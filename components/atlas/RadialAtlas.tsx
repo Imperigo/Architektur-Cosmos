@@ -24,13 +24,18 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   const [selectedEntry, setSelectedEntry] = useState<Entry | null>(null);
   const [showRelations, setShowRelations] = useState(true);
   const [travel, setTravel] = useState(0);
-  const [targetTravel, setTargetTravel] = useState(0);
   const [hasTravelled, setHasTravelled] = useState(false);
   const [snappedEntryId, setSnappedEntryId] = useState<string | null>(null);
   const [hoverEntryId, setHoverEntryId] = useState<string | null>(null);
+  const [activeTheme, setActiveTheme] = useState('all');
   const [pointerPoint, setPointerPoint] = useState<SvgPoint | null>(null);
   const state = wormholeState(travel);
-  const nodes = useMemo(() => layoutWormholeEntries(entries, state, selectedEntry?.id), [entries, selectedEntry?.id, state.timePosition]);
+  const themes = useMemo(() => atlasThemes(entries), [entries]);
+  const filteredEntries = useMemo(() => {
+    if (activeTheme === 'all') return entries;
+    return entries.filter((entry) => entry.themes.includes(activeTheme));
+  }, [activeTheme, entries]);
+  const nodes = useMemo(() => layoutWormholeEntries(filteredEntries, state, selectedEntry?.id), [filteredEntries, selectedEntry?.id, state.phase, state.timePosition]);
   const snappedNode = useMemo(() => nodes.find((node) => node.entry.id === snappedEntryId) ?? null, [nodes, snappedEntryId]);
   const hoverNode = useMemo(() => nodes.find((node) => node.entry.id === hoverEntryId) ?? null, [nodes, hoverEntryId]);
   const depthScale = 1 + state.timePosition * 2.8;
@@ -43,26 +48,6 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   };
 
   useEffect(() => {
-    let frame = 0;
-
-    function animateTravel() {
-      setTravel((current) => {
-        const delta = targetTravel - current;
-
-        if (Math.abs(delta) < 0.0006) {
-          return targetTravel;
-        }
-
-        frame = window.requestAnimationFrame(animateTravel);
-        return current + delta * 0.105;
-      });
-    }
-
-    frame = window.requestAnimationFrame(animateTravel);
-    return () => window.cancelAnimationFrame(frame);
-  }, [targetTravel]);
-
-  useEffect(() => {
     if (snappedEntryId && !snappedNode) {
       setSnappedEntryId(null);
       setHoverEntryId(null);
@@ -70,14 +55,25 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     }
   }, [snappedEntryId, snappedNode]);
 
+  useEffect(() => {
+    const visibleIds = new Set(filteredEntries.map((entry) => entry.id));
+
+    if (selectedEntry && !visibleIds.has(selectedEntry.id)) {
+      releaseSnap();
+    }
+
+    if (hoverEntryId && !visibleIds.has(hoverEntryId)) {
+      setHoverEntryId(null);
+    }
+  }, [filteredEntries, hoverEntryId, selectedEntry]);
+
   function travelBy(delta: number) {
     setHasTravelled(true);
     releaseSnap();
-    setTargetTravel((current) => current + delta);
+    setTravel((current) => loopTravel(current + delta));
   }
 
   function resetView() {
-    setTargetTravel(0);
     setTravel(0);
     setHasTravelled(false);
     releaseSnap();
@@ -101,7 +97,8 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
 
   function handleWheel(event: WheelEvent<SVGSVGElement>) {
     event.preventDefault();
-    travelBy(event.deltaY > 0 ? 0.012 : -0.012);
+    const normalizedDelta = Math.max(-140, Math.min(140, event.deltaY));
+    travelBy(normalizedDelta * 0.00042);
   }
 
   function handlePointerMove(event: PointerEvent<SVGSVGElement>) {
@@ -210,8 +207,17 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
       </div>
 
       <div className="cosmos-status-chip absolute bottom-4 left-4 z-10 origin-bottom-left scale-75 border border-[#f7f7f4]/35 bg-[#050505]/78 px-2 py-1 text-[10px] uppercase tracking-[0.16em] text-neutral-300 opacity-45 backdrop-blur-md transition-all duration-300 ease-out hover:scale-100 hover:border-[#f7f7f4]/70 hover:opacity-100">
-        {entries.length} entries · {relations.length} relations · wormhole loop
+        {filteredEntries.length}/{entries.length} entries · {relations.length} relations · wormhole loop
       </div>
+
+      <ThemeLens
+        themes={themes}
+        activeTheme={activeTheme}
+        onThemeChange={(theme) => {
+          setActiveTheme(theme);
+          releaseSnap();
+        }}
+      />
 
       <AtlasControls
         scale={depthScale}
@@ -240,13 +246,71 @@ function nearestNode(point: SvgPoint, nodes: WormholeEntryNode[]) {
   }, null);
 }
 
+function atlasThemes(entries: Entry[]) {
+  const counts = entries.reduce<Map<string, number>>((accumulator, entry) => {
+    entry.themes.forEach((theme) => {
+      accumulator.set(theme, (accumulator.get(theme) ?? 0) + 1);
+    });
+    return accumulator;
+  }, new Map());
+
+  return [...counts.entries()]
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .slice(0, 18)
+    .map(([id, count]) => ({ id, label: themeLabel(id), count }));
+}
+
+function ThemeLens({
+  themes,
+  activeTheme,
+  onThemeChange
+}: {
+  themes: ReturnType<typeof atlasThemes>;
+  activeTheme: string;
+  onThemeChange: (theme: string) => void;
+}) {
+  return (
+    <div className="group absolute right-4 top-1/2 z-20 max-h-[72vh] w-10 -translate-y-1/2 overflow-hidden border border-[#f7f7f4]/35 bg-[#050505]/68 text-[#f7f7f4] opacity-55 backdrop-blur-md transition-all duration-300 ease-out hover:w-64 hover:opacity-100">
+      <div className="flex h-10 items-center justify-center border-b border-[#f7f7f4]/35 text-[9px] uppercase tracking-[0.2em] group-hover:justify-start group-hover:px-3">
+        <span className="group-hover:hidden">Lens</span>
+        <span className="hidden group-hover:inline">Theme Lens</span>
+      </div>
+      <div className="max-h-[calc(72vh-2.5rem)] overflow-y-auto p-2">
+        <ThemeButton active={activeTheme === 'all'} label="All themes" count={themes.reduce((sum, theme) => sum + theme.count, 0)} onClick={() => onThemeChange('all')} />
+        {themes.map((theme) => (
+          <ThemeButton key={theme.id} active={activeTheme === theme.id} label={theme.label} count={theme.count} onClick={() => onThemeChange(theme.id)} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ThemeButton({ active, label, count, onClick }: { active: boolean; label: string; count: number; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`mb-1 flex h-8 w-full items-center justify-between border px-2 text-left text-[10px] uppercase tracking-[0.12em] transition-all duration-200 ${
+        active
+          ? 'border-[#f7f7f4] bg-[#f7f7f4] text-[#050505]'
+          : 'border-[#f7f7f4]/25 text-neutral-300 hover:border-[#f7f7f4]/70 hover:text-[#f7f7f4]'
+      }`}
+    >
+      <span className="hidden truncate group-hover:inline">{label}</span>
+      <span className="group-hover:hidden">{label.slice(0, 1)}</span>
+      <span>{count}</span>
+    </button>
+  );
+}
+
 function distance(point: SvgPoint, node: WormholeEntryNode) {
   return Math.hypot(point.x - node.x, point.y - node.y);
 }
 
 function HoverPreview({ pointer, node }: { pointer: SvgPoint; node: WormholeEntryNode }) {
   const previewScale = node.closeness > 0.68 ? 0.82 : 0.68;
-  const cardWidth = 238 * previewScale;
+  const baseWidth = previewCardWidth(node.entry);
+  const cardWidth = baseWidth * previewScale;
   const cardHeight = 148 * previewScale;
   const side = node.x > atlasSize.cx ? -1 : 1;
   const x = Math.max(34, Math.min(atlasSize.width - cardWidth - 34, node.x + side * 30));
@@ -258,7 +322,7 @@ function HoverPreview({ pointer, node }: { pointer: SvgPoint; node: WormholeEntr
       <circle cx={node.x} cy={node.y} r={node.size + 11} fill="none" stroke="#f7f7f4" strokeWidth="0.8" opacity="0.44" />
       <circle cx={node.x} cy={node.y} r={node.size + 20} fill="none" stroke="#f7f7f4" strokeWidth="0.45" strokeDasharray="1 8" opacity="0.24" />
       <g transform={`translate(${x} ${y}) scale(${previewScale})`}>
-        <ProjectPreviewCard entry={node.entry} x={0} y={0} />
+        <ProjectPreviewCard entry={node.entry} x={0} y={0} width={baseWidth} />
       </g>
     </g>
   );
@@ -310,4 +374,18 @@ function zoomModeLabel(scale: number) {
   if (scale >= 2) return 'Preview';
   if (scale >= 1.15) return 'Image';
   return 'Global';
+}
+
+function previewCardWidth(entry: Entry) {
+  return Math.max(260, Math.min(338, entry.title.length * 7.2 + 150));
+}
+
+function themeLabel(theme: string) {
+  return theme
+    .replace(/-/g, ' ')
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+function loopTravel(value: number) {
+  return ((value % 2) + 2) % 2;
 }

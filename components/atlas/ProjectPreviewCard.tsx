@@ -5,20 +5,34 @@ type ProjectPreviewCardProps = {
   entry: Entry;
   x: number;
   y: number;
+  width?: number;
 };
 
-export function ProjectPreviewCard({ entry, x, y }: ProjectPreviewCardProps) {
+export function ProjectPreviewCard({ entry, x, y, width = 260 }: ProjectPreviewCardProps) {
+  const mediaWidth = 104;
+  const textX = x + mediaWidth + 24;
+  const textWidth = width - mediaWidth - 38;
+  const titleLines = wrapText(entry.title, Math.max(16, Math.floor(textWidth / 7.2))).slice(0, 2);
+
   return (
-    <g>
-      <rect x={x} y={y} width="238" height="148" fill="#050505" stroke="#f7f7f4" strokeWidth="1" opacity="0.96" />
+    <g className="project-preview-card">
+      <rect x={x} y={y} width={width} height="148" fill="#050505" stroke="#f7f7f4" strokeWidth="1" opacity="0.96" />
+      <path d={`M ${x} ${y + 148} L ${x + width} ${y + 148}`} stroke="#f7f7f4" strokeWidth="0.7" opacity="0.4" />
       <ProjectMediaGrid media={entry.media} x={x + 10} y={y + 10} slotWidth={48} slotHeight={36} gap={7} />
-      <text x={x + 126} y={y + 24} fill="#f7f7f4" fontSize="15" fontWeight="700" fontFamily="var(--font-sans), system-ui, sans-serif">
-        {entry.title}
+      <text fill="#f7f7f4" fontSize="13.2" fontWeight="700" fontFamily="var(--font-sans), system-ui, sans-serif">
+        {titleLines.map((line, index) => (
+          <tspan key={`${line}-${index}`} x={textX} y={y + 22 + index * 15}>
+            {line}
+          </tspan>
+        ))}
       </text>
-      <text x={x + 126} y={y + 43} fill="#b8b8b8" fontSize="9" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.08em">
+      <text x={textX} y={y + 47 + (titleLines.length - 1) * 8} fill="#b8b8b8" fontSize="8.5" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.08em">
         {formatYear(entry.year_start)}
       </text>
-      <WrappedText text={entry.one_sentence} x={x + 126} y={y + 63} maxChars={34} lineHeight={13} maxLines={5} />
+      <WrappedText text={entry.one_sentence} x={textX} y={y + 65 + (titleLines.length - 1) * 8} maxChars={Math.max(24, Math.floor(textWidth / 5.6))} lineHeight={12} maxLines={5} />
+      <text x={textX} y={y + 134} fill="#b8b8b8" fontSize="7.8" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.16em">
+        CLICK TO OPEN
+      </text>
     </g>
   );
 }

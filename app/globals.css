@@ -14,6 +14,20 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
   50% { stroke-dashoffset: -22; }
 }
 
+@keyframes wormhole-stream-flow {
+  0% { stroke-dashoffset: 0; opacity: 0.025; }
+  45% { opacity: 0.09; }
+  100% { stroke-dashoffset: -120; opacity: 0.04; }
+}
+
+@keyframes wormhole-outer-flow {
+  to { stroke-dashoffset: -86; }
+}
+
+@keyframes wormhole-whirl {
+  to { transform: rotate(360deg); }
+}
+
 @keyframes wormhole-current-pulse {
   0%, 100% { opacity: 0.76; stroke-width: 1.1; }
   50% { opacity: 1; stroke-width: 1.65; }
@@ -51,7 +65,18 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
 
 .wormhole-spoke {
   stroke-dasharray: 20 34;
-  animation: wormhole-spoke-flow 2.8s linear infinite;
+  animation: wormhole-spoke-flow 2.25s linear infinite;
+  vector-effect: non-scaling-stroke;
+}
+
+.wormhole-stream {
+  stroke-dasharray: 28 44;
+  animation: wormhole-stream-flow 5.8s linear infinite;
+  vector-effect: non-scaling-stroke;
+}
+
+.wormhole-outer-rim {
+  animation: wormhole-outer-flow 9s linear infinite;
   vector-effect: non-scaling-stroke;
 }
 
@@ -70,8 +95,12 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
 }
 
 .wormhole-throat {
-  animation: wormhole-current-pulse 4.4s ease-in-out infinite;
+  animation: wormhole-current-pulse 6.4s ease-in-out infinite;
   vector-effect: non-scaling-stroke;
+}
+
+.wormhole-whirl {
+  animation: wormhole-whirl 34s linear infinite;
 }
 
 .wormhole-year-label,
@@ -83,6 +112,10 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
 
 .hover-preview {
   animation: hover-preview-arrive 220ms cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.project-preview-card {
+  filter: drop-shadow(0 0 12px rgb(247 247 244 / 10%));
 }
 
 .dossier-overlay {
@@ -98,6 +131,7 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
 .cosmos-cursor circle:first-child {
   stroke-dasharray: 4 7;
   animation: cursor-orbit 1.6s linear infinite;
+  transition: r 140ms ease, opacity 140ms ease;
 }
 
 .style-sector path {
@@ -118,6 +152,9 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
   .wormhole-ring,
   .wormhole-current-ring,
   .wormhole-breath,
+  .wormhole-stream,
+  .wormhole-outer-rim,
+  .wormhole-whirl,
   .wormhole-throat,
   .cosmos-node-wiggle,
   .cosmos-cursor circle:first-child,

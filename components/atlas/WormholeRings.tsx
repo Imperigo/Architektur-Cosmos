@@ -9,6 +9,7 @@ type WormholeRingsProps = {
 export function WormholeRings({ state }: WormholeRingsProps) {
   const rings = wormholeRings(state);
   const gridLines = wormholeGridLines(state);
+  const streamLines = wormholeStreamLines(state);
 
   return (
     <g aria-label="Zeit-Wurmloch">
@@ -22,6 +23,29 @@ export function WormholeRings({ state }: WormholeRingsProps) {
         </radialGradient>
       </defs>
       <circle className="wormhole-breath" cx={atlasSize.cx} cy={atlasSize.cy + 8} r="660" fill="url(#wormhole-vignette)" />
+      {streamLines.map((line, index) => (
+        <path
+          key={`stream-${index}`}
+          className="wormhole-stream"
+          d={line}
+          fill="none"
+          stroke={index % 3 === 0 ? '#c9fff4' : index % 3 === 1 ? '#d7c7ff' : '#ffd7a8'}
+          strokeWidth="0.65"
+          opacity="0.07"
+          style={{ animationDelay: `${index * -0.22}s` }}
+        />
+      ))}
+      <circle
+        className="wormhole-outer-rim"
+        cx={atlasSize.cx}
+        cy={atlasSize.cy}
+        r={wormholeTunnel.maxRadius}
+        fill="none"
+        stroke="#f7f7f4"
+        strokeWidth="1.15"
+        strokeDasharray="6 18 1 18"
+        opacity="0.3"
+      />
       {gridLines.map((line, index) => (
         <path
           key={index}
@@ -44,7 +68,6 @@ export function WormholeRings({ state }: WormholeRingsProps) {
         const labelOpacity = (ring.mode === 'local' ? 0.92 : Math.max(0.2, 1 - depth * 0.92)) * ringOpacity;
         const showLabel = labelOpacity > 0.18 && (ring.mode === 'local' || ring.weight === 'major');
         const label = ring.mode === 'local' ? formatYear(state.currentYear) : ring.label;
-        const labelWidth = Math.max(46, label.length * 6.2 + 16);
 
         return (
           <g key={`${ring.year}-${index}`}>
@@ -62,24 +85,17 @@ export function WormholeRings({ state }: WormholeRingsProps) {
             />
             {showLabel ? (
               <g className="wormhole-year-label" opacity={labelOpacity}>
-                <rect
-                  x={labelPoint.x - labelWidth / 2}
-                  y={labelPoint.y - 9}
-                  width={labelWidth}
-                  height="18"
-                  fill="#050505"
-                  stroke="#f7f7f4"
-                  strokeWidth="0.55"
-                  opacity={ring.mode === 'local' ? 0.9 : 0.7}
-                />
                 <text
                   x={labelPoint.x}
-                  y={labelPoint.y + 3.5}
+                  y={labelPoint.y + 3}
                   textAnchor="middle"
                   fill="#f7f7f4"
                   fontSize={Math.round(9.2 * labelScale)}
                   fontFamily="var(--font-sans), system-ui, sans-serif"
                   letterSpacing="0.07em"
+                  stroke="#050505"
+                  strokeWidth="3"
+                  paintOrder="stroke"
                 >
                   {label}
                 </text>
@@ -89,9 +105,36 @@ export function WormholeRings({ state }: WormholeRingsProps) {
         );
       })}
       <circle cx={atlasSize.cx} cy={atlasSize.cy} r={wormholeTunnel.minRadius - 12} fill="#050505" opacity="0.94" />
-      <circle className="wormhole-throat" cx={atlasSize.cx} cy={atlasSize.cy} r={wormholeTunnel.minRadius} fill="none" stroke="#f7f7f4" strokeWidth="0.7" strokeDasharray="1 12" opacity="0.35" />
+      <g className="wormhole-whirl" style={{ transformOrigin: `${atlasSize.cx}px ${atlasSize.cy}px` }}>
+        <path d={whirlPath(18, 52, 0)} fill="none" stroke="#f7f7f4" strokeWidth="0.55" opacity="0.16" />
+        <path d={whirlPath(12, 42, 120)} fill="none" stroke="#c9fff4" strokeWidth="0.5" opacity="0.12" />
+        <path d={whirlPath(8, 34, 240)} fill="none" stroke="#d7c7ff" strokeWidth="0.5" opacity="0.1" />
+      </g>
+      <circle className="wormhole-throat" cx={atlasSize.cx} cy={atlasSize.cy} r={wormholeTunnel.minRadius} fill="none" stroke="#f7f7f4" strokeWidth="0.55" strokeDasharray="1 16" opacity="0.13" />
     </g>
   );
+}
+
+function wormholeStreamLines(state: WormholeState) {
+  return Array.from({ length: 14 }, (_, index) => {
+    const angle = index * 25.7 + state.phase * 18;
+    const start = polarToCartesian(atlasSize.cx, atlasSize.cy, 92, angle - 5);
+    const mid = polarToCartesian(atlasSize.cx, atlasSize.cy + 24, 360 + (index % 4) * 36, angle + 10);
+    const end = polarToCartesian(atlasSize.cx, atlasSize.cy, 720, angle + 22);
+
+    return `M ${start.x} ${start.y} Q ${mid.x} ${mid.y} ${end.x} ${end.y}`;
+  });
+}
+
+function whirlPath(innerRadius: number, outerRadius: number, offset: number) {
+  const points = Array.from({ length: 18 }, (_, index) => {
+    const progress = index / 17;
+    const radius = innerRadius + (outerRadius - innerRadius) * progress;
+    const angle = offset + progress * 255;
+    return polarToCartesian(atlasSize.cx, atlasSize.cy, radius, angle);
+  });
+
+  return points.map((point, index) => `${index === 0 ? 'M' : 'L'} ${point.x} ${point.y}`).join(' ');
 }
 
 function yearLabelAngle(year: number, index: number, isLocal: boolean) {

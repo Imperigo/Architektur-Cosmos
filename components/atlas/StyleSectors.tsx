@@ -20,6 +20,15 @@ const sectorDash: Record<StyleSector['id'], string> = {
   vernacular_architecture: '4 8'
 };
 
+const sectorColor: Record<StyleSector['id'], string> = {
+  classical_architecture: '#d9c7ff',
+  pre_modern_architecture: '#ffd4a8',
+  modern_architecture: '#aee7ff',
+  postwar_modern_architecture: '#f0f0f0',
+  sustainable_architecture: '#b9f8cf',
+  vernacular_architecture: '#ffc1d6'
+};
+
 const sectorLabel: Record<StyleSector['id'], string> = {
   classical_architecture: 'ANTIKE',
   pre_modern_architecture: 'FRUEHMODERNE',
@@ -37,48 +46,51 @@ export function StyleSectors() {
         const startOuter = polarToCartesian(atlasSize.cx, atlasSize.cy, 720, sector.startAngle);
         const labelAngle = sectorMidAngle(sector);
         const label = readableLabelPoint(labelAngle);
+        const labelLeader = polarToCartesian(atlasSize.cx, atlasSize.cy, 452, labelAngle);
         const labelText = sectorLabel[sector.id];
-        const labelWidth = Math.min(166, Math.max(92, labelText.length * 6.4 + 48));
+        const accent = sectorColor[sector.id];
 
         return (
           <g key={sector.id} className="style-sector">
             <path
               d={sectorArc(sector, 438)}
               fill="none"
-              stroke="#f7f7f4"
+              stroke={accent}
               strokeWidth="1.35"
               strokeDasharray={sectorDash[sector.id]}
-              opacity="0.42"
+              opacity="0.5"
             />
             <path
               d={sectorArc(sector, 705)}
               fill="none"
-              stroke="#f7f7f4"
+              stroke={accent}
               strokeWidth="0.7"
               strokeDasharray={sectorDash[sector.id]}
-              opacity="0.18"
+              opacity="0.22"
             />
             <line
               x1={startInner.x}
               y1={startInner.y}
               x2={startOuter.x}
               y2={startOuter.y}
-              stroke="#f7f7f4"
+              stroke={accent}
               strokeWidth="0.8"
               opacity="0.22"
             />
             <g className="style-sector-label">
-              <rect
-                x={label.x - labelWidth / 2}
-                y={label.y - 15}
-                width={labelWidth}
-                height="30"
-                fill="#050505"
-                stroke="#f7f7f4"
+              <line
+                x1={labelLeader.x}
+                y1={labelLeader.y}
+                x2={label.x}
+                y2={label.y}
+                stroke={accent}
                 strokeWidth="0.65"
-                opacity="0.84"
+                strokeDasharray="1 7"
+                opacity="0.38"
               />
-              <text x={label.x - labelWidth / 2 + 12} y={label.y + 4} fill="#f7f7f4" fontSize="9" fontWeight="700" fontFamily="var(--font-sans), system-ui, sans-serif">
+              <circle cx={labelLeader.x} cy={labelLeader.y} r="3.6" fill={accent} opacity="0.72" />
+              <circle cx={label.x - 58} cy={label.y} r="7" fill="none" stroke={accent} strokeWidth="0.8" opacity="0.72" />
+              <text x={label.x - 58} y={label.y + 3.2} textAnchor="middle" fill={accent} fontSize="7.2" fontWeight="700" fontFamily="var(--font-sans), system-ui, sans-serif">
                 {sectorGlyph[sector.id]}
               </text>
               <text
@@ -90,6 +102,9 @@ export function StyleSectors() {
                 fontWeight="600"
                 fontFamily="var(--font-sans), system-ui, sans-serif"
                 letterSpacing="0.08em"
+                stroke="#050505"
+                strokeWidth="3"
+                paintOrder="stroke"
               >
                 {labelText}
               </text>
