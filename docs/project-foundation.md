@@ -61,7 +61,8 @@ A future interpretive mode. A lens can emphasize time, typology, climate, urbani
 3. Add relation data and a simple optional relation overlay.
 4. Improve node collision handling and label strategy.
 5. Add zoom and pan only after the static SVG atlas is readable.
-6. Add filters and search later, once the primitives are settled.
+6. Refine relation readability, labels, and density with a larger dataset.
+7. Add filters and search later, once the primitives are settled.
 
 ## Not Yet
 

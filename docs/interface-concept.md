@@ -26,12 +26,16 @@ Current MVP interaction:
 - Hover an entry node to reveal a lightweight label.
 - Click or keyboard-select an entry node.
 - Read the selected entry in the detail panel.
+- Read a short list of relations connected to the selected entry.
+- Toggle the relation overlay on or off.
+- Zoom with the controls or mouse wheel.
+- Pan the atlas by dragging the SVG field.
 - Close the panel to return to the field.
 
 Near-future interaction:
 
-- Add zoom and pan after labels and density are stable.
-- Add relation overlays after `data/relations.json` has meaningful content.
+- Improve relation readability as the dataset grows.
+- Refine label density and cluster behavior with larger entry sets.
 - Add filters only after entry taxonomy and relation logic are proven.
 
 ## Interface Boundaries

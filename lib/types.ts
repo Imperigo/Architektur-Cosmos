@@ -15,8 +15,17 @@ export type StyleSectorId =
   | 'modern_architecture'
   | 'postwar_modern_architecture'
   | 'sustainable_architecture'
-  | 'vernacular_architecture'
-  | 'urban_landscape';
+  | 'vernacular_architecture';
+
+export type RelationType =
+  | 'influences'
+  | 'responds_to'
+  | 'shares_theme'
+  | 'same_author'
+  | 'same_place'
+  | 'typological_reference'
+  | 'material_reference'
+  | 'context';
 
 export type Entry = {
   id: string;
@@ -40,4 +49,12 @@ export type Entry = {
     radius: number;
     cluster: string;
   };
+};
+
+export type EntryRelation = {
+  id: string;
+  source_entry_id: string;
+  target_entry_id: string;
+  relation_type: RelationType;
+  description: string;
 };

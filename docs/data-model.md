@@ -51,7 +51,7 @@ Sectors are navigational regions, not final academic truth. They can be refined 
 
 ## Relations
 
-Relations live separately from entries in `data/relations.json`.
+Relations live separately from entries in `data/relations.json`. They are rendered as an optional SVG overlay and summarized in the selected entry panel.
 
 Future relation shape:
 
@@ -79,3 +79,7 @@ Relation types should stay broad at first:
 ## Data Rule
 
 Do not hand-place the atlas as the default. Position should be derived from `year_start` and `style_sector`. Manual atlas overrides should remain exceptional and removable.
+
+## Layout Rule
+
+Atlas layout is a computed presentation layer. Node spreading, clustering, label positioning, and relation paths are allowed to change without changing entry meaning.

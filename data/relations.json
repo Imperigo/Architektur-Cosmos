@@ -1,1 +1,170 @@
-[]
+[
+  {
+    "id": "gobekli-to-uruk",
+    "source_entry_id": "gobekli-tepe",
+    "target_entry_id": "uruk-city",
+    "relation_type": "context",
+    "description": "Ritual gathering, settlement, and shared labor become early conditions for later urban organization."
+  },
+  {
+    "id": "uruk-to-giza",
+    "source_entry_id": "uruk-city",
+    "target_entry_id": "pyramids-of-giza",
+    "relation_type": "context",
+    "description": "Administration, labor coordination, and monumentality scale from early city systems into territorial building operations."
+  },
+  {
+    "id": "vitruvius-to-palladio",
+    "source_entry_id": "vitruvius-de-architectura",
+    "target_entry_id": "palladio-four-books",
+    "relation_type": "influences",
+    "description": "Palladio translates Vitruvian architectural authority into Renaissance drawing, proportion, and villa typology."
+  },
+  {
+    "id": "pantheon-to-hagia-sophia",
+    "source_entry_id": "pantheon",
+    "target_entry_id": "hagia-sophia",
+    "relation_type": "typological_reference",
+    "description": "Both entries test the dome as a cosmic, structural, and liturgical interior."
+  },
+  {
+    "id": "hagia-sophia-to-brunelleschi",
+    "source_entry_id": "hagia-sophia",
+    "target_entry_id": "brunelleschi-dome",
+    "relation_type": "typological_reference",
+    "description": "Large-span dome construction becomes a recurring problem of city image, faith, and engineering."
+  },
+  {
+    "id": "sixtus-to-versailles",
+    "source_entry_id": "sixtus-v-rome-plan",
+    "target_entry_id": "versailles-gardens",
+    "relation_type": "shares_theme",
+    "description": "Both use axes as instruments of territorial order, visibility, and power."
+  },
+  {
+    "id": "lougier-to-red-house",
+    "source_entry_id": "marc-antoine-laugier-primitive-hut",
+    "target_entry_id": "red-house",
+    "relation_type": "responds_to",
+    "description": "The Red House gives a later domestic and craft-oriented answer to origin myths and naturalized construction."
+  },
+  {
+    "id": "panopticon-to-athens-charter",
+    "source_entry_id": "panopticon",
+    "target_entry_id": "athens-charter",
+    "relation_type": "context",
+    "description": "Both show how diagrams can transform social order into spatial organization."
+  },
+  {
+    "id": "crystal-palace-to-fagus",
+    "source_entry_id": "crystal-palace",
+    "target_entry_id": "fagus-factory",
+    "relation_type": "material_reference",
+    "description": "Glass and industrial production move from exhibition hall to modern factory image."
+  },
+  {
+    "id": "red-house-to-garden-city",
+    "source_entry_id": "red-house",
+    "target_entry_id": "garden-cities-of-tomorrow",
+    "relation_type": "shares_theme",
+    "description": "Both critique industrial urban life through reformist domestic and settlement models."
+  },
+  {
+    "id": "cite-to-athens",
+    "source_entry_id": "cite-industrielle",
+    "target_entry_id": "athens-charter",
+    "relation_type": "influences",
+    "description": "Garnier's ordered industrial city anticipates functionalist urban separation and zoning."
+  },
+  {
+    "id": "domino-to-villa-savoye",
+    "source_entry_id": "dom-ino-house",
+    "target_entry_id": "villa-savoye",
+    "relation_type": "influences",
+    "description": "The structural prototype becomes an architectural language of pilotis, free plan, and free facade."
+  },
+  {
+    "id": "domino-to-unite",
+    "source_entry_id": "dom-ino-house",
+    "target_entry_id": "unite-habitation",
+    "relation_type": "influences",
+    "description": "Standardized frame thinking scales from house prototype to collective housing infrastructure."
+  },
+  {
+    "id": "bauhaus-to-tugendhat",
+    "source_entry_id": "bauhaus-dessau",
+    "target_entry_id": "haus-tugendhat",
+    "relation_type": "context",
+    "description": "Institutional and domestic modernism share glass, openness, and a new relationship between life and technical systems."
+  },
+  {
+    "id": "villa-savoye-to-athens-charter",
+    "source_entry_id": "villa-savoye",
+    "target_entry_id": "athens-charter",
+    "relation_type": "same_author",
+    "description": "Le Corbusier's house logic and urban doctrine share a belief in order, circulation, and functional separation."
+  },
+  {
+    "id": "athens-to-unite",
+    "source_entry_id": "athens-charter",
+    "target_entry_id": "unite-habitation",
+    "relation_type": "responds_to",
+    "description": "The Unite turns functionalist urban doctrine into a vertical block with collective services."
+  },
+  {
+    "id": "new-babylon-to-pompidou",
+    "source_entry_id": "new-babylon",
+    "target_entry_id": "centre-pompidou",
+    "relation_type": "shares_theme",
+    "description": "Both imagine architecture as open infrastructure for changing culture and public use."
+  },
+  {
+    "id": "pompidou-to-smlxl",
+    "source_entry_id": "centre-pompidou",
+    "target_entry_id": "s-m-l-xl",
+    "relation_type": "context",
+    "description": "Late twentieth-century architecture turns infrastructure, media, scale, and cultural performance into design material."
+  },
+  {
+    "id": "delirious-to-smlxl",
+    "source_entry_id": "delirious-new-york",
+    "target_entry_id": "s-m-l-xl",
+    "relation_type": "same_author",
+    "description": "Koolhaas moves from Manhattan's retroactive manifesto to the large-format office book as architectural medium."
+  },
+  {
+    "id": "iba-to-landschaftspark",
+    "source_entry_id": "berlin-iba-1987",
+    "target_entry_id": "landschaftspark-duisburg-nord",
+    "relation_type": "shares_theme",
+    "description": "Both treat existing urban fabric as material for repair, reuse, and historical continuity."
+  },
+  {
+    "id": "landschaftspark-to-highline",
+    "source_entry_id": "landschaftspark-duisburg-nord",
+    "target_entry_id": "high-line",
+    "relation_type": "influences",
+    "description": "Postindustrial landscape reuse becomes a transferable public-space strategy."
+  },
+  {
+    "id": "rural-studio-to-elemental",
+    "source_entry_id": "rural-studio-20k-house",
+    "target_entry_id": "elemental-quinta-monroy",
+    "relation_type": "shares_theme",
+    "description": "Both explore affordability through prototype thinking, material economy, and user agency."
+  },
+  {
+    "id": "common-ground-to-serpentine",
+    "source_entry_id": "venice-biennale-architecture-2012",
+    "target_entry_id": "serpentine-pavilion-ishigami",
+    "relation_type": "context",
+    "description": "Exhibition culture frames temporary architecture as discourse, reference, and public encounter."
+  },
+  {
+    "id": "alhambra-to-serpentine",
+    "source_entry_id": "alhambra",
+    "target_entry_id": "serpentine-pavilion-ishigami",
+    "relation_type": "material_reference",
+    "description": "Both hold architecture close to landscape, atmosphere, and the sensory reading of material."
+  }
+]

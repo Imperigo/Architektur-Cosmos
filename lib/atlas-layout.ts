@@ -25,6 +25,17 @@ export type StyleSector = {
   endAngle: number;
 };
 
+export type AtlasNode = ReturnType<typeof entryPosition> & {
+  entry: Entry;
+  clusterIndex: number;
+  clusterSize: number;
+  labelX: number;
+  labelY: number;
+  labelAnchor: 'start' | 'end';
+  labelLeaderX: number;
+  labelLeaderY: number;
+};
+
 const timeAnchors = [
   { year: -9000, label: '9000 v. Chr.', weight: 'major' as const },
   { year: -3000, label: '3000 v. Chr.', weight: 'minor' as const },
@@ -101,6 +112,54 @@ export function entryPosition(entry: Entry) {
   };
 }
 
+export function layoutEntries(entries: Entry[]): AtlasNode[] {
+  const baseNodes = entries.map((entry) => ({ entry, ...entryPosition(entry) }));
+  const buckets = new Map<string, typeof baseNodes>();
+
+  baseNodes.forEach((node) => {
+    const key = [
+      node.sector.id,
+      Math.round(node.radius / 26),
+      Math.round(node.angle / 12)
+    ].join(':');
+    const bucket = buckets.get(key) ?? [];
+    bucket.push(node);
+    buckets.set(key, bucket);
+  });
+
+  const nodes: AtlasNode[] = [];
+
+  buckets.forEach((bucket) => {
+    const sortedBucket = [...bucket].sort((a, b) => {
+      if (a.entry.year_start !== b.entry.year_start) return a.entry.year_start - b.entry.year_start;
+      return a.entry.id.localeCompare(b.entry.id);
+    });
+
+    sortedBucket.forEach((node, index) => {
+      const clusterSize = sortedBucket.length;
+      const lane = index - (clusterSize - 1) / 2;
+      const radial = radialUnit(node.x, node.y);
+      const tangent = { x: -radial.y, y: radial.x };
+      const spread = clusterSize > 1 ? Math.min(18, 10 + clusterSize * 1.4) : 0;
+      const radialOffset = clusterSize > 1 ? (index % 2 === 0 ? -5 : 5) : 0;
+      const x = roundLayout(node.x + tangent.x * lane * spread + radial.x * radialOffset);
+      const y = roundLayout(node.y + tangent.y * lane * spread + radial.y * radialOffset);
+      const label = labelPosition(x, y, node.angle, index, clusterSize);
+
+      nodes.push({
+        ...node,
+        x,
+        y,
+        clusterIndex: index,
+        clusterSize,
+        ...label
+      });
+    });
+  });
+
+  return resolveLabelCollisions(nodes);
+}
+
 export function sectorBoundaryPoint(angle: number, radius = atlasSize.outerRadius + 18) {
   return polarToCartesian(atlasSize.cx, atlasSize.cy, radius, angle);
 }
@@ -109,4 +168,52 @@ function stableHash(value: string) {
   return value.split('').reduce((hash, char) => {
     return (hash * 31 + char.charCodeAt(0)) >>> 0;
   }, 7);
+}
+
+function radialUnit(x: number, y: number) {
+  const dx = x - atlasSize.cx;
+  const dy = y - atlasSize.cy;
+  const length = Math.hypot(dx, dy) || 1;
+  return { x: dx / length, y: dy / length };
+}
+
+function labelPosition(x: number, y: number, angle: number, index: number, clusterSize: number) {
+  const isLeft = angle > 180 && angle < 360;
+  const labelAnchor = isLeft ? 'end' as const : 'start' as const;
+  const labelX = roundLayout(x + (isLeft ? -30 : 30));
+  const labelY = roundLayout(y - 12 + (index - (clusterSize - 1) / 2) * 15);
+  const labelLeaderX = roundLayout(x + (isLeft ? -8 : 8));
+  const labelLeaderY = roundLayout(y - 5);
+
+  return { labelX, labelY, labelAnchor, labelLeaderX, labelLeaderY };
+}
+
+function resolveLabelCollisions(nodes: AtlasNode[]) {
+  const minGap = 14;
+  const lanes = new Map<string, AtlasNode[]>();
+
+  nodes.forEach((node) => {
+    const laneKey = `${node.labelAnchor}:${node.sector.id}`;
+    const lane = lanes.get(laneKey) ?? [];
+    lane.push(node);
+    lanes.set(laneKey, lane);
+  });
+
+  lanes.forEach((lane) => {
+    lane.sort((a, b) => a.labelY - b.labelY);
+
+    for (let index = 1; index < lane.length; index += 1) {
+      const previous = lane[index - 1];
+      const current = lane[index];
+      if (current.labelY - previous.labelY < minGap) {
+        current.labelY = roundLayout(previous.labelY + minGap);
+      }
+    }
+  });
+
+  return nodes;
+}
+
+function roundLayout(value: number) {
+  return Math.round(value * 100) / 100;
 }

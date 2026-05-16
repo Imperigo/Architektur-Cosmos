@@ -12,6 +12,9 @@ The first MVP tests the foundation of Architecture Cosmos, not the full product.
 - Entry-based data model.
 - Entry detail panel.
 - Basic hover and selected states.
+- Optional relation overlay from local JSON.
+- Simple zoom and pan controls.
+- Deterministic node grouping for crowded atlas regions.
 - Concentric time rings.
 - Radial style sectors.
 - Conservative black/white architectural drawing style.
@@ -45,15 +48,15 @@ Docs, data primitives, atlas geometry, and visual grammar are aligned.
 
 ### Milestone 2: Density
 
-Add enough local entries to test crowding, labels, and sector balance.
+Add enough local entries to test crowding, labels, and sector balance. Initial density is now represented in `data/mock-entries.json`.
 
 ### Milestone 3: Relations
 
-Introduce simple relation data and an optional relation overlay.
+Introduce simple relation data and an optional relation overlay. Initial relation data is now represented in `data/relations.json`.
 
 ### Milestone 4: Navigation
 
-Add zoom and pan once the static atlas remains readable.
+Add zoom and pan once the static atlas remains readable. The MVP now includes conservative SVG pan and zoom controls.
 
 ### Milestone 5: Discovery
 
