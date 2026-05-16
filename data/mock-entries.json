@@ -1,5 +1,37 @@
 [
   {
+    "id": "parthenon",
+    "slug": "parthenon",
+    "title": "Parthenon",
+    "entry_type": "building",
+    "year_start": -447,
+    "year_end": -432,
+    "authors": ["Iktinos", "Kallikrates", "Phidias"],
+    "city": "Athen",
+    "country": "Greece",
+    "style_sector": "classical_architecture",
+    "lecture_cluster": ["architectural_history_1"],
+    "themes": ["temple", "order", "proportion", "polis"],
+    "short_description": "Kanonisches Tempelbauwerk der griechischen Antike, in dem Ordnung, optische Korrektur und stadträumliche Symbolik zusammenfallen.",
+    "source_quality": "lecture_notes"
+  },
+  {
+    "id": "sixtus-v-rome-plan",
+    "slug": "sixtus-v-rome-plan",
+    "title": "Rom unter Sixtus V.",
+    "entry_type": "urban_plan",
+    "year_start": 1585,
+    "year_end": 1590,
+    "authors": ["Domenico Fontana", "Sixtus V."],
+    "city": "Rom",
+    "country": "Italy",
+    "style_sector": "classical_architecture",
+    "lecture_cluster": ["urban_history"],
+    "themes": ["axis", "pilgrimage", "baroque city", "infrastructure"],
+    "short_description": "Frühes Beispiel einer großmaßstäblichen Stadtordnung durch Sichtachsen, Obelisken und eine vernetzte sakrale Topografie.",
+    "source_quality": "lecture_notes"
+  },
+  {
     "id": "crystal-palace",
     "slug": "crystal-palace",
     "title": "Crystal Palace",
@@ -9,12 +41,11 @@
     "authors": ["Joseph Paxton"],
     "city": "London",
     "country": "United Kingdom",
-    "style_sector": "pre-modern_architecture",
+    "style_sector": "pre_modern_architecture",
     "lecture_cluster": ["architectural_history_3_4"],
     "themes": ["glass", "industrialization", "exhibition", "transparency"],
     "short_description": "Schlüsselprojekt des 19. Jahrhunderts, in dem Eisen und Glas als neues technisches und räumliches System auftreten.",
-    "source_quality": "lecture_notes",
-    "atlas": { "year": 1851, "ring": "1850", "angle": 70, "radius": 560, "cluster": "industrialization" }
+    "source_quality": "lecture_notes"
   },
   {
     "id": "red-house",
@@ -26,12 +57,27 @@
     "authors": ["William Morris", "Philip Webb"],
     "city": "London",
     "country": "United Kingdom",
-    "style_sector": "pre-modern_architecture",
+    "style_sector": "pre_modern_architecture",
     "lecture_cluster": ["architectural_history_3_4"],
     "themes": ["arts-and-crafts", "anti-industrialism", "domesticity"],
     "short_description": "Manifestartiges Haus der Arts-and-Crafts-Bewegung und Gegenposition zur industriellen Moderne.",
-    "source_quality": "lecture_notes",
-    "atlas": { "year": 1860, "ring": "1850", "angle": 92, "radius": 570, "cluster": "industrialization" }
+    "source_quality": "lecture_notes"
+  },
+  {
+    "id": "garden-cities-of-tomorrow",
+    "slug": "garden-cities-of-tomorrow",
+    "title": "Garden Cities of To-morrow",
+    "entry_type": "text",
+    "year_start": 1902,
+    "year_end": 1902,
+    "authors": ["Ebenezer Howard"],
+    "city": "London",
+    "country": "United Kingdom",
+    "style_sector": "pre_modern_architecture",
+    "lecture_cluster": ["urban_history"],
+    "themes": ["garden city", "diagram", "reform", "settlement"],
+    "short_description": "Städtebaulicher Reformtext, der Wachstum, Grünraum und soziale Organisation in einem diagrammatischen Modell verbindet.",
+    "source_quality": "primary_text"
   },
   {
     "id": "haus-tugendhat",
@@ -47,8 +93,21 @@
     "lecture_cluster": ["architectural_history_3_4"],
     "themes": ["curtain", "free plan", "privacy", "modern living"],
     "short_description": "Modernes Wohnhaus mit präzisem Einsatz von Vorhängen, offenen Raumzonen und flexibler Raumartikulation.",
-    "source_quality": "lecture_notes",
-    "atlas": { "year": 1930, "ring": "1925", "angle": 120, "radius": 640, "cluster": "modernism" }
+    "source_quality": "lecture_notes"
+  },
+  {
+    "id": "athens-charter",
+    "slug": "athens-charter",
+    "title": "Charta von Athen",
+    "entry_type": "theory",
+    "year_start": 1933,
+    "year_end": 1943,
+    "authors": ["CIAM", "Le Corbusier"],
+    "style_sector": "modern_architecture",
+    "lecture_cluster": ["modernism"],
+    "themes": ["functional city", "zoning", "housing", "mobility"],
+    "short_description": "Programmatik der funktionalen Stadt, die Wohnen, Arbeiten, Erholung und Verkehr als getrennte Ordnungsfelder denkt.",
+    "source_quality": "primary_text"
   },
   {
     "id": "unite-habitation",
@@ -64,8 +123,37 @@
     "lecture_cluster": ["architectural_history_3_4"],
     "themes": ["mass housing", "interior street", "infrastructure", "modulor"],
     "short_description": "Nachkriegsmodernes Wohngebäude, das Wohnen, Versorgung, Infrastruktur und kollektive Programme in einem vertikalen System verbindet.",
-    "source_quality": "lecture_notes",
-    "atlas": { "year": 1952, "ring": "1950", "angle": 150, "radius": 670, "cluster": "postwar_modernism" }
+    "source_quality": "lecture_notes"
+  },
+  {
+    "id": "new-babylon",
+    "slug": "new-babylon",
+    "title": "New Babylon",
+    "entry_type": "map",
+    "year_start": 1959,
+    "year_end": 1974,
+    "authors": ["Constant Nieuwenhuys"],
+    "style_sector": "postwar_modern_architecture",
+    "lecture_cluster": ["postwar_urbanism"],
+    "themes": ["megastructure", "play", "mapping", "situationism"],
+    "short_description": "Spekulatives Karten- und Modellprojekt einer nomadischen Megastruktur, das Stadt als offenes Feld permanenter Veränderung versteht.",
+    "source_quality": "archive_reference"
+  },
+  {
+    "id": "centre-pompidou",
+    "slug": "centre-pompidou",
+    "title": "Centre Pompidou",
+    "entry_type": "infrastructure",
+    "year_start": 1977,
+    "year_end": 1977,
+    "authors": ["Renzo Piano", "Richard Rogers", "Gianfranco Franchini"],
+    "city": "Paris",
+    "country": "France",
+    "style_sector": "postwar_modern_architecture",
+    "lecture_cluster": ["architectural_history_4"],
+    "themes": ["culture", "services", "exoskeleton", "public space"],
+    "short_description": "Kulturmaschine mit ausgelagerter Gebäudetechnik, die Fassade, Infrastruktur und städtische Bühne miteinander verschränkt.",
+    "source_quality": "lecture_notes"
   },
   {
     "id": "landschaftspark-duisburg-nord",
@@ -81,7 +169,38 @@
     "lecture_cluster": ["landscape_architecture_1_2"],
     "themes": ["industrial nature", "reuse", "palimpsest", "landscape"],
     "short_description": "Postindustrieller Landschaftspark, der industrielle Relikte erhält, umnutzt und als lesbare Schichten des Ortes aktiviert.",
-    "source_quality": "lecture_notes",
-    "atlas": { "year": 1994, "ring": "1975", "angle": 205, "radius": 700, "cluster": "industrial_nature" }
+    "source_quality": "lecture_notes"
+  },
+  {
+    "id": "rural-studio-20k-house",
+    "slug": "rural-studio-20k-house",
+    "title": "20K House",
+    "entry_type": "object",
+    "year_start": 2005,
+    "year_end": 2016,
+    "authors": ["Rural Studio"],
+    "city": "Hale County",
+    "country": "United States",
+    "style_sector": "vernacular_architecture",
+    "lecture_cluster": ["housing"],
+    "themes": ["affordability", "prototype", "rural", "material economy"],
+    "short_description": "Serie von Wohnprototypen, die lokale Bauweisen, geringe Kosten und soziale Zugänglichkeit in konkrete Objekte übersetzt.",
+    "source_quality": "case_study"
+  },
+  {
+    "id": "venice-biennale-architecture-2012",
+    "slug": "venice-biennale-architecture-2012",
+    "title": "Common Ground",
+    "entry_type": "event",
+    "year_start": 2012,
+    "year_end": 2012,
+    "authors": ["David Chipperfield"],
+    "city": "Venice",
+    "country": "Italy",
+    "style_sector": "sustainable_architecture",
+    "lecture_cluster": ["contemporary_discourse"],
+    "themes": ["biennale", "commonality", "discourse", "exhibition"],
+    "short_description": "Architekturbiennale als diskursives Ereignis, das Beziehungen, Referenzen und geteilte Grundlagen der Architektur sichtbar macht.",
+    "source_quality": "exhibition_reference"
   }
 ]
