@@ -13,8 +13,9 @@ The homepage should name the project, state the promise, and point clearly to `/
 
 The atlas is the primary interface. It consists of:
 
-- Concentric time rings.
-- Radial style sectors.
+- A fixed-center time wormhole.
+- Dynamic year rings that form the wormhole body.
+- Radial style sectors as longitudinal tunnel seams.
 - Entry nodes placed by year and sector.
 - Semantic entry nodes that change detail level while zooming.
 - Minimal status text that confirms the MVP is local and SVG-based.
@@ -28,10 +29,12 @@ Current MVP interaction:
 - Read the selected entry in the detail panel.
 - Read a short list of relations connected to the selected entry.
 - Toggle the relation overlay on or off.
-- Zoom with the controls or mouse wheel.
-- Pan the atlas by dragging the SVG field.
-- Click a node to center it without forcing a detail level.
+- Travel through history with the controls or mouse wheel.
+- The camera stays fixed on the center; there is no lateral panning.
+- Click a node to select it without forcing a detail level.
 - Read project detail directly inside the zoomable atlas space.
+
+The journey loops: zooming inward moves from the present toward deep history; after the deepest point, continued inward zoom visually moves back outward through time.
 
 Near-future interaction:
 

@@ -13,13 +13,14 @@ The first MVP tests the foundation of Architecture Cosmos, not the full product.
 - Entry detail panel.
 - Basic hover and selected states.
 - Optional relation overlay from local JSON.
-- Simple zoom and pan controls.
+- Fixed-center wormhole travel controls.
 - Deterministic node grouping for crowded atlas regions.
 - Semantic zoom levels for project nodes.
 - Four placeholder media slots per entry.
-- Concentric time rings.
+- Dynamic wormhole year rings.
 - Radial style sectors.
 - Conservative black/white architectural drawing style.
+- Inverted black-field visual system.
 
 ## Out of Scope
 

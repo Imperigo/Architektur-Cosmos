@@ -1,22 +1,22 @@
 # Design System
 
-Architecture Cosmos should feel like a precise architectural drawing, not a marketing site or generic SaaS dashboard.
+Architecture Cosmos should feel like an inverted architectural drawing in motion, not a marketing site or generic SaaS dashboard.
 
 ## Visual Language
 
-- Black and white as the primary language.
-- Warm paper background instead of pure white.
+- Black background as the primary field.
+- White linework as the architectural drawing language.
 - Grey construction lines for grid, rings, and secondary marks.
 - Thin strokes, measured spacing, restrained labels.
 - No decorative gradient blobs, oversized cards, or glossy effects.
 
 ## Palette
 
-- Paper: `#f7f7f4`
-- Ink: `#101010`
-- Secondary text: `#525252`
-- Construction line: `#d4d4d4`
-- Fine grid: `#9a9a9a`
+- Field: `#050505`
+- Linework: `#f7f7f4`
+- Secondary text: `#b8b8b8`
+- Construction line: `#2f2f2f`
+- Fine grid: `#8c8c8c`
 
 ## Typography
 
@@ -62,3 +62,7 @@ Project information should unfold in the drawing space:
 - Dossier level: four captioned media slots, metadata, full description.
 
 Cards should remain black/white architectural drawing surfaces, not photo-heavy editorial cards.
+
+## Wormhole Motion
+
+The atlas uses a fixed camera and a looping time-depth model. Scroll input changes the time position, not lateral map position. Year rings behave like the ribs of a tunnel; entries appear on the tunnel net when their year approaches the current ring.

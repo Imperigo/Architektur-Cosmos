@@ -37,7 +37,7 @@ export function RelationOverlay({ nodes, relations, selectedEntry }: RelationOve
             key={relation.id}
             d={relationPath(source, target)}
             fill="none"
-            stroke={isSelectedRelation ? '#101010' : '#777'}
+            stroke={isSelectedRelation ? '#f7f7f4' : '#8a8a8a'}
             strokeWidth={isSelectedRelation ? 1.25 : 0.55}
             strokeDasharray={relationDash[relation.relation_type]}
             opacity={isSelectedRelation ? 0.68 : selectedEntry ? 0.1 : 0.18}

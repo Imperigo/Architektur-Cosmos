@@ -16,6 +16,8 @@ This makes the interface closer to a drawing table than a dashboard. It should f
 
 The atlas also follows a semantic zoom principle: zooming in does not only enlarge marks, it reveals richer forms of knowledge. A project changes from point, to image point, to preview, to dossier.
 
+The spatial metaphor is now a time wormhole. The user begins outside the tunnel in the present, scrolls inward toward older history, and eventually loops back outward. The camera remains fixed at the center.
+
 ## Product Principles
 
 - Start with the atlas, not with a landing page.
@@ -56,6 +58,10 @@ The amount of information shown for an entry based on camera scale and distance 
 - Image: point plus primary image placeholder.
 - Preview: four media slots, title, and one-sentence summary.
 - Dossier: four captioned media slots and full project description.
+
+### Wormhole Time Position
+
+The current historical position of the fixed camera. Projects become larger and richer when their year approaches the current ring. The time position loops so the atlas has no hard beginning or end.
 
 ## Foundation Decisions
 

@@ -17,16 +17,16 @@ export function StyleSectors() {
               y1={atlasSize.cy}
               x2={start.x}
               y2={start.y}
-              stroke="#252525"
+              stroke="#f7f7f4"
               strokeWidth="0.8"
-              opacity="0.55"
+              opacity="0.22"
             />
             <text
               x={label.x}
               y={label.y}
               textAnchor="middle"
               dominantBaseline="middle"
-              fill="#181818"
+              fill="#f7f7f4"
               fontSize="12"
               fontWeight="600"
               fontFamily="var(--font-sans), system-ui, sans-serif"

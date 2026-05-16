@@ -81,15 +81,15 @@ export function SemanticEntryNode({
         cx={x}
         cy={y}
         r={isSelected ? 7 : 4.8}
-        fill={isSelected ? '#f7f7f4' : '#101010'}
-        stroke="#101010"
+        fill={isSelected ? '#050505' : '#f7f7f4'}
+        stroke="#f7f7f4"
         strokeWidth={isSelected ? 2 : 1.2}
       />
       <text
         x={x}
         y={y + 3.5}
         textAnchor="middle"
-        fill={isSelected ? '#101010' : '#f7f7f4'}
+        fill={isSelected ? '#f7f7f4' : '#050505'}
         fontSize={entry.entry_type === 'text' || entry.entry_type === 'theory' ? 7 : 8}
         fontFamily="var(--font-sans), system-ui, sans-serif"
         pointerEvents="none"
@@ -99,7 +99,7 @@ export function SemanticEntryNode({
 
       {semanticLevel === 'image' ? (
         <g transform={`translate(${x + 12} ${y - 26}) scale(${inverseScale})`}>
-          <rect x="0" y="0" width="68" height="46" fill="#f7f7f4" stroke="#101010" strokeWidth="1" />
+          <rect x="0" y="0" width="68" height="46" fill="#050505" stroke="#f7f7f4" strokeWidth="1" />
           <ProjectMediaGrid media={entry.media} x={5} y={5} slotWidth={58} slotHeight={36} gap={0} types={['exterior']} />
         </g>
       ) : null}
@@ -118,9 +118,9 @@ export function SemanticEntryNode({
 
       {showFloatingLabel ? (
         <g className={isSelected || semanticLevel !== 'global' ? 'opacity-100' : 'opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100'}>
-          <line x1={labelLeaderX} y1={labelLeaderY} x2={labelLineX} y2={labelY - 9} stroke="#101010" strokeWidth="0.7" />
-          <rect x={labelRectX} y={labelY - 24} width={labelWidth} height="28" fill="#f7f7f4" stroke="#101010" strokeWidth="0.7" />
-          <text x={labelTextX} y={labelY - 6} textAnchor={labelAnchor} fill="#101010" fontSize="11" fontFamily="var(--font-sans), system-ui, sans-serif">
+          <line x1={labelLeaderX} y1={labelLeaderY} x2={labelLineX} y2={labelY - 9} stroke="#f7f7f4" strokeWidth="0.7" />
+          <rect x={labelRectX} y={labelY - 24} width={labelWidth} height="28" fill="#050505" stroke="#f7f7f4" strokeWidth="0.7" />
+          <text x={labelTextX} y={labelY - 6} textAnchor={labelAnchor} fill="#f7f7f4" fontSize="11" fontFamily="var(--font-sans), system-ui, sans-serif">
             {formatYear(entry.year_start)} · {entry.title}
           </text>
         </g>

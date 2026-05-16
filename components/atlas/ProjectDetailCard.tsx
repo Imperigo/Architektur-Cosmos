@@ -12,14 +12,14 @@ export function ProjectDetailCard({ entry, x, y }: ProjectDetailCardProps) {
 
   return (
     <g>
-      <rect x={x} y={y} width="352" height="292" fill="#f7f7f4" stroke="#101010" strokeWidth="1.1" />
-      <text x={x + 16} y={y + 27} fill="#525252" fontSize="9" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.2em">
+      <rect x={x} y={y} width="352" height="292" fill="#050505" stroke="#f7f7f4" strokeWidth="1.1" opacity="0.97" />
+      <text x={x + 16} y={y + 27} fill="#b8b8b8" fontSize="9" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.2em">
         PROJECT DOSSIER
       </text>
-      <text x={x + 16} y={y + 54} fill="#101010" fontSize="22" fontWeight="700" fontFamily="var(--font-sans), system-ui, sans-serif">
+      <text x={x + 16} y={y + 54} fill="#f7f7f4" fontSize="22" fontWeight="700" fontFamily="var(--font-sans), system-ui, sans-serif">
         {entry.title}
       </text>
-      <text x={x + 16} y={y + 74} fill="#525252" fontSize="10" fontFamily="var(--font-sans), system-ui, sans-serif">
+      <text x={x + 16} y={y + 74} fill="#b8b8b8" fontSize="10" fontFamily="var(--font-sans), system-ui, sans-serif">
         {formatYear(entry.year_start)}{location ? ` · ${location}` : ''}
       </text>
       <ProjectMediaGrid media={entry.media} x={x + 16} y={y + 92} slotWidth={72} slotHeight={50} gap={9} showLabels />
@@ -32,7 +32,7 @@ function WrappedText({ text, x, y, maxChars, lineHeight, maxLines }: { text: str
   const lines = wrapText(text, maxChars).slice(0, maxLines);
 
   return (
-    <text fill="#101010" fontSize="9.5" fontFamily="var(--font-sans), system-ui, sans-serif">
+    <text fill="#f7f7f4" fontSize="9.5" fontFamily="var(--font-sans), system-ui, sans-serif">
       {lines.map((line, index) => (
         <tspan key={`${line}-${index}`} x={x} y={y + index * lineHeight}>
           {line}

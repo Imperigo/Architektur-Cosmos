@@ -22,6 +22,10 @@ A lens that emphasizes recurring architectural types across time: villa, temple,
 
 Plans, sections, and high-resolution archival images can later use tile-based viewing. OpenSeadragon is the likely candidate once real image assets exist.
 
+## Wormhole Geometry Research
+
+The current MVP uses SVG perspective rings. Future versions can explore WebGL/Three.js tunnel meshes, but only after the SVG interaction model feels right.
+
 ## 3D Model Slot
 
 The media model should later accept a fifth representation: a generated or uploaded 3D model. This is explicitly deferred until the four canonical project media slots work well.

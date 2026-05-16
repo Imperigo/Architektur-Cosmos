@@ -10,12 +10,12 @@ type ProjectPreviewCardProps = {
 export function ProjectPreviewCard({ entry, x, y }: ProjectPreviewCardProps) {
   return (
     <g>
-      <rect x={x} y={y} width="238" height="148" fill="#f7f7f4" stroke="#101010" strokeWidth="1" />
+      <rect x={x} y={y} width="238" height="148" fill="#050505" stroke="#f7f7f4" strokeWidth="1" opacity="0.96" />
       <ProjectMediaGrid media={entry.media} x={x + 10} y={y + 10} slotWidth={48} slotHeight={36} gap={7} />
-      <text x={x + 126} y={y + 24} fill="#101010" fontSize="15" fontWeight="700" fontFamily="var(--font-sans), system-ui, sans-serif">
+      <text x={x + 126} y={y + 24} fill="#f7f7f4" fontSize="15" fontWeight="700" fontFamily="var(--font-sans), system-ui, sans-serif">
         {entry.title}
       </text>
-      <text x={x + 126} y={y + 43} fill="#525252" fontSize="9" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.08em">
+      <text x={x + 126} y={y + 43} fill="#b8b8b8" fontSize="9" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.08em">
         {formatYear(entry.year_start)}
       </text>
       <WrappedText text={entry.one_sentence} x={x + 126} y={y + 63} maxChars={34} lineHeight={13} maxLines={5} />
@@ -27,7 +27,7 @@ function WrappedText({ text, x, y, maxChars, lineHeight, maxLines }: { text: str
   const lines = wrapText(text, maxChars).slice(0, maxLines);
 
   return (
-    <text fill="#101010" fontSize="10" fontFamily="var(--font-sans), system-ui, sans-serif">
+    <text fill="#f7f7f4" fontSize="10" fontFamily="var(--font-sans), system-ui, sans-serif">
       {lines.map((line, index) => (
         <tspan key={`${line}-${index}`} x={x} y={y + index * lineHeight}>
           {line}
