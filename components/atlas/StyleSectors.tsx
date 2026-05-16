@@ -43,17 +43,18 @@ export function StyleSectors() {
     <g aria-label="Stilsektoren">
       {styleSectors.map((sector) => {
         const startInner = polarToCartesian(atlasSize.cx, atlasSize.cy, wormholeTunnel.minRadius + 18, sector.startAngle);
-        const startOuter = polarToCartesian(atlasSize.cx, atlasSize.cy, 720, sector.startAngle);
+        const startOuter = polarToCartesian(atlasSize.cx, atlasSize.cy, wormholeTunnel.maxRadius - 10, sector.startAngle);
         const labelAngle = sectorMidAngle(sector);
-        const label = readableLabelPoint(labelAngle);
-        const labelLeader = polarToCartesian(atlasSize.cx, atlasSize.cy, 452, labelAngle);
+        const label = polarToCartesian(atlasSize.cx, atlasSize.cy, wormholeTunnel.minRadius + 72, labelAngle);
+        const labelLeader = polarToCartesian(atlasSize.cx, atlasSize.cy, wormholeTunnel.minRadius + 38, labelAngle);
         const labelText = sectorLabel[sector.id];
         const accent = sectorColor[sector.id];
+        const rotate = readableRadialRotation(labelAngle);
 
         return (
           <g key={sector.id} className="style-sector">
             <path
-              d={sectorArc(sector, 438)}
+              d={sectorArc(sector, wormholeTunnel.minRadius + 58)}
               fill="none"
               stroke={accent}
               strokeWidth="1.35"
@@ -61,7 +62,7 @@ export function StyleSectors() {
               opacity="0.5"
             />
             <path
-              d={sectorArc(sector, 705)}
+              d={sectorArc(sector, wormholeTunnel.maxRadius - 26)}
               fill="none"
               stroke={accent}
               strokeWidth="0.7"
@@ -89,15 +90,15 @@ export function StyleSectors() {
                 opacity="0.38"
               />
               <circle cx={labelLeader.x} cy={labelLeader.y} r="3.6" fill={accent} opacity="0.72" />
-              <circle cx={label.x - 58} cy={label.y} r="7" fill="none" stroke={accent} strokeWidth="0.8" opacity="0.72" />
-              <text x={label.x - 58} y={label.y + 3.2} textAnchor="middle" fill={accent} fontSize="7.2" fontWeight="700" fontFamily="var(--font-sans), system-ui, sans-serif">
+              <circle cx={label.x} cy={label.y} r="7" fill="none" stroke={accent} strokeWidth="0.8" opacity="0.72" />
+              <text x={label.x} y={label.y + 3.2} textAnchor="middle" fill={accent} fontSize="7.2" fontWeight="700" fontFamily="var(--font-sans), system-ui, sans-serif">
                 {sectorGlyph[sector.id]}
               </text>
               <text
-                x={label.x + 8}
-                y={label.y + 4}
+                x={label.x}
+                y={label.y - 15}
                 textAnchor="middle"
-                fill="#f7f7f4"
+                fill={accent}
                 fontSize="9.5"
                 fontWeight="600"
                 fontFamily="var(--font-sans), system-ui, sans-serif"
@@ -105,6 +106,7 @@ export function StyleSectors() {
                 stroke="#050505"
                 strokeWidth="3"
                 paintOrder="stroke"
+                transform={`rotate(${rotate} ${label.x} ${label.y})`}
               >
                 {labelText}
               </text>
@@ -116,13 +118,9 @@ export function StyleSectors() {
   );
 }
 
-function readableLabelPoint(angle: number) {
-  const point = polarToCartesian(atlasSize.cx, atlasSize.cy, atlasSize.labelRadius + 10, angle);
-
-  return {
-    x: Math.max(104, Math.min(atlasSize.width - 104, point.x)),
-    y: Math.max(36, Math.min(atlasSize.height - 64, point.y))
-  };
+function readableRadialRotation(angle: number) {
+  const tangent = angle + 90;
+  return angle > 90 && angle < 270 ? tangent + 180 : tangent;
 }
 
 function sectorArc(sector: StyleSector, radius: number) {

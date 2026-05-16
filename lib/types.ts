@@ -53,6 +53,7 @@ export type Entry = {
   full_description: string;
   media: EntryMedia[];
   source_quality: string;
+  source_documents?: string[];
   atlas?: {
     year: number;
     ring: string;

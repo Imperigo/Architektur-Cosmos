@@ -166,5 +166,320 @@
     "target_entry_id": "serpentine-pavilion-ishigami",
     "relation_type": "material_reference",
     "description": "Both hold architecture close to landscape, atmosphere, and the sensory reading of material."
+  },
+  {
+    "id": "catal-to-nippur",
+    "source_entry_id": "catal-huyuk",
+    "target_entry_id": "nippur",
+    "relation_type": "context",
+    "description": "Proto-urban settlement thickens into Mesopotamian city palimpsests."
+  },
+  {
+    "id": "nippur-to-uruk",
+    "source_entry_id": "nippur",
+    "target_entry_id": "uruk-city",
+    "relation_type": "context",
+    "description": "Mesopotamian sacred and administrative centers build a shared urban lineage."
+  },
+  {
+    "id": "uruk-to-ur",
+    "source_entry_id": "uruk-city",
+    "target_entry_id": "ur",
+    "relation_type": "context",
+    "description": "Urban administration and mud-brick city building continue through Sumerian city systems."
+  },
+  {
+    "id": "mohenjo-to-milet",
+    "source_entry_id": "mohenjo-daro",
+    "target_entry_id": "milet",
+    "relation_type": "typological_reference",
+    "description": "Hydraulic and gridded urban order reappears as a recurring question of planned city form."
+  },
+  {
+    "id": "milet-to-olynth",
+    "source_entry_id": "milet",
+    "target_entry_id": "olynth",
+    "relation_type": "typological_reference",
+    "description": "Hippodamian order translates from polis theory into housing-block urbanism."
+  },
+  {
+    "id": "olynth-to-priene",
+    "source_entry_id": "olynth",
+    "target_entry_id": "priene",
+    "relation_type": "typological_reference",
+    "description": "The grid is adapted from domestic block logic to topographic Hellenistic city design."
+  },
+  {
+    "id": "priene-to-pompeji",
+    "source_entry_id": "priene",
+    "target_entry_id": "pompeji",
+    "relation_type": "context",
+    "description": "Classical urban ordering becomes a background for Roman street and domestic systems."
+  },
+  {
+    "id": "forum-to-timgad",
+    "source_entry_id": "forum-romanum",
+    "target_entry_id": "timgad",
+    "relation_type": "context",
+    "description": "Roman public space and colonial urban order scale across the empire."
+  },
+  {
+    "id": "st-gallen-to-siena",
+    "source_entry_id": "kloster-st-gallen",
+    "target_entry_id": "siena",
+    "relation_type": "context",
+    "description": "Medieval institutional planning and civic public space define different forms of collective order."
+  },
+  {
+    "id": "siena-to-palazzo-medici",
+    "source_entry_id": "siena",
+    "target_entry_id": "palazzo-medici-riccardi",
+    "relation_type": "context",
+    "description": "Civic public space shifts toward Renaissance palazzo power and urban representation."
+  },
+  {
+    "id": "city-layers-to-sforzinda",
+    "source_entry_id": "city-in-layers",
+    "target_entry_id": "sforzinda",
+    "relation_type": "shares_theme",
+    "description": "Renaissance speculation links sectional infrastructure with ideal geometric city form."
+  },
+  {
+    "id": "sforzinda-to-palmanova",
+    "source_entry_id": "sforzinda",
+    "target_entry_id": "fortezza-di-palmanova",
+    "relation_type": "influences",
+    "description": "Ideal city geometry becomes militarized in the star fortress."
+  },
+  {
+    "id": "palmanova-to-piazza-popolo",
+    "source_entry_id": "fortezza-di-palmanova",
+    "target_entry_id": "piazza-del-popolo",
+    "relation_type": "responds_to",
+    "description": "Urban control shifts from defensive geometry to ceremonial Baroque axial space."
+  },
+  {
+    "id": "popolo-to-st-peters",
+    "source_entry_id": "piazza-del-popolo",
+    "target_entry_id": "piazza-st-peters",
+    "relation_type": "shares_theme",
+    "description": "Baroque Rome organizes ritual, movement, and spectacle through spatial choreography."
+  },
+  {
+    "id": "arc-senans-to-new-lanark",
+    "source_entry_id": "arc-et-senans",
+    "target_entry_id": "new-lanark-mills",
+    "relation_type": "shares_theme",
+    "description": "Industrial ideal city thinking moves toward social reform and production communities."
+  },
+  {
+    "id": "new-lanark-to-familistere",
+    "source_entry_id": "new-lanark-mills",
+    "target_entry_id": "familistere",
+    "relation_type": "influences",
+    "description": "Owenite social reform informs later collective housing and industrial community experiments."
+  },
+  {
+    "id": "linear-city-to-garden-city",
+    "source_entry_id": "linear-city",
+    "target_entry_id": "garden-cities-of-tomorrow",
+    "relation_type": "responds_to",
+    "description": "Infrastructure-led reform city models feed into garden city settlement diagrams."
+  },
+  {
+    "id": "garden-city-to-letchworth",
+    "source_entry_id": "garden-cities-of-tomorrow",
+    "target_entry_id": "letchworth-garden-city",
+    "relation_type": "influences",
+    "description": "Howard’s diagram becomes a built garden city prototype."
+  },
+  {
+    "id": "letchworth-to-welwyn",
+    "source_entry_id": "letchworth-garden-city",
+    "target_entry_id": "welwyn-garden-city",
+    "relation_type": "influences",
+    "description": "The garden city model is refined as a transferable settlement pattern."
+  },
+  {
+    "id": "central-park-to-emerald",
+    "source_entry_id": "central-park",
+    "target_entry_id": "emerald-necklace",
+    "relation_type": "influences",
+    "description": "Olmsted’s park design scales into connected metropolitan park-system infrastructure."
+  },
+  {
+    "id": "cerda-to-ringstrasse",
+    "source_entry_id": "barcelona-extension",
+    "target_entry_id": "wien-ringstrasse",
+    "relation_type": "shares_theme",
+    "description": "Nineteenth-century city expansion negotiates infrastructure, blocks, and civic representation."
+  },
+  {
+    "id": "new-delhi-to-chandigarh",
+    "source_entry_id": "new-delhi",
+    "target_entry_id": "chandigarh",
+    "relation_type": "responds_to",
+    "description": "Colonial capital planning is later answered by postcolonial modernist capital design."
+  },
+  {
+    "id": "chandigarh-to-brasilia",
+    "source_entry_id": "chandigarh",
+    "target_entry_id": "brasilia",
+    "relation_type": "shares_theme",
+    "description": "Postwar capitals use modernist axes, sectors, and monumental administration."
+  },
+  {
+    "id": "habitat-to-new-babylon",
+    "source_entry_id": "habitat-67",
+    "target_entry_id": "new-babylon",
+    "relation_type": "shares_theme",
+    "description": "Megastructure and modular living become tools for open collective futures."
+  },
+  {
+    "id": "parc-villette-to-euralille",
+    "source_entry_id": "parc-de-la-villette",
+    "target_entry_id": "euralille-metropole",
+    "relation_type": "context",
+    "description": "Late twentieth-century urbanism treats event, infrastructure, and metropolitan program as design material."
+  },
+  {
+    "id": "shipyard-to-highline",
+    "source_entry_id": "shipyard-park",
+    "target_entry_id": "high-line",
+    "relation_type": "shares_theme",
+    "description": "Industrial infrastructure is reused as public landscape."
+  },
+  {
+    "id": "red-house-to-wertheim",
+    "source_entry_id": "red-house",
+    "target_entry_id": "warenhaus-wertheim",
+    "relation_type": "responds_to",
+    "description": "Craft domesticity and consumer modernity form opposed thresholds of modern life."
+  },
+  {
+    "id": "wertheim-to-avenue-franklin",
+    "source_entry_id": "warenhaus-wertheim",
+    "target_entry_id": "25b-avenue-franklin",
+    "relation_type": "context",
+    "description": "Modern thresholds and new frames transform facade, plan, and city interface."
+  },
+  {
+    "id": "avenue-franklin-to-postsparkasse",
+    "source_entry_id": "25b-avenue-franklin",
+    "target_entry_id": "postsparkasse",
+    "relation_type": "material_reference",
+    "description": "Concrete frame and rational process architecture prepare bureaucratic modern building systems."
+  },
+  {
+    "id": "postsparkasse-to-capitol",
+    "source_entry_id": "postsparkasse",
+    "target_entry_id": "the-capitol",
+    "relation_type": "shares_theme",
+    "description": "Modern architecture organizes bodies through process, light, and controlled sequence."
+  },
+  {
+    "id": "royal-observatory-to-postsparkasse",
+    "source_entry_id": "royal-observatory-greenwich",
+    "target_entry_id": "postsparkasse",
+    "relation_type": "context",
+    "description": "Time synchronization and bureaucracy turn architecture into an operational apparatus."
+  },
+  {
+    "id": "villa-noailles-to-tugendhat",
+    "source_entry_id": "villa-noailles",
+    "target_entry_id": "haus-tugendhat",
+    "relation_type": "shares_theme",
+    "description": "Modern domesticity becomes a field of movement, curtains, views, and flexible rooms."
+  },
+  {
+    "id": "voelkerbund-to-unite",
+    "source_entry_id": "voelkerbundspalast-competition",
+    "target_entry_id": "unite-habitation",
+    "relation_type": "context",
+    "description": "Institutional modernism and collective housing share organization through flows and services."
+  },
+  {
+    "id": "ibm-to-willis",
+    "source_entry_id": "ibm-cosham",
+    "target_entry_id": "willis-faber-and-dumas-office",
+    "relation_type": "same_author",
+    "description": "Foster develops reflective office envelopes and flexible corporate interiors."
+  },
+  {
+    "id": "hotel-tassel-to-red-house",
+    "source_entry_id": "hotel-tassel",
+    "target_entry_id": "red-house",
+    "relation_type": "shares_theme",
+    "description": "Interior craft and threshold design link Art Nouveau with Arts and Crafts concerns."
+  },
+  {
+    "id": "hereford-to-catalan-atlas",
+    "source_entry_id": "hereford-mappa-mundi",
+    "target_entry_id": "catalan-atlas",
+    "relation_type": "responds_to",
+    "description": "The worldview shifts from theological order toward navigational and mercantile mapping."
+  },
+  {
+    "id": "catalan-to-ptolemy",
+    "source_entry_id": "catalan-atlas",
+    "target_entry_id": "ptolemy-geographia",
+    "relation_type": "context",
+    "description": "Medieval mapping and rediscovered geographic projection transform world representation."
+  },
+  {
+    "id": "ptolemy-to-mercator",
+    "source_entry_id": "ptolemy-geographia",
+    "target_entry_id": "mercator-world-atlas",
+    "relation_type": "influences",
+    "description": "Projection-based geography leads toward Mercator’s navigational world image."
+  },
+  {
+    "id": "tuileries-to-versailles",
+    "source_entry_id": "garden-of-tuileries",
+    "target_entry_id": "versailles-gardens",
+    "relation_type": "influences",
+    "description": "French axial garden logic scales into absolutist territorial control."
+  },
+  {
+    "id": "gasworks-to-hafeninsel",
+    "source_entry_id": "gas-works-park",
+    "target_entry_id": "hafeninsel-saarbruecken",
+    "relation_type": "influences",
+    "description": "Postindustrial remains become landscape material rather than erased waste."
+  },
+  {
+    "id": "hafeninsel-to-landschaftspark",
+    "source_entry_id": "hafeninsel-saarbruecken",
+    "target_entry_id": "landschaftspark-duisburg-nord",
+    "relation_type": "influences",
+    "description": "Latz’s reuse strategies mature from harbor island to large industrial park."
+  },
+  {
+    "id": "landschaftspark-to-schurenbach",
+    "source_entry_id": "landschaftspark-duisburg-nord",
+    "target_entry_id": "schurenbach-halde",
+    "relation_type": "shares_theme",
+    "description": "IBA Emscher projects transform industrial residue into public landscape and landmark."
+  },
+  {
+    "id": "mfo-to-oerliker",
+    "source_entry_id": "mfo-park",
+    "target_entry_id": "oerliker-park",
+    "relation_type": "same_place",
+    "description": "Zurich North parks test different forms of urban repair and climate public space."
+  },
+  {
+    "id": "opfiker-to-leutschen",
+    "source_entry_id": "opfikerpark-glattpark",
+    "target_entry_id": "leutschenpark",
+    "relation_type": "same_place",
+    "description": "Zurich North landscape projects link water, neighborhood space, and new urbanization."
+  },
+  {
+    "id": "renaturierung-to-attisholz",
+    "source_entry_id": "renaturierung-der-aire",
+    "target_entry_id": "uferpark-attisholz-sued",
+    "relation_type": "shares_theme",
+    "description": "Swiss landscape projects foreground process, water, and postindustrial transformation."
   }
 ]

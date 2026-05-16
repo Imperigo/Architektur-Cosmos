@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState, type PointerEvent, type WheelEvent } from 'react';
-import { AtlasControls } from '@/components/atlas/AtlasControls';
 import { ProjectDetailCard } from '@/components/atlas/ProjectDetailCard';
 import { ProjectPreviewCard } from '@/components/atlas/ProjectPreviewCard';
 import { RelationOverlay } from '@/components/atlas/RelationOverlay';
@@ -9,6 +8,7 @@ import { SemanticEntryNode } from '@/components/atlas/SemanticEntryNode';
 import { StyleSectors } from '@/components/atlas/StyleSectors';
 import { WormholeRings } from '@/components/atlas/WormholeRings';
 import { atlasSize } from '@/lib/atlas-layout';
+import { polarToCartesian } from '@/lib/polar-coordinates';
 import type { Entry, EntryRelation } from '@/lib/types';
 import { formatYear, layoutWormholeEntries, wormholeState, type WormholeEntryNode } from '@/lib/wormhole-layout';
 
@@ -18,16 +18,19 @@ type SvgPoint = {
 };
 
 const hoverRadius = 76;
+type IntroState = 'intro' | 'launching' | 'idle';
 
 export function RadialAtlas({ entries, relations }: { entries: Entry[]; relations: EntryRelation[] }) {
   const svgRef = useRef<SVGSVGElement | null>(null);
   const [selectedEntry, setSelectedEntry] = useState<Entry | null>(null);
   const [showRelations, setShowRelations] = useState(true);
   const [travel, setTravel] = useState(0);
-  const [hasTravelled, setHasTravelled] = useState(false);
+  const [introState, setIntroState] = useState<IntroState>('intro');
   const [snappedEntryId, setSnappedEntryId] = useState<string | null>(null);
   const [hoverEntryId, setHoverEntryId] = useState<string | null>(null);
+  const [hoverFocusId, setHoverFocusId] = useState<string | null>(null);
   const [activeTheme, setActiveTheme] = useState('all');
+  const [hudThemeId, setHudThemeId] = useState<string | null>(null);
   const [pointerPoint, setPointerPoint] = useState<SvgPoint | null>(null);
   const state = wormholeState(travel);
   const themes = useMemo(() => atlasThemes(entries), [entries]);
@@ -39,13 +42,23 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   const snappedNode = useMemo(() => nodes.find((node) => node.entry.id === snappedEntryId) ?? null, [nodes, snappedEntryId]);
   const hoverNode = useMemo(() => nodes.find((node) => node.entry.id === hoverEntryId) ?? null, [nodes, hoverEntryId]);
   const depthScale = 1 + state.timePosition * 2.8;
-  const titleOpacity = hasTravelled ? 0 : 1;
-  const titleTransform = hasTravelled ? '-translate-y-5 scale-95' : 'translate-y-0 scale-100';
+  const isIntroActive = introState !== 'idle';
   const backgroundStyle = {
-    filter: snappedNode ? 'blur(6px)' : 'blur(0px)',
-    opacity: snappedNode ? 0.34 : 1,
+    filter: snappedNode ? 'blur(6px)' : isIntroActive ? 'blur(7px)' : 'blur(0px)',
+    opacity: snappedNode ? 0.34 : introState === 'intro' ? 0.3 : introState === 'launching' ? 0.82 : 1,
     transition: 'filter 520ms cubic-bezier(0.19, 1, 0.22, 1), opacity 520ms cubic-bezier(0.19, 1, 0.22, 1)'
   };
+
+  useEffect(() => {
+    if (introState !== 'launching') return;
+
+    const timeout = window.setTimeout(() => {
+      setIntroState('idle');
+      setTravel(0);
+    }, 1650);
+
+    return () => window.clearTimeout(timeout);
+  }, [introState]);
 
   useEffect(() => {
     if (snappedEntryId && !snappedNode) {
@@ -67,15 +80,35 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     }
   }, [filteredEntries, hoverEntryId, selectedEntry]);
 
+  useEffect(() => {
+    if (!hoverNode || snappedNode) {
+      setHoverFocusId(null);
+      return;
+    }
+
+    const timeout = window.setTimeout(() => setHoverFocusId(hoverNode.entry.id), 2300);
+    return () => window.clearTimeout(timeout);
+  }, [hoverNode, snappedNode]);
+
+  function startIntro() {
+    if (introState === 'idle') return;
+
+    setTravel(0);
+    setIntroState('launching');
+  }
+
   function travelBy(delta: number) {
-    setHasTravelled(true);
+    if (introState !== 'idle') {
+      startIntro();
+      return;
+    }
+
     releaseSnap();
     setTravel((current) => loopTravel(current + delta));
   }
 
   function resetView() {
     setTravel(0);
-    setHasTravelled(false);
     releaseSnap();
   }
 
@@ -97,6 +130,11 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
 
   function handleWheel(event: WheelEvent<SVGSVGElement>) {
     event.preventDefault();
+    if (introState !== 'idle') {
+      startIntro();
+      return;
+    }
+
     const normalizedDelta = Math.max(-140, Math.min(140, event.deltaY));
     travelBy(normalizedDelta * 0.00042);
   }
@@ -141,18 +179,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   }
 
   return (
-    <main className="relative h-screen w-screen overflow-hidden bg-[#050505] text-[#f7f7f4]">
-      <div
-        className={`pointer-events-none absolute left-1/2 top-8 z-10 max-w-2xl -translate-x-1/2 text-center transition-all duration-700 ${titleTransform}`}
-        style={{ opacity: titleOpacity }}
-      >
-        <p className="text-xs uppercase tracking-[0.42em] text-neutral-400">Architecture Cosmos</p>
-        <h1 className="mt-3 text-4xl font-semibold tracking-tight">Radial Infinity Atlas</h1>
-        <p className="mt-3 text-sm leading-relaxed text-neutral-300">
-          Scroll into the time wormhole. The camera stays centered while architecture moves through history.
-        </p>
-      </div>
-
+    <main className={`relative h-screen w-screen overflow-hidden bg-[#050505] text-[#f7f7f4] ${introState === 'launching' ? 'cosmos-launching' : ''}`}>
       <div className="h-full w-full">
         <svg
           ref={svgRef}
@@ -161,6 +188,9 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
           onWheel={handleWheel}
           onPointerMove={handlePointerMove}
           onPointerLeave={handlePointerLeave}
+          onClick={() => {
+            if (introState !== 'idle') startIntro();
+          }}
         >
           <rect width={atlasSize.width} height={atlasSize.height} fill="#050505" />
           <g style={backgroundStyle} pointerEvents={snappedNode ? 'none' : 'auto'}>
@@ -171,8 +201,16 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
 
             {hoverNode && pointerPoint && !snappedNode ? <HoverPreview pointer={pointerPoint} node={hoverNode} /> : null}
 
-            {nodes.map((node) => (
-              <g key={node.entry.id} opacity={node.opacity}>
+            {nodes.map((node) => {
+              const displayOffset = focusDisplayOffset(node, hoverNode, hoverFocusId === hoverNode?.entry.id);
+
+              return (
+              <g
+                key={node.entry.id}
+                className="node-focus-drift"
+                opacity={node.opacity}
+                style={{ transform: `translate(${displayOffset.x}px, ${displayOffset.y}px)` }}
+              >
                 <SemanticEntryNode
                   entry={node.entry}
                   x={node.x}
@@ -188,47 +226,46 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
                   isSelected={hoverEntryId === node.entry.id || snappedEntryId === node.entry.id}
                   nodeRadius={node.size}
                   showLabel={false}
+                  stretchX={node.stretchX}
+                  stretchY={node.stretchY}
                   driftX={node.driftX}
                   driftY={node.driftY}
                   driftDelay={node.driftDelay}
                   onSelect={() => focusNodeInView(node)}
                 />
               </g>
-            ))}
+              );
+            })}
           </g>
           {snappedNode ? <SnappedEntryOverlay node={snappedNode} onDismiss={releaseSnap} /> : null}
+          {introState === 'idle' ? (
+            <RadialHud
+              themes={themes}
+              activeTheme={activeTheme}
+              hoverThemeId={hudThemeId}
+              currentYear={formatYear(state.currentYear)}
+              zoomLabel={zoomModeLabel(depthScale)}
+              zoomPercent={Math.round(depthScale * 100)}
+              visibleEntryCount={filteredEntries.length}
+              totalEntryCount={entries.length}
+              relationCount={relations.length}
+              showRelations={showRelations}
+              onThemeChange={(theme) => {
+                setActiveTheme(theme);
+                releaseSnap();
+              }}
+              onThemeHover={setHudThemeId}
+              onZoomIn={() => travelBy(0.035)}
+              onZoomOut={() => travelBy(-0.035)}
+              onReset={resetView}
+              onToggleRelations={() => setShowRelations((current) => !current)}
+            />
+          ) : null}
           {pointerPoint ? <CosmosCursor pointer={pointerPoint} activeNode={hoverNode ?? snappedNode} /> : null}
-          <g pointerEvents="none">
-            <text x="22" y={atlasSize.height - 92} fill="#b8b8b8" fontSize="10" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.16em">
-              CURRENT RING {formatYear(state.currentYear)} · {state.direction === 'into_past' ? 'INTO HISTORY' : 'RETURN LOOP'}
-            </text>
-          </g>
         </svg>
       </div>
 
-      <div className="cosmos-status-chip absolute bottom-4 left-4 z-10 origin-bottom-left scale-75 border border-[#f7f7f4]/35 bg-[#050505]/78 px-2 py-1 text-[10px] uppercase tracking-[0.16em] text-neutral-300 opacity-45 backdrop-blur-md transition-all duration-300 ease-out hover:scale-100 hover:border-[#f7f7f4]/70 hover:opacity-100">
-        {filteredEntries.length}/{entries.length} entries · {relations.length} relations · wormhole loop
-      </div>
-
-      <ThemeLens
-        themes={themes}
-        activeTheme={activeTheme}
-        onThemeChange={(theme) => {
-          setActiveTheme(theme);
-          releaseSnap();
-        }}
-      />
-
-      <AtlasControls
-        scale={depthScale}
-        zoomModeLabel={zoomModeLabel(depthScale)}
-        showRelations={showRelations}
-        relationCount={relations.length}
-        onZoomIn={() => travelBy(0.035)}
-        onZoomOut={() => travelBy(-0.035)}
-        onReset={resetView}
-        onToggleRelations={() => setShowRelations((current) => !current)}
-      />
+      {introState !== 'idle' ? <IntroGate state={introState} onStart={startIntro} /> : null}
     </main>
   );
 }
@@ -246,6 +283,27 @@ function nearestNode(point: SvgPoint, nodes: WormholeEntryNode[]) {
   }, null);
 }
 
+function focusDisplayOffset(node: WormholeEntryNode, focusNode: WormholeEntryNode | null, focusActive: boolean): SvgPoint {
+  if (!focusNode || !focusActive) return { x: 0, y: 0 };
+
+  const depthDelta = Math.abs(node.depth - focusNode.depth);
+  const angularDelta = Math.abs(shortestAngleDelta(node.angle, focusNode.angle));
+  const isClusterNeighbor = depthDelta < 0.028 && angularDelta < 26;
+
+  if (!isClusterNeighbor) return { x: 0, y: 0 };
+
+  const strength = node.entry.id === focusNode.entry.id ? 0.13 : 0.09;
+
+  return {
+    x: (atlasSize.cx - node.x) * strength,
+    y: (atlasSize.cy - node.y) * strength
+  };
+}
+
+function shortestAngleDelta(a: number, b: number) {
+  return ((((a - b) % 360) + 540) % 360) - 180;
+}
+
 function atlasThemes(entries: Entry[]) {
   const counts = entries.reduce<Map<string, number>>((accumulator, entry) => {
     entry.themes.forEach((theme) => {
@@ -260,51 +318,197 @@ function atlasThemes(entries: Entry[]) {
     .map(([id, count]) => ({ id, label: themeLabel(id), count }));
 }
 
-function ThemeLens({
+function RadialHud({
   themes,
   activeTheme,
-  onThemeChange
+  hoverThemeId,
+  currentYear,
+  zoomLabel,
+  zoomPercent,
+  visibleEntryCount,
+  totalEntryCount,
+  relationCount,
+  showRelations,
+  onThemeChange,
+  onThemeHover,
+  onZoomIn,
+  onZoomOut,
+  onReset,
+  onToggleRelations
 }: {
   themes: ReturnType<typeof atlasThemes>;
   activeTheme: string;
+  hoverThemeId: string | null;
+  currentYear: string;
+  zoomLabel: string;
+  zoomPercent: number;
+  visibleEntryCount: number;
+  totalEntryCount: number;
+  relationCount: number;
+  showRelations: boolean;
   onThemeChange: (theme: string) => void;
+  onThemeHover: (theme: string | null) => void;
+  onZoomIn: () => void;
+  onZoomOut: () => void;
+  onReset: () => void;
+  onToggleRelations: () => void;
 }) {
+  const hudThemes = themes.slice(0, 16);
+  const selectedTheme = activeTheme === 'all' ? null : themes.find((theme) => theme.id === activeTheme);
+  const hoveredTheme = hoverThemeId ? themes.find((theme) => theme.id === hoverThemeId) : null;
+  const themeLabelText = hoveredTheme?.label ?? selectedTheme?.label ?? 'All Themes';
+
   return (
-    <div className="group absolute right-4 top-1/2 z-20 max-h-[72vh] w-10 -translate-y-1/2 overflow-hidden border border-[#f7f7f4]/35 bg-[#050505]/68 text-[#f7f7f4] opacity-55 backdrop-blur-md transition-all duration-300 ease-out hover:w-64 hover:opacity-100">
-      <div className="flex h-10 items-center justify-center border-b border-[#f7f7f4]/35 text-[9px] uppercase tracking-[0.2em] group-hover:justify-start group-hover:px-3">
-        <span className="group-hover:hidden">Lens</span>
-        <span className="hidden group-hover:inline">Theme Lens</span>
-      </div>
-      <div className="max-h-[calc(72vh-2.5rem)] overflow-y-auto p-2">
-        <ThemeButton active={activeTheme === 'all'} label="All themes" count={themes.reduce((sum, theme) => sum + theme.count, 0)} onClick={() => onThemeChange('all')} />
-        {themes.map((theme) => (
-          <ThemeButton key={theme.id} active={activeTheme === theme.id} label={theme.label} count={theme.count} onClick={() => onThemeChange(theme.id)} />
+    <g className="radial-hud" pointerEvents="auto">
+      <OrbitText angle={270} radius={457} text="ARCHITECTURE COSMOS" size={9.5} />
+      <OrbitText angle={288} radius={457} text={`${visibleEntryCount}/${totalEntryCount} ENTRIES`} size={8} muted />
+      <OrbitText angle={252} radius={457} text={`${currentYear} · ${zoomLabel} · ${zoomPercent}%`} size={8} muted />
+
+      <HudButton angle={214} label="-" onClick={onZoomOut} />
+      <HudButton angle={232} label="+" onClick={onZoomIn} />
+      <HudButton angle={250} label="0" onClick={onReset} />
+      <HudButton angle={268} label={showRelations ? 'REL' : 'OFF'} active={showRelations} onClick={onToggleRelations} />
+      <OrbitText angle={286} radius={421} text={`${relationCount} STRANDS`} size={7.2} muted />
+
+      <g>
+        <HudThemeMarker
+          angle={305}
+          label="ALL"
+          active={activeTheme === 'all'}
+          count={totalEntryCount}
+          onClick={() => onThemeChange('all')}
+          onHover={() => onThemeHover('all')}
+          onLeave={() => onThemeHover(null)}
+        />
+        {hudThemes.map((theme, index) => (
+          <HudThemeMarker
+            key={theme.id}
+            angle={315 + index * (90 / Math.max(1, hudThemes.length - 1))}
+            label={theme.label}
+            active={activeTheme === theme.id}
+            count={theme.count}
+            onClick={() => onThemeChange(theme.id)}
+            onHover={() => onThemeHover(theme.id)}
+            onLeave={() => onThemeHover(null)}
+          />
         ))}
-      </div>
-    </div>
+        <OrbitText angle={38} radius={414} text={themeLabelText.toUpperCase()} size={8.4} />
+      </g>
+    </g>
   );
 }
 
-function ThemeButton({ active, label, count, onClick }: { active: boolean; label: string; count: number; onClick: () => void }) {
+function HudThemeMarker({
+  angle,
+  label,
+  count,
+  active,
+  onClick,
+  onHover,
+  onLeave
+}: {
+  angle: number;
+  label: string;
+  count: number;
+  active: boolean;
+  onClick: () => void;
+  onHover: () => void;
+  onLeave: () => void;
+}) {
+  const point = polarToCartesian(atlasSize.cx, atlasSize.cy, 438, angle);
+  const tick = polarToCartesian(atlasSize.cx, atlasSize.cy, active ? 418 : 424, angle);
+  const rotate = readableOrbitRotation(angle);
+  const shortLabel = label === 'ALL' ? 'ALL' : label.split(' ').map((word) => word[0]).join('').slice(0, 3);
+
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`mb-1 flex h-8 w-full items-center justify-between border px-2 text-left text-[10px] uppercase tracking-[0.12em] transition-all duration-200 ${
-        active
-          ? 'border-[#f7f7f4] bg-[#f7f7f4] text-[#050505]'
-          : 'border-[#f7f7f4]/25 text-neutral-300 hover:border-[#f7f7f4]/70 hover:text-[#f7f7f4]'
-      }`}
-    >
-      <span className="hidden truncate group-hover:inline">{label}</span>
-      <span className="group-hover:hidden">{label.slice(0, 1)}</span>
-      <span>{count}</span>
-    </button>
+    <g className="hud-theme-marker" onClick={onClick} onPointerEnter={onHover} onPointerLeave={onLeave}>
+      <line x1={tick.x} y1={tick.y} x2={point.x} y2={point.y} stroke={active ? '#c9fff4' : '#f7f7f4'} strokeWidth={active ? 1.4 : 0.7} opacity={active ? 0.86 : 0.32} />
+      <circle cx={point.x} cy={point.y} r={active ? 6 : 3.6} fill={active ? '#c9fff4' : '#050505'} stroke="#f7f7f4" strokeWidth="0.7" opacity={active ? 0.95 : 0.7} />
+      <text
+        x={point.x}
+        y={point.y - 10}
+        textAnchor="middle"
+        fill={active ? '#c9fff4' : '#d6d6d2'}
+        fontSize="6.2"
+        fontFamily="var(--font-sans), system-ui, sans-serif"
+        letterSpacing="0.08em"
+        transform={`rotate(${rotate} ${point.x} ${point.y})`}
+      >
+        {shortLabel}{count > 9 ? '+' : ''}
+      </text>
+    </g>
   );
+}
+
+function HudButton({ angle, label, active = false, onClick }: { angle: number; label: string; active?: boolean; onClick: () => void }) {
+  const point = polarToCartesian(atlasSize.cx, atlasSize.cy, 432, angle);
+
+  return (
+    <g className="hud-button" onClick={onClick}>
+      <circle cx={point.x} cy={point.y} r="12" fill={active ? '#f7f7f4' : '#050505'} stroke="#f7f7f4" strokeWidth="0.7" opacity="0.88" />
+      <text x={point.x} y={point.y + 3.6} textAnchor="middle" fill={active ? '#050505' : '#f7f7f4'} fontSize="7.6" fontWeight="700" fontFamily="var(--font-sans), system-ui, sans-serif">
+        {label}
+      </text>
+    </g>
+  );
+}
+
+function OrbitText({ angle, radius, text, size, muted = false }: { angle: number; radius: number; text: string; size: number; muted?: boolean }) {
+  const point = polarToCartesian(atlasSize.cx, atlasSize.cy, radius, angle);
+  const rotate = readableOrbitRotation(angle);
+
+  return (
+    <text
+      x={point.x}
+      y={point.y}
+      textAnchor="middle"
+      fill={muted ? '#b8b8b8' : '#f7f7f4'}
+      fontSize={size}
+      fontFamily="var(--font-sans), system-ui, sans-serif"
+      letterSpacing="0.14em"
+      stroke="#050505"
+      strokeWidth="3"
+      paintOrder="stroke"
+      transform={`rotate(${rotate} ${point.x} ${point.y})`}
+      pointerEvents="none"
+    >
+      {text}
+    </text>
+  );
+}
+
+function readableOrbitRotation(angle: number) {
+  const tangent = angle + 90;
+  const normalized = ((angle % 360) + 360) % 360;
+  return normalized > 90 && normalized < 270 ? tangent + 180 : tangent;
 }
 
 function distance(point: SvgPoint, node: WormholeEntryNode) {
   return Math.hypot(point.x - node.x, point.y - node.y);
+}
+
+function IntroGate({ state, onStart }: { state: IntroState; onStart: () => void }) {
+  return (
+    <button
+      type="button"
+      className={`intro-gate absolute inset-0 z-30 flex cursor-none items-center justify-center bg-[#050505]/10 text-center ${state === 'launching' ? 'intro-gate-launching' : ''}`}
+      onClick={onStart}
+      onWheel={(event) => {
+        event.preventDefault();
+        onStart();
+      }}
+      aria-label="Start Architecture Cosmos"
+    >
+      <span className="block">
+        <span className="block text-[clamp(2.4rem,7vw,6.8rem)] font-semibold uppercase tracking-[0.18em] text-[#f7f7f4]">
+          architecture cosmos
+        </span>
+        <span className="mt-4 block text-[clamp(0.7rem,1.5vw,1rem)] uppercase tracking-[0.42em] text-neutral-300">
+          made by andrin
+        </span>
+      </span>
+    </button>
+  );
 }
 
 function HoverPreview({ pointer, node }: { pointer: SvgPoint; node: WormholeEntryNode }) {

@@ -16,13 +16,13 @@ export function WormholeRings({ state }: WormholeRingsProps) {
       <defs>
         <radialGradient id="wormhole-vignette" cx="50%" cy="50%" r="50%">
           <stop offset="0%" stopColor="#050505" stopOpacity="0" />
-          <stop offset="8%" stopColor="#050505" stopOpacity="0" />
-          <stop offset="24%" stopColor="#f7f7f4" stopOpacity="0.18" />
-          <stop offset="58%" stopColor="#f7f7f4" stopOpacity="0.07" />
+          <stop offset="12%" stopColor="#050505" stopOpacity="0" />
+          <stop offset="32%" stopColor="#c9fff4" stopOpacity="0.2" />
+          <stop offset="58%" stopColor="#d7c7ff" stopOpacity="0.08" />
           <stop offset="100%" stopColor="#050505" stopOpacity="0" />
         </radialGradient>
       </defs>
-      <circle className="wormhole-breath" cx={atlasSize.cx} cy={atlasSize.cy + 8} r="660" fill="url(#wormhole-vignette)" />
+      <circle className="wormhole-breath" cx={atlasSize.cx} cy={atlasSize.cy + 8} r={wormholeTunnel.maxRadius + 18} fill="url(#wormhole-vignette)" />
       {streamLines.map((line, index) => (
         <path
           key={`stream-${index}`}
@@ -35,17 +35,7 @@ export function WormholeRings({ state }: WormholeRingsProps) {
           style={{ animationDelay: `${index * -0.22}s` }}
         />
       ))}
-      <circle
-        className="wormhole-outer-rim"
-        cx={atlasSize.cx}
-        cy={atlasSize.cy}
-        r={wormholeTunnel.maxRadius}
-        fill="none"
-        stroke="#f7f7f4"
-        strokeWidth="1.15"
-        strokeDasharray="6 18 1 18"
-        opacity="0.3"
-      />
+      <OuterCurvature />
       {gridLines.map((line, index) => (
         <path
           key={index}
@@ -90,7 +80,7 @@ export function WormholeRings({ state }: WormholeRingsProps) {
                   y={labelPoint.y + 3}
                   textAnchor="middle"
                   fill="#f7f7f4"
-                  fontSize={Math.round(9.2 * labelScale)}
+                  fontSize={Math.round(12.4 * labelScale)}
                   fontFamily="var(--font-sans), system-ui, sans-serif"
                   letterSpacing="0.07em"
                   stroke="#050505"
@@ -105,36 +95,70 @@ export function WormholeRings({ state }: WormholeRingsProps) {
         );
       })}
       <circle cx={atlasSize.cx} cy={atlasSize.cy} r={wormholeTunnel.minRadius - 12} fill="#050505" opacity="0.94" />
-      <g className="wormhole-whirl" style={{ transformOrigin: `${atlasSize.cx}px ${atlasSize.cy}px` }}>
-        <path d={whirlPath(18, 52, 0)} fill="none" stroke="#f7f7f4" strokeWidth="0.55" opacity="0.16" />
-        <path d={whirlPath(12, 42, 120)} fill="none" stroke="#c9fff4" strokeWidth="0.5" opacity="0.12" />
-        <path d={whirlPath(8, 34, 240)} fill="none" stroke="#d7c7ff" strokeWidth="0.5" opacity="0.1" />
-      </g>
-      <circle className="wormhole-throat" cx={atlasSize.cx} cy={atlasSize.cy} r={wormholeTunnel.minRadius} fill="none" stroke="#f7f7f4" strokeWidth="0.55" strokeDasharray="1 16" opacity="0.13" />
+      <ThroatCurvature />
     </g>
   );
 }
 
+function OuterCurvature() {
+  const segments = Array.from({ length: 20 }, (_, index) => {
+    const angle = index * 18;
+    const inner = polarToCartesian(atlasSize.cx, atlasSize.cy, wormholeTunnel.maxRadius - 15, angle - 5);
+    const mid = polarToCartesian(atlasSize.cx, atlasSize.cy, wormholeTunnel.maxRadius + (index % 2 === 0 ? 12 : 5), angle + 4);
+    const outer = polarToCartesian(atlasSize.cx, atlasSize.cy, wormholeTunnel.maxRadius - 4, angle + 13);
+    const color = index % 3 === 0 ? '#c9fff4' : index % 3 === 1 ? '#d7c7ff' : '#ffd7a8';
+
+    return (
+      <path
+        key={index}
+        className="wormhole-outer-rim"
+        d={`M ${inner.x} ${inner.y} Q ${mid.x} ${mid.y} ${outer.x} ${outer.y}`}
+        fill="none"
+        stroke={color}
+        strokeWidth={index % 4 === 0 ? 1.4 : 0.8}
+        opacity={index % 4 === 0 ? 0.38 : 0.2}
+        style={{ animationDelay: `${index * -0.11}s` }}
+      />
+    );
+  });
+
+  return <g aria-label="Wurmloch-Aussenkruemmung">{segments}</g>;
+}
+
 function wormholeStreamLines(state: WormholeState) {
-  return Array.from({ length: 14 }, (_, index) => {
+  return Array.from({ length: 24 }, (_, index) => {
     const angle = index * 25.7 + state.phase * 18;
-    const start = polarToCartesian(atlasSize.cx, atlasSize.cy, 92, angle - 5);
-    const mid = polarToCartesian(atlasSize.cx, atlasSize.cy + 24, 360 + (index % 4) * 36, angle + 10);
-    const end = polarToCartesian(atlasSize.cx, atlasSize.cy, 720, angle + 22);
+    const start = polarToCartesian(atlasSize.cx, atlasSize.cy, 58, angle - 5);
+    const mid = polarToCartesian(atlasSize.cx, atlasSize.cy + 20, 235 + (index % 4) * 28, angle + 9);
+    const end = polarToCartesian(atlasSize.cx, atlasSize.cy, wormholeTunnel.maxRadius + 20, angle + 18);
 
     return `M ${start.x} ${start.y} Q ${mid.x} ${mid.y} ${end.x} ${end.y}`;
   });
 }
 
-function whirlPath(innerRadius: number, outerRadius: number, offset: number) {
-  const points = Array.from({ length: 18 }, (_, index) => {
-    const progress = index / 17;
-    const radius = innerRadius + (outerRadius - innerRadius) * progress;
-    const angle = offset + progress * 255;
-    return polarToCartesian(atlasSize.cx, atlasSize.cy, radius, angle);
+function ThroatCurvature() {
+  const paths = Array.from({ length: 9 }, (_, index) => {
+    const angle = index * 40;
+    const start = polarToCartesian(atlasSize.cx, atlasSize.cy, wormholeTunnel.minRadius - 4, angle - 16);
+    const mid = polarToCartesian(atlasSize.cx, atlasSize.cy, wormholeTunnel.minRadius + 9, angle);
+    const end = polarToCartesian(atlasSize.cx, atlasSize.cy, wormholeTunnel.minRadius - 2, angle + 16);
+    const color = index % 3 === 0 ? '#c9fff4' : index % 3 === 1 ? '#d7c7ff' : '#ffd7a8';
+
+    return (
+      <path
+        key={index}
+        className="wormhole-throat"
+        d={`M ${start.x} ${start.y} Q ${mid.x} ${mid.y} ${end.x} ${end.y}`}
+        fill="none"
+        stroke={color}
+        strokeWidth="0.55"
+        opacity="0.14"
+        style={{ animationDelay: `${index * -0.28}s` }}
+      />
+    );
   });
 
-  return points.map((point, index) => `${index === 0 ? 'M' : 'L'} ${point.x} ${point.y}`).join(' ');
+  return <g className="wormhole-throat-field">{paths}</g>;
 }
 
 function yearLabelAngle(year: number, index: number, isLocal: boolean) {

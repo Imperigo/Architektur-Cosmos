@@ -13,6 +13,7 @@ export function ProjectPreviewCard({ entry, x, y, width = 260 }: ProjectPreviewC
   const textX = x + mediaWidth + 24;
   const textWidth = width - mediaWidth - 38;
   const titleLines = wrapText(entry.title, Math.max(16, Math.floor(textWidth / 7.2))).slice(0, 2);
+  const themeTags = entry.themes.slice(0, 4);
 
   return (
     <g className="project-preview-card">
@@ -30,8 +31,21 @@ export function ProjectPreviewCard({ entry, x, y, width = 260 }: ProjectPreviewC
         {formatYear(entry.year_start)}
       </text>
       <WrappedText text={entry.one_sentence} x={textX} y={y + 65 + (titleLines.length - 1) * 8} maxChars={Math.max(24, Math.floor(textWidth / 5.6))} lineHeight={12} maxLines={5} />
-      <text x={textX} y={y + 134} fill="#b8b8b8" fontSize="7.8" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.16em">
-        CLICK TO OPEN
+      <g transform={`translate(${textX} ${y + 120})`}>
+        {themeTags.map((theme, index) => {
+          const chipX = index * 43;
+          return (
+            <g key={theme} className="preview-theme-chip" transform={`translate(${chipX} 0)`}>
+              <rect width="36" height="12" fill="#050505" stroke={themeColor(index)} strokeWidth="0.65" opacity="0.9" />
+              <text x="18" y="8.5" textAnchor="middle" fill={themeColor(index)} fontSize="5.8" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.08em">
+                {themeCode(theme)}
+              </text>
+            </g>
+          );
+        })}
+      </g>
+      <text x={textX} y={y + 141} fill="#b8b8b8" fontSize="7.4" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.16em">
+        CLICK TO OPEN · {entry.entry_type.replace(/_/g, ' ').toUpperCase()}
       </text>
     </g>
   );
@@ -68,6 +82,19 @@ function wrapText(text: string, maxChars: number) {
 
   if (current) lines.push(current);
   return lines;
+}
+
+function themeCode(theme: string) {
+  return theme
+    .split('-')
+    .map((part) => part[0])
+    .join('')
+    .slice(0, 4)
+    .toUpperCase();
+}
+
+function themeColor(index: number) {
+  return ['#c9fff4', '#d7c7ff', '#ffd7a8', '#ffc1d6'][index % 4];
 }
 
 function formatYear(year: number) {
