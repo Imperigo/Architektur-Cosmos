@@ -32,15 +32,20 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   const [activeTheme, setActiveTheme] = useState('all');
   const [hudThemeId, setHudThemeId] = useState<string | null>(null);
   const [pointerPoint, setPointerPoint] = useState<SvgPoint | null>(null);
-  const state = wormholeState(travel);
+  const state = useMemo(() => wormholeState(travel), [travel]);
   const themes = useMemo(() => atlasThemes(entries), [entries]);
   const filteredEntries = useMemo(() => {
     if (activeTheme === 'all') return entries;
     return entries.filter((entry) => entry.themes.includes(activeTheme));
   }, [activeTheme, entries]);
-  const nodes = useMemo(() => layoutWormholeEntries(filteredEntries, state, selectedEntry?.id), [filteredEntries, selectedEntry?.id, state.phase, state.timePosition]);
-  const snappedNode = useMemo(() => nodes.find((node) => node.entry.id === snappedEntryId) ?? null, [nodes, snappedEntryId]);
-  const hoverNode = useMemo(() => nodes.find((node) => node.entry.id === hoverEntryId) ?? null, [nodes, hoverEntryId]);
+  const visibleEntryIds = useMemo(() => new Set(filteredEntries.map((entry) => entry.id)), [filteredEntries]);
+  const activeSelectedEntryId = selectedEntry && visibleEntryIds.has(selectedEntry.id) ? selectedEntry.id : undefined;
+  const activeSnappedEntryId = snappedEntryId && visibleEntryIds.has(snappedEntryId) ? snappedEntryId : null;
+  const activeHoverEntryId = hoverEntryId && visibleEntryIds.has(hoverEntryId) ? hoverEntryId : null;
+  const nodes = useMemo(() => layoutWormholeEntries(filteredEntries, state, activeSelectedEntryId), [activeSelectedEntryId, filteredEntries, state]);
+  const snappedNode = useMemo(() => nodes.find((node) => node.entry.id === activeSnappedEntryId) ?? null, [activeSnappedEntryId, nodes]);
+  const hoverNode = useMemo(() => nodes.find((node) => node.entry.id === activeHoverEntryId) ?? null, [activeHoverEntryId, nodes]);
+  const isHoverFocusActive = hoverFocusId === hoverNode?.entry.id && !snappedNode;
   const depthScale = 1 + state.timePosition * 2.8;
   const isIntroActive = introState !== 'idle';
   const backgroundStyle = {
@@ -61,30 +66,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   }, [introState]);
 
   useEffect(() => {
-    if (snappedEntryId && !snappedNode) {
-      setSnappedEntryId(null);
-      setHoverEntryId(null);
-      setSelectedEntry(null);
-    }
-  }, [snappedEntryId, snappedNode]);
-
-  useEffect(() => {
-    const visibleIds = new Set(filteredEntries.map((entry) => entry.id));
-
-    if (selectedEntry && !visibleIds.has(selectedEntry.id)) {
-      releaseSnap();
-    }
-
-    if (hoverEntryId && !visibleIds.has(hoverEntryId)) {
-      setHoverEntryId(null);
-    }
-  }, [filteredEntries, hoverEntryId, selectedEntry]);
-
-  useEffect(() => {
-    if (!hoverNode || snappedNode) {
-      setHoverFocusId(null);
-      return;
-    }
+    if (!hoverNode || snappedNode) return;
 
     const timeout = window.setTimeout(() => setHoverFocusId(hoverNode.entry.id), 2300);
     return () => window.clearTimeout(timeout);
@@ -202,7 +184,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
             {hoverNode && pointerPoint && !snappedNode ? <HoverPreview pointer={pointerPoint} node={hoverNode} /> : null}
 
             {nodes.map((node) => {
-              const displayOffset = focusDisplayOffset(node, hoverNode, hoverFocusId === hoverNode?.entry.id);
+              const displayOffset = focusDisplayOffset(node, hoverNode, isHoverFocusActive);
 
               return (
               <g
@@ -223,7 +205,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
                   clusterSize={node.clusterSize}
                   semanticLevel="global"
                   scale={1}
-                  isSelected={hoverEntryId === node.entry.id || snappedEntryId === node.entry.id}
+                  isSelected={activeHoverEntryId === node.entry.id || activeSnappedEntryId === node.entry.id}
                   nodeRadius={node.size}
                   showLabel={false}
                   stretchX={node.stretchX}
