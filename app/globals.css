@@ -2,3 +2,128 @@
 
 :root { color-scheme: light; }
 body { margin: 0; background: #050505; color: #f7f7f4; }
+
+@keyframes wormhole-spoke-flow {
+  0% { stroke-dashoffset: 0; opacity: 0.08; }
+  42% { opacity: 0.34; }
+  100% { stroke-dashoffset: -96; opacity: 0.12; }
+}
+
+@keyframes wormhole-ring-pulse {
+  0%, 100% { stroke-dashoffset: 0; }
+  50% { stroke-dashoffset: -22; }
+}
+
+@keyframes wormhole-current-pulse {
+  0%, 100% { opacity: 0.76; stroke-width: 1.1; }
+  50% { opacity: 1; stroke-width: 1.65; }
+}
+
+@keyframes wormhole-breath {
+  0%, 100% { opacity: 0.82; }
+  50% { opacity: 1; }
+}
+
+@keyframes cosmos-node-drift {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  46% { transform: translate(var(--drift-x), var(--drift-y)) scale(1.035); }
+  72% { transform: translate(calc(var(--drift-x) * -0.45), calc(var(--drift-y) * 0.55)) scale(0.992); }
+}
+
+@keyframes hover-preview-arrive {
+  from { opacity: 0; transform: translateY(6px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes dossier-arrive {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes cursor-orbit {
+  0%, 100% { stroke-dashoffset: 0; opacity: 0.52; }
+  50% { stroke-dashoffset: -18; opacity: 0.9; }
+}
+
+@keyframes sector-current {
+  to { stroke-dashoffset: -80; }
+}
+
+.wormhole-spoke {
+  stroke-dasharray: 20 34;
+  animation: wormhole-spoke-flow 2.8s linear infinite;
+  vector-effect: non-scaling-stroke;
+}
+
+.wormhole-ring {
+  animation: wormhole-ring-pulse 7s ease-in-out infinite;
+  vector-effect: non-scaling-stroke;
+}
+
+.wormhole-current-ring {
+  animation: wormhole-current-pulse 3.8s ease-in-out infinite;
+  vector-effect: non-scaling-stroke;
+}
+
+.wormhole-breath {
+  animation: wormhole-breath 5.5s ease-in-out infinite;
+}
+
+.wormhole-throat {
+  animation: wormhole-current-pulse 4.4s ease-in-out infinite;
+  vector-effect: non-scaling-stroke;
+}
+
+.wormhole-year-label,
+.hover-preview,
+.dossier-overlay {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.hover-preview {
+  animation: hover-preview-arrive 220ms cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.dossier-overlay {
+  animation: dossier-arrive 420ms cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.cosmos-node-wiggle {
+  animation: cosmos-node-drift 7.5s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.cosmos-cursor circle:first-child {
+  stroke-dasharray: 4 7;
+  animation: cursor-orbit 1.6s linear infinite;
+}
+
+.style-sector path {
+  animation: sector-current 16s linear infinite;
+  vector-effect: non-scaling-stroke;
+}
+
+.style-sector-label {
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.style-sector:hover .style-sector-label {
+  transform: translateY(-2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wormhole-spoke,
+  .wormhole-ring,
+  .wormhole-current-ring,
+  .wormhole-breath,
+  .wormhole-throat,
+  .cosmos-node-wiggle,
+  .cosmos-cursor circle:first-child,
+  .style-sector path,
+  .hover-preview,
+  .dossier-overlay {
+    animation: none;
+  }
+}

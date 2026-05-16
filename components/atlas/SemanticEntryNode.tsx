@@ -1,5 +1,6 @@
 'use client';
 
+import type { CSSProperties } from 'react';
 import { ProjectDetailCard } from '@/components/atlas/ProjectDetailCard';
 import { ProjectMediaGrid } from '@/components/atlas/ProjectMediaGrid';
 import { ProjectPreviewCard } from '@/components/atlas/ProjectPreviewCard';
@@ -21,6 +22,9 @@ type SemanticEntryNodeProps = {
   isSelected: boolean;
   nodeRadius?: number;
   showLabel?: boolean;
+  driftX?: number;
+  driftY?: number;
+  driftDelay?: number;
   onSelect: () => void;
 };
 
@@ -51,6 +55,9 @@ export function SemanticEntryNode({
   isSelected,
   nodeRadius,
   showLabel = true,
+  driftX = 0,
+  driftY = 0,
+  driftDelay = 0,
   onSelect
 }: SemanticEntryNodeProps) {
   const inverseScale = 1 / scale;
@@ -64,6 +71,11 @@ export function SemanticEntryNode({
   const cardX = x + 18;
   const cardY = y - 86;
   const showFloatingLabel = showLabel && (semanticLevel === 'global' || (semanticLevel === 'image' && scale < 2));
+  const driftStyle = {
+    '--drift-x': `${driftX}px`,
+    '--drift-y': `${driftY}px`,
+    animationDelay: `${driftDelay}s`
+  } as CSSProperties;
 
   return (
     <g
@@ -71,7 +83,8 @@ export function SemanticEntryNode({
       role="button"
       tabIndex={0}
       aria-label={`${entry.title}, ${entry.year_start}`}
-      className="group cursor-pointer outline-none"
+      className="group cosmos-node-wiggle cursor-pointer outline-none"
+      style={driftStyle}
       onClick={onSelect}
       onKeyDown={(event) => {
         if (event.key === 'Enter' || event.key === ' ') {

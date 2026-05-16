@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState, type PointerEvent, type WheelEvent } from 'react';
 import { AtlasControls } from '@/components/atlas/AtlasControls';
 import { ProjectDetailCard } from '@/components/atlas/ProjectDetailCard';
+import { ProjectPreviewCard } from '@/components/atlas/ProjectPreviewCard';
 import { RelationOverlay } from '@/components/atlas/RelationOverlay';
 import { SemanticEntryNode } from '@/components/atlas/SemanticEntryNode';
 import { StyleSectors } from '@/components/atlas/StyleSectors';
@@ -16,36 +17,55 @@ type SvgPoint = {
   y: number;
 };
 
-const magnetRadius = 126;
-const snapRadius = 54;
-const releaseRadius = 162;
+const hoverRadius = 76;
 
 export function RadialAtlas({ entries, relations }: { entries: Entry[]; relations: EntryRelation[] }) {
   const svgRef = useRef<SVGSVGElement | null>(null);
   const [selectedEntry, setSelectedEntry] = useState<Entry | null>(null);
   const [showRelations, setShowRelations] = useState(true);
   const [travel, setTravel] = useState(0);
+  const [targetTravel, setTargetTravel] = useState(0);
   const [hasTravelled, setHasTravelled] = useState(false);
   const [snappedEntryId, setSnappedEntryId] = useState<string | null>(null);
-  const [magnetEntryId, setMagnetEntryId] = useState<string | null>(null);
+  const [hoverEntryId, setHoverEntryId] = useState<string | null>(null);
   const [pointerPoint, setPointerPoint] = useState<SvgPoint | null>(null);
   const state = wormholeState(travel);
   const nodes = useMemo(() => layoutWormholeEntries(entries, state, selectedEntry?.id), [entries, selectedEntry?.id, state.timePosition]);
   const snappedNode = useMemo(() => nodes.find((node) => node.entry.id === snappedEntryId) ?? null, [nodes, snappedEntryId]);
-  const magnetNode = useMemo(() => nodes.find((node) => node.entry.id === magnetEntryId) ?? null, [nodes, magnetEntryId]);
+  const hoverNode = useMemo(() => nodes.find((node) => node.entry.id === hoverEntryId) ?? null, [nodes, hoverEntryId]);
   const depthScale = 1 + state.timePosition * 2.8;
   const titleOpacity = hasTravelled ? 0 : 1;
   const titleTransform = hasTravelled ? '-translate-y-5 scale-95' : 'translate-y-0 scale-100';
   const backgroundStyle = {
-    filter: snappedNode ? 'blur(5px)' : 'blur(0px)',
-    opacity: snappedNode ? 0.28 : 1,
-    transition: 'filter 420ms ease, opacity 420ms ease'
+    filter: snappedNode ? 'blur(6px)' : 'blur(0px)',
+    opacity: snappedNode ? 0.34 : 1,
+    transition: 'filter 520ms cubic-bezier(0.19, 1, 0.22, 1), opacity 520ms cubic-bezier(0.19, 1, 0.22, 1)'
   };
+
+  useEffect(() => {
+    let frame = 0;
+
+    function animateTravel() {
+      setTravel((current) => {
+        const delta = targetTravel - current;
+
+        if (Math.abs(delta) < 0.0006) {
+          return targetTravel;
+        }
+
+        frame = window.requestAnimationFrame(animateTravel);
+        return current + delta * 0.105;
+      });
+    }
+
+    frame = window.requestAnimationFrame(animateTravel);
+    return () => window.cancelAnimationFrame(frame);
+  }, [targetTravel]);
 
   useEffect(() => {
     if (snappedEntryId && !snappedNode) {
       setSnappedEntryId(null);
-      setMagnetEntryId(null);
+      setHoverEntryId(null);
       setSelectedEntry(null);
     }
   }, [snappedEntryId, snappedNode]);
@@ -53,10 +73,11 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   function travelBy(delta: number) {
     setHasTravelled(true);
     releaseSnap();
-    setTravel((current) => current + delta);
+    setTargetTravel((current) => current + delta);
   }
 
   function resetView() {
+    setTargetTravel(0);
     setTravel(0);
     setHasTravelled(false);
     releaseSnap();
@@ -69,18 +90,18 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   function snapToNode(node: WormholeEntryNode) {
     setSelectedEntry(node.entry);
     setSnappedEntryId(node.entry.id);
-    setMagnetEntryId(node.entry.id);
+    setHoverEntryId(node.entry.id);
   }
 
   function releaseSnap() {
     setSnappedEntryId(null);
-    setMagnetEntryId(null);
+    setHoverEntryId(null);
     setSelectedEntry(null);
   }
 
   function handleWheel(event: WheelEvent<SVGSVGElement>) {
     event.preventDefault();
-    travelBy(event.deltaY > 0 ? 0.028 : -0.028);
+    travelBy(event.deltaY > 0 ? 0.012 : -0.012);
   }
 
   function handlePointerMove(event: PointerEvent<SVGSVGElement>) {
@@ -90,34 +111,24 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     setPointerPoint(point);
 
     if (snappedNode) {
-      const distanceToSnappedNode = distance(point, snappedNode);
-      if (distanceToSnappedNode > releaseRadius) {
-        releaseSnap();
-      }
       return;
     }
 
     const nearest = nearestNode(point, nodes);
 
     if (!nearest) {
-      setMagnetEntryId(null);
+      setHoverEntryId(null);
       return;
     }
 
-    const magneticDistance = magnetRadius + nearest.node.size * 0.65;
-    const snappingDistance = snapRadius + nearest.node.size * 0.45;
-
-    if (nearest.distance <= snappingDistance) {
-      snapToNode(nearest.node);
-      return;
-    }
-
-    setMagnetEntryId(nearest.distance <= magneticDistance ? nearest.node.entry.id : null);
+    setHoverEntryId(nearest.distance <= hoverRadius + nearest.node.size * 0.4 ? nearest.node.entry.id : null);
   }
 
   function handlePointerLeave() {
     setPointerPoint(null);
-    releaseSnap();
+    if (!snappedNode) {
+      setHoverEntryId(null);
+    }
   }
 
   function pointerToSvgPoint(event: PointerEvent<SVGSVGElement>): SvgPoint | null {
@@ -149,7 +160,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
         <svg
           ref={svgRef}
           viewBox={`0 0 ${atlasSize.width} ${atlasSize.height}`}
-          className={`h-full w-full touch-none ${snappedNode ? 'cursor-none' : 'cursor-ns-resize'}`}
+          className="h-full w-full touch-none cursor-none"
           onWheel={handleWheel}
           onPointerMove={handlePointerMove}
           onPointerLeave={handlePointerLeave}
@@ -159,9 +170,9 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
             <WormholeRings state={state} />
             <StyleSectors />
 
-            {showRelations ? <RelationOverlay nodes={nodes} relations={relations} selectedEntry={snappedNode?.entry ?? null} /> : null}
+            {showRelations ? <RelationOverlay nodes={nodes} relations={relations} selectedEntry={snappedNode?.entry ?? hoverNode?.entry ?? null} /> : null}
 
-            {magnetNode && pointerPoint && !snappedNode ? <MagnetCue pointer={pointerPoint} node={magnetNode} /> : null}
+            {hoverNode && pointerPoint && !snappedNode ? <HoverPreview pointer={pointerPoint} node={hoverNode} /> : null}
 
             {nodes.map((node) => (
               <g key={node.entry.id} opacity={node.opacity}>
@@ -177,15 +188,19 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
                   clusterSize={node.clusterSize}
                   semanticLevel="global"
                   scale={1}
-                  isSelected={magnetEntryId === node.entry.id || snappedEntryId === node.entry.id}
+                  isSelected={hoverEntryId === node.entry.id || snappedEntryId === node.entry.id}
                   nodeRadius={node.size}
                   showLabel={false}
+                  driftX={node.driftX}
+                  driftY={node.driftY}
+                  driftDelay={node.driftDelay}
                   onSelect={() => focusNodeInView(node)}
                 />
               </g>
             ))}
           </g>
-          {snappedNode ? <SnappedEntryOverlay node={snappedNode} /> : null}
+          {snappedNode ? <SnappedEntryOverlay node={snappedNode} onDismiss={releaseSnap} /> : null}
+          {pointerPoint ? <CosmosCursor pointer={pointerPoint} activeNode={hoverNode ?? snappedNode} /> : null}
           <g pointerEvents="none">
             <text x="22" y={atlasSize.height - 92} fill="#b8b8b8" fontSize="10" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.16em">
               CURRENT RING {formatYear(state.currentYear)} · {state.direction === 'into_past' ? 'INTO HISTORY' : 'RETURN LOOP'}
@@ -194,7 +209,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
         </svg>
       </div>
 
-      <div className="absolute bottom-5 left-5 z-10 border border-[#f7f7f4]/45 bg-[#050505]/90 px-3 py-2 text-xs uppercase tracking-[0.18em] text-neutral-300">
+      <div className="cosmos-status-chip absolute bottom-4 left-4 z-10 origin-bottom-left scale-75 border border-[#f7f7f4]/35 bg-[#050505]/78 px-2 py-1 text-[10px] uppercase tracking-[0.16em] text-neutral-300 opacity-45 backdrop-blur-md transition-all duration-300 ease-out hover:scale-100 hover:border-[#f7f7f4]/70 hover:opacity-100">
         {entries.length} entries · {relations.length} relations · wormhole loop
       </div>
 
@@ -203,8 +218,8 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
         zoomModeLabel={zoomModeLabel(depthScale)}
         showRelations={showRelations}
         relationCount={relations.length}
-        onZoomIn={() => travelBy(0.065)}
-        onZoomOut={() => travelBy(-0.065)}
+        onZoomIn={() => travelBy(0.035)}
+        onZoomOut={() => travelBy(-0.035)}
         onReset={resetView}
         onToggleRelations={() => setShowRelations((current) => !current)}
       />
@@ -229,21 +244,27 @@ function distance(point: SvgPoint, node: WormholeEntryNode) {
   return Math.hypot(point.x - node.x, point.y - node.y);
 }
 
-function MagnetCue({ pointer, node }: { pointer: SvgPoint; node: WormholeEntryNode }) {
-  const pull = 0.72;
-  const proxyX = pointer.x + (node.x - pointer.x) * pull;
-  const proxyY = pointer.y + (node.y - pointer.y) * pull;
+function HoverPreview({ pointer, node }: { pointer: SvgPoint; node: WormholeEntryNode }) {
+  const previewScale = node.closeness > 0.68 ? 0.82 : 0.68;
+  const cardWidth = 238 * previewScale;
+  const cardHeight = 148 * previewScale;
+  const side = node.x > atlasSize.cx ? -1 : 1;
+  const x = Math.max(34, Math.min(atlasSize.width - cardWidth - 34, node.x + side * 30));
+  const y = Math.max(34, Math.min(atlasSize.height - cardHeight - 34, node.y - cardHeight / 2));
 
   return (
-    <g pointerEvents="none">
-      <line x1={pointer.x} y1={pointer.y} x2={node.x} y2={node.y} stroke="#f7f7f4" strokeWidth="0.7" strokeDasharray="2 8" opacity="0.42" />
-      <circle cx={node.x} cy={node.y} r={node.size + 12} fill="none" stroke="#f7f7f4" strokeWidth="0.8" opacity="0.46" />
-      <circle cx={proxyX} cy={proxyY} r="3.5" fill="#f7f7f4" opacity="0.75" />
+    <g className="hover-preview" pointerEvents="none">
+      <line x1={pointer.x} y1={pointer.y} x2={node.x} y2={node.y} stroke="#f7f7f4" strokeWidth="0.6" strokeDasharray="1 9" opacity="0.34" />
+      <circle cx={node.x} cy={node.y} r={node.size + 11} fill="none" stroke="#f7f7f4" strokeWidth="0.8" opacity="0.44" />
+      <circle cx={node.x} cy={node.y} r={node.size + 20} fill="none" stroke="#f7f7f4" strokeWidth="0.45" strokeDasharray="1 8" opacity="0.24" />
+      <g transform={`translate(${x} ${y}) scale(${previewScale})`}>
+        <ProjectPreviewCard entry={node.entry} x={0} y={0} />
+      </g>
     </g>
   );
 }
 
-function SnappedEntryOverlay({ node }: { node: WormholeEntryNode }) {
+function SnappedEntryOverlay({ node, onDismiss }: { node: WormholeEntryNode; onDismiss: () => void }) {
   const cardScale = 1.42;
   const cardWidth = 352 * cardScale;
   const cardHeight = 292 * cardScale;
@@ -251,16 +272,35 @@ function SnappedEntryOverlay({ node }: { node: WormholeEntryNode }) {
   const cardY = atlasSize.cy - cardHeight / 2;
 
   return (
-    <g pointerEvents="none" opacity="1">
-      <rect width={atlasSize.width} height={atlasSize.height} fill="#050505" opacity="0.34" />
+    <g className="dossier-overlay" pointerEvents="auto" opacity="1">
+      <rect width={atlasSize.width} height={atlasSize.height} fill="#050505" opacity="0.34" onClick={onDismiss} />
       <line x1={node.x} y1={node.y} x2={atlasSize.cx} y2={atlasSize.cy} stroke="#f7f7f4" strokeWidth="0.7" strokeDasharray="3 9" opacity="0.28" />
       <circle cx={atlasSize.cx} cy={atlasSize.cy} r="252" fill="none" stroke="#f7f7f4" strokeWidth="0.8" strokeDasharray="1 13" opacity="0.22" />
       <g transform={`translate(${cardX - 12} ${cardY - 12})`}>
         <rect width={cardWidth + 24} height={cardHeight + 24} fill="#050505" stroke="#f7f7f4" strokeWidth="0.85" opacity="0.88" />
       </g>
-      <g transform={`translate(${cardX} ${cardY}) scale(${cardScale})`}>
+      <g pointerEvents="none" transform={`translate(${cardX} ${cardY}) scale(${cardScale})`}>
         <ProjectDetailCard entry={node.entry} x={0} y={0} />
       </g>
+      <g className="dossier-close" pointerEvents="auto" transform={`translate(${cardX + cardWidth - 46} ${cardY - 34})`} onClick={onDismiss}>
+        <rect width="46" height="22" fill="#f7f7f4" opacity="0.94" />
+        <text x="23" y="15" textAnchor="middle" fill="#050505" fontSize="9" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.14em">
+          CLOSE
+        </text>
+      </g>
+    </g>
+  );
+}
+
+function CosmosCursor({ pointer, activeNode }: { pointer: SvgPoint; activeNode: WormholeEntryNode | null }) {
+  return (
+    <g className="cosmos-cursor" pointerEvents="none" transform={`translate(${pointer.x} ${pointer.y})`}>
+      <circle r={activeNode ? 14 : 10} fill="none" stroke="#f7f7f4" strokeWidth="0.8" opacity={activeNode ? 0.82 : 0.52} />
+      <circle r="2.1" fill="#f7f7f4" opacity="0.86" />
+      <line x1="-18" y1="0" x2="-11" y2="0" stroke="#f7f7f4" strokeWidth="0.65" opacity="0.62" />
+      <line x1="11" y1="0" x2="18" y2="0" stroke="#f7f7f4" strokeWidth="0.65" opacity="0.62" />
+      <line x1="0" y1="-18" x2="0" y2="-11" stroke="#f7f7f4" strokeWidth="0.65" opacity="0.62" />
+      <line x1="0" y1="11" x2="0" y2="18" stroke="#f7f7f4" strokeWidth="0.65" opacity="0.62" />
     </g>
   );
 }
