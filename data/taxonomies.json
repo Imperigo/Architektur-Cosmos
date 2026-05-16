@@ -1,0 +1,4 @@
+{
+  "entry_types": ["building", "urban_plan", "landscape_project", "text", "map", "theory", "movement", "object", "infrastructure", "event"],
+  "style_sectors": ["classical_architecture", "pre-modern_architecture", "modern_architecture", "postwar_modern_architecture", "vernacular_architecture", "sustainable_architecture"]
+}
