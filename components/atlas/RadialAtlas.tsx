@@ -15,7 +15,7 @@ export function RadialAtlas({ entries }: { entries: Entry[] }) {
   return (
     <main className="relative h-screen w-screen overflow-hidden bg-[#f7f7f4] text-neutral-950">
       <div className="absolute left-5 top-5 z-10 max-w-[340px]">
-        <p className="text-xs uppercase tracking-[0.34em] text-neutral-500">Architecture Universe</p>
+        <p className="text-xs uppercase tracking-[0.34em] text-neutral-500">Architecture Cosmos</p>
         <h1 className="mt-2 text-3xl font-semibold tracking-tight">Radial Infinity Atlas</h1>
         <p className="mt-3 text-sm leading-relaxed text-neutral-600">
           Ein erster Atlas der Bauwerke, Texte, Pläne und Ereignisse als Zeitringe und Stilsektoren.

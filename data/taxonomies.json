@@ -1,4 +1,75 @@
 {
-  "entry_types": ["building", "urban_plan", "landscape_project", "text", "map", "theory", "movement", "object", "infrastructure", "event"],
-  "style_sectors": ["classical_architecture", "pre-modern_architecture", "modern_architecture", "postwar_modern_architecture", "vernacular_architecture", "sustainable_architecture"]
+  "entry_types": [
+    {
+      "id": "building",
+      "label": "Building",
+      "description": "Built architectural work."
+    },
+    {
+      "id": "urban_plan",
+      "label": "Urban plan",
+      "description": "Plan, model, or framework for urban space."
+    },
+    {
+      "id": "landscape_project",
+      "label": "Landscape project",
+      "description": "Designed landscape, park, garden, territory, or ecological intervention."
+    },
+    {
+      "id": "text",
+      "label": "Text",
+      "description": "Written architectural source, manifesto, book, essay, or publication."
+    },
+    {
+      "id": "theory",
+      "label": "Theory",
+      "description": "Conceptual framework, school of thought, or architectural doctrine."
+    },
+    {
+      "id": "map",
+      "label": "Map",
+      "description": "Cartographic, diagrammatic, or territorial representation."
+    },
+    {
+      "id": "infrastructure",
+      "label": "Infrastructure",
+      "description": "System, service structure, mobility network, or building-as-infrastructure."
+    },
+    {
+      "id": "object",
+      "label": "Object",
+      "description": "Prototype, furniture, model, detail, or designed architectural object."
+    },
+    {
+      "id": "event",
+      "label": "Event",
+      "description": "Exhibition, biennale, competition, publication moment, or historical event."
+    }
+  ],
+  "style_sectors": [
+    {
+      "id": "classical_architecture",
+      "label": "Classical / Antiquity"
+    },
+    {
+      "id": "pre_modern_architecture",
+      "label": "Pre-modern and early modern"
+    },
+    {
+      "id": "modern_architecture",
+      "label": "Modern architecture"
+    },
+    {
+      "id": "postwar_modern_architecture",
+      "label": "Postwar modernism"
+    },
+    {
+      "id": "sustainable_architecture",
+      "label": "Sustainability and reuse"
+    },
+    {
+      "id": "vernacular_architecture",
+      "label": "Vernacular architecture"
+    }
+  ]
 }

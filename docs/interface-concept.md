@@ -1,1 +1,41 @@
-# interface-concept
+# Interface Concept
+
+Architecture Cosmos has two MVP screens:
+
+- `/`: project entry and direct link to the atlas.
+- `/atlas`: the radial atlas experience.
+
+## Homepage
+
+The homepage should name the project, state the promise, and point clearly to `/atlas`. It should not become a marketing funnel before the atlas itself is mature.
+
+## Atlas
+
+The atlas is the primary interface. It consists of:
+
+- Concentric time rings.
+- Radial style sectors.
+- Entry nodes placed by year and sector.
+- A selected-entry detail panel.
+- Minimal status text that confirms the MVP is local and SVG-based.
+
+## Interaction
+
+Current MVP interaction:
+
+- Hover an entry node to reveal a lightweight label.
+- Click or keyboard-select an entry node.
+- Read the selected entry in the detail panel.
+- Close the panel to return to the field.
+
+Near-future interaction:
+
+- Add zoom and pan after labels and density are stable.
+- Add relation overlays after `data/relations.json` has meaningful content.
+- Add filters only after entry taxonomy and relation logic are proven.
+
+## Interface Boundaries
+
+Do not add search, filters, authentication, database, CMS, user accounts, or editing flows in the foundation phase.
+
+The early interface should answer one question well: can the atlas make architectural knowledge feel spatial, legible, and expandable?

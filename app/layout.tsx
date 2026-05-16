@@ -2,8 +2,8 @@ import './globals.css';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Architektur-Cosmos-Browser',
-  description: 'A radial zoomable architecture archive and reference atlas.'
+  title: 'Architecture Cosmos',
+  description: 'A radial architecture atlas for time, style, theory, place, and relation.'
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
