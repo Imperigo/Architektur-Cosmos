@@ -19,6 +19,8 @@ type SemanticEntryNodeProps = {
   semanticLevel: SemanticLevel;
   scale: number;
   isSelected: boolean;
+  nodeRadius?: number;
+  showLabel?: boolean;
   onSelect: () => void;
 };
 
@@ -47,16 +49,21 @@ export function SemanticEntryNode({
   semanticLevel,
   scale,
   isSelected,
+  nodeRadius,
+  showLabel = true,
   onSelect
 }: SemanticEntryNodeProps) {
   const inverseScale = 1 / scale;
+  const glyphRadius = nodeRadius ?? (semanticLevel === 'global' ? 4.8 : 7.2);
+  const hitRadius = Math.max(22, glyphRadius + 18);
+  const glyphFontSize = Math.max(7, Math.min(14, glyphRadius * 0.72));
   const labelWidth = Math.min(230, entry.title.length * 6.4 + 72);
   const labelRectX = labelAnchor === 'end' ? labelX - labelWidth : labelX;
   const labelTextX = labelAnchor === 'end' ? labelX - 10 : labelX + 10;
   const labelLineX = labelAnchor === 'end' ? labelX - 4 : labelX + 4;
   const cardX = x + 18;
   const cardY = y - 86;
-  const showFloatingLabel = semanticLevel === 'global' || (semanticLevel === 'image' && scale < 2);
+  const showFloatingLabel = showLabel && (semanticLevel === 'global' || (semanticLevel === 'image' && scale < 2));
 
   return (
     <g
@@ -73,24 +80,24 @@ export function SemanticEntryNode({
         }
       }}
     >
-      <circle cx={x} cy={y} r={semanticLevel === 'global' ? 18 : 24} fill="transparent" />
+      <circle cx={x} cy={y} r={hitRadius} fill="transparent" />
       {clusterSize > 1 ? (
-        <circle cx={x} cy={y} r={10.5} fill="none" stroke="#101010" strokeWidth="0.55" strokeDasharray="1 4" opacity="0.65" />
+        <circle cx={x} cy={y} r={glyphRadius + 5.5} fill="none" stroke="#f7f7f4" strokeWidth="0.55" strokeDasharray="1 4" opacity="0.65" />
       ) : null}
       <circle
         cx={x}
         cy={y}
-        r={isSelected ? 7 : 4.8}
+        r={isSelected ? glyphRadius + 3 : glyphRadius}
         fill={isSelected ? '#050505' : '#f7f7f4'}
         stroke="#f7f7f4"
         strokeWidth={isSelected ? 2 : 1.2}
       />
       <text
         x={x}
-        y={y + 3.5}
+        y={y + glyphFontSize * 0.34}
         textAnchor="middle"
         fill={isSelected ? '#f7f7f4' : '#050505'}
-        fontSize={entry.entry_type === 'text' || entry.entry_type === 'theory' ? 7 : 8}
+        fontSize={entry.entry_type === 'text' || entry.entry_type === 'theory' ? Math.max(7, glyphFontSize * 0.9) : glyphFontSize}
         fontFamily="var(--font-sans), system-ui, sans-serif"
         pointerEvents="none"
       >

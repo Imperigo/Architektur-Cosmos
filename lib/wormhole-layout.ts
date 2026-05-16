@@ -20,9 +20,15 @@ export type WormholeEntryNode = AtlasNode & {
 const wormholeYears = [-9500, -3000, -500, 0, 1000, 1400, 1600, 1800, 1900, 1950, 2000, 2025];
 const oldestYear = wormholeYears[0];
 const presentYear = wormholeYears[wormholeYears.length - 1];
-const maxTunnelRadius = 620;
-const minTunnelRadius = 34;
-const visibleDepth = 0.34;
+const maxTunnelRadius = 730;
+const minTunnelRadius = 118;
+const visibleDepth = 0.86;
+
+export const wormholeTunnel = {
+  maxRadius: maxTunnelRadius,
+  minRadius: minTunnelRadius,
+  visibleDepth
+};
 
 export function wormholeState(travel: number): WormholeState {
   const phase = positiveModulo(travel, 2);
@@ -66,7 +72,7 @@ export function wormholeGridLines(state: WormholeState) {
     const baseAngle = spoke * 20;
     const points = samples.map((depth) => {
       const radius = tunnelRadius(depth);
-      const angle = baseAngle + tunnelTwist(depth, state.phase);
+      const angle = baseAngle;
       return polarToCartesian(atlasSize.cx, atlasSize.cy, radius, angle);
     });
 
@@ -85,7 +91,7 @@ export function layoutWormholeEntries(entries: Entry[], state: WormholeState, se
       const closeness = 1 - depth / visibleDepth;
       const sector = styleSectors.find((item) => item.id === entry.style_sector) ?? styleSectors[0];
       const radius = tunnelRadius(depth);
-      const angle = sectorMidAngle(sector) + entryAngleOffset(entry.id) + tunnelTwist(depth, state.phase);
+      const angle = sectorMidAngle(sector) + entryAngleOffset(entry.id);
       const point = polarToCartesian(atlasSize.cx, atlasSize.cy, radius, angle);
       const labelAnchor = point.x > atlasSize.cx ? 'start' as const : 'end' as const;
       const labelX = point.x + (labelAnchor === 'start' ? 22 : -22);
@@ -103,7 +109,7 @@ export function layoutWormholeEntries(entries: Entry[], state: WormholeState, se
         depth,
         closeness,
         semanticLevel,
-        opacity: Math.max(0.08, Math.min(1, closeness * 1.4)),
+        opacity: tunnelOpacity(depth),
         size,
         clusterIndex: 0,
         clusterSize: 1,
@@ -123,8 +129,9 @@ export function tunnelRadius(depth: number) {
   return Math.round((minTunnelRadius + eased * (maxTunnelRadius - minTunnelRadius)) * 100) / 100;
 }
 
-export function tunnelTwist(depth: number, phase: number) {
-  return phase * 74 + depth * 185;
+export function radiusToTunnelDepth(radius: number) {
+  const eased = Math.max(0, Math.min(1, (radius - minTunnelRadius) / (maxTunnelRadius - minTunnelRadius)));
+  return 1 - Math.pow(eased, 1 / 2.15);
 }
 
 export function yearToPosition(year: number) {
@@ -165,9 +172,14 @@ function ringDepth(year: number, timePosition: number) {
 
 function semanticLevelForDepth(depth: number, closeness: number, isSelected: boolean): SemanticLevel {
   if (isSelected && depth < 0.09) return 'detail';
-  if (closeness > 0.78) return 'preview';
-  if (closeness > 0.48) return 'image';
+  if (closeness > 0.74 && depth > 0.05) return 'image';
   return 'global';
+}
+
+export function tunnelOpacity(depth: number) {
+  const fadeInFromBack = Math.min(1, Math.max(0, (visibleDepth - depth) / 0.12));
+  const fadeOutAtFront = Math.min(1, Math.max(0, depth / 0.055));
+  return Math.max(0, Math.min(1, fadeInFromBack, fadeOutAtFront));
 }
 
 function entryAngleOffset(id: string) {

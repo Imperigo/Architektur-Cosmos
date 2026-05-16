@@ -1,10 +1,12 @@
 import { atlasSize, sectorBoundaryPoint, sectorMidAngle, styleSectors } from '@/lib/atlas-layout';
 import { polarToCartesian } from '@/lib/polar-coordinates';
+import { wormholeTunnel } from '@/lib/wormhole-layout';
 
 export function StyleSectors() {
   return (
     <g aria-label="Stilsektoren">
       {styleSectors.map((sector) => {
+        const startInner = polarToCartesian(atlasSize.cx, atlasSize.cy, wormholeTunnel.minRadius, sector.startAngle);
         const start = sectorBoundaryPoint(sector.startAngle);
         const labelAngle = sectorMidAngle(sector);
         const label = polarToCartesian(atlasSize.cx, atlasSize.cy, atlasSize.labelRadius, labelAngle);
@@ -13,8 +15,8 @@ export function StyleSectors() {
         return (
           <g key={sector.id}>
             <line
-              x1={atlasSize.cx}
-              y1={atlasSize.cy}
+              x1={startInner.x}
+              y1={startInner.y}
               x2={start.x}
               y2={start.y}
               stroke="#f7f7f4"
