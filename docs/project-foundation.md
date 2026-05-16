@@ -14,6 +14,8 @@ The atlas combines three forms of orientation:
 
 This makes the interface closer to a drawing table than a dashboard. It should feel precise, quiet, and expandable.
 
+The atlas also follows a semantic zoom principle: zooming in does not only enlarge marks, it reveals richer forms of knowledge. A project changes from point, to image point, to preview, to dossier.
+
 ## Product Principles
 
 - Start with the atlas, not with a landing page.
@@ -45,6 +47,15 @@ A future connection between entries. Relations should describe influence, reacti
 ### Lens
 
 A future interpretive mode. A lens can emphasize time, typology, climate, urbanism, theory, material, pedagogy, or personal study paths. Lenses are not part of the first MVP UI.
+
+### Semantic Zoom Level
+
+The amount of information shown for an entry based on camera scale and distance from the viewport center.
+
+- Global: atlas, rings, sectors, points.
+- Image: point plus primary image placeholder.
+- Preview: four media slots, title, and one-sentence summary.
+- Dossier: four captioned media slots and full project description.
 
 ## Foundation Decisions
 

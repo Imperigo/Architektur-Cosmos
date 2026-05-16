@@ -1,5 +1,6 @@
 type AtlasControlsProps = {
   scale: number;
+  zoomModeLabel: string;
   showRelations: boolean;
   relationCount: number;
   onZoomIn: () => void;
@@ -10,6 +11,7 @@ type AtlasControlsProps = {
 
 export function AtlasControls({
   scale,
+  zoomModeLabel,
   showRelations,
   relationCount,
   onZoomIn,
@@ -24,6 +26,9 @@ export function AtlasControls({
       </button>
       <span className="min-w-16 border-r border-neutral-900 px-3 text-center text-xs uppercase tracking-[0.16em] text-neutral-600">
         {Math.round(scale * 100)}%
+      </span>
+      <span className="hidden h-10 min-w-28 items-center justify-center border-r border-neutral-900 px-3 text-xs uppercase tracking-[0.16em] text-neutral-600 sm:flex">
+        {zoomModeLabel}
       </span>
       <button title="Zoom in" onClick={onZoomIn} className="h-10 w-10 border-r border-neutral-900 hover:bg-neutral-900 hover:text-[#f7f7f4]">
         +

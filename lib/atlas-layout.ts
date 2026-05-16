@@ -16,6 +16,7 @@ export type TimeRing = {
   label: string;
   radius: number;
   weight: 'major' | 'minor';
+  mode?: 'global' | 'medium' | 'local';
 };
 
 export type StyleSector = {
@@ -35,6 +36,8 @@ export type AtlasNode = ReturnType<typeof entryPosition> & {
   labelLeaderX: number;
   labelLeaderY: number;
 };
+
+export type SemanticLevel = 'global' | 'image' | 'preview' | 'detail';
 
 const timeAnchors = [
   { year: -9000, label: '9000 v. Chr.', weight: 'major' as const },
@@ -65,8 +68,38 @@ const yearMax = timeAnchors[timeAnchors.length - 1].year;
 
 export const timeRings: TimeRing[] = timeAnchors.map((anchor) => ({
   ...anchor,
-  radius: yearToRadius(anchor.year)
+  radius: yearToRadius(anchor.year),
+  mode: 'medium' as const
 }));
+
+export function zoomTimeRings(scale: number, focusYear?: number): TimeRing[] {
+  if (scale < 1.15) {
+    return [-9000, -500, 1000, 1800, 1950, 2025].map((year) => ringForYear(year, 'global'));
+  }
+
+  if (scale < 2.4 || focusYear === undefined) {
+    return timeRings;
+  }
+
+  const localStep = Math.abs(focusYear) > 2000 ? 500 : focusYear < 1800 ? 100 : 25;
+  const localYears = [-2, -1, 0, 1, 2].map((step) => focusYear + step * localStep);
+  const allYears = [...new Set([...timeAnchors.map((anchor) => anchor.year), ...localYears])];
+
+  return allYears
+    .filter((year) => year >= yearMin && year <= yearMax)
+    .sort((a, b) => a - b)
+    .map((year) => {
+      const isFocus = year === focusYear;
+      const isAnchor = timeAnchors.some((anchor) => anchor.year === year);
+      return {
+        year,
+        label: formatYear(year),
+        radius: yearToRadius(year),
+        weight: isFocus || isAnchor ? 'major' as const : 'minor' as const,
+        mode: isAnchor ? 'medium' as const : 'local' as const
+      };
+    });
+}
 
 export function yearToRadius(year: number) {
   const clampedYear = Math.min(Math.max(year, yearMin), yearMax);
@@ -216,4 +249,21 @@ function resolveLabelCollisions(nodes: AtlasNode[]) {
 
 function roundLayout(value: number) {
   return Math.round(value * 100) / 100;
+}
+
+function ringForYear(year: number, mode: TimeRing['mode']): TimeRing {
+  const anchor = timeAnchors.find((item) => item.year === year);
+  return {
+    year,
+    label: anchor?.label ?? formatYear(year),
+    radius: yearToRadius(year),
+    weight: 'major',
+    mode
+  };
+}
+
+function formatYear(year: number) {
+  if (year === 2025) return 'heute';
+  if (year < 0) return `${Math.abs(year)} v. Chr.`;
+  return `${year}`;
 }

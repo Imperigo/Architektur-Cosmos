@@ -16,6 +16,7 @@ The first version builds the core atlas without filters, search, database, CMS, 
 - `docs/interface-concept.md`
 - `docs/design-system.md`
 - `docs/mvp-scope.md`
+- `docs/innovation-backlog.md`
 
 ## Run locally
 

@@ -16,7 +16,7 @@ The atlas is the primary interface. It consists of:
 - Concentric time rings.
 - Radial style sectors.
 - Entry nodes placed by year and sector.
-- A selected-entry detail panel.
+- Semantic entry nodes that change detail level while zooming.
 - Minimal status text that confirms the MVP is local and SVG-based.
 
 ## Interaction
@@ -30,12 +30,14 @@ Current MVP interaction:
 - Toggle the relation overlay on or off.
 - Zoom with the controls or mouse wheel.
 - Pan the atlas by dragging the SVG field.
-- Close the panel to return to the field.
+- Click a node to center it without forcing a detail level.
+- Read project detail directly inside the zoomable atlas space.
 
 Near-future interaction:
 
 - Improve relation readability as the dataset grows.
 - Refine label density and cluster behavior with larger entry sets.
+- Add source trails and curated study paths.
 - Add filters only after entry taxonomy and relation logic are proven.
 
 ## Interface Boundaries

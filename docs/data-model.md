@@ -17,6 +17,9 @@ Required fields:
 - `style_sector`: atlas sector id.
 - `themes`: short thematic tags.
 - `short_description`: concise explanation for the detail panel.
+- `one_sentence`: one-sentence summary for semantic zoom preview cards.
+- `full_description`: longer dossier text for close zoom.
+- `media`: four MVP media placeholders.
 - `source_quality`: current confidence or source type.
 
 Optional fields:
@@ -75,6 +78,17 @@ Relation types should stay broad at first:
 - `typological_reference`
 - `material_reference`
 - `context`
+
+## Media
+
+Every MVP entry has exactly four media slots:
+
+- `exterior`
+- `interior`
+- `section`
+- `plan`
+
+These are placeholders for now. The four-slot shape is stable so the UI can be built before image rights and sourcing are solved. A fifth 3D model slot is deferred.
 
 ## Data Rule
 

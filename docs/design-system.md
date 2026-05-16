@@ -52,3 +52,13 @@ Entry glyphs should distinguish type without becoming pictograms:
 ## Motion
 
 Motion should be minimal. Hover and selection states can use stroke weight, opacity, and small contrast changes. Avoid theatrical animation until the atlas semantics are stable.
+
+## Semantic Zoom Cards
+
+Project information should unfold in the drawing space:
+
+- Image level: a small framed exterior-placeholder close to the point.
+- Preview level: four media slots, title, year, one-sentence summary.
+- Dossier level: four captioned media slots, metadata, full description.
+
+Cards should remain black/white architectural drawing surfaces, not photo-heavy editorial cards.

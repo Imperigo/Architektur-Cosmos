@@ -27,6 +27,14 @@ export type RelationType =
   | 'material_reference'
   | 'context';
 
+export type EntryMediaType = 'exterior' | 'interior' | 'section' | 'plan';
+
+export type EntryMedia = {
+  type: EntryMediaType;
+  label: string;
+  placeholder: string;
+};
+
 export type Entry = {
   id: string;
   slug: string;
@@ -41,6 +49,9 @@ export type Entry = {
   lecture_cluster?: string[];
   themes: string[];
   short_description: string;
+  one_sentence: string;
+  full_description: string;
+  media: EntryMedia[];
   source_quality: string;
   atlas?: {
     year: number;

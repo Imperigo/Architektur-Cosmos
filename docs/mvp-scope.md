@@ -15,6 +15,8 @@ The first MVP tests the foundation of Architecture Cosmos, not the full product.
 - Optional relation overlay from local JSON.
 - Simple zoom and pan controls.
 - Deterministic node grouping for crowded atlas regions.
+- Semantic zoom levels for project nodes.
+- Four placeholder media slots per entry.
 - Concentric time rings.
 - Radial style sectors.
 - Conservative black/white architectural drawing style.
@@ -30,6 +32,9 @@ The first MVP tests the foundation of Architecture Cosmos, not the full product.
 - User profiles.
 - Saved collections.
 - PixiJS, canvas, or WebGL atlas rendering.
+- Real image sourcing or image rights workflows.
+- OpenSeadragon or tiled deep zoom.
+- 3D model rendering.
 - AI content generation.
 
 ## Foundation Phase Priorities

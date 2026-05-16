@@ -6,14 +6,47 @@
     "entry_type": "building",
     "year_start": -9500,
     "year_end": -8000,
-    "authors": ["Unknown builders"],
+    "authors": [
+      "Unknown builders"
+    ],
     "city": "Sanliurfa",
     "country": "Turkey",
     "style_sector": "vernacular_architecture",
-    "lecture_cluster": ["prehistoric_architecture"],
-    "themes": ["ritual", "megalith", "settlement", "origin"],
+    "lecture_cluster": [
+      "prehistoric_architecture"
+    ],
+    "themes": [
+      "ritual",
+      "megalith",
+      "settlement",
+      "origin"
+    ],
     "short_description": "Praehistorische Anlage, die Architektur als rituelle und soziale Ordnung lange vor klassischen Stadt- und Staatsformen sichtbar macht.",
-    "source_quality": "case_study"
+    "source_quality": "case_study",
+    "one_sentence": "Praehistorische Anlage, die Architektur als rituelle und soziale Ordnung lange vor klassischen Stadt- und Staatsformen sichtbar macht.",
+    "full_description": "Praehistorische Anlage, die Architektur als rituelle und soziale Ordnung lange vor klassischen Stadt- und Staatsformen sichtbar macht. Im Architecture Cosmos wird dieser Eintrag als Teil eines groesseren Wissensraums gelesen: Jahr, Stilsektor, Typologie, Ort, Autorenschaft und Relationen bestimmen, wie er im Atlas sichtbar wird. Die Detailstufe sammelt spaeter Fotografien, Plaene, Schnitte, Quellen und Modelle an einer Stelle, ohne den raeumlichen Zusammenhang der Architekturgeschichte zu verlieren.",
+    "media": [
+      {
+        "type": "exterior",
+        "label": "Aussenansicht",
+        "placeholder": "Aussenansicht Platzhalter fuer Gobekli Tepe"
+      },
+      {
+        "type": "interior",
+        "label": "Innenraum",
+        "placeholder": "Innenraum Platzhalter fuer Gobekli Tepe"
+      },
+      {
+        "type": "section",
+        "label": "Schnitt",
+        "placeholder": "Schnitt Platzhalter fuer Gobekli Tepe"
+      },
+      {
+        "type": "plan",
+        "label": "Grundriss",
+        "placeholder": "Grundriss Platzhalter fuer Gobekli Tepe"
+      }
+    ]
   },
   {
     "id": "uruk-city",
@@ -22,14 +55,47 @@
     "entry_type": "urban_plan",
     "year_start": -3500,
     "year_end": -3000,
-    "authors": ["Unknown planners"],
+    "authors": [
+      "Unknown planners"
+    ],
     "city": "Uruk",
     "country": "Iraq",
     "style_sector": "classical_architecture",
-    "lecture_cluster": ["urban_history"],
-    "themes": ["city", "temple", "wall", "administration"],
+    "lecture_cluster": [
+      "urban_history"
+    ],
+    "themes": [
+      "city",
+      "temple",
+      "wall",
+      "administration"
+    ],
     "short_description": "Fruehe Stadtstruktur, in der Tempelbezirke, Verwaltung, Arbeitsteilung und urbane Dichte als architektonisches System zusammenkommen.",
-    "source_quality": "case_study"
+    "source_quality": "case_study",
+    "one_sentence": "Fruehe Stadtstruktur, in der Tempelbezirke, Verwaltung, Arbeitsteilung und urbane Dichte als architektonisches System zusammenkommen.",
+    "full_description": "Fruehe Stadtstruktur, in der Tempelbezirke, Verwaltung, Arbeitsteilung und urbane Dichte als architektonisches System zusammenkommen. Im Architecture Cosmos wird dieser Eintrag als Teil eines groesseren Wissensraums gelesen: Jahr, Stilsektor, Typologie, Ort, Autorenschaft und Relationen bestimmen, wie er im Atlas sichtbar wird. Die Detailstufe sammelt spaeter Fotografien, Plaene, Schnitte, Quellen und Modelle an einer Stelle, ohne den raeumlichen Zusammenhang der Architekturgeschichte zu verlieren.",
+    "media": [
+      {
+        "type": "exterior",
+        "label": "Aussenansicht",
+        "placeholder": "Aussenansicht Platzhalter fuer Uruk"
+      },
+      {
+        "type": "interior",
+        "label": "Innenraum",
+        "placeholder": "Innenraum Platzhalter fuer Uruk"
+      },
+      {
+        "type": "section",
+        "label": "Schnitt",
+        "placeholder": "Schnitt Platzhalter fuer Uruk"
+      },
+      {
+        "type": "plan",
+        "label": "Grundriss",
+        "placeholder": "Grundriss Platzhalter fuer Uruk"
+      }
+    ]
   },
   {
     "id": "pyramids-of-giza",
@@ -38,14 +104,47 @@
     "entry_type": "infrastructure",
     "year_start": -2600,
     "year_end": -2500,
-    "authors": ["Old Kingdom builders"],
+    "authors": [
+      "Old Kingdom builders"
+    ],
     "city": "Giza",
     "country": "Egypt",
     "style_sector": "classical_architecture",
-    "lecture_cluster": ["architectural_history_1"],
-    "themes": ["monument", "labor", "axis", "afterlife"],
+    "lecture_cluster": [
+      "architectural_history_1"
+    ],
+    "themes": [
+      "monument",
+      "labor",
+      "axis",
+      "afterlife"
+    ],
     "short_description": "Monumentale Bau- und Logistikinfrastruktur, die Geometrie, Macht, Arbeit und kosmische Orientierung in eine dauerhafte Form bringt.",
-    "source_quality": "case_study"
+    "source_quality": "case_study",
+    "one_sentence": "Monumentale Bau- und Logistikinfrastruktur, die Geometrie, Macht, Arbeit und kosmische Orientierung in eine dauerhafte Form bringt.",
+    "full_description": "Monumentale Bau- und Logistikinfrastruktur, die Geometrie, Macht, Arbeit und kosmische Orientierung in eine dauerhafte Form bringt. Im Architecture Cosmos wird dieser Eintrag als Teil eines groesseren Wissensraums gelesen: Jahr, Stilsektor, Typologie, Ort, Autorenschaft und Relationen bestimmen, wie er im Atlas sichtbar wird. Die Detailstufe sammelt spaeter Fotografien, Plaene, Schnitte, Quellen und Modelle an einer Stelle, ohne den raeumlichen Zusammenhang der Architekturgeschichte zu verlieren.",
+    "media": [
+      {
+        "type": "exterior",
+        "label": "Aussenansicht",
+        "placeholder": "Aussenansicht Platzhalter fuer Pyramids of Giza"
+      },
+      {
+        "type": "interior",
+        "label": "Innenraum",
+        "placeholder": "Innenraum Platzhalter fuer Pyramids of Giza"
+      },
+      {
+        "type": "section",
+        "label": "Schnitt",
+        "placeholder": "Schnitt Platzhalter fuer Pyramids of Giza"
+      },
+      {
+        "type": "plan",
+        "label": "Grundriss",
+        "placeholder": "Grundriss Platzhalter fuer Pyramids of Giza"
+      }
+    ]
   },
   {
     "id": "parthenon",
@@ -54,14 +153,49 @@
     "entry_type": "building",
     "year_start": -447,
     "year_end": -432,
-    "authors": ["Iktinos", "Kallikrates", "Phidias"],
+    "authors": [
+      "Iktinos",
+      "Kallikrates",
+      "Phidias"
+    ],
     "city": "Athen",
     "country": "Greece",
     "style_sector": "classical_architecture",
-    "lecture_cluster": ["architectural_history_1"],
-    "themes": ["temple", "order", "proportion", "polis"],
+    "lecture_cluster": [
+      "architectural_history_1"
+    ],
+    "themes": [
+      "temple",
+      "order",
+      "proportion",
+      "polis"
+    ],
     "short_description": "Kanonisches Tempelbauwerk der griechischen Antike, in dem Ordnung, optische Korrektur und stadtraeumliche Symbolik zusammenfallen.",
-    "source_quality": "lecture_notes"
+    "source_quality": "lecture_notes",
+    "one_sentence": "Kanonisches Tempelbauwerk der griechischen Antike, in dem Ordnung, optische Korrektur und stadtraeumliche Symbolik zusammenfallen.",
+    "full_description": "Kanonisches Tempelbauwerk der griechischen Antike, in dem Ordnung, optische Korrektur und stadtraeumliche Symbolik zusammenfallen. Im Architecture Cosmos wird dieser Eintrag als Teil eines groesseren Wissensraums gelesen: Jahr, Stilsektor, Typologie, Ort, Autorenschaft und Relationen bestimmen, wie er im Atlas sichtbar wird. Die Detailstufe sammelt spaeter Fotografien, Plaene, Schnitte, Quellen und Modelle an einer Stelle, ohne den raeumlichen Zusammenhang der Architekturgeschichte zu verlieren.",
+    "media": [
+      {
+        "type": "exterior",
+        "label": "Aussenansicht",
+        "placeholder": "Aussenansicht Platzhalter fuer Parthenon"
+      },
+      {
+        "type": "interior",
+        "label": "Innenraum",
+        "placeholder": "Innenraum Platzhalter fuer Parthenon"
+      },
+      {
+        "type": "section",
+        "label": "Schnitt",
+        "placeholder": "Schnitt Platzhalter fuer Parthenon"
+      },
+      {
+        "type": "plan",
+        "label": "Grundriss",
+        "placeholder": "Grundriss Platzhalter fuer Parthenon"
+      }
+    ]
   },
   {
     "id": "vitruvius-de-architectura",
@@ -69,14 +203,47 @@
     "title": "De architectura",
     "entry_type": "text",
     "year_start": -25,
-    "authors": ["Vitruvius"],
+    "authors": [
+      "Vitruvius"
+    ],
     "city": "Rome",
     "country": "Italy",
     "style_sector": "classical_architecture",
-    "lecture_cluster": ["theory_history"],
-    "themes": ["treatise", "firmitas", "utilitas", "venustas"],
+    "lecture_cluster": [
+      "theory_history"
+    ],
+    "themes": [
+      "treatise",
+      "firmitas",
+      "utilitas",
+      "venustas"
+    ],
     "short_description": "Grundlegender Architekturtraktat, der Bauwissen, Proportion, Technik und kulturelle Autoritaet in ein ueberlieferbares System fasst.",
-    "source_quality": "primary_text"
+    "source_quality": "primary_text",
+    "one_sentence": "Grundlegender Architekturtraktat, der Bauwissen, Proportion, Technik und kulturelle Autoritaet in ein ueberlieferbares System fasst.",
+    "full_description": "Grundlegender Architekturtraktat, der Bauwissen, Proportion, Technik und kulturelle Autoritaet in ein ueberlieferbares System fasst. Im Architecture Cosmos wird dieser Eintrag als Teil eines groesseren Wissensraums gelesen: Jahr, Stilsektor, Typologie, Ort, Autorenschaft und Relationen bestimmen, wie er im Atlas sichtbar wird. Die Detailstufe sammelt spaeter Fotografien, Plaene, Schnitte, Quellen und Modelle an einer Stelle, ohne den raeumlichen Zusammenhang der Architekturgeschichte zu verlieren.",
+    "media": [
+      {
+        "type": "exterior",
+        "label": "Aussenansicht",
+        "placeholder": "Aussenansicht Platzhalter fuer De architectura"
+      },
+      {
+        "type": "interior",
+        "label": "Innenraum",
+        "placeholder": "Innenraum Platzhalter fuer De architectura"
+      },
+      {
+        "type": "section",
+        "label": "Schnitt",
+        "placeholder": "Schnitt Platzhalter fuer De architectura"
+      },
+      {
+        "type": "plan",
+        "label": "Grundriss",
+        "placeholder": "Grundriss Platzhalter fuer De architectura"
+      }
+    ]
   },
   {
     "id": "pantheon",
@@ -84,14 +251,47 @@
     "title": "Pantheon",
     "entry_type": "building",
     "year_start": 125,
-    "authors": ["Hadrianic builders"],
+    "authors": [
+      "Hadrianic builders"
+    ],
     "city": "Rome",
     "country": "Italy",
     "style_sector": "classical_architecture",
-    "lecture_cluster": ["architectural_history_1"],
-    "themes": ["dome", "concrete", "cosmos", "interior"],
+    "lecture_cluster": [
+      "architectural_history_1"
+    ],
+    "themes": [
+      "dome",
+      "concrete",
+      "cosmos",
+      "interior"
+    ],
     "short_description": "Roemischer Kuppelraum, der Konstruktion, Licht, Material und kosmische Symbolik zu einem praezisen Innenraum verbindet.",
-    "source_quality": "lecture_notes"
+    "source_quality": "lecture_notes",
+    "one_sentence": "Roemischer Kuppelraum, der Konstruktion, Licht, Material und kosmische Symbolik zu einem praezisen Innenraum verbindet.",
+    "full_description": "Roemischer Kuppelraum, der Konstruktion, Licht, Material und kosmische Symbolik zu einem praezisen Innenraum verbindet. Im Architecture Cosmos wird dieser Eintrag als Teil eines groesseren Wissensraums gelesen: Jahr, Stilsektor, Typologie, Ort, Autorenschaft und Relationen bestimmen, wie er im Atlas sichtbar wird. Die Detailstufe sammelt spaeter Fotografien, Plaene, Schnitte, Quellen und Modelle an einer Stelle, ohne den raeumlichen Zusammenhang der Architekturgeschichte zu verlieren.",
+    "media": [
+      {
+        "type": "exterior",
+        "label": "Aussenansicht",
+        "placeholder": "Aussenansicht Platzhalter fuer Pantheon"
+      },
+      {
+        "type": "interior",
+        "label": "Innenraum",
+        "placeholder": "Innenraum Platzhalter fuer Pantheon"
+      },
+      {
+        "type": "section",
+        "label": "Schnitt",
+        "placeholder": "Schnitt Platzhalter fuer Pantheon"
+      },
+      {
+        "type": "plan",
+        "label": "Grundriss",
+        "placeholder": "Grundriss Platzhalter fuer Pantheon"
+      }
+    ]
   },
   {
     "id": "hagia-sophia",
@@ -99,14 +299,48 @@
     "title": "Hagia Sophia",
     "entry_type": "building",
     "year_start": 537,
-    "authors": ["Anthemius of Tralles", "Isidore of Miletus"],
+    "authors": [
+      "Anthemius of Tralles",
+      "Isidore of Miletus"
+    ],
     "city": "Istanbul",
     "country": "Turkey",
     "style_sector": "classical_architecture",
-    "lecture_cluster": ["architectural_history_1"],
-    "themes": ["dome", "liturgy", "empire", "light"],
+    "lecture_cluster": [
+      "architectural_history_1"
+    ],
+    "themes": [
+      "dome",
+      "liturgy",
+      "empire",
+      "light"
+    ],
     "short_description": "Byzantinischer Zentralraum, der Kuppel, Lichtfuehrung und imperiale Repraesentation in eine neue raeumliche Ordnung uebersetzt.",
-    "source_quality": "lecture_notes"
+    "source_quality": "lecture_notes",
+    "one_sentence": "Byzantinischer Zentralraum, der Kuppel, Lichtfuehrung und imperiale Repraesentation in eine neue raeumliche Ordnung uebersetzt.",
+    "full_description": "Byzantinischer Zentralraum, der Kuppel, Lichtfuehrung und imperiale Repraesentation in eine neue raeumliche Ordnung uebersetzt. Im Architecture Cosmos wird dieser Eintrag als Teil eines groesseren Wissensraums gelesen: Jahr, Stilsektor, Typologie, Ort, Autorenschaft und Relationen bestimmen, wie er im Atlas sichtbar wird. Die Detailstufe sammelt spaeter Fotografien, Plaene, Schnitte, Quellen und Modelle an einer Stelle, ohne den raeumlichen Zusammenhang der Architekturgeschichte zu verlieren.",
+    "media": [
+      {
+        "type": "exterior",
+        "label": "Aussenansicht",
+        "placeholder": "Aussenansicht Platzhalter fuer Hagia Sophia"
+      },
+      {
+        "type": "interior",
+        "label": "Innenraum",
+        "placeholder": "Innenraum Platzhalter fuer Hagia Sophia"
+      },
+      {
+        "type": "section",
+        "label": "Schnitt",
+        "placeholder": "Schnitt Platzhalter fuer Hagia Sophia"
+      },
+      {
+        "type": "plan",
+        "label": "Grundriss",
+        "placeholder": "Grundriss Platzhalter fuer Hagia Sophia"
+      }
+    ]
   },
   {
     "id": "alhambra",
@@ -115,14 +349,47 @@
     "entry_type": "landscape_project",
     "year_start": 1238,
     "year_end": 1358,
-    "authors": ["Nasrid builders"],
+    "authors": [
+      "Nasrid builders"
+    ],
     "city": "Granada",
     "country": "Spain",
     "style_sector": "vernacular_architecture",
-    "lecture_cluster": ["garden_history"],
-    "themes": ["courtyard", "water", "ornament", "microclimate"],
+    "lecture_cluster": [
+      "garden_history"
+    ],
+    "themes": [
+      "courtyard",
+      "water",
+      "ornament",
+      "microclimate"
+    ],
     "short_description": "Palast- und Gartenlandschaft, in der Wasser, Schatten, Ornament und Hofraeume ein klimatisches und symbolisches System bilden.",
-    "source_quality": "case_study"
+    "source_quality": "case_study",
+    "one_sentence": "Palast- und Gartenlandschaft, in der Wasser, Schatten, Ornament und Hofraeume ein klimatisches und symbolisches System bilden.",
+    "full_description": "Palast- und Gartenlandschaft, in der Wasser, Schatten, Ornament und Hofraeume ein klimatisches und symbolisches System bilden. Im Architecture Cosmos wird dieser Eintrag als Teil eines groesseren Wissensraums gelesen: Jahr, Stilsektor, Typologie, Ort, Autorenschaft und Relationen bestimmen, wie er im Atlas sichtbar wird. Die Detailstufe sammelt spaeter Fotografien, Plaene, Schnitte, Quellen und Modelle an einer Stelle, ohne den raeumlichen Zusammenhang der Architekturgeschichte zu verlieren.",
+    "media": [
+      {
+        "type": "exterior",
+        "label": "Aussenansicht",
+        "placeholder": "Aussenansicht Platzhalter fuer Alhambra"
+      },
+      {
+        "type": "interior",
+        "label": "Innenraum",
+        "placeholder": "Innenraum Platzhalter fuer Alhambra"
+      },
+      {
+        "type": "section",
+        "label": "Schnitt",
+        "placeholder": "Schnitt Platzhalter fuer Alhambra"
+      },
+      {
+        "type": "plan",
+        "label": "Grundriss",
+        "placeholder": "Grundriss Platzhalter fuer Alhambra"
+      }
+    ]
   },
   {
     "id": "brunelleschi-dome",
@@ -131,14 +398,47 @@
     "entry_type": "infrastructure",
     "year_start": 1420,
     "year_end": 1436,
-    "authors": ["Filippo Brunelleschi"],
+    "authors": [
+      "Filippo Brunelleschi"
+    ],
     "city": "Florence",
     "country": "Italy",
     "style_sector": "classical_architecture",
-    "lecture_cluster": ["renaissance"],
-    "themes": ["dome", "construction", "city image", "engineering"],
+    "lecture_cluster": [
+      "renaissance"
+    ],
+    "themes": [
+      "dome",
+      "construction",
+      "city image",
+      "engineering"
+    ],
     "short_description": "Konstruktive Loesung und staedtisches Zeichen zugleich; die Kuppel macht Bauprozess, Technik und Renaissance-Stadtbild untrennbar.",
-    "source_quality": "lecture_notes"
+    "source_quality": "lecture_notes",
+    "one_sentence": "Konstruktive Loesung und staedtisches Zeichen zugleich; die Kuppel macht Bauprozess, Technik und Renaissance-Stadtbild untrennbar.",
+    "full_description": "Konstruktive Loesung und staedtisches Zeichen zugleich; die Kuppel macht Bauprozess, Technik und Renaissance-Stadtbild untrennbar. Im Architecture Cosmos wird dieser Eintrag als Teil eines groesseren Wissensraums gelesen: Jahr, Stilsektor, Typologie, Ort, Autorenschaft und Relationen bestimmen, wie er im Atlas sichtbar wird. Die Detailstufe sammelt spaeter Fotografien, Plaene, Schnitte, Quellen und Modelle an einer Stelle, ohne den raeumlichen Zusammenhang der Architekturgeschichte zu verlieren.",
+    "media": [
+      {
+        "type": "exterior",
+        "label": "Aussenansicht",
+        "placeholder": "Aussenansicht Platzhalter fuer Dome of Santa Maria del Fiore"
+      },
+      {
+        "type": "interior",
+        "label": "Innenraum",
+        "placeholder": "Innenraum Platzhalter fuer Dome of Santa Maria del Fiore"
+      },
+      {
+        "type": "section",
+        "label": "Schnitt",
+        "placeholder": "Schnitt Platzhalter fuer Dome of Santa Maria del Fiore"
+      },
+      {
+        "type": "plan",
+        "label": "Grundriss",
+        "placeholder": "Grundriss Platzhalter fuer Dome of Santa Maria del Fiore"
+      }
+    ]
   },
   {
     "id": "palladio-four-books",
@@ -146,14 +446,47 @@
     "title": "I quattro libri dell'architettura",
     "entry_type": "text",
     "year_start": 1570,
-    "authors": ["Andrea Palladio"],
+    "authors": [
+      "Andrea Palladio"
+    ],
     "city": "Venice",
     "country": "Italy",
     "style_sector": "classical_architecture",
-    "lecture_cluster": ["theory_history"],
-    "themes": ["treatise", "villa", "proportion", "classicism"],
+    "lecture_cluster": [
+      "theory_history"
+    ],
+    "themes": [
+      "treatise",
+      "villa",
+      "proportion",
+      "classicism"
+    ],
     "short_description": "Architekturtraktat, der antike Ordnung, Villentypologien und zeichnerische Reproduzierbarkeit zu einem weit reisenden Modell macht.",
-    "source_quality": "primary_text"
+    "source_quality": "primary_text",
+    "one_sentence": "Architekturtraktat, der antike Ordnung, Villentypologien und zeichnerische Reproduzierbarkeit zu einem weit reisenden Modell macht.",
+    "full_description": "Architekturtraktat, der antike Ordnung, Villentypologien und zeichnerische Reproduzierbarkeit zu einem weit reisenden Modell macht. Im Architecture Cosmos wird dieser Eintrag als Teil eines groesseren Wissensraums gelesen: Jahr, Stilsektor, Typologie, Ort, Autorenschaft und Relationen bestimmen, wie er im Atlas sichtbar wird. Die Detailstufe sammelt spaeter Fotografien, Plaene, Schnitte, Quellen und Modelle an einer Stelle, ohne den raeumlichen Zusammenhang der Architekturgeschichte zu verlieren.",
+    "media": [
+      {
+        "type": "exterior",
+        "label": "Aussenansicht",
+        "placeholder": "Aussenansicht Platzhalter fuer I quattro libri dell'architettura"
+      },
+      {
+        "type": "interior",
+        "label": "Innenraum",
+        "placeholder": "Innenraum Platzhalter fuer I quattro libri dell'architettura"
+      },
+      {
+        "type": "section",
+        "label": "Schnitt",
+        "placeholder": "Schnitt Platzhalter fuer I quattro libri dell'architettura"
+      },
+      {
+        "type": "plan",
+        "label": "Grundriss",
+        "placeholder": "Grundriss Platzhalter fuer I quattro libri dell'architettura"
+      }
+    ]
   },
   {
     "id": "sixtus-v-rome-plan",
@@ -162,14 +495,48 @@
     "entry_type": "urban_plan",
     "year_start": 1585,
     "year_end": 1590,
-    "authors": ["Domenico Fontana", "Sixtus V."],
+    "authors": [
+      "Domenico Fontana",
+      "Sixtus V."
+    ],
     "city": "Rom",
     "country": "Italy",
     "style_sector": "classical_architecture",
-    "lecture_cluster": ["urban_history"],
-    "themes": ["axis", "pilgrimage", "baroque city", "infrastructure"],
+    "lecture_cluster": [
+      "urban_history"
+    ],
+    "themes": [
+      "axis",
+      "pilgrimage",
+      "baroque city",
+      "infrastructure"
+    ],
     "short_description": "Fruehes Beispiel einer grossmassstaeblichen Stadtordnung durch Sichtachsen, Obelisken und eine vernetzte sakrale Topografie.",
-    "source_quality": "lecture_notes"
+    "source_quality": "lecture_notes",
+    "one_sentence": "Fruehes Beispiel einer grossmassstaeblichen Stadtordnung durch Sichtachsen, Obelisken und eine vernetzte sakrale Topografie.",
+    "full_description": "Fruehes Beispiel einer grossmassstaeblichen Stadtordnung durch Sichtachsen, Obelisken und eine vernetzte sakrale Topografie. Im Architecture Cosmos wird dieser Eintrag als Teil eines groesseren Wissensraums gelesen: Jahr, Stilsektor, Typologie, Ort, Autorenschaft und Relationen bestimmen, wie er im Atlas sichtbar wird. Die Detailstufe sammelt spaeter Fotografien, Plaene, Schnitte, Quellen und Modelle an einer Stelle, ohne den raeumlichen Zusammenhang der Architekturgeschichte zu verlieren.",
+    "media": [
+      {
+        "type": "exterior",
+        "label": "Aussenansicht",
+        "placeholder": "Aussenansicht Platzhalter fuer Rom unter Sixtus V."
+      },
+      {
+        "type": "interior",
+        "label": "Innenraum",
+        "placeholder": "Innenraum Platzhalter fuer Rom unter Sixtus V."
+      },
+      {
+        "type": "section",
+        "label": "Schnitt",
+        "placeholder": "Schnitt Platzhalter fuer Rom unter Sixtus V."
+      },
+      {
+        "type": "plan",
+        "label": "Grundriss",
+        "placeholder": "Grundriss Platzhalter fuer Rom unter Sixtus V."
+      }
+    ]
   },
   {
     "id": "versailles-gardens",
@@ -178,14 +545,47 @@
     "entry_type": "landscape_project",
     "year_start": 1661,
     "year_end": 1715,
-    "authors": ["Andre Le Notre"],
+    "authors": [
+      "Andre Le Notre"
+    ],
     "city": "Versailles",
     "country": "France",
     "style_sector": "classical_architecture",
-    "lecture_cluster": ["garden_history"],
-    "themes": ["axis", "absolutism", "landscape", "control"],
+    "lecture_cluster": [
+      "garden_history"
+    ],
+    "themes": [
+      "axis",
+      "absolutism",
+      "landscape",
+      "control"
+    ],
     "short_description": "Formalisierte Landschaft als politisches und optisches Instrument, in dem Achsen, Wasser und Vegetation Herrschaft raeumlich organisieren.",
-    "source_quality": "lecture_notes"
+    "source_quality": "lecture_notes",
+    "one_sentence": "Formalisierte Landschaft als politisches und optisches Instrument, in dem Achsen, Wasser und Vegetation Herrschaft raeumlich organisieren.",
+    "full_description": "Formalisierte Landschaft als politisches und optisches Instrument, in dem Achsen, Wasser und Vegetation Herrschaft raeumlich organisieren. Im Architecture Cosmos wird dieser Eintrag als Teil eines groesseren Wissensraums gelesen: Jahr, Stilsektor, Typologie, Ort, Autorenschaft und Relationen bestimmen, wie er im Atlas sichtbar wird. Die Detailstufe sammelt spaeter Fotografien, Plaene, Schnitte, Quellen und Modelle an einer Stelle, ohne den raeumlichen Zusammenhang der Architekturgeschichte zu verlieren.",
+    "media": [
+      {
+        "type": "exterior",
+        "label": "Aussenansicht",
+        "placeholder": "Aussenansicht Platzhalter fuer Gardens of Versailles"
+      },
+      {
+        "type": "interior",
+        "label": "Innenraum",
+        "placeholder": "Innenraum Platzhalter fuer Gardens of Versailles"
+      },
+      {
+        "type": "section",
+        "label": "Schnitt",
+        "placeholder": "Schnitt Platzhalter fuer Gardens of Versailles"
+      },
+      {
+        "type": "plan",
+        "label": "Grundriss",
+        "placeholder": "Grundriss Platzhalter fuer Gardens of Versailles"
+      }
+    ]
   },
   {
     "id": "marc-antoine-laugier-primitive-hut",
@@ -193,14 +593,47 @@
     "title": "Primitive Hut",
     "entry_type": "theory",
     "year_start": 1753,
-    "authors": ["Marc-Antoine Laugier"],
+    "authors": [
+      "Marc-Antoine Laugier"
+    ],
     "city": "Paris",
     "country": "France",
     "style_sector": "pre_modern_architecture",
-    "lecture_cluster": ["theory_history"],
-    "themes": ["origin", "nature", "column", "theory"],
+    "lecture_cluster": [
+      "theory_history"
+    ],
+    "themes": [
+      "origin",
+      "nature",
+      "column",
+      "theory"
+    ],
     "short_description": "Ursprungsmodell der Architektur, das Natur, Konstruktion und klassische Ordnung in einer theoretischen Figur verdichtet.",
-    "source_quality": "primary_text"
+    "source_quality": "primary_text",
+    "one_sentence": "Ursprungsmodell der Architektur, das Natur, Konstruktion und klassische Ordnung in einer theoretischen Figur verdichtet.",
+    "full_description": "Ursprungsmodell der Architektur, das Natur, Konstruktion und klassische Ordnung in einer theoretischen Figur verdichtet. Im Architecture Cosmos wird dieser Eintrag als Teil eines groesseren Wissensraums gelesen: Jahr, Stilsektor, Typologie, Ort, Autorenschaft und Relationen bestimmen, wie er im Atlas sichtbar wird. Die Detailstufe sammelt spaeter Fotografien, Plaene, Schnitte, Quellen und Modelle an einer Stelle, ohne den raeumlichen Zusammenhang der Architekturgeschichte zu verlieren.",
+    "media": [
+      {
+        "type": "exterior",
+        "label": "Aussenansicht",
+        "placeholder": "Aussenansicht Platzhalter fuer Primitive Hut"
+      },
+      {
+        "type": "interior",
+        "label": "Innenraum",
+        "placeholder": "Innenraum Platzhalter fuer Primitive Hut"
+      },
+      {
+        "type": "section",
+        "label": "Schnitt",
+        "placeholder": "Schnitt Platzhalter fuer Primitive Hut"
+      },
+      {
+        "type": "plan",
+        "label": "Grundriss",
+        "placeholder": "Grundriss Platzhalter fuer Primitive Hut"
+      }
+    ]
   },
   {
     "id": "panopticon",
@@ -208,12 +641,45 @@
     "title": "Panopticon",
     "entry_type": "theory",
     "year_start": 1791,
-    "authors": ["Jeremy Bentham"],
+    "authors": [
+      "Jeremy Bentham"
+    ],
     "style_sector": "pre_modern_architecture",
-    "lecture_cluster": ["institutional_architecture"],
-    "themes": ["surveillance", "institution", "diagram", "control"],
+    "lecture_cluster": [
+      "institutional_architecture"
+    ],
+    "themes": [
+      "surveillance",
+      "institution",
+      "diagram",
+      "control"
+    ],
     "short_description": "Raeumliches Kontrollmodell, das Architektur, Sichtbarkeit und Institution als diagrammatische Machttechnik verbindet.",
-    "source_quality": "primary_text"
+    "source_quality": "primary_text",
+    "one_sentence": "Raeumliches Kontrollmodell, das Architektur, Sichtbarkeit und Institution als diagrammatische Machttechnik verbindet.",
+    "full_description": "Raeumliches Kontrollmodell, das Architektur, Sichtbarkeit und Institution als diagrammatische Machttechnik verbindet. Im Architecture Cosmos wird dieser Eintrag als Teil eines groesseren Wissensraums gelesen: Jahr, Stilsektor, Typologie, Ort, Autorenschaft und Relationen bestimmen, wie er im Atlas sichtbar wird. Die Detailstufe sammelt spaeter Fotografien, Plaene, Schnitte, Quellen und Modelle an einer Stelle, ohne den raeumlichen Zusammenhang der Architekturgeschichte zu verlieren.",
+    "media": [
+      {
+        "type": "exterior",
+        "label": "Aussenansicht",
+        "placeholder": "Aussenansicht Platzhalter fuer Panopticon"
+      },
+      {
+        "type": "interior",
+        "label": "Innenraum",
+        "placeholder": "Innenraum Platzhalter fuer Panopticon"
+      },
+      {
+        "type": "section",
+        "label": "Schnitt",
+        "placeholder": "Schnitt Platzhalter fuer Panopticon"
+      },
+      {
+        "type": "plan",
+        "label": "Grundriss",
+        "placeholder": "Grundriss Platzhalter fuer Panopticon"
+      }
+    ]
   },
   {
     "id": "crystal-palace",
@@ -222,14 +688,47 @@
     "entry_type": "building",
     "year_start": 1851,
     "year_end": 1851,
-    "authors": ["Joseph Paxton"],
+    "authors": [
+      "Joseph Paxton"
+    ],
     "city": "London",
     "country": "United Kingdom",
     "style_sector": "pre_modern_architecture",
-    "lecture_cluster": ["architectural_history_3_4"],
-    "themes": ["glass", "industrialization", "exhibition", "transparency"],
+    "lecture_cluster": [
+      "architectural_history_3_4"
+    ],
+    "themes": [
+      "glass",
+      "industrialization",
+      "exhibition",
+      "transparency"
+    ],
     "short_description": "Schluesselprojekt des 19. Jahrhunderts, in dem Eisen und Glas als neues technisches und raeumliches System auftreten.",
-    "source_quality": "lecture_notes"
+    "source_quality": "lecture_notes",
+    "one_sentence": "Schluesselprojekt des 19. Jahrhunderts, in dem Eisen und Glas als neues technisches und raeumliches System auftreten.",
+    "full_description": "Schluesselprojekt des 19. Jahrhunderts, in dem Eisen und Glas als neues technisches und raeumliches System auftreten. Im Architecture Cosmos wird dieser Eintrag als Teil eines groesseren Wissensraums gelesen: Jahr, Stilsektor, Typologie, Ort, Autorenschaft und Relationen bestimmen, wie er im Atlas sichtbar wird. Die Detailstufe sammelt spaeter Fotografien, Plaene, Schnitte, Quellen und Modelle an einer Stelle, ohne den raeumlichen Zusammenhang der Architekturgeschichte zu verlieren.",
+    "media": [
+      {
+        "type": "exterior",
+        "label": "Aussenansicht",
+        "placeholder": "Aussenansicht Platzhalter fuer Crystal Palace"
+      },
+      {
+        "type": "interior",
+        "label": "Innenraum",
+        "placeholder": "Innenraum Platzhalter fuer Crystal Palace"
+      },
+      {
+        "type": "section",
+        "label": "Schnitt",
+        "placeholder": "Schnitt Platzhalter fuer Crystal Palace"
+      },
+      {
+        "type": "plan",
+        "label": "Grundriss",
+        "placeholder": "Grundriss Platzhalter fuer Crystal Palace"
+      }
+    ]
   },
   {
     "id": "red-house",
@@ -238,14 +737,47 @@
     "entry_type": "building",
     "year_start": 1860,
     "year_end": 1860,
-    "authors": ["William Morris", "Philip Webb"],
+    "authors": [
+      "William Morris",
+      "Philip Webb"
+    ],
     "city": "London",
     "country": "United Kingdom",
     "style_sector": "pre_modern_architecture",
-    "lecture_cluster": ["architectural_history_3_4"],
-    "themes": ["arts-and-crafts", "anti-industrialism", "domesticity"],
+    "lecture_cluster": [
+      "architectural_history_3_4"
+    ],
+    "themes": [
+      "arts-and-crafts",
+      "anti-industrialism",
+      "domesticity"
+    ],
     "short_description": "Manifestartiges Haus der Arts-and-Crafts-Bewegung und Gegenposition zur industriellen Moderne.",
-    "source_quality": "lecture_notes"
+    "source_quality": "lecture_notes",
+    "one_sentence": "Manifestartiges Haus der Arts-and-Crafts-Bewegung und Gegenposition zur industriellen Moderne.",
+    "full_description": "Manifestartiges Haus der Arts-and-Crafts-Bewegung und Gegenposition zur industriellen Moderne. Im Architecture Cosmos wird dieser Eintrag als Teil eines groesseren Wissensraums gelesen: Jahr, Stilsektor, Typologie, Ort, Autorenschaft und Relationen bestimmen, wie er im Atlas sichtbar wird. Die Detailstufe sammelt spaeter Fotografien, Plaene, Schnitte, Quellen und Modelle an einer Stelle, ohne den raeumlichen Zusammenhang der Architekturgeschichte zu verlieren.",
+    "media": [
+      {
+        "type": "exterior",
+        "label": "Aussenansicht",
+        "placeholder": "Aussenansicht Platzhalter fuer The Red House"
+      },
+      {
+        "type": "interior",
+        "label": "Innenraum",
+        "placeholder": "Innenraum Platzhalter fuer The Red House"
+      },
+      {
+        "type": "section",
+        "label": "Schnitt",
+        "placeholder": "Schnitt Platzhalter fuer The Red House"
+      },
+      {
+        "type": "plan",
+        "label": "Grundriss",
+        "placeholder": "Grundriss Platzhalter fuer The Red House"
+      }
+    ]
   },
   {
     "id": "cite-industrielle",
@@ -254,14 +786,47 @@
     "entry_type": "urban_plan",
     "year_start": 1901,
     "year_end": 1917,
-    "authors": ["Tony Garnier"],
+    "authors": [
+      "Tony Garnier"
+    ],
     "city": "Lyon",
     "country": "France",
     "style_sector": "pre_modern_architecture",
-    "lecture_cluster": ["urban_history"],
-    "themes": ["industry", "zoning", "workers", "utopia"],
+    "lecture_cluster": [
+      "urban_history"
+    ],
+    "themes": [
+      "industry",
+      "zoning",
+      "workers",
+      "utopia"
+    ],
     "short_description": "Fruehmodernes Stadtmodell, das Industrie, Wohnen, Gesundheit und Verkehr als rational geordnete urbane Maschine denkt.",
-    "source_quality": "case_study"
+    "source_quality": "case_study",
+    "one_sentence": "Fruehmodernes Stadtmodell, das Industrie, Wohnen, Gesundheit und Verkehr als rational geordnete urbane Maschine denkt.",
+    "full_description": "Fruehmodernes Stadtmodell, das Industrie, Wohnen, Gesundheit und Verkehr als rational geordnete urbane Maschine denkt. Im Architecture Cosmos wird dieser Eintrag als Teil eines groesseren Wissensraums gelesen: Jahr, Stilsektor, Typologie, Ort, Autorenschaft und Relationen bestimmen, wie er im Atlas sichtbar wird. Die Detailstufe sammelt spaeter Fotografien, Plaene, Schnitte, Quellen und Modelle an einer Stelle, ohne den raeumlichen Zusammenhang der Architekturgeschichte zu verlieren.",
+    "media": [
+      {
+        "type": "exterior",
+        "label": "Aussenansicht",
+        "placeholder": "Aussenansicht Platzhalter fuer Cite Industrielle"
+      },
+      {
+        "type": "interior",
+        "label": "Innenraum",
+        "placeholder": "Innenraum Platzhalter fuer Cite Industrielle"
+      },
+      {
+        "type": "section",
+        "label": "Schnitt",
+        "placeholder": "Schnitt Platzhalter fuer Cite Industrielle"
+      },
+      {
+        "type": "plan",
+        "label": "Grundriss",
+        "placeholder": "Grundriss Platzhalter fuer Cite Industrielle"
+      }
+    ]
   },
   {
     "id": "garden-cities-of-tomorrow",
@@ -270,14 +835,47 @@
     "entry_type": "text",
     "year_start": 1902,
     "year_end": 1902,
-    "authors": ["Ebenezer Howard"],
+    "authors": [
+      "Ebenezer Howard"
+    ],
     "city": "London",
     "country": "United Kingdom",
     "style_sector": "pre_modern_architecture",
-    "lecture_cluster": ["urban_history"],
-    "themes": ["garden city", "diagram", "reform", "settlement"],
+    "lecture_cluster": [
+      "urban_history"
+    ],
+    "themes": [
+      "garden city",
+      "diagram",
+      "reform",
+      "settlement"
+    ],
     "short_description": "Staedtebaulicher Reformtext, der Wachstum, Gruenraum und soziale Organisation in einem diagrammatischen Modell verbindet.",
-    "source_quality": "primary_text"
+    "source_quality": "primary_text",
+    "one_sentence": "Staedtebaulicher Reformtext, der Wachstum, Gruenraum und soziale Organisation in einem diagrammatischen Modell verbindet.",
+    "full_description": "Staedtebaulicher Reformtext, der Wachstum, Gruenraum und soziale Organisation in einem diagrammatischen Modell verbindet. Im Architecture Cosmos wird dieser Eintrag als Teil eines groesseren Wissensraums gelesen: Jahr, Stilsektor, Typologie, Ort, Autorenschaft und Relationen bestimmen, wie er im Atlas sichtbar wird. Die Detailstufe sammelt spaeter Fotografien, Plaene, Schnitte, Quellen und Modelle an einer Stelle, ohne den raeumlichen Zusammenhang der Architekturgeschichte zu verlieren.",
+    "media": [
+      {
+        "type": "exterior",
+        "label": "Aussenansicht",
+        "placeholder": "Aussenansicht Platzhalter fuer Garden Cities of To-morrow"
+      },
+      {
+        "type": "interior",
+        "label": "Innenraum",
+        "placeholder": "Innenraum Platzhalter fuer Garden Cities of To-morrow"
+      },
+      {
+        "type": "section",
+        "label": "Schnitt",
+        "placeholder": "Schnitt Platzhalter fuer Garden Cities of To-morrow"
+      },
+      {
+        "type": "plan",
+        "label": "Grundriss",
+        "placeholder": "Grundriss Platzhalter fuer Garden Cities of To-morrow"
+      }
+    ]
   },
   {
     "id": "fagus-factory",
@@ -286,14 +884,48 @@
     "entry_type": "building",
     "year_start": 1911,
     "year_end": 1913,
-    "authors": ["Walter Gropius", "Adolf Meyer"],
+    "authors": [
+      "Walter Gropius",
+      "Adolf Meyer"
+    ],
     "city": "Alfeld",
     "country": "Germany",
     "style_sector": "modern_architecture",
-    "lecture_cluster": ["modernism"],
-    "themes": ["factory", "glass corner", "industry", "transparency"],
+    "lecture_cluster": [
+      "modernism"
+    ],
+    "themes": [
+      "factory",
+      "glass corner",
+      "industry",
+      "transparency"
+    ],
     "short_description": "Industriebau, der die Ecke entmaterialisiert und die Fabrik als modernes, helles und repraesentatives Bauprogramm zeigt.",
-    "source_quality": "lecture_notes"
+    "source_quality": "lecture_notes",
+    "one_sentence": "Industriebau, der die Ecke entmaterialisiert und die Fabrik als modernes, helles und repraesentatives Bauprogramm zeigt.",
+    "full_description": "Industriebau, der die Ecke entmaterialisiert und die Fabrik als modernes, helles und repraesentatives Bauprogramm zeigt. Im Architecture Cosmos wird dieser Eintrag als Teil eines groesseren Wissensraums gelesen: Jahr, Stilsektor, Typologie, Ort, Autorenschaft und Relationen bestimmen, wie er im Atlas sichtbar wird. Die Detailstufe sammelt spaeter Fotografien, Plaene, Schnitte, Quellen und Modelle an einer Stelle, ohne den raeumlichen Zusammenhang der Architekturgeschichte zu verlieren.",
+    "media": [
+      {
+        "type": "exterior",
+        "label": "Aussenansicht",
+        "placeholder": "Aussenansicht Platzhalter fuer Fagus Factory"
+      },
+      {
+        "type": "interior",
+        "label": "Innenraum",
+        "placeholder": "Innenraum Platzhalter fuer Fagus Factory"
+      },
+      {
+        "type": "section",
+        "label": "Schnitt",
+        "placeholder": "Schnitt Platzhalter fuer Fagus Factory"
+      },
+      {
+        "type": "plan",
+        "label": "Grundriss",
+        "placeholder": "Grundriss Platzhalter fuer Fagus Factory"
+      }
+    ]
   },
   {
     "id": "dom-ino-house",
@@ -301,12 +933,45 @@
     "title": "Dom-Ino House",
     "entry_type": "object",
     "year_start": 1914,
-    "authors": ["Le Corbusier"],
+    "authors": [
+      "Le Corbusier"
+    ],
     "style_sector": "modern_architecture",
-    "lecture_cluster": ["modernism"],
-    "themes": ["prototype", "frame", "standardization", "free plan"],
+    "lecture_cluster": [
+      "modernism"
+    ],
+    "themes": [
+      "prototype",
+      "frame",
+      "standardization",
+      "free plan"
+    ],
     "short_description": "Konstruktives Prototypdiagramm, das Stahlbetonrahmen, freie Grundrisse und industrielle Wiederholbarkeit als modernes System vorbereitet.",
-    "source_quality": "case_study"
+    "source_quality": "case_study",
+    "one_sentence": "Konstruktives Prototypdiagramm, das Stahlbetonrahmen, freie Grundrisse und industrielle Wiederholbarkeit als modernes System vorbereitet.",
+    "full_description": "Konstruktives Prototypdiagramm, das Stahlbetonrahmen, freie Grundrisse und industrielle Wiederholbarkeit als modernes System vorbereitet. Im Architecture Cosmos wird dieser Eintrag als Teil eines groesseren Wissensraums gelesen: Jahr, Stilsektor, Typologie, Ort, Autorenschaft und Relationen bestimmen, wie er im Atlas sichtbar wird. Die Detailstufe sammelt spaeter Fotografien, Plaene, Schnitte, Quellen und Modelle an einer Stelle, ohne den raeumlichen Zusammenhang der Architekturgeschichte zu verlieren.",
+    "media": [
+      {
+        "type": "exterior",
+        "label": "Aussenansicht",
+        "placeholder": "Aussenansicht Platzhalter fuer Dom-Ino House"
+      },
+      {
+        "type": "interior",
+        "label": "Innenraum",
+        "placeholder": "Innenraum Platzhalter fuer Dom-Ino House"
+      },
+      {
+        "type": "section",
+        "label": "Schnitt",
+        "placeholder": "Schnitt Platzhalter fuer Dom-Ino House"
+      },
+      {
+        "type": "plan",
+        "label": "Grundriss",
+        "placeholder": "Grundriss Platzhalter fuer Dom-Ino House"
+      }
+    ]
   },
   {
     "id": "bauhaus-dessau",
@@ -314,14 +979,47 @@
     "title": "Bauhaus Dessau",
     "entry_type": "building",
     "year_start": 1926,
-    "authors": ["Walter Gropius"],
+    "authors": [
+      "Walter Gropius"
+    ],
     "city": "Dessau",
     "country": "Germany",
     "style_sector": "modern_architecture",
-    "lecture_cluster": ["modernism"],
-    "themes": ["school", "glass", "workshop", "modern pedagogy"],
+    "lecture_cluster": [
+      "modernism"
+    ],
+    "themes": [
+      "school",
+      "glass",
+      "workshop",
+      "modern pedagogy"
+    ],
     "short_description": "Schulbau und Programmarchitektur, die Werkstatt, Lehre, Wohnen und moderne Form als institutionelles Gefuege verbindet.",
-    "source_quality": "lecture_notes"
+    "source_quality": "lecture_notes",
+    "one_sentence": "Schulbau und Programmarchitektur, die Werkstatt, Lehre, Wohnen und moderne Form als institutionelles Gefuege verbindet.",
+    "full_description": "Schulbau und Programmarchitektur, die Werkstatt, Lehre, Wohnen und moderne Form als institutionelles Gefuege verbindet. Im Architecture Cosmos wird dieser Eintrag als Teil eines groesseren Wissensraums gelesen: Jahr, Stilsektor, Typologie, Ort, Autorenschaft und Relationen bestimmen, wie er im Atlas sichtbar wird. Die Detailstufe sammelt spaeter Fotografien, Plaene, Schnitte, Quellen und Modelle an einer Stelle, ohne den raeumlichen Zusammenhang der Architekturgeschichte zu verlieren.",
+    "media": [
+      {
+        "type": "exterior",
+        "label": "Aussenansicht",
+        "placeholder": "Aussenansicht Platzhalter fuer Bauhaus Dessau"
+      },
+      {
+        "type": "interior",
+        "label": "Innenraum",
+        "placeholder": "Innenraum Platzhalter fuer Bauhaus Dessau"
+      },
+      {
+        "type": "section",
+        "label": "Schnitt",
+        "placeholder": "Schnitt Platzhalter fuer Bauhaus Dessau"
+      },
+      {
+        "type": "plan",
+        "label": "Grundriss",
+        "placeholder": "Grundriss Platzhalter fuer Bauhaus Dessau"
+      }
+    ]
   },
   {
     "id": "villa-savoye",
@@ -329,14 +1027,48 @@
     "title": "Villa Savoye",
     "entry_type": "building",
     "year_start": 1931,
-    "authors": ["Le Corbusier", "Pierre Jeanneret"],
+    "authors": [
+      "Le Corbusier",
+      "Pierre Jeanneret"
+    ],
     "city": "Poissy",
     "country": "France",
     "style_sector": "modern_architecture",
-    "lecture_cluster": ["modernism"],
-    "themes": ["five points", "promenade", "pilotis", "machine age"],
+    "lecture_cluster": [
+      "modernism"
+    ],
+    "themes": [
+      "five points",
+      "promenade",
+      "pilotis",
+      "machine age"
+    ],
     "short_description": "Ikone der fruehen Moderne, in der die fuenf Punkte, Promenade architecturale und abstrakte Wohnmaschine in Hausform erscheinen.",
-    "source_quality": "lecture_notes"
+    "source_quality": "lecture_notes",
+    "one_sentence": "Ikone der fruehen Moderne, in der die fuenf Punkte, Promenade architecturale und abstrakte Wohnmaschine in Hausform erscheinen.",
+    "full_description": "Ikone der fruehen Moderne, in der die fuenf Punkte, Promenade architecturale und abstrakte Wohnmaschine in Hausform erscheinen. Im Architecture Cosmos wird dieser Eintrag als Teil eines groesseren Wissensraums gelesen: Jahr, Stilsektor, Typologie, Ort, Autorenschaft und Relationen bestimmen, wie er im Atlas sichtbar wird. Die Detailstufe sammelt spaeter Fotografien, Plaene, Schnitte, Quellen und Modelle an einer Stelle, ohne den raeumlichen Zusammenhang der Architekturgeschichte zu verlieren.",
+    "media": [
+      {
+        "type": "exterior",
+        "label": "Aussenansicht",
+        "placeholder": "Aussenansicht Platzhalter fuer Villa Savoye"
+      },
+      {
+        "type": "interior",
+        "label": "Innenraum",
+        "placeholder": "Innenraum Platzhalter fuer Villa Savoye"
+      },
+      {
+        "type": "section",
+        "label": "Schnitt",
+        "placeholder": "Schnitt Platzhalter fuer Villa Savoye"
+      },
+      {
+        "type": "plan",
+        "label": "Grundriss",
+        "placeholder": "Grundriss Platzhalter fuer Villa Savoye"
+      }
+    ]
   },
   {
     "id": "haus-tugendhat",
@@ -345,14 +1077,47 @@
     "entry_type": "building",
     "year_start": 1930,
     "year_end": 1930,
-    "authors": ["Ludwig Mies van der Rohe"],
+    "authors": [
+      "Ludwig Mies van der Rohe"
+    ],
     "city": "Bruenn",
     "country": "Czech Republic",
     "style_sector": "modern_architecture",
-    "lecture_cluster": ["architectural_history_3_4"],
-    "themes": ["curtain", "free plan", "privacy", "modern living"],
+    "lecture_cluster": [
+      "architectural_history_3_4"
+    ],
+    "themes": [
+      "curtain",
+      "free plan",
+      "privacy",
+      "modern living"
+    ],
     "short_description": "Modernes Wohnhaus mit praezisem Einsatz von Vorhaengen, offenen Raumzonen und flexibler Raumartikulation.",
-    "source_quality": "lecture_notes"
+    "source_quality": "lecture_notes",
+    "one_sentence": "Modernes Wohnhaus mit praezisem Einsatz von Vorhaengen, offenen Raumzonen und flexibler Raumartikulation.",
+    "full_description": "Modernes Wohnhaus mit praezisem Einsatz von Vorhaengen, offenen Raumzonen und flexibler Raumartikulation. Im Architecture Cosmos wird dieser Eintrag als Teil eines groesseren Wissensraums gelesen: Jahr, Stilsektor, Typologie, Ort, Autorenschaft und Relationen bestimmen, wie er im Atlas sichtbar wird. Die Detailstufe sammelt spaeter Fotografien, Plaene, Schnitte, Quellen und Modelle an einer Stelle, ohne den raeumlichen Zusammenhang der Architekturgeschichte zu verlieren.",
+    "media": [
+      {
+        "type": "exterior",
+        "label": "Aussenansicht",
+        "placeholder": "Aussenansicht Platzhalter fuer Haus Tugendhat"
+      },
+      {
+        "type": "interior",
+        "label": "Innenraum",
+        "placeholder": "Innenraum Platzhalter fuer Haus Tugendhat"
+      },
+      {
+        "type": "section",
+        "label": "Schnitt",
+        "placeholder": "Schnitt Platzhalter fuer Haus Tugendhat"
+      },
+      {
+        "type": "plan",
+        "label": "Grundriss",
+        "placeholder": "Grundriss Platzhalter fuer Haus Tugendhat"
+      }
+    ]
   },
   {
     "id": "athens-charter",
@@ -361,12 +1126,46 @@
     "entry_type": "theory",
     "year_start": 1933,
     "year_end": 1943,
-    "authors": ["CIAM", "Le Corbusier"],
+    "authors": [
+      "CIAM",
+      "Le Corbusier"
+    ],
     "style_sector": "modern_architecture",
-    "lecture_cluster": ["modernism"],
-    "themes": ["functional city", "zoning", "housing", "mobility"],
+    "lecture_cluster": [
+      "modernism"
+    ],
+    "themes": [
+      "functional city",
+      "zoning",
+      "housing",
+      "mobility"
+    ],
     "short_description": "Programmatik der funktionalen Stadt, die Wohnen, Arbeiten, Erholung und Verkehr als getrennte Ordnungsfelder denkt.",
-    "source_quality": "primary_text"
+    "source_quality": "primary_text",
+    "one_sentence": "Programmatik der funktionalen Stadt, die Wohnen, Arbeiten, Erholung und Verkehr als getrennte Ordnungsfelder denkt.",
+    "full_description": "Programmatik der funktionalen Stadt, die Wohnen, Arbeiten, Erholung und Verkehr als getrennte Ordnungsfelder denkt. Im Architecture Cosmos wird dieser Eintrag als Teil eines groesseren Wissensraums gelesen: Jahr, Stilsektor, Typologie, Ort, Autorenschaft und Relationen bestimmen, wie er im Atlas sichtbar wird. Die Detailstufe sammelt spaeter Fotografien, Plaene, Schnitte, Quellen und Modelle an einer Stelle, ohne den raeumlichen Zusammenhang der Architekturgeschichte zu verlieren.",
+    "media": [
+      {
+        "type": "exterior",
+        "label": "Aussenansicht",
+        "placeholder": "Aussenansicht Platzhalter fuer Charta von Athen"
+      },
+      {
+        "type": "interior",
+        "label": "Innenraum",
+        "placeholder": "Innenraum Platzhalter fuer Charta von Athen"
+      },
+      {
+        "type": "section",
+        "label": "Schnitt",
+        "placeholder": "Schnitt Platzhalter fuer Charta von Athen"
+      },
+      {
+        "type": "plan",
+        "label": "Grundriss",
+        "placeholder": "Grundriss Platzhalter fuer Charta von Athen"
+      }
+    ]
   },
   {
     "id": "unite-habitation",
@@ -375,14 +1174,47 @@
     "entry_type": "building",
     "year_start": 1952,
     "year_end": 1952,
-    "authors": ["Le Corbusier"],
+    "authors": [
+      "Le Corbusier"
+    ],
     "city": "Marseille",
     "country": "France",
     "style_sector": "postwar_modern_architecture",
-    "lecture_cluster": ["architectural_history_3_4"],
-    "themes": ["mass housing", "interior street", "infrastructure", "modulor"],
+    "lecture_cluster": [
+      "architectural_history_3_4"
+    ],
+    "themes": [
+      "mass housing",
+      "interior street",
+      "infrastructure",
+      "modulor"
+    ],
     "short_description": "Nachkriegsmodernes Wohngebaeude, das Wohnen, Versorgung, Infrastruktur und kollektive Programme in einem vertikalen System verbindet.",
-    "source_quality": "lecture_notes"
+    "source_quality": "lecture_notes",
+    "one_sentence": "Nachkriegsmodernes Wohngebaeude, das Wohnen, Versorgung, Infrastruktur und kollektive Programme in einem vertikalen System verbindet.",
+    "full_description": "Nachkriegsmodernes Wohngebaeude, das Wohnen, Versorgung, Infrastruktur und kollektive Programme in einem vertikalen System verbindet. Im Architecture Cosmos wird dieser Eintrag als Teil eines groesseren Wissensraums gelesen: Jahr, Stilsektor, Typologie, Ort, Autorenschaft und Relationen bestimmen, wie er im Atlas sichtbar wird. Die Detailstufe sammelt spaeter Fotografien, Plaene, Schnitte, Quellen und Modelle an einer Stelle, ohne den raeumlichen Zusammenhang der Architekturgeschichte zu verlieren.",
+    "media": [
+      {
+        "type": "exterior",
+        "label": "Aussenansicht",
+        "placeholder": "Aussenansicht Platzhalter fuer Unite d'Habitation"
+      },
+      {
+        "type": "interior",
+        "label": "Innenraum",
+        "placeholder": "Innenraum Platzhalter fuer Unite d'Habitation"
+      },
+      {
+        "type": "section",
+        "label": "Schnitt",
+        "placeholder": "Schnitt Platzhalter fuer Unite d'Habitation"
+      },
+      {
+        "type": "plan",
+        "label": "Grundriss",
+        "placeholder": "Grundriss Platzhalter fuer Unite d'Habitation"
+      }
+    ]
   },
   {
     "id": "new-babylon",
@@ -391,12 +1223,45 @@
     "entry_type": "map",
     "year_start": 1959,
     "year_end": 1974,
-    "authors": ["Constant Nieuwenhuys"],
+    "authors": [
+      "Constant Nieuwenhuys"
+    ],
     "style_sector": "postwar_modern_architecture",
-    "lecture_cluster": ["postwar_urbanism"],
-    "themes": ["megastructure", "play", "mapping", "situationism"],
+    "lecture_cluster": [
+      "postwar_urbanism"
+    ],
+    "themes": [
+      "megastructure",
+      "play",
+      "mapping",
+      "situationism"
+    ],
     "short_description": "Spekulatives Karten- und Modellprojekt einer nomadischen Megastruktur, das Stadt als offenes Feld permanenter Veraenderung versteht.",
-    "source_quality": "archive_reference"
+    "source_quality": "archive_reference",
+    "one_sentence": "Spekulatives Karten- und Modellprojekt einer nomadischen Megastruktur, das Stadt als offenes Feld permanenter Veraenderung versteht.",
+    "full_description": "Spekulatives Karten- und Modellprojekt einer nomadischen Megastruktur, das Stadt als offenes Feld permanenter Veraenderung versteht. Im Architecture Cosmos wird dieser Eintrag als Teil eines groesseren Wissensraums gelesen: Jahr, Stilsektor, Typologie, Ort, Autorenschaft und Relationen bestimmen, wie er im Atlas sichtbar wird. Die Detailstufe sammelt spaeter Fotografien, Plaene, Schnitte, Quellen und Modelle an einer Stelle, ohne den raeumlichen Zusammenhang der Architekturgeschichte zu verlieren.",
+    "media": [
+      {
+        "type": "exterior",
+        "label": "Aussenansicht",
+        "placeholder": "Aussenansicht Platzhalter fuer New Babylon"
+      },
+      {
+        "type": "interior",
+        "label": "Innenraum",
+        "placeholder": "Innenraum Platzhalter fuer New Babylon"
+      },
+      {
+        "type": "section",
+        "label": "Schnitt",
+        "placeholder": "Schnitt Platzhalter fuer New Babylon"
+      },
+      {
+        "type": "plan",
+        "label": "Grundriss",
+        "placeholder": "Grundriss Platzhalter fuer New Babylon"
+      }
+    ]
   },
   {
     "id": "centre-pompidou",
@@ -405,14 +1270,49 @@
     "entry_type": "infrastructure",
     "year_start": 1977,
     "year_end": 1977,
-    "authors": ["Renzo Piano", "Richard Rogers", "Gianfranco Franchini"],
+    "authors": [
+      "Renzo Piano",
+      "Richard Rogers",
+      "Gianfranco Franchini"
+    ],
     "city": "Paris",
     "country": "France",
     "style_sector": "postwar_modern_architecture",
-    "lecture_cluster": ["architectural_history_4"],
-    "themes": ["culture", "services", "exoskeleton", "public space"],
+    "lecture_cluster": [
+      "architectural_history_4"
+    ],
+    "themes": [
+      "culture",
+      "services",
+      "exoskeleton",
+      "public space"
+    ],
     "short_description": "Kulturmaschine mit ausgelagerter Gebaeudetechnik, die Fassade, Infrastruktur und staedtische Buehne miteinander verschraenkt.",
-    "source_quality": "lecture_notes"
+    "source_quality": "lecture_notes",
+    "one_sentence": "Kulturmaschine mit ausgelagerter Gebaeudetechnik, die Fassade, Infrastruktur und staedtische Buehne miteinander verschraenkt.",
+    "full_description": "Kulturmaschine mit ausgelagerter Gebaeudetechnik, die Fassade, Infrastruktur und staedtische Buehne miteinander verschraenkt. Im Architecture Cosmos wird dieser Eintrag als Teil eines groesseren Wissensraums gelesen: Jahr, Stilsektor, Typologie, Ort, Autorenschaft und Relationen bestimmen, wie er im Atlas sichtbar wird. Die Detailstufe sammelt spaeter Fotografien, Plaene, Schnitte, Quellen und Modelle an einer Stelle, ohne den raeumlichen Zusammenhang der Architekturgeschichte zu verlieren.",
+    "media": [
+      {
+        "type": "exterior",
+        "label": "Aussenansicht",
+        "placeholder": "Aussenansicht Platzhalter fuer Centre Pompidou"
+      },
+      {
+        "type": "interior",
+        "label": "Innenraum",
+        "placeholder": "Innenraum Platzhalter fuer Centre Pompidou"
+      },
+      {
+        "type": "section",
+        "label": "Schnitt",
+        "placeholder": "Schnitt Platzhalter fuer Centre Pompidou"
+      },
+      {
+        "type": "plan",
+        "label": "Grundriss",
+        "placeholder": "Grundriss Platzhalter fuer Centre Pompidou"
+      }
+    ]
   },
   {
     "id": "delirious-new-york",
@@ -420,14 +1320,47 @@
     "title": "Delirious New York",
     "entry_type": "text",
     "year_start": 1978,
-    "authors": ["Rem Koolhaas"],
+    "authors": [
+      "Rem Koolhaas"
+    ],
     "city": "New York",
     "country": "United States",
     "style_sector": "postwar_modern_architecture",
-    "lecture_cluster": ["urban_theory"],
-    "themes": ["retroactive manifesto", "density", "grid", "culture of congestion"],
+    "lecture_cluster": [
+      "urban_theory"
+    ],
+    "themes": [
+      "retroactive manifesto",
+      "density",
+      "grid",
+      "culture of congestion"
+    ],
     "short_description": "Rueckwirkendes Manifest, das Manhattan als Labor von Dichte, Programmstapelung und spekulativer Metropole liest.",
-    "source_quality": "primary_text"
+    "source_quality": "primary_text",
+    "one_sentence": "Rueckwirkendes Manifest, das Manhattan als Labor von Dichte, Programmstapelung und spekulativer Metropole liest.",
+    "full_description": "Rueckwirkendes Manifest, das Manhattan als Labor von Dichte, Programmstapelung und spekulativer Metropole liest. Im Architecture Cosmos wird dieser Eintrag als Teil eines groesseren Wissensraums gelesen: Jahr, Stilsektor, Typologie, Ort, Autorenschaft und Relationen bestimmen, wie er im Atlas sichtbar wird. Die Detailstufe sammelt spaeter Fotografien, Plaene, Schnitte, Quellen und Modelle an einer Stelle, ohne den raeumlichen Zusammenhang der Architekturgeschichte zu verlieren.",
+    "media": [
+      {
+        "type": "exterior",
+        "label": "Aussenansicht",
+        "placeholder": "Aussenansicht Platzhalter fuer Delirious New York"
+      },
+      {
+        "type": "interior",
+        "label": "Innenraum",
+        "placeholder": "Innenraum Platzhalter fuer Delirious New York"
+      },
+      {
+        "type": "section",
+        "label": "Schnitt",
+        "placeholder": "Schnitt Platzhalter fuer Delirious New York"
+      },
+      {
+        "type": "plan",
+        "label": "Grundriss",
+        "placeholder": "Grundriss Platzhalter fuer Delirious New York"
+      }
+    ]
   },
   {
     "id": "berlin-iba-1987",
@@ -436,14 +1369,48 @@
     "entry_type": "event",
     "year_start": 1979,
     "year_end": 1987,
-    "authors": ["Josef Paul Kleihues", "Hardt-Waltherr Hamer"],
+    "authors": [
+      "Josef Paul Kleihues",
+      "Hardt-Waltherr Hamer"
+    ],
     "city": "Berlin",
     "country": "Germany",
     "style_sector": "postwar_modern_architecture",
-    "lecture_cluster": ["urban_history"],
-    "themes": ["critical reconstruction", "block", "repair", "housing"],
+    "lecture_cluster": [
+      "urban_history"
+    ],
+    "themes": [
+      "critical reconstruction",
+      "block",
+      "repair",
+      "housing"
+    ],
     "short_description": "Stadterneuerungsprogramm, das Reparatur, Blockstruktur, Bestand und internationale Entwurfspositionen in einer geteilten Stadt verhandelt.",
-    "source_quality": "case_study"
+    "source_quality": "case_study",
+    "one_sentence": "Stadterneuerungsprogramm, das Reparatur, Blockstruktur, Bestand und internationale Entwurfspositionen in einer geteilten Stadt verhandelt.",
+    "full_description": "Stadterneuerungsprogramm, das Reparatur, Blockstruktur, Bestand und internationale Entwurfspositionen in einer geteilten Stadt verhandelt. Im Architecture Cosmos wird dieser Eintrag als Teil eines groesseren Wissensraums gelesen: Jahr, Stilsektor, Typologie, Ort, Autorenschaft und Relationen bestimmen, wie er im Atlas sichtbar wird. Die Detailstufe sammelt spaeter Fotografien, Plaene, Schnitte, Quellen und Modelle an einer Stelle, ohne den raeumlichen Zusammenhang der Architekturgeschichte zu verlieren.",
+    "media": [
+      {
+        "type": "exterior",
+        "label": "Aussenansicht",
+        "placeholder": "Aussenansicht Platzhalter fuer IBA Berlin 1987"
+      },
+      {
+        "type": "interior",
+        "label": "Innenraum",
+        "placeholder": "Innenraum Platzhalter fuer IBA Berlin 1987"
+      },
+      {
+        "type": "section",
+        "label": "Schnitt",
+        "placeholder": "Schnitt Platzhalter fuer IBA Berlin 1987"
+      },
+      {
+        "type": "plan",
+        "label": "Grundriss",
+        "placeholder": "Grundriss Platzhalter fuer IBA Berlin 1987"
+      }
+    ]
   },
   {
     "id": "s-m-l-xl",
@@ -451,12 +1418,46 @@
     "title": "S,M,L,XL",
     "entry_type": "text",
     "year_start": 1995,
-    "authors": ["Rem Koolhaas", "Bruce Mau"],
+    "authors": [
+      "Rem Koolhaas",
+      "Bruce Mau"
+    ],
     "style_sector": "postwar_modern_architecture",
-    "lecture_cluster": ["contemporary_discourse"],
-    "themes": ["book", "scale", "office", "urbanism"],
+    "lecture_cluster": [
+      "contemporary_discourse"
+    ],
+    "themes": [
+      "book",
+      "scale",
+      "office",
+      "urbanism"
+    ],
     "short_description": "Hybrides Buchobjekt, das Projekt, Theorie, Grafik und Bueropraxis als mediales Architektursystem zusammenfuehrt.",
-    "source_quality": "primary_text"
+    "source_quality": "primary_text",
+    "one_sentence": "Hybrides Buchobjekt, das Projekt, Theorie, Grafik und Bueropraxis als mediales Architektursystem zusammenfuehrt.",
+    "full_description": "Hybrides Buchobjekt, das Projekt, Theorie, Grafik und Bueropraxis als mediales Architektursystem zusammenfuehrt. Im Architecture Cosmos wird dieser Eintrag als Teil eines groesseren Wissensraums gelesen: Jahr, Stilsektor, Typologie, Ort, Autorenschaft und Relationen bestimmen, wie er im Atlas sichtbar wird. Die Detailstufe sammelt spaeter Fotografien, Plaene, Schnitte, Quellen und Modelle an einer Stelle, ohne den raeumlichen Zusammenhang der Architekturgeschichte zu verlieren.",
+    "media": [
+      {
+        "type": "exterior",
+        "label": "Aussenansicht",
+        "placeholder": "Aussenansicht Platzhalter fuer S,M,L,XL"
+      },
+      {
+        "type": "interior",
+        "label": "Innenraum",
+        "placeholder": "Innenraum Platzhalter fuer S,M,L,XL"
+      },
+      {
+        "type": "section",
+        "label": "Schnitt",
+        "placeholder": "Schnitt Platzhalter fuer S,M,L,XL"
+      },
+      {
+        "type": "plan",
+        "label": "Grundriss",
+        "placeholder": "Grundriss Platzhalter fuer S,M,L,XL"
+      }
+    ]
   },
   {
     "id": "landschaftspark-duisburg-nord",
@@ -465,14 +1466,47 @@
     "entry_type": "landscape_project",
     "year_start": 1994,
     "year_end": 1994,
-    "authors": ["Latz + Partner"],
+    "authors": [
+      "Latz + Partner"
+    ],
     "city": "Duisburg",
     "country": "Germany",
     "style_sector": "sustainable_architecture",
-    "lecture_cluster": ["landscape_architecture_1_2"],
-    "themes": ["industrial nature", "reuse", "palimpsest", "landscape"],
+    "lecture_cluster": [
+      "landscape_architecture_1_2"
+    ],
+    "themes": [
+      "industrial nature",
+      "reuse",
+      "palimpsest",
+      "landscape"
+    ],
     "short_description": "Postindustrieller Landschaftspark, der industrielle Relikte erhaelt, umnutzt und als lesbare Schichten des Ortes aktiviert.",
-    "source_quality": "lecture_notes"
+    "source_quality": "lecture_notes",
+    "one_sentence": "Postindustrieller Landschaftspark, der industrielle Relikte erhaelt, umnutzt und als lesbare Schichten des Ortes aktiviert.",
+    "full_description": "Postindustrieller Landschaftspark, der industrielle Relikte erhaelt, umnutzt und als lesbare Schichten des Ortes aktiviert. Im Architecture Cosmos wird dieser Eintrag als Teil eines groesseren Wissensraums gelesen: Jahr, Stilsektor, Typologie, Ort, Autorenschaft und Relationen bestimmen, wie er im Atlas sichtbar wird. Die Detailstufe sammelt spaeter Fotografien, Plaene, Schnitte, Quellen und Modelle an einer Stelle, ohne den raeumlichen Zusammenhang der Architekturgeschichte zu verlieren.",
+    "media": [
+      {
+        "type": "exterior",
+        "label": "Aussenansicht",
+        "placeholder": "Aussenansicht Platzhalter fuer Landschaftspark Duisburg-Nord"
+      },
+      {
+        "type": "interior",
+        "label": "Innenraum",
+        "placeholder": "Innenraum Platzhalter fuer Landschaftspark Duisburg-Nord"
+      },
+      {
+        "type": "section",
+        "label": "Schnitt",
+        "placeholder": "Schnitt Platzhalter fuer Landschaftspark Duisburg-Nord"
+      },
+      {
+        "type": "plan",
+        "label": "Grundriss",
+        "placeholder": "Grundriss Platzhalter fuer Landschaftspark Duisburg-Nord"
+      }
+    ]
   },
   {
     "id": "high-line",
@@ -481,14 +1515,49 @@
     "entry_type": "landscape_project",
     "year_start": 2009,
     "year_end": 2014,
-    "authors": ["James Corner Field Operations", "Diller Scofidio + Renfro", "Piet Oudolf"],
+    "authors": [
+      "James Corner Field Operations",
+      "Diller Scofidio + Renfro",
+      "Piet Oudolf"
+    ],
     "city": "New York",
     "country": "United States",
     "style_sector": "sustainable_architecture",
-    "lecture_cluster": ["landscape_architecture"],
-    "themes": ["adaptive reuse", "rail infrastructure", "public space", "planting"],
+    "lecture_cluster": [
+      "landscape_architecture"
+    ],
+    "themes": [
+      "adaptive reuse",
+      "rail infrastructure",
+      "public space",
+      "planting"
+    ],
     "short_description": "Umnutzung einer Hochbahntrasse als lineare Landschaft, die Infrastruktur, Stadtentwicklung und kuratierte Wildnis verbindet.",
-    "source_quality": "case_study"
+    "source_quality": "case_study",
+    "one_sentence": "Umnutzung einer Hochbahntrasse als lineare Landschaft, die Infrastruktur, Stadtentwicklung und kuratierte Wildnis verbindet.",
+    "full_description": "Umnutzung einer Hochbahntrasse als lineare Landschaft, die Infrastruktur, Stadtentwicklung und kuratierte Wildnis verbindet. Im Architecture Cosmos wird dieser Eintrag als Teil eines groesseren Wissensraums gelesen: Jahr, Stilsektor, Typologie, Ort, Autorenschaft und Relationen bestimmen, wie er im Atlas sichtbar wird. Die Detailstufe sammelt spaeter Fotografien, Plaene, Schnitte, Quellen und Modelle an einer Stelle, ohne den raeumlichen Zusammenhang der Architekturgeschichte zu verlieren.",
+    "media": [
+      {
+        "type": "exterior",
+        "label": "Aussenansicht",
+        "placeholder": "Aussenansicht Platzhalter fuer High Line"
+      },
+      {
+        "type": "interior",
+        "label": "Innenraum",
+        "placeholder": "Innenraum Platzhalter fuer High Line"
+      },
+      {
+        "type": "section",
+        "label": "Schnitt",
+        "placeholder": "Schnitt Platzhalter fuer High Line"
+      },
+      {
+        "type": "plan",
+        "label": "Grundriss",
+        "placeholder": "Grundriss Platzhalter fuer High Line"
+      }
+    ]
   },
   {
     "id": "rural-studio-20k-house",
@@ -497,14 +1566,47 @@
     "entry_type": "object",
     "year_start": 2005,
     "year_end": 2016,
-    "authors": ["Rural Studio"],
+    "authors": [
+      "Rural Studio"
+    ],
     "city": "Hale County",
     "country": "United States",
     "style_sector": "vernacular_architecture",
-    "lecture_cluster": ["housing"],
-    "themes": ["affordability", "prototype", "rural", "material economy"],
+    "lecture_cluster": [
+      "housing"
+    ],
+    "themes": [
+      "affordability",
+      "prototype",
+      "rural",
+      "material economy"
+    ],
     "short_description": "Serie von Wohnprototypen, die lokale Bauweisen, geringe Kosten und soziale Zugaenglichkeit in konkrete Objekte uebersetzt.",
-    "source_quality": "case_study"
+    "source_quality": "case_study",
+    "one_sentence": "Serie von Wohnprototypen, die lokale Bauweisen, geringe Kosten und soziale Zugaenglichkeit in konkrete Objekte uebersetzt.",
+    "full_description": "Serie von Wohnprototypen, die lokale Bauweisen, geringe Kosten und soziale Zugaenglichkeit in konkrete Objekte uebersetzt. Im Architecture Cosmos wird dieser Eintrag als Teil eines groesseren Wissensraums gelesen: Jahr, Stilsektor, Typologie, Ort, Autorenschaft und Relationen bestimmen, wie er im Atlas sichtbar wird. Die Detailstufe sammelt spaeter Fotografien, Plaene, Schnitte, Quellen und Modelle an einer Stelle, ohne den raeumlichen Zusammenhang der Architekturgeschichte zu verlieren.",
+    "media": [
+      {
+        "type": "exterior",
+        "label": "Aussenansicht",
+        "placeholder": "Aussenansicht Platzhalter fuer 20K House"
+      },
+      {
+        "type": "interior",
+        "label": "Innenraum",
+        "placeholder": "Innenraum Platzhalter fuer 20K House"
+      },
+      {
+        "type": "section",
+        "label": "Schnitt",
+        "placeholder": "Schnitt Platzhalter fuer 20K House"
+      },
+      {
+        "type": "plan",
+        "label": "Grundriss",
+        "placeholder": "Grundriss Platzhalter fuer 20K House"
+      }
+    ]
   },
   {
     "id": "venice-biennale-architecture-2012",
@@ -513,14 +1615,47 @@
     "entry_type": "event",
     "year_start": 2012,
     "year_end": 2012,
-    "authors": ["David Chipperfield"],
+    "authors": [
+      "David Chipperfield"
+    ],
     "city": "Venice",
     "country": "Italy",
     "style_sector": "sustainable_architecture",
-    "lecture_cluster": ["contemporary_discourse"],
-    "themes": ["biennale", "commonality", "discourse", "exhibition"],
+    "lecture_cluster": [
+      "contemporary_discourse"
+    ],
+    "themes": [
+      "biennale",
+      "commonality",
+      "discourse",
+      "exhibition"
+    ],
     "short_description": "Architekturbiennale als diskursives Ereignis, das Beziehungen, Referenzen und geteilte Grundlagen der Architektur sichtbar macht.",
-    "source_quality": "exhibition_reference"
+    "source_quality": "exhibition_reference",
+    "one_sentence": "Architekturbiennale als diskursives Ereignis, das Beziehungen, Referenzen und geteilte Grundlagen der Architektur sichtbar macht.",
+    "full_description": "Architekturbiennale als diskursives Ereignis, das Beziehungen, Referenzen und geteilte Grundlagen der Architektur sichtbar macht. Im Architecture Cosmos wird dieser Eintrag als Teil eines groesseren Wissensraums gelesen: Jahr, Stilsektor, Typologie, Ort, Autorenschaft und Relationen bestimmen, wie er im Atlas sichtbar wird. Die Detailstufe sammelt spaeter Fotografien, Plaene, Schnitte, Quellen und Modelle an einer Stelle, ohne den raeumlichen Zusammenhang der Architekturgeschichte zu verlieren.",
+    "media": [
+      {
+        "type": "exterior",
+        "label": "Aussenansicht",
+        "placeholder": "Aussenansicht Platzhalter fuer Common Ground"
+      },
+      {
+        "type": "interior",
+        "label": "Innenraum",
+        "placeholder": "Innenraum Platzhalter fuer Common Ground"
+      },
+      {
+        "type": "section",
+        "label": "Schnitt",
+        "placeholder": "Schnitt Platzhalter fuer Common Ground"
+      },
+      {
+        "type": "plan",
+        "label": "Grundriss",
+        "placeholder": "Grundriss Platzhalter fuer Common Ground"
+      }
+    ]
   },
   {
     "id": "elemental-quinta-monroy",
@@ -528,14 +1663,48 @@
     "title": "Quinta Monroy Housing",
     "entry_type": "building",
     "year_start": 2004,
-    "authors": ["ELEMENTAL", "Alejandro Aravena"],
+    "authors": [
+      "ELEMENTAL",
+      "Alejandro Aravena"
+    ],
     "city": "Iquique",
     "country": "Chile",
     "style_sector": "sustainable_architecture",
-    "lecture_cluster": ["housing"],
-    "themes": ["incremental housing", "participation", "affordability", "urban block"],
+    "lecture_cluster": [
+      "housing"
+    ],
+    "themes": [
+      "incremental housing",
+      "participation",
+      "affordability",
+      "urban block"
+    ],
     "short_description": "Sozialer Wohnungsbau als halbfertiges System, das knappe Mittel, Eigentum, Erweiterbarkeit und urbane Lage miteinander verknuepft.",
-    "source_quality": "case_study"
+    "source_quality": "case_study",
+    "one_sentence": "Sozialer Wohnungsbau als halbfertiges System, das knappe Mittel, Eigentum, Erweiterbarkeit und urbane Lage miteinander verknuepft.",
+    "full_description": "Sozialer Wohnungsbau als halbfertiges System, das knappe Mittel, Eigentum, Erweiterbarkeit und urbane Lage miteinander verknuepft. Im Architecture Cosmos wird dieser Eintrag als Teil eines groesseren Wissensraums gelesen: Jahr, Stilsektor, Typologie, Ort, Autorenschaft und Relationen bestimmen, wie er im Atlas sichtbar wird. Die Detailstufe sammelt spaeter Fotografien, Plaene, Schnitte, Quellen und Modelle an einer Stelle, ohne den raeumlichen Zusammenhang der Architekturgeschichte zu verlieren.",
+    "media": [
+      {
+        "type": "exterior",
+        "label": "Aussenansicht",
+        "placeholder": "Aussenansicht Platzhalter fuer Quinta Monroy Housing"
+      },
+      {
+        "type": "interior",
+        "label": "Innenraum",
+        "placeholder": "Innenraum Platzhalter fuer Quinta Monroy Housing"
+      },
+      {
+        "type": "section",
+        "label": "Schnitt",
+        "placeholder": "Schnitt Platzhalter fuer Quinta Monroy Housing"
+      },
+      {
+        "type": "plan",
+        "label": "Grundriss",
+        "placeholder": "Grundriss Platzhalter fuer Quinta Monroy Housing"
+      }
+    ]
   },
   {
     "id": "serpentine-pavilion-ishigami",
@@ -543,13 +1712,46 @@
     "title": "Serpentine Pavilion",
     "entry_type": "event",
     "year_start": 2019,
-    "authors": ["Junya Ishigami"],
+    "authors": [
+      "Junya Ishigami"
+    ],
     "city": "London",
     "country": "United Kingdom",
     "style_sector": "sustainable_architecture",
-    "lecture_cluster": ["contemporary_discourse"],
-    "themes": ["pavilion", "stone", "temporary", "landscape"],
+    "lecture_cluster": [
+      "contemporary_discourse"
+    ],
+    "themes": [
+      "pavilion",
+      "stone",
+      "temporary",
+      "landscape"
+    ],
     "short_description": "Temporare Architektur zwischen Objekt, Dach und Landschaft, die Materialschwere und fragile Erscheinung produktiv gegeneinander stellt.",
-    "source_quality": "exhibition_reference"
+    "source_quality": "exhibition_reference",
+    "one_sentence": "Temporare Architektur zwischen Objekt, Dach und Landschaft, die Materialschwere und fragile Erscheinung produktiv gegeneinander stellt.",
+    "full_description": "Temporare Architektur zwischen Objekt, Dach und Landschaft, die Materialschwere und fragile Erscheinung produktiv gegeneinander stellt. Im Architecture Cosmos wird dieser Eintrag als Teil eines groesseren Wissensraums gelesen: Jahr, Stilsektor, Typologie, Ort, Autorenschaft und Relationen bestimmen, wie er im Atlas sichtbar wird. Die Detailstufe sammelt spaeter Fotografien, Plaene, Schnitte, Quellen und Modelle an einer Stelle, ohne den raeumlichen Zusammenhang der Architekturgeschichte zu verlieren.",
+    "media": [
+      {
+        "type": "exterior",
+        "label": "Aussenansicht",
+        "placeholder": "Aussenansicht Platzhalter fuer Serpentine Pavilion"
+      },
+      {
+        "type": "interior",
+        "label": "Innenraum",
+        "placeholder": "Innenraum Platzhalter fuer Serpentine Pavilion"
+      },
+      {
+        "type": "section",
+        "label": "Schnitt",
+        "placeholder": "Schnitt Platzhalter fuer Serpentine Pavilion"
+      },
+      {
+        "type": "plan",
+        "label": "Grundriss",
+        "placeholder": "Grundriss Platzhalter fuer Serpentine Pavilion"
+      }
+    ]
   }
 ]
