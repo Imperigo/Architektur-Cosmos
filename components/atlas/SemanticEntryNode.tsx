@@ -22,8 +22,6 @@ type SemanticEntryNodeProps = {
   isSelected: boolean;
   nodeRadius?: number;
   showLabel?: boolean;
-  stretchX?: number;
-  stretchY?: number;
   driftX?: number;
   driftY?: number;
   driftDelay?: number;
@@ -57,8 +55,6 @@ export function SemanticEntryNode({
   isSelected,
   nodeRadius,
   showLabel = true,
-  stretchX = 1,
-  stretchY = 1,
   driftX = 0,
   driftY = 0,
   driftDelay = 0,
@@ -101,11 +97,10 @@ export function SemanticEntryNode({
       {clusterSize > 1 ? (
         <circle cx={x} cy={y} r={glyphRadius + 5.5} fill="none" stroke="#f7f7f4" strokeWidth="0.55" strokeDasharray="1 4" opacity="0.65" />
       ) : null}
-      <ellipse
+      <circle
         cx={x}
         cy={y}
-        rx={(isSelected ? glyphRadius + 3 : glyphRadius) * stretchX}
-        ry={(isSelected ? glyphRadius + 3 : glyphRadius) * stretchY}
+        r={isSelected ? glyphRadius + 3 : glyphRadius}
         fill={isSelected ? '#050505' : '#f7f7f4'}
         stroke="#f7f7f4"
         strokeWidth={isSelected ? 2 : 1.2}

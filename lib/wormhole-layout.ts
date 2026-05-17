@@ -16,8 +16,6 @@ export type WormholeEntryNode = AtlasNode & {
   semanticLevel: SemanticLevel;
   opacity: number;
   size: number;
-  stretchX: number;
-  stretchY: number;
   driftX: number;
   driftY: number;
   driftDelay: number;
@@ -145,8 +143,6 @@ export function layoutWormholeEntries(entries: Entry[], state: WormholeState, se
         semanticLevel,
         opacity: tunnelOpacity(depth),
         size,
-        stretchX: Math.min(1.82, 0.66 + Math.pow(closeness, 1.15) * 0.98 + Math.max(0, -depth) * 0.9),
-        stretchY: Math.max(0.72, 1.2 - Math.pow(closeness, 1.08) * 0.42),
         driftX: ((driftSeed % 9) - 4) * 0.42,
         driftY: (((driftSeed >> 4) % 9) - 4) * 0.38,
         driftDelay: -((driftSeed % 240) / 100),

@@ -36,6 +36,7 @@ export function WormholeRings({ state, isMoving = false }: WormholeRingsProps) {
         </filter>
       </defs>
       <circle className="wormhole-breath" cx={atlasSize.cx} cy={atlasSize.cy + 8} r={wormholeTunnel.maxRadius + 18 - edgeCompression * 24} fill="url(#wormhole-vignette)" />
+      <IdleOrbits state={state} />
       {streamLines.map((line, index) => (
         <path
           key={`stream-${index}`}
@@ -78,12 +79,12 @@ export function WormholeRings({ state, isMoving = false }: WormholeRingsProps) {
       {rings.map((ring, index) => {
         const depth = ring.depth ?? radiusToTunnelDepth(ring.radius);
         const ringCenter = tunnelCenter(depth, state.phase);
-        const labelAngle = yearLabelAngle(ring.year, index, ring.mode === 'local');
+        const labelAngle = yearLabelAngle(ring.year);
         const labelScale = Math.max(0.55, 1.25 - depth);
         const ringOpacity = tunnelOpacity(depth);
         const labelOpacity = (ring.mode === 'local' ? 1 : Math.max(0.46, 1 - Math.max(0, depth) * 0.58)) * ringOpacity;
         const isInnerCrowdedMinor = ring.radius < 150 && ring.weight !== 'major' && ring.mode !== 'local';
-        const isDenseMinor = ring.weight !== 'major' && ring.mode !== 'local' && index % (ring.radius < 230 ? 3 : 2) !== 0;
+        const isDenseMinor = ring.weight !== 'major' && ring.mode !== 'local' && yearDensitySlot(ring.year) % (ring.radius < 230 ? 3 : 2) !== 0;
         const showLabel = labelOpacity > 0.1 && !isInnerCrowdedMinor && !isDenseMinor;
         const label = ring.label;
         const ringDash = ring.mode === 'local' ? '2 9' : ring.weight === 'major' ? '1 8' : '1 12';
@@ -91,7 +92,7 @@ export function WormholeRings({ state, isMoving = false }: WormholeRingsProps) {
         const ringColor = ring.mode === 'local' ? '#fff8d6' : ring.weight === 'major' ? '#ffd16d' : '#f7f7f4';
 
         return (
-          <g key={`${ring.year}-${index}`}>
+          <g key={`ring-${ring.year}`}>
             <circle
               className={ring.mode === 'local' ? 'wormhole-current-ring' : 'wormhole-ring'}
               cx={ringCenter.x}
@@ -122,6 +123,35 @@ export function WormholeRings({ state, isMoving = false }: WormholeRingsProps) {
               />
             ) : null}
           </g>
+        );
+      })}
+    </g>
+  );
+}
+
+function IdleOrbits({ state }: { state: WormholeState }) {
+  const depths = [0.22, 0.48, 0.73];
+
+  return (
+    <g aria-hidden="true" pointerEvents="none">
+      {depths.map((depth, index) => {
+        const center = tunnelCenter(depth, state.phase);
+        const radius = tunnelRadius(depth) + index * 4;
+
+        return (
+          <circle
+            key={depth}
+            className="wormhole-idle-orbit"
+            cx={center.x}
+            cy={center.y}
+            r={radius}
+            fill="none"
+            stroke={energyColor(index + 1)}
+            strokeWidth={index === 1 ? 0.75 : 0.55}
+            strokeDasharray={index === 1 ? '1 18' : '1 24'}
+            opacity={0.22 - index * 0.035}
+            style={{ animationDelay: `${index * -2.7}s` }}
+          />
         );
       })}
     </g>
@@ -200,10 +230,11 @@ function energyColor(index: number) {
   return colors[index % colors.length];
 }
 
-function yearLabelAngle(year: number, index: number, isLocal: boolean) {
-  if (isLocal) return 92;
-
+function yearLabelAngle(year: number) {
   const sequence = [58, 126, 238, 304, 24, 166];
-  const offset = Math.abs(year) % sequence.length;
-  return sequence[(index + offset) % sequence.length];
+  return sequence[yearDensitySlot(year) % sequence.length];
+}
+
+function yearDensitySlot(year: number) {
+  return Math.abs(Math.round(year / 25));
 }

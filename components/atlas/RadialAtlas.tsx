@@ -262,7 +262,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   }
 
   return (
-    <main className={`relative h-screen w-screen overflow-hidden bg-[#050505] text-[#f7f7f4] ${introState === 'launching' ? 'cosmos-launching' : ''} ${isTraveling ? 'cosmos-moving' : ''}`}>
+    <main className={`relative h-screen w-screen overflow-hidden bg-[#050505] text-[#f7f7f4] ${introState === 'launching' ? 'cosmos-launching' : ''} ${isTraveling ? 'cosmos-moving' : ''} ${introState === 'idle' && !isTraveling ? 'cosmos-idle' : ''}`}>
       <div className="h-full w-full">
         <svg
           ref={svgRef}
@@ -316,8 +316,6 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
                     isSelected={activeHoverEntryId === node.entry.id || activeSnappedEntryId === node.entry.id}
                     nodeRadius={node.size}
                     showLabel={false}
-                    stretchX={node.stretchX}
-                    stretchY={node.stretchY}
                     driftX={node.driftX}
                     driftY={node.driftY}
                     driftDelay={node.driftDelay}
