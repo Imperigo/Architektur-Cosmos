@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 :root { color-scheme: light; }
+* { cursor: none !important; }
 body { margin: 0; background: #050505; color: #f7f7f4; }
 
 @keyframes wormhole-spoke-flow {
@@ -193,6 +194,14 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
   animation: dossier-arrive 420ms cubic-bezier(0.19, 1, 0.22, 1);
 }
 
+.project-detail-card {
+  filter: drop-shadow(0 0 18px rgb(0 231 255 / 13%));
+}
+
+.detail-card-scanline {
+  animation: wormhole-stream-flow 18s linear infinite;
+}
+
 .cosmos-node-wiggle {
   animation: none;
   transform-box: fill-box;
@@ -207,6 +216,15 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
   transition: transform 420ms cubic-bezier(0.19, 1, 0.22, 1), opacity 200ms ease;
 }
 
+.cosmos-magnifying .node-focus-drift:not(.node-focus-active) {
+  filter: blur(1.2px);
+  opacity: 0.34;
+}
+
+.cosmos-magnifying .relation-strand-group {
+  opacity: 0.32;
+}
+
 .cosmos-cursor circle:first-child {
   stroke-dasharray: 4 7;
   animation: cursor-orbit 2.4s linear infinite;
@@ -215,6 +233,7 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
 
 .cosmos-cursor {
   filter: drop-shadow(0 0 5px rgb(0 0 0 / 78%));
+  transition: opacity 160ms ease;
 }
 
 .style-sector-ribbon {
@@ -301,6 +320,10 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
 
 .navigation-dock {
   filter: drop-shadow(0 0 12px rgb(0 231 255 / 10%));
+}
+
+.database-placeholder {
+  filter: drop-shadow(0 0 20px rgb(0 231 255 / 12%));
 }
 
 .brand-chrome {

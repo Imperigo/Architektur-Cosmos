@@ -29,8 +29,8 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   const [introState, setIntroState] = useState<IntroState>('intro');
   const [snappedEntryId, setSnappedEntryId] = useState<string | null>(null);
   const [hoverEntryId, setHoverEntryId] = useState<string | null>(null);
-  const [hoverFocusId, setHoverFocusId] = useState<string | null>(null);
-  const [pointerPoint, setPointerPoint] = useState<SvgPoint | null>(null);
+  const [hoverMagnifyId, setHoverMagnifyId] = useState<string | null>(null);
+  const [showDatabasePanel, setShowDatabasePanel] = useState(false);
   const pendingTravelDeltaRef = useRef(0);
   const travelFrameRef = useRef<number | null>(null);
   const travelIdleTimeoutRef = useRef<number | null>(null);
@@ -44,8 +44,10 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   const displayNodes = useMemo(() => nodes.filter(isReadableNode), [nodes]);
   const snappedNode = useMemo(() => displayNodes.find((node) => node.entry.id === activeSnappedEntryId) ?? null, [activeSnappedEntryId, displayNodes]);
   const hoverNode = useMemo(() => displayNodes.find((node) => node.entry.id === activeHoverEntryId) ?? null, [activeHoverEntryId, displayNodes]);
-  const isHoverFocusActive = hoverFocusId === hoverNode?.entry.id && !snappedNode;
-  const cameraFocus = focusCameraOffset(hoverNode, isHoverFocusActive && !isTraveling);
+  const isHoverFocusActive = Boolean(hoverNode && !snappedNode && !isTraveling);
+  const isHoverMagnifyActive = hoverMagnifyId === hoverNode?.entry.id && isHoverFocusActive && !snappedNode;
+  const cameraFocus = focusCameraOffset(hoverNode, isHoverFocusActive && !isTraveling, isHoverMagnifyActive);
+  const cursorPoint = cursorAnchorPoint(hoverNode ?? snappedNode, cameraFocus, isTraveling, introState);
   const isIntroActive = introState !== 'idle';
   const backgroundStyle = {
     filter: snappedNode ? 'blur(6px)' : isIntroActive ? 'blur(7px)' : 'blur(0px)',
@@ -68,7 +70,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     if (!hoverNode || snappedNode) return;
     if (isTraveling) return;
 
-    const timeout = window.setTimeout(() => setHoverFocusId(hoverNode.entry.id), 2300);
+    const timeout = window.setTimeout(() => setHoverMagnifyId(hoverNode.entry.id), 4000);
     return () => window.clearTimeout(timeout);
   }, [hoverNode, isTraveling, snappedNode]);
 
@@ -120,7 +122,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   function releaseSnap() {
     setSnappedEntryId((current) => (current === null ? current : null));
     setHoverEntryId((current) => (current === null ? current : null));
-    setHoverFocusId((current) => (current === null ? current : null));
+    setHoverMagnifyId((current) => (current === null ? current : null));
     setSelectedEntry((current) => (current === null ? current : null));
   }
 
@@ -199,12 +201,10 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   }
 
   function commitPointerMove(point: SvgPoint) {
-    setPointerPoint(point);
-
     if (snappedNode || isTraveling) {
       if (isTraveling) {
         setHoverEntryId((current) => (current === null ? current : null));
-        setHoverFocusId((current) => (current === null ? current : null));
+        setHoverMagnifyId((current) => (current === null ? current : null));
       }
       return;
     }
@@ -214,7 +214,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
       if (hoverDistance <= hoverRadius * 2.2) return;
 
       setHoverEntryId(null);
-      setHoverFocusId(null);
+      setHoverMagnifyId(null);
       return;
     }
 
@@ -240,9 +240,9 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
       pointerFrameRef.current = null;
     }
 
-    setPointerPoint(null);
     if (!snappedNode) {
       setHoverEntryId(null);
+      setHoverMagnifyId(null);
     }
   }
 
@@ -260,7 +260,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   }
 
   return (
-    <main className={`relative h-screen w-screen overflow-hidden bg-[#050505] text-[#f7f7f4] ${introState === 'launching' ? 'cosmos-launching' : ''} ${isTraveling ? 'cosmos-moving' : ''} ${introState === 'idle' && !isTraveling ? 'cosmos-idle' : ''}`}>
+    <main className={`relative h-screen w-screen overflow-hidden bg-[#050505] text-[#f7f7f4] ${introState === 'launching' ? 'cosmos-launching' : ''} ${isTraveling ? 'cosmos-moving' : ''} ${introState === 'idle' && !isTraveling ? 'cosmos-idle' : ''} ${isHoverMagnifyActive ? 'cosmos-magnifying' : ''}`}>
       <div className="h-full w-full">
         <svg
           ref={svgRef}
@@ -273,6 +273,11 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
             if (introState !== 'idle') startIntro();
           }}
         >
+          <defs>
+            <filter id="cosmos-soft-blur" x="-18%" y="-18%" width="136%" height="136%">
+              <feGaussianBlur stdDeviation="1.15" />
+            </filter>
+          </defs>
           <rect width={atlasSize.width} height={atlasSize.height} fill="#050505" />
           <g style={backgroundStyle} pointerEvents={snappedNode ? 'none' : 'auto'}>
             <g
@@ -287,16 +292,18 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
 
               {showRelations ? <RelationOverlay nodes={displayNodes} relations={relations} selectedEntry={snappedNode?.entry ?? hoverNode?.entry ?? null} isMoving={isTraveling} /> : null}
 
-              {hoverNode && pointerPoint && !snappedNode && !isTraveling && !isHoverFocusActive ? <HoverPreview pointer={pointerPoint} node={hoverNode} /> : null}
+              {hoverNode && !snappedNode && !isTraveling ? <HoverPreview pointer={cursorPoint ?? applyCameraToPoint(hoverNode, cameraFocus)} node={hoverNode} isMagnified={isHoverMagnifyActive} /> : null}
 
               {displayNodes.map((node) => {
-                const displayOffset = focusDisplayOffset(node, hoverNode, isHoverFocusActive);
+                const displayOffset = focusDisplayOffset(node, hoverNode, isHoverFocusActive, isHoverMagnifyActive);
+                const isFocusNode = hoverNode?.entry.id === node.entry.id;
 
                 return (
                 <g
                   key={node.entry.id}
-                  className="node-focus-drift"
-                  opacity={node.opacity * styleLensOpacity(node, activeStyleLens)}
+                  className={`node-focus-drift ${isFocusNode ? 'node-focus-active' : ''}`}
+                  opacity={node.opacity * styleLensOpacity(node, activeStyleLens) * (isHoverMagnifyActive && !isFocusNode ? 0.38 : 1)}
+                  filter={isHoverMagnifyActive && !isFocusNode ? 'url(#cosmos-soft-blur)' : undefined}
                   style={{ transform: `translate(${displayOffset.x}px, ${displayOffset.y}px)` }}
                 >
                   <SemanticEntryNode
@@ -335,11 +342,13 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
               onTravelBackward={() => travelBy(-0.035)}
               onCycleStyleLens={() => setActiveStyleLens((current) => nextStyleLens(current))}
               onToggleRelations={() => setShowRelations((current) => !current)}
+              onToggleDatabase={() => setShowDatabasePanel((current) => !current)}
             />
           ) : null}
+          {showDatabasePanel && introState === 'idle' ? <DatabasePlaceholderPanel onDismiss={() => setShowDatabasePanel(false)} /> : null}
           {introState === 'idle' ? <TimeReadout timePosition={state.timePosition} currentYear={state.currentYear} /> : null}
           {introState === 'idle' ? <BrandChrome /> : null}
-          {pointerPoint ? <CosmosCursor pointer={pointerPoint} activeNode={hoverNode ?? snappedNode} /> : null}
+          {cursorPoint ? <CosmosCursor pointer={cursorPoint} activeNode={hoverNode ?? snappedNode} isMagnified={isHoverMagnifyActive} /> : null}
         </svg>
       </div>
 
@@ -373,16 +382,16 @@ function styleLensOpacity(node: WormholeEntryNode, activeStyleLens: StyleSectorI
   return 0.24 + node.closeness * 0.18;
 }
 
-function focusDisplayOffset(node: WormholeEntryNode, focusNode: WormholeEntryNode | null, focusActive: boolean): SvgPoint {
+function focusDisplayOffset(node: WormholeEntryNode, focusNode: WormholeEntryNode | null, focusActive: boolean, magnifyActive: boolean): SvgPoint {
   if (!focusNode || !focusActive) return { x: 0, y: 0 };
 
   const depthDelta = Math.abs(node.depth - focusNode.depth);
   const angularDelta = Math.abs(shortestAngleDelta(node.angle, focusNode.angle));
-  const isClusterNeighbor = depthDelta < 0.028 && angularDelta < 26;
+  const isClusterNeighbor = depthDelta < (magnifyActive ? 0.055 : 0.028) && angularDelta < (magnifyActive ? 42 : 26);
 
   if (!isClusterNeighbor) return { x: 0, y: 0 };
 
-  const strength = node.entry.id === focusNode.entry.id ? 0.13 : 0.09;
+  const strength = node.entry.id === focusNode.entry.id ? (magnifyActive ? 0.32 : 0.16) : (magnifyActive ? 0.2 : 0.09);
 
   return {
     x: (atlasSize.cx - node.x) * strength,
@@ -390,16 +399,29 @@ function focusDisplayOffset(node: WormholeEntryNode, focusNode: WormholeEntryNod
   };
 }
 
-function focusCameraOffset(focusNode: WormholeEntryNode | null, focusActive: boolean) {
+function focusCameraOffset(focusNode: WormholeEntryNode | null, focusActive: boolean, magnifyActive: boolean) {
   if (!focusNode || !focusActive) {
     return { x: 0, y: 0, scale: 1 };
   }
 
   return {
-    x: (atlasSize.cx - focusNode.x) * 0.16,
-    y: (atlasSize.cy - focusNode.y) * 0.16,
-    scale: 1.045
+    x: (atlasSize.cx - focusNode.x) * (magnifyActive ? 0.38 : 0.18),
+    y: (atlasSize.cy - focusNode.y) * (magnifyActive ? 0.38 : 0.18),
+    scale: magnifyActive ? 1.16 : 1.055
   };
+}
+
+function applyCameraToPoint(point: SvgPoint, cameraFocus: { x: number; y: number; scale: number }): SvgPoint {
+  return {
+    x: atlasSize.cx + cameraFocus.x + (point.x - atlasSize.cx) * cameraFocus.scale,
+    y: atlasSize.cy + cameraFocus.y + (point.y - atlasSize.cy) * cameraFocus.scale
+  };
+}
+
+function cursorAnchorPoint(node: WormholeEntryNode | null, cameraFocus: { x: number; y: number; scale: number }, isTraveling: boolean, introState: IntroState): SvgPoint | null {
+  if (introState !== 'idle' || isTraveling) return null;
+  if (node) return applyCameraToPoint(node, cameraFocus);
+  return { x: atlasSize.cx, y: atlasSize.cy };
 }
 
 function shortestAngleDelta(a: number, b: number) {
@@ -413,7 +435,8 @@ function RadialHud({
   onTravelForward,
   onTravelBackward,
   onCycleStyleLens,
-  onToggleRelations
+  onToggleRelations,
+  onToggleDatabase
 }: {
   showRelations: boolean;
   tunnelDepth: number;
@@ -422,24 +445,26 @@ function RadialHud({
   onTravelBackward: () => void;
   onCycleStyleLens: () => void;
   onToggleRelations: () => void;
+  onToggleDatabase: () => void;
 }) {
   const controlsOpacity = Math.max(0.46, 1 - tunnelDepth / 0.76);
   const lensLabel = activeStyleLens ? styleSectors.find((sector) => sector.id === activeStyleLens)?.label ?? 'Stil' : 'Alle Stile';
 
   return (
     <g className="radial-hud navigation-dock" pointerEvents="auto" opacity={controlsOpacity}>
-      <rect x={atlasSize.cx - 124} y="886" width="248" height="42" rx="21" fill="#050505" stroke="#f7f7f4" strokeWidth="0.55" opacity="0.72" />
+      <rect x={atlasSize.cx - 152} y="886" width="304" height="42" rx="21" fill="#050505" stroke="#f7f7f4" strokeWidth="0.55" opacity="0.72" />
       <g opacity={controlsOpacity}>
-        <HudButton x={atlasSize.cx - 82} y={907} kind="backward" label="zurueck" onClick={onTravelBackward} />
-        <HudButton x={atlasSize.cx - 28} y={907} kind="forward" label="vor" onClick={onTravelForward} />
-        <HudButton x={atlasSize.cx + 28} y={907} kind="lens" label={lensLabel} active={Boolean(activeStyleLens)} onClick={onCycleStyleLens} />
-        <HudButton x={atlasSize.cx + 82} y={907} kind="relations" label="relations" active={showRelations} onClick={onToggleRelations} />
+        <HudButton x={atlasSize.cx - 110} y={907} kind="backward" label="zurueck" onClick={onTravelBackward} />
+        <HudButton x={atlasSize.cx - 56} y={907} kind="forward" label="vor" onClick={onTravelForward} />
+        <HudButton x={atlasSize.cx} y={907} kind="lens" label={lensLabel} active={Boolean(activeStyleLens)} onClick={onCycleStyleLens} />
+        <HudButton x={atlasSize.cx + 56} y={907} kind="relations" label="relations" active={showRelations} onClick={onToggleRelations} />
+        <HudButton x={atlasSize.cx + 110} y={907} kind="database" label="database" onClick={onToggleDatabase} />
       </g>
     </g>
   );
 }
 
-function HudButton({ x, y, kind, label, active = false, onClick }: { x: number; y: number; kind: 'backward' | 'forward' | 'lens' | 'relations'; label: string; active?: boolean; onClick: () => void }) {
+function HudButton({ x, y, kind, label, active = false, onClick }: { x: number; y: number; kind: 'backward' | 'forward' | 'lens' | 'relations' | 'database'; label: string; active?: boolean; onClick: () => void }) {
   return (
     <g className="hud-button" onClick={(event) => { event.stopPropagation(); onClick(); }} aria-label={label}>
       <circle cx={x} cy={y} r="14" fill={active ? '#f7f7f4' : '#050505'} stroke={active ? '#00e7ff' : '#f7f7f4'} strokeWidth="0.75" opacity="0.88" />
@@ -448,7 +473,7 @@ function HudButton({ x, y, kind, label, active = false, onClick }: { x: number; 
   );
 }
 
-function HudIcon({ x, y, kind, active }: { x: number; y: number; kind: 'backward' | 'forward' | 'lens' | 'relations'; active: boolean }) {
+function HudIcon({ x, y, kind, active }: { x: number; y: number; kind: 'backward' | 'forward' | 'lens' | 'relations' | 'database'; active: boolean }) {
   const stroke = active ? '#050505' : '#f7f7f4';
 
   if (kind === 'relations') {
@@ -469,6 +494,16 @@ function HudIcon({ x, y, kind, active }: { x: number; y: number; kind: 'backward
         <circle cx={x} cy={y} r="5.1" />
         <path d={`M ${x - 7} ${y} H ${x + 7}`} />
         <path d={`M ${x} ${y - 7} V ${y + 7}`} opacity="0.55" />
+      </g>
+    );
+  }
+
+  if (kind === 'database') {
+    return (
+      <g stroke={stroke} fill="none" strokeWidth="0.9" opacity="0.9">
+        <ellipse cx={x} cy={y - 5} rx="5.6" ry="2.4" />
+        <path d={`M ${x - 5.6} ${y - 5} V ${y + 5} Q ${x} ${y + 8} ${x + 5.6} ${y + 5} V ${y - 5}`} />
+        <path d={`M ${x - 5.6} ${y} Q ${x} ${y + 3} ${x + 5.6} ${y}`} opacity="0.55" />
       </g>
     );
   }
@@ -561,20 +596,20 @@ function IntroGate({ state, onStart }: { state: IntroState; onStart: () => void 
   );
 }
 
-function HoverPreview({ pointer, node }: { pointer: SvgPoint; node: WormholeEntryNode }) {
+function HoverPreview({ pointer, node, isMagnified }: { pointer: SvgPoint; node: WormholeEntryNode; isMagnified: boolean }) {
   const previewScale = node.closeness > 0.68 ? 0.78 : 0.66;
   const baseWidth = previewCardWidth(node.entry);
   const cardWidth = baseWidth * previewScale;
   const cardHeight = 82 * previewScale;
   const side = node.x > atlasSize.cx ? -1 : 1;
-  const x = Math.max(34, Math.min(atlasSize.width - cardWidth - 34, node.x + side * 28));
-  const y = Math.max(34, Math.min(atlasSize.height - cardHeight - 34, node.y - cardHeight / 2));
+  const x = Math.max(34, Math.min(atlasSize.width - cardWidth - 34, pointer.x + side * 28));
+  const y = Math.max(34, Math.min(atlasSize.height - cardHeight - 34, pointer.y - cardHeight / 2));
 
   return (
-    <g className="hover-preview" pointerEvents="none">
-      <line x1={pointer.x} y1={pointer.y} x2={node.x} y2={node.y} stroke="#fff8d6" strokeWidth="0.55" strokeDasharray="1 9" opacity="0.42" />
-      <circle cx={node.x} cy={node.y} r={node.size + 9} fill="none" stroke="#fff8d6" strokeWidth="0.62" opacity="0.54" />
-      <circle cx={node.x} cy={node.y} r={node.size + 15} fill="none" stroke="#00e7ff" strokeWidth="0.45" strokeDasharray="1 8" opacity="0.32" />
+    <g className={`hover-preview ${isMagnified ? 'hover-preview-magnified' : ''}`} pointerEvents="none">
+      <line x1={pointer.x} y1={pointer.y} x2={node.x} y2={node.y} stroke="#fff8d6" strokeWidth="0.55" strokeDasharray="1 9" opacity="0.32" />
+      <circle cx={node.x} cy={node.y} r={node.size + (isMagnified ? 18 : 9)} fill="none" stroke="#fff8d6" strokeWidth="0.62" opacity="0.54" />
+      <circle cx={node.x} cy={node.y} r={node.size + (isMagnified ? 31 : 15)} fill="none" stroke="#00e7ff" strokeWidth="0.45" strokeDasharray="1 8" opacity={isMagnified ? 0.48 : 0.32} />
       <g transform={`translate(${x} ${y}) scale(${previewScale})`}>
         <HoverImageCard entry={node.entry} width={baseWidth} />
       </g>
@@ -596,6 +631,38 @@ function HoverImageCard({ entry, width }: { entry: Entry; width: number }) {
       <text x={mediaWidth + 10} y="48" fill="#b8b8b2" fontSize="7.4" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.16em">
         {formatYear(entry.year_start)}
       </text>
+    </g>
+  );
+}
+
+function DatabasePlaceholderPanel({ onDismiss }: { onDismiss: () => void }) {
+  const x = atlasSize.width - 310;
+  const y = atlasSize.height - 234;
+  const modules = ['Entries', 'Media', 'Sources', 'Relations', 'Tags'];
+
+  return (
+    <g className="database-placeholder" pointerEvents="auto">
+      <rect x={x} y={y} width="270" height="166" rx="4" fill="#050505" stroke="#00e7ff" strokeWidth="0.75" opacity="0.92" />
+      <text x={x + 18} y={y + 30} fill="#f7f7f4" fontSize="12" fontWeight="650" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.1em">
+        ARCHITECTURE COSMOS DATABASE
+      </text>
+      <text x={x + 18} y={y + 52} fill="#b8b8b2" fontSize="8.2" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.08em">
+        PLATZHALTER FUER DAS SPAETERE ARCHIVSYSTEM
+      </text>
+      {modules.map((module, index) => (
+        <g key={module} transform={`translate(${x + 18 + (index % 2) * 116} ${y + 76 + Math.floor(index / 2) * 26})`}>
+          <rect width="98" height="15" rx="7.5" fill="#07181a" stroke={index % 2 === 0 ? '#00e7ff' : '#ffb000'} strokeWidth="0.45" opacity="0.9" />
+          <text x="49" y="10.8" textAnchor="middle" fill="#f7f7f4" fontSize="7.2" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.12em">
+            {module.toUpperCase()}
+          </text>
+        </g>
+      ))}
+      <g className="dossier-close" pointerEvents="auto" transform={`translate(${x + 224} ${y + 12})`} onClick={(event) => { event.stopPropagation(); onDismiss(); }}>
+        <rect width="28" height="16" rx="8" fill="#f7f7f4" opacity="0.88" />
+        <text x="14" y="11.2" textAnchor="middle" fill="#050505" fontSize="7.2" fontFamily="var(--font-sans), system-ui, sans-serif">
+          X
+        </text>
+      </g>
     </g>
   );
 }
@@ -628,12 +695,12 @@ function SnappedEntryOverlay({ node, onDismiss }: { node: WormholeEntryNode; onD
   );
 }
 
-function CosmosCursor({ pointer, activeNode }: { pointer: SvgPoint; activeNode: WormholeEntryNode | null }) {
+function CosmosCursor({ pointer, activeNode, isMagnified }: { pointer: SvgPoint; activeNode: WormholeEntryNode | null; isMagnified: boolean }) {
   return (
-    <g className="cosmos-cursor" pointerEvents="none" transform={`translate(${pointer.x} ${pointer.y})`}>
-      <circle r={activeNode ? 16 : 12} fill="none" stroke="#050505" strokeWidth="3.4" opacity="0.88" />
-      <circle r={activeNode ? 14 : 10} fill="none" stroke="#f7f7f4" strokeWidth="0.8" opacity={activeNode ? 0.82 : 0.52} />
-      {activeNode ? <circle r="8.2" fill="none" stroke="#00e7ff" strokeWidth="0.55" opacity="0.58" /> : null}
+    <g className="cosmos-cursor" pointerEvents="none" transform={`translate(${pointer.x} ${pointer.y})`} opacity={isMagnified ? 0.92 : 1}>
+      <circle r={activeNode ? (isMagnified ? 22 : 16) : 12} fill="none" stroke="#050505" strokeWidth="3.4" opacity="0.88" />
+      <circle r={activeNode ? (isMagnified ? 20 : 14) : 10} fill="none" stroke="#f7f7f4" strokeWidth="0.8" opacity={activeNode ? 0.82 : 0.52} />
+      {activeNode ? <circle r={isMagnified ? 12.8 : 8.2} fill="none" stroke="#00e7ff" strokeWidth="0.55" opacity="0.58" /> : null}
       <circle r="2.1" fill="#f7f7f4" opacity="0.86" />
       <line x1="-18" y1="0" x2="-11" y2="0" stroke="#f7f7f4" strokeWidth="0.65" opacity="0.62" />
       <line x1="11" y1="0" x2="18" y2="0" stroke="#f7f7f4" strokeWidth="0.65" opacity="0.62" />
