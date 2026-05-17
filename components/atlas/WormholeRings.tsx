@@ -19,11 +19,11 @@ export function WormholeRings({ state }: WormholeRingsProps) {
       <defs>
         <radialGradient id="wormhole-vignette" cx="50%" cy="50%" r="50%">
           <stop offset="0%" stopColor="#050505" stopOpacity="0.02" />
-          <stop offset="13%" stopColor="#050505" stopOpacity="0.18" />
-          <stop offset="27%" stopColor="#00e7ff" stopOpacity="0.34" />
-          <stop offset="44%" stopColor="#8f5cff" stopOpacity="0.28" />
-          <stop offset="62%" stopColor="#ffb000" stopOpacity="0.22" />
-          <stop offset="79%" stopColor="#ff3d1f" stopOpacity="0.16" />
+          <stop offset="12%" stopColor="#050505" stopOpacity="0.16" />
+          <stop offset="25%" stopColor="#00e7ff" stopOpacity="0.48" />
+          <stop offset="42%" stopColor="#8f5cff" stopOpacity="0.38" />
+          <stop offset="61%" stopColor="#ffb000" stopOpacity="0.34" />
+          <stop offset="79%" stopColor="#ff3d1f" stopOpacity="0.25" />
           <stop offset="100%" stopColor="#050505" stopOpacity="0" />
         </radialGradient>
         <filter id="wormhole-energy-glow" x="-30%" y="-30%" width="160%" height="160%">
@@ -42,8 +42,8 @@ export function WormholeRings({ state }: WormholeRingsProps) {
           d={line}
           fill="none"
           stroke={energyColor(index)}
-          strokeWidth={index % 5 === 0 ? 1.1 : 0.7}
-          opacity={index % 5 === 0 ? 0.22 : 0.13}
+          strokeWidth={index % 5 === 0 ? 1.42 : 0.94}
+          opacity={index % 5 === 0 ? 0.34 : 0.22}
           filter="url(#wormhole-energy-glow)"
           style={{ animationDelay: `${index * -0.22}s` }}
         />
@@ -55,8 +55,8 @@ export function WormholeRings({ state }: WormholeRingsProps) {
           d={line}
           fill="none"
           stroke={energyColor(index + 2)}
-          strokeWidth={index % 6 === 0 ? 0.68 : 0.38}
-          opacity={index % 6 === 0 ? 0.4 : 0.24}
+          strokeWidth={index % 6 === 0 ? 0.92 : 0.54}
+          opacity={index % 6 === 0 ? 0.58 : 0.34}
           style={{ animationDelay: `${index * -0.045}s` }}
         />
       ))}
@@ -68,8 +68,9 @@ export function WormholeRings({ state }: WormholeRingsProps) {
           d={line}
           fill="none"
           stroke={index % 4 === 0 ? '#fff3d1' : energyColor(index)}
-          strokeWidth={index % 3 === 0 ? 0.88 : 0.48}
-          opacity={index % 3 === 0 ? 0.34 : 0.2}
+          strokeWidth={index % 6 === 0 ? 1.24 : 0.66}
+          opacity={index % 6 === 0 ? 0.56 : 0.32}
+          filter={index % 6 === 0 ? 'url(#wormhole-energy-glow)' : undefined}
           style={{ animationDelay: `${index * -0.08}s` }}
         />
       ))}
@@ -79,12 +80,12 @@ export function WormholeRings({ state }: WormholeRingsProps) {
         const labelAngle = yearLabelAngle(ring.year, index, ring.mode === 'local');
         const labelScale = Math.max(0.55, 1.25 - depth);
         const ringOpacity = tunnelOpacity(depth);
-        const labelOpacity = (ring.mode === 'local' ? 1 : Math.max(0.34, 1 - Math.max(0, depth) * 0.72)) * ringOpacity;
-        const showLabel = labelOpacity > 0.13;
+        const labelOpacity = (ring.mode === 'local' ? 1 : Math.max(0.46, 1 - Math.max(0, depth) * 0.58)) * ringOpacity;
+        const showLabel = labelOpacity > 0.08;
         const label = ring.label;
-        const ringDash = ring.mode === 'local' ? '2 11' : ring.weight === 'major' ? '1 10' : '1 15';
-        const ringStroke = ring.mode === 'local' ? 1.08 : ring.weight === 'major' ? 0.78 : 0.48;
-        const ringColor = ring.mode === 'local' ? '#fff6c8' : ring.weight === 'major' ? '#ffcf70' : '#f7f7f4';
+        const ringDash = ring.mode === 'local' ? '2 9' : ring.weight === 'major' ? '1 8' : '1 12';
+        const ringStroke = ring.mode === 'local' ? 1.58 : ring.weight === 'major' ? 1.08 : 0.72;
+        const ringColor = ring.mode === 'local' ? '#fff8d6' : ring.weight === 'major' ? '#ffd16d' : '#f7f7f4';
 
         return (
           <g key={`${ring.year}-${index}`}>
@@ -97,8 +98,8 @@ export function WormholeRings({ state }: WormholeRingsProps) {
               stroke={ringColor}
               strokeDasharray={ringDash}
               strokeWidth={ringStroke}
-              opacity={(ring.mode === 'local' ? 0.76 : Math.max(0.14, 0.52 - Math.max(0, depth) * 0.26)) * ringOpacity}
-              filter={ring.mode === 'local' ? 'url(#wormhole-energy-glow)' : undefined}
+              opacity={(ring.mode === 'local' ? 0.94 : Math.max(0.24, 0.72 - Math.max(0, depth) * 0.22)) * ringOpacity}
+              filter={ring.mode === 'local' || ring.weight === 'major' ? 'url(#wormhole-energy-glow)' : undefined}
               style={{ animationDelay: `${index * -0.16}s` }}
             />
             {showLabel ? (
@@ -110,10 +111,11 @@ export function WormholeRings({ state }: WormholeRingsProps) {
                 radius={ring.radius}
                 angle={labelAngle}
                 fill={ring.mode === 'local' ? '#fff6c8' : '#f7f7f4'}
-                fontSize={Math.round((ring.weight === 'major' ? 12.6 : 9.7) * labelScale)}
+                fontSize={Math.round((ring.weight === 'major' ? 14.4 : 10.8) * labelScale)}
                 fontWeight={ring.weight === 'major' ? 650 : 520}
                 opacity={labelOpacity}
                 letterAngleStep={ring.mode === 'local' ? 2.9 : ring.weight === 'major' ? 2.1 : 1.62}
+                strokeWidth={ring.weight === 'major' ? 3.2 : 2.7}
               />
             ) : null}
           </g>
@@ -141,8 +143,8 @@ function OuterCurvature({ state }: { state: WormholeState }) {
         d={`M ${inner.x} ${inner.y} Q ${mid.x} ${mid.y} ${outer.x} ${outer.y}`}
         fill="none"
         stroke={color}
-        strokeWidth={index % 4 === 0 ? 2.2 : 1.15}
-        opacity={(index % 4 === 0 ? 0.72 : 0.38) * rimOpacity}
+        strokeWidth={index % 4 === 0 ? 2.8 : 1.5}
+        opacity={(index % 4 === 0 ? 0.9 : 0.52) * rimOpacity}
         filter="url(#wormhole-energy-glow)"
         style={{ animationDelay: `${index * -0.11}s` }}
       />

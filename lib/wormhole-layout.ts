@@ -70,7 +70,7 @@ export function wormholeState(travel: number): WormholeState {
 }
 
 export function wormholeRings(state: WormholeState): TimeRing[] {
-  const years = [...new Set(staticTimelineMarkers)]
+  const years = [...new Set([...staticTimelineMarkers, ...rollingTimelineMarkers(state.timePosition)])]
     .filter((year) => year >= oldestYear && year <= presentYear)
     .sort((a, b) => yearToPosition(a) - yearToPosition(b));
 
@@ -94,10 +94,10 @@ export function wormholeRings(state: WormholeState): TimeRing[] {
 
 export function wormholeGridLines(state: WormholeState) {
   const lines: string[] = [];
-  const samples = Array.from({ length: 48 }, (_, index) => index / 47 * visibleDepth);
+  const samples = Array.from({ length: 58 }, (_, index) => index / 57 * visibleDepth);
 
-  for (let spoke = 0; spoke < 48; spoke += 1) {
-    const baseAngle = spoke * 7.5;
+  for (let spoke = 0; spoke < 72; spoke += 1) {
+    const baseAngle = spoke * 5;
     const points = samples.map((depth) => {
       const worldPosition = state.timePosition + depth;
       const staticAngle = baseAngle + tubeTwist(worldPosition);
@@ -178,14 +178,18 @@ export function tunnelCenter(depth: number, phase: number) {
   const breathing = Math.sin(phase * Math.PI) * 8;
 
   return {
-    x: atlasSize.cx + bend * breathing * 0.35,
-    y: atlasSize.cy + bend * (26 + breathing)
+    x: roundSvg(atlasSize.cx + bend * breathing * 0.35),
+    y: roundSvg(atlasSize.cy + bend * (26 + breathing))
   };
 }
 
 export function tunnelPoint(radius: number, angle: number, depth: number, phase: number) {
   const center = tunnelCenter(depth, phase);
-  return polarToCartesian(center.x, center.y, radius, angle);
+  const point = polarToCartesian(center.x, center.y, radius, angle);
+  return {
+    x: roundSvg(point.x),
+    y: roundSvg(point.y)
+  };
 }
 
 export function yearToPosition(year: number) {
@@ -226,6 +230,32 @@ function ringDepth(year: number, timePosition: number) {
   return yearToPosition(year) - timePosition;
 }
 
+function rollingTimelineMarkers(timePosition: number) {
+  const step = 0.034;
+  const start = Math.max(0, timePosition + frontFadeDepth + step * 0.5);
+  const end = Math.min(1, timePosition + visibleDepth - step * 0.5);
+  const first = Math.floor(start / step) * step;
+  const years: number[] = [];
+
+  for (let position = first; position <= end + 0.0001; position += step) {
+    years.push(roundTimelineYear(positionToYear(position)));
+  }
+
+  return years;
+}
+
+function roundTimelineYear(year: number) {
+  const absYear = Math.abs(year);
+
+  if (year >= 1990) return Math.round(year / 5) * 5;
+  if (year >= 1800) return Math.round(year / 25) * 25;
+  if (year >= 1000) return Math.round(year / 50) * 50;
+  if (year >= 0) return Math.round(year / 100) * 100;
+  if (absYear <= 1000) return Math.round(year / 250) * 250;
+  if (absYear <= 3000) return Math.round(year / 500) * 500;
+  return Math.round(year / 1000) * 1000;
+}
+
 export function tubeTwist(worldPosition: number) {
   return worldPosition * 34 + Math.sin(worldPosition * Math.PI * 3.2) * 8;
 }
@@ -263,4 +293,8 @@ function stableHash(value: string) {
 
 function clamp01(value: number) {
   return Math.max(0, Math.min(1, value));
+}
+
+function roundSvg(value: number) {
+  return Math.round(value * 100) / 100;
 }

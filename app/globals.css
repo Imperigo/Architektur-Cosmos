@@ -4,9 +4,9 @@
 body { margin: 0; background: #050505; color: #f7f7f4; }
 
 @keyframes wormhole-spoke-flow {
-  0% { stroke-dashoffset: 0; opacity: 0.16; }
-  42% { opacity: 0.42; }
-  100% { stroke-dashoffset: -104; opacity: 0.2; }
+  0% { stroke-dashoffset: 0; opacity: 0.28; }
+  42% { opacity: 0.66; }
+  100% { stroke-dashoffset: -104; opacity: 0.34; }
 }
 
 @keyframes wormhole-ring-pulse {
@@ -15,15 +15,15 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
 }
 
 @keyframes wormhole-stream-flow {
-  0% { stroke-dashoffset: 0; opacity: 0.1; }
-  45% { opacity: 0.34; }
-  100% { stroke-dashoffset: -132; opacity: 0.14; }
+  0% { stroke-dashoffset: 0; opacity: 0.18; }
+  45% { opacity: 0.52; }
+  100% { stroke-dashoffset: -132; opacity: 0.24; }
 }
 
 @keyframes wormhole-speed-flow {
-  0% { stroke-dashoffset: 88; opacity: 0.12; }
-  38% { opacity: 0.48; }
-  100% { stroke-dashoffset: -42; opacity: 0.2; }
+  0% { stroke-dashoffset: 88; opacity: 0.22; }
+  38% { opacity: 0.76; }
+  100% { stroke-dashoffset: -42; opacity: 0.32; }
 }
 
 @keyframes wormhole-outer-flow {
@@ -87,28 +87,33 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
   to { stroke-dashoffset: -80; }
 }
 
+@keyframes relation-strand-flow {
+  to { stroke-dashoffset: -96; }
+}
+
 .wormhole-spoke {
-  stroke-dasharray: 4 18;
-  animation: wormhole-spoke-flow 1.8s linear infinite;
+  stroke-dasharray: 5 15;
+  animation: wormhole-spoke-flow 1.55s linear infinite;
   vector-effect: non-scaling-stroke;
 }
 
 .wormhole-stream {
-  stroke-dasharray: 30 38;
-  animation: wormhole-stream-flow 4.2s linear infinite;
+  stroke-dasharray: 34 32;
+  animation: wormhole-stream-flow 3.8s linear infinite;
   mix-blend-mode: screen;
   vector-effect: non-scaling-stroke;
 }
 
 .wormhole-speed-line {
-  stroke-dasharray: 1 14;
-  animation: wormhole-speed-flow 1.25s linear infinite;
+  stroke-dasharray: 2 12;
+  animation: wormhole-speed-flow 1.05s linear infinite;
   mix-blend-mode: screen;
   vector-effect: non-scaling-stroke;
 }
 
 .cosmos-launching .wormhole-stream,
-.cosmos-launching .wormhole-spoke {
+.cosmos-launching .wormhole-spoke,
+.cosmos-launching .wormhole-speed-line {
   animation-name: launch-surge;
   animation-duration: 1.2s;
 }
@@ -194,6 +199,17 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
   vector-effect: non-scaling-stroke;
 }
 
+.relation-strand,
+.relation-strand-glow {
+  animation: relation-strand-flow 8.4s linear infinite;
+  mix-blend-mode: screen;
+  vector-effect: non-scaling-stroke;
+}
+
+.relation-strand {
+  filter: drop-shadow(0 0 4px rgb(247 247 244 / 22%));
+}
+
 .style-sector-label {
   transition: opacity 180ms ease, transform 180ms ease;
 }
@@ -255,6 +271,8 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
   .cosmos-node-wiggle,
   .cosmos-cursor circle:first-child,
   .style-sector path,
+  .relation-strand,
+  .relation-strand-glow,
   .hover-preview,
   .preview-theme-chip,
   .dossier-overlay {

@@ -18,6 +18,17 @@ const relationDash: Record<RelationType, string | undefined> = {
   context: '2 8'
 };
 
+const relationColor: Record<RelationType, string> = {
+  influences: '#ffd16d',
+  responds_to: '#ff4d1f',
+  shares_theme: '#00e7ff',
+  same_author: '#b7ffef',
+  same_place: '#65ff9a',
+  typological_reference: '#9b6dff',
+  material_reference: '#ff007a',
+  context: '#f7f7f4'
+};
+
 export function RelationOverlay({ nodes, relations, selectedEntry }: RelationOverlayProps) {
   const nodeById = new Map(nodes.map((node) => [node.entry.id, node]));
 
@@ -31,17 +42,32 @@ export function RelationOverlay({ nodes, relations, selectedEntry }: RelationOve
         const isSelectedRelation = selectedEntry
           ? relation.source_entry_id === selectedEntry.id || relation.target_entry_id === selectedEntry.id
           : false;
+        const relationStroke = isSelectedRelation ? '#fff8d6' : relationColor[relation.relation_type];
+        const relationOpacity = isSelectedRelation ? 0.96 : selectedEntry ? 0.22 : 0.52;
+        const path = relationPath(source, target);
 
         return (
-          <path
-            key={relation.id}
-            d={relationPath(source, target)}
-            fill="none"
-            stroke={isSelectedRelation ? '#f7f7f4' : '#8a8a8a'}
-            strokeWidth={isSelectedRelation ? 1.75 : 0.95}
-            strokeDasharray={relationDash[relation.relation_type]}
-            opacity={isSelectedRelation ? 0.86 : selectedEntry ? 0.2 : 0.34}
-          />
+          <g key={relation.id} className="relation-strand-group">
+            <path
+              className="relation-strand-glow"
+              d={path}
+              fill="none"
+              stroke={relationStroke}
+              strokeWidth={isSelectedRelation ? 4.8 : 2.6}
+              strokeDasharray={relationDash[relation.relation_type]}
+              opacity={relationOpacity * 0.26}
+              filter="url(#wormhole-energy-glow)"
+            />
+            <path
+              className="relation-strand"
+              d={path}
+              fill="none"
+              stroke={relationStroke}
+              strokeWidth={isSelectedRelation ? 2.2 : 1.18}
+              strokeDasharray={relationDash[relation.relation_type]}
+              opacity={relationOpacity}
+            />
+          </g>
         );
       })}
     </g>

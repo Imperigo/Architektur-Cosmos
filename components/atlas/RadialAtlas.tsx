@@ -430,8 +430,8 @@ function HudThemeMarker({
 
   return (
     <g className="hud-theme-marker" onClick={onClick} onPointerEnter={onHover} onPointerLeave={onLeave}>
-      <line x1={tick.x} y1={tick.y} x2={point.x} y2={point.y} stroke={active ? '#c9fff4' : '#f7f7f4'} strokeWidth={active ? 1.4 : 0.7} opacity={active ? 0.86 : 0.32} />
-      <circle cx={point.x} cy={point.y} r={active ? 6 : 3.6} fill={active ? '#c9fff4' : '#050505'} stroke="#f7f7f4" strokeWidth="0.7" opacity={active ? 0.95 : 0.7} />
+      <line x1={tick.x} y1={tick.y} x2={point.x} y2={point.y} stroke={active ? '#c9fff4' : '#fff8d6'} strokeWidth={active ? 1.8 : 1} opacity={active ? 0.96 : 0.52} filter="url(#wormhole-energy-glow)" />
+      <circle cx={point.x} cy={point.y} r={active ? 6.6 : 4.2} fill={active ? '#c9fff4' : '#050505'} stroke="#fff8d6" strokeWidth="0.95" opacity={active ? 1 : 0.86} />
       <RadialLetterText
         text={`${shortLabel}${count > 9 ? '+' : ''}`}
         cx={atlasSize.cx}
@@ -453,7 +453,7 @@ function HudButton({ angle, label, active = false, onClick }: { angle: number; l
 
   return (
     <g className="hud-button" onClick={onClick}>
-      <circle cx={point.x} cy={point.y} r="12" fill={active ? '#f7f7f4' : '#050505'} stroke="#f7f7f4" strokeWidth="0.7" opacity="0.88" />
+      <circle cx={point.x} cy={point.y} r="12" fill={active ? '#fff8d6' : '#050505'} stroke="#fff8d6" strokeWidth="1" opacity="0.94" filter="url(#wormhole-energy-glow)" />
       <RadialLetterText
         text={label}
         cx={atlasSize.cx}
@@ -528,9 +528,9 @@ function HoverPreview({ pointer, node }: { pointer: SvgPoint; node: WormholeEntr
 
   return (
     <g className="hover-preview" pointerEvents="none">
-      <line x1={pointer.x} y1={pointer.y} x2={node.x} y2={node.y} stroke="#f7f7f4" strokeWidth="0.6" strokeDasharray="1 9" opacity="0.34" />
-      <circle cx={node.x} cy={node.y} r={node.size + 11} fill="none" stroke="#f7f7f4" strokeWidth="0.8" opacity="0.44" />
-      <circle cx={node.x} cy={node.y} r={node.size + 20} fill="none" stroke="#f7f7f4" strokeWidth="0.45" strokeDasharray="1 8" opacity="0.24" />
+      <line x1={pointer.x} y1={pointer.y} x2={node.x} y2={node.y} stroke="#fff8d6" strokeWidth="0.95" strokeDasharray="1 7" opacity="0.58" filter="url(#wormhole-energy-glow)" />
+      <circle cx={node.x} cy={node.y} r={node.size + 11} fill="none" stroke="#fff8d6" strokeWidth="1.15" opacity="0.66" filter="url(#wormhole-energy-glow)" />
+      <circle cx={node.x} cy={node.y} r={node.size + 20} fill="none" stroke="#00e7ff" strokeWidth="0.72" strokeDasharray="1 7" opacity="0.42" />
       <g transform={`translate(${x} ${y}) scale(${previewScale})`}>
         <ProjectPreviewCard entry={node.entry} x={0} y={0} width={baseWidth} />
       </g>

@@ -33,7 +33,7 @@ const sectorLabel: Record<StyleSector['id'], string> = {
 export function StyleSectors({ state }: { state: WormholeState }) {
   const outerLabelOpacity = Math.max(0, 1 - state.timePosition / 0.26);
   const innerLabelOpacity = smoothstep(0.26, 0.54, state.timePosition);
-  const boundaryOpacity = 0.22 + innerLabelOpacity * 0.2;
+  const boundaryOpacity = 0.34 + innerLabelOpacity * 0.28;
 
   return (
     <g aria-label="Stilsektoren">
@@ -52,9 +52,10 @@ export function StyleSectors({ state }: { state: WormholeState }) {
               x2={startOuter.x}
               y2={startOuter.y}
               stroke={accent}
-              strokeWidth="0.9"
-              strokeDasharray="1 9"
+              strokeWidth="1.35"
+              strokeDasharray="1 7"
               opacity={boundaryOpacity}
+              filter="url(#wormhole-energy-glow)"
             />
             <RadialLetterText
               className="style-sector-label style-sector-label-outer"
@@ -64,11 +65,11 @@ export function StyleSectors({ state }: { state: WormholeState }) {
               radius={wormholeTunnel.maxRadius + 22 + state.timePosition * 120}
               angle={labelAngle}
               fill={accent}
-              fontSize={8.6}
+              fontSize={9.4}
               fontWeight={700}
               opacity={outerLabelOpacity}
               letterAngleStep={1.42}
-              strokeWidth={2.2}
+              strokeWidth={2.8}
             />
             <RadialLetterText
               className="style-sector-label style-sector-label-inner"
@@ -78,11 +79,11 @@ export function StyleSectors({ state }: { state: WormholeState }) {
               radius={wormholeTunnel.minRadius + 34}
               angle={labelAngle}
               fill={accent}
-              fontSize={6.3}
+              fontSize={7.1}
               fontWeight={700}
               opacity={innerLabelOpacity}
               letterAngleStep={2.95}
-              strokeWidth={1.9}
+              strokeWidth={2.3}
             />
           </g>
         );
