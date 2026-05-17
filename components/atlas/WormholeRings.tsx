@@ -81,7 +81,9 @@ export function WormholeRings({ state }: WormholeRingsProps) {
         const labelScale = Math.max(0.55, 1.25 - depth);
         const ringOpacity = tunnelOpacity(depth);
         const labelOpacity = (ring.mode === 'local' ? 1 : Math.max(0.46, 1 - Math.max(0, depth) * 0.58)) * ringOpacity;
-        const showLabel = labelOpacity > 0.08;
+        const isInnerCrowdedMinor = ring.radius < 150 && ring.weight !== 'major' && ring.mode !== 'local';
+        const isDenseMinor = ring.weight !== 'major' && ring.mode !== 'local' && index % (ring.radius < 230 ? 3 : 2) !== 0;
+        const showLabel = labelOpacity > 0.1 && !isInnerCrowdedMinor && !isDenseMinor;
         const label = ring.label;
         const ringDash = ring.mode === 'local' ? '2 9' : ring.weight === 'major' ? '1 8' : '1 12';
         const ringStroke = ring.mode === 'local' ? 1.58 : ring.weight === 'major' ? 1.08 : 0.72;
@@ -111,7 +113,7 @@ export function WormholeRings({ state }: WormholeRingsProps) {
                 radius={ring.radius}
                 angle={labelAngle}
                 fill={ring.mode === 'local' ? '#fff6c8' : '#f7f7f4'}
-                fontSize={Math.round((ring.weight === 'major' ? 14.4 : 10.8) * labelScale)}
+                fontSize={Math.round((ring.weight === 'major' ? 14.2 : 9.5) * labelScale)}
                 fontWeight={ring.weight === 'major' ? 650 : 520}
                 opacity={labelOpacity}
                 letterAngleStep={ring.mode === 'local' ? 2.9 : ring.weight === 'major' ? 2.1 : 1.62}

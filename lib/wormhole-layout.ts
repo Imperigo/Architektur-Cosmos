@@ -112,7 +112,7 @@ export function wormholeGridLines(state: WormholeState) {
 }
 
 export function layoutWormholeEntries(entries: Entry[], state: WormholeState, selectedEntryId?: string): WormholeEntryNode[] {
-  return entries
+  const baseNodes = entries
     .map((entry) => {
       const depth = ringDepth(entry.year_start, state.timePosition);
       if (depth < frontFadeDepth || depth > visibleDepth) return null;
@@ -128,8 +128,8 @@ export function layoutWormholeEntries(entries: Entry[], state: WormholeState, se
       const labelX = point.x + (labelAnchor === 'start' ? 22 : -22);
       const labelY = point.y - 10;
       const semanticLevel = semanticLevelForDepth(depth, closeness, entry.id === selectedEntryId);
-      const frontExpansion = 1 + Math.max(0, -depth) * 2.6;
-      const size = (2.2 + Math.pow(closeness, 1.45) * 12.8) * frontExpansion;
+      const frontExpansion = 1 + Math.max(0, -depth) * 1.45;
+      const size = Math.min(12.8, (2.15 + Math.pow(closeness, 1.45) * 11.4) * frontExpansion);
 
       return {
         entry,
@@ -143,8 +143,8 @@ export function layoutWormholeEntries(entries: Entry[], state: WormholeState, se
         semanticLevel,
         opacity: tunnelOpacity(depth),
         size,
-        stretchX: 0.66 + Math.pow(closeness, 1.15) * 1.08 + Math.max(0, -depth) * 1.4,
-        stretchY: 1.2 - Math.pow(closeness, 1.08) * 0.45,
+        stretchX: Math.min(1.82, 0.66 + Math.pow(closeness, 1.15) * 0.98 + Math.max(0, -depth) * 0.9),
+        stretchY: Math.max(0.72, 1.2 - Math.pow(closeness, 1.08) * 0.42),
         driftX: ((driftSeed % 9) - 4) * 0.42,
         driftY: (((driftSeed >> 4) % 9) - 4) * 0.38,
         driftDelay: -((driftSeed % 240) / 100),
@@ -157,7 +157,9 @@ export function layoutWormholeEntries(entries: Entry[], state: WormholeState, se
         labelLeaderY: point.y - 4
       };
     })
-    .filter((node): node is WormholeEntryNode => Boolean(node))
+    .filter((node): node is WormholeEntryNode => Boolean(node));
+
+  return spreadWormholeClusters(baseNodes, state.phase)
     .sort((a, b) => b.depth - a.depth);
 }
 
@@ -285,6 +287,84 @@ function depthLaneOffset(seed: number, closeness: number) {
   return (((seed >> 7) % 9) - 4) * (1.6 + closeness * 2.8);
 }
 
+function spreadWormholeClusters(nodes: WormholeEntryNode[], phase: number) {
+  const buckets = new Map<string, WormholeEntryNode[]>();
+
+  nodes.forEach((node) => {
+    const key = [
+      node.sector.id,
+      Math.round(node.depth / 0.042)
+    ].join(':');
+    const bucket = buckets.get(key) ?? [];
+    bucket.push(node);
+    buckets.set(key, bucket);
+  });
+
+  return [...buckets.values()].flatMap((bucket) => {
+    if (bucket.length === 1) return bucket;
+
+    const sortedBucket = [...bucket].sort((a, b) => {
+      if (a.entry.year_start !== b.entry.year_start) return a.entry.year_start - b.entry.year_start;
+      return a.entry.id.localeCompare(b.entry.id);
+    });
+
+    return sortedBucket.map((node, index) => {
+      const lane = index - (sortedBucket.length - 1) / 2;
+      const radial = radialUnit(node.x, node.y);
+      const tangent = { x: -radial.y, y: radial.x };
+      const spread = Math.min(42, 7 + sortedBucket.length * 2.7) * (0.36 + node.closeness * 0.72);
+      const radialSpread = Math.min(24, 5 + sortedBucket.length * 1.15) * (0.32 + node.closeness * 0.55);
+      const radialLane = ((index % 3) - 1) * radialSpread;
+      const constrained = constrainToTunnelSkin(
+        node.x + tangent.x * lane * spread + radial.x * radialLane,
+        node.y + tangent.y * lane * spread + radial.y * radialLane,
+        node.depth,
+        phase
+      );
+      const x = clamp(roundSvg(constrained.x), 38, atlasSize.width - 38);
+      const y = clamp(roundSvg(constrained.y), 38, atlasSize.height - 38);
+      const labelAnchor = x > atlasSize.cx ? 'start' as const : 'end' as const;
+
+      return {
+        ...node,
+        x,
+        y,
+        clusterIndex: index,
+        clusterSize: sortedBucket.length,
+        labelX: x + (labelAnchor === 'start' ? 22 : -22),
+        labelY: y - 10 + lane * 2,
+        labelAnchor,
+        labelLeaderX: x + (labelAnchor === 'start' ? 8 : -8),
+        labelLeaderY: y - 4
+      };
+    });
+  });
+}
+
+function radialUnit(x: number, y: number) {
+  const dx = x - atlasSize.cx;
+  const dy = y - atlasSize.cy;
+  const length = Math.hypot(dx, dy) || 1;
+  return { x: dx / length, y: dy / length };
+}
+
+function constrainToTunnelSkin(x: number, y: number, depth: number, phase: number) {
+  const center = tunnelCenter(depth, phase);
+  const dx = x - center.x;
+  const dy = y - center.y;
+  const length = Math.hypot(dx, dy) || 1;
+  const maxRadius = maxTunnelRadius - 10 + Math.max(0, -depth) * 12;
+
+  if (length <= maxRadius) {
+    return { x, y };
+  }
+
+  return {
+    x: center.x + (dx / length) * maxRadius,
+    y: center.y + (dy / length) * maxRadius
+  };
+}
+
 function stableHash(value: string) {
   return value.split('').reduce((hash, char) => {
     return (hash * 31 + char.charCodeAt(0)) >>> 0;
@@ -293,6 +373,10 @@ function stableHash(value: string) {
 
 function clamp01(value: number) {
   return Math.max(0, Math.min(1, value));
+}
+
+function clamp(value: number, min: number, max: number) {
+  return Math.max(min, Math.min(max, value));
 }
 
 function roundSvg(value: number) {

@@ -1,8 +1,14 @@
 import { atlasSize, type AtlasNode } from '@/lib/atlas-layout';
 import type { Entry, EntryRelation, RelationType } from '@/lib/types';
 
+type RelationNode = AtlasNode & {
+  opacity?: number;
+  depth?: number;
+  closeness?: number;
+};
+
 type RelationOverlayProps = {
-  nodes: AtlasNode[];
+  nodes: RelationNode[];
   relations: EntryRelation[];
   selectedEntry: Entry | null;
 };
@@ -42,8 +48,12 @@ export function RelationOverlay({ nodes, relations, selectedEntry }: RelationOve
         const isSelectedRelation = selectedEntry
           ? relation.source_entry_id === selectedEntry.id || relation.target_entry_id === selectedEntry.id
           : false;
+        const visibility = relationVisibility(source, target);
+        if (!isSelectedRelation && visibility < 0.18) return null;
+
         const relationStroke = isSelectedRelation ? '#fff8d6' : relationColor[relation.relation_type];
-        const relationOpacity = isSelectedRelation ? 0.96 : selectedEntry ? 0.22 : 0.52;
+        const relationOpacity = isSelectedRelation ? 0.9 : selectedEntry ? 0.16 * visibility : 0.3 * visibility;
+        const relationWidth = isSelectedRelation ? 1.95 : 0.72 + visibility * 0.32;
         const path = relationPath(source, target);
 
         return (
@@ -53,9 +63,9 @@ export function RelationOverlay({ nodes, relations, selectedEntry }: RelationOve
               d={path}
               fill="none"
               stroke={relationStroke}
-              strokeWidth={isSelectedRelation ? 4.8 : 2.6}
+              strokeWidth={isSelectedRelation ? 4.2 : 1.9}
               strokeDasharray={relationDash[relation.relation_type]}
-              opacity={relationOpacity * 0.26}
+              opacity={relationOpacity * 0.34}
               filter="url(#wormhole-energy-glow)"
             />
             <path
@@ -63,7 +73,7 @@ export function RelationOverlay({ nodes, relations, selectedEntry }: RelationOve
               d={path}
               fill="none"
               stroke={relationStroke}
-              strokeWidth={isSelectedRelation ? 2.2 : 1.18}
+              strokeWidth={relationWidth}
               strokeDasharray={relationDash[relation.relation_type]}
               opacity={relationOpacity}
             />
@@ -74,13 +84,48 @@ export function RelationOverlay({ nodes, relations, selectedEntry }: RelationOve
   );
 }
 
-function relationPath(source: AtlasNode, target: AtlasNode) {
+function relationPath(source: RelationNode, target: RelationNode) {
   const midX = (source.x + target.x) / 2;
   const midY = (source.y + target.y) / 2;
-  const controlX = roundPath(midX + (atlasSize.cx - midX) * 0.32);
-  const controlY = roundPath(midY + (atlasSize.cy - midY) * 0.32);
+  const distance = Math.hypot(target.x - source.x, target.y - source.y);
+  const direction = shortestAngleDelta(source.angle, target.angle) >= 0 ? 1 : -1;
+  const bend = Math.min(116, Math.max(24, distance * 0.2));
+  const sourceTangent = tangentUnit(source.x, source.y, direction);
+  const targetTangent = tangentUnit(target.x, target.y, direction);
+  const centerPull = distance > 260 ? 0.22 : 0.14;
+  const controlAX = roundPath(source.x + (atlasSize.cx - source.x) * centerPull + sourceTangent.x * bend);
+  const controlAY = roundPath(source.y + (atlasSize.cy - source.y) * centerPull + sourceTangent.y * bend);
+  const controlBX = roundPath(target.x + (atlasSize.cx - target.x) * centerPull - targetTangent.x * bend);
+  const controlBY = roundPath(target.y + (atlasSize.cy - target.y) * centerPull - targetTangent.y * bend);
 
-  return `M ${source.x} ${source.y} Q ${controlX} ${controlY} ${target.x} ${target.y}`;
+  if (distance < 90) {
+    const controlX = roundPath(midX + (atlasSize.cx - midX) * 0.18 + sourceTangent.x * bend * 0.42);
+    const controlY = roundPath(midY + (atlasSize.cy - midY) * 0.18 + sourceTangent.y * bend * 0.42);
+    return `M ${source.x} ${source.y} Q ${controlX} ${controlY} ${target.x} ${target.y}`;
+  }
+
+  return `M ${source.x} ${source.y} C ${controlAX} ${controlAY} ${controlBX} ${controlBY} ${target.x} ${target.y}`;
+}
+
+function relationVisibility(source: RelationNode, target: RelationNode) {
+  const depthGap = Math.abs((source.depth ?? 0.5) - (target.depth ?? 0.5));
+  const opacity = Math.min(source.opacity ?? 1, target.opacity ?? 1);
+  const focusBoost = Math.max(source.closeness ?? 0, target.closeness ?? 0) * 0.18;
+  return Math.max(0, Math.min(1, opacity * (0.85 - depthGap * 1.35) + focusBoost));
+}
+
+function tangentUnit(x: number, y: number, direction: number) {
+  const dx = x - atlasSize.cx;
+  const dy = y - atlasSize.cy;
+  const length = Math.hypot(dx, dy) || 1;
+  return {
+    x: (-dy / length) * direction,
+    y: (dx / length) * direction
+  };
+}
+
+function shortestAngleDelta(a: number, b: number) {
+  return ((((a - b) % 360) + 540) % 360) - 180;
 }
 
 function roundPath(value: number) {

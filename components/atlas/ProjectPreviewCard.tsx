@@ -52,7 +52,8 @@ export function ProjectPreviewCard({ entry, x, y, width = 260 }: ProjectPreviewC
 }
 
 function WrappedText({ text, x, y, maxChars, lineHeight, maxLines }: { text: string; x: number; y: number; maxChars: number; lineHeight: number; maxLines: number }) {
-  const lines = wrapText(text, maxChars).slice(0, maxLines);
+  const wrappedLines = wrapText(text, maxChars);
+  const lines = ellipsizeLines(wrappedLines, maxLines, maxChars);
 
   return (
     <text fill="#f7f7f4" fontSize="10" fontFamily="var(--font-sans), system-ui, sans-serif">
@@ -63,6 +64,15 @@ function WrappedText({ text, x, y, maxChars, lineHeight, maxLines }: { text: str
       ))}
     </text>
   );
+}
+
+function ellipsizeLines(lines: string[], maxLines: number, maxChars: number) {
+  if (lines.length <= maxLines) return lines;
+
+  const visible = lines.slice(0, maxLines);
+  const last = visible[visible.length - 1] ?? '';
+  visible[visible.length - 1] = `${last.replace(/[,.:\s]+$/, '').slice(0, Math.max(0, maxChars - 3))}...`;
+  return visible;
 }
 
 function wrapText(text: string, maxChars: number) {

@@ -360,7 +360,7 @@ function RadialHud({
   onReset: () => void;
   onToggleRelations: () => void;
 }) {
-  const hudThemes = themes.slice(0, 16);
+  const hudThemes = themes.slice(0, 12);
   const selectedTheme = activeTheme === 'all' ? null : themes.find((theme) => theme.id === activeTheme);
   const hoveredTheme = hoverThemeId ? themes.find((theme) => theme.id === hoverThemeId) : null;
   const themeLabelText = hoveredTheme?.label ?? selectedTheme?.label ?? 'All Themes';
@@ -378,6 +378,7 @@ function RadialHud({
           angle={305}
           label="ALL"
           active={activeTheme === 'all'}
+          labelVisible={activeTheme === 'all' || hoverThemeId === 'all'}
           count={totalEntryCount}
           onClick={() => onThemeChange('all')}
           onHover={() => onThemeHover('all')}
@@ -389,6 +390,7 @@ function RadialHud({
             angle={315 + index * (90 / Math.max(1, hudThemes.length - 1))}
             label={theme.label}
             active={activeTheme === theme.id}
+            labelVisible={activeTheme === theme.id || hoverThemeId === theme.id}
             count={theme.count}
             onClick={() => onThemeChange(theme.id)}
             onHover={() => onThemeHover(theme.id)}
@@ -412,6 +414,7 @@ function HudThemeMarker({
   label,
   count,
   active,
+  labelVisible,
   onClick,
   onHover,
   onLeave
@@ -420,6 +423,7 @@ function HudThemeMarker({
   label: string;
   count: number;
   active: boolean;
+  labelVisible: boolean;
   onClick: () => void;
   onHover: () => void;
   onLeave: () => void;
@@ -432,18 +436,20 @@ function HudThemeMarker({
     <g className="hud-theme-marker" onClick={onClick} onPointerEnter={onHover} onPointerLeave={onLeave}>
       <line x1={tick.x} y1={tick.y} x2={point.x} y2={point.y} stroke={active ? '#c9fff4' : '#fff8d6'} strokeWidth={active ? 1.8 : 1} opacity={active ? 0.96 : 0.52} filter="url(#wormhole-energy-glow)" />
       <circle cx={point.x} cy={point.y} r={active ? 6.6 : 4.2} fill={active ? '#c9fff4' : '#050505'} stroke="#fff8d6" strokeWidth="0.95" opacity={active ? 1 : 0.86} />
-      <RadialLetterText
-        text={`${shortLabel}${count > 9 ? '+' : ''}`}
-        cx={atlasSize.cx}
-        cy={atlasSize.cy}
-        radius={450}
-        angle={angle}
-        fill={active ? '#c9fff4' : '#d6d6d2'}
-        fontSize={5.8}
-        fontWeight={700}
-        strokeWidth={2}
-        letterAngleStep={1.25}
-      />
+      {labelVisible ? (
+        <RadialLetterText
+          text={`${shortLabel}${count > 9 ? '+' : ''}`}
+          cx={atlasSize.cx}
+          cy={atlasSize.cy}
+          radius={450}
+          angle={angle}
+          fill={active ? '#c9fff4' : '#d6d6d2'}
+          fontSize={5.8}
+          fontWeight={700}
+          strokeWidth={2}
+          letterAngleStep={1.25}
+        />
+      ) : null}
     </g>
   );
 }
