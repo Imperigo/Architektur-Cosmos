@@ -1,2 +1,2 @@
-:HL["/Architektur-Cosmos/_next/static/chunks/15a3mx7b1oehu.css","style"]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"/_not-found","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}},"staleTime":300,"buildId":"muFOvFYW318hcWCRO8pkG"}
+:HL["/Architektur-Cosmos/_next/static/chunks/00-4bno7kj6y9.css","style"]
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"/_not-found","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}},"staleTime":300,"buildId":"k9iHqLrr4z43AqzmuPtgm"}
