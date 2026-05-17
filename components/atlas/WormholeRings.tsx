@@ -37,6 +37,7 @@ export function WormholeRings({ state, isMoving = false }: WormholeRingsProps) {
       </defs>
       <circle className="wormhole-breath" cx={atlasSize.cx} cy={atlasSize.cy + 8} r={wormholeTunnel.maxRadius + 18 - edgeCompression * 24} fill="url(#wormhole-vignette)" />
       <IdleOrbits state={state} />
+      <IdleWhirlLines state={state} />
       {streamLines.map((line, index) => (
         <path
           key={`stream-${index}`}
@@ -45,7 +46,7 @@ export function WormholeRings({ state, isMoving = false }: WormholeRingsProps) {
           fill="none"
           stroke={energyColor(index)}
           strokeWidth={index % 5 === 0 ? 1.42 : 0.94}
-          opacity={isMoving ? (index % 5 === 0 ? 0.22 : 0.12) : index % 5 === 0 ? 0.34 : 0.22}
+          opacity={isMoving ? (index % 5 === 0 ? 0.42 : 0.28) : index % 5 === 0 ? 0.34 : 0.22}
           filter={isMoving ? undefined : 'url(#wormhole-energy-glow)'}
           style={{ animationDelay: `${index * -0.22}s` }}
         />
@@ -58,7 +59,7 @@ export function WormholeRings({ state, isMoving = false }: WormholeRingsProps) {
           fill="none"
           stroke={energyColor(index + 2)}
           strokeWidth={index % 6 === 0 ? 0.92 : 0.54}
-          opacity={isMoving ? (index % 6 === 0 ? 0.42 : 0.22) : index % 6 === 0 ? 0.58 : 0.34}
+          opacity={isMoving ? (index % 6 === 0 ? 0.56 : 0.34) : index % 6 === 0 ? 0.58 : 0.34}
           style={{ animationDelay: `${index * -0.045}s` }}
         />
       ))}
@@ -158,6 +159,38 @@ function IdleOrbits({ state }: { state: WormholeState }) {
   );
 }
 
+function IdleWhirlLines({ state }: { state: WormholeState }) {
+  return (
+    <g aria-hidden="true" pointerEvents="none">
+      {Array.from({ length: 6 }, (_, index) => {
+        const depth = 0.1 + index * 0.055;
+        const baseAngle = index * 58 + tubeTwist(state.timePosition + depth) * 0.22;
+        const samples = Array.from({ length: 5 }, (_, sampleIndex) => depth + sampleIndex * 0.034);
+        const points = samples.map((sampleDepth, sampleIndex) => {
+          const radius = tunnelRadius(sampleDepth) + Math.sin(sampleIndex * 0.8 + index) * 3;
+          const angle = baseAngle + sampleIndex * 10 + tubeTwist(state.timePosition + sampleDepth) * 0.34;
+          return tunnelPoint(radius, angle, sampleDepth, state.phase);
+        });
+        const path = points.map((point, pointIndex) => `${pointIndex === 0 ? 'M' : 'L'} ${point.x} ${point.y}`).join(' ');
+
+        return (
+          <path
+            key={index}
+            className="wormhole-idle-whirl"
+            d={path}
+            fill="none"
+            stroke={energyColor(index + 3)}
+            strokeWidth={index % 2 === 0 ? 0.8 : 0.6}
+            strokeDasharray="18 34"
+            opacity="0.2"
+            style={{ animationDelay: `${index * -1.9}s` }}
+          />
+        );
+      })}
+    </g>
+  );
+}
+
 function OuterCurvature({ state, isMoving }: { state: WormholeState; isMoving: boolean }) {
   const startResistance = state.edgeTension < 0 ? Math.abs(state.edgeTension) * 260 : 0;
   const radiusLift = Math.min(112, state.timePosition * 320) - startResistance;
@@ -167,7 +200,6 @@ function OuterCurvature({ state, isMoving }: { state: WormholeState; isMoving: b
     const inner = polarToCartesian(atlasSize.cx, atlasSize.cy, wormholeTunnel.maxRadius + radiusLift - 18, angle - 5);
     const mid = polarToCartesian(atlasSize.cx, atlasSize.cy, wormholeTunnel.maxRadius + radiusLift + (index % 2 === 0 ? 18 : 9), angle + 4);
     const outer = polarToCartesian(atlasSize.cx, atlasSize.cy, wormholeTunnel.maxRadius + radiusLift - 2, angle + 13);
-    const color = energyColor(index + 3);
 
     return (
       <path
@@ -175,9 +207,9 @@ function OuterCurvature({ state, isMoving }: { state: WormholeState; isMoving: b
         className="wormhole-outer-rim"
         d={`M ${inner.x} ${inner.y} Q ${mid.x} ${mid.y} ${outer.x} ${outer.y}`}
         fill="none"
-        stroke={color}
-        strokeWidth={index % 4 === 0 ? 2.8 : 1.5}
-        opacity={(index % 4 === 0 ? 0.9 : 0.52) * rimOpacity}
+        stroke="#f7f7f4"
+        strokeWidth={index % 4 === 0 ? 1.2 : 0.7}
+        opacity={(index % 4 === 0 ? 0.28 : 0.14) * rimOpacity}
         filter={isMoving ? undefined : 'url(#wormhole-energy-glow)'}
         style={{ animationDelay: `${index * -0.11}s` }}
       />

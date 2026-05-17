@@ -45,7 +45,9 @@ export function RadialLetterText({
       {letters.map((letter, index) => {
         const letterAngle = startAngle + index * step;
         const point = polarToCartesian(cx, cy, radius, letterAngle);
-        const rotation = inward ? letterAngle + 180 : letterAngle;
+        const radialRotation = inward ? letterAngle + 180 : letterAngle;
+        const normalizedRotation = ((radialRotation % 360) + 360) % 360;
+        const rotation = normalizedRotation > 90 && normalizedRotation < 270 ? radialRotation + 180 : radialRotation;
 
         return (
           <text

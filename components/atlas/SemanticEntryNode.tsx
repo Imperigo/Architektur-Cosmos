@@ -40,6 +40,15 @@ const entryGlyph: Record<Entry['entry_type'], string> = {
   event: '×'
 };
 
+const styleAccent: Record<Entry['style_sector'], string> = {
+  classical_architecture: '#9b6dff',
+  pre_modern_architecture: '#ffb000',
+  modern_architecture: '#00e7ff',
+  postwar_modern_architecture: '#ff4d1f',
+  sustainable_architecture: '#65ff9a',
+  vernacular_architecture: '#ff007a'
+};
+
 export function SemanticEntryNode({
   entry,
   x,
@@ -64,6 +73,7 @@ export function SemanticEntryNode({
   const glyphRadius = nodeRadius ?? (semanticLevel === 'global' ? 4.8 : 7.2);
   const hitRadius = Math.max(22, glyphRadius + 18);
   const glyphFontSize = Math.max(7, Math.min(14, glyphRadius * 0.72));
+  const accent = styleAccent[entry.style_sector];
   const labelWidth = Math.min(230, entry.title.length * 6.4 + 72);
   const labelRectX = labelAnchor === 'end' ? labelX - labelWidth : labelX;
   const labelTextX = labelAnchor === 'end' ? labelX - 10 : labelX + 10;
@@ -97,14 +107,7 @@ export function SemanticEntryNode({
       {clusterSize > 1 ? (
         <circle cx={x} cy={y} r={glyphRadius + 5.5} fill="none" stroke="#f7f7f4" strokeWidth="0.55" strokeDasharray="1 4" opacity="0.65" />
       ) : null}
-      <circle
-        cx={x}
-        cy={y}
-        r={isSelected ? glyphRadius + 3 : glyphRadius}
-        fill={isSelected ? '#050505' : '#f7f7f4'}
-        stroke="#f7f7f4"
-        strokeWidth={isSelected ? 2 : 1.2}
-      />
+      <EntryThumbnail entry={entry} x={x} y={y} radius={isSelected ? glyphRadius + 3 : glyphRadius} accent={accent} isSelected={isSelected} />
       <text
         x={x}
         y={y + glyphFontSize * 0.34}
@@ -113,6 +116,7 @@ export function SemanticEntryNode({
         fontSize={entry.entry_type === 'text' || entry.entry_type === 'theory' ? Math.max(7, glyphFontSize * 0.9) : glyphFontSize}
         fontFamily="var(--font-sans), system-ui, sans-serif"
         pointerEvents="none"
+        opacity={glyphRadius > 7.5 ? 0.82 : 0}
       >
         {entryGlyph[entry.entry_type]}
       </text>
@@ -147,6 +151,49 @@ export function SemanticEntryNode({
       ) : null}
     </g>
   );
+}
+
+function EntryThumbnail({ entry, x, y, radius, accent, isSelected }: { entry: Entry; x: number; y: number; radius: number; accent: string; isSelected: boolean }) {
+  const seed = stableHash(entry.id);
+  const inset = radius * 0.34;
+  const skyline = 3 + (seed % 4);
+  const baseY = y + radius * 0.34;
+
+  return (
+    <g className="entry-thumbnail" pointerEvents="none">
+      <circle cx={x} cy={y} r={radius} fill={isSelected ? '#050505' : thumbnailFill(entry.entry_type)} stroke={accent} strokeWidth={isSelected ? 2.15 : 1.25} />
+      <circle cx={x} cy={y} r={Math.max(0, radius - 2.2)} fill="none" stroke="#f7f7f4" strokeWidth="0.45" opacity="0.62" />
+      <g stroke={isSelected ? '#f7f7f4' : '#050505'} strokeWidth={Math.max(0.45, radius * 0.075)} fill="none" opacity={radius < 5.6 ? 0.28 : 0.66}>
+        {Array.from({ length: skyline }, (_, index) => {
+          const step = (radius * 1.35) / Math.max(1, skyline - 1);
+          const localX = x - radius * 0.68 + index * step;
+          const height = radius * (0.35 + ((seed >> (index * 3)) % 5) * 0.09);
+
+          return <path key={index} d={`M ${localX} ${baseY} V ${baseY - height}`} />;
+        })}
+        <path d={`M ${x - radius + inset} ${baseY} H ${x + radius - inset}`} />
+        {entry.entry_type === 'urban_plan' || entry.entry_type === 'map' ? (
+          <circle cx={x} cy={y} r={radius * 0.38} />
+        ) : (
+          <path d={`M ${x - radius * 0.42} ${y - radius * 0.05} L ${x} ${y - radius * 0.45} L ${x + radius * 0.42} ${y - radius * 0.05}`} />
+        )}
+      </g>
+    </g>
+  );
+}
+
+function thumbnailFill(entryType: Entry['entry_type']) {
+  if (entryType === 'text' || entryType === 'theory') return '#f7f7f4';
+  if (entryType === 'landscape_project') return '#c9fff4';
+  if (entryType === 'urban_plan' || entryType === 'map') return '#d7c7ff';
+  if (entryType === 'infrastructure') return '#ffd7a8';
+  return '#f7f7f4';
+}
+
+function stableHash(value: string) {
+  return value.split('').reduce((hash, char) => {
+    return (hash * 31 + char.charCodeAt(0)) >>> 0;
+  }, 7);
 }
 
 function formatYear(year: number) {

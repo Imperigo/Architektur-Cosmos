@@ -175,11 +175,13 @@ export function radiusToTunnelDepth(radius: number) {
 export function tunnelCenter(depth: number, phase: number) {
   const clampedDepth = Math.max(0, Math.min(1, depth));
   const bend = Math.sin(clampedDepth * Math.PI);
-  const breathing = Math.sin(phase * Math.PI) * 8;
+  const breathing = Math.sin(phase * Math.PI * 2) * 5;
+  const pathSway = Math.sin((phase + clampedDepth * 0.72) * Math.PI * 2) * 22 * clampedDepth * (1 - clampedDepth * 0.28);
+  const pathLift = Math.cos((phase * 0.82 + clampedDepth * 0.9) * Math.PI) * 16 * bend;
 
   return {
-    x: roundSvg(atlasSize.cx + bend * breathing * 0.35),
-    y: roundSvg(atlasSize.cy + bend * (26 + breathing))
+    x: roundSvg(atlasSize.cx + bend * breathing * 0.25 + pathSway),
+    y: roundSvg(atlasSize.cy + bend * (31 + breathing) + pathLift)
   };
 }
 

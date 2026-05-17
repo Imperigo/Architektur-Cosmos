@@ -119,9 +119,8 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
 }
 
 .wormhole-outer-rim {
-  stroke-dasharray: 20 18;
+  stroke-dasharray: none;
   animation: none;
-  mix-blend-mode: screen;
   vector-effect: non-scaling-stroke;
 }
 
@@ -153,12 +152,21 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
   animation: wormhole-idle-orbit 24s linear infinite;
 }
 
+.wormhole-idle-whirl {
+  mix-blend-mode: screen;
+  vector-effect: non-scaling-stroke;
+}
+
+.cosmos-idle .wormhole-idle-whirl {
+  animation: wormhole-stream-flow 18s linear infinite;
+}
+
 .wormhole-whirl {
   animation: wormhole-whirl 34s linear infinite;
 }
 
 .wormhole-camera {
-  transition: transform 620ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 760ms cubic-bezier(0.16, 1, 0.3, 1);
   transform-box: view-box;
   will-change: transform;
 }
@@ -171,7 +179,7 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
 }
 
 .hover-preview {
-  animation: hover-preview-arrive 220ms cubic-bezier(0.19, 1, 0.22, 1);
+  animation: hover-preview-arrive 180ms cubic-bezier(0.19, 1, 0.22, 1);
 }
 
 .project-preview-card {
@@ -189,11 +197,11 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
 }
 
 .cosmos-node-wiggle:hover {
-  animation: cosmos-node-hover 1.25s ease-in-out infinite;
+  animation: cosmos-node-hover 900ms ease-out 1;
 }
 
 .node-focus-drift {
-  transition: transform 320ms cubic-bezier(0.19, 1, 0.22, 1), opacity 180ms ease;
+  transition: transform 420ms cubic-bezier(0.19, 1, 0.22, 1), opacity 200ms ease;
 }
 
 .cosmos-cursor circle:first-child {
@@ -202,9 +210,12 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
   transition: r 90ms ease, opacity 90ms ease;
 }
 
-.style-sector path {
-  animation: sector-current 16s linear infinite;
-  vector-effect: non-scaling-stroke;
+.cosmos-cursor {
+  filter: drop-shadow(0 0 5px rgb(0 0 0 / 78%));
+}
+
+.style-sector-ribbon {
+  mix-blend-mode: screen;
 }
 
 .style-sector line {
@@ -238,13 +249,17 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
 }
 
 .cosmos-moving .cosmos-node-wiggle:hover,
-.cosmos-moving .style-sector path,
 .cosmos-moving .preview-theme-chip,
 .cosmos-moving .hover-preview,
 .cosmos-moving .wormhole-breath,
 .cosmos-moving .wormhole-idle-orbit,
+.cosmos-moving .wormhole-idle-whirl,
 .cosmos-moving .wormhole-current-ring {
   animation: none;
+}
+
+.cosmos-moving .wormhole-stream {
+  animation: wormhole-stream-flow 1.35s linear infinite;
 }
 
 .cosmos-moving .wormhole-spoke,
@@ -289,7 +304,7 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
 }
 
 .preview-theme-chip {
-  animation: hover-preview-arrive 260ms cubic-bezier(0.19, 1, 0.22, 1);
+  animation: none;
 }
 
 .intro-gate {
@@ -312,13 +327,13 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
   .wormhole-current-ring,
   .wormhole-breath,
   .wormhole-idle-orbit,
+  .wormhole-idle-whirl,
   .wormhole-stream,
   .wormhole-speed-line,
   .wormhole-outer-rim,
   .wormhole-whirl,
   .cosmos-node-wiggle,
   .cosmos-cursor circle:first-child,
-  .style-sector path,
   .relation-strand,
   .relation-strand-glow,
   .hover-preview,
