@@ -88,7 +88,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     }
 
     releaseSnap();
-    setTravel((current) => clampTravel(current + delta));
+    setTravel((current) => advanceTravel(current, delta));
   }
 
   function resetView() {
@@ -591,6 +591,27 @@ function themeLabel(theme: string) {
     .replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
-function clampTravel(value: number) {
-  return Math.max(0, Math.min(1, value));
+function advanceTravel(current: number, delta: number) {
+  const maxOverscroll = 0.065;
+
+  if (current <= 0 && delta < 0) {
+    return Math.max(-maxOverscroll, current + delta * 0.16);
+  }
+
+  if (current < 0 && delta > 0) {
+    return Math.min(0, current + delta * 0.78);
+  }
+
+  if (current >= 1 && delta > 0) {
+    return Math.min(1 + maxOverscroll, current + delta * 0.16);
+  }
+
+  if (current > 1 && delta < 0) {
+    return Math.max(1, current + delta * 0.78);
+  }
+
+  const next = current + delta;
+  if (next < 0) return next * 0.22;
+  if (next > 1) return 1 + (next - 1) * 0.22;
+  return next;
 }

@@ -5,6 +5,7 @@ import { atlasSize, sectorMidAngle, styleSectors, type AtlasNode, type SemanticL
 export type WormholeState = {
   phase: number;
   timePosition: number;
+  edgeTension: number;
   direction: 'into_past' | 'returning';
   currentYear: number;
 };
@@ -22,12 +23,30 @@ export type WormholeEntryNode = AtlasNode & {
   driftDelay: number;
 };
 
-const wormholeYears = [-9500, -3000, -500, 0, 1000, 1400, 1600, 1800, 1900, 1950, 2000, 2025];
-const oldestYear = wormholeYears[0];
-const presentYear = wormholeYears[wormholeYears.length - 1];
+const wormholeAnchors = [
+  { year: 2025, position: 0 },
+  { year: 2000, position: 0.055 },
+  { year: 1950, position: 0.13 },
+  { year: 1900, position: 0.215 },
+  { year: 1800, position: 0.31 },
+  { year: 1600, position: 0.405 },
+  { year: 1400, position: 0.49 },
+  { year: 1000, position: 0.59 },
+  { year: 0, position: 0.705 },
+  { year: -500, position: 0.765 },
+  { year: -3000, position: 0.875 },
+  { year: -9500, position: 1 }
+];
+const wormholeYears = wormholeAnchors.map((anchor) => anchor.year);
+const oldestYear = -9500;
+const presentYear = 2025;
+const staticTimelineMarkers = [
+  -9500, -7000, -5000, -3000, -2000, -1000, -500, 0, 500, 1000, 1200, 1400,
+  1600, 1700, 1800, 1850, 1900, 1925, 1950, 1975, 2000, 2025
+];
 const maxTunnelRadius = 430;
 const minTunnelRadius = 42;
-const visibleDepth = 0.64;
+const visibleDepth = 1;
 const frontFadeDepth = -0.09;
 
 export const wormholeTunnel = {
@@ -38,26 +57,26 @@ export const wormholeTunnel = {
 
 export function wormholeState(travel: number): WormholeState {
   const timePosition = clamp01(travel);
+  const edgeTension = travel < 0 ? travel : travel > 1 ? travel - 1 : 0;
 
   return {
     phase: timePosition,
     timePosition,
+    edgeTension,
     direction: 'into_past',
     currentYear: positionToYear(timePosition)
   };
 }
 
 export function wormholeRings(state: WormholeState): TimeRing[] {
-  const localStep = Math.abs(state.currentYear) > 2500 ? 500 : state.currentYear < 1800 ? 100 : 25;
-  const localYears = [-1, 0, 1].map((offset) => Math.round(state.currentYear + offset * localStep));
-  const years = [...new Set([...wormholeYears, ...localYears])]
+  const years = [...new Set(staticTimelineMarkers)]
     .filter((year) => year >= oldestYear && year <= presentYear)
     .sort((a, b) => yearToPosition(a) - yearToPosition(b));
 
   return years
     .map((year) => {
       const depth = ringDepth(year, state.timePosition);
-      const isCurrent = Math.abs(yearToPosition(year) - state.timePosition) < 0.018;
+      const isCurrent = Math.abs(yearToPosition(year) - state.timePosition) < 0.016;
       const isAnchor = wormholeYears.includes(year);
 
       return {
@@ -74,13 +93,15 @@ export function wormholeRings(state: WormholeState): TimeRing[] {
 
 export function wormholeGridLines(state: WormholeState) {
   const lines: string[] = [];
-  const samples = Array.from({ length: 38 }, (_, index) => index / 37);
+  const samples = Array.from({ length: 48 }, (_, index) => index / 47 * visibleDepth);
 
-  for (let spoke = 0; spoke < 40; spoke += 1) {
-    const baseAngle = spoke * 9;
+  for (let spoke = 0; spoke < 48; spoke += 1) {
+    const baseAngle = spoke * 7.5;
     const points = samples.map((depth) => {
+      const worldPosition = state.timePosition + depth;
+      const staticAngle = baseAngle + tubeTwist(worldPosition);
       const radius = tunnelRadius(depth);
-      return tunnelPoint(radius, baseAngle, depth, state.phase);
+      return tunnelPoint(radius, staticAngle, depth, state.phase);
     });
 
     lines.push(points.map((point, index) => `${index === 0 ? 'M' : 'L'} ${point.x} ${point.y}`).join(' '));
@@ -100,7 +121,7 @@ export function layoutWormholeEntries(entries: Entry[], state: WormholeState, se
       const sector = styleSectors.find((item) => item.id === entry.style_sector) ?? styleSectors[0];
       const driftSeed = stableHash(entry.id);
       const radius = tunnelRadius(depth) + depthLaneOffset(driftSeed, closeness);
-      const angle = sectorMidAngle(sector) + entryAngleOffset(entry.id);
+      const angle = sectorMidAngle(sector) + entryAngleOffset(entry.id) + tubeTwist(yearToPosition(entry.year_start));
       const point = tunnelPoint(radius, angle, depth, state.phase);
       const labelAnchor = point.x > atlasSize.cx ? 'start' as const : 'end' as const;
       const labelX = point.x + (labelAnchor === 'start' ? 22 : -22);
@@ -168,27 +189,30 @@ export function tunnelPoint(radius: number, angle: number, depth: number, phase:
 
 export function yearToPosition(year: number) {
   const clampedYear = Math.max(oldestYear, Math.min(presentYear, year));
-  const chronological = [...wormholeYears].sort((a, b) => a - b);
-  const nextIndex = chronological.findIndex((anchor) => anchor >= clampedYear);
+  const chronological = [...wormholeAnchors].sort((a, b) => a.year - b.year);
+  const nextIndex = chronological.findIndex((anchor) => anchor.year >= clampedYear);
 
   if (nextIndex <= 0) return 1;
 
   const previous = chronological[nextIndex - 1];
   const next = chronological[nextIndex];
-  const localProgress = (clampedYear - previous) / (next - previous);
-  const ancientToPresent = (nextIndex - 1 + localProgress) / (chronological.length - 1);
+  const localProgress = (clampedYear - previous.year) / (next.year - previous.year);
 
-  return 1 - ancientToPresent;
+  return previous.position + (next.position - previous.position) * localProgress;
 }
 
 export function positionToYear(position: number) {
-  const target = 1 - position;
-  const chronological = [...wormholeYears].sort((a, b) => a - b);
-  const scaled = target * (chronological.length - 1);
-  const index = Math.min(chronological.length - 2, Math.max(0, Math.floor(scaled)));
-  const local = scaled - index;
+  const clampedPosition = clamp01(position);
+  const chronological = [...wormholeAnchors].sort((a, b) => a.position - b.position);
+  const nextIndex = chronological.findIndex((anchor) => anchor.position >= clampedPosition);
 
-  return Math.round(chronological[index] + (chronological[index + 1] - chronological[index]) * local);
+  if (nextIndex <= 0) return presentYear;
+
+  const previous = chronological[nextIndex - 1];
+  const next = chronological[nextIndex];
+  const localProgress = (clampedPosition - previous.position) / (next.position - previous.position);
+
+  return Math.round(previous.year + (next.year - previous.year) * localProgress);
 }
 
 export function formatYear(year: number) {
@@ -199,6 +223,10 @@ export function formatYear(year: number) {
 
 function ringDepth(year: number, timePosition: number) {
   return yearToPosition(year) - timePosition;
+}
+
+export function tubeTwist(worldPosition: number) {
+  return worldPosition * 34 + Math.sin(worldPosition * Math.PI * 3.2) * 8;
 }
 
 function semanticLevelForDepth(depth: number, closeness: number, isSelected: boolean): SemanticLevel {
@@ -214,7 +242,8 @@ export function tunnelOpacity(depth: number) {
 
   const fadeInFromBack = Math.min(1, Math.max(0, (visibleDepth - depth) / 0.12));
   const fadeOutAtFront = Math.min(1, Math.max(0, depth / 0.075));
-  return Math.max(0, Math.min(1, fadeInFromBack, fadeOutAtFront));
+  const depthHaze = Math.max(0.22, 1 - depth * 0.62);
+  return Math.max(0, Math.min(1, fadeInFromBack, fadeOutAtFront) * depthHaze);
 }
 
 function entryAngleOffset(id: string) {

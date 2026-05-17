@@ -1,5 +1,5 @@
 import { atlasSize } from '@/lib/atlas-layout';
-import { formatYear, radiusToTunnelDepth, tunnelCenter, tunnelOpacity, wormholeGridLines, wormholeRings, wormholeTunnel, type WormholeState } from '@/lib/wormhole-layout';
+import { radiusToTunnelDepth, tubeTwist, tunnelCenter, tunnelOpacity, tunnelPoint, tunnelRadius, wormholeGridLines, wormholeRings, wormholeTunnel, type WormholeState } from '@/lib/wormhole-layout';
 import { polarToCartesian } from '@/lib/polar-coordinates';
 import { RadialLetterText } from '@/components/atlas/RadialText';
 
@@ -11,6 +11,7 @@ export function WormholeRings({ state }: WormholeRingsProps) {
   const rings = wormholeRings(state);
   const gridLines = wormholeGridLines(state);
   const streamLines = wormholeStreamLines(state);
+  const edgeCompression = Math.min(1, Math.abs(state.edgeTension) / 0.065);
 
   return (
     <g aria-label="Zeit-Wurmloch">
@@ -23,7 +24,7 @@ export function WormholeRings({ state }: WormholeRingsProps) {
           <stop offset="100%" stopColor="#050505" stopOpacity="0" />
         </radialGradient>
       </defs>
-      <circle className="wormhole-breath" cx={atlasSize.cx} cy={atlasSize.cy + 8} r={wormholeTunnel.maxRadius + 18} fill="url(#wormhole-vignette)" />
+      <circle className="wormhole-breath" cx={atlasSize.cx} cy={atlasSize.cy + 8} r={wormholeTunnel.maxRadius + 18 - edgeCompression * 24} fill="url(#wormhole-vignette)" />
       {streamLines.map((line, index) => (
         <path
           key={`stream-${index}`}
@@ -57,7 +58,7 @@ export function WormholeRings({ state }: WormholeRingsProps) {
         const ringOpacity = tunnelOpacity(depth);
         const labelOpacity = (ring.mode === 'local' ? 0.95 : Math.max(0.18, 1 - Math.max(0, depth) * 0.92)) * ringOpacity;
         const showLabel = labelOpacity > 0.18 && (ring.mode === 'local' || ring.weight === 'major');
-        const label = ring.mode === 'local' ? formatYear(state.currentYear) : ring.label;
+        const label = ring.label;
         const ringDash = ring.mode === 'local' ? '2 14' : ring.weight === 'major' ? '1 12' : '1 18';
         const ringStroke = ring.mode === 'local' ? 0.8 : ring.weight === 'major' ? 0.62 : 0.38;
 
@@ -98,7 +99,8 @@ export function WormholeRings({ state }: WormholeRingsProps) {
 }
 
 function OuterCurvature({ state }: { state: WormholeState }) {
-  const radiusLift = Math.min(112, state.timePosition * 320);
+  const startResistance = state.edgeTension < 0 ? Math.abs(state.edgeTension) * 260 : 0;
+  const radiusLift = Math.min(112, state.timePosition * 320) - startResistance;
   const rimOpacity = Math.max(0, 1 - state.timePosition / 0.32);
   const segments = Array.from({ length: 20 }, (_, index) => {
     const angle = index * 18;
@@ -125,13 +127,18 @@ function OuterCurvature({ state }: { state: WormholeState }) {
 }
 
 function wormholeStreamLines(state: WormholeState) {
-  return Array.from({ length: 24 }, (_, index) => {
-    const angle = index * 25.7 + state.phase * 18;
-    const start = polarToCartesian(atlasSize.cx, atlasSize.cy, 58, angle - 5);
-    const mid = polarToCartesian(atlasSize.cx, atlasSize.cy + 20, 235 + (index % 4) * 28, angle + 9);
-    const end = polarToCartesian(atlasSize.cx, atlasSize.cy, wormholeTunnel.maxRadius + 20, angle + 18);
+  return Array.from({ length: 30 }, (_, index) => {
+    const baseAngle = index * 12 + (index % 5) * 3.2;
+    const samples = Array.from({ length: 7 }, (_, sampleIndex) => 0.035 + sampleIndex * 0.096 + (index % 4) * 0.007);
+    const points = samples.map((depth) => {
+      const worldPosition = state.timePosition + depth + index * 0.002;
+      const angle = baseAngle + tubeTwist(worldPosition) + 10;
+      const radius = tunnelRadius(depth) + ((index % 5) - 2) * 1.8;
 
-    return `M ${start.x} ${start.y} Q ${mid.x} ${mid.y} ${end.x} ${end.y}`;
+      return tunnelPoint(radius, angle, depth, state.phase);
+    });
+
+    return points.map((point, pointIndex) => `${pointIndex === 0 ? 'M' : 'L'} ${point.x} ${point.y}`).join(' ');
   });
 }
 
