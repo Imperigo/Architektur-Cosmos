@@ -1,6 +1,6 @@
 import { atlasSize, sectorMidAngle, styleSectors, type StyleSector } from '@/lib/atlas-layout';
 import { polarToCartesian } from '@/lib/polar-coordinates';
-import { wormholeTunnel, type WormholeState } from '@/lib/wormhole-layout';
+import { tunnelFrontDepth, tunnelRadius, wormholeTunnel, type WormholeState } from '@/lib/wormhole-layout';
 import { RadialLetterText } from '@/components/atlas/RadialText';
 
 const sectorGlyph: Record<StyleSector['id'], string> = {
@@ -33,16 +33,21 @@ const sectorLabel: Record<StyleSector['id'], string> = {
 export function StyleSectors({ state, isMoving = false }: { state: WormholeState; isMoving?: boolean }) {
   const innerLabelOpacity = 0.58 + smoothstep(0.18, 0.54, state.timePosition) * 0.28;
   const boundaryOpacity = 0.38 + innerLabelOpacity * 0.24;
+  const frontDepth = tunnelFrontDepth(state);
+  const outerRadius = Math.max(wormholeTunnel.minRadius + 116, tunnelRadius(frontDepth + 0.05) - 20);
 
   return (
     <g aria-label="Stilsektoren">
       {styleSectors.map((sector) => {
-        const startInner = polarToCartesian(atlasSize.cx, atlasSize.cy, wormholeTunnel.minRadius + 42, sector.startAngle);
-        const startOuter = polarToCartesian(atlasSize.cx, atlasSize.cy, wormholeTunnel.maxRadius - 36 + state.timePosition * 62, sector.startAngle);
         const labelAngle = sectorMidAngle(sector);
+        const startInner = polarToCartesian(atlasSize.cx, atlasSize.cy, wormholeTunnel.minRadius + 54, sector.startAngle);
+        const startOuter = polarToCartesian(atlasSize.cx, atlasSize.cy, outerRadius, sector.startAngle);
+        const midInner = polarToCartesian(atlasSize.cx, atlasSize.cy, wormholeTunnel.minRadius + 86, labelAngle);
+        const midOuter = polarToCartesian(atlasSize.cx, atlasSize.cy, outerRadius - 18, labelAngle);
         const labelText = sectorLabel[sector.id];
         const accent = sectorColor[sector.id];
-        const ribbonPath = sectorRibbonPath(sector.startAngle, sector.endAngle, wormholeTunnel.minRadius + 46, wormholeTunnel.maxRadius - 56 + state.timePosition * 46);
+        const ribbonPath = sectorRibbonPath(sector.startAngle, sector.endAngle, wormholeTunnel.minRadius + 58, outerRadius - 12);
+        const accentBoost = sector.id === 'pre_modern_architecture' ? 1.45 : 1;
 
         return (
           <g key={sector.id} className="style-sector">
@@ -50,7 +55,17 @@ export function StyleSectors({ state, isMoving = false }: { state: WormholeState
               className="style-sector-ribbon"
               d={ribbonPath}
               fill={accent}
-              opacity={isMoving ? 0.035 : 0.06}
+              opacity={(isMoving ? 0.026 : 0.052) * accentBoost}
+            />
+            <line
+              className="style-sector-spine"
+              x1={midInner.x}
+              y1={midInner.y}
+              x2={midOuter.x}
+              y2={midOuter.y}
+              stroke={accent}
+              strokeWidth={sector.id === 'pre_modern_architecture' ? 1.35 : 1}
+              opacity={(isMoving ? 0.22 : 0.34) * accentBoost}
             />
             <line
               x1={startInner.x}

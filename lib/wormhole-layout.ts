@@ -46,7 +46,7 @@ const staticTimelineMarkers = [
 const maxTunnelRadius = 430;
 const minTunnelRadius = 42;
 const visibleDepth = 1;
-const frontFadeDepth = -0.09;
+const frontFadeDepth = -0.13;
 
 export const wormholeTunnel = {
   maxRadius: maxTunnelRadius,
@@ -94,7 +94,8 @@ export function wormholeGridLines(state: WormholeState, options?: { spokeStride?
   const lines: string[] = [];
   const spokeStride = Math.max(1, options?.spokeStride ?? 1);
   const sampleCount = Math.max(2, options?.sampleCount ?? 58);
-  const samples = Array.from({ length: sampleCount }, (_, index) => index / (sampleCount - 1) * visibleDepth);
+  const frontDepth = tunnelFrontDepth(state);
+  const samples = Array.from({ length: sampleCount }, (_, index) => frontDepth + (index / (sampleCount - 1)) * (visibleDepth - frontDepth));
 
   for (let spoke = 0; spoke < 72; spoke += spokeStride) {
     const baseAngle = spoke * 5;
@@ -175,9 +176,9 @@ export function radiusToTunnelDepth(radius: number) {
 export function tunnelCenter(depth: number, phase: number) {
   const clampedDepth = Math.max(0, Math.min(1, depth));
   const bend = Math.sin(clampedDepth * Math.PI);
-  const breathing = Math.sin(phase * Math.PI * 2) * 5;
-  const pathSway = Math.sin((phase + clampedDepth * 0.72) * Math.PI * 2) * 22 * clampedDepth * (1 - clampedDepth * 0.28);
-  const pathLift = Math.cos((phase * 0.82 + clampedDepth * 0.9) * Math.PI) * 16 * bend;
+  const breathing = Math.sin(phase * Math.PI * 2) * 6;
+  const pathSway = Math.sin((phase + clampedDepth * 0.82) * Math.PI * 2) * 34 * clampedDepth * (1 - clampedDepth * 0.24);
+  const pathLift = Math.cos((phase * 0.9 + clampedDepth * 0.96) * Math.PI) * 22 * bend;
 
   return {
     x: roundSvg(atlasSize.cx + bend * breathing * 0.25 + pathSway),
@@ -259,7 +260,11 @@ function roundTimelineYear(year: number) {
 }
 
 export function tubeTwist(worldPosition: number) {
-  return worldPosition * 34 + Math.sin(worldPosition * Math.PI * 3.2) * 8;
+  return worldPosition * 44 + Math.sin(worldPosition * Math.PI * 3.8) * 11;
+}
+
+export function tunnelFrontDepth(state: WormholeState) {
+  return Math.min(0.22, Math.max(0, state.timePosition * 0.62));
 }
 
 function semanticLevelForDepth(depth: number, closeness: number, isSelected: boolean): SemanticLevel {
@@ -274,8 +279,8 @@ export function tunnelOpacity(depth: number) {
   }
 
   const fadeInFromBack = Math.min(1, Math.max(0, (visibleDepth - depth) / 0.12));
-  const fadeOutAtFront = Math.min(1, Math.max(0, depth / 0.075));
-  const depthHaze = Math.max(0.22, 1 - depth * 0.62);
+  const fadeOutAtFront = Math.min(1, Math.max(0, depth / 0.12));
+  const depthHaze = Math.max(0.16, 1 - depth * 0.72);
   return Math.max(0, Math.min(1, fadeInFromBack, fadeOutAtFront) * depthHaze);
 }
 

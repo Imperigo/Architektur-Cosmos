@@ -10,7 +10,7 @@ import { WormholeRings } from '@/components/atlas/WormholeRings';
 import { atlasSize } from '@/lib/atlas-layout';
 import { polarToCartesian } from '@/lib/polar-coordinates';
 import type { Entry, EntryRelation } from '@/lib/types';
-import { layoutWormholeEntries, wormholeState, type WormholeEntryNode } from '@/lib/wormhole-layout';
+import { formatYear, layoutWormholeEntries, positionToYear, wormholeState, type WormholeEntryNode } from '@/lib/wormhole-layout';
 
 type SvgPoint = {
   x: number;
@@ -41,8 +41,9 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   const activeSnappedEntryId = snappedEntryId;
   const activeHoverEntryId = hoverEntryId;
   const nodes = useMemo(() => layoutWormholeEntries(entries, state, activeSelectedEntryId), [activeSelectedEntryId, entries, state]);
-  const snappedNode = useMemo(() => nodes.find((node) => node.entry.id === activeSnappedEntryId) ?? null, [activeSnappedEntryId, nodes]);
-  const hoverNode = useMemo(() => nodes.find((node) => node.entry.id === activeHoverEntryId) ?? null, [activeHoverEntryId, nodes]);
+  const displayNodes = useMemo(() => nodes.filter(isReadableNode), [nodes]);
+  const snappedNode = useMemo(() => displayNodes.find((node) => node.entry.id === activeSnappedEntryId) ?? null, [activeSnappedEntryId, displayNodes]);
+  const hoverNode = useMemo(() => displayNodes.find((node) => node.entry.id === activeHoverEntryId) ?? null, [activeHoverEntryId, displayNodes]);
   const isHoverFocusActive = hoverFocusId === hoverNode?.entry.id && !snappedNode;
   const cameraFocus = focusCameraOffset(hoverNode, isHoverFocusActive && !isTraveling);
   const isIntroActive = introState !== 'idle';
@@ -229,7 +230,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
       if (hoverDistance <= hoverRadius + hoverNode.size * 1.1) return;
     }
 
-    const nearest = nearestNode(point, nodes);
+    const nearest = nearestNode(point, displayNodes);
 
     if (!nearest) {
       setHoverEntryId(null);
@@ -291,11 +292,11 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
               <WormholeRings state={state} isMoving={isTraveling} />
               <StyleSectors state={state} isMoving={isTraveling} />
 
-              {showRelations ? <RelationOverlay nodes={nodes} relations={relations} selectedEntry={snappedNode?.entry ?? hoverNode?.entry ?? null} isMoving={isTraveling} /> : null}
+              {showRelations ? <RelationOverlay nodes={displayNodes} relations={relations} selectedEntry={snappedNode?.entry ?? hoverNode?.entry ?? null} isMoving={isTraveling} /> : null}
 
               {hoverNode && pointerPoint && !snappedNode && !isTraveling && !isHoverFocusActive ? <HoverPreview pointer={pointerPoint} node={hoverNode} /> : null}
 
-              {nodes.map((node) => {
+              {displayNodes.map((node) => {
                 const displayOffset = focusDisplayOffset(node, hoverNode, isHoverFocusActive);
 
                 return (
@@ -341,6 +342,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
               onToggleRelations={() => setShowRelations((current) => !current)}
             />
           ) : null}
+          {introState === 'idle' ? <TimeReadout timePosition={state.timePosition} currentYear={state.currentYear} /> : null}
           {pointerPoint ? <CosmosCursor pointer={pointerPoint} activeNode={hoverNode ?? snappedNode} /> : null}
         </svg>
       </div>
@@ -361,6 +363,12 @@ function nearestNode(point: SvgPoint, nodes: WormholeEntryNode[]) {
 
     return nearest;
   }, null);
+}
+
+function isReadableNode(node: WormholeEntryNode) {
+  const margin = 54;
+  const insideFrame = node.x > margin && node.x < atlasSize.width - margin && node.y > margin && node.y < atlasSize.height - margin;
+  return insideFrame && node.opacity >= 0.34;
 }
 
 function focusDisplayOffset(node: WormholeEntryNode, focusNode: WormholeEntryNode | null, focusActive: boolean): SvgPoint {
@@ -461,6 +469,38 @@ function HudIcon({ x, y, kind, active }: { x: number; y: number; kind: 'minus' |
       {kind === 'plus' ? <line x1={x} y1={y - 4.5} x2={x} y2={y + 4.5} /> : null}
     </g>
   );
+}
+
+function TimeReadout({ timePosition, currentYear }: { timePosition: number; currentYear: number }) {
+  const focusEndYear = positionToYear(Math.min(1, timePosition + 0.22));
+  const span = dominantSpanForYear(currentYear);
+
+  return (
+    <g className="time-readout" pointerEvents="none" opacity="0.88">
+      <line x1="42" y1="880" x2="172" y2="880" stroke="#f7f7f4" strokeWidth="0.6" opacity="0.5" />
+      <text x="42" y="842" fill="#f7f7f4" fontSize="27" fontWeight="650" fontFamily="var(--font-sans), system-ui, sans-serif">
+        {formatYear(currentYear)}
+      </text>
+      <text x="42" y="862" fill="#c7c7c2" fontSize="9.5" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.18em">
+        {span.label.toUpperCase()}
+      </text>
+      <text x="42" y="898" fill="#9c9c96" fontSize="8.5" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.12em">
+        {formatYear(Math.min(currentYear, focusEndYear))} - {formatYear(Math.max(currentYear, focusEndYear))}
+      </text>
+    </g>
+  );
+}
+
+function dominantSpanForYear(year: number) {
+  if (year >= 1990) return { label: 'Gegenwart / Digitalisierung' };
+  if (year >= 1950) return { label: 'Nachkriegsmoderne' };
+  if (year >= 1900) return { label: 'Moderne' };
+  if (year >= 1800) return { label: 'Industrialisierung' };
+  if (year >= 1400) return { label: 'Fruehmoderne' };
+  if (year >= 500) return { label: 'Mittelalter / Stadt' };
+  if (year >= -500) return { label: 'Antike' };
+  if (year >= -3000) return { label: 'Fruehe Hochkulturen' };
+  return { label: 'Proto-Urban / Ursprung' };
 }
 
 function distance(point: SvgPoint, node: WormholeEntryNode) {

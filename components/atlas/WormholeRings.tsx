@@ -1,7 +1,6 @@
 import { atlasSize } from '@/lib/atlas-layout';
-import { radiusToTunnelDepth, tubeTwist, tunnelCenter, tunnelOpacity, tunnelPoint, tunnelRadius, wormholeGridLines, wormholeRings, wormholeTunnel, type WormholeState } from '@/lib/wormhole-layout';
+import { radiusToTunnelDepth, tubeTwist, tunnelCenter, tunnelFrontDepth, tunnelOpacity, tunnelPoint, tunnelRadius, wormholeGridLines, wormholeRings, wormholeTunnel, type WormholeState } from '@/lib/wormhole-layout';
 import { polarToCartesian } from '@/lib/polar-coordinates';
-import { RadialLetterText } from '@/components/atlas/RadialText';
 
 type WormholeRingsProps = {
   state: WormholeState;
@@ -10,21 +9,22 @@ type WormholeRingsProps = {
 
 export function WormholeRings({ state, isMoving = false }: WormholeRingsProps) {
   const rings = wormholeRings(state);
-  const gridLines = wormholeGridLines(state, isMoving ? { spokeStride: 2, sampleCount: 34 } : undefined);
-  const streamLines = wormholeStreamLines(state, isMoving ? { count: 18, sampleCount: 5 } : undefined);
-  const speedLines = radialSpeedLines(state, isMoving ? { count: 36, sampleCount: 6 } : undefined);
+  const gridLines = wormholeGridLines(state, { spokeStride: 2, sampleCount: isMoving ? 34 : 42 });
+  const streamLines = wormholeStreamLines(state, { count: isMoving ? 18 : 22, sampleCount: isMoving ? 5 : 6 });
+  const speedLines = radialSpeedLines(state, { count: isMoving ? 36 : 42, sampleCount: isMoving ? 6 : 7 });
   const edgeCompression = Math.min(1, Math.abs(state.edgeTension) / 0.065);
+  const frontDissolve = Math.max(0, 1 - state.timePosition / 0.22);
 
   return (
     <g aria-label="Zeit-Wurmloch">
       <defs>
         <radialGradient id="wormhole-vignette" cx="50%" cy="50%" r="50%">
           <stop offset="0%" stopColor="#050505" stopOpacity="0.02" />
-          <stop offset="12%" stopColor="#050505" stopOpacity="0.16" />
-          <stop offset="25%" stopColor="#00e7ff" stopOpacity="0.48" />
-          <stop offset="42%" stopColor="#8f5cff" stopOpacity="0.38" />
-          <stop offset="61%" stopColor="#ffb000" stopOpacity="0.34" />
-          <stop offset="79%" stopColor="#ff3d1f" stopOpacity="0.25" />
+          <stop offset="12%" stopColor="#050505" stopOpacity="0.22" />
+          <stop offset="27%" stopColor="#00e7ff" stopOpacity="0.3" />
+          <stop offset="45%" stopColor="#8f5cff" stopOpacity="0.25" />
+          <stop offset="63%" stopColor="#ffb000" stopOpacity="0.18" />
+          <stop offset="80%" stopColor="#ff3d1f" stopOpacity="0.13" />
           <stop offset="100%" stopColor="#050505" stopOpacity="0" />
         </radialGradient>
         <filter id="wormhole-energy-glow" x="-30%" y="-30%" width="160%" height="160%">
@@ -35,7 +35,7 @@ export function WormholeRings({ state, isMoving = false }: WormholeRingsProps) {
           </feMerge>
         </filter>
       </defs>
-      <circle className="wormhole-breath" cx={atlasSize.cx} cy={atlasSize.cy + 8} r={wormholeTunnel.maxRadius + 18 - edgeCompression * 24} fill="url(#wormhole-vignette)" />
+      <circle className="wormhole-breath" cx={atlasSize.cx} cy={atlasSize.cy + 8} r={wormholeTunnel.maxRadius + 18 - edgeCompression * 24} fill="url(#wormhole-vignette)" opacity={0.84 - state.timePosition * 0.22} />
       <IdleOrbits state={state} />
       <IdleWhirlLines state={state} />
       {streamLines.map((line, index) => (
@@ -63,7 +63,7 @@ export function WormholeRings({ state, isMoving = false }: WormholeRingsProps) {
           style={{ animationDelay: `${index * -0.045}s` }}
         />
       ))}
-      <OuterCurvature state={state} isMoving={isMoving} />
+      <OuterCurvature state={state} isMoving={isMoving} opacityScale={frontDissolve} />
       {gridLines.map((line, index) => (
         <path
           key={index}
@@ -80,14 +80,7 @@ export function WormholeRings({ state, isMoving = false }: WormholeRingsProps) {
       {rings.map((ring, index) => {
         const depth = ring.depth ?? radiusToTunnelDepth(ring.radius);
         const ringCenter = tunnelCenter(depth, state.phase);
-        const labelAngle = yearLabelAngle(ring.year);
-        const labelScale = Math.max(0.55, 1.25 - depth);
-        const ringOpacity = tunnelOpacity(depth);
-        const labelOpacity = (ring.mode === 'local' ? 1 : Math.max(0.46, 1 - Math.max(0, depth) * 0.58)) * ringOpacity;
-        const isInnerCrowdedMinor = ring.radius < 150 && ring.weight !== 'major' && ring.mode !== 'local';
-        const isDenseMinor = ring.weight !== 'major' && ring.mode !== 'local' && yearDensitySlot(ring.year) % (ring.radius < 230 ? 3 : 2) !== 0;
-        const showLabel = labelOpacity > 0.1 && !isInnerCrowdedMinor && !isDenseMinor;
-        const label = ring.label;
+        const ringOpacity = tunnelOpacity(depth) * ringEdgeDissolve(depth, state.timePosition);
         const ringDash = ring.mode === 'local' ? '2 9' : ring.weight === 'major' ? '1 8' : '1 12';
         const ringStroke = ring.mode === 'local' ? 1.58 : ring.weight === 'major' ? 1.08 : 0.72;
         const ringColor = ring.mode === 'local' ? '#fff8d6' : ring.weight === 'major' ? '#ffd16d' : '#f7f7f4';
@@ -107,22 +100,6 @@ export function WormholeRings({ state, isMoving = false }: WormholeRingsProps) {
               filter={!isMoving && (ring.mode === 'local' || ring.weight === 'major') ? 'url(#wormhole-energy-glow)' : undefined}
               style={{ animationDelay: `${index * -0.16}s` }}
             />
-            {showLabel ? (
-              <RadialLetterText
-                className="wormhole-year-label"
-                text={label}
-                cx={ringCenter.x}
-                cy={ringCenter.y}
-                radius={ring.radius}
-                angle={labelAngle}
-                fill={ring.mode === 'local' ? '#fff6c8' : '#f7f7f4'}
-                fontSize={Math.round((ring.weight === 'major' ? 14.2 : 9.5) * labelScale)}
-                fontWeight={ring.weight === 'major' ? 650 : 520}
-                opacity={labelOpacity}
-                letterAngleStep={ring.mode === 'local' ? 2.9 : ring.weight === 'major' ? 2.1 : 1.62}
-                strokeWidth={ring.weight === 'major' ? 3.2 : 2.7}
-              />
-            ) : null}
           </g>
         );
       })}
@@ -131,7 +108,8 @@ export function WormholeRings({ state, isMoving = false }: WormholeRingsProps) {
 }
 
 function IdleOrbits({ state }: { state: WormholeState }) {
-  const depths = [0.22, 0.48, 0.73];
+  const frontDepth = tunnelFrontDepth(state);
+  const depths = [frontDepth + 0.12, frontDepth + 0.34, frontDepth + 0.58].filter((depth) => depth < 0.92);
 
   return (
     <g aria-hidden="true" pointerEvents="none">
@@ -160,10 +138,12 @@ function IdleOrbits({ state }: { state: WormholeState }) {
 }
 
 function IdleWhirlLines({ state }: { state: WormholeState }) {
+  const frontDepth = tunnelFrontDepth(state);
+
   return (
     <g aria-hidden="true" pointerEvents="none">
-      {Array.from({ length: 6 }, (_, index) => {
-        const depth = 0.1 + index * 0.055;
+      {Array.from({ length: 4 }, (_, index) => {
+        const depth = frontDepth + 0.04 + index * 0.06;
         const baseAngle = index * 58 + tubeTwist(state.timePosition + depth) * 0.22;
         const samples = Array.from({ length: 5 }, (_, sampleIndex) => depth + sampleIndex * 0.034);
         const points = samples.map((sampleDepth, sampleIndex) => {
@@ -191,10 +171,10 @@ function IdleWhirlLines({ state }: { state: WormholeState }) {
   );
 }
 
-function OuterCurvature({ state, isMoving }: { state: WormholeState; isMoving: boolean }) {
+function OuterCurvature({ state, isMoving, opacityScale }: { state: WormholeState; isMoving: boolean; opacityScale: number }) {
   const startResistance = state.edgeTension < 0 ? Math.abs(state.edgeTension) * 260 : 0;
   const radiusLift = Math.min(112, state.timePosition * 320) - startResistance;
-  const rimOpacity = Math.max(0, 1 - state.timePosition / 0.32);
+  const rimOpacity = Math.max(0, 1 - state.timePosition / 0.24) * opacityScale;
   const segments = Array.from({ length: 20 }, (_, index) => {
     const angle = index * 18;
     const inner = polarToCartesian(atlasSize.cx, atlasSize.cy, wormholeTunnel.maxRadius + radiusLift - 18, angle - 5);
@@ -222,10 +202,11 @@ function OuterCurvature({ state, isMoving }: { state: WormholeState; isMoving: b
 function wormholeStreamLines(state: WormholeState, options?: { count?: number; sampleCount?: number }) {
   const count = options?.count ?? 30;
   const sampleCount = options?.sampleCount ?? 7;
+  const frontDepth = tunnelFrontDepth(state);
 
   return Array.from({ length: count }, (_, index) => {
     const baseAngle = index * (360 / count) + (index % 5) * 3.2;
-    const samples = Array.from({ length: sampleCount }, (_, sampleIndex) => 0.035 + sampleIndex * 0.096 + (index % 4) * 0.007);
+    const samples = Array.from({ length: sampleCount }, (_, sampleIndex) => frontDepth + 0.035 + sampleIndex * 0.096 + (index % 4) * 0.007);
     const points = samples.map((depth) => {
       const worldPosition = state.timePosition + depth + index * 0.002;
       const angle = baseAngle + tubeTwist(worldPosition) + 10;
@@ -241,10 +222,11 @@ function wormholeStreamLines(state: WormholeState, options?: { count?: number; s
 function radialSpeedLines(state: WormholeState, options?: { count?: number; sampleCount?: number }) {
   const count = options?.count ?? 72;
   const sampleCount = options?.sampleCount ?? 10;
+  const frontDepth = tunnelFrontDepth(state);
 
   return Array.from({ length: count }, (_, index) => {
     const baseAngle = index * (360 / count) + (index % 3) * 1.2;
-    const samples = Array.from({ length: sampleCount }, (_, sampleIndex) => 0.025 + sampleIndex * 0.105);
+    const samples = Array.from({ length: sampleCount }, (_, sampleIndex) => frontDepth + 0.025 + sampleIndex * 0.105);
     const points = samples.map((depth) => {
       const worldPosition = state.timePosition + depth;
       const angle = baseAngle + tubeTwist(worldPosition) * 0.42;
@@ -262,11 +244,9 @@ function energyColor(index: number) {
   return colors[index % colors.length];
 }
 
-function yearLabelAngle(year: number) {
-  const sequence = [58, 126, 238, 304, 24, 166];
-  return sequence[yearDensitySlot(year) % sequence.length];
-}
+function ringEdgeDissolve(depth: number, timePosition: number) {
+  if (timePosition < 0.025) return 1;
+  if (depth > 0.18) return 1;
 
-function yearDensitySlot(year: number) {
-  return Math.abs(Math.round(year / 25));
+  return Math.max(0.08, depth / 0.18);
 }
