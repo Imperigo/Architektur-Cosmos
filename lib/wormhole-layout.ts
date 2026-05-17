@@ -131,8 +131,8 @@ export function layoutWormholeEntries(entries: Entry[], state: WormholeState, se
       const labelX = point.x + (labelAnchor === 'start' ? 22 : -22);
       const labelY = point.y - 10;
       const semanticLevel = semanticLevelForDepth(depth, closeness, entry.id === selectedEntryId);
-      const frontExpansion = 1 + Math.max(0, -depth) * 1.45;
-      const size = Math.min(12.8, (2.15 + Math.pow(closeness, 1.45) * 11.4) * frontExpansion);
+      const nearStrudelCompression = 1 - Math.max(0, closeness - 0.84) * 0.62;
+      const size = Math.min(12.2, (2.25 + Math.pow(closeness, 1.35) * 10.8) * nearStrudelCompression);
 
       return {
         entry,

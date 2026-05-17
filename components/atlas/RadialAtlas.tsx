@@ -2,14 +2,13 @@
 
 import { useEffect, useMemo, useRef, useState, type PointerEvent, type WheelEvent } from 'react';
 import { ProjectDetailCard } from '@/components/atlas/ProjectDetailCard';
-import { ProjectPreviewCard } from '@/components/atlas/ProjectPreviewCard';
+import { ProjectMediaGrid } from '@/components/atlas/ProjectMediaGrid';
 import { RelationOverlay } from '@/components/atlas/RelationOverlay';
 import { SemanticEntryNode } from '@/components/atlas/SemanticEntryNode';
 import { StyleSectors } from '@/components/atlas/StyleSectors';
 import { WormholeRings } from '@/components/atlas/WormholeRings';
-import { atlasSize } from '@/lib/atlas-layout';
-import { polarToCartesian } from '@/lib/polar-coordinates';
-import type { Entry, EntryRelation } from '@/lib/types';
+import { atlasSize, styleSectors } from '@/lib/atlas-layout';
+import type { Entry, EntryRelation, StyleSectorId } from '@/lib/types';
 import { formatYear, layoutWormholeEntries, positionToYear, wormholeState, type WormholeEntryNode } from '@/lib/wormhole-layout';
 
 type SvgPoint = {
@@ -24,6 +23,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   const svgRef = useRef<SVGSVGElement | null>(null);
   const [selectedEntry, setSelectedEntry] = useState<Entry | null>(null);
   const [showRelations, setShowRelations] = useState(true);
+  const [activeStyleLens, setActiveStyleLens] = useState<StyleSectorId | null>(null);
   const [travel, setTravel] = useState(0);
   const [isTraveling, setIsTraveling] = useState(false);
   const [introState, setIntroState] = useState<IntroState>('intro');
@@ -105,13 +105,6 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     markTraveling(220);
     releaseSnap();
     setTravel((current) => advanceTravel(current, delta));
-  }
-
-  function resetView() {
-    cancelPendingTravel();
-    markTraveling(220);
-    setTravel(0);
-    releaseSnap();
   }
 
   function focusNodeInView(node: WormholeEntryNode) {
@@ -290,7 +283,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
               }}
             >
               <WormholeRings state={state} isMoving={isTraveling} />
-              <StyleSectors state={state} isMoving={isTraveling} />
+              <StyleSectors state={state} isMoving={isTraveling} activeStyleLens={activeStyleLens} />
 
               {showRelations ? <RelationOverlay nodes={displayNodes} relations={relations} selectedEntry={snappedNode?.entry ?? hoverNode?.entry ?? null} isMoving={isTraveling} /> : null}
 
@@ -303,7 +296,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
                 <g
                   key={node.entry.id}
                   className="node-focus-drift"
-                  opacity={node.opacity}
+                  opacity={node.opacity * styleLensOpacity(node, activeStyleLens)}
                   style={{ transform: `translate(${displayOffset.x}px, ${displayOffset.y}px)` }}
                 >
                   <SemanticEntryNode
@@ -321,6 +314,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
                     isSelected={activeHoverEntryId === node.entry.id || activeSnappedEntryId === node.entry.id}
                     nodeRadius={node.size}
                     showLabel={false}
+                    styleLensActive={activeStyleLens === node.entry.style_sector}
                     driftX={node.driftX}
                     driftY={node.driftY}
                     driftDelay={node.driftDelay}
@@ -336,13 +330,15 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
             <RadialHud
               showRelations={showRelations}
               tunnelDepth={state.timePosition}
-              onZoomIn={() => travelBy(0.035)}
-              onZoomOut={() => travelBy(-0.035)}
-              onReset={resetView}
+              activeStyleLens={activeStyleLens}
+              onTravelForward={() => travelBy(0.035)}
+              onTravelBackward={() => travelBy(-0.035)}
+              onCycleStyleLens={() => setActiveStyleLens((current) => nextStyleLens(current))}
               onToggleRelations={() => setShowRelations((current) => !current)}
             />
           ) : null}
           {introState === 'idle' ? <TimeReadout timePosition={state.timePosition} currentYear={state.currentYear} /> : null}
+          {introState === 'idle' ? <BrandChrome /> : null}
           {pointerPoint ? <CosmosCursor pointer={pointerPoint} activeNode={hoverNode ?? snappedNode} /> : null}
         </svg>
       </div>
@@ -368,7 +364,13 @@ function nearestNode(point: SvgPoint, nodes: WormholeEntryNode[]) {
 function isReadableNode(node: WormholeEntryNode) {
   const margin = 54;
   const insideFrame = node.x > margin && node.x < atlasSize.width - margin && node.y > margin && node.y < atlasSize.height - margin;
-  return insideFrame && node.opacity >= 0.34;
+  return insideFrame && node.depth >= 0.045 && node.depth <= 0.94 && node.opacity >= 0.36;
+}
+
+function styleLensOpacity(node: WormholeEntryNode, activeStyleLens: StyleSectorId | null) {
+  if (!activeStyleLens) return 1;
+  if (node.entry.style_sector === activeStyleLens) return 1;
+  return 0.24 + node.closeness * 0.18;
 }
 
 function focusDisplayOffset(node: WormholeEntryNode, focusNode: WormholeEntryNode | null, focusActive: boolean): SvgPoint {
@@ -407,44 +409,46 @@ function shortestAngleDelta(a: number, b: number) {
 function RadialHud({
   showRelations,
   tunnelDepth,
-  onZoomIn,
-  onZoomOut,
-  onReset,
+  activeStyleLens,
+  onTravelForward,
+  onTravelBackward,
+  onCycleStyleLens,
   onToggleRelations
 }: {
   showRelations: boolean;
   tunnelDepth: number;
-  onZoomIn: () => void;
-  onZoomOut: () => void;
-  onReset: () => void;
+  activeStyleLens: StyleSectorId | null;
+  onTravelForward: () => void;
+  onTravelBackward: () => void;
+  onCycleStyleLens: () => void;
   onToggleRelations: () => void;
 }) {
-  const controlsOpacity = Math.max(0.2, 1 - tunnelDepth / 0.42);
+  const controlsOpacity = Math.max(0.46, 1 - tunnelDepth / 0.76);
+  const lensLabel = activeStyleLens ? styleSectors.find((sector) => sector.id === activeStyleLens)?.label ?? 'Stil' : 'Alle Stile';
 
   return (
-    <g className="radial-hud" pointerEvents="auto">
+    <g className="radial-hud navigation-dock" pointerEvents="auto" opacity={controlsOpacity}>
+      <rect x={atlasSize.cx - 124} y="886" width="248" height="42" rx="21" fill="#050505" stroke="#f7f7f4" strokeWidth="0.55" opacity="0.72" />
       <g opacity={controlsOpacity}>
-        <HudButton angle={214} kind="minus" onClick={onZoomOut} />
-        <HudButton angle={232} kind="plus" onClick={onZoomIn} />
-        <HudButton angle={250} kind="reset" onClick={onReset} />
-        <HudButton angle={268} kind="relations" active={showRelations} onClick={onToggleRelations} />
+        <HudButton x={atlasSize.cx - 82} y={907} kind="backward" label="zurueck" onClick={onTravelBackward} />
+        <HudButton x={atlasSize.cx - 28} y={907} kind="forward" label="vor" onClick={onTravelForward} />
+        <HudButton x={atlasSize.cx + 28} y={907} kind="lens" label={lensLabel} active={Boolean(activeStyleLens)} onClick={onCycleStyleLens} />
+        <HudButton x={atlasSize.cx + 82} y={907} kind="relations" label="relations" active={showRelations} onClick={onToggleRelations} />
       </g>
     </g>
   );
 }
 
-function HudButton({ angle, kind, active = false, onClick }: { angle: number; kind: 'minus' | 'plus' | 'reset' | 'relations'; active?: boolean; onClick: () => void }) {
-  const point = polarToCartesian(atlasSize.cx, atlasSize.cy, 432, angle);
-
+function HudButton({ x, y, kind, label, active = false, onClick }: { x: number; y: number; kind: 'backward' | 'forward' | 'lens' | 'relations'; label: string; active?: boolean; onClick: () => void }) {
   return (
-    <g className="hud-button" onClick={onClick}>
-      <circle cx={point.x} cy={point.y} r="9.5" fill={active ? '#f7f7f4' : '#050505'} stroke="#f7f7f4" strokeWidth="0.8" opacity="0.76" />
-      <HudIcon x={point.x} y={point.y} kind={kind} active={active} />
+    <g className="hud-button" onClick={(event) => { event.stopPropagation(); onClick(); }} aria-label={label}>
+      <circle cx={x} cy={y} r="14" fill={active ? '#f7f7f4' : '#050505'} stroke={active ? '#00e7ff' : '#f7f7f4'} strokeWidth="0.75" opacity="0.88" />
+      <HudIcon x={x} y={y} kind={kind} active={active} />
     </g>
   );
 }
 
-function HudIcon({ x, y, kind, active }: { x: number; y: number; kind: 'minus' | 'plus' | 'reset' | 'relations'; active: boolean }) {
+function HudIcon({ x, y, kind, active }: { x: number; y: number; kind: 'backward' | 'forward' | 'lens' | 'relations'; active: boolean }) {
   const stroke = active ? '#050505' : '#f7f7f4';
 
   if (kind === 'relations') {
@@ -459,14 +463,40 @@ function HudIcon({ x, y, kind, active }: { x: number; y: number; kind: 'minus' |
     );
   }
 
-  if (kind === 'reset') {
-    return <circle cx={x} cy={y} r="3.7" fill="none" stroke={stroke} strokeWidth="1.1" opacity="0.9" />;
+  if (kind === 'lens') {
+    return (
+      <g stroke={stroke} fill="none" strokeWidth="1" opacity="0.9">
+        <circle cx={x} cy={y} r="5.1" />
+        <path d={`M ${x - 7} ${y} H ${x + 7}`} />
+        <path d={`M ${x} ${y - 7} V ${y + 7}`} opacity="0.55" />
+      </g>
+    );
   }
 
   return (
-    <g stroke={stroke} strokeWidth="1.25" opacity="0.9">
-      <line x1={x - 4.5} y1={y} x2={x + 4.5} y2={y} />
-      {kind === 'plus' ? <line x1={x} y1={y - 4.5} x2={x} y2={y + 4.5} /> : null}
+    <g stroke={stroke} strokeWidth="1.25" fill="none" opacity="0.9">
+      <path d={kind === 'forward' ? `M ${x - 4} ${y - 6} L ${x + 4} ${y} L ${x - 4} ${y + 6}` : `M ${x + 4} ${y - 6} L ${x - 4} ${y} L ${x + 4} ${y + 6}`} />
+      <line x1={kind === 'forward' ? x - 6 : x + 6} y1={y} x2={kind === 'forward' ? x + 5 : x - 5} y2={y} opacity="0.5" />
+    </g>
+  );
+}
+
+function nextStyleLens(current: StyleSectorId | null): StyleSectorId | null {
+  if (!current) return styleSectors[0].id;
+  const currentIndex = styleSectors.findIndex((sector) => sector.id === current);
+  const next = styleSectors[currentIndex + 1];
+  return next?.id ?? null;
+}
+
+function BrandChrome() {
+  return (
+    <g className="brand-chrome" pointerEvents="none">
+      <text x="34" y="38" fill="#f7f7f4" fontSize="11" fontWeight="600" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.28em" opacity="0.72">
+        ARCHITECTURE COSMOS
+      </text>
+      <text x={atlasSize.width - 34} y="38" textAnchor="end" fill="#c7c7c2" fontSize="9" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.22em" opacity="0.62">
+        MADE BY ANDRIN BAUMANN
+      </text>
     </g>
   );
 }
@@ -532,22 +562,40 @@ function IntroGate({ state, onStart }: { state: IntroState; onStart: () => void 
 }
 
 function HoverPreview({ pointer, node }: { pointer: SvgPoint; node: WormholeEntryNode }) {
-  const previewScale = node.closeness > 0.68 ? 0.82 : 0.68;
+  const previewScale = node.closeness > 0.68 ? 0.78 : 0.66;
   const baseWidth = previewCardWidth(node.entry);
   const cardWidth = baseWidth * previewScale;
-  const cardHeight = 148 * previewScale;
+  const cardHeight = 82 * previewScale;
   const side = node.x > atlasSize.cx ? -1 : 1;
-  const x = Math.max(34, Math.min(atlasSize.width - cardWidth - 34, node.x + side * 30));
+  const x = Math.max(34, Math.min(atlasSize.width - cardWidth - 34, node.x + side * 28));
   const y = Math.max(34, Math.min(atlasSize.height - cardHeight - 34, node.y - cardHeight / 2));
 
   return (
     <g className="hover-preview" pointerEvents="none">
-      <line x1={pointer.x} y1={pointer.y} x2={node.x} y2={node.y} stroke="#fff8d6" strokeWidth="0.95" strokeDasharray="1 7" opacity="0.58" filter="url(#wormhole-energy-glow)" />
-      <circle cx={node.x} cy={node.y} r={node.size + 11} fill="none" stroke="#fff8d6" strokeWidth="1.15" opacity="0.66" filter="url(#wormhole-energy-glow)" />
-      <circle cx={node.x} cy={node.y} r={node.size + 20} fill="none" stroke="#00e7ff" strokeWidth="0.72" strokeDasharray="1 7" opacity="0.42" />
+      <line x1={pointer.x} y1={pointer.y} x2={node.x} y2={node.y} stroke="#fff8d6" strokeWidth="0.55" strokeDasharray="1 9" opacity="0.42" />
+      <circle cx={node.x} cy={node.y} r={node.size + 9} fill="none" stroke="#fff8d6" strokeWidth="0.62" opacity="0.54" />
+      <circle cx={node.x} cy={node.y} r={node.size + 15} fill="none" stroke="#00e7ff" strokeWidth="0.45" strokeDasharray="1 8" opacity="0.32" />
       <g transform={`translate(${x} ${y}) scale(${previewScale})`}>
-        <ProjectPreviewCard entry={node.entry} x={0} y={0} width={baseWidth} />
+        <HoverImageCard entry={node.entry} width={baseWidth} />
       </g>
+    </g>
+  );
+}
+
+function HoverImageCard({ entry, width }: { entry: Entry; width: number }) {
+  const mediaWidth = 74;
+  const title = entry.title.length > 30 ? `${entry.title.slice(0, 27).trim()}...` : entry.title;
+
+  return (
+    <g className="hover-image-card">
+      <rect x="0" y="0" width={width} height="82" rx="2" fill="#050505" stroke="#f7f7f4" strokeWidth="0.65" opacity="0.9" />
+      <ProjectMediaGrid media={entry.media} x={8} y={8} slotWidth={58} slotHeight={46} gap={0} types={['exterior']} />
+      <text x={mediaWidth + 10} y="27" fill="#f7f7f4" fontSize="10.5" fontWeight="650" fontFamily="var(--font-sans), system-ui, sans-serif">
+        {title}
+      </text>
+      <text x={mediaWidth + 10} y="48" fill="#b8b8b2" fontSize="7.4" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.16em">
+        {formatYear(entry.year_start)}
+      </text>
     </g>
   );
 }
@@ -596,7 +644,7 @@ function CosmosCursor({ pointer, activeNode }: { pointer: SvgPoint; activeNode: 
 }
 
 function previewCardWidth(entry: Entry) {
-  return Math.max(260, Math.min(338, entry.title.length * 7.2 + 150));
+  return Math.max(190, Math.min(262, entry.title.length * 5.7 + 108));
 }
 
 function advanceTravel(current: number, delta: number) {

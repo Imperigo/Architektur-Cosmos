@@ -93,20 +93,20 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
 
 .wormhole-spoke {
   stroke-dasharray: 5 15;
-  animation: none;
+  animation: wormhole-spoke-flow 26s linear infinite;
   vector-effect: non-scaling-stroke;
 }
 
 .wormhole-stream {
-  stroke-dasharray: 34 32;
-  animation: none;
+  stroke-dasharray: 8 28;
+  animation: wormhole-stream-flow 14s linear infinite;
   mix-blend-mode: screen;
   vector-effect: non-scaling-stroke;
 }
 
 .wormhole-speed-line {
   stroke-dasharray: 2 12;
-  animation: none;
+  animation: wormhole-speed-flow 18s linear infinite;
   mix-blend-mode: screen;
   vector-effect: non-scaling-stroke;
 }
@@ -160,22 +160,7 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
 .wormhole-idle-whirl {
   mix-blend-mode: screen;
   vector-effect: non-scaling-stroke;
-}
-
-.cosmos-idle .wormhole-idle-whirl {
-  animation: wormhole-stream-flow 18s linear infinite;
-}
-
-.cosmos-idle .wormhole-stream {
-  animation: wormhole-stream-flow 11s linear infinite;
-}
-
-.cosmos-idle .wormhole-speed-line {
-  animation: wormhole-speed-flow 15s linear infinite;
-}
-
-.cosmos-idle .wormhole-spoke {
-  animation: wormhole-spoke-flow 24s linear infinite;
+  animation: wormhole-stream-flow 22s linear infinite;
 }
 
 .wormhole-whirl {
@@ -199,7 +184,8 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
   animation: hover-preview-arrive 180ms cubic-bezier(0.19, 1, 0.22, 1);
 }
 
-.project-preview-card {
+.project-preview-card,
+.hover-image-card {
   filter: drop-shadow(0 0 12px rgb(247 247 244 / 10%));
 }
 
@@ -235,7 +221,7 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
   mix-blend-mode: screen;
 }
 
-.style-sector line {
+.style-sector-tick {
   mix-blend-mode: screen;
   vector-effect: non-scaling-stroke;
 }
@@ -272,10 +258,6 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
   animation: none;
 }
 
-.cosmos-moving .wormhole-stream {
-  animation: wormhole-stream-flow 1.35s linear infinite;
-}
-
 .cosmos-moving .wormhole-spoke,
 .cosmos-moving .wormhole-stream,
 .cosmos-moving .wormhole-speed-line,
@@ -295,12 +277,12 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
 }
 
 .radial-hud {
-  opacity: 0.8;
-  transition: opacity 180ms ease;
+  transition: opacity 180ms ease, transform 180ms cubic-bezier(0.19, 1, 0.22, 1);
 }
 
 .radial-hud:hover {
   opacity: 1;
+  transform: translateY(-2px);
 }
 
 .hud-button,
@@ -314,7 +296,15 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
   opacity: 1;
   transform-box: fill-box;
   transform-origin: center;
-  transform: scale(1.18);
+  transform: scale(1.28) translateY(-2px);
+}
+
+.navigation-dock {
+  filter: drop-shadow(0 0 12px rgb(0 231 255 / 10%));
+}
+
+.brand-chrome {
+  mix-blend-mode: screen;
 }
 
 .preview-theme-chip {

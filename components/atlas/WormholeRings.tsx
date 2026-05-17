@@ -10,8 +10,8 @@ type WormholeRingsProps = {
 export function WormholeRings({ state, isMoving = false }: WormholeRingsProps) {
   const rings = wormholeRings(state);
   const gridLines = wormholeGridLines(state, { spokeStride: 2, sampleCount: 40 });
-  const streamLines = wormholeStreamLines(state, { count: 20, sampleCount: 6 });
-  const speedLines = radialSpeedLines(state, { count: 40, sampleCount: 7 });
+  const streamLines = wormholeStreamLines(state, { count: 12, sampleCount: 4 });
+  const speedLines = radialSpeedLines(state, { count: 18, sampleCount: 3 });
   const edgeCompression = Math.min(1, Math.abs(state.edgeTension) / 0.065);
   const frontDissolve = Math.max(0, 1 - state.timePosition / 0.22);
 
@@ -46,10 +46,9 @@ export function WormholeRings({ state, isMoving = false }: WormholeRingsProps) {
           d={line}
           fill="none"
           stroke={energyColor(index)}
-          strokeWidth={index % 5 === 0 ? 1.42 : 0.94}
-          opacity={isMoving ? (index % 5 === 0 ? 0.42 : 0.28) : index % 5 === 0 ? 0.34 : 0.22}
-          filter={isMoving ? undefined : 'url(#wormhole-energy-glow)'}
-          style={{ animationDelay: `${index * -0.22}s` }}
+          strokeWidth={index % 4 === 0 ? 1.02 : 0.72}
+          opacity={isMoving ? (index % 4 === 0 ? 0.26 : 0.18) : index % 4 === 0 ? 0.22 : 0.15}
+          style={{ animationDelay: `${index * -0.41}s` }}
         />
       ))}
       {speedLines.map((line, index) => (
@@ -59,9 +58,9 @@ export function WormholeRings({ state, isMoving = false }: WormholeRingsProps) {
           d={line}
           fill="none"
           stroke={energyColor(index + 2)}
-          strokeWidth={index % 6 === 0 ? 0.92 : 0.54}
-          opacity={isMoving ? (index % 6 === 0 ? 0.56 : 0.34) : index % 6 === 0 ? 0.58 : 0.34}
-          style={{ animationDelay: `${index * -0.045}s` }}
+          strokeWidth={index % 6 === 0 ? 0.68 : 0.42}
+          opacity={isMoving ? (index % 6 === 0 ? 0.32 : 0.2) : index % 6 === 0 ? 0.28 : 0.17}
+          style={{ animationDelay: `${index * -0.19}s` }}
         />
       ))}
       <OuterCurvature state={state} isMoving={isMoving} opacityScale={frontDissolve} />
@@ -72,9 +71,8 @@ export function WormholeRings({ state, isMoving = false }: WormholeRingsProps) {
           d={line}
           fill="none"
           stroke={index % 4 === 0 ? '#fff3d1' : energyColor(index)}
-          strokeWidth={index % 6 === 0 ? 1.24 : 0.66}
-          opacity={isMoving ? (index % 6 === 0 ? 0.42 : 0.22) : index % 6 === 0 ? 0.56 : 0.32}
-          filter={!isMoving && index % 6 === 0 ? 'url(#wormhole-energy-glow)' : undefined}
+          strokeWidth={index % 6 === 0 ? 1.05 : 0.58}
+          opacity={isMoving ? (index % 6 === 0 ? 0.34 : 0.18) : index % 6 === 0 ? 0.38 : 0.22}
           style={{ animationDelay: `${index * -0.08}s` }}
         />
       ))}
@@ -98,7 +96,6 @@ export function WormholeRings({ state, isMoving = false }: WormholeRingsProps) {
               strokeDasharray={ringDash}
               strokeWidth={ringStroke}
               opacity={(ring.mode === 'local' ? 0.94 : Math.max(0.24, 0.72 - Math.max(0, depth) * 0.22)) * ringOpacity}
-              filter={!isMoving && (ring.mode === 'local' || ring.weight === 'major') ? 'url(#wormhole-energy-glow)' : undefined}
               style={{ animationDelay: `${index * -0.16}s` }}
             />
           </g>
@@ -172,10 +169,10 @@ function IdleWhirlLines({ state }: { state: WormholeState }) {
 
   return (
     <g aria-hidden="true" pointerEvents="none">
-      {Array.from({ length: 4 }, (_, index) => {
-        const depth = frontDepth + 0.04 + index * 0.06;
-        const baseAngle = index * 58 + tubeTwist(state.timePosition + depth) * 0.22;
-        const samples = Array.from({ length: 5 }, (_, sampleIndex) => depth + sampleIndex * 0.034);
+      {Array.from({ length: 2 }, (_, index) => {
+        const depth = frontDepth + 0.045 + index * 0.085;
+        const baseAngle = index * 128 + tubeTwist(state.timePosition + depth) * 0.18;
+        const samples = Array.from({ length: 4 }, (_, sampleIndex) => depth + sampleIndex * 0.026);
         const points = samples.map((sampleDepth, sampleIndex) => {
           const radius = tunnelRadius(sampleDepth) + Math.sin(sampleIndex * 0.8 + index) * 3;
           const angle = baseAngle + sampleIndex * 10 + tubeTwist(state.timePosition + sampleDepth) * 0.34;
@@ -190,10 +187,10 @@ function IdleWhirlLines({ state }: { state: WormholeState }) {
             d={path}
             fill="none"
             stroke={energyColor(index + 3)}
-            strokeWidth={index % 2 === 0 ? 0.8 : 0.6}
-            strokeDasharray="18 34"
-            opacity="0.2"
-            style={{ animationDelay: `${index * -1.9}s` }}
+            strokeWidth={index % 2 === 0 ? 0.58 : 0.48}
+            strokeDasharray="6 28"
+            opacity="0.16"
+            style={{ animationDelay: `${index * -4.8}s` }}
           />
         );
       })}
@@ -236,7 +233,7 @@ function wormholeStreamLines(state: WormholeState, options?: { count?: number; s
 
   return Array.from({ length: count }, (_, index) => {
     const baseAngle = index * (360 / count) + (index % 5) * 3.2;
-    const samples = Array.from({ length: sampleCount }, (_, sampleIndex) => frontDepth + 0.035 + sampleIndex * 0.096 + (index % 4) * 0.007);
+    const samples = Array.from({ length: sampleCount }, (_, sampleIndex) => frontDepth + 0.035 + sampleIndex * 0.052 + (index % 4) * 0.006);
     const points = samples.map((depth) => {
       const worldPosition = state.timePosition + depth + index * 0.002;
       const angle = baseAngle + tubeTwist(worldPosition) + 10;
@@ -256,7 +253,7 @@ function radialSpeedLines(state: WormholeState, options?: { count?: number; samp
 
   return Array.from({ length: count }, (_, index) => {
     const baseAngle = index * (360 / count) + (index % 3) * 1.2;
-    const samples = Array.from({ length: sampleCount }, (_, sampleIndex) => frontDepth + 0.025 + sampleIndex * 0.105);
+    const samples = Array.from({ length: sampleCount }, (_, sampleIndex) => frontDepth + 0.035 + sampleIndex * 0.04);
     const points = samples.map((depth) => {
       const worldPosition = state.timePosition + depth;
       const angle = baseAngle + tubeTwist(worldPosition) * 0.42;

@@ -22,6 +22,7 @@ type SemanticEntryNodeProps = {
   isSelected: boolean;
   nodeRadius?: number;
   showLabel?: boolean;
+  styleLensActive?: boolean;
   driftX?: number;
   driftY?: number;
   driftDelay?: number;
@@ -64,6 +65,7 @@ export function SemanticEntryNode({
   isSelected,
   nodeRadius,
   showLabel = true,
+  styleLensActive = false,
   driftX = 0,
   driftY = 0,
   driftDelay = 0,
@@ -107,7 +109,7 @@ export function SemanticEntryNode({
       {clusterSize > 1 ? (
         <circle cx={x} cy={y} r={glyphRadius + 5.5} fill="none" stroke="#f7f7f4" strokeWidth="0.55" strokeDasharray="1 4" opacity="0.65" />
       ) : null}
-      <EntryThumbnail entry={entry} x={x} y={y} radius={isSelected ? glyphRadius + 3 : glyphRadius} accent={accent} isSelected={isSelected} />
+      <EntryThumbnail entry={entry} x={x} y={y} radius={isSelected ? glyphRadius + 3 : glyphRadius} accent={accent} isSelected={isSelected} styleLensActive={styleLensActive} />
       <text
         x={x}
         y={y + glyphFontSize * 0.34}
@@ -153,17 +155,20 @@ export function SemanticEntryNode({
   );
 }
 
-function EntryThumbnail({ entry, x, y, radius, accent, isSelected }: { entry: Entry; x: number; y: number; radius: number; accent: string; isSelected: boolean }) {
+function EntryThumbnail({ entry, x, y, radius, accent, isSelected, styleLensActive }: { entry: Entry; x: number; y: number; radius: number; accent: string; isSelected: boolean; styleLensActive: boolean }) {
   const seed = stableHash(entry.id);
   const inset = radius * 0.34;
   const skyline = 3 + (seed % 4);
   const baseY = y + radius * 0.34;
+  const accentStroke = isSelected || styleLensActive ? 2.25 : 1.55;
+  const accentFillOpacity = styleLensActive ? 0.28 : 0.16;
 
   return (
     <g className="entry-thumbnail" pointerEvents="none">
-      <circle cx={x} cy={y} r={radius} fill={isSelected ? '#050505' : thumbnailFill(entry.entry_type)} stroke={accent} strokeWidth={isSelected ? 2.15 : 1.25} />
-      <circle cx={x} cy={y} r={Math.max(0, radius - 2.2)} fill="none" stroke="#f7f7f4" strokeWidth="0.45" opacity="0.62" />
-      <g stroke={isSelected ? '#f7f7f4' : '#050505'} strokeWidth={Math.max(0.45, radius * 0.075)} fill="none" opacity={radius < 5.6 ? 0.28 : 0.66}>
+      <circle cx={x} cy={y} r={radius + 2.2} fill={accent} opacity={accentFillOpacity} />
+      <circle cx={x} cy={y} r={radius} fill={isSelected ? '#050505' : thumbnailFill(entry.entry_type)} stroke={accent} strokeWidth={accentStroke} />
+      <circle cx={x} cy={y} r={Math.max(0, radius - 2.2)} fill="none" stroke={accent} strokeWidth="0.55" opacity="0.72" />
+      <g stroke={isSelected ? '#f7f7f4' : '#050505'} strokeWidth={Math.max(0.45, radius * 0.075)} fill="none" opacity={radius < 5.6 ? 0.3 : 0.7}>
         {Array.from({ length: skyline }, (_, index) => {
           const step = (radius * 1.35) / Math.max(1, skyline - 1);
           const localX = x - radius * 0.68 + index * step;
