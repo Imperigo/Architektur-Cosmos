@@ -13,12 +13,12 @@ const sectorGlyph: Record<StyleSector['id'], string> = {
 };
 
 const sectorColor: Record<StyleSector['id'], string> = {
-  classical_architecture: '#d9c7ff',
-  pre_modern_architecture: '#ffd4a8',
-  modern_architecture: '#aee7ff',
-  postwar_modern_architecture: '#f0f0f0',
-  sustainable_architecture: '#b9f8cf',
-  vernacular_architecture: '#ffc1d6'
+  classical_architecture: '#9b6dff',
+  pre_modern_architecture: '#ffb000',
+  modern_architecture: '#00e7ff',
+  postwar_modern_architecture: '#ff4d1f',
+  sustainable_architecture: '#65ff9a',
+  vernacular_architecture: '#ff007a'
 };
 
 const sectorLabel: Record<StyleSector['id'], string> = {
@@ -31,9 +31,9 @@ const sectorLabel: Record<StyleSector['id'], string> = {
 };
 
 export function StyleSectors({ state }: { state: WormholeState }) {
-  const outerLabelOpacity = Math.max(0, 1 - state.timePosition / 0.18);
-  const innerLabelOpacity = smoothstep(0.1, 0.34, state.timePosition);
-  const boundaryOpacity = 0.1 + innerLabelOpacity * 0.14;
+  const outerLabelOpacity = Math.max(0, 1 - state.timePosition / 0.26);
+  const innerLabelOpacity = smoothstep(0.26, 0.54, state.timePosition);
+  const boundaryOpacity = 0.22 + innerLabelOpacity * 0.2;
 
   return (
     <g aria-label="Stilsektoren">
@@ -52,8 +52,8 @@ export function StyleSectors({ state }: { state: WormholeState }) {
               x2={startOuter.x}
               y2={startOuter.y}
               stroke={accent}
-              strokeWidth="0.65"
-              strokeDasharray="1 12"
+              strokeWidth="0.9"
+              strokeDasharray="1 9"
               opacity={boundaryOpacity}
             />
             <RadialLetterText
@@ -64,10 +64,11 @@ export function StyleSectors({ state }: { state: WormholeState }) {
               radius={wormholeTunnel.maxRadius + 22 + state.timePosition * 120}
               angle={labelAngle}
               fill={accent}
-              fontSize={7.8}
+              fontSize={8.6}
               fontWeight={700}
               opacity={outerLabelOpacity}
-              letterAngleStep={1.55}
+              letterAngleStep={1.42}
+              strokeWidth={2.2}
             />
             <RadialLetterText
               className="style-sector-label style-sector-label-inner"
@@ -77,10 +78,11 @@ export function StyleSectors({ state }: { state: WormholeState }) {
               radius={wormholeTunnel.minRadius + 34}
               angle={labelAngle}
               fill={accent}
-              fontSize={5.8}
+              fontSize={6.3}
               fontWeight={700}
               opacity={innerLabelOpacity}
               letterAngleStep={2.95}
+              strokeWidth={1.9}
             />
           </g>
         );

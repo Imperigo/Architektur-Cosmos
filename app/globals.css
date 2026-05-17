@@ -4,9 +4,9 @@
 body { margin: 0; background: #050505; color: #f7f7f4; }
 
 @keyframes wormhole-spoke-flow {
-  0% { stroke-dashoffset: 0; opacity: 0.08; }
-  42% { opacity: 0.34; }
-  100% { stroke-dashoffset: -96; opacity: 0.12; }
+  0% { stroke-dashoffset: 0; opacity: 0.16; }
+  42% { opacity: 0.42; }
+  100% { stroke-dashoffset: -104; opacity: 0.2; }
 }
 
 @keyframes wormhole-ring-pulse {
@@ -15,9 +15,15 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
 }
 
 @keyframes wormhole-stream-flow {
-  0% { stroke-dashoffset: 0; opacity: 0.025; }
-  45% { opacity: 0.09; }
-  100% { stroke-dashoffset: -120; opacity: 0.04; }
+  0% { stroke-dashoffset: 0; opacity: 0.1; }
+  45% { opacity: 0.34; }
+  100% { stroke-dashoffset: -132; opacity: 0.14; }
+}
+
+@keyframes wormhole-speed-flow {
+  0% { stroke-dashoffset: 88; opacity: 0.12; }
+  38% { opacity: 0.48; }
+  100% { stroke-dashoffset: -42; opacity: 0.2; }
 }
 
 @keyframes wormhole-outer-flow {
@@ -46,7 +52,7 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
 }
 
 @keyframes wormhole-breath {
-  0%, 100% { opacity: 0.82; }
+  0%, 100% { opacity: 0.94; }
   50% { opacity: 1; }
 }
 
@@ -82,14 +88,22 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
 }
 
 .wormhole-spoke {
-  stroke-dasharray: 20 34;
-  animation: wormhole-spoke-flow 2.25s linear infinite;
+  stroke-dasharray: 4 18;
+  animation: wormhole-spoke-flow 1.8s linear infinite;
   vector-effect: non-scaling-stroke;
 }
 
 .wormhole-stream {
-  stroke-dasharray: 28 44;
-  animation: wormhole-stream-flow 5.8s linear infinite;
+  stroke-dasharray: 30 38;
+  animation: wormhole-stream-flow 4.2s linear infinite;
+  mix-blend-mode: screen;
+  vector-effect: non-scaling-stroke;
+}
+
+.wormhole-speed-line {
+  stroke-dasharray: 1 14;
+  animation: wormhole-speed-flow 1.25s linear infinite;
+  mix-blend-mode: screen;
   vector-effect: non-scaling-stroke;
 }
 
@@ -100,13 +114,15 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
 }
 
 .wormhole-outer-rim {
-  stroke-dasharray: 18 26;
-  animation: wormhole-outer-flow 8s linear infinite;
+  stroke-dasharray: 20 18;
+  animation: wormhole-outer-flow 5.4s linear infinite;
+  mix-blend-mode: screen;
   vector-effect: non-scaling-stroke;
 }
 
 .wormhole-ring {
-  animation: wormhole-ring-pulse 7s ease-in-out infinite;
+  animation: wormhole-ring-pulse 5.8s ease-in-out infinite;
+  mix-blend-mode: screen;
   vector-effect: non-scaling-stroke;
 }
 
@@ -117,6 +133,7 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
 
 .wormhole-breath {
   animation: wormhole-breath 5.5s ease-in-out infinite;
+  mix-blend-mode: screen;
 }
 
 .wormhole-whirl {
@@ -173,6 +190,7 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
 }
 
 .style-sector line {
+  mix-blend-mode: screen;
   vector-effect: non-scaling-stroke;
 }
 
@@ -230,10 +248,11 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
   .wormhole-ring,
   .wormhole-current-ring,
   .wormhole-breath,
-    .wormhole-stream,
-    .wormhole-outer-rim,
-    .wormhole-whirl,
-    .cosmos-node-wiggle,
+  .wormhole-stream,
+  .wormhole-speed-line,
+  .wormhole-outer-rim,
+  .wormhole-whirl,
+  .cosmos-node-wiggle,
   .cosmos-cursor circle:first-child,
   .style-sector path,
   .hover-preview,

@@ -41,8 +41,9 @@ const wormholeYears = wormholeAnchors.map((anchor) => anchor.year);
 const oldestYear = -9500;
 const presentYear = 2025;
 const staticTimelineMarkers = [
-  -9500, -7000, -5000, -3000, -2000, -1000, -500, 0, 500, 1000, 1200, 1400,
-  1600, 1700, 1800, 1850, 1900, 1925, 1950, 1975, 2000, 2025
+  -9500, -7000, -5000, -3000, -2000, -1000, -500, 0, 500, 750, 1000, 1200,
+  1400, 1500, 1600, 1700, 1750, 1800, 1850, 1875, 1900, 1925, 1940, 1950,
+  1960, 1975, 1990, 2000, 2010, 2020, 2025
 ];
 const maxTunnelRadius = 430;
 const minTunnelRadius = 42;

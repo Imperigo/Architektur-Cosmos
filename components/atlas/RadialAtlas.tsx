@@ -237,12 +237,13 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
               hoverThemeId={hudThemeId}
               currentYear={formatYear(state.currentYear)}
               zoomLabel={zoomModeLabel(depthScale)}
-              zoomPercent={Math.round(depthScale * 100)}
-              visibleEntryCount={filteredEntries.length}
-              totalEntryCount={entries.length}
-              relationCount={relations.length}
-              showRelations={showRelations}
-              onThemeChange={(theme) => {
+	              zoomPercent={Math.round(depthScale * 100)}
+	              visibleEntryCount={filteredEntries.length}
+	              totalEntryCount={entries.length}
+	              relationCount={relations.length}
+	              showRelations={showRelations}
+	              tunnelDepth={state.timePosition}
+	              onThemeChange={(theme) => {
                 setActiveTheme(theme);
                 releaseSnap();
               }}
@@ -333,6 +334,7 @@ function RadialHud({
   totalEntryCount,
   relationCount,
   showRelations,
+  tunnelDepth,
   onThemeChange,
   onThemeHover,
   onZoomIn,
@@ -350,6 +352,7 @@ function RadialHud({
   totalEntryCount: number;
   relationCount: number;
   showRelations: boolean;
+  tunnelDepth: number;
   onThemeChange: (theme: string) => void;
   onThemeHover: (theme: string | null) => void;
   onZoomIn: () => void;
@@ -361,20 +364,16 @@ function RadialHud({
   const selectedTheme = activeTheme === 'all' ? null : themes.find((theme) => theme.id === activeTheme);
   const hoveredTheme = hoverThemeId ? themes.find((theme) => theme.id === hoverThemeId) : null;
   const themeLabelText = hoveredTheme?.label ?? selectedTheme?.label ?? 'All Themes';
+  const legendOpacity = Math.max(0, 1 - tunnelDepth / 0.24);
+  const controlsOpacity = Math.max(0.28, legendOpacity);
 
   return (
     <g className="radial-hud" pointerEvents="auto">
-      <OrbitText angle={180} radius={457} text="ARCHITECTURE COSMOS" size={8.4} />
-      <OrbitText angle={288} radius={457} text={`${visibleEntryCount}/${totalEntryCount} ENTRIES`} size={8} muted />
-      <OrbitText angle={252} radius={457} text={`${currentYear} · ${zoomLabel} · ${zoomPercent}%`} size={8} muted />
-
-      <HudButton angle={214} label="-" onClick={onZoomOut} />
-      <HudButton angle={232} label="+" onClick={onZoomIn} />
-      <HudButton angle={250} label="0" onClick={onReset} />
-      <HudButton angle={268} label={showRelations ? 'REL' : 'OFF'} active={showRelations} onClick={onToggleRelations} />
-      <OrbitText angle={286} radius={421} text={`${relationCount} STRANDS`} size={7.2} muted />
-
-      <g>
+      <g opacity={legendOpacity} pointerEvents={legendOpacity > 0.08 ? 'auto' : 'none'}>
+        <OrbitText angle={180} radius={457} text="ARCHITECTURE COSMOS" size={8.4} />
+        <OrbitText angle={288} radius={457} text={`${visibleEntryCount}/${totalEntryCount} ENTRIES`} size={8} muted />
+        <OrbitText angle={252} radius={457} text={`${currentYear} · ${zoomLabel} · ${zoomPercent}%`} size={8} muted />
+        <OrbitText angle={286} radius={421} text={`${relationCount} STRANDS`} size={7.2} muted />
         <HudThemeMarker
           angle={305}
           label="ALL"
@@ -397,6 +396,12 @@ function RadialHud({
           />
         ))}
         <OrbitText angle={38} radius={414} text={themeLabelText.toUpperCase()} size={8.4} />
+      </g>
+      <g opacity={controlsOpacity}>
+        <HudButton angle={214} label="-" onClick={onZoomOut} />
+        <HudButton angle={232} label="+" onClick={onZoomIn} />
+        <HudButton angle={250} label="0" onClick={onReset} />
+        <HudButton angle={268} label={showRelations ? 'REL' : 'OFF'} active={showRelations} onClick={onToggleRelations} />
       </g>
     </g>
   );
