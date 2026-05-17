@@ -4,9 +4,8 @@
 body { margin: 0; background: #050505; color: #f7f7f4; }
 
 @keyframes wormhole-spoke-flow {
-  0% { stroke-dashoffset: 0; opacity: 0.28; }
-  42% { opacity: 0.66; }
-  100% { stroke-dashoffset: -104; opacity: 0.34; }
+  from { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: -104; }
 }
 
 @keyframes wormhole-ring-pulse {
@@ -15,15 +14,13 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
 }
 
 @keyframes wormhole-stream-flow {
-  0% { stroke-dashoffset: 0; opacity: 0.18; }
-  45% { opacity: 0.52; }
-  100% { stroke-dashoffset: -132; opacity: 0.24; }
+  from { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: -132; }
 }
 
 @keyframes wormhole-speed-flow {
-  0% { stroke-dashoffset: 88; opacity: 0.22; }
-  38% { opacity: 0.76; }
-  100% { stroke-dashoffset: -42; opacity: 0.32; }
+  from { stroke-dashoffset: 88; }
+  to { stroke-dashoffset: -42; }
 }
 
 @keyframes wormhole-outer-flow {
@@ -41,31 +38,25 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
 }
 
 @keyframes launch-surge {
-  0% { opacity: 0.08; stroke-dashoffset: 0; }
-  45% { opacity: 0.62; }
-  100% { opacity: 0.18; stroke-dashoffset: -180; }
+  from { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: -180; }
 }
 
 @keyframes wormhole-current-pulse {
-  0%, 100% { opacity: 0.76; stroke-width: 1.1; }
-  50% { opacity: 1; stroke-width: 1.65; }
-}
-
-@keyframes wormhole-breath {
-  0%, 100% { opacity: 0.94; }
-  50% { opacity: 1; }
+  from { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: -18; }
 }
 
 @keyframes cosmos-node-drift {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  46% { transform: translate(var(--drift-x), var(--drift-y)) scale(1.035); }
-  72% { transform: translate(calc(var(--drift-x) * -0.45), calc(var(--drift-y) * 0.55)) scale(0.992); }
+  0%, 100% { transform: translate(0, 0); }
+  46% { transform: translate(var(--drift-x), var(--drift-y)); }
+  72% { transform: translate(calc(var(--drift-x) * -0.35), calc(var(--drift-y) * 0.45)); }
 }
 
 @keyframes cosmos-node-hover {
   0%, 100% { transform: translate(0, 0) scale(1); }
-  35% { transform: translate(calc(var(--drift-x) * 1.4), calc(var(--drift-y) * -1.2)) scale(1.08); }
-  70% { transform: translate(calc(var(--drift-x) * -1.1), calc(var(--drift-y) * 1.2)) scale(1.03); }
+  35% { transform: translate(calc(var(--drift-x) * 1.05), calc(var(--drift-y) * -0.9)) scale(1.035); }
+  70% { transform: translate(calc(var(--drift-x) * -0.8), calc(var(--drift-y) * 0.9)) scale(1.015); }
 }
 
 @keyframes hover-preview-arrive {
@@ -79,8 +70,8 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
 }
 
 @keyframes cursor-orbit {
-  0%, 100% { stroke-dashoffset: 0; opacity: 0.52; }
-  50% { stroke-dashoffset: -18; opacity: 0.9; }
+  from { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: -18; }
 }
 
 @keyframes sector-current {
@@ -93,20 +84,20 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
 
 .wormhole-spoke {
   stroke-dasharray: 5 15;
-  animation: wormhole-spoke-flow 1.55s linear infinite;
+  animation: none;
   vector-effect: non-scaling-stroke;
 }
 
 .wormhole-stream {
   stroke-dasharray: 34 32;
-  animation: wormhole-stream-flow 3.8s linear infinite;
+  animation: none;
   mix-blend-mode: screen;
   vector-effect: non-scaling-stroke;
 }
 
 .wormhole-speed-line {
   stroke-dasharray: 2 12;
-  animation: wormhole-speed-flow 1.05s linear infinite;
+  animation: none;
   mix-blend-mode: screen;
   vector-effect: non-scaling-stroke;
 }
@@ -120,24 +111,23 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
 
 .wormhole-outer-rim {
   stroke-dasharray: 20 18;
-  animation: wormhole-outer-flow 5.4s linear infinite;
+  animation: none;
   mix-blend-mode: screen;
   vector-effect: non-scaling-stroke;
 }
 
 .wormhole-ring {
-  animation: wormhole-ring-pulse 5.8s ease-in-out infinite;
+  animation: none;
   mix-blend-mode: screen;
   vector-effect: non-scaling-stroke;
 }
 
 .wormhole-current-ring {
-  animation: wormhole-ring-pulse 5.4s ease-in-out infinite;
+  animation: none;
   vector-effect: non-scaling-stroke;
 }
 
 .wormhole-breath {
-  animation: wormhole-breath 5.5s ease-in-out infinite;
   mix-blend-mode: screen;
 }
 
@@ -170,7 +160,7 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
 }
 
 .cosmos-node-wiggle {
-  animation: cosmos-node-drift 7.5s ease-in-out infinite;
+  animation: none;
   transform-box: fill-box;
   transform-origin: center;
 }
@@ -185,7 +175,7 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
 
 .cosmos-cursor circle:first-child {
   stroke-dasharray: 4 7;
-  animation: cursor-orbit 1.15s linear infinite;
+  animation: cursor-orbit 2.4s linear infinite;
   transition: r 90ms ease, opacity 90ms ease;
 }
 
@@ -201,7 +191,6 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
 
 .relation-strand,
 .relation-strand-glow {
-  animation: relation-strand-flow 8.4s linear infinite;
   mix-blend-mode: screen;
   vector-effect: non-scaling-stroke;
 }
