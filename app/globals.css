@@ -217,8 +217,8 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
 }
 
 .cosmos-magnifying .node-focus-drift:not(.node-focus-active) {
-  filter: blur(1.2px);
-  opacity: 0.34;
+  filter: blur(0.65px);
+  opacity: 0.48;
 }
 
 .cosmos-magnifying .relation-strand-group {
@@ -234,6 +234,7 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
 .cosmos-cursor {
   filter: drop-shadow(0 0 5px rgb(0 0 0 / 78%));
   transition: opacity 160ms ease;
+  will-change: transform, opacity;
 }
 
 .style-sector-ribbon {
@@ -316,6 +317,38 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
   transform-box: fill-box;
   transform-origin: center;
   transform: scale(1.28) translateY(-2px);
+}
+
+.database-access {
+  filter: drop-shadow(0 0 12px rgb(0 231 255 / 12%));
+  transition: transform 180ms cubic-bezier(0.19, 1, 0.22, 1), opacity 180ms ease;
+}
+
+.database-access-shell {
+  transform-box: fill-box;
+  transform-origin: right center;
+  transform: scaleX(0.28);
+  transition: transform 190ms cubic-bezier(0.19, 1, 0.22, 1), opacity 190ms ease;
+}
+
+.database-access-label {
+  opacity: 0;
+  transition: opacity 160ms ease;
+}
+
+.database-access:hover,
+.database-access-open {
+  transform: translateX(-4px);
+}
+
+.database-access:hover .database-access-shell,
+.database-access-open .database-access-shell {
+  transform: scaleX(1);
+}
+
+.database-access:hover .database-access-label,
+.database-access-open .database-access-label {
+  opacity: 0.86;
 }
 
 .navigation-dock {

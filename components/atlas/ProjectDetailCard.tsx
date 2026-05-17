@@ -12,9 +12,13 @@ export function ProjectDetailCard({ entry, x, y }: ProjectDetailCardProps) {
   const accent = styleColor(entry.style_sector);
   const courseLabel = courseGroupLabel(entry);
   const layerLabel = layerLabelForEntry(entry);
-  const headlineLines = wrapText(entry.one_sentence || entry.short_description, 46).slice(0, 3);
-  const bodyLines = ellipsizeLines(wrapText(entry.full_description, 48), 9, 48);
-  const chips = [layerLabel, ...entry.themes.slice(0, 3)].map((item) => item.replace(/_/g, ' '));
+  const titleLines = ellipsizeLines(wrapText(entry.title, 29), 2, 29);
+  const titleFontSize = titleLines.length > 1 ? 16.2 : entry.title.length > 33 ? 17.2 : 19.2;
+  const metaY = y + 60 + (titleLines.length - 1) * 15;
+  const mediaY = y + 88 + (titleLines.length - 1) * 8;
+  const headlineLines = ellipsizeLines(wrapText(entry.one_sentence || entry.short_description, 35), 4, 35);
+  const bodyLines = ellipsizeLines(wrapText(entry.full_description, 42), 7, 42);
+  const chips = [layerLabel, ...entry.themes.slice(0, 3)].map((item) => ellipsizeText(item.replace(/_/g, ' '), 28));
 
   return (
     <g className="project-detail-card">
@@ -24,36 +28,42 @@ export function ProjectDetailCard({ entry, x, y }: ProjectDetailCardProps) {
       <text x={x + 16} y={y + 24} fill={accent} fontSize="7.7" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.18em">
         {courseLabel.toUpperCase()}
       </text>
-      <text x={x + 16} y={y + 48} fill="#f7f7f4" fontSize="20" fontWeight="700" fontFamily="var(--font-sans), system-ui, sans-serif">
-        {entry.title}
+      <text fill="#f7f7f4" fontSize={titleFontSize} fontWeight="700" fontFamily="var(--font-sans), system-ui, sans-serif">
+        {titleLines.map((line, index) => (
+          <tspan key={`${line}-${index}`} x={x + 16} y={y + 47 + index * 15}>
+            {line}
+          </tspan>
+        ))}
       </text>
-      <text x={x + 16} y={y + 67} fill="#b8b8b8" fontSize="8.4" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.08em">
+      <text x={x + 16} y={metaY} fill="#b8b8b8" fontSize="8.4" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.08em">
         {formatYear(entry.year_start)}{location ? ` · ${location}` : ''}
       </text>
-      <ProjectMediaGrid media={entry.media} x={x + 16} y={y + 86} slotWidth={72} slotHeight={48} gap={9} showLabels accent={accent} />
-      <text fill="#f7f7f4" fontSize="9.4" fontWeight="620" fontFamily="var(--font-sans), system-ui, sans-serif">
+      <ProjectMediaGrid media={entry.media} x={x + 16} y={mediaY} slotWidth={72} slotHeight={48} gap={9} showLabels accent={accent} />
+      <text fill="#f7f7f4" fontSize="8.7" fontWeight="620" fontFamily="var(--font-sans), system-ui, sans-serif">
         {headlineLines.map((line, index) => (
-          <tspan key={`${line}-${index}`} x={x + 184} y={y + 94 + index * 12}>
+          <tspan key={`${line}-${index}`} x={x + 184} y={y + 91 + index * 11}>
             {line}
           </tspan>
         ))}
       </text>
-      <text fill="#cfcfca" fontSize="7.7" fontFamily="var(--font-sans), system-ui, sans-serif">
+      <text fill="#cfcfca" fontSize="7.25" fontFamily="var(--font-sans), system-ui, sans-serif">
         {bodyLines.map((line, index) => (
-          <tspan key={`${line}-${index}`} x={x + 184} y={y + 139 + index * 10.4}>
+          <tspan key={`${line}-${index}`} x={x + 184} y={y + 142 + index * 9.7}>
             {line}
           </tspan>
         ))}
       </text>
-      <text x={x + 16} y={y + 248} fill="#b8b8b2" fontSize="7.2" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.1em">
+      <text x={x + 16} y={y + 244} fill="#b8b8b2" fontSize="7.2" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.1em">
         LAYER / FILTER
       </text>
       {chips.slice(0, 4).map((chip, index) => {
-        const chipWidth = Math.min(88, Math.max(42, chip.length * 4.2 + 14));
+        const column = index % 2;
+        const row = Math.floor(index / 2);
+        const chipWidth = 148;
         return (
-          <g key={`${chip}-${index}`} transform={`translate(${x + 16 + index * 80} ${y + 260})`}>
-            <rect width={chipWidth} height="14" rx="7" fill="#061315" stroke={index === 0 ? accent : '#f7f7f4'} strokeWidth="0.45" opacity="0.88" />
-            <text x={chipWidth / 2} y="9.5" textAnchor="middle" fill={index === 0 ? accent : '#d7d7d0'} fontSize="6.6" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.08em">
+          <g key={`${chip}-${index}`} transform={`translate(${x + 16 + column * 160} ${y + 254 + row * 17})`}>
+            <rect width={chipWidth} height="13" rx="6.5" fill="#061315" stroke={index === 0 ? accent : '#f7f7f4'} strokeWidth="0.45" opacity="0.88" />
+            <text x={chipWidth / 2} y="9" textAnchor="middle" fill={index === 0 ? accent : '#d7d7d0'} fontSize="5.9" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.07em">
               {chip.toUpperCase()}
             </text>
           </g>
@@ -70,6 +80,11 @@ function ellipsizeLines(lines: string[], maxLines: number, maxChars: number) {
   const last = visible[visible.length - 1] ?? '';
   visible[visible.length - 1] = `${last.replace(/[,.:\s]+$/, '').slice(0, Math.max(0, maxChars - 3))}...`;
   return visible;
+}
+
+function ellipsizeText(text: string, maxChars: number) {
+  if (text.length <= maxChars) return text;
+  return `${text.slice(0, Math.max(0, maxChars - 3)).trim()}...`;
 }
 
 function wrapText(text: string, maxChars: number) {

@@ -30,7 +30,9 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   const [snappedEntryId, setSnappedEntryId] = useState<string | null>(null);
   const [hoverEntryId, setHoverEntryId] = useState<string | null>(null);
   const [hoverMagnifyId, setHoverMagnifyId] = useState<string | null>(null);
+  const [pointerPoint, setPointerPoint] = useState<SvgPoint | null>(null);
   const [showDatabasePanel, setShowDatabasePanel] = useState(false);
+  const [isDatabaseHovered, setIsDatabaseHovered] = useState(false);
   const pendingTravelDeltaRef = useRef(0);
   const travelFrameRef = useRef<number | null>(null);
   const travelIdleTimeoutRef = useRef<number | null>(null);
@@ -47,7 +49,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   const isHoverFocusActive = Boolean(hoverNode && !snappedNode && !isTraveling);
   const isHoverMagnifyActive = hoverMagnifyId === hoverNode?.entry.id && isHoverFocusActive && !snappedNode;
   const cameraFocus = focusCameraOffset(hoverNode, isHoverFocusActive && !isTraveling, isHoverMagnifyActive);
-  const cursorPoint = cursorAnchorPoint(hoverNode ?? snappedNode, cameraFocus, isTraveling, introState);
+  const cursorPoint = cursorAnchorPoint(pointerPoint, hoverNode, cameraFocus, isTraveling, introState, isHoverMagnifyActive, Boolean(snappedNode));
   const isIntroActive = introState !== 'idle';
   const backgroundStyle = {
     filter: snappedNode ? 'blur(6px)' : isIntroActive ? 'blur(7px)' : 'blur(0px)',
@@ -201,6 +203,8 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   }
 
   function commitPointerMove(point: SvgPoint) {
+    setPointerPoint(point);
+
     if (snappedNode || isTraveling) {
       if (isTraveling) {
         setHoverEntryId((current) => (current === null ? current : null));
@@ -235,6 +239,8 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
 
   function handlePointerLeave() {
     pendingPointerPointRef.current = null;
+    setPointerPoint(null);
+
     if (pointerFrameRef.current !== null) {
       window.cancelAnimationFrame(pointerFrameRef.current);
       pointerFrameRef.current = null;
@@ -292,7 +298,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
 
               {showRelations ? <RelationOverlay nodes={displayNodes} relations={relations} selectedEntry={snappedNode?.entry ?? hoverNode?.entry ?? null} isMoving={isTraveling} /> : null}
 
-              {hoverNode && !snappedNode && !isTraveling ? <HoverPreview pointer={cursorPoint ?? applyCameraToPoint(hoverNode, cameraFocus)} node={hoverNode} isMagnified={isHoverMagnifyActive} /> : null}
+              {hoverNode && !snappedNode && !isTraveling ? <HoverPreview pointer={invertCameraPoint(cursorPoint ?? pointerPoint ?? applyCameraToPoint(hoverNode, cameraFocus), cameraFocus)} node={hoverNode} isMagnified={isHoverMagnifyActive} /> : null}
 
               {displayNodes.map((node) => {
                 const displayOffset = focusDisplayOffset(node, hoverNode, isHoverFocusActive, isHoverMagnifyActive);
@@ -342,7 +348,14 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
               onTravelBackward={() => travelBy(-0.035)}
               onCycleStyleLens={() => setActiveStyleLens((current) => nextStyleLens(current))}
               onToggleRelations={() => setShowRelations((current) => !current)}
-              onToggleDatabase={() => setShowDatabasePanel((current) => !current)}
+            />
+          ) : null}
+          {introState === 'idle' ? (
+            <DatabaseAccess
+              isOpen={showDatabasePanel}
+              isHovered={isDatabaseHovered}
+              onHoverChange={setIsDatabaseHovered}
+              onToggle={() => setShowDatabasePanel((current) => !current)}
             />
           ) : null}
           {showDatabasePanel && introState === 'idle' ? <DatabasePlaceholderPanel onDismiss={() => setShowDatabasePanel(false)} /> : null}
@@ -391,7 +404,7 @@ function focusDisplayOffset(node: WormholeEntryNode, focusNode: WormholeEntryNod
 
   if (!isClusterNeighbor) return { x: 0, y: 0 };
 
-  const strength = node.entry.id === focusNode.entry.id ? (magnifyActive ? 0.32 : 0.16) : (magnifyActive ? 0.2 : 0.09);
+  const strength = node.entry.id === focusNode.entry.id ? (magnifyActive ? 0.18 : 0.035) : (magnifyActive ? 0.12 : 0.02);
 
   return {
     x: (atlasSize.cx - node.x) * strength,
@@ -405,9 +418,9 @@ function focusCameraOffset(focusNode: WormholeEntryNode | null, focusActive: boo
   }
 
   return {
-    x: (atlasSize.cx - focusNode.x) * (magnifyActive ? 0.38 : 0.18),
-    y: (atlasSize.cy - focusNode.y) * (magnifyActive ? 0.38 : 0.18),
-    scale: magnifyActive ? 1.16 : 1.055
+    x: (atlasSize.cx - focusNode.x) * (magnifyActive ? 0.2 : 0.045),
+    y: (atlasSize.cy - focusNode.y) * (magnifyActive ? 0.2 : 0.045),
+    scale: magnifyActive ? 1.075 : 1.012
   };
 }
 
@@ -418,10 +431,32 @@ function applyCameraToPoint(point: SvgPoint, cameraFocus: { x: number; y: number
   };
 }
 
-function cursorAnchorPoint(node: WormholeEntryNode | null, cameraFocus: { x: number; y: number; scale: number }, isTraveling: boolean, introState: IntroState): SvgPoint | null {
+function invertCameraPoint(point: SvgPoint, cameraFocus: { x: number; y: number; scale: number }): SvgPoint {
+  return {
+    x: atlasSize.cx + (point.x - atlasSize.cx - cameraFocus.x) / cameraFocus.scale,
+    y: atlasSize.cy + (point.y - atlasSize.cy - cameraFocus.y) / cameraFocus.scale
+  };
+}
+
+function cursorAnchorPoint(
+  pointerPoint: SvgPoint | null,
+  hoverNode: WormholeEntryNode | null,
+  cameraFocus: { x: number; y: number; scale: number },
+  isTraveling: boolean,
+  introState: IntroState,
+  isMagnified: boolean,
+  hasSnappedNode: boolean
+): SvgPoint | null {
   if (introState !== 'idle' || isTraveling) return null;
-  if (node) return applyCameraToPoint(node, cameraFocus);
-  return { x: atlasSize.cx, y: atlasSize.cy };
+  const freePointer = pointerPoint ?? { x: atlasSize.cx, y: atlasSize.cy };
+  if (!hoverNode || hasSnappedNode) return freePointer;
+
+  const anchor = applyCameraToPoint(hoverNode, cameraFocus);
+  const strength = isMagnified ? 0.26 : 0.14;
+  return {
+    x: freePointer.x + (anchor.x - freePointer.x) * strength,
+    y: freePointer.y + (anchor.y - freePointer.y) * strength
+  };
 }
 
 function shortestAngleDelta(a: number, b: number) {
@@ -435,8 +470,7 @@ function RadialHud({
   onTravelForward,
   onTravelBackward,
   onCycleStyleLens,
-  onToggleRelations,
-  onToggleDatabase
+  onToggleRelations
 }: {
   showRelations: boolean;
   tunnelDepth: number;
@@ -445,26 +479,24 @@ function RadialHud({
   onTravelBackward: () => void;
   onCycleStyleLens: () => void;
   onToggleRelations: () => void;
-  onToggleDatabase: () => void;
 }) {
   const controlsOpacity = Math.max(0.46, 1 - tunnelDepth / 0.76);
   const lensLabel = activeStyleLens ? styleSectors.find((sector) => sector.id === activeStyleLens)?.label ?? 'Stil' : 'Alle Stile';
 
   return (
     <g className="radial-hud navigation-dock" pointerEvents="auto" opacity={controlsOpacity}>
-      <rect x={atlasSize.cx - 152} y="886" width="304" height="42" rx="21" fill="#050505" stroke="#f7f7f4" strokeWidth="0.55" opacity="0.72" />
+      <rect x={atlasSize.cx - 122} y="904" width="244" height="34" rx="17" fill="#050505" stroke="#f7f7f4" strokeWidth="0.5" opacity="0.68" />
       <g opacity={controlsOpacity}>
-        <HudButton x={atlasSize.cx - 110} y={907} kind="backward" label="zurueck" onClick={onTravelBackward} />
-        <HudButton x={atlasSize.cx - 56} y={907} kind="forward" label="vor" onClick={onTravelForward} />
-        <HudButton x={atlasSize.cx} y={907} kind="lens" label={lensLabel} active={Boolean(activeStyleLens)} onClick={onCycleStyleLens} />
-        <HudButton x={atlasSize.cx + 56} y={907} kind="relations" label="relations" active={showRelations} onClick={onToggleRelations} />
-        <HudButton x={atlasSize.cx + 110} y={907} kind="database" label="database" onClick={onToggleDatabase} />
+        <HudButton x={atlasSize.cx - 78} y={921} kind="backward" label="zurueck" onClick={onTravelBackward} />
+        <HudButton x={atlasSize.cx - 26} y={921} kind="forward" label="vor" onClick={onTravelForward} />
+        <HudButton x={atlasSize.cx + 26} y={921} kind="lens" label={lensLabel} active={Boolean(activeStyleLens)} onClick={onCycleStyleLens} />
+        <HudButton x={atlasSize.cx + 78} y={921} kind="relations" label="relations" active={showRelations} onClick={onToggleRelations} />
       </g>
     </g>
   );
 }
 
-function HudButton({ x, y, kind, label, active = false, onClick }: { x: number; y: number; kind: 'backward' | 'forward' | 'lens' | 'relations' | 'database'; label: string; active?: boolean; onClick: () => void }) {
+function HudButton({ x, y, kind, label, active = false, onClick }: { x: number; y: number; kind: 'backward' | 'forward' | 'lens' | 'relations'; label: string; active?: boolean; onClick: () => void }) {
   return (
     <g className="hud-button" onClick={(event) => { event.stopPropagation(); onClick(); }} aria-label={label}>
       <circle cx={x} cy={y} r="14" fill={active ? '#f7f7f4' : '#050505'} stroke={active ? '#00e7ff' : '#f7f7f4'} strokeWidth="0.75" opacity="0.88" />
@@ -473,7 +505,7 @@ function HudButton({ x, y, kind, label, active = false, onClick }: { x: number; 
   );
 }
 
-function HudIcon({ x, y, kind, active }: { x: number; y: number; kind: 'backward' | 'forward' | 'lens' | 'relations' | 'database'; active: boolean }) {
+function HudIcon({ x, y, kind, active }: { x: number; y: number; kind: 'backward' | 'forward' | 'lens' | 'relations'; active: boolean }) {
   const stroke = active ? '#050505' : '#f7f7f4';
 
   if (kind === 'relations') {
@@ -498,20 +530,60 @@ function HudIcon({ x, y, kind, active }: { x: number; y: number; kind: 'backward
     );
   }
 
-  if (kind === 'database') {
-    return (
-      <g stroke={stroke} fill="none" strokeWidth="0.9" opacity="0.9">
-        <ellipse cx={x} cy={y - 5} rx="5.6" ry="2.4" />
-        <path d={`M ${x - 5.6} ${y - 5} V ${y + 5} Q ${x} ${y + 8} ${x + 5.6} ${y + 5} V ${y - 5}`} />
-        <path d={`M ${x - 5.6} ${y} Q ${x} ${y + 3} ${x + 5.6} ${y}`} opacity="0.55" />
-      </g>
-    );
-  }
-
   return (
     <g stroke={stroke} strokeWidth="1.25" fill="none" opacity="0.9">
       <path d={kind === 'forward' ? `M ${x - 4} ${y - 6} L ${x + 4} ${y} L ${x - 4} ${y + 6}` : `M ${x + 4} ${y - 6} L ${x - 4} ${y} L ${x + 4} ${y + 6}`} />
       <line x1={kind === 'forward' ? x - 6 : x + 6} y1={y} x2={kind === 'forward' ? x + 5 : x - 5} y2={y} opacity="0.5" />
+    </g>
+  );
+}
+
+function DatabaseAccess({ isOpen, isHovered, onHoverChange, onToggle }: { isOpen: boolean; isHovered: boolean; onHoverChange: (isHovered: boolean) => void; onToggle: () => void }) {
+  const x = atlasSize.width - 164;
+  const y = atlasSize.height - 54;
+  const isExpanded = isOpen || isHovered;
+  const lastToggleRef = useRef(0);
+
+  function toggleOnce(event: { stopPropagation: () => void; timeStamp: number }) {
+    event.stopPropagation();
+    if (event.timeStamp - lastToggleRef.current < 180) return;
+    lastToggleRef.current = event.timeStamp;
+    onToggle();
+  }
+
+  return (
+    <g
+      className={`database-access ${isExpanded ? 'database-access-open' : ''}`}
+      pointerEvents="auto"
+      transform={`translate(${x} ${y})`}
+      onPointerEnter={() => onHoverChange(true)}
+      onPointerMove={() => onHoverChange(true)}
+      onPointerLeave={() => onHoverChange(false)}
+      aria-label="Database archive"
+    >
+      <rect className="database-access-shell" x="0" y="-16" width="128" height="32" rx="16" fill="#050505" stroke="#00e7ff" strokeWidth="0.55" opacity="0.74" />
+      <g className="database-access-core" stroke="#f7f7f4" fill="none" strokeWidth="0.72" opacity="0.9">
+        <ellipse cx="16" cy="-4.4" rx="6.1" ry="2.4" />
+        <path d="M 9.9 -4.4 V 5.8 Q 16 9.1 22.1 5.8 V -4.4" />
+        <path d="M 9.9 0.8 Q 16 4 22.1 0.8" opacity="0.52" />
+      </g>
+      <text className="database-access-label" x="34" y="3" fill="#f7f7f4" fontSize="7.5" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.2em">
+        DATABASE / ARCHIVE
+      </text>
+      <rect
+        x="0"
+        y="-16"
+        width="128"
+        height="32"
+        rx="16"
+        fill="#050505"
+        opacity="0.001"
+        onPointerMove={() => onHoverChange(true)}
+        onPointerDown={toggleOnce}
+        onPointerUp={toggleOnce}
+        onMouseDown={toggleOnce}
+        onClick={toggleOnce}
+      />
     </g>
   );
 }
