@@ -11,6 +11,7 @@ type RelationOverlayProps = {
   nodes: RelationNode[];
   relations: EntryRelation[];
   selectedEntry: Entry | null;
+  isMoving?: boolean;
 };
 
 const relationDash: Record<RelationType, string | undefined> = {
@@ -35,7 +36,7 @@ const relationColor: Record<RelationType, string> = {
   context: '#f7f7f4'
 };
 
-export function RelationOverlay({ nodes, relations, selectedEntry }: RelationOverlayProps) {
+export function RelationOverlay({ nodes, relations, selectedEntry, isMoving = false }: RelationOverlayProps) {
   const nodeById = new Map(nodes.map((node) => [node.entry.id, node]));
 
   return (
@@ -58,16 +59,18 @@ export function RelationOverlay({ nodes, relations, selectedEntry }: RelationOve
 
         return (
           <g key={relation.id} className="relation-strand-group">
-            <path
-              className="relation-strand-glow"
-              d={path}
-              fill="none"
-              stroke={relationStroke}
-              strokeWidth={isSelectedRelation ? 4.2 : 1.9}
-              strokeDasharray={relationDash[relation.relation_type]}
-              opacity={relationOpacity * 0.34}
-              filter="url(#wormhole-energy-glow)"
-            />
+            {!isMoving ? (
+              <path
+                className="relation-strand-glow"
+                d={path}
+                fill="none"
+                stroke={relationStroke}
+                strokeWidth={isSelectedRelation ? 4.2 : 1.9}
+                strokeDasharray={relationDash[relation.relation_type]}
+                opacity={relationOpacity * 0.34}
+                filter="url(#wormhole-energy-glow)"
+              />
+            ) : null}
             <path
               className="relation-strand"
               d={path}
@@ -75,7 +78,7 @@ export function RelationOverlay({ nodes, relations, selectedEntry }: RelationOve
               stroke={relationStroke}
               strokeWidth={relationWidth}
               strokeDasharray={relationDash[relation.relation_type]}
-              opacity={relationOpacity}
+              opacity={isMoving ? relationOpacity * 0.72 : relationOpacity}
             />
           </g>
         );

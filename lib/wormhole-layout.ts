@@ -92,11 +92,13 @@ export function wormholeRings(state: WormholeState): TimeRing[] {
     .filter((ring) => ring.depth >= frontFadeDepth && ring.depth <= visibleDepth);
 }
 
-export function wormholeGridLines(state: WormholeState) {
+export function wormholeGridLines(state: WormholeState, options?: { spokeStride?: number; sampleCount?: number }) {
   const lines: string[] = [];
-  const samples = Array.from({ length: 58 }, (_, index) => index / 57 * visibleDepth);
+  const spokeStride = Math.max(1, options?.spokeStride ?? 1);
+  const sampleCount = Math.max(2, options?.sampleCount ?? 58);
+  const samples = Array.from({ length: sampleCount }, (_, index) => index / (sampleCount - 1) * visibleDepth);
 
-  for (let spoke = 0; spoke < 72; spoke += 1) {
+  for (let spoke = 0; spoke < 72; spoke += spokeStride) {
     const baseAngle = spoke * 5;
     const points = samples.map((depth) => {
       const worldPosition = state.timePosition + depth;

@@ -26,6 +26,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   const [selectedEntry, setSelectedEntry] = useState<Entry | null>(null);
   const [showRelations, setShowRelations] = useState(true);
   const [travel, setTravel] = useState(0);
+  const [isTraveling, setIsTraveling] = useState(false);
   const [introState, setIntroState] = useState<IntroState>('intro');
   const [snappedEntryId, setSnappedEntryId] = useState<string | null>(null);
   const [hoverEntryId, setHoverEntryId] = useState<string | null>(null);
@@ -33,6 +34,11 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   const [activeTheme, setActiveTheme] = useState('all');
   const [hudThemeId, setHudThemeId] = useState<string | null>(null);
   const [pointerPoint, setPointerPoint] = useState<SvgPoint | null>(null);
+  const pendingTravelDeltaRef = useRef(0);
+  const travelFrameRef = useRef<number | null>(null);
+  const travelIdleTimeoutRef = useRef<number | null>(null);
+  const pendingPointerPointRef = useRef<SvgPoint | null>(null);
+  const pointerFrameRef = useRef<number | null>(null);
   const state = useMemo(() => wormholeState(travel), [travel]);
   const themes = useMemo(() => atlasThemes(entries), [entries]);
   const filteredEntries = useMemo(() => {
@@ -47,7 +53,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   const snappedNode = useMemo(() => nodes.find((node) => node.entry.id === activeSnappedEntryId) ?? null, [activeSnappedEntryId, nodes]);
   const hoverNode = useMemo(() => nodes.find((node) => node.entry.id === activeHoverEntryId) ?? null, [activeHoverEntryId, nodes]);
   const isHoverFocusActive = hoverFocusId === hoverNode?.entry.id && !snappedNode;
-  const cameraFocus = focusCameraOffset(hoverNode, isHoverFocusActive);
+  const cameraFocus = focusCameraOffset(hoverNode, isHoverFocusActive && !isTraveling);
   const depthScale = 1 + state.timePosition * 2.8;
   const isIntroActive = introState !== 'idle';
   const backgroundStyle = {
@@ -69,14 +75,32 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
 
   useEffect(() => {
     if (!hoverNode || snappedNode) return;
+    if (isTraveling) return;
 
     const timeout = window.setTimeout(() => setHoverFocusId(hoverNode.entry.id), 2300);
     return () => window.clearTimeout(timeout);
-  }, [hoverNode, snappedNode]);
+  }, [hoverNode, isTraveling, snappedNode]);
+
+  useEffect(() => {
+    return () => {
+      if (travelFrameRef.current !== null) {
+        window.cancelAnimationFrame(travelFrameRef.current);
+      }
+
+      if (travelIdleTimeoutRef.current !== null) {
+        window.clearTimeout(travelIdleTimeoutRef.current);
+      }
+
+      if (pointerFrameRef.current !== null) {
+        window.cancelAnimationFrame(pointerFrameRef.current);
+      }
+    };
+  }, []);
 
   function startIntro() {
     if (introState === 'idle') return;
 
+    cancelPendingTravel();
     setTravel(0);
     setIntroState('launching');
   }
@@ -87,11 +111,14 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
       return;
     }
 
+    markTraveling(220);
     releaseSnap();
     setTravel((current) => advanceTravel(current, delta));
   }
 
   function resetView() {
+    cancelPendingTravel();
+    markTraveling(220);
     setTravel(0);
     releaseSnap();
   }
@@ -107,9 +134,50 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   }
 
   function releaseSnap() {
-    setSnappedEntryId(null);
-    setHoverEntryId(null);
-    setSelectedEntry(null);
+    setSnappedEntryId((current) => (current === null ? current : null));
+    setHoverEntryId((current) => (current === null ? current : null));
+    setHoverFocusId((current) => (current === null ? current : null));
+    setSelectedEntry((current) => (current === null ? current : null));
+  }
+
+  function markTraveling(idleDelay = 160) {
+    setIsTraveling(true);
+
+    if (travelIdleTimeoutRef.current !== null) {
+      window.clearTimeout(travelIdleTimeoutRef.current);
+    }
+
+    travelIdleTimeoutRef.current = window.setTimeout(() => {
+      setIsTraveling(false);
+      travelIdleTimeoutRef.current = null;
+    }, idleDelay);
+  }
+
+  function cancelPendingTravel() {
+    pendingTravelDeltaRef.current = 0;
+
+    if (travelFrameRef.current !== null) {
+      window.cancelAnimationFrame(travelFrameRef.current);
+      travelFrameRef.current = null;
+    }
+  }
+
+  function scheduleTravel(delta: number) {
+    pendingTravelDeltaRef.current = Math.max(-0.052, Math.min(0.052, pendingTravelDeltaRef.current + delta));
+    markTraveling();
+
+    if (travelFrameRef.current !== null) return;
+
+    travelFrameRef.current = window.requestAnimationFrame(() => {
+      const pendingDelta = pendingTravelDeltaRef.current;
+      pendingTravelDeltaRef.current = 0;
+      travelFrameRef.current = null;
+
+      if (pendingDelta === 0) return;
+
+      releaseSnap();
+      setTravel((current) => advanceTravel(current, pendingDelta));
+    });
   }
 
   function handleWheel(event: WheelEvent<SVGSVGElement>) {
@@ -120,16 +188,40 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     }
 
     const normalizedDelta = Math.max(-140, Math.min(140, event.deltaY));
-    travelBy(normalizedDelta * 0.00042);
+    scheduleTravel(normalizedDelta * 0.00036);
   }
 
   function handlePointerMove(event: PointerEvent<SVGSVGElement>) {
     const point = pointerToSvgPoint(event);
     if (!point) return;
 
+    schedulePointerMove(point);
+  }
+
+  function schedulePointerMove(point: SvgPoint) {
+    pendingPointerPointRef.current = point;
+
+    if (pointerFrameRef.current !== null) return;
+
+    pointerFrameRef.current = window.requestAnimationFrame(() => {
+      const nextPoint = pendingPointerPointRef.current;
+      pendingPointerPointRef.current = null;
+      pointerFrameRef.current = null;
+
+      if (nextPoint) {
+        commitPointerMove(nextPoint);
+      }
+    });
+  }
+
+  function commitPointerMove(point: SvgPoint) {
     setPointerPoint(point);
 
-    if (snappedNode) {
+    if (snappedNode || isTraveling) {
+      if (isTraveling) {
+        setHoverEntryId((current) => (current === null ? current : null));
+        setHoverFocusId((current) => (current === null ? current : null));
+      }
       return;
     }
 
@@ -144,6 +236,12 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   }
 
   function handlePointerLeave() {
+    pendingPointerPointRef.current = null;
+    if (pointerFrameRef.current !== null) {
+      window.cancelAnimationFrame(pointerFrameRef.current);
+      pointerFrameRef.current = null;
+    }
+
     setPointerPoint(null);
     if (!snappedNode) {
       setHoverEntryId(null);
@@ -152,18 +250,19 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
 
   function pointerToSvgPoint(event: PointerEvent<SVGSVGElement>): SvgPoint | null {
     const svg = svgRef.current;
-    const matrix = svg?.getScreenCTM();
-    if (!svg || !matrix) return null;
+    if (!svg) return null;
 
-    const point = svg.createSVGPoint();
-    point.x = event.clientX;
-    point.y = event.clientY;
-    const transformed = point.matrixTransform(matrix.inverse());
-    return { x: transformed.x, y: transformed.y };
+    const rect = svg.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) return null;
+
+    return {
+      x: ((event.clientX - rect.left) / rect.width) * atlasSize.width,
+      y: ((event.clientY - rect.top) / rect.height) * atlasSize.height
+    };
   }
 
   return (
-    <main className={`relative h-screen w-screen overflow-hidden bg-[#050505] text-[#f7f7f4] ${introState === 'launching' ? 'cosmos-launching' : ''}`}>
+    <main className={`relative h-screen w-screen overflow-hidden bg-[#050505] text-[#f7f7f4] ${introState === 'launching' ? 'cosmos-launching' : ''} ${isTraveling ? 'cosmos-moving' : ''}`}>
       <div className="h-full w-full">
         <svg
           ref={svgRef}
@@ -185,12 +284,12 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
                 transformOrigin: `${atlasSize.cx}px ${atlasSize.cy}px`
               }}
             >
-              <WormholeRings state={state} />
-              <StyleSectors state={state} />
+              <WormholeRings state={state} isMoving={isTraveling} />
+              <StyleSectors state={state} isMoving={isTraveling} />
 
-              {showRelations ? <RelationOverlay nodes={nodes} relations={relations} selectedEntry={snappedNode?.entry ?? hoverNode?.entry ?? null} /> : null}
+              {showRelations ? <RelationOverlay nodes={nodes} relations={relations} selectedEntry={snappedNode?.entry ?? hoverNode?.entry ?? null} isMoving={isTraveling} /> : null}
 
-              {hoverNode && pointerPoint && !snappedNode ? <HoverPreview pointer={pointerPoint} node={hoverNode} /> : null}
+              {hoverNode && pointerPoint && !snappedNode && !isTraveling ? <HoverPreview pointer={pointerPoint} node={hoverNode} /> : null}
 
               {nodes.map((node) => {
                 const displayOffset = focusDisplayOffset(node, hoverNode, isHoverFocusActive);

@@ -30,7 +30,7 @@ const sectorLabel: Record<StyleSector['id'], string> = {
   vernacular_architecture: 'VERNAKULAER'
 };
 
-export function StyleSectors({ state }: { state: WormholeState }) {
+export function StyleSectors({ state, isMoving = false }: { state: WormholeState; isMoving?: boolean }) {
   const outerLabelOpacity = Math.max(0, 1 - state.timePosition / 0.26);
   const innerLabelOpacity = smoothstep(0.26, 0.54, state.timePosition);
   const boundaryOpacity = 0.34 + innerLabelOpacity * 0.28;
@@ -54,8 +54,8 @@ export function StyleSectors({ state }: { state: WormholeState }) {
               stroke={accent}
               strokeWidth="1.35"
               strokeDasharray="1 7"
-              opacity={boundaryOpacity}
-              filter="url(#wormhole-energy-glow)"
+              opacity={isMoving ? boundaryOpacity * 0.76 : boundaryOpacity}
+              filter={isMoving ? undefined : 'url(#wormhole-energy-glow)'}
             />
             <RadialLetterText
               className="style-sector-label style-sector-label-outer"

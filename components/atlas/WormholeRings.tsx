@@ -5,13 +5,14 @@ import { RadialLetterText } from '@/components/atlas/RadialText';
 
 type WormholeRingsProps = {
   state: WormholeState;
+  isMoving?: boolean;
 };
 
-export function WormholeRings({ state }: WormholeRingsProps) {
+export function WormholeRings({ state, isMoving = false }: WormholeRingsProps) {
   const rings = wormholeRings(state);
-  const gridLines = wormholeGridLines(state);
-  const streamLines = wormholeStreamLines(state);
-  const speedLines = radialSpeedLines(state);
+  const gridLines = wormholeGridLines(state, isMoving ? { spokeStride: 2, sampleCount: 34 } : undefined);
+  const streamLines = wormholeStreamLines(state, isMoving ? { count: 18, sampleCount: 5 } : undefined);
+  const speedLines = radialSpeedLines(state, isMoving ? { count: 36, sampleCount: 6 } : undefined);
   const edgeCompression = Math.min(1, Math.abs(state.edgeTension) / 0.065);
 
   return (
@@ -43,8 +44,8 @@ export function WormholeRings({ state }: WormholeRingsProps) {
           fill="none"
           stroke={energyColor(index)}
           strokeWidth={index % 5 === 0 ? 1.42 : 0.94}
-          opacity={index % 5 === 0 ? 0.34 : 0.22}
-          filter="url(#wormhole-energy-glow)"
+          opacity={isMoving ? (index % 5 === 0 ? 0.22 : 0.12) : index % 5 === 0 ? 0.34 : 0.22}
+          filter={isMoving ? undefined : 'url(#wormhole-energy-glow)'}
           style={{ animationDelay: `${index * -0.22}s` }}
         />
       ))}
@@ -56,11 +57,11 @@ export function WormholeRings({ state }: WormholeRingsProps) {
           fill="none"
           stroke={energyColor(index + 2)}
           strokeWidth={index % 6 === 0 ? 0.92 : 0.54}
-          opacity={index % 6 === 0 ? 0.58 : 0.34}
+          opacity={isMoving ? (index % 6 === 0 ? 0.42 : 0.22) : index % 6 === 0 ? 0.58 : 0.34}
           style={{ animationDelay: `${index * -0.045}s` }}
         />
       ))}
-      <OuterCurvature state={state} />
+      <OuterCurvature state={state} isMoving={isMoving} />
       {gridLines.map((line, index) => (
         <path
           key={index}
@@ -69,8 +70,8 @@ export function WormholeRings({ state }: WormholeRingsProps) {
           fill="none"
           stroke={index % 4 === 0 ? '#fff3d1' : energyColor(index)}
           strokeWidth={index % 6 === 0 ? 1.24 : 0.66}
-          opacity={index % 6 === 0 ? 0.56 : 0.32}
-          filter={index % 6 === 0 ? 'url(#wormhole-energy-glow)' : undefined}
+          opacity={isMoving ? (index % 6 === 0 ? 0.42 : 0.22) : index % 6 === 0 ? 0.56 : 0.32}
+          filter={!isMoving && index % 6 === 0 ? 'url(#wormhole-energy-glow)' : undefined}
           style={{ animationDelay: `${index * -0.08}s` }}
         />
       ))}
@@ -101,7 +102,7 @@ export function WormholeRings({ state }: WormholeRingsProps) {
               strokeDasharray={ringDash}
               strokeWidth={ringStroke}
               opacity={(ring.mode === 'local' ? 0.94 : Math.max(0.24, 0.72 - Math.max(0, depth) * 0.22)) * ringOpacity}
-              filter={ring.mode === 'local' || ring.weight === 'major' ? 'url(#wormhole-energy-glow)' : undefined}
+              filter={!isMoving && (ring.mode === 'local' || ring.weight === 'major') ? 'url(#wormhole-energy-glow)' : undefined}
               style={{ animationDelay: `${index * -0.16}s` }}
             />
             {showLabel ? (
@@ -127,7 +128,7 @@ export function WormholeRings({ state }: WormholeRingsProps) {
   );
 }
 
-function OuterCurvature({ state }: { state: WormholeState }) {
+function OuterCurvature({ state, isMoving }: { state: WormholeState; isMoving: boolean }) {
   const startResistance = state.edgeTension < 0 ? Math.abs(state.edgeTension) * 260 : 0;
   const radiusLift = Math.min(112, state.timePosition * 320) - startResistance;
   const rimOpacity = Math.max(0, 1 - state.timePosition / 0.32);
@@ -147,7 +148,7 @@ function OuterCurvature({ state }: { state: WormholeState }) {
         stroke={color}
         strokeWidth={index % 4 === 0 ? 2.8 : 1.5}
         opacity={(index % 4 === 0 ? 0.9 : 0.52) * rimOpacity}
-        filter="url(#wormhole-energy-glow)"
+        filter={isMoving ? undefined : 'url(#wormhole-energy-glow)'}
         style={{ animationDelay: `${index * -0.11}s` }}
       />
     );
@@ -156,10 +157,13 @@ function OuterCurvature({ state }: { state: WormholeState }) {
   return <g aria-label="Wurmloch-Aussenkruemmung">{segments}</g>;
 }
 
-function wormholeStreamLines(state: WormholeState) {
-  return Array.from({ length: 30 }, (_, index) => {
-    const baseAngle = index * 12 + (index % 5) * 3.2;
-    const samples = Array.from({ length: 7 }, (_, sampleIndex) => 0.035 + sampleIndex * 0.096 + (index % 4) * 0.007);
+function wormholeStreamLines(state: WormholeState, options?: { count?: number; sampleCount?: number }) {
+  const count = options?.count ?? 30;
+  const sampleCount = options?.sampleCount ?? 7;
+
+  return Array.from({ length: count }, (_, index) => {
+    const baseAngle = index * (360 / count) + (index % 5) * 3.2;
+    const samples = Array.from({ length: sampleCount }, (_, sampleIndex) => 0.035 + sampleIndex * 0.096 + (index % 4) * 0.007);
     const points = samples.map((depth) => {
       const worldPosition = state.timePosition + depth + index * 0.002;
       const angle = baseAngle + tubeTwist(worldPosition) + 10;
@@ -172,10 +176,13 @@ function wormholeStreamLines(state: WormholeState) {
   });
 }
 
-function radialSpeedLines(state: WormholeState) {
-  return Array.from({ length: 72 }, (_, index) => {
-    const baseAngle = index * 5 + (index % 3) * 1.2;
-    const samples = Array.from({ length: 10 }, (_, sampleIndex) => 0.025 + sampleIndex * 0.105);
+function radialSpeedLines(state: WormholeState, options?: { count?: number; sampleCount?: number }) {
+  const count = options?.count ?? 72;
+  const sampleCount = options?.sampleCount ?? 10;
+
+  return Array.from({ length: count }, (_, index) => {
+    const baseAngle = index * (360 / count) + (index % 3) * 1.2;
+    const samples = Array.from({ length: sampleCount }, (_, sampleIndex) => 0.025 + sampleIndex * 0.105);
     const points = samples.map((depth) => {
       const worldPosition = state.timePosition + depth;
       const angle = baseAngle + tubeTwist(worldPosition) * 0.42;
