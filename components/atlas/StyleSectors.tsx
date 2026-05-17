@@ -1,6 +1,7 @@
 import { atlasSize, sectorMidAngle, styleSectors, type StyleSector } from '@/lib/atlas-layout';
 import { polarToCartesian } from '@/lib/polar-coordinates';
-import { wormholeTunnel } from '@/lib/wormhole-layout';
+import { wormholeTunnel, type WormholeState } from '@/lib/wormhole-layout';
+import { RadialLetterText } from '@/components/atlas/RadialText';
 
 const sectorGlyph: Record<StyleSector['id'], string> = {
   classical_architecture: 'I',
@@ -9,15 +10,6 @@ const sectorGlyph: Record<StyleSector['id'], string> = {
   postwar_modern_architecture: 'IV',
   sustainable_architecture: 'V',
   vernacular_architecture: 'VI'
-};
-
-const sectorDash: Record<StyleSector['id'], string> = {
-  classical_architecture: '1 7',
-  pre_modern_architecture: '8 6',
-  modern_architecture: '2 4',
-  postwar_modern_architecture: '12 5 2 5',
-  sustainable_architecture: '1 4 7 4',
-  vernacular_architecture: '4 8'
 };
 
 const sectorColor: Record<StyleSector['id'], string> = {
@@ -38,79 +30,58 @@ const sectorLabel: Record<StyleSector['id'], string> = {
   vernacular_architecture: 'VERNAKULAER'
 };
 
-export function StyleSectors() {
+export function StyleSectors({ state }: { state: WormholeState }) {
+  const outerLabelOpacity = Math.max(0, 1 - state.timePosition / 0.18);
+  const innerLabelOpacity = smoothstep(0.1, 0.34, state.timePosition);
+  const boundaryOpacity = 0.1 + innerLabelOpacity * 0.14;
+
   return (
     <g aria-label="Stilsektoren">
       {styleSectors.map((sector) => {
-        const startInner = polarToCartesian(atlasSize.cx, atlasSize.cy, wormholeTunnel.minRadius + 18, sector.startAngle);
-        const startOuter = polarToCartesian(atlasSize.cx, atlasSize.cy, wormholeTunnel.maxRadius - 10, sector.startAngle);
+        const startInner = polarToCartesian(atlasSize.cx, atlasSize.cy, wormholeTunnel.minRadius + 34, sector.startAngle);
+        const startOuter = polarToCartesian(atlasSize.cx, atlasSize.cy, wormholeTunnel.maxRadius - 14 + state.timePosition * 82, sector.startAngle);
         const labelAngle = sectorMidAngle(sector);
-        const label = polarToCartesian(atlasSize.cx, atlasSize.cy, wormholeTunnel.minRadius + 72, labelAngle);
-        const labelLeader = polarToCartesian(atlasSize.cx, atlasSize.cy, wormholeTunnel.minRadius + 38, labelAngle);
         const labelText = sectorLabel[sector.id];
         const accent = sectorColor[sector.id];
-        const rotate = readableRadialRotation(labelAngle);
 
         return (
           <g key={sector.id} className="style-sector">
-            <path
-              d={sectorArc(sector, wormholeTunnel.minRadius + 58)}
-              fill="none"
-              stroke={accent}
-              strokeWidth="1.35"
-              strokeDasharray={sectorDash[sector.id]}
-              opacity="0.5"
-            />
-            <path
-              d={sectorArc(sector, wormholeTunnel.maxRadius - 26)}
-              fill="none"
-              stroke={accent}
-              strokeWidth="0.7"
-              strokeDasharray={sectorDash[sector.id]}
-              opacity="0.22"
-            />
             <line
               x1={startInner.x}
               y1={startInner.y}
               x2={startOuter.x}
               y2={startOuter.y}
               stroke={accent}
-              strokeWidth="0.8"
-              opacity="0.22"
+              strokeWidth="0.65"
+              strokeDasharray="1 12"
+              opacity={boundaryOpacity}
             />
-            <g className="style-sector-label">
-              <line
-                x1={labelLeader.x}
-                y1={labelLeader.y}
-                x2={label.x}
-                y2={label.y}
-                stroke={accent}
-                strokeWidth="0.65"
-                strokeDasharray="1 7"
-                opacity="0.38"
-              />
-              <circle cx={labelLeader.x} cy={labelLeader.y} r="3.6" fill={accent} opacity="0.72" />
-              <circle cx={label.x} cy={label.y} r="7" fill="none" stroke={accent} strokeWidth="0.8" opacity="0.72" />
-              <text x={label.x} y={label.y + 3.2} textAnchor="middle" fill={accent} fontSize="7.2" fontWeight="700" fontFamily="var(--font-sans), system-ui, sans-serif">
-                {sectorGlyph[sector.id]}
-              </text>
-              <text
-                x={label.x}
-                y={label.y - 15}
-                textAnchor="middle"
-                fill={accent}
-                fontSize="9.5"
-                fontWeight="600"
-                fontFamily="var(--font-sans), system-ui, sans-serif"
-                letterSpacing="0.08em"
-                stroke="#050505"
-                strokeWidth="3"
-                paintOrder="stroke"
-                transform={`rotate(${rotate} ${label.x} ${label.y})`}
-              >
-                {labelText}
-              </text>
-            </g>
+            <RadialLetterText
+              className="style-sector-label style-sector-label-outer"
+              text={labelText}
+              cx={atlasSize.cx}
+              cy={atlasSize.cy}
+              radius={wormholeTunnel.maxRadius + 22 + state.timePosition * 120}
+              angle={labelAngle}
+              fill={accent}
+              fontSize={7.8}
+              fontWeight={700}
+              opacity={outerLabelOpacity}
+              letterAngleStep={1.55}
+            />
+            <RadialLetterText
+              className="style-sector-label style-sector-label-inner"
+              text={`${sectorGlyph[sector.id]} ${labelText}`}
+              cx={atlasSize.cx}
+              cy={atlasSize.cy}
+              radius={wormholeTunnel.minRadius + 34}
+              angle={labelAngle}
+              fill={accent}
+              fontSize={5.8}
+              fontWeight={700}
+              opacity={innerLabelOpacity}
+              letterAngleStep={2.95}
+            />
           </g>
         );
       })}
@@ -118,17 +89,7 @@ export function StyleSectors() {
   );
 }
 
-function readableRadialRotation(angle: number) {
-  const tangent = angle + 90;
-  return angle > 90 && angle < 270 ? tangent + 180 : tangent;
-}
-
-function sectorArc(sector: StyleSector, radius: number) {
-  const start = polarToCartesian(atlasSize.cx, atlasSize.cy, radius, sector.startAngle);
-  const end = polarToCartesian(atlasSize.cx, atlasSize.cy, radius, sector.endAngle);
-  const span = sector.startAngle > sector.endAngle
-    ? sector.endAngle + 360 - sector.startAngle
-    : sector.endAngle - sector.startAngle;
-
-  return `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${span > 180 ? 1 : 0} 1 ${end.x} ${end.y}`;
+function smoothstep(edge0: number, edge1: number, value: number) {
+  const x = Math.max(0, Math.min(1, (value - edge0) / (edge1 - edge0)));
+  return x * x * (3 - 2 * x);
 }

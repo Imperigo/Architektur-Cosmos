@@ -15,6 +15,7 @@ export type TimeRing = {
   year: number;
   label: string;
   radius: number;
+  depth?: number;
   weight: 'major' | 'minor';
   mode?: 'global' | 'medium' | 'local';
 };

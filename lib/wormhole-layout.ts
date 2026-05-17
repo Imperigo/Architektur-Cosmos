@@ -27,7 +27,8 @@ const oldestYear = wormholeYears[0];
 const presentYear = wormholeYears[wormholeYears.length - 1];
 const maxTunnelRadius = 430;
 const minTunnelRadius = 42;
-const visibleDepth = 0.58;
+const visibleDepth = 0.64;
+const frontFadeDepth = -0.09;
 
 export const wormholeTunnel = {
   maxRadius: maxTunnelRadius,
@@ -36,13 +37,12 @@ export const wormholeTunnel = {
 };
 
 export function wormholeState(travel: number): WormholeState {
-  const phase = positiveModulo(travel, 2);
-  const timePosition = phase <= 1 ? phase : 2 - phase;
+  const timePosition = clamp01(travel);
 
   return {
-    phase,
+    phase: timePosition,
     timePosition,
-    direction: phase <= 1 ? 'into_past' : 'returning',
+    direction: 'into_past',
     currentYear: positionToYear(timePosition)
   };
 }
@@ -54,19 +54,22 @@ export function wormholeRings(state: WormholeState): TimeRing[] {
     .filter((year) => year >= oldestYear && year <= presentYear)
     .sort((a, b) => yearToPosition(a) - yearToPosition(b));
 
-  return years.map((year) => {
-    const depth = ringDepth(year, state.timePosition);
-    const isCurrent = Math.abs(yearToPosition(year) - state.timePosition) < 0.018;
-    const isAnchor = wormholeYears.includes(year);
+  return years
+    .map((year) => {
+      const depth = ringDepth(year, state.timePosition);
+      const isCurrent = Math.abs(yearToPosition(year) - state.timePosition) < 0.018;
+      const isAnchor = wormholeYears.includes(year);
 
-    return {
-      year,
-      label: formatYear(year),
-      radius: tunnelRadius(depth),
-      weight: isCurrent || isAnchor ? 'major' as const : 'minor' as const,
-      mode: isCurrent ? 'local' as const : isAnchor ? 'global' as const : 'medium' as const
-    };
-  });
+      return {
+        year,
+        label: formatYear(year),
+        radius: tunnelRadius(depth),
+        depth,
+        weight: isCurrent || isAnchor ? 'major' as const : 'minor' as const,
+        mode: isCurrent ? 'local' as const : isAnchor ? 'global' as const : 'medium' as const
+      };
+    })
+    .filter((ring) => ring.depth >= frontFadeDepth && ring.depth <= visibleDepth);
 }
 
 export function wormholeGridLines(state: WormholeState) {
@@ -90,9 +93,10 @@ export function layoutWormholeEntries(entries: Entry[], state: WormholeState, se
   return entries
     .map((entry) => {
       const depth = ringDepth(entry.year_start, state.timePosition);
-      if (depth > visibleDepth) return null;
+      if (depth < frontFadeDepth || depth > visibleDepth) return null;
 
-      const closeness = 1 - depth / visibleDepth;
+      const visibleDepthValue = Math.max(0, depth);
+      const closeness = 1 - visibleDepthValue / visibleDepth;
       const sector = styleSectors.find((item) => item.id === entry.style_sector) ?? styleSectors[0];
       const driftSeed = stableHash(entry.id);
       const radius = tunnelRadius(depth) + depthLaneOffset(driftSeed, closeness);
@@ -102,7 +106,8 @@ export function layoutWormholeEntries(entries: Entry[], state: WormholeState, se
       const labelX = point.x + (labelAnchor === 'start' ? 22 : -22);
       const labelY = point.y - 10;
       const semanticLevel = semanticLevelForDepth(depth, closeness, entry.id === selectedEntryId);
-      const size = 2.2 + Math.pow(closeness, 1.55) * 8.6;
+      const frontExpansion = 1 + Math.max(0, -depth) * 2.6;
+      const size = (2.2 + Math.pow(closeness, 1.45) * 12.8) * frontExpansion;
 
       return {
         entry,
@@ -116,8 +121,8 @@ export function layoutWormholeEntries(entries: Entry[], state: WormholeState, se
         semanticLevel,
         opacity: tunnelOpacity(depth),
         size,
-        stretchX: 0.7 + Math.pow(closeness, 1.2) * 0.82,
-        stretchY: 1.18 - Math.pow(closeness, 1.1) * 0.36,
+        stretchX: 0.66 + Math.pow(closeness, 1.15) * 1.08 + Math.max(0, -depth) * 1.4,
+        stretchY: 1.2 - Math.pow(closeness, 1.08) * 0.45,
         driftX: ((driftSeed % 9) - 4) * 0.42,
         driftY: (((driftSeed >> 4) % 9) - 4) * 0.38,
         driftDelay: -((driftSeed % 240) / 100),
@@ -135,7 +140,8 @@ export function layoutWormholeEntries(entries: Entry[], state: WormholeState, se
 }
 
 export function tunnelRadius(depth: number) {
-  const eased = Math.pow(Math.max(0, 1 - depth), 2.6);
+  const travelDepth = Math.max(0, Math.min(1.16, 1 - depth));
+  const eased = Math.pow(travelDepth, 2.45);
   return Math.round((minTunnelRadius + eased * (maxTunnelRadius - minTunnelRadius)) * 100) / 100;
 }
 
@@ -145,8 +151,9 @@ export function radiusToTunnelDepth(radius: number) {
 }
 
 export function tunnelCenter(depth: number, phase: number) {
-  const bend = Math.sin(Math.max(0, Math.min(1, depth)) * Math.PI);
-  const breathing = Math.sin(phase * Math.PI * 2) * 6;
+  const clampedDepth = Math.max(0, Math.min(1, depth));
+  const bend = Math.sin(clampedDepth * Math.PI);
+  const breathing = Math.sin(phase * Math.PI) * 8;
 
   return {
     x: atlasSize.cx + bend * breathing * 0.35,
@@ -191,8 +198,7 @@ export function formatYear(year: number) {
 }
 
 function ringDepth(year: number, timePosition: number) {
-  const delta = yearToPosition(year) - timePosition;
-  return delta < 0 ? delta + 1 : delta;
+  return yearToPosition(year) - timePosition;
 }
 
 function semanticLevelForDepth(depth: number, closeness: number, isSelected: boolean): SemanticLevel {
@@ -202,8 +208,12 @@ function semanticLevelForDepth(depth: number, closeness: number, isSelected: boo
 }
 
 export function tunnelOpacity(depth: number) {
+  if (depth < 0) {
+    return Math.max(0, Math.min(1, (depth - frontFadeDepth) / Math.abs(frontFadeDepth)));
+  }
+
   const fadeInFromBack = Math.min(1, Math.max(0, (visibleDepth - depth) / 0.12));
-  const fadeOutAtFront = Math.min(1, Math.max(0, depth / 0.055));
+  const fadeOutAtFront = Math.min(1, Math.max(0, depth / 0.075));
   return Math.max(0, Math.min(1, fadeInFromBack, fadeOutAtFront));
 }
 
@@ -221,6 +231,6 @@ function stableHash(value: string) {
   }, 7);
 }
 
-function positiveModulo(value: number, divisor: number) {
-  return ((value % divisor) + divisor) % divisor;
+function clamp01(value: number) {
+  return Math.max(0, Math.min(1, value));
 }

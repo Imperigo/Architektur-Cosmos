@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState, type PointerEvent, type WheelEvent } from 'react';
 import { ProjectDetailCard } from '@/components/atlas/ProjectDetailCard';
 import { ProjectPreviewCard } from '@/components/atlas/ProjectPreviewCard';
+import { RadialLetterText } from '@/components/atlas/RadialText';
 import { RelationOverlay } from '@/components/atlas/RelationOverlay';
 import { SemanticEntryNode } from '@/components/atlas/SemanticEntryNode';
 import { StyleSectors } from '@/components/atlas/StyleSectors';
@@ -46,6 +47,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   const snappedNode = useMemo(() => nodes.find((node) => node.entry.id === activeSnappedEntryId) ?? null, [activeSnappedEntryId, nodes]);
   const hoverNode = useMemo(() => nodes.find((node) => node.entry.id === activeHoverEntryId) ?? null, [activeHoverEntryId, nodes]);
   const isHoverFocusActive = hoverFocusId === hoverNode?.entry.id && !snappedNode;
+  const cameraFocus = focusCameraOffset(hoverNode, isHoverFocusActive);
   const depthScale = 1 + state.timePosition * 2.8;
   const isIntroActive = introState !== 'idle';
   const backgroundStyle = {
@@ -86,7 +88,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     }
 
     releaseSnap();
-    setTravel((current) => loopTravel(current + delta));
+    setTravel((current) => clampTravel(current + delta));
   }
 
   function resetView() {
@@ -176,48 +178,56 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
         >
           <rect width={atlasSize.width} height={atlasSize.height} fill="#050505" />
           <g style={backgroundStyle} pointerEvents={snappedNode ? 'none' : 'auto'}>
-            <WormholeRings state={state} />
-            <StyleSectors />
+            <g
+              className="wormhole-camera"
+              style={{
+                transform: `translate(${cameraFocus.x}px, ${cameraFocus.y}px) scale(${cameraFocus.scale})`,
+                transformOrigin: `${atlasSize.cx}px ${atlasSize.cy}px`
+              }}
+            >
+              <WormholeRings state={state} />
+              <StyleSectors state={state} />
 
-            {showRelations ? <RelationOverlay nodes={nodes} relations={relations} selectedEntry={snappedNode?.entry ?? hoverNode?.entry ?? null} /> : null}
+              {showRelations ? <RelationOverlay nodes={nodes} relations={relations} selectedEntry={snappedNode?.entry ?? hoverNode?.entry ?? null} /> : null}
 
-            {hoverNode && pointerPoint && !snappedNode ? <HoverPreview pointer={pointerPoint} node={hoverNode} /> : null}
+              {hoverNode && pointerPoint && !snappedNode ? <HoverPreview pointer={pointerPoint} node={hoverNode} /> : null}
 
-            {nodes.map((node) => {
-              const displayOffset = focusDisplayOffset(node, hoverNode, isHoverFocusActive);
+              {nodes.map((node) => {
+                const displayOffset = focusDisplayOffset(node, hoverNode, isHoverFocusActive);
 
-              return (
-              <g
-                key={node.entry.id}
-                className="node-focus-drift"
-                opacity={node.opacity}
-                style={{ transform: `translate(${displayOffset.x}px, ${displayOffset.y}px)` }}
-              >
-                <SemanticEntryNode
-                  entry={node.entry}
-                  x={node.x}
-                  y={node.y}
-                  labelX={node.labelX}
-                  labelY={node.labelY}
-                  labelAnchor={node.labelAnchor}
-                  labelLeaderX={node.labelLeaderX}
-                  labelLeaderY={node.labelLeaderY}
-                  clusterSize={node.clusterSize}
-                  semanticLevel="global"
-                  scale={1}
-                  isSelected={activeHoverEntryId === node.entry.id || activeSnappedEntryId === node.entry.id}
-                  nodeRadius={node.size}
-                  showLabel={false}
-                  stretchX={node.stretchX}
-                  stretchY={node.stretchY}
-                  driftX={node.driftX}
-                  driftY={node.driftY}
-                  driftDelay={node.driftDelay}
-                  onSelect={() => focusNodeInView(node)}
-                />
-              </g>
-              );
-            })}
+                return (
+                <g
+                  key={node.entry.id}
+                  className="node-focus-drift"
+                  opacity={node.opacity}
+                  style={{ transform: `translate(${displayOffset.x}px, ${displayOffset.y}px)` }}
+                >
+                  <SemanticEntryNode
+                    entry={node.entry}
+                    x={node.x}
+                    y={node.y}
+                    labelX={node.labelX}
+                    labelY={node.labelY}
+                    labelAnchor={node.labelAnchor}
+                    labelLeaderX={node.labelLeaderX}
+                    labelLeaderY={node.labelLeaderY}
+                    clusterSize={node.clusterSize}
+                    semanticLevel="global"
+                    scale={1}
+                    isSelected={activeHoverEntryId === node.entry.id || activeSnappedEntryId === node.entry.id}
+                    nodeRadius={node.size}
+                    showLabel={false}
+                    stretchX={node.stretchX}
+                    stretchY={node.stretchY}
+                    driftX={node.driftX}
+                    driftY={node.driftY}
+                    driftDelay={node.driftDelay}
+                    onSelect={() => focusNodeInView(node)}
+                  />
+                </g>
+                );
+              })}
+            </g>
           </g>
           {snappedNode ? <SnappedEntryOverlay node={snappedNode} onDismiss={releaseSnap} /> : null}
           {introState === 'idle' ? (
@@ -282,6 +292,18 @@ function focusDisplayOffset(node: WormholeEntryNode, focusNode: WormholeEntryNod
   };
 }
 
+function focusCameraOffset(focusNode: WormholeEntryNode | null, focusActive: boolean) {
+  if (!focusNode || !focusActive) {
+    return { x: 0, y: 0, scale: 1 };
+  }
+
+  return {
+    x: (atlasSize.cx - focusNode.x) * 0.16,
+    y: (atlasSize.cy - focusNode.y) * 0.16,
+    scale: 1.045
+  };
+}
+
 function shortestAngleDelta(a: number, b: number) {
   return ((((a - b) % 360) + 540) % 360) - 180;
 }
@@ -342,7 +364,7 @@ function RadialHud({
 
   return (
     <g className="radial-hud" pointerEvents="auto">
-      <OrbitText angle={270} radius={457} text="ARCHITECTURE COSMOS" size={9.5} />
+      <OrbitText angle={180} radius={457} text="ARCHITECTURE COSMOS" size={8.4} />
       <OrbitText angle={288} radius={457} text={`${visibleEntryCount}/${totalEntryCount} ENTRIES`} size={8} muted />
       <OrbitText angle={252} radius={457} text={`${currentYear} · ${zoomLabel} · ${zoomPercent}%`} size={8} muted />
 
@@ -399,25 +421,24 @@ function HudThemeMarker({
 }) {
   const point = polarToCartesian(atlasSize.cx, atlasSize.cy, 438, angle);
   const tick = polarToCartesian(atlasSize.cx, atlasSize.cy, active ? 418 : 424, angle);
-  const rotate = readableOrbitRotation(angle);
   const shortLabel = label === 'ALL' ? 'ALL' : label.split(' ').map((word) => word[0]).join('').slice(0, 3);
 
   return (
     <g className="hud-theme-marker" onClick={onClick} onPointerEnter={onHover} onPointerLeave={onLeave}>
       <line x1={tick.x} y1={tick.y} x2={point.x} y2={point.y} stroke={active ? '#c9fff4' : '#f7f7f4'} strokeWidth={active ? 1.4 : 0.7} opacity={active ? 0.86 : 0.32} />
       <circle cx={point.x} cy={point.y} r={active ? 6 : 3.6} fill={active ? '#c9fff4' : '#050505'} stroke="#f7f7f4" strokeWidth="0.7" opacity={active ? 0.95 : 0.7} />
-      <text
-        x={point.x}
-        y={point.y - 10}
-        textAnchor="middle"
+      <RadialLetterText
+        text={`${shortLabel}${count > 9 ? '+' : ''}`}
+        cx={atlasSize.cx}
+        cy={atlasSize.cy}
+        radius={450}
+        angle={angle}
         fill={active ? '#c9fff4' : '#d6d6d2'}
-        fontSize="6.2"
-        fontFamily="var(--font-sans), system-ui, sans-serif"
-        letterSpacing="0.08em"
-        transform={`rotate(${rotate} ${point.x} ${point.y})`}
-      >
-        {shortLabel}{count > 9 ? '+' : ''}
-      </text>
+        fontSize={5.8}
+        fontWeight={700}
+        strokeWidth={2}
+        letterAngleStep={1.25}
+      />
     </g>
   );
 }
@@ -428,41 +449,39 @@ function HudButton({ angle, label, active = false, onClick }: { angle: number; l
   return (
     <g className="hud-button" onClick={onClick}>
       <circle cx={point.x} cy={point.y} r="12" fill={active ? '#f7f7f4' : '#050505'} stroke="#f7f7f4" strokeWidth="0.7" opacity="0.88" />
-      <text x={point.x} y={point.y + 3.6} textAnchor="middle" fill={active ? '#050505' : '#f7f7f4'} fontSize="7.6" fontWeight="700" fontFamily="var(--font-sans), system-ui, sans-serif">
-        {label}
-      </text>
+      <RadialLetterText
+        text={label}
+        cx={atlasSize.cx}
+        cy={atlasSize.cy}
+        radius={432}
+        angle={angle}
+        fill={active ? '#050505' : '#f7f7f4'}
+        fontSize={7.4}
+        fontWeight={700}
+        stroke={active ? '#f7f7f4' : '#050505'}
+        strokeWidth={1.4}
+        letterAngleStep={1.15}
+      />
     </g>
   );
 }
 
 function OrbitText({ angle, radius, text, size, muted = false }: { angle: number; radius: number; text: string; size: number; muted?: boolean }) {
-  const point = polarToCartesian(atlasSize.cx, atlasSize.cy, radius, angle);
-  const rotate = readableOrbitRotation(angle);
-
   return (
-    <text
-      x={point.x}
-      y={point.y}
-      textAnchor="middle"
+    <RadialLetterText
+      text={text}
+      cx={atlasSize.cx}
+      cy={atlasSize.cy}
+      radius={radius}
+      angle={angle}
       fill={muted ? '#b8b8b8' : '#f7f7f4'}
       fontSize={size}
-      fontFamily="var(--font-sans), system-ui, sans-serif"
-      letterSpacing="0.14em"
       stroke="#050505"
-      strokeWidth="3"
-      paintOrder="stroke"
-      transform={`rotate(${rotate} ${point.x} ${point.y})`}
-      pointerEvents="none"
-    >
-      {text}
-    </text>
+      strokeWidth={3}
+      opacity={muted ? 0.84 : 1}
+      letterAngleStep={1.42}
+    />
   );
-}
-
-function readableOrbitRotation(angle: number) {
-  const tangent = angle + 90;
-  const normalized = ((angle % 360) + 360) % 360;
-  return normalized > 90 && normalized < 270 ? tangent + 180 : tangent;
 }
 
 function distance(point: SvgPoint, node: WormholeEntryNode) {
@@ -572,6 +591,6 @@ function themeLabel(theme: string) {
     .replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
-function loopTravel(value: number) {
-  return ((value % 2) + 2) % 2;
+function clampTravel(value: number) {
+  return Math.max(0, Math.min(1, value));
 }

@@ -1,6 +1,7 @@
 import { atlasSize } from '@/lib/atlas-layout';
 import { formatYear, radiusToTunnelDepth, tunnelCenter, tunnelOpacity, wormholeGridLines, wormholeRings, wormholeTunnel, type WormholeState } from '@/lib/wormhole-layout';
 import { polarToCartesian } from '@/lib/polar-coordinates';
+import { RadialLetterText } from '@/components/atlas/RadialText';
 
 type WormholeRingsProps = {
   state: WormholeState;
@@ -35,7 +36,7 @@ export function WormholeRings({ state }: WormholeRingsProps) {
           style={{ animationDelay: `${index * -0.22}s` }}
         />
       ))}
-      <OuterCurvature />
+      <OuterCurvature state={state} />
       {gridLines.map((line, index) => (
         <path
           key={index}
@@ -49,15 +50,16 @@ export function WormholeRings({ state }: WormholeRingsProps) {
         />
       ))}
       {rings.map((ring, index) => {
-        const depth = radiusToTunnelDepth(ring.radius);
+        const depth = ring.depth ?? radiusToTunnelDepth(ring.radius);
         const ringCenter = tunnelCenter(depth, state.phase);
         const labelAngle = yearLabelAngle(ring.year, index, ring.mode === 'local');
-        const labelPoint = polarToCartesian(ringCenter.x, ringCenter.y, ring.radius, labelAngle);
         const labelScale = Math.max(0.55, 1.25 - depth);
         const ringOpacity = tunnelOpacity(depth);
-        const labelOpacity = (ring.mode === 'local' ? 0.92 : Math.max(0.2, 1 - depth * 0.92)) * ringOpacity;
+        const labelOpacity = (ring.mode === 'local' ? 0.95 : Math.max(0.18, 1 - Math.max(0, depth) * 0.92)) * ringOpacity;
         const showLabel = labelOpacity > 0.18 && (ring.mode === 'local' || ring.weight === 'major');
         const label = ring.mode === 'local' ? formatYear(state.currentYear) : ring.label;
+        const ringDash = ring.mode === 'local' ? '2 14' : ring.weight === 'major' ? '1 12' : '1 18';
+        const ringStroke = ring.mode === 'local' ? 0.8 : ring.weight === 'major' ? 0.62 : 0.38;
 
         return (
           <g key={`${ring.year}-${index}`}>
@@ -68,44 +70,41 @@ export function WormholeRings({ state }: WormholeRingsProps) {
               r={ring.radius}
               fill="none"
               stroke="#f7f7f4"
-              strokeDasharray={ring.mode === 'local' ? undefined : ring.weight === 'major' ? '1 10' : '1 15'}
-              strokeWidth={ring.mode === 'local' ? 1.25 : ring.weight === 'major' ? 0.85 : 0.45}
-              opacity={(ring.mode === 'local' ? 0.84 : Math.max(0.13, 0.5 - depth * 0.36)) * ringOpacity}
+              strokeDasharray={ringDash}
+              strokeWidth={ringStroke}
+              opacity={(ring.mode === 'local' ? 0.42 : Math.max(0.08, 0.4 - Math.max(0, depth) * 0.3)) * ringOpacity}
               style={{ animationDelay: `${index * -0.16}s` }}
             />
             {showLabel ? (
-              <g className="wormhole-year-label" opacity={labelOpacity}>
-                <text
-                  x={labelPoint.x}
-                  y={labelPoint.y + 3}
-                  textAnchor="middle"
-                  fill="#f7f7f4"
-                  fontSize={Math.round(12.4 * labelScale)}
-                  fontFamily="var(--font-sans), system-ui, sans-serif"
-                  letterSpacing="0.07em"
-                  stroke="#050505"
-                  strokeWidth="3"
-                  paintOrder="stroke"
-                >
-                  {label}
-                </text>
-              </g>
+              <RadialLetterText
+                className="wormhole-year-label"
+                text={label}
+                cx={ringCenter.x}
+                cy={ringCenter.y}
+                radius={ring.radius}
+                angle={labelAngle}
+                fill="#f7f7f4"
+                fontSize={Math.round(11.4 * labelScale)}
+                fontWeight={500}
+                opacity={labelOpacity}
+                letterAngleStep={ring.mode === 'local' ? 2.9 : 2.15}
+              />
             ) : null}
           </g>
         );
       })}
-      <circle cx={atlasSize.cx} cy={atlasSize.cy} r={wormholeTunnel.minRadius - 12} fill="#050505" opacity="0.94" />
-      <ThroatCurvature />
     </g>
   );
 }
 
-function OuterCurvature() {
+function OuterCurvature({ state }: { state: WormholeState }) {
+  const radiusLift = Math.min(112, state.timePosition * 320);
+  const rimOpacity = Math.max(0, 1 - state.timePosition / 0.32);
   const segments = Array.from({ length: 20 }, (_, index) => {
     const angle = index * 18;
-    const inner = polarToCartesian(atlasSize.cx, atlasSize.cy, wormholeTunnel.maxRadius - 15, angle - 5);
-    const mid = polarToCartesian(atlasSize.cx, atlasSize.cy, wormholeTunnel.maxRadius + (index % 2 === 0 ? 12 : 5), angle + 4);
-    const outer = polarToCartesian(atlasSize.cx, atlasSize.cy, wormholeTunnel.maxRadius - 4, angle + 13);
+    const inner = polarToCartesian(atlasSize.cx, atlasSize.cy, wormholeTunnel.maxRadius + radiusLift - 18, angle - 5);
+    const mid = polarToCartesian(atlasSize.cx, atlasSize.cy, wormholeTunnel.maxRadius + radiusLift + (index % 2 === 0 ? 18 : 9), angle + 4);
+    const outer = polarToCartesian(atlasSize.cx, atlasSize.cy, wormholeTunnel.maxRadius + radiusLift - 2, angle + 13);
     const color = index % 3 === 0 ? '#c9fff4' : index % 3 === 1 ? '#d7c7ff' : '#ffd7a8';
 
     return (
@@ -116,7 +115,7 @@ function OuterCurvature() {
         fill="none"
         stroke={color}
         strokeWidth={index % 4 === 0 ? 1.4 : 0.8}
-        opacity={index % 4 === 0 ? 0.38 : 0.2}
+        opacity={(index % 4 === 0 ? 0.38 : 0.2) * rimOpacity}
         style={{ animationDelay: `${index * -0.11}s` }}
       />
     );
@@ -134,31 +133,6 @@ function wormholeStreamLines(state: WormholeState) {
 
     return `M ${start.x} ${start.y} Q ${mid.x} ${mid.y} ${end.x} ${end.y}`;
   });
-}
-
-function ThroatCurvature() {
-  const paths = Array.from({ length: 9 }, (_, index) => {
-    const angle = index * 40;
-    const start = polarToCartesian(atlasSize.cx, atlasSize.cy, wormholeTunnel.minRadius - 4, angle - 16);
-    const mid = polarToCartesian(atlasSize.cx, atlasSize.cy, wormholeTunnel.minRadius + 9, angle);
-    const end = polarToCartesian(atlasSize.cx, atlasSize.cy, wormholeTunnel.minRadius - 2, angle + 16);
-    const color = index % 3 === 0 ? '#c9fff4' : index % 3 === 1 ? '#d7c7ff' : '#ffd7a8';
-
-    return (
-      <path
-        key={index}
-        className="wormhole-throat"
-        d={`M ${start.x} ${start.y} Q ${mid.x} ${mid.y} ${end.x} ${end.y}`}
-        fill="none"
-        stroke={color}
-        strokeWidth="0.55"
-        opacity="0.14"
-        style={{ animationDelay: `${index * -0.28}s` }}
-      />
-    );
-  });
-
-  return <g className="wormhole-throat-field">{paths}</g>;
 }
 
 function yearLabelAngle(year: number, index: number, isLocal: boolean) {
