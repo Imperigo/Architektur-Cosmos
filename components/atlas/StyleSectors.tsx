@@ -1,6 +1,6 @@
-import { atlasSize, sectorMidAngle, styleSectors, type StyleSector } from '@/lib/atlas-layout';
+import { sectorMidAngle, styleSectors, type StyleSector } from '@/lib/atlas-layout';
 import { polarToCartesian } from '@/lib/polar-coordinates';
-import { tunnelFrontDepth, tunnelRadius, wormholeTunnel, type WormholeState } from '@/lib/wormhole-layout';
+import { tunnelCenter, tunnelFrontDepth, tunnelRadius, wormholeTunnel, type WormholeState } from '@/lib/wormhole-layout';
 import { RadialLetterText } from '@/components/atlas/RadialText';
 
 const sectorGlyph: Record<StyleSector['id'], string> = {
@@ -34,19 +34,21 @@ export function StyleSectors({ state, isMoving = false }: { state: WormholeState
   const innerLabelOpacity = 0.58 + smoothstep(0.18, 0.54, state.timePosition) * 0.28;
   const boundaryOpacity = 0.38 + innerLabelOpacity * 0.24;
   const frontDepth = tunnelFrontDepth(state);
+  const labelDepth = frontDepth + 0.08;
+  const sectorCenter = tunnelCenter(labelDepth, state.phase);
   const outerRadius = Math.max(wormholeTunnel.minRadius + 116, tunnelRadius(frontDepth + 0.05) - 20);
 
   return (
     <g aria-label="Stilsektoren">
       {styleSectors.map((sector) => {
         const labelAngle = sectorMidAngle(sector);
-        const startInner = polarToCartesian(atlasSize.cx, atlasSize.cy, wormholeTunnel.minRadius + 54, sector.startAngle);
-        const startOuter = polarToCartesian(atlasSize.cx, atlasSize.cy, outerRadius, sector.startAngle);
-        const midInner = polarToCartesian(atlasSize.cx, atlasSize.cy, wormholeTunnel.minRadius + 86, labelAngle);
-        const midOuter = polarToCartesian(atlasSize.cx, atlasSize.cy, outerRadius - 18, labelAngle);
+        const startInner = polarToCartesian(sectorCenter.x, sectorCenter.y, wormholeTunnel.minRadius + 54, sector.startAngle);
+        const startOuter = polarToCartesian(sectorCenter.x, sectorCenter.y, outerRadius, sector.startAngle);
+        const midInner = polarToCartesian(sectorCenter.x, sectorCenter.y, wormholeTunnel.minRadius + 86, labelAngle);
+        const midOuter = polarToCartesian(sectorCenter.x, sectorCenter.y, outerRadius - 18, labelAngle);
         const labelText = sectorLabel[sector.id];
         const accent = sectorColor[sector.id];
-        const ribbonPath = sectorRibbonPath(sector.startAngle, sector.endAngle, wormholeTunnel.minRadius + 58, outerRadius - 12);
+        const ribbonPath = sectorRibbonPath(sector.startAngle, sector.endAngle, wormholeTunnel.minRadius + 58, outerRadius - 12, sectorCenter.x, sectorCenter.y);
         const accentBoost = sector.id === 'pre_modern_architecture' ? 1.45 : 1;
 
         return (
@@ -80,8 +82,8 @@ export function StyleSectors({ state, isMoving = false }: { state: WormholeState
             <RadialLetterText
               className="style-sector-label style-sector-label-inner"
               text={`${sectorGlyph[sector.id]} ${labelText}`}
-              cx={atlasSize.cx}
-              cy={atlasSize.cy}
+              cx={sectorCenter.x}
+              cy={sectorCenter.y}
               radius={wormholeTunnel.minRadius + 58}
               angle={labelAngle}
               fill={accent}
@@ -98,14 +100,14 @@ export function StyleSectors({ state, isMoving = false }: { state: WormholeState
   );
 }
 
-function sectorRibbonPath(startAngle: number, endAngle: number, innerRadius: number, outerRadius: number) {
+function sectorRibbonPath(startAngle: number, endAngle: number, innerRadius: number, outerRadius: number, cx: number, cy: number) {
   const normalizedEnd = endAngle < startAngle ? endAngle + 360 : endAngle;
   const span = normalizedEnd - startAngle;
   const largeArc = span > 180 ? 1 : 0;
-  const outerStart = polarToCartesian(atlasSize.cx, atlasSize.cy, outerRadius, startAngle);
-  const outerEnd = polarToCartesian(atlasSize.cx, atlasSize.cy, outerRadius, normalizedEnd);
-  const innerEnd = polarToCartesian(atlasSize.cx, atlasSize.cy, innerRadius, normalizedEnd);
-  const innerStart = polarToCartesian(atlasSize.cx, atlasSize.cy, innerRadius, startAngle);
+  const outerStart = polarToCartesian(cx, cy, outerRadius, startAngle);
+  const outerEnd = polarToCartesian(cx, cy, outerRadius, normalizedEnd);
+  const innerEnd = polarToCartesian(cx, cy, innerRadius, normalizedEnd);
+  const innerStart = polarToCartesian(cx, cy, innerRadius, startAngle);
 
   return [
     `M ${outerStart.x} ${outerStart.y}`,

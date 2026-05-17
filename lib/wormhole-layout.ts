@@ -11,6 +11,7 @@ export type WormholeState = {
 };
 
 export type WormholeEntryNode = AtlasNode & {
+  worldPosition: number;
   depth: number;
   closeness: number;
   semanticLevel: SemanticLevel;
@@ -115,7 +116,8 @@ export function wormholeGridLines(state: WormholeState, options?: { spokeStride?
 export function layoutWormholeEntries(entries: Entry[], state: WormholeState, selectedEntryId?: string): WormholeEntryNode[] {
   const baseNodes = entries
     .map((entry) => {
-      const depth = ringDepth(entry.year_start, state.timePosition);
+      const worldPosition = yearToPosition(entry.year_start);
+      const depth = worldPosition - state.timePosition;
       if (depth < frontFadeDepth || depth > visibleDepth) return null;
 
       const visibleDepthValue = Math.max(0, depth);
@@ -123,7 +125,7 @@ export function layoutWormholeEntries(entries: Entry[], state: WormholeState, se
       const sector = styleSectors.find((item) => item.id === entry.style_sector) ?? styleSectors[0];
       const driftSeed = stableHash(entry.id);
       const radius = tunnelRadius(depth) + depthLaneOffset(driftSeed, closeness);
-      const angle = sectorMidAngle(sector) + entryAngleOffset(entry.id) + tubeTwist(yearToPosition(entry.year_start));
+      const angle = sectorMidAngle(sector) + entryAngleOffset(entry.id) + tubeTwist(worldPosition);
       const point = tunnelPoint(radius, angle, depth, state.phase);
       const labelAnchor = point.x > atlasSize.cx ? 'start' as const : 'end' as const;
       const labelX = point.x + (labelAnchor === 'start' ? 22 : -22);
@@ -134,6 +136,7 @@ export function layoutWormholeEntries(entries: Entry[], state: WormholeState, se
 
       return {
         entry,
+        worldPosition,
         x: point.x,
         y: point.y,
         radius,
@@ -174,15 +177,17 @@ export function radiusToTunnelDepth(radius: number) {
 }
 
 export function tunnelCenter(depth: number, phase: number) {
+  const worldPosition = phase + depth;
   const clampedDepth = Math.max(0, Math.min(1, depth));
+  const clampedWorldPosition = Math.max(0, Math.min(1, worldPosition));
   const bend = Math.sin(clampedDepth * Math.PI);
-  const breathing = Math.sin(phase * Math.PI * 2) * 6;
-  const pathSway = Math.sin((phase + clampedDepth * 0.82) * Math.PI * 2) * 34 * clampedDepth * (1 - clampedDepth * 0.24);
-  const pathLift = Math.cos((phase * 0.9 + clampedDepth * 0.96) * Math.PI) * 22 * bend;
+  const worldBend = Math.sin(clampedWorldPosition * Math.PI);
+  const pathSway = Math.sin((clampedWorldPosition * 1.72 + 0.08) * Math.PI * 2) * 38 * worldBend * (0.55 + clampedDepth * 0.45);
+  const pathLift = Math.cos((clampedWorldPosition * 1.36 + 0.18) * Math.PI) * 30 * bend;
 
   return {
-    x: roundSvg(atlasSize.cx + bend * breathing * 0.25 + pathSway),
-    y: roundSvg(atlasSize.cy + bend * (31 + breathing) + pathLift)
+    x: roundSvg(atlasSize.cx + pathSway),
+    y: roundSvg(atlasSize.cy + bend * 36 + pathLift)
   };
 }
 
@@ -264,7 +269,7 @@ export function tubeTwist(worldPosition: number) {
 }
 
 export function tunnelFrontDepth(state: WormholeState) {
-  return Math.min(0.22, Math.max(0, state.timePosition * 0.62));
+  return state.timePosition > 0.02 ? 0.018 : 0;
 }
 
 function semanticLevelForDepth(depth: number, closeness: number, isSelected: boolean): SemanticLevel {
@@ -298,7 +303,7 @@ function spreadWormholeClusters(nodes: WormholeEntryNode[], phase: number) {
   nodes.forEach((node) => {
     const key = [
       node.sector.id,
-      Math.round(node.depth / 0.042)
+      Math.round(node.worldPosition / 0.042)
     ].join(':');
     const bucket = buckets.get(key) ?? [];
     bucket.push(node);

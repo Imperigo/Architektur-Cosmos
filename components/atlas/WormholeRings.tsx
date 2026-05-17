@@ -9,9 +9,9 @@ type WormholeRingsProps = {
 
 export function WormholeRings({ state, isMoving = false }: WormholeRingsProps) {
   const rings = wormholeRings(state);
-  const gridLines = wormholeGridLines(state, { spokeStride: 2, sampleCount: isMoving ? 34 : 42 });
-  const streamLines = wormholeStreamLines(state, { count: isMoving ? 18 : 22, sampleCount: isMoving ? 5 : 6 });
-  const speedLines = radialSpeedLines(state, { count: isMoving ? 36 : 42, sampleCount: isMoving ? 6 : 7 });
+  const gridLines = wormholeGridLines(state, { spokeStride: 2, sampleCount: 40 });
+  const streamLines = wormholeStreamLines(state, { count: 20, sampleCount: 6 });
+  const speedLines = radialSpeedLines(state, { count: 40, sampleCount: 7 });
   const edgeCompression = Math.min(1, Math.abs(state.edgeTension) / 0.065);
   const frontDissolve = Math.max(0, 1 - state.timePosition / 0.22);
 
@@ -38,6 +38,7 @@ export function WormholeRings({ state, isMoving = false }: WormholeRingsProps) {
       <circle className="wormhole-breath" cx={atlasSize.cx} cy={atlasSize.cy + 8} r={wormholeTunnel.maxRadius + 18 - edgeCompression * 24} fill="url(#wormhole-vignette)" opacity={0.84 - state.timePosition * 0.22} />
       <IdleOrbits state={state} />
       <IdleWhirlLines state={state} />
+      <EnergyBands rings={rings} state={state} isMoving={isMoving} />
       {streamLines.map((line, index) => (
         <path
           key={`stream-${index}`}
@@ -101,6 +102,35 @@ export function WormholeRings({ state, isMoving = false }: WormholeRingsProps) {
               style={{ animationDelay: `${index * -0.16}s` }}
             />
           </g>
+        );
+      })}
+    </g>
+  );
+}
+
+function EnergyBands({ rings, state, isMoving }: { rings: ReturnType<typeof wormholeRings>; state: WormholeState; isMoving: boolean }) {
+  return (
+    <g aria-hidden="true" pointerEvents="none">
+      {rings.map((ring, index) => {
+        const depth = ring.depth ?? radiusToTunnelDepth(ring.radius);
+        if (depth < 0.035 || depth > 0.92) return null;
+
+        const center = tunnelCenter(depth, state.phase);
+        const opacity = tunnelOpacity(depth) * ringEdgeDissolve(depth, state.timePosition);
+        const bandOpacity = (ring.mode === 'local' ? 0.18 : ring.weight === 'major' ? 0.12 : 0.065) * opacity;
+
+        return (
+          <circle
+            key={`energy-band-${ring.year}`}
+            className="wormhole-energy-band"
+            cx={center.x}
+            cy={center.y}
+            r={ring.radius}
+            fill="none"
+            stroke={energyColor(index + (ring.weight === 'major' ? 2 : 0))}
+            strokeWidth={ring.mode === 'local' ? 9 : ring.weight === 'major' ? 6 : 3.6}
+            opacity={isMoving ? bandOpacity * 1.05 : bandOpacity}
+          />
         );
       })}
     </g>
