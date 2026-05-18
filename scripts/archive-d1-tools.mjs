@@ -1,13 +1,16 @@
 #!/usr/bin/env node
 
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { spawnSync } from 'node:child_process';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const rootDir = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const entriesPath = resolve(rootDir, 'data/mock-entries.json');
 const relationsPath = resolve(rootDir, 'data/relations.json');
+const schemaPath = resolve(rootDir, 'schema/architecture-cosmos-d1.sql');
 const defaultOutputPath = resolve(rootDir, 'out/archive-d1-import.sql');
+const defaultR2ManifestPath = resolve(rootDir, 'out/archive-r2-manifest.json');
 
 const entryTypes = new Set(['building', 'urban_plan', 'landscape_project', 'text', 'theory', 'map', 'infrastructure', 'object', 'event']);
 const styleSectors = new Set([
@@ -75,9 +78,42 @@ async function main() {
     return;
   }
 
+  if (command === 'smoke-test') {
+    const result = validateArchiveData(data);
+    printValidation(result);
+
+    if (result.errors.length > 0) {
+      console.error('\nSmoke test blocked because validation has errors.');
+      process.exitCode = 1;
+      return;
+    }
+
+    await runLocalD1SmokeTest(data);
+    return;
+  }
+
+  if (command === 'export-r2-manifest') {
+    const result = validateArchiveData(data);
+    printValidation(result);
+
+    if (result.errors.length > 0) {
+      console.error('\nR2 manifest export blocked because validation has errors.');
+      process.exitCode = 1;
+      return;
+    }
+
+    const manifestPath = readOutputArg() ?? defaultR2ManifestPath;
+    await mkdir(dirname(manifestPath), { recursive: true });
+    await writeFile(manifestPath, `${JSON.stringify(buildR2Manifest(data), null, 2)}\n`);
+    console.log(`\nWrote R2 manifest preview: ${relativeToRoot(manifestPath)}`);
+    return;
+  }
+
   console.error(`Unknown command: ${command}`);
   console.error('Use: node scripts/archive-d1-tools.mjs validate');
   console.error(' or: node scripts/archive-d1-tools.mjs export-sql --output out/archive-d1-import.sql');
+  console.error(' or: node scripts/archive-d1-tools.mjs smoke-test');
+  console.error(' or: node scripts/archive-d1-tools.mjs export-r2-manifest --output out/archive-r2-manifest.json');
   process.exitCode = 1;
 }
 
@@ -314,6 +350,107 @@ function buildD1ImportSql({ entries, relations }) {
 
   lines.push('COMMIT;', '');
   return lines.join('\n');
+}
+
+async function runLocalD1SmokeTest(data) {
+  const schemaSql = await readFile(schemaPath, 'utf8');
+  const importSql = buildD1ImportSql(data);
+  const smokeSql = [
+    schemaSql,
+    importSql,
+    '.headers on',
+    '.mode column',
+    "SELECT 'entries' AS check_name, COUNT(*) AS value FROM entries;",
+    "SELECT 'relations' AS check_name, COUNT(*) AS value FROM entry_relations;",
+    "SELECT 'flower_sources' AS check_name, COUNT(*) AS value FROM entry_sources WHERE entry_id = 'afasia-no-architecture-flower-house';",
+    "SELECT 'flower_media' AS check_name, COUNT(*) AS value FROM entry_media WHERE entry_id = 'afasia-no-architecture-flower-house';",
+    "SELECT 'flower_models' AS check_name, COUNT(*) AS value FROM entry_models WHERE entry_id = 'afasia-no-architecture-flower-house';",
+    "SELECT 'flower_analysis' AS check_name, COUNT(*) AS value FROM entry_analysis WHERE entry_id = 'afasia-no-architecture-flower-house';",
+    "SELECT 'flower_tags' AS check_name, COUNT(*) AS value FROM entry_tags WHERE entry_id = 'afasia-no-architecture-flower-house';",
+    "SELECT 'afasia_entries' AS check_name, COUNT(DISTINCT et.entry_id) AS value FROM entry_tags et JOIN tags t ON t.id = et.tag_id WHERE t.label = 'Afasia';",
+    "SELECT 'sustainable_entries' AS check_name, COUNT(*) AS value FROM entries WHERE style_sector = 'sustainable_architecture';",
+    "SELECT e.title, em.model_type, em.review_status, em.r2_key FROM entry_models em JOIN entries e ON e.id = em.entry_id ORDER BY em.model_type LIMIT 6;"
+  ].join('\n');
+  const result = spawnSync('sqlite3', [':memory:'], {
+    input: smokeSql,
+    encoding: 'utf8',
+    maxBuffer: 1024 * 1024 * 10
+  });
+
+  if (result.error) {
+    throw result.error;
+  }
+
+  if (result.status !== 0) {
+    console.error(result.stdout);
+    console.error(result.stderr);
+    throw new Error(`sqlite3 smoke test failed with status ${result.status}`);
+  }
+
+  console.log('\nLocal D1 smoke test passed.');
+  console.log(result.stdout.trim());
+}
+
+function buildR2Manifest({ entries }) {
+  const objects = [];
+
+  entries.forEach((entry) => {
+    const prefix = entry.database_profile?.r2_prefix ?? `entries/${entry.slug}`;
+
+    (entry.media ?? []).forEach((media, index) => {
+      objects.push({
+        entry_id: entry.id,
+        bucket: 'architecture-cosmos-assets-preview',
+        key: media.url ? r2KeyFromUrl(entry, media.url, media.type, index + 1) : `${prefix}/media/${media.type}-${String(index + 1).padStart(2, '0')}.placeholder.json`,
+        kind: 'media',
+        media_type: media.type,
+        source_url: media.url ?? null,
+        status: media.url ? 'needs_permission' : 'placeholder'
+      });
+    });
+
+    (entry.model_assets ?? []).forEach((model) => {
+      objects.push({
+        entry_id: entry.id,
+        bucket: 'architecture-cosmos-assets-preview',
+        key: model.r2_key,
+        kind: 'model',
+        model_type: model.model_type,
+        source_url: null,
+        status: model.review_status
+      });
+    });
+
+    (entry.analysis_layers ?? []).forEach((analysis) => {
+      objects.push({
+        entry_id: entry.id,
+        bucket: 'architecture-cosmos-assets-preview',
+        key: analysis.r2_key ?? `${prefix}/analysis/${analysis.analysis_type}.json`,
+        kind: 'analysis',
+        analysis_type: analysis.analysis_type,
+        source_url: null,
+        status: analysis.review_status
+      });
+    });
+
+    (entry.source_assets ?? []).forEach((asset, index) => {
+      objects.push({
+        entry_id: entry.id,
+        bucket: 'architecture-cosmos-assets-preview',
+        key: `${prefix}/sources/source-asset-${String(index + 1).padStart(2, '0')}.json`,
+        kind: asset.kind,
+        source_url: asset.url,
+        status: 'source_reference'
+      });
+    });
+  });
+
+  return {
+    generated_from: ['data/mock-entries.json', 'data/relations.json'],
+    bucket: 'architecture-cosmos-assets-preview',
+    object_count: objects.length,
+    objects
+  };
 }
 
 function buildSourceRows(entry) {
