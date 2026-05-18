@@ -142,7 +142,7 @@ function IdleOrbits({ state }: { state: WormholeState }) {
 
         return (
           <circle
-            key={depth}
+            key={`idle-orbit-${index}`}
             className="wormhole-idle-orbit"
             cx={center.x}
             cy={center.y}

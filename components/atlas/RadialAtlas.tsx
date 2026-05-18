@@ -423,19 +423,19 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     }
 
     if (isHoverFocusActive && hoverNode) {
-      const hoverDistance = distance(point, hoverNode);
-      if (hoverDistance <= hoverRadius * 2.2) return;
+      const hoverDistance = cameraDistance(point, hoverNode, cameraFocus);
+      if (hoverDistance <= hoverRadius * 2.65) return;
 
       clearHoverState();
       return;
     }
 
     if (hoverNode) {
-      const hoverDistance = distance(point, hoverNode);
-      if (hoverDistance <= hoverRadius + hoverNode.size * 1.1) return;
+      const hoverDistance = cameraDistance(point, hoverNode, cameraFocus);
+      if (hoverDistance <= hoverRadius * 1.45 + hoverNode.size * 1.4) return;
     }
 
-    const nearest = nearestNode(point, displayNodes);
+    const nearest = nearestCameraNode(point, displayNodes, cameraFocus);
 
     if (!nearest) {
       clearHoverState();
@@ -607,6 +607,24 @@ function nearestNode(point: SvgPoint, nodes: WormholeEntryNode[]) {
   }, null);
 }
 
+function nearestCameraNode(point: SvgPoint, nodes: WormholeEntryNode[], cameraFocus: { x: number; y: number; scale: number }) {
+  return nodes.reduce<{ node: WormholeEntryNode; distance: number } | null>((nearest, node) => {
+    if (node.opacity < 0.08) return nearest;
+
+    const nodeDistance = cameraDistance(point, node, cameraFocus);
+    if (!nearest || nodeDistance < nearest.distance) {
+      return { node, distance: nodeDistance };
+    }
+
+    return nearest;
+  }, null);
+}
+
+function cameraDistance(point: SvgPoint, node: WormholeEntryNode, cameraFocus: { x: number; y: number; scale: number }) {
+  const cameraPoint = applyCameraToPoint(node, cameraFocus);
+  return Math.hypot(point.x - cameraPoint.x, point.y - cameraPoint.y);
+}
+
 function isReadableNode(node: WormholeEntryNode) {
   const margin = 54;
   const insideFrame = node.x > margin && node.x < atlasSize.width - margin && node.y > margin && node.y < atlasSize.height - margin;
@@ -749,8 +767,14 @@ function RadialHud({
 }
 
 function HudButton({ x, y, kind, label, active = false, onClick }: { x: number; y: number; kind: 'backward' | 'forward' | 'lens' | 'relations'; label: string; active?: boolean; onClick: () => void }) {
+  function handleActivate(event: { stopPropagation: () => void }) {
+    event.stopPropagation();
+    onClick();
+  }
+
   return (
-    <g className="hud-button" onClick={(event) => { event.stopPropagation(); onClick(); }} aria-label={label}>
+    <g className="hud-button" pointerEvents="auto" onPointerDown={(event) => event.stopPropagation()} onClick={handleActivate} aria-label={label}>
+      <circle cx={x} cy={y} r="22" fill="#050505" opacity="0.001" />
       <circle cx={x} cy={y} r="14" fill={active ? '#f7f7f4' : '#050505'} stroke={active ? '#00e7ff' : '#f7f7f4'} strokeWidth="0.75" opacity="0.88" />
       <HudIcon x={x} y={y} kind={kind} active={active} />
     </g>
@@ -846,12 +870,8 @@ function DatabaseAccess({ isOpen, isHovered, onHoverChange, onToggle }: { isOpen
   const x = atlasSize.width - 164;
   const y = atlasSize.height - 54;
   const isExpanded = isOpen || isHovered;
-  const lastToggleRef = useRef(0);
-
-  function toggleOnce(event: { stopPropagation: () => void; timeStamp: number }) {
+  function toggleOnce(event: { stopPropagation: () => void }) {
     event.stopPropagation();
-    if (event.timeStamp - lastToggleRef.current < 180) return;
-    lastToggleRef.current = event.timeStamp;
     onToggle();
   }
 
@@ -882,10 +902,8 @@ function DatabaseAccess({ isOpen, isHovered, onHoverChange, onToggle }: { isOpen
         rx="16"
         fill="#050505"
         opacity="0.001"
+        onPointerDown={(event) => event.stopPropagation()}
         onPointerMove={() => onHoverChange(true)}
-        onPointerDown={toggleOnce}
-        onPointerUp={toggleOnce}
-        onMouseDown={toggleOnce}
         onClick={toggleOnce}
       />
     </g>
