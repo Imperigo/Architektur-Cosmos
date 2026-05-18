@@ -24,14 +24,19 @@ npm run archive:validate
 npm run archive:export
 npm run archive:smoke
 npm run archive:r2-manifest
+npm run archive:draft
 ```
 
 Generated files:
 
 - `out/archive-d1-import.sql`
 - `out/archive-r2-manifest.json`
+- `out/entry-draft-preview.json`
 
 Both are generated output and are not committed.
+
+`archive:draft` validates `data/entry-draft-template.json` by default and writes
+a local preview with planned R2 keys but no uploads.
 
 ## Recommended Preview Names
 

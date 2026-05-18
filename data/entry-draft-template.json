@@ -1,0 +1,62 @@
+{
+  "id": "draft-entry-id",
+  "slug": "draft-entry-slug",
+  "title": "Draft Entry Title",
+  "entry_type": "building",
+  "year_start": 2000,
+  "year_end": null,
+  "authors": ["Unknown author"],
+  "city": "City",
+  "country": "Country",
+  "style_sector": "sustainable_architecture",
+  "lecture_cluster": ["draft_import"],
+  "themes": ["draft", "needs-review"],
+  "short_description": "Short archive description.",
+  "one_sentence": "One sentence that explains why this object matters in the Architecture Cosmos.",
+  "full_description": "A longer description with historical, spatial, structural and source context. This draft should be reviewed before it becomes part of the public archive.",
+  "source_quality": "draft",
+  "source_documents": ["Draft source note"],
+  "source_url": "",
+  "media": [
+    {
+      "type": "exterior",
+      "label": "Exterior placeholder",
+      "placeholder": "Exterior media slot planned.",
+      "credit": "placeholder"
+    },
+    {
+      "type": "interior",
+      "label": "Interior placeholder",
+      "placeholder": "Interior media slot planned.",
+      "credit": "placeholder"
+    },
+    {
+      "type": "section",
+      "label": "Section placeholder",
+      "placeholder": "Section media slot planned.",
+      "credit": "placeholder"
+    },
+    {
+      "type": "plan",
+      "label": "Plan placeholder",
+      "placeholder": "Plan media slot planned.",
+      "credit": "placeholder"
+    }
+  ],
+  "database_tags": [
+    "source:draft",
+    "typology:needs-classification",
+    "theme:needs-research",
+    "course:draft-import",
+    "analysis:needs-review"
+  ],
+  "database_profile": {
+    "status": "draft",
+    "r2_prefix": "entries/draft-entry-slug",
+    "source_count": 1,
+    "media_count": 4,
+    "model_count": 0,
+    "analysis_count": 0,
+    "tag_count": 5
+  }
+}

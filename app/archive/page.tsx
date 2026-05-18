@@ -21,6 +21,7 @@ export default function ArchivePage() {
   const richestEntries = [...allEntries]
     .sort((a, b) => archiveWeight(b) - archiveWeight(a))
     .slice(0, 10);
+  const workflow = archiveWorkflow(allEntries);
 
   return (
     <main className="entry-page archive-page min-h-screen overflow-x-hidden bg-[#050505] text-[#f7f7f4]" style={{ '--entry-accent': '#00e7ff' } as CSSProperties}>
@@ -82,6 +83,34 @@ export default function ArchivePage() {
           <Metric label="Pilot objects" value={archivePreview.entries.length} />
         </section>
 
+        <section className="grid gap-6 border-t border-white/12 py-8 lg:grid-cols-[0.9fr_1.1fr]">
+          <div className="entry-archive-panel border border-white/14 bg-[#071315]/70 p-5">
+            <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#00e7ff]">Archive Workflow</h2>
+            <div className="space-y-3">
+              {workflow.stages.map((stage) => (
+                <div key={stage.label} className="border border-white/12 bg-[#050505]/40 p-3">
+                  <div className="flex items-center justify-between gap-4">
+                    <span className="text-sm text-[#f7f7f4]">{stage.label}</span>
+                    <span className="text-xl text-[#00e7ff]">{stage.value}</span>
+                  </div>
+                  <p className="mt-2 text-xs leading-5 text-[#b8b8b2]">{stage.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="entry-archive-panel border border-white/14 bg-[#071315]/70 p-5">
+            <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#00e7ff]">Next Import Workflow</h2>
+            <ol className="space-y-3 text-sm leading-6 text-[#d7d7d0]">
+              <li><span className="text-[#00e7ff]">01</span> Create a local draft from <code>data/entry-draft-template.json</code>.</li>
+              <li><span className="text-[#00e7ff]">02</span> Run <code>npm run archive:draft -- --input path/to/draft.json</code>.</li>
+              <li><span className="text-[#00e7ff]">03</span> Review generated R2 keys; uploads remain blocked.</li>
+              <li><span className="text-[#00e7ff]">04</span> Add reviewed entry to <code>data/mock-entries.json</code>.</li>
+              <li><span className="text-[#00e7ff]">05</span> Sync D1 with <code>npm run archive:d1-preview</code>.</li>
+            </ol>
+          </div>
+        </section>
+
         <section className="grid gap-6 border-t border-white/12 py-8 lg:grid-cols-2">
           <ArchiveList title="Entry Types" rows={orderedEntryTypes.map((type) => [type.replace(/_/g, ' '), `${typeCounts[type] ?? 0}`])} />
           <ArchiveList title="Style Sectors" rows={orderedStyleSectors.map((style) => [style.replace(/_/g, ' '), `${styleCounts[style] ?? 0}`])} />
@@ -103,6 +132,15 @@ export default function ArchivePage() {
               <ArchiveMeta label="Analysis" value={`${pilot.analysis_layers?.length ?? 0} analysis layers`} />
               <ArchiveMeta label="Tags" value={`${pilot.database_tags?.length ?? 0} tags`} />
             </div>
+          </div>
+        </section>
+
+        <section className="border-t border-white/12 py-8">
+          <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#00e7ff]">Needs Attention</h2>
+          <div className="grid gap-3 sm:grid-cols-3">
+            <AttentionCard title="Sources" entries={workflow.needsSources} />
+            <AttentionCard title="Relations" entries={workflow.needsRelations} />
+            <AttentionCard title="Models" entries={workflow.needsModels} />
           </div>
         </section>
 
@@ -144,6 +182,28 @@ function archiveWeight(entry: Entry) {
     + (entry.database_profile ? 20 : 0);
 }
 
+function archiveWorkflow(entries: Entry[]) {
+  const reviewed = entries.filter((entry) => entry.database_profile?.status === 'reviewed' || entry.database_profile?.status === 'published');
+  const withAllMedia = entries.filter((entry) => new Set(entry.media.map((media) => media.type)).size >= 4);
+  const withSources = entries.filter((entry) => (entry.source_documents?.length ?? 0) > 0 || Boolean(entry.source_url));
+  const withModels = entries.filter((entry) => (entry.model_assets?.length ?? 0) > 0);
+  const withRelations = entries.filter((entry) => allRelations.some((relation) => relation.source_entry_id === entry.id || relation.target_entry_id === entry.id));
+
+  return {
+    stages: [
+      { label: 'Structured entries', value: entries.length, description: 'Objects currently bundled in static JSON and exportable to D1.' },
+      { label: 'Source-backed', value: withSources.length, description: 'Entries with at least one source document or source URL.' },
+      { label: 'Four-slot media ready', value: withAllMedia.length, description: 'Entries with exterior, interior, section and plan placeholders or media rows.' },
+      { label: 'Relation graph ready', value: withRelations.length, description: 'Entries connected to at least one other archive object.' },
+      { label: 'Model metadata ready', value: withModels.length, description: 'Entries with planned 3D model rows and R2 keys.' },
+      { label: 'Reviewed pilots', value: reviewed.length, description: 'Entries promoted beyond draft status.' }
+    ],
+    needsSources: entries.filter((entry) => (entry.source_documents?.length ?? 0) === 0 && !entry.source_url).slice(0, 4),
+    needsRelations: entries.filter((entry) => !allRelations.some((relation) => relation.source_entry_id === entry.id || relation.target_entry_id === entry.id)).slice(0, 4),
+    needsModels: entries.filter((entry) => (entry.model_assets?.length ?? 0) === 0).slice(0, 4)
+  };
+}
+
 function Metric({ label, value }: { label: string; value: number }) {
   return (
     <div className="entry-study-card border border-white/14 bg-[#071315]/55 p-4">
@@ -172,6 +232,22 @@ function ArchiveList({ title, rows }: { title: string; rows: Array<[string, stri
             <span className="capitalize text-[#d7d7d0]">{label}</span>
             <span className="text-[#f7f7f4]">{value}</span>
           </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function AttentionCard({ title, entries }: { title: string; entries: Entry[] }) {
+  return (
+    <div className="entry-archive-panel border border-white/14 bg-[#071315]/70 p-4">
+      <h3 className="mb-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#00e7ff]">{title}</h3>
+      <div className="space-y-2">
+        {entries.map((entry) => (
+          <Link key={entry.id} href={`/atlas/${entry.slug}/`} className="entry-link block border border-white/10 bg-[#050505]/35 px-3 py-2">
+            <span className="block truncate text-sm text-[#f7f7f4]">{entry.title}</span>
+            <span className="mt-1 block text-[10px] uppercase tracking-[0.12em] text-[#8d8d87]">{entry.entry_type.replace(/_/g, ' ')}</span>
+          </Link>
         ))}
       </div>
     </div>
