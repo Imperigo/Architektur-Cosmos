@@ -109,8 +109,42 @@ body:has(.entry-page) {
 
 .entry-archive-panel,
 .entry-media-card,
-.entry-relation-card {
+.entry-relation-card,
+.entry-study-card,
+.entry-timeline-link {
   box-shadow: inset 0 1px 0 rgba(247, 247, 244, 0.055), 0 18px 48px rgba(0, 0, 0, 0.24);
+}
+
+.entry-study-card,
+.entry-timeline-link {
+  position: relative;
+  overflow: hidden;
+}
+
+.entry-study-card::before,
+.entry-timeline-link::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(115deg, color-mix(in srgb, var(--entry-accent) 13%, transparent), transparent 36%),
+    linear-gradient(180deg, rgba(247, 247, 244, 0.035), transparent);
+  opacity: 0.65;
+}
+
+.entry-study-card > *,
+.entry-timeline-link > * {
+  position: relative;
+}
+
+.entry-timeline-link {
+  min-height: 128px;
+  transition: border-color 180ms ease, transform 180ms ease, background 180ms ease;
+}
+
+.entry-timeline-link:hover {
+  transform: translateY(-2px);
 }
 
 .entry-mini-orbit {

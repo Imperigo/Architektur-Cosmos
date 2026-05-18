@@ -58,10 +58,13 @@ export default async function EntryPage({ params }: EntryPageProps) {
   if (!entry) notFound();
 
   const related = relatedEntries(entry).slice(0, 8);
+  const neighbors = timelineNeighbors(entry);
+  const peers = stylePeers(entry).slice(0, 4);
   const accent = styleColor(entry.style_sector);
   const location = [entry.city, entry.country].filter(Boolean).join(', ');
   const jsonLd = entryJsonLd(entry);
   const yearLabel = formatYear(entry.year_start);
+  const archiveScore = archiveReadiness(entry);
 
   return (
     <main className="entry-page min-h-screen overflow-x-hidden bg-[#050505] text-[#f7f7f4]" style={{ '--entry-accent': accent } as CSSProperties}>
@@ -122,6 +125,7 @@ export default async function EntryPage({ params }: EntryPageProps) {
               <EntryMeta label="Lecture cluster" value={(entry.lecture_cluster ?? []).join(', ') || 'not assigned'} />
               <EntryMeta label="Media slots" value={`${entry.media.length}`} />
               <EntryMeta label="Relations" value={`${related.length}`} />
+              <EntryMeta label="Archive readiness" value={`${archiveScore}%`} />
               {entry.database_profile ? (
                 <>
                   <EntryMeta label="Database" value={entry.database_profile.status} />
@@ -132,6 +136,27 @@ export default async function EntryPage({ params }: EntryPageProps) {
               ) : null}
             </dl>
           </aside>
+        </section>
+
+        <section className="entry-study-grid grid gap-4 border-t border-white/12 py-8 lg:grid-cols-3">
+          <StudyCard
+            title="Read"
+            label="Learning prompt"
+            body={studyPrompt(entry)}
+            accent={accent}
+          />
+          <StudyCard
+            title="Compare"
+            label={entry.style_sector.replace(/_/g, ' ')}
+            body={peers.length ? peers.map((peer) => peer.title).join(' / ') : 'No close comparison entries yet.'}
+            accent={accent}
+          />
+          <StudyCard
+            title="Archive"
+            label={`${archiveScore}% structured`}
+            body={archiveSummary(entry)}
+            accent={accent}
+          />
         </section>
 
         <section className="grid gap-4 border-t border-white/12 py-8 sm:grid-cols-2 lg:grid-cols-4">
@@ -184,6 +209,27 @@ export default async function EntryPage({ params }: EntryPageProps) {
             <p className="text-sm text-[#b8b8b2]">No relations attached yet.</p>
           )}
         </section>
+
+        <nav className="entry-timeline-nav grid gap-3 border-t border-white/12 py-8 sm:grid-cols-2" aria-label="Chronological entry navigation">
+          {neighbors.previous ? (
+            <Link href={`/atlas/${neighbors.previous.slug}/`} className="entry-link entry-timeline-link border border-white/14 bg-[#071315]/55 p-4">
+              <span className="block text-[10px] uppercase tracking-[0.18em]" style={{ color: accent }}>Earlier</span>
+              <span className="mt-2 block text-xl text-[#f7f7f4]">{neighbors.previous.title}</span>
+              <span className="mt-2 block text-sm text-[#b8b8b2]">{formatYear(neighbors.previous.year_start)}</span>
+            </Link>
+          ) : (
+            <div className="entry-timeline-link border border-white/10 bg-[#071315]/25 p-4 text-[#8d8d87]">Beginning of current archive slice</div>
+          )}
+          {neighbors.next ? (
+            <Link href={`/atlas/${neighbors.next.slug}/`} className="entry-link entry-timeline-link border border-white/14 bg-[#071315]/55 p-4 text-right">
+              <span className="block text-[10px] uppercase tracking-[0.18em]" style={{ color: accent }}>Later</span>
+              <span className="mt-2 block text-xl text-[#f7f7f4]">{neighbors.next.title}</span>
+              <span className="mt-2 block text-sm text-[#b8b8b2]">{formatYear(neighbors.next.year_start)}</span>
+            </Link>
+          ) : (
+            <div className="entry-timeline-link border border-white/10 bg-[#071315]/25 p-4 text-right text-[#8d8d87]">Newest object in current archive slice</div>
+          )}
+        </nav>
       </div>
     </main>
   );
@@ -211,6 +257,25 @@ function relatedEntries(entry: Entry) {
       return relatedEntry ? { relation, entry: relatedEntry } : null;
     })
     .filter((item): item is { relation: EntryRelation; entry: Entry } => Boolean(item));
+}
+
+function timelineNeighbors(entry: Entry) {
+  const sorted = [...allEntries].sort((a, b) => {
+    if (a.year_start !== b.year_start) return a.year_start - b.year_start;
+    return a.title.localeCompare(b.title);
+  });
+  const index = sorted.findIndex((candidate) => candidate.id === entry.id);
+
+  return {
+    previous: index > 0 ? sorted[index - 1] : null,
+    next: index >= 0 && index < sorted.length - 1 ? sorted[index + 1] : null
+  };
+}
+
+function stylePeers(entry: Entry) {
+  return allEntries
+    .filter((candidate) => candidate.id !== entry.id && candidate.style_sector === entry.style_sector)
+    .sort((a, b) => Math.abs(a.year_start - entry.year_start) - Math.abs(b.year_start - entry.year_start));
 }
 
 function EntryMeta({ label, value }: { label: string; value: string }) {
@@ -241,6 +306,16 @@ function InfoBlock({ title, items, accent, empty = 'No entries yet' }: { title: 
   );
 }
 
+function StudyCard({ title, label, body, accent }: { title: string; label: string; body: string; accent: string }) {
+  return (
+    <article className="entry-study-card border border-white/14 bg-[#071315]/55 p-4">
+      <div className="text-[10px] uppercase tracking-[0.2em]" style={{ color: accent }}>{title}</div>
+      <div className="mt-3 text-xl text-[#f7f7f4]">{label}</div>
+      <p className="mt-3 text-sm leading-6 text-[#b8b8b2]">{body}</p>
+    </article>
+  );
+}
+
 function sourceItems(entry: Entry) {
   return [
     ...(entry.source_documents ?? []),
@@ -257,6 +332,30 @@ function mediaSlotNumber(type: Entry['media'][number]['type']) {
     plan: '04'
   };
   return order[type];
+}
+
+function studyPrompt(entry: Entry) {
+  const type = entry.entry_type.replace(/_/g, ' ');
+  const theme = entry.themes[0]?.replace(/[_:]/g, ' ') ?? 'architectural history';
+  return `Read this ${type} through ${theme}: locate what is formal, what is technical, and what belongs to its historical context.`;
+}
+
+function archiveReadiness(entry: Entry) {
+  const mediaScore = Math.min(entry.media.length, 4) * 12;
+  const relationScore = Math.min(relatedEntries(entry).length, 4) * 6;
+  const textScore = entry.full_description.length > 220 ? 18 : 8;
+  const databaseScore = entry.database_profile ? 16 : 0;
+  const analysisScore = Math.min(entry.analysis_layers?.length ?? 0, 4) * 3;
+  return Math.min(100, mediaScore + relationScore + textScore + databaseScore + analysisScore);
+}
+
+function archiveSummary(entry: Entry) {
+  const parts = [
+    `${entry.media.length}/4 media slots`,
+    `${relatedEntries(entry).length} relations`,
+    entry.database_profile ? `${entry.database_profile.model_count} model layers` : '3D model pending'
+  ];
+  return parts.join(' / ');
 }
 
 function entryJsonLd(entry: Entry) {
