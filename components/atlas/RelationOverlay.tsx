@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { atlasSize, type AtlasNode } from '@/lib/atlas-layout';
 import type { Entry, EntryRelation, RelationType } from '@/lib/types';
 
@@ -36,12 +37,15 @@ const relationColor: Record<RelationType, string> = {
   context: '#f7f7f4'
 };
 
-export function RelationOverlay({ nodes, relations, selectedEntry, isMoving = false }: RelationOverlayProps) {
+function RelationOverlayComponent({ nodes, relations, selectedEntry, isMoving = false }: RelationOverlayProps) {
   const nodeById = new Map(nodes.map((node) => [node.entry.id, node]));
+  const visibleRelations = isMoving && !selectedEntry
+    ? relations.filter((_, index) => index % 4 === 0)
+    : relations;
 
   return (
     <g aria-label="Relationen" pointerEvents="none">
-      {relations.map((relation) => {
+      {visibleRelations.map((relation) => {
         const source = nodeById.get(relation.source_entry_id);
         const target = nodeById.get(relation.target_entry_id);
         if (!source || !target) return null;
@@ -75,7 +79,7 @@ export function RelationOverlay({ nodes, relations, selectedEntry, isMoving = fa
               stroke={relationStroke}
               strokeWidth={relationWidth}
               strokeDasharray={relationDash[relation.relation_type]}
-              opacity={isMoving ? relationOpacity * 0.72 : relationOpacity}
+              opacity={isMoving ? relationOpacity * 0.34 : relationOpacity}
             />
           </g>
         );
@@ -83,6 +87,8 @@ export function RelationOverlay({ nodes, relations, selectedEntry, isMoving = fa
     </g>
   );
 }
+
+export const RelationOverlay = memo(RelationOverlayComponent);
 
 function relationPath(source: RelationNode, target: RelationNode) {
   const midX = (source.x + target.x) / 2;

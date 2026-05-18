@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { atlasSize } from '@/lib/atlas-layout';
 import { radiusToTunnelDepth, tubeTwist, tunnelCenter, tunnelFrontDepth, tunnelOpacity, tunnelPoint, tunnelRadius, wormholeGridLines, wormholeRings, wormholeTunnel, type WormholeState } from '@/lib/wormhole-layout';
 import { polarToCartesian } from '@/lib/polar-coordinates';
@@ -8,11 +9,11 @@ type WormholeRingsProps = {
   isMoving?: boolean;
 };
 
-export function WormholeRings({ state, isMoving = false }: WormholeRingsProps) {
+function WormholeRingsComponent({ state, isMoving = false }: WormholeRingsProps) {
   const rings = stableRingSlots(wormholeRings(state));
-  const gridLines = wormholeGridLines(state, { spokeStride: 2, sampleCount: 40 });
-  const streamLines = wormholeStreamLines(state, { count: 12, sampleCount: 4 });
-  const speedLines = radialSpeedLines(state, { count: 18, sampleCount: 3 });
+  const gridLines = wormholeGridLines(state, { spokeStride: 4, sampleCount: isMoving ? 18 : 24 });
+  const streamLines = wormholeStreamLines(state, { count: isMoving ? 4 : 6, sampleCount: 4 });
+  const speedLines = radialSpeedLines(state, { count: isMoving ? 4 : 7, sampleCount: 3 });
   const edgeCompression = Math.min(1, Math.abs(state.edgeTension) / 0.065);
   const frontDissolve = Math.max(0, 1 - state.timePosition / 0.22);
 
@@ -41,7 +42,7 @@ export function WormholeRings({ state, isMoving = false }: WormholeRingsProps) {
           fill="none"
           stroke={energyColor(index)}
           strokeWidth={index % 4 === 0 ? 1.02 : 0.72}
-          opacity={isMoving ? (index % 4 === 0 ? 0.26 : 0.18) : index % 4 === 0 ? 0.22 : 0.15}
+          opacity={isMoving ? (index % 4 === 0 ? 0.18 : 0.12) : index % 4 === 0 ? 0.22 : 0.15}
           style={{ animationDelay: `${index * -0.41}s` }}
         />
       ))}
@@ -53,7 +54,7 @@ export function WormholeRings({ state, isMoving = false }: WormholeRingsProps) {
           fill="none"
           stroke={energyColor(index + 2)}
           strokeWidth={index % 6 === 0 ? 0.68 : 0.42}
-          opacity={isMoving ? (index % 6 === 0 ? 0.32 : 0.2) : index % 6 === 0 ? 0.28 : 0.17}
+          opacity={isMoving ? (index % 6 === 0 ? 0.2 : 0.12) : index % 6 === 0 ? 0.28 : 0.17}
           style={{ animationDelay: `${index * -0.19}s` }}
         />
       ))}
@@ -66,7 +67,7 @@ export function WormholeRings({ state, isMoving = false }: WormholeRingsProps) {
           fill="none"
           stroke={index % 4 === 0 ? '#fff3d1' : energyColor(index)}
           strokeWidth={index % 6 === 0 ? 1.05 : 0.58}
-          opacity={isMoving ? (index % 6 === 0 ? 0.34 : 0.18) : index % 6 === 0 ? 0.38 : 0.22}
+          opacity={isMoving ? (index % 6 === 0 ? 0.22 : 0.12) : index % 6 === 0 ? 0.38 : 0.22}
           style={{ animationDelay: `${index * -0.08}s` }}
         />
       ))}
@@ -99,6 +100,8 @@ export function WormholeRings({ state, isMoving = false }: WormholeRingsProps) {
     </g>
   );
 }
+
+export const WormholeRings = memo(WormholeRingsComponent);
 
 function EnergyBands({ rings, state, isMoving }: { rings: RingSlot[]; state: WormholeState; isMoving: boolean }) {
   return (
@@ -271,7 +274,7 @@ type RingSlot = {
   ring: TimeRing | null;
 };
 
-const ringSlotCount = 56;
+const ringSlotCount = 34;
 
 function stableRingSlots(rings: TimeRing[]): RingSlot[] {
   return Array.from({ length: ringSlotCount }, (_, slotIndex) => ({

@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { sectorMidAngle, styleSectors, type StyleSector } from '@/lib/atlas-layout';
 import { polarToCartesian } from '@/lib/polar-coordinates';
 import { tunnelCenter, tunnelFrontDepth, tunnelRadius, wormholeTunnel, type WormholeState } from '@/lib/wormhole-layout';
@@ -30,7 +31,7 @@ const sectorLabel: Record<StyleSector['id'], string> = {
   vernacular_architecture: 'VERNAKULAER'
 };
 
-export function StyleSectors({ state, isMoving = false, activeStyleLens = null }: { state: WormholeState; isMoving?: boolean; activeStyleLens?: StyleSector['id'] | null }) {
+function StyleSectorsComponent({ state, isMoving = false, activeStyleLens = null }: { state: WormholeState; isMoving?: boolean; activeStyleLens?: StyleSector['id'] | null }) {
   const innerLabelOpacity = 0.58 + smoothstep(0.18, 0.54, state.timePosition) * 0.28;
   const frontDepth = tunnelFrontDepth(state);
   const labelDepth = frontDepth + 0.08;
@@ -85,6 +86,8 @@ export function StyleSectors({ state, isMoving = false, activeStyleLens = null }
     </g>
   );
 }
+
+export const StyleSectors = memo(StyleSectorsComponent);
 
 function sectorRibbonPath(startAngle: number, endAngle: number, innerRadius: number, outerRadius: number, cx: number, cy: number) {
   const normalizedEnd = endAngle < startAngle ? endAngle + 360 : endAngle;

@@ -162,27 +162,32 @@ function EntryThumbnail({ entry, x, y, radius, accent, isSelected, styleLensActi
   const baseY = y + radius * 0.34;
   const accentStroke = isSelected || styleLensActive ? 2.25 : 1.55;
   const accentFillOpacity = styleLensActive ? 0.28 : 0.16;
+  const showDetailLines = radius >= 6.4 || isSelected || styleLensActive;
 
   return (
     <g className="entry-thumbnail" pointerEvents="none">
       <circle cx={x} cy={y} r={radius + 2.2} fill={accent} opacity={accentFillOpacity} />
       <circle cx={x} cy={y} r={radius} fill={isSelected ? '#050505' : thumbnailFill(entry.entry_type)} stroke={accent} strokeWidth={accentStroke} />
-      <circle cx={x} cy={y} r={Math.max(0, radius - 2.2)} fill="none" stroke={accent} strokeWidth="0.55" opacity="0.72" />
-      <g stroke={isSelected ? '#f7f7f4' : '#050505'} strokeWidth={Math.max(0.45, radius * 0.075)} fill="none" opacity={radius < 5.6 ? 0.3 : 0.7}>
-        {Array.from({ length: skyline }, (_, index) => {
-          const step = (radius * 1.35) / Math.max(1, skyline - 1);
-          const localX = x - radius * 0.68 + index * step;
-          const height = radius * (0.35 + ((seed >> (index * 3)) % 5) * 0.09);
+      {showDetailLines ? (
+        <>
+          <circle cx={x} cy={y} r={Math.max(0, radius - 2.2)} fill="none" stroke={accent} strokeWidth="0.55" opacity="0.72" />
+          <g stroke={isSelected ? '#f7f7f4' : '#050505'} strokeWidth={Math.max(0.45, radius * 0.075)} fill="none" opacity={0.7}>
+            {Array.from({ length: skyline }, (_, index) => {
+              const step = (radius * 1.35) / Math.max(1, skyline - 1);
+              const localX = x - radius * 0.68 + index * step;
+              const height = radius * (0.35 + ((seed >> (index * 3)) % 5) * 0.09);
 
-          return <path key={index} d={`M ${localX} ${baseY} V ${baseY - height}`} />;
-        })}
-        <path d={`M ${x - radius + inset} ${baseY} H ${x + radius - inset}`} />
-        {entry.entry_type === 'urban_plan' || entry.entry_type === 'map' ? (
-          <circle cx={x} cy={y} r={radius * 0.38} />
-        ) : (
-          <path d={`M ${x - radius * 0.42} ${y - radius * 0.05} L ${x} ${y - radius * 0.45} L ${x + radius * 0.42} ${y - radius * 0.05}`} />
-        )}
-      </g>
+              return <path key={index} d={`M ${localX} ${baseY} V ${baseY - height}`} />;
+            })}
+            <path d={`M ${x - radius + inset} ${baseY} H ${x + radius - inset}`} />
+            {entry.entry_type === 'urban_plan' || entry.entry_type === 'map' ? (
+              <circle cx={x} cy={y} r={radius * 0.38} />
+            ) : (
+              <path d={`M ${x - radius * 0.42} ${y - radius * 0.05} L ${x} ${y - radius * 0.45} L ${x + radius * 0.42} ${y - radius * 0.05}`} />
+            )}
+          </g>
+        </>
+      ) : null}
     </g>
   );
 }

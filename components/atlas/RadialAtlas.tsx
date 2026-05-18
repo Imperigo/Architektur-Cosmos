@@ -34,7 +34,7 @@ type SourceLens = 'afasia' | null;
 export function RadialAtlas({ entries, relations }: { entries: Entry[]; relations: EntryRelation[] }) {
   const svgRef = useRef<SVGSVGElement | null>(null);
   const [selectedEntry, setSelectedEntry] = useState<Entry | null>(null);
-  const [showRelations, setShowRelations] = useState(true);
+  const [showRelations, setShowRelations] = useState(false);
   const [activeStyleLens, setActiveStyleLens] = useState<StyleSectorId | null>(null);
   const [activeSourceLens, setActiveSourceLens] = useState<SourceLens>(null);
   const [motion, setMotion] = useState<MotionSnapshot>({
@@ -72,7 +72,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   const activeSnappedEntryId = snappedEntryId;
   const activeHoverEntryId = hoverEntryId;
   const nodes = useMemo(() => layoutWormholeEntries(entries, state, activeSelectedEntryId), [activeSelectedEntryId, entries, state]);
-  const displayNodes = useMemo(() => nodes.filter(isReadableNode), [nodes]);
+  const displayNodes = useMemo(() => limitDisplayNodes(nodes), [nodes]);
   const snappedNode = useMemo(() => displayNodes.find((node) => node.entry.id === activeSnappedEntryId) ?? null, [activeSnappedEntryId, displayNodes]);
   const hoverNode = useMemo(() => displayNodes.find((node) => node.entry.id === activeHoverEntryId) ?? null, [activeHoverEntryId, displayNodes]);
   const morphNode = useMemo(() => displayNodes.find((node) => node.entry.id === morphingEntryId) ?? null, [displayNodes, morphingEntryId]);
@@ -184,13 +184,22 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
 
   useEffect(() => {
     const preventBrowserWheel = (event: WheelEvent) => {
-      event.preventDefault();
+      if (event.cancelable) event.preventDefault();
+    };
+    const preventBrowserTouch = (event: TouchEvent) => {
+      if (event.cancelable) event.preventDefault();
     };
 
-    window.addEventListener('wheel', preventBrowserWheel, { passive: false });
+    window.addEventListener('wheel', preventBrowserWheel, { capture: true, passive: false });
+    window.addEventListener('touchmove', preventBrowserTouch, { capture: true, passive: false });
+    window.addEventListener('gesturestart', preventBrowserWheel as unknown as EventListener, { capture: true, passive: false });
+    window.addEventListener('gesturechange', preventBrowserWheel as unknown as EventListener, { capture: true, passive: false });
 
     return () => {
-      window.removeEventListener('wheel', preventBrowserWheel);
+      window.removeEventListener('wheel', preventBrowserWheel, { capture: true });
+      window.removeEventListener('touchmove', preventBrowserTouch, { capture: true });
+      window.removeEventListener('gesturestart', preventBrowserWheel as unknown as EventListener, { capture: true });
+      window.removeEventListener('gesturechange', preventBrowserWheel as unknown as EventListener, { capture: true });
 
       const currentMotion = motionRef.current;
       if (currentMotion.frame !== null && typeof window.cancelAnimationFrame === 'function') {
@@ -368,6 +377,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
 
     if (typeof window.requestAnimationFrame === 'function') {
       ref.frame = window.requestAnimationFrame(stepMotion);
+      return;
     }
 
     ref.timeout = window.setTimeout(stepMotion, 34);
@@ -642,7 +652,19 @@ function cameraDistance(point: SvgPoint, node: WormholeEntryNode, cameraFocus: {
 function isReadableNode(node: WormholeEntryNode) {
   const margin = 54;
   const insideFrame = node.x > margin && node.x < atlasSize.width - margin && node.y > margin && node.y < atlasSize.height - margin;
-  return insideFrame && node.depth >= 0.01 && node.depth <= 0.94 && node.opacity >= 0.08;
+  return insideFrame && node.depth >= 0.018 && node.depth <= 0.9 && node.opacity >= 0.12;
+}
+
+function limitDisplayNodes(nodes: WormholeEntryNode[]) {
+  return nodes
+    .filter(isReadableNode)
+    .sort((a, b) => nodeRenderPriority(b) - nodeRenderPriority(a))
+    .slice(0, 72)
+    .sort((a, b) => b.depth - a.depth);
+}
+
+function nodeRenderPriority(node: WormholeEntryNode) {
+  return node.opacity * 1.3 + node.closeness * 0.7 + (node.clusterSize > 1 ? 0.12 : 0);
 }
 
 function styleLensOpacity(node: WormholeEntryNode, activeStyleLens: StyleSectorId | null) {
