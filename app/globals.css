@@ -57,9 +57,9 @@ body {
 }
 
 @keyframes intro-title-away {
-  0% { opacity: 1; transform: scale(1); filter: blur(0); }
-  45% { opacity: 0.9; transform: scale(1.08); filter: blur(0); }
-  100% { opacity: 0; transform: scale(0.42); filter: blur(18px); }
+  0% { opacity: 1; transform: translate(0, 0) scale(1); filter: blur(0); }
+  58% { opacity: 0.92; transform: translate(-31vw, -34vh) scale(0.36); filter: blur(0); }
+  100% { opacity: 0; transform: translate(-42vw, -42vh) scale(0.18); filter: blur(10px); }
 }
 
 @keyframes wormhole-current-pulse {
@@ -79,49 +79,9 @@ body {
   70% { transform: translate(calc(var(--drift-x) * -0.8), calc(var(--drift-y) * 0.9)) scale(1.015); }
 }
 
-@keyframes hover-preview-arrive {
-  from { opacity: 0; transform: translateY(6px) scale(0.96); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
-}
-
 @keyframes dossier-arrive {
   from { opacity: 0; transform: scale(0.97); }
   to { opacity: 1; transform: scale(1); }
-}
-
-@keyframes dossier-morph-in {
-  from {
-    opacity: 0.04;
-    transform: translate(var(--morph-x), var(--morph-y)) scale(0.14);
-  }
-  58% {
-    opacity: 0.82;
-  }
-  to {
-    opacity: 1;
-    transform: translate(0, 0) scale(1);
-  }
-}
-
-@keyframes dossier-morph-out {
-  from {
-    opacity: 1;
-    transform: translate(0, 0) scale(1);
-  }
-  to {
-    opacity: 0;
-    transform: translate(var(--morph-x), var(--morph-y)) scale(0.16);
-  }
-}
-
-@keyframes dossier-dim-in {
-  from { opacity: 0; }
-  to { opacity: 0.18; }
-}
-
-@keyframes dossier-dim-out {
-  from { opacity: 0.26; }
-  to { opacity: 0; }
 }
 
 @keyframes cursor-orbit {
@@ -222,50 +182,17 @@ body {
 }
 
 .wormhole-year-label,
-.hover-preview,
 .dossier-overlay {
   transform-box: fill-box;
   transform-origin: center;
 }
 
-.hover-preview {
-  animation: hover-preview-arrive 180ms cubic-bezier(0.19, 1, 0.22, 1);
-}
-
-.project-preview-card,
-.hover-image-card {
+.project-preview-card {
   filter: drop-shadow(0 0 12px rgb(247 247 244 / 10%));
 }
 
 .dossier-overlay {
   animation: dossier-arrive 420ms cubic-bezier(0.19, 1, 0.22, 1);
-}
-
-.dossier-morph-overlay {
-  transform-box: view-box;
-  transform-origin: center;
-}
-
-.dossier-morph-card {
-  transform-box: fill-box;
-  transform-origin: 0 0;
-  will-change: transform, opacity;
-}
-
-.dossier-morph-card-opening {
-  animation: dossier-morph-in 360ms cubic-bezier(0.19, 1, 0.22, 1) both;
-}
-
-.dossier-morph-card-closing {
-  animation: dossier-morph-out 320ms cubic-bezier(0.55, 0, 0.1, 1) both;
-}
-
-.dossier-morph-overlay-opening .dossier-morph-dim {
-  animation: dossier-dim-in 240ms ease-out both;
-}
-
-.dossier-morph-overlay-closing .dossier-morph-dim {
-  animation: dossier-dim-out 260ms ease-in both;
 }
 
 .project-detail-card {
@@ -282,24 +209,8 @@ body {
   transform-origin: center;
 }
 
-.cosmos-node-wiggle:hover {
-  animation: cosmos-node-hover 900ms ease-out 1;
-}
-
 .node-focus-drift {
   transition: transform 420ms cubic-bezier(0.19, 1, 0.22, 1), opacity 200ms ease;
-}
-
-.cosmos-magnifying .node-focus-drift:not(.node-focus-active) {
-  opacity: 0.48;
-}
-
-.cosmos-focusing:not(.cosmos-magnifying) .node-focus-drift:not(.node-focus-active) {
-  opacity: 0.82;
-}
-
-.cosmos-magnifying .relation-strand-group {
-  opacity: 0.32;
 }
 
 .cosmos-cursor circle:first-child {
@@ -345,16 +256,12 @@ body {
 
 .cosmos-moving .relation-strand,
 .cosmos-moving .project-preview-card,
-.cosmos-moving .hover-image-card,
 .cosmos-moving .database-access,
-.cosmos-moving .motion-debug-hud,
 .cosmos-moving .entry-thumbnail {
   filter: none;
 }
 
-.cosmos-moving .cosmos-node-wiggle:hover,
 .cosmos-moving .preview-theme-chip,
-.cosmos-moving .hover-preview,
 .cosmos-moving .wormhole-current-ring {
   animation: none;
 }
@@ -407,18 +314,23 @@ body {
   transform: scale(1.28) translateY(-2px);
 }
 
-.filter-tabs {
+.lens-access,
+.lens-panel {
   filter: drop-shadow(0 0 10px rgb(0 231 255 / 8%));
 }
 
 .filter-tab,
-.database-tab {
+.database-tab,
+.lens-access,
+.lens-panel-close {
   cursor: none;
   transition: opacity 140ms ease, transform 140ms ease;
 }
 
 .filter-tab:hover,
-.database-tab:hover {
+.database-tab:hover,
+.lens-access:hover,
+.lens-panel-close:hover {
   opacity: 1;
   transform-box: fill-box;
   transform-origin: center;
@@ -426,7 +338,8 @@ body {
 }
 
 .filter-tab-active,
-.database-tab-active {
+.database-tab-active,
+.lens-access-open {
   filter: drop-shadow(0 0 8px rgb(0 231 255 / 16%));
 }
 
@@ -447,22 +360,16 @@ body {
   transition: opacity 160ms ease;
 }
 
-.database-access:hover .database-access-shell,
 .database-access-open .database-access-shell {
   transform: scaleX(1);
 }
 
-.database-access:hover .database-access-label,
 .database-access-open .database-access-label {
   opacity: 0.86;
 }
 
 .navigation-dock {
   filter: drop-shadow(0 0 12px rgb(0 231 255 / 10%));
-}
-
-.motion-debug-hud {
-  filter: drop-shadow(0 0 10px rgb(0 231 255 / 12%));
 }
 
 .database-placeholder {
@@ -489,6 +396,7 @@ body {
 
 .intro-gate-launching > span {
   animation: intro-title-away 1.35s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+  transform-origin: center;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -506,9 +414,6 @@ body {
   .cosmos-cursor circle:first-child,
   .relation-strand,
   .relation-strand-glow,
-  .hover-preview,
-  .dossier-morph-card,
-  .dossier-morph-dim,
   .preview-theme-chip,
   .dossier-overlay {
     animation: none;

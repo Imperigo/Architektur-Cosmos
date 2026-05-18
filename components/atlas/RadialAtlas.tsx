@@ -1,8 +1,7 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState, type CSSProperties, type PointerEvent, type WheelEvent as ReactWheelEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type PointerEvent, type WheelEvent as ReactWheelEvent } from 'react';
 import { ProjectDetailCard } from '@/components/atlas/ProjectDetailCard';
-import { ProjectMediaGrid } from '@/components/atlas/ProjectMediaGrid';
 import { RelationOverlay } from '@/components/atlas/RelationOverlay';
 import { SemanticEntryNode } from '@/components/atlas/SemanticEntryNode';
 import { StyleSectors } from '@/components/atlas/StyleSectors';
@@ -24,11 +23,7 @@ type MotionSnapshot = {
   isSettling: boolean;
 };
 
-const hoverRadius = 76;
 type IntroState = 'intro' | 'launching' | 'idle';
-type ObjectInteractionState = 'idle' | 'approach' | 'preview' | 'focus' | 'morphing' | 'dossier';
-type HoverFocusLevel = 'none' | 'approach' | 'preview' | 'focus' | 'magnify';
-type MorphPhase = 'opening' | 'closing' | null;
 type SourceLens = 'afasia' | null;
 type DatabaseTab = 'entries' | 'media' | 'sources' | 'relations' | 'tags';
 
@@ -46,17 +41,10 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     isSettling: true
   });
   const [introState, setIntroState] = useState<IntroState>('intro');
-  const [snappedEntryId, setSnappedEntryId] = useState<string | null>(null);
-  const [hoverEntryId, setHoverEntryId] = useState<string | null>(null);
-  const [hoverDurationMs, setHoverDurationMs] = useState(0);
-  const [morphingEntryId, setMorphingEntryId] = useState<string | null>(null);
-  const [morphPhase, setMorphPhase] = useState<MorphPhase>(null);
-  const [morphAnchor, setMorphAnchor] = useState<SvgPoint | null>(null);
   const [pointerPoint, setPointerPoint] = useState<SvgPoint | null>(null);
+  const [showFilterPanel, setShowFilterPanel] = useState(false);
   const [showDatabasePanel, setShowDatabasePanel] = useState(false);
-  const [isDatabaseHovered, setIsDatabaseHovered] = useState(false);
   const [activeDatabaseTab, setActiveDatabaseTab] = useState<DatabaseTab>('entries');
-  const [debugFps, setDebugFps] = useState<number | null>(null);
   const motionRef = useRef({
     currentTravel: 0,
     targetTravel: 0,
@@ -64,44 +52,19 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     frame: null as number | null,
     timeout: null as number | null
   });
-  const hoverDurationTimerRef = useRef<number | null>(null);
-  const morphTimeoutRef = useRef<number | null>(null);
   const pendingPointerPointRef = useRef<SvgPoint | null>(null);
   const pointerFrameRef = useRef<number | null>(null);
-  const showMotionDebug = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('debug') === 'motion';
   const state = useMemo(() => wormholeState(motion.currentTravel), [motion.currentTravel]);
-  const activeSelectedEntryId = selectedEntry?.id;
-  const activeSnappedEntryId = snappedEntryId;
-  const activeHoverEntryId = hoverEntryId;
-  const nodes = useMemo(() => layoutWormholeEntries(entries, state, activeSelectedEntryId), [activeSelectedEntryId, entries, state]);
+  const activeSelectedEntryId = selectedEntry?.id ?? null;
+  const nodes = useMemo(() => layoutWormholeEntries(entries, state, activeSelectedEntryId ?? undefined), [activeSelectedEntryId, entries, state]);
   const displayNodes = useMemo(() => limitDisplayNodes(nodes), [nodes]);
-  const snappedNode = useMemo(() => displayNodes.find((node) => node.entry.id === activeSnappedEntryId) ?? null, [activeSnappedEntryId, displayNodes]);
-  const hoverNode = useMemo(() => displayNodes.find((node) => node.entry.id === activeHoverEntryId) ?? null, [activeHoverEntryId, displayNodes]);
-  const morphNode = useMemo(() => displayNodes.find((node) => node.entry.id === morphingEntryId) ?? null, [displayNodes, morphingEntryId]);
-  const approachNode = useMemo(() => {
-    if (!pointerPoint || hoverNode || snappedNode || morphPhase || motion.isMoving || introState !== 'idle') return null;
-
-    const nearest = nearestNode(pointerPoint, displayNodes);
-    if (!nearest) return null;
-
-    return nearest.distance <= hoverRadius * 1.45 + nearest.node.size * 0.35 ? nearest.node : null;
-  }, [displayNodes, hoverNode, introState, morphPhase, motion.isMoving, pointerPoint, snappedNode]);
   const isTraveling = motion.isMoving;
-  const isSettling = motion.isSettling;
-  const isMorphing = morphPhase !== null;
-  const isHoverPreviewActive = Boolean(hoverNode && !snappedNode && !isTraveling && !isMorphing);
-  const isHoverFocusActive = isHoverPreviewActive && isSettling && hoverDurationMs >= 1050;
-  const isHoverMagnifyActive = isHoverPreviewActive && isSettling && hoverDurationMs >= 4000;
-  const hoverFocusLevel: HoverFocusLevel = isHoverMagnifyActive ? 'magnify' : isHoverFocusActive ? 'focus' : isHoverPreviewActive ? 'preview' : approachNode ? 'approach' : 'none';
-  const interactionState: ObjectInteractionState = snappedNode ? 'dossier' : isMorphing ? 'morphing' : isHoverMagnifyActive || isHoverFocusActive ? 'focus' : isHoverPreviewActive ? 'preview' : approachNode ? 'approach' : 'idle';
-  const focusNode = hoverNode ?? approachNode;
   const sourceLensCount = useMemo(() => entries.filter((entry) => isSourceLensEntry(entry, 'afasia')).length, [entries]);
-  const cameraFocus = focusCameraOffset(focusNode, hoverFocusLevel);
-  const cursorPoint = cursorAnchorPoint(pointerPoint, hoverNode, cameraFocus, isTraveling || isMorphing, introState, hoverFocusLevel, Boolean(snappedNode));
+  const cursorPoint = introState === 'idle' && !isTraveling ? pointerPoint ?? { x: atlasSize.cx, y: atlasSize.cy } : null;
   const isIntroActive = introState !== 'idle';
   const backgroundStyle = {
     filter: isIntroActive ? 'blur(7px)' : 'blur(0px)',
-    opacity: snappedNode ? 0.48 : isMorphing ? 0.62 : introState === 'intro' ? 0.3 : introState === 'launching' ? 0.82 : 1,
+    opacity: selectedEntry ? 0.48 : introState === 'intro' ? 0.3 : introState === 'launching' ? 0.82 : 1,
     transition: 'filter 520ms cubic-bezier(0.19, 1, 0.22, 1), opacity 520ms cubic-bezier(0.19, 1, 0.22, 1)'
   };
 
@@ -140,51 +103,6 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   }, [introState]);
 
   useEffect(() => {
-    clearHoverTimers();
-
-    if (!hoverNode || snappedNode || isMorphing || isTraveling || !isSettling) {
-      return;
-    }
-
-    const startedAt = window.performance.now();
-
-    const updateHoverDuration = () => {
-      setHoverDurationMs(Math.round(window.performance.now() - startedAt));
-      hoverDurationTimerRef.current = window.setTimeout(updateHoverDuration, 140);
-    };
-
-    hoverDurationTimerRef.current = window.setTimeout(updateHoverDuration, 140);
-    return clearHoverTimers;
-  }, [hoverNode, isMorphing, isSettling, isTraveling, snappedNode]);
-
-  useEffect(() => {
-    if (!showMotionDebug) return;
-
-    let frame: number | null = null;
-    let lastTime = window.performance.now();
-    let frames = 0;
-
-    function tick(now: number) {
-      frames += 1;
-
-      if (now - lastTime >= 600) {
-        setDebugFps(Math.round((frames * 1000) / (now - lastTime)));
-        frames = 0;
-        lastTime = now;
-      }
-
-      frame = window.requestAnimationFrame(tick);
-    }
-
-    frame = window.requestAnimationFrame(tick);
-    return () => {
-      if (frame !== null) {
-        window.cancelAnimationFrame(frame);
-      }
-    };
-  }, [showMotionDebug]);
-
-  useEffect(() => {
     const preventBrowserWheel = (event: WheelEvent) => {
       if (event.cancelable) event.preventDefault();
     };
@@ -215,27 +133,8 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
       if (pointerFrameRef.current !== null) {
         window.cancelAnimationFrame(pointerFrameRef.current);
       }
-
-      clearHoverTimers();
-
-      if (morphTimeoutRef.current !== null) {
-        window.clearTimeout(morphTimeoutRef.current);
-      }
     };
   }, []);
-
-  function clearHoverTimers() {
-    if (hoverDurationTimerRef.current !== null) {
-      window.clearTimeout(hoverDurationTimerRef.current);
-      hoverDurationTimerRef.current = null;
-    }
-  }
-
-  function clearHoverState() {
-    clearHoverTimers();
-    setHoverEntryId(null);
-    setHoverDurationMs(0);
-  }
 
   function startIntro() {
     if (introState === 'idle') return;
@@ -250,66 +149,22 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
       return;
     }
 
-    releaseSnap(true);
+    closeDossier();
     nudgeTravel(delta);
   }
 
   function focusNodeInView(node: WormholeEntryNode) {
-    openDossierFromNode(node);
+    openDossierFromNode(node.entry);
   }
 
-  function openDossierFromNode(node: WormholeEntryNode) {
-    if (isMorphing) return;
-
-    if (morphTimeoutRef.current !== null) {
-      window.clearTimeout(morphTimeoutRef.current);
-      morphTimeoutRef.current = null;
-    }
-
-    clearHoverTimers();
-    setSelectedEntry(node.entry);
-    setHoverEntryId(node.entry.id);
-    setMorphingEntryId(node.entry.id);
-    setMorphAnchor(applyCameraToPoint(node, cameraFocus));
-    setMorphPhase('opening');
-
-    morphTimeoutRef.current = window.setTimeout(() => {
-      setSnappedEntryId(node.entry.id);
-      setMorphPhase(null);
-      setMorphingEntryId(null);
-      morphTimeoutRef.current = null;
-    }, 360);
+  function openDossierFromNode(entry: Entry) {
+    setShowFilterPanel(false);
+    setShowDatabasePanel(false);
+    setSelectedEntry(entry);
   }
 
-  function releaseSnap(immediate = false) {
-    if (morphTimeoutRef.current !== null) {
-      window.clearTimeout(morphTimeoutRef.current);
-      morphTimeoutRef.current = null;
-    }
-
-    clearHoverState();
-
-    if (!snappedNode || immediate) {
-      setSnappedEntryId(null);
-      setMorphPhase(null);
-      setMorphingEntryId(null);
-      setMorphAnchor(null);
-      setSelectedEntry(null);
-      return;
-    }
-
-    setMorphingEntryId(snappedNode.entry.id);
-    setMorphAnchor(applyCameraToPoint(snappedNode, { x: 0, y: 0, scale: 1 }));
-    setMorphPhase('closing');
-    setSnappedEntryId(null);
-
-    morphTimeoutRef.current = window.setTimeout(() => {
-      setMorphPhase(null);
-      setMorphingEntryId(null);
-      setMorphAnchor(null);
-      setSelectedEntry(null);
-      morphTimeoutRef.current = null;
-    }, 320);
+  function closeDossier() {
+    setSelectedEntry(null);
   }
 
   function resetMotion(value: number) {
@@ -408,8 +263,8 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     }
 
     const normalizedDelta = Math.max(-140, Math.min(140, event.deltaY));
-    releaseSnap(true);
-    nudgeTravel(normalizedDelta * 0.00036);
+    closeDossier();
+    nudgeTravel(normalizedDelta * 0.00014);
   }
 
   function handlePointerMove(event: PointerEvent<SVGSVGElement>) {
@@ -437,41 +292,6 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
 
   function commitPointerMove(point: SvgPoint) {
     setPointerPoint(point);
-
-    if (snappedNode || isTraveling || isMorphing) {
-      if (isTraveling) {
-        clearHoverState();
-      }
-      return;
-    }
-
-    if (isHoverFocusActive && hoverNode) {
-      const hoverDistance = cameraDistance(point, hoverNode, cameraFocus);
-      if (hoverDistance <= hoverRadius * 2.65) return;
-
-      clearHoverState();
-      return;
-    }
-
-    if (hoverNode) {
-      const hoverDistance = cameraDistance(point, hoverNode, cameraFocus);
-      if (hoverDistance <= hoverRadius * 1.45 + hoverNode.size * 1.4) return;
-    }
-
-    const nearest = nearestCameraNode(point, displayNodes, cameraFocus);
-
-    if (!nearest) {
-      clearHoverState();
-      return;
-    }
-
-    const nextHoverId = nearest.distance <= hoverRadius + nearest.node.size * 0.4 ? nearest.node.entry.id : null;
-    if (nextHoverId === null) {
-      clearHoverState();
-    } else if (nextHoverId !== hoverEntryId) {
-      clearHoverState();
-      setHoverEntryId(nextHoverId);
-    }
   }
 
   function handlePointerLeave() {
@@ -483,9 +303,6 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
       pointerFrameRef.current = null;
     }
 
-    if (!snappedNode) {
-      clearHoverState();
-    }
   }
 
   function pointerToSvgPoint(event: PointerEvent<SVGSVGElement>): SvgPoint | null {
@@ -502,7 +319,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   }
 
   return (
-    <main className={`relative h-screen w-screen overflow-hidden bg-[#050505] text-[#f7f7f4] ${introState === 'launching' ? 'cosmos-launching' : ''} ${isTraveling ? 'cosmos-moving' : ''} ${introState === 'idle' && !isTraveling ? 'cosmos-idle' : ''} ${isHoverFocusActive || isHoverMagnifyActive ? 'cosmos-focusing' : ''} ${isHoverMagnifyActive ? 'cosmos-magnifying' : ''}`}>
+    <main className={`relative h-screen w-screen overflow-hidden bg-[#050505] text-[#f7f7f4] ${introState === 'launching' ? 'cosmos-launching' : ''} ${isTraveling ? 'cosmos-moving' : ''} ${introState === 'idle' && !isTraveling ? 'cosmos-idle' : ''}`}>
       <div className="h-full w-full">
         <svg
           ref={svgRef}
@@ -518,31 +335,19 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
           <defs>
           </defs>
           <rect width={atlasSize.width} height={atlasSize.height} fill="#050505" />
-          <g style={backgroundStyle} pointerEvents={snappedNode || isMorphing ? 'none' : 'auto'}>
-            <g
-              className="wormhole-camera"
-              style={{
-                transform: `translate(${cameraFocus.x}px, ${cameraFocus.y}px) scale(${cameraFocus.scale})`,
-                transformOrigin: `${atlasSize.cx}px ${atlasSize.cy}px`
-              }}
-            >
+          <g style={backgroundStyle} pointerEvents={selectedEntry ? 'none' : 'auto'}>
+            <g className="wormhole-camera">
               <WormholeRings state={state} isMoving={isTraveling} />
               <StyleSectors state={state} isMoving={isTraveling} activeStyleLens={activeStyleLens} />
 
-              {showRelations ? <RelationOverlay nodes={displayNodes} relations={relations} selectedEntry={snappedNode?.entry ?? hoverNode?.entry ?? morphNode?.entry ?? null} isMoving={isTraveling} /> : null}
-
-              {hoverNode && !snappedNode && !isTraveling && !isMorphing ? <HoverPreview pointer={invertCameraPoint(cursorPoint ?? pointerPoint ?? applyCameraToPoint(hoverNode, cameraFocus), cameraFocus)} node={hoverNode} focusLevel={hoverFocusLevel} /> : null}
+              {showRelations ? <RelationOverlay nodes={displayNodes} relations={relations} selectedEntry={selectedEntry} isMoving={isTraveling} /> : null}
 
               {displayNodes.map((node) => {
-                const displayOffset = focusDisplayOffset(node, hoverNode, hoverFocusLevel);
-                const isFocusNode = hoverNode?.entry.id === node.entry.id;
-
                 return (
                 <g
                   key={node.entry.id}
-                  className={`node-focus-drift ${isFocusNode ? 'node-focus-active' : ''}`}
-                  opacity={node.opacity * styleLensOpacity(node, activeStyleLens) * sourceLensOpacity(node, activeSourceLens) * (isHoverMagnifyActive && !isFocusNode ? 0.44 : 1)}
-                  style={{ transform: `translate(${displayOffset.x}px, ${displayOffset.y}px)` }}
+                  className="node-focus-drift"
+                  opacity={node.opacity * styleLensOpacity(node, activeStyleLens) * sourceLensOpacity(node, activeSourceLens)}
                 >
                   <SemanticEntryNode
                     entry={node.entry}
@@ -556,7 +361,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
                     clusterSize={node.clusterSize}
                     semanticLevel="global"
                     scale={1}
-                    isSelected={activeHoverEntryId === node.entry.id || activeSnappedEntryId === node.entry.id}
+                    isSelected={activeSelectedEntryId === node.entry.id}
                     nodeRadius={node.size}
                     showLabel={false}
                     styleLensActive={activeStyleLens === node.entry.style_sector}
@@ -570,10 +375,12 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
               })}
             </g>
           </g>
-          {morphNode && morphPhase ? <MorphingEntryOverlay node={morphNode} anchor={morphAnchor ?? applyCameraToPoint(morphNode, cameraFocus)} phase={morphPhase} onDismiss={() => releaseSnap(true)} /> : null}
-          {snappedNode ? <SnappedEntryOverlay node={snappedNode} onDismiss={() => releaseSnap()} /> : null}
+          {selectedEntry ? <SnappedEntryOverlay entry={selectedEntry} onDismiss={closeDossier} /> : null}
           {introState === 'idle' ? (
-            <FilterTabs
+            <LensAccess isOpen={showFilterPanel} onToggle={() => setShowFilterPanel((current) => !current)} />
+          ) : null}
+          {showFilterPanel && introState === 'idle' ? (
+            <FilterPanel
               activeStyleLens={activeStyleLens}
               activeSourceLens={activeSourceLens}
               showRelations={showRelations}
@@ -586,6 +393,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
               }}
               onToggleSourceLens={() => setActiveSourceLens((current) => current === 'afasia' ? null : 'afasia')}
               onToggleRelations={() => setShowRelations((current) => !current)}
+              onDismiss={() => setShowFilterPanel(false)}
             />
           ) : null}
           {introState === 'idle' ? (
@@ -595,8 +403,8 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
               activeStyleLens={activeStyleLens}
               activeSourceLens={activeSourceLens}
               sourceLensCount={sourceLensCount}
-              onTravelForward={() => travelBy(0.035)}
-              onTravelBackward={() => travelBy(-0.035)}
+              onTravelForward={() => travelBy(0.018)}
+              onTravelBackward={() => travelBy(-0.018)}
               onCycleStyleLens={() => setActiveStyleLens((current) => nextStyleLens(current))}
               onToggleSourceLens={() => setActiveSourceLens((current) => current === 'afasia' ? null : 'afasia')}
               onToggleRelations={() => setShowRelations((current) => !current)}
@@ -605,8 +413,6 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
           {introState === 'idle' ? (
             <DatabaseAccess
               isOpen={showDatabasePanel}
-              isHovered={isDatabaseHovered}
-              onHoverChange={setIsDatabaseHovered}
               onToggle={() => setShowDatabasePanel((current) => !current)}
             />
           ) : null}
@@ -619,58 +425,13 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
           ) : null}
           {introState === 'idle' ? <TimeReadout timePosition={state.timePosition} currentYear={state.currentYear} /> : null}
           {introState === 'idle' ? <BrandChrome /> : null}
-          {showMotionDebug && introState === 'idle' ? (
-            <MotionDebugHud
-              motion={motion}
-              fps={debugFps}
-              nodeCount={displayNodes.length}
-              hoverEntryId={hoverNode?.entry.id ?? null}
-              interactionState={interactionState}
-              focusLevel={hoverFocusLevel}
-              hoverDurationMs={hoverDurationMs}
-              focusNodeId={focusNode?.entry.id ?? morphNode?.entry.id ?? snappedNode?.entry.id ?? null}
-              morphing={isMorphing}
-              showRelations={showRelations}
-            />
-          ) : null}
-          {cursorPoint ? <CosmosCursor pointer={cursorPoint} activeNode={hoverNode ?? snappedNode} focusLevel={hoverFocusLevel} /> : null}
+          {cursorPoint ? <CosmosCursor pointer={cursorPoint} isDossierOpen={Boolean(selectedEntry)} /> : null}
         </svg>
       </div>
 
       {introState !== 'idle' ? <IntroGate state={introState} onStart={startIntro} /> : null}
     </main>
   );
-}
-
-function nearestNode(point: SvgPoint, nodes: WormholeEntryNode[]) {
-  return nodes.reduce<{ node: WormholeEntryNode; distance: number } | null>((nearest, node) => {
-    if (node.opacity < 0.08) return nearest;
-
-    const nodeDistance = distance(point, node);
-    if (!nearest || nodeDistance < nearest.distance) {
-      return { node, distance: nodeDistance };
-    }
-
-    return nearest;
-  }, null);
-}
-
-function nearestCameraNode(point: SvgPoint, nodes: WormholeEntryNode[], cameraFocus: { x: number; y: number; scale: number }) {
-  return nodes.reduce<{ node: WormholeEntryNode; distance: number } | null>((nearest, node) => {
-    if (node.opacity < 0.08) return nearest;
-
-    const nodeDistance = cameraDistance(point, node, cameraFocus);
-    if (!nearest || nodeDistance < nearest.distance) {
-      return { node, distance: nodeDistance };
-    }
-
-    return nearest;
-  }, null);
-}
-
-function cameraDistance(point: SvgPoint, node: WormholeEntryNode, cameraFocus: { x: number; y: number; scale: number }) {
-  const cameraPoint = applyCameraToPoint(node, cameraFocus);
-  return Math.hypot(point.x - cameraPoint.x, point.y - cameraPoint.y);
 }
 
 function isReadableNode(node: WormholeEntryNode) {
@@ -717,98 +478,6 @@ function isSourceLensEntry(entry: Entry, activeSourceLens: SourceLens) {
   return activeSourceLens === 'afasia' && sourceText.includes('afasia');
 }
 
-function focusDisplayOffset(node: WormholeEntryNode, focusNode: WormholeEntryNode | null, focusLevel: HoverFocusLevel): SvgPoint {
-  if (!focusNode || focusLevel === 'none' || focusLevel === 'approach' || focusLevel === 'preview') return { x: 0, y: 0 };
-
-  const magnifyActive = focusLevel === 'magnify';
-  const depthDelta = Math.abs(node.depth - focusNode.depth);
-  const angularDelta = Math.abs(shortestAngleDelta(node.angle, focusNode.angle));
-  const isClusterNeighbor = depthDelta < (magnifyActive ? 0.046 : 0.024) && angularDelta < (magnifyActive ? 35 : 22);
-
-  if (!isClusterNeighbor) return { x: 0, y: 0 };
-
-  const strength = node.entry.id === focusNode.entry.id ? (magnifyActive ? 0.095 : 0.026) : (magnifyActive ? 0.055 : 0.014);
-
-  return {
-    x: (atlasSize.cx - node.x) * strength,
-    y: (atlasSize.cy - node.y) * strength
-  };
-}
-
-function focusCameraOffset(focusNode: WormholeEntryNode | null, focusLevel: HoverFocusLevel) {
-  if (!focusNode || focusLevel === 'none') {
-    return { x: 0, y: 0, scale: 1 };
-  }
-
-  const strengthByLevel: Record<HoverFocusLevel, number> = {
-    none: 0,
-    approach: 0.006,
-    preview: 0.018,
-    focus: 0.058,
-    magnify: 0.125
-  };
-  const scaleByLevel: Record<HoverFocusLevel, number> = {
-    none: 1,
-    approach: 1.0015,
-    preview: 1.004,
-    focus: 1.018,
-    magnify: 1.052
-  };
-  const strength = strengthByLevel[focusLevel];
-
-  return {
-    x: (atlasSize.cx - focusNode.x) * strength,
-    y: (atlasSize.cy - focusNode.y) * strength,
-    scale: scaleByLevel[focusLevel]
-  };
-}
-
-function applyCameraToPoint(point: SvgPoint, cameraFocus: { x: number; y: number; scale: number }): SvgPoint {
-  return {
-    x: atlasSize.cx + cameraFocus.x + (point.x - atlasSize.cx) * cameraFocus.scale,
-    y: atlasSize.cy + cameraFocus.y + (point.y - atlasSize.cy) * cameraFocus.scale
-  };
-}
-
-function invertCameraPoint(point: SvgPoint, cameraFocus: { x: number; y: number; scale: number }): SvgPoint {
-  return {
-    x: atlasSize.cx + (point.x - atlasSize.cx - cameraFocus.x) / cameraFocus.scale,
-    y: atlasSize.cy + (point.y - atlasSize.cy - cameraFocus.y) / cameraFocus.scale
-  };
-}
-
-function cursorAnchorPoint(
-  pointerPoint: SvgPoint | null,
-  hoverNode: WormholeEntryNode | null,
-  cameraFocus: { x: number; y: number; scale: number },
-  isTraveling: boolean,
-  introState: IntroState,
-  focusLevel: HoverFocusLevel,
-  hasSnappedNode: boolean
-): SvgPoint | null {
-  if (introState !== 'idle' || isTraveling) return null;
-  const freePointer = pointerPoint ?? { x: atlasSize.cx, y: atlasSize.cy };
-  if (!hoverNode || hasSnappedNode) return freePointer;
-
-  const anchor = applyCameraToPoint(hoverNode, cameraFocus);
-  const strengthByLevel: Record<HoverFocusLevel, number> = {
-    none: 0,
-    approach: 0.025,
-    preview: 0.055,
-    focus: 0.09,
-    magnify: 0.14
-  };
-  const strength = strengthByLevel[focusLevel];
-  return {
-    x: freePointer.x + (anchor.x - freePointer.x) * strength,
-    y: freePointer.y + (anchor.y - freePointer.y) * strength
-  };
-}
-
-function shortestAngleDelta(a: number, b: number) {
-  return ((((a - b) % 360) + 540) % 360) - 180;
-}
-
 function roundMotion(value: number) {
   return Math.round(value * 100000) / 100000;
 }
@@ -841,16 +510,16 @@ function RadialHud({
 
   return (
     <g className="radial-hud navigation-dock" pointerEvents="auto" opacity={controlsOpacity}>
-      <rect x={atlasSize.cx - 150} y="904" width="300" height="34" rx="17" fill="#050505" stroke="#f7f7f4" strokeWidth="0.5" opacity="0.68" />
+      <rect x={atlasSize.cx - 132} y="918" width="264" height="30" rx="15" fill="#050505" stroke="#f7f7f4" strokeWidth="0.5" opacity="0.68" />
       <g opacity={controlsOpacity}>
-        <HudButton x={atlasSize.cx - 104} y={921} kind="backward" label="zurueck" onClick={onTravelBackward} />
-        <HudButton x={atlasSize.cx - 52} y={921} kind="forward" label="vor" onClick={onTravelForward} />
-        <HudButton x={atlasSize.cx} y={921} kind="lens" label={lensLabel} active={Boolean(activeStyleLens)} onClick={onCycleStyleLens} />
-        <HudButton x={atlasSize.cx + 52} y={921} kind="source" label="afasia" active={activeSourceLens === 'afasia'} onClick={onToggleSourceLens} />
-        <HudButton x={atlasSize.cx + 104} y={921} kind="relations" label="relations" active={showRelations} onClick={onToggleRelations} />
+        <HudButton x={atlasSize.cx - 92} y={933} kind="backward" label="zurueck" onClick={onTravelBackward} />
+        <HudButton x={atlasSize.cx - 46} y={933} kind="forward" label="vor" onClick={onTravelForward} />
+        <HudButton x={atlasSize.cx} y={933} kind="lens" label={lensLabel} active={Boolean(activeStyleLens)} onClick={onCycleStyleLens} />
+        <HudButton x={atlasSize.cx + 46} y={933} kind="source" label="afasia" active={activeSourceLens === 'afasia'} onClick={onToggleSourceLens} />
+        <HudButton x={atlasSize.cx + 92} y={933} kind="relations" label="relations" active={showRelations} onClick={onToggleRelations} />
       </g>
       {activeSourceLens ? (
-        <text x={atlasSize.cx} y="890" textAnchor="middle" fill="#65ff9a" fontSize="7.2" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.18em" opacity="0.9">
+        <text x={atlasSize.cx} y="907" textAnchor="middle" fill="#65ff9a" fontSize="7.2" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.18em" opacity="0.9">
           AFASIA SOURCE LENS / {sourceLensCount} PROJECT
         </text>
       ) : null}
@@ -866,8 +535,8 @@ function HudButton({ x, y, kind, label, active = false, onClick }: { x: number; 
 
   return (
     <g className="hud-button" pointerEvents="auto" onPointerDown={(event) => event.stopPropagation()} onClick={handleActivate} aria-label={label}>
-      <circle cx={x} cy={y} r="22" fill="#050505" opacity="0.001" />
-      <circle cx={x} cy={y} r="14" fill={active ? '#f7f7f4' : '#050505'} stroke={active ? '#00e7ff' : '#f7f7f4'} strokeWidth="0.75" opacity="0.88" />
+      <circle cx={x} cy={y} r="19" fill="#050505" opacity="0.001" />
+      <circle cx={x} cy={y} r="12.5" fill={active ? '#f7f7f4' : '#050505'} stroke={active ? '#00e7ff' : '#f7f7f4'} strokeWidth="0.75" opacity="0.88" />
       <HudIcon x={x} y={y} kind={kind} active={active} />
     </g>
   );
@@ -916,7 +585,30 @@ function HudIcon({ x, y, kind, active }: { x: number; y: number; kind: 'backward
   );
 }
 
-function FilterTabs({
+function LensAccess({ isOpen, onToggle }: { isOpen: boolean; onToggle: () => void }) {
+  return (
+    <g
+      className={`lens-access ${isOpen ? 'lens-access-open' : ''}`}
+      transform="translate(34 70)"
+      pointerEvents="auto"
+      aria-label="Open atlas lenses"
+      onPointerDown={(event) => event.stopPropagation()}
+      onClick={(event) => {
+        event.stopPropagation();
+        onToggle();
+      }}
+    >
+      <rect width="86" height="27" rx="13.5" fill="#050505" stroke={isOpen ? '#00e7ff' : '#f7f7f4'} strokeWidth="0.62" opacity="0.78" />
+      <circle cx="17" cy="13.5" r="5.2" fill="none" stroke={isOpen ? '#00e7ff' : '#f7f7f4'} strokeWidth="0.72" />
+      <path d="M 10.8 13.5 H 23.2 M 17 7.3 V 19.7" stroke={isOpen ? '#00e7ff' : '#f7f7f4'} strokeWidth="0.56" opacity="0.72" />
+      <text x="35" y="17" fill="#f7f7f4" fontSize="7.8" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.18em">
+        LENSES
+      </text>
+    </g>
+  );
+}
+
+function FilterPanel({
   activeStyleLens,
   activeSourceLens,
   showRelations,
@@ -924,7 +616,8 @@ function FilterTabs({
   onSetStyleLens,
   onResetLenses,
   onToggleSourceLens,
-  onToggleRelations
+  onToggleRelations,
+  onDismiss
 }: {
   activeStyleLens: StyleSectorId | null;
   activeSourceLens: SourceLens;
@@ -934,46 +627,54 @@ function FilterTabs({
   onResetLenses: () => void;
   onToggleSourceLens: () => void;
   onToggleRelations: () => void;
+  onDismiss: () => void;
 }) {
   const x = 34;
-  const y = 78;
+  const y = 108;
   const tabs = [
-    { id: 'all', label: 'ALLE', active: !activeStyleLens && !activeSourceLens && !showRelations, width: 48, onClick: onResetLenses },
+    { id: 'all', label: 'ALLE', active: !activeStyleLens && !activeSourceLens && !showRelations, width: 52, onClick: onResetLenses },
     ...styleSectors.map((sector) => ({
       id: sector.id,
       label: styleShortLabel(sector.id),
       active: activeStyleLens === sector.id,
-      width: 54,
+      width: 38,
       onClick: () => onSetStyleLens(activeStyleLens === sector.id ? null : sector.id)
     })),
-    { id: 'afasia', label: `AFASIA ${sourceLensCount}`, active: activeSourceLens === 'afasia', width: 78, onClick: onToggleSourceLens },
-    { id: 'relations', label: 'REL', active: showRelations, width: 44, onClick: onToggleRelations }
+    { id: 'afasia', label: `AFASIA ${sourceLensCount}`, active: activeSourceLens === 'afasia', width: 84, onClick: onToggleSourceLens },
+    { id: 'relations', label: 'REL', active: showRelations, width: 46, onClick: onToggleRelations }
   ];
 
-  let cursorX = 0;
-
   return (
-    <g className="filter-tabs" transform={`translate(${x} ${y})`} pointerEvents="auto" aria-label="Filter lenses">
-      <text x="0" y="-12" fill="#9cfff7" fontSize="7.4" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.22em" opacity="0.78">
-        LENSES
+    <g className="lens-panel" transform={`translate(${x} ${y})`} pointerEvents="auto" aria-label="Atlas lens panel" onPointerDown={(event) => event.stopPropagation()}>
+      <rect width="384" height="88" rx="8" fill="#050505" stroke="#00e7ff" strokeWidth="0.55" opacity="0.82" />
+      <text x="15" y="23" fill="#9cfff7" fontSize="7.4" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.22em" opacity="0.86">
+        ACTIVE LENSES
       </text>
-      {tabs.map((tab) => {
-        const tabX = cursorX;
-        cursorX += tab.width + 7;
+      <g className="lens-panel-close" transform="translate(342 11)" onClick={(event) => { event.stopPropagation(); onDismiss(); }}>
+        <rect width="25" height="15" rx="7.5" fill="#f7f7f4" opacity="0.84" />
+        <text x="12.5" y="10.8" textAnchor="middle" fill="#050505" fontSize="7" fontFamily="var(--font-sans), system-ui, sans-serif">
+          X
+        </text>
+      </g>
+      {tabs.map((tab, index) => {
+        const row = index < 5 ? 0 : 1;
+        const rowTabs = row === 0 ? tabs.slice(0, 5) : tabs.slice(5);
+        const tabX = rowTabs.slice(0, index - (row === 0 ? 0 : 5)).reduce((sum, item) => sum + item.width + 7, 15);
+        const tabY = row === 0 ? 36 : 60;
 
         return (
           <g
             key={tab.id}
             className={`filter-tab ${tab.active ? 'filter-tab-active' : ''}`}
-            transform={`translate(${tabX} 0)`}
+            transform={`translate(${tabX} ${tabY})`}
             onPointerDown={(event) => event.stopPropagation()}
             onClick={(event) => {
               event.stopPropagation();
               tab.onClick();
             }}
           >
-            <rect width={tab.width} height="21" rx="10.5" fill={tab.active ? '#f7f7f4' : '#050505'} stroke={tab.active ? '#00e7ff' : '#f7f7f4'} strokeWidth="0.55" opacity={tab.active ? 0.92 : 0.72} />
-            <text x={tab.width / 2} y="14" textAnchor="middle" fill={tab.active ? '#050505' : '#f7f7f4'} fontSize="6.7" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.12em">
+            <rect width={tab.width} height="18" rx="9" fill={tab.active ? '#f7f7f4' : '#050505'} stroke={tab.active ? '#00e7ff' : '#f7f7f4'} strokeWidth="0.5" opacity={tab.active ? 0.92 : 0.72} />
+            <text x={tab.width / 2} y="12.4" textAnchor="middle" fill={tab.active ? '#050505' : '#f7f7f4'} fontSize="6.2" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.11em">
               {tab.label}
             </text>
           </g>
@@ -995,62 +696,9 @@ function styleShortLabel(id: StyleSectorId) {
   return labels[id];
 }
 
-function MotionDebugHud({
-  motion,
-  fps,
-  nodeCount,
-  hoverEntryId,
-  interactionState,
-  focusLevel,
-  hoverDurationMs,
-  focusNodeId,
-  morphing,
-  showRelations
-}: {
-  motion: MotionSnapshot;
-  fps: number | null;
-  nodeCount: number;
-  hoverEntryId: string | null;
-  interactionState: ObjectInteractionState;
-  focusLevel: HoverFocusLevel;
-  hoverDurationMs: number;
-  focusNodeId: string | null;
-  morphing: boolean;
-  showRelations: boolean;
-}) {
-  const x = atlasSize.width - 246;
-  const y = 72;
-  const rows = [
-    `travel ${motion.currentTravel.toFixed(3)} -> ${motion.targetTravel.toFixed(3)}`,
-    `velocity ${motion.velocity.toFixed(4)}`,
-    `${motion.isMoving ? 'moving' : 'idle'} / ${motion.isSettling ? 'settled' : 'settling'}`,
-    `fps ${fps ?? '--'}`,
-    `nodes ${nodeCount} / relations ${showRelations ? 'on' : 'off'}`,
-    `interaction ${interactionState} / ${focusLevel}`,
-    `hover ${hoverEntryId ? 'active' : 'none'} / ${Math.round(hoverDurationMs / 100) / 10}s`,
-    `focus ${focusNodeId ? focusNodeId.slice(0, 18) : 'none'}`,
-    `morph ${morphing ? 'yes' : 'no'}`
-  ];
-
-  return (
-    <g className="motion-debug-hud" pointerEvents="none">
-      <rect x={x} y={y} width="212" height="124" rx="5" fill="#050505" stroke="#00e7ff" strokeWidth="0.55" opacity="0.82" />
-      <text x={x + 12} y={y + 20} fill="#f7f7f4" fontSize="8.5" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.14em">
-        MOTION DEBUG
-      </text>
-      {rows.map((row, index) => (
-        <text key={row} x={x + 12} y={y + 38 + index * 10} fill="#b8b8b2" fontSize="7.2" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.08em">
-          {row.toUpperCase()}
-        </text>
-      ))}
-    </g>
-  );
-}
-
-function DatabaseAccess({ isOpen, isHovered, onHoverChange, onToggle }: { isOpen: boolean; isHovered: boolean; onHoverChange: (isHovered: boolean) => void; onToggle: () => void }) {
+function DatabaseAccess({ isOpen, onToggle }: { isOpen: boolean; onToggle: () => void }) {
   const x = atlasSize.width - 164;
   const y = atlasSize.height - 54;
-  const isExpanded = isOpen || isHovered;
   function toggleOnce(event: { stopPropagation: () => void }) {
     event.stopPropagation();
     onToggle();
@@ -1058,13 +706,12 @@ function DatabaseAccess({ isOpen, isHovered, onHoverChange, onToggle }: { isOpen
 
   return (
     <g
-      className={`database-access ${isExpanded ? 'database-access-open' : ''}`}
+      className={`database-access ${isOpen ? 'database-access-open' : ''}`}
       pointerEvents="auto"
       transform={`translate(${x} ${y})`}
-      onPointerEnter={() => onHoverChange(true)}
-      onPointerMove={() => onHoverChange(true)}
-      onPointerLeave={() => onHoverChange(false)}
       aria-label="Database archive"
+      onPointerDown={(event) => event.stopPropagation()}
+      onClick={toggleOnce}
     >
       <rect className="database-access-shell" x="0" y="-16" width="128" height="32" rx="16" fill="#050505" stroke="#00e7ff" strokeWidth="0.55" opacity="0.74" />
       <g className="database-access-core" stroke="#f7f7f4" fill="none" strokeWidth="0.72" opacity="0.9">
@@ -1084,7 +731,6 @@ function DatabaseAccess({ isOpen, isHovered, onHoverChange, onToggle }: { isOpen
         fill="#050505"
         opacity="0.001"
         onPointerDown={(event) => event.stopPropagation()}
-        onPointerMove={() => onHoverChange(true)}
         onClick={toggleOnce}
       />
     </g>
@@ -1143,10 +789,6 @@ function dominantSpanForYear(year: number) {
   return { label: 'Proto-Urban / Ursprung' };
 }
 
-function distance(point: SvgPoint, node: WormholeEntryNode) {
-  return Math.hypot(point.x - node.x, point.y - node.y);
-}
-
 function IntroGate({ state, onStart }: { state: IntroState; onStart: () => void }) {
   return (
     <button
@@ -1160,55 +802,14 @@ function IntroGate({ state, onStart }: { state: IntroState; onStart: () => void 
       aria-label="Start Architecture Cosmos"
     >
       <span className="block">
-        <span className="block text-[clamp(2.4rem,7vw,6.8rem)] font-semibold uppercase tracking-[0.18em] text-[#f7f7f4]">
+        <span className="intro-title-main block text-[clamp(2.4rem,7vw,6.8rem)] font-semibold uppercase tracking-[0.18em] text-[#f7f7f4]">
           architecture cosmos
         </span>
-        <span className="mt-4 block text-[clamp(0.7rem,1.5vw,1rem)] uppercase tracking-[0.42em] text-neutral-300">
+        <span className="intro-title-byline mt-4 block text-[clamp(0.7rem,1.5vw,1rem)] uppercase tracking-[0.42em] text-neutral-300">
           made by andrin
         </span>
       </span>
     </button>
-  );
-}
-
-function HoverPreview({ pointer, node, focusLevel }: { pointer: SvgPoint; node: WormholeEntryNode; focusLevel: HoverFocusLevel }) {
-  const isMagnified = focusLevel === 'magnify';
-  const isFocused = focusLevel === 'focus' || isMagnified;
-  const previewScale = node.closeness > 0.68 ? 0.78 : 0.66;
-  const baseWidth = previewCardWidth(node.entry);
-  const cardWidth = baseWidth * previewScale;
-  const cardHeight = 82 * previewScale;
-  const side = node.x > atlasSize.cx ? -1 : 1;
-  const x = Math.max(34, Math.min(atlasSize.width - cardWidth - 34, pointer.x + side * 28));
-  const y = Math.max(34, Math.min(atlasSize.height - cardHeight - 86, pointer.y - cardHeight / 2));
-
-  return (
-    <g className={`hover-preview ${isFocused ? 'hover-preview-focused' : ''} ${isMagnified ? 'hover-preview-magnified' : ''}`} pointerEvents="none">
-      <line x1={pointer.x} y1={pointer.y} x2={node.x} y2={node.y} stroke="#fff8d6" strokeWidth="0.55" strokeDasharray="1 9" opacity="0.32" />
-      <circle cx={node.x} cy={node.y} r={node.size + (isMagnified ? 16 : isFocused ? 12 : 8)} fill="none" stroke="#fff8d6" strokeWidth="0.62" opacity={isFocused ? 0.58 : 0.44} />
-      <circle cx={node.x} cy={node.y} r={node.size + (isMagnified ? 27 : isFocused ? 20 : 14)} fill="none" stroke="#00e7ff" strokeWidth="0.45" strokeDasharray="1 8" opacity={isMagnified ? 0.44 : 0.28} />
-      <g transform={`translate(${x} ${y}) scale(${previewScale})`}>
-        <HoverImageCard entry={node.entry} width={baseWidth} />
-      </g>
-    </g>
-  );
-}
-
-function HoverImageCard({ entry, width }: { entry: Entry; width: number }) {
-  const mediaWidth = 74;
-  const title = entry.title.length > 30 ? `${entry.title.slice(0, 27).trim()}...` : entry.title;
-
-  return (
-    <g className="hover-image-card">
-      <rect x="0" y="0" width={width} height="82" rx="2" fill="#050505" stroke="#f7f7f4" strokeWidth="0.65" opacity="0.9" />
-      <ProjectMediaGrid media={entry.media} x={8} y={8} slotWidth={58} slotHeight={46} gap={0} types={['exterior']} />
-      <text x={mediaWidth + 10} y="27" fill="#f7f7f4" fontSize="10.5" fontWeight="650" fontFamily="var(--font-sans), system-ui, sans-serif">
-        {title}
-      </text>
-      <text x={mediaWidth + 10} y="48" fill="#b8b8b2" fontSize="7.4" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.16em">
-        {formatYear(entry.year_start)}
-      </text>
-    </g>
   );
 }
 
@@ -1280,35 +881,7 @@ function DatabasePlaceholderPanel({
   );
 }
 
-function MorphingEntryOverlay({ node, anchor, phase, onDismiss }: { node: WormholeEntryNode; anchor: SvgPoint; phase: Exclude<MorphPhase, null>; onDismiss: () => void }) {
-  const cardScale = 1.42;
-  const cardWidth = 352 * cardScale;
-  const cardHeight = 292 * cardScale;
-  const cardX = atlasSize.cx - cardWidth / 2;
-  const cardY = atlasSize.cy - cardHeight / 2;
-  const morphStyle = {
-    '--morph-x': `${anchor.x - cardX}px`,
-    '--morph-y': `${anchor.y - cardY}px`
-  } as CSSProperties;
-
-  return (
-    <g className={`dossier-morph-overlay dossier-morph-overlay-${phase}`} pointerEvents={phase === 'opening' ? 'none' : 'auto'}>
-      <rect className="dossier-morph-dim" width={atlasSize.width} height={atlasSize.height} fill="#050505" opacity={phase === 'opening' ? 0.18 : 0.26} onClick={onDismiss} />
-      <line x1={anchor.x} y1={anchor.y} x2={atlasSize.cx} y2={atlasSize.cy} stroke="#00e7ff" strokeWidth="0.65" strokeDasharray="2 10" opacity="0.28" />
-      <circle cx={anchor.x} cy={anchor.y} r={node.size + 18} fill="none" stroke="#fff8d6" strokeWidth="0.55" opacity="0.36" />
-      <g transform={`translate(${cardX} ${cardY})`}>
-        <g className={`dossier-morph-card dossier-morph-card-${phase}`} style={morphStyle}>
-          <rect x="-12" y="-12" width={cardWidth + 24} height={cardHeight + 24} fill="#050505" stroke="#00e7ff" strokeWidth="0.75" opacity="0.84" />
-          <g pointerEvents="none" transform={`scale(${cardScale})`}>
-            <ProjectDetailCard entry={node.entry} x={0} y={0} />
-          </g>
-        </g>
-      </g>
-    </g>
-  );
-}
-
-function SnappedEntryOverlay({ node, onDismiss }: { node: WormholeEntryNode; onDismiss: () => void }) {
+function SnappedEntryOverlay({ entry, onDismiss }: { entry: Entry; onDismiss: () => void }) {
   const cardScale = 1.42;
   const cardWidth = 352 * cardScale;
   const cardHeight = 292 * cardScale;
@@ -1318,13 +891,12 @@ function SnappedEntryOverlay({ node, onDismiss }: { node: WormholeEntryNode; onD
   return (
     <g className="dossier-overlay" pointerEvents="auto" opacity="1">
       <rect width={atlasSize.width} height={atlasSize.height} fill="#050505" opacity="0.34" onClick={onDismiss} />
-      <line x1={node.x} y1={node.y} x2={atlasSize.cx} y2={atlasSize.cy} stroke="#f7f7f4" strokeWidth="0.7" strokeDasharray="3 9" opacity="0.28" />
       <circle cx={atlasSize.cx} cy={atlasSize.cy} r="252" fill="none" stroke="#f7f7f4" strokeWidth="0.8" strokeDasharray="1 13" opacity="0.22" />
       <g transform={`translate(${cardX - 12} ${cardY - 12})`}>
         <rect width={cardWidth + 24} height={cardHeight + 24} fill="#050505" stroke="#f7f7f4" strokeWidth="0.85" opacity="0.88" />
       </g>
       <g pointerEvents="none" transform={`translate(${cardX} ${cardY}) scale(${cardScale})`}>
-        <ProjectDetailCard entry={node.entry} x={0} y={0} />
+        <ProjectDetailCard entry={entry} x={0} y={0} />
       </g>
       <g className="dossier-close" pointerEvents="auto" transform={`translate(${cardX + cardWidth - 46} ${cardY - 34})`} onClick={onDismiss}>
         <rect width="46" height="22" fill="#f7f7f4" opacity="0.94" />
@@ -1336,17 +908,12 @@ function SnappedEntryOverlay({ node, onDismiss }: { node: WormholeEntryNode; onD
   );
 }
 
-function CosmosCursor({ pointer, activeNode, focusLevel }: { pointer: SvgPoint; activeNode: WormholeEntryNode | null; focusLevel: HoverFocusLevel }) {
-  const isMagnified = focusLevel === 'magnify';
-  const isFocused = focusLevel === 'focus' || isMagnified;
-  const outerRadius = activeNode ? (isMagnified ? 18 : isFocused ? 16 : 14) : 12;
-  const innerRadius = activeNode ? Math.max(8, outerRadius - 2) : 10;
-
+function CosmosCursor({ pointer, isDossierOpen }: { pointer: SvgPoint; isDossierOpen: boolean }) {
   return (
-    <g className="cosmos-cursor" pointerEvents="none" transform={`translate(${pointer.x} ${pointer.y})`} opacity={isMagnified ? 0.92 : 1}>
-      <circle r={outerRadius} fill="none" stroke="#050505" strokeWidth="3.4" opacity="0.88" />
-      <circle r={innerRadius} fill="none" stroke="#f7f7f4" strokeWidth="0.8" opacity={activeNode ? 0.82 : 0.52} />
-      {activeNode ? <circle r={isMagnified ? 11.4 : isFocused ? 9.4 : 7.4} fill="none" stroke="#00e7ff" strokeWidth="0.55" opacity="0.58" /> : null}
+    <g className="cosmos-cursor" pointerEvents="none" transform={`translate(${pointer.x} ${pointer.y})`} opacity={isDossierOpen ? 0.78 : 1}>
+      <circle r="12" fill="none" stroke="#050505" strokeWidth="3.4" opacity="0.88" />
+      <circle r="10" fill="none" stroke="#f7f7f4" strokeWidth="0.8" opacity="0.6" />
+      <circle r="7.2" fill="none" stroke="#00e7ff" strokeWidth="0.45" opacity={isDossierOpen ? 0.32 : 0.46} />
       <circle r="2.1" fill="#f7f7f4" opacity="0.86" />
       <line x1="-18" y1="0" x2="-11" y2="0" stroke="#f7f7f4" strokeWidth="0.65" opacity="0.62" />
       <line x1="11" y1="0" x2="18" y2="0" stroke="#f7f7f4" strokeWidth="0.65" opacity="0.62" />
@@ -1354,10 +921,6 @@ function CosmosCursor({ pointer, activeNode, focusLevel }: { pointer: SvgPoint; 
       <line x1="0" y1="11" x2="0" y2="18" stroke="#f7f7f4" strokeWidth="0.65" opacity="0.62" />
     </g>
   );
-}
-
-function previewCardWidth(entry: Entry) {
-  return Math.max(190, Math.min(262, entry.title.length * 5.7 + 108));
 }
 
 function advanceTravel(current: number, delta: number) {
