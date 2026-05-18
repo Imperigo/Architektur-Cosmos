@@ -498,6 +498,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
             <DatabaseArchivePanel
               entries={entries}
               relations={relations}
+              selectedEntry={selectedEntry}
               draft={entryDraft}
               onDraftChange={setEntryDraft}
               onDismiss={() => setShowDatabasePanel(false)}
@@ -873,21 +874,25 @@ type DatabaseTab = 'overview' | 'entries' | 'sources' | 'media' | 'models' | 'an
 function DatabaseArchivePanel({
   entries,
   relations,
+  selectedEntry,
   draft,
   onDraftChange,
   onDismiss
 }: {
   entries: Entry[];
   relations: EntryRelation[];
+  selectedEntry: Entry | null;
   draft: EntryDraft;
   onDraftChange: (draft: EntryDraft) => void;
   onDismiss: () => void;
 }) {
-  const [activeTab, setActiveTab] = useState<DatabaseTab>('overview');
+  const [activeTab, setActiveTab] = useState<DatabaseTab>(selectedEntry ? 'entries' : 'overview');
   const x = atlasSize.width - 414;
   const y = atlasSize.height - 536;
   const preview = draftToEntryPreview(draft);
   const pilotEntry = archivePreview.entries[0];
+  const currentEntry = selectedEntry ?? entries.find((entry) => entry.id === pilotEntry.id) ?? null;
+  const currentProfile = currentEntry?.database_profile;
   const counts = [
     { label: 'Entries', value: entries.length },
     { label: 'Sources', value: archivePreview.entry_sources.length },
@@ -955,6 +960,7 @@ function DatabaseArchivePanel({
               <ArchiveRow label="Storage" value={`${archivePreview.storage_target.database.toUpperCase()} metadata / ${archivePreview.storage_target.assets.toUpperCase()} assets`} />
               <ArchiveRow label="Status" value="static preview only, no backend writes" />
               <ArchiveRow label="Pilot" value={`${pilotEntry.title}, ${pilotEntry.year_start}, ${pilotEntry.city}`} />
+              {selectedEntry ? <ArchiveRow label="Current" value={`${selectedEntry.title} / ${selectedEntry.database_profile?.status ?? 'local entry'}`} /> : null}
               <p className="border border-[#00e7ff]/25 bg-[#061719] p-2 text-[#c9fff4]">
                 The archive foundation separates structured knowledge, source records, media, 3D models, analysis layers and tags. Large files stay in R2 later; the atlas reads compact metadata first.
               </p>
@@ -963,23 +969,36 @@ function DatabaseArchivePanel({
           ) : null}
 
           {activeTab === 'entries' ? (
-            <ArchiveList title="Pilot Entry" items={[`${pilotEntry.title} / ${pilotEntry.entry_type} / ${pilotEntry.style_sector}`, `${pilotEntry.authors_json} / ${pilotEntry.country}`, `R2 prefix: ${pilotEntry.r2_prefix}`]} />
+            <div className="space-y-2">
+              {currentEntry ? (
+                <ArchiveList
+                  title={selectedEntry ? 'Current Entry' : 'Pilot Entry'}
+                  items={[
+                    `${currentEntry.title} / ${currentEntry.entry_type} / ${currentEntry.style_sector}`,
+                    `${currentEntry.authors.join(', ') || 'Unknown author'} / ${currentEntry.country ?? 'no country'}`,
+                    `Status: ${currentProfile?.status ?? 'local draft'}`,
+                    `R2 prefix: ${currentProfile?.r2_prefix ?? `entries/${currentEntry.slug}`}`
+                  ]}
+                />
+              ) : null}
+              <ArchiveList title="Pilot Entry" items={[`${pilotEntry.title} / ${pilotEntry.entry_type} / ${pilotEntry.style_sector}`, `${pilotEntry.authors_json} / ${pilotEntry.country}`, `R2 prefix: ${pilotEntry.r2_prefix}`]} />
+            </div>
           ) : null}
 
           {activeTab === 'sources' ? (
-            <ArchiveCards items={archivePreview.entry_sources.map((source) => ({ title: source.title, meta: `${source.source_type} / ${source.reliability_level}`, body: source.notes }))} />
+            <ArchiveCards items={selectedEntry ? sourceCardsForEntry(selectedEntry) : archivePreview.entry_sources.map((source) => ({ title: source.title, meta: `${source.source_type} / ${source.reliability_level}`, body: source.notes }))} />
           ) : null}
 
           {activeTab === 'media' ? (
-            <ArchiveCards items={archivePreview.entry_media.map((media) => ({ title: media.title, meta: `${media.media_type} / ${media.copyright_status}`, body: media.caption }))} />
+            <ArchiveCards items={selectedEntry ? selectedEntry.media.map((media) => ({ title: media.label, meta: `${media.type} / ${media.credit ?? 'placeholder'}`, body: media.placeholder })) : archivePreview.entry_media.map((media) => ({ title: media.title, meta: `${media.media_type} / ${media.copyright_status}`, body: media.caption }))} />
           ) : null}
 
           {activeTab === 'models' ? (
-            <ArchiveCards items={archivePreview.entry_models.map((model) => ({ title: model.title, meta: `${model.model_type} / ${model.review_status} / confidence ${model.confidence_score}`, body: model.source_basis }))} />
+            <ArchiveCards items={(currentEntry?.model_assets?.length ? currentEntry.model_assets : archivePreview.entry_models).map((model) => ({ title: model.title, meta: `${model.model_type} / ${model.review_status} / confidence ${model.confidence_score ?? 'n/a'}`, body: model.source_basis }))} />
           ) : null}
 
           {activeTab === 'analysis' ? (
-            <ArchiveCards items={archivePreview.entry_analysis.map((analysis) => ({ title: analysis.analysis_type.replace(/_/g, ' '), meta: analysis.review_status, body: analysis.summary }))} />
+            <ArchiveCards items={(currentEntry?.analysis_layers?.length ? currentEntry.analysis_layers : archivePreview.entry_analysis).map((analysis) => ({ title: analysis.analysis_type.replace(/_/g, ' '), meta: analysis.review_status, body: analysis.summary }))} />
           ) : null}
 
           {activeTab === 'relations' ? (
@@ -1055,6 +1074,44 @@ function ArchiveCards({ items }: { items: Array<{ title: string; meta: string; b
       ))}
     </div>
   );
+}
+
+function sourceCardsForEntry(entry: Entry) {
+  const cards = [];
+
+  if (entry.source_url) {
+    cards.push({
+      title: entry.source_url.includes('afasia') ? 'Afasia project source' : 'Linked web source',
+      meta: entry.source_quality || 'source',
+      body: entry.source_url
+    });
+  }
+
+  (entry.source_documents ?? []).forEach((document) => {
+    cards.push({
+      title: document,
+      meta: 'lecture reference',
+      body: `Course/document cluster for ${entry.title}.`
+    });
+  });
+
+  if (entry.source_assets?.length) {
+    cards.push({
+      title: `${entry.source_assets.length} source assets`,
+      meta: 'asset package',
+      body: entry.source_assets.slice(0, 4).map((asset) => asset.label).join(' / ')
+    });
+  }
+
+  if (cards.length === 0) {
+    cards.push({
+      title: 'Source placeholder',
+      meta: 'unverified',
+      body: 'No source records are attached yet.'
+    });
+  }
+
+  return cards;
 }
 
 const entryTypeOptions: Array<{ value: Entry['entry_type']; label: string }> = [

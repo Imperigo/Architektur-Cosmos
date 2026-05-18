@@ -22,6 +22,11 @@ export function ProjectDetailCard({ entry, x, y }: ProjectDetailCardProps) {
   const sourceLabel = sourceLabelForEntry(entry);
   const sourceAssetCount = entry.source_assets?.length ?? 0;
   const mediaCredit = primaryMediaCredit(entry);
+  const databaseProfile = entry.database_profile;
+  const isDatabasePilot = Boolean(databaseProfile);
+  const modelSummary = summaryList(entry.model_assets?.map((model) => model.model_type), 3);
+  const analysisSummary = summaryList(entry.analysis_layers?.map((analysis) => analysis.analysis_type), 3);
+  const databaseTagChips = (entry.database_tags ?? []).slice(0, 3).map((tag) => ellipsizeText(cleanDatabaseTag(tag), 21));
 
   return (
     <g className="project-detail-card">
@@ -31,6 +36,14 @@ export function ProjectDetailCard({ entry, x, y }: ProjectDetailCardProps) {
       <text x={x + 16} y={y + 24} fill={accent} fontSize="7.2" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.18em">
         {courseLabel.toUpperCase()}
       </text>
+      {isDatabasePilot ? (
+        <g transform={`translate(${x + 238} ${y + 13})`}>
+          <rect width="96" height="16" rx="8" fill={accent} opacity="0.16" stroke={accent} strokeWidth="0.5" />
+          <text x="48" y="10.7" textAnchor="middle" fill={accent} fontSize="5.7" fontWeight="700" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.12em">
+            DATABASE PILOT
+          </text>
+        </g>
+      ) : null}
       <text fill="#f7f7f4" fontSize={titleFontSize} fontWeight="700" fontFamily="var(--font-sans), system-ui, sans-serif">
         {titleLines.map((line, index) => (
           <tspan key={`${line}-${index}`} x={x + 16} y={y + 47 + index * 15}>
@@ -56,7 +69,29 @@ export function ProjectDetailCard({ entry, x, y }: ProjectDetailCardProps) {
           </tspan>
         ))}
       </text>
-      {sourceLabel ? (
+      {isDatabasePilot ? (
+        <g className="detail-database-pilot">
+          <text x={x + 184} y={y + 207} fill={accent} fontSize="6.8" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.12em">
+            ARCHIVE STATUS
+          </text>
+          <rect x={x + 184} y={y + 214} width="150" height="27" fill="#061315" stroke={accent} strokeWidth="0.45" opacity="0.86" />
+          <text x={x + 192} y={y + 225} fill="#f7f7f4" fontSize="6.5" fontFamily="var(--font-sans), system-ui, sans-serif">
+            {`${databaseProfile?.status ?? 'draft'} · ${databaseProfile?.source_count ?? 0} sources · ${databaseProfile?.media_count ?? sourceAssetCount} media`}
+          </text>
+          <text x={x + 192} y={y + 236} fill="#c7c7c2" fontSize="6.2" fontFamily="var(--font-sans), system-ui, sans-serif">
+            {`${databaseProfile?.model_count ?? 0} model layers · ${databaseProfile?.analysis_count ?? 0} analysis layers`}
+          </text>
+          <text x={x + 184} y={y + 251} fill={accent} fontSize="6.6" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.1em">
+            3D / ANALYSIS
+          </text>
+          <text x={x + 184} y={y + 264} fill="#d7d7d0" fontSize="6.5" fontFamily="var(--font-sans), system-ui, sans-serif">
+            {modelSummary}
+          </text>
+          <text x={x + 184} y={y + 276} fill="#9c9c96" fontSize="6.2" fontFamily="var(--font-sans), system-ui, sans-serif">
+            {analysisSummary}
+          </text>
+        </g>
+      ) : sourceLabel ? (
         <g className="detail-source-trail">
           <text x={x + 184} y={y + 218} fill={accent} fontSize="6.8" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.12em">
             SOURCE TRAIL
@@ -72,14 +107,17 @@ export function ProjectDetailCard({ entry, x, y }: ProjectDetailCardProps) {
       <text x={x + 16} y={y + 242} fill="#b8b8b2" fontSize="7.2" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.1em">
         LAYER / FILTER
       </text>
-      {chips.slice(0, 4).map((chip, index) => {
-        const column = index % 2;
-        const row = Math.floor(index / 2);
-        const chipWidth = 148;
+      {(isDatabasePilot ? databaseTagChips : chips).slice(0, isDatabasePilot ? 3 : 4).map((chip, index) => {
+        const column = isDatabasePilot ? 0 : index % 2;
+        const row = isDatabasePilot ? index : Math.floor(index / 2);
+        const chipWidth = isDatabasePilot ? 146 : 148;
+        const chipHeight = isDatabasePilot ? 11 : 13;
+        const chipRadius = chipHeight / 2;
+        const rowGap = isDatabasePilot ? 14 : 17;
         return (
-          <g key={`${chip}-${index}`} transform={`translate(${x + 16 + column * 160} ${y + 252 + row * 17})`}>
-            <rect width={chipWidth} height="13" rx="6.5" fill="#061315" stroke={index === 0 ? accent : '#f7f7f4'} strokeWidth="0.45" opacity="0.88" />
-            <text x={chipWidth / 2} y="9" textAnchor="middle" fill={index === 0 ? accent : '#d7d7d0'} fontSize="5.9" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.07em">
+          <g key={`${chip}-${index}`} transform={`translate(${x + 16 + column * 160} ${y + 252 + row * rowGap})`}>
+            <rect width={chipWidth} height={chipHeight} rx={chipRadius} fill="#061315" stroke={index === 0 ? accent : '#f7f7f4'} strokeWidth="0.45" opacity="0.88" />
+            <text x={chipWidth / 2} y={isDatabasePilot ? 7.8 : 9} textAnchor="middle" fill={index === 0 ? accent : '#d7d7d0'} fontSize={isDatabasePilot ? 5.3 : 5.9} fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.07em">
               {chip.toUpperCase()}
             </text>
           </g>
@@ -101,6 +139,19 @@ function ellipsizeLines(lines: string[], maxLines: number, maxChars: number) {
 function ellipsizeText(text: string, maxChars: number) {
   if (text.length <= maxChars) return text;
   return `${text.slice(0, Math.max(0, maxChars - 3)).trim()}...`;
+}
+
+function summaryList(items: string[] | undefined, maxItems: number) {
+  const cleanItems = (items ?? []).map((item) => item.replace(/_/g, ' '));
+  if (cleanItems.length === 0) return 'planned layers pending';
+  const visible = cleanItems.slice(0, maxItems).join(' / ');
+  const suffix = cleanItems.length > maxItems ? ` +${cleanItems.length - maxItems}` : '';
+  return ellipsizeText(`${visible}${suffix}`, 39);
+}
+
+function cleanDatabaseTag(tag: string) {
+  const parts = tag.split(':');
+  return (parts.length > 1 ? parts.slice(1).join(':') : tag).replace(/[_-]/g, ' ');
 }
 
 function wrapText(text: string, maxChars: number) {
