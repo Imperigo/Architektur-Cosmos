@@ -105,6 +105,27 @@
     "description": "Le Corbusier's house logic and urban doctrine share a belief in order, circulation, and functional separation."
   },
   {
+    "id": "villa-savoye-to-ville-radieuse",
+    "source_entry_id": "villa-savoye",
+    "target_entry_id": "ville-radieuse",
+    "relation_type": "same_author",
+    "description": "The isolated manifesto house and the ideal city both translate Le Corbusier's ordering systems into spatial diagrams."
+  },
+  {
+    "id": "villa-savoye-to-haus-tugendhat",
+    "source_entry_id": "villa-savoye",
+    "target_entry_id": "haus-tugendhat",
+    "relation_type": "shares_theme",
+    "description": "Both houses test modern living through open plans, technical refinement, and a new relationship between domestic space and abstraction."
+  },
+  {
+    "id": "villa-savoye-to-unite",
+    "source_entry_id": "villa-savoye",
+    "target_entry_id": "unite-habitation",
+    "relation_type": "typological_reference",
+    "description": "The five-points house later scales toward collective housing, roof programs, pilotis and standardized modern life."
+  },
+  {
     "id": "athens-to-unite",
     "source_entry_id": "athens-charter",
     "target_entry_id": "unite-habitation",

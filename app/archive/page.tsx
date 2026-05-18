@@ -16,6 +16,7 @@ export const metadata: Metadata = {
 
 export default function ArchivePage() {
   const pilot = allEntries.find((entry) => entry.id === archivePreview.entries[0]?.id) ?? allEntries[0];
+  const pilotEntries = allEntries.filter((entry) => entry.database_profile);
   const typeCounts = countBy(allEntries, (entry) => entry.entry_type);
   const styleCounts = countBy(allEntries, (entry) => entry.style_sector);
   const richestEntries = [...allEntries]
@@ -80,7 +81,7 @@ export default function ArchivePage() {
           <Metric label="Analysis layers" value={archivePreview.entry_analysis.length} />
           <Metric label="Source rows" value={archivePreview.entry_sources.length} />
           <Metric label="Tags" value={archivePreview.tags.length} />
-          <Metric label="Pilot objects" value={archivePreview.entries.length} />
+          <Metric label="Pilot objects" value={pilotEntries.length} />
         </section>
 
         <section className="grid gap-6 border-t border-white/12 py-8 lg:grid-cols-[0.9fr_1.1fr]">
@@ -132,6 +133,21 @@ export default function ArchivePage() {
               <ArchiveMeta label="Analysis" value={`${pilot.analysis_layers?.length ?? 0} analysis layers`} />
               <ArchiveMeta label="Tags" value={`${pilot.database_tags?.length ?? 0} tags`} />
             </div>
+          </div>
+        </section>
+
+        <section className="border-t border-white/12 py-8">
+          <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#00e7ff]">Database Pilot Objects</h2>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {pilotEntries.map((entry) => (
+              <Link key={entry.id} href={`/atlas/${entry.slug}/`} className="entry-link entry-relation-card border border-white/14 bg-[#071315]/55 p-4">
+                <span className="block text-[10px] uppercase tracking-[0.16em] text-[#00e7ff]">{entry.database_profile?.status} / {entry.style_sector.replace(/_/g, ' ')}</span>
+                <span className="mt-2 block text-lg text-[#f7f7f4]">{entry.title}</span>
+                <span className="mt-2 block text-sm leading-6 text-[#b8b8b2]">
+                  {entry.database_profile?.media_count ?? entry.media.length} media / {entry.database_profile?.model_count ?? 0} models / {entry.database_profile?.analysis_count ?? 0} analysis layers
+                </span>
+              </Link>
+            ))}
           </div>
         </section>
 
