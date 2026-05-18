@@ -68,6 +68,16 @@ Status checks are read-only:
 npm run archive:r2-status
 ```
 
+Local asset intake is also upload-free:
+
+```bash
+npm run archive:asset-manifest -- --entry villa-savoye
+```
+
+This command creates ignored local folders under `archive-intake/`, scans files,
+checks file types, size and rights status, then writes a manifest under
+`out/asset-manifests/`. It does not call Cloudflare and cannot create R2 cost.
+
 ## Future R2 Checklist
 
 Before uploading real assets:
@@ -77,8 +87,9 @@ Before uploading real assets:
 3. Define allowed file types and maximum file sizes.
 4. Keep copyrighted source images as external references until rights are clear.
 5. Start with one pilot object only.
-6. Add lifecycle cleanup rules for test objects.
-7. Keep all upload/write actions out of the public frontend.
+6. Generate and review a local asset manifest first.
+7. Add lifecycle cleanup rules for test objects.
+8. Keep all upload/write actions out of the public frontend.
 
 ## Alternative To R2
 

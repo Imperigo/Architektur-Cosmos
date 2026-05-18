@@ -113,6 +113,29 @@ export default function ArchivePage() {
           </div>
         </section>
 
+        <section className="grid gap-6 border-t border-white/12 py-8 lg:grid-cols-[1.05fr_0.95fr]">
+          <div className="entry-archive-panel border border-[#00e7ff]/35 bg-[#06171a]/75 p-5">
+            <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#00e7ff]">Asset Intake</h2>
+            <p className="max-w-3xl text-sm leading-7 text-[#d7d7d0]">
+              Real images, plans and model files stay local until rights and size checks are complete. The intake command creates a private folder structure, scans the files and writes a dry-run manifest without touching Cloudflare.
+            </p>
+            <div className="mt-5 grid gap-3 sm:grid-cols-3">
+              <ArchiveMeta label="Local folder" value="archive-intake/{entry_slug}" />
+              <ArchiveMeta label="Manifest" value="out/asset-manifests/{entry_slug}.json" />
+              <ArchiveMeta label="Upload" value="blocked / dry-run only" />
+            </div>
+          </div>
+
+          <div className="entry-archive-panel border border-white/14 bg-[#071315]/70 p-5">
+            <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#00e7ff]">Asset Intake Command</h2>
+            <ol className="space-y-3 text-sm leading-6 text-[#d7d7d0]">
+              <li><span className="text-[#00e7ff]">01</span> Place files into <code>archive-intake/villa-savoye/exterior</code>, <code>interior</code>, <code>section</code>, <code>plan</code> or <code>models</code>.</li>
+              <li><span className="text-[#00e7ff]">02</span> Run <code>npm run archive:asset-manifest -- --entry villa-savoye</code>.</li>
+              <li><span className="text-[#00e7ff]">03</span> Review blocked rights, missing slots and planned R2 keys in the generated manifest.</li>
+            </ol>
+          </div>
+        </section>
+
         <section className="grid gap-6 border-t border-white/12 py-8 lg:grid-cols-2">
           <ArchiveList title="Entry Types" rows={orderedEntryTypes.map((type) => [type.replace(/_/g, ' '), `${typeCounts[type] ?? 0}`])} />
           <ArchiveList title="Style Sectors" rows={orderedStyleSectors.map((style) => [style.replace(/_/g, ' '), `${styleCounts[style] ?? 0}`])} />

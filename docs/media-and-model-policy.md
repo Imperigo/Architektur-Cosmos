@@ -94,14 +94,24 @@ Every model row needs:
 
 ## Upload Gate
 
+Before an upload is even considered, generate a local intake manifest:
+
+```bash
+npm run archive:asset-manifest -- --entry villa-savoye
+```
+
+This creates `archive-intake/{entry_slug}/` folders and writes a dry-run manifest
+to `out/asset-manifests/{entry_slug}.json`. The command never uploads files.
+
 Before any actual R2 upload:
 
 1. Confirm budget alert is active.
-2. Confirm file has an allowed copyright status.
-3. Confirm file size is inside the target.
-4. Confirm the D1 row already exists.
-5. Confirm the R2 key matches the policy.
-6. Upload one pilot object first.
-7. Re-run archive validation and smoke tests.
+2. Confirm the local intake manifest exists.
+3. Confirm file has an allowed copyright status.
+4. Confirm file size is inside the target.
+5. Confirm the D1 row already exists.
+6. Confirm the R2 key matches the policy.
+7. Upload one pilot object first.
+8. Re-run archive validation and smoke tests.
 
 Until these checks are automated, uploads stay manual and rare.
