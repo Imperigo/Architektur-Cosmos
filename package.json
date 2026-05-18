@@ -1,12 +1,13 @@
 {
-  "name": "architektur-cosmos-browser",
+  "name": "architecture-cosmos",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint .",
+    "import:afasia": "node scripts/import-afasia.mjs"
   },
   "dependencies": {
     "@types/d3": "latest",

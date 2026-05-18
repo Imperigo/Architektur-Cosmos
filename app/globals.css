@@ -1,6 +1,473 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 :root { color-scheme: light; }
-body { margin: 0; background: #f7f7f4; color: #111; }
+* { cursor: none !important; }
+html,
+body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
+  background: #050505;
+  color: #f7f7f4;
+}
+
+body {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  touch-action: none;
+}
+
+@keyframes wormhole-spoke-flow {
+  from { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: -104; }
+}
+
+@keyframes wormhole-ring-pulse {
+  0%, 100% { stroke-dashoffset: 0; }
+  50% { stroke-dashoffset: -22; }
+}
+
+@keyframes wormhole-stream-flow {
+  from { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: -132; }
+}
+
+@keyframes wormhole-speed-flow {
+  from { stroke-dashoffset: 88; }
+  to { stroke-dashoffset: -42; }
+}
+
+@keyframes wormhole-outer-flow {
+  to { stroke-dashoffset: -86; }
+}
+
+@keyframes wormhole-whirl {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes intro-title-away {
+  0% { opacity: 1; transform: scale(1); filter: blur(0); }
+  45% { opacity: 0.9; transform: scale(1.08); filter: blur(0); }
+  100% { opacity: 0; transform: scale(0.42); filter: blur(18px); }
+}
+
+@keyframes wormhole-current-pulse {
+  from { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: -18; }
+}
+
+@keyframes cosmos-node-drift {
+  0%, 100% { transform: translate(0, 0); }
+  46% { transform: translate(var(--drift-x), var(--drift-y)); }
+  72% { transform: translate(calc(var(--drift-x) * -0.35), calc(var(--drift-y) * 0.45)); }
+}
+
+@keyframes cosmos-node-hover {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  35% { transform: translate(calc(var(--drift-x) * 1.05), calc(var(--drift-y) * -0.9)) scale(1.035); }
+  70% { transform: translate(calc(var(--drift-x) * -0.8), calc(var(--drift-y) * 0.9)) scale(1.015); }
+}
+
+@keyframes hover-preview-arrive {
+  from { opacity: 0; transform: translateY(6px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes dossier-arrive {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes dossier-morph-in {
+  from {
+    opacity: 0.04;
+    transform: translate(var(--morph-x), var(--morph-y)) scale(0.14);
+  }
+  58% {
+    opacity: 0.82;
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+@keyframes dossier-morph-out {
+  from {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(var(--morph-x), var(--morph-y)) scale(0.16);
+  }
+}
+
+@keyframes dossier-dim-in {
+  from { opacity: 0; }
+  to { opacity: 0.18; }
+}
+
+@keyframes dossier-dim-out {
+  from { opacity: 0.26; }
+  to { opacity: 0; }
+}
+
+@keyframes cursor-orbit {
+  from { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: -18; }
+}
+
+@keyframes sector-current {
+  to { stroke-dashoffset: -80; }
+}
+
+@keyframes relation-strand-flow {
+  to { stroke-dashoffset: -96; }
+}
+
+@keyframes wormhole-idle-orbit {
+  to { stroke-dashoffset: -88; }
+}
+
+@keyframes wormhole-idle-breathe {
+  0%, 100% { opacity: 0.92; }
+  50% { opacity: 0.68; }
+}
+
+.wormhole-spoke {
+  stroke-dasharray: 5 15;
+  animation: wormhole-spoke-flow 26s linear infinite;
+  vector-effect: non-scaling-stroke;
+}
+
+.wormhole-stream {
+  stroke-dasharray: 8 28;
+  animation: wormhole-stream-flow 14s linear infinite;
+  mix-blend-mode: screen;
+  vector-effect: non-scaling-stroke;
+}
+
+.wormhole-speed-line {
+  stroke-dasharray: 2 12;
+  animation: wormhole-speed-flow 18s linear infinite;
+  mix-blend-mode: screen;
+  vector-effect: non-scaling-stroke;
+}
+
+.wormhole-energy-band {
+  mix-blend-mode: screen;
+  vector-effect: non-scaling-stroke;
+}
+
+.wormhole-outer-rim {
+  stroke-dasharray: none;
+  animation: none;
+  vector-effect: non-scaling-stroke;
+}
+
+.wormhole-ring {
+  animation: none;
+  mix-blend-mode: screen;
+  vector-effect: non-scaling-stroke;
+}
+
+.wormhole-current-ring {
+  animation: none;
+  vector-effect: non-scaling-stroke;
+}
+
+.wormhole-breath {
+  mix-blend-mode: screen;
+}
+
+.cosmos-idle .wormhole-breath {
+  animation: wormhole-idle-breathe 16s ease-in-out infinite;
+}
+
+.wormhole-idle-orbit {
+  mix-blend-mode: screen;
+  vector-effect: non-scaling-stroke;
+}
+
+.cosmos-idle .wormhole-idle-orbit {
+  animation: wormhole-idle-orbit 24s linear infinite;
+}
+
+.wormhole-idle-whirl {
+  mix-blend-mode: screen;
+  vector-effect: non-scaling-stroke;
+  animation: wormhole-stream-flow 22s linear infinite;
+}
+
+.wormhole-whirl {
+  animation: wormhole-whirl 34s linear infinite;
+}
+
+.wormhole-camera {
+  transition: transform 760ms cubic-bezier(0.16, 1, 0.3, 1);
+  transform-box: view-box;
+  will-change: transform;
+}
+
+.wormhole-year-label,
+.hover-preview,
+.dossier-overlay {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.hover-preview {
+  animation: hover-preview-arrive 180ms cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.project-preview-card,
+.hover-image-card {
+  filter: drop-shadow(0 0 12px rgb(247 247 244 / 10%));
+}
+
+.dossier-overlay {
+  animation: dossier-arrive 420ms cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.dossier-morph-overlay {
+  transform-box: view-box;
+  transform-origin: center;
+}
+
+.dossier-morph-card {
+  transform-box: fill-box;
+  transform-origin: 0 0;
+  will-change: transform, opacity;
+}
+
+.dossier-morph-card-opening {
+  animation: dossier-morph-in 360ms cubic-bezier(0.19, 1, 0.22, 1) both;
+}
+
+.dossier-morph-card-closing {
+  animation: dossier-morph-out 320ms cubic-bezier(0.55, 0, 0.1, 1) both;
+}
+
+.dossier-morph-overlay-opening .dossier-morph-dim {
+  animation: dossier-dim-in 240ms ease-out both;
+}
+
+.dossier-morph-overlay-closing .dossier-morph-dim {
+  animation: dossier-dim-out 260ms ease-in both;
+}
+
+.project-detail-card {
+  filter: drop-shadow(0 0 18px rgb(0 231 255 / 13%));
+}
+
+.detail-card-scanline {
+  animation: wormhole-stream-flow 18s linear infinite;
+}
+
+.cosmos-node-wiggle {
+  animation: none;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.cosmos-node-wiggle:hover {
+  animation: cosmos-node-hover 900ms ease-out 1;
+}
+
+.node-focus-drift {
+  transition: transform 420ms cubic-bezier(0.19, 1, 0.22, 1), opacity 200ms ease;
+}
+
+.cosmos-magnifying .node-focus-drift:not(.node-focus-active) {
+  opacity: 0.48;
+}
+
+.cosmos-focusing:not(.cosmos-magnifying) .node-focus-drift:not(.node-focus-active) {
+  opacity: 0.82;
+}
+
+.cosmos-magnifying .relation-strand-group {
+  opacity: 0.32;
+}
+
+.cosmos-cursor circle:first-child {
+  stroke-dasharray: 4 7;
+  animation: cursor-orbit 2.4s linear infinite;
+  transition: r 90ms ease, opacity 90ms ease;
+}
+
+.cosmos-cursor {
+  filter: drop-shadow(0 0 5px rgb(0 0 0 / 78%));
+  transition: opacity 160ms ease;
+  will-change: transform, opacity;
+}
+
+.style-sector-ribbon {
+  mix-blend-mode: screen;
+}
+
+.style-sector-tick {
+  mix-blend-mode: screen;
+  vector-effect: non-scaling-stroke;
+}
+
+.relation-strand,
+.relation-strand-glow {
+  mix-blend-mode: screen;
+  vector-effect: non-scaling-stroke;
+}
+
+.relation-strand {
+  filter: drop-shadow(0 0 4px rgb(247 247 244 / 22%));
+}
+
+.cosmos-moving .wormhole-camera,
+.cosmos-moving .node-focus-drift,
+.cosmos-moving .style-sector-label,
+.cosmos-moving .hud-button,
+.cosmos-moving .hud-theme-marker,
+.cosmos-moving .radial-hud,
+.cosmos-moving .cosmos-cursor circle:first-child {
+  transition: none;
+}
+
+.cosmos-moving .relation-strand,
+.cosmos-moving .project-preview-card {
+  filter: none;
+}
+
+.cosmos-moving .cosmos-node-wiggle:hover,
+.cosmos-moving .preview-theme-chip,
+.cosmos-moving .hover-preview,
+.cosmos-moving .wormhole-current-ring {
+  animation: none;
+}
+
+.cosmos-moving .wormhole-spoke,
+.cosmos-moving .wormhole-stream,
+.cosmos-moving .wormhole-speed-line,
+.cosmos-moving .wormhole-ring,
+.cosmos-moving .wormhole-current-ring,
+.cosmos-moving .wormhole-outer-rim,
+.cosmos-moving .relation-strand {
+  shape-rendering: optimizeSpeed;
+}
+
+.style-sector-label {
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.style-sector:hover .style-sector-label {
+  transform: translateY(-2px);
+}
+
+.radial-hud {
+  transition: opacity 180ms ease, transform 180ms cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.radial-hud:hover {
+  opacity: 1;
+  transform: translateY(-2px);
+}
+
+.hud-button,
+.hud-theme-marker {
+  cursor: none;
+  transition: opacity 140ms ease, transform 140ms ease;
+}
+
+.hud-button:hover,
+.hud-theme-marker:hover {
+  opacity: 1;
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: scale(1.28) translateY(-2px);
+}
+
+.database-access {
+  filter: drop-shadow(0 0 12px rgb(0 231 255 / 12%));
+  transition: opacity 180ms ease;
+}
+
+.database-access-shell {
+  transform-box: fill-box;
+  transform-origin: right center;
+  transform: scaleX(0.28);
+  transition: transform 190ms cubic-bezier(0.19, 1, 0.22, 1), opacity 190ms ease;
+}
+
+.database-access-label {
+  opacity: 0;
+  transition: opacity 160ms ease;
+}
+
+.database-access:hover .database-access-shell,
+.database-access-open .database-access-shell {
+  transform: scaleX(1);
+}
+
+.database-access:hover .database-access-label,
+.database-access-open .database-access-label {
+  opacity: 0.86;
+}
+
+.navigation-dock {
+  filter: drop-shadow(0 0 12px rgb(0 231 255 / 10%));
+}
+
+.motion-debug-hud {
+  filter: drop-shadow(0 0 10px rgb(0 231 255 / 12%));
+}
+
+.database-placeholder {
+  filter: drop-shadow(0 0 20px rgb(0 231 255 / 12%));
+}
+
+.brand-chrome {
+  mix-blend-mode: screen;
+}
+
+.preview-theme-chip {
+  animation: none;
+}
+
+.intro-gate {
+  appearance: none;
+  border: 0;
+  font: inherit;
+}
+
+.intro-gate span {
+  pointer-events: none;
+}
+
+.intro-gate-launching > span {
+  animation: intro-title-away 1.35s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wormhole-spoke,
+  .wormhole-ring,
+  .wormhole-current-ring,
+  .wormhole-breath,
+  .wormhole-idle-orbit,
+  .wormhole-idle-whirl,
+  .wormhole-stream,
+  .wormhole-speed-line,
+  .wormhole-outer-rim,
+  .wormhole-whirl,
+  .cosmos-node-wiggle,
+  .cosmos-cursor circle:first-child,
+  .relation-strand,
+  .relation-strand-glow,
+  .hover-preview,
+  .dossier-morph-card,
+  .dossier-morph-dim,
+  .preview-theme-chip,
+  .dossier-overlay {
+    animation: none;
+  }
+}

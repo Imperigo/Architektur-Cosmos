@@ -1,15 +1,18 @@
 /** @type {import('next').NextConfig} */
+const isGithubPages = process.env.GITHUB_PAGES === 'true';
+
 const nextConfig = {
-  // Static HTML Export — perfekt für die aktuelle MVP-Phase (keine SSR/API).
-  // Wenn später DB-Integration mit Server Components kommt: hier auf
-  // den OpenNext.js / Cloudflare-Workers-Pfad umstellen.
+  // Static HTML Export - keeps the MVP deployable without SSR/API runtime.
   output: 'export',
 
-  // Trailing slashes für saubere URLs auf static hosts (architekturkosmos.ch/atlas/)
-  trailingSlash: true,
+  // Optional GitHub Pages compatibility for imperigo.github.io/Architektur-Cosmos/.
+  basePath: isGithubPages ? '/Architektur-Cosmos' : '',
+  assetPrefix: isGithubPages ? '/Architektur-Cosmos/' : '',
 
-  // Bild-Optimization deaktivieren — nicht verfügbar bei static export
-  images: { unoptimized: true },
+  trailingSlash: true,
+  images: {
+    unoptimized: true
+  }
 };
 
 module.exports = nextConfig;
