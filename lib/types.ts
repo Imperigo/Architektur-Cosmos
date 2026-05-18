@@ -33,6 +33,17 @@ export type EntryMedia = {
   type: EntryMediaType;
   label: string;
   placeholder: string;
+  url?: string;
+  credit?: string;
+  source_url?: string;
+};
+
+export type EntrySourceAsset = {
+  kind: 'image' | 'drawing' | 'plan' | 'section';
+  label: string;
+  url: string;
+  credit?: string;
+  source_url?: string;
 };
 
 export type Entry = {
@@ -54,6 +65,8 @@ export type Entry = {
   media: EntryMedia[];
   source_quality: string;
   source_documents?: string[];
+  source_url?: string;
+  source_assets?: EntrySourceAsset[];
   atlas?: {
     year: number;
     ring: string;

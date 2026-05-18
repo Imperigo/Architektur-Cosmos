@@ -2,7 +2,22 @@
 
 :root { color-scheme: light; }
 * { cursor: none !important; }
-body { margin: 0; background: #050505; color: #f7f7f4; }
+html,
+body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
+  background: #050505;
+  color: #f7f7f4;
+}
+
+body {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  touch-action: none;
+}
 
 @keyframes wormhole-spoke-flow {
   from { stroke-dashoffset: 0; }

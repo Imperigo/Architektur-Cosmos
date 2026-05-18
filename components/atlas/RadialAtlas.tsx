@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState, type CSSProperties, type PointerEvent, type WheelEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type CSSProperties, type PointerEvent, type WheelEvent as ReactWheelEvent } from 'react';
 import { ProjectDetailCard } from '@/components/atlas/ProjectDetailCard';
 import { ProjectMediaGrid } from '@/components/atlas/ProjectMediaGrid';
 import { RelationOverlay } from '@/components/atlas/RelationOverlay';
@@ -29,12 +29,14 @@ type IntroState = 'intro' | 'launching' | 'idle';
 type ObjectInteractionState = 'idle' | 'approach' | 'preview' | 'focus' | 'morphing' | 'dossier';
 type HoverFocusLevel = 'none' | 'approach' | 'preview' | 'focus' | 'magnify';
 type MorphPhase = 'opening' | 'closing' | null;
+type SourceLens = 'afasia' | null;
 
 export function RadialAtlas({ entries, relations }: { entries: Entry[]; relations: EntryRelation[] }) {
   const svgRef = useRef<SVGSVGElement | null>(null);
   const [selectedEntry, setSelectedEntry] = useState<Entry | null>(null);
   const [showRelations, setShowRelations] = useState(true);
   const [activeStyleLens, setActiveStyleLens] = useState<StyleSectorId | null>(null);
+  const [activeSourceLens, setActiveSourceLens] = useState<SourceLens>(null);
   const [motion, setMotion] = useState<MotionSnapshot>({
     currentTravel: 0,
     targetTravel: 0,
@@ -180,7 +182,15 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   }, [showMotionDebug]);
 
   useEffect(() => {
+    const preventBrowserWheel = (event: WheelEvent) => {
+      event.preventDefault();
+    };
+
+    window.addEventListener('wheel', preventBrowserWheel, { passive: false });
+
     return () => {
+      window.removeEventListener('wheel', preventBrowserWheel);
+
       const currentMotion = motionRef.current;
       if (currentMotion.frame !== null && typeof window.cancelAnimationFrame === 'function') {
         window.cancelAnimationFrame(currentMotion.frame);
@@ -377,7 +387,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     ref.timeout = null;
   }
 
-  function handleWheel(event: WheelEvent<SVGSVGElement>) {
+  function handleWheel(event: ReactWheelEvent<SVGSVGElement>) {
     event.preventDefault();
     if (introState !== 'idle') {
       startIntro();
@@ -518,7 +528,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
                 <g
                   key={node.entry.id}
                   className={`node-focus-drift ${isFocusNode ? 'node-focus-active' : ''}`}
-                  opacity={node.opacity * styleLensOpacity(node, activeStyleLens) * (isHoverMagnifyActive && !isFocusNode ? 0.44 : 1)}
+                  opacity={node.opacity * styleLensOpacity(node, activeStyleLens) * sourceLensOpacity(node, activeSourceLens) * (isHoverMagnifyActive && !isFocusNode ? 0.44 : 1)}
                   style={{ transform: `translate(${displayOffset.x}px, ${displayOffset.y}px)` }}
                 >
                   <SemanticEntryNode
@@ -554,9 +564,11 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
               showRelations={showRelations}
               tunnelDepth={state.timePosition}
               activeStyleLens={activeStyleLens}
+              activeSourceLens={activeSourceLens}
               onTravelForward={() => travelBy(0.035)}
               onTravelBackward={() => travelBy(-0.035)}
               onCycleStyleLens={() => setActiveStyleLens((current) => nextStyleLens(current))}
+              onToggleSourceLens={() => setActiveSourceLens((current) => current === 'afasia' ? null : 'afasia')}
               onToggleRelations={() => setShowRelations((current) => !current)}
             />
           ) : null}
@@ -628,13 +640,26 @@ function cameraDistance(point: SvgPoint, node: WormholeEntryNode, cameraFocus: {
 function isReadableNode(node: WormholeEntryNode) {
   const margin = 54;
   const insideFrame = node.x > margin && node.x < atlasSize.width - margin && node.y > margin && node.y < atlasSize.height - margin;
-  return insideFrame && node.depth >= 0.045 && node.depth <= 0.94 && node.opacity >= 0.36;
+  return insideFrame && node.depth >= 0.01 && node.depth <= 0.94 && node.opacity >= 0.08;
 }
 
 function styleLensOpacity(node: WormholeEntryNode, activeStyleLens: StyleSectorId | null) {
   if (!activeStyleLens) return 1;
   if (node.entry.style_sector === activeStyleLens) return 1;
   return 0.24 + node.closeness * 0.18;
+}
+
+function sourceLensOpacity(node: WormholeEntryNode, activeSourceLens: SourceLens) {
+  if (!activeSourceLens) return 1;
+  const sourceText = [
+    node.entry.source_url,
+    node.entry.source_quality,
+    ...(node.entry.source_documents ?? []),
+    ...node.entry.themes
+  ].join(' ').toLowerCase();
+
+  if (activeSourceLens === 'afasia' && sourceText.includes('afasia')) return 1;
+  return 0.035 + node.closeness * 0.055;
 }
 
 function focusDisplayOffset(node: WormholeEntryNode, focusNode: WormholeEntryNode | null, focusLevel: HoverFocusLevel): SvgPoint {
@@ -737,17 +762,21 @@ function RadialHud({
   showRelations,
   tunnelDepth,
   activeStyleLens,
+  activeSourceLens,
   onTravelForward,
   onTravelBackward,
   onCycleStyleLens,
+  onToggleSourceLens,
   onToggleRelations
 }: {
   showRelations: boolean;
   tunnelDepth: number;
   activeStyleLens: StyleSectorId | null;
+  activeSourceLens: SourceLens;
   onTravelForward: () => void;
   onTravelBackward: () => void;
   onCycleStyleLens: () => void;
+  onToggleSourceLens: () => void;
   onToggleRelations: () => void;
 }) {
   const controlsOpacity = Math.max(0.46, 1 - tunnelDepth / 0.76);
@@ -755,18 +784,19 @@ function RadialHud({
 
   return (
     <g className="radial-hud navigation-dock" pointerEvents="auto" opacity={controlsOpacity}>
-      <rect x={atlasSize.cx - 122} y="904" width="244" height="34" rx="17" fill="#050505" stroke="#f7f7f4" strokeWidth="0.5" opacity="0.68" />
+      <rect x={atlasSize.cx - 150} y="904" width="300" height="34" rx="17" fill="#050505" stroke="#f7f7f4" strokeWidth="0.5" opacity="0.68" />
       <g opacity={controlsOpacity}>
-        <HudButton x={atlasSize.cx - 78} y={921} kind="backward" label="zurueck" onClick={onTravelBackward} />
-        <HudButton x={atlasSize.cx - 26} y={921} kind="forward" label="vor" onClick={onTravelForward} />
-        <HudButton x={atlasSize.cx + 26} y={921} kind="lens" label={lensLabel} active={Boolean(activeStyleLens)} onClick={onCycleStyleLens} />
-        <HudButton x={atlasSize.cx + 78} y={921} kind="relations" label="relations" active={showRelations} onClick={onToggleRelations} />
+        <HudButton x={atlasSize.cx - 104} y={921} kind="backward" label="zurueck" onClick={onTravelBackward} />
+        <HudButton x={atlasSize.cx - 52} y={921} kind="forward" label="vor" onClick={onTravelForward} />
+        <HudButton x={atlasSize.cx} y={921} kind="lens" label={lensLabel} active={Boolean(activeStyleLens)} onClick={onCycleStyleLens} />
+        <HudButton x={atlasSize.cx + 52} y={921} kind="source" label="afasia" active={activeSourceLens === 'afasia'} onClick={onToggleSourceLens} />
+        <HudButton x={atlasSize.cx + 104} y={921} kind="relations" label="relations" active={showRelations} onClick={onToggleRelations} />
       </g>
     </g>
   );
 }
 
-function HudButton({ x, y, kind, label, active = false, onClick }: { x: number; y: number; kind: 'backward' | 'forward' | 'lens' | 'relations'; label: string; active?: boolean; onClick: () => void }) {
+function HudButton({ x, y, kind, label, active = false, onClick }: { x: number; y: number; kind: 'backward' | 'forward' | 'lens' | 'source' | 'relations'; label: string; active?: boolean; onClick: () => void }) {
   function handleActivate(event: { stopPropagation: () => void }) {
     event.stopPropagation();
     onClick();
@@ -781,7 +811,7 @@ function HudButton({ x, y, kind, label, active = false, onClick }: { x: number; 
   );
 }
 
-function HudIcon({ x, y, kind, active }: { x: number; y: number; kind: 'backward' | 'forward' | 'lens' | 'relations'; active: boolean }) {
+function HudIcon({ x, y, kind, active }: { x: number; y: number; kind: 'backward' | 'forward' | 'lens' | 'source' | 'relations'; active: boolean }) {
   const stroke = active ? '#050505' : '#f7f7f4';
 
   if (kind === 'relations') {
@@ -802,6 +832,16 @@ function HudIcon({ x, y, kind, active }: { x: number; y: number; kind: 'backward
         <circle cx={x} cy={y} r="5.1" />
         <path d={`M ${x - 7} ${y} H ${x + 7}`} />
         <path d={`M ${x} ${y - 7} V ${y + 7}`} opacity="0.55" />
+      </g>
+    );
+  }
+
+  if (kind === 'source') {
+    return (
+      <g stroke={stroke} fill="none" strokeWidth="0.95" opacity="0.92">
+        <path d={`M ${x - 6.4} ${y + 4.8} H ${x + 6.4}`} />
+        <path d={`M ${x - 5.5} ${y + 2.2} C ${x - 3.3} ${y - 5.8}, ${x + 3.3} ${y - 5.8}, ${x + 5.5} ${y + 2.2}`} />
+        <circle cx={x} cy={y - 1.4} r="1.3" fill={stroke} />
       </g>
     );
   }

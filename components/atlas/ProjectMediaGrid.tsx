@@ -29,7 +29,14 @@ export function ProjectMediaGrid({ media, x, y, slotWidth, slotHeight, gap, show
         return (
           <g key={type}>
             <rect x={slotX} y={slotY} width={slotWidth} height={slotHeight} fill="#050505" stroke={accent} strokeWidth="0.72" opacity="0.94" />
-            <MediaPlaceholder type={type} x={slotX} y={slotY} width={slotWidth} height={slotHeight} accent={accent} seed={stableHash(mediaItem?.placeholder ?? type)} />
+            {mediaItem?.url ? (
+              <g>
+                <image href={mediaItem.url} x={slotX + 1} y={slotY + 1} width={slotWidth - 2} height={slotHeight - 2} preserveAspectRatio="xMidYMid slice" opacity="0.88" />
+                <rect x={slotX} y={slotY} width={slotWidth} height={slotHeight} fill="none" stroke={accent} strokeWidth="0.72" opacity="0.82" />
+              </g>
+            ) : (
+              <MediaPlaceholder type={type} x={slotX} y={slotY} width={slotWidth} height={slotHeight} accent={accent} seed={stableHash(mediaItem?.placeholder ?? type)} />
+            )}
             {showLabels ? (
               <text x={slotX} y={slotY + slotHeight + 10} fill="#b8b8b8" fontSize="7.4" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.08em">
                 {(mediaItem?.label ?? type).toUpperCase()}

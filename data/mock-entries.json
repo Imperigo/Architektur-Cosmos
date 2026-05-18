@@ -5469,5 +5469,173 @@
     "source_documents": [
       "04 Landschaftsarchitektur 1_2.pdf"
     ]
+  },
+  {
+    "id": "afasia-no-architecture-flower-house",
+    "slug": "afasia-no-architecture-flower-house",
+    "title": "Flower House",
+    "entry_type": "building",
+    "year_start": 2020,
+    "authors": [
+      "NO Architecture"
+    ],
+    "city": "Berkshire County, Massachusetts",
+    "country": "United States",
+    "style_sector": "sustainable_architecture",
+    "lecture_cluster": [
+      "afasia_test_pull",
+      "contemporary_architecture"
+    ],
+    "themes": [
+      "afasia",
+      "glass-house",
+      "landscape",
+      "hillside",
+      "courtyard",
+      "private-residence"
+    ],
+    "short_description": "Afasia-Pilotprojekt: ein privates Wohnhaus aus sechs ineinandergreifenden Pavillons, das Glass-House-Typologie, Landschaft und topografische Einbettung verbindet.",
+    "source_quality": "afasia_test_pull",
+    "one_sentence": "Flower House von NO Architecture ist als Afasia-Testeintrag in Berkshire County im Jahr 2020 verortet und verknuepft Glass-House-Typologie, Landschaft, Hof und Hanglage.",
+    "full_description": "Der Afasia-Beitrag beschreibt Flower House als Erweiterung und Neuinterpretation der Glass-House-Typologie: sechs ineinandergreifende Pavillons bilden wie Blütenblaetter einen offenen zentralen Hof. Das teilweise in den Hang eingeschnittene Haus nutzt Topografie als thermische Huelle und ordnet oeffentliche und private Raeume entlang von Offenheit, Rueckzug, Landschaftsbezug und Belichtung. Die westlichen Schlaf- und Badbereiche werden ueber Clerestory-Fenster belichtet; nach Osten oeffnen sich die oeffentlicheren Programme mit raumhohen Verglasungen zur Landschaft. Strukturell funktionieren die Pavillons als schirmartige Canopy-Diagramme mit sichtbarer Betonplatte; tragende Fensterrahmen und T- beziehungsweise L-foermige Kerne uebernehmen vertikale und laterale Stabilisierung. Programmdaten laut Afasia: Private Residence, 326 m2, completed 2020, photography Iwan Baan.",
+    "media": [
+      {
+        "type": "exterior",
+        "label": "Aussenfoto / Afasia",
+        "placeholder": "Afasia / Flower House / exterior",
+        "url": "/media/afasia/flower-house/flower-house-1.jpg",
+        "credit": "© Iwan Baan via Afasia",
+        "source_url": "https://afasiaarchzine.com/2022/09/no-architecture/"
+      },
+      {
+        "type": "interior",
+        "label": "Innenfoto / Afasia",
+        "placeholder": "Afasia / Flower House / interior",
+        "url": "/media/afasia/flower-house/flower-house-10.jpg",
+        "credit": "© Iwan Baan via Afasia",
+        "source_url": "https://afasiaarchzine.com/2022/09/no-architecture/"
+      },
+      {
+        "type": "section",
+        "label": "Schnitt / Afasia",
+        "placeholder": "Afasia / Flower House / section",
+        "url": "/media/afasia/flower-house/flower-house-32.jpg",
+        "credit": "© NO Architecture via Afasia",
+        "source_url": "https://afasiaarchzine.com/2022/09/no-architecture/"
+      },
+      {
+        "type": "plan",
+        "label": "Grundriss / Afasia",
+        "placeholder": "Afasia / Flower House / plan",
+        "url": "/media/afasia/flower-house/flower-house-31.jpg",
+        "credit": "© NO Architecture via Afasia",
+        "source_url": "https://afasiaarchzine.com/2022/09/no-architecture/"
+      }
+    ],
+    "source_documents": [
+      "Afasia Archzine",
+      "NO Architecture - Flower House . Massachusetts"
+    ],
+    "source_url": "https://afasiaarchzine.com/2022/09/no-architecture/",
+    "source_assets": [
+      {
+        "kind": "image",
+        "label": "Afasia image 1 / exterior",
+        "url": "/media/afasia/flower-house/flower-house-1.jpg",
+        "credit": "© Iwan Baan via Afasia",
+        "source_url": "https://afasiaarchzine.com/2022/09/no-architecture/"
+      },
+      {
+        "kind": "image",
+        "label": "Afasia image 2 / landscape context",
+        "url": "/media/afasia/flower-house/flower-house-2.jpg",
+        "credit": "© Iwan Baan via Afasia",
+        "source_url": "https://afasiaarchzine.com/2022/09/no-architecture/"
+      },
+      {
+        "kind": "image",
+        "label": "Afasia image 3 / facade",
+        "url": "/media/afasia/flower-house/flower-house-3.jpg",
+        "credit": "© Iwan Baan via Afasia",
+        "source_url": "https://afasiaarchzine.com/2022/09/no-architecture/"
+      },
+      {
+        "kind": "image",
+        "label": "Afasia image 10 / interior",
+        "url": "/media/afasia/flower-house/flower-house-10.jpg",
+        "credit": "© Iwan Baan via Afasia",
+        "source_url": "https://afasiaarchzine.com/2022/09/no-architecture/"
+      },
+      {
+        "kind": "image",
+        "label": "Afasia image 20 / kitchen interior",
+        "url": "/media/afasia/flower-house/flower-house-20.jpg",
+        "credit": "© Iwan Baan via Afasia",
+        "source_url": "https://afasiaarchzine.com/2022/09/no-architecture/"
+      },
+      {
+        "kind": "plan",
+        "label": "Afasia image 30 / site plan",
+        "url": "/media/afasia/flower-house/flower-house-30.jpg",
+        "credit": "© NO Architecture via Afasia",
+        "source_url": "https://afasiaarchzine.com/2022/09/no-architecture/"
+      },
+      {
+        "kind": "plan",
+        "label": "Afasia image 31 / plan",
+        "url": "/media/afasia/flower-house/flower-house-31.jpg",
+        "credit": "© NO Architecture via Afasia",
+        "source_url": "https://afasiaarchzine.com/2022/09/no-architecture/"
+      },
+      {
+        "kind": "section",
+        "label": "Afasia image 32 / section",
+        "url": "/media/afasia/flower-house/flower-house-32.jpg",
+        "credit": "© NO Architecture via Afasia",
+        "source_url": "https://afasiaarchzine.com/2022/09/no-architecture/"
+      },
+      {
+        "kind": "drawing",
+        "label": "Afasia image 33 / drawing",
+        "url": "/media/afasia/flower-house/flower-house-33.jpg",
+        "credit": "© NO Architecture via Afasia",
+        "source_url": "https://afasiaarchzine.com/2022/09/no-architecture/"
+      },
+      {
+        "kind": "drawing",
+        "label": "Afasia image 34 / drawing",
+        "url": "/media/afasia/flower-house/flower-house-34.jpg",
+        "credit": "© NO Architecture via Afasia",
+        "source_url": "https://afasiaarchzine.com/2022/09/no-architecture/"
+      },
+      {
+        "kind": "drawing",
+        "label": "Afasia image 35 / drawing",
+        "url": "/media/afasia/flower-house/flower-house-35.jpg",
+        "credit": "© NO Architecture via Afasia",
+        "source_url": "https://afasiaarchzine.com/2022/09/no-architecture/"
+      },
+      {
+        "kind": "drawing",
+        "label": "Afasia image 36 / drawing",
+        "url": "/media/afasia/flower-house/flower-house-36.jpg",
+        "credit": "© NO Architecture via Afasia",
+        "source_url": "https://afasiaarchzine.com/2022/09/no-architecture/"
+      },
+      {
+        "kind": "drawing",
+        "label": "Afasia image 37 / roof diagram",
+        "url": "/media/afasia/flower-house/flower-house-37.jpg",
+        "credit": "© NO Architecture via Afasia",
+        "source_url": "https://afasiaarchzine.com/2022/09/no-architecture/"
+      },
+      {
+        "kind": "drawing",
+        "label": "Afasia image 38 / axonometric drawing",
+        "url": "/media/afasia/flower-house/flower-house-38.jpg",
+        "credit": "© NO Architecture via Afasia",
+        "source_url": "https://afasiaarchzine.com/2022/09/no-architecture/"
+      }
+    ]
   }
 ]
