@@ -2,6 +2,11 @@
 
 The MVP uses local JSON files. The schema should be treated as the future database contract, but no database or CMS is introduced yet.
 
+The planned production database foundation is documented in
+[`docs/database-architecture.md`](./database-architecture.md). The draft
+Cloudflare D1 SQL schema lives in
+[`schema/architecture-cosmos-d1.sql`](../schema/architecture-cosmos-d1.sql).
+
 ## Entry
 
 An entry is the main unit of the atlas. It can represent architecture in a broad sense: built work, plan, theory, text, object, event, infrastructure, landscape, or map.
@@ -89,6 +94,25 @@ Every MVP entry has exactly four media slots:
 - `plan`
 
 These are placeholders for now. The four-slot shape is stable so the UI can be built before image rights and sourcing are solved. A fifth 3D model slot is deferred.
+
+In the future database, media metadata moves to `entry_media` and the files
+themselves live in Cloudflare R2. Large binaries should never be stored in D1.
+
+## 3D Models
+
+3D models are future R2 assets referenced by D1 metadata. Each mature entry may
+eventually have several model layers:
+
+- `full_model`
+- `low_poly_model`
+- `structure_model`
+- `tectonic_model`
+- `site_model`
+- `mass_model`
+
+The database stores `r2_key`, model type, format, review status, source basis,
+generation method, and confidence metadata. The actual `.glb`, `.gltf`, `.usdz`,
+textures, and annotation files belong in R2.
 
 ## Data Rule
 

@@ -109,22 +109,25 @@ No environment variables needed currently.
 
 ---
 
-## Future: DB Integration
+## Future: DB / Archive Integration
 
-When the architecture demands more than static data (CMS-style editing, large
-entry counts, search, etc.), the planned path is:
+The preferred low-cost database path is now Cloudflare-native:
 
-1. **Database**: Postgres (self-hosted on user's home server, separate project)
-2. **Connection**: env var `DATABASE_URL` (only set in production)
-3. **DB client**: `postgres` (postgres.js — slim, async-first)
-4. **Pattern**: `lib/db.ts` returns null when `DATABASE_URL` unset → callers fall back to `data/mock-entries.json` so `npm run dev` keeps working without DB
-5. **Runtime switch**: drop `output: 'export'`, switch to OpenNext.js deploy
+1. **Database**: Cloudflare D1 for structured metadata, relations, tags, sources,
+   analysis records, and 3D model metadata.
+2. **Asset storage**: Cloudflare R2 for images, plans, PDFs, source scans,
+   textures, `.glb` / `.gltf` / `.usdz` models, and large analysis JSON files.
+3. **Schema contract**: `docs/database-architecture.md` and
+   `schema/architecture-cosmos-d1.sql`.
+4. **Frontend pattern**: keep static JSON as the local fallback while the schema
+   stabilizes. Only introduce runtime data reads when explicitly requested.
+5. **Runtime switch**: when dynamic reads/writes are needed, add Worker bindings
+   for D1/R2 and either use lightweight Worker endpoints or migrate the app to
+   OpenNext.js.
 
-Ready-to-copy patches for this migration live in the user's separate
-`architektur-server` repo under `cosmos-patches/`. When DB integration becomes
-relevant, the user will either copy them in or ask Codex to integrate them.
-
-**For now: do not add DB code.** Stay with static + mock JSON.
+**For now: do not add live D1/R2 bindings, API routes, auth, CMS, or backend
+code.** Stay with static + mock JSON until the user explicitly asks to activate
+the database.
 
 ---
 

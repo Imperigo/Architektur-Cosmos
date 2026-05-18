@@ -13,10 +13,12 @@ The first version builds the core atlas without filters, search, database, CMS, 
 - `docs/project-foundation.md`
 - `docs/master-brief.md`
 - `docs/data-model.md`
+- `docs/database-architecture.md`
 - `docs/interface-concept.md`
 - `docs/design-system.md`
 - `docs/mvp-scope.md`
 - `docs/innovation-backlog.md`
+- `schema/architecture-cosmos-d1.sql`
 
 ## Run locally
 
