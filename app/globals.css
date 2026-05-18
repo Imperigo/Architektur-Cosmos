@@ -65,6 +65,41 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
   to { opacity: 1; transform: scale(1); }
 }
 
+@keyframes dossier-morph-in {
+  from {
+    opacity: 0.04;
+    transform: translate(var(--morph-x), var(--morph-y)) scale(0.14);
+  }
+  58% {
+    opacity: 0.82;
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+@keyframes dossier-morph-out {
+  from {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(var(--morph-x), var(--morph-y)) scale(0.16);
+  }
+}
+
+@keyframes dossier-dim-in {
+  from { opacity: 0; }
+  to { opacity: 0.18; }
+}
+
+@keyframes dossier-dim-out {
+  from { opacity: 0.26; }
+  to { opacity: 0; }
+}
+
 @keyframes cursor-orbit {
   from { stroke-dashoffset: 0; }
   to { stroke-dashoffset: -18; }
@@ -182,6 +217,33 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
   animation: dossier-arrive 420ms cubic-bezier(0.19, 1, 0.22, 1);
 }
 
+.dossier-morph-overlay {
+  transform-box: view-box;
+  transform-origin: center;
+}
+
+.dossier-morph-card {
+  transform-box: fill-box;
+  transform-origin: 0 0;
+  will-change: transform, opacity;
+}
+
+.dossier-morph-card-opening {
+  animation: dossier-morph-in 360ms cubic-bezier(0.19, 1, 0.22, 1) both;
+}
+
+.dossier-morph-card-closing {
+  animation: dossier-morph-out 320ms cubic-bezier(0.55, 0, 0.1, 1) both;
+}
+
+.dossier-morph-overlay-opening .dossier-morph-dim {
+  animation: dossier-dim-in 240ms ease-out both;
+}
+
+.dossier-morph-overlay-closing .dossier-morph-dim {
+  animation: dossier-dim-out 260ms ease-in both;
+}
+
 .project-detail-card {
   filter: drop-shadow(0 0 18px rgb(0 231 255 / 13%));
 }
@@ -206,6 +268,10 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
 
 .cosmos-magnifying .node-focus-drift:not(.node-focus-active) {
   opacity: 0.48;
+}
+
+.cosmos-focusing:not(.cosmos-magnifying) .node-focus-drift:not(.node-focus-active) {
+  opacity: 0.82;
 }
 
 .cosmos-magnifying .relation-strand-group {
@@ -383,6 +449,8 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
   .relation-strand,
   .relation-strand-glow,
   .hover-preview,
+  .dossier-morph-card,
+  .dossier-morph-dim,
   .preview-theme-chip,
   .dossier-overlay {
     animation: none;

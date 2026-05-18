@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState, type PointerEvent, type WheelEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type CSSProperties, type PointerEvent, type WheelEvent } from 'react';
 import { ProjectDetailCard } from '@/components/atlas/ProjectDetailCard';
 import { ProjectMediaGrid } from '@/components/atlas/ProjectMediaGrid';
 import { RelationOverlay } from '@/components/atlas/RelationOverlay';
@@ -26,6 +26,9 @@ type MotionSnapshot = {
 
 const hoverRadius = 76;
 type IntroState = 'intro' | 'launching' | 'idle';
+type ObjectInteractionState = 'idle' | 'approach' | 'preview' | 'focus' | 'morphing' | 'dossier';
+type HoverFocusLevel = 'none' | 'approach' | 'preview' | 'focus' | 'magnify';
+type MorphPhase = 'opening' | 'closing' | null;
 
 export function RadialAtlas({ entries, relations }: { entries: Entry[]; relations: EntryRelation[] }) {
   const svgRef = useRef<SVGSVGElement | null>(null);
@@ -42,7 +45,10 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   const [introState, setIntroState] = useState<IntroState>('intro');
   const [snappedEntryId, setSnappedEntryId] = useState<string | null>(null);
   const [hoverEntryId, setHoverEntryId] = useState<string | null>(null);
-  const [hoverMagnifyId, setHoverMagnifyId] = useState<string | null>(null);
+  const [hoverDurationMs, setHoverDurationMs] = useState(0);
+  const [morphingEntryId, setMorphingEntryId] = useState<string | null>(null);
+  const [morphPhase, setMorphPhase] = useState<MorphPhase>(null);
+  const [morphAnchor, setMorphAnchor] = useState<SvgPoint | null>(null);
   const [pointerPoint, setPointerPoint] = useState<SvgPoint | null>(null);
   const [showDatabasePanel, setShowDatabasePanel] = useState(false);
   const [isDatabaseHovered, setIsDatabaseHovered] = useState(false);
@@ -54,6 +60,8 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     frame: null as number | null,
     timeout: null as number | null
   });
+  const hoverDurationTimerRef = useRef<number | null>(null);
+  const morphTimeoutRef = useRef<number | null>(null);
   const pendingPointerPointRef = useRef<SvgPoint | null>(null);
   const pointerFrameRef = useRef<number | null>(null);
   const showMotionDebug = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('debug') === 'motion';
@@ -65,16 +73,30 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   const displayNodes = useMemo(() => nodes.filter(isReadableNode), [nodes]);
   const snappedNode = useMemo(() => displayNodes.find((node) => node.entry.id === activeSnappedEntryId) ?? null, [activeSnappedEntryId, displayNodes]);
   const hoverNode = useMemo(() => displayNodes.find((node) => node.entry.id === activeHoverEntryId) ?? null, [activeHoverEntryId, displayNodes]);
+  const morphNode = useMemo(() => displayNodes.find((node) => node.entry.id === morphingEntryId) ?? null, [displayNodes, morphingEntryId]);
+  const approachNode = useMemo(() => {
+    if (!pointerPoint || hoverNode || snappedNode || morphPhase || motion.isMoving || introState !== 'idle') return null;
+
+    const nearest = nearestNode(pointerPoint, displayNodes);
+    if (!nearest) return null;
+
+    return nearest.distance <= hoverRadius * 1.45 + nearest.node.size * 0.35 ? nearest.node : null;
+  }, [displayNodes, hoverNode, introState, morphPhase, motion.isMoving, pointerPoint, snappedNode]);
   const isTraveling = motion.isMoving;
   const isSettling = motion.isSettling;
-  const isHoverFocusActive = Boolean(hoverNode && !snappedNode && !isTraveling);
-  const isHoverMagnifyActive = hoverMagnifyId === hoverNode?.entry.id && isHoverFocusActive && !snappedNode && isSettling;
-  const cameraFocus = focusCameraOffset(hoverNode, isHoverFocusActive && !isTraveling, isHoverMagnifyActive);
-  const cursorPoint = cursorAnchorPoint(pointerPoint, hoverNode, cameraFocus, isTraveling, introState, isHoverMagnifyActive, Boolean(snappedNode));
+  const isMorphing = morphPhase !== null;
+  const isHoverPreviewActive = Boolean(hoverNode && !snappedNode && !isTraveling && !isMorphing);
+  const isHoverFocusActive = isHoverPreviewActive && isSettling && hoverDurationMs >= 1050;
+  const isHoverMagnifyActive = isHoverPreviewActive && isSettling && hoverDurationMs >= 4000;
+  const hoverFocusLevel: HoverFocusLevel = isHoverMagnifyActive ? 'magnify' : isHoverFocusActive ? 'focus' : isHoverPreviewActive ? 'preview' : approachNode ? 'approach' : 'none';
+  const interactionState: ObjectInteractionState = snappedNode ? 'dossier' : isMorphing ? 'morphing' : isHoverMagnifyActive || isHoverFocusActive ? 'focus' : isHoverPreviewActive ? 'preview' : approachNode ? 'approach' : 'idle';
+  const focusNode = hoverNode ?? approachNode;
+  const cameraFocus = focusCameraOffset(focusNode, hoverFocusLevel);
+  const cursorPoint = cursorAnchorPoint(pointerPoint, hoverNode, cameraFocus, isTraveling || isMorphing, introState, hoverFocusLevel, Boolean(snappedNode));
   const isIntroActive = introState !== 'idle';
   const backgroundStyle = {
-    filter: snappedNode ? 'blur(6px)' : isIntroActive ? 'blur(7px)' : 'blur(0px)',
-    opacity: snappedNode ? 0.34 : introState === 'intro' ? 0.3 : introState === 'launching' ? 0.82 : 1,
+    filter: isIntroActive ? 'blur(7px)' : 'blur(0px)',
+    opacity: snappedNode ? 0.48 : isMorphing ? 0.62 : introState === 'intro' ? 0.3 : introState === 'launching' ? 0.82 : 1,
     transition: 'filter 520ms cubic-bezier(0.19, 1, 0.22, 1), opacity 520ms cubic-bezier(0.19, 1, 0.22, 1)'
   };
 
@@ -113,12 +135,22 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   }, [introState]);
 
   useEffect(() => {
-    if (!hoverNode || snappedNode) return;
-    if (isTraveling || !isSettling) return;
+    clearHoverTimers();
 
-    const timeout = window.setTimeout(() => setHoverMagnifyId(hoverNode.entry.id), 4000);
-    return () => window.clearTimeout(timeout);
-  }, [hoverNode, isSettling, isTraveling, snappedNode]);
+    if (!hoverNode || snappedNode || isMorphing || isTraveling || !isSettling) {
+      return;
+    }
+
+    const startedAt = window.performance.now();
+
+    const updateHoverDuration = () => {
+      setHoverDurationMs(Math.round(window.performance.now() - startedAt));
+      hoverDurationTimerRef.current = window.setTimeout(updateHoverDuration, 140);
+    };
+
+    hoverDurationTimerRef.current = window.setTimeout(updateHoverDuration, 140);
+    return clearHoverTimers;
+  }, [hoverNode, isMorphing, isSettling, isTraveling, snappedNode]);
 
   useEffect(() => {
     if (!showMotionDebug) return;
@@ -161,8 +193,27 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
       if (pointerFrameRef.current !== null) {
         window.cancelAnimationFrame(pointerFrameRef.current);
       }
+
+      clearHoverTimers();
+
+      if (morphTimeoutRef.current !== null) {
+        window.clearTimeout(morphTimeoutRef.current);
+      }
     };
   }, []);
+
+  function clearHoverTimers() {
+    if (hoverDurationTimerRef.current !== null) {
+      window.clearTimeout(hoverDurationTimerRef.current);
+      hoverDurationTimerRef.current = null;
+    }
+  }
+
+  function clearHoverState() {
+    clearHoverTimers();
+    setHoverEntryId(null);
+    setHoverDurationMs(0);
+  }
 
   function startIntro() {
     if (introState === 'idle') return;
@@ -177,25 +228,66 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
       return;
     }
 
-    releaseSnap();
+    releaseSnap(true);
     nudgeTravel(delta);
   }
 
   function focusNodeInView(node: WormholeEntryNode) {
-    snapToNode(node);
+    openDossierFromNode(node);
   }
 
-  function snapToNode(node: WormholeEntryNode) {
+  function openDossierFromNode(node: WormholeEntryNode) {
+    if (isMorphing) return;
+
+    if (morphTimeoutRef.current !== null) {
+      window.clearTimeout(morphTimeoutRef.current);
+      morphTimeoutRef.current = null;
+    }
+
+    clearHoverTimers();
     setSelectedEntry(node.entry);
-    setSnappedEntryId(node.entry.id);
     setHoverEntryId(node.entry.id);
+    setMorphingEntryId(node.entry.id);
+    setMorphAnchor(applyCameraToPoint(node, cameraFocus));
+    setMorphPhase('opening');
+
+    morphTimeoutRef.current = window.setTimeout(() => {
+      setSnappedEntryId(node.entry.id);
+      setMorphPhase(null);
+      setMorphingEntryId(null);
+      morphTimeoutRef.current = null;
+    }, 360);
   }
 
-  function releaseSnap() {
-    setSnappedEntryId((current) => (current === null ? current : null));
-    setHoverEntryId((current) => (current === null ? current : null));
-    setHoverMagnifyId((current) => (current === null ? current : null));
-    setSelectedEntry((current) => (current === null ? current : null));
+  function releaseSnap(immediate = false) {
+    if (morphTimeoutRef.current !== null) {
+      window.clearTimeout(morphTimeoutRef.current);
+      morphTimeoutRef.current = null;
+    }
+
+    clearHoverState();
+
+    if (!snappedNode || immediate) {
+      setSnappedEntryId(null);
+      setMorphPhase(null);
+      setMorphingEntryId(null);
+      setMorphAnchor(null);
+      setSelectedEntry(null);
+      return;
+    }
+
+    setMorphingEntryId(snappedNode.entry.id);
+    setMorphAnchor(applyCameraToPoint(snappedNode, { x: 0, y: 0, scale: 1 }));
+    setMorphPhase('closing');
+    setSnappedEntryId(null);
+
+    morphTimeoutRef.current = window.setTimeout(() => {
+      setMorphPhase(null);
+      setMorphingEntryId(null);
+      setMorphAnchor(null);
+      setSelectedEntry(null);
+      morphTimeoutRef.current = null;
+    }, 320);
   }
 
   function resetMotion(value: number) {
@@ -293,7 +385,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     }
 
     const normalizedDelta = Math.max(-140, Math.min(140, event.deltaY));
-    releaseSnap();
+    releaseSnap(true);
     nudgeTravel(normalizedDelta * 0.00036);
   }
 
@@ -323,10 +415,9 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   function commitPointerMove(point: SvgPoint) {
     setPointerPoint(point);
 
-    if (snappedNode || isTraveling) {
+    if (snappedNode || isTraveling || isMorphing) {
       if (isTraveling) {
-        setHoverEntryId((current) => (current === null ? current : null));
-        setHoverMagnifyId((current) => (current === null ? current : null));
+        clearHoverState();
       }
       return;
     }
@@ -335,8 +426,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
       const hoverDistance = distance(point, hoverNode);
       if (hoverDistance <= hoverRadius * 2.2) return;
 
-      setHoverEntryId(null);
-      setHoverMagnifyId(null);
+      clearHoverState();
       return;
     }
 
@@ -348,11 +438,17 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     const nearest = nearestNode(point, displayNodes);
 
     if (!nearest) {
-      setHoverEntryId(null);
+      clearHoverState();
       return;
     }
 
-    setHoverEntryId(nearest.distance <= hoverRadius + nearest.node.size * 0.4 ? nearest.node.entry.id : null);
+    const nextHoverId = nearest.distance <= hoverRadius + nearest.node.size * 0.4 ? nearest.node.entry.id : null;
+    if (nextHoverId === null) {
+      clearHoverState();
+    } else if (nextHoverId !== hoverEntryId) {
+      clearHoverState();
+      setHoverEntryId(nextHoverId);
+    }
   }
 
   function handlePointerLeave() {
@@ -365,8 +461,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     }
 
     if (!snappedNode) {
-      setHoverEntryId(null);
-      setHoverMagnifyId(null);
+      clearHoverState();
     }
   }
 
@@ -384,7 +479,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   }
 
   return (
-    <main className={`relative h-screen w-screen overflow-hidden bg-[#050505] text-[#f7f7f4] ${introState === 'launching' ? 'cosmos-launching' : ''} ${isTraveling ? 'cosmos-moving' : ''} ${introState === 'idle' && !isTraveling ? 'cosmos-idle' : ''} ${isHoverMagnifyActive ? 'cosmos-magnifying' : ''}`}>
+    <main className={`relative h-screen w-screen overflow-hidden bg-[#050505] text-[#f7f7f4] ${introState === 'launching' ? 'cosmos-launching' : ''} ${isTraveling ? 'cosmos-moving' : ''} ${introState === 'idle' && !isTraveling ? 'cosmos-idle' : ''} ${isHoverFocusActive || isHoverMagnifyActive ? 'cosmos-focusing' : ''} ${isHoverMagnifyActive ? 'cosmos-magnifying' : ''}`}>
       <div className="h-full w-full">
         <svg
           ref={svgRef}
@@ -400,7 +495,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
           <defs>
           </defs>
           <rect width={atlasSize.width} height={atlasSize.height} fill="#050505" />
-          <g style={backgroundStyle} pointerEvents={snappedNode ? 'none' : 'auto'}>
+          <g style={backgroundStyle} pointerEvents={snappedNode || isMorphing ? 'none' : 'auto'}>
             <g
               className="wormhole-camera"
               style={{
@@ -411,12 +506,12 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
               <WormholeRings state={state} isMoving={isTraveling} />
               <StyleSectors state={state} isMoving={isTraveling} activeStyleLens={activeStyleLens} />
 
-              {showRelations ? <RelationOverlay nodes={displayNodes} relations={relations} selectedEntry={snappedNode?.entry ?? hoverNode?.entry ?? null} isMoving={isTraveling} /> : null}
+              {showRelations ? <RelationOverlay nodes={displayNodes} relations={relations} selectedEntry={snappedNode?.entry ?? hoverNode?.entry ?? morphNode?.entry ?? null} isMoving={isTraveling} /> : null}
 
-              {hoverNode && !snappedNode && !isTraveling ? <HoverPreview pointer={invertCameraPoint(cursorPoint ?? pointerPoint ?? applyCameraToPoint(hoverNode, cameraFocus), cameraFocus)} node={hoverNode} isMagnified={isHoverMagnifyActive} /> : null}
+              {hoverNode && !snappedNode && !isTraveling && !isMorphing ? <HoverPreview pointer={invertCameraPoint(cursorPoint ?? pointerPoint ?? applyCameraToPoint(hoverNode, cameraFocus), cameraFocus)} node={hoverNode} focusLevel={hoverFocusLevel} /> : null}
 
               {displayNodes.map((node) => {
-                const displayOffset = focusDisplayOffset(node, hoverNode, isHoverFocusActive, isHoverMagnifyActive);
+                const displayOffset = focusDisplayOffset(node, hoverNode, hoverFocusLevel);
                 const isFocusNode = hoverNode?.entry.id === node.entry.id;
 
                 return (
@@ -452,7 +547,8 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
               })}
             </g>
           </g>
-          {snappedNode ? <SnappedEntryOverlay node={snappedNode} onDismiss={releaseSnap} /> : null}
+          {morphNode && morphPhase ? <MorphingEntryOverlay node={morphNode} anchor={morphAnchor ?? applyCameraToPoint(morphNode, cameraFocus)} phase={morphPhase} onDismiss={() => releaseSnap(true)} /> : null}
+          {snappedNode ? <SnappedEntryOverlay node={snappedNode} onDismiss={() => releaseSnap()} /> : null}
           {introState === 'idle' ? (
             <RadialHud
               showRelations={showRelations}
@@ -481,10 +577,15 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
               fps={debugFps}
               nodeCount={displayNodes.length}
               hoverEntryId={hoverNode?.entry.id ?? null}
+              interactionState={interactionState}
+              focusLevel={hoverFocusLevel}
+              hoverDurationMs={hoverDurationMs}
+              focusNodeId={focusNode?.entry.id ?? morphNode?.entry.id ?? snappedNode?.entry.id ?? null}
+              morphing={isMorphing}
               showRelations={showRelations}
             />
           ) : null}
-          {cursorPoint ? <CosmosCursor pointer={cursorPoint} activeNode={hoverNode ?? snappedNode} isMagnified={isHoverMagnifyActive} /> : null}
+          {cursorPoint ? <CosmosCursor pointer={cursorPoint} activeNode={hoverNode ?? snappedNode} focusLevel={hoverFocusLevel} /> : null}
         </svg>
       </div>
 
@@ -518,16 +619,17 @@ function styleLensOpacity(node: WormholeEntryNode, activeStyleLens: StyleSectorI
   return 0.24 + node.closeness * 0.18;
 }
 
-function focusDisplayOffset(node: WormholeEntryNode, focusNode: WormholeEntryNode | null, focusActive: boolean, magnifyActive: boolean): SvgPoint {
-  if (!focusNode || !focusActive) return { x: 0, y: 0 };
+function focusDisplayOffset(node: WormholeEntryNode, focusNode: WormholeEntryNode | null, focusLevel: HoverFocusLevel): SvgPoint {
+  if (!focusNode || focusLevel === 'none' || focusLevel === 'approach' || focusLevel === 'preview') return { x: 0, y: 0 };
 
+  const magnifyActive = focusLevel === 'magnify';
   const depthDelta = Math.abs(node.depth - focusNode.depth);
   const angularDelta = Math.abs(shortestAngleDelta(node.angle, focusNode.angle));
-  const isClusterNeighbor = depthDelta < (magnifyActive ? 0.055 : 0.028) && angularDelta < (magnifyActive ? 42 : 26);
+  const isClusterNeighbor = depthDelta < (magnifyActive ? 0.046 : 0.024) && angularDelta < (magnifyActive ? 35 : 22);
 
   if (!isClusterNeighbor) return { x: 0, y: 0 };
 
-  const strength = node.entry.id === focusNode.entry.id ? (magnifyActive ? 0.18 : 0.035) : (magnifyActive ? 0.12 : 0.02);
+  const strength = node.entry.id === focusNode.entry.id ? (magnifyActive ? 0.095 : 0.026) : (magnifyActive ? 0.055 : 0.014);
 
   return {
     x: (atlasSize.cx - node.x) * strength,
@@ -535,15 +637,31 @@ function focusDisplayOffset(node: WormholeEntryNode, focusNode: WormholeEntryNod
   };
 }
 
-function focusCameraOffset(focusNode: WormholeEntryNode | null, focusActive: boolean, magnifyActive: boolean) {
-  if (!focusNode || !focusActive) {
+function focusCameraOffset(focusNode: WormholeEntryNode | null, focusLevel: HoverFocusLevel) {
+  if (!focusNode || focusLevel === 'none') {
     return { x: 0, y: 0, scale: 1 };
   }
 
+  const strengthByLevel: Record<HoverFocusLevel, number> = {
+    none: 0,
+    approach: 0.006,
+    preview: 0.018,
+    focus: 0.058,
+    magnify: 0.125
+  };
+  const scaleByLevel: Record<HoverFocusLevel, number> = {
+    none: 1,
+    approach: 1.0015,
+    preview: 1.004,
+    focus: 1.018,
+    magnify: 1.052
+  };
+  const strength = strengthByLevel[focusLevel];
+
   return {
-    x: (atlasSize.cx - focusNode.x) * (magnifyActive ? 0.2 : 0.045),
-    y: (atlasSize.cy - focusNode.y) * (magnifyActive ? 0.2 : 0.045),
-    scale: magnifyActive ? 1.075 : 1.012
+    x: (atlasSize.cx - focusNode.x) * strength,
+    y: (atlasSize.cy - focusNode.y) * strength,
+    scale: scaleByLevel[focusLevel]
   };
 }
 
@@ -567,7 +685,7 @@ function cursorAnchorPoint(
   cameraFocus: { x: number; y: number; scale: number },
   isTraveling: boolean,
   introState: IntroState,
-  isMagnified: boolean,
+  focusLevel: HoverFocusLevel,
   hasSnappedNode: boolean
 ): SvgPoint | null {
   if (introState !== 'idle' || isTraveling) return null;
@@ -575,7 +693,14 @@ function cursorAnchorPoint(
   if (!hoverNode || hasSnappedNode) return freePointer;
 
   const anchor = applyCameraToPoint(hoverNode, cameraFocus);
-  const strength = isMagnified ? 0.26 : 0.14;
+  const strengthByLevel: Record<HoverFocusLevel, number> = {
+    none: 0,
+    approach: 0.025,
+    preview: 0.055,
+    focus: 0.09,
+    magnify: 0.14
+  };
+  const strength = strengthByLevel[focusLevel];
   return {
     x: freePointer.x + (anchor.x - freePointer.x) * strength,
     y: freePointer.y + (anchor.y - freePointer.y) * strength
@@ -665,7 +790,29 @@ function HudIcon({ x, y, kind, active }: { x: number; y: number; kind: 'backward
   );
 }
 
-function MotionDebugHud({ motion, fps, nodeCount, hoverEntryId, showRelations }: { motion: MotionSnapshot; fps: number | null; nodeCount: number; hoverEntryId: string | null; showRelations: boolean }) {
+function MotionDebugHud({
+  motion,
+  fps,
+  nodeCount,
+  hoverEntryId,
+  interactionState,
+  focusLevel,
+  hoverDurationMs,
+  focusNodeId,
+  morphing,
+  showRelations
+}: {
+  motion: MotionSnapshot;
+  fps: number | null;
+  nodeCount: number;
+  hoverEntryId: string | null;
+  interactionState: ObjectInteractionState;
+  focusLevel: HoverFocusLevel;
+  hoverDurationMs: number;
+  focusNodeId: string | null;
+  morphing: boolean;
+  showRelations: boolean;
+}) {
   const x = atlasSize.width - 246;
   const y = 72;
   const rows = [
@@ -674,12 +821,15 @@ function MotionDebugHud({ motion, fps, nodeCount, hoverEntryId, showRelations }:
     `${motion.isMoving ? 'moving' : 'idle'} / ${motion.isSettling ? 'settled' : 'settling'}`,
     `fps ${fps ?? '--'}`,
     `nodes ${nodeCount} / relations ${showRelations ? 'on' : 'off'}`,
-    `hover ${hoverEntryId ? 'active' : 'none'}`
+    `interaction ${interactionState} / ${focusLevel}`,
+    `hover ${hoverEntryId ? 'active' : 'none'} / ${Math.round(hoverDurationMs / 100) / 10}s`,
+    `focus ${focusNodeId ? focusNodeId.slice(0, 18) : 'none'}`,
+    `morph ${morphing ? 'yes' : 'no'}`
   ];
 
   return (
     <g className="motion-debug-hud" pointerEvents="none">
-      <rect x={x} y={y} width="212" height="92" rx="5" fill="#050505" stroke="#00e7ff" strokeWidth="0.55" opacity="0.82" />
+      <rect x={x} y={y} width="212" height="124" rx="5" fill="#050505" stroke="#00e7ff" strokeWidth="0.55" opacity="0.82" />
       <text x={x + 12} y={y + 20} fill="#f7f7f4" fontSize="8.5" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.14em">
         MOTION DEBUG
       </text>
@@ -822,20 +972,22 @@ function IntroGate({ state, onStart }: { state: IntroState; onStart: () => void 
   );
 }
 
-function HoverPreview({ pointer, node, isMagnified }: { pointer: SvgPoint; node: WormholeEntryNode; isMagnified: boolean }) {
+function HoverPreview({ pointer, node, focusLevel }: { pointer: SvgPoint; node: WormholeEntryNode; focusLevel: HoverFocusLevel }) {
+  const isMagnified = focusLevel === 'magnify';
+  const isFocused = focusLevel === 'focus' || isMagnified;
   const previewScale = node.closeness > 0.68 ? 0.78 : 0.66;
   const baseWidth = previewCardWidth(node.entry);
   const cardWidth = baseWidth * previewScale;
   const cardHeight = 82 * previewScale;
   const side = node.x > atlasSize.cx ? -1 : 1;
   const x = Math.max(34, Math.min(atlasSize.width - cardWidth - 34, pointer.x + side * 28));
-  const y = Math.max(34, Math.min(atlasSize.height - cardHeight - 34, pointer.y - cardHeight / 2));
+  const y = Math.max(34, Math.min(atlasSize.height - cardHeight - 86, pointer.y - cardHeight / 2));
 
   return (
-    <g className={`hover-preview ${isMagnified ? 'hover-preview-magnified' : ''}`} pointerEvents="none">
+    <g className={`hover-preview ${isFocused ? 'hover-preview-focused' : ''} ${isMagnified ? 'hover-preview-magnified' : ''}`} pointerEvents="none">
       <line x1={pointer.x} y1={pointer.y} x2={node.x} y2={node.y} stroke="#fff8d6" strokeWidth="0.55" strokeDasharray="1 9" opacity="0.32" />
-      <circle cx={node.x} cy={node.y} r={node.size + (isMagnified ? 18 : 9)} fill="none" stroke="#fff8d6" strokeWidth="0.62" opacity="0.54" />
-      <circle cx={node.x} cy={node.y} r={node.size + (isMagnified ? 31 : 15)} fill="none" stroke="#00e7ff" strokeWidth="0.45" strokeDasharray="1 8" opacity={isMagnified ? 0.48 : 0.32} />
+      <circle cx={node.x} cy={node.y} r={node.size + (isMagnified ? 16 : isFocused ? 12 : 8)} fill="none" stroke="#fff8d6" strokeWidth="0.62" opacity={isFocused ? 0.58 : 0.44} />
+      <circle cx={node.x} cy={node.y} r={node.size + (isMagnified ? 27 : isFocused ? 20 : 14)} fill="none" stroke="#00e7ff" strokeWidth="0.45" strokeDasharray="1 8" opacity={isMagnified ? 0.44 : 0.28} />
       <g transform={`translate(${x} ${y}) scale(${previewScale})`}>
         <HoverImageCard entry={node.entry} width={baseWidth} />
       </g>
@@ -893,6 +1045,34 @@ function DatabasePlaceholderPanel({ onDismiss }: { onDismiss: () => void }) {
   );
 }
 
+function MorphingEntryOverlay({ node, anchor, phase, onDismiss }: { node: WormholeEntryNode; anchor: SvgPoint; phase: Exclude<MorphPhase, null>; onDismiss: () => void }) {
+  const cardScale = 1.42;
+  const cardWidth = 352 * cardScale;
+  const cardHeight = 292 * cardScale;
+  const cardX = atlasSize.cx - cardWidth / 2;
+  const cardY = atlasSize.cy - cardHeight / 2;
+  const morphStyle = {
+    '--morph-x': `${anchor.x - cardX}px`,
+    '--morph-y': `${anchor.y - cardY}px`
+  } as CSSProperties;
+
+  return (
+    <g className={`dossier-morph-overlay dossier-morph-overlay-${phase}`} pointerEvents={phase === 'opening' ? 'none' : 'auto'}>
+      <rect className="dossier-morph-dim" width={atlasSize.width} height={atlasSize.height} fill="#050505" opacity={phase === 'opening' ? 0.18 : 0.26} onClick={onDismiss} />
+      <line x1={anchor.x} y1={anchor.y} x2={atlasSize.cx} y2={atlasSize.cy} stroke="#00e7ff" strokeWidth="0.65" strokeDasharray="2 10" opacity="0.28" />
+      <circle cx={anchor.x} cy={anchor.y} r={node.size + 18} fill="none" stroke="#fff8d6" strokeWidth="0.55" opacity="0.36" />
+      <g transform={`translate(${cardX} ${cardY})`}>
+        <g className={`dossier-morph-card dossier-morph-card-${phase}`} style={morphStyle}>
+          <rect x="-12" y="-12" width={cardWidth + 24} height={cardHeight + 24} fill="#050505" stroke="#00e7ff" strokeWidth="0.75" opacity="0.84" />
+          <g pointerEvents="none" transform={`scale(${cardScale})`}>
+            <ProjectDetailCard entry={node.entry} x={0} y={0} />
+          </g>
+        </g>
+      </g>
+    </g>
+  );
+}
+
 function SnappedEntryOverlay({ node, onDismiss }: { node: WormholeEntryNode; onDismiss: () => void }) {
   const cardScale = 1.42;
   const cardWidth = 352 * cardScale;
@@ -921,12 +1101,17 @@ function SnappedEntryOverlay({ node, onDismiss }: { node: WormholeEntryNode; onD
   );
 }
 
-function CosmosCursor({ pointer, activeNode, isMagnified }: { pointer: SvgPoint; activeNode: WormholeEntryNode | null; isMagnified: boolean }) {
+function CosmosCursor({ pointer, activeNode, focusLevel }: { pointer: SvgPoint; activeNode: WormholeEntryNode | null; focusLevel: HoverFocusLevel }) {
+  const isMagnified = focusLevel === 'magnify';
+  const isFocused = focusLevel === 'focus' || isMagnified;
+  const outerRadius = activeNode ? (isMagnified ? 18 : isFocused ? 16 : 14) : 12;
+  const innerRadius = activeNode ? Math.max(8, outerRadius - 2) : 10;
+
   return (
     <g className="cosmos-cursor" pointerEvents="none" transform={`translate(${pointer.x} ${pointer.y})`} opacity={isMagnified ? 0.92 : 1}>
-      <circle r={activeNode ? (isMagnified ? 22 : 16) : 12} fill="none" stroke="#050505" strokeWidth="3.4" opacity="0.88" />
-      <circle r={activeNode ? (isMagnified ? 20 : 14) : 10} fill="none" stroke="#f7f7f4" strokeWidth="0.8" opacity={activeNode ? 0.82 : 0.52} />
-      {activeNode ? <circle r={isMagnified ? 12.8 : 8.2} fill="none" stroke="#00e7ff" strokeWidth="0.55" opacity="0.58" /> : null}
+      <circle r={outerRadius} fill="none" stroke="#050505" strokeWidth="3.4" opacity="0.88" />
+      <circle r={innerRadius} fill="none" stroke="#f7f7f4" strokeWidth="0.8" opacity={activeNode ? 0.82 : 0.52} />
+      {activeNode ? <circle r={isMagnified ? 11.4 : isFocused ? 9.4 : 7.4} fill="none" stroke="#00e7ff" strokeWidth="0.55" opacity="0.58" /> : null}
       <circle r="2.1" fill="#f7f7f4" opacity="0.86" />
       <line x1="-18" y1="0" x2="-11" y2="0" stroke="#f7f7f4" strokeWidth="0.65" opacity="0.62" />
       <line x1="11" y1="0" x2="18" y2="0" stroke="#f7f7f4" strokeWidth="0.65" opacity="0.62" />
