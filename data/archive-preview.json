@@ -3,7 +3,11 @@
   "storage_target": {
     "database": "cloudflare_d1",
     "assets": "cloudflare_r2",
-    "status": "static_preview_only"
+    "status": "cloud_d1_preview_ready",
+    "database_name": "architecture-cosmos-preview",
+    "assets_status": "r2_skipped_local_manifest_only",
+    "last_verified": "2026-05-18",
+    "frontend_connection": "static_json_only"
   },
   "entries": [
     {

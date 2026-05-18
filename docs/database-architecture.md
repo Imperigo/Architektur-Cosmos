@@ -167,9 +167,9 @@ Each generated model should have:
 ## Integration Path
 
 1. Keep the static site on local JSON while the schema stabilizes.
-2. Create a D1 database in Cloudflare when ready.
-3. Create an R2 bucket for media/model assets.
-4. Import current `data/mock-entries.json` into D1 using a migration script.
+2. Create a D1 database in Cloudflare when ready. Completed for preview as `architecture-cosmos-preview` on 2026-05-18.
+3. Create an R2 bucket for media/model assets only when real asset uploads are ready; R2 is currently skipped to avoid unnecessary storage/billing setup.
+4. Import current `data/mock-entries.json` into D1 using a migration script. Completed for the preview database on 2026-05-18.
 5. Add read-only Worker API endpoints or migrate to OpenNext only when dynamic reads are required.
 6. Add admin/write flows later; do not start with editing UI before the schema is proven.
 

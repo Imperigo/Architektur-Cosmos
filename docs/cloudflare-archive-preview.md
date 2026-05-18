@@ -6,9 +6,13 @@ It does not connect the live website to the database.
 ## Current Status
 
 - The website remains a static export.
-- D1/R2 are preview infrastructure only.
+- Cloudflare D1 preview is created and imported as `architecture-cosmos-preview`.
+- R2 is intentionally skipped; `out/archive-r2-manifest.json` remains the asset planning artifact.
+- D1/R2 are not connected to the live frontend.
 - No API routes, auth, CMS, backend writes, or runtime reads are added.
 - Wrangler currently needs a `CLOUDFLARE_API_TOKEN` in non-interactive Codex runs.
+
+Last confirmed successful preview import: **2026-05-18**.
 
 ## Local Checks
 
@@ -89,9 +93,11 @@ Expected local baseline:
 
 - Entries: 111
 - Relations: 69
+- Flower House sources: 3
 - Flower House media: 4 imported MVP rows
 - Flower House models: 6
 - Flower House analysis layers: 7
+- Afasia entries: 1
 
 ## R2 Preview Policy
 

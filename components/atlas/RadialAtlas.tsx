@@ -927,7 +927,7 @@ function DatabaseArchivePanel({
         <div className="mb-3 flex items-start justify-between gap-3">
           <div>
             <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#00e7ff]">Architecture Cosmos Database</div>
-            <div className="mt-1 text-[10px] uppercase tracking-[0.14em] text-[#b8b8b2]">Static D1 / R2 archive preview</div>
+            <div className="mt-1 text-[10px] uppercase tracking-[0.14em] text-[#b8b8b2]">Cloud D1 preview ready / static frontend</div>
           </div>
           <button className="h-6 w-8 border border-[#f7f7f4]/70 text-[10px] text-[#050505] bg-[#f7f7f4]" type="button" onClick={onDismiss}>X</button>
         </div>
@@ -957,14 +957,16 @@ function DatabaseArchivePanel({
         <div className="min-h-0 flex-1 overflow-y-auto pr-1">
           {activeTab === 'overview' ? (
             <div className="space-y-2 text-[10px] leading-relaxed text-[#d9d9d2]">
-              <ArchiveRow label="Storage" value={`${archivePreview.storage_target.database.toUpperCase()} metadata / ${archivePreview.storage_target.assets.toUpperCase()} assets`} />
-              <ArchiveRow label="Status" value="static preview only, no backend writes" />
+              <ArchiveRow label="Storage" value={`${archivePreview.storage_target.database.toUpperCase()} metadata / R2 skipped`} />
+              <ArchiveRow label="Status" value={`Cloud D1 preview ready / ${archivePreview.storage_target.frontend_connection.replace(/_/g, ' ')}`} />
+              <ArchiveRow label="D1" value={`${archivePreview.storage_target.database_name} / verified ${archivePreview.storage_target.last_verified}`} />
+              <ArchiveRow label="Assets" value={archivePreview.storage_target.assets_status.replace(/_/g, ' ')} />
               <ArchiveRow label="Pilot" value={`${pilotEntry.title}, ${pilotEntry.year_start}, ${pilotEntry.city}`} />
               {selectedEntry ? <ArchiveRow label="Current" value={`${selectedEntry.title} / ${selectedEntry.database_profile?.status ?? 'local entry'}`} /> : null}
               <p className="border border-[#00e7ff]/25 bg-[#061719] p-2 text-[#c9fff4]">
-                The archive foundation separates structured knowledge, source records, media, 3D models, analysis layers and tags. Large files stay in R2 later; the atlas reads compact metadata first.
+                The archive foundation now exists as a Cloudflare D1 preview while this frontend still reads bundled JSON. R2 remains a local manifest until real media and model uploads are worth enabling.
               </p>
-              <ArchiveList title="Next Database Steps" items={['Create Cloudflare D1 database when schema is frozen', 'Create R2 bucket for media, plans and GLB models', 'Import local JSON into normalized tables', 'Add read-only Worker API only after static schema is proven']} />
+              <ArchiveList title="Next Database Steps" items={['Keep D1 preview in sync with archive:cloudflare-preview', 'Use D1 for validation and query design, not live reads yet', 'Keep R2 skipped until media/model upload policy is ready', 'Add read-only Worker API only after static schema is proven']} />
             </div>
           ) : null}
 
