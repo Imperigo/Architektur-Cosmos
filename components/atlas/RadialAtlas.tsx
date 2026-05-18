@@ -93,6 +93,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   const hoverFocusLevel: HoverFocusLevel = isHoverMagnifyActive ? 'magnify' : isHoverFocusActive ? 'focus' : isHoverPreviewActive ? 'preview' : approachNode ? 'approach' : 'none';
   const interactionState: ObjectInteractionState = snappedNode ? 'dossier' : isMorphing ? 'morphing' : isHoverMagnifyActive || isHoverFocusActive ? 'focus' : isHoverPreviewActive ? 'preview' : approachNode ? 'approach' : 'idle';
   const focusNode = hoverNode ?? approachNode;
+  const sourceLensCount = useMemo(() => entries.filter((entry) => isSourceLensEntry(entry, 'afasia')).length, [entries]);
   const cameraFocus = focusCameraOffset(focusNode, hoverFocusLevel);
   const cursorPoint = cursorAnchorPoint(pointerPoint, hoverNode, cameraFocus, isTraveling || isMorphing, introState, hoverFocusLevel, Boolean(snappedNode));
   const isIntroActive = introState !== 'idle';
@@ -565,6 +566,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
               tunnelDepth={state.timePosition}
               activeStyleLens={activeStyleLens}
               activeSourceLens={activeSourceLens}
+              sourceLensCount={sourceLensCount}
               onTravelForward={() => travelBy(0.035)}
               onTravelBackward={() => travelBy(-0.035)}
               onCycleStyleLens={() => setActiveStyleLens((current) => nextStyleLens(current))}
@@ -651,15 +653,22 @@ function styleLensOpacity(node: WormholeEntryNode, activeStyleLens: StyleSectorI
 
 function sourceLensOpacity(node: WormholeEntryNode, activeSourceLens: SourceLens) {
   if (!activeSourceLens) return 1;
+
+  if (isSourceLensEntry(node.entry, activeSourceLens)) return 1;
+  return 0.035 + node.closeness * 0.055;
+}
+
+function isSourceLensEntry(entry: Entry, activeSourceLens: SourceLens) {
+  if (!activeSourceLens) return false;
+
   const sourceText = [
-    node.entry.source_url,
-    node.entry.source_quality,
-    ...(node.entry.source_documents ?? []),
-    ...node.entry.themes
+    entry.source_url,
+    entry.source_quality,
+    ...(entry.source_documents ?? []),
+    ...entry.themes
   ].join(' ').toLowerCase();
 
-  if (activeSourceLens === 'afasia' && sourceText.includes('afasia')) return 1;
-  return 0.035 + node.closeness * 0.055;
+  return activeSourceLens === 'afasia' && sourceText.includes('afasia');
 }
 
 function focusDisplayOffset(node: WormholeEntryNode, focusNode: WormholeEntryNode | null, focusLevel: HoverFocusLevel): SvgPoint {
@@ -763,6 +772,7 @@ function RadialHud({
   tunnelDepth,
   activeStyleLens,
   activeSourceLens,
+  sourceLensCount,
   onTravelForward,
   onTravelBackward,
   onCycleStyleLens,
@@ -773,6 +783,7 @@ function RadialHud({
   tunnelDepth: number;
   activeStyleLens: StyleSectorId | null;
   activeSourceLens: SourceLens;
+  sourceLensCount: number;
   onTravelForward: () => void;
   onTravelBackward: () => void;
   onCycleStyleLens: () => void;
@@ -792,6 +803,11 @@ function RadialHud({
         <HudButton x={atlasSize.cx + 52} y={921} kind="source" label="afasia" active={activeSourceLens === 'afasia'} onClick={onToggleSourceLens} />
         <HudButton x={atlasSize.cx + 104} y={921} kind="relations" label="relations" active={showRelations} onClick={onToggleRelations} />
       </g>
+      {activeSourceLens ? (
+        <text x={atlasSize.cx} y="890" textAnchor="middle" fill="#65ff9a" fontSize="7.2" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.18em" opacity="0.9">
+          AFASIA SOURCE LENS / {sourceLensCount} PROJECT
+        </text>
+      ) : null}
     </g>
   );
 }

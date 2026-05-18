@@ -17,8 +17,11 @@ export function ProjectDetailCard({ entry, x, y }: ProjectDetailCardProps) {
   const metaY = y + 60 + (titleLines.length - 1) * 15;
   const mediaY = y + 88 + (titleLines.length - 1) * 8;
   const headlineLines = ellipsizeLines(wrapText(entry.one_sentence || entry.short_description, 35), 4, 35);
-  const bodyLines = ellipsizeLines(wrapText(entry.full_description, 42), 7, 42);
+  const bodyLines = ellipsizeLines(wrapText(entry.full_description, 42), entry.source_url || entry.source_assets?.length ? 5 : 7, 42);
   const chips = [layerLabel, ...entry.themes.slice(0, 3)].map((item) => ellipsizeText(item.replace(/_/g, ' '), 28));
+  const sourceLabel = sourceLabelForEntry(entry);
+  const sourceAssetCount = entry.source_assets?.length ?? 0;
+  const mediaCredit = primaryMediaCredit(entry);
 
   return (
     <g className="project-detail-card">
@@ -53,7 +56,20 @@ export function ProjectDetailCard({ entry, x, y }: ProjectDetailCardProps) {
           </tspan>
         ))}
       </text>
-      <text x={x + 16} y={y + 244} fill="#b8b8b2" fontSize="7.2" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.1em">
+      {sourceLabel ? (
+        <g className="detail-source-trail">
+          <text x={x + 184} y={y + 218} fill={accent} fontSize="6.8" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.12em">
+            SOURCE TRAIL
+          </text>
+          <text x={x + 184} y={y + 231} fill="#d7d7d0" fontSize="7.1" fontFamily="var(--font-sans), system-ui, sans-serif">
+            {sourceLabel}
+          </text>
+          <text x={x + 184} y={y + 243} fill="#9c9c96" fontSize="6.4" fontFamily="var(--font-sans), system-ui, sans-serif">
+            {sourceAssetCount ? `${sourceAssetCount} local assets` : 'source linked'}{mediaCredit ? ` · ${mediaCredit}` : ''}
+          </text>
+        </g>
+      ) : null}
+      <text x={x + 16} y={y + 242} fill="#b8b8b2" fontSize="7.2" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.1em">
         LAYER / FILTER
       </text>
       {chips.slice(0, 4).map((chip, index) => {
@@ -61,7 +77,7 @@ export function ProjectDetailCard({ entry, x, y }: ProjectDetailCardProps) {
         const row = Math.floor(index / 2);
         const chipWidth = 148;
         return (
-          <g key={`${chip}-${index}`} transform={`translate(${x + 16 + column * 160} ${y + 254 + row * 17})`}>
+          <g key={`${chip}-${index}`} transform={`translate(${x + 16 + column * 160} ${y + 252 + row * 17})`}>
             <rect width={chipWidth} height="13" rx="6.5" fill="#061315" stroke={index === 0 ? accent : '#f7f7f4'} strokeWidth="0.45" opacity="0.88" />
             <text x={chipWidth / 2} y="9" textAnchor="middle" fill={index === 0 ? accent : '#d7d7d0'} fontSize="5.9" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.07em">
               {chip.toUpperCase()}
@@ -115,11 +131,29 @@ function courseGroupLabel(entry: Entry) {
   const cluster = entry.lecture_cluster?.join(' ') ?? '';
   const combined = `${source} ${cluster}`.toLowerCase();
 
+  if (combined.includes('afasia')) return 'Afasia Source Pull';
   if (combined.includes('landschaft')) return 'Landschaftsarchitektur ETH';
   if (combined.includes('global') || combined.includes('urban')) return 'Global History ETH';
   if (combined.includes('architekturgeschichte') || combined.includes('architecture_history') || combined.includes('architectural_history')) return 'Architekturgeschichte ETH';
   if (combined.includes('theory')) return 'Theoriegeschichte ETH';
   return entry.source_quality.replace(/_/g, ' ');
+}
+
+function sourceLabelForEntry(entry: Entry) {
+  if (entry.source_url?.includes('afasia') || entry.source_documents?.some((item) => item.toLowerCase().includes('afasia'))) {
+    return 'Afasia Archzine';
+  }
+
+  if (entry.source_documents?.length) {
+    return ellipsizeText(entry.source_documents.join(' / '), 42);
+  }
+
+  return '';
+}
+
+function primaryMediaCredit(entry: Entry) {
+  const credit = entry.media.find((item) => item.credit)?.credit ?? entry.source_assets?.find((item) => item.credit)?.credit ?? '';
+  return ellipsizeText(credit.replace('© ', ''), 28);
 }
 
 function layerLabelForEntry(entry: Entry) {
