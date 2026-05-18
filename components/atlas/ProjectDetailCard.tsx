@@ -13,7 +13,7 @@ export function ProjectDetailCard({ entry, x, y }: ProjectDetailCardProps) {
   const courseLabel = courseGroupLabel(entry);
   const layerLabel = layerLabelForEntry(entry);
   const titleLines = ellipsizeLines(wrapText(entry.title, 29), 2, 29);
-  const titleFontSize = titleLines.length > 1 ? 16.2 : entry.title.length > 33 ? 17.2 : 19.2;
+  const titleFontSize = titleLines.length > 1 ? 15.2 : entry.title.length > 33 ? 16.2 : 18;
   const metaY = y + 60 + (titleLines.length - 1) * 15;
   const mediaY = y + 88 + (titleLines.length - 1) * 8;
   const headlineLines = ellipsizeLines(wrapText(entry.one_sentence || entry.short_description, 35), 4, 35);
@@ -25,10 +25,10 @@ export function ProjectDetailCard({ entry, x, y }: ProjectDetailCardProps) {
 
   return (
     <g className="project-detail-card">
-      <rect x={x} y={y} width="352" height="292" fill="#050505" stroke={accent} strokeWidth="1" opacity="0.96" />
-      <rect x={x + 1} y={y + 1} width="350" height="290" fill={accent} opacity="0.055" />
+      <rect x={x} y={y} width="352" height="292" fill="#050505" stroke={accent} strokeWidth="0.72" opacity="0.95" />
+      <rect x={x + 1} y={y + 1} width="350" height="290" fill={accent} opacity="0.045" />
       <path className="detail-card-scanline" d={`M ${x + 12} ${y + 38} H ${x + 340}`} stroke={accent} strokeWidth="0.5" strokeDasharray="2 10" opacity="0.62" />
-      <text x={x + 16} y={y + 24} fill={accent} fontSize="7.7" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.18em">
+      <text x={x + 16} y={y + 24} fill={accent} fontSize="7.2" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.18em">
         {courseLabel.toUpperCase()}
       </text>
       <text fill="#f7f7f4" fontSize={titleFontSize} fontWeight="700" fontFamily="var(--font-sans), system-ui, sans-serif">
@@ -38,18 +38,18 @@ export function ProjectDetailCard({ entry, x, y }: ProjectDetailCardProps) {
           </tspan>
         ))}
       </text>
-      <text x={x + 16} y={metaY} fill="#b8b8b8" fontSize="8.4" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.08em">
+      <text x={x + 16} y={metaY} fill="#b8b8b8" fontSize="7.9" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.08em">
         {formatYear(entry.year_start)}{location ? ` · ${location}` : ''}
       </text>
       <ProjectMediaGrid media={entry.media} x={x + 16} y={mediaY} slotWidth={72} slotHeight={48} gap={9} showLabels accent={accent} />
-      <text fill="#f7f7f4" fontSize="8.7" fontWeight="620" fontFamily="var(--font-sans), system-ui, sans-serif">
+      <text fill="#f7f7f4" fontSize="8.2" fontWeight="600" fontFamily="var(--font-sans), system-ui, sans-serif">
         {headlineLines.map((line, index) => (
           <tspan key={`${line}-${index}`} x={x + 184} y={y + 91 + index * 11}>
             {line}
           </tspan>
         ))}
       </text>
-      <text fill="#cfcfca" fontSize="7.25" fontFamily="var(--font-sans), system-ui, sans-serif">
+      <text fill="#cfcfca" fontSize="6.9" fontFamily="var(--font-sans), system-ui, sans-serif">
         {bodyLines.map((line, index) => (
           <tspan key={`${line}-${index}`} x={x + 184} y={y + 142 + index * 9.7}>
             {line}

@@ -23,10 +23,12 @@ type SemanticEntryNodeProps = {
   nodeRadius?: number;
   showLabel?: boolean;
   styleLensActive?: boolean;
+  isHovered?: boolean;
   driftX?: number;
   driftY?: number;
   driftDelay?: number;
   onSelect: () => void;
+  onHover?: (entryId: string | null) => void;
 };
 
 const entryGlyph: Record<Entry['entry_type'], string> = {
@@ -66,14 +68,16 @@ export function SemanticEntryNode({
   nodeRadius,
   showLabel = true,
   styleLensActive = false,
+  isHovered = false,
   driftX = 0,
   driftY = 0,
   driftDelay = 0,
-  onSelect
+  onSelect,
+  onHover
 }: SemanticEntryNodeProps) {
   const inverseScale = 1 / scale;
   const glyphRadius = nodeRadius ?? (semanticLevel === 'global' ? 4.8 : 7.2);
-  const hitRadius = Math.max(22, glyphRadius + 18);
+  const hitRadius = Math.max(30, glyphRadius + 24);
   const glyphFontSize = Math.max(7, Math.min(14, glyphRadius * 0.72));
   const accent = styleAccent[entry.style_sector];
   const labelWidth = Math.min(230, entry.title.length * 6.4 + 72);
@@ -97,6 +101,8 @@ export function SemanticEntryNode({
       aria-label={`${entry.title}, ${entry.year_start}`}
       className="group cosmos-node-wiggle cursor-pointer outline-none"
       style={driftStyle}
+      onPointerEnter={() => onHover?.(entry.id)}
+      onPointerLeave={() => onHover?.(null)}
       onClick={onSelect}
       onKeyDown={(event) => {
         if (event.key === 'Enter' || event.key === ' ') {
@@ -109,7 +115,10 @@ export function SemanticEntryNode({
       {clusterSize > 1 ? (
         <circle cx={x} cy={y} r={glyphRadius + 5.5} fill="none" stroke="#f7f7f4" strokeWidth="0.55" strokeDasharray="1 4" opacity="0.65" />
       ) : null}
-      <EntryThumbnail entry={entry} x={x} y={y} radius={isSelected ? glyphRadius + 3 : glyphRadius} accent={accent} isSelected={isSelected} styleLensActive={styleLensActive} />
+      {isHovered ? (
+        <circle cx={x} cy={y} r={glyphRadius + 9} fill="none" stroke={accent} strokeWidth="0.75" strokeDasharray="1 6" opacity="0.78" pointerEvents="none" />
+      ) : null}
+      <EntryThumbnail entry={entry} x={x} y={y} radius={isSelected ? glyphRadius + 3 : isHovered ? glyphRadius + 1.5 : glyphRadius} accent={accent} isSelected={isSelected} styleLensActive={styleLensActive || isHovered} />
       <text
         x={x}
         y={y + glyphFontSize * 0.34}

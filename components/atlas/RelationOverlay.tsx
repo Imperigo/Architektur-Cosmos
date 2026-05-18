@@ -12,6 +12,7 @@ type RelationOverlayProps = {
   nodes: RelationNode[];
   relations: EntryRelation[];
   selectedEntry: Entry | null;
+  focusEntry?: Entry | null;
   isMoving?: boolean;
 };
 
@@ -37,11 +38,14 @@ const relationColor: Record<RelationType, string> = {
   context: '#f7f7f4'
 };
 
-function RelationOverlayComponent({ nodes, relations, selectedEntry, isMoving = false }: RelationOverlayProps) {
+function RelationOverlayComponent({ nodes, relations, selectedEntry, focusEntry = null, isMoving = false }: RelationOverlayProps) {
   const nodeById = new Map(nodes.map((node) => [node.entry.id, node]));
+  const activeEntry = selectedEntry ?? focusEntry;
   const visibleRelations = isMoving && !selectedEntry
     ? relations.filter((_, index) => index % 4 === 0)
     : relations;
+  const explicitRelationKeys = new Set(visibleRelations.map((relation) => relationKey(relation.source_entry_id, relation.target_entry_id)));
+  const themeRelations = !isMoving && focusEntry ? themeNetworkRelations(focusEntry, nodes, explicitRelationKeys) : [];
 
   return (
     <g aria-label="Relationen" pointerEvents="none">
@@ -50,14 +54,14 @@ function RelationOverlayComponent({ nodes, relations, selectedEntry, isMoving = 
         const target = nodeById.get(relation.target_entry_id);
         if (!source || !target) return null;
 
-        const isSelectedRelation = selectedEntry
-          ? relation.source_entry_id === selectedEntry.id || relation.target_entry_id === selectedEntry.id
+        const isSelectedRelation = activeEntry
+          ? relation.source_entry_id === activeEntry.id || relation.target_entry_id === activeEntry.id
           : false;
         const visibility = relationVisibility(source, target);
         if (!isSelectedRelation && visibility < 0.18) return null;
 
         const relationStroke = isSelectedRelation ? '#fff8d6' : relationColor[relation.relation_type];
-        const relationOpacity = isSelectedRelation ? 0.9 : selectedEntry ? 0.16 * visibility : 0.3 * visibility;
+        const relationOpacity = isSelectedRelation ? 0.9 : activeEntry ? 0.16 * visibility : 0.3 * visibility;
         const relationWidth = isSelectedRelation ? 1.95 : 0.72 + visibility * 0.32;
         const path = relationPath(source, target);
 
@@ -81,6 +85,14 @@ function RelationOverlayComponent({ nodes, relations, selectedEntry, isMoving = 
               strokeDasharray={relationDash[relation.relation_type]}
               opacity={isMoving ? relationOpacity * 0.34 : relationOpacity}
             />
+          </g>
+        );
+      })}
+      {themeRelations.map(({ source, target, strength, reason }) => {
+        const path = relationPath(source, target);
+        return (
+          <g key={`theme-${source.entry.id}-${target.entry.id}-${reason}`} className="relation-strand-group relation-theme-hover">
+            <path d={path} fill="none" stroke={reason === 'style' ? '#ffd16d' : '#00e7ff'} strokeWidth={1.25 + strength * 0.55} strokeDasharray="1 7" opacity={0.32 + strength * 0.38} />
           </g>
         );
       })}
@@ -118,6 +130,38 @@ function relationVisibility(source: RelationNode, target: RelationNode) {
   const opacity = Math.min(source.opacity ?? 1, target.opacity ?? 1);
   const focusBoost = Math.max(source.closeness ?? 0, target.closeness ?? 0) * 0.18;
   return Math.max(0, Math.min(1, opacity * (0.85 - depthGap * 1.35) + focusBoost));
+}
+
+function themeNetworkRelations(focusEntry: Entry, nodes: RelationNode[], explicitRelationKeys: Set<string>) {
+  const source = nodes.find((node) => node.entry.id === focusEntry.id);
+  if (!source) return [];
+
+  return nodes
+    .filter((node) => node.entry.id !== focusEntry.id && !explicitRelationKeys.has(relationKey(focusEntry.id, node.entry.id)))
+    .map((target) => {
+      const sharedThemes = focusEntry.themes.filter((theme) => target.entry.themes.includes(theme)).length;
+      const sameStyle = target.entry.style_sector === focusEntry.style_sector;
+      const sameSource = sourceBucket(target.entry) && sourceBucket(target.entry) === sourceBucket(focusEntry);
+      const strength = Math.min(1, sharedThemes * 0.34 + (sameStyle ? 0.28 : 0) + (sameSource ? 0.24 : 0));
+      const reason = sharedThemes ? 'theme' : sameStyle ? 'style' : 'source';
+      return { source, target, strength, reason };
+    })
+    .filter((item) => item.strength >= 0.28)
+    .sort((a, b) => b.strength - a.strength)
+    .slice(0, 18);
+}
+
+function sourceBucket(entry: Entry) {
+  const sourceText = [entry.source_url, ...(entry.source_documents ?? [])].join(' ').toLowerCase();
+  if (sourceText.includes('afasia')) return 'afasia';
+  if (sourceText.includes('landschaft')) return 'landschaft';
+  if (sourceText.includes('global')) return 'global-history';
+  if (sourceText.includes('architekturgeschichte')) return 'architecture-history';
+  return '';
+}
+
+function relationKey(a: string, b: string) {
+  return [a, b].sort().join('::');
 }
 
 function tangentUnit(x: number, y: number, direction: number) {

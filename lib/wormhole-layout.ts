@@ -44,10 +44,10 @@ const staticTimelineMarkers = [
   1400, 1500, 1600, 1700, 1750, 1800, 1850, 1875, 1900, 1925, 1940, 1950,
   1960, 1975, 1990, 2000, 2010, 2020, 2025
 ];
-const maxTunnelRadius = 430;
-const minTunnelRadius = 42;
-const visibleDepth = 1;
-const frontFadeDepth = -0.13;
+const maxTunnelRadius = 438;
+const minTunnelRadius = 36;
+const visibleDepth = 1.34;
+const frontFadeDepth = -0.16;
 
 export const wormholeTunnel = {
   maxRadius: maxTunnelRadius,
@@ -166,19 +166,19 @@ export function layoutWormholeEntries(entries: Entry[], state: WormholeState, se
 }
 
 export function tunnelRadius(depth: number) {
-  const travelDepth = Math.max(0, Math.min(1.16, 1 - depth));
+  const travelDepth = Math.max(0, Math.min(1.18, 1 - depth / visibleDepth));
   const eased = Math.pow(travelDepth, 2.45);
   return Math.round((minTunnelRadius + eased * (maxTunnelRadius - minTunnelRadius)) * 100) / 100;
 }
 
 export function radiusToTunnelDepth(radius: number) {
   const eased = Math.max(0, Math.min(1, (radius - minTunnelRadius) / (maxTunnelRadius - minTunnelRadius)));
-  return 1 - Math.pow(eased, 1 / 2.6);
+  return visibleDepth * (1 - Math.pow(eased, 1 / 2.6));
 }
 
 export function tunnelCenter(depth: number, phase: number) {
   const worldPosition = phase + depth;
-  const clampedDepth = Math.max(0, Math.min(1, depth));
+  const clampedDepth = Math.max(0, Math.min(1, depth / visibleDepth));
   const clampedWorldPosition = Math.max(0, Math.min(1, worldPosition));
   const bend = Math.sin(clampedDepth * Math.PI);
   const worldBend = Math.sin(clampedWorldPosition * Math.PI);
@@ -239,7 +239,7 @@ function ringDepth(year: number, timePosition: number) {
 }
 
 function rollingTimelineMarkers(timePosition: number) {
-  const step = 0.034;
+  const step = 0.029;
   const start = Math.max(0, timePosition + frontFadeDepth + step * 0.5);
   const end = Math.min(1, timePosition + visibleDepth - step * 0.5);
   const first = Math.floor(start / step) * step;
@@ -283,9 +283,9 @@ export function tunnelOpacity(depth: number) {
     return Math.max(0, Math.min(1, (depth - frontFadeDepth) / Math.abs(frontFadeDepth)));
   }
 
-  const fadeInFromBack = Math.min(1, Math.max(0, (visibleDepth - depth) / 0.12));
-  const fadeOutAtFront = Math.min(1, Math.max(0, depth / 0.12));
-  const depthHaze = Math.max(0.16, 1 - depth * 0.72);
+  const fadeInFromBack = Math.min(1, Math.max(0, (visibleDepth - depth) / 0.18));
+  const fadeOutAtFront = Math.min(1, Math.max(0, depth / 0.13));
+  const depthHaze = Math.max(0.16, 1 - (depth / visibleDepth) * 0.72);
   return Math.max(0, Math.min(1, fadeInFromBack, fadeOutAtFront) * depthHaze);
 }
 

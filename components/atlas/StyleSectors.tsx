@@ -31,7 +31,7 @@ const sectorLabel: Record<StyleSector['id'], string> = {
   vernacular_architecture: 'VERNAKULAER'
 };
 
-function StyleSectorsComponent({ state, isMoving = false, activeStyleLens = null }: { state: WormholeState; isMoving?: boolean; activeStyleLens?: StyleSector['id'] | null }) {
+function StyleSectorsComponent({ state, isMoving = false, activeStyleLens = null, onSelectStyleLens }: { state: WormholeState; isMoving?: boolean; activeStyleLens?: StyleSector['id'] | null; onSelectStyleLens?: (styleId: StyleSector['id']) => void }) {
   const innerLabelOpacity = 0.58 + smoothstep(0.18, 0.54, state.timePosition) * 0.28;
   const frontDepth = tunnelFrontDepth(state);
   const labelDepth = frontDepth + 0.08;
@@ -51,7 +51,17 @@ function StyleSectorsComponent({ state, isMoving = false, activeStyleLens = null
         const lensBoost = activeStyleLens === sector.id ? 1.8 : activeStyleLens ? 0.36 : 1;
 
         return (
-          <g key={sector.id} className="style-sector">
+          <g
+            key={sector.id}
+            className="style-sector"
+            pointerEvents="auto"
+            onPointerDown={(event) => event.stopPropagation()}
+            onClick={(event) => {
+              event.stopPropagation();
+              onSelectStyleLens?.(sector.id);
+            }}
+          >
+            <path d={ribbonPath} fill="#050505" opacity="0.001" />
             <path
               className="style-sector-ribbon"
               d={ribbonPath}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState, type PointerEvent, type WheelEvent as ReactWheelEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type PointerEvent, type RefObject, type WheelEvent as ReactWheelEvent } from 'react';
 import { ProjectDetailCard } from '@/components/atlas/ProjectDetailCard';
 import { RelationOverlay } from '@/components/atlas/RelationOverlay';
 import { SemanticEntryNode } from '@/components/atlas/SemanticEntryNode';
@@ -25,11 +25,35 @@ type MotionSnapshot = {
 
 type IntroState = 'intro' | 'launching' | 'idle';
 type SourceLens = 'afasia' | null;
-type DatabaseTab = 'entries' | 'media' | 'sources' | 'relations' | 'tags';
+type EntryDraft = {
+  title: string;
+  year: string;
+  entry_type: Entry['entry_type'];
+  style_sector: StyleSectorId;
+  city: string;
+  country: string;
+  authors: string;
+  themes: string;
+  short_description: string;
+};
+
+const initialEntryDraft: EntryDraft = {
+  title: '',
+  year: '2025',
+  entry_type: 'building',
+  style_sector: 'modern_architecture',
+  city: '',
+  country: '',
+  authors: '',
+  themes: '',
+  short_description: ''
+};
 
 export function RadialAtlas({ entries, relations }: { entries: Entry[]; relations: EntryRelation[] }) {
   const svgRef = useRef<SVGSVGElement | null>(null);
+  const cursorRef = useRef<SVGGElement | null>(null);
   const [selectedEntry, setSelectedEntry] = useState<Entry | null>(null);
+  const [hoveredEntryId, setHoveredEntryId] = useState<string | null>(null);
   const [showRelations, setShowRelations] = useState(false);
   const [activeStyleLens, setActiveStyleLens] = useState<StyleSectorId | null>(null);
   const [activeSourceLens, setActiveSourceLens] = useState<SourceLens>(null);
@@ -41,10 +65,9 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     isSettling: true
   });
   const [introState, setIntroState] = useState<IntroState>('intro');
-  const [pointerPoint, setPointerPoint] = useState<SvgPoint | null>(null);
   const [showFilterPanel, setShowFilterPanel] = useState(false);
   const [showDatabasePanel, setShowDatabasePanel] = useState(false);
-  const [activeDatabaseTab, setActiveDatabaseTab] = useState<DatabaseTab>('entries');
+  const [entryDraft, setEntryDraft] = useState<EntryDraft>(initialEntryDraft);
   const motionRef = useRef({
     currentTravel: 0,
     targetTravel: 0,
@@ -54,13 +77,15 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   });
   const pendingPointerPointRef = useRef<SvgPoint | null>(null);
   const pointerFrameRef = useRef<number | null>(null);
+  const hoveredEntryIdRef = useRef<string | null>(null);
   const state = useMemo(() => wormholeState(motion.currentTravel), [motion.currentTravel]);
   const activeSelectedEntryId = selectedEntry?.id ?? null;
   const nodes = useMemo(() => layoutWormholeEntries(entries, state, activeSelectedEntryId ?? undefined), [activeSelectedEntryId, entries, state]);
   const displayNodes = useMemo(() => limitDisplayNodes(nodes), [nodes]);
   const isTraveling = motion.isMoving;
   const sourceLensCount = useMemo(() => entries.filter((entry) => isSourceLensEntry(entry, 'afasia')).length, [entries]);
-  const cursorPoint = introState === 'idle' && !isTraveling ? pointerPoint ?? { x: atlasSize.cx, y: atlasSize.cy } : null;
+  const hoveredEntry = useMemo(() => displayNodes.find((node) => node.entry.id === hoveredEntryId)?.entry ?? null, [displayNodes, hoveredEntryId]);
+  const cursorVisible = introState === 'idle' && !isTraveling;
   const isIntroActive = introState !== 'idle';
   const backgroundStyle = {
     filter: isIntroActive ? 'blur(7px)' : 'blur(0px)',
@@ -136,6 +161,15 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     };
   }, []);
 
+  useEffect(() => {
+    if (cursorVisible) {
+      moveCursor({ x: atlasSize.cx, y: atlasSize.cy });
+      return;
+    }
+
+    setHoveredEntry(null);
+  }, [cursorVisible]);
+
   function startIntro() {
     if (introState === 'idle') return;
 
@@ -161,6 +195,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     setShowFilterPanel(false);
     setShowDatabasePanel(false);
     setSelectedEntry(entry);
+    setHoveredEntry(null);
   }
 
   function closeDossier() {
@@ -291,18 +326,38 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   }
 
   function commitPointerMove(point: SvgPoint) {
-    setPointerPoint(point);
+    moveCursor(point);
+
+    if (selectedEntry || isTraveling || introState !== 'idle') {
+      setHoveredEntry(null);
+      return;
+    }
+
+    const nearest = nearestInteractiveNode(point, displayNodes);
+    setHoveredEntry(nearest?.entry.id ?? null);
   }
 
   function handlePointerLeave() {
     pendingPointerPointRef.current = null;
-    setPointerPoint(null);
+    setHoveredEntry(null);
 
     if (pointerFrameRef.current !== null) {
       window.cancelAnimationFrame(pointerFrameRef.current);
       pointerFrameRef.current = null;
     }
 
+  }
+
+  function moveCursor(point: SvgPoint) {
+    const cursor = cursorRef.current;
+    if (!cursor) return;
+    cursor.setAttribute('transform', `translate(${point.x} ${point.y})`);
+  }
+
+  function setHoveredEntry(entryId: string | null) {
+    if (hoveredEntryIdRef.current === entryId) return;
+    hoveredEntryIdRef.current = entryId;
+    setHoveredEntryId(entryId);
   }
 
   function pointerToSvgPoint(event: PointerEvent<SVGSVGElement>): SvgPoint | null {
@@ -338,9 +393,19 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
           <g style={backgroundStyle} pointerEvents={selectedEntry ? 'none' : 'auto'}>
             <g className="wormhole-camera">
               <WormholeRings state={state} isMoving={isTraveling} />
-              <StyleSectors state={state} isMoving={isTraveling} activeStyleLens={activeStyleLens} />
+              <StyleSectors
+                state={state}
+                isMoving={isTraveling}
+                activeStyleLens={activeStyleLens}
+                onSelectStyleLens={(styleId) => {
+                  setActiveStyleLens((current) => current === styleId ? null : styleId);
+                  setShowFilterPanel(false);
+                }}
+              />
 
-              {showRelations ? <RelationOverlay nodes={displayNodes} relations={relations} selectedEntry={selectedEntry} isMoving={isTraveling} /> : null}
+              {showRelations || hoveredEntry || selectedEntry ? (
+                <RelationOverlay nodes={displayNodes} relations={relations} selectedEntry={selectedEntry} focusEntry={hoveredEntry} isMoving={isTraveling} />
+              ) : null}
 
               {displayNodes.map((node) => {
                 return (
@@ -362,6 +427,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
                     semanticLevel="global"
                     scale={1}
                     isSelected={activeSelectedEntryId === node.entry.id}
+                    isHovered={hoveredEntryId === node.entry.id}
                     nodeRadius={node.size}
                     showLabel={false}
                     styleLensActive={activeStyleLens === node.entry.style_sector}
@@ -369,6 +435,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
                     driftY={node.driftY}
                     driftDelay={node.driftDelay}
                     onSelect={() => focusNodeInView(node)}
+                    onHover={setHoveredEntry}
                   />
                 </g>
                 );
@@ -403,9 +470,9 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
               activeStyleLens={activeStyleLens}
               activeSourceLens={activeSourceLens}
               sourceLensCount={sourceLensCount}
-              onTravelForward={() => travelBy(0.018)}
-              onTravelBackward={() => travelBy(-0.018)}
-              onCycleStyleLens={() => setActiveStyleLens((current) => nextStyleLens(current))}
+              onTravelForward={() => travelBy(0.026)}
+              onTravelBackward={() => travelBy(-0.026)}
+              onToggleLenses={() => setShowFilterPanel((current) => !current)}
               onToggleSourceLens={() => setActiveSourceLens((current) => current === 'afasia' ? null : 'afasia')}
               onToggleRelations={() => setShowRelations((current) => !current)}
             />
@@ -417,15 +484,15 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
             />
           ) : null}
           {showDatabasePanel && introState === 'idle' ? (
-            <DatabasePlaceholderPanel
-              activeTab={activeDatabaseTab}
-              onTabChange={setActiveDatabaseTab}
+            <DatabaseDraftPanel
+              draft={entryDraft}
+              onDraftChange={setEntryDraft}
               onDismiss={() => setShowDatabasePanel(false)}
             />
           ) : null}
           {introState === 'idle' ? <TimeReadout timePosition={state.timePosition} currentYear={state.currentYear} /> : null}
           {introState === 'idle' ? <BrandChrome /> : null}
-          {cursorPoint ? <CosmosCursor pointer={cursorPoint} isDossierOpen={Boolean(selectedEntry)} /> : null}
+          {cursorVisible ? <CosmosCursor cursorRef={cursorRef} isDossierOpen={Boolean(selectedEntry)} /> : null}
         </svg>
       </div>
 
@@ -437,14 +504,14 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
 function isReadableNode(node: WormholeEntryNode) {
   const margin = 54;
   const insideFrame = node.x > margin && node.x < atlasSize.width - margin && node.y > margin && node.y < atlasSize.height - margin;
-  return insideFrame && node.depth >= 0.018 && node.depth <= 0.9 && node.opacity >= 0.12;
+  return insideFrame && node.depth >= 0.012 && node.depth <= 1.24 && node.opacity >= 0.1;
 }
 
 function limitDisplayNodes(nodes: WormholeEntryNode[]) {
   return nodes
     .filter(isReadableNode)
     .sort((a, b) => nodeRenderPriority(b) - nodeRenderPriority(a))
-    .slice(0, 72)
+    .slice(0, 112)
     .sort((a, b) => b.depth - a.depth);
 }
 
@@ -462,7 +529,7 @@ function sourceLensOpacity(node: WormholeEntryNode, activeSourceLens: SourceLens
   if (!activeSourceLens) return 1;
 
   if (isSourceLensEntry(node.entry, activeSourceLens)) return 1;
-  return 0.035 + node.closeness * 0.055;
+  return 0.18 + node.closeness * 0.16;
 }
 
 function isSourceLensEntry(entry: Entry, activeSourceLens: SourceLens) {
@@ -478,6 +545,22 @@ function isSourceLensEntry(entry: Entry, activeSourceLens: SourceLens) {
   return activeSourceLens === 'afasia' && sourceText.includes('afasia');
 }
 
+function nearestInteractiveNode(point: SvgPoint, nodes: WormholeEntryNode[]) {
+  return nodes.reduce<{ entry: Entry; distance: number } | null>((nearest, node) => {
+    if (node.opacity < 0.14) return nearest;
+
+    const distance = Math.hypot(point.x - node.x, point.y - node.y);
+    const hitRadius = Math.max(28, node.size + 22);
+    if (distance > hitRadius) return nearest;
+
+    if (!nearest || distance < nearest.distance) {
+      return { entry: node.entry, distance };
+    }
+
+    return nearest;
+  }, null);
+}
+
 function roundMotion(value: number) {
   return Math.round(value * 100000) / 100000;
 }
@@ -490,7 +573,7 @@ function RadialHud({
   sourceLensCount,
   onTravelForward,
   onTravelBackward,
-  onCycleStyleLens,
+  onToggleLenses,
   onToggleSourceLens,
   onToggleRelations
 }: {
@@ -501,23 +584,29 @@ function RadialHud({
   sourceLensCount: number;
   onTravelForward: () => void;
   onTravelBackward: () => void;
-  onCycleStyleLens: () => void;
+  onToggleLenses: () => void;
   onToggleSourceLens: () => void;
   onToggleRelations: () => void;
 }) {
   const controlsOpacity = Math.max(0.46, 1 - tunnelDepth / 0.76);
-  const lensLabel = activeStyleLens ? styleSectors.find((sector) => sector.id === activeStyleLens)?.label ?? 'Stil' : 'Alle Stile';
+  const lensLabel = activeStyleLens ? styleShortLabel(activeStyleLens) : 'All';
+  const buttons = [
+    { id: 'back', label: 'Time -', active: false, width: 58, onClick: onTravelBackward },
+    { id: 'forward', label: 'Time +', active: false, width: 58, onClick: onTravelForward },
+    { id: 'lenses', label: `Lens ${lensLabel}`, active: Boolean(activeStyleLens), width: 72, onClick: onToggleLenses },
+    { id: 'afasia', label: `Afasia ${sourceLensCount}`, active: activeSourceLens === 'afasia', width: 82, onClick: onToggleSourceLens },
+    { id: 'relations', label: 'Relations', active: showRelations, width: 78, onClick: onToggleRelations }
+  ];
+  let cursorX = atlasSize.cx - buttons.reduce((sum, button) => sum + button.width + 7, -7) / 2;
 
   return (
     <g className="radial-hud navigation-dock" pointerEvents="auto" opacity={controlsOpacity}>
-      <rect x={atlasSize.cx - 132} y="918" width="264" height="30" rx="15" fill="#050505" stroke="#f7f7f4" strokeWidth="0.5" opacity="0.68" />
-      <g opacity={controlsOpacity}>
-        <HudButton x={atlasSize.cx - 92} y={933} kind="backward" label="zurueck" onClick={onTravelBackward} />
-        <HudButton x={atlasSize.cx - 46} y={933} kind="forward" label="vor" onClick={onTravelForward} />
-        <HudButton x={atlasSize.cx} y={933} kind="lens" label={lensLabel} active={Boolean(activeStyleLens)} onClick={onCycleStyleLens} />
-        <HudButton x={atlasSize.cx + 46} y={933} kind="source" label="afasia" active={activeSourceLens === 'afasia'} onClick={onToggleSourceLens} />
-        <HudButton x={atlasSize.cx + 92} y={933} kind="relations" label="relations" active={showRelations} onClick={onToggleRelations} />
-      </g>
+      <rect x={atlasSize.cx - 190} y="914" width="380" height="38" rx="19" fill="#050505" stroke="#f7f7f4" strokeWidth="0.48" opacity="0.7" />
+      {buttons.map((button) => {
+        const x = cursorX;
+        cursorX += button.width + 7;
+        return <DockButton key={button.id} x={x} y={923} width={button.width} label={button.label} active={button.active} onClick={button.onClick} />;
+      })}
       {activeSourceLens ? (
         <text x={atlasSize.cx} y="907" textAnchor="middle" fill="#65ff9a" fontSize="7.2" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.18em" opacity="0.9">
           AFASIA SOURCE LENS / {sourceLensCount} PROJECT
@@ -527,60 +616,18 @@ function RadialHud({
   );
 }
 
-function HudButton({ x, y, kind, label, active = false, onClick }: { x: number; y: number; kind: 'backward' | 'forward' | 'lens' | 'source' | 'relations'; label: string; active?: boolean; onClick: () => void }) {
+function DockButton({ x, y, width, label, active, onClick }: { x: number; y: number; width: number; label: string; active: boolean; onClick: () => void }) {
   function handleActivate(event: { stopPropagation: () => void }) {
     event.stopPropagation();
     onClick();
   }
 
   return (
-    <g className="hud-button" pointerEvents="auto" onPointerDown={(event) => event.stopPropagation()} onClick={handleActivate} aria-label={label}>
-      <circle cx={x} cy={y} r="19" fill="#050505" opacity="0.001" />
-      <circle cx={x} cy={y} r="12.5" fill={active ? '#f7f7f4' : '#050505'} stroke={active ? '#00e7ff' : '#f7f7f4'} strokeWidth="0.75" opacity="0.88" />
-      <HudIcon x={x} y={y} kind={kind} active={active} />
-    </g>
-  );
-}
-
-function HudIcon({ x, y, kind, active }: { x: number; y: number; kind: 'backward' | 'forward' | 'lens' | 'source' | 'relations'; active: boolean }) {
-  const stroke = active ? '#050505' : '#f7f7f4';
-
-  if (kind === 'relations') {
-    return (
-      <g stroke={stroke} fill={active ? '#050505' : '#f7f7f4'} strokeWidth="0.9" opacity="0.9">
-        <line x1={x - 4.2} y1={y + 3.2} x2={x} y2={y - 4.5} />
-        <line x1={x} y1={y - 4.5} x2={x + 4.4} y2={y + 3.2} />
-        <circle cx={x - 4.2} cy={y + 3.2} r="1.6" />
-        <circle cx={x} cy={y - 4.5} r="1.6" />
-        <circle cx={x + 4.4} cy={y + 3.2} r="1.6" />
-      </g>
-    );
-  }
-
-  if (kind === 'lens') {
-    return (
-      <g stroke={stroke} fill="none" strokeWidth="1" opacity="0.9">
-        <circle cx={x} cy={y} r="5.1" />
-        <path d={`M ${x - 7} ${y} H ${x + 7}`} />
-        <path d={`M ${x} ${y - 7} V ${y + 7}`} opacity="0.55" />
-      </g>
-    );
-  }
-
-  if (kind === 'source') {
-    return (
-      <g stroke={stroke} fill="none" strokeWidth="0.95" opacity="0.92">
-        <path d={`M ${x - 6.4} ${y + 4.8} H ${x + 6.4}`} />
-        <path d={`M ${x - 5.5} ${y + 2.2} C ${x - 3.3} ${y - 5.8}, ${x + 3.3} ${y - 5.8}, ${x + 5.5} ${y + 2.2}`} />
-        <circle cx={x} cy={y - 1.4} r="1.3" fill={stroke} />
-      </g>
-    );
-  }
-
-  return (
-    <g stroke={stroke} strokeWidth="1.25" fill="none" opacity="0.9">
-      <path d={kind === 'forward' ? `M ${x - 4} ${y - 6} L ${x + 4} ${y} L ${x - 4} ${y + 6}` : `M ${x + 4} ${y - 6} L ${x - 4} ${y} L ${x + 4} ${y + 6}`} />
-      <line x1={kind === 'forward' ? x - 6 : x + 6} y1={y} x2={kind === 'forward' ? x + 5 : x - 5} y2={y} opacity="0.5" />
+    <g className="dock-button" pointerEvents="auto" onPointerDown={(event) => event.stopPropagation()} onClick={handleActivate} aria-label={label}>
+      <rect x={x} y={y} width={width} height="20" rx="10" fill={active ? '#f7f7f4' : '#050505'} stroke={active ? '#00e7ff' : '#f7f7f4'} strokeWidth="0.58" opacity={active ? 0.94 : 0.76} />
+      <text x={x + width / 2} y={y + 13.2} textAnchor="middle" fill={active ? '#050505' : '#f7f7f4'} fontSize="6.6" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.08em">
+        {label.toUpperCase()}
+      </text>
     </g>
   );
 }
@@ -697,8 +744,8 @@ function styleShortLabel(id: StyleSectorId) {
 }
 
 function DatabaseAccess({ isOpen, onToggle }: { isOpen: boolean; onToggle: () => void }) {
-  const x = atlasSize.width - 164;
-  const y = atlasSize.height - 54;
+  const x = atlasSize.width - 112;
+  const y = atlasSize.height - 52;
   function toggleOnce(event: { stopPropagation: () => void }) {
     event.stopPropagation();
     onToggle();
@@ -713,19 +760,19 @@ function DatabaseAccess({ isOpen, onToggle }: { isOpen: boolean; onToggle: () =>
       onPointerDown={(event) => event.stopPropagation()}
       onClick={toggleOnce}
     >
-      <rect className="database-access-shell" x="0" y="-16" width="128" height="32" rx="16" fill="#050505" stroke="#00e7ff" strokeWidth="0.55" opacity="0.74" />
+      <rect x="0" y="-16" width="84" height="32" rx="16" fill={isOpen ? '#f7f7f4' : '#050505'} stroke="#00e7ff" strokeWidth="0.62" opacity="0.88" />
       <g className="database-access-core" stroke="#f7f7f4" fill="none" strokeWidth="0.72" opacity="0.9">
-        <ellipse cx="16" cy="-4.4" rx="6.1" ry="2.4" />
-        <path d="M 9.9 -4.4 V 5.8 Q 16 9.1 22.1 5.8 V -4.4" />
-        <path d="M 9.9 0.8 Q 16 4 22.1 0.8" opacity="0.52" />
+        <ellipse cx="14" cy="-3.6" rx="5.6" ry="2.2" stroke={isOpen ? '#050505' : '#f7f7f4'} />
+        <path d="M 8.4 -3.6 V 5.4 Q 14 8.2 19.6 5.4 V -3.6" stroke={isOpen ? '#050505' : '#f7f7f4'} />
+        <path d="M 8.4 1.2 Q 14 4 19.6 1.2" stroke={isOpen ? '#050505' : '#f7f7f4'} opacity="0.52" />
       </g>
-      <text className="database-access-label" x="34" y="3" fill="#f7f7f4" fontSize="7.5" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.2em">
-        DATABASE / ARCHIVE
+      <text x="29" y="3" fill={isOpen ? '#050505' : '#f7f7f4'} fontSize="7.2" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.12em">
+        DATABASE
       </text>
       <rect
         x="0"
         y="-16"
-        width="128"
+        width="84"
         height="32"
         rx="16"
         fill="#050505"
@@ -735,13 +782,6 @@ function DatabaseAccess({ isOpen, onToggle }: { isOpen: boolean; onToggle: () =>
       />
     </g>
   );
-}
-
-function nextStyleLens(current: StyleSectorId | null): StyleSectorId | null {
-  if (!current) return styleSectors[0].id;
-  const currentIndex = styleSectors.findIndex((sector) => sector.id === current);
-  const next = styleSectors[currentIndex + 1];
-  return next?.id ?? null;
 }
 
 function BrandChrome() {
@@ -813,72 +853,127 @@ function IntroGate({ state, onStart }: { state: IntroState; onStart: () => void 
   );
 }
 
-function DatabasePlaceholderPanel({
-  activeTab,
-  onTabChange,
+function DatabaseDraftPanel({
+  draft,
+  onDraftChange,
   onDismiss
 }: {
-  activeTab: DatabaseTab;
-  onTabChange: (tab: DatabaseTab) => void;
+  draft: EntryDraft;
+  onDraftChange: (draft: EntryDraft) => void;
   onDismiss: () => void;
 }) {
-  const x = atlasSize.width - 310;
-  const y = atlasSize.height - 234;
-  const tabs: Array<{ id: DatabaseTab; label: string; description: string }> = [
-    { id: 'entries', label: 'Entries', description: 'Projekte, Texte, Plaene, Events.' },
-    { id: 'media', label: 'Media', description: 'Bild, Schnitt, Grundriss, 3D.' },
-    { id: 'sources', label: 'Sources', description: 'PDFs, Afasia, Literatur.' },
-    { id: 'relations', label: 'Relations', description: 'Einfluss, Thema, Ort, Autor.' },
-    { id: 'tags', label: 'Tags', description: 'Themen, Kurse, Layer, Linsen.' }
-  ];
-  const currentTab = tabs.find((tab) => tab.id === activeTab) ?? tabs[0];
+  const x = atlasSize.width - 392;
+  const y = atlasSize.height - 418;
+  const preview = draftToEntryPreview(draft);
+
+  function updateField<Key extends keyof EntryDraft>(key: Key, value: EntryDraft[Key]) {
+    onDraftChange({ ...draft, [key]: value });
+  }
 
   return (
-    <g className="database-placeholder" pointerEvents="auto">
-      <rect x={x} y={y} width="270" height="166" rx="4" fill="#050505" stroke="#00e7ff" strokeWidth="0.75" opacity="0.92" />
-      <text x={x + 18} y={y + 30} fill="#f7f7f4" fontSize="11.2" fontWeight="650" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.16em">
-        COSMOS DATABASE
-      </text>
-      <text x={x + 18} y={y + 52} fill="#b8b8b2" fontSize="8.2" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.08em">
-        PLATZHALTER FUER DAS SPAETERE ARCHIVSYSTEM
-      </text>
-      {tabs.map((tab, index) => {
-        const isActive = activeTab === tab.id;
-        return (
-          <g
-            key={tab.id}
-            className={`database-tab ${isActive ? 'database-tab-active' : ''}`}
-            transform={`translate(${x + 18 + (index % 2) * 116} ${y + 72 + Math.floor(index / 2) * 23})`}
-            onPointerDown={(event) => event.stopPropagation()}
-            onClick={(event) => {
-              event.stopPropagation();
-              onTabChange(tab.id);
-            }}
-          >
-            <rect width="98" height="15" rx="7.5" fill={isActive ? '#f7f7f4' : '#07181a'} stroke={isActive ? '#00e7ff' : index % 2 === 0 ? '#00e7ff' : '#ffb000'} strokeWidth="0.45" opacity="0.92" />
-            <text x="49" y="10.8" textAnchor="middle" fill={isActive ? '#050505' : '#f7f7f4'} fontSize="7.2" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.12em">
-              {tab.label.toUpperCase()}
-            </text>
-          </g>
-        );
-      })}
-      <g transform={`translate(${x + 18} ${y + 145})`} pointerEvents="none">
-        <line x1="0" y1="-11" x2="232" y2="-11" stroke="#00e7ff" strokeWidth="0.45" opacity="0.32" />
-        <text x="0" y="0" fill="#f7f7f4" fontSize="7.4" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.12em">
-          {currentTab.label.toUpperCase()}
-        </text>
-        <text x="0" y="13" fill="#b8b8b2" fontSize="7" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.04em">
-          {currentTab.description.toUpperCase()}
-        </text>
-      </g>
-      <g className="dossier-close" pointerEvents="auto" transform={`translate(${x + 232} ${y + 12})`} onClick={(event) => { event.stopPropagation(); onDismiss(); }}>
-        <rect width="28" height="16" rx="8" fill="#f7f7f4" opacity="0.88" />
-        <text x="14" y="11.2" textAnchor="middle" fill="#050505" fontSize="7.2" fontFamily="var(--font-sans), system-ui, sans-serif">
-          X
-        </text>
-      </g>
-    </g>
+    <foreignObject x={x} y={y} width="360" height="350" className="database-draft" pointerEvents="auto">
+      <div
+        className="border border-[#00e7ff]/70 bg-[#050505]/95 p-4 text-[#f7f7f4] shadow-[0_0_28px_rgb(0_231_255_/_0.12)]"
+        style={{ width: 360, height: 350 }}
+        onPointerDown={(event) => event.stopPropagation()}
+        onClick={(event) => event.stopPropagation()}
+      >
+        <div className="mb-3 flex items-start justify-between gap-3">
+          <div>
+            <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#00e7ff]">New Entry Draft</div>
+            <div className="mt-1 text-[10px] uppercase tracking-[0.14em] text-[#b8b8b2]">Static JSON preview only</div>
+          </div>
+          <button className="h-6 w-8 border border-[#f7f7f4]/70 text-[10px] text-[#050505] bg-[#f7f7f4]" type="button" onClick={onDismiss}>X</button>
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          <DraftInput label="Title" value={draft.title} onChange={(value) => updateField('title', value)} />
+          <DraftInput label="Year" value={draft.year} onChange={(value) => updateField('year', value)} />
+          <DraftSelect label="Type" value={draft.entry_type} options={entryTypeOptions} onChange={(value) => updateField('entry_type', value as Entry['entry_type'])} />
+          <DraftSelect label="Style" value={draft.style_sector} options={styleSectors.map((sector) => ({ value: sector.id, label: styleShortLabel(sector.id) }))} onChange={(value) => updateField('style_sector', value as StyleSectorId)} />
+          <DraftInput label="City" value={draft.city} onChange={(value) => updateField('city', value)} />
+          <DraftInput label="Country" value={draft.country} onChange={(value) => updateField('country', value)} />
+          <DraftInput label="Authors" value={draft.authors} onChange={(value) => updateField('authors', value)} />
+          <DraftInput label="Themes" value={draft.themes} onChange={(value) => updateField('themes', value)} />
+        </div>
+        <pre className="mt-3 h-[70px] overflow-hidden whitespace-pre-wrap border border-[#00e7ff]/25 bg-black/35 p-2 text-[9px] leading-snug text-[#c9fff4]">
+          {JSON.stringify(preview, null, 2)}
+        </pre>
+        <label className="mt-2 block text-[9px] uppercase tracking-[0.16em] text-[#b8b8b2]">
+          Short text
+          <textarea
+            className="mt-1 h-10 w-full resize-none border border-[#f7f7f4]/20 bg-[#07181a] px-2 py-1 text-[11px] leading-tight text-[#f7f7f4] outline-none"
+            value={draft.short_description}
+            maxLength={180}
+            onChange={(event) => updateField('short_description', event.target.value)}
+          />
+        </label>
+      </div>
+    </foreignObject>
   );
+}
+
+const entryTypeOptions: Array<{ value: Entry['entry_type']; label: string }> = [
+  { value: 'building', label: 'Building' },
+  { value: 'urban_plan', label: 'Urban' },
+  { value: 'landscape_project', label: 'Landscape' },
+  { value: 'text', label: 'Text' },
+  { value: 'theory', label: 'Theory' },
+  { value: 'map', label: 'Map' },
+  { value: 'infrastructure', label: 'Infrastructure' },
+  { value: 'object', label: 'Object' },
+  { value: 'event', label: 'Event' }
+];
+
+function DraftInput({ label, value, onChange }: { label: string; value: string; onChange: (value: string) => void }) {
+  return (
+    <label className="block text-[9px] uppercase tracking-[0.16em] text-[#b8b8b2]">
+      {label}
+      <input
+        className="mt-1 h-7 w-full border border-[#f7f7f4]/20 bg-[#07181a] px-2 text-[11px] text-[#f7f7f4] outline-none"
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+      />
+    </label>
+  );
+}
+
+function DraftSelect({ label, value, options, onChange }: { label: string; value: string; options: Array<{ value: string; label: string }>; onChange: (value: string) => void }) {
+  return (
+    <label className="block text-[9px] uppercase tracking-[0.16em] text-[#b8b8b2]">
+      {label}
+      <select
+        className="mt-1 h-7 w-full border border-[#f7f7f4]/20 bg-[#07181a] px-2 text-[11px] text-[#f7f7f4] outline-none"
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+      >
+        {options.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+      </select>
+    </label>
+  );
+}
+
+function draftToEntryPreview(draft: EntryDraft) {
+  const title = draft.title.trim() || 'Untitled Entry';
+  return {
+    id: slugify(title),
+    title,
+    entry_type: draft.entry_type,
+    year_start: Number.parseInt(draft.year, 10) || 2025,
+    authors: splitList(draft.authors),
+    city: draft.city.trim(),
+    country: draft.country.trim(),
+    style_sector: draft.style_sector,
+    themes: splitList(draft.themes),
+    short_description: draft.short_description.trim()
+  };
+}
+
+function splitList(value: string) {
+  return value.split(',').map((item) => item.trim()).filter(Boolean);
+}
+
+function slugify(value: string) {
+  return value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'new-entry';
 }
 
 function SnappedEntryOverlay({ entry, onDismiss }: { entry: Entry; onDismiss: () => void }) {
@@ -908,9 +1003,9 @@ function SnappedEntryOverlay({ entry, onDismiss }: { entry: Entry; onDismiss: ()
   );
 }
 
-function CosmosCursor({ pointer, isDossierOpen }: { pointer: SvgPoint; isDossierOpen: boolean }) {
+function CosmosCursor({ cursorRef, isDossierOpen }: { cursorRef: RefObject<SVGGElement | null>; isDossierOpen: boolean }) {
   return (
-    <g className="cosmos-cursor" pointerEvents="none" transform={`translate(${pointer.x} ${pointer.y})`} opacity={isDossierOpen ? 0.78 : 1}>
+    <g ref={cursorRef} className="cosmos-cursor" pointerEvents="none" transform={`translate(${atlasSize.cx} ${atlasSize.cy})`} opacity={isDossierOpen ? 0.78 : 1}>
       <circle r="12" fill="none" stroke="#050505" strokeWidth="3.4" opacity="0.88" />
       <circle r="10" fill="none" stroke="#f7f7f4" strokeWidth="0.8" opacity="0.6" />
       <circle r="7.2" fill="none" stroke="#00e7ff" strokeWidth="0.45" opacity={isDossierOpen ? 0.32 : 0.46} />

@@ -300,18 +300,18 @@ body {
   transform: translateY(-2px);
 }
 
-.hud-button,
+.dock-button,
 .hud-theme-marker {
   cursor: none;
   transition: opacity 140ms ease, transform 140ms ease;
 }
 
-.hud-button:hover,
+.dock-button:hover,
 .hud-theme-marker:hover {
   opacity: 1;
   transform-box: fill-box;
   transform-origin: center;
-  transform: scale(1.28) translateY(-2px);
+  transform: scale(1.08) translateY(-1px);
 }
 
 .lens-access,
@@ -320,7 +320,10 @@ body {
 }
 
 .filter-tab,
-.database-tab,
+.database-draft input,
+.database-draft select,
+.database-draft textarea,
+.database-draft button,
 .lens-access,
 .lens-panel-close {
   cursor: none;
@@ -328,7 +331,6 @@ body {
 }
 
 .filter-tab:hover,
-.database-tab:hover,
 .lens-access:hover,
 .lens-panel-close:hover {
   opacity: 1;
@@ -338,7 +340,6 @@ body {
 }
 
 .filter-tab-active,
-.database-tab-active,
 .lens-access-open {
   filter: drop-shadow(0 0 8px rgb(0 231 255 / 16%));
 }
@@ -348,31 +349,11 @@ body {
   transition: opacity 180ms ease;
 }
 
-.database-access-shell {
-  transform-box: fill-box;
-  transform-origin: right center;
-  transform: scaleX(0.28);
-  transition: transform 190ms cubic-bezier(0.19, 1, 0.22, 1), opacity 190ms ease;
-}
-
-.database-access-label {
-  opacity: 0;
-  transition: opacity 160ms ease;
-}
-
-.database-access-open .database-access-shell {
-  transform: scaleX(1);
-}
-
-.database-access-open .database-access-label {
-  opacity: 0.86;
-}
-
 .navigation-dock {
   filter: drop-shadow(0 0 12px rgb(0 231 255 / 10%));
 }
 
-.database-placeholder {
+.database-draft {
   filter: drop-shadow(0 0 20px rgb(0 231 255 / 12%));
 }
 
