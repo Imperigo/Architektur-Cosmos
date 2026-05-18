@@ -36,8 +36,9 @@ CF detects the push and rebuilds within 1–3 minutes.
   but the public frontend still reads `data/mock-entries.json`. Do not add live
   D1/R2 bindings, API routes, auth, CMS, or backend reads unless explicitly
   requested.
-- **R2 is cost-guarded.** Do not create buckets or upload assets. R2 requires
-  both `ARCHITECTURE_COSMOS_ENABLE_R2=1` and `--i-understand-r2-costs`.
+- **R2 is cost-guarded.** The preview bucket may exist, but do not upload
+  assets or add public upload paths. R2 bucket creation/recreation requires both
+  `ARCHITECTURE_COSMOS_ENABLE_R2=1` and `--i-understand-r2-costs`.
 
 ## Soft preferences
 

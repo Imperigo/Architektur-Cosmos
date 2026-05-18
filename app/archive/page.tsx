@@ -45,7 +45,7 @@ export default function ArchivePage() {
             <div className="mb-4 flex flex-wrap gap-2 text-[10px] uppercase tracking-[0.16em] text-[#b8b8b2]">
               <span className="border border-white/15 px-2.5 py-1">Static archive preview</span>
               <span className="border border-[#00e7ff] px-2.5 py-1 text-[#00e7ff]">D1 ready</span>
-              <span className="border border-white/15 px-2.5 py-1">R2 skipped</span>
+              <span className="border border-white/15 px-2.5 py-1">R2 preview bucket</span>
             </div>
             <h1 className="max-w-4xl text-4xl font-semibold leading-[0.95] tracking-normal text-[#f7f7f4] sm:text-6xl lg:text-7xl">
               Archive Database
@@ -64,6 +64,7 @@ export default function ArchivePage() {
               <ArchiveMeta label="Database" value={archivePreview.storage_target.database_name} />
               <ArchiveMeta label="Status" value={archivePreview.storage_target.status.replace(/_/g, ' ')} />
               <ArchiveMeta label="Frontend" value={archivePreview.storage_target.frontend_connection.replace(/_/g, ' ')} />
+              <ArchiveMeta label="R2 bucket" value={archivePreview.storage_target.assets_bucket_name ?? 'not configured'} />
               <ArchiveMeta label="Assets" value={archivePreview.storage_target.assets_status.replace(/_/g, ' ')} />
               <ArchiveMeta label="Verified" value={archivePreview.storage_target.last_verified} />
             </dl>

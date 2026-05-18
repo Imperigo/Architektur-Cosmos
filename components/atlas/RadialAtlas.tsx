@@ -962,16 +962,17 @@ function DatabaseArchivePanel({
         <div className="min-h-0 flex-1 overflow-y-auto pr-1">
           {activeTab === 'overview' ? (
             <div className="space-y-2 text-[10px] leading-relaxed text-[#d9d9d2]">
-              <ArchiveRow label="Storage" value={`${archivePreview.storage_target.database.toUpperCase()} metadata / R2 skipped`} />
-              <ArchiveRow label="Status" value={`Cloud D1 preview ready / ${archivePreview.storage_target.frontend_connection.replace(/_/g, ' ')}`} />
+              <ArchiveRow label="Storage" value={`${archivePreview.storage_target.database.toUpperCase()} metadata / R2 preview bucket`} />
+              <ArchiveRow label="Status" value={`Cloud D1 + R2 preview ready / ${archivePreview.storage_target.frontend_connection.replace(/_/g, ' ')}`} />
               <ArchiveRow label="D1" value={`${archivePreview.storage_target.database_name} / verified ${archivePreview.storage_target.last_verified}`} />
+              <ArchiveRow label="R2" value={`${archivePreview.storage_target.assets_bucket_name ?? 'not configured'} / no uploads`} />
               <ArchiveRow label="Assets" value={archivePreview.storage_target.assets_status.replace(/_/g, ' ')} />
               <ArchiveRow label="Pilot" value={`${pilotEntry.title}, ${pilotEntry.year_start}, ${pilotEntry.city}`} />
               {selectedEntry ? <ArchiveRow label="Current" value={`${selectedEntry.title} / ${selectedEntry.database_profile?.status ?? 'local entry'}`} /> : null}
               <p className="border border-[#00e7ff]/25 bg-[#061719] p-2 text-[#c9fff4]">
-                The archive foundation now exists as a Cloudflare D1 preview while this frontend still reads bundled JSON. R2 remains a local manifest until real media and model uploads are worth enabling.
+                The archive foundation now exists as Cloudflare D1 plus an empty R2 preview bucket while this frontend still reads bundled JSON. Asset uploads remain blocked until media rights and file policy are ready.
               </p>
-              <ArchiveList title="Next Database Steps" items={['Keep D1 preview in sync with archive:cloudflare-preview', 'Use D1 for validation and query design, not live reads yet', 'Keep R2 skipped until media/model upload policy is ready', 'Add read-only Worker API only after static schema is proven']} />
+              <ArchiveList title="Next Database Steps" items={['Keep D1 preview in sync with archive:d1-preview', 'Use D1 for validation and query design, not live reads yet', 'Keep R2 uploads blocked until media/model upload policy is ready', 'Add read-only Worker API only after static schema is proven']} />
             </div>
           ) : null}
 

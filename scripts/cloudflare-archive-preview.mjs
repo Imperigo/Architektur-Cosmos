@@ -6,6 +6,7 @@ const d1Name = 'architecture-cosmos-preview';
 const r2Bucket = 'architecture-cosmos-assets-preview';
 const withR2 = process.argv.includes('--with-r2');
 const smokeOnly = process.argv.includes('--smoke-only');
+const r2StatusOnly = process.argv.includes('--r2-status');
 const allowR2 = process.env.ARCHITECTURE_COSMOS_ENABLE_R2 === '1' && process.argv.includes('--i-understand-r2-costs');
 
 main();
@@ -27,6 +28,11 @@ function main() {
     console.error('  export CLOUDFLARE_API_TOKEN="..."');
     console.error('  npm run archive:d1-preview');
     process.exitCode = 1;
+    return;
+  }
+
+  if (r2StatusOnly) {
+    checkR2BucketStatus();
     return;
   }
 
@@ -91,6 +97,12 @@ function ensureR2Bucket() {
   }
 
   run('npx', ['wrangler', 'r2', 'bucket', 'create', r2Bucket, '--location', 'eeur', '--update-config=false']);
+}
+
+function checkR2BucketStatus() {
+  const list = runText('npx', ['wrangler', 'r2', 'bucket', 'list']);
+  const exists = list.split('\n').some((line) => line.includes(r2Bucket));
+  console.log(exists ? `R2 preview bucket exists: ${r2Bucket}` : `R2 preview bucket is missing: ${r2Bucket}`);
 }
 
 function runSmokeQuery(label, sql) {

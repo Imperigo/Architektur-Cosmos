@@ -14,6 +14,7 @@
     "archive:d1-preview": "node scripts/cloudflare-archive-preview.mjs",
     "archive:d1-smoke-remote": "node scripts/cloudflare-archive-preview.mjs --smoke-only",
     "archive:r2-plan": "node scripts/archive-d1-tools.mjs export-r2-manifest",
+    "archive:r2-status": "node scripts/cloudflare-archive-preview.mjs --r2-status",
     "archive:r2-manifest": "node scripts/archive-d1-tools.mjs export-r2-manifest",
     "archive:cloudflare-preview": "node scripts/cloudflare-archive-preview.mjs"
   },

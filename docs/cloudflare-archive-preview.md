@@ -1,13 +1,14 @@
 # Cloudflare Archive Preview Runbook
 
-This runbook prepares the first D1-only test archive for Architecture Cosmos.
+This runbook prepares the first D1 + R2 preview archive for Architecture Cosmos.
 It does not connect the live website to the database.
 
 ## Current Status
 
 - The website remains a static export.
 - Cloudflare D1 preview is created and imported as `architecture-cosmos-preview`.
-- R2 is intentionally skipped; `out/archive-r2-manifest.json` remains the asset planning artifact.
+- Cloudflare R2 preview bucket is created as `architecture-cosmos-assets-preview`.
+- R2 upload/write workflows are intentionally not implemented yet.
 - D1/R2 are not connected to the live frontend.
 - No API routes, auth, CMS, backend writes, or runtime reads are added.
 - Wrangler currently needs a `CLOUDFLARE_API_TOKEN` in non-interactive Codex runs.
@@ -35,7 +36,7 @@ Both are generated output and are not committed.
 ## Recommended Preview Names
 
 - D1 database: `architecture-cosmos-preview`
-- R2 bucket: `architecture-cosmos-assets-preview` (future/optional; skipped by default)
+- R2 bucket: `architecture-cosmos-assets-preview` (preview bucket; no uploads yet)
 
 ## Remote Setup Commands
 
@@ -51,9 +52,9 @@ The command above validates the local archive, exports SQL plus a local asset
 planning manifest, creates the preview D1 database when missing, imports the
 schema/data, and runs smoke queries.
 
-R2 is skipped by default to avoid enabling object storage before real media and
-model uploads are ready. The local R2 manifest is still generated as a planning
-artifact, but no bucket is created and no file is uploaded.
+R2 is still skipped by default by the script to avoid accidental bucket creation
+in fresh accounts. In this account the preview bucket exists, but the local R2
+manifest remains the only asset planning artifact and no file is uploaded.
 
 It deliberately passes `--update-config=false` when creating resources. Do not
 let Wrangler add D1/R2 bindings to `wrangler.jsonc` while the site is still a
@@ -71,7 +72,7 @@ Remote smoke queries without re-importing:
 npm run archive:d1-smoke-remote
 ```
 
-To explicitly include R2 later, two cost-guard steps are required:
+To explicitly include or recreate the R2 preview bucket, two cost-guard steps are required:
 
 ```bash
 export ARCHITECTURE_COSMOS_ENABLE_R2=1
@@ -79,7 +80,13 @@ npm run archive:d1-preview -- --with-r2 --i-understand-r2-costs
 ```
 
 Without both the environment variable and the explicit flag, the script refuses
-to create an R2 bucket.
+to create or check/create an R2 bucket.
+
+Read-only R2 bucket status:
+
+```bash
+npm run archive:r2-status
+```
 
 Manual equivalent:
 
@@ -118,8 +125,9 @@ Expected local baseline:
 ## R2 Cost Guardrail Policy
 
 Do not upload copyrighted images or drawings until rights and source policy are clear.
-For now, R2 is only a key structure target. D1 is the database; R2 is only future
-file storage for heavy assets.
+For now, R2 is a preview bucket plus key structure target. D1 is the database;
+R2 is future file storage for heavy assets. No public frontend upload path
+exists.
 
 ```text
 entries/{slug}/media/exterior-01.jpg

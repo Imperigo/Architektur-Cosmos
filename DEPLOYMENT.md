@@ -116,9 +116,9 @@ are separate phases:
 
 1. **Database**: Cloudflare D1 for structured metadata, relations, tags, sources,
    analysis records, and 3D model metadata.
-2. **Asset storage**: Cloudflare R2 later for images, plans, PDFs, source scans,
+2. **Asset storage**: Cloudflare R2 preview bucket for images, plans, PDFs, source scans,
    textures, `.glb` / `.gltf` / `.usdz` models, and large analysis JSON files.
-   R2 is skipped and cost-guarded until real upload policy is ready.
+   Uploads are still blocked and cost-guarded until real upload policy is ready.
 3. **Schema contract**: `docs/database-architecture.md` and
    `schema/architecture-cosmos-d1.sql`.
 4. **Frontend pattern**: keep static JSON as the local fallback while the schema

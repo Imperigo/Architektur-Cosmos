@@ -7,9 +7,10 @@ and 3D-model workflow are still being designed.
 ## Current Decision
 
 - **Use D1 now** for the real structured archive preview.
-- **Do not use R2 yet** for production assets.
-- **Generate only a local R2 manifest** so future file keys are planned without
-  creating buckets or uploading files.
+- **R2 preview bucket is enabled** for future asset workflow testing.
+- **Do not upload production assets yet.**
+- **Generate a local R2 manifest** so future file keys are planned before any
+  upload workflow exists.
 
 ## Why D1 Is Enough Now
 
@@ -28,7 +29,7 @@ This is enough to design the archive and test queries. The frontend still ships
 as static JSON, so D1 is currently a validation and migration target rather than
 a live dependency.
 
-## What R2 Would Store Later
+## What R2 Will Store Later
 
 R2 is only for heavy files:
 
@@ -44,7 +45,8 @@ It should never store heavy binary assets.
 
 ## Repository Guardrail
 
-The Cloudflare preview script skips R2 by default. R2 creation requires both:
+The Cloudflare preview script still skips R2 by default. R2 bucket creation
+requires both:
 
 ```bash
 export ARCHITECTURE_COSMOS_ENABLE_R2=1
@@ -54,12 +56,24 @@ npm run archive:d1-preview -- --with-r2 --i-understand-r2-costs
 If either the environment variable or explicit flag is missing, the script exits
 before creating a bucket.
 
+The current preview bucket is:
+
+```text
+architecture-cosmos-assets-preview
+```
+
+Status checks are read-only:
+
+```bash
+npm run archive:r2-status
+```
+
 ## Future R2 Checklist
 
-Before enabling R2:
+Before uploading real assets:
 
-1. Confirm current Cloudflare pricing and free limits in the dashboard.
-2. Add a monthly budget alert in Cloudflare.
+1. Keep the monthly budget alert active in Cloudflare.
+2. Confirm current Cloudflare pricing and free limits in the dashboard.
 3. Define allowed file types and maximum file sizes.
 4. Keep copyrighted source images as external references until rights are clear.
 5. Start with one pilot object only.
