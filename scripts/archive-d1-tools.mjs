@@ -11,6 +11,7 @@ const relationsPath = resolve(rootDir, 'data/relations.json');
 const schemaPath = resolve(rootDir, 'schema/architecture-cosmos-d1.sql');
 const defaultOutputPath = resolve(rootDir, 'out/archive-d1-import.sql');
 const defaultR2ManifestPath = resolve(rootDir, 'out/archive-r2-manifest.json');
+const defaultArchivePreviewPath = resolve(rootDir, 'data/archive-preview.json');
 
 const entryTypes = new Set(['building', 'urban_plan', 'landscape_project', 'text', 'theory', 'map', 'infrastructure', 'object', 'event']);
 const styleSectors = new Set([
@@ -109,11 +110,29 @@ async function main() {
     return;
   }
 
+  if (command === 'export-preview-json') {
+    const result = validateArchiveData(data);
+    printValidation(result);
+
+    if (result.errors.length > 0) {
+      console.error('\nArchive preview export blocked because validation has errors.');
+      process.exitCode = 1;
+      return;
+    }
+
+    const previewPath = readOutputArg() ?? defaultArchivePreviewPath;
+    await mkdir(dirname(previewPath), { recursive: true });
+    await writeFile(previewPath, `${JSON.stringify(buildArchivePreviewJson(data), null, 2)}\n`);
+    console.log(`\nWrote archive preview JSON: ${relativeToRoot(previewPath)}`);
+    return;
+  }
+
   console.error(`Unknown command: ${command}`);
   console.error('Use: node scripts/archive-d1-tools.mjs validate');
   console.error(' or: node scripts/archive-d1-tools.mjs export-sql --output out/archive-d1-import.sql');
   console.error(' or: node scripts/archive-d1-tools.mjs smoke-test');
   console.error(' or: node scripts/archive-d1-tools.mjs export-r2-manifest --output out/archive-r2-manifest.json');
+  console.error(' or: node scripts/archive-d1-tools.mjs export-preview-json --output data/archive-preview.json');
   process.exitCode = 1;
 }
 
@@ -411,12 +430,15 @@ function buildR2Manifest({ entries }) {
 
   entries.forEach((entry) => {
     const prefix = entry.database_profile?.r2_prefix ?? `entries/${entry.slug}`;
+    const mediaTypeCounts = new Map();
 
-    (entry.media ?? []).forEach((media, index) => {
+    (entry.media ?? []).forEach((media) => {
+      const occurrence = (mediaTypeCounts.get(media.type) ?? 0) + 1;
+      mediaTypeCounts.set(media.type, occurrence);
       objects.push({
         entry_id: entry.id,
         bucket: 'architecture-cosmos-assets-preview',
-        key: media.url ? r2KeyFromUrl(entry, media.url, media.type, index + 1) : `${prefix}/media/${media.type}-${String(index + 1).padStart(2, '0')}.placeholder.json`,
+        key: media.url ? r2KeyFromUrl(entry, media.url, media.type, occurrence) : `${prefix}/media/${media.type}-${String(occurrence).padStart(2, '0')}.placeholder.json`,
         kind: 'media',
         media_type: media.type,
         source_url: media.url ?? null,
@@ -465,6 +487,89 @@ function buildR2Manifest({ entries }) {
     bucket: 'architecture-cosmos-assets-preview',
     object_count: objects.length,
     objects
+  };
+}
+
+function buildArchivePreviewJson({ entries, relations }) {
+  const pilotEntries = entries.filter((entry) => entry.database_profile);
+  const sourceIdsByEntry = new Map();
+  const entrySources = [];
+
+  pilotEntries.forEach((entry) => {
+    const sources = buildSourceRows(entry);
+    sourceIdsByEntry.set(entry.id, sources.map((source) => source.id));
+    entrySources.push(...sources);
+  });
+
+  const entryMedia = [];
+  const entryModels = [];
+  const entryAnalysis = [];
+  const entryTags = [];
+  const assetManifests = [];
+  const pilotEntryIds = new Set(pilotEntries.map((entry) => entry.id));
+  const tags = collectTags(pilotEntries);
+
+  pilotEntries.forEach((entry) => {
+    const primarySourceId = sourceIdsByEntry.get(entry.id)?.[0] ?? null;
+    entryMedia.push(...buildMediaRows(entry, primarySourceId));
+    entryModels.push(...buildModelRows(entry, primarySourceId));
+    entryAnalysis.push(...buildAnalysisRows(entry));
+    entryTags.push(...entryTagsForEntry(entry).map((tag) => ({
+      entry_id: entry.id,
+      tag_id: tag.id,
+      confidence_score: tag.confidence
+    })));
+
+    const prefix = entry.database_profile?.r2_prefix ?? `entries/${entry.slug}`;
+    assetManifests.push({
+      id: `${entry.id}-asset-manifest`,
+      entry_id: entry.id,
+      manifest_type: 'source_package',
+      r2_prefix: prefix,
+      manifest_json: JSON.stringify({
+        media: entry.media?.length ?? 0,
+        source_assets: entry.source_assets?.length ?? 0,
+        models: entry.model_assets?.length ?? 0,
+        analysis_files: entry.analysis_layers?.length ?? 0,
+        status: 'planned_r2_package_no_uploads'
+      })
+    });
+  });
+
+  return {
+    schema_version: '0.1',
+    storage_target: {
+      database: 'cloudflare_d1',
+      assets: 'cloudflare_r2',
+      status: 'cloud_d1_r2_preview_ready',
+      database_name: 'architecture-cosmos-preview',
+      assets_bucket_name: 'architecture-cosmos-assets-preview',
+      assets_status: 'r2_preview_bucket_ready_no_uploads',
+      last_verified: '2026-05-18',
+      frontend_connection: 'static_json_only'
+    },
+    entries: pilotEntries.map((entry) => ({
+      id: entry.id,
+      slug: entry.slug,
+      title: entry.title,
+      entry_type: entry.entry_type,
+      year_start: entry.year_start,
+      year_end: entry.year_end ?? null,
+      authors_json: JSON.stringify(entry.authors ?? []),
+      city: entry.city ?? null,
+      country: entry.country ?? null,
+      style_sector: entry.style_sector,
+      status: entry.database_profile?.status ?? 'draft',
+      r2_prefix: entry.database_profile?.r2_prefix ?? `entries/${entry.slug}`
+    })),
+    entry_sources: entrySources,
+    entry_media: entryMedia,
+    entry_models: entryModels,
+    entry_analysis: entryAnalysis,
+    tags,
+    entry_tags: entryTags,
+    entry_relations: relations.filter((relation) => pilotEntryIds.has(relation.source_entry_id) || pilotEntryIds.has(relation.target_entry_id)),
+    asset_manifests: assetManifests
   };
 }
 
@@ -520,19 +625,27 @@ function buildSourceRows(entry) {
 }
 
 function buildMediaRows(entry, primarySourceId) {
-  return (entry.media ?? []).map((media, index) => ({
-    id: `${entry.id}-media-${media.type}-${index + 1}`,
-    entry_id: entry.id,
-    source_id: primarySourceId,
-    media_type: media.type,
-    title: media.label ?? media.type,
-    caption: media.placeholder ?? '',
-    r2_key: media.url ? r2KeyFromUrl(entry, media.url, media.type, index + 1) : null,
-    external_url: media.url ?? null,
-    credit: media.credit ?? null,
-    copyright_status: media.url ? 'needs_permission' : 'placeholder',
-    sort_order: index + 1
-  }));
+  const prefix = entry.database_profile?.r2_prefix;
+  const mediaTypeCounts = new Map();
+
+  return (entry.media ?? []).map((media, index) => {
+    const occurrence = (mediaTypeCounts.get(media.type) ?? 0) + 1;
+    mediaTypeCounts.set(media.type, occurrence);
+
+    return {
+      id: `${entry.id}-media-${media.type}-${occurrence}`,
+      entry_id: entry.id,
+      source_id: primarySourceId,
+      media_type: media.type,
+      title: media.label ?? media.type,
+      caption: media.placeholder ?? '',
+      r2_key: media.url ? r2KeyFromUrl(entry, media.url, media.type, occurrence) : prefix ? `${prefix}/media/${media.type}-${String(occurrence).padStart(2, '0')}.placeholder.json` : null,
+      external_url: media.url ?? null,
+      credit: media.credit ?? null,
+      copyright_status: media.url ? 'needs_permission' : 'placeholder',
+      sort_order: index + 1
+    };
+  });
 }
 
 function buildModelRows(entry, primarySourceId) {

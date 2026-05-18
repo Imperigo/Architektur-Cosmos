@@ -21,6 +21,7 @@ Run these before touching Cloudflare:
 
 ```bash
 npm run archive:validate
+npm run archive:preview-json
 npm run archive:export
 npm run archive:smoke
 npm run archive:r2-manifest
@@ -29,11 +30,13 @@ npm run archive:draft
 
 Generated files:
 
+- `data/archive-preview.json`
 - `out/archive-d1-import.sql`
 - `out/archive-r2-manifest.json`
 - `out/entry-draft-preview.json`
 
-Both are generated output and are not committed.
+`data/archive-preview.json` is committed because it powers the static archive UI.
+The `out/*` files are generated output and are not committed.
 
 `archive:draft` validates `data/entry-draft-template.json` by default and writes
 a local preview with planned R2 keys but no uploads.

@@ -12,6 +12,20 @@
   },
   "entries": [
     {
+      "id": "villa-savoye",
+      "slug": "villa-savoye",
+      "title": "Villa Savoye",
+      "entry_type": "building",
+      "year_start": 1931,
+      "year_end": null,
+      "authors_json": "[\"Le Corbusier\",\"Pierre Jeanneret\"]",
+      "city": "Poissy",
+      "country": "France",
+      "style_sector": "modern_architecture",
+      "status": "reviewed",
+      "r2_prefix": "entries/villa-savoye"
+    },
+    {
       "id": "afasia-no-architecture-flower-house",
       "slug": "afasia-no-architecture-flower-house",
       "title": "Flower House",
@@ -28,182 +42,929 @@
   ],
   "entry_sources": [
     {
-      "id": "source-afasia-flower-house",
-      "entry_id": "afasia-no-architecture-flower-house",
-      "source_type": "website",
-      "title": "NO Architecture - Flower House . Massachusetts",
-      "author": "Afasia Archzine",
-      "url": "https://afasiaarchzine.com/2022/09/no-architecture/",
-      "document_name": "Afasia Archzine project post",
+      "id": "villa-savoye-source-document-1",
+      "entry_id": "villa-savoye",
+      "source_type": "lecture_pdf",
+      "title": "03 Architekturgeschichte 3_4.pdf",
+      "author": null,
+      "url": null,
+      "document_name": "03 Architekturgeschichte 3_4.pdf",
       "page_reference": null,
-      "reliability_level": "secondary_source",
-      "notes": "Pilot source for the Afasia import workflow. Contains project text, photography credits, drawings and plans."
+      "reliability_level": "lecture_reference",
+      "notes": "Imported from source_documents for Villa Savoye."
     },
     {
-      "id": "source-no-architecture-flower-house",
+      "id": "villa-savoye-source-document-2",
+      "entry_id": "villa-savoye",
+      "source_type": "lecture_pdf",
+      "title": "Lecture notes / modernism",
+      "author": null,
+      "url": null,
+      "document_name": "Lecture notes / modernism",
+      "page_reference": null,
+      "reliability_level": "lecture_reference",
+      "notes": "Imported from source_documents for Villa Savoye."
+    },
+    {
+      "id": "afasia-no-architecture-flower-house-source-web",
       "entry_id": "afasia-no-architecture-flower-house",
       "source_type": "website",
-      "title": "Flower House",
-      "author": "NO Architecture",
-      "url": "https://noarchitecture.com/",
-      "document_name": "Office/project reference placeholder",
+      "title": "Afasia source for Flower House",
+      "author": null,
+      "url": "https://afasiaarchzine.com/2022/09/no-architecture/",
+      "document_name": null,
       "page_reference": null,
-      "reliability_level": "unverified",
-      "notes": "Placeholder for primary office source verification before model reconstruction is marked reviewed."
+      "reliability_level": "secondary_source",
+      "notes": "Imported from source_url for Flower House."
+    },
+    {
+      "id": "afasia-no-architecture-flower-house-source-document-1",
+      "entry_id": "afasia-no-architecture-flower-house",
+      "source_type": "lecture_pdf",
+      "title": "Afasia Archzine",
+      "author": null,
+      "url": null,
+      "document_name": "Afasia Archzine",
+      "page_reference": null,
+      "reliability_level": "lecture_reference",
+      "notes": "Imported from source_documents for Flower House."
+    },
+    {
+      "id": "afasia-no-architecture-flower-house-source-document-2",
+      "entry_id": "afasia-no-architecture-flower-house",
+      "source_type": "lecture_pdf",
+      "title": "NO Architecture - Flower House . Massachusetts",
+      "author": null,
+      "url": null,
+      "document_name": "NO Architecture - Flower House . Massachusetts",
+      "page_reference": null,
+      "reliability_level": "lecture_reference",
+      "notes": "Imported from source_documents for Flower House."
     }
   ],
   "entry_media": [
     {
-      "id": "media-flower-exterior-01",
-      "entry_id": "afasia-no-architecture-flower-house",
-      "source_id": "source-afasia-flower-house",
+      "id": "villa-savoye-media-exterior-1",
+      "entry_id": "villa-savoye",
+      "source_id": "villa-savoye-source-document-1",
       "media_type": "exterior",
-      "title": "Exterior view",
-      "caption": "Landscape-facing exterior photograph from Afasia source package.",
+      "title": "Aussenansicht",
+      "caption": "Aussenansicht / Villa Savoye / weisser Baukoerper auf Pilotis, freistehend in Poissy",
+      "r2_key": "entries/villa-savoye/media/exterior-01.placeholder.json",
+      "external_url": null,
+      "credit": "placeholder / rights pending",
+      "copyright_status": "placeholder",
+      "sort_order": 1
+    },
+    {
+      "id": "villa-savoye-media-interior-1",
+      "entry_id": "villa-savoye",
+      "source_id": "villa-savoye-source-document-1",
+      "media_type": "interior",
+      "title": "Innenraum",
+      "caption": "Innenraum / Villa Savoye / Rampe, Wohnraum, Lichtband und freie Raumfolge",
+      "r2_key": "entries/villa-savoye/media/interior-01.placeholder.json",
+      "external_url": null,
+      "credit": "placeholder / rights pending",
+      "copyright_status": "placeholder",
+      "sort_order": 2
+    },
+    {
+      "id": "villa-savoye-media-section-1",
+      "entry_id": "villa-savoye",
+      "source_id": "villa-savoye-source-document-1",
+      "media_type": "section",
+      "title": "Schnitt",
+      "caption": "Schnitt / Villa Savoye / Pilotis, Rampe, Wohnebene und Dachgarten",
+      "r2_key": "entries/villa-savoye/media/section-01.placeholder.json",
+      "external_url": null,
+      "credit": "placeholder / drawing source pending",
+      "copyright_status": "placeholder",
+      "sort_order": 3
+    },
+    {
+      "id": "villa-savoye-media-plan-1",
+      "entry_id": "villa-savoye",
+      "source_id": "villa-savoye-source-document-1",
+      "media_type": "plan",
+      "title": "Grundriss",
+      "caption": "Grundriss / Villa Savoye / freie Grundrissordnung um Rampe und Servicekerne",
+      "r2_key": "entries/villa-savoye/media/plan-01.placeholder.json",
+      "external_url": null,
+      "credit": "placeholder / drawing source pending",
+      "copyright_status": "placeholder",
+      "sort_order": 4
+    },
+    {
+      "id": "afasia-no-architecture-flower-house-media-exterior-1",
+      "entry_id": "afasia-no-architecture-flower-house",
+      "source_id": "afasia-no-architecture-flower-house-source-web",
+      "media_type": "exterior",
+      "title": "Aussenfoto / Afasia",
+      "caption": "Afasia / Flower House / exterior",
       "r2_key": "entries/afasia-no-architecture-flower-house/media/exterior-01.jpg",
       "external_url": "/media/afasia/flower-house/flower-house-1.jpg",
-      "credit": "Iwan Baan via Afasia",
+      "credit": "© Iwan Baan via Afasia",
       "copyright_status": "needs_permission",
       "sort_order": 1
     },
     {
-      "id": "media-flower-interior-01",
+      "id": "afasia-no-architecture-flower-house-media-interior-1",
       "entry_id": "afasia-no-architecture-flower-house",
-      "source_id": "source-afasia-flower-house",
+      "source_id": "afasia-no-architecture-flower-house-source-web",
       "media_type": "interior",
-      "title": "Interior view",
-      "caption": "Interior photograph for spatial and material reading.",
+      "title": "Innenfoto / Afasia",
+      "caption": "Afasia / Flower House / interior",
       "r2_key": "entries/afasia-no-architecture-flower-house/media/interior-01.jpg",
       "external_url": "/media/afasia/flower-house/flower-house-10.jpg",
-      "credit": "Iwan Baan via Afasia",
+      "credit": "© Iwan Baan via Afasia",
       "copyright_status": "needs_permission",
       "sort_order": 2
     },
     {
-      "id": "media-flower-section-01",
+      "id": "afasia-no-architecture-flower-house-media-section-1",
       "entry_id": "afasia-no-architecture-flower-house",
-      "source_id": "source-afasia-flower-house",
+      "source_id": "afasia-no-architecture-flower-house-source-web",
       "media_type": "section",
-      "title": "Section drawing",
-      "caption": "Section source for hillside and canopy analysis.",
+      "title": "Schnitt / Afasia",
+      "caption": "Afasia / Flower House / section",
       "r2_key": "entries/afasia-no-architecture-flower-house/media/section-01.jpg",
       "external_url": "/media/afasia/flower-house/flower-house-32.jpg",
-      "credit": "NO Architecture via Afasia",
+      "credit": "© NO Architecture via Afasia",
       "copyright_status": "needs_permission",
       "sort_order": 3
     },
     {
-      "id": "media-flower-plan-01",
+      "id": "afasia-no-architecture-flower-house-media-plan-1",
       "entry_id": "afasia-no-architecture-flower-house",
-      "source_id": "source-afasia-flower-house",
+      "source_id": "afasia-no-architecture-flower-house-source-web",
       "media_type": "plan",
-      "title": "Plan drawing",
-      "caption": "Plan source for six-pavilion courtyard analysis.",
+      "title": "Grundriss / Afasia",
+      "caption": "Afasia / Flower House / plan",
       "r2_key": "entries/afasia-no-architecture-flower-house/media/plan-01.jpg",
       "external_url": "/media/afasia/flower-house/flower-house-31.jpg",
-      "credit": "NO Architecture via Afasia",
+      "credit": "© NO Architecture via Afasia",
       "copyright_status": "needs_permission",
       "sort_order": 4
     }
   ],
   "entry_models": [
     {
-      "id": "model-flower-full",
-      "entry_id": "afasia-no-architecture-flower-house",
-      "source_id": "source-afasia-flower-house",
+      "id": "villa-savoye-model-mass_model-1",
+      "entry_id": "villa-savoye",
+      "source_id": "villa-savoye-source-document-1",
+      "model_type": "mass_model",
+      "title": "Villa Savoye lifted massing model",
+      "r2_key": "entries/villa-savoye/models/mass.glb",
+      "format": "glb",
+      "lod_level": "preview",
+      "source_basis": "Canonical massing: elevated rectangular volume, pilotis grid, ramp sequence and roof terrace.",
+      "generation_method": "procedural",
+      "review_status": "reviewed",
+      "confidence_score": 0.78,
+      "file_size_bytes": null
+    },
+    {
+      "id": "villa-savoye-model-low_poly_model-2",
+      "entry_id": "villa-savoye",
+      "source_id": "villa-savoye-source-document-1",
+      "model_type": "low_poly_model",
+      "title": "Villa Savoye low-poly atlas preview",
+      "r2_key": "entries/villa-savoye/models/low.glb",
+      "format": "glb",
+      "lod_level": "low",
+      "source_basis": "Planned web preview derived from massing, pilotis and promenade elements.",
+      "generation_method": "procedural",
+      "review_status": "draft",
+      "confidence_score": 0.64,
+      "file_size_bytes": null
+    },
+    {
+      "id": "villa-savoye-model-full_model-3",
+      "entry_id": "villa-savoye",
+      "source_id": "villa-savoye-source-document-1",
       "model_type": "full_model",
-      "title": "Complete pavilion model",
+      "title": "Villa Savoye complete architectural model",
+      "r2_key": "entries/villa-savoye/models/full.glb",
+      "format": "glb",
+      "lod_level": "medium",
+      "source_basis": "Requires verified plans, sections, elevations and dimensional references before public model release.",
+      "generation_method": "source_reconstruction",
+      "review_status": "needs_source",
+      "confidence_score": 0.48,
+      "file_size_bytes": null
+    },
+    {
+      "id": "villa-savoye-model-structure_model-4",
+      "entry_id": "villa-savoye",
+      "source_id": "villa-savoye-source-document-1",
+      "model_type": "structure_model",
+      "title": "Villa Savoye pilotis and concrete frame model",
+      "r2_key": "entries/villa-savoye/models/structure.glb",
+      "format": "glb",
+      "lod_level": "medium",
+      "source_basis": "Five-points reading of reinforced-concrete frame, pilotis, slabs and non-load-bearing facade.",
+      "generation_method": "source_reconstruction",
+      "review_status": "draft",
+      "confidence_score": 0.62,
+      "file_size_bytes": null
+    },
+    {
+      "id": "villa-savoye-model-tectonic_model-5",
+      "entry_id": "villa-savoye",
+      "source_id": "villa-savoye-source-document-1",
+      "model_type": "tectonic_model",
+      "title": "Villa Savoye five-points tectonic layer model",
+      "r2_key": "entries/villa-savoye/models/tectonic.glb",
+      "format": "glb",
+      "lod_level": "medium",
+      "source_basis": "Analytical separation of pilotis, slabs, ribbon windows, free facade, ramp and roof garden.",
+      "generation_method": "ai_assisted",
+      "review_status": "draft",
+      "confidence_score": 0.58,
+      "file_size_bytes": null
+    },
+    {
+      "id": "villa-savoye-model-site_model-6",
+      "entry_id": "villa-savoye",
+      "source_id": "villa-savoye-source-document-1",
+      "model_type": "site_model",
+      "title": "Villa Savoye Poissy site relation model",
+      "r2_key": "entries/villa-savoye/models/site.glb",
+      "format": "glb",
+      "lod_level": "preview",
+      "source_basis": "Landscape clearing, arrival path and freestanding object relationship require stronger site source verification.",
+      "generation_method": "source_reconstruction",
+      "review_status": "needs_source",
+      "confidence_score": 0.4,
+      "file_size_bytes": null
+    },
+    {
+      "id": "afasia-no-architecture-flower-house-model-full_model-1",
+      "entry_id": "afasia-no-architecture-flower-house",
+      "source_id": "afasia-no-architecture-flower-house-source-web",
+      "model_type": "full_model",
+      "title": "Flower House complete pavilion model",
       "r2_key": "entries/afasia-no-architecture-flower-house/models/full.glb",
       "format": "glb",
       "lod_level": "medium",
       "source_basis": "Afasia photos, plan, section, roof diagram, axonometric drawings and published project text.",
       "generation_method": "source_reconstruction",
       "review_status": "draft",
-      "confidence_score": 0.62
+      "confidence_score": 0.62,
+      "file_size_bytes": null
     },
     {
-      "id": "model-flower-structure",
+      "id": "afasia-no-architecture-flower-house-model-low_poly_model-2",
       "entry_id": "afasia-no-architecture-flower-house",
-      "source_id": "source-afasia-flower-house",
+      "source_id": "afasia-no-architecture-flower-house-source-web",
+      "model_type": "low_poly_model",
+      "title": "Flower House low-poly atlas preview",
+      "r2_key": "entries/afasia-no-architecture-flower-house/models/low.glb",
+      "format": "glb",
+      "lod_level": "low",
+      "source_basis": "Derived from planned full model for fast atlas rendering.",
+      "generation_method": "procedural",
+      "review_status": "draft",
+      "confidence_score": 0.58,
+      "file_size_bytes": null
+    },
+    {
+      "id": "afasia-no-architecture-flower-house-model-structure_model-3",
+      "entry_id": "afasia-no-architecture-flower-house",
+      "source_id": "afasia-no-architecture-flower-house-source-web",
       "model_type": "structure_model",
-      "title": "Canopy and core structure model",
+      "title": "Flower House structural canopy and core model",
       "r2_key": "entries/afasia-no-architecture-flower-house/models/structure.glb",
       "format": "glb",
       "lod_level": "medium",
-      "source_basis": "Published structural description: canopy-like pavilions, load-bearing frames, concrete slab and T/L-shaped cores.",
+      "source_basis": "Published description of six canopy-like pavilions, load-bearing window frames, concrete slab and T/L-shaped stabilizing cores.",
       "generation_method": "source_reconstruction",
       "review_status": "needs_source",
-      "confidence_score": 0.54
+      "confidence_score": 0.54,
+      "file_size_bytes": null
     },
     {
-      "id": "model-flower-tectonic",
+      "id": "afasia-no-architecture-flower-house-model-tectonic_model-4",
       "entry_id": "afasia-no-architecture-flower-house",
-      "source_id": "source-afasia-flower-house",
+      "source_id": "afasia-no-architecture-flower-house-source-web",
       "model_type": "tectonic_model",
-      "title": "Tectonic layer model",
+      "title": "Flower House tectonic layer model",
       "r2_key": "entries/afasia-no-architecture-flower-house/models/tectonic.glb",
       "format": "glb",
       "lod_level": "medium",
-      "source_basis": "Analytical split into terrain, slab, canopy roofs, glass envelope and stabilizing cores.",
+      "source_basis": "Planned analytical model separating slab, roof canopies, glass envelope, cores and terrain cut.",
       "generation_method": "ai_assisted",
       "review_status": "draft",
-      "confidence_score": 0.5
+      "confidence_score": 0.5,
+      "file_size_bytes": null
+    },
+    {
+      "id": "afasia-no-architecture-flower-house-model-site_model-5",
+      "entry_id": "afasia-no-architecture-flower-house",
+      "source_id": "afasia-no-architecture-flower-house-source-web",
+      "model_type": "site_model",
+      "title": "Flower House hillside site model",
+      "r2_key": "entries/afasia-no-architecture-flower-house/models/site.glb",
+      "format": "glb",
+      "lod_level": "medium",
+      "source_basis": "Afasia site imagery and published hillside/topographic description.",
+      "generation_method": "source_reconstruction",
+      "review_status": "needs_source",
+      "confidence_score": 0.46,
+      "file_size_bytes": null
+    },
+    {
+      "id": "afasia-no-architecture-flower-house-model-mass_model-6",
+      "entry_id": "afasia-no-architecture-flower-house",
+      "source_id": "afasia-no-architecture-flower-house-source-web",
+      "model_type": "mass_model",
+      "title": "Flower House six-pavilion massing model",
+      "r2_key": "entries/afasia-no-architecture-flower-house/models/mass.glb",
+      "format": "glb",
+      "lod_level": "preview",
+      "source_basis": "Six interlocking pavilion diagram described as flower petals around a central courtyard.",
+      "generation_method": "procedural",
+      "review_status": "reviewed",
+      "confidence_score": 0.72,
+      "file_size_bytes": null
     }
   ],
   "entry_analysis": [
     {
-      "id": "analysis-flower-structure",
+      "id": "villa-savoye-analysis-structure-1",
+      "entry_id": "villa-savoye",
+      "analysis_type": "structure",
+      "summary": "The house is read as a reinforced-concrete frame that separates load-bearing order from facade and plan, making pilotis, slab and free enclosure the structural grammar of the project.",
+      "data_json": "{\"primary_system\":\"reinforced_concrete_frame\",\"key_elements\":[\"pilotis\",\"slabs\",\"free_plan\",\"free_facade\"]}",
+      "r2_key": "entries/villa-savoye/analysis/structure.json",
+      "review_status": "draft"
+    },
+    {
+      "id": "villa-savoye-analysis-tectonics-2",
+      "entry_id": "villa-savoye",
+      "analysis_type": "tectonics",
+      "summary": "The tectonic reading separates the lifted frame, white envelope, horizontal window band, ramp, service cores and roof-garden plane as distinct modern layers.",
+      "data_json": "{\"layers\":[\"pilotis_grid\",\"floor_slabs\",\"free_facade\",\"ribbon_windows\",\"ramp\",\"roof_garden\"]}",
+      "r2_key": "entries/villa-savoye/analysis/tectonics.json",
+      "review_status": "draft"
+    },
+    {
+      "id": "villa-savoye-analysis-spatial_order-3",
+      "entry_id": "villa-savoye",
+      "analysis_type": "spatial_order",
+      "summary": "Spatial order is choreographed as a promenade: arrival below the raised volume, ascent by ramp, movement through living spaces and release onto the roof terrace.",
+      "data_json": "{\"sequence\":[\"arrival_under_volume\",\"ramp_ascent\",\"living_level\",\"roof_terrace\"],\"order\":\"promenade_architecturale\"}",
+      "r2_key": null,
+      "review_status": "reviewed"
+    },
+    {
+      "id": "villa-savoye-analysis-material_system-4",
+      "entry_id": "villa-savoye",
+      "analysis_type": "material_system",
+      "summary": "The material reading foregrounds white rendered surfaces, reinforced concrete, glass bands and roof-garden ground as an abstract modern envelope.",
+      "data_json": "{\"materials\":[\"reinforced_concrete\",\"rendered_surface\",\"glass\",\"roof_garden\"]}",
+      "r2_key": null,
+      "review_status": "draft"
+    },
+    {
+      "id": "villa-savoye-analysis-typology-5",
+      "entry_id": "villa-savoye",
+      "analysis_type": "typology",
+      "summary": "Villa Savoye operates as a manifesto-house: a domestic program used to demonstrate a general architectural system rather than only a private residence.",
+      "data_json": "{\"base_typology\":\"villa\",\"mutation\":\"manifest_house\",\"theory\":\"five_points\"}",
+      "r2_key": null,
+      "review_status": "reviewed"
+    },
+    {
+      "id": "villa-savoye-analysis-filter_classification-6",
+      "entry_id": "villa-savoye",
+      "analysis_type": "filter_classification",
+      "summary": "Suggested filters: modern villa, manifesto house, five points, promenade architecturale, pilotis, free plan, reinforced-concrete frame, Le Corbusier, early modernism.",
+      "data_json": "{\"primary_filters\":[\"modern_villa\",\"manifest_house\",\"five_points\",\"promenade\",\"pilotis\"],\"model_readiness\":\"pilot_ready_needs_verified_sources\"}",
+      "r2_key": null,
+      "review_status": "reviewed"
+    },
+    {
+      "id": "afasia-no-architecture-flower-house-analysis-structure-1",
       "entry_id": "afasia-no-architecture-flower-house",
       "analysis_type": "structure",
       "summary": "Six pavilion roofs act as canopy-like structural fields. Vertical and lateral stability is described through load-bearing window frames and T/L-shaped service cores, with a visible concrete slab tying the system together.",
-      "data_json": "{\"primary_system\":\"canopy_pavilions_with_core_stabilization\",\"stabilizing_elements\":[\"load_bearing_window_frames\",\"t_shaped_cores\",\"l_shaped_cores\",\"concrete_slab\"]}",
+      "data_json": "{\"primary_system\":\"canopy_pavilions_with_core_stabilization\",\"stabilizing_elements\":[\"load_bearing_window_frames\",\"t_shaped_cores\",\"l_shaped_cores\",\"concrete_slab\"],\"confidence\":0.54}",
       "r2_key": "entries/afasia-no-architecture-flower-house/analysis/structure.json",
       "review_status": "needs_source"
     },
     {
-      "id": "analysis-flower-tectonics",
+      "id": "afasia-no-architecture-flower-house-analysis-tectonics-2",
       "entry_id": "afasia-no-architecture-flower-house",
       "analysis_type": "tectonics",
-      "summary": "The tectonic reading separates terrain cut, concrete ground datum, pavilion roofs, glass enclosure, and service cores.",
+      "summary": "The tectonic reading separates terrain cut, concrete ground datum, pavilion roofs, glass enclosure, and service cores. The house is understood as a landscape-embedded canopy cluster rather than a single closed volume.",
       "data_json": "{\"layers\":[\"terrain_cut\",\"concrete_datum\",\"canopy_roofs\",\"glass_envelope\",\"service_cores\"],\"tectonic_theme\":\"landscape_embedded_glass_house\"}",
       "r2_key": "entries/afasia-no-architecture-flower-house/analysis/tectonics.json",
       "review_status": "draft"
     },
     {
-      "id": "analysis-flower-filter-classification",
+      "id": "afasia-no-architecture-flower-house-analysis-spatial_order-3",
+      "entry_id": "afasia-no-architecture-flower-house",
+      "analysis_type": "spatial_order",
+      "summary": "The spatial order is radial and centripetal: six interlocking pavilions form petal-like rooms around a central open courtyard, distributing public and private zones through degrees of openness.",
+      "data_json": "{\"order\":\"six_pavilions_around_courtyard\",\"public_private_gradient\":[\"east_public_glass\",\"central_courtyard\",\"west_private_clerestory\"]}",
+      "r2_key": null,
+      "review_status": "reviewed"
+    },
+    {
+      "id": "afasia-no-architecture-flower-house-analysis-material_system-4",
+      "entry_id": "afasia-no-architecture-flower-house",
+      "analysis_type": "material_system",
+      "summary": "Glass, concrete and earth/topography form the primary material system: transparent pavilion edges meet a heavy ground datum and hillside thermal envelope.",
+      "data_json": "{\"materials\":[\"glass\",\"concrete\",\"earth\",\"vegetated_landscape\"],\"envelope_logic\":\"transparent_public_edges_and_topographic_insulation\"}",
+      "r2_key": null,
+      "review_status": "draft"
+    },
+    {
+      "id": "afasia-no-architecture-flower-house-analysis-circulation-5",
+      "entry_id": "afasia-no-architecture-flower-house",
+      "analysis_type": "circulation",
+      "summary": "Movement is organized around the central court and between pavilion wings, with landscape-facing rooms opening outward and more private zones embedded into the slope.",
+      "data_json": "{\"circulation_type\":\"courtyard_linked_pavilion_sequence\",\"anchors\":[\"central_courtyard\",\"east_public_rooms\",\"west_private_rooms\"]}",
+      "r2_key": null,
+      "review_status": "draft"
+    },
+    {
+      "id": "afasia-no-architecture-flower-house-analysis-typology-6",
+      "entry_id": "afasia-no-architecture-flower-house",
+      "analysis_type": "typology",
+      "summary": "The project extends the Glass House lineage by breaking the single transparent box into a flower-like cluster of pavilions, making landscape and privacy part of the typological revision.",
+      "data_json": "{\"base_typology\":\"glass_house\",\"mutation\":\"clustered_pavilion_courtyard_house\",\"program\":\"private_residence\"}",
+      "r2_key": null,
+      "review_status": "reviewed"
+    },
+    {
+      "id": "afasia-no-architecture-flower-house-analysis-filter_classification-7",
       "entry_id": "afasia-no-architecture-flower-house",
       "analysis_type": "filter_classification",
-      "summary": "Suggested filters: Afasia source, private residence, glass-house typology, landscape integration, hillside, courtyard, canopy structure, core-stabilized tectonics.",
-      "data_json": "{\"primary_filters\":[\"afasia\",\"private_residence\",\"glass_house\",\"landscape\",\"hillside\",\"courtyard\"],\"model_readiness\":\"pilot_ready\"}",
-      "r2_key": "entries/afasia-no-architecture-flower-house/analysis/filter-classification.json",
+      "summary": "Suggested filters: Afasia source, private residence, glass-house typology, landscape integration, hillside, courtyard, canopy structure, core-stabilized tectonics, contemporary reuse/sustainability sector.",
+      "data_json": "{\"primary_filters\":[\"afasia\",\"private_residence\",\"glass_house\",\"landscape\",\"hillside\",\"courtyard\"],\"structural_filters\":[\"canopy_structure\",\"core_stabilized\",\"concrete_slab\"],\"model_readiness\":\"pilot_ready\"}",
+      "r2_key": null,
       "review_status": "reviewed"
     }
   ],
   "tags": [
-    { "id": "tag-source-afasia", "label": "Afasia", "tag_group": "source" },
-    { "id": "tag-private-residence", "label": "Private residence", "tag_group": "typology" },
-    { "id": "tag-glass-house", "label": "Glass house", "tag_group": "typology" },
-    { "id": "tag-hillside", "label": "Hillside", "tag_group": "theme" },
-    { "id": "tag-courtyard", "label": "Courtyard", "tag_group": "theme" },
-    { "id": "tag-canopy-structure", "label": "Canopy structure", "tag_group": "structure" },
-    { "id": "tag-core-stabilized", "label": "Core stabilized", "tag_group": "structure" }
+    {
+      "id": "tag-analysis-model-ready",
+      "label": "Model Ready",
+      "tag_group": "analysis",
+      "description": ""
+    },
+    {
+      "id": "tag-analysis-tectonics-ready",
+      "label": "Tectonics Ready",
+      "tag_group": "analysis",
+      "description": ""
+    },
+    {
+      "id": "tag-course-afasia-test-pull",
+      "label": "Afasia Test Pull",
+      "tag_group": "course",
+      "description": ""
+    },
+    {
+      "id": "tag-course-architekturgeschichte-eth",
+      "label": "Architekturgeschichte Eth",
+      "tag_group": "course",
+      "description": ""
+    },
+    {
+      "id": "tag-course-contemporary-architecture",
+      "label": "Contemporary Architecture",
+      "tag_group": "course",
+      "description": ""
+    },
+    {
+      "id": "tag-course-modernism",
+      "label": "Modernism",
+      "tag_group": "course",
+      "description": ""
+    },
+    {
+      "id": "tag-material-concrete",
+      "label": "Concrete",
+      "tag_group": "material",
+      "description": ""
+    },
+    {
+      "id": "tag-material-glass",
+      "label": "Glass",
+      "tag_group": "material",
+      "description": ""
+    },
+    {
+      "id": "tag-material-glass-house",
+      "label": "Glass House",
+      "tag_group": "material",
+      "description": ""
+    },
+    {
+      "id": "tag-material-reinforced-concrete",
+      "label": "Reinforced Concrete",
+      "tag_group": "material",
+      "description": ""
+    },
+    {
+      "id": "tag-period-early-modernism",
+      "label": "Early Modernism",
+      "tag_group": "period",
+      "description": ""
+    },
+    {
+      "id": "tag-source-afasia",
+      "label": "Afasia",
+      "tag_group": "source",
+      "description": ""
+    },
+    {
+      "id": "tag-source-lecture-notes",
+      "label": "Lecture Notes",
+      "tag_group": "source",
+      "description": ""
+    },
+    {
+      "id": "tag-structure-canopy-system",
+      "label": "Canopy System",
+      "tag_group": "structure",
+      "description": ""
+    },
+    {
+      "id": "tag-structure-core-stabilized",
+      "label": "Core Stabilized",
+      "tag_group": "structure",
+      "description": ""
+    },
+    {
+      "id": "tag-structure-pilotis",
+      "label": "Pilotis",
+      "tag_group": "structure",
+      "description": ""
+    },
+    {
+      "id": "tag-structure-reinforced-concrete-frame",
+      "label": "Reinforced Concrete Frame",
+      "tag_group": "structure",
+      "description": ""
+    },
+    {
+      "id": "tag-style-modern-architecture",
+      "label": "Modern Architecture",
+      "tag_group": "style",
+      "description": ""
+    },
+    {
+      "id": "tag-style-sustainable-architecture",
+      "label": "Sustainable Architecture",
+      "tag_group": "style",
+      "description": ""
+    },
+    {
+      "id": "tag-theme-central-courtyard",
+      "label": "Central Courtyard",
+      "tag_group": "theme",
+      "description": ""
+    },
+    {
+      "id": "tag-theme-courtyard",
+      "label": "Courtyard",
+      "tag_group": "theme",
+      "description": ""
+    },
+    {
+      "id": "tag-theme-five-points",
+      "label": "Five Points",
+      "tag_group": "theme",
+      "description": ""
+    },
+    {
+      "id": "tag-theme-free-plan",
+      "label": "Free Plan",
+      "tag_group": "theme",
+      "description": ""
+    },
+    {
+      "id": "tag-theme-hillside",
+      "label": "Hillside",
+      "tag_group": "theme",
+      "description": ""
+    },
+    {
+      "id": "tag-theme-landscape",
+      "label": "Landscape",
+      "tag_group": "theme",
+      "description": ""
+    },
+    {
+      "id": "tag-theme-machine-age",
+      "label": "Machine Age",
+      "tag_group": "theme",
+      "description": ""
+    },
+    {
+      "id": "tag-theme-modern-villa",
+      "label": "Modern Villa",
+      "tag_group": "theme",
+      "description": ""
+    },
+    {
+      "id": "tag-theme-pilotis",
+      "label": "Pilotis",
+      "tag_group": "theme",
+      "description": ""
+    },
+    {
+      "id": "tag-theme-private-residence",
+      "label": "Private Residence",
+      "tag_group": "theme",
+      "description": ""
+    },
+    {
+      "id": "tag-theme-promenade",
+      "label": "Promenade",
+      "tag_group": "theme",
+      "description": ""
+    },
+    {
+      "id": "tag-theme-promenade-architecturale",
+      "label": "Promenade Architecturale",
+      "tag_group": "theme",
+      "description": ""
+    },
+    {
+      "id": "tag-theme-roof-garden",
+      "label": "Roof Garden",
+      "tag_group": "theme",
+      "description": ""
+    },
+    {
+      "id": "tag-typology-glass-house",
+      "label": "Glass House",
+      "tag_group": "typology",
+      "description": ""
+    },
+    {
+      "id": "tag-typology-manifest-house",
+      "label": "Manifest House",
+      "tag_group": "typology",
+      "description": ""
+    },
+    {
+      "id": "tag-typology-modern-villa",
+      "label": "Modern Villa",
+      "tag_group": "typology",
+      "description": ""
+    },
+    {
+      "id": "tag-typology-private-residence",
+      "label": "Private Residence",
+      "tag_group": "typology",
+      "description": ""
+    }
   ],
   "entry_tags": [
-    { "entry_id": "afasia-no-architecture-flower-house", "tag_id": "tag-source-afasia", "confidence_score": 1 },
-    { "entry_id": "afasia-no-architecture-flower-house", "tag_id": "tag-private-residence", "confidence_score": 0.94 },
-    { "entry_id": "afasia-no-architecture-flower-house", "tag_id": "tag-glass-house", "confidence_score": 0.88 },
-    { "entry_id": "afasia-no-architecture-flower-house", "tag_id": "tag-hillside", "confidence_score": 0.84 },
-    { "entry_id": "afasia-no-architecture-flower-house", "tag_id": "tag-courtyard", "confidence_score": 0.9 },
-    { "entry_id": "afasia-no-architecture-flower-house", "tag_id": "tag-canopy-structure", "confidence_score": 0.66 },
-    { "entry_id": "afasia-no-architecture-flower-house", "tag_id": "tag-core-stabilized", "confidence_score": 0.58 }
+    {
+      "entry_id": "villa-savoye",
+      "tag_id": "tag-style-modern-architecture",
+      "confidence_score": 1
+    },
+    {
+      "entry_id": "villa-savoye",
+      "tag_id": "tag-course-modernism",
+      "confidence_score": 0.86
+    },
+    {
+      "entry_id": "villa-savoye",
+      "tag_id": "tag-theme-five-points",
+      "confidence_score": 0.76
+    },
+    {
+      "entry_id": "villa-savoye",
+      "tag_id": "tag-theme-promenade",
+      "confidence_score": 0.76
+    },
+    {
+      "entry_id": "villa-savoye",
+      "tag_id": "tag-theme-pilotis",
+      "confidence_score": 0.76
+    },
+    {
+      "entry_id": "villa-savoye",
+      "tag_id": "tag-theme-machine-age",
+      "confidence_score": 0.76
+    },
+    {
+      "entry_id": "villa-savoye",
+      "tag_id": "tag-theme-free-plan",
+      "confidence_score": 0.92
+    },
+    {
+      "entry_id": "villa-savoye",
+      "tag_id": "tag-theme-roof-garden",
+      "confidence_score": 0.76
+    },
+    {
+      "entry_id": "villa-savoye",
+      "tag_id": "tag-theme-modern-villa",
+      "confidence_score": 0.76
+    },
+    {
+      "entry_id": "villa-savoye",
+      "tag_id": "tag-material-reinforced-concrete",
+      "confidence_score": 0.76
+    },
+    {
+      "entry_id": "villa-savoye",
+      "tag_id": "tag-source-lecture-notes",
+      "confidence_score": 0.92
+    },
+    {
+      "entry_id": "villa-savoye",
+      "tag_id": "tag-course-architekturgeschichte-eth",
+      "confidence_score": 0.92
+    },
+    {
+      "entry_id": "villa-savoye",
+      "tag_id": "tag-typology-modern-villa",
+      "confidence_score": 0.92
+    },
+    {
+      "entry_id": "villa-savoye",
+      "tag_id": "tag-typology-manifest-house",
+      "confidence_score": 0.92
+    },
+    {
+      "entry_id": "villa-savoye",
+      "tag_id": "tag-structure-reinforced-concrete-frame",
+      "confidence_score": 0.92
+    },
+    {
+      "entry_id": "villa-savoye",
+      "tag_id": "tag-structure-pilotis",
+      "confidence_score": 0.92
+    },
+    {
+      "entry_id": "villa-savoye",
+      "tag_id": "tag-theme-promenade-architecturale",
+      "confidence_score": 0.92
+    },
+    {
+      "entry_id": "villa-savoye",
+      "tag_id": "tag-material-concrete",
+      "confidence_score": 0.92
+    },
+    {
+      "entry_id": "villa-savoye",
+      "tag_id": "tag-period-early-modernism",
+      "confidence_score": 0.92
+    },
+    {
+      "entry_id": "villa-savoye",
+      "tag_id": "tag-analysis-model-ready",
+      "confidence_score": 0.92
+    },
+    {
+      "entry_id": "afasia-no-architecture-flower-house",
+      "tag_id": "tag-style-sustainable-architecture",
+      "confidence_score": 1
+    },
+    {
+      "entry_id": "afasia-no-architecture-flower-house",
+      "tag_id": "tag-course-afasia-test-pull",
+      "confidence_score": 0.86
+    },
+    {
+      "entry_id": "afasia-no-architecture-flower-house",
+      "tag_id": "tag-course-contemporary-architecture",
+      "confidence_score": 0.92
+    },
+    {
+      "entry_id": "afasia-no-architecture-flower-house",
+      "tag_id": "tag-source-afasia",
+      "confidence_score": 0.92
+    },
+    {
+      "entry_id": "afasia-no-architecture-flower-house",
+      "tag_id": "tag-material-glass-house",
+      "confidence_score": 0.76
+    },
+    {
+      "entry_id": "afasia-no-architecture-flower-house",
+      "tag_id": "tag-theme-landscape",
+      "confidence_score": 0.76
+    },
+    {
+      "entry_id": "afasia-no-architecture-flower-house",
+      "tag_id": "tag-theme-hillside",
+      "confidence_score": 0.92
+    },
+    {
+      "entry_id": "afasia-no-architecture-flower-house",
+      "tag_id": "tag-theme-courtyard",
+      "confidence_score": 0.76
+    },
+    {
+      "entry_id": "afasia-no-architecture-flower-house",
+      "tag_id": "tag-theme-private-residence",
+      "confidence_score": 0.76
+    },
+    {
+      "entry_id": "afasia-no-architecture-flower-house",
+      "tag_id": "tag-typology-private-residence",
+      "confidence_score": 0.92
+    },
+    {
+      "entry_id": "afasia-no-architecture-flower-house",
+      "tag_id": "tag-typology-glass-house",
+      "confidence_score": 0.92
+    },
+    {
+      "entry_id": "afasia-no-architecture-flower-house",
+      "tag_id": "tag-structure-canopy-system",
+      "confidence_score": 0.92
+    },
+    {
+      "entry_id": "afasia-no-architecture-flower-house",
+      "tag_id": "tag-structure-core-stabilized",
+      "confidence_score": 0.92
+    },
+    {
+      "entry_id": "afasia-no-architecture-flower-house",
+      "tag_id": "tag-material-glass",
+      "confidence_score": 0.92
+    },
+    {
+      "entry_id": "afasia-no-architecture-flower-house",
+      "tag_id": "tag-material-concrete",
+      "confidence_score": 0.92
+    },
+    {
+      "entry_id": "afasia-no-architecture-flower-house",
+      "tag_id": "tag-theme-central-courtyard",
+      "confidence_score": 0.92
+    },
+    {
+      "entry_id": "afasia-no-architecture-flower-house",
+      "tag_id": "tag-analysis-tectonics-ready",
+      "confidence_score": 0.92
+    }
+  ],
+  "entry_relations": [
+    {
+      "id": "domino-to-villa-savoye",
+      "source_entry_id": "dom-ino-house",
+      "target_entry_id": "villa-savoye",
+      "relation_type": "influences",
+      "description": "The structural prototype becomes an architectural language of pilotis, free plan, and free facade."
+    },
+    {
+      "id": "villa-savoye-to-athens-charter",
+      "source_entry_id": "villa-savoye",
+      "target_entry_id": "athens-charter",
+      "relation_type": "same_author",
+      "description": "Le Corbusier's house logic and urban doctrine share a belief in order, circulation, and functional separation."
+    },
+    {
+      "id": "villa-savoye-to-ville-radieuse",
+      "source_entry_id": "villa-savoye",
+      "target_entry_id": "ville-radieuse",
+      "relation_type": "same_author",
+      "description": "The isolated manifesto house and the ideal city both translate Le Corbusier's ordering systems into spatial diagrams."
+    },
+    {
+      "id": "villa-savoye-to-haus-tugendhat",
+      "source_entry_id": "villa-savoye",
+      "target_entry_id": "haus-tugendhat",
+      "relation_type": "shares_theme",
+      "description": "Both houses test modern living through open plans, technical refinement, and a new relationship between domestic space and abstraction."
+    },
+    {
+      "id": "villa-savoye-to-unite",
+      "source_entry_id": "villa-savoye",
+      "target_entry_id": "unite-habitation",
+      "relation_type": "typological_reference",
+      "description": "The five-points house later scales toward collective housing, roof programs, pilotis and standardized modern life."
+    }
   ],
   "asset_manifests": [
     {
-      "id": "manifest-flower-asset-package",
+      "id": "villa-savoye-asset-manifest",
+      "entry_id": "villa-savoye",
+      "manifest_type": "source_package",
+      "r2_prefix": "entries/villa-savoye",
+      "manifest_json": "{\"media\":4,\"source_assets\":0,\"models\":6,\"analysis_files\":6,\"status\":\"planned_r2_package_no_uploads\"}"
+    },
+    {
+      "id": "afasia-no-architecture-flower-house-asset-manifest",
       "entry_id": "afasia-no-architecture-flower-house",
-      "manifest_type": "model_set",
+      "manifest_type": "source_package",
       "r2_prefix": "entries/afasia-no-architecture-flower-house",
-      "manifest_json": "{\"media\":14,\"models\":6,\"analysis_files\":7,\"status\":\"planned_r2_package\"}"
+      "manifest_json": "{\"media\":4,\"source_assets\":14,\"models\":6,\"analysis_files\":7,\"status\":\"planned_r2_package_no_uploads\"}"
     }
   ]
 }

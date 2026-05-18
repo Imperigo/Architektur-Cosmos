@@ -42,6 +42,7 @@ function main() {
     return;
   }
 
+  run('npm', ['run', 'archive:preview-json']);
   run('npm', ['run', 'archive:export']);
   run('npm', ['run', 'archive:r2-plan']);
 

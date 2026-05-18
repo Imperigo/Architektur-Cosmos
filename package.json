@@ -10,6 +10,7 @@
     "import:afasia": "node scripts/import-afasia.mjs",
     "archive:validate": "node scripts/archive-d1-tools.mjs validate",
     "archive:export": "node scripts/archive-d1-tools.mjs export-sql",
+    "archive:preview-json": "node scripts/archive-d1-tools.mjs export-preview-json",
     "archive:smoke": "node scripts/archive-d1-tools.mjs smoke-test",
     "archive:draft": "node scripts/archive-entry-draft.mjs",
     "archive:d1-preview": "node scripts/cloudflare-archive-preview.mjs",
