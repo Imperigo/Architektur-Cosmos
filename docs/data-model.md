@@ -81,7 +81,9 @@ Relation types should stay broad at first:
 - `same_author`
 - `same_place`
 - `typological_reference`
+- `structural_reference`
 - `material_reference`
+- `source_connection`
 - `context`
 
 ## Media
@@ -113,6 +115,24 @@ eventually have several model layers:
 The database stores `r2_key`, model type, format, review status, source basis,
 generation method, and confidence metadata. The actual `.glb`, `.gltf`, `.usdz`,
 textures, and annotation files belong in R2.
+
+## Local Archive Checks
+
+Run the archive validator before adding larger batches of projects:
+
+```bash
+npm run archive:validate
+```
+
+To create a local D1 import preview:
+
+```bash
+npm run archive:export
+```
+
+This writes `out/archive-d1-import.sql`, which is generated output and should not
+be committed. It translates local entries, relations, media placeholders, tags,
+Flower House model metadata, and analysis layers into the planned D1 table shape.
 
 ## Data Rule
 

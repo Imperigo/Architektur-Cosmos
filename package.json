@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "import:afasia": "node scripts/import-afasia.mjs"
+    "import:afasia": "node scripts/import-afasia.mjs",
+    "archive:validate": "node scripts/archive-d1-tools.mjs validate",
+    "archive:export": "node scripts/archive-d1-tools.mjs export-sql"
   },
   "dependencies": {
     "@types/d3": "latest",

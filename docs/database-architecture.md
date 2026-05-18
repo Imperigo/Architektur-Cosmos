@@ -179,6 +179,23 @@ The current repository includes `data/archive-preview.json` as a static normaliz
 
 The atlas database panel reads this preview directly. It is intentionally not a backend and does not write anything from the browser.
 
+## Local Validation And Export
+
+The repository now includes a local archive tool:
+
+```bash
+npm run archive:validate
+npm run archive:export
+```
+
+`archive:validate` checks local entries, relations, media slots, model metadata, analysis layers, tags, and future D1 enum compatibility. `archive:export` writes a local SQL preview to `out/archive-d1-import.sql`.
+
+The generated SQL is intentionally ignored by git because it is build output. It can be tested locally with:
+
+```bash
+sqlite3 :memory: < <(cat schema/architecture-cosmos-d1.sql out/archive-d1-import.sql)
+```
+
 ## Current Constraint
 
 Do not add live database bindings, API routes, authentication, CMS logic, or backend infrastructure until explicitly requested. This schema is the preparation layer.
