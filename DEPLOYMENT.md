@@ -30,7 +30,8 @@ If a build fails, the previous version stays live (no broken deployments).
 | Hosting | **Cloudflare Workers (Static Assets mode)** | edge, global |
 | Worker name | `architekturkosmos` | CF account `andrin99zsc@gmail.com` |
 | Production URL (Workers) | `architekturkosmos.andrin99zsc.workers.dev` | always available |
-| Custom domain | `architekturkosmos.ch` | pending DNS propagation as of 2026-05-18 |
+| Custom domain | `architekturkosmos.ch` | ✅ live (since 2026-05-18) |
+| Custom domain (www) | `www.architekturkosmos.ch` | live alongside apex |
 | Build runtime | Node 22 (CF build env) | CF cloud builders |
 | Deploy tool | `wrangler` (version pinned to latest by CF) | auto-installed |
 | Auto-deploy trigger | GitHub push to `main` | CF Pages GitHub integration |
@@ -144,7 +145,7 @@ These improvements are welcome PRs. They don't require any infra changes.
 
 - **Repo**: https://github.com/Imperigo/Architektur-Cosmos
 - **Production (Workers)**: https://architekturkosmos.andrin99zsc.workers.dev
-- **Production (Custom Domain)**: https://architekturkosmos.ch *(pending DNS as of 2026-05-18)*
+- **Production (Custom Domain)**: https://architekturkosmos.ch ✅ live
 - **CF Dashboard**: https://dash.cloudflare.com → Workers & Pages → `architekturkosmos`
 
 ---
