@@ -54,6 +54,8 @@ async function main() {
   const captureDraft = path.join(root, 'out/archive-captures', slug, 'entry-draft.json');
   steps.push(runStep('model-plan', ['run', 'archive:model-plan', '--', '--entry', slug, '--draft', path.relative(root, captureDraft)]));
 
+  steps.push(runStep('rights-gate', ['run', 'archive:rights-gate', '--', '--entry', slug]));
+
   const manifestStep = await maybeRunBundledAssetManifest(slug, copyright);
   if (manifestStep) steps.push(manifestStep);
 
@@ -82,6 +84,7 @@ async function main() {
     outputs: {
       capture_manifest: existsSync(captureManifestPath) ? path.relative(root, captureManifestPath) : null,
       entry_draft: existsSync(captureDraft) ? path.relative(root, captureDraft) : null,
+      rights_report: existsSync(path.join(root, 'out/archive-rights', slug, 'rights-report.json')) ? `out/archive-rights/${slug}/rights-report.json` : null,
       model_manifest: existsSync(modelManifestPath) ? path.relative(root, modelManifestPath) : null,
       automation_summary: `out/archive-automation/${slug}/run-summary.json`,
       next_actions: `out/archive-automation/${slug}/next-actions.md`

@@ -1098,6 +1098,7 @@ function DatabaseArchivePanel({
                   `mkdir -p archive-inbox/${intakeSlug}`,
                   `npm run archive:autopilot -- --input archive-inbox/${intakeSlug} --title "${preview.title}" --copyright ${draft.copyright_status}`,
                   `npm run archive:capture -- --input archive-inbox/${intakeSlug} --title "${preview.title}"`,
+                  `npm run archive:rights-gate -- --entry ${intakeSlug}`,
                   `npm run archive:model-plan -- --entry ${intakeSlug}`,
                   `npm run archive:model-generate -- --entry ${intakeSlug}`,
                   'future: run Gaussian splat generation after own/licensed video frames are staged'
