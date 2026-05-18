@@ -94,7 +94,7 @@ export type SourceCandidate = {
   url?: string;
   local_path?: string;
   reliability_level: 'unverified' | 'lecture_reference' | 'secondary_source' | 'primary_source' | 'verified';
-  rights_status: 'unknown' | 'needs_permission' | 'licensed' | 'public_domain' | 'own_work';
+  rights_status: 'unknown' | 'needs_permission' | 'private_research' | 'licensed' | 'public_domain' | 'own_work';
   notes?: string;
 };
 
@@ -104,7 +104,7 @@ export type AssetCandidate = {
   title: string;
   local_path?: string;
   planned_r2_key?: string;
-  rights_status: 'unknown' | 'needs_permission' | 'licensed' | 'public_domain' | 'own_work';
+  rights_status: 'unknown' | 'needs_permission' | 'private_research' | 'licensed' | 'public_domain' | 'own_work';
   public_display_allowed: boolean;
   bytes?: number;
 };

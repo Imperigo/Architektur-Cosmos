@@ -41,7 +41,7 @@ type EntryDraft = {
   short_description: string;
   one_sentence: string;
   full_description: string;
-  copyright_status: 'needs_permission' | 'licensed' | 'public_domain' | 'own_work';
+  copyright_status: 'needs_permission' | 'private_research' | 'licensed' | 'public_domain' | 'own_work';
 };
 type IntakeFile = {
   id: string;
@@ -1193,6 +1193,7 @@ function DatabaseArchivePanel({
                   value={draft.copyright_status}
                   options={[
                     { value: 'needs_permission', label: 'Needs rights' },
+                    { value: 'private_research', label: 'Private research' },
                     { value: 'licensed', label: 'Licensed' },
                     { value: 'public_domain', label: 'Public domain' },
                     { value: 'own_work', label: 'Own work' }

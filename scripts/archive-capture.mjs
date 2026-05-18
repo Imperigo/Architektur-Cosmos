@@ -12,7 +12,7 @@ const allowedImageExtensions = new Set(['.jpg', '.jpeg', '.png', '.webp']);
 const allowedDocumentExtensions = new Set(['.pdf', '.txt', '.md', '.csv', '.json', '.url', '.webloc']);
 const allowedDrawingExtensions = new Set(['.svg', '.pdf']);
 const allowedModelExtensions = new Set(['.glb', '.gltf', '.usdz', '.obj', '.fbx', '.blend', '.pla', '.pln']);
-const rightsStatuses = new Set(['needs_permission', 'licensed', 'public_domain', 'own_work']);
+const rightsStatuses = new Set(['needs_permission', 'private_research', 'licensed', 'public_domain', 'own_work']);
 
 main().catch((error) => {
   console.error(error);
@@ -33,7 +33,7 @@ async function main() {
 
   const errors = [];
   if (!title) errors.push('--title is required');
-  if (!rightsStatuses.has(copyright)) errors.push('--copyright must be needs_permission, licensed, public_domain, or own_work');
+  if (!rightsStatuses.has(copyright)) errors.push('--copyright must be needs_permission, private_research, licensed, public_domain, or own_work');
   if (!Number.isFinite(year)) errors.push('--year must be a finite number when provided');
 
   if (errors.length > 0) {
@@ -203,7 +203,7 @@ function buildAssetCandidates({ files, slug, copyright }) {
 function buildEntryDraft({ title, slug, type, style, year, copyright, sourceUrl, sourceCandidates, assetCandidates, localStorageBytes, storageLimitBytes }) {
   const sourceStatus = sourceCandidates.length > 0 ? 'candidate' : 'none';
   const assetStatus = assetCandidates.length > 0
-    ? ['own_work', 'licensed', 'public_domain'].includes(copyright) ? 'ready' : 'rights_blocked'
+    ? ['own_work', 'licensed', 'public_domain'].includes(copyright) ? 'ready' : copyright === 'private_research' ? 'candidate' : 'rights_blocked'
     : 'none';
   const modelStatus = assetCandidates.some((asset) => asset.kind === 'model') ? 'manual_ready' : 'planned';
   const stage = sourceStatus === 'candidate' && assetStatus !== 'rights_blocked' ? 'ready_for_wormhole' : 'needs_review';

@@ -42,11 +42,11 @@ async function main() {
 
   if (fileInfo && mediaTypes.has(type)) validateImageLike(fileInfo, errors);
   if (fileInfo && type?.endsWith('_model')) validateModelLike(fileInfo, errors);
-  if (!['needs_permission', 'licensed', 'public_domain', 'own_work'].includes(copyright)) {
-    errors.push('--copyright must be needs_permission, licensed, public_domain, or own_work');
+  if (!['needs_permission', 'private_research', 'licensed', 'public_domain', 'own_work'].includes(copyright)) {
+    errors.push('--copyright must be needs_permission, private_research, licensed, public_domain, or own_work');
   }
-  if (copyright === 'needs_permission') {
-    errors.push('Upload blocked: copyright status is needs_permission. Keep as source reference until rights are clear.');
+  if (copyright === 'needs_permission' || copyright === 'private_research') {
+    errors.push(`Upload blocked: copyright status is ${copyright}. Keep as source reference/private research until rights are clear.`);
   }
 
   const key = entry && type ? plannedKey(entry, type, fileInfo?.extension ?? '') : null;

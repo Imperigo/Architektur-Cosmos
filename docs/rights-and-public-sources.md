@@ -15,6 +15,8 @@ Public display is allowed only for:
 Everything else becomes:
 
 - `link_only`: show title, source URL, bibliographic note and metadata;
+- `private_research`: local-only source/model/analysis material for Andrin's
+  private pipeline; never public display, never R2 upload;
 - `private_review`: keep local/private until reviewed;
 - `blocked_upload`: never upload or render publicly.
 
@@ -88,3 +90,23 @@ should stay link-only unless a file-level reusable license is clear.
    even when the source image remains link-only, provided it is written in our
    own words and does not reproduce protected material.
 
+## Private Research Mode
+
+`private_research` is for Andrin's local archive and design pipeline. It is meant
+for material such as book scans, Afasia/source screenshots, protected plans or
+private research PDFs that should help with analysis, model generation and
+Blender/ArchiCAD experimentation.
+
+Rules:
+
+- keep files only in `archive-inbox/` or `archive-intake/`;
+- never commit private files to GitHub;
+- never upload them to R2;
+- never render them on the public website;
+- allow derived private analysis/modeling notes locally;
+- publish only own-written summaries, public links, rights-clean assets or own
+  diagrammatic reconstructions.
+
+A frontend "key" inside a static export is not secure. A real private cloud mode
+must later use server-side authentication, for example Cloudflare Access, signed
+URLs and private R2 buckets. Until then, `private_research` is local-only.

@@ -16,7 +16,7 @@ const allowedDrawingExtensions = new Set(['.jpg', '.jpeg', '.png', '.webp', '.sv
 const allowedModelExtensions = new Set(['.glb', '.gltf', '.usdz', '.obj', '.fbx']);
 const maxImageBytes = 8 * 1024 * 1024;
 const maxModelBytes = 8 * 1024 * 1024;
-const copyrightStatuses = new Set(['needs_permission', 'licensed', 'public_domain', 'own_work']);
+const copyrightStatuses = new Set(['needs_permission', 'private_research', 'licensed', 'public_domain', 'own_work']);
 
 main().catch((error) => {
   console.error(error);
@@ -32,7 +32,7 @@ async function main() {
   const errors = [];
   if (!entryId) errors.push('--entry is required');
   if (!copyrightStatuses.has(copyright)) {
-    errors.push('--copyright must be needs_permission, licensed, public_domain, or own_work');
+    errors.push('--copyright must be needs_permission, private_research, licensed, public_domain, or own_work');
   }
 
   const entry = entries.find((candidate) => candidate.id === entryId || candidate.slug === entryId);
@@ -183,7 +183,7 @@ function validateModelLike(extension, bytes) {
 }
 
 function statusForChecks(checks, copyright) {
-  if (copyright === 'needs_permission') return 'blocked_rights';
+  if (copyright === 'needs_permission' || copyright === 'private_research') return 'blocked_rights';
   if (checks.some((check) => check.startsWith('invalid_extension'))) return 'blocked_invalid_type';
   if (checks.some((check) => check.startsWith('too_large'))) return 'blocked_too_large';
   return 'dry_run_ready';

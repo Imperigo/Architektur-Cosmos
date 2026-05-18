@@ -59,6 +59,7 @@ Public display is allowed only when the asset status is one of:
 - `own_work`
 - `licensed`
 - `public_domain`
+- `private_research` for local-only private analysis/model generation
 
 Everything else remains a source candidate, external link, placeholder or
 private review item until cleared by Andrin.

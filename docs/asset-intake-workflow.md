@@ -63,11 +63,14 @@ npm run archive:asset-manifest -- --entry villa-savoye --copyright own_work
 Allowed copyright statuses are:
 
 - `needs_permission`
+- `private_research`
 - `licensed`
 - `public_domain`
 - `own_work`
 
 Only `licensed`, `public_domain` and `own_work` can become dry-run ready.
+`private_research` is allowed for local analysis/modeling but remains blocked
+from public display and R2 upload.
 
 ## Accepted Preview Files
 

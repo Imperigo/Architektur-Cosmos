@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const args = parseArgs(process.argv.slice(2));
 const publicDisplayStatuses = new Set(['own_work', 'public_domain', 'licensed']);
-const linkOnlyStatuses = new Set(['needs_permission', 'unknown']);
+const linkOnlyStatuses = new Set(['needs_permission', 'private_research', 'unknown']);
 
 const sourceRegistry = [
   {
@@ -95,7 +95,7 @@ async function main() {
     safe_publication_policy: [
       'Create the entry even when all visual assets are blocked.',
       'Show own_work, public_domain and licensed assets only after attribution metadata is present.',
-      'For Afasia, books, magazines and protected architecture websites: store title, author, URL, page reference and notes; do not republish images or scans without permission.',
+      'For Afasia, books, magazines and protected architecture websites: store title, author, URL, page reference and notes; keep private_research assets local and do not republish images or scans without permission.',
       'Use generated placeholders or own diagrammatic reconstructions when visual rights are unclear.',
       'For Gaussian splats, use own or explicitly licensed video/photo frames.'
     ]
@@ -148,12 +148,15 @@ function classifyAsset(asset) {
   } else if (status === 'licensed') {
     decision = 'private_review';
     reason = 'Bulk licensed status needs file-level credit/source/license metadata before public display.';
+  } else if (status === 'private_research') {
+    decision = 'private_review';
+    reason = 'Private research asset may feed local analysis/modeling, but must not be publicly displayed or uploaded.';
   } else if (linkOnlyStatuses.has(status)) {
     decision = 'link_only';
     reason = 'Keep as metadata/source link; do not display the file publicly.';
   }
 
-  if (asset.public_display_allowed === false || status === 'needs_permission') {
+  if ((asset.public_display_allowed === false && status !== 'private_research') || status === 'needs_permission') {
     public_display_allowed = false;
     decision = 'link_only';
   }

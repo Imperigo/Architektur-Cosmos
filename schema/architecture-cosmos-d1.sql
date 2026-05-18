@@ -107,6 +107,7 @@ CREATE TABLE IF NOT EXISTS entry_media (
   copyright_status TEXT NOT NULL DEFAULT 'unknown' CHECK (copyright_status IN (
     'unknown',
     'needs_permission',
+    'private_research',
     'licensed',
     'public_domain',
     'own_work',
@@ -300,6 +301,7 @@ CREATE TABLE IF NOT EXISTS source_candidates (
   rights_status TEXT NOT NULL DEFAULT 'unknown' CHECK (rights_status IN (
     'unknown',
     'needs_permission',
+    'private_research',
     'licensed',
     'public_domain',
     'own_work'
@@ -330,6 +332,7 @@ CREATE TABLE IF NOT EXISTS asset_candidates (
   rights_status TEXT NOT NULL DEFAULT 'unknown' CHECK (rights_status IN (
     'unknown',
     'needs_permission',
+    'private_research',
     'licensed',
     'public_domain',
     'own_work'
