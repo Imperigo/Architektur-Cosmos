@@ -1,0 +1,204 @@
+{
+  "schema_version": "0.1",
+  "storage_target": {
+    "database": "cloudflare_d1",
+    "assets": "cloudflare_r2",
+    "status": "static_preview_only"
+  },
+  "entries": [
+    {
+      "id": "afasia-no-architecture-flower-house",
+      "slug": "afasia-no-architecture-flower-house",
+      "title": "Flower House",
+      "entry_type": "building",
+      "year_start": 2020,
+      "year_end": null,
+      "authors_json": "[\"NO Architecture\"]",
+      "city": "Berkshire County, Massachusetts",
+      "country": "United States",
+      "style_sector": "sustainable_architecture",
+      "status": "reviewed",
+      "r2_prefix": "entries/afasia-no-architecture-flower-house"
+    }
+  ],
+  "entry_sources": [
+    {
+      "id": "source-afasia-flower-house",
+      "entry_id": "afasia-no-architecture-flower-house",
+      "source_type": "website",
+      "title": "NO Architecture - Flower House . Massachusetts",
+      "author": "Afasia Archzine",
+      "url": "https://afasiaarchzine.com/2022/09/no-architecture/",
+      "document_name": "Afasia Archzine project post",
+      "page_reference": null,
+      "reliability_level": "secondary_source",
+      "notes": "Pilot source for the Afasia import workflow. Contains project text, photography credits, drawings and plans."
+    },
+    {
+      "id": "source-no-architecture-flower-house",
+      "entry_id": "afasia-no-architecture-flower-house",
+      "source_type": "website",
+      "title": "Flower House",
+      "author": "NO Architecture",
+      "url": "https://noarchitecture.com/",
+      "document_name": "Office/project reference placeholder",
+      "page_reference": null,
+      "reliability_level": "unverified",
+      "notes": "Placeholder for primary office source verification before model reconstruction is marked reviewed."
+    }
+  ],
+  "entry_media": [
+    {
+      "id": "media-flower-exterior-01",
+      "entry_id": "afasia-no-architecture-flower-house",
+      "source_id": "source-afasia-flower-house",
+      "media_type": "exterior",
+      "title": "Exterior view",
+      "caption": "Landscape-facing exterior photograph from Afasia source package.",
+      "r2_key": "entries/afasia-no-architecture-flower-house/media/exterior-01.jpg",
+      "external_url": "/media/afasia/flower-house/flower-house-1.jpg",
+      "credit": "Iwan Baan via Afasia",
+      "copyright_status": "needs_permission",
+      "sort_order": 1
+    },
+    {
+      "id": "media-flower-interior-01",
+      "entry_id": "afasia-no-architecture-flower-house",
+      "source_id": "source-afasia-flower-house",
+      "media_type": "interior",
+      "title": "Interior view",
+      "caption": "Interior photograph for spatial and material reading.",
+      "r2_key": "entries/afasia-no-architecture-flower-house/media/interior-01.jpg",
+      "external_url": "/media/afasia/flower-house/flower-house-10.jpg",
+      "credit": "Iwan Baan via Afasia",
+      "copyright_status": "needs_permission",
+      "sort_order": 2
+    },
+    {
+      "id": "media-flower-section-01",
+      "entry_id": "afasia-no-architecture-flower-house",
+      "source_id": "source-afasia-flower-house",
+      "media_type": "section",
+      "title": "Section drawing",
+      "caption": "Section source for hillside and canopy analysis.",
+      "r2_key": "entries/afasia-no-architecture-flower-house/media/section-01.jpg",
+      "external_url": "/media/afasia/flower-house/flower-house-32.jpg",
+      "credit": "NO Architecture via Afasia",
+      "copyright_status": "needs_permission",
+      "sort_order": 3
+    },
+    {
+      "id": "media-flower-plan-01",
+      "entry_id": "afasia-no-architecture-flower-house",
+      "source_id": "source-afasia-flower-house",
+      "media_type": "plan",
+      "title": "Plan drawing",
+      "caption": "Plan source for six-pavilion courtyard analysis.",
+      "r2_key": "entries/afasia-no-architecture-flower-house/media/plan-01.jpg",
+      "external_url": "/media/afasia/flower-house/flower-house-31.jpg",
+      "credit": "NO Architecture via Afasia",
+      "copyright_status": "needs_permission",
+      "sort_order": 4
+    }
+  ],
+  "entry_models": [
+    {
+      "id": "model-flower-full",
+      "entry_id": "afasia-no-architecture-flower-house",
+      "source_id": "source-afasia-flower-house",
+      "model_type": "full_model",
+      "title": "Complete pavilion model",
+      "r2_key": "entries/afasia-no-architecture-flower-house/models/full.glb",
+      "format": "glb",
+      "lod_level": "medium",
+      "source_basis": "Afasia photos, plan, section, roof diagram, axonometric drawings and published project text.",
+      "generation_method": "source_reconstruction",
+      "review_status": "draft",
+      "confidence_score": 0.62
+    },
+    {
+      "id": "model-flower-structure",
+      "entry_id": "afasia-no-architecture-flower-house",
+      "source_id": "source-afasia-flower-house",
+      "model_type": "structure_model",
+      "title": "Canopy and core structure model",
+      "r2_key": "entries/afasia-no-architecture-flower-house/models/structure.glb",
+      "format": "glb",
+      "lod_level": "medium",
+      "source_basis": "Published structural description: canopy-like pavilions, load-bearing frames, concrete slab and T/L-shaped cores.",
+      "generation_method": "source_reconstruction",
+      "review_status": "needs_source",
+      "confidence_score": 0.54
+    },
+    {
+      "id": "model-flower-tectonic",
+      "entry_id": "afasia-no-architecture-flower-house",
+      "source_id": "source-afasia-flower-house",
+      "model_type": "tectonic_model",
+      "title": "Tectonic layer model",
+      "r2_key": "entries/afasia-no-architecture-flower-house/models/tectonic.glb",
+      "format": "glb",
+      "lod_level": "medium",
+      "source_basis": "Analytical split into terrain, slab, canopy roofs, glass envelope and stabilizing cores.",
+      "generation_method": "ai_assisted",
+      "review_status": "draft",
+      "confidence_score": 0.5
+    }
+  ],
+  "entry_analysis": [
+    {
+      "id": "analysis-flower-structure",
+      "entry_id": "afasia-no-architecture-flower-house",
+      "analysis_type": "structure",
+      "summary": "Six pavilion roofs act as canopy-like structural fields. Vertical and lateral stability is described through load-bearing window frames and T/L-shaped service cores, with a visible concrete slab tying the system together.",
+      "data_json": "{\"primary_system\":\"canopy_pavilions_with_core_stabilization\",\"stabilizing_elements\":[\"load_bearing_window_frames\",\"t_shaped_cores\",\"l_shaped_cores\",\"concrete_slab\"]}",
+      "r2_key": "entries/afasia-no-architecture-flower-house/analysis/structure.json",
+      "review_status": "needs_source"
+    },
+    {
+      "id": "analysis-flower-tectonics",
+      "entry_id": "afasia-no-architecture-flower-house",
+      "analysis_type": "tectonics",
+      "summary": "The tectonic reading separates terrain cut, concrete ground datum, pavilion roofs, glass enclosure, and service cores.",
+      "data_json": "{\"layers\":[\"terrain_cut\",\"concrete_datum\",\"canopy_roofs\",\"glass_envelope\",\"service_cores\"],\"tectonic_theme\":\"landscape_embedded_glass_house\"}",
+      "r2_key": "entries/afasia-no-architecture-flower-house/analysis/tectonics.json",
+      "review_status": "draft"
+    },
+    {
+      "id": "analysis-flower-filter-classification",
+      "entry_id": "afasia-no-architecture-flower-house",
+      "analysis_type": "filter_classification",
+      "summary": "Suggested filters: Afasia source, private residence, glass-house typology, landscape integration, hillside, courtyard, canopy structure, core-stabilized tectonics.",
+      "data_json": "{\"primary_filters\":[\"afasia\",\"private_residence\",\"glass_house\",\"landscape\",\"hillside\",\"courtyard\"],\"model_readiness\":\"pilot_ready\"}",
+      "r2_key": "entries/afasia-no-architecture-flower-house/analysis/filter-classification.json",
+      "review_status": "reviewed"
+    }
+  ],
+  "tags": [
+    { "id": "tag-source-afasia", "label": "Afasia", "tag_group": "source" },
+    { "id": "tag-private-residence", "label": "Private residence", "tag_group": "typology" },
+    { "id": "tag-glass-house", "label": "Glass house", "tag_group": "typology" },
+    { "id": "tag-hillside", "label": "Hillside", "tag_group": "theme" },
+    { "id": "tag-courtyard", "label": "Courtyard", "tag_group": "theme" },
+    { "id": "tag-canopy-structure", "label": "Canopy structure", "tag_group": "structure" },
+    { "id": "tag-core-stabilized", "label": "Core stabilized", "tag_group": "structure" }
+  ],
+  "entry_tags": [
+    { "entry_id": "afasia-no-architecture-flower-house", "tag_id": "tag-source-afasia", "confidence_score": 1 },
+    { "entry_id": "afasia-no-architecture-flower-house", "tag_id": "tag-private-residence", "confidence_score": 0.94 },
+    { "entry_id": "afasia-no-architecture-flower-house", "tag_id": "tag-glass-house", "confidence_score": 0.88 },
+    { "entry_id": "afasia-no-architecture-flower-house", "tag_id": "tag-hillside", "confidence_score": 0.84 },
+    { "entry_id": "afasia-no-architecture-flower-house", "tag_id": "tag-courtyard", "confidence_score": 0.9 },
+    { "entry_id": "afasia-no-architecture-flower-house", "tag_id": "tag-canopy-structure", "confidence_score": 0.66 },
+    { "entry_id": "afasia-no-architecture-flower-house", "tag_id": "tag-core-stabilized", "confidence_score": 0.58 }
+  ],
+  "asset_manifests": [
+    {
+      "id": "manifest-flower-asset-package",
+      "entry_id": "afasia-no-architecture-flower-house",
+      "manifest_type": "model_set",
+      "r2_prefix": "entries/afasia-no-architecture-flower-house",
+      "manifest_json": "{\"media\":14,\"models\":6,\"analysis_files\":7,\"status\":\"planned_r2_package\"}"
+    }
+  ]
+}

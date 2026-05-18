@@ -6,6 +6,7 @@ import { RelationOverlay } from '@/components/atlas/RelationOverlay';
 import { SemanticEntryNode } from '@/components/atlas/SemanticEntryNode';
 import { StyleSectors } from '@/components/atlas/StyleSectors';
 import { WormholeRings } from '@/components/atlas/WormholeRings';
+import archivePreview from '@/data/archive-preview.json';
 import { atlasSize, styleSectors } from '@/lib/atlas-layout';
 import type { Entry, EntryRelation, StyleSectorId } from '@/lib/types';
 import { formatYear, layoutWormholeEntries, positionToYear, wormholeState, type WormholeEntryNode } from '@/lib/wormhole-layout';
@@ -494,7 +495,9 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
             />
           ) : null}
           {showDatabasePanel && introState === 'idle' ? (
-            <DatabaseDraftPanel
+            <DatabaseArchivePanel
+              entries={entries}
+              relations={relations}
               draft={entryDraft}
               onDraftChange={setEntryDraft}
               onDismiss={() => setShowDatabasePanel(false)}
@@ -865,62 +868,192 @@ function IntroGate({ state, onStart }: { state: IntroState; onStart: () => void 
   );
 }
 
-function DatabaseDraftPanel({
+type DatabaseTab = 'overview' | 'entries' | 'sources' | 'media' | 'models' | 'analysis' | 'relations' | 'draft';
+
+function DatabaseArchivePanel({
+  entries,
+  relations,
   draft,
   onDraftChange,
   onDismiss
 }: {
+  entries: Entry[];
+  relations: EntryRelation[];
   draft: EntryDraft;
   onDraftChange: (draft: EntryDraft) => void;
   onDismiss: () => void;
 }) {
-  const x = atlasSize.width - 392;
-  const y = atlasSize.height - 500;
+  const [activeTab, setActiveTab] = useState<DatabaseTab>('overview');
+  const x = atlasSize.width - 414;
+  const y = atlasSize.height - 536;
   const preview = draftToEntryPreview(draft);
+  const pilotEntry = archivePreview.entries[0];
+  const counts = [
+    { label: 'Entries', value: entries.length },
+    { label: 'Sources', value: archivePreview.entry_sources.length },
+    { label: 'Media', value: archivePreview.entry_media.length },
+    { label: '3D', value: archivePreview.entry_models.length },
+    { label: 'Analysis', value: archivePreview.entry_analysis.length },
+    { label: 'Relations', value: relations.length }
+  ];
+  const tabs: Array<{ id: DatabaseTab; label: string }> = [
+    { id: 'overview', label: 'Overview' },
+    { id: 'entries', label: 'Entries' },
+    { id: 'sources', label: 'Sources' },
+    { id: 'media', label: 'Media' },
+    { id: 'models', label: '3D' },
+    { id: 'analysis', label: 'Analysis' },
+    { id: 'relations', label: 'Relations' },
+    { id: 'draft', label: 'Draft' }
+  ];
 
   function updateField<Key extends keyof EntryDraft>(key: Key, value: EntryDraft[Key]) {
     onDraftChange({ ...draft, [key]: value });
   }
 
   return (
-    <foreignObject x={x} y={y} width="360" height="430" className="database-draft" pointerEvents="auto">
+    <foreignObject x={x} y={y} width="382" height="468" className="database-draft database-archive-panel" pointerEvents="auto">
       <div
-        className="border border-[#00e7ff]/70 bg-[#050505]/95 p-4 text-[#f7f7f4] shadow-[0_0_28px_rgb(0_231_255_/_0.12)]"
-        style={{ width: 360, height: 430 }}
+        className="flex flex-col border border-[#00e7ff]/70 bg-[#050505]/95 p-4 text-[#f7f7f4] shadow-[0_0_28px_rgb(0_231_255_/_0.12)]"
+        style={{ width: 382, height: 468 }}
         onPointerDown={(event) => event.stopPropagation()}
         onClick={(event) => event.stopPropagation()}
       >
         <div className="mb-3 flex items-start justify-between gap-3">
           <div>
-            <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#00e7ff]">New Entry Draft</div>
-            <div className="mt-1 text-[10px] uppercase tracking-[0.14em] text-[#b8b8b2]">Static JSON preview only</div>
+            <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#00e7ff]">Architecture Cosmos Database</div>
+            <div className="mt-1 text-[10px] uppercase tracking-[0.14em] text-[#b8b8b2]">Static D1 / R2 archive preview</div>
           </div>
           <button className="h-6 w-8 border border-[#f7f7f4]/70 text-[10px] text-[#050505] bg-[#f7f7f4]" type="button" onClick={onDismiss}>X</button>
         </div>
-        <div className="grid grid-cols-2 gap-2">
-          <DraftInput label="Title" value={draft.title} onChange={(value) => updateField('title', value)} />
-          <DraftInput label="Year" value={draft.year} onChange={(value) => updateField('year', value)} />
-          <DraftSelect label="Type" value={draft.entry_type} options={entryTypeOptions} onChange={(value) => updateField('entry_type', value as Entry['entry_type'])} />
-          <DraftSelect label="Style" value={draft.style_sector} options={styleSectors.map((sector) => ({ value: sector.id, label: styleShortLabel(sector.id) }))} onChange={(value) => updateField('style_sector', value as StyleSectorId)} />
-          <DraftInput label="City" value={draft.city} onChange={(value) => updateField('city', value)} />
-          <DraftInput label="Country" value={draft.country} onChange={(value) => updateField('country', value)} />
-          <DraftInput label="Authors" value={draft.authors} onChange={(value) => updateField('authors', value)} />
-          <DraftInput label="Themes" value={draft.themes} onChange={(value) => updateField('themes', value)} />
+
+        <div className="mb-3 grid grid-cols-3 gap-1.5">
+          {counts.map((item) => (
+            <div key={item.label} className="border border-[#f7f7f4]/15 bg-[#07181a]/80 px-2 py-1.5">
+              <div className="text-[13px] font-semibold leading-none text-[#f7f7f4]">{item.value}</div>
+              <div className="mt-1 truncate text-[8px] uppercase tracking-[0.12em] text-[#b8b8b2]">{item.label}</div>
+            </div>
+          ))}
         </div>
-        <pre className="mt-3 h-[74px] overflow-hidden whitespace-pre-wrap border border-[#00e7ff]/25 bg-black/35 p-2 text-[9px] leading-snug text-[#c9fff4]">
-          {JSON.stringify(preview, null, 2)}
-        </pre>
-        <label className="mt-2 block text-[9px] uppercase tracking-[0.16em] text-[#b8b8b2]">
-          Short text
-          <textarea
-            className="mt-1 h-10 w-full resize-none border border-[#f7f7f4]/20 bg-[#07181a] px-2 py-1 text-[11px] leading-tight text-[#f7f7f4] outline-none"
-            value={draft.short_description}
-            maxLength={180}
-            onChange={(event) => updateField('short_description', event.target.value)}
-          />
-        </label>
+
+        <div className="mb-3 flex flex-wrap gap-1.5">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`border px-2 py-1 text-[8.5px] uppercase tracking-[0.11em] ${activeTab === tab.id ? 'border-[#00e7ff] bg-[#00e7ff] text-[#050505]' : 'border-[#f7f7f4]/20 bg-[#050505] text-[#d9d9d2]'}`}
+              onClick={() => setActiveTab(tab.id)}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="min-h-0 flex-1 overflow-y-auto pr-1">
+          {activeTab === 'overview' ? (
+            <div className="space-y-2 text-[10px] leading-relaxed text-[#d9d9d2]">
+              <ArchiveRow label="Storage" value={`${archivePreview.storage_target.database.toUpperCase()} metadata / ${archivePreview.storage_target.assets.toUpperCase()} assets`} />
+              <ArchiveRow label="Status" value="static preview only, no backend writes" />
+              <ArchiveRow label="Pilot" value={`${pilotEntry.title}, ${pilotEntry.year_start}, ${pilotEntry.city}`} />
+              <p className="border border-[#00e7ff]/25 bg-[#061719] p-2 text-[#c9fff4]">
+                The archive foundation separates structured knowledge, source records, media, 3D models, analysis layers and tags. Large files stay in R2 later; the atlas reads compact metadata first.
+              </p>
+              <ArchiveList title="Next Database Steps" items={['Create Cloudflare D1 database when schema is frozen', 'Create R2 bucket for media, plans and GLB models', 'Import local JSON into normalized tables', 'Add read-only Worker API only after static schema is proven']} />
+            </div>
+          ) : null}
+
+          {activeTab === 'entries' ? (
+            <ArchiveList title="Pilot Entry" items={[`${pilotEntry.title} / ${pilotEntry.entry_type} / ${pilotEntry.style_sector}`, `${pilotEntry.authors_json} / ${pilotEntry.country}`, `R2 prefix: ${pilotEntry.r2_prefix}`]} />
+          ) : null}
+
+          {activeTab === 'sources' ? (
+            <ArchiveCards items={archivePreview.entry_sources.map((source) => ({ title: source.title, meta: `${source.source_type} / ${source.reliability_level}`, body: source.notes }))} />
+          ) : null}
+
+          {activeTab === 'media' ? (
+            <ArchiveCards items={archivePreview.entry_media.map((media) => ({ title: media.title, meta: `${media.media_type} / ${media.copyright_status}`, body: media.caption }))} />
+          ) : null}
+
+          {activeTab === 'models' ? (
+            <ArchiveCards items={archivePreview.entry_models.map((model) => ({ title: model.title, meta: `${model.model_type} / ${model.review_status} / confidence ${model.confidence_score}`, body: model.source_basis }))} />
+          ) : null}
+
+          {activeTab === 'analysis' ? (
+            <ArchiveCards items={archivePreview.entry_analysis.map((analysis) => ({ title: analysis.analysis_type.replace(/_/g, ' '), meta: analysis.review_status, body: analysis.summary }))} />
+          ) : null}
+
+          {activeTab === 'relations' ? (
+            <ArchiveList title="Knowledge Graph" items={[`${relations.length} local relations available now`, 'D1 table prepared for influence, theme, source and structural relations', 'Hover network can later read the same graph instead of local JSON']} />
+          ) : null}
+
+          {activeTab === 'draft' ? (
+            <div>
+              <div className="mb-2 text-[9px] uppercase tracking-[0.16em] text-[#b8b8b2]">New Entry Draft / local JSON preview only</div>
+              <div className="grid grid-cols-2 gap-2">
+                <DraftInput label="Title" value={draft.title} onChange={(value) => updateField('title', value)} />
+                <DraftInput label="Year" value={draft.year} onChange={(value) => updateField('year', value)} />
+                <DraftSelect label="Type" value={draft.entry_type} options={entryTypeOptions} onChange={(value) => updateField('entry_type', value as Entry['entry_type'])} />
+                <DraftSelect label="Style" value={draft.style_sector} options={styleSectors.map((sector) => ({ value: sector.id, label: styleShortLabel(sector.id) }))} onChange={(value) => updateField('style_sector', value as StyleSectorId)} />
+                <DraftInput label="City" value={draft.city} onChange={(value) => updateField('city', value)} />
+                <DraftInput label="Country" value={draft.country} onChange={(value) => updateField('country', value)} />
+                <DraftInput label="Authors" value={draft.authors} onChange={(value) => updateField('authors', value)} />
+                <DraftInput label="Themes" value={draft.themes} onChange={(value) => updateField('themes', value)} />
+              </div>
+              <label className="mt-2 block text-[9px] uppercase tracking-[0.16em] text-[#b8b8b2]">
+                Short text
+                <textarea
+                  className="mt-1 h-11 w-full resize-none border border-[#f7f7f4]/20 bg-[#07181a] px-2 py-1 text-[11px] leading-tight text-[#f7f7f4] outline-none"
+                  value={draft.short_description}
+                  maxLength={180}
+                  onChange={(event) => updateField('short_description', event.target.value)}
+                />
+              </label>
+              <pre className="mt-3 max-h-[116px] overflow-y-auto whitespace-pre-wrap border border-[#00e7ff]/25 bg-black/35 p-2 text-[9px] leading-snug text-[#c9fff4]">
+                {JSON.stringify(preview, null, 2)}
+              </pre>
+            </div>
+          ) : null}
+        </div>
       </div>
     </foreignObject>
+  );
+}
+
+function ArchiveRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex gap-3 border-b border-[#f7f7f4]/10 pb-1.5">
+      <span className="w-20 shrink-0 text-[8px] uppercase tracking-[0.16em] text-[#00e7ff]">{label}</span>
+      <span className="min-w-0 text-[#f7f7f4]">{value}</span>
+    </div>
+  );
+}
+
+function ArchiveList({ title, items }: { title: string; items: string[] }) {
+  return (
+    <div>
+      <div className="mb-2 text-[9px] uppercase tracking-[0.18em] text-[#00e7ff]">{title}</div>
+      <div className="space-y-1.5">
+        {items.map((item) => (
+          <div key={item} className="border border-[#f7f7f4]/12 bg-[#07181a]/60 px-2 py-1.5 text-[10px] leading-snug text-[#d9d9d2]">
+            {item}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ArchiveCards({ items }: { items: Array<{ title: string; meta: string; body: string }> }) {
+  return (
+    <div className="space-y-2">
+      {items.map((item) => (
+        <div key={`${item.title}-${item.meta}`} className="border border-[#f7f7f4]/12 bg-[#07181a]/60 p-2">
+          <div className="truncate text-[10px] font-semibold text-[#f7f7f4]">{item.title}</div>
+          <div className="mt-1 truncate text-[8px] uppercase tracking-[0.14em] text-[#00e7ff]">{item.meta}</div>
+          <p className="mt-1 line-clamp-3 text-[9.5px] leading-snug text-[#c7c7c2]">{item.body}</p>
+        </div>
+      ))}
+    </div>
   );
 }
 

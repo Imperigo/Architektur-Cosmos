@@ -23,7 +23,9 @@ const relationDash: Record<RelationType, string | undefined> = {
   same_author: '10 4 2 4',
   same_place: '1 5',
   typological_reference: '7 4',
+  structural_reference: '8 3 2 3',
   material_reference: '3 3',
+  source_connection: '1 4 6 4',
   context: '2 8'
 };
 
@@ -34,7 +36,9 @@ const relationColor: Record<RelationType, string> = {
   same_author: '#b7ffef',
   same_place: '#65ff9a',
   typological_reference: '#9b6dff',
+  structural_reference: '#f7f7f4',
   material_reference: '#ff007a',
+  source_connection: '#00e7ff',
   context: '#f7f7f4'
 };
 

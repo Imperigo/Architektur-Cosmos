@@ -173,6 +173,12 @@ Each generated model should have:
 5. Add read-only Worker API endpoints or migrate to OpenNext only when dynamic reads are required.
 6. Add admin/write flows later; do not start with editing UI before the schema is proven.
 
+## Current Static Pilot
+
+The current repository includes `data/archive-preview.json` as a static normalized preview of the future D1/R2 archive. It uses Flower House as the pilot object and mirrors the planned tables for entries, sources, media, 3D models, analysis layers, tags, and asset manifests.
+
+The atlas database panel reads this preview directly. It is intentionally not a backend and does not write anything from the browser.
+
 ## Current Constraint
 
 Do not add live database bindings, API routes, authentication, CMS logic, or backend infrastructure until explicitly requested. This schema is the preparation layer.

@@ -24,7 +24,9 @@ export type RelationType =
   | 'same_author'
   | 'same_place'
   | 'typological_reference'
+  | 'structural_reference'
   | 'material_reference'
+  | 'source_connection'
   | 'context';
 
 export type EntryMediaType = 'exterior' | 'interior' | 'section' | 'plan';
@@ -39,11 +41,51 @@ export type EntryMedia = {
 };
 
 export type EntrySourceAsset = {
-  kind: 'image' | 'drawing' | 'plan' | 'section';
+  kind: 'image' | 'drawing' | 'plan' | 'section' | 'model' | 'analysis';
   label: string;
   url: string;
   credit?: string;
   source_url?: string;
+};
+
+export type EntryModelAsset = {
+  model_type: 'full_model' | 'low_poly_model' | 'structure_model' | 'tectonic_model' | 'site_model' | 'mass_model';
+  title: string;
+  r2_key: string;
+  format: 'glb' | 'gltf' | 'usdz' | 'obj' | 'fbx' | 'json';
+  lod_level: 'preview' | 'low' | 'medium' | 'high' | 'source';
+  source_basis: string;
+  generation_method: 'unknown' | 'manual' | 'ai_assisted' | 'procedural' | 'photogrammetry' | 'survey_derived' | 'source_reconstruction';
+  review_status: 'draft' | 'reviewed' | 'verified' | 'needs_source';
+  confidence_score?: number;
+};
+
+export type EntryAnalysisLayer = {
+  analysis_type:
+    | 'structure'
+    | 'tectonics'
+    | 'spatial_order'
+    | 'material_system'
+    | 'circulation'
+    | 'typology'
+    | 'urban_context'
+    | 'landscape_system'
+    | 'filter_classification'
+    | 'source_reconstruction';
+  summary: string;
+  data?: Record<string, unknown>;
+  r2_key?: string;
+  review_status: 'draft' | 'reviewed' | 'verified' | 'needs_source';
+};
+
+export type EntryDatabaseProfile = {
+  status: 'draft' | 'reviewed' | 'published' | 'needs_sources';
+  r2_prefix: string;
+  source_count: number;
+  media_count: number;
+  model_count: number;
+  analysis_count: number;
+  tag_count: number;
 };
 
 export type Entry = {
@@ -67,6 +109,10 @@ export type Entry = {
   source_documents?: string[];
   source_url?: string;
   source_assets?: EntrySourceAsset[];
+  model_assets?: EntryModelAsset[];
+  analysis_layers?: EntryAnalysisLayer[];
+  database_tags?: string[];
+  database_profile?: EntryDatabaseProfile;
   atlas?: {
     year: number;
     ring: string;

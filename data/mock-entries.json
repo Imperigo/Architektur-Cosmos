@@ -5636,6 +5636,201 @@
         "credit": "© NO Architecture via Afasia",
         "source_url": "https://afasiaarchzine.com/2022/09/no-architecture/"
       }
+    ],
+    "database_tags": [
+      "source:afasia",
+      "course:contemporary-architecture",
+      "typology:private-residence",
+      "typology:glass-house",
+      "structure:canopy-system",
+      "structure:core-stabilized",
+      "material:glass",
+      "material:concrete",
+      "landscape:hillside",
+      "spatial:central-courtyard",
+      "analysis:tectonics-ready"
+    ],
+    "database_profile": {
+      "status": "reviewed",
+      "r2_prefix": "entries/afasia-no-architecture-flower-house",
+      "source_count": 2,
+      "media_count": 14,
+      "model_count": 6,
+      "analysis_count": 7,
+      "tag_count": 11
+    },
+    "model_assets": [
+      {
+        "model_type": "full_model",
+        "title": "Flower House complete pavilion model",
+        "r2_key": "entries/afasia-no-architecture-flower-house/models/full.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "Afasia photos, plan, section, roof diagram, axonometric drawings and published project text.",
+        "generation_method": "source_reconstruction",
+        "review_status": "draft",
+        "confidence_score": 0.62
+      },
+      {
+        "model_type": "low_poly_model",
+        "title": "Flower House low-poly atlas preview",
+        "r2_key": "entries/afasia-no-architecture-flower-house/models/low.glb",
+        "format": "glb",
+        "lod_level": "low",
+        "source_basis": "Derived from planned full model for fast atlas rendering.",
+        "generation_method": "procedural",
+        "review_status": "draft",
+        "confidence_score": 0.58
+      },
+      {
+        "model_type": "structure_model",
+        "title": "Flower House structural canopy and core model",
+        "r2_key": "entries/afasia-no-architecture-flower-house/models/structure.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "Published description of six canopy-like pavilions, load-bearing window frames, concrete slab and T/L-shaped stabilizing cores.",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.54
+      },
+      {
+        "model_type": "tectonic_model",
+        "title": "Flower House tectonic layer model",
+        "r2_key": "entries/afasia-no-architecture-flower-house/models/tectonic.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "Planned analytical model separating slab, roof canopies, glass envelope, cores and terrain cut.",
+        "generation_method": "ai_assisted",
+        "review_status": "draft",
+        "confidence_score": 0.5
+      },
+      {
+        "model_type": "site_model",
+        "title": "Flower House hillside site model",
+        "r2_key": "entries/afasia-no-architecture-flower-house/models/site.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "Afasia site imagery and published hillside/topographic description.",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.46
+      },
+      {
+        "model_type": "mass_model",
+        "title": "Flower House six-pavilion massing model",
+        "r2_key": "entries/afasia-no-architecture-flower-house/models/mass.glb",
+        "format": "glb",
+        "lod_level": "preview",
+        "source_basis": "Six interlocking pavilion diagram described as flower petals around a central courtyard.",
+        "generation_method": "procedural",
+        "review_status": "reviewed",
+        "confidence_score": 0.72
+      }
+    ],
+    "analysis_layers": [
+      {
+        "analysis_type": "structure",
+        "summary": "Six pavilion roofs act as canopy-like structural fields. Vertical and lateral stability is described through load-bearing window frames and T/L-shaped service cores, with a visible concrete slab tying the system together.",
+        "data": {
+          "primary_system": "canopy_pavilions_with_core_stabilization",
+          "stabilizing_elements": [
+            "load_bearing_window_frames",
+            "t_shaped_cores",
+            "l_shaped_cores",
+            "concrete_slab"
+          ],
+          "confidence": 0.54
+        },
+        "r2_key": "entries/afasia-no-architecture-flower-house/analysis/structure.json",
+        "review_status": "needs_source"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "The tectonic reading separates terrain cut, concrete ground datum, pavilion roofs, glass enclosure, and service cores. The house is understood as a landscape-embedded canopy cluster rather than a single closed volume.",
+        "data": {
+          "layers": [
+            "terrain_cut",
+            "concrete_datum",
+            "canopy_roofs",
+            "glass_envelope",
+            "service_cores"
+          ],
+          "tectonic_theme": "landscape_embedded_glass_house"
+        },
+        "r2_key": "entries/afasia-no-architecture-flower-house/analysis/tectonics.json",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "spatial_order",
+        "summary": "The spatial order is radial and centripetal: six interlocking pavilions form petal-like rooms around a central open courtyard, distributing public and private zones through degrees of openness.",
+        "data": {
+          "order": "six_pavilions_around_courtyard",
+          "public_private_gradient": [
+            "east_public_glass",
+            "central_courtyard",
+            "west_private_clerestory"
+          ]
+        },
+        "review_status": "reviewed"
+      },
+      {
+        "analysis_type": "material_system",
+        "summary": "Glass, concrete and earth/topography form the primary material system: transparent pavilion edges meet a heavy ground datum and hillside thermal envelope.",
+        "data": {
+          "materials": [
+            "glass",
+            "concrete",
+            "earth",
+            "vegetated_landscape"
+          ],
+          "envelope_logic": "transparent_public_edges_and_topographic_insulation"
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "circulation",
+        "summary": "Movement is organized around the central court and between pavilion wings, with landscape-facing rooms opening outward and more private zones embedded into the slope.",
+        "data": {
+          "circulation_type": "courtyard_linked_pavilion_sequence",
+          "anchors": [
+            "central_courtyard",
+            "east_public_rooms",
+            "west_private_rooms"
+          ]
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "typology",
+        "summary": "The project extends the Glass House lineage by breaking the single transparent box into a flower-like cluster of pavilions, making landscape and privacy part of the typological revision.",
+        "data": {
+          "base_typology": "glass_house",
+          "mutation": "clustered_pavilion_courtyard_house",
+          "program": "private_residence"
+        },
+        "review_status": "reviewed"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "summary": "Suggested filters: Afasia source, private residence, glass-house typology, landscape integration, hillside, courtyard, canopy structure, core-stabilized tectonics, contemporary reuse/sustainability sector.",
+        "data": {
+          "primary_filters": [
+            "afasia",
+            "private_residence",
+            "glass_house",
+            "landscape",
+            "hillside",
+            "courtyard"
+          ],
+          "structural_filters": [
+            "canopy_structure",
+            "core_stabilized",
+            "concrete_slab"
+          ],
+          "model_readiness": "pilot_ready"
+        },
+        "review_status": "reviewed"
+      }
     ]
   }
 ]
