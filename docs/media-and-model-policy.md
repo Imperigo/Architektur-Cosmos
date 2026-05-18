@@ -20,8 +20,8 @@ Every mature building entry should aim for four visible study slots:
 |---|---|---|---|
 | `exterior` | Object in context, facade, landscape relation | jpg, webp, png | `needs_permission` or `own_work` |
 | `interior` | Spatial atmosphere, structure, material reading | jpg, webp, png | `needs_permission` or `own_work` |
-| `section` | Spatial/tectonic cut | jpg, png, pdf, svg source later | `needs_permission` or `own_work` |
-| `plan` | Organization, geometry, circulation | jpg, png, pdf, svg source later | `needs_permission` or `own_work` |
+| `section` | Spatial/tectonic cut | jpg, png, webp, pdf, svg | `needs_permission`, `licensed`, `public_domain` or `own_work` |
+| `plan` | Organization, geometry, circulation | jpg, png, webp, pdf, svg | `needs_permission`, `licensed`, `public_domain` or `own_work` |
 
 Other entry types may reuse the slots as placeholders until custom media schemas
 exist. Example: a text entry can use `exterior` for cover/source image and

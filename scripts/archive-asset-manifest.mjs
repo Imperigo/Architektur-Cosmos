@@ -12,6 +12,7 @@ const mediaTypes = ['exterior', 'interior', 'section', 'plan'];
 const mediaTypeSet = new Set(mediaTypes);
 const modelFolder = 'models';
 const allowedImageExtensions = new Set(['.jpg', '.jpeg', '.png', '.webp']);
+const allowedDrawingExtensions = new Set(['.jpg', '.jpeg', '.png', '.webp', '.svg', '.pdf']);
 const allowedModelExtensions = new Set(['.glb', '.gltf', '.usdz', '.obj', '.fbx']);
 const maxImageBytes = 8 * 1024 * 1024;
 const maxModelBytes = 8 * 1024 * 1024;
@@ -124,7 +125,7 @@ async function scanFolder({ entry, folder, entryRoot, copyright }) {
     const type = isModel ? modelTypeFromName(name) : folder;
     const checks = isModel
       ? validateModelLike(extension, info.size)
-      : validateImageLike(extension, info.size);
+      : validateMediaLike(folder, extension, info.size);
     const status = statusForChecks(checks, copyright);
 
     rows.push({
@@ -154,6 +155,20 @@ function validateImageLike(extension, bytes) {
     checks.push(`too_large:${bytes}>${maxImageBytes}`);
   }
   return checks;
+}
+
+function validateMediaLike(folder, extension, bytes) {
+  if (folder === 'plan' || folder === 'section') {
+    const checks = [];
+    if (!allowedDrawingExtensions.has(extension)) {
+      checks.push(`invalid_extension:${extension || 'none'}`);
+    }
+    if (bytes > maxImageBytes) {
+      checks.push(`too_large:${bytes}>${maxImageBytes}`);
+    }
+    return checks;
+  }
+  return validateImageLike(extension, bytes);
 }
 
 function validateModelLike(extension, bytes) {

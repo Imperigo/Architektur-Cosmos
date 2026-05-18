@@ -10,6 +10,7 @@ const mediaSlots = ['exterior', 'interior', 'section', 'plan'];
 const modelTypes = ['low', 'full', 'structure', 'tectonic', 'site'];
 const allowedImageExtensions = new Set(['.jpg', '.jpeg', '.png', '.webp']);
 const allowedDocumentExtensions = new Set(['.pdf', '.txt', '.md', '.csv', '.json', '.url', '.webloc']);
+const allowedDrawingExtensions = new Set(['.svg', '.pdf']);
 const allowedModelExtensions = new Set(['.glb', '.gltf', '.usdz', '.obj', '.fbx', '.blend', '.pla', '.pln']);
 const rightsStatuses = new Set(['needs_permission', 'licensed', 'public_domain', 'own_work']);
 
@@ -179,7 +180,7 @@ function buildSourceCandidates({ files, sourceUrl, copyright }) {
 
 function buildAssetCandidates({ files, slug, copyright }) {
   return files
-    .filter((file) => allowedImageExtensions.has(file.extension) || allowedModelExtensions.has(file.extension))
+    .filter((file) => allowedImageExtensions.has(file.extension) || allowedDrawingExtensions.has(file.extension) || allowedModelExtensions.has(file.extension))
     .map((file, index) => {
       const isModel = allowedModelExtensions.has(file.extension);
       const mediaType = inferMediaType(file);
@@ -395,8 +396,8 @@ function missingFields(entry) {
 
 function inferMediaType(file) {
   const path = file.relative_path.toLowerCase();
-  if (path.includes('section') || path.includes('schnitt')) return 'section';
-  if (path.includes('plan') || path.includes('grundriss')) return 'plan';
+  if (path.includes('/section/') || path.includes('section') || path.includes('schnitt')) return 'section';
+  if (path.includes('/plan/') || path.includes('plan') || path.includes('grundriss')) return 'plan';
   if (path.includes('interior') || path.includes('innen')) return 'interior';
   if (path.includes('exterior') || path.includes('aussen') || path.includes('facade')) return 'exterior';
   return allowedImageExtensions.has(file.extension) ? 'exterior' : 'other';
