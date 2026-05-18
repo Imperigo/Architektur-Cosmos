@@ -23,6 +23,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'weekly',
       priority: 0.95
     },
+    {
+      url: `${siteUrl}/archive/`,
+      lastModified: now,
+      changeFrequency: 'weekly',
+      priority: 0.82
+    },
     ...allEntries.map((entry) => ({
       url: `${siteUrl}/atlas/${entry.slug}/`,
       lastModified: now,

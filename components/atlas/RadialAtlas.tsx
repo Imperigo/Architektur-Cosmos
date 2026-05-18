@@ -929,7 +929,12 @@ function DatabaseArchivePanel({
             <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#00e7ff]">Architecture Cosmos Database</div>
             <div className="mt-1 text-[10px] uppercase tracking-[0.14em] text-[#b8b8b2]">Cloud D1 preview ready / static frontend</div>
           </div>
-          <button className="h-6 w-8 border border-[#f7f7f4]/70 text-[10px] text-[#050505] bg-[#f7f7f4]" type="button" onClick={onDismiss}>X</button>
+          <div className="flex gap-1.5">
+            <a className="border border-[#00e7ff]/70 px-2 py-1 text-[9px] uppercase tracking-[0.12em] text-[#00e7ff]" href="/archive/">
+              Open
+            </a>
+            <button className="h-6 w-8 border border-[#f7f7f4]/70 text-[10px] text-[#050505] bg-[#f7f7f4]" type="button" onClick={onDismiss}>X</button>
+          </div>
         </div>
 
         <div className="mb-3 grid grid-cols-3 gap-1.5">
