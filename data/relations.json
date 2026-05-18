@@ -413,6 +413,27 @@
     "description": "Modern domesticity becomes a field of movement, curtains, views, and flexible rooms."
   },
   {
+    "id": "tugendhat-to-unite",
+    "source_entry_id": "haus-tugendhat",
+    "target_entry_id": "unite-habitation",
+    "relation_type": "typological_reference",
+    "description": "The free-plan villa and the collective block both test modern living through services, open spatial fields, and technical systems."
+  },
+  {
+    "id": "tugendhat-to-barcelona-extension",
+    "source_entry_id": "haus-tugendhat",
+    "target_entry_id": "barcelona-extension",
+    "relation_type": "context",
+    "description": "Mies's domestic fluidity sits in contrast to nineteenth-century urban grid rationalization, showing different scales of modern order."
+  },
+  {
+    "id": "tugendhat-to-bauhaus",
+    "source_entry_id": "haus-tugendhat",
+    "target_entry_id": "bauhaus-dessau",
+    "relation_type": "shares_theme",
+    "description": "Both works connect modern material systems, glass, technical precision, and new ways of organizing life."
+  },
+  {
     "id": "voelkerbund-to-unite",
     "source_entry_id": "voelkerbundspalast-competition",
     "target_entry_id": "unite-habitation",

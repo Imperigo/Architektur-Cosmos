@@ -12,6 +12,20 @@
   },
   "entries": [
     {
+      "id": "haus-tugendhat",
+      "slug": "haus-tugendhat",
+      "title": "Haus Tugendhat",
+      "entry_type": "building",
+      "year_start": 1930,
+      "year_end": 1930,
+      "authors_json": "[\"Ludwig Mies van der Rohe\"]",
+      "city": "Bruenn",
+      "country": "Czech Republic",
+      "style_sector": "modern_architecture",
+      "status": "reviewed",
+      "r2_prefix": "entries/haus-tugendhat"
+    },
+    {
       "id": "villa-savoye",
       "slug": "villa-savoye",
       "title": "Villa Savoye",
@@ -41,6 +55,30 @@
     }
   ],
   "entry_sources": [
+    {
+      "id": "haus-tugendhat-source-document-1",
+      "entry_id": "haus-tugendhat",
+      "source_type": "lecture_pdf",
+      "title": "03 Architekturgeschichte 3_4.pdf",
+      "author": null,
+      "url": null,
+      "document_name": "03 Architekturgeschichte 3_4.pdf",
+      "page_reference": null,
+      "reliability_level": "lecture_reference",
+      "notes": "Imported from source_documents for Haus Tugendhat."
+    },
+    {
+      "id": "haus-tugendhat-source-document-2",
+      "entry_id": "haus-tugendhat",
+      "source_type": "lecture_pdf",
+      "title": "Lecture notes / modernism",
+      "author": null,
+      "url": null,
+      "document_name": "Lecture notes / modernism",
+      "page_reference": null,
+      "reliability_level": "lecture_reference",
+      "notes": "Imported from source_documents for Haus Tugendhat."
+    },
     {
       "id": "villa-savoye-source-document-1",
       "entry_id": "villa-savoye",
@@ -103,6 +141,58 @@
     }
   ],
   "entry_media": [
+    {
+      "id": "haus-tugendhat-media-exterior-1",
+      "entry_id": "haus-tugendhat",
+      "source_id": "haus-tugendhat-source-document-1",
+      "media_type": "exterior",
+      "title": "Aussenansicht",
+      "caption": "Aussenansicht / Haus Tugendhat / Hanglage, Terrassen, horizontaler Wohnkoerper",
+      "r2_key": "entries/haus-tugendhat/media/exterior-01.placeholder.json",
+      "external_url": null,
+      "credit": "placeholder / rights pending",
+      "copyright_status": "placeholder",
+      "sort_order": 1
+    },
+    {
+      "id": "haus-tugendhat-media-interior-1",
+      "entry_id": "haus-tugendhat",
+      "source_id": "haus-tugendhat-source-document-1",
+      "media_type": "interior",
+      "title": "Innenraum",
+      "caption": "Innenraum / Haus Tugendhat / freier Wohnraum, Onyxwand, Vorhang und Glasfront",
+      "r2_key": "entries/haus-tugendhat/media/interior-01.placeholder.json",
+      "external_url": null,
+      "credit": "placeholder / rights pending",
+      "copyright_status": "placeholder",
+      "sort_order": 2
+    },
+    {
+      "id": "haus-tugendhat-media-section-1",
+      "entry_id": "haus-tugendhat",
+      "source_id": "haus-tugendhat-source-document-1",
+      "media_type": "section",
+      "title": "Schnitt",
+      "caption": "Schnitt / Haus Tugendhat / Hang, Wohnebene, Servicezonen und Terrassen",
+      "r2_key": "entries/haus-tugendhat/media/section-01.placeholder.json",
+      "external_url": null,
+      "credit": "placeholder / drawing source pending",
+      "copyright_status": "placeholder",
+      "sort_order": 3
+    },
+    {
+      "id": "haus-tugendhat-media-plan-1",
+      "entry_id": "haus-tugendhat",
+      "source_id": "haus-tugendhat-source-document-1",
+      "media_type": "plan",
+      "title": "Grundriss",
+      "caption": "Grundriss / Haus Tugendhat / freie Raumfelder, Materialwaende und Stuetzenraster",
+      "r2_key": "entries/haus-tugendhat/media/plan-01.placeholder.json",
+      "external_url": null,
+      "credit": "placeholder / drawing source pending",
+      "copyright_status": "placeholder",
+      "sort_order": 4
+    },
     {
       "id": "villa-savoye-media-exterior-1",
       "entry_id": "villa-savoye",
@@ -209,6 +299,96 @@
     }
   ],
   "entry_models": [
+    {
+      "id": "haus-tugendhat-model-mass_model-1",
+      "entry_id": "haus-tugendhat",
+      "source_id": "haus-tugendhat-source-document-1",
+      "model_type": "mass_model",
+      "title": "Haus Tugendhat terraced massing model",
+      "r2_key": "entries/haus-tugendhat/models/mass.glb",
+      "format": "glb",
+      "lod_level": "preview",
+      "source_basis": "Stepped hillside massing, horizontal living level, terrace relation and garden-facing glass volume.",
+      "generation_method": "procedural",
+      "review_status": "reviewed",
+      "confidence_score": 0.7,
+      "file_size_bytes": null
+    },
+    {
+      "id": "haus-tugendhat-model-low_poly_model-2",
+      "entry_id": "haus-tugendhat",
+      "source_id": "haus-tugendhat-source-document-1",
+      "model_type": "low_poly_model",
+      "title": "Haus Tugendhat low-poly atlas preview",
+      "r2_key": "entries/haus-tugendhat/models/low.glb",
+      "format": "glb",
+      "lod_level": "low",
+      "source_basis": "Planned atlas model based on massing, glass plane, free-plan zones and material wall elements.",
+      "generation_method": "procedural",
+      "review_status": "draft",
+      "confidence_score": 0.58,
+      "file_size_bytes": null
+    },
+    {
+      "id": "haus-tugendhat-model-full_model-3",
+      "entry_id": "haus-tugendhat",
+      "source_id": "haus-tugendhat-source-document-1",
+      "model_type": "full_model",
+      "title": "Haus Tugendhat complete architectural model",
+      "r2_key": "entries/haus-tugendhat/models/full.glb",
+      "format": "glb",
+      "lod_level": "medium",
+      "source_basis": "Requires verified plan, section, elevation and interior material-source package before release.",
+      "generation_method": "source_reconstruction",
+      "review_status": "needs_source",
+      "confidence_score": 0.46,
+      "file_size_bytes": null
+    },
+    {
+      "id": "haus-tugendhat-model-structure_model-4",
+      "entry_id": "haus-tugendhat",
+      "source_id": "haus-tugendhat-source-document-1",
+      "model_type": "structure_model",
+      "title": "Haus Tugendhat steel-frame structure model",
+      "r2_key": "entries/haus-tugendhat/models/structure.glb",
+      "format": "glb",
+      "lod_level": "medium",
+      "source_basis": "Analytical reading of steel columns, floor plates, service zones and non-load-bearing spatial partitions.",
+      "generation_method": "source_reconstruction",
+      "review_status": "draft",
+      "confidence_score": 0.56,
+      "file_size_bytes": null
+    },
+    {
+      "id": "haus-tugendhat-model-tectonic_model-5",
+      "entry_id": "haus-tugendhat",
+      "source_id": "haus-tugendhat-source-document-1",
+      "model_type": "tectonic_model",
+      "title": "Haus Tugendhat material-screen tectonic model",
+      "r2_key": "entries/haus-tugendhat/models/tectonic.glb",
+      "format": "glb",
+      "lod_level": "medium",
+      "source_basis": "Layer model separating steel frame, glass skin, curtains, Onyx wall, timber screen and stone floor plane.",
+      "generation_method": "ai_assisted",
+      "review_status": "draft",
+      "confidence_score": 0.52,
+      "file_size_bytes": null
+    },
+    {
+      "id": "haus-tugendhat-model-site_model-6",
+      "entry_id": "haus-tugendhat",
+      "source_id": "haus-tugendhat-source-document-1",
+      "model_type": "site_model",
+      "title": "Haus Tugendhat Brno hillside site model",
+      "r2_key": "entries/haus-tugendhat/models/site.glb",
+      "format": "glb",
+      "lod_level": "preview",
+      "source_basis": "Garden slope, terrace sequence and view relation require verified site drawings before public model release.",
+      "generation_method": "source_reconstruction",
+      "review_status": "needs_source",
+      "confidence_score": 0.42,
+      "file_size_bytes": null
+    },
     {
       "id": "villa-savoye-model-mass_model-1",
       "entry_id": "villa-savoye",
@@ -392,6 +572,60 @@
   ],
   "entry_analysis": [
     {
+      "id": "haus-tugendhat-analysis-structure-1",
+      "entry_id": "haus-tugendhat",
+      "analysis_type": "structure",
+      "summary": "The structural reading foregrounds a steel-frame order that frees the living level from conventional room-bearing walls and allows material screens to organize space.",
+      "data_json": "{\"primary_system\":\"steel_frame_with_free_plan\",\"key_elements\":[\"steel_columns\",\"floor_plates\",\"service_zones\",\"non_load_bearing_screens\"]}",
+      "r2_key": "entries/haus-tugendhat/analysis/structure.json",
+      "review_status": "draft"
+    },
+    {
+      "id": "haus-tugendhat-analysis-tectonics-2",
+      "entry_id": "haus-tugendhat",
+      "analysis_type": "tectonics",
+      "summary": "The tectonic reading separates frame, glass, curtain, Onyx wall, timber wall and floor plane into layered elements that produce fluid domestic space.",
+      "data_json": "{\"layers\":[\"steel_frame\",\"glass_skin\",\"curtain_tracks\",\"onyx_wall\",\"timber_screen\",\"stone_floor\"]}",
+      "r2_key": "entries/haus-tugendhat/analysis/tectonics.json",
+      "review_status": "draft"
+    },
+    {
+      "id": "haus-tugendhat-analysis-spatial_order-3",
+      "entry_id": "haus-tugendhat",
+      "analysis_type": "spatial_order",
+      "summary": "Spatial order is defined by zones rather than closed rooms: living, dining, music and view fields flow around material partitions and curtains.",
+      "data_json": "{\"order\":\"zoned_free_plan\",\"spatial_devices\":[\"onyx_wall\",\"curtain\",\"glass_front\",\"furniture_fields\"]}",
+      "r2_key": null,
+      "review_status": "reviewed"
+    },
+    {
+      "id": "haus-tugendhat-analysis-material_system-4",
+      "entry_id": "haus-tugendhat",
+      "analysis_type": "material_system",
+      "summary": "Onyx, glass, steel, textile and timber are not decoration only; they act as atmospheric and spatial instruments within the free plan.",
+      "data_json": "{\"materials\":[\"onyx\",\"glass\",\"steel\",\"textile\",\"timber\"]}",
+      "r2_key": null,
+      "review_status": "reviewed"
+    },
+    {
+      "id": "haus-tugendhat-analysis-typology-5",
+      "entry_id": "haus-tugendhat",
+      "analysis_type": "typology",
+      "summary": "Haus Tugendhat mutates the villa into a spatial instrument for modern living, where representational domestic rooms dissolve into linked fields and material thresholds.",
+      "data_json": "{\"base_typology\":\"villa\",\"mutation\":\"free_plan_material_house\",\"comparison\":\"villa_savoye_manifest_house\"}",
+      "r2_key": null,
+      "review_status": "reviewed"
+    },
+    {
+      "id": "haus-tugendhat-analysis-filter_classification-6",
+      "entry_id": "haus-tugendhat",
+      "analysis_type": "filter_classification",
+      "summary": "Suggested filters: modern villa, Mies, free plan, curtain screen, material wall, steel frame, Brno, early modernism, domestic modernity.",
+      "data_json": "{\"primary_filters\":[\"modern_villa\",\"free_plan\",\"material_wall\",\"curtain\",\"steel_frame\"],\"model_readiness\":\"pilot_ready_needs_verified_sources\"}",
+      "r2_key": null,
+      "review_status": "reviewed"
+    },
+    {
       "id": "villa-savoye-analysis-structure-1",
       "entry_id": "villa-savoye",
       "analysis_type": "structure",
@@ -529,6 +763,12 @@
       "description": ""
     },
     {
+      "id": "tag-course-architecture-history-3-4",
+      "label": "Architecture History 3 4",
+      "tag_group": "course",
+      "description": ""
+    },
+    {
       "id": "tag-course-architekturgeschichte-eth",
       "label": "Architekturgeschichte Eth",
       "tag_group": "course",
@@ -561,6 +801,18 @@
     {
       "id": "tag-material-glass-house",
       "label": "Glass House",
+      "tag_group": "material",
+      "description": ""
+    },
+    {
+      "id": "tag-material-material-wall",
+      "label": "Material Wall",
+      "tag_group": "material",
+      "description": ""
+    },
+    {
+      "id": "tag-material-onyx",
+      "label": "Onyx",
       "tag_group": "material",
       "description": ""
     },
@@ -613,6 +865,12 @@
       "description": ""
     },
     {
+      "id": "tag-structure-steel-frame",
+      "label": "Steel Frame",
+      "tag_group": "structure",
+      "description": ""
+    },
+    {
       "id": "tag-style-modern-architecture",
       "label": "Modern Architecture",
       "tag_group": "style",
@@ -637,8 +895,32 @@
       "description": ""
     },
     {
+      "id": "tag-theme-curtain",
+      "label": "Curtain",
+      "tag_group": "theme",
+      "description": ""
+    },
+    {
+      "id": "tag-theme-curtain-screen",
+      "label": "Curtain Screen",
+      "tag_group": "theme",
+      "description": ""
+    },
+    {
+      "id": "tag-theme-domestic-modernism",
+      "label": "Domestic Modernism",
+      "tag_group": "theme",
+      "description": ""
+    },
+    {
       "id": "tag-theme-five-points",
       "label": "Five Points",
+      "tag_group": "theme",
+      "description": ""
+    },
+    {
+      "id": "tag-theme-fluid-space",
+      "label": "Fluid Space",
       "tag_group": "theme",
       "description": ""
     },
@@ -663,6 +945,12 @@
     {
       "id": "tag-theme-machine-age",
       "label": "Machine Age",
+      "tag_group": "theme",
+      "description": ""
+    },
+    {
+      "id": "tag-theme-modern-living",
+      "label": "Modern Living",
       "tag_group": "theme",
       "description": ""
     },
@@ -703,6 +991,24 @@
       "description": ""
     },
     {
+      "id": "tag-theme-steel-frame",
+      "label": "Steel Frame",
+      "tag_group": "theme",
+      "description": ""
+    },
+    {
+      "id": "tag-theme-thing-modernity",
+      "label": "Thing Modernity",
+      "tag_group": "theme",
+      "description": ""
+    },
+    {
+      "id": "tag-typology-free-plan-house",
+      "label": "Free Plan House",
+      "tag_group": "typology",
+      "description": ""
+    },
+    {
       "id": "tag-typology-glass-house",
       "label": "Glass House",
       "tag_group": "typology",
@@ -728,6 +1034,106 @@
     }
   ],
   "entry_tags": [
+    {
+      "entry_id": "haus-tugendhat",
+      "tag_id": "tag-style-modern-architecture",
+      "confidence_score": 1
+    },
+    {
+      "entry_id": "haus-tugendhat",
+      "tag_id": "tag-course-architecture-history-3-4",
+      "confidence_score": 0.86
+    },
+    {
+      "entry_id": "haus-tugendhat",
+      "tag_id": "tag-theme-thing-modernity",
+      "confidence_score": 0.76
+    },
+    {
+      "entry_id": "haus-tugendhat",
+      "tag_id": "tag-theme-curtain",
+      "confidence_score": 0.76
+    },
+    {
+      "entry_id": "haus-tugendhat",
+      "tag_id": "tag-theme-free-plan",
+      "confidence_score": 0.76
+    },
+    {
+      "entry_id": "haus-tugendhat",
+      "tag_id": "tag-theme-modern-living",
+      "confidence_score": 0.76
+    },
+    {
+      "entry_id": "haus-tugendhat",
+      "tag_id": "tag-material-material-wall",
+      "confidence_score": 0.76
+    },
+    {
+      "entry_id": "haus-tugendhat",
+      "tag_id": "tag-theme-steel-frame",
+      "confidence_score": 0.76
+    },
+    {
+      "entry_id": "haus-tugendhat",
+      "tag_id": "tag-theme-fluid-space",
+      "confidence_score": 0.92
+    },
+    {
+      "entry_id": "haus-tugendhat",
+      "tag_id": "tag-theme-domestic-modernism",
+      "confidence_score": 0.76
+    },
+    {
+      "entry_id": "haus-tugendhat",
+      "tag_id": "tag-source-lecture-notes",
+      "confidence_score": 0.92
+    },
+    {
+      "entry_id": "haus-tugendhat",
+      "tag_id": "tag-course-architekturgeschichte-eth",
+      "confidence_score": 0.92
+    },
+    {
+      "entry_id": "haus-tugendhat",
+      "tag_id": "tag-typology-modern-villa",
+      "confidence_score": 0.92
+    },
+    {
+      "entry_id": "haus-tugendhat",
+      "tag_id": "tag-typology-free-plan-house",
+      "confidence_score": 0.92
+    },
+    {
+      "entry_id": "haus-tugendhat",
+      "tag_id": "tag-structure-steel-frame",
+      "confidence_score": 0.92
+    },
+    {
+      "entry_id": "haus-tugendhat",
+      "tag_id": "tag-theme-curtain-screen",
+      "confidence_score": 0.92
+    },
+    {
+      "entry_id": "haus-tugendhat",
+      "tag_id": "tag-material-onyx",
+      "confidence_score": 0.92
+    },
+    {
+      "entry_id": "haus-tugendhat",
+      "tag_id": "tag-material-glass",
+      "confidence_score": 0.92
+    },
+    {
+      "entry_id": "haus-tugendhat",
+      "tag_id": "tag-period-early-modernism",
+      "confidence_score": 0.92
+    },
+    {
+      "entry_id": "haus-tugendhat",
+      "tag_id": "tag-analysis-model-ready",
+      "confidence_score": 0.92
+    },
     {
       "entry_id": "villa-savoye",
       "tag_id": "tag-style-modern-architecture",
@@ -923,6 +1329,13 @@
       "description": "The structural prototype becomes an architectural language of pilotis, free plan, and free facade."
     },
     {
+      "id": "bauhaus-to-tugendhat",
+      "source_entry_id": "bauhaus-dessau",
+      "target_entry_id": "haus-tugendhat",
+      "relation_type": "context",
+      "description": "Institutional and domestic modernism share glass, openness, and a new relationship between life and technical systems."
+    },
+    {
       "id": "villa-savoye-to-athens-charter",
       "source_entry_id": "villa-savoye",
       "target_entry_id": "athens-charter",
@@ -949,9 +1362,44 @@
       "target_entry_id": "unite-habitation",
       "relation_type": "typological_reference",
       "description": "The five-points house later scales toward collective housing, roof programs, pilotis and standardized modern life."
+    },
+    {
+      "id": "villa-noailles-to-tugendhat",
+      "source_entry_id": "villa-noailles",
+      "target_entry_id": "haus-tugendhat",
+      "relation_type": "shares_theme",
+      "description": "Modern domesticity becomes a field of movement, curtains, views, and flexible rooms."
+    },
+    {
+      "id": "tugendhat-to-unite",
+      "source_entry_id": "haus-tugendhat",
+      "target_entry_id": "unite-habitation",
+      "relation_type": "typological_reference",
+      "description": "The free-plan villa and the collective block both test modern living through services, open spatial fields, and technical systems."
+    },
+    {
+      "id": "tugendhat-to-barcelona-extension",
+      "source_entry_id": "haus-tugendhat",
+      "target_entry_id": "barcelona-extension",
+      "relation_type": "context",
+      "description": "Mies's domestic fluidity sits in contrast to nineteenth-century urban grid rationalization, showing different scales of modern order."
+    },
+    {
+      "id": "tugendhat-to-bauhaus",
+      "source_entry_id": "haus-tugendhat",
+      "target_entry_id": "bauhaus-dessau",
+      "relation_type": "shares_theme",
+      "description": "Both works connect modern material systems, glass, technical precision, and new ways of organizing life."
     }
   ],
   "asset_manifests": [
+    {
+      "id": "haus-tugendhat-asset-manifest",
+      "entry_id": "haus-tugendhat",
+      "manifest_type": "source_package",
+      "r2_prefix": "entries/haus-tugendhat",
+      "manifest_json": "{\"media\":4,\"source_assets\":0,\"models\":6,\"analysis_files\":6,\"status\":\"planned_r2_package_no_uploads\"}"
+    },
     {
       "id": "villa-savoye-asset-manifest",
       "entry_id": "villa-savoye",
