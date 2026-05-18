@@ -58,6 +58,154 @@ body:has(.entry-page) {
   color: var(--entry-accent);
 }
 
+.entry-page {
+  position: relative;
+  isolation: isolate;
+}
+
+.entry-cosmos-field {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 74% 18%, color-mix(in srgb, var(--entry-accent) 24%, transparent), transparent 28%),
+    radial-gradient(circle at 20% 82%, color-mix(in srgb, var(--entry-accent) 12%, transparent), transparent 32%),
+    linear-gradient(135deg, rgba(247, 247, 244, 0.035), transparent 42%);
+}
+
+.entry-ring {
+  position: absolute;
+  display: block;
+  border: 1px dashed color-mix(in srgb, var(--entry-accent) 45%, transparent);
+  border-radius: 9999px;
+  opacity: 0.18;
+  transform: rotate(-18deg);
+}
+
+.entry-ring-a {
+  width: 720px;
+  height: 720px;
+  right: -220px;
+  top: -250px;
+}
+
+.entry-ring-b {
+  width: 1040px;
+  height: 1040px;
+  right: -420px;
+  top: -420px;
+  opacity: 0.1;
+}
+
+.entry-ring-c {
+  width: 560px;
+  height: 560px;
+  left: -260px;
+  bottom: -280px;
+  opacity: 0.12;
+}
+
+.entry-archive-panel,
+.entry-media-card,
+.entry-relation-card {
+  box-shadow: inset 0 1px 0 rgba(247, 247, 244, 0.055), 0 18px 48px rgba(0, 0, 0, 0.24);
+}
+
+.entry-mini-orbit {
+  position: relative;
+}
+
+.entry-mini-orbit::before,
+.entry-mini-orbit::after,
+.entry-mini-orbit span {
+  content: "";
+  position: absolute;
+  inset: 50%;
+  border: 1px solid color-mix(in srgb, var(--entry-accent) 52%, transparent);
+  border-radius: 9999px;
+  transform: translate(-50%, -50%);
+}
+
+.entry-mini-orbit::before {
+  width: 152px;
+  height: 46px;
+}
+
+.entry-mini-orbit::after {
+  width: 118px;
+  height: 118px;
+  border-style: dashed;
+  opacity: 0.32;
+}
+
+.entry-mini-orbit span:nth-child(1) {
+  width: 78px;
+  height: 24px;
+  opacity: 0.42;
+}
+
+.entry-mini-orbit span:nth-child(2) {
+  width: 172px;
+  height: 172px;
+  border-style: dashed;
+  opacity: 0.16;
+}
+
+.entry-mini-orbit span:nth-child(3) {
+  width: 7px;
+  height: 7px;
+  background: var(--entry-accent);
+  border: 0;
+  box-shadow: 0 0 18px var(--entry-accent);
+}
+
+.entry-media-placeholder {
+  background:
+    linear-gradient(90deg, rgba(247, 247, 244, 0.08) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(247, 247, 244, 0.06) 1px, transparent 1px),
+    radial-gradient(circle at 50% 40%, color-mix(in srgb, var(--entry-accent) 18%, transparent), rgba(247, 247, 244, 0.025) 58%, transparent 70%);
+  background-size: 18px 18px, 18px 18px, auto;
+}
+
+.entry-media-section {
+  background:
+    repeating-linear-gradient(160deg, rgba(247, 247, 244, 0.08) 0 1px, transparent 1px 11px),
+    radial-gradient(circle at 50% 40%, color-mix(in srgb, var(--entry-accent) 16%, transparent), transparent 62%);
+}
+
+.entry-media-plan {
+  background:
+    linear-gradient(90deg, rgba(247, 247, 244, 0.12) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(247, 247, 244, 0.1) 1px, transparent 1px),
+    radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--entry-accent) 10%, transparent), transparent 64%);
+  background-size: 24px 24px, 24px 24px, auto;
+}
+
+.entry-relation-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.entry-relation-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 2px;
+  background: var(--entry-accent);
+  opacity: 0.45;
+}
+
+.entry-relation-node {
+  width: 13px;
+  height: 13px;
+  flex: 0 0 auto;
+  border: 1px solid var(--entry-accent);
+  border-radius: 9999px;
+  box-shadow: 0 0 14px color-mix(in srgb, var(--entry-accent) 46%, transparent);
+}
+
 @keyframes wormhole-spoke-flow {
   from { stroke-dashoffset: 0; }
   to { stroke-dashoffset: -104; }

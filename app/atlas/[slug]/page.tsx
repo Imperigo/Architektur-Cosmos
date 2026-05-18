@@ -61,11 +61,17 @@ export default async function EntryPage({ params }: EntryPageProps) {
   const accent = styleColor(entry.style_sector);
   const location = [entry.city, entry.country].filter(Boolean).join(', ');
   const jsonLd = entryJsonLd(entry);
+  const yearLabel = formatYear(entry.year_start);
 
   return (
     <main className="entry-page min-h-screen overflow-x-hidden bg-[#050505] text-[#f7f7f4]" style={{ '--entry-accent': accent } as CSSProperties}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <div className="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-5 py-5 sm:px-8 lg:px-10">
+      <div className="entry-cosmos-field" aria-hidden="true">
+        <span className="entry-ring entry-ring-a" />
+        <span className="entry-ring entry-ring-b" />
+        <span className="entry-ring entry-ring-c" />
+      </div>
+      <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-6xl flex-col px-5 py-5 sm:px-8 lg:px-10">
         <header className="flex items-center justify-between gap-4 border-b border-white/12 pb-4">
           <Link href="/" className="entry-link text-[11px] font-semibold uppercase tracking-[0.28em] text-[#f7f7f4]/78">
             Architecture Cosmos
@@ -77,8 +83,13 @@ export default async function EntryPage({ params }: EntryPageProps) {
 
         <section className="grid gap-8 py-10 lg:grid-cols-[minmax(0,1.08fr)_360px] lg:py-14">
           <div>
+            <div className="mb-6 grid max-w-xl grid-cols-3 border border-white/12 bg-[#071315]/45 text-center">
+              <EntryStat label="Time" value={yearLabel} />
+              <EntryStat label="Layer" value={entry.entry_type.replace(/_/g, ' ')} />
+              <EntryStat label="Network" value={`${related.length} links`} />
+            </div>
             <div className="mb-4 flex flex-wrap gap-2 text-[10px] uppercase tracking-[0.16em] text-[#b8b8b2]">
-              <span className="border border-white/15 px-2.5 py-1">{formatYear(entry.year_start)}</span>
+              <span className="border border-white/15 px-2.5 py-1">{yearLabel}</span>
               <span className="border border-white/15 px-2.5 py-1">{entry.entry_type.replace(/_/g, ' ')}</span>
               <span className="border px-2.5 py-1" style={{ borderColor: accent, color: accent }}>{entry.style_sector.replace(/_/g, ' ')}</span>
               {entry.database_profile ? <span className="border px-2.5 py-1" style={{ borderColor: accent, color: accent }}>Database Pilot</span> : null}
@@ -97,8 +108,15 @@ export default async function EntryPage({ params }: EntryPageProps) {
             </p>
           </div>
 
-          <aside className="border border-white/14 bg-[#071315]/70 p-5">
+          <aside className="entry-archive-panel border border-white/14 bg-[#071315]/70 p-5">
             <h2 className="text-[11px] font-semibold uppercase tracking-[0.22em]" style={{ color: accent }}>Archive Status</h2>
+            <div className="my-5 h-28 border border-white/10 bg-[#050505]/55 p-3">
+              <div className="entry-mini-orbit mx-auto h-full max-w-[210px]" aria-hidden="true">
+                <span />
+                <span />
+                <span />
+              </div>
+            </div>
             <dl className="mt-4 space-y-3 text-sm">
               <EntryMeta label="Source quality" value={entry.source_quality.replace(/_/g, ' ')} />
               <EntryMeta label="Lecture cluster" value={(entry.lecture_cluster ?? []).join(', ') || 'not assigned'} />
@@ -118,9 +136,12 @@ export default async function EntryPage({ params }: EntryPageProps) {
 
         <section className="grid gap-4 border-t border-white/12 py-8 sm:grid-cols-2 lg:grid-cols-4">
           {entry.media.map((media) => (
-            <div key={media.type} className="min-h-[180px] border border-white/14 bg-[#070707] p-4">
-              <div className="mb-3 text-[10px] uppercase tracking-[0.18em]" style={{ color: accent }}>{media.type}</div>
-              <div className="flex h-24 items-center justify-center border border-white/10 bg-[radial-gradient(circle_at_50%_40%,rgba(247,247,244,0.11),rgba(247,247,244,0.02)_58%,transparent_70%)] text-center text-[11px] uppercase tracking-[0.14em] text-[#d7d7d0]">
+            <div key={media.type} className="entry-media-card min-h-[210px] border border-white/14 bg-[#070707] p-4">
+              <div className="mb-3 flex items-center justify-between gap-3 text-[10px] uppercase tracking-[0.18em]" style={{ color: accent }}>
+                <span>{media.type}</span>
+                <span className="text-[#8d8d87]">slot {mediaSlotNumber(media.type)}</span>
+              </div>
+              <div className={`entry-media-placeholder entry-media-${media.type} flex h-28 items-center justify-center border border-white/10 text-center text-[11px] uppercase tracking-[0.14em] text-[#d7d7d0]`}>
                 {media.label}
               </div>
               <p className="mt-3 text-sm leading-6 text-[#b8b8b2]">{media.placeholder}</p>
@@ -145,12 +166,17 @@ export default async function EntryPage({ params }: EntryPageProps) {
         <section className="border-t border-white/12 py-8">
           <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em]" style={{ color: accent }}>Relations</h2>
           {related.length ? (
-            <div className="grid gap-3 sm:grid-cols-2">
-              {related.map(({ relation, entry: relatedEntry }) => (
-                <Link key={relation.id} href={`/atlas/${relatedEntry.slug}/`} className="entry-link border border-white/14 bg-[#071315]/55 p-4">
-                  <div className="text-[10px] uppercase tracking-[0.16em]" style={{ color: accent }}>{relation.relation_type.replace(/_/g, ' ')}</div>
-                  <div className="mt-2 text-lg text-[#f7f7f4]">{relatedEntry.title}</div>
-                  <p className="mt-2 text-sm leading-6 text-[#b8b8b2]">{relation.description}</p>
+            <div className="entry-relation-network grid gap-3 sm:grid-cols-2">
+              {related.map(({ relation, entry: relatedEntry }, index) => (
+                <Link key={relation.id} href={`/atlas/${relatedEntry.slug}/`} className="entry-link entry-relation-card border border-white/14 bg-[#071315]/55 p-4" style={{ '--relation-index': index } as CSSProperties}>
+                  <div className="flex items-start gap-3">
+                    <span className="entry-relation-node mt-1" aria-hidden="true" />
+                    <span className="min-w-0">
+                      <span className="block text-[10px] uppercase tracking-[0.16em]" style={{ color: accent }}>{relation.relation_type.replace(/_/g, ' ')}</span>
+                      <span className="mt-2 block text-lg text-[#f7f7f4]">{relatedEntry.title}</span>
+                      <span className="mt-2 block text-sm leading-6 text-[#b8b8b2]">{relation.description}</span>
+                    </span>
+                  </div>
                 </Link>
               ))}
             </div>
@@ -160,6 +186,15 @@ export default async function EntryPage({ params }: EntryPageProps) {
         </section>
       </div>
     </main>
+  );
+}
+
+function EntryStat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="border-r border-white/10 px-3 py-3 last:border-r-0">
+      <div className="text-[9px] uppercase tracking-[0.18em] text-[#8d8d87]">{label}</div>
+      <div className="mt-1 truncate text-sm text-[#f7f7f4]">{value}</div>
+    </div>
   );
 }
 
@@ -212,6 +247,16 @@ function sourceItems(entry: Entry) {
     ...(entry.source_url ? [entry.source_url] : []),
     ...(entry.source_assets?.length ? [`${entry.source_assets.length} source assets`] : [])
   ];
+}
+
+function mediaSlotNumber(type: Entry['media'][number]['type']) {
+  const order: Record<Entry['media'][number]['type'], string> = {
+    exterior: '01',
+    interior: '02',
+    section: '03',
+    plan: '04'
+  };
+  return order[type];
 }
 
 function entryJsonLd(entry: Entry) {
