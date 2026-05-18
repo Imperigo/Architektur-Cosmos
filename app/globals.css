@@ -407,6 +407,29 @@ body {
   transform: scale(1.28) translateY(-2px);
 }
 
+.filter-tabs {
+  filter: drop-shadow(0 0 10px rgb(0 231 255 / 8%));
+}
+
+.filter-tab,
+.database-tab {
+  cursor: none;
+  transition: opacity 140ms ease, transform 140ms ease;
+}
+
+.filter-tab:hover,
+.database-tab:hover {
+  opacity: 1;
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: translateY(-1.5px);
+}
+
+.filter-tab-active,
+.database-tab-active {
+  filter: drop-shadow(0 0 8px rgb(0 231 255 / 16%));
+}
+
 .database-access {
   filter: drop-shadow(0 0 12px rgb(0 231 255 / 12%));
   transition: opacity 180ms ease;

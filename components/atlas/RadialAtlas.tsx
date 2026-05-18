@@ -30,6 +30,7 @@ type ObjectInteractionState = 'idle' | 'approach' | 'preview' | 'focus' | 'morph
 type HoverFocusLevel = 'none' | 'approach' | 'preview' | 'focus' | 'magnify';
 type MorphPhase = 'opening' | 'closing' | null;
 type SourceLens = 'afasia' | null;
+type DatabaseTab = 'entries' | 'media' | 'sources' | 'relations' | 'tags';
 
 export function RadialAtlas({ entries, relations }: { entries: Entry[]; relations: EntryRelation[] }) {
   const svgRef = useRef<SVGSVGElement | null>(null);
@@ -54,6 +55,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   const [pointerPoint, setPointerPoint] = useState<SvgPoint | null>(null);
   const [showDatabasePanel, setShowDatabasePanel] = useState(false);
   const [isDatabaseHovered, setIsDatabaseHovered] = useState(false);
+  const [activeDatabaseTab, setActiveDatabaseTab] = useState<DatabaseTab>('entries');
   const [debugFps, setDebugFps] = useState<number | null>(null);
   const motionRef = useRef({
     currentTravel: 0,
@@ -571,6 +573,22 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
           {morphNode && morphPhase ? <MorphingEntryOverlay node={morphNode} anchor={morphAnchor ?? applyCameraToPoint(morphNode, cameraFocus)} phase={morphPhase} onDismiss={() => releaseSnap(true)} /> : null}
           {snappedNode ? <SnappedEntryOverlay node={snappedNode} onDismiss={() => releaseSnap()} /> : null}
           {introState === 'idle' ? (
+            <FilterTabs
+              activeStyleLens={activeStyleLens}
+              activeSourceLens={activeSourceLens}
+              showRelations={showRelations}
+              sourceLensCount={sourceLensCount}
+              onSetStyleLens={setActiveStyleLens}
+              onResetLenses={() => {
+                setActiveStyleLens(null);
+                setActiveSourceLens(null);
+                setShowRelations(false);
+              }}
+              onToggleSourceLens={() => setActiveSourceLens((current) => current === 'afasia' ? null : 'afasia')}
+              onToggleRelations={() => setShowRelations((current) => !current)}
+            />
+          ) : null}
+          {introState === 'idle' ? (
             <RadialHud
               showRelations={showRelations}
               tunnelDepth={state.timePosition}
@@ -592,7 +610,13 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
               onToggle={() => setShowDatabasePanel((current) => !current)}
             />
           ) : null}
-          {showDatabasePanel && introState === 'idle' ? <DatabasePlaceholderPanel onDismiss={() => setShowDatabasePanel(false)} /> : null}
+          {showDatabasePanel && introState === 'idle' ? (
+            <DatabasePlaceholderPanel
+              activeTab={activeDatabaseTab}
+              onTabChange={setActiveDatabaseTab}
+              onDismiss={() => setShowDatabasePanel(false)}
+            />
+          ) : null}
           {introState === 'idle' ? <TimeReadout timePosition={state.timePosition} currentYear={state.currentYear} /> : null}
           {introState === 'idle' ? <BrandChrome /> : null}
           {showMotionDebug && introState === 'idle' ? (
@@ -892,6 +916,85 @@ function HudIcon({ x, y, kind, active }: { x: number; y: number; kind: 'backward
   );
 }
 
+function FilterTabs({
+  activeStyleLens,
+  activeSourceLens,
+  showRelations,
+  sourceLensCount,
+  onSetStyleLens,
+  onResetLenses,
+  onToggleSourceLens,
+  onToggleRelations
+}: {
+  activeStyleLens: StyleSectorId | null;
+  activeSourceLens: SourceLens;
+  showRelations: boolean;
+  sourceLensCount: number;
+  onSetStyleLens: (lens: StyleSectorId | null) => void;
+  onResetLenses: () => void;
+  onToggleSourceLens: () => void;
+  onToggleRelations: () => void;
+}) {
+  const x = 34;
+  const y = 78;
+  const tabs = [
+    { id: 'all', label: 'ALLE', active: !activeStyleLens && !activeSourceLens && !showRelations, width: 48, onClick: onResetLenses },
+    ...styleSectors.map((sector) => ({
+      id: sector.id,
+      label: styleShortLabel(sector.id),
+      active: activeStyleLens === sector.id,
+      width: 54,
+      onClick: () => onSetStyleLens(activeStyleLens === sector.id ? null : sector.id)
+    })),
+    { id: 'afasia', label: `AFASIA ${sourceLensCount}`, active: activeSourceLens === 'afasia', width: 78, onClick: onToggleSourceLens },
+    { id: 'relations', label: 'REL', active: showRelations, width: 44, onClick: onToggleRelations }
+  ];
+
+  let cursorX = 0;
+
+  return (
+    <g className="filter-tabs" transform={`translate(${x} ${y})`} pointerEvents="auto" aria-label="Filter lenses">
+      <text x="0" y="-12" fill="#9cfff7" fontSize="7.4" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.22em" opacity="0.78">
+        LENSES
+      </text>
+      {tabs.map((tab) => {
+        const tabX = cursorX;
+        cursorX += tab.width + 7;
+
+        return (
+          <g
+            key={tab.id}
+            className={`filter-tab ${tab.active ? 'filter-tab-active' : ''}`}
+            transform={`translate(${tabX} 0)`}
+            onPointerDown={(event) => event.stopPropagation()}
+            onClick={(event) => {
+              event.stopPropagation();
+              tab.onClick();
+            }}
+          >
+            <rect width={tab.width} height="21" rx="10.5" fill={tab.active ? '#f7f7f4' : '#050505'} stroke={tab.active ? '#00e7ff' : '#f7f7f4'} strokeWidth="0.55" opacity={tab.active ? 0.92 : 0.72} />
+            <text x={tab.width / 2} y="14" textAnchor="middle" fill={tab.active ? '#050505' : '#f7f7f4'} fontSize="6.7" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.12em">
+              {tab.label}
+            </text>
+          </g>
+        );
+      })}
+    </g>
+  );
+}
+
+function styleShortLabel(id: StyleSectorId) {
+  const labels: Record<StyleSectorId, string> = {
+    classical_architecture: 'I',
+    pre_modern_architecture: 'II',
+    modern_architecture: 'III',
+    postwar_modern_architecture: 'IV',
+    sustainable_architecture: 'V',
+    vernacular_architecture: 'VI'
+  };
+  return labels[id];
+}
+
 function MotionDebugHud({
   motion,
   fps,
@@ -1109,29 +1212,65 @@ function HoverImageCard({ entry, width }: { entry: Entry; width: number }) {
   );
 }
 
-function DatabasePlaceholderPanel({ onDismiss }: { onDismiss: () => void }) {
+function DatabasePlaceholderPanel({
+  activeTab,
+  onTabChange,
+  onDismiss
+}: {
+  activeTab: DatabaseTab;
+  onTabChange: (tab: DatabaseTab) => void;
+  onDismiss: () => void;
+}) {
   const x = atlasSize.width - 310;
   const y = atlasSize.height - 234;
-  const modules = ['Entries', 'Media', 'Sources', 'Relations', 'Tags'];
+  const tabs: Array<{ id: DatabaseTab; label: string; description: string }> = [
+    { id: 'entries', label: 'Entries', description: 'Projekte, Texte, Plaene, Events.' },
+    { id: 'media', label: 'Media', description: 'Bild, Schnitt, Grundriss, 3D.' },
+    { id: 'sources', label: 'Sources', description: 'PDFs, Afasia, Literatur.' },
+    { id: 'relations', label: 'Relations', description: 'Einfluss, Thema, Ort, Autor.' },
+    { id: 'tags', label: 'Tags', description: 'Themen, Kurse, Layer, Linsen.' }
+  ];
+  const currentTab = tabs.find((tab) => tab.id === activeTab) ?? tabs[0];
 
   return (
     <g className="database-placeholder" pointerEvents="auto">
       <rect x={x} y={y} width="270" height="166" rx="4" fill="#050505" stroke="#00e7ff" strokeWidth="0.75" opacity="0.92" />
-      <text x={x + 18} y={y + 30} fill="#f7f7f4" fontSize="12" fontWeight="650" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.1em">
-        ARCHITECTURE COSMOS DATABASE
+      <text x={x + 18} y={y + 30} fill="#f7f7f4" fontSize="11.2" fontWeight="650" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.16em">
+        COSMOS DATABASE
       </text>
       <text x={x + 18} y={y + 52} fill="#b8b8b2" fontSize="8.2" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.08em">
         PLATZHALTER FUER DAS SPAETERE ARCHIVSYSTEM
       </text>
-      {modules.map((module, index) => (
-        <g key={module} transform={`translate(${x + 18 + (index % 2) * 116} ${y + 76 + Math.floor(index / 2) * 26})`}>
-          <rect width="98" height="15" rx="7.5" fill="#07181a" stroke={index % 2 === 0 ? '#00e7ff' : '#ffb000'} strokeWidth="0.45" opacity="0.9" />
-          <text x="49" y="10.8" textAnchor="middle" fill="#f7f7f4" fontSize="7.2" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.12em">
-            {module.toUpperCase()}
-          </text>
-        </g>
-      ))}
-      <g className="dossier-close" pointerEvents="auto" transform={`translate(${x + 224} ${y + 12})`} onClick={(event) => { event.stopPropagation(); onDismiss(); }}>
+      {tabs.map((tab, index) => {
+        const isActive = activeTab === tab.id;
+        return (
+          <g
+            key={tab.id}
+            className={`database-tab ${isActive ? 'database-tab-active' : ''}`}
+            transform={`translate(${x + 18 + (index % 2) * 116} ${y + 72 + Math.floor(index / 2) * 23})`}
+            onPointerDown={(event) => event.stopPropagation()}
+            onClick={(event) => {
+              event.stopPropagation();
+              onTabChange(tab.id);
+            }}
+          >
+            <rect width="98" height="15" rx="7.5" fill={isActive ? '#f7f7f4' : '#07181a'} stroke={isActive ? '#00e7ff' : index % 2 === 0 ? '#00e7ff' : '#ffb000'} strokeWidth="0.45" opacity="0.92" />
+            <text x="49" y="10.8" textAnchor="middle" fill={isActive ? '#050505' : '#f7f7f4'} fontSize="7.2" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.12em">
+              {tab.label.toUpperCase()}
+            </text>
+          </g>
+        );
+      })}
+      <g transform={`translate(${x + 18} ${y + 145})`} pointerEvents="none">
+        <line x1="0" y1="-11" x2="232" y2="-11" stroke="#00e7ff" strokeWidth="0.45" opacity="0.32" />
+        <text x="0" y="0" fill="#f7f7f4" fontSize="7.4" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.12em">
+          {currentTab.label.toUpperCase()}
+        </text>
+        <text x="0" y="13" fill="#b8b8b2" fontSize="7" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.04em">
+          {currentTab.description.toUpperCase()}
+        </text>
+      </g>
+      <g className="dossier-close" pointerEvents="auto" transform={`translate(${x + 232} ${y + 12})`} onClick={(event) => { event.stopPropagation(); onDismiss(); }}>
         <rect width="28" height="16" rx="8" fill="#f7f7f4" opacity="0.88" />
         <text x="14" y="11.2" textAnchor="middle" fill="#050505" fontSize="7.2" fontFamily="var(--font-sans), system-ui, sans-serif">
           X
