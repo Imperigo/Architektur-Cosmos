@@ -26,3 +26,13 @@ npm run dev
 ```
 
 Then open the local Next.js URL shown in the terminal.
+
+## Deployment
+
+The site is hosted on **Cloudflare Workers (Static Assets)** at
+[architekturkosmos.ch](https://architekturkosmos.ch). Every push to `main`
+is auto-deployed in 1–3 minutes — no manual step.
+
+For build/runtime constraints and the deploy architecture, see
+[`DEPLOYMENT.md`](./DEPLOYMENT.md). AI coding agents should also read
+[`AGENTS.md`](./AGENTS.md) before making changes.
