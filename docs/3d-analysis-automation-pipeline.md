@@ -28,6 +28,26 @@ archive-intake/{entry-slug}/automation/next-actions.md
 
 No Cloudflare upload is performed. No local asset is committed to GitHub.
 
+## First Procedural Massing
+
+```bash
+npm run archive:model-generate -- --entry villa-savoye
+```
+
+This creates the first local low-poly GLB for the archive pilot:
+
+```text
+archive-intake/villa-savoye/models/low.glb
+archive-intake/villa-savoye/models/mass.glb
+archive-intake/villa-savoye/analysis/generated-geometry-profile.json
+```
+
+The model is intentionally diagrammatic. It contains a site plane, lifted villa
+volume, pilotis grid, horizontal window bands, ramp/promenade markers, roof slab,
+roof garden and a few envelope/trace markers. It is useful as a first
+machine-readable reference body for Blender import tests and analysis tooling.
+It is not a measured reconstruction.
+
 ## Model Layer Contract
 
 Every serious pilot should eventually separate:
@@ -96,4 +116,3 @@ Minimum input for a useful splat:
 - 80-250 sharp frames after extraction;
 - rights review before any upload;
 - explicit upload command before R2 usage.
-
