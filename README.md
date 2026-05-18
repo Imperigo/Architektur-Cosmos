@@ -14,6 +14,8 @@ The first version builds the core atlas without filters, search, database, CMS, 
 - `docs/master-brief.md`
 - `docs/data-model.md`
 - `docs/database-architecture.md`
+- `docs/storage-cost-guardrails.md`
+- `docs/cloudflare-archive-preview.md`
 - `docs/interface-concept.md`
 - `docs/design-system.md`
 - `docs/mvp-scope.md`

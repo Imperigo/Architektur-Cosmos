@@ -1,6 +1,6 @@
 # Cloudflare Archive Preview Runbook
 
-This runbook prepares the first D1/R2 test archive for Architecture Cosmos.
+This runbook prepares the first D1-only test archive for Architecture Cosmos.
 It does not connect the live website to the database.
 
 ## Current Status
@@ -47,23 +47,39 @@ export CLOUDFLARE_API_TOKEN="..."
 npm run archive:cloudflare-preview
 ```
 
-The command above validates the local archive, exports SQL/R2 manifests, creates
-the preview D1 database when missing, imports the schema/data, and runs smoke
-queries.
+The command above validates the local archive, exports SQL plus a local asset
+planning manifest, creates the preview D1 database when missing, imports the
+schema/data, and runs smoke queries.
 
-R2 is skipped by default to avoid enabling paid object storage before real media
-and model uploads are ready. The local R2 manifest is still generated as a
-planning artifact.
+R2 is skipped by default to avoid enabling object storage before real media and
+model uploads are ready. The local R2 manifest is still generated as a planning
+artifact, but no bucket is created and no file is uploaded.
 
 It deliberately passes `--update-config=false` when creating resources. Do not
 let Wrangler add D1/R2 bindings to `wrangler.jsonc` while the site is still a
 static export.
 
-To explicitly include R2 later:
+Preferred explicit D1 command:
 
 ```bash
-npm run archive:cloudflare-preview -- --with-r2
+npm run archive:d1-preview
 ```
+
+Remote smoke queries without re-importing:
+
+```bash
+npm run archive:d1-smoke-remote
+```
+
+To explicitly include R2 later, two cost-guard steps are required:
+
+```bash
+export ARCHITECTURE_COSMOS_ENABLE_R2=1
+npm run archive:d1-preview -- --with-r2 --i-understand-r2-costs
+```
+
+Without both the environment variable and the explicit flag, the script refuses
+to create an R2 bucket.
 
 Manual equivalent:
 
@@ -73,7 +89,7 @@ export CLOUDFLARE_API_TOKEN="..."
 npx wrangler d1 create architecture-cosmos-preview
 
 npm run archive:export
-npm run archive:r2-manifest
+npm run archive:r2-plan
 
 npx wrangler d1 execute architecture-cosmos-preview --remote --file schema/architecture-cosmos-d1.sql
 npx wrangler d1 execute architecture-cosmos-preview --remote --file out/archive-d1-import.sql
@@ -99,10 +115,11 @@ Expected local baseline:
 - Flower House analysis layers: 7
 - Afasia entries: 1
 
-## R2 Preview Policy
+## R2 Cost Guardrail Policy
 
 Do not upload copyrighted images or drawings until rights and source policy are clear.
-For now, R2 is only a key structure target:
+For now, R2 is only a key structure target. D1 is the database; R2 is only future
+file storage for heavy assets.
 
 ```text
 entries/{slug}/media/exterior-01.jpg

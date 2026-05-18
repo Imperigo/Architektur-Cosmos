@@ -5,21 +5,25 @@ It is a design contract only: the current website still ships as a static export
 
 ## Recommended Stack
 
-Use Cloudflare-native storage first:
+Use Cloudflare-native storage first, but keep the phases separate:
 
 - **Cloudflare D1** for structured data: entries, sources, tags, relations, analyses, and model metadata.
-- **Cloudflare R2** for large assets: photos, drawings, PDFs, textures, GLB/USDZ models, analysis JSON, and source scans.
+- **Cloudflare R2** later and only if needed for large assets: photos, drawings, PDFs, textures, GLB/USDZ models, analysis JSON, and source scans.
 - **Cloudflare Workers / Pages** for the frontend and later lightweight API endpoints.
 
 This avoids a dedicated server while staying close to the current deployment platform.
 
 ## Cost Logic
 
-The first production database can likely start inside free or very low-cost tiers:
+The first production database should be D1-only:
 
 - D1 stores metadata and analysis records, which are small.
-- R2 stores large files and scales by object storage usage.
+- R2 stores large files and scales by object storage usage, so it remains disabled until real uploads and a budget policy are defined.
 - 3D models, source PDFs, plan tiles, and textures must never be stored inside D1.
+
+R2 is protected by a repository guardrail: the preview script refuses to create an
+R2 bucket unless both `ARCHITECTURE_COSMOS_ENABLE_R2=1` and
+`--i-understand-r2-costs` are supplied.
 
 If Architecture Cosmos later needs collaborative editing, permissions, and a rich admin UI, Supabase can still be introduced. For now, D1 + R2 is the simplest fit because the site is already on Cloudflare.
 
@@ -168,7 +172,7 @@ Each generated model should have:
 
 1. Keep the static site on local JSON while the schema stabilizes.
 2. Create a D1 database in Cloudflare when ready. Completed for preview as `architecture-cosmos-preview` on 2026-05-18.
-3. Create an R2 bucket for media/model assets only when real asset uploads are ready; R2 is currently skipped to avoid unnecessary storage/billing setup.
+3. Keep R2 disabled while media/model policy is open; only a local object manifest is generated.
 4. Import current `data/mock-entries.json` into D1 using a migration script. Completed for the preview database on 2026-05-18.
 5. Add read-only Worker API endpoints or migrate to OpenNext only when dynamic reads are required.
 6. Add admin/write flows later; do not start with editing UI before the schema is proven.
@@ -186,6 +190,7 @@ The repository now includes a local archive tool:
 ```bash
 npm run archive:validate
 npm run archive:export
+npm run archive:d1-preview
 ```
 
 `archive:validate` checks local entries, relations, media slots, model metadata, analysis layers, tags, and future D1 enum compatibility. `archive:export` writes a local SQL preview to `out/archive-d1-import.sql`.

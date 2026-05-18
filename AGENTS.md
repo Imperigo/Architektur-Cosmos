@@ -32,9 +32,12 @@ CF detects the push and rebuilds within 1–3 minutes.
 - **Don't change `wrangler.jsonc`** unless you understand the static-assets
   deploy mode. Adding a `main` entry switches the project to a
   full Worker deploy and was the source of a deploy failure on 2026-05-18.
-- **Don't add DB code.** Future DB integration is planned but the user
-  will explicitly initiate it. For now: data comes from
-  `data/mock-entries.json`.
+- **Database remains static-facing.** D1 preview scripts and schema are allowed,
+  but the public frontend still reads `data/mock-entries.json`. Do not add live
+  D1/R2 bindings, API routes, auth, CMS, or backend reads unless explicitly
+  requested.
+- **R2 is cost-guarded.** Do not create buckets or upload assets. R2 requires
+  both `ARCHITECTURE_COSMOS_ENABLE_R2=1` and `--i-understand-r2-costs`.
 
 ## Soft preferences
 

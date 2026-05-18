@@ -11,6 +11,9 @@
     "archive:validate": "node scripts/archive-d1-tools.mjs validate",
     "archive:export": "node scripts/archive-d1-tools.mjs export-sql",
     "archive:smoke": "node scripts/archive-d1-tools.mjs smoke-test",
+    "archive:d1-preview": "node scripts/cloudflare-archive-preview.mjs",
+    "archive:d1-smoke-remote": "node scripts/cloudflare-archive-preview.mjs --smoke-only",
+    "archive:r2-plan": "node scripts/archive-d1-tools.mjs export-r2-manifest",
     "archive:r2-manifest": "node scripts/archive-d1-tools.mjs export-r2-manifest",
     "archive:cloudflare-preview": "node scripts/cloudflare-archive-preview.mjs"
   },

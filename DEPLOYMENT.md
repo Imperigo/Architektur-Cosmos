@@ -111,12 +111,14 @@ No environment variables needed currently.
 
 ## Future: DB / Archive Integration
 
-The preferred low-cost database path is now Cloudflare-native:
+The preferred low-cost database path is now Cloudflare-native, but D1 and R2
+are separate phases:
 
 1. **Database**: Cloudflare D1 for structured metadata, relations, tags, sources,
    analysis records, and 3D model metadata.
-2. **Asset storage**: Cloudflare R2 for images, plans, PDFs, source scans,
+2. **Asset storage**: Cloudflare R2 later for images, plans, PDFs, source scans,
    textures, `.glb` / `.gltf` / `.usdz` models, and large analysis JSON files.
+   R2 is skipped and cost-guarded until real upload policy is ready.
 3. **Schema contract**: `docs/database-architecture.md` and
    `schema/architecture-cosmos-d1.sql`.
 4. **Frontend pattern**: keep static JSON as the local fallback while the schema
@@ -126,8 +128,9 @@ The preferred low-cost database path is now Cloudflare-native:
    OpenNext.js.
 
 **For now: do not add live D1/R2 bindings, API routes, auth, CMS, or backend
-code.** Stay with static + mock JSON until the user explicitly asks to activate
-the database.
+code.** D1 can be used as a preview/import target through scripts, while the
+website stays static + mock JSON until the user explicitly asks to activate live
+database reads.
 
 ---
 
