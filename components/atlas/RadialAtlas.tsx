@@ -410,11 +410,16 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
               ) : null}
 
               {displayNodes.map((node) => {
+                const isSourceLensMatch = isSourceLensEntry(node.entry, activeSourceLens);
+                const nodeOpacity = node.opacity * styleLensOpacity(node, activeStyleLens) * sourceLensOpacity(node, activeSourceLens);
+                const displayOpacity = isSourceLensMatch ? Math.max(0.94, nodeOpacity) : nodeOpacity;
+
                 return (
                 <g
                   key={node.entry.id}
                   className="node-focus-drift"
-                  opacity={node.opacity * styleLensOpacity(node, activeStyleLens) * sourceLensOpacity(node, activeSourceLens)}
+                  opacity={displayOpacity}
+                  style={{ pointerEvents: activeSourceLens && !isSourceLensMatch ? 'none' : 'auto' }}
                 >
                   <SemanticEntryNode
                     entry={node.entry}
@@ -430,9 +435,9 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
                     scale={1}
                     isSelected={activeSelectedEntryId === node.entry.id}
                     isHovered={hoveredEntryId === node.entry.id}
-                    nodeRadius={node.size}
-                    showLabel={false}
-                    styleLensActive={activeStyleLens === node.entry.style_sector}
+                    nodeRadius={isSourceLensMatch ? Math.max(node.size, 13) : node.size}
+                    showLabel={isSourceLensMatch}
+                    styleLensActive={activeStyleLens === node.entry.style_sector || isSourceLensMatch}
                     driftX={node.driftX}
                     driftY={node.driftY}
                     driftDelay={node.driftDelay}
@@ -569,7 +574,7 @@ function sourceLensOpacity(node: WormholeEntryNode, activeSourceLens: SourceLens
   if (!activeSourceLens) return 1;
 
   if (isSourceLensEntry(node.entry, activeSourceLens)) return 1;
-  return 0.18 + node.closeness * 0.16;
+  return 0.035;
 }
 
 function isSourceLensEntry(entry: Entry, activeSourceLens: SourceLens) {
@@ -685,6 +690,7 @@ function LensAccess({ isOpen, onToggle }: { isOpen: boolean; onToggle: () => voi
         onToggle();
       }}
     >
+      <rect x="-8" y="-8" width="104" height="43" rx="20" fill="#050505" opacity="0.001" />
       <rect width="86" height="27" rx="13.5" fill="#050505" stroke={isOpen ? '#00e7ff' : '#f7f7f4'} strokeWidth="0.62" opacity="0.78" />
       <circle cx="17" cy="13.5" r="5.2" fill="none" stroke={isOpen ? '#00e7ff' : '#f7f7f4'} strokeWidth="0.72" />
       <path d="M 10.8 13.5 H 23.2 M 17 7.3 V 19.7" stroke={isOpen ? '#00e7ff' : '#f7f7f4'} strokeWidth="0.56" opacity="0.72" />
@@ -717,7 +723,7 @@ function FilterPanel({
   onDismiss: () => void;
 }) {
   const x = 34;
-  const y = 108;
+  const y = 118;
   const tabs = [
     { id: 'all', label: 'ALLE', active: !activeStyleLens && !activeSourceLens && !showRelations, width: 52, onClick: onResetLenses },
     ...styleSectors.map((sector) => ({
@@ -827,10 +833,10 @@ function DatabaseAccess({ isOpen, onToggle }: { isOpen: boolean; onToggle: () =>
 function BrandChrome() {
   return (
     <g className="brand-chrome" pointerEvents="none">
-      <text x="34" y="38" fill="#f7f7f4" fontSize="11" fontWeight="600" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.28em" opacity="0.72">
+      <text x={atlasSize.cx} y="32" textAnchor="middle" fill="#f7f7f4" fontSize="12" fontWeight="650" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.3em" opacity="0.76">
         ARCHITECTURE COSMOS
       </text>
-      <text x={atlasSize.width - 34} y="38" textAnchor="end" fill="#c7c7c2" fontSize="9" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.22em" opacity="0.62">
+      <text x={atlasSize.cx} y="49" textAnchor="middle" fill="#c7c7c2" fontSize="7" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.18em" opacity="0.52">
         MADE BY ANDRIN BAUMANN
       </text>
     </g>
@@ -884,9 +890,6 @@ function IntroGate({ state, onStart }: { state: IntroState; onStart: () => void 
       <span className="block">
         <span className="intro-title-main block text-[clamp(2.4rem,7vw,6.8rem)] font-semibold uppercase tracking-[0.18em] text-[#f7f7f4]">
           architecture cosmos
-        </span>
-        <span className="intro-title-byline mt-4 block text-[clamp(0.7rem,1.5vw,1rem)] uppercase tracking-[0.42em] text-neutral-300">
-          made by andrin
         </span>
       </span>
     </button>
