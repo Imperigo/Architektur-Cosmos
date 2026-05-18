@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState, type MouseEvent as ReactMouseEvent, type PointerEvent, type RefObject, type WheelEvent as ReactWheelEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type DragEvent, type MouseEvent as ReactMouseEvent, type PointerEvent, type RefObject, type WheelEvent as ReactWheelEvent } from 'react';
 import { ProjectDetailCard } from '@/components/atlas/ProjectDetailCard';
 import { RelationOverlay } from '@/components/atlas/RelationOverlay';
 import { SemanticEntryNode } from '@/components/atlas/SemanticEntryNode';
@@ -43,6 +43,13 @@ type EntryDraft = {
   full_description: string;
   copyright_status: 'needs_permission' | 'licensed' | 'public_domain' | 'own_work';
 };
+type IntakeFile = {
+  id: string;
+  name: string;
+  size: number;
+  kind: 'pdf' | 'image' | 'plan' | 'video' | 'model' | 'text' | 'other';
+  status: 'queued' | 'classified';
+};
 
 const initialEntryDraft: EntryDraft = {
   title: '',
@@ -81,6 +88,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   const [showFilterPanel, setShowFilterPanel] = useState(false);
   const [showDatabasePanel, setShowDatabasePanel] = useState(false);
   const [entryDraft, setEntryDraft] = useState<EntryDraft>(initialEntryDraft);
+  const [intakeFiles, setIntakeFiles] = useState<IntakeFile[]>([]);
   const motionRef = useRef({
     currentTravel: 0,
     targetTravel: 0,
@@ -512,7 +520,9 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
               relations={relations}
               selectedEntry={selectedEntry}
               draft={entryDraft}
+              intakeFiles={intakeFiles}
               onDraftChange={setEntryDraft}
+              onIntakeFilesChange={setIntakeFiles}
               onDismiss={() => setShowDatabasePanel(false)}
             />
           ) : null}
@@ -881,27 +891,33 @@ function IntroGate({ state, onStart }: { state: IntroState; onStart: () => void 
   );
 }
 
-type DatabaseTab = 'overview' | 'entries' | 'sources' | 'media' | 'models' | 'analysis' | 'relations' | 'draft';
+type DatabaseTab = 'overview' | 'intake' | 'entries' | 'sources' | 'media' | 'models' | 'analysis' | 'relations' | 'draft';
 
 function DatabaseArchivePanel({
   entries,
   relations,
   selectedEntry,
   draft,
+  intakeFiles,
   onDraftChange,
+  onIntakeFilesChange,
   onDismiss
 }: {
   entries: Entry[];
   relations: EntryRelation[];
   selectedEntry: Entry | null;
   draft: EntryDraft;
+  intakeFiles: IntakeFile[];
   onDraftChange: (draft: EntryDraft) => void;
+  onIntakeFilesChange: (files: IntakeFile[]) => void;
   onDismiss: () => void;
 }) {
-  const [activeTab, setActiveTab] = useState<DatabaseTab>(selectedEntry ? 'entries' : 'overview');
+  const [activeTab, setActiveTab] = useState<DatabaseTab>(selectedEntry ? 'entries' : 'intake');
   const x = atlasSize.width - 414;
   const y = atlasSize.height - 536;
   const preview = draftToEntryPreview(draft);
+  const intakeSlug = preview.slug;
+  const intakeStats = summarizeIntakeFiles(intakeFiles);
   const pilotEntry = archivePreview.entries[0];
   const currentEntry = selectedEntry ?? entries.find((entry) => entry.id === pilotEntry.id) ?? null;
   const currentProfile = currentEntry?.database_profile;
@@ -915,6 +931,7 @@ function DatabaseArchivePanel({
   ];
   const tabs: Array<{ id: DatabaseTab; label: string }> = [
     { id: 'overview', label: 'Overview' },
+    { id: 'intake', label: 'Intake' },
     { id: 'entries', label: 'Entries' },
     { id: 'sources', label: 'Sources' },
     { id: 'media', label: 'Media' },
@@ -928,6 +945,25 @@ function DatabaseArchivePanel({
     onDraftChange({ ...draft, [key]: value });
   }
 
+  function appendFiles(files: FileList | File[]) {
+    const nextFiles = Array.from(files).map((file) => ({
+      id: `${file.name}-${file.size}-${file.lastModified}`,
+      name: file.name,
+      size: file.size,
+      kind: classifyIntakeFile(file.name),
+      status: 'classified' as const
+    }));
+    const merged = new Map(intakeFiles.map((file) => [file.id, file]));
+    nextFiles.forEach((file) => merged.set(file.id, file));
+    onIntakeFilesChange([...merged.values()]);
+  }
+
+  function handleDrop(event: DragEvent<HTMLDivElement>) {
+    event.preventDefault();
+    event.stopPropagation();
+    appendFiles(event.dataTransfer.files);
+  }
+
   return (
     <foreignObject x={x} y={y} width="382" height="468" className="database-draft database-archive-panel" pointerEvents="auto">
       <div
@@ -939,7 +975,7 @@ function DatabaseArchivePanel({
         <div className="mb-3 flex items-start justify-between gap-3">
           <div>
             <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#00e7ff]">Architecture Cosmos Database</div>
-            <div className="mt-1 text-[10px] uppercase tracking-[0.14em] text-[#b8b8b2]">Cloud D1 preview ready / static frontend</div>
+            <div className="mt-1 text-[10px] uppercase tracking-[0.14em] text-[#b8b8b2]">Local intake console / static frontend</div>
           </div>
           <div className="flex gap-1.5">
             <a className="border border-[#00e7ff]/70 px-2 py-1 text-[9px] uppercase tracking-[0.12em] text-[#00e7ff]" href="/archive/">
@@ -994,6 +1030,92 @@ function DatabaseArchivePanel({
                 ]}
               />
               <ArchiveList title="Next Database Steps" items={['Keep D1 preview in sync with archive:d1-preview', 'Use D1 for validation and query design, not live reads yet', 'Keep R2 uploads blocked until media/model upload policy is ready', 'Add read-only Worker API only after static schema is proven']} />
+            </div>
+          ) : null}
+
+          {activeTab === 'intake' ? (
+            <div className="space-y-3 text-[10px] leading-relaxed text-[#d9d9d2]">
+              <div
+                className="database-dropzone"
+                onDragOver={(event) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                }}
+                onDrop={handleDrop}
+              >
+                <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#00e7ff]">Drop source package</div>
+                <p className="mt-2 text-[10px] leading-snug text-[#c7c7c2]">
+                  PDFs, scans, plans, images, video, text notes and model files. This browser preview classifies files only; real capture still runs locally from archive-inbox.
+                </p>
+                <label className="mt-3 inline-flex cursor-none items-center border border-[#00e7ff]/60 px-3 py-1.5 text-[8.5px] uppercase tracking-[0.14em] text-[#9cfff7]">
+                  Select files
+                  <input
+                    className="sr-only"
+                    type="file"
+                    multiple
+                    accept=".pdf,.txt,.md,.jpg,.jpeg,.png,.webp,.svg,.mp4,.mov,.glb,.gltf,.obj,.fbx,.ifc"
+                    onChange={(event) => {
+                      if (event.target.files) appendFiles(event.target.files);
+                      event.currentTarget.value = '';
+                    }}
+                  />
+                </label>
+              </div>
+
+              <div className="grid grid-cols-4 gap-1.5">
+                {[
+                  ['Files', intakeFiles.length],
+                  ['Sources', intakeStats.sources],
+                  ['Visual', intakeStats.visual],
+                  ['3D', intakeStats.model]
+                ].map(([label, value]) => (
+                  <div key={label} className="border border-[#f7f7f4]/14 bg-[#07181a]/70 px-2 py-1.5">
+                    <div className="text-[13px] font-semibold leading-none text-[#f7f7f4]">{value}</div>
+                    <div className="mt-1 truncate text-[7.5px] uppercase tracking-[0.12em] text-[#b8b8b2]">{label}</div>
+                  </div>
+                ))}
+              </div>
+
+              {intakeFiles.length ? (
+                <div className="space-y-1.5">
+                  {intakeFiles.map((file) => (
+                    <div key={file.id} className="grid grid-cols-[62px_minmax(0,1fr)_58px] gap-2 border border-[#f7f7f4]/12 bg-[#07181a]/60 px-2 py-1.5">
+                      <span className="text-[8px] uppercase tracking-[0.13em] text-[#00e7ff]">{file.kind}</span>
+                      <span className="truncate text-[9.5px] text-[#f7f7f4]">{file.name}</span>
+                      <span className="text-right text-[8px] text-[#8d8d87]">{formatBytes(file.size)}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="border border-[#f7f7f4]/12 bg-[#050505]/45 p-2 text-[#b8b8b2]">
+                  No files staged yet. For the real local run, create archive-inbox/{intakeSlug} and place the same files there.
+                </p>
+              )}
+
+              <ArchiveList
+                title="Local automation sequence"
+                items={[
+                  `mkdir -p archive-inbox/${intakeSlug}`,
+                  `npm run archive:capture -- --input archive-inbox/${intakeSlug} --title "${preview.title}"`,
+                  `npm run archive:model-plan -- --entry ${intakeSlug}`,
+                  `npm run archive:model-generate -- --entry ${intakeSlug}`,
+                  'future: run Gaussian splat generation after own/licensed video frames are staged'
+                ]}
+              />
+
+              <div className="grid grid-cols-3 gap-1.5">
+                <IntakeAction label="Capture" ready={intakeFiles.length > 0} />
+                <IntakeAction label="3D Plan" ready={intakeStats.sources + intakeStats.visual > 1} />
+                <IntakeAction label="Splat" ready={intakeStats.video > 0 || intakeStats.image >= 20} />
+              </div>
+
+              <button
+                type="button"
+                className="w-full border border-[#f7f7f4]/25 px-2 py-1.5 text-[8.5px] uppercase tracking-[0.14em] text-[#d9d9d2]"
+                onClick={() => onIntakeFilesChange([])}
+              >
+                Clear staged files
+              </button>
             </div>
           ) : null}
 
@@ -1109,7 +1231,8 @@ function DatabaseArchivePanel({
                 title="Local next commands"
                 items={[
                   `npm run archive:draft -- --input data/drafts/${preview.slug}.json`,
-                  `npm run archive:asset-manifest -- --entry ${preview.slug} --copyright ${draft.copyright_status}`
+                  `npm run archive:asset-manifest -- --entry ${preview.slug} --copyright ${draft.copyright_status}`,
+                  `npm run archive:model-plan -- --entry ${preview.slug}`
                 ]}
               />
               <pre className="mt-3 max-h-[168px] overflow-y-auto whitespace-pre-wrap border border-[#00e7ff]/25 bg-black/35 p-2 text-[9px] leading-snug text-[#c9fff4]">
@@ -1147,6 +1270,15 @@ function ArchiveList({ title, items }: { title: string; items: string[] }) {
   );
 }
 
+function IntakeAction({ label, ready }: { label: string; ready: boolean }) {
+  return (
+    <div className={`border px-2 py-1.5 ${ready ? 'border-[#00e7ff]/55 bg-[#061719]' : 'border-[#f7f7f4]/14 bg-[#050505]/55'}`}>
+      <div className={`text-[10px] font-semibold uppercase tracking-[0.12em] ${ready ? 'text-[#00e7ff]' : 'text-[#8d8d87]'}`}>{label}</div>
+      <div className="mt-1 text-[7.5px] uppercase tracking-[0.1em] text-[#b8b8b2]">{ready ? 'ready' : 'needs input'}</div>
+    </div>
+  );
+}
+
 function ArchiveCards({ items }: { items: Array<{ title: string; meta: string; body: string }> }) {
   return (
     <div className="space-y-2">
@@ -1159,6 +1291,38 @@ function ArchiveCards({ items }: { items: Array<{ title: string; meta: string; b
       ))}
     </div>
   );
+}
+
+function classifyIntakeFile(name: string): IntakeFile['kind'] {
+  const normalized = name.toLowerCase();
+  if (normalized.endsWith('.pdf')) return 'pdf';
+  if (/\.(jpg|jpeg|png|webp|tif|tiff)$/i.test(normalized)) return normalized.includes('plan') || normalized.includes('section') || normalized.includes('schnitt') || normalized.includes('grundriss') ? 'plan' : 'image';
+  if (/\.(svg|dwg|dxf)$/i.test(normalized)) return 'plan';
+  if (/\.(mp4|mov|m4v|avi)$/i.test(normalized)) return 'video';
+  if (/\.(glb|gltf|obj|fbx|ifc|blend)$/i.test(normalized)) return 'model';
+  if (/\.(txt|md|rtf|doc|docx)$/i.test(normalized)) return 'text';
+  return 'other';
+}
+
+function summarizeIntakeFiles(files: IntakeFile[]) {
+  return files.reduce(
+    (summary, file) => {
+      if (file.kind === 'pdf' || file.kind === 'text') summary.sources += 1;
+      if (file.kind === 'image') summary.image += 1;
+      if (file.kind === 'video') summary.video += 1;
+      if (file.kind === 'plan') summary.plan += 1;
+      if (file.kind === 'model') summary.model += 1;
+      if (file.kind === 'image' || file.kind === 'plan' || file.kind === 'video') summary.visual += 1;
+      return summary;
+    },
+    { sources: 0, image: 0, plan: 0, video: 0, visual: 0, model: 0 }
+  );
+}
+
+function formatBytes(bytes: number) {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
+  return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
 }
 
 function sourceCardsForEntry(entry: Entry) {

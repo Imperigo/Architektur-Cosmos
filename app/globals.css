@@ -706,6 +706,24 @@ body:has(.entry-page) {
   filter: drop-shadow(0 0 20px rgb(0 231 255 / 12%));
 }
 
+.database-dropzone {
+  border: 1px dashed rgb(0 231 255 / 58%);
+  background:
+    linear-gradient(135deg, rgb(0 231 255 / 7%), transparent 42%),
+    rgb(5 5 5 / 62%);
+  padding: 14px;
+  min-height: 118px;
+  transition: border-color 140ms ease, background 140ms ease, transform 140ms ease;
+}
+
+.database-dropzone:hover {
+  border-color: rgb(156 255 247 / 88%);
+  background:
+    linear-gradient(135deg, rgb(0 231 255 / 12%), transparent 46%),
+    rgb(5 5 5 / 72%);
+  transform: translateY(-1px);
+}
+
 .brand-chrome {
   mix-blend-mode: screen;
 }
