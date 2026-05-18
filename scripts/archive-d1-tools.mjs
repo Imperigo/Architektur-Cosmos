@@ -265,7 +265,6 @@ function buildD1ImportSql({ entries, relations }) {
     '-- Generated from data/mock-entries.json and data/relations.json.',
     '-- This file is local output only. Review before applying to Cloudflare D1.',
     'PRAGMA foreign_keys = ON;',
-    'BEGIN TRANSACTION;',
     ...deleteExistingRowsStatements()
   ];
 
@@ -349,7 +348,7 @@ function buildD1ImportSql({ entries, relations }) {
     }));
   });
 
-  lines.push('COMMIT;', '');
+  lines.push('');
   return lines.join('\n');
 }
 
