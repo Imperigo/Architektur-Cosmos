@@ -413,6 +413,27 @@
     "description": "Modern domesticity becomes a field of movement, curtains, views, and flexible rooms."
   },
   {
+    "id": "villa-noailles-to-villa-savoye",
+    "source_entry_id": "villa-noailles",
+    "target_entry_id": "villa-savoye",
+    "relation_type": "typological_reference",
+    "description": "Both villas turn domestic life into modern spatial experimentation, but Noailles emphasizes movement and leisure while Savoye crystallizes a manifesto."
+  },
+  {
+    "id": "villa-noailles-to-bauhaus",
+    "source_entry_id": "villa-noailles",
+    "target_entry_id": "bauhaus-dessau",
+    "relation_type": "context",
+    "description": "Domestic avant-garde culture and institutional modern pedagogy share a belief in modern life as designed environment."
+  },
+  {
+    "id": "villa-noailles-to-narkomfin",
+    "source_entry_id": "villa-noailles",
+    "target_entry_id": "narkomfin-housing",
+    "relation_type": "context",
+    "description": "The private leisure villa and collective housing prototype expose different social programs within early modern domestic experimentation."
+  },
+  {
     "id": "tugendhat-to-unite",
     "source_entry_id": "haus-tugendhat",
     "target_entry_id": "unite-habitation",

@@ -3499,36 +3499,221 @@
     "themes": [
       "thing-modernity",
       "movement",
-      "domesticity"
+      "domesticity",
+      "modern villa",
+      "leisure",
+      "garden-room",
+      "avant-garde domesticity",
+      "cubist garden"
     ],
     "short_description": "Villa Noailles ist im PDF-Framework als thing-modernity / movement verortet und bildet einen wichtigen Knoten der Architektur- und Stadtgeschichte.",
     "source_quality": "lecture_pdf",
-    "one_sentence": "Villa Noailles ist als Bauwerk in Hyeres, France im Jahr 1928 im Architecture Cosmos verortet und verknuepft thing modernity, movement, domesticity.",
-    "full_description": "Villa Noailles ist im PDF-Framework als thing-modernity / movement verortet und bildet einen wichtigen Knoten der Architektur- und Stadtgeschichte. Der Eintrag wird im Atlas als Bauwerk gelesen und gehoert zur Wissensspur Architekturgeschichte ETH, 03 Architekturgeschichte 3_4.pdf, Layer architecture history 3 4. Autorenschaft / Quelle: Robert Mallet-Stevens, Gabriel Guevrekian. Seine Filterebene verbindet thing modernity, movement, domesticity mit Jahr, Stilsektor und Relationennetz; spaeter koennen echte Fotos, Plaene, Schnitte, Quellen und Modelle direkt aus der Datenbank angeschlossen werden.",
+    "one_sentence": "Villa Noailles ist als Bauwerk in Hyeres, France im Jahr 1928 im Architecture Cosmos verortet und verknuepft moderne Villa, Bewegung, Freizeit, kubistischen Garten und avantgardistische Wohnkultur.",
+    "full_description": "Villa Noailles verbindet moderne Wohnarchitektur, mediterrane Topografie, Kunstsammlung, Gartenraum und avantgardistische Lebensform. Mallet-Stevens entwickelt das Haus nicht als ein einzelnes manifestohaftes Objekt, sondern als gegliedertes Ensemble aus Terrassen, Wegen, Licht, Bewegung und domestic lifestyle. Der kubistische Garten von Gabriel Guevrekian erweitert die Architektur in ein abstraktes Freiraumdiagramm. Im Architecture Cosmos bildet Villa Noailles den dritten Pol des modernen Villenclusters neben Villa Savoye und Haus Tugendhat: weniger Fuenf-Punkte-Manifest oder Materialraum, sondern ein Netzwerk aus Bewegung, Freizeit, Kunst, Landschaft und frueher moderner Wohninszenierung.",
     "media": [
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Villa Noailles / thing-modernity-movement"
+        "placeholder": "Aussenansicht / Villa Noailles / Terrassen, Hanglage, kubische Volumen und mediterranes Licht",
+        "credit": "placeholder / rights pending"
       },
       {
         "type": "interior",
         "label": "Innenraum",
-        "placeholder": "Innenraum / Villa Noailles / thing-modernity-movement"
+        "placeholder": "Innenraum / Villa Noailles / moderne Wohnkultur, Kunstsammlung, Licht und Bewegung",
+        "credit": "placeholder / rights pending"
       },
       {
         "type": "section",
         "label": "Schnitt",
-        "placeholder": "Schnitt / Villa Noailles / thing-modernity-movement"
+        "placeholder": "Schnitt / Villa Noailles / Hang, Terrassen, Wege und gestaffelte Wohnzonen",
+        "credit": "placeholder / drawing source pending"
       },
       {
         "type": "plan",
         "label": "Grundriss",
-        "placeholder": "Grundriss / Villa Noailles / thing-modernity-movement"
+        "placeholder": "Grundriss / Villa Noailles / Zimmersequenzen, Terrassen, Gartenbezug und Bewegungsachsen",
+        "credit": "placeholder / drawing source pending"
       }
     ],
     "source_documents": [
       "03 Architekturgeschichte 3_4.pdf"
+    ],
+    "database_tags": [
+      "source:lecture-pdf",
+      "course:architekturgeschichte-eth",
+      "typology:modern-villa",
+      "typology:artist-house",
+      "spatial:movement-sequence",
+      "spatial:terrace-system",
+      "landscape:cubist-garden",
+      "theme:avant-garde-domesticity",
+      "theme:leisure",
+      "period:early-modernism",
+      "analysis:model-ready"
+    ],
+    "database_profile": {
+      "status": "reviewed",
+      "r2_prefix": "entries/villa-noailles",
+      "source_count": 1,
+      "media_count": 4,
+      "model_count": 6,
+      "analysis_count": 6,
+      "tag_count": 11
+    },
+    "model_assets": [
+      {
+        "model_type": "mass_model",
+        "title": "Villa Noailles terraced massing model",
+        "r2_key": "entries/villa-noailles/models/mass.glb",
+        "format": "glb",
+        "lod_level": "preview",
+        "source_basis": "Stepped cubic volumes, terrace system, hillside placement and garden-room relation.",
+        "generation_method": "procedural",
+        "review_status": "reviewed",
+        "confidence_score": 0.66
+      },
+      {
+        "model_type": "low_poly_model",
+        "title": "Villa Noailles low-poly atlas preview",
+        "r2_key": "entries/villa-noailles/models/low.glb",
+        "format": "glb",
+        "lod_level": "low",
+        "source_basis": "Simplified relation of house volumes, terraces, paths and cubist garden.",
+        "generation_method": "procedural",
+        "review_status": "draft",
+        "confidence_score": 0.54
+      },
+      {
+        "model_type": "full_model",
+        "title": "Villa Noailles complete architectural model",
+        "r2_key": "entries/villa-noailles/models/full.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "Requires verified plans, sections, garden drawings and photographic sequence before release.",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.42
+      },
+      {
+        "model_type": "structure_model",
+        "title": "Villa Noailles structural and terrace model",
+        "r2_key": "entries/villa-noailles/models/structure.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "Analytical reading of stacked volumes, terraces, retaining conditions and room blocks.",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.42
+      },
+      {
+        "model_type": "tectonic_model",
+        "title": "Villa Noailles movement and garden tectonic model",
+        "r2_key": "entries/villa-noailles/models/tectonic.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "Layer model separating house blocks, terraces, circulation paths, garden surfaces and light courts.",
+        "generation_method": "ai_assisted",
+        "review_status": "draft",
+        "confidence_score": 0.5
+      },
+      {
+        "model_type": "site_model",
+        "title": "Villa Noailles Hyeres hillside site model",
+        "r2_key": "entries/villa-noailles/models/site.glb",
+        "format": "glb",
+        "lod_level": "preview",
+        "source_basis": "Hillside, Mediterranean exposure, terrace landscape and Guevrekian garden require verified source geometry.",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.38
+      }
+    ],
+    "analysis_layers": [
+      {
+        "analysis_type": "structure",
+        "summary": "The structural reading treats Villa Noailles as a stepped system of cubic blocks, terraces and retaining relations rather than as a single pure object.",
+        "data": {
+          "primary_system": "terraced_cubic_ensemble",
+          "key_elements": [
+            "cubic_room_blocks",
+            "terraces",
+            "hillside_retaining_logic",
+            "garden_room"
+          ]
+        },
+        "r2_key": "entries/villa-noailles/analysis/structure.json",
+        "review_status": "needs_source"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "The tectonic reading separates block volumes, terraces, roof planes, circulation paths, garden geometry and light surfaces.",
+        "data": {
+          "layers": [
+            "white_volumes",
+            "terrace_planes",
+            "roof_surfaces",
+            "circulation_paths",
+            "cubist_garden",
+            "light_courts"
+          ]
+        },
+        "r2_key": "entries/villa-noailles/analysis/tectonics.json",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "spatial_order",
+        "summary": "Spatial order is episodic and kinetic: the villa is experienced through rooms, terraces, stairs, views and garden fragments rather than one continuous free plan.",
+        "data": {
+          "order": "episodic_movement_sequence",
+          "anchors": [
+            "terrace",
+            "stair",
+            "garden",
+            "art_room",
+            "view"
+          ]
+        },
+        "review_status": "reviewed"
+      },
+      {
+        "analysis_type": "landscape_system",
+        "summary": "The Guevrekian garden and hillside terraces turn the house into a constructed landscape of leisure, abstraction and viewpoint.",
+        "data": {
+          "landscape_elements": [
+            "cubist_garden",
+            "terraces",
+            "hillside",
+            "mediterranean_light"
+          ]
+        },
+        "review_status": "reviewed"
+      },
+      {
+        "analysis_type": "typology",
+        "summary": "Villa Noailles mutates the modern villa into an artist-house and leisure machine, less doctrinal than Villa Savoye and more programmatically dispersed.",
+        "data": {
+          "base_typology": "villa",
+          "mutation": "artist_leisure_house",
+          "comparison": "villa_savoye_and_haus_tugendhat"
+        },
+        "review_status": "reviewed"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "summary": "Suggested filters: modern villa, avant-garde domesticity, movement sequence, terrace system, cubist garden, leisure, artist house, early modernism.",
+        "data": {
+          "primary_filters": [
+            "modern_villa",
+            "movement",
+            "terrace",
+            "cubist_garden",
+            "leisure"
+          ],
+          "model_readiness": "pilot_ready_needs_verified_sources"
+        },
+        "review_status": "reviewed"
+      }
     ]
   },
   {

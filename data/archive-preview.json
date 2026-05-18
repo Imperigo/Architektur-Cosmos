@@ -12,6 +12,20 @@
   },
   "entries": [
     {
+      "id": "villa-noailles",
+      "slug": "villa-noailles",
+      "title": "Villa Noailles",
+      "entry_type": "building",
+      "year_start": 1928,
+      "year_end": null,
+      "authors_json": "[\"Robert Mallet-Stevens\",\"Gabriel Guevrekian\"]",
+      "city": "Hyeres",
+      "country": "France",
+      "style_sector": "modern_architecture",
+      "status": "reviewed",
+      "r2_prefix": "entries/villa-noailles"
+    },
+    {
       "id": "haus-tugendhat",
       "slug": "haus-tugendhat",
       "title": "Haus Tugendhat",
@@ -55,6 +69,18 @@
     }
   ],
   "entry_sources": [
+    {
+      "id": "villa-noailles-source-document-1",
+      "entry_id": "villa-noailles",
+      "source_type": "lecture_pdf",
+      "title": "03 Architekturgeschichte 3_4.pdf",
+      "author": null,
+      "url": null,
+      "document_name": "03 Architekturgeschichte 3_4.pdf",
+      "page_reference": null,
+      "reliability_level": "lecture_reference",
+      "notes": "Imported from source_documents for Villa Noailles."
+    },
     {
       "id": "haus-tugendhat-source-document-1",
       "entry_id": "haus-tugendhat",
@@ -141,6 +167,58 @@
     }
   ],
   "entry_media": [
+    {
+      "id": "villa-noailles-media-exterior-1",
+      "entry_id": "villa-noailles",
+      "source_id": "villa-noailles-source-document-1",
+      "media_type": "exterior",
+      "title": "Aussenansicht",
+      "caption": "Aussenansicht / Villa Noailles / Terrassen, Hanglage, kubische Volumen und mediterranes Licht",
+      "r2_key": "entries/villa-noailles/media/exterior-01.placeholder.json",
+      "external_url": null,
+      "credit": "placeholder / rights pending",
+      "copyright_status": "placeholder",
+      "sort_order": 1
+    },
+    {
+      "id": "villa-noailles-media-interior-1",
+      "entry_id": "villa-noailles",
+      "source_id": "villa-noailles-source-document-1",
+      "media_type": "interior",
+      "title": "Innenraum",
+      "caption": "Innenraum / Villa Noailles / moderne Wohnkultur, Kunstsammlung, Licht und Bewegung",
+      "r2_key": "entries/villa-noailles/media/interior-01.placeholder.json",
+      "external_url": null,
+      "credit": "placeholder / rights pending",
+      "copyright_status": "placeholder",
+      "sort_order": 2
+    },
+    {
+      "id": "villa-noailles-media-section-1",
+      "entry_id": "villa-noailles",
+      "source_id": "villa-noailles-source-document-1",
+      "media_type": "section",
+      "title": "Schnitt",
+      "caption": "Schnitt / Villa Noailles / Hang, Terrassen, Wege und gestaffelte Wohnzonen",
+      "r2_key": "entries/villa-noailles/media/section-01.placeholder.json",
+      "external_url": null,
+      "credit": "placeholder / drawing source pending",
+      "copyright_status": "placeholder",
+      "sort_order": 3
+    },
+    {
+      "id": "villa-noailles-media-plan-1",
+      "entry_id": "villa-noailles",
+      "source_id": "villa-noailles-source-document-1",
+      "media_type": "plan",
+      "title": "Grundriss",
+      "caption": "Grundriss / Villa Noailles / Zimmersequenzen, Terrassen, Gartenbezug und Bewegungsachsen",
+      "r2_key": "entries/villa-noailles/media/plan-01.placeholder.json",
+      "external_url": null,
+      "credit": "placeholder / drawing source pending",
+      "copyright_status": "placeholder",
+      "sort_order": 4
+    },
     {
       "id": "haus-tugendhat-media-exterior-1",
       "entry_id": "haus-tugendhat",
@@ -299,6 +377,96 @@
     }
   ],
   "entry_models": [
+    {
+      "id": "villa-noailles-model-mass_model-1",
+      "entry_id": "villa-noailles",
+      "source_id": "villa-noailles-source-document-1",
+      "model_type": "mass_model",
+      "title": "Villa Noailles terraced massing model",
+      "r2_key": "entries/villa-noailles/models/mass.glb",
+      "format": "glb",
+      "lod_level": "preview",
+      "source_basis": "Stepped cubic volumes, terrace system, hillside placement and garden-room relation.",
+      "generation_method": "procedural",
+      "review_status": "reviewed",
+      "confidence_score": 0.66,
+      "file_size_bytes": null
+    },
+    {
+      "id": "villa-noailles-model-low_poly_model-2",
+      "entry_id": "villa-noailles",
+      "source_id": "villa-noailles-source-document-1",
+      "model_type": "low_poly_model",
+      "title": "Villa Noailles low-poly atlas preview",
+      "r2_key": "entries/villa-noailles/models/low.glb",
+      "format": "glb",
+      "lod_level": "low",
+      "source_basis": "Simplified relation of house volumes, terraces, paths and cubist garden.",
+      "generation_method": "procedural",
+      "review_status": "draft",
+      "confidence_score": 0.54,
+      "file_size_bytes": null
+    },
+    {
+      "id": "villa-noailles-model-full_model-3",
+      "entry_id": "villa-noailles",
+      "source_id": "villa-noailles-source-document-1",
+      "model_type": "full_model",
+      "title": "Villa Noailles complete architectural model",
+      "r2_key": "entries/villa-noailles/models/full.glb",
+      "format": "glb",
+      "lod_level": "medium",
+      "source_basis": "Requires verified plans, sections, garden drawings and photographic sequence before release.",
+      "generation_method": "source_reconstruction",
+      "review_status": "needs_source",
+      "confidence_score": 0.42,
+      "file_size_bytes": null
+    },
+    {
+      "id": "villa-noailles-model-structure_model-4",
+      "entry_id": "villa-noailles",
+      "source_id": "villa-noailles-source-document-1",
+      "model_type": "structure_model",
+      "title": "Villa Noailles structural and terrace model",
+      "r2_key": "entries/villa-noailles/models/structure.glb",
+      "format": "glb",
+      "lod_level": "medium",
+      "source_basis": "Analytical reading of stacked volumes, terraces, retaining conditions and room blocks.",
+      "generation_method": "source_reconstruction",
+      "review_status": "needs_source",
+      "confidence_score": 0.42,
+      "file_size_bytes": null
+    },
+    {
+      "id": "villa-noailles-model-tectonic_model-5",
+      "entry_id": "villa-noailles",
+      "source_id": "villa-noailles-source-document-1",
+      "model_type": "tectonic_model",
+      "title": "Villa Noailles movement and garden tectonic model",
+      "r2_key": "entries/villa-noailles/models/tectonic.glb",
+      "format": "glb",
+      "lod_level": "medium",
+      "source_basis": "Layer model separating house blocks, terraces, circulation paths, garden surfaces and light courts.",
+      "generation_method": "ai_assisted",
+      "review_status": "draft",
+      "confidence_score": 0.5,
+      "file_size_bytes": null
+    },
+    {
+      "id": "villa-noailles-model-site_model-6",
+      "entry_id": "villa-noailles",
+      "source_id": "villa-noailles-source-document-1",
+      "model_type": "site_model",
+      "title": "Villa Noailles Hyeres hillside site model",
+      "r2_key": "entries/villa-noailles/models/site.glb",
+      "format": "glb",
+      "lod_level": "preview",
+      "source_basis": "Hillside, Mediterranean exposure, terrace landscape and Guevrekian garden require verified source geometry.",
+      "generation_method": "source_reconstruction",
+      "review_status": "needs_source",
+      "confidence_score": 0.38,
+      "file_size_bytes": null
+    },
     {
       "id": "haus-tugendhat-model-mass_model-1",
       "entry_id": "haus-tugendhat",
@@ -572,6 +740,60 @@
   ],
   "entry_analysis": [
     {
+      "id": "villa-noailles-analysis-structure-1",
+      "entry_id": "villa-noailles",
+      "analysis_type": "structure",
+      "summary": "The structural reading treats Villa Noailles as a stepped system of cubic blocks, terraces and retaining relations rather than as a single pure object.",
+      "data_json": "{\"primary_system\":\"terraced_cubic_ensemble\",\"key_elements\":[\"cubic_room_blocks\",\"terraces\",\"hillside_retaining_logic\",\"garden_room\"]}",
+      "r2_key": "entries/villa-noailles/analysis/structure.json",
+      "review_status": "needs_source"
+    },
+    {
+      "id": "villa-noailles-analysis-tectonics-2",
+      "entry_id": "villa-noailles",
+      "analysis_type": "tectonics",
+      "summary": "The tectonic reading separates block volumes, terraces, roof planes, circulation paths, garden geometry and light surfaces.",
+      "data_json": "{\"layers\":[\"white_volumes\",\"terrace_planes\",\"roof_surfaces\",\"circulation_paths\",\"cubist_garden\",\"light_courts\"]}",
+      "r2_key": "entries/villa-noailles/analysis/tectonics.json",
+      "review_status": "draft"
+    },
+    {
+      "id": "villa-noailles-analysis-spatial_order-3",
+      "entry_id": "villa-noailles",
+      "analysis_type": "spatial_order",
+      "summary": "Spatial order is episodic and kinetic: the villa is experienced through rooms, terraces, stairs, views and garden fragments rather than one continuous free plan.",
+      "data_json": "{\"order\":\"episodic_movement_sequence\",\"anchors\":[\"terrace\",\"stair\",\"garden\",\"art_room\",\"view\"]}",
+      "r2_key": null,
+      "review_status": "reviewed"
+    },
+    {
+      "id": "villa-noailles-analysis-landscape_system-4",
+      "entry_id": "villa-noailles",
+      "analysis_type": "landscape_system",
+      "summary": "The Guevrekian garden and hillside terraces turn the house into a constructed landscape of leisure, abstraction and viewpoint.",
+      "data_json": "{\"landscape_elements\":[\"cubist_garden\",\"terraces\",\"hillside\",\"mediterranean_light\"]}",
+      "r2_key": null,
+      "review_status": "reviewed"
+    },
+    {
+      "id": "villa-noailles-analysis-typology-5",
+      "entry_id": "villa-noailles",
+      "analysis_type": "typology",
+      "summary": "Villa Noailles mutates the modern villa into an artist-house and leisure machine, less doctrinal than Villa Savoye and more programmatically dispersed.",
+      "data_json": "{\"base_typology\":\"villa\",\"mutation\":\"artist_leisure_house\",\"comparison\":\"villa_savoye_and_haus_tugendhat\"}",
+      "r2_key": null,
+      "review_status": "reviewed"
+    },
+    {
+      "id": "villa-noailles-analysis-filter_classification-6",
+      "entry_id": "villa-noailles",
+      "analysis_type": "filter_classification",
+      "summary": "Suggested filters: modern villa, avant-garde domesticity, movement sequence, terrace system, cubist garden, leisure, artist house, early modernism.",
+      "data_json": "{\"primary_filters\":[\"modern_villa\",\"movement\",\"terrace\",\"cubist_garden\",\"leisure\"],\"model_readiness\":\"pilot_ready_needs_verified_sources\"}",
+      "r2_key": null,
+      "review_status": "reviewed"
+    },
+    {
       "id": "haus-tugendhat-analysis-structure-1",
       "entry_id": "haus-tugendhat",
       "analysis_type": "structure",
@@ -841,6 +1063,12 @@
       "description": ""
     },
     {
+      "id": "tag-source-lecture-pdf",
+      "label": "Lecture Pdf",
+      "tag_group": "source",
+      "description": ""
+    },
+    {
       "id": "tag-structure-canopy-system",
       "label": "Canopy System",
       "tag_group": "structure",
@@ -883,6 +1111,12 @@
       "description": ""
     },
     {
+      "id": "tag-theme-avant-garde-domesticity",
+      "label": "Avant Garde Domesticity",
+      "tag_group": "theme",
+      "description": ""
+    },
+    {
       "id": "tag-theme-central-courtyard",
       "label": "Central Courtyard",
       "tag_group": "theme",
@@ -891,6 +1125,12 @@
     {
       "id": "tag-theme-courtyard",
       "label": "Courtyard",
+      "tag_group": "theme",
+      "description": ""
+    },
+    {
+      "id": "tag-theme-cubist-garden",
+      "label": "Cubist Garden",
       "tag_group": "theme",
       "description": ""
     },
@@ -913,6 +1153,12 @@
       "description": ""
     },
     {
+      "id": "tag-theme-domesticity",
+      "label": "Domesticity",
+      "tag_group": "theme",
+      "description": ""
+    },
+    {
       "id": "tag-theme-five-points",
       "label": "Five Points",
       "tag_group": "theme",
@@ -931,6 +1177,12 @@
       "description": ""
     },
     {
+      "id": "tag-theme-garden-room",
+      "label": "Garden Room",
+      "tag_group": "theme",
+      "description": ""
+    },
+    {
       "id": "tag-theme-hillside",
       "label": "Hillside",
       "tag_group": "theme",
@@ -939,6 +1191,12 @@
     {
       "id": "tag-theme-landscape",
       "label": "Landscape",
+      "tag_group": "theme",
+      "description": ""
+    },
+    {
+      "id": "tag-theme-leisure",
+      "label": "Leisure",
       "tag_group": "theme",
       "description": ""
     },
@@ -957,6 +1215,18 @@
     {
       "id": "tag-theme-modern-villa",
       "label": "Modern Villa",
+      "tag_group": "theme",
+      "description": ""
+    },
+    {
+      "id": "tag-theme-movement",
+      "label": "Movement",
+      "tag_group": "theme",
+      "description": ""
+    },
+    {
+      "id": "tag-theme-movement-sequence",
+      "label": "Movement Sequence",
       "tag_group": "theme",
       "description": ""
     },
@@ -997,9 +1267,21 @@
       "description": ""
     },
     {
+      "id": "tag-theme-terrace-system",
+      "label": "Terrace System",
+      "tag_group": "theme",
+      "description": ""
+    },
+    {
       "id": "tag-theme-thing-modernity",
       "label": "Thing Modernity",
       "tag_group": "theme",
+      "description": ""
+    },
+    {
+      "id": "tag-typology-artist-house",
+      "label": "Artist House",
+      "tag_group": "typology",
       "description": ""
     },
     {
@@ -1034,6 +1316,96 @@
     }
   ],
   "entry_tags": [
+    {
+      "entry_id": "villa-noailles",
+      "tag_id": "tag-style-modern-architecture",
+      "confidence_score": 1
+    },
+    {
+      "entry_id": "villa-noailles",
+      "tag_id": "tag-course-architecture-history-3-4",
+      "confidence_score": 0.86
+    },
+    {
+      "entry_id": "villa-noailles",
+      "tag_id": "tag-theme-thing-modernity",
+      "confidence_score": 0.76
+    },
+    {
+      "entry_id": "villa-noailles",
+      "tag_id": "tag-theme-movement",
+      "confidence_score": 0.76
+    },
+    {
+      "entry_id": "villa-noailles",
+      "tag_id": "tag-theme-domesticity",
+      "confidence_score": 0.76
+    },
+    {
+      "entry_id": "villa-noailles",
+      "tag_id": "tag-theme-modern-villa",
+      "confidence_score": 0.76
+    },
+    {
+      "entry_id": "villa-noailles",
+      "tag_id": "tag-theme-leisure",
+      "confidence_score": 0.92
+    },
+    {
+      "entry_id": "villa-noailles",
+      "tag_id": "tag-theme-garden-room",
+      "confidence_score": 0.76
+    },
+    {
+      "entry_id": "villa-noailles",
+      "tag_id": "tag-theme-avant-garde-domesticity",
+      "confidence_score": 0.92
+    },
+    {
+      "entry_id": "villa-noailles",
+      "tag_id": "tag-theme-cubist-garden",
+      "confidence_score": 0.92
+    },
+    {
+      "entry_id": "villa-noailles",
+      "tag_id": "tag-source-lecture-pdf",
+      "confidence_score": 0.92
+    },
+    {
+      "entry_id": "villa-noailles",
+      "tag_id": "tag-course-architekturgeschichte-eth",
+      "confidence_score": 0.92
+    },
+    {
+      "entry_id": "villa-noailles",
+      "tag_id": "tag-typology-modern-villa",
+      "confidence_score": 0.92
+    },
+    {
+      "entry_id": "villa-noailles",
+      "tag_id": "tag-typology-artist-house",
+      "confidence_score": 0.92
+    },
+    {
+      "entry_id": "villa-noailles",
+      "tag_id": "tag-theme-movement-sequence",
+      "confidence_score": 0.92
+    },
+    {
+      "entry_id": "villa-noailles",
+      "tag_id": "tag-theme-terrace-system",
+      "confidence_score": 0.92
+    },
+    {
+      "entry_id": "villa-noailles",
+      "tag_id": "tag-period-early-modernism",
+      "confidence_score": 0.92
+    },
+    {
+      "entry_id": "villa-noailles",
+      "tag_id": "tag-analysis-model-ready",
+      "confidence_score": 0.92
+    },
     {
       "entry_id": "haus-tugendhat",
       "tag_id": "tag-style-modern-architecture",
@@ -1371,6 +1743,27 @@
       "description": "Modern domesticity becomes a field of movement, curtains, views, and flexible rooms."
     },
     {
+      "id": "villa-noailles-to-villa-savoye",
+      "source_entry_id": "villa-noailles",
+      "target_entry_id": "villa-savoye",
+      "relation_type": "typological_reference",
+      "description": "Both villas turn domestic life into modern spatial experimentation, but Noailles emphasizes movement and leisure while Savoye crystallizes a manifesto."
+    },
+    {
+      "id": "villa-noailles-to-bauhaus",
+      "source_entry_id": "villa-noailles",
+      "target_entry_id": "bauhaus-dessau",
+      "relation_type": "context",
+      "description": "Domestic avant-garde culture and institutional modern pedagogy share a belief in modern life as designed environment."
+    },
+    {
+      "id": "villa-noailles-to-narkomfin",
+      "source_entry_id": "villa-noailles",
+      "target_entry_id": "narkomfin-housing",
+      "relation_type": "context",
+      "description": "The private leisure villa and collective housing prototype expose different social programs within early modern domestic experimentation."
+    },
+    {
       "id": "tugendhat-to-unite",
       "source_entry_id": "haus-tugendhat",
       "target_entry_id": "unite-habitation",
@@ -1393,6 +1786,13 @@
     }
   ],
   "asset_manifests": [
+    {
+      "id": "villa-noailles-asset-manifest",
+      "entry_id": "villa-noailles",
+      "manifest_type": "source_package",
+      "r2_prefix": "entries/villa-noailles",
+      "manifest_json": "{\"media\":4,\"source_assets\":0,\"models\":6,\"analysis_files\":6,\"status\":\"planned_r2_package_no_uploads\"}"
+    },
     {
       "id": "haus-tugendhat-asset-manifest",
       "entry_id": "haus-tugendhat",
