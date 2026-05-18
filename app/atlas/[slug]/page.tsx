@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { CSSProperties } from 'react';
+import { EntryModelViewer } from '@/components/atlas/EntryModelViewer';
 import entries from '@/data/mock-entries.json';
 import relations from '@/data/relations.json';
 import type { Entry, EntryRelation, StyleSectorId } from '@/lib/types';
@@ -66,6 +67,7 @@ export default async function EntryPage({ params }: EntryPageProps) {
   const jsonLd = entryJsonLd(entry);
   const yearLabel = formatYear(entry.year_start);
   const archiveScore = archiveReadiness(entry);
+  const publicModelUrl = publicModelPreviewUrl(entry);
 
   return (
     <main className="entry-page min-h-screen overflow-x-hidden bg-[#050505] text-[#f7f7f4]" style={{ '--entry-accent': accent } as CSSProperties}>
@@ -186,6 +188,35 @@ export default async function EntryPage({ params }: EntryPageProps) {
           <section className="grid gap-6 border-t border-white/12 py-8 lg:grid-cols-2">
             <InfoBlock title="3D Model Layers" items={(entry.model_assets ?? []).map((model) => `${model.model_type.replace(/_/g, ' ')} / ${model.review_status}`)} accent={accent} />
             <InfoBlock title="Analysis Layers" items={(entry.analysis_layers ?? []).map((analysis) => `${analysis.analysis_type.replace(/_/g, ' ')} / ${analysis.review_status}`)} accent={accent} />
+          </section>
+        ) : null}
+
+        {publicModelUrl ? (
+          <section className="border-t border-white/12 py-8">
+            <EntryModelViewer modelUrl={publicModelUrl} title={entry.title} accent={accent} />
+          </section>
+        ) : null}
+
+        {entry.analysis_layers?.length || entry.analysis_observations?.length ? (
+          <section className="grid gap-4 border-t border-white/12 py-8 lg:grid-cols-3">
+            <AnalysisCard
+              title="Tragwerk"
+              accent={accent}
+              items={analysisItems(entry, ['structure'])}
+              empty="Noch kein Tragwerkslayer."
+            />
+            <AnalysisCard
+              title="Material"
+              accent={accent}
+              items={analysisItems(entry, ['material_system', 'material_tag', 'roof_form'])}
+              empty="Noch kein Materiallayer."
+            />
+            <AnalysisCard
+              title="Tektonik"
+              accent={accent}
+              items={analysisItems(entry, ['tectonics', 'circulation', 'source_reconstruction'])}
+              empty="Noch kein Tektoniklayer."
+            />
           </section>
         ) : null}
 
@@ -422,12 +453,49 @@ function StudyCard({ title, label, body, accent }: { title: string; label: strin
   );
 }
 
+function AnalysisCard({ title, items, accent, empty }: { title: string; items: string[]; accent: string; empty: string }) {
+  return (
+    <article className="entry-study-card border border-white/14 bg-[#071315]/55 p-4">
+      <div className="text-[10px] uppercase tracking-[0.2em]" style={{ color: accent }}>{title}</div>
+      {items.length ? (
+        <div className="mt-3 space-y-2">
+          {items.slice(0, 5).map((item) => (
+            <div key={item} className="border border-white/10 bg-[#050505]/45 p-2 text-sm leading-6 text-[#d7d7d0]">
+              {item.replace(/[_:]/g, ' ')}
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p className="mt-3 text-sm leading-6 text-[#b8b8b2]">{empty}</p>
+      )}
+    </article>
+  );
+}
+
 function sourceItems(entry: Entry) {
   return [
     ...(entry.source_documents ?? []),
     ...(entry.source_url ? [entry.source_url] : []),
     ...(entry.source_assets?.length ? [`${entry.source_assets.length} source assets`] : [])
   ];
+}
+
+function analysisItems(entry: Entry, types: string[]) {
+  const layerItems = (entry.analysis_layers ?? [])
+    .filter((layer) => types.includes(layer.analysis_type))
+    .map((layer) => `${layer.analysis_type}: ${layer.summary}`);
+  const observationItems = (entry.analysis_observations ?? [])
+    .filter((observation) => types.includes(observation.analysis_type))
+    .map((observation) => {
+      const confidence = typeof observation.confidence_score === 'number' ? ` (${Math.round(observation.confidence_score * 100)}%)` : '';
+      return `${observation.label}${confidence}`;
+    });
+  return [...layerItems, ...observationItems];
+}
+
+function publicModelPreviewUrl(entry: Entry) {
+  if (entry.slug !== 'villa-savoye') return null;
+  return '/archive-models/villa-savoye/low.glb';
 }
 
 function mediaSlotNumber(type: Entry['media'][number]['type']) {
