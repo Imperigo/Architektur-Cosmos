@@ -1203,6 +1203,14 @@ function SnappedEntryOverlay({ entry, onDismiss }: { entry: Entry; onDismiss: ()
           CLOSE
         </text>
       </g>
+      <a href={`/atlas/${entry.slug}/`} className="dossier-page-link">
+        <g pointerEvents="auto" transform={`translate(${cardX} ${cardY - 34})`}>
+          <rect width="76" height="22" fill="#050505" stroke="#f7f7f4" strokeWidth="0.58" opacity="0.9" />
+          <text x="38" y="15" textAnchor="middle" fill="#f7f7f4" fontSize="8.2" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.13em">
+            OPEN PAGE
+          </text>
+        </g>
+      </a>
     </g>
   );
 }

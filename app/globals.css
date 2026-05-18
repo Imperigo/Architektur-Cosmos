@@ -28,6 +28,36 @@ body {
   -webkit-overflow-scrolling: auto;
 }
 
+html:has(.entry-page),
+body:has(.entry-page) {
+  height: auto;
+  min-height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior-y: auto;
+}
+
+body:has(.entry-page) {
+  position: static;
+  inset: auto;
+  touch-action: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.entry-page,
+.entry-page * {
+  cursor: auto !important;
+}
+
+.entry-link {
+  transition: border-color 180ms ease, color 180ms ease, background 180ms ease;
+}
+
+.entry-link:hover {
+  border-color: var(--entry-accent);
+  color: var(--entry-accent);
+}
+
 @keyframes wormhole-spoke-flow {
   from { stroke-dashoffset: 0; }
   to { stroke-dashoffset: -104; }
