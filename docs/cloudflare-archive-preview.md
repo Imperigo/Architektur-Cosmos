@@ -40,6 +40,18 @@ Only run these after Cloudflare authentication is available:
 ```bash
 export CLOUDFLARE_API_TOKEN="..."
 
+npm run archive:cloudflare-preview
+```
+
+The command above validates the local archive, exports SQL/R2 manifests, creates
+the preview D1 database and R2 bucket when missing, imports the schema/data, and
+runs smoke queries.
+
+Manual equivalent:
+
+```bash
+export CLOUDFLARE_API_TOKEN="..."
+
 npx wrangler d1 create architecture-cosmos-preview
 npx wrangler r2 bucket create architecture-cosmos-assets-preview
 

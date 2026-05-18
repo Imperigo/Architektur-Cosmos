@@ -11,7 +11,8 @@
     "archive:validate": "node scripts/archive-d1-tools.mjs validate",
     "archive:export": "node scripts/archive-d1-tools.mjs export-sql",
     "archive:smoke": "node scripts/archive-d1-tools.mjs smoke-test",
-    "archive:r2-manifest": "node scripts/archive-d1-tools.mjs export-r2-manifest"
+    "archive:r2-manifest": "node scripts/archive-d1-tools.mjs export-r2-manifest",
+    "archive:cloudflare-preview": "node scripts/cloudflare-archive-preview.mjs"
   },
   "dependencies": {
     "@types/d3": "latest",
