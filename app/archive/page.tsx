@@ -23,6 +23,7 @@ export default function ArchivePage() {
     .sort((a, b) => archiveWeight(b) - archiveWeight(a))
     .slice(0, 10);
   const workflow = archiveWorkflow(allEntries);
+  const modernVillaCluster = pilotEntries.filter((entry) => entry.database_tags?.some((tag) => tag.includes('modern-villa')));
 
   return (
     <main className="entry-page archive-page min-h-screen overflow-x-hidden bg-[#050505] text-[#f7f7f4]" style={{ '--entry-accent': '#00e7ff' } as CSSProperties}>
@@ -152,6 +153,19 @@ export default function ArchivePage() {
         </section>
 
         <section className="border-t border-white/12 py-8">
+          <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#00e7ff]">Pilot Cluster / Modern Villa</h2>
+          <div className="grid gap-3 lg:grid-cols-3">
+            {modernVillaCluster.map((entry) => (
+              <Link key={entry.id} href={`/atlas/${entry.slug}/`} className="entry-link entry-study-card border border-white/14 bg-[#071315]/55 p-4">
+                <span className="block text-[10px] uppercase tracking-[0.16em] text-[#00e7ff]">{entry.year_start} / {entry.authors[0]}</span>
+                <span className="mt-2 block text-xl text-[#f7f7f4]">{entry.title}</span>
+                <span className="mt-3 block text-sm leading-6 text-[#b8b8b2]">{clusterPosition(entry)}</span>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        <section className="border-t border-white/12 py-8">
           <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#00e7ff]">Needs Attention</h2>
           <div className="grid gap-3 sm:grid-cols-3">
             <AttentionCard title="Sources" entries={workflow.needsSources} />
@@ -218,6 +232,13 @@ function archiveWorkflow(entries: Entry[]) {
     needsRelations: entries.filter((entry) => !allRelations.some((relation) => relation.source_entry_id === entry.id || relation.target_entry_id === entry.id)).slice(0, 4),
     needsModels: entries.filter((entry) => (entry.model_assets?.length ?? 0) === 0).slice(0, 4)
   };
+}
+
+function clusterPosition(entry: Entry) {
+  if (entry.id === 'villa-savoye') return 'Manifest house: five points, promenade, pilotis and roof garden.';
+  if (entry.id === 'haus-tugendhat') return 'Material free plan: steel frame, screens, glass and fluid domestic space.';
+  if (entry.id === 'villa-noailles') return 'Leisure villa: movement, terraces, art, garden and avant-garde domesticity.';
+  return entry.one_sentence;
 }
 
 function Metric({ label, value }: { label: string; value: number }) {

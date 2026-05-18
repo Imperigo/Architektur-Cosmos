@@ -60,6 +60,7 @@ export default async function EntryPage({ params }: EntryPageProps) {
   const related = relatedEntries(entry).slice(0, 8);
   const neighbors = timelineNeighbors(entry);
   const peers = stylePeers(entry).slice(0, 4);
+  const compareEntries = comparisonEntries(entry);
   const accent = styleColor(entry.style_sector);
   const location = [entry.city, entry.country].filter(Boolean).join(', ');
   const jsonLd = entryJsonLd(entry);
@@ -188,6 +189,21 @@ export default async function EntryPage({ params }: EntryPageProps) {
           </section>
         ) : null}
 
+        {compareEntries.length ? (
+          <section className="border-t border-white/12 py-8">
+            <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em]" style={{ color: accent }}>Compare With</h2>
+            <div className="grid gap-3 lg:grid-cols-3">
+              {compareEntries.map((candidate) => (
+                <Link key={candidate.id} href={`/atlas/${candidate.slug}/`} className="entry-link entry-study-card border border-white/14 bg-[#071315]/55 p-4">
+                  <span className="block text-[10px] uppercase tracking-[0.16em]" style={{ color: accent }}>{candidate.year_start} / {candidate.authors[0] ?? 'unknown'}</span>
+                  <span className="mt-2 block text-xl text-[#f7f7f4]">{candidate.title}</span>
+                  <span className="mt-3 block text-sm leading-6 text-[#b8b8b2]">{comparisonAxis(entry, candidate)}</span>
+                </Link>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
         <section className="border-t border-white/12 py-8">
           <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em]" style={{ color: accent }}>Relations</h2>
           {related.length ? (
@@ -276,6 +292,25 @@ function stylePeers(entry: Entry) {
   return allEntries
     .filter((candidate) => candidate.id !== entry.id && candidate.style_sector === entry.style_sector)
     .sort((a, b) => Math.abs(a.year_start - entry.year_start) - Math.abs(b.year_start - entry.year_start));
+}
+
+function comparisonEntries(entry: Entry) {
+  const modernVillaIds = ['villa-noailles', 'haus-tugendhat', 'villa-savoye'];
+  const clusterIds = entry.database_tags?.some((tag) => tag.includes('modern-villa')) ? modernVillaIds : [];
+  const relatedIds = relatedEntries(entry).map((item) => item.entry.id);
+  const ids = [...clusterIds, ...relatedIds].filter((id) => id !== entry.id);
+  return [...new Set(ids)]
+    .map((id) => allEntries.find((candidate) => candidate.id === id))
+    .filter((candidate): candidate is Entry => Boolean(candidate))
+    .slice(0, 3);
+}
+
+function comparisonAxis(entry: Entry, candidate: Entry) {
+  const pair = new Set([entry.id, candidate.id]);
+  if (pair.has('villa-savoye') && pair.has('haus-tugendhat')) return 'Manifest diagram versus material free-plan space.';
+  if (pair.has('villa-savoye') && pair.has('villa-noailles')) return 'Five-points manifesto versus leisure, movement and garden culture.';
+  if (pair.has('haus-tugendhat') && pair.has('villa-noailles')) return 'Material-screen domesticity versus terraced avant-garde lifestyle.';
+  return `Compare ${entry.themes[0]?.replace(/[_:]/g, ' ') ?? 'archive logic'} with ${candidate.themes[0]?.replace(/[_:]/g, ' ') ?? 'archive logic'}.`;
 }
 
 function EntryMeta({ label, value }: { label: string; value: string }) {
