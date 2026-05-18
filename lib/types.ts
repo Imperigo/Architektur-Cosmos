@@ -116,6 +116,17 @@ export type ModelPackage = {
   notes?: string;
 };
 
+export type EntrySplatAsset = {
+  splat_type: 'reality_layer' | 'survey_layer' | 'atmosphere_layer';
+  title: string;
+  r2_key: string;
+  alternate_r2_key?: string;
+  source_basis: string;
+  generation_method: 'gaussian_splatting_planned' | 'gaussian_splatting' | 'photogrammetry' | 'video_capture' | 'manual';
+  review_status: 'planned' | 'draft' | 'reviewed' | 'verified' | 'needs_source';
+  use_case?: string;
+};
+
 export type AnalysisObservation = {
   analysis_type: EntryAnalysisLayer['analysis_type'] | 'roof_form' | 'material_tag' | 'blender_query';
   label: string;
@@ -158,6 +169,7 @@ export type Entry = {
   asset_candidates?: AssetCandidate[];
   model_assets?: EntryModelAsset[];
   model_packages?: ModelPackage[];
+  splat_assets?: EntrySplatAsset[];
   analysis_layers?: EntryAnalysisLayer[];
   analysis_observations?: AnalysisObservation[];
   ingestion_status?: IngestionStatus;

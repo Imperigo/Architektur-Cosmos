@@ -106,6 +106,18 @@
       "notes": "Imported from source_documents for Haus Tugendhat."
     },
     {
+      "id": "villa-savoye-source-web",
+      "entry_id": "villa-savoye",
+      "source_type": "website",
+      "title": "Web source for Villa Savoye",
+      "author": null,
+      "url": "https://www.villa-savoye.fr/",
+      "document_name": null,
+      "page_reference": null,
+      "reliability_level": "lecture_reference",
+      "notes": "Imported from source_url for Villa Savoye."
+    },
+    {
       "id": "villa-savoye-source-document-1",
       "entry_id": "villa-savoye",
       "source_type": "lecture_pdf",
@@ -125,6 +137,66 @@
       "author": null,
       "url": null,
       "document_name": "Lecture notes / modernism",
+      "page_reference": null,
+      "reliability_level": "lecture_reference",
+      "notes": "Imported from source_documents for Villa Savoye."
+    },
+    {
+      "id": "villa-savoye-source-document-3",
+      "entry_id": "villa-savoye",
+      "source_type": "lecture_pdf",
+      "title": "Centre des monuments nationaux / villa-savoye.fr",
+      "author": null,
+      "url": null,
+      "document_name": "Centre des monuments nationaux / villa-savoye.fr",
+      "page_reference": null,
+      "reliability_level": "lecture_reference",
+      "notes": "Imported from source_documents for Villa Savoye."
+    },
+    {
+      "id": "villa-savoye-source-document-4",
+      "entry_id": "villa-savoye",
+      "source_type": "lecture_pdf",
+      "title": "Fondation Le Corbusier",
+      "author": null,
+      "url": null,
+      "document_name": "Fondation Le Corbusier",
+      "page_reference": null,
+      "reliability_level": "lecture_reference",
+      "notes": "Imported from source_documents for Villa Savoye."
+    },
+    {
+      "id": "villa-savoye-source-document-5",
+      "entry_id": "villa-savoye",
+      "source_type": "lecture_pdf",
+      "title": "UNESCO World Heritage source documents",
+      "author": null,
+      "url": null,
+      "document_name": "UNESCO World Heritage source documents",
+      "page_reference": null,
+      "reliability_level": "lecture_reference",
+      "notes": "Imported from source_documents for Villa Savoye."
+    },
+    {
+      "id": "villa-savoye-source-document-6",
+      "entry_id": "villa-savoye",
+      "source_type": "lecture_pdf",
+      "title": "Wikimedia Commons public/license-cleared image candidates",
+      "author": null,
+      "url": null,
+      "document_name": "Wikimedia Commons public/license-cleared image candidates",
+      "page_reference": null,
+      "reliability_level": "lecture_reference",
+      "notes": "Imported from source_documents for Villa Savoye."
+    },
+    {
+      "id": "villa-savoye-source-document-7",
+      "entry_id": "villa-savoye",
+      "source_type": "lecture_pdf",
+      "title": "Architecture Cosmos diagrammatic vector plans",
+      "author": null,
+      "url": null,
+      "document_name": "Architecture Cosmos diagrammatic vector plans",
       "page_reference": null,
       "reliability_level": "lecture_reference",
       "notes": "Imported from source_documents for Villa Savoye."
@@ -274,53 +346,53 @@
     {
       "id": "villa-savoye-media-exterior-1",
       "entry_id": "villa-savoye",
-      "source_id": "villa-savoye-source-document-1",
+      "source_id": "villa-savoye-source-web",
       "media_type": "exterior",
-      "title": "Aussenansicht",
-      "caption": "Aussenansicht / Villa Savoye / weisser Baukoerper auf Pilotis, freistehend in Poissy",
-      "r2_key": "entries/villa-savoye/media/exterior-01.placeholder.json",
-      "external_url": null,
-      "credit": "placeholder / rights pending",
-      "copyright_status": "placeholder",
+      "title": "Exterior / public domain study image",
+      "caption": "Exterior view of Villa Savoye as a freestanding white volume on pilotis in Poissy.",
+      "r2_key": "entries/villa-savoye/media/exterior-01.jpg",
+      "external_url": "archive-intake/villa-savoye/exterior/savoye-3-exterior-cc0.jpg",
+      "credit": "Wikimedia Commons / Wasily / CC0",
+      "copyright_status": "needs_permission",
       "sort_order": 1
     },
     {
       "id": "villa-savoye-media-interior-1",
       "entry_id": "villa-savoye",
-      "source_id": "villa-savoye-source-document-1",
+      "source_id": "villa-savoye-source-web",
       "media_type": "interior",
-      "title": "Innenraum",
-      "caption": "Innenraum / Villa Savoye / Rampe, Wohnraum, Lichtband und freie Raumfolge",
-      "r2_key": "entries/villa-savoye/media/interior-01.placeholder.json",
-      "external_url": null,
-      "credit": "placeholder / rights pending",
-      "copyright_status": "placeholder",
+      "title": "Interior / furniture and spatial atmosphere",
+      "caption": "Interior reference with Le Corbusier furniture and Villa Savoye spatial atmosphere.",
+      "r2_key": "entries/villa-savoye/media/interior-01.jpg",
+      "external_url": "archive-intake/villa-savoye/interior/villa-savoye-chaise-longue-interior-cc-by-sa-2.jpg",
+      "credit": "Wikimedia Commons / jeanbaptisteparis / CC BY-SA 2.0",
+      "copyright_status": "needs_permission",
       "sort_order": 2
     },
     {
       "id": "villa-savoye-media-section-1",
       "entry_id": "villa-savoye",
-      "source_id": "villa-savoye-source-document-1",
+      "source_id": "villa-savoye-source-web",
       "media_type": "section",
-      "title": "Schnitt",
-      "caption": "Schnitt / Villa Savoye / Pilotis, Rampe, Wohnebene und Dachgarten",
-      "r2_key": "entries/villa-savoye/media/section-01.placeholder.json",
-      "external_url": null,
-      "credit": "placeholder / drawing source pending",
-      "copyright_status": "placeholder",
+      "title": "Long section / diagrammatic reconstruction",
+      "caption": "Vector study section showing pilotis, suspended volume, ramp, roof garden and promenade sequence.",
+      "r2_key": "entries/villa-savoye/media/section-01.svg",
+      "external_url": "archive-intake/villa-savoye/section/villa-savoye-long-section-diagram.svg",
+      "credit": "Architecture Cosmos / diagrammatic reconstruction / not measured",
+      "copyright_status": "needs_permission",
       "sort_order": 3
     },
     {
       "id": "villa-savoye-media-plan-1",
       "entry_id": "villa-savoye",
-      "source_id": "villa-savoye-source-document-1",
+      "source_id": "villa-savoye-source-web",
       "media_type": "plan",
-      "title": "Grundriss",
-      "caption": "Grundriss / Villa Savoye / freie Grundrissordnung um Rampe und Servicekerne",
-      "r2_key": "entries/villa-savoye/media/plan-01.placeholder.json",
-      "external_url": null,
-      "credit": "placeholder / drawing source pending",
-      "copyright_status": "placeholder",
+      "title": "Ground floor plan / diagrammatic reconstruction",
+      "caption": "Vector study plan showing pilotis grid, curved car trace, entry core and ramp logic.",
+      "r2_key": "entries/villa-savoye/media/plan-01.svg",
+      "external_url": "archive-intake/villa-savoye/plan/villa-savoye-ground-floor-diagram.svg",
+      "credit": "Architecture Cosmos / diagrammatic reconstruction / not measured",
+      "copyright_status": "needs_permission",
       "sort_order": 4
     },
     {
@@ -560,7 +632,7 @@
     {
       "id": "villa-savoye-model-mass_model-1",
       "entry_id": "villa-savoye",
-      "source_id": "villa-savoye-source-document-1",
+      "source_id": "villa-savoye-source-web",
       "model_type": "mass_model",
       "title": "Villa Savoye lifted massing model",
       "r2_key": "entries/villa-savoye/models/mass.glb",
@@ -575,7 +647,7 @@
     {
       "id": "villa-savoye-model-low_poly_model-2",
       "entry_id": "villa-savoye",
-      "source_id": "villa-savoye-source-document-1",
+      "source_id": "villa-savoye-source-web",
       "model_type": "low_poly_model",
       "title": "Villa Savoye low-poly atlas preview",
       "r2_key": "entries/villa-savoye/models/low.glb",
@@ -590,7 +662,7 @@
     {
       "id": "villa-savoye-model-full_model-3",
       "entry_id": "villa-savoye",
-      "source_id": "villa-savoye-source-document-1",
+      "source_id": "villa-savoye-source-web",
       "model_type": "full_model",
       "title": "Villa Savoye complete architectural model",
       "r2_key": "entries/villa-savoye/models/full.glb",
@@ -605,7 +677,7 @@
     {
       "id": "villa-savoye-model-structure_model-4",
       "entry_id": "villa-savoye",
-      "source_id": "villa-savoye-source-document-1",
+      "source_id": "villa-savoye-source-web",
       "model_type": "structure_model",
       "title": "Villa Savoye pilotis and concrete frame model",
       "r2_key": "entries/villa-savoye/models/structure.glb",
@@ -620,7 +692,7 @@
     {
       "id": "villa-savoye-model-tectonic_model-5",
       "entry_id": "villa-savoye",
-      "source_id": "villa-savoye-source-document-1",
+      "source_id": "villa-savoye-source-web",
       "model_type": "tectonic_model",
       "title": "Villa Savoye five-points tectonic layer model",
       "r2_key": "entries/villa-savoye/models/tectonic.glb",
@@ -635,7 +707,7 @@
     {
       "id": "villa-savoye-model-site_model-6",
       "entry_id": "villa-savoye",
-      "source_id": "villa-savoye-source-document-1",
+      "source_id": "villa-savoye-source-web",
       "model_type": "site_model",
       "title": "Villa Savoye Poissy site relation model",
       "r2_key": "entries/villa-savoye/models/site.glb",
@@ -854,7 +926,7 @@
       "summary": "The house is read as a reinforced-concrete frame that separates load-bearing order from facade and plan, making pilotis, slab and free enclosure the structural grammar of the project.",
       "data_json": "{\"primary_system\":\"reinforced_concrete_frame\",\"key_elements\":[\"pilotis\",\"slabs\",\"free_plan\",\"free_facade\"]}",
       "r2_key": "entries/villa-savoye/analysis/structure.json",
-      "review_status": "draft"
+      "review_status": "reviewed"
     },
     {
       "id": "villa-savoye-analysis-tectonics-2",
@@ -879,9 +951,9 @@
       "entry_id": "villa-savoye",
       "analysis_type": "material_system",
       "summary": "The material reading foregrounds white rendered surfaces, reinforced concrete, glass bands and roof-garden ground as an abstract modern envelope.",
-      "data_json": "{\"materials\":[\"reinforced_concrete\",\"rendered_surface\",\"glass\",\"roof_garden\"]}",
-      "r2_key": null,
-      "review_status": "draft"
+      "data_json": "{\"materials\":[\"reinforced_concrete\",\"rendered_surface\",\"glass\",\"roof_garden\"],\"filter_tags\":[\"material:reinforced-concrete\",\"material:white-rendered-surface\",\"material:glass\",\"roof:roof-garden\"]}",
+      "r2_key": "entries/villa-savoye/analysis/materials.json",
+      "review_status": "reviewed"
     },
     {
       "id": "villa-savoye-analysis-typology-5",
@@ -899,6 +971,24 @@
       "summary": "Suggested filters: modern villa, manifesto house, five points, promenade architecturale, pilotis, free plan, reinforced-concrete frame, Le Corbusier, early modernism.",
       "data_json": "{\"primary_filters\":[\"modern_villa\",\"manifest_house\",\"five_points\",\"promenade\",\"pilotis\"],\"model_readiness\":\"pilot_ready_needs_verified_sources\"}",
       "r2_key": null,
+      "review_status": "reviewed"
+    },
+    {
+      "id": "villa-savoye-analysis-circulation-7",
+      "entry_id": "villa-savoye",
+      "analysis_type": "circulation",
+      "summary": "The circulation layer is defined by the car arrival trace and the ramp promenade from ground level to roof garden.",
+      "data_json": "{\"elements\":[\"car_turning_trace\",\"entry_under_volume\",\"ramp\",\"roof_garden_arrival\"]}",
+      "r2_key": "entries/villa-savoye/analysis/circulation.json",
+      "review_status": "reviewed"
+    },
+    {
+      "id": "villa-savoye-analysis-source_reconstruction-8",
+      "entry_id": "villa-savoye",
+      "analysis_type": "source_reconstruction",
+      "summary": "Diagrammatic vector plans and section have been reconstructed as rights-safe study layers for analysis and future procedural 3D modeling, not as measured construction drawings.",
+      "data_json": "{\"plan_layers\":[\"ground_floor\",\"first_floor\",\"roof_plan\"],\"section_layers\":[\"long_section\"],\"reconstruction_status\":\"diagrammatic\"}",
+      "r2_key": "entries/villa-savoye/analysis/vector-plan-graph.json",
       "review_status": "reviewed"
     },
     {
@@ -967,8 +1057,20 @@
   ],
   "tags": [
     {
+      "id": "tag-analysis-material-system",
+      "label": "Material System",
+      "tag_group": "analysis",
+      "description": ""
+    },
+    {
       "id": "tag-analysis-model-ready",
       "label": "Model Ready",
+      "tag_group": "analysis",
+      "description": ""
+    },
+    {
+      "id": "tag-analysis-tectonic-layering",
+      "label": "Tectonic Layering",
       "tag_group": "analysis",
       "description": ""
     },
@@ -1069,6 +1171,24 @@
       "description": ""
     },
     {
+      "id": "tag-source-official-cmn",
+      "label": "Official Cmn",
+      "tag_group": "source",
+      "description": ""
+    },
+    {
+      "id": "tag-source-unesco",
+      "label": "Unesco",
+      "tag_group": "source",
+      "description": ""
+    },
+    {
+      "id": "tag-source-wikimedia-commons",
+      "label": "Wikimedia Commons",
+      "tag_group": "source",
+      "description": ""
+    },
+    {
       "id": "tag-structure-canopy-system",
       "label": "Canopy System",
       "tag_group": "structure",
@@ -1117,6 +1237,12 @@
       "description": ""
     },
     {
+      "id": "tag-theme-blender-package-planned",
+      "label": "Blender Package Planned",
+      "tag_group": "theme",
+      "description": ""
+    },
+    {
       "id": "tag-theme-central-courtyard",
       "label": "Central Courtyard",
       "tag_group": "theme",
@@ -1143,6 +1269,12 @@
     {
       "id": "tag-theme-curtain-screen",
       "label": "Curtain Screen",
+      "tag_group": "theme",
+      "description": ""
+    },
+    {
+      "id": "tag-theme-diagrammatic-vector-plans",
+      "label": "Diagrammatic Vector Plans",
       "tag_group": "theme",
       "description": ""
     },
@@ -1183,6 +1315,12 @@
       "description": ""
     },
     {
+      "id": "tag-theme-gaussian-splat-planned",
+      "label": "Gaussian Splat Planned",
+      "tag_group": "theme",
+      "description": ""
+    },
+    {
       "id": "tag-theme-hillside",
       "label": "Hillside",
       "tag_group": "theme",
@@ -1197,6 +1335,12 @@
     {
       "id": "tag-theme-leisure",
       "label": "Leisure",
+      "tag_group": "theme",
+      "description": ""
+    },
+    {
+      "id": "tag-theme-licensed-images",
+      "label": "Licensed Images",
       "tag_group": "theme",
       "description": ""
     },
@@ -1251,6 +1395,12 @@
     {
       "id": "tag-theme-promenade-architecturale",
       "label": "Promenade Architecturale",
+      "tag_group": "theme",
+      "description": ""
+    },
+    {
+      "id": "tag-theme-ramp-promenade",
+      "label": "Ramp Promenade",
       "tag_group": "theme",
       "description": ""
     },
@@ -1544,7 +1694,7 @@
     {
       "entry_id": "villa-savoye",
       "tag_id": "tag-theme-roof-garden",
-      "confidence_score": 0.76
+      "confidence_score": 0.92
     },
     {
       "entry_id": "villa-savoye",
@@ -1604,6 +1754,56 @@
     {
       "entry_id": "villa-savoye",
       "tag_id": "tag-analysis-model-ready",
+      "confidence_score": 0.92
+    },
+    {
+      "entry_id": "villa-savoye",
+      "tag_id": "tag-source-official-cmn",
+      "confidence_score": 0.92
+    },
+    {
+      "entry_id": "villa-savoye",
+      "tag_id": "tag-source-unesco",
+      "confidence_score": 0.92
+    },
+    {
+      "entry_id": "villa-savoye",
+      "tag_id": "tag-source-wikimedia-commons",
+      "confidence_score": 0.92
+    },
+    {
+      "entry_id": "villa-savoye",
+      "tag_id": "tag-theme-licensed-images",
+      "confidence_score": 0.92
+    },
+    {
+      "entry_id": "villa-savoye",
+      "tag_id": "tag-theme-diagrammatic-vector-plans",
+      "confidence_score": 0.92
+    },
+    {
+      "entry_id": "villa-savoye",
+      "tag_id": "tag-theme-gaussian-splat-planned",
+      "confidence_score": 0.92
+    },
+    {
+      "entry_id": "villa-savoye",
+      "tag_id": "tag-theme-blender-package-planned",
+      "confidence_score": 0.92
+    },
+    {
+      "entry_id": "villa-savoye",
+      "tag_id": "tag-analysis-material-system",
+      "confidence_score": 0.92
+    },
+    {
+      "entry_id": "villa-savoye",
+      "tag_id": "tag-analysis-tectonic-layering",
+      "confidence_score": 0.92
+    },
+    {
+      "entry_id": "villa-savoye",
+      "tag_id": "tag-theme-ramp-promenade",
       "confidence_score": 0.92
     },
     {
@@ -1805,7 +2005,7 @@
       "entry_id": "villa-savoye",
       "manifest_type": "source_package",
       "r2_prefix": "entries/villa-savoye",
-      "manifest_json": "{\"media\":4,\"source_assets\":0,\"models\":6,\"analysis_files\":6,\"status\":\"planned_r2_package_no_uploads\"}"
+      "manifest_json": "{\"media\":4,\"source_assets\":4,\"models\":6,\"analysis_files\":8,\"status\":\"planned_r2_package_no_uploads\"}"
     },
     {
       "id": "afasia-no-architecture-flower-house-asset-manifest",

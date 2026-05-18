@@ -189,6 +189,77 @@ export default async function EntryPage({ params }: EntryPageProps) {
           </section>
         ) : null}
 
+        {entry.ingestion_status || entry.model_packages?.length || entry.splat_assets?.length || entry.analysis_observations?.length ? (
+          <section className="grid gap-6 border-t border-white/12 py-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
+            <article className="entry-study-card border border-white/14 bg-[#071315]/55 p-5">
+              <div className="text-[10px] uppercase tracking-[0.2em]" style={{ color: accent }}>AI Reference Pilot</div>
+              <h2 className="mt-3 text-2xl text-[#f7f7f4]">Capture, model and analysis pipeline</h2>
+              <div className="mt-5 grid gap-3 text-sm leading-6 text-[#cfcfca] sm:grid-cols-2">
+                {entry.ingestion_status ? (
+                  <>
+                    <EntryMeta label="Wormhole status" value={entry.ingestion_status.stage.replace(/_/g, ' ')} />
+                    <EntryMeta label="Sources" value={entry.ingestion_status.source_status.replace(/_/g, ' ')} />
+                    <EntryMeta label="Assets" value={entry.ingestion_status.asset_status.replace(/_/g, ' ')} />
+                    <EntryMeta label="Models" value={entry.ingestion_status.model_status.replace(/_/g, ' ')} />
+                  </>
+                ) : null}
+              </div>
+              {entry.model_packages?.length ? (
+                <div className="mt-6">
+                  <h3 className="text-[10px] uppercase tracking-[0.18em]" style={{ color: accent }}>Model Packages</h3>
+                  <div className="mt-3 grid gap-3">
+                    {entry.model_packages.map((modelPackage) => (
+                      <div key={modelPackage.package_type} className="border border-white/10 bg-[#050505]/45 p-3">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <span className="text-sm text-[#f7f7f4]">{modelPackage.package_type.replace(/_/g, ' ')}</span>
+                          <span className="text-[10px] uppercase tracking-[0.14em]" style={{ color: accent }}>{modelPackage.status.replace(/_/g, ' ')}</span>
+                        </div>
+                        <p className="mt-2 text-xs leading-5 text-[#b8b8b2]">{modelPackage.notes ?? modelPackage.planned_paths[0]}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+            </article>
+
+            <div className="grid gap-6">
+              {entry.splat_assets?.length ? (
+                <article className="entry-study-card border border-white/14 bg-[#071315]/55 p-5">
+                  <div className="text-[10px] uppercase tracking-[0.2em]" style={{ color: accent }}>Gaussian Splat Layer</div>
+                  {entry.splat_assets.map((splat) => (
+                    <div key={splat.r2_key} className="mt-3">
+                      <h2 className="text-xl text-[#f7f7f4]">{splat.title}</h2>
+                      <p className="mt-2 text-sm leading-6 text-[#b8b8b2]">{splat.use_case ?? splat.source_basis}</p>
+                      <p className="mt-3 break-words text-[10px] uppercase tracking-[0.12em] text-[#8d8d87]">{splat.r2_key}</p>
+                    </div>
+                  ))}
+                </article>
+              ) : null}
+
+              {entry.analysis_observations?.length ? (
+                <InfoBlock
+                  title="Analysis Observations"
+                  items={entry.analysis_observations.map((observation) => {
+                    const confidence = typeof observation.confidence_score === 'number' ? ` ${Math.round(observation.confidence_score * 100)}%` : '';
+                    return `${observation.analysis_type}: ${observation.label}${confidence}`;
+                  })}
+                  accent={accent}
+                />
+              ) : null}
+            </div>
+          </section>
+        ) : null}
+
+        {entry.asset_candidates?.length ? (
+          <section className="border-t border-white/12 py-8">
+            <InfoBlock
+              title="Asset Candidates"
+              items={entry.asset_candidates.map((asset) => `${asset.kind}: ${asset.title} / ${asset.rights_status}${asset.public_display_allowed ? ' / display ready' : ' / review before publish'}`)}
+              accent={accent}
+            />
+          </section>
+        ) : null}
+
         {compareEntries.length ? (
           <section className="border-t border-white/12 py-8">
             <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em]" style={{ color: accent }}>Compare With</h2>
