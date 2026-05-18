@@ -4,6 +4,7 @@ import { spawnSync } from 'node:child_process';
 
 const d1Name = 'architecture-cosmos-preview';
 const r2Bucket = 'architecture-cosmos-assets-preview';
+const withR2 = process.argv.includes('--with-r2');
 
 main();
 
@@ -22,7 +23,12 @@ function main() {
   run('npm', ['run', 'archive:r2-manifest']);
 
   ensureD1Database();
-  ensureR2Bucket();
+  if (withR2) {
+    ensureR2Bucket();
+  } else {
+    console.log('\nSkipping R2 bucket creation. Local R2 manifest remains in out/archive-r2-manifest.json.');
+    console.log('Run npm run archive:cloudflare-preview -- --with-r2 only when R2 billing/storage is explicitly enabled.');
+  }
 
   run('npx', ['wrangler', 'd1', 'execute', d1Name, '--remote', '--file', 'schema/architecture-cosmos-d1.sql']);
   run('npx', ['wrangler', 'd1', 'execute', d1Name, '--remote', '--file', 'out/archive-d1-import.sql']);
@@ -37,7 +43,7 @@ function main() {
 
   console.log('\nCloudflare archive preview is ready.');
   console.log(`D1: ${d1Name}`);
-  console.log(`R2: ${r2Bucket}`);
+  console.log(`R2: ${withR2 ? r2Bucket : 'skipped, local manifest only'}`);
   console.log('The live website is still static and is not connected to D1/R2.');
 }
 

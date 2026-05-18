@@ -31,7 +31,7 @@ Both are generated output and are not committed.
 ## Recommended Preview Names
 
 - D1 database: `architecture-cosmos-preview`
-- R2 bucket: `architecture-cosmos-assets-preview`
+- R2 bucket: `architecture-cosmos-assets-preview` (future/optional; skipped by default)
 
 ## Remote Setup Commands
 
@@ -44,12 +44,22 @@ npm run archive:cloudflare-preview
 ```
 
 The command above validates the local archive, exports SQL/R2 manifests, creates
-the preview D1 database and R2 bucket when missing, imports the schema/data, and
-runs smoke queries.
+the preview D1 database when missing, imports the schema/data, and runs smoke
+queries.
+
+R2 is skipped by default to avoid enabling paid object storage before real media
+and model uploads are ready. The local R2 manifest is still generated as a
+planning artifact.
 
 It deliberately passes `--update-config=false` when creating resources. Do not
 let Wrangler add D1/R2 bindings to `wrangler.jsonc` while the site is still a
 static export.
+
+To explicitly include R2 later:
+
+```bash
+npm run archive:cloudflare-preview -- --with-r2
+```
 
 Manual equivalent:
 
@@ -57,7 +67,6 @@ Manual equivalent:
 export CLOUDFLARE_API_TOKEN="..."
 
 npx wrangler d1 create architecture-cosmos-preview
-npx wrangler r2 bucket create architecture-cosmos-assets-preview
 
 npm run archive:export
 npm run archive:r2-manifest
