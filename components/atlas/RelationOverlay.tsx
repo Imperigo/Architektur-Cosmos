@@ -59,18 +59,15 @@ export function RelationOverlay({ nodes, relations, selectedEntry, isMoving = fa
 
         return (
           <g key={relation.id} className="relation-strand-group">
-            {!isMoving ? (
-              <path
-                className="relation-strand-glow"
-                d={path}
-                fill="none"
-                stroke={relationStroke}
-                strokeWidth={isSelectedRelation ? 4.2 : 1.9}
-                strokeDasharray={relationDash[relation.relation_type]}
-                opacity={relationOpacity * 0.34}
-                filter="url(#wormhole-energy-glow)"
-              />
-            ) : null}
+            <path
+              className="relation-strand-glow"
+              d={path}
+              fill="none"
+              stroke={relationStroke}
+              strokeWidth={isSelectedRelation ? 3.2 : 1.4}
+              strokeDasharray={relationDash[relation.relation_type]}
+              opacity={isMoving ? 0 : relationOpacity * 0.18}
+            />
             <path
               className="relation-strand"
               d={path}

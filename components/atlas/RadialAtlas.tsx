@@ -16,6 +16,14 @@ type SvgPoint = {
   y: number;
 };
 
+type MotionSnapshot = {
+  currentTravel: number;
+  targetTravel: number;
+  velocity: number;
+  isMoving: boolean;
+  isSettling: boolean;
+};
+
 const hoverRadius = 76;
 type IntroState = 'intro' | 'launching' | 'idle';
 
@@ -24,8 +32,13 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   const [selectedEntry, setSelectedEntry] = useState<Entry | null>(null);
   const [showRelations, setShowRelations] = useState(true);
   const [activeStyleLens, setActiveStyleLens] = useState<StyleSectorId | null>(null);
-  const [travel, setTravel] = useState(0);
-  const [isTraveling, setIsTraveling] = useState(false);
+  const [motion, setMotion] = useState<MotionSnapshot>({
+    currentTravel: 0,
+    targetTravel: 0,
+    velocity: 0,
+    isMoving: false,
+    isSettling: true
+  });
   const [introState, setIntroState] = useState<IntroState>('intro');
   const [snappedEntryId, setSnappedEntryId] = useState<string | null>(null);
   const [hoverEntryId, setHoverEntryId] = useState<string | null>(null);
@@ -33,12 +46,17 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   const [pointerPoint, setPointerPoint] = useState<SvgPoint | null>(null);
   const [showDatabasePanel, setShowDatabasePanel] = useState(false);
   const [isDatabaseHovered, setIsDatabaseHovered] = useState(false);
-  const pendingTravelDeltaRef = useRef(0);
-  const travelFrameRef = useRef<number | null>(null);
-  const travelIdleTimeoutRef = useRef<number | null>(null);
+  const [debugFps, setDebugFps] = useState<number | null>(null);
+  const motionRef = useRef({
+    currentTravel: 0,
+    targetTravel: 0,
+    velocity: 0,
+    frame: null as number | null
+  });
   const pendingPointerPointRef = useRef<SvgPoint | null>(null);
   const pointerFrameRef = useRef<number | null>(null);
-  const state = useMemo(() => wormholeState(travel), [travel]);
+  const showMotionDebug = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('debug') === 'motion';
+  const state = useMemo(() => wormholeState(motion.currentTravel), [motion.currentTravel]);
   const activeSelectedEntryId = selectedEntry?.id;
   const activeSnappedEntryId = snappedEntryId;
   const activeHoverEntryId = hoverEntryId;
@@ -46,8 +64,10 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   const displayNodes = useMemo(() => nodes.filter(isReadableNode), [nodes]);
   const snappedNode = useMemo(() => displayNodes.find((node) => node.entry.id === activeSnappedEntryId) ?? null, [activeSnappedEntryId, displayNodes]);
   const hoverNode = useMemo(() => displayNodes.find((node) => node.entry.id === activeHoverEntryId) ?? null, [activeHoverEntryId, displayNodes]);
+  const isTraveling = motion.isMoving;
+  const isSettling = motion.isSettling;
   const isHoverFocusActive = Boolean(hoverNode && !snappedNode && !isTraveling);
-  const isHoverMagnifyActive = hoverMagnifyId === hoverNode?.entry.id && isHoverFocusActive && !snappedNode;
+  const isHoverMagnifyActive = hoverMagnifyId === hoverNode?.entry.id && isHoverFocusActive && !snappedNode && isSettling;
   const cameraFocus = focusCameraOffset(hoverNode, isHoverFocusActive && !isTraveling, isHoverMagnifyActive);
   const cursorPoint = cursorAnchorPoint(pointerPoint, hoverNode, cameraFocus, isTraveling, introState, isHoverMagnifyActive, Boolean(snappedNode));
   const isIntroActive = introState !== 'idle';
@@ -62,7 +82,24 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
 
     const timeout = window.setTimeout(() => {
       setIntroState('idle');
-      setTravel(0);
+      if (motionRef.current.frame !== null) {
+        window.cancelAnimationFrame(motionRef.current.frame);
+      }
+
+      motionRef.current = {
+        currentTravel: 0,
+        targetTravel: 0,
+        velocity: 0,
+        frame: null
+      };
+
+      setMotion({
+        currentTravel: 0,
+        targetTravel: 0,
+        velocity: 0,
+        isMoving: false,
+        isSettling: true
+      });
     }, 1650);
 
     return () => window.clearTimeout(timeout);
@@ -70,20 +107,43 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
 
   useEffect(() => {
     if (!hoverNode || snappedNode) return;
-    if (isTraveling) return;
+    if (isTraveling || !isSettling) return;
 
     const timeout = window.setTimeout(() => setHoverMagnifyId(hoverNode.entry.id), 4000);
     return () => window.clearTimeout(timeout);
-  }, [hoverNode, isTraveling, snappedNode]);
+  }, [hoverNode, isSettling, isTraveling, snappedNode]);
+
+  useEffect(() => {
+    if (!showMotionDebug) return;
+
+    let frame: number | null = null;
+    let lastTime = window.performance.now();
+    let frames = 0;
+
+    function tick(now: number) {
+      frames += 1;
+
+      if (now - lastTime >= 600) {
+        setDebugFps(Math.round((frames * 1000) / (now - lastTime)));
+        frames = 0;
+        lastTime = now;
+      }
+
+      frame = window.requestAnimationFrame(tick);
+    }
+
+    frame = window.requestAnimationFrame(tick);
+    return () => {
+      if (frame !== null) {
+        window.cancelAnimationFrame(frame);
+      }
+    };
+  }, [showMotionDebug]);
 
   useEffect(() => {
     return () => {
-      if (travelFrameRef.current !== null) {
-        window.cancelAnimationFrame(travelFrameRef.current);
-      }
-
-      if (travelIdleTimeoutRef.current !== null) {
-        window.clearTimeout(travelIdleTimeoutRef.current);
+      if (motionRef.current.frame !== null) {
+        window.cancelAnimationFrame(motionRef.current.frame);
       }
 
       if (pointerFrameRef.current !== null) {
@@ -95,8 +155,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   function startIntro() {
     if (introState === 'idle') return;
 
-    cancelPendingTravel();
-    setTravel(0);
+    resetMotion(0);
     setIntroState('launching');
   }
 
@@ -106,9 +165,8 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
       return;
     }
 
-    markTraveling(220);
     releaseSnap();
-    setTravel((current) => advanceTravel(current, delta));
+    nudgeTravel(delta);
   }
 
   function focusNodeInView(node: WormholeEntryNode) {
@@ -128,44 +186,67 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     setSelectedEntry((current) => (current === null ? current : null));
   }
 
-  function markTraveling(idleDelay = 160) {
-    setIsTraveling(true);
-
-    if (travelIdleTimeoutRef.current !== null) {
-      window.clearTimeout(travelIdleTimeoutRef.current);
+  function resetMotion(value: number) {
+    if (motionRef.current.frame !== null) {
+      window.cancelAnimationFrame(motionRef.current.frame);
     }
 
-    travelIdleTimeoutRef.current = window.setTimeout(() => {
-      setIsTraveling(false);
-      travelIdleTimeoutRef.current = null;
-    }, idleDelay);
-  }
+    motionRef.current = {
+      currentTravel: value,
+      targetTravel: value,
+      velocity: 0,
+      frame: null
+    };
 
-  function cancelPendingTravel() {
-    pendingTravelDeltaRef.current = 0;
-
-    if (travelFrameRef.current !== null) {
-      window.cancelAnimationFrame(travelFrameRef.current);
-      travelFrameRef.current = null;
-    }
-  }
-
-  function scheduleTravel(delta: number) {
-    pendingTravelDeltaRef.current = Math.max(-0.052, Math.min(0.052, pendingTravelDeltaRef.current + delta));
-    markTraveling();
-
-    if (travelFrameRef.current !== null) return;
-
-    travelFrameRef.current = window.requestAnimationFrame(() => {
-      const pendingDelta = pendingTravelDeltaRef.current;
-      pendingTravelDeltaRef.current = 0;
-      travelFrameRef.current = null;
-
-      if (pendingDelta === 0) return;
-
-      releaseSnap();
-      setTravel((current) => advanceTravel(current, pendingDelta));
+    setMotion({
+      currentTravel: value,
+      targetTravel: value,
+      velocity: 0,
+      isMoving: false,
+      isSettling: true
     });
+  }
+
+  function nudgeTravel(delta: number) {
+    const ref = motionRef.current;
+    const boundedDelta = Math.max(-0.052, Math.min(0.052, delta));
+    ref.targetTravel = advanceTravel(ref.targetTravel, boundedDelta);
+    ref.velocity += boundedDelta * 0.18;
+    setMotion((current) => ({
+      ...current,
+      targetTravel: roundMotion(ref.targetTravel),
+      velocity: roundMotion(ref.velocity),
+      isMoving: true,
+      isSettling: false
+    }));
+
+    if (ref.frame === null) {
+      ref.frame = window.requestAnimationFrame(stepMotion);
+    }
+  }
+
+  function stepMotion() {
+    const ref = motionRef.current;
+    const delta = ref.targetTravel - ref.currentTravel;
+    const nextVelocity = ref.velocity * 0.62 + delta * 0.18;
+    const nextTravel = advanceTravel(ref.currentTravel, nextVelocity);
+    const settled = Math.abs(ref.targetTravel - nextTravel) < 0.00035 && Math.abs(nextVelocity) < 0.00028;
+
+    ref.currentTravel = settled ? ref.targetTravel : nextTravel;
+    ref.velocity = settled ? 0 : nextVelocity;
+    ref.frame = null;
+
+    setMotion({
+      currentTravel: roundMotion(ref.currentTravel),
+      targetTravel: roundMotion(ref.targetTravel),
+      velocity: roundMotion(ref.velocity),
+      isMoving: !settled,
+      isSettling: settled
+    });
+
+    if (!settled) {
+      ref.frame = window.requestAnimationFrame(stepMotion);
+    }
   }
 
   function handleWheel(event: WheelEvent<SVGSVGElement>) {
@@ -176,7 +257,8 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     }
 
     const normalizedDelta = Math.max(-140, Math.min(140, event.deltaY));
-    scheduleTravel(normalizedDelta * 0.00036);
+    releaseSnap();
+    nudgeTravel(normalizedDelta * 0.00036);
   }
 
   function handlePointerMove(event: PointerEvent<SVGSVGElement>) {
@@ -280,9 +362,6 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
           }}
         >
           <defs>
-            <filter id="cosmos-soft-blur" x="-18%" y="-18%" width="136%" height="136%">
-              <feGaussianBlur stdDeviation="1.15" />
-            </filter>
           </defs>
           <rect width={atlasSize.width} height={atlasSize.height} fill="#050505" />
           <g style={backgroundStyle} pointerEvents={snappedNode ? 'none' : 'auto'}>
@@ -308,8 +387,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
                 <g
                   key={node.entry.id}
                   className={`node-focus-drift ${isFocusNode ? 'node-focus-active' : ''}`}
-                  opacity={node.opacity * styleLensOpacity(node, activeStyleLens) * (isHoverMagnifyActive && !isFocusNode ? 0.38 : 1)}
-                  filter={isHoverMagnifyActive && !isFocusNode ? 'url(#cosmos-soft-blur)' : undefined}
+                  opacity={node.opacity * styleLensOpacity(node, activeStyleLens) * (isHoverMagnifyActive && !isFocusNode ? 0.44 : 1)}
                   style={{ transform: `translate(${displayOffset.x}px, ${displayOffset.y}px)` }}
                 >
                   <SemanticEntryNode
@@ -361,6 +439,15 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
           {showDatabasePanel && introState === 'idle' ? <DatabasePlaceholderPanel onDismiss={() => setShowDatabasePanel(false)} /> : null}
           {introState === 'idle' ? <TimeReadout timePosition={state.timePosition} currentYear={state.currentYear} /> : null}
           {introState === 'idle' ? <BrandChrome /> : null}
+          {showMotionDebug && introState === 'idle' ? (
+            <MotionDebugHud
+              motion={motion}
+              fps={debugFps}
+              nodeCount={displayNodes.length}
+              hoverEntryId={hoverNode?.entry.id ?? null}
+              showRelations={showRelations}
+            />
+          ) : null}
           {cursorPoint ? <CosmosCursor pointer={cursorPoint} activeNode={hoverNode ?? snappedNode} isMagnified={isHoverMagnifyActive} /> : null}
         </svg>
       </div>
@@ -463,6 +550,10 @@ function shortestAngleDelta(a: number, b: number) {
   return ((((a - b) % 360) + 540) % 360) - 180;
 }
 
+function roundMotion(value: number) {
+  return Math.round(value * 100000) / 100000;
+}
+
 function RadialHud({
   showRelations,
   tunnelDepth,
@@ -534,6 +625,33 @@ function HudIcon({ x, y, kind, active }: { x: number; y: number; kind: 'backward
     <g stroke={stroke} strokeWidth="1.25" fill="none" opacity="0.9">
       <path d={kind === 'forward' ? `M ${x - 4} ${y - 6} L ${x + 4} ${y} L ${x - 4} ${y + 6}` : `M ${x + 4} ${y - 6} L ${x - 4} ${y} L ${x + 4} ${y + 6}`} />
       <line x1={kind === 'forward' ? x - 6 : x + 6} y1={y} x2={kind === 'forward' ? x + 5 : x - 5} y2={y} opacity="0.5" />
+    </g>
+  );
+}
+
+function MotionDebugHud({ motion, fps, nodeCount, hoverEntryId, showRelations }: { motion: MotionSnapshot; fps: number | null; nodeCount: number; hoverEntryId: string | null; showRelations: boolean }) {
+  const x = atlasSize.width - 246;
+  const y = 72;
+  const rows = [
+    `travel ${motion.currentTravel.toFixed(3)} -> ${motion.targetTravel.toFixed(3)}`,
+    `velocity ${motion.velocity.toFixed(4)}`,
+    `${motion.isMoving ? 'moving' : 'idle'} / ${motion.isSettling ? 'settled' : 'settling'}`,
+    `fps ${fps ?? '--'}`,
+    `nodes ${nodeCount} / relations ${showRelations ? 'on' : 'off'}`,
+    `hover ${hoverEntryId ? 'active' : 'none'}`
+  ];
+
+  return (
+    <g className="motion-debug-hud" pointerEvents="none">
+      <rect x={x} y={y} width="212" height="92" rx="5" fill="#050505" stroke="#00e7ff" strokeWidth="0.55" opacity="0.82" />
+      <text x={x + 12} y={y + 20} fill="#f7f7f4" fontSize="8.5" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.14em">
+        MOTION DEBUG
+      </text>
+      {rows.map((row, index) => (
+        <text key={row} x={x + 12} y={y + 38 + index * 10} fill="#b8b8b2" fontSize="7.2" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.08em">
+          {row.toUpperCase()}
+        </text>
+      ))}
     </g>
   );
 }

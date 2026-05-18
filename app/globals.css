@@ -38,11 +38,6 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
   100% { opacity: 0; transform: scale(0.42); filter: blur(18px); }
 }
 
-@keyframes launch-surge {
-  from { stroke-dashoffset: 0; }
-  to { stroke-dashoffset: -180; }
-}
-
 @keyframes wormhole-current-pulse {
   from { stroke-dashoffset: 0; }
   to { stroke-dashoffset: -18; }
@@ -115,13 +110,6 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
 .wormhole-energy-band {
   mix-blend-mode: screen;
   vector-effect: non-scaling-stroke;
-}
-
-.cosmos-launching .wormhole-stream,
-.cosmos-launching .wormhole-spoke,
-.cosmos-launching .wormhole-speed-line {
-  animation-name: launch-surge;
-  animation-duration: 1.2s;
 }
 
 .wormhole-outer-rim {
@@ -217,7 +205,6 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
 }
 
 .cosmos-magnifying .node-focus-drift:not(.node-focus-active) {
-  filter: blur(0.65px);
   opacity: 0.48;
 }
 
@@ -348,6 +335,10 @@ body { margin: 0; background: #050505; color: #f7f7f4; }
 
 .navigation-dock {
   filter: drop-shadow(0 0 12px rgb(0 231 255 / 10%));
+}
+
+.motion-debug-hud {
+  filter: drop-shadow(0 0 10px rgb(0 231 255 / 12%));
 }
 
 .database-placeholder {
