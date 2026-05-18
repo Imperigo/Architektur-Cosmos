@@ -35,7 +35,13 @@ type EntryDraft = {
   country: string;
   authors: string;
   themes: string;
+  lecture_cluster: string;
+  source_documents: string;
+  source_url: string;
   short_description: string;
+  one_sentence: string;
+  full_description: string;
+  copyright_status: 'needs_permission' | 'licensed' | 'public_domain' | 'own_work';
 };
 
 const initialEntryDraft: EntryDraft = {
@@ -47,7 +53,13 @@ const initialEntryDraft: EntryDraft = {
   country: '',
   authors: '',
   themes: '',
-  short_description: ''
+  lecture_cluster: '',
+  source_documents: '',
+  source_url: '',
+  short_description: '',
+  one_sentence: '',
+  full_description: '',
+  copyright_status: 'needs_permission'
 };
 
 export function RadialAtlas({ entries, relations }: { entries: Entry[]; relations: EntryRelation[] }) {
@@ -1015,7 +1027,24 @@ function DatabaseArchivePanel({
 
           {activeTab === 'draft' ? (
             <div>
-              <div className="mb-2 text-[9px] uppercase tracking-[0.16em] text-[#b8b8b2]">New Entry Draft / local JSON preview only</div>
+              <div className="mb-2 flex items-center justify-between gap-2">
+                <div className="text-[9px] uppercase tracking-[0.16em] text-[#b8b8b2]">New Entry Draft / local JSON preview only</div>
+                <button
+                  type="button"
+                  className="border border-[#f7f7f4]/25 px-2 py-1 text-[8px] uppercase tracking-[0.12em] text-[#d9d9d2]"
+                  onClick={() => onDraftChange(initialEntryDraft)}
+                >
+                  Reset
+                </button>
+              </div>
+              <div className="mb-2 grid grid-cols-3 gap-1.5">
+                {draftReadiness(draft).map((item) => (
+                  <div key={item.label} className={`border px-2 py-1 ${item.ready ? 'border-[#00e7ff]/45 bg-[#061719]' : 'border-[#f7f7f4]/14 bg-[#050505]/55'}`}>
+                    <div className={`text-[10px] font-semibold ${item.ready ? 'text-[#00e7ff]' : 'text-[#8d8d87]'}`}>{item.ready ? 'ready' : 'open'}</div>
+                    <div className="mt-0.5 truncate text-[7.5px] uppercase tracking-[0.1em] text-[#b8b8b2]">{item.label}</div>
+                  </div>
+                ))}
+              </div>
               <div className="grid grid-cols-2 gap-2">
                 <DraftInput label="Title" value={draft.title} onChange={(value) => updateField('title', value)} />
                 <DraftInput label="Year" value={draft.year} onChange={(value) => updateField('year', value)} />
@@ -1025,7 +1054,21 @@ function DatabaseArchivePanel({
                 <DraftInput label="Country" value={draft.country} onChange={(value) => updateField('country', value)} />
                 <DraftInput label="Authors" value={draft.authors} onChange={(value) => updateField('authors', value)} />
                 <DraftInput label="Themes" value={draft.themes} onChange={(value) => updateField('themes', value)} />
+                <DraftInput label="Courses" value={draft.lecture_cluster} onChange={(value) => updateField('lecture_cluster', value)} />
+                <DraftSelect
+                  label="Rights"
+                  value={draft.copyright_status}
+                  options={[
+                    { value: 'needs_permission', label: 'Needs rights' },
+                    { value: 'licensed', label: 'Licensed' },
+                    { value: 'public_domain', label: 'Public domain' },
+                    { value: 'own_work', label: 'Own work' }
+                  ]}
+                  onChange={(value) => updateField('copyright_status', value as EntryDraft['copyright_status'])}
+                />
               </div>
+              <DraftInput label="Source URL" value={draft.source_url} onChange={(value) => updateField('source_url', value)} />
+              <DraftInput label="Source docs" value={draft.source_documents} onChange={(value) => updateField('source_documents', value)} />
               <label className="mt-2 block text-[9px] uppercase tracking-[0.16em] text-[#b8b8b2]">
                 Short text
                 <textarea
@@ -1035,7 +1078,32 @@ function DatabaseArchivePanel({
                   onChange={(event) => updateField('short_description', event.target.value)}
                 />
               </label>
-              <pre className="mt-3 max-h-[116px] overflow-y-auto whitespace-pre-wrap border border-[#00e7ff]/25 bg-black/35 p-2 text-[9px] leading-snug text-[#c9fff4]">
+              <label className="mt-2 block text-[9px] uppercase tracking-[0.16em] text-[#b8b8b2]">
+                One sentence
+                <textarea
+                  className="mt-1 h-11 w-full resize-none border border-[#f7f7f4]/20 bg-[#07181a] px-2 py-1 text-[11px] leading-tight text-[#f7f7f4] outline-none"
+                  value={draft.one_sentence}
+                  maxLength={240}
+                  onChange={(event) => updateField('one_sentence', event.target.value)}
+                />
+              </label>
+              <label className="mt-2 block text-[9px] uppercase tracking-[0.16em] text-[#b8b8b2]">
+                Full description
+                <textarea
+                  className="mt-1 h-16 w-full resize-none border border-[#f7f7f4]/20 bg-[#07181a] px-2 py-1 text-[11px] leading-tight text-[#f7f7f4] outline-none"
+                  value={draft.full_description}
+                  maxLength={760}
+                  onChange={(event) => updateField('full_description', event.target.value)}
+                />
+              </label>
+              <ArchiveList
+                title="Local next commands"
+                items={[
+                  `npm run archive:draft -- --input data/drafts/${preview.slug}.json`,
+                  `npm run archive:asset-manifest -- --entry ${preview.slug} --copyright ${draft.copyright_status}`
+                ]}
+              />
+              <pre className="mt-3 max-h-[168px] overflow-y-auto whitespace-pre-wrap border border-[#00e7ff]/25 bg-black/35 p-2 text-[9px] leading-snug text-[#c9fff4]">
                 {JSON.stringify(preview, null, 2)}
               </pre>
             </div>
@@ -1164,19 +1232,81 @@ function DraftSelect({ label, value, options, onChange }: { label: string; value
 
 function draftToEntryPreview(draft: EntryDraft) {
   const title = draft.title.trim() || 'Untitled Entry';
+  const slug = slugify(title);
+  const year = Number.parseInt(draft.year, 10) || 2025;
+  const themes = splitList(draft.themes);
+  const sourceDocuments = splitList(draft.source_documents);
+  const lectureCluster = splitList(draft.lecture_cluster);
+  const authors = splitList(draft.authors);
+  const shortDescription = draft.short_description.trim() || `Draft archive entry for ${title}.`;
+  const oneSentence = draft.one_sentence.trim() || `${title} is a draft Architecture Cosmos entry prepared for source, media, model and relation review.`;
+  const fullDescription = draft.full_description.trim() || `${title} is currently staged as a local archive draft. Before publication, the entry needs source verification, media-rights review, relation mapping and analysis-layer classification.`;
+  const databaseTags = [
+    `source:${draft.source_url.trim() ? 'web-source' : 'needs-source'}`,
+    `typology:${draft.entry_type.replace(/_/g, '-')}`,
+    `style:${draft.style_sector.replace(/_/g, '-')}`,
+    ...themes.slice(0, 5).map((theme) => `theme:${slugify(theme)}`),
+    ...lectureCluster.slice(0, 3).map((cluster) => `course:${slugify(cluster)}`),
+    `rights:${draft.copyright_status.replace(/_/g, '-')}`,
+    'analysis:needs-review'
+  ];
+
   return {
-    id: slugify(title),
+    id: slug,
+    slug,
     title,
     entry_type: draft.entry_type,
-    year_start: Number.parseInt(draft.year, 10) || 2025,
-    authors: splitList(draft.authors),
+    year_start: year,
+    year_end: null,
+    authors: authors.length > 0 ? authors : ['Unknown author'],
     city: draft.city.trim(),
     country: draft.country.trim(),
     style_sector: draft.style_sector,
-    themes: splitList(draft.themes),
-    short_description: draft.short_description.trim()
+    lecture_cluster: lectureCluster.length > 0 ? lectureCluster : ['draft_import'],
+    themes: themes.length > 0 ? themes : ['needs-review'],
+    short_description: shortDescription,
+    one_sentence: oneSentence,
+    full_description: fullDescription,
+    source_quality: draft.source_url.trim() || sourceDocuments.length > 0 ? 'draft_source_attached' : 'needs_source',
+    source_documents: sourceDocuments.length > 0 ? sourceDocuments : ['Draft source note'],
+    source_url: draft.source_url.trim(),
+    media: mediaTypes.map((type) => ({
+      type,
+      label: `${mediaTypeLabels[type]} placeholder`,
+      placeholder: `${mediaTypeLabels[type]} media slot planned for ${title}.`,
+      credit: draft.copyright_status
+    })),
+    database_tags: Array.from(new Set(databaseTags)),
+    database_profile: {
+      status: 'draft',
+      r2_prefix: `entries/${slug}`,
+      source_count: sourceDocuments.length + (draft.source_url.trim() ? 1 : 0),
+      media_count: 4,
+      model_count: 0,
+      analysis_count: 0,
+      tag_count: Array.from(new Set(databaseTags)).length
+    }
   };
 }
+
+function draftReadiness(draft: EntryDraft) {
+  return [
+    { label: 'identity', ready: Boolean(draft.title.trim() && draft.year.trim() && draft.authors.trim()) },
+    { label: 'place', ready: Boolean(draft.city.trim() || draft.country.trim()) },
+    { label: 'sources', ready: Boolean(draft.source_url.trim() || draft.source_documents.trim()) },
+    { label: 'themes', ready: Boolean(draft.themes.trim() || draft.lecture_cluster.trim()) },
+    { label: 'text', ready: Boolean(draft.short_description.trim() && draft.one_sentence.trim()) },
+    { label: 'rights', ready: draft.copyright_status !== 'needs_permission' }
+  ];
+}
+
+const mediaTypes: Array<'exterior' | 'interior' | 'section' | 'plan'> = ['exterior', 'interior', 'section', 'plan'];
+const mediaTypeLabels = {
+  exterior: 'Exterior',
+  interior: 'Interior',
+  section: 'Section',
+  plan: 'Plan'
+} satisfies Record<(typeof mediaTypes)[number], string>;
 
 function splitList(value: string) {
   return value.split(',').map((item) => item.trim()).filter(Boolean);
