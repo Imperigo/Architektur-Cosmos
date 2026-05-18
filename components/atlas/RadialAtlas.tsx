@@ -462,36 +462,6 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
           </g>
           {selectedEntry ? <SnappedEntryOverlay entry={selectedEntry} onDismiss={closeDossier} /> : null}
           {introState === 'idle' ? (
-            <LensAccess isOpen={showFilterPanel} onToggle={() => setShowFilterPanel((current) => !current)} />
-          ) : null}
-          {showFilterPanel && introState === 'idle' ? (
-            <FilterPanel
-              activeStyleLens={activeStyleLens}
-              activeSourceLens={activeSourceLens}
-              showRelations={showRelations}
-              sourceLensCount={sourceLensCount}
-              onSetStyleLens={(styleId) => {
-                setHoveredEntry(null);
-                setActiveStyleLens(styleId);
-              }}
-              onResetLenses={() => {
-                setHoveredEntry(null);
-                setActiveStyleLens(null);
-                setActiveSourceLens(null);
-                setShowRelations(false);
-              }}
-              onToggleSourceLens={() => {
-                setHoveredEntry(null);
-                setActiveSourceLens((current) => current === 'afasia' ? null : 'afasia');
-              }}
-              onToggleRelations={() => {
-                setHoveredEntry(null);
-                setShowRelations((current) => !current);
-              }}
-              onDismiss={() => setShowFilterPanel(false)}
-            />
-          ) : null}
-          {introState === 'idle' ? (
             <RadialHud
               showRelations={showRelations}
               tunnelDepth={state.timePosition}
@@ -534,6 +504,38 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
           {introState === 'idle' ? <BrandChrome /> : null}
           {cursorVisible ? <CosmosCursor cursorRef={cursorRef} isDossierOpen={Boolean(selectedEntry)} /> : null}
         </svg>
+        {introState === 'idle' ? (
+          <LensControls
+            isOpen={showFilterPanel}
+            activeStyleLens={activeStyleLens}
+            activeSourceLens={activeSourceLens}
+            showRelations={showRelations}
+            sourceLensCount={sourceLensCount}
+            onToggle={() => {
+              setHoveredEntry(null);
+              setShowFilterPanel((current) => !current);
+            }}
+            onSetStyleLens={(styleId) => {
+              setHoveredEntry(null);
+              setActiveStyleLens(styleId);
+            }}
+            onResetLenses={() => {
+              setHoveredEntry(null);
+              setActiveStyleLens(null);
+              setActiveSourceLens(null);
+              setShowRelations(false);
+            }}
+            onToggleSourceLens={() => {
+              setHoveredEntry(null);
+              setActiveSourceLens((current) => current === 'afasia' ? null : 'afasia');
+            }}
+            onToggleRelations={() => {
+              setHoveredEntry(null);
+              setShowRelations((current) => !current);
+            }}
+            onDismiss={() => setShowFilterPanel(false)}
+          />
+        ) : null}
       </div>
 
       {introState !== 'idle' ? <IntroGate state={introState} onStart={startIntro} /> : null}
@@ -677,103 +679,70 @@ function DockButton({ x, y, width, label, active, onClick }: { x: number; y: num
   );
 }
 
-function LensAccess({ isOpen, onToggle }: { isOpen: boolean; onToggle: () => void }) {
-  return (
-    <g
-      className={`lens-access ${isOpen ? 'lens-access-open' : ''}`}
-      transform="translate(34 70)"
-      pointerEvents="auto"
-      aria-label="Open atlas lenses"
-      onPointerDown={(event) => event.stopPropagation()}
-      onClick={(event) => {
-        event.stopPropagation();
-        onToggle();
-      }}
-    >
-      <rect x="-8" y="-8" width="104" height="43" rx="20" fill="#050505" opacity="0.001" />
-      <rect width="86" height="27" rx="13.5" fill="#050505" stroke={isOpen ? '#00e7ff' : '#f7f7f4'} strokeWidth="0.62" opacity="0.78" />
-      <circle cx="17" cy="13.5" r="5.2" fill="none" stroke={isOpen ? '#00e7ff' : '#f7f7f4'} strokeWidth="0.72" />
-      <path d="M 10.8 13.5 H 23.2 M 17 7.3 V 19.7" stroke={isOpen ? '#00e7ff' : '#f7f7f4'} strokeWidth="0.56" opacity="0.72" />
-      <text x="35" y="17" fill="#f7f7f4" fontSize="7.8" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.18em">
-        LENSES
-      </text>
-    </g>
-  );
-}
-
-function FilterPanel({
+function LensControls({
+  isOpen,
   activeStyleLens,
   activeSourceLens,
   showRelations,
   sourceLensCount,
+  onToggle,
   onSetStyleLens,
   onResetLenses,
   onToggleSourceLens,
   onToggleRelations,
   onDismiss
 }: {
+  isOpen: boolean;
   activeStyleLens: StyleSectorId | null;
   activeSourceLens: SourceLens;
   showRelations: boolean;
   sourceLensCount: number;
+  onToggle: () => void;
   onSetStyleLens: (lens: StyleSectorId | null) => void;
   onResetLenses: () => void;
   onToggleSourceLens: () => void;
   onToggleRelations: () => void;
   onDismiss: () => void;
 }) {
-  const x = 34;
-  const y = 118;
   const tabs = [
-    { id: 'all', label: 'ALLE', active: !activeStyleLens && !activeSourceLens && !showRelations, width: 52, onClick: onResetLenses },
+    { id: 'all', label: 'ALLE', active: !activeStyleLens && !activeSourceLens && !showRelations, onClick: onResetLenses },
     ...styleSectors.map((sector) => ({
       id: sector.id,
       label: styleShortLabel(sector.id),
       active: activeStyleLens === sector.id,
-      width: 38,
       onClick: () => onSetStyleLens(activeStyleLens === sector.id ? null : sector.id)
     })),
-    { id: 'afasia', label: `AFASIA ${sourceLensCount}`, active: activeSourceLens === 'afasia', width: 84, onClick: onToggleSourceLens },
-    { id: 'relations', label: 'REL', active: showRelations, width: 46, onClick: onToggleRelations }
+    { id: 'afasia', label: `AFASIA ${sourceLensCount}`, active: activeSourceLens === 'afasia', onClick: onToggleSourceLens },
+    { id: 'relations', label: 'REL', active: showRelations, onClick: onToggleRelations }
   ];
 
   return (
-    <g className="lens-panel" transform={`translate(${x} ${y})`} pointerEvents="auto" aria-label="Atlas lens panel" onPointerDown={(event) => event.stopPropagation()}>
-      <rect width="384" height="88" rx="8" fill="#050505" stroke="#00e7ff" strokeWidth="0.55" opacity="0.82" />
-      <text x="15" y="23" fill="#9cfff7" fontSize="7.4" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.22em" opacity="0.86">
-        ACTIVE LENSES
-      </text>
-      <g className="lens-panel-close" transform="translate(342 11)" onClick={(event) => { event.stopPropagation(); onDismiss(); }}>
-        <rect width="25" height="15" rx="7.5" fill="#f7f7f4" opacity="0.84" />
-        <text x="12.5" y="10.8" textAnchor="middle" fill="#050505" fontSize="7" fontFamily="var(--font-sans), system-ui, sans-serif">
-          X
-        </text>
-      </g>
-      {tabs.map((tab, index) => {
-        const row = index < 5 ? 0 : 1;
-        const rowTabs = row === 0 ? tabs.slice(0, 5) : tabs.slice(5);
-        const tabX = rowTabs.slice(0, index - (row === 0 ? 0 : 5)).reduce((sum, item) => sum + item.width + 7, 15);
-        const tabY = row === 0 ? 36 : 60;
-
-        return (
-          <g
-            key={tab.id}
-            className={`filter-tab ${tab.active ? 'filter-tab-active' : ''}`}
-            transform={`translate(${tabX} ${tabY})`}
-            onPointerDown={(event) => event.stopPropagation()}
-            onClick={(event) => {
-              event.stopPropagation();
-              tab.onClick();
-            }}
-          >
-            <rect width={tab.width} height="18" rx="9" fill={tab.active ? '#f7f7f4' : '#050505'} stroke={tab.active ? '#00e7ff' : '#f7f7f4'} strokeWidth="0.5" opacity={tab.active ? 0.92 : 0.72} />
-            <text x={tab.width / 2} y="12.4" textAnchor="middle" fill={tab.active ? '#050505' : '#f7f7f4'} fontSize="6.2" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.11em">
-              {tab.label}
-            </text>
-          </g>
-        );
-      })}
-    </g>
+    <div className="lens-control" onPointerDown={(event) => event.stopPropagation()} onClick={(event) => event.stopPropagation()}>
+      <button type="button" className={`lens-control-trigger ${isOpen ? 'lens-control-trigger-open' : ''}`} onClick={onToggle}>
+        <span className="lens-control-mark" aria-hidden="true" />
+        <span>Lenses</span>
+      </button>
+      {isOpen ? (
+        <div className="lens-control-panel" role="dialog" aria-label="Atlas lenses">
+          <div className="lens-control-head">
+            <span>Active Lenses</span>
+            <button type="button" className="lens-control-close" onClick={onDismiss}>X</button>
+          </div>
+          <div className="lens-control-grid">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                className={`lens-control-tab ${tab.active ? 'lens-control-tab-active' : ''}`}
+                onClick={tab.onClick}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      ) : null}
+    </div>
   );
 }
 
