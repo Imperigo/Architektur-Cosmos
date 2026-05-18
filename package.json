@@ -13,6 +13,7 @@
     "archive:preview-json": "node scripts/archive-d1-tools.mjs export-preview-json",
     "archive:smoke": "node scripts/archive-d1-tools.mjs smoke-test",
     "archive:draft": "node scripts/archive-entry-draft.mjs",
+    "archive:capture": "node scripts/archive-capture.mjs",
     "archive:asset-manifest": "node scripts/archive-asset-manifest.mjs",
     "archive:d1-preview": "node scripts/cloudflare-archive-preview.mjs",
     "archive:d1-smoke-remote": "node scripts/cloudflare-archive-preview.mjs --smoke-only",

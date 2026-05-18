@@ -272,3 +272,146 @@ CREATE TABLE IF NOT EXISTS asset_manifests (
 );
 
 CREATE INDEX IF NOT EXISTS idx_asset_manifests_entry ON asset_manifests (entry_id, manifest_type);
+
+CREATE TABLE IF NOT EXISTS source_candidates (
+  id TEXT PRIMARY KEY,
+  entry_id TEXT REFERENCES entries(id) ON DELETE CASCADE,
+  source_type TEXT NOT NULL CHECK (source_type IN (
+    'lecture_pdf',
+    'book',
+    'article',
+    'website',
+    'archive',
+    'image_source',
+    'model_source',
+    'dataset',
+    'other'
+  )),
+  title TEXT NOT NULL,
+  url TEXT,
+  local_path TEXT,
+  reliability_level TEXT NOT NULL DEFAULT 'unverified' CHECK (reliability_level IN (
+    'unverified',
+    'lecture_reference',
+    'secondary_source',
+    'primary_source',
+    'verified'
+  )),
+  rights_status TEXT NOT NULL DEFAULT 'unknown' CHECK (rights_status IN (
+    'unknown',
+    'needs_permission',
+    'licensed',
+    'public_domain',
+    'own_work'
+  )),
+  notes TEXT,
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_source_candidates_entry ON source_candidates (entry_id, source_type);
+
+CREATE TABLE IF NOT EXISTS asset_candidates (
+  id TEXT PRIMARY KEY,
+  entry_id TEXT REFERENCES entries(id) ON DELETE CASCADE,
+  kind TEXT NOT NULL CHECK (kind IN (
+    'image',
+    'drawing',
+    'plan',
+    'section',
+    'pdf',
+    'model',
+    'analysis',
+    'other'
+  )),
+  title TEXT NOT NULL,
+  local_path TEXT,
+  planned_r2_key TEXT,
+  rights_status TEXT NOT NULL DEFAULT 'unknown' CHECK (rights_status IN (
+    'unknown',
+    'needs_permission',
+    'licensed',
+    'public_domain',
+    'own_work'
+  )),
+  public_display_allowed INTEGER NOT NULL DEFAULT 0 CHECK (public_display_allowed IN (0, 1)),
+  file_size_bytes INTEGER,
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_asset_candidates_entry ON asset_candidates (entry_id, kind);
+
+CREATE TABLE IF NOT EXISTS model_packages (
+  id TEXT PRIMARY KEY,
+  entry_id TEXT REFERENCES entries(id) ON DELETE CASCADE,
+  package_type TEXT NOT NULL CHECK (package_type IN (
+    'reference_model',
+    'analysis_model',
+    'blender_package',
+    'archicad_package'
+  )),
+  status TEXT NOT NULL DEFAULT 'planned' CHECK (status IN (
+    'planned',
+    'manual_ready',
+    'generated_draft',
+    'reviewed'
+  )),
+  planned_paths_json TEXT NOT NULL DEFAULT '[]',
+  notes TEXT,
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_model_packages_entry ON model_packages (entry_id, package_type);
+
+CREATE TABLE IF NOT EXISTS analysis_observations (
+  id TEXT PRIMARY KEY,
+  entry_id TEXT REFERENCES entries(id) ON DELETE CASCADE,
+  analysis_type TEXT NOT NULL,
+  label TEXT NOT NULL,
+  confidence_score REAL CHECK (confidence_score IS NULL OR (confidence_score >= 0 AND confidence_score <= 1)),
+  source TEXT NOT NULL DEFAULT 'manual' CHECK (source IN (
+    'manual',
+    'ai_assisted',
+    'source_inferred',
+    'model_analysis'
+  )),
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_analysis_observations_entry ON analysis_observations (entry_id, analysis_type);
+
+CREATE TABLE IF NOT EXISTS ingestion_status (
+  entry_id TEXT PRIMARY KEY REFERENCES entries(id) ON DELETE CASCADE,
+  stage TEXT NOT NULL DEFAULT 'not_started' CHECK (stage IN (
+    'not_started',
+    'captured',
+    'needs_review',
+    'ready_for_wormhole',
+    'published'
+  )),
+  source_status TEXT NOT NULL DEFAULT 'none' CHECK (source_status IN (
+    'none',
+    'candidate',
+    'attached',
+    'reviewed'
+  )),
+  asset_status TEXT NOT NULL DEFAULT 'none' CHECK (asset_status IN (
+    'none',
+    'candidate',
+    'rights_blocked',
+    'ready'
+  )),
+  model_status TEXT NOT NULL DEFAULT 'none' CHECK (model_status IN (
+    'none',
+    'planned',
+    'manual_ready',
+    'generated_draft',
+    'reviewed'
+  )),
+  local_storage_bytes INTEGER,
+  local_storage_limit_bytes INTEGER,
+  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);

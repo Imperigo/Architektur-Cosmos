@@ -6,6 +6,21 @@ safe staging area and a dry-run manifest for each object.
 
 ## Local Folder
 
+Drop raw source material into the local inbox:
+
+```text
+archive-inbox/{entry_slug}/
+```
+
+Then run the capture command:
+
+```bash
+npm run archive:capture -- --input archive-inbox/villa-savoye --title "Villa Savoye"
+```
+
+The command writes a local capture package to `out/archive-captures/{entry_slug}/`
+and prepares the intake folders below.
+
 Use one folder per entry slug:
 
 ```text
@@ -18,6 +33,8 @@ archive-intake/{entry_slug}/
 ```
 
 `archive-intake/` is ignored by Git. It is for local files only.
+`archive-inbox/` is also ignored by Git and is the drag-and-drop simulation for
+the future host/admin intake area.
 
 ## Create Or Refresh A Manifest
 

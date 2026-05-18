@@ -45,6 +45,17 @@ It should never store heavy binary assets.
 
 ## Repository Guardrail
 
+`archive-inbox/` and `archive-intake/` are local-only and ignored by Git. The
+capture workflow enforces a default local private storage budget of 10 GB across
+those folders.
+
+```bash
+npm run archive:capture -- --input archive-inbox/villa-savoye --title "Villa Savoye"
+```
+
+The command creates only local output under `out/archive-captures/` and never
+uploads assets.
+
 The Cloudflare preview script still skips R2 by default. R2 bucket creation
 requires both:
 

@@ -6,4 +6,5 @@ dist/
 .env
 .env.local
 .vercel
+archive-inbox/
 archive-intake/

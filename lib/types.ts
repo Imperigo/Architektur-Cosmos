@@ -78,6 +78,51 @@ export type EntryAnalysisLayer = {
   review_status: 'draft' | 'reviewed' | 'verified' | 'needs_source';
 };
 
+export type IngestionStatus = {
+  stage: 'not_started' | 'captured' | 'needs_review' | 'ready_for_wormhole' | 'published';
+  source_status: 'none' | 'candidate' | 'attached' | 'reviewed';
+  asset_status: 'none' | 'candidate' | 'rights_blocked' | 'ready';
+  model_status: 'none' | 'planned' | 'manual_ready' | 'generated_draft' | 'reviewed';
+  local_storage_bytes?: number;
+  local_storage_limit_bytes?: number;
+  updated_at?: string;
+};
+
+export type SourceCandidate = {
+  source_type: 'lecture_pdf' | 'book' | 'article' | 'website' | 'archive' | 'image_source' | 'model_source' | 'dataset' | 'other';
+  title: string;
+  url?: string;
+  local_path?: string;
+  reliability_level: 'unverified' | 'lecture_reference' | 'secondary_source' | 'primary_source' | 'verified';
+  rights_status: 'unknown' | 'needs_permission' | 'licensed' | 'public_domain' | 'own_work';
+  notes?: string;
+};
+
+export type AssetCandidate = {
+  kind: 'image' | 'drawing' | 'plan' | 'section' | 'pdf' | 'model' | 'analysis' | 'other';
+  media_slot?: EntryMediaType;
+  title: string;
+  local_path?: string;
+  planned_r2_key?: string;
+  rights_status: 'unknown' | 'needs_permission' | 'licensed' | 'public_domain' | 'own_work';
+  public_display_allowed: boolean;
+  bytes?: number;
+};
+
+export type ModelPackage = {
+  package_type: 'reference_model' | 'analysis_model' | 'blender_package' | 'archicad_package';
+  status: 'planned' | 'manual_ready' | 'generated_draft' | 'reviewed';
+  planned_paths: string[];
+  notes?: string;
+};
+
+export type AnalysisObservation = {
+  analysis_type: EntryAnalysisLayer['analysis_type'] | 'roof_form' | 'material_tag' | 'blender_query';
+  label: string;
+  confidence_score?: number;
+  source: 'manual' | 'ai_assisted' | 'source_inferred' | 'model_analysis';
+};
+
 export type EntryDatabaseProfile = {
   status: 'draft' | 'reviewed' | 'published' | 'needs_sources';
   r2_prefix: string;
@@ -109,8 +154,13 @@ export type Entry = {
   source_documents?: string[];
   source_url?: string;
   source_assets?: EntrySourceAsset[];
+  source_candidates?: SourceCandidate[];
+  asset_candidates?: AssetCandidate[];
   model_assets?: EntryModelAsset[];
+  model_packages?: ModelPackage[];
   analysis_layers?: EntryAnalysisLayer[];
+  analysis_observations?: AnalysisObservation[];
+  ingestion_status?: IngestionStatus;
   database_tags?: string[];
   database_profile?: EntryDatabaseProfile;
   atlas?: {

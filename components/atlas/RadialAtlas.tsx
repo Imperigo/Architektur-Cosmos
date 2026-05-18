@@ -984,6 +984,15 @@ function DatabaseArchivePanel({
               <p className="border border-[#00e7ff]/25 bg-[#061719] p-2 text-[#c9fff4]">
                 The archive foundation now exists as Cloudflare D1 plus an empty R2 preview bucket while this frontend still reads bundled JSON. Asset uploads remain blocked until media rights and file policy are ready.
               </p>
+              <ArchiveList
+                title="Local Capture Automation"
+                items={[
+                  'Drop PDFs, books, plans, images or model files into archive-inbox/{slug}',
+                  'Run archive:capture to generate entry draft, source candidates, asset candidates and model-package placeholders',
+                  '10 GB local private storage guardrail across archive-inbox and archive-intake',
+                  'Only own_work, licensed and public_domain assets are marked public-display ready'
+                ]}
+              />
               <ArchiveList title="Next Database Steps" items={['Keep D1 preview in sync with archive:d1-preview', 'Use D1 for validation and query design, not live reads yet', 'Keep R2 uploads blocked until media/model upload policy is ready', 'Add read-only Worker API only after static schema is proven']} />
             </div>
           ) : null}

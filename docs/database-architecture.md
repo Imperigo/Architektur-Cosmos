@@ -183,6 +183,23 @@ The current repository includes `data/archive-preview.json` as a static normaliz
 
 The atlas database panel reads this preview directly. It is intentionally not a backend and does not write anything from the browser.
 
+## Local AI Reference Capture
+
+The repository includes a local-only capture command:
+
+```bash
+npm run archive:capture -- --input archive-inbox/villa-savoye --title "Villa Savoye"
+```
+
+It scans local source material and creates an entry draft, source candidates,
+asset candidates, planned model package paths, analysis placeholders and a
+capture manifest. It never writes to Cloudflare, D1 or R2.
+
+Future D1 tables are prepared for `source_candidates`, `asset_candidates`,
+`model_packages`, `analysis_observations` and `ingestion_status`, but the public
+frontend still reads static JSON until a real admin/write flow is explicitly
+introduced.
+
 ## Local Validation And Export
 
 The repository now includes a local archive tool:

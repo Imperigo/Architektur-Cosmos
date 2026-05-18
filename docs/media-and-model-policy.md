@@ -94,6 +94,12 @@ Every model row needs:
 
 ## Upload Gate
 
+First capture the local source package:
+
+```bash
+npm run archive:capture -- --input archive-inbox/villa-savoye --title "Villa Savoye"
+```
+
 Before an upload is even considered, generate a local intake manifest:
 
 ```bash
