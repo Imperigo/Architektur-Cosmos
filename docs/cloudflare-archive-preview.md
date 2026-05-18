@@ -47,6 +47,10 @@ The command above validates the local archive, exports SQL/R2 manifests, creates
 the preview D1 database and R2 bucket when missing, imports the schema/data, and
 runs smoke queries.
 
+It deliberately passes `--update-config=false` when creating resources. Do not
+let Wrangler add D1/R2 bindings to `wrangler.jsonc` while the site is still a
+static export.
+
 Manual equivalent:
 
 ```bash

@@ -265,7 +265,8 @@ function buildD1ImportSql({ entries, relations }) {
     '-- Generated from data/mock-entries.json and data/relations.json.',
     '-- This file is local output only. Review before applying to Cloudflare D1.',
     'PRAGMA foreign_keys = ON;',
-    'BEGIN TRANSACTION;'
+    'BEGIN TRANSACTION;',
+    ...deleteExistingRowsStatements()
   ];
 
   const sourceIdsByEntry = new Map();
@@ -350,6 +351,21 @@ function buildD1ImportSql({ entries, relations }) {
 
   lines.push('COMMIT;', '');
   return lines.join('\n');
+}
+
+function deleteExistingRowsStatements() {
+  return [
+    '-- Keep preview imports repeatable while the schema is still stabilizing.',
+    'DELETE FROM entry_tags;',
+    'DELETE FROM entry_relations;',
+    'DELETE FROM asset_manifests;',
+    'DELETE FROM entry_analysis;',
+    'DELETE FROM entry_models;',
+    'DELETE FROM entry_media;',
+    'DELETE FROM entry_sources;',
+    'DELETE FROM tags;',
+    'DELETE FROM entries;'
+  ];
 }
 
 async function runLocalD1SmokeTest(data) {

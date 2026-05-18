@@ -50,19 +50,19 @@ function ensureD1Database() {
     return;
   }
 
-  run('npx', ['wrangler', 'd1', 'create', d1Name]);
+  run('npx', ['wrangler', 'd1', 'create', d1Name, '--location', 'eeur', '--update-config=false']);
 }
 
 function ensureR2Bucket() {
-  const list = runJson('npx', ['wrangler', 'r2', 'bucket', 'list', '--json']);
-  const exists = Array.isArray(list) && list.some((bucket) => bucket.name === r2Bucket);
+  const list = runText('npx', ['wrangler', 'r2', 'bucket', 'list']);
+  const exists = list.split('\n').some((line) => line.includes(r2Bucket));
 
   if (exists) {
     console.log(`R2 bucket already exists: ${r2Bucket}`);
     return;
   }
 
-  run('npx', ['wrangler', 'r2', 'bucket', 'create', r2Bucket]);
+  run('npx', ['wrangler', 'r2', 'bucket', 'create', r2Bucket, '--location', 'eeur', '--update-config=false']);
 }
 
 function runSmokeQuery(label, sql) {
@@ -71,6 +71,18 @@ function runSmokeQuery(label, sql) {
 }
 
 function runJson(command, args) {
+  const output = runText(command, args).trim();
+  if (!output) return null;
+
+  try {
+    return JSON.parse(output);
+  } catch (error) {
+    process.stdout.write(output);
+    throw new Error(`Could not parse JSON output from ${command} ${args.join(' ')}: ${error.message}`);
+  }
+}
+
+function runText(command, args) {
   const result = spawnSync(command, args, {
     encoding: 'utf8',
     stdio: ['inherit', 'pipe', 'pipe']
@@ -82,15 +94,7 @@ function runJson(command, args) {
     throw new Error(`${command} ${args.join(' ')} failed`);
   }
 
-  const output = result.stdout.trim();
-  if (!output) return null;
-
-  try {
-    return JSON.parse(output);
-  } catch (error) {
-    process.stdout.write(result.stdout);
-    throw new Error(`Could not parse JSON output from ${command} ${args.join(' ')}: ${error.message}`);
-  }
+  return result.stdout;
 }
 
 function run(command, args) {
