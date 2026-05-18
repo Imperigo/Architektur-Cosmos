@@ -51,7 +51,8 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     currentTravel: 0,
     targetTravel: 0,
     velocity: 0,
-    frame: null as number | null
+    frame: null as number | null,
+    timeout: null as number | null
   });
   const pendingPointerPointRef = useRef<SvgPoint | null>(null);
   const pointerFrameRef = useRef<number | null>(null);
@@ -82,15 +83,21 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
 
     const timeout = window.setTimeout(() => {
       setIntroState('idle');
-      if (motionRef.current.frame !== null) {
-        window.cancelAnimationFrame(motionRef.current.frame);
+      const currentMotion = motionRef.current;
+      if (currentMotion.frame !== null && typeof window.cancelAnimationFrame === 'function') {
+        window.cancelAnimationFrame(currentMotion.frame);
+      }
+
+      if (currentMotion.timeout !== null) {
+        window.clearTimeout(currentMotion.timeout);
       }
 
       motionRef.current = {
         currentTravel: 0,
         targetTravel: 0,
         velocity: 0,
-        frame: null
+        frame: null,
+        timeout: null
       };
 
       setMotion({
@@ -142,8 +149,13 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
 
   useEffect(() => {
     return () => {
-      if (motionRef.current.frame !== null) {
-        window.cancelAnimationFrame(motionRef.current.frame);
+      const currentMotion = motionRef.current;
+      if (currentMotion.frame !== null && typeof window.cancelAnimationFrame === 'function') {
+        window.cancelAnimationFrame(currentMotion.frame);
+      }
+
+      if (currentMotion.timeout !== null) {
+        window.clearTimeout(currentMotion.timeout);
       }
 
       if (pointerFrameRef.current !== null) {
@@ -187,15 +199,14 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   }
 
   function resetMotion(value: number) {
-    if (motionRef.current.frame !== null) {
-      window.cancelAnimationFrame(motionRef.current.frame);
-    }
+    cancelMotionStep();
 
     motionRef.current = {
       currentTravel: value,
       targetTravel: value,
       velocity: 0,
-      frame: null
+      frame: null,
+      timeout: null
     };
 
     setMotion({
@@ -220,13 +231,13 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
       isSettling: false
     }));
 
-    if (ref.frame === null) {
-      ref.frame = window.requestAnimationFrame(stepMotion);
-    }
+    scheduleMotionStep();
   }
 
   function stepMotion() {
     const ref = motionRef.current;
+    cancelMotionStep();
+
     const delta = ref.targetTravel - ref.currentTravel;
     const nextVelocity = ref.velocity * 0.62 + delta * 0.18;
     const nextTravel = advanceTravel(ref.currentTravel, nextVelocity);
@@ -234,7 +245,6 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
 
     ref.currentTravel = settled ? ref.targetTravel : nextTravel;
     ref.velocity = settled ? 0 : nextVelocity;
-    ref.frame = null;
 
     setMotion({
       currentTravel: roundMotion(ref.currentTravel),
@@ -245,8 +255,34 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     });
 
     if (!settled) {
+      scheduleMotionStep();
+    }
+  }
+
+  function scheduleMotionStep() {
+    const ref = motionRef.current;
+    if (ref.frame !== null || ref.timeout !== null) return;
+
+    if (typeof window.requestAnimationFrame === 'function') {
       ref.frame = window.requestAnimationFrame(stepMotion);
     }
+
+    ref.timeout = window.setTimeout(stepMotion, 34);
+  }
+
+  function cancelMotionStep() {
+    const ref = motionRef.current;
+
+    if (ref.frame !== null && typeof window.cancelAnimationFrame === 'function') {
+      window.cancelAnimationFrame(ref.frame);
+    }
+
+    if (ref.timeout !== null) {
+      window.clearTimeout(ref.timeout);
+    }
+
+    ref.frame = null;
+    ref.timeout = null;
   }
 
   function handleWheel(event: WheelEvent<SVGSVGElement>) {
