@@ -15,6 +15,7 @@
     "archive:draft": "node scripts/archive-entry-draft.mjs",
     "archive:capture": "node scripts/archive-capture.mjs",
     "archive:asset-manifest": "node scripts/archive-asset-manifest.mjs",
+    "archive:autopilot": "node scripts/archive-autopilot.mjs",
     "archive:model-plan": "node scripts/archive-model-plan.mjs",
     "archive:model-generate": "node scripts/archive-generate-massing.mjs",
     "archive:d1-preview": "node scripts/cloudflare-archive-preview.mjs",

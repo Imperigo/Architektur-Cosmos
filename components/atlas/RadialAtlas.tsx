@@ -1096,6 +1096,7 @@ function DatabaseArchivePanel({
                 title="Local automation sequence"
                 items={[
                   `mkdir -p archive-inbox/${intakeSlug}`,
+                  `npm run archive:autopilot -- --input archive-inbox/${intakeSlug} --title "${preview.title}" --copyright ${draft.copyright_status}`,
                   `npm run archive:capture -- --input archive-inbox/${intakeSlug} --title "${preview.title}"`,
                   `npm run archive:model-plan -- --entry ${intakeSlug}`,
                   `npm run archive:model-generate -- --entry ${intakeSlug}`,

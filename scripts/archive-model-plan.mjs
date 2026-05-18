@@ -18,8 +18,7 @@ async function main() {
     throw new Error('Usage: npm run archive:model-plan -- --entry villa-savoye');
   }
 
-  const entries = JSON.parse(await readFile(path.join(root, 'data/mock-entries.json'), 'utf8'));
-  const entry = entries.find((candidate) => candidate.slug === slug || candidate.id === slug);
+  const entry = await loadEntry(slug);
   if (!entry) throw new Error(`No entry found for "${slug}".`);
 
   const intakeRoot = path.join(root, 'archive-intake', entry.slug);
@@ -60,6 +59,25 @@ async function main() {
   console.log(`- ${path.relative(root, path.join(automationDir, 'next-actions.md'))}`);
   console.log('');
   console.log('No upload was performed. All generated files are local and gitignored.');
+}
+
+async function loadEntry(slug) {
+  const explicitDraft = args.draft ? path.resolve(root, args.draft) : null;
+  const draftCandidates = [
+    explicitDraft,
+    path.join(root, 'out/archive-captures', slug, 'entry-draft.json')
+  ].filter(Boolean);
+
+  const entries = JSON.parse(await readFile(path.join(root, 'data/mock-entries.json'), 'utf8'));
+  const bundledEntry = entries.find((candidate) => candidate.slug === slug || candidate.id === slug);
+  if (bundledEntry) return bundledEntry;
+
+  for (const draftPath of draftCandidates) {
+    if (!existsSync(draftPath)) continue;
+    return JSON.parse(await readFile(draftPath, 'utf8'));
+  }
+
+  return null;
 }
 
 function parseArgs(argv) {

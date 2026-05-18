@@ -10,6 +10,25 @@ visual layer and must not be treated as measured geometry.
 
 ## Local-first command
 
+For a complete local run:
+
+```bash
+npm run archive:autopilot -- --input archive-inbox/villa-savoye --title "Villa Savoye" --copyright licensed
+```
+
+The autopilot runs capture, model planning, asset-manifest dry run when the entry
+is already a database pilot, and the procedural massing generator where a
+template exists. It writes a local run summary to:
+
+```text
+out/archive-automation/{entry-slug}/run-summary.json
+out/archive-automation/{entry-slug}/next-actions.md
+```
+
+No upload is performed.
+
+For individual pipeline steps:
+
 ```bash
 npm run archive:model-plan -- --entry villa-savoye
 ```
