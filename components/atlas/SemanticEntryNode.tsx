@@ -1,6 +1,6 @@
 'use client';
 
-import type { CSSProperties } from 'react';
+import type { CSSProperties, MouseEvent as ReactMouseEvent } from 'react';
 import { ProjectDetailCard } from '@/components/atlas/ProjectDetailCard';
 import { ProjectMediaGrid } from '@/components/atlas/ProjectMediaGrid';
 import { ProjectPreviewCard } from '@/components/atlas/ProjectPreviewCard';
@@ -27,7 +27,7 @@ type SemanticEntryNodeProps = {
   driftX?: number;
   driftY?: number;
   driftDelay?: number;
-  onSelect: () => void;
+  onSelect: (event?: ReactMouseEvent<SVGGElement>) => void;
   onHover?: (entryId: string | null) => void;
 };
 
@@ -77,7 +77,7 @@ export function SemanticEntryNode({
 }: SemanticEntryNodeProps) {
   const inverseScale = 1 / scale;
   const glyphRadius = nodeRadius ?? (semanticLevel === 'global' ? 4.8 : 7.2);
-  const hitRadius = Math.max(30, glyphRadius + 24);
+  const hitRadius = Math.max(15, glyphRadius + 8);
   const glyphFontSize = Math.max(7, Math.min(14, glyphRadius * 0.72));
   const accent = styleAccent[entry.style_sector];
   const labelWidth = Math.min(230, entry.title.length * 6.4 + 72);
@@ -103,7 +103,10 @@ export function SemanticEntryNode({
       style={driftStyle}
       onPointerEnter={() => onHover?.(entry.id)}
       onPointerLeave={() => onHover?.(null)}
-      onClick={onSelect}
+      onClick={(event) => {
+        event.stopPropagation();
+        onSelect(event);
+      }}
       onKeyDown={(event) => {
         if (event.key === 'Enter' || event.key === ' ') {
           event.preventDefault();

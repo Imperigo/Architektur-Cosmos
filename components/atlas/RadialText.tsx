@@ -1,4 +1,5 @@
 import { polarToCartesian } from '@/lib/polar-coordinates';
+import type { MouseEvent as ReactMouseEvent } from 'react';
 
 type RadialLetterTextProps = {
   text: string;
@@ -15,6 +16,7 @@ type RadialLetterTextProps = {
   strokeWidth?: number;
   className?: string;
   inward?: boolean;
+  onClick?: (event: ReactMouseEvent<SVGTextElement>) => void;
 };
 
 export function RadialLetterText({
@@ -31,7 +33,8 @@ export function RadialLetterText({
   stroke = '#050505',
   strokeWidth = 2.6,
   className,
-  inward = true
+  inward = true,
+  onClick
 }: RadialLetterTextProps) {
   const letters = [...text];
   const normalizedAngle = ((angle % 360) + 360) % 360;
@@ -41,7 +44,7 @@ export function RadialLetterText({
   const startAngle = angle - ((letters.length - 1) * step) / 2;
 
   return (
-    <g className={className} opacity={opacity} aria-label={text}>
+    <g className={className} opacity={opacity} aria-label={text} pointerEvents="none">
       {letters.map((letter, index) => {
         const letterAngle = startAngle + index * step;
         const point = polarToCartesian(cx, cy, radius, letterAngle);
@@ -65,7 +68,8 @@ export function RadialLetterText({
             strokeWidth={strokeWidth}
             paintOrder="stroke"
             transform={`rotate(${rotation} ${point.x} ${point.y})`}
-            pointerEvents="none"
+            pointerEvents={onClick ? 'visiblePainted' : 'none'}
+            onClick={onClick}
           >
             {letter === ' ' ? '\u00a0' : letter}
           </text>

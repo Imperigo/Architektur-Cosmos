@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState, type PointerEvent, type RefObject, type WheelEvent as ReactWheelEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type MouseEvent as ReactMouseEvent, type PointerEvent, type RefObject, type WheelEvent as ReactWheelEvent } from 'react';
 import { ProjectDetailCard } from '@/components/atlas/ProjectDetailCard';
 import { RelationOverlay } from '@/components/atlas/RelationOverlay';
 import { SemanticEntryNode } from '@/components/atlas/SemanticEntryNode';
@@ -184,11 +184,14 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     }
 
     closeDossier();
+    setHoveredEntry(null);
     nudgeTravel(delta);
   }
 
-  function focusNodeInView(node: WormholeEntryNode) {
-    openDossierFromNode(node.entry);
+  function focusNodeInView(event: ReactMouseEvent<SVGGElement> | undefined, fallbackNode: WormholeEntryNode) {
+    const point = event ? pointerToSvgPoint(event) : null;
+    const nearest = point ? nearestInteractiveNode(point, displayNodes) : null;
+    openDossierFromNode(nearest?.entry ?? fallbackNode.entry);
   }
 
   function openDossierFromNode(entry: Entry) {
@@ -306,6 +309,12 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     const point = pointerToSvgPoint(event);
     if (!point) return;
 
+    if (isInterfaceTarget(event.target)) {
+      moveCursor(point);
+      setHoveredEntry(null);
+      return;
+    }
+
     schedulePointerMove(point);
   }
 
@@ -360,17 +369,19 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     setHoveredEntryId(entryId);
   }
 
-  function pointerToSvgPoint(event: PointerEvent<SVGSVGElement>): SvgPoint | null {
+  function pointerToSvgPoint(event: { clientX: number; clientY: number }): SvgPoint | null {
     const svg = svgRef.current;
     if (!svg) return null;
 
-    const rect = svg.getBoundingClientRect();
-    if (rect.width === 0 || rect.height === 0) return null;
+    const matrix = svg.getScreenCTM();
+    if (!matrix) return null;
 
-    return {
-      x: ((event.clientX - rect.left) / rect.width) * atlasSize.width,
-      y: ((event.clientY - rect.top) / rect.height) * atlasSize.height
-    };
+    const point = svg.createSVGPoint();
+    point.x = event.clientX;
+    point.y = event.clientY;
+
+    const transformed = point.matrixTransform(matrix.inverse());
+    return { x: transformed.x, y: transformed.y };
   }
 
   return (
@@ -393,15 +404,6 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
           <g style={backgroundStyle} pointerEvents={selectedEntry ? 'none' : 'auto'}>
             <g className="wormhole-camera">
               <WormholeRings state={state} isMoving={isTraveling} />
-              <StyleSectors
-                state={state}
-                isMoving={isTraveling}
-                activeStyleLens={activeStyleLens}
-                onSelectStyleLens={(styleId) => {
-                  setActiveStyleLens((current) => current === styleId ? null : styleId);
-                  setShowFilterPanel(false);
-                }}
-              />
 
               {showRelations || hoveredEntry || selectedEntry ? (
                 <RelationOverlay nodes={displayNodes} relations={relations} selectedEntry={selectedEntry} focusEntry={hoveredEntry} isMoving={isTraveling} />
@@ -434,12 +436,23 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
                     driftX={node.driftX}
                     driftY={node.driftY}
                     driftDelay={node.driftDelay}
-                    onSelect={() => focusNodeInView(node)}
+                    onSelect={(event) => focusNodeInView(event, node)}
                     onHover={setHoveredEntry}
                   />
                 </g>
                 );
               })}
+              <StyleSectors
+                state={state}
+                isMoving={isTraveling}
+                activeStyleLens={activeStyleLens}
+                onSelectStyleLens={(styleId) => {
+                  setHoveredEntry(null);
+                  setActiveStyleLens((current) => current === styleId ? null : styleId);
+                  setActiveSourceLens(null);
+                  setShowFilterPanel(false);
+                }}
+              />
             </g>
           </g>
           {selectedEntry ? <SnappedEntryOverlay entry={selectedEntry} onDismiss={closeDossier} /> : null}
@@ -452,14 +465,24 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
               activeSourceLens={activeSourceLens}
               showRelations={showRelations}
               sourceLensCount={sourceLensCount}
-              onSetStyleLens={setActiveStyleLens}
+              onSetStyleLens={(styleId) => {
+                setHoveredEntry(null);
+                setActiveStyleLens(styleId);
+              }}
               onResetLenses={() => {
+                setHoveredEntry(null);
                 setActiveStyleLens(null);
                 setActiveSourceLens(null);
                 setShowRelations(false);
               }}
-              onToggleSourceLens={() => setActiveSourceLens((current) => current === 'afasia' ? null : 'afasia')}
-              onToggleRelations={() => setShowRelations((current) => !current)}
+              onToggleSourceLens={() => {
+                setHoveredEntry(null);
+                setActiveSourceLens((current) => current === 'afasia' ? null : 'afasia');
+              }}
+              onToggleRelations={() => {
+                setHoveredEntry(null);
+                setShowRelations((current) => !current);
+              }}
               onDismiss={() => setShowFilterPanel(false)}
             />
           ) : null}
@@ -472,15 +495,27 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
               sourceLensCount={sourceLensCount}
               onTravelForward={() => travelBy(0.026)}
               onTravelBackward={() => travelBy(-0.026)}
-              onToggleLenses={() => setShowFilterPanel((current) => !current)}
-              onToggleSourceLens={() => setActiveSourceLens((current) => current === 'afasia' ? null : 'afasia')}
-              onToggleRelations={() => setShowRelations((current) => !current)}
+              onToggleLenses={() => {
+                setHoveredEntry(null);
+                setShowFilterPanel((current) => !current);
+              }}
+              onToggleSourceLens={() => {
+                setHoveredEntry(null);
+                setActiveSourceLens((current) => current === 'afasia' ? null : 'afasia');
+              }}
+              onToggleRelations={() => {
+                setHoveredEntry(null);
+                setShowRelations((current) => !current);
+              }}
             />
           ) : null}
           {introState === 'idle' ? (
             <DatabaseAccess
               isOpen={showDatabasePanel}
-              onToggle={() => setShowDatabasePanel((current) => !current)}
+              onToggle={() => {
+                setHoveredEntry(null);
+                setShowDatabasePanel((current) => !current);
+              }}
             />
           ) : null}
           {showDatabasePanel && introState === 'idle' ? (
@@ -501,10 +536,15 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   );
 }
 
+function isInterfaceTarget(target: EventTarget) {
+  if (!(target instanceof Element)) return false;
+  return Boolean(target.closest('.radial-hud, .lens-access, .lens-panel, .database-access, .database-draft, .dossier-overlay, .style-sector'));
+}
+
 function isReadableNode(node: WormholeEntryNode) {
   const margin = 54;
   const insideFrame = node.x > margin && node.x < atlasSize.width - margin && node.y > margin && node.y < atlasSize.height - margin;
-  return insideFrame && node.depth >= 0.012 && node.depth <= 1.24 && node.opacity >= 0.1;
+  return insideFrame && node.depth >= 0.002 && node.depth <= 1.24 && node.opacity >= 0.02;
 }
 
 function limitDisplayNodes(nodes: WormholeEntryNode[]) {
@@ -550,7 +590,7 @@ function nearestInteractiveNode(point: SvgPoint, nodes: WormholeEntryNode[]) {
     if (node.opacity < 0.14) return nearest;
 
     const distance = Math.hypot(point.x - node.x, point.y - node.y);
-    const hitRadius = Math.max(28, node.size + 22);
+    const hitRadius = Math.max(18, node.size + 10);
     if (distance > hitRadius) return nearest;
 
     if (!nearest || distance < nearest.distance) {
@@ -863,7 +903,7 @@ function DatabaseDraftPanel({
   onDismiss: () => void;
 }) {
   const x = atlasSize.width - 392;
-  const y = atlasSize.height - 418;
+  const y = atlasSize.height - 500;
   const preview = draftToEntryPreview(draft);
 
   function updateField<Key extends keyof EntryDraft>(key: Key, value: EntryDraft[Key]) {
@@ -871,10 +911,10 @@ function DatabaseDraftPanel({
   }
 
   return (
-    <foreignObject x={x} y={y} width="360" height="350" className="database-draft" pointerEvents="auto">
+    <foreignObject x={x} y={y} width="360" height="430" className="database-draft" pointerEvents="auto">
       <div
         className="border border-[#00e7ff]/70 bg-[#050505]/95 p-4 text-[#f7f7f4] shadow-[0_0_28px_rgb(0_231_255_/_0.12)]"
-        style={{ width: 360, height: 350 }}
+        style={{ width: 360, height: 430 }}
         onPointerDown={(event) => event.stopPropagation()}
         onClick={(event) => event.stopPropagation()}
       >
@@ -895,7 +935,7 @@ function DatabaseDraftPanel({
           <DraftInput label="Authors" value={draft.authors} onChange={(value) => updateField('authors', value)} />
           <DraftInput label="Themes" value={draft.themes} onChange={(value) => updateField('themes', value)} />
         </div>
-        <pre className="mt-3 h-[70px] overflow-hidden whitespace-pre-wrap border border-[#00e7ff]/25 bg-black/35 p-2 text-[9px] leading-snug text-[#c9fff4]">
+        <pre className="mt-3 h-[74px] overflow-hidden whitespace-pre-wrap border border-[#00e7ff]/25 bg-black/35 p-2 text-[9px] leading-snug text-[#c9fff4]">
           {JSON.stringify(preview, null, 2)}
         </pre>
         <label className="mt-2 block text-[9px] uppercase tracking-[0.16em] text-[#b8b8b2]">
