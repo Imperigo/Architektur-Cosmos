@@ -1,0 +1,500 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-05-19T11:13:20.415Z",
+  "mode": "static_analysis_preview",
+  "writes_database": false,
+  "packs": [
+    {
+      "entry_slug": "alterszentrum-kloster-ingenbohl",
+      "topic": "Kloster Ingenbohl",
+      "agent": "current",
+      "generated_at": "2026-05-19T11:12:51.174Z",
+      "readiness_score": {
+        "score": 0.89,
+        "label": "strong_pilot",
+        "blockers": [
+          "no public-display media cleared"
+        ]
+      },
+      "source_score": {
+        "strongest_confidence": 0.95,
+        "primary_sources": 1,
+        "high_reliability_sources": 3,
+        "source_mix": "strong"
+      },
+      "rights_summary": {
+        "public_media_ready": 0,
+        "link_only_or_private_sources": 8,
+        "publication_default": "metadata_and_links_only",
+        "note": "Generated analysis and own summaries can be public; protected source images, plans and screenshots stay link-only/private unless rights are cleared."
+      },
+      "analysis_tags": [
+        "material:concrete",
+        "material:timber",
+        "material:lime-plaster",
+        "material:clay-plaster",
+        "structure:concrete-frame",
+        "structure:core",
+        "typology:care-architecture",
+        "typology:monastery-transformation",
+        "theme:adaptive-reuse",
+        "spatial:courtyard",
+        "landscape:terrace-roof-garden",
+        "analysis:tectonics-old-new-interface",
+        "typology:building",
+        "theme:monastery",
+        "theme:care-architecture",
+        "theme:concrete-structure",
+        "theme:timber-facade",
+        "material:trass-lime",
+        "structure:solid-and-frame-hybrid",
+        "structure:reinforced-concrete-frame",
+        "structure:bracing-core",
+        "analysis:needs-review"
+      ],
+      "model_potential": {
+        "readiness": "draft_model_plan_ready",
+        "score": 0.72,
+        "recommended_layers": [
+          "low.glb",
+          "mass.glb",
+          "structure.glb",
+          "material-system.glb",
+          "tectonic-old-new-interface.glb",
+          "site-context.glb"
+        ],
+        "blender_collections": [
+          "AC_entry_identity",
+          "AC_structure",
+          "AC_materials",
+          "AC_tectonics",
+          "AC_site_context",
+          "AC_source_confidence"
+        ],
+        "source_basis_needed": [
+          "verified exterior and interior photographs",
+          "plans and sections with rights status",
+          "own diagrammatic reconstruction notes",
+          "site context source"
+        ]
+      },
+      "source_assessments": [
+        {
+          "id": "office-boltshauser",
+          "name": "Boltshauser Architekten",
+          "reliability": "primary",
+          "confidence": 0.95,
+          "rights_decision": "link_only",
+          "analysis_use": [
+            "source_trail",
+            "identity",
+            "project_facts"
+          ],
+          "recommended_use": "primary facts, project metadata, source trail, no media reuse without permission"
+        },
+        {
+          "id": "lignumdata",
+          "name": "Lignumdata",
+          "reliability": "high",
+          "confidence": 0.84,
+          "rights_decision": "link_only",
+          "analysis_use": [
+            "source_trail",
+            "material_tags",
+            "structure_tags"
+          ],
+          "recommended_use": "supporting reference, tags and source trail"
+        },
+        {
+          "id": "espazium",
+          "name": "espazium",
+          "reliability": "high",
+          "confidence": 0.84,
+          "rights_decision": "link_only",
+          "analysis_use": [
+            "source_trail"
+          ],
+          "recommended_use": "supporting reference, tags and source trail"
+        },
+        {
+          "id": "divisare",
+          "name": "Divisare",
+          "reliability": "medium",
+          "confidence": 0.62,
+          "rights_decision": "link_only",
+          "analysis_use": [
+            "source_trail"
+          ],
+          "recommended_use": "supporting reference, tags and source trail"
+        },
+        {
+          "id": "wbw-epaper",
+          "name": "werk, bauen + wohnen ePaper",
+          "reliability": "high",
+          "confidence": 0.84,
+          "rights_decision": "private_or_link_only",
+          "analysis_use": [
+            "source_trail",
+            "critical_context",
+            "media_candidates"
+          ],
+          "recommended_use": "supporting reference, tags and source trail"
+        },
+        {
+          "id": "afasia",
+          "name": "Afasia Archzine",
+          "reliability": "medium",
+          "confidence": 0.62,
+          "rights_decision": "link_only",
+          "analysis_use": [
+            "source_trail",
+            "critical_context",
+            "media_candidates"
+          ],
+          "recommended_use": "supporting reference, tags and source trail"
+        },
+        {
+          "id": "swiss-architects",
+          "name": "Swiss-Architects",
+          "reliability": "medium",
+          "confidence": 0.62,
+          "rights_decision": "link_only",
+          "analysis_use": [
+            "source_trail",
+            "identity",
+            "project_facts"
+          ],
+          "recommended_use": "supporting reference, tags and source trail"
+        },
+        {
+          "id": "world-architects",
+          "name": "World-Architects",
+          "reliability": "medium",
+          "confidence": 0.62,
+          "rights_decision": "link_only",
+          "analysis_use": [
+            "source_trail",
+            "identity",
+            "project_facts"
+          ],
+          "recommended_use": "supporting reference, tags and source trail"
+        }
+      ],
+      "draft_recommendation": {
+        "action": "refine_existing_entry",
+        "title": "Alterszentrum Kloster Ingenbohl",
+        "slug": "alterszentrum-kloster-ingenbohl",
+        "source_candidates": [
+          {
+            "title": "Boltshauser Architekten",
+            "url": "https://boltshauser.info/",
+            "reliability_level": "primary",
+            "rights_status": "link_only"
+          },
+          {
+            "title": "Lignumdata",
+            "url": "https://www.lignumdata.ch/",
+            "reliability_level": "high",
+            "rights_status": "link_only"
+          },
+          {
+            "title": "espazium",
+            "url": "https://www.espazium.ch/",
+            "reliability_level": "high",
+            "rights_status": "link_only"
+          },
+          {
+            "title": "Divisare",
+            "url": "https://divisare.com/",
+            "reliability_level": "medium",
+            "rights_status": "link_only"
+          },
+          {
+            "title": "werk, bauen + wohnen ePaper",
+            "url": "https://epaper.wbw.ch/#/library/tile",
+            "reliability_level": "high",
+            "rights_status": "private_or_link_only"
+          },
+          {
+            "title": "Afasia Archzine",
+            "url": "https://afasiaarchzine.com/",
+            "reliability_level": "medium",
+            "rights_status": "link_only"
+          },
+          {
+            "title": "Swiss-Architects",
+            "url": "https://www.swiss-architects.com/",
+            "reliability_level": "medium",
+            "rights_status": "link_only"
+          },
+          {
+            "title": "World-Architects",
+            "url": "https://www.world-architects.com/",
+            "reliability_level": "medium",
+            "rights_status": "link_only"
+          }
+        ],
+        "suggested_tags": [
+          "material:concrete",
+          "material:timber",
+          "material:lime-plaster",
+          "material:clay-plaster",
+          "structure:concrete-frame",
+          "structure:core",
+          "typology:care-architecture",
+          "typology:monastery-transformation",
+          "theme:adaptive-reuse",
+          "spatial:courtyard",
+          "landscape:terrace-roof-garden",
+          "analysis:tectonics-old-new-interface",
+          "typology:building",
+          "theme:monastery",
+          "theme:care-architecture",
+          "theme:concrete-structure",
+          "theme:timber-facade",
+          "material:trass-lime",
+          "structure:solid-and-frame-hybrid",
+          "structure:reinforced-concrete-frame",
+          "structure:bracing-core",
+          "analysis:needs-review"
+        ],
+        "model_status": "draft_model_plan_ready",
+        "public_copy_policy": "own_summary_only_with_links_until_rights_clear",
+        "database_write_allowed": false
+      }
+    },
+    {
+      "entry_slug": "villa-savoye",
+      "topic": "Villa Savoye",
+      "agent": "historical",
+      "generated_at": "2026-05-19T11:12:51.174Z",
+      "readiness_score": {
+        "score": 0.84,
+        "label": "strong_pilot",
+        "blockers": [
+          "no primary source selected"
+        ]
+      },
+      "source_score": {
+        "strongest_confidence": 0.84,
+        "primary_sources": 0,
+        "high_reliability_sources": 8,
+        "source_mix": "good"
+      },
+      "rights_summary": {
+        "public_media_ready": 4,
+        "link_only_or_private_sources": 6,
+        "publication_default": "partial_public_media_after_attribution",
+        "note": "Generated analysis and own summaries can be public; protected source images, plans and screenshots stay link-only/private unless rights are cleared."
+      },
+      "analysis_tags": [
+        "material:concrete",
+        "structure:concrete-frame",
+        "landscape:terrace-roof-garden",
+        "typology:modern-villa",
+        "typology:manifest-house",
+        "structure:reinforced-concrete-frame",
+        "structure:pilotis",
+        "spatial:promenade-architecturale",
+        "spatial:free-plan",
+        "analysis:model-ready",
+        "analysis:material-system",
+        "analysis:tectonic-layering"
+      ],
+      "model_potential": {
+        "readiness": "model_seed_ready",
+        "score": 1,
+        "recommended_layers": [
+          "low.glb",
+          "mass.glb",
+          "structure.glb",
+          "material-system.glb",
+          "tectonic-old-new-interface.glb",
+          "site-context.glb"
+        ],
+        "blender_collections": [
+          "AC_entry_identity",
+          "AC_structure",
+          "AC_materials",
+          "AC_tectonics",
+          "AC_site_context",
+          "AC_source_confidence"
+        ],
+        "source_basis_needed": [
+          "verified exterior and interior photographs",
+          "plans and sections with rights status",
+          "own diagrammatic reconstruction notes",
+          "site context source"
+        ]
+      },
+      "source_assessments": [
+        {
+          "id": "eth-research-collection",
+          "name": "ETH Research Collection",
+          "reliability": "high",
+          "confidence": 0.84,
+          "rights_decision": "review_required",
+          "analysis_use": [
+            "source_trail",
+            "historical_context"
+          ],
+          "recommended_use": "supporting reference, tags and source trail"
+        },
+        {
+          "id": "eth-library-architecture",
+          "name": "ETH Library Architecture and Urban Planning Research Guide",
+          "reliability": "high",
+          "confidence": 0.84,
+          "rights_decision": "link_only",
+          "analysis_use": [
+            "source_trail",
+            "historical_context"
+          ],
+          "recommended_use": "supporting reference, tags and source trail"
+        },
+        {
+          "id": "eth-e-pics",
+          "name": "ETH E-Pics",
+          "reliability": "high",
+          "confidence": 0.84,
+          "rights_decision": "review_required",
+          "analysis_use": [
+            "source_trail"
+          ],
+          "recommended_use": "supporting reference, tags and source trail"
+        },
+        {
+          "id": "eth-videoportal-darch",
+          "name": "ETH Videoportal D-ARCH Lectures",
+          "reliability": "high",
+          "confidence": 0.84,
+          "rights_decision": "link_only",
+          "analysis_use": [
+            "source_trail"
+          ],
+          "recommended_use": "supporting reference, tags and source trail"
+        },
+        {
+          "id": "global-history-urban-design-i",
+          "name": "Global History of Urban Design I / ETH",
+          "reliability": "high",
+          "confidence": 0.84,
+          "rights_decision": "link_only",
+          "analysis_use": [
+            "source_trail",
+            "historical_context"
+          ],
+          "recommended_use": "supporting reference, tags and source trail"
+        },
+        {
+          "id": "global-history-urban-design-ii",
+          "name": "Global History of Urban Design II / ETH",
+          "reliability": "high",
+          "confidence": 0.84,
+          "rights_decision": "link_only",
+          "analysis_use": [
+            "source_trail",
+            "historical_context"
+          ],
+          "recommended_use": "supporting reference, tags and source trail"
+        },
+        {
+          "id": "holzer-construction-history",
+          "name": "ETH Construction History / Holzer Lectures",
+          "reliability": "high",
+          "confidence": 0.84,
+          "rights_decision": "link_only",
+          "analysis_use": [
+            "source_trail",
+            "historical_context"
+          ],
+          "recommended_use": "supporting reference, tags and source trail"
+        },
+        {
+          "id": "stalder-architecture-theory",
+          "name": "ETH gta Architecture Theory / Laurent Stalder Lectures",
+          "reliability": "high",
+          "confidence": 0.84,
+          "rights_decision": "link_only",
+          "analysis_use": [
+            "source_trail",
+            "historical_context"
+          ],
+          "recommended_use": "supporting reference, tags and source trail"
+        }
+      ],
+      "draft_recommendation": {
+        "action": "refine_existing_entry",
+        "title": "Villa Savoye",
+        "slug": "villa-savoye",
+        "source_candidates": [
+          {
+            "title": "ETH Research Collection",
+            "url": "https://www.research-collection.ethz.ch/home",
+            "reliability_level": "high",
+            "rights_status": "review_required"
+          },
+          {
+            "title": "ETH Library Architecture and Urban Planning Research Guide",
+            "url": "https://library.ethz.ch/medien-finden/recherchieren/fachgebiete/architektur-stadtplanung.html",
+            "reliability_level": "high",
+            "rights_status": "link_only"
+          },
+          {
+            "title": "ETH E-Pics",
+            "url": "https://e-pics3.ethz.ch/de/home/",
+            "reliability_level": "high",
+            "rights_status": "review_required"
+          },
+          {
+            "title": "ETH Videoportal D-ARCH Lectures",
+            "url": "https://video.ethz.ch/lectures/d-arch/2024/autumn.html",
+            "reliability_level": "high",
+            "rights_status": "link_only"
+          },
+          {
+            "title": "Global History of Urban Design I / ETH",
+            "url": "https://avermaete.arch.ethz.ch/education/bachelor/global-history-of-urban-design-I.html",
+            "reliability_level": "high",
+            "rights_status": "link_only"
+          },
+          {
+            "title": "Global History of Urban Design II / ETH",
+            "url": "https://avermaete.arch.ethz.ch/education/bachelor/global-history-of-urban-design-II.html",
+            "reliability_level": "high",
+            "rights_status": "link_only"
+          },
+          {
+            "title": "ETH Construction History / Holzer Lectures",
+            "url": "https://holzer.arch.ethz.ch/studium/vorlesungen.html",
+            "reliability_level": "high",
+            "rights_status": "link_only"
+          },
+          {
+            "title": "ETH gta Architecture Theory / Laurent Stalder Lectures",
+            "url": "https://stalder.gta.arch.ethz.ch/vorlesungen",
+            "reliability_level": "high",
+            "rights_status": "link_only"
+          }
+        ],
+        "suggested_tags": [
+          "material:concrete",
+          "structure:concrete-frame",
+          "landscape:terrace-roof-garden",
+          "typology:modern-villa",
+          "typology:manifest-house",
+          "structure:reinforced-concrete-frame",
+          "structure:pilotis",
+          "spatial:promenade-architecturale",
+          "spatial:free-plan",
+          "analysis:model-ready",
+          "analysis:material-system",
+          "analysis:tectonic-layering"
+        ],
+        "model_status": "model_seed_ready",
+        "public_copy_policy": "own_summary_only_with_links_until_rights_clear",
+        "database_write_allowed": false
+      }
+    }
+  ]
+}

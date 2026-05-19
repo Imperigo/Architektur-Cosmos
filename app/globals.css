@@ -1538,6 +1538,96 @@ body:has(.entry-page) {
   color: #00e7ff;
 }
 
+.database-flow-steps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+  border: 1px solid rgb(247 247 244 / 10%);
+  background: rgb(5 5 5 / 48%);
+  padding: 6px;
+}
+
+.database-flow-step {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid rgb(247 247 244 / 12%);
+  background: rgb(7 24 26 / 44%);
+  padding: 6px;
+  opacity: 0.62;
+}
+
+.database-flow-step span {
+  display: grid;
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  color: #8d8d87;
+  font-size: 9px;
+  line-height: 1;
+}
+
+.database-flow-step small {
+  min-width: 0;
+  color: #b8b8b2;
+  font-size: 7.6px;
+  letter-spacing: 0.06em;
+  line-height: 1.08;
+  text-transform: uppercase;
+}
+
+.database-flow-step-active {
+  border-color: rgb(0 231 255 / 44%);
+  background: rgb(0 231 255 / 8%);
+  opacity: 1;
+}
+
+.database-flow-step-active span,
+.database-flow-step-active small {
+  color: #00e7ff;
+}
+
+.database-analysis-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border: 1px solid rgb(0 231 255 / 38%);
+  background:
+    radial-gradient(circle at 100% 0%, rgb(0 231 255 / 15%), transparent 42%),
+    rgb(7 24 26 / 72%);
+  padding: 12px;
+}
+
+.database-analysis-score {
+  display: grid;
+  width: 70px;
+  height: 70px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid rgb(0 231 255 / 64%);
+  border-radius: 999px;
+  background: rgb(5 5 5 / 72%);
+  color: #00e7ff;
+}
+
+.database-analysis-score span {
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.database-analysis-score small {
+  margin-top: -18px;
+  font-size: 7px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
 .brand-chrome {
   mix-blend-mode: screen;
 }
@@ -1660,6 +1750,19 @@ body:has(.entry-page) {
   .database-tab small {
     font-size: 10px;
     line-height: 1.2;
+  }
+
+  .database-flow-steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+  }
+
+  .database-flow-step {
+    min-height: 44px;
+  }
+
+  .database-flow-step small {
+    font-size: 10px;
   }
 
   .database-draft p,

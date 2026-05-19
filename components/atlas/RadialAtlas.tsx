@@ -7,6 +7,7 @@ import { RelationOverlay } from '@/components/atlas/RelationOverlay';
 import { SemanticEntryNode } from '@/components/atlas/SemanticEntryNode';
 import { StyleSectors } from '@/components/atlas/StyleSectors';
 import { WormholeRings } from '@/components/atlas/WormholeRings';
+import analysisPreview from '@/data/database-analysis-preview.json';
 import archivePreview from '@/data/archive-preview.json';
 import { atlasSize, styleSectors } from '@/lib/atlas-layout';
 import type { Entry, EntryRelation, StyleSectorId } from '@/lib/types';
@@ -1385,6 +1386,7 @@ function DatabaseArchivePanel({
   const intakeStats = summarizeIntakeFiles(intakeFiles);
   const pilotEntry = archivePreview.entries[0];
   const currentEntry = selectedEntry ?? entries.find((entry) => entry.id === pilotEntry.id) ?? null;
+  const currentAnalysisPack = findAnalysisPackForEntry(currentEntry);
   const currentProfile = currentEntry?.database_profile;
   const counts = [
     { label: 'Entries', value: entries.length },
@@ -1397,13 +1399,13 @@ function DatabaseArchivePanel({
   const tabs: Array<{ id: DatabaseTab; label: string; hint: string; group: 'create' | 'review' }> = [
     { id: 'generate', label: 'Generate', hint: 'Name or image to draft', group: 'create' },
     { id: 'intake', label: 'Files', hint: 'Stage source package', group: 'create' },
+    { id: 'analysis', label: 'Analyze', hint: 'Score and layers', group: 'create' },
     { id: 'draft', label: 'Draft', hint: 'Edit before adding', group: 'create' },
     { id: 'overview', label: 'Status', hint: 'What exists now', group: 'review' },
     { id: 'entries', label: 'Entries', hint: 'Current object', group: 'review' },
     { id: 'sources', label: 'Sources', hint: 'References', group: 'review' },
     { id: 'media', label: 'Media', hint: 'Images and plans', group: 'review' },
     { id: 'models', label: '3D', hint: 'Model layers', group: 'review' },
-    { id: 'analysis', label: 'Analysis', hint: 'Material and tectonics', group: 'review' },
     { id: 'relations', label: 'Graph', hint: 'Connections', group: 'review' }
   ];
   const createTabs = tabs.filter((tab) => tab.group === 'create');
@@ -1676,6 +1678,7 @@ function DatabaseArchivePanel({
 
           {activeTab === 'generate' ? (
             <div className="space-y-3 text-[10px] leading-relaxed text-[#d9d9d2]">
+              <DatabaseFlowSteps current="research" />
               <div className="database-generate-sticky">
                   <div>
                     <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#00e7ff]">Dev AI Generate</div>
@@ -1786,6 +1789,10 @@ function DatabaseArchivePanel({
             </div>
           ) : null}
 
+          {activeTab === 'analysis' ? (
+            <DatabaseAnalysisPackView pack={currentAnalysisPack} fallbackEntry={currentEntry} />
+          ) : null}
+
           {activeTab === 'entries' ? (
             <div className="space-y-2">
               {currentEntry ? (
@@ -1815,16 +1822,13 @@ function DatabaseArchivePanel({
             <ArchiveCards items={(currentEntry?.model_assets?.length ? currentEntry.model_assets : archivePreview.entry_models).map((model) => ({ title: model.title, meta: `${model.model_type} / ${model.review_status} / confidence ${model.confidence_score ?? 'n/a'}`, body: model.source_basis }))} />
           ) : null}
 
-          {activeTab === 'analysis' ? (
-            <ArchiveCards items={(currentEntry?.analysis_layers?.length ? currentEntry.analysis_layers : archivePreview.entry_analysis).map((analysis) => ({ title: analysis.analysis_type.replace(/_/g, ' '), meta: analysis.review_status, body: analysis.summary }))} />
-          ) : null}
-
           {activeTab === 'relations' ? (
             <ArchiveList title="Knowledge Graph" items={[`${relations.length} local relations available now`, 'D1 table prepared for influence, theme, source and structural relations', 'Hover network can later read the same graph instead of local JSON']} />
           ) : null}
 
           {activeTab === 'draft' ? (
             <div>
+              <DatabaseFlowSteps current="draft" />
               <div className="mb-2 flex items-center justify-between gap-2">
                 <div className="text-[9px] uppercase tracking-[0.16em] text-[#b8b8b2]">New Entry Draft / browser session only</div>
                 <div className="flex gap-1.5">
@@ -1988,6 +1992,131 @@ function DatabaseTabGroup({
   );
 }
 
+function DatabaseFlowSteps({ current }: { current: 'research' | 'analysis' | 'draft' | 'review' }) {
+  const steps = [
+    { id: 'research', label: 'Research Pack' },
+    { id: 'analysis', label: 'Analysis Pack' },
+    { id: 'draft', label: 'Draft' },
+    { id: 'review', label: 'Ready for Review' }
+  ] as const;
+  const currentIndex = steps.findIndex((step) => step.id === current);
+
+  return (
+    <div className="database-flow-steps" aria-label="Database workflow">
+      {steps.map((step, index) => (
+        <div key={step.id} className={`database-flow-step ${index <= currentIndex ? 'database-flow-step-active' : ''}`}>
+          <span>{index + 1}</span>
+          <small>{step.label}</small>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function DatabaseAnalysisPackView({
+  pack,
+  fallbackEntry
+}: {
+  pack: (typeof analysisPreview.packs)[number] | null;
+  fallbackEntry: Entry | null;
+}) {
+  if (!pack) {
+    return (
+      <div className="space-y-3 text-[10px] leading-relaxed text-[#d9d9d2]">
+        <DatabaseFlowSteps current="analysis" />
+        <ArchiveList
+          title="Analysis Pack"
+          items={[
+            fallbackEntry ? `No static analysis pack yet for ${fallbackEntry.title}` : 'No selected entry analysis pack yet',
+            'Run database:analyze in the terminal to produce a research and analysis pack',
+            'Reviewed packs can be added to data/database-analysis-preview.json for static display'
+          ]}
+        />
+      </div>
+    );
+  }
+
+  const materialTags = pack.analysis_tags.filter((tag) => tag.startsWith('material:'));
+  const structureTags = pack.analysis_tags.filter((tag) => tag.startsWith('structure:'));
+  const tectonicTags = pack.analysis_tags.filter((tag) => tag.startsWith('analysis:') || tag.startsWith('spatial:') || tag.startsWith('landscape:'));
+
+  return (
+    <div className="space-y-3 text-[10px] leading-relaxed text-[#d9d9d2]">
+      <DatabaseFlowSteps current="analysis" />
+      <div className="database-analysis-hero">
+        <div>
+          <div className="text-[9px] uppercase tracking-[0.18em] text-[#00e7ff]">Analysis Pack</div>
+          <div className="mt-1 text-[15px] font-semibold leading-tight text-[#f7f7f4]">{pack.topic}</div>
+          <div className="mt-1 text-[8.5px] uppercase tracking-[0.13em] text-[#b8b8b2]">{pack.agent} / {pack.readiness_score.label.replace(/_/g, ' ')}</div>
+        </div>
+        <div className="database-analysis-score">
+          <span>{Math.round(pack.readiness_score.score * 100)}</span>
+          <small>ready</small>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-3 gap-1.5">
+        <AnalysisMetric label="Source mix" value={pack.source_score.source_mix.replace(/_/g, ' ')} />
+        <AnalysisMetric label="Primary" value={`${pack.source_score.primary_sources}`} />
+        <AnalysisMetric label="Rights" value={pack.rights_summary.publication_default.replace(/_/g, ' ')} />
+      </div>
+
+      <AnalysisTagGroup title="Material" tags={materialTags} empty="No material tags yet" />
+      <AnalysisTagGroup title="Structure" tags={structureTags} empty="No structure tags yet" />
+      <AnalysisTagGroup title="Tectonics / Site" tags={tectonicTags} empty="No tectonic tags yet" />
+
+      <ArchiveList
+        title="3D / Blender Layers"
+        items={[
+          `Readiness: ${pack.model_potential.readiness.replace(/_/g, ' ')} / score ${Math.round(pack.model_potential.score * 100)}%`,
+          `Layers: ${pack.model_potential.recommended_layers.join(', ')}`,
+          `Collections: ${pack.model_potential.blender_collections.join(', ')}`
+        ]}
+      />
+
+      <ArchiveCards
+        items={pack.source_assessments.slice(0, 5).map((source) => ({
+          title: source.name,
+          meta: `${source.reliability} / ${Math.round(source.confidence * 100)}% / ${source.rights_decision.replace(/_/g, ' ')}`,
+          body: source.recommended_use
+        }))}
+      />
+
+      <ArchiveList
+        title="Rights Gate"
+        items={[
+          pack.rights_summary.note,
+          ...pack.readiness_score.blockers.map((blocker) => `Blocker: ${blocker}`)
+        ]}
+      />
+    </div>
+  );
+}
+
+function AnalysisMetric({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="border border-[#f7f7f4]/12 bg-[#07181a]/65 px-2 py-1.5">
+      <div className="truncate text-[9.5px] font-semibold text-[#f7f7f4]">{value}</div>
+      <div className="mt-1 truncate text-[7.5px] uppercase tracking-[0.1em] text-[#b8b8b2]">{label}</div>
+    </div>
+  );
+}
+
+function AnalysisTagGroup({ title, tags, empty }: { title: string; tags: string[]; empty: string }) {
+  return (
+    <div>
+      <div className="mb-2 text-[9px] uppercase tracking-[0.18em] text-[#00e7ff]">{title}</div>
+      <div className="flex flex-wrap gap-1.5">
+        {(tags.length ? tags : [empty]).slice(0, 10).map((tag) => (
+          <span key={tag} className="border border-[#00e7ff]/24 bg-[#061719]/80 px-2 py-1 text-[8.5px] leading-tight text-[#d9d9d2]">
+            {tag.replace(/^[^:]+:/, '').replace(/-/g, ' ')}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function ArchiveList({ title, items }: { title: string; items: string[] }) {
   return (
     <div>
@@ -2094,6 +2223,11 @@ function sourceCardsForEntry(entry: Entry) {
   }
 
   return cards;
+}
+
+function findAnalysisPackForEntry(entry: Entry | null) {
+  if (!entry) return null;
+  return analysisPreview.packs.find((pack) => pack.entry_slug === entry.slug || pack.entry_slug === entry.id) ?? null;
 }
 
 const entryTypeOptions: Array<{ value: Entry['entry_type']; label: string }> = [

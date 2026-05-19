@@ -33,7 +33,8 @@
     "archive:r2-status": "node scripts/cloudflare-archive-preview.mjs --r2-status",
     "archive:r2-manifest": "node scripts/archive-d1-tools.mjs export-r2-manifest",
     "archive:cloudflare-preview": "node scripts/cloudflare-archive-preview.mjs",
-    "database:research": "node scripts/database-research-agents.mjs"
+    "database:research": "node scripts/database-research-agents.mjs",
+    "database:analyze": "node scripts/database-research-agents.mjs --mode analyze"
   },
   "dependencies": {
     "@types/d3": "latest",

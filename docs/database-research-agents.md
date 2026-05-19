@@ -102,17 +102,27 @@ npm run database:research -- --agent current --topic "Kloster Ingenbohl"
 npm run database:research -- --agent all --topic "Swiss timber housing"
 ```
 
+Generate and analyze in one pass:
+
+```bash
+npm run database:analyze -- --agent current --topic "Kloster Ingenbohl"
+npm run database:research -- --mode analyze --agent historical --topic "Villa Savoye"
+```
+
 The tool writes:
 
 ```text
 out/database-research/{date}/{agent}-{topic}/research-pack.json
 out/database-research/{date}/{agent}-{topic}/research-pack.md
+out/database-research/{date}/{agent}-{topic}/analysis-pack.json
+out/database-research/{date}/{agent}-{topic}/analysis-pack.md
 ```
 
 This is the intended flow:
 
 ```text
 Research pack
+  -> analysis pack
   -> manual review
   -> rights gate
   -> entry draft
@@ -133,6 +143,12 @@ Each candidate should eventually receive:
 
 ## Next Implementation Step
 
-The first implementation is a query-pack generator. Later, if we add a search
-API key, the same tool can run live discovery and produce candidate rows. Even
-then, the database write remains a separate review step.
+The current implementation has two modes:
+
+- `research`: source/query pack only;
+- `analyze`: source scoring, rights summary, analysis tags, model potential and
+  draft recommendation.
+
+Later, if we add a search API key, the same tool can run live discovery and
+produce candidate rows. Even then, the database write remains a separate review
+step.
