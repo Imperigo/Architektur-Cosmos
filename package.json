@@ -38,7 +38,8 @@
     "database:research": "node scripts/database-research-agents.mjs",
     "database:analyze": "node scripts/database-research-agents.mjs --mode analyze",
     "database:pilot-enrich": "node scripts/pilot-enrichment-review.mjs",
-    "brain:review": "node scripts/brain-review.mjs"
+    "brain:review": "node scripts/brain-review.mjs",
+    "brain:doctor": "node scripts/brain-doctor.mjs"
   },
   "dependencies": {
     "@types/d3": "latest",

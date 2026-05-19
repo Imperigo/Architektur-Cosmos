@@ -2,7 +2,44 @@
   "version": 1,
   "name": "Architecture Cosmos Brain",
   "modes": ["observe", "draft", "review", "execute", "publish"],
-  "default_mode": "review",
+  "default_mode": "autonomous_review",
+  "autonomy": {
+    "posture": "active_self_healing_with_owner_approval",
+    "may_run_without_approval": [
+      "read_repository_state",
+      "generate_local_reports",
+      "run_validation_checks",
+      "run_build_checks",
+      "run_security_checks",
+      "regenerate_review_outputs",
+      "clean_runtime_report_outputs"
+    ],
+    "may_self_heal_without_approval": [
+      "create_missing_out_directories",
+      "regenerate_brain_review",
+      "regenerate_archive_preview_json",
+      "rerun_failed_checks_once",
+      "write_local_diagnostics"
+    ],
+    "must_ask_before": [
+      "editing_tracked_source_files",
+      "committing",
+      "pushing",
+      "publishing",
+      "cloud_resource_creation",
+      "database_write",
+      "r2_upload",
+      "email_send",
+      "auth_or_upload_feature",
+      "public_asset_release"
+    ],
+    "failure_policy": {
+      "retry_failed_safe_check_once": true,
+      "write_doctor_report": true,
+      "stop_before_destructive_actions": true,
+      "never_delete_user_files_without_explicit_approval": true
+    }
+  },
   "approval_required_for": [
     "repository_write",
     "public_publish",
@@ -34,6 +71,8 @@
     "Do not introduce auth, upload or database writes without a security plan.",
     "Prefer review packs before committing enriched data.",
     "Keep private research metadata separate from public display.",
-    "Every 3D or Blender layer needs source_basis and review_status."
+    "Every 3D or Blender layer needs source_basis and review_status.",
+    "Autonomous mode may diagnose and prepare work, but large changes need owner approval.",
+    "Self-healing is allowed for reports and regenerated derived files, not for destructive file operations."
   ]
 }
