@@ -6,6 +6,7 @@ import { ProjectSearch } from '@/components/atlas/ProjectSearch';
 import { RelationOverlay } from '@/components/atlas/RelationOverlay';
 import { SemanticEntryNode } from '@/components/atlas/SemanticEntryNode';
 import { StyleSectors } from '@/components/atlas/StyleSectors';
+import { WormholeCanvas } from '@/components/atlas/WormholeCanvas';
 import { WormholeRings } from '@/components/atlas/WormholeRings';
 import analysisPreview from '@/data/database-analysis-preview.json';
 import archivePreview from '@/data/archive-preview.json';
@@ -686,7 +687,8 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
 
   return (
     <main className={`relative h-screen w-screen overflow-hidden bg-[#050505] text-[#f7f7f4] cosmos-perf-${performanceTier} cosmos-intro-${introState} ${introState === 'launching' ? 'cosmos-launching' : ''} ${isTraveling ? 'cosmos-moving' : ''} ${introState === 'idle' && !isTraveling ? 'cosmos-idle' : ''}`}>
-      <div className="h-full w-full">
+      <WormholeCanvas state={state} isMoving={isTraveling} quality={performanceTier} />
+      <div className="relative z-10 h-full w-full">
         <svg
           ref={svgRef}
           viewBox={`0 0 ${atlasSize.width} ${atlasSize.height}`}
@@ -704,10 +706,10 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
         >
           <defs>
           </defs>
-          <rect width={atlasSize.width} height={atlasSize.height} fill="#050505" />
+          <rect width={atlasSize.width} height={atlasSize.height} fill="#050505" opacity={introState === 'intro' ? 0.16 : 0.02} />
           <g style={backgroundStyle} pointerEvents={selectedEntry ? 'none' : 'auto'}>
             <g className="wormhole-camera">
-              <WormholeRings state={state} isMoving={isTraveling} quality={performanceTier} />
+              {performanceTier === 'full' && !isTraveling ? <WormholeRings state={state} isMoving={isTraveling} quality={performanceTier} /> : null}
 
               {relationOverlayActive ? (
                 <RelationOverlay nodes={displayNodes} relations={relations} selectedEntry={selectedEntry} focusEntry={hoveredEntry} isMoving={isTraveling} />
