@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint .",
     "security:check": "node scripts/security-check.mjs",
+    "security:headers": "node scripts/check-live-security.mjs",
     "import:afasia": "node scripts/import-afasia.mjs",
     "archive:validate": "node scripts/archive-d1-tools.mjs validate",
     "archive:export": "node scripts/archive-d1-tools.mjs export-sql",

@@ -130,6 +130,7 @@ Run before any commit or publish:
 ```bash
 npm run archive:validate
 npm run security:check
+npm run security:headers
 npm run lint
 npm run build
 ```

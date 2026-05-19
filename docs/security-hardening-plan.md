@@ -63,6 +63,7 @@ Allowed safe checks for routine development:
 - Secret scanning with `rg`.
 - Dependency audit with `npm audit`.
 - Local security baseline with `npm run security:check`.
+- Live header verification with `npm run security:headers`.
 - Static build verification.
 - Header verification on the exported/static deployment.
 - UI tests against local dev and the live domain.
