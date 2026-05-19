@@ -1456,6 +1456,20 @@ body:has(.entry-page) {
     max-height: calc(100% - 24px);
     overflow-y: auto;
   }
+
+  .screen-cosmos-cursor {
+    display: none;
+  }
+
+  .navigation-dock {
+    filter: none;
+  }
+
+  .database-access,
+  .lens-control,
+  .project-search {
+    touch-action: manipulation;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

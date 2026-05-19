@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState, type DragEvent, type MouseEvent as ReactMouseEvent, type PointerEvent, type RefObject, type WheelEvent as ReactWheelEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type DragEvent, type MouseEvent as ReactMouseEvent, type PointerEvent, type RefObject, type TouchEvent as ReactTouchEvent, type WheelEvent as ReactWheelEvent } from 'react';
 import { ProjectDetailCard } from '@/components/atlas/ProjectDetailCard';
 import { ProjectSearch } from '@/components/atlas/ProjectSearch';
 import { RelationOverlay } from '@/components/atlas/RelationOverlay';
@@ -66,6 +66,18 @@ type IntakeFile = {
   kind: 'pdf' | 'image' | 'plan' | 'video' | 'model' | 'text' | 'other';
   status: 'queued' | 'classified';
 };
+type TouchTravelGesture = {
+  mode: 'idle' | 'single' | 'pinch';
+  startX: number;
+  startY: number;
+  lastY: number;
+  lastDistance: number;
+  moved: number;
+};
+type TouchPoint = {
+  clientX: number;
+  clientY: number;
+};
 
 const initialEntryDraft: EntryDraft = {
   title: '',
@@ -128,8 +140,17 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   const pendingPointerPointRef = useRef<SvgPoint | null>(null);
   const pointerFrameRef = useRef<number | null>(null);
   const hoveredEntryIdRef = useRef<string | null>(null);
+  const touchTravelRef = useRef<TouchTravelGesture>({
+    mode: 'idle',
+    startX: 0,
+    startY: 0,
+    lastY: 0,
+    lastDistance: 0,
+    moved: 0
+  });
   const allEntries = useMemo(() => mergeEntries(entries, localEntries), [entries, localEntries]);
   const state = useMemo(() => wormholeState(motion.currentTravel), [motion.currentTravel]);
+  const coarsePointer = useCoarsePointer();
   const activeSelectedEntryId = selectedEntry?.id ?? null;
   const nodes = useMemo(() => layoutWormholeEntries(allEntries, state, activeSelectedEntryId ?? undefined), [activeSelectedEntryId, allEntries, state]);
   const displayNodes = useMemo(() => limitDisplayNodes(nodes, performanceTier), [nodes, performanceTier]);
@@ -398,7 +419,148 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     nudgeTravel(normalizedDelta * 0.00014);
   }
 
+  function handleTouchStart(event: ReactTouchEvent<SVGSVGElement>) {
+    if (isInterfaceTarget(event.target)) return;
+    if (event.cancelable) event.preventDefault();
+
+    if (introState !== 'idle') {
+      startIntro();
+      return;
+    }
+
+    const touches = Array.from(event.touches);
+    setHoveredEntry(null);
+
+    if (touches.length >= 2) {
+      touchTravelRef.current = {
+        mode: 'pinch',
+        startX: 0,
+        startY: 0,
+        lastY: averageTouchY(touches),
+        lastDistance: touchDistance(touches[0], touches[1]),
+        moved: 0
+      };
+      return;
+    }
+
+    if (touches.length === 1) {
+      touchTravelRef.current = {
+        mode: 'single',
+        startX: touches[0].clientX,
+        startY: touches[0].clientY,
+        lastY: touches[0].clientY,
+        lastDistance: 0,
+        moved: 0
+      };
+    }
+  }
+
+  function handleTouchMove(event: ReactTouchEvent<SVGSVGElement>) {
+    if (isInterfaceTarget(event.target)) return;
+    if (event.cancelable) event.preventDefault();
+
+    if (introState !== 'idle') {
+      startIntro();
+      return;
+    }
+
+    const touches = Array.from(event.touches);
+    if (touches.length === 0) return;
+
+    closeDossier();
+    setHoveredEntry(null);
+
+    if (touches.length >= 2) {
+      const nextDistance = touchDistance(touches[0], touches[1]);
+      const previousDistance = touchTravelRef.current.mode === 'pinch' ? touchTravelRef.current.lastDistance : nextDistance;
+      const distanceDelta = Math.max(-86, Math.min(86, nextDistance - previousDistance));
+      touchTravelRef.current = {
+        mode: 'pinch',
+        startX: touchTravelRef.current.startX,
+        startY: touchTravelRef.current.startY,
+        lastY: averageTouchY(touches),
+        lastDistance: nextDistance,
+        moved: touchTravelRef.current.moved + Math.abs(distanceDelta)
+      };
+
+      nudgeTravel(distanceDelta * 0.00052);
+      return;
+    }
+
+    const nextY = touches[0].clientY;
+    const currentTouch = touchTravelRef.current;
+    const previousY = currentTouch.mode === 'single' ? currentTouch.lastY : nextY;
+    const verticalDelta = Math.max(-92, Math.min(92, previousY - nextY));
+    touchTravelRef.current = {
+      mode: 'single',
+      startX: currentTouch.mode === 'single' ? currentTouch.startX : touches[0].clientX,
+      startY: currentTouch.mode === 'single' ? currentTouch.startY : touches[0].clientY,
+      lastY: nextY,
+      lastDistance: 0,
+      moved: currentTouch.moved + Math.abs(verticalDelta)
+    };
+
+    nudgeTravel(verticalDelta * 0.00034);
+  }
+
+  function handleTouchEnd(event: ReactTouchEvent<SVGSVGElement>) {
+    if (isInterfaceTarget(event.target)) return;
+
+    const touches = Array.from(event.touches);
+    if (touches.length >= 2) {
+      touchTravelRef.current = {
+        mode: 'pinch',
+        startX: 0,
+        startY: 0,
+        lastY: averageTouchY(touches),
+        lastDistance: touchDistance(touches[0], touches[1]),
+        moved: 0
+      };
+      return;
+    }
+
+    if (touches.length === 1) {
+      touchTravelRef.current = {
+        mode: 'single',
+        startX: touches[0].clientX,
+        startY: touches[0].clientY,
+        lastY: touches[0].clientY,
+        lastDistance: 0,
+        moved: 0
+      };
+      return;
+    }
+
+    const finishedTouch = event.changedTouches[0];
+    const currentTouch = touchTravelRef.current;
+    const tapDistance = finishedTouch && currentTouch.mode === 'single'
+      ? Math.hypot(finishedTouch.clientX - currentTouch.startX, finishedTouch.clientY - currentTouch.startY)
+      : Number.POSITIVE_INFINITY;
+
+    if (finishedTouch && currentTouch.mode === 'single' && currentTouch.moved < 10 && tapDistance < 14 && !selectedEntry) {
+      const point = pointerToSvgPoint(finishedTouch);
+      const nearest = point ? nearestInteractiveNode(point, displayNodes) : null;
+      if (nearest) {
+        openDossierFromNode(nearest.entry);
+      }
+    }
+
+    touchTravelRef.current = {
+      mode: 'idle',
+      startX: 0,
+      startY: 0,
+      lastY: 0,
+      lastDistance: 0,
+      moved: 0
+    };
+  }
+
   function handlePointerMove(event: PointerEvent<SVGSVGElement>) {
+    if (event.pointerType === 'touch') {
+      setHoveredEntry(null);
+      return;
+    }
+
     const point = pointerToSvgPoint(event);
     if (!point) return;
 
@@ -485,6 +647,10 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
           viewBox={`0 0 ${atlasSize.width} ${atlasSize.height}`}
           className="h-full w-full touch-none cursor-none"
           onWheel={handleWheel}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          onTouchCancel={handleTouchEnd}
           onPointerMove={handlePointerMove}
           onPointerLeave={handlePointerLeave}
           onClick={() => {
@@ -639,7 +805,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
           />
         ) : null}
         {introState === 'idle' ? <ProjectSearch entries={allEntries} /> : null}
-        {cursorVisible ? <ScreenCosmosCursor cursorRef={screenCursorRef} isDossierOpen={Boolean(selectedEntry)} /> : null}
+        {cursorVisible && !coarsePointer ? <ScreenCosmosCursor cursorRef={screenCursorRef} isDossierOpen={Boolean(selectedEntry)} /> : null}
       </div>
 
       {introState !== 'idle' ? <IntroGate state={introState} onStart={startIntro} /> : null}
@@ -689,6 +855,22 @@ function usePerformanceTier(): PerformanceTier {
   }, []);
 
   return tier;
+}
+
+function useCoarsePointer() {
+  const [isCoarsePointer, setIsCoarsePointer] = useState(false);
+
+  useEffect(() => {
+    const media = window.matchMedia('(pointer: coarse)');
+    const updatePointerMode = () => setIsCoarsePointer(media.matches);
+
+    updatePointerMode();
+    media.addEventListener('change', updatePointerMode);
+
+    return () => media.removeEventListener('change', updatePointerMode);
+  }, []);
+
+  return isCoarsePointer;
 }
 
 function isInterfaceTarget(target: EventTarget) {
@@ -772,6 +954,14 @@ function nearestInteractiveNode(point: SvgPoint, nodes: WormholeEntryNode[]) {
 
     return nearest;
   }, null);
+}
+
+function touchDistance(first: TouchPoint, second: TouchPoint) {
+  return Math.hypot(first.clientX - second.clientX, first.clientY - second.clientY);
+}
+
+function averageTouchY(touches: TouchPoint[]) {
+  return touches.reduce((sum, touch) => sum + touch.clientY, 0) / touches.length;
 }
 
 function roundMotion(value: number) {

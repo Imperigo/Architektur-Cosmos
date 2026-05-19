@@ -40,8 +40,13 @@ Manual QA overrides:
 - CSS:
   - reduced: hides expensive decorative streams/glows and disables more
     animations/filters
-  - mobile/coarse pointer: smaller HUD, safer overlay positions and scrollable
-    model controls
+- mobile/coarse pointer: smaller HUD, safer overlay positions and scrollable
+  model controls
+- Atlas touch travel:
+  - one-finger vertical swipe moves through the wormhole timeline
+  - two-finger pinch maps to atlas travel instead of browser page zoom
+  - overlays keep native vertical scrolling and do not trigger tunnel travel
+  - the custom desktop crosshair is hidden on coarse-pointer devices
 
 ## Browser QA Matrix
 
@@ -54,6 +59,7 @@ Minimum manual checks before major publish:
 | Desktop Opera | `/?perf=balanced` or automatic | wheel zoom does not move page |
 | Weak laptop simulation | `/?perf=reduced` | stable motion, no flicker |
 | Mobile narrow viewport | `/?perf=reduced` | panels fit, HUD reachable |
+| Mobile Opera/Safari/Chrome | `/atlas/?perf=reduced` | one-finger travel and two-finger pinch move the atlas, not the page |
 | Detail page | `/atlas/villa-savoye/` | 3D viewer controls usable |
 
 ## Next Optimization Steps
