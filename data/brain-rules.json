@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "name": "Architecture Cosmos Brain",
+  "modes": ["observe", "draft", "review", "execute", "publish"],
+  "default_mode": "review",
+  "approval_required_for": [
+    "repository_write",
+    "public_publish",
+    "cloud_upload",
+    "database_write",
+    "auth_or_upload_feature",
+    "private_asset_publication",
+    "external_email_send"
+  ],
+  "public_rights_allowed": ["own_work", "licensed", "public_domain", "cc_by", "cc_by_sa"],
+  "private_or_blocked_rights": ["unknown", "needs_permission", "private_research", "personal_only", "all_rights_reserved"],
+  "entry_quality_targets": {
+    "minimum_sources": 3,
+    "required_media_slots": ["exterior", "interior", "section", "plan"],
+    "required_analysis_layers": ["structure", "material_system", "tectonics"],
+    "required_model_parts": ["full", "structure", "site"]
+  },
+  "priority_weights": {
+    "missing_sources": 22,
+    "rights_blocked": 18,
+    "missing_model": 16,
+    "missing_analysis": 14,
+    "missing_relations": 10,
+    "pilot_entry": 12,
+    "public_ready": -8
+  },
+  "guardrails": [
+    "Do not publish unclear images, plans, sections or exact plan-derived assets.",
+    "Do not introduce auth, upload or database writes without a security plan.",
+    "Prefer review packs before committing enriched data.",
+    "Keep private research metadata separate from public display.",
+    "Every 3D or Blender layer needs source_basis and review_status."
+  ]
+}

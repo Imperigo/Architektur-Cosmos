@@ -1,0 +1,6 @@
+{
+  "version": 1,
+  "updated_at": "2026-05-19",
+  "description": "Manual approval queue for Architecture Cosmos Brain. Runtime reports are written to out/brain-review and should be reviewed before repository or database writes.",
+  "items": []
+}
