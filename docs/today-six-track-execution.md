@@ -114,6 +114,8 @@ Today:
 - make the project detail page treat the 3D/model viewer as the primary
   analysis object, ahead of generic filters;
 - add material investigation as a first-class viewer/filter layer;
+- run `archive:media-quality` to score exterior, interior, section and plan
+  slots before trusting them as 3D/model inputs;
 - improve image-identification expectations: current static UI is only
   filename/context matching, while real project recognition requires a private
   vision model or server-side API behind auth.

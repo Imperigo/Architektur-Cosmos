@@ -206,6 +206,14 @@ function buildAnalysisProfile(entry, availableAssets) {
 }
 
 function buildBlenderProfile(entry, modelPackage, analysisProfile) {
+  const collectionPrefix = `AC_${entry.slug.replace(/-/g, '_')}`;
+  const collections = modelPackage.blender_layers.map((layerName) => ({
+    name: `${collectionPrefix}/${layerName}`,
+    visibility_default: true,
+    source: collectionSource(layerName, modelPackage, analysisProfile),
+    purpose: collectionPurpose(layerName)
+  }));
+
   return {
     entry_id: entry.id,
     slug: entry.slug,
@@ -213,10 +221,11 @@ function buildBlenderProfile(entry, modelPackage, analysisProfile) {
     target_file: `archive-intake/${entry.slug}/models/source.blend`,
     import_contract: {
       expected_units: modelPackage.coordinate_policy.unit,
-      collection_prefix: `AC_${entry.slug.replace(/-/g, '_')}`,
+      collection_prefix: collectionPrefix,
       layer_collections: modelPackage.blender_layers,
       metadata_text_block: 'architecture_cosmos_metadata.json'
     },
+    collections,
     model_targets: modelPackage.targets,
     analysis_layers: analysisProfile.layers.map((layer) => ({
       analysis_type: layer.analysis_type,
@@ -229,6 +238,30 @@ function buildBlenderProfile(entry, modelPackage, analysisProfile) {
       `Highlight structure, material system and circulation layers for ${entry.title}.`
     ]
   };
+}
+
+function collectionSource(layerName, modelPackage, analysisProfile) {
+  const normalized = layerName.toLowerCase();
+  if (normalized.includes('source')) return modelPackage.source_assets.map((asset) => asset.local_path ?? asset.title).filter(Boolean);
+  if (normalized.includes('structure')) return analysisProfile.layers.filter((layer) => layer.analysis_type === 'structure').map((layer) => layer.output_path);
+  if (normalized.includes('material') || normalized.includes('tectonic')) return analysisProfile.layers.filter((layer) => ['material_system', 'tectonics', 'filter_classification'].includes(layer.analysis_type)).map((layer) => layer.output_path);
+  if (normalized.includes('circulation')) return analysisProfile.layers.filter((layer) => layer.analysis_type === 'circulation').map((layer) => layer.output_path);
+  if (normalized.includes('mass')) return modelPackage.targets.filter((target) => target.model_type === 'mass_model' || target.model_type === 'low_poly_model').map((target) => target.target_path);
+  if (normalized.includes('site')) return modelPackage.targets.filter((target) => target.model_type === 'site_model').map((target) => target.target_path);
+  return [];
+}
+
+function collectionPurpose(layerName) {
+  const normalized = layerName.toLowerCase();
+  if (normalized.includes('source')) return 'Keep source images, plans, sections and notes as non-public reference inputs.';
+  if (normalized.includes('site')) return 'Context, terrain, landscape and placement relationship.';
+  if (normalized.includes('mass')) return 'Simplified volume and spatial order for atlas-scale comparison.';
+  if (normalized.includes('structure')) return 'Load-bearing system, frame, core, slabs, walls and structural grid.';
+  if (normalized.includes('envelope')) return 'Facade, openings, screens, windows and external skin.';
+  if (normalized.includes('circulation')) return 'Ramp, stair, corridor, promenade and movement logic.';
+  if (normalized.includes('material')) return 'Material palette, tectonic annotations and filterable construction logic.';
+  if (normalized.includes('splat')) return 'Optional reality/atmosphere layer, not canonical measured geometry.';
+  return 'Architecture Cosmos reference layer.';
 }
 
 function buildArchicadProfile(entry, modelPackage) {

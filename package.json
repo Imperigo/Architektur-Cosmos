@@ -19,6 +19,7 @@
     "archive:identify-image": "node scripts/archive-identify-image.mjs",
     "archive:capture": "node scripts/archive-capture.mjs",
     "archive:asset-manifest": "node scripts/archive-asset-manifest.mjs",
+    "archive:media-quality": "node scripts/archive-media-quality.mjs",
     "archive:autopilot": "node scripts/archive-autopilot.mjs",
     "archive:rights-gate": "node scripts/archive-rights-gate.mjs",
     "archive:model-plan": "node scripts/archive-model-plan.mjs",

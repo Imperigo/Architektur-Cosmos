@@ -31,6 +31,7 @@ For individual pipeline steps:
 
 ```bash
 npm run archive:model-plan -- --entry villa-savoye
+npm run archive:media-quality -- --entry villa-savoye
 ```
 
 The command reads `data/mock-entries.json` and writes local, gitignored planning
@@ -46,6 +47,13 @@ archive-intake/{entry-slug}/automation/next-actions.md
 ```
 
 No Cloudflare upload is performed. No local asset is committed to GitHub.
+
+`archive:media-quality` writes a local media-slot quality report to
+`out/media-quality/{slug}.json`. It checks metadata, local file presence,
+source/rights hints, slot semantics and basic size policy. It does not inspect
+pixels yet; the future private vision model must confirm whether the project is
+actually visible in exterior/interior images and whether plan/section drawings
+really belong to the project.
 
 ## First Procedural Massing
 
@@ -168,6 +176,14 @@ formats. This keeps the current local MVP compatible with the larger vision:
 > Ask Claude in Blender for Swiss 18th-century timber buildings with pitched
 > roofs, retrieve them from the archive, and insert the relevant reference
 > models into the current design context.
+
+The generated `blender-import-profile.json` now also includes explicit
+collection rows with:
+
+- collection path;
+- default visibility;
+- source files or analysis JSON linked to that collection;
+- collection purpose for Blender/Claude use.
 
 ## Gaussian Splat Policy
 
