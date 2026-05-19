@@ -68,11 +68,14 @@ Recommended Cloudflare order:
 
 Decision for today: use **Villa Savoye** as the first full automation pilot
 because it already has media, model data and a procedural massing template.
-Ingenbohl stays the contemporary Swiss pilot for later manual/source review.
+Use **Alterszentrum Kloster Ingenbohl** as the second source-only/private-research
+pilot to test how the pipeline behaves when sources exist but rights-reviewed
+plans, images and geometry are not yet available.
 
 Today:
 
 - run local-only automation commands for Villa Savoye;
+- run local-only automation commands for Ingenbohl as a source-only pilot;
 - inspect generated outputs in `out/` and `archive-intake/`;
 - do not upload anything to Cloudflare.
 
@@ -87,6 +90,12 @@ Progress:
 - The model-plan asset resolver now recognizes public pilot media under
   `public/archive-media`, so exterior, interior, section and plan slots are
   correctly available for the next Blender/analysis pass.
+- Ingenbohl autopilot passes locally through capture, model-plan, rights-gate
+  and asset-manifest. Model generation is correctly skipped because no
+  rights-reviewed plan/section basis or procedural template exists yet.
+- The model-plan next-actions are now project-sensitive: Villa Savoye keeps its
+  five-points sequence, while source-only pilots receive rights/geometry-first
+  instructions.
 
 ## 5. 3D / Gaussian Splat / Blender-ArchiCAD
 

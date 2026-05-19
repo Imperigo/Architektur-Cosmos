@@ -293,6 +293,7 @@ function buildSplatPlan(entry, availableAssets) {
 function buildNextActions(entry, availableAssets) {
   const missing = availableAssets.filter((asset) => !asset.exists);
   const ready = availableAssets.filter((asset) => asset.exists);
+  const sequence = buildRecommendedSequence(entry, ready);
   return `# ${entry.title} / Next 3D + Analysis Actions
 
 ## Ready locally
@@ -302,18 +303,50 @@ ${ready.map((asset) => `- ${asset.slot}: ${asset.local_path}`).join('\n') || '- 
 ${missing.map((asset) => `- ${asset.slot}: ${asset.local_path ?? asset.title}`).join('\n') || '- No missing local asset references.'}
 
 ## Recommended next sequence
-1. Review diagrammatic plan and section layers against trusted sources.
-2. Build a low-poly mass model from plan, section and five-points logic.
-3. Split the model into site, mass, structure, envelope, circulation and tectonic layers.
-4. Add analysis JSON for materials, roof form, structure and circulation.
-5. Capture or source a rights-clean video set before generating a Gaussian splat.
-6. Export GLB first; postpone IFC/ArchiCAD exchange until the geometry is reviewed.
+${sequence.map((item, index) => `${index + 1}. ${item}`).join('\n')}
 
 ## Safety
 - No public upload without explicit command.
 - Diagrammatic drawings are not measured construction plans.
 - Gaussian splat is a reality/atmosphere layer, not the canonical analytical model.
 `;
+}
+
+function buildRecommendedSequence(entry, readyAssets) {
+  const hasPlan = readyAssets.some((asset) => asset.slot === 'plan');
+  const hasSection = readyAssets.some((asset) => asset.slot === 'section');
+  const hasGeometryBasis = hasPlan && hasSection;
+
+  if (entry.slug === 'villa-savoye') {
+    return [
+      'Review diagrammatic plan and section layers against trusted sources.',
+      'Build a low-poly mass model from plan, section and five-points logic.',
+      'Split the model into site, mass, structure, envelope, circulation and tectonic layers.',
+      'Add analysis JSON for materials, roof form, structure and circulation.',
+      'Capture or source a rights-clean video set before generating a Gaussian splat.',
+      'Export GLB first; postpone IFC/ArchiCAD exchange until the geometry is reviewed.'
+    ];
+  }
+
+  if (!hasGeometryBasis) {
+    return [
+      'Collect or create rights-reviewed plan and section references before generating geometry.',
+      'Keep the current entry as a source-and-analysis pilot until geometric evidence exists.',
+      'Use the existing analysis layers to define target model collections: site, mass, structure, envelope, circulation and tectonics.',
+      'Mark all copyrighted or unclear media as private research or link-only until review.',
+      'Prepare own/licensed photos or video frames before any Gaussian splat experiment.',
+      'Create a project-specific procedural template only after the plan/section basis is reviewed.'
+    ];
+  }
+
+  return [
+    'Review available plan and section references against trusted sources.',
+    'Build a project-specific low-poly mass model from the reviewed geometry basis.',
+    'Split the model into site, mass, structure, envelope, circulation and tectonic layers.',
+    'Add analysis JSON for materials, roof form, structure and circulation.',
+    'Capture or source a rights-clean video set before generating a Gaussian splat.',
+    'Export GLB first; postpone IFC/ArchiCAD exchange until the geometry is reviewed.'
+  ];
 }
 
 function modelTypeToIfc(modelType) {

@@ -74,7 +74,11 @@ It is “model-ready” only when it additionally has:
 ## Current Pilot Queue
 
 1. `villa-savoye`: 3D/analysis reference pilot with local GLB generation.
-2. `alterszentrum-kloster-ingenbohl`: contemporary Swiss transformation pilot.
+2. `alterszentrum-kloster-ingenbohl`: contemporary Swiss transformation pilot;
+   currently a source-only/private-research automation pilot. It can pass
+   capture, model planning, rights-gate and asset manifest generation, but model
+   generation stays blocked until rights-reviewed plan/section assets or a
+   project-specific procedural template exist.
 3. `afasia-no-architecture-flower-house`: source-rights and Afasia policy pilot.
 4. Glass House and Farnsworth House: comparison and typology targets.
 5. Unité d’Habitation, Salk Institute, Centre Pompidou, Parc de la Villette and
