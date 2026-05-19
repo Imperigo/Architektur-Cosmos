@@ -5,21 +5,21 @@
   --ui-safe-edge: clamp(14px, 1.8vw, 26px);
   --ui-hit-min: 44px;
   --ui-hit-touch: 48px;
-  --ui-trigger-h: 48px;
-  --ui-trigger-min-w: 124px;
+  --ui-trigger-h: 32px;
+  --ui-trigger-min-w: 92px;
   --ui-panel-max-w: min(330px, calc(100vw - (var(--ui-safe-edge) * 2)));
   --ui-panel-max-h: min(620px, calc(100dvh - 112px));
   --ui-gap: 8px;
   --ui-panel-pad: 12px;
-  --ui-font-control: 10px;
+  --ui-font-control: 8.2px;
   --ui-font-body: 11px;
   --ui-font-label: 9px;
   --ui-leading-body: 1.35;
   --ui-backdrop-blur: blur(14px);
   --cosmos-hud-edge: clamp(14px, 1.8vw, 26px);
   --cosmos-hud-top: clamp(70px, 7.2vh, 88px);
-  --cosmos-hud-button-height: 32px;
-  --cosmos-hud-button-min: 96px;
+  --cosmos-hud-button-height: 28px;
+  --cosmos-hud-button-min: 92px;
 }
 * { cursor: none !important; }
 *,
@@ -76,14 +76,14 @@
   gap: var(--ui-gap);
   height: var(--ui-trigger-h);
   min-width: var(--ui-trigger-min-w);
-  padding-inline: 13px;
+  padding-inline: 10px;
   border: 1px solid rgb(247 247 244 / 62%);
   border-radius: 999px;
   background: rgb(5 5 5 / 78%);
   color: #f7f7f4;
   text-transform: uppercase;
   letter-spacing: 0.11em;
-  font-size: 9.4px;
+  font-size: var(--ui-font-control);
   line-height: 1;
   white-space: nowrap;
   overflow-wrap: normal;
@@ -1046,7 +1046,6 @@ body:has(.entry-page) {
   gap: var(--ui-gap);
   width: var(--ui-trigger-min-w);
   min-width: var(--ui-trigger-min-w);
-  min-height: var(--ui-hit-min);
   height: var(--ui-trigger-h);
   border: 1px solid rgb(0 231 255 / 70%);
   border-radius: 999px;
@@ -1054,7 +1053,7 @@ body:has(.entry-page) {
     radial-gradient(circle at 10% 0%, rgb(0 231 255 / 16%), transparent 46%),
     rgb(5 5 5 / 80%);
   color: #dffcff;
-  padding: 0 15px 0 13px;
+  padding: 0 11px 0 10px;
   text-transform: uppercase;
   letter-spacing: 0.15em;
   font-size: var(--ui-font-control);
@@ -1072,7 +1071,7 @@ body:has(.entry-page) {
 .project-search-trigger span:last-child {
   display: block;
   min-width: 0;
-  max-width: 104px;
+  max-width: 76px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1092,8 +1091,8 @@ body:has(.entry-page) {
 
 .lens-control-mark {
   display: block;
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   border: 1px solid currentColor;
   border-radius: 999px;
   position: relative;
@@ -1254,7 +1253,6 @@ body:has(.entry-page) {
   gap: var(--ui-gap);
   width: var(--ui-trigger-min-w);
   min-width: var(--ui-trigger-min-w);
-  min-height: var(--ui-hit-min);
   height: var(--ui-trigger-h);
   margin-left: auto;
   border: 1px solid rgb(0 231 255 / 70%);
@@ -1263,10 +1261,10 @@ body:has(.entry-page) {
     radial-gradient(circle at 10% 0%, rgb(255 79 216 / 16%), transparent 46%),
     rgb(5 5 5 / 80%);
   color: #fff2fb;
-  padding: 0 15px 0 13px;
+  padding: 0 11px 0 10px;
   text-transform: uppercase;
   letter-spacing: 0.11em;
-  font-size: 9.4px;
+  font-size: var(--ui-font-control);
   line-height: 1;
   white-space: nowrap;
   overflow: hidden;
@@ -1290,8 +1288,8 @@ body:has(.entry-page) {
 .project-search-mark {
   position: relative;
   display: block;
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   border: 1px solid currentColor;
   border-radius: 999px;
 }
@@ -1299,9 +1297,9 @@ body:has(.entry-page) {
 .project-search-mark::after {
   content: "";
   position: absolute;
-  right: -3px;
+  right: -2.5px;
   bottom: -2px;
-  width: 5px;
+  width: 4px;
   height: 1px;
   background: currentColor;
   transform: rotate(45deg);
@@ -1486,8 +1484,7 @@ body:has(.entry-page) {
 }
 
 .database-generate-sticky {
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 2;
   display: flex;
   align-items: center;
@@ -1499,6 +1496,48 @@ body:has(.entry-page) {
     rgb(5 5 5 / 96%);
   padding: 10px;
   box-shadow: 0 12px 24px rgb(0 0 0 / 34%);
+}
+
+.database-top-workflow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.database-top-workflow .database-flow-steps {
+  height: 100%;
+}
+
+.database-primary-generate {
+  min-width: 116px;
+  border: 1px solid rgb(0 231 255 / 82%);
+  background:
+    linear-gradient(135deg, rgb(156 255 247 / 28%), rgb(0 231 255 / 86%)),
+    #00e7ff;
+  color: #050505;
+  font-size: 8.5px;
+  font-weight: 750;
+  letter-spacing: 0.13em;
+  line-height: 1.1;
+  padding: 8px 10px;
+  text-transform: uppercase;
+  transition: transform 140ms ease, box-shadow 140ms ease, border-color 140ms ease;
+}
+
+.database-primary-generate:hover {
+  border-color: rgb(247 247 244 / 92%);
+  box-shadow: 0 0 20px rgb(0 231 255 / 16%);
+  transform: translateY(-1px);
+}
+
+.database-tab-section {
+  margin-bottom: 12px;
+  display: grid;
+  gap: 8px;
+  border: 1px solid rgb(247 247 244 / 10%);
+  background: rgb(5 5 5 / 42%);
+  padding: 8px;
 }
 
 .database-dropzone {
@@ -1763,7 +1802,7 @@ body:has(.entry-page) {
     --ui-hit-min: 48px;
     --ui-hit-touch: 48px;
     --ui-trigger-h: 42px;
-    --ui-trigger-min-w: 144px;
+    --ui-trigger-min-w: 116px;
     --ui-panel-max-w: min(92vw, 430px);
     --ui-panel-max-h: min(78dvh, 620px);
     --ui-gap: 9px;
@@ -1776,7 +1815,7 @@ body:has(.entry-page) {
     --cosmos-hud-edge: clamp(14px, 4.4vw, 20px);
     --cosmos-hud-top: max(64px, env(safe-area-inset-top));
     --cosmos-hud-button-height: 42px;
-    --cosmos-hud-button-min: 116px;
+    --cosmos-hud-button-min: 112px;
   }
 
   .database-draft {
@@ -1816,6 +1855,16 @@ body:has(.entry-page) {
   .database-tab {
     min-height: 58px;
     padding: 9px 10px;
+  }
+
+  .database-top-workflow {
+    grid-template-columns: 1fr;
+  }
+
+  .database-primary-generate {
+    min-height: var(--ui-hit-min);
+    width: 100%;
+    font-size: 12px;
   }
 
   .database-tab span {

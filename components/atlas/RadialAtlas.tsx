@@ -1236,11 +1236,11 @@ function styleShortLabel(id: StyleSectorId) {
 
 function DatabaseAccess({ isOpen, onToggle }: { isOpen: boolean; onToggle: () => void }) {
   const ui = useAtlasUiMetrics();
-  const width = ui.isCoarsePointer ? 350 : 196;
-  const height = ui.isCoarsePointer ? 116 : 65;
-  const x = atlasSize.width - width - (ui.isCoarsePointer ? 28 : 28);
-  const y = atlasSize.height - (ui.isCoarsePointer ? 152 : 90);
-  const iconScale = ui.isCoarsePointer ? 2.8 : 1.55;
+  const width = ui.isCoarsePointer ? 212 : 100;
+  const height = ui.isCoarsePointer ? 54 : 32;
+  const x = atlasSize.width - width - (ui.isCoarsePointer ? 22 : 28);
+  const y = atlasSize.height - (ui.isCoarsePointer ? 86 : 64);
+  const iconScale = ui.isCoarsePointer ? 1.25 : 0.82;
   function toggleOnce(event: { stopPropagation: () => void }) {
     event.stopPropagation();
     onToggle();
@@ -1257,12 +1257,12 @@ function DatabaseAccess({ isOpen, onToggle }: { isOpen: boolean; onToggle: () =>
     >
       <rect x="0" y={-height / 2} width={width} height={height} rx={height / 2} fill={isOpen ? '#f7f7f4' : '#050505'} stroke="#00e7ff" strokeWidth="0.92" opacity="0.9" />
       <path d={`M ${height / 2} ${-height / 2 + 1} H ${width - height / 2}`} stroke="#00e7ff" strokeWidth="0.42" opacity={isOpen ? 0.18 : 0.34} />
-      <g className="database-access-core" transform={`translate(${ui.isCoarsePointer ? 34 : 21} ${ui.isCoarsePointer ? -1.5 : -1.5}) scale(${iconScale})`} stroke="#f7f7f4" fill="none" strokeWidth="0.72" opacity="0.9">
+      <g className="database-access-core" transform={`translate(${ui.isCoarsePointer ? 20 : 10} ${ui.isCoarsePointer ? -1.5 : -1.5}) scale(${iconScale})`} stroke="#f7f7f4" fill="none" strokeWidth="0.72" opacity="0.9">
         <ellipse cx="14" cy="-3.6" rx="5.6" ry="2.2" stroke={isOpen ? '#050505' : '#f7f7f4'} />
         <path d="M 8.4 -3.6 V 5.4 Q 14 8.2 19.6 5.4 V -3.6" stroke={isOpen ? '#050505' : '#f7f7f4'} />
         <path d="M 8.4 1.2 Q 14 4 19.6 1.2" stroke={isOpen ? '#050505' : '#f7f7f4'} opacity="0.52" />
       </g>
-      <text x={ui.isCoarsePointer ? 126 : 68} y={ui.isCoarsePointer ? 10 : 5} fill={isOpen ? '#050505' : '#f7f7f4'} fontSize={ui.isCoarsePointer ? 30 : 12.5} fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.11em" fontWeight="650">
+      <text x={ui.isCoarsePointer ? 70 : 34} y={ui.isCoarsePointer ? 6 : 3.5} fill={isOpen ? '#050505' : '#f7f7f4'} fontSize={ui.isCoarsePointer ? 13 : 6.6} fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.09em" fontWeight="650">
         DATABASE
       </text>
       <rect
@@ -1283,7 +1283,7 @@ function DatabaseAccess({ isOpen, onToggle }: { isOpen: boolean; onToggle: () =>
 function BrandChrome({ isArriving = false }: { isArriving?: boolean }) {
   return (
     <g className={`brand-chrome ${isArriving ? 'brand-chrome-arriving' : ''}`} pointerEvents="none">
-      <g transform={`translate(${atlasSize.cx - 54} 14) scale(1.68)`} opacity="0.88">
+      <g transform={`translate(${atlasSize.cx - 31} 20) scale(0.98)`} opacity="0.88">
         <CosmosGlyph />
       </g>
     </g>
@@ -1430,6 +1430,7 @@ function DatabaseArchivePanel({
   ];
   const createTabs = tabs.filter((tab) => tab.group === 'create');
   const reviewTabs = tabs.filter((tab) => tab.group === 'review');
+  const workflowStage = databaseWorkflowStage(activeTab);
 
   function updateField<Key extends keyof EntryDraft>(key: Key, value: EntryDraft[Key]) {
     onDraftChange({ ...draft, [key]: value });
@@ -1587,12 +1588,23 @@ function DatabaseArchivePanel({
           Browser session only / no D1 write / no R2 upload / private library planned
         </div>
 
-        <div className="mb-3 space-y-2">
-          <DatabaseTabGroup title="Create entry" tabs={createTabs} activeTab={activeTab} onSelect={setActiveTab} />
-          <DatabaseTabGroup title="Review archive" tabs={reviewTabs} activeTab={activeTab} onSelect={setActiveTab} />
+        <div className="database-top-workflow mb-3">
+          <DatabaseFlowSteps current={workflowStage} />
+          <button
+            type="button"
+            className="database-primary-generate"
+            onClick={generateResearchDraft}
+          >
+            Dev AI Generate
+          </button>
         </div>
 
         <div className="cosmos-scroll-panel min-h-0 flex-1 pr-1">
+          <div className="database-tab-section">
+            <DatabaseTabGroup title="Create entry" tabs={createTabs} activeTab={activeTab} onSelect={setActiveTab} />
+            <DatabaseTabGroup title="Review archive" tabs={reviewTabs} activeTab={activeTab} onSelect={setActiveTab} />
+          </div>
+
           {activeTab === 'overview' ? (
             <div className="space-y-2 text-[10px] leading-relaxed text-[#d9d9d2]">
               <ArchiveRow label="Mode" value="Static public atlas / browser drafts only" />
@@ -1698,7 +1710,6 @@ function DatabaseArchivePanel({
 
           {activeTab === 'generate' ? (
             <div className="space-y-3 text-[10px] leading-relaxed text-[#d9d9d2]">
-              <DatabaseFlowSteps current="research" />
               <div className="database-generate-sticky">
                   <div>
                     <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#00e7ff]">Dev AI Generate</div>
@@ -1706,13 +1717,9 @@ function DatabaseArchivePanel({
                     Projektname, Adresse, Architekt oder Bildhinweis eingeben. Der Draft wird jedes Mal neu aufgebaut.
                     </p>
                   </div>
-                <button
-                  type="button"
-                  className="shrink-0 border border-[#00e7ff]/80 bg-[#00e7ff] px-3 py-2 text-[9px] font-semibold uppercase tracking-[0.14em] text-[#050505]"
-                  onClick={generateResearchDraft}
-                >
-                  Let&apos;s generate
-                </button>
+                <div className="shrink-0 border border-[#00e7ff]/35 px-2 py-1 text-[8px] uppercase tracking-[0.12em] text-[#00e7ff]">
+                  Use top action
+                </div>
               </div>
 
               <div
@@ -1848,7 +1855,6 @@ function DatabaseArchivePanel({
 
           {activeTab === 'draft' ? (
             <div>
-              <DatabaseFlowSteps current="draft" />
               <div className="mb-2 flex items-center justify-between gap-2">
                 <div className="text-[9px] uppercase tracking-[0.16em] text-[#b8b8b2]">New Entry Draft / browser session only</div>
                 <div className="flex gap-1.5">
@@ -2033,6 +2039,13 @@ function DatabaseFlowSteps({ current }: { current: 'research' | 'analysis' | 'dr
   );
 }
 
+function databaseWorkflowStage(tab: DatabaseTab): 'research' | 'analysis' | 'draft' | 'review' {
+  if (tab === 'analysis' || tab === 'models' || tab === 'media') return 'analysis';
+  if (tab === 'draft') return 'draft';
+  if (tab === 'overview' || tab === 'entries' || tab === 'sources' || tab === 'relations') return 'review';
+  return 'research';
+}
+
 function DatabaseAnalysisPackView({
   pack,
   fallbackEntry
@@ -2043,7 +2056,6 @@ function DatabaseAnalysisPackView({
   if (!pack) {
     return (
       <div className="space-y-3 text-[10px] leading-relaxed text-[#d9d9d2]">
-        <DatabaseFlowSteps current="analysis" />
         <ArchiveList
           title="Analysis Pack"
           items={[
@@ -2062,7 +2074,6 @@ function DatabaseAnalysisPackView({
 
   return (
     <div className="space-y-3 text-[10px] leading-relaxed text-[#d9d9d2]">
-      <DatabaseFlowSteps current="analysis" />
       <div className="database-analysis-hero">
         <div className="min-w-0">
           <div className="text-[9px] uppercase tracking-[0.18em] text-[#00e7ff]">Analysis Pack</div>
