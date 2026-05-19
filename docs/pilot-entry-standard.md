@@ -70,3 +70,12 @@ It is “model-ready” only when it additionally has:
   enforced.
 - Promote one analysis layer from `draft` to `reviewed` only after source
   verification.
+
+## Current Pilot Queue
+
+1. `villa-savoye`: 3D/analysis reference pilot with local GLB generation.
+2. `alterszentrum-kloster-ingenbohl`: contemporary Swiss transformation pilot.
+3. `afasia-no-architecture-flower-house`: source-rights and Afasia policy pilot.
+4. Glass House and Farnsworth House: comparison and typology targets.
+5. Unité d’Habitation, Salk Institute, Centre Pompidou, Parc de la Villette and
+   Bruder Klaus Field Chapel: next study-path and analysis candidates.

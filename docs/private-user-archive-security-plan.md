@@ -235,6 +235,15 @@ Maintainer/admin:
 
 ## Implementation Phases
 
+### Phase 0: Admin-Only Access Prototype
+
+- Use Cloudflare Access or an equivalent managed access layer for maintainer-only
+  routes before opening public user accounts.
+- Keep public users on the static atlas while the private draft/review model is
+  proven.
+- Do not add browser uploads until quarantine, limits, rights checks and signed
+  upload URLs are ready.
+
 ### Phase 1: Private Archive Spec
 
 - Finalize D1 schema for user/private/review tables.
