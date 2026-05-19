@@ -7,8 +7,14 @@ import { dirname } from 'node:path';
 import entries from '../data/mock-entries.json' with { type: 'json' };
 
 const rootDir = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const bucket = 'architecture-cosmos-assets-preview';
+const publicLayout = hasFlag('--public-layout');
+const bucket =
+  readArg('--bucket') ??
+  process.env.ARCHITECTURE_COSMOS_R2_BUCKET ??
+  (publicLayout ? 'cosmos-assets' : 'architecture-cosmos-assets-preview');
 const mediaTypes = new Set(['exterior', 'interior', 'section', 'plan']);
+const publicImageTypes = new Set(['hero', 'hero@1200', 'hero@600', 'gallery', 'gallery@1200', 'gallery@600']);
+const modelTypes = new Set(['full_model', 'structure_model', 'facade_model', 'interior_model', 'site_model', 'mass_model', 'low_model']);
 const allowedImageExtensions = new Set(['.jpg', '.jpeg', '.png', '.webp']);
 const allowedModelExtensions = new Set(['.glb', '.gltf', '.usdz', '.obj', '.fbx']);
 const maxImageBytes = 8 * 1024 * 1024;
@@ -29,8 +35,8 @@ async function main() {
   if (!entryId) errors.push('--entry is required');
   if (!fileArg) errors.push('--file is required');
   if (!type) errors.push('--type is required');
-  if (type && !mediaTypes.has(type) && !type.endsWith('_model')) {
-    errors.push(`--type must be one of exterior, interior, section, plan, or a *_model type. Received: ${type}`);
+  if (type && !isSupportedType(type)) {
+    errors.push(`--type must be exterior, interior, section, plan, hero, gallery, a responsive image variant, or a *_model type. Received: ${type}`);
   }
 
   const entry = entries.find((candidate) => candidate.id === entryId || candidate.slug === entryId);
@@ -40,8 +46,8 @@ async function main() {
   const filePath = fileArg ? resolve(rootDir, fileArg) : null;
   const fileInfo = filePath ? await readFileInfo(filePath, errors) : null;
 
-  if (fileInfo && mediaTypes.has(type)) validateImageLike(fileInfo, errors);
-  if (fileInfo && type?.endsWith('_model')) validateModelLike(fileInfo, errors);
+  if (fileInfo && isImageType(type)) validateImageLike(fileInfo, errors);
+  if (fileInfo && isModelType(type)) validateModelLike(fileInfo, errors);
   if (!['needs_permission', 'private_research', 'licensed', 'public_domain', 'own_work'].includes(copyright)) {
     errors.push('--copyright must be needs_permission, private_research, licensed, public_domain, or own_work');
   }
@@ -53,6 +59,7 @@ async function main() {
 
   console.log('Architecture Cosmos R2 dry run');
   console.log(`Bucket: ${bucket}`);
+  console.log(`Layout: ${publicLayout ? 'public blender asset layout' : 'legacy preview intake layout'}`);
   console.log(`Entry: ${entry?.id ?? entryId ?? 'missing'}`);
   console.log(`Type: ${type ?? 'missing'}`);
   console.log(`File: ${filePath ?? 'missing'}`);
@@ -107,12 +114,55 @@ function validateModelLike(fileInfo, errors) {
 }
 
 function plannedKey(entry, type, extension) {
+  if (publicLayout) {
+    if (isImageType(type)) return plannedPublicImageKey(entry, type);
+    if (isModelType(type)) return plannedPublicModelKey(entry, type, extension);
+  }
+
   const prefix = entry.database_profile?.r2_prefix ?? `entries/${entry.slug}`;
-  if (mediaTypes.has(type)) {
+  if (isImageType(type)) {
     const suffix = extension || '.jpg';
     return `${prefix}/media/${type}-01${suffix}`;
   }
   return `${prefix}/models/${type.replace(/_model$/, '')}${extension || '.glb'}`;
+}
+
+function plannedPublicImageKey(entry, type) {
+  if (type.startsWith('gallery')) {
+    const suffix = type.replace('gallery', '') || '';
+    return `images/${entry.id}/gallery_1${suffix}.webp`;
+  }
+  if (type.startsWith('hero')) {
+    const suffix = type.replace('hero', '') || '';
+    return `images/${entry.id}/hero${suffix}.webp`;
+  }
+  return `images/${entry.id}/${type}.webp`;
+}
+
+function plannedPublicModelKey(entry, type, extension) {
+  const modelName = type.replace(/_model$/, '');
+  if (modelName.startsWith('material:')) {
+    return `models/${entry.id}/materials/${modelName.replace('material:', '')}${extension || '.glb'}`;
+  }
+  return `models/${entry.id}/${modelName}${extension || '.glb'}`;
+}
+
+function isSupportedType(type) {
+  return isImageType(type) || isModelType(type);
+}
+
+function isImageType(type) {
+  if (!type) return false;
+  return mediaTypes.has(type) || publicImageTypes.has(type);
+}
+
+function isModelType(type) {
+  if (!type) return false;
+  return modelTypes.has(type) || type.endsWith('_model') || type.startsWith('material:');
+}
+
+function hasFlag(name) {
+  return process.argv.includes(name);
 }
 
 function readArg(name) {

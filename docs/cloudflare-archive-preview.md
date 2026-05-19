@@ -5,12 +5,15 @@ It does not connect the live website to the database.
 
 ## Current Status
 
-- The website remains a static export.
+- The visual website remains a static Next export.
+- A lightweight read-only Cloudflare Worker API now serves `/api/entries.json`,
+  `/api/taxonomies.json` and `/api/search` from the bundled static snapshot for
+  Blender/local tooling.
 - Cloudflare D1 preview is created and imported as `architecture-cosmos-preview`.
 - Cloudflare R2 preview bucket is created as `architecture-cosmos-assets-preview`.
 - R2 upload/write workflows are intentionally not implemented yet.
 - D1/R2 are not connected to the live frontend.
-- No API routes, auth, CMS, backend writes, or runtime reads are added.
+- No auth, CMS, backend writes, upload routes, or D1/R2 runtime reads are added.
 - Wrangler currently needs a `CLOUDFLARE_API_TOKEN` in non-interactive Codex runs.
 
 Last confirmed successful preview import: **2026-05-18**.
@@ -26,6 +29,7 @@ npm run archive:export
 npm run archive:smoke
 npm run archive:r2-manifest
 npm run archive:draft
+npm run blender:smoke
 ```
 
 Generated files:
@@ -151,6 +155,29 @@ entries/{slug}/sources/source-asset-01.json
 
 ## Website Connection
 
-Do not add D1/R2 bindings to `wrangler.jsonc` yet. The frontend stays static
-until there is an explicit decision to add Worker endpoints or migrate to
-OpenNext.
+Do not add D1/R2 bindings to `wrangler.jsonc` yet. The frontend stays static and
+the current Worker API reads only from `data/mock-entries.json`. D1/R2 runtime
+reads or writes still require an explicit decision.
+
+## Blender API Smoke Test
+
+Run the live API contract check after publish:
+
+```bash
+npm run blender:smoke
+```
+
+It verifies:
+
+- `/api/entries.json` returns an Entry array;
+- `/api/search` returns `{ count, results }`;
+- `/api/taxonomies.json` exposes taxonomy arrays;
+- CORS allows local Blender/browser development;
+- `assets.architekturkosmos.ch` DNS is visible.
+
+Until the asset domain is activated, the asset-domain check is a warning. To
+make it blocking:
+
+```bash
+npm run blender:smoke -- --strict-assets
+```
