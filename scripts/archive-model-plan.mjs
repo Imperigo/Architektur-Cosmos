@@ -100,7 +100,7 @@ function checkLocalAssets(entry) {
     local_path: asset.url,
     source_url: asset.source_url,
     rights_note: asset.credit,
-    exists: asset.url ? existsSync(path.join(root, asset.url)) : false
+    exists: asset.url ? existsSync(resolveAssetPath(asset.url)) : false
   }));
 
   const candidates = (entry.asset_candidates ?? []).map((asset) => ({
@@ -110,7 +110,7 @@ function checkLocalAssets(entry) {
     planned_r2_key: asset.planned_r2_key,
     rights_status: asset.rights_status,
     public_display_allowed: asset.public_display_allowed,
-    exists: asset.local_path ? existsSync(path.join(root, asset.local_path)) : false
+    exists: asset.local_path ? existsSync(resolveAssetPath(asset.local_path)) : false
   }));
 
   const deduped = new Map();
@@ -121,6 +121,18 @@ function checkLocalAssets(entry) {
   }
 
   return [...deduped.values()];
+}
+
+function resolveAssetPath(assetPath) {
+  if (path.isAbsolute(assetPath)) {
+    const publicPath = path.join(root, 'public', assetPath.replace(/^\/+/, ''));
+    if (existsSync(publicPath)) return publicPath;
+    return assetPath;
+  }
+
+  const repoPath = path.join(root, assetPath);
+  if (existsSync(repoPath)) return repoPath;
+  return path.join(root, 'public', assetPath);
 }
 
 function buildModelPackage(entry, availableAssets) {

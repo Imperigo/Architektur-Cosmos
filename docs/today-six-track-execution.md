@@ -44,13 +44,15 @@ Next implementation target:
 ## 3. Security / Firewall
 
 Status: security headers and `security.txt` are live. Local `security:check`
-passes.
+passes. GitHub workflow publishing is confirmed: the current token can push
+workflow files, and CI plus the weekly update scout are now committed on `main`.
 
 Today:
 
 - use the Cloudflare dashboard checklist in `docs/security-hardening-plan.md`;
 - keep external testing passive and conservative;
-- keep workflow files local until a GitHub token with `workflow` scope exists.
+- monitor the first GitHub Actions runs and fix CI only if the remote
+  environment differs from local.
 
 Recommended Cloudflare order:
 
@@ -77,6 +79,13 @@ Done criteria:
 
 - capture, rights gate, model plan and model generation run locally;
 - generated next-actions identify the next manual review step.
+
+Progress:
+
+- Villa Savoye autopilot passes locally from capture through model generation.
+- The model-plan asset resolver now recognizes public pilot media under
+  `public/archive-media`, so exterior, interior, section and plan slots are
+  correctly available for the next Blender/analysis pass.
 
 ## 5. 3D / Gaussian Splat / Blender-ArchiCAD
 
