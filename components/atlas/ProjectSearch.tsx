@@ -59,19 +59,19 @@ export function ProjectSearch({ entries, currentSlug, variant = currentSlug ? 'e
 
   return (
     <div
-      className={`project-search project-search-${variant} ${isOpen ? 'project-search-open' : ''}`}
+      className={`project-search project-search-${variant} cosmos-text-safe ${isOpen ? 'project-search-open' : ''}`}
       onPointerDown={(event) => event.stopPropagation()}
       onWheel={(event) => event.stopPropagation()}
       onTouchMove={(event) => event.stopPropagation()}
       onClick={(event) => event.stopPropagation()}
     >
-      <button type="button" className="project-search-trigger" onClick={toggleSearch} aria-expanded={isOpen}>
+      <button type="button" className="project-search-trigger cosmos-trigger" onClick={toggleSearch} aria-expanded={isOpen}>
         <span className="project-search-mark" aria-hidden="true" />
         <span>Search</span>
       </button>
 
       {isOpen ? (
-        <div className="project-search-panel" role="dialog" aria-label="Project search">
+        <div className="project-search-panel cosmos-panel cosmos-scroll-panel" role="dialog" aria-label="Project search">
           <div className="project-search-field">
             <input
               ref={inputRef}

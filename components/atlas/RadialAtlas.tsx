@@ -78,6 +78,35 @@ type TouchPoint = {
   clientX: number;
   clientY: number;
 };
+type AtlasUiMetrics = {
+  isCoarsePointer: boolean;
+  dock: {
+    buttonHeight: number;
+    buttonY: number;
+    buttonTextY: number;
+    buttonFontSize: number;
+    shellWidth: number;
+    shellHeight: number;
+    shellY: number;
+    shellRadius: number;
+    gap: number;
+  };
+  databasePanel: {
+    width: number;
+    height: number;
+    x: number;
+    y: number;
+  };
+  dossier: {
+    cardScale: number;
+    cardY: number;
+    closeWidth: number;
+    actionHeight: number;
+    actionOffsetY: number;
+    actionFontSize: number;
+    openWidth: number;
+  };
+};
 
 const initialEntryDraft: EntryDraft = {
   title: '',
@@ -873,6 +902,44 @@ function useCoarsePointer() {
   return isCoarsePointer;
 }
 
+function useAtlasUiMetrics(): AtlasUiMetrics {
+  const isCoarsePointer = useCoarsePointer();
+  const databaseWidth = isCoarsePointer ? 910 : 468;
+  const databaseHeight = isCoarsePointer ? 810 : 660;
+  const dossierScale = isCoarsePointer ? 2.36 : 1.42;
+  const dossierHeight = 292 * dossierScale;
+
+  return {
+    isCoarsePointer,
+    dock: {
+      buttonHeight: isCoarsePointer ? 30 : 20,
+      buttonY: isCoarsePointer ? 915 : 923,
+      buttonTextY: isCoarsePointer ? 934 : 936.2,
+      buttonFontSize: isCoarsePointer ? 9.4 : 6.6,
+      shellWidth: isCoarsePointer ? 650 : 380,
+      shellHeight: isCoarsePointer ? 50 : 38,
+      shellY: isCoarsePointer ? 905 : 914,
+      shellRadius: isCoarsePointer ? 25 : 19,
+      gap: isCoarsePointer ? 10 : 7
+    },
+    databasePanel: {
+      width: databaseWidth,
+      height: databaseHeight,
+      x: isCoarsePointer ? 35 : atlasSize.width - databaseWidth - 28,
+      y: isCoarsePointer ? 86 : Math.max(24, atlasSize.height - databaseHeight - 28)
+    },
+    dossier: {
+      cardScale: dossierScale,
+      cardY: isCoarsePointer ? 136 : atlasSize.cy - dossierHeight / 2,
+      closeWidth: isCoarsePointer ? 86 : 46,
+      actionHeight: isCoarsePointer ? 42 : 22,
+      actionOffsetY: isCoarsePointer ? -56 : -34,
+      actionFontSize: isCoarsePointer ? 13 : 9,
+      openWidth: isCoarsePointer ? 132 : 76
+    }
+  };
+}
+
 function isInterfaceTarget(target: EventTarget) {
   if (!(target instanceof Element)) return false;
   return Boolean(target.closest('.radial-hud, .lens-control, .lens-control-panel, .lens-access, .lens-panel, .database-access, .database-draft, .dossier-overlay, .style-sector, .project-search'));
@@ -991,37 +1058,28 @@ function RadialHud({
   onToggleSourceLens: () => void;
   onToggleRelations: () => void;
 }) {
-  const coarsePointer = useCoarsePointer();
+  const ui = useAtlasUiMetrics();
   const controlsOpacity = Math.max(0.46, 1 - tunnelDepth / 0.76);
   const lensLabel = activeStyleLens ? styleShortLabel(activeStyleLens) : 'All';
-  const buttonHeight = coarsePointer ? 30 : 20;
-  const buttonY = coarsePointer ? 915 : 923;
-  const buttonTextY = coarsePointer ? buttonY + 19 : buttonY + 13.2;
-  const buttonFontSize = coarsePointer ? 9.4 : 6.6;
-  const shellWidth = coarsePointer ? 650 : 380;
-  const shellHeight = coarsePointer ? 50 : 38;
-  const shellY = coarsePointer ? 905 : 914;
-  const shellRadius = coarsePointer ? 25 : 19;
   const buttons = [
-    { id: 'back', label: 'Time -', active: false, width: coarsePointer ? 98 : 58, onClick: onTravelBackward },
-    { id: 'forward', label: 'Time +', active: false, width: coarsePointer ? 98 : 58, onClick: onTravelForward },
-    { id: 'lenses', label: `Lens ${lensLabel}`, active: Boolean(activeStyleLens), width: coarsePointer ? 126 : 72, onClick: onToggleLenses },
-    { id: 'afasia', label: `Afasia ${sourceLensCount}`, active: activeSourceLens === 'afasia', width: coarsePointer ? 132 : 82, onClick: onToggleSourceLens },
-    { id: 'relations', label: 'Relations', active: showRelations, width: coarsePointer ? 128 : 78, onClick: onToggleRelations }
+    { id: 'back', label: 'Time -', active: false, width: ui.isCoarsePointer ? 98 : 58, onClick: onTravelBackward },
+    { id: 'forward', label: 'Time +', active: false, width: ui.isCoarsePointer ? 98 : 58, onClick: onTravelForward },
+    { id: 'lenses', label: `Lens ${lensLabel}`, active: Boolean(activeStyleLens), width: ui.isCoarsePointer ? 126 : 72, onClick: onToggleLenses },
+    { id: 'afasia', label: `Afasia ${sourceLensCount}`, active: activeSourceLens === 'afasia', width: ui.isCoarsePointer ? 132 : 82, onClick: onToggleSourceLens },
+    { id: 'relations', label: 'Relations', active: showRelations, width: ui.isCoarsePointer ? 128 : 78, onClick: onToggleRelations }
   ];
-  const gap = coarsePointer ? 10 : 7;
-  let cursorX = atlasSize.cx - buttons.reduce((sum, button) => sum + button.width + gap, -gap) / 2;
+  let cursorX = atlasSize.cx - buttons.reduce((sum, button) => sum + button.width + ui.dock.gap, -ui.dock.gap) / 2;
 
   return (
     <g className="radial-hud navigation-dock" pointerEvents="auto" opacity={controlsOpacity}>
-      <rect x={atlasSize.cx - shellWidth / 2} y={shellY} width={shellWidth} height={shellHeight} rx={shellRadius} fill="#050505" stroke="#f7f7f4" strokeWidth="0.48" opacity="0.7" />
+      <rect x={atlasSize.cx - ui.dock.shellWidth / 2} y={ui.dock.shellY} width={ui.dock.shellWidth} height={ui.dock.shellHeight} rx={ui.dock.shellRadius} fill="#050505" stroke="#f7f7f4" strokeWidth="0.48" opacity="0.7" />
       {buttons.map((button) => {
         const x = cursorX;
-        cursorX += button.width + gap;
-        return <DockButton key={button.id} x={x} y={buttonY} width={button.width} height={buttonHeight} textY={buttonTextY} fontSize={buttonFontSize} label={button.label} active={button.active} onClick={button.onClick} />;
+        cursorX += button.width + ui.dock.gap;
+        return <DockButton key={button.id} x={x} y={ui.dock.buttonY} width={button.width} height={ui.dock.buttonHeight} textY={ui.dock.buttonTextY} fontSize={ui.dock.buttonFontSize} label={button.label} active={button.active} onClick={button.onClick} />;
       })}
       {activeSourceLens ? (
-        <text x={atlasSize.cx} y={coarsePointer ? 895 : 907} textAnchor="middle" fill="#65ff9a" fontSize={coarsePointer ? 10 : 7.2} fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.18em" opacity="0.9">
+        <text x={atlasSize.cx} y={ui.isCoarsePointer ? 895 : 907} textAnchor="middle" fill="#65ff9a" fontSize={ui.isCoarsePointer ? 10 : 7.2} fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.18em" opacity="0.9">
           AFASIA SOURCE LENS / {sourceLensCount} PROJECT
         </text>
       ) : null}
@@ -1095,7 +1153,7 @@ function LensControls({
         <span>Lenses</span>
       </button>
       {isOpen ? (
-        <div className="lens-control-panel" role="dialog" aria-label="Atlas lenses">
+        <div className="lens-control-panel cosmos-panel cosmos-scroll-panel cosmos-text-safe" role="dialog" aria-label="Atlas lenses">
           <div className="lens-control-head">
             <span>Active Lenses</span>
             <button type="button" className="lens-control-close" onClick={onDismiss}>X</button>
@@ -1266,11 +1324,11 @@ function DatabaseArchivePanel({
   onDismiss: () => void;
 }) {
   const [activeTab, setActiveTab] = useState<DatabaseTab>(selectedEntry ? 'entries' : 'intake');
-  const coarsePointer = useCoarsePointer();
-  const panelWidth = coarsePointer ? 910 : 468;
-  const panelHeight = coarsePointer ? 810 : 660;
-  const x = coarsePointer ? 35 : atlasSize.width - panelWidth - 28;
-  const y = coarsePointer ? 86 : Math.max(24, atlasSize.height - panelHeight - 28);
+  const ui = useAtlasUiMetrics();
+  const panelWidth = ui.databasePanel.width;
+  const panelHeight = ui.databasePanel.height;
+  const x = ui.databasePanel.x;
+  const y = ui.databasePanel.y;
   const preview = draftToEntryPreview(draft);
   const intakeSlug = preview.slug;
   const intakeStats = summarizeIntakeFiles(intakeFiles);
@@ -1395,7 +1453,7 @@ function DatabaseArchivePanel({
   return (
     <foreignObject x={x} y={y} width={panelWidth} height={panelHeight} className="database-draft database-archive-panel" pointerEvents="auto">
       <div
-        className="flex flex-col border border-[#00e7ff]/70 bg-[#050505]/95 p-4 text-[#f7f7f4] shadow-[0_0_28px_rgb(0_231_255_/_0.12)]"
+        className="cosmos-panel cosmos-text-safe flex flex-col border border-[#00e7ff]/70 bg-[#050505]/95 p-4 text-[#f7f7f4] shadow-[0_0_28px_rgb(0_231_255_/_0.12)]"
         style={{ width: panelWidth, height: panelHeight }}
         onPointerDown={(event) => event.stopPropagation()}
         onWheel={(event) => event.stopPropagation()}
@@ -1441,7 +1499,7 @@ function DatabaseArchivePanel({
           ))}
         </div>
 
-        <div className="min-h-0 flex-1 overflow-y-auto pr-1">
+        <div className="cosmos-scroll-panel min-h-0 flex-1 pr-1">
           {activeTab === 'overview' ? (
             <div className="space-y-2 text-[10px] leading-relaxed text-[#d9d9d2]">
               <ArchiveRow label="Mode" value="Static public atlas / browser drafts only" />
@@ -2251,16 +2309,16 @@ function normalizeForMatch(value: string) {
 }
 
 function SnappedEntryOverlay({ entry, onDismiss }: { entry: Entry; onDismiss: () => void }) {
-  const coarsePointer = useCoarsePointer();
-  const cardScale = coarsePointer ? 2.36 : 1.42;
+  const ui = useAtlasUiMetrics();
+  const cardScale = ui.dossier.cardScale;
   const cardWidth = 352 * cardScale;
   const cardHeight = 292 * cardScale;
   const cardX = atlasSize.cx - cardWidth / 2;
-  const cardY = coarsePointer ? 136 : atlasSize.cy - cardHeight / 2;
-  const closeWidth = coarsePointer ? 86 : 46;
-  const actionHeight = coarsePointer ? 42 : 22;
-  const actionY = coarsePointer ? cardY - 56 : cardY - 34;
-  const actionFont = coarsePointer ? 13 : 9;
+  const cardY = ui.dossier.cardY;
+  const closeWidth = ui.dossier.closeWidth;
+  const actionHeight = ui.dossier.actionHeight;
+  const actionY = cardY + ui.dossier.actionOffsetY;
+  const actionFont = ui.dossier.actionFontSize;
 
   return (
     <g className="dossier-overlay" pointerEvents="auto" opacity="1">
@@ -2274,14 +2332,14 @@ function SnappedEntryOverlay({ entry, onDismiss }: { entry: Entry; onDismiss: ()
       </g>
       <g className="dossier-close" pointerEvents="auto" transform={`translate(${cardX + cardWidth - closeWidth} ${actionY})`} onClick={onDismiss}>
         <rect width={closeWidth} height={actionHeight} fill="#f7f7f4" opacity="0.94" />
-        <text x={closeWidth / 2} y={coarsePointer ? 27 : 15} textAnchor="middle" fill="#050505" fontSize={actionFont} fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.14em">
+        <text x={closeWidth / 2} y={ui.isCoarsePointer ? 27 : 15} textAnchor="middle" fill="#050505" fontSize={actionFont} fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.14em">
           CLOSE
         </text>
       </g>
       <a href={`/atlas/${entry.slug}/`} className="dossier-page-link">
         <g pointerEvents="auto" transform={`translate(${cardX} ${actionY})`}>
-          <rect width={coarsePointer ? 132 : 76} height={actionHeight} fill="#050505" stroke="#f7f7f4" strokeWidth="0.58" opacity="0.9" />
-          <text x={coarsePointer ? 66 : 38} y={coarsePointer ? 27 : 15} textAnchor="middle" fill="#f7f7f4" fontSize={coarsePointer ? 12 : 8.2} fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.13em">
+          <rect width={ui.dossier.openWidth} height={actionHeight} fill="#050505" stroke="#f7f7f4" strokeWidth="0.58" opacity="0.9" />
+          <text x={ui.dossier.openWidth / 2} y={ui.isCoarsePointer ? 27 : 15} textAnchor="middle" fill="#f7f7f4" fontSize={ui.isCoarsePointer ? 12 : 8.2} fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.13em">
             OPEN PAGE
           </text>
         </g>

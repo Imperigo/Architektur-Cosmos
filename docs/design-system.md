@@ -25,7 +25,11 @@ Use system sans-serif for now. The interface should be quiet and legible:
 - Small uppercase labels for system orientation.
 - Strong but restrained headings.
 - Compact detail text.
-- No viewport-scaled typography.
+- No unbounded viewport-scaled typography. Bounded `clamp()` is allowed only
+  when the minimum and maximum keep text readable across desktop, weak laptops
+  and mobile.
+- Follow the mandatory responsive interface rules in
+  [`docs/interface-continuity-rulebook.md`](./interface-continuity-rulebook.md).
 
 ## Atlas Marks
 
@@ -48,6 +52,10 @@ Entry glyphs should distinguish type without becoming pictograms:
 - Controls should be compact and literal.
 - Labels must remain readable before visual flourish.
 - Cards are reserved for repeated items or panels, not page sections.
+- Search, Lenses, Database, Dock and Dossier controls must share the same
+  sizing tokens, safe-area spacing and touch-target rules.
+- Text may never visibly escape an interface block; dynamic text must wrap,
+  scroll internally or be intentionally ellipsized.
 
 ## Motion
 
