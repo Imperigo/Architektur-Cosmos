@@ -643,9 +643,15 @@ body:has(.entry-page) {
 }
 
 @keyframes intro-title-away {
-  0% { opacity: 1; transform: translate(0, 0) scale(1); filter: blur(0); }
-  72% { opacity: 0.92; transform: translateY(calc(-50vh + 34px)) scale(0.18); filter: blur(0); }
-  100% { opacity: 0; transform: translateY(calc(-50vh + 34px)) scale(0.12); filter: blur(5px); }
+  0% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); filter: blur(0); }
+  62% { opacity: 1; transform: translate3d(0, calc(-50dvh + 98px), 0) scale(0.24); filter: blur(0); }
+  100% { opacity: 0; transform: translate3d(0, calc(-50dvh + 82px), 0) scale(0.17); filter: blur(1.4px); }
+}
+
+@keyframes brand-symbol-arrive {
+  0% { opacity: 0; transform: translateY(14px) scale(0.82); filter: blur(4px); }
+  72% { opacity: 0; transform: translateY(8px) scale(0.92); filter: blur(2px); }
+  100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
 }
 
 @keyframes wormhole-current-pulse {
@@ -1632,6 +1638,12 @@ body:has(.entry-page) {
   mix-blend-mode: screen;
 }
 
+.brand-chrome-arriving {
+  animation: brand-symbol-arrive 1.35s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+  transform-box: fill-box;
+  transform-origin: center top;
+}
+
 .preview-theme-chip {
   animation: none;
 }
@@ -1639,7 +1651,13 @@ body:has(.entry-page) {
 .intro-gate {
   appearance: none;
   border: 0;
+  cursor: auto !important;
   font: inherit;
+}
+
+.intro-gate,
+.intro-gate * {
+  cursor: auto !important;
 }
 
 .intro-gate span {
@@ -1649,6 +1667,13 @@ body:has(.entry-page) {
 .intro-gate-launching > span {
   animation: intro-title-away 1.35s cubic-bezier(0.19, 1, 0.22, 1) forwards;
   transform-origin: center;
+}
+
+.cosmos-intro-intro,
+.cosmos-intro-intro *,
+.cosmos-intro-launching,
+.cosmos-intro-launching * {
+  cursor: auto !important;
 }
 
 .cosmos-perf-reduced .wormhole-stream,

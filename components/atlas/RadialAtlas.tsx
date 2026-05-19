@@ -684,7 +684,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   }
 
   return (
-    <main className={`relative h-screen w-screen overflow-hidden bg-[#050505] text-[#f7f7f4] cosmos-perf-${performanceTier} ${introState === 'launching' ? 'cosmos-launching' : ''} ${isTraveling ? 'cosmos-moving' : ''} ${introState === 'idle' && !isTraveling ? 'cosmos-idle' : ''}`}>
+    <main className={`relative h-screen w-screen overflow-hidden bg-[#050505] text-[#f7f7f4] cosmos-perf-${performanceTier} cosmos-intro-${introState} ${introState === 'launching' ? 'cosmos-launching' : ''} ${isTraveling ? 'cosmos-moving' : ''} ${introState === 'idle' && !isTraveling ? 'cosmos-idle' : ''}`}>
       <div className="h-full w-full">
         <svg
           ref={svgRef}
@@ -814,7 +814,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
             />
           ) : null}
           {introState === 'idle' ? <TimeReadout timePosition={state.timePosition} currentYear={state.currentYear} /> : null}
-          {introState === 'idle' ? <BrandChrome /> : null}
+          {introState !== 'intro' ? <BrandChrome isArriving={introState === 'launching'} /> : null}
         </svg>
         {showDatabasePanel && introState === 'idle' && ui.isCoarsePointer ? (
           <DatabaseArchivePanel
@@ -1280,9 +1280,9 @@ function DatabaseAccess({ isOpen, onToggle }: { isOpen: boolean; onToggle: () =>
   );
 }
 
-function BrandChrome() {
+function BrandChrome({ isArriving = false }: { isArriving?: boolean }) {
   return (
-    <g className="brand-chrome" pointerEvents="none">
+    <g className={`brand-chrome ${isArriving ? 'brand-chrome-arriving' : ''}`} pointerEvents="none">
       <g transform={`translate(${atlasSize.cx - 54} 14) scale(1.68)`} opacity="0.88">
         <CosmosGlyph />
       </g>
@@ -1343,7 +1343,7 @@ function IntroGate({ state, onStart }: { state: IntroState; onStart: () => void 
   return (
     <button
       type="button"
-      className={`intro-gate absolute inset-0 z-30 flex cursor-none items-center justify-center bg-[#050505]/10 text-center ${state === 'launching' ? 'intro-gate-launching' : ''}`}
+      className={`intro-gate absolute inset-0 z-30 flex items-center justify-center bg-[#050505]/10 text-center ${state === 'launching' ? 'intro-gate-launching' : ''}`}
       onClick={onStart}
       onWheel={(event) => {
         event.preventDefault();
