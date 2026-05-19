@@ -3,7 +3,11 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Architecture Cosmos',
-  description: 'A radial architecture atlas for time, style, theory, place, and relation.'
+  description: 'A radial architecture atlas for time, style, theory, place, and relation.',
+  icons: {
+    icon: [{ url: '/icon.svg', type: 'image/svg+xml' }],
+    shortcut: [{ url: '/icon.svg', type: 'image/svg+xml' }]
+  }
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

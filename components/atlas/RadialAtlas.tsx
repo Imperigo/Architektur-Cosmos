@@ -1283,9 +1283,26 @@ function DatabaseAccess({ isOpen, onToggle }: { isOpen: boolean; onToggle: () =>
 function BrandChrome() {
   return (
     <g className="brand-chrome" pointerEvents="none">
-      <text x={atlasSize.cx} y="32" textAnchor="middle" fill="#f7f7f4" fontSize="12" fontWeight="650" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.3em" opacity="0.76">
-        ARCHITECTURE COSMOS
-      </text>
+      <g transform={`translate(${atlasSize.cx - 54} 14) scale(1.68)`} opacity="0.88">
+        <CosmosGlyph />
+      </g>
+    </g>
+  );
+}
+
+function CosmosGlyph() {
+  return (
+    <g fill="none" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="32" cy="32" r="8.5" fill="#050505" stroke="#f7f7f4" strokeWidth="1.25" opacity="0.9" />
+      <path d="M15.4 30.7c5.2-14.4 27.6-17.8 35.5-4.8 6.4 10.5-1.7 23.6-15.5 24.7-13.1 1-24.4-8.1-22.5-17.8" stroke="#f7f7f4" strokeWidth="1.65" />
+      <path d="M21.2 36.8c4.8 7.8 18.6 8.5 25.1 1.6 5.9-6.3 2.5-15.4-6.5-17.3-8.3-1.8-16.5 2.5-18.6 8.6" stroke="#00e7ff" strokeWidth="1.2" opacity="0.86" />
+      <path d="M19 20.4 32 32 45.2 43.8" stroke="#f5b342" strokeWidth="0.9" opacity="0.78" />
+      <path d="M45.1 19.6 32 32 19.2 44.2" stroke="#ff4fd8" strokeWidth="0.85" opacity="0.72" />
+      <circle cx="32" cy="32" r="2.1" fill="#f7f7f4" stroke="none" opacity="0.92" />
+      <circle cx="19.2" cy="20.7" r="1.4" fill="#f5b342" stroke="none" />
+      <circle cx="45.1" cy="19.8" r="1.35" fill="#00e7ff" stroke="none" />
+      <circle cx="45.2" cy="43.8" r="1.25" fill="#ff4fd8" stroke="none" />
+      <circle cx="18.9" cy="44.1" r="1.15" fill="#f7f7f4" stroke="none" />
     </g>
   );
 }
@@ -1334,7 +1351,10 @@ function IntroGate({ state, onStart }: { state: IntroState; onStart: () => void 
       }}
       aria-label="Start Architecture Cosmos"
     >
-      <span className="block">
+      <span className="intro-title-lockup block">
+        <svg className="intro-cosmos-mark mx-auto mb-7 block h-[clamp(5.4rem,13vw,11rem)] w-[clamp(5.4rem,13vw,11rem)]" viewBox="0 0 64 64" aria-hidden="true">
+          <CosmosGlyph />
+        </svg>
         <span className="intro-title-main block text-[clamp(2.4rem,7vw,6.8rem)] font-semibold uppercase tracking-[0.18em] text-[#f7f7f4]">
           architecture cosmos
         </span>
