@@ -191,7 +191,8 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   const hoveredEntry = useMemo(() => displayNodes.find((node) => node.entry.id === hoveredEntryId)?.entry ?? null, [displayNodes, hoveredEntryId]);
   const cursorVisible = introState === 'idle';
   const isIntroActive = introState !== 'idle';
-  const relationOverlayActive = !isTraveling && (selectedEntry || showRelations || (performanceTier === 'full' && hoveredEntry));
+  const fastNodeRender = isTraveling || performanceTier === 'reduced';
+  const relationOverlayActive = !isTraveling && performanceTier !== 'reduced' && (selectedEntry || showRelations || (performanceTier === 'full' && hoveredEntry));
   const backgroundStyle = {
     filter: isIntroActive ? 'blur(7px)' : 'blur(0px)',
     opacity: selectedEntry ? 0.48 : introState === 'intro' ? 0.3 : introState === 'launching' ? 0.82 : 1,
@@ -742,8 +743,9 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
                     isSelected={activeSelectedEntryId === node.entry.id}
                     isHovered={hoveredEntryId === node.entry.id}
                     nodeRadius={isSourceLensMatch ? Math.max(node.size, 13) : node.size}
-                    showLabel={isSourceLensMatch}
+                    showLabel={!fastNodeRender && isSourceLensMatch}
                     styleLensActive={activeStyleLens === node.entry.style_sector || isSourceLensMatch}
+                    renderMode={fastNodeRender ? 'fast' : 'full'}
                     driftX={node.driftX}
                     driftY={node.driftY}
                     driftDelay={node.driftDelay}
@@ -1003,9 +1005,9 @@ function isReadableNode(node: WormholeEntryNode) {
 
 function limitDisplayNodes(nodes: WormholeEntryNode[], performanceTier: PerformanceTier, isMoving: boolean) {
   const nodeLimit: Record<PerformanceTier, { idle: number; moving: number }> = {
-    reduced: { idle: 42, moving: 24 },
-    balanced: { idle: 72, moving: 42 },
-    full: { idle: 104, moving: 68 }
+    reduced: { idle: 36, moving: 18 },
+    balanced: { idle: 64, moving: 34 },
+    full: { idle: 96, moving: 56 }
   };
   const limit = isMoving ? nodeLimit[performanceTier].moving : nodeLimit[performanceTier].idle;
 

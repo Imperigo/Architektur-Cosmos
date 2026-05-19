@@ -24,6 +24,7 @@ type SemanticEntryNodeProps = {
   showLabel?: boolean;
   styleLensActive?: boolean;
   isHovered?: boolean;
+  renderMode?: 'full' | 'fast';
   driftX?: number;
   driftY?: number;
   driftDelay?: number;
@@ -69,6 +70,7 @@ export function SemanticEntryNode({
   showLabel = true,
   styleLensActive = false,
   isHovered = false,
+  renderMode = 'full',
   driftX = 0,
   driftY = 0,
   driftDelay = 0,
@@ -76,8 +78,9 @@ export function SemanticEntryNode({
   onHover
 }: SemanticEntryNodeProps) {
   const inverseScale = 1 / scale;
+  const isFast = renderMode === 'fast';
   const glyphRadius = nodeRadius ?? (semanticLevel === 'global' ? 4.8 : 7.2);
-  const hitRadius = Math.max(15, glyphRadius + 8);
+  const hitRadius = Math.max(isFast ? 18 : 15, glyphRadius + 8);
   const glyphFontSize = Math.max(7, Math.min(14, glyphRadius * 0.72));
   const accent = styleAccent[entry.style_sector];
   const labelWidth = Math.min(230, entry.title.length * 6.4 + 72);
@@ -86,7 +89,7 @@ export function SemanticEntryNode({
   const labelLineX = labelAnchor === 'end' ? labelX - 4 : labelX + 4;
   const cardX = x + 18;
   const cardY = y - 86;
-  const showFloatingLabel = showLabel && (semanticLevel === 'global' || (semanticLevel === 'image' && scale < 2));
+  const showFloatingLabel = !isFast && showLabel && (semanticLevel === 'global' || (semanticLevel === 'image' && scale < 2));
   const driftStyle = {
     '--drift-x': `${driftX}px`,
     '--drift-y': `${driftY}px`,
@@ -115,14 +118,14 @@ export function SemanticEntryNode({
       }}
     >
       <circle cx={x} cy={y} r={hitRadius} fill="transparent" />
-      {clusterSize > 1 ? (
+      {clusterSize > 1 && !isFast ? (
         <circle cx={x} cy={y} r={glyphRadius + 5.5} fill="none" stroke="#f7f7f4" strokeWidth="0.55" strokeDasharray="1 4" opacity="0.65" />
       ) : null}
-      {isHovered ? (
+      {isHovered && !isFast ? (
         <circle cx={x} cy={y} r={glyphRadius + 9} fill="none" stroke={accent} strokeWidth="0.75" strokeDasharray="1 6" opacity="0.78" pointerEvents="none" />
       ) : null}
-      <EntryThumbnail entry={entry} x={x} y={y} radius={isSelected ? glyphRadius + 3 : isHovered ? glyphRadius + 1.5 : glyphRadius} accent={accent} isSelected={isSelected} styleLensActive={styleLensActive || isHovered} />
-      <text
+      <EntryThumbnail entry={entry} x={x} y={y} radius={isSelected ? glyphRadius + 3 : isHovered && !isFast ? glyphRadius + 1.5 : glyphRadius} accent={accent} isSelected={isSelected} styleLensActive={!isFast && (styleLensActive || isHovered)} renderMode={renderMode} />
+      {!isFast ? <text
         x={x}
         y={y + glyphFontSize * 0.34}
         textAnchor="middle"
@@ -133,22 +136,22 @@ export function SemanticEntryNode({
         opacity={glyphRadius > 7.5 ? 0.82 : 0}
       >
         {entryGlyph[entry.entry_type]}
-      </text>
+      </text> : null}
 
-      {semanticLevel === 'image' ? (
+      {!isFast && semanticLevel === 'image' ? (
         <g transform={`translate(${x + 12} ${y - 26}) scale(${inverseScale})`}>
           <rect x="0" y="0" width="68" height="46" fill="#050505" stroke="#f7f7f4" strokeWidth="1" />
           <ProjectMediaGrid media={entry.media} x={5} y={5} slotWidth={58} slotHeight={36} gap={0} types={['exterior']} />
         </g>
       ) : null}
 
-      {semanticLevel === 'preview' ? (
+      {!isFast && semanticLevel === 'preview' ? (
         <g transform={`translate(${cardX} ${cardY}) scale(${inverseScale})`}>
           <ProjectPreviewCard entry={entry} x={0} y={0} />
         </g>
       ) : null}
 
-      {semanticLevel === 'detail' ? (
+      {!isFast && semanticLevel === 'detail' ? (
         <g transform={`translate(${cardX} ${cardY - 52}) scale(${inverseScale})`}>
           <ProjectDetailCard entry={entry} x={0} y={0} />
         </g>
@@ -167,14 +170,15 @@ export function SemanticEntryNode({
   );
 }
 
-function EntryThumbnail({ entry, x, y, radius, accent, isSelected, styleLensActive }: { entry: Entry; x: number; y: number; radius: number; accent: string; isSelected: boolean; styleLensActive: boolean }) {
+function EntryThumbnail({ entry, x, y, radius, accent, isSelected, styleLensActive, renderMode }: { entry: Entry; x: number; y: number; radius: number; accent: string; isSelected: boolean; styleLensActive: boolean; renderMode: 'full' | 'fast' }) {
   const seed = stableHash(entry.id);
+  const isFast = renderMode === 'fast';
   const inset = radius * 0.34;
   const skyline = 3 + (seed % 4);
   const baseY = y + radius * 0.34;
-  const accentStroke = isSelected || styleLensActive ? 2.25 : 1.55;
-  const accentFillOpacity = styleLensActive ? 0.28 : 0.16;
-  const showDetailLines = radius >= 6.4 || isSelected || styleLensActive;
+  const accentStroke = isFast ? 1.05 : isSelected || styleLensActive ? 2.25 : 1.55;
+  const accentFillOpacity = isFast ? 0.2 : styleLensActive ? 0.28 : 0.16;
+  const showDetailLines = !isFast && (radius >= 6.4 || isSelected || styleLensActive);
 
   return (
     <g className="entry-thumbnail" pointerEvents="none">

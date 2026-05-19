@@ -25,15 +25,24 @@ Manual QA overrides:
 ## Current Tier Effects
 
 - Node render budget:
-  - reduced: 58 visible nodes
-  - balanced: 88 visible nodes
-  - full: 112 visible nodes
+  - reduced: 36 visible nodes idle / 18 while moving
+  - balanced: 64 visible nodes idle / 34 while moving
+  - full: 96 visible nodes idle / 56 while moving
+- Node rendering:
+  - moving/reduced mode uses fast glyphs without miniature detail lines,
+    preview cards, inline media or floating labels.
+  - idle mode restores richer thumbnails and selected/source labels.
+- Tunnel rendering:
+  - Canvas renders the wormhole background, rings, grid and energy bands.
+  - SVG is reserved for UI, text, project nodes, labels, relations and selected
+    dossier surfaces.
 - Wormhole geometry:
   - reduced: fewer spokes, samples, stream lines and speed lines
   - balanced/full: richer tunnel detail
 - Relations:
-  - reduced: no hover-triggered network overlay, only explicit relations or
-    selected dossier context
+  - reduced: no relation overlay
+  - balanced/full: relations render only when idle and explicitly requested,
+    selected or focused
 - 3D viewer:
   - reduced: lower pixel ratio, no antialiasing, default power preference
   - balanced/full: higher pixel ratio and antialiasing
@@ -64,14 +73,17 @@ Minimum manual checks before major publish:
 
 ## Next Optimization Steps
 
-1. Add Playwright/browser visual smoke tests for `/`, `/atlas/`,
+1. Run a dedicated smartphone UI redesign pass. Current performance is improved,
+   but HUD and overlay proportions still need a separate touch-first layout
+   treatment.
+2. Add Playwright/browser visual smoke tests for `/`, `/atlas/`,
    `/atlas/villa-savoye/` and a narrow mobile viewport.
-2. Add a small optional debug HUD for current performance tier, node count and
+3. Add a small optional debug HUD for current performance tier, node count and
    frame estimate, hidden unless `?debug=motion-dev`.
-3. Profile the SVG layer counts in real browsers and reduce expensive filters
+4. Profile the SVG layer counts in real browsers and reduce expensive filters
    further if Safari/Opera still lag.
-4. Split 3D viewer loading behind an interaction gate on mobile if needed.
-5. Add asset-size budgets for images and GLB files before large content imports.
+5. Split 3D viewer loading behind an interaction gate on mobile if needed.
+6. Add asset-size budgets for images and GLB files before large content imports.
 
 ## Principle
 

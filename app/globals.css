@@ -968,6 +968,11 @@ body:has(.entry-page) {
   filter: none;
 }
 
+.cosmos-moving .cosmos-node-wiggle,
+.cosmos-perf-reduced .cosmos-node-wiggle {
+  animation: none;
+}
+
 .style-sector-label {
   transition: opacity 180ms ease, transform 180ms ease;
 }
