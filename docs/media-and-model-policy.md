@@ -73,6 +73,29 @@ entries/{entry_slug}/sources/source-notes.json
 The key can exist in D1 before the file exists in R2. This lets the archive plan
 its structure without creating storage cost or copyright risk.
 
+For Blender and other external read-only clients, the public asset domain is
+reserved as:
+
+```text
+https://assets.architekturkosmos.ch/models/{entry_id}/full.glb
+https://assets.architekturkosmos.ch/models/{entry_id}/structure.glb
+https://assets.architekturkosmos.ch/models/{entry_id}/facade.glb
+https://assets.architekturkosmos.ch/models/{entry_id}/interior.glb
+https://assets.architekturkosmos.ch/models/{entry_id}/site.glb
+https://assets.architekturkosmos.ch/models/{entry_id}/materials/{material_tag}.glb
+https://assets.architekturkosmos.ch/images/{entry_id}/hero.webp
+https://assets.architekturkosmos.ch/images/{entry_id}/hero@1200.webp
+https://assets.architekturkosmos.ch/images/{entry_id}/hero@600.webp
+https://assets.architekturkosmos.ch/images/{entry_id}/gallery_N.webp
+https://assets.architekturkosmos.ch/images/{entry_id}/gallery_N@1200.webp
+https://assets.architekturkosmos.ch/images/{entry_id}/gallery_N@600.webp
+```
+
+The planned production bucket name for those public assets is `cosmos-assets`.
+Repository code may reference these URLs as planned targets, but actual bucket
+creation, custom-domain activation and uploads remain gated by the upload
+checks below.
+
 ## 3D Model Layers
 
 Each mature object should be able to grow toward:

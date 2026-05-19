@@ -27,7 +27,7 @@ If a build fails, the previous version stays live (no broken deployments).
 
 | Component | Tech | Location |
 |---|---|---|
-| Hosting | **Cloudflare Workers (Static Assets mode)** | edge, global |
+| Hosting | **Cloudflare Workers (Static Assets + read-only API shell)** | edge, global |
 | Worker name | `architekturkosmos` | Cloudflare account configured outside the repo |
 | Production URL (Workers) | account-specific preview URL | intentionally not committed |
 | Custom domain | `architekturkosmos.ch` | ✅ live (since 2026-05-18) |
@@ -36,8 +36,9 @@ If a build fails, the previous version stays live (no broken deployments).
 | Deploy tool | `wrangler` (version pinned to latest by CF) | auto-installed |
 | Auto-deploy trigger | GitHub push to `main` | CF Pages GitHub integration |
 
-There is **no separate backend** right now. The site is fully static:
-all entries are bundled from `data/mock-entries.json` at build time.
+The visual website is still a static Next export. A lightweight Worker shell now
+handles read-only `/api/*` routes for external tools such as Blender, then
+passes every non-API request through to Cloudflare Static Assets.
 
 ---
 
@@ -48,13 +49,13 @@ all entries are bundled from `data/mock-entries.json` at build time.
 3. Runs `npm run build` (which runs `next build`)
 4. Next.js produces a static export in `./out/` (because `next.config.js` has `output: 'export'`)
 5. Runs `npx wrangler deploy`
-6. Wrangler reads `wrangler.jsonc` → sees `assets.directory: "./out"` → uploads `./out/` as Workers Static Assets
+6. Wrangler reads `wrangler.jsonc` → compiles `src/worker.ts` and uploads `./out/` as Workers Static Assets
 7. New version becomes the active deployment
 
 **Critical config files** (do not modify casually):
 
 - **`next.config.js`** — must keep `output: 'export'`, `trailingSlash: true`, `images: { unoptimized: true }` for static export to work
-- **`wrangler.jsonc`** — must keep `assets.directory: "./out"`, no `main` entry (would trigger Worker code deploy)
+- **`wrangler.jsonc`** — must keep `main: "./src/worker.ts"`, `assets.binding: "ASSETS"` and `assets.directory: "./out"` so `/api/*` works while all page routes remain static
 - **`package.json`** name (`architektur-cosmos-browser`) — does NOT need to match the CF Worker name (`architekturkosmos`); a previous setup attempt failed because of this mismatch, the current static-assets-only setup avoids the issue
 
 ---
@@ -77,16 +78,27 @@ all entries are bundled from `data/mock-entries.json` at build time.
 
 ### ❌ Will break the static build
 - **Server Components with async data fetching from external APIs** at request time (`fetch` with `cache: 'no-store'`) — these need server runtime, not available on static export
-- **API routes** (`app/api/.../route.ts`) — would fail to build with `output: 'export'`
+- **Next API routes** (`app/api/.../route.ts`) — would fail to build with `output: 'export'`; use the standalone Cloudflare Worker in `src/worker.ts` for edge API endpoints
 - **Server Actions** — same
 - **`redirect()` from `next/navigation`** at module top-level — breaks build
 - **Middleware** — not supported on static export
 - **ISR/`revalidate`** — no-op on static export, won't error but doesn't do anything
 
-### 🚀 If you need any of the ❌ items
+### Current Worker API Contract
+
+The Worker is intentionally small and read-only:
+
+- `GET /api/entries.json` — bundled `data/mock-entries.json`, 1h edge cache, CORS `*`
+- `GET /api/taxonomies.json` — derived taxonomy lists, 1h edge cache, CORS `*`
+- `GET /api/search` — server-side filtering for Blender/local tools, response `{ count, results }`, CORS `*`
+
+The Worker does **not** write to D1/R2, does not expose admin upload routes and
+does not replace the static frontend data flow.
+
+### 🚀 If you need the Next runtime items above
 That means the app is outgrowing static export. Then the migration path is:
 1. Remove `output: 'export'` from `next.config.js`
-2. Add `main` entry to `wrangler.jsonc` pointing to `@opennextjs/cloudflare` worker
+2. Replace the lightweight `src/worker.ts` shell with an `@opennextjs/cloudflare` worker
 3. Install `@opennextjs/cloudflare` adapter
 4. Change deploy to `npx opennextjs-cloudflare build && npx wrangler deploy`
 
@@ -123,14 +135,14 @@ are separate phases:
    `schema/architecture-cosmos-d1.sql`.
 4. **Frontend pattern**: keep static JSON as the local fallback while the schema
    stabilizes. Only introduce runtime data reads when explicitly requested.
-5. **Runtime switch**: when dynamic reads/writes are needed, add Worker bindings
-   for D1/R2 and either use lightweight Worker endpoints or migrate the app to
-   OpenNext.js.
+5. **Runtime switch**: dynamic read-only endpoints can live in `src/worker.ts`.
+   Write endpoints, auth, uploads, D1/R2 bindings or CMS flows still require an
+   explicit architecture decision.
 
-**For now: do not add live D1/R2 bindings, API routes, auth, CMS, or backend
-code.** D1 can be used as a preview/import target through scripts, while the
-website stays static + mock JSON until the user explicitly asks to activate live
-database reads.
+**For now: do not add live D1/R2 bindings, auth, CMS, upload routes or write
+endpoints.** D1 can be used as a preview/import target through scripts, while
+the website stays static + mock JSON until the user explicitly asks to activate
+live database reads or writes.
 
 ---
 

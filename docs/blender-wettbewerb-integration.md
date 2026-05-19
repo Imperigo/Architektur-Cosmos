@@ -1,7 +1,7 @@
 # Blender-Wettbewerbsvorbereitung — Integration mit Cosmos
 
 **Status**: Briefing für Codex / Integration-Spec.  
-**Context**: Andrin baut ein Blender-Add-on `Wettbewerbsvorbereitung` (separates Repo, in OneDrive unter `11 AI Workflow/Wettbewerbsvorbereitung Addon/`), das Architektur-Wettbewerbe von Atelierblaupause-Paket bis Dossier automatisiert. Cosmos soll als Referenzbibliothek dienen — Blender konsumiert Cosmos-Daten read-only.
+**Context**: Der Maintainer baut ein Blender-Add-on `Wettbewerbsvorbereitung` (separates privates Repo), das Architektur-Wettbewerbe von Atelierblaupause-Paket bis Dossier automatisiert. Cosmos soll als Referenzbibliothek dienen — Blender konsumiert Cosmos-Daten read-only.
 
 Bestehende Cosmos-Architektur passt zu 80% bereits. Dieses Dokument klärt die **API-Touchpoints** und etwaige Schema-Lücken, die für die Blender-Integration relevant sind.
 
@@ -46,7 +46,7 @@ Aus `lib/types.ts` ist schon viel da. Was Blender braucht (prüfen ob vorhanden,
 - `model_3d.glb_url` + `parts` — 3D-Verfügbarkeit
 - `vibes: string[]` — Soft-Match-Tags für semantische Ähnlichkeit
 
-Vollständige Taxonomie-Vorschläge: siehe `Wettbewerbsvorbereitung Addon/03_Doku/cosmos_codex_briefing.md` im OneDrive (Andrin).
+Vollständige Taxonomie-Vorschläge: siehe private Add-on-Dokumentation im lokalen Arbeitsarchiv.
 
 ### 4. Reference-Suggester (KI-Feature)
 
@@ -76,7 +76,7 @@ Blender soll **nie** Inhalte importieren ohne `license` zu kennen:
 ## Was Blender NICHT von Cosmos braucht
 
 - Schreibender Zugriff (Cosmos bleibt read-only für das Add-on)
-- User-Auth (Add-on läuft lokal auf Andrins Maschine)
+- User-Auth (Add-on läuft lokal auf der Entwickler-Maschine)
 - Realtime-Updates (1h Cache ist OK)
 - Datenmodell-Migration (Add-on adaptiert sich an `lib/types.ts`)
 
@@ -98,7 +98,7 @@ Wenn das Cosmos-Repo bereit ist, die Blender-Integration zu supporten:
 5. ⏳ Smoke-Test: `curl https://architekturkosmos.ch/api/search?country=CH&materials=natural_stone`
 6. ⏳ Async: Splat-Support im Schema (`model_3d.splat_url` etc.)
 
-Blender-Add-on hat seine Seite vorbereitet — siehe gespeicherte Specs in OneDrive. Sobald `/api/entries.json` live ist, baut Andrin den `Cosmos Reference Library`-Knoten.
+Blender-Add-on hat seine Seite vorbereitet — siehe gespeicherte private Specs. Sobald `/api/entries.json` live ist, kann der `Cosmos Reference Library`-Knoten angebunden werden.
 
 ## Querverweise
 

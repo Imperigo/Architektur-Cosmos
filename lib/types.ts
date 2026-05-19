@@ -38,6 +38,7 @@ export type EntryMedia = {
   url?: string;
   credit?: string;
   source_url?: string;
+  license?: 'personal_only' | 'cc_by' | 'cc_by_sa' | 'all_rights_reserved' | 'public_domain' | 'own_work';
 };
 
 export type EntrySourceAsset = {
@@ -144,6 +145,54 @@ export type EntryDatabaseProfile = {
   tag_count: number;
 };
 
+export type EntryGeo = {
+  lat?: number;
+  lon?: number;
+  canton?: string;
+  region?: string;
+  precision?: 'exact' | 'site' | 'city' | 'region' | 'approximate' | 'unknown';
+};
+
+export type EntryMaterials = {
+  primary?: string[];
+  stone_type?: string[];
+  secondary?: string[];
+  notes?: string;
+};
+
+export type EntryProgram = {
+  type?: string;
+  subtype?: string;
+  public_access?: 'public' | 'semi_public' | 'private' | 'restricted' | 'unknown';
+};
+
+export type EntryContext = {
+  topography?: string;
+  setting?: string;
+  heritage_context?: string[];
+  climate?: string;
+  landscape_relation?: string[];
+};
+
+export type EntryModel3DPart = {
+  type: 'full' | 'structure' | 'facade' | 'interior' | 'site' | 'material' | 'mass' | 'low';
+  glb_url?: string;
+  r2_key?: string;
+  material_tag?: string;
+  license?: 'personal_only' | 'cc_by' | 'cc_by_sa' | 'all_rights_reserved' | 'public_domain' | 'own_work';
+  review_status?: 'planned' | 'draft' | 'reviewed' | 'verified' | 'needs_source';
+};
+
+export type EntryModel3D = {
+  glb_url?: string;
+  parts?: EntryModel3DPart[];
+  splat_url?: string;
+  splat_capture_year?: number;
+  analytical_dataset_year?: number;
+  license?: 'personal_only' | 'cc_by' | 'cc_by_sa' | 'all_rights_reserved' | 'public_domain' | 'own_work';
+  source_basis?: string;
+};
+
 export type Entry = {
   id: string;
   slug: string;
@@ -165,6 +214,12 @@ export type Entry = {
   source_documents?: string[];
   source_url?: string;
   source_assets?: EntrySourceAsset[];
+  geo?: EntryGeo;
+  materials?: EntryMaterials;
+  program?: EntryProgram;
+  context?: EntryContext;
+  model_3d?: EntryModel3D;
+  vibes?: string[];
   source_candidates?: SourceCandidate[];
   asset_candidates?: AssetCandidate[];
   model_assets?: EntryModelAsset[];

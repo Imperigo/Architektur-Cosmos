@@ -4,13 +4,13 @@
   "compatibility_date": "2026-05-18",
   "compatibility_flags": ["nodejs_compat"],
 
-  // Static-only Worker: serviert die von `next build` (mit output:'export')
-  // erzeugten Files aus ./out. Kein Worker-Code, kein OpenNext, keine
-  // Service-Bindings — daher kein WORKER_SELF_REFERENCE-Konflikt.
-  //
-  // Wenn später DB-Integration mit Server-Components kommt: hier
-  // "main": "./src/worker.ts" ergänzen + OpenNext-Adapter aktivieren.
+  // Lightweight Worker shell: `/api/*` is handled by `src/worker.ts`, every
+  // other request is passed through to the static Next export in ./out.
+  // This keeps `next.config.js` on `output: 'export'` and avoids Next API
+  // routes, Server Actions, Middleware or OpenNext runtime coupling.
+  "main": "./src/worker.ts",
   "assets": {
+    "binding": "ASSETS",
     "directory": "./out",
     "not_found_handling": "404-page",
     "html_handling": "auto-trailing-slash"

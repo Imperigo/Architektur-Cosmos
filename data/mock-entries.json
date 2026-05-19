@@ -4141,7 +4141,8 @@
         "placeholder": "Exterior view of Villa Savoye as a lifted white volume on pilotis in Poissy.",
         "credit": "Library of Congress / Balthazar Korab collection / no known restrictions",
         "source_url": "https://www.loc.gov/item/2020714937/",
-        "url": "/archive-media/villa-savoye/exterior/villa-savoye-loc-exterior-crop.jpg"
+        "url": "/archive-media/villa-savoye/exterior/villa-savoye-loc-exterior-crop.jpg",
+        "license": "public_domain"
       },
       {
         "type": "interior",
@@ -4149,7 +4150,8 @@
         "placeholder": "Interior reference with Le Corbusier furniture and Villa Savoye spatial atmosphere.",
         "credit": "Wikimedia Commons / jeanbaptisteparis / CC BY-SA 2.0",
         "source_url": "https://commons.wikimedia.org/wiki/File:Villa_Savoye_(8237925975).jpg",
-        "url": "/archive-media/villa-savoye/interior/villa-savoye-chaise-longue-interior-cc-by-sa-2.jpg"
+        "url": "/archive-media/villa-savoye/interior/villa-savoye-chaise-longue-interior-cc-by-sa-2.jpg",
+        "license": "cc_by_sa"
       },
       {
         "type": "section",
@@ -4157,7 +4159,8 @@
         "placeholder": "Vector study section showing pilotis, suspended volume, ramp, roof garden and promenade sequence.",
         "credit": "Architecture Cosmos / diagrammatic reconstruction / not measured",
         "source_url": "archive-intake/villa-savoye/section/villa-savoye-long-section-diagram.pdf",
-        "url": "/archive-media/villa-savoye/section/villa-savoye-long-section-diagram.svg"
+        "url": "/archive-media/villa-savoye/section/villa-savoye-long-section-diagram.svg",
+        "license": "all_rights_reserved"
       },
       {
         "type": "plan",
@@ -4165,7 +4168,8 @@
         "placeholder": "Vector study plan showing pilotis grid, curved car trace, entry core and ramp logic.",
         "credit": "Architecture Cosmos / diagrammatic reconstruction / not measured",
         "source_url": "archive-intake/villa-savoye/plan/villa-savoye-ground-floor-diagram.pdf",
-        "url": "/archive-media/villa-savoye/plan/villa-savoye-ground-floor-diagram.svg"
+        "url": "/archive-media/villa-savoye/plan/villa-savoye-ground-floor-diagram.svg",
+        "license": "all_rights_reserved"
       }
     ],
     "source_documents": [
@@ -4601,6 +4605,95 @@
         "review_status": "planned",
         "use_case": "Atmosphere, surfaces, context and immersive visual reference; not a measured BIM or ArchiCAD model."
       }
+    ],
+    "geo": {
+      "lat": 48.9243,
+      "lon": 2.0288,
+      "region": "Ile-de-France",
+      "precision": "site"
+    },
+    "materials": {
+      "primary": [
+        "reinforced_concrete",
+        "plaster",
+        "glass"
+      ],
+      "secondary": [
+        "steel",
+        "roof_garden"
+      ],
+      "notes": "Pilotis, reinforced-concrete frame, white render, ribbon windows and roof garden."
+    },
+    "program": {
+      "type": "housing_single_family",
+      "subtype": "modern_villa",
+      "public_access": "public"
+    },
+    "context": {
+      "topography": "flat_suburban_site",
+      "setting": "suburban_villa_landscape",
+      "heritage_context": [
+        "unesco_world_heritage_component",
+        "listed_monument"
+      ],
+      "landscape_relation": [
+        "lawn",
+        "roof_garden",
+        "automobile_arrival"
+      ]
+    },
+    "model_3d": {
+      "glb_url": "https://assets.architekturkosmos.ch/models/villa-savoye/full.glb",
+      "license": "personal_only",
+      "source_basis": "Analytical reconstruction from lecture notes, public sources and Architecture Cosmos diagrammatic plans; public serving requires model review.",
+      "splat_url": "https://assets.architekturkosmos.ch/models/villa-savoye/reality.splat",
+      "splat_capture_year": 2026,
+      "analytical_dataset_year": 1931,
+      "parts": [
+        {
+          "type": "full",
+          "glb_url": "https://assets.architekturkosmos.ch/models/villa-savoye/full.glb",
+          "r2_key": "models/villa-savoye/full.glb",
+          "license": "personal_only",
+          "review_status": "planned"
+        },
+        {
+          "type": "structure",
+          "glb_url": "https://assets.architekturkosmos.ch/models/villa-savoye/structure.glb",
+          "r2_key": "models/villa-savoye/structure.glb",
+          "license": "personal_only",
+          "review_status": "planned"
+        },
+        {
+          "type": "facade",
+          "glb_url": "https://assets.architekturkosmos.ch/models/villa-savoye/facade.glb",
+          "r2_key": "models/villa-savoye/facade.glb",
+          "license": "personal_only",
+          "review_status": "planned"
+        },
+        {
+          "type": "site",
+          "glb_url": "https://assets.architekturkosmos.ch/models/villa-savoye/site.glb",
+          "r2_key": "models/villa-savoye/site.glb",
+          "license": "personal_only",
+          "review_status": "planned"
+        },
+        {
+          "type": "material",
+          "material_tag": "reinforced_concrete",
+          "glb_url": "https://assets.architekturkosmos.ch/models/villa-savoye/materials/reinforced_concrete.glb",
+          "r2_key": "models/villa-savoye/materials/reinforced_concrete.glb",
+          "license": "personal_only",
+          "review_status": "planned"
+        }
+      ]
+    },
+    "vibes": [
+      "canonical_modernism",
+      "white_machine",
+      "promenade_architecturale",
+      "pilotis",
+      "roof_garden"
     ]
   },
   {
@@ -5975,26 +6068,101 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / MFO Park / industrial-reuse-climate-landscape"
+        "placeholder": "Aussenansicht / MFO Park / industrial-reuse-climate-landscape",
+        "license": "all_rights_reserved"
       },
       {
         "type": "interior",
         "label": "Innenraum",
-        "placeholder": "Innenraum / MFO Park / industrial-reuse-climate-landscape"
+        "placeholder": "Innenraum / MFO Park / industrial-reuse-climate-landscape",
+        "license": "all_rights_reserved"
       },
       {
         "type": "section",
         "label": "Schnitt",
-        "placeholder": "Schnitt / MFO Park / industrial-reuse-climate-landscape"
+        "placeholder": "Schnitt / MFO Park / industrial-reuse-climate-landscape",
+        "license": "all_rights_reserved"
       },
       {
         "type": "plan",
         "label": "Grundriss",
-        "placeholder": "Grundriss / MFO Park / industrial-reuse-climate-landscape"
+        "placeholder": "Grundriss / MFO Park / industrial-reuse-climate-landscape",
+        "license": "all_rights_reserved"
       }
     ],
     "source_documents": [
       "04 Landschaftsarchitektur 1_2.pdf"
+    ],
+    "geo": {
+      "lat": 47.4122,
+      "lon": 8.5394,
+      "canton": "ZH",
+      "region": "Zuerich Nord",
+      "precision": "site"
+    },
+    "materials": {
+      "primary": [
+        "steel",
+        "vegetation",
+        "climbing_plants"
+      ],
+      "secondary": [
+        "industrial_frame",
+        "public_landscape"
+      ],
+      "notes": "Landscape-architectural reuse of industrial memory as planted steel spatial frame."
+    },
+    "program": {
+      "type": "public_space",
+      "subtype": "urban_park",
+      "public_access": "public"
+    },
+    "context": {
+      "topography": "flat_urban_site",
+      "setting": "urban_redevelopment",
+      "heritage_context": [
+        "industrial_reuse"
+      ],
+      "landscape_relation": [
+        "climate_landscape",
+        "urban_repair"
+      ]
+    },
+    "model_3d": {
+      "glb_url": "https://assets.architekturkosmos.ch/models/mfo-park/site.glb",
+      "license": "personal_only",
+      "source_basis": "Planned site/spatial-frame reference model from lecture and public landscape references.",
+      "analytical_dataset_year": 2002,
+      "parts": [
+        {
+          "type": "site",
+          "glb_url": "https://assets.architekturkosmos.ch/models/mfo-park/site.glb",
+          "r2_key": "models/mfo-park/site.glb",
+          "license": "personal_only",
+          "review_status": "planned"
+        },
+        {
+          "type": "structure",
+          "glb_url": "https://assets.architekturkosmos.ch/models/mfo-park/structure.glb",
+          "r2_key": "models/mfo-park/structure.glb",
+          "license": "personal_only",
+          "review_status": "planned"
+        },
+        {
+          "type": "material",
+          "material_tag": "steel",
+          "glb_url": "https://assets.architekturkosmos.ch/models/mfo-park/materials/steel.glb",
+          "r2_key": "models/mfo-park/materials/steel.glb",
+          "license": "personal_only",
+          "review_status": "planned"
+        }
+      ]
+    },
+    "vibes": [
+      "industrial_reuse",
+      "planted_frame",
+      "urban_room",
+      "climate_landscape"
     ]
   },
   {
@@ -6127,23 +6295,98 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / High Line / landscape-urbanism-industrial-reuse"
+        "placeholder": "Aussenansicht / High Line / landscape-urbanism-industrial-reuse",
+        "license": "all_rights_reserved"
       },
       {
         "type": "interior",
         "label": "Innenraum",
-        "placeholder": "Innenraum / High Line / landscape-urbanism-industrial-reuse"
+        "placeholder": "Innenraum / High Line / landscape-urbanism-industrial-reuse",
+        "license": "all_rights_reserved"
       },
       {
         "type": "section",
         "label": "Schnitt",
-        "placeholder": "Schnitt / High Line / landscape-urbanism-industrial-reuse"
+        "placeholder": "Schnitt / High Line / landscape-urbanism-industrial-reuse",
+        "license": "all_rights_reserved"
       },
       {
         "type": "plan",
         "label": "Grundriss",
-        "placeholder": "Grundriss / High Line / landscape-urbanism-industrial-reuse"
+        "placeholder": "Grundriss / High Line / landscape-urbanism-industrial-reuse",
+        "license": "all_rights_reserved"
       }
+    ],
+    "geo": {
+      "lat": 40.748,
+      "lon": -74.005,
+      "region": "New York City",
+      "precision": "site"
+    },
+    "materials": {
+      "primary": [
+        "steel",
+        "concrete",
+        "vegetation"
+      ],
+      "secondary": [
+        "rail_infrastructure",
+        "paving"
+      ],
+      "notes": "Linear adaptive reuse of elevated rail infrastructure as planted public landscape."
+    },
+    "program": {
+      "type": "public_space",
+      "subtype": "linear_park",
+      "public_access": "public"
+    },
+    "context": {
+      "topography": "elevated_infrastructure",
+      "setting": "urban_dense",
+      "heritage_context": [
+        "industrial_reuse",
+        "rail_infrastructure"
+      ],
+      "landscape_relation": [
+        "linear_landscape",
+        "urban_redevelopment"
+      ]
+    },
+    "model_3d": {
+      "glb_url": "https://assets.architekturkosmos.ch/models/high-line/site.glb",
+      "license": "personal_only",
+      "source_basis": "Planned urban/site reference model for Blender context import; detailed source verification required before public assets.",
+      "analytical_dataset_year": 2014,
+      "parts": [
+        {
+          "type": "site",
+          "glb_url": "https://assets.architekturkosmos.ch/models/high-line/site.glb",
+          "r2_key": "models/high-line/site.glb",
+          "license": "personal_only",
+          "review_status": "planned"
+        },
+        {
+          "type": "structure",
+          "glb_url": "https://assets.architekturkosmos.ch/models/high-line/structure.glb",
+          "r2_key": "models/high-line/structure.glb",
+          "license": "personal_only",
+          "review_status": "planned"
+        },
+        {
+          "type": "material",
+          "material_tag": "vegetation",
+          "glb_url": "https://assets.architekturkosmos.ch/models/high-line/materials/vegetation.glb",
+          "r2_key": "models/high-line/materials/vegetation.glb",
+          "license": "personal_only",
+          "review_status": "planned"
+        }
+      ]
+    },
+    "vibes": [
+      "linear_park",
+      "industrial_reuse",
+      "urban_wildness",
+      "public_promendade"
     ]
   },
   {
@@ -6328,7 +6571,8 @@
         "placeholder": "Afasia / Flower House / exterior",
         "url": "/media/afasia/flower-house/flower-house-1.jpg",
         "credit": "© Iwan Baan via Afasia",
-        "source_url": "https://afasiaarchzine.com/2022/09/no-architecture/"
+        "source_url": "https://afasiaarchzine.com/2022/09/no-architecture/",
+        "license": "all_rights_reserved"
       },
       {
         "type": "interior",
@@ -6336,7 +6580,8 @@
         "placeholder": "Afasia / Flower House / interior",
         "url": "/media/afasia/flower-house/flower-house-10.jpg",
         "credit": "© Iwan Baan via Afasia",
-        "source_url": "https://afasiaarchzine.com/2022/09/no-architecture/"
+        "source_url": "https://afasiaarchzine.com/2022/09/no-architecture/",
+        "license": "all_rights_reserved"
       },
       {
         "type": "section",
@@ -6344,7 +6589,8 @@
         "placeholder": "Afasia / Flower House / section",
         "url": "/media/afasia/flower-house/flower-house-32.jpg",
         "credit": "© NO Architecture via Afasia",
-        "source_url": "https://afasiaarchzine.com/2022/09/no-architecture/"
+        "source_url": "https://afasiaarchzine.com/2022/09/no-architecture/",
+        "license": "all_rights_reserved"
       },
       {
         "type": "plan",
@@ -6352,7 +6598,8 @@
         "placeholder": "Afasia / Flower House / plan",
         "url": "/media/afasia/flower-house/flower-house-31.jpg",
         "credit": "© NO Architecture via Afasia",
-        "source_url": "https://afasiaarchzine.com/2022/09/no-architecture/"
+        "source_url": "https://afasiaarchzine.com/2022/09/no-architecture/",
+        "license": "all_rights_reserved"
       }
     ],
     "source_documents": [
@@ -6654,6 +6901,84 @@
         },
         "review_status": "reviewed"
       }
+    ],
+    "geo": {
+      "lat": 42.35,
+      "lon": -73.2,
+      "region": "Berkshire County",
+      "precision": "region"
+    },
+    "materials": {
+      "primary": [
+        "concrete",
+        "glass",
+        "steel",
+        "earth_shelter"
+      ],
+      "secondary": [
+        "green_roof",
+        "landscape"
+      ],
+      "notes": "Reading from Afasia/NO Architecture description: canopy slabs, cores, glazing and partially earth-sheltered hillside condition."
+    },
+    "program": {
+      "type": "housing_single_family",
+      "subtype": "private_residence",
+      "public_access": "private"
+    },
+    "context": {
+      "topography": "hillside",
+      "setting": "rural_dispersed",
+      "heritage_context": [],
+      "landscape_relation": [
+        "courtyard",
+        "woodland",
+        "embedded_slope"
+      ]
+    },
+    "model_3d": {
+      "glb_url": "https://assets.architekturkosmos.ch/models/afasia-no-architecture-flower-house/full.glb",
+      "license": "personal_only",
+      "source_basis": "Private/research-only reconstruction from Afasia source package; source images are not cleared for public redistribution.",
+      "analytical_dataset_year": 2020,
+      "parts": [
+        {
+          "type": "full",
+          "glb_url": "https://assets.architekturkosmos.ch/models/afasia-no-architecture-flower-house/full.glb",
+          "r2_key": "models/afasia-no-architecture-flower-house/full.glb",
+          "license": "personal_only",
+          "review_status": "planned"
+        },
+        {
+          "type": "structure",
+          "glb_url": "https://assets.architekturkosmos.ch/models/afasia-no-architecture-flower-house/structure.glb",
+          "r2_key": "models/afasia-no-architecture-flower-house/structure.glb",
+          "license": "personal_only",
+          "review_status": "planned"
+        },
+        {
+          "type": "site",
+          "glb_url": "https://assets.architekturkosmos.ch/models/afasia-no-architecture-flower-house/site.glb",
+          "r2_key": "models/afasia-no-architecture-flower-house/site.glb",
+          "license": "personal_only",
+          "review_status": "planned"
+        },
+        {
+          "type": "material",
+          "material_tag": "glass",
+          "glb_url": "https://assets.architekturkosmos.ch/models/afasia-no-architecture-flower-house/materials/glass.glb",
+          "r2_key": "models/afasia-no-architecture-flower-house/materials/glass.glb",
+          "license": "personal_only",
+          "review_status": "planned"
+        }
+      ]
+    },
+    "vibes": [
+      "glass_house_reinterpreted",
+      "petal_plan",
+      "earth_sheltered",
+      "courtyard_house",
+      "landscape_canopy"
     ]
   },
   {
@@ -6698,25 +7023,29 @@
         "type": "exterior",
         "label": "Aussenansicht",
         "placeholder": "Aussenansicht / Kloster Ingenbohl / Hangkante, Klosterhügel, vertikale Fassadenstrata und mineralischer Baukörper",
-        "credit": "private_research"
+        "credit": "private_research",
+        "license": "personal_only"
       },
       {
         "type": "interior",
         "label": "Innenraum",
         "placeholder": "Innenraum / Kloster Ingenbohl / helle Pflegezimmer, ruhige mineralische Oberflächen, Holz, Lehm- und Kalkputz",
-        "credit": "private_research"
+        "credit": "private_research",
+        "license": "personal_only"
       },
       {
         "type": "section",
         "label": "Schnitt",
         "placeholder": "Schnitt / Kloster Ingenbohl / Sockel, Hof, Hangkante, Dachgarten, aussteifender Kern und Stahlbetonskelett",
-        "credit": "private_research"
+        "credit": "private_research",
+        "license": "personal_only"
       },
       {
         "type": "plan",
         "label": "Grundriss",
         "placeholder": "Grundriss / Kloster Ingenbohl / fast quadratischer Baukörper, eingeschnittener Hof, Pflegecluster und Erschliessung",
-        "credit": "private_research"
+        "credit": "private_research",
+        "license": "personal_only"
       }
     ],
     "source_documents": [
@@ -6850,6 +7179,100 @@
         },
         "review_status": "draft"
       }
+    ],
+    "geo": {
+      "lat": 46.9997,
+      "lon": 8.6136,
+      "canton": "SZ",
+      "region": "Innerschweiz",
+      "precision": "site"
+    },
+    "materials": {
+      "primary": [
+        "concrete",
+        "timber",
+        "lime_plaster",
+        "clay_plaster",
+        "existing_masonry"
+      ],
+      "secondary": [
+        "trass_lime",
+        "mineral_render"
+      ],
+      "stone_type": [
+        "trass_lime"
+      ],
+      "notes": "Draft material reading from office/public sources; verify against plans and material specification."
+    },
+    "program": {
+      "type": "care",
+      "subtype": "elderly_care_monastery_conversion",
+      "public_access": "restricted"
+    },
+    "context": {
+      "topography": "hilltop",
+      "setting": "village_center",
+      "heritage_context": [
+        "monastery_context",
+        "existing_fabric"
+      ],
+      "landscape_relation": [
+        "monastery_hill",
+        "courtyard",
+        "lake_region"
+      ]
+    },
+    "model_3d": {
+      "glb_url": "https://assets.architekturkosmos.ch/models/alterszentrum-kloster-ingenbohl/full.glb",
+      "license": "personal_only",
+      "source_basis": "Planned analytical model from private research package, public office information and later plan review.",
+      "analytical_dataset_year": 2023,
+      "parts": [
+        {
+          "type": "full",
+          "glb_url": "https://assets.architekturkosmos.ch/models/alterszentrum-kloster-ingenbohl/full.glb",
+          "r2_key": "models/alterszentrum-kloster-ingenbohl/full.glb",
+          "license": "personal_only",
+          "review_status": "planned"
+        },
+        {
+          "type": "structure",
+          "glb_url": "https://assets.architekturkosmos.ch/models/alterszentrum-kloster-ingenbohl/structure.glb",
+          "r2_key": "models/alterszentrum-kloster-ingenbohl/structure.glb",
+          "license": "personal_only",
+          "review_status": "planned"
+        },
+        {
+          "type": "site",
+          "glb_url": "https://assets.architekturkosmos.ch/models/alterszentrum-kloster-ingenbohl/site.glb",
+          "r2_key": "models/alterszentrum-kloster-ingenbohl/site.glb",
+          "license": "personal_only",
+          "review_status": "planned"
+        },
+        {
+          "type": "material",
+          "material_tag": "timber",
+          "glb_url": "https://assets.architekturkosmos.ch/models/alterszentrum-kloster-ingenbohl/materials/timber.glb",
+          "r2_key": "models/alterszentrum-kloster-ingenbohl/materials/timber.glb",
+          "license": "personal_only",
+          "review_status": "planned"
+        },
+        {
+          "type": "material",
+          "material_tag": "concrete",
+          "glb_url": "https://assets.architekturkosmos.ch/models/alterszentrum-kloster-ingenbohl/materials/concrete.glb",
+          "r2_key": "models/alterszentrum-kloster-ingenbohl/materials/concrete.glb",
+          "license": "personal_only",
+          "review_status": "planned"
+        }
+      ]
+    },
+    "vibes": [
+      "monastery_reuse",
+      "mineral_calm",
+      "care_cluster",
+      "hilltop_context",
+      "tectonic_layers"
     ]
   }
 ]
