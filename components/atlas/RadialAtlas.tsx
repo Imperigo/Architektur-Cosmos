@@ -28,7 +28,19 @@ type MotionSnapshot = {
 };
 
 type IntroState = 'intro' | 'launching' | 'idle';
-type SourceLens = 'afasia' | null;
+const sourceLensDefinitions = [
+  { id: 'afasia', label: 'Afasia', terms: ['afasia'] },
+  { id: 'espazium', label: 'Espazium', terms: ['espazium', 'tec21'] },
+  { id: 'bestswiss', label: 'BestSwiss', terms: ['bestswissarchitects', 'best swiss architects'] },
+  { id: 'instagram', label: 'Instagram', terms: ['instagram.com', 'instagram'] },
+  { id: 'eth', label: 'ETH', terms: ['eth', 'lecture_pdf', 'lecture notes', 'architekturgeschichte', 'global history', 'landschaftsarchitektur'] },
+  { id: 'official', label: 'Official', terms: ['official', 'unesco', 'fondation', 'centres des monuments', 'stadt zürich', 'stadt-zuerich', 'thehighline.org', 'dainst'] },
+  { id: 'office', label: 'Office', terms: ['boltshauser', 'burckhardt', 'raderschall', 'diller scofidio', 'field operations', 'le corbusier', 'no architecture'] },
+  { id: 'archive', label: 'Archive', terms: ['archive', 'library of congress', 'wikimedia', 'commons', 'e-periodica', 'research collection'] }
+] as const;
+type SourceLensId = (typeof sourceLensDefinitions)[number]['id'];
+type SourceLens = SourceLensId | null;
+type SourceLensCounts = Record<SourceLensId, number>;
 type PerformanceTier = 'reduced' | 'balanced' | 'full';
 type ResearchSeed = {
   project: string;
@@ -187,7 +199,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   const nodes = useMemo(() => layoutWormholeEntries(allEntries, state, activeSelectedEntryId ?? undefined), [activeSelectedEntryId, allEntries, state]);
   const displayNodes = useMemo(() => limitDisplayNodes(nodes, performanceTier, motion.isMoving), [nodes, performanceTier, motion.isMoving]);
   const isTraveling = motion.isMoving;
-  const sourceLensCount = useMemo(() => allEntries.filter((entry) => isSourceLensEntry(entry, 'afasia')).length, [allEntries]);
+  const sourceLensCounts = useMemo(() => countSourceLensEntries(allEntries), [allEntries]);
   const hoveredEntry = useMemo(() => displayNodes.find((node) => node.entry.id === hoveredEntryId)?.entry ?? null, [displayNodes, hoveredEntryId]);
   const cursorVisible = introState === 'idle';
   const isIntroActive = introState !== 'idle';
@@ -781,7 +793,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
               tunnelDepth={state.timePosition}
               activeStyleLens={activeStyleLens}
               activeSourceLens={activeSourceLens}
-              sourceLensCount={sourceLensCount}
+              sourceLensCounts={sourceLensCounts}
               onTravelForward={() => travelBy(0.018)}
               onTravelBackward={() => travelBy(-0.018)}
               onToggleLenses={() => {
@@ -790,7 +802,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
               }}
               onToggleSourceLens={() => {
                 setHoveredEntry(null);
-                setActiveSourceLens((current) => current === 'afasia' ? null : 'afasia');
+                setActiveSourceLens((current) => current ? null : 'afasia');
               }}
               onToggleRelations={() => {
                 setHoveredEntry(null);
@@ -851,7 +863,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
             activeStyleLens={activeStyleLens}
             activeSourceLens={activeSourceLens}
             showRelations={showRelations}
-            sourceLensCount={sourceLensCount}
+            sourceLensCounts={sourceLensCounts}
             onToggle={() => {
               setHoveredEntry(null);
               setShowFilterPanel((current) => !current);
@@ -866,9 +878,9 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
               setActiveSourceLens(null);
               setShowRelations(false);
             }}
-            onToggleSourceLens={() => {
+            onSetSourceLens={(lensId) => {
               setHoveredEntry(null);
-              setActiveSourceLens((current) => current === 'afasia' ? null : 'afasia');
+              setActiveSourceLens((current) => current === lensId ? null : lensId);
             }}
             onToggleRelations={() => {
               setHoveredEntry(null);
@@ -1048,17 +1060,36 @@ function mergeEntries(baseEntries: Entry[], localEntries: Entry[]) {
   return [...merged.values()];
 }
 
+function countSourceLensEntries(entries: Entry[]): SourceLensCounts {
+  return sourceLensDefinitions.reduce((counts, definition) => {
+    counts[definition.id] = entries.filter((entry) => isSourceLensEntry(entry, definition.id)).length;
+    return counts;
+  }, {} as SourceLensCounts);
+}
+
+function sourceLensLabel(activeSourceLens: SourceLens) {
+  if (!activeSourceLens) return 'Quellen';
+  return sourceLensDefinitions.find((definition) => definition.id === activeSourceLens)?.label ?? 'Quellen';
+}
+
 function isSourceLensEntry(entry: Entry, activeSourceLens: SourceLens) {
   if (!activeSourceLens) return false;
+  const definition = sourceLensDefinitions.find((source) => source.id === activeSourceLens);
+  if (!definition) return false;
 
   const sourceText = [
     entry.source_url,
     entry.source_quality,
     ...(entry.source_documents ?? []),
-    ...entry.themes
+    ...(entry.source_candidates?.map((source) => `${source.source_type} ${source.title} ${source.url ?? ''} ${source.notes ?? ''}`) ?? []),
+    ...(entry.source_assets?.map((asset) => `${asset.kind} ${asset.label} ${asset.url} ${asset.source_url ?? ''} ${asset.credit ?? ''}`) ?? []),
+    ...(entry.media?.map((media) => `${media.label} ${media.url ?? ''} ${media.source_url ?? ''} ${media.credit ?? ''}`) ?? []),
+    ...(entry.asset_candidates?.map((asset) => `${asset.kind} ${asset.title} ${asset.local_path ?? ''} ${asset.planned_r2_key ?? ''}`) ?? []),
+    ...entry.themes,
+    ...(entry.authors ?? [])
   ].join(' ').toLowerCase();
 
-  return activeSourceLens === 'afasia' && sourceText.includes('afasia');
+  return definition.terms.some((term) => sourceText.includes(term.toLowerCase()));
 }
 
 function nearestInteractiveNode(point: SvgPoint, nodes: WormholeEntryNode[]) {
@@ -1094,7 +1125,7 @@ function RadialHud({
   tunnelDepth,
   activeStyleLens,
   activeSourceLens,
-  sourceLensCount,
+  sourceLensCounts,
   onTravelForward,
   onTravelBackward,
   onToggleLenses,
@@ -1105,7 +1136,7 @@ function RadialHud({
   tunnelDepth: number;
   activeStyleLens: StyleSectorId | null;
   activeSourceLens: SourceLens;
-  sourceLensCount: number;
+  sourceLensCounts: SourceLensCounts;
   onTravelForward: () => void;
   onTravelBackward: () => void;
   onToggleLenses: () => void;
@@ -1115,11 +1146,13 @@ function RadialHud({
   const ui = useAtlasUiMetrics();
   const controlsOpacity = Math.max(0.46, 1 - tunnelDepth / 0.76);
   const lensLabel = activeStyleLens ? styleShortLabel(activeStyleLens) : 'All';
+  const activeSourceCount = activeSourceLens ? sourceLensCounts[activeSourceLens] : 0;
+  const activeSourceLabel = activeSourceLens ? `${sourceLensLabel(activeSourceLens)} ${activeSourceCount}` : 'Quellen';
   const buttons = [
     { id: 'back', label: 'Time -', active: false, width: ui.isCoarsePointer ? 150 : 58, onClick: onTravelBackward },
     { id: 'forward', label: 'Time +', active: false, width: ui.isCoarsePointer ? 150 : 58, onClick: onTravelForward },
     { id: 'lenses', label: `Lens ${lensLabel}`, active: Boolean(activeStyleLens), width: ui.isCoarsePointer ? 192 : 72, onClick: onToggleLenses },
-    { id: 'afasia', label: `Afasia ${sourceLensCount}`, active: activeSourceLens === 'afasia', width: ui.isCoarsePointer ? 198 : 82, onClick: onToggleSourceLens },
+    { id: 'sources', label: activeSourceLabel, active: Boolean(activeSourceLens), width: ui.isCoarsePointer ? 198 : 82, onClick: onToggleSourceLens },
     { id: 'relations', label: 'Relations', active: showRelations, width: ui.isCoarsePointer ? 198 : 78, onClick: onToggleRelations }
   ];
   let cursorX = atlasSize.cx - buttons.reduce((sum, button) => sum + button.width + ui.dock.gap, -ui.dock.gap) / 2;
@@ -1135,8 +1168,8 @@ function RadialHud({
         return <DockButton key={button.id} x={x} y={ui.dock.buttonY} width={button.width} height={ui.dock.buttonHeight} textY={ui.dock.buttonTextY} fontSize={ui.dock.buttonFontSize} label={button.label} active={button.active} onClick={button.onClick} />;
       })}
       {activeSourceLens ? (
-        <text x={atlasSize.cx} y={ui.isCoarsePointer ? 895 : 907} textAnchor="middle" fill="#65ff9a" fontSize={ui.isCoarsePointer ? 10 : 7.2} fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.18em" opacity="0.9">
-          AFASIA SOURCE LENS / {sourceLensCount} PROJECT
+        <text x={atlasSize.cx} y={ui.isCoarsePointer ? 895 : 907} textAnchor="middle" fill="#f7f7f4" fontSize={ui.isCoarsePointer ? 10 : 7.2} fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.18em" opacity="0.72">
+          QUELLWEBSEITE / {sourceLensLabel(activeSourceLens).toUpperCase()} / {activeSourceCount} PROJECTS
         </text>
       ) : null}
     </g>
@@ -1164,11 +1197,11 @@ function LensControls({
   activeStyleLens,
   activeSourceLens,
   showRelations,
-  sourceLensCount,
+  sourceLensCounts,
   onToggle,
   onSetStyleLens,
   onResetLenses,
-  onToggleSourceLens,
+  onSetSourceLens,
   onToggleRelations,
   onDismiss
 }: {
@@ -1176,15 +1209,15 @@ function LensControls({
   activeStyleLens: StyleSectorId | null;
   activeSourceLens: SourceLens;
   showRelations: boolean;
-  sourceLensCount: number;
+  sourceLensCounts: SourceLensCounts;
   onToggle: () => void;
   onSetStyleLens: (lens: StyleSectorId | null) => void;
   onResetLenses: () => void;
-  onToggleSourceLens: () => void;
+  onSetSourceLens: (lens: SourceLensId) => void;
   onToggleRelations: () => void;
   onDismiss: () => void;
 }) {
-  const tabs = [
+  const styleTabs = [
     { id: 'all', label: 'ALLE', active: !activeStyleLens && !activeSourceLens && !showRelations, onClick: onResetLenses },
     ...styleSectors.map((sector) => ({
       id: sector.id,
@@ -1192,8 +1225,18 @@ function LensControls({
       active: activeStyleLens === sector.id,
       onClick: () => onSetStyleLens(activeStyleLens === sector.id ? null : sector.id)
     })),
-    { id: 'afasia', label: `AFASIA ${sourceLensCount}`, active: activeSourceLens === 'afasia', onClick: onToggleSourceLens },
     { id: 'relations', label: 'REL', active: showRelations, onClick: onToggleRelations }
+  ];
+  const sourceTabs = sourceLensDefinitions.map((definition) => ({
+    id: definition.id,
+    label: `${definition.label} ${sourceLensCounts[definition.id]}`,
+    active: activeSourceLens === definition.id,
+    onClick: () => onSetSourceLens(definition.id)
+  }));
+
+  const tabGroups = [
+    { id: 'style', label: 'Stil', tabs: styleTabs },
+    { id: 'source', label: 'Quellwebseite', tabs: sourceTabs }
   ];
 
   return (
@@ -1204,28 +1247,33 @@ function LensControls({
       onTouchMove={(event) => event.stopPropagation()}
       onClick={(event) => event.stopPropagation()}
     >
-      <button type="button" className={`lens-control-trigger ${isOpen ? 'lens-control-trigger-open' : ''}`} onClick={onToggle}>
+      <button type="button" className={`lens-control-trigger cosmos-trigger ${isOpen ? 'lens-control-trigger-open' : ''}`} onClick={onToggle}>
         <span className="lens-control-mark" aria-hidden="true" />
         <span>Lenses</span>
       </button>
       {isOpen ? (
         <div className="lens-control-panel cosmos-panel cosmos-scroll-panel cosmos-text-safe" role="dialog" aria-label="Atlas lenses">
           <div className="lens-control-head">
-            <span>Active Lenses</span>
+            <span>Filter / Quellwebseite</span>
             <button type="button" className="lens-control-close" onClick={onDismiss}>X</button>
           </div>
-          <div className="lens-control-grid">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                type="button"
-                className={`lens-control-tab ${tab.active ? 'lens-control-tab-active' : ''}`}
-                onClick={tab.onClick}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
+          {tabGroups.map((group) => (
+            <div className="lens-control-section" key={group.id}>
+              <div className="lens-control-section-title">{group.label}</div>
+              <div className="lens-control-grid">
+                {group.tabs.map((tab) => (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    className={`lens-control-tab ${tab.active ? 'lens-control-tab-active' : ''}`}
+                    onClick={tab.onClick}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
       ) : null}
     </div>
