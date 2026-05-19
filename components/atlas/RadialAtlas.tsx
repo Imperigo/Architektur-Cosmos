@@ -833,7 +833,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
             onDismiss={() => setShowFilterPanel(false)}
           />
         ) : null}
-        {introState === 'idle' ? <ProjectSearch entries={allEntries} /> : null}
+        {introState === 'idle' && !showDatabasePanel ? <ProjectSearch entries={allEntries} /> : null}
         {cursorVisible && !coarsePointer ? <ScreenCosmosCursor cursorRef={screenCursorRef} isDossierOpen={Boolean(selectedEntry)} /> : null}
       </div>
 
@@ -904,38 +904,50 @@ function useCoarsePointer() {
 
 function useAtlasUiMetrics(): AtlasUiMetrics {
   const isCoarsePointer = useCoarsePointer();
-  const databaseWidth = isCoarsePointer ? 910 : 468;
-  const databaseHeight = isCoarsePointer ? 810 : 660;
-  const dossierScale = isCoarsePointer ? 2.36 : 1.42;
+  const [isNarrowViewport, setIsNarrowViewport] = useState(false);
+
+  useEffect(() => {
+    const updateViewportMode = () => setIsNarrowViewport(window.innerWidth <= 760);
+
+    updateViewportMode();
+    window.addEventListener('resize', updateViewportMode, { passive: true });
+
+    return () => window.removeEventListener('resize', updateViewportMode);
+  }, []);
+
+  const useLargeInterface = isCoarsePointer || isNarrowViewport;
+  const databaseWidth = useLargeInterface ? 910 : 468;
+  const databaseHeight = useLargeInterface ? 810 : 660;
+  const dossierScale = useLargeInterface ? 2.36 : 1.42;
   const dossierHeight = 292 * dossierScale;
 
   return {
-    isCoarsePointer,
+    isCoarsePointer: useLargeInterface,
     dock: {
-      buttonHeight: isCoarsePointer ? 30 : 20,
-      buttonY: isCoarsePointer ? 915 : 923,
-      buttonTextY: isCoarsePointer ? 934 : 936.2,
-      buttonFontSize: isCoarsePointer ? 9.4 : 6.6,
-      shellWidth: isCoarsePointer ? 650 : 380,
-      shellHeight: isCoarsePointer ? 50 : 38,
-      shellY: isCoarsePointer ? 905 : 914,
-      shellRadius: isCoarsePointer ? 25 : 19,
-      gap: isCoarsePointer ? 10 : 7
+      buttonHeight: useLargeInterface ? 78 : 20,
+      buttonY: useLargeInterface ? 844 : 923,
+      buttonTextY: useLargeInterface ? 893 : 936.2,
+      buttonFontSize: useLargeInterface ? 21 : 6.6,
+      shellWidth: useLargeInterface ? 960 : 380,
+      shellHeight: useLargeInterface ? 114 : 38,
+      shellY: useLargeInterface ? 826 : 914,
+      shellRadius: useLargeInterface ? 57 : 19,
+      gap: useLargeInterface ? 16 : 7
     },
     databasePanel: {
       width: databaseWidth,
       height: databaseHeight,
-      x: isCoarsePointer ? 35 : atlasSize.width - databaseWidth - 28,
-      y: isCoarsePointer ? 86 : Math.max(24, atlasSize.height - databaseHeight - 28)
+      x: useLargeInterface ? 35 : atlasSize.width - databaseWidth - 28,
+      y: useLargeInterface ? 86 : Math.max(24, atlasSize.height - databaseHeight - 28)
     },
     dossier: {
       cardScale: dossierScale,
-      cardY: isCoarsePointer ? 136 : atlasSize.cy - dossierHeight / 2,
-      closeWidth: isCoarsePointer ? 86 : 46,
-      actionHeight: isCoarsePointer ? 42 : 22,
-      actionOffsetY: isCoarsePointer ? -56 : -34,
-      actionFontSize: isCoarsePointer ? 13 : 9,
-      openWidth: isCoarsePointer ? 132 : 76
+      cardY: useLargeInterface ? 136 : atlasSize.cy - dossierHeight / 2,
+      closeWidth: useLargeInterface ? 86 : 46,
+      actionHeight: useLargeInterface ? 42 : 22,
+      actionOffsetY: useLargeInterface ? -56 : -34,
+      actionFontSize: useLargeInterface ? 13 : 9,
+      openWidth: useLargeInterface ? 132 : 76
     }
   };
 }
@@ -1062,13 +1074,15 @@ function RadialHud({
   const controlsOpacity = Math.max(0.46, 1 - tunnelDepth / 0.76);
   const lensLabel = activeStyleLens ? styleShortLabel(activeStyleLens) : 'All';
   const buttons = [
-    { id: 'back', label: 'Time -', active: false, width: ui.isCoarsePointer ? 98 : 58, onClick: onTravelBackward },
-    { id: 'forward', label: 'Time +', active: false, width: ui.isCoarsePointer ? 98 : 58, onClick: onTravelForward },
-    { id: 'lenses', label: `Lens ${lensLabel}`, active: Boolean(activeStyleLens), width: ui.isCoarsePointer ? 126 : 72, onClick: onToggleLenses },
-    { id: 'afasia', label: `Afasia ${sourceLensCount}`, active: activeSourceLens === 'afasia', width: ui.isCoarsePointer ? 132 : 82, onClick: onToggleSourceLens },
-    { id: 'relations', label: 'Relations', active: showRelations, width: ui.isCoarsePointer ? 128 : 78, onClick: onToggleRelations }
+    { id: 'back', label: 'Time -', active: false, width: ui.isCoarsePointer ? 150 : 58, onClick: onTravelBackward },
+    { id: 'forward', label: 'Time +', active: false, width: ui.isCoarsePointer ? 150 : 58, onClick: onTravelForward },
+    { id: 'lenses', label: `Lens ${lensLabel}`, active: Boolean(activeStyleLens), width: ui.isCoarsePointer ? 192 : 72, onClick: onToggleLenses },
+    { id: 'afasia', label: `Afasia ${sourceLensCount}`, active: activeSourceLens === 'afasia', width: ui.isCoarsePointer ? 198 : 82, onClick: onToggleSourceLens },
+    { id: 'relations', label: 'Relations', active: showRelations, width: ui.isCoarsePointer ? 198 : 78, onClick: onToggleRelations }
   ];
   let cursorX = atlasSize.cx - buttons.reduce((sum, button) => sum + button.width + ui.dock.gap, -ui.dock.gap) / 2;
+
+  if (ui.isCoarsePointer) return null;
 
   return (
     <g className="radial-hud navigation-dock" pointerEvents="auto" opacity={controlsOpacity}>
@@ -1189,8 +1203,12 @@ function styleShortLabel(id: StyleSectorId) {
 }
 
 function DatabaseAccess({ isOpen, onToggle }: { isOpen: boolean; onToggle: () => void }) {
-  const x = atlasSize.width - 112;
-  const y = atlasSize.height - 52;
+  const ui = useAtlasUiMetrics();
+  const width = ui.isCoarsePointer ? 248 : 84;
+  const height = ui.isCoarsePointer ? 88 : 32;
+  const x = atlasSize.width - width - (ui.isCoarsePointer ? 28 : 28);
+  const y = atlasSize.height - (ui.isCoarsePointer ? 120 : 52);
+  const iconScale = ui.isCoarsePointer ? 2.2 : 1;
   function toggleOnce(event: { stopPropagation: () => void }) {
     event.stopPropagation();
     onToggle();
@@ -1205,21 +1223,21 @@ function DatabaseAccess({ isOpen, onToggle }: { isOpen: boolean; onToggle: () =>
       onPointerDown={(event) => event.stopPropagation()}
       onClick={toggleOnce}
     >
-      <rect x="0" y="-16" width="84" height="32" rx="16" fill={isOpen ? '#f7f7f4' : '#050505'} stroke="#00e7ff" strokeWidth="0.62" opacity="0.88" />
-      <g className="database-access-core" stroke="#f7f7f4" fill="none" strokeWidth="0.72" opacity="0.9">
+      <rect x="0" y={-height / 2} width={width} height={height} rx={height / 2} fill={isOpen ? '#f7f7f4' : '#050505'} stroke="#00e7ff" strokeWidth="0.88" opacity="0.88" />
+      <g className="database-access-core" transform={`translate(${ui.isCoarsePointer ? 16 : 0} 0) scale(${iconScale})`} stroke="#f7f7f4" fill="none" strokeWidth="0.72" opacity="0.9">
         <ellipse cx="14" cy="-3.6" rx="5.6" ry="2.2" stroke={isOpen ? '#050505' : '#f7f7f4'} />
         <path d="M 8.4 -3.6 V 5.4 Q 14 8.2 19.6 5.4 V -3.6" stroke={isOpen ? '#050505' : '#f7f7f4'} />
         <path d="M 8.4 1.2 Q 14 4 19.6 1.2" stroke={isOpen ? '#050505' : '#f7f7f4'} opacity="0.52" />
       </g>
-      <text x="29" y="3" fill={isOpen ? '#050505' : '#f7f7f4'} fontSize="7.2" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.12em">
+      <text x={ui.isCoarsePointer ? 88 : 29} y={ui.isCoarsePointer ? 9 : 3} fill={isOpen ? '#050505' : '#f7f7f4'} fontSize={ui.isCoarsePointer ? 22 : 7.2} fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.12em">
         DATABASE
       </text>
       <rect
         x="0"
-        y="-16"
-        width="84"
-        height="32"
-        rx="16"
+        y={-height / 2}
+        width={width}
+        height={height}
+        rx={height / 2}
         fill="#050505"
         opacity="0.001"
         onPointerDown={(event) => event.stopPropagation()}
