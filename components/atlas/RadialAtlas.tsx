@@ -1237,11 +1237,11 @@ function styleShortLabel(id: StyleSectorId) {
 
 function DatabaseAccess({ isOpen, onToggle }: { isOpen: boolean; onToggle: () => void }) {
   const ui = useAtlasUiMetrics();
-  const width = ui.isCoarsePointer ? 248 : 84;
-  const height = ui.isCoarsePointer ? 88 : 32;
+  const width = ui.isCoarsePointer ? 350 : 196;
+  const height = ui.isCoarsePointer ? 116 : 65;
   const x = atlasSize.width - width - (ui.isCoarsePointer ? 28 : 28);
-  const y = atlasSize.height - (ui.isCoarsePointer ? 120 : 52);
-  const iconScale = ui.isCoarsePointer ? 2.2 : 1;
+  const y = atlasSize.height - (ui.isCoarsePointer ? 152 : 90);
+  const iconScale = ui.isCoarsePointer ? 2.8 : 1.55;
   function toggleOnce(event: { stopPropagation: () => void }) {
     event.stopPropagation();
     onToggle();
@@ -1256,13 +1256,14 @@ function DatabaseAccess({ isOpen, onToggle }: { isOpen: boolean; onToggle: () =>
       onPointerDown={(event) => event.stopPropagation()}
       onClick={toggleOnce}
     >
-      <rect x="0" y={-height / 2} width={width} height={height} rx={height / 2} fill={isOpen ? '#f7f7f4' : '#050505'} stroke="#00e7ff" strokeWidth="0.88" opacity="0.88" />
-      <g className="database-access-core" transform={`translate(${ui.isCoarsePointer ? 16 : 0} 0) scale(${iconScale})`} stroke="#f7f7f4" fill="none" strokeWidth="0.72" opacity="0.9">
+      <rect x="0" y={-height / 2} width={width} height={height} rx={height / 2} fill={isOpen ? '#f7f7f4' : '#050505'} stroke="#00e7ff" strokeWidth="0.92" opacity="0.9" />
+      <path d={`M ${height / 2} ${-height / 2 + 1} H ${width - height / 2}`} stroke="#00e7ff" strokeWidth="0.42" opacity={isOpen ? 0.18 : 0.34} />
+      <g className="database-access-core" transform={`translate(${ui.isCoarsePointer ? 34 : 21} ${ui.isCoarsePointer ? -1.5 : -1.5}) scale(${iconScale})`} stroke="#f7f7f4" fill="none" strokeWidth="0.72" opacity="0.9">
         <ellipse cx="14" cy="-3.6" rx="5.6" ry="2.2" stroke={isOpen ? '#050505' : '#f7f7f4'} />
         <path d="M 8.4 -3.6 V 5.4 Q 14 8.2 19.6 5.4 V -3.6" stroke={isOpen ? '#050505' : '#f7f7f4'} />
         <path d="M 8.4 1.2 Q 14 4 19.6 1.2" stroke={isOpen ? '#050505' : '#f7f7f4'} opacity="0.52" />
       </g>
-      <text x={ui.isCoarsePointer ? 88 : 29} y={ui.isCoarsePointer ? 9 : 3} fill={isOpen ? '#050505' : '#f7f7f4'} fontSize={ui.isCoarsePointer ? 22 : 7.2} fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.12em">
+      <text x={ui.isCoarsePointer ? 126 : 68} y={ui.isCoarsePointer ? 10 : 5} fill={isOpen ? '#050505' : '#f7f7f4'} fontSize={ui.isCoarsePointer ? 30 : 12.5} fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.11em" fontWeight="650">
         DATABASE
       </text>
       <rect
@@ -1974,9 +1975,9 @@ function DatabaseArchivePanel({
 
 function ArchiveRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex gap-3 border-b border-[#f7f7f4]/10 pb-1.5">
-      <span className="w-20 shrink-0 text-[8px] uppercase tracking-[0.16em] text-[#00e7ff]">{label}</span>
-      <span className="min-w-0 text-[#f7f7f4]">{value}</span>
+    <div className="flex min-w-0 gap-3 border-b border-[#f7f7f4]/10 pb-1.5">
+      <span className="w-20 shrink-0 overflow-hidden text-ellipsis text-[8px] uppercase tracking-[0.12em] text-[#00e7ff]">{label}</span>
+      <span className="min-w-0 overflow-wrap-anywhere text-[#f7f7f4]">{value}</span>
     </div>
   );
 }
@@ -2064,10 +2065,10 @@ function DatabaseAnalysisPackView({
     <div className="space-y-3 text-[10px] leading-relaxed text-[#d9d9d2]">
       <DatabaseFlowSteps current="analysis" />
       <div className="database-analysis-hero">
-        <div>
+        <div className="min-w-0">
           <div className="text-[9px] uppercase tracking-[0.18em] text-[#00e7ff]">Analysis Pack</div>
-          <div className="mt-1 text-[15px] font-semibold leading-tight text-[#f7f7f4]">{pack.topic}</div>
-          <div className="mt-1 text-[8.5px] uppercase tracking-[0.13em] text-[#b8b8b2]">{pack.agent} / {pack.readiness_score.label.replace(/_/g, ' ')}</div>
+          <div className="mt-1 overflow-wrap-anywhere text-[15px] font-semibold leading-tight text-[#f7f7f4]">{pack.topic}</div>
+          <div className="mt-1 overflow-wrap-anywhere text-[8.5px] uppercase tracking-[0.1em] text-[#b8b8b2]">{pack.agent} / {pack.readiness_score.label.replace(/_/g, ' ')}</div>
         </div>
         <div className="database-analysis-score">
           <span>{Math.round(pack.readiness_score.score * 100)}</span>
@@ -2143,7 +2144,7 @@ function ArchiveList({ title, items }: { title: string; items: string[] }) {
       <div className="mb-2 text-[9px] uppercase tracking-[0.18em] text-[#00e7ff]">{title}</div>
       <div className="space-y-1.5">
         {items.map((item) => (
-          <div key={item} className="border border-[#f7f7f4]/12 bg-[#07181a]/60 px-2 py-1.5 text-[10px] leading-snug text-[#d9d9d2]">
+          <div key={item} className="min-w-0 overflow-wrap-anywhere border border-[#f7f7f4]/12 bg-[#07181a]/60 px-2 py-1.5 text-[10px] leading-snug text-[#d9d9d2]">
             {item}
           </div>
         ))}
@@ -2165,7 +2166,7 @@ function ArchiveCards({ items }: { items: Array<{ title: string; meta: string; b
   return (
     <div className="space-y-2">
       {items.map((item) => (
-        <div key={`${item.title}-${item.meta}`} className="border border-[#f7f7f4]/12 bg-[#07181a]/60 p-2">
+        <div key={`${item.title}-${item.meta}`} className="min-w-0 border border-[#f7f7f4]/12 bg-[#07181a]/60 p-2">
           <div className="truncate text-[10px] font-semibold text-[#f7f7f4]">{item.title}</div>
           <div className="mt-1 truncate text-[8px] uppercase tracking-[0.14em] text-[#00e7ff]">{item.meta}</div>
           <p className="mt-1 line-clamp-3 text-[9.5px] leading-snug text-[#c7c7c2]">{item.body}</p>
