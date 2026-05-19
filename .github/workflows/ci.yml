@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   verify:
-    name: Security, lint and build
+    name: Archive, security, lint and build
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -26,6 +26,9 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Archive validation
+        run: npm run archive:validate
 
       - name: Security baseline
         run: npm run security:check

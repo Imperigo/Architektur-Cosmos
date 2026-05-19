@@ -75,6 +75,8 @@ window and scope.
 
 ## Security Backlog
 
+- Monitor the daily `Live Security Headers` GitHub Action and investigate any
+  missing or weakened production header before adding upload functionality.
 - Add a private admin route protected by Cloudflare Access before real uploads.
 - Add signed upload URL Worker for R2 instead of direct browser credentials.
 - Add file scanning pipeline before any asset becomes public.

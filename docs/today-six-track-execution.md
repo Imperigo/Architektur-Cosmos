@@ -53,6 +53,7 @@ Today:
 - keep external testing passive and conservative;
 - monitor the first GitHub Actions runs and fix CI only if the remote
   environment differs from local.
+- use the `Live Security Headers` workflow as a daily passive production check.
 
 Recommended Cloudflare order:
 
