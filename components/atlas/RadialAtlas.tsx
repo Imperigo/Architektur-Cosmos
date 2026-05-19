@@ -991,27 +991,37 @@ function RadialHud({
   onToggleSourceLens: () => void;
   onToggleRelations: () => void;
 }) {
+  const coarsePointer = useCoarsePointer();
   const controlsOpacity = Math.max(0.46, 1 - tunnelDepth / 0.76);
   const lensLabel = activeStyleLens ? styleShortLabel(activeStyleLens) : 'All';
+  const buttonHeight = coarsePointer ? 30 : 20;
+  const buttonY = coarsePointer ? 915 : 923;
+  const buttonTextY = coarsePointer ? buttonY + 19 : buttonY + 13.2;
+  const buttonFontSize = coarsePointer ? 9.4 : 6.6;
+  const shellWidth = coarsePointer ? 650 : 380;
+  const shellHeight = coarsePointer ? 50 : 38;
+  const shellY = coarsePointer ? 905 : 914;
+  const shellRadius = coarsePointer ? 25 : 19;
   const buttons = [
-    { id: 'back', label: 'Time -', active: false, width: 58, onClick: onTravelBackward },
-    { id: 'forward', label: 'Time +', active: false, width: 58, onClick: onTravelForward },
-    { id: 'lenses', label: `Lens ${lensLabel}`, active: Boolean(activeStyleLens), width: 72, onClick: onToggleLenses },
-    { id: 'afasia', label: `Afasia ${sourceLensCount}`, active: activeSourceLens === 'afasia', width: 82, onClick: onToggleSourceLens },
-    { id: 'relations', label: 'Relations', active: showRelations, width: 78, onClick: onToggleRelations }
+    { id: 'back', label: 'Time -', active: false, width: coarsePointer ? 98 : 58, onClick: onTravelBackward },
+    { id: 'forward', label: 'Time +', active: false, width: coarsePointer ? 98 : 58, onClick: onTravelForward },
+    { id: 'lenses', label: `Lens ${lensLabel}`, active: Boolean(activeStyleLens), width: coarsePointer ? 126 : 72, onClick: onToggleLenses },
+    { id: 'afasia', label: `Afasia ${sourceLensCount}`, active: activeSourceLens === 'afasia', width: coarsePointer ? 132 : 82, onClick: onToggleSourceLens },
+    { id: 'relations', label: 'Relations', active: showRelations, width: coarsePointer ? 128 : 78, onClick: onToggleRelations }
   ];
-  let cursorX = atlasSize.cx - buttons.reduce((sum, button) => sum + button.width + 7, -7) / 2;
+  const gap = coarsePointer ? 10 : 7;
+  let cursorX = atlasSize.cx - buttons.reduce((sum, button) => sum + button.width + gap, -gap) / 2;
 
   return (
     <g className="radial-hud navigation-dock" pointerEvents="auto" opacity={controlsOpacity}>
-      <rect x={atlasSize.cx - 190} y="914" width="380" height="38" rx="19" fill="#050505" stroke="#f7f7f4" strokeWidth="0.48" opacity="0.7" />
+      <rect x={atlasSize.cx - shellWidth / 2} y={shellY} width={shellWidth} height={shellHeight} rx={shellRadius} fill="#050505" stroke="#f7f7f4" strokeWidth="0.48" opacity="0.7" />
       {buttons.map((button) => {
         const x = cursorX;
-        cursorX += button.width + 7;
-        return <DockButton key={button.id} x={x} y={923} width={button.width} label={button.label} active={button.active} onClick={button.onClick} />;
+        cursorX += button.width + gap;
+        return <DockButton key={button.id} x={x} y={buttonY} width={button.width} height={buttonHeight} textY={buttonTextY} fontSize={buttonFontSize} label={button.label} active={button.active} onClick={button.onClick} />;
       })}
       {activeSourceLens ? (
-        <text x={atlasSize.cx} y="907" textAnchor="middle" fill="#65ff9a" fontSize="7.2" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.18em" opacity="0.9">
+        <text x={atlasSize.cx} y={coarsePointer ? 895 : 907} textAnchor="middle" fill="#65ff9a" fontSize={coarsePointer ? 10 : 7.2} fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.18em" opacity="0.9">
           AFASIA SOURCE LENS / {sourceLensCount} PROJECT
         </text>
       ) : null}
@@ -1019,7 +1029,7 @@ function RadialHud({
   );
 }
 
-function DockButton({ x, y, width, label, active, onClick }: { x: number; y: number; width: number; label: string; active: boolean; onClick: () => void }) {
+function DockButton({ x, y, width, height = 20, textY = y + 13.2, fontSize = 6.6, label, active, onClick }: { x: number; y: number; width: number; height?: number; textY?: number; fontSize?: number; label: string; active: boolean; onClick: () => void }) {
   function handleActivate(event: { stopPropagation: () => void }) {
     event.stopPropagation();
     onClick();
@@ -1027,8 +1037,8 @@ function DockButton({ x, y, width, label, active, onClick }: { x: number; y: num
 
   return (
     <g className="dock-button" pointerEvents="auto" onPointerDown={(event) => event.stopPropagation()} onClick={handleActivate} aria-label={label}>
-      <rect x={x} y={y} width={width} height="20" rx="10" fill={active ? '#f7f7f4' : '#050505'} stroke={active ? '#00e7ff' : '#f7f7f4'} strokeWidth="0.58" opacity={active ? 0.94 : 0.76} />
-      <text x={x + width / 2} y={y + 13.2} textAnchor="middle" fill={active ? '#050505' : '#f7f7f4'} fontSize="6.6" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.08em">
+      <rect x={x} y={y} width={width} height={height} rx={height / 2} fill={active ? '#f7f7f4' : '#050505'} stroke={active ? '#00e7ff' : '#f7f7f4'} strokeWidth="0.58" opacity={active ? 0.94 : 0.76} />
+      <text x={x + width / 2} y={textY} textAnchor="middle" fill={active ? '#050505' : '#f7f7f4'} fontSize={fontSize} fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.08em">
         {label.toUpperCase()}
       </text>
     </g>
@@ -1256,10 +1266,11 @@ function DatabaseArchivePanel({
   onDismiss: () => void;
 }) {
   const [activeTab, setActiveTab] = useState<DatabaseTab>(selectedEntry ? 'entries' : 'intake');
-  const panelWidth = 468;
-  const panelHeight = 660;
-  const x = atlasSize.width - panelWidth - 28;
-  const y = Math.max(24, atlasSize.height - panelHeight - 28);
+  const coarsePointer = useCoarsePointer();
+  const panelWidth = coarsePointer ? 910 : 468;
+  const panelHeight = coarsePointer ? 810 : 660;
+  const x = coarsePointer ? 35 : atlasSize.width - panelWidth - 28;
+  const y = coarsePointer ? 86 : Math.max(24, atlasSize.height - panelHeight - 28);
   const preview = draftToEntryPreview(draft);
   const intakeSlug = preview.slug;
   const intakeStats = summarizeIntakeFiles(intakeFiles);
@@ -2240,11 +2251,16 @@ function normalizeForMatch(value: string) {
 }
 
 function SnappedEntryOverlay({ entry, onDismiss }: { entry: Entry; onDismiss: () => void }) {
-  const cardScale = 1.42;
+  const coarsePointer = useCoarsePointer();
+  const cardScale = coarsePointer ? 2.36 : 1.42;
   const cardWidth = 352 * cardScale;
   const cardHeight = 292 * cardScale;
   const cardX = atlasSize.cx - cardWidth / 2;
-  const cardY = atlasSize.cy - cardHeight / 2;
+  const cardY = coarsePointer ? 136 : atlasSize.cy - cardHeight / 2;
+  const closeWidth = coarsePointer ? 86 : 46;
+  const actionHeight = coarsePointer ? 42 : 22;
+  const actionY = coarsePointer ? cardY - 56 : cardY - 34;
+  const actionFont = coarsePointer ? 13 : 9;
 
   return (
     <g className="dossier-overlay" pointerEvents="auto" opacity="1">
@@ -2256,16 +2272,16 @@ function SnappedEntryOverlay({ entry, onDismiss }: { entry: Entry; onDismiss: ()
       <g pointerEvents="none" transform={`translate(${cardX} ${cardY}) scale(${cardScale})`}>
         <ProjectDetailCard entry={entry} x={0} y={0} />
       </g>
-      <g className="dossier-close" pointerEvents="auto" transform={`translate(${cardX + cardWidth - 46} ${cardY - 34})`} onClick={onDismiss}>
-        <rect width="46" height="22" fill="#f7f7f4" opacity="0.94" />
-        <text x="23" y="15" textAnchor="middle" fill="#050505" fontSize="9" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.14em">
+      <g className="dossier-close" pointerEvents="auto" transform={`translate(${cardX + cardWidth - closeWidth} ${actionY})`} onClick={onDismiss}>
+        <rect width={closeWidth} height={actionHeight} fill="#f7f7f4" opacity="0.94" />
+        <text x={closeWidth / 2} y={coarsePointer ? 27 : 15} textAnchor="middle" fill="#050505" fontSize={actionFont} fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.14em">
           CLOSE
         </text>
       </g>
       <a href={`/atlas/${entry.slug}/`} className="dossier-page-link">
-        <g pointerEvents="auto" transform={`translate(${cardX} ${cardY - 34})`}>
-          <rect width="76" height="22" fill="#050505" stroke="#f7f7f4" strokeWidth="0.58" opacity="0.9" />
-          <text x="38" y="15" textAnchor="middle" fill="#f7f7f4" fontSize="8.2" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.13em">
+        <g pointerEvents="auto" transform={`translate(${cardX} ${actionY})`}>
+          <rect width={coarsePointer ? 132 : 76} height={actionHeight} fill="#050505" stroke="#f7f7f4" strokeWidth="0.58" opacity="0.9" />
+          <text x={coarsePointer ? 66 : 38} y={coarsePointer ? 27 : 15} textAnchor="middle" fill="#f7f7f4" fontSize={coarsePointer ? 12 : 8.2} fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.13em">
             OPEN PAGE
           </text>
         </g>

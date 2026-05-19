@@ -1091,37 +1091,19 @@ body:has(.entry-page) {
 
 @media (max-width: 760px) {
   .project-search {
-    right: max(10px, env(safe-area-inset-right));
-    top: 66px;
+    right: max(var(--cosmos-hud-edge), env(safe-area-inset-right));
+    top: calc(var(--cosmos-hud-top) + 2px);
   }
 
   .lens-control {
-    left: max(10px, env(safe-area-inset-left));
-    top: 66px;
+    left: max(var(--cosmos-hud-edge), env(safe-area-inset-left));
+    top: calc(var(--cosmos-hud-top) + 2px);
   }
 
   .project-search-open,
   .lens-control-open,
   .lens-control:has(.lens-control-panel) {
-    width: min(300px, calc(100vw - 20px));
-  }
-
-  .project-search:not(.project-search-open) .project-search-trigger span:last-child {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    white-space: nowrap;
-  }
-
-  .project-search-open .project-search-trigger span:last-child {
-    position: static;
-    width: auto;
-    height: auto;
-    overflow: visible;
-    clip: auto;
-    white-space: normal;
+    width: min(92vw, 430px);
   }
 }
 
@@ -1310,6 +1292,23 @@ body:has(.entry-page) {
   overscroll-behavior: contain;
 }
 
+.lens-control,
+.lens-control *,
+.project-search,
+.project-search *,
+.database-draft,
+.database-draft * {
+  overflow-wrap: anywhere;
+  word-break: normal;
+  min-width: 0;
+}
+
+.database-draft pre,
+.database-draft code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
 .database-draft select,
 .database-draft input,
 .database-draft textarea,
@@ -1423,32 +1422,154 @@ body:has(.entry-page) {
 
 @media (max-width: 760px), (pointer: coarse) {
   :root {
-    --cosmos-hud-edge: 10px;
-    --cosmos-hud-top: 58px;
-    --cosmos-hud-button-height: 30px;
-    --cosmos-hud-button-min: 78px;
+    --cosmos-hud-edge: clamp(14px, 4.4vw, 20px);
+    --cosmos-hud-top: max(64px, env(safe-area-inset-top));
+    --cosmos-hud-button-height: 42px;
+    --cosmos-hud-button-min: 116px;
   }
 
   .database-draft {
-    width: min(94vw, 520px);
-    max-height: min(78vh, 690px);
-    right: 3vw;
-    bottom: 64px;
+    filter: none;
+  }
+
+  .database-draft > div {
+    padding: 18px !important;
+  }
+
+  .database-draft input,
+  .database-draft select,
+  .database-draft textarea,
+  .database-draft button,
+  .database-draft a {
+    min-height: 42px;
+    font-size: 14px !important;
+    line-height: 1.25 !important;
+  }
+
+  .database-draft textarea {
+    min-height: 72px;
+  }
+
+  .database-draft p,
+  .database-draft li,
+  .database-draft span,
+  .database-draft div,
+  .database-draft pre {
+    line-height: 1.35;
+  }
+
+  .database-draft .grid {
+    min-width: 0;
   }
 
   .project-search {
-    right: 10px;
-    max-width: min(86vw, 360px);
+    right: max(var(--cosmos-hud-edge), env(safe-area-inset-right));
+    top: calc(var(--cosmos-hud-top) + 2px);
+    max-width: calc(100vw - (var(--cosmos-hud-edge) * 2));
   }
 
-  .lens-panel {
-    left: 10px;
-    max-width: min(86vw, 360px);
+  .lens-control {
+    left: max(var(--cosmos-hud-edge), env(safe-area-inset-left));
+    top: calc(var(--cosmos-hud-top) + 2px);
+    max-width: calc(100vw - (var(--cosmos-hud-edge) * 2));
+  }
+
+  .project-search-trigger,
+  .lens-control-trigger {
+    height: var(--cosmos-hud-button-height);
+    min-width: var(--cosmos-hud-button-min);
+    padding-inline: 16px;
+    font-size: 12px;
+    letter-spacing: 0.11em;
+  }
+
+  .project-search-mark,
+  .lens-control-mark {
+    width: 15px;
+    height: 15px;
+  }
+
+  .project-search-open,
+  .project-search-entry.project-search-open,
+  .lens-control-open,
+  .lens-control:has(.lens-control-panel) {
+    width: min(92vw, 430px);
+  }
+
+  .project-search-panel,
+  .lens-control-panel {
+    max-height: min(72vh, 620px);
+    overflow-y: auto;
+    padding: 16px;
+    backdrop-filter: none;
+  }
+
+  .project-search-field {
+    padding: 11px;
+  }
+
+  .project-search-field input {
+    font-size: 16px;
+    line-height: 1.25;
+  }
+
+  .project-search-clear {
+    width: 40px;
+    height: 38px;
+    font-size: 13px;
+  }
+
+  .project-search-results {
+    max-height: min(54vh, 420px);
+    gap: 9px;
+  }
+
+  .project-search-result {
+    padding: 13px;
+  }
+
+  .project-search-result-title {
+    white-space: normal;
+    font-size: 15px;
+    line-height: 1.18;
+  }
+
+  .project-search-result-meta,
+  .project-search-empty {
+    white-space: normal;
+    font-size: 11px;
+    line-height: 1.25;
+  }
+
+  .lens-control-head {
+    font-size: 12px;
+    line-height: 1.25;
+    letter-spacing: 0.14em;
+  }
+
+  .lens-control-close {
+    width: 42px;
+    height: 36px;
+    font-size: 13px;
+  }
+
+  .lens-control-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 9px;
+  }
+
+  .lens-control-tab {
+    height: 40px;
+    padding-inline: 7px;
+    font-size: 11px;
+    line-height: 1.1;
+    white-space: normal;
+    letter-spacing: 0.07em;
   }
 
   .radial-hud {
-    bottom: 10px;
-    transform: translateX(-50%) scale(0.92);
+    bottom: max(8px, env(safe-area-inset-bottom));
+    transform: translateX(-50%);
     transform-origin: bottom center;
   }
 
