@@ -27,6 +27,7 @@ type MotionSnapshot = {
 
 type IntroState = 'intro' | 'launching' | 'idle';
 type SourceLens = 'afasia' | null;
+type PerformanceTier = 'reduced' | 'balanced' | 'full';
 type ResearchSeed = {
   project: string;
   architect: string;
@@ -116,6 +117,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     status: 'empty'
   });
   const [intakeFiles, setIntakeFiles] = useState<IntakeFile[]>([]);
+  const performanceTier = usePerformanceTier();
   const motionRef = useRef({
     currentTravel: 0,
     targetTravel: 0,
@@ -130,12 +132,13 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   const state = useMemo(() => wormholeState(motion.currentTravel), [motion.currentTravel]);
   const activeSelectedEntryId = selectedEntry?.id ?? null;
   const nodes = useMemo(() => layoutWormholeEntries(allEntries, state, activeSelectedEntryId ?? undefined), [activeSelectedEntryId, allEntries, state]);
-  const displayNodes = useMemo(() => limitDisplayNodes(nodes), [nodes]);
+  const displayNodes = useMemo(() => limitDisplayNodes(nodes, performanceTier), [nodes, performanceTier]);
   const isTraveling = motion.isMoving;
   const sourceLensCount = useMemo(() => allEntries.filter((entry) => isSourceLensEntry(entry, 'afasia')).length, [allEntries]);
   const hoveredEntry = useMemo(() => displayNodes.find((node) => node.entry.id === hoveredEntryId)?.entry ?? null, [displayNodes, hoveredEntryId]);
   const cursorVisible = introState === 'idle';
   const isIntroActive = introState !== 'idle';
+  const relationOverlayActive = selectedEntry || showRelations || (performanceTier !== 'reduced' && hoveredEntry);
   const backgroundStyle = {
     filter: isIntroActive ? 'blur(7px)' : 'blur(0px)',
     opacity: selectedEntry ? 0.48 : introState === 'intro' ? 0.3 : introState === 'launching' ? 0.82 : 1,
@@ -475,7 +478,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   }
 
   return (
-    <main className={`relative h-screen w-screen overflow-hidden bg-[#050505] text-[#f7f7f4] ${introState === 'launching' ? 'cosmos-launching' : ''} ${isTraveling ? 'cosmos-moving' : ''} ${introState === 'idle' && !isTraveling ? 'cosmos-idle' : ''}`}>
+    <main className={`relative h-screen w-screen overflow-hidden bg-[#050505] text-[#f7f7f4] cosmos-perf-${performanceTier} ${introState === 'launching' ? 'cosmos-launching' : ''} ${isTraveling ? 'cosmos-moving' : ''} ${introState === 'idle' && !isTraveling ? 'cosmos-idle' : ''}`}>
       <div className="h-full w-full">
         <svg
           ref={svgRef}
@@ -493,9 +496,9 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
           <rect width={atlasSize.width} height={atlasSize.height} fill="#050505" />
           <g style={backgroundStyle} pointerEvents={selectedEntry ? 'none' : 'auto'}>
             <g className="wormhole-camera">
-              <WormholeRings state={state} isMoving={isTraveling} />
+              <WormholeRings state={state} isMoving={isTraveling} quality={performanceTier} />
 
-              {showRelations || hoveredEntry || selectedEntry ? (
+              {relationOverlayActive ? (
                 <RelationOverlay nodes={displayNodes} relations={relations} selectedEntry={selectedEntry} focusEntry={hoveredEntry} isMoving={isTraveling} />
               ) : null}
 
@@ -644,6 +647,50 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   );
 }
 
+function usePerformanceTier(): PerformanceTier {
+  const [tier, setTier] = useState<PerformanceTier>('balanced');
+
+  useEffect(() => {
+    const updateTier = () => {
+      const params = new URLSearchParams(window.location.search);
+      const forcedTier = params.get('perf');
+
+      if (forcedTier === 'reduced' || forcedTier === 'balanced' || forcedTier === 'full') {
+        setTier(forcedTier);
+        document.documentElement.dataset.cosmosPerf = forcedTier;
+        return;
+      }
+
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const coarsePointer = window.matchMedia('(pointer: coarse)').matches;
+      const narrowViewport = window.innerWidth < 760;
+      const smallViewport = window.innerWidth < 1024;
+      const cores = navigator.hardwareConcurrency || 4;
+      const memory = typeof (navigator as Navigator & { deviceMemory?: number }).deviceMemory === 'number'
+        ? (navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 4
+        : 4;
+      const userAgent = navigator.userAgent.toLowerCase();
+      const conservativeBrowser = userAgent.includes('opr/') || (userAgent.includes('safari') && !userAgent.includes('chrome'));
+
+      const nextTier: PerformanceTier = reducedMotion || narrowViewport || cores <= 4 || memory <= 4
+        ? 'reduced'
+        : !coarsePointer && !smallViewport && cores >= 8 && memory >= 8 && !conservativeBrowser
+          ? 'full'
+          : 'balanced';
+
+      setTier(nextTier);
+      document.documentElement.dataset.cosmosPerf = nextTier;
+    };
+
+    updateTier();
+    window.addEventListener('resize', updateTier, { passive: true });
+
+    return () => window.removeEventListener('resize', updateTier);
+  }, []);
+
+  return tier;
+}
+
 function isInterfaceTarget(target: EventTarget) {
   if (!(target instanceof Element)) return false;
   return Boolean(target.closest('.radial-hud, .lens-control, .lens-control-panel, .lens-access, .lens-panel, .database-access, .database-draft, .dossier-overlay, .style-sector, .project-search'));
@@ -660,11 +707,17 @@ function isReadableNode(node: WormholeEntryNode) {
   return insideFrame && node.depth >= 0.002 && node.depth <= 1.24 && node.opacity >= 0.02;
 }
 
-function limitDisplayNodes(nodes: WormholeEntryNode[]) {
+function limitDisplayNodes(nodes: WormholeEntryNode[], performanceTier: PerformanceTier) {
+  const nodeLimit: Record<PerformanceTier, number> = {
+    reduced: 58,
+    balanced: 88,
+    full: 112
+  };
+
   return nodes
     .filter(isReadableNode)
     .sort((a, b) => nodeRenderPriority(b) - nodeRenderPriority(a))
-    .slice(0, 112)
+    .slice(0, nodeLimit[performanceTier])
     .sort((a, b) => b.depth - a.depth);
 }
 

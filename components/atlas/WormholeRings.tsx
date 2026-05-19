@@ -7,13 +7,19 @@ import type { TimeRing } from '@/lib/atlas-layout';
 type WormholeRingsProps = {
   state: WormholeState;
   isMoving?: boolean;
+  quality?: 'reduced' | 'balanced' | 'full';
 };
 
-function WormholeRingsComponent({ state, isMoving = false }: WormholeRingsProps) {
+function WormholeRingsComponent({ state, isMoving = false, quality = 'balanced' }: WormholeRingsProps) {
+  const isReduced = quality === 'reduced';
+  const isFull = quality === 'full';
   const rings = stableRingSlots(wormholeRings(state));
-  const gridLines = wormholeGridLines(state, { spokeStride: 4, sampleCount: isMoving ? 18 : 24 });
-  const streamLines = wormholeStreamLines(state, { count: isMoving ? 4 : 6, sampleCount: 4 });
-  const speedLines = radialSpeedLines(state, { count: isMoving ? 4 : 7, sampleCount: 3 });
+  const gridLines = wormholeGridLines(state, {
+    spokeStride: isReduced ? 6 : 4,
+    sampleCount: isReduced ? 14 : isMoving ? 18 : isFull ? 26 : 22
+  });
+  const streamLines = wormholeStreamLines(state, { count: isReduced ? 2 : isMoving ? 4 : isFull ? 6 : 5, sampleCount: isReduced ? 3 : 4 });
+  const speedLines = radialSpeedLines(state, { count: isReduced ? 2 : isMoving ? 4 : isFull ? 7 : 5, sampleCount: 3 });
   const edgeCompression = Math.min(1, Math.abs(state.edgeTension) / 0.065);
   const frontDissolve = Math.max(0, 1 - state.timePosition / 0.22);
 
@@ -31,9 +37,9 @@ function WormholeRingsComponent({ state, isMoving = false }: WormholeRingsProps)
         </radialGradient>
       </defs>
       <circle className="wormhole-breath" cx={atlasSize.cx} cy={atlasSize.cy + 8} r={wormholeTunnel.maxRadius + 18 - edgeCompression * 24} fill="url(#wormhole-vignette)" opacity={0.84 - state.timePosition * 0.22} />
-      <IdleOrbits state={state} />
-      <IdleWhirlLines state={state} />
-      <EnergyBands rings={rings} state={state} isMoving={isMoving} />
+      {!isReduced ? <IdleOrbits state={state} /> : null}
+      {!isReduced ? <IdleWhirlLines state={state} /> : null}
+      <EnergyBands rings={rings} state={state} isMoving={isMoving} quality={quality} />
       {streamLines.map((line, index) => (
         <path
           key={`stream-${index}`}
@@ -103,7 +109,9 @@ function WormholeRingsComponent({ state, isMoving = false }: WormholeRingsProps)
 
 export const WormholeRings = memo(WormholeRingsComponent);
 
-function EnergyBands({ rings, state, isMoving }: { rings: RingSlot[]; state: WormholeState; isMoving: boolean }) {
+function EnergyBands({ rings, state, isMoving, quality }: { rings: RingSlot[]; state: WormholeState; isMoving: boolean; quality: 'reduced' | 'balanced' | 'full' }) {
+  const bandScale = quality === 'reduced' ? 0.45 : quality === 'full' ? 1 : 0.75;
+
   return (
     <g aria-hidden="true" pointerEvents="none">
       {rings.map((slot, index) => {
@@ -113,7 +121,7 @@ function EnergyBands({ rings, state, isMoving }: { rings: RingSlot[]; state: Wor
 
         const center = tunnelCenter(depth, state.phase);
         const opacity = isVisible ? tunnelOpacity(depth) * ringEdgeDissolve(depth, state.timePosition) : 0;
-        const bandOpacity = ((ring?.mode === 'local' ? 0.18 : ring?.weight === 'major' ? 0.12 : 0.065) * opacity);
+        const bandOpacity = ((ring?.mode === 'local' ? 0.18 : ring?.weight === 'major' ? 0.12 : 0.065) * opacity * bandScale);
 
         return (
           <circle

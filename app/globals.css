@@ -1390,6 +1390,74 @@ body:has(.entry-page) {
   transform-origin: center;
 }
 
+.cosmos-perf-reduced .wormhole-stream,
+.cosmos-perf-reduced .wormhole-speed-line,
+.cosmos-perf-reduced .wormhole-idle-orbit,
+.cosmos-perf-reduced .wormhole-idle-whirl,
+.cosmos-perf-reduced .wormhole-energy-band,
+.cosmos-perf-reduced .relation-strand-glow {
+  display: none;
+}
+
+.cosmos-perf-reduced .wormhole-spoke,
+.cosmos-perf-reduced .wormhole-ring,
+.cosmos-perf-reduced .wormhole-current-ring,
+.cosmos-perf-reduced .relation-strand,
+.cosmos-perf-reduced .node-focus-drift,
+.cosmos-perf-reduced .cosmos-node-wiggle {
+  animation: none;
+  filter: none;
+}
+
+.cosmos-perf-reduced .database-draft,
+.cosmos-perf-reduced .lens-panel,
+.cosmos-perf-reduced .project-search,
+.cosmos-perf-reduced .screen-cosmos-cursor {
+  backdrop-filter: none;
+  filter: none;
+}
+
+.cosmos-perf-reduced .wormhole-camera {
+  transition-duration: 260ms;
+}
+
+@media (max-width: 760px), (pointer: coarse) {
+  :root {
+    --cosmos-hud-edge: 10px;
+    --cosmos-hud-top: 58px;
+    --cosmos-hud-button-height: 30px;
+    --cosmos-hud-button-min: 78px;
+  }
+
+  .database-draft {
+    width: min(94vw, 520px);
+    max-height: min(78vh, 690px);
+    right: 3vw;
+    bottom: 64px;
+  }
+
+  .project-search {
+    right: 10px;
+    max-width: min(86vw, 360px);
+  }
+
+  .lens-panel {
+    left: 10px;
+    max-width: min(86vw, 360px);
+  }
+
+  .radial-hud {
+    bottom: 10px;
+    transform: translateX(-50%) scale(0.92);
+    transform-origin: bottom center;
+  }
+
+  .entry-model-viewer .absolute.left-3.top-3 {
+    max-height: calc(100% - 24px);
+    overflow-y: auto;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .wormhole-spoke,
   .wormhole-ring,

@@ -15,12 +15,16 @@ Today:
 - test start, zoom, lenses, search, database and dossier on live desktop;
 - only fix small stability issues such as button alignment, text overflow or
   broken click targets.
+- run the adaptive performance program across weak laptops, Safari, Opera,
+  Chrome and mobile/narrow viewports.
 
 Done criteria:
 
 - `/`, `/atlas/`, Villa Savoye and Ingenbohl load on production;
 - Lenses, Search and Database are reachable;
 - Dossier opens from an atlas object.
+- `?perf=reduced`, `?perf=balanced` and `?perf=full` keep the atlas usable with
+  different render budgets.
 
 ## 2. Database / Private Library
 

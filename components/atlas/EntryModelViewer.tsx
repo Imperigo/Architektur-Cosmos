@@ -105,6 +105,7 @@ export function EntryModelViewer({ modelUrl, title, accent }: EntryModelViewerPr
       if (disposed || !mountRef.current) return;
 
       const mount = mountRef.current;
+      const viewerQuality = detectViewerQuality();
       const scene = new Three.Scene();
       scene.background = new Three.Color(0x050505);
       scene.fog = new Three.Fog(0x050505, 18, 42);
@@ -149,8 +150,12 @@ export function EntryModelViewer({ modelUrl, title, accent }: EntryModelViewerPr
       const camera = new Three.PerspectiveCamera(42, mount.clientWidth / mount.clientHeight, 0.1, 100);
       camera.position.set(16, 11, 16);
 
-      const renderer = new Three.WebGLRenderer({ antialias: true, alpha: false, powerPreference: 'high-performance' });
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      const renderer = new Three.WebGLRenderer({
+        antialias: viewerQuality !== 'reduced',
+        alpha: false,
+        powerPreference: viewerQuality === 'reduced' ? 'default' : 'high-performance'
+      });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, viewerQuality === 'full' ? 2 : viewerQuality === 'balanced' ? 1.5 : 1));
       renderer.setSize(mount.clientWidth, mount.clientHeight);
       renderer.outputColorSpace = Three.SRGBColorSpace;
       mount.appendChild(renderer.domElement);
@@ -360,6 +365,23 @@ function materialLayerFromMesh(name: string, material: Material | Material[]): M
 function materialName(material: Material | Material[]) {
   if (Array.isArray(material)) return material.map((item) => item.name).join(' ');
   return material.name;
+}
+
+function detectViewerQuality(): 'reduced' | 'balanced' | 'full' {
+  const forcedTier = document.documentElement.dataset.cosmosPerf;
+  if (forcedTier === 'reduced' || forcedTier === 'balanced' || forcedTier === 'full') return forcedTier;
+
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const coarsePointer = window.matchMedia('(pointer: coarse)').matches;
+  const narrowViewport = window.innerWidth < 760;
+  const cores = navigator.hardwareConcurrency || 4;
+  const memory = typeof (navigator as Navigator & { deviceMemory?: number }).deviceMemory === 'number'
+    ? (navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 4
+    : 4;
+
+  if (reducedMotion || coarsePointer || narrowViewport || cores <= 4 || memory <= 4) return 'reduced';
+  if (window.innerWidth >= 1180 && cores >= 8 && memory >= 8) return 'full';
+  return 'balanced';
 }
 
 function applyViewerStyle(
