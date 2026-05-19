@@ -79,6 +79,7 @@ export function SemanticEntryNode({
 }: SemanticEntryNodeProps) {
   const inverseScale = 1 / scale;
   const isFast = renderMode === 'fast';
+  const hasImageThumbnail = Boolean(primaryImageUrl(entry));
   const glyphRadius = nodeRadius ?? (semanticLevel === 'global' ? 4.8 : 7.2);
   const hitRadius = Math.max(isFast ? 18 : 15, glyphRadius + 8);
   const glyphFontSize = Math.max(7, Math.min(14, glyphRadius * 0.72));
@@ -125,7 +126,7 @@ export function SemanticEntryNode({
         <circle cx={x} cy={y} r={glyphRadius + 9} fill="none" stroke={accent} strokeWidth="0.75" strokeDasharray="1 6" opacity="0.78" pointerEvents="none" />
       ) : null}
       <EntryThumbnail entry={entry} x={x} y={y} radius={isSelected ? glyphRadius + 3 : isHovered && !isFast ? glyphRadius + 1.5 : glyphRadius} accent={accent} isSelected={isSelected} styleLensActive={!isFast && (styleLensActive || isHovered)} renderMode={renderMode} />
-      {!isFast ? <text
+      {!isFast && !hasImageThumbnail ? <text
         x={x}
         y={y + glyphFontSize * 0.34}
         textAnchor="middle"
@@ -173,17 +174,42 @@ export function SemanticEntryNode({
 function EntryThumbnail({ entry, x, y, radius, accent, isSelected, styleLensActive, renderMode }: { entry: Entry; x: number; y: number; radius: number; accent: string; isSelected: boolean; styleLensActive: boolean; renderMode: 'full' | 'fast' }) {
   const seed = stableHash(entry.id);
   const isFast = renderMode === 'fast';
+  const imageUrl = primaryImageUrl(entry);
   const inset = radius * 0.34;
   const skyline = 3 + (seed % 4);
   const baseY = y + radius * 0.34;
-  const accentStroke = isFast ? 1.05 : isSelected || styleLensActive ? 2.25 : 1.55;
+  const accentStroke = isFast ? 1.3 : isSelected || styleLensActive ? 2.45 : 1.7;
   const accentFillOpacity = isFast ? 0.2 : styleLensActive ? 0.28 : 0.16;
-  const showDetailLines = !isFast && (radius >= 6.4 || isSelected || styleLensActive);
+  const showDetailLines = !imageUrl && !isFast && (radius >= 6.4 || isSelected || styleLensActive);
+  const clipId = `entry-thumb-clip-${sanitizeId(entry.id)}`;
 
   return (
     <g className="entry-thumbnail" pointerEvents="none">
       <circle cx={x} cy={y} r={radius + 2.2} fill={accent} opacity={accentFillOpacity} />
-      <circle cx={x} cy={y} r={radius} fill={isSelected ? '#050505' : thumbnailFill(entry.entry_type)} stroke={accent} strokeWidth={accentStroke} />
+      {imageUrl ? (
+        <>
+          <defs>
+            <clipPath id={clipId}>
+              <circle cx={x} cy={y} r={Math.max(0, radius - 0.35)} />
+            </clipPath>
+          </defs>
+          <circle cx={x} cy={y} r={radius} fill="#050505" stroke={accent} strokeWidth={accentStroke + 0.3} />
+          <image
+            href={imageUrl}
+            x={x - radius}
+            y={y - radius}
+            width={radius * 2}
+            height={radius * 2}
+            preserveAspectRatio="xMidYMid slice"
+            clipPath={`url(#${clipId})`}
+            opacity={isFast ? 0.72 : 0.86}
+          />
+          <circle cx={x} cy={y} r={Math.max(0, radius - 0.35)} fill={accent} opacity="0.2" />
+          <circle cx={x} cy={y} r={Math.max(0, radius - 0.65)} fill="none" stroke="#f7f7f4" strokeWidth="0.42" opacity={isSelected || styleLensActive ? 0.72 : 0.38} />
+        </>
+      ) : (
+        <circle cx={x} cy={y} r={radius} fill={isSelected ? '#050505' : thumbnailFill(entry.entry_type)} stroke={accent} strokeWidth={accentStroke} />
+      )}
       {showDetailLines ? (
         <>
           <circle cx={x} cy={y} r={Math.max(0, radius - 2.2)} fill="none" stroke={accent} strokeWidth="0.55" opacity="0.72" />
@@ -214,6 +240,14 @@ function thumbnailFill(entryType: Entry['entry_type']) {
   if (entryType === 'urban_plan' || entryType === 'map') return '#d7c7ff';
   if (entryType === 'infrastructure') return '#ffd7a8';
   return '#f7f7f4';
+}
+
+function primaryImageUrl(entry: Entry) {
+  return entry.media.find((media) => media.type === 'exterior' && media.url)?.url ?? entry.media.find((media) => media.url)?.url ?? null;
+}
+
+function sanitizeId(value: string) {
+  return value.replace(/[^a-zA-Z0-9_-]/g, '-');
 }
 
 function stableHash(value: string) {

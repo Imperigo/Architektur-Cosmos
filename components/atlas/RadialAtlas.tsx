@@ -405,6 +405,12 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     const ref = motionRef.current;
     cancelMotionStep();
 
+    if (ref.targetTravel < 0 && ref.currentTravel < 0) {
+      ref.targetTravel = 0;
+    } else if (ref.targetTravel > wormholeTravelEnd && ref.currentTravel > wormholeTravelEnd) {
+      ref.targetTravel = wormholeTravelEnd;
+    }
+
     const delta = ref.targetTravel - ref.currentTravel;
     const nextVelocity = ref.velocity * 0.62 + delta * 0.18;
     const nextTravel = advanceTravel(ref.currentTravel, nextVelocity);
