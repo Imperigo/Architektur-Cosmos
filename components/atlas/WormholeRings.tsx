@@ -15,11 +15,11 @@ function WormholeRingsComponent({ state, isMoving = false, quality = 'balanced' 
   const isFull = quality === 'full';
   const rings = stableRingSlots(wormholeRings(state));
   const gridLines = wormholeGridLines(state, {
-    spokeStride: isReduced ? 8 : isMoving ? 6 : isFull ? 4 : 5,
-    sampleCount: isReduced ? 10 : isMoving ? 12 : isFull ? 24 : 17
+    spokeStride: isReduced ? 10 : isMoving ? 8 : isFull ? 4 : 5,
+    sampleCount: isReduced ? 8 : isMoving ? 10 : isFull ? 24 : 17
   });
-  const streamLines = wormholeStreamLines(state, { count: isReduced ? 1 : isMoving ? 2 : isFull ? 6 : 3, sampleCount: isReduced ? 2 : isMoving ? 3 : 4 });
-  const speedLines = radialSpeedLines(state, { count: isReduced ? 1 : isMoving ? 2 : isFull ? 7 : 3, sampleCount: isMoving ? 2 : 3 });
+  const streamLines = wormholeStreamLines(state, { count: isReduced ? 0 : isMoving ? 1 : isFull ? 6 : 3, sampleCount: isReduced ? 2 : isMoving ? 2 : 4 });
+  const speedLines = radialSpeedLines(state, { count: isReduced ? 0 : isMoving ? 1 : isFull ? 7 : 3, sampleCount: isMoving ? 2 : 3 });
   const edgeCompression = Math.min(1, Math.abs(state.edgeTension) / 0.065);
   const frontDissolve = Math.max(0, 1 - state.timePosition / 0.22);
 
@@ -39,7 +39,7 @@ function WormholeRingsComponent({ state, isMoving = false, quality = 'balanced' 
       <circle className="wormhole-breath" cx={atlasSize.cx} cy={atlasSize.cy + 8} r={wormholeTunnel.maxRadius + 18 - edgeCompression * 24} fill="url(#wormhole-vignette)" opacity={0.84 - state.timePosition * 0.22} />
       {!isReduced && !isMoving ? <IdleOrbits state={state} /> : null}
       {!isReduced && !isMoving ? <IdleWhirlLines state={state} /> : null}
-      <EnergyBands rings={rings} state={state} isMoving={isMoving} quality={quality} />
+      {!isMoving || isFull ? <EnergyBands rings={rings} state={state} isMoving={isMoving} quality={quality} /> : null}
       {streamLines.map((line, index) => (
         <path
           key={`stream-${index}`}
@@ -73,7 +73,7 @@ function WormholeRingsComponent({ state, isMoving = false, quality = 'balanced' 
           fill="none"
           stroke={index % 4 === 0 ? '#fff3d1' : energyColor(index)}
           strokeWidth={index % 6 === 0 ? 1.05 : 0.58}
-          opacity={isMoving ? (index % 6 === 0 ? 0.22 : 0.12) : index % 6 === 0 ? 0.38 : 0.22}
+          opacity={isMoving ? (index % 6 === 0 ? 0.18 : 0.08) : index % 6 === 0 ? 0.38 : 0.22}
           style={{ animationDelay: `${index * -0.08}s` }}
         />
       ))}
@@ -97,7 +97,7 @@ function WormholeRingsComponent({ state, isMoving = false, quality = 'balanced' 
               stroke={ringColor}
               strokeDasharray={ringDash}
               strokeWidth={ringStroke}
-              opacity={(ring?.mode === 'local' ? 0.94 : Math.max(0.24, 0.72 - Math.max(0, depth) * 0.22)) * ringOpacity}
+              opacity={(isMoving ? 0.72 : 1) * (ring?.mode === 'local' ? 0.94 : Math.max(0.24, 0.72 - Math.max(0, depth) * 0.22)) * ringOpacity}
               style={{ animationDelay: `${index * -0.16}s` }}
             />
           </g>

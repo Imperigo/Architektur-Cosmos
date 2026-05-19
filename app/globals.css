@@ -1509,7 +1509,23 @@ body:has(.entry-page) {
   height: 100%;
 }
 
+.database-primary-action {
+  display: grid;
+  min-width: 116px;
+  gap: 4px;
+}
+
+.database-primary-action small {
+  color: rgb(184 184 178 / 78%);
+  font-size: 7px;
+  letter-spacing: 0.08em;
+  line-height: 1.05;
+  text-align: center;
+  text-transform: uppercase;
+}
+
 .database-primary-generate {
+  width: 100%;
   min-width: 116px;
   border: 1px solid rgb(0 231 255 / 82%);
   background:
@@ -1538,6 +1554,12 @@ body:has(.entry-page) {
   border: 1px solid rgb(247 247 244 / 10%);
   background: rgb(5 5 5 / 42%);
   padding: 8px;
+}
+
+.cosmos-moving .entry-node-label,
+.cosmos-moving .style-sector-label,
+.cosmos-moving .time-readout {
+  opacity: 0.72;
 }
 
 .database-dropzone {
@@ -1824,14 +1846,14 @@ body:has(.entry-page) {
 
   .database-mobile-overlay {
     inset:
-      max(68px, calc(env(safe-area-inset-top) + 58px))
+      max(56px, calc(env(safe-area-inset-top) + 48px))
       max(var(--ui-safe-edge), env(safe-area-inset-right))
-      max(16px, calc(env(safe-area-inset-bottom) + 12px))
+      max(12px, calc(env(safe-area-inset-bottom) + 10px))
       max(var(--ui-safe-edge), env(safe-area-inset-left));
   }
 
   .database-draft > div {
-    padding: 18px !important;
+    padding: 14px !important;
   }
 
   .database-mobile-overlay > div {
@@ -1867,6 +1889,14 @@ body:has(.entry-page) {
     font-size: 12px;
   }
 
+  .database-primary-action {
+    width: 100%;
+  }
+
+  .database-primary-action small {
+    font-size: 9px;
+  }
+
   .database-tab span {
     font-size: 12px;
   }
@@ -1877,16 +1907,23 @@ body:has(.entry-page) {
   }
 
   .database-flow-steps {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 7px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 5px;
   }
 
   .database-flow-step {
-    min-height: 44px;
+    min-height: 40px;
+    justify-content: center;
+    padding: 5px 3px;
+  }
+
+  .database-flow-step span {
+    width: 22px;
+    height: 22px;
   }
 
   .database-flow-step small {
-    font-size: 10px;
+    display: none;
   }
 
   .database-draft p,

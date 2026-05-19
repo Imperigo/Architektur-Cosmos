@@ -1001,9 +1001,9 @@ function isReadableNode(node: WormholeEntryNode) {
 
 function limitDisplayNodes(nodes: WormholeEntryNode[], performanceTier: PerformanceTier, isMoving: boolean) {
   const nodeLimit: Record<PerformanceTier, { idle: number; moving: number }> = {
-    reduced: { idle: 46, moving: 32 },
-    balanced: { idle: 78, moving: 52 },
-    full: { idle: 112, moving: 84 }
+    reduced: { idle: 42, moving: 24 },
+    balanced: { idle: 72, moving: 42 },
+    full: { idle: 104, moving: 68 }
   };
   const limit = isMoving ? nodeLimit[performanceTier].moving : nodeLimit[performanceTier].idle;
 
@@ -1446,6 +1446,15 @@ function DatabaseArchivePanel({
     setActiveTab('draft');
   }
 
+  function handlePrimaryGenerate() {
+    if (activeTab !== 'generate') {
+      setActiveTab('generate');
+      return;
+    }
+
+    generateResearchDraft();
+  }
+
   function loadIngenbohlSample() {
     const seed = {
       project: 'Alterszentrum Kloster Ingenbohl',
@@ -1590,13 +1599,16 @@ function DatabaseArchivePanel({
 
         <div className="database-top-workflow mb-3">
           <DatabaseFlowSteps current={workflowStage} />
-          <button
-            type="button"
-            className="database-primary-generate"
-            onClick={generateResearchDraft}
-          >
-            Dev AI Generate
-          </button>
+          <div className="database-primary-action">
+            <button
+              type="button"
+              className="database-primary-generate"
+              onClick={handlePrimaryGenerate}
+            >
+              {activeTab === 'generate' ? 'Generate Draft' : 'Dev AI Generate'}
+            </button>
+            <small>{activeTab === 'generate' ? 'uses current inputs' : 'opens generator'}</small>
+          </div>
         </div>
 
         <div className="cosmos-scroll-panel min-h-0 flex-1 pr-1">
