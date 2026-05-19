@@ -100,6 +100,14 @@ Read-only R2 bucket status:
 npm run archive:r2-status
 ```
 
+Public asset-domain setup is documented separately in
+`docs/r2-assets-custom-domain.md`. After connecting `assets.architekturkosmos.ch`
+in Cloudflare, run:
+
+```bash
+npm run assets:check
+```
+
 Manual equivalent:
 
 ```bash
