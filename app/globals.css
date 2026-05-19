@@ -1394,6 +1394,31 @@ body:has(.entry-page) {
   overscroll-behavior: contain;
 }
 
+.database-mobile-overlay {
+  position: fixed;
+  inset:
+    max(72px, calc(env(safe-area-inset-top) + 62px))
+    max(var(--ui-safe-edge), env(safe-area-inset-right))
+    max(18px, calc(env(safe-area-inset-bottom) + 12px))
+    max(var(--ui-safe-edge), env(safe-area-inset-left));
+  z-index: 80;
+  display: flex;
+  align-items: stretch;
+  justify-content: stretch;
+  max-width: none;
+  max-height: none;
+  filter: none;
+  pointer-events: auto;
+}
+
+.database-mobile-overlay > .cosmos-panel {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  overflow: hidden;
+}
+
 .lens-control,
 .lens-control *,
 .project-search,
@@ -1466,6 +1491,51 @@ body:has(.entry-page) {
   background:
     linear-gradient(135deg, rgb(0 231 255 / 13%), transparent 45%),
     rgb(5 5 5 / 72%);
+}
+
+.database-tab {
+  display: flex;
+  min-height: 44px;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 3px;
+  border: 1px solid rgb(247 247 244 / 18%);
+  background: rgb(5 5 5 / 72%);
+  padding: 7px 8px;
+  text-align: left;
+  transition: border-color 140ms ease, background 140ms ease, color 140ms ease;
+}
+
+.database-tab span {
+  color: #f7f7f4;
+  font-size: 8.8px;
+  font-weight: 650;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow-wrap: normal;
+  word-break: keep-all;
+}
+
+.database-tab small {
+  color: #8d8d87;
+  font-size: 7.2px;
+  letter-spacing: 0.04em;
+  line-height: 1.15;
+  text-transform: none;
+}
+
+.database-tab:hover,
+.database-tab-active {
+  border-color: rgb(0 231 255 / 82%);
+  background: rgb(0 231 255 / 12%);
+}
+
+.database-tab-active span,
+.database-tab-active small {
+  color: #00e7ff;
 }
 
 .brand-chrome {
@@ -1548,8 +1618,20 @@ body:has(.entry-page) {
     filter: none;
   }
 
+  .database-mobile-overlay {
+    inset:
+      max(68px, calc(env(safe-area-inset-top) + 58px))
+      max(var(--ui-safe-edge), env(safe-area-inset-right))
+      max(16px, calc(env(safe-area-inset-bottom) + 12px))
+      max(var(--ui-safe-edge), env(safe-area-inset-left));
+  }
+
   .database-draft > div {
     padding: 18px !important;
+  }
+
+  .database-mobile-overlay > div {
+    border-color: rgb(0 231 255 / 64%) !important;
   }
 
   .database-draft input,
@@ -1564,6 +1646,20 @@ body:has(.entry-page) {
 
   .database-draft textarea {
     min-height: 72px;
+  }
+
+  .database-tab {
+    min-height: 58px;
+    padding: 9px 10px;
+  }
+
+  .database-tab span {
+    font-size: 12px;
+  }
+
+  .database-tab small {
+    font-size: 10px;
+    line-height: 1.2;
   }
 
   .database-draft p,
