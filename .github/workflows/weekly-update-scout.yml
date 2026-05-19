@@ -1,0 +1,45 @@
+name: Weekly Update Scout
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Monday 07:00 Zurich during standard time / 08:00 during summer time.
+    - cron: '0 6 * * 1'
+
+permissions:
+  contents: read
+
+jobs:
+  update-scout:
+    name: Generate update proposals
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate update scout report
+        env:
+          BRAVE_SEARCH_API_KEY: ${{ secrets.BRAVE_SEARCH_API_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          UPDATE_SCOUT_EMAIL_TO: ${{ secrets.UPDATE_SCOUT_EMAIL_TO }}
+          UPDATE_SCOUT_EMAIL_FROM: ${{ secrets.UPDATE_SCOUT_EMAIL_FROM }}
+          UPDATE_SCOUT_APPROVAL_BASE_URL: ${{ secrets.UPDATE_SCOUT_APPROVAL_BASE_URL }}
+          UPDATE_SCOUT_SIGNING_SECRET: ${{ secrets.UPDATE_SCOUT_SIGNING_SECRET }}
+        run: npm run archive:update-scout:mail -- --limit 6
+
+      - name: Upload report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: architecture-cosmos-update-scout
+          path: out/update-scout/**
+          if-no-files-found: error
