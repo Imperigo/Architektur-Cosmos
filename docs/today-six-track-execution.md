@@ -107,11 +107,19 @@ Today:
 - confirm Villa Savoye GLB generation works;
 - keep layer names aligned with site, mass, low, structure and tectonic;
 - use Blender profile output as the bridge to future Claude-in-Blender testing.
+- make the project detail page treat the 3D/model viewer as the primary
+  analysis object, ahead of generic filters;
+- add material investigation as a first-class viewer/filter layer;
+- improve image-identification expectations: current static UI is only
+  filename/context matching, while real project recognition requires a private
+  vision model or server-side API behind auth.
 
 Deferred:
 
 - Gaussian splat training until own/licensed video frames exist;
 - IFC/ArchiCAD exchange until the reviewed GLB layer structure is stable.
+- true visual building recognition until the private upload/vision pipeline is
+  protected by auth, quarantine, rights gate and API-key isolation.
 
 ## 6. Content / Pilot Entries
 

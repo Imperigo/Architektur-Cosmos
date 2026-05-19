@@ -1092,7 +1092,10 @@ function DatabaseArchivePanel({
   }
 
   function identifyDroppedImage() {
-    const candidate = identifyBuildingFromImageName(imageIdentify.fileName, entries);
+    const candidate = identifyBuildingFromImageName(
+      `${imageIdentify.fileName} ${researchSeed.project} ${researchSeed.architect} ${researchSeed.address}`,
+      entries
+    );
 
     if (!candidate) {
       onImageIdentifyChange({
@@ -1332,7 +1335,7 @@ function DatabaseArchivePanel({
                   <div>
                     <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#00e7ff]">Image identify</div>
                     <p className="mt-1 text-[9.5px] leading-snug text-[#b8b8b2]">
-                      Drop a building image. Dev V1 prepares a local vision-identification job and uses filename/context heuristics until a private model/API is connected.
+                      Drop a building image. This static V1 uses filename and project-context matching; real visual recognition needs a private server-side vision model.
                     </p>
                   </div>
                   <label className="shrink-0 cursor-none border border-[#00e7ff]/60 px-2 py-1 text-[8px] uppercase tracking-[0.12em] text-[#9cfff7]">
@@ -1840,6 +1843,28 @@ function draftFromResearchSeed(seed: ResearchSeed): EntryDraft {
   }
 
   const title = normalizedProject || 'New Research Entry';
+  const normalizedSeed = normalizeForMatch(`${normalizedProject} ${normalizedArchitect} ${normalizedAddress}`);
+
+  if (normalizedSeed.includes('kispi') || normalizedSeed.includes('kinderspital') || (normalizedSeed.includes('herzog') && normalizedSeed.includes('meuron'))) {
+    return {
+      title: 'Kinderspital Zürich',
+      year: '2024',
+      entry_type: 'building',
+      style_sector: 'sustainable_architecture',
+      city: 'Zürich',
+      country: 'Schweiz',
+      authors: 'Herzog & de Meuron',
+      themes: 'hospital architecture, concrete frame, timber infill, healthcare, landscape campus, low-rise hospital, patient cottages, courtyard, daylight, children hospital',
+      lecture_cluster: 'Architecture Cosmos dev research, contemporary Swiss architecture',
+      source_documents: 'Herzog & de Meuron project page, Kinderspital Zürich project information, architecture press review',
+      source_url: 'https://www.herzogdemeuron.com/projects/377-kinderspital-zurich/',
+      short_description: 'Neubau des Kinderspitals Zürich als flache, landschaftlich eingebettete Gesundheitsarchitektur mit starker Holz-, Licht- und Hoflogik.',
+      one_sentence: 'Das Kinderspital Zürich von Herzog & de Meuron verbindet Gesundheitsbau, dreigeschossiges Betontragwerk, hölzerne Ausfachungen, Höfe, Tageslicht und landschaftliche Einbettung zu einem zeitgenössischen Spitaltyp.',
+      full_description: 'Das Kinderspital Zürich wird als Referenz für eine neue Generation von Gesundheitsbauten gelesen: nicht als monolithisches Spital, sondern als räumlich gegliederte, horizontale und landschaftlich eingebundene Architektur. Der Akutspitalbereich wird als dreigeschossiger Betonrahmen mit komplexen hölzernen Ausfachungen beschrieben; im Inneren organisiert eine städtische Logik aus Strassen, Plätzen und grünen Höfen Orientierung und Tageslicht. Für Architecture Cosmos eignet sich das Projekt besonders für Material-, Tragwerks- und Atmosphärenanalyse: Betonrahmen, Holz, Glas, Vegetation, Patientenzimmer als kleine Cottages, Hofräume, Erschliessung und therapeutische Landschaft sollen später als filterbare 3D- und Datenbanklayer geprüft werden.',
+      copyright_status: 'needs_permission'
+    };
+  }
+
   return {
     title,
     year: '2025',
@@ -1903,6 +1928,14 @@ function identifyBuildingFromImageName(fileName: string, entries: Entry[]) {
       confidence: 0.82,
       reason: 'filename/context matched Ingenbohl/Boltshauser aliases',
       aliases: ['ingenbohl', 'boltshauser', 'brunnen', 'kloster']
+    },
+    {
+      project: 'Kinderspital Zürich',
+      architect: 'Herzog & de Meuron',
+      address: 'Lenggstrasse 30, Zürich, Schweiz',
+      confidence: 0.78,
+      reason: 'filename/context matched Kispi/Kinderspital Zürich aliases',
+      aliases: ['kispi', 'kinderspital', 'kinderspital-zuerich', 'kinderspital-zurich', 'children-hospital-zurich', 'herzog-de-meuron', 'lengg']
     }
   ];
 

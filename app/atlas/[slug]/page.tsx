@@ -154,6 +154,8 @@ export default async function EntryPage({ params }: EntryPageProps) {
           </aside>
         </section>
 
+        <ModelAnalysisSection entry={entry} modelUrl={publicModelUrl} accent={accent} />
+
         <ObjectIdentityPanel entry={entry} profile={visualProfile} accent={accent} />
 
         <section className="entry-study-grid grid gap-4 border-t border-white/12 py-8 lg:grid-cols-3">
@@ -199,19 +201,6 @@ export default async function EntryPage({ params }: EntryPageProps) {
           <InfoBlock title="Source Trail" items={sourceItems(entry)} accent={accent} />
           <InfoBlock title="Database Tags" items={entry.database_tags ?? []} accent={accent} empty="No database tags yet" />
         </section>
-
-        {entry.model_assets?.length || entry.analysis_layers?.length ? (
-          <section className="grid gap-6 border-t border-white/12 py-8 lg:grid-cols-2">
-            <InfoBlock title="3D Model Layers" items={(entry.model_assets ?? []).map((model) => `${model.model_type.replace(/_/g, ' ')} / ${model.review_status}`)} accent={accent} />
-            <InfoBlock title="Analysis Layers" items={(entry.analysis_layers ?? []).map((analysis) => `${analysis.analysis_type.replace(/_/g, ' ')} / ${analysis.review_status}`)} accent={accent} />
-          </section>
-        ) : null}
-
-        {publicModelUrl ? (
-          <section className="border-t border-white/12 py-8">
-            <EntryModelViewer modelUrl={publicModelUrl} title={entry.title} accent={accent} />
-          </section>
-        ) : null}
 
         {entry.analysis_layers?.length || entry.analysis_observations?.length ? (
           <section className="grid gap-4 border-t border-white/12 py-8 lg:grid-cols-3">
@@ -440,6 +429,63 @@ function EntryMeta({ label, value }: { label: string; value: string }) {
   );
 }
 
+function ModelAnalysisSection({ entry, modelUrl, accent }: { entry: Entry; modelUrl: string | null; accent: string }) {
+  const hasModelOrAnalysis = Boolean(modelUrl || entry.model_assets?.length || entry.analysis_layers?.length || entry.analysis_observations?.length);
+  if (!hasModelOrAnalysis) return null;
+
+  const materialFilters = materialFilterItems(entry);
+  const blenderLayers = blenderLayerItems(entry);
+
+  return (
+    <section className="border-t border-white/12 py-10">
+      <div className="mb-5 flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <div className="text-[10px] uppercase tracking-[0.24em]" style={{ color: accent }}>3D Reference Core</div>
+          <h2 className="mt-2 max-w-3xl text-3xl leading-tight text-[#f7f7f4] sm:text-4xl">
+            Modell, Materialanalyse und Blender-Layer
+          </h2>
+        </div>
+        <p className="max-w-md text-sm leading-6 text-[#b8b8b2]">
+          Dieser Bereich ist der spätere Importkern: Geometrie, Materialfilter, Tragwerk, Tektonik und Quellenbasis sollen in Blender als eigene Ebenen ein- und ausgeblendet werden können.
+        </p>
+      </div>
+
+      {modelUrl ? (
+        <EntryModelViewer modelUrl={modelUrl} title={entry.title} accent={accent} />
+      ) : (
+        <article className="border border-white/14 bg-[#071315]/55 p-5">
+          <div className="text-[10px] uppercase tracking-[0.2em]" style={{ color: accent }}>Model pending</div>
+          <h3 className="mt-3 text-2xl text-[#f7f7f4]">Noch kein öffentliches 3D-Modell</h3>
+          <p className="mt-3 max-w-3xl text-sm leading-7 text-[#b8b8b2]">
+            Das Projekt bleibt als Analyse- und Quellenpilot aktiv, bis rights-reviewed Plan-, Schnitt- oder Modellgrundlagen vorhanden sind.
+          </p>
+        </article>
+      )}
+
+      <div className="mt-5 grid gap-4 lg:grid-cols-3">
+        <InfoBlock
+          title="Blender Collections"
+          items={blenderLayers}
+          accent={accent}
+          empty="No model collections planned yet"
+        />
+        <InfoBlock
+          title="Material Filters"
+          items={materialFilters}
+          accent={accent}
+          empty="No material filters yet"
+        />
+        <InfoBlock
+          title="Source Basis"
+          items={modelSourceItems(entry)}
+          accent={accent}
+          empty="No model source basis yet"
+        />
+      </div>
+    </section>
+  );
+}
+
 function ObjectIdentityPanel({ entry, profile, accent }: { entry: Entry; profile: EntryVisualProfile; accent: string }) {
   return (
     <section className="entry-object-signature border-t border-white/12 py-8">
@@ -665,6 +711,56 @@ function sourceItems(entry: Entry) {
     ...(entry.source_url ? [entry.source_url] : []),
     ...(entry.source_assets?.length ? [`${entry.source_assets.length} source assets`] : [])
   ];
+}
+
+function blenderLayerItems(entry: Entry) {
+  const modelLayers = (entry.model_assets ?? []).map((model) => `${model.model_type.replace(/_/g, ' ')} / ${model.review_status}`);
+  const analysisLayers = (entry.analysis_layers ?? []).map((analysis) => `analysis ${analysis.analysis_type.replace(/_/g, ' ')} / ${analysis.review_status}`);
+
+  if (modelLayers.length || analysisLayers.length) {
+    return [...modelLayers, ...analysisLayers].slice(0, 10);
+  }
+
+  return [
+    'site context / planned',
+    'mass model / planned',
+    'structure / planned',
+    'envelope / planned',
+    'circulation / planned',
+    'tectonics / planned'
+  ];
+}
+
+function materialFilterItems(entry: Entry) {
+  const tagMaterials = (entry.database_tags ?? [])
+    .filter((tag) => tag.startsWith('material:') || tag.startsWith('structure:'))
+    .map((tag) => tag.replace(/[_:]/g, ' '));
+  const analysisMaterials = (entry.analysis_layers ?? [])
+    .filter((layer) => layer.analysis_type === 'material_system' || layer.analysis_type === 'filter_classification')
+    .flatMap((layer) => extractAnalysisValues(layer.data, ['materials', 'material_filters', 'structural_filters']));
+  const observationMaterials = (entry.analysis_observations ?? [])
+    .filter((observation) => observation.analysis_type === 'material_tag' || observation.analysis_type === 'structure')
+    .map((observation) => observation.label);
+
+  return [...new Set([...tagMaterials, ...analysisMaterials, ...observationMaterials])].slice(0, 12);
+}
+
+function modelSourceItems(entry: Entry) {
+  const modelSources = (entry.model_assets ?? []).map((model) => `${model.model_type.replace(/_/g, ' ')}: ${model.source_basis}`);
+  if (modelSources.length) return modelSources.slice(0, 6);
+  return [
+    ...(entry.source_documents ?? []).slice(0, 3),
+    entry.source_url ?? 'rights-reviewed plans, sections and images needed'
+  ].filter(Boolean);
+}
+
+function extractAnalysisValues(data: Record<string, unknown> | undefined, keys: string[]) {
+  if (!data) return [];
+  return keys.flatMap((key) => {
+    const value = data[key];
+    if (Array.isArray(value)) return value.filter((item): item is string => typeof item === 'string');
+    return typeof value === 'string' ? [value] : [];
+  });
 }
 
 function analysisItems(entry: Entry, types: string[]) {

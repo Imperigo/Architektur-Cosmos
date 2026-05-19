@@ -51,6 +51,13 @@ function identifyFromPath(imagePath) {
       address: 'Klosterstrasse 20, 6440 Brunnen, Schweiz',
       confidence: 0.82,
       aliases: ['ingenbohl', 'boltshauser', 'brunnen', 'kloster']
+    },
+    {
+      project: 'Kinderspital Zürich',
+      architect: 'Herzog & de Meuron',
+      address: 'Lenggstrasse 30, Zürich, Schweiz',
+      confidence: 0.78,
+      aliases: ['kispi', 'kinderspital', 'kinderspital-zuerich', 'kinderspital-zurich', 'children-hospital-zurich', 'herzog-de-meuron', 'lengg']
     }
   ];
 
@@ -64,7 +71,7 @@ function identifyFromPath(imagePath) {
       architect: candidate.architect,
       address: candidate.address,
       confidence: candidate.confidence,
-      reason: 'filename/context heuristic match'
+      reason: 'filename/context heuristic match; not visual recognition'
     } : null,
     next_steps: candidate ? [
       `npm run archive:research-entry -- --title "${candidate.project}" --architect "${candidate.architect}" --address "${candidate.address}"`,

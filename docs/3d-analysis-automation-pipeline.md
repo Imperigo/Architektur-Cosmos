@@ -78,6 +78,27 @@ Every serious pilot should eventually separate:
 - `tectonic_model`: envelope, joints, material assemblies and construction logic;
 - `full_model`: reviewed complete reference model.
 
+The web viewer and Blender export must treat these layers as first-class
+collections, not as visual decoration. A future Blender import should create
+named collections such as:
+
+```text
+AC_{slug}/00_source_references
+AC_{slug}/01_site_context
+AC_{slug}/02_mass_model
+AC_{slug}/03_structure
+AC_{slug}/04_envelope
+AC_{slug}/05_circulation
+AC_{slug}/06_material_system
+AC_{slug}/07_tectonic_annotations
+AC_{slug}/08_reality_splat
+```
+
+Each collection should be individually hideable, queryable and attachable to
+analysis JSON so a Blender/Claude workflow can ask for “Swiss timber hospitals”
+or “concrete-frame buildings with courtyard plans” and import the relevant
+filtered model layers directly.
+
 Suggested object storage keys:
 
 ```text
@@ -101,6 +122,39 @@ Typical layers:
 - `spatial_order.json`
 - `filter_classification.json`
 - `vector-plan-graph.json`
+
+The material investigation is now a core requirement, not a secondary note.
+For every mature object the pipeline should try to separate:
+
+- material palette: concrete, timber, glass, stone, plaster, metal, vegetation;
+- structure system: frame, wall, core, slab, shell, truss, hybrid;
+- envelope system: facade rhythm, openings, screens, insulation/skin if known;
+- spatial/compositional system: courtyard, slope, plinth, pavilion, tower, mat;
+- confidence and source basis for every claim.
+
+Public filters can show reviewed material tags. Private/dev filters may keep
+copyright-derived or source-inferred observations separate until rights and
+source reliability are reviewed.
+
+## Image And Plan Selection Quality
+
+The archive should not accept images just because a search result mentions the
+project name. Each candidate image or plan should be scored before becoming a
+media slot:
+
+- exterior slot: building visibly present, not only surrounding site or people;
+- interior slot: actual interior of the project, not furniture/source-adjacent
+  imagery from a different building;
+- plan/section slot: architectural drawing or diagram of the project, with a
+  clear source and rights status;
+- duplicate check: avoid near-identical views unless they add analytical value;
+- rights status: `own_work`, `licensed`, `public_domain`, `private_research`,
+  `linked_reference_only` or blocked.
+
+The current static browser identify tool is only filename/context matching. A
+real image recognition step must run privately/server-side later, because the
+browser must not expose API keys or upload private/copyright material without
+auth, quarantine and rights gates.
 
 These files become the bridge between the website, D1 filters, Blender queries
 and later ArchiCAD/IFC exchange.
