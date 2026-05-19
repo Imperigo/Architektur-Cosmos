@@ -24,29 +24,33 @@ export type WormholeEntryNode = AtlasNode & {
 
 const wormholeAnchors = [
   { year: 2025, position: 0 },
-  { year: 2000, position: 0.055 },
-  { year: 1950, position: 0.13 },
-  { year: 1900, position: 0.215 },
-  { year: 1800, position: 0.31 },
-  { year: 1600, position: 0.405 },
-  { year: 1400, position: 0.49 },
-  { year: 1000, position: 0.59 },
-  { year: 0, position: 0.705 },
-  { year: -500, position: 0.765 },
-  { year: -3000, position: 0.875 },
-  { year: -9500, position: 1 }
+  { year: 2000, position: 0.08 },
+  { year: 1950, position: 0.19 },
+  { year: 1900, position: 0.33 },
+  { year: 1800, position: 0.5 },
+  { year: 1600, position: 0.68 },
+  { year: 1400, position: 0.83 },
+  { year: 1000, position: 1.02 },
+  { year: 0, position: 1.3 },
+  { year: -500, position: 1.45 },
+  { year: -3000, position: 1.85 },
+  { year: -5000, position: 2.05 },
+  { year: -7000, position: 2.23 },
+  { year: -9000, position: 2.4 }
 ];
 const wormholeYears = wormholeAnchors.map((anchor) => anchor.year);
-const oldestYear = -9500;
+export const wormholeTravelEnd = 2.4;
+const oldestYear = -9000;
 const presentYear = 2025;
 const staticTimelineMarkers = [
-  -9500, -7000, -5000, -3000, -2000, -1000, -500, 0, 500, 750, 1000, 1200,
-  1400, 1500, 1600, 1700, 1750, 1800, 1850, 1875, 1900, 1925, 1940, 1950,
-  1960, 1975, 1990, 2000, 2010, 2020, 2025
+  -9000, -8000, -7000, -6000, -5000, -4000, -3000, -2500, -2000, -1500,
+  -1000, -750, -500, -250, 0, 250, 500, 750, 1000, 1200, 1400, 1500,
+  1600, 1700, 1750, 1800, 1850, 1875, 1900, 1925, 1940, 1950, 1960, 1975,
+  1990, 2000, 2010, 2020, 2025
 ];
 const maxTunnelRadius = 438;
 const minTunnelRadius = 36;
-const visibleDepth = 1.34;
+const visibleDepth = 1.38;
 const frontFadeDepth = -0.16;
 
 export const wormholeTunnel = {
@@ -56,8 +60,8 @@ export const wormholeTunnel = {
 };
 
 export function wormholeState(travel: number): WormholeState {
-  const timePosition = clamp01(travel);
-  const edgeTension = travel < 0 ? travel : travel > 1 ? travel - 1 : 0;
+  const timePosition = clampTravel(travel);
+  const edgeTension = travel < 0 ? travel : travel > wormholeTravelEnd ? travel - wormholeTravelEnd : 0;
 
   return {
     phase: timePosition,
@@ -179,7 +183,7 @@ export function radiusToTunnelDepth(radius: number) {
 export function tunnelCenter(depth: number, phase: number) {
   const worldPosition = phase + depth;
   const clampedDepth = Math.max(0, Math.min(1, depth / visibleDepth));
-  const clampedWorldPosition = Math.max(0, Math.min(1, worldPosition));
+  const clampedWorldPosition = Math.max(0, Math.min(1, worldPosition / wormholeTravelEnd));
   const bend = Math.sin(clampedDepth * Math.PI);
   const worldBend = Math.sin(clampedWorldPosition * Math.PI);
   const pathSway = Math.sin((clampedWorldPosition * 1.72 + 0.08) * Math.PI * 2) * 38 * worldBend * (0.55 + clampedDepth * 0.45);
@@ -205,7 +209,7 @@ export function yearToPosition(year: number) {
   const chronological = [...wormholeAnchors].sort((a, b) => a.year - b.year);
   const nextIndex = chronological.findIndex((anchor) => anchor.year >= clampedYear);
 
-  if (nextIndex <= 0) return 1;
+  if (nextIndex <= 0) return wormholeTravelEnd;
 
   const previous = chronological[nextIndex - 1];
   const next = chronological[nextIndex];
@@ -215,7 +219,7 @@ export function yearToPosition(year: number) {
 }
 
 export function positionToYear(position: number) {
-  const clampedPosition = clamp01(position);
+  const clampedPosition = clampTravel(position);
   const chronological = [...wormholeAnchors].sort((a, b) => a.position - b.position);
   const nextIndex = chronological.findIndex((anchor) => anchor.position >= clampedPosition);
 
@@ -239,9 +243,9 @@ function ringDepth(year: number, timePosition: number) {
 }
 
 function rollingTimelineMarkers(timePosition: number) {
-  const step = 0.029;
+  const step = 0.025;
   const start = Math.max(0, timePosition + frontFadeDepth + step * 0.5);
-  const end = Math.min(1, timePosition + visibleDepth - step * 0.5);
+  const end = Math.min(wormholeTravelEnd, timePosition + visibleDepth - step * 0.5);
   const first = Math.floor(start / step) * step;
   const years: number[] = [];
 
@@ -260,8 +264,8 @@ function roundTimelineYear(year: number) {
   if (year >= 1000) return Math.round(year / 50) * 50;
   if (year >= 0) return Math.round(year / 100) * 100;
   if (absYear <= 1000) return Math.round(year / 250) * 250;
-  if (absYear <= 3000) return Math.round(year / 500) * 500;
-  return Math.round(year / 1000) * 1000;
+  if (absYear <= 5000) return Math.round(year / 500) * 500;
+  return Math.round(year / 750) * 750;
 }
 
 export function tubeTwist(worldPosition: number) {
@@ -381,8 +385,8 @@ function stableHash(value: string) {
   }, 7);
 }
 
-function clamp01(value: number) {
-  return Math.max(0, Math.min(1, value));
+function clampTravel(value: number) {
+  return Math.max(0, Math.min(wormholeTravelEnd, value));
 }
 
 function clamp(value: number, min: number, max: number) {

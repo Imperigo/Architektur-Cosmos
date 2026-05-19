@@ -12,7 +12,7 @@ import analysisPreview from '@/data/database-analysis-preview.json';
 import archivePreview from '@/data/archive-preview.json';
 import { atlasSize, styleSectors } from '@/lib/atlas-layout';
 import type { Entry, EntryRelation, StyleSectorId } from '@/lib/types';
-import { formatYear, layoutWormholeEntries, positionToYear, wormholeState, type WormholeEntryNode } from '@/lib/wormhole-layout';
+import { formatYear, layoutWormholeEntries, positionToYear, wormholeState, wormholeTravelEnd, type WormholeEntryNode } from '@/lib/wormhole-layout';
 
 type SvgPoint = {
   x: number;
@@ -463,7 +463,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     const normalizedDelta = Math.max(-140, Math.min(140, event.deltaY));
     closeDossier();
     setHoveredEntry(null);
-    nudgeTravel(normalizedDelta * 0.00014);
+    nudgeTravel(normalizedDelta * 0.00008);
   }
 
   function handleTouchStart(event: ReactTouchEvent<SVGSVGElement>) {
@@ -530,7 +530,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
         moved: touchTravelRef.current.moved + Math.abs(distanceDelta)
       };
 
-      nudgeTravel(distanceDelta * 0.00052);
+      nudgeTravel(distanceDelta * 0.0003);
       return;
     }
 
@@ -547,7 +547,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
       moved: currentTouch.moved + Math.abs(verticalDelta)
     };
 
-    nudgeTravel(verticalDelta * 0.00034);
+    nudgeTravel(verticalDelta * 0.0002);
   }
 
   function handleTouchEnd(event: ReactTouchEvent<SVGSVGElement>) {
@@ -776,8 +776,8 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
               activeStyleLens={activeStyleLens}
               activeSourceLens={activeSourceLens}
               sourceLensCount={sourceLensCount}
-              onTravelForward={() => travelBy(0.026)}
-              onTravelBackward={() => travelBy(-0.026)}
+              onTravelForward={() => travelBy(0.018)}
+              onTravelBackward={() => travelBy(-0.018)}
               onToggleLenses={() => {
                 setHoveredEntry(null);
                 setShowFilterPanel((current) => !current);
@@ -1312,7 +1312,7 @@ function CosmosGlyph() {
 }
 
 function TimeReadout({ timePosition, currentYear }: { timePosition: number; currentYear: number }) {
-  const focusEndYear = positionToYear(Math.min(1, timePosition + 0.22));
+  const focusEndYear = positionToYear(Math.min(wormholeTravelEnd, timePosition + 0.22));
   const span = dominantSpanForYear(currentYear);
 
   return (
@@ -2642,16 +2642,16 @@ function advanceTravel(current: number, delta: number) {
     return Math.min(0, current + delta * 0.78);
   }
 
-  if (current >= 1 && delta > 0) {
-    return Math.min(1 + maxOverscroll, current + delta * 0.16);
+  if (current >= wormholeTravelEnd && delta > 0) {
+    return Math.min(wormholeTravelEnd + maxOverscroll, current + delta * 0.16);
   }
 
-  if (current > 1 && delta < 0) {
-    return Math.max(1, current + delta * 0.78);
+  if (current > wormholeTravelEnd && delta < 0) {
+    return Math.max(wormholeTravelEnd, current + delta * 0.78);
   }
 
   const next = current + delta;
   if (next < 0) return next * 0.22;
-  if (next > 1) return 1 + (next - 1) * 0.22;
+  if (next > wormholeTravelEnd) return wormholeTravelEnd + (next - wormholeTravelEnd) * 0.22;
   return next;
 }
