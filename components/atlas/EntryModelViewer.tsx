@@ -271,15 +271,16 @@ export function EntryModelViewer({ modelUrl, title, accent }: EntryModelViewerPr
     <article id="model-viewer" className="entry-model-viewer border border-white/14 bg-[#050505]">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-4 py-3">
         <div>
-          <div className="text-[10px] uppercase tracking-[0.2em]" style={{ color: accent }}>Interactive 3D Preview</div>
-          <h2 className="mt-1 text-xl text-[#f7f7f4]">{title} / diagrammatic massing</h2>
+          <div className="text-[10px] uppercase tracking-[0.2em]" style={{ color: accent }}>3D Reference Core / Blender Layers</div>
+          <h2 className="mt-1 text-xl text-[#f7f7f4]">{title} / material, structure and analysis model</h2>
         </div>
         <div className="text-[9px] uppercase tracking-[0.14em] text-[#8d8d87]">drag rotate / scroll zoom</div>
       </div>
       <div className="relative h-[420px] min-h-[320px] w-full overflow-hidden" style={{ '--viewer-accent': accent } as CSSProperties}>
         <div ref={mountRef} className="h-full w-full" />
         {status === 'ready' ? (
-          <div className="absolute left-3 top-3 max-w-[calc(100%-24px)] border border-white/15 bg-[#050505]/78 p-3 text-[#f7f7f4] backdrop-blur-md">
+          <div className="entry-model-controls absolute left-3 top-3 max-w-[calc(100%-24px)] border border-white/15 bg-[#050505]/78 p-3 text-[#f7f7f4] backdrop-blur-md">
+            <div className="mb-2 text-[8px] uppercase tracking-[0.18em] text-[#8d8d87]">Darstellung</div>
             <div className="mb-2 flex flex-wrap gap-1.5">
               {[
                 ['realistic', 'Realistisch'],
@@ -297,6 +298,7 @@ export function EntryModelViewer({ modelUrl, title, accent }: EntryModelViewerPr
                 </button>
               ))}
             </div>
+            <div className="mb-1 text-[8px] uppercase tracking-[0.18em] text-[#8d8d87]">Analyse-Layer</div>
             <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3">
               {analysisLayers.map((layer) => (
                 <button
@@ -311,6 +313,7 @@ export function EntryModelViewer({ modelUrl, title, accent }: EntryModelViewerPr
                 </button>
               ))}
             </div>
+            <div className="mb-1 mt-2 text-[8px] uppercase tracking-[0.18em] text-[#8d8d87]">Materialfilter</div>
             <div className="mt-2 grid grid-cols-2 gap-1.5 sm:grid-cols-3">
               {materialLayers.map((layer) => (
                 <button

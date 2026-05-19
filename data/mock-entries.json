@@ -23,8 +23,8 @@
     ],
     "short_description": "Praehistorische Anlage, die Architektur als rituelle und soziale Ordnung lange vor klassischen Stadt- und Staatsformen sichtbar macht.",
     "source_quality": "lecture_pdf",
-    "one_sentence": "Gobekli Tepe ist als Bauwerk in Sanliurfa, Turkey im Jahr 9000 v. Chr. im Architecture Cosmos verortet und verknuepft proto urban, ritual, megalith.",
-    "full_description": "Praehistorische Anlage, die Architektur als rituelle und soziale Ordnung lange vor klassischen Stadt- und Staatsformen sichtbar macht. Der Eintrag wird im Atlas als Bauwerk gelesen und gehoert zur Wissensspur Global History ETH, Layer global urban design. Autorenschaft / Quelle: Unknown builders. Seine Filterebene verbindet proto urban, ritual, megalith, origin mit Jahr, Stilsektor und Relationennetz; spaeter koennen echte Fotos, Plaene, Schnitte, Quellen und Modelle direkt aus der Datenbank angeschlossen werden.",
+    "one_sentence": "Göbekli Tepe ist ein Deep-Time-Anker des Architecture Cosmos: monumentale Kalksteinpfeiler, rituelle Rundanlagen und Landschaftsbezug erscheinen hier vor der klassischen Stadt und vor der gewohnten Haus-Typologie.",
+    "full_description": "Göbekli Tepe verschiebt Architekturgeschichte in eine Zeit vor den vertrauten Kategorien von Stadt, Haus und Staat. Die Anlage besteht aus wiederholten kreis- oder ovalförmigen Einfassungen mit T-förmigen Kalksteinpfeilern, Reliefs und massiven Steinsetzungen. Architektonisch wichtig ist die Konzentration von Ritual, Monumentalität, Materialbearbeitung und Landschaftsposition: Raum wird nicht als Wohnraum, sondern als kollektive, symbolisch aufgeladene Ordnung erzeugt. Im Wurmloch markiert Göbekli Tepe den Ursprungsknoten für Megalithik, rituelle Raumfassung, Kalkstein-Tektonik, Vor-Urbanität und vorsichtige archäologische Rekonstruktion.",
     "media": [
       {
         "type": "exterior",
@@ -46,7 +46,280 @@
         "label": "Grundriss",
         "placeholder": "Grundriss / Gobekli Tepe / proto-urban-ritual"
       }
-    ]
+    ],
+    "source_url": "https://whc.unesco.org/en/list/1572/",
+    "source_documents": [
+      "02 Global History of Urban Design 1_2.pdf"
+    ],
+    "geo": {
+      "lat": 37.2231,
+      "lon": 38.9226,
+      "region": "Sanliurfa",
+      "precision": "site"
+    },
+    "materials": {
+      "primary": [
+        "limestone",
+        "megalithic_stone"
+      ],
+      "stone_type": [
+        "limestone"
+      ],
+      "secondary": [
+        "carved_relief"
+      ],
+      "notes": "Worked limestone pillars and enclosure walls; archaeological interpretation continues to evolve."
+    },
+    "program": {
+      "type": "ritual_site",
+      "subtype": "prehistoric_megalithic_enclosure",
+      "public_access": "public"
+    },
+    "context": {
+      "topography": "hilltop",
+      "setting": "rural_archaeological_landscape",
+      "heritage_context": [
+        "unesco_world_heritage_site",
+        "archaeological_site"
+      ],
+      "landscape_relation": [
+        "limestone_plateau",
+        "ritual_landscape",
+        "deep_time"
+      ]
+    },
+    "vibes": [
+      "deep time",
+      "ritual enclosure",
+      "megalithic threshold",
+      "pre-urban monument"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "archive",
+        "title": "UNESCO / Gobekli Tepe",
+        "url": "https://whc.unesco.org/en/list/1572/",
+        "reliability_level": "verified",
+        "rights_status": "private_research",
+        "notes": "Source trail: official_project_or_institutional_source. Public use: facts_links_own_summary."
+      },
+      {
+        "source_type": "archive",
+        "title": "German Archaeological Institute / Göbekli Tepe research context",
+        "url": "https://www.dainst.org/",
+        "reliability_level": "verified",
+        "rights_status": "private_research",
+        "notes": "Source trail: academic_or_heritage_source. Public use: facts_links_own_summary."
+      },
+      {
+        "source_type": "archive",
+        "title": "DAI / Göbekli Tepe fieldwork and research",
+        "url": "https://www.dainst.org/en/research/projects/noslug/1934",
+        "reliability_level": "verified",
+        "rights_status": "private_research",
+        "notes": "Source trail: academic_or_heritage_source. Public use: facts_links_own_summary."
+      }
+    ],
+    "database_tags": [
+      "source:unesco",
+      "typology:ritual_site",
+      "material:limestone",
+      "material:megalithic_stone",
+      "context:unesco_world_heritage_site",
+      "context:archaeological_site",
+      "landscape:limestone_plateau",
+      "landscape:ritual_landscape",
+      "landscape:deep_time",
+      "theme:proto-urban",
+      "theme:ritual",
+      "theme:megalith",
+      "theme:origin"
+    ],
+    "model_assets": [
+      {
+        "model_type": "full_model",
+        "title": "Gobekli Tepe complete analytical model",
+        "r2_key": "entries/gobekli-tepe/models/full.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "UNESCO/official/academic references plus archaeological plans only when rights and interpretation status are clear.",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.42
+      },
+      {
+        "model_type": "structure_model",
+        "title": "Gobekli Tepe structural layer model",
+        "r2_key": "entries/gobekli-tepe/models/structure.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "UNESCO/official/academic references plus archaeological plans only when rights and interpretation status are clear.",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.42
+      },
+      {
+        "model_type": "tectonic_model",
+        "title": "Gobekli Tepe tectonic/material separation model",
+        "r2_key": "entries/gobekli-tepe/models/tectonic.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "UNESCO/official/academic references plus archaeological plans only when rights and interpretation status are clear.",
+        "generation_method": "ai_assisted",
+        "review_status": "needs_source",
+        "confidence_score": 0.42
+      },
+      {
+        "model_type": "site_model",
+        "title": "Gobekli Tepe site and context model",
+        "r2_key": "entries/gobekli-tepe/models/site.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "UNESCO/official/academic references plus archaeological plans only when rights and interpretation status are clear.",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.42
+      },
+      {
+        "model_type": "mass_model",
+        "title": "Gobekli Tepe massing preview model",
+        "r2_key": "entries/gobekli-tepe/models/mass.glb",
+        "format": "glb",
+        "lod_level": "preview",
+        "source_basis": "UNESCO/official/academic references plus archaeological plans only when rights and interpretation status are clear.",
+        "generation_method": "procedural",
+        "review_status": "needs_source",
+        "confidence_score": 0.42
+      }
+    ],
+    "analysis_layers": [
+      {
+        "analysis_type": "structure",
+        "summary": "The primary architectural material is worked limestone. T-shaped monoliths, circular/oval enclosures and stone walls define space through mass, carving and arrangement rather than through roofed building systems.",
+        "data": {
+          "source_basis": "UNESCO/official/academic references plus archaeological plans only when rights and interpretation status are clear."
+        },
+        "review_status": "needs_source"
+      },
+      {
+        "analysis_type": "spatial_order",
+        "summary": "The site is organized as repeated enclosures with central and perimeter pillars. The architectural question is not plan as habitation but plan as ritual concentration and symbolic ordering.",
+        "data": {
+          "model_layers": [
+            "site",
+            "structure",
+            "material:limestone",
+            "enclosure_rings",
+            "central_pillars",
+            "relief_annotations"
+          ]
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Its tectonics are megalithic and subtractive/additive at once: quarrying, shaping, carving, erecting and embedding stones into enclosure walls.",
+        "data": {
+          "caution": "Avoid presenting speculative reconstruction as verified; every model layer should mark confidence and interpretation date."
+        },
+        "review_status": "needs_source"
+      },
+      {
+        "analysis_type": "material_system",
+        "summary": "The primary architectural material is worked limestone. T-shaped monoliths, circular/oval enclosures and stone walls define space through mass, carving and arrangement rather than through roofed building systems.",
+        "data": {
+          "materials": [
+            "limestone",
+            "megalithic_stone"
+          ],
+          "material_filters": [
+            "limestone",
+            "megalithic_stone",
+            "carved_relief"
+          ]
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "summary": "For Cosmos it is an origin-point for monumentality, stone construction, ritual space and pre-urban collective architecture.",
+        "data": {
+          "primary_filters": [
+            "deep time",
+            "ritual enclosure",
+            "megalithic threshold",
+            "pre-urban monument"
+          ],
+          "context_filters": [
+            "limestone_plateau",
+            "ritual_landscape",
+            "deep_time"
+          ]
+        },
+        "review_status": "reviewed"
+      }
+    ],
+    "model_3d": {
+      "glb_url": "https://assets.architekturkosmos.ch/models/gobekli-tepe/full.glb",
+      "license": "personal_only",
+      "source_basis": "UNESCO/official/academic references plus archaeological plans only when rights and interpretation status are clear.",
+      "analytical_dataset_year": -8000,
+      "parts": [
+        {
+          "type": "full",
+          "glb_url": "https://assets.architekturkosmos.ch/models/gobekli-tepe/full.glb",
+          "r2_key": "models/gobekli-tepe/full.glb",
+          "license": "personal_only",
+          "review_status": "planned"
+        },
+        {
+          "type": "structure",
+          "glb_url": "https://assets.architekturkosmos.ch/models/gobekli-tepe/structure.glb",
+          "r2_key": "models/gobekli-tepe/structure.glb",
+          "license": "personal_only",
+          "review_status": "planned"
+        },
+        {
+          "type": "site",
+          "glb_url": "https://assets.architekturkosmos.ch/models/gobekli-tepe/site.glb",
+          "r2_key": "models/gobekli-tepe/site.glb",
+          "license": "personal_only",
+          "review_status": "planned"
+        },
+        {
+          "type": "material",
+          "material_tag": "limestone",
+          "glb_url": "https://assets.architekturkosmos.ch/models/gobekli-tepe/materials/limestone.glb",
+          "r2_key": "models/gobekli-tepe/materials/limestone.glb",
+          "license": "personal_only",
+          "review_status": "planned"
+        },
+        {
+          "type": "material",
+          "material_tag": "megalithic_stone",
+          "glb_url": "https://assets.architekturkosmos.ch/models/gobekli-tepe/materials/megalithic_stone.glb",
+          "r2_key": "models/gobekli-tepe/materials/megalithic_stone.glb",
+          "license": "personal_only",
+          "review_status": "planned"
+        }
+      ]
+    },
+    "database_profile": {
+      "status": "needs_sources",
+      "r2_prefix": "entries/gobekli-tepe",
+      "source_count": 3,
+      "media_count": 4,
+      "model_count": 5,
+      "analysis_count": 5,
+      "tag_count": 13
+    },
+    "ingestion_status": {
+      "stage": "needs_review",
+      "source_status": "candidate",
+      "asset_status": "rights_blocked",
+      "model_status": "planned",
+      "updated_at": "2026-05-19"
+    }
   },
   {
     "id": "catal-huyuk",
@@ -6062,8 +6335,8 @@
     ],
     "short_description": "MFO Park ist im PDF-Framework als industrial-reuse / climate-landscape verortet und bildet einen wichtigen Knoten der Architektur- und Stadtgeschichte.",
     "source_quality": "lecture_pdf",
-    "one_sentence": "MFO Park ist als Landschaftsprojekt in Zurich, Switzerland im Jahr 2002 im Architecture Cosmos verortet und verknuepft industrial reuse, climate landscape, urban repair.",
-    "full_description": "MFO Park ist im PDF-Framework als industrial-reuse / climate-landscape verortet und bildet einen wichtigen Knoten der Architektur- und Stadtgeschichte. Der Eintrag wird im Atlas als Landschaftsprojekt gelesen und gehoert zur Wissensspur Landschaftsarchitektur ETH, 04 Landschaftsarchitektur 1_2.pdf, Layer landscape architecture 1 2. Autorenschaft / Quelle: Burckhardt + Partner, Raderschall Landschaftsarchitekten. Seine Filterebene verbindet industrial reuse, climate landscape, urban repair mit Jahr, Stilsektor und Relationennetz; spaeter koennen echte Fotos, Plaene, Schnitte, Quellen und Modelle direkt aus der Datenbank angeschlossen werden.",
+    "one_sentence": "MFO Park übersetzt die Erinnerung an eine Maschinenfabrik in einen begehbaren grünen Raum aus Stahlgerüst, Kletterpflanzen, Schatten, Wachstum und urbaner Öffentlichkeit.",
+    "full_description": "MFO Park wird im Architecture Cosmos als Landschaftsarchitektur gelesen, die zugleich Gebäude, Infrastrukturgedächtnis und klimatischer Stadtraum ist. Das Stahlgerüst bildet eine raumhaltige, begehbare Trellis-Struktur; die Bepflanzung macht Zeit, Jahreszeiten und Wachstum selbst zum architektonischen Material. Der Park ersetzt die industrielle Produktionshalle nicht durch eine neutrale Grünfläche, sondern transformiert sie in einen öffentlichen Raum mit Vertikalität, Schatten, Balkonen, Nischen und urbaner Reparatur im Zürcher Entwicklungsgebiet Oerlikon.",
     "media": [
       {
         "type": "exterior",
@@ -6110,7 +6383,7 @@
         "industrial_frame",
         "public_landscape"
       ],
-      "notes": "Landscape-architectural reuse of industrial memory as planted steel spatial frame."
+      "notes": "Steel trellis and plant growth form a time-based spatial envelope."
     },
     "program": {
       "type": "public_space",
@@ -6125,19 +6398,20 @@
       ],
       "landscape_relation": [
         "climate_landscape",
-        "urban_repair"
+        "urban_repair",
+        "seasonal_growth"
       ]
     },
     "model_3d": {
-      "glb_url": "https://assets.architekturkosmos.ch/models/mfo-park/site.glb",
+      "glb_url": "https://assets.architekturkosmos.ch/models/mfo-park/full.glb",
       "license": "personal_only",
-      "source_basis": "Planned site/spatial-frame reference model from lecture and public landscape references.",
+      "source_basis": "Public city/office sources and existing Cosmos landscape reading; geometric precision should be checked against plans if available.",
       "analytical_dataset_year": 2002,
       "parts": [
         {
-          "type": "site",
-          "glb_url": "https://assets.architekturkosmos.ch/models/mfo-park/site.glb",
-          "r2_key": "models/mfo-park/site.glb",
+          "type": "full",
+          "glb_url": "https://assets.architekturkosmos.ch/models/mfo-park/full.glb",
+          "r2_key": "models/mfo-park/full.glb",
           "license": "personal_only",
           "review_status": "planned"
         },
@@ -6149,21 +6423,228 @@
           "review_status": "planned"
         },
         {
+          "type": "site",
+          "glb_url": "https://assets.architekturkosmos.ch/models/mfo-park/site.glb",
+          "r2_key": "models/mfo-park/site.glb",
+          "license": "personal_only",
+          "review_status": "planned"
+        },
+        {
           "type": "material",
           "material_tag": "steel",
           "glb_url": "https://assets.architekturkosmos.ch/models/mfo-park/materials/steel.glb",
           "r2_key": "models/mfo-park/materials/steel.glb",
           "license": "personal_only",
           "review_status": "planned"
+        },
+        {
+          "type": "material",
+          "material_tag": "vegetation",
+          "glb_url": "https://assets.architekturkosmos.ch/models/mfo-park/materials/vegetation.glb",
+          "r2_key": "models/mfo-park/materials/vegetation.glb",
+          "license": "personal_only",
+          "review_status": "planned"
+        },
+        {
+          "type": "material",
+          "material_tag": "climbing_plants",
+          "glb_url": "https://assets.architekturkosmos.ch/models/mfo-park/materials/climbing_plants.glb",
+          "r2_key": "models/mfo-park/materials/climbing_plants.glb",
+          "license": "personal_only",
+          "review_status": "planned"
         }
       ]
     },
     "vibes": [
-      "industrial_reuse",
-      "planted_frame",
-      "urban_room",
-      "climate_landscape"
-    ]
+      "green machine hall",
+      "urban trellis",
+      "seasonal room",
+      "industrial memory"
+    ],
+    "source_url": "https://www.stadt-zuerich.ch/de/stadtleben/sport-und-erholung/park-und-gruenanlagen/mfo-park.html",
+    "source_candidates": [
+      {
+        "source_type": "website",
+        "title": "Stadt Zürich / MFO-Park",
+        "url": "https://www.stadt-zuerich.ch/de/stadtleben/sport-und-erholung/park-und-gruenanlagen/mfo-park.html",
+        "reliability_level": "verified",
+        "rights_status": "private_research",
+        "notes": "Source trail: official_project_or_institutional_source. Public use: facts_links_own_summary."
+      },
+      {
+        "source_type": "website",
+        "title": "Burckhardt / MFO-Park, Zürich",
+        "url": "https://burckhardt.swiss/en/project/mfo-park-zurich/",
+        "reliability_level": "verified",
+        "rights_status": "private_research",
+        "notes": "Source trail: office_or_designer_source. Public use: facts_links_own_summary."
+      },
+      {
+        "source_type": "website",
+        "title": "Basler & Hofmann / MFO Park steel structure greening",
+        "url": "https://www.baslerhofmann.ch/en/reference/mfo-park-zurich-oerlikon-steel-structure-greening",
+        "reliability_level": "verified",
+        "rights_status": "private_research",
+        "notes": "Source trail: specialist_engineering_or_project_source. Public use: technical_facts_links_own_summary."
+      }
+    ],
+    "database_tags": [
+      "source:official",
+      "typology:public_space",
+      "material:steel",
+      "material:vegetation",
+      "material:climbing_plants",
+      "context:industrial_reuse",
+      "landscape:climate_landscape",
+      "landscape:urban_repair",
+      "landscape:seasonal_growth",
+      "theme:industrial-reuse",
+      "theme:climate-landscape",
+      "theme:urban-repair"
+    ],
+    "model_assets": [
+      {
+        "model_type": "full_model",
+        "title": "MFO Park complete analytical model",
+        "r2_key": "entries/mfo-park/models/full.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "Public city/office sources and existing Cosmos landscape reading; geometric precision should be checked against plans if available.",
+        "generation_method": "source_reconstruction",
+        "review_status": "draft",
+        "confidence_score": 0.58
+      },
+      {
+        "model_type": "structure_model",
+        "title": "MFO Park structural layer model",
+        "r2_key": "entries/mfo-park/models/structure.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "Public city/office sources and existing Cosmos landscape reading; geometric precision should be checked against plans if available.",
+        "generation_method": "source_reconstruction",
+        "review_status": "draft",
+        "confidence_score": 0.58
+      },
+      {
+        "model_type": "tectonic_model",
+        "title": "MFO Park tectonic/material separation model",
+        "r2_key": "entries/mfo-park/models/tectonic.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "Public city/office sources and existing Cosmos landscape reading; geometric precision should be checked against plans if available.",
+        "generation_method": "ai_assisted",
+        "review_status": "draft",
+        "confidence_score": 0.58
+      },
+      {
+        "model_type": "site_model",
+        "title": "MFO Park site and context model",
+        "r2_key": "entries/mfo-park/models/site.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "Public city/office sources and existing Cosmos landscape reading; geometric precision should be checked against plans if available.",
+        "generation_method": "source_reconstruction",
+        "review_status": "draft",
+        "confidence_score": 0.58
+      },
+      {
+        "model_type": "mass_model",
+        "title": "MFO Park massing preview model",
+        "r2_key": "entries/mfo-park/models/mass.glb",
+        "format": "glb",
+        "lod_level": "preview",
+        "source_basis": "Public city/office sources and existing Cosmos landscape reading; geometric precision should be checked against plans if available.",
+        "generation_method": "procedural",
+        "review_status": "draft",
+        "confidence_score": 0.58
+      }
+    ],
+    "analysis_layers": [
+      {
+        "analysis_type": "structure",
+        "summary": "The project depends on a steel scaffold, climbing vegetation and time. Its architectural material is not simply greenery but the changing relation between frame, seasonal growth, shade, void and public occupation.",
+        "data": {
+          "source_basis": "Public city/office sources and existing Cosmos landscape reading; geometric precision should be checked against plans if available."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "spatial_order",
+        "summary": "Instead of a conventional park field, MFO-Park uses a volumetric trellis as a room. It has interior-like spatial depth, vertical surfaces, balconies/perches and a civic ground plane.",
+        "data": {
+          "model_layers": [
+            "site",
+            "structure",
+            "material:steel",
+            "material:vegetation",
+            "growth_phase",
+            "public_ground"
+          ]
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Its tectonics are exposed and processual: steel is the permanent skeleton, vegetation is the living envelope, and the park matures through growth rather than through finished facade treatment.",
+        "data": {
+          "caution": "Vegetation geometry should be procedural/interpretive unless measured data exists."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "material_system",
+        "summary": "The project depends on a steel scaffold, climbing vegetation and time. Its architectural material is not simply greenery but the changing relation between frame, seasonal growth, shade, void and public occupation.",
+        "data": {
+          "materials": [
+            "steel",
+            "vegetation",
+            "climbing_plants"
+          ],
+          "material_filters": [
+            "steel",
+            "vegetation",
+            "climbing_plants",
+            "industrial_frame",
+            "public_landscape"
+          ]
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "summary": "For Cosmos this is a key bridge between landscape project, infrastructure memory, public room and material/time-based architecture.",
+        "data": {
+          "primary_filters": [
+            "green machine hall",
+            "urban trellis",
+            "seasonal room",
+            "industrial memory"
+          ],
+          "context_filters": [
+            "climate_landscape",
+            "urban_repair",
+            "seasonal_growth"
+          ]
+        },
+        "review_status": "reviewed"
+      }
+    ],
+    "database_profile": {
+      "status": "draft",
+      "r2_prefix": "entries/mfo-park",
+      "source_count": 3,
+      "media_count": 4,
+      "model_count": 5,
+      "analysis_count": 5,
+      "tag_count": 12
+    },
+    "ingestion_status": {
+      "stage": "ready_for_wormhole",
+      "source_status": "candidate",
+      "asset_status": "rights_blocked",
+      "model_status": "planned",
+      "updated_at": "2026-05-19"
+    }
   },
   {
     "id": "elemental-quinta-monroy",
@@ -6289,8 +6770,8 @@
     ],
     "short_description": "Umnutzung einer Hochbahntrasse als lineare Landschaft, die Infrastruktur, Stadtentwicklung und kuratierte Wildnis verbindet.",
     "source_quality": "lecture_pdf",
-    "one_sentence": "High Line ist als Landschaftsprojekt in New York, United States im Jahr 2009 im Architecture Cosmos verortet und verknuepft landscape urbanism, industrial reuse, rail infrastructure.",
-    "full_description": "Umnutzung einer Hochbahntrasse als lineare Landschaft, die Infrastruktur, Stadtentwicklung und kuratierte Wildnis verbindet. Der Eintrag wird im Atlas als Landschaftsprojekt gelesen und gehoert zur Wissensspur Global History ETH, Layer global urban design. Autorenschaft / Quelle: James Corner Field Operations, Diller Scofidio + Renfro, Piet Oudolf. Seine Filterebene verbindet landscape urbanism, industrial reuse, rail infrastructure, public space mit Jahr, Stilsektor und Relationennetz; spaeter koennen echte Fotos, Plaene, Schnitte, Quellen und Modelle direkt aus der Datenbank angeschlossen werden.",
+    "one_sentence": "Die High Line transformiert eine obsolete Hochbahntrasse in eine lineare Stadtlandschaft, in der Infrastruktur, Vegetation, Bewegung und öffentlicher Raum zu einer räumlichen Sequenz verschmelzen.",
+    "full_description": "Die High Line wird im Architecture Cosmos als Schnittstelle von Infrastruktur, Landschaftsarchitektur und Stadtentwicklung gelesen. Entscheidend ist nicht nur die Wiederverwendung der erhöhten Bahntrasse, sondern die choreografierte Abfolge von Engstellen, Aufweitungen, Ausblicken, Pflanzbändern und Stadtschnitten. Stahl- und Betontragwerk bleiben als industrieller Sockel lesbar, während Vegetation, Planken und Wege ein neues öffentliches Terrain über der Straße erzeugen. Für die Datenbank ist das Projekt ein Referenzfall für adaptive reuse, lineare Parktypologie, urbane Ökologie und Blender-Layer aus Tragwerk, Weg, Vegetation und Kontext.",
     "media": [
       {
         "type": "exterior",
@@ -6333,7 +6814,7 @@
         "rail_infrastructure",
         "paving"
       ],
-      "notes": "Linear adaptive reuse of elevated rail infrastructure as planted public landscape."
+      "notes": "Elevated rail structure, concrete plank system and planting matrix as adaptive public landscape."
     },
     "program": {
       "type": "public_space",
@@ -6349,15 +6830,30 @@
       ],
       "landscape_relation": [
         "linear_landscape",
-        "urban_redevelopment"
+        "urban_redevelopment",
+        "elevated_walk"
       ]
     },
     "model_3d": {
-      "glb_url": "https://assets.architekturkosmos.ch/models/high-line/site.glb",
+      "glb_url": "https://assets.architekturkosmos.ch/models/high-line/full.glb",
       "license": "personal_only",
-      "source_basis": "Planned urban/site reference model for Blender context import; detailed source verification required before public assets.",
+      "source_basis": "Official park and office sources plus later verified sectional references; public model should remain analytical and non-literal unless geometry rights are clear.",
       "analytical_dataset_year": 2014,
       "parts": [
+        {
+          "type": "full",
+          "glb_url": "https://assets.architekturkosmos.ch/models/high-line/full.glb",
+          "r2_key": "models/high-line/full.glb",
+          "license": "personal_only",
+          "review_status": "planned"
+        },
+        {
+          "type": "structure",
+          "glb_url": "https://assets.architekturkosmos.ch/models/high-line/structure.glb",
+          "r2_key": "models/high-line/structure.glb",
+          "license": "personal_only",
+          "review_status": "planned"
+        },
         {
           "type": "site",
           "glb_url": "https://assets.architekturkosmos.ch/models/high-line/site.glb",
@@ -6366,9 +6862,18 @@
           "review_status": "planned"
         },
         {
-          "type": "structure",
-          "glb_url": "https://assets.architekturkosmos.ch/models/high-line/structure.glb",
-          "r2_key": "models/high-line/structure.glb",
+          "type": "material",
+          "material_tag": "steel",
+          "glb_url": "https://assets.architekturkosmos.ch/models/high-line/materials/steel.glb",
+          "r2_key": "models/high-line/materials/steel.glb",
+          "license": "personal_only",
+          "review_status": "planned"
+        },
+        {
+          "type": "material",
+          "material_tag": "concrete",
+          "glb_url": "https://assets.architekturkosmos.ch/models/high-line/materials/concrete.glb",
+          "r2_key": "models/high-line/materials/concrete.glb",
           "license": "personal_only",
           "review_status": "planned"
         },
@@ -6383,11 +6888,201 @@
       ]
     },
     "vibes": [
-      "linear_park",
-      "industrial_reuse",
-      "urban_wildness",
-      "public_promendade"
-    ]
+      "linear reuse",
+      "urban balcony",
+      "rail ecology",
+      "choreographed walk"
+    ],
+    "source_url": "https://www.thehighline.org/",
+    "source_documents": [
+      "02 Global History of Urban Design 1_2.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "website",
+        "title": "The High Line / Official History and Park Information",
+        "url": "https://www.thehighline.org/",
+        "reliability_level": "verified",
+        "rights_status": "private_research",
+        "notes": "Source trail: official_project_or_institutional_source. Public use: facts_links_own_summary."
+      },
+      {
+        "source_type": "website",
+        "title": "Diller Scofidio + Renfro / The High Line",
+        "url": "https://dsrny.com/project/the-high-line",
+        "reliability_level": "verified",
+        "rights_status": "private_research",
+        "notes": "Source trail: office_or_designer_source. Public use: facts_links_own_summary."
+      },
+      {
+        "source_type": "website",
+        "title": "Field Operations / The High Line",
+        "url": "https://www.fieldoperations.net/project/high-line",
+        "reliability_level": "verified",
+        "rights_status": "private_research",
+        "notes": "Source trail: office_or_designer_source. Public use: facts_links_own_summary."
+      }
+    ],
+    "database_tags": [
+      "source:official",
+      "typology:public_space",
+      "material:steel",
+      "material:concrete",
+      "material:vegetation",
+      "context:industrial_reuse",
+      "context:rail_infrastructure",
+      "landscape:linear_landscape",
+      "landscape:urban_redevelopment",
+      "landscape:elevated_walk",
+      "theme:landscape-urbanism",
+      "theme:industrial-reuse",
+      "theme:rail-infrastructure",
+      "theme:public-space"
+    ],
+    "model_assets": [
+      {
+        "model_type": "full_model",
+        "title": "High Line complete analytical model",
+        "r2_key": "entries/high-line/models/full.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "Official park and office sources plus later verified sectional references; public model should remain analytical and non-literal unless geometry rights are clear.",
+        "generation_method": "source_reconstruction",
+        "review_status": "draft",
+        "confidence_score": 0.58
+      },
+      {
+        "model_type": "structure_model",
+        "title": "High Line structural layer model",
+        "r2_key": "entries/high-line/models/structure.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "Official park and office sources plus later verified sectional references; public model should remain analytical and non-literal unless geometry rights are clear.",
+        "generation_method": "source_reconstruction",
+        "review_status": "draft",
+        "confidence_score": 0.58
+      },
+      {
+        "model_type": "tectonic_model",
+        "title": "High Line tectonic/material separation model",
+        "r2_key": "entries/high-line/models/tectonic.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "Official park and office sources plus later verified sectional references; public model should remain analytical and non-literal unless geometry rights are clear.",
+        "generation_method": "ai_assisted",
+        "review_status": "draft",
+        "confidence_score": 0.58
+      },
+      {
+        "model_type": "site_model",
+        "title": "High Line site and context model",
+        "r2_key": "entries/high-line/models/site.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "Official park and office sources plus later verified sectional references; public model should remain analytical and non-literal unless geometry rights are clear.",
+        "generation_method": "source_reconstruction",
+        "review_status": "draft",
+        "confidence_score": 0.58
+      },
+      {
+        "model_type": "mass_model",
+        "title": "High Line massing preview model",
+        "r2_key": "entries/high-line/models/mass.glb",
+        "format": "glb",
+        "lod_level": "preview",
+        "source_basis": "Official park and office sources plus later verified sectional references; public model should remain analytical and non-literal unless geometry rights are clear.",
+        "generation_method": "procedural",
+        "review_status": "draft",
+        "confidence_score": 0.58
+      }
+    ],
+    "analysis_layers": [
+      {
+        "analysis_type": "structure",
+        "summary": "The retained rail viaduct provides the structural datum. Concrete planks, steel infrastructure, planting and fragments of rail memory are layered to make an adaptive landscape rather than erase the industrial support.",
+        "data": {
+          "source_basis": "Official park and office sources plus later verified sectional references; public model should remain analytical and non-literal unless geometry rights are clear."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "spatial_order",
+        "summary": "The project is organized as sequence rather than object: entries, overlooks, narrowed passages, widened rooms and planting bands create urban episodes along a continuous elevated path.",
+        "data": {
+          "model_layers": [
+            "site",
+            "structure",
+            "material:steel",
+            "material:concrete",
+            "material:vegetation",
+            "circulation_path",
+            "urban_context"
+          ]
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "The tectonic idea is peel-up and interweaving: hard paving and soft planting interlock, suggesting that landscape grows from the infrastructure rather than being placed on top of it.",
+        "data": {
+          "caution": "Exact urban geometry and current surrounding context should be sourced from open geodata with attribution, not from protected drawings."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "material_system",
+        "summary": "The retained rail viaduct provides the structural datum. Concrete planks, steel infrastructure, planting and fragments of rail memory are layered to make an adaptive landscape rather than erase the industrial support.",
+        "data": {
+          "materials": [
+            "steel",
+            "concrete",
+            "vegetation"
+          ],
+          "material_filters": [
+            "steel",
+            "concrete",
+            "vegetation",
+            "rail_infrastructure",
+            "paving"
+          ]
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "summary": "For Cosmos and Blender it is a reference for adaptive reuse, linear section, infrastructure landscape, public-space choreography and vegetation/structure filters.",
+        "data": {
+          "primary_filters": [
+            "linear reuse",
+            "urban balcony",
+            "rail ecology",
+            "choreographed walk"
+          ],
+          "context_filters": [
+            "linear_landscape",
+            "urban_redevelopment",
+            "elevated_walk"
+          ]
+        },
+        "review_status": "reviewed"
+      }
+    ],
+    "database_profile": {
+      "status": "draft",
+      "r2_prefix": "entries/high-line",
+      "source_count": 3,
+      "media_count": 4,
+      "model_count": 5,
+      "analysis_count": 5,
+      "tag_count": 14
+    },
+    "ingestion_status": {
+      "stage": "ready_for_wormhole",
+      "source_status": "candidate",
+      "asset_status": "rights_blocked",
+      "model_status": "planned",
+      "updated_at": "2026-05-19"
+    }
   },
   {
     "id": "venice-biennale-architecture-2012",
