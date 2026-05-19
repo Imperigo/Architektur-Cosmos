@@ -15,11 +15,11 @@ function WormholeRingsComponent({ state, isMoving = false, quality = 'balanced' 
   const isFull = quality === 'full';
   const rings = stableRingSlots(wormholeRings(state));
   const gridLines = wormholeGridLines(state, {
-    spokeStride: isReduced ? 6 : 4,
-    sampleCount: isReduced ? 14 : isMoving ? 18 : isFull ? 26 : 22
+    spokeStride: isReduced ? 8 : isMoving ? 6 : isFull ? 4 : 5,
+    sampleCount: isReduced ? 10 : isMoving ? 12 : isFull ? 24 : 17
   });
-  const streamLines = wormholeStreamLines(state, { count: isReduced ? 2 : isMoving ? 4 : isFull ? 6 : 5, sampleCount: isReduced ? 3 : 4 });
-  const speedLines = radialSpeedLines(state, { count: isReduced ? 2 : isMoving ? 4 : isFull ? 7 : 5, sampleCount: 3 });
+  const streamLines = wormholeStreamLines(state, { count: isReduced ? 1 : isMoving ? 2 : isFull ? 6 : 3, sampleCount: isReduced ? 2 : isMoving ? 3 : 4 });
+  const speedLines = radialSpeedLines(state, { count: isReduced ? 1 : isMoving ? 2 : isFull ? 7 : 3, sampleCount: isMoving ? 2 : 3 });
   const edgeCompression = Math.min(1, Math.abs(state.edgeTension) / 0.065);
   const frontDissolve = Math.max(0, 1 - state.timePosition / 0.22);
 
@@ -37,8 +37,8 @@ function WormholeRingsComponent({ state, isMoving = false, quality = 'balanced' 
         </radialGradient>
       </defs>
       <circle className="wormhole-breath" cx={atlasSize.cx} cy={atlasSize.cy + 8} r={wormholeTunnel.maxRadius + 18 - edgeCompression * 24} fill="url(#wormhole-vignette)" opacity={0.84 - state.timePosition * 0.22} />
-      {!isReduced ? <IdleOrbits state={state} /> : null}
-      {!isReduced ? <IdleWhirlLines state={state} /> : null}
+      {!isReduced && !isMoving ? <IdleOrbits state={state} /> : null}
+      {!isReduced && !isMoving ? <IdleWhirlLines state={state} /> : null}
       <EnergyBands rings={rings} state={state} isMoving={isMoving} quality={quality} />
       {streamLines.map((line, index) => (
         <path
@@ -64,7 +64,7 @@ function WormholeRingsComponent({ state, isMoving = false, quality = 'balanced' 
           style={{ animationDelay: `${index * -0.19}s` }}
         />
       ))}
-      <OuterCurvature state={state} opacityScale={frontDissolve} />
+      {!isReduced || !isMoving ? <OuterCurvature state={state} opacityScale={frontDissolve} quality={quality} isMoving={isMoving} /> : null}
       {gridLines.map((line, index) => (
         <path
           key={index}
@@ -110,7 +110,7 @@ function WormholeRingsComponent({ state, isMoving = false, quality = 'balanced' 
 export const WormholeRings = memo(WormholeRingsComponent);
 
 function EnergyBands({ rings, state, isMoving, quality }: { rings: RingSlot[]; state: WormholeState; isMoving: boolean; quality: 'reduced' | 'balanced' | 'full' }) {
-  const bandScale = quality === 'reduced' ? 0.45 : quality === 'full' ? 1 : 0.75;
+  const bandScale = quality === 'reduced' ? 0.25 : isMoving ? 0.34 : quality === 'full' ? 1 : 0.62;
 
   return (
     <g aria-hidden="true" pointerEvents="none">
@@ -205,12 +205,13 @@ function IdleWhirlLines({ state }: { state: WormholeState }) {
   );
 }
 
-function OuterCurvature({ state, opacityScale }: { state: WormholeState; opacityScale: number }) {
+function OuterCurvature({ state, opacityScale, quality, isMoving }: { state: WormholeState; opacityScale: number; quality: 'reduced' | 'balanced' | 'full'; isMoving: boolean }) {
   const startResistance = state.edgeTension < 0 ? Math.abs(state.edgeTension) * 260 : 0;
   const radiusLift = Math.min(112, state.timePosition * 320) - startResistance;
   const rimOpacity = Math.max(0, 1 - state.timePosition / 0.24) * opacityScale;
-  const segments = Array.from({ length: 20 }, (_, index) => {
-    const angle = index * 18;
+  const segmentCount = quality === 'full' ? 20 : isMoving ? 8 : 12;
+  const segments = Array.from({ length: segmentCount }, (_, index) => {
+    const angle = index * (360 / segmentCount);
     const inner = polarToCartesian(atlasSize.cx, atlasSize.cy, wormholeTunnel.maxRadius + radiusLift - 18, angle - 5);
     const mid = polarToCartesian(atlasSize.cx, atlasSize.cy, wormholeTunnel.maxRadius + radiusLift + (index % 2 === 0 ? 18 : 9), angle + 4);
     const outer = polarToCartesian(atlasSize.cx, atlasSize.cy, wormholeTunnel.maxRadius + radiusLift - 2, angle + 13);

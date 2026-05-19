@@ -943,6 +943,20 @@ body:has(.entry-page) {
   mix-blend-mode: normal;
 }
 
+.cosmos-moving .wormhole-breath,
+.cosmos-moving .wormhole-energy-band,
+.cosmos-moving .style-sector-ribbon,
+.cosmos-moving .style-sector-tick {
+  mix-blend-mode: normal;
+}
+
+.cosmos-moving .style-sector-ribbon,
+.cosmos-moving .style-sector-tick,
+.cosmos-moving .entry-thumbnail,
+.cosmos-moving .screen-cosmos-cursor-ring {
+  filter: none;
+}
+
 .style-sector-label {
   transition: opacity 180ms ease, transform 180ms ease;
 }
@@ -1725,8 +1739,22 @@ body:has(.entry-page) {
   filter: none;
 }
 
+.cosmos-perf-reduced .wormhole-breath,
+.cosmos-perf-reduced .wormhole-ring,
+.cosmos-perf-reduced .wormhole-current-ring,
+.cosmos-perf-reduced .style-sector-ribbon,
+.cosmos-perf-reduced .style-sector-tick {
+  mix-blend-mode: normal;
+}
+
 .cosmos-perf-reduced .wormhole-camera {
   transition-duration: 260ms;
+}
+
+.cosmos-perf-balanced.cosmos-moving .wormhole-energy-band,
+.cosmos-perf-balanced.cosmos-moving .wormhole-stream,
+.cosmos-perf-balanced.cosmos-moving .wormhole-speed-line {
+  display: none;
 }
 
 @media (max-width: 760px), (pointer: coarse) {
