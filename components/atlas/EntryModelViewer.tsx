@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import type { CSSProperties } from 'react';
+import type { Material, Mesh } from 'three';
 
 type EntryModelViewerProps = {
   modelUrl: string;
@@ -10,10 +11,54 @@ type EntryModelViewerProps = {
 };
 
 type ViewerStatus = 'loading' | 'ready' | 'error';
+type ViewerStyle = 'realistic' | 'analysis' | 'ghost';
+type AnalysisLayerId = 'site' | 'mass' | 'structure' | 'envelope' | 'circulation' | 'roof_garden';
+
+type MeshRecord = {
+  mesh: Mesh;
+  layer: AnalysisLayerId;
+  originalMaterial: Material | Material[];
+};
+
+const analysisLayers: Array<{ id: AnalysisLayerId; label: string; color: string; description: string }> = [
+  { id: 'site', label: 'Site', color: '#6cff9a', description: 'terrain / ground context' },
+  { id: 'mass', label: 'Mass', color: '#f7f7f4', description: 'lifted body and slabs' },
+  { id: 'structure', label: 'Tragwerk', color: '#ffb000', description: 'pilotis, slabs, structural order' },
+  { id: 'envelope', label: 'Hülle', color: '#00e7ff', description: 'facade, ribbons, screens' },
+  { id: 'circulation', label: 'Zirkulation', color: '#ff4d8d', description: 'ramp and promenade' },
+  { id: 'roof_garden', label: 'Dachgarten', color: '#7dff6a', description: 'roof landscape' }
+];
 
 export function EntryModelViewer({ modelUrl, title, accent }: EntryModelViewerProps) {
   const mountRef = useRef<HTMLDivElement | null>(null);
+  const meshRecordsRef = useRef<MeshRecord[]>([]);
+  const analysisMaterialsRef = useRef<Partial<Record<AnalysisLayerId, Material>>>({});
+  const ghostMaterialsRef = useRef<Partial<Record<AnalysisLayerId, Material>>>({});
+  const viewerStyleRef = useRef<ViewerStyle>('realistic');
+  const visibleLayersRef = useRef<Record<AnalysisLayerId, boolean>>({
+    site: true,
+    mass: true,
+    structure: true,
+    envelope: true,
+    circulation: true,
+    roof_garden: true
+  });
   const [status, setStatus] = useState<ViewerStatus>('loading');
+  const [viewerStyle, setViewerStyle] = useState<ViewerStyle>('realistic');
+  const [visibleLayers, setVisibleLayers] = useState<Record<AnalysisLayerId, boolean>>(() => ({
+    site: true,
+    mass: true,
+    structure: true,
+    envelope: true,
+    circulation: true,
+    roof_garden: true
+  }));
+
+  useEffect(() => {
+    viewerStyleRef.current = viewerStyle;
+    visibleLayersRef.current = visibleLayers;
+    applyViewerStyle(meshRecordsRef.current, analysisMaterialsRef.current, ghostMaterialsRef.current, viewerStyle, visibleLayers);
+  }, [viewerStyle, visibleLayers]);
 
   useEffect(() => {
     let disposed = false;
@@ -34,6 +79,29 @@ export function EntryModelViewer({ modelUrl, title, accent }: EntryModelViewerPr
       const scene = new Three.Scene();
       scene.background = new Three.Color(0x050505);
       scene.fog = new Three.Fog(0x050505, 18, 42);
+      const analysisMaterials = {} as Record<AnalysisLayerId, Material>;
+      const ghostMaterials = {} as Record<AnalysisLayerId, Material>;
+
+      analysisLayers.forEach((layer) => {
+        analysisMaterials[layer.id] = new Three.MeshStandardMaterial({
+          color: new Three.Color(layer.color),
+          emissive: new Three.Color(layer.color),
+          emissiveIntensity: 0.06,
+          roughness: 0.72,
+          metalness: 0
+        });
+        ghostMaterials[layer.id] = new Three.MeshStandardMaterial({
+          color: new Three.Color(layer.color),
+          transparent: true,
+          opacity: layer.id === 'structure' || layer.id === 'circulation' ? 0.72 : 0.18,
+          roughness: 0.88,
+          metalness: 0,
+          depthWrite: false
+        });
+      });
+
+      analysisMaterialsRef.current = analysisMaterials;
+      ghostMaterialsRef.current = ghostMaterials;
 
       const camera = new Three.PerspectiveCamera(42, mount.clientWidth / mount.clientHeight, 0.1, 100);
       camera.position.set(16, 11, 16);
@@ -71,12 +139,21 @@ export function EntryModelViewer({ modelUrl, title, accent }: EntryModelViewerPr
         (gltf) => {
           if (disposed) return;
           const model = gltf.scene;
+          const meshRecords: MeshRecord[] = [];
           model.traverse((child) => {
             if ('isMesh' in child && child.isMesh) {
+              const mesh = child as Mesh;
               child.castShadow = false;
               child.receiveShadow = true;
+              meshRecords.push({
+                mesh,
+                layer: layerFromMeshName(mesh.name),
+                originalMaterial: mesh.material
+              });
             }
           });
+          meshRecordsRef.current = meshRecords;
+          applyViewerStyle(meshRecords, analysisMaterials, ghostMaterials, viewerStyleRef.current, visibleLayersRef.current);
           scene.add(model);
           setStatus('ready');
         },
@@ -107,6 +184,10 @@ export function EntryModelViewer({ modelUrl, title, accent }: EntryModelViewerPr
         window.removeEventListener('resize', resize);
         window.cancelAnimationFrame(frame);
         controls.dispose();
+        [...Object.values(analysisMaterialsRef.current), ...Object.values(ghostMaterialsRef.current)].forEach((material) => material?.dispose());
+        meshRecordsRef.current = [];
+        analysisMaterialsRef.current = {};
+        ghostMaterialsRef.current = {};
         renderer.dispose();
         mount.removeChild(renderer.domElement);
       };
@@ -122,8 +203,15 @@ export function EntryModelViewer({ modelUrl, title, accent }: EntryModelViewerPr
     };
   }, [accent, modelUrl]);
 
+  function toggleLayer(layerId: AnalysisLayerId) {
+    setVisibleLayers((current) => ({
+      ...current,
+      [layerId]: !current[layerId]
+    }));
+  }
+
   return (
-    <article className="entry-model-viewer border border-white/14 bg-[#050505]">
+    <article id="model-viewer" className="entry-model-viewer border border-white/14 bg-[#050505]">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-4 py-3">
         <div>
           <div className="text-[10px] uppercase tracking-[0.2em]" style={{ color: accent }}>Interactive 3D Preview</div>
@@ -133,6 +221,40 @@ export function EntryModelViewer({ modelUrl, title, accent }: EntryModelViewerPr
       </div>
       <div className="relative h-[420px] min-h-[320px] w-full overflow-hidden" style={{ '--viewer-accent': accent } as CSSProperties}>
         <div ref={mountRef} className="h-full w-full" />
+        {status === 'ready' ? (
+          <div className="absolute left-3 top-3 max-w-[calc(100%-24px)] border border-white/15 bg-[#050505]/78 p-3 text-[#f7f7f4] backdrop-blur-md">
+            <div className="mb-2 flex flex-wrap gap-1.5">
+              {[
+                ['realistic', 'Realistisch'],
+                ['analysis', 'Analyse'],
+                ['ghost', 'Ghost']
+              ].map(([id, label]) => (
+                <button
+                  key={id}
+                  type="button"
+                  className={`border px-2.5 py-1 text-[9px] uppercase tracking-[0.14em] transition ${viewerStyle === id ? 'border-[#00e7ff] bg-[#00e7ff] text-[#050505]' : 'border-white/25 bg-black/20 text-[#d7d7d0] hover:border-[#00e7ff]/70'}`}
+                  onClick={() => setViewerStyle(id as ViewerStyle)}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+            <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3">
+              {analysisLayers.map((layer) => (
+                <button
+                  key={layer.id}
+                  type="button"
+                  className={`flex min-w-0 items-center gap-1.5 border px-2 py-1 text-left transition ${visibleLayers[layer.id] ? 'border-white/25 bg-white/5 text-[#f7f7f4]' : 'border-white/10 bg-black/25 text-[#777]'}`}
+                  onClick={() => toggleLayer(layer.id)}
+                  title={layer.description}
+                >
+                  <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: visibleLayers[layer.id] ? layer.color : '#555' }} />
+                  <span className="truncate text-[9px] uppercase tracking-[0.12em]">{layer.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : null}
         {status !== 'ready' ? (
           <div className="absolute inset-0 flex items-center justify-center bg-[#050505]/82 text-[10px] uppercase tracking-[0.18em] text-[#d7d7d0]">
             {status === 'loading' ? 'loading 3d model' : '3d model could not be loaded'}
@@ -140,10 +262,44 @@ export function EntryModelViewer({ modelUrl, title, accent }: EntryModelViewerPr
         ) : null}
       </div>
       <div className="grid gap-3 border-t border-white/10 p-4 text-sm leading-6 text-[#b8b8b2] md:grid-cols-3">
-        <div><span style={{ color: accent }}>Layer:</span> site, mass, pilotis, envelope, ramp, roof garden.</div>
-        <div><span style={{ color: accent }}>Status:</span> generated low-poly reference, not measured.</div>
-        <div><span style={{ color: accent }}>Use:</span> first Blender/ArchiCAD analysis body.</div>
+        <div><span style={{ color: accent }}>Filter:</span> site, mass, Tragwerk, Hülle, Zirkulation, Dachgarten.</div>
+        <div><span style={{ color: accent }}>Style:</span> realistisch, Analysefarben oder Ghost-Isolation.</div>
+        <div><span style={{ color: accent }}>Use:</span> first Blender/ArchiCAD analysis body, not measured.</div>
       </div>
     </article>
   );
+}
+
+function layerFromMeshName(name: string): AnalysisLayerId {
+  const normalized = name.toLowerCase();
+  if (normalized.includes('site') || normalized.includes('ground')) return 'site';
+  if (normalized.includes('structure') || normalized.includes('pilotis') || normalized.includes('slab')) return 'structure';
+  if (normalized.includes('envelope') || normalized.includes('window') || normalized.includes('screen')) return 'envelope';
+  if (normalized.includes('circulation') || normalized.includes('ramp') || normalized.includes('trace')) return 'circulation';
+  if (normalized.includes('roof_garden') || normalized.includes('roof garden') || normalized.includes('planted')) return 'roof_garden';
+  return 'mass';
+}
+
+function applyViewerStyle(
+  records: MeshRecord[],
+  analysisMaterials: Partial<Record<AnalysisLayerId, Material>>,
+  ghostMaterials: Partial<Record<AnalysisLayerId, Material>>,
+  viewerStyle: ViewerStyle,
+  visibleLayers: Record<AnalysisLayerId, boolean>
+) {
+  for (const record of records) {
+    record.mesh.visible = visibleLayers[record.layer];
+
+    if (viewerStyle === 'analysis') {
+      record.mesh.material = analysisMaterials[record.layer] ?? record.originalMaterial;
+      continue;
+    }
+
+    if (viewerStyle === 'ghost') {
+      record.mesh.material = ghostMaterials[record.layer] ?? record.originalMaterial;
+      continue;
+    }
+
+    record.mesh.material = record.originalMaterial;
+  }
 }

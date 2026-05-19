@@ -16,7 +16,7 @@ step. When the user says "publish", "deploy", "make it live", or similar:
 1. Make sure changes are committed
 2. Push to `main`
 3. Cloudflare detects the push within seconds and rebuilds
-4. Live at `https://architekturkosmos.ch` (or `architekturkosmos.andrin99zsc.workers.dev` until DNS finishes propagating) in 1–3 minutes
+4. Live at `https://architekturkosmos.ch` in 1–3 minutes
 5. Verify by visiting the URL
 
 If a build fails, the previous version stays live (no broken deployments).
@@ -28,8 +28,8 @@ If a build fails, the previous version stays live (no broken deployments).
 | Component | Tech | Location |
 |---|---|---|
 | Hosting | **Cloudflare Workers (Static Assets mode)** | edge, global |
-| Worker name | `architekturkosmos` | CF account `andrin99zsc@gmail.com` |
-| Production URL (Workers) | `architekturkosmos.andrin99zsc.workers.dev` | always available |
+| Worker name | `architekturkosmos` | Cloudflare account configured outside the repo |
+| Production URL (Workers) | account-specific preview URL | intentionally not committed |
 | Custom domain | `architekturkosmos.ch` | ✅ live (since 2026-05-18) |
 | Custom domain (www) | `www.architekturkosmos.ch` | live alongside apex |
 | Build runtime | Node 22 (CF build env) | CF cloud builders |
@@ -150,17 +150,17 @@ These improvements are welcome PRs. They don't require any infra changes.
 ## Project URLs
 
 - **Repo**: https://github.com/Imperigo/Architektur-Cosmos
-- **Production (Workers)**: https://architekturkosmos.andrin99zsc.workers.dev
 - **Production (Custom Domain)**: https://architekturkosmos.ch ✅ live
 - **CF Dashboard**: https://dash.cloudflare.com → Workers & Pages → `architekturkosmos`
 
 ---
 
-## Owner contact / context
+## Project context
 
-- **Owner**: Andrin Baumann (Architecture student/practitioner, ETH Zurich + HSLU)
-- **Email**: andrin.bau@gmail.com
-- **Concept**: "Architecture Universe" — radial zoomable atlas of architectural history with concentric time rings, style sectors, expandable entries. Originally built for ETH TKB Bibliothek project.
+Private owner/contact details must stay outside the public repository.
+
+- **Concept**: "Architecture Universe" — radial zoomable atlas of architectural
+  history with concentric time rings, style sectors, expandable entries.
 
 If anything in this file is unclear or out of date, update it as part of your
 PR — keeping this current is part of the deployment contract.

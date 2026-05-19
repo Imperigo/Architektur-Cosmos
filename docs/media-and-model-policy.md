@@ -46,7 +46,7 @@ Use conservative status labels:
 - `needs_permission`: source exists but rights are not cleared.
 - `licensed`: explicit permission or license exists.
 - `public_domain`: verified public-domain source.
-- `own_work`: created by Andrin/Architecture Cosmos.
+- `own_work`: created by the maintainer or Architecture Cosmos.
 
 For now, Afasia and office images should remain source references unless rights
 are explicitly cleared. R2 keys may be planned, but the actual files should not

@@ -1,0 +1,4 @@
+Contact: https://github.com/Imperigo/Architektur-Cosmos/security/advisories/new
+Policy: https://github.com/Imperigo/Architektur-Cosmos/blob/main/SECURITY.md
+Preferred-Languages: de, en
+Expires: 2027-05-19T00:00:00Z

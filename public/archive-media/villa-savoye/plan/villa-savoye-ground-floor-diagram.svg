@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 980" width="1400" height="980">
+<style>
+.bg{fill:#050505}.line{fill:none;stroke:#f7f7f4;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}.thin{fill:none;stroke:#8d8d87;stroke-width:1.3;stroke-linecap:round;stroke-linejoin:round}.grid{fill:none;stroke:#2f3435;stroke-width:1}.accent{fill:none;stroke:#00e7ff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}.dash{fill:none;stroke:#00e7ff;stroke-width:2;stroke-dasharray:10 12;opacity:.72}.txt{fill:#f7f7f4;font:24px Helvetica,Arial,sans-serif;letter-spacing:2px}.small{fill:#b8b8b2;font:15px Helvetica,Arial,sans-serif;letter-spacing:1.1px}.label{fill:#00e7ff;font:15px Helvetica,Arial,sans-serif;letter-spacing:1.4px}.zone{fill:#00e7ff;opacity:.08;stroke:#00e7ff;stroke-width:2}.pale{fill:#f7f7f4;opacity:.08;stroke:#f7f7f4;stroke-width:1.5}.col{fill:#f7f7f4;opacity:.78}.ramp{fill:#00e7ff;opacity:.12;stroke:#00e7ff;stroke-width:3}.car{fill:none;stroke:#8d8d87;stroke-width:2;stroke-dasharray:8 10}.note{fill:#808987;font:12px Helvetica,Arial,sans-serif;letter-spacing:1px}
+</style>
+<rect class="bg" width="100%" height="100%"/>
+<text x="90" y="82" class="txt">VILLA SAVOYE / GROUND FLOOR PLAN</text><text x="90" y="114" class="small">pilotis, curved car approach, service core, entrance sequence</text><text x="90" y="900" class="note">Diagrammatic reconstruction for Architecture Cosmos. Not a measured construction drawing. Source basis: official sources + public architectural knowledge; rights-safe vector study layer.</text>
+<path class="grid" d="M160 170 V820"/>
+<path class="grid" d="M250 170 V820"/>
+<path class="grid" d="M340 170 V820"/>
+<path class="grid" d="M430 170 V820"/>
+<path class="grid" d="M520 170 V820"/>
+<path class="grid" d="M610 170 V820"/>
+<path class="grid" d="M700 170 V820"/>
+<path class="grid" d="M790 170 V820"/>
+<path class="grid" d="M880 170 V820"/>
+<path class="grid" d="M970 170 V820"/>
+<path class="grid" d="M1060 170 V820"/>
+<path class="grid" d="M1150 170 V820"/>
+<path class="grid" d="M1240 170 V820"/>
+<path class="grid" d="M140 190 H1260"/>
+<path class="grid" d="M140 260 H1260"/>
+<path class="grid" d="M140 330 H1260"/>
+<path class="grid" d="M140 400 H1260"/>
+<path class="grid" d="M140 470 H1260"/>
+<path class="grid" d="M140 540 H1260"/>
+<path class="grid" d="M140 610 H1260"/>
+<path class="grid" d="M140 680 H1260"/>
+<path class="grid" d="M140 750 H1260"/>
+<path class="grid" d="M140 820 H1260"/>
+
+<rect x="300" y="235" width="720" height="470" rx="14" class="line"/><path class="thin" d="M300 392 H1020 M300 548 H1020 M480 235 V705 M660 235 V705 M840 235 V705"/><circle class="col" cx="360" cy="300" r="10"/><circle class="col" cx="360" cy="470" r="10"/><circle class="col" cx="360" cy="640" r="10"/><circle class="col" cx="480" cy="300" r="10"/><circle class="col" cx="480" cy="470" r="10"/><circle class="col" cx="480" cy="640" r="10"/><circle class="col" cx="600" cy="300" r="10"/><circle class="col" cx="600" cy="470" r="10"/><circle class="col" cx="600" cy="640" r="10"/><circle class="col" cx="720" cy="300" r="10"/><circle class="col" cx="720" cy="470" r="10"/><circle class="col" cx="720" cy="640" r="10"/><circle class="col" cx="840" cy="300" r="10"/><circle class="col" cx="840" cy="470" r="10"/><circle class="col" cx="840" cy="640" r="10"/><circle class="col" cx="960" cy="300" r="10"/><circle class="col" cx="960" cy="470" r="10"/><circle class="col" cx="960" cy="640" r="10"/>
+<path class="car" d="M210 725 C300 590 345 515 300 390 C260 280 370 210 520 210 H1010"/>
+<path class="dash" d="M225 710 C315 590 350 512 320 407"/>
+<rect x="640" y="355" width="145" height="160" class="zone"/><text x="660" y="445" class="label">CORE</text>
+<rect x="470" y="395" width="125" height="90" class="pale"/><text x="492" y="448" class="small">ENTRY</text>
+<path class="ramp" d="M785 625 L960 265 L1000 285 L825 645 Z"/><text x="905" y="460" class="label" transform="rotate(-64 905 460)">RAMP</text>
+<text x="315" y="730" class="label">CAR TURNING TRACE</text>
+
+</svg>

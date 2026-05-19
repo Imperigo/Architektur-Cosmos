@@ -7,8 +7,8 @@ analysis.
 
 ## Long-Term Goal
 
-The atlas should let Andrin, as host/admin, drop source material such as PDFs,
-books, plans, image references and model files into a database intake area. The
+The atlas should let the host/admin drop source material such as PDFs, books,
+plans, image references and model files into a database intake area. The
 system then prepares a structured object for the wormhole atlas and for later
 design-tool workflows.
 
@@ -52,6 +52,13 @@ The first implementation stays local and cheap:
 The local capture workflow creates drafts, manifests and analysis placeholders
 without touching Cloudflare. D1/R2 remain prepared archive layers for later.
 
+The next public-product expansion is a signed-in private library for each user:
+private upload, private object generation, review submission and moderated public
+publishing. This is documented separately in
+[`docs/private-user-archive-security-plan.md`](./private-user-archive-security-plan.md)
+because it changes the security model from static archive to authenticated
+backend system.
+
 ## Rights And Public Display
 
 Public display is allowed only when the asset status is one of:
@@ -62,7 +69,7 @@ Public display is allowed only when the asset status is one of:
 - `private_research` for local-only private analysis/model generation
 
 Everything else remains a source candidate, external link, placeholder or
-private review item until cleared by Andrin.
+private review item until cleared by the host/admin.
 
 ## Model Package Standard
 

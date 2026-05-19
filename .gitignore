@@ -8,3 +8,4 @@ dist/
 .vercel
 archive-inbox/
 archive-intake/
+data/drafts/

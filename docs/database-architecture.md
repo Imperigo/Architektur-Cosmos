@@ -3,6 +3,12 @@
 This document defines the planned low-cost database foundation for Architecture Cosmos.
 It is a design contract only: the current website still ships as a static export with local JSON.
 
+For the planned user-facing private library, upload, authentication and review
+workflow, see
+[`docs/private-user-archive-security-plan.md`](./private-user-archive-security-plan.md).
+That system requires a Worker API and must not be implemented as direct browser
+writes to D1/R2.
+
 ## Recommended Stack
 
 Use Cloudflare-native storage first, but keep the phases separate:

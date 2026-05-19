@@ -15,7 +15,7 @@ Public display is allowed only for:
 Everything else becomes:
 
 - `link_only`: show title, source URL, bibliographic note and metadata;
-- `private_research`: local-only source/model/analysis material for Andrin's
+- `private_research`: local-only source/model/analysis material for the maintainer's
   private pipeline; never public display, never R2 upload;
 - `private_review`: keep local/private until reviewed;
 - `blocked_upload`: never upload or render publicly.
@@ -92,7 +92,7 @@ should stay link-only unless a file-level reusable license is clear.
 
 ## Private Research Mode
 
-`private_research` is for Andrin's local archive and design pipeline. It is meant
+`private_research` is for the maintainer's local archive and design pipeline. It is meant
 for material such as book scans, Afasia/source screenshots, protected plans or
 private research PDFs that should help with analysis, model generation and
 Blender/ArchiCAD experimentation.

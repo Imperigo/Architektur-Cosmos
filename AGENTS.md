@@ -15,8 +15,8 @@ Cursor, Copilot, etc.) working on this repo.
 ## Deployment in one sentence
 
 **Every push to `main` is auto-deployed to Cloudflare Workers Static Assets.**
-The live URL is `architekturkosmos.andrin99zsc.workers.dev`
-(custom domain `architekturkosmos.ch` is being set up).
+The public production URL is `architekturkosmos.ch`. Any account-specific
+Workers preview URL is intentionally not documented in the repo.
 
 When the user says "publish", "deploy", "make it live", "veröffentliche das",
 "live damit": **commit and push to main**. No other action required.

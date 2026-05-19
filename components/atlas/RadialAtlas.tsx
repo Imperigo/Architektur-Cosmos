@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState, type DragEvent, type MouseEvent as ReactMouseEvent, type PointerEvent, type RefObject, type WheelEvent as ReactWheelEvent } from 'react';
 import { ProjectDetailCard } from '@/components/atlas/ProjectDetailCard';
+import { ProjectSearch } from '@/components/atlas/ProjectSearch';
 import { RelationOverlay } from '@/components/atlas/RelationOverlay';
 import { SemanticEntryNode } from '@/components/atlas/SemanticEntryNode';
 import { StyleSectors } from '@/components/atlas/StyleSectors';
@@ -26,6 +27,20 @@ type MotionSnapshot = {
 
 type IntroState = 'intro' | 'launching' | 'idle';
 type SourceLens = 'afasia' | null;
+type ResearchSeed = {
+  project: string;
+  architect: string;
+  address: string;
+};
+type ImageIdentifyState = {
+  fileName: string;
+  previewUrl: string;
+  status: 'empty' | 'ready' | 'identified' | 'unknown';
+  candidate?: ResearchSeed & {
+    confidence: number;
+    reason: string;
+  };
+};
 type EntryDraft = {
   title: string;
   year: string;
@@ -72,6 +87,7 @@ const initialEntryDraft: EntryDraft = {
 export function RadialAtlas({ entries, relations }: { entries: Entry[]; relations: EntryRelation[] }) {
   const svgRef = useRef<SVGSVGElement | null>(null);
   const cursorRef = useRef<SVGGElement | null>(null);
+  const screenCursorRef = useRef<HTMLDivElement | null>(null);
   const [selectedEntry, setSelectedEntry] = useState<Entry | null>(null);
   const [hoveredEntryId, setHoveredEntryId] = useState<string | null>(null);
   const [showRelations, setShowRelations] = useState(false);
@@ -87,7 +103,18 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   const [introState, setIntroState] = useState<IntroState>('intro');
   const [showFilterPanel, setShowFilterPanel] = useState(false);
   const [showDatabasePanel, setShowDatabasePanel] = useState(false);
+  const [localEntries, setLocalEntries] = useState<Entry[]>([]);
   const [entryDraft, setEntryDraft] = useState<EntryDraft>(initialEntryDraft);
+  const [researchSeed, setResearchSeed] = useState<ResearchSeed>({
+    project: 'Alterszentrum Kloster Ingenbohl',
+    architect: 'Boltshauser Architekten / Roger Boltshauser',
+    address: 'Klosterstrasse 20, 6440 Brunnen, Schweiz'
+  });
+  const [imageIdentify, setImageIdentify] = useState<ImageIdentifyState>({
+    fileName: '',
+    previewUrl: '',
+    status: 'empty'
+  });
   const [intakeFiles, setIntakeFiles] = useState<IntakeFile[]>([]);
   const motionRef = useRef({
     currentTravel: 0,
@@ -99,14 +126,15 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   const pendingPointerPointRef = useRef<SvgPoint | null>(null);
   const pointerFrameRef = useRef<number | null>(null);
   const hoveredEntryIdRef = useRef<string | null>(null);
+  const allEntries = useMemo(() => mergeEntries(entries, localEntries), [entries, localEntries]);
   const state = useMemo(() => wormholeState(motion.currentTravel), [motion.currentTravel]);
   const activeSelectedEntryId = selectedEntry?.id ?? null;
-  const nodes = useMemo(() => layoutWormholeEntries(entries, state, activeSelectedEntryId ?? undefined), [activeSelectedEntryId, entries, state]);
+  const nodes = useMemo(() => layoutWormholeEntries(allEntries, state, activeSelectedEntryId ?? undefined), [activeSelectedEntryId, allEntries, state]);
   const displayNodes = useMemo(() => limitDisplayNodes(nodes), [nodes]);
   const isTraveling = motion.isMoving;
-  const sourceLensCount = useMemo(() => entries.filter((entry) => isSourceLensEntry(entry, 'afasia')).length, [entries]);
+  const sourceLensCount = useMemo(() => allEntries.filter((entry) => isSourceLensEntry(entry, 'afasia')).length, [allEntries]);
   const hoveredEntry = useMemo(() => displayNodes.find((node) => node.entry.id === hoveredEntryId)?.entry ?? null, [displayNodes, hoveredEntryId]);
-  const cursorVisible = introState === 'idle' && !isTraveling;
+  const cursorVisible = introState === 'idle';
   const isIntroActive = introState !== 'idle';
   const backgroundStyle = {
     filter: isIntroActive ? 'blur(7px)' : 'blur(0px)',
@@ -150,9 +178,11 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
 
   useEffect(() => {
     const preventBrowserWheel = (event: WheelEvent) => {
+      if (isNativeOverlayTarget(event.target)) return;
       if (event.cancelable) event.preventDefault();
     };
     const preventBrowserTouch = (event: TouchEvent) => {
+      if (isNativeOverlayTarget(event.target)) return;
       if (event.cancelable) event.preventDefault();
     };
 
@@ -179,6 +209,20 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
       if (pointerFrameRef.current !== null) {
         window.cancelAnimationFrame(pointerFrameRef.current);
       }
+    };
+  }, []);
+
+  useEffect(() => {
+    const updateScreenCursor = (event: globalThis.PointerEvent) => {
+      const cursor = screenCursorRef.current;
+      if (!cursor) return;
+      cursor.style.transform = `translate3d(${event.clientX - 17}px, ${event.clientY - 17}px, 0)`;
+    };
+
+    window.addEventListener('pointermove', updateScreenCursor, { capture: true, passive: true });
+
+    return () => {
+      window.removeEventListener('pointermove', updateScreenCursor, { capture: true });
     };
   }, []);
 
@@ -224,6 +268,31 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
 
   function closeDossier() {
     setSelectedEntry(null);
+  }
+
+  function createLocalEntryFromDraft(draft: EntryDraft) {
+    const preview = draftToEntryPreview(draft);
+    const existingEntry = entries.find((entry) => entry.id === preview.id || entry.slug === preview.slug);
+
+    if (existingEntry) {
+      setActiveStyleLens(null);
+      setActiveSourceLens(null);
+      setShowRelations(false);
+      setShowDatabasePanel(false);
+      setSelectedEntry(existingEntry);
+      return;
+    }
+
+    const entry = draftToLocalEntry(draft, allEntries);
+    setLocalEntries((currentEntries) => {
+      const nextEntries = currentEntries.filter((currentEntry) => currentEntry.id !== entry.id);
+      return [...nextEntries, entry];
+    });
+    setActiveStyleLens(null);
+    setActiveSourceLens(null);
+    setShowRelations(false);
+    setShowDatabasePanel(false);
+    setSelectedEntry(entry);
   }
 
   function resetMotion(value: number) {
@@ -516,19 +585,23 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
           ) : null}
           {showDatabasePanel && introState === 'idle' ? (
             <DatabaseArchivePanel
-              entries={entries}
+              entries={allEntries}
               relations={relations}
               selectedEntry={selectedEntry}
               draft={entryDraft}
               intakeFiles={intakeFiles}
+              researchSeed={researchSeed}
+              imageIdentify={imageIdentify}
               onDraftChange={setEntryDraft}
               onIntakeFilesChange={setIntakeFiles}
+              onResearchSeedChange={setResearchSeed}
+              onImageIdentifyChange={setImageIdentify}
+              onCreateLocalEntry={createLocalEntryFromDraft}
               onDismiss={() => setShowDatabasePanel(false)}
             />
           ) : null}
           {introState === 'idle' ? <TimeReadout timePosition={state.timePosition} currentYear={state.currentYear} /> : null}
           {introState === 'idle' ? <BrandChrome /> : null}
-          {cursorVisible ? <CosmosCursor cursorRef={cursorRef} isDossierOpen={Boolean(selectedEntry)} /> : null}
         </svg>
         {introState === 'idle' ? (
           <LensControls
@@ -562,6 +635,8 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
             onDismiss={() => setShowFilterPanel(false)}
           />
         ) : null}
+        {introState === 'idle' ? <ProjectSearch entries={allEntries} /> : null}
+        {cursorVisible ? <ScreenCosmosCursor cursorRef={screenCursorRef} isDossierOpen={Boolean(selectedEntry)} /> : null}
       </div>
 
       {introState !== 'idle' ? <IntroGate state={introState} onStart={startIntro} /> : null}
@@ -571,7 +646,12 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
 
 function isInterfaceTarget(target: EventTarget) {
   if (!(target instanceof Element)) return false;
-  return Boolean(target.closest('.radial-hud, .lens-access, .lens-panel, .database-access, .database-draft, .dossier-overlay, .style-sector'));
+  return Boolean(target.closest('.radial-hud, .lens-control, .lens-control-panel, .lens-access, .lens-panel, .database-access, .database-draft, .dossier-overlay, .style-sector, .project-search'));
+}
+
+function isNativeOverlayTarget(target: EventTarget | null) {
+  if (!(target instanceof Element)) return false;
+  return Boolean(target.closest('.database-draft, .lens-control, .lens-control-panel, .project-search, .dossier-overlay, .entry-page'));
 }
 
 function isReadableNode(node: WormholeEntryNode) {
@@ -603,6 +683,13 @@ function sourceLensOpacity(node: WormholeEntryNode, activeSourceLens: SourceLens
 
   if (isSourceLensEntry(node.entry, activeSourceLens)) return 1;
   return 0.035;
+}
+
+function mergeEntries(baseEntries: Entry[], localEntries: Entry[]) {
+  if (localEntries.length === 0) return baseEntries;
+  const merged = new Map(baseEntries.map((entry) => [entry.id, entry]));
+  localEntries.forEach((entry) => merged.set(entry.id, entry));
+  return [...merged.values()];
 }
 
 function isSourceLensEntry(entry: Entry, activeSourceLens: SourceLens) {
@@ -743,7 +830,13 @@ function LensControls({
   ];
 
   return (
-    <div className="lens-control" onPointerDown={(event) => event.stopPropagation()} onClick={(event) => event.stopPropagation()}>
+    <div
+      className={`lens-control ${isOpen ? 'lens-control-open' : ''}`}
+      onPointerDown={(event) => event.stopPropagation()}
+      onWheel={(event) => event.stopPropagation()}
+      onTouchMove={(event) => event.stopPropagation()}
+      onClick={(event) => event.stopPropagation()}
+    >
       <button type="button" className={`lens-control-trigger ${isOpen ? 'lens-control-trigger-open' : ''}`} onClick={onToggle}>
         <span className="lens-control-mark" aria-hidden="true" />
         <span>Lenses</span>
@@ -831,9 +924,6 @@ function BrandChrome() {
       <text x={atlasSize.cx} y="32" textAnchor="middle" fill="#f7f7f4" fontSize="12" fontWeight="650" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.3em" opacity="0.76">
         ARCHITECTURE COSMOS
       </text>
-      <text x={atlasSize.cx} y="49" textAnchor="middle" fill="#c7c7c2" fontSize="7" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.18em" opacity="0.52">
-        MADE BY ANDRIN BAUMANN
-      </text>
     </g>
   );
 }
@@ -891,7 +981,7 @@ function IntroGate({ state, onStart }: { state: IntroState; onStart: () => void 
   );
 }
 
-type DatabaseTab = 'overview' | 'intake' | 'entries' | 'sources' | 'media' | 'models' | 'analysis' | 'relations' | 'draft';
+type DatabaseTab = 'overview' | 'intake' | 'generate' | 'entries' | 'sources' | 'media' | 'models' | 'analysis' | 'relations' | 'draft';
 
 function DatabaseArchivePanel({
   entries,
@@ -899,8 +989,13 @@ function DatabaseArchivePanel({
   selectedEntry,
   draft,
   intakeFiles,
+  researchSeed,
+  imageIdentify,
   onDraftChange,
   onIntakeFilesChange,
+  onResearchSeedChange,
+  onImageIdentifyChange,
+  onCreateLocalEntry,
   onDismiss
 }: {
   entries: Entry[];
@@ -908,13 +1003,20 @@ function DatabaseArchivePanel({
   selectedEntry: Entry | null;
   draft: EntryDraft;
   intakeFiles: IntakeFile[];
+  researchSeed: ResearchSeed;
+  imageIdentify: ImageIdentifyState;
   onDraftChange: (draft: EntryDraft) => void;
   onIntakeFilesChange: (files: IntakeFile[]) => void;
+  onResearchSeedChange: (seed: ResearchSeed) => void;
+  onImageIdentifyChange: (state: ImageIdentifyState) => void;
+  onCreateLocalEntry: (draft: EntryDraft) => void;
   onDismiss: () => void;
 }) {
   const [activeTab, setActiveTab] = useState<DatabaseTab>(selectedEntry ? 'entries' : 'intake');
-  const x = atlasSize.width - 414;
-  const y = atlasSize.height - 536;
+  const panelWidth = 468;
+  const panelHeight = 660;
+  const x = atlasSize.width - panelWidth - 28;
+  const y = Math.max(24, atlasSize.height - panelHeight - 28);
   const preview = draftToEntryPreview(draft);
   const intakeSlug = preview.slug;
   const intakeStats = summarizeIntakeFiles(intakeFiles);
@@ -932,6 +1034,7 @@ function DatabaseArchivePanel({
   const tabs: Array<{ id: DatabaseTab; label: string }> = [
     { id: 'overview', label: 'Overview' },
     { id: 'intake', label: 'Intake' },
+    { id: 'generate', label: 'AI Gen' },
     { id: 'entries', label: 'Entries' },
     { id: 'sources', label: 'Sources' },
     { id: 'media', label: 'Media' },
@@ -943,6 +1046,74 @@ function DatabaseArchivePanel({
 
   function updateField<Key extends keyof EntryDraft>(key: Key, value: EntryDraft[Key]) {
     onDraftChange({ ...draft, [key]: value });
+  }
+
+  function updateResearchSeed<Key extends keyof ResearchSeed>(key: Key, value: ResearchSeed[Key]) {
+    onResearchSeedChange({ ...researchSeed, [key]: value });
+  }
+
+  function generateResearchDraft() {
+    const generatedDraft = draftFromResearchSeed(researchSeed);
+    onDraftChange(generatedDraft);
+    setActiveTab('draft');
+  }
+
+  function loadIngenbohlSample() {
+    const seed = {
+      project: 'Alterszentrum Kloster Ingenbohl',
+      architect: 'Boltshauser Architekten / Roger Boltshauser',
+      address: 'Klosterstrasse 20, 6440 Brunnen, Schweiz'
+    };
+
+    onResearchSeedChange(seed);
+    onDraftChange(draftFromResearchSeed(seed));
+    setActiveTab('draft');
+  }
+
+  function stageIdentifyImage(file: File) {
+    const objectUrl = URL.createObjectURL(file);
+
+    if (imageIdentify.previewUrl.startsWith('blob:')) {
+      URL.revokeObjectURL(imageIdentify.previewUrl);
+    }
+
+    onImageIdentifyChange({
+      fileName: file.name,
+      previewUrl: objectUrl,
+      status: 'ready'
+    });
+  }
+
+  function handleIdentifyImageDrop(event: DragEvent<HTMLDivElement>) {
+    event.preventDefault();
+    event.stopPropagation();
+    const imageFile = Array.from(event.dataTransfer.files).find((file) => file.type.startsWith('image/'));
+    if (imageFile) stageIdentifyImage(imageFile);
+  }
+
+  function identifyDroppedImage() {
+    const candidate = identifyBuildingFromImageName(imageIdentify.fileName, entries);
+
+    if (!candidate) {
+      onImageIdentifyChange({
+        ...imageIdentify,
+        status: 'unknown'
+      });
+      return;
+    }
+
+    const nextSeed = {
+      project: candidate.project,
+      architect: candidate.architect,
+      address: candidate.address
+    };
+    onResearchSeedChange(nextSeed);
+    onDraftChange(draftFromResearchSeed(nextSeed));
+    onImageIdentifyChange({
+      ...imageIdentify,
+      status: 'identified',
+      candidate
+    });
   }
 
   function appendFiles(files: FileList | File[]) {
@@ -965,17 +1136,19 @@ function DatabaseArchivePanel({
   }
 
   return (
-    <foreignObject x={x} y={y} width="382" height="468" className="database-draft database-archive-panel" pointerEvents="auto">
+    <foreignObject x={x} y={y} width={panelWidth} height={panelHeight} className="database-draft database-archive-panel" pointerEvents="auto">
       <div
         className="flex flex-col border border-[#00e7ff]/70 bg-[#050505]/95 p-4 text-[#f7f7f4] shadow-[0_0_28px_rgb(0_231_255_/_0.12)]"
-        style={{ width: 382, height: 468 }}
+        style={{ width: panelWidth, height: panelHeight }}
         onPointerDown={(event) => event.stopPropagation()}
+        onWheel={(event) => event.stopPropagation()}
+        onTouchMove={(event) => event.stopPropagation()}
         onClick={(event) => event.stopPropagation()}
       >
         <div className="mb-3 flex items-start justify-between gap-3">
           <div>
             <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#00e7ff]">Architecture Cosmos Database</div>
-            <div className="mt-1 text-[10px] uppercase tracking-[0.14em] text-[#b8b8b2]">Local intake console / static frontend</div>
+            <div className="mt-1 text-[10px] uppercase tracking-[0.14em] text-[#b8b8b2]">Local draft console / private library planned</div>
           </div>
           <div className="flex gap-1.5">
             <a className="border border-[#00e7ff]/70 px-2 py-1 text-[9px] uppercase tracking-[0.12em] text-[#00e7ff]" href="/archive/">
@@ -994,6 +1167,10 @@ function DatabaseArchivePanel({
           ))}
         </div>
 
+        <div className="mb-3 border border-[#00e7ff]/25 bg-[#061719]/85 px-2 py-1.5 text-[8.8px] uppercase leading-snug tracking-[0.12em] text-[#c9fff4]">
+          Browser session only / no D1 write / no R2 upload / private library planned
+        </div>
+
         <div className="mb-3 flex flex-wrap gap-1.5">
           {tabs.map((tab) => (
             <button
@@ -1010,15 +1187,19 @@ function DatabaseArchivePanel({
         <div className="min-h-0 flex-1 overflow-y-auto pr-1">
           {activeTab === 'overview' ? (
             <div className="space-y-2 text-[10px] leading-relaxed text-[#d9d9d2]">
-              <ArchiveRow label="Storage" value={`${archivePreview.storage_target.database.toUpperCase()} metadata / R2 preview bucket`} />
-              <ArchiveRow label="Status" value={`Cloud D1 + R2 preview ready / ${archivePreview.storage_target.frontend_connection.replace(/_/g, ' ')}`} />
+              <ArchiveRow label="Mode" value="Static public atlas / browser drafts only" />
+              <ArchiveRow label="Storage" value={`${archivePreview.storage_target.database.toUpperCase()} metadata preview / R2 planned`} />
+              <ArchiveRow label="Status" value={`D1 preview ready / ${archivePreview.storage_target.frontend_connection.replace(/_/g, ' ')}`} />
               <ArchiveRow label="D1" value={`${archivePreview.storage_target.database_name} / verified ${archivePreview.storage_target.last_verified}`} />
               <ArchiveRow label="R2" value={`${archivePreview.storage_target.assets_bucket_name ?? 'not configured'} / no uploads`} />
               <ArchiveRow label="Assets" value={archivePreview.storage_target.assets_status.replace(/_/g, ' ')} />
               <ArchiveRow label="Pilot" value={`${pilotEntry.title}, ${pilotEntry.year_start}, ${pilotEntry.city}`} />
               {selectedEntry ? <ArchiveRow label="Current" value={`${selectedEntry.title} / ${selectedEntry.database_profile?.status ?? 'local entry'}`} /> : null}
               <p className="border border-[#00e7ff]/25 bg-[#061719] p-2 text-[#c9fff4]">
-                The archive foundation now exists as Cloudflare D1 plus an empty R2 preview bucket while this frontend still reads bundled JSON. Asset uploads remain blocked until media rights and file policy are ready.
+                This panel is a local planning console. It can stage drafts in the browser session, but it does not persist to D1, upload to R2 or publish user/private files.
+              </p>
+              <p className="border border-[#f7f7f4]/15 bg-[#050505]/55 p-2 text-[#b8b8b2]">
+                Future private libraries need authentication, Cloudflare Access or an identity provider, signed R2 upload URLs, quarantine, rights gate and maintainer review before any public publication.
               </p>
               <ArchiveList
                 title="Local Capture Automation"
@@ -1029,7 +1210,7 @@ function DatabaseArchivePanel({
                   'Only own_work, licensed and public_domain assets are marked public-display ready'
                 ]}
               />
-              <ArchiveList title="Next Database Steps" items={['Keep D1 preview in sync with archive:d1-preview', 'Use D1 for validation and query design, not live reads yet', 'Keep R2 uploads blocked until media/model upload policy is ready', 'Add read-only Worker API only after static schema is proven']} />
+              <ArchiveList title="Next Database Steps" items={['Keep D1 preview in sync with archive:d1-preview', 'Use D1 for validation and query design, not live reads yet', 'Keep R2 uploads blocked until signed upload + quarantine policy exists', 'Add read-only Worker API only after static schema is proven']} />
             </div>
           ) : null}
 
@@ -1121,6 +1302,119 @@ function DatabaseArchivePanel({
             </div>
           ) : null}
 
+          {activeTab === 'generate' ? (
+            <div className="space-y-3 text-[10px] leading-relaxed text-[#d9d9d2]">
+              <div className="database-generate-sticky">
+                <div>
+                  <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#00e7ff]">Dev AI Generate</div>
+                  <p className="mt-1 text-[9px] leading-snug text-[#b8b8b2]">
+                    Bild oder Projektdaten rein, dann Research-Draft erzeugen.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  className="shrink-0 border border-[#00e7ff]/80 bg-[#00e7ff] px-3 py-2 text-[9px] font-semibold uppercase tracking-[0.14em] text-[#050505]"
+                  onClick={generateResearchDraft}
+                >
+                  Let&apos;s generate
+                </button>
+              </div>
+
+              <div
+                className="database-image-identify"
+                onDragOver={(event) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                }}
+                onDrop={handleIdentifyImageDrop}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#00e7ff]">Image identify</div>
+                    <p className="mt-1 text-[9.5px] leading-snug text-[#b8b8b2]">
+                      Drop a building image. Dev V1 prepares a local vision-identification job and uses filename/context heuristics until a private model/API is connected.
+                    </p>
+                  </div>
+                  <label className="shrink-0 cursor-none border border-[#00e7ff]/60 px-2 py-1 text-[8px] uppercase tracking-[0.12em] text-[#9cfff7]">
+                    Select
+                    <input
+                      className="sr-only"
+                      type="file"
+                      accept="image/*"
+                      onChange={(event) => {
+                        const file = event.target.files?.[0];
+                        if (file) stageIdentifyImage(file);
+                        event.currentTarget.value = '';
+                      }}
+                    />
+                  </label>
+                </div>
+
+                {imageIdentify.previewUrl ? (
+                  <div className="mt-3 grid grid-cols-[96px_minmax(0,1fr)] gap-3">
+                    {/* eslint-disable-next-line @next/next/no-img-element -- Local browser preview uses a blob URL. */}
+                    <img className="h-20 w-24 object-cover" src={imageIdentify.previewUrl} alt="Image identification preview" />
+                    <div className="min-w-0">
+                      <div className="truncate text-[10px] text-[#f7f7f4]">{imageIdentify.fileName}</div>
+                      <div className="mt-1 text-[8px] uppercase tracking-[0.12em] text-[#8d8d87]">
+                        {imageIdentify.status === 'identified' ? `identified / ${Math.round((imageIdentify.candidate?.confidence ?? 0) * 100)}%` : imageIdentify.status === 'unknown' ? 'needs manual research' : 'ready to analyze'}
+                      </div>
+                      {imageIdentify.candidate ? (
+                        <p className="mt-1 line-clamp-2 text-[9px] leading-snug text-[#c9fff4]">{imageIdentify.candidate.project} / {imageIdentify.candidate.reason}</p>
+                      ) : null}
+                      <button
+                        type="button"
+                        className="mt-2 border border-[#00e7ff]/70 px-2 py-1 text-[8px] uppercase tracking-[0.12em] text-[#00e7ff]"
+                        onClick={identifyDroppedImage}
+                      >
+                        Analyze image
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="mt-3 border border-dashed border-[#f7f7f4]/18 bg-[#050505]/45 px-3 py-4 text-center text-[8.5px] uppercase tracking-[0.16em] text-[#8d8d87]">
+                    Drop image here
+                  </div>
+                )}
+              </div>
+
+              <DraftInput label="Project" value={researchSeed.project} onChange={(value) => updateResearchSeed('project', value)} />
+              <DraftInput label="Architect" value={researchSeed.architect} onChange={(value) => updateResearchSeed('architect', value)} />
+              <DraftInput label="Address / place" value={researchSeed.address} onChange={(value) => updateResearchSeed('address', value)} />
+
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  className="border border-[#f7f7f4]/25 px-2 py-2 text-[8.5px] uppercase tracking-[0.14em] text-[#d9d9d2]"
+                  onClick={loadIngenbohlSample}
+                >
+                  Ingenbohl Sample
+                </button>
+                <button
+                  type="button"
+                  className="border border-[#00e7ff]/55 px-2 py-2 text-[8.5px] uppercase tracking-[0.14em] text-[#00e7ff]"
+                  onClick={generateResearchDraft}
+                >
+                  Draft preview
+                </button>
+              </div>
+
+              <ArchiveList
+                title="Local research pipeline"
+                items={[
+                  `npm run archive:research-entry -- --title "${researchSeed.project || 'Project name'}" --architect "${researchSeed.architect || 'Architect'}" --address "${researchSeed.address || 'Address'}"`,
+                  'Researches official sources, source candidates, rights status, tags, structure/material/tectonic hypotheses',
+                  'Creates data/drafts/{slug}.json and an archive-inbox/{slug}/sources.md checklist',
+                  'Next: archive:autopilot, rights-gate, model-plan, model-generate'
+                ]}
+              />
+
+              <pre className="max-h-[142px] overflow-y-auto whitespace-pre-wrap border border-[#00e7ff]/25 bg-black/35 p-2 text-[9px] leading-snug text-[#c9fff4]">
+                {JSON.stringify(researchJobPreview(researchSeed), null, 2)}
+              </pre>
+            </div>
+          ) : null}
+
           {activeTab === 'entries' ? (
             <div className="space-y-2">
               {currentEntry ? (
@@ -1161,15 +1455,27 @@ function DatabaseArchivePanel({
           {activeTab === 'draft' ? (
             <div>
               <div className="mb-2 flex items-center justify-between gap-2">
-                <div className="text-[9px] uppercase tracking-[0.16em] text-[#b8b8b2]">New Entry Draft / local JSON preview only</div>
-                <button
-                  type="button"
-                  className="border border-[#f7f7f4]/25 px-2 py-1 text-[8px] uppercase tracking-[0.12em] text-[#d9d9d2]"
-                  onClick={() => onDraftChange(initialEntryDraft)}
-                >
-                  Reset
-                </button>
+                <div className="text-[9px] uppercase tracking-[0.16em] text-[#b8b8b2]">New Entry Draft / browser session only</div>
+                <div className="flex gap-1.5">
+                  <button
+                    type="button"
+                    className="border border-[#00e7ff]/80 bg-[#00e7ff] px-2 py-1 text-[8px] font-semibold uppercase tracking-[0.12em] text-[#050505]"
+                    onClick={() => onCreateLocalEntry(draft)}
+                  >
+                    Create browser entry
+                  </button>
+                  <button
+                    type="button"
+                    className="border border-[#f7f7f4]/25 px-2 py-1 text-[8px] uppercase tracking-[0.12em] text-[#d9d9d2]"
+                    onClick={() => onDraftChange(initialEntryDraft)}
+                  >
+                    Reset
+                  </button>
+                </div>
               </div>
+              <p className="mb-2 border border-[#00e7ff]/25 bg-[#061719] p-2 text-[9.5px] leading-snug text-[#c9fff4]">
+                Creates a temporary Atlas entry in this browser session only. Persistent D1/database saving, private libraries and uploads come in a later protected backend step.
+              </p>
               <div className="mb-2 grid grid-cols-3 gap-1.5">
                 {draftReadiness(draft).map((item) => (
                   <div key={item.label} className={`border px-2 py-1 ${item.ready ? 'border-[#00e7ff]/45 bg-[#061719]' : 'border-[#f7f7f4]/14 bg-[#050505]/55'}`}>
@@ -1465,6 +1771,160 @@ function draftToEntryPreview(draft: EntryDraft) {
   };
 }
 
+function draftToLocalEntry(draft: EntryDraft, existingEntries: Entry[]): Entry {
+  const preview = draftToEntryPreview(draft);
+  const existingIds = new Set(existingEntries.map((entry) => entry.id));
+  const isBaseConflict = existingIds.has(preview.id);
+  const id = isBaseConflict ? uniqueEntryId(`${preview.id}-draft`, existingIds) : preview.id;
+  const slug = id;
+
+  return {
+    ...preview,
+    id,
+    slug,
+    year_end: undefined,
+    source_quality: `${preview.source_quality}_local_session`,
+    database_tags: [...(preview.database_tags ?? []), 'status:local-session'],
+    database_profile: {
+      ...preview.database_profile,
+      status: 'draft',
+      r2_prefix: `entries/${slug}`
+    },
+    ingestion_status: {
+      stage: 'ready_for_wormhole',
+      source_status: preview.source_url || (preview.source_documents?.length ?? 0) > 0 ? 'candidate' : 'none',
+      asset_status: 'candidate',
+      model_status: 'planned',
+      updated_at: new Date().toISOString()
+    }
+  };
+}
+
+function uniqueEntryId(baseId: string, existingIds: Set<string>) {
+  if (!existingIds.has(baseId)) return baseId;
+  let index = 2;
+  let nextId = `${baseId}-${index}`;
+
+  while (existingIds.has(nextId)) {
+    index += 1;
+    nextId = `${baseId}-${index}`;
+  }
+
+  return nextId;
+}
+
+function draftFromResearchSeed(seed: ResearchSeed): EntryDraft {
+  const normalizedProject = seed.project.trim();
+  const normalizedArchitect = seed.architect.trim();
+  const normalizedAddress = seed.address.trim();
+  const isIngenbohl = normalizeForMatch(`${normalizedProject} ${normalizedArchitect} ${normalizedAddress}`).includes('ingenbohl');
+
+  if (isIngenbohl) {
+    return {
+      title: 'Alterszentrum Kloster Ingenbohl',
+      year: '2023',
+      entry_type: 'building',
+      style_sector: 'sustainable_architecture',
+      city: 'Brunnen',
+      country: 'Schweiz',
+      authors: 'Boltshauser Architekten, Roger Boltshauser',
+      themes: 'adaptive reuse, monastery, care architecture, concrete structure, lime plaster, clay plaster, timber facade, inner courtyard, roof garden, existing fabric',
+      lecture_cluster: 'Architecture Cosmos dev research, contemporary Swiss architecture',
+      source_documents: 'Boltshauser Architekten project page, Baunetz project report, swiss-architects project note',
+      source_url: 'https://boltshauser.info/projekt/alterszentrum-kloster-ingenbohl/',
+      short_description: 'Umbau und Erweiterung des Klosterareals Ingenbohl zu einem Alterszentrum mit präziser Einbindung in Bestand, Hofstruktur und Landschaft.',
+      one_sentence: 'Das Alterszentrum Kloster Ingenbohl verbindet klösterlichen Bestand, neue Pflegearchitektur, Betontragwerk, mineralische Oberflächen und landschaftliche Terrassen zu einem zeitgenössischen Schweizer Umbauprojekt.',
+      full_description: 'Der Umbau des Klosters Ingenbohl in Brunnen wird als Weiterbauen am Bestand gelesen: Die neue Struktur ergänzt das klösterliche Ensemble, arbeitet mit Hof, Sockel, Terrassen und präzisen Materialschichten und übersetzt Pflegearchitektur in eine ruhige räumliche Ordnung. Für den Architecture Cosmos ist das Projekt ein wichtiger Referenzknoten für Transformation, Tragwerk, Materialökologie und tektonische Analyse: Beton, mineralische Putze, Holz- und Fassadenschichten, innere Organisation und Landschaftsbezug lassen sich später als Modell- und Filterlayer auswerten.',
+      copyright_status: 'needs_permission'
+    };
+  }
+
+  const title = normalizedProject || 'New Research Entry';
+  return {
+    title,
+    year: '2025',
+    entry_type: 'building',
+    style_sector: 'sustainable_architecture',
+    city: normalizedAddress,
+    country: '',
+    authors: normalizedArchitect,
+    themes: 'needs research, source verification, rights review, material analysis, structure analysis, tectonic analysis',
+    lecture_cluster: 'Architecture Cosmos dev research',
+    source_documents: 'Generated research job / sources pending',
+    source_url: '',
+    short_description: `${title} is staged for AI-assisted research and archive classification.`,
+    one_sentence: `${title} is a dev-mode research seed prepared for source discovery, rights review, media intake, model planning and analysis-layer classification.`,
+    full_description: `${title} has not been verified yet. The next local research step should collect official project sources, reliable publication references, rights-safe media candidates, project metadata, structural/material/tectonic hypotheses and possible model-generation inputs.`,
+    copyright_status: 'needs_permission'
+  };
+}
+
+function researchJobPreview(seed: ResearchSeed) {
+  const title = seed.project.trim() || 'Project name';
+  const slug = slugify(title);
+
+  return {
+    mode: 'dev_local_ai_research',
+    slug,
+    input: {
+      title,
+      architect: seed.architect.trim(),
+      address: seed.address.trim()
+    },
+    output: {
+      draft_json: `data/drafts/${slug}.json`,
+      inbox: `archive-inbox/${slug}`,
+      source_checklist: `archive-inbox/${slug}/sources.md`
+    },
+    image_identification: {
+      command: `npm run archive:identify-image -- --image archive-inbox/${slug}/image.jpg`,
+      status: 'planned_private_dev_model'
+    },
+    guardrails: ['no browser API key', 'rights review before public display', 'private_research allowed for local pipeline only']
+  };
+}
+
+function identifyBuildingFromImageName(fileName: string, entries: Entry[]) {
+  const normalizedFile = normalizeForMatch(fileName);
+
+  const knownCandidates: Array<ResearchSeed & { confidence: number; reason: string; aliases: string[] }> = [
+    {
+      project: 'Villa Savoye',
+      architect: 'Le Corbusier, Pierre Jeanneret',
+      address: 'Poissy, France',
+      confidence: 0.86,
+      reason: 'filename/context matched Villa Savoye aliases',
+      aliases: ['villa-savoye', 'savoye', 'poissy', 'le-corbusier']
+    },
+    {
+      project: 'Alterszentrum Kloster Ingenbohl',
+      architect: 'Boltshauser Architekten / Roger Boltshauser',
+      address: 'Klosterstrasse 20, 6440 Brunnen, Schweiz',
+      confidence: 0.82,
+      reason: 'filename/context matched Ingenbohl/Boltshauser aliases',
+      aliases: ['ingenbohl', 'boltshauser', 'brunnen', 'kloster']
+    }
+  ];
+
+  const matchedKnown = knownCandidates.find((candidate) => candidate.aliases.some((alias) => normalizedFile.includes(alias)));
+  if (matchedKnown) return matchedKnown;
+
+  const matchedEntry = entries.find((entry) => {
+    const aliases = [entry.slug, entry.title, ...entry.authors, entry.city ?? '', entry.country ?? ''].map(normalizeForMatch).filter(Boolean);
+    return aliases.some((alias) => alias.length > 4 && normalizedFile.includes(alias));
+  });
+
+  if (!matchedEntry) return null;
+
+  return {
+    project: matchedEntry.title,
+    architect: matchedEntry.authors.join(', '),
+    address: [matchedEntry.city, matchedEntry.country].filter(Boolean).join(', '),
+    confidence: 0.72,
+    reason: 'filename matched an existing Architecture Cosmos entry'
+  };
+}
+
 function draftReadiness(draft: EntryDraft) {
   return [
     { label: 'identity', ready: Boolean(draft.title.trim() && draft.year.trim() && draft.authors.trim()) },
@@ -1489,7 +1949,18 @@ function splitList(value: string) {
 }
 
 function slugify(value: string) {
-  return value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'new-entry';
+  return normalizeForMatch(value).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'new-entry';
+}
+
+function normalizeForMatch(value: string) {
+  return value
+    .toLowerCase()
+    .replace(/ä/g, 'ae')
+    .replace(/ö/g, 'oe')
+    .replace(/ü/g, 'ue')
+    .replace(/ß/g, 'ss')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
 }
 
 function SnappedEntryOverlay({ entry, onDismiss }: { entry: Entry; onDismiss: () => void }) {
@@ -1527,18 +1998,14 @@ function SnappedEntryOverlay({ entry, onDismiss }: { entry: Entry; onDismiss: ()
   );
 }
 
-function CosmosCursor({ cursorRef, isDossierOpen }: { cursorRef: RefObject<SVGGElement | null>; isDossierOpen: boolean }) {
+function ScreenCosmosCursor({ cursorRef, isDossierOpen }: { cursorRef: RefObject<HTMLDivElement | null>; isDossierOpen: boolean }) {
   return (
-    <g ref={cursorRef} className="cosmos-cursor" pointerEvents="none" transform={`translate(${atlasSize.cx} ${atlasSize.cy})`} opacity={isDossierOpen ? 0.78 : 1}>
-      <circle r="12" fill="none" stroke="#050505" strokeWidth="3.4" opacity="0.88" />
-      <circle r="10" fill="none" stroke="#f7f7f4" strokeWidth="0.8" opacity="0.6" />
-      <circle r="7.2" fill="none" stroke="#00e7ff" strokeWidth="0.45" opacity={isDossierOpen ? 0.32 : 0.46} />
-      <circle r="2.1" fill="#f7f7f4" opacity="0.86" />
-      <line x1="-18" y1="0" x2="-11" y2="0" stroke="#f7f7f4" strokeWidth="0.65" opacity="0.62" />
-      <line x1="11" y1="0" x2="18" y2="0" stroke="#f7f7f4" strokeWidth="0.65" opacity="0.62" />
-      <line x1="0" y1="-18" x2="0" y2="-11" stroke="#f7f7f4" strokeWidth="0.65" opacity="0.62" />
-      <line x1="0" y1="11" x2="0" y2="18" stroke="#f7f7f4" strokeWidth="0.65" opacity="0.62" />
-    </g>
+    <div ref={cursorRef} className={`screen-cosmos-cursor ${isDossierOpen ? 'screen-cosmos-cursor-dossier' : ''}`} aria-hidden="true">
+      <span className="screen-cosmos-cursor-ring" />
+      <span className="screen-cosmos-cursor-h screen-cosmos-cursor-line" />
+      <span className="screen-cosmos-cursor-v screen-cosmos-cursor-line" />
+      <span className="screen-cosmos-cursor-dot" />
+    </div>
   );
 }
 

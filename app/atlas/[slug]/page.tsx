@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { CSSProperties } from 'react';
 import { EntryModelViewer } from '@/components/atlas/EntryModelViewer';
+import { ProjectSearch } from '@/components/atlas/ProjectSearch';
 import entries from '@/data/mock-entries.json';
 import relations from '@/data/relations.json';
 import type { Entry, EntryRelation, StyleSectorId } from '@/lib/types';
@@ -68,11 +69,23 @@ export default async function EntryPage({ params }: EntryPageProps) {
   const yearLabel = formatYear(entry.year_start);
   const archiveScore = archiveReadiness(entry);
   const publicModelUrl = publicModelPreviewUrl(entry);
+  const heroImage = primaryMediaUrl(entry);
+  const visualProfile = entryVisualProfile(entry);
 
   return (
-    <main className="entry-page min-h-screen overflow-x-hidden bg-[#050505] text-[#f7f7f4]" style={{ '--entry-accent': accent } as CSSProperties}>
+    <main
+      className={`entry-page entry-page-${entry.slug} min-h-screen overflow-x-hidden bg-[#050505] text-[#f7f7f4]`}
+      style={{
+        '--entry-accent': accent,
+        '--entry-material-a': visualProfile.materialColors[0],
+        '--entry-material-b': visualProfile.materialColors[1],
+        '--entry-material-c': visualProfile.materialColors[2]
+      } as CSSProperties}
+    >
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <ProjectSearch entries={allEntries} currentSlug={entry.slug} />
       <div className="entry-cosmos-field" aria-hidden="true">
+        {heroImage ? <span className="entry-object-backdrop" style={{ backgroundImage: `url(${heroImage})` }} /> : null}
         <span className="entry-ring entry-ring-a" />
         <span className="entry-ring entry-ring-b" />
         <span className="entry-ring entry-ring-c" />
@@ -141,6 +154,8 @@ export default async function EntryPage({ params }: EntryPageProps) {
           </aside>
         </section>
 
+        <ObjectIdentityPanel entry={entry} profile={visualProfile} accent={accent} />
+
         <section className="entry-study-grid grid gap-4 border-t border-white/12 py-8 lg:grid-cols-3">
           <StudyCard
             title="Read"
@@ -162,20 +177,21 @@ export default async function EntryPage({ params }: EntryPageProps) {
           />
         </section>
 
-        <section className="grid gap-4 border-t border-white/12 py-8 sm:grid-cols-2 lg:grid-cols-4">
-          {entry.media.map((media) => (
-            <div key={media.type} className="entry-media-card min-h-[210px] border border-white/14 bg-[#070707] p-4">
-              <div className="mb-3 flex items-center justify-between gap-3 text-[10px] uppercase tracking-[0.18em]" style={{ color: accent }}>
-                <span>{media.type}</span>
-                <span className="text-[#8d8d87]">slot {mediaSlotNumber(media.type)}</span>
-              </div>
-              <div className={`entry-media-placeholder entry-media-${media.type} flex h-28 items-center justify-center border border-white/10 text-center text-[11px] uppercase tracking-[0.14em] text-[#d7d7d0]`}>
-                {media.label}
-              </div>
-              <p className="mt-3 text-sm leading-6 text-[#b8b8b2]">{media.placeholder}</p>
-              {media.credit ? <p className="mt-3 text-[10px] uppercase tracking-[0.12em] text-[#8d8d87]">{media.credit}</p> : null}
+        <section id="media-gallery" className="entry-media-gallery border-t border-white/12 py-10">
+          <div className="mb-5 flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <div className="text-[10px] uppercase tracking-[0.22em]" style={{ color: accent }}>Object Media</div>
+              <h2 className="mt-2 text-3xl text-[#f7f7f4]">Bilder, Plan und Schnitt</h2>
             </div>
-          ))}
+            <p className="max-w-md text-sm leading-6 text-[#b8b8b2]">
+              Die vier Slots werden als lesbare Projektgrundlage gezeigt: Atmosphäre, Raum, Grundrisslogik und Schnittsequenz.
+            </p>
+          </div>
+          <div className="grid gap-4 lg:grid-cols-2">
+            {entry.media.map((media) => (
+              <MediaCard key={media.type} media={media} entry={entry} profile={visualProfile} accent={accent} />
+            ))}
+          </div>
         </section>
 
         <section className="grid gap-6 border-t border-white/12 py-8 lg:grid-cols-3">
@@ -424,6 +440,102 @@ function EntryMeta({ label, value }: { label: string; value: string }) {
   );
 }
 
+function ObjectIdentityPanel({ entry, profile, accent }: { entry: Entry; profile: EntryVisualProfile; accent: string }) {
+  return (
+    <section className="entry-object-signature border-t border-white/12 py-8">
+      <div className="grid gap-5 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
+        <article className="entry-material-board border border-white/14 bg-[#071315]/60 p-5">
+          <div className="text-[10px] uppercase tracking-[0.22em]" style={{ color: accent }}>Object Signature</div>
+          <h2 className="mt-3 text-3xl leading-tight text-[#f7f7f4]">{profile.title}</h2>
+          <p className="mt-4 text-sm leading-7 text-[#cfcfca]">{profile.reading}</p>
+          <div className="mt-5 grid gap-2 sm:grid-cols-3">
+            {profile.materials.map((material, index) => (
+              <div key={material} className="entry-material-chip border border-white/12 bg-[#050505]/45 p-3">
+                <span className="entry-material-swatch" style={{ background: profile.materialColors[index % profile.materialColors.length] }} />
+                <span className="mt-3 block text-[10px] uppercase tracking-[0.14em] text-[#d7d7d0]">{material}</span>
+              </div>
+            ))}
+          </div>
+        </article>
+
+        <article className="entry-composition-board border border-white/14 bg-[#071315]/60 p-5">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <div className="text-[10px] uppercase tracking-[0.22em]" style={{ color: accent }}>Material + Composition Analysis</div>
+              <h2 className="mt-3 text-2xl text-[#f7f7f4]">{profile.compositionTitle}</h2>
+            </div>
+            <span className="border border-white/14 px-3 py-2 text-[10px] uppercase tracking-[0.14em] text-[#b8b8b2]">{entry.year_start}</span>
+          </div>
+          <div className={`entry-composition-diagram entry-composition-${profile.diagramType} mt-5`} aria-hidden="true">
+            <span className="entry-composition-mass" />
+            <span className="entry-composition-court" />
+            <span className="entry-composition-core" />
+            <span className="entry-composition-slope" />
+            <span className="entry-composition-strata" />
+          </div>
+          <div className="mt-5 grid gap-2 sm:grid-cols-2">
+            {profile.composition.map((item) => (
+              <div key={item} className="border border-white/10 bg-[#050505]/42 p-3 text-sm leading-6 text-[#cfcfca]">
+                {item}
+              </div>
+            ))}
+          </div>
+        </article>
+      </div>
+    </section>
+  );
+}
+
+function MediaCard({ media, entry, profile, accent }: { media: Entry['media'][number]; entry: Entry; profile: EntryVisualProfile; accent: string }) {
+  const isDrawing = media.type === 'plan' || media.type === 'section';
+  const mediaUrl = media.url;
+
+  return (
+    <article className={`entry-media-card entry-media-card-${media.type} border border-white/14 bg-[#070707]`}>
+      <div className="entry-media-surface">
+        {mediaUrl ? (
+          <>
+          {/* eslint-disable-next-line @next/next/no-img-element -- Static export serves mixed JPG/SVG archive assets directly. */}
+          <img
+            className={`entry-media-image ${isDrawing ? 'entry-media-image-drawing' : ''}`}
+            src={mediaUrl}
+            alt={media.label}
+            loading="lazy"
+          />
+          </>
+        ) : (
+          <div className={`entry-media-placeholder entry-media-${media.type} flex h-full items-center justify-center border border-white/10 text-center text-[11px] uppercase tracking-[0.14em] text-[#d7d7d0]`}>
+            <ObjectMediaPlaceholder mediaType={media.type} entry={entry} profile={profile} />
+          </div>
+        )}
+      </div>
+      <div className="entry-media-caption">
+        <div className="flex items-center justify-between gap-3 text-[10px] uppercase tracking-[0.18em]" style={{ color: accent }}>
+          <span>{media.type}</span>
+          <span className="text-[#8d8d87]">slot {mediaSlotNumber(media.type)}</span>
+        </div>
+        <h3 className="mt-2 text-xl text-[#f7f7f4]">{media.label}</h3>
+        <p className="mt-3 text-sm leading-6 text-[#b8b8b2]">{media.placeholder}</p>
+        {media.credit ? <p className="mt-3 text-[10px] uppercase tracking-[0.12em] text-[#8d8d87]">{media.credit}</p> : null}
+      </div>
+    </article>
+  );
+}
+
+function ObjectMediaPlaceholder({ mediaType, entry, profile }: { mediaType: Entry['media'][number]['type']; entry: Entry; profile: EntryVisualProfile }) {
+  const label = profile.slotReadings[mediaType] ?? entry.title;
+
+  return (
+    <div className={`entry-object-media-diagram entry-object-media-${mediaType}`}>
+      <span className="entry-object-media-frame" />
+      <span className="entry-object-media-core" />
+      <span className="entry-object-media-slope" />
+      <span className="entry-object-media-strata" />
+      <span className="entry-object-media-label">{label}</span>
+    </div>
+  );
+}
+
 function InfoBlock({ title, items, accent, empty = 'No entries yet' }: { title: string; items: string[]; accent: string; empty?: string }) {
   return (
     <div>
@@ -472,6 +584,81 @@ function AnalysisCard({ title, items, accent, empty }: { title: string; items: s
   );
 }
 
+type EntryVisualProfile = {
+  title: string;
+  reading: string;
+  materials: string[];
+  materialColors: [string, string, string];
+  compositionTitle: string;
+  composition: string[];
+  diagramType: 'monastery-plinth' | 'free-plan' | 'generic';
+  slotReadings: Record<Entry['media'][number]['type'], string>;
+};
+
+function entryVisualProfile(entry: Entry): EntryVisualProfile {
+  if (entry.slug === 'alterszentrum-kloster-ingenbohl') {
+    return {
+      title: 'Mineralischer Klosterhügel, neue Pflegeordnung',
+      reading: 'Das Objektblatt folgt der Materiallogik des Projekts: ein ruhiger, erdiger Grundton aus Klosterhügel und Bestand, darüber präzise grüne Akzente für Garten, Hof und Heilpflege. Die Oberfläche liest sich weniger als Bildcollage, mehr als tektonische Schichtung aus Sockel, Kern, Fassade und Hof.',
+      materials: ['Trasskalk / mineralisch', 'Holz lasiert', 'Betontragwerk'],
+      materialColors: ['#9b9b83', '#5f7655', '#6f746d'],
+      compositionTitle: 'Quadratischer Körper, Hof, Hangkante und vertikale Fassadenstrata',
+      composition: [
+        'Fast quadratischer Baukörper mit eingeschnittenem Hof als ruhigem Zentrum.',
+        'Stahlbetonskelett und aussteifender Kern als tragende Grundstruktur.',
+        'Vertikale Fassadengliederung und Trasskalkelemente erzeugen eine mineralische Tiefe.',
+        'Hangkante, Garten und Klosterbestand werden als zusammenhängender Campus gelesen.'
+      ],
+      diagramType: 'monastery-plinth',
+      slotReadings: {
+        exterior: 'Hangkante / Klosterhügel / vertikale Fassade',
+        interior: 'Pflegezimmer / mineralische Ruhe / Holz und Putz',
+        section: 'Sockel, Hof, Kern und Terrassen',
+        plan: 'Quadrat, Hof, Cluster und Erschliessung'
+      }
+    };
+  }
+
+  if (entry.slug === 'villa-savoye') {
+    return {
+      title: 'Weisser Apparat, freie Bewegung',
+      reading: 'Das Objektblatt betont die abstrakte Modernität: heller Körper, Pilotis, Rampe, Dachgarten und horizontale Fenster werden als räumliche Maschine lesbar.',
+      materials: ['Putz / Weiss', 'Glasband', 'Beton / Pilotis'],
+      materialColors: ['#e8e5d7', '#83b7bd', '#8d9189'],
+      compositionTitle: 'Freier Grundriss, Rampe und Dachgarten',
+      composition: ['Pilotis lösen den Körper vom Boden.', 'Rampe verbindet Bewegung und Blick.', 'Bandfenster schneiden die Fassade horizontal.', 'Dachgarten ersetzt den verlorenen Boden.'],
+      diagramType: 'free-plan',
+      slotReadings: {
+        exterior: 'Weisser Körper auf Pilotis',
+        interior: 'Rampe und freier Raum',
+        section: 'Promenade architecturale',
+        plan: 'Freier Grundriss'
+      }
+    };
+  }
+
+  return {
+    title: 'Objektlogik aus Quellen, Material und Filter',
+    reading: 'Dieses Datenblatt verwendet die vorhandenen Quellen, Themen und Analysefelder, um eine objektspezifische Oberfläche aufzubauen. Mit echten Medien kann die visuelle Identität später präziser werden.',
+    materials: entry.themes.slice(0, 3).length ? entry.themes.slice(0, 3) : ['source', 'type', 'context'],
+    materialColors: ['#6d7674', '#8f8b75', '#6f677e'],
+    compositionTitle: 'Kompositionslesung',
+    composition: [
+      entry.short_description,
+      `Typologie: ${entry.entry_type.replace(/_/g, ' ')}`,
+      `Stilsektor: ${entry.style_sector.replace(/_/g, ' ')}`,
+      `Filter: ${entry.themes.slice(0, 3).join(', ') || 'needs review'}`
+    ],
+    diagramType: 'generic',
+    slotReadings: {
+      exterior: 'Aussenwirkung und Kontext',
+      interior: 'Innenraum und Atmosphäre',
+      section: 'Schnitt und Tragwerk',
+      plan: 'Grundriss und Ordnung'
+    }
+  };
+}
+
 function sourceItems(entry: Entry) {
   return [
     ...(entry.source_documents ?? []),
@@ -496,6 +683,10 @@ function analysisItems(entry: Entry, types: string[]) {
 function publicModelPreviewUrl(entry: Entry) {
   if (entry.slug !== 'villa-savoye') return null;
   return '/archive-models/villa-savoye/low.glb';
+}
+
+function primaryMediaUrl(entry: Entry) {
+  return entry.media.find((media) => media.type === 'exterior' && media.url)?.url ?? entry.media.find((media) => media.url)?.url ?? null;
 }
 
 function mediaSlotNumber(type: Entry['media'][number]['type']) {

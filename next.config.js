@@ -5,6 +5,10 @@ const nextConfig = {
   // Static HTML Export - keeps the MVP deployable without SSR/API runtime.
   output: 'export',
 
+  // Codex and some local browsers open the dev site via 127.0.0.1. Allow that
+  // origin so the dev client can hydrate instead of leaving the atlas inert.
+  allowedDevOrigins: ['127.0.0.1'],
+
   // Optional GitHub Pages compatibility for imperigo.github.io/Architektur-Cosmos/.
   basePath: isGithubPages ? '/Architektur-Cosmos' : '',
   assetPrefix: isGithubPages ? '/Architektur-Cosmos/' : '',

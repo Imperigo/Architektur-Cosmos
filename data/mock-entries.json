@@ -4130,18 +4130,18 @@
       "modern villa",
       "reinforced concrete"
     ],
-    "short_description": "Ikone der fruehen Moderne, in der die fuenf Punkte, Promenade architecturale und abstrakte Wohnmaschine in Hausform erscheinen.",
+    "short_description": "Ikone der frühen Moderne, in der die fünf Punkte, Promenade architecturale und abstrakte Wohnmaschine in Hausform erscheinen.",
     "source_quality": "captured_sources_with_diagrammatic_reconstruction",
-    "one_sentence": "Villa Savoye ist als Bauwerk in Poissy, France im Jahr 1931 im Architecture Cosmos verortet und verknuepft fuenf Punkte, Promenade architecturale, Pilotis und den abstrakten Wohnapparat der fruehen Moderne.",
-    "full_description": "Villa Savoye verdichtet Le Corbusiers fuenf Punkte der Architektur zu einem kanonischen Wohnhaus: Pilotis heben das Volumen vom Boden, der freie Grundriss loest tragende Waende auf, die freie Fassade wird zur abstrakten Huelle, lange Fensterbaender schneiden Licht in den Innenraum, und der Dachgarten ersetzt den besetzten Boden als kuenstliche Landschaft. Die Promenade architecturale fuehrt vom Ankommen unter dem Haus ueber Rampe, Wohnraum und Dachterrasse durch eine choreografierte Sequenz von Bewegung, Blick und Konstruktion. Im Architecture Cosmos wird Villa Savoye als moderner Modellknoten gelesen: ein Haus, das zugleich Manifest, Raumapparat, Stahlbeton-Diagramm und spaeteres Referenzobjekt fuer Rekonstruktion, Analyse und 3D-Schichtung ist.",
+    "one_sentence": "Villa Savoye ist als Bauwerk in Poissy, France im Jahr 1931 im Architecture Cosmos verortet und verknüpft fünf Punkte, Promenade architecturale, Pilotis und den abstrakten Wohnapparat der frühen Moderne.",
+    "full_description": "Villa Savoye verdichtet Le Corbusiers fünf Punkte der Architektur zu einem kanonischen Wohnhaus: Pilotis heben das Volumen vom Boden, der freie Grundriss löst tragende Wände auf, die freie Fassade wird zur abstrakten Hülle, lange Fensterbänder schneiden Licht in den Innenraum, und der Dachgarten ersetzt den besetzten Boden als künstliche Landschaft. Die Promenade architecturale führt vom Ankommen unter dem Haus über Rampe, Wohnraum und Dachterrasse durch eine choreografierte Sequenz von Bewegung, Blick und Konstruktion. Im Architecture Cosmos wird Villa Savoye als moderner Modellknoten gelesen: ein Haus, das zugleich Manifest, Raumapparat, Stahlbeton-Diagramm und späteres Referenzobjekt für Rekonstruktion, Analyse und 3D-Schichtung ist.",
     "media": [
       {
         "type": "exterior",
-        "label": "Exterior / public domain study image",
-        "placeholder": "Exterior view of Villa Savoye as a freestanding white volume on pilotis in Poissy.",
-        "credit": "Wikimedia Commons / Wasily / CC0",
-        "source_url": "https://commons.wikimedia.org/wiki/File:Savoye_3.JPG",
-        "url": "archive-intake/villa-savoye/exterior/savoye-3-exterior-cc0.jpg"
+        "label": "Exterior / Library of Congress study image",
+        "placeholder": "Exterior view of Villa Savoye as a lifted white volume on pilotis in Poissy.",
+        "credit": "Library of Congress / Balthazar Korab collection / no known restrictions",
+        "source_url": "https://www.loc.gov/item/2020714937/",
+        "url": "/archive-media/villa-savoye/exterior/villa-savoye-loc-exterior-crop.jpg"
       },
       {
         "type": "interior",
@@ -4149,7 +4149,7 @@
         "placeholder": "Interior reference with Le Corbusier furniture and Villa Savoye spatial atmosphere.",
         "credit": "Wikimedia Commons / jeanbaptisteparis / CC BY-SA 2.0",
         "source_url": "https://commons.wikimedia.org/wiki/File:Villa_Savoye_(8237925975).jpg",
-        "url": "archive-intake/villa-savoye/interior/villa-savoye-chaise-longue-interior-cc-by-sa-2.jpg"
+        "url": "/archive-media/villa-savoye/interior/villa-savoye-chaise-longue-interior-cc-by-sa-2.jpg"
       },
       {
         "type": "section",
@@ -4157,7 +4157,7 @@
         "placeholder": "Vector study section showing pilotis, suspended volume, ramp, roof garden and promenade sequence.",
         "credit": "Architecture Cosmos / diagrammatic reconstruction / not measured",
         "source_url": "archive-intake/villa-savoye/section/villa-savoye-long-section-diagram.pdf",
-        "url": "archive-intake/villa-savoye/section/villa-savoye-long-section-diagram.svg"
+        "url": "/archive-media/villa-savoye/section/villa-savoye-long-section-diagram.svg"
       },
       {
         "type": "plan",
@@ -4165,7 +4165,7 @@
         "placeholder": "Vector study plan showing pilotis grid, curved car trace, entry core and ramp logic.",
         "credit": "Architecture Cosmos / diagrammatic reconstruction / not measured",
         "source_url": "archive-intake/villa-savoye/plan/villa-savoye-ground-floor-diagram.pdf",
-        "url": "archive-intake/villa-savoye/plan/villa-savoye-ground-floor-diagram.svg"
+        "url": "/archive-media/villa-savoye/plan/villa-savoye-ground-floor-diagram.svg"
       }
     ],
     "source_documents": [
@@ -4405,29 +4405,29 @@
     "source_assets": [
       {
         "kind": "image",
-        "label": "Exterior CC0 image candidate",
-        "url": "archive-intake/villa-savoye/exterior/savoye-3-exterior-cc0.jpg",
-        "credit": "Wikimedia Commons / Wasily / CC0",
-        "source_url": "https://commons.wikimedia.org/wiki/File:Savoye_3.JPG"
+        "label": "Exterior Library of Congress image candidate",
+        "url": "/archive-media/villa-savoye/exterior/villa-savoye-loc-exterior-crop.jpg",
+        "credit": "Library of Congress / Balthazar Korab collection / no known restrictions",
+        "source_url": "https://www.loc.gov/item/2020714937/"
       },
       {
         "kind": "image",
         "label": "Interior CC BY-SA image candidate",
-        "url": "archive-intake/villa-savoye/interior/villa-savoye-chaise-longue-interior-cc-by-sa-2.jpg",
+        "url": "/archive-media/villa-savoye/interior/villa-savoye-chaise-longue-interior-cc-by-sa-2.jpg",
         "credit": "Wikimedia Commons / jeanbaptisteparis / CC BY-SA 2.0",
         "source_url": "https://commons.wikimedia.org/wiki/File:Villa_Savoye_(8237925975).jpg"
       },
       {
         "kind": "plan",
         "label": "Ground floor vector reconstruction",
-        "url": "archive-intake/villa-savoye/plan/villa-savoye-ground-floor-diagram.svg",
+        "url": "/archive-media/villa-savoye/plan/villa-savoye-ground-floor-diagram.svg",
         "credit": "Architecture Cosmos / diagrammatic reconstruction",
         "source_url": "archive-intake/villa-savoye/plan/villa-savoye-ground-floor-diagram.pdf"
       },
       {
         "kind": "section",
         "label": "Long section vector reconstruction",
-        "url": "archive-intake/villa-savoye/section/villa-savoye-long-section-diagram.svg",
+        "url": "/archive-media/villa-savoye/section/villa-savoye-long-section-diagram.svg",
         "credit": "Architecture Cosmos / diagrammatic reconstruction",
         "source_url": "archive-intake/villa-savoye/section/villa-savoye-long-section-diagram.pdf"
       }
@@ -4469,8 +4469,8 @@
       {
         "kind": "image",
         "media_slot": "exterior",
-        "title": "savoye-3-exterior-cc0.jpg",
-        "local_path": "archive-intake/villa-savoye/exterior/savoye-3-exterior-cc0.jpg",
+        "title": "villa-savoye-loc-exterior-crop.jpg",
+        "local_path": "/archive-media/villa-savoye/exterior/villa-savoye-loc-exterior-crop.jpg",
         "planned_r2_key": "entries/villa-savoye/media/exterior-01.jpg",
         "rights_status": "public_domain",
         "public_display_allowed": true
@@ -4479,7 +4479,7 @@
         "kind": "image",
         "media_slot": "interior",
         "title": "villa-savoye-chaise-longue-interior-cc-by-sa-2.jpg",
-        "local_path": "archive-intake/villa-savoye/interior/villa-savoye-chaise-longue-interior-cc-by-sa-2.jpg",
+        "local_path": "/archive-media/villa-savoye/interior/villa-savoye-chaise-longue-interior-cc-by-sa-2.jpg",
         "planned_r2_key": "entries/villa-savoye/media/interior-01.jpg",
         "rights_status": "licensed",
         "public_display_allowed": true
@@ -4488,7 +4488,7 @@
         "kind": "plan",
         "media_slot": "plan",
         "title": "villa-savoye-ground-floor-diagram.svg",
-        "local_path": "archive-intake/villa-savoye/plan/villa-savoye-ground-floor-diagram.svg",
+        "local_path": "/archive-media/villa-savoye/plan/villa-savoye-ground-floor-diagram.svg",
         "planned_r2_key": "entries/villa-savoye/media/plan-01.svg",
         "rights_status": "own_work",
         "public_display_allowed": true
@@ -4497,7 +4497,7 @@
         "kind": "section",
         "media_slot": "section",
         "title": "villa-savoye-long-section-diagram.svg",
-        "local_path": "archive-intake/villa-savoye/section/villa-savoye-long-section-diagram.svg",
+        "local_path": "/archive-media/villa-savoye/section/villa-savoye-long-section-diagram.svg",
         "planned_r2_key": "entries/villa-savoye/media/section-01.svg",
         "rights_status": "own_work",
         "public_display_allowed": true
@@ -6653,6 +6653,202 @@
           "model_readiness": "pilot_ready"
         },
         "review_status": "reviewed"
+      }
+    ]
+  },
+  {
+    "id": "alterszentrum-kloster-ingenbohl",
+    "slug": "alterszentrum-kloster-ingenbohl",
+    "title": "Alterszentrum Kloster Ingenbohl",
+    "entry_type": "building",
+    "year_start": 2023,
+    "year_end": null,
+    "authors": [
+      "Boltshauser Architekten",
+      "Roger Boltshauser"
+    ],
+    "city": "Brunnen",
+    "country": "Schweiz",
+    "style_sector": "sustainable_architecture",
+    "lecture_cluster": [
+      "architecture_cosmos_dev_research",
+      "private_research_pipeline"
+    ],
+    "themes": [
+      "adaptive reuse",
+      "monastery",
+      "care architecture",
+      "concrete structure",
+      "lime plaster",
+      "clay plaster",
+      "timber facade",
+      "inner courtyard",
+      "roof garden",
+      "existing fabric",
+      "square plan",
+      "slope edge",
+      "monastery hill"
+    ],
+    "short_description": "Umbau und Erweiterung des Klosters Ingenbohl zu einem Alterszentrum, bei dem bestehende Klosterstrukturen, neue Pflegearchitektur und materialbezogene Tektonik miteinander verbunden werden.",
+    "source_quality": "draft_source_attached",
+    "one_sentence": "Das Alterszentrum Kloster Ingenbohl verbindet klösterlichen Bestand, neue Pflegearchitektur, Betontragwerk, mineralische Oberflächen und hölzerne Fassadenschichten zu einem zeitgenössischen Weiterbauen im Bestand.",
+    "full_description": "Der Umbau des Klosters Ingenbohl in Brunnen wird als Weiterbauen am Bestand gelesen: Die neue Struktur ergänzt das klösterliche Ensemble, arbeitet mit Hof, Sockel, Terrassen und präzisen Materialschichten und verbindet Pflegearchitektur mit einer ruhigen, tektonisch starken Ordnung. Für Architecture Cosmos dient der Eintrag als Pilot für den Dev-Research-Workflow: Quellen, Medien, Analysefilter, Tragwerk, Materialsystem und spätere Modell-Layer werden strukturiert vorbereitet, bevor echte Bild- und Planrechte öffentlich freigegeben werden.",
+    "media": [
+      {
+        "type": "exterior",
+        "label": "Aussenansicht",
+        "placeholder": "Aussenansicht / Kloster Ingenbohl / Hangkante, Klosterhügel, vertikale Fassadenstrata und mineralischer Baukörper",
+        "credit": "private_research"
+      },
+      {
+        "type": "interior",
+        "label": "Innenraum",
+        "placeholder": "Innenraum / Kloster Ingenbohl / helle Pflegezimmer, ruhige mineralische Oberflächen, Holz, Lehm- und Kalkputz",
+        "credit": "private_research"
+      },
+      {
+        "type": "section",
+        "label": "Schnitt",
+        "placeholder": "Schnitt / Kloster Ingenbohl / Sockel, Hof, Hangkante, Dachgarten, aussteifender Kern und Stahlbetonskelett",
+        "credit": "private_research"
+      },
+      {
+        "type": "plan",
+        "label": "Grundriss",
+        "placeholder": "Grundriss / Kloster Ingenbohl / fast quadratischer Baukörper, eingeschnittener Hof, Pflegecluster und Erschliessung",
+        "credit": "private_research"
+      }
+    ],
+    "source_documents": [
+      "Boltshauser Architekten project page",
+      "Baunetz project report",
+      "swiss-architects project note"
+    ],
+    "source_url": "https://boltshauser.info/projekt/alterszentrum-kloster-ingenbohl/",
+    "source_candidates": [
+      {
+        "source_type": "website",
+        "title": "Boltshauser Architekten project page",
+        "url": "https://boltshauser.info/projekt/alterszentrum-kloster-ingenbohl/",
+        "reliability_level": "primary_source",
+        "rights_status": "private_research",
+        "notes": "Primary office source for private research and later rights review."
+      }
+    ],
+    "database_tags": [
+      "source:web-source",
+      "typology:building",
+      "style:sustainable-architecture",
+      "theme:adaptive-reuse",
+      "theme:monastery",
+      "theme:care-architecture",
+      "theme:concrete-structure",
+      "theme:timber-facade",
+      "material:concrete",
+      "material:timber",
+      "material:lime-plaster",
+      "material:clay-plaster",
+      "material:trass-lime",
+      "structure:solid-and-frame-hybrid",
+      "structure:reinforced-concrete-frame",
+      "structure:bracing-core",
+      "context:existing-fabric",
+      "context:monastery-hill",
+      "composition:square-plan",
+      "composition:inner-courtyard",
+      "rights:private-research",
+      "analysis:needs-review"
+    ],
+    "database_profile": {
+      "status": "draft",
+      "r2_prefix": "entries/alterszentrum-kloster-ingenbohl",
+      "source_count": 3,
+      "media_count": 4,
+      "model_count": 0,
+      "analysis_count": 4,
+      "tag_count": 22
+    },
+    "ingestion_status": {
+      "stage": "ready_for_wormhole",
+      "source_status": "candidate",
+      "asset_status": "rights_blocked",
+      "model_status": "planned",
+      "updated_at": "2026-05-19"
+    },
+    "analysis_layers": [
+      {
+        "analysis_type": "structure",
+        "summary": "Vorläufige Tragwerkslesung: massiver Bestand, ergänzende neue Tragstruktur, Stahlbetonskelett und aussteifender Kern. Die klare Lastabtragung über Sockel, Wand- und Deckensysteme muss später anhand von Plänen geprüft und im 3D-Modell layerweise getrennt werden.",
+        "data": {
+          "hypotheses": [
+            "existing_monastery_fabric",
+            "new_reinforced_concrete_frame",
+            "bracing_core",
+            "care_cluster_floorplates",
+            "courtyard_and_terrace_order"
+          ]
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "material_system",
+        "summary": "Mineralische Oberflächen, Trasskalkelemente mit vertikaler Struktur, Beton, lasiertes Holz, Kalkputz und Lehmputz bilden das vorläufige Materialsystem und verbinden Bestand mit neuer Pflegearchitektur.",
+        "data": {
+          "materials": [
+            "concrete",
+            "timber",
+            "trass lime elements",
+            "lime plaster",
+            "clay plaster",
+            "existing masonry"
+          ]
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Die tektonische Analyse liest das Projekt als präzise Schichtung von Bestand, Sockel, Hangkante, Hof, vertikaler Fassadenhaut, aussteifendem Kern und neuen Pflegegeschossen.",
+        "data": {
+          "layers": [
+            "existing_fabric",
+            "plinth",
+            "slope_edge",
+            "courtyard",
+            "vertical_trass_lime_facade",
+            "bracing_core",
+            "care_floors"
+          ]
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "summary": "Vorgeschlagene Filter: Umbau, Kloster, Pflegearchitektur, quadratischer Baukörper, Hof, Hangkante, Stahlbetonskelett, aussteifender Kern, Beton, Holzfassade, Trasskalk, Kalkputz, Lehmputz, Weiterbauen im Bestand, Schweizer Gegenwartsarchitektur.",
+        "data": {
+          "primary_filters": [
+            "adaptive_reuse",
+            "monastery",
+            "care_architecture",
+            "square_plan",
+            "inner_courtyard",
+            "slope_edge",
+            "switzerland",
+            "contemporary_architecture"
+          ],
+          "material_filters": [
+            "concrete",
+            "timber",
+            "trass_lime",
+            "lime_plaster",
+            "clay_plaster"
+          ],
+          "structural_filters": [
+            "reinforced_concrete_frame",
+            "bracing_core",
+            "existing_fabric"
+          ]
+        },
+        "review_status": "draft"
       }
     ]
   }
