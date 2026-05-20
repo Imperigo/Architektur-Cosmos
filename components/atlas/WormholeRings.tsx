@@ -28,15 +28,16 @@ function WormholeRingsComponent({ state, isMoving = false, quality = 'balanced' 
       <defs>
         <radialGradient id="wormhole-vignette" cx="50%" cy="50%" r="50%">
           <stop offset="0%" stopColor="#050505" stopOpacity="0.02" />
-          <stop offset="12%" stopColor="#050505" stopOpacity="0.22" />
-          <stop offset="27%" stopColor="#00e7ff" stopOpacity="0.3" />
-          <stop offset="45%" stopColor="#8f5cff" stopOpacity="0.25" />
-          <stop offset="63%" stopColor="#ffb000" stopOpacity="0.18" />
-          <stop offset="80%" stopColor="#ff3d1f" stopOpacity="0.13" />
+          <stop offset="11%" stopColor="#050505" stopOpacity="0.2" />
+          <stop offset="26%" stopColor="#00f5ff" stopOpacity="0.43" />
+          <stop offset="42%" stopColor="#a56bff" stopOpacity="0.36" />
+          <stop offset="58%" stopColor="#ff38f5" stopOpacity="0.26" />
+          <stop offset="73%" stopColor="#ffd43d" stopOpacity="0.25" />
+          <stop offset="88%" stopColor="#ff4b20" stopOpacity="0.18" />
           <stop offset="100%" stopColor="#050505" stopOpacity="0" />
         </radialGradient>
       </defs>
-      <circle className="wormhole-breath" cx={atlasSize.cx} cy={atlasSize.cy + 8} r={wormholeTunnel.maxRadius + 18 - edgeCompression * 24} fill="url(#wormhole-vignette)" opacity={0.84 - state.timePosition * 0.22} />
+      <circle className="wormhole-breath" cx={atlasSize.cx} cy={atlasSize.cy + 8} r={wormholeTunnel.maxRadius + 18 - edgeCompression * 24} fill="url(#wormhole-vignette)" opacity={0.98 - state.timePosition * 0.18} />
       {!isReduced && !isMoving ? <IdleOrbits state={state} /> : null}
       {!isReduced && !isMoving ? <IdleWhirlLines state={state} /> : null}
       {!isMoving || isFull ? <EnergyBands rings={rings} state={state} isMoving={isMoving} quality={quality} /> : null}
@@ -47,8 +48,8 @@ function WormholeRingsComponent({ state, isMoving = false, quality = 'balanced' 
           d={line}
           fill="none"
           stroke={energyColor(index)}
-          strokeWidth={index % 4 === 0 ? 1.02 : 0.72}
-          opacity={isMoving ? (index % 4 === 0 ? 0.18 : 0.12) : index % 4 === 0 ? 0.22 : 0.15}
+          strokeWidth={index % 4 === 0 ? 1.18 : 0.82}
+          opacity={isMoving ? (index % 4 === 0 ? 0.23 : 0.15) : index % 4 === 0 ? 0.32 : 0.21}
           style={{ animationDelay: `${index * -0.41}s` }}
         />
       ))}
@@ -59,8 +60,8 @@ function WormholeRingsComponent({ state, isMoving = false, quality = 'balanced' 
           d={line}
           fill="none"
           stroke={energyColor(index + 2)}
-          strokeWidth={index % 6 === 0 ? 0.68 : 0.42}
-          opacity={isMoving ? (index % 6 === 0 ? 0.2 : 0.12) : index % 6 === 0 ? 0.28 : 0.17}
+          strokeWidth={index % 6 === 0 ? 0.78 : 0.48}
+          opacity={isMoving ? (index % 6 === 0 ? 0.28 : 0.16) : index % 6 === 0 ? 0.38 : 0.22}
           style={{ animationDelay: `${index * -0.19}s` }}
         />
       ))}
@@ -72,8 +73,8 @@ function WormholeRingsComponent({ state, isMoving = false, quality = 'balanced' 
           d={line}
           fill="none"
           stroke={index % 4 === 0 ? '#fff3d1' : energyColor(index)}
-          strokeWidth={index % 6 === 0 ? 1.05 : 0.58}
-          opacity={isMoving ? (index % 6 === 0 ? 0.18 : 0.08) : index % 6 === 0 ? 0.38 : 0.22}
+          strokeWidth={index % 6 === 0 ? 1.18 : 0.68}
+          opacity={isMoving ? (index % 6 === 0 ? 0.24 : 0.12) : index % 6 === 0 ? 0.5 : 0.3}
           style={{ animationDelay: `${index * -0.08}s` }}
         />
       ))}
@@ -84,7 +85,7 @@ function WormholeRingsComponent({ state, isMoving = false, quality = 'balanced' 
         const ringOpacity = ring ? tunnelOpacity(depth) * ringEdgeDissolve(depth, state.timePosition) : 0;
         const ringDash = ring?.mode === 'local' ? '2 9' : ring?.weight === 'major' ? '1 8' : '1 12';
         const ringStroke = ring?.mode === 'local' ? 1.58 : ring?.weight === 'major' ? 1.08 : 0.72;
-        const ringColor = ring?.mode === 'local' ? '#fff8d6' : ring?.weight === 'major' ? '#ffd16d' : '#f7f7f4';
+        const ringColor = ring?.mode === 'local' ? '#fff8d6' : ring?.weight === 'major' ? '#ffd43d' : '#f7f7f4';
 
         return (
           <g key={`ring-slot-${slot.slotIndex}`}>
@@ -96,8 +97,8 @@ function WormholeRingsComponent({ state, isMoving = false, quality = 'balanced' 
               fill="none"
               stroke={ringColor}
               strokeDasharray={ringDash}
-              strokeWidth={ringStroke}
-              opacity={(isMoving ? 0.72 : 1) * (ring?.mode === 'local' ? 0.94 : Math.max(0.24, 0.72 - Math.max(0, depth) * 0.22)) * ringOpacity}
+              strokeWidth={ringStroke * 1.08}
+              opacity={(isMoving ? 0.78 : 1) * (ring?.mode === 'local' ? 1 : Math.max(0.32, 0.82 - Math.max(0, depth) * 0.18)) * ringOpacity}
               style={{ animationDelay: `${index * -0.16}s` }}
             />
           </g>
@@ -110,7 +111,7 @@ function WormholeRingsComponent({ state, isMoving = false, quality = 'balanced' 
 export const WormholeRings = memo(WormholeRingsComponent);
 
 function EnergyBands({ rings, state, isMoving, quality }: { rings: RingSlot[]; state: WormholeState; isMoving: boolean; quality: 'reduced' | 'balanced' | 'full' }) {
-  const bandScale = quality === 'reduced' ? 0.25 : isMoving ? 0.34 : quality === 'full' ? 1 : 0.62;
+  const bandScale = quality === 'reduced' ? 0.28 : isMoving ? 0.48 : quality === 'full' ? 1.22 : 0.86;
 
   return (
     <g aria-hidden="true" pointerEvents="none">
@@ -121,7 +122,7 @@ function EnergyBands({ rings, state, isMoving, quality }: { rings: RingSlot[]; s
 
         const center = tunnelCenter(depth, state.phase);
         const opacity = isVisible ? tunnelOpacity(depth) * ringEdgeDissolve(depth, state.timePosition) : 0;
-        const bandOpacity = ((ring?.mode === 'local' ? 0.18 : ring?.weight === 'major' ? 0.12 : 0.065) * opacity * bandScale);
+        const bandOpacity = ((ring?.mode === 'local' ? 0.28 : ring?.weight === 'major' ? 0.2 : 0.105) * opacity * bandScale);
 
         return (
           <circle
@@ -132,7 +133,7 @@ function EnergyBands({ rings, state, isMoving, quality }: { rings: RingSlot[]; s
             r={ring?.radius ?? 0}
             fill="none"
             stroke={energyColor(index + (ring?.weight === 'major' ? 2 : 0))}
-            strokeWidth={ring?.mode === 'local' ? 9 : ring?.weight === 'major' ? 6 : 3.6}
+            strokeWidth={ring?.mode === 'local' ? 12 : ring?.weight === 'major' ? 7.4 : 4.4}
             opacity={isMoving ? bandOpacity * 1.05 : bandOpacity}
           />
         );

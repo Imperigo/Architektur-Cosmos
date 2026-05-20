@@ -203,6 +203,8 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     frame: null as number | null,
     timeout: null as number | null
   });
+  const mainRef = useRef<HTMLElement | null>(null);
+  const cameraRef = useRef<SVGGElement | null>(null);
   const visualPanRef = useRef<VisualPan>({ x: 0, y: 0 });
   const panGestureRef = useRef({
     active: false,
@@ -245,7 +247,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     transition: 'filter 520ms cubic-bezier(0.19, 1, 0.22, 1), opacity 520ms cubic-bezier(0.19, 1, 0.22, 1)'
   };
   const visualZoomValue = visualZoom.currentZoom;
-  const cameraTransform = `translate(${atlasSize.cx + visualPan.x} ${atlasSize.cy + visualPan.y}) scale(${roundZoom(visualZoomValue)}) translate(${-atlasSize.cx} ${-atlasSize.cy})`;
+  const cameraTransform = buildCameraTransform(visualZoomValue, visualPan);
   const visualZoomStyle = {
     '--cosmos-visual-zoom': String(roundZoom(visualZoomValue)),
     '--cosmos-visual-pan-x': `${roundMotion(visualPan.x)}px`,
@@ -479,7 +481,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   function setVisualPanValue(nextPan: VisualPan) {
     const next = clampVisualPan(nextPan, visualZoomRef.current.currentZoom);
     visualPanRef.current = next;
-    setVisualPan(next);
+    applyVisualTransform();
   }
 
   function scheduleVisualPan(nextPan: VisualPan) {
@@ -499,6 +501,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     if (nextZoom > 1.01) return;
     visualPanRef.current = { x: 0, y: 0 };
     setVisualPan({ x: 0, y: 0 });
+    applyVisualTransform({ x: 0, y: 0 }, nextZoom);
   }
 
   function stepVisualZoom() {
@@ -519,7 +522,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
       velocity: roundZoom(ref.velocity),
       isZooming: !settled
     });
-    setVisualPanValue(visualPanRef.current);
+    applyVisualTransform(visualPanRef.current, ref.currentZoom);
     resetVisualPanIfUnzoomed(ref.currentZoom);
 
     if (!settled) {
@@ -837,6 +840,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   function handlePointerUp(event: PointerEvent<SVGSVGElement>) {
     if (!panGestureRef.current.active || panGestureRef.current.pointerId !== event.pointerId) return;
     event.currentTarget.releasePointerCapture?.(event.pointerId);
+    setVisualPan(visualPanRef.current);
     window.setTimeout(() => {
       panGestureRef.current = {
         active: false,
@@ -916,16 +920,47 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     return { x: transformed.x, y: transformed.y };
   }
 
+  function screenPanToSvgPan(pan: VisualPan): VisualPan {
+    const rect = svgRef.current?.getBoundingClientRect();
+    if (!rect || rect.width <= 0 || rect.height <= 0) return pan;
+
+    return {
+      x: pan.x * (atlasSize.width / rect.width),
+      y: pan.y * (atlasSize.height / rect.height)
+    };
+  }
+
+  function buildCameraTransform(zoom: number, pan: VisualPan) {
+    const svgPan = screenPanToSvgPan(pan);
+    return `translate(${roundMotion(atlasSize.cx + svgPan.x)} ${roundMotion(atlasSize.cy + svgPan.y)}) scale(${roundZoom(zoom)}) translate(${-atlasSize.cx} ${-atlasSize.cy})`;
+  }
+
+  function applyVisualTransform(pan = visualPanRef.current, zoom = visualZoomRef.current.currentZoom) {
+    const main = mainRef.current;
+    const camera = cameraRef.current;
+
+    if (main) {
+      main.style.setProperty('--cosmos-visual-zoom', String(roundZoom(zoom)));
+      main.style.setProperty('--cosmos-visual-pan-x', `${roundMotion(pan.x)}px`);
+      main.style.setProperty('--cosmos-visual-pan-y', `${roundMotion(pan.y)}px`);
+    }
+
+    if (camera) {
+      camera.setAttribute('transform', buildCameraTransform(zoom, pan));
+    }
+  }
+
   function toCameraPoint(point: SvgPoint): SvgPoint {
     const zoom = visualZoomRef.current.currentZoom || 1;
+    const pan = screenPanToSvgPan(visualPanRef.current);
     return {
-      x: atlasSize.cx + (point.x - atlasSize.cx - visualPanRef.current.x) / zoom,
-      y: atlasSize.cy + (point.y - atlasSize.cy - visualPanRef.current.y) / zoom
+      x: atlasSize.cx + (point.x - atlasSize.cx - pan.x) / zoom,
+      y: atlasSize.cy + (point.y - atlasSize.cy - pan.y) / zoom
     };
   }
 
   return (
-    <main style={visualZoomStyle} className={`relative h-screen w-screen overflow-hidden bg-[#050505] text-[#f7f7f4] cosmos-perf-${performanceTier} cosmos-intro-${introState} ${introState === 'launching' ? 'cosmos-launching' : ''} ${isTraveling || visualZoom.isZooming ? 'cosmos-moving' : ''} ${visualZoom.currentZoom > 1.01 ? 'cosmos-lensing' : ''} ${introState === 'idle' && !isTraveling && !visualZoom.isZooming ? 'cosmos-idle' : ''}`}>
+    <main ref={mainRef} style={visualZoomStyle} className={`relative h-screen w-screen overflow-hidden bg-[#050505] text-[#f7f7f4] cosmos-perf-${performanceTier} cosmos-intro-${introState} ${introState === 'launching' ? 'cosmos-launching' : ''} ${isTraveling || visualZoom.isZooming ? 'cosmos-moving' : ''} ${visualZoom.currentZoom > 1.01 ? 'cosmos-lensing' : ''} ${introState === 'idle' && !isTraveling && !visualZoom.isZooming ? 'cosmos-idle' : ''}`}>
       <WormholeCanvas state={state} isMoving={isTraveling} quality={performanceTier} />
       <div className="relative z-10 h-full w-full">
         <svg
@@ -950,7 +985,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
           </defs>
           <rect width={atlasSize.width} height={atlasSize.height} fill="#050505" opacity={introState === 'intro' ? 0.16 : 0.02} />
           <g style={backgroundStyle} pointerEvents={selectedEntry ? 'none' : 'auto'}>
-            <g className="wormhole-camera" transform={cameraTransform}>
+            <g ref={cameraRef} className="wormhole-camera" transform={cameraTransform}>
               {performanceTier === 'full' && !isTraveling ? <WormholeRings state={state} isMoving={isTraveling} quality={performanceTier} /> : null}
 
               {relationOverlayActive ? (

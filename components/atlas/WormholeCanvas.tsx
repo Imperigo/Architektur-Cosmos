@@ -21,15 +21,15 @@ type WormholeCanvasProps = {
   quality: 'reduced' | 'balanced' | 'full';
 };
 
-const energyColors = ['#00e7ff', '#9cfff7', '#8f5cff', '#ff4fd8', '#ffd16d', '#ff4d1f'];
+const energyColors = ['#00f5ff', '#55fff0', '#a56bff', '#ff38f5', '#ffd43d', '#ff4b20', '#65ff73'];
 
 function WormholeCanvasComponent({ state, isMoving, quality }: WormholeCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const frameRef = useRef<number | null>(null);
-  const stateRef = useRef({ state, isMoving, quality });
+  const stateRef = useRef({ state, isMoving, quality, idlePhase: 0 });
 
   useEffect(() => {
-    stateRef.current = { state, isMoving, quality };
+    stateRef.current = { ...stateRef.current, state, isMoving, quality };
   }, [state, isMoving, quality]);
 
   useEffect(() => {
@@ -86,6 +86,35 @@ function WormholeCanvasComponent({ state, isMoving, quality }: WormholeCanvasPro
     });
   }, [state.timePosition, state.phase, state.edgeTension, isMoving, quality]);
 
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const context = canvas?.getContext('2d', { alpha: true });
+    if (!canvas || !context || quality === 'reduced') return;
+
+    const targetCanvas = canvas;
+    const targetContext = context;
+    let animationFrame: number | null = null;
+    let lastDraw = 0;
+
+    function tick(time: number) {
+      const current = stateRef.current;
+      if (!current.isMoving) {
+        current.idlePhase = time * 0.00012;
+        if (time - lastDraw > 48) {
+          lastDraw = time;
+          drawWormholeCanvas(targetContext, targetCanvas, current);
+        }
+      }
+      animationFrame = window.requestAnimationFrame(tick);
+    }
+
+    animationFrame = window.requestAnimationFrame(tick);
+
+    return () => {
+      if (animationFrame !== null) window.cancelAnimationFrame(animationFrame);
+    };
+  }, [quality]);
+
   return <canvas ref={canvasRef} className="wormhole-canvas" aria-hidden="true" />;
 }
 
@@ -94,13 +123,13 @@ export const WormholeCanvas = memo(WormholeCanvasComponent);
 function drawWormholeCanvas(
   context: CanvasRenderingContext2D,
   canvas: HTMLCanvasElement,
-  props: { state: WormholeState; isMoving: boolean; quality: 'reduced' | 'balanced' | 'full' }
+  props: { state: WormholeState; isMoving: boolean; quality: 'reduced' | 'balanced' | 'full'; idlePhase?: number }
 ) {
   const dpr = Number(canvas.dataset.dpr || 1);
   const cssWidth = canvas.width / dpr;
   const cssHeight = canvas.height / dpr;
   const viewport = viewportToAtlas(cssWidth, cssHeight);
-  const { state, isMoving, quality } = props;
+  const { state, isMoving, quality, idlePhase = 0 } = props;
   const isReduced = quality === 'reduced';
   const isFull = quality === 'full';
 
@@ -116,9 +145,9 @@ function drawWormholeCanvas(
 
   drawVignette(context, state);
   drawGrid(context, state, { quality, isMoving });
-  if (!isReduced && !isMoving) drawIdleMotion(context, state);
-  if (!isReduced && (!isMoving || isFull)) drawEnergyBands(context, state, { quality, isMoving });
-  drawRings(context, state, { isMoving });
+  if (!isReduced && !isMoving) drawIdleMotion(context, state, idlePhase);
+  if (!isReduced && (!isMoving || isFull)) drawEnergyBands(context, state, { quality, isMoving, idlePhase });
+  drawRings(context, state, { isMoving, idlePhase });
 
   context.restore();
 }
@@ -140,15 +169,16 @@ function drawVignette(context: CanvasRenderingContext2D, state: WormholeState) {
   const radius = wormholeTunnel.maxRadius + 28 - edgeCompression * 24;
   const gradient = context.createRadialGradient(atlasSize.cx, atlasSize.cy + 8, 12, atlasSize.cx, atlasSize.cy + 8, radius);
 
-  gradient.addColorStop(0, 'rgba(5,5,5,0.06)');
-  gradient.addColorStop(0.18, 'rgba(5,5,5,0.28)');
-  gradient.addColorStop(0.31, 'rgba(0,231,255,0.22)');
-  gradient.addColorStop(0.48, 'rgba(143,92,255,0.2)');
-  gradient.addColorStop(0.66, 'rgba(255,209,109,0.14)');
-  gradient.addColorStop(0.82, 'rgba(255,77,31,0.1)');
+  gradient.addColorStop(0, 'rgba(5,5,5,0.04)');
+  gradient.addColorStop(0.14, 'rgba(5,5,5,0.2)');
+  gradient.addColorStop(0.27, 'rgba(0,245,255,0.34)');
+  gradient.addColorStop(0.42, 'rgba(165,107,255,0.31)');
+  gradient.addColorStop(0.57, 'rgba(255,56,245,0.23)');
+  gradient.addColorStop(0.72, 'rgba(255,212,61,0.22)');
+  gradient.addColorStop(0.88, 'rgba(255,75,32,0.16)');
   gradient.addColorStop(1, 'rgba(5,5,5,0)');
 
-  context.globalAlpha = Math.max(0.48, 0.84 - state.timePosition * 0.22);
+  context.globalAlpha = Math.max(0.62, 0.96 - state.timePosition * 0.18);
   context.fillStyle = gradient;
   context.beginPath();
   context.arc(atlasSize.cx, atlasSize.cy + 8, radius, 0, Math.PI * 2);
@@ -175,9 +205,9 @@ function drawGrid(context: CanvasRenderingContext2D, state: WormholeState, optio
       else context.lineTo(point.x, point.y);
     }
 
-    context.strokeStyle = spoke % 4 === 0 ? 'rgba(255,243,209,0.5)' : withAlpha(energyColor(spoke), 0.42);
-    context.lineWidth = spoke % 6 === 0 ? 1.05 : 0.58;
-    context.globalAlpha = isMoving ? (spoke % 6 === 0 ? 0.18 : 0.08) : (spoke % 6 === 0 ? 0.38 : 0.22);
+    context.strokeStyle = spoke % 4 === 0 ? 'rgba(255,248,214,0.64)' : withAlpha(energyColor(spoke), 0.58);
+    context.lineWidth = spoke % 6 === 0 ? 1.2 : 0.68;
+    context.globalAlpha = isMoving ? (spoke % 6 === 0 ? 0.24 : 0.11) : (spoke % 6 === 0 ? 0.5 : 0.3);
     context.setLineDash([1, spoke % 6 === 0 ? 12 : 18]);
     context.stroke();
   }
@@ -186,7 +216,7 @@ function drawGrid(context: CanvasRenderingContext2D, state: WormholeState, optio
   context.globalAlpha = 1;
 }
 
-function drawRings(context: CanvasRenderingContext2D, state: WormholeState, options: { isMoving: boolean }) {
+function drawRings(context: CanvasRenderingContext2D, state: WormholeState, options: { isMoving: boolean; idlePhase: number }) {
   const rings = wormholeRings(state);
 
   rings.forEach((ring, index) => {
@@ -194,17 +224,17 @@ function drawRings(context: CanvasRenderingContext2D, state: WormholeState, opti
     const center = tunnelCenter(depth, state.phase);
     const opacity = tunnelOpacity(depth) * ringEdgeDissolve(depth, state.timePosition);
     const movingScale = options.isMoving ? 0.72 : 1;
-    const ringOpacity = movingScale * (ring.mode === 'local' ? 0.94 : Math.max(0.24, 0.72 - Math.max(0, depth) * 0.22)) * opacity;
+    const ringOpacity = movingScale * (ring.mode === 'local' ? 1 : Math.max(0.32, 0.84 - Math.max(0, depth) * 0.18)) * opacity;
 
     if (ringOpacity <= 0.01) return;
 
     context.beginPath();
     context.arc(center.x, center.y, ring.radius, 0, Math.PI * 2);
-    context.strokeStyle = ring.mode === 'local' ? '#fff8d6' : ring.weight === 'major' ? '#ffd16d' : '#f7f7f4';
-    context.lineWidth = ring.mode === 'local' ? 1.58 : ring.weight === 'major' ? 1.08 : 0.72;
+    context.strokeStyle = ring.mode === 'local' ? '#fff8d6' : ring.weight === 'major' ? '#ffd43d' : 'rgba(247,247,244,0.9)';
+    context.lineWidth = ring.mode === 'local' ? 1.74 : ring.weight === 'major' ? 1.18 : 0.78;
     context.globalAlpha = ringOpacity;
     context.setLineDash(ring.mode === 'local' ? [2, 9] : ring.weight === 'major' ? [1, 8] : [1, 12]);
-    context.lineDashOffset = -index * 0.9 - state.timePosition * 20;
+    context.lineDashOffset = -index * 0.9 - state.timePosition * 20 - (options.isMoving ? 0 : options.idlePhase * 16);
     context.stroke();
   });
 
@@ -212,9 +242,9 @@ function drawRings(context: CanvasRenderingContext2D, state: WormholeState, opti
   context.globalAlpha = 1;
 }
 
-function drawEnergyBands(context: CanvasRenderingContext2D, state: WormholeState, options: { quality: 'reduced' | 'balanced' | 'full'; isMoving: boolean }) {
+function drawEnergyBands(context: CanvasRenderingContext2D, state: WormholeState, options: { quality: 'reduced' | 'balanced' | 'full'; isMoving: boolean; idlePhase: number }) {
   const rings = wormholeRings(state);
-  const bandScale = options.quality === 'reduced' ? 0.25 : options.isMoving ? 0.34 : options.quality === 'full' ? 1 : 0.62;
+  const bandScale = options.quality === 'reduced' ? 0.28 : options.isMoving ? 0.48 : options.quality === 'full' ? 1.24 : 0.86;
 
   rings.forEach((ring, index) => {
     const depth = ring.depth ?? radiusToTunnelDepth(ring.radius);
@@ -222,12 +252,13 @@ function drawEnergyBands(context: CanvasRenderingContext2D, state: WormholeState
 
     const center = tunnelCenter(depth, state.phase);
     const opacity = tunnelOpacity(depth) * ringEdgeDissolve(depth, state.timePosition);
-    const bandOpacity = (ring.mode === 'local' ? 0.18 : ring.weight === 'major' ? 0.12 : 0.065) * opacity * bandScale;
+    const idlePulse = options.isMoving ? 1 : 0.84 + Math.sin(options.idlePhase * 4.2 + index * 0.7) * 0.16;
+    const bandOpacity = (ring.mode === 'local' ? 0.28 : ring.weight === 'major' ? 0.2 : 0.105) * opacity * bandScale * idlePulse;
 
     context.beginPath();
     context.arc(center.x, center.y, ring.radius, 0, Math.PI * 2);
     context.strokeStyle = energyColor(index + (ring.weight === 'major' ? 2 : 0));
-    context.lineWidth = ring.mode === 'local' ? 9 : ring.weight === 'major' ? 6 : 3.6;
+    context.lineWidth = ring.mode === 'local' ? 12 : ring.weight === 'major' ? 7.4 : 4.4;
     context.globalAlpha = bandOpacity;
     context.stroke();
   });
@@ -235,18 +266,19 @@ function drawEnergyBands(context: CanvasRenderingContext2D, state: WormholeState
   context.globalAlpha = 1;
 }
 
-function drawIdleMotion(context: CanvasRenderingContext2D, state: WormholeState) {
+function drawIdleMotion(context: CanvasRenderingContext2D, state: WormholeState, idlePhase: number) {
   const frontDepth = tunnelFrontDepth(state);
 
   [frontDepth + 0.12, frontDepth + 0.34, frontDepth + 0.58].filter((depth) => depth < 0.92).forEach((depth, index) => {
     const center = tunnelCenter(depth, state.phase);
     context.beginPath();
-    context.arc(center.x, center.y, tunnelRadius(depth) + index * 4, 0, Math.PI * 2);
+    const breathingRadius = tunnelRadius(depth) + index * 4 + Math.sin(idlePhase * 3.4 + index) * 1.6;
+    context.arc(center.x, center.y, breathingRadius, 0, Math.PI * 2);
     context.strokeStyle = energyColor(index + 1);
-    context.lineWidth = index === 1 ? 0.75 : 0.55;
-    context.globalAlpha = 0.22 - index * 0.035;
+    context.lineWidth = index === 1 ? 1.05 : 0.76;
+    context.globalAlpha = 0.4 - index * 0.055;
     context.setLineDash(index === 1 ? [1, 18] : [1, 24]);
-    context.lineDashOffset = -state.timePosition * 80 - index * 9;
+    context.lineDashOffset = -state.timePosition * 80 - index * 9 - idlePhase * 140;
     context.stroke();
   });
 

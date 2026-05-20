@@ -14,12 +14,12 @@ const sectorGlyph: Record<StyleSector['id'], string> = {
 };
 
 const sectorColor: Record<StyleSector['id'], string> = {
-  classical_architecture: '#9b6dff',
-  pre_modern_architecture: '#ffb000',
-  modern_architecture: '#00e7ff',
-  postwar_modern_architecture: '#ff4d1f',
-  sustainable_architecture: '#65ff9a',
-  vernacular_architecture: '#ff007a'
+  classical_architecture: '#a56bff',
+  pre_modern_architecture: '#ffd43d',
+  modern_architecture: '#00f5ff',
+  postwar_modern_architecture: '#ff4b20',
+  sustainable_architecture: '#65ff73',
+  vernacular_architecture: '#ff38f5'
 };
 
 const sectorLabel: Record<StyleSector['id'], string> = {
@@ -34,9 +34,10 @@ const sectorLabel: Record<StyleSector['id'], string> = {
 function StyleSectorsComponent({ state, isMoving = false, activeStyleLens = null, onSelectStyleLens }: { state: WormholeState; isMoving?: boolean; activeStyleLens?: StyleSector['id'] | null; onSelectStyleLens?: (styleId: StyleSector['id']) => void }) {
   const innerLabelOpacity = 0.58 + smoothstep(0.18, 0.54, state.timePosition) * 0.28;
   const frontDepth = tunnelFrontDepth(state);
-  const labelDepth = frontDepth + 0.08;
+  const labelDepth = frontDepth + 0.1;
   const sectorCenter = tunnelCenter(labelDepth, state.phase);
   const outerRadius = Math.max(wormholeTunnel.minRadius + 116, tunnelRadius(frontDepth + 0.05) - 20);
+  const labelRadius = wormholeTunnel.minRadius + 72;
 
   return (
     <g aria-label="Stilsektoren">
@@ -66,24 +67,26 @@ function StyleSectorsComponent({ state, isMoving = false, activeStyleLens = null
               strokeDasharray="1 14"
               opacity={(isMoving ? 0.16 : 0.25) * lensBoost}
             />
-            <RadialLetterText
-              className="style-sector-label style-sector-label-inner"
-              text={`${sectorGlyph[sector.id]} ${labelText}`}
-              cx={sectorCenter.x}
-              cy={sectorCenter.y}
-              radius={wormholeTunnel.minRadius + 58}
-              angle={labelAngle}
-              fill={accent}
-              fontSize={6.2}
-              fontWeight={560}
-              opacity={innerLabelOpacity * (activeStyleLens && activeStyleLens !== sector.id ? 0.52 : 1)}
-              letterAngleStep={3.65}
-              strokeWidth={1.55}
-              onClick={(event) => {
-                event.stopPropagation();
-                onSelectStyleLens?.(sector.id);
-              }}
-            />
+            <g pointerEvents="auto">
+              <RadialLetterText
+                className="style-sector-label style-sector-label-inner"
+                text={`${sectorGlyph[sector.id]} ${labelText}`}
+                cx={sectorCenter.x}
+                cy={sectorCenter.y}
+                radius={labelRadius}
+                angle={labelAngle}
+                fill={accent}
+                fontSize={7.1}
+                fontWeight={610}
+                opacity={(innerLabelOpacity + 0.08) * (activeStyleLens && activeStyleLens !== sector.id ? 0.52 : 1)}
+                letterAngleStep={4.05}
+                strokeWidth={1.15}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  onSelectStyleLens?.(sector.id);
+                }}
+              />
+            </g>
           </g>
         );
       })}

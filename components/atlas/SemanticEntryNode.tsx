@@ -45,12 +45,12 @@ const entryGlyph: Record<Entry['entry_type'], string> = {
 };
 
 const styleAccent: Record<Entry['style_sector'], string> = {
-  classical_architecture: '#9b6dff',
-  pre_modern_architecture: '#ffb000',
-  modern_architecture: '#00e7ff',
-  postwar_modern_architecture: '#ff4d1f',
-  sustainable_architecture: '#65ff9a',
-  vernacular_architecture: '#ff007a'
+  classical_architecture: '#a56bff',
+  pre_modern_architecture: '#ffd43d',
+  modern_architecture: '#00f5ff',
+  postwar_modern_architecture: '#ff4b20',
+  sustainable_architecture: '#65ff73',
+  vernacular_architecture: '#ff38f5'
 };
 
 export function SemanticEntryNode({
@@ -179,22 +179,42 @@ function EntryThumbnail({ entry, x, y, radius, accent, isSelected, styleLensActi
   const skyline = 3 + (seed % 4);
   const baseY = y + radius * 0.34;
   const accentStroke = isFast ? 1.3 : isSelected || styleLensActive ? 2.45 : 1.7;
-  const accentFillOpacity = isFast ? 0.2 : styleLensActive ? 0.28 : 0.16;
+  const accentFillOpacity = isFast ? 0.28 : styleLensActive ? 0.42 : 0.26;
   const showDetailLines = !imageUrl && !isFast && (radius >= 6.4 || isSelected || styleLensActive);
-  const clipId = `entry-thumb-clip-${sanitizeId(entry.id)}`;
+  const stableSuffix = `${sanitizeId(entry.id)}-${Math.round(x * 10)}-${Math.round(y * 10)}`;
+  const clipId = `entry-thumb-clip-${stableSuffix}`;
+  const shadeId = `entry-planet-shade-${stableSuffix}`;
+  const glowId = `entry-planet-glow-${stableSuffix}`;
+  const lightX = x - radius * (0.38 + (seed % 11) * 0.012);
+  const lightY = y - radius * (0.44 + (seed % 7) * 0.014);
 
   return (
     <g className="entry-thumbnail" pointerEvents="none">
-      <circle cx={x} cy={y} r={radius + 2.2} fill={accent} opacity={accentFillOpacity} />
+      <defs>
+        <radialGradient id={glowId} cx="34%" cy="28%" r="74%">
+          <stop offset="0%" stopColor="#ffffff" stopOpacity={isFast ? 0.3 : 0.46} />
+          <stop offset="42%" stopColor={accent} stopOpacity={isFast ? 0.14 : 0.22} />
+          <stop offset="100%" stopColor={accent} stopOpacity="0" />
+        </radialGradient>
+        <radialGradient id={shadeId} cx="34%" cy="28%" r="78%">
+          <stop offset="0%" stopColor="#ffffff" stopOpacity={isFast ? 0.2 : 0.32} />
+          <stop offset="45%" stopColor={accent} stopOpacity="0.1" />
+          <stop offset="78%" stopColor="#050505" stopOpacity="0.2" />
+          <stop offset="100%" stopColor="#000000" stopOpacity={isFast ? 0.68 : 0.82} />
+        </radialGradient>
+        {imageUrl ? (
+          <clipPath id={clipId}>
+            <circle cx={x} cy={y} r={Math.max(0, radius - 0.35)} />
+          </clipPath>
+        ) : null}
+      </defs>
+      <circle cx={x} cy={y} r={radius + 5.2} fill={accent} opacity={isFast ? accentFillOpacity * 0.68 : accentFillOpacity} />
+      <circle cx={x} cy={y} r={radius + 2.7} fill={`url(#${glowId})`} opacity={styleLensActive || isSelected ? 0.98 : 0.74} />
       {imageUrl ? (
         <>
-          <defs>
-            <clipPath id={clipId}>
-              <circle cx={x} cy={y} r={Math.max(0, radius - 0.35)} />
-            </clipPath>
-          </defs>
-          <circle cx={x} cy={y} r={radius} fill="#050505" stroke={accent} strokeWidth={accentStroke + 0.3} />
+          <circle cx={x} cy={y} r={radius} fill="#050505" stroke={accent} strokeWidth={accentStroke + 0.25} />
           <image
+            key={`${entry.id}-${imageUrl}`}
             href={imageUrl}
             x={x - radius}
             y={y - radius}
@@ -202,13 +222,26 @@ function EntryThumbnail({ entry, x, y, radius, accent, isSelected, styleLensActi
             height={radius * 2}
             preserveAspectRatio="xMidYMid slice"
             clipPath={`url(#${clipId})`}
-            opacity={isFast ? 0.72 : 0.86}
+            opacity={isFast ? 0.8 : 0.94}
           />
-          <circle cx={x} cy={y} r={Math.max(0, radius - 0.35)} fill={accent} opacity="0.2" />
-          <circle cx={x} cy={y} r={Math.max(0, radius - 0.65)} fill="none" stroke="#f7f7f4" strokeWidth="0.42" opacity={isSelected || styleLensActive ? 0.72 : 0.38} />
+          <circle cx={x} cy={y} r={Math.max(0, radius - 0.35)} fill={accent} opacity={isFast ? 0.22 : 0.3} />
+          <circle cx={x} cy={y} r={Math.max(0, radius - 0.35)} fill={`url(#${shadeId})`} opacity={isFast ? 0.76 : 0.86} />
+          {!isFast ? <circle cx={lightX} cy={lightY} r={Math.max(1.1, radius * 0.17)} fill="#ffffff" opacity="0.3" /> : null}
+          <path
+            d={`M ${x - radius * 0.58} ${y + radius * 0.72} C ${x - radius * 0.08} ${y + radius * 0.98}, ${x + radius * 0.68} ${y + radius * 0.78}, ${x + radius * 0.86} ${y + radius * 0.08}`}
+            fill="none"
+            stroke="#050505"
+            strokeWidth={Math.max(0.35, radius * 0.09)}
+            opacity={isFast ? 0.2 : 0.3}
+          />
+          <circle cx={x} cy={y} r={Math.max(0, radius - 0.65)} fill="none" stroke="#f7f7f4" strokeWidth="0.46" opacity={isSelected || styleLensActive ? 0.86 : 0.52} />
         </>
       ) : (
-        <circle cx={x} cy={y} r={radius} fill={isSelected ? '#050505' : thumbnailFill(entry.entry_type)} stroke={accent} strokeWidth={accentStroke} />
+        <>
+          <circle cx={x} cy={y} r={radius} fill={isSelected ? '#050505' : thumbnailFill(entry.entry_type)} stroke={accent} strokeWidth={accentStroke} />
+          <circle cx={x} cy={y} r={Math.max(0, radius - 0.3)} fill={`url(#${shadeId})`} opacity={isFast ? 0.66 : 0.78} />
+          {!isFast ? <circle cx={lightX} cy={lightY} r={Math.max(1, radius * 0.14)} fill="#ffffff" opacity="0.22" /> : null}
+        </>
       )}
       {showDetailLines ? (
         <>
