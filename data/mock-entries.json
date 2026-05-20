@@ -943,7 +943,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Milet / polis-grid"
+        "placeholder": "Aussenansicht / Milet / polis-grid",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Miletus_-_Ancient_Greek_theatre_02.jpg/960px-Miletus_-_Ancient_Greek_theatre_02.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Miletus_-_Ancient_Greek_theatre_02.jpg",
+        "credit": "Wikimedia Commons / Bernard Gagnon / CC BY-SA 3.0",
+        "license": "cc_by_sa"
       },
       {
         "type": "interior",
@@ -963,6 +967,16 @@
     ],
     "source_documents": [
       "02 Global History of Urban Design 1_2.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Milet",
+        "url": "https://commons.wikimedia.org/wiki/File:Miletus_-_Ancient_Greek_theatre_02.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.95. License: CC BY-SA 3.0."
+      }
     ]
   },
   {
@@ -1058,7 +1072,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Olynth / polis-housing-block"
+        "placeholder": "Aussenansicht / Olynth / polis-housing-block",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Bouleuterion_in_Olynthos_2.jpg/960px-Bouleuterion_in_Olynthos_2.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Bouleuterion_in_Olynthos_2.jpg",
+        "credit": "Wikimedia Commons / Hermann Hammer / CC BY-SA 4.0",
+        "license": "cc_by_sa"
       },
       {
         "type": "interior",
@@ -1078,6 +1096,16 @@
     ],
     "source_documents": [
       "02 Global History of Urban Design 1_2.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Olynth",
+        "url": "https://commons.wikimedia.org/wiki/File:Bouleuterion_in_Olynthos_2.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.95. License: CC BY-SA 4.0."
+      }
     ]
   },
   {
@@ -1236,7 +1264,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Pompeji / roman-urbanism-street-grid"
+        "placeholder": "Aussenansicht / Pompeji / roman-urbanism-street-grid",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Theathres_of_Pompeii.jpg/960px-Theathres_of_Pompeii.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Theathres_of_Pompeii.jpg",
+        "credit": "Wikimedia Commons / ElfQrin / CC BY-SA 4.0",
+        "license": "cc_by_sa"
       },
       {
         "type": "interior",
@@ -1256,6 +1288,16 @@
     ],
     "source_documents": [
       "02 Global History of Urban Design 1_2.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Pompeji",
+        "url": "https://commons.wikimedia.org/wiki/File:Theathres_of_Pompeii.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.95. License: CC BY-SA 4.0."
+      }
     ]
   },
   {
@@ -3346,7 +3388,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Wien Ringstrasse / urban-expansion-ring"
+        "placeholder": "Aussenansicht / Wien Ringstrasse / urban-expansion-ring",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Wien_01_Burgring_b.jpg/960px-Wien_01_Burgring_b.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Wien_01_Burgring_b.jpg",
+        "credit": "Wikimedia Commons / Gugerell / CC0",
+        "license": "public_domain"
       },
       {
         "type": "interior",
@@ -3366,6 +3412,16 @@
     ],
     "source_documents": [
       "02 Global History of Urban Design 1_2.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Wien Ringstrasse",
+        "url": "https://commons.wikimedia.org/wiki/File:Wien_01_Burgring_b.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "public_domain",
+        "notes": "Auto-selected hero image candidate. Score: 0.95. License: CC0."
+      }
     ]
   },
   {
@@ -3460,7 +3516,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Linear City / reform-city-infrastructure"
+        "placeholder": "Aussenansicht / Linear City / reform-city-infrastructure",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/6/6e/Ciudad_lineal_de_Arturo_Soria.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Ciudad_lineal_de_Arturo_Soria.jpg",
+        "credit": "Wikimedia Commons / Public domain",
+        "license": "public_domain"
       },
       {
         "type": "interior",
@@ -3480,6 +3540,16 @@
     ],
     "source_documents": [
       "02 Global History of Urban Design 1_2.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Linear City",
+        "url": "https://commons.wikimedia.org/wiki/File:Ciudad_lineal_de_Arturo_Soria.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "public_domain",
+        "notes": "Auto-selected hero image candidate. Score: 0.95. License: Public domain."
+      }
     ]
   },
   {
@@ -4620,7 +4690,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Narkomfin Housing / housing-reform-collective-living"
+        "placeholder": "Aussenansicht / Narkomfin Housing / housing-reform-collective-living",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Moscow%2C_Narkomfin_building_in_May_2021_03.jpg/960px-Moscow%2C_Narkomfin_building_in_May_2021_03.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Moscow,_Narkomfin_building_in_May_2021_03.jpg",
+        "credit": "Wikimedia Commons / Retired electrician / CC0",
+        "license": "public_domain"
       },
       {
         "type": "interior",
@@ -4640,6 +4714,16 @@
     ],
     "source_documents": [
       "02 Global History of Urban Design 1_2.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Narkomfin Housing",
+        "url": "https://commons.wikimedia.org/wiki/File:Moscow,_Narkomfin_building_in_May_2021_03.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "public_domain",
+        "notes": "Auto-selected hero image candidate. Score: 0.95. License: CC0."
+      }
     ]
   },
   {
@@ -6883,7 +6967,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Oerliker Park / urban-repair-climate-landscape"
+        "placeholder": "Aussenansicht / Oerliker Park / urban-repair-climate-landscape",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Westteil_oerliker-park.jpg/960px-Westteil_oerliker-park.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Westteil_oerliker-park.jpg",
+        "credit": "Wikimedia Commons / Gruen Stadt Zuerich / CC BY-SA 3.0",
+        "license": "cc_by_sa"
       },
       {
         "type": "interior",
@@ -6903,6 +6991,16 @@
     ],
     "source_documents": [
       "04 Landschaftsarchitektur 1_2.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Oerliker Park",
+        "url": "https://commons.wikimedia.org/wiki/File:Westteil_oerliker-park.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.95. License: CC BY-SA 3.0."
+      }
     ]
   },
   {
