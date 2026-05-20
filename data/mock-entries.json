@@ -361,7 +361,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Catal Hüyük / proto-urban-settlement"
+        "placeholder": "Aussenansicht / Catal Hüyük / proto-urban-settlement",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/%C3%87atalh%C3%B6y%C3%BCk%2C_7400_BC%2C_Konya%2C_Turkey_-_UNESCO_World_Heritage_Site%2C_08.jpg/960px-%C3%87atalh%C3%B6y%C3%BCk%2C_7400_BC%2C_Konya%2C_Turkey_-_UNESCO_World_Heritage_Site%2C_08.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:%C3%87atalh%C3%B6y%C3%BCk,_7400_BC,_Konya,_Turkey_-_UNESCO_World_Heritage_Site,_08.jpg",
+        "credit": "Wikimedia Commons / Murat Özsoy 1958 / CC BY-SA 4.0",
+        "license": "cc_by_sa"
       },
       {
         "type": "interior",
@@ -381,6 +385,16 @@
     ],
     "source_documents": [
       "02 Global History of Urban Design 1_2.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Catal Hüyük",
+        "url": "https://commons.wikimedia.org/wiki/File:%C3%87atalh%C3%B6y%C3%BCk,_7400_BC,_Konya,_Turkey_-_UNESCO_World_Heritage_Site,_08.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY-SA 4.0."
+      }
     ]
   },
   {
@@ -1158,7 +1172,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Dura-Europos / hellenistic-city-frontier"
+        "placeholder": "Aussenansicht / Dura-Europos / hellenistic-city-frontier",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/DuraEuropos-TempleOfBel.jpg/960px-DuraEuropos-TempleOfBel.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:DuraEuropos-TempleOfBel.jpg",
+        "credit": "Wikimedia Commons / Heretiq / CC BY-SA 2.5",
+        "license": "cc_by_sa"
       },
       {
         "type": "interior",
@@ -1178,6 +1196,16 @@
     ],
     "source_documents": [
       "02 Global History of Urban Design 1_2.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Dura-Europos",
+        "url": "https://commons.wikimedia.org/wiki/File:DuraEuropos-TempleOfBel.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY-SA 2.5."
+      }
     ]
   },
   {
@@ -2156,7 +2184,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Villa d'Este / garden-history-water"
+        "placeholder": "Aussenansicht / Villa d'Este / garden-history-water",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Villa_Deste_park_Rometta_2011_2.jpg/960px-Villa_Deste_park_Rometta_2011_2.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Villa_Deste_park_Rometta_2011_2.jpg",
+        "credit": "Wikimedia Commons / Karelj / CC BY-SA 3.0",
+        "license": "cc_by_sa"
       },
       {
         "type": "interior",
@@ -2176,6 +2208,16 @@
     ],
     "source_documents": [
       "04 Landschaftsarchitektur 1_2.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Villa d'Este",
+        "url": "https://commons.wikimedia.org/wiki/File:Villa_Deste_park_Rometta_2011_2.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY-SA 3.0."
+      }
     ]
   },
   {
@@ -2270,7 +2312,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Villa Lante / garden-history-water"
+        "placeholder": "Aussenansicht / Villa Lante / garden-history-water",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Villa_Lante_%281%29.jpg/960px-Villa_Lante_%281%29.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Villa_Lante_(1).jpg",
+        "credit": "Wikimedia Commons / Jeff from Sacramento, CA / CC BY 2.0",
+        "license": "cc_by"
       },
       {
         "type": "interior",
@@ -2290,6 +2336,16 @@
     ],
     "source_documents": [
       "04 Landschaftsarchitektur 1_2.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Villa Lante",
+        "url": "https://commons.wikimedia.org/wiki/File:Villa_Lante_(1).jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY 2.0."
+      }
     ]
   },
   {
@@ -2468,7 +2524,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Fortezza di Palmanova / fortress-city-geometry"
+        "placeholder": "Aussenansicht / Fortezza di Palmanova / fortress-city-geometry",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/0/06/Cinta_muraria_di_Palmanova.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Cinta_muraria_di_Palmanova.jpg",
+        "credit": "Wikimedia Commons / IlirikIlirik / CC0",
+        "license": "public_domain"
       },
       {
         "type": "interior",
@@ -2488,6 +2548,16 @@
     ],
     "source_documents": [
       "02 Global History of Urban Design 1_2.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Fortezza di Palmanova",
+        "url": "https://commons.wikimedia.org/wiki/File:Cinta_muraria_di_Palmanova.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "public_domain",
+        "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC0."
+      }
     ]
   },
   {
@@ -2647,7 +2717,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Piazza St Peters / baroque-city-ritual"
+        "placeholder": "Aussenansicht / Piazza St Peters / baroque-city-ritual",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/St_Peter%27s_Square%2C_Vatican_City_-_April_2007.jpg/960px-St_Peter%27s_Square%2C_Vatican_City_-_April_2007.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:St_Peter%27s_Square,_Vatican_City_-_April_2007.jpg",
+        "credit": "Wikimedia Commons / Diliff / CC BY-SA 3.0",
+        "license": "cc_by_sa"
       },
       {
         "type": "interior",
@@ -2667,6 +2741,16 @@
     ],
     "source_documents": [
       "02 Global History of Urban Design 1_2.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Piazza St Peters",
+        "url": "https://commons.wikimedia.org/wiki/File:St_Peter%27s_Square,_Vatican_City_-_April_2007.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY-SA 3.0."
+      }
     ]
   },
   {
@@ -2809,7 +2893,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / New Lanark Mills / reform-city-industry"
+        "placeholder": "Aussenansicht / New Lanark Mills / reform-city-industry",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/New_Lanark_buildings_2009.jpg/960px-New_Lanark_buildings_2009.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:New_Lanark_buildings_2009.jpg",
+        "credit": "Wikimedia Commons / mrpbps / CC BY 2.0",
+        "license": "cc_by"
       },
       {
         "type": "interior",
@@ -2829,6 +2917,16 @@
     ],
     "source_documents": [
       "02 Global History of Urban Design 1_2.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / New Lanark Mills",
+        "url": "https://commons.wikimedia.org/wiki/File:New_Lanark_buildings_2009.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY 2.0."
+      }
     ]
   },
   {
@@ -3412,7 +3510,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Hotel Tassel / art-nouveau-threshold"
+        "placeholder": "Aussenansicht / Hotel Tassel / art-nouveau-threshold",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Victor_Horta_Hotel_Tassel.JPG/960px-Victor_Horta_Hotel_Tassel.JPG",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Victor_Horta_Hotel_Tassel.JPG",
+        "credit": "Wikimedia Commons / Karl Stas / CC BY-SA 3.0",
+        "license": "cc_by_sa"
       },
       {
         "type": "interior",
@@ -3432,6 +3534,16 @@
     ],
     "source_documents": [
       "03 Architekturgeschichte 3_4.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Hotel Tassel",
+        "url": "https://commons.wikimedia.org/wiki/File:Victor_Horta_Hotel_Tassel.JPG",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY-SA 3.0."
+      }
     ]
   },
   {
@@ -3744,7 +3856,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Fagus Factory / factory-glass corner"
+        "placeholder": "Aussenansicht / Fagus Factory / factory-glass corner",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Fagus_Gropius_Hauptgebaeude_200705_wiki_front.jpg/960px-Fagus_Gropius_Hauptgebaeude_200705_wiki_front.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Fagus_Gropius_Hauptgebaeude_200705_wiki_front.jpg",
+        "credit": "Wikimedia Commons / Carsten Janssen / CC BY-SA 2.0 de",
+        "license": "cc_by_sa"
       },
       {
         "type": "interior",
@@ -3760,6 +3876,16 @@
         "type": "plan",
         "label": "Grundriss",
         "placeholder": "Grundriss / Fagus Factory / factory-glass corner"
+      }
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Fagus Factory",
+        "url": "https://commons.wikimedia.org/wiki/File:Fagus_Gropius_Hauptgebaeude_200705_wiki_front.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY-SA 2.0 de."
       }
     ]
   },
