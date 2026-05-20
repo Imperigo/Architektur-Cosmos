@@ -112,6 +112,10 @@ const worker = {
       return json(buildBrainReport(), 200, 'public, max-age=300, s-maxage=300');
     }
 
+    if (url.pathname === '/api/brain/activation') {
+      return json(buildBrainActivation(), 200, 'public, max-age=300, s-maxage=300');
+    }
+
     if (url.pathname === '/api/brain/tasks') {
       const limit = clamp(numberParam(url.searchParams, 'limit') ?? 20, 1, 100);
       const tasks = filterBrainTasks(buildBrainTasks(), url.searchParams);
@@ -217,6 +221,58 @@ function buildBrainStatus() {
       'Create a dedicated architecture-cosmos-brain D1 database only after approval.',
       'Use Obsidian as a private review surface, not public asset storage.'
     ]
+  };
+}
+
+function buildBrainActivation() {
+  return {
+    current_phase: 'phase_1_read_only_active',
+    official_status: 'active_read_only',
+    owner_approval_required: true,
+    writes_database: false,
+    publishes: false,
+    sends_email: false,
+    uploads_assets: false,
+    phases: [
+      {
+        id: 'phase_1_read_only_active',
+        label: 'Read-only Brain active',
+        status: 'active',
+        description: 'Brain API, status panel, reports, tasks and local exports are active. No cloud writes.'
+      },
+      {
+        id: 'phase_2_d1_state',
+        label: 'D1 Brain state',
+        status: 'planned',
+        description: 'Dedicated D1 database stores runs, tasks, reports and approvals after owner approval.'
+      },
+      {
+        id: 'phase_3_scheduled_reports',
+        label: 'Scheduled reports',
+        status: 'planned',
+        description: 'Cloudflare Cron produces scheduled Brain reports after D1 state is reviewed.'
+      },
+      {
+        id: 'phase_4_owner_approvals',
+        label: 'Owner approvals',
+        status: 'planned',
+        description: 'Signed approval or dashboard flow before any execution, email, upload, commit or publish.'
+      },
+      {
+        id: 'phase_5_controlled_execution',
+        label: 'Controlled execution',
+        status: 'locked',
+        description: 'Future PR-based execution only after security review and explicit owner approval.'
+      }
+    ],
+    guardrails: [
+      'No automatic commits, pushes or publishes.',
+      'No production D1 writes without approval.',
+      'No R2 uploads or private asset publication.',
+      'No email sends until signed approval flow exists.',
+      'Obsidian remains a private review surface.'
+    ],
+    next_recommended_action: 'Create dedicated D1 binding for architecture-cosmos-brain after owner approval.'
   };
 }
 

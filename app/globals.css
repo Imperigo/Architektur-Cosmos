@@ -1301,7 +1301,9 @@ body:has(.entry-page) {
 }
 
 .brain-status-metric,
+.brain-activation-card,
 .brain-status-priority,
+.brain-next-action,
 .brain-status-task {
   min-width: 0;
   border: 1px solid rgb(247 247 244 / 10%);
@@ -1383,6 +1385,43 @@ body:has(.entry-page) {
   text-align: right;
 }
 
+.brain-activation-card {
+  display: grid;
+  gap: 3px;
+  margin-bottom: 9px;
+  padding: 8px;
+  border-color: rgb(0 231 255 / 18%);
+  background:
+    linear-gradient(135deg, rgb(0 231 255 / 8%), rgb(255 79 216 / 5%)),
+    rgb(247 247 244 / 3%);
+}
+
+.brain-activation-card small,
+.brain-next-action small,
+.brain-task-count {
+  color: rgb(247 247 244 / 54%);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 8px;
+}
+
+.brain-activation-card strong {
+  color: #9cfff7;
+  font-size: 12px;
+  font-weight: 720;
+  line-height: 1.15;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+
+.brain-activation-card span,
+.brain-next-action span {
+  color: rgb(247 247 244 / 70%);
+  font-size: 9px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
 .brain-status-priority {
   margin-bottom: 9px;
   padding: 8px;
@@ -1396,12 +1435,54 @@ body:has(.entry-page) {
   color: #f7f7f4;
 }
 
+.brain-task-toolbar {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+}
+
+.brain-task-toolbar::-webkit-scrollbar {
+  display: none;
+}
+
+.brain-task-toolbar button {
+  flex: 0 0 auto;
+  min-height: 28px;
+  max-width: 92px;
+  border: 1px solid rgb(247 247 244 / 14%);
+  border-radius: 999px;
+  padding: 0 8px;
+  background: rgb(247 247 244 / 4%);
+  color: rgb(247 247 244 / 58%);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 7.5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: background 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+
+.brain-task-toolbar button:hover,
+.brain-task-toolbar .brain-task-filter-active {
+  border-color: rgb(0 231 255 / 44%);
+  background: rgb(0 231 255 / 12%);
+  color: #f7f7f4;
+}
+
 .brain-status-tasks {
   display: grid;
   gap: 6px;
   max-height: 190px;
   overflow: auto;
   overscroll-behavior: contain;
+}
+
+.brain-task-count {
+  padding: 2px 1px 1px;
 }
 
 .brain-status-task {
@@ -1420,6 +1501,15 @@ body:has(.entry-page) {
 
 .brain-status-error {
   color: #ff8c8c;
+}
+
+.brain-next-action {
+  display: grid;
+  gap: 3px;
+  margin-top: 9px;
+  padding: 8px;
+  border-color: rgb(245 179 66 / 20%);
+  background: rgb(245 179 66 / 5%);
 }
 
 .project-search-entry {

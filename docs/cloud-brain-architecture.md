@@ -89,6 +89,7 @@ V2 startet mit read-only Endpoints:
 ```text
 GET /api/brain/status
 GET /api/brain/latest-report
+GET /api/brain/activation
 GET /api/brain/tasks
 ```
 
@@ -224,6 +225,24 @@ GET /api/brain/tasks
 
 These endpoints derive a static snapshot from the repository data bundled into
 the Worker. They do not write to D1, R2, GitHub or email.
+
+## Official Activation Status
+
+The Brain can be considered officially active in **Phase 1** only:
+
+```text
+active_read_only
+```
+
+This means:
+
+- Brain API is live;
+- Brain status panel can be shown in the atlas;
+- review tasks and coverage data are available;
+- local Brain/D1/Obsidian exports can be generated;
+- no database writes, no asset uploads, no email sends and no publish actions.
+
+Everything beyond Phase 1 remains approval-gated.
 
 ### Phase 3: Scheduled Reports
 

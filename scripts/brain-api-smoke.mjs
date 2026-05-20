@@ -43,6 +43,11 @@ async function main() {
     assert(status.writes_database === false, 'Brain status must not write database');
     assert(status.publishes === false, 'Brain status must not publish');
 
+    const activation = await getJson('/api/brain/activation');
+    assert(activation.official_status === 'active_read_only', 'Activation should be read-only active');
+    assert(activation.owner_approval_required === true, 'Activation must require owner approval');
+    assert(activation.writes_database === false, 'Activation must not write database');
+
     const tasks = await getJson('/api/brain/tasks?limit=3&kind=model');
     assert(typeof tasks.count === 'number', 'Tasks response needs count');
     assert(Array.isArray(tasks.results), 'Tasks response needs results');
@@ -58,6 +63,7 @@ async function main() {
 
     console.log('Architecture Cosmos Brain API smoke test passed.');
     console.log(`Status entries: ${status.summary.entries}`);
+    console.log(`Activation: ${activation.official_status}`);
     console.log(`Model tasks: ${tasks.count}`);
     console.log(`High-risk tasks: ${highRiskTasks.count}`);
   } finally {

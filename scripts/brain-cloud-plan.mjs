@@ -34,6 +34,7 @@ const requiredSchemaTables = [
 const requiredWorkerRoutes = [
   '/api/brain/status',
   '/api/brain/latest-report',
+  '/api/brain/activation',
   '/api/brain/tasks'
 ];
 

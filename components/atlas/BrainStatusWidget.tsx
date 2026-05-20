@@ -37,37 +37,62 @@ type BrainTask = {
   risk_level: string;
 };
 
+type BrainActivation = {
+  official_status: string;
+  current_phase: string;
+  next_recommended_action: string;
+  phases: Array<{
+    id: string;
+    label: string;
+    status: string;
+    description: string;
+  }>;
+};
+
 type TaskResponse = {
   count: number;
   results: BrainTask[];
 };
 
+type TaskFilter = 'all' | 'research' | 'rights' | 'model' | 'analysis' | 'database';
+
 export function BrainStatusWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [status, setStatus] = useState<BrainStatus | null>(null);
+  const [activation, setActivation] = useState<BrainActivation | null>(null);
   const [tasks, setTasks] = useState<BrainTask[]>([]);
+  const [taskCount, setTaskCount] = useState(0);
+  const [taskFilter, setTaskFilter] = useState<TaskFilter>('all');
   const [error, setError] = useState<string | null>(null);
   const isLoading = isOpen && !status && !error;
 
   useEffect(() => {
-    if (!isOpen || status) return;
+    if (!isOpen) return;
 
     let cancelled = false;
+    const query = taskFilter === 'all' ? 'limit=5' : `limit=5&kind=${taskFilter}`;
 
     Promise.all([
       fetch('/api/brain/status').then((response) => {
         if (!response.ok) throw new Error(`Status ${response.status}`);
         return response.json() as Promise<BrainStatus>;
       }),
-      fetch('/api/brain/tasks?limit=5').then((response) => {
+      fetch('/api/brain/activation').then((response) => {
+        if (!response.ok) throw new Error(`Activation ${response.status}`);
+        return response.json() as Promise<BrainActivation>;
+      }),
+      fetch(`/api/brain/tasks?${query}`).then((response) => {
         if (!response.ok) throw new Error(`Tasks ${response.status}`);
         return response.json() as Promise<TaskResponse>;
       })
     ])
-      .then(([nextStatus, taskResponse]) => {
+      .then(([nextStatus, nextActivation, taskResponse]) => {
         if (cancelled) return;
         setStatus(nextStatus);
+        setActivation(nextActivation);
         setTasks(taskResponse.results);
+        setTaskCount(taskResponse.count);
+        setError(null);
       })
       .catch((nextError: Error) => {
         if (cancelled) return;
@@ -77,7 +102,7 @@ export function BrainStatusWidget() {
     return () => {
       cancelled = true;
     };
-  }, [isOpen, status]);
+  }, [isOpen, taskFilter]);
 
   return (
     <div className="brain-status">
@@ -121,6 +146,14 @@ export function BrainStatusWidget() {
                 <small>No database writes, no publish, approval required.</small>
               </div>
 
+              {activation ? (
+                <div className="brain-activation-card">
+                  <small>Official activation</small>
+                  <strong>{activation.official_status.replace(/_/g, ' ')}</strong>
+                  <span>{activation.current_phase.replace(/_/g, ' ')}</span>
+                </div>
+              ) : null}
+
               {status.highest_priority_task ? (
                 <div className="brain-status-priority">
                   <small>Highest priority</small>
@@ -128,7 +161,21 @@ export function BrainStatusWidget() {
                 </div>
               ) : null}
 
+              <div className="brain-task-toolbar" aria-label="Brain task filters">
+                {(['all', 'research', 'rights', 'model', 'analysis', 'database'] as const).map((filter) => (
+                  <button
+                    key={filter}
+                    type="button"
+                    className={taskFilter === filter ? 'brain-task-filter-active' : ''}
+                    onClick={() => setTaskFilter(filter)}
+                  >
+                    {filter}
+                  </button>
+                ))}
+              </div>
+
               <div className="brain-status-tasks">
+                <div className="brain-task-count">{taskCount} matching tasks</div>
                 {tasks.map((task) => (
                   <div key={task.id} className="brain-status-task">
                     <span>{task.kind}</span>
@@ -137,6 +184,13 @@ export function BrainStatusWidget() {
                   </div>
                 ))}
               </div>
+
+              {activation ? (
+                <div className="brain-next-action">
+                  <small>Next gated action</small>
+                  <span>{activation.next_recommended_action}</span>
+                </div>
+              ) : null}
             </>
           ) : null}
         </section>
