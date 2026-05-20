@@ -220,6 +220,7 @@ Current V2 read-only endpoints:
 ```text
 GET /api/brain/status
 GET /api/brain/latest-report
+GET /api/brain/activation
 GET /api/brain/tasks
 ```
 
@@ -243,6 +244,43 @@ This means:
 - no database writes, no asset uploads, no email sends and no publish actions.
 
 Everything beyond Phase 1 remains approval-gated.
+
+## Phase 2 D1 Preview Commands
+
+The next controlled step is to prepare a dedicated operational Brain D1 database
+named:
+
+```text
+architecture-cosmos-brain
+```
+
+This database is only for Brain operations: runs, reports, tasks, approvals,
+errors and Obsidian export records. It is not the public architecture archive
+database and it must not store heavy media or 3D assets.
+
+Safe local preview:
+
+```bash
+npm run brain:d1-plan
+```
+
+This command regenerates the Brain review, cloud plan, seed SQL, Obsidian preview
+and API smoke test. It validates the Brain D1 schema and seed file. It performs
+no Cloudflare writes.
+
+Owner-approved remote steps:
+
+```bash
+npm run brain:d1-status
+npm run brain:d1-create
+npm run brain:d1-apply-preview
+npm run brain:d1-smoke-remote
+```
+
+Remote commands require `CLOUDFLARE_API_TOKEN`. `brain:d1-apply-preview` is the
+only command in this group that imports schema/seed data into remote D1. It has
+an explicit confirmation flag inside the npm script so it cannot be run through
+the neutral planning command by accident.
 
 ### Phase 3: Scheduled Reports
 

@@ -44,6 +44,11 @@
     "brain:cloud-export": "node scripts/brain-cloud-export.mjs",
     "brain:api-smoke": "node scripts/brain-api-smoke.mjs",
     "brain:cloud-ready": "npm run brain:review && npm run brain:cloud-plan && npm run brain:cloud-export && npm run obsidian:export && npm run brain:api-smoke",
+    "brain:d1-plan": "node scripts/cloudflare-brain-preview.mjs",
+    "brain:d1-status": "node scripts/cloudflare-brain-preview.mjs --status",
+    "brain:d1-create": "node scripts/cloudflare-brain-preview.mjs --create-d1",
+    "brain:d1-apply-preview": "node scripts/cloudflare-brain-preview.mjs --apply-remote --confirm-d1-write",
+    "brain:d1-smoke-remote": "node scripts/cloudflare-brain-preview.mjs --smoke-remote",
     "obsidian:export": "node scripts/obsidian-export.mjs"
   },
   "dependencies": {

@@ -215,7 +215,7 @@ function buildBrainStatus() {
     coverage: buildBrainCoverage(summary),
     open_tasks: tasks.length,
     highest_priority_task: tasks[0] ?? null,
-    endpoints: ['/api/brain/status', '/api/brain/latest-report', '/api/brain/tasks'],
+    endpoints: ['/api/brain/status', '/api/brain/latest-report', '/api/brain/activation', '/api/brain/tasks'],
     next_steps: [
       'Keep Cloud Brain read-only until D1 state and approval gates are reviewed.',
       'Create a dedicated architecture-cosmos-brain D1 database only after approval.',
@@ -272,7 +272,7 @@ function buildBrainActivation() {
       'No email sends until signed approval flow exists.',
       'Obsidian remains a private review surface.'
     ],
-    next_recommended_action: 'Create dedicated D1 binding for architecture-cosmos-brain after owner approval.'
+    next_recommended_action: 'Run npm run brain:d1-plan, then create architecture-cosmos-brain D1 only after owner approval.'
   };
 }
 
