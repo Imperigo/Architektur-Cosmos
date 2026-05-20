@@ -1,4 +1,5 @@
 import type { EntryMedia, EntryMediaType } from '@/lib/types';
+import { publicDisplayMediaUrl } from '@/lib/media';
 
 type ProjectMediaGridProps = {
   media: EntryMedia[];
@@ -21,6 +22,7 @@ export function ProjectMediaGrid({ media, x, y, slotWidth, slotHeight, gap, show
     <g>
       {types.map((type, index) => {
         const mediaItem = mediaByType.get(type);
+        const mediaUrl = publicDisplayMediaUrl(mediaItem);
         const col = index % 2;
         const row = Math.floor(index / 2);
         const slotX = x + col * (slotWidth + gap);
@@ -29,9 +31,9 @@ export function ProjectMediaGrid({ media, x, y, slotWidth, slotHeight, gap, show
         return (
           <g key={type}>
             <rect x={slotX} y={slotY} width={slotWidth} height={slotHeight} fill="#050505" stroke={accent} strokeWidth="0.72" opacity="0.94" />
-            {mediaItem?.url ? (
+            {mediaUrl ? (
               <g>
-                <image href={mediaItem.url} crossOrigin="anonymous" x={slotX + 1} y={slotY + 1} width={slotWidth - 2} height={slotHeight - 2} preserveAspectRatio="xMidYMid slice" opacity="0.9" />
+                <image href={mediaUrl} x={slotX + 1} y={slotY + 1} width={slotWidth - 2} height={slotHeight - 2} preserveAspectRatio="xMidYMid slice" opacity="0.9" />
                 <rect x={slotX} y={slotY} width={slotWidth} height={slotHeight} fill="none" stroke={accent} strokeWidth="0.72" opacity="0.82" />
               </g>
             ) : (

@@ -1,10 +1,11 @@
 'use client';
 
-import type { CSSProperties, MouseEvent as ReactMouseEvent } from 'react';
+import { useId, type CSSProperties, type MouseEvent as ReactMouseEvent } from 'react';
 import { ProjectDetailCard } from '@/components/atlas/ProjectDetailCard';
 import { ProjectMediaGrid } from '@/components/atlas/ProjectMediaGrid';
 import { ProjectPreviewCard } from '@/components/atlas/ProjectPreviewCard';
 import type { SemanticLevel } from '@/lib/atlas-layout';
+import { primaryPublicMediaUrl } from '@/lib/media';
 import type { Entry } from '@/lib/types';
 
 type SemanticEntryNodeProps = {
@@ -172,6 +173,7 @@ export function SemanticEntryNode({
 }
 
 function EntryThumbnail({ entry, x, y, radius, accent, isSelected, styleLensActive, renderMode }: { entry: Entry; x: number; y: number; radius: number; accent: string; isSelected: boolean; styleLensActive: boolean; renderMode: 'full' | 'fast' }) {
+  const reactId = useId();
   const seed = stableHash(entry.id);
   const isFast = renderMode === 'fast';
   const imageUrl = primaryImageUrl(entry);
@@ -181,9 +183,8 @@ function EntryThumbnail({ entry, x, y, radius, accent, isSelected, styleLensActi
   const accentStroke = isFast ? 1.3 : isSelected || styleLensActive ? 2.45 : 1.7;
   const accentFillOpacity = isFast ? 0.28 : styleLensActive ? 0.42 : 0.26;
   const showDetailLines = !imageUrl && !isFast && (radius >= 6.4 || isSelected || styleLensActive);
-  const stableSuffix = `${sanitizeId(entry.id)}-${Math.round(x * 10)}-${Math.round(y * 10)}`;
+  const stableSuffix = `${sanitizeId(entry.id)}-${sanitizeId(reactId)}`;
   const clipId = `entry-thumb-clip-${stableSuffix}`;
-  const imagePatternId = `entry-thumb-image-${stableSuffix}`;
   const shadeId = `entry-planet-shade-${stableSuffix}`;
   const glowId = `entry-planet-glow-${stableSuffix}`;
   const lightX = x - radius * (0.38 + (seed % 11) * 0.012);
@@ -204,32 +205,27 @@ function EntryThumbnail({ entry, x, y, radius, accent, isSelected, styleLensActi
           <stop offset="100%" stopColor="#000000" stopOpacity={isFast ? 0.68 : 0.82} />
         </radialGradient>
         {imageUrl ? (
-          <>
-            <clipPath id={clipId}>
-              <circle cx={x} cy={y} r={Math.max(0, radius - 0.35)} />
-            </clipPath>
-            <pattern id={imagePatternId} x={x - radius} y={y - radius} width={radius * 2} height={radius * 2} patternUnits="userSpaceOnUse">
-              <image
-                key={`${entry.id}-${imageUrl}`}
-                href={imageUrl}
-                crossOrigin="anonymous"
-                x={x - radius}
-                y={y - radius}
-                width={radius * 2}
-                height={radius * 2}
-                preserveAspectRatio="xMidYMid slice"
-                opacity="1"
-              />
-            </pattern>
-          </>
+          <clipPath id={clipId}>
+            <circle cx={x} cy={y} r={Math.max(0, radius - 0.35)} />
+          </clipPath>
         ) : null}
       </defs>
-      <circle cx={x} cy={y} r={radius + 5.2} fill={accent} opacity={isFast ? accentFillOpacity * 0.68 : accentFillOpacity} />
-      <circle cx={x} cy={y} r={radius + 2.7} fill={`url(#${glowId})`} opacity={styleLensActive || isSelected ? 0.98 : 0.74} />
+          <circle cx={x} cy={y} r={radius + 5.2} fill={accent} opacity={isFast ? accentFillOpacity * 0.68 : accentFillOpacity} />
+          <circle cx={x} cy={y} r={radius + 2.7} fill={`url(#${glowId})`} opacity={styleLensActive || isSelected ? 0.98 : 0.74} />
       {imageUrl ? (
         <>
           <circle cx={x} cy={y} r={radius} fill="#050505" stroke={accent} strokeWidth={accentStroke + 0.25} />
-          <circle cx={x} cy={y} r={Math.max(0, radius - 0.35)} fill={`url(#${imagePatternId})`} opacity={isFast ? 0.86 : 1} clipPath={`url(#${clipId})`} />
+          <image
+            key={`${entry.id}-${imageUrl}`}
+            href={imageUrl}
+            x={x - radius}
+            y={y - radius}
+            width={radius * 2}
+            height={radius * 2}
+            preserveAspectRatio="xMidYMid slice"
+            opacity={isFast ? 0.86 : 1}
+            clipPath={`url(#${clipId})`}
+          />
           <circle cx={x} cy={y} r={Math.max(0, radius - 0.35)} fill={accent} opacity={isFast ? 0.22 : 0.3} />
           <circle cx={x} cy={y} r={Math.max(0, radius - 0.35)} fill={`url(#${shadeId})`} opacity={isFast ? 0.76 : 0.86} />
           {!isFast ? <circle cx={lightX} cy={lightY} r={Math.max(1.1, radius * 0.17)} fill="#ffffff" opacity="0.3" /> : null}
@@ -282,7 +278,7 @@ function thumbnailFill(entryType: Entry['entry_type']) {
 }
 
 function primaryImageUrl(entry: Entry) {
-  return entry.media.find((media) => media.type === 'exterior' && media.url)?.url ?? entry.media.find((media) => media.url)?.url ?? null;
+  return primaryPublicMediaUrl(entry);
 }
 
 function sanitizeId(value: string) {

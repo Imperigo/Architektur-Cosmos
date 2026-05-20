@@ -12,6 +12,7 @@ import { WormholeRings } from '@/components/atlas/WormholeRings';
 import analysisPreview from '@/data/database-analysis-preview.json';
 import archivePreview from '@/data/archive-preview.json';
 import { atlasSize, styleSectors } from '@/lib/atlas-layout';
+import { publicDisplayMediaUrl } from '@/lib/media';
 import type { Entry, EntryRelation, StyleSectorId } from '@/lib/types';
 import { formatYear, layoutWormholeEntries, positionToYear, wormholeState, wormholeTravelEnd, type WormholeEntryNode } from '@/lib/wormhole-layout';
 
@@ -2087,7 +2088,15 @@ function DatabaseArchivePanel({
           ) : null}
 
           {safeActiveTab === 'media' ? (
-            <ArchiveCards items={currentEntry ? currentEntry.media.map((media) => ({ title: media.label, meta: `${media.type} / ${media.credit ?? 'placeholder'}`, body: `${media.placeholder}${media.url ? ` / ${media.url}` : ' / no public image attached'}` })) : archivePreview.entry_media.map((media) => ({ title: media.title, meta: `${media.media_type} / ${media.copyright_status}`, body: media.caption }))} />
+            <ArchiveCards items={currentEntry ? currentEntry.media.map((media) => {
+              const mediaUrl = publicDisplayMediaUrl(media);
+              return {
+                title: media.label,
+                meta: `${media.type} / ${media.credit ?? 'placeholder'}`,
+                body: `${media.placeholder}${mediaUrl ? ` / ${mediaUrl}` : ' / no public image attached'}`,
+                imageUrl: mediaUrl ?? undefined
+              };
+            }) : archivePreview.entry_media.map((media) => ({ title: media.title, meta: `${media.media_type} / ${media.copyright_status}`, body: media.caption }))} />
           ) : null}
 
           {safeActiveTab === 'models' ? (
@@ -2430,14 +2439,24 @@ function IntakeAction({ label, ready }: { label: string; ready: boolean }) {
   );
 }
 
-function ArchiveCards({ items }: { items: Array<{ title: string; meta: string; body: string }> }) {
+function ArchiveCards({ items }: { items: Array<{ title: string; meta: string; body: string; imageUrl?: string }> }) {
   return (
     <div className="space-y-2">
       {items.map((item) => (
-        <div key={`${item.title}-${item.meta}`} className="min-w-0 border border-[#f7f7f4]/12 bg-[#07181a]/60 p-2">
-          <div className="truncate text-[10px] font-semibold text-[#f7f7f4]">{item.title}</div>
-          <div className="mt-1 truncate text-[8px] uppercase tracking-[0.14em] text-[#00e7ff]">{item.meta}</div>
-          <p className="mt-1 line-clamp-3 text-[9.5px] leading-snug text-[#c7c7c2]">{item.body}</p>
+        <div key={`${item.title}-${item.meta}`} className="grid min-w-0 grid-cols-[44px_minmax(0,1fr)] gap-2 border border-[#f7f7f4]/12 bg-[#07181a]/60 p-2">
+          <div className="h-11 overflow-hidden border border-[#f7f7f4]/12 bg-[#050505]/72">
+            {item.imageUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element -- Database preview renders licensed/static URLs without Next image optimization.
+              <img src={item.imageUrl} alt="" className="h-full w-full object-cover opacity-90" loading="lazy" />
+            ) : (
+              <div className="h-full w-full bg-[radial-gradient(circle_at_35%_25%,rgb(247_247_244_/_0.22),rgb(0_231_255_/_0.12)_42%,rgb(5_5_5_/_0.92)_100%)]" />
+            )}
+          </div>
+          <div className="min-w-0">
+            <div className="truncate text-[10px] font-semibold text-[#f7f7f4]">{item.title}</div>
+            <div className="mt-1 truncate text-[8px] uppercase tracking-[0.14em] text-[#00e7ff]">{item.meta}</div>
+            <p className="mt-1 line-clamp-3 text-[9.5px] leading-snug text-[#c7c7c2]">{item.body}</p>
+          </div>
         </div>
       ))}
     </div>

@@ -6,6 +6,7 @@ import { EntryModelViewer } from '@/components/atlas/EntryModelViewer';
 import { ProjectSearch } from '@/components/atlas/ProjectSearch';
 import entries from '@/data/mock-entries.json';
 import relations from '@/data/relations.json';
+import { primaryPublicMediaUrl, publicDisplayMediaUrl } from '@/lib/media';
 import type { Entry, EntryRelation, StyleSectorId } from '@/lib/types';
 
 const allEntries = entries as Entry[];
@@ -782,13 +783,7 @@ function publicModelPreviewUrl(entry: Entry) {
 }
 
 function primaryMediaUrl(entry: Entry) {
-  return publicDisplayMediaUrl(entry.media.find((media) => media.type === 'exterior' && media.url)) ?? publicDisplayMediaUrl(entry.media.find((media) => media.url)) ?? null;
-}
-
-function publicDisplayMediaUrl(media: Entry['media'][number] | undefined) {
-  if (!media?.url) return null;
-  if (['all_rights_reserved', 'needs_permission', 'private_research', 'personal_only'].includes(media.license ?? '')) return null;
-  return media.url;
+  return primaryPublicMediaUrl(entry);
 }
 
 function mediaSlotNumber(type: Entry['media'][number]['type']) {
