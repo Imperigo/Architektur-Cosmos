@@ -29,7 +29,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Gobekli Tepe / proto-urban-ritual"
+        "placeholder": "Aussenansicht / Gobekli Tepe / proto-urban-ritual",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/G%C3%B6bekli_Tepe%2C_Urfa.jpg/960px-G%C3%B6bekli_Tepe%2C_Urfa.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:G%C3%B6bekli_Tepe,_Urfa.jpg",
+        "credit": "Wikimedia Commons / Teomancimit / CC BY-SA 3.0",
+        "license": "cc_by_sa"
       },
       {
         "type": "interior",
@@ -118,6 +122,14 @@
         "reliability_level": "verified",
         "rights_status": "private_research",
         "notes": "Source trail: academic_or_heritage_source. Public use: facts_links_own_summary."
+      },
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Gobekli Tepe",
+        "url": "https://commons.wikimedia.org/wiki/File:G%C3%B6bekli_Tepe,_Urfa.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY-SA 3.0."
       }
     ],
     "database_tags": [
@@ -4539,7 +4551,10 @@
         "type": "exterior",
         "label": "Aussenansicht",
         "placeholder": "Aussenansicht / Haus Tugendhat / Hanglage, Terrassen, horizontaler Wohnkoerper",
-        "credit": "placeholder / rights pending"
+        "credit": "Wikimedia Commons / Petr1987 / CC BY-SA 4.0",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Vila_Tugendhat_exterior_Dvorak2.JPG/960px-Vila_Tugendhat_exterior_Dvorak2.JPG",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Vila_Tugendhat_exterior_Dvorak2.JPG",
+        "license": "cc_by_sa"
       },
       {
         "type": "interior",
@@ -4738,6 +4753,16 @@
           "model_readiness": "pilot_ready_needs_verified_sources"
         },
         "review_status": "reviewed"
+      }
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Haus Tugendhat",
+        "url": "https://commons.wikimedia.org/wiki/File:Vila_Tugendhat_exterior_Dvorak2.JPG",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY-SA 4.0."
       }
     ]
   },
@@ -6949,7 +6974,10 @@
         "type": "exterior",
         "label": "Aussenansicht",
         "placeholder": "Aussenansicht / MFO Park / industrial-reuse-climate-landscape",
-        "license": "all_rights_reserved"
+        "license": "cc_by_sa",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Z%C3%BCrich_-_Oerlikon_-_MFO-Park_2010-10-03_14-10-42.JPG/960px-Z%C3%BCrich_-_Oerlikon_-_MFO-Park_2010-10-03_14-10-42.JPG",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Z%C3%BCrich_-_Oerlikon_-_MFO-Park_2010-10-03_14-10-42.JPG",
+        "credit": "Wikimedia Commons / Roland zh / CC BY-SA 3.0"
       },
       {
         "type": "interior",
@@ -7093,6 +7121,14 @@
         "reliability_level": "verified",
         "rights_status": "private_research",
         "notes": "Source trail: specialist_engineering_or_project_source. Public use: technical_facts_links_own_summary."
+      },
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / MFO Park",
+        "url": "https://commons.wikimedia.org/wiki/File:Z%C3%BCrich_-_Oerlikon_-_MFO-Park_2010-10-03_14-10-42.JPG",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY-SA 3.0."
       }
     ],
     "database_tags": [

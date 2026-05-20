@@ -12,6 +12,7 @@ const outputPath = resolve(outputDir, 'commons-hero-candidates.json');
 const args = new Set(process.argv.slice(2));
 const apply = args.has('--apply');
 const force = args.has('--force');
+const manualOnly = args.has('--manual-only');
 const minScore = numberArg('--min-score', 0.52);
 const limit = numberArg('--limit', Number.POSITIVE_INFINITY);
 
@@ -52,6 +53,54 @@ const stopWords = new Set([
   'gardens'
 ]);
 
+const manualHeroOverrides = {
+  'gobekli-tepe': {
+    title: 'File:Göbekli Tepe, Urfa.jpg',
+    query: 'manual_override',
+    url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/G%C3%B6bekli_Tepe%2C_Urfa.jpg/960px-G%C3%B6bekli_Tepe%2C_Urfa.jpg',
+    source_url: 'https://commons.wikimedia.org/wiki/File:G%C3%B6bekli_Tepe,_Urfa.jpg',
+    credit: 'Wikimedia Commons / Teomancimit / CC BY-SA 3.0',
+    license: 'cc_by_sa',
+    license_short: 'CC BY-SA 3.0',
+    mime: 'image/jpeg',
+    width: 960,
+    score: 0.98,
+    source_page_title: 'Göbekli Tepe',
+    discovery: 'manual_public_safe_override',
+    public_safe: true
+  },
+  'haus-tugendhat': {
+    title: 'File:Vila Tugendhat exterior Dvorak2.JPG',
+    query: 'manual_override',
+    url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Vila_Tugendhat_exterior_Dvorak2.JPG/960px-Vila_Tugendhat_exterior_Dvorak2.JPG',
+    source_url: 'https://commons.wikimedia.org/wiki/File:Vila_Tugendhat_exterior_Dvorak2.JPG',
+    credit: 'Wikimedia Commons / Petr1987 / CC BY-SA 4.0',
+    license: 'cc_by_sa',
+    license_short: 'CC BY-SA 4.0',
+    mime: 'image/jpeg',
+    width: 960,
+    score: 0.98,
+    source_page_title: 'Villa Tugendhat',
+    discovery: 'manual_public_safe_override',
+    public_safe: true
+  },
+  'mfo-park': {
+    title: 'File:Zürich - Oerlikon - MFO-Park 2010-10-03 14-10-42.JPG',
+    query: 'manual_override',
+    url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Z%C3%BCrich_-_Oerlikon_-_MFO-Park_2010-10-03_14-10-42.JPG/960px-Z%C3%BCrich_-_Oerlikon_-_MFO-Park_2010-10-03_14-10-42.JPG',
+    source_url: 'https://commons.wikimedia.org/wiki/File:Z%C3%BCrich_-_Oerlikon_-_MFO-Park_2010-10-03_14-10-42.JPG',
+    credit: 'Wikimedia Commons / Roland zh / CC BY-SA 3.0',
+    license: 'cc_by_sa',
+    license_short: 'CC BY-SA 3.0',
+    mime: 'image/jpeg',
+    width: 960,
+    score: 0.98,
+    source_page_title: 'MFO-Park',
+    discovery: 'manual_public_safe_override',
+    public_safe: true
+  }
+};
+
 main().catch((error) => {
   console.error(error);
   process.exitCode = 1;
@@ -65,14 +114,41 @@ async function main() {
   let searched = 0;
 
   for (const entry of entries) {
-    const hasHero = Boolean(primaryMedia(entry)?.url);
-    if (hasHero && !force) {
+    const existingHero = primaryMedia(entry);
+    const hasPublicHero = isPublicHeroMedia(existingHero);
+    const manualOverride = manualHeroOverrides[entry.id];
+
+    if (manualOverride && (!hasPublicHero || force)) {
+      nextEntries.push(apply ? applyHero(entry, manualOverride) : entry);
+      if (apply) applied += 1;
+      report.push({
+        id: entry.id,
+        title: entry.title,
+        query: ['manual_override'],
+        status: apply ? 'applied' : 'candidate',
+        best: manualOverride,
+        candidates: [manualOverride]
+      });
+      continue;
+    }
+
+    if (manualOnly) {
+      nextEntries.push(entry);
+      report.push({
+        id: entry.id,
+        title: entry.title,
+        status: 'manual_override_missing'
+      });
+      continue;
+    }
+
+    if (hasPublicHero && !force) {
       nextEntries.push(entry);
       report.push({
         id: entry.id,
         title: entry.title,
         status: 'kept_existing',
-        url: primaryMedia(entry)?.url
+        url: existingHero?.url
       });
       continue;
     }
@@ -122,6 +198,7 @@ async function main() {
     public_safe_policy: 'Only public domain, CC0, CC BY and CC BY-SA candidates are eligible for automatic use.',
     apply,
     force,
+    manual_only: manualOnly,
     min_score: minScore,
     searched,
     applied,
@@ -432,6 +509,10 @@ function dedupeSources(items) {
 
 function primaryMedia(entry) {
   return entry.media?.find((media) => media.type === 'exterior' && media.url) ?? entry.media?.find((media) => media.url);
+}
+
+function isPublicHeroMedia(media) {
+  return Boolean(media?.url && media?.license && !['unknown', 'needs_permission', 'private_research', 'personal_only', 'all_rights_reserved'].includes(media.license));
 }
 
 function firstUsefulAuthor(entry) {
