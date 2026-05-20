@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState, type DragEvent, type MouseEvent as ReactMouseEvent, type PointerEvent, type RefObject, type TouchEvent as ReactTouchEvent, type WheelEvent as ReactWheelEvent } from 'react';
+import { BrainStatusWidget } from '@/components/atlas/BrainStatusWidget';
 import { ProjectDetailCard } from '@/components/atlas/ProjectDetailCard';
 import { ProjectSearch } from '@/components/atlas/ProjectSearch';
 import { RelationOverlay } from '@/components/atlas/RelationOverlay';
@@ -889,6 +890,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
             onDismiss={() => setShowFilterPanel(false)}
           />
         ) : null}
+        {introState === 'idle' ? <BrainStatusWidget /> : null}
         {introState === 'idle' && !showDatabasePanel ? <ProjectSearch entries={allEntries} /> : null}
         {cursorVisible && !coarsePointer ? <ScreenCosmosCursor cursorRef={screenCursorRef} isDossierOpen={Boolean(selectedEntry)} /> : null}
       </div>
