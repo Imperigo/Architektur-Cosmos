@@ -1,0 +1,463 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <title>Architecture Cosmos - Benutzerhandbuch und Projektvision</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 16mm;
+    }
+
+    :root {
+      --bg: #050608;
+      --panel: #0d1117;
+      --ink: #f3f5f7;
+      --muted: #aab3bf;
+      --line: rgba(255,255,255,0.16);
+      --accent-a: #71d4ff;
+      --accent-b: #f4c35e;
+      --accent-c: #d95bff;
+      --accent-d: #67ffa9;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      color: #101317;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", "Helvetica Neue", Arial, sans-serif;
+      font-size: 10.5pt;
+      line-height: 1.5;
+      background: white;
+    }
+
+    .page {
+      min-height: 265mm;
+      position: relative;
+      page-break-after: always;
+      overflow: hidden;
+    }
+
+    .cover {
+      margin: -16mm;
+      padding: 22mm 20mm;
+      min-height: 297mm;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 50% 44%, rgba(113,212,255,0.30), transparent 12%),
+        radial-gradient(circle at 50% 44%, transparent 18%, rgba(244,195,94,0.15) 19%, transparent 21%),
+        radial-gradient(circle at 50% 44%, transparent 28%, rgba(217,91,255,0.18) 29%, transparent 31%),
+        radial-gradient(circle at 50% 44%, transparent 39%, rgba(103,255,169,0.13) 40%, transparent 42%),
+        radial-gradient(circle at 50% 44%, transparent 53%, rgba(255,255,255,0.13) 54%, transparent 55%),
+        linear-gradient(135deg, #030407 0%, #071019 44%, #09070f 100%);
+    }
+
+    .cover::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 43%;
+      width: 150mm;
+      height: 150mm;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      background:
+        repeating-radial-gradient(circle, transparent 0 8mm, rgba(255,255,255,0.14) 8.2mm 8.35mm, transparent 8.6mm 14mm);
+      opacity: 0.65;
+    }
+
+    .cover::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 43%;
+      width: 34mm;
+      height: 34mm;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      background: radial-gradient(circle, #010102 0%, #010102 48%, rgba(255,255,255,0.18) 49%, transparent 54%);
+      box-shadow: 0 0 38mm rgba(113,212,255,0.25);
+    }
+
+    .cover-content {
+      position: relative;
+      z-index: 2;
+      min-height: 250mm;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .kicker {
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      font-size: 8pt;
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 138mm;
+      font-size: 35pt;
+      line-height: 0.98;
+      letter-spacing: -0.03em;
+      font-weight: 600;
+    }
+
+    .subtitle {
+      margin-top: 8mm;
+      max-width: 120mm;
+      color: var(--muted);
+      font-size: 12pt;
+      line-height: 1.45;
+    }
+
+    .cover-meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 5mm;
+      border-top: 1px solid var(--line);
+      padding-top: 6mm;
+      color: var(--muted);
+      font-size: 8.5pt;
+    }
+
+    .cover-meta strong {
+      display: block;
+      color: var(--ink);
+      font-weight: 500;
+      margin-bottom: 1.5mm;
+    }
+
+    .toc {
+      margin-top: 15mm;
+      padding: 8mm;
+      border: 1px solid #d8dde5;
+      background: #f7f9fb;
+    }
+
+    .toc h2 {
+      margin-top: 0;
+    }
+
+    .toc ol {
+      columns: 2;
+      column-gap: 12mm;
+      margin: 0;
+      padding-left: 5mm;
+    }
+
+    .toc li {
+      break-inside: avoid;
+      margin: 0 0 2mm;
+    }
+
+    .chapter {
+      display: grid;
+      grid-template-columns: 26mm 1fr;
+      gap: 8mm;
+      padding-top: 3mm;
+      margin-bottom: 7mm;
+      page-break-inside: avoid;
+    }
+
+    .num {
+      width: 20mm;
+      height: 20mm;
+      border-radius: 50%;
+      border: 1px solid #101317;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 8pt;
+      letter-spacing: 0.12em;
+    }
+
+    h2 {
+      margin: 0 0 3mm;
+      font-size: 17pt;
+      line-height: 1.15;
+      letter-spacing: -0.015em;
+      font-weight: 560;
+    }
+
+    p {
+      margin: 0 0 3mm;
+    }
+
+    ul,
+    ol {
+      margin-top: 0;
+      padding-left: 5mm;
+    }
+
+    li {
+      margin-bottom: 1.8mm;
+    }
+
+    .lead {
+      font-size: 12pt;
+      color: #2a3139;
+    }
+
+    .quote {
+      margin: 4mm 0 5mm;
+      padding: 4mm 5mm;
+      color: #071019;
+      background: linear-gradient(90deg, rgba(113,212,255,0.14), rgba(244,195,94,0.12), rgba(217,91,255,0.11));
+      border-left: 2px solid #101317;
+      font-size: 11.5pt;
+    }
+
+    .dark-card {
+      margin: 4mm 0;
+      padding: 5mm;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top right, rgba(113,212,255,0.22), transparent 35%),
+        linear-gradient(135deg, #070a0f, #10141b);
+      border: 1px solid rgba(0,0,0,0.22);
+    }
+
+    .dark-card code {
+      color: #ffffff;
+    }
+
+    code {
+      font-family: "SF Mono", Menlo, Consolas, monospace;
+      font-size: 8.8pt;
+      color: #111923;
+    }
+
+    pre {
+      margin: 3mm 0;
+      padding: 4mm;
+      color: #e9f6ff;
+      background: #080b10;
+      border: 1px solid #1f2d38;
+      white-space: pre-wrap;
+      font-family: "SF Mono", Menlo, Consolas, monospace;
+      font-size: 8.2pt;
+      line-height: 1.4;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4mm;
+      margin-top: 4mm;
+    }
+
+    .mini {
+      padding: 4mm;
+      background: #f7f9fb;
+      border: 1px solid #dfe5ec;
+      page-break-inside: avoid;
+    }
+
+    .mini strong {
+      display: block;
+      margin-bottom: 1mm;
+    }
+
+    .footer {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding-top: 3mm;
+      border-top: 1px solid #d8dde5;
+      color: #7c8794;
+      font-size: 8pt;
+      display: flex;
+      justify-content: space-between;
+    }
+  </style>
+</head>
+<body>
+  <section class="page cover">
+    <div class="cover-content">
+      <div>
+        <div class="kicker">Architecture Cosmos</div>
+        <h1>Benutzerhandbuch und Projektvision</h1>
+        <p class="subtitle">Ein räumliches, kuratiertes und lernendes Architekturgedächtnis: Website, Datenbank, Quellenarbeit, 3D-Analyse und Entwurfswerkzeug in einem System.</p>
+      </div>
+      <div class="cover-meta">
+        <div><strong>Stand</strong>19. Mai 2026</div>
+        <div><strong>System</strong>Radial Infinity Atlas</div>
+        <div><strong>Status</strong>Arbeitsgrundlage V1</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page">
+    <div class="toc">
+      <h2>Inhalt</h2>
+      <ol>
+        <li>Grundidee</li>
+        <li>Website-Design</li>
+        <li>Atlas und Navigation</li>
+        <li>Datenbank-Vision</li>
+        <li>AI- und Automation-Vision</li>
+        <li>3D- und Analyse-Werkzeug</li>
+        <li>Sicherheit</li>
+        <li>Arbeitsweise</li>
+        <li>Offene Tracks</li>
+        <li>Projektidentität</li>
+      </ol>
+    </div>
+
+    <div class="chapter">
+      <div class="num">01</div>
+      <div>
+        <h2>Grundidee</h2>
+        <p class="lead">Architecture Cosmos ist ein zoombarer Wissensraum für Architekturgeschichte, Gegenwartsarchitektur, Landschaft, Stadt, Theorie, Quellen und spätere 3D-Referenzmodelle.</p>
+        <p>Die Website zeigt Architektur nicht als lineare Liste, sondern als räumlich-zeitlichen Atlas. Die zentrale Metapher ist ein Wurmloch: Beim Scrollen bewegt sich die Kamera durch eine tiefe historische Tube. Jahresringe, Projekte, Quellen, Stile und Relationen erscheinen als Schichten in diesem Raum.</p>
+        <ul>
+          <li>Referenzbibliothek und Studienwerkzeug;</li>
+          <li>visuelles Archiv und Rechercheinterface;</li>
+          <li>kuratierter Architekturatlas;</li>
+          <li>3D-Referenzdatenbank für Blender, ArchiCAD und KI-Workflows;</li>
+          <li>persönliches und später teilweise öffentliches Wissensnetzwerk.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="chapter">
+      <div class="num">02</div>
+      <div>
+        <h2>Website-Design</h2>
+        <p>Das Interface bleibt bewusst architektonisch, dunkel, ruhig und technisch: schwarzer Grundraum, feine weiße und graue Linien, dezente Farbakzente aus Stil- und Quellenlogik.</p>
+        <div class="quote">Immersion zuerst, aber Lesbarkeit und Bedienbarkeit gewinnen immer gegen visuelle Überladung.</div>
+        <div class="grid">
+          <div class="mini"><strong>Atlas statt Landingpage</strong>Die erste Ansicht soll das eigentliche Werkzeug sein, nicht eine Marketing-Hülle.</div>
+          <div class="mini"><strong>Objektbezogene Details</strong>Detailseiten dürfen Materialfarbe, Bildstimmung und Komposition des jeweiligen Projekts aufnehmen.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer"><span>Architecture Cosmos</span><span>Benutzerhandbuch</span></div>
+  </section>
+
+  <section class="page">
+    <div class="chapter">
+      <div class="num">03</div>
+      <div>
+        <h2>Atlas und Navigation</h2>
+        <p>Der Atlas basiert aktuell auf SVG/React und ist technisch konservativ gehalten. Er nutzt Wurmloch-Geometrie, Jahresringe bis ca. 9000 v. Chr., Projektpunkte mit Hauptbild-Miniaturen, Lens-Filter nach Stil und Quellwebseite, Relations-Netzwerk, Search und Database-/Draft-Zugang.</p>
+        <p>Die semantische Zoom-Logik bleibt zentral:</p>
+        <ul>
+          <li>weit weg: Zeit, Stil, Punkte, Struktur;</li>
+          <li>näher: Projektidentität und Medien;</li>
+          <li>Detail: Dossier, Quellen, Analyse, 3D, Material, Tragwerk, Tektonik.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="chapter">
+      <div class="num">04</div>
+      <div>
+        <h2>Datenbank-Vision</h2>
+        <p>Die Datenbank ist nicht nur für die Website gedacht. Sie wird die Grundlage für ein größeres AI-Referenzarchiv mit Quellen, Medien, Plan- und Schnittslots, Tags, Relationen und 3D-Modellpaketen.</p>
+        <div class="dark-card">
+          <p><strong>Blender-/ArchiCAD-Ziel</strong></p>
+          <p>Später sollen Abfragen möglich sein wie: Schweizer Holzbauten des 18. Jahrhunderts mit Satteldach finden, die wichtigsten Referenzen anzeigen und deren 3D-Layer in ein Entwurfsmodell importieren.</p>
+        </div>
+        <ul>
+          <li>3D-Layer: <code>full</code>, <code>structure</code>, <code>facade</code>, <code>interior</code>, <code>site</code>, <code>mass</code>, <code>materials</code>;</li>
+          <li>filterbar: Material, Tragwerk, Tektonik, Raumordnung und Kontext;</li>
+          <li>public/private Trennung: rechteklare Medien öffentlich, unklare Rechte privat oder link-only.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="chapter">
+      <div class="num">05</div>
+      <div>
+        <h2>AI- und Automation-Vision</h2>
+        <p>Das Ziel ist ein zentrales <code>Architecture Cosmos Brain</code>. Es beobachtet, prüft, diagnostiziert, erzeugt Reports, bereitet Daten vor und fragt vor großen Änderungen nach Freigabe.</p>
+        <pre>npm run brain:review
+npm run brain:doctor</pre>
+        <p>Der nächste große Schritt ist <strong>Brain V2: Cloudflare Scheduled Brain</strong>, damit die Überwachung unabhängig vom Laptop laufen kann.</p>
+      </div>
+    </div>
+
+    <div class="footer"><span>Architecture Cosmos</span><span>Atlas · Database · Brain</span></div>
+  </section>
+
+  <section class="page">
+    <div class="chapter">
+      <div class="num">06</div>
+      <div>
+        <h2>3D- und Analyse-Werkzeug</h2>
+        <p>Der 3D-Viewer soll nicht nur Modelle anzeigen, sondern Analyse-Schichten steuerbar machen: realistische Ansicht, Analyse-Ansicht, Material-Ansicht, Ghost/Transparenz, Tragwerk, Hülle, Zirkulation, Site und Materialfilter.</p>
+        <div class="grid">
+          <div class="mini"><strong>Modellqualität</strong>Modelle entstehen aus Plänen, Schnitten, Bildern, Quellen und manuell geprüfter Geometrie.</div>
+          <div class="mini"><strong>Analysequalität</strong>Material, Tektonik, Bauweise und Tragstruktur werden als Layer und Tags ablegbar.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chapter">
+      <div class="num">07</div>
+      <div>
+        <h2>Sicherheit</h2>
+        <p>Security ist Grundarchitektur, nicht Zusatz. Keine echten Uploads ohne Quarantine, keine Public-Datenbank-Writes ohne Rechte- und Security-Gate, keine Auth-Funktion ohne Cloudflare Access/Turnstile/Rate-Limit-Konzept.</p>
+        <pre>npm run security:check
+npm run brain:doctor</pre>
+      </div>
+    </div>
+
+    <div class="chapter">
+      <div class="num">08</div>
+      <div>
+        <h2>Arbeitsweise</h2>
+        <ol>
+          <li>Idee oder Quelle entsteht.</li>
+          <li>Brain/Research erzeugt Review Pack.</li>
+          <li>Rechte und Quellen werden bewertet.</li>
+          <li>Public-safe Felder gehen in Datenbank/Website.</li>
+          <li>Private Medien/Modelle bleiben privat oder link-only.</li>
+          <li>Tests laufen.</li>
+          <li>Nach Freigabe wird committed und gepublished.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="footer"><span>Architecture Cosmos</span><span>Security · Workflow</span></div>
+  </section>
+
+  <section class="page" style="page-break-after: auto;">
+    <div class="chapter">
+      <div class="num">09</div>
+      <div>
+        <h2>Wichtigste offene Tracks</h2>
+        <ul>
+          <li>Brain V2 als Cloud-Version.</li>
+          <li>Mobile UI gründlich weiter verbessern.</li>
+          <li>Database/Profile-Coverage für alle wichtigen Einträge erhöhen.</li>
+          <li>Pilotobjekte weiter verfeinern: Villa Savoye, Ingenbohl, MFO Park, High Line, Göbekli Tepe.</li>
+          <li>3D-Viewer und Blender-Layer tiefer ausbauen.</li>
+          <li>Rechte- und Public/Private-Gate produktionsreif machen.</li>
+          <li>Später: User Private Library mit sicherem Upload- und Review-Prozess.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="chapter">
+      <div class="num">10</div>
+      <div>
+        <h2>Projektidentität</h2>
+        <p>Architecture Cosmos ist kein reines Archiv und keine reine Visualisierung. Es ist ein entstehendes Wissensinstrument.</p>
+        <div class="quote">Ein räumliches, kuratiertes, lernendes Architekturgedächtnis, das Website, Datenbank, Quellenarbeit, 3D-Analyse und Entwurfswerkzeug miteinander verbindet.</div>
+      </div>
+    </div>
+
+    <div class="footer"><span>Architecture Cosmos</span><span>Projektvision V1</span></div>
+  </section>
+</body>
+</html>
