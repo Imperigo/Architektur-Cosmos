@@ -39,7 +39,12 @@
     "database:analyze": "node scripts/database-research-agents.mjs --mode analyze",
     "database:pilot-enrich": "node scripts/pilot-enrichment-review.mjs",
     "brain:review": "node scripts/brain-review.mjs",
-    "brain:doctor": "node scripts/brain-doctor.mjs"
+    "brain:doctor": "node scripts/brain-doctor.mjs",
+    "brain:cloud-plan": "node scripts/brain-cloud-plan.mjs",
+    "brain:cloud-export": "node scripts/brain-cloud-export.mjs",
+    "brain:api-smoke": "node scripts/brain-api-smoke.mjs",
+    "brain:cloud-ready": "npm run brain:review && npm run brain:cloud-plan && npm run brain:cloud-export && npm run obsidian:export && npm run brain:api-smoke",
+    "obsidian:export": "node scripts/obsidian-export.mjs"
   },
   "dependencies": {
     "@types/d3": "latest",

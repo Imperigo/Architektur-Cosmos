@@ -1,5 +1,7 @@
 import entriesData from '../data/mock-entries.json';
-import type { Entry } from '../lib/types';
+import relationsData from '../data/relations.json';
+import rulesData from '../data/brain-rules.json';
+import type { Entry, EntryRelation } from '../lib/types';
 
 type AssetsBinding = {
   fetch(request: Request): Promise<Response>;
@@ -15,6 +17,44 @@ type SearchResponse = {
 };
 
 const entries = entriesData as Entry[];
+const relations = relationsData as EntryRelation[];
+const brainRules = rulesData as BrainRules;
+
+type BrainRules = {
+  default_mode?: string;
+  autonomy?: {
+    posture?: string;
+    must_ask_before?: string[];
+  };
+  entry_quality_targets?: {
+    minimum_sources?: number;
+    required_analysis_layers?: string[];
+    required_model_parts?: string[];
+  };
+  priority_weights?: {
+    missing_sources?: number;
+    rights_blocked?: number;
+    missing_model?: number;
+    missing_analysis?: number;
+    missing_relations?: number;
+    pilot_entry?: number;
+  };
+  private_or_blocked_rights?: string[];
+};
+
+type BrainTask = {
+  id: string;
+  scope: 'system' | 'entry';
+  kind: string;
+  entry_id: string | null;
+  entry_slug?: string;
+  entry_title: string;
+  title: string;
+  body: string;
+  priority: number;
+  risk_level: 'low' | 'medium' | 'high' | 'critical';
+  approval_required: boolean;
+};
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -62,6 +102,20 @@ const worker = {
 
     if (url.pathname === '/api/search') {
       return json(searchEntries(entries, url.searchParams), 200, 'public, max-age=300, s-maxage=3600');
+    }
+
+    if (url.pathname === '/api/brain/status') {
+      return json(buildBrainStatus(), 200, 'public, max-age=300, s-maxage=300');
+    }
+
+    if (url.pathname === '/api/brain/latest-report') {
+      return json(buildBrainReport(), 200, 'public, max-age=300, s-maxage=300');
+    }
+
+    if (url.pathname === '/api/brain/tasks') {
+      const limit = clamp(numberParam(url.searchParams, 'limit') ?? 20, 1, 100);
+      const tasks = filterBrainTasks(buildBrainTasks(), url.searchParams);
+      return json({ count: tasks.length, results: tasks.slice(0, limit) }, 200, 'public, max-age=300, s-maxage=300');
     }
 
     return json({ error: 'Unknown API route' }, 404, 'no-store');
@@ -138,6 +192,271 @@ function buildTaxonomies(sourceEntries: Entry[]) {
     model_parts: unique(sourceEntries.flatMap((entry) => entry.model_3d?.parts?.map((part) => part.type) ?? [])),
     vibes: unique(sourceEntries.flatMap((entry) => entry.vibes ?? []))
   };
+}
+
+function buildBrainStatus() {
+  const summary = buildBrainSummary();
+  const tasks = buildBrainTasks();
+
+  return {
+    status: 'ready',
+    mode: brainRules.default_mode ?? 'autonomous_review',
+    posture: brainRules.autonomy?.posture ?? 'active_self_healing_with_owner_approval',
+    generated_at: new Date().toISOString(),
+    source: 'static_worker_snapshot',
+    writes_database: false,
+    publishes: false,
+    approval_required_before_execution: true,
+    summary,
+    coverage: buildBrainCoverage(summary),
+    open_tasks: tasks.length,
+    highest_priority_task: tasks[0] ?? null,
+    endpoints: ['/api/brain/status', '/api/brain/latest-report', '/api/brain/tasks'],
+    next_steps: [
+      'Keep Cloud Brain read-only until D1 state and approval gates are reviewed.',
+      'Create a dedicated architecture-cosmos-brain D1 database only after approval.',
+      'Use Obsidian as a private review surface, not public asset storage.'
+    ]
+  };
+}
+
+function buildBrainReport() {
+  const summary = buildBrainSummary();
+  const tasks = buildBrainTasks();
+
+  return {
+    title: 'Architecture Cosmos Cloud Brain Report',
+    generated_at: new Date().toISOString(),
+    status: 'read_only_snapshot',
+    writes_database: false,
+    publishes: false,
+    approval_required: true,
+    summary,
+    coverage: buildBrainCoverage(summary),
+    watchlists: {
+      missing_sources: entries.filter((entry) => sourceCountFor(entry) < minimumSourceTarget()).map(toBrainWatchItem).slice(0, 20),
+      missing_models: entries.filter((entry) => !entryHas3dModel(entry)).map(toBrainWatchItem).slice(0, 20),
+      missing_analysis: entries.filter((entry) => !entryHasAnalysis(entry)).map(toBrainWatchItem).slice(0, 20),
+      public_candidates: entries
+        .filter((entry) => entry.database_profile && sourceCountFor(entry) >= minimumSourceTarget() && !entryHasBlockedRights(entry))
+        .map(toBrainWatchItem)
+        .slice(0, 20)
+    },
+    top_tasks: tasks.slice(0, 10),
+    obsidian: {
+      role: 'private_knowledge_and_review_surface',
+      suggested_vault_sections: ['00 Inbox', '01 Projects', '02 Sources', '03 Research Packs', '04 Brain Reports', '05 Decisions', '06 Taxonomies', '07 Blender + 3D']
+    }
+  };
+}
+
+function buildBrainSummary() {
+  const brokenRelations = relations.filter((relation) => !entryById(relation.source_entry_id) || !entryById(relation.target_entry_id));
+  const databaseProfiles = entries.filter((entry) => entry.database_profile).length;
+  const modelReadyOrPlanned = entries.filter(entryHas3dModel).length;
+  const analysisReadyOrPlanned = entries.filter(entryHasAnalysis).length;
+  const sourceCandidateEntries = entries.filter((entry) => sourceCountFor(entry) > 0).length;
+  const rightsBlocked = entries.filter(entryHasBlockedRights).length;
+
+  return {
+    entries: entries.length,
+    relations: relations.length,
+    broken_relations: brokenRelations.length,
+    database_profiles: databaseProfiles,
+    model_ready_or_planned: modelReadyOrPlanned,
+    analysis_ready_or_planned: analysisReadyOrPlanned,
+    source_candidate_entries: sourceCandidateEntries,
+    rights_blocked: rightsBlocked
+  };
+}
+
+function buildBrainCoverage(summary: ReturnType<typeof buildBrainSummary>) {
+  return {
+    database_profile_percent: percent(summary.database_profiles, summary.entries),
+    model_percent: percent(summary.model_ready_or_planned, summary.entries),
+    analysis_percent: percent(summary.analysis_ready_or_planned, summary.entries),
+    source_candidate_percent: percent(summary.source_candidate_entries, summary.entries)
+  };
+}
+
+function buildBrainTasks(): BrainTask[] {
+  const tasks: BrainTask[] = [];
+  const relationCounts = countRelations();
+  const brokenRelations = relations.filter((relation) => !entryById(relation.source_entry_id) || !entryById(relation.target_entry_id));
+
+  if (brokenRelations.length > 0) {
+    tasks.push({
+      id: 'system-broken-relations',
+      scope: 'system',
+      kind: 'integrity',
+      entry_id: null,
+      entry_title: 'Archive graph',
+      title: 'Fix broken relations',
+      body: `${brokenRelations.length} relation(s) point to missing entries.`,
+      priority: 100,
+      risk_level: 'high',
+      approval_required: true
+    });
+  }
+
+  const entriesWithoutProfile = entries.length - entries.filter((entry) => entry.database_profile).length;
+  if (entriesWithoutProfile > entries.length * 0.5) {
+    tasks.push({
+      id: 'system-profile-coverage',
+      scope: 'system',
+      kind: 'database',
+      entry_id: null,
+      entry_title: 'Database coverage',
+      title: 'Increase database profile coverage',
+      body: `${entriesWithoutProfile} entries do not yet have database_profile metadata.`,
+      priority: 52,
+      risk_level: 'medium',
+      approval_required: true
+    });
+  }
+
+  for (const entry of entries) {
+    const sourceCount = sourceCountFor(entry);
+    const relationCount = relationCounts.get(entry.id) ?? 0;
+    const pilotBoost = entry.database_profile ? priority('pilot_entry', 12) : 0;
+
+    if (sourceCount < minimumSourceTarget()) {
+      tasks.push(brainTask(entry, 'research', `Add source trail for ${entry.title}`, `Only ${sourceCount} source(s) attached. Target is ${minimumSourceTarget()}.`, priority('missing_sources', 22) + pilotBoost, 'medium'));
+    }
+
+    if (entryHasBlockedRights(entry)) {
+      tasks.push(brainTask(entry, 'rights', `Rights review for ${entry.title}`, 'Entry contains private, blocked or unclear media/model rights. Keep assets link-only until cleared.', priority('rights_blocked', 18) + pilotBoost, 'high'));
+    }
+
+    if (!entryHas3dModel(entry)) {
+      tasks.push(brainTask(entry, 'model', `Plan 3D layers for ${entry.title}`, 'No model_3d or model_assets found. Prepare full, structure and site layers.', priority('missing_model', 16) + pilotBoost, 'medium'));
+    } else {
+      const missingParts = requiredModelParts().filter((part) => !(entry.model_3d?.parts ?? []).some((modelPart) => modelPart.type === part));
+      if (missingParts.length > 0) {
+        tasks.push(brainTask(entry, 'model', `Complete Blender layer plan for ${entry.title}`, `Missing model parts: ${missingParts.join(', ')}.`, priority('missing_model', 16) - 4 + pilotBoost, 'medium'));
+      }
+    }
+
+    if (!entryHasAnalysis(entry)) {
+      tasks.push(brainTask(entry, 'analysis', `Add analysis layers for ${entry.title}`, 'No structure/material/tectonic analysis layers attached.', priority('missing_analysis', 14) + pilotBoost, 'medium'));
+    } else {
+      const analysisTypes = new Set<string>((entry.analysis_layers ?? []).map((layer) => layer.analysis_type));
+      const missingAnalysis = requiredAnalysisLayers().filter((type) => !analysisTypes.has(type));
+      if (missingAnalysis.length > 0) {
+        tasks.push(brainTask(entry, 'analysis', `Complete analysis filters for ${entry.title}`, `Missing analysis layers: ${missingAnalysis.join(', ')}.`, priority('missing_analysis', 14) - 4 + pilotBoost, 'medium'));
+      }
+    }
+
+    if (relationCount < 2) {
+      tasks.push(brainTask(entry, 'relations', `Strengthen relation network for ${entry.title}`, `Only ${relationCount} relation(s). Add typological, material or source relations.`, priority('missing_relations', 10) + pilotBoost, 'low'));
+    }
+  }
+
+  return tasks.sort((a, b) => b.priority - a.priority || a.title.localeCompare(b.title));
+}
+
+function filterBrainTasks(tasks: BrainTask[], params: URLSearchParams): BrainTask[] {
+  const kinds = listParam(params, 'kind').map(normalize);
+  const scopes = listParam(params, 'scope').map(normalize);
+  const riskLevels = listParam(params, 'risk_level').map(normalize);
+  const entryId = normalize(params.get('entry_id') ?? undefined);
+
+  return tasks.filter((task) => {
+    if (kinds.length && !kinds.includes(normalize(task.kind))) return false;
+    if (scopes.length && !scopes.includes(normalize(task.scope))) return false;
+    if (riskLevels.length && !riskLevels.includes(normalize(task.risk_level))) return false;
+    if (entryId && normalize(task.entry_id ?? undefined) !== entryId) return false;
+    return true;
+  });
+}
+
+function brainTask(entry: Entry, kind: string, title: string, body: string, priorityValue: number, riskLevel: BrainTask['risk_level']): BrainTask {
+  return {
+    id: `${kind}-${entry.id}`,
+    scope: 'entry',
+    kind,
+    entry_id: entry.id,
+    entry_slug: entry.slug,
+    entry_title: entry.title,
+    title,
+    body,
+    priority: priorityValue,
+    risk_level: riskLevel,
+    approval_required: true
+  };
+}
+
+function entryById(id: string): Entry | undefined {
+  return entries.find((entry) => entry.id === id);
+}
+
+function countRelations(): Map<string, number> {
+  const counts = new Map<string, number>();
+  for (const relation of relations) {
+    counts.set(relation.source_entry_id, (counts.get(relation.source_entry_id) ?? 0) + 1);
+    counts.set(relation.target_entry_id, (counts.get(relation.target_entry_id) ?? 0) + 1);
+  }
+  return counts;
+}
+
+function toBrainWatchItem(entry: Entry) {
+  return {
+    id: entry.id,
+    slug: entry.slug,
+    title: entry.title,
+    year_start: entry.year_start,
+    entry_type: entry.entry_type
+  };
+}
+
+function entryHasAnalysis(entry: Entry): boolean {
+  return Boolean(entry.analysis_layers?.length || entry.analysis_observations?.length);
+}
+
+function entryHasBlockedRights(entry: Entry): boolean {
+  const blocked = brainRules.private_or_blocked_rights ?? ['unknown', 'needs_permission', 'private_research', 'personal_only', 'all_rights_reserved'];
+  const rightsValues = [
+    ...(entry.media ?? []).map((media) => media.license),
+    entry.model_3d?.license,
+    ...(entry.model_3d?.parts ?? []).map((part) => part.license),
+    ...(entry.asset_candidates ?? []).map((asset) => asset.rights_status),
+    ...(entry.source_candidates ?? []).map((source) => source.rights_status)
+  ];
+  const rightsList: string[] = [];
+  for (const value of rightsValues) {
+    if (isDefinedString(value)) rightsList.push(value);
+  }
+  return rightsList.some((rights) => blocked.includes(rights));
+}
+
+function sourceCountFor(entry: Entry): number {
+  return [
+    entry.source_url,
+    ...(entry.source_documents ?? []),
+    ...(entry.source_candidates ?? []),
+    ...(entry.source_assets ?? [])
+  ].filter(Boolean).length;
+}
+
+function minimumSourceTarget(): number {
+  return brainRules.entry_quality_targets?.minimum_sources ?? 3;
+}
+
+function requiredAnalysisLayers(): string[] {
+  return brainRules.entry_quality_targets?.required_analysis_layers ?? ['structure', 'material_system', 'tectonics'];
+}
+
+function requiredModelParts(): string[] {
+  return brainRules.entry_quality_targets?.required_model_parts ?? ['full', 'structure', 'site'];
+}
+
+function priority(key: keyof NonNullable<BrainRules['priority_weights']>, fallback: number): number {
+  return brainRules.priority_weights?.[key] ?? fallback;
+}
+
+function percent(value: number, total: number): number {
+  if (!total) return 0;
+  return Math.round((value / total) * 1000) / 10;
 }
 
 function listParam(params: URLSearchParams, key: string): string[] {
@@ -235,6 +554,10 @@ function unique(values: string[]): string[] {
 
 function isString(value: string | undefined): value is string {
   return Boolean(value);
+}
+
+function isDefinedString(value: unknown): value is string {
+  return typeof value === 'string' && value.length > 0;
 }
 
 function clamp(value: number, min: number, max: number): number {

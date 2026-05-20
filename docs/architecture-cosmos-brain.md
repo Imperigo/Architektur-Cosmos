@@ -115,3 +115,31 @@ If a safe check fails, the doctor retries once where allowed and records the fai
 - R2 signed upload preparation;
 - Blender import request generation;
 - owner-approved execute/publish automation.
+
+## Cloud Brain V2
+
+The official hosted direction is documented in:
+
+```text
+docs/cloud-brain-architecture.md
+schema/architecture-cosmos-brain-d1.sql
+```
+
+Cloud Brain V2 should run as a Cloudflare Scheduled Worker with D1 state. The
+first version is read-only/status-first:
+
+- produce health and database-quality reports;
+- store Brain run metadata and proposed tasks;
+- expose read-only status endpoints;
+- keep all execution, publishing, cloud writes, email sends and asset uploads
+behind approval gates.
+
+Local readiness check:
+
+```bash
+npm run brain:cloud-plan
+```
+
+Obsidian is tracked as a private knowledge/review surface for project notes,
+research packs, Brain reports, taxonomies and decisions. It is not the public
+asset store and does not replace rights gates.
