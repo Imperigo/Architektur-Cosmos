@@ -149,6 +149,7 @@ const initialEntryDraft: EntryDraft = {
   full_description: '',
   copyright_status: 'needs_permission'
 };
+const developerSessionKey = 'architecture-cosmos-dev-mode';
 
 export function RadialAtlas({ entries, relations }: { entries: Entry[]; relations: EntryRelation[] }) {
   const svgRef = useRef<SVGSVGElement | null>(null);
@@ -175,6 +176,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   const [visualPan, setVisualPan] = useState<VisualPan>({ x: 0, y: 0 });
   const [introState, setIntroState] = useState<IntroState>('intro');
   const [showDatabasePanel, setShowDatabasePanel] = useState(false);
+  const [developerMode, setDeveloperMode] = useState(readDeveloperSession);
   const [localEntries, setLocalEntries] = useState<Entry[]>([]);
   const [entryDraft, setEntryDraft] = useState<EntryDraft>(initialEntryDraft);
   const [researchSeed, setResearchSeed] = useState<ResearchSeed>({
@@ -229,6 +231,20 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     moved: 0
   });
   const allEntries = useMemo(() => mergeEntries(entries, localEntries), [entries, localEntries]);
+
+  function updateDeveloperMode(enabled: boolean) {
+    setDeveloperMode(enabled);
+    try {
+      if (enabled) {
+        window.sessionStorage.setItem(developerSessionKey, 'unlocked');
+      } else {
+        window.sessionStorage.removeItem(developerSessionKey);
+      }
+    } catch {
+      // Session storage can be disabled; the visible state still updates.
+    }
+  }
+
   const state = useMemo(() => wormholeState(motion.currentTravel), [motion.currentTravel]);
   const coarsePointer = useCoarsePointer();
   const ui = useAtlasUiMetrics();
@@ -822,6 +838,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
 
   function handlePointerDown(event: PointerEvent<SVGSVGElement>) {
     if (event.pointerType === 'touch' || event.button !== 0 || isInterfaceTarget(event.target) || selectedEntry || introState !== 'idle') return;
+    if (isEntryNodeTarget(event.target)) return;
     if (visualZoomRef.current.currentZoom <= 1.02) return;
 
     panGestureRef.current = {
@@ -852,6 +869,22 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
         moved: false
       };
     }, 0);
+  }
+
+  function handleAtlasClick(event: ReactMouseEvent<SVGSVGElement>) {
+    if (introState !== 'idle') {
+      startIntro();
+      return;
+    }
+
+    if (selectedEntry || isInterfaceTarget(event.target) || isEntryNodeTarget(event.target)) return;
+    if (panGestureRef.current.moved) return;
+
+    const point = pointerToSvgPoint(event);
+    const nearest = point ? nearestInteractiveNode(toCameraPoint(point), displayNodes) : null;
+    if (nearest && visualZoomRef.current.currentZoom > 1.02) {
+      openDossierFromNode(nearest.entry);
+    }
   }
 
   function schedulePointerMove(point: SvgPoint) {
@@ -977,9 +1010,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
           onPointerUp={handlePointerUp}
           onPointerCancel={handlePointerUp}
           onPointerLeave={handlePointerLeave}
-          onClick={() => {
-            if (introState !== 'idle') startIntro();
-          }}
+          onClick={handleAtlasClick}
         >
           <defs>
           </defs>
@@ -1074,6 +1105,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
               intakeFiles={intakeFiles}
               researchSeed={researchSeed}
               imageIdentify={imageIdentify}
+              developerMode={developerMode}
               onDraftChange={setEntryDraft}
               onIntakeFilesChange={setIntakeFiles}
               onResearchSeedChange={setResearchSeed}
@@ -1096,6 +1128,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
             intakeFiles={intakeFiles}
             researchSeed={researchSeed}
             imageIdentify={imageIdentify}
+            developerMode={developerMode}
             onDraftChange={setEntryDraft}
             onIntakeFilesChange={setIntakeFiles}
             onResearchSeedChange={setResearchSeed}
@@ -1105,7 +1138,9 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
           />
         ) : null}
         {introState === 'idle' ? <BrainStatusWidget /> : null}
-        {introState === 'idle' && !showDatabasePanel ? <ProjectSearch entries={allEntries} /> : null}
+        {introState === 'idle' && !showDatabasePanel ? (
+          <ProjectSearch entries={allEntries} developerMode={developerMode} onDeveloperModeChange={updateDeveloperMode} />
+        ) : null}
         {cursorVisible && !coarsePointer ? <ScreenCosmosCursor cursorRef={screenCursorRef} isDossierOpen={Boolean(selectedEntry)} /> : null}
       </div>
 
@@ -1224,6 +1259,11 @@ function useAtlasUiMetrics(): AtlasUiMetrics {
 function isInterfaceTarget(target: EventTarget) {
   if (!(target instanceof Element)) return false;
   return Boolean(target.closest('.radial-hud, .lens-control, .lens-control-panel, .lens-access, .lens-panel, .database-access, .database-draft, .dossier-overlay, .style-sector, .project-search'));
+}
+
+function isEntryNodeTarget(target: EventTarget | null) {
+  if (!(target instanceof Element)) return false;
+  return Boolean(target.closest('[data-entry-node="true"]'));
 }
 
 function isNativeOverlayTarget(target: EventTarget | null) {
@@ -1548,6 +1588,7 @@ function DatabaseArchivePanel({
   intakeFiles,
   researchSeed,
   imageIdentify,
+  developerMode,
   onDraftChange,
   onIntakeFilesChange,
   onResearchSeedChange,
@@ -1563,6 +1604,7 @@ function DatabaseArchivePanel({
   intakeFiles: IntakeFile[];
   researchSeed: ResearchSeed;
   imageIdentify: ImageIdentifyState;
+  developerMode: boolean;
   onDraftChange: (draft: EntryDraft) => void;
   onIntakeFilesChange: (files: IntakeFile[]) => void;
   onResearchSeedChange: (seed: ResearchSeed) => void;
@@ -1570,7 +1612,7 @@ function DatabaseArchivePanel({
   onCreateLocalEntry: (draft: EntryDraft) => void;
   onDismiss: () => void;
 }) {
-  const [activeTab, setActiveTab] = useState<DatabaseTab>(selectedEntry ? 'entries' : 'generate');
+  const [activeTab, setActiveTab] = useState<DatabaseTab>(selectedEntry ? 'entries' : 'overview');
   const ui = useAtlasUiMetrics();
   const panelWidth = ui.databasePanel.width;
   const panelHeight = ui.databasePanel.height;
@@ -1590,11 +1632,11 @@ function DatabaseArchivePanel({
     { label: 'Analysis', value: archivePreview.entry_analysis.length },
     { label: 'Relations', value: relations.length }
   ];
-  const tabs: Array<{ id: DatabaseTab; label: string; hint: string; group: 'create' | 'review' }> = [
-    { id: 'generate', label: 'Generate', hint: 'Name or image to draft', group: 'create' },
-    { id: 'intake', label: 'Files', hint: 'Stage source package', group: 'create' },
-    { id: 'analysis', label: 'Analyze', hint: 'Score and layers', group: 'create' },
-    { id: 'draft', label: 'Draft', hint: 'Edit before adding', group: 'create' },
+  const tabs: Array<{ id: DatabaseTab; label: string; hint: string; group: 'create' | 'review'; devOnly?: boolean }> = [
+    { id: 'generate', label: 'Generate', hint: 'Name or image to draft', group: 'create', devOnly: true },
+    { id: 'intake', label: 'Files', hint: 'Stage source package', group: 'create', devOnly: true },
+    { id: 'analysis', label: 'Analyze', hint: 'Score and layers', group: 'create', devOnly: true },
+    { id: 'draft', label: 'Draft', hint: 'Edit before adding', group: 'create', devOnly: true },
     { id: 'overview', label: 'Status', hint: 'What exists now', group: 'review' },
     { id: 'entries', label: 'Entries', hint: 'Current object', group: 'review' },
     { id: 'sources', label: 'Sources', hint: 'References', group: 'review' },
@@ -1602,9 +1644,11 @@ function DatabaseArchivePanel({
     { id: 'models', label: '3D', hint: 'Model layers', group: 'review' },
     { id: 'relations', label: 'Graph', hint: 'Connections', group: 'review' }
   ];
-  const createTabs = tabs.filter((tab) => tab.group === 'create');
-  const reviewTabs = tabs.filter((tab) => tab.group === 'review');
-  const workflowStage = databaseWorkflowStage(activeTab);
+  const visibleTabs = developerMode ? tabs : tabs.filter((tab) => !tab.devOnly);
+  const createTabs = visibleTabs.filter((tab) => tab.group === 'create');
+  const reviewTabs = visibleTabs.filter((tab) => tab.group === 'review');
+  const safeActiveTab = !developerMode && isDevOnlyDatabaseTab(activeTab) ? 'overview' : activeTab;
+  const workflowStage = databaseWorkflowStage(safeActiveTab);
 
   function updateField<Key extends keyof EntryDraft>(key: Key, value: EntryDraft[Key]) {
     onDraftChange({ ...draft, [key]: value });
@@ -1621,7 +1665,12 @@ function DatabaseArchivePanel({
   }
 
   function handlePrimaryGenerate() {
-    if (activeTab !== 'generate') {
+    if (!developerMode) {
+      setActiveTab('overview');
+      return;
+    }
+
+    if (safeActiveTab !== 'generate') {
       setActiveTab('generate');
       return;
     }
@@ -1748,7 +1797,9 @@ function DatabaseArchivePanel({
         <div className="mb-3 flex items-start justify-between gap-3">
           <div>
             <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#00e7ff]">Architecture Cosmos Database</div>
-            <div className="mt-1 text-[10px] uppercase tracking-[0.14em] text-[#b8b8b2]">Local draft console / private library planned</div>
+            <div className="mt-1 text-[10px] uppercase tracking-[0.14em] text-[#b8b8b2]">
+              {developerMode ? 'Developer session / private tools visible' : 'Public-safe archive view / dev tools locked'}
+            </div>
           </div>
           <div className="flex gap-1.5">
             <a className="border border-[#00e7ff]/70 px-2 py-1 text-[9px] uppercase tracking-[0.12em] text-[#00e7ff]" href="/archive/">
@@ -1767,31 +1818,39 @@ function DatabaseArchivePanel({
           ))}
         </div>
 
-        <div className="mb-3 border border-[#00e7ff]/25 bg-[#061719]/85 px-2 py-1.5 text-[8.8px] uppercase leading-snug tracking-[0.12em] text-[#c9fff4]">
-          Browser session only / no D1 write / no R2 upload / private library planned
+        <div className={`mb-3 border px-2 py-1.5 text-[8.8px] uppercase leading-snug tracking-[0.12em] ${developerMode ? 'border-[#f5b342]/34 bg-[#201407]/70 text-[#ffe1a3]' : 'border-[#00e7ff]/25 bg-[#061719]/85 text-[#c9fff4]'}`}>
+          {developerMode
+            ? 'Dev unlocked / private copyright workflow visible / no automatic publish'
+            : 'Dev locked / public-safe metadata only / unlock below Search for private tools'}
         </div>
 
-        <div className="database-top-workflow mb-3">
-          <DatabaseFlowSteps current={workflowStage} />
-          <div className="database-primary-action">
-            <button
-              type="button"
-              className="database-primary-generate"
-              onClick={handlePrimaryGenerate}
-            >
-              {activeTab === 'generate' ? 'Generate Draft' : 'Dev AI Generate'}
-            </button>
-            <small>{activeTab === 'generate' ? 'uses current inputs' : 'opens generator'}</small>
+        {developerMode ? (
+          <div className="database-top-workflow mb-3">
+            <DatabaseFlowSteps current={workflowStage} />
+            <div className="database-primary-action">
+              <button
+                type="button"
+                className="database-primary-generate"
+                onClick={handlePrimaryGenerate}
+              >
+                {safeActiveTab === 'generate' ? 'Generate Draft' : 'Dev AI Generate'}
+              </button>
+              <small>{safeActiveTab === 'generate' ? 'uses current inputs' : 'opens generator'}</small>
+            </div>
           </div>
-        </div>
+        ) : (
+          <p className="mb-3 border border-[#f7f7f4]/12 bg-[#050505]/55 p-2 text-[9.5px] leading-snug text-[#b8b8b2]">
+            Private intake, AI generation, draft creation and copyright-sensitive review stay hidden until the local Developer gate is unlocked. This is a UI safeguard, not authentication.
+          </p>
+        )}
 
         <div className="cosmos-scroll-panel min-h-0 flex-1 pr-1">
           <div className="database-tab-section">
-            <DatabaseTabGroup title="Create entry" tabs={createTabs} activeTab={activeTab} onSelect={setActiveTab} />
-            <DatabaseTabGroup title="Review archive" tabs={reviewTabs} activeTab={activeTab} onSelect={setActiveTab} />
+            {developerMode ? <DatabaseTabGroup title="Create entry" tabs={createTabs} activeTab={safeActiveTab} onSelect={setActiveTab} /> : null}
+            <DatabaseTabGroup title="Review archive" tabs={reviewTabs} activeTab={safeActiveTab} onSelect={setActiveTab} />
           </div>
 
-          {activeTab === 'overview' ? (
+          {safeActiveTab === 'overview' ? (
             <div className="space-y-2 text-[10px] leading-relaxed text-[#d9d9d2]">
               <ArchiveRow label="Mode" value="Static public atlas / browser drafts only" />
               <ArchiveRow label="Storage" value={`${archivePreview.storage_target.database.toUpperCase()} metadata preview / R2 planned`} />
@@ -1819,7 +1878,7 @@ function DatabaseArchivePanel({
             </div>
           ) : null}
 
-          {activeTab === 'intake' ? (
+          {safeActiveTab === 'intake' ? (
             <div className="space-y-3 text-[10px] leading-relaxed text-[#d9d9d2]">
               <div
                 className="database-dropzone"
@@ -1894,7 +1953,7 @@ function DatabaseArchivePanel({
             </div>
           ) : null}
 
-          {activeTab === 'generate' ? (
+          {safeActiveTab === 'generate' ? (
             <div className="space-y-3 text-[10px] leading-relaxed text-[#d9d9d2]">
               <div className="database-generate-sticky">
                   <div>
@@ -2002,11 +2061,11 @@ function DatabaseArchivePanel({
             </div>
           ) : null}
 
-          {activeTab === 'analysis' ? (
+          {safeActiveTab === 'analysis' ? (
             <DatabaseAnalysisPackView pack={currentAnalysisPack} fallbackEntry={currentEntry} />
           ) : null}
 
-          {activeTab === 'entries' ? (
+          {safeActiveTab === 'entries' ? (
             <div className="space-y-2">
               {currentEntry ? (
                 <ArchiveList
@@ -2023,23 +2082,23 @@ function DatabaseArchivePanel({
             </div>
           ) : null}
 
-          {activeTab === 'sources' ? (
+          {safeActiveTab === 'sources' ? (
             <ArchiveCards items={selectedEntry ? sourceCardsForEntry(selectedEntry) : archivePreview.entry_sources.map((source) => ({ title: source.title, meta: `${source.source_type} / ${source.reliability_level}`, body: source.notes }))} />
           ) : null}
 
-          {activeTab === 'media' ? (
-            <ArchiveCards items={selectedEntry ? selectedEntry.media.map((media) => ({ title: media.label, meta: `${media.type} / ${media.credit ?? 'placeholder'}`, body: media.placeholder })) : archivePreview.entry_media.map((media) => ({ title: media.title, meta: `${media.media_type} / ${media.copyright_status}`, body: media.caption }))} />
+          {safeActiveTab === 'media' ? (
+            <ArchiveCards items={currentEntry ? currentEntry.media.map((media) => ({ title: media.label, meta: `${media.type} / ${media.credit ?? 'placeholder'}`, body: `${media.placeholder}${media.url ? ` / ${media.url}` : ' / no public image attached'}` })) : archivePreview.entry_media.map((media) => ({ title: media.title, meta: `${media.media_type} / ${media.copyright_status}`, body: media.caption }))} />
           ) : null}
 
-          {activeTab === 'models' ? (
+          {safeActiveTab === 'models' ? (
             <ArchiveCards items={(currentEntry?.model_assets?.length ? currentEntry.model_assets : archivePreview.entry_models).map((model) => ({ title: model.title, meta: `${model.model_type} / ${model.review_status} / confidence ${model.confidence_score ?? 'n/a'}`, body: model.source_basis }))} />
           ) : null}
 
-          {activeTab === 'relations' ? (
+          {safeActiveTab === 'relations' ? (
             <ArchiveList title="Knowledge Graph" items={[`${relations.length} local relations available now`, 'D1 table prepared for influence, theme, source and structural relations', 'Hover network can later read the same graph instead of local JSON']} />
           ) : null}
 
-          {activeTab === 'draft' ? (
+          {safeActiveTab === 'draft' ? (
             <div>
               <div className="mb-2 flex items-center justify-between gap-2">
                 <div className="text-[9px] uppercase tracking-[0.16em] text-[#b8b8b2]">New Entry Draft / browser session only</div>
@@ -2230,6 +2289,19 @@ function databaseWorkflowStage(tab: DatabaseTab): 'research' | 'analysis' | 'dra
   if (tab === 'draft') return 'draft';
   if (tab === 'overview' || tab === 'entries' || tab === 'sources' || tab === 'relations') return 'review';
   return 'research';
+}
+
+function isDevOnlyDatabaseTab(tab: DatabaseTab) {
+  return tab === 'generate' || tab === 'intake' || tab === 'analysis' || tab === 'draft';
+}
+
+function readDeveloperSession() {
+  if (typeof window === 'undefined') return false;
+  try {
+    return window.sessionStorage.getItem(developerSessionKey) === 'unlocked';
+  } catch {
+    return false;
+  }
 }
 
 function DatabaseAnalysisPackView({

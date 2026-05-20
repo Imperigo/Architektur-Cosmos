@@ -9,14 +9,30 @@ type ProjectSearchProps = {
   entries: Entry[];
   currentSlug?: string;
   variant?: 'atlas' | 'entry';
+  developerMode?: boolean;
+  onDeveloperModeChange?: (enabled: boolean) => void;
 };
 
 const MAX_RESULTS = 8;
+const DEV_SESSION_KEY = 'architecture-cosmos-dev-mode';
+const DEV_ACCESS_CODES = new Set(['COSMOS-DEV', 'ARCHIVE-DEV']);
 
-export function ProjectSearch({ entries, currentSlug, variant = currentSlug ? 'entry' : 'atlas' }: ProjectSearchProps) {
+export function ProjectSearch({
+  entries,
+  currentSlug,
+  variant = currentSlug ? 'entry' : 'atlas',
+  developerMode,
+  onDeveloperModeChange
+}: ProjectSearchProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isDevOpen, setIsDevOpen] = useState(false);
+  const [localDeveloperMode, setLocalDeveloperMode] = useState(readDevSession);
+  const [devCode, setDevCode] = useState('');
+  const [devError, setDevError] = useState('');
   const [query, setQuery] = useState('');
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const devInputRef = useRef<HTMLInputElement | null>(null);
+  const isDeveloperMode = developerMode ?? localDeveloperMode;
 
   const results = useMemo(() => {
     const normalizedQuery = normalize(query);
@@ -47,7 +63,44 @@ export function ProjectSearch({ entries, currentSlug, variant = currentSlug ? 'e
       return;
     }
 
+    setIsDevOpen(false);
     openSearch();
+  }
+
+  function setDevMode(enabled: boolean) {
+    setLocalDeveloperMode(enabled);
+    onDeveloperModeChange?.(enabled);
+    try {
+      if (enabled) {
+        window.sessionStorage.setItem(DEV_SESSION_KEY, 'unlocked');
+      } else {
+        window.sessionStorage.removeItem(DEV_SESSION_KEY);
+      }
+    } catch {
+      // Session storage can be unavailable in strict private contexts.
+    }
+  }
+
+  function toggleDevGate() {
+    setIsOpen(false);
+    setQuery('');
+    setIsDevOpen((current) => {
+      const next = !current;
+      if (next) window.setTimeout(() => devInputRef.current?.focus(), 40);
+      return next;
+    });
+  }
+
+  function unlockDevMode() {
+    const normalizedCode = devCode.trim().toUpperCase();
+    if (!DEV_ACCESS_CODES.has(normalizedCode)) {
+      setDevError('Code nicht korrekt');
+      return;
+    }
+
+    setDevError('');
+    setDevCode('');
+    setDevMode(true);
   }
 
   function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
@@ -57,9 +110,21 @@ export function ProjectSearch({ entries, currentSlug, variant = currentSlug ? 'e
     }
   }
 
+  function handleDevKeyDown(event: KeyboardEvent<HTMLInputElement>) {
+    if (event.key === 'Escape') {
+      setIsDevOpen(false);
+      setDevError('');
+      setDevCode('');
+    }
+
+    if (event.key === 'Enter') {
+      unlockDevMode();
+    }
+  }
+
   return (
     <div
-      className={`project-search project-search-${variant} cosmos-text-safe ${isOpen ? 'project-search-open' : ''}`}
+      className={`project-search project-search-${variant} cosmos-text-safe ${isOpen ? 'project-search-open' : ''} ${isDevOpen ? 'project-dev-open' : ''}`}
       onPointerDown={(event) => event.stopPropagation()}
       onWheel={(event) => event.stopPropagation()}
       onTouchMove={(event) => event.stopPropagation()}
@@ -69,6 +134,56 @@ export function ProjectSearch({ entries, currentSlug, variant = currentSlug ? 'e
         <span className="project-search-mark" aria-hidden="true" />
         <span>Search</span>
       </button>
+
+      <div className="project-dev-gate" aria-label="Developer access">
+        <button
+          type="button"
+          className={`project-dev-trigger cosmos-trigger ${isDeveloperMode ? 'project-dev-trigger-active' : ''}`}
+          onClick={toggleDevGate}
+          aria-expanded={isDevOpen}
+        >
+          <span className="project-dev-mark" aria-hidden="true" />
+          <span>{isDeveloperMode ? 'Dev on' : 'Dev'}</span>
+        </button>
+
+        {isDevOpen ? (
+          <div className="project-dev-panel cosmos-panel" role="dialog" aria-label="Developer access gate">
+            {isDeveloperMode ? (
+              <>
+                <div className="project-dev-title">Developer views unlocked</div>
+                <p>Lokale Session-Freischaltung fuer private Copyright- und Draft-Werkzeuge. Keine echte Authentifizierung.</p>
+                <button type="button" className="project-dev-action" onClick={() => setDevMode(false)}>
+                  Lock again
+                </button>
+              </>
+            ) : (
+              <>
+                <div className="project-dev-title">Developer access</div>
+                <p>Schaltet private Draft-, Intake- und AI-Ansichten nur in dieser Browser-Session frei.</p>
+                <div className="project-dev-field">
+                  <input
+                    ref={devInputRef}
+                    value={devCode}
+                    onChange={(event) => {
+                      setDevCode(event.target.value);
+                      setDevError('');
+                    }}
+                    onKeyDown={handleDevKeyDown}
+                    placeholder="Code"
+                    aria-label="Developer code"
+                    type="password"
+                  />
+                  <button type="button" onClick={unlockDevMode}>
+                    Unlock
+                  </button>
+                </div>
+                {devError ? <div className="project-dev-error">{devError}</div> : null}
+                <div className="project-dev-hint">Local gate only / not public auth</div>
+              </>
+            )}
+          </div>
+        ) : null}
+      </div>
 
       {isOpen ? (
         <div className="project-search-panel cosmos-panel cosmos-scroll-panel" role="dialog" aria-label="Project search">
@@ -122,6 +237,15 @@ function normalize(value: string) {
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
     .trim();
+}
+
+function readDevSession() {
+  if (typeof window === 'undefined') return false;
+  try {
+    return window.sessionStorage.getItem(DEV_SESSION_KEY) === 'unlocked';
+  } catch {
+    return false;
+  }
 }
 
 function scoreEntry(entry: Entry, normalizedQuery: string) {

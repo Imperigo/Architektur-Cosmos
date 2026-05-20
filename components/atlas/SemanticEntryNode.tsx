@@ -183,6 +183,7 @@ function EntryThumbnail({ entry, x, y, radius, accent, isSelected, styleLensActi
   const showDetailLines = !imageUrl && !isFast && (radius >= 6.4 || isSelected || styleLensActive);
   const stableSuffix = `${sanitizeId(entry.id)}-${Math.round(x * 10)}-${Math.round(y * 10)}`;
   const clipId = `entry-thumb-clip-${stableSuffix}`;
+  const imagePatternId = `entry-thumb-image-${stableSuffix}`;
   const shadeId = `entry-planet-shade-${stableSuffix}`;
   const glowId = `entry-planet-glow-${stableSuffix}`;
   const lightX = x - radius * (0.38 + (seed % 11) * 0.012);
@@ -203,9 +204,24 @@ function EntryThumbnail({ entry, x, y, radius, accent, isSelected, styleLensActi
           <stop offset="100%" stopColor="#000000" stopOpacity={isFast ? 0.68 : 0.82} />
         </radialGradient>
         {imageUrl ? (
-          <clipPath id={clipId}>
-            <circle cx={x} cy={y} r={Math.max(0, radius - 0.35)} />
-          </clipPath>
+          <>
+            <clipPath id={clipId}>
+              <circle cx={x} cy={y} r={Math.max(0, radius - 0.35)} />
+            </clipPath>
+            <pattern id={imagePatternId} x={x - radius} y={y - radius} width={radius * 2} height={radius * 2} patternUnits="userSpaceOnUse">
+              <image
+                key={`${entry.id}-${imageUrl}`}
+                href={imageUrl}
+                crossOrigin="anonymous"
+                x={x - radius}
+                y={y - radius}
+                width={radius * 2}
+                height={radius * 2}
+                preserveAspectRatio="xMidYMid slice"
+                opacity="1"
+              />
+            </pattern>
+          </>
         ) : null}
       </defs>
       <circle cx={x} cy={y} r={radius + 5.2} fill={accent} opacity={isFast ? accentFillOpacity * 0.68 : accentFillOpacity} />
@@ -213,17 +229,7 @@ function EntryThumbnail({ entry, x, y, radius, accent, isSelected, styleLensActi
       {imageUrl ? (
         <>
           <circle cx={x} cy={y} r={radius} fill="#050505" stroke={accent} strokeWidth={accentStroke + 0.25} />
-          <image
-            key={`${entry.id}-${imageUrl}`}
-            href={imageUrl}
-            x={x - radius}
-            y={y - radius}
-            width={radius * 2}
-            height={radius * 2}
-            preserveAspectRatio="xMidYMid slice"
-            clipPath={`url(#${clipId})`}
-            opacity={isFast ? 0.8 : 0.94}
-          />
+          <circle cx={x} cy={y} r={Math.max(0, radius - 0.35)} fill={`url(#${imagePatternId})`} opacity={isFast ? 0.86 : 1} clipPath={`url(#${clipId})`} />
           <circle cx={x} cy={y} r={Math.max(0, radius - 0.35)} fill={accent} opacity={isFast ? 0.22 : 0.3} />
           <circle cx={x} cy={y} r={Math.max(0, radius - 0.35)} fill={`url(#${shadeId})`} opacity={isFast ? 0.76 : 0.86} />
           {!isFast ? <circle cx={lightX} cy={lightY} r={Math.max(1.1, radius * 0.17)} fill="#ffffff" opacity="0.3" /> : null}

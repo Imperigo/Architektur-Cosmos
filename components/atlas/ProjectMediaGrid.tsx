@@ -31,7 +31,7 @@ export function ProjectMediaGrid({ media, x, y, slotWidth, slotHeight, gap, show
             <rect x={slotX} y={slotY} width={slotWidth} height={slotHeight} fill="#050505" stroke={accent} strokeWidth="0.72" opacity="0.94" />
             {mediaItem?.url ? (
               <g>
-                <image href={mediaItem.url} x={slotX + 1} y={slotY + 1} width={slotWidth - 2} height={slotHeight - 2} preserveAspectRatio="xMidYMid slice" opacity="0.88" />
+                <image href={mediaItem.url} crossOrigin="anonymous" x={slotX + 1} y={slotY + 1} width={slotWidth - 2} height={slotHeight - 2} preserveAspectRatio="xMidYMid slice" opacity="0.9" />
                 <rect x={slotX} y={slotY} width={slotWidth} height={slotHeight} fill="none" stroke={accent} strokeWidth="0.72" opacity="0.82" />
               </g>
             ) : (

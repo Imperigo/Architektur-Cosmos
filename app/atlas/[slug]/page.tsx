@@ -534,7 +534,7 @@ function ObjectIdentityPanel({ entry, profile, accent }: { entry: Entry; profile
 
 function MediaCard({ media, entry, profile, accent }: { media: Entry['media'][number]; entry: Entry; profile: EntryVisualProfile; accent: string }) {
   const isDrawing = media.type === 'plan' || media.type === 'section';
-  const mediaUrl = media.url;
+  const mediaUrl = publicDisplayMediaUrl(media);
 
   return (
     <article className={`entry-media-card entry-media-card-${media.type} border border-white/14 bg-[#070707]`}>
@@ -782,7 +782,13 @@ function publicModelPreviewUrl(entry: Entry) {
 }
 
 function primaryMediaUrl(entry: Entry) {
-  return entry.media.find((media) => media.type === 'exterior' && media.url)?.url ?? entry.media.find((media) => media.url)?.url ?? null;
+  return publicDisplayMediaUrl(entry.media.find((media) => media.type === 'exterior' && media.url)) ?? publicDisplayMediaUrl(entry.media.find((media) => media.url)) ?? null;
+}
+
+function publicDisplayMediaUrl(media: Entry['media'][number] | undefined) {
+  if (!media?.url) return null;
+  if (['all_rights_reserved', 'needs_permission', 'private_research', 'personal_only'].includes(media.license ?? '')) return null;
+  return media.url;
 }
 
 function mediaSlotNumber(type: Entry['media'][number]['type']) {
