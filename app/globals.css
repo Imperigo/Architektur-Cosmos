@@ -143,7 +143,44 @@ body:has(.entry-page) {
   height: 100%;
   pointer-events: none;
   background: #050505;
-  transform: translateZ(0);
+  transform: translateZ(0) scale(var(--cosmos-visual-zoom, 1));
+  transform-origin: center;
+  transition: transform 180ms cubic-bezier(0.19, 1, 0.22, 1);
+  will-change: transform;
+}
+
+.wormhole-idle-overlay {
+  position: absolute;
+  inset: -10%;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0;
+  mix-blend-mode: screen;
+  background:
+    repeating-conic-gradient(
+      from 8deg at 50% 50%,
+      rgb(0 231 255 / 0.075) 0deg 1.1deg,
+      rgb(143 92 255 / 0.045) 1.1deg 1.8deg,
+      transparent 1.8deg 11deg
+    ),
+    radial-gradient(circle at 50% 50%, transparent 0 20%, rgb(255 209 109 / 0.045) 32%, transparent 58%);
+  transform: translateZ(0) scale(calc(var(--cosmos-visual-zoom, 1) * 1.02));
+  transform-origin: center;
+  will-change: transform, opacity;
+}
+
+.cosmos-idle .wormhole-idle-overlay {
+  opacity: 0.36;
+  animation: cosmos-idle-tunnel-drift 58s linear infinite;
+}
+
+.cosmos-moving .wormhole-idle-overlay {
+  opacity: 0.16;
+}
+
+.cosmos-lensing .wormhole-canvas,
+.cosmos-lensing .wormhole-idle-overlay {
+  transition-duration: 100ms;
 }
 
 .entry-page,
@@ -712,6 +749,24 @@ body:has(.entry-page) {
 @keyframes wormhole-idle-breathe {
   0%, 100% { opacity: 0.92; }
   50% { opacity: 0.68; }
+}
+
+@keyframes cosmos-idle-tunnel-drift {
+  to { transform: translateZ(0) scale(calc(var(--cosmos-visual-zoom, 1) * 1.02)) rotate(360deg); }
+}
+
+.wormhole-idle-shell {
+  transform-box: view-box;
+  transform-origin: center;
+  will-change: transform;
+}
+
+.cosmos-idle .wormhole-idle-shell {
+  animation: cosmos-idle-shell-drift 82s linear infinite;
+}
+
+@keyframes cosmos-idle-shell-drift {
+  to { transform: rotate(360deg); }
 }
 
 .wormhole-spoke {
@@ -2492,6 +2547,8 @@ body:has(.entry-page) {
   .wormhole-speed-line,
   .wormhole-outer-rim,
   .wormhole-whirl,
+  .wormhole-idle-overlay,
+  .wormhole-idle-shell,
   .cosmos-node-wiggle,
   .cosmos-cursor circle:first-child,
   .relation-strand,

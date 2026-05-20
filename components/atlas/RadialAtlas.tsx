@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState, type DragEvent, type MouseEvent as ReactMouseEvent, type PointerEvent, type RefObject, type TouchEvent as ReactTouchEvent, type WheelEvent as ReactWheelEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type CSSProperties, type DragEvent, type MouseEvent as ReactMouseEvent, type PointerEvent, type RefObject, type TouchEvent as ReactTouchEvent, type WheelEvent as ReactWheelEvent } from 'react';
 import { BrainStatusWidget } from '@/components/atlas/BrainStatusWidget';
 import { ProjectDetailCard } from '@/components/atlas/ProjectDetailCard';
 import { ProjectSearch } from '@/components/atlas/ProjectSearch';
@@ -26,6 +26,12 @@ type MotionSnapshot = {
   velocity: number;
   isMoving: boolean;
   isSettling: boolean;
+};
+type VisualZoomSnapshot = {
+  currentZoom: number;
+  targetZoom: number;
+  velocity: number;
+  isZooming: boolean;
 };
 
 type IntroState = 'intro' | 'launching' | 'idle';
@@ -157,6 +163,12 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     isMoving: false,
     isSettling: true
   });
+  const [visualZoom, setVisualZoom] = useState<VisualZoomSnapshot>({
+    currentZoom: 1,
+    targetZoom: 1,
+    velocity: 0,
+    isZooming: false
+  });
   const [introState, setIntroState] = useState<IntroState>('intro');
   const [showFilterPanel, setShowFilterPanel] = useState(false);
   const [showDatabasePanel, setShowDatabasePanel] = useState(false);
@@ -177,6 +189,13 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   const motionRef = useRef({
     currentTravel: 0,
     targetTravel: 0,
+    velocity: 0,
+    frame: null as number | null,
+    timeout: null as number | null
+  });
+  const visualZoomRef = useRef({
+    currentZoom: 1,
+    targetZoom: 1,
     velocity: 0,
     frame: null as number | null,
     timeout: null as number | null
@@ -211,6 +230,11 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     opacity: selectedEntry ? 0.48 : introState === 'intro' ? 0.3 : introState === 'launching' ? 0.82 : 1,
     transition: 'filter 520ms cubic-bezier(0.19, 1, 0.22, 1), opacity 520ms cubic-bezier(0.19, 1, 0.22, 1)'
   };
+  const visualZoomValue = visualZoom.currentZoom;
+  const cameraTransform = `translate(${atlasSize.cx} ${atlasSize.cy}) scale(${roundZoom(visualZoomValue)}) translate(${-atlasSize.cx} ${-atlasSize.cy})`;
+  const visualZoomStyle = {
+    '--cosmos-visual-zoom': String(roundZoom(visualZoomValue))
+  } as CSSProperties;
 
   useEffect(() => {
     if (introState !== 'launching') return;
@@ -247,6 +271,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   }, [introState]);
 
   useEffect(() => {
+    const visualZoomState = visualZoomRef.current;
     const preventBrowserWheel = (event: WheelEvent) => {
       if (isNativeOverlayTarget(event.target)) return;
       if (event.cancelable) event.preventDefault();
@@ -278,6 +303,14 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
 
       if (pointerFrameRef.current !== null) {
         window.cancelAnimationFrame(pointerFrameRef.current);
+      }
+
+      if (visualZoomState.frame !== null && typeof window.cancelAnimationFrame === 'function') {
+        window.cancelAnimationFrame(visualZoomState.frame);
+      }
+
+      if (visualZoomState.timeout !== null) {
+        window.clearTimeout(visualZoomState.timeout);
       }
     };
   }, []);
@@ -323,9 +356,19 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     nudgeTravel(delta);
   }
 
+  function zoomViewBy(factor: number) {
+    if (introState !== 'idle') {
+      startIntro();
+      return;
+    }
+
+    setHoveredEntry(null);
+    nudgeVisualZoom(factor);
+  }
+
   function focusNodeInView(event: ReactMouseEvent<SVGGElement> | undefined, fallbackNode: WormholeEntryNode) {
     const point = event ? pointerToSvgPoint(event) : null;
-    const nearest = point ? nearestInteractiveNode(point, displayNodes) : null;
+    const nearest = point ? nearestInteractiveNode(toCameraPoint(point), displayNodes) : null;
     openDossierFromNode(nearest?.entry ?? fallbackNode.entry);
   }
 
@@ -396,6 +439,72 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
       isMoving: false,
       isSettling: true
     });
+  }
+
+  function nudgeVisualZoom(factor: number) {
+    const ref = visualZoomRef.current;
+    const boundedFactor = Math.max(0.72, Math.min(1.38, factor));
+    ref.targetZoom = clampVisualZoom(ref.targetZoom * boundedFactor);
+    ref.velocity += (boundedFactor - 1) * 0.22;
+    setVisualZoom((current) => ({
+      ...current,
+      targetZoom: roundZoom(ref.targetZoom),
+      velocity: roundZoom(ref.velocity),
+      isZooming: true
+    }));
+
+    scheduleVisualZoomStep();
+  }
+
+  function stepVisualZoom() {
+    const ref = visualZoomRef.current;
+    cancelVisualZoomStep();
+
+    const delta = ref.targetZoom - ref.currentZoom;
+    const nextVelocity = ref.velocity * 0.5 + delta * 0.22;
+    const nextZoom = clampVisualZoom(ref.currentZoom + nextVelocity);
+    const settled = Math.abs(ref.targetZoom - nextZoom) < 0.0016 && Math.abs(nextVelocity) < 0.0012;
+
+    ref.currentZoom = settled ? ref.targetZoom : nextZoom;
+    ref.velocity = settled ? 0 : nextVelocity;
+
+    setVisualZoom({
+      currentZoom: roundZoom(ref.currentZoom),
+      targetZoom: roundZoom(ref.targetZoom),
+      velocity: roundZoom(ref.velocity),
+      isZooming: !settled
+    });
+
+    if (!settled) {
+      scheduleVisualZoomStep();
+    }
+  }
+
+  function scheduleVisualZoomStep() {
+    const ref = visualZoomRef.current;
+    if (ref.frame !== null || ref.timeout !== null) return;
+
+    if (typeof window.requestAnimationFrame === 'function') {
+      ref.frame = window.requestAnimationFrame(stepVisualZoom);
+      return;
+    }
+
+    ref.timeout = window.setTimeout(stepVisualZoom, 34);
+  }
+
+  function cancelVisualZoomStep() {
+    const ref = visualZoomRef.current;
+
+    if (ref.frame !== null && typeof window.cancelAnimationFrame === 'function') {
+      window.cancelAnimationFrame(ref.frame);
+    }
+
+    if (ref.timeout !== null) {
+      window.clearTimeout(ref.timeout);
+    }
+
+    ref.frame = null;
+    ref.timeout = null;
   }
 
   function nudgeTravel(delta: number) {
@@ -480,8 +589,14 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     }
 
     const normalizedDelta = Math.max(-140, Math.min(140, event.deltaY));
-    closeDossier();
     setHoveredEntry(null);
+
+    if (event.ctrlKey) {
+      zoomViewBy(Math.exp(-normalizedDelta * 0.0042));
+      return;
+    }
+
+    closeDossier();
     nudgeTravel(normalizedDelta * 0.00008);
   }
 
@@ -540,6 +655,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
       const nextDistance = touchDistance(touches[0], touches[1]);
       const previousDistance = touchTravelRef.current.mode === 'pinch' ? touchTravelRef.current.lastDistance : nextDistance;
       const distanceDelta = Math.max(-86, Math.min(86, nextDistance - previousDistance));
+      const pinchFactor = previousDistance > 0 ? Math.max(0.74, Math.min(1.34, nextDistance / previousDistance)) : 1;
       touchTravelRef.current = {
         mode: 'pinch',
         startX: touchTravelRef.current.startX,
@@ -549,7 +665,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
         moved: touchTravelRef.current.moved + Math.abs(distanceDelta)
       };
 
-      nudgeTravel(distanceDelta * 0.0003);
+      zoomViewBy(pinchFactor);
       return;
     }
 
@@ -605,7 +721,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
 
     if (finishedTouch && currentTouch.mode === 'single' && currentTouch.moved < 10 && tapDistance < 14 && !selectedEntry) {
       const point = pointerToSvgPoint(finishedTouch);
-      const nearest = point ? nearestInteractiveNode(point, displayNodes) : null;
+      const nearest = point ? nearestInteractiveNode(toCameraPoint(point), displayNodes) : null;
       if (nearest) {
         openDossierFromNode(nearest.entry);
       }
@@ -663,7 +779,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
       return;
     }
 
-    const nearest = nearestInteractiveNode(point, displayNodes);
+    const nearest = nearestInteractiveNode(toCameraPoint(point), displayNodes);
     setHoveredEntry(nearest?.entry.id ?? null);
   }
 
@@ -705,9 +821,18 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     return { x: transformed.x, y: transformed.y };
   }
 
+  function toCameraPoint(point: SvgPoint): SvgPoint {
+    const zoom = visualZoomRef.current.currentZoom || 1;
+    return {
+      x: atlasSize.cx + (point.x - atlasSize.cx) / zoom,
+      y: atlasSize.cy + (point.y - atlasSize.cy) / zoom
+    };
+  }
+
   return (
-    <main className={`relative h-screen w-screen overflow-hidden bg-[#050505] text-[#f7f7f4] cosmos-perf-${performanceTier} cosmos-intro-${introState} ${introState === 'launching' ? 'cosmos-launching' : ''} ${isTraveling ? 'cosmos-moving' : ''} ${introState === 'idle' && !isTraveling ? 'cosmos-idle' : ''}`}>
+    <main style={visualZoomStyle} className={`relative h-screen w-screen overflow-hidden bg-[#050505] text-[#f7f7f4] cosmos-perf-${performanceTier} cosmos-intro-${introState} ${introState === 'launching' ? 'cosmos-launching' : ''} ${isTraveling || visualZoom.isZooming ? 'cosmos-moving' : ''} ${visualZoom.currentZoom > 1.01 ? 'cosmos-lensing' : ''} ${introState === 'idle' && !isTraveling && !visualZoom.isZooming ? 'cosmos-idle' : ''}`}>
       <WormholeCanvas state={state} isMoving={isTraveling} quality={performanceTier} />
+      <div className="wormhole-idle-overlay" aria-hidden="true" />
       <div className="relative z-10 h-full w-full">
         <svg
           ref={svgRef}
@@ -728,8 +853,12 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
           </defs>
           <rect width={atlasSize.width} height={atlasSize.height} fill="#050505" opacity={introState === 'intro' ? 0.16 : 0.02} />
           <g style={backgroundStyle} pointerEvents={selectedEntry ? 'none' : 'auto'}>
-            <g className="wormhole-camera">
-              {performanceTier === 'full' && !isTraveling ? <WormholeRings state={state} isMoving={isTraveling} quality={performanceTier} /> : null}
+            <g className="wormhole-camera" transform={cameraTransform}>
+              {performanceTier === 'full' && !isTraveling ? (
+                <g className="wormhole-idle-shell">
+                  <WormholeRings state={state} isMoving={isTraveling} quality={performanceTier} />
+                </g>
+              ) : null}
 
               {relationOverlayActive ? (
                 <RelationOverlay nodes={displayNodes} relations={relations} selectedEntry={selectedEntry} focusEntry={hoveredEntry} isMoving={isTraveling} />
@@ -838,6 +967,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
             />
           ) : null}
           {introState === 'idle' ? <TimeReadout timePosition={state.timePosition} currentYear={state.currentYear} /> : null}
+          {introState === 'idle' ? <VisualZoomReadout zoom={visualZoom.currentZoom} /> : null}
           {introState !== 'intro' ? <BrandChrome isArriving={introState === 'launching'} /> : null}
         </svg>
         {showDatabasePanel && introState === 'idle' && ui.isCoarsePointer ? (
@@ -1382,6 +1512,26 @@ function TimeReadout({ timePosition, currentYear }: { timePosition: number; curr
       </text>
       <text x="42" y="898" fill="#9c9c96" fontSize="8.5" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.12em">
         {formatYear(Math.min(currentYear, focusEndYear))} - {formatYear(Math.max(currentYear, focusEndYear))}
+      </text>
+    </g>
+  );
+}
+
+function VisualZoomReadout({ zoom }: { zoom: number }) {
+  const opacity = Math.max(0, Math.min(0.74, (zoom - 1.02) * 1.35));
+  if (opacity <= 0.01) return null;
+
+  return (
+    <g className="visual-zoom-readout" pointerEvents="none" opacity={opacity}>
+      <line x1="804" y1="880" x2="934" y2="880" stroke="#00e7ff" strokeWidth="0.6" opacity="0.52" />
+      <text x="934" y="848" textAnchor="end" fill="#f7f7f4" fontSize="19" fontWeight="560" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.03em">
+        {Math.round(zoom * 100)}%
+      </text>
+      <text x="934" y="866" textAnchor="end" fill="#9cfff7" fontSize="8.4" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.18em">
+        OPTISCHE LUPE
+      </text>
+      <text x="934" y="898" textAnchor="end" fill="#9c9c96" fontSize="7.6" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.12em">
+        PINCH ZOOM / ZEIT BLEIBT STABIL
       </text>
     </g>
   );
@@ -2710,4 +2860,12 @@ function advanceTravel(current: number, delta: number) {
   if (next < 0) return next * 0.22;
   if (next > wormholeTravelEnd) return wormholeTravelEnd + (next - wormholeTravelEnd) * 0.22;
   return next;
+}
+
+function clampVisualZoom(value: number) {
+  return Math.max(1, Math.min(2.65, value));
+}
+
+function roundZoom(value: number) {
+  return Math.round(value * 1000) / 1000;
 }
