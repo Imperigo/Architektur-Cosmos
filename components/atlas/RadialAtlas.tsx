@@ -33,6 +33,10 @@ type VisualZoomSnapshot = {
   velocity: number;
   isZooming: boolean;
 };
+type VisualPan = {
+  x: number;
+  y: number;
+};
 
 type IntroState = 'intro' | 'launching' | 'idle';
 const sourceLensDefinitions = [
@@ -47,7 +51,6 @@ const sourceLensDefinitions = [
 ] as const;
 type SourceLensId = (typeof sourceLensDefinitions)[number]['id'];
 type SourceLens = SourceLensId | null;
-type SourceLensCounts = Record<SourceLensId, number>;
 type PerformanceTier = 'reduced' | 'balanced' | 'full';
 type ResearchSeed = {
   project: string;
@@ -169,8 +172,8 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     velocity: 0,
     isZooming: false
   });
+  const [visualPan, setVisualPan] = useState<VisualPan>({ x: 0, y: 0 });
   const [introState, setIntroState] = useState<IntroState>('intro');
-  const [showFilterPanel, setShowFilterPanel] = useState(false);
   const [showDatabasePanel, setShowDatabasePanel] = useState(false);
   const [localEntries, setLocalEntries] = useState<Entry[]>([]);
   const [entryDraft, setEntryDraft] = useState<EntryDraft>(initialEntryDraft);
@@ -200,6 +203,18 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     frame: null as number | null,
     timeout: null as number | null
   });
+  const visualPanRef = useRef<VisualPan>({ x: 0, y: 0 });
+  const panGestureRef = useRef({
+    active: false,
+    pointerId: -1,
+    startClientX: 0,
+    startClientY: 0,
+    startPanX: 0,
+    startPanY: 0,
+    moved: false
+  });
+  const panFrameRef = useRef<number | null>(null);
+  const pendingPanRef = useRef<VisualPan | null>(null);
   const pendingPointerPointRef = useRef<SvgPoint | null>(null);
   const pointerFrameRef = useRef<number | null>(null);
   const hoveredEntryIdRef = useRef<string | null>(null);
@@ -219,7 +234,6 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   const nodes = useMemo(() => layoutWormholeEntries(allEntries, state, activeSelectedEntryId ?? undefined), [activeSelectedEntryId, allEntries, state]);
   const displayNodes = useMemo(() => limitDisplayNodes(nodes, performanceTier, motion.isMoving), [nodes, performanceTier, motion.isMoving]);
   const isTraveling = motion.isMoving;
-  const sourceLensCounts = useMemo(() => countSourceLensEntries(allEntries), [allEntries]);
   const hoveredEntry = useMemo(() => displayNodes.find((node) => node.entry.id === hoveredEntryId)?.entry ?? null, [displayNodes, hoveredEntryId]);
   const cursorVisible = introState === 'idle';
   const isIntroActive = introState !== 'idle';
@@ -231,9 +245,11 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     transition: 'filter 520ms cubic-bezier(0.19, 1, 0.22, 1), opacity 520ms cubic-bezier(0.19, 1, 0.22, 1)'
   };
   const visualZoomValue = visualZoom.currentZoom;
-  const cameraTransform = `translate(${atlasSize.cx} ${atlasSize.cy}) scale(${roundZoom(visualZoomValue)}) translate(${-atlasSize.cx} ${-atlasSize.cy})`;
+  const cameraTransform = `translate(${atlasSize.cx + visualPan.x} ${atlasSize.cy + visualPan.y}) scale(${roundZoom(visualZoomValue)}) translate(${-atlasSize.cx} ${-atlasSize.cy})`;
   const visualZoomStyle = {
-    '--cosmos-visual-zoom': String(roundZoom(visualZoomValue))
+    '--cosmos-visual-zoom': String(roundZoom(visualZoomValue)),
+    '--cosmos-visual-pan-x': `${roundMotion(visualPan.x)}px`,
+    '--cosmos-visual-pan-y': `${roundMotion(visualPan.y)}px`
   } as CSSProperties;
 
   useEffect(() => {
@@ -305,6 +321,10 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
         window.cancelAnimationFrame(pointerFrameRef.current);
       }
 
+      if (panFrameRef.current !== null) {
+        window.cancelAnimationFrame(panFrameRef.current);
+      }
+
       if (visualZoomState.frame !== null && typeof window.cancelAnimationFrame === 'function') {
         window.cancelAnimationFrame(visualZoomState.frame);
       }
@@ -367,13 +387,13 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   }
 
   function focusNodeInView(event: ReactMouseEvent<SVGGElement> | undefined, fallbackNode: WormholeEntryNode) {
+    if (panGestureRef.current.moved) return;
     const point = event ? pointerToSvgPoint(event) : null;
     const nearest = point ? nearestInteractiveNode(toCameraPoint(point), displayNodes) : null;
     openDossierFromNode(nearest?.entry ?? fallbackNode.entry);
   }
 
   function openDossierFromNode(entry: Entry) {
-    setShowFilterPanel(false);
     setShowDatabasePanel(false);
     setSelectedEntry(entry);
     setHoveredEntry(null);
@@ -456,6 +476,31 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     scheduleVisualZoomStep();
   }
 
+  function setVisualPanValue(nextPan: VisualPan) {
+    const next = clampVisualPan(nextPan, visualZoomRef.current.currentZoom);
+    visualPanRef.current = next;
+    setVisualPan(next);
+  }
+
+  function scheduleVisualPan(nextPan: VisualPan) {
+    pendingPanRef.current = nextPan;
+
+    if (panFrameRef.current !== null) return;
+
+    panFrameRef.current = window.requestAnimationFrame(() => {
+      panFrameRef.current = null;
+      const pendingPan = pendingPanRef.current;
+      pendingPanRef.current = null;
+      if (pendingPan) setVisualPanValue(pendingPan);
+    });
+  }
+
+  function resetVisualPanIfUnzoomed(nextZoom: number) {
+    if (nextZoom > 1.01) return;
+    visualPanRef.current = { x: 0, y: 0 };
+    setVisualPan({ x: 0, y: 0 });
+  }
+
   function stepVisualZoom() {
     const ref = visualZoomRef.current;
     cancelVisualZoomStep();
@@ -474,6 +519,8 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
       velocity: roundZoom(ref.velocity),
       isZooming: !settled
     });
+    setVisualPanValue(visualPanRef.current);
+    resetVisualPanIfUnzoomed(ref.currentZoom);
 
     if (!settled) {
       scheduleVisualZoomStep();
@@ -746,6 +793,21 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     const point = pointerToSvgPoint(event);
     if (!point) return;
 
+    if (panGestureRef.current.active) {
+      event.preventDefault();
+      const gesture = panGestureRef.current;
+      const dx = event.clientX - gesture.startClientX;
+      const dy = event.clientY - gesture.startClientY;
+      if (Math.hypot(dx, dy) > 3) gesture.moved = true;
+      scheduleVisualPan({
+        x: gesture.startPanX + dx,
+        y: gesture.startPanY + dy
+      });
+      moveCursor(point);
+      setHoveredEntry(null);
+      return;
+    }
+
     if (isInterfaceTarget(event.target)) {
       moveCursor(point);
       setHoveredEntry(null);
@@ -753,6 +815,39 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     }
 
     schedulePointerMove(point);
+  }
+
+  function handlePointerDown(event: PointerEvent<SVGSVGElement>) {
+    if (event.pointerType === 'touch' || event.button !== 0 || isInterfaceTarget(event.target) || selectedEntry || introState !== 'idle') return;
+    if (visualZoomRef.current.currentZoom <= 1.02) return;
+
+    panGestureRef.current = {
+      active: true,
+      pointerId: event.pointerId,
+      startClientX: event.clientX,
+      startClientY: event.clientY,
+      startPanX: visualPanRef.current.x,
+      startPanY: visualPanRef.current.y,
+      moved: false
+    };
+    setHoveredEntry(null);
+    event.currentTarget.setPointerCapture?.(event.pointerId);
+  }
+
+  function handlePointerUp(event: PointerEvent<SVGSVGElement>) {
+    if (!panGestureRef.current.active || panGestureRef.current.pointerId !== event.pointerId) return;
+    event.currentTarget.releasePointerCapture?.(event.pointerId);
+    window.setTimeout(() => {
+      panGestureRef.current = {
+        active: false,
+        pointerId: -1,
+        startClientX: 0,
+        startClientY: 0,
+        startPanX: 0,
+        startPanY: 0,
+        moved: false
+      };
+    }, 0);
   }
 
   function schedulePointerMove(point: SvgPoint) {
@@ -824,15 +919,14 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   function toCameraPoint(point: SvgPoint): SvgPoint {
     const zoom = visualZoomRef.current.currentZoom || 1;
     return {
-      x: atlasSize.cx + (point.x - atlasSize.cx) / zoom,
-      y: atlasSize.cy + (point.y - atlasSize.cy) / zoom
+      x: atlasSize.cx + (point.x - atlasSize.cx - visualPanRef.current.x) / zoom,
+      y: atlasSize.cy + (point.y - atlasSize.cy - visualPanRef.current.y) / zoom
     };
   }
 
   return (
     <main style={visualZoomStyle} className={`relative h-screen w-screen overflow-hidden bg-[#050505] text-[#f7f7f4] cosmos-perf-${performanceTier} cosmos-intro-${introState} ${introState === 'launching' ? 'cosmos-launching' : ''} ${isTraveling || visualZoom.isZooming ? 'cosmos-moving' : ''} ${visualZoom.currentZoom > 1.01 ? 'cosmos-lensing' : ''} ${introState === 'idle' && !isTraveling && !visualZoom.isZooming ? 'cosmos-idle' : ''}`}>
       <WormholeCanvas state={state} isMoving={isTraveling} quality={performanceTier} />
-      <div className="wormhole-idle-overlay" aria-hidden="true" />
       <div className="relative z-10 h-full w-full">
         <svg
           ref={svgRef}
@@ -843,7 +937,10 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
           onTouchCancel={handleTouchEnd}
+          onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onPointerCancel={handlePointerUp}
           onPointerLeave={handlePointerLeave}
           onClick={() => {
             if (introState !== 'idle') startIntro();
@@ -854,11 +951,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
           <rect width={atlasSize.width} height={atlasSize.height} fill="#050505" opacity={introState === 'intro' ? 0.16 : 0.02} />
           <g style={backgroundStyle} pointerEvents={selectedEntry ? 'none' : 'auto'}>
             <g className="wormhole-camera" transform={cameraTransform}>
-              {performanceTier === 'full' && !isTraveling ? (
-                <g className="wormhole-idle-shell">
-                  <WormholeRings state={state} isMoving={isTraveling} quality={performanceTier} />
-                </g>
-              ) : null}
+              {performanceTier === 'full' && !isTraveling ? <WormholeRings state={state} isMoving={isTraveling} quality={performanceTier} /> : null}
 
               {relationOverlayActive ? (
                 <RelationOverlay nodes={displayNodes} relations={relations} selectedEntry={selectedEntry} focusEntry={hoveredEntry} isMoving={isTraveling} />
@@ -911,7 +1004,6 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
                   setHoveredEntry(null);
                   setActiveStyleLens((current) => current === styleId ? null : styleId);
                   setActiveSourceLens(null);
-                  setShowFilterPanel(false);
                 }}
               />
             </g>
@@ -921,19 +1013,8 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
             <RadialHud
               showRelations={showRelations}
               tunnelDepth={state.timePosition}
-              activeStyleLens={activeStyleLens}
-              activeSourceLens={activeSourceLens}
-              sourceLensCounts={sourceLensCounts}
               onTravelForward={() => travelBy(0.018)}
               onTravelBackward={() => travelBy(-0.018)}
-              onToggleLenses={() => {
-                setHoveredEntry(null);
-                setShowFilterPanel((current) => !current);
-              }}
-              onToggleSourceLens={() => {
-                setHoveredEntry(null);
-                setActiveSourceLens((current) => current ? null : 'afasia');
-              }}
               onToggleRelations={() => {
                 setHoveredEntry(null);
                 setShowRelations((current) => !current);
@@ -986,38 +1067,6 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
             onImageIdentifyChange={setImageIdentify}
             onCreateLocalEntry={createLocalEntryFromDraft}
             onDismiss={() => setShowDatabasePanel(false)}
-          />
-        ) : null}
-        {introState === 'idle' ? (
-          <LensControls
-            isOpen={showFilterPanel}
-            activeStyleLens={activeStyleLens}
-            activeSourceLens={activeSourceLens}
-            showRelations={showRelations}
-            sourceLensCounts={sourceLensCounts}
-            onToggle={() => {
-              setHoveredEntry(null);
-              setShowFilterPanel((current) => !current);
-            }}
-            onSetStyleLens={(styleId) => {
-              setHoveredEntry(null);
-              setActiveStyleLens(styleId);
-            }}
-            onResetLenses={() => {
-              setHoveredEntry(null);
-              setActiveStyleLens(null);
-              setActiveSourceLens(null);
-              setShowRelations(false);
-            }}
-            onSetSourceLens={(lensId) => {
-              setHoveredEntry(null);
-              setActiveSourceLens((current) => current === lensId ? null : lensId);
-            }}
-            onToggleRelations={() => {
-              setHoveredEntry(null);
-              setShowRelations((current) => !current);
-            }}
-            onDismiss={() => setShowFilterPanel(false)}
           />
         ) : null}
         {introState === 'idle' ? <BrainStatusWidget /> : null}
@@ -1192,18 +1241,6 @@ function mergeEntries(baseEntries: Entry[], localEntries: Entry[]) {
   return [...merged.values()];
 }
 
-function countSourceLensEntries(entries: Entry[]): SourceLensCounts {
-  return sourceLensDefinitions.reduce((counts, definition) => {
-    counts[definition.id] = entries.filter((entry) => isSourceLensEntry(entry, definition.id)).length;
-    return counts;
-  }, {} as SourceLensCounts);
-}
-
-function sourceLensLabel(activeSourceLens: SourceLens) {
-  if (!activeSourceLens) return 'Quellen';
-  return sourceLensDefinitions.find((definition) => definition.id === activeSourceLens)?.label ?? 'Quellen';
-}
-
 function isSourceLensEntry(entry: Entry, activeSourceLens: SourceLens) {
   if (!activeSourceLens) return false;
   const definition = sourceLensDefinitions.find((source) => source.id === activeSourceLens);
@@ -1255,36 +1292,21 @@ function roundMotion(value: number) {
 function RadialHud({
   showRelations,
   tunnelDepth,
-  activeStyleLens,
-  activeSourceLens,
-  sourceLensCounts,
   onTravelForward,
   onTravelBackward,
-  onToggleLenses,
-  onToggleSourceLens,
   onToggleRelations
 }: {
   showRelations: boolean;
   tunnelDepth: number;
-  activeStyleLens: StyleSectorId | null;
-  activeSourceLens: SourceLens;
-  sourceLensCounts: SourceLensCounts;
   onTravelForward: () => void;
   onTravelBackward: () => void;
-  onToggleLenses: () => void;
-  onToggleSourceLens: () => void;
   onToggleRelations: () => void;
 }) {
   const ui = useAtlasUiMetrics();
   const controlsOpacity = Math.max(0.46, 1 - tunnelDepth / 0.76);
-  const lensLabel = activeStyleLens ? styleShortLabel(activeStyleLens) : 'All';
-  const activeSourceCount = activeSourceLens ? sourceLensCounts[activeSourceLens] : 0;
-  const activeSourceLabel = activeSourceLens ? `${sourceLensLabel(activeSourceLens)} ${activeSourceCount}` : 'Quellen';
   const buttons = [
     { id: 'back', label: 'Time -', active: false, width: ui.isCoarsePointer ? 150 : 58, onClick: onTravelBackward },
     { id: 'forward', label: 'Time +', active: false, width: ui.isCoarsePointer ? 150 : 58, onClick: onTravelForward },
-    { id: 'lenses', label: `Lens ${lensLabel}`, active: Boolean(activeStyleLens), width: ui.isCoarsePointer ? 192 : 72, onClick: onToggleLenses },
-    { id: 'sources', label: activeSourceLabel, active: Boolean(activeSourceLens), width: ui.isCoarsePointer ? 198 : 82, onClick: onToggleSourceLens },
     { id: 'relations', label: 'Relations', active: showRelations, width: ui.isCoarsePointer ? 198 : 78, onClick: onToggleRelations }
   ];
   let cursorX = atlasSize.cx - buttons.reduce((sum, button) => sum + button.width + ui.dock.gap, -ui.dock.gap) / 2;
@@ -1299,11 +1321,6 @@ function RadialHud({
         cursorX += button.width + ui.dock.gap;
         return <DockButton key={button.id} x={x} y={ui.dock.buttonY} width={button.width} height={ui.dock.buttonHeight} textY={ui.dock.buttonTextY} fontSize={ui.dock.buttonFontSize} label={button.label} active={button.active} onClick={button.onClick} />;
       })}
-      {activeSourceLens ? (
-        <text x={atlasSize.cx} y={ui.isCoarsePointer ? 895 : 907} textAnchor="middle" fill="#f7f7f4" fontSize={ui.isCoarsePointer ? 10 : 7.2} fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.18em" opacity="0.72">
-          QUELLWEBSEITE / {sourceLensLabel(activeSourceLens).toUpperCase()} / {activeSourceCount} PROJECTS
-        </text>
-      ) : null}
     </g>
   );
 }
@@ -1321,94 +1338,6 @@ function DockButton({ x, y, width, height = 20, textY = y + 13.2, fontSize = 6.6
         {label.toUpperCase()}
       </text>
     </g>
-  );
-}
-
-function LensControls({
-  isOpen,
-  activeStyleLens,
-  activeSourceLens,
-  showRelations,
-  sourceLensCounts,
-  onToggle,
-  onSetStyleLens,
-  onResetLenses,
-  onSetSourceLens,
-  onToggleRelations,
-  onDismiss
-}: {
-  isOpen: boolean;
-  activeStyleLens: StyleSectorId | null;
-  activeSourceLens: SourceLens;
-  showRelations: boolean;
-  sourceLensCounts: SourceLensCounts;
-  onToggle: () => void;
-  onSetStyleLens: (lens: StyleSectorId | null) => void;
-  onResetLenses: () => void;
-  onSetSourceLens: (lens: SourceLensId) => void;
-  onToggleRelations: () => void;
-  onDismiss: () => void;
-}) {
-  const styleTabs = [
-    { id: 'all', label: 'ALLE', active: !activeStyleLens && !activeSourceLens && !showRelations, onClick: onResetLenses },
-    ...styleSectors.map((sector) => ({
-      id: sector.id,
-      label: styleShortLabel(sector.id),
-      active: activeStyleLens === sector.id,
-      onClick: () => onSetStyleLens(activeStyleLens === sector.id ? null : sector.id)
-    })),
-    { id: 'relations', label: 'REL', active: showRelations, onClick: onToggleRelations }
-  ];
-  const sourceTabs = sourceLensDefinitions.map((definition) => ({
-    id: definition.id,
-    label: `${definition.label} ${sourceLensCounts[definition.id]}`,
-    active: activeSourceLens === definition.id,
-    onClick: () => onSetSourceLens(definition.id)
-  }));
-
-  const tabGroups = [
-    { id: 'style', label: 'Stil', tabs: styleTabs },
-    { id: 'source', label: 'Quellwebseite', tabs: sourceTabs }
-  ];
-
-  return (
-    <div
-      className={`lens-control ${isOpen ? 'lens-control-open' : ''}`}
-      onPointerDown={(event) => event.stopPropagation()}
-      onWheel={(event) => event.stopPropagation()}
-      onTouchMove={(event) => event.stopPropagation()}
-      onClick={(event) => event.stopPropagation()}
-    >
-      <button type="button" className={`lens-control-trigger cosmos-trigger ${isOpen ? 'lens-control-trigger-open' : ''}`} onClick={onToggle}>
-        <span className="lens-control-mark" aria-hidden="true" />
-        <span>Lenses</span>
-      </button>
-      {isOpen ? (
-        <div className="lens-control-panel cosmos-panel cosmos-scroll-panel cosmos-text-safe" role="dialog" aria-label="Atlas lenses">
-          <div className="lens-control-head">
-            <span>Filter / Quellwebseite</span>
-            <button type="button" className="lens-control-close" onClick={onDismiss}>X</button>
-          </div>
-          {tabGroups.map((group) => (
-            <div className="lens-control-section" key={group.id}>
-              <div className="lens-control-section-title">{group.label}</div>
-              <div className="lens-control-grid">
-                {group.tabs.map((tab) => (
-                  <button
-                    key={tab.id}
-                    type="button"
-                    className={`lens-control-tab ${tab.active ? 'lens-control-tab-active' : ''}`}
-                    onClick={tab.onClick}
-                  >
-                    {tab.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : null}
-    </div>
   );
 }
 
@@ -2864,6 +2793,17 @@ function advanceTravel(current: number, delta: number) {
 
 function clampVisualZoom(value: number) {
   return Math.max(1, Math.min(2.65, value));
+}
+
+function clampVisualPan(value: VisualPan, zoom: number) {
+  const zoomExcess = Math.max(0, zoom - 1);
+  const maxX = Math.min(360, atlasSize.width * zoomExcess * 0.24);
+  const maxY = Math.min(270, atlasSize.height * zoomExcess * 0.24);
+
+  return {
+    x: Math.max(-maxX, Math.min(maxX, value.x)),
+    y: Math.max(-maxY, Math.min(maxY, value.y))
+  };
 }
 
 function roundZoom(value: number) {

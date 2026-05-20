@@ -8237,7 +8237,6 @@
         "type": "exterior",
         "label": "Aussenfoto / Afasia",
         "placeholder": "Afasia / Flower House / exterior",
-        "url": "/media/afasia/flower-house/flower-house-1.jpg",
         "credit": "© Iwan Baan via Afasia",
         "source_url": "https://afasiaarchzine.com/2022/09/no-architecture/",
         "license": "all_rights_reserved"
@@ -8246,7 +8245,6 @@
         "type": "interior",
         "label": "Innenfoto / Afasia",
         "placeholder": "Afasia / Flower House / interior",
-        "url": "/media/afasia/flower-house/flower-house-10.jpg",
         "credit": "© Iwan Baan via Afasia",
         "source_url": "https://afasiaarchzine.com/2022/09/no-architecture/",
         "license": "all_rights_reserved"
@@ -8255,7 +8253,6 @@
         "type": "section",
         "label": "Schnitt / Afasia",
         "placeholder": "Afasia / Flower House / section",
-        "url": "/media/afasia/flower-house/flower-house-32.jpg",
         "credit": "© NO Architecture via Afasia",
         "source_url": "https://afasiaarchzine.com/2022/09/no-architecture/",
         "license": "all_rights_reserved"
@@ -8264,7 +8261,6 @@
         "type": "plan",
         "label": "Grundriss / Afasia",
         "placeholder": "Afasia / Flower House / plan",
-        "url": "/media/afasia/flower-house/flower-house-31.jpg",
         "credit": "© NO Architecture via Afasia",
         "source_url": "https://afasiaarchzine.com/2022/09/no-architecture/",
         "license": "all_rights_reserved"

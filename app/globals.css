@@ -143,43 +143,13 @@ body:has(.entry-page) {
   height: 100%;
   pointer-events: none;
   background: #050505;
-  transform: translateZ(0) scale(var(--cosmos-visual-zoom, 1));
+  transform: translate3d(var(--cosmos-visual-pan-x, 0), var(--cosmos-visual-pan-y, 0), 0) scale(var(--cosmos-visual-zoom, 1));
   transform-origin: center;
   transition: transform 180ms cubic-bezier(0.19, 1, 0.22, 1);
   will-change: transform;
 }
 
-.wormhole-idle-overlay {
-  position: absolute;
-  inset: -10%;
-  z-index: 1;
-  pointer-events: none;
-  opacity: 0;
-  mix-blend-mode: screen;
-  background:
-    repeating-conic-gradient(
-      from 8deg at 50% 50%,
-      rgb(0 231 255 / 0.075) 0deg 1.1deg,
-      rgb(143 92 255 / 0.045) 1.1deg 1.8deg,
-      transparent 1.8deg 11deg
-    ),
-    radial-gradient(circle at 50% 50%, transparent 0 20%, rgb(255 209 109 / 0.045) 32%, transparent 58%);
-  transform: translateZ(0) scale(calc(var(--cosmos-visual-zoom, 1) * 1.02));
-  transform-origin: center;
-  will-change: transform, opacity;
-}
-
-.cosmos-idle .wormhole-idle-overlay {
-  opacity: 0.36;
-  animation: cosmos-idle-tunnel-drift 58s linear infinite;
-}
-
-.cosmos-moving .wormhole-idle-overlay {
-  opacity: 0.16;
-}
-
-.cosmos-lensing .wormhole-canvas,
-.cosmos-lensing .wormhole-idle-overlay {
+.cosmos-lensing .wormhole-canvas {
   transition-duration: 100ms;
 }
 
@@ -751,22 +721,15 @@ body:has(.entry-page) {
   50% { opacity: 0.68; }
 }
 
-@keyframes cosmos-idle-tunnel-drift {
-  to { transform: translateZ(0) scale(calc(var(--cosmos-visual-zoom, 1) * 1.02)) rotate(360deg); }
+@keyframes wormhole-color-current {
+  0%, 100% { opacity: 0.7; stroke-dashoffset: 0; }
+  50% { opacity: 0.96; stroke-dashoffset: -18; }
 }
 
-.wormhole-idle-shell {
-  transform-box: view-box;
-  transform-origin: center;
-  will-change: transform;
-}
-
-.cosmos-idle .wormhole-idle-shell {
-  animation: cosmos-idle-shell-drift 82s linear infinite;
-}
-
-@keyframes cosmos-idle-shell-drift {
-  to { transform: rotate(360deg); }
+@keyframes wormhole-energy-current {
+  0% { stroke-dashoffset: 0; opacity: 0.5; }
+  50% { opacity: 0.82; }
+  100% { stroke-dashoffset: -64; opacity: 0.5; }
 }
 
 .wormhole-spoke {
@@ -792,6 +755,7 @@ body:has(.entry-page) {
 .wormhole-energy-band {
   mix-blend-mode: screen;
   vector-effect: non-scaling-stroke;
+  stroke-dasharray: 3 34;
 }
 
 .wormhole-outer-rim {
@@ -817,6 +781,15 @@ body:has(.entry-page) {
 
 .cosmos-idle .wormhole-breath {
   animation: wormhole-idle-breathe 16s ease-in-out infinite;
+}
+
+.cosmos-idle .wormhole-energy-band {
+  animation: wormhole-energy-current 28s linear infinite;
+}
+
+.cosmos-idle .wormhole-ring,
+.cosmos-idle .wormhole-current-ring {
+  animation: wormhole-color-current 34s ease-in-out infinite;
 }
 
 .wormhole-idle-orbit {
@@ -1282,21 +1255,21 @@ body:has(.entry-page) {
 
 .brain-status {
   position: fixed;
-  left: 50%;
+  left: max(var(--ui-safe-edge), env(safe-area-inset-left));
   top: var(--cosmos-hud-top);
   z-index: 26;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   width: auto;
   color: #f7f7f4;
   pointer-events: auto;
-  transform: translateX(-50%);
+  transform: none;
 }
 
 .brain-status-trigger {
-  width: var(--ui-trigger-min-w);
-  min-width: var(--ui-trigger-min-w);
+  width: 100px;
+  min-width: 100px;
   height: var(--ui-trigger-h);
   border: 0.7px solid rgb(247 247 244 / 44%);
   background: rgb(5 5 5 / 58%);
@@ -1308,7 +1281,7 @@ body:has(.entry-page) {
 .brain-status-panel {
   width: min(360px, calc(100vw - (var(--ui-safe-edge) * 2)));
   margin-top: 8px;
-  align-self: center;
+  align-self: flex-start;
   padding: 12px;
   color: #f7f7f4;
   border: 0.7px solid rgb(247 247 244 / 38%);
@@ -1594,8 +1567,11 @@ body:has(.entry-page) {
     top: calc(var(--cosmos-hud-top) + 2px);
   }
 
-.brain-status {
-    top: calc(var(--cosmos-hud-top) + 48px);
+  .brain-status {
+    left: max(var(--ui-safe-edge), env(safe-area-inset-left));
+    top: calc(var(--cosmos-hud-top) + 2px);
+    align-items: flex-start;
+    transform: none;
   }
 
 .lens-control {
@@ -1629,8 +1605,8 @@ body:has(.entry-page) {
   align-items: center;
   justify-content: center;
   gap: var(--ui-gap);
-  width: var(--ui-trigger-min-w);
-  min-width: var(--ui-trigger-min-w);
+  width: 100px;
+  min-width: 100px;
   height: var(--ui-trigger-h);
   margin-left: auto;
   box-sizing: border-box;
@@ -2335,8 +2311,8 @@ body:has(.entry-page) {
   .project-search-trigger,
   .lens-control-trigger {
     height: var(--ui-trigger-h);
-    width: var(--ui-trigger-min-w);
-    min-width: var(--ui-trigger-min-w);
+    width: 148px;
+    min-width: 148px;
     padding-inline: 12px;
     font-size: var(--ui-font-control);
     letter-spacing: 0.08em;
@@ -2364,16 +2340,16 @@ body:has(.entry-page) {
   }
 
   .brain-status {
-    top: auto;
-    bottom: max(70px, calc(env(safe-area-inset-bottom) + 58px));
-    left: var(--ui-safe-edge);
+    top: var(--cosmos-hud-top);
+    bottom: auto;
+    left: max(var(--ui-safe-edge), env(safe-area-inset-left));
     align-items: flex-start;
     transform: none;
   }
 
   .brain-status-trigger {
-    width: var(--ui-trigger-min-w);
-    min-width: var(--ui-trigger-min-w);
+    width: 148px;
+    min-width: 148px;
     height: var(--ui-trigger-h);
     font-size: var(--ui-font-control);
   }
@@ -2579,8 +2555,6 @@ body:has(.entry-page) {
   .wormhole-speed-line,
   .wormhole-outer-rim,
   .wormhole-whirl,
-  .wormhole-idle-overlay,
-  .wormhole-idle-shell,
   .cosmos-node-wiggle,
   .cosmos-cursor circle:first-child,
   .relation-strand,
