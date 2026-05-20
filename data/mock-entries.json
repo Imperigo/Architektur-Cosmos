@@ -3047,7 +3047,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Crystal Palace / thing-modernity-glass"
+        "placeholder": "Aussenansicht / Crystal Palace / thing-modernity-glass",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/The_Crystal_Palace_page_24.jpg/960px-The_Crystal_Palace_page_24.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:The_Crystal_Palace_page_24.jpg",
+        "credit": "Wikimedia Commons / Peter Berlyn, Charles Fowler Jr., George Measom / Public domain",
+        "license": "public_domain"
       },
       {
         "type": "interior",
@@ -3065,7 +3069,16 @@
         "placeholder": "Grundriss / Crystal Palace / thing-modernity-glass"
       }
     ],
-    "source_candidates": []
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Crystal Palace",
+        "url": "https://commons.wikimedia.org/wiki/File:The_Crystal_Palace_page_24.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "public_domain",
+        "notes": "Auto-selected hero image candidate. Score: 0.92. License: Public domain."
+      }
+    ]
   },
   {
     "id": "royal-observatory-greenwich",
@@ -3224,7 +3237,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Familistere / reform-housing-collective-living"
+        "placeholder": "Aussenansicht / Familistere / reform-housing-collective-living",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Guise_panorama_familist%C3%A8re_1.jpg/960px-Guise_panorama_familist%C3%A8re_1.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Guise_panorama_familist%C3%A8re_1.jpg",
+        "credit": "Wikimedia Commons / Markus3 (Marc Roussel) / CC BY-SA 3.0",
+        "license": "cc_by_sa"
       },
       {
         "type": "interior",
@@ -3244,6 +3261,16 @@
     ],
     "source_documents": [
       "02 Global History of Urban Design 1_2.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Familistere",
+        "url": "https://commons.wikimedia.org/wiki/File:Guise_panorama_familist%C3%A8re_1.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.94. License: CC BY-SA 3.0."
+      }
     ]
   },
   {
@@ -3274,7 +3301,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Barcelona Extension / urban-expansion-grid"
+        "placeholder": "Aussenansicht / Barcelona Extension / urban-expansion-grid",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Eixample_aire.jpg/960px-Eixample_aire.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Eixample_aire.jpg",
+        "credit": "Wikimedia Commons / Alhzeiia / CC BY-SA 2.0",
+        "license": "cc_by_sa"
       },
       {
         "type": "interior",
@@ -3294,6 +3325,16 @@
     ],
     "source_documents": [
       "02 Global History of Urban Design 1_2.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Barcelona Extension",
+        "url": "https://commons.wikimedia.org/wiki/File:Eixample_aire.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.95. License: CC BY-SA 2.0."
+      }
     ]
   },
   {
@@ -4226,7 +4267,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Bauhaus Dessau / school-glass"
+        "placeholder": "Aussenansicht / Bauhaus Dessau / school-glass",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Au%C3%9Fenansichten_des_Bauhaus-Geb%C3%A4udes_in_Dessau_03.jpg/960px-Au%C3%9Fenansichten_des_Bauhaus-Geb%C3%A4udes_in_Dessau_03.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Au%C3%9Fenansichten_des_Bauhaus-Geb%C3%A4udes_in_Dessau_03.jpg",
+        "credit": "Wikimedia Commons / JensKunstfreund / CC BY-SA 4.0",
+        "license": "cc_by_sa"
       },
       {
         "type": "interior",
@@ -4244,7 +4289,16 @@
         "placeholder": "Grundriss / Bauhaus Dessau / school-glass"
       }
     ],
-    "source_candidates": []
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Bauhaus Dessau",
+        "url": "https://commons.wikimedia.org/wiki/File:Au%C3%9Fenansichten_des_Bauhaus-Geb%C3%A4udes_in_Dessau_03.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.96. License: CC BY-SA 4.0."
+      }
+    ]
   },
   {
     "id": "karl-marx-hof",
@@ -6603,7 +6657,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Parc de la Villette / landscape-urbanism-event"
+        "placeholder": "Aussenansicht / Parc de la Villette / landscape-urbanism-event",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Parc_de_la_Villette%2C_Paris_2010.jpg/960px-Parc_de_la_Villette%2C_Paris_2010.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Parc_de_la_Villette,_Paris_2010.jpg",
+        "credit": "Wikimedia Commons / Jean-Marie Hullot / CC BY-SA 2.0",
+        "license": "cc_by_sa"
       },
       {
         "type": "interior",
@@ -6624,7 +6682,16 @@
     "source_documents": [
       "02 Global History of Urban Design 1_2.pdf"
     ],
-    "source_candidates": []
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Parc de la Villette",
+        "url": "https://commons.wikimedia.org/wiki/File:Parc_de_la_Villette,_Paris_2010.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.93. License: CC BY-SA 2.0."
+      }
+    ]
   },
   {
     "id": "euralille-metropole",
@@ -6866,7 +6933,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Schurenbach Halde / industrial-reuse-landmark"
+        "placeholder": "Aussenansicht / Schurenbach Halde / industrial-reuse-landmark",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/4/40/Richard_Serra_Bramme_Essen_Schurenbachhalde.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Richard_Serra_Bramme_Essen_Schurenbachhalde.jpg",
+        "credit": "Wikimedia Commons / Jesse Krauss / Public domain",
+        "license": "public_domain"
       },
       {
         "type": "interior",
@@ -6886,6 +6957,16 @@
     ],
     "source_documents": [
       "04 Landschaftsarchitektur 1_2.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Schurenbach Halde",
+        "url": "https://commons.wikimedia.org/wiki/File:Richard_Serra_Bramme_Essen_Schurenbachhalde.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "public_domain",
+        "notes": "Auto-selected hero image candidate. Score: 0.93. License: Public domain."
+      }
     ]
   },
   {
