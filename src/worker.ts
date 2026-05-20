@@ -312,6 +312,7 @@ function buildBrainSummary() {
   const modelReadyOrPlanned = entries.filter(entryHas3dModel).length;
   const analysisReadyOrPlanned = entries.filter(entryHasAnalysis).length;
   const sourceCandidateEntries = entries.filter((entry) => sourceCountFor(entry) > 0).length;
+  const heroImageEntries = entries.filter(entryHasHeroImage).length;
   const rightsBlocked = entries.filter(entryHasBlockedRights).length;
 
   return {
@@ -322,6 +323,7 @@ function buildBrainSummary() {
     model_ready_or_planned: modelReadyOrPlanned,
     analysis_ready_or_planned: analysisReadyOrPlanned,
     source_candidate_entries: sourceCandidateEntries,
+    hero_image_entries: heroImageEntries,
     rights_blocked: rightsBlocked
   };
 }
@@ -331,7 +333,8 @@ function buildBrainCoverage(summary: ReturnType<typeof buildBrainSummary>) {
     database_profile_percent: percent(summary.database_profiles, summary.entries),
     model_percent: percent(summary.model_ready_or_planned, summary.entries),
     analysis_percent: percent(summary.analysis_ready_or_planned, summary.entries),
-    source_candidate_percent: percent(summary.source_candidate_entries, summary.entries)
+    source_candidate_percent: percent(summary.source_candidate_entries, summary.entries),
+    hero_image_percent: percent(summary.hero_image_entries, summary.entries)
   };
 }
 
@@ -375,6 +378,10 @@ function buildBrainTasks(): BrainTask[] {
     const sourceCount = sourceCountFor(entry);
     const relationCount = relationCounts.get(entry.id) ?? 0;
     const pilotBoost = entry.database_profile ? priority('pilot_entry', 12) : 0;
+
+    if (!entryHasHeroImage(entry)) {
+      tasks.push(brainTask(entry, 'media', `Find public-safe hero image for ${entry.title}`, 'No public-safe exterior/hero image is attached. Research Wikimedia/official sources and keep unclear media in review.', priority('missing_sources', 22) - 6 + pilotBoost, 'medium'));
+    }
 
     if (sourceCount < minimumSourceTarget()) {
       tasks.push(brainTask(entry, 'research', `Add source trail for ${entry.title}`, `Only ${sourceCount} source(s) attached. Target is ${minimumSourceTarget()}.`, priority('missing_sources', 22) + pilotBoost, 'medium'));
@@ -483,6 +490,10 @@ function entryHasBlockedRights(entry: Entry): boolean {
     if (isDefinedString(value)) rightsList.push(value);
   }
   return rightsList.some((rights) => blocked.includes(rights));
+}
+
+function entryHasHeroImage(entry: Entry): boolean {
+  return Boolean((entry.media ?? []).find((media) => media.type === 'exterior' && media.url && media.license && !['unknown', 'needs_permission', 'private_research', 'personal_only', 'all_rights_reserved'].includes(media.license)));
 }
 
 function sourceCountFor(entry: Entry): number {

@@ -38,6 +38,8 @@
     "database:research": "node scripts/database-research-agents.mjs",
     "database:analyze": "node scripts/database-research-agents.mjs --mode analyze",
     "database:pilot-enrich": "node scripts/pilot-enrichment-review.mjs",
+    "database:hero-images": "node scripts/research-hero-images.mjs",
+    "database:hero-images:apply": "node scripts/research-hero-images.mjs --apply",
     "brain:review": "node scripts/brain-review.mjs",
     "brain:doctor": "node scripts/brain-doctor.mjs",
     "brain:cloud-plan": "node scripts/brain-cloud-plan.mjs",

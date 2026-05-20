@@ -20,6 +20,7 @@ type BrainStatus = {
     model_percent: number;
     analysis_percent: number;
     source_candidate_percent: number;
+    hero_image_percent?: number;
   };
   open_tasks: number;
   highest_priority_task: {
@@ -54,7 +55,7 @@ type TaskResponse = {
   results: BrainTask[];
 };
 
-type TaskFilter = 'all' | 'research' | 'rights' | 'model' | 'analysis' | 'database';
+type TaskFilter = 'all' | 'research' | 'media' | 'rights' | 'model' | 'analysis' | 'database';
 
 export function BrainStatusWidget() {
   const [isOpen, setIsOpen] = useState(false);
@@ -139,6 +140,7 @@ export function BrainStatusWidget() {
                 <BrainBar label="Models" value={status.coverage.model_percent} />
                 <BrainBar label="Analysis" value={status.coverage.analysis_percent} />
                 <BrainBar label="Sources" value={status.coverage.source_candidate_percent} />
+                <BrainBar label="Hero images" value={status.coverage.hero_image_percent ?? 0} />
               </div>
 
               <div className="brain-status-guard">
@@ -162,7 +164,7 @@ export function BrainStatusWidget() {
               ) : null}
 
               <div className="brain-task-toolbar" aria-label="Brain task filters">
-                {(['all', 'research', 'rights', 'model', 'analysis', 'database'] as const).map((filter) => (
+                {(['all', 'research', 'media', 'rights', 'model', 'analysis', 'database'] as const).map((filter) => (
                   <button
                     key={filter}
                     type="button"

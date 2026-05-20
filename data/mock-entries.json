@@ -399,7 +399,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Nippur / mesopotamia-city"
+        "placeholder": "Aussenansicht / Nippur / mesopotamia-city",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Ruins_from_a_temple_in_Naffur.jpg/960px-Ruins_from_a_temple_in_Naffur.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Ruins_from_a_temple_in_Naffur.jpg",
+        "credit": "Wikimedia Commons / Jasmine N. Walthall, U.S. Army / Public domain",
+        "license": "public_domain"
       },
       {
         "type": "interior",
@@ -419,6 +423,16 @@
     ],
     "source_documents": [
       "02 Global History of Urban Design 1_2.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Nippur",
+        "url": "https://commons.wikimedia.org/wiki/File:Ruins_from_a_temple_in_Naffur.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "public_domain",
+        "notes": "Auto-selected hero image candidate. Score: 0.98. License: Public domain."
+      }
     ]
   },
   {
@@ -548,7 +562,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Mohenjo-Daro / hydraulic-city-grid"
+        "placeholder": "Aussenansicht / Mohenjo-Daro / hydraulic-city-grid",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Mohenjodaro_-_view_of_the_stupa_mound.JPG/960px-Mohenjodaro_-_view_of_the_stupa_mound.JPG",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Mohenjodaro_-_view_of_the_stupa_mound.JPG",
+        "credit": "Wikimedia Commons / Saqib Qayyum / CC BY-SA 3.0",
+        "license": "cc_by_sa"
       },
       {
         "type": "interior",
@@ -568,6 +586,16 @@
     ],
     "source_documents": [
       "02 Global History of Urban Design 1_2.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Mohenjo-Daro",
+        "url": "https://commons.wikimedia.org/wiki/File:Mohenjodaro_-_view_of_the_stupa_mound.JPG",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY-SA 3.0."
+      }
     ]
   },
   {
@@ -600,7 +628,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Pyramids of Giza / monument-labor"
+        "placeholder": "Aussenansicht / Pyramids of Giza / monument-labor",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/All_Gizah_Pyramids.jpg/960px-All_Gizah_Pyramids.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:All_Gizah_Pyramids.jpg",
+        "credit": "Wikimedia Commons / Ricardo Liberato / CC BY-SA 2.0",
+        "license": "cc_by_sa"
       },
       {
         "type": "interior",
@@ -616,6 +648,16 @@
         "type": "plan",
         "label": "Grundriss",
         "placeholder": "Grundriss / Pyramids of Giza / monument-labor"
+      }
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Pyramids of Giza",
+        "url": "https://commons.wikimedia.org/wiki/File:All_Gizah_Pyramids.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.87. License: CC BY-SA 2.0."
       }
     ]
   },
@@ -697,7 +739,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Forum Romanum / roman-urbanism-forum"
+        "placeholder": "Aussenansicht / Forum Romanum / roman-urbanism-forum",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Rome_%28IT%29%2C_Forum_Romanum_--_2013_--_3358.jpg/960px-Rome_%28IT%29%2C_Forum_Romanum_--_2013_--_3358.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Rome_(IT),_Forum_Romanum_--_2013_--_3358.jpg",
+        "credit": "Wikimedia Commons / Dietmar Rabich / CC BY-SA 4.0",
+        "license": "cc_by_sa"
       },
       {
         "type": "interior",
@@ -717,6 +763,16 @@
     ],
     "source_documents": [
       "02 Global History of Urban Design 1_2.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Forum Romanum",
+        "url": "https://commons.wikimedia.org/wiki/File:Rome_(IT),_Forum_Romanum_--_2013_--_3358.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.87. License: CC BY-SA 4.0."
+      }
     ]
   },
   {
@@ -797,7 +853,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Agora of Athens / polis-public-space"
+        "placeholder": "Aussenansicht / Agora of Athens / polis-public-space",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Agora_-_Ath%C3%A8nes_%28GRA1%29_-_2022-03-26_-_97.jpg/960px-Agora_-_Ath%C3%A8nes_%28GRA1%29_-_2022-03-26_-_97.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Agora_-_Ath%C3%A8nes_(GRA1)_-_2022-03-26_-_97.jpg",
+        "credit": "Wikimedia Commons / Chabe01 / CC BY-SA 4.0",
+        "license": "cc_by_sa"
       },
       {
         "type": "interior",
@@ -817,6 +877,16 @@
     ],
     "source_documents": [
       "02 Global History of Urban Design 1_2.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Agora of Athens",
+        "url": "https://commons.wikimedia.org/wiki/File:Agora_-_Ath%C3%A8nes_(GRA1)_-_2022-03-26_-_97.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY-SA 4.0."
+      }
     ]
   },
   {
@@ -901,7 +971,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Parthenon / temple-order"
+        "placeholder": "Aussenansicht / Parthenon / temple-order",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/The_Parthenon_in_Athens.jpg/960px-The_Parthenon_in_Athens.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:The_Parthenon_in_Athens.jpg",
+        "credit": "Wikimedia Commons / Steve Swayne / CC BY 2.0",
+        "license": "cc_by"
       },
       {
         "type": "interior",
@@ -917,6 +991,16 @@
         "type": "plan",
         "label": "Grundriss",
         "placeholder": "Grundriss / Parthenon / temple-order"
+      }
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Parthenon",
+        "url": "https://commons.wikimedia.org/wiki/File:The_Parthenon_in_Athens.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY 2.0."
       }
     ]
   },
@@ -998,7 +1082,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Priene / polis-topography"
+        "placeholder": "Aussenansicht / Priene / polis-topography",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Temple_of_Athena_at_Priene.jpg/960px-Temple_of_Athena_at_Priene.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Temple_of_Athena_at_Priene.jpg",
+        "credit": "Wikimedia Commons / Ken and Nyetta / CC BY 2.0",
+        "license": "cc_by"
       },
       {
         "type": "interior",
@@ -1018,6 +1106,16 @@
     ],
     "source_documents": [
       "02 Global History of Urban Design 1_2.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Priene",
+        "url": "https://commons.wikimedia.org/wiki/File:Temple_of_Athena_at_Priene.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY 2.0."
+      }
     ]
   },
   {
@@ -1148,7 +1246,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Timgad / roman-urbanism-colonial-city"
+        "placeholder": "Aussenansicht / Timgad / roman-urbanism-colonial-city",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Timgad_%2815685889550%29.jpg/960px-Timgad_%2815685889550%29.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Timgad_(15685889550).jpg",
+        "credit": "Wikimedia Commons / Dan Sloan / CC BY-SA 2.0",
+        "license": "cc_by_sa"
       },
       {
         "type": "interior",
@@ -1168,6 +1270,16 @@
     ],
     "source_documents": [
       "02 Global History of Urban Design 1_2.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Timgad",
+        "url": "https://commons.wikimedia.org/wiki/File:Timgad_(15685889550).jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY-SA 2.0."
+      }
     ]
   },
   {
@@ -1247,7 +1359,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Pantheon / dome-concrete"
+        "placeholder": "Aussenansicht / Pantheon / dome-concrete",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Pantheon_Rome%2C_from_a_Series_of_24_Depicting_%28Reconstructed%29_Buildings_from_Roman_Antiquity_MET_DP874934.jpg/960px-Pantheon_Rome%2C_from_a_Series_of_24_Depicting_%28Reconstructed%29_Buildings_from_Roman_Antiquity_MET_DP874934.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Pantheon_Rome,_from_a_Series_of_24_Depicting_(Reconstructed)_Buildings_from_Roman_Antiquity_MET_DP874934.jpg",
+        "credit": "Wikimedia Commons / Formerly attributed to   Monogrammist G.A. & the Caltrop / CC0",
+        "license": "public_domain"
       },
       {
         "type": "interior",
@@ -1263,6 +1379,16 @@
         "type": "plan",
         "label": "Grundriss",
         "placeholder": "Grundriss / Pantheon / dome-concrete"
+      }
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Pantheon",
+        "url": "https://commons.wikimedia.org/wiki/File:Pantheon_Rome,_from_a_Series_of_24_Depicting_(Reconstructed)_Buildings_from_Roman_Antiquity_MET_DP874934.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "public_domain",
+        "notes": "Auto-selected hero image candidate. Score: 0.87. License: CC0."
       }
     ]
   },
@@ -1296,7 +1422,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Hagia Sophia / dome-liturgy"
+        "placeholder": "Aussenansicht / Hagia Sophia / dome-liturgy",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Hagia_Sophia_%28228968325%29.jpeg/960px-Hagia_Sophia_%28228968325%29.jpeg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Hagia_Sophia_(228968325).jpeg",
+        "credit": "Wikimedia Commons / Adli Wahid / CC BY-SA 3.0",
+        "license": "cc_by_sa"
       },
       {
         "type": "interior",
@@ -1312,6 +1442,16 @@
         "type": "plan",
         "label": "Grundriss",
         "placeholder": "Grundriss / Hagia Sophia / dome-liturgy"
+      }
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Hagia Sophia",
+        "url": "https://commons.wikimedia.org/wiki/File:Hagia_Sophia_(228968325).jpeg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY-SA 3.0."
       }
     ]
   },
@@ -1393,7 +1533,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Siena / medieval-city-public-space"
+        "placeholder": "Aussenansicht / Siena / medieval-city-public-space",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Siena_Cattedrale_nuova_Vista_su_la_Piazza_del_Campo_2.jpg/960px-Siena_Cattedrale_nuova_Vista_su_la_Piazza_del_Campo_2.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Siena_Cattedrale_nuova_Vista_su_la_Piazza_del_Campo_2.jpg",
+        "credit": "Wikimedia Commons / Zairon / CC BY 4.0",
+        "license": "cc_by"
       },
       {
         "type": "interior",
@@ -1413,6 +1557,16 @@
     ],
     "source_documents": [
       "02 Global History of Urban Design 1_2.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Siena",
+        "url": "https://commons.wikimedia.org/wiki/File:Siena_Cattedrale_nuova_Vista_su_la_Piazza_del_Campo_2.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY 4.0."
+      }
     ]
   },
   {
@@ -1445,7 +1599,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Alhambra / courtyard-water"
+        "placeholder": "Aussenansicht / Alhambra / courtyard-water",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Dawn_Charles_V_Palace_Alhambra_Granada_Andalusia_Spain.jpg/960px-Dawn_Charles_V_Palace_Alhambra_Granada_Andalusia_Spain.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Dawn_Charles_V_Palace_Alhambra_Granada_Andalusia_Spain.jpg",
+        "credit": "Wikimedia Commons / Jebulon / CC0",
+        "license": "public_domain"
       },
       {
         "type": "interior",
@@ -1461,6 +1619,16 @@
         "type": "plan",
         "label": "Grundriss",
         "placeholder": "Grundriss / Alhambra / courtyard-water"
+      }
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Alhambra",
+        "url": "https://commons.wikimedia.org/wiki/File:Dawn_Charles_V_Palace_Alhambra_Granada_Andalusia_Spain.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "public_domain",
+        "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC0."
       }
     ]
   },
@@ -1492,7 +1660,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Hereford Mappa Mundi / cartography-worldview"
+        "placeholder": "Aussenansicht / Hereford Mappa Mundi / cartography-worldview",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Hereford-Karte.jpg/960px-Hereford-Karte.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Hereford-Karte.jpg",
+        "credit": "Wikimedia Commons / Unknown author Unknown author / Public domain",
+        "license": "public_domain"
       },
       {
         "type": "interior",
@@ -1512,6 +1684,16 @@
     ],
     "source_documents": [
       "04 Landschaftsarchitektur 1_2.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Hereford Mappa Mundi",
+        "url": "https://commons.wikimedia.org/wiki/File:Hereford-Karte.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "public_domain",
+        "notes": "Auto-selected hero image candidate. Score: 0.98. License: Public domain."
+      }
     ]
   },
   {
@@ -1542,7 +1724,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Catalan Atlas / cartography-worldview"
+        "placeholder": "Aussenansicht / Catalan Atlas / cartography-worldview",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/d/d2/Compass_rose_from_Catalan_Atlas_%281375%29.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Compass_rose_from_Catalan_Atlas_(1375).jpg",
+        "credit": "Wikimedia Commons / Cresques Abraham / Public domain",
+        "license": "public_domain"
       },
       {
         "type": "interior",
@@ -1562,6 +1748,16 @@
     ],
     "source_documents": [
       "04 Landschaftsarchitektur 1_2.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Catalan Atlas",
+        "url": "https://commons.wikimedia.org/wiki/File:Compass_rose_from_Catalan_Atlas_(1375).jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "public_domain",
+        "notes": "Auto-selected hero image candidate. Score: 0.98. License: Public domain."
+      }
     ]
   },
   {
@@ -1594,7 +1790,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Dome of Santa Maria del Fiore / dome-construction"
+        "placeholder": "Aussenansicht / Dome of Santa Maria del Fiore / dome-construction",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/5/52/Filippo_Brunelleschi%2C_cutaway_of_the_Dome_of_Florence_Cathedral_%28Santa_Maria_del_Fiore%29.JPG",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Filippo_Brunelleschi,_cutaway_of_the_Dome_of_Florence_Cathedral_(Santa_Maria_del_Fiore).JPG",
+        "credit": "Wikimedia Commons / Wikimedia Commons contributor / Public domain",
+        "license": "public_domain"
       },
       {
         "type": "interior",
@@ -1610,6 +1810,16 @@
         "type": "plan",
         "label": "Grundriss",
         "placeholder": "Grundriss / Dome of Santa Maria del Fiore / dome-construction"
+      }
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Dome of Santa Maria del Fiore",
+        "url": "https://commons.wikimedia.org/wiki/File:Filippo_Brunelleschi,_cutaway_of_the_Dome_of_Florence_Cathedral_(Santa_Maria_del_Fiore).JPG",
+        "reliability_level": "secondary_source",
+        "rights_status": "public_domain",
+        "notes": "Auto-selected hero image candidate. Score: 0.97. License: Public domain."
       }
     ]
   },
@@ -1641,7 +1851,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Palazzo Medici Riccardi / renaissance-city-palazzo"
+        "placeholder": "Aussenansicht / Palazzo Medici Riccardi / renaissance-city-palazzo",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Palazzo_Medici_Riccardi-Florence.jpg/960px-Palazzo_Medici_Riccardi-Florence.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Palazzo_Medici_Riccardi-Florence.jpg",
+        "credit": "Wikimedia Commons / Yair Haklai / CC BY-SA 3.0",
+        "license": "cc_by_sa"
       },
       {
         "type": "interior",
@@ -1661,6 +1875,16 @@
     ],
     "source_documents": [
       "02 Global History of Urban Design 1_2.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Palazzo Medici Riccardi",
+        "url": "https://commons.wikimedia.org/wiki/File:Palazzo_Medici_Riccardi-Florence.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY-SA 3.0."
+      }
     ]
   },
   {
@@ -1741,7 +1965,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Villa Medici in Fiesole / garden-history-renaissance-garden"
+        "placeholder": "Aussenansicht / Villa Medici in Fiesole / garden-history-renaissance-garden",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Villa_Medici_a_Fiesole_1.jpg/960px-Villa_Medici_a_Fiesole_1.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Villa_Medici_a_Fiesole_1.jpg",
+        "credit": "Wikimedia Commons / Donata Mazzini / CC BY-SA 3.0",
+        "license": "cc_by_sa"
       },
       {
         "type": "interior",
@@ -1761,6 +1989,16 @@
     ],
     "source_documents": [
       "04 Landschaftsarchitektur 1_2.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Villa Medici in Fiesole",
+        "url": "https://commons.wikimedia.org/wiki/File:Villa_Medici_a_Fiesole_1.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY-SA 3.0."
+      }
     ]
   },
   {
@@ -1791,7 +2029,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Sforzinda / ideal-city-renaissance-city"
+        "placeholder": "Aussenansicht / Sforzinda / ideal-city-renaissance-city",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Idealstadt.jpg/960px-Idealstadt.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Idealstadt.jpg",
+        "credit": "Wikimedia Commons / User  Rainer Zenz  on  de.wikipedia / Public domain",
+        "license": "public_domain"
       },
       {
         "type": "interior",
@@ -1811,6 +2053,16 @@
     ],
     "source_documents": [
       "02 Global History of Urban Design 1_2.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Sforzinda",
+        "url": "https://commons.wikimedia.org/wiki/File:Idealstadt.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "public_domain",
+        "notes": "Auto-selected hero image candidate. Score: 0.98. License: Public domain."
+      }
     ]
   },
   {
@@ -1942,7 +2194,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Garden of Tuileries / garden-history-axis"
+        "placeholder": "Aussenansicht / Garden of Tuileries / garden-history-axis",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Camille_Pissarro%2C_The_Garden_of_the_Tuileries_on_a_Spring_Morning%2C_1899.jpg/960px-Camille_Pissarro%2C_The_Garden_of_the_Tuileries_on_a_Spring_Morning%2C_1899.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Camille_Pissarro,_The_Garden_of_the_Tuileries_on_a_Spring_Morning,_1899.jpg",
+        "credit": "Wikimedia Commons / Camille Pissarro / Public domain",
+        "license": "public_domain"
       },
       {
         "type": "interior",
@@ -1962,6 +2218,16 @@
     ],
     "source_documents": [
       "04 Landschaftsarchitektur 1_2.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Garden of Tuileries",
+        "url": "https://commons.wikimedia.org/wiki/File:Camille_Pissarro,_The_Garden_of_the_Tuileries_on_a_Spring_Morning,_1899.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "public_domain",
+        "notes": "Auto-selected hero image candidate. Score: 0.85. License: Public domain."
+      }
     ]
   },
   {
@@ -2242,7 +2508,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Piazza del Popolo / baroque-city-axis"
+        "placeholder": "Aussenansicht / Piazza del Popolo / baroque-city-axis",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/PIAZZA_DEL_POPOLO_VISTA_AEREA.jpg/960px-PIAZZA_DEL_POPOLO_VISTA_AEREA.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:PIAZZA_DEL_POPOLO_VISTA_AEREA.jpg",
+        "credit": "Wikimedia Commons / DellaGherardesca / CC BY 4.0",
+        "license": "cc_by"
       },
       {
         "type": "interior",
@@ -2262,6 +2532,16 @@
     ],
     "source_documents": [
       "02 Global History of Urban Design 1_2.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Piazza del Popolo",
+        "url": "https://commons.wikimedia.org/wiki/File:PIAZZA_DEL_POPOLO_VISTA_AEREA.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY 4.0."
+      }
     ]
   },
   {
@@ -2294,7 +2574,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Gardens of Versailles / axis-absolutism"
+        "placeholder": "Aussenansicht / Gardens of Versailles / axis-absolutism",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Vue_a%C3%A9rienne_du_domaine_de_Versailles_le_20_ao%C3%BBt_2014_par_ToucanWings_-_Creative_Commons_By_Sa_3.0_-_22.jpg/960px-Vue_a%C3%A9rienne_du_domaine_de_Versailles_le_20_ao%C3%BBt_2014_par_ToucanWings_-_Creative_Commons_By_Sa_3.0_-_22.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Vue_a%C3%A9rienne_du_domaine_de_Versailles_le_20_ao%C3%BBt_2014_par_ToucanWings_-_Creative_Commons_By_Sa_3.0_-_22.jpg",
+        "credit": "Wikimedia Commons / ToucanWings / CC BY-SA 3.0",
+        "license": "cc_by_sa"
       },
       {
         "type": "interior",
@@ -2310,6 +2594,16 @@
         "type": "plan",
         "label": "Grundriss",
         "placeholder": "Grundriss / Gardens of Versailles / axis-absolutism"
+      }
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Gardens of Versailles",
+        "url": "https://commons.wikimedia.org/wiki/File:Vue_a%C3%A9rienne_du_domaine_de_Versailles_le_20_ao%C3%BBt_2014_par_ToucanWings_-_Creative_Commons_By_Sa_3.0_-_22.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY-SA 3.0."
       }
     ]
   },
@@ -2439,7 +2733,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Arc-et-Senans / ideal-city-industry"
+        "placeholder": "Aussenansicht / Arc-et-Senans / ideal-city-industry",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Arc-et-Senans_-_Saline_Royale_%2801%29.jpg/960px-Arc-et-Senans_-_Saline_Royale_%2801%29.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Arc-et-Senans_-_Saline_Royale_(01).jpg",
+        "credit": "Wikimedia Commons / Concierge.2C / CC BY-SA 3.0",
+        "license": "cc_by_sa"
       },
       {
         "type": "interior",
@@ -2459,6 +2757,16 @@
     ],
     "source_documents": [
       "02 Global History of Urban Design 1_2.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Arc-et-Senans",
+        "url": "https://commons.wikimedia.org/wiki/File:Arc-et-Senans_-_Saline_Royale_(01).jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.87. License: CC BY-SA 3.0."
+      }
     ]
   },
   {
@@ -2604,7 +2912,8 @@
         "label": "Grundriss",
         "placeholder": "Grundriss / Crystal Palace / thing-modernity-glass"
       }
-    ]
+    ],
+    "source_candidates": []
   },
   {
     "id": "royal-observatory-greenwich",
@@ -2635,7 +2944,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Royal Observatory Greenwich / thing-modernity-time"
+        "placeholder": "Aussenansicht / Royal Observatory Greenwich / thing-modernity-time",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/8/8a/Royal_observatory_greenwich.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Royal_observatory_greenwich.jpg",
+        "credit": "Wikimedia Commons / Wikimedia Commons contributor / CC BY-SA 3.0",
+        "license": "cc_by_sa"
       },
       {
         "type": "interior",
@@ -2655,6 +2968,16 @@
     ],
     "source_documents": [
       "03 Architekturgeschichte 3_4.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Royal Observatory Greenwich",
+        "url": "https://commons.wikimedia.org/wiki/File:Royal_observatory_greenwich.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY-SA 3.0."
+      }
     ]
   },
   {
@@ -2685,7 +3008,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Central Park / landscape-urbanism-park-system"
+        "placeholder": "Aussenansicht / Central Park / landscape-urbanism-park-system",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/New_York_City_%28New_York%2C_USA%29%2C_Central_Park_--_2012_--_6728.jpg/960px-New_York_City_%28New_York%2C_USA%29%2C_Central_Park_--_2012_--_6728.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:New_York_City_(New_York,_USA),_Central_Park_--_2012_--_6728.jpg",
+        "credit": "Wikimedia Commons / Dietmar Rabich / CC BY-SA 4.0",
+        "license": "cc_by_sa"
       },
       {
         "type": "interior",
@@ -2705,6 +3032,16 @@
     ],
     "source_documents": [
       "02 Global History of Urban Design 1_2.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Central Park",
+        "url": "https://commons.wikimedia.org/wiki/File:New_York_City_(New_York,_USA),_Central_Park_--_2012_--_6728.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.95. License: CC BY-SA 4.0."
+      }
     ]
   },
   {
@@ -2838,7 +3175,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / The Red House / thing-modernity-arts-and-crafts"
+        "placeholder": "Aussenansicht / The Red House / thing-modernity-arts-and-crafts",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Red_House_home_of_William_Morris_%2810%29.jpg/960px-Red_House_home_of_William_Morris_%2810%29.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Red_House_home_of_William_Morris_(10).jpg",
+        "credit": "Wikimedia Commons / Tony Hisgett  from Birmingham, UK / CC BY 2.0",
+        "license": "cc_by"
       },
       {
         "type": "interior",
@@ -2854,6 +3195,16 @@
         "type": "plan",
         "label": "Grundriss",
         "placeholder": "Grundriss / The Red House / thing-modernity-arts-and-crafts"
+      }
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / The Red House",
+        "url": "https://commons.wikimedia.org/wiki/File:Red_House_home_of_William_Morris_(10).jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.87. License: CC BY 2.0."
       }
     ]
   },
@@ -2935,7 +3286,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Emerald Necklace / landscape-urbanism-park-system"
+        "placeholder": "Aussenansicht / Emerald Necklace / landscape-urbanism-park-system",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Boston_Public_Garden_1_2019-11-20.jpg/960px-Boston_Public_Garden_1_2019-11-20.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Boston_Public_Garden_1_2019-11-20.jpg",
+        "credit": "Wikimedia Commons / F  ASTILY / CC BY-SA 4.0",
+        "license": "cc_by_sa"
       },
       {
         "type": "interior",
@@ -2955,6 +3310,16 @@
     ],
     "source_documents": [
       "02 Global History of Urban Design 1_2.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Emerald Necklace",
+        "url": "https://commons.wikimedia.org/wiki/File:Boston_Public_Garden_1_2019-11-20.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY-SA 4.0."
+      }
     ]
   },
   {
@@ -3087,7 +3452,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Cite Industrielle / industry-zoning"
+        "placeholder": "Aussenansicht / Cite Industrielle / industry-zoning",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Garnier-Tony%2C_Cit%C3%A9_industrielle%2C_centre%2C_vue_perspective.jpg/960px-Garnier-Tony%2C_Cit%C3%A9_industrielle%2C_centre%2C_vue_perspective.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Garnier-Tony,_Cit%C3%A9_industrielle,_centre,_vue_perspective.jpg",
+        "credit": "Wikimedia Commons / Tony Garnier / Public domain",
+        "license": "public_domain"
       },
       {
         "type": "interior",
@@ -3103,6 +3472,16 @@
         "type": "plan",
         "label": "Grundriss",
         "placeholder": "Grundriss / Cite Industrielle / industry-zoning"
+      }
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Cite Industrielle",
+        "url": "https://commons.wikimedia.org/wiki/File:Garnier-Tony,_Cit%C3%A9_industrielle,_centre,_vue_perspective.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "public_domain",
+        "notes": "Auto-selected hero image candidate. Score: 0.87. License: Public domain."
       }
     ]
   },
@@ -3235,7 +3614,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Letchworth Garden City / garden-city-reform-city"
+        "placeholder": "Aussenansicht / Letchworth Garden City / garden-city-reform-city",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Letchworth_Town_Hall.jpg/960px-Letchworth_Town_Hall.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Letchworth_Town_Hall.jpg",
+        "credit": "Wikimedia Commons / Richard Kelly / CC BY 4.0",
+        "license": "cc_by"
       },
       {
         "type": "interior",
@@ -3255,6 +3638,16 @@
     ],
     "source_documents": [
       "02 Global History of Urban Design 1_2.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Letchworth Garden City",
+        "url": "https://commons.wikimedia.org/wiki/File:Letchworth_Town_Hall.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY 4.0."
+      }
     ]
   },
   {
@@ -3305,7 +3698,8 @@
     ],
     "source_documents": [
       "03 Architekturgeschichte 3_4.pdf"
-    ]
+    ],
+    "source_candidates": []
   },
   {
     "id": "fagus-factory",
@@ -3385,7 +3779,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / New Delhi / capital-city-colonial-urbanism"
+        "placeholder": "Aussenansicht / New Delhi / capital-city-colonial-urbanism",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Forecourt%2C_Rashtrapati_Bhavan_-_1.jpg/960px-Forecourt%2C_Rashtrapati_Bhavan_-_1.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Forecourt,_Rashtrapati_Bhavan_-_1.jpg",
+        "credit": "Wikimedia Commons / Ronakshah1990 / CC BY-SA 4.0",
+        "license": "cc_by_sa"
       },
       {
         "type": "interior",
@@ -3405,6 +3803,16 @@
     ],
     "source_documents": [
       "02 Global History of Urban Design 1_2.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / New Delhi",
+        "url": "https://commons.wikimedia.org/wiki/File:Forecourt,_Rashtrapati_Bhavan_-_1.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY-SA 4.0."
+      }
     ]
   },
   {
@@ -3481,7 +3889,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Welwyn Garden City / garden-city-reform-city"
+        "placeholder": "Aussenansicht / Welwyn Garden City / garden-city-reform-city",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/The_Parkway_Fountain.jpg/960px-The_Parkway_Fountain.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:The_Parkway_Fountain.jpg",
+        "credit": "Wikimedia Commons / Spearhead / CC BY-SA 3.0",
+        "license": "cc_by_sa"
       },
       {
         "type": "interior",
@@ -3501,6 +3913,16 @@
     ],
     "source_documents": [
       "02 Global History of Urban Design 1_2.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Welwyn Garden City",
+        "url": "https://commons.wikimedia.org/wiki/File:The_Parkway_Fountain.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY-SA 3.0."
+      }
     ]
   },
   {
@@ -3531,7 +3953,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Postsparkasse / thing-modernity-process-architecture"
+        "placeholder": "Aussenansicht / Postsparkasse / thing-modernity-process-architecture",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/%C3%96sterreichische_Postsparkasse_%28236209935%29.jpeg/960px-%C3%96sterreichische_Postsparkasse_%28236209935%29.jpeg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:%C3%96sterreichische_Postsparkasse_(236209935).jpeg",
+        "credit": "Wikimedia Commons / Giuseppe Pinto / CC BY-SA 3.0",
+        "license": "cc_by_sa"
       },
       {
         "type": "interior",
@@ -3551,6 +3977,16 @@
     ],
     "source_documents": [
       "03 Architekturgeschichte 3_4.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Postsparkasse",
+        "url": "https://commons.wikimedia.org/wiki/File:%C3%96sterreichische_Postsparkasse_(236209935).jpeg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.85. License: CC BY-SA 3.0."
+      }
     ]
   },
   {
@@ -3599,7 +4035,8 @@
         "label": "Grundriss",
         "placeholder": "Grundriss / Bauhaus Dessau / school-glass"
       }
-    ]
+    ],
+    "source_candidates": []
   },
   {
     "id": "karl-marx-hof",
@@ -3629,7 +4066,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Karl-Marx-Hof / housing-reform-collective-living"
+        "placeholder": "Aussenansicht / Karl-Marx-Hof / housing-reform-collective-living",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Karl-Marx-Hof_2009.jpg/960px-Karl-Marx-Hof_2009.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Karl-Marx-Hof_2009.jpg",
+        "credit": "Wikimedia Commons / Dreizung / CC BY-SA 3.0",
+        "license": "cc_by_sa"
       },
       {
         "type": "interior",
@@ -3649,6 +4090,16 @@
     ],
     "source_documents": [
       "02 Global History of Urban Design 1_2.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Karl-Marx-Hof",
+        "url": "https://commons.wikimedia.org/wiki/File:Karl-Marx-Hof_2009.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY-SA 3.0."
+      }
     ]
   },
   {
@@ -3788,7 +4239,10 @@
         "type": "exterior",
         "label": "Aussenansicht",
         "placeholder": "Aussenansicht / Villa Noailles / Terrassen, Hanglage, kubische Volumen und mediterranes Licht",
-        "credit": "placeholder / rights pending"
+        "credit": "Wikimedia Commons / Patrub01 / CC BY-SA 3.0",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Hy%C3%A8res_%2883%29_-_Villa_Noailles_-_Entr%C3%A9e.jpg/960px-Hy%C3%A8res_%2883%29_-_Villa_Noailles_-_Entr%C3%A9e.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Hy%C3%A8res_(83)_-_Villa_Noailles_-_Entr%C3%A9e.jpg",
+        "license": "cc_by_sa"
       },
       {
         "type": "interior",
@@ -3986,6 +4440,16 @@
           "model_readiness": "pilot_ready_needs_verified_sources"
         },
         "review_status": "reviewed"
+      }
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Villa Noailles",
+        "url": "https://commons.wikimedia.org/wiki/File:Hy%C3%A8res_(83)_-_Villa_Noailles_-_Entr%C3%A9e.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.77. License: CC BY-SA 3.0."
       }
     ]
   },
@@ -4306,7 +4770,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Hufeisensiedlung / housing-reform-collective-living"
+        "placeholder": "Aussenansicht / Hufeisensiedlung / housing-reform-collective-living",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Hufeisensiedlung_Berlin_2017_01.jpg/960px-Hufeisensiedlung_Berlin_2017_01.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Hufeisensiedlung_Berlin_2017_01.jpg",
+        "credit": "Wikimedia Commons / Clemensfranz / CC BY-SA 4.0",
+        "license": "cc_by_sa"
       },
       {
         "type": "interior",
@@ -4326,6 +4794,16 @@
     ],
     "source_documents": [
       "02 Global History of Urban Design 1_2.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Hufeisensiedlung",
+        "url": "https://commons.wikimedia.org/wiki/File:Hufeisensiedlung_Berlin_2017_01.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.87. License: CC BY-SA 4.0."
+      }
     ]
   },
   {
@@ -4355,7 +4833,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Ville Radieuse / modern-urbanism-ideal-city"
+        "placeholder": "Aussenansicht / Ville Radieuse / modern-urbanism-ideal-city",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Monumental_axis.jpg/960px-Monumental_axis.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Monumental_axis.jpg",
+        "credit": "Wikimedia Commons / Limongi / CC BY 3.0",
+        "license": "cc_by"
       },
       {
         "type": "interior",
@@ -4375,6 +4857,16 @@
     ],
     "source_documents": [
       "02 Global History of Urban Design 1_2.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Ville Radieuse",
+        "url": "https://commons.wikimedia.org/wiki/File:Monumental_axis.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY 3.0."
+      }
     ]
   },
   {
@@ -5194,7 +5686,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Chandigarh / capital-city-postcolonial-city"
+        "placeholder": "Aussenansicht / Chandigarh / capital-city-postcolonial-city",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/Open_Hand_monument%2C_Chandigarh.jpg/960px-Open_Hand_monument%2C_Chandigarh.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Open_Hand_monument,_Chandigarh.jpg",
+        "credit": "Wikimedia Commons / Raakesh Blokhra / CC BY-SA 2.0",
+        "license": "cc_by_sa"
       },
       {
         "type": "interior",
@@ -5214,6 +5710,16 @@
     ],
     "source_documents": [
       "02 Global History of Urban Design 1_2.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Chandigarh",
+        "url": "https://commons.wikimedia.org/wiki/File:Open_Hand_monument,_Chandigarh.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY-SA 2.0."
+      }
     ]
   },
   {
@@ -5294,7 +5800,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Brasilia / capital-city-modern-urbanism"
+        "placeholder": "Aussenansicht / Brasilia / capital-city-modern-urbanism",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/9/93/BR_Brasilia_0609_102_%2817185683216%29.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:BR_Brasilia_0609_102_(17185683216).jpg",
+        "credit": "Wikimedia Commons / Diego Tirira  from Quito, Ecuador / CC BY-SA 2.0",
+        "license": "cc_by_sa"
       },
       {
         "type": "interior",
@@ -5314,6 +5824,16 @@
     ],
     "source_documents": [
       "02 Global History of Urban Design 1_2.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Brasilia",
+        "url": "https://commons.wikimedia.org/wiki/File:BR_Brasilia_0609_102_(17185683216).jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.87. License: CC BY-SA 2.0."
+      }
     ]
   },
   {
@@ -5344,7 +5864,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Habitat 67 / megastructure-housing"
+        "placeholder": "Aussenansicht / Habitat 67 / megastructure-housing",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Montreal%27s_Habitat_67_at_sunset_%28Unsplash%29.jpg/960px-Montreal%27s_Habitat_67_at_sunset_%28Unsplash%29.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Montreal%27s_Habitat_67_at_sunset_(Unsplash).jpg",
+        "credit": "Wikimedia Commons / Liana Carbone  liana_inthesky / CC0",
+        "license": "public_domain"
       },
       {
         "type": "interior",
@@ -5364,6 +5888,16 @@
     ],
     "source_documents": [
       "02 Global History of Urban Design 1_2.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Habitat 67",
+        "url": "https://commons.wikimedia.org/wiki/File:Montreal%27s_Habitat_67_at_sunset_(Unsplash).jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "public_domain",
+        "notes": "Auto-selected hero image candidate. Score: 0.87. License: CC0."
+      }
     ]
   },
   {
@@ -5411,7 +5945,8 @@
         "label": "Grundriss",
         "placeholder": "Grundriss / New Babylon / megastructure-freedom"
       }
-    ]
+    ],
+    "source_candidates": []
   },
   {
     "id": "ibm-cosham",
@@ -5539,7 +6074,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Gas Works Park / industrial-reuse-landscape-urbanism"
+        "placeholder": "Aussenansicht / Gas Works Park / industrial-reuse-landscape-urbanism",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Aerial_Gas_Works_Park_September_2011.jpg/960px-Aerial_Gas_Works_Park_September_2011.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Aerial_Gas_Works_Park_September_2011.jpg",
+        "credit": "Wikimedia Commons / Photo by Liesl Matthies / CC BY-SA 3.0",
+        "license": "cc_by_sa"
       },
       {
         "type": "interior",
@@ -5559,6 +6098,16 @@
     ],
     "source_documents": [
       "04 Landschaftsarchitektur 1_2.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Gas Works Park",
+        "url": "https://commons.wikimedia.org/wiki/File:Aerial_Gas_Works_Park_September_2011.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY-SA 3.0."
+      }
     ]
   },
   {
@@ -5589,7 +6138,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Willis Faber and Dumas Office / thing-modernity-glass"
+        "placeholder": "Aussenansicht / Willis Faber and Dumas Office / thing-modernity-glass",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Foster_-_Willis_Faber_and_Dumas_Headquarters_Ipswich.jpg/960px-Foster_-_Willis_Faber_and_Dumas_Headquarters_Ipswich.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Foster_-_Willis_Faber_and_Dumas_Headquarters_Ipswich.jpg",
+        "credit": "Wikimedia Commons / Wikimedia Commons contributor / CC BY-SA 2.0",
+        "license": "cc_by_sa"
       },
       {
         "type": "interior",
@@ -5609,6 +6162,16 @@
     ],
     "source_documents": [
       "03 Architekturgeschichte 3_4.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Willis Faber and Dumas Office",
+        "url": "https://commons.wikimedia.org/wiki/File:Foster_-_Willis_Faber_and_Dumas_Headquarters_Ipswich.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.79. License: CC BY-SA 2.0."
+      }
     ]
   },
   {
@@ -5660,7 +6223,8 @@
         "label": "Grundriss",
         "placeholder": "Grundriss / Centre Pompidou / culture-services"
       }
-    ]
+    ],
+    "source_candidates": []
   },
   {
     "id": "klingenpark",
@@ -5743,7 +6307,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / IBA Berlin 1987 / critical reconstruction-block"
+        "placeholder": "Aussenansicht / IBA Berlin 1987 / critical reconstruction-block",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/IBA-87-Berlin-072-OMA-Koolhaas-Zenghelis-Sauerbruch-Checkpoint-Charlie-Friedrichstr.jpg/960px-IBA-87-Berlin-072-OMA-Koolhaas-Zenghelis-Sauerbruch-Checkpoint-Charlie-Friedrichstr.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:IBA-87-Berlin-072-OMA-Koolhaas-Zenghelis-Sauerbruch-Checkpoint-Charlie-Friedrichstr.jpg",
+        "credit": "Wikimedia Commons / Gunnar Klack / CC BY-SA 4.0",
+        "license": "cc_by_sa"
       },
       {
         "type": "interior",
@@ -5759,6 +6327,16 @@
         "type": "plan",
         "label": "Grundriss",
         "placeholder": "Grundriss / IBA Berlin 1987 / critical reconstruction-block"
+      }
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / IBA Berlin 1987",
+        "url": "https://commons.wikimedia.org/wiki/File:IBA-87-Berlin-072-OMA-Koolhaas-Zenghelis-Sauerbruch-Checkpoint-Charlie-Friedrichstr.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.87. License: CC BY-SA 4.0."
       }
     ]
   },
@@ -5810,7 +6388,8 @@
     ],
     "source_documents": [
       "02 Global History of Urban Design 1_2.pdf"
-    ]
+    ],
+    "source_candidates": []
   },
   {
     "id": "euralille-metropole",
@@ -5943,7 +6522,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Landschaftspark Duisburg-Nord / industrial-reuse-landscape-urbanism"
+        "placeholder": "Aussenansicht / Landschaftspark Duisburg-Nord / industrial-reuse-landscape-urbanism",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Hochofen_5_at_Landschaftspark_Duisburg-Nord.jpg/960px-Hochofen_5_at_Landschaftspark_Duisburg-Nord.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Hochofen_5_at_Landschaftspark_Duisburg-Nord.jpg",
+        "credit": "Wikimedia Commons / Sch0p3nh4u3r / CC BY-SA 4.0",
+        "license": "cc_by_sa"
       },
       {
         "type": "interior",
@@ -5959,6 +6542,16 @@
         "type": "plan",
         "label": "Grundriss",
         "placeholder": "Grundriss / Landschaftspark Duisburg-Nord / industrial-reuse-landscape-urbanism"
+      }
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Landschaftspark Duisburg-Nord",
+        "url": "https://commons.wikimedia.org/wiki/File:Hochofen_5_at_Landschaftspark_Duisburg-Nord.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY-SA 4.0."
       }
     ]
   },
@@ -6290,7 +6883,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Leutschenpark / urban-repair-climate-landscape"
+        "placeholder": "Aussenansicht / Leutschenpark / urban-repair-climate-landscape",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/Buehne-mit-Baumtopf.JPG/960px-Buehne-mit-Baumtopf.JPG",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Buehne-mit-Baumtopf.JPG",
+        "credit": "Wikimedia Commons / Grün Stadt Zürich / CC BY-SA 3.0",
+        "license": "cc_by_sa"
       },
       {
         "type": "interior",
@@ -6310,6 +6907,16 @@
     ],
     "source_documents": [
       "04 Landschaftsarchitektur 1_2.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Leutschenpark",
+        "url": "https://commons.wikimedia.org/wiki/File:Buehne-mit-Baumtopf.JPG",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY-SA 3.0."
+      }
     ]
   },
   {
@@ -6777,7 +7384,10 @@
         "type": "exterior",
         "label": "Aussenansicht",
         "placeholder": "Aussenansicht / High Line / landscape-urbanism-industrial-reuse",
-        "license": "all_rights_reserved"
+        "license": "public_domain",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/High_Line_Park%2C_Section_1a.jpg/960px-High_Line_Park%2C_Section_1a.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:High_Line_Park,_Section_1a.jpg",
+        "credit": "Wikimedia Commons / Dansnguyen / CC0"
       },
       {
         "type": "interior",
@@ -6921,6 +7531,14 @@
         "reliability_level": "verified",
         "rights_status": "private_research",
         "notes": "Source trail: office_or_designer_source. Public use: facts_links_own_summary."
+      },
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / High Line",
+        "url": "https://commons.wikimedia.org/wiki/File:High_Line_Park,_Section_1a.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "public_domain",
+        "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC0."
       }
     ],
     "database_tags": [
@@ -7162,7 +7780,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Serpentine Pavilion / pavilion-stone"
+        "placeholder": "Aussenansicht / Serpentine Pavilion / pavilion-stone",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Serpentine_Gallery_10_years_pop-up_pavilions.jpg/960px-Serpentine_Gallery_10_years_pop-up_pavilions.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Serpentine_Gallery_10_years_pop-up_pavilions.jpg",
+        "credit": "Wikimedia Commons / Images George Rex / CC BY-SA 2.0",
+        "license": "cc_by_sa"
       },
       {
         "type": "interior",
@@ -7178,6 +7800,16 @@
         "type": "plan",
         "label": "Grundriss",
         "placeholder": "Grundriss / Serpentine Pavilion / pavilion-stone"
+      }
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Serpentine Pavilion",
+        "url": "https://commons.wikimedia.org/wiki/File:Serpentine_Gallery_10_years_pop-up_pavilions.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.77. License: CC BY-SA 2.0."
       }
     ]
   },

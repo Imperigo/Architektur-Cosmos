@@ -51,6 +51,7 @@ function buildReview({ entries, relations, rules, queue, decisions }) {
   const entriesWithModels = entries.filter((entry) => hasModel(entry));
   const entriesWithAnalysis = entries.filter((entry) => (entry.analysis_layers?.length ?? 0) > 0 || (entry.analysis_observations?.length ?? 0) > 0);
   const entriesWithSourceCandidates = entries.filter((entry) => (entry.source_candidates?.length ?? 0) > 0 || Boolean(entry.source_url));
+  const entriesWithHeroImages = entries.filter(hasHeroImage);
   const brokenRelations = relations.filter((relation) => !entryIds.has(relation.source_entry_id) || !entryIds.has(relation.target_entry_id));
 
   const entryReviews = entries.map((entry) => reviewEntry(entry, relationCounts, rules));
@@ -76,6 +77,7 @@ function buildReview({ entries, relations, rules, queue, decisions }) {
       model_ready_or_planned: entriesWithModels.length,
       analysis_ready_or_planned: entriesWithAnalysis.length,
       source_candidate_entries: entriesWithSourceCandidates.length,
+      hero_image_entries: entriesWithHeroImages.length,
       queue_items: queue.items?.length ?? 0,
       recorded_decisions: decisions.decisions?.length ?? 0
     },
@@ -83,7 +85,8 @@ function buildReview({ entries, relations, rules, queue, decisions }) {
       database_profile_percent: percent(entriesWithDatabaseProfile.length, entries.length),
       model_percent: percent(entriesWithModels.length, entries.length),
       analysis_percent: percent(entriesWithAnalysis.length, entries.length),
-      source_candidate_percent: percent(entriesWithSourceCandidates.length, entries.length)
+      source_candidate_percent: percent(entriesWithSourceCandidates.length, entries.length),
+      hero_image_percent: percent(entriesWithHeroImages.length, entries.length)
     },
     watchlists: {
       rights_blocked: entryReviews.filter((item) => item.flags.includes('rights_blocked')).map(toWatchItem).slice(0, 20),
@@ -111,6 +114,11 @@ function reviewEntry(entry, relationCounts, rules) {
   const modelPartTypes = new Set((entry.model_3d?.parts ?? []).map((part) => part.type));
   const mediaRights = (entry.media ?? []).map((media) => media.license).filter(Boolean);
   const blockedRights = mediaRights.some((license) => rules.private_or_blocked_rights?.includes(license));
+
+  if (!hasHeroImage(entry)) {
+    flags.push('missing_hero_image');
+    tasks.push(task(entry, 'media', `Find public-safe hero image for ${entry.title}`, 'No public-safe exterior/hero image is attached. Research Wikimedia/official sources and keep unclear media in review.', rules.priority_weights.missing_sources - 6));
+  }
 
   if (sourceCount < rules.entry_quality_targets.minimum_sources) {
     flags.push('missing_sources');
@@ -236,6 +244,10 @@ function task(entry, kind, title, body, priority) {
 
 function hasModel(entry) {
   return Boolean(entry.model_3d || (entry.model_assets?.length ?? 0) > 0 || (entry.model_packages?.length ?? 0) > 0);
+}
+
+function hasHeroImage(entry) {
+  return Boolean((entry.media ?? []).find((media) => media.type === 'exterior' && media.url && media.license && !['unknown', 'needs_permission', 'private_research', 'personal_only', 'all_rights_reserved'].includes(media.license)));
 }
 
 function sourceCountFor(entry) {
