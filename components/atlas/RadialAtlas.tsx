@@ -255,12 +255,12 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   const ui = useAtlasUiMetrics();
   const activeSelectedEntryId = selectedEntry?.id ?? null;
   const nodes = useMemo(() => layoutWormholeEntries(allEntries, state, activeSelectedEntryId ?? undefined), [activeSelectedEntryId, allEntries, state]);
-  const displayNodes = useMemo(() => limitDisplayNodes(nodes, performanceTier, motion.isMoving), [nodes, performanceTier, motion.isMoving]);
+  const displayNodes = useMemo(() => limitDisplayNodes(nodes), [nodes]);
   const isTraveling = motion.isMoving;
   const hoveredEntry = useMemo(() => displayNodes.find((node) => node.entry.id === hoveredEntryId)?.entry ?? null, [displayNodes, hoveredEntryId]);
   const cursorVisible = introState === 'idle';
   const isIntroActive = introState !== 'idle';
-  const fastNodeRender = isTraveling || performanceTier === 'reduced';
+  const fastNodeRender = performanceTier === 'reduced';
   const relationOverlayActive = !isTraveling && performanceTier !== 'reduced' && (selectedEntry || showRelations || (performanceTier === 'full' && hoveredEntry));
   const backgroundStyle = {
     filter: isIntroActive ? 'blur(7px)' : 'blur(0px)',
@@ -1391,28 +1391,15 @@ function isEditableKeyboardTarget(target: EventTarget | null) {
 }
 
 function isReadableNode(node: WormholeEntryNode) {
-  const margin = 54;
-  const insideFrame = node.x > margin && node.x < atlasSize.width - margin && node.y > margin && node.y < atlasSize.height - margin;
-  return insideFrame && node.depth >= 0.002 && node.depth <= 1.24 && node.opacity >= 0.02;
+  const margin = -96;
+  const insideExtendedFrame = node.x > margin && node.x < atlasSize.width - margin && node.y > margin && node.y < atlasSize.height - margin;
+  return insideExtendedFrame && node.depth >= 0.001 && node.depth <= 1.26 && node.opacity >= 0.006;
 }
 
-function limitDisplayNodes(nodes: WormholeEntryNode[], performanceTier: PerformanceTier, isMoving: boolean) {
-  const nodeLimit: Record<PerformanceTier, { idle: number; moving: number }> = {
-    reduced: { idle: 36, moving: 18 },
-    balanced: { idle: 64, moving: 34 },
-    full: { idle: 96, moving: 56 }
-  };
-  const limit = isMoving ? nodeLimit[performanceTier].moving : nodeLimit[performanceTier].idle;
-
+function limitDisplayNodes(nodes: WormholeEntryNode[]) {
   return nodes
     .filter(isReadableNode)
-    .sort((a, b) => nodeRenderPriority(b) - nodeRenderPriority(a))
-    .slice(0, limit)
     .sort((a, b) => b.depth - a.depth);
-}
-
-function nodeRenderPriority(node: WormholeEntryNode) {
-  return node.opacity * 1.3 + node.closeness * 0.7 + (node.clusterSize > 1 ? 0.12 : 0);
 }
 
 function styleLensOpacity(node: WormholeEntryNode, activeStyleLens: StyleSectorId | null) {

@@ -972,7 +972,7 @@ body:has(.entry-page) {
 }
 
 .wormhole-camera {
-  transition: transform 760ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 260ms linear;
   transform-box: view-box;
   will-change: transform;
 }
@@ -1006,7 +1006,8 @@ body:has(.entry-page) {
 }
 
 .node-focus-drift {
-  transition: transform 420ms cubic-bezier(0.19, 1, 0.22, 1), opacity 200ms ease;
+  transition: opacity 120ms linear;
+  will-change: opacity;
 }
 
 .cosmos-cursor circle:first-child {
@@ -1134,6 +1135,10 @@ body:has(.entry-page) {
 .cosmos-moving .database-access,
 .cosmos-moving .entry-thumbnail {
   filter: none;
+}
+
+.cosmos-moving .entry-thumbnail image {
+  image-rendering: auto;
 }
 
 .cosmos-moving .preview-theme-chip,

@@ -1,6 +1,6 @@
 'use client';
 
-import { useId, type CSSProperties, type MouseEvent as ReactMouseEvent } from 'react';
+import { useMemo, type CSSProperties, type MouseEvent as ReactMouseEvent } from 'react';
 import { ProjectDetailCard } from '@/components/atlas/ProjectDetailCard';
 import { ProjectMediaGrid } from '@/components/atlas/ProjectMediaGrid';
 import { ProjectPreviewCard } from '@/components/atlas/ProjectPreviewCard';
@@ -173,7 +173,6 @@ export function SemanticEntryNode({
 }
 
 function EntryThumbnail({ entry, x, y, radius, accent, isSelected, styleLensActive, renderMode }: { entry: Entry; x: number; y: number; radius: number; accent: string; isSelected: boolean; styleLensActive: boolean; renderMode: 'full' | 'fast' }) {
-  const reactId = useId();
   const seed = stableHash(entry.id);
   const isFast = renderMode === 'fast';
   const imageUrl = primaryImageUrl(entry);
@@ -183,7 +182,7 @@ function EntryThumbnail({ entry, x, y, radius, accent, isSelected, styleLensActi
   const accentStroke = isFast ? 1.3 : isSelected || styleLensActive ? 2.45 : 1.7;
   const accentFillOpacity = isFast ? 0.28 : styleLensActive ? 0.42 : 0.26;
   const showDetailLines = !imageUrl && !isFast && (radius >= 6.4 || isSelected || styleLensActive);
-  const stableSuffix = `${sanitizeId(entry.id)}-${sanitizeId(reactId)}`;
+  const stableSuffix = useMemo(() => sanitizeId(entry.id), [entry.id]);
   const clipId = `entry-thumb-clip-${stableSuffix}`;
   const surfaceId = `entry-planet-surface-${stableSuffix}`;
   const shadeId = `entry-planet-shade-${stableSuffix}`;

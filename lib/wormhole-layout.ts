@@ -287,10 +287,15 @@ export function tunnelOpacity(depth: number) {
     return Math.max(0, Math.min(1, (depth - frontFadeDepth) / Math.abs(frontFadeDepth)));
   }
 
-  const fadeInFromBack = Math.min(1, Math.max(0, (visibleDepth - depth) / 0.18));
-  const fadeOutAtFront = Math.min(1, Math.max(0, depth / 0.13));
+  const fadeInFromBack = smoothstep(0, 0.24, visibleDepth - depth);
+  const fadeOutAtFront = smoothstep(0, 0.18, depth);
   const depthHaze = Math.max(0.16, 1 - (depth / visibleDepth) * 0.72);
   return Math.max(0, Math.min(1, fadeInFromBack, fadeOutAtFront) * depthHaze);
+}
+
+function smoothstep(edge0: number, edge1: number, value: number) {
+  const t = Math.max(0, Math.min(1, (value - edge0) / (edge1 - edge0)));
+  return t * t * (3 - 2 * t);
 }
 
 function entryAngleOffset(id: string) {
