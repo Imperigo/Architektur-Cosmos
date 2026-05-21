@@ -42,10 +42,10 @@ function buildReport(items) {
 }
 
 function scoreEntry(entry) {
-  const sourceCount = entry.source_candidates?.length ?? 0;
+  const sourceCount = sourceCountFor(entry);
   const mediaWithPublicUrl = (entry.media ?? []).filter((media) => Boolean(media.url) && ['public_domain', 'cc_by', 'cc_by_sa', 'own_work'].includes(media.license)).length;
   const analysisCount = entry.analysis_layers?.length ?? 0;
-  const modelCount = entry.model_assets?.length ?? 0;
+  const modelCount = modelCountFor(entry);
   const hasHero = mediaWithPublicUrl > 0;
   const isPilotType = ['building', 'landscape_project', 'urban_plan', 'infrastructure'].includes(entry.entry_type);
   const rightsPenalty = hasRightsBlocked(entry) ? 8 : 0;
@@ -75,6 +75,24 @@ function scoreEntry(entry) {
       tag_count: entry.database_tags?.length ?? entry.themes?.length ?? 0
     }
   };
+}
+
+function sourceCountFor(entry) {
+  return [
+    entry.source_url,
+    ...(entry.source_documents ?? []),
+    ...(entry.source_candidates ?? []),
+    ...(entry.source_assets ?? [])
+  ].filter(Boolean).length;
+}
+
+function modelCountFor(entry) {
+  return [
+    ...(entry.model_assets ?? []),
+    ...(entry.model_3d?.parts ?? []),
+    ...(entry.model_packages ?? []),
+    ...(entry.splat_assets ?? [])
+  ].filter(Boolean).length;
 }
 
 function hasRightsBlocked(entry) {
