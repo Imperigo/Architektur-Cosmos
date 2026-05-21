@@ -1719,8 +1719,8 @@ body:has(.entry-page) {
 
   .project-dev-gate,
   .project-dev-trigger {
-    width: 148px;
-    min-width: 148px;
+    width: var(--ui-trigger-min-w);
+    min-width: var(--ui-trigger-min-w);
   }
 
   .project-dev-panel {
@@ -2315,10 +2315,10 @@ body:has(.entry-page) {
     --ui-safe-edge: clamp(12px, 3.8vw, 18px);
     --ui-hit-min: 48px;
     --ui-hit-touch: 48px;
-    --ui-trigger-h: 40px;
-    --ui-trigger-min-w: clamp(100px, 29vw, 116px);
-    --ui-panel-max-w: min(92vw, 430px);
-    --ui-panel-max-h: min(74dvh, 620px);
+    --ui-trigger-h: 38px;
+    --ui-trigger-min-w: clamp(108px, 28vw, 118px);
+    --ui-panel-max-w: min(94vw, 430px);
+    --ui-panel-max-h: min(76dvh, 620px);
     --ui-gap: 8px;
     --ui-panel-pad: 14px;
     --ui-font-control: clamp(10px, 2.65vw, 11.5px);
@@ -2328,8 +2328,8 @@ body:has(.entry-page) {
     --ui-backdrop-blur: none;
     --cosmos-hud-edge: clamp(12px, 3.8vw, 18px);
     --cosmos-hud-top: max(54px, calc(env(safe-area-inset-top) + 16px));
-    --cosmos-hud-button-height: 40px;
-    --cosmos-hud-button-min: clamp(100px, 29vw, 116px);
+    --cosmos-hud-button-height: 38px;
+    --cosmos-hud-button-min: clamp(108px, 28vw, 118px);
   }
 
   .brand-chrome {
@@ -2344,9 +2344,9 @@ body:has(.entry-page) {
 
   .database-mobile-overlay {
     inset:
-      max(64px, calc(env(safe-area-inset-top) + 54px))
+      max(62px, calc(env(safe-area-inset-top) + 52px))
       max(var(--ui-safe-edge), env(safe-area-inset-right))
-      max(16px, calc(env(safe-area-inset-bottom) + 12px))
+      max(68px, calc(env(safe-area-inset-bottom) + 58px))
       max(var(--ui-safe-edge), env(safe-area-inset-left));
   }
 
@@ -2454,8 +2454,8 @@ body:has(.entry-page) {
   .project-search-trigger,
   .lens-control-trigger {
     height: var(--ui-trigger-h);
-    width: 148px;
-    min-width: 148px;
+    width: var(--ui-trigger-min-w);
+    min-width: var(--ui-trigger-min-w);
     padding-inline: 12px;
     font-size: var(--ui-font-control);
     letter-spacing: 0.08em;
@@ -2491,15 +2491,15 @@ body:has(.entry-page) {
   }
 
   .brain-status-trigger {
-    width: 148px;
-    min-width: 148px;
+    width: var(--ui-trigger-min-w);
+    min-width: var(--ui-trigger-min-w);
     height: var(--ui-trigger-h);
     font-size: var(--ui-font-control);
   }
 
   .brain-status-panel {
     width: min(92vw, 430px);
-    max-height: min(62dvh, 520px);
+    max-height: min(66dvh, 520px);
     overflow-y: auto;
   }
 

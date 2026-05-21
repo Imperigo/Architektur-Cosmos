@@ -1431,11 +1431,11 @@ function styleShortLabel(id: StyleSectorId) {
 
 function DatabaseAccess({ isOpen, onToggle }: { isOpen: boolean; onToggle: () => void }) {
   const ui = useAtlasUiMetrics();
-  const width = ui.isCoarsePointer ? 148 : 100;
-  const height = ui.isCoarsePointer ? 46 : 32;
-  const x = atlasSize.width - width - (ui.isCoarsePointer ? 26 : 28);
-  const y = atlasSize.height - (ui.isCoarsePointer ? 74 : 64);
-  const iconScale = ui.isCoarsePointer ? 1.02 : 0.82;
+  const width = ui.isCoarsePointer ? 284 : 100;
+  const height = ui.isCoarsePointer ? 112 : 32;
+  const x = atlasSize.width - width - (ui.isCoarsePointer ? 38 : 28);
+  const y = atlasSize.height - (ui.isCoarsePointer ? 58 : 64);
+  const iconScale = ui.isCoarsePointer ? 1.58 : 0.82;
   function toggleOnce(event: { stopPropagation: () => void }) {
     event.stopPropagation();
     onToggle();
@@ -1452,12 +1452,12 @@ function DatabaseAccess({ isOpen, onToggle }: { isOpen: boolean; onToggle: () =>
     >
       <rect x="0" y={-height / 2} width={width} height={height} rx={height / 2} fill={isOpen ? '#f7f7f4' : '#050505'} stroke="#00e7ff" strokeWidth="0.92" opacity="0.9" />
       <path d={`M ${height / 2} ${-height / 2 + 1} H ${width - height / 2}`} stroke="#00e7ff" strokeWidth="0.42" opacity={isOpen ? 0.18 : 0.34} />
-      <g className="database-access-core" transform={`translate(${ui.isCoarsePointer ? 14 : 10} ${ui.isCoarsePointer ? -1.2 : -1.5}) scale(${iconScale})`} stroke="#f7f7f4" fill="none" strokeWidth="0.72" opacity="0.9">
+      <g className="database-access-core" transform={`translate(${ui.isCoarsePointer ? 24 : 10} ${ui.isCoarsePointer ? -5.8 : -1.5}) scale(${iconScale})`} stroke="#f7f7f4" fill="none" strokeWidth="0.72" opacity="0.9">
         <ellipse cx="14" cy="-3.6" rx="5.6" ry="2.2" stroke={isOpen ? '#050505' : '#f7f7f4'} />
         <path d="M 8.4 -3.6 V 5.4 Q 14 8.2 19.6 5.4 V -3.6" stroke={isOpen ? '#050505' : '#f7f7f4'} />
         <path d="M 8.4 1.2 Q 14 4 19.6 1.2" stroke={isOpen ? '#050505' : '#f7f7f4'} opacity="0.52" />
       </g>
-      <text x={ui.isCoarsePointer ? 48 : 34} y={ui.isCoarsePointer ? 4.8 : 3.5} fill={isOpen ? '#050505' : '#f7f7f4'} fontSize={ui.isCoarsePointer ? 9.6 : 6.6} fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.08em" fontWeight="650">
+      <text x={ui.isCoarsePointer ? 78 : 34} y={ui.isCoarsePointer ? 8.6 : 3.5} fill={isOpen ? '#050505' : '#f7f7f4'} fontSize={ui.isCoarsePointer ? 24 : 6.6} fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.08em" fontWeight="650">
         DATABASE
       </text>
       <rect
