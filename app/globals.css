@@ -2559,6 +2559,77 @@ body:has(.entry-page) {
     line-height: 1.25;
   }
 
+  .project-search.project-search-open,
+  .project-search.project-dev-open {
+    left: max(var(--ui-safe-edge), env(safe-area-inset-left));
+    right: max(var(--ui-safe-edge), env(safe-area-inset-right));
+    align-items: stretch;
+    width: auto;
+  }
+
+  .project-search.project-search-open .project-search-trigger,
+  .project-search.project-dev-open .project-search-trigger,
+  .project-search.project-dev-open .project-dev-trigger {
+    align-self: flex-end;
+  }
+
+  .project-search-panel,
+  .project-dev-panel {
+    position: fixed;
+    left: max(var(--ui-safe-edge), env(safe-area-inset-left));
+    right: max(var(--ui-safe-edge), env(safe-area-inset-right));
+    top: calc(var(--cosmos-hud-top) + var(--ui-trigger-h) + 12px);
+    bottom: max(72px, calc(env(safe-area-inset-bottom) + 64px));
+    width: auto;
+    max-width: none;
+    max-height: none;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .project-search-panel {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .project-search-results {
+    min-height: 0;
+    max-height: none;
+    flex: 1;
+    padding-bottom: 2px;
+  }
+
+  .project-dev-panel {
+    height: auto;
+    min-height: 0;
+    bottom: auto;
+    max-height: min(54dvh, 360px);
+  }
+
+  .brain-status:has(.brain-status-panel) {
+    left: max(var(--ui-safe-edge), env(safe-area-inset-left));
+    right: max(var(--ui-safe-edge), env(safe-area-inset-right));
+    width: auto;
+  }
+
+  .brain-status-panel {
+    position: fixed;
+    left: max(var(--ui-safe-edge), env(safe-area-inset-left));
+    right: max(var(--ui-safe-edge), env(safe-area-inset-right));
+    top: calc(var(--cosmos-hud-top) + var(--ui-trigger-h) + 12px);
+    bottom: max(72px, calc(env(safe-area-inset-bottom) + 64px));
+    width: auto;
+    max-width: none;
+    max-height: none;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .brain-status-header button,
+  .brain-task-toolbar button {
+    min-height: 36px;
+  }
+
   .lens-control-head {
     font-size: var(--ui-font-control);
     line-height: 1.25;
