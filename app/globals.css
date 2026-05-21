@@ -2671,7 +2671,7 @@ body:has(.entry-page) {
 
   .entry-page .relative.z-10 {
     padding-inline: var(--ui-safe-edge);
-    padding-top: 16px;
+    padding-top: max(86px, calc(env(safe-area-inset-top) + 72px));
   }
 
   .entry-page header {
@@ -2697,6 +2697,32 @@ body:has(.entry-page) {
     overflow-wrap: anywhere;
   }
 
+  .entry-object-backdrop {
+    opacity: 0.1;
+    filter: grayscale(0.2) blur(10px) saturate(1.08);
+  }
+
+  .entry-ring-a {
+    width: 420px;
+    height: 420px;
+    right: -190px;
+    top: -150px;
+  }
+
+  .entry-ring-b {
+    width: 620px;
+    height: 620px;
+    right: -300px;
+    top: -260px;
+  }
+
+  .entry-ring-c {
+    width: 360px;
+    height: 360px;
+    left: -210px;
+    bottom: -190px;
+  }
+
   .entry-page p,
   .entry-page dd,
   .entry-page li,
@@ -2718,6 +2744,14 @@ body:has(.entry-page) {
     padding: 14px;
   }
 
+  .entry-page .entry-archive-panel {
+    order: -1;
+  }
+
+  .entry-page .entry-study-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
   .entry-page .mb-6.grid.max-w-xl.grid-cols-3 {
     grid-template-columns: 1fr;
     text-align: left;
@@ -2729,22 +2763,39 @@ body:has(.entry-page) {
   }
 
   .entry-model-viewer > .relative {
-    height: min(60dvh, 500px);
-    min-height: 360px;
+    height: min(58dvh, 480px);
+    min-height: 340px;
   }
 
   .entry-model-controls {
     inset: auto 10px 10px 10px;
     max-width: none;
-    max-height: min(44%, 270px);
+    max-height: min(46%, 260px);
     overflow-y: auto;
     padding: 12px;
+    background: rgb(5 5 5 / 88%);
+    backdrop-filter: none;
   }
 
   .entry-model-controls button {
     min-height: 42px;
     font-size: 10px;
     letter-spacing: 0.08em;
+  }
+
+  .entry-model-viewer > div:first-child {
+    align-items: flex-start;
+  }
+
+  .entry-model-viewer > div:first-child h2 {
+    font-size: 16px;
+    line-height: 1.25;
+  }
+
+  .entry-model-viewer > div:last-child {
+    grid-template-columns: minmax(0, 1fr);
+    font-size: 13px;
+    line-height: 1.45;
   }
 
   .entry-model-controls .grid {
@@ -2761,12 +2812,32 @@ body:has(.entry-page) {
   .entry-media-card-interior .entry-media-surface,
   .entry-media-card-plan .entry-media-surface,
   .entry-media-card-section .entry-media-surface {
-    min-height: clamp(220px, 58vw, 330px);
+    min-height: clamp(210px, 56vw, 310px);
   }
 
   .entry-media-caption {
     min-height: 0;
     padding: 14px;
+  }
+
+  .entry-media-caption h3 {
+    font-size: 18px;
+    line-height: 1.18;
+  }
+
+  .entry-media-caption p {
+    font-size: 13px;
+    line-height: 1.55;
+  }
+
+  .entry-object-media-diagram {
+    width: min(86%, 320px);
+    height: min(76%, 230px);
+  }
+
+  .entry-object-media-label {
+    font-size: 9px;
+    letter-spacing: 0.09em;
   }
 
   .entry-page [class*="tracking-"] {
@@ -2782,6 +2853,12 @@ body:has(.entry-page) {
   .entry-page .flex.flex-wrap.gap-2 > span {
     font-size: 11px;
     line-height: 1.25;
+  }
+
+  .entry-page section.grid,
+  .entry-page .entry-relation-network,
+  .entry-page .entry-timeline-nav {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .screen-cosmos-cursor {
