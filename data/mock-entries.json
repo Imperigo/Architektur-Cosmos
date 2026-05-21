@@ -5583,6 +5583,72 @@
       "model_count": 5,
       "analysis_count": 4,
       "tag_count": 6
+    },
+    "architecture_text": {
+      "headline": "Palazzo Medici Riccardi: Stadtpalast als gebaute Macht",
+      "overview": "Palazzo Medici Riccardi wird als Renaissance-Familienpalast verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und historischer Stadtkern / flat urban fabric / Florence, Italy / Renaissance-Stadt und medici patronage. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Palazzo Medici Riccardi gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Der Palazzo Medici Riccardi übersetzt Familienmacht in Stadtform: rustizierte Sockelzonen, hierarchische Fassade, Innenhof und Straßenkante bilden eine kontrollierte urbane Präsenz. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Renaissance-Stadt, Palazzo, städtische Macht als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Primäre Materiallesart: Rustikamauerwerk, Mauerwerk, Pietra forte. Der Florentiner Palazzo wird über schweres Rustikamauerwerk, hierarchische Fassadenschichten, Hofordnung und städtische Machtrepräsentation gelesen. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "analysis layer: material_system; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Der Palazzo Medici Riccardi übersetzt Familienmacht in Stadtform: rustizierte Sockelzonen, hierarchische Fassade, Innenhof und Straßenkante bilden eine kontrollierte urbane Präsenz. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "analysis layer: tectonics; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Palazzo Medici Riccardi gehört zu historischer Stadtkern / flat urban fabric / Florence, Italy / Renaissance-Stadt und medici patronage. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry context metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "Palazzo Medici Riccardi ist als Referenz wichtig, weil material:rusticated stone, material:masonry, typology:palazzo, typology:courtyard, context:renaissance city, blender:facade model candidate, Rustikamauerwerk, Mauerwerk nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T18:20:10.031Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_document",
+          "value": "02 Global History of Urban Design 1_2.pdf"
+        },
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Palazzo Medici Riccardi",
+          "value": "https://commons.wikimedia.org/wiki/File:Palazzo_Medici_Riccardi-Florence.jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        },
+        {
+          "type": "website",
+          "title": "Musei Civici Fiorentini: Palazzo Medici Riccardi",
+          "value": "https://musefirenze.it/en/museums/palazzo-medici-riccardi/",
+          "reliability_level": "primary_source",
+          "rights_status": "licensed"
+        }
+      ]
     }
   },
   {
@@ -7893,6 +7959,72 @@
       "model_count": 5,
       "analysis_count": 4,
       "tag_count": 6
+    },
+    "architecture_text": {
+      "headline": "Palmanova: Sternfestung als geometrische Stadtmaschine",
+      "overview": "Fortezza di Palmanova wird als venezianische Sternfestungsstadt verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und befestigte Stadtlandschaft / flat plain / Palmanova, Italy / UNESCO-Welterbestätte und venetian defence system. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Fortezza di Palmanova gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Palmanova macht Verteidigung zur Stadtfigur: Bastionen, Wälle, radiale Straßen und zentrale Piazza verschmelzen zu einer geometrischen Maschine aus Sicht, Bewegung und Kontrolle. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Festungsstadt, Geometrie, Verteidigung als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Primäre Materiallesart: Erdwerke, Ziegelmauerwerk, Steinmauerwerk. Palmanova ist eine ideale Festungsstadt, in der Erdwerke, Bastionen, radiale Straßen und zentrale Piazza eine geometrische Verteidigungsmaschine bilden. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "analysis layer: material_system; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Palmanova macht Verteidigung zur Stadtfigur: Bastionen, Wälle, radiale Straßen und zentrale Piazza verschmelzen zu einer geometrischen Maschine aus Sicht, Bewegung und Kontrolle. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "analysis layer: tectonics; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Fortezza di Palmanova gehört zu befestigte Stadtlandschaft / flat plain / Palmanova, Italy / UNESCO-Welterbestätte und venetian defence system. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry context metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "Fortezza di Palmanova ist als Referenz wichtig, weil material:earthworks, material:brick masonry, typology:star fort, geometry:radial plan, theme:defense, blender:fortification model candidate, Erdwerke, Ziegelmauerwerk nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T18:20:10.203Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_document",
+          "value": "02 Global History of Urban Design 1_2.pdf"
+        },
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Fortezza di Palmanova",
+          "value": "https://commons.wikimedia.org/wiki/File:Cinta_muraria_di_Palmanova.jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "public_domain"
+        },
+        {
+          "type": "website",
+          "title": "UNESCO World Heritage Centre: Venetian Works of Defence",
+          "value": "https://whc.unesco.org/en/list/1533/",
+          "reliability_level": "primary_source",
+          "rights_status": "licensed"
+        }
+      ]
     }
   },
   {
@@ -9040,6 +9172,72 @@
       "model_count": 5,
       "analysis_count": 4,
       "tag_count": 6
+    },
+    "architecture_text": {
+      "headline": "New Lanark: Industrie, Fürsorge und reformierte Siedlung",
+      "overview": "New Lanark Mills wird als Textilmühlensiedlung der Sozialreform verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und industrielles Kulturerbe-Dorf / river valley / New Lanark, Scotland / UNESCO-Welterbestätte und industrial revolution. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "New Lanark Mills gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: New Lanark verbindet Fabrik, Wasserkraft, Arbeiterwohnen und Sozialreform zu einer Industriesiedlung, in der Produktion und Alltag räumlich aufeinander bezogen werden. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Reformstadt, Industrie, soziale Utopie als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Primäre Materiallesart: Steinmauerwerk, Holzboden, Wasserkraft-Infrastruktur. New Lanark ist eine Mühlensiedlung, in der steinerne Fabrikblöcke, Wasserkraft, Arbeiterwohnungen und reformerische soziale Infrastruktur ein industrielles Siedlungssystem bilden. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "analysis layer: material_system; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "New Lanark verbindet Fabrik, Wasserkraft, Arbeiterwohnen und Sozialreform zu einer Industriesiedlung, in der Produktion und Alltag räumlich aufeinander bezogen werden. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "analysis layer: tectonics; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "New Lanark Mills gehört zu industrielles Kulturerbe-Dorf / river valley / New Lanark, Scotland / UNESCO-Welterbestätte und industrial revolution. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry context metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "New Lanark Mills ist als Referenz wichtig, weil material:stone masonry, typology:mill village, theme:industry, theme:social reform, topography:river valley, blender:industrial settlement candidate, Steinmauerwerk, Holzboden nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T18:20:10.367Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_document",
+          "value": "02 Global History of Urban Design 1_2.pdf"
+        },
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / New Lanark Mills",
+          "value": "https://commons.wikimedia.org/wiki/File:New_Lanark_buildings_2009.jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        },
+        {
+          "type": "website",
+          "title": "UNESCO World Heritage Centre: New Lanark",
+          "value": "https://whc.unesco.org/en/list/429/",
+          "reliability_level": "primary_source",
+          "rights_status": "licensed"
+        }
+      ]
     }
   },
   {
@@ -9355,6 +9553,72 @@
       "model_count": 5,
       "analysis_count": 4,
       "tag_count": 6
+    },
+    "architecture_text": {
+      "headline": "Greenwich Observatory: Architektur der Zeitmessung",
+      "overview": "Royal Observatory Greenwich wird als Observatorium und Zeitmessungsbau verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und historische Wissenschaftslandschaft / park hill / Greenwich, UK / Welterbe-Kontext und timekeeping. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Royal Observatory Greenwich gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Das Observatorium in Greenwich macht Messung zu Architektur: Baukörper, Instrumente, Meridianlinie und Parktopografie ordnen Zeit, Blick und wissenschaftliche Autorität. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie moderne Objektkultur, Zeit, Synchronisierung als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Primäre Materiallesart: Ziegelmauerwerk, Stein, wissenschaftliche Instrumente. Das Observatorium ist Infrastruktur für Zeit und Messung: Mauerwerksbauten, Instrumente, Meridianlinie und die Lage über Greenwich Park bilden eine wissenschaftliche Raumordnung. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "analysis layer: material_system; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Das Observatorium in Greenwich macht Messung zu Architektur: Baukörper, Instrumente, Meridianlinie und Parktopografie ordnen Zeit, Blick und wissenschaftliche Autorität. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "analysis layer: tectonics; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Royal Observatory Greenwich gehört zu historische Wissenschaftslandschaft / park hill / Greenwich, UK / Welterbe-Kontext und timekeeping. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry context metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "Royal Observatory Greenwich ist als Referenz wichtig, weil material:brick masonry, typology:observatory, theme:time, theme:navigation, topography:hill, blender:instrument site candidate, Ziegelmauerwerk, Stein nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T18:20:10.533Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_document",
+          "value": "03 Architekturgeschichte 3_4.pdf"
+        },
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Royal Observatory Greenwich",
+          "value": "https://commons.wikimedia.org/wiki/File:Royal_observatory_greenwich.jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        },
+        {
+          "type": "website",
+          "title": "Royal Museums Greenwich: Royal Observatory",
+          "value": "https://www.rmg.co.uk/royal-observatory",
+          "reliability_level": "primary_source",
+          "rights_status": "licensed"
+        }
+      ]
     }
   },
   {
@@ -9567,6 +9831,72 @@
       "model_count": 5,
       "analysis_count": 4,
       "tag_count": 6
+    },
+    "architecture_text": {
+      "headline": "Central Park: Landschaft als Gegenform zur Metropole",
+      "overview": "Central Park wird als metropolitaner Volkspark verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und dichtes metropolitanes Raster / constructed urban landscape / New York, USA / urban park history und public space reform. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Central Park gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Central Park ist eine künstlich gebaute Landschaft im Raster Manhattans: Wege, Felsen, Wasser, Wiesen, Brücken und Baumräume erzeugen eine Gegenwelt zur dichten Stadt. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Landschaftsurbanismus, Parksystem, öffentlicher Raum als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Central Park ist eine gebaute Stadtlandschaft aus Erdmodellierung, Pflanzung, Wasserflächen, Felsen, Wegen und Brückeninfrastruktur. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "curated material reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Central Park ist eine künstlich gebaute Landschaft im Raster Manhattans: Wege, Felsen, Wasser, Wiesen, Brücken und Baumräume erzeugen eine Gegenwelt zur dichten Stadt. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "analysis layer: tectonics; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Central Park gehört zu dichtes metropolitanes Raster / constructed urban landscape / New York, USA / urban park history und public space reform. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry context metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "Central Park ist als Referenz wichtig, weil material:vegetation, material:water, typology:urban park, theme:public space, landscape:park system, blender:landscape model candidate, Vegetation, Felsaufschluss nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T18:20:10.699Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_document",
+          "value": "02 Global History of Urban Design 1_2.pdf"
+        },
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Central Park",
+          "value": "https://commons.wikimedia.org/wiki/File:New_York_City_(New_York,_USA),_Central_Park_--_2012_--_6728.jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        },
+        {
+          "type": "website",
+          "title": "Central Park Conservancy: Park History",
+          "value": "https://www.centralparknyc.org/park-history",
+          "reliability_level": "primary_source",
+          "rights_status": "licensed"
+        }
+      ]
     }
   },
   {
@@ -9783,6 +10113,72 @@
       "model_count": 6,
       "analysis_count": 4,
       "tag_count": 6
+    },
+    "architecture_text": {
+      "headline": "Familistère: Kollektives Wohnen als sozialer Apparat",
+      "overview": "Familistere wird als soziale Industriesiedlung verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und industrielle Reformsiedlung / flat town site / Guise, France / soziale Utopie und workers housing. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Familistere gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Das Familistère ordnet Wohnen, Hof, Glasdach, Versorgung und kollektive Einrichtungen zu einem sozialen Innenraum, in dem Reform nicht Theorie bleibt, sondern Alltag organisiert. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Wohnreform, kollektives Wohnen, soziale Utopie als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Primäre Materiallesart: Ziegelmauerwerk, Glasdach, Eisenstruktur. Das Familistère ist eine Wohnmaschine der Sozialreform: Ziegelwohnblöcke, verglaste Höfe und kollektive Einrichtungen ordnen einen reformierten Alltag. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "analysis layer: material_system; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Das Familistère ordnet Wohnen, Hof, Glasdach, Versorgung und kollektive Einrichtungen zu einem sozialen Innenraum, in dem Reform nicht Theorie bleibt, sondern Alltag organisiert. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "analysis layer: tectonics; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Familistere gehört zu industrielle Reformsiedlung / flat town site / Guise, France / soziale Utopie und workers housing. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry context metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "Familistere ist als Referenz wichtig, weil material:brick masonry, material:glass, typology:collective housing, theme:social reform, structure:iron roof, blender:courtyard model candidate, Ziegelmauerwerk, Glasdach nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T18:20:10.863Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_document",
+          "value": "02 Global History of Urban Design 1_2.pdf"
+        },
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Familistere",
+          "value": "https://commons.wikimedia.org/wiki/File:Guise_panorama_familist%C3%A8re_1.jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        },
+        {
+          "type": "website",
+          "title": "Familistère de Guise: official site",
+          "value": "https://www.familistere.com/en",
+          "reliability_level": "primary_source",
+          "rights_status": "licensed"
+        }
+      ]
     }
   },
   {
@@ -9982,6 +10378,72 @@
       "model_count": 5,
       "analysis_count": 4,
       "tag_count": 5
+    },
+    "architecture_text": {
+      "headline": "Barcelona Eixample: Raster, Hygiene und Stadterweiterung",
+      "overview": "Barcelona Extension wird als Eixample-Rasterinfrastruktur verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und metropolitanes Erweiterungsraster / Küstenebene / Barcelona, Spain / urban reform und hygienist planning. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Barcelona Extension gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Cerdàs Eixample liest Stadt als Infrastruktur: abgeschrägte Blöcke, breite Straßen, Innenhöfe, Bewegung und Hygiene bilden ein offenes System metropolitaner Erweiterung. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Stadterweiterung, Raster, Infrastruktur als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Primäre Materiallesart: Stadtraster, Mauerwerksblöcke, Straßeninfrastruktur. Cerdàs Eixample wird als Infrastruktur- und Blocklogik gelesen: abgeschrägtes Raster, Straßenbreiten, Höfe, Bewegung und hygienische Reform bilden ein offenes Stadtsystem. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "analysis layer: material_system; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Cerdàs Eixample liest Stadt als Infrastruktur: abgeschrägte Blöcke, breite Straßen, Innenhöfe, Bewegung und Hygiene bilden ein offenes System metropolitaner Erweiterung. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "analysis layer: tectonics; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Barcelona Extension gehört zu metropolitanes Erweiterungsraster / Küstenebene / Barcelona, Spain / urban reform und hygienist planning. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry context metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "Barcelona Extension ist als Referenz wichtig, weil typology:grid city, theme:urban expansion, infrastructure:street grid, geometry:chamfered block, blender:urban grid candidate, Stadtraster, Mauerwerksblöcke, Straßeninfrastruktur nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T18:20:11.025Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_document",
+          "value": "02 Global History of Urban Design 1_2.pdf"
+        },
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Barcelona Extension",
+          "value": "https://commons.wikimedia.org/wiki/File:Eixample_aire.jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        },
+        {
+          "type": "website",
+          "title": "Ajuntament de Barcelona: The Eixample",
+          "value": "https://ajuntament.barcelona.cat/eixample/es/conozca-el-distrito/historia",
+          "reliability_level": "primary_source",
+          "rights_status": "licensed"
+        }
+      ]
     }
   },
   {
@@ -10256,6 +10718,72 @@
       "model_count": 6,
       "analysis_count": 4,
       "tag_count": 6
+    },
+    "architecture_text": {
+      "headline": "Wien Ringstraße: Boulevard als bürgerliche Bühne",
+      "overview": "Wien Ringstrasse wird als bürgerlicher Ringboulevard des 19. Jahrhunderts verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und historische Hauptstadt-Erweiterung / flat urban core / Vienna, Austria / Stadterweiterung und historicist city. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Wien Ringstrasse gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Die Wiener Ringstraße verwandelt die ehemalige Befestigungslinie in einen bürgerlichen Boulevard aus Institutionen, Parks, Repräsentationsfassaden und öffentlicher Bewegung. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Stadterweiterung, Ring, öffentlicher Raum als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Primäre Materiallesart: Steinmauerwerk, Stadtpflaster, historistische Fassaden. Die Ringstraße ist eine bürgerliche Ringinfrastruktur: Boulevard, Institutionen, öffentlicher Raum, Trambewegung und historistische Steinfassaden besetzen die ehemalige Befestigungslinie. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "analysis layer: material_system; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Die Wiener Ringstraße verwandelt die ehemalige Befestigungslinie in einen bürgerlichen Boulevard aus Institutionen, Parks, Repräsentationsfassaden und öffentlicher Bewegung. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "analysis layer: tectonics; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Wien Ringstrasse gehört zu historische Hauptstadt-Erweiterung / flat urban core / Vienna, Austria / Stadterweiterung und historicist city. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry context metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "Wien Ringstrasse ist als Referenz wichtig, weil material:stone masonry, typology:boulevard, geometry:ring, theme:civic city, infrastructure:tram axis, blender:urban axis candidate, Steinmauerwerk, Stadtpflaster nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T18:20:11.193Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_document",
+          "value": "02 Global History of Urban Design 1_2.pdf"
+        },
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Wien Ringstrasse",
+          "value": "https://commons.wikimedia.org/wiki/File:Wien_01_Burgring_b.jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "public_domain"
+        },
+        {
+          "type": "website",
+          "title": "Wien Geschichte Wiki: Ringstraße",
+          "value": "https://www.geschichtewiki.wien.gv.at/Ringstra%C3%9Fe",
+          "reliability_level": "primary_source",
+          "rights_status": "licensed"
+        }
+      ]
     }
   },
   {
@@ -10468,6 +10996,72 @@
       "model_count": 5,
       "analysis_count": 4,
       "tag_count": 6
+    },
+    "architecture_text": {
+      "headline": "Emerald Necklace: Parksystem als urbane Infrastruktur",
+      "overview": "Emerald Necklace wird als metropolitanes Parksystem verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und metropolitanes Freiraumsystem / wetland valley network / Boston, USA / olmsted park system und landscape infrastructure. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Emerald Necklace gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Emerald Necklace verbindet Park, Wasserlauf, Entwässerung, Erholung und ökologische Reparatur zu einem metropolitanen Freiraumsystem. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Landschaftsurbanismus, Parksystem, Infrastruktur als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Primäre Materiallesart: Vegetation, Wasser, Feuchtboden. Emerald Necklace ist Landschaftsinfrastruktur: verbundene Parks, Wasserläufe, Entwässerung, ökologische Reparatur und öffentlicher Erholungsraum greifen ineinander. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "analysis layer: material_system; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Emerald Necklace verbindet Park, Wasserlauf, Entwässerung, Erholung und ökologische Reparatur zu einem metropolitanen Freiraumsystem. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "analysis layer: tectonics; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Emerald Necklace gehört zu metropolitanes Freiraumsystem / wetland valley network / Boston, USA / olmsted park system und landscape infrastructure. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry context metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "Emerald Necklace ist als Referenz wichtig, weil material:vegetation, material:water, typology:park system, infrastructure:drainage, landscape:ecological corridor, blender:landscape network candidate, Vegetation, Wasser nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T18:20:11.372Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_document",
+          "value": "02 Global History of Urban Design 1_2.pdf"
+        },
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Emerald Necklace",
+          "value": "https://commons.wikimedia.org/wiki/File:Boston_Public_Garden_1_2019-11-20.jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        },
+        {
+          "type": "website",
+          "title": "Emerald Necklace Conservancy: History",
+          "value": "https://www.emeraldnecklace.org/park-overview/history/",
+          "reliability_level": "primary_source",
+          "rights_status": "licensed"
+        }
+      ]
     }
   },
   {
@@ -10666,6 +11260,72 @@
       "model_count": 5,
       "analysis_count": 4,
       "tag_count": 5
+    },
+    "architecture_text": {
+      "headline": "Linear City: Stadt als Verkehrsband",
+      "overview": "Linear City wird als lineare Infrastrukturstadt verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und Madrider Reformkontext / theoretical urban corridor / Madrid, Spain / lineare Stadt und transport urbanism. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Linear City gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Die Linear City denkt Stadt entlang eines Verkehrsbandes: Transport, Parzellen, Versorgung und Siedlung wachsen nicht konzentrisch, sondern als lineares Infrastrukturmodell. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Reformstadt, Infrastruktur, lineare Stadt als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Primäre Materiallesart: Straßeninfrastruktur, Tramkorridor, Wohnparzellen. Arturo Sorias Linear City ist eine infrastrukturelle Stadttheorie: Verkehrsachse, Wohnparzellen und Versorgungsbänder lassen Siedlung linear wachsen. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "analysis layer: material_system; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Die Linear City denkt Stadt entlang eines Verkehrsbandes: Transport, Parzellen, Versorgung und Siedlung wachsen nicht konzentrisch, sondern als lineares Infrastrukturmodell. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "analysis layer: tectonics; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Linear City gehört zu Madrider Reformkontext / theoretical urban corridor / Madrid, Spain / lineare Stadt und transport urbanism. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry context metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "Linear City ist als Referenz wichtig, weil typology:linear city, infrastructure:tram corridor, theme:reform city, geometry:linear axis, blender:urban axis candidate, Straßeninfrastruktur, Tramkorridor, Wohnparzellen nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T18:20:11.544Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_document",
+          "value": "02 Global History of Urban Design 1_2.pdf"
+        },
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Linear City",
+          "value": "https://commons.wikimedia.org/wiki/File:Ciudad_lineal_de_Arturo_Soria.jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "public_domain"
+        },
+        {
+          "type": "website",
+          "title": "Ciudad Lineal / Madrid historical reference",
+          "value": "https://patrimonioypaisaje.madrid.es/portales/monumenta/es/Monumentos-y-Edificios-Singulares/Monumentos/Primera-Piedra-Ciudad-Lineal/?vgnextchannel=8fac3cb702aa4510VgnVCM1000008a4a900aRCRD&vgnextfmt=default&vgnextoid=8ac8091d1b9c4510091d1b9c45102e085a0aRCRD",
+          "reliability_level": "primary_source",
+          "rights_status": "licensed"
+        }
+      ]
     }
   },
   {
@@ -10877,6 +11537,72 @@
       "model_count": 6,
       "analysis_count": 4,
       "tag_count": 6
+    },
+    "architecture_text": {
+      "headline": "Hôtel Tassel: Interieur, Eisen und fließende Linie",
+      "overview": "Hotel Tassel wird als Art-Nouveau-Stadthaus verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und Brüsseler Stadthausgefüge / urban street plot / Brussels, Belgium / UNESCO-Welterbestätte und Art Nouveau. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Hotel Tassel gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Hôtel Tassel verschiebt das Stadthaus ins Innere: Treppenhalle, Eisenstruktur, Glas, Ornament und Bewegung bilden einen zusammenhängenden räumlichen Fluss. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Art Nouveau, Schwelle, Interieur als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Primäre Materiallesart: Steinmauerwerk, Eisenstruktur, Glas. Hôtel Tassel ist ein tektonisches Interieurmanifest: Eisen-Glas-Treppenhalle, Steinfassade, fließende Struktur und ornamentale Materialkontinuität verbinden sich. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "analysis layer: material_system; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Hôtel Tassel verschiebt das Stadthaus ins Innere: Treppenhalle, Eisenstruktur, Glas, Ornament und Bewegung bilden einen zusammenhängenden räumlichen Fluss. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "analysis layer: tectonics; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Hotel Tassel gehört zu Brüsseler Stadthausgefüge / urban street plot / Brussels, Belgium / UNESCO-Welterbestätte und Art Nouveau. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry context metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "Hotel Tassel ist als Referenz wichtig, weil material:iron, material:glass, typology:townhouse, style:art nouveau, structure:iron frame, blender:interior structure candidate, Steinmauerwerk, Eisenstruktur nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T18:20:11.718Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_document",
+          "value": "03 Architekturgeschichte 3_4.pdf"
+        },
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Hotel Tassel",
+          "value": "https://commons.wikimedia.org/wiki/File:Victor_Horta_Hotel_Tassel.JPG",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        },
+        {
+          "type": "website",
+          "title": "UNESCO World Heritage Centre: Major Town Houses of Victor Horta",
+          "value": "https://whc.unesco.org/en/list/1005/",
+          "reliability_level": "primary_source",
+          "rights_status": "licensed"
+        }
+      ]
     }
   },
   {
@@ -11250,6 +11976,72 @@
       "model_count": 6,
       "analysis_count": 4,
       "tag_count": 5
+    },
+    "architecture_text": {
+      "headline": "Letchworth: Gartenstadt als Reformmodell",
+      "overview": "Letchworth Garden City wird als reformerische Gartenstadt verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und Planstadt / gentle english landscape / Letchworth, UK / garden city movement und social reform. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Letchworth Garden City gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Letchworth übersetzt die Gartenstadtidee in eine geplante Siedlung aus Wohnen, Grünraum, Industrie, Gemeinschaftseinrichtungen und begrenztem Wachstum. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Gartenstadt, Reformstadt, Siedlung als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Primäre Materiallesart: Ziegelwohnbauten, Gartenlandschaft, Straßeninfrastruktur. Letchworth ist eine gebaute Gartenstadt: lockeres Wohnen, Grüngürtel, Zentrum, Industrie und Landschaftsstruktur werden gemeinsam geplant. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "analysis layer: material_system; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Letchworth übersetzt die Gartenstadtidee in eine geplante Siedlung aus Wohnen, Grünraum, Industrie, Gemeinschaftseinrichtungen und begrenztem Wachstum. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "analysis layer: tectonics; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Letchworth Garden City gehört zu Planstadt / gentle english landscape / Letchworth, UK / garden city movement und social reform. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry context metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "Letchworth Garden City ist als Referenz wichtig, weil material:brick, typology:garden city, theme:social reform, landscape:green belt, blender:settlement model candidate, Ziegelwohnbauten, Gartenlandschaft, Straßeninfrastruktur nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T18:20:11.889Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_document",
+          "value": "02 Global History of Urban Design 1_2.pdf"
+        },
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Letchworth Garden City",
+          "value": "https://commons.wikimedia.org/wiki/File:Letchworth_Town_Hall.jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        },
+        {
+          "type": "website",
+          "title": "Letchworth Garden City Heritage Foundation: History",
+          "value": "https://www.letchworth.com/about-us/our-history/",
+          "reliability_level": "primary_source",
+          "rights_status": "licensed"
+        }
+      ]
     }
   },
   {
@@ -11574,6 +12366,72 @@
       "model_count": 6,
       "analysis_count": 4,
       "tag_count": 5
+    },
+    "architecture_text": {
+      "headline": "New Delhi: Hauptstadtachse als koloniale Raumordnung",
+      "overview": "New Delhi wird als kolonialer Hauptstadtplan verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und Hauptstadtachse / plains capital site / New Delhi, India / colonial urbanism und capital planning. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "New Delhi gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: New Delhi ordnet Hauptstadt über Achsen, Monumente, Gartengerüste und ceremonielle Distanzen; Macht wird als Landschaft aus Straßen, Blicken und Verwaltungsbauten inszeniert. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Hauptstadt, colonial urbanism, Achse als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Primäre Materiallesart: Sandstein, Mauerwerk, Stadtachse. New Delhi wird als imperiale Hauptstadtplanung gelesen: axiale Geometrie, Sandsteinmonumente, ceremonielle Alleen und Gartenstadtmotive ordnen den Raum. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "analysis layer: material_system; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "New Delhi ordnet Hauptstadt über Achsen, Monumente, Gartengerüste und ceremonielle Distanzen; Macht wird als Landschaft aus Straßen, Blicken und Verwaltungsbauten inszeniert. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "analysis layer: tectonics; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "New Delhi gehört zu Hauptstadtachse / plains capital site / New Delhi, India / colonial urbanism und capital planning. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry context metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "New Delhi ist als Referenz wichtig, weil material:sandstone, typology:capital city, theme:axis, theme:colonial urbanism, blender:capital axis candidate, Sandstein, Mauerwerk, Stadtachse nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T18:20:12.060Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_document",
+          "value": "02 Global History of Urban Design 1_2.pdf"
+        },
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / New Delhi",
+          "value": "https://commons.wikimedia.org/wiki/File:Forecourt,_Rashtrapati_Bhavan_-_1.jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        },
+        {
+          "type": "website",
+          "title": "Encyclopaedia Britannica: New Delhi",
+          "value": "https://www.britannica.com/place/New-Delhi",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        }
+      ]
     }
   },
   {
@@ -11829,6 +12687,72 @@
       "model_count": 6,
       "analysis_count": 4,
       "tag_count": 5
+    },
+    "architecture_text": {
+      "headline": "Welwyn Garden City: Gartenstadt in zweiter Generation",
+      "overview": "Welwyn Garden City wird als Gartenstadt zweiter Generation verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und Planstadt / gentle english landscape / Welwyn, UK / garden city movement und planned settlement. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Welwyn Garden City gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Welwyn Garden City entwickelt das Gartenstadtmodell weiter: Nachbarschaften, Grünpuffer, Industrie, Zentrum und Landschaft werden als kontrollierte Stadtlandschaft zusammen gedacht. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Gartenstadt, Reformstadt, Siedlung als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Primäre Materiallesart: Ziegelwohnbauten, Gartenlandschaft, Straßeninfrastruktur. Welwyn Garden City entwickelt das Gartenstadtmodell mit geplanten Nachbarschaften, Landschaftspuffern, Industrie und Zentrum weiter. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "analysis layer: material_system; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Welwyn Garden City entwickelt das Gartenstadtmodell weiter: Nachbarschaften, Grünpuffer, Industrie, Zentrum und Landschaft werden als kontrollierte Stadtlandschaft zusammen gedacht. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "analysis layer: tectonics; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Welwyn Garden City gehört zu Planstadt / gentle english landscape / Welwyn, UK / garden city movement und planned settlement. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry context metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "Welwyn Garden City ist als Referenz wichtig, weil material:brick, typology:garden city, theme:planned settlement, landscape:green belt, blender:settlement model candidate, Ziegelwohnbauten, Gartenlandschaft, Straßeninfrastruktur nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T18:20:12.224Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_document",
+          "value": "02 Global History of Urban Design 1_2.pdf"
+        },
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Welwyn Garden City",
+          "value": "https://commons.wikimedia.org/wiki/File:The_Parkway_Fountain.jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        },
+        {
+          "type": "website",
+          "title": "Welwyn Garden City Centenary Foundation: History",
+          "value": "https://www.britannica.com/place/Welwyn-Garden-City",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        }
+      ]
     }
   },
   {
@@ -12047,6 +12971,72 @@
       "model_count": 6,
       "analysis_count": 4,
       "tag_count": 7
+    },
+    "architecture_text": {
+      "headline": "Postsparkasse: Moderne Verwaltung als präziser Prozessraum",
+      "overview": "Postsparkasse wird als moderner Verwaltungsbau verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und Wiener Stadtkern / urban block / Vienna, Austria / viennese modernism und otto wagner. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Postsparkasse gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Die Postsparkasse organisiert Verwaltung als modernen Prozessraum: Schalterhalle, Glasdach, Metallverkleidung, sichtbare Befestigungen und klare Wege übersetzen Bürokratie in Architektur. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie moderne Objektkultur, Prozessarchitektur, Bürokratie als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Primäre Materiallesart: Steinverkleidung, Aluminium, Glas, Eisenstruktur. Die Postsparkasse wird über funktionale Moderne gelesen: Stein- und Aluminiumverkleidung, sichtbare Befestigungen, glasgedeckte Kassenhalle und prozessorientierter Grundriss. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "analysis layer: material_system; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Die Postsparkasse organisiert Verwaltung als modernen Prozessraum: Schalterhalle, Glasdach, Metallverkleidung, sichtbare Befestigungen und klare Wege übersetzen Bürokratie in Architektur. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "analysis layer: tectonics; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Postsparkasse gehört zu Wiener Stadtkern / urban block / Vienna, Austria / viennese modernism und otto wagner. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry context metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "Postsparkasse ist als Referenz wichtig, weil material:aluminium, material:glass, material:stone cladding, typology:bank, theme:bureaucracy, structure:iron roof, blender:hall structure candidate, Steinverkleidung nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T18:20:12.402Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_document",
+          "value": "03 Architekturgeschichte 3_4.pdf"
+        },
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Postsparkasse",
+          "value": "https://commons.wikimedia.org/wiki/File:%C3%96sterreichische_Postsparkasse_(236209935).jpeg",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        },
+        {
+          "type": "website",
+          "title": "MAK: Österreichische Postsparkasse",
+          "value": "https://blog.mak.at/otto-wagner-postsparkasse/",
+          "reliability_level": "primary_source",
+          "rights_status": "licensed"
+        }
+      ]
     }
   },
   {
@@ -12325,6 +13315,72 @@
       "model_count": 6,
       "analysis_count": 4,
       "tag_count": 6
+    },
+    "architecture_text": {
+      "headline": "Karl-Marx-Hof: Wohnblock als Stadt der Fürsorge",
+      "overview": "Karl-Marx-Hof wird als Superblock des Roten Wien verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und kommunale Wohnlandschaft / urban linear site / Vienna, Austria / Rotes Wien und social housing. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Karl-Marx-Hof gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Der Karl-Marx-Hof macht kommunales Wohnen monumental: langer Block, Höfe, Tore, Gemeinschaftseinrichtungen und rote Wiener Stadtpolitik werden zu einer kollektiven Architekturfigur. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Wohnreform, kollektives Wohnen, Rotes Wien als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Primäre Materiallesart: Ziegelmauerwerk, Putz, Beton. Der Karl-Marx-Hof ist Wohninfrastruktur des Roten Wien: langer Randblock, monumentale Tore, Höfe und kollektive Einrichtungen bilden eine eigene Stadtfigur. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "analysis layer: material_system; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Der Karl-Marx-Hof macht kommunales Wohnen monumental: langer Block, Höfe, Tore, Gemeinschaftseinrichtungen und rote Wiener Stadtpolitik werden zu einer kollektiven Architekturfigur. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "analysis layer: tectonics; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Karl-Marx-Hof gehört zu kommunale Wohnlandschaft / urban linear site / Vienna, Austria / Rotes Wien und social housing. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry context metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "Karl-Marx-Hof ist als Referenz wichtig, weil material:brick masonry, material:plaster, typology:social housing, typology:superblock, theme:red vienna, blender:housing block candidate, Ziegelmauerwerk, plaster nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T18:20:12.580Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_document",
+          "value": "02 Global History of Urban Design 1_2.pdf"
+        },
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Karl-Marx-Hof",
+          "value": "https://commons.wikimedia.org/wiki/File:Karl-Marx-Hof_2009.jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        },
+        {
+          "type": "website",
+          "title": "Das Rote Wien: Karl-Marx-Hof",
+          "value": "https://dasrotewien.at/seite/karl-marx-hof",
+          "reliability_level": "primary_source",
+          "rights_status": "licensed"
+        }
+      ]
     }
   },
   {

@@ -91,7 +91,7 @@ function buildTextPack(entry) {
   const structuralClaim = analysis.structure || materialStructureFallback(entry, materials);
   const tectonicClaim = analysis.tectonics || tectonicFallback(entry, materials);
   const spatialClaim = analysis.spatial_order || spatialFallback(entry);
-  const materialClaim = analysis.material_system || materialFallback(entry, materials);
+  const materialClaim = specificMaterialClaim(entry) || analysis.material_system || materialFallback(entry, materials);
 
   const headline = buildHeadline(entry, program);
   const overview = paragraph([
@@ -203,7 +203,23 @@ function buildHeadline(entry, program) {
     'mercator-world-atlas': 'Mercator Weltatlas: Projektion als räumliches Werkzeug',
     'piazza-del-popolo': 'Piazza del Popolo: Stadtzugang als barocke Orientierung',
     'piazza-st-peters': 'Petersplatz: Kolonnade, Ritual und gefasste Menge',
-    'arc-et-senans': 'Arc-et-Senans: Industrie als Idealstadtfragment'
+    'arc-et-senans': 'Arc-et-Senans: Industrie als Idealstadtfragment',
+    'palazzo-medici-riccardi': 'Palazzo Medici Riccardi: Stadtpalast als gebaute Macht',
+    'fortezza-di-palmanova': 'Palmanova: Sternfestung als geometrische Stadtmaschine',
+    'new-lanark-mills': 'New Lanark: Industrie, Fürsorge und reformierte Siedlung',
+    'royal-observatory-greenwich': 'Greenwich Observatory: Architektur der Zeitmessung',
+    'central-park': 'Central Park: Landschaft als Gegenform zur Metropole',
+    familistere: 'Familistère: Kollektives Wohnen als sozialer Apparat',
+    'barcelona-extension': 'Barcelona Eixample: Raster, Hygiene und Stadterweiterung',
+    'wien-ringstrasse': 'Wien Ringstraße: Boulevard als bürgerliche Bühne',
+    'emerald-necklace': 'Emerald Necklace: Parksystem als urbane Infrastruktur',
+    'linear-city': 'Linear City: Stadt als Verkehrsband',
+    'hotel-tassel': 'Hôtel Tassel: Interieur, Eisen und fließende Linie',
+    'letchworth-garden-city': 'Letchworth: Gartenstadt als Reformmodell',
+    'new-delhi': 'New Delhi: Hauptstadtachse als koloniale Raumordnung',
+    'welwyn-garden-city': 'Welwyn Garden City: Gartenstadt in zweiter Generation',
+    postsparkasse: 'Postsparkasse: Moderne Verwaltung als präziser Prozessraum',
+    'karl-marx-hof': 'Karl-Marx-Hof: Wohnblock als Stadt der Fürsorge'
   };
 
   if (specificHeadlines[entry.slug]) return specificHeadlines[entry.slug];
@@ -226,6 +242,18 @@ function materialStructureFallback(entry, materials) {
     short: `${materialText} as construction logic`,
     long: `Die aktuellen Archivdaten weisen ${materialText} als konstruktive Grundlage aus; die genaue strukturelle Hierarchie braucht jedoch noch Quellenprüfung`,
     basis: 'entry materials fallback'
+  };
+}
+
+function specificMaterialClaim(entry) {
+  const claims = {
+    'central-park': 'Central Park ist eine gebaute Stadtlandschaft aus Erdmodellierung, Pflanzung, Wasserflächen, Felsen, Wegen und Brückeninfrastruktur.'
+  };
+  if (!claims[entry.slug]) return null;
+  return {
+    short: compact(claims[entry.slug], 92),
+    long: claims[entry.slug],
+    basis: 'curated material reading'
   };
 }
 
@@ -266,6 +294,22 @@ function spatialFallback(entry) {
     'piazza-del-popolo': 'Piazza del Popolo ordnet Stadteingang, Obelisk, Zwillingskirchen und drei ausstrahlende Straßen zu einem barocken Orientierungssystem',
     'piazza-st-peters': 'Der Petersplatz fasst die Menge durch Ellipse, Kolonnade, Achse und Obelisk; der Platz wird zu einem räumlichen Instrument für Ritual, Prozession und Sichtbarkeit',
     'arc-et-senans': 'Arc-et-Senans verbindet Produktion, Ordnung und Utopie: Die halbkreisförmige Anlage macht industrielle Arbeit, soziale Hierarchie und geometrische Idealvorstellung räumlich lesbar',
+    'palazzo-medici-riccardi': 'Der Palazzo Medici Riccardi übersetzt Familienmacht in Stadtform: rustizierte Sockelzonen, hierarchische Fassade, Innenhof und Straßenkante bilden eine kontrollierte urbane Präsenz',
+    'fortezza-di-palmanova': 'Palmanova macht Verteidigung zur Stadtfigur: Bastionen, Wälle, radiale Straßen und zentrale Piazza verschmelzen zu einer geometrischen Maschine aus Sicht, Bewegung und Kontrolle',
+    'new-lanark-mills': 'New Lanark verbindet Fabrik, Wasserkraft, Arbeiterwohnen und Sozialreform zu einer Industriesiedlung, in der Produktion und Alltag räumlich aufeinander bezogen werden',
+    'royal-observatory-greenwich': 'Das Observatorium in Greenwich macht Messung zu Architektur: Baukörper, Instrumente, Meridianlinie und Parktopografie ordnen Zeit, Blick und wissenschaftliche Autorität',
+    'central-park': 'Central Park ist eine künstlich gebaute Landschaft im Raster Manhattans: Wege, Felsen, Wasser, Wiesen, Brücken und Baumräume erzeugen eine Gegenwelt zur dichten Stadt',
+    familistere: 'Das Familistère ordnet Wohnen, Hof, Glasdach, Versorgung und kollektive Einrichtungen zu einem sozialen Innenraum, in dem Reform nicht Theorie bleibt, sondern Alltag organisiert',
+    'barcelona-extension': 'Cerdàs Eixample liest Stadt als Infrastruktur: abgeschrägte Blöcke, breite Straßen, Innenhöfe, Bewegung und Hygiene bilden ein offenes System metropolitaner Erweiterung',
+    'wien-ringstrasse': 'Die Wiener Ringstraße verwandelt die ehemalige Befestigungslinie in einen bürgerlichen Boulevard aus Institutionen, Parks, Repräsentationsfassaden und öffentlicher Bewegung',
+    'emerald-necklace': 'Emerald Necklace verbindet Park, Wasserlauf, Entwässerung, Erholung und ökologische Reparatur zu einem metropolitanen Freiraumsystem',
+    'linear-city': 'Die Linear City denkt Stadt entlang eines Verkehrsbandes: Transport, Parzellen, Versorgung und Siedlung wachsen nicht konzentrisch, sondern als lineares Infrastrukturmodell',
+    'hotel-tassel': 'Hôtel Tassel verschiebt das Stadthaus ins Innere: Treppenhalle, Eisenstruktur, Glas, Ornament und Bewegung bilden einen zusammenhängenden räumlichen Fluss',
+    'letchworth-garden-city': 'Letchworth übersetzt die Gartenstadtidee in eine geplante Siedlung aus Wohnen, Grünraum, Industrie, Gemeinschaftseinrichtungen und begrenztem Wachstum',
+    'new-delhi': 'New Delhi ordnet Hauptstadt über Achsen, Monumente, Gartengerüste und ceremonielle Distanzen; Macht wird als Landschaft aus Straßen, Blicken und Verwaltungsbauten inszeniert',
+    'welwyn-garden-city': 'Welwyn Garden City entwickelt das Gartenstadtmodell weiter: Nachbarschaften, Grünpuffer, Industrie, Zentrum und Landschaft werden als kontrollierte Stadtlandschaft zusammen gedacht',
+    postsparkasse: 'Die Postsparkasse organisiert Verwaltung als modernen Prozessraum: Schalterhalle, Glasdach, Metallverkleidung, sichtbare Befestigungen und klare Wege übersetzen Bürokratie in Architektur',
+    'karl-marx-hof': 'Der Karl-Marx-Hof macht kommunales Wohnen monumental: langer Block, Höfe, Tore, Gemeinschaftseinrichtungen und rote Wiener Stadtpolitik werden zu einer kollektiven Architekturfigur',
     'haus-tugendhat': 'Die räumliche Ordnung entsteht aus Zonen statt aus geschlossenen Zimmern: Wohnen, Essen, Musik und Blickfelder fließen um Materialwände, Vorhänge und Möblierungsfelder herum'
   };
   if (specificSpatialReadings[entry.slug]) {
@@ -375,7 +419,7 @@ function visibleClaimText(claim) {
     .split(/(?<=[.!?])\s+/)
     .map((sentence) => sentence.trim())
     .filter(Boolean)
-    .filter((sentence) => !/(Blender|ArchiCAD|Datenbank|Filter|Suchfilter|Modell|Layer|Tragwerkslayer|Studienrekonstruktion|Quellenpläne|review|source|R2|Upload)/i.test(sentence));
+    .filter((sentence) => !/(Blender|ArchiCAD|Datenbank|Database|Filter|Suchfilter|\bModell\b|Layer|Tragwerkslayer|Studienrekonstruktion|Quellenpläne|review|source|classification|context tags|R2|Upload)/i.test(sentence));
   return sentences.join(' ');
 }
 
@@ -470,6 +514,38 @@ function readableDe(value) {
     'industrial complex': 'Industrieanlage',
     enlightenment_saltworks_ideal_city: 'aufklärerische Salinen-Idealstadt',
     'enlightenment saltworks ideal city': 'aufklärerische Salinen-Idealstadt',
+    renaissance_family_palazzo: 'Renaissance-Familienpalast',
+    'renaissance family palazzo': 'Renaissance-Familienpalast',
+    venetian_star_fort_city: 'venezianische Sternfestungsstadt',
+    'venetian star fort city': 'venezianische Sternfestungsstadt',
+    textile_mill_village_social_reform: 'Textilmühlensiedlung der Sozialreform',
+    'textile mill village social reform': 'Textilmühlensiedlung der Sozialreform',
+    observatory_timekeeping_meridian: 'Observatorium und Zeitmessungsbau',
+    'observatory timekeeping meridian': 'Observatorium und Zeitmessungsbau',
+    metropolitan_public_park: 'metropolitaner Volkspark',
+    'metropolitan public park': 'metropolitaner Volkspark',
+    industrial_social_utopia_housing: 'soziale Industriesiedlung',
+    'industrial social utopia housing': 'soziale Industriesiedlung',
+    eixample_grid_infrastructure: 'Eixample-Rasterinfrastruktur',
+    'eixample grid infrastructure': 'Eixample-Rasterinfrastruktur',
+    nineteenth_century_civic_ring: 'bürgerlicher Ringboulevard des 19. Jahrhunderts',
+    'nineteenth century civic ring': 'bürgerlicher Ringboulevard des 19. Jahrhunderts',
+    metropolitan_park_system: 'metropolitanes Parksystem',
+    'metropolitan park system': 'metropolitanes Parksystem',
+    linear_infrastructure_city: 'lineare Infrastrukturstadt',
+    'linear infrastructure city': 'lineare Infrastrukturstadt',
+    art_nouveau_townhouse: 'Art-Nouveau-Stadthaus',
+    'art nouveau townhouse': 'Art-Nouveau-Stadthaus',
+    reform_settlement_garden_city: 'reformerische Gartenstadt',
+    'reform settlement garden city': 'reformerische Gartenstadt',
+    colonial_ceremonial_capital_plan: 'kolonialer Hauptstadtplan',
+    'colonial ceremonial capital plan': 'kolonialer Hauptstadtplan',
+    second_generation_garden_city: 'Gartenstadt zweiter Generation',
+    'second generation garden city': 'Gartenstadt zweiter Generation',
+    modern_bureaucratic_service_building: 'moderner Verwaltungsbau',
+    'modern bureaucratic service building': 'moderner Verwaltungsbau',
+    red_vienna_superblock_housing: 'Superblock des Roten Wien',
+    'red vienna superblock housing': 'Superblock des Roten Wien',
     early_urbanism: 'frühe Urbanisierung',
     'early urbanism': 'frühe Urbanisierung',
     public_space: 'öffentlicher Raum',
@@ -592,6 +668,40 @@ function readableDe(value) {
     'industrial heritage landscape': 'industrielle Kulturlandschaft',
     flat_rural_site: 'flacher ländlicher Standort',
     'flat rural site': 'flacher ländlicher Standort',
+    fortified_urban_landscape: 'befestigte Stadtlandschaft',
+    'fortified urban landscape': 'befestigte Stadtlandschaft',
+    industrial_heritage_village: 'industrielles Kulturerbe-Dorf',
+    'industrial heritage village': 'industrielles Kulturerbe-Dorf',
+    historic_scientific_landscape: 'historische Wissenschaftslandschaft',
+    'historic scientific landscape': 'historische Wissenschaftslandschaft',
+    dense_metropolitan_grid: 'dichtes metropolitanes Raster',
+    'dense metropolitan grid': 'dichtes metropolitanes Raster',
+    industrial_reform_settlement: 'industrielle Reformsiedlung',
+    'industrial reform settlement': 'industrielle Reformsiedlung',
+    metropolitan_expansion_grid: 'metropolitanes Erweiterungsraster',
+    'metropolitan expansion grid': 'metropolitanes Erweiterungsraster',
+    historic_capital_expansion: 'historische Hauptstadt-Erweiterung',
+    'historic capital expansion': 'historische Hauptstadt-Erweiterung',
+    metropolitan_open_space_system: 'metropolitanes Freiraumsystem',
+    'metropolitan open space system': 'metropolitanes Freiraumsystem',
+    madrid_reform_context: 'Madrider Reformkontext',
+    'madrid reform context': 'Madrider Reformkontext',
+    theoretical_corridor: 'theoretischer Korridor',
+    'theoretical corridor': 'theoretischer Korridor',
+    brussels_townhouse_fabric: 'Brüsseler Stadthausgefüge',
+    'brussels townhouse fabric': 'Brüsseler Stadthausgefüge',
+    urban_plot: 'städtische Parzelle',
+    'urban plot': 'städtische Parzelle',
+    planned_town: 'Planstadt',
+    'planned town': 'Planstadt',
+    capital_city_axis: 'Hauptstadtachse',
+    'capital city axis': 'Hauptstadtachse',
+    plateau_garden_city: 'Plateau-Gartenstadt',
+    'plateau garden city': 'Plateau-Gartenstadt',
+    vienna_civic_core: 'Wiener Stadtkern',
+    'vienna civic core': 'Wiener Stadtkern',
+    municipal_housing_landscape: 'kommunale Wohnlandschaft',
+    'municipal housing landscape': 'kommunale Wohnlandschaft',
     neolithic_settlement: 'neolithische Siedlung',
     'neolithic settlement': 'neolithische Siedlung',
     sumerian_city: 'sumerische Stadt',
@@ -680,6 +790,47 @@ function readableDe(value) {
     'industrial utopia': 'Industrieutopie',
     enlightenment_planning: 'Planung der Aufklärung',
     'enlightenment planning': 'Planung der Aufklärung',
+    palazzo: 'Palazzo',
+    urban_power: 'städtische Macht',
+    'urban power': 'städtische Macht',
+    fortress_city: 'Festungsstadt',
+    'fortress city': 'Festungsstadt',
+    defense: 'Verteidigung',
+    reform_city: 'Reformstadt',
+    'reform city': 'Reformstadt',
+    social_utopia: 'soziale Utopie',
+    'social utopia': 'soziale Utopie',
+    time: 'Zeit',
+    synchronization: 'Synchronisierung',
+    landscape_urbanism: 'Landschaftsurbanismus',
+    'landscape urbanism': 'Landschaftsurbanismus',
+    park_system: 'Parksystem',
+    'park system': 'Parksystem',
+    reform_housing: 'Wohnreform',
+    'reform housing': 'Wohnreform',
+    collective_living: 'kollektives Wohnen',
+    'collective living': 'kollektives Wohnen',
+    urban_expansion: 'Stadterweiterung',
+    'urban expansion': 'Stadterweiterung',
+    ring: 'Ring',
+    linear_city: 'lineare Stadt',
+    'linear city': 'lineare Stadt',
+    art_nouveau: 'Art Nouveau',
+    'art nouveau': 'Art Nouveau',
+    threshold: 'Schwelle',
+    interior: 'Interieur',
+    garden_city: 'Gartenstadt',
+    'garden city': 'Gartenstadt',
+    capital_city: 'Hauptstadt',
+    'capital city': 'Hauptstadt',
+    colonial_urbanism: 'kolonialer Urbanismus',
+    process_architecture: 'Prozessarchitektur',
+    'process architecture': 'Prozessarchitektur',
+    bureaucracy: 'Bürokratie',
+    housing_reform: 'Wohnreform',
+    'housing reform': 'Wohnreform',
+    red_vienna: 'Rotes Wien',
+    'red vienna': 'Rotes Wien',
     palimpsest: 'Palimpsest',
     proto_urban: 'proto-urban',
     'proto urban': 'proto-urban',
@@ -764,6 +915,49 @@ function readableDe(value) {
     terracotta: 'Terrakotta',
     geometric_diagram: 'geometrisches Diagramm',
     'geometric diagram': 'geometrisches Diagramm',
+    rusticated_stone: 'Rustikamauerwerk',
+    'rusticated stone': 'Rustikamauerwerk',
+    pietra_forte: 'Pietra forte',
+    'pietra forte': 'Pietra forte',
+    earthworks: 'Erdwerke',
+    brick_masonry: 'Ziegelmauerwerk',
+    'brick masonry': 'Ziegelmauerwerk',
+    timber_floor: 'Holzboden',
+    'timber floor': 'Holzboden',
+    water_power_infrastructure: 'Wasserkraft-Infrastruktur',
+    'water power infrastructure': 'Wasserkraft-Infrastruktur',
+    scientific_instrumentation: 'wissenschaftliche Instrumente',
+    'scientific instrumentation': 'wissenschaftliche Instrumente',
+    rock_outcrop: 'Felsaufschluss',
+    'rock outcrop': 'Felsaufschluss',
+    soil: 'Boden',
+    glass_roof: 'Glasdach',
+    'glass roof': 'Glasdach',
+    iron_structure: 'Eisenstruktur',
+    'iron structure': 'Eisenstruktur',
+    urban_grid: 'Stadtraster',
+    masonry_blocks: 'Mauerwerksblöcke',
+    'masonry blocks': 'Mauerwerksblöcke',
+    street_infrastructure: 'Straßeninfrastruktur',
+    'street infrastructure': 'Straßeninfrastruktur',
+    urban_paving: 'Stadtpflaster',
+    'urban paving': 'Stadtpflaster',
+    historicist_facades: 'historistische Fassaden',
+    'historicist facades': 'historistische Fassaden',
+    wetland_soil: 'Feuchtboden',
+    'wetland soil': 'Feuchtboden',
+    tram_corridor: 'Tramkorridor',
+    'tram corridor': 'Tramkorridor',
+    housing_plots: 'Wohnparzellen',
+    'housing plots': 'Wohnparzellen',
+    brick_housing: 'Ziegelwohnbauten',
+    'brick housing': 'Ziegelwohnbauten',
+    garden_landscape: 'Gartenlandschaft',
+    'garden landscape': 'Gartenlandschaft',
+    sandstone: 'Sandstein',
+    stone_cladding: 'Steinverkleidung',
+    'stone cladding': 'Steinverkleidung',
+    aluminium: 'Aluminium',
     masonry: 'Mauerwerk',
     stone: 'Stein',
     limestone: 'Kalkstein',
@@ -927,10 +1121,54 @@ function localizeArchitectureText(value) {
     .replaceAll('Piazza del Popolo is a baroque/urban threshold: paving field, twin churches, obelisk, gates and radiating streets produce an urban orientation device', 'Piazza del Popolo ist eine barocke urbane Schwelle: Pflasterfeld, Zwillingskirchen, Obelisk, Tore und ausstrahlende Straßen erzeugen ein Orientierungssystem')
     .replaceAll('St Peter’s Square is a ritual urban space: elliptical colonnades, axial approach, obelisk and paving define crowd, procession and symbolic orientation', 'Der Petersplatz ist ein ritueller Stadtraum: elliptische Kolonnaden, axiale Annäherung, Obelisk und Pflasterung ordnen Menge, Prozession und symbolische Orientierung')
     .replaceAll('The Royal Saltworks is an industrial-ideal urban fragment: semicircular plan, production buildings, director’s house and social order encoded in geometry', 'Die Königliche Saline ist ein industriell-ideales Stadtfragment: Halbkreisplan, Produktionsbauten, Direktorenhaus und soziale Ordnung werden geometrisch codiert')
+    .replaceAll('The Florentine palazzo is read through heavy rusticated Mauerwerk, hierarchical facade courses, courtyard order and urban power representation', 'Der Florentiner Palazzo wird über schweres Rustikamauerwerk, hierarchische Fassadenschichten, Hofordnung und städtische Machtrepräsentation gelesen')
+    .replaceAll('Palmanova is an ideal fortress city where earthwork ramparts, bastions, radial streets and central piazza form one geometric defensive machine', 'Palmanova ist eine ideale Festungsstadt, in der Erdwerke, Bastionen, radiale Straßen und zentrale Piazza eine geometrische Verteidigungsmaschine bilden')
+    .replaceAll('New Lanark is a mill village where Stein factory blocks, Wasser power, worker housing and reformist social infrastructure form an industrial settlement system', 'New Lanark ist eine Mühlensiedlung, in der steinerne Fabrikblöcke, Wasserkraft, Arbeiterwohnungen und reformerische soziale Infrastruktur ein industrielles Siedlungssystem bilden')
+    .replaceAll('The observatory is infrastructure for time and measurement: Mauerwerk buildings, instruments, meridian line and landscape position over Greenwich Park', 'Das Observatorium ist Infrastruktur für Zeit und Messung: Mauerwerksbauten, Instrumente, Meridianlinie und die Lage über Greenwich Park bilden eine wissenschaftliche Raumordnung')
+    .replaceAll('Central Park is a constructed urban landscape of earthwork, planting, Wasser bodies, rock outcrops, paths and bridge infrastructure', 'Central Park ist eine gebaute Stadtlandschaft aus Erdmodellierung, Pflanzung, Wasserflächen, Felsen, Wegen und Brückeninfrastruktur')
+    .replaceAll('Central Park is a constructed urban landscape of earthwork, planting, water bodies, rock outcrops, paths and bridge infrastructure', 'Central Park ist eine gebaute Stadtlandschaft aus Erdmodellierung, Pflanzung, Wasserflächen, Felsen, Wegen und Brückeninfrastruktur')
+    .replaceAll('The Familistère is a social-housing machine: Ziegel residential blocks, glazed courtyards and collective facilities organized around reformist living', 'Das Familistère ist eine Wohnmaschine der Sozialreform: Ziegelwohnblöcke, verglaste Höfe und kollektive Einrichtungen ordnen einen reformierten Alltag')
+    .replaceAll('Cerdà’s Eixample is modeled as infrastructure and block logic: chamfered grid, street widths, courtyards, movement and hygienic reform', 'Cerdàs Eixample wird als Infrastruktur- und Blocklogik gelesen: abgeschrägtes Raster, Straßenbreiten, Höfe, Bewegung und hygienische Reform bilden ein offenes Stadtsystem')
+    .replaceAll('Ringstrasse is a civic ring infrastructure: boulevard, institutions, public space, tram movement and historicist Stein facades around the former fortification line', 'Die Ringstraße ist eine bürgerliche Ringinfrastruktur: Boulevard, Institutionen, öffentlicher Raum, Trambewegung und historistische Steinfassaden besetzen die ehemalige Befestigungslinie')
+    .replaceAll('The Emerald Necklace is landscape infrastructure: lTinteed parks, Wasserways, drainage, ecological repair and recreational public space', 'Emerald Necklace ist Landschaftsinfrastruktur: verbundene Parks, Wasserläufe, Entwässerung, ökologische Reparatur und öffentlicher Erholungsraum greifen ineinander')
+    .replaceAll('Arturo Soria’s Linear City is an infrastructural urban theory: transport spine, housing plots and service bands extending settlement linearly', 'Arturo Sorias Linear City ist eine infrastrukturelle Stadttheorie: Verkehrsachse, Wohnparzellen und Versorgungsbänder lassen Siedlung linear wachsen')
+    .replaceAll('Hôtel Tassel is a tectonic interior manifesto: iron/glass stair hall, Stein facade, flowing structure and ornamental material continuity', 'Hôtel Tassel ist ein tektonisches Interieurmanifest: Eisen-Glas-Treppenhalle, Steinfassade, fließende Struktur und ornamentale Materialkontinuität verbinden sich')
+    .replaceAll('Letchworth is an implemented garden city: low-density housing, green belt, civic center, industry and landscape structure planned together', 'Letchworth ist eine gebaute Gartenstadt: lockeres Wohnen, Grüngürtel, Zentrum, Industrie und Landschaftsstruktur werden gemeinsam geplant')
+    .replaceAll('New Delhi is read as imperial capital planning: axial geometry, sandStein civic monuments, ceremonial avenues and garden-city spatial devices', 'New Delhi wird als imperiale Hauptstadtplanung gelesen: axiale Geometrie, Sandsteinmonumente, ceremonielle Alleen und Gartenstadtmotive ordnen den Raum')
+    .replaceAll('Welwyn Garden City develops the garden-city model with planned neighborhoods, landscape buffers, industry and civic center', 'Welwyn Garden City entwickelt das Gartenstadtmodell mit geplanten Nachbarschaften, Landschaftspuffern, Industrie und Zentrum weiter')
+    .replaceAll('Postsparkasse is read through functional modernity: Stein/aluminium cladding, exposed fasteners, glass-roofed banking hall and process-oriented plan', 'Die Postsparkasse wird über funktionale Moderne gelesen: Stein- und Aluminiumverkleidung, sichtbare Befestigungen, glasgedeckte Kassenhalle und prozessorientierter Grundriss')
+    .replaceAll('Karl-Marx-Hof is Red Vienna housing infrastructure: long perimeter block, monumental gateways, courtyards and collective services', 'Der Karl-Marx-Hof ist Wohninfrastruktur des Roten Wien: langer Randblock, monumentale Tore, Höfe und kollektive Einrichtungen bilden eine eigene Stadtfigur')
+    .replaceAll('rusticated_Stein', 'Rustikamauerwerk')
+    .replaceAll('Ziegel_Mauerwerk', 'Ziegelmauerwerk')
+    .replaceAll('Holz_floor', 'Holzboden')
+    .replaceAll('Wasser_power_infrastructure', 'Wasserkraft-Infrastruktur')
+    .replaceAll('scientific_instrumentation', 'wissenschaftliche Instrumente')
+    .replaceAll('rock_outcrop', 'Felsaufschluss')
+    .replaceAll('glass_roof', 'Glasdach')
+    .replaceAll('iron_structure', 'Eisenstruktur')
+    .replaceAll('urban_grid', 'Stadtraster')
+    .replaceAll('Mauerwerk_blocks', 'Mauerwerksblöcke')
+    .replaceAll('street_infrastructure', 'Straßeninfrastruktur')
+    .replaceAll('urban_paving', 'Stadtpflaster')
+    .replaceAll('historicist_facades', 'historistische Fassaden')
+    .replaceAll('wetland_soil', 'Feuchtboden')
+    .replaceAll('tram_corridor', 'Tramkorridor')
+    .replaceAll('housing_plots', 'Wohnparzellen')
+    .replaceAll('Ziegel_housing', 'Ziegelwohnbauten')
+    .replaceAll('garden_landscape', 'Gartenlandschaft')
+    .replaceAll('sandStein', 'Sandstein')
+    .replaceAll('Stein_cladding', 'Steinverkleidung')
     .replaceAll('Stein_edges', 'Steinkanten')
     .replaceAll('Stein_paving', 'Steinpflaster')
     .replaceAll('Holz_roof', 'Holzdach')
     .replaceAll('industrial_infrastructure', 'Industrieinfrastruktur')
+    .replaceAll('earthworks', 'Erdwerke')
+    .replaceAll('soil', 'Boden')
+    .replaceAll('glass', 'Glas')
+    .replaceAll('concrete', 'Beton')
+    .replaceAll('aluminium', 'Aluminium')
+    .replaceAll('pietra_forte', 'Pietra forte')
+    .replaceAll('urban_axis', 'Stadtachse')
     .replaceAll('terrace_walls', 'Terrassenmauern')
     .replaceAll('geometric_diagram', 'geometrisches Diagramm')
     .replaceAll('Mauerwerk foundation', 'Mauerwerksfundament')
