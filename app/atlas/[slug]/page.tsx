@@ -158,6 +158,8 @@ export default async function EntryPage({ params }: EntryPageProps) {
 
         <ModelAnalysisSection entry={entry} modelUrl={publicModelUrl} accent={accent} />
 
+        {entry.architecture_text ? <ArchitectureTextSection entry={entry} accent={accent} /> : null}
+
         <ObjectIdentityPanel entry={entry} profile={visualProfile} accent={accent} />
 
         <section className="entry-study-grid grid gap-4 border-t border-white/12 py-8 lg:grid-cols-3">
@@ -483,6 +485,39 @@ function ModelAnalysisSection({ entry, modelUrl, accent }: { entry: Entry; model
           accent={accent}
           empty="No model source basis yet"
         />
+      </div>
+    </section>
+  );
+}
+
+function ArchitectureTextSection({ entry, accent }: { entry: Entry; accent: string }) {
+  const text = entry.architecture_text;
+  if (!text) return null;
+  const chapters = text.chapters.slice(0, 4);
+
+  return (
+    <section className="entry-architecture-text border-t border-white/12 py-10">
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)]">
+        <div>
+          <div className="text-[10px] uppercase tracking-[0.22em]" style={{ color: accent }}>Architektonische Lesart</div>
+          <h2 className="mt-3 max-w-xl text-3xl leading-tight text-[#f7f7f4] sm:text-4xl">{text.headline}</h2>
+          <div className="mt-4 flex flex-wrap gap-2 text-[9px] uppercase tracking-[0.14em] text-[#8d8d87]">
+            <span className="border border-white/14 px-2.5 py-1">{text.language ?? 'de'}</span>
+            <span className="border border-white/14 px-2.5 py-1">{text.review_status?.replace(/_/g, ' ') ?? 'draft review'}</span>
+            {text.generator ? <span className="border border-white/14 px-2.5 py-1">{text.generator.replace(/-/g, ' ')}</span> : null}
+          </div>
+        </div>
+        <div>
+          <p className="text-lg leading-8 text-[#e5e5df]">{text.overview}</p>
+          <div className="mt-6 grid gap-3">
+            {chapters.map((chapter) => (
+              <article key={chapter.title} className="entry-architecture-chapter border border-white/12 bg-[#071315]/56 p-4">
+                <h3 className="text-[11px] font-semibold uppercase tracking-[0.18em]" style={{ color: accent }}>{chapter.title}</h3>
+                <p className="mt-3 text-sm leading-7 text-[#cfcfca]">{chapter.text}</p>
+              </article>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );

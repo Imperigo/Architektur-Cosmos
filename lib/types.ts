@@ -193,6 +193,24 @@ export type EntryModel3D = {
   source_basis?: string;
 };
 
+export type EntryArchitectureTextChapter = {
+  title: string;
+  text: string;
+  source_basis?: string;
+  review_status?: 'draft_review' | 'reviewed' | 'verified' | 'needs_source_review';
+};
+
+export type EntryArchitectureText = {
+  headline: string;
+  overview: string;
+  chapters: EntryArchitectureTextChapter[];
+  language?: 'de' | 'en' | 'mixed';
+  generator?: string;
+  generated_at?: string;
+  review_status?: 'draft_review' | 'reviewed' | 'verified' | 'needs_source_review';
+  source_basis?: Array<Record<string, unknown>>;
+};
+
 export type Entry = {
   id: string;
   slug: string;
@@ -218,6 +236,7 @@ export type Entry = {
   materials?: EntryMaterials;
   program?: EntryProgram;
   context?: EntryContext;
+  architecture_text?: EntryArchitectureText;
   model_3d?: EntryModel3D;
   vibes?: string[];
   source_candidates?: SourceCandidate[];

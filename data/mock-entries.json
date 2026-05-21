@@ -11920,7 +11920,115 @@
       "promenade_architecturale",
       "pilotis",
       "roof_garden"
-    ]
+    ],
+    "architecture_text": {
+      "headline": "Villa Savoye: Der freie Grundriss als bewohnbares Manifest",
+      "overview": "Villa Savoye wird im Architektur Kosmos als moderne Villa gelesen und nicht als isoliertes Archivobjekt behandelt. Die Relevanz des Projekts liegt im Zusammenspiel von räumlicher Dramaturgie, konstruktiver Ordnung und suburbane Villenlandschaft / flacher suburbaner Standort / Poissy, France / UNESCO-Welterbe-Komponente und denkmalgeschütztes Objekt. Der Eintrag soll deshalb Projektlogik, Materialsystem, Tragwerk und Modell-Layer sichtbar machen, statt nur eine lineare Kurzgeschichte zu liefern.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Villa Savoye gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Die räumliche Ordnung ist als Promenade architecturale choreografiert: Ankunft unter dem angehobenen Volumen, Aufstieg über die Rampe, Bewegung durch die Wohnräume und Öffnung zur Dachterrasse. Für den Atlas ist das Projekt wertvoll, weil es trockene Metadaten in eine räumliche Fragestellung übersetzt: Fünf Punkte, Promenade architecturale, Pilotis, Maschinenzeitalter, freier Grundriss.",
+          "source_basis": "analysis layer: spatial_order; review status: reviewed",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Die Materiallesart stellt weiße Putzflächen, Stahlbeton, Fensterbänder und den Dachgarten als abstrakte moderne Hülle in den Vordergrund. Das Haus wird als Stahlbetonskelett gelesen, das Tragordnung, Fassade und Grundriss voneinander trennt; Pilotis, Deckenplatte und freie Hülle bilden die strukturelle Grammatik des Projekts. Für spätere Blender- und ArchiCAD-Workflows sollen diese Beobachtungen als trennbare Ebenen geführt werden, nicht als ein einziges dekoratives Modell.",
+          "source_basis": "analysis layer: material_system; review status: reviewed",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Die räumliche Ordnung ist als Promenade architecturale choreografiert: Ankunft unter dem angehobenen Volumen, Aufstieg über die Rampe, Bewegung durch die Wohnräume und Öffnung zur Dachterrasse. Dadurch wird das Projekt als filterbare Referenz interessant: Grundriss, Schnitt, Erschliessung und Kontext können über Zeiträume hinweg verglichen werden, statt nur als Bilder betrachtet zu werden.",
+          "source_basis": "analysis layer: spatial_order; review status: reviewed",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "The tectonic reading separates the lifted frame, white envelope, horizontal window band, ramp, service cores and Dachgarten plane as distinct modern layers. Der Cosmos-Text hält diese konstruktive Lesart bewusst explizit, weil sie die Brücke zwischen historischer Interpretation und modellbasierter Analyse bildet.",
+          "source_basis": "analysis layer: tectonics; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Villa Savoye gehört zu suburbane Villenlandschaft / flacher suburbaner Standort / Poissy, France / UNESCO-Welterbe-Komponente und denkmalgeschütztes Objekt. Der Ort ist dabei keine Hintergrundinformation, sondern Teil des architektonischen Arguments und soll im Atlas, im Modellpaket und in zukünftigen Suchfiltern sichtbar bleiben.",
+          "source_basis": "entry context metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für die Architecture-Cosmos-Datenbank soll Villa Savoye als strukturierte Referenz mit Quellenpfad, Medienslots, Analyseebenen und Modellteilen gespeichert werden. Die wichtigsten zukünftigen Filter sind source:lecture-notes, course:architekturgeschichte-eth, typology:modern-villa, typology:manifest-house, structure:reinforced-concrete-frame, structure:pilotis, spatial:promenade-architecturale, spatial:free-plan. Öffentliche Ausgaben müssen rechteklar bleiben; private Forschungsnotizen können detailliertere, quellenbasierte Analysen tragen, bis sie geprüft sind.",
+          "source_basis": "derived from entry metadata, model fields and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T16:57:08.125Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_url",
+          "value": "https://www.villa-savoye.fr/"
+        },
+        {
+          "type": "source_document",
+          "value": "03 Architekturgeschichte 3_4.pdf"
+        },
+        {
+          "type": "source_document",
+          "value": "Lecture notes / modernism"
+        },
+        {
+          "type": "source_document",
+          "value": "Centre des monuments nationaux / villa-savoye.fr"
+        },
+        {
+          "type": "source_document",
+          "value": "Fondation Le Corbusier"
+        },
+        {
+          "type": "source_document",
+          "value": "UNESCO World Heritage source documents"
+        },
+        {
+          "type": "source_document",
+          "value": "Wikimedia Commons public/license-cleared image candidates"
+        },
+        {
+          "type": "source_document",
+          "value": "Architecture Cosmos diagrammatic vector plans"
+        },
+        {
+          "type": "website",
+          "title": "Centre des monuments nationaux / Villa Savoye",
+          "value": "https://www.villa-savoye.fr/",
+          "reliability_level": "primary_source",
+          "rights_status": "needs_permission"
+        },
+        {
+          "type": "website",
+          "title": "Fondation Le Corbusier / Maison Savoye",
+          "value": "https://www.fondationlecorbusier.fr/",
+          "reliability_level": "primary_source",
+          "rights_status": "needs_permission"
+        },
+        {
+          "type": "archive",
+          "title": "UNESCO World Heritage / Le Corbusier serial property",
+          "value": "https://whc.unesco.org/en/list/1321/",
+          "reliability_level": "primary_source",
+          "rights_status": "needs_permission"
+        },
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons / Villa Savoye category",
+          "value": "https://commons.wikimedia.org/wiki/Category:Villa_Savoye",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        }
+      ]
+    }
   },
   {
     "id": "broadacre-city",
@@ -15366,6 +15474,98 @@
         "confidence_score": 0.78,
         "source": "manual"
       }
-    ]
+    ],
+    "architecture_text": {
+      "headline": "Alterszentrum Kloster Ingenbohl: Weiterbauen zwischen Kloster, Pflege und Landschaft",
+      "overview": "Alterszentrum Kloster Ingenbohl wird im Architektur Kosmos als Pflege- und Klosterumbau gelesen und nicht als isoliertes Archivobjekt behandelt. Die Relevanz des Projekts liegt im Zusammenspiel von räumlicher Dramaturgie, konstruktiver Ordnung und Dorfzentrum / Hang- und Klosterplateau / Brunnen, Schweiz / Klosterkontext und bestehender Baubestand. Der Eintrag soll deshalb Projektlogik, Materialsystem, Tragwerk und Modell-Layer sichtbar machen, statt nur eine lineare Kurzgeschichte zu liefern.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Alterszentrum Kloster Ingenbohl gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Die räumliche Ordnung verbindet unteres Besucherniveau, teilweise eingegrabene Untergeschosse, Erdgeschoss mit Kapelle und Foyer, Pflegegeschosse, Dachtechnik und Klosterplateau. Die Kapelle ist als zweigeschossiger, verglaster Raum mit Trasskalkwänden ein besonderer spiritueller Schwerpunkt. Für den Atlas ist das Projekt wertvoll, weil es trockene Metadaten in eine räumliche Fragestellung übersetzt: Weiterbauen im Bestand, Kloster, Pflegearchitektur, Betonstruktur, Kalkputz.",
+          "source_basis": "analysis layer: spatial_order; review status: reviewed",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Das Materialsystem kombiniert Massivbau, gestampften Trasskalk als CO2-ärmere Alternative zu klassischem Sichtbeton, Weisstannen-Holzschalung, Beton, Kalkputz und Lehmputz. Für die Datenbank sind Trasskalk, Holz-Hybrid, mineralische Oberflächen und Bestand als eigene Filter relevant. Das Tragwerk wird als massives Stahlbetonskelett mit aussteifendem Kern gelesen. Punktgestützte Flachdecken erlauben flexible Spannweiten; Wind- und Erdbebenlasten werden über schubsteife Decken in die Kernwände geleitet. Die innere Stützenordnung läuft ohne Abfangungen bis zur Gründung und wird durch Vorspannung unterstützt. Für spätere Blender- und ArchiCAD-Workflows sollen diese Beobachtungen als trennbare Ebenen geführt werden, nicht als ein einziges dekoratives Modell.",
+          "source_basis": "analysis layer: material_system; review status: reviewed",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Die räumliche Ordnung verbindet unteres Besucherniveau, teilweise eingegrabene Untergeschosse, Erdgeschoss mit Kapelle und Foyer, Pflegegeschosse, Dachtechnik und Klosterplateau. Die Kapelle ist als zweigeschossiger, verglaster Raum mit Trasskalkwänden ein besonderer spiritueller Schwerpunkt. Dadurch wird das Projekt als filterbare Referenz interessant: Grundriss, Schnitt, Erschliessung und Kontext können über Zeiträume hinweg verglichen werden, statt nur als Bilder betrachtet zu werden.",
+          "source_basis": "analysis layer: spatial_order; review status: reviewed",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Tektonisch wird das Projekt als Schichtung aus Hangkante, Sockel, Kolonnaden, sichtbarem Kraftfluss der Fassadenstruktur, Trasskalkwänden, Holzschalung, Kapellenraum und Pflegegeschossen lesbar. Die Fassaden zeigen Stützen, Decken- und Balkonplatten als tragwerksnahes Ordnungssystem. Der Cosmos-Text hält diese konstruktive Lesart bewusst explizit, weil sie die Brücke zwischen historischer Interpretation und modellbasierter Analyse bildet.",
+          "source_basis": "analysis layer: tectonics; review status: reviewed",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Alterszentrum Kloster Ingenbohl gehört zu Dorfzentrum / Hang- und Klosterplateau / Brunnen, Schweiz / Klosterkontext und bestehender Baubestand. Der Ort ist dabei keine Hintergrundinformation, sondern Teil des architektonischen Arguments und soll im Atlas, im Modellpaket und in zukünftigen Suchfiltern sichtbar bleiben.",
+          "source_basis": "entry context metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für die Architecture-Cosmos-Datenbank soll Alterszentrum Kloster Ingenbohl als strukturierte Referenz mit Quellenpfad, Medienslots, Analyseebenen und Modellteilen gespeichert werden. Die wichtigsten zukünftigen Filter sind source:web-source, typology:building, style:sustainable-architecture, theme:adaptive-reuse, theme:monastery, theme:care-architecture, theme:concrete-structure, theme:timber-facade. Öffentliche Ausgaben müssen rechteklar bleiben; private Forschungsnotizen können detailliertere, quellenbasierte Analysen tragen, bis sie geprüft sind.",
+          "source_basis": "derived from entry metadata, model fields and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T16:57:08.142Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_url",
+          "value": "https://boltshauser.info/projekt/alterszentrum-kloster-ingenbohl/"
+        },
+        {
+          "type": "source_document",
+          "value": "Boltshauser Architekten project page"
+        },
+        {
+          "type": "source_document",
+          "value": "Baunetz project report"
+        },
+        {
+          "type": "source_document",
+          "value": "swiss-architects project note"
+        },
+        {
+          "type": "website",
+          "title": "Boltshauser Architekten project page",
+          "value": "https://boltshauser.info/projekt/alterszentrum-kloster-ingenbohl/",
+          "reliability_level": "primary_source",
+          "rights_status": "private_research"
+        },
+        {
+          "type": "website",
+          "title": "Schnetzer Puskas / Alterszentrum Kloster Ingenbohl",
+          "value": "https://www.schnetzerpuskas.com/de/projekte/3705-alterszentrum-kloster-ingenbohl",
+          "reliability_level": "primary_source",
+          "rights_status": "private_research"
+        },
+        {
+          "type": "website",
+          "title": "Halter AG / Alterszentrum Kloster Ingenbohl",
+          "value": "https://www.halter.ch/de/projekte/alterszentrum-kloster-ingenbohl",
+          "reliability_level": "primary_source",
+          "rights_status": "private_research"
+        },
+        {
+          "type": "article",
+          "title": "KOMPLEX / Neue Räume für ein gemeinschaftliches Leben",
+          "value": "https://www.komplex-magazin.ch/de/artikel/neue-raume-fur-ein-gemeinschaftliches-leben",
+          "reliability_level": "secondary_source",
+          "rights_status": "private_research"
+        }
+      ]
+    }
   }
 ]
