@@ -394,8 +394,125 @@
         "reliability_level": "secondary_source",
         "rights_status": "licensed",
         "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY-SA 4.0."
+      },
+      {
+        "source_type": "website",
+        "title": "UNESCO World Heritage Centre: Neolithic Site of Çatalhöyük",
+        "url": "https://whc.unesco.org/en/list/1405/",
+        "reliability_level": "primary_source",
+        "rights_status": "licensed",
+        "notes": "UNESCO reference for the Neolithic settlement, heritage context and site description."
       }
-    ]
+    ],
+    "geo": {
+      "lat": 37.666,
+      "lon": 32.826,
+      "region": "Konya Plain",
+      "precision": "site"
+    },
+    "materials": {
+      "primary": [
+        "mud_brick",
+        "timber",
+        "plaster"
+      ],
+      "secondary": [
+        "earth_floor",
+        "painted_plaster"
+      ],
+      "notes": "Dense Neolithic room clusters used mud brick, timber roof structure and plastered interiors; access and circulation are interpreted through rooftops and room openings."
+    },
+    "program": {
+      "type": "settlement",
+      "subtype": "neolithic_aggregated_domestic_fabric",
+      "public_access": "public"
+    },
+    "context": {
+      "topography": "flat_alluvial_plain",
+      "setting": "archaeological_tell_landscape",
+      "heritage_context": [
+        "unesco_world_heritage_site",
+        "neolithic_settlement"
+      ],
+      "landscape_relation": [
+        "tell_mound",
+        "domestic_cluster",
+        "roofscape_circulation"
+      ]
+    },
+    "database_tags": [
+      "material:mud_brick",
+      "typology:aggregated_settlement",
+      "structure:cellular_mass",
+      "context:tell_mound",
+      "blender:cluster_model_candidate"
+    ],
+    "model_3d": {
+      "source_basis": "Public hero/source metadata plus lecture-derived historical framework; geometry remains planned/reconstruction-grade until source plans are reviewed.",
+      "parts": [
+        {
+          "type": "low",
+          "r2_key": "models/catal-huyuk/low.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "mass",
+          "r2_key": "models/catal-huyuk/mass.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "site",
+          "r2_key": "models/catal-huyuk/site.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "structure",
+          "r2_key": "models/catal-huyuk/structure.glb",
+          "review_status": "planned"
+        }
+      ],
+      "license": "own_work"
+    },
+    "analysis_layers": [
+      {
+        "analysis_type": "material_system",
+        "summary": "Primary material reading: mud_brick, timber, plaster. Dense Neolithic room clusters used mud brick, timber roof structure and plastered interiors; access and circulation are interpreted through rooftops and room openings.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "urban_context",
+        "summary": "Database classification places Catal Hüyük in neolithic_aggregated_domestic_fabric, with context tags unesco_world_heritage_site, neolithic_settlement.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "source_reconstruction",
+        "summary": "3D/Blender layer is planned as an analytical reconstruction layer; no exact measured model is claimed at this stage.",
+        "review_status": "needs_source"
+      }
+    ],
+    "analysis_observations": [
+      {
+        "analysis_type": "material_tag",
+        "label": "material:mud_brick",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:aggregated_settlement",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      }
+    ],
+    "database_profile": {
+      "status": "draft",
+      "r2_prefix": "entries/catal-huyuk",
+      "source_count": 3,
+      "media_count": 4,
+      "model_count": 4,
+      "analysis_count": 3,
+      "tag_count": 5
+    }
   },
   {
     "id": "nippur",
@@ -458,8 +575,125 @@
         "reliability_level": "secondary_source",
         "rights_status": "public_domain",
         "notes": "Auto-selected hero image candidate. Score: 0.98. License: Public domain."
+      },
+      {
+        "source_type": "website",
+        "title": "Encyclopaedia Britannica: Nippur",
+        "url": "https://www.britannica.com/place/Nippur",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Public reference for Nippur as a Mesopotamian religious and urban center."
       }
-    ]
+    ],
+    "geo": {
+      "lat": 32.126,
+      "lon": 45.235,
+      "region": "Nuffar / Southern Iraq",
+      "precision": "site"
+    },
+    "materials": {
+      "primary": [
+        "mud_brick",
+        "baked_brick"
+      ],
+      "secondary": [
+        "reed",
+        "plaster"
+      ],
+      "notes": "Nippur is read as a Mesopotamian temple city with mud-brick urban fabric, sacred precincts and layered tell stratigraphy."
+    },
+    "program": {
+      "type": "early_urbanism",
+      "subtype": "temple_city",
+      "public_access": "public"
+    },
+    "context": {
+      "topography": "alluvial_plain",
+      "setting": "archaeological_tell_landscape",
+      "heritage_context": [
+        "sumerian_city",
+        "temple_precinct",
+        "scribal_culture"
+      ],
+      "landscape_relation": [
+        "tell_mound",
+        "sacred_precinct",
+        "irrigation_plain"
+      ]
+    },
+    "database_tags": [
+      "material:mud_brick",
+      "typology:temple_city",
+      "structure:massive_wall",
+      "context:alluvial_plain",
+      "blender:site_model_candidate"
+    ],
+    "model_3d": {
+      "source_basis": "Public hero/source metadata plus lecture-derived historical framework; geometry remains planned/reconstruction-grade until source plans are reviewed.",
+      "parts": [
+        {
+          "type": "low",
+          "r2_key": "models/nippur/low.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "mass",
+          "r2_key": "models/nippur/mass.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "site",
+          "r2_key": "models/nippur/site.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "structure",
+          "r2_key": "models/nippur/structure.glb",
+          "review_status": "planned"
+        }
+      ],
+      "license": "own_work"
+    },
+    "analysis_layers": [
+      {
+        "analysis_type": "material_system",
+        "summary": "Primary material reading: mud_brick, baked_brick. Nippur is read as a Mesopotamian temple city with mud-brick urban fabric, sacred precincts and layered tell stratigraphy.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "urban_context",
+        "summary": "Database classification places Nippur in temple_city, with context tags sumerian_city, temple_precinct, scribal_culture.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "source_reconstruction",
+        "summary": "3D/Blender layer is planned as an analytical reconstruction layer; no exact measured model is claimed at this stage.",
+        "review_status": "needs_source"
+      }
+    ],
+    "analysis_observations": [
+      {
+        "analysis_type": "material_tag",
+        "label": "material:mud_brick",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:temple_city",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      }
+    ],
+    "database_profile": {
+      "status": "draft",
+      "r2_prefix": "entries/nippur",
+      "source_count": 3,
+      "media_count": 4,
+      "model_count": 4,
+      "analysis_count": 3,
+      "tag_count": 5
+    }
   },
   {
     "id": "eridu-and-susa",
@@ -908,8 +1142,125 @@
         "reliability_level": "secondary_source",
         "rights_status": "licensed",
         "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY-SA 3.0."
+      },
+      {
+        "source_type": "website",
+        "title": "UNESCO World Heritage Centre: Archaeological Ruins at Moenjodaro",
+        "url": "https://whc.unesco.org/en/list/138/",
+        "reliability_level": "primary_source",
+        "rights_status": "licensed",
+        "notes": "UNESCO reference for the Indus city, heritage status and archaeological significance."
       }
-    ]
+    ],
+    "geo": {
+      "lat": 27.329,
+      "lon": 68.139,
+      "region": "Sindh",
+      "precision": "site"
+    },
+    "materials": {
+      "primary": [
+        "baked_brick",
+        "mud_brick"
+      ],
+      "secondary": [
+        "timber",
+        "drainage_channels"
+      ],
+      "notes": "The Indus city is characterized by standardized baked brick, gridded streets, platforms, drains and carefully organized water infrastructure."
+    },
+    "program": {
+      "type": "early_urbanism",
+      "subtype": "indus_grid_city",
+      "public_access": "public"
+    },
+    "context": {
+      "topography": "river_plain",
+      "setting": "archaeological_city_landscape",
+      "heritage_context": [
+        "unesco_world_heritage_site",
+        "indus_valley_city"
+      ],
+      "landscape_relation": [
+        "indus_plain",
+        "drainage_network",
+        "citadel_mound"
+      ]
+    },
+    "database_tags": [
+      "material:baked_brick",
+      "typology:grid_city",
+      "structure:platform",
+      "infrastructure:drainage",
+      "context:river_plain",
+      "blender:urban_grid_candidate"
+    ],
+    "model_3d": {
+      "source_basis": "Public hero/source metadata plus lecture-derived historical framework; geometry remains planned/reconstruction-grade until source plans are reviewed.",
+      "parts": [
+        {
+          "type": "low",
+          "r2_key": "models/mohenjo-daro/low.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "mass",
+          "r2_key": "models/mohenjo-daro/mass.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "site",
+          "r2_key": "models/mohenjo-daro/site.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "structure",
+          "r2_key": "models/mohenjo-daro/structure.glb",
+          "review_status": "planned"
+        }
+      ],
+      "license": "own_work"
+    },
+    "analysis_layers": [
+      {
+        "analysis_type": "material_system",
+        "summary": "Primary material reading: baked_brick, mud_brick. The Indus city is characterized by standardized baked brick, gridded streets, platforms, drains and carefully organized water infrastructure.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "urban_context",
+        "summary": "Database classification places Mohenjo-Daro in indus_grid_city, with context tags unesco_world_heritage_site, indus_valley_city.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "source_reconstruction",
+        "summary": "3D/Blender layer is planned as an analytical reconstruction layer; no exact measured model is claimed at this stage.",
+        "review_status": "needs_source"
+      }
+    ],
+    "analysis_observations": [
+      {
+        "analysis_type": "material_tag",
+        "label": "material:baked_brick",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:grid_city",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      }
+    ],
+    "database_profile": {
+      "status": "draft",
+      "r2_prefix": "entries/mohenjo-daro",
+      "source_count": 3,
+      "media_count": 4,
+      "model_count": 4,
+      "analysis_count": 3,
+      "tag_count": 6
+    }
   },
   {
     "id": "pyramids-of-giza",
@@ -1231,8 +1582,134 @@
         "reliability_level": "secondary_source",
         "rights_status": "licensed",
         "notes": "Auto-selected hero image candidate. Score: 0.87. License: CC BY-SA 4.0."
+      },
+      {
+        "source_type": "website",
+        "title": "Encyclopaedia Britannica: Roman Forum",
+        "url": "https://www.britannica.com/place/Roman-Forum",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Public reference for the Roman Forum as civic and monumental urban space."
       }
-    ]
+    ],
+    "geo": {
+      "lat": 41.892,
+      "lon": 12.486,
+      "region": "Rome",
+      "precision": "site"
+    },
+    "materials": {
+      "primary": [
+        "travertine",
+        "tufa",
+        "brick",
+        "roman_concrete"
+      ],
+      "secondary": [
+        "marble",
+        "basalt_paving"
+      ],
+      "notes": "The Forum Romanum accumulates stone, brick and concrete monuments around a civic valley; it should be modeled as a layered public field rather than one building."
+    },
+    "program": {
+      "type": "public_space",
+      "subtype": "roman_civic_forum",
+      "public_access": "public"
+    },
+    "context": {
+      "topography": "valley_between_hills",
+      "setting": "urban_archaeological_core",
+      "heritage_context": [
+        "roman_forum",
+        "civic_space",
+        "palimpsest"
+      ],
+      "landscape_relation": [
+        "processional_axis",
+        "temple_edges",
+        "civic_void"
+      ]
+    },
+    "database_tags": [
+      "material:stone",
+      "material:roman_concrete",
+      "typology:forum",
+      "context:urban_core",
+      "structure:monumental_ensemble",
+      "blender:site_model_candidate"
+    ],
+    "model_3d": {
+      "source_basis": "Public hero/source metadata plus lecture-derived historical framework; geometry remains planned/reconstruction-grade until source plans are reviewed.",
+      "parts": [
+        {
+          "type": "low",
+          "r2_key": "models/forum-romanum/low.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "mass",
+          "r2_key": "models/forum-romanum/mass.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "site",
+          "r2_key": "models/forum-romanum/site.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "structure",
+          "r2_key": "models/forum-romanum/structure.glb",
+          "review_status": "planned"
+        }
+      ],
+      "license": "own_work"
+    },
+    "analysis_layers": [
+      {
+        "analysis_type": "material_system",
+        "summary": "Primary material reading: travertine, tufa, brick, roman_concrete. The Forum Romanum accumulates stone, brick and concrete monuments around a civic valley; it should be modeled as a layered public field rather than one building.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "urban_context",
+        "summary": "Database classification places Forum Romanum in roman_civic_forum, with context tags roman_forum, civic_space, palimpsest.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "source_reconstruction",
+        "summary": "3D/Blender layer is planned as an analytical reconstruction layer; no exact measured model is claimed at this stage.",
+        "review_status": "needs_source"
+      }
+    ],
+    "analysis_observations": [
+      {
+        "analysis_type": "material_tag",
+        "label": "material:stone",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "material_tag",
+        "label": "material:roman_concrete",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:forum",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      }
+    ],
+    "database_profile": {
+      "status": "draft",
+      "r2_prefix": "entries/forum-romanum",
+      "source_count": 3,
+      "media_count": 4,
+      "model_count": 4,
+      "analysis_count": 3,
+      "tag_count": 6
+    }
   },
   {
     "id": "megara-hyblaea",
@@ -1491,8 +1968,137 @@
         "reliability_level": "secondary_source",
         "rights_status": "licensed",
         "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY-SA 4.0."
+      },
+      {
+        "source_type": "website",
+        "title": "American School of Classical Studies: Athenian Agora Excavations",
+        "url": "https://www.ascsa.edu.gr/excavations/athenian-agora",
+        "reliability_level": "primary_source",
+        "rights_status": "licensed",
+        "notes": "Institutional excavation reference for the Athenian Agora and its civic/archaeological layers."
       }
-    ]
+    ],
+    "geo": {
+      "lat": 37.975,
+      "lon": 23.723,
+      "region": "Athens",
+      "precision": "site"
+    },
+    "materials": {
+      "primary": [
+        "limestone",
+        "marble"
+      ],
+      "secondary": [
+        "terracotta_roof",
+        "timber"
+      ],
+      "notes": "The Agora combines open civic ground with stoas, temples and administrative buildings; material reading is stone civic architecture around a public void."
+    },
+    "program": {
+      "type": "public_space",
+      "subtype": "greek_civic_agora",
+      "public_access": "public"
+    },
+    "context": {
+      "topography": "low_urban_slope",
+      "setting": "urban_archaeological_core",
+      "heritage_context": [
+        "greek_agora",
+        "democratic_civic_space"
+      ],
+      "landscape_relation": [
+        "public_void",
+        "stoa_edges",
+        "acropolis_relation"
+      ]
+    },
+    "database_tags": [
+      "material:limestone",
+      "material:marble",
+      "typology:agora",
+      "typology:stoa",
+      "context:civic_void",
+      "blender:site_model_candidate"
+    ],
+    "model_3d": {
+      "source_basis": "Public hero/source metadata plus lecture-derived historical framework; geometry remains planned/reconstruction-grade until source plans are reviewed.",
+      "parts": [
+        {
+          "type": "low",
+          "r2_key": "models/agora-of-athens/low.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "mass",
+          "r2_key": "models/agora-of-athens/mass.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "site",
+          "r2_key": "models/agora-of-athens/site.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "structure",
+          "r2_key": "models/agora-of-athens/structure.glb",
+          "review_status": "planned"
+        }
+      ],
+      "license": "own_work"
+    },
+    "analysis_layers": [
+      {
+        "analysis_type": "material_system",
+        "summary": "Primary material reading: limestone, marble. The Agora combines open civic ground with stoas, temples and administrative buildings; material reading is stone civic architecture around a public void.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "urban_context",
+        "summary": "Database classification places Agora of Athens in greek_civic_agora, with context tags greek_agora, democratic_civic_space.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "source_reconstruction",
+        "summary": "3D/Blender layer is planned as an analytical reconstruction layer; no exact measured model is claimed at this stage.",
+        "review_status": "needs_source"
+      }
+    ],
+    "analysis_observations": [
+      {
+        "analysis_type": "material_tag",
+        "label": "material:limestone",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "material_tag",
+        "label": "material:marble",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:agora",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:stoa",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      }
+    ],
+    "database_profile": {
+      "status": "draft",
+      "r2_prefix": "entries/agora-of-athens",
+      "source_count": 3,
+      "media_count": 4,
+      "model_count": 4,
+      "analysis_count": 3,
+      "tag_count": 6
+    }
   },
   {
     "id": "milet",
@@ -1555,8 +2161,131 @@
         "reliability_level": "secondary_source",
         "rights_status": "licensed",
         "notes": "Auto-selected hero image candidate. Score: 0.95. License: CC BY-SA 3.0."
+      },
+      {
+        "source_type": "website",
+        "title": "Encyclopaedia Britannica: Miletus",
+        "url": "https://www.britannica.com/place/Miletus",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Public reference for Miletus as an Ionian city and planning reference."
       }
-    ]
+    ],
+    "geo": {
+      "lat": 37.53,
+      "lon": 27.278,
+      "region": "Ionia / Aydin",
+      "precision": "site"
+    },
+    "materials": {
+      "primary": [
+        "limestone",
+        "marble",
+        "masonry"
+      ],
+      "secondary": [
+        "harbor_infrastructure"
+      ],
+      "notes": "Milet is an important grid-planning and harbor-city reference, with stone civic monuments arranged in relation to orthogonal urban order and changing coastline."
+    },
+    "program": {
+      "type": "urban_plan",
+      "subtype": "ionian_grid_harbor_city",
+      "public_access": "public"
+    },
+    "context": {
+      "topography": "former_harbor_plain",
+      "setting": "archaeological_city_landscape",
+      "heritage_context": [
+        "greek_city",
+        "hippodamian_grid",
+        "harbor_urbanism"
+      ],
+      "landscape_relation": [
+        "harbor_basin",
+        "orthogonal_grid",
+        "civic_center"
+      ]
+    },
+    "database_tags": [
+      "material:limestone",
+      "typology:grid_city",
+      "typology:harbor_city",
+      "context:coastal_plain",
+      "blender:urban_grid_candidate"
+    ],
+    "model_3d": {
+      "source_basis": "Public hero/source metadata plus lecture-derived historical framework; geometry remains planned/reconstruction-grade until source plans are reviewed.",
+      "parts": [
+        {
+          "type": "low",
+          "r2_key": "models/milet/low.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "mass",
+          "r2_key": "models/milet/mass.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "site",
+          "r2_key": "models/milet/site.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "structure",
+          "r2_key": "models/milet/structure.glb",
+          "review_status": "planned"
+        }
+      ],
+      "license": "own_work"
+    },
+    "analysis_layers": [
+      {
+        "analysis_type": "material_system",
+        "summary": "Primary material reading: limestone, marble, masonry. Milet is an important grid-planning and harbor-city reference, with stone civic monuments arranged in relation to orthogonal urban order and changing coastline.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "urban_context",
+        "summary": "Database classification places Milet in ionian_grid_harbor_city, with context tags greek_city, hippodamian_grid, harbor_urbanism.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "source_reconstruction",
+        "summary": "3D/Blender layer is planned as an analytical reconstruction layer; no exact measured model is claimed at this stage.",
+        "review_status": "needs_source"
+      }
+    ],
+    "analysis_observations": [
+      {
+        "analysis_type": "material_tag",
+        "label": "material:limestone",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:grid_city",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:harbor_city",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      }
+    ],
+    "database_profile": {
+      "status": "draft",
+      "r2_prefix": "entries/milet",
+      "source_count": 3,
+      "media_count": 4,
+      "model_count": 4,
+      "analysis_count": 3,
+      "tag_count": 5
+    }
   },
   {
     "id": "parthenon",
@@ -1684,8 +2413,137 @@
         "reliability_level": "secondary_source",
         "rights_status": "licensed",
         "notes": "Auto-selected hero image candidate. Score: 0.95. License: CC BY-SA 4.0."
+      },
+      {
+        "source_type": "website",
+        "title": "Encyclopaedia Britannica: Olynthus",
+        "url": "https://www.britannica.com/place/Olynthus",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Public reference for Olynthus and its Greek urban/domestic fabric."
       }
-    ]
+    ],
+    "geo": {
+      "lat": 40.292,
+      "lon": 23.348,
+      "region": "Chalkidiki",
+      "precision": "site"
+    },
+    "materials": {
+      "primary": [
+        "stone_foundations",
+        "mud_brick"
+      ],
+      "secondary": [
+        "timber_roof",
+        "courtyard_surface"
+      ],
+      "notes": "Olynth is central for reading Greek domestic blocks: regular street grid, courtyard houses and stone foundation traces with reconstructed mud-brick/timber superstructures."
+    },
+    "program": {
+      "type": "urban_plan",
+      "subtype": "greek_domestic_grid",
+      "public_access": "public"
+    },
+    "context": {
+      "topography": "low_hill",
+      "setting": "archaeological_site",
+      "heritage_context": [
+        "greek_city",
+        "domestic_block",
+        "urban_grid"
+      ],
+      "landscape_relation": [
+        "house_block",
+        "courtyard_pattern",
+        "street_grid"
+      ]
+    },
+    "database_tags": [
+      "material:stone_foundation",
+      "material:mud_brick",
+      "typology:courtyard_house",
+      "typology:grid_plan",
+      "blender:block_model_candidate"
+    ],
+    "model_3d": {
+      "source_basis": "Public hero/source metadata plus lecture-derived historical framework; geometry remains planned/reconstruction-grade until source plans are reviewed.",
+      "parts": [
+        {
+          "type": "low",
+          "r2_key": "models/olynth/low.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "mass",
+          "r2_key": "models/olynth/mass.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "site",
+          "r2_key": "models/olynth/site.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "structure",
+          "r2_key": "models/olynth/structure.glb",
+          "review_status": "planned"
+        }
+      ],
+      "license": "own_work"
+    },
+    "analysis_layers": [
+      {
+        "analysis_type": "material_system",
+        "summary": "Primary material reading: stone_foundations, mud_brick. Olynth is central for reading Greek domestic blocks: regular street grid, courtyard houses and stone foundation traces with reconstructed mud-brick/timber superstructures.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "urban_context",
+        "summary": "Database classification places Olynth in greek_domestic_grid, with context tags greek_city, domestic_block, urban_grid.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "source_reconstruction",
+        "summary": "3D/Blender layer is planned as an analytical reconstruction layer; no exact measured model is claimed at this stage.",
+        "review_status": "needs_source"
+      }
+    ],
+    "analysis_observations": [
+      {
+        "analysis_type": "material_tag",
+        "label": "material:stone_foundation",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "material_tag",
+        "label": "material:mud_brick",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:courtyard_house",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:grid_plan",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      }
+    ],
+    "database_profile": {
+      "status": "draft",
+      "r2_prefix": "entries/olynth",
+      "source_count": 3,
+      "media_count": 4,
+      "model_count": 4,
+      "analysis_count": 3,
+      "tag_count": 5
+    }
   },
   {
     "id": "priene",
@@ -1748,8 +2606,131 @@
         "reliability_level": "secondary_source",
         "rights_status": "licensed",
         "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY 2.0."
+      },
+      {
+        "source_type": "website",
+        "title": "Encyclopaedia Britannica: Priene",
+        "url": "https://www.britannica.com/place/Priene",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Public reference for Priene, its grid plan and hillside urbanism."
       }
-    ]
+    ],
+    "geo": {
+      "lat": 37.659,
+      "lon": 27.297,
+      "region": "Ionia / Aydin",
+      "precision": "site"
+    },
+    "materials": {
+      "primary": [
+        "limestone",
+        "marble",
+        "masonry"
+      ],
+      "secondary": [
+        "terrace_walls"
+      ],
+      "notes": "Priene adapts an orthogonal urban grid to a steep slope, making terraces, retaining walls and civic monuments inseparable from topography."
+    },
+    "program": {
+      "type": "urban_plan",
+      "subtype": "terraced_hellenistic_grid_city",
+      "public_access": "public"
+    },
+    "context": {
+      "topography": "steep_slope",
+      "setting": "archaeological_mountain_site",
+      "heritage_context": [
+        "hellenistic_city",
+        "grid_plan",
+        "temple_of_athena"
+      ],
+      "landscape_relation": [
+        "terracing",
+        "mountain_backdrop",
+        "civic_platforms"
+      ]
+    },
+    "database_tags": [
+      "material:limestone",
+      "typology:grid_city",
+      "topography:slope",
+      "structure:terrace_wall",
+      "blender:terrain_model_candidate"
+    ],
+    "model_3d": {
+      "source_basis": "Public hero/source metadata plus lecture-derived historical framework; geometry remains planned/reconstruction-grade until source plans are reviewed.",
+      "parts": [
+        {
+          "type": "low",
+          "r2_key": "models/priene/low.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "mass",
+          "r2_key": "models/priene/mass.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "site",
+          "r2_key": "models/priene/site.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "structure",
+          "r2_key": "models/priene/structure.glb",
+          "review_status": "planned"
+        }
+      ],
+      "license": "own_work"
+    },
+    "analysis_layers": [
+      {
+        "analysis_type": "material_system",
+        "summary": "Primary material reading: limestone, marble, masonry. Priene adapts an orthogonal urban grid to a steep slope, making terraces, retaining walls and civic monuments inseparable from topography.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "urban_context",
+        "summary": "Database classification places Priene in terraced_hellenistic_grid_city, with context tags hellenistic_city, grid_plan, temple_of_athena.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "source_reconstruction",
+        "summary": "3D/Blender layer is planned as an analytical reconstruction layer; no exact measured model is claimed at this stage.",
+        "review_status": "needs_source"
+      }
+    ],
+    "analysis_observations": [
+      {
+        "analysis_type": "material_tag",
+        "label": "material:limestone",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:grid_city",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "topography:slope",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      }
+    ],
+    "database_profile": {
+      "status": "draft",
+      "r2_prefix": "entries/priene",
+      "source_count": 3,
+      "media_count": 4,
+      "model_count": 4,
+      "analysis_count": 3,
+      "tag_count": 5
+    }
   },
   {
     "id": "dura-europos",
@@ -1812,8 +2793,132 @@
         "reliability_level": "secondary_source",
         "rights_status": "licensed",
         "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY-SA 2.5."
+      },
+      {
+        "source_type": "website",
+        "title": "Yale University Art Gallery: Dura-Europos",
+        "url": "https://artgallery.yale.edu/dura-europos",
+        "reliability_level": "primary_source",
+        "rights_status": "licensed",
+        "notes": "Institutional source for Dura-Europos excavations, objects and site context."
       }
-    ]
+    ],
+    "geo": {
+      "lat": 34.747,
+      "lon": 40.729,
+      "region": "Euphrates / Syria",
+      "precision": "site"
+    },
+    "materials": {
+      "primary": [
+        "mud_brick",
+        "stone",
+        "plaster"
+      ],
+      "secondary": [
+        "painted_plaster",
+        "timber"
+      ],
+      "notes": "Dura-Europos is a fortified frontier city with mud-brick and stone fabric, city walls, religious interiors and exceptional painted/plastered room evidence."
+    },
+    "program": {
+      "type": "urban_plan",
+      "subtype": "fortified_frontier_city",
+      "public_access": "restricted"
+    },
+    "context": {
+      "topography": "river_bluff",
+      "setting": "euphrates_archaeological_landscape",
+      "heritage_context": [
+        "frontier_city",
+        "fortification",
+        "religious_pluralism"
+      ],
+      "landscape_relation": [
+        "euphrates_edge",
+        "city_wall",
+        "street_grid"
+      ]
+    },
+    "database_tags": [
+      "material:mud_brick",
+      "material:stone",
+      "typology:fortified_city",
+      "context:river_bluff",
+      "blender:fortification_model_candidate"
+    ],
+    "model_3d": {
+      "source_basis": "Public hero/source metadata plus lecture-derived historical framework; geometry remains planned/reconstruction-grade until source plans are reviewed.",
+      "parts": [
+        {
+          "type": "low",
+          "r2_key": "models/dura-europos/low.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "mass",
+          "r2_key": "models/dura-europos/mass.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "site",
+          "r2_key": "models/dura-europos/site.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "structure",
+          "r2_key": "models/dura-europos/structure.glb",
+          "review_status": "planned"
+        }
+      ],
+      "license": "own_work"
+    },
+    "analysis_layers": [
+      {
+        "analysis_type": "material_system",
+        "summary": "Primary material reading: mud_brick, stone, plaster. Dura-Europos is a fortified frontier city with mud-brick and stone fabric, city walls, religious interiors and exceptional painted/plastered room evidence.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "urban_context",
+        "summary": "Database classification places Dura-Europos in fortified_frontier_city, with context tags frontier_city, fortification, religious_pluralism.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "source_reconstruction",
+        "summary": "3D/Blender layer is planned as an analytical reconstruction layer; no exact measured model is claimed at this stage.",
+        "review_status": "needs_source"
+      }
+    ],
+    "analysis_observations": [
+      {
+        "analysis_type": "material_tag",
+        "label": "material:mud_brick",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "material_tag",
+        "label": "material:stone",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:fortified_city",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      }
+    ],
+    "database_profile": {
+      "status": "draft",
+      "r2_prefix": "entries/dura-europos",
+      "source_count": 3,
+      "media_count": 4,
+      "model_count": 4,
+      "analysis_count": 3,
+      "tag_count": 5
+    }
   },
   {
     "id": "pompeji",
@@ -1876,8 +2981,140 @@
         "reliability_level": "secondary_source",
         "rights_status": "licensed",
         "notes": "Auto-selected hero image candidate. Score: 0.95. License: CC BY-SA 4.0."
+      },
+      {
+        "source_type": "website",
+        "title": "UNESCO World Heritage Centre: Archaeological Areas of Pompei, Herculaneum and Torre Annunziata",
+        "url": "https://whc.unesco.org/en/list/829/",
+        "reliability_level": "primary_source",
+        "rights_status": "licensed",
+        "notes": "UNESCO reference for Pompeii and its archaeological urban fabric."
       }
-    ]
+    ],
+    "geo": {
+      "lat": 40.749,
+      "lon": 14.484,
+      "region": "Campania",
+      "precision": "site"
+    },
+    "materials": {
+      "primary": [
+        "tufa",
+        "brick",
+        "roman_concrete",
+        "plaster"
+      ],
+      "secondary": [
+        "lava_paving",
+        "fresco_plaster"
+      ],
+      "notes": "Pompeii combines volcanic stone, brick, concrete, plastered interiors and street paving; the urban model should expose domestic, commercial and infrastructural layers."
+    },
+    "program": {
+      "type": "urban_plan",
+      "subtype": "roman_city",
+      "public_access": "public"
+    },
+    "context": {
+      "topography": "volcanic_plain",
+      "setting": "archaeological_city_landscape",
+      "heritage_context": [
+        "unesco_world_heritage_site",
+        "roman_domestic_city",
+        "vesuvian_context"
+      ],
+      "landscape_relation": [
+        "street_network",
+        "insulae",
+        "volcanic_landscape"
+      ]
+    },
+    "database_tags": [
+      "material:tufa",
+      "material:roman_concrete",
+      "typology:roman_city",
+      "typology:insula",
+      "context:volcanic_plain",
+      "blender:urban_model_candidate"
+    ],
+    "model_3d": {
+      "source_basis": "Public hero/source metadata plus lecture-derived historical framework; geometry remains planned/reconstruction-grade until source plans are reviewed.",
+      "parts": [
+        {
+          "type": "low",
+          "r2_key": "models/pompeji/low.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "mass",
+          "r2_key": "models/pompeji/mass.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "site",
+          "r2_key": "models/pompeji/site.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "structure",
+          "r2_key": "models/pompeji/structure.glb",
+          "review_status": "planned"
+        }
+      ],
+      "license": "own_work"
+    },
+    "analysis_layers": [
+      {
+        "analysis_type": "material_system",
+        "summary": "Primary material reading: tufa, brick, roman_concrete, plaster. Pompeii combines volcanic stone, brick, concrete, plastered interiors and street paving; the urban model should expose domestic, commercial and infrastructural layers.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "urban_context",
+        "summary": "Database classification places Pompeji in roman_city, with context tags unesco_world_heritage_site, roman_domestic_city, vesuvian_context.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "source_reconstruction",
+        "summary": "3D/Blender layer is planned as an analytical reconstruction layer; no exact measured model is claimed at this stage.",
+        "review_status": "needs_source"
+      }
+    ],
+    "analysis_observations": [
+      {
+        "analysis_type": "material_tag",
+        "label": "material:tufa",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "material_tag",
+        "label": "material:roman_concrete",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:roman_city",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:insula",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      }
+    ],
+    "database_profile": {
+      "status": "draft",
+      "r2_prefix": "entries/pompeji",
+      "source_count": 3,
+      "media_count": 4,
+      "model_count": 4,
+      "analysis_count": 3,
+      "tag_count": 6
+    }
   },
   {
     "id": "timgad",
@@ -1940,8 +3177,131 @@
         "reliability_level": "secondary_source",
         "rights_status": "licensed",
         "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY-SA 2.0."
+      },
+      {
+        "source_type": "website",
+        "title": "UNESCO World Heritage Centre: Timgad",
+        "url": "https://whc.unesco.org/en/list/194/",
+        "reliability_level": "primary_source",
+        "rights_status": "licensed",
+        "notes": "UNESCO reference for Timgad as Roman colonial grid city."
       }
-    ]
+    ],
+    "geo": {
+      "lat": 35.484,
+      "lon": 6.468,
+      "region": "Batna",
+      "precision": "site"
+    },
+    "materials": {
+      "primary": [
+        "limestone",
+        "stone_masonry"
+      ],
+      "secondary": [
+        "paving_stone",
+        "columnar_spolia"
+      ],
+      "notes": "Timgad is a Roman colonial grid city whose stone streets, forum, theater and cardo/decumanus structure make it a strong urban-order reference."
+    },
+    "program": {
+      "type": "urban_plan",
+      "subtype": "roman_colonial_grid_city",
+      "public_access": "public"
+    },
+    "context": {
+      "topography": "plateau_plain",
+      "setting": "archaeological_city_landscape",
+      "heritage_context": [
+        "unesco_world_heritage_site",
+        "roman_colony",
+        "grid_city"
+      ],
+      "landscape_relation": [
+        "cardo_decumanus",
+        "forum_center",
+        "colonial_grid"
+      ]
+    },
+    "database_tags": [
+      "material:limestone",
+      "typology:roman_colony",
+      "typology:grid_city",
+      "structure:stone_masonry",
+      "blender:urban_grid_candidate"
+    ],
+    "model_3d": {
+      "source_basis": "Public hero/source metadata plus lecture-derived historical framework; geometry remains planned/reconstruction-grade until source plans are reviewed.",
+      "parts": [
+        {
+          "type": "low",
+          "r2_key": "models/timgad/low.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "mass",
+          "r2_key": "models/timgad/mass.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "site",
+          "r2_key": "models/timgad/site.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "structure",
+          "r2_key": "models/timgad/structure.glb",
+          "review_status": "planned"
+        }
+      ],
+      "license": "own_work"
+    },
+    "analysis_layers": [
+      {
+        "analysis_type": "material_system",
+        "summary": "Primary material reading: limestone, stone_masonry. Timgad is a Roman colonial grid city whose stone streets, forum, theater and cardo/decumanus structure make it a strong urban-order reference.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "urban_context",
+        "summary": "Database classification places Timgad in roman_colonial_grid_city, with context tags unesco_world_heritage_site, roman_colony, grid_city.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "source_reconstruction",
+        "summary": "3D/Blender layer is planned as an analytical reconstruction layer; no exact measured model is claimed at this stage.",
+        "review_status": "needs_source"
+      }
+    ],
+    "analysis_observations": [
+      {
+        "analysis_type": "material_tag",
+        "label": "material:limestone",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:roman_colony",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:grid_city",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      }
+    ],
+    "database_profile": {
+      "status": "draft",
+      "r2_prefix": "entries/timgad",
+      "source_count": 3,
+      "media_count": 4,
+      "model_count": 4,
+      "analysis_count": 3,
+      "tag_count": 5
+    }
   },
   {
     "id": "vitruvius-de-architectura",
@@ -2227,8 +3587,139 @@
         "reliability_level": "secondary_source",
         "rights_status": "licensed",
         "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY 4.0."
+      },
+      {
+        "source_type": "website",
+        "title": "UNESCO World Heritage Centre: Historic Centre of Siena",
+        "url": "https://whc.unesco.org/en/list/717/",
+        "reliability_level": "primary_source",
+        "rights_status": "licensed",
+        "notes": "UNESCO reference for Siena’s historic city fabric and civic landscape."
       }
-    ]
+    ],
+    "geo": {
+      "lat": 43.318,
+      "lon": 11.331,
+      "region": "Tuscany",
+      "precision": "city"
+    },
+    "materials": {
+      "primary": [
+        "brick",
+        "stone",
+        "terracotta"
+      ],
+      "secondary": [
+        "plaster",
+        "paving_stone"
+      ],
+      "notes": "Siena is read as a medieval hill city where brick/stone fabric, shell-shaped Piazza del Campo and topographic streets form a compact civic landscape."
+    },
+    "program": {
+      "type": "urban_plan",
+      "subtype": "medieval_hill_city",
+      "public_access": "public"
+    },
+    "context": {
+      "topography": "hilltop_ridge",
+      "setting": "historic_city_center",
+      "heritage_context": [
+        "unesco_world_heritage_site",
+        "medieval_city",
+        "civic_square"
+      ],
+      "landscape_relation": [
+        "piazza_del_campo",
+        "ridge_streets",
+        "civic_tower"
+      ]
+    },
+    "database_tags": [
+      "material:brick",
+      "material:stone",
+      "typology:hill_town",
+      "typology:civic_square",
+      "topography:hilltop",
+      "blender:urban_mass_candidate"
+    ],
+    "model_3d": {
+      "source_basis": "Public hero/source metadata plus lecture-derived historical framework; geometry remains planned/reconstruction-grade until source plans are reviewed.",
+      "parts": [
+        {
+          "type": "low",
+          "r2_key": "models/siena/low.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "mass",
+          "r2_key": "models/siena/mass.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "site",
+          "r2_key": "models/siena/site.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "structure",
+          "r2_key": "models/siena/structure.glb",
+          "review_status": "planned"
+        }
+      ],
+      "license": "own_work"
+    },
+    "analysis_layers": [
+      {
+        "analysis_type": "material_system",
+        "summary": "Primary material reading: brick, stone, terracotta. Siena is read as a medieval hill city where brick/stone fabric, shell-shaped Piazza del Campo and topographic streets form a compact civic landscape.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "urban_context",
+        "summary": "Database classification places Siena in medieval_hill_city, with context tags unesco_world_heritage_site, medieval_city, civic_square.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "source_reconstruction",
+        "summary": "3D/Blender layer is planned as an analytical reconstruction layer; no exact measured model is claimed at this stage.",
+        "review_status": "needs_source"
+      }
+    ],
+    "analysis_observations": [
+      {
+        "analysis_type": "material_tag",
+        "label": "material:brick",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "material_tag",
+        "label": "material:stone",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:hill_town",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:civic_square",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      }
+    ],
+    "database_profile": {
+      "status": "draft",
+      "r2_prefix": "entries/siena",
+      "source_count": 3,
+      "media_count": 4,
+      "model_count": 4,
+      "analysis_count": 3,
+      "tag_count": 6
+    }
   },
   {
     "id": "alhambra",
