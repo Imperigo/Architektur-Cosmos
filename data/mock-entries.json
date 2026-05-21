@@ -8681,35 +8681,39 @@
     "short_description": "Umbau und Erweiterung des Klosters Ingenbohl zu einem Alterszentrum, bei dem bestehende Klosterstrukturen, neue Pflegearchitektur und materialbezogene Tektonik miteinander verbunden werden.",
     "source_quality": "draft_source_attached",
     "one_sentence": "Das Alterszentrum Kloster Ingenbohl verbindet klösterlichen Bestand, neue Pflegearchitektur, Betontragwerk, mineralische Oberflächen und hölzerne Fassadenschichten zu einem zeitgenössischen Weiterbauen im Bestand.",
-    "full_description": "Der Umbau des Klosters Ingenbohl in Brunnen wird als Weiterbauen am Bestand gelesen: Die neue Struktur ergänzt das klösterliche Ensemble, arbeitet mit Hof, Sockel, Terrassen und präzisen Materialschichten und verbindet Pflegearchitektur mit einer ruhigen, tektonisch starken Ordnung. Für Architecture Cosmos dient der Eintrag als Pilot für den Dev-Research-Workflow: Quellen, Medien, Analysefilter, Tragwerk, Materialsystem und spätere Modell-Layer werden strukturiert vorbereitet, bevor echte Bild- und Planrechte öffentlich freigegeben werden.",
+    "full_description": "Das Alterszentrum Kloster Ingenbohl wird als präzise Erweiterung einer klösterlichen Topografie gelesen: ein siebengeschossiger Pflegebau an der östlichen Hangkante, der Besucherparkplatz, Klosterplateau, Kapelle, Pflegezimmer und gemeinschaftliche Räume in einer vertikalen Ordnung verbindet. Architektonisch wichtig ist die Kombination aus massivem Stahlbetonskelett, aussteifendem Kern, punktgestützten Flachdecken, gestampftem Trasskalk, Weisstannen-Holzschalung und mineralischen Innenoberflächen. Für Architecture Cosmos ist der Eintrag ein Schweizer Gegenwarts-Pilot für Care-Architektur, Weiterbauen im institutionellen Bestand, Materialanalyse und spätere Blender-Layer: Struktur, Hülle, Sockel, Hof, Hangkante, Kapelle, Erschliessung und Materialschichten sollen getrennt modellier- und filterbar werden.",
     "media": [
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Kloster Ingenbohl / Hangkante, Klosterhügel, vertikale Fassadenstrata und mineralischer Baukörper",
-        "credit": "private_research",
-        "license": "personal_only"
+        "placeholder": "Aussenansicht / Kloster Ingenbohl / siebengeschossiger Baukörper an der östlichen Hangkante, sichtbares Stützen- und Plattenraster, Kolonnaden, gestampfter Trasskalk und Weisstannen-Holzschalung.",
+        "credit": "private_research / public metadata only",
+        "license": "personal_only",
+        "source_url": "https://www.schnetzerpuskas.com/de/projekte/3705-alterszentrum-kloster-ingenbohl"
       },
       {
         "type": "interior",
         "label": "Innenraum",
-        "placeholder": "Innenraum / Kloster Ingenbohl / helle Pflegezimmer, ruhige mineralische Oberflächen, Holz, Lehm- und Kalkputz",
-        "credit": "private_research",
-        "license": "personal_only"
+        "placeholder": "Innenraum / Kloster Ingenbohl / Kapelle und Foyer als zweigeschossige, spirituelle Räume mit grossflächiger Verglasung, gestampftem Trasskalk, Stahltreppe und ruhiger Pflegeatmosphäre.",
+        "credit": "private_research / public metadata only",
+        "license": "personal_only",
+        "source_url": "https://www.schnetzerpuskas.com/de/projekte/3705-alterszentrum-kloster-ingenbohl"
       },
       {
         "type": "section",
         "label": "Schnitt",
-        "placeholder": "Schnitt / Kloster Ingenbohl / Sockel, Hof, Hangkante, Dachgarten, aussteifender Kern und Stahlbetonskelett",
-        "credit": "private_research",
-        "license": "personal_only"
+        "placeholder": "Schnitt / Kloster Ingenbohl / Dachtechnik, sechs Obergeschosse, Erdgeschoss und vier teilweise in den Hügel versenkte Untergeschosse zwischen Besucherparkplatz und Klosterplateau.",
+        "credit": "private_research / public metadata only",
+        "license": "personal_only",
+        "source_url": "https://www.schnetzerpuskas.com/de/projekte/3705-alterszentrum-kloster-ingenbohl"
       },
       {
         "type": "plan",
         "label": "Grundriss",
-        "placeholder": "Grundriss / Kloster Ingenbohl / fast quadratischer Baukörper, eingeschnittener Hof, Pflegecluster und Erschliessung",
-        "credit": "private_research",
-        "license": "personal_only"
+        "placeholder": "Grundriss / Kloster Ingenbohl / Pflegecluster, 76 Einzelzimmer mit Nasszellen, Kapelle, Speisesaal, Spitex- und Pflegeräume, Büros, Gastroküche und öffentliches Café.",
+        "credit": "private_research / public metadata only",
+        "license": "personal_only",
+        "source_url": "https://www.schnetzerpuskas.com/de/projekte/3705-alterszentrum-kloster-ingenbohl"
       }
     ],
     "source_documents": [
@@ -8725,7 +8729,31 @@
         "url": "https://boltshauser.info/projekt/alterszentrum-kloster-ingenbohl/",
         "reliability_level": "primary_source",
         "rights_status": "private_research",
-        "notes": "Primary office source for private research and later rights review."
+        "notes": "Primary architecture office source; public display of images/plans requires rights review."
+      },
+      {
+        "source_type": "website",
+        "title": "Schnetzer Puskas / Alterszentrum Kloster Ingenbohl",
+        "url": "https://www.schnetzerpuskas.com/de/projekte/3705-alterszentrum-kloster-ingenbohl",
+        "reliability_level": "primary_source",
+        "rights_status": "private_research",
+        "notes": "Structural engineering source: seven-storey care building, eastern slope edge, reinforced-concrete skeleton, bracing core, point-supported flat slabs, post-tensioning, trass lime, chapel."
+      },
+      {
+        "source_type": "website",
+        "title": "Halter AG / Alterszentrum Kloster Ingenbohl",
+        "url": "https://www.halter.ch/de/projekte/alterszentrum-kloster-ingenbohl",
+        "reliability_level": "primary_source",
+        "rights_status": "private_research",
+        "notes": "Design-build and program source: 76 rooms, dining hall, chapel, care rooms, offices, kitchen, public cafe, 6140 m2, CHF 33 million, completion October 2023, timber panel construction with rear-ventilated silver-fir cladding."
+      },
+      {
+        "source_type": "article",
+        "title": "KOMPLEX / Neue Räume für ein gemeinschaftliches Leben",
+        "url": "https://www.komplex-magazin.ch/de/artikel/neue-raume-fur-ein-gemeinschaftliches-leben",
+        "reliability_level": "secondary_source",
+        "rights_status": "private_research",
+        "notes": "Architectural article by Reto Westermann with photographs by Oliver Stern; useful for context, competition background and spatial reading, link-only/public-safe."
       }
     ],
     "database_tags": [
@@ -8750,98 +8778,147 @@
       "composition:square-plan",
       "composition:inner-courtyard",
       "rights:private-research",
-      "analysis:needs-review"
+      "analysis:needs-review",
+      "program:76-single-rooms",
+      "program:chapel",
+      "program:public-cafe",
+      "material:stamped-trass-lime",
+      "material:silver-fir",
+      "structure:point-supported-flat-slab",
+      "structure:post-tensioning",
+      "context:eastern-slope-edge",
+      "context:monastery-plateau",
+      "model:structure-layer-planned",
+      "model:site-layer-planned",
+      "analysis:reviewed-structure",
+      "analysis:reviewed-materials"
     ],
     "database_profile": {
-      "status": "draft",
+      "status": "reviewed",
       "r2_prefix": "entries/alterszentrum-kloster-ingenbohl",
-      "source_count": 3,
+      "source_count": 4,
       "media_count": 4,
-      "model_count": 0,
-      "analysis_count": 4,
-      "tag_count": 22
+      "model_count": 5,
+      "analysis_count": 5,
+      "tag_count": 35
     },
     "ingestion_status": {
-      "stage": "ready_for_wormhole",
-      "source_status": "candidate",
+      "stage": "needs_review",
+      "source_status": "reviewed",
       "asset_status": "rights_blocked",
       "model_status": "planned",
-      "updated_at": "2026-05-19"
+      "updated_at": "2026-05-21T00:00:00.000Z",
+      "local_storage_limit_bytes": 10737418240
     },
     "analysis_layers": [
       {
         "analysis_type": "structure",
-        "summary": "Vorläufige Tragwerkslesung: massiver Bestand, ergänzende neue Tragstruktur, Stahlbetonskelett und aussteifender Kern. Die klare Lastabtragung über Sockel, Wand- und Deckensysteme muss später anhand von Plänen geprüft und im 3D-Modell layerweise getrennt werden.",
+        "summary": "Das Tragwerk wird als massives Stahlbetonskelett mit aussteifendem Kern gelesen. Punktgestützte Flachdecken erlauben flexible Spannweiten; Wind- und Erdbebenlasten werden über schubsteife Decken in die Kernwände geleitet. Die innere Stützenordnung läuft ohne Abfangungen bis zur Gründung und wird durch Vorspannung unterstützt.",
         "data": {
-          "hypotheses": [
-            "existing_monastery_fabric",
-            "new_reinforced_concrete_frame",
+          "primary_system": "reinforced_concrete_skeleton",
+          "key_elements": [
             "bracing_core",
-            "care_cluster_floorplates",
-            "courtyard_and_terrace_order"
-          ]
+            "point_supported_flat_slabs",
+            "continuous_columns",
+            "post_tensioning",
+            "shear_resistant_slabs"
+          ],
+          "source_basis": "Schnetzer Puskas project text"
         },
-        "review_status": "draft"
+        "r2_key": "entries/alterszentrum-kloster-ingenbohl/analysis/structure.json",
+        "review_status": "reviewed"
       },
       {
         "analysis_type": "material_system",
-        "summary": "Mineralische Oberflächen, Trasskalkelemente mit vertikaler Struktur, Beton, lasiertes Holz, Kalkputz und Lehmputz bilden das vorläufige Materialsystem und verbinden Bestand mit neuer Pflegearchitektur.",
+        "summary": "Das Materialsystem kombiniert Massivbau, gestampften Trasskalk als CO2-ärmere Alternative zu klassischem Sichtbeton, Weisstannen-Holzschalung, Beton, Kalkputz und Lehmputz. Für die Datenbank sind Trasskalk, Holz-Hybrid, mineralische Oberflächen und Bestand als eigene Filter relevant.",
         "data": {
           "materials": [
-            "concrete",
-            "timber",
-            "trass lime elements",
-            "lime plaster",
-            "clay plaster",
-            "existing masonry"
+            "reinforced_concrete",
+            "stamped_trass_lime",
+            "silver_fir_timber_cladding",
+            "lime_plaster",
+            "clay_plaster",
+            "existing_masonry"
+          ],
+          "filter_tags": [
+            "material:trass-lime",
+            "material:timber",
+            "material:concrete",
+            "material:lime-plaster",
+            "material:clay-plaster"
           ]
         },
-        "review_status": "draft"
+        "r2_key": "entries/alterszentrum-kloster-ingenbohl/analysis/materials.json",
+        "review_status": "reviewed"
       },
       {
         "analysis_type": "tectonics",
-        "summary": "Die tektonische Analyse liest das Projekt als präzise Schichtung von Bestand, Sockel, Hangkante, Hof, vertikaler Fassadenhaut, aussteifendem Kern und neuen Pflegegeschossen.",
+        "summary": "Tektonisch wird das Projekt als Schichtung aus Hangkante, Sockel, Kolonnaden, sichtbarem Kraftfluss der Fassadenstruktur, Trasskalkwänden, Holzschalung, Kapellenraum und Pflegegeschossen lesbar. Die Fassaden zeigen Stützen, Decken- und Balkonplatten als tragwerksnahes Ordnungssystem.",
         "data": {
           "layers": [
-            "existing_fabric",
-            "plinth",
             "slope_edge",
-            "courtyard",
-            "vertical_trass_lime_facade",
-            "bracing_core",
+            "plinth",
+            "colonnades",
+            "force_flow_facade_grid",
+            "stamped_trass_lime_walls",
+            "timber_cladding_zones",
+            "chapel_void",
             "care_floors"
           ]
         },
-        "review_status": "draft"
+        "r2_key": "entries/alterszentrum-kloster-ingenbohl/analysis/tectonics.json",
+        "review_status": "reviewed"
+      },
+      {
+        "analysis_type": "spatial_order",
+        "summary": "Die räumliche Ordnung verbindet unteres Besucherniveau, teilweise eingegrabene Untergeschosse, Erdgeschoss mit Kapelle und Foyer, Pflegegeschosse, Dachtechnik und Klosterplateau. Die Kapelle ist als zweigeschossiger, verglaster Raum mit Trasskalkwänden ein besonderer spiritueller Schwerpunkt.",
+        "data": {
+          "sequence": [
+            "visitor_parking_level",
+            "partly_buried_basements",
+            "ground_floor_chapel_and_foyer",
+            "care_floors",
+            "roof_service_level",
+            "monastery_plateau"
+          ],
+          "special_spaces": [
+            "two_storey_chapel",
+            "public_cafe",
+            "dining_hall",
+            "care_rooms"
+          ]
+        },
+        "r2_key": "entries/alterszentrum-kloster-ingenbohl/analysis/spatial-order.json",
+        "review_status": "reviewed"
       },
       {
         "analysis_type": "filter_classification",
-        "summary": "Vorgeschlagene Filter: Umbau, Kloster, Pflegearchitektur, quadratischer Baukörper, Hof, Hangkante, Stahlbetonskelett, aussteifender Kern, Beton, Holzfassade, Trasskalk, Kalkputz, Lehmputz, Weiterbauen im Bestand, Schweizer Gegenwartsarchitektur.",
+        "summary": "Vorgeschlagene Filter: Pflegearchitektur, Kloster, Weiterbauen im Bestand, Hangkante, sieben Geschosse, Stahlbetonskelett, aussteifender Kern, Flachdecke, Trasskalk, Weisstanne, Holz-Hybrid, Kapelle, öffentliches Café, Schweizer Gegenwartsarchitektur.",
         "data": {
           "primary_filters": [
-            "adaptive_reuse",
-            "monastery",
             "care_architecture",
-            "square_plan",
-            "inner_courtyard",
+            "monastery_context",
+            "adaptive_reuse",
             "slope_edge",
             "switzerland",
             "contemporary_architecture"
           ],
           "material_filters": [
-            "concrete",
-            "timber",
             "trass_lime",
+            "silver_fir",
+            "concrete",
             "lime_plaster",
             "clay_plaster"
           ],
           "structural_filters": [
-            "reinforced_concrete_frame",
+            "reinforced_concrete_skeleton",
             "bracing_core",
-            "existing_fabric"
+            "point_supported_flat_slab",
+            "post_tensioning"
           ]
         },
-        "review_status": "draft"
+        "r2_key": "entries/alterszentrum-kloster-ingenbohl/analysis/filter-classification.json",
+        "review_status": "reviewed"
       }
     ],
     "geo": {
@@ -8937,6 +9014,186 @@
       "care_cluster",
       "hilltop_context",
       "tectonic_layers"
+    ],
+    "asset_candidates": [
+      {
+        "kind": "image",
+        "media_slot": "exterior",
+        "title": "Ingenbohl exterior candidate from office/article sources",
+        "planned_r2_key": "entries/alterszentrum-kloster-ingenbohl/media/exterior-01.webp",
+        "rights_status": "private_research",
+        "public_display_allowed": false
+      },
+      {
+        "kind": "image",
+        "media_slot": "interior",
+        "title": "Ingenbohl chapel/interior candidate from office/article sources",
+        "planned_r2_key": "entries/alterszentrum-kloster-ingenbohl/media/interior-01.webp",
+        "rights_status": "private_research",
+        "public_display_allowed": false
+      },
+      {
+        "kind": "section",
+        "media_slot": "section",
+        "title": "Analytical section drawing needed: parking level to monastery plateau",
+        "planned_r2_key": "entries/alterszentrum-kloster-ingenbohl/media/section-01.svg",
+        "rights_status": "own_work",
+        "public_display_allowed": false
+      },
+      {
+        "kind": "plan",
+        "media_slot": "plan",
+        "title": "Analytical plan drawing needed: care cluster, chapel and courtyard order",
+        "planned_r2_key": "entries/alterszentrum-kloster-ingenbohl/media/plan-01.svg",
+        "rights_status": "own_work",
+        "public_display_allowed": false
+      }
+    ],
+    "model_assets": [
+      {
+        "model_type": "mass_model",
+        "title": "Ingenbohl slope-edge massing model",
+        "r2_key": "entries/alterszentrum-kloster-ingenbohl/models/mass.glb",
+        "format": "glb",
+        "lod_level": "preview",
+        "source_basis": "Seven-storey care building at the eastern slope edge connecting visitor parking and monastery plateau; requires public-safe analytical reconstruction before display.",
+        "generation_method": "source_reconstruction",
+        "review_status": "draft",
+        "confidence_score": 0.58
+      },
+      {
+        "model_type": "structure_model",
+        "title": "Ingenbohl reinforced-concrete skeleton and bracing core model",
+        "r2_key": "entries/alterszentrum-kloster-ingenbohl/models/structure.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "Schnetzer Puskas describes a solid reinforced-concrete skeleton, bracing core, point-supported flat slabs and post-tensioning with subsequent bonding.",
+        "generation_method": "source_reconstruction",
+        "review_status": "draft",
+        "confidence_score": 0.7
+      },
+      {
+        "model_type": "tectonic_model",
+        "title": "Ingenbohl trass-lime facade and colonnade tectonic model",
+        "r2_key": "entries/alterszentrum-kloster-ingenbohl/models/tectonic.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "Facade order from visible columns, floor and balcony slabs, colonnades, stamped trass lime, timber-panel exterior wall zones and plinth reading.",
+        "generation_method": "source_reconstruction",
+        "review_status": "draft",
+        "confidence_score": 0.64
+      },
+      {
+        "model_type": "site_model",
+        "title": "Ingenbohl monastery hill and slope connection model",
+        "r2_key": "entries/alterszentrum-kloster-ingenbohl/models/site.glb",
+        "format": "glb",
+        "lod_level": "preview",
+        "source_basis": "Topographic relation between village/plain, visitor parking, eastern slope edge, convent plateau and monastery ensemble.",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.48
+      },
+      {
+        "model_type": "low_poly_model",
+        "title": "Ingenbohl low-poly atlas preview",
+        "r2_key": "entries/alterszentrum-kloster-ingenbohl/models/low.glb",
+        "format": "glb",
+        "lod_level": "low",
+        "source_basis": "Simplified public-safe preview from massing, slope, plinth, core, chapel void and facade-raster logic; no copyrighted drawings embedded.",
+        "generation_method": "procedural",
+        "review_status": "draft",
+        "confidence_score": 0.55
+      }
+    ],
+    "model_packages": [
+      {
+        "package_type": "reference_model",
+        "status": "planned",
+        "planned_paths": [
+          "entries/alterszentrum-kloster-ingenbohl/models/mass.glb",
+          "entries/alterszentrum-kloster-ingenbohl/models/low.glb",
+          "entries/alterszentrum-kloster-ingenbohl/models/structure.glb",
+          "entries/alterszentrum-kloster-ingenbohl/models/tectonic.glb",
+          "entries/alterszentrum-kloster-ingenbohl/models/site.glb"
+        ],
+        "notes": "Layered model package for slope-edge massing, care program, structural skeleton, trass-lime facade and monastery context."
+      },
+      {
+        "package_type": "blender_package",
+        "status": "planned",
+        "planned_paths": [
+          "entries/alterszentrum-kloster-ingenbohl/models/source.blend",
+          "entries/alterszentrum-kloster-ingenbohl/analysis/blender-query-profile.json"
+        ],
+        "notes": "Future Blender import collections: Site, Mass, Structure, Facade, Chapel, Circulation, Materials."
+      },
+      {
+        "package_type": "analysis_model",
+        "status": "planned",
+        "planned_paths": [
+          "entries/alterszentrum-kloster-ingenbohl/analysis/materials.json",
+          "entries/alterszentrum-kloster-ingenbohl/analysis/structure.json",
+          "entries/alterszentrum-kloster-ingenbohl/analysis/tectonics.json"
+        ],
+        "notes": "Analysis profile for material filters, structural filters and topographic/context filters."
+      }
+    ],
+    "analysis_observations": [
+      {
+        "analysis_type": "material_tag",
+        "label": "material:stamped-trass-lime",
+        "confidence_score": 0.9,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "material_tag",
+        "label": "material:silver-fir-timber-cladding",
+        "confidence_score": 0.84,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "material_tag",
+        "label": "material:reinforced-concrete",
+        "confidence_score": 0.88,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "structure",
+        "label": "structure:reinforced-concrete-skeleton",
+        "confidence_score": 0.9,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "structure",
+        "label": "structure:bracing-core",
+        "confidence_score": 0.86,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "structure",
+        "label": "structure:point-supported-flat-slab",
+        "confidence_score": 0.82,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "tectonics",
+        "label": "tectonics:force-flow-facade-grid",
+        "confidence_score": 0.78,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "spatial_order",
+        "label": "space:two-storey-chapel",
+        "confidence_score": 0.82,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "blender_query",
+        "label": "query:swiss-care-architecture-monastery-trass-lime-concrete-skeleton",
+        "confidence_score": 0.78,
+        "source": "manual"
+      }
     ]
   }
 ]
