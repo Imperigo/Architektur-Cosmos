@@ -16967,7 +16967,52 @@
         "rights_status": "licensed",
         "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY-SA 2.0."
       }
-    ]
+    ],
+    "architecture_text": {
+      "headline": "Chandigarh: Hauptstadt als postkoloniale Landschaft der Moderne",
+      "overview": "Chandigarh wird als Gebäude verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und Chandigarh, India. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Chandigarh gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Chandigarh ordnet die neue Hauptstadt über Sektoren, Straßenhierarchie, Grünräume und Capitol-Komplex; die Stadt wird als offenes, klimatisch und politisch aufgeladenes Raster gelesen. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Hauptstadt, postkoloniale Stadt, moderner Urbanismus als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Chandigarh wird über Betonmonumente, Sektorenraster, breite Verkehrsachsen, Grünräume und die Capitol-Anlage gelesen; Stadt und Staatsrepräsentation fallen eng zusammen. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "curated material reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Chandigarh ordnet die neue Hauptstadt über Sektoren, Straßenhierarchie, Grünräume und Capitol-Komplex; die Stadt wird als offenes, klimatisch und politisch aufgeladenes Raster gelesen. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart soll zeigen, wie Oberfläche, Tragstruktur und Fügung Stützung, Hülle, Fügung und Atmosphäre organisieren. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "entry materials and analysis fallback",
+          "review_status": "needs_source_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Chandigarh gehört zu Chandigarh, India. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry location metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "Chandigarh ist als Referenz wichtig, weil Hauptstadt, postkoloniale Stadt, moderner Urbanismus nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "review_status": "draft_review",
+      "public_use_allowed": true,
+      "generated_at": "2026-05-21T19:08:58.164Z"
+    }
   },
   {
     "id": "unite-habitation",
@@ -17017,7 +17062,52 @@
         "label": "Grundriss",
         "placeholder": "Grundriss / Unite d'Habitation / modern-housing-infrastructure"
       }
-    ]
+    ],
+    "architecture_text": {
+      "headline": "Unité d’Habitation: Wohnmaschine als vertikale Stadt",
+      "overview": "Unite d'Habitation wird als Gebäude verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und Marseille, France. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Unite d'Habitation gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Die Unité d’Habitation stapelt Wohnen, Erschließung, Versorgung und Dachnutzung zu einer vertikalen Nachbarschaft, in der der Wohnblock wie eine kleine Stadt funktioniert. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie moderne Wohnreform, Infrastruktur, kollektives Wohnen, Modulor als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Die Unité d’Habitation verbindet Béton brut, Pilotis, innere Straßen, Maisonette-Wohnungen, Dachlandschaft und gemeinschaftliche Einrichtungen zu einem vertikalen Wohnkörper. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "curated material reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Die Unité d’Habitation stapelt Wohnen, Erschließung, Versorgung und Dachnutzung zu einer vertikalen Nachbarschaft, in der der Wohnblock wie eine kleine Stadt funktioniert. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart soll zeigen, wie Oberfläche, Tragstruktur und Fügung Stützung, Hülle, Fügung und Atmosphäre organisieren. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "entry materials and analysis fallback",
+          "review_status": "needs_source_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Unite d'Habitation gehört zu Marseille, France. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry location metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "Unite d'Habitation ist als Referenz wichtig, weil moderne Wohnreform, Infrastruktur, kollektives Wohnen, Modulor nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "review_status": "draft_review",
+      "public_use_allowed": true,
+      "generated_at": "2026-05-21T19:08:58.426Z"
+    }
   },
   {
     "id": "brasilia",
@@ -17081,7 +17171,52 @@
         "rights_status": "licensed",
         "notes": "Auto-selected hero image candidate. Score: 0.87. License: CC BY-SA 2.0."
       }
-    ]
+    ],
+    "architecture_text": {
+      "headline": "Brasília: Hauptstadtachse, Monument und leere Mitte",
+      "overview": "Brasilia wird als Gebäude verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und Brasilia, Brazil. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Brasilia gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Brasília formt Hauptstadt über zwei große Achsen, Superquadras, monumentale Regierungsräume und weite Leere; Bewegung, Blick und Distanz werden zum eigentlichen Stadtmaterial. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Hauptstadt, moderner Urbanismus, Achse als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Brasília arbeitet mit Betonmonumenten, Superquadras, Verkehrsachsen, weitem Landschaftsraum und skulpturalen Regierungsbauten als Material einer geplanten Hauptstadt. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "curated material reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Brasília formt Hauptstadt über zwei große Achsen, Superquadras, monumentale Regierungsräume und weite Leere; Bewegung, Blick und Distanz werden zum eigentlichen Stadtmaterial. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart soll zeigen, wie Oberfläche, Tragstruktur und Fügung Stützung, Hülle, Fügung und Atmosphäre organisieren. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "entry materials and analysis fallback",
+          "review_status": "needs_source_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Brasilia gehört zu Brasilia, Brazil. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry location metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "Brasilia ist als Referenz wichtig, weil Hauptstadt, moderner Urbanismus, Achse nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "review_status": "draft_review",
+      "public_use_allowed": true,
+      "generated_at": "2026-05-21T19:08:58.658Z"
+    }
   },
   {
     "id": "habitat-67",
@@ -17145,7 +17280,52 @@
         "rights_status": "public_domain",
         "notes": "Auto-selected hero image candidate. Score: 0.87. License: CC0."
       }
-    ]
+    ],
+    "architecture_text": {
+      "headline": "Habitat 67: Modul, Terrasse und gestapeltes Wohnen",
+      "overview": "Habitat 67 wird als Gebäude verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und Montreal, Canada. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Habitat 67 gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Habitat 67 zerlegt den Wohnblock in stapelbare Einheiten: Jede Wohnung erhält Licht, Terrasse und Adresse, während das Ganze als dreidimensionale Nachbarschaft erscheint. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Megastruktur, housing, Cluster als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Habitat 67 wird über vorgefertigte Betonmodule, gestapelte Wohneinheiten, Terrassen, Brücken und Zwischenräume als dreidimensionaler Wohnteppich gelesen. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "curated material reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Habitat 67 zerlegt den Wohnblock in stapelbare Einheiten: Jede Wohnung erhält Licht, Terrasse und Adresse, während das Ganze als dreidimensionale Nachbarschaft erscheint. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart soll zeigen, wie Oberfläche, Tragstruktur und Fügung Stützung, Hülle, Fügung und Atmosphäre organisieren. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "entry materials and analysis fallback",
+          "review_status": "needs_source_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Habitat 67 gehört zu Montreal, Canada. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry location metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "Habitat 67 ist als Referenz wichtig, weil Megastruktur, housing, Cluster nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "review_status": "draft_review",
+      "public_use_allowed": true,
+      "generated_at": "2026-05-21T19:08:58.903Z"
+    }
   },
   {
     "id": "new-babylon",
@@ -17193,7 +17373,52 @@
         "placeholder": "Grundriss / New Babylon / megastructure-freedom"
       }
     ],
-    "source_candidates": []
+    "source_candidates": [],
+    "architecture_text": {
+      "headline": "New Babylon: Megastruktur als Spielraum einer freien Gesellschaft",
+      "overview": "New Babylon wird als Karte verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und einem Kontext, der noch Quellenprüfung braucht. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "New Babylon gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: New Babylon entwirft keinen festen Ort, sondern ein offenes Netz von Plattformen und veränderbaren Räumen, in dem Arbeit durch Spiel, Drift und kollektive Aneignung ersetzt wird. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Megastruktur, Freiheit, Spiel, Situationismus als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "curated material reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "New Babylon entwirft keinen festen Ort, sondern ein offenes Netz von Plattformen und veränderbaren Räumen, in dem Arbeit durch Spiel, Drift und kollektive Aneignung ersetzt wird. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart soll zeigen, wie Oberfläche, Tragstruktur und Fügung Stützung, Hülle, Fügung und Atmosphäre organisieren. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "entry materials and analysis fallback",
+          "review_status": "needs_source_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "New Babylon gehört zu einem Kontext, der noch Quellenprüfung braucht. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "context needs source review",
+          "review_status": "needs_source_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "New Babylon ist als Referenz wichtig, weil Megastruktur, Freiheit, Spiel, Situationismus nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "review_status": "draft_review",
+      "public_use_allowed": true,
+      "generated_at": "2026-05-21T19:08:59.174Z"
+    }
   },
   {
     "id": "ibm-cosham",
@@ -17243,7 +17468,52 @@
     ],
     "source_documents": [
       "03 Architekturgeschichte 3_4.pdf"
-    ]
+    ],
+    "architecture_text": {
+      "headline": "IBM Cosham: Bürohaus als technologische Glaslandschaft",
+      "overview": "IBM Cosham wird als Gebäude verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und Portsmouth, UK. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "IBM Cosham gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: IBM Cosham organisiert Büroarbeit als flexible technische Landschaft: Glas, offene Geschosse, Infrastruktur und Arbeitsplätze bilden eine ruhige, veränderbare Ordnung. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Büro, Glas, Technologie als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "IBM Cosham verbindet flexible Büroflächen, Glasfassade, technische Infrastruktur und campusartige Arbeitsorganisation zu einer frühen Architektur der Informationsarbeit. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "curated material reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "IBM Cosham organisiert Büroarbeit als flexible technische Landschaft: Glas, offene Geschosse, Infrastruktur und Arbeitsplätze bilden eine ruhige, veränderbare Ordnung. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart soll zeigen, wie Oberfläche, Tragstruktur und Fügung Stützung, Hülle, Fügung und Atmosphäre organisieren. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "entry materials and analysis fallback",
+          "review_status": "needs_source_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "IBM Cosham gehört zu Portsmouth, UK. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry location metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "IBM Cosham ist als Referenz wichtig, weil Büro, Glas, Technologie nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "review_status": "draft_review",
+      "public_use_allowed": true,
+      "generated_at": "2026-05-21T19:08:59.453Z"
+    }
   },
   {
     "id": "delirious-new-york",
@@ -17291,7 +17561,52 @@
         "label": "Grundriss",
         "placeholder": "Grundriss / Delirious New York / urban-theory-density"
       }
-    ]
+    ],
+    "architecture_text": {
+      "headline": "Delirious New York: Manhattan als Kultur der Dichte",
+      "overview": "Delirious New York wird als Text verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und New York, United States. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Delirious New York gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Delirious New York liest Manhattan als Schnittmaschine: Raster, Parzelle, Wolkenkratzer und programmatische Stapelung erzeugen eine Kultur extremer Dichte. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Stadttheorie, Dichte, Raster, Metropole als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Delirious New York ist ein theoretisches Material aus Raster, Dichte, Hochhaus, Programmstapelung und metropolitaner Fantasie; der Text liest Manhattan als architektonisches Labor. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "curated material reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Delirious New York liest Manhattan als Schnittmaschine: Raster, Parzelle, Wolkenkratzer und programmatische Stapelung erzeugen eine Kultur extremer Dichte. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart soll zeigen, wie Oberfläche, Tragstruktur und Fügung Stützung, Hülle, Fügung und Atmosphäre organisieren. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "entry materials and analysis fallback",
+          "review_status": "needs_source_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Delirious New York gehört zu New York, United States. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry location metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "Delirious New York ist als Referenz wichtig, weil Stadttheorie, Dichte, Raster, Metropole nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "review_status": "draft_review",
+      "public_use_allowed": true,
+      "generated_at": "2026-05-21T19:08:59.680Z"
+    }
   },
   {
     "id": "gas-works-park",
@@ -17355,7 +17670,52 @@
         "rights_status": "licensed",
         "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY-SA 3.0."
       }
-    ]
+    ],
+    "architecture_text": {
+      "headline": "Gas Works Park: Industriebestand als öffentliche Landschaft",
+      "overview": "Gas Works Park wird als Landschaftsprojekt verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und Seattle, USA. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Gas Works Park gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Gas Works Park verwandelt Industrie nicht in Kulisse, sondern in nutzbaren Landschaftsbestand: Hügel, Maschinenfragmente, Wege und Seeufer bilden eine neue öffentliche Topografie. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie industrielles Weiterverwenden, Landschaftsurbanismus, Ruine als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Gas Works Park erhält industrielle Apparate, Betonfundamente, Erdmodellierung, Wiesen und Blickbeziehungen; Ruine und Park werden nicht getrennt, sondern ineinander überführt. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "curated material reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Gas Works Park verwandelt Industrie nicht in Kulisse, sondern in nutzbaren Landschaftsbestand: Hügel, Maschinenfragmente, Wege und Seeufer bilden eine neue öffentliche Topografie. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart soll zeigen, wie Oberfläche, Tragstruktur und Fügung Stützung, Hülle, Fügung und Atmosphäre organisieren. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "entry materials and analysis fallback",
+          "review_status": "needs_source_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Gas Works Park gehört zu Seattle, USA. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry location metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "Gas Works Park ist als Referenz wichtig, weil industrielles Weiterverwenden, Landschaftsurbanismus, Ruine nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "review_status": "draft_review",
+      "public_use_allowed": true,
+      "generated_at": "2026-05-21T19:08:59.885Z"
+    }
   },
   {
     "id": "willis-faber-and-dumas-office",
@@ -17419,7 +17779,52 @@
         "rights_status": "licensed",
         "notes": "Auto-selected hero image candidate. Score: 0.79. License: CC BY-SA 2.0."
       }
-    ]
+    ],
+    "architecture_text": {
+      "headline": "Willis Faber & Dumas: Büro als gläserner Stadtorganismus",
+      "overview": "Willis Faber and Dumas Office wird als Gebäude verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und Ipswich, UK. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Willis Faber and Dumas Office gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Willis Faber & Dumas biegt sich in die Stadt ein: Glasfassade, offenes Büro, Rolltreppen, Atrium und Dachgarten verbinden Arbeit mit urbanem Alltag. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie moderne Objektkultur, Glas, Büro als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Willis Faber & Dumas verbindet dunkle Glasfassade, flexible Büroflächen, Dachgarten, soziale Innenräume und Stadtblockkante zu einer offenen Arbeitslandschaft. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "curated material reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Willis Faber & Dumas biegt sich in die Stadt ein: Glasfassade, offenes Büro, Rolltreppen, Atrium und Dachgarten verbinden Arbeit mit urbanem Alltag. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart soll zeigen, wie Oberfläche, Tragstruktur und Fügung Stützung, Hülle, Fügung und Atmosphäre organisieren. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "entry materials and analysis fallback",
+          "review_status": "needs_source_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Willis Faber and Dumas Office gehört zu Ipswich, UK. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry location metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "Willis Faber and Dumas Office ist als Referenz wichtig, weil moderne Objektkultur, Glas, Büro nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "review_status": "draft_review",
+      "public_use_allowed": true,
+      "generated_at": "2026-05-21T19:09:00.141Z"
+    }
   },
   {
     "id": "centre-pompidou",
@@ -17471,7 +17876,52 @@
         "placeholder": "Grundriss / Centre Pompidou / culture-services"
       }
     ],
-    "source_candidates": []
+    "source_candidates": [],
+    "architecture_text": {
+      "headline": "Centre Pompidou: Kulturmaschine mit offen gelegter Infrastruktur",
+      "overview": "Centre Pompidou wird als Infrastruktur verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und Paris, France. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Centre Pompidou gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Centre Pompidou kehrt das Museum nach außen: Erschließung, Technik, Tragwerk und Vorplatz machen Kultur als öffentliche Maschine sichtbar. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Kultur, Haustechnik, Exoskelett, öffentlicher Raum als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Centre Pompidou legt Stahltragwerk, Rolltreppen, Lüftung, Farbcode, flexible Hallen und öffentlichen Vorplatz offen; Infrastruktur wird zur Fassade und zum Stadtereignis. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "curated material reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Centre Pompidou kehrt das Museum nach außen: Erschließung, Technik, Tragwerk und Vorplatz machen Kultur als öffentliche Maschine sichtbar. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart soll zeigen, wie Oberfläche, Tragstruktur und Fügung Stützung, Hülle, Fügung und Atmosphäre organisieren. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "entry materials and analysis fallback",
+          "review_status": "needs_source_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Centre Pompidou gehört zu Paris, France. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry location metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "Centre Pompidou ist als Referenz wichtig, weil Kultur, Haustechnik, Exoskelett, öffentlicher Raum nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "review_status": "draft_review",
+      "public_use_allowed": true,
+      "generated_at": "2026-05-21T19:09:00.397Z"
+    }
   },
   {
     "id": "klingenpark",

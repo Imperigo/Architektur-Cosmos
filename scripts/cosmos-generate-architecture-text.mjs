@@ -253,7 +253,17 @@ function buildHeadline(entry, program) {
     'broadacre-city': 'Broadacre City: Dezentralisierung, Land und Auto als Stadtmodell',
     'athens-charter': 'Charta von Athen: Funktionstrennung als Stadtprogramm',
     'the-capitol': 'The Capitol: Lichtarchitektur und Kino als Großstadtapparat',
-    'buerogebaeude-montecatini': 'Montecatini: Büroarbeit als präzise moderne Prozessarchitektur'
+    'buerogebaeude-montecatini': 'Montecatini: Büroarbeit als präzise moderne Prozessarchitektur',
+    chandigarh: 'Chandigarh: Hauptstadt als postkoloniale Landschaft der Moderne',
+    'unite-habitation': 'Unité d’Habitation: Wohnmaschine als vertikale Stadt',
+    brasilia: 'Brasília: Hauptstadtachse, Monument und leere Mitte',
+    'habitat-67': 'Habitat 67: Modul, Terrasse und gestapeltes Wohnen',
+    'new-babylon': 'New Babylon: Megastruktur als Spielraum einer freien Gesellschaft',
+    'ibm-cosham': 'IBM Cosham: Bürohaus als technologische Glaslandschaft',
+    'delirious-new-york': 'Delirious New York: Manhattan als Kultur der Dichte',
+    'gas-works-park': 'Gas Works Park: Industriebestand als öffentliche Landschaft',
+    'willis-faber-and-dumas-office': 'Willis Faber & Dumas: Büro als gläserner Stadtorganismus',
+    'centre-pompidou': 'Centre Pompidou: Kulturmaschine mit offen gelegter Infrastruktur'
   };
 
   if (specificHeadlines[entry.slug]) return specificHeadlines[entry.slug];
@@ -315,7 +325,17 @@ function specificMaterialClaim(entry) {
     'broadacre-city': 'Broadacre City wird über Parzelle, Straße, Auto, dezentralisierte Versorgung, Landschaft und Einzelhaus als flächiges Gegenmodell zur dichten Stadt gelesen.',
     'athens-charter': 'Die Charta von Athen ist kein Baukörper, sondern eine Regelstruktur aus Wohnen, Arbeiten, Erholung und Verkehr; ihr Material ist die funktionale Stadtanalyse.',
     'the-capitol': 'The Capitol wird über Licht, Kinosaal, Foyer, Großstadtfassade und technische Inszenierung gelesen; Architektur wird hier zum Apparat der Wahrnehmung.',
-    'buerogebaeude-montecatini': 'Montecatini verbindet Stahlbeton, Naturstein, Glas, präzise Haustechnik, Treppenräume und Büroorganisation zu einer kontrollierten Architektur der Arbeit.'
+    'buerogebaeude-montecatini': 'Montecatini verbindet Stahlbeton, Naturstein, Glas, präzise Haustechnik, Treppenräume und Büroorganisation zu einer kontrollierten Architektur der Arbeit.',
+    chandigarh: 'Chandigarh wird über Betonmonumente, Sektorenraster, breite Verkehrsachsen, Grünräume und die Capitol-Anlage gelesen; Stadt und Staatsrepräsentation fallen eng zusammen.',
+    'unite-habitation': 'Die Unité d’Habitation verbindet Béton brut, Pilotis, innere Straßen, Maisonette-Wohnungen, Dachlandschaft und gemeinschaftliche Einrichtungen zu einem vertikalen Wohnkörper.',
+    brasilia: 'Brasília arbeitet mit Betonmonumenten, Superquadras, Verkehrsachsen, weitem Landschaftsraum und skulpturalen Regierungsbauten als Material einer geplanten Hauptstadt.',
+    'habitat-67': 'Habitat 67 wird über vorgefertigte Betonmodule, gestapelte Wohneinheiten, Terrassen, Brücken und Zwischenräume als dreidimensionaler Wohnteppich gelesen.',
+    'new-babylon': 'New Babylon besitzt sein Material als Modell, Collage, Karte und spekulative Struktur; Raum wird als veränderbares Feld für Spiel, Mobilität und kollektives Leben entworfen.',
+    'ibm-cosham': 'IBM Cosham verbindet flexible Büroflächen, Glasfassade, technische Infrastruktur und campusartige Arbeitsorganisation zu einer frühen Architektur der Informationsarbeit.',
+    'delirious-new-york': 'Delirious New York ist ein theoretisches Material aus Raster, Dichte, Hochhaus, Programmstapelung und metropolitaner Fantasie; der Text liest Manhattan als architektonisches Labor.',
+    'gas-works-park': 'Gas Works Park erhält industrielle Apparate, Betonfundamente, Erdmodellierung, Wiesen und Blickbeziehungen; Ruine und Park werden nicht getrennt, sondern ineinander überführt.',
+    'willis-faber-and-dumas-office': 'Willis Faber & Dumas verbindet dunkle Glasfassade, flexible Büroflächen, Dachgarten, soziale Innenräume und Stadtblockkante zu einer offenen Arbeitslandschaft.',
+    'centre-pompidou': 'Centre Pompidou legt Stahltragwerk, Rolltreppen, Lüftung, Farbcode, flexible Hallen und öffentlichen Vorplatz offen; Infrastruktur wird zur Fassade und zum Stadtereignis.'
   };
   if (!claims[entry.slug]) return null;
   return {
@@ -412,6 +432,16 @@ function spatialFallback(entry) {
     'athens-charter': 'Die Charta von Athen beschreibt Stadt als analytisches System: Wohnen, Arbeiten, Erholung und Verkehr werden getrennt, bewertet und als Planungsprogramm neu zusammengesetzt',
     'the-capitol': 'The Capitol inszeniert Kino als Großstadterfahrung: Fassade, Licht, Foyer und Saal führen Besucher von der Straße in eine technische Innenwelt der Projektion',
     'buerogebaeude-montecatini': 'Montecatini liest Büroarbeit als präzisen Ablauf: Fassade, Treppen, Erschließung, Arbeitsräume und technische Ausstattung bilden eine disziplinierte Organisation moderner Verwaltung',
+    chandigarh: 'Chandigarh ordnet die neue Hauptstadt über Sektoren, Straßenhierarchie, Grünräume und Capitol-Komplex; die Stadt wird als offenes, klimatisch und politisch aufgeladenes Raster gelesen',
+    'unite-habitation': 'Die Unité d’Habitation stapelt Wohnen, Erschließung, Versorgung und Dachnutzung zu einer vertikalen Nachbarschaft, in der der Wohnblock wie eine kleine Stadt funktioniert',
+    brasilia: 'Brasília formt Hauptstadt über zwei große Achsen, Superquadras, monumentale Regierungsräume und weite Leere; Bewegung, Blick und Distanz werden zum eigentlichen Stadtmaterial',
+    'habitat-67': 'Habitat 67 zerlegt den Wohnblock in stapelbare Einheiten: Jede Wohnung erhält Licht, Terrasse und Adresse, während das Ganze als dreidimensionale Nachbarschaft erscheint',
+    'new-babylon': 'New Babylon entwirft keinen festen Ort, sondern ein offenes Netz von Plattformen und veränderbaren Räumen, in dem Arbeit durch Spiel, Drift und kollektive Aneignung ersetzt wird',
+    'ibm-cosham': 'IBM Cosham organisiert Büroarbeit als flexible technische Landschaft: Glas, offene Geschosse, Infrastruktur und Arbeitsplätze bilden eine ruhige, veränderbare Ordnung',
+    'delirious-new-york': 'Delirious New York liest Manhattan als Schnittmaschine: Raster, Parzelle, Wolkenkratzer und programmatische Stapelung erzeugen eine Kultur extremer Dichte',
+    'gas-works-park': 'Gas Works Park verwandelt Industrie nicht in Kulisse, sondern in nutzbaren Landschaftsbestand: Hügel, Maschinenfragmente, Wege und Seeufer bilden eine neue öffentliche Topografie',
+    'willis-faber-and-dumas-office': 'Willis Faber & Dumas biegt sich in die Stadt ein: Glasfassade, offenes Büro, Rolltreppen, Atrium und Dachgarten verbinden Arbeit mit urbanem Alltag',
+    'centre-pompidou': 'Centre Pompidou kehrt das Museum nach außen: Erschließung, Technik, Tragwerk und Vorplatz machen Kultur als öffentliche Maschine sichtbar',
     'haus-tugendhat': 'Die räumliche Ordnung entsteht aus Zonen statt aus geschlossenen Zimmern: Wohnen, Essen, Musik und Blickfelder fließen um Materialwände, Vorhänge und Möblierungsfelder herum'
   };
   if (specificSpatialReadings[entry.slug]) {
@@ -1064,6 +1094,23 @@ function readableDe(value) {
     office: 'Büro',
     process_architecture: 'Prozessarchitektur',
     'process architecture': 'Prozessarchitektur',
+    postcolonial_city: 'postkoloniale Stadt',
+    'postcolonial city': 'postkoloniale Stadt',
+    modulor: 'Modulor',
+    megastructure: 'Megastruktur',
+    cluster: 'Cluster',
+    freedom: 'Freiheit',
+    play: 'Spiel',
+    situationism: 'Situationismus',
+    technology: 'Technologie',
+    urban_theory: 'Stadttheorie',
+    'urban theory': 'Stadttheorie',
+    density: 'Dichte',
+    metropolis: 'Metropole',
+    ruin: 'Ruine',
+    culture: 'Kultur',
+    services: 'Haustechnik',
+    exoskeleton: 'Exoskelett',
     curtain: 'Vorhang',
     material_wall: 'Materialwand',
     'material wall': 'Materialwand',
