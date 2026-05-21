@@ -873,6 +873,72 @@
       "model_count": 5,
       "analysis_count": 5,
       "tag_count": 5
+    },
+    "architecture_text": {
+      "headline": "Nippur: Tempelstadt als geschichteter Lehmziegelkörper",
+      "overview": "Nippur wird im Architektur Kosmos als Tempelstadt gelesen und nicht als isoliertes Archivobjekt behandelt. Die Relevanz des Projekts liegt im Zusammenspiel von räumlicher Dramaturgie, konstruktiver Ordnung und archäologische Tell-Landschaft / Schwemmlandebene / Nippur, Iraq / sumerische Stadt und Tempelbezirk. Der Eintrag soll deshalb Projektlogik, Materialsystem, Tragwerk und Modell-Layer sichtbar machen, statt nur eine lineare Kurzgeschichte zu liefern.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Nippur gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Nippur wird als sakrale Stadtlandschaft gelesen, in der Tempelbezirke, Lehmziegelmasse, Tell-Schichtung und Prozessionsräume den urbanen Kern organisieren. Für den Atlas ist das Projekt wertvoll, weil es trockene Metadaten in eine räumliche Fragestellung übersetzt: Mesopotamien, Stadt, Palimpsest.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Primäre Materiallesart: Lehmziegel, gebrannter Ziegel. Nippur wird als mesopotamische Tempelstadt mit Lehmziegelgefüge, sakralen Bezirken und geschichteter Tell-Stratigrafie gelesen. Tragwerkslayer für Blender-Import geplant: massive Wand. Die Geometrie bleibt als Studienrekonstruktion markiert, bis Quellenpläne geprüft sind. Für spätere Blender- und ArchiCAD-Workflows sollen diese Beobachtungen als trennbare Ebenen geführt werden, nicht als ein einziges dekoratives Modell.",
+          "source_basis": "analysis layer: material_system; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Nippur wird als sakrale Stadtlandschaft gelesen, in der Tempelbezirke, Lehmziegelmasse, Tell-Schichtung und Prozessionsräume den urbanen Kern organisieren. Dadurch wird das Projekt als filterbare Referenz interessant: Grundriss, Schnitt, Erschliessung und Kontext können über Zeiträume hinweg verglichen werden, statt nur als Bilder betrachtet zu werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Tectonic layer planned around Lehmziegel, gebrannter Ziegel; separates material expression, enclosure and structural reading for later Blender layer toggles. Der Cosmos-Text hält diese konstruktive Lesart bewusst explizit, weil sie die Brücke zwischen historischer Interpretation und modellbasierter Analyse bildet.",
+          "source_basis": "analysis layer: tectonics; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Nippur gehört zu archäologische Tell-Landschaft / Schwemmlandebene / Nippur, Iraq / sumerische Stadt und Tempelbezirk. Der Ort ist dabei keine Hintergrundinformation, sondern Teil des architektonischen Arguments und soll im Atlas, im Modellpaket und in zukünftigen Suchfiltern sichtbar bleiben.",
+          "source_basis": "entry context metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für die Architecture-Cosmos-Datenbank soll Nippur als strukturierte Referenz mit Quellenpfad, Medienslots, Analyseebenen und Modellteilen gespeichert werden. Die wichtigsten zukünftigen Filter sind material:mud brick, typology:temple city, structure:massive wall, context:alluvial plain, blender:site model candidate, Lehmziegel, gebrannter Ziegel, Mesopotamien. Öffentliche Ausgaben müssen rechteklar bleiben; private Forschungsnotizen können detailliertere, quellenbasierte Analysen tragen, bis sie geprüft sind.",
+          "source_basis": "derived from entry metadata, model fields and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T17:51:33.783Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_document",
+          "value": "02 Global History of Urban Design 1_2.pdf"
+        },
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Nippur",
+          "value": "https://commons.wikimedia.org/wiki/File:Ruins_from_a_temple_in_Naffur.jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "public_domain"
+        },
+        {
+          "type": "website",
+          "title": "Encyclopaedia Britannica: Nippur",
+          "value": "https://www.britannica.com/place/Nippur",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        }
+      ]
     }
   },
   {
@@ -1079,6 +1145,79 @@
       "model_count": 5,
       "analysis_count": 5,
       "tag_count": 6
+    },
+    "architecture_text": {
+      "headline": "Eridu und Susa: Flusslandschaft, Tempel und frühe Stadtmacht",
+      "overview": "Eridu and Susa wird im Architektur Kosmos als Tempelstadt und Palastsiedlung gelesen und nicht als isoliertes Archivobjekt behandelt. Die Relevanz des Projekts liegt im Zusammenspiel von räumlicher Dramaturgie, konstruktiver Ordnung und archäologische Flusslandschaft / Schwemmlandebene / West Asia, Iraq / Iran / frühe Urbanisierung und mesopotamian city. Der Eintrag soll deshalb Projektlogik, Materialsystem, Tragwerk und Modell-Layer sichtbar machen, statt nur eine lineare Kurzgeschichte zu liefern.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Eridu and Susa gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Eridu und Susa stehen für frühe Stadtbildung in Flusslandschaften: Tempel, Palast, Lehmziegelplattformen und Sedimentschichten bilden eine lange Folge politischer und ritueller Räume. Für den Atlas ist das Projekt wertvoll, weil es trockene Metadaten in eine räumliche Fragestellung übersetzt: Mesopotamien, Stadt, Palimpsest.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Primäre Materiallesart: Lehmziegel, Schwemmland-Lehm. Stadt- und Tempelgefüge werden vor allem über mesopotamische Schwemmland-Lehm-Archäologie rekonstruiert; Susa ergänzt elamische und achämenidische Palast- und Lehmziegelkontexte. Tragwerkslayer für Blender-Import geplant: massive Wand. Die Geometrie bleibt als Studienrekonstruktion markiert, bis Quellenpläne geprüft sind. Für spätere Blender- und ArchiCAD-Workflows sollen diese Beobachtungen als trennbare Ebenen geführt werden, nicht als ein einziges dekoratives Modell.",
+          "source_basis": "analysis layer: material_system; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Eridu und Susa stehen für frühe Stadtbildung in Flusslandschaften: Tempel, Palast, Lehmziegelplattformen und Sedimentschichten bilden eine lange Folge politischer und ritueller Räume. Dadurch wird das Projekt als filterbare Referenz interessant: Grundriss, Schnitt, Erschliessung und Kontext können über Zeiträume hinweg verglichen werden, statt nur als Bilder betrachtet zu werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Tectonic layer planned around Lehmziegel, Schwemmland-Lehm; separates material expression, enclosure and structural reading for later Blender layer toggles. Der Cosmos-Text hält diese konstruktive Lesart bewusst explizit, weil sie die Brücke zwischen historischer Interpretation und modellbasierter Analyse bildet.",
+          "source_basis": "analysis layer: tectonics; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Eridu and Susa gehört zu archäologische Flusslandschaft / Schwemmlandebene / West Asia, Iraq / Iran / frühe Urbanisierung und mesopotamian city. Der Ort ist dabei keine Hintergrundinformation, sondern Teil des architektonischen Arguments und soll im Atlas, im Modellpaket und in zukünftigen Suchfiltern sichtbar bleiben.",
+          "source_basis": "entry context metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für die Architecture-Cosmos-Datenbank soll Eridu and Susa als strukturierte Referenz mit Quellenpfad, Medienslots, Analyseebenen und Modellteilen gespeichert werden. Die wichtigsten zukünftigen Filter sind material:mud brick, structure:massive wall, typology:early city, context:alluvial plain, region:mesopotamia, blender:mass model candidate, Lehmziegel, Schwemmland-Lehm. Öffentliche Ausgaben müssen rechteklar bleiben; private Forschungsnotizen können detailliertere, quellenbasierte Analysen tragen, bis sie geprüft sind.",
+          "source_basis": "derived from entry metadata, model fields and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T17:51:33.951Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_document",
+          "value": "02 Global History of Urban Design 1_2.pdf"
+        },
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Eridu and Susa",
+          "value": "https://commons.wikimedia.org/wiki/File:Eridu_mound4c.8.png",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        },
+        {
+          "type": "website",
+          "title": "Encyclopaedia Britannica: Eridu",
+          "value": "https://www.britannica.com/place/Eridu",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        },
+        {
+          "type": "website",
+          "title": "Encyclopaedia Britannica: Susa",
+          "value": "https://www.britannica.com/place/Susa-ancient-city-Iran",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        }
+      ]
     }
   },
   {
@@ -1894,6 +2033,79 @@
       "model_count": 5,
       "analysis_count": 5,
       "tag_count": 6
+    },
+    "architecture_text": {
+      "headline": "Ur: Zikkurat, Stadtmauer und Lehmziegel-Monumentalität",
+      "overview": "Ur wird im Architektur Kosmos als Zikkuratstadt gelesen und nicht als isoliertes Archivobjekt behandelt. Die Relevanz des Projekts liegt im Zusammenspiel von räumlicher Dramaturgie, konstruktiver Ordnung und archäologische Stadtlandschaft / Schwemmlandebene / Dhi Qar, Iraq / sumerische Stadt und Zikkurat. Der Eintrag soll deshalb Projektlogik, Materialsystem, Tragwerk und Modell-Layer sichtbar machen, statt nur eine lineare Kurzgeschichte zu liefern.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Ur gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Ur verdichtet Stadt, Zikkurat, Wohnquartiere und Mauer zu einer Lehmziegel-Topografie, in der Monument und Alltagsstadt nicht getrennt betrachtet werden können. Für den Atlas ist das Projekt wertvoll, weil es trockene Metadaten in eine räumliche Fragestellung übersetzt: Mesopotamien, Stadt, Lehmziegel.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Primäre Materiallesart: Lehmziegel, gebrannter Ziegel. Zikkurat und Stadtreste verbinden Lehmziegelmasse mit gebrannten Ziegelverkleidungen und Bitumenmörtel in den zentralen monumentalen Zonen. Tragwerkslayer für Blender-Import geplant: gestufte Masse. Die Geometrie bleibt als Studienrekonstruktion markiert, bis Quellenpläne geprüft sind. Für spätere Blender- und ArchiCAD-Workflows sollen diese Beobachtungen als trennbare Ebenen geführt werden, nicht als ein einziges dekoratives Modell.",
+          "source_basis": "analysis layer: material_system; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Ur verdichtet Stadt, Zikkurat, Wohnquartiere und Mauer zu einer Lehmziegel-Topografie, in der Monument und Alltagsstadt nicht getrennt betrachtet werden können. Dadurch wird das Projekt als filterbare Referenz interessant: Grundriss, Schnitt, Erschliessung und Kontext können über Zeiträume hinweg verglichen werden, statt nur als Bilder betrachtet zu werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Tectonic layer planned around Lehmziegel, gebrannter Ziegel; separates material expression, enclosure and structural reading for later Blender layer toggles. Der Cosmos-Text hält diese konstruktive Lesart bewusst explizit, weil sie die Brücke zwischen historischer Interpretation und modellbasierter Analyse bildet.",
+          "source_basis": "analysis layer: tectonics; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Ur gehört zu archäologische Stadtlandschaft / Schwemmlandebene / Dhi Qar, Iraq / sumerische Stadt und Zikkurat. Der Ort ist dabei keine Hintergrundinformation, sondern Teil des architektonischen Arguments und soll im Atlas, im Modellpaket und in zukünftigen Suchfiltern sichtbar bleiben.",
+          "source_basis": "entry context metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für die Architecture-Cosmos-Datenbank soll Ur als strukturierte Referenz mit Quellenpfad, Medienslots, Analyseebenen und Modellteilen gespeichert werden. Die wichtigsten zukünftigen Filter sind material:mud brick, material:baked brick, typology:ziggurat, structure:stepped mass, context:alluvial plain, blender:mass model candidate, Lehmziegel, gebrannter Ziegel. Öffentliche Ausgaben müssen rechteklar bleiben; private Forschungsnotizen können detailliertere, quellenbasierte Analysen tragen, bis sie geprüft sind.",
+          "source_basis": "derived from entry metadata, model fields and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T17:51:34.140Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_document",
+          "value": "02 Global History of Urban Design 1_2.pdf"
+        },
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Ur",
+          "value": "https://commons.wikimedia.org/wiki/File:Ancient_ziggurat_at_Ali_Air_Base_Iraq_2005.jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        },
+        {
+          "type": "website",
+          "title": "UNESCO World Heritage Centre: The Ahwar of Southern Iraq",
+          "value": "https://whc.unesco.org/en/list/1481/",
+          "reliability_level": "primary_source",
+          "rights_status": "licensed"
+        },
+        {
+          "type": "website",
+          "title": "Encyclopaedia Britannica: Ur",
+          "value": "https://www.britannica.com/place/Ur",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        }
+      ]
     }
   },
   {
@@ -2376,6 +2588,79 @@
       "model_count": 5,
       "analysis_count": 5,
       "tag_count": 6
+    },
+    "architecture_text": {
+      "headline": "Megara Hyblaea: Koloniale Polis als frühes Raster",
+      "overview": "Megara Hyblaea wird im Architektur Kosmos als griechische Kolonialstadt gelesen und nicht als isoliertes Archivobjekt behandelt. Die Relevanz des Projekts liegt im Zusammenspiel von räumlicher Dramaturgie, konstruktiver Ordnung und archäologische Stätte / Küstenebene / Sicily, Italy / griechische Kolonie und Polis-Planung. Der Eintrag soll deshalb Projektlogik, Materialsystem, Tragwerk und Modell-Layer sichtbar machen, statt nur eine lineare Kurzgeschichte zu liefern.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Megara Hyblaea gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Megara Hyblaea macht die griechische Kolonialstadt als ordnenden Grundriss lesbar: Parzellen, Straßen, öffentliche Räume und Hausgrundstücke werden zu einem frühen Rasterinstrument. Für den Atlas ist das Projekt wertvoll, weil es trockene Metadaten in eine räumliche Fragestellung übersetzt: polis, Kolonisation, Stadtraster.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Primäre Materiallesart: Kalkstein, Mauerwerk. Das griechische Kolonialgefüge wird über Steinfundamente, Straßenraster und Hausparzellen gelesen; aufgehende Bauteile bleiben weitgehend archäologische Interpretation. Tragwerkslayer für Blender-Import geplant: Mauerwerksfundament. Die Geometrie bleibt als Studienrekonstruktion markiert, bis Quellenpläne geprüft sind. Für spätere Blender- und ArchiCAD-Workflows sollen diese Beobachtungen als trennbare Ebenen geführt werden, nicht als ein einziges dekoratives Modell.",
+          "source_basis": "analysis layer: material_system; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Megara Hyblaea macht die griechische Kolonialstadt als ordnenden Grundriss lesbar: Parzellen, Straßen, öffentliche Räume und Hausgrundstücke werden zu einem frühen Rasterinstrument. Dadurch wird das Projekt als filterbare Referenz interessant: Grundriss, Schnitt, Erschliessung und Kontext können über Zeiträume hinweg verglichen werden, statt nur als Bilder betrachtet zu werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Tectonic layer planned around Kalkstein, Mauerwerk; separates material expression, enclosure and structural reading for later Blender layer toggles. Der Cosmos-Text hält diese konstruktive Lesart bewusst explizit, weil sie die Brücke zwischen historischer Interpretation und modellbasierter Analyse bildet.",
+          "source_basis": "analysis layer: tectonics; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Megara Hyblaea gehört zu archäologische Stätte / Küstenebene / Sicily, Italy / griechische Kolonie und Polis-Planung. Der Ort ist dabei keine Hintergrundinformation, sondern Teil des architektonischen Arguments und soll im Atlas, im Modellpaket und in zukünftigen Suchfiltern sichtbar bleiben.",
+          "source_basis": "entry context metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für die Architecture-Cosmos-Datenbank soll Megara Hyblaea als strukturierte Referenz mit Quellenpfad, Medienslots, Analyseebenen und Modellteilen gespeichert werden. Die wichtigsten zukünftigen Filter sind material:limestone, typology:polis, typology:grid plan, context:coastal plain, structure:masonry foundation, blender:urban grid candidate, Kalkstein, Mauerwerk. Öffentliche Ausgaben müssen rechteklar bleiben; private Forschungsnotizen können detailliertere, quellenbasierte Analysen tragen, bis sie geprüft sind.",
+          "source_basis": "derived from entry metadata, model fields and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T17:51:34.309Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_document",
+          "value": "02 Global History of Urban Design 1_2.pdf"
+        },
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Megara Hyblaea",
+          "value": "https://commons.wikimedia.org/wiki/File:Megara_Hyblaea_001.jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        },
+        {
+          "type": "website",
+          "title": "Encyclopaedia Britannica: Megara Hyblaea",
+          "value": "https://www.britannica.com/place/Megara-Hyblaea",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        },
+        {
+          "type": "website",
+          "title": "Wikimedia Commons source image: Megara Hyblaea 001",
+          "value": "https://commons.wikimedia.org/wiki/File:Megara_Hyblaea_001.jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        }
+      ]
     }
   },
   {
@@ -2584,6 +2869,72 @@
       "model_count": 5,
       "analysis_count": 5,
       "tag_count": 6
+    },
+    "architecture_text": {
+      "headline": "Agora von Athen: Öffentlichkeit als architektonische Ordnung",
+      "overview": "Agora of Athens wird im Architektur Kosmos als griechische Agora gelesen und nicht als isoliertes Archivobjekt behandelt. Die Relevanz des Projekts liegt im Zusammenspiel von räumlicher Dramaturgie, konstruktiver Ordnung und urbaner archäologischer Kern / flacher urbaner Hang / Athens, Greece / griechische Agora und demokratischer Bürgerraum. Der Eintrag soll deshalb Projektlogik, Materialsystem, Tragwerk und Modell-Layer sichtbar machen, statt nur eine lineare Kurzgeschichte zu liefern.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Agora of Athens gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Die Agora von Athen ist ein offenes urbanes Feld, das durch Stoen, Heiligtümer, Verwaltungsbauten, Wege und politische Rituale räumliche Bedeutung erhält. Für den Atlas ist das Projekt wertvoll, weil es trockene Metadaten in eine räumliche Fragestellung übersetzt: polis, öffentlicher Raum, Demokratie.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Primäre Materiallesart: Kalkstein, Marmor. Die Agora verbindet offenen Bürgergrund mit Stoen, Tempeln und Verwaltungsbauten; die Materiallesart versteht sie als steinerne Bürgerarchitektur um eine öffentliche Leere. Tragwerkslayer für Blender-Import geplant: Masse, Lastpfad und räumliches Tragsystem. Die Geometrie bleibt als Studienrekonstruktion markiert, bis Quellenpläne geprüft sind. Für spätere Blender- und ArchiCAD-Workflows sollen diese Beobachtungen als trennbare Ebenen geführt werden, nicht als ein einziges dekoratives Modell.",
+          "source_basis": "analysis layer: material_system; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Die Agora von Athen ist ein offenes urbanes Feld, das durch Stoen, Heiligtümer, Verwaltungsbauten, Wege und politische Rituale räumliche Bedeutung erhält. Dadurch wird das Projekt als filterbare Referenz interessant: Grundriss, Schnitt, Erschliessung und Kontext können über Zeiträume hinweg verglichen werden, statt nur als Bilder betrachtet zu werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Tectonic layer planned around Kalkstein, Marmor; separates material expression, enclosure and structural reading for later Blender layer toggles. Der Cosmos-Text hält diese konstruktive Lesart bewusst explizit, weil sie die Brücke zwischen historischer Interpretation und modellbasierter Analyse bildet.",
+          "source_basis": "analysis layer: tectonics; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Agora of Athens gehört zu urbaner archäologischer Kern / flacher urbaner Hang / Athens, Greece / griechische Agora und demokratischer Bürgerraum. Der Ort ist dabei keine Hintergrundinformation, sondern Teil des architektonischen Arguments und soll im Atlas, im Modellpaket und in zukünftigen Suchfiltern sichtbar bleiben.",
+          "source_basis": "entry context metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für die Architecture-Cosmos-Datenbank soll Agora of Athens als strukturierte Referenz mit Quellenpfad, Medienslots, Analyseebenen und Modellteilen gespeichert werden. Die wichtigsten zukünftigen Filter sind material:limestone, material:marble, typology:agora, typology:stoa, context:civic void, blender:site model candidate, Kalkstein, Marmor. Öffentliche Ausgaben müssen rechteklar bleiben; private Forschungsnotizen können detailliertere, quellenbasierte Analysen tragen, bis sie geprüft sind.",
+          "source_basis": "derived from entry metadata, model fields and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T17:51:34.474Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_document",
+          "value": "02 Global History of Urban Design 1_2.pdf"
+        },
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Agora of Athens",
+          "value": "https://commons.wikimedia.org/wiki/File:Agora_-_Ath%C3%A8nes_(GRA1)_-_2022-03-26_-_97.jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        },
+        {
+          "type": "website",
+          "title": "American School of Classical Studies: Athenian Agora Excavations",
+          "value": "https://www.ascsa.edu.gr/excavations/athenian-agora",
+          "reliability_level": "primary_source",
+          "rights_status": "licensed"
+        }
+      ]
     }
   },
   {
@@ -2786,6 +3137,72 @@
       "model_count": 5,
       "analysis_count": 5,
       "tag_count": 5
+    },
+    "architecture_text": {
+      "headline": "Milet: Hafen, Raster und ionische Stadtidee",
+      "overview": "Milet wird im Architektur Kosmos als ionische Raster- und Hafenstadt gelesen und nicht als isoliertes Archivobjekt behandelt. Die Relevanz des Projekts liegt im Zusammenspiel von räumlicher Dramaturgie, konstruktiver Ordnung und archäologische Stadtlandschaft / ehemalige Hafenebene / Didim, Turkey / griechische Stadt und hippodamisches Raster. Der Eintrag soll deshalb Projektlogik, Materialsystem, Tragwerk und Modell-Layer sichtbar machen, statt nur eine lineare Kurzgeschichte zu liefern.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Milet gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Milet verknüpft Hafenlandschaft, orthogonales Raster und öffentliche Monumente zu einer Stadtidee, in der Geometrie und Küstenveränderung zusammenspielen. Für den Atlas ist das Projekt wertvoll, weil es trockene Metadaten in eine räumliche Fragestellung übersetzt: polis, Raster, Städtebau.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Primäre Materiallesart: Kalkstein, Marmor, Mauerwerk. Milet ist eine zentrale Referenz für Rasterplanung und Hafenstadt: steinerne öffentliche Monumente stehen im Verhältnis zu orthogonaler Ordnung und veränderlicher Küstenlinie. Tragwerkslayer für Blender-Import geplant: Masse, Lastpfad und räumliches Tragsystem. Die Geometrie bleibt als Studienrekonstruktion markiert, bis Quellenpläne geprüft sind. Für spätere Blender- und ArchiCAD-Workflows sollen diese Beobachtungen als trennbare Ebenen geführt werden, nicht als ein einziges dekoratives Modell.",
+          "source_basis": "analysis layer: material_system; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Milet verknüpft Hafenlandschaft, orthogonales Raster und öffentliche Monumente zu einer Stadtidee, in der Geometrie und Küstenveränderung zusammenspielen. Dadurch wird das Projekt als filterbare Referenz interessant: Grundriss, Schnitt, Erschliessung und Kontext können über Zeiträume hinweg verglichen werden, statt nur als Bilder betrachtet zu werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Tectonic layer planned around Kalkstein, Marmor, Mauerwerk; separates material expression, enclosure and structural reading for later Blender layer toggles. Der Cosmos-Text hält diese konstruktive Lesart bewusst explizit, weil sie die Brücke zwischen historischer Interpretation und modellbasierter Analyse bildet.",
+          "source_basis": "analysis layer: tectonics; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Milet gehört zu archäologische Stadtlandschaft / ehemalige Hafenebene / Didim, Turkey / griechische Stadt und hippodamisches Raster. Der Ort ist dabei keine Hintergrundinformation, sondern Teil des architektonischen Arguments und soll im Atlas, im Modellpaket und in zukünftigen Suchfiltern sichtbar bleiben.",
+          "source_basis": "entry context metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für die Architecture-Cosmos-Datenbank soll Milet als strukturierte Referenz mit Quellenpfad, Medienslots, Analyseebenen und Modellteilen gespeichert werden. Die wichtigsten zukünftigen Filter sind material:limestone, typology:grid city, typology:harbor city, context:coastal plain, blender:urban grid candidate, Kalkstein, Marmor, Mauerwerk. Öffentliche Ausgaben müssen rechteklar bleiben; private Forschungsnotizen können detailliertere, quellenbasierte Analysen tragen, bis sie geprüft sind.",
+          "source_basis": "derived from entry metadata, model fields and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T17:51:34.639Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_document",
+          "value": "02 Global History of Urban Design 1_2.pdf"
+        },
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Milet",
+          "value": "https://commons.wikimedia.org/wiki/File:Miletus_-_Ancient_Greek_theatre_02.jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        },
+        {
+          "type": "website",
+          "title": "Encyclopaedia Britannica: Miletus",
+          "value": "https://www.britannica.com/place/Miletus",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        }
+      ]
     }
   },
   {
@@ -3059,6 +3476,72 @@
       "model_count": 5,
       "analysis_count": 5,
       "tag_count": 5
+    },
+    "architecture_text": {
+      "headline": "Olynth: Wohnblock und Alltagsraster der griechischen Polis",
+      "overview": "Olynth wird im Architektur Kosmos als griechisches Wohnraster gelesen und nicht als isoliertes Archivobjekt behandelt. Die Relevanz des Projekts liegt im Zusammenspiel von räumlicher Dramaturgie, konstruktiver Ordnung und archäologische Stätte / flacher Hügel / Central Macedonia, Greece / griechische Stadt und Wohnblock. Der Eintrag soll deshalb Projektlogik, Materialsystem, Tragwerk und Modell-Layer sichtbar machen, statt nur eine lineare Kurzgeschichte zu liefern.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Olynth gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Olynth zeigt die Polis auf Ebene des Wohnblocks: regelmäßige Straßen, Hofhäuser, Parzellen und Nachbarschaften machen Alltag als städtebauliches System sichtbar. Für den Atlas ist das Projekt wertvoll, weil es trockene Metadaten in eine räumliche Fragestellung übersetzt: polis, housing block, Stadtraster.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Primäre Materiallesart: Steinfundamente, Lehmziegel. Olynth ist zentral für die Lesart griechischer Wohnblöcke: regelmäßiges Straßennetz, Hofhäuser und Steinfundamente mit rekonstruierten Lehmziegel- und Holzaufbauten. Tragwerkslayer für Blender-Import geplant: Masse, Lastpfad und räumliches Tragsystem. Die Geometrie bleibt als Studienrekonstruktion markiert, bis Quellenpläne geprüft sind. Für spätere Blender- und ArchiCAD-Workflows sollen diese Beobachtungen als trennbare Ebenen geführt werden, nicht als ein einziges dekoratives Modell.",
+          "source_basis": "analysis layer: material_system; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Olynth zeigt die Polis auf Ebene des Wohnblocks: regelmäßige Straßen, Hofhäuser, Parzellen und Nachbarschaften machen Alltag als städtebauliches System sichtbar. Dadurch wird das Projekt als filterbare Referenz interessant: Grundriss, Schnitt, Erschliessung und Kontext können über Zeiträume hinweg verglichen werden, statt nur als Bilder betrachtet zu werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Tectonic layer planned around Steinfundamente, Lehmziegel; separates material expression, enclosure and structural reading for later Blender layer toggles. Der Cosmos-Text hält diese konstruktive Lesart bewusst explizit, weil sie die Brücke zwischen historischer Interpretation und modellbasierter Analyse bildet.",
+          "source_basis": "analysis layer: tectonics; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Olynth gehört zu archäologische Stätte / flacher Hügel / Central Macedonia, Greece / griechische Stadt und Wohnblock. Der Ort ist dabei keine Hintergrundinformation, sondern Teil des architektonischen Arguments und soll im Atlas, im Modellpaket und in zukünftigen Suchfiltern sichtbar bleiben.",
+          "source_basis": "entry context metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für die Architecture-Cosmos-Datenbank soll Olynth als strukturierte Referenz mit Quellenpfad, Medienslots, Analyseebenen und Modellteilen gespeichert werden. Die wichtigsten zukünftigen Filter sind material:stone foundation, material:mud brick, typology:courtyard house, typology:grid plan, blender:block model candidate, Steinfundamente, Lehmziegel, polis. Öffentliche Ausgaben müssen rechteklar bleiben; private Forschungsnotizen können detailliertere, quellenbasierte Analysen tragen, bis sie geprüft sind.",
+          "source_basis": "derived from entry metadata, model fields and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T17:51:34.814Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_document",
+          "value": "02 Global History of Urban Design 1_2.pdf"
+        },
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Olynth",
+          "value": "https://commons.wikimedia.org/wiki/File:Bouleuterion_in_Olynthos_2.jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        },
+        {
+          "type": "website",
+          "title": "Encyclopaedia Britannica: Olynthus",
+          "value": "https://www.britannica.com/place/Olynthus",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        }
+      ]
     }
   },
   {
@@ -3261,6 +3744,72 @@
       "model_count": 5,
       "analysis_count": 5,
       "tag_count": 5
+    },
+    "architecture_text": {
+      "headline": "Priene: Orthogonale Stadt am Hang",
+      "overview": "Priene wird im Architektur Kosmos als terrassierte hellenistische Rasterstadt gelesen und nicht als isoliertes Archivobjekt behandelt. Die Relevanz des Projekts liegt im Zusammenspiel von räumlicher Dramaturgie, konstruktiver Ordnung und archäologische Hang- und Bergstadt / steiler Hang / Aydin, Turkey / hellenistische Stadt und Rasterplan. Der Eintrag soll deshalb Projektlogik, Materialsystem, Tragwerk und Modell-Layer sichtbar machen, statt nur eine lineare Kurzgeschichte zu liefern.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Priene gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Priene legt ein orthogonales Raster über einen steilen Hang; Terrassen, Stützmauern, Agora und Heiligtümer zeigen, wie Geometrie topografisch verhandelt wird. Für den Atlas ist das Projekt wertvoll, weil es trockene Metadaten in eine räumliche Fragestellung übersetzt: polis, Topografie, Stadtraster.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Primäre Materiallesart: Kalkstein, Marmor, Mauerwerk. Priene passt ein orthogonales Stadtraster an einen steilen Hang an; Terrassen, Stützmauern und öffentliche Monumente werden untrennbar mit der Topografie verbunden. Tragwerkslayer für Blender-Import geplant: Terrassenmauer. Die Geometrie bleibt als Studienrekonstruktion markiert, bis Quellenpläne geprüft sind. Für spätere Blender- und ArchiCAD-Workflows sollen diese Beobachtungen als trennbare Ebenen geführt werden, nicht als ein einziges dekoratives Modell.",
+          "source_basis": "analysis layer: material_system; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Priene legt ein orthogonales Raster über einen steilen Hang; Terrassen, Stützmauern, Agora und Heiligtümer zeigen, wie Geometrie topografisch verhandelt wird. Dadurch wird das Projekt als filterbare Referenz interessant: Grundriss, Schnitt, Erschliessung und Kontext können über Zeiträume hinweg verglichen werden, statt nur als Bilder betrachtet zu werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Tectonic layer planned around Kalkstein, Marmor, Mauerwerk; separates material expression, enclosure and structural reading for later Blender layer toggles. Der Cosmos-Text hält diese konstruktive Lesart bewusst explizit, weil sie die Brücke zwischen historischer Interpretation und modellbasierter Analyse bildet.",
+          "source_basis": "analysis layer: tectonics; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Priene gehört zu archäologische Hang- und Bergstadt / steiler Hang / Aydin, Turkey / hellenistische Stadt und Rasterplan. Der Ort ist dabei keine Hintergrundinformation, sondern Teil des architektonischen Arguments und soll im Atlas, im Modellpaket und in zukünftigen Suchfiltern sichtbar bleiben.",
+          "source_basis": "entry context metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für die Architecture-Cosmos-Datenbank soll Priene als strukturierte Referenz mit Quellenpfad, Medienslots, Analyseebenen und Modellteilen gespeichert werden. Die wichtigsten zukünftigen Filter sind material:limestone, typology:grid city, topography:slope, structure:terrace wall, blender:terrain model candidate, Kalkstein, Marmor, Mauerwerk. Öffentliche Ausgaben müssen rechteklar bleiben; private Forschungsnotizen können detailliertere, quellenbasierte Analysen tragen, bis sie geprüft sind.",
+          "source_basis": "derived from entry metadata, model fields and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T17:51:34.994Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_document",
+          "value": "02 Global History of Urban Design 1_2.pdf"
+        },
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Priene",
+          "value": "https://commons.wikimedia.org/wiki/File:Temple_of_Athena_at_Priene.jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        },
+        {
+          "type": "website",
+          "title": "Encyclopaedia Britannica: Priene",
+          "value": "https://www.britannica.com/place/Priene",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        }
+      ]
     }
   },
   {
@@ -3464,6 +4013,72 @@
       "model_count": 5,
       "analysis_count": 5,
       "tag_count": 5
+    },
+    "architecture_text": {
+      "headline": "Dura-Europos: Grenzstadt zwischen Mauer, Raster und Bildraum",
+      "overview": "Dura-Europos wird im Architektur Kosmos als befestigte Grenzstadt gelesen und nicht als isoliertes Archivobjekt behandelt. Die Relevanz des Projekts liegt im Zusammenspiel von räumlicher Dramaturgie, konstruktiver Ordnung und archäologische Euphratlandschaft / Flusskante / Gharanij, Syria / Grenzstadt und Befestigung. Der Eintrag soll deshalb Projektlogik, Materialsystem, Tragwerk und Modell-Layer sichtbar machen, statt nur eine lineare Kurzgeschichte zu liefern.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Dura-Europos gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Dura-Europos verbindet hellenistisches Raster, Befestigung, Flusskante und religiöse Innenräume zu einer Grenzstadt, deren Bedeutung aus Überlagerung entsteht. Für den Atlas ist das Projekt wertvoll, weil es trockene Metadaten in eine räumliche Fragestellung übersetzt: hellenistische Stadt, Grenze, Stadtraster.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Primäre Materiallesart: Lehmziegel, Stein, Putz. Dura-Europos ist eine befestigte Grenzstadt aus Lehmziegel- und Steingefüge, Stadtmauer, religiösen Innenräumen und außergewöhnlichen bemalten Putzbefunden. Tragwerkslayer für Blender-Import geplant: Masse, Lastpfad und räumliches Tragsystem. Die Geometrie bleibt als Studienrekonstruktion markiert, bis Quellenpläne geprüft sind. Für spätere Blender- und ArchiCAD-Workflows sollen diese Beobachtungen als trennbare Ebenen geführt werden, nicht als ein einziges dekoratives Modell.",
+          "source_basis": "analysis layer: material_system; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Dura-Europos verbindet hellenistisches Raster, Befestigung, Flusskante und religiöse Innenräume zu einer Grenzstadt, deren Bedeutung aus Überlagerung entsteht. Dadurch wird das Projekt als filterbare Referenz interessant: Grundriss, Schnitt, Erschliessung und Kontext können über Zeiträume hinweg verglichen werden, statt nur als Bilder betrachtet zu werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Tectonic layer planned around Lehmziegel, Stein, Putz; separates material expression, enclosure and structural reading for later Blender layer toggles. Der Cosmos-Text hält diese konstruktive Lesart bewusst explizit, weil sie die Brücke zwischen historischer Interpretation und modellbasierter Analyse bildet.",
+          "source_basis": "analysis layer: tectonics; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Dura-Europos gehört zu archäologische Euphratlandschaft / Flusskante / Gharanij, Syria / Grenzstadt und Befestigung. Der Ort ist dabei keine Hintergrundinformation, sondern Teil des architektonischen Arguments und soll im Atlas, im Modellpaket und in zukünftigen Suchfiltern sichtbar bleiben.",
+          "source_basis": "entry context metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für die Architecture-Cosmos-Datenbank soll Dura-Europos als strukturierte Referenz mit Quellenpfad, Medienslots, Analyseebenen und Modellteilen gespeichert werden. Die wichtigsten zukünftigen Filter sind material:mud brick, material:stone, typology:fortified city, context:river bluff, blender:fortification model candidate, Lehmziegel, Stein, plaster. Öffentliche Ausgaben müssen rechteklar bleiben; private Forschungsnotizen können detailliertere, quellenbasierte Analysen tragen, bis sie geprüft sind.",
+          "source_basis": "derived from entry metadata, model fields and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T17:51:35.161Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_document",
+          "value": "02 Global History of Urban Design 1_2.pdf"
+        },
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Dura-Europos",
+          "value": "https://commons.wikimedia.org/wiki/File:DuraEuropos-TempleOfBel.jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        },
+        {
+          "type": "website",
+          "title": "Yale University Art Gallery: Dura-Europos",
+          "value": "https://artgallery.yale.edu/dura-europos",
+          "reliability_level": "primary_source",
+          "rights_status": "licensed"
+        }
+      ]
     }
   },
   {
@@ -3675,6 +4290,72 @@
       "model_count": 5,
       "analysis_count": 5,
       "tag_count": 6
+    },
+    "architecture_text": {
+      "headline": "Pompeji: Alltagsstadt als konservierter urbaner Schnitt",
+      "overview": "Pompeji wird im Architektur Kosmos als römische Stadt gelesen und nicht als isoliertes Archivobjekt behandelt. Die Relevanz des Projekts liegt im Zusammenspiel von räumlicher Dramaturgie, konstruktiver Ordnung und archäologische Stadtlandschaft / vulkanische Ebene / Naples, Italy / UNESCO-Welterbestätte und römische Alltagsstadt. Der Eintrag soll deshalb Projektlogik, Materialsystem, Tragwerk und Modell-Layer sichtbar machen, statt nur eine lineare Kurzgeschichte zu liefern.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Pompeji gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Pompeji wird als urbaner Schnitt durch Alltag, Handel, Wohnen, Straße, Infrastruktur und Vulkanlandschaft gelesen, nicht nur als konservierte Ruinenstadt. Für den Atlas ist das Projekt wertvoll, weil es trockene Metadaten in eine räumliche Fragestellung übersetzt: römischer Urbanismus, Straßenraster, Alltagswohnen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Primäre Materiallesart: Tuffstein, Ziegel, römischer Beton, Putz. Pompeji verbindet vulkanisches Gestein, Ziegel, Beton, verputzte Innenräume und Straßenbeläge; das Stadtmodell soll Wohn-, Handels- und Infrastrukturschichten getrennt lesbar machen. Tragwerkslayer für Blender-Import geplant: Masse, Lastpfad und räumliches Tragsystem. Die Geometrie bleibt als Studienrekonstruktion markiert, bis Quellenpläne geprüft sind. Für spätere Blender- und ArchiCAD-Workflows sollen diese Beobachtungen als trennbare Ebenen geführt werden, nicht als ein einziges dekoratives Modell.",
+          "source_basis": "analysis layer: material_system; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Pompeji wird als urbaner Schnitt durch Alltag, Handel, Wohnen, Straße, Infrastruktur und Vulkanlandschaft gelesen, nicht nur als konservierte Ruinenstadt. Dadurch wird das Projekt als filterbare Referenz interessant: Grundriss, Schnitt, Erschliessung und Kontext können über Zeiträume hinweg verglichen werden, statt nur als Bilder betrachtet zu werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Tectonic layer planned around Tuffstein, Ziegel, römischer Beton; separates material expression, enclosure and structural reading for later Blender layer toggles. Der Cosmos-Text hält diese konstruktive Lesart bewusst explizit, weil sie die Brücke zwischen historischer Interpretation und modellbasierter Analyse bildet.",
+          "source_basis": "analysis layer: tectonics; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Pompeji gehört zu archäologische Stadtlandschaft / vulkanische Ebene / Naples, Italy / UNESCO-Welterbestätte und römische Alltagsstadt. Der Ort ist dabei keine Hintergrundinformation, sondern Teil des architektonischen Arguments und soll im Atlas, im Modellpaket und in zukünftigen Suchfiltern sichtbar bleiben.",
+          "source_basis": "entry context metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für die Architecture-Cosmos-Datenbank soll Pompeji als strukturierte Referenz mit Quellenpfad, Medienslots, Analyseebenen und Modellteilen gespeichert werden. Die wichtigsten zukünftigen Filter sind material:tufa, material:roman concrete, typology:roman city, typology:insula, context:volcanic plain, blender:urban model candidate, Tuffstein, Ziegel. Öffentliche Ausgaben müssen rechteklar bleiben; private Forschungsnotizen können detailliertere, quellenbasierte Analysen tragen, bis sie geprüft sind.",
+          "source_basis": "derived from entry metadata, model fields and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T17:51:35.330Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_document",
+          "value": "02 Global History of Urban Design 1_2.pdf"
+        },
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Pompeji",
+          "value": "https://commons.wikimedia.org/wiki/File:Theathres_of_Pompeii.jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        },
+        {
+          "type": "website",
+          "title": "UNESCO World Heritage Centre: Archaeological Areas of Pompei, Herculaneum and Torre Annunziata",
+          "value": "https://whc.unesco.org/en/list/829/",
+          "reliability_level": "primary_source",
+          "rights_status": "licensed"
+        }
+      ]
     }
   },
   {
@@ -3877,6 +4558,72 @@
       "model_count": 5,
       "analysis_count": 5,
       "tag_count": 5
+    },
+    "architecture_text": {
+      "headline": "Timgad: Kolonialraster als römische Stadtmaschine",
+      "overview": "Timgad wird im Architektur Kosmos als römische Kolonialstadt gelesen und nicht als isoliertes Archivobjekt behandelt. Die Relevanz des Projekts liegt im Zusammenspiel von räumlicher Dramaturgie, konstruktiver Ordnung und archäologische Stadtlandschaft / Plateau-Ebene / Timgad, Algeria / UNESCO-Welterbestätte und römische Kolonie. Der Eintrag soll deshalb Projektlogik, Materialsystem, Tragwerk und Modell-Layer sichtbar machen, statt nur eine lineare Kurzgeschichte zu liefern.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Timgad gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Timgad übersetzt römische Kolonialordnung in Cardo, Decumanus, Forum, Theater und Steinraster; die Stadt wird zum präzisen Instrument imperialer Raumproduktion. Für den Atlas ist das Projekt wertvoll, weil es trockene Metadaten in eine räumliche Fragestellung übersetzt: römischer Urbanismus, Kolonialstadt, Raster.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Primäre Materiallesart: Kalkstein, Steinmauerwerk. Timgad ist eine römische Kolonialstadt, deren Steinstraßen, Forum, Theater und Cardo-Decumanus-Struktur sie zu einer starken Referenz urbaner Ordnung machen. Tragwerkslayer für Blender-Import geplant: Steinmauerwerk. Die Geometrie bleibt als Studienrekonstruktion markiert, bis Quellenpläne geprüft sind. Für spätere Blender- und ArchiCAD-Workflows sollen diese Beobachtungen als trennbare Ebenen geführt werden, nicht als ein einziges dekoratives Modell.",
+          "source_basis": "analysis layer: material_system; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Timgad übersetzt römische Kolonialordnung in Cardo, Decumanus, Forum, Theater und Steinraster; die Stadt wird zum präzisen Instrument imperialer Raumproduktion. Dadurch wird das Projekt als filterbare Referenz interessant: Grundriss, Schnitt, Erschliessung und Kontext können über Zeiträume hinweg verglichen werden, statt nur als Bilder betrachtet zu werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Tectonic layer planned around Kalkstein, Steinmauerwerk; separates material expression, enclosure and structural reading for later Blender layer toggles. Der Cosmos-Text hält diese konstruktive Lesart bewusst explizit, weil sie die Brücke zwischen historischer Interpretation und modellbasierter Analyse bildet.",
+          "source_basis": "analysis layer: tectonics; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Timgad gehört zu archäologische Stadtlandschaft / Plateau-Ebene / Timgad, Algeria / UNESCO-Welterbestätte und römische Kolonie. Der Ort ist dabei keine Hintergrundinformation, sondern Teil des architektonischen Arguments und soll im Atlas, im Modellpaket und in zukünftigen Suchfiltern sichtbar bleiben.",
+          "source_basis": "entry context metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für die Architecture-Cosmos-Datenbank soll Timgad als strukturierte Referenz mit Quellenpfad, Medienslots, Analyseebenen und Modellteilen gespeichert werden. Die wichtigsten zukünftigen Filter sind material:limestone, typology:roman colony, typology:grid city, structure:stone masonry, blender:urban grid candidate, Kalkstein, Steinmauerwerk, römischer Urbanismus. Öffentliche Ausgaben müssen rechteklar bleiben; private Forschungsnotizen können detailliertere, quellenbasierte Analysen tragen, bis sie geprüft sind.",
+          "source_basis": "derived from entry metadata, model fields and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T17:51:35.509Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_document",
+          "value": "02 Global History of Urban Design 1_2.pdf"
+        },
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Timgad",
+          "value": "https://commons.wikimedia.org/wiki/File:Timgad_(15685889550).jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        },
+        {
+          "type": "website",
+          "title": "UNESCO World Heritage Centre: Timgad",
+          "value": "https://whc.unesco.org/en/list/194/",
+          "reliability_level": "primary_source",
+          "rights_status": "licensed"
+        }
+      ]
     }
   },
   {

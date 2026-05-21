@@ -182,7 +182,18 @@ function buildHeadline(entry, program) {
     'catal-huyuk': 'Catal Hüyük: Wohnen, Dachlandschaft und frühe städtische Dichte',
     'uruk-city': 'Uruk: Tempelbezirke, Verwaltung und frühe Stadtordnung',
     'mohenjo-daro': 'Mohenjo-Daro: Wasser, Raster und Indus-Stadt',
-    'forum-romanum': 'Forum Romanum: Öffentlicher Raum als politisches Palimpsest'
+    'forum-romanum': 'Forum Romanum: Öffentlicher Raum als politisches Palimpsest',
+    nippur: 'Nippur: Tempelstadt als geschichteter Lehmziegelkörper',
+    'eridu-and-susa': 'Eridu und Susa: Flusslandschaft, Tempel und frühe Stadtmacht',
+    ur: 'Ur: Zikkurat, Stadtmauer und Lehmziegel-Monumentalität',
+    'megara-hyblaea': 'Megara Hyblaea: Koloniale Polis als frühes Raster',
+    'agora-of-athens': 'Agora von Athen: Öffentlichkeit als architektonische Ordnung',
+    milet: 'Milet: Hafen, Raster und ionische Stadtidee',
+    olynth: 'Olynth: Wohnblock und Alltagsraster der griechischen Polis',
+    priene: 'Priene: Orthogonale Stadt am Hang',
+    'dura-europos': 'Dura-Europos: Grenzstadt zwischen Mauer, Raster und Bildraum',
+    pompeji: 'Pompeji: Alltagsstadt als konservierter urbaner Schnitt',
+    timgad: 'Timgad: Kolonialraster als römische Stadtmaschine'
   };
 
   if (specificHeadlines[entry.slug]) return specificHeadlines[entry.slug];
@@ -223,6 +234,17 @@ function spatialFallback(entry) {
     'uruk-city': 'Uruk ordnet frühe Stadt über Tempelbezirke, Plattformen, Mauern und Verwaltungsräume; Monument, Schrift und Arbeitsteilung werden zu einer architektonischen Stadtstruktur',
     'mohenjo-daro': 'Mohenjo-Daro verbindet Rasterstraßen, erhöhte Plattformen, Drainagen und Wasserbauten zu einer Stadt, deren Ordnung aus Hygiene, Standardisierung und kollektiver Infrastruktur entsteht',
     'forum-romanum': 'Das Forum Romanum ist kein einzelner Platz, sondern ein über Jahrhunderte geschichtetes Band aus Tempeln, Basiliken, Triumphwegen, Kurie und öffentlicher Leere',
+    nippur: 'Nippur wird als sakrale Stadtlandschaft gelesen, in der Tempelbezirke, Lehmziegelmasse, Tell-Schichtung und Prozessionsräume den urbanen Kern organisieren',
+    'eridu-and-susa': 'Eridu und Susa stehen für frühe Stadtbildung in Flusslandschaften: Tempel, Palast, Lehmziegelplattformen und Sedimentschichten bilden eine lange Folge politischer und ritueller Räume',
+    ur: 'Ur verdichtet Stadt, Zikkurat, Wohnquartiere und Mauer zu einer Lehmziegel-Topografie, in der Monument und Alltagsstadt nicht getrennt betrachtet werden können',
+    'megara-hyblaea': 'Megara Hyblaea macht die griechische Kolonialstadt als ordnenden Grundriss lesbar: Parzellen, Straßen, öffentliche Räume und Hausgrundstücke werden zu einem frühen Rasterinstrument',
+    'agora-of-athens': 'Die Agora von Athen ist ein offenes urbanes Feld, das durch Stoen, Heiligtümer, Verwaltungsbauten, Wege und politische Rituale räumliche Bedeutung erhält',
+    milet: 'Milet verknüpft Hafenlandschaft, orthogonales Raster und öffentliche Monumente zu einer Stadtidee, in der Geometrie und Küstenveränderung zusammenspielen',
+    olynth: 'Olynth zeigt die Polis auf Ebene des Wohnblocks: regelmäßige Straßen, Hofhäuser, Parzellen und Nachbarschaften machen Alltag als städtebauliches System sichtbar',
+    priene: 'Priene legt ein orthogonales Raster über einen steilen Hang; Terrassen, Stützmauern, Agora und Heiligtümer zeigen, wie Geometrie topografisch verhandelt wird',
+    'dura-europos': 'Dura-Europos verbindet hellenistisches Raster, Befestigung, Flusskante und religiöse Innenräume zu einer Grenzstadt, deren Bedeutung aus Überlagerung entsteht',
+    pompeji: 'Pompeji wird als urbaner Schnitt durch Alltag, Handel, Wohnen, Straße, Infrastruktur und Vulkanlandschaft gelesen, nicht nur als konservierte Ruinenstadt',
+    timgad: 'Timgad übersetzt römische Kolonialordnung in Cardo, Decumanus, Forum, Theater und Steinraster; die Stadt wird zum präzisen Instrument imperialer Raumproduktion',
     'haus-tugendhat': 'Die räumliche Ordnung entsteht aus Zonen statt aus geschlossenen Zimmern: Wohnen, Essen, Musik und Blickfelder fließen um Materialwände, Vorhänge und Möblierungsfelder herum'
   };
   if (specificSpatialReadings[entry.slug]) {
@@ -357,6 +379,28 @@ function readableDe(value) {
     'indus grid city': 'Indus-Rasterstadt',
     roman_civic_forum: 'römisches Forum',
     'roman civic forum': 'römisches Forum',
+    temple_city: 'Tempelstadt',
+    'temple city': 'Tempelstadt',
+    temple_city_and_palatial_settlement: 'Tempelstadt und Palastsiedlung',
+    'temple city and palatial settlement': 'Tempelstadt und Palastsiedlung',
+    ziggurat_city: 'Zikkuratstadt',
+    'ziggurat city': 'Zikkuratstadt',
+    greek_colonial_polis_grid: 'griechische Kolonialstadt',
+    'greek colonial polis grid': 'griechische Kolonialstadt',
+    greek_civic_agora: 'griechische Agora',
+    'greek civic agora': 'griechische Agora',
+    ionian_grid_harbor_city: 'ionische Raster- und Hafenstadt',
+    'ionian grid harbor city': 'ionische Raster- und Hafenstadt',
+    greek_domestic_grid: 'griechisches Wohnraster',
+    'greek domestic grid': 'griechisches Wohnraster',
+    terraced_hellenistic_grid_city: 'terrassierte hellenistische Rasterstadt',
+    'terraced hellenistic grid city': 'terrassierte hellenistische Rasterstadt',
+    fortified_frontier_city: 'befestigte Grenzstadt',
+    'fortified frontier city': 'befestigte Grenzstadt',
+    roman_city: 'römische Stadt',
+    'roman city': 'römische Stadt',
+    roman_colonial_grid_city: 'römische Kolonialstadt',
+    'roman colonial grid city': 'römische Kolonialstadt',
     early_urbanism: 'frühe Urbanisierung',
     'early urbanism': 'frühe Urbanisierung',
     public_space: 'öffentlicher Raum',
@@ -419,6 +463,28 @@ function readableDe(value) {
     'urban archaeological core': 'urbaner archäologischer Kern',
     valley_between_hills: 'Talraum zwischen Hügeln',
     'valley between hills': 'Talraum zwischen Hügeln',
+    riverine_archaeological_landscape: 'archäologische Flusslandschaft',
+    'riverine archaeological landscape': 'archäologische Flusslandschaft',
+    euphrates_archaeological_landscape: 'archäologische Euphratlandschaft',
+    'euphrates archaeological landscape': 'archäologische Euphratlandschaft',
+    archaeological_mountain_site: 'archäologische Hang- und Bergstadt',
+    'archaeological mountain site': 'archäologische Hang- und Bergstadt',
+    coastal_plain: 'Küstenebene',
+    'coastal plain': 'Küstenebene',
+    low_urban_slope: 'flacher urbaner Hang',
+    'low urban slope': 'flacher urbaner Hang',
+    former_harbor_plain: 'ehemalige Hafenebene',
+    'former harbor plain': 'ehemalige Hafenebene',
+    low_hill: 'flacher Hügel',
+    'low hill': 'flacher Hügel',
+    steep_slope: 'steiler Hang',
+    'steep slope': 'steiler Hang',
+    river_bluff: 'Flusskante',
+    'river bluff': 'Flusskante',
+    volcanic_plain: 'vulkanische Ebene',
+    'volcanic plain': 'vulkanische Ebene',
+    plateau_plain: 'Plateau-Ebene',
+    'plateau plain': 'Plateau-Ebene',
     neolithic_settlement: 'neolithische Siedlung',
     'neolithic settlement': 'neolithische Siedlung',
     sumerian_city: 'sumerische Stadt',
@@ -433,6 +499,32 @@ function readableDe(value) {
     'roman forum': 'römisches Forum',
     civic_space: 'zivischer Raum',
     'civic space': 'zivischer Raum',
+    greek_colony: 'griechische Kolonie',
+    'greek colony': 'griechische Kolonie',
+    polis_planning: 'Polis-Planung',
+    'polis planning': 'Polis-Planung',
+    greek_agora: 'griechische Agora',
+    'greek agora': 'griechische Agora',
+    democratic_civic_space: 'demokratischer Bürgerraum',
+    'democratic civic space': 'demokratischer Bürgerraum',
+    greek_city: 'griechische Stadt',
+    'greek city': 'griechische Stadt',
+    hippodamian_grid: 'hippodamisches Raster',
+    'hippodamian grid': 'hippodamisches Raster',
+    domestic_block: 'Wohnblock',
+    'domestic block': 'Wohnblock',
+    hellenistic_city: 'hellenistische Stadt',
+    'hellenistic city': 'hellenistische Stadt',
+    grid_plan: 'Rasterplan',
+    'grid plan': 'Rasterplan',
+    frontier_city: 'Grenzstadt',
+    'frontier city': 'Grenzstadt',
+    fortification: 'Befestigung',
+    roman_domestic_city: 'römische Alltagsstadt',
+    'roman domestic city': 'römische Alltagsstadt',
+    roman_colony: 'römische Kolonie',
+    'roman colony': 'römische Kolonie',
+    ziggurat: 'Zikkurat',
     palimpsest: 'Palimpsest',
     proto_urban: 'proto-urban',
     'proto urban': 'proto-urban',
@@ -447,6 +539,19 @@ function readableDe(value) {
     grid: 'Raster',
     urban_design: 'Städtebau',
     'urban design': 'Städtebau',
+    urban_grid: 'Stadtraster',
+    'urban grid': 'Stadtraster',
+    colonization: 'Kolonisation',
+    democracy: 'Demokratie',
+    topography: 'Topografie',
+    frontier: 'Grenze',
+    street_grid: 'Straßenraster',
+    'street grid': 'Straßenraster',
+    domesticity: 'Alltagswohnen',
+    colonial_city: 'Kolonialstadt',
+    'colonial city': 'Kolonialstadt',
+    mud_brick: 'Lehmziegel',
+    'mud brick': 'Lehmziegel',
     roman_urbanism: 'römischer Urbanismus',
     'roman urbanism': 'römischer Urbanismus',
     forum: 'Forum',
@@ -464,8 +569,16 @@ function readableDe(value) {
     'fluid space': 'fließender Raum',
     domestic_modernism: 'Wohnmoderne',
     'domestic modernism': 'Wohnmoderne',
-    mud_brick: 'Lehmziegel',
-    'mud brick': 'Lehmziegel',
+    alluvial_clay: 'Schwemmland-Lehm',
+    'alluvial clay': 'Schwemmland-Lehm',
+    stone_foundations: 'Steinfundamente',
+    'stone foundations': 'Steinfundamente',
+    stone_masonry: 'Steinmauerwerk',
+    'stone masonry': 'Steinmauerwerk',
+    masonry: 'Mauerwerk',
+    stone: 'Stein',
+    limestone: 'Kalkstein',
+    marble: 'Marmor',
     baked_brick: 'gebrannter Ziegel',
     'baked brick': 'gebrannter Ziegel',
     travertine: 'Travertin',
@@ -518,7 +631,18 @@ function localizeArchitectureText(value) {
     ['Dense Neolithic room clusters used mud brick, timber roof structure and plastered interiors; access and circulation are interpreted through rooftops and room openings', 'Dichte neolithische Raumcluster aus Lehmziegeln, Holzdächern und verputzten Innenräumen bilden ein Wohngefüge, dessen Erschließung über Dachflächen und Raumöffnungen gelesen wird'],
     ['Uruk is a mud-brick urban fabric with monumental precincts such as Eanna and Anu/White Temple; geometry should be treated as archaeological reconstruction, not exact survey', 'Uruk wird als Lehmziegel-Stadtgefüge mit monumentalen Bezirken wie Eanna und Anu/Weißem Tempel gelesen; seine Geometrie bleibt archäologische Rekonstruktion und kein exaktes Aufmaß'],
     ['The Indus city is characterized by standardized baked brick, gridded streets, platforms, drains and carefully organized water infrastructure', 'Die Indus-Stadt ist durch standardisierte gebrannte Ziegel, gerasterte Straßen, Plattformen, Drainagen und präzise organisierte Wasserinfrastruktur geprägt'],
-    ['The Forum Romanum accumulates stone, brick and concrete monuments around a civic valley; it should be modeled as a layered public field rather than one building', 'Das Forum Romanum versammelt Stein-, Ziegel- und Betonmonumente um einen zivilen Talraum; es soll als geschichtetes öffentliches Feld und nicht als Einzelbau modelliert werden']
+    ['The Forum Romanum accumulates stone, brick and concrete monuments around a civic valley; it should be modeled as a layered public field rather than one building', 'Das Forum Romanum versammelt Stein-, Ziegel- und Betonmonumente um einen zivilen Talraum; es soll als geschichtetes öffentliches Feld und nicht als Einzelbau modelliert werden'],
+    ['Nippur is read as a Mesopotamian temple city with mud-Ziegel urban fabric, sacred precincts and layered tell stratigraphy', 'Nippur wird als mesopotamische Tempelstadt mit Lehmziegelgefüge, sakralen Bezirken und geschichteter Tell-Stratigrafie gelesen'],
+    ['Urban and temple fabrics are reconstructed primarily through Mesopotamian alluvial mud-Ziegel archaeology; Susa adds Elamite/Achaemenid palatial and mud-Ziegel contexts', 'Stadt- und Tempelgefüge werden vor allem über mesopotamische Schwemmland-Lehm-Archäologie rekonstruiert; Susa ergänzt elamische und achämenidische Palast- und Lehmziegelkontexte'],
+    ['The ziggurat and city remains combine mud-Ziegel massing with baked-Ziegel revetments and bitumen mortars in key monumental zones', 'Zikkurat und Stadtreste verbinden Lehmziegelmasse mit gebrannten Ziegelverkleidungen und Bitumenmörtel in den zentralen monumentalen Zonen'],
+    ['Greek colonial urban fabric is read through Stein foundations, street grids and house plots; upper structures are largely archaeological inference', 'Das griechische Kolonialgefüge wird über Steinfundamente, Straßenraster und Hausparzellen gelesen; aufgehende Bauteile bleiben weitgehend archäologische Interpretation'],
+    ['The Agora combines open civic ground with stoas, temples and administrative buildings; material reading is Stein civic architecture around a public void', 'Die Agora verbindet offenen Bürgergrund mit Stoen, Tempeln und Verwaltungsbauten; die Materiallesart versteht sie als steinerne Bürgerarchitektur um eine öffentliche Leere'],
+    ['Milet is an important grid-planning and harbor-city reference, with Stein civic monuments arranged in relation to orthogonal urban order and changing coastline', 'Milet ist eine zentrale Referenz für Rasterplanung und Hafenstadt: steinerne öffentliche Monumente stehen im Verhältnis zu orthogonaler Ordnung und veränderlicher Küstenlinie'],
+    ['Olynth is central for reading Greek domestic blocks: regular street grid, courtyard houses and Stein foundation traces with reconstructed mud-Ziegel/Holz superstructures', 'Olynth ist zentral für die Lesart griechischer Wohnblöcke: regelmäßiges Straßennetz, Hofhäuser und Steinfundamente mit rekonstruierten Lehmziegel- und Holzaufbauten'],
+    ['Priene adapts an orthogonal urban grid to a steep slope, making terraces, retaining walls and civic monuments inseparable from topography', 'Priene passt ein orthogonales Stadtraster an einen steilen Hang an; Terrassen, Stützmauern und öffentliche Monumente werden untrennbar mit der Topografie verbunden'],
+    ['Dura-Europos is a fortified frontier city with mud-Ziegel and Stein fabric, city walls, religious interiors and exceptional painted/Putzed room evidence', 'Dura-Europos ist eine befestigte Grenzstadt aus Lehmziegel- und Steingefüge, Stadtmauer, religiösen Innenräumen und außergewöhnlichen bemalten Putzbefunden'],
+    ['Pompeii combines volcanic Stein, Ziegel, concrete, Putzed interiors and street paving; the urban model should expose domestic, commercial and infrastructural layers', 'Pompeji verbindet vulkanisches Gestein, Ziegel, Beton, verputzte Innenräume und Straßenbeläge; das Stadtmodell soll Wohn-, Handels- und Infrastrukturschichten getrennt lesbar machen'],
+    ['Timgad is a Roman colonial grid city whose Stein streets, forum, theater and cardo/decumanus structure make it a strong urban-order reference', 'Timgad ist eine römische Kolonialstadt, deren Steinstraßen, Forum, Theater und Cardo-Decumanus-Struktur sie zu einer starken Referenz urbaner Ordnung machen']
   ];
 
   for (const [source, target] of replacements) {
@@ -539,18 +663,43 @@ function localizeArchitectureText(value) {
     .replaceAll('Geometry remains reconstruction-grade until source plans are reviewed', 'Die Geometrie bleibt als Studienrekonstruktion markiert, bis Quellenpläne geprüft sind')
     .replaceAll('mud_brick', 'Lehmziegel')
     .replaceAll('baked_brick', 'gebrannter Ziegel')
+    .replaceAll('alluvial_clay', 'Schwemmland-Lehm')
+    .replaceAll('stone_foundations', 'Steinfundamente')
+    .replaceAll('stone_masonry', 'Steinmauerwerk')
     .replaceAll('roman_concrete', 'römischer Beton')
+    .replaceAll('limestone', 'Kalkstein')
+    .replaceAll('marble', 'Marmor')
+    .replaceAll('masonry', 'Mauerwerk')
+    .replaceAll('stone', 'Stein')
     .replaceAll('travertine', 'Travertin')
     .replaceAll('tufa', 'Tuffstein')
     .replaceAll('brick', 'Ziegel')
     .replaceAll('plaster', 'Putz')
     .replaceAll('timber', 'Holz')
     .replaceAll('cellular mass', 'zelluläre Masse')
+    .replaceAll('massive wall', 'massive Wand')
+    .replaceAll('stepped mass', 'gestufte Masse')
+    .replaceAll('masonry foundation', 'Mauerwerksfundament')
+    .replaceAll('terrace wall', 'Terrassenmauer')
+    .replaceAll('stone masonry', 'Steinmauerwerk')
+    .replaceAll('mass, load path and spatial support system', 'Masse, Lastpfad und räumliches Tragsystem')
     .replaceAll('platform', 'Plattform')
     .replaceAll('monumental ensemble', 'monumentales Ensemble')
     .replaceAll('Onyx, glass, steel, textile and Holz are not decoration only; they act as atmospheric and spatial instruments within the freier Grundriss', 'Onyx, Glas, Stahl, Textil und Holz sind nicht nur Ausstattung, sondern atmosphärische und räumliche Instrumente innerhalb des freien Grundrisses')
     .replaceAll('Onyx, glass, steel, textile and timber are not decoration only; they act as atmospheric and spatial instruments within the freier Grundriss', 'Onyx, Glas, Stahl, Textil und Holz sind nicht nur Ausstattung, sondern atmosphärische und räumliche Instrumente innerhalb des freien Grundrisses')
-    .replaceAll('The structural reading foregrounds a steel-frame order that frees the living level from conventional room-bearing walls and allows material screens to organize space', 'Die strukturelle Lesart stellt ein Stahlskelett in den Vordergrund, das das Wohngeschoss von tragenden Zimmerwänden löst und Materialschirme als raumbildende Elemente ermöglicht');
+    .replaceAll('The structural reading foregrounds a steel-frame order that frees the living level from conventional room-bearing walls and allows material screens to organize space', 'Die strukturelle Lesart stellt ein Stahlskelett in den Vordergrund, das das Wohngeschoss von tragenden Zimmerwänden löst und Materialschirme als raumbildende Elemente ermöglicht')
+    .replaceAll('Nippur is read as a Mesopotamian temple city with mud-Ziegel urban fabric, sacred precincts and layered tell stratigraphy', 'Nippur wird als mesopotamische Tempelstadt mit Lehmziegelgefüge, sakralen Bezirken und geschichteter Tell-Stratigrafie gelesen')
+    .replaceAll('Urban and temple fabrics are reconstructed primarily through Mesopotamian alluvial mud-Ziegel archaeology; Susa adds Elamite/Achaemenid palatial and mud-Ziegel contexts', 'Stadt- und Tempelgefüge werden vor allem über mesopotamische Schwemmland-Lehm-Archäologie rekonstruiert; Susa ergänzt elamische und achämenidische Palast- und Lehmziegelkontexte')
+    .replaceAll('The ziggurat and city remains combine mud-Ziegel massing with baked-Ziegel revetments and bitumen mortars in key monumental zones', 'Zikkurat und Stadtreste verbinden Lehmziegelmasse mit gebrannten Ziegelverkleidungen und Bitumenmörtel in den zentralen monumentalen Zonen')
+    .replaceAll('Greek colonial urban fabric is read through Stein foundations, street grids and house plots; upper structures are largely archaeological inference', 'Das griechische Kolonialgefüge wird über Steinfundamente, Straßenraster und Hausparzellen gelesen; aufgehende Bauteile bleiben weitgehend archäologische Interpretation')
+    .replaceAll('The Agora combines open civic ground with stoas, temples and administrative buildings; material reading is Stein civic architecture around a public void', 'Die Agora verbindet offenen Bürgergrund mit Stoen, Tempeln und Verwaltungsbauten; die Materiallesart versteht sie als steinerne Bürgerarchitektur um eine öffentliche Leere')
+    .replaceAll('Milet is an important grid-planning and harbor-city reference, with Stein civic monuments arranged in relation to orthogonal urban order and changing coastline', 'Milet ist eine zentrale Referenz für Rasterplanung und Hafenstadt: steinerne öffentliche Monumente stehen im Verhältnis zu orthogonaler Ordnung und veränderlicher Küstenlinie')
+    .replaceAll('Olynth is central for reading Greek domestic blocks: regular street grid, courtyard houses and Stein foundation traces with reconstructed mud-Ziegel/Holz superstructures', 'Olynth ist zentral für die Lesart griechischer Wohnblöcke: regelmäßiges Straßennetz, Hofhäuser und Steinfundamente mit rekonstruierten Lehmziegel- und Holzaufbauten')
+    .replaceAll('Dura-Europos is a fortified frontier city with mud-Ziegel and Stein fabric, city walls, religious interiors and exceptional painted/Putzed room evidence', 'Dura-Europos ist eine befestigte Grenzstadt aus Lehmziegel- und Steingefüge, Stadtmauer, religiösen Innenräumen und außergewöhnlichen bemalten Putzbefunden')
+    .replaceAll('Pompeii combines volcanic Stein, Ziegel, concrete, Putzed interiors and street paving; the urban model should expose domestic, commercial and infrastructural layers', 'Pompeji verbindet vulkanisches Gestein, Ziegel, Beton, verputzte Innenräume und Straßenbeläge; das Stadtmodell soll Wohn-, Handels- und Infrastrukturschichten getrennt lesbar machen')
+    .replaceAll('Timgad is a Roman colonial grid city whose Stein streets, forum, theater and cardo/decumanus structure make it a strong urban-order reference', 'Timgad ist eine römische Kolonialstadt, deren Steinstraßen, Forum, Theater und Cardo-Decumanus-Struktur sie zu einer starken Referenz urbaner Ordnung machen')
+    .replaceAll('Mauerwerk foundation', 'Mauerwerksfundament')
+    .replaceAll('Stein Mauerwerk', 'Steinmauerwerk');
 }
 
 function titleCase(value) {
