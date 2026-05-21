@@ -1,4 +1,7 @@
-@import "tailwindcss";
+@import "tailwindcss" source(none);
+@source "../app";
+@source "../components";
+@source "../lib";
 
 :root { color-scheme: light; }
 :root {
@@ -1487,7 +1490,7 @@ body:has(.entry-page) {
   color: rgb(247 247 244 / 58%);
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  font-size: 7.5px;
+  font-size: 8px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1589,6 +1592,8 @@ body:has(.entry-page) {
   font-size: calc(var(--ui-font-control) - 0.5px);
   line-height: 1;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   backdrop-filter: blur(6px);
   transition: border-color 140ms ease, background 140ms ease, color 140ms ease, transform 140ms ease;
 }
@@ -2009,7 +2014,7 @@ body:has(.entry-page) {
 
 .database-primary-action small {
   color: rgb(184 184 178 / 78%);
-  font-size: 7px;
+  font-size: 8px;
   letter-spacing: 0.08em;
   line-height: 1.05;
   text-align: center;
@@ -2116,7 +2121,7 @@ body:has(.entry-page) {
 
 .database-tab small {
   color: #8d8d87;
-  font-size: 7.2px;
+  font-size: 8px;
   letter-spacing: 0.04em;
   line-height: 1.15;
   text-transform: none;
@@ -2169,7 +2174,7 @@ body:has(.entry-page) {
 .database-flow-step small {
   min-width: 0;
   color: #b8b8b2;
-  font-size: 7.6px;
+  font-size: 8px;
   letter-spacing: 0.06em;
   line-height: 1.08;
   text-transform: uppercase;
@@ -2218,7 +2223,7 @@ body:has(.entry-page) {
 
 .database-analysis-score small {
   margin-top: -18px;
-  font-size: 7px;
+  font-size: 8px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
