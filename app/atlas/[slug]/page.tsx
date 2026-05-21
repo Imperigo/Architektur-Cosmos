@@ -504,7 +504,6 @@ function ArchitectureTextSection({ entry, accent }: { entry: Entry; accent: stri
           <div className="mt-4 flex flex-wrap gap-2 text-[9px] uppercase tracking-[0.14em] text-[#8d8d87]">
             <span className="border border-white/14 px-2.5 py-1">{text.language ?? 'de'}</span>
             <span className="border border-white/14 px-2.5 py-1">{text.review_status?.replace(/_/g, ' ') ?? 'draft review'}</span>
-            {text.generator ? <span className="border border-white/14 px-2.5 py-1">{text.generator.replace(/-/g, ' ')}</span> : null}
           </div>
         </div>
         <div>

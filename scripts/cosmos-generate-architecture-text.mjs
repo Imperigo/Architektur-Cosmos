@@ -95,38 +95,37 @@ function buildTextPack(entry) {
 
   const headline = buildHeadline(entry, program);
   const overview = paragraph([
-    `${entry.title} wird im Architektur Kosmos als ${program} gelesen und nicht als isoliertes Archivobjekt behandelt.`,
-    `Die Relevanz des Projekts liegt im Zusammenspiel von räumlicher Dramaturgie, konstruktiver Ordnung und ${context}.`,
-    `Der Eintrag soll deshalb Projektlogik, Materialsystem, Tragwerk und Modell-Layer sichtbar machen, statt nur eine lineare Kurzgeschichte zu liefern.`
+    `${entry.title} wird als ${program} verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf.`,
+    `Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und ${context}.`,
+    `Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.`
   ]);
 
   const chapters = [
     chapter('Architektonische Lesart', paragraph([
       `${entry.title} gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: ${spatialClaim.long}.`,
-      `Für den Atlas ist das Projekt wertvoll, weil es trockene Metadaten in eine räumliche Fragestellung übersetzt: ${mainThemes(entry)}.`
+      `Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie ${mainThemes(entry)} als räumliche, soziale und konstruktive Ordnung sichtbar werden.`
     ]), spatialClaim.basis),
     chapter('Material und Tragwerk', paragraph([
-      materialClaim.long,
-      structuralClaim.long,
-      `Für spätere Blender- und ArchiCAD-Workflows sollen diese Beobachtungen als trennbare Ebenen geführt werden, nicht als ein einziges dekoratives Modell.`
+      visibleClaimText(materialClaim),
+      visibleClaimText(structuralClaim),
+      `Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.`
     ]), materialClaim.basis),
     chapter('Raumordnung', paragraph([
       spatialClaim.long,
-      `Dadurch wird das Projekt als filterbare Referenz interessant: Grundriss, Schnitt, Erschliessung und Kontext können über Zeiträume hinweg verglichen werden, statt nur als Bilder betrachtet zu werden.`
+      `Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.`
     ]), spatialClaim.basis),
     chapter('Tektonik', paragraph([
-      tectonicClaim.long,
-      `Der Cosmos-Text hält diese konstruktive Lesart bewusst explizit, weil sie die Brücke zwischen historischer Interpretation und modellbasierter Analyse bildet.`
+      visibleClaimText(tectonicClaim),
+      `Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.`
     ]), tectonicClaim.basis),
     chapter('Kontext', paragraph([
       `${entry.title} gehört zu ${context}.`,
-      `Der Ort ist dabei keine Hintergrundinformation, sondern Teil des architektonischen Arguments und soll im Atlas, im Modellpaket und in zukünftigen Suchfiltern sichtbar bleiben.`
+      `Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.`
     ]), contextBasis(entry)),
-    chapter('Datenbank- und Modellwert', paragraph([
-      `Für die Architecture-Cosmos-Datenbank soll ${entry.title} als strukturierte Referenz mit Quellenpfad, Medienslots, Analyseebenen und Modellteilen gespeichert werden.`,
-      `Die wichtigsten zukünftigen Filter sind ${databaseValue(entry)}.`,
-      `Öffentliche Ausgaben müssen rechteklar bleiben; private Forschungsnotizen können detailliertere, quellenbasierte Analysen tragen, bis sie geprüft sind.`
-    ]), 'derived from entry metadata, model fields and Brain quality rules')
+    chapter('Relevanz', paragraph([
+      `${entry.title} ist als Referenz wichtig, weil ${databaseValue(entry)} nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden.`,
+      `Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.`
+    ]), 'derived from entry metadata and Brain quality rules')
   ];
 
   return {
@@ -222,8 +221,8 @@ function materialStructureFallback(entry, materials) {
 function tectonicFallback(entry, materials) {
   const materialText = materials.length ? materials.map(readable).slice(0, 3).join(', ') : 'surface, structure and assembly';
   return {
-    short: `${materialText} as tectonic relationship`,
-    long: `Die tektonische Lesart soll zeigen, wie ${materialText} Stützung, Hülle, Fügung und Atmosphäre organisieren`,
+    short: `${materialText} als tektonische Beziehung`,
+    long: `Die tektonische Lesart soll zeigen, wie ${materialText} Stützung, Hülle, Fügung und Atmosphäre organisieren.`,
     basis: 'entry materials and analysis fallback'
   };
 }
@@ -334,10 +333,28 @@ function chapter(title, text, source_basis) {
 }
 
 function paragraph(sentences) {
+  const seen = new Set();
   return sentences
     .map((sentence) => cleanSentence(sentence))
     .filter(Boolean)
+    .filter((sentence) => {
+      const key = sentence.toLowerCase();
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
     .join(' ');
+}
+
+function visibleClaimText(claim) {
+  const text = cleanSentence(claim?.long);
+  if (!text) return '';
+  const sentences = text
+    .split(/(?<=[.!?])\s+/)
+    .map((sentence) => sentence.trim())
+    .filter(Boolean)
+    .filter((sentence) => !/(Blender|ArchiCAD|Datenbank|Filter|Suchfilter|Modell|Layer|Tragwerkslayer|Studienrekonstruktion|Quellenpläne|review|source|R2|Upload)/i.test(sentence));
+  return sentences.join(' ');
 }
 
 function cleanSentence(value) {
@@ -649,7 +666,26 @@ function localizeArchitectureText(value) {
     text = text.replaceAll(source, target);
   }
 
+  text = text.replace(
+    /Tectonic layer planned around ([^;]+); separates material expression, enclosure and structural reading for later Blender layer toggles/g,
+    'Die tektonische Lesart trennt $1 als Zusammenspiel von Materialausdruck, Hülle, Fügung und tragender Ordnung'
+  );
+
   return text
+    .replaceAll('Material system planned for database filters: materials require source review', 'Das Materialsystem muss noch quellenbasiert präzisiert werden')
+    .replaceAll('The structural reading treats Villa Noailles as a stepped system of cubic blocks, terraces and retaining relations rather than as a single pure object', 'Die strukturelle Lesart versteht Villa Noailles als gestuftes System aus kubischen Körpern, Terrassen und Stützmauerbezügen, nicht als reine Einzelbox')
+    .replaceAll('The structural reading treats Villa Noailles as a stepped system of cubic blocks, terraces and retaining relations rather than as a single pure box', 'Die strukturelle Lesart versteht Villa Noailles als gestuftes System aus kubischen Körpern, Terrassen und Stützmauerbezügen, nicht als reine Einzelbox')
+    .replaceAll('The tectonic reading separates block volumes, terraces, roof planes, circulation paths, garden geometry and light surfaces', 'Die tektonische Lesart trennt Baukörper, Terrassen, Dachflächen, Wegeführung, Gartengeometrie und helle Oberflächen')
+    .replaceAll('The primary architectural material is worked limestone. T-shaped monoliths, circular/oval enclosures and stone walls define space through mass, carving and arrangement rather than through roofed building systems', 'Das primäre architektonische Material ist bearbeiteter Kalkstein. T-förmige Monolithe, kreis- und ovalförmige Einhegungen sowie Steinmauern definieren Raum über Masse, Setzung, Relief und Anordnung statt über gedeckte Gebäudesysteme')
+    .replaceAll('Its tectonics are megalithic and subtractive/additive at once: quarrying, shaping, carving, erecting and embedding Steins into enclosure walls', 'Die Tektonik ist zugleich megalithisch und aushebend-aufbauend: Gewinnen, Formen, Reliefieren, Aufrichten und Einbetten der Steine erzeugen die räumliche Ordnung')
+    .replaceAll('Its tectonics are megalithic and subtractive/additive at once: quarrying, shaping, carving, erecting and embedding stones into enclosure walls', 'Die Tektonik ist zugleich megalithisch und aushebend-aufbauend: Gewinnen, Formen, Reliefieren, Aufrichten und Einbetten der Steine erzeugen die räumliche Ordnung')
+    .replaceAll('The project depends on a steel scaffold, climbing vegetation and time. Its architectural material is not simply greenery but the changing relation between frame, seasonal growth, shade, void and public occupation', 'Das Projekt beruht auf Stahlgerüst, Klettervegetation und Zeit. Sein architektonisches Material ist nicht bloß Begrünung, sondern das wechselnde Verhältnis von Rahmen, Wachstum, Schatten, Leere und öffentlicher Aneignung')
+    .replaceAll('Its tectonics are exposed and processual: steel is the permanent skeleton, vegetation is the living envelope, and the park matures through growth rather than through finished facade treatment', 'Die Tektonik ist offen und prozesshaft: Stahl bildet das dauerhafte Skelett, Vegetation die lebendige Hülle, und der Park reift durch Wachstum statt durch eine abgeschlossene Fassadenbehandlung')
+    .replaceAll('The retained rail viaduct provides the structural datum. Concrete planks, steel infrastructure, planting and fragments of rail memory are layered to make an adaptive landscape rather than erase the industrial support', 'Das erhaltene Bahnviadukt bildet den tragenden Grund. Betonplatten, Stahlstruktur, Pflanzung und Spuren der Bahngeschichte werden so geschichtet, dass eine neue Landschaft entsteht, ohne die industrielle Grundlage auszulöschen')
+    .replaceAll('Glass, concrete and earth/topography form the primary material system: transparent pavilion edges meet a heavy ground datum and hillside thermal envelope', 'Glas, Beton und Erd-/Hangbezug bilden das primäre Materialsystem: transparente Pavillonränder treffen auf einen schweren Bodensockel und eine in den Hang eingebettete Hülle')
+    .replaceAll('Six pavilion roofs act as canopy-like structural fields. Vertical supports and concrete retaining elements organize a light/heavy contrast across the radial plan', 'Sechs Pavillondächer wirken wie schirmartige Tragfelder. Vertikale Stützen und haltende Betonelemente organisieren den Kontrast von Leichtigkeit und Schwere im radialen Grundriss')
+    .replaceAll('The tectonic reading separates frame, glass, curtain, Onyx wall, Holz wall and floor plane into layered elements that produce fluid domestic space', 'Die tektonische Lesart trennt Rahmen, Glas, Vorhang, Onyxwand, Holzwand und Bodenebene als Schichten, die einen fließenden Wohnraum erzeugen')
+    .replaceAll('The tectonic reading separates the lifted frame, white envelope, horizontal window band, ramp, service cores and Dachgarten plane as distinct modern layers', 'Die tektonische Lesart trennt angehobenes Tragwerk, weiße Hülle, horizontales Fensterband, Rampe, dienende Kerne und Dachgartenebene als klare moderne Schichten')
     .replaceAll('reinforced-concrete', 'Stahlbeton')
     .replaceAll('roof terrace', 'Dachterrasse')
     .replaceAll('roof-garden', 'Dachgarten')
