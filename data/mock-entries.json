@@ -7580,8 +7580,156 @@
         "reliability_level": "secondary_source",
         "rights_status": "licensed",
         "notes": "Auto-selected hero image candidate. Score: 0.95. License: CC BY-SA 4.0."
+      },
+      {
+        "source_type": "website",
+        "title": "Central Park Conservancy: Park History",
+        "url": "https://www.centralparknyc.org/park-history",
+        "reliability_level": "primary_source",
+        "rights_status": "licensed",
+        "notes": "Institutional public source for Central Park history and landscape framework."
       }
-    ]
+    ],
+    "geo": {
+      "lat": 40.782,
+      "lon": -73.965,
+      "region": "New York City",
+      "precision": "site"
+    },
+    "materials": {
+      "primary": [
+        "vegetation",
+        "rock_outcrop",
+        "water",
+        "soil"
+      ],
+      "secondary": [
+        "paths",
+        "bridges",
+        "masonry_edges"
+      ],
+      "notes": "Central Park is a constructed urban landscape of earthwork, planting, water bodies, rock outcrops, paths and bridge infrastructure."
+    },
+    "program": {
+      "type": "public_space",
+      "subtype": "metropolitan_public_park",
+      "public_access": "public"
+    },
+    "context": {
+      "topography": "constructed_urban_landscape",
+      "setting": "dense_metropolitan_grid",
+      "heritage_context": [
+        "urban_park_history",
+        "public_space_reform"
+      ],
+      "landscape_relation": [
+        "park_system",
+        "urban_grid_relief",
+        "scenic_sequence"
+      ]
+    },
+    "database_tags": [
+      "material:vegetation",
+      "material:water",
+      "typology:urban_park",
+      "theme:public_space",
+      "landscape:park_system",
+      "blender:landscape_model_candidate"
+    ],
+    "model_3d": {
+      "source_basis": "Public hero/source metadata plus lecture-derived historical framework; geometry remains planned/reconstruction-grade until source plans are reviewed.",
+      "parts": [
+        {
+          "type": "full",
+          "r2_key": "models/central-park/full.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "structure",
+          "r2_key": "models/central-park/structure.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "site",
+          "r2_key": "models/central-park/site.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "material",
+          "r2_key": "models/central-park/material.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "low",
+          "r2_key": "models/central-park/low.glb",
+          "review_status": "planned"
+        }
+      ],
+      "license": "own_work"
+    },
+    "analysis_layers": [
+      {
+        "analysis_type": "material_system",
+        "summary": "Primary material reading: vegetation, rock_outcrop, water, soil. Central Park is a constructed urban landscape of earthwork, planting, water bodies, rock outcrops, paths and bridge infrastructure.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "structure",
+        "summary": "Structure layer planned for Blender import: spatial support and infrastructure system.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Tectonic layer planned around vegetation, rock_outcrop, water; separates material expression, enclosure and structural reading.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "landscape_system",
+        "summary": "Database classification places Central Park in metropolitan_public_park, with context tags urban_park_history, public_space_reform.",
+        "review_status": "draft"
+      }
+    ],
+    "analysis_observations": [
+      {
+        "analysis_type": "material_tag",
+        "label": "material:vegetation",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "material_tag",
+        "label": "material:water",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:urban_park",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "theme:public_space",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "landscape:park_system",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      }
+    ],
+    "database_profile": {
+      "status": "draft",
+      "r2_prefix": "entries/central-park",
+      "source_count": 3,
+      "media_count": 4,
+      "model_count": 5,
+      "analysis_count": 4,
+      "tag_count": 6
+    }
   },
   {
     "id": "familistere",
@@ -7644,8 +7792,160 @@
         "reliability_level": "secondary_source",
         "rights_status": "licensed",
         "notes": "Auto-selected hero image candidate. Score: 0.94. License: CC BY-SA 3.0."
+      },
+      {
+        "source_type": "website",
+        "title": "Familistère de Guise: official site",
+        "url": "https://www.familistere.com/en",
+        "reliability_level": "primary_source",
+        "rights_status": "licensed",
+        "notes": "Official public source for the Familistère, its social program and buildings."
       }
-    ]
+    ],
+    "geo": {
+      "lat": 49.901,
+      "lon": 3.629,
+      "region": "Aisne / Guise",
+      "precision": "site"
+    },
+    "materials": {
+      "primary": [
+        "brick_masonry",
+        "glass_roof",
+        "iron_structure"
+      ],
+      "secondary": [
+        "courtyard",
+        "timber_floor"
+      ],
+      "notes": "The Familistère is a social-housing machine: brick residential blocks, glazed courtyards and collective facilities organized around reformist living."
+    },
+    "program": {
+      "type": "collective_housing",
+      "subtype": "industrial_social_utopia_housing",
+      "public_access": "public"
+    },
+    "context": {
+      "topography": "flat_town_site",
+      "setting": "industrial_reform_settlement",
+      "heritage_context": [
+        "social_utopia",
+        "workers_housing",
+        "industrial_paternalism"
+      ],
+      "landscape_relation": [
+        "factory_relation",
+        "courtyard_collective_space",
+        "river_town"
+      ]
+    },
+    "database_tags": [
+      "material:brick_masonry",
+      "material:glass",
+      "typology:collective_housing",
+      "theme:social_reform",
+      "structure:iron_roof",
+      "blender:courtyard_model_candidate"
+    ],
+    "model_3d": {
+      "source_basis": "Public hero/source metadata plus lecture-derived historical framework; geometry remains planned/reconstruction-grade until source plans are reviewed.",
+      "parts": [
+        {
+          "type": "full",
+          "r2_key": "models/familistere/full.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "structure",
+          "r2_key": "models/familistere/structure.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "site",
+          "r2_key": "models/familistere/site.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "facade",
+          "r2_key": "models/familistere/facade.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "interior",
+          "r2_key": "models/familistere/interior.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "low",
+          "r2_key": "models/familistere/low.glb",
+          "review_status": "planned"
+        }
+      ],
+      "license": "own_work"
+    },
+    "analysis_layers": [
+      {
+        "analysis_type": "material_system",
+        "summary": "Primary material reading: brick_masonry, glass_roof, iron_structure. The Familistère is a social-housing machine: brick residential blocks, glazed courtyards and collective facilities organized around reformist living.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "structure",
+        "summary": "Structure layer planned for Blender import: iron roof.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Tectonic layer planned around brick_masonry, glass_roof, iron_structure; separates material expression, enclosure and structural reading.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Database classification places Familistere in industrial_social_utopia_housing, with context tags social_utopia, workers_housing, industrial_paternalism.",
+        "review_status": "draft"
+      }
+    ],
+    "analysis_observations": [
+      {
+        "analysis_type": "material_tag",
+        "label": "material:brick_masonry",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "material_tag",
+        "label": "material:glass",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:collective_housing",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "theme:social_reform",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "structure:iron_roof",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      }
+    ],
+    "database_profile": {
+      "status": "draft",
+      "r2_prefix": "entries/familistere",
+      "source_count": 3,
+      "media_count": 4,
+      "model_count": 6,
+      "analysis_count": 4,
+      "tag_count": 6
+    }
   },
   {
     "id": "barcelona-extension",
@@ -7708,8 +8008,143 @@
         "reliability_level": "secondary_source",
         "rights_status": "licensed",
         "notes": "Auto-selected hero image candidate. Score: 0.95. License: CC BY-SA 2.0."
+      },
+      {
+        "source_type": "website",
+        "title": "Ajuntament de Barcelona: The Eixample",
+        "url": "https://ajuntament.barcelona.cat/eixample/es/conozca-el-distrito/historia",
+        "reliability_level": "primary_source",
+        "rights_status": "licensed",
+        "notes": "Municipal public source for the Eixample urban district and its planning identity."
       }
-    ]
+    ],
+    "geo": {
+      "lat": 41.393,
+      "lon": 2.164,
+      "region": "Barcelona / Eixample",
+      "precision": "district"
+    },
+    "materials": {
+      "primary": [
+        "urban_grid",
+        "masonry_blocks",
+        "street_infrastructure"
+      ],
+      "secondary": [
+        "chamfered_corners",
+        "courtyards",
+        "tree_avenues"
+      ],
+      "notes": "Cerdà’s Eixample is modeled as infrastructure and block logic: chamfered grid, street widths, courtyards, movement and hygienic reform."
+    },
+    "program": {
+      "type": "urban_expansion",
+      "subtype": "eixample_grid_infrastructure",
+      "public_access": "public"
+    },
+    "context": {
+      "topography": "coastal_plain",
+      "setting": "metropolitan_expansion_grid",
+      "heritage_context": [
+        "urban_reform",
+        "hygienist_planning",
+        "cerda_plan"
+      ],
+      "landscape_relation": [
+        "grid_extension",
+        "street_section",
+        "block_courtyard"
+      ]
+    },
+    "database_tags": [
+      "typology:grid_city",
+      "theme:urban_expansion",
+      "infrastructure:street_grid",
+      "geometry:chamfered_block",
+      "blender:urban_grid_candidate"
+    ],
+    "model_3d": {
+      "source_basis": "Public hero/source metadata plus lecture-derived historical framework; geometry remains planned/reconstruction-grade until source plans are reviewed.",
+      "parts": [
+        {
+          "type": "full",
+          "r2_key": "models/barcelona-extension/full.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "structure",
+          "r2_key": "models/barcelona-extension/structure.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "site",
+          "r2_key": "models/barcelona-extension/site.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "mass",
+          "r2_key": "models/barcelona-extension/mass.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "low",
+          "r2_key": "models/barcelona-extension/low.glb",
+          "review_status": "planned"
+        }
+      ],
+      "license": "own_work"
+    },
+    "analysis_layers": [
+      {
+        "analysis_type": "material_system",
+        "summary": "Primary material reading: urban_grid, masonry_blocks, street_infrastructure. Cerdà’s Eixample is modeled as infrastructure and block logic: chamfered grid, street widths, courtyards, movement and hygienic reform.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "structure",
+        "summary": "Structure layer planned for Blender import: spatial support and infrastructure system.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Tectonic layer planned around urban_grid, masonry_blocks, street_infrastructure; separates material expression, enclosure and structural reading.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "urban_context",
+        "summary": "Database classification places Barcelona Extension in eixample_grid_infrastructure, with context tags urban_reform, hygienist_planning, cerda_plan.",
+        "review_status": "draft"
+      }
+    ],
+    "analysis_observations": [
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:grid_city",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "theme:urban_expansion",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "infrastructure:street_grid",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      }
+    ],
+    "database_profile": {
+      "status": "draft",
+      "r2_prefix": "entries/barcelona-extension",
+      "source_count": 3,
+      "media_count": 4,
+      "model_count": 5,
+      "analysis_count": 4,
+      "tag_count": 5
+    }
   },
   {
     "id": "red-house",
@@ -7836,8 +8271,154 @@
         "reliability_level": "secondary_source",
         "rights_status": "public_domain",
         "notes": "Auto-selected hero image candidate. Score: 0.95. License: CC0."
+      },
+      {
+        "source_type": "website",
+        "title": "Wien Geschichte Wiki: Ringstraße",
+        "url": "https://www.geschichtewiki.wien.gv.at/Ringstra%C3%9Fe",
+        "reliability_level": "primary_source",
+        "rights_status": "licensed",
+        "notes": "City history source for the Ringstrasse and Vienna’s nineteenth-century urban transformation."
       }
-    ]
+    ],
+    "geo": {
+      "lat": 48.207,
+      "lon": 16.37,
+      "region": "Vienna",
+      "precision": "district"
+    },
+    "materials": {
+      "primary": [
+        "stone_masonry",
+        "urban_paving",
+        "historicist_facades"
+      ],
+      "secondary": [
+        "tram_infrastructure",
+        "tree_avenues"
+      ],
+      "notes": "Ringstrasse is a civic ring infrastructure: boulevard, institutions, public space, tram movement and historicist stone facades around the former fortification line."
+    },
+    "program": {
+      "type": "urban_boulevard",
+      "subtype": "nineteenth_century_civic_ring",
+      "public_access": "public"
+    },
+    "context": {
+      "topography": "flat_urban_core",
+      "setting": "historic_capital_expansion",
+      "heritage_context": [
+        "urban_expansion",
+        "historicist_city",
+        "civic_institutions"
+      ],
+      "landscape_relation": [
+        "ring_boulevard",
+        "former_walls",
+        "institutional_sequence"
+      ]
+    },
+    "database_tags": [
+      "material:stone_masonry",
+      "typology:boulevard",
+      "geometry:ring",
+      "theme:civic_city",
+      "infrastructure:tram_axis",
+      "blender:urban_axis_candidate"
+    ],
+    "model_3d": {
+      "source_basis": "Public hero/source metadata plus lecture-derived historical framework; geometry remains planned/reconstruction-grade until source plans are reviewed.",
+      "parts": [
+        {
+          "type": "full",
+          "r2_key": "models/wien-ringstrasse/full.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "structure",
+          "r2_key": "models/wien-ringstrasse/structure.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "site",
+          "r2_key": "models/wien-ringstrasse/site.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "facade",
+          "r2_key": "models/wien-ringstrasse/facade.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "interior",
+          "r2_key": "models/wien-ringstrasse/interior.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "low",
+          "r2_key": "models/wien-ringstrasse/low.glb",
+          "review_status": "planned"
+        }
+      ],
+      "license": "own_work"
+    },
+    "analysis_layers": [
+      {
+        "analysis_type": "material_system",
+        "summary": "Primary material reading: stone_masonry, urban_paving, historicist_facades. Ringstrasse is a civic ring infrastructure: boulevard, institutions, public space, tram movement and historicist stone facades around the former fortification line.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "structure",
+        "summary": "Structure layer planned for Blender import: spatial support and infrastructure system.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Tectonic layer planned around stone_masonry, urban_paving, historicist_facades; separates material expression, enclosure and structural reading.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Database classification places Wien Ringstrasse in nineteenth_century_civic_ring, with context tags urban_expansion, historicist_city, civic_institutions.",
+        "review_status": "draft"
+      }
+    ],
+    "analysis_observations": [
+      {
+        "analysis_type": "material_tag",
+        "label": "material:stone_masonry",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:boulevard",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "theme:civic_city",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "infrastructure:tram_axis",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      }
+    ],
+    "database_profile": {
+      "status": "draft",
+      "r2_prefix": "entries/wien-ringstrasse",
+      "source_count": 3,
+      "media_count": 4,
+      "model_count": 6,
+      "analysis_count": 4,
+      "tag_count": 6
+    }
   },
   {
     "id": "emerald-necklace",
@@ -7900,8 +8481,156 @@
         "reliability_level": "secondary_source",
         "rights_status": "licensed",
         "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY-SA 4.0."
+      },
+      {
+        "source_type": "website",
+        "title": "Emerald Necklace Conservancy: History",
+        "url": "https://www.emeraldnecklace.org/park-overview/history/",
+        "reliability_level": "primary_source",
+        "rights_status": "licensed",
+        "notes": "Institutional public source for the Emerald Necklace park-system history."
       }
-    ]
+    ],
+    "geo": {
+      "lat": 42.326,
+      "lon": -71.111,
+      "region": "Boston / Brookline",
+      "precision": "region"
+    },
+    "materials": {
+      "primary": [
+        "vegetation",
+        "water",
+        "wetland_soil"
+      ],
+      "secondary": [
+        "paths",
+        "stone_edges",
+        "bridges"
+      ],
+      "notes": "The Emerald Necklace is landscape infrastructure: linked parks, waterways, drainage, ecological repair and recreational public space."
+    },
+    "program": {
+      "type": "landscape_infrastructure",
+      "subtype": "metropolitan_park_system",
+      "public_access": "public"
+    },
+    "context": {
+      "topography": "wetland_valley_network",
+      "setting": "metropolitan_open_space_system",
+      "heritage_context": [
+        "olmsted_park_system",
+        "landscape_infrastructure",
+        "urban_ecology"
+      ],
+      "landscape_relation": [
+        "water_chain",
+        "park_connector",
+        "drainage_landscape"
+      ]
+    },
+    "database_tags": [
+      "material:vegetation",
+      "material:water",
+      "typology:park_system",
+      "infrastructure:drainage",
+      "landscape:ecological_corridor",
+      "blender:landscape_network_candidate"
+    ],
+    "model_3d": {
+      "source_basis": "Public hero/source metadata plus lecture-derived historical framework; geometry remains planned/reconstruction-grade until source plans are reviewed.",
+      "parts": [
+        {
+          "type": "full",
+          "r2_key": "models/emerald-necklace/full.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "structure",
+          "r2_key": "models/emerald-necklace/structure.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "site",
+          "r2_key": "models/emerald-necklace/site.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "material",
+          "r2_key": "models/emerald-necklace/material.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "low",
+          "r2_key": "models/emerald-necklace/low.glb",
+          "review_status": "planned"
+        }
+      ],
+      "license": "own_work"
+    },
+    "analysis_layers": [
+      {
+        "analysis_type": "material_system",
+        "summary": "Primary material reading: vegetation, water, wetland_soil. The Emerald Necklace is landscape infrastructure: linked parks, waterways, drainage, ecological repair and recreational public space.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "structure",
+        "summary": "Structure layer planned for Blender import: spatial support and infrastructure system.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Tectonic layer planned around vegetation, water, wetland_soil; separates material expression, enclosure and structural reading.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "landscape_system",
+        "summary": "Database classification places Emerald Necklace in metropolitan_park_system, with context tags olmsted_park_system, landscape_infrastructure, urban_ecology.",
+        "review_status": "draft"
+      }
+    ],
+    "analysis_observations": [
+      {
+        "analysis_type": "material_tag",
+        "label": "material:vegetation",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "material_tag",
+        "label": "material:water",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:park_system",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "infrastructure:drainage",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "landscape:ecological_corridor",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      }
+    ],
+    "database_profile": {
+      "status": "draft",
+      "r2_prefix": "entries/emerald-necklace",
+      "source_count": 3,
+      "media_count": 4,
+      "model_count": 5,
+      "analysis_count": 4,
+      "tag_count": 6
+    }
   },
   {
     "id": "linear-city",
@@ -7964,8 +8693,142 @@
         "reliability_level": "secondary_source",
         "rights_status": "public_domain",
         "notes": "Auto-selected hero image candidate. Score: 0.95. License: Public domain."
+      },
+      {
+        "source_type": "website",
+        "title": "Ciudad Lineal / Madrid historical reference",
+        "url": "https://patrimonioypaisaje.madrid.es/portales/monumenta/es/Monumentos-y-Edificios-Singulares/Monumentos/Primera-Piedra-Ciudad-Lineal/?vgnextchannel=8fac3cb702aa4510VgnVCM1000008a4a900aRCRD&vgnextfmt=default&vgnextoid=8ac8091d1b9c4510091d1b9c45102e085a0aRCRD",
+        "reliability_level": "primary_source",
+        "rights_status": "licensed",
+        "notes": "Municipal historical context for Ciudad Lineal and Arturo Soria’s urban model."
       }
-    ]
+    ],
+    "geo": {
+      "lat": 40.455,
+      "lon": -3.648,
+      "region": "Madrid",
+      "precision": "city"
+    },
+    "materials": {
+      "primary": [
+        "street_infrastructure",
+        "tram_corridor",
+        "housing_plots"
+      ],
+      "secondary": [
+        "tree_axis",
+        "service_bands"
+      ],
+      "notes": "Arturo Soria’s Linear City is an infrastructural urban theory: transport spine, housing plots and service bands extending settlement linearly."
+    },
+    "program": {
+      "type": "urban_theory",
+      "subtype": "linear_infrastructure_city",
+      "public_access": "public"
+    },
+    "context": {
+      "topography": "theoretical_urban_corridor",
+      "setting": "madrid_reform_context",
+      "heritage_context": [
+        "linear_city",
+        "transport_urbanism",
+        "reform_city"
+      ],
+      "landscape_relation": [
+        "transport_spine",
+        "settlement_band",
+        "garden_plot"
+      ]
+    },
+    "database_tags": [
+      "typology:linear_city",
+      "infrastructure:tram_corridor",
+      "theme:reform_city",
+      "geometry:linear_axis",
+      "blender:urban_axis_candidate"
+    ],
+    "model_3d": {
+      "source_basis": "Public hero/source metadata plus lecture-derived historical framework; geometry remains planned/reconstruction-grade until source plans are reviewed.",
+      "parts": [
+        {
+          "type": "full",
+          "r2_key": "models/linear-city/full.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "structure",
+          "r2_key": "models/linear-city/structure.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "site",
+          "r2_key": "models/linear-city/site.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "mass",
+          "r2_key": "models/linear-city/mass.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "low",
+          "r2_key": "models/linear-city/low.glb",
+          "review_status": "planned"
+        }
+      ],
+      "license": "own_work"
+    },
+    "analysis_layers": [
+      {
+        "analysis_type": "material_system",
+        "summary": "Primary material reading: street_infrastructure, tram_corridor, housing_plots. Arturo Soria’s Linear City is an infrastructural urban theory: transport spine, housing plots and service bands extending settlement linearly.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "structure",
+        "summary": "Structure layer planned for Blender import: spatial support and infrastructure system.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Tectonic layer planned around street_infrastructure, tram_corridor, housing_plots; separates material expression, enclosure and structural reading.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "urban_context",
+        "summary": "Database classification places Linear City in linear_infrastructure_city, with context tags linear_city, transport_urbanism, reform_city.",
+        "review_status": "draft"
+      }
+    ],
+    "analysis_observations": [
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:linear_city",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "infrastructure:tram_corridor",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "theme:reform_city",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      }
+    ],
+    "database_profile": {
+      "status": "draft",
+      "r2_prefix": "entries/linear-city",
+      "source_count": 3,
+      "media_count": 4,
+      "model_count": 5,
+      "analysis_count": 4,
+      "tag_count": 5
+    }
   },
   {
     "id": "hotel-tassel",
@@ -8028,8 +8891,155 @@
         "reliability_level": "secondary_source",
         "rights_status": "licensed",
         "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY-SA 3.0."
+      },
+      {
+        "source_type": "website",
+        "title": "UNESCO World Heritage Centre: Major Town Houses of Victor Horta",
+        "url": "https://whc.unesco.org/en/list/1005/",
+        "reliability_level": "primary_source",
+        "rights_status": "licensed",
+        "notes": "UNESCO reference for Horta’s townhouses including Hôtel Tassel."
       }
-    ]
+    ],
+    "geo": {
+      "lat": 50.824,
+      "lon": 4.363,
+      "region": "Brussels",
+      "precision": "site"
+    },
+    "materials": {
+      "primary": [
+        "stone_masonry",
+        "iron_structure",
+        "glass"
+      ],
+      "secondary": [
+        "ceramic_tile",
+        "timber",
+        "decorative_metalwork"
+      ],
+      "notes": "Hôtel Tassel is a tectonic interior manifesto: iron/glass stair hall, stone facade, flowing structure and ornamental material continuity."
+    },
+    "program": {
+      "type": "urban_house",
+      "subtype": "art_nouveau_townhouse",
+      "public_access": "private"
+    },
+    "context": {
+      "topography": "urban_street_plot",
+      "setting": "brussels_townhouse_fabric",
+      "heritage_context": [
+        "unesco_world_heritage_site",
+        "art_nouveau",
+        "victor_horta"
+      ],
+      "landscape_relation": [
+        "street_threshold",
+        "interior_lightwell",
+        "stair_space"
+      ]
+    },
+    "database_tags": [
+      "material:iron",
+      "material:glass",
+      "typology:townhouse",
+      "style:art_nouveau",
+      "structure:iron_frame",
+      "blender:interior_structure_candidate"
+    ],
+    "model_3d": {
+      "source_basis": "Public hero/source metadata plus lecture-derived historical framework; geometry remains planned/reconstruction-grade until source plans are reviewed.",
+      "parts": [
+        {
+          "type": "full",
+          "r2_key": "models/hotel-tassel/full.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "structure",
+          "r2_key": "models/hotel-tassel/structure.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "site",
+          "r2_key": "models/hotel-tassel/site.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "facade",
+          "r2_key": "models/hotel-tassel/facade.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "interior",
+          "r2_key": "models/hotel-tassel/interior.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "low",
+          "r2_key": "models/hotel-tassel/low.glb",
+          "review_status": "planned"
+        }
+      ],
+      "license": "own_work"
+    },
+    "analysis_layers": [
+      {
+        "analysis_type": "material_system",
+        "summary": "Primary material reading: stone_masonry, iron_structure, glass. Hôtel Tassel is a tectonic interior manifesto: iron/glass stair hall, stone facade, flowing structure and ornamental material continuity.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "structure",
+        "summary": "Structure layer planned for Blender import: iron frame.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Tectonic layer planned around stone_masonry, iron_structure, glass; separates material expression, enclosure and structural reading.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Database classification places Hotel Tassel in art_nouveau_townhouse, with context tags unesco_world_heritage_site, art_nouveau, victor_horta.",
+        "review_status": "draft"
+      }
+    ],
+    "analysis_observations": [
+      {
+        "analysis_type": "material_tag",
+        "label": "material:iron",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "material_tag",
+        "label": "material:glass",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:townhouse",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "structure:iron_frame",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      }
+    ],
+    "database_profile": {
+      "status": "draft",
+      "r2_prefix": "entries/hotel-tassel",
+      "source_count": 3,
+      "media_count": 4,
+      "model_count": 6,
+      "analysis_count": 4,
+      "tag_count": 6
+    }
   },
   {
     "id": "cite-industrielle",
@@ -8256,8 +9266,153 @@
         "reliability_level": "secondary_source",
         "rights_status": "licensed",
         "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY 4.0."
+      },
+      {
+        "source_type": "website",
+        "title": "Letchworth Garden City Heritage Foundation: History",
+        "url": "https://www.letchworth.com/about-us/our-history/",
+        "reliability_level": "primary_source",
+        "rights_status": "licensed",
+        "notes": "Institutional public source for Letchworth’s garden-city history."
       }
-    ]
+    ],
+    "geo": {
+      "lat": 51.979,
+      "lon": -0.229,
+      "region": "Hertfordshire",
+      "precision": "city"
+    },
+    "materials": {
+      "primary": [
+        "brick_housing",
+        "garden_landscape",
+        "street_infrastructure"
+      ],
+      "secondary": [
+        "green_belt",
+        "civic_core"
+      ],
+      "notes": "Letchworth is an implemented garden city: low-density housing, green belt, civic center, industry and landscape structure planned together."
+    },
+    "program": {
+      "type": "garden_city",
+      "subtype": "reform_settlement_garden_city",
+      "public_access": "public"
+    },
+    "context": {
+      "topography": "gentle_english_landscape",
+      "setting": "planned_town",
+      "heritage_context": [
+        "garden_city_movement",
+        "social_reform",
+        "planned_settlement"
+      ],
+      "landscape_relation": [
+        "green_belt",
+        "garden_suburb",
+        "civic_core"
+      ]
+    },
+    "database_tags": [
+      "material:brick",
+      "typology:garden_city",
+      "theme:social_reform",
+      "landscape:green_belt",
+      "blender:settlement_model_candidate"
+    ],
+    "model_3d": {
+      "source_basis": "Public hero/source metadata plus lecture-derived historical framework; geometry remains planned/reconstruction-grade until source plans are reviewed.",
+      "parts": [
+        {
+          "type": "full",
+          "r2_key": "models/letchworth-garden-city/full.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "structure",
+          "r2_key": "models/letchworth-garden-city/structure.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "site",
+          "r2_key": "models/letchworth-garden-city/site.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "facade",
+          "r2_key": "models/letchworth-garden-city/facade.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "interior",
+          "r2_key": "models/letchworth-garden-city/interior.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "low",
+          "r2_key": "models/letchworth-garden-city/low.glb",
+          "review_status": "planned"
+        }
+      ],
+      "license": "own_work"
+    },
+    "analysis_layers": [
+      {
+        "analysis_type": "material_system",
+        "summary": "Primary material reading: brick_housing, garden_landscape, street_infrastructure. Letchworth is an implemented garden city: low-density housing, green belt, civic center, industry and landscape structure planned together.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "structure",
+        "summary": "Structure layer planned for Blender import: spatial support and infrastructure system.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Tectonic layer planned around brick_housing, garden_landscape, street_infrastructure; separates material expression, enclosure and structural reading.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Database classification places Letchworth Garden City in reform_settlement_garden_city, with context tags garden_city_movement, social_reform, planned_settlement.",
+        "review_status": "draft"
+      }
+    ],
+    "analysis_observations": [
+      {
+        "analysis_type": "material_tag",
+        "label": "material:brick",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:garden_city",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "theme:social_reform",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "landscape:green_belt",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      }
+    ],
+    "database_profile": {
+      "status": "draft",
+      "r2_prefix": "entries/letchworth-garden-city",
+      "source_count": 3,
+      "media_count": 4,
+      "model_count": 6,
+      "analysis_count": 4,
+      "tag_count": 5
+    }
   },
   {
     "id": "warenhaus-wertheim",
@@ -8435,8 +9590,153 @@
         "reliability_level": "secondary_source",
         "rights_status": "licensed",
         "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY-SA 4.0."
+      },
+      {
+        "source_type": "website",
+        "title": "Encyclopaedia Britannica: New Delhi",
+        "url": "https://www.britannica.com/place/New-Delhi",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Public reference for New Delhi’s capital-city planning and historical context."
       }
-    ]
+    ],
+    "geo": {
+      "lat": 28.614,
+      "lon": 77.209,
+      "region": "Delhi",
+      "precision": "district"
+    },
+    "materials": {
+      "primary": [
+        "sandstone",
+        "masonry",
+        "urban_axis"
+      ],
+      "secondary": [
+        "garden_avenues",
+        "imperial_plinths"
+      ],
+      "notes": "New Delhi is read as imperial capital planning: axial geometry, sandstone civic monuments, ceremonial avenues and garden-city spatial devices."
+    },
+    "program": {
+      "type": "capital_city",
+      "subtype": "colonial_ceremonial_capital_plan",
+      "public_access": "public"
+    },
+    "context": {
+      "topography": "plains_capital_site",
+      "setting": "capital_city_axis",
+      "heritage_context": [
+        "colonial_urbanism",
+        "capital_planning",
+        "ceremonial_axis"
+      ],
+      "landscape_relation": [
+        "rajpath_axis",
+        "government_precinct",
+        "garden_avenue"
+      ]
+    },
+    "database_tags": [
+      "material:sandstone",
+      "typology:capital_city",
+      "theme:axis",
+      "theme:colonial_urbanism",
+      "blender:capital_axis_candidate"
+    ],
+    "model_3d": {
+      "source_basis": "Public hero/source metadata plus lecture-derived historical framework; geometry remains planned/reconstruction-grade until source plans are reviewed.",
+      "parts": [
+        {
+          "type": "full",
+          "r2_key": "models/new-delhi/full.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "structure",
+          "r2_key": "models/new-delhi/structure.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "site",
+          "r2_key": "models/new-delhi/site.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "facade",
+          "r2_key": "models/new-delhi/facade.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "interior",
+          "r2_key": "models/new-delhi/interior.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "low",
+          "r2_key": "models/new-delhi/low.glb",
+          "review_status": "planned"
+        }
+      ],
+      "license": "own_work"
+    },
+    "analysis_layers": [
+      {
+        "analysis_type": "material_system",
+        "summary": "Primary material reading: sandstone, masonry, urban_axis. New Delhi is read as imperial capital planning: axial geometry, sandstone civic monuments, ceremonial avenues and garden-city spatial devices.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "structure",
+        "summary": "Structure layer planned for Blender import: spatial support and infrastructure system.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Tectonic layer planned around sandstone, masonry, urban_axis; separates material expression, enclosure and structural reading.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Database classification places New Delhi in colonial_ceremonial_capital_plan, with context tags colonial_urbanism, capital_planning, ceremonial_axis.",
+        "review_status": "draft"
+      }
+    ],
+    "analysis_observations": [
+      {
+        "analysis_type": "material_tag",
+        "label": "material:sandstone",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:capital_city",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "theme:axis",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "theme:colonial_urbanism",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      }
+    ],
+    "database_profile": {
+      "status": "draft",
+      "r2_prefix": "entries/new-delhi",
+      "source_count": 3,
+      "media_count": 4,
+      "model_count": 6,
+      "analysis_count": 4,
+      "tag_count": 5
+    }
   },
   {
     "id": "dom-ino-house",
@@ -8545,8 +9845,153 @@
         "reliability_level": "secondary_source",
         "rights_status": "licensed",
         "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY-SA 3.0."
+      },
+      {
+        "source_type": "website",
+        "title": "Welwyn Garden City Centenary Foundation: History",
+        "url": "https://www.britannica.com/place/Welwyn-Garden-City",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Public historical source for Welwyn Garden City and its planning background."
       }
-    ]
+    ],
+    "geo": {
+      "lat": 51.803,
+      "lon": -0.206,
+      "region": "Hertfordshire",
+      "precision": "city"
+    },
+    "materials": {
+      "primary": [
+        "brick_housing",
+        "garden_landscape",
+        "street_infrastructure"
+      ],
+      "secondary": [
+        "green_belt",
+        "town_center"
+      ],
+      "notes": "Welwyn Garden City develops the garden-city model with planned neighborhoods, landscape buffers, industry and civic center."
+    },
+    "program": {
+      "type": "garden_city",
+      "subtype": "second_generation_garden_city",
+      "public_access": "public"
+    },
+    "context": {
+      "topography": "gentle_english_landscape",
+      "setting": "planned_town",
+      "heritage_context": [
+        "garden_city_movement",
+        "planned_settlement",
+        "interwar_planning"
+      ],
+      "landscape_relation": [
+        "green_belt",
+        "neighborhood_unit",
+        "town_center"
+      ]
+    },
+    "database_tags": [
+      "material:brick",
+      "typology:garden_city",
+      "theme:planned_settlement",
+      "landscape:green_belt",
+      "blender:settlement_model_candidate"
+    ],
+    "model_3d": {
+      "source_basis": "Public hero/source metadata plus lecture-derived historical framework; geometry remains planned/reconstruction-grade until source plans are reviewed.",
+      "parts": [
+        {
+          "type": "full",
+          "r2_key": "models/welwyn-garden-city/full.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "structure",
+          "r2_key": "models/welwyn-garden-city/structure.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "site",
+          "r2_key": "models/welwyn-garden-city/site.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "facade",
+          "r2_key": "models/welwyn-garden-city/facade.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "interior",
+          "r2_key": "models/welwyn-garden-city/interior.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "low",
+          "r2_key": "models/welwyn-garden-city/low.glb",
+          "review_status": "planned"
+        }
+      ],
+      "license": "own_work"
+    },
+    "analysis_layers": [
+      {
+        "analysis_type": "material_system",
+        "summary": "Primary material reading: brick_housing, garden_landscape, street_infrastructure. Welwyn Garden City develops the garden-city model with planned neighborhoods, landscape buffers, industry and civic center.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "structure",
+        "summary": "Structure layer planned for Blender import: spatial support and infrastructure system.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Tectonic layer planned around brick_housing, garden_landscape, street_infrastructure; separates material expression, enclosure and structural reading.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Database classification places Welwyn Garden City in second_generation_garden_city, with context tags garden_city_movement, planned_settlement, interwar_planning.",
+        "review_status": "draft"
+      }
+    ],
+    "analysis_observations": [
+      {
+        "analysis_type": "material_tag",
+        "label": "material:brick",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:garden_city",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "theme:planned_settlement",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "landscape:green_belt",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      }
+    ],
+    "database_profile": {
+      "status": "draft",
+      "r2_prefix": "entries/welwyn-garden-city",
+      "source_count": 3,
+      "media_count": 4,
+      "model_count": 6,
+      "analysis_count": 4,
+      "tag_count": 5
+    }
   },
   {
     "id": "postsparkasse",
@@ -8609,8 +10054,162 @@
         "reliability_level": "secondary_source",
         "rights_status": "licensed",
         "notes": "Auto-selected hero image candidate. Score: 0.85. License: CC BY-SA 3.0."
+      },
+      {
+        "source_type": "website",
+        "title": "MAK: Österreichische Postsparkasse",
+        "url": "https://blog.mak.at/otto-wagner-postsparkasse/",
+        "reliability_level": "primary_source",
+        "rights_status": "licensed",
+        "notes": "Institutional public source for Otto Wagner’s Postsparkasse context."
       }
-    ]
+    ],
+    "geo": {
+      "lat": 48.211,
+      "lon": 16.383,
+      "region": "Vienna",
+      "precision": "site"
+    },
+    "materials": {
+      "primary": [
+        "stone_cladding",
+        "aluminium",
+        "glass",
+        "iron_structure"
+      ],
+      "secondary": [
+        "ceramic_tile",
+        "rivets"
+      ],
+      "notes": "Postsparkasse is read through functional modernity: stone/aluminium cladding, exposed fasteners, glass-roofed banking hall and process-oriented plan."
+    },
+    "program": {
+      "type": "office_bank",
+      "subtype": "modern_bureaucratic_service_building",
+      "public_access": "public"
+    },
+    "context": {
+      "topography": "urban_block",
+      "setting": "vienna_civic_core",
+      "heritage_context": [
+        "viennese_modernism",
+        "otto_wagner",
+        "banking_infrastructure"
+      ],
+      "landscape_relation": [
+        "street_block",
+        "public_counter_hall",
+        "administrative_process"
+      ]
+    },
+    "database_tags": [
+      "material:aluminium",
+      "material:glass",
+      "material:stone_cladding",
+      "typology:bank",
+      "theme:bureaucracy",
+      "structure:iron_roof",
+      "blender:hall_structure_candidate"
+    ],
+    "model_3d": {
+      "source_basis": "Public hero/source metadata plus lecture-derived historical framework; geometry remains planned/reconstruction-grade until source plans are reviewed.",
+      "parts": [
+        {
+          "type": "full",
+          "r2_key": "models/postsparkasse/full.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "structure",
+          "r2_key": "models/postsparkasse/structure.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "site",
+          "r2_key": "models/postsparkasse/site.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "facade",
+          "r2_key": "models/postsparkasse/facade.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "interior",
+          "r2_key": "models/postsparkasse/interior.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "low",
+          "r2_key": "models/postsparkasse/low.glb",
+          "review_status": "planned"
+        }
+      ],
+      "license": "own_work"
+    },
+    "analysis_layers": [
+      {
+        "analysis_type": "material_system",
+        "summary": "Primary material reading: stone_cladding, aluminium, glass, iron_structure. Postsparkasse is read through functional modernity: stone/aluminium cladding, exposed fasteners, glass-roofed banking hall and process-oriented plan.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "structure",
+        "summary": "Structure layer planned for Blender import: iron roof.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Tectonic layer planned around stone_cladding, aluminium, glass; separates material expression, enclosure and structural reading.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Database classification places Postsparkasse in modern_bureaucratic_service_building, with context tags viennese_modernism, otto_wagner, banking_infrastructure.",
+        "review_status": "draft"
+      }
+    ],
+    "analysis_observations": [
+      {
+        "analysis_type": "material_tag",
+        "label": "material:aluminium",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "material_tag",
+        "label": "material:glass",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "material_tag",
+        "label": "material:stone_cladding",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:bank",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "theme:bureaucracy",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      }
+    ],
+    "database_profile": {
+      "status": "draft",
+      "r2_prefix": "entries/postsparkasse",
+      "source_count": 3,
+      "media_count": 4,
+      "model_count": 6,
+      "analysis_count": 4,
+      "tag_count": 7
+    }
   },
   {
     "id": "bauhaus-dessau",
@@ -8735,8 +10334,160 @@
         "reliability_level": "secondary_source",
         "rights_status": "licensed",
         "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY-SA 3.0."
+      },
+      {
+        "source_type": "website",
+        "title": "Das Rote Wien: Karl-Marx-Hof",
+        "url": "https://dasrotewien.at/seite/karl-marx-hof",
+        "reliability_level": "primary_source",
+        "rights_status": "licensed",
+        "notes": "Public historical source for Karl-Marx-Hof and Red Vienna housing."
       }
-    ]
+    ],
+    "geo": {
+      "lat": 48.252,
+      "lon": 16.365,
+      "region": "Vienna",
+      "precision": "site"
+    },
+    "materials": {
+      "primary": [
+        "brick_masonry",
+        "plaster",
+        "concrete"
+      ],
+      "secondary": [
+        "courtyard_landscape",
+        "communal_facilities"
+      ],
+      "notes": "Karl-Marx-Hof is Red Vienna housing infrastructure: long perimeter block, monumental gateways, courtyards and collective services."
+    },
+    "program": {
+      "type": "collective_housing",
+      "subtype": "red_vienna_superblock_housing",
+      "public_access": "public"
+    },
+    "context": {
+      "topography": "urban_linear_site",
+      "setting": "municipal_housing_landscape",
+      "heritage_context": [
+        "red_vienna",
+        "social_housing",
+        "municipal_reform"
+      ],
+      "landscape_relation": [
+        "courtyard_sequence",
+        "rail_corridor",
+        "communal_services"
+      ]
+    },
+    "database_tags": [
+      "material:brick_masonry",
+      "material:plaster",
+      "typology:social_housing",
+      "typology:superblock",
+      "theme:red_vienna",
+      "blender:housing_block_candidate"
+    ],
+    "model_3d": {
+      "source_basis": "Public hero/source metadata plus lecture-derived historical framework; geometry remains planned/reconstruction-grade until source plans are reviewed.",
+      "parts": [
+        {
+          "type": "full",
+          "r2_key": "models/karl-marx-hof/full.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "structure",
+          "r2_key": "models/karl-marx-hof/structure.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "site",
+          "r2_key": "models/karl-marx-hof/site.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "facade",
+          "r2_key": "models/karl-marx-hof/facade.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "interior",
+          "r2_key": "models/karl-marx-hof/interior.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "low",
+          "r2_key": "models/karl-marx-hof/low.glb",
+          "review_status": "planned"
+        }
+      ],
+      "license": "own_work"
+    },
+    "analysis_layers": [
+      {
+        "analysis_type": "material_system",
+        "summary": "Primary material reading: brick_masonry, plaster, concrete. Karl-Marx-Hof is Red Vienna housing infrastructure: long perimeter block, monumental gateways, courtyards and collective services.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "structure",
+        "summary": "Structure layer planned for Blender import: spatial support and infrastructure system.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Tectonic layer planned around brick_masonry, plaster, concrete; separates material expression, enclosure and structural reading.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Database classification places Karl-Marx-Hof in red_vienna_superblock_housing, with context tags red_vienna, social_housing, municipal_reform.",
+        "review_status": "draft"
+      }
+    ],
+    "analysis_observations": [
+      {
+        "analysis_type": "material_tag",
+        "label": "material:brick_masonry",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "material_tag",
+        "label": "material:plaster",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:social_housing",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:superblock",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "theme:red_vienna",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      }
+    ],
+    "database_profile": {
+      "status": "draft",
+      "r2_prefix": "entries/karl-marx-hof",
+      "source_count": 3,
+      "media_count": 4,
+      "model_count": 6,
+      "analysis_count": 4,
+      "tag_count": 6
+    }
   },
   {
     "id": "immeuble-rue-des-amiraux",
