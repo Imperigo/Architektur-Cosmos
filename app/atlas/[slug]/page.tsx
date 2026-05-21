@@ -7,6 +7,7 @@ import { MediaLightbox } from '@/components/atlas/MediaLightbox';
 import { ProjectSearch } from '@/components/atlas/ProjectSearch';
 import entries from '@/data/mock-entries.json';
 import relations from '@/data/relations.json';
+import { styleSectorColors } from '@/lib/atlas-layout';
 import { primaryPublicMediaUrl, publicDisplayMediaUrl } from '@/lib/media';
 import type { Entry, EntryRelation, StyleSectorId } from '@/lib/types';
 
@@ -882,14 +883,5 @@ function formatYear(year: number) {
 }
 
 function styleColor(styleSector: StyleSectorId) {
-  const colors: Record<StyleSectorId, string> = {
-    classical_architecture: '#9b6dff',
-    pre_modern_architecture: '#ffb000',
-    modern_architecture: '#00e7ff',
-    postwar_modern_architecture: '#ff4d1f',
-    sustainable_architecture: '#65ff9a',
-    vernacular_architecture: '#ff007a'
-  };
-
-  return colors[styleSector];
+  return styleSectorColors[styleSector];
 }

@@ -5,6 +5,7 @@ import { ProjectDetailCard } from '@/components/atlas/ProjectDetailCard';
 import { ProjectMediaGrid } from '@/components/atlas/ProjectMediaGrid';
 import { ProjectPreviewCard } from '@/components/atlas/ProjectPreviewCard';
 import type { SemanticLevel } from '@/lib/atlas-layout';
+import { styleSectorColors } from '@/lib/atlas-layout';
 import { primaryPublicMediaUrl } from '@/lib/media';
 import type { Entry } from '@/lib/types';
 
@@ -45,15 +46,6 @@ const entryGlyph: Record<Entry['entry_type'], string> = {
   event: '×'
 };
 
-const styleAccent: Record<Entry['style_sector'], string> = {
-  classical_architecture: '#a56bff',
-  pre_modern_architecture: '#ffd43d',
-  modern_architecture: '#00f5ff',
-  postwar_modern_architecture: '#ff4b20',
-  sustainable_architecture: '#65ff73',
-  vernacular_architecture: '#ff38f5'
-};
-
 export function SemanticEntryNode({
   entry,
   x,
@@ -84,7 +76,7 @@ export function SemanticEntryNode({
   const glyphRadius = nodeRadius ?? (semanticLevel === 'global' ? 4.8 : 7.2);
   const hitRadius = Math.max(isFast ? 18 : 15, glyphRadius + 8);
   const glyphFontSize = Math.max(7, Math.min(14, glyphRadius * 0.72));
-  const accent = styleAccent[entry.style_sector];
+  const accent = styleSectorColors[entry.style_sector];
   const labelWidth = Math.min(230, entry.title.length * 6.4 + 72);
   const labelRectX = labelAnchor === 'end' ? labelX - labelWidth : labelX;
   const labelTextX = labelAnchor === 'end' ? labelX - 10 : labelX + 10;

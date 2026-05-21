@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { sectorMidAngle, styleSectors, type StyleSector } from '@/lib/atlas-layout';
+import { sectorMidAngle, styleSectorColors, styleSectors, type StyleSector } from '@/lib/atlas-layout';
 import { polarToCartesian } from '@/lib/polar-coordinates';
 import { tunnelCenter, tunnelFrontDepth, tunnelRadius, wormholeTunnel, type WormholeState } from '@/lib/wormhole-layout';
 import { RadialLetterText } from '@/components/atlas/RadialText';
@@ -11,15 +11,6 @@ const sectorGlyph: Record<StyleSector['id'], string> = {
   postwar_modern_architecture: 'IV',
   sustainable_architecture: 'V',
   vernacular_architecture: 'VI'
-};
-
-const sectorColor: Record<StyleSector['id'], string> = {
-  classical_architecture: '#a56bff',
-  pre_modern_architecture: '#ffd43d',
-  modern_architecture: '#00f5ff',
-  postwar_modern_architecture: '#ff4b20',
-  sustainable_architecture: '#65ff73',
-  vernacular_architecture: '#ff38f5'
 };
 
 const sectorLabel: Record<StyleSector['id'], string> = {
@@ -46,7 +37,7 @@ function StyleSectorsComponent({ state, isMoving = false, activeStyleLens = null
         const startInner = polarToCartesian(sectorCenter.x, sectorCenter.y, wormholeTunnel.minRadius + 54, sector.startAngle);
         const startOuter = polarToCartesian(sectorCenter.x, sectorCenter.y, outerRadius, sector.startAngle);
         const labelText = sectorLabel[sector.id];
-        const accent = sectorColor[sector.id];
+        const accent = styleSectorColors[sector.id];
         const ribbonPath = sectorRibbonPath(sector.startAngle, sector.endAngle, wormholeTunnel.minRadius + 58, outerRadius - 12, sectorCenter.x, sectorCenter.y);
         const accentBoost = sector.id === 'pre_modern_architecture' ? 1.45 : 1;
         const lensBoost = activeStyleLens === sector.id ? 1.8 : activeStyleLens ? 0.36 : 1;

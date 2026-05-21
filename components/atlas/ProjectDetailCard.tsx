@@ -1,4 +1,5 @@
 import { ProjectMediaGrid } from '@/components/atlas/ProjectMediaGrid';
+import { styleSectorColors } from '@/lib/atlas-layout';
 import type { Entry, StyleSectorId } from '@/lib/types';
 
 type ProjectDetailCardProps = {
@@ -212,14 +213,5 @@ function layerLabelForEntry(entry: Entry) {
 }
 
 function styleColor(styleSector: StyleSectorId) {
-  const colors: Record<StyleSectorId, string> = {
-    classical_architecture: '#9b6dff',
-    pre_modern_architecture: '#ffb000',
-    modern_architecture: '#00e7ff',
-    postwar_modern_architecture: '#ff4d1f',
-    sustainable_architecture: '#65ff9a',
-    vernacular_architecture: '#ff007a'
-  };
-
-  return colors[styleSector];
+  return styleSectorColors[styleSector];
 }

@@ -64,6 +64,15 @@ export const styleSectors: StyleSector[] = [
   { id: 'vernacular_architecture', label: 'Vernakulär', startAngle: 246, endAngle: 300 }
 ];
 
+export const styleSectorColors: Record<StyleSectorId, string> = {
+  classical_architecture: '#a56bff',
+  pre_modern_architecture: '#ffd43d',
+  modern_architecture: '#00f5ff',
+  postwar_modern_architecture: '#ff4b20',
+  sustainable_architecture: '#65ff73',
+  vernacular_architecture: '#ff38f5'
+};
+
 const yearMin = timeAnchors[0].year;
 const yearMax = timeAnchors[timeAnchors.length - 1].year;
 
