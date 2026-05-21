@@ -15,20 +15,20 @@ const sectorGlyph: Record<StyleSector['id'], string> = {
 
 const sectorLabel: Record<StyleSector['id'], string> = {
   classical_architecture: 'ANTIKE',
-  pre_modern_architecture: 'FRUEHMODERNE',
+  pre_modern_architecture: 'FRÜHMODERNE',
   modern_architecture: 'MODERNE',
   postwar_modern_architecture: 'NACHKRIEG',
   sustainable_architecture: 'REUSE',
-  vernacular_architecture: 'VERNAKULAER'
+  vernacular_architecture: 'VERNAKULÄR'
 };
 
 function StyleSectorsComponent({ state, isMoving = false, activeStyleLens = null, onSelectStyleLens }: { state: WormholeState; isMoving?: boolean; activeStyleLens?: StyleSector['id'] | null; onSelectStyleLens?: (styleId: StyleSector['id']) => void }) {
-  const innerLabelOpacity = 0.58 + smoothstep(0.18, 0.54, state.timePosition) * 0.28;
+  const outerLabelOpacity = 0.64 + smoothstep(0.08, 0.42, state.timePosition) * 0.2;
   const frontDepth = tunnelFrontDepth(state);
-  const labelDepth = frontDepth + 0.1;
+  const labelDepth = frontDepth + 0.045;
   const sectorCenter = tunnelCenter(labelDepth, state.phase);
-  const outerRadius = Math.max(wormholeTunnel.minRadius + 116, tunnelRadius(frontDepth + 0.05) - 20);
-  const labelRadius = wormholeTunnel.minRadius + 72;
+  const outerRadius = Math.max(wormholeTunnel.minRadius + 136, tunnelRadius(frontDepth + 0.035) - 14);
+  const labelRadius = Math.max(wormholeTunnel.minRadius + 128, outerRadius - 18);
 
   return (
     <g aria-label="Stilsektoren">
@@ -67,11 +67,13 @@ function StyleSectorsComponent({ state, isMoving = false, activeStyleLens = null
                 radius={labelRadius}
                 angle={labelAngle}
                 fill={accent}
-                fontSize={7.1}
-                fontWeight={610}
-                opacity={(innerLabelOpacity + 0.08) * (activeStyleLens && activeStyleLens !== sector.id ? 0.52 : 1)}
-                letterAngleStep={4.05}
-                strokeWidth={1.15}
+                fontSize={8.35}
+                fontWeight={460}
+                fontStyle="italic"
+                opacity={outerLabelOpacity * (activeStyleLens && activeStyleLens !== sector.id ? 0.52 : 1)}
+                letterAngleStep={4.85}
+                strokeWidth={0.82}
+                inward={false}
                 onClick={(event) => {
                   event.stopPropagation();
                   onSelectStyleLens?.(sector.id);

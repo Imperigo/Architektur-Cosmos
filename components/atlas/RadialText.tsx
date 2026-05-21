@@ -16,6 +16,7 @@ type RadialLetterTextProps = {
   strokeWidth?: number;
   className?: string;
   inward?: boolean;
+  fontStyle?: 'normal' | 'italic';
   onClick?: (event: ReactMouseEvent<SVGTextElement>) => void;
 };
 
@@ -34,6 +35,7 @@ export function RadialLetterText({
   strokeWidth = 2.6,
   className,
   inward = true,
+  fontStyle = 'normal',
   onClick
 }: RadialLetterTextProps) {
   const letters = [...text];
@@ -50,7 +52,9 @@ export function RadialLetterText({
         const point = polarToCartesian(cx, cy, radius, letterAngle);
         const radialRotation = inward ? letterAngle + 180 : letterAngle;
         const normalizedRotation = ((radialRotation % 360) + 360) % 360;
-        const rotation = normalizedRotation > 90 && normalizedRotation < 270 ? radialRotation + 180 : radialRotation;
+        const rotation = normalizedRotation > 90 && normalizedRotation < 270
+          ? radialRotation + 180
+          : radialRotation;
 
         return (
           <text
@@ -62,6 +66,7 @@ export function RadialLetterText({
             fill={fill}
             fontSize={fontSize}
             fontWeight={fontWeight}
+            fontStyle={fontStyle}
             fontFamily="var(--font-sans), system-ui, sans-serif"
             letterSpacing="0"
             stroke={stroke}
