@@ -1822,7 +1822,62 @@
         "rights_status": "licensed",
         "notes": "Auto-selected hero image candidate. Score: 0.87. License: CC BY-SA 2.0."
       }
-    ]
+    ],
+    "architecture_text": {
+      "headline": "Pyramiden von Gizeh: Geometrie, Arbeit und kosmische Dauer",
+      "overview": "Pyramids of Giza wird als Infrastruktur verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und Giza, Egypt. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Pyramids of Giza gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Die Pyramiden von Gizeh verbinden präzise Geometrie, monumentale Masse, Arbeitsorganisation und kosmische Orientierung zu einer dauerhaften Landschaft der Macht und des Jenseits. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Monument, Arbeit, Achse, Jenseits als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Die Pyramiden werden als präzise Steinmasse, Logistikbau und geometrisches Erdzeichen gelesen; Material, Last und Orientierung bilden eine untrennbare Einheit. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "curated material reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Die Pyramiden von Gizeh verbinden präzise Geometrie, monumentale Masse, Arbeitsorganisation und kosmische Orientierung zu einer dauerhaften Landschaft der Macht und des Jenseits. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart soll zeigen, wie surface, structure and assembly Stützung, Hülle, Fügung und Atmosphäre organisieren. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "entry materials and analysis fallback",
+          "review_status": "needs_source_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Pyramids of Giza gehört zu Giza, Egypt. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry location metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "Pyramids of Giza ist als Referenz wichtig, weil Monument, Arbeit, Achse, Jenseits nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T18:29:05.101Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Pyramids of Giza",
+          "value": "https://commons.wikimedia.org/wiki/File:All_Gizah_Pyramids.jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        }
+      ]
+    }
   },
   {
     "id": "ur",
@@ -3268,7 +3323,62 @@
         "rights_status": "licensed",
         "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY 2.0."
       }
-    ]
+    ],
+    "architecture_text": {
+      "headline": "Parthenon: Ordnung, Maß und Polis als Tempelbild",
+      "overview": "Parthenon wird als Gebäude verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und Athen, Greece. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Parthenon gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Der Parthenon verdichtet Tempelordnung, Proportion, optische Korrektur und Akropolis-Topografie zu einem politischen Bild der Polis. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Tempel, Ordnung, Proportion, Polis als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Der Parthenon wird über Marmorkonstruktion, Säulenordnung, Gebälk, Cella und optische Korrekturen gelesen; Tragwerk und Bildordnung fallen eng zusammen. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "curated material reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Der Parthenon verdichtet Tempelordnung, Proportion, optische Korrektur und Akropolis-Topografie zu einem politischen Bild der Polis. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart soll zeigen, wie surface, structure and assembly Stützung, Hülle, Fügung und Atmosphäre organisieren. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "entry materials and analysis fallback",
+          "review_status": "needs_source_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Parthenon gehört zu Athen, Greece. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry location metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "Parthenon ist als Referenz wichtig, weil Tempel, Ordnung, Proportion, Polis nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T18:29:05.282Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Parthenon",
+          "value": "https://commons.wikimedia.org/wiki/File:The_Parthenon_in_Athens.jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        }
+      ]
+    }
   },
   {
     "id": "olynth",
@@ -4672,7 +4782,54 @@
         "label": "Grundriss",
         "placeholder": "Grundriss / De architectura / treatise-firmitas"
       }
-    ]
+    ],
+    "architecture_text": {
+      "headline": "De architectura: Bauwissen als übertragbares System",
+      "overview": "De architectura wird als Text verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und Rome, Italy. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "De architectura gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: De architectura ordnet Bauwissen als Verhältnis von Festigkeit, Zweck und Schönheit; Architektur wird dadurch als lehrbares, technisches und kulturelles System formuliert. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Traktat, Festigkeit, Nützlichkeit, Schönheit als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Als Text besitzt De architectura kein Tragwerk im baulichen Sinn; sein Material ist die systematische Ordnung von Bauwissen, Technik, Proportion und Begriffen. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "curated material reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "De architectura ordnet Bauwissen als Verhältnis von Festigkeit, Zweck und Schönheit; Architektur wird dadurch als lehrbares, technisches und kulturelles System formuliert. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart soll zeigen, wie surface, structure and assembly Stützung, Hülle, Fügung und Atmosphäre organisieren. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "entry materials and analysis fallback",
+          "review_status": "needs_source_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "De architectura gehört zu Rome, Italy. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry location metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "De architectura ist als Referenz wichtig, weil Traktat, Festigkeit, Nützlichkeit, Schönheit nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T18:29:05.459Z",
+      "review_status": "needs_owner_review",
+      "source_basis": []
+    }
   },
   {
     "id": "pantheon",
@@ -4734,7 +4891,62 @@
         "rights_status": "public_domain",
         "notes": "Auto-selected hero image candidate. Score: 0.87. License: CC0."
       }
-    ]
+    ],
+    "architecture_text": {
+      "headline": "Pantheon: Kuppelraum, Licht und kosmische Mitte",
+      "overview": "Pantheon wird als Gebäude verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und Rome, Italy. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Pantheon gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Das Pantheon erzeugt Innenraum aus Kuppel, Zylinder, Oculus, Betonmasse und Lichtstrahl; der Raum erscheint zugleich konstruktiv, atmosphärisch und kosmisch geordnet. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Kuppel, Beton, Kosmos, Interieur als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Das Pantheon verbindet römischen Beton, abgestufte Kuppelmasse, Ziegel- und Steinverkleidung, Kassettierung und Oculus zu einer radikalen Innenraumkonstruktion. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "curated material reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Das Pantheon erzeugt Innenraum aus Kuppel, Zylinder, Oculus, Betonmasse und Lichtstrahl; der Raum erscheint zugleich konstruktiv, atmosphärisch und kosmisch geordnet. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart soll zeigen, wie surface, structure and assembly Stützung, Hülle, Fügung und Atmosphäre organisieren. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "entry materials and analysis fallback",
+          "review_status": "needs_source_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Pantheon gehört zu Rome, Italy. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry location metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "Pantheon ist als Referenz wichtig, weil Kuppel, Beton, Kosmos, Interieur nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T18:29:05.640Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Pantheon",
+          "value": "https://commons.wikimedia.org/wiki/File:Pantheon_Rome,_from_a_Series_of_24_Depicting_(Reconstructed)_Buildings_from_Roman_Antiquity_MET_DP874934.jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "public_domain"
+        }
+      ]
+    }
   },
   {
     "id": "hagia-sophia",
@@ -4797,7 +5009,62 @@
         "rights_status": "licensed",
         "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY-SA 3.0."
       }
-    ]
+    ],
+    "architecture_text": {
+      "headline": "Hagia Sophia: Kuppel, Licht und imperiale Raumordnung",
+      "overview": "Hagia Sophia wird als Gebäude verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und Istanbul, Turkey. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Hagia Sophia gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Hagia Sophia übersetzt Kuppel, Pendentifs, Halbkuppeln, Licht und Liturgie in einen schwebend wirkenden Zentralraum imperialer Präsenz. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Kuppel, Liturgie, Imperium, Licht als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Hagia Sophia wird über Mauerwerksmassen, Pendentifs, Halbkuppeln, Marmorschichten und Lichtflächen gelesen; die Konstruktion erzeugt eine scheinbar schwebende Kuppelordnung. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "curated material reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Hagia Sophia übersetzt Kuppel, Pendentifs, Halbkuppeln, Licht und Liturgie in einen schwebend wirkenden Zentralraum imperialer Präsenz. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart soll zeigen, wie surface, structure and assembly Stützung, Hülle, Fügung und Atmosphäre organisieren. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "entry materials and analysis fallback",
+          "review_status": "needs_source_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Hagia Sophia gehört zu Istanbul, Turkey. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry location metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "Hagia Sophia ist als Referenz wichtig, weil Kuppel, Liturgie, Imperium, Licht nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T18:29:05.814Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Hagia Sophia",
+          "value": "https://commons.wikimedia.org/wiki/File:Hagia_Sophia_(228968325).jpeg",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        }
+      ]
+    }
   },
   {
     "id": "kloster-st-gallen",
@@ -4847,7 +5114,59 @@
     ],
     "source_documents": [
       "02 Global History of Urban Design 1_2.pdf"
-    ]
+    ],
+    "architecture_text": {
+      "headline": "Kloster St. Gallen: Wissen, Liturgie und Plan als Ordnung",
+      "overview": "Kloster St. Gallen wird als Stadtplan verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und St. Gallen, Switzerland. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Kloster St. Gallen gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Der St. Galler Klosterplan ordnet Liturgie, Arbeit, Wissen, Versorgung und Gemeinschaft in einem idealisierten monastischen Grundriss. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Kloster, plan, Wissensnetz als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Der St. Galler Plan arbeitet mit der zeichnerischen Ordnung von Kirche, Klausur, Werkhöfen, Gärten, Schule, Herberge und Versorgung; sein Material ist der organisierte Grundriss. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "curated material reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Der St. Galler Klosterplan ordnet Liturgie, Arbeit, Wissen, Versorgung und Gemeinschaft in einem idealisierten monastischen Grundriss. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart soll zeigen, wie surface, structure and assembly Stützung, Hülle, Fügung und Atmosphäre organisieren. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "entry materials and analysis fallback",
+          "review_status": "needs_source_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Kloster St. Gallen gehört zu St. Gallen, Switzerland. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry location metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "Kloster St. Gallen ist als Referenz wichtig, weil Kloster, plan, Wissensnetz nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T18:29:05.982Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_document",
+          "value": "02 Global History of Urban Design 1_2.pdf"
+        }
+      ]
+    }
   },
   {
     "id": "siena",
@@ -5186,7 +5505,62 @@
         "rights_status": "public_domain",
         "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC0."
       }
-    ]
+    ],
+    "architecture_text": {
+      "headline": "Alhambra: Hof, Wasser und Ornament als Klimaarchitektur",
+      "overview": "Alhambra wird als Landschaftsprojekt verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und Granada, Spain. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Alhambra gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Die Alhambra organisiert Palast, Hof, Wasser, Schatten, Ornament und Aussicht als feines klimatisches und symbolisches Raumgefüge. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Hof, Wasser, Ornament, Mikroklima als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Die Alhambra verbindet Mauerwerk, Stuck, Holzdecken, Fliesen, Wasserbecken, Schatten und Hofräume zu einer leichten, klimatisch präzisen Raumstruktur. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "curated material reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Die Alhambra organisiert Palast, Hof, Wasser, Schatten, Ornament und Aussicht als feines klimatisches und symbolisches Raumgefüge. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart soll zeigen, wie surface, structure and assembly Stützung, Hülle, Fügung und Atmosphäre organisieren. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "entry materials and analysis fallback",
+          "review_status": "needs_source_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Alhambra gehört zu Granada, Spain. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry location metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "Alhambra ist als Referenz wichtig, weil Hof, Wasser, Ornament, Mikroklima nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T18:29:06.156Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Alhambra",
+          "value": "https://commons.wikimedia.org/wiki/File:Dawn_Charles_V_Palace_Alhambra_Granada_Andalusia_Spain.jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "public_domain"
+        }
+      ]
+    }
   },
   {
     "id": "hereford-mappa-mundi",
@@ -5250,7 +5624,66 @@
         "rights_status": "public_domain",
         "notes": "Auto-selected hero image candidate. Score: 0.98. License: Public domain."
       }
-    ]
+    ],
+    "architecture_text": {
+      "headline": "Hereford Mappa Mundi: Weltbild als kartografische Theologie",
+      "overview": "Hereford Mappa Mundi wird als Karte verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und Hereford, UK. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Hereford Mappa Mundi gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Die Hereford Mappa Mundi zeichnet Welt nicht neutral, sondern theologisch: Zentrum, Rand, Geschichte, Ort und Bedeutung werden in einer kartografischen Ordnung verschränkt. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Kartografie, Weltbild, theozentrisches Weltbild als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Die Hereford Mappa Mundi ist als Pergament-, Tinten- und Bildordnung wirksam; ihr räumliches Material ist die Verbindung von Ort, Text, Geschichte und theologischer Hierarchie. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "curated material reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Die Hereford Mappa Mundi zeichnet Welt nicht neutral, sondern theologisch: Zentrum, Rand, Geschichte, Ort und Bedeutung werden in einer kartografischen Ordnung verschränkt. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart soll zeigen, wie surface, structure and assembly Stützung, Hülle, Fügung und Atmosphäre organisieren. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "entry materials and analysis fallback",
+          "review_status": "needs_source_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Hereford Mappa Mundi gehört zu Hereford, UK. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry location metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "Hereford Mappa Mundi ist als Referenz wichtig, weil Kartografie, Weltbild, theozentrisches Weltbild nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T18:29:06.327Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_document",
+          "value": "04 Landschaftsarchitektur 1_2.pdf"
+        },
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Hereford Mappa Mundi",
+          "value": "https://commons.wikimedia.org/wiki/File:Hereford-Karte.jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "public_domain"
+        }
+      ]
+    }
   },
   {
     "id": "catalan-atlas",
@@ -5314,7 +5747,66 @@
         "rights_status": "public_domain",
         "notes": "Auto-selected hero image candidate. Score: 0.98. License: Public domain."
       }
-    ]
+    ],
+    "architecture_text": {
+      "headline": "Catalan Atlas: Navigation, Handel und gezeichnete Welt",
+      "overview": "Catalan Atlas wird als Karte verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und Mallorca, Spain. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Catalan Atlas gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Der Catalan Atlas verbindet Navigation, Küstenwissen, Herrschaftsbilder und Handelsräume; Karte wird hier zum Instrument von Bewegung und Weltvorstellung. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Kartografie, Weltbild, Navigation als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Der Catalan Atlas arbeitet mit Pergament, Farbe, Schrift, Küstenlinien und Figuren; seine konstruktive Ordnung liegt in Navigation, Maß und narrativer Weltgliederung. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "curated material reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Der Catalan Atlas verbindet Navigation, Küstenwissen, Herrschaftsbilder und Handelsräume; Karte wird hier zum Instrument von Bewegung und Weltvorstellung. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart soll zeigen, wie surface, structure and assembly Stützung, Hülle, Fügung und Atmosphäre organisieren. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "entry materials and analysis fallback",
+          "review_status": "needs_source_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Catalan Atlas gehört zu Mallorca, Spain. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry location metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "Catalan Atlas ist als Referenz wichtig, weil Kartografie, Weltbild, Navigation nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T18:29:06.503Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_document",
+          "value": "04 Landschaftsarchitektur 1_2.pdf"
+        },
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Catalan Atlas",
+          "value": "https://commons.wikimedia.org/wiki/File:Compass_rose_from_Catalan_Atlas_(1375).jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "public_domain"
+        }
+      ]
+    }
   },
   {
     "id": "brunelleschi-dome",
@@ -5377,7 +5869,62 @@
         "rights_status": "public_domain",
         "notes": "Auto-selected hero image candidate. Score: 0.97. License: Public domain."
       }
-    ]
+    ],
+    "architecture_text": {
+      "headline": "Santa Maria del Fiore: Kuppelbau als Stadtzeichen",
+      "overview": "Dome of Santa Maria del Fiore wird als Infrastruktur verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und Florence, Italy. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Dome of Santa Maria del Fiore gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Brunelleschis Kuppel verbindet doppelschalige Konstruktion, Bauprozess, Rippenlogik und Stadtbild zu einem technischen und symbolischen Wendepunkt der Renaissance. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Kuppel, Konstruktion, Stadtbild, Ingenieurbau als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Die Florentiner Kuppel wird über Doppelschale, Rippen, Ziegelverband, hölzerne Bauhilfen und selbsttragende Bauabfolge gelesen. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "curated material reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Brunelleschis Kuppel verbindet doppelschalige Konstruktion, Bauprozess, Rippenlogik und Stadtbild zu einem technischen und symbolischen Wendepunkt der Renaissance. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart soll zeigen, wie surface, structure and assembly Stützung, Hülle, Fügung und Atmosphäre organisieren. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "entry materials and analysis fallback",
+          "review_status": "needs_source_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Dome of Santa Maria del Fiore gehört zu Florence, Italy. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry location metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "Dome of Santa Maria del Fiore ist als Referenz wichtig, weil Kuppel, Konstruktion, Stadtbild, Ingenieurbau nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T18:29:06.688Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Dome of Santa Maria del Fiore",
+          "value": "https://commons.wikimedia.org/wiki/File:Filippo_Brunelleschi,_cutaway_of_the_Dome_of_Florence_Cathedral_(Santa_Maria_del_Fiore).JPG",
+          "reliability_level": "secondary_source",
+          "rights_status": "public_domain"
+        }
+      ]
+    }
   },
   {
     "id": "palazzo-medici-riccardi",
@@ -5699,7 +6246,59 @@
     ],
     "source_documents": [
       "02 Global History of Urban Design 1_2.pdf"
-    ]
+    ],
+    "architecture_text": {
+      "headline": "City in Layers: Stadt als vertikale Infrastruktur",
+      "overview": "City in Layers wird als Theorie verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und Italy, Italy. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "City in Layers gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: City in Layers denkt Stadt als geschichtete Ordnung: Bewegung, Wasser, Arbeit, Versorgung und Öffentlichkeit werden nicht nur im Plan, sondern im Schnitt organisiert. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Renaissance-Stadt, Infrastruktur, Schnittstadt als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "City in Layers beschreibt Material nicht als Baustoff, sondern als räumliche Schichtung von Bewegung, Versorgung, Wasser, Arbeit und Öffentlichkeit. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "curated material reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "City in Layers denkt Stadt als geschichtete Ordnung: Bewegung, Wasser, Arbeit, Versorgung und Öffentlichkeit werden nicht nur im Plan, sondern im Schnitt organisiert. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart soll zeigen, wie surface, structure and assembly Stützung, Hülle, Fügung und Atmosphäre organisieren. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "entry materials and analysis fallback",
+          "review_status": "needs_source_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "City in Layers gehört zu Italy, Italy. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry location metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "City in Layers ist als Referenz wichtig, weil Renaissance-Stadt, Infrastruktur, Schnittstadt nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T18:29:55.116Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_document",
+          "value": "02 Global History of Urban Design 1_2.pdf"
+        }
+      ]
+    }
   },
   {
     "id": "villa-medici-in-fiesole",
@@ -7704,7 +8303,54 @@
         "label": "Grundriss",
         "placeholder": "Grundriss / I quattro libri dell'architettura / treatise-villa"
       }
-    ]
+    ],
+    "architecture_text": {
+      "headline": "Palladios Vier Bücher: Proportion als übertragbare Architektur",
+      "overview": "I quattro libri dell'architettura wird als Text verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und Venice, Italy. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "I quattro libri dell'architettura gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Palladios Vier Bücher machen Architektur reproduzierbar: Proportion, Villa, Antike, Typus und Zeichnung werden zu einem übertragbaren Entwurfswissen. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Traktat, Villa, Proportion, Klassizismus als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Palladios Traktat arbeitet mit Zeichnung, Maß, Proportion und Typus; sein konstruktives Material ist die Übertragbarkeit architektonischer Regeln. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "curated material reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Palladios Vier Bücher machen Architektur reproduzierbar: Proportion, Villa, Antike, Typus und Zeichnung werden zu einem übertragbaren Entwurfswissen. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart soll zeigen, wie surface, structure and assembly Stützung, Hülle, Fügung und Atmosphäre organisieren. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "entry materials and analysis fallback",
+          "review_status": "needs_source_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "I quattro libri dell'architettura gehört zu Venice, Italy. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry location metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "I quattro libri dell'architettura ist als Referenz wichtig, weil Traktat, Villa, Proportion, Klassizismus nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T18:29:07.067Z",
+      "review_status": "needs_owner_review",
+      "source_basis": []
+    }
   },
   {
     "id": "sixtus-v-rome-plan",
@@ -7754,7 +8400,54 @@
         "label": "Grundriss",
         "placeholder": "Grundriss / Rom unter Sixtus V. / axis-pilgrimage"
       }
-    ]
+    ],
+    "architecture_text": {
+      "headline": "Rom unter Sixtus V.: Achsen, Obelisken und Pilgerstadt",
+      "overview": "Rom unter Sixtus V. wird als Stadtplan verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und Rom, Italy. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Rom unter Sixtus V. gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Rom unter Sixtus V. ordnet die Stadt über Sichtachsen, Obelisken, Pilgerwege und sakrale Knoten; Bewegung durch die Stadt wird zur räumlichen Dramaturgie. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Achse, Pilgerbewegung, barocke Stadt, Infrastruktur als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Rom unter Sixtus V. wird über Straßenachsen, Obelisken, Platzräume und sakrale Knoten gelesen; die Konstruktion liegt in der städtischen Verbindung. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "curated material reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Rom unter Sixtus V. ordnet die Stadt über Sichtachsen, Obelisken, Pilgerwege und sakrale Knoten; Bewegung durch die Stadt wird zur räumlichen Dramaturgie. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart soll zeigen, wie surface, structure and assembly Stützung, Hülle, Fügung und Atmosphäre organisieren. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "entry materials and analysis fallback",
+          "review_status": "needs_source_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Rom unter Sixtus V. gehört zu Rom, Italy. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry location metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "Rom unter Sixtus V. ist als Referenz wichtig, weil Achse, Pilgerbewegung, barocke Stadt, Infrastruktur nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T18:29:07.249Z",
+      "review_status": "needs_owner_review",
+      "source_basis": []
+    }
   },
   {
     "id": "fortezza-di-palmanova",
@@ -8366,7 +9059,62 @@
         "rights_status": "licensed",
         "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY-SA 3.0."
       }
-    ]
+    ],
+    "architecture_text": {
+      "headline": "Versailles: Landschaft als absolutistische Perspektive",
+      "overview": "Gardens of Versailles wird als Landschaftsprojekt verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und Versailles, France. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Gardens of Versailles gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Versailles formt Landschaft als Machtraum: Achse, Parterre, Wasser, Waldkanten und Blicktiefe übersetzen absolutistische Ordnung in begehbare Perspektive. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Achse, Absolutismus, Landschaft, Kontrolle als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Versailles verbindet Erdmodellierung, Wassertechnik, Bosketts, Parterres, Achsen und Blickräume zu einer gebauten Landschaft der Kontrolle. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "curated material reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Versailles formt Landschaft als Machtraum: Achse, Parterre, Wasser, Waldkanten und Blicktiefe übersetzen absolutistische Ordnung in begehbare Perspektive. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart soll zeigen, wie surface, structure and assembly Stützung, Hülle, Fügung und Atmosphäre organisieren. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "entry materials and analysis fallback",
+          "review_status": "needs_source_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Gardens of Versailles gehört zu Versailles, France. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry location metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "Gardens of Versailles ist als Referenz wichtig, weil Achse, Absolutismus, Landschaft, Kontrolle nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T18:29:07.434Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Gardens of Versailles",
+          "value": "https://commons.wikimedia.org/wiki/File:Vue_a%C3%A9rienne_du_domaine_de_Versailles_le_20_ao%C3%BBt_2014_par_ToucanWings_-_Creative_Commons_By_Sa_3.0_-_22.jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        }
+      ]
+    }
   },
   {
     "id": "piazza-st-peters",
@@ -8691,7 +9439,54 @@
         "label": "Grundriss",
         "placeholder": "Grundriss / Primitive Hut / origin-nature"
       }
-    ]
+    ],
+    "architecture_text": {
+      "headline": "Primitive Hut: Ursprung als architektonische Theoriefigur",
+      "overview": "Primitive Hut wird als Theorie verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und Paris, France. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Primitive Hut gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Laugiers Urhütte reduziert Architektur auf Stütze, Balken, Dach und Naturbezug; sie ist weniger Bauwerk als theoretisches Bild einer konstruktiven Herkunft. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Ursprung, Natur, Säule, Theorie als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Die Primitive Hut arbeitet als theoretische Materialfigur aus Stütze, Balken, Dach und Natur; sie reduziert Architektur auf eine elementare tektonische Ordnung. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "curated material reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Laugiers Urhütte reduziert Architektur auf Stütze, Balken, Dach und Naturbezug; sie ist weniger Bauwerk als theoretisches Bild einer konstruktiven Herkunft. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart soll zeigen, wie surface, structure and assembly Stützung, Hülle, Fügung und Atmosphäre organisieren. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "entry materials and analysis fallback",
+          "review_status": "needs_source_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Primitive Hut gehört zu Paris, France. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry location metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "Primitive Hut ist als Referenz wichtig, weil Ursprung, Natur, Säule, Theorie nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T18:29:07.615Z",
+      "review_status": "needs_owner_review",
+      "source_basis": []
+    }
   },
   {
     "id": "arc-et-senans",
@@ -9284,7 +10079,54 @@
         "label": "Grundriss",
         "placeholder": "Grundriss / Panopticon / surveillance-institution"
       }
-    ]
+    ],
+    "architecture_text": {
+      "headline": "Panopticon: Sichtbarkeit als räumliche Machttechnik",
+      "overview": "Panopticon wird als Theorie verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und einem Kontext, der noch Quellenprüfung braucht. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Panopticon gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Das Panopticon organisiert Macht durch Sichtbarkeit: Ring, Zelle, Zentrum und Blickachse machen Kontrolle zu einer räumlichen Figur. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Überwachung, Institution, Diagramm, Kontrolle als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Das Panopticon besitzt sein Tragwerk vor allem als Diagramm: Ring, Zelle, Zentrum, Blick und Distanz ordnen Körper und Institution. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "curated material reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Das Panopticon organisiert Macht durch Sichtbarkeit: Ring, Zelle, Zentrum und Blickachse machen Kontrolle zu einer räumlichen Figur. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart soll zeigen, wie surface, structure and assembly Stützung, Hülle, Fügung und Atmosphäre organisieren. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "entry materials and analysis fallback",
+          "review_status": "needs_source_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Panopticon gehört zu einem Kontext, der noch Quellenprüfung braucht. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "context needs source review",
+          "review_status": "needs_source_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "Panopticon ist als Referenz wichtig, weil Überwachung, Institution, Diagramm, Kontrolle nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T18:29:07.815Z",
+      "review_status": "needs_owner_review",
+      "source_basis": []
+    }
   },
   {
     "id": "crystal-palace",
@@ -9347,7 +10189,62 @@
         "rights_status": "public_domain",
         "notes": "Auto-selected hero image candidate. Score: 0.92. License: Public domain."
       }
-    ]
+    ],
+    "architecture_text": {
+      "headline": "Crystal Palace: Eisen, Glas und klimatisierter Ausstellungsraum",
+      "overview": "Crystal Palace wird als Gebäude verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und London, United Kingdom. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Crystal Palace gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Crystal Palace verbindet Eisenraster, Glasfläche, modulare Fertigung, Ausstellung und kontrolliertes Klima zu einem frühen Raum der industriellen Moderne. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie moderne Objektkultur, Glas, Ausstellung, Klima als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Crystal Palace wird über Eisenstützen, Träger, Glasfelder, modulare Rasterung, Vorfertigung und klimatische Hülle als industrieller Großraum lesbar. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "curated material reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Crystal Palace verbindet Eisenraster, Glasfläche, modulare Fertigung, Ausstellung und kontrolliertes Klima zu einem frühen Raum der industriellen Moderne. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart soll zeigen, wie surface, structure and assembly Stützung, Hülle, Fügung und Atmosphäre organisieren. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "entry materials and analysis fallback",
+          "review_status": "needs_source_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Crystal Palace gehört zu London, United Kingdom. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry location metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "Crystal Palace ist als Referenz wichtig, weil moderne Objektkultur, Glas, Ausstellung, Klima nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T18:29:07.993Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Crystal Palace",
+          "value": "https://commons.wikimedia.org/wiki/File:The_Crystal_Palace_page_24.jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "public_domain"
+        }
+      ]
+    }
   },
   {
     "id": "royal-observatory-greenwich",

@@ -219,7 +219,24 @@ function buildHeadline(entry, program) {
     'new-delhi': 'New Delhi: Hauptstadtachse als koloniale Raumordnung',
     'welwyn-garden-city': 'Welwyn Garden City: Gartenstadt in zweiter Generation',
     postsparkasse: 'Postsparkasse: Moderne Verwaltung als präziser Prozessraum',
-    'karl-marx-hof': 'Karl-Marx-Hof: Wohnblock als Stadt der Fürsorge'
+    'karl-marx-hof': 'Karl-Marx-Hof: Wohnblock als Stadt der Fürsorge',
+    'pyramids-of-giza': 'Pyramiden von Gizeh: Geometrie, Arbeit und kosmische Dauer',
+    parthenon: 'Parthenon: Ordnung, Maß und Polis als Tempelbild',
+    'vitruvius-de-architectura': 'De architectura: Bauwissen als übertragbares System',
+    pantheon: 'Pantheon: Kuppelraum, Licht und kosmische Mitte',
+    'hagia-sophia': 'Hagia Sophia: Kuppel, Licht und imperiale Raumordnung',
+    'kloster-st-gallen': 'Kloster St. Gallen: Wissen, Liturgie und Plan als Ordnung',
+    alhambra: 'Alhambra: Hof, Wasser und Ornament als Klimaarchitektur',
+    'hereford-mappa-mundi': 'Hereford Mappa Mundi: Weltbild als kartografische Theologie',
+    'catalan-atlas': 'Catalan Atlas: Navigation, Handel und gezeichnete Welt',
+    'brunelleschi-dome': 'Santa Maria del Fiore: Kuppelbau als Stadtzeichen',
+    'city-in-layers': 'City in Layers: Stadt als vertikale Infrastruktur',
+    'palladio-four-books': 'Palladios Vier Bücher: Proportion als übertragbare Architektur',
+    'sixtus-v-rome-plan': 'Rom unter Sixtus V.: Achsen, Obelisken und Pilgerstadt',
+    'versailles-gardens': 'Versailles: Landschaft als absolutistische Perspektive',
+    'marc-antoine-laugier-primitive-hut': 'Primitive Hut: Ursprung als architektonische Theoriefigur',
+    panopticon: 'Panopticon: Sichtbarkeit als räumliche Machttechnik',
+    'crystal-palace': 'Crystal Palace: Eisen, Glas und klimatisierter Ausstellungsraum'
   };
 
   if (specificHeadlines[entry.slug]) return specificHeadlines[entry.slug];
@@ -247,7 +264,24 @@ function materialStructureFallback(entry, materials) {
 
 function specificMaterialClaim(entry) {
   const claims = {
-    'central-park': 'Central Park ist eine gebaute Stadtlandschaft aus Erdmodellierung, Pflanzung, Wasserflächen, Felsen, Wegen und Brückeninfrastruktur.'
+    'central-park': 'Central Park ist eine gebaute Stadtlandschaft aus Erdmodellierung, Pflanzung, Wasserflächen, Felsen, Wegen und Brückeninfrastruktur.',
+    'pyramids-of-giza': 'Die Pyramiden werden als präzise Steinmasse, Logistikbau und geometrisches Erdzeichen gelesen; Material, Last und Orientierung bilden eine untrennbare Einheit.',
+    parthenon: 'Der Parthenon wird über Marmorkonstruktion, Säulenordnung, Gebälk, Cella und optische Korrekturen gelesen; Tragwerk und Bildordnung fallen eng zusammen.',
+    'vitruvius-de-architectura': 'Als Text besitzt De architectura kein Tragwerk im baulichen Sinn; sein Material ist die systematische Ordnung von Bauwissen, Technik, Proportion und Begriffen.',
+    pantheon: 'Das Pantheon verbindet römischen Beton, abgestufte Kuppelmasse, Ziegel- und Steinverkleidung, Kassettierung und Oculus zu einer radikalen Innenraumkonstruktion.',
+    'hagia-sophia': 'Hagia Sophia wird über Mauerwerksmassen, Pendentifs, Halbkuppeln, Marmorschichten und Lichtflächen gelesen; die Konstruktion erzeugt eine scheinbar schwebende Kuppelordnung.',
+    'kloster-st-gallen': 'Der St. Galler Plan arbeitet mit der zeichnerischen Ordnung von Kirche, Klausur, Werkhöfen, Gärten, Schule, Herberge und Versorgung; sein Material ist der organisierte Grundriss.',
+    alhambra: 'Die Alhambra verbindet Mauerwerk, Stuck, Holzdecken, Fliesen, Wasserbecken, Schatten und Hofräume zu einer leichten, klimatisch präzisen Raumstruktur.',
+    'hereford-mappa-mundi': 'Die Hereford Mappa Mundi ist als Pergament-, Tinten- und Bildordnung wirksam; ihr räumliches Material ist die Verbindung von Ort, Text, Geschichte und theologischer Hierarchie.',
+    'catalan-atlas': 'Der Catalan Atlas arbeitet mit Pergament, Farbe, Schrift, Küstenlinien und Figuren; seine konstruktive Ordnung liegt in Navigation, Maß und narrativer Weltgliederung.',
+    'brunelleschi-dome': 'Die Florentiner Kuppel wird über Doppelschale, Rippen, Ziegelverband, hölzerne Bauhilfen und selbsttragende Bauabfolge gelesen.',
+    'city-in-layers': 'City in Layers beschreibt Material nicht als Baustoff, sondern als räumliche Schichtung von Bewegung, Versorgung, Wasser, Arbeit und Öffentlichkeit.',
+    'palladio-four-books': 'Palladios Traktat arbeitet mit Zeichnung, Maß, Proportion und Typus; sein konstruktives Material ist die Übertragbarkeit architektonischer Regeln.',
+    'sixtus-v-rome-plan': 'Rom unter Sixtus V. wird über Straßenachsen, Obelisken, Platzräume und sakrale Knoten gelesen; die Konstruktion liegt in der städtischen Verbindung.',
+    'versailles-gardens': 'Versailles verbindet Erdmodellierung, Wassertechnik, Bosketts, Parterres, Achsen und Blickräume zu einer gebauten Landschaft der Kontrolle.',
+    'marc-antoine-laugier-primitive-hut': 'Die Primitive Hut arbeitet als theoretische Materialfigur aus Stütze, Balken, Dach und Natur; sie reduziert Architektur auf eine elementare tektonische Ordnung.',
+    panopticon: 'Das Panopticon besitzt sein Tragwerk vor allem als Diagramm: Ring, Zelle, Zentrum, Blick und Distanz ordnen Körper und Institution.',
+    'crystal-palace': 'Crystal Palace wird über Eisenstützen, Träger, Glasfelder, modulare Rasterung, Vorfertigung und klimatische Hülle als industrieller Großraum lesbar.'
   };
   if (!claims[entry.slug]) return null;
   return {
@@ -310,6 +344,23 @@ function spatialFallback(entry) {
     'welwyn-garden-city': 'Welwyn Garden City entwickelt das Gartenstadtmodell weiter: Nachbarschaften, Grünpuffer, Industrie, Zentrum und Landschaft werden als kontrollierte Stadtlandschaft zusammen gedacht',
     postsparkasse: 'Die Postsparkasse organisiert Verwaltung als modernen Prozessraum: Schalterhalle, Glasdach, Metallverkleidung, sichtbare Befestigungen und klare Wege übersetzen Bürokratie in Architektur',
     'karl-marx-hof': 'Der Karl-Marx-Hof macht kommunales Wohnen monumental: langer Block, Höfe, Tore, Gemeinschaftseinrichtungen und rote Wiener Stadtpolitik werden zu einer kollektiven Architekturfigur',
+    'pyramids-of-giza': 'Die Pyramiden von Gizeh verbinden präzise Geometrie, monumentale Masse, Arbeitsorganisation und kosmische Orientierung zu einer dauerhaften Landschaft der Macht und des Jenseits',
+    parthenon: 'Der Parthenon verdichtet Tempelordnung, Proportion, optische Korrektur und Akropolis-Topografie zu einem politischen Bild der Polis',
+    'vitruvius-de-architectura': 'De architectura ordnet Bauwissen als Verhältnis von Festigkeit, Zweck und Schönheit; Architektur wird dadurch als lehrbares, technisches und kulturelles System formuliert',
+    pantheon: 'Das Pantheon erzeugt Innenraum aus Kuppel, Zylinder, Oculus, Betonmasse und Lichtstrahl; der Raum erscheint zugleich konstruktiv, atmosphärisch und kosmisch geordnet',
+    'hagia-sophia': 'Hagia Sophia übersetzt Kuppel, Pendentifs, Halbkuppeln, Licht und Liturgie in einen schwebend wirkenden Zentralraum imperialer Präsenz',
+    'kloster-st-gallen': 'Der St. Galler Klosterplan ordnet Liturgie, Arbeit, Wissen, Versorgung und Gemeinschaft in einem idealisierten monastischen Grundriss',
+    alhambra: 'Die Alhambra organisiert Palast, Hof, Wasser, Schatten, Ornament und Aussicht als feines klimatisches und symbolisches Raumgefüge',
+    'hereford-mappa-mundi': 'Die Hereford Mappa Mundi zeichnet Welt nicht neutral, sondern theologisch: Zentrum, Rand, Geschichte, Ort und Bedeutung werden in einer kartografischen Ordnung verschränkt',
+    'catalan-atlas': 'Der Catalan Atlas verbindet Navigation, Küstenwissen, Herrschaftsbilder und Handelsräume; Karte wird hier zum Instrument von Bewegung und Weltvorstellung',
+    'brunelleschi-dome': 'Brunelleschis Kuppel verbindet doppelschalige Konstruktion, Bauprozess, Rippenlogik und Stadtbild zu einem technischen und symbolischen Wendepunkt der Renaissance',
+    'city-in-layers': 'City in Layers denkt Stadt als geschichtete Ordnung: Bewegung, Wasser, Arbeit, Versorgung und Öffentlichkeit werden nicht nur im Plan, sondern im Schnitt organisiert',
+    'palladio-four-books': 'Palladios Vier Bücher machen Architektur reproduzierbar: Proportion, Villa, Antike, Typus und Zeichnung werden zu einem übertragbaren Entwurfswissen',
+    'sixtus-v-rome-plan': 'Rom unter Sixtus V. ordnet die Stadt über Sichtachsen, Obelisken, Pilgerwege und sakrale Knoten; Bewegung durch die Stadt wird zur räumlichen Dramaturgie',
+    'versailles-gardens': 'Versailles formt Landschaft als Machtraum: Achse, Parterre, Wasser, Waldkanten und Blicktiefe übersetzen absolutistische Ordnung in begehbare Perspektive',
+    'marc-antoine-laugier-primitive-hut': 'Laugiers Urhütte reduziert Architektur auf Stütze, Balken, Dach und Naturbezug; sie ist weniger Bauwerk als theoretisches Bild einer konstruktiven Herkunft',
+    panopticon: 'Das Panopticon organisiert Macht durch Sichtbarkeit: Ring, Zelle, Zentrum und Blickachse machen Kontrolle zu einer räumlichen Figur',
+    'crystal-palace': 'Crystal Palace verbindet Eisenraster, Glasfläche, modulare Fertigung, Ausstellung und kontrolliertes Klima zu einem frühen Raum der industriellen Moderne',
     'haus-tugendhat': 'Die räumliche Ordnung entsteht aus Zonen statt aus geschlossenen Zimmern: Wohnen, Essen, Musik und Blickfelder fließen um Materialwände, Vorhänge und Möblierungsfelder herum'
   };
   if (specificSpatialReadings[entry.slug]) {
@@ -419,7 +470,7 @@ function visibleClaimText(claim) {
     .split(/(?<=[.!?])\s+/)
     .map((sentence) => sentence.trim())
     .filter(Boolean)
-    .filter((sentence) => !/(Blender|ArchiCAD|Datenbank|Database|Filter|Suchfilter|\bModell\b|Layer|Tragwerkslayer|Studienrekonstruktion|Quellenpläne|review|source|classification|context tags|R2|Upload)/i.test(sentence));
+    .filter((sentence) => !/(Blender|ArchiCAD|Datenbank|Database|Filter|Suchfilter|\bModell\b|\bLayer\b|Tragwerkslayer|Studienrekonstruktion|Quellenpläne|review|source|classification|context tags|R2|Upload)/i.test(sentence));
   return sentences.join(' ');
 }
 
@@ -443,7 +494,9 @@ function readableDe(value) {
   const dictionary = {
     building: 'Gebäude',
     urban_plan: 'Stadtplan',
+    'urban plan': 'Stadtplan',
     landscape_project: 'Landschaftsprojekt',
+    'landscape project': 'Landschaftsprojekt',
     infrastructure: 'Infrastruktur',
     object: 'Objekt',
     event: 'Ereignis',
@@ -546,6 +599,11 @@ function readableDe(value) {
     'modern bureaucratic service building': 'moderner Verwaltungsbau',
     red_vienna_superblock_housing: 'Superblock des Roten Wien',
     'red vienna superblock housing': 'Superblock des Roten Wien',
+    infrastructure: 'Infrastruktur',
+    temple: 'Tempel',
+    treatise: 'Traktat',
+    monastery_plan: 'Klosterplan',
+    'monastery plan': 'Klosterplan',
     early_urbanism: 'frühe Urbanisierung',
     'early urbanism': 'frühe Urbanisierung',
     public_space: 'öffentlicher Raum',
@@ -831,6 +889,47 @@ function readableDe(value) {
     'housing reform': 'Wohnreform',
     red_vienna: 'Rotes Wien',
     'red vienna': 'Rotes Wien',
+    monument: 'Monument',
+    labor: 'Arbeit',
+    afterlife: 'Jenseits',
+    order: 'Ordnung',
+    proportion: 'Proportion',
+    polis: 'Polis',
+    firmitas: 'Festigkeit',
+    utilitas: 'Nützlichkeit',
+    venustas: 'Schönheit',
+    dome: 'Kuppel',
+    cosmos: 'Kosmos',
+    liturgy: 'Liturgie',
+    empire: 'Imperium',
+    light: 'Licht',
+    knowledge_network: 'Wissensnetz',
+    'knowledge network': 'Wissensnetz',
+    courtyard: 'Hof',
+    ornament: 'Ornament',
+    microclimate: 'Mikroklima',
+    theocentric: 'theozentrisches Weltbild',
+    construction: 'Konstruktion',
+    city_image: 'Stadtbild',
+    'city image': 'Stadtbild',
+    engineering: 'Ingenieurbau',
+    sectional_city: 'Schnittstadt',
+    'sectional city': 'Schnittstadt',
+    villa: 'Villa',
+    classicism: 'Klassizismus',
+    pilgrimage: 'Pilgerbewegung',
+    absolutism: 'Absolutismus',
+    landscape: 'Landschaft',
+    control: 'Kontrolle',
+    origin: 'Ursprung',
+    nature: 'Natur',
+    column: 'Säule',
+    theory: 'Theorie',
+    surveillance: 'Überwachung',
+    institution: 'Institution',
+    diagram: 'Diagramm',
+    exhibition: 'Ausstellung',
+    climate: 'Klima',
     palimpsest: 'Palimpsest',
     proto_urban: 'proto-urban',
     'proto urban': 'proto-urban',
