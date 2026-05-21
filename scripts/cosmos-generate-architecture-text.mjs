@@ -173,9 +173,11 @@ function buildHeadline(entry, program) {
   const specificHeadlines = {
     'villa-savoye': 'Villa Savoye: Der freie Grundriss als bewohnbares Manifest',
     'alterszentrum-kloster-ingenbohl': 'Alterszentrum Kloster Ingenbohl: Weiterbauen zwischen Kloster, Pflege und Landschaft',
-    'mfo-park': 'MFO-Park: Landschaft als begehbares Stahlgeruest',
-    'high-line': 'High Line: Infrastruktur wird oeffentlicher Stadtraum',
-    'gobekli-tepe': 'Goebekli Tepe: Monumentalitaet vor der Stadt'
+    'mfo-park': 'MFO-Park: Landschaft als begehbares Stahlgerüst',
+    'high-line': 'High Line: Infrastruktur wird öffentlicher Stadtraum',
+    'gobekli-tepe': 'Göbekli Tepe: Monumentalität vor der Stadt',
+    'afasia-no-architecture-flower-house': 'Flower House: Wohnen als radialer Landschaftsraum',
+    'villa-noailles': 'Villa Noailles: Moderne als Bewegung durch Haus, Garten und Blick'
   };
 
   if (specificHeadlines[entry.slug]) return specificHeadlines[entry.slug];
@@ -325,6 +327,14 @@ function readableDe(value) {
     text: 'Text',
     modern_villa: 'moderne Villa',
     'modern villa': 'moderne Villa',
+    private_residence: 'privates Wohnhaus',
+    'private residence': 'privates Wohnhaus',
+    linear_park: 'linearer Park',
+    'linear park': 'linearer Park',
+    prehistoric_megalithic_enclosure: 'prähistorische Megalithanlage',
+    'prehistoric megalithic enclosure': 'prähistorische Megalithanlage',
+    urban_park: 'urbaner Park',
+    'urban park': 'urbaner Park',
     elderly_care_monastery_conversion: 'Pflege- und Klosterumbau',
     'elderly care monastery conversion': 'Pflege- und Klosterumbau',
     suburban_villa_landscape: 'suburbane Villenlandschaft',
@@ -333,7 +343,8 @@ function readableDe(value) {
     'flat suburban site': 'flacher suburbaner Standort',
     village_center: 'Dorfzentrum',
     'village center': 'Dorfzentrum',
-    hilltop: 'Hang- und Klosterplateau',
+    hilltop: 'Hügel- oder Plateaulage',
+    hillside: 'Hanglage',
     monastery_context: 'Klosterkontext',
     'monastery context': 'Klosterkontext',
     existing_fabric: 'bestehender Baubestand',
@@ -342,6 +353,26 @@ function readableDe(value) {
     'unesco world heritage component': 'UNESCO-Welterbe-Komponente',
     listed_monument: 'denkmalgeschütztes Objekt',
     'listed monument': 'denkmalgeschütztes Objekt',
+    rural_dispersed: 'disperser Landschaftskontext',
+    'rural dispersed': 'disperser Landschaftskontext',
+    rural_archaeological_landscape: 'archäologische Landschaft',
+    'rural archaeological landscape': 'archäologische Landschaft',
+    urban_dense: 'dichter Stadtraum',
+    'urban dense': 'dichter Stadtraum',
+    elevated_infrastructure: 'aufgeständerte Infrastruktur',
+    'elevated infrastructure': 'aufgeständerte Infrastruktur',
+    urban_redevelopment: 'städtisches Transformationsgebiet',
+    'urban redevelopment': 'städtisches Transformationsgebiet',
+    flat_urban_site: 'flacher städtischer Standort',
+    'flat urban site': 'flacher städtischer Standort',
+    industrial_reuse: 'industrielles Weiterverwenden',
+    'industrial reuse': 'industrielles Weiterverwenden',
+    rail_infrastructure: 'Bahninfrastruktur',
+    'rail infrastructure': 'Bahninfrastruktur',
+    unesco_world_heritage_site: 'UNESCO-Welterbestätte',
+    'unesco world heritage site': 'UNESCO-Welterbestätte',
+    archaeological_site: 'archäologische Stätte',
+    'archaeological site': 'archäologische Stätte',
     five_points: 'Fünf Punkte',
     'five points': 'Fünf Punkte',
     promenade: 'Promenade architecturale',
@@ -376,7 +407,13 @@ function localizeArchitectureText(value) {
     ['Spatial order is choreographed as a promenade: arrival below the raised volume, ascent by ramp, movement through living spaces and release onto the roof terrace', 'Die räumliche Ordnung ist als Promenade architecturale choreografiert: Ankunft unter dem angehobenen Volumen, Aufstieg über die Rampe, Bewegung durch die Wohnräume und Öffnung zur Dachterrasse'],
     ['The house is read as a reinforced-concrete frame that separates load-bearing order from facade and plan, making pilotis, slab and free enclosure the structural grammar of the project', 'Das Haus wird als Stahlbetonskelett gelesen, das Tragordnung, Fassade und Grundriss voneinander trennt; Pilotis, Deckenplatte und freie Hülle bilden die strukturelle Grammatik des Projekts'],
     ['The material reading foregrounds white rendered surfaces, reinforced concrete, glass bands and roof-garden ground as an abstract modern envelope', 'Die Materiallesart stellt weiße Putzflächen, Stahlbeton, Fensterbänder und den Dachgarten als abstrakte moderne Hülle in den Vordergrund'],
-    ['The tectonic reading focuses on the contrast between abstract white surfaces, thin horizontal glazing, exposed pilotis and the inhabited roof landscape', 'Die tektonische Lesart fokussiert den Kontrast zwischen abstrakten weißen Flächen, horizontalen Fensterbändern, freigestellten Pilotis und der bewohnten Dachlandschaft']
+    ['The tectonic reading focuses on the contrast between abstract white surfaces, thin horizontal glazing, exposed pilotis and the inhabited roof landscape', 'Die tektonische Lesart fokussiert den Kontrast zwischen abstrakten weißen Flächen, horizontalen Fensterbändern, freigestellten Pilotis und der bewohnten Dachlandschaft'],
+    ['The spatial order is radial and centripetal: six interlocking pavilions form petal-like rooms around a central open courtyard, distributing public and private zones through degrees of openness', 'Die räumliche Ordnung ist radial und zentripetal: sechs ineinandergreifende Pavillons bilden blütenartige Räume um einen offenen Hof und staffeln öffentliche sowie private Bereiche über unterschiedliche Grade der Offenheit'],
+    ['The project is organized as sequence rather than object: entries, overlooks, narrowed passages, widened rooms and planting bands create urban episodes along a continuous elevated path', 'Das Projekt ist als Sequenz und nicht als Einzelobjekt organisiert: Zugänge, Aussichtspunkte, Engstellen, Aufweitungen und Pflanzbänder erzeugen urbane Episoden entlang eines durchgehenden erhöhten Weges'],
+    ['The site is organized as repeated enclosures with central and perimeter pillars. The architectural question is not plan as habitation but plan as ritual concentration and symbolic ordering', 'Die Anlage ist als Folge von Einhegungen mit zentralen und randständigen Pfeilern organisiert. Die architektonische Frage ist nicht Wohnen, sondern rituelle Konzentration und symbolische Ordnung'],
+    ['Instead of a conventional park field, MFO-Park uses a volumetric trellis as a room. It has interior-like spatial depth, vertical surfaces, balconies/perches and a civic ground plane', 'Statt einer konventionellen Parkfläche nutzt der MFO-Park ein volumetrisches Rankgerüst als Raum. Es besitzt innenraumartige Tiefe, vertikale Oberflächen, Balkone, Aufenthaltsnischen und eine öffentliche Bodenebene'],
+    ['Spatial order is episodic and kinetic: the villa is experienced through rooms, terraces, stairs, views and garden fragments rather than one continuous freier Grundriss', 'Die räumliche Ordnung ist episodisch und kinetisch: Die Villa wird über Räume, Terrassen, Treppen, Blicke und Gartenfragmente erfahren, nicht als durchgehender freier Grundriss'],
+    ['Spatial order is episodic and kinetic: the villa is experienced through rooms, terraces, stairs, views and garden fragments rather than one continuous free plan', 'Die räumliche Ordnung ist episodisch und kinetisch: Die Villa wird über Räume, Terrassen, Treppen, Blicke und Gartenfragmente erfahren, nicht als durchgehender freier Grundriss']
   ];
 
   for (const [source, target] of replacements) {

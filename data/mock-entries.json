@@ -331,6 +331,90 @@
       "asset_status": "rights_blocked",
       "model_status": "planned",
       "updated_at": "2026-05-19"
+    },
+    "architecture_text": {
+      "headline": "Göbekli Tepe: Monumentalität vor der Stadt",
+      "overview": "Gobekli Tepe wird im Architektur Kosmos als prähistorische Megalithanlage gelesen und nicht als isoliertes Archivobjekt behandelt. Die Relevanz des Projekts liegt im Zusammenspiel von räumlicher Dramaturgie, konstruktiver Ordnung und archäologische Landschaft / Hügel- oder Plateaulage / Sanliurfa, Turkey / UNESCO-Welterbestätte und archäologische Stätte. Der Eintrag soll deshalb Projektlogik, Materialsystem, Tragwerk und Modell-Layer sichtbar machen, statt nur eine lineare Kurzgeschichte zu liefern.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Gobekli Tepe gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Die Anlage ist als Folge von Einhegungen mit zentralen und randständigen Pfeilern organisiert. Die architektonische Frage ist nicht Wohnen, sondern rituelle Konzentration und symbolische Ordnung. Für den Atlas ist das Projekt wertvoll, weil es trockene Metadaten in eine räumliche Fragestellung übersetzt: proto-urban, ritual, megalith, origin.",
+          "source_basis": "analysis layer: spatial_order; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "The primary architectural material is worked limestone. T-shaped monoliths, circular/oval enclosures and stone walls define space through mass, carving and arrangement rather than through roofed building systems. The primary architectural material is worked limestone. T-shaped monoliths, circular/oval enclosures and stone walls define space through mass, carving and arrangement rather than through roofed building systems. Für spätere Blender- und ArchiCAD-Workflows sollen diese Beobachtungen als trennbare Ebenen geführt werden, nicht als ein einziges dekoratives Modell.",
+          "source_basis": "analysis layer: material_system; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Die Anlage ist als Folge von Einhegungen mit zentralen und randständigen Pfeilern organisiert. Die architektonische Frage ist nicht Wohnen, sondern rituelle Konzentration und symbolische Ordnung. Dadurch wird das Projekt als filterbare Referenz interessant: Grundriss, Schnitt, Erschliessung und Kontext können über Zeiträume hinweg verglichen werden, statt nur als Bilder betrachtet zu werden.",
+          "source_basis": "analysis layer: spatial_order; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Its tectonics are megalithic and subtractive/additive at once: quarrying, shaping, carving, erecting and embedding stones into enclosure walls. Der Cosmos-Text hält diese konstruktive Lesart bewusst explizit, weil sie die Brücke zwischen historischer Interpretation und modellbasierter Analyse bildet.",
+          "source_basis": "analysis layer: tectonics; review status: needs_source",
+          "review_status": "needs_source_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Gobekli Tepe gehört zu archäologische Landschaft / Hügel- oder Plateaulage / Sanliurfa, Turkey / UNESCO-Welterbestätte und archäologische Stätte. Der Ort ist dabei keine Hintergrundinformation, sondern Teil des architektonischen Arguments und soll im Atlas, im Modellpaket und in zukünftigen Suchfiltern sichtbar bleiben.",
+          "source_basis": "entry context metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für die Architecture-Cosmos-Datenbank soll Gobekli Tepe als strukturierte Referenz mit Quellenpfad, Medienslots, Analyseebenen und Modellteilen gespeichert werden. Die wichtigsten zukünftigen Filter sind source:unesco, typology:ritual site, material:limestone, material:megalithic stone, context:unesco world heritage site, context:archaeological site, landscape:limestone plateau, landscape:ritual landscape. Öffentliche Ausgaben müssen rechteklar bleiben; private Forschungsnotizen können detailliertere, quellenbasierte Analysen tragen, bis sie geprüft sind.",
+          "source_basis": "derived from entry metadata, model fields and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T17:32:40.409Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_url",
+          "value": "https://whc.unesco.org/en/list/1572/"
+        },
+        {
+          "type": "source_document",
+          "value": "02 Global History of Urban Design 1_2.pdf"
+        },
+        {
+          "type": "archive",
+          "title": "UNESCO / Gobekli Tepe",
+          "value": "https://whc.unesco.org/en/list/1572/",
+          "reliability_level": "verified",
+          "rights_status": "private_research"
+        },
+        {
+          "type": "archive",
+          "title": "German Archaeological Institute / Göbekli Tepe research context",
+          "value": "https://www.dainst.org/",
+          "reliability_level": "verified",
+          "rights_status": "private_research"
+        },
+        {
+          "type": "archive",
+          "title": "DAI / Göbekli Tepe fieldwork and research",
+          "value": "https://www.dainst.org/en/research/projects/noslug/1934",
+          "reliability_level": "verified",
+          "rights_status": "private_research"
+        },
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Gobekli Tepe",
+          "value": "https://commons.wikimedia.org/wiki/File:G%C3%B6bekli_Tepe,_Urfa.jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        }
+      ]
     }
   },
   {
@@ -10864,6 +10948,65 @@
           "review_status": "planned"
         }
       ]
+    },
+    "architecture_text": {
+      "headline": "Villa Noailles: Moderne als Bewegung durch Haus, Garten und Blick",
+      "overview": "Villa Noailles wird im Architektur Kosmos als Gebäude gelesen und nicht als isoliertes Archivobjekt behandelt. Die Relevanz des Projekts liegt im Zusammenspiel von räumlicher Dramaturgie, konstruktiver Ordnung und Hyeres, France. Der Eintrag soll deshalb Projektlogik, Materialsystem, Tragwerk und Modell-Layer sichtbar machen, statt nur eine lineare Kurzgeschichte zu liefern.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Villa Noailles gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Die räumliche Ordnung ist episodisch und kinetisch: Die Villa wird über Räume, Terrassen, Treppen, Blicke und Gartenfragmente erfahren, nicht als durchgehender freier Grundriss. Für den Atlas ist das Projekt wertvoll, weil es trockene Metadaten in eine räumliche Fragestellung übersetzt: thing-modernity, movement, domesticity, moderne Villa, leisure.",
+          "source_basis": "analysis layer: spatial_order; review status: reviewed",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Material system planned for database filters: materials require source review. The structural reading treats Villa Noailles as a stepped system of cubic blocks, terraces and retaining relations rather than as a single pure object. Für spätere Blender- und ArchiCAD-Workflows sollen diese Beobachtungen als trennbare Ebenen geführt werden, nicht als ein einziges dekoratives Modell.",
+          "source_basis": "analysis layer: material_system; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Die räumliche Ordnung ist episodisch und kinetisch: Die Villa wird über Räume, Terrassen, Treppen, Blicke und Gartenfragmente erfahren, nicht als durchgehender freier Grundriss. Dadurch wird das Projekt als filterbare Referenz interessant: Grundriss, Schnitt, Erschliessung und Kontext können über Zeiträume hinweg verglichen werden, statt nur als Bilder betrachtet zu werden.",
+          "source_basis": "analysis layer: spatial_order; review status: reviewed",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "The tectonic reading separates block volumes, terraces, roof planes, circulation paths, garden geometry and light surfaces. Der Cosmos-Text hält diese konstruktive Lesart bewusst explizit, weil sie die Brücke zwischen historischer Interpretation und modellbasierter Analyse bildet.",
+          "source_basis": "analysis layer: tectonics; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Villa Noailles gehört zu Hyeres, France. Der Ort ist dabei keine Hintergrundinformation, sondern Teil des architektonischen Arguments und soll im Atlas, im Modellpaket und in zukünftigen Suchfiltern sichtbar bleiben.",
+          "source_basis": "entry location metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für die Architecture-Cosmos-Datenbank soll Villa Noailles als strukturierte Referenz mit Quellenpfad, Medienslots, Analyseebenen und Modellteilen gespeichert werden. Die wichtigsten zukünftigen Filter sind source:lecture-pdf, course:architekturgeschichte-eth, typology:modern-villa, typology:artist-house, spatial:movement-sequence, spatial:terrace-system, landscape:cubist-garden, theme:avant-garde-domesticity. Öffentliche Ausgaben müssen rechteklar bleiben; private Forschungsnotizen können detailliertere, quellenbasierte Analysen tragen, bis sie geprüft sind.",
+          "source_basis": "derived from entry metadata, model fields and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T17:32:40.719Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_document",
+          "value": "03 Architekturgeschichte 3_4.pdf"
+        },
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Villa Noailles",
+          "value": "https://commons.wikimedia.org/wiki/File:Hy%C3%A8res_(83)_-_Villa_Noailles_-_Entr%C3%A9e.jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        }
+      ]
     }
   },
   {
@@ -13872,6 +14015,90 @@
       "asset_status": "rights_blocked",
       "model_status": "planned",
       "updated_at": "2026-05-19"
+    },
+    "architecture_text": {
+      "headline": "MFO-Park: Landschaft als begehbares Stahlgerüst",
+      "overview": "MFO Park wird im Architektur Kosmos als urbaner Park gelesen und nicht als isoliertes Archivobjekt behandelt. Die Relevanz des Projekts liegt im Zusammenspiel von räumlicher Dramaturgie, konstruktiver Ordnung und städtisches Transformationsgebiet / flacher städtischer Standort / Zurich, Switzerland / industrielles Weiterverwenden. Der Eintrag soll deshalb Projektlogik, Materialsystem, Tragwerk und Modell-Layer sichtbar machen, statt nur eine lineare Kurzgeschichte zu liefern.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "MFO Park gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Statt einer konventionellen Parkfläche nutzt der MFO-Park ein volumetrisches Rankgerüst als Raum. Es besitzt innenraumartige Tiefe, vertikale Oberflächen, Balkone, Aufenthaltsnischen und eine öffentliche Bodenebene. Für den Atlas ist das Projekt wertvoll, weil es trockene Metadaten in eine räumliche Fragestellung übersetzt: industrial-reuse, climate-landscape, urban-repair.",
+          "source_basis": "analysis layer: spatial_order; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "The project depends on a steel scaffold, climbing vegetation and time. Its architectural material is not simply greenery but the changing relation between frame, seasonal growth, shade, void and public occupation. The project depends on a steel scaffold, climbing vegetation and time. Its architectural material is not simply greenery but the changing relation between frame, seasonal growth, shade, void and public occupation. Für spätere Blender- und ArchiCAD-Workflows sollen diese Beobachtungen als trennbare Ebenen geführt werden, nicht als ein einziges dekoratives Modell.",
+          "source_basis": "analysis layer: material_system; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Statt einer konventionellen Parkfläche nutzt der MFO-Park ein volumetrisches Rankgerüst als Raum. Es besitzt innenraumartige Tiefe, vertikale Oberflächen, Balkone, Aufenthaltsnischen und eine öffentliche Bodenebene. Dadurch wird das Projekt als filterbare Referenz interessant: Grundriss, Schnitt, Erschliessung und Kontext können über Zeiträume hinweg verglichen werden, statt nur als Bilder betrachtet zu werden.",
+          "source_basis": "analysis layer: spatial_order; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Its tectonics are exposed and processual: steel is the permanent skeleton, vegetation is the living envelope, and the park matures through growth rather than through finished facade treatment. Der Cosmos-Text hält diese konstruktive Lesart bewusst explizit, weil sie die Brücke zwischen historischer Interpretation und modellbasierter Analyse bildet.",
+          "source_basis": "analysis layer: tectonics; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "MFO Park gehört zu städtisches Transformationsgebiet / flacher städtischer Standort / Zurich, Switzerland / industrielles Weiterverwenden. Der Ort ist dabei keine Hintergrundinformation, sondern Teil des architektonischen Arguments und soll im Atlas, im Modellpaket und in zukünftigen Suchfiltern sichtbar bleiben.",
+          "source_basis": "entry context metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für die Architecture-Cosmos-Datenbank soll MFO Park als strukturierte Referenz mit Quellenpfad, Medienslots, Analyseebenen und Modellteilen gespeichert werden. Die wichtigsten zukünftigen Filter sind source:official, typology:public space, material:steel, material:vegetation, material:climbing plants, context:industrial reuse, landscape:climate landscape, landscape:urban repair. Öffentliche Ausgaben müssen rechteklar bleiben; private Forschungsnotizen können detailliertere, quellenbasierte Analysen tragen, bis sie geprüft sind.",
+          "source_basis": "derived from entry metadata, model fields and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T17:32:40.564Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_url",
+          "value": "https://www.stadt-zuerich.ch/de/stadtleben/sport-und-erholung/park-und-gruenanlagen/mfo-park.html"
+        },
+        {
+          "type": "source_document",
+          "value": "04 Landschaftsarchitektur 1_2.pdf"
+        },
+        {
+          "type": "website",
+          "title": "Stadt Zürich / MFO-Park",
+          "value": "https://www.stadt-zuerich.ch/de/stadtleben/sport-und-erholung/park-und-gruenanlagen/mfo-park.html",
+          "reliability_level": "verified",
+          "rights_status": "private_research"
+        },
+        {
+          "type": "website",
+          "title": "Burckhardt / MFO-Park, Zürich",
+          "value": "https://burckhardt.swiss/en/project/mfo-park-zurich/",
+          "reliability_level": "verified",
+          "rights_status": "private_research"
+        },
+        {
+          "type": "website",
+          "title": "Basler & Hofmann / MFO Park steel structure greening",
+          "value": "https://www.baslerhofmann.ch/en/reference/mfo-park-zurich-oerlikon-steel-structure-greening",
+          "reliability_level": "verified",
+          "rights_status": "private_research"
+        },
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / MFO Park",
+          "value": "https://commons.wikimedia.org/wiki/File:Z%C3%BCrich_-_Oerlikon_-_MFO-Park_2010-10-03_14-10-42.JPG",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        }
+      ]
     }
   },
   {
@@ -14321,6 +14548,90 @@
       "asset_status": "rights_blocked",
       "model_status": "planned",
       "updated_at": "2026-05-19"
+    },
+    "architecture_text": {
+      "headline": "High Line: Infrastruktur wird öffentlicher Stadtraum",
+      "overview": "High Line wird im Architektur Kosmos als linearer Park gelesen und nicht als isoliertes Archivobjekt behandelt. Die Relevanz des Projekts liegt im Zusammenspiel von räumlicher Dramaturgie, konstruktiver Ordnung und dichter Stadtraum / aufgeständerte Infrastruktur / New York, United States / industrielles Weiterverwenden und Bahninfrastruktur. Der Eintrag soll deshalb Projektlogik, Materialsystem, Tragwerk und Modell-Layer sichtbar machen, statt nur eine lineare Kurzgeschichte zu liefern.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "High Line gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Das Projekt ist als Sequenz und nicht als Einzelobjekt organisiert: Zugänge, Aussichtspunkte, Engstellen, Aufweitungen und Pflanzbänder erzeugen urbane Episoden entlang eines durchgehenden erhöhten Weges. Für den Atlas ist das Projekt wertvoll, weil es trockene Metadaten in eine räumliche Fragestellung übersetzt: landscape-urbanism, industrial-reuse, rail-infrastructure, public-space.",
+          "source_basis": "analysis layer: spatial_order; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "The retained rail viaduct provides the structural datum. Concrete planks, steel infrastructure, planting and fragments of rail memory are layered to make an adaptive landscape rather than erase the industrial support. The retained rail viaduct provides the structural datum. Concrete planks, steel infrastructure, planting and fragments of rail memory are layered to make an adaptive landscape rather than erase the industrial support. Für spätere Blender- und ArchiCAD-Workflows sollen diese Beobachtungen als trennbare Ebenen geführt werden, nicht als ein einziges dekoratives Modell.",
+          "source_basis": "analysis layer: material_system; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Das Projekt ist als Sequenz und nicht als Einzelobjekt organisiert: Zugänge, Aussichtspunkte, Engstellen, Aufweitungen und Pflanzbänder erzeugen urbane Episoden entlang eines durchgehenden erhöhten Weges. Dadurch wird das Projekt als filterbare Referenz interessant: Grundriss, Schnitt, Erschliessung und Kontext können über Zeiträume hinweg verglichen werden, statt nur als Bilder betrachtet zu werden.",
+          "source_basis": "analysis layer: spatial_order; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "The tectonic idea is peel-up and interweaving: hard paving and soft planting interlock, suggesting that landscape grows from the infrastructure rather than being placed on top of it. Der Cosmos-Text hält diese konstruktive Lesart bewusst explizit, weil sie die Brücke zwischen historischer Interpretation und modellbasierter Analyse bildet.",
+          "source_basis": "analysis layer: tectonics; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "High Line gehört zu dichter Stadtraum / aufgeständerte Infrastruktur / New York, United States / industrielles Weiterverwenden und Bahninfrastruktur. Der Ort ist dabei keine Hintergrundinformation, sondern Teil des architektonischen Arguments und soll im Atlas, im Modellpaket und in zukünftigen Suchfiltern sichtbar bleiben.",
+          "source_basis": "entry context metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für die Architecture-Cosmos-Datenbank soll High Line als strukturierte Referenz mit Quellenpfad, Medienslots, Analyseebenen und Modellteilen gespeichert werden. Die wichtigsten zukünftigen Filter sind source:official, typology:public space, material:steel, material:concrete, material:vegetation, context:industrial reuse, context:rail infrastructure, landscape:linear landscape. Öffentliche Ausgaben müssen rechteklar bleiben; private Forschungsnotizen können detailliertere, quellenbasierte Analysen tragen, bis sie geprüft sind.",
+          "source_basis": "derived from entry metadata, model fields and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T17:32:40.252Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_url",
+          "value": "https://www.thehighline.org/"
+        },
+        {
+          "type": "source_document",
+          "value": "02 Global History of Urban Design 1_2.pdf"
+        },
+        {
+          "type": "website",
+          "title": "The High Line / Official History and Park Information",
+          "value": "https://www.thehighline.org/",
+          "reliability_level": "verified",
+          "rights_status": "private_research"
+        },
+        {
+          "type": "website",
+          "title": "Diller Scofidio + Renfro / The High Line",
+          "value": "https://dsrny.com/project/the-high-line",
+          "reliability_level": "verified",
+          "rights_status": "private_research"
+        },
+        {
+          "type": "website",
+          "title": "Field Operations / The High Line",
+          "value": "https://www.fieldoperations.net/project/high-line",
+          "reliability_level": "verified",
+          "rights_status": "private_research"
+        },
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / High Line",
+          "value": "https://commons.wikimedia.org/wiki/File:High_Line_Park,_Section_1a.jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "public_domain"
+        }
+      ]
     }
   },
   {
@@ -14923,7 +15234,67 @@
       "earth_sheltered",
       "courtyard_house",
       "landscape_canopy"
-    ]
+    ],
+    "architecture_text": {
+      "headline": "Flower House: Wohnen als radialer Landschaftsraum",
+      "overview": "Flower House wird im Architektur Kosmos als privates Wohnhaus gelesen und nicht als isoliertes Archivobjekt behandelt. Die Relevanz des Projekts liegt im Zusammenspiel von räumlicher Dramaturgie, konstruktiver Ordnung und disperser Landschaftskontext / Hanglage / Berkshire County, Massachusetts, United States. Der Eintrag soll deshalb Projektlogik, Materialsystem, Tragwerk und Modell-Layer sichtbar machen, statt nur eine lineare Kurzgeschichte zu liefern.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Flower House gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Die räumliche Ordnung ist radial und zentripetal: sechs ineinandergreifende Pavillons bilden blütenartige Räume um einen offenen Hof und staffeln öffentliche sowie private Bereiche über unterschiedliche Grade der Offenheit. Für den Atlas ist das Projekt wertvoll, weil es trockene Metadaten in eine räumliche Fragestellung übersetzt: afasia, glass-house, landscape, Hanglage, courtyard.",
+          "source_basis": "analysis layer: spatial_order; review status: reviewed",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Glass, concrete and earth/topography form the primary material system: transparent pavilion edges meet a heavy ground datum and hillside thermal envelope. Six pavilion roofs act as canopy-like structural fields. Vertical and lateral stability is described through load-bearing window frames and T/L-shaped service cores, with a visible concrete slab tying the system together. Für spätere Blender- und ArchiCAD-Workflows sollen diese Beobachtungen als trennbare Ebenen geführt werden, nicht als ein einziges dekoratives Modell.",
+          "source_basis": "analysis layer: material_system; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Die räumliche Ordnung ist radial und zentripetal: sechs ineinandergreifende Pavillons bilden blütenartige Räume um einen offenen Hof und staffeln öffentliche sowie private Bereiche über unterschiedliche Grade der Offenheit. Dadurch wird das Projekt als filterbare Referenz interessant: Grundriss, Schnitt, Erschliessung und Kontext können über Zeiträume hinweg verglichen werden, statt nur als Bilder betrachtet zu werden.",
+          "source_basis": "analysis layer: spatial_order; review status: reviewed",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "The tectonic reading separates terrain cut, concrete ground datum, pavilion roofs, glass enclosure, and service cores. The house is understood as a landscape-embedded canopy cluster rather than a single closed volume. Der Cosmos-Text hält diese konstruktive Lesart bewusst explizit, weil sie die Brücke zwischen historischer Interpretation und modellbasierter Analyse bildet.",
+          "source_basis": "analysis layer: tectonics; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Flower House gehört zu disperser Landschaftskontext / Hanglage / Berkshire County, Massachusetts, United States. Der Ort ist dabei keine Hintergrundinformation, sondern Teil des architektonischen Arguments und soll im Atlas, im Modellpaket und in zukünftigen Suchfiltern sichtbar bleiben.",
+          "source_basis": "entry context metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für die Architecture-Cosmos-Datenbank soll Flower House als strukturierte Referenz mit Quellenpfad, Medienslots, Analyseebenen und Modellteilen gespeichert werden. Die wichtigsten zukünftigen Filter sind source:afasia, course:contemporary-architecture, typology:private-residence, typology:glass-house, structure:canopy-system, structure:core-stabilized, material:glass, material:concrete. Öffentliche Ausgaben müssen rechteklar bleiben; private Forschungsnotizen können detailliertere, quellenbasierte Analysen tragen, bis sie geprüft sind.",
+          "source_basis": "derived from entry metadata, model fields and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T17:32:40.089Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_url",
+          "value": "https://afasiaarchzine.com/2022/09/no-architecture/"
+        },
+        {
+          "type": "source_document",
+          "value": "Afasia Archzine"
+        },
+        {
+          "type": "source_document",
+          "value": "NO Architecture - Flower House . Massachusetts"
+        }
+      ]
+    }
   },
   {
     "id": "alterszentrum-kloster-ingenbohl",
