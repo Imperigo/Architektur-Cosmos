@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { CSSProperties } from 'react';
 import { EntryModelViewer } from '@/components/atlas/EntryModelViewer';
+import { MediaLightbox } from '@/components/atlas/MediaLightbox';
 import { ProjectSearch } from '@/components/atlas/ProjectSearch';
 import entries from '@/data/mock-entries.json';
 import relations from '@/data/relations.json';
@@ -27,11 +28,11 @@ export async function generateMetadata({ params }: EntryPageProps): Promise<Meta
 
   if (!entry) {
     return {
-      title: 'Entry not found | Architecture Cosmos'
+      title: 'Entry not found | Architektur Kosmos'
     };
   }
 
-  const title = `${entry.title} | Architecture Cosmos`;
+  const title = `${entry.title} | Architektur Kosmos`;
   const description = entry.one_sentence || entry.short_description;
   const url = `${siteUrl}/atlas/${entry.slug}/`;
 
@@ -43,7 +44,7 @@ export async function generateMetadata({ params }: EntryPageProps): Promise<Meta
       title,
       description,
       url,
-      siteName: 'Architecture Cosmos',
+      siteName: 'Architektur Kosmos',
       type: 'article'
     },
     twitter: {
@@ -94,7 +95,7 @@ export default async function EntryPage({ params }: EntryPageProps) {
       <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-6xl flex-col px-5 py-5 sm:px-8 lg:px-10">
         <header className="flex items-center justify-between gap-4 border-b border-white/12 pb-4">
           <Link href="/" className="entry-link text-[11px] font-semibold uppercase tracking-[0.28em] text-[#f7f7f4]/78">
-            Architecture Cosmos
+            Architektur Kosmos
           </Link>
           <Link href="/atlas/" className="entry-link border border-white/20 px-3 py-2 text-[10px] uppercase tracking-[0.18em] text-[#d7d7d0]">
             Back to Atlas
@@ -541,15 +542,22 @@ function MediaCard({ media, entry, profile, accent }: { media: Entry['media'][nu
     <article className={`entry-media-card entry-media-card-${media.type} border border-white/14 bg-[#070707]`}>
       <div className="entry-media-surface">
         {mediaUrl ? (
-          <>
-          {/* eslint-disable-next-line @next/next/no-img-element -- Static export serves mixed JPG/SVG archive assets directly. */}
-          <img
-            className={`entry-media-image ${isDrawing ? 'entry-media-image-drawing' : ''}`}
+          <MediaLightbox
             src={mediaUrl}
-            alt={media.label}
-            loading="lazy"
-          />
-          </>
+            label={media.label}
+            type={media.type}
+            credit={media.credit}
+            isDrawing={isDrawing}
+            accent={accent}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element -- Static export serves mixed JPG/SVG archive assets directly. */}
+            <img
+              className={`entry-media-image ${isDrawing ? 'entry-media-image-drawing' : ''}`}
+              src={mediaUrl}
+              alt={media.label}
+              loading="lazy"
+            />
+          </MediaLightbox>
         ) : (
           <div className={`entry-media-placeholder entry-media-${media.type} flex h-full items-center justify-center border border-white/10 text-center text-[11px] uppercase tracking-[0.14em] text-[#d7d7d0]`}>
             <ObjectMediaPlaceholder mediaType={media.type} entry={entry} profile={profile} />

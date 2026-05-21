@@ -78,9 +78,29 @@ The report includes:
 - archive coverage;
 - source and rights gaps;
 - model and analysis gaps;
+- registered local tools from `data/brain-tools.json`;
 - relation coverage;
 - suggested review tasks;
 - recommended next steps.
+
+## Local Tool Suite
+
+The Brain now has a local review-only tool registry for integrated archive work:
+
+```bash
+npm run cosmos:plan-generate -- --entry villa-savoye
+npm run cosmos:model-generate -- --entry villa-savoye
+npm run cosmos:text-generate -- --entry villa-savoye
+npm run cosmos:entry-build -- --entry villa-savoye --mode review
+```
+
+These tools create 2D vector study drawings, Blender/ArchiCAD model planning
+outputs and architecture-text review packs. They do not write to the public
+database, upload assets or publish. The detailed contract is documented in:
+
+```text
+docs/cosmos-tool-suite.md
+```
 
 ## Brain Doctor
 

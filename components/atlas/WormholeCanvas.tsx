@@ -22,6 +22,18 @@ type WormholeCanvasProps = {
 };
 
 const energyColors = ['#00f5ff', '#55fff0', '#a56bff', '#ff38f5', '#ffd43d', '#ff4b20', '#65ff73'];
+const starField = Array.from({ length: 132 }, (_, index) => {
+  const xSeed = seededUnit(index, 17.13);
+  const ySeed = seededUnit(index, 83.71);
+  return {
+    x: xSeed,
+    y: ySeed,
+    size: 0.45 + seededUnit(index, 41.9) * 1.25,
+    depth: seededUnit(index, 11.37),
+    hue: seededUnit(index, 63.2),
+    phase: seededUnit(index, 7.7) * Math.PI * 2
+  };
+});
 
 function WormholeCanvasComponent({ state, isMoving, quality }: WormholeCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -137,6 +149,7 @@ function drawWormholeCanvas(
   context.clearRect(0, 0, cssWidth, cssHeight);
   context.fillStyle = '#050505';
   context.fillRect(0, 0, cssWidth, cssHeight);
+  drawSpaceBackground(context, cssWidth, cssHeight, state, { quality, isMoving, idlePhase });
   context.save();
   context.translate(viewport.x, viewport.y);
   context.scale(viewport.scale, viewport.scale);
@@ -150,6 +163,91 @@ function drawWormholeCanvas(
   drawRings(context, state, { isMoving, idlePhase });
 
   context.restore();
+}
+
+function drawSpaceBackground(
+  context: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  state: WormholeState,
+  options: { quality: 'reduced' | 'balanced' | 'full'; isMoving: boolean; idlePhase: number }
+) {
+  const centerX = width / 2;
+  const centerY = height / 2;
+  const diagonal = Math.hypot(width, height);
+  const motion = state.timePosition * 0.038 + (options.isMoving ? state.phase * 0.06 : options.idlePhase * 0.012);
+  const starCount = options.quality === 'reduced' ? 54 : options.quality === 'balanced' ? 88 : starField.length;
+
+  const nebula = context.createRadialGradient(centerX, centerY, diagonal * 0.08, centerX, centerY, diagonal * 0.72);
+  nebula.addColorStop(0, 'rgba(5,5,5,0)');
+  nebula.addColorStop(0.36, 'rgba(0,245,255,0.028)');
+  nebula.addColorStop(0.58, 'rgba(165,107,255,0.035)');
+  nebula.addColorStop(0.78, 'rgba(255,56,245,0.026)');
+  nebula.addColorStop(1, 'rgba(5,5,5,0)');
+  context.fillStyle = nebula;
+  context.fillRect(0, 0, width, height);
+
+  context.save();
+  context.translate(centerX, centerY);
+  context.rotate(motion * 0.05);
+  context.translate(-centerX, -centerY);
+
+  for (let index = 0; index < starCount; index += 1) {
+    const star = starField[index];
+    if (!star) continue;
+
+    const parallax = 1 + star.depth * 0.036 * state.timePosition;
+    const x = centerX + (star.x * width - centerX) * parallax;
+    const y = centerY + (star.y * height - centerY) * parallax;
+    if (x < -8 || x > width + 8 || y < -8 || y > height + 8) continue;
+
+    const distance = Math.hypot(x - centerX, y - centerY) / Math.max(1, diagonal * 0.5);
+    const centerFade = Math.min(1, Math.max(0.14, (distance - 0.16) / 0.32));
+    const edgeFade = Math.max(0, 1 - Math.max(0, distance - 0.74) / 0.32);
+    const twinkle = options.isMoving ? 0.72 : 0.72 + Math.sin(options.idlePhase * (1.7 + star.depth) + star.phase) * 0.18;
+    const alpha = (0.13 + star.depth * 0.5) * centerFade * edgeFade * twinkle;
+    if (alpha <= 0.02) continue;
+
+    context.beginPath();
+    context.fillStyle = starColor(star.hue, alpha);
+    context.arc(x, y, star.size * (0.8 + star.depth * 0.7), 0, Math.PI * 2);
+    context.fill();
+  }
+
+  if (options.quality !== 'reduced') {
+    drawCosmicDust(context, width, height, state, options);
+  }
+
+  context.restore();
+}
+
+function drawCosmicDust(
+  context: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  state: WormholeState,
+  options: { isMoving: boolean; idlePhase: number }
+) {
+  const centerX = width / 2;
+  const centerY = height / 2;
+  const orbitCount = options.isMoving ? 5 : 8;
+  const baseRadius = Math.min(width, height) * 0.42;
+
+  for (let index = 0; index < orbitCount; index += 1) {
+    const radius = baseRadius + index * Math.min(width, height) * 0.055;
+    const start = state.phase * 0.0009 + options.idlePhase * 0.038 + index * 0.72;
+    const sweep = 0.32 + seededUnit(index, 19.2) * 0.34;
+
+    context.beginPath();
+    context.ellipse(centerX, centerY + Math.sin(index) * 8, radius * 1.18, radius * (0.58 + index * 0.018), start, start + Math.PI * 0.12, start + Math.PI * (0.12 + sweep));
+    context.strokeStyle = withAlpha(energyColor(index + 2), options.isMoving ? 0.035 : 0.058);
+    context.lineWidth = 0.7;
+    context.setLineDash([1, 18 + index * 3]);
+    context.lineDashOffset = -state.timePosition * 18 - options.idlePhase * 44 - index * 11;
+    context.stroke();
+  }
+
+  context.setLineDash([]);
 }
 
 function viewportToAtlas(width: number, height: number) {
@@ -297,10 +395,22 @@ function energyColor(index: number) {
   return energyColors[index % energyColors.length] ?? '#00e7ff';
 }
 
+function starColor(hueSeed: number, alpha: number) {
+  if (hueSeed < 0.18) return `rgba(255,248,214,${alpha})`;
+  if (hueSeed < 0.42) return `rgba(156,255,247,${alpha})`;
+  if (hueSeed < 0.68) return `rgba(210,184,255,${alpha})`;
+  return `rgba(255,205,244,${alpha})`;
+}
+
 function withAlpha(hex: string, alpha: number) {
   const normalized = hex.replace('#', '');
   const r = Number.parseInt(normalized.slice(0, 2), 16);
   const g = Number.parseInt(normalized.slice(2, 4), 16);
   const b = Number.parseInt(normalized.slice(4, 6), 16);
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+function seededUnit(index: number, salt: number) {
+  const value = Math.sin(index * 127.1 + salt * 311.7) * 43758.5453123;
+  return value - Math.floor(value);
 }

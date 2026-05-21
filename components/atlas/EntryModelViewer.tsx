@@ -269,12 +269,12 @@ export function EntryModelViewer({ modelUrl, title, accent }: EntryModelViewerPr
 
   return (
     <article id="model-viewer" className="entry-model-viewer border border-white/14 bg-[#050505]">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-4 py-3">
-        <div>
+      <div className="flex flex-wrap items-start justify-between gap-3 border-b border-white/10 px-4 py-3">
+        <div className="min-w-0 flex-1">
           <div className="text-[10px] uppercase tracking-[0.2em]" style={{ color: accent }}>3D Reference Core / Blender Layers</div>
-          <h2 className="mt-1 text-xl text-[#f7f7f4]">{title} / material, structure and analysis model</h2>
+          <h2 className="mt-1 max-w-full overflow-wrap-anywhere text-lg leading-tight text-[#f7f7f4] sm:text-xl">{title} / material, structure and analysis model</h2>
         </div>
-        <div className="text-[9px] uppercase tracking-[0.14em] text-[#8d8d87]">drag rotate / scroll zoom</div>
+        <div className="shrink-0 text-[9px] uppercase tracking-[0.14em] text-[#8d8d87]">drag rotate / scroll zoom</div>
       </div>
       <div className="relative h-[420px] min-h-[320px] w-full overflow-hidden" style={{ '--viewer-accent': accent } as CSSProperties}>
         <div ref={mountRef} className="h-full w-full" />

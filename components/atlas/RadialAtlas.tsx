@@ -219,6 +219,10 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     moved: false
   });
   const panFrameRef = useRef<number | null>(null);
+  const databaseHistoryRef = useRef(false);
+  const dossierHistoryRef = useRef(false);
+  const showDatabasePanelRef = useRef(false);
+  const selectedEntryRef = useRef<Entry | null>(null);
   const pendingPanRef = useRef<VisualPan | null>(null);
   const pendingPointerPointRef = useRef<SvgPoint | null>(null);
   const pointerFrameRef = useRef<number | null>(null);
@@ -304,6 +308,53 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
 
     return () => window.clearTimeout(timeout);
   }, [introState]);
+
+  useEffect(() => {
+    showDatabasePanelRef.current = showDatabasePanel;
+  }, [showDatabasePanel]);
+
+  useEffect(() => {
+    selectedEntryRef.current = selectedEntry;
+  }, [selectedEntry]);
+
+  useEffect(() => {
+    const handlePopState = () => {
+      if (showDatabasePanelRef.current && databaseHistoryRef.current) {
+        databaseHistoryRef.current = false;
+        setShowDatabasePanel(false);
+        return;
+      }
+
+      if (selectedEntryRef.current && dossierHistoryRef.current) {
+        dossierHistoryRef.current = false;
+        setSelectedEntry(null);
+      }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      const shouldDismiss = event.key === 'Escape' || (event.key === 'Backspace' && !isEditableKeyboardTarget(event.target));
+      if (!shouldDismiss) return;
+
+      if (showDatabasePanelRef.current) {
+        event.preventDefault();
+        closeDatabasePanel();
+        return;
+      }
+
+      if (selectedEntryRef.current) {
+        event.preventDefault();
+        closeDossier();
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
 
   useEffect(() => {
     const visualZoomState = visualZoomRef.current;
@@ -413,13 +464,56 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   }
 
   function openDossierFromNode(entry: Entry) {
+    databaseHistoryRef.current = false;
     setShowDatabasePanel(false);
+    pushOverlayHistory('dossier');
+    dossierHistoryRef.current = true;
     setSelectedEntry(entry);
     setHoveredEntry(null);
   }
 
   function closeDossier() {
+    if (dossierHistoryRef.current) {
+      window.history.back();
+      return;
+    }
+
+    dossierHistoryRef.current = false;
     setSelectedEntry(null);
+  }
+
+  function openDatabasePanel() {
+    if (!showDatabasePanelRef.current) {
+      pushOverlayHistory('database');
+      databaseHistoryRef.current = true;
+    }
+
+    setShowDatabasePanel(true);
+  }
+
+  function closeDatabasePanel() {
+    if (databaseHistoryRef.current) {
+      window.history.back();
+      return;
+    }
+
+    databaseHistoryRef.current = false;
+    setShowDatabasePanel(false);
+  }
+
+  function toggleDatabasePanel() {
+    if (showDatabasePanelRef.current) {
+      closeDatabasePanel();
+      return;
+    }
+
+    openDatabasePanel();
+  }
+
+  function pushOverlayHistory(name: 'database' | 'dossier') {
+    const currentState = typeof window.history.state === 'object' && window.history.state !== null ? window.history.state : {};
+    if (currentState.cosmosOverlay === name) return;
+    window.history.pushState({ ...currentState, cosmosOverlay: name }, '', window.location.href);
   }
 
   function createLocalEntryFromDraft(draft: EntryDraft) {
@@ -994,7 +1088,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   }
 
   return (
-    <main ref={mainRef} style={visualZoomStyle} className={`relative h-screen w-screen overflow-hidden bg-[#050505] text-[#f7f7f4] cosmos-perf-${performanceTier} cosmos-intro-${introState} ${introState === 'launching' ? 'cosmos-launching' : ''} ${isTraveling || visualZoom.isZooming ? 'cosmos-moving' : ''} ${visualZoom.currentZoom > 1.01 ? 'cosmos-lensing' : ''} ${introState === 'idle' && !isTraveling && !visualZoom.isZooming ? 'cosmos-idle' : ''}`}>
+    <main ref={mainRef} style={visualZoomStyle} className={`relative h-screen w-screen overflow-hidden bg-[#050505] text-[#f7f7f4] cosmos-perf-${performanceTier} cosmos-intro-${introState} ${ui.isCoarsePointer ? 'cosmos-mobile-web' : 'cosmos-desktop-web'} ${introState === 'launching' ? 'cosmos-launching' : ''} ${isTraveling || visualZoom.isZooming ? 'cosmos-moving' : ''} ${visualZoom.currentZoom > 1.01 ? 'cosmos-lensing' : ''} ${introState === 'idle' && !isTraveling && !visualZoom.isZooming ? 'cosmos-idle' : ''}`}>
       <WormholeCanvas state={state} isMoving={isTraveling} quality={performanceTier} />
       <div className="relative z-10 h-full w-full">
         <svg
@@ -1088,12 +1182,12 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
               }}
             />
           ) : null}
-          {introState === 'idle' ? (
+          {introState === 'idle' && !ui.isCoarsePointer ? (
             <DatabaseAccess
               isOpen={showDatabasePanel}
               onToggle={() => {
                 setHoveredEntry(null);
-                setShowDatabasePanel((current) => !current);
+                toggleDatabasePanel();
               }}
             />
           ) : null}
@@ -1112,11 +1206,11 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
               onResearchSeedChange={setResearchSeed}
               onImageIdentifyChange={setImageIdentify}
               onCreateLocalEntry={createLocalEntryFromDraft}
-              onDismiss={() => setShowDatabasePanel(false)}
+              onDismiss={closeDatabasePanel}
             />
           ) : null}
-          {introState === 'idle' ? <TimeReadout timePosition={state.timePosition} currentYear={state.currentYear} /> : null}
-          {introState === 'idle' ? <VisualZoomReadout zoom={visualZoom.currentZoom} /> : null}
+          {introState === 'idle' && !ui.isCoarsePointer ? <TimeReadout timePosition={state.timePosition} currentYear={state.currentYear} /> : null}
+          {introState === 'idle' && !ui.isCoarsePointer ? <VisualZoomReadout zoom={visualZoom.currentZoom} /> : null}
           {introState !== 'intro' ? <BrandChrome isArriving={introState === 'launching'} /> : null}
         </svg>
         {showDatabasePanel && introState === 'idle' && ui.isCoarsePointer ? (
@@ -1135,14 +1229,33 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
             onResearchSeedChange={setResearchSeed}
             onImageIdentifyChange={setImageIdentify}
             onCreateLocalEntry={createLocalEntryFromDraft}
-            onDismiss={() => setShowDatabasePanel(false)}
+            onDismiss={closeDatabasePanel}
           />
         ) : null}
         {introState === 'idle' ? <BrainStatusWidget /> : null}
         {introState === 'idle' && !showDatabasePanel ? (
           <ProjectSearch entries={allEntries} developerMode={developerMode} onDeveloperModeChange={updateDeveloperMode} />
         ) : null}
-        {cursorVisible && !coarsePointer ? <ScreenCosmosCursor cursorRef={screenCursorRef} isDossierOpen={Boolean(selectedEntry)} /> : null}
+        {introState === 'idle' && ui.isCoarsePointer && !selectedEntry ? (
+          <MobileAtlasHud
+            currentYear={state.currentYear}
+            timePosition={state.timePosition}
+            visualZoom={visualZoom.currentZoom}
+            showRelations={showRelations}
+            databaseOpen={showDatabasePanel}
+            onTravelForward={() => travelBy(0.018)}
+            onTravelBackward={() => travelBy(-0.018)}
+            onToggleRelations={() => {
+              setHoveredEntry(null);
+              setShowRelations((current) => !current);
+            }}
+            onToggleDatabase={() => {
+              setHoveredEntry(null);
+              toggleDatabasePanel();
+            }}
+          />
+        ) : null}
+        {cursorVisible && !coarsePointer ? <ScreenCosmosCursor cursorRef={screenCursorRef} isDossierOpen={Boolean(selectedEntry)} isOverlayOpen={showDatabasePanel} /> : null}
       </div>
 
       {introState !== 'idle' ? <IntroGate state={introState} onStart={startIntro} /> : null}
@@ -1270,6 +1383,11 @@ function isEntryNodeTarget(target: EventTarget | null) {
 function isNativeOverlayTarget(target: EventTarget | null) {
   if (!(target instanceof Element)) return false;
   return Boolean(target.closest('.database-draft, .lens-control, .lens-control-panel, .project-search, .dossier-overlay, .entry-page'));
+}
+
+function isEditableKeyboardTarget(target: EventTarget | null) {
+  if (!(target instanceof HTMLElement)) return false;
+  return Boolean(target.closest('input, textarea, select, [contenteditable="true"]'));
 }
 
 function isReadableNode(node: WormholeEntryNode) {
@@ -1414,6 +1532,71 @@ function DockButton({ x, y, width, height = 20, textY = y + 13.2, fontSize = 6.6
         {label.toUpperCase()}
       </text>
     </g>
+  );
+}
+
+function MobileAtlasHud({
+  currentYear,
+  timePosition,
+  visualZoom,
+  showRelations,
+  databaseOpen,
+  onTravelForward,
+  onTravelBackward,
+  onToggleRelations,
+  onToggleDatabase
+}: {
+  currentYear: number;
+  timePosition: number;
+  visualZoom: number;
+  showRelations: boolean;
+  databaseOpen: boolean;
+  onTravelForward: () => void;
+  onTravelBackward: () => void;
+  onToggleRelations: () => void;
+  onToggleDatabase: () => void;
+}) {
+  const span = dominantSpanForYear(currentYear);
+  const progress = Math.round(Math.max(0, Math.min(1, timePosition / wormholeTravelEnd)) * 100);
+
+  function stopAndRun(event: { stopPropagation: () => void }, action: () => void) {
+    event.stopPropagation();
+    action();
+  }
+
+  return (
+    <div className="mobile-atlas-shell cosmos-text-safe" onPointerDown={(event) => event.stopPropagation()} onClick={(event) => event.stopPropagation()}>
+      <section className="mobile-atlas-time" aria-label="Aktuelle Zeitposition">
+        <div>
+          <span className="mobile-atlas-kicker">Zeitfenster</span>
+          <strong>{formatYear(currentYear)}</strong>
+        </div>
+        <div className="mobile-atlas-time-meta">
+          <span>{span.label}</span>
+          <i>{progress}% Tiefe</i>
+        </div>
+        {visualZoom > 1.03 ? <em>{Math.round(visualZoom * 100)}% Lupe</em> : null}
+      </section>
+
+      <nav className="mobile-atlas-dock" aria-label="Mobile Atlas Navigation">
+        <button type="button" onClick={(event) => stopAndRun(event, onTravelBackward)} aria-label="Zeit Richtung Gegenwart">
+          <span>−</span>
+          <small>Zeit</small>
+        </button>
+        <button type="button" onClick={(event) => stopAndRun(event, onTravelForward)} aria-label="Zeit tiefer in die Vergangenheit">
+          <span>+</span>
+          <small>Zeit</small>
+        </button>
+        <button type="button" className={showRelations ? 'mobile-atlas-active' : ''} onClick={(event) => stopAndRun(event, onToggleRelations)} aria-pressed={showRelations}>
+          <span>Rel</span>
+          <small>Netz</small>
+        </button>
+        <button type="button" className={databaseOpen ? 'mobile-atlas-active' : ''} onClick={(event) => stopAndRun(event, onToggleDatabase)} aria-pressed={databaseOpen}>
+          <span>DB</span>
+          <small>Archiv</small>
+        </button>
+      </nav>
+    </div>
   );
 }
 
@@ -1571,7 +1754,7 @@ function IntroGate({ state, onStart }: { state: IntroState; onStart: () => void 
           <CosmosGlyph />
         </svg>
         <span className="intro-title-main block text-[clamp(2.4rem,7vw,6.8rem)] font-semibold uppercase tracking-[0.18em] text-[#f7f7f4]">
-          architecture cosmos
+          architektur kosmos
         </span>
       </span>
     </button>
@@ -2881,9 +3064,9 @@ function SnappedEntryOverlay({ entry, onDismiss }: { entry: Entry; onDismiss: ()
   );
 }
 
-function ScreenCosmosCursor({ cursorRef, isDossierOpen }: { cursorRef: RefObject<HTMLDivElement | null>; isDossierOpen: boolean }) {
+function ScreenCosmosCursor({ cursorRef, isDossierOpen, isOverlayOpen }: { cursorRef: RefObject<HTMLDivElement | null>; isDossierOpen: boolean; isOverlayOpen: boolean }) {
   return (
-    <div ref={cursorRef} className={`screen-cosmos-cursor ${isDossierOpen ? 'screen-cosmos-cursor-dossier' : ''}`} aria-hidden="true">
+    <div ref={cursorRef} className={`screen-cosmos-cursor ${isDossierOpen ? 'screen-cosmos-cursor-dossier' : ''} ${isOverlayOpen ? 'screen-cosmos-cursor-overlay' : ''}`} aria-hidden="true">
       <span className="screen-cosmos-cursor-ring" />
       <span className="screen-cosmos-cursor-h screen-cosmos-cursor-line" />
       <span className="screen-cosmos-cursor-v screen-cosmos-cursor-line" />

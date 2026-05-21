@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 type BrainStatus = {
   status: string;
@@ -65,7 +65,67 @@ export function BrainStatusWidget() {
   const [taskCount, setTaskCount] = useState(0);
   const [taskFilter, setTaskFilter] = useState<TaskFilter>('all');
   const [error, setError] = useState<string | null>(null);
+  const isOpenRef = useRef(false);
+  const historyRef = useRef(false);
   const isLoading = isOpen && !status && !error;
+
+  useEffect(() => {
+    isOpenRef.current = isOpen;
+  }, [isOpen]);
+
+  useEffect(() => {
+    const handlePopState = () => {
+      if (!isOpenRef.current || !historyRef.current) return;
+      historyRef.current = false;
+      setIsOpen(false);
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      const shouldDismiss = event.key === 'Escape' || (event.key === 'Backspace' && !isEditableKeyboardTarget(event.target));
+      if (!shouldDismiss || !isOpenRef.current) return;
+      event.preventDefault();
+      closePanel();
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
+  function openPanel() {
+    if (!isOpenRef.current) {
+      const currentState = typeof window.history.state === 'object' && window.history.state !== null ? window.history.state : {};
+      if (currentState.cosmosOverlay !== 'brain') {
+        window.history.pushState({ ...currentState, cosmosOverlay: 'brain' }, '', window.location.href);
+      }
+      historyRef.current = true;
+    }
+
+    setIsOpen(true);
+  }
+
+  function closePanel() {
+    if (historyRef.current) {
+      window.history.back();
+      return;
+    }
+
+    historyRef.current = false;
+    setIsOpen(false);
+  }
+
+  function togglePanel() {
+    if (isOpenRef.current) {
+      closePanel();
+      return;
+    }
+
+    openPanel();
+  }
 
   useEffect(() => {
     if (!isOpen) return;
@@ -110,7 +170,7 @@ export function BrainStatusWidget() {
       <button
         type="button"
         className={`brain-status-trigger cosmos-trigger ${isOpen ? 'cosmos-trigger-active' : ''}`}
-        onClick={() => setIsOpen((current) => !current)}
+        onClick={togglePanel}
         aria-expanded={isOpen}
       >
         <span>Brain</span>
@@ -120,7 +180,7 @@ export function BrainStatusWidget() {
         <section className="brain-status-panel cosmos-panel cosmos-text-safe" aria-label="Architecture Cosmos Brain status">
           <div className="brain-status-header">
             <span>Cloud Brain V2</span>
-            <button type="button" onClick={() => setIsOpen(false)} aria-label="Close Brain status">Close</button>
+            <button type="button" onClick={closePanel} aria-label="Close Brain status">Close</button>
           </div>
 
           {isLoading ? <p className="brain-status-muted">Reading live Brain snapshot...</p> : null}
@@ -220,4 +280,9 @@ function BrainBar({ label, value }: { label: string; value: number }) {
       <i style={{ width: `${Math.max(2, Math.min(100, value))}%` }} />
     </div>
   );
+}
+
+function isEditableKeyboardTarget(target: EventTarget | null) {
+  if (!(target instanceof HTMLElement)) return false;
+  return Boolean(target.closest('input, textarea, select, [contenteditable="true"]'));
 }

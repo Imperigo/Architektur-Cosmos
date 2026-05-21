@@ -8,6 +8,7 @@ const rootDir = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const entriesPath = resolve(rootDir, 'data/mock-entries.json');
 const relationsPath = resolve(rootDir, 'data/relations.json');
 const rulesPath = resolve(rootDir, 'data/brain-rules.json');
+const toolsPath = resolve(rootDir, 'data/brain-tools.json');
 const queuePath = resolve(rootDir, 'data/review-queue.json');
 const decisionsPath = resolve(rootDir, 'data/agent-decisions.json');
 const outputRoot = resolve(rootDir, 'out/brain-review');
@@ -19,15 +20,16 @@ main().catch((error) => {
 });
 
 async function main() {
-  const [entries, relations, rules, queue, decisions] = await Promise.all([
+  const [entries, relations, rules, tools, queue, decisions] = await Promise.all([
     readJson(entriesPath),
     readJson(relationsPath),
     readJson(rulesPath),
+    readJson(toolsPath),
     readJson(queuePath),
     readJson(decisionsPath)
   ]);
 
-  const review = buildReview({ entries, relations, rules, queue, decisions });
+  const review = buildReview({ entries, relations, rules, tools, queue, decisions });
   const outputDir = resolve(outputRoot, today);
   await mkdir(outputDir, { recursive: true });
   await writeFile(resolve(outputDir, 'brain-review.json'), `${JSON.stringify(review, null, 2)}\n`, 'utf8');
@@ -44,7 +46,7 @@ async function readJson(path) {
   return JSON.parse(await readFile(path, 'utf8'));
 }
 
-function buildReview({ entries, relations, rules, queue, decisions }) {
+function buildReview({ entries, relations, rules, tools, queue, decisions }) {
   const entryIds = new Set(entries.map((entry) => entry.id));
   const relationCounts = countRelations(relations);
   const entriesWithDatabaseProfile = entries.filter((entry) => entry.database_profile);
@@ -78,6 +80,7 @@ function buildReview({ entries, relations, rules, queue, decisions }) {
       analysis_ready_or_planned: entriesWithAnalysis.length,
       source_candidate_entries: entriesWithSourceCandidates.length,
       hero_image_entries: entriesWithHeroImages.length,
+      registered_tools: tools.tools?.length ?? 0,
       queue_items: queue.items?.length ?? 0,
       recorded_decisions: decisions.decisions?.length ?? 0
     },
@@ -94,6 +97,18 @@ function buildReview({ entries, relations, rules, queue, decisions }) {
       missing_analysis: entryReviews.filter((item) => item.flags.includes('missing_analysis')).map(toWatchItem).slice(0, 20),
       weak_relations: entryReviews.filter((item) => item.flags.includes('weak_relations')).map(toWatchItem).slice(0, 20),
       public_candidates: entryReviews.filter((item) => item.flags.includes('public_candidate')).map(toWatchItem).slice(0, 20)
+    },
+    tool_registry: {
+      mode: tools.mode,
+      writes_public_database: tools.writes_public_database,
+      uploads_assets: tools.uploads_assets,
+      tools: (tools.tools ?? []).map((tool) => ({
+        id: tool.id,
+        label: tool.label,
+        command: tool.command,
+        output_root: tool.output_root,
+        approval_required_before_public_use: tool.approval_required_before_public_use
+      }))
     },
     tasks: allTasks,
     next_steps: [
@@ -302,6 +317,14 @@ function renderMarkdown(review) {
     `- Model ready/planned: ${review.summary.model_ready_or_planned} (${review.coverage.model_percent}%)`,
     `- Analysis ready/planned: ${review.summary.analysis_ready_or_planned} (${review.coverage.analysis_percent}%)`,
     `- Source candidate entries: ${review.summary.source_candidate_entries} (${review.coverage.source_candidate_percent}%)`,
+    `- Registered local tools: ${review.summary.registered_tools}`,
+    '',
+    '## Tool Registry',
+    '',
+    `- Mode: \`${review.tool_registry.mode}\``,
+    `- Writes public database: \`${review.tool_registry.writes_public_database}\``,
+    `- Uploads assets: \`${review.tool_registry.uploads_assets}\``,
+    ...review.tool_registry.tools.map((tool) => `- ${tool.label}: \`${tool.command}\``),
     '',
     '## Top Tasks',
     ''

@@ -1,0 +1,51 @@
+{
+  "version": 1,
+  "name": "Architecture Cosmos Tool Registry",
+  "mode": "local_review_only",
+  "writes_public_database": false,
+  "uploads_assets": false,
+  "tools": [
+    {
+      "id": "plan_generate",
+      "label": "2D Vector Plan Generator",
+      "command": "npm run cosmos:plan-generate -- --entry {slug}",
+      "output_root": "archive-intake/{slug}/plans",
+      "review_output": "archive-intake/{slug}/automation/plan-tool-run.json",
+      "purpose": "Generate rights-safe Cosmos-style SVG/DXF study plans, sections and vector plan graphs.",
+      "approval_required_before_public_use": true
+    },
+    {
+      "id": "model_generate",
+      "label": "3D Model Generator",
+      "command": "npm run cosmos:model-generate -- --entry {slug}",
+      "output_root": "archive-intake/{slug}/models",
+      "review_output": "archive-intake/{slug}/automation/model-tool-run.json",
+      "purpose": "Prepare Blender/ArchiCAD model packages and generate diagrammatic GLB models where a reviewed template exists.",
+      "approval_required_before_public_use": true
+    },
+    {
+      "id": "text_generate",
+      "label": "Architecture Text Generator",
+      "command": "npm run cosmos:text-generate -- --entry {slug}",
+      "output_root": "out/text-review/{slug}",
+      "review_output": "archive-intake/{slug}/texts/architecture-text.json",
+      "purpose": "Rewrite dry archive data and source notes into precise architectural headliners, overview text and chapter prose.",
+      "approval_required_before_public_use": true
+    },
+    {
+      "id": "entry_build_review",
+      "label": "Entry Build Review",
+      "command": "npm run cosmos:entry-build -- --entry {slug} --mode review",
+      "output_root": "archive-intake/{slug}/review",
+      "review_output": "archive-intake/{slug}/review/entry-build-review.json",
+      "purpose": "Run the local plan, model and text tools together and produce a single review packet for owner approval.",
+      "approval_required_before_public_use": true
+    }
+  ],
+  "guardrails": [
+    "Generated drawings and models are diagrammatic study reconstructions unless verified otherwise.",
+    "Do not publish exact plan-derived assets from unclear or copyrighted sources.",
+    "Do not upload, commit or write to D1/R2 from these tools.",
+    "Every generated artifact must include source_basis, review_status and public_use_allowed metadata."
+  ]
+}

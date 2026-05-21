@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useMemo, useRef, useState, type KeyboardEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
 import type { Entry } from '@/lib/types';
 import { formatYear } from '@/lib/wormhole-layout';
 
@@ -32,6 +32,10 @@ export function ProjectSearch({
   const [query, setQuery] = useState('');
   const inputRef = useRef<HTMLInputElement | null>(null);
   const devInputRef = useRef<HTMLInputElement | null>(null);
+  const isOpenRef = useRef(false);
+  const isDevOpenRef = useRef(false);
+  const searchHistoryRef = useRef(false);
+  const devHistoryRef = useRef(false);
   const isDeveloperMode = developerMode ?? localDeveloperMode;
 
   const results = useMemo(() => {
@@ -51,18 +55,81 @@ export function ProjectSearch({
       .map((result) => result.entry);
   }, [entries, query]);
 
+  useEffect(() => {
+    isOpenRef.current = isOpen;
+  }, [isOpen]);
+
+  useEffect(() => {
+    isDevOpenRef.current = isDevOpen;
+  }, [isDevOpen]);
+
+  useEffect(() => {
+    const handlePopState = () => {
+      if (isOpenRef.current && searchHistoryRef.current) {
+        searchHistoryRef.current = false;
+        setIsOpen(false);
+        setQuery('');
+        return;
+      }
+
+      if (isDevOpenRef.current && devHistoryRef.current) {
+        devHistoryRef.current = false;
+        setIsDevOpen(false);
+        setDevError('');
+        setDevCode('');
+      }
+    };
+
+    const handleWindowKeyDown = (event: globalThis.KeyboardEvent) => {
+      const shouldDismiss = event.key === 'Escape' || (event.key === 'Backspace' && !isEditableKeyboardTarget(event.target));
+      if (!shouldDismiss) return;
+      if (isOpenRef.current) {
+        event.preventDefault();
+        closeSearch();
+        return;
+      }
+      if (isDevOpenRef.current) {
+        event.preventDefault();
+        closeDevGate();
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    window.addEventListener('keydown', handleWindowKeyDown);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+      window.removeEventListener('keydown', handleWindowKeyDown);
+    };
+  }, []);
+
   function openSearch() {
+    if (!isOpenRef.current) {
+      pushOverlayHistory('search');
+      searchHistoryRef.current = true;
+    }
     setIsOpen(true);
     window.setTimeout(() => inputRef.current?.focus(), 40);
   }
 
-  function toggleSearch() {
-    if (isOpen) {
-      setIsOpen(false);
-      setQuery('');
+  function closeSearch() {
+    if (searchHistoryRef.current) {
+      window.history.back();
       return;
     }
 
+    searchHistoryRef.current = false;
+    setIsOpen(false);
+    setQuery('');
+  }
+
+  function toggleSearch() {
+    if (isOpen) {
+      closeSearch();
+      return;
+    }
+
+    devHistoryRef.current = false;
     setIsDevOpen(false);
     openSearch();
   }
@@ -82,13 +149,36 @@ export function ProjectSearch({
   }
 
   function toggleDevGate() {
+    searchHistoryRef.current = false;
     setIsOpen(false);
     setQuery('');
-    setIsDevOpen((current) => {
-      const next = !current;
-      if (next) window.setTimeout(() => devInputRef.current?.focus(), 40);
-      return next;
-    });
+    if (isDevOpenRef.current) {
+      closeDevGate();
+      return;
+    }
+
+    pushOverlayHistory('dev');
+    devHistoryRef.current = true;
+    setIsDevOpen(true);
+    window.setTimeout(() => devInputRef.current?.focus(), 40);
+  }
+
+  function closeDevGate() {
+    if (devHistoryRef.current) {
+      window.history.back();
+      return;
+    }
+
+    devHistoryRef.current = false;
+    setIsDevOpen(false);
+    setDevError('');
+    setDevCode('');
+  }
+
+  function pushOverlayHistory(name: 'search' | 'dev') {
+    const currentState = typeof window.history.state === 'object' && window.history.state !== null ? window.history.state : {};
+    if (currentState.cosmosOverlay === name) return;
+    window.history.pushState({ ...currentState, cosmosOverlay: name }, '', window.location.href);
   }
 
   function unlockDevMode() {
@@ -105,16 +195,15 @@ export function ProjectSearch({
 
   function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
     if (event.key === 'Escape') {
-      setIsOpen(false);
-      setQuery('');
+      event.stopPropagation();
+      closeSearch();
     }
   }
 
   function handleDevKeyDown(event: KeyboardEvent<HTMLInputElement>) {
     if (event.key === 'Escape') {
-      setIsDevOpen(false);
-      setDevError('');
-      setDevCode('');
+      event.stopPropagation();
+      closeDevGate();
     }
 
     if (event.key === 'Enter') {
@@ -211,6 +300,7 @@ export function ProjectSearch({
                   href={`/atlas/${entry.slug}/`}
                   className={`project-search-result ${currentSlug === entry.slug ? 'project-search-result-active' : ''}`}
                   onClick={() => {
+                    searchHistoryRef.current = false;
                     setIsOpen(false);
                     setQuery('');
                   }}
@@ -246,6 +336,11 @@ function readDevSession() {
   } catch {
     return false;
   }
+}
+
+function isEditableKeyboardTarget(target: EventTarget | null) {
+  if (!(target instanceof HTMLElement)) return false;
+  return Boolean(target.closest('input, textarea, select, [contenteditable="true"]'));
 }
 
 function scoreEntry(entry: Entry, normalizedQuery: string) {
