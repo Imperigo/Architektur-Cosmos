@@ -469,6 +469,11 @@
           "type": "structure",
           "r2_key": "models/catal-huyuk/structure.glb",
           "review_status": "planned"
+        },
+        {
+          "type": "full",
+          "r2_key": "models/catal-huyuk/full.glb",
+          "review_status": "planned"
         }
       ],
       "license": "own_work"
@@ -488,6 +493,16 @@
         "analysis_type": "source_reconstruction",
         "summary": "3D/Blender layer is planned as an analytical reconstruction layer; no exact measured model is claimed at this stage.",
         "review_status": "needs_source"
+      },
+      {
+        "analysis_type": "structure",
+        "summary": "Structure layer planned for Blender import: cellular mass. Geometry remains reconstruction-grade until source plans are reviewed.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Tectonic layer planned around mud_brick, timber, plaster; separates material expression, enclosure and structural reading for later Blender layer toggles.",
+        "review_status": "draft"
       }
     ],
     "analysis_observations": [
@@ -509,8 +524,8 @@
       "r2_prefix": "entries/catal-huyuk",
       "source_count": 3,
       "media_count": 4,
-      "model_count": 4,
-      "analysis_count": 3,
+      "model_count": 5,
+      "analysis_count": 5,
       "tag_count": 5
     }
   },
@@ -650,6 +665,11 @@
           "type": "structure",
           "r2_key": "models/nippur/structure.glb",
           "review_status": "planned"
+        },
+        {
+          "type": "full",
+          "r2_key": "models/nippur/full.glb",
+          "review_status": "planned"
         }
       ],
       "license": "own_work"
@@ -669,6 +689,16 @@
         "analysis_type": "source_reconstruction",
         "summary": "3D/Blender layer is planned as an analytical reconstruction layer; no exact measured model is claimed at this stage.",
         "review_status": "needs_source"
+      },
+      {
+        "analysis_type": "structure",
+        "summary": "Structure layer planned for Blender import: massive wall. Geometry remains reconstruction-grade until source plans are reviewed.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Tectonic layer planned around mud_brick, baked_brick; separates material expression, enclosure and structural reading for later Blender layer toggles.",
+        "review_status": "draft"
       }
     ],
     "analysis_observations": [
@@ -690,8 +720,8 @@
       "r2_prefix": "entries/nippur",
       "source_count": 3,
       "media_count": 4,
-      "model_count": 4,
-      "analysis_count": 3,
+      "model_count": 5,
+      "analysis_count": 5,
       "tag_count": 5
     }
   },
@@ -841,6 +871,11 @@
           "type": "structure",
           "r2_key": "models/eridu-and-susa/structure.glb",
           "review_status": "planned"
+        },
+        {
+          "type": "full",
+          "r2_key": "models/eridu-and-susa/full.glb",
+          "review_status": "planned"
         }
       ],
       "license": "own_work"
@@ -860,6 +895,16 @@
         "analysis_type": "source_reconstruction",
         "summary": "3D/Blender layer is planned as an analytical reconstruction layer; no exact measured model is claimed at this stage.",
         "review_status": "needs_source"
+      },
+      {
+        "analysis_type": "structure",
+        "summary": "Structure layer planned for Blender import: massive wall. Geometry remains reconstruction-grade until source plans are reviewed.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Tectonic layer planned around mud_brick, alluvial_clay; separates material expression, enclosure and structural reading for later Blender layer toggles.",
+        "review_status": "draft"
       }
     ],
     "analysis_observations": [
@@ -881,8 +926,8 @@
       "r2_prefix": "entries/eridu-and-susa",
       "source_count": 4,
       "media_count": 4,
-      "model_count": 4,
-      "analysis_count": 3,
+      "model_count": 5,
+      "analysis_count": 5,
       "tag_count": 6
     }
   },
@@ -1030,6 +1075,11 @@
           "type": "structure",
           "r2_key": "models/uruk-city/structure.glb",
           "review_status": "planned"
+        },
+        {
+          "type": "full",
+          "r2_key": "models/uruk-city/full.glb",
+          "review_status": "planned"
         }
       ],
       "license": "own_work"
@@ -1049,6 +1099,16 @@
         "analysis_type": "source_reconstruction",
         "summary": "3D/Blender layer is planned as an analytical reconstruction layer; no exact measured model is claimed at this stage.",
         "review_status": "needs_source"
+      },
+      {
+        "analysis_type": "structure",
+        "summary": "Structure layer planned for Blender import: platform. Geometry remains reconstruction-grade until source plans are reviewed.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Tectonic layer planned around mud_brick, baked_brick; separates material expression, enclosure and structural reading for later Blender layer toggles.",
+        "review_status": "draft"
       }
     ],
     "analysis_observations": [
@@ -1076,8 +1136,8 @@
       "r2_prefix": "entries/uruk-city",
       "source_count": 3,
       "media_count": 4,
-      "model_count": 4,
-      "analysis_count": 3,
+      "model_count": 5,
+      "analysis_count": 5,
       "tag_count": 6
     }
   },
@@ -1217,6 +1277,11 @@
           "type": "structure",
           "r2_key": "models/mohenjo-daro/structure.glb",
           "review_status": "planned"
+        },
+        {
+          "type": "full",
+          "r2_key": "models/mohenjo-daro/full.glb",
+          "review_status": "planned"
         }
       ],
       "license": "own_work"
@@ -1236,6 +1301,16 @@
         "analysis_type": "source_reconstruction",
         "summary": "3D/Blender layer is planned as an analytical reconstruction layer; no exact measured model is claimed at this stage.",
         "review_status": "needs_source"
+      },
+      {
+        "analysis_type": "structure",
+        "summary": "Structure layer planned for Blender import: platform. Geometry remains reconstruction-grade until source plans are reviewed.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Tectonic layer planned around baked_brick, mud_brick; separates material expression, enclosure and structural reading for later Blender layer toggles.",
+        "review_status": "draft"
       }
     ],
     "analysis_observations": [
@@ -1257,8 +1332,8 @@
       "r2_prefix": "entries/mohenjo-daro",
       "source_count": 3,
       "media_count": 4,
-      "model_count": 4,
-      "analysis_count": 3,
+      "model_count": 5,
+      "analysis_count": 5,
       "tag_count": 6
     }
   },
@@ -1470,6 +1545,11 @@
           "type": "structure",
           "r2_key": "models/ur/structure.glb",
           "review_status": "planned"
+        },
+        {
+          "type": "full",
+          "r2_key": "models/ur/full.glb",
+          "review_status": "planned"
         }
       ],
       "license": "own_work"
@@ -1489,6 +1569,16 @@
         "analysis_type": "source_reconstruction",
         "summary": "3D/Blender layer is planned as an analytical reconstruction layer; no exact measured model is claimed at this stage.",
         "review_status": "needs_source"
+      },
+      {
+        "analysis_type": "structure",
+        "summary": "Structure layer planned for Blender import: stepped mass. Geometry remains reconstruction-grade until source plans are reviewed.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Tectonic layer planned around mud_brick, baked_brick; separates material expression, enclosure and structural reading for later Blender layer toggles.",
+        "review_status": "draft"
       }
     ],
     "analysis_observations": [
@@ -1516,8 +1606,8 @@
       "r2_prefix": "entries/ur",
       "source_count": 4,
       "media_count": 4,
-      "model_count": 4,
-      "analysis_count": 3,
+      "model_count": 5,
+      "analysis_count": 5,
       "tag_count": 6
     }
   },
@@ -1660,6 +1750,11 @@
           "type": "structure",
           "r2_key": "models/forum-romanum/structure.glb",
           "review_status": "planned"
+        },
+        {
+          "type": "full",
+          "r2_key": "models/forum-romanum/full.glb",
+          "review_status": "planned"
         }
       ],
       "license": "own_work"
@@ -1679,6 +1774,16 @@
         "analysis_type": "source_reconstruction",
         "summary": "3D/Blender layer is planned as an analytical reconstruction layer; no exact measured model is claimed at this stage.",
         "review_status": "needs_source"
+      },
+      {
+        "analysis_type": "structure",
+        "summary": "Structure layer planned for Blender import: monumental ensemble. Geometry remains reconstruction-grade until source plans are reviewed.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Tectonic layer planned around travertine, tufa, brick; separates material expression, enclosure and structural reading for later Blender layer toggles.",
+        "review_status": "draft"
       }
     ],
     "analysis_observations": [
@@ -1706,8 +1811,8 @@
       "r2_prefix": "entries/forum-romanum",
       "source_count": 3,
       "media_count": 4,
-      "model_count": 4,
-      "analysis_count": 3,
+      "model_count": 5,
+      "analysis_count": 5,
       "tag_count": 6
     }
   },
@@ -1856,6 +1961,11 @@
           "type": "structure",
           "r2_key": "models/megara-hyblaea/structure.glb",
           "review_status": "planned"
+        },
+        {
+          "type": "full",
+          "r2_key": "models/megara-hyblaea/full.glb",
+          "review_status": "planned"
         }
       ],
       "license": "own_work"
@@ -1875,6 +1985,16 @@
         "analysis_type": "source_reconstruction",
         "summary": "3D/Blender layer is planned as an analytical reconstruction layer; no exact measured model is claimed at this stage.",
         "review_status": "needs_source"
+      },
+      {
+        "analysis_type": "structure",
+        "summary": "Structure layer planned for Blender import: masonry foundation. Geometry remains reconstruction-grade until source plans are reviewed.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Tectonic layer planned around limestone, masonry; separates material expression, enclosure and structural reading for later Blender layer toggles.",
+        "review_status": "draft"
       }
     ],
     "analysis_observations": [
@@ -1902,8 +2022,8 @@
       "r2_prefix": "entries/megara-hyblaea",
       "source_count": 4,
       "media_count": 4,
-      "model_count": 4,
-      "analysis_count": 3,
+      "model_count": 5,
+      "analysis_count": 5,
       "tag_count": 6
     }
   },
@@ -2043,6 +2163,11 @@
           "type": "structure",
           "r2_key": "models/agora-of-athens/structure.glb",
           "review_status": "planned"
+        },
+        {
+          "type": "full",
+          "r2_key": "models/agora-of-athens/full.glb",
+          "review_status": "planned"
         }
       ],
       "license": "own_work"
@@ -2062,6 +2187,16 @@
         "analysis_type": "source_reconstruction",
         "summary": "3D/Blender layer is planned as an analytical reconstruction layer; no exact measured model is claimed at this stage.",
         "review_status": "needs_source"
+      },
+      {
+        "analysis_type": "structure",
+        "summary": "Structure layer planned for Blender import: mass, load path and spatial support system. Geometry remains reconstruction-grade until source plans are reviewed.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Tectonic layer planned around limestone, marble; separates material expression, enclosure and structural reading for later Blender layer toggles.",
+        "review_status": "draft"
       }
     ],
     "analysis_observations": [
@@ -2095,8 +2230,8 @@
       "r2_prefix": "entries/agora-of-athens",
       "source_count": 3,
       "media_count": 4,
-      "model_count": 4,
-      "analysis_count": 3,
+      "model_count": 5,
+      "analysis_count": 5,
       "tag_count": 6
     }
   },
@@ -2236,6 +2371,11 @@
           "type": "structure",
           "r2_key": "models/milet/structure.glb",
           "review_status": "planned"
+        },
+        {
+          "type": "full",
+          "r2_key": "models/milet/full.glb",
+          "review_status": "planned"
         }
       ],
       "license": "own_work"
@@ -2255,6 +2395,16 @@
         "analysis_type": "source_reconstruction",
         "summary": "3D/Blender layer is planned as an analytical reconstruction layer; no exact measured model is claimed at this stage.",
         "review_status": "needs_source"
+      },
+      {
+        "analysis_type": "structure",
+        "summary": "Structure layer planned for Blender import: mass, load path and spatial support system. Geometry remains reconstruction-grade until source plans are reviewed.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Tectonic layer planned around limestone, marble, masonry; separates material expression, enclosure and structural reading for later Blender layer toggles.",
+        "review_status": "draft"
       }
     ],
     "analysis_observations": [
@@ -2282,8 +2432,8 @@
       "r2_prefix": "entries/milet",
       "source_count": 3,
       "media_count": 4,
-      "model_count": 4,
-      "analysis_count": 3,
+      "model_count": 5,
+      "analysis_count": 5,
       "tag_count": 5
     }
   },
@@ -2488,6 +2638,11 @@
           "type": "structure",
           "r2_key": "models/olynth/structure.glb",
           "review_status": "planned"
+        },
+        {
+          "type": "full",
+          "r2_key": "models/olynth/full.glb",
+          "review_status": "planned"
         }
       ],
       "license": "own_work"
@@ -2507,6 +2662,16 @@
         "analysis_type": "source_reconstruction",
         "summary": "3D/Blender layer is planned as an analytical reconstruction layer; no exact measured model is claimed at this stage.",
         "review_status": "needs_source"
+      },
+      {
+        "analysis_type": "structure",
+        "summary": "Structure layer planned for Blender import: mass, load path and spatial support system. Geometry remains reconstruction-grade until source plans are reviewed.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Tectonic layer planned around stone_foundations, mud_brick; separates material expression, enclosure and structural reading for later Blender layer toggles.",
+        "review_status": "draft"
       }
     ],
     "analysis_observations": [
@@ -2540,8 +2705,8 @@
       "r2_prefix": "entries/olynth",
       "source_count": 3,
       "media_count": 4,
-      "model_count": 4,
-      "analysis_count": 3,
+      "model_count": 5,
+      "analysis_count": 5,
       "tag_count": 5
     }
   },
@@ -2681,6 +2846,11 @@
           "type": "structure",
           "r2_key": "models/priene/structure.glb",
           "review_status": "planned"
+        },
+        {
+          "type": "full",
+          "r2_key": "models/priene/full.glb",
+          "review_status": "planned"
         }
       ],
       "license": "own_work"
@@ -2700,6 +2870,16 @@
         "analysis_type": "source_reconstruction",
         "summary": "3D/Blender layer is planned as an analytical reconstruction layer; no exact measured model is claimed at this stage.",
         "review_status": "needs_source"
+      },
+      {
+        "analysis_type": "structure",
+        "summary": "Structure layer planned for Blender import: terrace wall. Geometry remains reconstruction-grade until source plans are reviewed.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Tectonic layer planned around limestone, marble, masonry; separates material expression, enclosure and structural reading for later Blender layer toggles.",
+        "review_status": "draft"
       }
     ],
     "analysis_observations": [
@@ -2727,8 +2907,8 @@
       "r2_prefix": "entries/priene",
       "source_count": 3,
       "media_count": 4,
-      "model_count": 4,
-      "analysis_count": 3,
+      "model_count": 5,
+      "analysis_count": 5,
       "tag_count": 5
     }
   },
@@ -2869,6 +3049,11 @@
           "type": "structure",
           "r2_key": "models/dura-europos/structure.glb",
           "review_status": "planned"
+        },
+        {
+          "type": "full",
+          "r2_key": "models/dura-europos/full.glb",
+          "review_status": "planned"
         }
       ],
       "license": "own_work"
@@ -2888,6 +3073,16 @@
         "analysis_type": "source_reconstruction",
         "summary": "3D/Blender layer is planned as an analytical reconstruction layer; no exact measured model is claimed at this stage.",
         "review_status": "needs_source"
+      },
+      {
+        "analysis_type": "structure",
+        "summary": "Structure layer planned for Blender import: mass, load path and spatial support system. Geometry remains reconstruction-grade until source plans are reviewed.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Tectonic layer planned around mud_brick, stone, plaster; separates material expression, enclosure and structural reading for later Blender layer toggles.",
+        "review_status": "draft"
       }
     ],
     "analysis_observations": [
@@ -2915,8 +3110,8 @@
       "r2_prefix": "entries/dura-europos",
       "source_count": 3,
       "media_count": 4,
-      "model_count": 4,
-      "analysis_count": 3,
+      "model_count": 5,
+      "analysis_count": 5,
       "tag_count": 5
     }
   },
@@ -3059,6 +3254,11 @@
           "type": "structure",
           "r2_key": "models/pompeji/structure.glb",
           "review_status": "planned"
+        },
+        {
+          "type": "full",
+          "r2_key": "models/pompeji/full.glb",
+          "review_status": "planned"
         }
       ],
       "license": "own_work"
@@ -3078,6 +3278,16 @@
         "analysis_type": "source_reconstruction",
         "summary": "3D/Blender layer is planned as an analytical reconstruction layer; no exact measured model is claimed at this stage.",
         "review_status": "needs_source"
+      },
+      {
+        "analysis_type": "structure",
+        "summary": "Structure layer planned for Blender import: mass, load path and spatial support system. Geometry remains reconstruction-grade until source plans are reviewed.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Tectonic layer planned around tufa, brick, roman_concrete; separates material expression, enclosure and structural reading for later Blender layer toggles.",
+        "review_status": "draft"
       }
     ],
     "analysis_observations": [
@@ -3111,8 +3321,8 @@
       "r2_prefix": "entries/pompeji",
       "source_count": 3,
       "media_count": 4,
-      "model_count": 4,
-      "analysis_count": 3,
+      "model_count": 5,
+      "analysis_count": 5,
       "tag_count": 6
     }
   },
@@ -3252,6 +3462,11 @@
           "type": "structure",
           "r2_key": "models/timgad/structure.glb",
           "review_status": "planned"
+        },
+        {
+          "type": "full",
+          "r2_key": "models/timgad/full.glb",
+          "review_status": "planned"
         }
       ],
       "license": "own_work"
@@ -3271,6 +3486,16 @@
         "analysis_type": "source_reconstruction",
         "summary": "3D/Blender layer is planned as an analytical reconstruction layer; no exact measured model is claimed at this stage.",
         "review_status": "needs_source"
+      },
+      {
+        "analysis_type": "structure",
+        "summary": "Structure layer planned for Blender import: stone masonry. Geometry remains reconstruction-grade until source plans are reviewed.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Tectonic layer planned around limestone, stone_masonry; separates material expression, enclosure and structural reading for later Blender layer toggles.",
+        "review_status": "draft"
       }
     ],
     "analysis_observations": [
@@ -3298,8 +3523,8 @@
       "r2_prefix": "entries/timgad",
       "source_count": 3,
       "media_count": 4,
-      "model_count": 4,
-      "analysis_count": 3,
+      "model_count": 5,
+      "analysis_count": 5,
       "tag_count": 5
     }
   },
@@ -3664,6 +3889,11 @@
           "type": "structure",
           "r2_key": "models/siena/structure.glb",
           "review_status": "planned"
+        },
+        {
+          "type": "full",
+          "r2_key": "models/siena/full.glb",
+          "review_status": "planned"
         }
       ],
       "license": "own_work"
@@ -3683,6 +3913,16 @@
         "analysis_type": "source_reconstruction",
         "summary": "3D/Blender layer is planned as an analytical reconstruction layer; no exact measured model is claimed at this stage.",
         "review_status": "needs_source"
+      },
+      {
+        "analysis_type": "structure",
+        "summary": "Structure layer planned for Blender import: mass, load path and spatial support system. Geometry remains reconstruction-grade until source plans are reviewed.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Tectonic layer planned around brick, stone, terracotta; separates material expression, enclosure and structural reading for later Blender layer toggles.",
+        "review_status": "draft"
       }
     ],
     "analysis_observations": [
@@ -3716,8 +3956,8 @@
       "r2_prefix": "entries/siena",
       "source_count": 3,
       "media_count": 4,
-      "model_count": 4,
-      "analysis_count": 3,
+      "model_count": 5,
+      "analysis_count": 5,
       "tag_count": 6
     }
   },
@@ -4036,8 +4276,150 @@
         "reliability_level": "secondary_source",
         "rights_status": "licensed",
         "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY-SA 3.0."
+      },
+      {
+        "source_type": "website",
+        "title": "Musei Civici Fiorentini: Palazzo Medici Riccardi",
+        "url": "https://musefirenze.it/en/museums/palazzo-medici-riccardi/",
+        "reliability_level": "primary_source",
+        "rights_status": "licensed",
+        "notes": "Institutional public source for the palazzo and its civic/museum context."
       }
-    ]
+    ],
+    "geo": {
+      "lat": 43.775,
+      "lon": 11.256,
+      "region": "Florence",
+      "precision": "site"
+    },
+    "materials": {
+      "primary": [
+        "rusticated_stone",
+        "masonry",
+        "pietra_forte"
+      ],
+      "secondary": [
+        "courtyard_stone",
+        "timber_roof",
+        "fresco"
+      ],
+      "notes": "The Florentine palazzo is read through heavy rusticated masonry, hierarchical facade courses, courtyard order and urban power representation."
+    },
+    "program": {
+      "type": "urban_palace",
+      "subtype": "renaissance_family_palazzo",
+      "public_access": "public"
+    },
+    "context": {
+      "topography": "flat_urban_fabric",
+      "setting": "historic_city_center",
+      "heritage_context": [
+        "renaissance_city",
+        "medici_patronage",
+        "urban_palazzo"
+      ],
+      "landscape_relation": [
+        "street_edge",
+        "courtyard",
+        "city_power_network"
+      ]
+    },
+    "database_tags": [
+      "material:rusticated_stone",
+      "material:masonry",
+      "typology:palazzo",
+      "typology:courtyard",
+      "context:renaissance_city",
+      "blender:facade_model_candidate"
+    ],
+    "model_3d": {
+      "source_basis": "Public hero/source metadata plus lecture-derived historical framework; geometry remains planned/reconstruction-grade until source plans are reviewed.",
+      "parts": [
+        {
+          "type": "low",
+          "r2_key": "models/palazzo-medici-riccardi/low.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "mass",
+          "r2_key": "models/palazzo-medici-riccardi/mass.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "site",
+          "r2_key": "models/palazzo-medici-riccardi/site.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "structure",
+          "r2_key": "models/palazzo-medici-riccardi/structure.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "full",
+          "r2_key": "models/palazzo-medici-riccardi/full.glb",
+          "review_status": "planned"
+        }
+      ],
+      "license": "own_work"
+    },
+    "analysis_layers": [
+      {
+        "analysis_type": "material_system",
+        "summary": "Primary material reading: rusticated_stone, masonry, pietra_forte. The Florentine palazzo is read through heavy rusticated masonry, hierarchical facade courses, courtyard order and urban power representation.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Database classification places Palazzo Medici Riccardi in renaissance_family_palazzo, with context tags renaissance_city, medici_patronage, urban_palazzo.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "source_reconstruction",
+        "summary": "3D/Blender layer is planned as an analytical reconstruction layer; no exact measured model is claimed at this stage.",
+        "review_status": "needs_source"
+      },
+      {
+        "analysis_type": "structure",
+        "summary": "Structure layer planned for Blender import: mass, load path and spatial support system. Geometry remains reconstruction-grade until source plans are reviewed.",
+        "review_status": "draft"
+      }
+    ],
+    "analysis_observations": [
+      {
+        "analysis_type": "material_tag",
+        "label": "material:rusticated_stone",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "material_tag",
+        "label": "material:masonry",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:palazzo",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:courtyard",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      }
+    ],
+    "database_profile": {
+      "status": "draft",
+      "r2_prefix": "entries/palazzo-medici-riccardi",
+      "source_count": 3,
+      "media_count": 4,
+      "model_count": 5,
+      "analysis_count": 4,
+      "tag_count": 6
+    }
   },
   {
     "id": "city-in-layers",
@@ -4150,8 +4532,160 @@
         "reliability_level": "secondary_source",
         "rights_status": "licensed",
         "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY-SA 3.0."
+      },
+      {
+        "source_type": "website",
+        "title": "Medici Villas and Gardens in Tuscany / UNESCO",
+        "url": "https://whc.unesco.org/en/list/175/",
+        "reliability_level": "primary_source",
+        "rights_status": "licensed",
+        "notes": "UNESCO context for Medici villa landscape systems in Tuscany."
       }
-    ]
+    ],
+    "geo": {
+      "lat": 43.805,
+      "lon": 11.296,
+      "region": "Fiesole / Florence",
+      "precision": "site"
+    },
+    "materials": {
+      "primary": [
+        "stone_masonry",
+        "terrace_walls",
+        "vegetation"
+      ],
+      "secondary": [
+        "plaster",
+        "garden_soil",
+        "water"
+      ],
+      "notes": "The villa is modeled as architecture plus terraced landscape: masonry house, retaining walls, planted garden rooms and framed views toward Florence."
+    },
+    "program": {
+      "type": "villa_landscape",
+      "subtype": "renaissance_terraced_villa_garden",
+      "public_access": "private"
+    },
+    "context": {
+      "topography": "hillside",
+      "setting": "periurban_villa_landscape",
+      "heritage_context": [
+        "renaissance_villa",
+        "garden_history",
+        "medici_landscape"
+      ],
+      "landscape_relation": [
+        "terraces",
+        "view_axis",
+        "hillside_garden"
+      ]
+    },
+    "database_tags": [
+      "material:stone_masonry",
+      "typology:villa_garden",
+      "topography:hillside",
+      "landscape:terrace",
+      "theme:view",
+      "blender:terrain_model_candidate"
+    ],
+    "model_3d": {
+      "source_basis": "Public hero/source metadata plus lecture-derived historical framework; geometry remains planned/reconstruction-grade until source plans are reviewed.",
+      "parts": [
+        {
+          "type": "low",
+          "r2_key": "models/villa-medici-in-fiesole/low.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "site",
+          "r2_key": "models/villa-medici-in-fiesole/site.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "mass",
+          "r2_key": "models/villa-medici-in-fiesole/mass.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "material",
+          "r2_key": "models/villa-medici-in-fiesole/material.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "full",
+          "r2_key": "models/villa-medici-in-fiesole/full.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "structure",
+          "r2_key": "models/villa-medici-in-fiesole/structure.glb",
+          "review_status": "planned"
+        }
+      ],
+      "license": "own_work"
+    },
+    "analysis_layers": [
+      {
+        "analysis_type": "material_system",
+        "summary": "Primary material reading: stone_masonry, terrace_walls, vegetation. The villa is modeled as architecture plus terraced landscape: masonry house, retaining walls, planted garden rooms and framed views toward Florence.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "landscape_system",
+        "summary": "Database classification places Villa Medici in Fiesole in renaissance_terraced_villa_garden, with context tags renaissance_villa, garden_history, medici_landscape.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "source_reconstruction",
+        "summary": "3D/Blender layer is planned as an analytical reconstruction layer; no exact measured model is claimed at this stage.",
+        "review_status": "needs_source"
+      },
+      {
+        "analysis_type": "structure",
+        "summary": "Structure layer planned for Blender import: landscape support and grading system. Geometry remains reconstruction-grade until source plans are reviewed.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Tectonic layer planned around stone_masonry, terrace_walls, vegetation; separates material expression, enclosure and structural reading for later Blender layer toggles.",
+        "review_status": "draft"
+      }
+    ],
+    "analysis_observations": [
+      {
+        "analysis_type": "material_tag",
+        "label": "material:stone_masonry",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:villa_garden",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "topography:hillside",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "theme:view",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      }
+    ],
+    "database_profile": {
+      "status": "draft",
+      "r2_prefix": "entries/villa-medici-in-fiesole",
+      "source_count": 3,
+      "media_count": 4,
+      "model_count": 6,
+      "analysis_count": 5,
+      "tag_count": 6
+    }
   },
   {
     "id": "sforzinda",
@@ -4214,8 +4748,144 @@
         "reliability_level": "secondary_source",
         "rights_status": "public_domain",
         "notes": "Auto-selected hero image candidate. Score: 0.98. License: Public domain."
+      },
+      {
+        "source_type": "website",
+        "title": "Filarete and Sforzinda / Treccani reference",
+        "url": "https://www.treccani.it/enciclopedia/filarete/",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Public reference for Filarete and the Sforzinda ideal-city concept."
       }
-    ]
+    ],
+    "geo": {
+      "region": "Italy / Renaissance theoretical city",
+      "precision": "approximate"
+    },
+    "materials": {
+      "primary": [
+        "paper",
+        "ink",
+        "geometric_diagram"
+      ],
+      "secondary": [
+        "ideal_city_model"
+      ],
+      "notes": "Sforzinda is a textual/drawn ideal city; material is manuscript/diagram, while 3D value lies in reconstructing geometry and urban order."
+    },
+    "program": {
+      "type": "ideal_city",
+      "subtype": "renaissance_star_plan_theory",
+      "public_access": "public"
+    },
+    "context": {
+      "topography": "theoretical_plain",
+      "setting": "renaissance_treatise_context",
+      "heritage_context": [
+        "ideal_city",
+        "renaissance_urban_theory",
+        "geometric_planning"
+      ],
+      "landscape_relation": [
+        "radial_geometry",
+        "fortification_logic",
+        "symbolic_order"
+      ]
+    },
+    "database_tags": [
+      "medium:drawing",
+      "typology:ideal_city",
+      "geometry:star_plan",
+      "theme:utopia",
+      "blender:diagram_to_mass_candidate"
+    ],
+    "model_3d": {
+      "source_basis": "Public hero/source metadata plus lecture-derived historical framework; geometry remains planned/reconstruction-grade until source plans are reviewed.",
+      "parts": [
+        {
+          "type": "low",
+          "r2_key": "models/sforzinda/low.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "mass",
+          "r2_key": "models/sforzinda/mass.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "site",
+          "r2_key": "models/sforzinda/site.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "structure",
+          "r2_key": "models/sforzinda/structure.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "full",
+          "r2_key": "models/sforzinda/full.glb",
+          "review_status": "planned"
+        }
+      ],
+      "license": "own_work"
+    },
+    "analysis_layers": [
+      {
+        "analysis_type": "material_system",
+        "summary": "Primary material reading: paper, ink, geometric_diagram. Sforzinda is a textual/drawn ideal city; material is manuscript/diagram, while 3D value lies in reconstructing geometry and urban order.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "urban_context",
+        "summary": "Database classification places Sforzinda in renaissance_star_plan_theory, with context tags ideal_city, renaissance_urban_theory, geometric_planning.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "source_reconstruction",
+        "summary": "3D/Blender layer is planned as an analytical reconstruction layer; no exact measured model is claimed at this stage.",
+        "review_status": "needs_source"
+      },
+      {
+        "analysis_type": "structure",
+        "summary": "Structure layer planned for Blender import: mass, load path and spatial support system. Geometry remains reconstruction-grade until source plans are reviewed.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Tectonic layer planned around paper, ink, geometric_diagram; separates material expression, enclosure and structural reading for later Blender layer toggles.",
+        "review_status": "draft"
+      }
+    ],
+    "analysis_observations": [
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:ideal_city",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "geometry:star_plan",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "theme:utopia",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      }
+    ],
+    "database_profile": {
+      "status": "draft",
+      "r2_prefix": "entries/sforzinda",
+      "source_count": 3,
+      "media_count": 4,
+      "model_count": 5,
+      "analysis_count": 5,
+      "tag_count": 5
+    }
   },
   {
     "id": "ptolemy-geographia",
@@ -4357,6 +5027,16 @@
           "type": "material",
           "r2_key": "models/ptolemy-geographia/material.glb",
           "review_status": "planned"
+        },
+        {
+          "type": "full",
+          "r2_key": "models/ptolemy-geographia/full.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "structure",
+          "r2_key": "models/ptolemy-geographia/structure.glb",
+          "review_status": "planned"
         }
       ],
       "license": "own_work"
@@ -4376,6 +5056,16 @@
         "analysis_type": "source_reconstruction",
         "summary": "3D/Blender layer is planned as an analytical reconstruction layer; no exact measured model is claimed at this stage.",
         "review_status": "needs_source"
+      },
+      {
+        "analysis_type": "structure",
+        "summary": "Structure layer planned for Blender import: mass, load path and spatial support system. Geometry remains reconstruction-grade until source plans are reviewed.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Tectonic layer planned around parchment, ink, paper; separates material expression, enclosure and structural reading for later Blender layer toggles.",
+        "review_status": "draft"
       }
     ],
     "analysis_observations": [
@@ -4397,8 +5087,8 @@
       "r2_prefix": "entries/ptolemy-geographia",
       "source_count": 4,
       "media_count": 4,
-      "model_count": 3,
-      "analysis_count": 3,
+      "model_count": 5,
+      "analysis_count": 5,
       "tag_count": 5
     }
   },
@@ -4464,8 +5154,160 @@
         "reliability_level": "secondary_source",
         "rights_status": "licensed",
         "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY-SA 3.0."
+      },
+      {
+        "source_type": "website",
+        "title": "UNESCO World Heritage Centre: Villa d’Este, Tivoli",
+        "url": "https://whc.unesco.org/en/list/1025/",
+        "reliability_level": "primary_source",
+        "rights_status": "licensed",
+        "notes": "UNESCO reference for Villa d’Este and its Renaissance garden/water system."
       }
-    ]
+    ],
+    "geo": {
+      "lat": 41.963,
+      "lon": 12.797,
+      "region": "Tivoli",
+      "precision": "site"
+    },
+    "materials": {
+      "primary": [
+        "stone_masonry",
+        "water",
+        "vegetation"
+      ],
+      "secondary": [
+        "terrace_walls",
+        "fountains",
+        "stucco"
+      ],
+      "notes": "Villa d’Este is read as hydraulic landscape architecture: terraces, stone retaining systems, fountains, water axes and garden rooms."
+    },
+    "program": {
+      "type": "villa_landscape",
+      "subtype": "renaissance_hydraulic_garden",
+      "public_access": "public"
+    },
+    "context": {
+      "topography": "steep_hillside",
+      "setting": "historic_garden",
+      "heritage_context": [
+        "unesco_world_heritage_site",
+        "renaissance_garden",
+        "hydraulic_landscape"
+      ],
+      "landscape_relation": [
+        "water_axis",
+        "terraces",
+        "garden_theatre"
+      ]
+    },
+    "database_tags": [
+      "material:stone_masonry",
+      "material:water",
+      "typology:villa_garden",
+      "landscape:hydraulic_garden",
+      "topography:hillside",
+      "blender:water_system_candidate"
+    ],
+    "model_3d": {
+      "source_basis": "Public hero/source metadata plus lecture-derived historical framework; geometry remains planned/reconstruction-grade until source plans are reviewed.",
+      "parts": [
+        {
+          "type": "low",
+          "r2_key": "models/villa-d-este/low.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "site",
+          "r2_key": "models/villa-d-este/site.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "mass",
+          "r2_key": "models/villa-d-este/mass.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "material",
+          "r2_key": "models/villa-d-este/material.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "full",
+          "r2_key": "models/villa-d-este/full.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "structure",
+          "r2_key": "models/villa-d-este/structure.glb",
+          "review_status": "planned"
+        }
+      ],
+      "license": "own_work"
+    },
+    "analysis_layers": [
+      {
+        "analysis_type": "material_system",
+        "summary": "Primary material reading: stone_masonry, water, vegetation. Villa d’Este is read as hydraulic landscape architecture: terraces, stone retaining systems, fountains, water axes and garden rooms.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "landscape_system",
+        "summary": "Database classification places Villa d'Este in renaissance_hydraulic_garden, with context tags unesco_world_heritage_site, renaissance_garden, hydraulic_landscape.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "source_reconstruction",
+        "summary": "3D/Blender layer is planned as an analytical reconstruction layer; no exact measured model is claimed at this stage.",
+        "review_status": "needs_source"
+      },
+      {
+        "analysis_type": "structure",
+        "summary": "Structure layer planned for Blender import: landscape support and grading system. Geometry remains reconstruction-grade until source plans are reviewed.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Tectonic layer planned around stone_masonry, water, vegetation; separates material expression, enclosure and structural reading for later Blender layer toggles.",
+        "review_status": "draft"
+      }
+    ],
+    "analysis_observations": [
+      {
+        "analysis_type": "material_tag",
+        "label": "material:stone_masonry",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "material_tag",
+        "label": "material:water",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:villa_garden",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "topography:hillside",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      }
+    ],
+    "database_profile": {
+      "status": "draft",
+      "r2_prefix": "entries/villa-d-este",
+      "source_count": 3,
+      "media_count": 4,
+      "model_count": 6,
+      "analysis_count": 5,
+      "tag_count": 6
+    }
   },
   {
     "id": "garden-of-tuileries",
@@ -4528,8 +5370,159 @@
         "reliability_level": "secondary_source",
         "rights_status": "public_domain",
         "notes": "Auto-selected hero image candidate. Score: 0.85. License: Public domain."
+      },
+      {
+        "source_type": "website",
+        "title": "Musée du Louvre: Tuileries Garden",
+        "url": "https://www.louvre.fr/en/explore/the-palace/the-tuileries-garden",
+        "reliability_level": "primary_source",
+        "rights_status": "licensed",
+        "notes": "Institutional public source for the Tuileries Garden as part of the Louvre/Paris landscape."
       }
-    ]
+    ],
+    "geo": {
+      "lat": 48.863,
+      "lon": 2.327,
+      "region": "Paris",
+      "precision": "site"
+    },
+    "materials": {
+      "primary": [
+        "vegetation",
+        "gravel",
+        "stone_edges"
+      ],
+      "secondary": [
+        "water_basin",
+        "axis"
+      ],
+      "notes": "Tuileries is modeled as a formal garden field: axial paths, parterres, basins, tree masses and royal/urban alignments."
+    },
+    "program": {
+      "type": "public_space",
+      "subtype": "formal_royal_garden",
+      "public_access": "public"
+    },
+    "context": {
+      "topography": "flat_urban_site",
+      "setting": "central_paris_royal_axis",
+      "heritage_context": [
+        "french_formal_garden",
+        "royal_landscape",
+        "urban_axis"
+      ],
+      "landscape_relation": [
+        "louvre_axis",
+        "parterre",
+        "basin_sequence"
+      ]
+    },
+    "database_tags": [
+      "material:vegetation",
+      "material:gravel",
+      "typology:formal_garden",
+      "theme:axis",
+      "context:royal_landscape",
+      "blender:landscape_axis_candidate"
+    ],
+    "model_3d": {
+      "source_basis": "Public hero/source metadata plus lecture-derived historical framework; geometry remains planned/reconstruction-grade until source plans are reviewed.",
+      "parts": [
+        {
+          "type": "low",
+          "r2_key": "models/garden-of-tuileries/low.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "site",
+          "r2_key": "models/garden-of-tuileries/site.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "mass",
+          "r2_key": "models/garden-of-tuileries/mass.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "material",
+          "r2_key": "models/garden-of-tuileries/material.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "full",
+          "r2_key": "models/garden-of-tuileries/full.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "structure",
+          "r2_key": "models/garden-of-tuileries/structure.glb",
+          "review_status": "planned"
+        }
+      ],
+      "license": "own_work"
+    },
+    "analysis_layers": [
+      {
+        "analysis_type": "material_system",
+        "summary": "Primary material reading: vegetation, gravel, stone_edges. Tuileries is modeled as a formal garden field: axial paths, parterres, basins, tree masses and royal/urban alignments.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "landscape_system",
+        "summary": "Database classification places Garden of Tuileries in formal_royal_garden, with context tags french_formal_garden, royal_landscape, urban_axis.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "source_reconstruction",
+        "summary": "3D/Blender layer is planned as an analytical reconstruction layer; no exact measured model is claimed at this stage.",
+        "review_status": "needs_source"
+      },
+      {
+        "analysis_type": "structure",
+        "summary": "Structure layer planned for Blender import: landscape support and grading system. Geometry remains reconstruction-grade until source plans are reviewed.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Tectonic layer planned around vegetation, gravel, stone_edges; separates material expression, enclosure and structural reading for later Blender layer toggles.",
+        "review_status": "draft"
+      }
+    ],
+    "analysis_observations": [
+      {
+        "analysis_type": "material_tag",
+        "label": "material:vegetation",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "material_tag",
+        "label": "material:gravel",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:formal_garden",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "theme:axis",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      }
+    ],
+    "database_profile": {
+      "status": "draft",
+      "r2_prefix": "entries/garden-of-tuileries",
+      "source_count": 3,
+      "media_count": 4,
+      "model_count": 6,
+      "analysis_count": 5,
+      "tag_count": 6
+    }
   },
   {
     "id": "villa-lante",
@@ -4592,8 +5585,160 @@
         "reliability_level": "secondary_source",
         "rights_status": "licensed",
         "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY 2.0."
+      },
+      {
+        "source_type": "website",
+        "title": "Villa Lante / Italian Ministry of Culture",
+        "url": "https://cultura.gov.it/luogo/villa-lante",
+        "reliability_level": "primary_source",
+        "rights_status": "licensed",
+        "notes": "Institutional public source for Villa Lante and its garden heritage."
       }
-    ]
+    ],
+    "geo": {
+      "lat": 42.427,
+      "lon": 12.153,
+      "region": "Bagnaia / Viterbo",
+      "precision": "site"
+    },
+    "materials": {
+      "primary": [
+        "stone_masonry",
+        "water",
+        "vegetation"
+      ],
+      "secondary": [
+        "terrace_walls",
+        "fountains",
+        "parterre"
+      ],
+      "notes": "Villa Lante is read as a compact Renaissance water garden with paired casino buildings, terraces, fountains and a controlled descent of water."
+    },
+    "program": {
+      "type": "villa_landscape",
+      "subtype": "renaissance_water_garden",
+      "public_access": "public"
+    },
+    "context": {
+      "topography": "gentle_slope",
+      "setting": "historic_garden",
+      "heritage_context": [
+        "renaissance_garden",
+        "mannerist_garden",
+        "water_axis"
+      ],
+      "landscape_relation": [
+        "water_chain",
+        "terrace_sequence",
+        "parterre_order"
+      ]
+    },
+    "database_tags": [
+      "material:stone_masonry",
+      "material:water",
+      "typology:villa_garden",
+      "landscape:water_axis",
+      "topography:slope",
+      "blender:water_system_candidate"
+    ],
+    "model_3d": {
+      "source_basis": "Public hero/source metadata plus lecture-derived historical framework; geometry remains planned/reconstruction-grade until source plans are reviewed.",
+      "parts": [
+        {
+          "type": "low",
+          "r2_key": "models/villa-lante/low.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "site",
+          "r2_key": "models/villa-lante/site.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "mass",
+          "r2_key": "models/villa-lante/mass.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "material",
+          "r2_key": "models/villa-lante/material.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "full",
+          "r2_key": "models/villa-lante/full.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "structure",
+          "r2_key": "models/villa-lante/structure.glb",
+          "review_status": "planned"
+        }
+      ],
+      "license": "own_work"
+    },
+    "analysis_layers": [
+      {
+        "analysis_type": "material_system",
+        "summary": "Primary material reading: stone_masonry, water, vegetation. Villa Lante is read as a compact Renaissance water garden with paired casino buildings, terraces, fountains and a controlled descent of water.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "landscape_system",
+        "summary": "Database classification places Villa Lante in renaissance_water_garden, with context tags renaissance_garden, mannerist_garden, water_axis.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "source_reconstruction",
+        "summary": "3D/Blender layer is planned as an analytical reconstruction layer; no exact measured model is claimed at this stage.",
+        "review_status": "needs_source"
+      },
+      {
+        "analysis_type": "structure",
+        "summary": "Structure layer planned for Blender import: landscape support and grading system. Geometry remains reconstruction-grade until source plans are reviewed.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Tectonic layer planned around stone_masonry, water, vegetation; separates material expression, enclosure and structural reading for later Blender layer toggles.",
+        "review_status": "draft"
+      }
+    ],
+    "analysis_observations": [
+      {
+        "analysis_type": "material_tag",
+        "label": "material:stone_masonry",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "material_tag",
+        "label": "material:water",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:villa_garden",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "topography:slope",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      }
+    ],
+    "database_profile": {
+      "status": "draft",
+      "r2_prefix": "entries/villa-lante",
+      "source_count": 3,
+      "media_count": 4,
+      "model_count": 6,
+      "analysis_count": 5,
+      "tag_count": 6
+    }
   },
   {
     "id": "mercator-world-atlas",
@@ -4736,6 +5881,16 @@
           "type": "material",
           "r2_key": "models/mercator-world-atlas/material.glb",
           "review_status": "planned"
+        },
+        {
+          "type": "full",
+          "r2_key": "models/mercator-world-atlas/full.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "structure",
+          "r2_key": "models/mercator-world-atlas/structure.glb",
+          "review_status": "planned"
         }
       ],
       "license": "own_work"
@@ -4755,6 +5910,16 @@
         "analysis_type": "source_reconstruction",
         "summary": "3D/Blender layer is planned as an analytical reconstruction layer; no exact measured model is claimed at this stage.",
         "review_status": "needs_source"
+      },
+      {
+        "analysis_type": "structure",
+        "summary": "Structure layer planned for Blender import: mass, load path and spatial support system. Geometry remains reconstruction-grade until source plans are reviewed.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Tectonic layer planned around paper, ink, engraving; separates material expression, enclosure and structural reading for later Blender layer toggles.",
+        "review_status": "draft"
       }
     ],
     "analysis_observations": [
@@ -4782,8 +5947,8 @@
       "r2_prefix": "entries/mercator-world-atlas",
       "source_count": 4,
       "media_count": 4,
-      "model_count": 3,
-      "analysis_count": 3,
+      "model_count": 5,
+      "analysis_count": 5,
       "tag_count": 6
     }
   },
@@ -4946,8 +6111,149 @@
         "reliability_level": "secondary_source",
         "rights_status": "public_domain",
         "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC0."
+      },
+      {
+        "source_type": "website",
+        "title": "UNESCO World Heritage Centre: Venetian Works of Defence",
+        "url": "https://whc.unesco.org/en/list/1533/",
+        "reliability_level": "primary_source",
+        "rights_status": "licensed",
+        "notes": "UNESCO reference for Palmanova within the Venetian defence system."
       }
-    ]
+    ],
+    "geo": {
+      "lat": 45.906,
+      "lon": 13.309,
+      "region": "Friuli Venezia Giulia",
+      "precision": "site"
+    },
+    "materials": {
+      "primary": [
+        "earthworks",
+        "brick_masonry",
+        "stone_masonry"
+      ],
+      "secondary": [
+        "water_moat",
+        "grass_rampart"
+      ],
+      "notes": "Palmanova is an ideal fortress city where earthwork ramparts, bastions, radial streets and central piazza form one geometric defensive machine."
+    },
+    "program": {
+      "type": "fortress_city",
+      "subtype": "venetian_star_fort_city",
+      "public_access": "public"
+    },
+    "context": {
+      "topography": "flat_plain",
+      "setting": "fortified_urban_landscape",
+      "heritage_context": [
+        "unesco_world_heritage_site",
+        "venetian_defence_system",
+        "star_fort"
+      ],
+      "landscape_relation": [
+        "bastion_ring",
+        "radial_plan",
+        "military_plain"
+      ]
+    },
+    "database_tags": [
+      "material:earthworks",
+      "material:brick_masonry",
+      "typology:star_fort",
+      "geometry:radial_plan",
+      "theme:defense",
+      "blender:fortification_model_candidate"
+    ],
+    "model_3d": {
+      "source_basis": "Public hero/source metadata plus lecture-derived historical framework; geometry remains planned/reconstruction-grade until source plans are reviewed.",
+      "parts": [
+        {
+          "type": "low",
+          "r2_key": "models/fortezza-di-palmanova/low.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "mass",
+          "r2_key": "models/fortezza-di-palmanova/mass.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "site",
+          "r2_key": "models/fortezza-di-palmanova/site.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "structure",
+          "r2_key": "models/fortezza-di-palmanova/structure.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "full",
+          "r2_key": "models/fortezza-di-palmanova/full.glb",
+          "review_status": "planned"
+        }
+      ],
+      "license": "own_work"
+    },
+    "analysis_layers": [
+      {
+        "analysis_type": "material_system",
+        "summary": "Primary material reading: earthworks, brick_masonry, stone_masonry. Palmanova is an ideal fortress city where earthwork ramparts, bastions, radial streets and central piazza form one geometric defensive machine.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Database classification places Fortezza di Palmanova in venetian_star_fort_city, with context tags unesco_world_heritage_site, venetian_defence_system, star_fort.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "source_reconstruction",
+        "summary": "3D/Blender layer is planned as an analytical reconstruction layer; no exact measured model is claimed at this stage.",
+        "review_status": "needs_source"
+      },
+      {
+        "analysis_type": "structure",
+        "summary": "Structure layer planned for Blender import: mass, load path and spatial support system. Geometry remains reconstruction-grade until source plans are reviewed.",
+        "review_status": "draft"
+      }
+    ],
+    "analysis_observations": [
+      {
+        "analysis_type": "material_tag",
+        "label": "material:earthworks",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "material_tag",
+        "label": "material:brick_masonry",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:star_fort",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "geometry:radial_plan",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      }
+    ],
+    "database_profile": {
+      "status": "draft",
+      "r2_prefix": "entries/fortezza-di-palmanova",
+      "source_count": 3,
+      "media_count": 4,
+      "model_count": 5,
+      "analysis_count": 4,
+      "tag_count": 6
+    }
   },
   {
     "id": "piazza-del-popolo",
@@ -5012,8 +6318,154 @@
         "reliability_level": "secondary_source",
         "rights_status": "licensed",
         "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY 4.0."
+      },
+      {
+        "source_type": "website",
+        "title": "Sovrintendenza Capitolina: Piazza del Popolo",
+        "url": "https://www.sovraintendenzaroma.it/i_luoghi/roma_medioevale_e_moderna/piazze/piazza_del_popolo",
+        "reliability_level": "primary_source",
+        "rights_status": "licensed",
+        "notes": "Municipal public source for Piazza del Popolo and its urban-historical context."
       }
-    ]
+    ],
+    "geo": {
+      "lat": 41.911,
+      "lon": 12.476,
+      "region": "Rome",
+      "precision": "site"
+    },
+    "materials": {
+      "primary": [
+        "stone_paving",
+        "travertine",
+        "masonry"
+      ],
+      "secondary": [
+        "obelisk",
+        "fountain_water"
+      ],
+      "notes": "Piazza del Popolo is a baroque/urban threshold: paving field, twin churches, obelisk, gates and radiating streets produce an urban orientation device."
+    },
+    "program": {
+      "type": "public_space",
+      "subtype": "baroque_urban_piazza",
+      "public_access": "public"
+    },
+    "context": {
+      "topography": "flat_urban_node",
+      "setting": "historic_city_gateway",
+      "heritage_context": [
+        "baroque_city",
+        "urban_axis",
+        "roman_piazza"
+      ],
+      "landscape_relation": [
+        "three_street_fan",
+        "obelisk_center",
+        "city_gate"
+      ]
+    },
+    "database_tags": [
+      "material:stone_paving",
+      "typology:piazza",
+      "geometry:radial_axis",
+      "theme:baroque_city",
+      "context:urban_gateway",
+      "blender:urban_node_candidate"
+    ],
+    "model_3d": {
+      "source_basis": "Public hero/source metadata plus lecture-derived historical framework; geometry remains planned/reconstruction-grade until source plans are reviewed.",
+      "parts": [
+        {
+          "type": "low",
+          "r2_key": "models/piazza-del-popolo/low.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "site",
+          "r2_key": "models/piazza-del-popolo/site.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "mass",
+          "r2_key": "models/piazza-del-popolo/mass.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "structure",
+          "r2_key": "models/piazza-del-popolo/structure.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "full",
+          "r2_key": "models/piazza-del-popolo/full.glb",
+          "review_status": "planned"
+        }
+      ],
+      "license": "own_work"
+    },
+    "analysis_layers": [
+      {
+        "analysis_type": "material_system",
+        "summary": "Primary material reading: stone_paving, travertine, masonry. Piazza del Popolo is a baroque/urban threshold: paving field, twin churches, obelisk, gates and radiating streets produce an urban orientation device.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "urban_context",
+        "summary": "Database classification places Piazza del Popolo in baroque_urban_piazza, with context tags baroque_city, urban_axis, roman_piazza.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "source_reconstruction",
+        "summary": "3D/Blender layer is planned as an analytical reconstruction layer; no exact measured model is claimed at this stage.",
+        "review_status": "needs_source"
+      },
+      {
+        "analysis_type": "structure",
+        "summary": "Structure layer planned for Blender import: mass, load path and spatial support system. Geometry remains reconstruction-grade until source plans are reviewed.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Tectonic layer planned around stone_paving, travertine, masonry; separates material expression, enclosure and structural reading for later Blender layer toggles.",
+        "review_status": "draft"
+      }
+    ],
+    "analysis_observations": [
+      {
+        "analysis_type": "material_tag",
+        "label": "material:stone_paving",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:piazza",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "geometry:radial_axis",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "theme:baroque_city",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      }
+    ],
+    "database_profile": {
+      "status": "draft",
+      "r2_prefix": "entries/piazza-del-popolo",
+      "source_count": 3,
+      "media_count": 4,
+      "model_count": 5,
+      "analysis_count": 5,
+      "tag_count": 6
+    }
   },
   {
     "id": "versailles-gardens",
@@ -5139,8 +6591,155 @@
         "reliability_level": "secondary_source",
         "rights_status": "licensed",
         "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY-SA 3.0."
+      },
+      {
+        "source_type": "website",
+        "title": "Vatican: Saint Peter’s Basilica and Square",
+        "url": "https://www.basilicasanpietro.va/en.html",
+        "reliability_level": "primary_source",
+        "rights_status": "licensed",
+        "notes": "Official Vatican public source for the basilica/square complex."
       }
-    ]
+    ],
+    "geo": {
+      "lat": 41.902,
+      "lon": 12.457,
+      "region": "Vatican City / Rome",
+      "precision": "site"
+    },
+    "materials": {
+      "primary": [
+        "travertine",
+        "stone_paving",
+        "masonry"
+      ],
+      "secondary": [
+        "colonnade",
+        "fountain_water",
+        "obelisk"
+      ],
+      "notes": "St Peter’s Square is a ritual urban space: elliptical colonnades, axial approach, obelisk and paving define crowd, procession and symbolic orientation."
+    },
+    "program": {
+      "type": "public_space",
+      "subtype": "baroque_ritual_square",
+      "public_access": "public"
+    },
+    "context": {
+      "topography": "flat_urban_forecourt",
+      "setting": "vatican_civic_ritual_space",
+      "heritage_context": [
+        "baroque_city",
+        "ritual_space",
+        "world_heritage_context"
+      ],
+      "landscape_relation": [
+        "colonnade_embrace",
+        "processional_axis",
+        "basilica_forecourt"
+      ]
+    },
+    "database_tags": [
+      "material:travertine",
+      "typology:ritual_square",
+      "typology:colonnade",
+      "geometry:ellipse",
+      "theme:procession",
+      "blender:colonnade_model_candidate"
+    ],
+    "model_3d": {
+      "source_basis": "Public hero/source metadata plus lecture-derived historical framework; geometry remains planned/reconstruction-grade until source plans are reviewed.",
+      "parts": [
+        {
+          "type": "low",
+          "r2_key": "models/piazza-st-peters/low.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "site",
+          "r2_key": "models/piazza-st-peters/site.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "mass",
+          "r2_key": "models/piazza-st-peters/mass.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "structure",
+          "r2_key": "models/piazza-st-peters/structure.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "full",
+          "r2_key": "models/piazza-st-peters/full.glb",
+          "review_status": "planned"
+        }
+      ],
+      "license": "own_work"
+    },
+    "analysis_layers": [
+      {
+        "analysis_type": "material_system",
+        "summary": "Primary material reading: travertine, stone_paving, masonry. St Peter’s Square is a ritual urban space: elliptical colonnades, axial approach, obelisk and paving define crowd, procession and symbolic orientation.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "urban_context",
+        "summary": "Database classification places Piazza St Peters in baroque_ritual_square, with context tags baroque_city, ritual_space, world_heritage_context.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "source_reconstruction",
+        "summary": "3D/Blender layer is planned as an analytical reconstruction layer; no exact measured model is claimed at this stage.",
+        "review_status": "needs_source"
+      },
+      {
+        "analysis_type": "structure",
+        "summary": "Structure layer planned for Blender import: mass, load path and spatial support system. Geometry remains reconstruction-grade until source plans are reviewed.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Tectonic layer planned around travertine, stone_paving, masonry; separates material expression, enclosure and structural reading for later Blender layer toggles.",
+        "review_status": "draft"
+      }
+    ],
+    "analysis_observations": [
+      {
+        "analysis_type": "material_tag",
+        "label": "material:travertine",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:ritual_square",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:colonnade",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "geometry:ellipse",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      }
+    ],
+    "database_profile": {
+      "status": "draft",
+      "r2_prefix": "entries/piazza-st-peters",
+      "source_count": 3,
+      "media_count": 4,
+      "model_count": 5,
+      "analysis_count": 5,
+      "tag_count": 6
+    }
   },
   {
     "id": "marc-antoine-laugier-primitive-hut",
@@ -5251,8 +6850,154 @@
         "reliability_level": "secondary_source",
         "rights_status": "licensed",
         "notes": "Auto-selected hero image candidate. Score: 0.87. License: CC BY-SA 3.0."
+      },
+      {
+        "source_type": "website",
+        "title": "UNESCO World Heritage Centre: Royal Saltworks of Arc-et-Senans",
+        "url": "https://whc.unesco.org/en/list/203/",
+        "reliability_level": "primary_source",
+        "rights_status": "licensed",
+        "notes": "UNESCO reference for the Royal Saltworks and its ideal-industrial planning significance."
       }
-    ]
+    ],
+    "geo": {
+      "lat": 47.033,
+      "lon": 5.779,
+      "region": "Bourgogne-Franche-Comte",
+      "precision": "site"
+    },
+    "materials": {
+      "primary": [
+        "stone_masonry",
+        "timber_roof",
+        "industrial_infrastructure"
+      ],
+      "secondary": [
+        "saltworks_equipment",
+        "courtyard_ground"
+      ],
+      "notes": "The Royal Saltworks is an industrial-ideal urban fragment: semicircular plan, production buildings, director’s house and social order encoded in geometry."
+    },
+    "program": {
+      "type": "industrial_complex",
+      "subtype": "enlightenment_saltworks_ideal_city",
+      "public_access": "public"
+    },
+    "context": {
+      "topography": "flat_rural_site",
+      "setting": "industrial_heritage_landscape",
+      "heritage_context": [
+        "unesco_world_heritage_site",
+        "industrial_utopia",
+        "enlightenment_planning"
+      ],
+      "landscape_relation": [
+        "semicircular_plan",
+        "production_courtyard",
+        "forest_salt_network"
+      ]
+    },
+    "database_tags": [
+      "material:stone_masonry",
+      "typology:industrial_complex",
+      "typology:ideal_city",
+      "geometry:semicircle",
+      "theme:industry",
+      "blender:ensemble_model_candidate"
+    ],
+    "model_3d": {
+      "source_basis": "Public hero/source metadata plus lecture-derived historical framework; geometry remains planned/reconstruction-grade until source plans are reviewed.",
+      "parts": [
+        {
+          "type": "low",
+          "r2_key": "models/arc-et-senans/low.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "mass",
+          "r2_key": "models/arc-et-senans/mass.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "site",
+          "r2_key": "models/arc-et-senans/site.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "structure",
+          "r2_key": "models/arc-et-senans/structure.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "full",
+          "r2_key": "models/arc-et-senans/full.glb",
+          "review_status": "planned"
+        }
+      ],
+      "license": "own_work"
+    },
+    "analysis_layers": [
+      {
+        "analysis_type": "material_system",
+        "summary": "Primary material reading: stone_masonry, timber_roof, industrial_infrastructure. The Royal Saltworks is an industrial-ideal urban fragment: semicircular plan, production buildings, director’s house and social order encoded in geometry.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "urban_context",
+        "summary": "Database classification places Arc-et-Senans in enlightenment_saltworks_ideal_city, with context tags unesco_world_heritage_site, industrial_utopia, enlightenment_planning.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "source_reconstruction",
+        "summary": "3D/Blender layer is planned as an analytical reconstruction layer; no exact measured model is claimed at this stage.",
+        "review_status": "needs_source"
+      },
+      {
+        "analysis_type": "structure",
+        "summary": "Structure layer planned for Blender import: mass, load path and spatial support system. Geometry remains reconstruction-grade until source plans are reviewed.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Tectonic layer planned around stone_masonry, timber_roof, industrial_infrastructure; separates material expression, enclosure and structural reading for later Blender layer toggles.",
+        "review_status": "draft"
+      }
+    ],
+    "analysis_observations": [
+      {
+        "analysis_type": "material_tag",
+        "label": "material:stone_masonry",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:industrial_complex",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:ideal_city",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "geometry:semicircle",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      }
+    ],
+    "database_profile": {
+      "status": "draft",
+      "r2_prefix": "entries/arc-et-senans",
+      "source_count": 3,
+      "media_count": 4,
+      "model_count": 5,
+      "analysis_count": 5,
+      "tag_count": 6
+    }
   },
   {
     "id": "new-lanark-mills",
@@ -5315,8 +7060,149 @@
         "reliability_level": "secondary_source",
         "rights_status": "licensed",
         "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY 2.0."
+      },
+      {
+        "source_type": "website",
+        "title": "UNESCO World Heritage Centre: New Lanark",
+        "url": "https://whc.unesco.org/en/list/429/",
+        "reliability_level": "primary_source",
+        "rights_status": "licensed",
+        "notes": "UNESCO reference for New Lanark as industrial and social-reform landscape."
       }
-    ]
+    ],
+    "geo": {
+      "lat": 55.664,
+      "lon": -3.782,
+      "region": "South Lanarkshire",
+      "precision": "site"
+    },
+    "materials": {
+      "primary": [
+        "stone_masonry",
+        "timber_floor",
+        "water_power_infrastructure"
+      ],
+      "secondary": [
+        "slate_roof",
+        "brick"
+      ],
+      "notes": "New Lanark is a mill village where stone factory blocks, water power, worker housing and reformist social infrastructure form an industrial settlement system."
+    },
+    "program": {
+      "type": "industrial_settlement",
+      "subtype": "textile_mill_village_social_reform",
+      "public_access": "public"
+    },
+    "context": {
+      "topography": "river_valley",
+      "setting": "industrial_heritage_village",
+      "heritage_context": [
+        "unesco_world_heritage_site",
+        "industrial_revolution",
+        "social_reform"
+      ],
+      "landscape_relation": [
+        "river_power",
+        "mill_race",
+        "worker_housing"
+      ]
+    },
+    "database_tags": [
+      "material:stone_masonry",
+      "typology:mill_village",
+      "theme:industry",
+      "theme:social_reform",
+      "topography:river_valley",
+      "blender:industrial_settlement_candidate"
+    ],
+    "model_3d": {
+      "source_basis": "Public hero/source metadata plus lecture-derived historical framework; geometry remains planned/reconstruction-grade until source plans are reviewed.",
+      "parts": [
+        {
+          "type": "low",
+          "r2_key": "models/new-lanark-mills/low.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "mass",
+          "r2_key": "models/new-lanark-mills/mass.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "site",
+          "r2_key": "models/new-lanark-mills/site.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "structure",
+          "r2_key": "models/new-lanark-mills/structure.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "full",
+          "r2_key": "models/new-lanark-mills/full.glb",
+          "review_status": "planned"
+        }
+      ],
+      "license": "own_work"
+    },
+    "analysis_layers": [
+      {
+        "analysis_type": "material_system",
+        "summary": "Primary material reading: stone_masonry, timber_floor, water_power_infrastructure. New Lanark is a mill village where stone factory blocks, water power, worker housing and reformist social infrastructure form an industrial settlement system.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Database classification places New Lanark Mills in textile_mill_village_social_reform, with context tags unesco_world_heritage_site, industrial_revolution, social_reform.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "source_reconstruction",
+        "summary": "3D/Blender layer is planned as an analytical reconstruction layer; no exact measured model is claimed at this stage.",
+        "review_status": "needs_source"
+      },
+      {
+        "analysis_type": "structure",
+        "summary": "Structure layer planned for Blender import: mass, load path and spatial support system. Geometry remains reconstruction-grade until source plans are reviewed.",
+        "review_status": "draft"
+      }
+    ],
+    "analysis_observations": [
+      {
+        "analysis_type": "material_tag",
+        "label": "material:stone_masonry",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:mill_village",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "theme:industry",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "theme:social_reform",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      }
+    ],
+    "database_profile": {
+      "status": "draft",
+      "r2_prefix": "entries/new-lanark-mills",
+      "source_count": 3,
+      "media_count": 4,
+      "model_count": 5,
+      "analysis_count": 4,
+      "tag_count": 6
+    }
   },
   {
     "id": "panopticon",
@@ -5489,8 +7375,149 @@
         "reliability_level": "secondary_source",
         "rights_status": "licensed",
         "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY-SA 3.0."
+      },
+      {
+        "source_type": "website",
+        "title": "Royal Museums Greenwich: Royal Observatory",
+        "url": "https://www.rmg.co.uk/royal-observatory",
+        "reliability_level": "primary_source",
+        "rights_status": "licensed",
+        "notes": "Institutional public source for the Royal Observatory, timekeeping and meridian context."
       }
-    ]
+    ],
+    "geo": {
+      "lat": 51.4779,
+      "lon": -0.0015,
+      "region": "Greenwich / London",
+      "precision": "site"
+    },
+    "materials": {
+      "primary": [
+        "brick_masonry",
+        "stone",
+        "scientific_instrumentation"
+      ],
+      "secondary": [
+        "timber_roof",
+        "metal_instruments"
+      ],
+      "notes": "The observatory is infrastructure for time and measurement: masonry buildings, instruments, meridian line and landscape position over Greenwich Park."
+    },
+    "program": {
+      "type": "scientific_infrastructure",
+      "subtype": "observatory_timekeeping_meridian",
+      "public_access": "public"
+    },
+    "context": {
+      "topography": "park_hill",
+      "setting": "historic_scientific_landscape",
+      "heritage_context": [
+        "world_heritage_context",
+        "timekeeping",
+        "navigation"
+      ],
+      "landscape_relation": [
+        "meridian_line",
+        "park_hill",
+        "river_orientation"
+      ]
+    },
+    "database_tags": [
+      "material:brick_masonry",
+      "typology:observatory",
+      "theme:time",
+      "theme:navigation",
+      "topography:hill",
+      "blender:instrument_site_candidate"
+    ],
+    "model_3d": {
+      "source_basis": "Public hero/source metadata plus lecture-derived historical framework; geometry remains planned/reconstruction-grade until source plans are reviewed.",
+      "parts": [
+        {
+          "type": "low",
+          "r2_key": "models/royal-observatory-greenwich/low.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "mass",
+          "r2_key": "models/royal-observatory-greenwich/mass.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "site",
+          "r2_key": "models/royal-observatory-greenwich/site.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "structure",
+          "r2_key": "models/royal-observatory-greenwich/structure.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "full",
+          "r2_key": "models/royal-observatory-greenwich/full.glb",
+          "review_status": "planned"
+        }
+      ],
+      "license": "own_work"
+    },
+    "analysis_layers": [
+      {
+        "analysis_type": "material_system",
+        "summary": "Primary material reading: brick_masonry, stone, scientific_instrumentation. The observatory is infrastructure for time and measurement: masonry buildings, instruments, meridian line and landscape position over Greenwich Park.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Database classification places Royal Observatory Greenwich in observatory_timekeeping_meridian, with context tags world_heritage_context, timekeeping, navigation.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "source_reconstruction",
+        "summary": "3D/Blender layer is planned as an analytical reconstruction layer; no exact measured model is claimed at this stage.",
+        "review_status": "needs_source"
+      },
+      {
+        "analysis_type": "structure",
+        "summary": "Structure layer planned for Blender import: mass, load path and spatial support system. Geometry remains reconstruction-grade until source plans are reviewed.",
+        "review_status": "draft"
+      }
+    ],
+    "analysis_observations": [
+      {
+        "analysis_type": "material_tag",
+        "label": "material:brick_masonry",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:observatory",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "theme:time",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "theme:navigation",
+        "confidence_score": 0.66,
+        "source": "source_inferred"
+      }
+    ],
+    "database_profile": {
+      "status": "draft",
+      "r2_prefix": "entries/royal-observatory-greenwich",
+      "source_count": 3,
+      "media_count": 4,
+      "model_count": 5,
+      "analysis_count": 4,
+      "tag_count": 6
+    }
   },
   {
     "id": "central-park",
@@ -6893,8 +8920,8 @@
       "r2_prefix": "entries/villa-noailles",
       "source_count": 1,
       "media_count": 4,
-      "model_count": 6,
-      "analysis_count": 6,
+      "model_count": 3,
+      "analysis_count": 7,
       "tag_count": 11
     },
     "model_assets": [
@@ -7049,6 +9076,11 @@
           "model_readiness": "pilot_ready_needs_verified_sources"
         },
         "review_status": "reviewed"
+      },
+      {
+        "analysis_type": "material_system",
+        "summary": "Material system planned for database filters: materials require source review.",
+        "review_status": "draft"
       }
     ],
     "source_candidates": [
@@ -7060,7 +9092,28 @@
         "rights_status": "licensed",
         "notes": "Auto-selected hero image candidate. Score: 0.77. License: CC BY-SA 3.0."
       }
-    ]
+    ],
+    "model_3d": {
+      "source_basis": "Database-profile planning scaffold; review source plans before geometry publication.",
+      "license": "own_work",
+      "parts": [
+        {
+          "type": "full",
+          "r2_key": "models/villa-noailles/full.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "structure",
+          "r2_key": "models/villa-noailles/structure.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "site",
+          "r2_key": "models/villa-noailles/site.glb",
+          "review_status": "planned"
+        }
+      ]
+    }
   },
   {
     "id": "narkomfin-housing",
@@ -7208,7 +9261,7 @@
       "r2_prefix": "entries/haus-tugendhat",
       "source_count": 2,
       "media_count": 4,
-      "model_count": 6,
+      "model_count": 3,
       "analysis_count": 6,
       "tag_count": 11
     },
@@ -7375,7 +9428,28 @@
         "rights_status": "licensed",
         "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY-SA 4.0."
       }
-    ]
+    ],
+    "model_3d": {
+      "source_basis": "Database-profile planning scaffold; review source plans before geometry publication.",
+      "license": "own_work",
+      "parts": [
+        {
+          "type": "full",
+          "r2_key": "models/haus-tugendhat/full.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "structure",
+          "r2_key": "models/haus-tugendhat/structure.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "site",
+          "r2_key": "models/haus-tugendhat/site.glb",
+          "review_status": "planned"
+        }
+      ]
+    }
   },
   {
     "id": "hufeisensiedlung",
@@ -7611,8 +9685,8 @@
       "r2_prefix": "entries/villa-savoye",
       "source_count": 7,
       "media_count": 4,
-      "model_count": 6,
-      "analysis_count": 9,
+      "model_count": 5,
+      "analysis_count": 8,
       "tag_count": 22
     },
     "model_assets": [
@@ -9929,7 +12003,7 @@
       "r2_prefix": "entries/mfo-park",
       "source_count": 3,
       "media_count": 4,
-      "model_count": 5,
+      "model_count": 6,
       "analysis_count": 5,
       "tag_count": 12
     },
@@ -10378,7 +12452,7 @@
       "r2_prefix": "entries/high-line",
       "source_count": 3,
       "media_count": 4,
-      "model_count": 5,
+      "model_count": 6,
       "analysis_count": 5,
       "tag_count": 14
     },
@@ -10736,7 +12810,7 @@
       "r2_prefix": "entries/afasia-no-architecture-flower-house",
       "source_count": 2,
       "media_count": 14,
-      "model_count": 6,
+      "model_count": 4,
       "analysis_count": 7,
       "tag_count": 11
     },
