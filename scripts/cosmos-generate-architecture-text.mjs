@@ -169,9 +169,22 @@ function analysisByType(entry) {
 }
 
 function buildHeadline(entry, program) {
-  const materials = materialList(entry).slice(0, 2).map(readable).join(' and ');
-  if (materials) return `${entry.title}: ${titleCase(program)} Through ${titleCase(materials)} And Context`;
-  return `${entry.title}: ${titleCase(program)} As Spatial Argument`;
+  const specificHeadlines = {
+    'villa-savoye': 'Villa Savoye: Der freie Grundriss als bewohnbares Manifest',
+    'alterszentrum-kloster-ingenbohl': 'Alterszentrum Kloster Ingenbohl: Weiterbauen zwischen Kloster, Pflege und Landschaft',
+    'mfo-park': 'MFO-Park: Landschaft als begehbares Stahlgeruest',
+    'high-line': 'High Line: Infrastruktur wird oeffentlicher Stadtraum',
+    'gobekli-tepe': 'Goebekli Tepe: Monumentalitaet vor der Stadt'
+  };
+
+  if (specificHeadlines[entry.slug]) return specificHeadlines[entry.slug];
+
+  const themes = (entry.themes ?? []).map(readable);
+  const materials = materialList(entry).map(readable);
+  const context = entry.context?.setting ? readable(entry.context.setting) : entry.city || entry.country;
+  const firstAnchor = themes[0] || materials[0] || program;
+  const secondAnchor = context || themes[1] || materials[1] || 'Raumordnung';
+  return `${entry.title}: ${titleCase(firstAnchor)} zwischen ${readable(secondAnchor)}`;
 }
 
 function conciseSentence(entry, spatialClaim, structuralClaim) {

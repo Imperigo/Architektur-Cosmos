@@ -1236,7 +1236,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
         {introState === 'idle' && !showDatabasePanel ? (
           <ProjectSearch entries={allEntries} developerMode={developerMode} onDeveloperModeChange={updateDeveloperMode} />
         ) : null}
-        {introState === 'idle' && ui.isCoarsePointer && !selectedEntry ? (
+        {introState === 'idle' && ui.isCoarsePointer && !selectedEntry && !showDatabasePanel ? (
           <MobileAtlasHud
             currentYear={state.currentYear}
             timePosition={state.timePosition}

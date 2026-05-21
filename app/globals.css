@@ -2757,6 +2757,41 @@ body:has(.entry-page) {
     font-size: 11px !important;
   }
 
+  .mobile-atlas-shell {
+    gap: 8px;
+  }
+
+  .mobile-atlas-time {
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.1fr);
+    padding: 8px 10px;
+  }
+
+  .mobile-atlas-time em {
+    display: none;
+  }
+
+  .mobile-atlas-time strong {
+    font-size: clamp(19px, 6vw, 27px);
+  }
+
+  .mobile-atlas-dock {
+    gap: 7px;
+  }
+
+  .mobile-atlas-dock button {
+    min-height: 50px;
+    border-radius: 16px;
+  }
+
+  .mobile-atlas-dock button span {
+    font-size: 15px;
+  }
+
+  .mobile-atlas-dock button small {
+    font-size: 8px;
+    letter-spacing: 0.1em;
+  }
+
   .database-draft .grid {
     min-width: 0;
   }
