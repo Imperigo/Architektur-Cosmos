@@ -177,7 +177,12 @@ function buildHeadline(entry, program) {
     'high-line': 'High Line: Infrastruktur wird öffentlicher Stadtraum',
     'gobekli-tepe': 'Göbekli Tepe: Monumentalität vor der Stadt',
     'afasia-no-architecture-flower-house': 'Flower House: Wohnen als radialer Landschaftsraum',
-    'villa-noailles': 'Villa Noailles: Moderne als Bewegung durch Haus, Garten und Blick'
+    'villa-noailles': 'Villa Noailles: Moderne als Bewegung durch Haus, Garten und Blick',
+    'haus-tugendhat': 'Haus Tugendhat: Freier Wohnraum als Material- und Blickapparat',
+    'catal-huyuk': 'Catal Hüyük: Wohnen, Dachlandschaft und frühe städtische Dichte',
+    'uruk-city': 'Uruk: Tempelbezirke, Verwaltung und frühe Stadtordnung',
+    'mohenjo-daro': 'Mohenjo-Daro: Wasser, Raster und Indus-Stadt',
+    'forum-romanum': 'Forum Romanum: Öffentlicher Raum als politisches Palimpsest'
   };
 
   if (specificHeadlines[entry.slug]) return specificHeadlines[entry.slug];
@@ -213,6 +218,21 @@ function tectonicFallback(entry, materials) {
 }
 
 function spatialFallback(entry) {
+  const specificSpatialReadings = {
+    'catal-huyuk': 'Çatal Hüyük wird als dichtes Haus-an-Haus-Gefüge gelesen, in dem Wand, Dach, Innenraum und Erschließung zu einer frühen urbanen Wohnlandschaft verschmelzen',
+    'uruk-city': 'Uruk ordnet frühe Stadt über Tempelbezirke, Plattformen, Mauern und Verwaltungsräume; Monument, Schrift und Arbeitsteilung werden zu einer architektonischen Stadtstruktur',
+    'mohenjo-daro': 'Mohenjo-Daro verbindet Rasterstraßen, erhöhte Plattformen, Drainagen und Wasserbauten zu einer Stadt, deren Ordnung aus Hygiene, Standardisierung und kollektiver Infrastruktur entsteht',
+    'forum-romanum': 'Das Forum Romanum ist kein einzelner Platz, sondern ein über Jahrhunderte geschichtetes Band aus Tempeln, Basiliken, Triumphwegen, Kurie und öffentlicher Leere',
+    'haus-tugendhat': 'Die räumliche Ordnung entsteht aus Zonen statt aus geschlossenen Zimmern: Wohnen, Essen, Musik und Blickfelder fließen um Materialwände, Vorhänge und Möblierungsfelder herum'
+  };
+  if (specificSpatialReadings[entry.slug]) {
+    return {
+      short: compact(specificSpatialReadings[entry.slug], 92),
+      long: specificSpatialReadings[entry.slug],
+      basis: 'curated spatial reading'
+    };
+  }
+
   const hints = [...(entry.themes ?? []), ...(entry.vibes ?? [])].slice(0, 4).map(readableDe);
   const text = hints.length ? hints.join(', ') : readable(entry.entry_type);
   return {
@@ -310,7 +330,7 @@ function compact(value, max) {
 }
 
 function readable(value) {
-  return String(value ?? '').replace(/_/g, ' ').replace(/\s+/g, ' ').trim();
+  return String(value ?? '').replace(/[_-]/g, ' ').replace(/\s+/g, ' ').trim();
 }
 
 function readableDe(value) {
@@ -329,6 +349,18 @@ function readableDe(value) {
     'modern villa': 'moderne Villa',
     private_residence: 'privates Wohnhaus',
     'private residence': 'privates Wohnhaus',
+    neolithic_aggregated_domestic_fabric: 'neolithisches Wohngefüge',
+    'neolithic aggregated domestic fabric': 'neolithisches Wohngefüge',
+    administrative_ritual_city: 'administrativ-rituelle Stadt',
+    'administrative ritual city': 'administrativ-rituelle Stadt',
+    indus_grid_city: 'Indus-Rasterstadt',
+    'indus grid city': 'Indus-Rasterstadt',
+    roman_civic_forum: 'römisches Forum',
+    'roman civic forum': 'römisches Forum',
+    early_urbanism: 'frühe Urbanisierung',
+    'early urbanism': 'frühe Urbanisierung',
+    public_space: 'öffentlicher Raum',
+    'public space': 'öffentlicher Raum',
     linear_park: 'linearer Park',
     'linear park': 'linearer Park',
     prehistoric_megalithic_enclosure: 'prähistorische Megalithanlage',
@@ -373,6 +405,74 @@ function readableDe(value) {
     'unesco world heritage site': 'UNESCO-Welterbestätte',
     archaeological_site: 'archäologische Stätte',
     'archaeological site': 'archäologische Stätte',
+    archaeological_tell_landscape: 'archäologische Tell-Landschaft',
+    'archaeological tell landscape': 'archäologische Tell-Landschaft',
+    archaeological_city_landscape: 'archäologische Stadtlandschaft',
+    'archaeological city landscape': 'archäologische Stadtlandschaft',
+    flat_alluvial_plain: 'flache Schwemmlandebene',
+    'flat alluvial plain': 'flache Schwemmlandebene',
+    alluvial_plain: 'Schwemmlandebene',
+    'alluvial plain': 'Schwemmlandebene',
+    river_plain: 'Flussebene',
+    'river plain': 'Flussebene',
+    urban_archaeological_core: 'urbaner archäologischer Kern',
+    'urban archaeological core': 'urbaner archäologischer Kern',
+    valley_between_hills: 'Talraum zwischen Hügeln',
+    'valley between hills': 'Talraum zwischen Hügeln',
+    neolithic_settlement: 'neolithische Siedlung',
+    'neolithic settlement': 'neolithische Siedlung',
+    sumerian_city: 'sumerische Stadt',
+    'sumerian city': 'sumerische Stadt',
+    early_writing: 'frühe Schriftkultur',
+    'early writing': 'frühe Schriftkultur',
+    temple_precinct: 'Tempelbezirk',
+    'temple precinct': 'Tempelbezirk',
+    indus_valley_city: 'Indus-Stadt',
+    'indus valley city': 'Indus-Stadt',
+    roman_forum: 'römisches Forum',
+    'roman forum': 'römisches Forum',
+    civic_space: 'zivischer Raum',
+    'civic space': 'zivischer Raum',
+    palimpsest: 'Palimpsest',
+    proto_urban: 'proto-urban',
+    'proto urban': 'proto-urban',
+    settlement: 'Siedlung',
+    collective_memory: 'kollektives Gedächtnis',
+    'collective memory': 'kollektives Gedächtnis',
+    mesopotamia: 'Mesopotamien',
+    city: 'Stadt',
+    administration: 'Verwaltung',
+    hydraulic_city: 'Wasserstadt',
+    'hydraulic city': 'Wasserstadt',
+    grid: 'Raster',
+    urban_design: 'Städtebau',
+    'urban design': 'Städtebau',
+    roman_urbanism: 'römischer Urbanismus',
+    'roman urbanism': 'römischer Urbanismus',
+    forum: 'Forum',
+    politics: 'Politik',
+    thing_modernity: 'moderne Objektkultur',
+    'thing modernity': 'moderne Objektkultur',
+    curtain: 'Vorhang',
+    material_wall: 'Materialwand',
+    'material wall': 'Materialwand',
+    modern_living: 'modernes Wohnen',
+    'modern living': 'modernes Wohnen',
+    steel_frame: 'Stahlskelett',
+    'steel frame': 'Stahlskelett',
+    fluid_space: 'fließender Raum',
+    'fluid space': 'fließender Raum',
+    domestic_modernism: 'Wohnmoderne',
+    'domestic modernism': 'Wohnmoderne',
+    mud_brick: 'Lehmziegel',
+    'mud brick': 'Lehmziegel',
+    baked_brick: 'gebrannter Ziegel',
+    'baked brick': 'gebrannter Ziegel',
+    travertine: 'Travertin',
+    tufa: 'Tuffstein',
+    brick: 'Ziegel',
+    roman_concrete: 'römischer Beton',
+    'roman concrete': 'römischer Beton',
     five_points: 'Fünf Punkte',
     'five points': 'Fünf Punkte',
     promenade: 'Promenade architecturale',
@@ -413,7 +513,12 @@ function localizeArchitectureText(value) {
     ['The site is organized as repeated enclosures with central and perimeter pillars. The architectural question is not plan as habitation but plan as ritual concentration and symbolic ordering', 'Die Anlage ist als Folge von Einhegungen mit zentralen und randständigen Pfeilern organisiert. Die architektonische Frage ist nicht Wohnen, sondern rituelle Konzentration und symbolische Ordnung'],
     ['Instead of a conventional park field, MFO-Park uses a volumetric trellis as a room. It has interior-like spatial depth, vertical surfaces, balconies/perches and a civic ground plane', 'Statt einer konventionellen Parkfläche nutzt der MFO-Park ein volumetrisches Rankgerüst als Raum. Es besitzt innenraumartige Tiefe, vertikale Oberflächen, Balkone, Aufenthaltsnischen und eine öffentliche Bodenebene'],
     ['Spatial order is episodic and kinetic: the villa is experienced through rooms, terraces, stairs, views and garden fragments rather than one continuous freier Grundriss', 'Die räumliche Ordnung ist episodisch und kinetisch: Die Villa wird über Räume, Terrassen, Treppen, Blicke und Gartenfragmente erfahren, nicht als durchgehender freier Grundriss'],
-    ['Spatial order is episodic and kinetic: the villa is experienced through rooms, terraces, stairs, views and garden fragments rather than one continuous free plan', 'Die räumliche Ordnung ist episodisch und kinetisch: Die Villa wird über Räume, Terrassen, Treppen, Blicke und Gartenfragmente erfahren, nicht als durchgehender freier Grundriss']
+    ['Spatial order is episodic and kinetic: the villa is experienced through rooms, terraces, stairs, views and garden fragments rather than one continuous free plan', 'Die räumliche Ordnung ist episodisch und kinetisch: Die Villa wird über Räume, Terrassen, Treppen, Blicke und Gartenfragmente erfahren, nicht als durchgehender freier Grundriss'],
+    ['Spatial order is defined by zones rather than closed rooms: living, dining, music and view fields flow around material partitions and curtains', 'Die räumliche Ordnung entsteht aus Zonen statt aus geschlossenen Zimmern: Wohnen, Essen, Musik und Blickfelder fließen um Materialwände, Vorhänge und Möblierungsfelder herum'],
+    ['Dense Neolithic room clusters used mud brick, timber roof structure and plastered interiors; access and circulation are interpreted through rooftops and room openings', 'Dichte neolithische Raumcluster aus Lehmziegeln, Holzdächern und verputzten Innenräumen bilden ein Wohngefüge, dessen Erschließung über Dachflächen und Raumöffnungen gelesen wird'],
+    ['Uruk is a mud-brick urban fabric with monumental precincts such as Eanna and Anu/White Temple; geometry should be treated as archaeological reconstruction, not exact survey', 'Uruk wird als Lehmziegel-Stadtgefüge mit monumentalen Bezirken wie Eanna und Anu/Weißem Tempel gelesen; seine Geometrie bleibt archäologische Rekonstruktion und kein exaktes Aufmaß'],
+    ['The Indus city is characterized by standardized baked brick, gridded streets, platforms, drains and carefully organized water infrastructure', 'Die Indus-Stadt ist durch standardisierte gebrannte Ziegel, gerasterte Straßen, Plattformen, Drainagen und präzise organisierte Wasserinfrastruktur geprägt'],
+    ['The Forum Romanum accumulates stone, brick and concrete monuments around a civic valley; it should be modeled as a layered public field rather than one building', 'Das Forum Romanum versammelt Stein-, Ziegel- und Betonmonumente um einen zivilen Talraum; es soll als geschichtetes öffentliches Feld und nicht als Einzelbau modelliert werden']
   ];
 
   for (const [source, target] of replacements) {
@@ -428,7 +533,24 @@ function localizeArchitectureText(value) {
     .replaceAll('free plan', 'freier Grundriss')
     .replaceAll('pilotis', 'Pilotis')
     .replaceAll('glass bands', 'Fensterbänder')
-    .replaceAll('white rendered surfaces', 'weiße Putzflächen');
+    .replaceAll('white rendered surfaces', 'weiße Putzflächen')
+    .replaceAll('Primary material reading:', 'Primäre Materiallesart:')
+    .replaceAll('Structure layer planned for Blender import:', 'Tragwerkslayer für Blender-Import geplant:')
+    .replaceAll('Geometry remains reconstruction-grade until source plans are reviewed', 'Die Geometrie bleibt als Studienrekonstruktion markiert, bis Quellenpläne geprüft sind')
+    .replaceAll('mud_brick', 'Lehmziegel')
+    .replaceAll('baked_brick', 'gebrannter Ziegel')
+    .replaceAll('roman_concrete', 'römischer Beton')
+    .replaceAll('travertine', 'Travertin')
+    .replaceAll('tufa', 'Tuffstein')
+    .replaceAll('brick', 'Ziegel')
+    .replaceAll('plaster', 'Putz')
+    .replaceAll('timber', 'Holz')
+    .replaceAll('cellular mass', 'zelluläre Masse')
+    .replaceAll('platform', 'Plattform')
+    .replaceAll('monumental ensemble', 'monumentales Ensemble')
+    .replaceAll('Onyx, glass, steel, textile and Holz are not decoration only; they act as atmospheric and spatial instruments within the freier Grundriss', 'Onyx, Glas, Stahl, Textil und Holz sind nicht nur Ausstattung, sondern atmosphärische und räumliche Instrumente innerhalb des freien Grundrisses')
+    .replaceAll('Onyx, glass, steel, textile and timber are not decoration only; they act as atmospheric and spatial instruments within the freier Grundriss', 'Onyx, Glas, Stahl, Textil und Holz sind nicht nur Ausstattung, sondern atmosphärische und räumliche Instrumente innerhalb des freien Grundrisses')
+    .replaceAll('The structural reading foregrounds a steel-frame order that frees the living level from conventional room-bearing walls and allows material screens to organize space', 'Die strukturelle Lesart stellt ein Stahlskelett in den Vordergrund, das das Wohngeschoss von tragenden Zimmerwänden löst und Materialschirme als raumbildende Elemente ermöglicht');
 }
 
 function titleCase(value) {

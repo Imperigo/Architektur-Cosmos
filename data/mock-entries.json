@@ -611,6 +611,72 @@
       "model_count": 5,
       "analysis_count": 5,
       "tag_count": 5
+    },
+    "architecture_text": {
+      "headline": "Catal Hüyük: Wohnen, Dachlandschaft und frühe städtische Dichte",
+      "overview": "Catal Hüyük wird im Architektur Kosmos als neolithisches Wohngefüge gelesen und nicht als isoliertes Archivobjekt behandelt. Die Relevanz des Projekts liegt im Zusammenspiel von räumlicher Dramaturgie, konstruktiver Ordnung und archäologische Tell-Landschaft / flache Schwemmlandebene / Konya, Turkey / UNESCO-Welterbestätte und neolithische Siedlung. Der Eintrag soll deshalb Projektlogik, Materialsystem, Tragwerk und Modell-Layer sichtbar machen, statt nur eine lineare Kurzgeschichte zu liefern.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Catal Hüyük gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Çatal Hüyük wird als dichtes Haus-an-Haus-Gefüge gelesen, in dem Wand, Dach, Innenraum und Erschließung zu einer frühen urbanen Wohnlandschaft verschmelzen. Für den Atlas ist das Projekt wertvoll, weil es trockene Metadaten in eine räumliche Fragestellung übersetzt: proto-urban, Siedlung, kollektives Gedächtnis.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Primäre Materiallesart: Lehmziegel, Holz, Putz. Dichte neolithische Raumcluster aus Lehmziegeln, Holzdächern und verputzten Innenräumen bilden ein Wohngefüge, dessen Erschließung über Dachflächen und Raumöffnungen gelesen wird. Tragwerkslayer für Blender-Import geplant: zelluläre Masse. Die Geometrie bleibt als Studienrekonstruktion markiert, bis Quellenpläne geprüft sind. Für spätere Blender- und ArchiCAD-Workflows sollen diese Beobachtungen als trennbare Ebenen geführt werden, nicht als ein einziges dekoratives Modell.",
+          "source_basis": "analysis layer: material_system; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Çatal Hüyük wird als dichtes Haus-an-Haus-Gefüge gelesen, in dem Wand, Dach, Innenraum und Erschließung zu einer frühen urbanen Wohnlandschaft verschmelzen. Dadurch wird das Projekt als filterbare Referenz interessant: Grundriss, Schnitt, Erschliessung und Kontext können über Zeiträume hinweg verglichen werden, statt nur als Bilder betrachtet zu werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Tectonic layer planned around Lehmziegel, Holz, Putz; separates material expression, enclosure and structural reading for later Blender layer toggles. Der Cosmos-Text hält diese konstruktive Lesart bewusst explizit, weil sie die Brücke zwischen historischer Interpretation und modellbasierter Analyse bildet.",
+          "source_basis": "analysis layer: tectonics; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Catal Hüyük gehört zu archäologische Tell-Landschaft / flache Schwemmlandebene / Konya, Turkey / UNESCO-Welterbestätte und neolithische Siedlung. Der Ort ist dabei keine Hintergrundinformation, sondern Teil des architektonischen Arguments und soll im Atlas, im Modellpaket und in zukünftigen Suchfiltern sichtbar bleiben.",
+          "source_basis": "entry context metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für die Architecture-Cosmos-Datenbank soll Catal Hüyük als strukturierte Referenz mit Quellenpfad, Medienslots, Analyseebenen und Modellteilen gespeichert werden. Die wichtigsten zukünftigen Filter sind material:mud brick, typology:aggregated settlement, structure:cellular mass, context:tell mound, blender:cluster model candidate, Lehmziegel, Holz, plaster. Öffentliche Ausgaben müssen rechteklar bleiben; private Forschungsnotizen können detailliertere, quellenbasierte Analysen tragen, bis sie geprüft sind.",
+          "source_basis": "derived from entry metadata, model fields and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T17:41:19.461Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_document",
+          "value": "02 Global History of Urban Design 1_2.pdf"
+        },
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Catal Hüyük",
+          "value": "https://commons.wikimedia.org/wiki/File:%C3%87atalh%C3%B6y%C3%BCk,_7400_BC,_Konya,_Turkey_-_UNESCO_World_Heritage_Site,_08.jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        },
+        {
+          "type": "website",
+          "title": "UNESCO World Heritage Centre: Neolithic Site of Çatalhöyük",
+          "value": "https://whc.unesco.org/en/list/1405/",
+          "reliability_level": "primary_source",
+          "rights_status": "licensed"
+        }
+      ]
     }
   },
   {
@@ -1223,6 +1289,75 @@
       "model_count": 5,
       "analysis_count": 5,
       "tag_count": 6
+    },
+    "architecture_text": {
+      "headline": "Uruk: Tempelbezirke, Verwaltung und frühe Stadtordnung",
+      "overview": "Uruk wird im Architektur Kosmos als administrativ-rituelle Stadt gelesen und nicht als isoliertes Archivobjekt behandelt. Die Relevanz des Projekts liegt im Zusammenspiel von räumlicher Dramaturgie, konstruktiver Ordnung und archäologische Tell-Landschaft / Schwemmlandebene / Uruk, Iraq / sumerische Stadt und frühe Schriftkultur. Der Eintrag soll deshalb Projektlogik, Materialsystem, Tragwerk und Modell-Layer sichtbar machen, statt nur eine lineare Kurzgeschichte zu liefern.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Uruk gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Uruk ordnet frühe Stadt über Tempelbezirke, Plattformen, Mauern und Verwaltungsräume; Monument, Schrift und Arbeitsteilung werden zu einer architektonischen Stadtstruktur. Für den Atlas ist das Projekt wertvoll, weil es trockene Metadaten in eine räumliche Fragestellung übersetzt: Mesopotamien, Stadt, Palimpsest, Verwaltung.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Primäre Materiallesart: Lehmziegel, gebrannter Ziegel. Uruk wird als Lehmziegel-Stadtgefüge mit monumentalen Bezirken wie Eanna und Anu/Weißem Tempel gelesen; seine Geometrie bleibt archäologische Rekonstruktion und kein exaktes Aufmaß. Tragwerkslayer für Blender-Import geplant: Plattform. Die Geometrie bleibt als Studienrekonstruktion markiert, bis Quellenpläne geprüft sind. Für spätere Blender- und ArchiCAD-Workflows sollen diese Beobachtungen als trennbare Ebenen geführt werden, nicht als ein einziges dekoratives Modell.",
+          "source_basis": "analysis layer: material_system; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Uruk ordnet frühe Stadt über Tempelbezirke, Plattformen, Mauern und Verwaltungsräume; Monument, Schrift und Arbeitsteilung werden zu einer architektonischen Stadtstruktur. Dadurch wird das Projekt als filterbare Referenz interessant: Grundriss, Schnitt, Erschliessung und Kontext können über Zeiträume hinweg verglichen werden, statt nur als Bilder betrachtet zu werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Tectonic layer planned around Lehmziegel, gebrannter Ziegel; separates material expression, enclosure and structural reading for later Blender layer toggles. Der Cosmos-Text hält diese konstruktive Lesart bewusst explizit, weil sie die Brücke zwischen historischer Interpretation und modellbasierter Analyse bildet.",
+          "source_basis": "analysis layer: tectonics; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Uruk gehört zu archäologische Tell-Landschaft / Schwemmlandebene / Uruk, Iraq / sumerische Stadt und frühe Schriftkultur. Der Ort ist dabei keine Hintergrundinformation, sondern Teil des architektonischen Arguments und soll im Atlas, im Modellpaket und in zukünftigen Suchfiltern sichtbar bleiben.",
+          "source_basis": "entry context metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für die Architecture-Cosmos-Datenbank soll Uruk als strukturierte Referenz mit Quellenpfad, Medienslots, Analyseebenen und Modellteilen gespeichert werden. Die wichtigsten zukünftigen Filter sind material:mud brick, typology:temple precinct, typology:early city, structure:platform, context:alluvial plain, blender:site model candidate, Lehmziegel, gebrannter Ziegel. Öffentliche Ausgaben müssen rechteklar bleiben; private Forschungsnotizen können detailliertere, quellenbasierte Analysen tragen, bis sie geprüft sind.",
+          "source_basis": "derived from entry metadata, model fields and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T17:41:19.622Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Uruk",
+          "value": "https://commons.wikimedia.org/wiki/File:White_Temple_%27E_at_Uruk,_3500-3000_BCE.jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "public_domain"
+        },
+        {
+          "type": "website",
+          "title": "Encyclopaedia Britannica: Uruk",
+          "value": "https://www.britannica.com/place/Uruk",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        },
+        {
+          "type": "website",
+          "title": "Wikimedia Commons source image: White Temple at Uruk",
+          "value": "https://commons.wikimedia.org/wiki/File:White_Temple_%27E_at_Uruk,_3500-3000_BCE.jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "public_domain"
+        }
+      ]
     }
   },
   {
@@ -1419,6 +1554,72 @@
       "model_count": 5,
       "analysis_count": 5,
       "tag_count": 6
+    },
+    "architecture_text": {
+      "headline": "Mohenjo-Daro: Wasser, Raster und Indus-Stadt",
+      "overview": "Mohenjo-Daro wird im Architektur Kosmos als Indus-Rasterstadt gelesen und nicht als isoliertes Archivobjekt behandelt. Die Relevanz des Projekts liegt im Zusammenspiel von räumlicher Dramaturgie, konstruktiver Ordnung und archäologische Stadtlandschaft / Flussebene / Mohenjo-Daro, Pakistan / UNESCO-Welterbestätte und Indus-Stadt. Der Eintrag soll deshalb Projektlogik, Materialsystem, Tragwerk und Modell-Layer sichtbar machen, statt nur eine lineare Kurzgeschichte zu liefern.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Mohenjo-Daro gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Mohenjo-Daro verbindet Rasterstraßen, erhöhte Plattformen, Drainagen und Wasserbauten zu einer Stadt, deren Ordnung aus Hygiene, Standardisierung und kollektiver Infrastruktur entsteht. Für den Atlas ist das Projekt wertvoll, weil es trockene Metadaten in eine räumliche Fragestellung übersetzt: Wasserstadt, Raster, Städtebau.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Primäre Materiallesart: gebrannter Ziegel, Lehmziegel. Die Indus-Stadt ist durch standardisierte gebrannte Ziegel, gerasterte Straßen, Plattformen, Drainagen und präzise organisierte Wasserinfrastruktur geprägt. Tragwerkslayer für Blender-Import geplant: Plattform. Die Geometrie bleibt als Studienrekonstruktion markiert, bis Quellenpläne geprüft sind. Für spätere Blender- und ArchiCAD-Workflows sollen diese Beobachtungen als trennbare Ebenen geführt werden, nicht als ein einziges dekoratives Modell.",
+          "source_basis": "analysis layer: material_system; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Mohenjo-Daro verbindet Rasterstraßen, erhöhte Plattformen, Drainagen und Wasserbauten zu einer Stadt, deren Ordnung aus Hygiene, Standardisierung und kollektiver Infrastruktur entsteht. Dadurch wird das Projekt als filterbare Referenz interessant: Grundriss, Schnitt, Erschliessung und Kontext können über Zeiträume hinweg verglichen werden, statt nur als Bilder betrachtet zu werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Tectonic layer planned around gebrannter Ziegel, Lehmziegel; separates material expression, enclosure and structural reading for later Blender layer toggles. Der Cosmos-Text hält diese konstruktive Lesart bewusst explizit, weil sie die Brücke zwischen historischer Interpretation und modellbasierter Analyse bildet.",
+          "source_basis": "analysis layer: tectonics; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Mohenjo-Daro gehört zu archäologische Stadtlandschaft / Flussebene / Mohenjo-Daro, Pakistan / UNESCO-Welterbestätte und Indus-Stadt. Der Ort ist dabei keine Hintergrundinformation, sondern Teil des architektonischen Arguments und soll im Atlas, im Modellpaket und in zukünftigen Suchfiltern sichtbar bleiben.",
+          "source_basis": "entry context metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für die Architecture-Cosmos-Datenbank soll Mohenjo-Daro als strukturierte Referenz mit Quellenpfad, Medienslots, Analyseebenen und Modellteilen gespeichert werden. Die wichtigsten zukünftigen Filter sind material:baked brick, typology:grid city, structure:platform, infrastructure:drainage, context:river plain, blender:urban grid candidate, gebrannter Ziegel, Lehmziegel. Öffentliche Ausgaben müssen rechteklar bleiben; private Forschungsnotizen können detailliertere, quellenbasierte Analysen tragen, bis sie geprüft sind.",
+          "source_basis": "derived from entry metadata, model fields and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T17:41:19.791Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_document",
+          "value": "02 Global History of Urban Design 1_2.pdf"
+        },
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Mohenjo-Daro",
+          "value": "https://commons.wikimedia.org/wiki/File:Mohenjodaro_-_view_of_the_stupa_mound.JPG",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        },
+        {
+          "type": "website",
+          "title": "UNESCO World Heritage Centre: Archaeological Ruins at Moenjodaro",
+          "value": "https://whc.unesco.org/en/list/138/",
+          "reliability_level": "primary_source",
+          "rights_status": "licensed"
+        }
+      ]
     }
   },
   {
@@ -1898,6 +2099,72 @@
       "model_count": 5,
       "analysis_count": 5,
       "tag_count": 6
+    },
+    "architecture_text": {
+      "headline": "Forum Romanum: Öffentlicher Raum als politisches Palimpsest",
+      "overview": "Forum Romanum wird im Architektur Kosmos als römisches Forum gelesen und nicht als isoliertes Archivobjekt behandelt. Die Relevanz des Projekts liegt im Zusammenspiel von räumlicher Dramaturgie, konstruktiver Ordnung und urbaner archäologischer Kern / Talraum zwischen Hügeln / Rome, Italy / römisches Forum und zivischer Raum. Der Eintrag soll deshalb Projektlogik, Materialsystem, Tragwerk und Modell-Layer sichtbar machen, statt nur eine lineare Kurzgeschichte zu liefern.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Forum Romanum gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Das Forum Romanum ist kein einzelner Platz, sondern ein über Jahrhunderte geschichtetes Band aus Tempeln, Basiliken, Triumphwegen, Kurie und öffentlicher Leere. Für den Atlas ist das Projekt wertvoll, weil es trockene Metadaten in eine räumliche Fragestellung übersetzt: römischer Urbanismus, Forum, Politik.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Primäre Materiallesart: Travertin, Tuffstein, Ziegel, römischer Beton. Das Forum Romanum versammelt Stein-, Ziegel- und Betonmonumente um einen zivilen Talraum; es soll als geschichtetes öffentliches Feld und nicht als Einzelbau modelliert werden. Tragwerkslayer für Blender-Import geplant: monumentales Ensemble. Die Geometrie bleibt als Studienrekonstruktion markiert, bis Quellenpläne geprüft sind. Für spätere Blender- und ArchiCAD-Workflows sollen diese Beobachtungen als trennbare Ebenen geführt werden, nicht als ein einziges dekoratives Modell.",
+          "source_basis": "analysis layer: material_system; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Das Forum Romanum ist kein einzelner Platz, sondern ein über Jahrhunderte geschichtetes Band aus Tempeln, Basiliken, Triumphwegen, Kurie und öffentlicher Leere. Dadurch wird das Projekt als filterbare Referenz interessant: Grundriss, Schnitt, Erschliessung und Kontext können über Zeiträume hinweg verglichen werden, statt nur als Bilder betrachtet zu werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Tectonic layer planned around Travertin, Tuffstein, Ziegel; separates material expression, enclosure and structural reading for later Blender layer toggles. Der Cosmos-Text hält diese konstruktive Lesart bewusst explizit, weil sie die Brücke zwischen historischer Interpretation und modellbasierter Analyse bildet.",
+          "source_basis": "analysis layer: tectonics; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Forum Romanum gehört zu urbaner archäologischer Kern / Talraum zwischen Hügeln / Rome, Italy / römisches Forum und zivischer Raum. Der Ort ist dabei keine Hintergrundinformation, sondern Teil des architektonischen Arguments und soll im Atlas, im Modellpaket und in zukünftigen Suchfiltern sichtbar bleiben.",
+          "source_basis": "entry context metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für die Architecture-Cosmos-Datenbank soll Forum Romanum als strukturierte Referenz mit Quellenpfad, Medienslots, Analyseebenen und Modellteilen gespeichert werden. Die wichtigsten zukünftigen Filter sind material:stone, material:roman concrete, typology:forum, context:urban core, structure:monumental ensemble, blender:site model candidate, Travertin, Tuffstein. Öffentliche Ausgaben müssen rechteklar bleiben; private Forschungsnotizen können detailliertere, quellenbasierte Analysen tragen, bis sie geprüft sind.",
+          "source_basis": "derived from entry metadata, model fields and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T17:41:19.956Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_document",
+          "value": "02 Global History of Urban Design 1_2.pdf"
+        },
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Forum Romanum",
+          "value": "https://commons.wikimedia.org/wiki/File:Rome_(IT),_Forum_Romanum_--_2013_--_3358.jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        },
+        {
+          "type": "website",
+          "title": "Encyclopaedia Britannica: Roman Forum",
+          "value": "https://www.britannica.com/place/Roman-Forum",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        }
+      ]
     }
   },
   {
@@ -11341,6 +11608,69 @@
           "type": "site",
           "r2_key": "models/haus-tugendhat/site.glb",
           "review_status": "planned"
+        }
+      ]
+    },
+    "architecture_text": {
+      "headline": "Haus Tugendhat: Freier Wohnraum als Material- und Blickapparat",
+      "overview": "Haus Tugendhat wird im Architektur Kosmos als Gebäude gelesen und nicht als isoliertes Archivobjekt behandelt. Die Relevanz des Projekts liegt im Zusammenspiel von räumlicher Dramaturgie, konstruktiver Ordnung und Bruenn, Czech Republic. Der Eintrag soll deshalb Projektlogik, Materialsystem, Tragwerk und Modell-Layer sichtbar machen, statt nur eine lineare Kurzgeschichte zu liefern.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Haus Tugendhat gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Die räumliche Ordnung entsteht aus Zonen statt aus geschlossenen Zimmern: Wohnen, Essen, Musik und Blickfelder fließen um Materialwände, Vorhänge und Möblierungsfelder herum. Für den Atlas ist das Projekt wertvoll, weil es trockene Metadaten in eine räumliche Fragestellung übersetzt: moderne Objektkultur, Vorhang, freier Grundriss, modernes Wohnen, Materialwand.",
+          "source_basis": "analysis layer: spatial_order; review status: reviewed",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Onyx, Glas, Stahl, Textil und Holz sind nicht nur Ausstattung, sondern atmosphärische und räumliche Instrumente innerhalb des freien Grundrisses. Die strukturelle Lesart stellt ein Stahlskelett in den Vordergrund, das das Wohngeschoss von tragenden Zimmerwänden löst und Materialschirme als raumbildende Elemente ermöglicht. Für spätere Blender- und ArchiCAD-Workflows sollen diese Beobachtungen als trennbare Ebenen geführt werden, nicht als ein einziges dekoratives Modell.",
+          "source_basis": "analysis layer: material_system; review status: reviewed",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Die räumliche Ordnung entsteht aus Zonen statt aus geschlossenen Zimmern: Wohnen, Essen, Musik und Blickfelder fließen um Materialwände, Vorhänge und Möblierungsfelder herum. Dadurch wird das Projekt als filterbare Referenz interessant: Grundriss, Schnitt, Erschliessung und Kontext können über Zeiträume hinweg verglichen werden, statt nur als Bilder betrachtet zu werden.",
+          "source_basis": "analysis layer: spatial_order; review status: reviewed",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "The tectonic reading separates frame, glass, curtain, Onyx wall, Holz wall and floor plane into layered elements that produce fluid domestic space. Der Cosmos-Text hält diese konstruktive Lesart bewusst explizit, weil sie die Brücke zwischen historischer Interpretation und modellbasierter Analyse bildet.",
+          "source_basis": "analysis layer: tectonics; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Haus Tugendhat gehört zu Bruenn, Czech Republic. Der Ort ist dabei keine Hintergrundinformation, sondern Teil des architektonischen Arguments und soll im Atlas, im Modellpaket und in zukünftigen Suchfiltern sichtbar bleiben.",
+          "source_basis": "entry location metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für die Architecture-Cosmos-Datenbank soll Haus Tugendhat als strukturierte Referenz mit Quellenpfad, Medienslots, Analyseebenen und Modellteilen gespeichert werden. Die wichtigsten zukünftigen Filter sind source:lecture notes, course:architekturgeschichte eth, typology:modern villa, typology:free plan house, structure:steel frame, spatial:fluid space, spatial:curtain screen, material:onyx. Öffentliche Ausgaben müssen rechteklar bleiben; private Forschungsnotizen können detailliertere, quellenbasierte Analysen tragen, bis sie geprüft sind.",
+          "source_basis": "derived from entry metadata, model fields and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T17:41:44.483Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_document",
+          "value": "03 Architekturgeschichte 3_4.pdf"
+        },
+        {
+          "type": "source_document",
+          "value": "Lecture notes / modernism"
+        },
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Haus Tugendhat",
+          "value": "https://commons.wikimedia.org/wiki/File:Vila_Tugendhat_exterior_Dvorak2.JPG",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
         }
       ]
     }
