@@ -40,6 +40,7 @@
     "database:research": "node scripts/database-research-agents.mjs",
     "database:analyze": "node scripts/database-research-agents.mjs --mode analyze",
     "database:pilot-enrich": "node scripts/pilot-enrichment-review.mjs",
+    "database:profile-audit": "node scripts/database-profile-audit.mjs",
     "database:hero-images": "node scripts/research-hero-images.mjs",
     "database:hero-images:audit": "node scripts/audit-hero-images.mjs",
     "database:hero-images:apply": "node scripts/research-hero-images.mjs --apply",
