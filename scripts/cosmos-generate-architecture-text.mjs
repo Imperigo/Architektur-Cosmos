@@ -192,7 +192,18 @@ function buildHeadline(entry, program) {
     priene: 'Priene: Orthogonale Stadt am Hang',
     'dura-europos': 'Dura-Europos: Grenzstadt zwischen Mauer, Raster und Bildraum',
     pompeji: 'Pompeji: Alltagsstadt als konservierter urbaner Schnitt',
-    timgad: 'Timgad: Kolonialraster als römische Stadtmaschine'
+    timgad: 'Timgad: Kolonialraster als römische Stadtmaschine',
+    siena: 'Siena: Bürgerstadt als Topografie des öffentlichen Raums',
+    'villa-medici-in-fiesole': 'Villa Medici in Fiesole: Terrasse, Blick und Renaissance-Landschaft',
+    sforzinda: 'Sforzinda: Idealstadt als geometrisches Denkmodell',
+    'ptolemy-geographia': 'Ptolemäus Geographia: Weltbild als messbarer Raum',
+    'villa-d-este': 'Villa d’Este: Wasser als Architektur des Gartens',
+    'garden-of-tuileries': 'Tuilerien: Achse, Parterre und höfische Stadtlandschaft',
+    'villa-lante': 'Villa Lante: Wasserlauf, Terrasse und kontrollierte Landschaft',
+    'mercator-world-atlas': 'Mercator Weltatlas: Projektion als räumliches Werkzeug',
+    'piazza-del-popolo': 'Piazza del Popolo: Stadtzugang als barocke Orientierung',
+    'piazza-st-peters': 'Petersplatz: Kolonnade, Ritual und gefasste Menge',
+    'arc-et-senans': 'Arc-et-Senans: Industrie als Idealstadtfragment'
   };
 
   if (specificHeadlines[entry.slug]) return specificHeadlines[entry.slug];
@@ -244,6 +255,17 @@ function spatialFallback(entry) {
     'dura-europos': 'Dura-Europos verbindet hellenistisches Raster, Befestigung, Flusskante und religiöse Innenräume zu einer Grenzstadt, deren Bedeutung aus Überlagerung entsteht',
     pompeji: 'Pompeji wird als urbaner Schnitt durch Alltag, Handel, Wohnen, Straße, Infrastruktur und Vulkanlandschaft gelesen, nicht nur als konservierte Ruinenstadt',
     timgad: 'Timgad übersetzt römische Kolonialordnung in Cardo, Decumanus, Forum, Theater und Steinraster; die Stadt wird zum präzisen Instrument imperialer Raumproduktion',
+    siena: 'Siena formt öffentlichen Raum aus Topografie: Gassen, Hangkanten, Ziegelkörper, Torre del Mangia und die muschelförmige Piazza del Campo bilden eine verdichtete Bürgerlandschaft',
+    'villa-medici-in-fiesole': 'Villa Medici in Fiesole ordnet Haus, Terrassen, Gartenräume und Blickachsen am Hang; Architektur und Landschaft werden zu einem kontrollierten Sehapparat über Florenz',
+    sforzinda: 'Sforzinda ist keine gebaute Stadt, sondern ein geometrisches Argument: Sternfigur, Radialordnung, Befestigung und Symbolik übersetzen Herrschaft in einen idealen Stadtgrundriss',
+    'ptolemy-geographia': 'Die Geographia macht Raum über Koordinaten, Projektion und Maßverhältnis beschreibbar; sie verschiebt Architektur- und Stadtdenken in ein kartografisches Ordnungssystem',
+    'villa-d-este': 'Villa d’Este organisiert den steilen Hang als Wasserdramaturgie: Terrassen, Achsen, Brunnen, Grotten und Gartenräume bilden eine begehbare hydraulische Inszenierung',
+    'garden-of-tuileries': 'Die Tuilerien übersetzen höfische Ordnung in ein offenes Gartenfeld: Achsen, Parterres, Baumvolumen, Wasserbecken und Wege strukturieren Paris als Landschaftsraum',
+    'villa-lante': 'Villa Lante verdichtet Renaissancegarten, Wasserlauf, Terrassenfolge und symmetrische Casino-Bauten zu einer präzisen Choreografie von Bewegung und Blick',
+    'mercator-world-atlas': 'Mercators Atlas verwandelt Weltgeografie in eine navigierbare Projektionsfläche; nicht Masse, sondern Abstraktion, Maß und Orientierung werden zum räumlichen Instrument',
+    'piazza-del-popolo': 'Piazza del Popolo ordnet Stadteingang, Obelisk, Zwillingskirchen und drei ausstrahlende Straßen zu einem barocken Orientierungssystem',
+    'piazza-st-peters': 'Der Petersplatz fasst die Menge durch Ellipse, Kolonnade, Achse und Obelisk; der Platz wird zu einem räumlichen Instrument für Ritual, Prozession und Sichtbarkeit',
+    'arc-et-senans': 'Arc-et-Senans verbindet Produktion, Ordnung und Utopie: Die halbkreisförmige Anlage macht industrielle Arbeit, soziale Hierarchie und geometrische Idealvorstellung räumlich lesbar',
     'haus-tugendhat': 'Die räumliche Ordnung entsteht aus Zonen statt aus geschlossenen Zimmern: Wohnen, Essen, Musik und Blickfelder fließen um Materialwände, Vorhänge und Möblierungsfelder herum'
   };
   if (specificSpatialReadings[entry.slug]) {
@@ -418,6 +440,36 @@ function readableDe(value) {
     'roman city': 'römische Stadt',
     roman_colonial_grid_city: 'römische Kolonialstadt',
     'roman colonial grid city': 'römische Kolonialstadt',
+    medieval_hill_city: 'mittelalterliche Hügelstadt',
+    'medieval hill city': 'mittelalterliche Hügelstadt',
+    villa_landscape: 'Villenlandschaft',
+    'villa landscape': 'Villenlandschaft',
+    renaissance_terraced_villa_garden: 'terrassierter Renaissancegarten',
+    'renaissance terraced villa garden': 'terrassierter Renaissancegarten',
+    ideal_city: 'Idealstadt',
+    'ideal city': 'Idealstadt',
+    renaissance_star_plan_theory: 'Renaissance-Idealstadt',
+    'renaissance star plan theory': 'Renaissance-Idealstadt',
+    knowledge_system: 'Wissenssystem',
+    'knowledge system': 'Wissenssystem',
+    cartographic_projection_treatise: 'kartografische Projektionslehre',
+    'cartographic projection treatise': 'kartografische Projektionslehre',
+    renaissance_hydraulic_garden: 'hydraulischer Renaissancegarten',
+    'renaissance hydraulic garden': 'hydraulischer Renaissancegarten',
+    formal_royal_garden: 'formaler königlicher Garten',
+    'formal royal garden': 'formaler königlicher Garten',
+    renaissance_water_garden: 'Renaissance-Wassergarten',
+    'renaissance water garden': 'Renaissance-Wassergarten',
+    world_map_projection_atlas: 'Weltkartenatlas',
+    'world map projection atlas': 'Weltkartenatlas',
+    baroque_urban_piazza: 'barocke Stadtpiazza',
+    'baroque urban piazza': 'barocke Stadtpiazza',
+    baroque_ritual_square: 'barocker Ritualplatz',
+    'baroque ritual square': 'barocker Ritualplatz',
+    industrial_complex: 'Industrieanlage',
+    'industrial complex': 'Industrieanlage',
+    enlightenment_saltworks_ideal_city: 'aufklärerische Salinen-Idealstadt',
+    'enlightenment saltworks ideal city': 'aufklärerische Salinen-Idealstadt',
     early_urbanism: 'frühe Urbanisierung',
     'early urbanism': 'frühe Urbanisierung',
     public_space: 'öffentlicher Raum',
@@ -502,6 +554,44 @@ function readableDe(value) {
     'volcanic plain': 'vulkanische Ebene',
     plateau_plain: 'Plateau-Ebene',
     'plateau plain': 'Plateau-Ebene',
+    historic_city_center: 'historischer Stadtkern',
+    'historic city center': 'historischer Stadtkern',
+    hilltop_ridge: 'Hügelrücken',
+    'hilltop ridge': 'Hügelrücken',
+    periurban_villa_landscape: 'periurbane Villenlandschaft',
+    'periurban villa landscape': 'periurbane Villenlandschaft',
+    renaissance_treatise_context: 'Renaissance-Traktatkontext',
+    'renaissance treatise context': 'Renaissance-Traktatkontext',
+    theoretical_plain: 'theoretische Ebene',
+    'theoretical plain': 'theoretische Ebene',
+    mediterranean_scholarly_context: 'mediterraner Gelehrtenkontext',
+    'mediterranean scholarly context': 'mediterraner Gelehrtenkontext',
+    knowledge_network: 'Wissensnetz',
+    'knowledge network': 'Wissensnetz',
+    historic_garden: 'historischer Garten',
+    'historic garden': 'historischer Garten',
+    steep_hillside: 'steiler Hang',
+    'steep hillside': 'steiler Hang',
+    central_paris_royal_axis: 'zentrale Pariser Königsachse',
+    'central paris royal axis': 'zentrale Pariser Königsachse',
+    gentle_slope: 'sanfter Hang',
+    'gentle slope': 'sanfter Hang',
+    early_modern_cartographic_network: 'frühneuzeitliches Kartografienetz',
+    'early modern cartographic network': 'frühneuzeitliches Kartografienetz',
+    global_projection: 'globale Projektion',
+    'global projection': 'globale Projektion',
+    historic_city_gateway: 'historischer Stadteingang',
+    'historic city gateway': 'historischer Stadteingang',
+    flat_urban_node: 'flacher urbaner Knoten',
+    'flat urban node': 'flacher urbaner Knoten',
+    vatican_civic_ritual_space: 'vatikanischer Ritualraum',
+    'vatican civic ritual space': 'vatikanischer Ritualraum',
+    flat_urban_forecourt: 'flacher urbaner Vorplatz',
+    'flat urban forecourt': 'flacher urbaner Vorplatz',
+    industrial_heritage_landscape: 'industrielle Kulturlandschaft',
+    'industrial heritage landscape': 'industrielle Kulturlandschaft',
+    flat_rural_site: 'flacher ländlicher Standort',
+    'flat rural site': 'flacher ländlicher Standort',
     neolithic_settlement: 'neolithische Siedlung',
     'neolithic settlement': 'neolithische Siedlung',
     sumerian_city: 'sumerische Stadt',
@@ -542,6 +632,54 @@ function readableDe(value) {
     roman_colony: 'römische Kolonie',
     'roman colony': 'römische Kolonie',
     ziggurat: 'Zikkurat',
+    medieval_city: 'mittelalterliche Stadt',
+    'medieval city': 'mittelalterliche Stadt',
+    civic_square: 'Bürgerplatz',
+    'civic square': 'Bürgerplatz',
+    renaissance_villa: 'Renaissancevilla',
+    'renaissance villa': 'Renaissancevilla',
+    garden_history: 'Gartengeschichte',
+    'garden history': 'Gartengeschichte',
+    medici_landscape: 'Medici-Landschaft',
+    'medici landscape': 'Medici-Landschaft',
+    renaissance_urban_theory: 'Renaissance-Stadttheorie',
+    'renaissance urban theory': 'Renaissance-Stadttheorie',
+    geometric_planning: 'geometrische Planung',
+    'geometric planning': 'geometrische Planung',
+    cartography: 'Kartografie',
+    projection_system: 'Projektionssystem',
+    'projection system': 'Projektionssystem',
+    renaissance_transmission: 'Renaissance-Überlieferung',
+    'renaissance transmission': 'Renaissance-Überlieferung',
+    renaissance_garden: 'Renaissancegarten',
+    'renaissance garden': 'Renaissancegarten',
+    hydraulic_landscape: 'hydraulische Landschaft',
+    'hydraulic landscape': 'hydraulische Landschaft',
+    french_formal_garden: 'französischer Formalgarten',
+    'french formal garden': 'französischer Formalgarten',
+    royal_landscape: 'höfische Landschaft',
+    'royal landscape': 'höfische Landschaft',
+    urban_axis: 'Stadtachse',
+    'urban axis': 'Stadtachse',
+    mannerist_garden: 'manieristischer Garten',
+    'mannerist garden': 'manieristischer Garten',
+    water_axis: 'Wasserachse',
+    'water axis': 'Wasserachse',
+    navigation: 'Navigation',
+    mercator_projection: 'Mercator-Projektion',
+    'mercator projection': 'Mercator-Projektion',
+    baroque_city: 'barocke Stadt',
+    'baroque city': 'barocke Stadt',
+    roman_piazza: 'römische Piazza',
+    'roman piazza': 'römische Piazza',
+    ritual_space: 'Ritualraum',
+    'ritual space': 'Ritualraum',
+    world_heritage_context: 'Welterbe-Kontext',
+    'world heritage context': 'Welterbe-Kontext',
+    industrial_utopia: 'Industrieutopie',
+    'industrial utopia': 'Industrieutopie',
+    enlightenment_planning: 'Planung der Aufklärung',
+    'enlightenment planning': 'Planung der Aufklärung',
     palimpsest: 'Palimpsest',
     proto_urban: 'proto-urban',
     'proto urban': 'proto-urban',
@@ -567,6 +705,20 @@ function readableDe(value) {
     domesticity: 'Alltagswohnen',
     colonial_city: 'Kolonialstadt',
     'colonial city': 'Kolonialstadt',
+    republic: 'Republik',
+    view: 'Blick',
+    geometry: 'Geometrie',
+    worldview: 'Weltbild',
+    projection: 'Projektion',
+    water: 'Wasser',
+    axis: 'Achse',
+    ritual: 'Ritual',
+    industry: 'Industrie',
+    utopia: 'Utopie',
+    renaissance_city: 'Renaissance-Stadt',
+    'renaissance city': 'Renaissance-Stadt',
+    baroque_city: 'barocke Stadt',
+    'baroque city': 'barocke Stadt',
     mud_brick: 'Lehmziegel',
     'mud brick': 'Lehmziegel',
     roman_urbanism: 'römischer Urbanismus',
@@ -592,6 +744,26 @@ function readableDe(value) {
     'stone foundations': 'Steinfundamente',
     stone_masonry: 'Steinmauerwerk',
     'stone masonry': 'Steinmauerwerk',
+    stone_paving: 'Steinpflaster',
+    'stone paving': 'Steinpflaster',
+    stone_edges: 'Steinkanten',
+    'stone edges': 'Steinkanten',
+    terrace_walls: 'Terrassenmauern',
+    'terrace walls': 'Terrassenmauern',
+    timber_roof: 'Holzdach',
+    'timber roof': 'Holzdach',
+    industrial_infrastructure: 'Industrieinfrastruktur',
+    'industrial infrastructure': 'Industrieinfrastruktur',
+    vegetation: 'Vegetation',
+    gravel: 'Kies',
+    water: 'Wasser',
+    paper: 'Papier',
+    ink: 'Tinte',
+    parchment: 'Pergament',
+    engraving: 'Kupferstich',
+    terracotta: 'Terrakotta',
+    geometric_diagram: 'geometrisches Diagramm',
+    'geometric diagram': 'geometrisches Diagramm',
     masonry: 'Mauerwerk',
     stone: 'Stein',
     limestone: 'Kalkstein',
@@ -706,6 +878,14 @@ function localizeArchitectureText(value) {
     .replaceAll('limestone', 'Kalkstein')
     .replaceAll('marble', 'Marmor')
     .replaceAll('masonry', 'Mauerwerk')
+    .replaceAll('vegetation', 'Vegetation')
+    .replaceAll('gravel', 'Kies')
+    .replaceAll('water', 'Wasser')
+    .replaceAll('paper', 'Papier')
+    .replaceAll('ink', 'Tinte')
+    .replaceAll('parchment', 'Pergament')
+    .replaceAll('engraving', 'Kupferstich')
+    .replaceAll('terracotta', 'Terrakotta')
     .replaceAll('stone', 'Stein')
     .replaceAll('travertine', 'Travertin')
     .replaceAll('tufa', 'Tuffstein')
@@ -734,6 +914,25 @@ function localizeArchitectureText(value) {
     .replaceAll('Dura-Europos is a fortified frontier city with mud-Ziegel and Stein fabric, city walls, religious interiors and exceptional painted/Putzed room evidence', 'Dura-Europos ist eine befestigte Grenzstadt aus Lehmziegel- und Steingefüge, Stadtmauer, religiösen Innenräumen und außergewöhnlichen bemalten Putzbefunden')
     .replaceAll('Pompeii combines volcanic Stein, Ziegel, concrete, Putzed interiors and street paving; the urban model should expose domestic, commercial and infrastructural layers', 'Pompeji verbindet vulkanisches Gestein, Ziegel, Beton, verputzte Innenräume und Straßenbeläge; das Stadtmodell soll Wohn-, Handels- und Infrastrukturschichten getrennt lesbar machen')
     .replaceAll('Timgad is a Roman colonial grid city whose Stein streets, forum, theater and cardo/decumanus structure make it a strong urban-order reference', 'Timgad ist eine römische Kolonialstadt, deren Steinstraßen, Forum, Theater und Cardo-Decumanus-Struktur sie zu einer starken Referenz urbaner Ordnung machen')
+    .replaceAll('Siena is read as a medieval hill city where Ziegel/Stein fabric, shell-shaped Piazza del Campo and topographic streets form a compact civic landscape', 'Siena wird als mittelalterliche Hügelstadt gelesen, in der Ziegel- und Steinstruktur, die muschelförmige Piazza del Campo und topografische Gassen eine kompakte Bürgerlandschaft bilden')
+    .replaceAll('The villa is modeled as architecture plus terraced landscape: Mauerwerk house, retaining walls, planted garden rooms and framed views toward Florence', 'Die Villa verbindet Architektur und terrassierte Landschaft: Mauerwerkskörper, Stützmauern, bepflanzte Gartenräume und gefasste Blicke auf Florenz bilden eine zusammenhängende Ordnung')
+    .replaceAll('Sforzinda is a textual/drawn ideal city; material is manuscript/diagram, while 3D value lies in reconstructing geometry and urban order', 'Sforzinda ist eine gezeichnete und beschriebene Idealstadt; ihr Material ist Manuskript und Diagramm, ihre architektonische Bedeutung liegt in der Rekonstruktion von Geometrie und urbaner Ordnung')
+    .replaceAll('As a cartographic/textual object, the material system is manuscript and early print media rather than building fabric', 'Als kartografisches und textliches Objekt besteht das Materialsystem aus Manuskript, Papier, Tinte und früher Druckkultur statt aus Baugefüge')
+    .replaceAll('Villa d’Este is read as hydraulic landscape architecture: terraces, Stein retaining systems, fountains, water axes and garden rooms', 'Villa d’Este wird als hydraulische Landschaftsarchitektur gelesen: Terrassen, steinerne Stützungen, Brunnen, Wasserachsen und Gartenräume bilden eine räumliche Dramaturgie')
+    .replaceAll('Villa d’Este is read as hydraulic landscape architecture: terraces, Stein retaining systems, fountains, Wasser axes and garden rooms', 'Villa d’Este wird als hydraulische Landschaftsarchitektur gelesen: Terrassen, steinerne Stützungen, Brunnen, Wasserachsen und Gartenräume bilden eine räumliche Dramaturgie')
+    .replaceAll('Tuileries is modeled as a formal garden field: axial paths, parterres, basins, tree masses and royal/urban alignments', 'Die Tuilerien werden als formales Gartenfeld gelesen: Achswege, Parterres, Wasserbecken, Baumvolumen und höfisch-städtische Ausrichtungen ordnen den Raum')
+    .replaceAll('Villa Lante is read as a compact Renaissance water garden with paired casino buildings, terraces, fountains and a controlled descent of water', 'Villa Lante wird als kompakter Renaissance-Wassergarten mit paarigen Casino-Bauten, Terrassen, Brunnen und kontrolliertem Wasserlauf gelesen')
+    .replaceAll('Villa Lante is read as a compact Renaissance Wasser garden with paired casino buildings, terraces, fountains and a controlled descent of Wasser', 'Villa Lante wird als kompakter Renaissance-Wassergarten mit paarigen Casino-Bauten, Terrassen, Brunnen und kontrolliertem Wasserlauf gelesen')
+    .replaceAll('Mercator is modeled as a cartographic projection and printed knowledge object; spatial value lies in navigational abstraction rather than architectural mass', 'Mercator wird als kartografische Projektion und gedrucktes Wissensobjekt gelesen; sein räumlicher Wert liegt in navigierbarer Abstraktion statt in architektonischer Masse')
+    .replaceAll('Piazza del Popolo is a baroque/urban threshold: paving field, twin churches, obelisk, gates and radiating streets produce an urban orientation device', 'Piazza del Popolo ist eine barocke urbane Schwelle: Pflasterfeld, Zwillingskirchen, Obelisk, Tore und ausstrahlende Straßen erzeugen ein Orientierungssystem')
+    .replaceAll('St Peter’s Square is a ritual urban space: elliptical colonnades, axial approach, obelisk and paving define crowd, procession and symbolic orientation', 'Der Petersplatz ist ein ritueller Stadtraum: elliptische Kolonnaden, axiale Annäherung, Obelisk und Pflasterung ordnen Menge, Prozession und symbolische Orientierung')
+    .replaceAll('The Royal Saltworks is an industrial-ideal urban fragment: semicircular plan, production buildings, director’s house and social order encoded in geometry', 'Die Königliche Saline ist ein industriell-ideales Stadtfragment: Halbkreisplan, Produktionsbauten, Direktorenhaus und soziale Ordnung werden geometrisch codiert')
+    .replaceAll('Stein_edges', 'Steinkanten')
+    .replaceAll('Stein_paving', 'Steinpflaster')
+    .replaceAll('Holz_roof', 'Holzdach')
+    .replaceAll('industrial_infrastructure', 'Industrieinfrastruktur')
+    .replaceAll('terrace_walls', 'Terrassenmauern')
+    .replaceAll('geometric_diagram', 'geometrisches Diagramm')
     .replaceAll('Mauerwerk foundation', 'Mauerwerksfundament')
     .replaceAll('Stein Mauerwerk', 'Steinmauerwerk');
 }

@@ -5057,6 +5057,72 @@
       "model_count": 5,
       "analysis_count": 5,
       "tag_count": 6
+    },
+    "architecture_text": {
+      "headline": "Siena: Bürgerstadt als Topografie des öffentlichen Raums",
+      "overview": "Siena wird als mittelalterliche Hügelstadt verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und historischer Stadtkern / Hügelrücken / Siena, Italy / UNESCO-Welterbestätte und mittelalterliche Stadt. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Siena gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Siena formt öffentlichen Raum aus Topografie: Gassen, Hangkanten, Ziegelkörper, Torre del Mangia und die muschelförmige Piazza del Campo bilden eine verdichtete Bürgerlandschaft. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie mittelalterliche Stadt, öffentlicher Raum, Republik als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Primäre Materiallesart: Ziegel, Stein, Terrakotta. Siena wird als mittelalterliche Hügelstadt gelesen, in der Ziegel- und Steinstruktur, die muschelförmige Piazza del Campo und topografische Gassen eine kompakte Bürgerlandschaft bilden. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "analysis layer: material_system; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Siena formt öffentlichen Raum aus Topografie: Gassen, Hangkanten, Ziegelkörper, Torre del Mangia und die muschelförmige Piazza del Campo bilden eine verdichtete Bürgerlandschaft. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart trennt Ziegel, Stein, Terrakotta als Zusammenspiel von Materialausdruck, Hülle, Fügung und tragender Ordnung. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "analysis layer: tectonics; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Siena gehört zu historischer Stadtkern / Hügelrücken / Siena, Italy / UNESCO-Welterbestätte und mittelalterliche Stadt. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry context metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "Siena ist als Referenz wichtig, weil material:brick, material:stone, typology:hill town, typology:civic square, topography:hilltop, blender:urban mass candidate, Ziegel, Stein nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T18:06:23.187Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_document",
+          "value": "02 Global History of Urban Design 1_2.pdf"
+        },
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Siena",
+          "value": "https://commons.wikimedia.org/wiki/File:Siena_Cattedrale_nuova_Vista_su_la_Piazza_del_Campo_2.jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        },
+        {
+          "type": "website",
+          "title": "UNESCO World Heritage Centre: Historic Centre of Siena",
+          "value": "https://whc.unesco.org/en/list/717/",
+          "reliability_level": "primary_source",
+          "rights_status": "licensed"
+        }
+      ]
     }
   },
   {
@@ -5783,6 +5849,72 @@
       "model_count": 6,
       "analysis_count": 5,
       "tag_count": 6
+    },
+    "architecture_text": {
+      "headline": "Villa Medici in Fiesole: Terrasse, Blick und Renaissance-Landschaft",
+      "overview": "Villa Medici in Fiesole wird als terrassierter Renaissancegarten verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und periurbane Villenlandschaft / Hanglage / Florence, Italy / Renaissancevilla und Gartengeschichte. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Villa Medici in Fiesole gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Villa Medici in Fiesole ordnet Haus, Terrassen, Gartenräume und Blickachsen am Hang; Architektur und Landschaft werden zu einem kontrollierten Sehapparat über Florenz. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Gartengeschichte, Renaissancegarten, Blick als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Primäre Materiallesart: Steinmauerwerk, Terrassenmauern, Vegetation. Die Villa verbindet Architektur und terrassierte Landschaft: Mauerwerkskörper, Stützmauern, bepflanzte Gartenräume und gefasste Blicke auf Florenz bilden eine zusammenhängende Ordnung. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "analysis layer: material_system; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Villa Medici in Fiesole ordnet Haus, Terrassen, Gartenräume und Blickachsen am Hang; Architektur und Landschaft werden zu einem kontrollierten Sehapparat über Florenz. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart trennt Steinmauerwerk, Terrassenmauern, Vegetation als Zusammenspiel von Materialausdruck, Hülle, Fügung und tragender Ordnung. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "analysis layer: tectonics; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Villa Medici in Fiesole gehört zu periurbane Villenlandschaft / Hanglage / Florence, Italy / Renaissancevilla und Gartengeschichte. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry context metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "Villa Medici in Fiesole ist als Referenz wichtig, weil material:stone masonry, typology:villa garden, topography:hillside, landscape:terrace, theme:view, blender:terrain model candidate, Steinmauerwerk, Terrassenmauern nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T18:06:23.344Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_document",
+          "value": "04 Landschaftsarchitektur 1_2.pdf"
+        },
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Villa Medici in Fiesole",
+          "value": "https://commons.wikimedia.org/wiki/File:Villa_Medici_a_Fiesole_1.jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        },
+        {
+          "type": "website",
+          "title": "Medici Villas and Gardens in Tuscany / UNESCO",
+          "value": "https://whc.unesco.org/en/list/175/",
+          "reliability_level": "primary_source",
+          "rights_status": "licensed"
+        }
+      ]
     }
   },
   {
@@ -5983,6 +6115,72 @@
       "model_count": 5,
       "analysis_count": 5,
       "tag_count": 5
+    },
+    "architecture_text": {
+      "headline": "Sforzinda: Idealstadt als geometrisches Denkmodell",
+      "overview": "Sforzinda wird als Renaissance-Idealstadt verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und Renaissance-Traktatkontext / theoretische Ebene / Italy, Italy / Idealstadt und Renaissance-Stadttheorie. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Sforzinda gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Sforzinda ist keine gebaute Stadt, sondern ein geometrisches Argument: Sternfigur, Radialordnung, Befestigung und Symbolik übersetzen Herrschaft in einen idealen Stadtgrundriss. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Idealstadt, Renaissance-Stadt, Geometrie als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Primäre Materiallesart: Papier, Tinte, geometrisches Diagramm. Sforzinda ist eine gezeichnete und beschriebene Idealstadt; ihr Material ist Manuskript und Diagramm, ihre architektonische Bedeutung liegt in der Rekonstruktion von Geometrie und urbaner Ordnung. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "analysis layer: material_system; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Sforzinda ist keine gebaute Stadt, sondern ein geometrisches Argument: Sternfigur, Radialordnung, Befestigung und Symbolik übersetzen Herrschaft in einen idealen Stadtgrundriss. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart trennt Papier, Tinte, geometrisches Diagramm als Zusammenspiel von Materialausdruck, Hülle, Fügung und tragender Ordnung. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "analysis layer: tectonics; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Sforzinda gehört zu Renaissance-Traktatkontext / theoretische Ebene / Italy, Italy / Idealstadt und Renaissance-Stadttheorie. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry context metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "Sforzinda ist als Referenz wichtig, weil medium:drawing, typology:ideal city, geometry:star plan, theme:utopia, blender:diagram to mass candidate, Papier, Tinte, geometrisches Diagramm nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T18:06:23.495Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_document",
+          "value": "02 Global History of Urban Design 1_2.pdf"
+        },
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Sforzinda",
+          "value": "https://commons.wikimedia.org/wiki/File:Idealstadt.jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "public_domain"
+        },
+        {
+          "type": "website",
+          "title": "Filarete and Sforzinda / Treccani reference",
+          "value": "https://www.treccani.it/enciclopedia/filarete/",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        }
+      ]
     }
   },
   {
@@ -6188,6 +6386,79 @@
       "model_count": 5,
       "analysis_count": 5,
       "tag_count": 5
+    },
+    "architecture_text": {
+      "headline": "Ptolemäus Geographia: Weltbild als messbarer Raum",
+      "overview": "Ptolemy Geographia wird als kartografische Projektionslehre verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und mediterraner Gelehrtenkontext / Wissensnetz / Alexandria, Egypt / Kartografie und Projektionssystem. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Ptolemy Geographia gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Die Geographia macht Raum über Koordinaten, Projektion und Maßverhältnis beschreibbar; sie verschiebt Architektur- und Stadtdenken in ein kartografisches Ordnungssystem. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Kartografie, Weltbild, Projektion als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Primäre Materiallesart: Pergament, Tinte, Papier. Als kartografisches und textliches Objekt besteht das Materialsystem aus Manuskript, Papier, Tinte und früher Druckkultur statt aus Baugefüge. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "analysis layer: material_system; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Die Geographia macht Raum über Koordinaten, Projektion und Maßverhältnis beschreibbar; sie verschiebt Architektur- und Stadtdenken in ein kartografisches Ordnungssystem. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart trennt Pergament, Tinte, Papier als Zusammenspiel von Materialausdruck, Hülle, Fügung und tragender Ordnung. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "analysis layer: tectonics; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Ptolemy Geographia gehört zu mediterraner Gelehrtenkontext / Wissensnetz / Alexandria, Egypt / Kartografie und Projektionssystem. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry context metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "Ptolemy Geographia ist als Referenz wichtig, weil medium:map, typology:cartographic system, theme:projection, context:knowledge network, blender:data layer candidate, Pergament, Tinte, Papier nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T18:06:23.651Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_document",
+          "value": "04 Landschaftsarchitektur 1_2.pdf"
+        },
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Ptolemy Geographia",
+          "value": "https://commons.wikimedia.org/wiki/File:Burney_MS_111_f105v-f106r_Ptolemy%27s_World_Map_1420_crop_01.jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "public_domain"
+        },
+        {
+          "type": "website",
+          "title": "Library of Congress: Geography / Claudius Ptolemy",
+          "value": "https://www.loc.gov/item/2021667854/",
+          "reliability_level": "primary_source",
+          "rights_status": "public_domain"
+        },
+        {
+          "type": "website",
+          "title": "Wikimedia Commons source image: Ptolemy World Map",
+          "value": "https://commons.wikimedia.org/wiki/File:Burney_MS_111_f105v-f106r_Ptolemy%27s_World_Map_1420_crop_01.jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "public_domain"
+        }
+      ]
     }
   },
   {
@@ -6405,6 +6676,72 @@
       "model_count": 6,
       "analysis_count": 5,
       "tag_count": 6
+    },
+    "architecture_text": {
+      "headline": "Villa d’Este: Wasser als Architektur des Gartens",
+      "overview": "Villa d'Este wird als hydraulischer Renaissancegarten verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und historischer Garten / steiler Hang / Tivoli, Italy / UNESCO-Welterbestätte und Renaissancegarten. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Villa d'Este gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Villa d’Este organisiert den steilen Hang als Wasserdramaturgie: Terrassen, Achsen, Brunnen, Grotten und Gartenräume bilden eine begehbare hydraulische Inszenierung. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Gartengeschichte, Wasser, Renaissancegarten als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Primäre Materiallesart: Steinmauerwerk, Wasser, Vegetation. Villa d’Este wird als hydraulische Landschaftsarchitektur gelesen: Terrassen, steinerne Stützungen, Brunnen, Wasserachsen und Gartenräume bilden eine räumliche Dramaturgie. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "analysis layer: material_system; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Villa d’Este organisiert den steilen Hang als Wasserdramaturgie: Terrassen, Achsen, Brunnen, Grotten und Gartenräume bilden eine begehbare hydraulische Inszenierung. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart trennt Steinmauerwerk, Wasser, Vegetation als Zusammenspiel von Materialausdruck, Hülle, Fügung und tragender Ordnung. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "analysis layer: tectonics; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Villa d'Este gehört zu historischer Garten / steiler Hang / Tivoli, Italy / UNESCO-Welterbestätte und Renaissancegarten. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry context metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "Villa d'Este ist als Referenz wichtig, weil material:stone masonry, material:water, typology:villa garden, landscape:hydraulic garden, topography:hillside, blender:water system candidate, Steinmauerwerk, Wasser nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T18:06:23.811Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_document",
+          "value": "04 Landschaftsarchitektur 1_2.pdf"
+        },
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Villa d'Este",
+          "value": "https://commons.wikimedia.org/wiki/File:Villa_Deste_park_Rometta_2011_2.jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        },
+        {
+          "type": "website",
+          "title": "UNESCO World Heritage Centre: Villa d’Este, Tivoli",
+          "value": "https://whc.unesco.org/en/list/1025/",
+          "reliability_level": "primary_source",
+          "rights_status": "licensed"
+        }
+      ]
     }
   },
   {
@@ -6620,6 +6957,72 @@
       "model_count": 6,
       "analysis_count": 5,
       "tag_count": 6
+    },
+    "architecture_text": {
+      "headline": "Tuilerien: Achse, Parterre und höfische Stadtlandschaft",
+      "overview": "Garden of Tuileries wird als formaler königlicher Garten verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und zentrale Pariser Königsachse / flacher städtischer Standort / Paris, France / französischer Formalgarten und höfische Landschaft. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Garden of Tuileries gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Die Tuilerien übersetzen höfische Ordnung in ein offenes Gartenfeld: Achsen, Parterres, Baumvolumen, Wasserbecken und Wege strukturieren Paris als Landschaftsraum. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Gartengeschichte, Achse, höfische Landschaft als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Primäre Materiallesart: Vegetation, Kies, Steinkanten. Die Tuilerien werden als formales Gartenfeld gelesen: Achswege, Parterres, Wasserbecken, Baumvolumen und höfisch-städtische Ausrichtungen ordnen den Raum. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "analysis layer: material_system; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Die Tuilerien übersetzen höfische Ordnung in ein offenes Gartenfeld: Achsen, Parterres, Baumvolumen, Wasserbecken und Wege strukturieren Paris als Landschaftsraum. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart trennt Vegetation, Kies, Steinkanten als Zusammenspiel von Materialausdruck, Hülle, Fügung und tragender Ordnung. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "analysis layer: tectonics; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Garden of Tuileries gehört zu zentrale Pariser Königsachse / flacher städtischer Standort / Paris, France / französischer Formalgarten und höfische Landschaft. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry context metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "Garden of Tuileries ist als Referenz wichtig, weil material:vegetation, material:gravel, typology:formal garden, theme:axis, context:royal landscape, blender:landscape axis candidate, Vegetation, Kies nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T18:06:23.971Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_document",
+          "value": "04 Landschaftsarchitektur 1_2.pdf"
+        },
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Garden of Tuileries",
+          "value": "https://commons.wikimedia.org/wiki/File:Camille_Pissarro,_The_Garden_of_the_Tuileries_on_a_Spring_Morning,_1899.jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "public_domain"
+        },
+        {
+          "type": "website",
+          "title": "Musée du Louvre: Tuileries Garden",
+          "value": "https://www.louvre.fr/en/explore/the-palace/the-tuileries-garden",
+          "reliability_level": "primary_source",
+          "rights_status": "licensed"
+        }
+      ]
     }
   },
   {
@@ -6836,6 +7239,72 @@
       "model_count": 6,
       "analysis_count": 5,
       "tag_count": 6
+    },
+    "architecture_text": {
+      "headline": "Villa Lante: Wasserlauf, Terrasse und kontrollierte Landschaft",
+      "overview": "Villa Lante wird als Renaissance-Wassergarten verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und historischer Garten / sanfter Hang / Bagnaia, Italy / Renaissancegarten und manieristischer Garten. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Villa Lante gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Villa Lante verdichtet Renaissancegarten, Wasserlauf, Terrassenfolge und symmetrische Casino-Bauten zu einer präzisen Choreografie von Bewegung und Blick. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Gartengeschichte, Wasser, Renaissancegarten als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Primäre Materiallesart: Steinmauerwerk, Wasser, Vegetation. Villa Lante wird als kompakter Renaissance-Wassergarten mit paarigen Casino-Bauten, Terrassen, Brunnen und kontrolliertem Wasserlauf gelesen. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "analysis layer: material_system; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Villa Lante verdichtet Renaissancegarten, Wasserlauf, Terrassenfolge und symmetrische Casino-Bauten zu einer präzisen Choreografie von Bewegung und Blick. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart trennt Steinmauerwerk, Wasser, Vegetation als Zusammenspiel von Materialausdruck, Hülle, Fügung und tragender Ordnung. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "analysis layer: tectonics; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Villa Lante gehört zu historischer Garten / sanfter Hang / Bagnaia, Italy / Renaissancegarten und manieristischer Garten. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry context metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "Villa Lante ist als Referenz wichtig, weil material:stone masonry, material:water, typology:villa garden, landscape:water axis, topography:slope, blender:water system candidate, Steinmauerwerk, Wasser nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T18:06:24.134Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_document",
+          "value": "04 Landschaftsarchitektur 1_2.pdf"
+        },
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Villa Lante",
+          "value": "https://commons.wikimedia.org/wiki/File:Villa_Lante_(1).jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        },
+        {
+          "type": "website",
+          "title": "Villa Lante / Italian Ministry of Culture",
+          "value": "https://cultura.gov.it/luogo/villa-lante",
+          "reliability_level": "primary_source",
+          "rights_status": "licensed"
+        }
+      ]
     }
   },
   {
@@ -7048,6 +7517,79 @@
       "model_count": 5,
       "analysis_count": 5,
       "tag_count": 6
+    },
+    "architecture_text": {
+      "headline": "Mercator Weltatlas: Projektion als räumliches Werkzeug",
+      "overview": "Mercator World Atlas wird als Weltkartenatlas verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und frühneuzeitliches Kartografienetz / globale Projektion / Duisburg, Germany / Kartografie und Navigation. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Mercator World Atlas gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Mercators Atlas verwandelt Weltgeografie in eine navigierbare Projektionsfläche; nicht Masse, sondern Abstraktion, Maß und Orientierung werden zum räumlichen Instrument. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Kartografie, Projektion, Navigation als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Primäre Materiallesart: Papier, Tinte, Kupferstich. Mercator wird als kartografische Projektion und gedrucktes Wissensobjekt gelesen; sein räumlicher Wert liegt in navigierbarer Abstraktion statt in architektonischer Masse. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "analysis layer: material_system; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Mercators Atlas verwandelt Weltgeografie in eine navigierbare Projektionsfläche; nicht Masse, sondern Abstraktion, Maß und Orientierung werden zum räumlichen Instrument. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart trennt Papier, Tinte, Kupferstich als Zusammenspiel von Materialausdruck, Hülle, Fügung und tragender Ordnung. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "analysis layer: tectonics; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Mercator World Atlas gehört zu frühneuzeitliches Kartografienetz / globale Projektion / Duisburg, Germany / Kartografie und Navigation. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry context metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "Mercator World Atlas ist als Referenz wichtig, weil medium:map, typology:atlas, theme:projection, theme:navigation, context:early modern cartography, blender:data layer candidate, Papier, Tinte nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T18:06:24.295Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_document",
+          "value": "04 Landschaftsarchitektur 1_2.pdf"
+        },
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Mercator World Atlas",
+          "value": "https://commons.wikimedia.org/wiki/File:Gerardus_Mercator_3.jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "public_domain"
+        },
+        {
+          "type": "website",
+          "title": "Library of Congress: Mercator map and cartographic collections",
+          "value": "https://www.loc.gov/maps/?fa=contributor:mercator,+gerhard",
+          "reliability_level": "primary_source",
+          "rights_status": "public_domain"
+        },
+        {
+          "type": "website",
+          "title": "Wikimedia Commons source image: Gerardus Mercator 3",
+          "value": "https://commons.wikimedia.org/wiki/File:Gerardus_Mercator_3.jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "public_domain"
+        }
+      ]
     }
   },
   {
@@ -7563,6 +8105,72 @@
       "model_count": 5,
       "analysis_count": 5,
       "tag_count": 6
+    },
+    "architecture_text": {
+      "headline": "Piazza del Popolo: Stadtzugang als barocke Orientierung",
+      "overview": "Piazza del Popolo wird als barocke Stadtpiazza verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und historischer Stadteingang / flacher urbaner Knoten / Rome, Italy / barocke Stadt und Stadtachse. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Piazza del Popolo gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Piazza del Popolo ordnet Stadteingang, Obelisk, Zwillingskirchen und drei ausstrahlende Straßen zu einem barocken Orientierungssystem. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie barocke Stadt, Achse, öffentlicher Raum als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Primäre Materiallesart: Steinpflaster, Travertin, Mauerwerk. Piazza del Popolo ist eine barocke urbane Schwelle: Pflasterfeld, Zwillingskirchen, Obelisk, Tore und ausstrahlende Straßen erzeugen ein Orientierungssystem. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "analysis layer: material_system; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Piazza del Popolo ordnet Stadteingang, Obelisk, Zwillingskirchen und drei ausstrahlende Straßen zu einem barocken Orientierungssystem. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart trennt Steinpflaster, Travertin, Mauerwerk als Zusammenspiel von Materialausdruck, Hülle, Fügung und tragender Ordnung. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "analysis layer: tectonics; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Piazza del Popolo gehört zu historischer Stadteingang / flacher urbaner Knoten / Rome, Italy / barocke Stadt und Stadtachse. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry context metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "Piazza del Popolo ist als Referenz wichtig, weil material:stone paving, typology:piazza, geometry:radial axis, theme:baroque city, context:urban gateway, blender:urban node candidate, Steinpflaster, Travertin nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T18:06:24.455Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_document",
+          "value": "02 Global History of Urban Design 1_2.pdf"
+        },
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Piazza del Popolo",
+          "value": "https://commons.wikimedia.org/wiki/File:PIAZZA_DEL_POPOLO_VISTA_AEREA.jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        },
+        {
+          "type": "website",
+          "title": "Sovrintendenza Capitolina: Piazza del Popolo",
+          "value": "https://www.sovraintendenzaroma.it/i_luoghi/roma_medioevale_e_moderna/piazze/piazza_del_popolo",
+          "reliability_level": "primary_source",
+          "rights_status": "licensed"
+        }
+      ]
     }
   },
   {
@@ -7837,6 +8445,72 @@
       "model_count": 5,
       "analysis_count": 5,
       "tag_count": 6
+    },
+    "architecture_text": {
+      "headline": "Petersplatz: Kolonnade, Ritual und gefasste Menge",
+      "overview": "Piazza St Peters wird als barocker Ritualplatz verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und vatikanischer Ritualraum / flacher urbaner Vorplatz / Rome, Italy / barocke Stadt und Ritualraum. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Piazza St Peters gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Der Petersplatz fasst die Menge durch Ellipse, Kolonnade, Achse und Obelisk; der Platz wird zu einem räumlichen Instrument für Ritual, Prozession und Sichtbarkeit. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie barocke Stadt, Ritual, öffentlicher Raum als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Primäre Materiallesart: Travertin, Steinpflaster, Mauerwerk. Der Petersplatz ist ein ritueller Stadtraum: elliptische Kolonnaden, axiale Annäherung, Obelisk und Pflasterung ordnen Menge, Prozession und symbolische Orientierung. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "analysis layer: material_system; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Der Petersplatz fasst die Menge durch Ellipse, Kolonnade, Achse und Obelisk; der Platz wird zu einem räumlichen Instrument für Ritual, Prozession und Sichtbarkeit. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart trennt Travertin, Steinpflaster, Mauerwerk als Zusammenspiel von Materialausdruck, Hülle, Fügung und tragender Ordnung. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "analysis layer: tectonics; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Piazza St Peters gehört zu vatikanischer Ritualraum / flacher urbaner Vorplatz / Rome, Italy / barocke Stadt und Ritualraum. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry context metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "Piazza St Peters ist als Referenz wichtig, weil material:travertine, typology:ritual square, typology:colonnade, geometry:ellipse, theme:procession, blender:colonnade model candidate, Travertin, Steinpflaster nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T18:06:24.613Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_document",
+          "value": "02 Global History of Urban Design 1_2.pdf"
+        },
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Piazza St Peters",
+          "value": "https://commons.wikimedia.org/wiki/File:St_Peter%27s_Square,_Vatican_City_-_April_2007.jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        },
+        {
+          "type": "website",
+          "title": "Vatican: Saint Peter’s Basilica and Square",
+          "value": "https://www.basilicasanpietro.va/en.html",
+          "reliability_level": "primary_source",
+          "rights_status": "licensed"
+        }
+      ]
     }
   },
   {
@@ -8095,6 +8769,72 @@
       "model_count": 5,
       "analysis_count": 5,
       "tag_count": 6
+    },
+    "architecture_text": {
+      "headline": "Arc-et-Senans: Industrie als Idealstadtfragment",
+      "overview": "Arc-et-Senans wird als aufklärerische Salinen-Idealstadt verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und industrielle Kulturlandschaft / flacher ländlicher Standort / Arc-et-Senans, France / UNESCO-Welterbestätte und Industrieutopie. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Arc-et-Senans gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Arc-et-Senans verbindet Produktion, Ordnung und Utopie: Die halbkreisförmige Anlage macht industrielle Arbeit, soziale Hierarchie und geometrische Idealvorstellung räumlich lesbar. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Idealstadt, Industrie, Utopie als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Material und Tragwerk",
+          "text": "Primäre Materiallesart: Steinmauerwerk, Holzdach, Industrieinfrastruktur. Die Königliche Saline ist ein industriell-ideales Stadtfragment: Halbkreisplan, Produktionsbauten, Direktorenhaus und soziale Ordnung werden geometrisch codiert. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
+          "source_basis": "analysis layer: material_system; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Arc-et-Senans verbindet Produktion, Ordnung und Utopie: Die halbkreisförmige Anlage macht industrielle Arbeit, soziale Hierarchie und geometrische Idealvorstellung räumlich lesbar. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
+          "source_basis": "curated spatial reading",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Die tektonische Lesart trennt Steinmauerwerk, Holzdach, Industrieinfrastruktur als Zusammenspiel von Materialausdruck, Hülle, Fügung und tragender Ordnung. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
+          "source_basis": "analysis layer: tectonics; review status: draft",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Arc-et-Senans gehört zu industrielle Kulturlandschaft / flacher ländlicher Standort / Arc-et-Senans, France / UNESCO-Welterbestätte und Industrieutopie. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
+          "source_basis": "entry context metadata",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "Arc-et-Senans ist als Referenz wichtig, weil material:stone masonry, typology:industrial complex, typology:ideal city, geometry:semicircle, theme:industry, blender:ensemble model candidate, Steinmauerwerk, Holzdach nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
+          "source_basis": "derived from entry metadata and Brain quality rules",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "cosmos-generate-architecture-text",
+      "generated_at": "2026-05-21T18:06:24.783Z",
+      "review_status": "needs_owner_review",
+      "source_basis": [
+        {
+          "type": "source_document",
+          "value": "02 Global History of Urban Design 1_2.pdf"
+        },
+        {
+          "type": "image_source",
+          "title": "Wikimedia Commons hero candidate / Arc-et-Senans",
+          "value": "https://commons.wikimedia.org/wiki/File:Arc-et-Senans_-_Saline_Royale_(01).jpg",
+          "reliability_level": "secondary_source",
+          "rights_status": "licensed"
+        },
+        {
+          "type": "website",
+          "title": "UNESCO World Heritage Centre: Royal Saltworks of Arc-et-Senans",
+          "value": "https://whc.unesco.org/en/list/203/",
+          "reliability_level": "primary_source",
+          "rights_status": "licensed"
+        }
+      ]
     }
   },
   {
