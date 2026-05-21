@@ -522,8 +522,135 @@
         "reliability_level": "secondary_source",
         "rights_status": "licensed",
         "notes": "Auto-selected hero image candidate. Score: 0.92. License: CC BY-SA 3.0."
+      },
+      {
+        "source_type": "website",
+        "title": "Encyclopaedia Britannica: Eridu",
+        "url": "https://www.britannica.com/place/Eridu",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Public reference source for Eridu as one of southern Mesopotamia’s earliest cities."
+      },
+      {
+        "source_type": "website",
+        "title": "Encyclopaedia Britannica: Susa",
+        "url": "https://www.britannica.com/place/Susa-ancient-city-Iran",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Public reference source for Susa and its Elamite/Achaemenid urban history."
       }
-    ]
+    ],
+    "geo": {
+      "lat": 30.816,
+      "lon": 45.996,
+      "region": "Southern Mesopotamia / Khuzestan",
+      "precision": "region"
+    },
+    "materials": {
+      "primary": [
+        "mud_brick",
+        "alluvial_clay"
+      ],
+      "secondary": [
+        "reed",
+        "bitumen",
+        "stone_foundations"
+      ],
+      "notes": "Urban and temple fabrics are reconstructed primarily through Mesopotamian alluvial mud-brick archaeology; Susa adds Elamite/Achaemenid palatial and mud-brick contexts."
+    },
+    "program": {
+      "type": "early_urbanism",
+      "subtype": "temple_city_and_palatial_settlement",
+      "public_access": "public"
+    },
+    "context": {
+      "topography": "alluvial_plain",
+      "setting": "riverine_archaeological_landscape",
+      "heritage_context": [
+        "early_urbanism",
+        "mesopotamian_city",
+        "elamite_context"
+      ],
+      "landscape_relation": [
+        "irrigation_plain",
+        "tell_mound",
+        "temple_precinct"
+      ]
+    },
+    "database_tags": [
+      "material:mud_brick",
+      "structure:massive_wall",
+      "typology:early_city",
+      "context:alluvial_plain",
+      "region:mesopotamia",
+      "blender:mass_model_candidate"
+    ],
+    "model_3d": {
+      "source_basis": "Public hero/source metadata plus lecture-derived historical framework; geometry remains planned/reconstruction-grade until source plans are reviewed.",
+      "parts": [
+        {
+          "type": "low",
+          "r2_key": "models/eridu-and-susa/low.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "mass",
+          "r2_key": "models/eridu-and-susa/mass.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "site",
+          "r2_key": "models/eridu-and-susa/site.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "structure",
+          "r2_key": "models/eridu-and-susa/structure.glb",
+          "review_status": "planned"
+        }
+      ],
+      "license": "own_work"
+    },
+    "analysis_layers": [
+      {
+        "analysis_type": "material_system",
+        "summary": "Primary material reading: mud_brick, alluvial_clay. Urban and temple fabrics are reconstructed primarily through Mesopotamian alluvial mud-brick archaeology; Susa adds Elamite/Achaemenid palatial and mud-brick contexts.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "urban_context",
+        "summary": "Database classification places Eridu and Susa in temple_city_and_palatial_settlement, with context tags early_urbanism, mesopotamian_city, elamite_context.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "source_reconstruction",
+        "summary": "3D/Blender layer is planned as an analytical reconstruction layer; no exact measured model is claimed at this stage.",
+        "review_status": "needs_source"
+      }
+    ],
+    "analysis_observations": [
+      {
+        "analysis_type": "material_tag",
+        "label": "material:mud_brick",
+        "confidence_score": 0.68,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:early_city",
+        "confidence_score": 0.68,
+        "source": "source_inferred"
+      }
+    ],
+    "database_profile": {
+      "status": "draft",
+      "r2_prefix": "entries/eridu-and-susa",
+      "source_count": 4,
+      "media_count": 4,
+      "model_count": 4,
+      "analysis_count": 3,
+      "tag_count": 6
+    }
   },
   {
     "id": "uruk-city",
@@ -585,8 +712,140 @@
         "reliability_level": "secondary_source",
         "rights_status": "public_domain",
         "notes": "Auto-selected hero image candidate. Score: 0.95. License: Public domain."
+      },
+      {
+        "source_type": "website",
+        "title": "Encyclopaedia Britannica: Uruk",
+        "url": "https://www.britannica.com/place/Uruk",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Public reference for Uruk as a major early Mesopotamian city."
+      },
+      {
+        "source_type": "website",
+        "title": "Wikimedia Commons source image: White Temple at Uruk",
+        "url": "https://commons.wikimedia.org/wiki/File:White_Temple_%27E_at_Uruk,_3500-3000_BCE.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "public_domain",
+        "notes": "Public-domain reconstruction image source used as hero candidate."
       }
-    ]
+    ],
+    "geo": {
+      "lat": 31.322,
+      "lon": 45.636,
+      "region": "Warka / Southern Iraq",
+      "precision": "site"
+    },
+    "materials": {
+      "primary": [
+        "mud_brick",
+        "baked_brick"
+      ],
+      "secondary": [
+        "lime_plaster",
+        "reed"
+      ],
+      "notes": "Uruk is a mud-brick urban fabric with monumental precincts such as Eanna and Anu/White Temple; geometry should be treated as archaeological reconstruction, not exact survey."
+    },
+    "program": {
+      "type": "early_urbanism",
+      "subtype": "administrative_ritual_city",
+      "public_access": "public"
+    },
+    "context": {
+      "topography": "alluvial_plain",
+      "setting": "archaeological_tell_landscape",
+      "heritage_context": [
+        "sumerian_city",
+        "early_writing",
+        "temple_precinct"
+      ],
+      "landscape_relation": [
+        "euphrates_alluvial_network",
+        "monumental_platform",
+        "city_wall"
+      ]
+    },
+    "database_tags": [
+      "material:mud_brick",
+      "typology:temple_precinct",
+      "typology:early_city",
+      "structure:platform",
+      "context:alluvial_plain",
+      "blender:site_model_candidate"
+    ],
+    "model_3d": {
+      "source_basis": "Public hero/source metadata plus lecture-derived historical framework; geometry remains planned/reconstruction-grade until source plans are reviewed.",
+      "parts": [
+        {
+          "type": "low",
+          "r2_key": "models/uruk-city/low.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "mass",
+          "r2_key": "models/uruk-city/mass.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "site",
+          "r2_key": "models/uruk-city/site.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "structure",
+          "r2_key": "models/uruk-city/structure.glb",
+          "review_status": "planned"
+        }
+      ],
+      "license": "own_work"
+    },
+    "analysis_layers": [
+      {
+        "analysis_type": "material_system",
+        "summary": "Primary material reading: mud_brick, baked_brick. Uruk is a mud-brick urban fabric with monumental precincts such as Eanna and Anu/White Temple; geometry should be treated as archaeological reconstruction, not exact survey.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "urban_context",
+        "summary": "Database classification places Uruk in administrative_ritual_city, with context tags sumerian_city, early_writing, temple_precinct.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "source_reconstruction",
+        "summary": "3D/Blender layer is planned as an analytical reconstruction layer; no exact measured model is claimed at this stage.",
+        "review_status": "needs_source"
+      }
+    ],
+    "analysis_observations": [
+      {
+        "analysis_type": "material_tag",
+        "label": "material:mud_brick",
+        "confidence_score": 0.68,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:temple_precinct",
+        "confidence_score": 0.68,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:early_city",
+        "confidence_score": 0.68,
+        "source": "source_inferred"
+      }
+    ],
+    "database_profile": {
+      "status": "draft",
+      "r2_prefix": "entries/uruk-city",
+      "source_count": 3,
+      "media_count": 4,
+      "model_count": 4,
+      "analysis_count": 3,
+      "tag_count": 6
+    }
   },
   {
     "id": "mohenjo-daro",
@@ -776,8 +1035,140 @@
         "reliability_level": "secondary_source",
         "rights_status": "licensed",
         "notes": "Auto-selected hero image candidate. Score: 0.95. License: CC BY 3.0."
+      },
+      {
+        "source_type": "website",
+        "title": "UNESCO World Heritage Centre: The Ahwar of Southern Iraq",
+        "url": "https://whc.unesco.org/en/list/1481/",
+        "reliability_level": "primary_source",
+        "rights_status": "licensed",
+        "notes": "UNESCO context for southern Iraqi archaeological landscapes including ancient urban and wetland systems."
+      },
+      {
+        "source_type": "website",
+        "title": "Encyclopaedia Britannica: Ur",
+        "url": "https://www.britannica.com/place/Ur",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Public reference for Ur, its ziggurat and urban history."
       }
-    ]
+    ],
+    "geo": {
+      "lat": 30.962,
+      "lon": 46.104,
+      "region": "Dhi Qar",
+      "precision": "site"
+    },
+    "materials": {
+      "primary": [
+        "mud_brick",
+        "baked_brick"
+      ],
+      "secondary": [
+        "bitumen",
+        "reed"
+      ],
+      "notes": "The ziggurat and city remains combine mud-brick massing with baked-brick revetments and bitumen mortars in key monumental zones."
+    },
+    "program": {
+      "type": "early_urbanism",
+      "subtype": "ziggurat_city",
+      "public_access": "public"
+    },
+    "context": {
+      "topography": "alluvial_plain",
+      "setting": "archaeological_city_landscape",
+      "heritage_context": [
+        "sumerian_city",
+        "ziggurat",
+        "royal_cemetery"
+      ],
+      "landscape_relation": [
+        "sacred_platform",
+        "riverine_plain",
+        "city_wall"
+      ]
+    },
+    "database_tags": [
+      "material:mud_brick",
+      "material:baked_brick",
+      "typology:ziggurat",
+      "structure:stepped_mass",
+      "context:alluvial_plain",
+      "blender:mass_model_candidate"
+    ],
+    "model_3d": {
+      "source_basis": "Public hero/source metadata plus lecture-derived historical framework; geometry remains planned/reconstruction-grade until source plans are reviewed.",
+      "parts": [
+        {
+          "type": "low",
+          "r2_key": "models/ur/low.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "mass",
+          "r2_key": "models/ur/mass.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "site",
+          "r2_key": "models/ur/site.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "structure",
+          "r2_key": "models/ur/structure.glb",
+          "review_status": "planned"
+        }
+      ],
+      "license": "own_work"
+    },
+    "analysis_layers": [
+      {
+        "analysis_type": "material_system",
+        "summary": "Primary material reading: mud_brick, baked_brick. The ziggurat and city remains combine mud-brick massing with baked-brick revetments and bitumen mortars in key monumental zones.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "urban_context",
+        "summary": "Database classification places Ur in ziggurat_city, with context tags sumerian_city, ziggurat, royal_cemetery.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "source_reconstruction",
+        "summary": "3D/Blender layer is planned as an analytical reconstruction layer; no exact measured model is claimed at this stage.",
+        "review_status": "needs_source"
+      }
+    ],
+    "analysis_observations": [
+      {
+        "analysis_type": "material_tag",
+        "label": "material:mud_brick",
+        "confidence_score": 0.68,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "material_tag",
+        "label": "material:baked_brick",
+        "confidence_score": 0.68,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:ziggurat",
+        "confidence_score": 0.68,
+        "source": "source_inferred"
+      }
+    ],
+    "database_profile": {
+      "status": "draft",
+      "r2_prefix": "entries/ur",
+      "source_count": 4,
+      "media_count": 4,
+      "model_count": 4,
+      "analysis_count": 3,
+      "tag_count": 6
+    }
   },
   {
     "id": "forum-romanum",
@@ -904,8 +1295,140 @@
         "reliability_level": "secondary_source",
         "rights_status": "licensed",
         "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY 2.5."
+      },
+      {
+        "source_type": "website",
+        "title": "Encyclopaedia Britannica: Megara Hyblaea",
+        "url": "https://www.britannica.com/place/Megara-Hyblaea",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Public reference for the Greek colonial city and archaeological site."
+      },
+      {
+        "source_type": "website",
+        "title": "Wikimedia Commons source image: Megara Hyblaea 001",
+        "url": "https://commons.wikimedia.org/wiki/File:Megara_Hyblaea_001.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "CC BY image source used as public hero candidate."
       }
-    ]
+    ],
+    "geo": {
+      "lat": 37.203,
+      "lon": 15.181,
+      "region": "Sicily",
+      "precision": "site"
+    },
+    "materials": {
+      "primary": [
+        "limestone",
+        "masonry"
+      ],
+      "secondary": [
+        "earth_floor",
+        "timber_roof"
+      ],
+      "notes": "Greek colonial urban fabric is read through stone foundations, street grids and house plots; upper structures are largely archaeological inference."
+    },
+    "program": {
+      "type": "urban_plan",
+      "subtype": "greek_colonial_polis_grid",
+      "public_access": "public"
+    },
+    "context": {
+      "topography": "coastal_plain",
+      "setting": "archaeological_site",
+      "heritage_context": [
+        "greek_colony",
+        "polis_planning",
+        "orthogonal_grid"
+      ],
+      "landscape_relation": [
+        "street_grid",
+        "agora_relation",
+        "colonial_settlement"
+      ]
+    },
+    "database_tags": [
+      "material:limestone",
+      "typology:polis",
+      "typology:grid_plan",
+      "context:coastal_plain",
+      "structure:masonry_foundation",
+      "blender:urban_grid_candidate"
+    ],
+    "model_3d": {
+      "source_basis": "Public hero/source metadata plus lecture-derived historical framework; geometry remains planned/reconstruction-grade until source plans are reviewed.",
+      "parts": [
+        {
+          "type": "low",
+          "r2_key": "models/megara-hyblaea/low.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "mass",
+          "r2_key": "models/megara-hyblaea/mass.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "site",
+          "r2_key": "models/megara-hyblaea/site.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "structure",
+          "r2_key": "models/megara-hyblaea/structure.glb",
+          "review_status": "planned"
+        }
+      ],
+      "license": "own_work"
+    },
+    "analysis_layers": [
+      {
+        "analysis_type": "material_system",
+        "summary": "Primary material reading: limestone, masonry. Greek colonial urban fabric is read through stone foundations, street grids and house plots; upper structures are largely archaeological inference.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "urban_context",
+        "summary": "Database classification places Megara Hyblaea in greek_colonial_polis_grid, with context tags greek_colony, polis_planning, orthogonal_grid.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "source_reconstruction",
+        "summary": "3D/Blender layer is planned as an analytical reconstruction layer; no exact measured model is claimed at this stage.",
+        "review_status": "needs_source"
+      }
+    ],
+    "analysis_observations": [
+      {
+        "analysis_type": "material_tag",
+        "label": "material:limestone",
+        "confidence_score": 0.68,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:polis",
+        "confidence_score": 0.68,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:grid_plan",
+        "confidence_score": 0.68,
+        "source": "source_inferred"
+      }
+    ],
+    "database_profile": {
+      "status": "draft",
+      "r2_prefix": "entries/megara-hyblaea",
+      "source_count": 4,
+      "media_count": 4,
+      "model_count": 4,
+      "analysis_count": 3,
+      "tag_count": 6
+    }
   },
   {
     "id": "agora-of-athens",
@@ -2264,8 +2787,129 @@
         "reliability_level": "secondary_source",
         "rights_status": "public_domain",
         "notes": "Auto-selected hero image candidate. Score: 0.98. License: Public domain."
+      },
+      {
+        "source_type": "website",
+        "title": "Library of Congress: Geography / Claudius Ptolemy",
+        "url": "https://www.loc.gov/item/2021667854/",
+        "reliability_level": "primary_source",
+        "rights_status": "public_domain",
+        "notes": "Library catalogue reference for a public-domain Ptolemaic geography/map source."
+      },
+      {
+        "source_type": "website",
+        "title": "Wikimedia Commons source image: Ptolemy World Map",
+        "url": "https://commons.wikimedia.org/wiki/File:Burney_MS_111_f105v-f106r_Ptolemy%27s_World_Map_1420_crop_01.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "public_domain",
+        "notes": "Public-domain map image used as hero candidate."
       }
-    ]
+    ],
+    "geo": {
+      "lat": 31.2,
+      "lon": 29.918,
+      "region": "Alexandria / Mediterranean knowledge network",
+      "precision": "city"
+    },
+    "materials": {
+      "primary": [
+        "parchment",
+        "ink",
+        "paper"
+      ],
+      "secondary": [
+        "manuscript",
+        "printed_map"
+      ],
+      "notes": "As a cartographic/textual object, the material system is manuscript and early print media rather than building fabric."
+    },
+    "program": {
+      "type": "knowledge_system",
+      "subtype": "cartographic_projection_treatise",
+      "public_access": "public"
+    },
+    "context": {
+      "topography": "knowledge_network",
+      "setting": "mediterranean_scholarly_context",
+      "heritage_context": [
+        "cartography",
+        "projection_system",
+        "renaissance_transmission"
+      ],
+      "landscape_relation": [
+        "worldview",
+        "coordinate_system",
+        "mapped_territory"
+      ]
+    },
+    "database_tags": [
+      "medium:map",
+      "typology:cartographic_system",
+      "theme:projection",
+      "context:knowledge_network",
+      "blender:data_layer_candidate"
+    ],
+    "model_3d": {
+      "source_basis": "Public hero/source metadata plus lecture-derived historical framework; geometry remains planned/reconstruction-grade until source plans are reviewed.",
+      "parts": [
+        {
+          "type": "low",
+          "r2_key": "models/ptolemy-geographia/low.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "site",
+          "r2_key": "models/ptolemy-geographia/site.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "material",
+          "r2_key": "models/ptolemy-geographia/material.glb",
+          "review_status": "planned"
+        }
+      ],
+      "license": "own_work"
+    },
+    "analysis_layers": [
+      {
+        "analysis_type": "material_system",
+        "summary": "Primary material reading: parchment, ink, paper. As a cartographic/textual object, the material system is manuscript and early print media rather than building fabric.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "summary": "Database classification places Ptolemy Geographia in cartographic_projection_treatise, with context tags cartography, projection_system, renaissance_transmission.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "source_reconstruction",
+        "summary": "3D/Blender layer is planned as an analytical reconstruction layer; no exact measured model is claimed at this stage.",
+        "review_status": "needs_source"
+      }
+    ],
+    "analysis_observations": [
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:cartographic_system",
+        "confidence_score": 0.68,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "theme:projection",
+        "confidence_score": 0.68,
+        "source": "source_inferred"
+      }
+    ],
+    "database_profile": {
+      "status": "draft",
+      "r2_prefix": "entries/ptolemy-geographia",
+      "source_count": 4,
+      "media_count": 4,
+      "model_count": 3,
+      "analysis_count": 3,
+      "tag_count": 5
+    }
   },
   {
     "id": "villa-d-este",
@@ -2521,8 +3165,136 @@
         "reliability_level": "secondary_source",
         "rights_status": "public_domain",
         "notes": "Auto-selected hero image candidate. Score: 0.92. License: Public domain."
+      },
+      {
+        "source_type": "website",
+        "title": "Library of Congress: Mercator map and cartographic collections",
+        "url": "https://www.loc.gov/maps/?fa=contributor:mercator,+gerhard",
+        "reliability_level": "primary_source",
+        "rights_status": "public_domain",
+        "notes": "Library of Congress cartographic source trail for Mercator material."
+      },
+      {
+        "source_type": "website",
+        "title": "Wikimedia Commons source image: Gerardus Mercator 3",
+        "url": "https://commons.wikimedia.org/wiki/File:Gerardus_Mercator_3.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "public_domain",
+        "notes": "Public-domain image source used as hero candidate."
       }
-    ]
+    ],
+    "geo": {
+      "lat": 51.434,
+      "lon": 6.762,
+      "region": "Duisburg / Low Countries cartographic network",
+      "precision": "city"
+    },
+    "materials": {
+      "primary": [
+        "paper",
+        "ink",
+        "engraving"
+      ],
+      "secondary": [
+        "atlas_binding",
+        "printed_map"
+      ],
+      "notes": "Mercator is modeled as a cartographic projection and printed knowledge object; spatial value lies in navigational abstraction rather than architectural mass."
+    },
+    "program": {
+      "type": "knowledge_system",
+      "subtype": "world_map_projection_atlas",
+      "public_access": "public"
+    },
+    "context": {
+      "topography": "global_projection",
+      "setting": "early_modern_cartographic_network",
+      "heritage_context": [
+        "cartography",
+        "navigation",
+        "mercator_projection"
+      ],
+      "landscape_relation": [
+        "mapped_world",
+        "navigation_grid",
+        "projection_surface"
+      ]
+    },
+    "database_tags": [
+      "medium:map",
+      "typology:atlas",
+      "theme:projection",
+      "theme:navigation",
+      "context:early_modern_cartography",
+      "blender:data_layer_candidate"
+    ],
+    "model_3d": {
+      "source_basis": "Public hero/source metadata plus lecture-derived historical framework; geometry remains planned/reconstruction-grade until source plans are reviewed.",
+      "parts": [
+        {
+          "type": "low",
+          "r2_key": "models/mercator-world-atlas/low.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "site",
+          "r2_key": "models/mercator-world-atlas/site.glb",
+          "review_status": "planned"
+        },
+        {
+          "type": "material",
+          "r2_key": "models/mercator-world-atlas/material.glb",
+          "review_status": "planned"
+        }
+      ],
+      "license": "own_work"
+    },
+    "analysis_layers": [
+      {
+        "analysis_type": "material_system",
+        "summary": "Primary material reading: paper, ink, engraving. Mercator is modeled as a cartographic projection and printed knowledge object; spatial value lies in navigational abstraction rather than architectural mass.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "summary": "Database classification places Mercator World Atlas in world_map_projection_atlas, with context tags cartography, navigation, mercator_projection.",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "source_reconstruction",
+        "summary": "3D/Blender layer is planned as an analytical reconstruction layer; no exact measured model is claimed at this stage.",
+        "review_status": "needs_source"
+      }
+    ],
+    "analysis_observations": [
+      {
+        "analysis_type": "filter_classification",
+        "label": "typology:atlas",
+        "confidence_score": 0.68,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "theme:projection",
+        "confidence_score": 0.68,
+        "source": "source_inferred"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "label": "theme:navigation",
+        "confidence_score": 0.68,
+        "source": "source_inferred"
+      }
+    ],
+    "database_profile": {
+      "status": "draft",
+      "r2_prefix": "entries/mercator-world-atlas",
+      "source_count": 4,
+      "media_count": 4,
+      "model_count": 3,
+      "analysis_count": 3,
+      "tag_count": 6
+    }
   },
   {
     "id": "palladio-four-books",
