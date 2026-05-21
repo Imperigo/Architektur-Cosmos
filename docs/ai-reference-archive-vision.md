@@ -5,6 +5,11 @@ It is the reference archive foundation for a larger design pipeline connecting
 the website, Cloudflare archive storage, Blender, ArchiCAD and AI-assisted
 analysis.
 
+This vision is also guided by the broader office-strategy memory in
+[`docs/architecture-office-2045-guideline.md`](./architecture-office-2045-guideline.md):
+Architecture Cosmos should become verified reference infrastructure, not just
+an AI image or content demo.
+
 ## Long-Term Goal
 
 The atlas should let the host/admin drop source material such as PDFs, books,
