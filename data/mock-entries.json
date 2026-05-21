@@ -489,7 +489,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Eridu and Susa / mesopotamia-city"
+        "placeholder": "Aussenansicht / Eridu and Susa / mesopotamia-city",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Eridu_mound4c.8.png/960px-Eridu_mound4c.8.png",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Eridu_mound4c.8.png",
+        "credit": "Wikimedia Commons / User:Cush / CC BY-SA 3.0",
+        "license": "cc_by_sa"
       },
       {
         "type": "interior",
@@ -509,6 +513,16 @@
     ],
     "source_documents": [
       "02 Global History of Urban Design 1_2.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Eridu and Susa",
+        "url": "https://commons.wikimedia.org/wiki/File:Eridu_mound4c.8.png",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.92. License: CC BY-SA 3.0."
+      }
     ]
   },
   {
@@ -541,7 +555,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Uruk / mesopotamia-city"
+        "placeholder": "Aussenansicht / Uruk / mesopotamia-city",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/White_Temple_%27E_at_Uruk%2C_3500-3000_BCE.jpg/960px-White_Temple_%27E_at_Uruk%2C_3500-3000_BCE.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:White_Temple_%27E_at_Uruk,_3500-3000_BCE.jpg",
+        "credit": "Wikimedia Commons / Fletcher Banister / Public domain",
+        "license": "public_domain"
       },
       {
         "type": "interior",
@@ -557,6 +575,16 @@
         "type": "plan",
         "label": "Grundriss",
         "placeholder": "Grundriss / Uruk / mesopotamia-city"
+      }
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Uruk",
+        "url": "https://commons.wikimedia.org/wiki/File:White_Temple_%27E_at_Uruk,_3500-3000_BCE.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "public_domain",
+        "notes": "Auto-selected hero image candidate. Score: 0.95. License: Public domain."
       }
     ]
   },
@@ -715,7 +743,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Ur / mesopotamia-city"
+        "placeholder": "Aussenansicht / Ur / mesopotamia-city",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Ancient_ziggurat_at_Ali_Air_Base_Iraq_2005.jpg/960px-Ancient_ziggurat_at_Ali_Air_Base_Iraq_2005.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Ancient_ziggurat_at_Ali_Air_Base_Iraq_2005.jpg",
+        "credit": "Wikimedia Commons / en:User:Hardnfast / CC BY 3.0",
+        "license": "cc_by"
       },
       {
         "type": "interior",
@@ -735,6 +767,16 @@
     ],
     "source_documents": [
       "02 Global History of Urban Design 1_2.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Ur",
+        "url": "https://commons.wikimedia.org/wiki/File:Ancient_ziggurat_at_Ali_Air_Base_Iraq_2005.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.95. License: CC BY 3.0."
+      }
     ]
   },
   {
@@ -829,7 +871,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Megara Hyblaea / polis-colonization"
+        "placeholder": "Aussenansicht / Megara Hyblaea / polis-colonization",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Megara_Hyblaea_001.jpg/960px-Megara_Hyblaea_001.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Megara_Hyblaea_001.jpg",
+        "credit": "Wikimedia Commons / Clemensfranz / CC BY 2.5",
+        "license": "cc_by"
       },
       {
         "type": "interior",
@@ -849,6 +895,16 @@
     ],
     "source_documents": [
       "02 Global History of Urban Design 1_2.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Megara Hyblaea",
+        "url": "https://commons.wikimedia.org/wiki/File:Megara_Hyblaea_001.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY 2.5."
+      }
     ]
   },
   {
@@ -2175,7 +2231,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Ptolemy Geographia / cartography-worldview"
+        "placeholder": "Aussenansicht / Ptolemy Geographia / cartography-worldview",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Burney_MS_111_f105v-f106r_Ptolemy%27s_World_Map_1420_crop_01.jpg/960px-Burney_MS_111_f105v-f106r_Ptolemy%27s_World_Map_1420_crop_01.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Burney_MS_111_f105v-f106r_Ptolemy%27s_World_Map_1420_crop_01.jpg",
+        "credit": "Wikimedia Commons / Ptolemy / Public domain",
+        "license": "public_domain"
       },
       {
         "type": "interior",
@@ -2195,6 +2255,16 @@
     ],
     "source_documents": [
       "04 Landschaftsarchitektur 1_2.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Ptolemy Geographia",
+        "url": "https://commons.wikimedia.org/wiki/File:Burney_MS_111_f105v-f106r_Ptolemy%27s_World_Map_1420_crop_01.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "public_domain",
+        "notes": "Auto-selected hero image candidate. Score: 0.98. License: Public domain."
+      }
     ]
   },
   {
@@ -2418,7 +2488,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Mercator World Atlas / cartography-projection"
+        "placeholder": "Aussenansicht / Mercator World Atlas / cartography-projection",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Gerardus_Mercator_3.jpg/960px-Gerardus_Mercator_3.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Gerardus_Mercator_3.jpg",
+        "credit": "Wikimedia Commons / Frans Hogenberg / Public domain",
+        "license": "public_domain"
       },
       {
         "type": "interior",
@@ -2438,6 +2512,16 @@
     ],
     "source_documents": [
       "04 Landschaftsarchitektur 1_2.pdf"
+    ],
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Mercator World Atlas",
+        "url": "https://commons.wikimedia.org/wiki/File:Gerardus_Mercator_3.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "public_domain",
+        "notes": "Auto-selected hero image candidate. Score: 0.92. License: Public domain."
+      }
     ]
   },
   {

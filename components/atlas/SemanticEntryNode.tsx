@@ -185,10 +185,13 @@ function EntryThumbnail({ entry, x, y, radius, accent, isSelected, styleLensActi
   const showDetailLines = !imageUrl && !isFast && (radius >= 6.4 || isSelected || styleLensActive);
   const stableSuffix = `${sanitizeId(entry.id)}-${sanitizeId(reactId)}`;
   const clipId = `entry-thumb-clip-${stableSuffix}`;
+  const surfaceId = `entry-planet-surface-${stableSuffix}`;
   const shadeId = `entry-planet-shade-${stableSuffix}`;
   const glowId = `entry-planet-glow-${stableSuffix}`;
   const lightX = x - radius * (0.38 + (seed % 11) * 0.012);
   const lightY = y - radius * (0.44 + (seed % 7) * 0.014);
+  const fallbackSurface = thumbnailSurface(entry.entry_type);
+  const terrainOffset = ((seed % 9) - 4) * radius * 0.018;
 
   return (
     <g className="entry-thumbnail" pointerEvents="none">
@@ -197,6 +200,12 @@ function EntryThumbnail({ entry, x, y, radius, accent, isSelected, styleLensActi
           <stop offset="0%" stopColor="#ffffff" stopOpacity={isFast ? 0.3 : 0.46} />
           <stop offset="42%" stopColor={accent} stopOpacity={isFast ? 0.14 : 0.22} />
           <stop offset="100%" stopColor={accent} stopOpacity="0" />
+        </radialGradient>
+        <radialGradient id={surfaceId} cx="35%" cy="28%" r="82%">
+          <stop offset="0%" stopColor="#f7f7f4" stopOpacity={isFast ? 0.34 : 0.48} />
+          <stop offset="38%" stopColor={fallbackSurface} stopOpacity="0.92" />
+          <stop offset="70%" stopColor={accent} stopOpacity="0.72" />
+          <stop offset="100%" stopColor="#050505" stopOpacity="0.96" />
         </radialGradient>
         <radialGradient id={shadeId} cx="34%" cy="28%" r="78%">
           <stop offset="0%" stopColor="#ffffff" stopOpacity={isFast ? 0.18 : 0.26} />
@@ -240,8 +249,17 @@ function EntryThumbnail({ entry, x, y, radius, accent, isSelected, styleLensActi
         </>
       ) : (
         <>
-          <circle cx={x} cy={y} r={radius} fill={isSelected ? '#050505' : thumbnailFill(entry.entry_type)} stroke={accent} strokeWidth={accentStroke} />
-          <circle cx={x} cy={y} r={Math.max(0, radius - 0.3)} fill={`url(#${shadeId})`} opacity={isFast ? 0.66 : 0.78} />
+          <circle cx={x} cy={y} r={radius} fill={`url(#${surfaceId})`} stroke={accent} strokeWidth={accentStroke} />
+          {!isFast ? (
+            <path
+              d={`M ${x - radius * 0.78} ${y + terrainOffset} C ${x - radius * 0.32} ${y - radius * 0.2}, ${x + radius * 0.18} ${y + radius * 0.26}, ${x + radius * 0.78} ${y - radius * 0.02}`}
+              fill="none"
+              stroke={entry.entry_type === 'text' || entry.entry_type === 'theory' ? '#050505' : '#f7f7f4'}
+              strokeWidth={Math.max(0.42, radius * 0.075)}
+              opacity="0.38"
+            />
+          ) : null}
+          <circle cx={x} cy={y} r={Math.max(0, radius - 0.3)} fill={`url(#${shadeId})`} opacity={isFast ? 0.5 : 0.62} />
           {!isFast ? <circle cx={lightX} cy={lightY} r={Math.max(1, radius * 0.14)} fill="#ffffff" opacity="0.22" /> : null}
         </>
       )}
@@ -269,11 +287,12 @@ function EntryThumbnail({ entry, x, y, radius, accent, isSelected, styleLensActi
   );
 }
 
-function thumbnailFill(entryType: Entry['entry_type']) {
-  if (entryType === 'text' || entryType === 'theory') return '#f7f7f4';
-  if (entryType === 'landscape_project') return '#c9fff4';
-  if (entryType === 'urban_plan' || entryType === 'map') return '#d7c7ff';
-  if (entryType === 'infrastructure') return '#ffd7a8';
+function thumbnailSurface(entryType: Entry['entry_type']) {
+  if (entryType === 'text' || entryType === 'theory') return '#efe7cf';
+  if (entryType === 'landscape_project') return '#59ffe0';
+  if (entryType === 'urban_plan' || entryType === 'map') return '#a994ff';
+  if (entryType === 'infrastructure') return '#ffb15f';
+  if (entryType === 'event') return '#ff7ac8';
   return '#f7f7f4';
 }
 

@@ -84,6 +84,96 @@ const manualHeroOverrides = {
     discovery: 'manual_public_safe_override',
     public_safe: true
   },
+  'eridu-and-susa': {
+    title: 'File:Eridu mound4c.8.png',
+    query: 'manual_override',
+    url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Eridu_mound4c.8.png/960px-Eridu_mound4c.8.png',
+    source_url: 'https://commons.wikimedia.org/wiki/File:Eridu_mound4c.8.png',
+    credit: 'Wikimedia Commons / User:Cush / CC BY-SA 3.0',
+    license: 'cc_by_sa',
+    license_short: 'CC BY-SA 3.0',
+    mime: 'image/png',
+    width: 960,
+    score: 0.92,
+    source_page_title: 'Eridu',
+    discovery: 'manual_public_safe_override',
+    public_safe: true
+  },
+  'uruk-city': {
+    title: "File:White Temple 'E at Uruk, 3500-3000 BCE.jpg",
+    query: 'manual_override',
+    url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/White_Temple_%27E_at_Uruk%2C_3500-3000_BCE.jpg/960px-White_Temple_%27E_at_Uruk%2C_3500-3000_BCE.jpg',
+    source_url: 'https://commons.wikimedia.org/wiki/File:White_Temple_%27E_at_Uruk,_3500-3000_BCE.jpg',
+    credit: 'Wikimedia Commons / Fletcher Banister / Public domain',
+    license: 'public_domain',
+    license_short: 'Public domain',
+    mime: 'image/jpeg',
+    width: 960,
+    score: 0.95,
+    source_page_title: 'Uruk',
+    discovery: 'manual_public_safe_override',
+    public_safe: true
+  },
+  'ur': {
+    title: 'File:Ancient ziggurat at Ali Air Base Iraq 2005.jpg',
+    query: 'manual_override',
+    url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Ancient_ziggurat_at_Ali_Air_Base_Iraq_2005.jpg/960px-Ancient_ziggurat_at_Ali_Air_Base_Iraq_2005.jpg',
+    source_url: 'https://commons.wikimedia.org/wiki/File:Ancient_ziggurat_at_Ali_Air_Base_Iraq_2005.jpg',
+    credit: 'Wikimedia Commons / en:User:Hardnfast / CC BY 3.0',
+    license: 'cc_by',
+    license_short: 'CC BY 3.0',
+    mime: 'image/jpeg',
+    width: 960,
+    score: 0.95,
+    source_page_title: 'Ur',
+    discovery: 'manual_public_safe_override',
+    public_safe: true
+  },
+  'megara-hyblaea': {
+    title: 'File:Megara Hyblaea 001.jpg',
+    query: 'manual_override',
+    url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Megara_Hyblaea_001.jpg/960px-Megara_Hyblaea_001.jpg',
+    source_url: 'https://commons.wikimedia.org/wiki/File:Megara_Hyblaea_001.jpg',
+    credit: 'Wikimedia Commons / Clemensfranz / CC BY 2.5',
+    license: 'cc_by',
+    license_short: 'CC BY 2.5',
+    mime: 'image/jpeg',
+    width: 960,
+    score: 0.98,
+    source_page_title: 'Megara Hyblaea',
+    discovery: 'manual_public_safe_override',
+    public_safe: true
+  },
+  'ptolemy-geographia': {
+    title: "File:Burney MS 111 f105v-f106r Ptolemy's World Map 1420 crop 01.jpg",
+    query: 'manual_override',
+    url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Burney_MS_111_f105v-f106r_Ptolemy%27s_World_Map_1420_crop_01.jpg/960px-Burney_MS_111_f105v-f106r_Ptolemy%27s_World_Map_1420_crop_01.jpg',
+    source_url: 'https://commons.wikimedia.org/wiki/File:Burney_MS_111_f105v-f106r_Ptolemy%27s_World_Map_1420_crop_01.jpg',
+    credit: 'Wikimedia Commons / Ptolemy / Public domain',
+    license: 'public_domain',
+    license_short: 'Public domain',
+    mime: 'image/jpeg',
+    width: 960,
+    score: 0.98,
+    source_page_title: 'Geography (Ptolemy)',
+    discovery: 'manual_public_safe_override',
+    public_safe: true
+  },
+  'mercator-world-atlas': {
+    title: 'File:Gerardus Mercator 3.jpg',
+    query: 'manual_override',
+    url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Gerardus_Mercator_3.jpg/960px-Gerardus_Mercator_3.jpg',
+    source_url: 'https://commons.wikimedia.org/wiki/File:Gerardus_Mercator_3.jpg',
+    credit: 'Wikimedia Commons / Frans Hogenberg / Public domain',
+    license: 'public_domain',
+    license_short: 'Public domain',
+    mime: 'image/jpeg',
+    width: 960,
+    score: 0.92,
+    source_page_title: 'Mercator 1569 world map',
+    discovery: 'manual_public_safe_override',
+    public_safe: true
+  },
   'dura-europos': {
     title: 'File:DuraEuropos-TempleOfBel.jpg',
     query: 'manual_override',
@@ -883,9 +973,11 @@ function cleanCredit(value = '') {
 }
 
 function numberArg(name, fallback) {
-  const arg = process.argv.find((item) => item.startsWith(`${name}=`));
-  if (!arg) return fallback;
-  const parsed = Number(arg.slice(name.length + 1));
+  const equalsArg = process.argv.find((item) => item.startsWith(`${name}=`));
+  const spacedArgIndex = process.argv.indexOf(name);
+  const value = equalsArg ? equalsArg.slice(name.length + 1) : spacedArgIndex === -1 ? null : process.argv[spacedArgIndex + 1];
+  if (!value) return fallback;
+  const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : fallback;
 }
 
