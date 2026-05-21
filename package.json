@@ -67,24 +67,25 @@
   "dependencies": {
     "@types/d3": "latest",
     "@types/three": "^0.184.1",
+    "aria-query": "^5.3.2",
     "d3": "latest",
     "framer-motion": "latest",
-    "next": "latest",
-    "react": "latest",
-    "react-dom": "latest",
+    "next": "^15.5.18",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
     "three": "^0.184.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.0",
     "@types/node": "latest",
-    "@types/react": "latest",
-    "@types/react-dom": "latest",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
     "autoprefixer": "latest",
-    "eslint": "latest",
-    "eslint-config-next": "latest",
+    "eslint": "^9.39.4",
+    "eslint-config-next": "^15.5.18",
     "postcss": "8.5.14",
     "tailwindcss": "latest",
-    "typescript": "latest"
+    "typescript": "^5.9.3"
   },
   "overrides": {
     "postcss": "8.5.14"
