@@ -199,10 +199,10 @@ function EntryThumbnail({ entry, x, y, radius, accent, isSelected, styleLensActi
           <stop offset="100%" stopColor={accent} stopOpacity="0" />
         </radialGradient>
         <radialGradient id={shadeId} cx="34%" cy="28%" r="78%">
-          <stop offset="0%" stopColor="#ffffff" stopOpacity={isFast ? 0.2 : 0.32} />
-          <stop offset="45%" stopColor={accent} stopOpacity="0.1" />
-          <stop offset="78%" stopColor="#050505" stopOpacity="0.2" />
-          <stop offset="100%" stopColor="#000000" stopOpacity={isFast ? 0.68 : 0.82} />
+          <stop offset="0%" stopColor="#ffffff" stopOpacity={isFast ? 0.18 : 0.26} />
+          <stop offset="48%" stopColor={accent} stopOpacity="0.07" />
+          <stop offset="80%" stopColor="#050505" stopOpacity="0.16" />
+          <stop offset="100%" stopColor="#000000" stopOpacity={imageUrl ? (isFast ? 0.42 : 0.52) : (isFast ? 0.68 : 0.82)} />
         </radialGradient>
         {imageUrl ? (
           <clipPath id={clipId}>
@@ -223,18 +223,18 @@ function EntryThumbnail({ entry, x, y, radius, accent, isSelected, styleLensActi
             width={radius * 2}
             height={radius * 2}
             preserveAspectRatio="xMidYMid slice"
-            opacity={isFast ? 0.86 : 1}
+            opacity={isFast ? 0.94 : 1}
             clipPath={`url(#${clipId})`}
           />
-          <circle cx={x} cy={y} r={Math.max(0, radius - 0.35)} fill={accent} opacity={isFast ? 0.22 : 0.3} />
-          <circle cx={x} cy={y} r={Math.max(0, radius - 0.35)} fill={`url(#${shadeId})`} opacity={isFast ? 0.76 : 0.86} />
-          {!isFast ? <circle cx={lightX} cy={lightY} r={Math.max(1.1, radius * 0.17)} fill="#ffffff" opacity="0.3" /> : null}
+          <circle cx={x} cy={y} r={Math.max(0, radius - 0.35)} fill={accent} opacity={isFast ? 0.12 : 0.18} />
+          <circle cx={x} cy={y} r={Math.max(0, radius - 0.35)} fill={`url(#${shadeId})`} opacity={isFast ? 0.54 : 0.64} />
+          {!isFast ? <circle cx={lightX} cy={lightY} r={Math.max(1.1, radius * 0.17)} fill="#ffffff" opacity="0.24" /> : null}
           <path
             d={`M ${x - radius * 0.58} ${y + radius * 0.72} C ${x - radius * 0.08} ${y + radius * 0.98}, ${x + radius * 0.68} ${y + radius * 0.78}, ${x + radius * 0.86} ${y + radius * 0.08}`}
             fill="none"
             stroke="#050505"
             strokeWidth={Math.max(0.35, radius * 0.09)}
-            opacity={isFast ? 0.2 : 0.3}
+            opacity={isFast ? 0.16 : 0.22}
           />
           <circle cx={x} cy={y} r={Math.max(0, radius - 0.65)} fill="none" stroke="#f7f7f4" strokeWidth="0.46" opacity={isSelected || styleLensActive ? 0.86 : 0.52} />
         </>

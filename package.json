@@ -43,6 +43,7 @@
     "database:profile-audit": "node scripts/database-profile-audit.mjs",
     "database:hero-images": "node scripts/research-hero-images.mjs",
     "database:hero-images:audit": "node scripts/audit-hero-images.mjs",
+    "database:planet-thumbnails:audit": "node scripts/audit-planet-thumbnails.mjs",
     "database:hero-images:apply": "node scripts/research-hero-images.mjs --apply",
     "database:hero-images:apply-manual": "node scripts/research-hero-images.mjs --apply --manual-only",
     "brain:review": "node scripts/brain-review.mjs",
