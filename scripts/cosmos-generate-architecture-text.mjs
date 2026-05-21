@@ -86,7 +86,7 @@ function buildTextPack(entry) {
   const sources = sourceTrail(entry);
   const analysis = analysisByType(entry);
   const materials = materialList(entry);
-  const program = readable(entry.program?.subtype || entry.program?.type || entry.entry_type);
+  const program = readableDe(entry.program?.subtype || entry.program?.type || entry.entry_type);
   const context = contextPhrase(entry);
   const structuralClaim = analysis.structure || materialStructureFallback(entry, materials);
   const tectonicClaim = analysis.tectonics || tectonicFallback(entry, materials);
@@ -95,37 +95,37 @@ function buildTextPack(entry) {
 
   const headline = buildHeadline(entry, program);
   const overview = paragraph([
-    `${entry.title} is treated in Architecture Cosmos as ${article(program)} ${program} rather than as an isolated database object.`,
-    `Its relevance lies in the relation between ${spatialClaim.short}, ${structuralClaim.short} and ${context}.`,
-    `The entry should therefore be read through project logic, material system and model layers, not through a flat historical summary.`
+    `${entry.title} wird im Architektur Kosmos als ${program} gelesen und nicht als isoliertes Archivobjekt behandelt.`,
+    `Die Relevanz des Projekts liegt im Zusammenspiel von räumlicher Dramaturgie, konstruktiver Ordnung und ${context}.`,
+    `Der Eintrag soll deshalb Projektlogik, Materialsystem, Tragwerk und Modell-Layer sichtbar machen, statt nur eine lineare Kurzgeschichte zu liefern.`
   ]);
 
   const chapters = [
-    chapter('Architectural Reading', paragraph([
-      `${entry.title} gains its architectural force from ${spatialClaim.long}.`,
-      `The project is useful for the atlas because it turns dry metadata into a spatial problem: ${mainThemes(entry)}.`
+    chapter('Architektonische Lesart', paragraph([
+      `${entry.title} gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: ${spatialClaim.long}.`,
+      `Für den Atlas ist das Projekt wertvoll, weil es trockene Metadaten in eine räumliche Fragestellung übersetzt: ${mainThemes(entry)}.`
     ]), spatialClaim.basis),
-    chapter('Material / Structure', paragraph([
-      `${materialClaim.long}.`,
-      `${structuralClaim.long}.`,
-      `For later Blender and ArchiCAD work, these observations should become separable layers instead of a single decorative model.`
+    chapter('Material und Tragwerk', paragraph([
+      materialClaim.long,
+      structuralClaim.long,
+      `Für spätere Blender- und ArchiCAD-Workflows sollen diese Beobachtungen als trennbare Ebenen geführt werden, nicht als ein einziges dekoratives Modell.`
     ]), materialClaim.basis),
-    chapter('Spatial Order', paragraph([
-      `${spatialClaim.long}.`,
-      `This makes the project valuable as a filterable precedent: plan, section, circulation and context can be compared across time instead of only browsed as images.`
+    chapter('Raumordnung', paragraph([
+      spatialClaim.long,
+      `Dadurch wird das Projekt als filterbare Referenz interessant: Grundriss, Schnitt, Erschliessung und Kontext können über Zeiträume hinweg verglichen werden, statt nur als Bilder betrachtet zu werden.`
     ]), spatialClaim.basis),
-    chapter('Tectonics', paragraph([
-      `${tectonicClaim.long}.`,
-      `The Cosmos text should keep this constructional reading explicit, because it is the bridge between historical interpretation and model-based analysis.`
+    chapter('Tektonik', paragraph([
+      tectonicClaim.long,
+      `Der Cosmos-Text hält diese konstruktive Lesart bewusst explizit, weil sie die Brücke zwischen historischer Interpretation und modellbasierter Analyse bildet.`
     ]), tectonicClaim.basis),
-    chapter('Context', paragraph([
-      `${entry.title} belongs to ${context}.`,
-      `Its setting is not background information; it is part of the architectural argument and should remain visible in the atlas, model package and future search filters.`
+    chapter('Kontext', paragraph([
+      `${entry.title} gehört zu ${context}.`,
+      `Der Ort ist dabei keine Hintergrundinformation, sondern Teil des architektonischen Arguments und soll im Atlas, im Modellpaket und in zukünftigen Suchfiltern sichtbar bleiben.`
     ]), contextBasis(entry)),
-    chapter('Database / Model Value', paragraph([
-      `For the Architecture Cosmos database, ${entry.title} should be stored as a structured reference with source trail, media slots, analysis layers and model parts.`,
-      `The most important future filters are ${databaseValue(entry)}.`,
-      `Public output must remain rights-safe; private research notes can carry more detailed source-derived analysis until reviewed.`
+    chapter('Datenbank- und Modellwert', paragraph([
+      `Für die Architecture-Cosmos-Datenbank soll ${entry.title} als strukturierte Referenz mit Quellenpfad, Medienslots, Analyseebenen und Modellteilen gespeichert werden.`,
+      `Die wichtigsten zukünftigen Filter sind ${databaseValue(entry)}.`,
+      `Öffentliche Ausgaben müssen rechteklar bleiben; private Forschungsnotizen können detailliertere, quellenbasierte Analysen tragen, bis sie geprüft sind.`
     ]), 'derived from entry metadata, model fields and Brain quality rules')
   ];
 
@@ -159,9 +159,10 @@ function buildTextPack(entry) {
 function analysisByType(entry) {
   const result = {};
   for (const layer of entry.analysis_layers ?? []) {
+    const summary = localizeArchitectureText(layer.summary);
     result[layer.analysis_type] = {
-      short: compact(layer.summary, 92),
-      long: cleanSentence(layer.summary),
+      short: compact(summary, 92),
+      long: cleanSentence(summary),
       basis: `analysis layer: ${layer.analysis_type}; review status: ${layer.review_status}`
     };
   }
@@ -179,23 +180,23 @@ function buildHeadline(entry, program) {
 
   if (specificHeadlines[entry.slug]) return specificHeadlines[entry.slug];
 
-  const themes = (entry.themes ?? []).map(readable);
-  const materials = materialList(entry).map(readable);
-  const context = entry.context?.setting ? readable(entry.context.setting) : entry.city || entry.country;
+  const themes = (entry.themes ?? []).map(readableDe);
+  const materials = materialList(entry).map(readableDe);
+  const context = entry.context?.setting ? readableDe(entry.context.setting) : entry.city || entry.country;
   const firstAnchor = themes[0] || materials[0] || program;
   const secondAnchor = context || themes[1] || materials[1] || 'Raumordnung';
-  return `${entry.title}: ${titleCase(firstAnchor)} zwischen ${readable(secondAnchor)}`;
+  return `${entry.title}: ${titleCase(firstAnchor)} zwischen ${readableDe(secondAnchor)}`;
 }
 
 function conciseSentence(entry, spatialClaim, structuralClaim) {
-  return `${entry.title} is a ${readable(entry.entry_type)} defined by ${spatialClaim.short} and ${structuralClaim.short}.`;
+  return `${entry.title} ist ein ${readableDe(entry.entry_type)}, das durch ${spatialClaim.short} und ${structuralClaim.short} geprägt wird.`;
 }
 
 function materialStructureFallback(entry, materials) {
   const materialText = materials.length ? materials.map(readable).slice(0, 3).join(', ') : 'a source-dependent material system';
   return {
     short: `${materialText} as construction logic`,
-    long: `The current archive data points to ${materialText} as the constructional basis, but the exact structural hierarchy still needs source review`,
+    long: `Die aktuellen Archivdaten weisen ${materialText} als konstruktive Grundlage aus; die genaue strukturelle Hierarchie braucht jedoch noch Quellenprüfung`,
     basis: 'entry materials fallback'
   };
 }
@@ -204,17 +205,17 @@ function tectonicFallback(entry, materials) {
   const materialText = materials.length ? materials.map(readable).slice(0, 3).join(', ') : 'surface, structure and assembly';
   return {
     short: `${materialText} as tectonic relationship`,
-    long: `The tectonic reading should focus on how ${materialText} organize support, enclosure, joint and atmosphere`,
+    long: `Die tektonische Lesart soll zeigen, wie ${materialText} Stützung, Hülle, Fügung und Atmosphäre organisieren`,
     basis: 'entry materials and analysis fallback'
   };
 }
 
 function spatialFallback(entry) {
-  const hints = [...(entry.themes ?? []), ...(entry.vibes ?? [])].slice(0, 4).map(readable);
+  const hints = [...(entry.themes ?? []), ...(entry.vibes ?? [])].slice(0, 4).map(readableDe);
   const text = hints.length ? hints.join(', ') : readable(entry.entry_type);
   return {
     short: `${text} as spatial order`,
-    long: `The spatial order is currently best described through ${text}, with plan and section requiring further source-backed refinement`,
+    long: `Die räumliche Ordnung lässt sich aktuell über ${text} beschreiben; Grundriss und Schnitt brauchen aber weitere quellenbasierte Präzisierung`,
     basis: 'themes/vibes fallback'
   };
 }
@@ -223,19 +224,19 @@ function materialFallback(entry, materials) {
   const materialText = materials.length ? materials.map(readable).slice(0, 4).join(', ') : 'materials still requiring review';
   return {
     short: materialText,
-    long: `The material system is recorded as ${materialText}`,
+    long: `Das Materialsystem ist aktuell als ${materialText} erfasst`,
     basis: 'entry materials fallback'
   };
 }
 
 function contextPhrase(entry) {
   const parts = [
-    entry.context?.setting && readable(entry.context.setting),
-    entry.context?.topography && readable(entry.context.topography),
+    entry.context?.setting && readableDe(entry.context.setting),
+    entry.context?.topography && readableDe(entry.context.topography),
     entry.city && entry.country ? `${entry.city}, ${entry.country}` : entry.city || entry.country,
-    entry.context?.heritage_context?.slice(0, 2).map(readable).join(' and ')
+    entry.context?.heritage_context?.slice(0, 2).map(readableDe).join(' und ')
   ].filter(Boolean);
-  return parts.length ? parts.join(' within ') : 'a context that still needs source review';
+  return parts.length ? parts.join(' / ') : 'einem Kontext, der noch Quellenprüfung braucht';
 }
 
 function contextBasis(entry) {
@@ -245,7 +246,7 @@ function contextBasis(entry) {
 }
 
 function mainThemes(entry) {
-  return (entry.themes ?? []).slice(0, 5).map(readable).join(', ') || readable(entry.entry_type);
+  return (entry.themes ?? []).slice(0, 5).map(readableDe).join(', ') || readableDe(entry.entry_type);
 }
 
 function databaseValue(entry) {
@@ -254,7 +255,7 @@ function databaseValue(entry) {
     ...(entry.materials?.primary ?? []),
     ...(entry.themes ?? [])
   ];
-  return [...new Set(tags)].slice(0, 8).map(readable).join(', ') || 'structure, material, context and typology';
+  return [...new Set(tags)].slice(0, 8).map(readableDe).join(', ') || 'Tragwerk, Material, Kontext und Typologie';
 }
 
 function sourceTrail(entry) {
@@ -296,7 +297,7 @@ function paragraph(sentences) {
 }
 
 function cleanSentence(value) {
-  const text = String(value ?? '').replace(/\s+/g, ' ').trim();
+  const text = String(value ?? '').replace(/\s+/g, ' ').replace(/\.\.+/g, '.').replace(/\.\s+\./g, '.').trim();
   if (!text) return '';
   return /[.!?]$/.test(text) ? text : `${text}.`;
 }
@@ -310,12 +311,91 @@ function readable(value) {
   return String(value ?? '').replace(/_/g, ' ').replace(/\s+/g, ' ').trim();
 }
 
-function titleCase(value) {
-  return readable(value).replace(/\b\w/g, (letter) => letter.toUpperCase());
+function readableDe(value) {
+  const text = readable(value);
+  const dictionary = {
+    building: 'Gebäude',
+    urban_plan: 'Stadtplan',
+    landscape_project: 'Landschaftsprojekt',
+    infrastructure: 'Infrastruktur',
+    object: 'Objekt',
+    event: 'Ereignis',
+    theory: 'Theorie',
+    map: 'Karte',
+    text: 'Text',
+    modern_villa: 'moderne Villa',
+    'modern villa': 'moderne Villa',
+    elderly_care_monastery_conversion: 'Pflege- und Klosterumbau',
+    'elderly care monastery conversion': 'Pflege- und Klosterumbau',
+    suburban_villa_landscape: 'suburbane Villenlandschaft',
+    'suburban villa landscape': 'suburbane Villenlandschaft',
+    flat_suburban_site: 'flacher suburbaner Standort',
+    'flat suburban site': 'flacher suburbaner Standort',
+    village_center: 'Dorfzentrum',
+    'village center': 'Dorfzentrum',
+    hilltop: 'Hang- und Klosterplateau',
+    monastery_context: 'Klosterkontext',
+    'monastery context': 'Klosterkontext',
+    existing_fabric: 'bestehender Baubestand',
+    'existing fabric': 'bestehender Baubestand',
+    unesco_world_heritage_component: 'UNESCO-Welterbe-Komponente',
+    'unesco world heritage component': 'UNESCO-Welterbe-Komponente',
+    listed_monument: 'denkmalgeschütztes Objekt',
+    'listed monument': 'denkmalgeschütztes Objekt',
+    five_points: 'Fünf Punkte',
+    'five points': 'Fünf Punkte',
+    promenade: 'Promenade architecturale',
+    pilotis: 'Pilotis',
+    machine_age: 'Maschinenzeitalter',
+    'machine age': 'Maschinenzeitalter',
+    free_plan: 'freier Grundriss',
+    'free plan': 'freier Grundriss',
+    adaptive_reuse: 'Weiterbauen im Bestand',
+    'adaptive reuse': 'Weiterbauen im Bestand',
+    monastery: 'Kloster',
+    care_architecture: 'Pflegearchitektur',
+    'care architecture': 'Pflegearchitektur',
+    concrete_structure: 'Betonstruktur',
+    'concrete structure': 'Betonstruktur',
+    lime_plaster: 'Kalkputz',
+    'lime plaster': 'Kalkputz',
+    reinforced_concrete: 'Stahlbeton',
+    'reinforced concrete': 'Stahlbeton',
+    white_plaster: 'weißer Putz',
+    'white plaster': 'weißer Putz',
+    glass: 'Glas',
+    timber: 'Holz',
+    concrete: 'Beton'
+  };
+  return dictionary[text] ?? text;
 }
 
-function article(value) {
-  return /^[aeiou]/i.test(value) ? 'an' : 'a';
+function localizeArchitectureText(value) {
+  let text = cleanSentence(value).replace(/[.!?]$/, '');
+  const replacements = [
+    ['Spatial order is choreographed as a promenade: arrival below the raised volume, ascent by ramp, movement through living spaces and release onto the roof terrace', 'Die räumliche Ordnung ist als Promenade architecturale choreografiert: Ankunft unter dem angehobenen Volumen, Aufstieg über die Rampe, Bewegung durch die Wohnräume und Öffnung zur Dachterrasse'],
+    ['The house is read as a reinforced-concrete frame that separates load-bearing order from facade and plan, making pilotis, slab and free enclosure the structural grammar of the project', 'Das Haus wird als Stahlbetonskelett gelesen, das Tragordnung, Fassade und Grundriss voneinander trennt; Pilotis, Deckenplatte und freie Hülle bilden die strukturelle Grammatik des Projekts'],
+    ['The material reading foregrounds white rendered surfaces, reinforced concrete, glass bands and roof-garden ground as an abstract modern envelope', 'Die Materiallesart stellt weiße Putzflächen, Stahlbeton, Fensterbänder und den Dachgarten als abstrakte moderne Hülle in den Vordergrund'],
+    ['The tectonic reading focuses on the contrast between abstract white surfaces, thin horizontal glazing, exposed pilotis and the inhabited roof landscape', 'Die tektonische Lesart fokussiert den Kontrast zwischen abstrakten weißen Flächen, horizontalen Fensterbändern, freigestellten Pilotis und der bewohnten Dachlandschaft']
+  ];
+
+  for (const [source, target] of replacements) {
+    text = text.replaceAll(source, target);
+  }
+
+  return text
+    .replaceAll('reinforced-concrete', 'Stahlbeton')
+    .replaceAll('roof terrace', 'Dachterrasse')
+    .replaceAll('roof-garden', 'Dachgarten')
+    .replaceAll('roof garden', 'Dachgarten')
+    .replaceAll('free plan', 'freier Grundriss')
+    .replaceAll('pilotis', 'Pilotis')
+    .replaceAll('glass bands', 'Fensterbänder')
+    .replaceAll('white rendered surfaces', 'weiße Putzflächen');
+}
+
+function titleCase(value) {
+  return readable(value).replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
 function renderMarkdown(pack) {
