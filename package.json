@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint .",
     "ui:audit": "node scripts/ui-audit.mjs",
+    "quality:check": "npm run archive:validate && npm run security:check && npm run ui:audit && npm run lint && npm run build",
     "security:check": "node scripts/security-check.mjs",
     "security:headers": "node scripts/check-live-security.mjs",
     "import:afasia": "node scripts/import-afasia.mjs",

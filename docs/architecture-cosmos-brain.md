@@ -93,6 +93,7 @@ Runs the current autonomous health loop:
 - `brain:review`
 - `archive:validate`
 - `lint`
+- `ui:audit`
 - `build`
 - `security:check`
 

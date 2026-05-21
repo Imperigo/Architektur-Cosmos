@@ -155,6 +155,7 @@ Run before any commit or publish:
 npm run archive:validate
 npm run security:check
 npm run security:headers
+npm run ui:audit
 npm run lint
 npm run build
 ```

@@ -37,6 +37,14 @@ const checks = [
     safe_healing: 'diagnostics_only'
   },
   {
+    id: 'ui-audit',
+    label: 'Interface continuity audit',
+    command: 'npm',
+    args: ['run', 'ui:audit'],
+    retry: false,
+    safe_healing: 'diagnostics_only'
+  },
+  {
     id: 'build',
     label: 'Build',
     command: 'npm',
@@ -127,6 +135,7 @@ function diagnose(check, result) {
   const output = `${result.stdout}\n${result.stderr}`.toLowerCase();
   if (check.id === 'build' && output.includes('type')) return 'Build failed during TypeScript or static generation. Needs code review before edits.';
   if (check.id === 'lint') return 'Lint failed. Doctor will not auto-fix tracked source files without approval.';
+  if (check.id === 'ui-audit') return 'Interface audit failed. Check shared UI tokens, mobile panel rules and touch-target consistency.';
   if (check.id === 'security-check') return 'Security check failed. Treat as approval-gated P0 before publish.';
   if (check.id === 'archive-validate') return 'Archive validation failed. Check entry schema, relations, media, model or analysis rows.';
   if (check.id === 'brain-review') return 'Brain review failed. Check rules, queue and data JSON validity.';

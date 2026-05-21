@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   verify:
-    name: Archive, security, lint and build
+    name: Archive, security, UI, lint and build
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -32,6 +32,9 @@ jobs:
 
       - name: Security baseline
         run: npm run security:check
+
+      - name: Interface continuity audit
+        run: npm run ui:audit
 
       - name: Lint
         run: npm run lint
