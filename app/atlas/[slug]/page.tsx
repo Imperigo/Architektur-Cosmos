@@ -12,8 +12,16 @@ import { primaryPublicMediaUrl, publicDisplayMediaUrl } from '@/lib/media';
 import type { Entry, EntryRelation, StyleSectorId } from '@/lib/types';
 
 const allEntries = entries as Entry[];
-const allRelations = relations as EntryRelation[];
+const allRelationen = relations as EntryRelation[];
 const siteUrl = 'https://architekturkosmos.ch';
+
+type ArchiveStatusMetric = {
+  id: string;
+  label: string;
+  shortLabel: string;
+  value: number;
+  hint: string;
+};
 
 type EntryPageProps = {
   params: Promise<{ slug: string }>;
@@ -70,7 +78,7 @@ export default async function EntryPage({ params }: EntryPageProps) {
   const location = [entry.city, entry.country].filter(Boolean).join(', ');
   const jsonLd = entryJsonLd(entry);
   const yearLabel = formatYear(entry.year_start);
-  const archiveScore = archiveReadiness(entry);
+  const archiveScore = archiveLeseniness(entry);
   const publicModelUrl = publicModelPreviewUrl(entry);
   const heroImage = primaryMediaUrl(entry);
   const visualProfile = entryVisualProfile(entry);
@@ -114,7 +122,7 @@ export default async function EntryPage({ params }: EntryPageProps) {
               <span className="border border-white/15 px-2.5 py-1">{yearLabel}</span>
               <span className="border border-white/15 px-2.5 py-1">{entry.entry_type.replace(/_/g, ' ')}</span>
               <span className="border px-2.5 py-1" style={{ borderColor: accent, color: accent }}>{entry.style_sector.replace(/_/g, ' ')}</span>
-              {entry.database_profile ? <span className="border px-2.5 py-1" style={{ borderColor: accent, color: accent }}>Database Pilot</span> : null}
+              {entry.database_profile ? <span className="border px-2.5 py-1" style={{ borderColor: accent, color: accent }}>Datenbank Pilot</span> : null}
             </div>
             <h1 className="max-w-4xl text-4xl font-semibold leading-[0.95] tracking-normal text-[#f7f7f4] sm:text-6xl lg:text-7xl">
               {entry.title}
@@ -122,39 +130,15 @@ export default async function EntryPage({ params }: EntryPageProps) {
             <div className="mt-5 max-w-3xl text-sm uppercase tracking-[0.12em] text-[#b8b8b2]">
               {entry.authors.join(', ') || 'Unknown author'}{location ? ` / ${location}` : ''}
             </div>
-            <p className="mt-8 max-w-3xl text-xl leading-relaxed text-[#f7f7f4] sm:text-2xl">
+            <p className="entry-text-reactive entry-text-hero mt-8 max-w-3xl text-xl leading-relaxed text-[#f7f7f4] sm:text-2xl">
               {entry.one_sentence || entry.short_description}
             </p>
-            <p className="mt-7 max-w-3xl text-base leading-8 text-[#cfcfca]">
+            <p className="entry-text-reactive entry-text-body mt-7 max-w-3xl text-base leading-8 text-[#cfcfca]">
               {entry.full_description}
             </p>
           </div>
 
-          <aside className="entry-archive-panel border border-white/14 bg-[#071315]/70 p-5">
-            <h2 className="text-[11px] font-semibold uppercase tracking-[0.22em]" style={{ color: accent }}>Archive Status</h2>
-            <div className="my-5 h-28 border border-white/10 bg-[#050505]/55 p-3">
-              <div className="entry-mini-orbit mx-auto h-full max-w-[210px]" aria-hidden="true">
-                <span />
-                <span />
-                <span />
-              </div>
-            </div>
-            <dl className="mt-4 space-y-3 text-sm">
-              <EntryMeta label="Source quality" value={entry.source_quality.replace(/_/g, ' ')} />
-              <EntryMeta label="Lecture cluster" value={(entry.lecture_cluster ?? []).join(', ') || 'not assigned'} />
-              <EntryMeta label="Media slots" value={`${entry.media.length}`} />
-              <EntryMeta label="Relations" value={`${related.length}`} />
-              <EntryMeta label="Archive readiness" value={`${archiveScore}%`} />
-              {entry.database_profile ? (
-                <>
-                  <EntryMeta label="Database" value={entry.database_profile.status} />
-                  <EntryMeta label="3D layers" value={`${entry.database_profile.model_count}`} />
-                  <EntryMeta label="Analysis layers" value={`${entry.database_profile.analysis_count}`} />
-                  <EntryMeta label="R2 prefix" value={entry.database_profile.r2_prefix} />
-                </>
-              ) : null}
-            </dl>
-          </aside>
+          <ArchiveStatusPanel entry={entry} relatedCount={related.length} archiveScore={archiveScore} accent={accent} />
         </section>
 
         <ModelAnalysisSection entry={entry} modelUrl={publicModelUrl} accent={accent} />
@@ -165,20 +149,20 @@ export default async function EntryPage({ params }: EntryPageProps) {
 
         <section className="entry-study-grid grid gap-4 border-t border-white/12 py-8 lg:grid-cols-3">
           <StudyCard
-            title="Read"
-            label="Learning prompt"
+            title="Lesen"
+            label="Lernimpuls"
             body={studyPrompt(entry)}
             accent={accent}
           />
           <StudyCard
-            title="Compare"
+            title="Vergleichen"
             label={entry.style_sector.replace(/_/g, ' ')}
-            body={peers.length ? peers.map((peer) => peer.title).join(' / ') : 'No close comparison entries yet.'}
+            body={peers.length ? peers.map((peer) => peer.title).join(' / ') : 'Noch keine nahen Vergleichseintraege.'}
             accent={accent}
           />
           <StudyCard
-            title="Archive"
-            label={`${archiveScore}% structured`}
+            title="Archiv"
+            label={`${archiveScore}% strukturiert`}
             body={archiveSummary(entry)}
             accent={accent}
           />
@@ -187,7 +171,7 @@ export default async function EntryPage({ params }: EntryPageProps) {
         <section id="media-gallery" className="entry-media-gallery border-t border-white/12 py-10">
           <div className="mb-5 flex flex-wrap items-end justify-between gap-4">
             <div>
-              <div className="text-[10px] uppercase tracking-[0.22em]" style={{ color: accent }}>Object Media</div>
+              <div className="text-[10px] uppercase tracking-[0.22em]" style={{ color: accent }}>Objektmedien</div>
               <h2 className="mt-2 text-3xl text-[#f7f7f4]">Bilder, Plan und Schnitt</h2>
             </div>
             <p className="max-w-md text-sm leading-6 text-[#b8b8b2]">
@@ -202,9 +186,9 @@ export default async function EntryPage({ params }: EntryPageProps) {
         </section>
 
         <section className="grid gap-6 border-t border-white/12 py-8 lg:grid-cols-3">
-          <InfoBlock title="Themes" items={entry.themes} accent={accent} />
+          <InfoBlock title="Themen" items={entry.themes} accent={accent} />
           <InfoBlock title="Source Trail" items={sourceItems(entry)} accent={accent} />
-          <InfoBlock title="Database Tags" items={entry.database_tags ?? []} accent={accent} empty="No database tags yet" />
+          <InfoBlock title="Datenbank Tags" items={entry.database_tags ?? []} accent={accent} empty="No database tags yet" />
         </section>
 
         {entry.analysis_layers?.length || entry.analysis_observations?.length ? (
@@ -279,7 +263,7 @@ export default async function EntryPage({ params }: EntryPageProps) {
 
               {entry.analysis_observations?.length ? (
                 <InfoBlock
-                  title="Analysis Observations"
+                  title="Analysebeobachtungen"
                   items={entry.analysis_observations.map((observation) => {
                     const confidence = typeof observation.confidence_score === 'number' ? ` ${Math.round(observation.confidence_score * 100)}%` : '';
                     return `${observation.analysis_type}: ${observation.label}${confidence}`;
@@ -294,8 +278,8 @@ export default async function EntryPage({ params }: EntryPageProps) {
         {entry.asset_candidates?.length ? (
           <section className="border-t border-white/12 py-8">
             <InfoBlock
-              title="Asset Candidates"
-              items={entry.asset_candidates.map((asset) => `${asset.kind}: ${asset.title} / ${asset.rights_status}${asset.public_display_allowed ? ' / display ready' : ' / review before publish'}`)}
+              title="Asset-Kandidaten"
+              items={entry.asset_candidates.map((asset) => `${asset.kind}: ${asset.title} / ${asset.rights_status}${asset.public_display_allowed ? ' / anzeigebereit' : ' / Review vor Veroeffentlichung'}`)}
               accent={accent}
             />
           </section>
@@ -303,11 +287,11 @@ export default async function EntryPage({ params }: EntryPageProps) {
 
         {compareEntries.length ? (
           <section className="border-t border-white/12 py-8">
-            <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em]" style={{ color: accent }}>Compare With</h2>
+            <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em]" style={{ color: accent }}>Vergleichen With</h2>
             <div className="grid gap-3 lg:grid-cols-3">
               {compareEntries.map((candidate) => (
                 <Link key={candidate.id} href={`/atlas/${candidate.slug}/`} className="entry-link entry-study-card border border-white/14 bg-[#071315]/55 p-4">
-                  <span className="block text-[10px] uppercase tracking-[0.16em]" style={{ color: accent }}>{candidate.year_start} / {candidate.authors[0] ?? 'unknown'}</span>
+                  <span className="block text-[10px] uppercase tracking-[0.16em]" style={{ color: accent }}>{candidate.year_start} / {candidate.authors[0] ?? 'unbekannt'}</span>
                   <span className="mt-2 block text-xl text-[#f7f7f4]">{candidate.title}</span>
                   <span className="mt-3 block text-sm leading-6 text-[#b8b8b2]">{comparisonAxis(entry, candidate)}</span>
                 </Link>
@@ -317,7 +301,7 @@ export default async function EntryPage({ params }: EntryPageProps) {
         ) : null}
 
         <section className="border-t border-white/12 py-8">
-          <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em]" style={{ color: accent }}>Relations</h2>
+          <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em]" style={{ color: accent }}>Relationen</h2>
           {related.length ? (
             <div className="entry-relation-network grid gap-3 sm:grid-cols-2">
               {related.map(({ relation, entry: relatedEntry }, index) => (
@@ -377,7 +361,7 @@ function findEntry(slug: string) {
 }
 
 function relatedEntries(entry: Entry) {
-  return allRelations
+  return allRelationen
     .filter((relation) => relation.source_entry_id === entry.id || relation.target_entry_id === entry.id)
     .map((relation) => {
       const relatedId = relation.source_entry_id === entry.id ? relation.target_entry_id : relation.source_entry_id;
@@ -390,7 +374,7 @@ function relatedEntries(entry: Entry) {
 function timelineNeighbors(entry: Entry) {
   const sorted = [...allEntries].sort((a, b) => {
     if (a.year_start !== b.year_start) return a.year_start - b.year_start;
-    return a.title.localeCompare(b.title);
+    return a.title.localeVergleichen(b.title);
   });
   const index = sorted.findIndex((candidate) => candidate.id === entry.id);
 
@@ -422,14 +406,109 @@ function comparisonAxis(entry: Entry, candidate: Entry) {
   if (pair.has('villa-savoye') && pair.has('haus-tugendhat')) return 'Manifest diagram versus material free-plan space.';
   if (pair.has('villa-savoye') && pair.has('villa-noailles')) return 'Five-points manifesto versus leisure, movement and garden culture.';
   if (pair.has('haus-tugendhat') && pair.has('villa-noailles')) return 'Material-screen domesticity versus terraced avant-garde lifestyle.';
-  return `Compare ${entry.themes[0]?.replace(/[_:]/g, ' ') ?? 'archive logic'} with ${candidate.themes[0]?.replace(/[_:]/g, ' ') ?? 'archive logic'}.`;
+  return `Vergleichen ${entry.themes[0]?.replace(/[_:]/g, ' ') ?? 'archive logic'} with ${candidate.themes[0]?.replace(/[_:]/g, ' ') ?? 'archive logic'}.`;
 }
 
 function EntryMeta({ label, value }: { label: string; value: string }) {
   return (
-    <div>
+    <div className="entry-meta-row">
       <dt className="text-[10px] uppercase tracking-[0.16em] text-[#8d8d87]">{label}</dt>
       <dd className="mt-1 break-words text-[#f7f7f4]">{value}</dd>
+    </div>
+  );
+}
+
+function ArchiveStatusPanel({ entry, relatedCount, archiveScore, accent }: { entry: Entry; relatedCount: number; archiveScore: number; accent: string }) {
+  const metrics = archiveStatusMetrics(entry, relatedCount);
+  const strongest = [...metrics].sort((a, b) => b.value - a.value)[0];
+  const weakest = [...metrics].sort((a, b) => a.value - b.value)[0];
+
+  return (
+    <aside className="entry-archive-panel entry-archive-status-panel border border-white/14 bg-[#071315]/70 p-5">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h2 className="text-[11px] font-semibold uppercase tracking-[0.22em]" style={{ color: accent }}>Archivstatus</h2>
+          <p className="mt-2 text-xs leading-5 text-[#b8b8b2]">Datenreife, Quellenlage und Modellpotenzial als interaktive Übersicht.</p>
+        </div>
+        <div className="entry-archive-score" style={{ borderColor: accent, color: accent }}>
+          <span>{archiveScore}</span>
+          <small>%</small>
+        </div>
+      </div>
+
+      <ArchiveRadarChart metrics={metrics} accent={accent} />
+
+      <div className="mt-4 space-y-2">
+        {metrics.map((metric) => (
+          <ArchiveProgressRow key={metric.id} metric={metric} accent={accent} />
+        ))}
+      </div>
+
+      <div className="mt-4 grid grid-cols-2 gap-2 text-[10px] leading-snug">
+        <div className="entry-archive-insight border border-white/10 bg-[#050505]/45 p-2">
+          <span className="block uppercase tracking-[0.16em] text-[#8d8d87]">Stark</span>
+          <b className="mt-1 block text-[#f7f7f4]">{strongest.label}</b>
+        </div>
+        <div className="entry-archive-insight border border-white/10 bg-[#050505]/45 p-2">
+          <span className="block uppercase tracking-[0.16em] text-[#8d8d87]">Nächster Schritt</span>
+          <b className="mt-1 block text-[#f7f7f4]">{weakest.label}</b>
+        </div>
+      </div>
+
+      <dl className="mt-4 grid gap-2 text-sm">
+        <EntryMeta label="Quellen" value={entry.source_quality.replace(/_/g, ' ')} />
+        <EntryMeta label="Kurs / Cluster" value={(entry.lecture_cluster ?? []).join(', ') || 'nicht zugeordnet'} />
+        {entry.database_profile ? <EntryMeta label="Datenbank" value={`${entry.database_profile.status} / ${entry.database_profile.r2_prefix}`} /> : null}
+      </dl>
+    </aside>
+  );
+}
+
+function ArchiveRadarChart({ metrics, accent }: { metrics: ArchiveStatusMetric[]; accent: string }) {
+  const center = 92;
+  const radius = 64;
+  const polygon = radarPoints(metrics.map((metric) => metric.value), center, radius);
+  const rings = [0.33, 0.66, 1];
+
+  return (
+    <div className="entry-archive-radar" style={{ '--radar-accent': accent } as CSSProperties}>
+      <svg viewBox="0 0 184 184" role="img" aria-label="Spinnendiagramm der Archivqualitaet">
+        {rings.map((ring) => (
+          <polygon key={ring} points={radarPoints(metrics.map(() => ring * 100), center, radius)} className="entry-radar-ring" />
+        ))}
+        {metrics.map((metric, index) => {
+          const point = radarPoint(index, metrics.length, center, radius);
+          const labelPoint = radarPoint(index, metrics.length, center, radius + 18);
+          return (
+            <g key={metric.id}>
+              <line x1={center} y1={center} x2={point.x} y2={point.y} className="entry-radar-axis" />
+              <text x={labelPoint.x} y={labelPoint.y} textAnchor="middle" dominantBaseline="middle" className="entry-radar-label">
+                {metric.shortLabel}
+              </text>
+            </g>
+          );
+        })}
+        <polygon points={polygon} className="entry-radar-shape" />
+        {metrics.map((metric, index) => {
+          const point = radarPoint(index, metrics.length, center, radius * (metric.value / 100));
+          return <circle key={metric.id} cx={point.x} cy={point.y} r="3.2" className="entry-radar-node" />;
+        })}
+      </svg>
+    </div>
+  );
+}
+
+function ArchiveProgressRow({ metric, accent }: { metric: ArchiveStatusMetric; accent: string }) {
+  return (
+    <div className="entry-archive-progress" style={{ '--progress-value': `${metric.value}%`, '--progress-accent': accent } as CSSProperties}>
+      <div className="flex items-center justify-between gap-3">
+        <span>{metric.label}</span>
+        <b>{metric.value}%</b>
+      </div>
+      <div className="entry-archive-progress-track" aria-hidden="true">
+        <span />
+      </div>
+      <p>{metric.hint}</p>
     </div>
   );
 }
@@ -508,7 +587,7 @@ function ArchitectureTextSection({ entry, accent }: { entry: Entry; accent: stri
           </div>
         </div>
         <div>
-          <p className="text-lg leading-8 text-[#e5e5df]">{text.overview}</p>
+          <p className="entry-text-reactive entry-architecture-overview text-lg leading-8 text-[#e5e5df]">{text.overview}</p>
           <div className="mt-6 grid gap-3">
             {chapters.map((chapter) => (
               <article key={chapter.title} className="entry-architecture-chapter border border-white/12 bg-[#071315]/56 p-4">
@@ -530,7 +609,7 @@ function ObjectIdentityPanel({ entry, profile, accent }: { entry: Entry; profile
         <article className="entry-material-board border border-white/14 bg-[#071315]/60 p-5">
           <div className="text-[10px] uppercase tracking-[0.22em]" style={{ color: accent }}>Object Signature</div>
           <h2 className="mt-3 text-3xl leading-tight text-[#f7f7f4]">{profile.title}</h2>
-          <p className="mt-4 text-sm leading-7 text-[#cfcfca]">{profile.reading}</p>
+          <p className="entry-text-reactive mt-4 text-sm leading-7 text-[#cfcfca]">{profile.reading}</p>
           <div className="mt-5 grid gap-2 sm:grid-cols-3">
             {profile.materials.map((material, index) => (
               <div key={material} className="entry-material-chip border border-white/12 bg-[#050505]/45 p-3">
@@ -544,7 +623,7 @@ function ObjectIdentityPanel({ entry, profile, accent }: { entry: Entry; profile
         <article className="entry-composition-board border border-white/14 bg-[#071315]/60 p-5">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <div className="text-[10px] uppercase tracking-[0.22em]" style={{ color: accent }}>Material + Composition Analysis</div>
+              <div className="text-[10px] uppercase tracking-[0.22em]" style={{ color: accent }}>Material- und Kompositionsanalyse</div>
               <h2 className="mt-3 text-2xl text-[#f7f7f4]">{profile.compositionTitle}</h2>
             </div>
             <span className="border border-white/14 px-3 py-2 text-[10px] uppercase tracking-[0.14em] text-[#b8b8b2]">{entry.year_start}</span>
@@ -558,7 +637,7 @@ function ObjectIdentityPanel({ entry, profile, accent }: { entry: Entry; profile
           </div>
           <div className="mt-5 grid gap-2 sm:grid-cols-2">
             {profile.composition.map((item) => (
-              <div key={item} className="border border-white/10 bg-[#050505]/42 p-3 text-sm leading-6 text-[#cfcfca]">
+              <div key={item} className="entry-text-reactive border border-white/10 bg-[#050505]/42 p-3 text-sm leading-6 text-[#cfcfca]">
                 {item}
               </div>
             ))}
@@ -613,7 +692,7 @@ function MediaCard({ media, entry, profile, accent }: { media: Entry['media'][nu
 }
 
 function ObjectMediaPlaceholder({ mediaType, entry, profile }: { mediaType: Entry['media'][number]['type']; entry: Entry; profile: EntryVisualProfile }) {
-  const label = profile.slotReadings[mediaType] ?? entry.title;
+  const label = profile.slotLesenings[mediaType] ?? entry.title;
 
   return (
     <div className={`entry-object-media-diagram entry-object-media-${mediaType}`}>
@@ -626,20 +705,20 @@ function ObjectMediaPlaceholder({ mediaType, entry, profile }: { mediaType: Entr
   );
 }
 
-function InfoBlock({ title, items, accent, empty = 'No entries yet' }: { title: string; items: string[]; accent: string; empty?: string }) {
+function InfoBlock({ title, items, accent, empty = 'Keine Eintraege vorhanden' }: { title: string; items: string[]; accent: string; empty?: string }) {
   return (
-    <div>
+    <div className="entry-info-block">
       <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em]" style={{ color: accent }}>{title}</h2>
       {items.length ? (
         <div className="flex flex-wrap gap-2">
           {items.map((item) => (
-            <span key={item} className="border border-white/14 bg-[#071315]/70 px-3 py-2 text-xs uppercase tracking-[0.11em] text-[#d7d7d0]">
+            <span key={item} className="entry-info-chip border border-white/14 bg-[#071315]/70 px-3 py-2 text-xs uppercase tracking-[0.11em] text-[#d7d7d0]">
               {item.replace(/[_:]/g, ' ')}
             </span>
           ))}
         </div>
       ) : (
-        <p className="text-sm text-[#b8b8b2]">{empty}</p>
+        <p className="entry-text-reactive text-sm text-[#b8b8b2]">{empty}</p>
       )}
     </div>
   );
@@ -662,7 +741,7 @@ function AnalysisCard({ title, items, accent, empty }: { title: string; items: s
       {items.length ? (
         <div className="mt-3 space-y-2">
           {items.slice(0, 5).map((item) => (
-            <div key={item} className="border border-white/10 bg-[#050505]/45 p-2 text-sm leading-6 text-[#d7d7d0]">
+            <div key={item} className="entry-text-reactive border border-white/10 bg-[#050505]/45 p-2 text-sm leading-6 text-[#d7d7d0]">
               {item.replace(/[_:]/g, ' ')}
             </div>
           ))}
@@ -682,7 +761,7 @@ type EntryVisualProfile = {
   compositionTitle: string;
   composition: string[];
   diagramType: 'monastery-plinth' | 'free-plan' | 'generic';
-  slotReadings: Record<Entry['media'][number]['type'], string>;
+  slotLesenings: Record<Entry['media'][number]['type'], string>;
 };
 
 function entryVisualProfile(entry: Entry): EntryVisualProfile {
@@ -700,7 +779,7 @@ function entryVisualProfile(entry: Entry): EntryVisualProfile {
         'Hangkante, Garten und Klosterbestand werden als zusammenhängender Campus gelesen.'
       ],
       diagramType: 'monastery-plinth',
-      slotReadings: {
+      slotLesenings: {
         exterior: 'Hangkante / Klosterhügel / vertikale Fassade',
         interior: 'Pflegezimmer / mineralische Ruhe / Holz und Putz',
         section: 'Sockel, Hof, Kern und Terrassen',
@@ -718,7 +797,7 @@ function entryVisualProfile(entry: Entry): EntryVisualProfile {
       compositionTitle: 'Freier Grundriss, Rampe und Dachgarten',
       composition: ['Pilotis lösen den Körper vom Boden.', 'Rampe verbindet Bewegung und Blick.', 'Bandfenster schneiden die Fassade horizontal.', 'Dachgarten ersetzt den verlorenen Boden.'],
       diagramType: 'free-plan',
-      slotReadings: {
+      slotLesenings: {
         exterior: 'Weisser Körper auf Pilotis',
         interior: 'Rampe und freier Raum',
         section: 'Promenade architecturale',
@@ -740,7 +819,7 @@ function entryVisualProfile(entry: Entry): EntryVisualProfile {
       `Filter: ${entry.themes.slice(0, 3).join(', ') || 'needs review'}`
     ],
     diagramType: 'generic',
-    slotReadings: {
+    slotLesenings: {
       exterior: 'Aussenwirkung und Kontext',
       interior: 'Innenraum und Atmosphäre',
       section: 'Schnitt und Tragwerk',
@@ -798,7 +877,7 @@ function modelSourceItems(entry: Entry) {
   ].filter(Boolean);
 }
 
-function extractAnalysisValues(data: Record<string, unknown> | undefined, keys: string[]) {
+function extractAnalysisValues(data: Record<string, unbekannt> | undefined, keys: string[]) {
   if (!data) return [];
   return keys.flatMap((key) => {
     const value = data[key];
@@ -839,13 +918,46 @@ function mediaSlotNumber(type: Entry['media'][number]['type']) {
   return order[type];
 }
 
+function archiveStatusMetrics(entry: Entry, relatedCount: number): ArchiveStatusMetric[] {
+  const sourceValue = Math.min(100, (entry.source_documents?.length ?? 0) * 20 + (entry.source_url ? 24 : 0) + (entry.source_candidates?.length ?? 0) * 8 + (entry.source_quality.includes('verified') ? 24 : 0));
+  const mediaValue = Math.min(100, new Set(entry.media.map((media) => media.type)).size * 20 + entry.media.filter((media) => publicDisplayMediaUrl(media)).length * 5);
+  const networkValue = Math.min(100, relatedCount * 17 + (entry.database_tags?.length ?? 0) * 2);
+  const modelValue = Math.min(100, (entry.model_assets?.length ?? 0) * 18 + (entry.model_3d?.parts?.length ?? 0) * 12 + (entry.model_3d?.glb_url ? 18 : 0));
+  const analysisValue = Math.min(100, (entry.analysis_layers?.length ?? 0) * 18 + (entry.analysis_observations?.length ?? 0) * 9);
+  const textValue = Math.min(100, (entry.architecture_text?.chapters.length ?? 0) * 16 + (entry.full_description.length > 320 ? 28 : 12) + (entry.one_sentence.length > 40 ? 12 : 0));
+
+  return [
+    { id: 'sources', label: 'Quellenlage', shortLabel: 'QU', value: Math.round(sourceValue), hint: 'Nachweise, Quellenkandidaten und Verifizierungsgrad.' },
+    { id: 'media', label: 'Medien / Pläne', shortLabel: 'ME', value: Math.round(mediaValue), hint: 'Außen, Innen, Schnitt, Grundriss und öffentliche Medien.' },
+    { id: 'network', label: 'Wissensnetz', shortLabel: 'NE', value: Math.round(networkValue), hint: 'Relationen, Tags und thematische Anschlussfähigkeit.' },
+    { id: 'model', label: '3D-Modell', shortLabel: '3D', value: Math.round(modelValue), hint: 'Modellpakete, GLB-Layer und Blender-Potenzial.' },
+    { id: 'analysis', label: 'Analyse', shortLabel: 'AN', value: Math.round(analysisValue), hint: 'Material, Tragwerk, Tektonik und Beobachtungslayer.' },
+    { id: 'text', label: 'Texttiefe', shortLabel: 'TX', value: Math.round(textValue), hint: 'Architekturtext, Kapitelstruktur und beschreibende Dichte.' }
+  ];
+}
+
+function radarPoints(values: number[], center: number, radius: number) {
+  return values.map((value, index) => {
+    const point = radarPoint(index, values.length, center, radius * (Math.max(0, Math.min(100, value)) / 100));
+    return `${point.x.toFixed(2)},${point.y.toFixed(2)}`;
+  }).join(' ');
+}
+
+function radarPoint(index: number, total: number, center: number, radius: number) {
+  const angle = -Math.PI / 2 + (index / total) * Math.PI * 2;
+  return {
+    x: center + Math.cos(angle) * radius,
+    y: center + Math.sin(angle) * radius
+  };
+}
+
 function studyPrompt(entry: Entry) {
   const type = entry.entry_type.replace(/_/g, ' ');
   const theme = entry.themes[0]?.replace(/[_:]/g, ' ') ?? 'architectural history';
-  return `Read this ${type} through ${theme}: locate what is formal, what is technical, and what belongs to its historical context.`;
+  return `Lesen this ${type} through ${theme}: locate what is formal, what is technical, and what belongs to its historical context.`;
 }
 
-function archiveReadiness(entry: Entry) {
+function archiveLeseniness(entry: Entry) {
   const mediaScore = Math.min(entry.media.length, 4) * 12;
   const relationScore = Math.min(relatedEntries(entry).length, 4) * 6;
   const textScore = entry.full_description.length > 220 ? 18 : 8;

@@ -1,13 +1,15 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import type { CSSProperties } from 'react';
+import { ArchiveCursor } from '@/components/archive/ArchiveCursor';
+import { ArchiveHistoryControls } from '@/components/archive/ArchiveHistoryControls';
 import entries from '@/data/mock-entries.json';
 import relations from '@/data/relations.json';
 import archivePreview from '@/data/archive-preview.json';
 import type { Entry, EntryRelation, EntryType, StyleSectorId } from '@/lib/types';
 
-const allEntries = entries as Entry[];
-const allRelations = relations as EntryRelation[];
+const allEintraege = entries as Entry[];
+const allRelationen = relations as EntryRelation[];
 
 export const metadata: Metadata = {
   title: 'Archive Preview | Architecture Cosmos',
@@ -15,18 +17,19 @@ export const metadata: Metadata = {
 };
 
 export default function ArchivePage() {
-  const pilot = allEntries.find((entry) => entry.id === archivePreview.entries[0]?.id) ?? allEntries[0];
-  const pilotEntries = allEntries.filter((entry) => entry.database_profile);
-  const typeCounts = countBy(allEntries, (entry) => entry.entry_type);
-  const styleCounts = countBy(allEntries, (entry) => entry.style_sector);
-  const richestEntries = [...allEntries]
+  const pilot = allEintraege.find((entry) => entry.id === archivePreview.entries[0]?.id) ?? allEintraege[0];
+  const pilotEintraege = allEintraege.filter((entry) => entry.database_profile);
+  const typeCounts = countBy(allEintraege, (entry) => entry.entry_type);
+  const styleCounts = countBy(allEintraege, (entry) => entry.style_sector);
+  const richestEintraege = [...allEintraege]
     .sort((a, b) => archiveWeight(b) - archiveWeight(a))
     .slice(0, 10);
-  const workflow = archiveWorkflow(allEntries);
-  const modernVillaCluster = pilotEntries.filter((entry) => entry.database_tags?.some((tag) => tag.includes('modern-villa')));
+  const workflow = archiveWorkflow(allEintraege);
+  const modernVillaCluster = pilotEintraege.filter((entry) => entry.database_tags?.some((tag) => tag.includes('modern-villa')));
 
   return (
     <main className="entry-page archive-page min-h-screen overflow-x-hidden bg-[#050505] text-[#f7f7f4]" style={{ '--entry-accent': '#00e7ff' } as CSSProperties}>
+      <ArchiveCursor />
       <div className="entry-cosmos-field" aria-hidden="true">
         <span className="entry-ring entry-ring-a" />
         <span className="entry-ring entry-ring-b" />
@@ -38,9 +41,12 @@ export default function ArchivePage() {
           <Link href="/" className="entry-link text-[11px] font-semibold uppercase tracking-[0.28em] text-[#f7f7f4]/78">
             Architecture Cosmos
           </Link>
-          <Link href="/atlas/" className="entry-link border border-white/20 px-3 py-2 text-[10px] uppercase tracking-[0.18em] text-[#d7d7d0]">
-            Back to Atlas
-          </Link>
+          <div className="flex items-center gap-2">
+            <ArchiveHistoryControls />
+            <Link href="/atlas/?return=database" className="entry-link border border-white/20 px-3 py-2 text-[10px] uppercase tracking-[0.18em] text-[#d7d7d0]">
+              Zum Atlas
+            </Link>
+          </div>
         </header>
 
         <section className="grid gap-8 py-10 lg:grid-cols-[minmax(0,1.08fr)_360px] lg:py-14">
@@ -51,73 +57,85 @@ export default function ArchivePage() {
               <span className="border border-white/15 px-2.5 py-1">R2 preview bucket</span>
             </div>
             <h1 className="max-w-4xl text-4xl font-semibold leading-[0.95] tracking-normal text-[#f7f7f4] sm:text-6xl lg:text-7xl">
-              Archive Database
+              Archive Datenbank
             </h1>
             <p className="mt-8 max-w-3xl text-xl leading-relaxed text-[#f7f7f4] sm:text-2xl">
-              A static control room for entries, sources, media slots, relations, analysis layers and future 3D model packages.
+              Ein statischer Kontrollraum fuer Eintraege, Quellen, Medienslots, Relationen, Analyseebenen und zukuenftige 3D-Modellpakete.
             </p>
             <p className="mt-7 max-w-3xl text-base leading-8 text-[#cfcfca]">
-              The website still reads bundled JSON for maximum speed and zero backend risk. Cloudflare D1 is prepared as a preview archive for validation, schema design and later read-only queries. Real images, plans and GLB models can move to object storage once the media policy is ready.
+              Die Website liest weiterhin gebuendelte JSON-Daten fuer maximale Geschwindigkeit und minimales Backend-Risiko. Cloudflare D1 ist als Vorschauarchiv fuer Validierung, Schemaentwurf und spaetere Read-only-Abfragen vorbereitet. Echte Bilder, Plaene und GLB-Modelle koennen in Objektspeicher wechseln, sobald die Medienpolitik bereit ist.
             </p>
           </div>
 
-          <aside className="entry-archive-panel border border-white/14 bg-[#071315]/70 p-5">
-            <h2 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#00e7ff]">Storage Status</h2>
+          <details className="entry-archive-panel archive-expandable-card border border-white/14 bg-[#071315]/70 p-5" open>
+            <summary>
+              <span>Speicherstatus</span>
+              <i>öffnen</i>
+            </summary>
             <dl className="mt-5 space-y-3 text-sm">
-              <ArchiveMeta label="Database" value={archivePreview.storage_target.database_name} />
+              <ArchiveMeta label="Datenbank" value={archivePreview.storage_target.database_name} />
               <ArchiveMeta label="Status" value={archivePreview.storage_target.status.replace(/_/g, ' ')} />
               <ArchiveMeta label="Frontend" value={archivePreview.storage_target.frontend_connection.replace(/_/g, ' ')} />
-              <ArchiveMeta label="R2 bucket" value={archivePreview.storage_target.assets_bucket_name ?? 'not configured'} />
+              <ArchiveMeta label="R2-Bucket" value={archivePreview.storage_target.assets_bucket_name ?? 'nicht konfiguriert'} />
               <ArchiveMeta label="Assets" value={archivePreview.storage_target.assets_status.replace(/_/g, ' ')} />
-              <ArchiveMeta label="Verified" value={archivePreview.storage_target.last_verified} />
+              <ArchiveMeta label="Geprueft" value={archivePreview.storage_target.last_verified} />
             </dl>
-          </aside>
+          </details>
         </section>
 
         <section className="archive-metric-grid grid gap-3 border-t border-white/12 py-8 sm:grid-cols-2 lg:grid-cols-4">
-          <Metric label="Entries" value={allEntries.length} />
-          <Metric label="Relations" value={allRelations.length} />
-          <Metric label="Media rows" value={archivePreview.entry_media.length} />
-          <Metric label="Model layers" value={archivePreview.entry_models.length} />
-          <Metric label="Analysis layers" value={archivePreview.entry_analysis.length} />
-          <Metric label="Source rows" value={archivePreview.entry_sources.length} />
+          <Metric label="Eintraege" value={allEintraege.length} />
+          <Metric label="Relationen" value={allRelationen.length} />
+          <Metric label="Medienzeilen" value={archivePreview.entry_media.length} />
+          <Metric label="Modellebenen" value={archivePreview.entry_models.length} />
+          <Metric label="Analyseebenen" value={archivePreview.entry_analysis.length} />
+          <Metric label="Quellenzeilen" value={archivePreview.entry_sources.length} />
           <Metric label="Tags" value={archivePreview.tags.length} />
-          <Metric label="Pilot objects" value={pilotEntries.length} />
+          <Metric label="Pilotobjekte" value={pilotEintraege.length} />
         </section>
 
         <section className="grid gap-6 border-t border-white/12 py-8 lg:grid-cols-[0.9fr_1.1fr]">
-          <div className="entry-archive-panel border border-white/14 bg-[#071315]/70 p-5">
-            <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#00e7ff]">Archive Workflow</h2>
+          <details className="entry-archive-panel archive-expandable-card border border-white/14 bg-[#071315]/70 p-5" open>
+            <summary>
+              <span>Archiv-Workflow</span>
+              <i>vergrößern</i>
+            </summary>
             <div className="space-y-3">
               {workflow.stages.map((stage) => (
-                <div key={stage.label} className="border border-white/12 bg-[#050505]/40 p-3">
-                  <div className="flex items-center justify-between gap-4">
+                <details key={stage.label} className="archive-inline-card border border-white/12 bg-[#050505]/40 p-3">
+                  <summary>
                     <span className="text-sm text-[#f7f7f4]">{stage.label}</span>
                     <span className="text-xl text-[#00e7ff]">{stage.value}</span>
-                  </div>
+                  </summary>
                   <p className="mt-2 text-xs leading-5 text-[#b8b8b2]">{stage.description}</p>
-                </div>
+                </details>
               ))}
             </div>
-          </div>
+          </details>
 
-          <div className="entry-archive-panel border border-white/14 bg-[#071315]/70 p-5">
-            <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#00e7ff]">Next Import Workflow</h2>
-            <ol className="space-y-3 text-sm leading-6 text-[#d7d7d0]">
-              <li><span className="text-[#00e7ff]">01</span> Drop source material into <code>{'archive-inbox/{entry_slug}'}</code>.</li>
-              <li><span className="text-[#00e7ff]">02</span> Run <code>npm run archive:capture -- --input archive-inbox/villa-savoye --title &quot;Villa Savoye&quot;</code>.</li>
-              <li><span className="text-[#00e7ff]">03</span> Review generated entry draft, source candidates, asset candidates and model-package placeholders.</li>
-              <li><span className="text-[#00e7ff]">04</span> Add reviewed entry to <code>data/mock-entries.json</code>.</li>
-              <li><span className="text-[#00e7ff]">05</span> Sync D1 with <code>npm run archive:d1-preview</code>.</li>
+          <details className="entry-archive-panel archive-expandable-card border border-white/14 bg-[#071315]/70 p-5">
+            <summary>
+              <span>Naechster Import-Workflow</span>
+              <i>anzeigen</i>
+            </summary>
+            <ol className="mt-4 space-y-3 text-sm leading-6 text-[#d7d7d0]">
+              <li><span className="text-[#00e7ff]">01</span> Quellenmaterial in <code>{'archive-inbox/{entry_slug}'}</code> ablegen.</li>
+              <li><span className="text-[#00e7ff]">02</span> <code>npm run archive:capture -- --input archive-inbox/villa-savoye --title &quot;Villa Savoye&quot;</code> ausführen.</li>
+              <li><span className="text-[#00e7ff]">03</span> Eintragsentwurf, Quellenkandidaten, Asset-Kandidaten und Modellpakete prüfen.</li>
+              <li><span className="text-[#00e7ff]">04</span> Geprüften Eintrag in <code>data/mock-entries.json</code> übernehmen.</li>
+              <li><span className="text-[#00e7ff]">05</span> D1 mit <code>npm run archive:d1-preview</code> synchronisieren.</li>
             </ol>
-          </div>
+          </details>
         </section>
 
         <section className="grid gap-6 border-t border-white/12 py-8 lg:grid-cols-[1.05fr_0.95fr]">
-          <div className="entry-archive-panel border border-[#00e7ff]/35 bg-[#06171a]/75 p-5">
-            <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#00e7ff]">Asset Intake</h2>
-            <p className="max-w-3xl text-sm leading-7 text-[#d7d7d0]">
-              Real images, plans and model files stay local until rights and size checks are complete. The intake command creates a private folder structure, scans the files and writes a dry-run manifest without touching Cloudflare.
+          <details className="entry-archive-panel archive-expandable-card border border-[#00e7ff]/35 bg-[#06171a]/75 p-5" open>
+            <summary>
+              <span>Asset Intake</span>
+              <i>Details</i>
+            </summary>
+            <p className="mt-4 max-w-3xl text-sm leading-7 text-[#d7d7d0]">
+              Echte Bilder, Pläne und Modelldateien bleiben lokal, bis Rechte- und Größenprüfungen abgeschlossen sind. Der Intake-Befehl erzeugt eine private Ordnerstruktur, scannt Dateien und schreibt ein Dry-run-Manifest ohne Cloudflare zu berühren.
             </p>
             <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
               <ArchiveMeta label="Local folder" value="archive-intake/{entry_slug}" />
@@ -125,16 +143,19 @@ export default function ArchivePage() {
               <ArchiveMeta label="Manifest" value="out/asset-manifests/{entry_slug}.json" />
               <ArchiveMeta label="Upload" value="blocked / dry-run only" />
             </div>
-          </div>
+          </details>
 
-          <div className="entry-archive-panel border border-white/14 bg-[#071315]/70 p-5">
-            <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#00e7ff]">Asset Intake Command</h2>
-            <ol className="space-y-3 text-sm leading-6 text-[#d7d7d0]">
-              <li><span className="text-[#00e7ff]">01</span> Place files into <code>archive-intake/villa-savoye/exterior</code>, <code>interior</code>, <code>section</code>, <code>plan</code> or <code>models</code>.</li>
-              <li><span className="text-[#00e7ff]">02</span> Run <code>npm run archive:asset-manifest -- --entry villa-savoye</code>.</li>
-              <li><span className="text-[#00e7ff]">03</span> Review blocked rights, missing slots and planned R2 keys in the generated manifest.</li>
+          <details className="entry-archive-panel archive-expandable-card border border-white/14 bg-[#071315]/70 p-5">
+            <summary>
+              <span>Asset-Intake-Befehl</span>
+              <i>anzeigen</i>
+            </summary>
+            <ol className="mt-4 space-y-3 text-sm leading-6 text-[#d7d7d0]">
+              <li><span className="text-[#00e7ff]">01</span> Dateien in <code>archive-intake/villa-savoye/exterior</code>, <code>interior</code>, <code>section</code>, <code>plan</code> oder <code>models</code> legen.</li>
+              <li><span className="text-[#00e7ff]">02</span> <code>npm run archive:asset-manifest -- --entry villa-savoye</code> ausführen.</li>
+              <li><span className="text-[#00e7ff]">03</span> Blockierte Rechte, fehlende Slots und geplante R2-Keys im Manifest prüfen.</li>
             </ol>
-          </div>
+          </details>
         </section>
 
         <section className="grid gap-6 border-t border-white/12 py-8 lg:grid-cols-2">
@@ -144,7 +165,7 @@ export default function ArchivePage() {
 
         <section className="border-t border-white/12 py-8">
           <div className="mb-4 flex items-end justify-between gap-4">
-            <h2 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#00e7ff]">Database Pilot</h2>
+            <h2 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#00e7ff]">Datenbank Pilot</h2>
             <Link href={`/atlas/${pilot.slug}/`} className="entry-link border border-white/20 px-3 py-2 text-[10px] uppercase tracking-[0.18em] text-[#d7d7d0]">
               Open Pilot
             </Link>
@@ -162,9 +183,9 @@ export default function ArchivePage() {
         </section>
 
         <section className="border-t border-white/12 py-8">
-          <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#00e7ff]">Database Pilot Objects</h2>
+          <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#00e7ff]">Datenbank Pilot Objects</h2>
           <div className="grid gap-3 sm:grid-cols-2">
-            {pilotEntries.map((entry) => (
+            {pilotEintraege.map((entry) => (
               <Link key={entry.id} href={`/atlas/${entry.slug}/`} className="entry-link entry-relation-card border border-white/14 bg-[#071315]/55 p-4">
                 <span className="block text-[10px] uppercase tracking-[0.16em] text-[#00e7ff]">{entry.database_profile?.status} / {entry.style_sector.replace(/_/g, ' ')}</span>
                 <span className="mt-2 block text-lg text-[#f7f7f4]">{entry.title}</span>
@@ -190,22 +211,22 @@ export default function ArchivePage() {
         </section>
 
         <section className="border-t border-white/12 py-8">
-          <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#00e7ff]">Needs Attention</h2>
+          <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#00e7ff]">Braucht Aufmerksamkeit</h2>
           <div className="grid gap-3 sm:grid-cols-3">
-            <AttentionCard title="Sources" entries={workflow.needsSources} />
-            <AttentionCard title="Relations" entries={workflow.needsRelations} />
-            <AttentionCard title="Models" entries={workflow.needsModels} />
+            <AttentionCard title="Quellen" entries={workflow.needsQuellen} />
+            <AttentionCard title="Relationen" entries={workflow.needsRelationen} />
+            <AttentionCard title="Modelle" entries={workflow.needsModelle} />
           </div>
         </section>
 
         <section className="border-t border-white/12 py-8">
-          <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#00e7ff]">Richest Static Entries</h2>
+          <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#00e7ff]">Richest Static Eintraege</h2>
           <div className="grid gap-3 sm:grid-cols-2">
-            {richestEntries.map((entry) => (
+            {richestEintraege.map((entry) => (
               <Link key={entry.id} href={`/atlas/${entry.slug}/`} className="entry-link entry-relation-card border border-white/14 bg-[#071315]/55 p-4">
                 <span className="block text-[10px] uppercase tracking-[0.16em] text-[#00e7ff]">{entry.entry_type.replace(/_/g, ' ')} / {entry.style_sector.replace(/_/g, ' ')}</span>
                 <span className="mt-2 block text-lg text-[#f7f7f4]">{entry.title}</span>
-                <span className="mt-2 block text-sm leading-6 text-[#b8b8b2]">{archiveWeight(entry)} archive points / {entry.year_start < 0 ? `${Math.abs(entry.year_start)} BCE` : entry.year_start}</span>
+                <span className="mt-2 block text-sm leading-6 text-[#b8b8b2]">{archiveWeight(entry)} Archivpunkte / {entry.year_start < 0 ? `${Math.abs(entry.year_start)} BCE` : entry.year_start}</span>
               </Link>
             ))}
           </div>
@@ -239,38 +260,43 @@ function archiveWeight(entry: Entry) {
 function archiveWorkflow(entries: Entry[]) {
   const reviewed = entries.filter((entry) => entry.database_profile?.status === 'reviewed' || entry.database_profile?.status === 'published');
   const withAllMedia = entries.filter((entry) => new Set(entry.media.map((media) => media.type)).size >= 4);
-  const withSources = entries.filter((entry) => (entry.source_documents?.length ?? 0) > 0 || Boolean(entry.source_url));
-  const withModels = entries.filter((entry) => (entry.model_assets?.length ?? 0) > 0);
-  const withRelations = entries.filter((entry) => allRelations.some((relation) => relation.source_entry_id === entry.id || relation.target_entry_id === entry.id));
+  const withQuellen = entries.filter((entry) => (entry.source_documents?.length ?? 0) > 0 || Boolean(entry.source_url));
+  const withModelle = entries.filter((entry) => (entry.model_assets?.length ?? 0) > 0);
+  const withRelationen = entries.filter((entry) => allRelationen.some((relation) => relation.source_entry_id === entry.id || relation.target_entry_id === entry.id));
 
   return {
     stages: [
-      { label: 'Structured entries', value: entries.length, description: 'Objects currently bundled in static JSON and exportable to D1.' },
-      { label: 'Source-backed', value: withSources.length, description: 'Entries with at least one source document or source URL.' },
-      { label: 'Four-slot media ready', value: withAllMedia.length, description: 'Entries with exterior, interior, section and plan placeholders or media rows.' },
-      { label: 'Relation graph ready', value: withRelations.length, description: 'Entries connected to at least one other archive object.' },
-      { label: 'Model metadata ready', value: withModels.length, description: 'Entries with planned 3D model rows and R2 keys.' },
-      { label: 'Reviewed pilots', value: reviewed.length, description: 'Entries promoted beyond draft status.' }
+      { label: 'Strukturierte Eintraege', value: entries.length, description: 'Objekte, die aktuell als statisches JSON gebuendelt und nach D1 exportierbar sind.' },
+      { label: 'Quellengestuetzt', value: withQuellen.length, description: 'Eintraege with at least one source document or source URL.' },
+      { label: 'Vier Medienslots bereit', value: withAllMedia.length, description: 'Eintraege with exterior, interior, section and plan placeholders or media rows.' },
+      { label: 'Beziehungsgraph bereit', value: withRelationen.length, description: 'Eintraege connected to at least one other archive object.' },
+      { label: 'Modelldaten bereit', value: withModelle.length, description: 'Eintraege with planned 3D model rows and R2 keys.' },
+      { label: 'Gepruefte Piloten', value: reviewed.length, description: 'Eintraege promoted beyond draft status.' }
     ],
-    needsSources: entries.filter((entry) => (entry.source_documents?.length ?? 0) === 0 && !entry.source_url).slice(0, 4),
-    needsRelations: entries.filter((entry) => !allRelations.some((relation) => relation.source_entry_id === entry.id || relation.target_entry_id === entry.id)).slice(0, 4),
-    needsModels: entries.filter((entry) => (entry.model_assets?.length ?? 0) === 0).slice(0, 4)
+    needsQuellen: entries.filter((entry) => (entry.source_documents?.length ?? 0) === 0 && !entry.source_url).slice(0, 4),
+    needsRelationen: entries.filter((entry) => !allRelationen.some((relation) => relation.source_entry_id === entry.id || relation.target_entry_id === entry.id)).slice(0, 4),
+    needsModelle: entries.filter((entry) => (entry.model_assets?.length ?? 0) === 0).slice(0, 4)
   };
 }
 
 function clusterPosition(entry: Entry) {
-  if (entry.id === 'villa-savoye') return 'Manifest house: five points, promenade, pilotis and roof garden.';
-  if (entry.id === 'haus-tugendhat') return 'Material free plan: steel frame, screens, glass and fluid domestic space.';
-  if (entry.id === 'villa-noailles') return 'Leisure villa: movement, terraces, art, garden and avant-garde domesticity.';
+  if (entry.id === 'villa-savoye') return 'Manifesthaus: fünf Punkte, Promenade, Pilotis und Dachgarten.';
+  if (entry.id === 'haus-tugendhat') return 'Materialisierter freier Grundriss: Stahlrahmen, Schirme, Glas und fließender Wohnraum.';
+  if (entry.id === 'villa-noailles') return 'Freizeitvilla: Bewegung, Terrassen, Kunst, Garten und avantgardistische Häuslichkeit.';
   return entry.one_sentence;
 }
 
 function Metric({ label, value }: { label: string; value: number }) {
   return (
-    <div className="entry-study-card border border-white/14 bg-[#071315]/55 p-4">
-      <div className="text-3xl font-semibold text-[#f7f7f4]">{value}</div>
-      <div className="mt-2 text-[10px] uppercase tracking-[0.18em] text-[#b8b8b2]">{label}</div>
-    </div>
+    <details className="entry-study-card archive-metric-card border border-white/14 bg-[#071315]/55 p-4">
+      <summary>
+        <span className="text-3xl font-semibold text-[#f7f7f4]">{value}</span>
+        <span className="mt-2 block text-[10px] uppercase tracking-[0.18em] text-[#b8b8b2]">{label}</span>
+      </summary>
+      <p className="mt-3 text-xs leading-5 text-[#b8b8b2]">
+        Klickbare Datenbank-Kennzahl. Diese Werte kommen aus der statischen Archivvorschau und dienen später als Health-Signal für D1, Medien, Modelle und Analyseabdeckung.
+      </p>
+    </details>
   );
 }
 
@@ -285,8 +311,11 @@ function ArchiveMeta({ label, value }: { label: string; value: string }) {
 
 function ArchiveList({ title, rows }: { title: string; rows: Array<[string, string]> }) {
   return (
-    <div className="entry-archive-panel border border-white/14 bg-[#071315]/70 p-5">
-      <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#00e7ff]">{title}</h2>
+    <details className="entry-archive-panel archive-expandable-card border border-white/14 bg-[#071315]/70 p-5">
+      <summary>
+        <span>{title}</span>
+        <i>öffnen</i>
+      </summary>
       <div className="space-y-2">
         {rows.map(([label, value]) => (
           <div key={label} className="flex items-center justify-between gap-4 border-b border-white/10 pb-2 text-sm">
@@ -295,15 +324,18 @@ function ArchiveList({ title, rows }: { title: string; rows: Array<[string, stri
           </div>
         ))}
       </div>
-    </div>
+    </details>
   );
 }
 
 function AttentionCard({ title, entries }: { title: string; entries: Entry[] }) {
   return (
-    <div className="entry-archive-panel border border-white/14 bg-[#071315]/70 p-4">
-      <h3 className="mb-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#00e7ff]">{title}</h3>
-      <div className="space-y-2">
+    <details className="entry-archive-panel archive-expandable-card border border-white/14 bg-[#071315]/70 p-4" open>
+      <summary>
+        <span>{title}</span>
+        <i>{entries.length}</i>
+      </summary>
+      <div className="mt-3 space-y-2">
         {entries.map((entry) => (
           <Link key={entry.id} href={`/atlas/${entry.slug}/`} className="entry-link block border border-white/10 bg-[#050505]/35 px-3 py-2">
             <span className="block truncate text-sm text-[#f7f7f4]">{entry.title}</span>
@@ -311,6 +343,6 @@ function AttentionCard({ title, entries }: { title: string; entries: Entry[] }) 
           </Link>
         ))}
       </div>
-    </div>
+    </details>
   );
 }

@@ -198,8 +198,10 @@ function drawSpaceBackground(
     if (!star) continue;
 
     const parallax = 1 + star.depth * 0.036 * state.timePosition;
-    const x = centerX + (star.x * width - centerX) * parallax;
-    const y = centerY + (star.y * height - centerY) * parallax;
+    const idleOrbit = options.isMoving ? 0 : options.idlePhase * (0.9 + star.depth * 0.38) + star.phase;
+    const idleDrift = options.isMoving ? 0 : star.depth * 4.8;
+    const x = centerX + (star.x * width - centerX) * parallax + Math.cos(idleOrbit) * idleDrift;
+    const y = centerY + (star.y * height - centerY) * parallax + Math.sin(idleOrbit * 0.82) * idleDrift;
     if (x < -8 || x > width + 8 || y < -8 || y > height + 8) continue;
 
     const distance = Math.hypot(x - centerX, y - centerY) / Math.max(1, diagonal * 0.5);
@@ -216,10 +218,56 @@ function drawSpaceBackground(
   }
 
   if (options.quality !== 'reduced') {
+    drawOuterCosmosMotion(context, width, height, state, options);
     drawCosmicDust(context, width, height, state, options);
   }
 
   context.restore();
+}
+
+function drawOuterCosmosMotion(
+  context: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  state: WormholeState,
+  options: { quality: 'reduced' | 'balanced' | 'full'; isMoving: boolean; idlePhase: number },
+) {
+  const centerX = width / 2;
+  const centerY = height / 2;
+  const min = Math.min(width, height);
+  const max = Math.max(width, height);
+  const orbitCount = options.quality === 'full' ? 7 : 5;
+  const phase = options.isMoving ? state.phase * 0.004 : options.idlePhase;
+
+  context.save();
+  context.globalCompositeOperation = 'screen';
+
+  for (let index = 0; index < orbitCount; index += 1) {
+    const seed = seededUnit(index, 31.4);
+    const radius = min * (0.45 + index * 0.078) + max * 0.018;
+    const start = phase * (0.018 + index * 0.0025) + index * 0.83;
+    const sweep = Math.PI * (0.16 + seed * 0.2);
+    const alpha = options.isMoving ? 0.014 : 0.036 + seed * 0.018;
+
+    context.beginPath();
+    context.ellipse(
+      centerX,
+      centerY + Math.sin(index * 1.7) * min * 0.018,
+      radius * (1.18 + seed * 0.12),
+      radius * (0.36 + index * 0.018),
+      start * 0.22,
+      start + Math.PI * 0.08,
+      start + sweep,
+    );
+    context.strokeStyle = withAlpha(energyColor(index + 5), alpha);
+    context.lineWidth = 0.38 + index * 0.035;
+    context.setLineDash([1, 32 + index * 7]);
+    context.lineDashOffset = -phase * 48 - state.timePosition * 12 - index * 19;
+    context.stroke();
+  }
+
+  context.restore();
+  context.setLineDash([]);
 }
 
 function drawCosmicDust(

@@ -52,6 +52,16 @@ const sourceLensDefinitions = [
 ] as const;
 type SourceLensId = (typeof sourceLensDefinitions)[number]['id'];
 type SourceLens = SourceLensId | null;
+const tagLayerDefinitions = [
+  { id: 'public_space', label: 'Raum', terms: ['public-space', 'polis', 'city', 'urban', 'plaza', 'garden', 'courtyard', 'landscape-urbanism'] },
+  { id: 'reuse', label: 'Reuse', terms: ['reuse', 'industrial-reuse', 'palimpsest', 'urban-repair', 'conversion', 'umbau', 'renovation'] },
+  { id: 'infrastructure', label: 'Infra', terms: ['infrastructure', 'rail', 'water', 'drainage', 'transport', 'bridge', 'canal'] },
+  { id: 'landscape', label: 'Land', terms: ['landscape', 'garden', 'vegetation', 'topography', 'climate-landscape', 'terrain'] },
+  { id: 'material', label: 'Material', terms: ['material:', 'stone', 'brick', 'concrete', 'glass', 'wood', 'steel', 'mud_brick', 'limestone', 'vegetation'] },
+  { id: 'housing', label: 'Wohnen', terms: ['housing', 'collective-living', 'domesticity', 'villa', 'monastery', 'care', 'residential'] }
+] as const;
+type TagLayerId = (typeof tagLayerDefinitions)[number]['id'];
+type ActiveTagLayer = TagLayerId | null;
 type PerformanceTier = 'reduced' | 'balanced' | 'full';
 type ResearchSeed = {
   project: string;
@@ -61,13 +71,13 @@ type ResearchSeed = {
 type ImageIdentifyState = {
   fileName: string;
   previewUrl: string;
-  status: 'empty' | 'ready' | 'identified' | 'unknown';
+  status: 'empty' | 'bereit' | 'erkannt' | 'unknown';
   candidate?: ResearchSeed & {
     confidence: number;
     reason: string;
   };
 };
-type EntryDraft = {
+type EntryEntwurf = {
   title: string;
   year: string;
   entry_type: Entry['entry_type'];
@@ -133,7 +143,7 @@ type AtlasUiMetrics = {
   };
 };
 
-const initialEntryDraft: EntryDraft = {
+const initialEntryEntwurf: EntryEntwurf = {
   title: '',
   year: '2025',
   entry_type: 'building',
@@ -152,6 +162,15 @@ const initialEntryDraft: EntryDraft = {
 };
 const developerSessionKey = 'architecture-cosmos-dev-mode';
 
+function readInitialIntroState(): IntroState {
+  if (typeof window === 'undefined') return 'intro';
+  try {
+    return new URLSearchParams(window.location.search).get('return') === 'database' ? 'idle' : 'intro';
+  } catch {
+    return 'intro';
+  }
+}
+
 export function RadialAtlas({ entries, relations }: { entries: Entry[]; relations: EntryRelation[] }) {
   const svgRef = useRef<SVGSVGElement | null>(null);
   const cursorRef = useRef<SVGGElement | null>(null);
@@ -161,6 +180,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   const [showRelations, setShowRelations] = useState(false);
   const [activeStyleLens, setActiveStyleLens] = useState<StyleSectorId | null>(null);
   const [activeSourceLens, setActiveSourceLens] = useState<SourceLens>(null);
+  const [activeTagLayer, setActiveTagLayer] = useState<ActiveTagLayer>(null);
   const [motion, setMotion] = useState<MotionSnapshot>({
     currentTravel: 0,
     targetTravel: 0,
@@ -175,11 +195,12 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     isZooming: false
   });
   const [visualPan, setVisualPan] = useState<VisualPan>({ x: 0, y: 0 });
-  const [introState, setIntroState] = useState<IntroState>('intro');
+  const [introState, setIntroState] = useState<IntroState>(readInitialIntroState);
+  const [returningFromDatabase, setReturningFromDatabase] = useState(false);
   const [showDatabasePanel, setShowDatabasePanel] = useState(false);
   const [developerMode, setDeveloperMode] = useState(readDeveloperSession);
   const [localEntries, setLocalEntries] = useState<Entry[]>([]);
-  const [entryDraft, setEntryDraft] = useState<EntryDraft>(initialEntryDraft);
+  const [entryEntwurf, setEntryEntwurf] = useState<EntryEntwurf>(initialEntryEntwurf);
   const [researchSeed, setResearchSeed] = useState<ResearchSeed>({
     project: '',
     architect: '',
@@ -276,7 +297,50 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   } as CSSProperties;
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('return') !== 'database') return;
+
+    setIntroState('idle');
+    setReturningFromDatabase(true);
+    params.delete('return');
+    const nextQuery = params.toString();
+    window.history.replaceState(window.history.state, '', `${window.location.pathname}${nextQuery ? `?${nextQuery}` : ''}${window.location.hash}`);
+
+    motionRef.current = {
+      currentTravel: 0.085,
+      targetTravel: 0,
+      velocity: -0.0018,
+      frame: null,
+      timeout: null
+    };
+    setMotion({
+      currentTravel: 0.085,
+      targetTravel: 0,
+      velocity: -0.0018,
+      isMoving: true,
+      isSettling: false
+    });
+
+    const travelTimeout = window.setTimeout(() => {
+      nudgeTravel(-0.085);
+    }, 80);
+    const doneTimeout = window.setTimeout(() => {
+      setReturningFromDatabase(false);
+    }, 1180);
+
+    return () => {
+      window.clearTimeout(travelTimeout);
+      window.clearTimeout(doneTimeout);
+    };
+  }, []);
+
+  useEffect(() => {
     if (introState !== 'launching') return;
+
+    const motionTimeout = window.setTimeout(() => {
+      nudgeTravel(0.11);
+    }, 360);
 
     const timeout = window.setTimeout(() => {
       setIntroState('idle');
@@ -304,9 +368,12 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
         isMoving: false,
         isSettling: true
       });
-    }, 1650);
+    }, 3000);
 
-    return () => window.clearTimeout(timeout);
+    return () => {
+      window.clearTimeout(motionTimeout);
+      window.clearTimeout(timeout);
+    };
   }, [introState]);
 
   useEffect(() => {
@@ -460,10 +527,10 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     if (panGestureRef.current.moved) return;
     const point = event ? pointerToSvgPoint(event) : null;
     const nearest = point ? nearestInteractiveNode(toCameraPoint(point), displayNodes) : null;
-    openDossierFromNode(nearest?.entry ?? fallbackNode.entry);
+    offenDossierFromNode(nearest?.entry ?? fallbackNode.entry);
   }
 
-  function openDossierFromNode(entry: Entry) {
+  function offenDossierFromNode(entry: Entry) {
     databaseHistoryRef.current = false;
     setShowDatabasePanel(false);
     pushOverlayHistory('dossier');
@@ -482,7 +549,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     setSelectedEntry(null);
   }
 
-  function openDatabasePanel() {
+  function offenDatabasePanel() {
     if (!showDatabasePanelRef.current) {
       pushOverlayHistory('database');
       databaseHistoryRef.current = true;
@@ -507,7 +574,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
       return;
     }
 
-    openDatabasePanel();
+    offenDatabasePanel();
   }
 
   function pushOverlayHistory(name: 'database' | 'dossier') {
@@ -516,12 +583,12 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     window.history.pushState({ ...currentState, cosmosOverlay: name }, '', window.location.href);
   }
 
-  function createLocalEntryFromDraft(draft: EntryDraft) {
+  function createLocalEntryFromEntwurf(draft: EntryEntwurf) {
     const preview = draftToEntryPreview(draft);
     const existingEntry = entries.find((entry) => entry.id === preview.id || entry.slug === preview.slug);
 
     if (existingEntry) {
-      resetDatabaseDraftState();
+      resetDatabaseEntwurfState();
       setActiveStyleLens(null);
       setActiveSourceLens(null);
       setShowRelations(false);
@@ -539,16 +606,16 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     setActiveSourceLens(null);
     setShowRelations(false);
     setShowDatabasePanel(false);
-    resetDatabaseDraftState();
+    resetDatabaseEntwurfState();
     setSelectedEntry(entry);
   }
 
-  function resetDatabaseDraftState() {
+  function resetDatabaseEntwurfState() {
     if (imageIdentify.previewUrl.startsWith('blob:')) {
       URL.revokeObjectURL(imageIdentify.previewUrl);
     }
 
-    setEntryDraft(initialEntryDraft);
+    setEntryEntwurf(initialEntryEntwurf);
     setResearchSeed({ project: '', architect: '', address: '' });
     setImageIdentify({ fileName: '', previewUrl: '', status: 'empty' });
     setIntakeFiles([]);
@@ -884,7 +951,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
       const point = pointerToSvgPoint(finishedTouch);
       const nearest = point ? nearestInteractiveNode(toCameraPoint(point), displayNodes) : null;
       if (nearest) {
-        openDossierFromNode(nearest.entry);
+        offenDossierFromNode(nearest.entry);
       }
     }
 
@@ -972,13 +1039,21 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
       return;
     }
 
-    if (selectedEntry || isInterfaceTarget(event.target) || isEntryNodeTarget(event.target)) return;
+    if (isInterfaceTarget(event.target) || isEntryNodeTarget(event.target)) return;
+    if (showDatabasePanelRef.current) {
+      closeDatabasePanel();
+      return;
+    }
+    if (selectedEntry) {
+      closeDossier();
+      return;
+    }
     if (panGestureRef.current.moved) return;
 
     const point = pointerToSvgPoint(event);
     const nearest = point ? nearestInteractiveNode(toCameraPoint(point), displayNodes) : null;
     if (nearest && visualZoomRef.current.currentZoom > 1.02) {
-      openDossierFromNode(nearest.entry);
+      offenDossierFromNode(nearest.entry);
     }
   }
 
@@ -1088,7 +1163,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   }
 
   return (
-    <main ref={mainRef} style={visualZoomStyle} className={`relative h-screen w-screen overflow-hidden bg-[#050505] text-[#f7f7f4] cosmos-perf-${performanceTier} cosmos-intro-${introState} ${ui.isCoarsePointer ? 'cosmos-mobile-web' : 'cosmos-desktop-web'} ${introState === 'launching' ? 'cosmos-launching' : ''} ${isTraveling || visualZoom.isZooming ? 'cosmos-moving' : ''} ${visualZoom.currentZoom > 1.01 ? 'cosmos-lensing' : ''} ${introState === 'idle' && !isTraveling && !visualZoom.isZooming ? 'cosmos-idle' : ''}`}>
+    <main ref={mainRef} style={visualZoomStyle} className={`relative h-screen w-screen overflow-hidden bg-[#050505] text-[#f7f7f4] cosmos-perf-${performanceTier} cosmos-intro-${introState} ${ui.isCoarsePointer ? 'cosmos-mobile-web' : 'cosmos-desktop-web'} ${introState === 'launching' ? 'cosmos-launching' : ''} ${returningFromDatabase ? 'cosmos-returning-from-database' : ''} ${isTraveling || visualZoom.isZooming ? 'cosmos-moving' : ''} ${visualZoom.currentZoom > 1.01 ? 'cosmos-lensing' : ''} ${introState === 'idle' && !isTraveling && !visualZoom.isZooming ? 'cosmos-idle' : ''}`}>
       <WormholeCanvas state={state} isMoving={isTraveling} quality={performanceTier} />
       <div className="relative z-10 h-full w-full">
         <svg
@@ -1120,8 +1195,9 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
 
               {displayNodes.map((node) => {
                 const isSourceLensMatch = isSourceLensEntry(node.entry, activeSourceLens);
-                const nodeOpacity = node.opacity * styleLensOpacity(node, activeStyleLens) * sourceLensOpacity(node, activeSourceLens);
-                const displayOpacity = isSourceLensMatch ? Math.max(0.94, nodeOpacity) : nodeOpacity;
+                const isTagLayerMatch = isTagLayerEntry(node.entry, activeTagLayer);
+                const nodeOpacity = node.opacity * styleLensOpacity(node, activeStyleLens) * sourceLensOpacity(node, activeSourceLens) * tagLayerOpacity(node, activeTagLayer);
+                const displayOpacity = isSourceLensMatch || isTagLayerMatch ? Math.max(0.94, nodeOpacity) : nodeOpacity;
 
                 return (
                 <g
@@ -1144,9 +1220,9 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
                     scale={1}
                     isSelected={activeSelectedEntryId === node.entry.id}
                     isHovered={hoveredEntryId === node.entry.id}
-                    nodeRadius={isSourceLensMatch ? Math.max(node.size, 13) : node.size}
-                    showLabel={!fastNodeRender && isSourceLensMatch}
-                    styleLensActive={activeStyleLens === node.entry.style_sector || isSourceLensMatch}
+                    nodeRadius={isSourceLensMatch || isTagLayerMatch ? Math.max(node.size, 13) : node.size}
+                    showLabel={!fastNodeRender && (isSourceLensMatch || isTagLayerMatch)}
+                    styleLensActive={activeStyleLens === node.entry.style_sector || isSourceLensMatch || isTagLayerMatch}
                     renderMode={fastNodeRender ? 'fast' : 'full'}
                     driftX={node.driftX}
                     driftY={node.driftY}
@@ -1173,9 +1249,13 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
           {introState === 'idle' ? (
             <RadialHud
               showRelations={showRelations}
+              activeTagLayer={activeTagLayer}
               tunnelDepth={state.timePosition}
-              onTravelForward={() => travelBy(0.018)}
-              onTravelBackward={() => travelBy(-0.018)}
+              onSelectTagLayer={(layerId) => {
+                setHoveredEntry(null);
+                setActiveTagLayer((current) => current === layerId ? null : layerId);
+                setActiveSourceLens(null);
+              }}
               onToggleRelations={() => {
                 setHoveredEntry(null);
                 setShowRelations((current) => !current);
@@ -1196,16 +1276,16 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
               entries={allEntries}
               relations={relations}
               selectedEntry={selectedEntry}
-              draft={entryDraft}
+              draft={entryEntwurf}
               intakeFiles={intakeFiles}
               researchSeed={researchSeed}
               imageIdentify={imageIdentify}
               developerMode={developerMode}
-              onDraftChange={setEntryDraft}
+              onEntwurfChange={setEntryEntwurf}
               onIntakeFilesChange={setIntakeFiles}
               onResearchSeedChange={setResearchSeed}
               onImageIdentifyChange={setImageIdentify}
-              onCreateLocalEntry={createLocalEntryFromDraft}
+              onCreateLocalEntry={createLocalEntryFromEntwurf}
               onDismiss={closeDatabasePanel}
             />
           ) : null}
@@ -1219,16 +1299,16 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
             entries={allEntries}
             relations={relations}
             selectedEntry={selectedEntry}
-            draft={entryDraft}
+            draft={entryEntwurf}
             intakeFiles={intakeFiles}
             researchSeed={researchSeed}
             imageIdentify={imageIdentify}
             developerMode={developerMode}
-            onDraftChange={setEntryDraft}
+            onEntwurfChange={setEntryEntwurf}
             onIntakeFilesChange={setIntakeFiles}
             onResearchSeedChange={setResearchSeed}
             onImageIdentifyChange={setImageIdentify}
-            onCreateLocalEntry={createLocalEntryFromDraft}
+            onCreateLocalEntry={createLocalEntryFromEntwurf}
             onDismiss={closeDatabasePanel}
           />
         ) : null}
@@ -1242,9 +1322,13 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
             timePosition={state.timePosition}
             visualZoom={visualZoom.currentZoom}
             showRelations={showRelations}
+            activeTagLayer={activeTagLayer}
             databaseOpen={showDatabasePanel}
-            onTravelForward={() => travelBy(0.018)}
-            onTravelBackward={() => travelBy(-0.018)}
+            onSelectTagLayer={(layerId) => {
+              setHoveredEntry(null);
+              setActiveTagLayer((current) => current === layerId ? null : layerId);
+              setActiveSourceLens(null);
+            }}
             onToggleRelations={() => {
               setHoveredEntry(null);
               setShowRelations((current) => !current);
@@ -1259,6 +1343,8 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
       </div>
 
       {introState !== 'idle' ? <IntroGate state={introState} onStart={startIntro} /> : null}
+      {introState === 'launching' ? <WormholeBirthOverlay /> : null}
+      {returningFromDatabase ? <DatabaseReturnOverlay /> : null}
     </main>
   );
 }
@@ -1346,7 +1432,7 @@ function useAtlasUiMetrics(): AtlasUiMetrics {
       buttonY: useLargeInterface ? 844 : 923,
       buttonTextY: useLargeInterface ? 893 : 936.2,
       buttonFontSize: useLargeInterface ? 21 : 6.6,
-      shellWidth: useLargeInterface ? 960 : 380,
+      shellWidth: useLargeInterface ? 960 : 520,
       shellHeight: useLargeInterface ? 114 : 38,
       shellY: useLargeInterface ? 826 : 914,
       shellRadius: useLargeInterface ? 57 : 19,
@@ -1415,6 +1501,12 @@ function sourceLensOpacity(node: WormholeEntryNode, activeSourceLens: SourceLens
   return 0.035;
 }
 
+function tagLayerOpacity(node: WormholeEntryNode, activeTagLayer: ActiveTagLayer) {
+  if (!activeTagLayer) return 1;
+  if (isTagLayerEntry(node.entry, activeTagLayer)) return 1;
+  return 0.08 + node.closeness * 0.12;
+}
+
 function mergeEntries(baseEntries: Entry[], localEntries: Entry[]) {
   if (localEntries.length === 0) return baseEntries;
   const merged = new Map(baseEntries.map((entry) => [entry.id, entry]));
@@ -1440,6 +1532,32 @@ function isSourceLensEntry(entry: Entry, activeSourceLens: SourceLens) {
   ].join(' ').toLowerCase();
 
   return definition.terms.some((term) => sourceText.includes(term.toLowerCase()));
+}
+
+function isTagLayerEntry(entry: Entry, activeTagLayer: ActiveTagLayer) {
+  if (!activeTagLayer) return false;
+  const definition = tagLayerDefinitions.find((layer) => layer.id === activeTagLayer);
+  if (!definition) return false;
+
+  const layerText = [
+    entry.entry_type,
+    entry.program?.type,
+    entry.program?.subtype,
+    entry.context?.topography,
+    entry.context?.setting,
+    entry.materials?.notes,
+    ...(entry.database_tags ?? []),
+    ...(entry.themes ?? []),
+    ...(entry.vibes ?? []),
+    ...(entry.materials?.primary ?? []),
+    ...(entry.materials?.secondary ?? []),
+    ...(entry.materials?.stone_type ?? []),
+    ...(entry.context?.heritage_context ?? []),
+    ...(entry.context?.landscape_relation ?? []),
+    ...(entry.analysis_observations?.map((observation) => `${observation.analysis_type} ${observation.label}`) ?? [])
+  ].join(' ').toLowerCase();
+
+  return definition.terms.some((term) => layerText.includes(term.toLowerCase()));
 }
 
 function nearestInteractiveNode(point: SvgPoint, nodes: WormholeEntryNode[]) {
@@ -1472,23 +1590,29 @@ function roundMotion(value: number) {
 
 function RadialHud({
   showRelations,
+  activeTagLayer,
   tunnelDepth,
-  onTravelForward,
-  onTravelBackward,
+  onSelectTagLayer,
   onToggleRelations
 }: {
   showRelations: boolean;
+  activeTagLayer: ActiveTagLayer;
   tunnelDepth: number;
-  onTravelForward: () => void;
-  onTravelBackward: () => void;
+  onSelectTagLayer: (layerId: TagLayerId | null) => void;
   onToggleRelations: () => void;
 }) {
   const ui = useAtlasUiMetrics();
   const controlsOpacity = Math.max(0.46, 1 - tunnelDepth / 0.76);
-  const buttons = [
-    { id: 'back', label: 'Time -', active: false, width: ui.isCoarsePointer ? 150 : 58, onClick: onTravelBackward },
-    { id: 'forward', label: 'Time +', active: false, width: ui.isCoarsePointer ? 150 : 58, onClick: onTravelForward },
-    { id: 'relations', label: 'Relations', active: showRelations, width: ui.isCoarsePointer ? 198 : 78, onClick: onToggleRelations }
+  const buttons: Array<{ id: string; label: string; active: boolean; width: number; onClick: () => void }> = [
+    { id: 'all', label: 'Alle', active: !activeTagLayer, width: 42, onClick: () => onSelectTagLayer(null) },
+    ...tagLayerDefinitions.map((layer) => ({
+      id: layer.id,
+      label: layer.label,
+      active: activeTagLayer === layer.id,
+      width: layer.id === 'infrastructure' ? 46 : 56,
+      onClick: () => onSelectTagLayer(layer.id)
+    })),
+    { id: 'relations', label: 'Netz', active: showRelations, width: 46, onClick: onToggleRelations }
   ];
   let cursorX = atlasSize.cx - buttons.reduce((sum, button) => sum + button.width + ui.dock.gap, -ui.dock.gap) / 2;
 
@@ -1527,9 +1651,9 @@ function MobileAtlasHud({
   timePosition,
   visualZoom,
   showRelations,
+  activeTagLayer,
   databaseOpen,
-  onTravelForward,
-  onTravelBackward,
+  onSelectTagLayer,
   onToggleRelations,
   onToggleDatabase
 }: {
@@ -1537,9 +1661,9 @@ function MobileAtlasHud({
   timePosition: number;
   visualZoom: number;
   showRelations: boolean;
+  activeTagLayer: ActiveTagLayer;
   databaseOpen: boolean;
-  onTravelForward: () => void;
-  onTravelBackward: () => void;
+  onSelectTagLayer: (layerId: TagLayerId | null) => void;
   onToggleRelations: () => void;
   onToggleDatabase: () => void;
 }) {
@@ -1566,13 +1690,17 @@ function MobileAtlasHud({
       </section>
 
       <nav className="mobile-atlas-dock" aria-label="Mobile Atlas Navigation">
-        <button type="button" onClick={(event) => stopAndRun(event, onTravelBackward)} aria-label="Zeit Richtung Gegenwart">
-          <span>−</span>
-          <small>Zeit</small>
+        <button type="button" className={!activeTagLayer ? 'mobile-atlas-active' : ''} onClick={(event) => stopAndRun(event, () => onSelectTagLayer(null))} aria-pressed={!activeTagLayer}>
+          <span>All</span>
+          <small>Ebenen</small>
         </button>
-        <button type="button" onClick={(event) => stopAndRun(event, onTravelForward)} aria-label="Zeit tiefer in die Vergangenheit">
-          <span>+</span>
-          <small>Zeit</small>
+        <button type="button" className={activeTagLayer === 'material' ? 'mobile-atlas-active' : ''} onClick={(event) => stopAndRun(event, () => onSelectTagLayer('material'))} aria-pressed={activeTagLayer === 'material'}>
+          <span>Mat</span>
+          <small>Material</small>
+        </button>
+        <button type="button" className={activeTagLayer === 'landscape' ? 'mobile-atlas-active' : ''} onClick={(event) => stopAndRun(event, () => onSelectTagLayer('landscape'))} aria-pressed={activeTagLayer === 'landscape'}>
+          <span>Land</span>
+          <small>Landschaft</small>
         </button>
         <button type="button" className={showRelations ? 'mobile-atlas-active' : ''} onClick={(event) => stopAndRun(event, onToggleRelations)} aria-pressed={showRelations}>
           <span>Rel</span>
@@ -1613,7 +1741,7 @@ function DatabaseAccess({ isOpen, onToggle }: { isOpen: boolean; onToggle: () =>
 
   return (
     <g
-      className={`database-access ${isOpen ? 'database-access-open' : ''}`}
+      className={`database-access ${isOpen ? 'database-access-offen' : ''}`}
       pointerEvents="auto"
       transform={`translate(${x} ${y})`}
       aria-label="Database archive"
@@ -1734,7 +1862,7 @@ function IntroGate({ state, onStart }: { state: IntroState; onStart: () => void 
         event.preventDefault();
         onStart();
       }}
-      aria-label="Start Architecture Cosmos"
+      aria-label="Start Architekture Cosmos"
     >
       <span className="intro-title-lockup block">
         <svg className="intro-cosmos-mark mx-auto mb-7 block h-[clamp(5.4rem,13vw,11rem)] w-[clamp(5.4rem,13vw,11rem)]" viewBox="0 0 64 64" aria-hidden="true">
@@ -1745,6 +1873,45 @@ function IntroGate({ state, onStart }: { state: IntroState; onStart: () => void 
         </span>
       </span>
     </button>
+  );
+}
+
+function WormholeBirthOverlay() {
+  const sparks = Array.from({ length: 18 }, (_, index) => index);
+
+  return (
+    <div className="wormhole-birth-overlay" aria-hidden="true">
+      <div className="wormhole-birth-core">
+        <span />
+        <span />
+        <span />
+        <span />
+      </div>
+      <div className="wormhole-birth-grid">
+        <span />
+        <span />
+        <span />
+      </div>
+      <div className="wormhole-birth-sparks">
+        {sparks.map((spark) => (
+          <i key={spark} style={{ '--spark-index': spark } as CSSProperties} />
+        ))}
+      </div>
+      <div className="wormhole-birth-label">Wurmloch wird erzeugt</div>
+    </div>
+  );
+}
+
+function DatabaseReturnOverlay() {
+  return (
+    <div className="database-return-overlay" aria-hidden="true">
+      <div className="database-return-orbit">
+        <span />
+        <span />
+        <span />
+      </div>
+      <div className="database-return-label">Zurück ins Wurmloch</div>
+    </div>
   );
 }
 
@@ -1760,7 +1927,7 @@ function DatabaseArchivePanel({
   researchSeed,
   imageIdentify,
   developerMode,
-  onDraftChange,
+  onEntwurfChange,
   onIntakeFilesChange,
   onResearchSeedChange,
   onImageIdentifyChange,
@@ -1771,16 +1938,16 @@ function DatabaseArchivePanel({
   entries: Entry[];
   relations: EntryRelation[];
   selectedEntry: Entry | null;
-  draft: EntryDraft;
+  draft: EntryEntwurf;
   intakeFiles: IntakeFile[];
   researchSeed: ResearchSeed;
   imageIdentify: ImageIdentifyState;
   developerMode: boolean;
-  onDraftChange: (draft: EntryDraft) => void;
+  onEntwurfChange: (draft: EntryEntwurf) => void;
   onIntakeFilesChange: (files: IntakeFile[]) => void;
   onResearchSeedChange: (seed: ResearchSeed) => void;
   onImageIdentifyChange: (state: ImageIdentifyState) => void;
-  onCreateLocalEntry: (draft: EntryDraft) => void;
+  onCreateLocalEntry: (draft: EntryEntwurf) => void;
   onDismiss: () => void;
 }) {
   const [activeTab, setActiveTab] = useState<DatabaseTab>(selectedEntry ? 'entries' : 'overview');
@@ -1796,24 +1963,24 @@ function DatabaseArchivePanel({
   const currentAnalysisPack = findAnalysisPackForEntry(currentEntry);
   const currentProfile = currentEntry?.database_profile;
   const counts = [
-    { label: 'Entries', value: entries.length },
-    { label: 'Sources', value: archivePreview.entry_sources.length },
-    { label: 'Media', value: archivePreview.entry_media.length },
+    { label: 'Eintraege', value: entries.length },
+    { label: 'Quellen', value: archivePreview.entry_sources.length },
+    { label: 'Medien', value: archivePreview.entry_media.length },
     { label: '3D', value: archivePreview.entry_models.length },
-    { label: 'Analysis', value: archivePreview.entry_analysis.length },
-    { label: 'Relations', value: relations.length }
+    { label: 'Analyse', value: archivePreview.entry_analysis.length },
+    { label: 'Relationen', value: relations.length }
   ];
   const tabs: Array<{ id: DatabaseTab; label: string; hint: string; group: 'create' | 'review'; devOnly?: boolean }> = [
-    { id: 'generate', label: 'Generate', hint: 'Name or image to draft', group: 'create', devOnly: true },
-    { id: 'intake', label: 'Files', hint: 'Stage source package', group: 'create', devOnly: true },
-    { id: 'analysis', label: 'Analyze', hint: 'Score and layers', group: 'create', devOnly: true },
-    { id: 'draft', label: 'Draft', hint: 'Edit before adding', group: 'create', devOnly: true },
-    { id: 'overview', label: 'Status', hint: 'What exists now', group: 'review' },
-    { id: 'entries', label: 'Entries', hint: 'Current object', group: 'review' },
-    { id: 'sources', label: 'Sources', hint: 'References', group: 'review' },
-    { id: 'media', label: 'Media', hint: 'Images and plans', group: 'review' },
-    { id: 'models', label: '3D', hint: 'Model layers', group: 'review' },
-    { id: 'relations', label: 'Graph', hint: 'Connections', group: 'review' }
+    { id: 'generate', label: 'KI Erfassen', hint: 'Name oder Bild zu Entwurf', group: 'create', devOnly: true },
+    { id: 'intake', label: 'Dateien', hint: 'Quellenpaket sammeln', group: 'create', devOnly: true },
+    { id: 'analysis', label: 'Analyse', hint: 'Layer und Pruefung', group: 'create', devOnly: true },
+    { id: 'draft', label: 'Entwurf', hint: 'Vor Eintrag pruefen', group: 'create', devOnly: true },
+    { id: 'overview', label: 'Wissen', hint: 'Stand der Datenbank', group: 'review' },
+    { id: 'entries', label: 'Objekte', hint: 'Aktuelles Objekt', group: 'review' },
+    { id: 'sources', label: 'Quellen', hint: 'Nachweise', group: 'review' },
+    { id: 'media', label: 'Medien', hint: 'Bilder und Plaene', group: 'review' },
+    { id: 'models', label: '3D', hint: 'Modellebenen', group: 'review' },
+    { id: 'relations', label: 'Graph', hint: 'Verknuepfungen', group: 'review' }
   ];
   const visibleTabs = developerMode ? tabs : tabs.filter((tab) => !tab.devOnly);
   const createTabs = visibleTabs.filter((tab) => tab.group === 'create');
@@ -1821,17 +1988,17 @@ function DatabaseArchivePanel({
   const safeActiveTab = !developerMode && isDevOnlyDatabaseTab(activeTab) ? 'overview' : activeTab;
   const workflowStage = databaseWorkflowStage(safeActiveTab);
 
-  function updateField<Key extends keyof EntryDraft>(key: Key, value: EntryDraft[Key]) {
-    onDraftChange({ ...draft, [key]: value });
+  function updateField<Key extends keyof EntryEntwurf>(key: Key, value: EntryEntwurf[Key]) {
+    onEntwurfChange({ ...draft, [key]: value });
   }
 
   function updateResearchSeed<Key extends keyof ResearchSeed>(key: Key, value: ResearchSeed[Key]) {
     onResearchSeedChange({ ...researchSeed, [key]: value });
   }
 
-  function generateResearchDraft() {
-    const generatedDraft = draftFromResearchSeed(researchSeed);
-    onDraftChange(generatedDraft);
+  function generateResearchEntwurf() {
+    const generatedEntwurf = draftFromResearchSeed(researchSeed);
+    onEntwurfChange(generatedEntwurf);
     setActiveTab('draft');
   }
 
@@ -1846,7 +2013,7 @@ function DatabaseArchivePanel({
       return;
     }
 
-    generateResearchDraft();
+    generateResearchEntwurf();
   }
 
   function loadIngenbohlSample() {
@@ -1857,7 +2024,7 @@ function DatabaseArchivePanel({
     };
 
     onResearchSeedChange(seed);
-    onDraftChange(draftFromResearchSeed(seed));
+    onEntwurfChange(draftFromResearchSeed(seed));
     if (imageIdentify.previewUrl.startsWith('blob:')) {
       URL.revokeObjectURL(imageIdentify.previewUrl);
     }
@@ -1875,9 +2042,9 @@ function DatabaseArchivePanel({
     onImageIdentifyChange({
       fileName: file.name,
       previewUrl: objectUrl,
-      status: 'ready'
+      status: 'bereit'
     });
-    onDraftChange(initialEntryDraft);
+    onEntwurfChange(initialEntryEntwurf);
     onResearchSeedChange({ project: '', architect: '', address: '' });
     setActiveTab('generate');
   }
@@ -1897,12 +2064,12 @@ function DatabaseArchivePanel({
 
     if (!candidate) {
       const nextSeed = {
-        project: stripFileExtension(imageIdentify.fileName) || 'Unidentified image research',
+        project: stripFileExtension(imageIdentify.fileName) || 'Unerkannt image research',
         architect: '',
         address: ''
       };
       onResearchSeedChange(nextSeed);
-      onDraftChange(draftFromResearchSeed(nextSeed));
+      onEntwurfChange(draftFromResearchSeed(nextSeed));
       onImageIdentifyChange({
         ...imageIdentify,
         status: 'unknown',
@@ -1917,20 +2084,20 @@ function DatabaseArchivePanel({
       address: candidate.address
     };
     onResearchSeedChange(nextSeed);
-    onDraftChange(draftFromResearchSeed(nextSeed));
+    onEntwurfChange(draftFromResearchSeed(nextSeed));
     onImageIdentifyChange({
       ...imageIdentify,
-      status: 'identified',
+      status: 'erkannt',
       candidate
     });
   }
 
-  function resetPanelDraft() {
+  function resetPanelEntwurf() {
     if (imageIdentify.previewUrl.startsWith('blob:')) {
       URL.revokeObjectURL(imageIdentify.previewUrl);
     }
 
-    onDraftChange(initialEntryDraft);
+    onEntwurfChange(initialEntryEntwurf);
     onResearchSeedChange({ project: '', architect: '', address: '' });
     onImageIdentifyChange({ fileName: '', previewUrl: '', status: 'empty' });
     onIntakeFilesChange([]);
@@ -1965,34 +2132,40 @@ function DatabaseArchivePanel({
         onTouchMove={(event) => event.stopPropagation()}
         onClick={(event) => event.stopPropagation()}
       >
-        <div className="mb-3 flex items-start justify-between gap-3">
-          <div>
-            <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#00e7ff]">Architecture Cosmos Database</div>
-            <div className="mt-1 text-[10px] uppercase tracking-[0.14em] text-[#b8b8b2]">
-              {developerMode ? 'Developer session / private tools visible' : 'Public-safe archive view / dev tools locked'}
-            </div>
-          </div>
-          <div className="flex gap-1.5">
-            <a className="border border-[#00e7ff]/70 px-2 py-1 text-[9px] uppercase tracking-[0.12em] text-[#00e7ff]" href="/archive/">
-              Open
-            </a>
-            <button className="h-6 w-8 border border-[#f7f7f4]/70 text-[10px] text-[#050505] bg-[#f7f7f4]" type="button" onClick={onDismiss}>X</button>
+        <div className="mb-4">
+          <div className="database-panel-title">Architektur Kosmos Datenbank</div>
+          <div className="mt-1 text-[9.5px] uppercase tracking-[0.18em] text-[#b8b8b2]">
+            {developerMode ? 'Dev Zugang aktiv / private Werkzeuge sichtbar' : 'Oeffentliche Wissensansicht / private Werkzeuge gesperrt'}
           </div>
         </div>
 
-        <div className="mb-3 flex flex-wrap gap-1.5 border border-[#f7f7f4]/10 bg-[#050505]/35 px-2 py-1.5">
+        <a className="database-gold-action mb-2" href="/archive/" aria-label="Datenbank oeffnen">
+          <span>Datenbank oeffnen</span>
+          <small>Direkter Zugriff auf die aktuelle Archiv- und Knowledge-Plattform</small>
+        </a>
+
+        <button
+          type="button"
+          className="database-user-intake mb-3"
+          onClick={() => setActiveTab(developerMode ? 'generate' : 'overview')}
+        >
+          <span>Eigenes Projekt erfassen</span>
+          <small>Gast: oeffentlichen Eintragsantrag stellen. Konto: private Bibliothek mit lokalem Projektordner. Dev: geschuetzte Vollerfassung fuer nicht-oeffentliche Recherche.</small>
+        </button>
+
+        <div className="mb-3 grid grid-cols-3 gap-1.5 border border-[#f7f7f4]/10 bg-[#050505]/28 px-2 py-2 sm:grid-cols-6">
           {counts.map((item) => (
-            <div key={item.label} className="flex items-baseline gap-1.5 pr-2">
-              <span className="text-[10px] font-semibold leading-none text-[#f7f7f4]/85">{item.value}</span>
-              <span className="text-[7.5px] uppercase tracking-[0.11em] text-[#b8b8b2]/80">{item.label}</span>
+            <div key={item.label} className="min-w-0">
+              <span className="block text-[10px] font-semibold leading-none text-[#f7f7f4]/78">{item.value}</span>
+              <span className="mt-1 block truncate text-[7px] uppercase tracking-[0.1em] text-[#b8b8b2]/62">{item.label}</span>
             </div>
           ))}
         </div>
 
         <div className={`mb-3 border px-2 py-1.5 text-[8.8px] uppercase leading-snug tracking-[0.12em] ${developerMode ? 'border-[#f5b342]/34 bg-[#201407]/70 text-[#ffe1a3]' : 'border-[#00e7ff]/25 bg-[#061719]/85 text-[#c9fff4]'}`}>
           {developerMode
-            ? 'Dev unlocked / private copyright workflow visible / no automatic publish'
-            : 'Dev locked / public-safe metadata only / unlock below Search for private tools'}
+            ? 'Dev freigeschaltet / private Copyright-Workflows sichtbar / keine automatische Veroeffentlichung'
+            : 'Dev gesperrt / nur public-safe Metadaten / private Werkzeuge unter Search entsperren'}
         </div>
 
         {developerMode ? (
@@ -2004,14 +2177,14 @@ function DatabaseArchivePanel({
                 className="database-primary-generate"
                 onClick={handlePrimaryGenerate}
               >
-                {safeActiveTab === 'generate' ? 'Generate Draft' : 'Dev AI Generate'}
+                {safeActiveTab === 'generate' ? 'Entwurf erzeugen' : 'Dev KI Erfassen'}
               </button>
-              <small>{safeActiveTab === 'generate' ? 'uses current inputs' : 'opens generator'}</small>
+              <small>{safeActiveTab === 'generate' ? 'uses current inputs' : 'offens generator'}</small>
             </div>
           </div>
         ) : (
           <p className="mb-3 border border-[#f7f7f4]/12 bg-[#050505]/55 p-2 text-[9.5px] leading-snug text-[#b8b8b2]">
-            Private intake, AI generation, draft creation and copyright-sensitive review stay hidden until the local Developer gate is unlocked. This is a UI safeguard, not authentication.
+            Private Erfassung, KI-Generierung, Entwurfserstellung und copyright-sensible Pruefung bleiben verborgen, bis der lokale Dev-Zugang entsperrt ist. Das ist eine UI-Schranke, keine echte Authentifizierung.
           </p>
         )}
 
@@ -2024,26 +2197,26 @@ function DatabaseArchivePanel({
           {safeActiveTab === 'overview' ? (
             <div className="space-y-2 text-[10px] leading-relaxed text-[#d9d9d2]">
               <ArchiveRow label="Mode" value="Static public atlas / browser drafts only" />
-              <ArchiveRow label="Storage" value={`${archivePreview.storage_target.database.toUpperCase()} metadata preview / R2 planned`} />
-              <ArchiveRow label="Status" value={`D1 preview ready / ${archivePreview.storage_target.frontend_connection.replace(/_/g, ' ')}`} />
+              <ArchiveRow label="Speicher" value={`${archivePreview.storage_target.database.toUpperCase()} metadata preview / R2 planned`} />
+              <ArchiveRow label="Status" value={`D1 preview bereit / ${archivePreview.storage_target.frontend_connection.replace(/_/g, ' ')}`} />
               <ArchiveRow label="D1" value={`${archivePreview.storage_target.database_name} / verified ${archivePreview.storage_target.last_verified}`} />
               <ArchiveRow label="R2" value={`${archivePreview.storage_target.assets_bucket_name ?? 'not configured'} / no uploads`} />
               <ArchiveRow label="Assets" value={archivePreview.storage_target.assets_status.replace(/_/g, ' ')} />
               <ArchiveRow label="Pilot" value={`${pilotEntry.title}, ${pilotEntry.year_start}, ${pilotEntry.city}`} />
-              {selectedEntry ? <ArchiveRow label="Current" value={`${selectedEntry.title} / ${selectedEntry.database_profile?.status ?? 'local entry'}`} /> : null}
+              {selectedEntry ? <ArchiveRow label="Aktuell" value={`${selectedEntry.title} / ${selectedEntry.database_profile?.status ?? 'local entry'}`} /> : null}
               <p className="border border-[#00e7ff]/25 bg-[#061719] p-2 text-[#c9fff4]">
-                This panel is a local planning console. It can stage drafts in the browser session, but it does not persist to D1, upload to R2 or publish user/private files.
+                Dieses Panel ist eine lokale Planungskonsole. Es kann Entwuerfe in der Browser-Session vorbereiten, speichert aber nicht in D1, laedt nicht nach R2 hoch und veroeffentlicht keine Nutzer- oder Privatdateien.
               </p>
               <p className="border border-[#f7f7f4]/15 bg-[#050505]/55 p-2 text-[#b8b8b2]">
-                Future private libraries need authentication, Cloudflare Access or an identity provider, signed R2 upload URLs, quarantine, rights gate and maintainer review before any public publication.
+                Spaetere private Bibliotheken brauchen Authentifizierung, Cloudflare Access oder einen Identity Provider, signierte R2-Upload-URLs, Quarantaene, Rechtepruefung und manuelle Review vor jeder oeffentlichen Veroeffentlichung.
               </p>
               <ArchiveList
-                title="How this panel works"
+                title="So funktioniert dieses Panel"
                 items={[
-                  'Generate creates a temporary draft from a project name, address, architect or image hint',
-                  'Files stages source material in this browser session only',
-                  'Draft lets you review and add a temporary local atlas entry',
-                  'Review tabs show the current static archive preview'
+                  'KI Erfassen erzeugt einen temporaeren Entwurf aus Projektname, Adresse, Architekt oder Bildhinweis',
+                  'Dateien sammelt Quellenmaterial nur in dieser Browser-Session',
+                  'Entwurf erlaubt Pruefung und temporaeres Hinzufuegen eines lokalen Atlas-Eintrags',
+                  'Wissens-Tabs zeigen die aktuelle statische Archivvorschau'
                 ]}
               />
             </div>
@@ -2059,12 +2232,12 @@ function DatabaseArchivePanel({
                 }}
                 onDrop={handleDrop}
               >
-                <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#00e7ff]">Drop source package</div>
+                <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#00e7ff]">Quellenpaket ablegen</div>
                 <p className="mt-2 text-[10px] leading-snug text-[#c7c7c2]">
-                  PDFs, scans, plans, images, video, text notes and model files. This preview classifies the package and shows what is ready for later capture.
+                  PDFs, Scans, Plaene, Bilder, Videos, Textnotizen und Modelldateien. Diese Vorschau klassifiziert das Paket und zeigt, was fuer spaetere Erfassung bereit ist.
                 </p>
                 <label className="mt-3 inline-flex cursor-none items-center border border-[#00e7ff]/60 px-3 py-1.5 text-[8.5px] uppercase tracking-[0.14em] text-[#9cfff7]">
-                  Select files
+                  Dateien waehlen
                   <input
                     className="sr-only"
                     type="file"
@@ -2104,14 +2277,14 @@ function DatabaseArchivePanel({
                 </div>
               ) : (
                 <p className="border border-[#f7f7f4]/12 bg-[#050505]/45 p-2 text-[#b8b8b2]">
-                  No files staged yet. Add a project package here to see source, visual and 3D readiness.
+                  Noch keine Dateien gesammelt. Fuege ein Projektpaket hinzu, um Quellen-, Bild- und 3D-Bereitschaft zu sehen.
                 </p>
               )}
 
               <div className="grid grid-cols-3 gap-1.5">
-                <IntakeAction label="Capture" ready={intakeFiles.length > 0} />
-                <IntakeAction label="3D Plan" ready={intakeStats.sources + intakeStats.visual > 1} />
-                <IntakeAction label="Splat" ready={intakeStats.video > 0 || intakeStats.image >= 20} />
+                <IntakeAction label="Capture" bereit={intakeFiles.length > 0} />
+                <IntakeAction label="3D Plan" bereit={intakeStats.sources + intakeStats.visual > 1} />
+                <IntakeAction label="Splat" bereit={intakeStats.video > 0 || intakeStats.image >= 20} />
               </div>
 
               <button
@@ -2119,7 +2292,7 @@ function DatabaseArchivePanel({
                 className="w-full border border-[#f7f7f4]/25 px-2 py-1.5 text-[8.5px] uppercase tracking-[0.14em] text-[#d9d9d2]"
                 onClick={() => onIntakeFilesChange([])}
               >
-                Clear staged files
+                Gesammelte Dateien leeren
               </button>
             </div>
           ) : null}
@@ -2128,13 +2301,13 @@ function DatabaseArchivePanel({
             <div className="space-y-3 text-[10px] leading-relaxed text-[#d9d9d2]">
               <div className="database-generate-sticky">
                   <div>
-                    <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#00e7ff]">Dev AI Generate</div>
+                    <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#00e7ff]">Dev KI Erfassen</div>
                     <p className="mt-1 text-[9px] leading-snug text-[#b8b8b2]">
-                    Projektname, Adresse, Architekt oder Bildhinweis eingeben. Der Draft wird jedes Mal neu aufgebaut.
+                    Projektname, Adresse, Architekt oder Bildhinweis eingeben. Der Entwurf wird jedes Mal neu aufgebaut.
                     </p>
                   </div>
                 <div className="shrink-0 border border-[#00e7ff]/35 px-2 py-1 text-[8px] uppercase tracking-[0.12em] text-[#00e7ff]">
-                  Use top action
+                  Oben starten
                 </div>
               </div>
 
@@ -2148,9 +2321,9 @@ function DatabaseArchivePanel({
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#00e7ff]">Image identify</div>
+                    <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#00e7ff]">Bild erkennen</div>
                     <p className="mt-1 text-[9.5px] leading-snug text-[#b8b8b2]">
-                      Drop a building image. This V1 reads filename/context hints and always resets the draft before creating a fresh result.
+                      Ziehe ein Gebaeudebild hinein. V1 liest Dateiname und Kontext-Hinweise und setzt den Entwurf vor jedem neuen Resultat zurueck.
                     </p>
                   </div>
                   <label className="shrink-0 cursor-none border border-[#00e7ff]/60 px-2 py-1 text-[8px] uppercase tracking-[0.12em] text-[#9cfff7]">
@@ -2175,7 +2348,7 @@ function DatabaseArchivePanel({
                     <div className="min-w-0">
                       <div className="truncate text-[10px] text-[#f7f7f4]">{imageIdentify.fileName}</div>
                       <div className="mt-1 text-[8px] uppercase tracking-[0.12em] text-[#8d8d87]">
-                        {imageIdentify.status === 'identified' ? `identified / ${Math.round((imageIdentify.candidate?.confidence ?? 0) * 100)}%` : imageIdentify.status === 'unknown' ? 'needs manual research' : 'ready to analyze'}
+                        {imageIdentify.status === 'erkannt' ? `erkannt / ${Math.round((imageIdentify.candidate?.confidence ?? 0) * 100)}%` : imageIdentify.status === 'unknown' ? 'braucht manuelle Recherche' : 'bereit to analyze'}
                       </div>
                       {imageIdentify.candidate ? (
                         <p className="mt-1 line-clamp-2 text-[9px] leading-snug text-[#c9fff4]">{imageIdentify.candidate.project} / {imageIdentify.candidate.reason}</p>
@@ -2185,20 +2358,20 @@ function DatabaseArchivePanel({
                         className="mt-2 border border-[#00e7ff]/70 px-2 py-1 text-[8px] uppercase tracking-[0.12em] text-[#00e7ff]"
                         onClick={identifyDroppedImage}
                       >
-                        Analyze image
+                        Bild analysieren
                       </button>
                     </div>
                   </div>
                 ) : (
                   <div className="mt-3 border border-dashed border-[#f7f7f4]/18 bg-[#050505]/45 px-3 py-4 text-center text-[8.5px] uppercase tracking-[0.16em] text-[#8d8d87]">
-                    Drop image here
+                    Bild hier ablegen
                   </div>
                 )}
               </div>
 
-              <DraftInput label="Project" value={researchSeed.project} onChange={(value) => updateResearchSeed('project', value)} />
-              <DraftInput label="Architect" value={researchSeed.architect} onChange={(value) => updateResearchSeed('architect', value)} />
-              <DraftInput label="Address / place" value={researchSeed.address} onChange={(value) => updateResearchSeed('address', value)} />
+              <DraftInput label="Projekt" value={researchSeed.project} onChange={(value) => updateResearchSeed('project', value)} />
+              <DraftInput label="Architekt" value={researchSeed.architect} onChange={(value) => updateResearchSeed('architect', value)} />
+              <DraftInput label="Adresse / Ort" value={researchSeed.address} onChange={(value) => updateResearchSeed('address', value)} />
 
               <div className="grid grid-cols-2 gap-2">
                 <button
@@ -2206,27 +2379,27 @@ function DatabaseArchivePanel({
                   className="border border-[#f7f7f4]/25 px-2 py-2 text-[8.5px] uppercase tracking-[0.14em] text-[#d9d9d2]"
                   onClick={loadIngenbohlSample}
                 >
-                  Load sample
+                  Beispiel laden
                 </button>
                 <button
                   type="button"
                   className="border border-[#00e7ff]/55 px-2 py-2 text-[8.5px] uppercase tracking-[0.14em] text-[#00e7ff]"
-                  onClick={generateResearchDraft}
+                  onClick={generateResearchEntwurf}
                 >
                   Generate draft
                 </button>
               </div>
 
               <p className="border border-[#f7f7f4]/12 bg-[#050505]/45 p-2 text-[9.5px] leading-snug text-[#b8b8b2]">
-                Load sample fills a known test project. Generate draft converts your current inputs into an editable browser-session draft.
+                Beispiel laden fills a known test project. Generate draft converts your current inputs into an editable browser-session draft.
               </p>
 
               <ArchiveList
-                title="What happens next"
+                title="Naechster Ablauf"
                 items={[
-                  'A clean editable draft is created from the current inputs',
-                  'Existing old project text is cleared before a new image analysis result is applied',
-                  'Create browser entry adds it only to this session; it is not public and not saved to D1/R2'
+                  'Aus den aktuellen Eingaben entsteht ein sauberer editierbarer Entwurf',
+                  'Alter Projekttext wird geloescht, bevor eine neue Bildanalyse angewendet wird',
+                  'Browser-Eintrag erstellen fuegt ihn nur dieser Session hinzu; er ist nicht oeffentlich und nicht in D1/R2 gespeichert'
                 ]}
               />
             </div>
@@ -2240,16 +2413,16 @@ function DatabaseArchivePanel({
             <div className="space-y-2">
               {currentEntry ? (
                 <ArchiveList
-                  title={selectedEntry ? 'Current Entry' : 'Pilot Entry'}
+                  title={selectedEntry ? 'Aktueller Eintrag' : 'Pilot-Eintrag'}
                   items={[
                     `${currentEntry.title} / ${currentEntry.entry_type} / ${currentEntry.style_sector}`,
-                    `${currentEntry.authors.join(', ') || 'Unknown author'} / ${currentEntry.country ?? 'no country'}`,
-                    `Status: ${currentProfile?.status ?? 'local draft'}`,
+                    `${currentEntry.authors.join(', ') || 'Unbekannte Autorenschaft'} / ${currentEntry.country ?? 'kein Land'}`,
+                    `Status: ${currentProfile?.status ?? 'lokaler Entwurf'}`,
                     `R2 prefix: ${currentProfile?.r2_prefix ?? `entries/${currentEntry.slug}`}`
                   ]}
                 />
               ) : null}
-              <ArchiveList title="Pilot Entry" items={[`${pilotEntry.title} / ${pilotEntry.entry_type} / ${pilotEntry.style_sector}`, `${pilotEntry.authors_json} / ${pilotEntry.country}`, `R2 prefix: ${pilotEntry.r2_prefix}`]} />
+              <ArchiveList title="Pilot-Eintrag" items={[`${pilotEntry.title} / ${pilotEntry.entry_type} / ${pilotEntry.style_sector}`, `${pilotEntry.authors_json} / ${pilotEntry.country}`, `R2 prefix: ${pilotEntry.r2_prefix}`]} />
             </div>
           ) : null}
 
@@ -2262,8 +2435,8 @@ function DatabaseArchivePanel({
               const mediaUrl = publicDisplayMediaUrl(media);
               return {
                 title: media.label,
-                meta: `${media.type} / ${media.credit ?? 'placeholder'}`,
-                body: `${media.placeholder}${mediaUrl ? ` / ${mediaUrl}` : ' / no public image attached'}`,
+                meta: `${media.type} / ${media.credit ?? 'Platzhalter'}`,
+                body: `${media.placeholder}${mediaUrl ? ` / ${mediaUrl}` : ' / kein oeffentliches Bild angehaengt'}`,
                 imageUrl: mediaUrl ?? undefined
               };
             }) : archivePreview.entry_media.map((media) => ({ title: media.title, meta: `${media.media_type} / ${media.copyright_status}`, body: media.caption }))} />
@@ -2274,25 +2447,25 @@ function DatabaseArchivePanel({
           ) : null}
 
           {safeActiveTab === 'relations' ? (
-            <ArchiveList title="Knowledge Graph" items={[`${relations.length} local relations available now`, 'D1 table prepared for influence, theme, source and structural relations', 'Hover network can later read the same graph instead of local JSON']} />
+            <ArchiveList title="Wissensgraph" items={[`${relations.length} lokale Relationen aktuell verfuegbar`, 'D1-Tabelle ist fuer Einfluss-, Themen-, Quellen- und Strukturrelationen vorbereitet', 'Das Hover-Netzwerk kann spaeter denselben Graph statt lokaler JSON-Daten lesen']} />
           ) : null}
 
           {safeActiveTab === 'draft' ? (
             <div>
               <div className="mb-2 flex items-center justify-between gap-2">
-                <div className="text-[9px] uppercase tracking-[0.16em] text-[#b8b8b2]">New Entry Draft / browser session only</div>
+                <div className="text-[9px] uppercase tracking-[0.16em] text-[#b8b8b2]">Neuer Eintragsentwurf / nur Browser-Session</div>
                 <div className="flex gap-1.5">
                   <button
                     type="button"
                     className="border border-[#00e7ff]/80 bg-[#00e7ff] px-2 py-1 text-[8px] font-semibold uppercase tracking-[0.12em] text-[#050505]"
                     onClick={() => onCreateLocalEntry(draft)}
                   >
-                    Create browser entry
+                    Browser-Eintrag erstellen
                   </button>
                   <button
                     type="button"
                     className="border border-[#f7f7f4]/25 px-2 py-1 text-[8px] uppercase tracking-[0.12em] text-[#d9d9d2]"
-                    onClick={resetPanelDraft}
+                    onClick={resetPanelEntwurf}
                   >
                     Clear
                   </button>
@@ -2303,39 +2476,39 @@ function DatabaseArchivePanel({
               </p>
               <div className="mb-2 grid grid-cols-3 gap-1.5">
                 {draftReadiness(draft).map((item) => (
-                  <div key={item.label} className={`border px-2 py-1 ${item.ready ? 'border-[#00e7ff]/45 bg-[#061719]' : 'border-[#f7f7f4]/14 bg-[#050505]/55'}`}>
-                    <div className={`text-[10px] font-semibold ${item.ready ? 'text-[#00e7ff]' : 'text-[#8d8d87]'}`}>{item.ready ? 'ready' : 'open'}</div>
+                  <div key={item.label} className={`border px-2 py-1 ${item.bereit ? 'border-[#00e7ff]/45 bg-[#061719]' : 'border-[#f7f7f4]/14 bg-[#050505]/55'}`}>
+                    <div className={`text-[10px] font-semibold ${item.bereit ? 'text-[#00e7ff]' : 'text-[#8d8d87]'}`}>{item.bereit ? 'bereit' : 'offen'}</div>
                     <div className="mt-0.5 truncate text-[7.5px] uppercase tracking-[0.1em] text-[#b8b8b2]">{item.label}</div>
                   </div>
                 ))}
               </div>
               <div className="grid grid-cols-2 gap-2">
-                <DraftInput label="Title" value={draft.title} onChange={(value) => updateField('title', value)} />
-                <DraftInput label="Year" value={draft.year} onChange={(value) => updateField('year', value)} />
-                <DraftSelect label="Type" value={draft.entry_type} options={entryTypeOptions} onChange={(value) => updateField('entry_type', value as Entry['entry_type'])} />
-                <DraftSelect label="Style" value={draft.style_sector} options={styleSectors.map((sector) => ({ value: sector.id, label: styleShortLabel(sector.id) }))} onChange={(value) => updateField('style_sector', value as StyleSectorId)} />
-                <DraftInput label="City" value={draft.city} onChange={(value) => updateField('city', value)} />
-                <DraftInput label="Country" value={draft.country} onChange={(value) => updateField('country', value)} />
-                <DraftInput label="Authors" value={draft.authors} onChange={(value) => updateField('authors', value)} />
-                <DraftInput label="Themes" value={draft.themes} onChange={(value) => updateField('themes', value)} />
-                <DraftInput label="Courses" value={draft.lecture_cluster} onChange={(value) => updateField('lecture_cluster', value)} />
+                <DraftInput label="Titel" value={draft.title} onChange={(value) => updateField('title', value)} />
+                <DraftInput label="Jahr" value={draft.year} onChange={(value) => updateField('year', value)} />
+                <DraftSelect label="Typ" value={draft.entry_type} options={entryTypeOptions} onChange={(value) => updateField('entry_type', value as Entry['entry_type'])} />
+                <DraftSelect label="Stil" value={draft.style_sector} options={styleSectors.map((sector) => ({ value: sector.id, label: styleShortLabel(sector.id) }))} onChange={(value) => updateField('style_sector', value as StyleSectorId)} />
+                <DraftInput label="Stadt" value={draft.city} onChange={(value) => updateField('city', value)} />
+                <DraftInput label="Land" value={draft.country} onChange={(value) => updateField('country', value)} />
+                <DraftInput label="Autorenschaft" value={draft.authors} onChange={(value) => updateField('authors', value)} />
+                <DraftInput label="Themen" value={draft.themes} onChange={(value) => updateField('themes', value)} />
+                <DraftInput label="Kurse" value={draft.lecture_cluster} onChange={(value) => updateField('lecture_cluster', value)} />
                 <DraftSelect
-                  label="Rights"
+                  label="Rechte"
                   value={draft.copyright_status}
                   options={[
-                    { value: 'needs_permission', label: 'Needs rights' },
-                    { value: 'private_research', label: 'Private research' },
-                    { value: 'licensed', label: 'Licensed' },
-                    { value: 'public_domain', label: 'Public domain' },
-                    { value: 'own_work', label: 'Own work' }
+                    { value: 'needs_permission', label: 'Rechte offen' },
+                    { value: 'private_research', label: 'Private Recherche' },
+                    { value: 'licensed', label: 'Lizenziert' },
+                    { value: 'public_domain', label: 'Gemeinfrei' },
+                    { value: 'own_work', label: 'Eigene Arbeit' }
                   ]}
-                  onChange={(value) => updateField('copyright_status', value as EntryDraft['copyright_status'])}
+                  onChange={(value) => updateField('copyright_status', value as EntryEntwurf['copyright_status'])}
                 />
               </div>
-              <DraftInput label="Source URL" value={draft.source_url} onChange={(value) => updateField('source_url', value)} />
-              <DraftInput label="Source docs" value={draft.source_documents} onChange={(value) => updateField('source_documents', value)} />
+              <DraftInput label="Quellen-URL" value={draft.source_url} onChange={(value) => updateField('source_url', value)} />
+              <DraftInput label="Quellendokumente" value={draft.source_documents} onChange={(value) => updateField('source_documents', value)} />
               <label className="mt-2 block text-[9px] uppercase tracking-[0.16em] text-[#b8b8b2]">
-                Short text
+                Kurztext
                 <textarea
                   className="mt-1 h-11 w-full resize-none border border-[#f7f7f4]/20 bg-[#07181a] px-2 py-1 text-[11px] leading-tight text-[#f7f7f4] outline-none"
                   value={draft.short_description}
@@ -2344,7 +2517,7 @@ function DatabaseArchivePanel({
                 />
               </label>
               <label className="mt-2 block text-[9px] uppercase tracking-[0.16em] text-[#b8b8b2]">
-                One sentence
+                Ein Satz
                 <textarea
                   className="mt-1 h-11 w-full resize-none border border-[#f7f7f4]/20 bg-[#07181a] px-2 py-1 text-[11px] leading-tight text-[#f7f7f4] outline-none"
                   value={draft.one_sentence}
@@ -2353,7 +2526,7 @@ function DatabaseArchivePanel({
                 />
               </label>
               <label className="mt-2 block text-[9px] uppercase tracking-[0.16em] text-[#b8b8b2]">
-                Full description
+                Vollbeschreibung
                 <textarea
                   className="mt-1 h-16 w-full resize-none border border-[#f7f7f4]/20 bg-[#07181a] px-2 py-1 text-[11px] leading-tight text-[#f7f7f4] outline-none"
                   value={draft.full_description}
@@ -2362,7 +2535,7 @@ function DatabaseArchivePanel({
                 />
               </label>
               <ArchiveList
-                title="Local next commands"
+                title="Lokale naechste Befehle"
                 items={[
                   `npm run archive:draft -- --input data/drafts/${preview.slug}.json`,
                   `npm run archive:asset-manifest -- --entry ${preview.slug} --copyright ${draft.copyright_status}`,
@@ -2384,7 +2557,7 @@ function DatabaseArchivePanel({
         className="database-draft database-archive-panel database-mobile-overlay"
         role="dialog"
         aria-modal="true"
-        aria-label="Architecture Cosmos Database"
+        aria-label="Architekture Cosmos Database"
         onPointerDown={(event) => event.stopPropagation()}
         onWheel={(event) => event.stopPropagation()}
         onTouchMove={(event) => event.stopPropagation()}
@@ -2444,15 +2617,15 @@ function DatabaseTabGroup({
 
 function DatabaseFlowSteps({ current }: { current: 'research' | 'analysis' | 'draft' | 'review' }) {
   const steps = [
-    { id: 'research', label: 'Research Pack' },
-    { id: 'analysis', label: 'Analysis Pack' },
-    { id: 'draft', label: 'Draft' },
-    { id: 'review', label: 'Ready for Review' }
+    { id: 'research', label: 'Recherchepaket' },
+    { id: 'analysis', label: 'Analysepaket' },
+    { id: 'draft', label: 'Entwurf' },
+    { id: 'review', label: 'Bereit fuer Review' }
   ] as const;
   const currentIndex = steps.findIndex((step) => step.id === current);
 
   return (
-    <div className="database-flow-steps" aria-label="Database workflow">
+    <div className="database-flow-steps" aria-label="Datenbank-Workflow">
       {steps.map((step, index) => (
         <div key={step.id} className={`database-flow-step ${index <= currentIndex ? 'database-flow-step-active' : ''}`}>
           <span>{index + 1}</span>
@@ -2494,11 +2667,11 @@ function DatabaseAnalysisPackView({
     return (
       <div className="space-y-3 text-[10px] leading-relaxed text-[#d9d9d2]">
         <ArchiveList
-          title="Analysis Pack"
+          title="Analysepaket"
           items={[
-            fallbackEntry ? `No static analysis pack yet for ${fallbackEntry.title}` : 'No selected entry analysis pack yet',
-            'Run database:analyze in the terminal to produce a research and analysis pack',
-            'Reviewed packs can be added to data/database-analysis-preview.json for static display'
+            fallbackEntry ? `Noch kein statisches Analysepaket fuer ${fallbackEntry.title}` : 'Noch kein Analysepaket fuer den ausgewaehlten Eintrag',
+            'Fuehre database:analyze im Terminal aus, um ein Recherche- und Analysepaket zu erzeugen',
+            'Gepruefte Pakete koennen fuer die statische Anzeige in data/database-analysis-preview.json ergaenzt werden'
           ]}
         />
       </div>
@@ -2513,20 +2686,20 @@ function DatabaseAnalysisPackView({
     <div className="space-y-3 text-[10px] leading-relaxed text-[#d9d9d2]">
       <div className="database-analysis-hero">
         <div className="min-w-0">
-          <div className="text-[9px] uppercase tracking-[0.18em] text-[#00e7ff]">Analysis Pack</div>
+          <div className="text-[9px] uppercase tracking-[0.18em] text-[#00e7ff]">Analysepaket</div>
           <div className="mt-1 overflow-wrap-anywhere text-[15px] font-semibold leading-tight text-[#f7f7f4]">{pack.topic}</div>
           <div className="mt-1 overflow-wrap-anywhere text-[8.5px] uppercase tracking-[0.1em] text-[#b8b8b2]">{pack.agent} / {pack.readiness_score.label.replace(/_/g, ' ')}</div>
         </div>
         <div className="database-analysis-score">
           <span>{Math.round(pack.readiness_score.score * 100)}</span>
-          <small>ready</small>
+          <small>bereit</small>
         </div>
       </div>
 
       <div className="grid grid-cols-3 gap-1.5">
         <AnalysisMetric label="Source mix" value={pack.source_score.source_mix.replace(/_/g, ' ')} />
         <AnalysisMetric label="Primary" value={`${pack.source_score.primary_sources}`} />
-        <AnalysisMetric label="Rights" value={pack.rights_summary.publication_default.replace(/_/g, ' ')} />
+        <AnalysisMetric label="Rechte" value={pack.rights_summary.publication_default.replace(/_/g, ' ')} />
       </div>
 
       <AnalysisTagGroup title="Material" tags={materialTags} empty="No material tags yet" />
@@ -2551,7 +2724,7 @@ function DatabaseAnalysisPackView({
       />
 
       <ArchiveList
-        title="Rights Gate"
+        title="Rechte Gate"
         items={[
           pack.rights_summary.note,
           ...pack.readiness_score.blockers.map((blocker) => `Blocker: ${blocker}`)
@@ -2600,11 +2773,11 @@ function ArchiveList({ title, items }: { title: string; items: string[] }) {
   );
 }
 
-function IntakeAction({ label, ready }: { label: string; ready: boolean }) {
+function IntakeAction({ label, bereit }: { label: string; bereit: boolean }) {
   return (
-    <div className={`border px-2 py-1.5 ${ready ? 'border-[#00e7ff]/55 bg-[#061719]' : 'border-[#f7f7f4]/14 bg-[#050505]/55'}`}>
-      <div className={`text-[10px] font-semibold uppercase tracking-[0.12em] ${ready ? 'text-[#00e7ff]' : 'text-[#8d8d87]'}`}>{label}</div>
-      <div className="mt-1 text-[7.5px] uppercase tracking-[0.1em] text-[#b8b8b2]">{ready ? 'ready' : 'needs input'}</div>
+    <div className={`border px-2 py-1.5 ${bereit ? 'border-[#00e7ff]/55 bg-[#061719]' : 'border-[#f7f7f4]/14 bg-[#050505]/55'}`}>
+      <div className={`text-[10px] font-semibold uppercase tracking-[0.12em] ${bereit ? 'text-[#00e7ff]' : 'text-[#8d8d87]'}`}>{label}</div>
+      <div className="mt-1 text-[7.5px] uppercase tracking-[0.1em] text-[#b8b8b2]">{bereit ? 'bereit' : 'braucht Input'}</div>
     </div>
   );
 }
@@ -2694,7 +2867,7 @@ function sourceCardsForEntry(entry: Entry) {
 
   if (cards.length === 0) {
     cards.push({
-      title: 'Source placeholder',
+      title: 'Source Platzhalter',
       meta: 'unverified',
       body: 'No source records are attached yet.'
     });
@@ -2748,7 +2921,7 @@ function DraftSelect({ label, value, options, onChange }: { label: string; value
   );
 }
 
-function draftToEntryPreview(draft: EntryDraft) {
+function draftToEntryPreview(draft: EntryEntwurf) {
   const title = draft.title.trim() || 'Untitled Entry';
   const slug = slugify(title);
   const year = Number.parseInt(draft.year, 10) || 2025;
@@ -2756,8 +2929,8 @@ function draftToEntryPreview(draft: EntryDraft) {
   const sourceDocuments = splitList(draft.source_documents);
   const lectureCluster = splitList(draft.lecture_cluster);
   const authors = splitList(draft.authors);
-  const shortDescription = draft.short_description.trim() || `Draft archive entry for ${title}.`;
-  const oneSentence = draft.one_sentence.trim() || `${title} is a draft Architecture Cosmos entry prepared for source, media, model and relation review.`;
+  const shortDescription = draft.short_description.trim() || `Entwurf archive entry for ${title}.`;
+  const oneSentence = draft.one_sentence.trim() || `${title} is a draft Architekture Cosmos entry prepared for source, media, model and relation review.`;
   const fullDescription = draft.full_description.trim() || `${title} is currently staged as a local archive draft. Before publication, the entry needs source verification, media-rights review, relation mapping and analysis-layer classification.`;
   const databaseTags = [
     `source:${draft.source_url.trim() ? 'web-source' : 'needs-source'}`,
@@ -2776,7 +2949,7 @@ function draftToEntryPreview(draft: EntryDraft) {
     entry_type: draft.entry_type,
     year_start: year,
     year_end: null,
-    authors: authors.length > 0 ? authors : ['Unknown author'],
+    authors: authors.length > 0 ? authors : ['Unbekannte Autorenschaft'],
     city: draft.city.trim(),
     country: draft.country.trim(),
     style_sector: draft.style_sector,
@@ -2786,11 +2959,11 @@ function draftToEntryPreview(draft: EntryDraft) {
     one_sentence: oneSentence,
     full_description: fullDescription,
     source_quality: draft.source_url.trim() || sourceDocuments.length > 0 ? 'draft_source_attached' : 'needs_source',
-    source_documents: sourceDocuments.length > 0 ? sourceDocuments : ['Draft source note'],
+    source_documents: sourceDocuments.length > 0 ? sourceDocuments : ['Entwurf source note'],
     source_url: draft.source_url.trim(),
     media: mediaTypes.map((type) => ({
       type,
-      label: `${mediaTypeLabels[type]} placeholder`,
+      label: `${mediaTypeLabels[type]} Platzhalter`,
       placeholder: `${mediaTypeLabels[type]} media slot planned for ${title}.`,
       credit: draft.copyright_status
     })),
@@ -2807,7 +2980,7 @@ function draftToEntryPreview(draft: EntryDraft) {
   };
 }
 
-function draftToLocalEntry(draft: EntryDraft, existingEntries: Entry[]): Entry {
+function draftToLocalEntry(draft: EntryEntwurf, existingEntries: Entry[]): Entry {
   const preview = draftToEntryPreview(draft);
   const existingIds = new Set(existingEntries.map((entry) => entry.id));
   const isBaseConflict = existingIds.has(preview.id);
@@ -2827,7 +3000,7 @@ function draftToLocalEntry(draft: EntryDraft, existingEntries: Entry[]): Entry {
       r2_prefix: `entries/${slug}`
     },
     ingestion_status: {
-      stage: 'ready_for_wormhole',
+      stage: 'bereit_for_wormhole',
       source_status: preview.source_url || (preview.source_documents?.length ?? 0) > 0 ? 'candidate' : 'none',
       asset_status: 'candidate',
       model_status: 'planned',
@@ -2849,11 +3022,11 @@ function uniqueEntryId(baseId: string, existingIds: Set<string>) {
   return nextId;
 }
 
-function draftFromResearchSeed(seed: ResearchSeed): EntryDraft {
-  const normalizedProject = seed.project.trim();
-  const normalizedArchitect = seed.architect.trim();
+function draftFromResearchSeed(seed: ResearchSeed): EntryEntwurf {
+  const normalizedProjekt = seed.project.trim();
+  const normalizedArchitekt = seed.architect.trim();
   const normalizedAddress = seed.address.trim();
-  const isIngenbohl = normalizeForMatch(`${normalizedProject} ${normalizedArchitect} ${normalizedAddress}`).includes('ingenbohl');
+  const isIngenbohl = normalizeForMatch(`${normalizedProjekt} ${normalizedArchitekt} ${normalizedAddress}`).includes('ingenbohl');
 
   if (isIngenbohl) {
     return {
@@ -2865,18 +3038,18 @@ function draftFromResearchSeed(seed: ResearchSeed): EntryDraft {
       country: 'Schweiz',
       authors: 'Boltshauser Architekten, Roger Boltshauser',
       themes: 'adaptive reuse, monastery, care architecture, concrete structure, lime plaster, clay plaster, timber facade, inner courtyard, roof garden, existing fabric',
-      lecture_cluster: 'Architecture Cosmos dev research, contemporary Swiss architecture',
+      lecture_cluster: 'Architekture Cosmos dev research, contemporary Swiss architecture',
       source_documents: 'Boltshauser Architekten project page, Baunetz project report, swiss-architects project note',
       source_url: 'https://boltshauser.info/projekt/alterszentrum-kloster-ingenbohl/',
       short_description: 'Umbau und Erweiterung des Klosterareals Ingenbohl zu einem Alterszentrum mit präziser Einbindung in Bestand, Hofstruktur und Landschaft.',
       one_sentence: 'Das Alterszentrum Kloster Ingenbohl verbindet klösterlichen Bestand, neue Pflegearchitektur, Betontragwerk, mineralische Oberflächen und landschaftliche Terrassen zu einem zeitgenössischen Schweizer Umbauprojekt.',
-      full_description: 'Der Umbau des Klosters Ingenbohl in Brunnen wird als Weiterbauen am Bestand gelesen: Die neue Struktur ergänzt das klösterliche Ensemble, arbeitet mit Hof, Sockel, Terrassen und präzisen Materialschichten und übersetzt Pflegearchitektur in eine ruhige räumliche Ordnung. Für den Architecture Cosmos ist das Projekt ein wichtiger Referenzknoten für Transformation, Tragwerk, Materialökologie und tektonische Analyse: Beton, mineralische Putze, Holz- und Fassadenschichten, innere Organisation und Landschaftsbezug lassen sich später als Modell- und Filterlayer auswerten.',
+      full_description: 'Der Umbau des Klosters Ingenbohl in Brunnen wird als Weiterbauen am Bestand gelesen: Die neue Struktur ergänzt das klösterliche Ensemble, arbeitet mit Hof, Sockel, Terrassen und präzisen Materialschichten und übersetzt Pflegearchitektur in eine ruhige räumliche Ordnung. Für den Architekture Cosmos ist das Projekt ein wichtiger Referenzknoten für Transformation, Tragwerk, Materialökologie und tektonische Analyse: Beton, mineralische Putze, Holz- und Fassadenschichten, innere Organisation und Landschaftsbezug lassen sich später als Modell- und Filterlayer auswerten.',
       copyright_status: 'needs_permission'
     };
   }
 
-  const title = normalizedProject || 'New Research Entry';
-  const normalizedSeed = normalizeForMatch(`${normalizedProject} ${normalizedArchitect} ${normalizedAddress}`);
+  const title = normalizedProjekt || 'New Research Entry';
+  const normalizedSeed = normalizeForMatch(`${normalizedProjekt} ${normalizedArchitekt} ${normalizedAddress}`);
 
   if (normalizedSeed.includes('kispi') || normalizedSeed.includes('kinderspital') || (normalizedSeed.includes('herzog') && normalizedSeed.includes('meuron'))) {
     return {
@@ -2888,12 +3061,12 @@ function draftFromResearchSeed(seed: ResearchSeed): EntryDraft {
       country: 'Schweiz',
       authors: 'Herzog & de Meuron',
       themes: 'hospital architecture, concrete frame, timber infill, healthcare, landscape campus, low-rise hospital, patient cottages, courtyard, daylight, children hospital',
-      lecture_cluster: 'Architecture Cosmos dev research, contemporary Swiss architecture',
+      lecture_cluster: 'Architekture Cosmos dev research, contemporary Swiss architecture',
       source_documents: 'Herzog & de Meuron project page, Kinderspital Zürich project information, architecture press review',
       source_url: 'https://www.herzogdemeuron.com/projects/377-kinderspital-zurich/',
       short_description: 'Neubau des Kinderspitals Zürich als flache, landschaftlich eingebettete Gesundheitsarchitektur mit starker Holz-, Licht- und Hoflogik.',
       one_sentence: 'Das Kinderspital Zürich von Herzog & de Meuron verbindet Gesundheitsbau, dreigeschossiges Betontragwerk, hölzerne Ausfachungen, Höfe, Tageslicht und landschaftliche Einbettung zu einem zeitgenössischen Spitaltyp.',
-      full_description: 'Das Kinderspital Zürich wird als Referenz für eine neue Generation von Gesundheitsbauten gelesen: nicht als monolithisches Spital, sondern als räumlich gegliederte, horizontale und landschaftlich eingebundene Architektur. Der Akutspitalbereich wird als dreigeschossiger Betonrahmen mit komplexen hölzernen Ausfachungen beschrieben; im Inneren organisiert eine städtische Logik aus Strassen, Plätzen und grünen Höfen Orientierung und Tageslicht. Für Architecture Cosmos eignet sich das Projekt besonders für Material-, Tragwerks- und Atmosphärenanalyse: Betonrahmen, Holz, Glas, Vegetation, Patientenzimmer als kleine Cottages, Hofräume, Erschliessung und therapeutische Landschaft sollen später als filterbare 3D- und Datenbanklayer geprüft werden.',
+      full_description: 'Das Kinderspital Zürich wird als Referenz für eine neue Generation von Gesundheitsbauten gelesen: nicht als monolithisches Spital, sondern als räumlich gegliederte, horizontale und landschaftlich eingebundene Architektur. Der Akutspitalbereich wird als dreigeschossiger Betonrahmen mit komplexen hölzernen Ausfachungen beschrieben; im Inneren organisiert eine städtische Logik aus Strassen, Plätzen und grünen Höfen Orientierung und Tageslicht. Für Architekture Cosmos eignet sich das Projekt besonders für Material-, Tragwerks- und Atmosphärenanalyse: Betonrahmen, Holz, Glas, Vegetation, Patientenzimmer als kleine Cottages, Hofräume, Erschliessung und therapeutische Landschaft sollen später als filterbare 3D- und Datenbanklayer geprüft werden.',
       copyright_status: 'needs_permission'
     };
   }
@@ -2905,14 +3078,14 @@ function draftFromResearchSeed(seed: ResearchSeed): EntryDraft {
     style_sector: 'sustainable_architecture',
     city: normalizedAddress,
     country: '',
-    authors: normalizedArchitect,
+    authors: normalizedArchitekt,
     themes: 'needs research, source verification, rights review, material analysis, structure analysis, tectonic analysis',
-    lecture_cluster: 'Architecture Cosmos dev research',
-    source_documents: 'Generated research job / sources pending',
+    lecture_cluster: 'Architekture Cosmos dev research',
+    source_documents: 'Generierter Rechercheauftrag / Quellen offen',
     source_url: '',
-    short_description: `${title} is staged for AI-assisted research and archive classification.`,
-    one_sentence: `${title} is a dev-mode research seed prepared for source discovery, rights review, media intake, model planning and analysis-layer classification.`,
-    full_description: `${title} has not been verified yet. The next local research step should collect official project sources, reliable publication references, rights-safe media candidates, project metadata, structural/material/tectonic hypotheses and possible model-generation inputs.`,
+    short_description: `${title} ist fuer KI-gestuetzte Recherche und Archivklassifikation vorbereitet.`,
+    one_sentence: `${title} ist ein Dev-Recherche-Seed fuer Quellensuche, Rechtepruefung, Medienaufnahme, Modellplanung und Analyseklassifikation.`,
+    full_description: `${title} ist noch nicht verifiziert. Der naechste lokale Rechercheschritt sammelt offizielle Projektquellen, verlaessliche Publikationen, rechteklare Medienkandidaten, Projektdaten, Struktur-/Material-/Tektonik-Hypothesen und moegliche Inputs fuer die Modellgenerierung.`,
     copyright_status: 'needs_permission'
   };
 }
@@ -2962,18 +3135,18 @@ function identifyBuildingFromImageName(fileName: string, entries: Entry[]) {
     architect: matchedEntry.authors.join(', '),
     address: [matchedEntry.city, matchedEntry.country].filter(Boolean).join(', '),
     confidence: 0.72,
-    reason: 'filename matched an existing Architecture Cosmos entry'
+    reason: 'filename matched an existing Architekture Cosmos entry'
   };
 }
 
-function draftReadiness(draft: EntryDraft) {
+function draftReadiness(draft: EntryEntwurf) {
   return [
-    { label: 'identity', ready: Boolean(draft.title.trim() && draft.year.trim() && draft.authors.trim()) },
-    { label: 'place', ready: Boolean(draft.city.trim() || draft.country.trim()) },
-    { label: 'sources', ready: Boolean(draft.source_url.trim() || draft.source_documents.trim()) },
-    { label: 'themes', ready: Boolean(draft.themes.trim() || draft.lecture_cluster.trim()) },
-    { label: 'text', ready: Boolean(draft.short_description.trim() && draft.one_sentence.trim()) },
-    { label: 'rights', ready: draft.copyright_status !== 'needs_permission' }
+    { label: 'identity', bereit: Boolean(draft.title.trim() && draft.year.trim() && draft.authors.trim()) },
+    { label: 'place', bereit: Boolean(draft.city.trim() || draft.country.trim()) },
+    { label: 'sources', bereit: Boolean(draft.source_url.trim() || draft.source_documents.trim()) },
+    { label: 'themes', bereit: Boolean(draft.themes.trim() || draft.lecture_cluster.trim()) },
+    { label: 'text', bereit: Boolean(draft.short_description.trim() && draft.one_sentence.trim()) },
+    { label: 'rights', bereit: draft.copyright_status !== 'needs_permission' }
   ];
 }
 
@@ -3030,7 +3203,7 @@ function SnappedEntryOverlay({ entry, onDismiss }: { entry: Entry; onDismiss: ()
       <g transform={`translate(${cardX - 12} ${cardY - 12})`}>
         <rect width={cardWidth + 24} height={cardHeight + 24} fill="#050505" stroke="#f7f7f4" strokeWidth="0.85" opacity="0.88" />
       </g>
-      <g pointerEvents="none" transform={`translate(${cardX} ${cardY}) scale(${cardScale})`}>
+      <g pointerEvents="auto" transform={`translate(${cardX} ${cardY}) scale(${cardScale})`}>
         <ProjectDetailCard entry={entry} x={0} y={0} />
       </g>
       <g className="dossier-close" pointerEvents="auto" transform={`translate(${cardX + cardWidth - closeWidth} ${actionY})`} onClick={onDismiss}>
@@ -3043,7 +3216,7 @@ function SnappedEntryOverlay({ entry, onDismiss }: { entry: Entry; onDismiss: ()
         <g pointerEvents="auto" transform={`translate(${cardX} ${actionY})`}>
           <rect width={ui.dossier.openWidth} height={actionHeight} fill="#050505" stroke="#f7f7f4" strokeWidth="0.58" opacity="0.9" />
           <text x={ui.dossier.openWidth / 2} y={ui.isCoarsePointer ? 27 : 15} textAnchor="middle" fill="#f7f7f4" fontSize={ui.isCoarsePointer ? 12 : 8.2} fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.13em">
-            OPEN PAGE
+            EINTRAG
           </text>
         </g>
       </a>

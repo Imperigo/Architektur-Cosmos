@@ -11,6 +11,7 @@ type ProjectDetailCardProps = {
 export function ProjectDetailCard({ entry, x, y }: ProjectDetailCardProps) {
   const location = [entry.city, entry.country].filter(Boolean).join(', ');
   const accent = styleColor(entry.style_sector);
+  const detailHref = `/atlas/${entry.slug}/`;
   const courseLabel = courseGroupLabel(entry);
   const layerLabel = layerLabelForEntry(entry);
   const titleLines = ellipsizeLines(wrapText(entry.title, 29), 2, 29);
@@ -45,17 +46,20 @@ export function ProjectDetailCard({ entry, x, y }: ProjectDetailCardProps) {
           </text>
         </g>
       ) : null}
-      <text fill="#f7f7f4" fontSize={titleFontSize} fontWeight="700" fontFamily="var(--font-sans), system-ui, sans-serif">
-        {titleLines.map((line, index) => (
-          <tspan key={`${line}-${index}`} x={x + 16} y={y + 47 + index * 15}>
-            {line}
-          </tspan>
-        ))}
-      </text>
+      <a href={detailHref} className="dossier-title-link" aria-label={`Eintrag öffnen: ${entry.title}`}>
+        <rect x={x + 10} y={y + 30} width="210" height={titleLines.length > 1 ? 38 : 24} fill="#fff" opacity="0.001" />
+        <text fill="#f7f7f4" fontSize={titleFontSize} fontWeight="700" fontFamily="var(--font-sans), system-ui, sans-serif">
+          {titleLines.map((line, index) => (
+            <tspan key={`${line}-${index}`} x={x + 16} y={y + 47 + index * 15}>
+              {line}
+            </tspan>
+          ))}
+        </text>
+      </a>
       <text x={x + 16} y={metaY} fill="#b8b8b8" fontSize="7.9" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.08em">
         {formatYear(entry.year_start)}{location ? ` · ${location}` : ''}
       </text>
-      <ProjectMediaGrid media={entry.media} x={x + 16} y={mediaY} slotWidth={72} slotHeight={48} gap={9} showLabels accent={accent} />
+      <ProjectMediaGrid media={entry.media} x={x + 16} y={mediaY} slotWidth={72} slotHeight={48} gap={9} showLabels accent={accent} detailHref={detailHref} />
       <text fill="#f7f7f4" fontSize="8.2" fontWeight="600" fontFamily="var(--font-sans), system-ui, sans-serif">
         {headlineLines.map((line, index) => (
           <tspan key={`${line}-${index}`} x={x + 184} y={y + 91 + index * 11}>

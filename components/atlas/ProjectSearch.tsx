@@ -221,10 +221,10 @@ export function ProjectSearch({
     >
       <button type="button" className="project-search-trigger cosmos-trigger" onClick={toggleSearch} aria-expanded={isOpen}>
         <span className="project-search-mark" aria-hidden="true" />
-        <span>Search</span>
+        <span>Suche</span>
       </button>
 
-      <div className="project-dev-gate" aria-label="Developer access">
+      <div className="project-dev-gate" aria-label="Developer-Zugang">
         <button
           type="button"
           className={`project-dev-trigger cosmos-trigger ${isDeveloperMode ? 'project-dev-trigger-active' : ''}`}
@@ -236,18 +236,18 @@ export function ProjectSearch({
         </button>
 
         {isDevOpen ? (
-          <div className="project-dev-panel cosmos-panel" role="dialog" aria-label="Developer access gate">
+          <div className="project-dev-panel cosmos-panel" role="dialog" aria-label="Developer-Zugang">
             {isDeveloperMode ? (
               <>
-                <div className="project-dev-title">Developer views unlocked</div>
+                <div className="project-dev-title">Dev-Ansichten freigeschaltet</div>
                 <p>Lokale Session-Freischaltung fuer private Copyright- und Draft-Werkzeuge. Keine echte Authentifizierung.</p>
                 <button type="button" className="project-dev-action" onClick={() => setDevMode(false)}>
-                  Lock again
+                  Wieder sperren
                 </button>
               </>
             ) : (
               <>
-                <div className="project-dev-title">Developer access</div>
+                <div className="project-dev-title">Dev-Zugang</div>
                 <p>Schaltet private Draft-, Intake- und AI-Ansichten nur in dieser Browser-Session frei.</p>
                 <div className="project-dev-field">
                   <input
@@ -259,15 +259,15 @@ export function ProjectSearch({
                     }}
                     onKeyDown={handleDevKeyDown}
                     placeholder="Code"
-                    aria-label="Developer code"
+                    aria-label="Dev-Code"
                     type="password"
                   />
                   <button type="button" onClick={unlockDevMode}>
-                    Unlock
+                    Entsperren
                   </button>
                 </div>
                 {devError ? <div className="project-dev-error">{devError}</div> : null}
-                <div className="project-dev-hint">Local gate only / not public auth</div>
+                <div className="project-dev-hint">Nur lokale Schranke / keine oeffentliche Auth</div>
               </>
             )}
           </div>
@@ -275,18 +275,18 @@ export function ProjectSearch({
       </div>
 
       {isOpen ? (
-        <div className="project-search-panel cosmos-panel cosmos-scroll-panel" role="dialog" aria-label="Project search">
+        <div className="project-search-panel cosmos-panel cosmos-scroll-panel" role="dialog" aria-label="Projektsuche">
           <div className="project-search-field">
             <input
               ref={inputRef}
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Search projects, authors, cities, themes"
-              aria-label="Search projects"
+              placeholder="Projekte, Autorenschaft, Orte, Themen suchen"
+              aria-label="Projekte suchen"
             />
             {query ? (
-              <button type="button" className="project-search-clear" onClick={() => setQuery('')} aria-label="Clear search">
+              <button type="button" className="project-search-clear" onClick={() => setQuery('')} aria-label="Suche leeren">
                 X
               </button>
             ) : null}

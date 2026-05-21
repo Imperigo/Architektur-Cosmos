@@ -11,11 +11,12 @@ type ProjectMediaGridProps = {
   showLabels?: boolean;
   types?: EntryMediaType[];
   accent?: string;
+  detailHref?: string;
 };
 
 const mediaOrder: EntryMediaType[] = ['exterior', 'interior', 'section', 'plan'];
 
-export function ProjectMediaGrid({ media, x, y, slotWidth, slotHeight, gap, showLabels = false, types = mediaOrder, accent = '#f7f7f4' }: ProjectMediaGridProps) {
+export function ProjectMediaGrid({ media, x, y, slotWidth, slotHeight, gap, showLabels = false, types = mediaOrder, accent = '#f7f7f4', detailHref }: ProjectMediaGridProps) {
   const mediaByType = new Map(media.map((item) => [item.type, item]));
 
   return (
@@ -28,8 +29,8 @@ export function ProjectMediaGrid({ media, x, y, slotWidth, slotHeight, gap, show
         const slotX = x + col * (slotWidth + gap);
         const slotY = y + row * (slotHeight + gap + (showLabels ? 13 : 0));
 
-        return (
-          <g key={type}>
+        const slotContent = (
+          <g>
             <rect x={slotX} y={slotY} width={slotWidth} height={slotHeight} fill="#050505" stroke={accent} strokeWidth="0.72" opacity="0.94" />
             {mediaUrl ? (
               <g>
@@ -44,6 +45,16 @@ export function ProjectMediaGrid({ media, x, y, slotWidth, slotHeight, gap, show
                 {(mediaItem?.label ?? type).toUpperCase()}
               </text>
             ) : null}
+          </g>
+        );
+
+        return detailHref ? (
+          <a key={type} href={detailHref} className="dossier-media-link" aria-label={`Eintrag öffnen: ${(mediaItem?.label ?? type)}`}>
+            {slotContent}
+          </a>
+        ) : (
+          <g key={type}>
+            {slotContent}
           </g>
         );
       })}
