@@ -48,7 +48,7 @@ function StyleSectorsComponent({ state, isMoving = false, activeStyleLens = null
               className="style-sector-ribbon"
               d={ribbonPath}
               fill={accent}
-              opacity={(isMoving ? 0.018 : 0.04) * accentBoost * lensBoost}
+              opacity={(isMoving ? 0.02 : 0.072) * accentBoost * lensBoost}
             />
             <path
               className="style-sector-tick"

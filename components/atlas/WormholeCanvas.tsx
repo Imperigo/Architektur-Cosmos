@@ -1,7 +1,7 @@
 'use client';
 
 import { memo, useEffect, useRef } from 'react';
-import { atlasSize } from '@/lib/atlas-layout';
+import { atlasSize, sectorMidAngle, styleSectorColors, styleSectors } from '@/lib/atlas-layout';
 import {
   radiusToTunnelDepth,
   tubeTwist,
@@ -157,6 +157,7 @@ function drawWormholeCanvas(
   context.lineJoin = 'round';
 
   drawVignette(context, state);
+  if (!isReduced) drawStyleDepthFields(context, state, { isMoving, quality, idlePhase });
   drawGrid(context, state, { quality, isMoving });
   if (!isReduced && !isMoving) drawIdleMotion(context, state, idlePhase);
   if (!isReduced && (!isMoving || isFull)) drawEnergyBands(context, state, { quality, isMoving, idlePhase });
@@ -314,6 +315,51 @@ function drawGrid(context: CanvasRenderingContext2D, state: WormholeState, optio
   context.globalAlpha = 1;
 }
 
+function drawStyleDepthFields(
+  context: CanvasRenderingContext2D,
+  state: WormholeState,
+  options: { isMoving: boolean; quality: 'reduced' | 'balanced' | 'full'; idlePhase: number }
+) {
+  const frontDepth = tunnelFrontDepth(state);
+  const depthSamples = options.quality === 'full' ? [0.07, 0.24, 0.43, 0.66, 0.9] : [0.08, 0.32, 0.6, 0.86];
+  const motionPhase = options.idlePhase * 10.5 + state.timePosition * 18;
+  const baseOpacity = options.isMoving ? 0.026 : options.quality === 'full' ? 0.072 : 0.058;
+
+  context.save();
+  context.globalCompositeOperation = 'screen';
+
+  depthSamples.forEach((relativeDepth, depthIndex) => {
+    const depth = frontDepth + relativeDepth;
+    if (depth <= 0 || depth >= wormholeTunnel.visibleDepth) return;
+
+    const center = tunnelCenter(depth, state.phase);
+    const radius = tunnelRadius(depth);
+    const thickness = Math.max(18, radius * (0.08 + depthIndex * 0.012));
+    const depthOpacity = tunnelOpacity(depth) * ringEdgeDissolve(depth, state.timePosition) * baseOpacity * (1.15 - depthIndex * 0.08);
+
+    styleSectors.forEach((sector, sectorIndex) => {
+      const accent = styleSectorColors[sector.id];
+      const centerAngle = sectorMidAngle(sector) + Math.sin(motionPhase * 0.12 + sectorIndex * 0.9 + depthIndex) * 1.8;
+      const span = sectorSpan(sector.startAngle, sector.endAngle);
+      const start = toRadians(centerAngle - span * 0.36);
+      const end = toRadians(centerAngle + span * 0.36);
+      const pulse = options.isMoving ? 1 : 0.86 + Math.sin(motionPhase * 0.22 + sectorIndex * 1.7 + depthIndex * 0.8) * 0.14;
+
+      context.beginPath();
+      context.arc(center.x, center.y, radius, start, end);
+      context.strokeStyle = withAlpha(accent, depthOpacity * pulse);
+      context.lineWidth = thickness;
+      context.setLineDash(depthIndex % 2 === 0 ? [36, 28] : [24, 36]);
+      context.lineDashOffset = -motionPhase * (2.8 + depthIndex * 0.4) - sectorIndex * 18;
+      context.stroke();
+    });
+  });
+
+  context.setLineDash([]);
+  context.globalCompositeOperation = 'source-over';
+  context.restore();
+}
+
 function drawRings(context: CanvasRenderingContext2D, state: WormholeState, options: { isMoving: boolean; idlePhase: number }) {
   const rings = wormholeRings(state);
 
@@ -393,6 +439,14 @@ function ringEdgeDissolve(depth: number, timePosition: number) {
 
 function energyColor(index: number) {
   return energyColors[index % energyColors.length] ?? '#00e7ff';
+}
+
+function sectorSpan(startAngle: number, endAngle: number) {
+  return endAngle < startAngle ? endAngle + 360 - startAngle : endAngle - startAngle;
+}
+
+function toRadians(angle: number) {
+  return (angle * Math.PI) / 180;
 }
 
 function starColor(hueSeed: number, alpha: number) {
