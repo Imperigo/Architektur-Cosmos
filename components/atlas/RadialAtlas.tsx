@@ -39,7 +39,7 @@ type VisualPan = {
   y: number;
 };
 
-type IntroState = 'intro' | 'launching' | 'idle';
+type IntroState = 'intro' | 'hub' | 'launching' | 'idle';
 const sourceLensDefinitions = [
   { id: 'afasia', label: 'Afasia', terms: ['afasia'] },
   { id: 'espazium', label: 'Espazium', terms: ['espazium', 'tec21'] },
@@ -272,7 +272,6 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   }
 
   const state = useMemo(() => wormholeState(motion.currentTravel), [motion.currentTravel]);
-  const coarsePointer = useCoarsePointer();
   const ui = useAtlasUiMetrics();
   const activeSelectedEntryId = selectedEntry?.id ?? null;
   const nodes = useMemo(() => layoutWormholeEntries(allEntries, state, activeSelectedEntryId ?? undefined), [activeSelectedEntryId, allEntries, state]);
@@ -285,7 +284,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   const relationOverlayActive = !isTraveling && performanceTier !== 'reduced' && (selectedEntry || showRelations || (performanceTier === 'full' && hoveredEntry));
   const backgroundStyle = {
     filter: isIntroActive ? 'blur(7px)' : 'blur(0px)',
-    opacity: selectedEntry ? 0.48 : introState === 'intro' ? 0.3 : introState === 'launching' ? 0.82 : 1,
+    opacity: selectedEntry ? 0.48 : introState === 'intro' ? 0.3 : introState === 'hub' ? 0.56 : introState === 'launching' ? 0.82 : 1,
     transition: 'filter 520ms cubic-bezier(0.19, 1, 0.22, 1), opacity 520ms cubic-bezier(0.19, 1, 0.22, 1)'
   };
   const visualZoomValue = visualZoom.currentZoom;
@@ -497,20 +496,13 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
 
   function startIntro() {
     if (introState === 'idle') return;
-
-    resetMotion(0);
-    setIntroState('launching');
-  }
-
-  function travelBy(delta: number) {
-    if (introState !== 'idle') {
-      startIntro();
+    if (introState === 'intro') {
+      setIntroState('hub');
       return;
     }
 
-    closeDossier();
-    setHoveredEntry(null);
-    nudgeTravel(delta);
+    resetMotion(0);
+    setIntroState('launching');
   }
 
   function zoomViewBy(factor: number) {
@@ -1187,7 +1179,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
           <rect width={atlasSize.width} height={atlasSize.height} fill="#050505" opacity={introState === 'intro' ? 0.16 : 0.02} />
           <g style={backgroundStyle} pointerEvents={selectedEntry ? 'none' : 'auto'}>
             <g ref={cameraRef} className="wormhole-camera" transform={cameraTransform}>
-              {performanceTier === 'full' && !isTraveling ? <WormholeRings state={state} isMoving={isTraveling} quality={performanceTier} /> : null}
+              {performanceTier === 'full' ? <WormholeRings state={state} isMoving={isTraveling} quality={performanceTier} /> : null}
 
               {relationOverlayActive ? (
                 <RelationOverlay nodes={displayNodes} relations={relations} selectedEntry={selectedEntry} focusEntry={hoveredEntry} isMoving={isTraveling} />
@@ -1291,7 +1283,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
           ) : null}
           {introState === 'idle' && !ui.isCoarsePointer ? <TimeReadout timePosition={state.timePosition} currentYear={state.currentYear} /> : null}
           {introState === 'idle' && !ui.isCoarsePointer ? <VisualZoomReadout zoom={visualZoom.currentZoom} /> : null}
-          {introState !== 'intro' ? <BrandChrome isArriving={introState === 'launching'} /> : null}
+          {introState !== 'intro' && introState !== 'hub' ? <BrandChrome isArriving={introState === 'launching'} /> : null}
         </svg>
         {showDatabasePanel && introState === 'idle' && ui.isCoarsePointer ? (
           <DatabaseArchivePanel
@@ -1339,7 +1331,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
             }}
           />
         ) : null}
-        {cursorVisible && !coarsePointer ? <ScreenCosmosCursor cursorRef={screenCursorRef} isDossierOpen={Boolean(selectedEntry)} isOverlayOpen={showDatabasePanel} /> : null}
+        {cursorVisible && !ui.isCoarsePointer ? <ScreenCosmosCursor cursorRef={screenCursorRef} isDossierOpen={Boolean(selectedEntry)} isOverlayOpen={showDatabasePanel} /> : null}
       </div>
 
       {introState !== 'idle' ? <IntroGate state={introState} onStart={startIntro} /> : null}
@@ -1479,7 +1471,7 @@ function isEditableKeyboardTarget(target: EventTarget | null) {
 function isReadableNode(node: WormholeEntryNode) {
   const margin = -96;
   const insideExtendedFrame = node.x > margin && node.x < atlasSize.width - margin && node.y > margin && node.y < atlasSize.height - margin;
-  return insideExtendedFrame && node.depth >= 0.001 && node.depth <= 1.26 && node.opacity >= 0.006;
+  return insideExtendedFrame && node.depth >= -0.12 && node.depth <= 1.26 && node.opacity >= 0.006;
 }
 
 function limitDisplayNodes(nodes: WormholeEntryNode[]) {
@@ -1691,16 +1683,16 @@ function MobileAtlasHud({
 
       <nav className="mobile-atlas-dock" aria-label="Mobile Atlas Navigation">
         <button type="button" className={!activeTagLayer ? 'mobile-atlas-active' : ''} onClick={(event) => stopAndRun(event, () => onSelectTagLayer(null))} aria-pressed={!activeTagLayer}>
-          <span>All</span>
-          <small>Ebenen</small>
+          <span>Alle</span>
+          <small>Ebene</small>
         </button>
         <button type="button" className={activeTagLayer === 'material' ? 'mobile-atlas-active' : ''} onClick={(event) => stopAndRun(event, () => onSelectTagLayer('material'))} aria-pressed={activeTagLayer === 'material'}>
           <span>Mat</span>
-          <small>Material</small>
+          <small>Stoff</small>
         </button>
         <button type="button" className={activeTagLayer === 'landscape' ? 'mobile-atlas-active' : ''} onClick={(event) => stopAndRun(event, () => onSelectTagLayer('landscape'))} aria-pressed={activeTagLayer === 'landscape'}>
           <span>Land</span>
-          <small>Landschaft</small>
+          <small>Raum</small>
         </button>
         <button type="button" className={showRelations ? 'mobile-atlas-active' : ''} onClick={(event) => stopAndRun(event, onToggleRelations)} aria-pressed={showRelations}>
           <span>Rel</span>
@@ -1853,16 +1845,42 @@ function dominantSpanForYear(year: number) {
 }
 
 function IntroGate({ state, onStart }: { state: IntroState; onStart: () => void }) {
+  if (state === 'hub') {
+    return (
+      <section
+        className="intro-gate intro-gate-hub absolute inset-0 z-30 flex items-center justify-center bg-[#050505]/10 text-center"
+        aria-label="Architecture Cosmos Hauptmenü"
+      >
+        <ModuleHub onOpenKosmoData={onStart} />
+      </section>
+    );
+  }
+
+  if (state === 'launching') {
+    return (
+      <div className="intro-gate intro-gate-launching absolute inset-0 z-30 flex items-center justify-center bg-[#050505]/10 text-center" aria-hidden="true">
+        <span className="intro-title-lockup block">
+          <svg className="intro-cosmos-mark mx-auto mb-7 block h-[clamp(5.4rem,13vw,11rem)] w-[clamp(5.4rem,13vw,11rem)]" viewBox="0 0 64 64" aria-hidden="true">
+            <CosmosGlyph />
+          </svg>
+          <span className="intro-title-main block text-[clamp(2.4rem,7vw,6.8rem)] font-semibold uppercase tracking-[0.18em] text-[#f7f7f4]">
+            architektur kosmos
+          </span>
+        </span>
+      </div>
+    );
+  }
+
   return (
     <button
       type="button"
-      className={`intro-gate absolute inset-0 z-30 flex items-center justify-center bg-[#050505]/10 text-center ${state === 'launching' ? 'intro-gate-launching' : ''}`}
+      className="intro-gate absolute inset-0 z-30 flex items-center justify-center bg-[#050505]/10 text-center"
       onClick={onStart}
       onWheel={(event) => {
         event.preventDefault();
         onStart();
       }}
-      aria-label="Start Architekture Cosmos"
+      aria-label="Start Architektur Kosmos"
     >
       <span className="intro-title-lockup block">
         <svg className="intro-cosmos-mark mx-auto mb-7 block h-[clamp(5.4rem,13vw,11rem)] w-[clamp(5.4rem,13vw,11rem)]" viewBox="0 0 64 64" aria-hidden="true">
@@ -1873,6 +1891,108 @@ function IntroGate({ state, onStart }: { state: IntroState; onStart: () => void 
         </span>
       </span>
     </button>
+  );
+}
+
+function ModuleHub({ onOpenKosmoData }: { onOpenKosmoData: () => void }) {
+  const modules: Array<{
+    id: string;
+    name: string;
+    label: string;
+    description: string;
+    status: 'bereit' | 'in Planung';
+    accent: string;
+    x: number;
+    y: number;
+    xMobile: number;
+    yMobile: number;
+    onClick?: () => void;
+  }> = [
+    {
+      id: 'data',
+      name: 'KosmoData',
+      label: 'Datenbank / Atlas',
+      description: 'Wurmloch, Referenzarchiv, Projekte, Quellen und 3D-Modelle.',
+      status: 'bereit',
+      accent: '#00e7ff',
+      x: 0,
+      y: -190,
+      xMobile: 0,
+      yMobile: -210,
+      onClick: onOpenKosmoData
+    },
+    {
+      id: 'brief',
+      name: 'KosmoBrief',
+      label: 'Entwurf / Wettbewerb',
+      description: 'Briefing, Kontextanalyse, Strategie und Referenzpfade.',
+      status: 'in Planung',
+      accent: '#f5b342',
+      x: 214,
+      y: 8,
+      xMobile: 112,
+      yMobile: -38
+    },
+    {
+      id: 'form',
+      name: 'KosmoForm',
+      label: '3D / Visualisierung',
+      description: 'Blender-, ArchiCAD-, Modell- und Analyse-Layer.',
+      status: 'in Planung',
+      accent: '#ff4fd8',
+      x: 0,
+      y: 190,
+      xMobile: 0,
+      yMobile: 166
+    },
+    {
+      id: 'plan',
+      name: 'KosmoPlanwerk',
+      label: '2D / Layout / Export',
+      description: 'Planwerk, Vektorpläne, Abgabe-Layouts und Exportprofile.',
+      status: 'in Planung',
+      accent: '#65ff73',
+      x: -214,
+      y: 8,
+      xMobile: -112,
+      yMobile: -38
+    }
+  ];
+
+  return (
+    <div className="module-hub cosmos-text-safe">
+      <div className="module-hub-orbit module-hub-orbit-a" />
+      <div className="module-hub-orbit module-hub-orbit-b" />
+      <div className="module-hub-core">
+        <svg viewBox="0 0 64 64" aria-hidden="true">
+          <CosmosGlyph />
+        </svg>
+        <span>Projektzentrale</span>
+      </div>
+      {modules.map((module) => {
+        const isReady = module.status === 'bereit';
+        return (
+          <button
+            key={module.id}
+            type="button"
+            className={`module-station ${isReady ? 'module-station-ready' : 'module-station-planned'}`}
+            style={{ '--station-x': `${module.x}px`, '--station-y': `${module.y}px`, '--station-x-mobile': `${module.xMobile}px`, '--station-y-mobile': `${module.yMobile}px`, '--station-accent': module.accent } as CSSProperties}
+            disabled={!isReady}
+            onClick={(event) => {
+              event.stopPropagation();
+              if (!isReady) return;
+              module.onClick?.();
+            }}
+            aria-label={isReady ? `${module.name} öffnen` : `${module.name} ist in Planung`}
+          >
+            <small>{module.status}</small>
+            <strong>{module.name}</strong>
+            <span>{module.label}</span>
+            <em>{module.description}</em>
+          </button>
+        );
+      })}
+    </div>
   );
 }
 
@@ -1932,7 +2052,7 @@ function DatabaseArchivePanel({
   onResearchSeedChange,
   onImageIdentifyChange,
   onCreateLocalEntry,
-  onDismiss
+  onDismiss: _onDismiss
 }: {
   renderMode?: 'svg' | 'html';
   entries: Entry[];
@@ -3000,7 +3120,7 @@ function draftToLocalEntry(draft: EntryEntwurf, existingEntries: Entry[]): Entry
       r2_prefix: `entries/${slug}`
     },
     ingestion_status: {
-      stage: 'bereit_for_wormhole',
+      stage: 'ready_for_wormhole',
       source_status: preview.source_url || (preview.source_documents?.length ?? 0) > 0 ? 'candidate' : 'none',
       asset_status: 'candidate',
       model_status: 'planned',

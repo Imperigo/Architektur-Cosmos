@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { sectorMidAngle, styleSectorColors, styleSectors, type StyleSector } from '@/lib/atlas-layout';
 import { polarToCartesian } from '@/lib/polar-coordinates';
-import { tunnelCenter, tunnelFrontDepth, tunnelRadius, wormholeTunnel, type WormholeState } from '@/lib/wormhole-layout';
+import { tubeTwist, tunnelCenter, tunnelFrontDepth, tunnelRadius, wormholeTunnel, type WormholeState } from '@/lib/wormhole-layout';
 import { RadialLetterText } from '@/components/atlas/RadialText';
 
 const sectorGlyph: Record<StyleSector['id'], string> = {
@@ -26,19 +26,22 @@ function StyleSectorsComponent({ state, isMoving = false, activeStyleLens = null
   const outerLabelOpacity = 0.64 + smoothstep(0.08, 0.42, state.timePosition) * 0.2;
   const frontDepth = tunnelFrontDepth(state);
   const labelDepth = frontDepth + 0.045;
+  const labelTwist = tubeTwist(state.timePosition + labelDepth);
   const sectorCenter = tunnelCenter(labelDepth, state.phase);
-  const outerRadius = Math.max(wormholeTunnel.minRadius + 136, tunnelRadius(frontDepth + 0.035) - 14);
-  const labelRadius = Math.max(wormholeTunnel.minRadius + 128, outerRadius - 18);
+  const outerRadius = Math.max(wormholeTunnel.minRadius + 146, tunnelRadius(frontDepth + 0.035) - 6);
+  const labelRadius = Math.max(wormholeTunnel.minRadius + 138, outerRadius - 10);
 
   return (
     <g aria-label="Stilsektoren">
       {styleSectors.map((sector) => {
-        const labelAngle = sectorMidAngle(sector);
-        const startInner = polarToCartesian(sectorCenter.x, sectorCenter.y, wormholeTunnel.minRadius + 54, sector.startAngle);
-        const startOuter = polarToCartesian(sectorCenter.x, sectorCenter.y, outerRadius, sector.startAngle);
+        const labelAngle = sectorMidAngle(sector) + labelTwist;
+        const startAngle = sector.startAngle + labelTwist;
+        const endAngle = sector.endAngle + labelTwist;
+        const startInner = polarToCartesian(sectorCenter.x, sectorCenter.y, wormholeTunnel.minRadius + 54, startAngle);
+        const startOuter = polarToCartesian(sectorCenter.x, sectorCenter.y, outerRadius, startAngle);
         const labelText = sectorLabel[sector.id];
         const accent = styleSectorColors[sector.id];
-        const ribbonPath = sectorRibbonPath(sector.startAngle, sector.endAngle, wormholeTunnel.minRadius + 58, outerRadius - 12, sectorCenter.x, sectorCenter.y);
+        const ribbonPath = sectorRibbonPath(startAngle, endAngle, wormholeTunnel.minRadius + 58, outerRadius - 12, sectorCenter.x, sectorCenter.y);
         const accentBoost = sector.id === 'pre_modern_architecture' ? 1.45 : 1;
         const lensBoost = activeStyleLens === sector.id ? 1.8 : activeStyleLens ? 0.36 : 1;
 
@@ -48,7 +51,7 @@ function StyleSectorsComponent({ state, isMoving = false, activeStyleLens = null
               className="style-sector-ribbon"
               d={ribbonPath}
               fill={accent}
-              opacity={(isMoving ? 0.02 : 0.072) * accentBoost * lensBoost}
+              opacity={(isMoving ? 0.018 : 0.104) * accentBoost * lensBoost}
             />
             <path
               className="style-sector-tick"
@@ -67,12 +70,12 @@ function StyleSectorsComponent({ state, isMoving = false, activeStyleLens = null
                 radius={labelRadius}
                 angle={labelAngle}
                 fill={accent}
-                fontSize={8.35}
+                fontSize={10.1}
                 fontWeight={460}
                 fontStyle="italic"
                 opacity={outerLabelOpacity * (activeStyleLens && activeStyleLens !== sector.id ? 0.52 : 1)}
-                letterAngleStep={4.85}
-                strokeWidth={0.82}
+                letterAngleStep={5.9}
+                strokeWidth={0.62}
                 inward={false}
                 onClick={(event) => {
                   event.stopPropagation();

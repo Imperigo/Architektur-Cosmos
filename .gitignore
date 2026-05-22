@@ -10,3 +10,4 @@ dist/
 archive-inbox/
 archive-intake/
 data/drafts/
+tsconfig.tsbuildinfo

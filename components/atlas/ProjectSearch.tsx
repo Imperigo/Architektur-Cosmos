@@ -80,6 +80,20 @@ export function ProjectSearch({
       }
     };
 
+    const handleWindowPointerDown = (event: globalThis.PointerEvent) => {
+      if (!(isOpenRef.current || isDevOpenRef.current)) return;
+      if (event.target instanceof Element && event.target.closest('.project-search')) return;
+
+      if (isOpenRef.current) {
+        closeSearch();
+        return;
+      }
+
+      if (isDevOpenRef.current) {
+        closeDevGate();
+      }
+    };
+
     const handleWindowKeyDown = (event: globalThis.KeyboardEvent) => {
       const shouldDismiss = event.key === 'Escape' || (event.key === 'Backspace' && !isEditableKeyboardTarget(event.target));
       if (!shouldDismiss) return;
@@ -95,10 +109,12 @@ export function ProjectSearch({
     };
 
     window.addEventListener('popstate', handlePopState);
+    window.addEventListener('pointerdown', handleWindowPointerDown, true);
     window.addEventListener('keydown', handleWindowKeyDown);
 
     return () => {
       window.removeEventListener('popstate', handlePopState);
+      window.removeEventListener('pointerdown', handleWindowPointerDown, true);
       window.removeEventListener('keydown', handleWindowKeyDown);
     };
   }, []);
@@ -312,7 +328,7 @@ export function ProjectSearch({
                 </Link>
               ))
             ) : (
-              <div className="project-search-empty">No project found</div>
+              <div className="project-search-empty">Kein Projekt gefunden</div>
             )}
           </div>
         </div>

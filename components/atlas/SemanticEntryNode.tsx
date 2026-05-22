@@ -226,9 +226,9 @@ function EntryThumbnail({ entry, x, y, radius, accent, isSelected, styleLensActi
             opacity={isFast ? 0.94 : 1}
             clipPath={`url(#${clipId})`}
           />
-          <circle cx={x} cy={y} r={Math.max(0, radius - 0.35)} fill={accent} opacity={isFast ? 0.12 : 0.18} />
-          <circle cx={x} cy={y} r={Math.max(0, radius - 0.35)} fill={`url(#${shadeId})`} opacity={isFast ? 0.54 : 0.64} />
-          {!isFast ? <circle cx={lightX} cy={lightY} r={Math.max(1.1, radius * 0.17)} fill="#ffffff" opacity="0.24" /> : null}
+          <circle cx={x} cy={y} r={Math.max(0, radius - 0.35)} fill={accent} opacity={isFast ? 0.07 : 0.1} />
+          <circle cx={x} cy={y} r={Math.max(0, radius - 0.35)} fill={`url(#${shadeId})`} opacity={isFast ? 0.34 : 0.42} />
+          {!isFast ? <circle cx={lightX} cy={lightY} r={Math.max(1.1, radius * 0.17)} fill="#ffffff" opacity="0.18" /> : null}
           <path
             d={`M ${x - radius * 0.58} ${y + radius * 0.72} C ${x - radius * 0.08} ${y + radius * 0.98}, ${x + radius * 0.68} ${y + radius * 0.78}, ${x + radius * 0.86} ${y + radius * 0.08}`}
             fill="none"
@@ -236,7 +236,7 @@ function EntryThumbnail({ entry, x, y, radius, accent, isSelected, styleLensActi
             strokeWidth={Math.max(0.35, radius * 0.09)}
             opacity={isFast ? 0.16 : 0.22}
           />
-          <circle cx={x} cy={y} r={Math.max(0, radius - 0.65)} fill="none" stroke="#f7f7f4" strokeWidth="0.46" opacity={isSelected || styleLensActive ? 0.86 : 0.52} />
+          <circle cx={x} cy={y} r={Math.max(0, radius - 0.65)} fill="none" stroke="#f7f7f4" strokeWidth="0.42" opacity={isSelected || styleLensActive ? 0.78 : 0.42} />
         </>
       ) : (
         <>

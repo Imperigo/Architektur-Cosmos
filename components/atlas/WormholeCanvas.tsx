@@ -371,7 +371,7 @@ function drawStyleDepthFields(
   const frontDepth = tunnelFrontDepth(state);
   const depthSamples = options.quality === 'full' ? [0.07, 0.24, 0.43, 0.66, 0.9] : [0.08, 0.32, 0.6, 0.86];
   const motionPhase = options.idlePhase * 10.5 + state.timePosition * 18;
-  const baseOpacity = options.isMoving ? 0.026 : options.quality === 'full' ? 0.072 : 0.058;
+  const baseOpacity = options.isMoving ? 0.024 : options.quality === 'full' ? 0.1 : 0.078;
 
   context.save();
   context.globalCompositeOperation = 'screen';
@@ -387,7 +387,7 @@ function drawStyleDepthFields(
 
     styleSectors.forEach((sector, sectorIndex) => {
       const accent = styleSectorColors[sector.id];
-      const centerAngle = sectorMidAngle(sector) + Math.sin(motionPhase * 0.12 + sectorIndex * 0.9 + depthIndex) * 1.8;
+      const centerAngle = sectorMidAngle(sector) + tubeTwist(state.timePosition + depth) + Math.sin(motionPhase * 0.12 + sectorIndex * 0.9 + depthIndex) * 1.8;
       const span = sectorSpan(sector.startAngle, sector.endAngle);
       const start = toRadians(centerAngle - span * 0.36);
       const end = toRadians(centerAngle + span * 0.36);

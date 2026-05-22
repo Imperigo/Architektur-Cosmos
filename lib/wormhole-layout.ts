@@ -129,7 +129,7 @@ export function layoutWormholeEntries(entries: Entry[], state: WormholeState, se
       const sector = styleSectors.find((item) => item.id === entry.style_sector) ?? styleSectors[0];
       const driftSeed = stableHash(entry.id);
       const radius = tunnelRadius(depth) + depthLaneOffset(driftSeed, closeness);
-      const angle = sectorMidAngle(sector) + entryAngleOffset(entry.id);
+      const angle = sectorMidAngle(sector) + tubeTwist(worldPosition) + entryAngleOffset(entry.id);
       const point = tunnelPoint(radius, angle, depth, state.phase);
       const labelAnchor = point.x > atlasSize.cx ? 'start' as const : 'end' as const;
       const labelX = point.x + (labelAnchor === 'start' ? 22 : -22);

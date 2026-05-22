@@ -374,7 +374,7 @@ function relatedEntries(entry: Entry) {
 function timelineNeighbors(entry: Entry) {
   const sorted = [...allEntries].sort((a, b) => {
     if (a.year_start !== b.year_start) return a.year_start - b.year_start;
-    return a.title.localeVergleichen(b.title);
+    return a.title.localeCompare(b.title);
   });
   const index = sorted.findIndex((candidate) => candidate.id === entry.id);
 
@@ -877,7 +877,7 @@ function modelSourceItems(entry: Entry) {
   ].filter(Boolean);
 }
 
-function extractAnalysisValues(data: Record<string, unbekannt> | undefined, keys: string[]) {
+function extractAnalysisValues(data: Record<string, unknown> | undefined, keys: string[]) {
   if (!data) return [];
   return keys.flatMap((key) => {
     const value = data[key];

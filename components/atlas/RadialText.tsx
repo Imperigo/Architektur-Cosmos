@@ -39,8 +39,7 @@ export function RadialLetterText({
   onClick
 }: RadialLetterTextProps) {
   const letters = [...text];
-  const normalizedAngle = ((angle % 360) + 360) % 360;
-  const direction = normalizedAngle > 90 && normalizedAngle < 270 ? -1 : 1;
+  const direction = 1;
   const baseStep = letterAngleStep ?? Math.max(1.2, Math.min(3.6, fontSize * 38 / Math.max(80, radius)));
   const step = Math.abs(baseStep) * direction;
   const startAngle = angle - ((letters.length - 1) * step) / 2;
