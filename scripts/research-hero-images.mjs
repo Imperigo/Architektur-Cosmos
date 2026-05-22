@@ -504,6 +504,36 @@ const manualHeroOverrides = {
     discovery: 'manual_public_safe_override',
     public_safe: true
   },
+  'palladio-four-books': {
+    title: "File:I quattro libri dell'architettura (1790) pag011.png",
+    query: 'manual_override',
+    url: 'https://upload.wikimedia.org/wikipedia/commons/3/3d/I_quattro_libri_dell%27architettura_%281790%29_pag011.png',
+    source_url: "https://commons.wikimedia.org/wiki/File:I_quattro_libri_dell'architettura_(1790)_pag011.png",
+    credit: 'Wikimedia Commons / Andrea Palladio / Public domain',
+    license: 'public_domain',
+    license_short: 'Public domain',
+    mime: 'image/png',
+    width: 960,
+    score: 0.96,
+    source_page_title: "I quattro libri dell'architettura",
+    discovery: 'manual_public_safe_override',
+    public_safe: true
+  },
+  'dom-ino-house': {
+    title: "File:La maison Dom-ino de Le Corbusier (Biennale d'architecture 2014, Venise) (14938729273).jpg",
+    query: 'manual_override',
+    url: 'https://upload.wikimedia.org/wikipedia/commons/9/9d/La_maison_Dom-ino_de_Le_Corbusier_%28Biennale_d%27architecture_2014%2C_Venise%29_%2814938729273%29.jpg',
+    source_url: "https://commons.wikimedia.org/wiki/File:La_maison_Dom-ino_de_Le_Corbusier_(Biennale_d'architecture_2014,_Venise)_(14938729273).jpg",
+    credit: 'Wikimedia Commons / Jean-Pierre Dalbera / CC BY 2.0',
+    license: 'cc_by',
+    license_short: 'CC BY 2.0',
+    mime: 'image/jpeg',
+    width: 960,
+    score: 0.94,
+    source_page_title: 'Maison Dom-Ino',
+    discovery: 'manual_public_safe_override',
+    public_safe: true
+  },
   'schurenbach-halde': {
     title: 'File:Richard Serra Bramme Essen Schurenbachhalde.jpg',
     query: 'manual_override',

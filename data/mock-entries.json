@@ -8286,7 +8286,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / I quattro libri dell'architettura / treatise-villa"
+        "placeholder": "Aussenansicht / I quattro libri dell'architettura / treatise-villa",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/3/3d/I_quattro_libri_dell%27architettura_%281790%29_pag011.png",
+        "source_url": "https://commons.wikimedia.org/wiki/File:I_quattro_libri_dell'architettura_(1790)_pag011.png",
+        "credit": "Wikimedia Commons / Andrea Palladio / Public domain",
+        "license": "public_domain"
       },
       {
         "type": "interior",
@@ -8350,7 +8354,17 @@
       "generated_at": "2026-05-21T18:29:07.067Z",
       "review_status": "needs_owner_review",
       "source_basis": []
-    }
+    },
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / I quattro libri dell'architettura",
+        "url": "https://commons.wikimedia.org/wiki/File:I_quattro_libri_dell'architettura_(1790)_pag011.png",
+        "reliability_level": "secondary_source",
+        "rights_status": "public_domain",
+        "notes": "Auto-selected hero image candidate. Score: 0.96. License: Public domain."
+      }
+    ]
   },
   {
     "id": "sixtus-v-rome-plan",
@@ -13628,7 +13642,11 @@
       {
         "type": "exterior",
         "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Dom-Ino House / prototype-frame"
+        "placeholder": "Aussenansicht / Dom-Ino House / prototype-frame",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/9/9d/La_maison_Dom-ino_de_Le_Corbusier_%28Biennale_d%27architecture_2014%2C_Venise%29_%2814938729273%29.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:La_maison_Dom-ino_de_Le_Corbusier_(Biennale_d'architecture_2014,_Venise)_(14938729273).jpg",
+        "credit": "Wikimedia Commons / Jean-Pierre Dalbera / CC BY 2.0",
+        "license": "cc_by"
       },
       {
         "type": "interior",
@@ -13690,7 +13708,17 @@
       "review_status": "draft_review",
       "public_use_allowed": true,
       "generated_at": "2026-05-21T18:36:41.349Z"
-    }
+    },
+    "source_candidates": [
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Dom-Ino House",
+        "url": "https://commons.wikimedia.org/wiki/File:La_maison_Dom-ino_de_Le_Corbusier_(Biennale_d'architecture_2014,_Venise)_(14938729273).jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Auto-selected hero image candidate. Score: 0.94. License: CC BY 2.0."
+      }
+    ]
   },
   {
     "id": "welwyn-garden-city",

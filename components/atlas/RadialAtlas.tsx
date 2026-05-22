@@ -220,6 +220,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     frame: null as number | null,
     timeout: null as number | null
   });
+  const nudgeTravelRef = useRef<(delta: number) => void>(() => undefined);
   const visualZoomRef = useRef({
     currentZoom: 1,
     targetZoom: 1,
@@ -322,7 +323,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     });
 
     const travelTimeout = window.setTimeout(() => {
-      nudgeTravel(-0.085);
+      nudgeTravelRef.current(-0.085);
     }, 80);
     const doneTimeout = window.setTimeout(() => {
       setReturningFromDatabase(false);
@@ -338,7 +339,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     if (introState !== 'launching') return;
 
     const motionTimeout = window.setTimeout(() => {
-      nudgeTravel(0.11);
+      nudgeTravelRef.current(0.11);
     }, 360);
 
     const timeout = window.setTimeout(() => {
@@ -742,6 +743,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
 
     scheduleMotionStep();
   }
+  nudgeTravelRef.current = nudgeTravel;
 
   function stepMotion() {
     const ref = motionRef.current;
