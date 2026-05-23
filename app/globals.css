@@ -3026,6 +3026,7 @@ body:has(.entry-page) {
 .archive-history-controls button {
   display: inline-flex;
   align-items: center;
+  flex: 0 0 auto;
   gap: 7px;
   min-height: 34px;
   border: 1px solid rgb(0 231 255 / 34%);
@@ -3037,7 +3038,10 @@ body:has(.entry-page) {
   font-size: 10px;
   letter-spacing: 0.16em;
   line-height: 1;
+  overflow: hidden;
   padding: 0 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   text-transform: uppercase;
   transition: border-color 160ms ease, background 160ms ease, color 160ms ease, transform 160ms ease;
 }
@@ -3170,6 +3174,7 @@ body:has(.entry-page) {
 
 .entry-archive-score {
   display: inline-flex;
+  flex: 0 0 auto;
   min-width: 66px;
   align-items: baseline;
   justify-content: center;
@@ -3180,6 +3185,9 @@ body:has(.entry-page) {
     rgb(5 5 5 / 68%);
   padding: 9px 10px;
   text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .entry-archive-score span {
@@ -4673,6 +4681,18 @@ body:has(.entry-page) {
     padding-block: 10px;
     overflow-wrap: anywhere;
     line-height: 1.25;
+  }
+
+  .archive-history-controls button {
+    min-width: 0;
+    min-height: 48px;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    padding-inline: 13px;
+  }
+
+  .entry-archive-score {
+    min-width: 82px;
   }
 
   .entry-page h1 {

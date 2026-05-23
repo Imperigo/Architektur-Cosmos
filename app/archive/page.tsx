@@ -25,6 +25,7 @@ export default function ArchivePage() {
     .sort((a, b) => archiveWeight(b) - archiveWeight(a))
     .slice(0, 10);
   const workflow = archiveWorkflow(allEintraege);
+  const health = archiveHealth(allEintraege, allRelationen);
   const modernVillaCluster = pilotEintraege.filter((entry) => entry.database_tags?.some((tag) => tag.includes('modern-villa')));
 
   return (
@@ -67,24 +68,11 @@ export default function ArchivePage() {
             </p>
           </div>
 
-          <details className="entry-archive-panel archive-expandable-card border border-white/14 bg-[#071315]/70 p-5" open>
-            <summary>
-              <span>Speicherstatus</span>
-              <i>öffnen</i>
-            </summary>
-            <dl className="mt-5 space-y-3 text-sm">
-              <ArchiveMeta label="Datenbank" value={archivePreview.storage_target.database_name} />
-              <ArchiveMeta label="Status" value={archivePreview.storage_target.status.replace(/_/g, ' ')} />
-              <ArchiveMeta label="Frontend" value={archivePreview.storage_target.frontend_connection.replace(/_/g, ' ')} />
-              <ArchiveMeta label="R2-Bucket" value={archivePreview.storage_target.assets_bucket_name ?? 'nicht konfiguriert'} />
-              <ArchiveMeta label="Assets" value={archivePreview.storage_target.assets_status.replace(/_/g, ' ')} />
-              <ArchiveMeta label="Geprüft" value={archivePreview.storage_target.last_verified} />
-            </dl>
-          </details>
+          <ArchiveHealthPanel health={health} />
         </section>
 
         <section className="archive-metric-grid grid gap-3 border-t border-white/12 py-8 sm:grid-cols-2 lg:grid-cols-4">
-          <Metric label="Eintraege" value={allEintraege.length} />
+          <Metric label="Einträge" value={allEintraege.length} />
           <Metric label="Relationen" value={allRelationen.length} />
           <Metric label="Medienzeilen" value={archivePreview.entry_media.length} />
           <Metric label="Modellebenen" value={archivePreview.entry_models.length} />
@@ -115,7 +103,7 @@ export default function ArchivePage() {
 
           <details className="entry-archive-panel archive-expandable-card border border-white/14 bg-[#071315]/70 p-5">
             <summary>
-              <span>Naechster Import-Workflow</span>
+              <span>Nächster Import-Workflow</span>
               <i>anzeigen</i>
             </summary>
             <ol className="mt-4 space-y-3 text-sm leading-6 text-[#d7d7d0]">
@@ -183,7 +171,7 @@ export default function ArchivePage() {
         </section>
 
         <section className="border-t border-white/12 py-8">
-          <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#00e7ff]">Datenbank Pilot Objects</h2>
+          <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#00e7ff]">Datenbank Pilotobjekte</h2>
           <div className="grid gap-3 sm:grid-cols-2">
             {pilotEintraege.map((entry) => (
               <Link key={entry.id} href={`/atlas/${entry.slug}/`} className="entry-link entry-relation-card border border-white/14 bg-[#071315]/55 p-4">
@@ -238,6 +226,20 @@ export default function ArchivePage() {
 
 const orderedEntryTypes: EntryType[] = ['building', 'urban_plan', 'landscape_project', 'text', 'theory', 'map', 'infrastructure', 'object', 'event'];
 const orderedStyleSectors: StyleSectorId[] = ['classical_architecture', 'pre_modern_architecture', 'modern_architecture', 'postwar_modern_architecture', 'sustainable_architecture', 'vernacular_architecture'];
+const requiredMediaTypes = ['exterior', 'interior', 'section', 'plan'] as const;
+
+type ArchiveHealthMetric = {
+  id: string;
+  label: string;
+  shortLabel: string;
+  value: number;
+  hint: string;
+};
+
+type ArchiveHealth = {
+  score: number;
+  metrics: ArchiveHealthMetric[];
+};
 
 function countBy<Key extends string>(items: Entry[], keyFn: (entry: Entry) => Key) {
   return items.reduce<Record<Key, number>>((accumulator, entry) => {
@@ -255,6 +257,77 @@ function archiveWeight(entry: Entry) {
     + (entry.analysis_layers?.length ?? 0) * 8
     + (entry.database_tags?.length ?? 0) * 2
     + (entry.database_profile ? 20 : 0);
+}
+
+function archiveHealth(entries: Entry[], entryRelations: EntryRelation[]): ArchiveHealth {
+  const total = entries.length;
+  const relationEntryIds = new Set(entryRelations.flatMap((relation) => [relation.source_entry_id, relation.target_entry_id]));
+  const reviewedStatuses = new Set(['reviewed', 'published']);
+  const withSources = entries.filter((entry) => (entry.source_documents?.length ?? 0) > 0 || Boolean(entry.source_url));
+  const withMedia = entries.filter(hasRequiredMediaSet);
+  const withRelations = entries.filter((entry) => relationEntryIds.has(entry.id));
+  const withModels = entries.filter((entry) => (entry.model_assets?.length ?? 0) > 0 || Boolean(entry.model_3d?.glb_url));
+  const withAnalysis = entries.filter((entry) => (entry.analysis_layers?.length ?? 0) > 0 || (entry.analysis_observations?.length ?? 0) > 0);
+  const reviewed = entries.filter((entry) => reviewedStatuses.has(entry.database_profile?.status ?? ''));
+
+  const metrics: ArchiveHealthMetric[] = [
+    {
+      id: 'sources',
+      label: 'Quellenlage',
+      shortLabel: 'Quellen',
+      value: percentOf(withSources.length, total),
+      hint: 'Einträge mit Quelldokumenten oder belastbarer Quellen-URL.'
+    },
+    {
+      id: 'media',
+      label: 'Medienslots',
+      shortLabel: 'Medien',
+      value: percentOf(withMedia.length, total),
+      hint: 'Außen, Innen, Schnitt und Plan sind als Slot oder Medium angelegt.'
+    },
+    {
+      id: 'relations',
+      label: 'Wissensnetz',
+      shortLabel: 'Netz',
+      value: percentOf(withRelations.length, total),
+      hint: 'Einträge mit mindestens einer Beziehung zu einem anderen Objekt.'
+    },
+    {
+      id: 'models',
+      label: '3D-Modellbasis',
+      shortLabel: '3D',
+      value: percentOf(withModels.length, total),
+      hint: 'Einträge mit Modellzeilen, GLB-Hinweis oder vorbereiteten Layern.'
+    },
+    {
+      id: 'analysis',
+      label: 'Analyseebenen',
+      shortLabel: 'Analyse',
+      value: percentOf(withAnalysis.length, total),
+      hint: 'Material, Struktur, Tektonik oder Kontext sind als Analysefelder vorbereitet.'
+    },
+    {
+      id: 'review',
+      label: 'Review-Status',
+      shortLabel: 'Review',
+      value: percentOf(reviewed.length, total),
+      hint: 'Einträge, die über Draft hinaus als geprüft oder publiziert markiert sind.'
+    }
+  ];
+
+  return {
+    score: Math.round(metrics.reduce((sum, metric) => sum + metric.value, 0) / metrics.length),
+    metrics
+  };
+}
+
+function hasRequiredMediaSet(entry: Entry) {
+  const mediaTypes = new Set(entry.media.map((media) => media.type));
+  return requiredMediaTypes.every((type) => mediaTypes.has(type));
+}
+
+function percentOf(part: number, total: number) {
+  return total > 0 ? Math.round((part / total) * 100) : 0;
 }
 
 function archiveWorkflow(entries: Entry[]) {
@@ -284,6 +357,98 @@ function clusterPosition(entry: Entry) {
   if (entry.id === 'haus-tugendhat') return 'Materialisierter freier Grundriss: Stahlrahmen, Schirme, Glas und fließender Wohnraum.';
   if (entry.id === 'villa-noailles') return 'Freizeitvilla: Bewegung, Terrassen, Kunst, Garten und avantgardistische Häuslichkeit.';
   return entry.one_sentence;
+}
+
+function ArchiveHealthPanel({ health }: { health: ArchiveHealth }) {
+  return (
+    <aside className="entry-archive-panel entry-archive-status-panel archive-expandable-card border border-white/14 bg-[#071315]/70 p-5">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#00e7ff]">Archivgesundheit</p>
+          <h2 className="mt-2 text-2xl font-semibold text-[#f7f7f4]">KosmoData ist lesbar, aber noch im Review.</h2>
+        </div>
+        <div className="entry-archive-score" style={{ borderColor: '#00e7ff', color: '#00e7ff' }}>
+          <span>{health.score}</span>
+          <small>%</small>
+        </div>
+      </div>
+
+      <ArchiveHealthRadar metrics={health.metrics} />
+
+      <div className="mt-4 space-y-2">
+        {health.metrics.map((metric) => (
+          <ArchiveHealthProgress key={metric.id} metric={metric} />
+        ))}
+      </div>
+
+      <dl className="mt-5 grid gap-3 text-sm sm:grid-cols-2 lg:grid-cols-1">
+        <ArchiveMeta label="Datenbank" value={archivePreview.storage_target.database_name} />
+        <ArchiveMeta label="Frontend" value={archivePreview.storage_target.frontend_connection.replace(/_/g, ' ')} />
+        <ArchiveMeta label="Assets" value={archivePreview.storage_target.assets_status.replace(/_/g, ' ')} />
+        <ArchiveMeta label="Geprüft" value={archivePreview.storage_target.last_verified} />
+      </dl>
+    </aside>
+  );
+}
+
+function ArchiveHealthRadar({ metrics }: { metrics: ArchiveHealthMetric[] }) {
+  const center = 72;
+  const maxRadius = 52;
+  const axisPoints = metrics.map((metric, index) => radarPoint(index, metrics.length, maxRadius, center, center, 1));
+  const valuePoints = metrics.map((metric, index) => radarPoint(index, metrics.length, maxRadius, center, center, metric.value / 100));
+
+  return (
+    <div className="entry-archive-radar" style={{ '--radar-accent': '#00e7ff' } as CSSProperties}>
+      <svg viewBox="0 0 144 144" role="img" aria-label="Radar der Archivabdeckung">
+        {[0.33, 0.66, 1].map((scale) => {
+          const points = metrics.map((metric, index) => formatRadarPoint(radarPoint(index, metrics.length, maxRadius, center, center, scale))).join(' ');
+          return <polygon key={scale} className="entry-radar-ring" points={points} />;
+        })}
+        {axisPoints.map((point, index) => (
+          <line key={metrics[index].id} className="entry-radar-axis" x1={center} y1={center} x2={point.x} y2={point.y} />
+        ))}
+        <polygon className="entry-radar-shape" points={valuePoints.map(formatRadarPoint).join(' ')} />
+        {valuePoints.map((point, index) => (
+          <circle key={metrics[index].id} className="entry-radar-node" cx={point.x} cy={point.y} r="2.3" />
+        ))}
+        {axisPoints.map((point, index) => {
+          const label = radarPoint(index, metrics.length, maxRadius + 12, center, center, 1);
+          return (
+            <text key={metrics[index].id} className="entry-radar-label" x={label.x} y={label.y} textAnchor="middle" dominantBaseline="middle">
+              {metrics[index].shortLabel}
+            </text>
+          );
+        })}
+      </svg>
+    </div>
+  );
+}
+
+function ArchiveHealthProgress({ metric }: { metric: ArchiveHealthMetric }) {
+  return (
+    <div className="entry-archive-progress" style={{ '--progress-value': `${metric.value}%`, '--progress-accent': '#00e7ff' } as CSSProperties}>
+      <div className="flex items-center justify-between gap-3">
+        <span>{metric.label}</span>
+        <b>{metric.value}%</b>
+      </div>
+      <div className="entry-archive-progress-track" aria-hidden="true">
+        <span />
+      </div>
+      <p>{metric.hint}</p>
+    </div>
+  );
+}
+
+function radarPoint(index: number, total: number, radius: number, centerX: number, centerY: number, scale: number) {
+  const angle = -Math.PI / 2 + (index / total) * Math.PI * 2;
+  const scaledRadius = radius * scale;
+  const x = centerX + Math.cos(angle) * scaledRadius;
+  const y = centerY + Math.sin(angle) * scaledRadius;
+  return { x, y };
+}
+
+function formatRadarPoint(point: { x: number; y: number }) {
+  return `${point.x.toFixed(2)},${point.y.toFixed(2)}`;
 }
 
 function Metric({ label, value }: { label: string; value: number }) {
