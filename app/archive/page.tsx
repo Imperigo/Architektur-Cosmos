@@ -39,7 +39,7 @@ export default function ArchivePage() {
 
       <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-6xl flex-col px-5 py-5 sm:px-8 lg:px-10">
         <header className="flex items-center justify-between gap-4 border-b border-white/12 pb-4">
-          <Link href="/" className="entry-link text-[11px] font-semibold uppercase tracking-[0.28em] text-[#f7f7f4]/78">
+          <Link href="/?view=hub" className="entry-link text-[11px] font-semibold uppercase tracking-[0.28em] text-[#f7f7f4]/78">
             Architektur Kosmos
           </Link>
           <div className="flex items-center gap-2">

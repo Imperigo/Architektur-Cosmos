@@ -1676,7 +1676,8 @@ body:has(.entry-page) {
 }
 
 .filter-access:hover .filter-access-panel,
-.filter-access:focus-within .filter-access-panel {
+.filter-access:focus-within .filter-access-panel,
+.filter-access-open .filter-access-panel {
   opacity: 1;
   pointer-events: auto;
   transform: translateY(0) scale(1);
@@ -2722,6 +2723,7 @@ body:has(.entry-page) {
 
 .database-panel-title {
   width: 100%;
+  min-width: 0;
   color: #f7f7f4;
   font-size: clamp(28px, 3.25vw, 42px);
   font-weight: 680;
@@ -2731,6 +2733,35 @@ body:has(.entry-page) {
   white-space: nowrap;
   overflow-wrap: normal;
   word-break: keep-all;
+}
+
+.database-logo-return {
+  flex: 0 0 auto;
+  width: 46px;
+  height: 46px;
+  border: 1px solid rgb(0 231 255 / 36%);
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 35% 25%, rgb(0 231 255 / 18%), transparent 60%),
+    rgb(5 5 5 / 62%);
+  color: #f7f7f4;
+  cursor: none;
+  transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+}
+
+.database-logo-return svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 7px;
+}
+
+.database-logo-return:hover,
+.database-logo-return:focus-visible {
+  border-color: rgb(245 179 66 / 72%);
+  box-shadow: 0 0 18px rgb(0 231 255 / 18%);
+  transform: translateY(-1px);
+  outline: none;
 }
 
 .database-print-action {
@@ -3558,6 +3589,12 @@ body:has(.entry-page) {
 
 .brand-chrome {
   mix-blend-mode: screen;
+  cursor: none;
+}
+
+.brand-chrome:hover .cosmos-glyph,
+.brand-chrome:focus-visible .cosmos-glyph {
+  filter: drop-shadow(0 0 10px rgb(0 231 255 / 42%));
 }
 
 .brand-chrome-arriving {
