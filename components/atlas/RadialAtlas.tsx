@@ -162,6 +162,17 @@ const initialEntryEntwurf: EntryEntwurf = {
   full_description: '',
   copyright_status: 'needs_permission'
 };
+
+const databaseCountLabels: Record<string, string> = {
+  Eintraege: 'Einträge',
+  Einträge: 'Einträge',
+  Quellen: 'Quellen',
+  Medien: 'Medien',
+  '3D': '3D',
+  Analyse: 'Analyse',
+  Relationen: 'Relationen'
+};
+
 const developerSessionKey = 'architecture-cosmos-dev-mode';
 
 function readInitialIntroState(): IntroState {
@@ -2291,7 +2302,7 @@ function DatabaseArchivePanel({
   const currentAnalysisPack = findAnalysisPackForEntry(currentEntry);
   const currentProfile = currentEntry?.database_profile;
   const counts = [
-    { label: 'Eintraege', value: entries.length },
+    { label: 'Einträge', value: entries.length },
     { label: 'Quellen', value: archivePreview.entry_sources.length },
     { label: 'Medien', value: archivePreview.entry_media.length },
     { label: '3D', value: archivePreview.entry_models.length },
@@ -2301,14 +2312,14 @@ function DatabaseArchivePanel({
   const tabs: Array<{ id: DatabaseTab; label: string; hint: string; group: 'create' | 'review'; devOnly?: boolean }> = [
     { id: 'generate', label: 'KI Erfassen', hint: 'Name oder Bild zu Entwurf', group: 'create', devOnly: true },
     { id: 'intake', label: 'Erfassen', hint: 'Gast, Konto oder Dev', group: 'create' },
-    { id: 'analysis', label: 'Analyse', hint: 'Layer und Pruefung', group: 'create', devOnly: true },
-    { id: 'draft', label: 'Entwurf', hint: 'Vor Eintrag pruefen', group: 'create', devOnly: true },
+    { id: 'analysis', label: 'Analyse', hint: 'Layer und Prüfung', group: 'create', devOnly: true },
+    { id: 'draft', label: 'Entwurf', hint: 'Vor Eintrag prüfen', group: 'create', devOnly: true },
     { id: 'overview', label: 'Wissen', hint: 'Stand der Datenbank', group: 'review' },
     { id: 'entries', label: 'Objekte', hint: 'Aktuelles Objekt', group: 'review' },
     { id: 'sources', label: 'Quellen', hint: 'Nachweise', group: 'review' },
-    { id: 'media', label: 'Medien', hint: 'Bilder und Plaene', group: 'review' },
+    { id: 'media', label: 'Medien', hint: 'Bilder und Pläne', group: 'review' },
     { id: 'models', label: '3D', hint: 'Modellebenen', group: 'review' },
-    { id: 'relations', label: 'Graph', hint: 'Verknuepfungen', group: 'review' }
+    { id: 'relations', label: 'Graph', hint: 'Verknüpfungen', group: 'review' }
   ];
   const visibleTabs = developerMode ? tabs : tabs.filter((tab) => !tab.devOnly);
   const createTabs = visibleTabs.filter((tab) => tab.group === 'create');
@@ -2527,7 +2538,7 @@ function DatabaseArchivePanel({
           {counts.map((item) => (
             <div key={item.label} className="min-w-0">
               <span className="block text-[10px] font-semibold leading-none text-[#f7f7f4]/78">{item.value}</span>
-              <span className="mt-1 block truncate text-[7px] uppercase tracking-[0.1em] text-[#b8b8b2]/62">{item.label}</span>
+              <span className="mt-1 block truncate text-[7px] uppercase tracking-[0.1em] text-[#b8b8b2]/62">{databaseCountLabels[item.label] ?? item.label}</span>
             </div>
           ))}
         </div>
@@ -2549,7 +2560,7 @@ function DatabaseArchivePanel({
               >
                 {safeActiveTab === 'generate' ? 'Entwurf erzeugen' : 'Dev KI Erfassen'}
               </button>
-              <small>{safeActiveTab === 'generate' ? 'uses current inputs' : 'offens generator'}</small>
+              <small>{safeActiveTab === 'generate' ? 'nutzt aktuelle Eingaben' : 'öffnet Generator'}</small>
             </div>
           </div>
         ) : (
@@ -2623,9 +2634,9 @@ function DatabaseArchivePanel({
 
               <div className="grid grid-cols-4 gap-1.5">
                 {[
-                  ['Files', intakeFiles.length],
-                  ['Sources', intakeStats.sources],
-                  ['Visual', intakeStats.visual],
+                  ['Dateien', intakeFiles.length],
+                  ['Quellen', intakeStats.sources],
+                  ['Bild/Plan', intakeStats.visual],
                   ['3D', intakeStats.model]
                 ].map(([label, value]) => (
                   <div key={label} className="border border-[#f7f7f4]/14 bg-[#07181a]/70 px-2 py-1.5">
@@ -2639,7 +2650,7 @@ function DatabaseArchivePanel({
                 <div className="space-y-1.5">
                   {intakeFiles.map((file) => (
                     <div key={file.id} className="grid grid-cols-[62px_minmax(0,1fr)_58px] gap-2 border border-[#f7f7f4]/12 bg-[#07181a]/60 px-2 py-1.5">
-                      <span className="text-[8px] uppercase tracking-[0.13em] text-[#00e7ff]">{file.kind}</span>
+                      <span className="text-[8px] uppercase tracking-[0.13em] text-[#00e7ff]">{fileKindLabel(file.kind)}</span>
                       <span className="truncate text-[9.5px] text-[#f7f7f4]">{file.name}</span>
                       <span className="text-right text-[8px] text-[#8d8d87]">{formatBytes(file.size)}</span>
                     </div>
@@ -2652,7 +2663,7 @@ function DatabaseArchivePanel({
               )}
 
               <div className="grid grid-cols-3 gap-1.5">
-                <IntakeAction label="Capture" bereit={intakeFiles.length > 0} />
+                <IntakeAction label="Erfassen" bereit={intakeFiles.length > 0} />
                 <IntakeAction label="3D Plan" bereit={intakeStats.sources + intakeStats.visual > 1} />
                 <IntakeAction label="Splat" bereit={intakeStats.video > 0 || intakeStats.image >= 20} />
               </div>
@@ -2697,7 +2708,7 @@ function DatabaseArchivePanel({
                     </p>
                   </div>
                   <label className="shrink-0 cursor-none border border-[#00e7ff]/60 px-2 py-1 text-[8px] uppercase tracking-[0.12em] text-[#9cfff7]">
-                    Select
+                    Bild wählen
                     <input
                       className="sr-only"
                       type="file"
@@ -2718,7 +2729,7 @@ function DatabaseArchivePanel({
                     <div className="min-w-0">
                       <div className="truncate text-[10px] text-[#f7f7f4]">{imageIdentify.fileName}</div>
                       <div className="mt-1 text-[8px] uppercase tracking-[0.12em] text-[#8d8d87]">
-                        {imageIdentify.status === 'erkannt' ? `erkannt / ${Math.round((imageIdentify.candidate?.confidence ?? 0) * 100)}%` : imageIdentify.status === 'unknown' ? 'braucht manuelle Recherche' : 'bereit to analyze'}
+                        {imageIdentify.status === 'erkannt' ? `erkannt / ${Math.round((imageIdentify.candidate?.confidence ?? 0) * 100)}%` : imageIdentify.status === 'unknown' ? 'braucht manuelle Recherche' : 'bereit zur Analyse'}
                       </div>
                       {imageIdentify.candidate ? (
                         <p className="mt-1 line-clamp-2 text-[9px] leading-snug text-[#c9fff4]">{imageIdentify.candidate.project} / {imageIdentify.candidate.reason}</p>
@@ -2756,12 +2767,12 @@ function DatabaseArchivePanel({
                   className="border border-[#00e7ff]/55 px-2 py-2 text-[8.5px] uppercase tracking-[0.14em] text-[#00e7ff]"
                   onClick={generateResearchEntwurf}
                 >
-                  Generate draft
+                  Entwurf erzeugen
                 </button>
               </div>
 
               <p className="border border-[#f7f7f4]/12 bg-[#050505]/45 p-2 text-[9.5px] leading-snug text-[#b8b8b2]">
-                Beispiel laden fills a known test project. Generate draft converts your current inputs into an editable browser-session draft.
+                Beispiel laden setzt ein bekanntes Testprojekt ein. Entwurf erzeugen wandelt die aktuellen Eingaben in einen editierbaren Browser-Entwurf um.
               </p>
 
               <ArchiveList
@@ -2837,12 +2848,12 @@ function DatabaseArchivePanel({
                     className="border border-[#f7f7f4]/25 px-2 py-1 text-[8px] uppercase tracking-[0.12em] text-[#d9d9d2]"
                     onClick={resetPanelEntwurf}
                   >
-                    Clear
+                    Leeren
                   </button>
                 </div>
               </div>
               <p className="mb-2 border border-[#00e7ff]/25 bg-[#061719] p-2 text-[9.5px] leading-snug text-[#c9fff4]">
-                Creates a temporary Atlas entry in this browser session only. Persistent D1/database saving, private libraries and uploads come in a later protected backend step.
+                Erstellt nur in dieser Browser-Session einen temporären Atlas-Eintrag. Persistente D1-Speicherung, private Bibliotheken und Uploads folgen erst in einem geschützten Backend-Schritt.
               </p>
               <div className="mb-2 grid grid-cols-3 gap-1.5">
                 {draftReadiness(draft).map((item) => (
@@ -2935,7 +2946,7 @@ function DatabaseArchivePanel({
         style={htmlPanelStyle}
         role="dialog"
         aria-modal="true"
-        aria-label="Architekture Cosmos Database"
+        aria-label="Architektur Kosmos Datenbank"
         onPointerDown={(event) => event.stopPropagation()}
         onWheel={(event) => event.stopPropagation()}
         onTouchMove={(event) => event.stopPropagation()}
@@ -3229,6 +3240,19 @@ function classifyIntakeFile(name: string): IntakeFile['kind'] {
   if (/\.(glb|gltf|obj|fbx|ifc|blend)$/i.test(normalized)) return 'model';
   if (/\.(txt|md|rtf|doc|docx)$/i.test(normalized)) return 'text';
   return 'other';
+}
+
+function fileKindLabel(kind: IntakeFile['kind']) {
+  const labels: Record<IntakeFile['kind'], string> = {
+    pdf: 'PDF',
+    image: 'Bild',
+    plan: 'Plan',
+    video: 'Video',
+    model: '3D',
+    text: 'Text',
+    other: 'Datei'
+  };
+  return labels[kind];
 }
 
 function summarizeIntakeFiles(files: IntakeFile[]) {
