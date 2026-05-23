@@ -1544,6 +1544,9 @@ function usePerformanceTier(): PerformanceTier {
     const updateTier = () => {
       const params = new URLSearchParams(window.location.search);
       const forcedTier = params.get('perf');
+      const userAgent = navigator.userAgent.toLowerCase();
+      const browserMode = browserPerformanceMode(userAgent);
+      document.documentElement.dataset.cosmosBrowser = browserMode;
 
       if (forcedTier === 'reduced' || forcedTier === 'balanced' || forcedTier === 'full') {
         setTier(forcedTier);
@@ -1556,12 +1559,12 @@ function usePerformanceTier(): PerformanceTier {
       const narrowViewport = window.innerWidth < 760;
       const cores = navigator.hardwareConcurrency || 4;
       const memory = typeof (navigator as Navigator & { deviceMemory?: number }).deviceMemory === 'number'
-        ? (navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 4
-        : 4;
-      const userAgent = navigator.userAgent.toLowerCase();
-      const conservativeBrowser = userAgent.includes('opr/') || (userAgent.includes('safari') && !userAgent.includes('chrome'));
+        ? (navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 8
+        : 8;
+      const fragileDevice = cores <= 4 || memory <= 4;
+      const fragileViewport = narrowViewport || coarsePointer;
 
-      const nextTier: PerformanceTier = reducedMotion || narrowViewport || coarsePointer || cores <= 4 || memory <= 4 || conservativeBrowser
+      const nextTier: PerformanceTier = reducedMotion || fragileViewport || fragileDevice
         ? 'reduced'
         : 'balanced';
 
@@ -1576,6 +1579,14 @@ function usePerformanceTier(): PerformanceTier {
   }, []);
 
   return tier;
+}
+
+function browserPerformanceMode(userAgent: string) {
+  if (userAgent.includes('opr/') || userAgent.includes('opera')) return 'opera';
+  if (userAgent.includes('safari') && !userAgent.includes('chrome') && !userAgent.includes('chromium')) return 'safari';
+  if (userAgent.includes('firefox')) return 'firefox';
+  if (userAgent.includes('chrome') || userAgent.includes('chromium')) return 'chromium';
+  return 'standard';
 }
 
 function useCoarsePointer() {

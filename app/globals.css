@@ -4202,6 +4202,32 @@ body:has(.entry-page) {
   transition-duration: 260ms;
 }
 
+html[data-cosmos-browser="safari"] .wormhole-stream,
+html[data-cosmos-browser="safari"] .wormhole-speed-line,
+html[data-cosmos-browser="safari"] .wormhole-energy-band,
+html[data-cosmos-browser="opera"] .wormhole-stream,
+html[data-cosmos-browser="opera"] .wormhole-speed-line,
+html[data-cosmos-browser="opera"] .wormhole-energy-band {
+  filter: none;
+  mix-blend-mode: normal;
+}
+
+html[data-cosmos-browser="safari"] .project-search,
+html[data-cosmos-browser="safari"] .database-draft,
+html[data-cosmos-browser="safari"] .filter-access-panel,
+html[data-cosmos-browser="opera"] .project-search,
+html[data-cosmos-browser="opera"] .database-draft,
+html[data-cosmos-browser="opera"] .filter-access-panel {
+  backdrop-filter: none;
+}
+
+html[data-cosmos-browser="safari"] .entry-thumbnail,
+html[data-cosmos-browser="safari"] .relation-strand,
+html[data-cosmos-browser="opera"] .entry-thumbnail,
+html[data-cosmos-browser="opera"] .relation-strand {
+  filter: none;
+}
+
 .cosmos-perf-balanced.cosmos-moving .wormhole-energy-band,
 .cosmos-perf-balanced.cosmos-moving .wormhole-stream,
 .cosmos-perf-balanced.cosmos-moving .wormhole-speed-line {

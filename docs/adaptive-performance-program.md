@@ -9,10 +9,15 @@ rendering budget instead of rendering one fixed maximum experience everywhere.
 The current frontend uses three runtime tiers:
 
 - `reduced`: narrow screens, coarse pointer/touch, low CPU/memory signals,
-  `prefers-reduced-motion`, Safari/Opera-conservative cases or `?perf=reduced`.
+  `prefers-reduced-motion` or `?perf=reduced`.
 - `balanced`: default for normal laptops and browsers.
 - `full`: wide desktop, strong CPU/memory signals and non-conservative browser,
   or `?perf=full`.
+
+Safari and Opera now receive a separate browser guard via
+`html[data-cosmos-browser="safari"|"opera"]`: they can stay in `balanced` on
+capable desktop hardware, but expensive blur/filter/mix-blend effects are
+reduced. Weak devices in those browsers still fall back to `reduced`.
 
 Manual QA overrides:
 
