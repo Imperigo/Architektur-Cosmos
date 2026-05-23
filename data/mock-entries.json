@@ -19499,9 +19499,10 @@
     "slug": "gas-works-park",
     "title": "Gas Works Park",
     "entry_type": "landscape_project",
-    "year_start": 1975,
+    "year_start": 1971,
     "authors": [
-      "Richard Haag"
+      "Richard Haag",
+      "Richard Haag Associates"
     ],
     "city": "Seattle",
     "country": "USA",
@@ -19512,17 +19513,24 @@
     "themes": [
       "industrial-reuse",
       "landscape-urbanism",
-      "ruin"
+      "ruin",
+      "postindustrial-landscape",
+      "adaptive-reuse",
+      "soil-remediation",
+      "industrial-archaeology",
+      "lake-union",
+      "public-park",
+      "heritage-safety-conflict"
     ],
     "short_description": "Gas Works Park ist im PDF-Framework als industrial-reuse / landscape-urbanism verortet und bildet einen wichtigen Knoten der Architektur- und Stadtgeschichte.",
     "source_quality": "lecture_pdf",
-    "one_sentence": "Gas Works Park ist als Landschaftsprojekt in Seattle, USA im Jahr 1975 im Architecture Cosmos verortet und verknuepft industrial reuse, landscape urbanism, ruin.",
-    "full_description": "Gas Works Park ist im PDF-Framework als industrial-reuse / landscape-urbanism verortet und bildet einen wichtigen Knoten der Architektur- und Stadtgeschichte. Der Eintrag wird im Atlas als Landschaftsprojekt gelesen und gehoert zur Wissensspur Landschaftsarchitektur ETH, 04 Landschaftsarchitektur 1_2.pdf, Layer landscape architecture 1 2. Autorenschaft / Quelle: Richard Haag. Seine Filterebene verbindet industrial reuse, landscape urbanism, ruin mit Jahr, Stilsektor und Relationennetz; spaeter koennen echte Fotos, Plaene, Schnitte, Quellen und Modelle direkt aus der Datenbank angeschlossen werden.",
+    "one_sentence": "Gas Works Park verwandelt eine ehemalige Gaswerksanlage am Lake Union in eine öffentliche Landschaft, in der kontaminierter Boden, industrielle Apparate, Hügel, Spielräume und Stadtblick als bewusst erhaltene Schichten lesbar bleiben.",
+    "full_description": "Gas Works Park ist ein Schlüsselprojekt der postindustriellen Landschaftsarchitektur. Richard Haag entfernte die industrielle Vergangenheit nicht, sondern machte sie zum räumlichen Material des Parks: Türme, Kesselhaus, Pumpenhaus, Rohrleitungen, Fundamente, Erdhügel, Wiesen und Lake-Union-Ufer werden zu einem neuen öffentlichen Terrain. Die Bedeutung liegt gerade im Nicht-Glattziehen des Ortes. Der kontaminierte Boden, die Gaswerksruine und die Topografie werden nicht als Defekt versteckt, sondern als Geschichte, Gefahr, Erinnerung und Gebrauch neu verhandelt. Dadurch ist Gas Works Park für Architecture Cosmos ein Referenzknoten für Reuse vor dem heutigen Nachhaltigkeitsdiskurs: Landschaft entsteht hier aus Sanierung, Selektion, Erhaltung, Blickführung und sozialer Aneignung. Gleichzeitig bleibt das Projekt aktuell, weil Sicherheit, Altlasten, Denkmalpflege und öffentlicher Zugang bis heute in Spannung stehen.",
     "media": [
       {
         "type": "exterior",
-        "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Gas Works Park / industrial-reuse-landscape-urbanism",
+        "label": "Industriepark / Lake Union",
+        "placeholder": "Gas Works Park / Gaswerktürme, Hügel, Lake Union, Seattle-Skyline",
         "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Aerial_Gas_Works_Park_September_2011.jpg/960px-Aerial_Gas_Works_Park_September_2011.jpg",
         "source_url": "https://commons.wikimedia.org/wiki/File:Aerial_Gas_Works_Park_September_2011.jpg",
         "credit": "Wikimedia Commons / Photo by Liesl Matthies / CC BY-SA 3.0",
@@ -19549,58 +19557,360 @@
     ],
     "source_candidates": [
       {
+        "source_type": "website",
+        "title": "Seattle Parks and Recreation / Gas Works Park",
+        "url": "https://www.seattle.gov/parks/allparks/gas-works-park",
+        "reliability_level": "verified",
+        "rights_status": "unknown",
+        "notes": "Official park source for access, public use, Lake Union restrictions, sundial/view features and current municipal framing."
+      },
+      {
+        "source_type": "archive",
+        "title": "City of Seattle Landmarks Preservation Board / Gas Works Park designation report",
+        "url": "https://www.seattle.gov/documents/Departments/Neighborhoods/HistoricPreservation/Landmarks/RelatedDocuments/gas-works-park-designation.pdf",
+        "reliability_level": "verified",
+        "rights_status": "unknown",
+        "notes": "Official designation material for industrial-preservation value, Richard Haag Associates master planning, plant history and landmark context."
+      },
+      {
+        "source_type": "website",
+        "title": "The Cultural Landscape Foundation / Gas Works Park",
+        "url": "https://www.tclf.org/landscapes/gas-works-park",
+        "reliability_level": "verified",
+        "rights_status": "unknown",
+        "notes": "Landscape-history source for postindustrial reuse, editing/thinning of the gas works apparatus, Lake Union setting and Richard Haag’s design significance."
+      },
+      {
+        "source_type": "article",
+        "title": "University of Washington Press Blog / Gas Works Park history",
+        "url": "https://uwpressblog.com/2015/04/15/gas-works-park-a-brief-history-of-a-seattle-landmark/",
+        "reliability_level": "secondary_source",
+        "rights_status": "unknown",
+        "notes": "Context source for Haag’s rehabilitation, public controversy and the transformation of a postindustrial site into public place."
+      },
+      {
         "source_type": "image_source",
-        "title": "Wikimedia Commons hero candidate / Gas Works Park",
+        "title": "Wikimedia Commons hero candidate / Aerial Gas Works Park",
         "url": "https://commons.wikimedia.org/wiki/File:Aerial_Gas_Works_Park_September_2011.jpg",
         "reliability_level": "secondary_source",
         "rights_status": "licensed",
-        "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY-SA 3.0."
+        "notes": "Public hero image already used by the entry. License: CC BY-SA 3.0. Shows the park, industrial relics, shore condition and urban context clearly."
       }
     ],
     "architecture_text": {
-      "headline": "Gas Works Park: Industriebestand als öffentliche Landschaft",
-      "overview": "Gas Works Park wird als Landschaftsprojekt verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und Seattle, USA. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "headline": "Gas Works Park: Ruine, Boden und Stadtblick als Parkmaterial",
+      "overview": "Gas Works Park wird als postindustrielle Landschaft gelesen: nicht Abriss und Neubeginn, sondern selektive Erhaltung, Bodensanierung, Topografie und öffentliche Aneignung formen den Park.",
       "chapters": [
         {
           "title": "Architektonische Lesart",
-          "text": "Gas Works Park gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Gas Works Park verwandelt Industrie nicht in Kulisse, sondern in nutzbaren Landschaftsbestand: Hügel, Maschinenfragmente, Wege und Seeufer bilden eine neue öffentliche Topografie. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie industrielles Weiterverwenden, Landschaftsurbanismus, Ruine als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
-          "source_basis": "curated spatial reading",
-          "review_status": "draft_review"
+          "text": "Gas Works Park ist kein Park, der seine Vorgeschichte überdeckt. Richard Haag macht die ehemalige Gaswerksanlage selbst zum Ausgangsmaterial: Maschinen, Türme und Fundamente bleiben sichtbar, werden aber durch Wege, Wiese, Uferkante, Spielräume und Aussichtshügel neu lesbar. Der Park ist dadurch weniger Kulisse als eine räumliche Argumentation über industrielle Erinnerung im öffentlichen Raum.",
+          "source_basis": "Seattle Parks, Seattle Landmarks report, TCLF, ETH Landschaftsarchitektur notes",
+          "review_status": "source_enriched_review"
         },
         {
-          "title": "Material und Tragwerk",
-          "text": "Gas Works Park erhält industrielle Apparate, Betonfundamente, Erdmodellierung, Wiesen und Blickbeziehungen; Ruine und Park werden nicht getrennt, sondern ineinander überführt. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
-          "source_basis": "curated material reading",
-          "review_status": "draft_review"
+          "title": "Material und Altlast",
+          "text": "Das Materialsystem besteht aus Apparaten, Stahl, Beton, kontaminiertem Boden, Erdmodellierung, Grasflächen und Wassergrenze. Entscheidend ist, dass der Boden nicht neutral ist: Die Sanierung und der Umgang mit Altlasten gehören zur Tektonik des Projekts. Landschaft wird hier als Transformation eines beschädigten industriellen Körpers verstanden.",
+          "source_basis": "Seattle designation material and postindustrial landscape sources",
+          "review_status": "source_enriched_review"
         },
         {
           "title": "Raumordnung",
-          "text": "Gas Works Park verwandelt Industrie nicht in Kulisse, sondern in nutzbaren Landschaftsbestand: Hügel, Maschinenfragmente, Wege und Seeufer bilden eine neue öffentliche Topografie. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
-          "source_basis": "curated spatial reading",
-          "review_status": "draft_review"
+          "text": "Die Raumordnung arbeitet mit starken Gegensätzen: offene Wiesen gegen dichte Apparate, Hügel gegen Ufer, Stadtpanorama gegen industrielle Nahsicht. Die erhaltenen Gaswerksstrukturen bilden ein Zentrum und einen Maßstabssprung; der Kite Hill und die Blickachsen über Lake Union öffnen das Projekt zur Skyline von Seattle. Park, Denkmal und Aussichtsinstrument fallen zusammen.",
+          "source_basis": "TCLF spatial description and Seattle Parks public-use information",
+          "review_status": "source_enriched_review"
         },
         {
-          "title": "Tektonik",
-          "text": "Die tektonische Lesart soll zeigen, wie Oberfläche, Tragstruktur und Fügung Stützung, Hülle, Fügung und Atmosphäre organisieren. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
-          "source_basis": "entry materials and analysis fallback",
-          "review_status": "needs_source_review"
+          "title": "Tektonik und Reuse",
+          "text": "Tektonisch ist Gas Works Park eine Landschaft aus Auswahl. Haag behält nicht alles, sondern editiert: Einige Apparate werden erhalten, andere entfernt, Funktionen werden verschoben, Bedeutungen umcodiert. Diese Haltung macht das Projekt bis heute wichtig: Reuse ist hier nicht Dekoration, sondern eine Entwurfstechnik aus Erhalten, Sperren, Umnutzen, Umformen und Sichtbarmachen.",
+          "source_basis": "Seattle Landmarks report and TCLF Richard Haag interpretation",
+          "review_status": "source_enriched_review"
         },
         {
           "title": "Kontext",
-          "text": "Gas Works Park gehört zu Seattle, USA. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
-          "source_basis": "entry location metadata",
-          "review_status": "draft_review"
+          "text": "Der Ort liegt am Nordufer des Lake Union gegenüber der Innenstadt. Dadurch wird der Park zu einem städtischen Balkon: Die ehemalige Industrieanlage, das Wasser, die Skyline und die Nachbarschaft Wallingford treffen in einer einzigen öffentlichen Topografie aufeinander. Seine heutigen Konflikte um Sicherheit, Zugang und Denkmalpflege zeigen, dass postindustrielle Landschaften nie abgeschlossen sind.",
+          "source_basis": "Seattle Parks, municipal landmark context and recent preservation discourse",
+          "review_status": "source_enriched_review"
         },
         {
           "title": "Relevanz",
-          "text": "Gas Works Park ist als Referenz wichtig, weil industrielles Weiterverwenden, Landschaftsurbanismus, Ruine nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
-          "source_basis": "derived from entry metadata and Brain quality rules",
-          "review_status": "draft_review"
+          "text": "Für Architecture Cosmos ist Gas Works Park ein früher und präziser Gegenentwurf zur Tabula rasa. Das Projekt verbindet Landschaftsarchitektur, Denkmalpflege, Ökologie, Altlastensanierung, industrielle Archäologie und öffentliche Nutzung. Für KosmoData ist es besonders gut filterbar über Industrie-Reuse, kontaminierten Boden, Ruinenästhetik, Uferlandschaft, Topografie, Sichtbeziehungen und Sicherheit/Erhaltung als laufende Frage.",
+          "source_basis": "source-enriched database profile and atlas relation system",
+          "review_status": "source_enriched_review"
         }
       ],
-      "review_status": "draft_review",
+      "language": "de",
+      "review_status": "source_enriched_review",
       "public_use_allowed": true,
-      "generated_at": "2026-05-21T19:08:59.885Z"
+      "generated_at": "2026-05-23T17:42:03.000Z",
+      "source_basis": [
+        {
+          "type": "source_document",
+          "value": "04 Landschaftsarchitektur 1_2.pdf"
+        },
+        {
+          "type": "official_park_source",
+          "title": "Seattle Parks and Recreation / Gas Works Park",
+          "value": "https://www.seattle.gov/parks/allparks/gas-works-park",
+          "reliability_level": "verified",
+          "rights_status": "unknown"
+        },
+        {
+          "type": "official_designation_report",
+          "title": "Seattle Landmarks Preservation Board / Gas Works Park designation report",
+          "value": "https://www.seattle.gov/documents/Departments/Neighborhoods/HistoricPreservation/Landmarks/RelatedDocuments/gas-works-park-designation.pdf",
+          "reliability_level": "verified",
+          "rights_status": "unknown"
+        },
+        {
+          "type": "landscape_history_source",
+          "title": "The Cultural Landscape Foundation / Gas Works Park",
+          "value": "https://www.tclf.org/landscapes/gas-works-park",
+          "reliability_level": "verified",
+          "rights_status": "unknown"
+        },
+        {
+          "type": "secondary_reference",
+          "title": "University of Washington Press Blog / Gas Works Park history",
+          "value": "https://uwpressblog.com/2015/04/15/gas-works-park-a-brief-history-of-a-seattle-landmark/",
+          "reliability_level": "secondary_source",
+          "rights_status": "unknown"
+        }
+      ]
+    },
+    "year_end": 1975,
+    "source_url": "https://www.seattle.gov/parks/allparks/gas-works-park",
+    "geo": {
+      "country_code": "US",
+      "city": "Seattle",
+      "region": "Washington / Lake Union / Wallingford",
+      "latitude": 47.6456,
+      "longitude": -122.3344,
+      "precision": "park_site"
+    },
+    "materials": {
+      "primary": [
+        "industrial_steel_relics",
+        "concrete_foundations",
+        "remediated_soil",
+        "earth_mounding",
+        "grass_landscape"
+      ],
+      "secondary": [
+        "lake_edge",
+        "paths",
+        "play_structures",
+        "sundial",
+        "fenced_towers",
+        "view_corridors"
+      ],
+      "notes": "Material reading must include industrial relics and contaminated/remediated soil. Public technical drawings and safety documentation should remain source-linked unless permissions are clear."
+    },
+    "program": {
+      "type": "postindustrial_public_park",
+      "subtype": "industrial_reuse_landscape_and_lakefront_view_park",
+      "public_access": "public_park_with_restricted_water_and_fenced_industrial_structures",
+      "components": [
+        "gas works relics",
+        "Kite Hill",
+        "play barn",
+        "picnic shelter",
+        "sundial",
+        "Lake Union waterfront",
+        "open lawns",
+        "view terraces"
+      ]
+    },
+    "context": {
+      "topography": "lakefront_postindustrial_site_with_artificial_mounds",
+      "setting": "urban_public_park_on_former_gasification_plant",
+      "landscape_relations": [
+        "Lake Union",
+        "Seattle skyline",
+        "Wallingford",
+        "waterfront edge",
+        "Kite Hill",
+        "industrial towers"
+      ],
+      "urban_context": [
+        "postindustrial_reclamation",
+        "industrial_preservation",
+        "public_access_vs_safety",
+        "landmark_designation",
+        "contaminated_sediment_restriction"
+      ],
+      "reuse_logic": [
+        "preserve_relics",
+        "edit_industrial_fabric",
+        "remediate_soil",
+        "convert_structures",
+        "frame_city_views"
+      ]
+    },
+    "vibes": [
+      "postindustrial-park",
+      "toxic-ground-made-public",
+      "industrial-archaeology",
+      "city-balcony",
+      "reuse-before-greenwashing",
+      "ruin-as-play-and-warning"
+    ],
+    "database_tags": [
+      "source:seattle-parks",
+      "source:seattle-landmarks",
+      "source:tclf",
+      "source:uw-press-crosscheck",
+      "typology:postindustrial-park",
+      "typology:landscape-reuse",
+      "material:industrial-steel",
+      "material:concrete-foundations",
+      "material:remediated-soil",
+      "landscape:lakefront",
+      "landscape:earth-mound",
+      "heritage:industrial-archaeology",
+      "program:public-park",
+      "ecology:soil-remediation",
+      "risk:contaminated-sediment",
+      "critique:safety-preservation-conflict",
+      "blender:industrial-relic-layer-candidate",
+      "blender:terrain-remediation-layer-candidate"
+    ],
+    "model_assets": [
+      {
+        "model_type": "site_model",
+        "title": "Gas Works Park lakefront terrain and view model",
+        "r2_key": "entries/gas-works-park/models/site.glb",
+        "format": "glb",
+        "lod_level": "preview",
+        "source_basis": "Diagrammatic terrain model of Lake Union edge, Kite Hill, open lawns and industrial relic cluster from public spatial descriptions and aerial hero image.",
+        "generation_method": "procedural",
+        "review_status": "draft",
+        "confidence_score": 0.58
+      },
+      {
+        "model_type": "structure_model",
+        "title": "Gas Works Park industrial relic structure model",
+        "r2_key": "entries/gas-works-park/models/structure.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "Analytical reconstruction of preserved towers, boiler/pump structures, foundations and fenced zones; exact geometry requires landmark/source drawings review.",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.46
+      },
+      {
+        "model_type": "tectonic_model",
+        "title": "Gas Works Park remediation and reuse layer model",
+        "r2_key": "entries/gas-works-park/models/tectonic.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "Layer model separating relics, ground remediation zones, access limits, reuse structures, paths, hill and waterfront restrictions.",
+        "generation_method": "ai_assisted",
+        "review_status": "draft",
+        "confidence_score": 0.5
+      }
+    ],
+    "analysis_layers": [
+      {
+        "analysis_type": "landscape_system",
+        "summary": "Gas Works Park ist eine Landschaft aus Ufer, Aussichtshügel, Wiesen, Industriekörpern und gesperrten/umgenutzten Bereichen; der Park entsteht durch räumliche Montage statt Naturbild.",
+        "data": {
+          "landscape_tags": [
+            "lakefront",
+            "kite_hill",
+            "industrial_relics",
+            "open_lawn",
+            "view_corridors"
+          ],
+          "model_layer": "landscape_system"
+        },
+        "r2_key": "entries/gas-works-park/analysis/landscape_system.json",
+        "review_status": "reviewed"
+      },
+      {
+        "analysis_type": "material_system",
+        "summary": "Das Materialsystem verbindet Stahlapparate, Betonfundamente, Bodenmodellierung, Sanierungsschichten, Grasflächen, Wege und Wassergrenze zu einer postindustriellen Parktektonik.",
+        "data": {
+          "primary_materials": [
+            "industrial_steel",
+            "concrete_foundations",
+            "remediated_soil",
+            "grass",
+            "lake_edge"
+          ],
+          "public_display": "text_and_metadata_safe"
+        },
+        "r2_key": "entries/gas-works-park/analysis/material_system.json",
+        "review_status": "reviewed"
+      },
+      {
+        "analysis_type": "urban_context",
+        "summary": "Der Park funktioniert als öffentlicher Balkon gegenüber Downtown Seattle und als Denkmal des industriellen Lake-Union-Ufers; städtische Aussicht und industrielle Erinnerung sind untrennbar.",
+        "data": {
+          "context_tags": [
+            "lake_union",
+            "seattle_skyline",
+            "wallingford",
+            "industrial_preservation",
+            "public_access"
+          ],
+          "conflicts": [
+            "safety",
+            "heritage_preservation",
+            "contaminated_sediment"
+          ]
+        },
+        "r2_key": "entries/gas-works-park/analysis/urban_context.json",
+        "review_status": "reviewed"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Tektonik heißt hier Auswahl und Umcodierung: Apparate werden nicht im ursprünglichen Produktionssinn genutzt, sondern als Gerüst, Grenze, Bild, Spiel- und Erinnerungsstruktur neu gelesen.",
+        "data": {
+          "tectonic_elements": [
+            "retained_towers",
+            "converted_pump_house",
+            "converted_boiler_house",
+            "fenced_structures",
+            "earth_mounding"
+          ],
+          "blender_layers": [
+            "relics",
+            "terrain",
+            "access_limits",
+            "reuse_programs"
+          ]
+        },
+        "r2_key": "entries/gas-works-park/analysis/tectonics.json",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "summary": "Gas Works Park ist filterbar als postindustrielle Landschaft, Reuse-Park, Industriearchäologie, Boden-/Altlastenprojekt, Lakefront, Ruine, Denkmal und öffentlicher Konfliktraum.",
+        "data": {
+          "filters": [
+            "industrial-reuse",
+            "landscape-urbanism",
+            "ruin",
+            "postindustrial-landscape",
+            "soil-remediation",
+            "industrial-archaeology",
+            "public-park"
+          ]
+        },
+        "r2_key": "entries/gas-works-park/analysis/filter_classification.json",
+        "review_status": "reviewed"
+      }
+    ],
+    "database_profile": {
+      "status": "reviewed",
+      "r2_prefix": "entries/gas-works-park",
+      "source_count": 5,
+      "media_count": 4,
+      "model_count": 3,
+      "analysis_count": 5,
+      "tag_count": 18,
+      "rights_summary": "Public text, metadata and CC hero are usable; landmark PDFs/technical drawings and municipal imagery should remain source-linked unless rights are cleared.",
+      "updated_at": "2026-05-23T17:42:03.000Z"
     }
   },
   {
