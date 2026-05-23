@@ -2449,6 +2449,8 @@ body:has(.entry-page) {
   pointer-events: auto;
   user-select: none;
   -webkit-user-select: none;
+  max-height: 46dvh;
+  overflow: visible;
 }
 
 .mobile-atlas-time {
@@ -2596,37 +2598,39 @@ body:has(.entry-page) {
 }
 
 .mobile-atlas-dock {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 6px;
+  display: flex;
+  gap: 7px;
+  margin-inline: calc(var(--ui-safe-edge) * -0.25);
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 1px calc(var(--ui-safe-edge) * 0.25) 4px;
+  scrollbar-width: none;
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
 }
 
 .mobile-atlas-dock button {
-  min-width: 0;
-  min-height: 54px;
+  flex: 0 0 auto;
+  min-width: 84px;
+  min-height: 48px;
   border: 1px solid rgb(247 247 244 / 22%);
-  border-radius: 18px;
+  border-radius: 999px;
   background: rgb(5 5 5 / 78%);
   color: #f7f7f4;
-  padding: 7px 4px;
+  padding: 0 14px;
   backdrop-filter: blur(10px);
   box-shadow: inset 0 1px 0 rgb(247 247 244 / 7%), 0 14px 38px rgb(0 0 0 / 28%);
+  font-size: 13px;
+  font-weight: 680;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  scroll-snap-align: start;
+  text-transform: uppercase;
   touch-action: manipulation;
 }
 
-.mobile-atlas-dock button span {
-  display: block;
-  font-size: 17px;
-  line-height: 1;
-  font-weight: 680;
-}
-
-.mobile-atlas-dock button small {
-  display: block;
-  margin-top: 5px;
-  color: rgb(247 247 244 / 56%);
-  font-size: 9px;
-  line-height: 1;
+.mobile-atlas-dock::-webkit-scrollbar {
+  display: none;
 }
 
 .mobile-atlas-dock .mobile-atlas-active {
@@ -4327,18 +4331,11 @@ body:has(.entry-page) {
   }
 
   .mobile-atlas-dock button {
-    min-height: 50px;
-    border-radius: 16px;
-    padding-inline: 3px;
-  }
-
-  .mobile-atlas-dock button span {
-    font-size: 15px;
-  }
-
-  .mobile-atlas-dock button small {
-    font-size: 8px;
-    letter-spacing: 0.1em;
+    min-width: 78px;
+    min-height: 48px;
+    border-radius: 999px;
+    padding-inline: 13px;
+    font-size: 12px;
   }
 
   .database-draft .grid {
@@ -4873,17 +4870,11 @@ body:has(.entry-page) {
   }
 
   .mobile-atlas-dock button {
-    min-height: 50px;
-    border-radius: 15px;
-  }
-
-  .mobile-atlas-dock button span {
-    font-size: 14px;
-  }
-
-  .mobile-atlas-dock button small {
-    margin-top: 4px;
-    font-size: 8px;
+    min-width: 74px;
+    min-height: 48px;
+    border-radius: 999px;
+    padding-inline: 12px;
+    font-size: 11.5px;
   }
 }
 

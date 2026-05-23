@@ -1844,26 +1844,20 @@ function MobileAtlasHud({
         </div>
       </section>
 
-      <nav className="mobile-atlas-dock" aria-label="Mobile Atlas Navigation">
+      <nav className="mobile-atlas-dock" aria-label="Mobile Atlas Filter und Navigation">
         <button type="button" className={!activeTagLayer ? 'mobile-atlas-active' : ''} onClick={(event) => stopAndRun(event, () => onSelectTagLayer(null))} aria-pressed={!activeTagLayer}>
-          <span>Alle</span>
-          <small>Ebene</small>
+          Alle
         </button>
-        <button type="button" className={activeTagLayer === 'material' ? 'mobile-atlas-active' : ''} onClick={(event) => stopAndRun(event, () => onSelectTagLayer('material'))} aria-pressed={activeTagLayer === 'material'}>
-          <span>Mat</span>
-          <small>Stoff</small>
-        </button>
-        <button type="button" className={activeTagLayer === 'landscape' ? 'mobile-atlas-active' : ''} onClick={(event) => stopAndRun(event, () => onSelectTagLayer('landscape'))} aria-pressed={activeTagLayer === 'landscape'}>
-          <span>Land</span>
-          <small>Raum</small>
-        </button>
+        {tagLayerDefinitions.map((layer) => (
+          <button key={layer.id} type="button" className={activeTagLayer === layer.id ? 'mobile-atlas-active' : ''} onClick={(event) => stopAndRun(event, () => onSelectTagLayer(layer.id))} aria-pressed={activeTagLayer === layer.id}>
+            {layer.label}
+          </button>
+        ))}
         <button type="button" className={showRelations ? 'mobile-atlas-active' : ''} onClick={(event) => stopAndRun(event, onToggleRelations)} aria-pressed={showRelations}>
-          <span>Rel</span>
-          <small>Netz</small>
+          Netz
         </button>
         <button type="button" className={databaseOpen ? 'mobile-atlas-active' : ''} onClick={(event) => stopAndRun(event, onToggleDatabase)} aria-pressed={databaseOpen}>
-          <span>DB</span>
-          <small>Archiv</small>
+          KosmoData
         </button>
       </nav>
     </div>
