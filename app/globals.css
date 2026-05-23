@@ -1206,6 +1206,10 @@ body:has(.entry-page) {
   background: rgb(247 247 244 / 88%);
 }
 
+.cosmos-mobile-web .screen-cosmos-cursor {
+  display: none;
+}
+
 .cosmos-moving .screen-cosmos-cursor {
   opacity: 0.22;
 }
@@ -2491,7 +2495,7 @@ body:has(.entry-page) {
 
 .mobile-atlas-shell {
   position: fixed;
-  inset: auto max(var(--ui-safe-edge), env(safe-area-inset-right)) max(10px, calc(env(safe-area-inset-bottom) + 8px)) max(var(--ui-safe-edge), env(safe-area-inset-left));
+  inset: auto max(var(--ui-safe-edge), env(safe-area-inset-right)) max(18px, calc(env(safe-area-inset-bottom) + 14px)) max(var(--ui-safe-edge), env(safe-area-inset-left));
   z-index: 38;
   display: none;
   gap: 10px;
@@ -3562,6 +3566,7 @@ body:has(.entry-page) {
   border: 0;
   cursor: none !important;
   font: inherit;
+  touch-action: manipulation;
 }
 
 .intro-gate,
@@ -3764,6 +3769,7 @@ body:has(.entry-page) {
     rgb(5 5 5 / 82%);
   color: #f7f7f4;
   text-align: left;
+  touch-action: manipulation;
   transform: translate(calc(-50% + var(--station-x)), calc(-50% + var(--station-y)));
   box-shadow: 0 18px 42px rgb(0 0 0 / 32%), inset 0 1px 0 rgb(247 247 244 / 6%);
   backdrop-filter: blur(10px);
@@ -4354,7 +4360,7 @@ body:has(.entry-page) {
   .mobile-atlas-time {
     grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.1fr);
     padding: 8px 10px;
-    min-height: 50px;
+    min-height: 46px;
   }
 
   .mobile-atlas-time em {
@@ -4370,7 +4376,7 @@ body:has(.entry-page) {
     gap: 7px;
     border-radius: 16px;
     padding: 7px;
-    min-height: 54px;
+    min-height: 50px;
   }
 
   .mobile-atlas-gesture span {
@@ -4393,7 +4399,7 @@ body:has(.entry-page) {
 
   .mobile-atlas-dock button {
     min-width: 78px;
-    min-height: 48px;
+    min-height: 46px;
     border-radius: 999px;
     padding-inline: 13px;
     font-size: 12px;
@@ -4928,7 +4934,7 @@ body:has(.entry-page) {
   .mobile-atlas-time {
     border-radius: 17px;
     padding: 8px 10px;
-    min-height: 48px;
+    min-height: 44px;
   }
 
   .mobile-atlas-dock {
@@ -4939,7 +4945,7 @@ body:has(.entry-page) {
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
     padding: 6px 7px;
-    min-height: 52px;
+    min-height: 48px;
   }
 
   .mobile-atlas-gesture div {
@@ -4963,7 +4969,7 @@ body:has(.entry-page) {
 
   .mobile-atlas-dock button {
     min-width: 74px;
-    min-height: 48px;
+    min-height: 44px;
     border-radius: 999px;
     padding-inline: 12px;
     font-size: 11.5px;

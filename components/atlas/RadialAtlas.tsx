@@ -2028,6 +2028,20 @@ function dominantSpanForYear(year: number) {
 }
 
 function IntroGate({ state, onStart }: { state: IntroState; onStart: () => void }) {
+  const lastTouchStartRef = useRef(0);
+
+  function startFromTouch(event: ReactTouchEvent<HTMLElement>) {
+    lastTouchStartRef.current = Date.now();
+    event.preventDefault();
+    event.stopPropagation();
+    onStart();
+  }
+
+  function startFromClick() {
+    if (Date.now() - lastTouchStartRef.current < 500) return;
+    onStart();
+  }
+
   if (state === 'hub') {
     return (
       <section
@@ -2059,7 +2073,8 @@ function IntroGate({ state, onStart }: { state: IntroState; onStart: () => void 
     <button
       type="button"
       className="intro-gate absolute inset-0 z-30 flex items-center justify-center bg-[#050505]/10 text-center"
-      onClick={onStart}
+      onTouchStart={startFromTouch}
+      onClick={startFromClick}
       onWheel={(event) => {
         event.preventDefault();
         onStart();
@@ -2114,6 +2129,7 @@ function OrbitMenuBackdrop({ mode }: { mode: 'intro' | 'hub' }) {
 }
 
 function ModuleHub({ onOpenKosmoData }: { onOpenKosmoData: () => void }) {
+  const lastTouchActionRef = useRef(0);
   const modules: Array<{
     id: string;
     name: string;
@@ -2196,8 +2212,16 @@ function ModuleHub({ onOpenKosmoData }: { onOpenKosmoData: () => void }) {
             className={`module-station ${isReady ? 'module-station-ready' : 'module-station-planned'}`}
             style={{ '--station-x': `${module.x}px`, '--station-y': `${module.y}px`, '--station-x-mobile': `${module.xMobile}px`, '--station-y-mobile': `${module.yMobile}px`, '--station-accent': module.accent } as CSSProperties}
             disabled={!isReady}
+            onTouchStart={(event) => {
+              lastTouchActionRef.current = Date.now();
+              event.preventDefault();
+              event.stopPropagation();
+              if (!isReady) return;
+              module.onClick?.();
+            }}
             onClick={(event) => {
               event.stopPropagation();
+              if (Date.now() - lastTouchActionRef.current < 500) return;
               if (!isReady) return;
               module.onClick?.();
             }}
