@@ -187,3 +187,13 @@ It does not run a real OCR engine yet and does not clean images yet; V1 is a
 safe classifier/review-pack generator. The public website can show the planned
 capability in the Database/KosmoData UI without accepting real uploads until
 authentication, storage quotas and rights review are ready.
+
+Smoke test:
+
+```bash
+npm run kosmodata:book-ingest:smoke
+```
+
+The smoke test creates a tiny gitignored fixture in `archive-inbox/books/`,
+runs the local ingest and asserts that the output remains private, metadata-only
+and review-pack based.
