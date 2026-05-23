@@ -14888,8 +14888,8 @@
     ],
     "short_description": "Villa Noailles ist im PDF-Framework als thing-modernity / movement verortet und bildet einen wichtigen Knoten der Architektur- und Stadtgeschichte.",
     "source_quality": "lecture_pdf",
-    "one_sentence": "Villa Noailles ist als Bauwerk in Hyeres, France im Jahr 1928 im Architecture Cosmos verortet und verknuepft moderne Villa, Bewegung, Freizeit, kubistischen Garten und avantgardistische Wohnkultur.",
-    "full_description": "Villa Noailles verbindet moderne Wohnarchitektur, mediterrane Topografie, Kunstsammlung, Gartenraum und avantgardistische Lebensform. Mallet-Stevens entwickelt das Haus nicht als ein einzelnes manifestohaftes Objekt, sondern als gegliedertes Ensemble aus Terrassen, Wegen, Licht, Bewegung und domestic lifestyle. Der kubistische Garten von Gabriel Guevrekian erweitert die Architektur in ein abstraktes Freiraumdiagramm. Im Architecture Cosmos bildet Villa Noailles den dritten Pol des modernen Villenclusters neben Villa Savoye und Haus Tugendhat: weniger Fuenf-Punkte-Manifest oder Materialraum, sondern ein Netzwerk aus Bewegung, Freizeit, Kunst, Landschaft und frueher moderner Wohninszenierung.",
+    "one_sentence": "Villa Noailles macht die moderne Villa als bewegtes Ensemble aus Haus, Terrassen, Kunst, Freizeit, Hanglage und kubistischem Garten lesbar.",
+    "full_description": "Villa Noailles ist keine isolierte weiße Moderne-Ikone, sondern ein über Jahre erweitertes Wohn-, Kunst- und Freizeitensemble am Hang über Hyères. Robert Mallet-Stevens entwickelt für Charles und Marie-Laure de Noailles ein rationalistisch reduziertes Haus aus kubischen Volumen, Dachterrassen, Licht, Wegen und Blickachsen; Gabriel Guévrékian ergänzt mit dem kubistischen Garten ein präzises abstraktes Freiraumdiagramm. Die Villa verbindet private Wohnkultur, Mäzenatentum, avantgardistische Kunstproduktion und mediterrane Topografie. Architektonisch relevant ist gerade diese Mischung: Bewegung ersetzt die klassische Front, Terrassen ersetzen den geschlossenen Block, und das Haus wird zum kuratierten Apparat für modernes Leben, Kunst, Körper, Sonne und Landschaft.",
     "media": [
       {
         "type": "exterior",
@@ -14933,16 +14933,26 @@
       "theme:avant-garde-domesticity",
       "theme:leisure",
       "period:early-modernism",
-      "analysis:model-ready"
+      "analysis:model-ready",
+      "source:villa-noailles-official",
+      "source:ministere-culture-pop",
+      "source:ville-hyeres",
+      "heritage:monument-historique",
+      "heritage:jardin-remarquable",
+      "material:rendered-masonry",
+      "material:reinforced-concrete",
+      "topography:hillside",
+      "program:artist-patron-house",
+      "program:contemporary-art-center"
     ],
     "database_profile": {
       "status": "reviewed",
       "r2_prefix": "entries/villa-noailles",
-      "source_count": 1,
+      "source_count": 6,
       "media_count": 4,
       "model_count": 3,
       "analysis_count": 7,
-      "tag_count": 11
+      "tag_count": 21
     },
     "model_assets": [
       {
@@ -15099,11 +15109,63 @@
       },
       {
         "analysis_type": "material_system",
-        "summary": "Material system planned for database filters: materials require source review.",
-        "review_status": "draft"
+        "summary": "Die Materiallesart bleibt bewusst quellenkritisch: Die offizielle Mérimée-Notiz nennt verputzte traditionelle Mauerwerkskonstruktion mit einzelnen Stahlbetonelementen. Für das 3D-Modell werden deshalb Putzkörper, Terrassenplatten, Öffnungen, Gartenflächen und spätere Restaurierungsschichten getrennt geführt.",
+        "review_status": "reviewed",
+        "data": {
+          "primary_materials": [
+            "rendered_masonry",
+            "reinforced_concrete"
+          ],
+          "secondary_materials": [
+            "glass",
+            "terrace_roof",
+            "garden_surfaces"
+          ],
+          "uncertainty": "Detailed conservation drawings and material reports still required before precise public model release."
+        }
       }
     ],
     "source_candidates": [
+      {
+        "source_type": "official_project_page",
+        "title": "Villa Noailles Hyères / official site",
+        "url": "https://villanoailles.com/",
+        "reliability_level": "verified",
+        "rights_status": "public_metadata_only",
+        "notes": "Official current institutional source for visitor status, address, cultural role and public-safe project context. Public use: facts, links and own summary only."
+      },
+      {
+        "source_type": "official_heritage_record",
+        "title": "POP Mérimée / Villa Marie-Laure-de-Noailles ou château Saint-Bernard",
+        "url": "https://pop.culture.gouv.fr/notice/merimee/PA00081651",
+        "reliability_level": "verified",
+        "rights_status": "open_government_metadata",
+        "notes": "French Ministry of Culture heritage record. Public use: factual metadata, monument status, authorship, protection dates and paraphrased material/program notes."
+      },
+      {
+        "source_type": "official_culture_page",
+        "title": "Ministère de la Culture / Villa Noailles Hyères",
+        "url": "https://www.culture.gouv.fr/regions/drac-provence-alpes-cote-d-azur/politique-et-actions-culturelles/le-label-maison-des-illustres-en-provence-alpes-cote-d-azur/villa-noailles-hyeres-83",
+        "reliability_level": "verified",
+        "rights_status": "public_metadata_only",
+        "notes": "Institutional summary for Maison des Illustres, rationalist principles, terraces/light and current cultural use. Public use: own summary and link."
+      },
+      {
+        "source_type": "municipal_context",
+        "title": "Ville d'Hyères / Monuments et sites / Villa Noailles",
+        "url": "https://hyeres.fr/monuments-et-sites/",
+        "reliability_level": "verified",
+        "rights_status": "public_metadata_only",
+        "notes": "Municipal context for siting, commission, occupation from 1925, extensions to 1933, avant-garde network and city ownership/restoration context."
+      },
+      {
+        "source_type": "official_collection_context",
+        "title": "Villa Noailles / Collections, the architecture of the villa Noailles",
+        "url": "https://villanoailles.com/en/expositions/collections-l-architecture-de-la-villa-noailles",
+        "reliability_level": "verified",
+        "rights_status": "public_metadata_only",
+        "notes": "Official exhibition context for architectural image history, modern silhouette, restoration phases and art-center transformation. Public use: link and own summary only."
+      },
       {
         "source_type": "image_source",
         "title": "Wikimedia Commons hero candidate / Villa Noailles",
@@ -15135,50 +15197,50 @@
       ]
     },
     "architecture_text": {
-      "headline": "Villa Noailles: Moderne als Bewegung durch Haus, Garten und Blick",
-      "overview": "Villa Noailles wird als Gebäude verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und Hyeres, France. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "headline": "Villa Noailles: Moderne als begehbare Kulturmaschine am Hang",
+      "overview": "Villa Noailles wird als Terrassenhaus, Künstlerhaus und Landschaftsapparat gelesen. Nicht ein einzelnes modernes Objekt steht im Zentrum, sondern ein Geflecht aus Mäzenatentum, Bewegung, Licht, Dachterrassen, Garten und mediterraner Topografie.",
       "chapters": [
         {
           "title": "Architektonische Lesart",
-          "text": "Villa Noailles gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Die räumliche Ordnung ist episodisch und kinetisch: Die Villa wird über Räume, Terrassen, Treppen, Blicke und Gartenfragmente erfahren, nicht als durchgehender freier Grundriss. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie moderne Objektkultur, movement, Alltagswohnen, moderne Villa, leisure als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
-          "source_basis": "analysis layer: spatial_order; review status: reviewed",
-          "review_status": "draft_review"
+          "text": "Villa Noailles ist weniger ein abgeschlossenes Hausbild als eine Choreografie moderner Lebensformen. Mallet-Stevens organisiert die Villa als gestaffeltes Ensemble aus kubischen Baukörpern, Dachterrassen, Zimmerfolgen, Blickachsen und Freiräumen. Der architektonische Kern liegt in der Bewegung: Wohnen, Kunst, Gäste, Sport, Sonne und Aussicht werden nicht in einer repräsentativen Hauptfront gesammelt, sondern über Wege, Terrassen und Übergänge verteilt.",
+          "source_basis": "official site, POP/Mérimée, Ville d'Hyères, ETH lecture notes",
+          "review_status": "source_enriched_review"
         },
         {
           "title": "Material und Tragwerk",
-          "text": "Das Materialsystem muss noch quellenbasiert präzisiert werden. Die strukturelle Lesart versteht Villa Noailles als gestuftes System aus kubischen Körpern, Terrassen und Stützmauerbezügen, nicht als reine Einzelbox. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
-          "source_basis": "analysis layer: material_system; review status: draft",
-          "review_status": "draft_review"
+          "text": "Die Villa sollte nicht als rein abstrakte weiße Maschine gelesen werden. Der POP/Mérimée-Datensatz beschreibt eine traditionelle verputzte Mauerwerkskonstruktion mit einzelnen Stahlbetonelementen. Gerade diese Mischung ist für die Datenbank wichtig: Der moderne Ausdruck entsteht aus Putzflächen, Terrassenplatten, Öffnungen, Dachflächen, Stützmauerlogik und Gartenkörpern, nicht aus einem vollständig industriellen System. Für Blender werden deshalb Material- und Struktur-Layer bewusst getrennt geführt.",
+          "source_basis": "POP/Mérimée material note and model-layer review",
+          "review_status": "source_enriched_review"
         },
         {
           "title": "Raumordnung",
-          "text": "Die räumliche Ordnung ist episodisch und kinetisch: Die Villa wird über Räume, Terrassen, Treppen, Blicke und Gartenfragmente erfahren, nicht als durchgehender freier Grundriss. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
-          "source_basis": "analysis layer: spatial_order; review status: reviewed",
-          "review_status": "draft_review"
+          "text": "Die Raumordnung ist episodisch. Statt eines einzigen freien Grundrisses entsteht eine Folge von Innenräumen, Außenräumen, Aufenthaltsorten, Servicezonen, Terrassen und Aussichtspositionen. Die späteren Erweiterungen bis in die 1930er-Jahre verstärken diesen Charakter eines wachsenden Kultur- und Freizeitapparats. Die Villa wird dadurch zu einem räumlichen Netzwerk, in dem private Wohnkultur und öffentliche Avantgarde bereits ineinander greifen.",
+          "source_basis": "official history, municipal context, architecture analysis layer",
+          "review_status": "source_enriched_review"
         },
         {
           "title": "Tektonik",
-          "text": "Die tektonische Lesart trennt Baukörper, Terrassen, Dachflächen, Wegeführung, Gartengeometrie und helle Oberflächen. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
-          "source_basis": "analysis layer: tectonics; review status: draft",
-          "review_status": "draft_review"
+          "text": "Tektonisch arbeitet Villa Noailles mit präzisen Gegensätzen: schwere Hang- und Stützsituationen gegen scheinbar leichte, glatt verputzte Kuben; geschlossene Volumen gegen offene Terrassen; gerade Rationalität gegen die abstrakte Geometrie des kubistischen Gartens von Gabriel Guévrékian. Das Modell sollte diese Schichten nicht verschmelzen, sondern als Hauskörper, Terrassen, Gartenflächen, Wege, Öffnungen und spätere Restaurierungszonen einzeln lesbar machen.",
+          "source_basis": "POP/Mérimée, official collection context, model taxonomy",
+          "review_status": "source_enriched_review"
         },
         {
           "title": "Kontext",
-          "text": "Villa Noailles gehört zu Hyeres, France. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
-          "source_basis": "entry location metadata",
-          "review_status": "draft_review"
+          "text": "Der Ort ist ein aktiver Bestandteil des Projekts. Die Villa liegt am Hang oberhalb von Hyères, im Kontext des Clos Saint-Bernard und der ehemaligen mittelalterlichen Burganlage. Mediterranes Licht, Aussicht, Topografie und Gartenräume formen den Entwurf ebenso stark wie die Innenräume. Heute verschiebt sich die Lesart zusätzlich: Aus dem privaten Mäzenatenhaus wurde ein öffentlich zugängliches Kunstzentrum, dessen Architektur selbst Teil der Sammlung und Vermittlung geworden ist.",
+          "source_basis": "Ville d'Hyères, official visitor information, POP/Mérimée",
+          "review_status": "source_enriched_review"
         },
         {
           "title": "Relevanz",
-          "text": "Villa Noailles ist als Referenz wichtig, weil source:lecture pdf, course:architekturgeschichte eth, typology:modern villa, typology:artist house, spatial:movement sequence, spatial:terrace system, landscape:cubist garden, theme:avant garde domesticity nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
-          "source_basis": "derived from entry metadata and Brain quality rules",
-          "review_status": "draft_review"
+          "text": "Für Architecture Cosmos ist Villa Noailles ein Schlüsselprojekt der frühen Moderne, weil es moderne Architektur nicht nur als Form, sondern als kulturelle Infrastruktur zeigt. Die Villa verbindet Mäzenatentum, Kunst, Film, Design, Garten, Körperkultur und Wohnen. Im Vergleich zu Villa Savoye oder Haus Tugendhat ist sie weniger Manifest und mehr Milieu: ein räumliches Labor für avantgardistische Lebensweisen. Genau deshalb ist sie für Filter wie Artist House, Terrassensystem, kubistischer Garten, frühe Moderne, Materialschichtung und Bewegungssequenz besonders wertvoll.",
+          "source_basis": "source-enriched database profile and comparative atlas relations",
+          "review_status": "source_enriched_review"
         }
       ],
       "language": "de",
       "generator": "cosmos-generate-architecture-text",
       "generated_at": "2026-05-21T17:59:19.050Z",
-      "review_status": "needs_owner_review",
+      "review_status": "source_enriched_review",
       "source_basis": [
         {
           "type": "source_document",
@@ -15190,9 +15252,91 @@
           "value": "https://commons.wikimedia.org/wiki/File:Hy%C3%A8res_(83)_-_Villa_Noailles_-_Entr%C3%A9e.jpg",
           "reliability_level": "secondary_source",
           "rights_status": "licensed"
+        },
+        {
+          "type": "official_project_page",
+          "title": "Villa Noailles Hyères / official site",
+          "value": "https://villanoailles.com/",
+          "reliability_level": "verified",
+          "rights_status": "public_metadata_only"
+        },
+        {
+          "type": "official_heritage_record",
+          "title": "POP Mérimée / Villa Marie-Laure-de-Noailles ou château Saint-Bernard",
+          "value": "https://pop.culture.gouv.fr/notice/merimee/PA00081651",
+          "reliability_level": "verified",
+          "rights_status": "open_government_metadata"
+        },
+        {
+          "type": "official_culture_page",
+          "title": "Ministère de la Culture / Villa Noailles Hyères",
+          "value": "https://www.culture.gouv.fr/regions/drac-provence-alpes-cote-d-azur/politique-et-actions-culturelles/le-label-maison-des-illustres-en-provence-alpes-cote-d-azur/villa-noailles-hyeres-83",
+          "reliability_level": "verified",
+          "rights_status": "public_metadata_only"
+        },
+        {
+          "type": "municipal_context",
+          "title": "Ville d'Hyères / Monuments et sites / Villa Noailles",
+          "value": "https://hyeres.fr/monuments-et-sites/",
+          "reliability_level": "verified",
+          "rights_status": "public_metadata_only"
+        },
+        {
+          "type": "official_collection_context",
+          "title": "Villa Noailles / Collections, the architecture of the villa Noailles",
+          "value": "https://villanoailles.com/en/expositions/collections-l-architecture-de-la-villa-noailles",
+          "reliability_level": "verified",
+          "rights_status": "public_metadata_only"
         }
       ]
-    }
+    },
+    "source_url": "https://villanoailles.com/",
+    "geo": {
+      "lat": 43.12373506498703,
+      "lon": 6.127432363357431,
+      "region": "Provence-Alpes-Côte d'Azur / Var / Hyères",
+      "precision": "site"
+    },
+    "materials": {
+      "primary": [
+        "rendered_masonry",
+        "reinforced_concrete"
+      ],
+      "secondary": [
+        "glass",
+        "terrace_roof",
+        "garden_surfaces"
+      ],
+      "notes": "POP/Mérimée describes traditional rendered masonry with some reinforced-concrete elements; material reading should remain review-based until detailed conservation sources are checked."
+    },
+    "program": {
+      "type": "villa",
+      "subtype": "patron_artist_house_and_contemporary_art_center",
+      "public_access": "public_guided_visit"
+    },
+    "context": {
+      "topography": "hillside",
+      "setting": "mediterranean_hilltown_above_hyeres",
+      "heritage_context": [
+        "monument_historique",
+        "jardin_remarquable",
+        "maison_des_illustres",
+        "contemporary_art_center"
+      ],
+      "landscape_relation": [
+        "terraces",
+        "cubist_garden",
+        "mediterranean_light",
+        "castle_enclosure_context"
+      ]
+    },
+    "vibes": [
+      "avant-garde domesticity",
+      "terraced modernity",
+      "patronage house",
+      "cubist garden",
+      "Mediterranean light"
+    ]
   },
   {
     "id": "narkomfin-housing",
