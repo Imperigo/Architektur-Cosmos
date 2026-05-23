@@ -13,6 +13,7 @@ npm run cosmos:text-generate -- --entry villa-savoye
 npm run cosmos:entry-build -- --entry villa-savoye --mode review
 npm run kosmodata:book-ingest -- --input archive-inbox/books/villa-savoye-book --title "Villa Savoye Source Book"
 npm run kosmodata:book-drafts -- --book villa-savoye-source-book
+npm run kosmodata:book-pipeline -- --input archive-inbox/books/villa-savoye-book --title "Villa Savoye Source Book"
 ```
 
 ## 2D Vector Plan Generator
@@ -91,6 +92,11 @@ cleared.
 Entry draft candidates under `out/book-ingestion/{book_slug}/entry-drafts/`.
 These drafts remain local review material and can be validated with
 `archive:draft` before any manual promotion.
+
+`kosmodata:book-pipeline` runs the ingest, draft generation and draft validation
+as one review sequence and writes `pipeline-report.json` plus
+`pipeline-report.md`. This is the preferred handoff when the Brain or owner
+wants to check whether a private book package is ready for manual review.
 
 ## Brain Integration
 

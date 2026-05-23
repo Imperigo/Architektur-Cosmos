@@ -3193,9 +3193,9 @@ function DatabaseBookLibraryView({
     <div className="space-y-3 text-[10px] leading-relaxed text-[#d9d9d2]">
       <div className="database-book-hero">
         <div>
-          <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#f5b342]">Buchbibliothek</div>
+          <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#f5b342]">Buchbibliothek / Private Library</div>
           <p className="mt-1 text-[10px] leading-snug text-[#f7f7f4]/78">
-            Private Buchscans, Handyfotos und PDFs werden später zu sauberen digitalen Studienkopien, OCR, Projekt-Drafts und Rechte-Reports.
+            Private Buchscans, Handyfotos und PDFs werden zu lokalen Review-Paketen. Keine Veröffentlichung, keine Cloud, keine Datenbank-Schreibung.
           </p>
         </div>
         <span>{bookReady ? 'bereit' : 'geplant'}</span>
@@ -3211,7 +3211,7 @@ function DatabaseBookLibraryView({
       >
         <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#f5b342]">Buchmaterial ablegen</div>
         <p className="mt-2 text-[9.5px] leading-snug text-[#c7c7c2]">
-          Buch-PDFs, Kapitel, Scans, Doppelseiten oder Handyfotos. Aktuell nur Browser-Vorschau; später private Quarantäne mit OCR und Projekterkennung.
+          Buch-PDFs, Kapitel, Scans, Doppelseiten oder Handyfotos. Aktuell Browser-Vorschau und lokale Pipeline: Ingest, Projekt-Drafts, Draft-Validation.
         </p>
         <label className="mt-3 inline-flex cursor-none items-center border border-[#f5b342]/70 px-3 py-1.5 text-[8.5px] uppercase tracking-[0.14em] text-[#ffe1a3]">
           Buchdateien wählen
@@ -3271,6 +3271,8 @@ function DatabaseBookLibraryView({
         title="Späterer lokaler Befehl"
         items={[
           'npm run kosmodata:book-ingest -- --input archive-inbox/books/{book_slug} --title "Buchtitel"',
+          'npm run kosmodata:book-drafts -- --book {book_slug}',
+          'npm run kosmodata:book-pipeline -- --input archive-inbox/books/{book_slug} --title "Buchtitel"',
           'Output: clean-pages, OCR, detected-projects.json, source-map.json und review-report.md'
         ]}
       />

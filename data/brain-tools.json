@@ -60,6 +60,15 @@
       "approval_required_before_public_use": true
     },
     {
+      "id": "book_pipeline",
+      "label": "Book Pipeline Review",
+      "command": "npm run kosmodata:book-pipeline -- --input archive-inbox/books/{book_slug} --title \"{book_title}\"",
+      "output_root": "out/book-ingestion/{book_slug}",
+      "review_output": "out/book-ingestion/{book_slug}/pipeline-report.md",
+      "purpose": "Run book ingest, detected project draft generation and draft validation as one local review-only pipeline.",
+      "approval_required_before_public_use": true
+    },
+    {
       "id": "research_agents",
       "label": "Database Research Agents",
       "command": "npm run database:research -- --agent all --topic {topic}",

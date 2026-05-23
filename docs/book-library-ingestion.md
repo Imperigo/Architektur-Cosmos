@@ -205,6 +205,27 @@ out/book-ingestion/{book_slug}/entry-drafts/review.md
 These drafts are still not database entries. They must pass `archive:draft`,
 manual source review and the rights gate before any public promotion.
 
+Aggregate pipeline:
+
+```bash
+npm run kosmodata:book-pipeline -- \
+  --input archive-inbox/books/villa-savoye-book \
+  --title "Villa Savoye Source Book" \
+  --project "Villa Savoye"
+```
+
+The pipeline runs book ingest, entry-draft generation and draft validation in
+one local review-only sequence. It writes:
+
+```text
+out/book-ingestion/{book_slug}/pipeline-report.json
+out/book-ingestion/{book_slug}/pipeline-report.md
+```
+
+The report is the recommended handoff artifact for manual review because it
+records the pipeline status, generated drafts, validation results and the next
+rights-safe review steps.
+
 Smoke test:
 
 ```bash

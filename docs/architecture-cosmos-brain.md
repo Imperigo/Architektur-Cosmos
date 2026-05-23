@@ -94,6 +94,7 @@ npm run cosmos:text-generate -- --entry villa-savoye
 npm run cosmos:entry-build -- --entry villa-savoye --mode review
 npm run kosmodata:book-ingest -- --input archive-inbox/books/villa-savoye-book --title "Villa Savoye Source Book"
 npm run kosmodata:book-drafts -- --book villa-savoye-source-book
+npm run kosmodata:book-pipeline -- --input archive-inbox/books/villa-savoye-book --title "Villa Savoye Source Book"
 npm run database:source-audit
 npm run database:research -- --agent all --topic "Villa Savoye"
 ```

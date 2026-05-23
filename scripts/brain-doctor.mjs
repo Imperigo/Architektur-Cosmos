@@ -29,6 +29,14 @@ const checks = [
     safe_healing: 'rerun_failed_checks_once'
   },
   {
+    id: 'kosmodata-book-smoke',
+    label: 'KosmoData book pipeline smoke',
+    command: 'npm',
+    args: ['run', 'kosmodata:book-ingest:smoke'],
+    retry: true,
+    safe_healing: 'regenerate_book_pipeline_review'
+  },
+  {
     id: 'lint',
     label: 'Lint',
     command: 'npm',
@@ -107,7 +115,8 @@ async function main() {
 
 function runCheck(check) {
   const startedAt = new Date().toISOString();
-  const result = spawnSync(check.command, check.args, {
+  const invocation = resolveInvocation(check);
+  const result = spawnSync(invocation.command, invocation.args, {
     cwd: rootDir,
     encoding: 'utf8',
     maxBuffer: 1024 * 1024 * 16
@@ -116,16 +125,32 @@ function runCheck(check) {
   return {
     id: check.id,
     label: check.label,
-    command: `${check.command} ${check.args.join(' ')}`,
+    command: invocation.display,
     safe_healing: check.safe_healing,
     started_at: startedAt,
     finished_at: new Date().toISOString(),
-    status: result.status,
+    status: result.status ?? 1,
     passed: result.status === 0,
     retried: false,
     stdout_tail: tail(result.stdout),
-    stderr_tail: tail(result.stderr),
+    stderr_tail: tail(`${result.stderr ?? ''}\n${result.error?.message ?? ''}`),
     diagnosis: diagnose(check, result)
+  };
+}
+
+function resolveInvocation(check) {
+  if (check.command !== 'npm' || !process.env.npm_execpath) {
+    return {
+      command: check.command,
+      args: check.args,
+      display: `${check.command} ${check.args.join(' ')}`
+    };
+  }
+
+  return {
+    command: process.execPath,
+    args: [process.env.npm_execpath, ...check.args],
+    display: `npm ${check.args.join(' ')}`
   };
 }
 
@@ -133,7 +158,12 @@ function diagnose(check, result) {
   if (result.status === 0) return 'passed';
 
   const output = `${result.stdout}\n${result.stderr}`.toLowerCase();
+  if (output.includes('spawnsync npm enoent') || result.error?.code === 'ENOENT') return 'npm is not available on PATH. Run Brain Doctor through npm or use the bundled Node/npm environment.';
+  if (check.id === 'build' && (output.includes('failed to load swc') || output.includes('next-swc') || output.includes('different team ids'))) {
+    return 'Local Next SWC binary failed to load because of macOS code-signature/runtime environment. Product checks passed; reinstall dependencies or run build in a clean terminal/CI.';
+  }
   if (check.id === 'build' && output.includes('type')) return 'Build failed during TypeScript or static generation. Needs code review before edits.';
+  if (check.id === 'kosmodata-book-smoke') return 'Book pipeline smoke failed. Check local book ingest, draft generation and rights-gated review output.';
   if (check.id === 'lint') return 'Lint failed. Doctor will not auto-fix tracked source files without approval.';
   if (check.id === 'ui-audit') return 'Interface audit failed. Check shared UI tokens, mobile panel rules and touch-target consistency.';
   if (check.id === 'security-check') return 'Security check failed. Treat as approval-gated P0 before publish.';
