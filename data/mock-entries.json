@@ -6626,7 +6626,10 @@
     "year_start": 1238,
     "year_end": 1358,
     "authors": [
-      "Nasrid builders"
+      "Nasrid builders",
+      "Muhammad I al-Ahmar",
+      "Yusuf I",
+      "Muhammad V"
     ],
     "city": "Granada",
     "country": "Spain",
@@ -6635,105 +6638,456 @@
       "garden_history"
     ],
     "themes": [
-      "courtyard",
-      "water",
-      "ornament",
-      "microclimate"
+      "palace_city",
+      "fortress_palace_garden",
+      "courtyard_water_system",
+      "nasrid_ornament",
+      "microclimate_design",
+      "hydraulic_landscape",
+      "world_heritage_landscape"
     ],
-    "short_description": "Palast- und Gartenlandschaft, in der Wasser, Schatten, Ornament und Hofraeume ein klimatisches und symbolisches System bilden.",
+    "short_description": "Nasridische Palaststadt auf dem Sabika-Hügel, in der Wehrmauern, Hofsequenzen, Wasserachsen, Stuckornament, Gärten und Blickbeziehungen zu einem klimatischen Raumapparat verschränkt sind.",
     "source_quality": "case_study",
-    "one_sentence": "Alhambra ist als Landschaftsprojekt in Granada, Spain im Jahr 1238 im Architecture Cosmos verortet und verknuepft courtyard, water, ornament.",
-    "full_description": "Palast- und Gartenlandschaft, in der Wasser, Schatten, Ornament und Hofraeume ein klimatisches und symbolisches System bilden. Der Eintrag wird im Atlas als Landschaftsprojekt gelesen und gehoert zur Wissensspur case study, Layer garden history. Autorenschaft / Quelle: Nasrid builders. Seine Filterebene verbindet courtyard, water, ornament, microclimate mit Jahr, Stilsektor und Relationennetz; spaeter koennen echte Fotos, Plaene, Schnitte, Quellen und Modelle direkt aus der Datenbank angeschlossen werden.",
+    "one_sentence": "Die Alhambra ist keine einzelne Palastfassade, sondern eine Palaststadt aus Festung, Hofräumen, Wassertechnik, Gartenlandschaft und ornamentaler Oberfläche, die Topografie, Klima und Herrschaft räumlich organisiert.",
+    "full_description": "Die Alhambra wird im KosmoData-Atlas als Palaststadt, Festung und Gartenlandschaft gelesen. Auf dem Sabika-Hügel über Granada verbindet sie Nasridenpaläste, Alcazaba, Generalife, Terrassen, Wasserläufe, Höfe und spätere christliche Eingriffe zu einem dichten historischen Gefüge. Architektonisch entscheidend ist der Wechsel zwischen massiver Wehrmauer und fein gearbeiteter Innenwelt: Stuck, Holzdecken, Keramik, Marmorsäulen, Muqarnas, Wasserbecken und Schatten erzeugen eine Klimamaschine, in der Raum nicht über Monumentalität allein, sondern über Sequenz, Schwelle, Reflexion und Mikroklima wirkt. Für die Datenbank ist sie ein Schlüsselobjekt, weil sich an ihr Topos, Typos und Tektonik besonders klar als Netzwerk lesen lassen: Hügel und Stadtblick, Palast/Festung/Garten als Mischtypus, massive Mauer und leichte ornamentale Haut als tektonische Spannung.",
     "media": [
       {
         "type": "exterior",
-        "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Alhambra / courtyard-water",
-        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Dawn_Charles_V_Palace_Alhambra_Granada_Andalusia_Spain.jpg/960px-Dawn_Charles_V_Palace_Alhambra_Granada_Andalusia_Spain.jpg",
-        "source_url": "https://commons.wikimedia.org/wiki/File:Dawn_Charles_V_Palace_Alhambra_Granada_Andalusia_Spain.jpg",
-        "credit": "Wikimedia Commons / Jebulon / CC0",
-        "license": "public_domain"
+        "label": "Panorama vom Mirador San Nicolas / Alhambra und Sabika-Hügel",
+        "placeholder": "Alhambra / Palaststadt, Sabika-Hügel, Granada, Generalife, Mauern",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/c/ca/Alhambra_Granada_panorama.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Alhambra_Granada_panorama.jpg",
+        "credit": "Wikimedia Commons / Robert Bovington / CC BY-SA 4.0",
+        "license": "cc_by_sa"
       },
       {
         "type": "interior",
-        "label": "Innenraum",
-        "placeholder": "Innenraum / Alhambra / courtyard-water"
+        "label": "Innenraum / Hof, Wasser und Ornament",
+        "placeholder": "Innenraum / Alhambra / Patio, Wasserbecken, Stuck, Holzdecke, Muqarnas"
       },
       {
         "type": "section",
-        "label": "Schnitt",
-        "placeholder": "Schnitt / Alhambra / courtyard-water"
+        "label": "Schnitt / Sabika-Hügel, Mauern und Wasserführung",
+        "placeholder": "Schnitt / Alhambra / Hügel, Festungsmauer, Patio-Sequenz, Generalife, Wasser"
       },
       {
         "type": "plan",
-        "label": "Grundriss",
-        "placeholder": "Grundriss / Alhambra / courtyard-water"
+        "label": "Grundriss / Palaststadt und Hofsequenzen",
+        "placeholder": "Grundriss / Alhambra / Alcazaba, Nasridenpaläste, Comares, Löwenhof, Generalife"
       }
     ],
     "source_candidates": [
       {
-        "source_type": "image_source",
-        "title": "Wikimedia Commons hero candidate / Alhambra",
-        "url": "https://commons.wikimedia.org/wiki/File:Dawn_Charles_V_Palace_Alhambra_Granada_Andalusia_Spain.jpg",
+        "source_type": "heritage_record",
+        "title": "UNESCO World Heritage Centre / Alhambra, Generalife and Albayzin, Granada",
+        "url": "https://whc.unesco.org/en/list/314",
+        "reliability_level": "primary_institutional_source",
+        "rights_status": "link_only",
+        "notes": "Primary heritage source for world-heritage boundaries, landscape relation, palatine-city reading, water/vegetation value and authenticity/integrity logic."
+      },
+      {
+        "source_type": "official_site",
+        "title": "Patronato de la Alhambra y Generalife / History",
+        "url": "https://www.alhambra-patronato.es/en/discover/alhambra-y-generalife/history",
+        "reliability_level": "primary_institutional_source",
+        "rights_status": "link_only",
+        "notes": "Official site for historical phases: Sabika Hill, Nasrid reconstruction under Muhammad I, Yusuf I and Muhammad V, Charles V transformation and monument status."
+      },
+      {
+        "source_type": "official_site",
+        "title": "Patronato de la Alhambra y Generalife / Buildings and Places",
+        "url": "https://www.alhambra-patronato.es/en/discover/alhambra-y-generalife/buildings-and-places",
+        "reliability_level": "primary_institutional_source",
+        "rights_status": "link_only",
+        "notes": "Official index of Generalife, palatial city, courts, towers, Alcazaba, Comares, Lions, Partal and water/garden components."
+      },
+      {
+        "source_type": "reference_source",
+        "title": "Britannica / Alhambra",
+        "url": "https://www.britannica.com/topic/Alhambra-fortress-Granada-Spain",
         "reliability_level": "secondary_source",
-        "rights_status": "public_domain",
-        "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC0."
+        "rights_status": "link_only",
+        "notes": "Secondary cross-check for the palace-fortress description, Nasrid period and location above Granada."
+      },
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero / Alhambra Granada panorama",
+        "url": "https://commons.wikimedia.org/wiki/File:Alhambra_Granada_panorama.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Public-safe hero image showing the Alhambra from Mirador San Nicolas. License: CC BY-SA 4.0; credit required: Robert Bovington."
       }
     ],
     "architecture_text": {
-      "headline": "Alhambra: Hof, Wasser und Ornament als Klimaarchitektur",
-      "overview": "Alhambra wird als Landschaftsprojekt verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und Granada, Spain. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "headline": "Alhambra: Wasser, Ornament und Topografie als Palaststadt",
+      "overview": "Die Alhambra ist als räumliches Geflecht zu lesen: Festung, Palast, Garten, Wasserinfrastruktur und Stadtblick bilden keine getrennten Themen, sondern ein einziges architektonisches System. Die massive Außenfigur schützt und markiert den Sabika-Hügel, während innen eine feine Sequenz aus Höfen, Schatten, Wasserbecken, Stuckflächen, Holzdecken, Keramik und Blickachsen entsteht. Ihre Bedeutung liegt nicht nur im Ornament, sondern in der Art, wie Material, Klima, Bewegung und Herrschaft als räumliche Erfahrung organisiert werden.",
       "chapters": [
         {
-          "title": "Architektonische Lesart",
-          "text": "Alhambra gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Die Alhambra organisiert Palast, Hof, Wasser, Schatten, Ornament und Aussicht als feines klimatisches und symbolisches Raumgefüge. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Hof, Wasser, Ornament, Mikroklima als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
-          "source_basis": "curated spatial reading",
-          "review_status": "draft_review"
+          "title": "These",
+          "text": "Die Alhambra zeigt Architektur als Klimainstrument: Wasser, Schatten, Reflexion, Oberfläche und Schwelle verwandeln eine befestigte Palaststadt in eine präzise atmosphärische Maschine. Ihre Stärke entsteht aus dem Gegensatz von schwerer Außenmauer und scheinbar leichter Innenwelt.",
+          "source_basis": "curated reading from UNESCO, Patronato history and buildings index",
+          "review_status": "reviewed"
         },
         {
-          "title": "Material und Tragwerk",
-          "text": "Die Alhambra verbindet Mauerwerk, Stuck, Holzdecken, Fliesen, Wasserbecken, Schatten und Hofräume zu einer leichten, klimatisch präzisen Raumstruktur. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
-          "source_basis": "curated material reading",
-          "review_status": "draft_review"
+          "title": "Netzwerk und DNA",
+          "text": "Im KosmoData-Netzwerk gehört die Alhambra zur DNA von Palaststadt, islamischem Garten, hydraulischer Landschaft und Hofhauslogik. Sie steht nahe bei Objekten, die Wasser, Achse, Garten und Herrschaft verbinden, unterscheidet sich aber durch die enge Verschränkung von Festung, Hofsequenz, Generalife-Landschaft und ornamentaler Textoberfläche.",
+          "source_basis": "database themes plus UNESCO palatine-city and landscape descriptions",
+          "review_status": "reviewed"
         },
         {
-          "title": "Raumordnung",
-          "text": "Die Alhambra organisiert Palast, Hof, Wasser, Schatten, Ornament und Aussicht als feines klimatisches und symbolisches Raumgefüge. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
-          "source_basis": "curated spatial reading",
-          "review_status": "draft_review"
+          "title": "Topos",
+          "text": "Der Sabika-Hügel ist kein neutraler Sockel. Die Lage über Granada, die Beziehung zum Albaicin, zum Darro-Tal, zu den Generalife-Gärten und zur Sierra-Nevada-Silhouette macht die Alhambra zu einem topografischen Apparat. Aussicht, Verteidigung, Wasserführung und Gartenraum sind direkt an den Ort gebunden.",
+          "source_basis": "UNESCO site description and official Patronato history",
+          "review_status": "reviewed"
+        },
+        {
+          "title": "Typos",
+          "text": "Typologisch ist die Alhambra ein Hybrid: Palast, Zitadelle, Garten, kleine Stadt und späteres Monument. Sie funktioniert deshalb nicht wie ein isoliertes Gebäude, sondern wie ein begehbares System aus Toren, Türmen, Höfen, Sälen, Wasserläufen, Gärten und städtischen Rändern.",
+          "source_basis": "Patronato buildings index and UNESCO palatine-city framing",
+          "review_status": "reviewed"
         },
         {
           "title": "Tektonik",
-          "text": "Die tektonische Lesart soll zeigen, wie Oberfläche, Tragstruktur und Fügung Stützung, Hülle, Fügung und Atmosphäre organisieren. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
-          "source_basis": "entry materials and analysis fallback",
-          "review_status": "needs_source_review"
+          "text": "Tektonisch arbeitet die Alhambra mit zwei Geschwindigkeiten. Außen dominieren Mauer, Turm, Erd- und Steinmasse; innen lösen Stuck, Holz, Keramik, Muqarnas, Marmorsäulen und Wasserflächen die Schwere in Oberfläche, Muster und Licht auf. Tragwerk und Ornament sind nicht getrennt: Die Oberfläche erklärt Macht, Poesie, Maß und Atmosphäre.",
+          "source_basis": "UNESCO material criteria and curated tectonic reading",
+          "review_status": "reviewed"
         },
         {
-          "title": "Kontext",
-          "text": "Alhambra gehört zu Granada, Spain. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
-          "source_basis": "entry location metadata",
-          "review_status": "draft_review"
+          "title": "Raumlogik",
+          "text": "Die Raumfolge lebt von Schwellen: enge Zugänge, offene Höfe, Wasserachsen, schattige Säle, gerahmte Ausblicke und kontrollierte Übergänge zwischen Öffentlichkeit und Intimität. Der Grundriss ist weniger ein einzelnes Diagramm als eine Sequenz von Zuständen, in denen Licht, Klang, Wasser und Ornament die Orientierung übernehmen.",
+          "source_basis": "official buildings/courts list and spatial analysis",
+          "review_status": "reviewed"
         },
         {
-          "title": "Relevanz",
-          "text": "Alhambra ist als Referenz wichtig, weil Hof, Wasser, Ornament, Mikroklima nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
-          "source_basis": "derived from entry metadata and Brain quality rules",
-          "review_status": "draft_review"
+          "title": "Konflikt und Kritik",
+          "text": "Die Alhambra ist zugleich Weltkulturerbe, touristisches Hochdruckobjekt und historisch überformte Palaststadt. Jede digitale Rekonstruktion muss deshalb zwischen Nasridischer Anlage, christlichen Eingriffen, Restaurierung, heutiger Besucherführung und Rechtefragen unterscheiden, statt eine scheinbar eindeutige historische Version zu behaupten.",
+          "source_basis": "Patronato historical phases and heritage-management logic",
+          "review_status": "reviewed"
+        },
+        {
+          "title": "KosmoData-Layer und 3D-Potenzial",
+          "text": "Für das 3D-Archiv eignet sich die Alhambra als Layer-Modell: Topografie des Sabika-Hügels, Wehrmauer und Türme, Palast-Hof-Sequenzen, Generalife-Gärten, Wasserinfrastruktur, Oberflächenornament und spätere Charles-V-Schicht können getrennt aufgebaut und in Blender als ein- und ausblendbare Ebenen geführt werden.",
+          "source_basis": "database model strategy plus public institutional source trail",
+          "review_status": "reviewed"
+        },
+        {
+          "title": "Entwurfsintelligenz",
+          "text": "Die wichtigste Entwurfslektion liegt in der Kopplung von Mikroklima und Bedeutung: Wasser kühlt, klingt und spiegelt; Ornament misst und verdichtet; Höfe organisieren Licht und Bewegung; Topografie erzeugt Distanz und Blick. Aus diesen Elementen entsteht eine Architektur, die nicht laut sein muss, um monumental zu wirken.",
+          "source_basis": "curated design intelligence synthesis",
+          "review_status": "reviewed"
         }
       ],
       "language": "de",
-      "generator": "cosmos-generate-architecture-text",
-      "generated_at": "2026-05-21T18:29:06.156Z",
-      "review_status": "needs_owner_review",
+      "generator": "cosmos-curated-enrichment",
+      "generated_at": "2026-05-23T19:05:00.000Z",
+      "review_status": "reviewed",
       "source_basis": [
         {
+          "type": "heritage_record",
+          "title": "UNESCO World Heritage Centre / Alhambra, Generalife and Albayzin, Granada",
+          "value": "https://whc.unesco.org/en/list/314",
+          "reliability_level": "primary_institutional_source",
+          "rights_status": "link_only"
+        },
+        {
+          "type": "official_site",
+          "title": "Patronato de la Alhambra y Generalife / History",
+          "value": "https://www.alhambra-patronato.es/en/discover/alhambra-y-generalife/history",
+          "reliability_level": "primary_institutional_source",
+          "rights_status": "link_only"
+        },
+        {
           "type": "image_source",
-          "title": "Wikimedia Commons hero candidate / Alhambra",
-          "value": "https://commons.wikimedia.org/wiki/File:Dawn_Charles_V_Palace_Alhambra_Granada_Andalusia_Spain.jpg",
+          "title": "Wikimedia Commons / Alhambra Granada panorama",
+          "value": "https://commons.wikimedia.org/wiki/File:Alhambra_Granada_panorama.jpg",
           "reliability_level": "secondary_source",
-          "rights_status": "public_domain"
+          "rights_status": "licensed"
         }
       ]
+    },
+    "source_url": "https://whc.unesco.org/en/list/314",
+    "geo": {
+      "country_code": "ES",
+      "city": "Granada",
+      "region": "Andalusia / Sabika Hill / Alhambra, Generalife and Albayzin World Heritage property",
+      "latitude": 37.1761,
+      "longitude": -3.5881,
+      "precision": "palace_city_world_heritage_landscape"
+    },
+    "materials": {
+      "primary": [
+        "rammed_earth_and_masonry_walls",
+        "stucco_ornament",
+        "tilework_zellij",
+        "carved_wood_ceilings",
+        "water_channels_and_basins"
+      ],
+      "secondary": [
+        "brick_masonry",
+        "plaster_surfaces",
+        "marble_columns",
+        "muqarnas_vaults",
+        "garden_vegetation",
+        "reflecting_pools",
+        "terrace_walls"
+      ],
+      "notes": "Material reading separates defensive mass, earthen/masonry wall systems, delicate stucco and ceramic surfaces, timber ceilings, marble columns, muqarnas, water infrastructure and garden/terrace layers."
+    },
+    "program": {
+      "type": "nasrid_palace_fortress_garden_and_world_heritage_complex",
+      "subtype": "palace_city_with_courtyards_water_gardens_and_defensive_citadel",
+      "public_access": "managed_world_heritage_monument_and_museum_visit",
+      "components": [
+        "Alcazaba",
+        "Nasrid palaces",
+        "Mexuar",
+        "Comares Palace",
+        "Court of the Myrtles",
+        "Court of the Lions",
+        "Partal",
+        "Generalife gardens",
+        "water stairway and channels",
+        "towers and defensive walls",
+        "Charles V Palace layer",
+        "Albayzin landscape relation"
+      ]
+    },
+    "context": {
+      "topography": "sabika_hill_above_granada",
+      "setting": "nasrid_palace_city_generalife_and_albayzin_world_heritage_landscape",
+      "landscape_relations": [
+        "Sabika Hill above Granada",
+        "Albayzin on the adjacent hill",
+        "Darro valley separation",
+        "Generalife gardens to the east",
+        "views toward Granada and Sierra Nevada",
+        "irrigation and garden landscape"
+      ],
+      "urban_context": [
+        "Nasrid capital and court",
+        "palatine city and military fortress",
+        "Christian Royal Household after 1492",
+        "Charles V Renaissance palace intervention",
+        "World Heritage monument management",
+        "high tourism and conservation pressure"
+      ],
+      "construction_logic": [
+        "fortress_wall_mass",
+        "courtyard_sequence",
+        "hydraulic_channels_and_basins",
+        "stucco_tile_wood_surface_system",
+        "muqarnas_and_light_modulation",
+        "garden_terrace_microclimate"
+      ]
+    },
+    "vibes": [
+      "water_shadow_reflection",
+      "fortress_outside_delicate_inside",
+      "palace_city_as_landscape",
+      "ornament_as_atmospheric_structure",
+      "threshold_sequence"
+    ],
+    "database_tags": [
+      "source:unesco-world-heritage",
+      "source:alhambra-patronato",
+      "source:britannica-crosscheck",
+      "source:wikimedia-commons-hero",
+      "typology:palace-city",
+      "typology:fortress-palace-garden",
+      "program:nasrid-royal-residence",
+      "material:stucco-ornament",
+      "material:tilework-zellij",
+      "material:water-channels",
+      "structure:rammed-earth-and-masonry",
+      "spatial:patio-sequence",
+      "spatial:water-axis",
+      "topos:sabika-hill",
+      "climate:shade-water-microclimate",
+      "heritage:world-heritage",
+      "critique:tourism-fragility-water-maintenance",
+      "blender:patio-water-layer-candidate",
+      "blender:ornament-surface-layer-candidate"
+    ],
+    "model_assets": [
+      {
+        "model_type": "site_model",
+        "title": "Alhambra Sabika Hill, Albayzin and Generalife site model",
+        "r2_key": "entries/alhambra/models/site.glb",
+        "format": "glb",
+        "lod_level": "preview",
+        "source_basis": "Diagrammatic site model separating Sabika Hill, Granada, Albayzin, Darro valley, Generalife gardens and palace-city walls from UNESCO and official Patronato descriptions; not a measured survey.",
+        "generation_method": "procedural",
+        "review_status": "draft",
+        "confidence_score": 0.58
+      },
+      {
+        "model_type": "structure_model",
+        "title": "Alhambra fortress wall, courtyard and hydraulic structure model",
+        "r2_key": "entries/alhambra/models/structure.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "Layer model for defensive walls, towers, courtyard sequence, water channels, basins and garden terraces; exact geometry requires verified plans and survey data.",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.5
+      },
+      {
+        "model_type": "tectonic_model",
+        "title": "Alhambra ornament, water and microclimate study model",
+        "r2_key": "entries/alhambra/models/tectonic.glb",
+        "format": "glb",
+        "lod_level": "study",
+        "source_basis": "Study model separating masonry mass, stucco/tile/wood surface zones, muqarnas volumes, water reflections, shade fields and historical transformation layers. Public export remains diagrammatic until source precision and rights are cleared.",
+        "generation_method": "diagrammatic_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.48
+      }
+    ],
+    "analysis_layers": [
+      {
+        "analysis_type": "structure",
+        "summary": "Die Alhambra verbindet defensive Mauer- und Turmmasse mit einer innenliegenden Palaststadt aus Höfen, Sälen, Wasserwegen und späteren historischen Schichten.",
+        "data": {
+          "structural_tags": [
+            "fortress_wall_mass",
+            "towers",
+            "palace_city",
+            "courtyard_sequence",
+            "charles_v_later_layer"
+          ],
+          "blender_layer": "fortress_mass_and_palace_city_structure",
+          "observations": [
+            "Defensive mass, towers and walls define the exterior image and protect the palatine city.",
+            "Interior spatial structure is organized by patios, thresholds and water corridors rather than by one monumental axis.",
+            "The Charles V layer must be separated as a later Renaissance intervention."
+          ]
+        },
+        "r2_key": "entries/alhambra/analysis/structure.json",
+        "review_status": "reviewed"
+      },
+      {
+        "analysis_type": "spatial_order",
+        "summary": "Die Raumordnung entsteht aus Schwellen, Patio-Sequenzen, Wasserachsen, Schatten, Spiegelungen und gerahmten Blicken in Richtung Granada, Generalife und Landschaft.",
+        "data": {
+          "spatial_tags": [
+            "patio_sequence",
+            "water_axis",
+            "thresholds",
+            "framed_views",
+            "garden_terrace_microclimate"
+          ],
+          "model_layer": "courtyard_water_and_threshold_sequence",
+          "observations": [
+            "Courts and basins act as spatial regulators for movement, climate, view and acoustic atmosphere.",
+            "The sequence alternates compression, release, shade, reflection and framed distance.",
+            "Generalife extends the palace logic into garden, terrace and productive hydraulic landscape."
+          ]
+        },
+        "r2_key": "entries/alhambra/analysis/spatial_order.json",
+        "review_status": "reviewed"
+      },
+      {
+        "analysis_type": "material_system",
+        "summary": "Das Materialsystem trennt schwere Außenmasse von feiner Innenhaut: Mauerwerk, Stuck, Zellij-Fliesen, Holzdecken, Marmorsäulen, Muqarnas, Wasser und Vegetation wirken zusammen.",
+        "data": {
+          "material_tags": [
+            "rammed_earth_and_masonry_walls",
+            "stucco_ornament",
+            "tilework_zellij",
+            "water_channels",
+            "carved_wood_ceilings"
+          ],
+          "model_layers": [
+            "wall_mass",
+            "ornament_surfaces",
+            "water",
+            "vegetation",
+            "later_interventions"
+          ],
+          "observations": [
+            "Heavy wall mass contrasts with delicate stucco, tilework, timber ceilings and muqarnas surfaces.",
+            "Water is treated as spatial material: it cools, reflects, sounds and marks axes.",
+            "Material layers should be encoded separately for Blender filtering: wall mass, surface ornament, water, vegetation and later interventions."
+          ]
+        },
+        "r2_key": "entries/alhambra/analysis/material_system.json",
+        "review_status": "reviewed"
+      },
+      {
+        "analysis_type": "typology",
+        "summary": "Typologisch überlagert die Alhambra Palaststadt, Festung, Garten, hydraulische Landschaft und heutiges Welterbe-Monument; Topos und Typos sind nicht voneinander lösbar.",
+        "data": {
+          "typology_tags": [
+            "palace_city",
+            "fortress_palace_garden",
+            "world_heritage_landscape",
+            "hydraulic_landscape"
+          ],
+          "topos_tags": [
+            "sabika_hill",
+            "darro_valley",
+            "albayzin_relation",
+            "generalife_relation"
+          ],
+          "tectonic_reading": "mass outside, atmospheric surface inside, with water as active connective layer",
+          "observations": [
+            "Topos: Sabika Hill, Darro valley, Albayzin and Generalife form the spatial field.",
+            "Typos: palace city, fortress, garden and world-heritage monument overlap.",
+            "Tektonik: mass outside, atmospheric surface inside, with water as active connective layer."
+          ]
+        },
+        "r2_key": "entries/alhambra/analysis/typology.json",
+        "review_status": "reviewed"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "summary": "Starke KosmoData-Filter sind Wasserinfrastruktur, islamischer Garten, Palaststadt, Ornament, Mikroklima, Welterbe, Topografie und historische Überlagerung.",
+        "data": {
+          "filter_tags": [
+            "water_infrastructure",
+            "islamic_garden",
+            "palace_city",
+            "ornament",
+            "microclimate",
+            "world_heritage",
+            "topographic_architecture"
+          ],
+          "relation_candidates": [
+            "versailles-gardens",
+            "villa-d-este",
+            "sforzinda",
+            "hagia-sophia"
+          ],
+          "blender_collections": [
+            "site",
+            "mass",
+            "patios",
+            "water",
+            "gardens",
+            "ornament",
+            "later_transformations",
+            "uncertainty_zones"
+          ],
+          "observations": [
+            "Strong filter candidates: water infrastructure, Islamic garden, palace-city, ornament, microclimate, world heritage, topographic architecture.",
+            "Useful comparisons: Versailles for controlled landscape, Villa d’Este for water as architecture, Sforzinda for city as ideal construct, and Hagia Sophia for surface/light and historical transformation.",
+            "For Blender, separate collections should be site, mass, patios, water, gardens, ornament, later transformations and uncertainty zones."
+          ]
+        },
+        "r2_key": "entries/alhambra/analysis/filter_classification.json",
+        "review_status": "reviewed"
+      }
+    ],
+    "database_profile": {
+      "status": "reviewed",
+      "r2_prefix": "entries/alhambra",
+      "source_count": 5,
+      "media_count": 4,
+      "model_count": 3,
+      "analysis_count": 5,
+      "tag_count": 19,
+      "rights_summary": "Public text, metadata and CC-BY-SA hero are usable with attribution/share-alike awareness; official UNESCO/Patronato/Britannica images and plans remain link-only unless licensed; 3D geometry remains diagrammatic until measured public data is cleared.",
+      "updated_at": "2026-05-23T19:05:00.000Z"
     }
   },
   {
