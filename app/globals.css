@@ -2500,6 +2500,14 @@ body:has(.entry-page) {
   -webkit-user-select: none;
   max-height: 46dvh;
   overflow: visible;
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.cosmos-mobile-web:has(.project-search-open) .mobile-atlas-shell,
+.cosmos-mobile-web:has(.project-dev-open) .mobile-atlas-shell {
+  opacity: 0.14;
+  pointer-events: none;
+  transform: translateY(8px);
 }
 
 .mobile-atlas-time {
@@ -2516,6 +2524,7 @@ body:has(.entry-page) {
   color: #f7f7f4;
   backdrop-filter: blur(10px);
   box-shadow: 0 18px 46px rgb(0 0 0 / 36%);
+  min-height: 54px;
 }
 
 .mobile-atlas-kicker,
@@ -2584,6 +2593,7 @@ body:has(.entry-page) {
   padding: 8px;
   backdrop-filter: blur(10px);
   box-shadow: 0 14px 34px rgb(0 0 0 / 26%);
+  min-height: 58px;
 }
 
 .mobile-atlas-gesture p {
@@ -4344,6 +4354,7 @@ body:has(.entry-page) {
   .mobile-atlas-time {
     grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.1fr);
     padding: 8px 10px;
+    min-height: 50px;
   }
 
   .mobile-atlas-time em {
@@ -4359,6 +4370,7 @@ body:has(.entry-page) {
     gap: 7px;
     border-radius: 16px;
     padding: 7px;
+    min-height: 54px;
   }
 
   .mobile-atlas-gesture span {
@@ -4916,6 +4928,7 @@ body:has(.entry-page) {
   .mobile-atlas-time {
     border-radius: 17px;
     padding: 8px 10px;
+    min-height: 48px;
   }
 
   .mobile-atlas-dock {
@@ -4926,6 +4939,7 @@ body:has(.entry-page) {
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
     padding: 6px 7px;
+    min-height: 52px;
   }
 
   .mobile-atlas-gesture div {
@@ -4940,11 +4954,11 @@ body:has(.entry-page) {
   }
 
   .mobile-atlas-gesture span {
-    font-size: 10px;
+    font-size: 9.5px;
   }
 
   .mobile-atlas-gesture small {
-    font-size: 8px;
+    display: none;
   }
 
   .mobile-atlas-dock button {
