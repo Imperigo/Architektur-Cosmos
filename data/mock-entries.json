@@ -22127,9 +22127,10 @@
     "year_start": 2002,
     "authors": [
       "Dipol Landschaftsarchitekten",
-      "Hunziker"
+      "Christopher T. Hunziker",
+      "Müller Sigrist Architekten"
     ],
-    "city": "Zurich",
+    "city": "Zürich",
     "country": "Switzerland",
     "style_sector": "sustainable_architecture",
     "lecture_cluster": [
@@ -22138,17 +22139,25 @@
     "themes": [
       "urban-repair",
       "climate-landscape",
-      "public-space"
+      "public-space",
+      "leutschenbach",
+      "baumtopf",
+      "leutschenlicht",
+      "urban-square-park",
+      "contaminated-hill",
+      "climate-upgrade",
+      "rainwater-management",
+      "public-stage"
     ],
     "short_description": "Leutschenpark ist im PDF-Framework als urban-repair / climate-landscape verortet und bildet einen wichtigen Knoten der Architektur- und Stadtgeschichte.",
     "source_quality": "lecture_pdf",
-    "one_sentence": "Leutschenpark ist als Landschaftsprojekt in Zurich, Switzerland im Jahr 2002 im Architecture Cosmos verortet und verknuepft urban repair, climate landscape, public space.",
-    "full_description": "Leutschenpark ist im PDF-Framework als urban-repair / climate-landscape verortet und bildet einen wichtigen Knoten der Architektur- und Stadtgeschichte. Der Eintrag wird im Atlas als Landschaftsprojekt gelesen und gehoert zur Wissensspur Landschaftsarchitektur ETH, 04 Landschaftsarchitektur 1_2.pdf, Layer landscape architecture 1 2. Autorenschaft / Quelle: Dipol Landschaftsarchitekten, Hunziker. Seine Filterebene verbindet urban repair, climate landscape, public space mit Jahr, Stilsektor und Relationennetz; spaeter koennen echte Fotos, Plaene, Schnitte, Quellen und Modelle direkt aus der Datenbank angeschlossen werden.",
+    "one_sentence": "Leutschenpark verwandelt ein dreieckiges Stadtentwicklungsareal in einen Platzpark aus Baumtopf, Bühne, Wasserbecken, Gleditschien-Schleier und blauem Leutschenlicht.",
+    "full_description": "Leutschenpark ist ein öffentlicher Park im Zürcher Entwicklungsgebiet Leutschenbach und ein Beispiel dafür, wie Landschaftsarchitektur mit schwierigen Restbedingungen arbeitet. Das Projekt von Dipol Landschaftsarchitekten und Christopher T. Hunziker nimmt einen kontaminierten Schiesshügel nicht einfach weg, sondern macht ihn als nicht begehbaren “Baumtopf” zu einer Großplastik und ökologischen Insel. Um ihn herum ordnen sich Kiesflächen, Bühne, Spielwiese, Wasserbecken, Gleditschien-Schleier und das blaue Leutschenlicht, das nachts an den unterirdisch geführten Leutschenbach erinnert. Der Park ist daher weder klassischer Grünraum noch bloßer Platz, sondern ein hybrider Platzpark. Seine aktuelle Sanierung und ökologische Aufwertung ab 2026 zeigt zusätzlich, dass solche zeitgenössischen Parks lernende Systeme sind: Entsiegelung, zusätzliche Bäume, Regenwassermanagement und Hitzeminderung werden Teil seiner zweiten Entwurfsschicht.",
     "media": [
       {
         "type": "exterior",
-        "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Leutschenpark / urban-repair-climate-landscape",
+        "label": "Bühne / Baumtopf",
+        "placeholder": "Leutschenpark / Baumtopf, Bühne, Leutschenlicht, Gleditschien, Wasserbecken",
         "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/Buehne-mit-Baumtopf.JPG/960px-Buehne-mit-Baumtopf.JPG",
         "source_url": "https://commons.wikimedia.org/wiki/File:Buehne-mit-Baumtopf.JPG",
         "credit": "Wikimedia Commons / Grün Stadt Zürich / CC BY-SA 3.0",
@@ -22175,14 +22184,354 @@
     ],
     "source_candidates": [
       {
+        "source_type": "website",
+        "title": "Landezine / Leutschenpark by Westpol Landscape Architecture",
+        "url": "https://landezine.com/leutschenbach-westpol-landscape-architecture/",
+        "reliability_level": "verified",
+        "rights_status": "needs_permission",
+        "notes": "Professional landscape-architecture source for 2002-2008 planning/realisation, Dipol/Westpol, C.T. Hunziker, tree veil, restored ditch/boulevard, contaminated backstop as oversized tree-pot, client and construction sum. Images protected/link-only unless licensed."
+      },
+      {
+        "source_type": "website",
+        "title": "Stadt Zürich / Leutschenpark wird saniert und aufgewertet",
+        "url": "https://www.stadt-zuerich.ch/de/aktuell/medienmitteilungen/2025/11/leutschenpark-wird-saniert-und-aufgewertet.html",
+        "reliability_level": "verified",
+        "rights_status": "unknown",
+        "notes": "Official city source for 17,000 m² park, 2008 opening, Baumtopf, Leutschenlicht, settlement damage, desealing, 40 new large-crowned trees, rainwater management and 2026-2027 upgrade."
+      },
+      {
+        "source_type": "website",
+        "title": "Müller Sigrist / Neuordnung Leutschenpark",
+        "url": "https://www.muellersigrist.ch/arbeiten/wettbewerbe/neuordnung-leutschenpark/",
+        "reliability_level": "verified",
+        "rights_status": "needs_permission",
+        "notes": "Architect competition/project source: small hill, two existing buildings, chaussée, play lawn, tree veil, contaminated shooting mound as terra incognita/tree pot and colour/object treatment."
+      },
+      {
+        "source_type": "website",
+        "title": "Christopher T. Hunziker / Leutschenlicht",
+        "url": "https://www.cth.ch/projekte/leutschenlicht/",
+        "reliability_level": "verified",
+        "rights_status": "needs_permission",
+        "notes": "Artist source for Leutschenlicht/light installation in Leutschenpark, with Dipol collaboration. Use metadata/link-only unless licensed."
+      },
+      {
         "source_type": "image_source",
-        "title": "Wikimedia Commons hero candidate / Leutschenpark",
+        "title": "Wikimedia Commons hero candidate / Bühne mit Baumtopf",
         "url": "https://commons.wikimedia.org/wiki/File:Buehne-mit-Baumtopf.JPG",
         "reliability_level": "secondary_source",
         "rights_status": "licensed",
-        "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY-SA 3.0."
+        "notes": "Public hero image already used by the entry. License: CC BY-SA 3.0 by Grün Stadt Zürich. Good for Baumtopf/stage planet thumbnail."
       }
-    ]
+    ],
+    "year_end": 2008,
+    "source_url": "https://landezine.com/leutschenbach-westpol-landscape-architecture/",
+    "architecture_text": {
+      "headline": "Leutschenpark: Platzpark zwischen Baumtopf, Licht und Schwammstadt",
+      "overview": "Leutschenpark wird als hybrider Stadtpark gelesen: Bühne, Baumtopf, Gleditschien-Schleier, Wasserbecken und Leutschenlicht verbinden Quartiersplatz, ökologische Insel und unterirdische Erinnerung.",
+      "chapters": [
+        {
+          "title": "Architektonische Lesart",
+          "text": "Leutschenpark arbeitet mit Widersprüchen. Er ist Park und Platz, offen und gesperrt, alltagstauglich und künstlich. Der zentrale Baumtopf macht den kontaminierten Hügel nicht unsichtbar, sondern transformiert ihn in eine nicht begehbare, räumlich wirksame Insel. Darum ist der Park weniger idyllisch als präzise: Er ordnet schwierige Restbedingungen zu einem öffentlichen Bild.",
+          "source_basis": "Landezine, Stadt Zürich, Müller Sigrist, ETH Landschaftsarchitektur notes",
+          "review_status": "source_enriched_review"
+        },
+        {
+          "title": "Material und Vegetation",
+          "text": "Das Materialsystem kombiniert Kiesflächen, Bühne, Wasser, Baumtopf, Gleditschien, Sitzmauern, Lichtinstallation und bestehende/umcodierte Bauten. Vegetation erscheint nicht nur als Fläche, sondern als Schleier und Insel. Der Baumtopf ist zugleich Schutz, ökologische Zone und plastisches Zentrum; das Leutschenlicht ergänzt das Material um eine nächtliche, fast immaterielle Ebene.",
+          "source_basis": "Landezine project description and Stadt Zürich upgrade notes",
+          "review_status": "source_enriched_review"
+        },
+        {
+          "title": "Raumordnung",
+          "text": "Die Raumordnung folgt dem dreieckigen Areal und den vorhandenen Bedingungen. Um den Baumtopf entstehen Platzflächen, Bühne, Spielbereich, Wiese und Wasserbecken. Der Park ist dadurch kein reiner Durchgangsraum, sondern ein Quartiersraum mit mehreren Betriebsarten: Aufenthalt, Spiel, Veranstaltung, Bühne, Lichtspaziergang und ökologischer Rückzugsraum.",
+          "source_basis": "Müller Sigrist and Landezine spatial descriptions",
+          "review_status": "source_enriched_review"
+        },
+        {
+          "title": "Klima und Update-Schicht",
+          "text": "Die anstehende Sanierung macht sichtbar, dass Leutschenpark als System weiterarbeitet. Setzungen, Entwässerung, Hitze und geschädigte Bäume werden nicht als reine Wartung verstanden, sondern als zweite Entwurfsebene: Entsiegelung, zusätzliche großkronige Bäume, Regenwassermanagement und Substratverbesserung schärfen den Park als Schwammstadt- und Klimaraum.",
+          "source_basis": "Stadt Zürich 2025/2026 upgrade announcement",
+          "review_status": "source_enriched_review"
+        },
+        {
+          "title": "Kontext",
+          "text": "Der Park liegt im Quartierteil Leutschenbach in Zürich-Seebach, einem Transformationsgebiet mit neuen Nutzungen, unvollständigen Freiraumnetzen und hoher baulicher Dynamik. Er reagiert auf diese Situation mit einem starken öffentlichen Zentrum, das zugleich Kunst, Licht, Vegetation und Alltagsprogramm verbindet.",
+          "source_basis": "Stadt Zürich and Landezine development context",
+          "review_status": "source_enriched_review"
+        },
+        {
+          "title": "Relevanz",
+          "text": "Für Architecture Cosmos ist Leutschenpark wichtig, weil er zeitgenössische Landschaftsarchitektur als Betriebssystem zeigt: vorhandene Kontamination, Kunst, Quartiersbedarf, Klima, Regenwasser und öffentliche Nutzung werden miteinander verknüpft. Für KosmoData ist er filterbar über Baumtopf, Leutschenlicht, Gleditschien, Platzpark, Schwammstadt, Entsiegelung, Bühne und kontaminierten Untergrund.",
+          "source_basis": "source-enriched database profile and atlas relation system",
+          "review_status": "source_enriched_review"
+        }
+      ],
+      "language": "de",
+      "review_status": "source_enriched_review",
+      "public_use_allowed": true,
+      "generated_at": "2026-05-23T19:31:50.000Z",
+      "source_basis": [
+        {
+          "type": "source_document",
+          "value": "04 Landschaftsarchitektur 1_2.pdf"
+        },
+        {
+          "type": "professional_landscape_source",
+          "title": "Landezine / Leutschenpark",
+          "value": "https://landezine.com/leutschenbach-westpol-landscape-architecture/",
+          "reliability_level": "verified",
+          "rights_status": "needs_permission"
+        },
+        {
+          "type": "official_city_source",
+          "title": "Stadt Zürich / Leutschenpark wird saniert und aufgewertet",
+          "value": "https://www.stadt-zuerich.ch/de/aktuell/medienmitteilungen/2025/11/leutschenpark-wird-saniert-und-aufgewertet.html",
+          "reliability_level": "verified",
+          "rights_status": "unknown"
+        },
+        {
+          "type": "architect_source",
+          "title": "Müller Sigrist / Neuordnung Leutschenpark",
+          "value": "https://www.muellersigrist.ch/arbeiten/wettbewerbe/neuordnung-leutschenpark/",
+          "reliability_level": "verified",
+          "rights_status": "needs_permission"
+        },
+        {
+          "type": "artist_source",
+          "title": "Christopher T. Hunziker / Leutschenlicht",
+          "value": "https://www.cth.ch/projekte/leutschenlicht/",
+          "reliability_level": "verified",
+          "rights_status": "needs_permission"
+        }
+      ]
+    },
+    "geo": {
+      "country_code": "CH",
+      "city": "Zürich",
+      "canton": "ZH",
+      "region": "Leutschenbach / Zürich-Seebach / Zürich Nord",
+      "latitude": 47.4162,
+      "longitude": 8.5597,
+      "precision": "park_site"
+    },
+    "materials": {
+      "primary": [
+        "tree_pot_landform",
+        "gleditsia_tree_veil",
+        "gravel_square",
+        "water_basin",
+        "blue_light_installation"
+      ],
+      "secondary": [
+        "stage",
+        "play_lawn",
+        "concrete_silver_seat_wall",
+        "rainwater_management",
+        "desealed_surfaces",
+        "planting_substrate"
+      ],
+      "notes": "Material reading separates original 2008 park layers from planned 2026-2027 climate upgrade layers. Images/drawings from offices and artist remain link-only unless licensed."
+    },
+    "program": {
+      "type": "urban_square_park",
+      "subtype": "hybrid_public_space_with_tree_pot_light_installation_and_climate_upgrade",
+      "public_access": "public_city_park",
+      "components": [
+        "Baumtopf",
+        "stage",
+        "play area",
+        "water basin",
+        "Gleditsia tree veil",
+        "Leutschenlicht",
+        "gravel square",
+        "rainwater/climate upgrade"
+      ]
+    },
+    "context": {
+      "topography": "triangular_transformation_site_with_contaminated_mound",
+      "setting": "Leutschenbach urban development area in Zurich-Seebach",
+      "landscape_relations": [
+        "Leutschenbach stream memory",
+        "tree veil",
+        "public stage",
+        "quarter open-space network",
+        "hidden/underground water logic"
+      ],
+      "urban_context": [
+        "Leutschenbach transformation",
+        "deficient former open-space network",
+        "new quarter public space",
+        "private_landowner_contributions",
+        "city_green_space_strategy"
+      ],
+      "climate_logic": [
+        "desealing",
+        "additional_large_crowned_trees",
+        "rainwater_retention_on_site",
+        "soil_stabilization",
+        "heat_reduction"
+      ]
+    },
+    "vibes": [
+      "blue-light-park",
+      "tree-pot-island",
+      "quartier-stage",
+      "schwammstadt-update",
+      "contaminated-mound-as-art",
+      "zurich-night-landscape"
+    ],
+    "database_tags": [
+      "source:landezine",
+      "source:stadt-zuerich",
+      "source:mueller-sigrist",
+      "source:christopher-t-hunziker",
+      "typology:urban-square-park",
+      "typology:climate-upgrade-park",
+      "landscape:baumtopf",
+      "landscape:gleditsia-tree-veil",
+      "material:gravel-square",
+      "material:water-basin",
+      "light:leutschenlicht",
+      "ecology:contaminated-mound",
+      "climate:desealing",
+      "climate:rainwater-management",
+      "program:public-stage",
+      "urban:leutschenbach",
+      "blender:tree-pot-layer-candidate",
+      "plan2d:light-band-vector-candidate"
+    ],
+    "model_assets": [
+      {
+        "model_type": "site_model",
+        "title": "Leutschenpark Baumtopf and square-park site model",
+        "r2_key": "entries/leutschenpark/models/site.glb",
+        "format": "glb",
+        "lod_level": "preview",
+        "source_basis": "Procedural model separating triangular site, Baumtopf, stage, play lawn, water basin, tree veil and light band from public descriptions.",
+        "generation_method": "procedural",
+        "review_status": "draft",
+        "confidence_score": 0.58
+      },
+      {
+        "model_type": "structure_model",
+        "title": "Leutschenpark tree-pot and Leutschenlicht structure model",
+        "r2_key": "entries/leutschenpark/models/structure.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "Analytical structure for Baumtopf, retaining/seat wall, stage, Leutschenlicht path and water basin; exact geometry requires source plan review.",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.49
+      },
+      {
+        "model_type": "tectonic_model",
+        "title": "Leutschenpark climate-upgrade tectonic layer model",
+        "r2_key": "entries/leutschenpark/models/tectonic.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "Layer model for original park, contaminated mound, vegetation, drainage, desealing, new trees and rainwater-management upgrade.",
+        "generation_method": "ai_assisted",
+        "review_status": "draft",
+        "confidence_score": 0.52
+      }
+    ],
+    "analysis_layers": [
+      {
+        "analysis_type": "spatial_order",
+        "summary": "Leutschenpark organisiert Baumtopf, Gleditschien-Schleier, Bühne, Wasserbecken, Platzflächen und Leutschenlicht als hybride Ordnung zwischen Platz und Park.",
+        "data": {
+          "landscape_tags": [
+            "baumtopf",
+            "tree_veil",
+            "stage",
+            "water_basin",
+            "light_band",
+            "gravel_square"
+          ],
+          "model_layer": "square_park_landscape"
+        },
+        "r2_key": "entries/leutschenpark/analysis/spatial_order.json",
+        "review_status": "reviewed"
+      },
+      {
+        "analysis_type": "material_system",
+        "summary": "Das Materialsystem arbeitet mit Kies, Wasser, Beton-/Sitzwand, Bauminsel, Gleditschien, Lichtband und späterer Entsiegelungs-/Regenwassertechnik.",
+        "data": {
+          "primary_materials": [
+            "gravel",
+            "water",
+            "concrete_wall",
+            "trees",
+            "blue_light",
+            "rainwater_layers"
+          ],
+          "public_display": "text_and_metadata_safe"
+        },
+        "r2_key": "entries/leutschenpark/analysis/material_system.json",
+        "review_status": "reviewed"
+      },
+      {
+        "analysis_type": "urban_context",
+        "summary": "Der Park reagiert auf das Transformationsgebiet Leutschenbach und schafft einen öffentlichen Mittelpunkt in einem Quartier mit vormals unzureichendem Freiraumnetz.",
+        "data": {
+          "context_tags": [
+            "leutschenbach",
+            "zurich_north",
+            "urban_development_area",
+            "public_space_network",
+            "quarter_identity"
+          ],
+          "model_layer": "urban_context"
+        },
+        "r2_key": "entries/leutschenpark/analysis/urban_context.json",
+        "review_status": "reviewed"
+      },
+      {
+        "analysis_type": "landscape_system",
+        "summary": "Die 2026-2027 geplante Sanierung ergänzt den ursprünglichen Park um Schwammstadt-Logik: Entsiegelung, zusätzliche Bäume, Substratverbesserung und Regenwasser vor Ort.",
+        "data": {
+          "climate_tags": [
+            "desealing",
+            "large_crowned_trees",
+            "rainwater_retention",
+            "soil_stabilization",
+            "heat_reduction"
+          ],
+          "model_layer": "climate_upgrade"
+        },
+        "r2_key": "entries/leutschenpark/analysis/climate_upgrade.json",
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "summary": "Leutschenpark ist filterbar als Platzpark, Baumtopf, Lichtinstallation, Gleditschien-Schleier, kontaminierter Hügel, Schwammstadt-Upgrade und öffentlicher Bühnenraum.",
+        "data": {
+          "filters": [
+            "urban-repair",
+            "climate-landscape",
+            "public-space",
+            "baumtopf",
+            "leutschenlicht",
+            "rainwater-management",
+            "desealing"
+          ]
+        },
+        "r2_key": "entries/leutschenpark/analysis/filter_classification.json",
+        "review_status": "reviewed"
+      }
+    ],
+    "database_profile": {
+      "status": "reviewed",
+      "r2_prefix": "entries/leutschenpark",
+      "source_count": 5,
+      "media_count": 4,
+      "model_count": 3,
+      "analysis_count": 5,
+      "tag_count": 18,
+      "rights_summary": "Public text, metadata and CC hero are usable; office/artist images and plans remain link-only unless licensed. 2025 city upgrade info is public metadata/source context.",
+      "updated_at": "2026-05-23T19:31:50.000Z"
+    }
   },
   {
     "id": "mfo-park",
