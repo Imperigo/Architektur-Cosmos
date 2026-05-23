@@ -36,6 +36,13 @@ archive-intake/{entry_slug}/
 `archive-inbox/` is also ignored by Git and is the drag-and-drop simulation for
 the future host/admin intake area.
 
+For whole books, scans, photographed pages and book PDFs, use the dedicated
+book-library concept in
+[`docs/book-library-ingestion.md`](./book-library-ingestion.md). Book intake is
+private by default: it may generate cleaned pages, OCR and project drafts for a
+private library, but public display remains metadata/link-only unless rights are
+cleared.
+
 ## Create Or Refresh A Manifest
 
 ```bash

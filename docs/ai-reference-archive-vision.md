@@ -17,6 +17,13 @@ plans, image references and model files into a database intake area. The
 system then prepares a structured object for the wormhole atlas and for later
 design-tool workflows.
 
+KosmoData also needs a dedicated book-library ingestion path for private
+architecture books, scans, photographed pages and book PDFs. That workflow
+creates a cleaned private digital study copy, runs OCR/layout detection and
+extracts detected projects as private review drafts. It is documented in
+[`docs/book-library-ingestion.md`](./book-library-ingestion.md) and must stay
+separate from public publishing because most book material is copyrighted.
+
 A mature archive object should contain:
 
 - verified metadata, dates, authors, location and source references

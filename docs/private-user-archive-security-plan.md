@@ -38,6 +38,22 @@ surface, authentication, private storage and moderation workflow.
 7. User can view the private entry in their own wormhole/library.
 8. User can submit the entry for public review.
 
+### Private Book Library Flow
+
+The private library should also support complete book/chapter intake:
+
+1. User uploads book scans, phone photos or book PDFs.
+2. Raw files stay in private quarantine.
+3. The system creates cleaned private page images and OCR/layout metadata.
+4. Detected projects become private project drafts with page references.
+5. The user can keep these drafts private, merge them with existing private
+   entries or submit a public-safe version for review.
+
+This flow is described in
+[`docs/book-library-ingestion.md`](./book-library-ingestion.md). It must never
+promote copyrighted page images, OCR extracts or plan reproductions to the
+public Atlas without rights approval.
+
 ### Review Flow
 
 1. Submitted entry enters `review_pending`.
