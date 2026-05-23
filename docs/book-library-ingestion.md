@@ -159,13 +159,31 @@ pipeline.
 
 ## First Implementation Step
 
-Add a local command later:
+The local preview command is:
 
 ```bash
 npm run kosmodata:book-ingest -- --input archive-inbox/books/villa-savoye-book --title "Villa Savoye Source Book"
 ```
 
-It should only create local review output and remain gitignored. The public
-website can then show the planned capability in the Database/KosmoData UI
-without accepting real uploads until authentication, storage quotas and rights
-review are ready.
+Optional project hints can be provided when filenames/OCR are weak:
+
+```bash
+npm run kosmodata:book-ingest -- \
+  --input archive-inbox/books/villa-savoye-book \
+  --title "Villa Savoye Source Book" \
+  --project "Villa Savoye"
+```
+
+The command only creates local review output and remains gitignored. It writes:
+
+```text
+out/book-ingestion/{book_slug}/book-manifest.json
+out/book-ingestion/{book_slug}/detected-projects.json
+out/book-ingestion/{book_slug}/source-map.json
+out/book-ingestion/{book_slug}/review-report.md
+```
+
+It does not run a real OCR engine yet and does not clean images yet; V1 is a
+safe classifier/review-pack generator. The public website can show the planned
+capability in the Database/KosmoData UI without accepting real uploads until
+authentication, storage quotas and rights review are ready.
