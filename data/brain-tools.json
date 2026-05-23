@@ -42,6 +42,15 @@
       "approval_required_before_public_use": true
     },
     {
+      "id": "book_library_ingest",
+      "label": "Book Library Ingest",
+      "command": "npm run kosmodata:book-ingest -- --input archive-inbox/books/{book_slug} --title \"{book_title}\"",
+      "output_root": "out/book-ingestion/{book_slug}",
+      "review_output": "out/book-ingestion/{book_slug}/review-report.md",
+      "purpose": "Classify private book scans, book PDFs and photographed pages into local review packs with detected project drafts and strict rights separation.",
+      "approval_required_before_public_use": true
+    },
+    {
       "id": "research_agents",
       "label": "Database Research Agents",
       "command": "npm run database:research -- --agent all --topic {topic}",
@@ -63,6 +72,7 @@
   "guardrails": [
     "Generated drawings and models are diagrammatic study reconstructions unless verified otherwise.",
     "Do not publish exact plan-derived assets from unclear or copyrighted sources.",
+    "Book scans, OCR text and photographed pages stay private unless rights are explicitly cleared.",
     "Do not upload, commit or write to D1/R2 from these tools.",
     "Every generated artifact must include source_basis, review_status and public_use_allowed metadata."
   ]

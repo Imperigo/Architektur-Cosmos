@@ -11,6 +11,7 @@ npm run cosmos:plan-generate -- --entry villa-savoye
 npm run cosmos:model-generate -- --entry villa-savoye
 npm run cosmos:text-generate -- --entry villa-savoye
 npm run cosmos:entry-build -- --entry villa-savoye --mode review
+npm run kosmodata:book-ingest -- --input archive-inbox/books/villa-savoye-book --title "Villa Savoye Source Book"
 ```
 
 ## 2D Vector Plan Generator
@@ -69,6 +70,22 @@ The text generator is intentionally source-cautious. It turns dry metadata,
 analysis layers and ETH/source notes into better prose, but every factual claim
 must be reviewed before being promoted into `data/mock-entries.json`.
 
+## Book Library Ingest
+
+`kosmodata:book-ingest` reads a local private folder of book PDFs, chapter
+scans, phone photos, page images and notes. It writes a review pack to
+`out/book-ingestion/{book_slug}/`:
+
+- `book-manifest.json`
+- `detected-projects.json`
+- `source-map.json`
+- `review-report.md`
+
+This is not a public ingest. Book pages, OCR text, photographed plans and page
+images remain private by default. Public Atlas output is limited to metadata,
+external references and paraphrased analysis until rights are explicitly
+cleared.
+
 ## Brain Integration
 
 The Brain reads `data/brain-tools.json` as the tool registry. The registry tells
@@ -80,4 +97,6 @@ Guardrails:
 - no automatic public database write;
 - no R2/D1 upload;
 - no public release of unclear images, plans or exact plan-derived assets;
+- no public release of book scans, OCR text or photographed pages without
+  rights clearance;
 - every tool output carries review status and public-use metadata.
