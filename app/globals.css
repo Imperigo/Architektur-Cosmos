@@ -1551,6 +1551,39 @@ body:has(.entry-page) {
   filter: none;
 }
 
+.mobile-database-trigger {
+  position: fixed;
+  left: max(var(--ui-safe-edge), env(safe-area-inset-left));
+  top: var(--cosmos-hud-top);
+  z-index: 42;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: var(--ui-trigger-min-w);
+  min-width: var(--ui-trigger-min-w);
+  height: var(--ui-trigger-h);
+  border: 1px solid rgb(0 231 255 / 52%);
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 0% 0%, rgb(0 231 255 / 18%), transparent 48%),
+    rgb(5 5 5 / 78%);
+  color: #f7f7f4;
+  font-size: var(--ui-font-control);
+  font-weight: 680;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  pointer-events: auto;
+  touch-action: manipulation;
+  backdrop-filter: blur(10px);
+}
+
+.mobile-database-trigger span:first-child {
+  color: #00e7ff;
+  font-size: 0.86em;
+  line-height: 1;
+}
+
 .filter-access {
   position: fixed;
   right: max(var(--ui-safe-edge), env(safe-area-inset-right));
@@ -1993,6 +2026,7 @@ body:has(.entry-page) {
 }
 
 .project-search-open {
+  z-index: 92;
   width: var(--ui-panel-max-w);
   align-items: stretch;
 }
@@ -2272,16 +2306,19 @@ body:has(.entry-page) {
   border: 1px solid rgb(247 247 244 / 18%);
   background: rgb(5 5 5 / 72%);
   padding: 8px;
+  min-height: 42px;
 }
 
 .project-search-field input {
   min-width: 0;
   flex: 1;
+  min-height: 24px;
   border: 0;
   outline: 0;
   background: transparent;
   color: #f7f7f4;
   font-size: var(--ui-font-body);
+  line-height: 1.25;
   letter-spacing: 0.04em;
 }
 
@@ -2399,6 +2436,18 @@ body:has(.entry-page) {
   max-width: none;
   max-height: none;
   overflow: hidden;
+}
+
+.database-mobile-overlay > .cosmos-panel::before,
+.project-search-panel::before {
+  content: "";
+  display: block;
+  width: 46px;
+  height: 4px;
+  flex: 0 0 auto;
+  align-self: center;
+  border-radius: 999px;
+  background: rgb(247 247 244 / 28%);
 }
 
 .database-desktop-overlay {
@@ -4179,7 +4228,7 @@ body:has(.entry-page) {
 
   .database-mobile-overlay {
     inset: auto 0 0 0;
-    height: min(86dvh, 760px);
+    height: min(84dvh, 740px);
     padding:
       0
       max(var(--ui-safe-edge), env(safe-area-inset-right))
@@ -4356,6 +4405,10 @@ body:has(.entry-page) {
     max-width: calc(100vw - (var(--ui-safe-edge) * 2));
   }
 
+  .mobile-database-trigger {
+    display: inline-flex;
+  }
+
   .lens-control {
     left: max(var(--ui-safe-edge), env(safe-area-inset-left));
     top: var(--cosmos-hud-top);
@@ -4422,9 +4475,11 @@ body:has(.entry-page) {
 
   .project-search-field {
     padding: 11px;
+    min-height: 50px;
   }
 
   .project-search-field input {
+    min-height: 28px;
     font-size: var(--ui-font-body);
     line-height: 1.25;
   }
@@ -4459,6 +4514,7 @@ body:has(.entry-page) {
 
   .project-search.project-search-open,
   .project-search.project-dev-open {
+    z-index: 92;
     left: max(var(--ui-safe-edge), env(safe-area-inset-left));
     right: max(var(--ui-safe-edge), env(safe-area-inset-right));
     align-items: stretch;
@@ -4476,8 +4532,8 @@ body:has(.entry-page) {
     position: fixed;
     left: max(var(--ui-safe-edge), env(safe-area-inset-left));
     right: max(var(--ui-safe-edge), env(safe-area-inset-right));
-    top: calc(var(--cosmos-hud-top) + var(--ui-trigger-h) + 12px);
-    bottom: max(72px, calc(env(safe-area-inset-bottom) + 64px));
+    top: auto;
+    bottom: 0;
     width: auto;
     max-width: none;
     max-height: none;
@@ -4488,6 +4544,16 @@ body:has(.entry-page) {
   .project-search-panel {
     display: flex;
     flex-direction: column;
+    height: min(68dvh, 620px);
+    border-radius: 22px 22px 0 0;
+    border-color: rgb(0 231 255 / 48%);
+    padding:
+      10px
+      var(--ui-panel-pad)
+      max(var(--ui-panel-pad), calc(env(safe-area-inset-bottom) + 12px));
+    background:
+      radial-gradient(circle at 100% 0%, rgb(0 231 255 / 10%), transparent 38%),
+      rgb(5 5 5 / 96%);
   }
 
   .project-search-results {
@@ -4500,8 +4566,9 @@ body:has(.entry-page) {
   .project-dev-panel {
     height: auto;
     min-height: 0;
-    bottom: auto;
+    bottom: max(72px, calc(env(safe-area-inset-bottom) + 64px));
     max-height: min(54dvh, 360px);
+    border-radius: 18px;
   }
 
   .brain-status:has(.brain-status-panel) {

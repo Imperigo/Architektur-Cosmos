@@ -1433,13 +1433,20 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
           />
         ) : null}
         {introState === 'idle' && ui.isCoarsePointer && !selectedEntry && !showDatabasePanel ? (
+          <MobileDatabaseAccess
+            onToggle={() => {
+              setHoveredEntry(null);
+              toggleDatabasePanel();
+            }}
+          />
+        ) : null}
+        {introState === 'idle' && ui.isCoarsePointer && !selectedEntry && !showDatabasePanel ? (
           <MobileAtlasHud
             currentYear={state.currentYear}
             timePosition={state.timePosition}
             visualZoom={visualZoom.currentZoom}
             showRelations={showRelations}
             activeTagLayer={activeTagLayer}
-            databaseOpen={showDatabasePanel}
             onZoomIn={() => zoomViewBy(1.22)}
             onZoomOut={() => zoomViewBy(0.82)}
             onResetZoom={resetVisualZoom}
@@ -1451,10 +1458,6 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
             onToggleRelations={() => {
               setHoveredEntry(null);
               setShowRelations((current) => !current);
-            }}
-            onToggleDatabase={() => {
-              setHoveredEntry(null);
-              toggleDatabasePanel();
             }}
           />
         ) : null}
@@ -1577,7 +1580,7 @@ function useAtlasUiMetrics(): AtlasUiMetrics {
 
 function isInterfaceTarget(target: EventTarget) {
   if (!(target instanceof Element)) return false;
-  return Boolean(target.closest('.radial-hud, .filter-access, .lens-control, .lens-control-panel, .lens-access, .lens-panel, .database-access, .database-draft, .dossier-overlay, .style-sector, .project-search'));
+  return Boolean(target.closest('.radial-hud, .filter-access, .lens-control, .lens-control-panel, .lens-access, .lens-panel, .database-access, .mobile-database-trigger, .database-draft, .dossier-overlay, .style-sector, .project-search'));
 }
 
 function isEntryNodeTarget(target: EventTarget | null) {
@@ -1788,26 +1791,22 @@ function MobileAtlasHud({
   visualZoom,
   showRelations,
   activeTagLayer,
-  databaseOpen,
   onZoomIn,
   onZoomOut,
   onResetZoom,
   onSelectTagLayer,
-  onToggleRelations,
-  onToggleDatabase
+  onToggleRelations
 }: {
   currentYear: number;
   timePosition: number;
   visualZoom: number;
   showRelations: boolean;
   activeTagLayer: ActiveTagLayer;
-  databaseOpen: boolean;
   onZoomIn: () => void;
   onZoomOut: () => void;
   onResetZoom: () => void;
   onSelectTagLayer: (layerId: TagLayerId | null) => void;
   onToggleRelations: () => void;
-  onToggleDatabase: () => void;
 }) {
   const span = dominantSpanForYear(currentYear);
   const progress = Math.round(Math.max(0, Math.min(1, timePosition / wormholeTravelEnd)) * 100);
@@ -1856,11 +1855,27 @@ function MobileAtlasHud({
         <button type="button" className={showRelations ? 'mobile-atlas-active' : ''} onClick={(event) => stopAndRun(event, onToggleRelations)} aria-pressed={showRelations}>
           Netz
         </button>
-        <button type="button" className={databaseOpen ? 'mobile-atlas-active' : ''} onClick={(event) => stopAndRun(event, onToggleDatabase)} aria-pressed={databaseOpen}>
-          KosmoData
-        </button>
       </nav>
     </div>
+  );
+}
+
+function MobileDatabaseAccess({ onToggle }: { onToggle: () => void }) {
+  return (
+    <button
+      type="button"
+      className="mobile-database-trigger cosmos-trigger"
+      onPointerDown={(event) => event.stopPropagation()}
+      onClick={(event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        onToggle();
+      }}
+      aria-label="KosmoData öffnen"
+    >
+      <span aria-hidden="true">◆</span>
+      <span>KosmoData</span>
+    </button>
   );
 }
 
