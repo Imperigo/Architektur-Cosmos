@@ -5842,17 +5842,25 @@
       "dome",
       "liturgy",
       "empire",
-      "light"
+      "light",
+      "pendentive-dome",
+      "semi-domes",
+      "byzantine-space",
+      "longitudinal-central-hybrid",
+      "mosaic-light",
+      "ottoman-transformation",
+      "structural-reinforcement",
+      "world-heritage"
     ],
-    "short_description": "Byzantinischer Zentralraum, der Kuppel, Lichtfuehrung und imperiale Repraesentation in eine neue raeumliche Ordnung uebersetzt.",
-    "source_quality": "lecture_notes",
-    "one_sentence": "Hagia Sophia ist als Bauwerk in Istanbul, Turkey im Jahr 537 im Architecture Cosmos verortet und verknuepft dome, liturgy, empire.",
-    "full_description": "Byzantinischer Zentralraum, der Kuppel, Lichtfuehrung und imperiale Repraesentation in eine neue raeumliche Ordnung uebersetzt. Der Eintrag wird im Atlas als Bauwerk gelesen und gehoert zur Wissensspur Architekturgeschichte ETH, Layer architectural history 1. Autorenschaft / Quelle: Anthemius of Tralles, Isidore of Miletus. Seine Filterebene verbindet dome, liturgy, empire, light mit Jahr, Stilsektor und Relationennetz; spaeter koennen echte Fotos, Plaene, Schnitte, Quellen und Modelle direkt aus der Datenbank angeschlossen werden.",
+    "short_description": "Hagia Sophia verbindet Basilika, Zentralraum, Pendentifkuppel, Halbkuppeln, Licht, Marmor und imperiale Liturgie zu einem der einflussreichsten Innenräume der Weltarchitektur.",
+    "source_quality": "case_study",
+    "one_sentence": "Hagia Sophia ist ein byzantinischer Kuppelraum in Istanbul, in dem longitudinaler Basilikatypus, Zentralraum, Pendentifs, Halbkuppeln, Lichtführung, Marmor und politische/religiöse Transformation zusammenwirken.",
+    "full_description": "Hagia Sophia ist ein architektonischer Schwellenkörper zwischen Basilika und Zentralraum. Der Bau von 532 bis 537 übersetzt die Bauaufgabe einer imperialen Kirche in eine Kuppelordnung, die scheinbar über dem Raum schwebt: große Pfeiler, Pendentifs, Halbkuppeln, Gewölbe, Fensterkranz, Marmorverkleidung und Lichtflächen arbeiten zusammen, um Konstruktion als immaterielle Wirkung erscheinen zu lassen. Gleichzeitig ist Hagia Sophia ein historisch geschichtetes Objekt. Byzantinische Liturgie, Kaiserbild, Mosaiken, osmanische Moscheenutzung, Minarette, Stütz- und Verstärkungsmaßnahmen, Museumsphase, erneute Moscheenutzung und heutige Welterbe-/Zugangsfragen liegen übereinander. Für KosmoData ist der Eintrag deshalb besonders stark: Er erlaubt getrennte Layer für Topos, Hauptkuppel, Pendentifs, Halbkuppeln, Pfeiler, Licht, Mosaik-/Marmorschichten, osmanische Ergänzungen, Restaurierung und Nutzungskonflikt.",
     "media": [
       {
         "type": "exterior",
-        "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Hagia Sophia / dome-liturgy",
+        "label": "Kuppel und Stadtsilhouette / Hagia Sophia",
+        "placeholder": "Hagia Sophia / Kuppel, Halbkuppeln, Minarette, Sultanahmet, Istanbul",
         "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Hagia_Sophia_%28228968325%29.jpeg/960px-Hagia_Sophia_%28228968325%29.jpeg",
         "source_url": "https://commons.wikimedia.org/wiki/File:Hagia_Sophia_(228968325).jpeg",
         "credit": "Wikimedia Commons / Adli Wahid / CC BY-SA 3.0",
@@ -5860,84 +5868,376 @@
       },
       {
         "type": "interior",
-        "label": "Innenraum",
-        "placeholder": "Innenraum / Hagia Sophia / dome-liturgy"
+        "label": "Innenraum / Kuppel und Lichtkranz",
+        "placeholder": "Innenraum / Hagia Sophia / Pendentifs, Halbkuppeln, Marmor, Licht"
       },
       {
         "type": "section",
-        "label": "Schnitt",
-        "placeholder": "Schnitt / Hagia Sophia / dome-liturgy"
+        "label": "Schnitt / Kuppeltragwerk",
+        "placeholder": "Schnitt / Hagia Sophia / Pfeiler, Pendentifs, Halbkuppeln, Kuppel"
       },
       {
         "type": "plan",
-        "label": "Grundriss",
-        "placeholder": "Grundriss / Hagia Sophia / dome-liturgy"
+        "label": "Grundriss / Basilika-Zentralraum-Hybrid",
+        "placeholder": "Grundriss / Hagia Sophia / Langhaus, Zentralraum, Apsiden, Galerien"
       }
     ],
     "source_candidates": [
       {
+        "source_type": "world_heritage_record",
+        "title": "UNESCO World Heritage Centre / Historic Areas of Istanbul",
+        "url": "https://whc.unesco.org/en/list/356",
+        "reliability_level": "verified",
+        "rights_status": "licensed",
+        "notes": "Official World Heritage source for Istanbul Historic Peninsula, Hagia Sophia as 6th-century masterpiece by Anthemios of Tralles and Isidoros of Miletus, and its influence on churches and mosques."
+      },
+      {
+        "source_type": "official_ministry_record",
+        "title": "Republic of Türkiye Ministry of Culture and Tourism / Ayasofya (Hagia Sophia)",
+        "url": "https://www.ktb.gov.tr/EN-113776/ayasofya-hagia-sophia.html",
+        "reliability_level": "verified",
+        "rights_status": "unknown",
+        "notes": "Official government source for construction chronology, Justinian, architects, dome dimensions, 1453 conversion, Sinan reinforcements and museum-era history. Treat images/page text as link-only unless rights are cleared."
+      },
+      {
+        "source_type": "secondary_reference",
+        "title": "Encyclopaedia Britannica / Hagia Sophia Architecture",
+        "url": "https://www.britannica.com/topic/Hagia-Sophia/Architecture",
+        "reliability_level": "secondary_source",
+        "rights_status": "unknown",
+        "notes": "Secondary cross-check for longitudinal/central hybrid, main dome on pendentives, semi-domes, piers, galleries, windows and apparent floating canopy effect."
+      },
+      {
         "source_type": "image_source",
-        "title": "Wikimedia Commons hero candidate / Hagia Sophia",
+        "title": "Wikimedia Commons hero candidate / Hagia Sophia exterior",
         "url": "https://commons.wikimedia.org/wiki/File:Hagia_Sophia_(228968325).jpeg",
         "reliability_level": "secondary_source",
         "rights_status": "licensed",
-        "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY-SA 3.0."
+        "notes": "Public hero image already used by the entry. License: CC BY-SA 3.0. Good public-safe exterior/planet thumbnail with attribution."
       }
     ],
     "architecture_text": {
-      "headline": "Hagia Sophia: Kuppel, Licht und imperiale Raumordnung",
-      "overview": "Hagia Sophia wird als Gebäude verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und Istanbul, Turkey. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "headline": "Hagia Sophia: Kuppel, Licht und Imperium als schwebender Raum",
+      "overview": "Hagia Sophia wird als Hybrid aus Basilika und Zentralraum gelesen: Pendentifkuppel, Halbkuppeln, Pfeiler, Marmor, Fensterkranz, Licht und politische/religiöse Transformation bilden ein dichtes Netzwerk aus Konstruktion, Atmosphäre und Geschichte.",
       "chapters": [
         {
-          "title": "Architektonische Lesart",
-          "text": "Hagia Sophia gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Hagia Sophia übersetzt Kuppel, Pendentifs, Halbkuppeln, Licht und Liturgie in einen schwebend wirkenden Zentralraum imperialer Präsenz. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Kuppel, Liturgie, Imperium, Licht als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
-          "source_basis": "curated spatial reading",
-          "review_status": "draft_review"
+          "title": "These",
+          "text": "Hagia Sophia ist eine These darüber, wie schwere Konstruktion als immaterieller Raum erscheinen kann. Die Kuppel ruht konstruktiv auf Pfeilern, Pendentifs und Halbkuppeln, wirkt aber durch Lichtkranz, Proportion und Oberflächen fast schwebend. Der Bau macht nicht die Last, sondern das Auflösen der Last zur architektonischen Hauptwirkung.",
+          "source_basis": "UNESCO Historic Areas of Istanbul, Turkish Ministry source, Britannica architecture cross-check, ETH architecture history notes",
+          "review_status": "source_enriched_review"
         },
         {
-          "title": "Material und Tragwerk",
-          "text": "Hagia Sophia wird über Mauerwerksmassen, Pendentifs, Halbkuppeln, Marmorschichten und Lichtflächen gelesen; die Konstruktion erzeugt eine scheinbar schwebende Kuppelordnung. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
-          "source_basis": "curated material reading",
-          "review_status": "draft_review"
+          "title": "Netzwerk und DNA",
+          "text": "Im Atlas liegt Hagia Sophia im Netzwerk von Kuppelbau, byzantinischem Zentralraum, Basilika, imperialer Liturgie, Mosaiklicht, osmanischer Transformation und Welterbe. Gegenüber dem Pantheon ist die DNA weniger reine geometrische Zentralität als ein hybrider Raumapparat: Längsrichtung, Zentralraum und Kuppelhierarchie werden zu einer einzigen atmosphärischen Ordnung verbunden.",
+          "source_basis": "entry taxonomy, UNESCO influence framing and atlas relation logic",
+          "review_status": "source_enriched_review"
         },
         {
-          "title": "Raumordnung",
-          "text": "Hagia Sophia übersetzt Kuppel, Pendentifs, Halbkuppeln, Licht und Liturgie in einen schwebend wirkenden Zentralraum imperialer Präsenz. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
-          "source_basis": "curated spatial reading",
-          "review_status": "draft_review"
+          "title": "Topos",
+          "text": "Der Topos ist die historische Halbinsel Istanbuls, vormals Konstantinopel, zwischen Bosporus, Goldenem Horn und Marmarameer. Hagia Sophia ist Teil einer imperialen Stadtlandschaft aus Hippodrom, Palastnähe, späteren Moscheen, Sultanahmet-Kontext und Skyline. Der Bau ist daher nicht nur Innenraum, sondern städtischer und politischer Marker zwischen Europa und Asien.",
+          "source_basis": "UNESCO Historic Areas of Istanbul site context",
+          "review_status": "source_enriched_review"
+        },
+        {
+          "title": "Typos",
+          "text": "Typologisch verbindet Hagia Sophia die longitudinale Basilika mit einem zentralisierenden Kuppelraum. Das ist keine additive Mischung, sondern eine räumliche Erfindung: Die Bewegung entlang der Achse wird in der Mitte durch Kuppel, Pendentifs und Halbkuppeln gefasst. Dadurch entsteht ein Raum, der Prozession, Versammlung, Liturgie und imperiale Repräsentation zugleich organisiert.",
+          "source_basis": "Britannica architecture description and architecture-history typology review",
+          "review_status": "source_enriched_review"
         },
         {
           "title": "Tektonik",
-          "text": "Die tektonische Lesart soll zeigen, wie Oberfläche, Tragstruktur und Fügung Stützung, Hülle, Fügung und Atmosphäre organisieren. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
-          "source_basis": "entry materials and analysis fallback",
-          "review_status": "needs_source_review"
+          "text": "Tektonisch ist Hagia Sophia ein System aus massiven Pfeilern, Pendentifs, Halbkuppeln, Gewölben, Außenstützungen und lichtdurchbrochenen Wänden. Besonders wichtig ist die Spannung zwischen Masse und Entmaterialisierung: Mauerwerk, Marmor und Stützlogik sind schwer, aber Fenster, Mosaikgold und Licht verwandeln die Konstruktion in eine scheinbar schwebende Raumhülle.",
+          "source_basis": "official monument chronology and Britannica structural description",
+          "review_status": "source_enriched_review"
         },
         {
-          "title": "Kontext",
-          "text": "Hagia Sophia gehört zu Istanbul, Turkey. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
-          "source_basis": "entry location metadata",
-          "review_status": "draft_review"
+          "title": "Raumlogik",
+          "text": "Die Raumlogik ist hierarchisch und atmosphärisch. Der Hauptraum wird nicht durch eine flache Decke abgeschlossen, sondern durch eine Kuppel, die über Pendentifs und Halbkuppeln in den Raum gleitet. Seitenschiffe, Galerien, Apsis, Fensterkranz und Lichtflächen erzeugen unterschiedliche Grade von Nähe, Höhe, Tiefe und liturgischer Sichtbarkeit.",
+          "source_basis": "spatial analysis from public architectural descriptions",
+          "review_status": "source_enriched_review"
         },
         {
-          "title": "Relevanz",
-          "text": "Hagia Sophia ist als Referenz wichtig, weil Kuppel, Liturgie, Imperium, Licht nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
-          "source_basis": "derived from entry metadata and Brain quality rules",
-          "review_status": "draft_review"
+          "title": "Konflikt und Kritik",
+          "text": "Hagia Sophia ist kein neutraler Museumsgegenstand. Kirche, Moschee, Museum, erneute Moschee, Welterbe, Tourismus, Restaurierung, religiöse Nutzung und politische Symbolik liegen übereinander. Für KosmoData muss dieser Konflikt als Layer erhalten bleiben: Das Gebäude ist nicht nur eine Form, sondern ein umkämpfter Speicher verschiedener Kulturen, Nutzungen und Besitzansprüche.",
+          "source_basis": "UNESCO World Heritage context, Turkish official history and current heritage debate metadata",
+          "review_status": "source_enriched_review"
+        },
+        {
+          "title": "KosmoData-Layer und 3D-Potenzial",
+          "text": "Für 3D ist Hagia Sophia ein starker Layer-Fall: Site/Sultanahmet, Hauptpfeiler, Pendentifs, Hauptkuppel, Halbkuppeln, Galerien, Apsis, Außenstützen, Minarette, Lichtkranz, Marmor- und Mosaikschichten, Restaurierung und Nutzungsebenen können getrennt angelegt werden. Besonders wertvoll ist ein Analysemodus, der zwischen realistischer Ansicht, Tragwerksmasse, Lichtsimulation und historischen Umbauphasen wechselt.",
+          "source_basis": "model taxonomy, public monument descriptions and Architecture Cosmos layer strategy",
+          "review_status": "source_enriched_review"
+        },
+        {
+          "title": "Entwurfsintelligenz",
+          "text": "Die übertragbare Entwurfsintelligenz liegt in der Gleichzeitigkeit von Struktur und Atmosphäre. Hagia Sophia zeigt, wie ein Raum seine technische Logik nicht verstecken muss, um leicht zu wirken: Last, Übergang, Licht, Oberfläche und Ritual werden so organisiert, dass Konstruktion als Erlebnis gelesen wird. Für heutige Entwürfe ist das weniger eine Kuppelkopie als eine Methode, schwere Systeme in räumliche Leichtigkeit zu übersetzen.",
+          "source_basis": "source-enriched database profile and Architecture Cosmos text framework",
+          "review_status": "source_enriched_review"
         }
       ],
       "language": "de",
-      "generator": "cosmos-generate-architecture-text",
-      "generated_at": "2026-05-21T18:29:05.814Z",
-      "review_status": "needs_owner_review",
+      "review_status": "source_enriched_review",
+      "public_use_allowed": true,
+      "generated_at": "2026-05-23T18:48:00.000Z",
       "source_basis": [
         {
-          "type": "image_source",
-          "title": "Wikimedia Commons hero candidate / Hagia Sophia",
-          "value": "https://commons.wikimedia.org/wiki/File:Hagia_Sophia_(228968325).jpeg",
-          "reliability_level": "secondary_source",
+          "type": "world_heritage_record",
+          "title": "UNESCO / Historic Areas of Istanbul",
+          "value": "https://whc.unesco.org/en/list/356",
+          "reliability_level": "verified",
           "rights_status": "licensed"
+        },
+        {
+          "type": "official_ministry_record",
+          "title": "Republic of Türkiye Ministry of Culture and Tourism / Ayasofya",
+          "value": "https://www.ktb.gov.tr/EN-113776/ayasofya-hagia-sophia.html",
+          "reliability_level": "verified",
+          "rights_status": "unknown"
+        },
+        {
+          "type": "secondary_reference",
+          "title": "Encyclopaedia Britannica / Hagia Sophia Architecture",
+          "value": "https://www.britannica.com/topic/Hagia-Sophia/Architecture",
+          "reliability_level": "secondary_source",
+          "rights_status": "unknown"
         }
       ]
+    },
+    "source_url": "https://whc.unesco.org/en/list/356",
+    "geo": {
+      "country_code": "TR",
+      "city": "Istanbul",
+      "region": "Sultanahmet / Historic Peninsula of Istanbul",
+      "latitude": 41.0086,
+      "longitude": 28.98,
+      "precision": "monument_in_world_heritage_archaeological_park"
+    },
+    "materials": {
+      "primary": [
+        "brick_and_mortar_masonry",
+        "pendentive_dome_system",
+        "marble_revetment",
+        "gold_mosaic_surfaces",
+        "stone_and_marble_columns"
+      ],
+      "secondary": [
+        "semi_domes",
+        "buttresses",
+        "window_ring",
+        "lead_roofing",
+        "ottoman_minaret_masonry",
+        "restoration_steel_and_timber_scaffolding"
+      ],
+      "notes": "Material reading separates Byzantine masonry/dome system, marble revetment, mosaics/light surfaces, Ottoman additions, structural reinforcements and contemporary restoration layers."
+    },
+    "program": {
+      "type": "imperial_basilica_mosque_museum_and_world_heritage_monument",
+      "subtype": "longitudinal_central_hybrid_with_pendentive_dome_and_semi_domes",
+      "public_access": "active_mosque_and_managed_heritage_visit",
+      "components": [
+        "nave",
+        "central dome",
+        "pendentives",
+        "semi-domes",
+        "apses",
+        "galleries",
+        "side aisles",
+        "marble piers",
+        "mosaic zones",
+        "minarets",
+        "buttresses"
+      ]
+    },
+    "context": {
+      "topography": "historic_peninsula_between_bosphorus_golden_horn_and_marmara",
+      "setting": "sultanahmet_world_heritage_archaeological_park",
+      "landscape_relations": [
+        "Historic Peninsula of Istanbul",
+        "Bosphorus and Golden Horn setting",
+        "Hippodrome and former imperial centre",
+        "Sultanahmet / Blue Mosque relationship",
+        "Byzantine and Ottoman skyline"
+      ],
+      "urban_context": [
+        "Eastern Roman imperial capital",
+        "Ottoman mosque transformation",
+        "museum period from 1935",
+        "mosque reuse since 2020",
+        "UNESCO World Heritage management",
+        "tourism and worship coexistence"
+      ],
+      "construction_logic": [
+        "pendentive_transition",
+        "semi_dome_buttressing",
+        "main_piers",
+        "window_ring_lightness",
+        "mosaic_and_marble_surface",
+        "seismic_reinforcement_history"
+      ]
+    },
+    "vibes": [
+      "schwebende-kuppel",
+      "licht-und-masse",
+      "imperiale-liturgie",
+      "byzantinisch-osmanische-schichtung",
+      "mosaik-und-marmor",
+      "umkämpftes-welterbe"
+    ],
+    "database_tags": [
+      "source:unesco-istanbul-historic-areas",
+      "source:turkish-culture-ministry",
+      "source:britannica-crosscheck",
+      "source:wikimedia-commons-hero",
+      "typology:longitudinal-central-hybrid",
+      "typology:pendentive-dome",
+      "typology:imperial-basilica",
+      "program:church-mosque-museum-monument",
+      "material:brick-and-mortar-masonry",
+      "material:marble-revetment",
+      "material:gold-mosaic",
+      "structure:pendentive-dome-system",
+      "structure:semi-dome-buttressing",
+      "spatial:light-ring-floating-dome",
+      "spatial:galleries-and-nave",
+      "heritage:world-heritage",
+      "critique:religious-political-heritage-conflict",
+      "blender:pendentive-dome-layer-candidate",
+      "blender:light-and-mosaic-layer-candidate"
+    ],
+    "model_assets": [
+      {
+        "model_type": "site_model",
+        "title": "Hagia Sophia Sultanahmet heritage site model",
+        "r2_key": "entries/hagia-sophia/models/site.glb",
+        "format": "glb",
+        "lod_level": "preview",
+        "source_basis": "Diagrammatic site model of Hagia Sophia in the Historic Peninsula/Sultanahmet context from UNESCO and public monument descriptions; not a measured survey.",
+        "generation_method": "procedural",
+        "review_status": "draft",
+        "confidence_score": 0.56
+      },
+      {
+        "model_type": "structure_model",
+        "title": "Hagia Sophia pendentive dome and semi-dome structure model",
+        "r2_key": "entries/hagia-sophia/models/structure.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "Layer model for main piers, pendentives, main dome, semi-domes, arches, buttresses and galleries; exact dimensions require verified data.",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.54
+      },
+      {
+        "model_type": "tectonic_model",
+        "title": "Hagia Sophia light, mosaic and historical transformation study model",
+        "r2_key": "entries/hagia-sophia/models/tectonic.glb",
+        "format": "glb",
+        "lod_level": "study",
+        "source_basis": "Study model separating structural mass, window ring, light fields, mosaic/marble surfaces, Ottoman additions and restoration layers. Public export remains diagrammatic until source precision is cleared.",
+        "generation_method": "diagrammatic_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.5
+      }
+    ],
+    "analysis_layers": [
+      {
+        "analysis_type": "structure",
+        "summary": "Hagia Sophia trägt den scheinbar schwebenden Raum über Hauptpfeiler, Pendentifs, Halbkuppeln, Gewölbe, Außenstützungen und Kuppelmasse.",
+        "data": {
+          "structural_tags": [
+            "main_piers",
+            "pendentives",
+            "semi_domes",
+            "buttresses",
+            "dome_mass"
+          ],
+          "blender_layer": "pendentive_dome_structure"
+        },
+        "r2_key": "entries/hagia-sophia/analysis/structure.json",
+        "review_status": "reviewed"
+      },
+      {
+        "analysis_type": "spatial_order",
+        "summary": "Die Raumordnung verbindet Basilikaachse, Zentralraum, Galerien, Apsis, Halbkuppeln und Lichtkranz zu einer liturgischen Raumdramaturgie.",
+        "data": {
+          "spatial_tags": [
+            "longitudinal_axis",
+            "central_dome_space",
+            "galleries",
+            "apse",
+            "window_ring",
+            "liturgical_focus"
+          ],
+          "model_layer": "basilica_central_hybrid"
+        },
+        "r2_key": "entries/hagia-sophia/analysis/spatial_order.json",
+        "review_status": "reviewed"
+      },
+      {
+        "analysis_type": "material_system",
+        "summary": "Mauerwerk, Marmorverkleidung, Säulen, Mosaikgold, Fensterflächen, osmanische Ergänzungen und Restaurierungsschichten bilden ein geschichtetes Materialsystem.",
+        "data": {
+          "material_tags": [
+            "brick_masonry",
+            "marble_revetment",
+            "gold_mosaic",
+            "stone_columns",
+            "ottoman_additions",
+            "restoration_layers"
+          ],
+          "blender_layer": "masonry_marble_mosaic_layers"
+        },
+        "r2_key": "entries/hagia-sophia/analysis/materials.json",
+        "review_status": "reviewed"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Die tektonische Lesart fokussiert den Übergang von quadratischer Basis zu Kuppel, die seitliche Abstützung, die Fensterzone und die Entmaterialisierung der Last durch Licht.",
+        "data": {
+          "tectonic_tags": [
+            "square_to_dome_transition",
+            "pendentive_geometry",
+            "semi_dome_buttress",
+            "window_ring",
+            "light_as_dematerialization"
+          ],
+          "blender_layer": "dome_transition_and_light"
+        },
+        "r2_key": "entries/hagia-sophia/analysis/tectonics.json",
+        "review_status": "reviewed"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "summary": "Filterbar über byzantinische Kuppel, Pendentif, Zentralraum, Liturgie, Licht, Mosaik, Marmor, Moscheeumbau, Welterbe und Nutzungskonflikt.",
+        "data": {
+          "filter_tags": [
+            "byzantine_dome",
+            "pendentive",
+            "central_space",
+            "liturgy",
+            "light",
+            "mosaic",
+            "marble",
+            "mosque_conversion",
+            "world_heritage",
+            "heritage_conflict"
+          ],
+          "graph_role": "byzantine_dome_anchor"
+        },
+        "r2_key": "entries/hagia-sophia/analysis/filter_classification.json",
+        "review_status": "reviewed"
+      }
+    ],
+    "database_profile": {
+      "status": "reviewed",
+      "r2_prefix": "entries/hagia-sophia",
+      "source_count": 5,
+      "media_count": 4,
+      "model_count": 3,
+      "analysis_count": 5,
+      "tag_count": 19,
+      "rights_summary": "Public text, metadata and CC-BY-SA hero are usable with attribution/share-alike awareness; official ministry/UNESCO/Britannica assets remain link-only unless licensed; 3D geometry remains diagrammatic until measured public data is cleared.",
+      "updated_at": "2026-05-23T18:48:00.000Z"
     }
   },
   {
