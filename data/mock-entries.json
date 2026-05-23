@@ -5432,102 +5432,394 @@
       "dome",
       "concrete",
       "cosmos",
-      "interior"
+      "interior",
+      "oculus",
+      "roman-concrete",
+      "rotunda",
+      "portico",
+      "coffered-dome",
+      "light-instrument",
+      "continuous-use",
+      "historic-centre-rome"
     ],
-    "short_description": "Roemischer Kuppelraum, der Konstruktion, Licht, Material und kosmische Symbolik zu einem praezisen Innenraum verbindet.",
-    "source_quality": "lecture_notes",
-    "one_sentence": "Pantheon ist als Bauwerk in Rome, Italy im Jahr 125 im Architecture Cosmos verortet und verknuepft dome, concrete, cosmos.",
-    "full_description": "Roemischer Kuppelraum, der Konstruktion, Licht, Material und kosmische Symbolik zu einem praezisen Innenraum verbindet. Der Eintrag wird im Atlas als Bauwerk gelesen und gehoert zur Wissensspur Architekturgeschichte ETH, Layer architectural history 1. Autorenschaft / Quelle: Hadrianic builders. Seine Filterebene verbindet dome, concrete, cosmos, interior mit Jahr, Stilsektor und Relationennetz; spaeter koennen echte Fotos, Plaene, Schnitte, Quellen und Modelle direkt aus der Datenbank angeschlossen werden.",
+    "short_description": "Das Pantheon verbindet römischen Beton, Rotunde, Portikus, Kuppel, Oculus und Licht zu einem der präzisesten Innenräume der Architekturgeschichte.",
+    "source_quality": "case_study",
+    "one_sentence": "Das Pantheon ist ein römischer Kuppelraum in Rom, in dem Betonmasse, Rotunde, Portikus, Oculus, Kassetten und Lichtstrahl ein kosmisch lesbares Innenraumdiagramm bilden.",
+    "full_description": "Das Pantheon wird als radikaler Innenraum gelesen: ein klassischer Portikus führt in eine zylindrische Rotunde, darüber spannt sich eine große römische Betonkuppel, deren Oculus den Raum mit Himmel, Licht und Zeit verbindet. Die architektonische Kraft liegt in einer fast einfachen geometrischen Setzung: Kreis, Zylinder, Halbkugel und Öffnung. Gleichzeitig ist das Bauwerk tektonisch hoch komplex. Mauerstärken, Entlastungsbögen, abgestufte Betonmasse, Kassetten, Materialwechsel, Granitsäulen, Marmorböden und die spätere kirchliche Nutzung machen das Pantheon zu einem geschichteten Objekt. Für KosmoData ist es ein Schlüssel zwischen Konstruktion, Atmosphäre, kosmischem Symbol, Stadtraum und Modell-Layer: Rotunde, Kuppel, Oculus, Portikus, Materialgewicht, Lichtweg und Erhaltungszustand lassen sich als getrennte Analyseebenen aufbauen.",
     "media": [
       {
         "type": "exterior",
-        "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Pantheon / dome-concrete",
-        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Pantheon_Rome%2C_from_a_Series_of_24_Depicting_%28Reconstructed%29_Buildings_from_Roman_Antiquity_MET_DP874934.jpg/960px-Pantheon_Rome%2C_from_a_Series_of_24_Depicting_%28Reconstructed%29_Buildings_from_Roman_Antiquity_MET_DP874934.jpg",
-        "source_url": "https://commons.wikimedia.org/wiki/File:Pantheon_Rome,_from_a_Series_of_24_Depicting_(Reconstructed)_Buildings_from_Roman_Antiquity_MET_DP874934.jpg",
-        "credit": "Wikimedia Commons / Formerly attributed to   Monogrammist G.A. & the Caltrop / CC0",
-        "license": "public_domain"
+        "label": "Portikus und Rotunde / Pantheon",
+        "placeholder": "Pantheon / Portikus, Rotunde, Kuppel, Piazza della Rotonda",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/a/a4/Roman_Pantheon_exterior.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Roman_Pantheon_exterior.jpg",
+        "credit": "Wikimedia Commons / Sputnikcccp / CC BY-SA 3.0 and GFDL",
+        "license": "cc_by_sa"
       },
       {
         "type": "interior",
-        "label": "Innenraum",
-        "placeholder": "Innenraum / Pantheon / dome-concrete"
+        "label": "Innenraum / Oculus",
+        "placeholder": "Innenraum / Pantheon / Rotunde, Kuppel, Oculus, Lichtkegel"
       },
       {
         "type": "section",
-        "label": "Schnitt",
-        "placeholder": "Schnitt / Pantheon / dome-concrete"
+        "label": "Schnitt / Kuppel und Rotunde",
+        "placeholder": "Schnitt / Pantheon / Zylinder, Halbkugel, Oculus, Wandmasse"
       },
       {
         "type": "plan",
-        "label": "Grundriss",
-        "placeholder": "Grundriss / Pantheon / dome-concrete"
+        "label": "Grundriss / Portikus und Rotunde",
+        "placeholder": "Grundriss / Pantheon / Portikus, Rotunde, Exedren, Achse"
       }
     ],
     "source_candidates": [
       {
-        "source_type": "image_source",
-        "title": "Wikimedia Commons hero candidate / Pantheon",
-        "url": "https://commons.wikimedia.org/wiki/File:Pantheon_Rome,_from_a_Series_of_24_Depicting_(Reconstructed)_Buildings_from_Roman_Antiquity_MET_DP874934.jpg",
+        "source_type": "official_monument_record",
+        "title": "Direzione Musei Nazionali Roma / Pantheon",
+        "url": "https://direzionemuseiroma.cultura.gov.it/en/pantheon/",
+        "reliability_level": "verified",
+        "rights_status": "unknown",
+        "notes": "Official museum/ministry source for access, monument status and current institutional management. Use metadata and link; do not republish protected page assets."
+      },
+      {
+        "source_type": "world_heritage_record",
+        "title": "UNESCO World Heritage Centre / Historic Centre of Rome",
+        "url": "https://whc.unesco.org/en/list/91",
+        "reliability_level": "verified",
+        "rights_status": "licensed",
+        "notes": "Official World Heritage framing for Rome as historic urban ensemble; useful for the Pantheon as part of the long continuity of Roman urban fabric."
+      },
+      {
+        "source_type": "secondary_reference",
+        "title": "Encyclopaedia Britannica / Pantheon",
+        "url": "https://www.britannica.com/topic/Pantheon-building-Rome-Italy",
         "reliability_level": "secondary_source",
-        "rights_status": "public_domain",
-        "notes": "Auto-selected hero image candidate. Score: 0.87. License: CC0."
+        "rights_status": "unknown",
+        "notes": "Secondary cross-check for concrete rotunda, dome, portico and architectural influence. Text remains paraphrased and source-linked."
+      },
+      {
+        "source_type": "image_source",
+        "title": "Wikimedia Commons hero candidate / Roman Pantheon exterior",
+        "url": "https://commons.wikimedia.org/wiki/File:Roman_Pantheon_exterior.jpg",
+        "reliability_level": "secondary_source",
+        "rights_status": "licensed",
+        "notes": "Public hero image used by the entry. License: CC BY-SA 3.0 and GFDL. Shows the actual exterior/portico and rotunda, replacing the earlier reconstruction drawing."
       }
     ],
     "architecture_text": {
-      "headline": "Pantheon: Kuppelraum, Licht und kosmische Mitte",
-      "overview": "Pantheon wird als Gebäude verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und Rome, Italy. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "headline": "Pantheon: Kuppel, Oculus und Beton als kosmischer Innenraum",
+      "overview": "Das Pantheon wird als römische Raum-Maschine gelesen: Portikus, Rotunde, Betonkuppel, Oculus, Kassettierung, Lichtstrahl und historische Weiternutzung verbinden Konstruktion, Atmosphäre, Stadt und Kosmos.",
       "chapters": [
         {
-          "title": "Architektonische Lesart",
-          "text": "Pantheon gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Das Pantheon erzeugt Innenraum aus Kuppel, Zylinder, Oculus, Betonmasse und Lichtstrahl; der Raum erscheint zugleich konstruktiv, atmosphärisch und kosmisch geordnet. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Kuppel, Beton, Kosmos, Interieur als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
-          "source_basis": "curated spatial reading",
-          "review_status": "draft_review"
+          "title": "These",
+          "text": "Das Pantheon ist eine These darüber, wie Konstruktion zum Weltbild werden kann. Ein scheinbar einfacher Innenraum aus Kreis, Zylinder, Halbkugel und Öffnung erzeugt ein Maximum an räumlicher Wirkung. Der Bau macht Tragwerk, Licht und Zeit nicht zu Nebenthemen, sondern zum eigentlichen Inhalt der Architektur.",
+          "source_basis": "official monument source, Britannica cross-check, ETH architecture history notes",
+          "review_status": "source_enriched_review"
         },
         {
-          "title": "Material und Tragwerk",
-          "text": "Das Pantheon verbindet römischen Beton, abgestufte Kuppelmasse, Ziegel- und Steinverkleidung, Kassettierung und Oculus zu einer radikalen Innenraumkonstruktion. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
-          "source_basis": "curated material reading",
-          "review_status": "draft_review"
+          "title": "Netzwerk und DNA",
+          "text": "Im Atlas sitzt das Pantheon im Netzwerk von römischem Beton, Kuppelbau, Zentralraum, Portikus-Rotunde-Hybrid, Lichtarchitektur und kosmischer Symbolik. Seine DNA unterscheidet sich von griechischen Tempeln gerade durch den Wechsel vom äußeren Säulenbild zum radikalen Innenraum. Es verbindet antike Repräsentation mit einer konstruktiven Idee, die spätere Kuppelbauten immer wieder aufgreifen.",
+          "source_basis": "entry taxonomy, Rome heritage context and architectural history comparison",
+          "review_status": "source_enriched_review"
         },
         {
-          "title": "Raumordnung",
-          "text": "Das Pantheon erzeugt Innenraum aus Kuppel, Zylinder, Oculus, Betonmasse und Lichtstrahl; der Raum erscheint zugleich konstruktiv, atmosphärisch und kosmisch geordnet. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
-          "source_basis": "curated spatial reading",
-          "review_status": "draft_review"
+          "title": "Topos",
+          "text": "Der Topos ist das dichte historische Zentrum Roms und die Piazza della Rotonda. Das Pantheon wirkt nicht als freigestelltes Objekt, sondern als Stadtraum-Überraschung: Eine klassische Front sitzt in der engen Stadt, dahinter öffnet sich ein kugelförmig gedachter Innenraum. Der urbane Druck verstärkt den Effekt des plötzlichen kosmischen Raums.",
+          "source_basis": "Rome historic-centre context and monument location metadata",
+          "review_status": "source_enriched_review"
+        },
+        {
+          "title": "Typos",
+          "text": "Typologisch ist das Pantheon ein Hybrid: Portikus, Tempelfront, Rotunde, Kuppelraum, später Kirche und Memorial. Gerade dieser Mischtyp macht es architektonisch stark. Die Front verspricht einen klassischen Tempel, der Innenraum löst dieses Versprechen in eine andere Raumfigur auf: nicht Langhaus oder Säulenhalle, sondern Zentralraum unter offenem Himmel.",
+          "source_basis": "official monument and architecture-history typology review",
+          "review_status": "source_enriched_review"
         },
         {
           "title": "Tektonik",
-          "text": "Die tektonische Lesart soll zeigen, wie Oberfläche, Tragstruktur und Fügung Stützung, Hülle, Fügung und Atmosphäre organisieren. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
-          "source_basis": "entry materials and analysis fallback",
-          "review_status": "needs_source_review"
+          "text": "Tektonisch ist das Pantheon ein Meisterstück römischer Masse. Die Kuppel arbeitet nicht als dünne Schale im modernen Sinn, sondern als abgestufte Betonmasse auf einem massiven zylindrischen Mauerwerk. Kassetten, Materialabstufung, Entlastungsbögen, Wandnischen und Oculus reduzieren Gewicht und organisieren Kräfte. Die Konstruktion ist zugleich sichtbar, verborgen und atmosphärisch wirksam.",
+          "source_basis": "architectural-structural reading from monument and reference sources",
+          "review_status": "source_enriched_review"
         },
         {
-          "title": "Kontext",
-          "text": "Pantheon gehört zu Rome, Italy. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
-          "source_basis": "entry location metadata",
-          "review_status": "draft_review"
+          "title": "Raumlogik",
+          "text": "Die Raumlogik ist axial und zentral zugleich. Man tritt durch den Portikus ein, wird aber sofort in einen kreisförmigen Innenraum gebracht, dessen Mittelpunkt durch den Oculus und den Lichtstrahl definiert wird. Der Raum ist weniger Weg als Ereignis: Boden, Wand, Kuppel und Himmel bilden eine einzige geometrische Figur.",
+          "source_basis": "spatial analysis and geometry taxonomy",
+          "review_status": "source_enriched_review"
         },
         {
-          "title": "Relevanz",
-          "text": "Pantheon ist als Referenz wichtig, weil Kuppel, Beton, Kosmos, Interieur nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
-          "source_basis": "derived from entry metadata and Brain quality rules",
-          "review_status": "draft_review"
+          "title": "Konflikt und Kritik",
+          "text": "Das Pantheon ist auch ein Objekt von Umnutzung, Spolien, religiöser Transformation, Restaurierung und Tourismusdruck. Seine Erhaltung verdankt sich wesentlich der späteren kirchlichen Nutzung. Für KosmoData ist wichtig, nicht nur die antike Idealform zu speichern, sondern die geschichtete Realität: Tempel, Kirche, Denkmal, Stadtattraktion und materiell verändertes Monument.",
+          "source_basis": "official monument/history context and heritage review questions",
+          "review_status": "source_enriched_review"
+        },
+        {
+          "title": "KosmoData-Layer und 3D-Potenzial",
+          "text": "Für 3D ist das Pantheon ein idealer Layer-Fall: Portikus, Säulen, Rotunde, Wandmasse, Entlastungsbögen, Kuppel, Kassetten, Oculus, Lichtkegel, Bodenmuster und städtischer Vorraum können getrennt modelliert werden. Besonders wichtig ist der Analysemodus, der zwischen realistischer Ansicht, Tragwerksmasse, Lichtsimulation und geometrischem Schnitt umschaltet.",
+          "source_basis": "model taxonomy and public architectural description",
+          "review_status": "source_enriched_review"
+        },
+        {
+          "title": "Entwurfsintelligenz",
+          "text": "Die übertragbare Entwurfsintelligenz liegt in der Präzision des einfachen Diagramms. Kreis, Achse, Halbkugel und Öffnung erzeugen ein komplexes Verhältnis von Körper, Licht, Last und Himmel. Für heutige Entwürfe ist das Pantheon weniger eine Formvorlage als ein Werkzeug: Wie kann ein Raum durch eine klare geometrische Regel und ein einziges Lichtinstrument maximale atmosphärische Dichte erhalten?",
+          "source_basis": "source-enriched database profile and Architecture Cosmos text framework",
+          "review_status": "source_enriched_review"
         }
       ],
       "language": "de",
-      "generator": "cosmos-generate-architecture-text",
-      "generated_at": "2026-05-21T18:29:05.640Z",
-      "review_status": "needs_owner_review",
+      "review_status": "source_enriched_review",
+      "public_use_allowed": true,
+      "generated_at": "2026-05-23T18:25:00.000Z",
       "source_basis": [
         {
-          "type": "image_source",
-          "title": "Wikimedia Commons hero candidate / Pantheon",
-          "value": "https://commons.wikimedia.org/wiki/File:Pantheon_Rome,_from_a_Series_of_24_Depicting_(Reconstructed)_Buildings_from_Roman_Antiquity_MET_DP874934.jpg",
+          "type": "official_monument_record",
+          "title": "Direzione Musei Nazionali Roma / Pantheon",
+          "value": "https://direzionemuseiroma.cultura.gov.it/en/pantheon/",
+          "reliability_level": "verified",
+          "rights_status": "unknown"
+        },
+        {
+          "type": "world_heritage_record",
+          "title": "UNESCO / Historic Centre of Rome",
+          "value": "https://whc.unesco.org/en/list/91",
+          "reliability_level": "verified",
+          "rights_status": "licensed"
+        },
+        {
+          "type": "secondary_reference",
+          "title": "Encyclopaedia Britannica / Pantheon",
+          "value": "https://www.britannica.com/topic/Pantheon-building-Rome-Italy",
           "reliability_level": "secondary_source",
-          "rights_status": "public_domain"
+          "rights_status": "unknown"
         }
       ]
+    },
+    "source_url": "https://direzionemuseiroma.cultura.gov.it/en/pantheon/",
+    "geo": {
+      "country_code": "IT",
+      "city": "Rome",
+      "region": "Lazio / Historic Centre of Rome",
+      "latitude": 41.8986,
+      "longitude": 12.4769,
+      "precision": "monument_in_historic_city_center"
+    },
+    "materials": {
+      "primary": [
+        "roman_concrete",
+        "brick_faced_concrete",
+        "coffered_concrete_dome",
+        "granite_columns",
+        "marble_interior_cladding"
+      ],
+      "secondary": [
+        "oculus_ring",
+        "relieving_arches",
+        "travertine_foundation",
+        "bronze_door_and_lost_roofing",
+        "stone_paving"
+      ],
+      "notes": "Material reading separates Roman concrete mass, brick-facing, dome coffers, oculus, granite portico, marble interior surfaces and later historical transformations."
+    },
+    "program": {
+      "type": "roman_temple_church_and_memorial",
+      "subtype": "portico_rotunda_concrete_dome_with_oculus",
+      "public_access": "public_monument_and_active_church_with_managed_ticketing",
+      "components": [
+        "portico",
+        "granite columns",
+        "rotunda",
+        "concrete dome",
+        "oculus",
+        "coffers",
+        "marble floor",
+        "wall niches",
+        "piazza frontage"
+      ]
+    },
+    "context": {
+      "topography": "dense_historic_city_center",
+      "setting": "roman_monument_in_piazza_della_rotonda",
+      "landscape_relations": [
+        "Piazza della Rotonda",
+        "Historic Centre of Rome",
+        "urban approach through dense fabric",
+        "sky connection through oculus"
+      ],
+      "urban_context": [
+        "Hadrianic Rome",
+        "ancient temple later converted to church",
+        "continuous use",
+        "tourism pressure",
+        "architectural influence on later dome traditions"
+      ],
+      "construction_logic": [
+        "roman_concrete_mass",
+        "hemispherical_dome",
+        "oculus_compression_ring",
+        "coffer_weight_reduction",
+        "relieving_arches",
+        "portico_rotunda_join"
+      ]
+    },
+    "vibes": [
+      "cosmic-interior",
+      "concrete-sky-room",
+      "oculus-light-instrument",
+      "mass-and-void",
+      "roman-urban-surprise",
+      "continuous-use-monument"
+    ],
+    "database_tags": [
+      "source:direzione-musei-roma",
+      "source:unesco-historic-centre-rome",
+      "source:britannica-crosscheck",
+      "source:wikimedia-commons-hero",
+      "typology:rotunda",
+      "typology:portico-rotunda-hybrid",
+      "typology:central-space",
+      "program:temple-church-memorial",
+      "material:roman-concrete",
+      "material:brick-faced-concrete",
+      "material:granite-columns",
+      "structure:unreinforced-concrete-dome",
+      "structure:coffered-dome",
+      "spatial:oculus-light-axis",
+      "spatial:cosmic-interior",
+      "heritage:historic-centre-rome",
+      "critique:spolia-reuse-tourism-pressure",
+      "blender:dome-section-layer-candidate",
+      "blender:oculus-light-simulation-candidate"
+    ],
+    "model_assets": [
+      {
+        "model_type": "site_model",
+        "title": "Pantheon Piazza della Rotonda site model",
+        "r2_key": "entries/pantheon/models/site.glb",
+        "format": "glb",
+        "lod_level": "preview",
+        "source_basis": "Diagrammatic urban model of Pantheon, Piazza della Rotonda and dense approach context from public monument descriptions; not a measured survey.",
+        "generation_method": "procedural",
+        "review_status": "draft",
+        "confidence_score": 0.56
+      },
+      {
+        "model_type": "structure_model",
+        "title": "Pantheon concrete dome and rotunda structure model",
+        "r2_key": "entries/pantheon/models/structure.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "Layer model for rotunda wall mass, concrete dome, coffers, oculus, relieving arches and portico/rotunda joint; exact dimensions require verified data.",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.55
+      },
+      {
+        "model_type": "tectonic_model",
+        "title": "Pantheon oculus, coffers and light-axis study model",
+        "r2_key": "entries/pantheon/models/tectonic.glb",
+        "format": "glb",
+        "lod_level": "study",
+        "source_basis": "Study model separating dome mass, oculus, coffer pattern, light cone and interior surface layers. Public export remains diagrammatic until source precision is cleared.",
+        "generation_method": "diagrammatic_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.5
+      }
+    ],
+    "analysis_layers": [
+      {
+        "analysis_type": "structure",
+        "summary": "Das Pantheon trägt den Innenraum über zylindrische Mauerwerksmasse, römischen Beton, Kuppel, Kassetten, Entlastungsbögen und Oculus.",
+        "data": {
+          "structural_tags": [
+            "roman_concrete",
+            "unreinforced_dome",
+            "rotunda_wall_mass",
+            "coffers",
+            "oculus"
+          ],
+          "blender_layer": "dome_and_rotunda_structure"
+        },
+        "r2_key": "entries/pantheon/analysis/structure.json",
+        "review_status": "reviewed"
+      },
+      {
+        "analysis_type": "spatial_order",
+        "summary": "Die Raumordnung kippt vom Portikus in eine zentrale Rotunde: Achse, Kreis, Halbkugel, Oculus und Lichtstrahl bilden ein geschlossenes Innenraumdiagramm.",
+        "data": {
+          "spatial_tags": [
+            "portico_axis",
+            "rotunda",
+            "central_space",
+            "oculus_light",
+            "sphere_geometry"
+          ],
+          "model_layer": "central_space_geometry"
+        },
+        "r2_key": "entries/pantheon/analysis/spatial_order.json",
+        "review_status": "reviewed"
+      },
+      {
+        "analysis_type": "material_system",
+        "summary": "Römischer Beton, Ziegelflächen, Granitsäulen, Marmoroberflächen, Kassetten und Oculus-Ring bilden ein Materialsystem aus Masse, Hülle und Licht.",
+        "data": {
+          "material_tags": [
+            "roman_concrete",
+            "brick_faced_concrete",
+            "granite_columns",
+            "marble_surfaces",
+            "oculus_ring"
+          ],
+          "blender_layer": "material_mass_and_surface"
+        },
+        "r2_key": "entries/pantheon/analysis/materials.json",
+        "review_status": "reviewed"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Die tektonische Lesart fokussiert den Übergang von Portikus zu Rotunde, die Kuppelmasse, Kassetten, Oculus und Entlastungslogik als gebaute Wahrnehmung.",
+        "data": {
+          "tectonic_tags": [
+            "portico_rotunda_joint",
+            "coffered_dome",
+            "oculus",
+            "relieving_arches",
+            "light_as_structure"
+          ],
+          "blender_layer": "tectonic_light_and_mass"
+        },
+        "r2_key": "entries/pantheon/analysis/tectonics.json",
+        "review_status": "reviewed"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "summary": "Filterbar über Rotunde, Kuppel, römischen Beton, Oculus, Zentralraum, Lichtachse, Portikus, Kirche/Memorial und historisches Zentrum Roms.",
+        "data": {
+          "filter_tags": [
+            "rotunda",
+            "dome",
+            "roman_concrete",
+            "oculus",
+            "central_space",
+            "light_axis",
+            "portico",
+            "church_memorial",
+            "historic_rome"
+          ],
+          "graph_role": "roman_dome_anchor"
+        },
+        "r2_key": "entries/pantheon/analysis/filter_classification.json",
+        "review_status": "reviewed"
+      }
+    ],
+    "database_profile": {
+      "status": "reviewed",
+      "r2_prefix": "entries/pantheon",
+      "source_count": 5,
+      "media_count": 4,
+      "model_count": 3,
+      "analysis_count": 5,
+      "tag_count": 19,
+      "rights_summary": "Public text, metadata and CC-BY-SA hero are usable with attribution/share-alike awareness; official monument and Britannica assets remain link-only unless licensed; 3D geometry remains diagrammatic until measured public data is cleared.",
+      "updated_at": "2026-05-23T18:25:00.000Z"
     }
   },
   {
