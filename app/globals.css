@@ -4856,17 +4856,28 @@ body:has(.entry-page) {
   }
 
   .mobile-atlas-gesture {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    padding: 6px 7px;
   }
 
   .mobile-atlas-gesture div {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    display: inline-flex;
+    gap: 5px;
   }
 
   .mobile-atlas-gesture button {
-    min-width: 0;
-    min-height: 46px;
+    min-width: 38px;
+    min-height: 38px;
+    font-size: 12px;
+  }
+
+  .mobile-atlas-gesture span {
+    font-size: 10px;
+  }
+
+  .mobile-atlas-gesture small {
+    font-size: 8px;
   }
 
   .mobile-atlas-dock button {
