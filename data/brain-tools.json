@@ -40,6 +40,24 @@
       "review_output": "archive-intake/{slug}/review/entry-build-review.json",
       "purpose": "Run the local plan, model and text tools together and produce a single review packet for owner approval.",
       "approval_required_before_public_use": true
+    },
+    {
+      "id": "research_agents",
+      "label": "Database Research Agents",
+      "command": "npm run database:research -- --agent all --topic {topic}",
+      "output_root": "out/database-research/{date}",
+      "review_output": "out/database-research/{date}/{agent}-{topic}/research-pack.json",
+      "purpose": "Prepare historical and contemporary source packs from the curated registry without writing to the public database.",
+      "approval_required_before_public_use": true
+    },
+    {
+      "id": "source_registry_audit",
+      "label": "Source Registry Audit",
+      "command": "npm run database:source-audit",
+      "output_root": "out/research-source-registry",
+      "review_output": "out/research-source-registry/source-registry-audit.json",
+      "purpose": "Check source coverage, rights modes, automation readiness and unsafe URLs before Brain research runs.",
+      "approval_required_before_public_use": false
     }
   ],
   "guardrails": [

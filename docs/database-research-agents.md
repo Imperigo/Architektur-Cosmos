@@ -132,6 +132,44 @@ Research pack
 
 No generated candidate becomes public until it passes rights and quality review.
 
+## Source Registry Audit
+
+Before a Brain research run, audit the curated source registry:
+
+```bash
+npm run database:source-audit
+```
+
+The audit writes:
+
+```text
+out/research-source-registry/source-registry-audit.json
+out/research-source-registry/source-registry-audit.md
+```
+
+It checks:
+
+- duplicate or unsafe source IDs/URLs;
+- distribution by historical/current agent;
+- reliability coverage;
+- rights modes and private/link-only sources;
+- automation readiness;
+- whether Opera-discovered sources are still treated conservatively.
+
+This is the safer operating rhythm:
+
+```text
+Source registry audit
+  -> database:research pack
+  -> database:analyze pack
+  -> manual review
+  -> rights gate
+  -> entry draft or tool-suite generation
+```
+
+The audit is local-only. It does not browse, scrape, write database rows,
+upload media or publish anything.
+
 ## Quality Scoring
 
 Each candidate should eventually receive:

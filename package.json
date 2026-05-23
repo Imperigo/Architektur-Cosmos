@@ -44,6 +44,7 @@
     "assets:check": "node scripts/blender-api-smoke.mjs --strict-assets",
     "database:research": "node scripts/database-research-agents.mjs",
     "database:analyze": "node scripts/database-research-agents.mjs --mode analyze",
+    "database:source-audit": "node scripts/research-source-registry-audit.mjs",
     "database:pilot-enrich": "node scripts/pilot-enrichment-review.mjs",
     "database:profile-audit": "node scripts/database-profile-audit.mjs",
     "database:hero-images": "node scripts/research-hero-images.mjs",
