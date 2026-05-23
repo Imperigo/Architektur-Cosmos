@@ -5567,12 +5567,13 @@
     "slug": "hereford-mappa-mundi",
     "title": "Hereford Mappa Mundi",
     "entry_type": "map",
-    "year_start": 1300,
+    "year_start": 1290,
     "authors": [
-      "Hereford Cathedral"
+      "Hereford Cathedral",
+      "Richard of Haldingham and Lafford"
     ],
     "city": "Hereford",
-    "country": "UK",
+    "country": "United Kingdom",
     "style_sector": "pre_modern_architecture",
     "lecture_cluster": [
       "landscape_architecture_1_2"
@@ -5580,17 +5581,24 @@
     "themes": [
       "cartography",
       "worldview",
-      "theocentric"
+      "theocentric",
+      "medieval-world-map",
+      "memory-of-the-world",
+      "visual-encyclopedia",
+      "jerusalem-center",
+      "vellum-manuscript",
+      "monsters-and-marvels",
+      "sacred-geography"
     ],
     "short_description": "Hereford Mappa Mundi ist im PDF-Framework als cartography / worldview verortet und bildet einen wichtigen Knoten der Architektur- und Stadtgeschichte.",
     "source_quality": "lecture_pdf",
-    "one_sentence": "Hereford Mappa Mundi ist als Karte in Hereford, UK im Jahr 1300 im Architecture Cosmos verortet und verknuepft cartography, worldview, theocentric.",
-    "full_description": "Hereford Mappa Mundi ist im PDF-Framework als cartography / worldview verortet und bildet einen wichtigen Knoten der Architektur- und Stadtgeschichte. Der Eintrag wird im Atlas als Karte gelesen und gehoert zur Wissensspur Landschaftsarchitektur ETH, 04 Landschaftsarchitektur 1_2.pdf, Layer landscape architecture 1 2. Autorenschaft / Quelle: Hereford Cathedral. Seine Filterebene verbindet cartography, worldview, theocentric mit Jahr, Stilsektor und Relationennetz; spaeter koennen echte Fotos, Plaene, Schnitte, Quellen und Modelle direkt aus der Datenbank angeschlossen werden.",
+    "one_sentence": "Die Hereford Mappa Mundi ist kein neutraler Weltplan, sondern ein mittelalterlicher Wissensraum auf Vellum, in dem Geografie, Bibelgeschichte, Städte, Völker, Tiere, Wunder und Theologie zu einer räumlichen Ordnung verschränkt werden.",
+    "full_description": "Die Hereford Mappa Mundi ist die größte vollständig erhaltene mittelalterliche Weltkarte und einer der wichtigsten kartografischen Wissensräume Europas um 1300. Sie zeigt die Welt nicht nach moderner Vermessungslogik, sondern als theologisch und historisch geordnete Bildfläche: Jerusalem liegt im Zentrum, Osten ist oben, biblische Ereignisse, klassische Mythen, Städte, Völker, Tiere, Pflanzen und fremde Wunder sind in die Geografie eingeschrieben. Das macht die Karte für Architecture Cosmos besonders wichtig. Sie ist eine Art mittelalterlicher Atlas, Datenbank und Weltmodell zugleich: Ort ist nicht nur Koordinate, sondern Bedeutung, Erinnerung, Heilsgeschichte und moralische Ordnung. Als materielles Objekt ist sie ebenso präzise: eine große einzelne Vellumhaut, beschriftet, bemalt, konserviert und heute in Hereford Cathedral als Gedächtnisobjekt ausgestellt.",
     "media": [
       {
         "type": "exterior",
-        "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Hereford Mappa Mundi / cartography-worldview",
+        "label": "Weltkarte / Vellum",
+        "placeholder": "Hereford Mappa Mundi / Jerusalem-Zentrum, Ostung, Kreaturen, Städte, Theologie",
         "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Hereford-Karte.jpg/960px-Hereford-Karte.jpg",
         "source_url": "https://commons.wikimedia.org/wiki/File:Hereford-Karte.jpg",
         "credit": "Wikimedia Commons / Unknown author Unknown author / Public domain",
@@ -5617,72 +5625,343 @@
     ],
     "source_candidates": [
       {
+        "source_type": "website",
+        "title": "Hereford Cathedral / Mappa Mundi",
+        "url": "https://www.herefordcathedral.org/mappa-mundi",
+        "reliability_level": "verified",
+        "rights_status": "needs_permission",
+        "notes": "Official holding institution source. Useful for date around 1300, single vellum sheet, dimensions, Jerusalem-centered theological geography and count of drawings/cities/biblical events/creatures. Official images require purchase/reproduction permission."
+      },
+      {
+        "source_type": "archive",
+        "title": "UNESCO Memory of the World / Hereford Mappa Mundi",
+        "url": "https://www.unesco.org/en/memory-world/hereford-mappa-mundi",
+        "reliability_level": "verified",
+        "rights_status": "needs_permission",
+        "notes": "Official Memory of the World source: unique complete large medieval world map intended for public display and visual encyclopaedia of historical, anthropological, biblical, classical and theological information."
+      },
+      {
+        "source_type": "website",
+        "title": "Mappa Mundi Hereford / Explore the largest medieval map",
+        "url": "https://www.themappamundi.co.uk/",
+        "reliability_level": "verified",
+        "rights_status": "needs_permission",
+        "notes": "Official public-facing exploration source for scale, Hereford Cathedral context and Chained Library relation. Images remain controlled by the Mappa Mundi Trust/Cathedral."
+      },
+      {
+        "source_type": "article",
+        "title": "Guinness World Records / Largest surviving medieval world map",
+        "url": "https://www.guinnessworldrecords.com/world-records/606607-largest-surviving-medieval-world-map",
+        "reliability_level": "secondary_source",
+        "rights_status": "unknown",
+        "notes": "Secondary cross-check for largest surviving medieval world map and physical scale on calfskin."
+      },
+      {
         "source_type": "image_source",
-        "title": "Wikimedia Commons hero candidate / Hereford Mappa Mundi",
+        "title": "Wikimedia Commons hero candidate / Hereford-Karte",
         "url": "https://commons.wikimedia.org/wiki/File:Hereford-Karte.jpg",
         "reliability_level": "secondary_source",
         "rights_status": "public_domain",
-        "notes": "Auto-selected hero image candidate. Score: 0.98. License: Public domain."
+        "notes": "Public-domain hero image already used by the entry. Keep as public-safe thumbnail; official high-resolution images remain rights-controlled."
       }
     ],
     "architecture_text": {
-      "headline": "Hereford Mappa Mundi: Weltbild als kartografische Theologie",
-      "overview": "Hereford Mappa Mundi wird als Karte verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und Hereford, UK. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "headline": "Hereford Mappa Mundi: Welt als theologischer Wissensraum",
+      "overview": "Die Hereford Mappa Mundi wird als mittelalterliches Interface gelesen: eine Karte, die Orte, Geschichte, Kreaturen, Text, Bild und Heilserwartung in eine einzige räumliche Ordnung bringt.",
       "chapters": [
         {
           "title": "Architektonische Lesart",
-          "text": "Hereford Mappa Mundi gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Die Hereford Mappa Mundi zeichnet Welt nicht neutral, sondern theologisch: Zentrum, Rand, Geschichte, Ort und Bedeutung werden in einer kartografischen Ordnung verschränkt. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Kartografie, Weltbild, theozentrisches Weltbild als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
-          "source_basis": "curated spatial reading",
-          "review_status": "draft_review"
+          "text": "Die Hereford Mappa Mundi ist für Architecture Cosmos fast ein Vorläufer des Projekts selbst: Sie ordnet Weltwissen räumlich. Es geht nicht um exakte Entfernung, sondern um Bedeutung. Jerusalem als Zentrum, das Paradies im Osten, die Weltgeschichte, Tiere, Städte und Wunder bilden eine kartografische Dramaturgie. Die Karte ist dadurch weniger Abbild als Raumapparat.",
+          "source_basis": "Hereford Cathedral, UNESCO Memory of the World, ETH landscape/worldview notes",
+          "review_status": "source_enriched_review"
         },
         {
-          "title": "Material und Tragwerk",
-          "text": "Die Hereford Mappa Mundi ist als Pergament-, Tinten- und Bildordnung wirksam; ihr räumliches Material ist die Verbindung von Ort, Text, Geschichte und theologischer Hierarchie. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
-          "source_basis": "curated material reading",
-          "review_status": "draft_review"
+          "title": "Material und Träger",
+          "text": "Das Material ist Teil des Arguments. Die Welt ist auf eine einzelne Vellumhaut gezeichnet, beschrieben und bemalt. Pergament, Tinte, Farbe, Gold, Schrift und Bild bilden keine neutrale Oberfläche, sondern einen Wissenskörper. Die Größe der Haut macht die Karte zu einem öffentlichen Betrachtungsobjekt, nicht zu einem privaten Notizblatt.",
+          "source_basis": "Hereford Cathedral object description and Guinness scale cross-check",
+          "review_status": "source_enriched_review"
         },
         {
           "title": "Raumordnung",
-          "text": "Die Hereford Mappa Mundi zeichnet Welt nicht neutral, sondern theologisch: Zentrum, Rand, Geschichte, Ort und Bedeutung werden in einer kartografischen Ordnung verschränkt. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
-          "source_basis": "curated spatial reading",
-          "review_status": "draft_review"
+          "text": "Die Raumordnung folgt einer anderen Logik als moderne Kartografie. Osten ist oben, Zentrum ist Bedeutung, Rand ist Grenze des Bekannten und zugleich Projektionsraum. Städte, biblische Episoden, Völker, Tiere und Monster sind nicht Beiwerk; sie strukturieren die Welt als Text-Bild-Netzwerk. Damit ist die Karte ein semantischer Zoomraum vor der digitalen Zeit.",
+          "source_basis": "UNESCO visual-encyclopaedia framing and cathedral data",
+          "review_status": "source_enriched_review"
         },
         {
-          "title": "Tektonik",
-          "text": "Die tektonische Lesart soll zeigen, wie Oberfläche, Tragstruktur und Fügung Stützung, Hülle, Fügung und Atmosphäre organisieren. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
-          "source_basis": "entry materials and analysis fallback",
-          "review_status": "needs_source_review"
+          "title": "Tektonik des Wissens",
+          "text": "Tektonisch besteht die Mappa Mundi aus Layern: geometrische Weltform, christliches Zentrum, Ortsnamen, Figuren, Erzählungen, Randzonen, Materialträger und Ausstellungsrahmen. Für KosmoData lässt sich daraus ein 2D-Analysemodell bauen, in dem Zentrum, Ränder, Kategorien, Bildtypen und Textfelder getrennt aktiviert werden können.",
+          "source_basis": "database layer taxonomy and Mappa Mundi structure",
+          "review_status": "source_enriched_review"
         },
         {
           "title": "Kontext",
-          "text": "Hereford Mappa Mundi gehört zu Hereford, UK. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
-          "source_basis": "entry location metadata",
-          "review_status": "draft_review"
+          "text": "Die Karte ist in Hereford Cathedral überliefert und gehört heute zum UNESCO-Memory-of-the-World-Kontext. Sie ist damit nicht nur mittelalterliche Kartografie, sondern auch Objektgeschichte: Bewahrung, Ausstellung, Reproduktion, Rechte und institutionelle Pflege sind Teil ihrer heutigen Wirkung.",
+          "source_basis": "Hereford Cathedral and UNESCO preservation context",
+          "review_status": "source_enriched_review"
         },
         {
           "title": "Relevanz",
-          "text": "Hereford Mappa Mundi ist als Referenz wichtig, weil Kartografie, Weltbild, theozentrisches Weltbild nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
-          "source_basis": "derived from entry metadata and Brain quality rules",
-          "review_status": "draft_review"
+          "text": "Für Architecture Cosmos ist die Hereford Mappa Mundi ein Schlüsselobjekt, weil sie zeigt, dass Atlas, Archiv und Weltbild historisch untrennbar sind. Sie verbindet Karte, Bild, Text, Religion, Geografie und Erzählung zu einer Wissensmaschine. Genau daraus kann der digitale Kosmos lernen: Navigation bedeutet nicht nur Koordinaten, sondern Interpretation.",
+          "source_basis": "source-enriched database profile and atlas relation system",
+          "review_status": "source_enriched_review"
         }
       ],
       "language": "de",
-      "generator": "cosmos-generate-architecture-text",
-      "generated_at": "2026-05-21T18:29:06.327Z",
-      "review_status": "needs_owner_review",
+      "review_status": "source_enriched_review",
+      "public_use_allowed": true,
+      "generated_at": "2026-05-23T19:57:22.000Z",
       "source_basis": [
         {
           "type": "source_document",
           "value": "04 Landschaftsarchitektur 1_2.pdf"
         },
         {
-          "type": "image_source",
-          "title": "Wikimedia Commons hero candidate / Hereford Mappa Mundi",
-          "value": "https://commons.wikimedia.org/wiki/File:Hereford-Karte.jpg",
+          "type": "official_holding_institution",
+          "title": "Hereford Cathedral / Mappa Mundi",
+          "value": "https://www.herefordcathedral.org/mappa-mundi",
+          "reliability_level": "verified",
+          "rights_status": "needs_permission"
+        },
+        {
+          "type": "unesco_memory_record",
+          "title": "UNESCO Memory of the World / Hereford Mappa Mundi",
+          "value": "https://www.unesco.org/en/memory-world/hereford-mappa-mundi",
+          "reliability_level": "verified",
+          "rights_status": "needs_permission"
+        },
+        {
+          "type": "official_explore_source",
+          "title": "Mappa Mundi Hereford",
+          "value": "https://www.themappamundi.co.uk/",
+          "reliability_level": "verified",
+          "rights_status": "needs_permission"
+        },
+        {
+          "type": "secondary_reference",
+          "title": "Guinness World Records / Largest surviving medieval world map",
+          "value": "https://www.guinnessworldrecords.com/world-records/606607-largest-surviving-medieval-world-map",
           "reliability_level": "secondary_source",
-          "rights_status": "public_domain"
+          "rights_status": "unknown"
         }
       ]
+    },
+    "year_end": 1300,
+    "source_url": "https://www.herefordcathedral.org/mappa-mundi",
+    "geo": {
+      "country_code": "GB",
+      "city": "Hereford",
+      "region": "Herefordshire / Hereford Cathedral",
+      "latitude": 52.0542,
+      "longitude": -2.7161,
+      "precision": "holding_institution"
+    },
+    "materials": {
+      "primary": [
+        "vellum_calfskin",
+        "ink",
+        "pigment",
+        "gold_highlights",
+        "manuscript_surface"
+      ],
+      "secondary": [
+        "text_labels",
+        "city_symbols",
+        "creature_drawings",
+        "biblical_scenes",
+        "display_case_context"
+      ],
+      "notes": "Material reading treats the map as a physical manuscript and public knowledge object. Official high-resolution images are rights-controlled; public-domain hero remains low-risk."
+    },
+    "program": {
+      "type": "medieval_world_map_and_visual_encyclopedia",
+      "subtype": "theological_geography_public_display_object",
+      "public_access": "museum_cathedral_display_with_image_rights_restrictions",
+      "components": [
+        "vellum sheet",
+        "Jerusalem centre",
+        "biblical events",
+        "cities/towns",
+        "peoples",
+        "animals/creatures",
+        "classical mythology",
+        "text-image fields"
+      ]
+    },
+    "context": {
+      "topography": "manuscript_surface_world_model",
+      "setting": "Hereford Cathedral manuscript and chained-library context",
+      "worldview_relations": [
+        "Jerusalem as centre",
+        "East at top",
+        "theological geography",
+        "visual encyclopedia",
+        "Memory of the World"
+      ],
+      "knowledge_context": [
+        "medieval_cartography",
+        "public_display_map",
+        "biblical_history",
+        "classical_knowledge",
+        "ethnographic_marvels"
+      ],
+      "display_context": [
+        "cathedral_collection",
+        "reproduction_rights",
+        "conservation",
+        "digital_exploration"
+      ]
+    },
+    "vibes": [
+      "world-as-manuscript",
+      "theological-interface",
+      "medieval-data-map",
+      "vellum-cosmos",
+      "semantic-center-and-edge",
+      "archive-before-database"
+    ],
+    "database_tags": [
+      "source:hereford-cathedral",
+      "source:unesco-memory-of-the-world",
+      "source:mappa-mundi-explore",
+      "source:guinness-crosscheck",
+      "typology:medieval-world-map",
+      "typology:visual-encyclopedia",
+      "material:vellum",
+      "material:ink-pigment-gold",
+      "spatial:jerusalem-center",
+      "spatial:east-at-top",
+      "knowledge:theological-geography",
+      "knowledge:monsters-and-marvels",
+      "heritage:memory-of-the-world",
+      "plan2d:semantic-map-layer-candidate",
+      "blender:manuscript-relief-display-candidate"
+    ],
+    "model_assets": [
+      {
+        "model_type": "site_model",
+        "title": "Hereford Mappa Mundi semantic manuscript model",
+        "r2_key": "entries/hereford-mappa-mundi/models/site.glb",
+        "format": "glb",
+        "lod_level": "preview",
+        "source_basis": "Diagrammatic raised-plane model of vellum sheet, centre/rim logic, text-image zones and display context from public descriptions.",
+        "generation_method": "procedural",
+        "review_status": "draft",
+        "confidence_score": 0.57
+      },
+      {
+        "model_type": "tectonic_model",
+        "title": "Hereford Mappa Mundi knowledge-layer model",
+        "r2_key": "entries/hereford-mappa-mundi/models/tectonic.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "Layer model for vellum support, central theology, city symbols, creatures, biblical episodes, text labels and edge zones; no protected image reproduction.",
+        "generation_method": "ai_assisted",
+        "review_status": "draft",
+        "confidence_score": 0.53
+      }
+    ],
+    "analysis_layers": [
+      {
+        "analysis_type": "spatial_order",
+        "summary": "Die Karte ordnet Welt über Zentrum, Rand, Ostung und theologische Bedeutung; räumliche Ordnung ist zugleich moralische und historische Ordnung.",
+        "data": {
+          "spatial_tags": [
+            "jerusalem_center",
+            "east_at_top",
+            "edge_zones",
+            "world_circle",
+            "semantic_hierarchy"
+          ],
+          "plan2d_layers": [
+            "center",
+            "continents",
+            "texts",
+            "figures",
+            "margins"
+          ]
+        },
+        "r2_key": "entries/hereford-mappa-mundi/analysis/spatial_order.json",
+        "review_status": "reviewed"
+      },
+      {
+        "analysis_type": "material_system",
+        "summary": "Das Materialsystem besteht aus einer großen Vellumhaut, Tinte, Farbe, Gold und dichter Text-Bild-Beschriftung; Träger und Bildordnung sind untrennbar.",
+        "data": {
+          "primary_materials": [
+            "vellum",
+            "ink",
+            "pigment",
+            "gold",
+            "manuscript_display"
+          ],
+          "public_display": "public_domain_thumbnail_official_images_restricted"
+        },
+        "r2_key": "entries/hereford-mappa-mundi/analysis/material_system.json",
+        "review_status": "reviewed"
+      },
+      {
+        "analysis_type": "typology",
+        "summary": "Typologisch ist die Mappa Mundi zugleich Weltkarte, enzyklopädische Bildtafel, theologisches Diagramm, Gedächtnisobjekt und öffentliches Ausstellungsstück.",
+        "data": {
+          "typology_tags": [
+            "mappa_mundi",
+            "visual_encyclopedia",
+            "theological_map",
+            "memory_object",
+            "public_display_map"
+          ]
+        },
+        "r2_key": "entries/hereford-mappa-mundi/analysis/typology.json",
+        "review_status": "reviewed"
+      },
+      {
+        "analysis_type": "source_reconstruction",
+        "summary": "Öffentliche Rekonstruktion soll die Struktur der Karte, nicht das geschützte Hochauflösungsbild reproduzieren: Zentrum, Figurenkategorien, Texte und Randzonen als eigene Analyse-Layer.",
+        "data": {
+          "rights_notes": [
+            "official_high_resolution_images_need_permission",
+            "public_domain_thumbnail_available",
+            "derive_diagrammatic_layers_only"
+          ],
+          "reconstruction_layers": [
+            "vellum_shape",
+            "center",
+            "cities",
+            "biblical_events",
+            "creatures",
+            "text_labels"
+          ]
+        },
+        "r2_key": "entries/hereford-mappa-mundi/analysis/source_reconstruction.json",
+        "review_status": "reviewed"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "summary": "Hereford Mappa Mundi ist filterbar als mittelalterliche Weltkarte, theozentrisches Weltbild, Vellum-Manuskript, visuelle Enzyklopädie, Memory-of-the-World-Objekt und Kartografie des Zentrums/Rands.",
+        "data": {
+          "filters": [
+            "cartography",
+            "worldview",
+            "theocentric",
+            "medieval-world-map",
+            "vellum-manuscript",
+            "memory-of-the-world"
+          ]
+        },
+        "r2_key": "entries/hereford-mappa-mundi/analysis/filter_classification.json",
+        "review_status": "reviewed"
+      }
+    ],
+    "database_profile": {
+      "status": "reviewed",
+      "r2_prefix": "entries/hereford-mappa-mundi",
+      "source_count": 5,
+      "media_count": 4,
+      "model_count": 2,
+      "analysis_count": 5,
+      "tag_count": 15,
+      "rights_summary": "Public text, metadata and public-domain Commons hero are usable; official cathedral/trust high-resolution images require permission and should stay link-only unless licensed.",
+      "updated_at": "2026-05-23T19:57:22.000Z"
     }
   },
   {
