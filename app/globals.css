@@ -2905,6 +2905,75 @@ body:has(.entry-page) {
   overflow-wrap: anywhere;
 }
 
+.database-book-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: start;
+  border: 1px solid rgb(245 179 66 / 28%);
+  background:
+    radial-gradient(circle at 8% 0%, rgb(245 179 66 / 20%), transparent 48%),
+    linear-gradient(135deg, rgb(20 12 3 / 92%), rgb(5 5 5 / 82%));
+  padding: 12px;
+}
+
+.database-book-hero span {
+  border: 1px solid rgb(245 179 66 / 54%);
+  color: #ffe1a3;
+  font-size: 8px;
+  letter-spacing: 0.14em;
+  line-height: 1;
+  padding: 7px 8px;
+  text-transform: uppercase;
+}
+
+.database-book-dropzone {
+  border: 1px dashed rgb(245 179 66 / 36%);
+  background:
+    linear-gradient(90deg, rgb(245 179 66 / 8%), transparent 54%),
+    rgb(5 5 5 / 58%);
+  padding: 12px;
+}
+
+.database-book-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.database-book-card {
+  min-width: 0;
+  min-height: 88px;
+  border: 1px solid rgb(247 247 244 / 12%);
+  background: rgb(247 247 244 / 3%);
+  padding: 9px;
+}
+
+.database-book-card-active {
+  border-color: rgb(245 179 66 / 36%);
+  background:
+    radial-gradient(circle at 0% 0%, rgb(245 179 66 / 14%), transparent 54%),
+    rgb(26 17 5 / 62%);
+}
+
+.database-book-card strong {
+  display: block;
+  color: #ffe1a3;
+  font-size: 8px;
+  letter-spacing: 0.13em;
+  line-height: 1.2;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.database-book-card span {
+  color: rgb(247 247 244 / 66%);
+  display: block;
+  font-size: 8.5px;
+  line-height: 1.32;
+  overflow-wrap: anywhere;
+}
+
 .archive-page {
   cursor: none;
 }
@@ -4487,6 +4556,14 @@ html[data-cosmos-browser="opera"] .relation-strand {
 
   .database-intake-card {
     min-height: 72px;
+  }
+
+  .database-book-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .database-book-card {
+    min-height: 64px;
   }
 
   .project-search {

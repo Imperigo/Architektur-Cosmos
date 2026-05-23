@@ -99,7 +99,7 @@ type IntakeFile = {
   id: string;
   name: string;
   size: number;
-  kind: 'pdf' | 'image' | 'plan' | 'video' | 'model' | 'text' | 'other';
+  kind: 'pdf' | 'book' | 'image' | 'plan' | 'video' | 'model' | 'text' | 'other';
   status: 'queued' | 'classified';
 };
 type TouchTravelGesture = {
@@ -2372,7 +2372,7 @@ function DatabaseReturnOverlay() {
   );
 }
 
-type DatabaseTab = 'overview' | 'intake' | 'generate' | 'entries' | 'sources' | 'media' | 'models' | 'analysis' | 'relations' | 'brain' | 'draft';
+type DatabaseTab = 'overview' | 'intake' | 'books' | 'generate' | 'entries' | 'sources' | 'media' | 'models' | 'analysis' | 'relations' | 'brain' | 'draft';
 
 function DatabaseArchivePanel({
   renderMode = 'svg',
@@ -2433,6 +2433,7 @@ function DatabaseArchivePanel({
   const tabs: Array<{ id: DatabaseTab; label: string; hint: string; group: 'create' | 'review'; devOnly?: boolean }> = [
     { id: 'generate', label: 'KI Erfassen', hint: 'Name oder Bild zu Entwurf', group: 'create', devOnly: true },
     { id: 'intake', label: 'Erfassen', hint: 'Gast, Konto oder Dev', group: 'create' },
+    { id: 'books', label: 'Bücher', hint: 'Scans zu Projekten', group: 'create' },
     { id: 'analysis', label: 'Analyse', hint: 'Layer und Prüfung', group: 'create', devOnly: true },
     { id: 'draft', label: 'Entwurf', hint: 'Vor Eintrag prüfen', group: 'create', devOnly: true },
     { id: 'overview', label: 'Wissen', hint: 'Stand der Datenbank', group: 'review' },
@@ -2822,6 +2823,10 @@ function DatabaseArchivePanel({
             </div>
           ) : null}
 
+          {safeActiveTab === 'books' ? (
+            <DatabaseBookLibraryView intakeStats={intakeStats} intakeFiles={intakeFiles} onDrop={handleDrop} appendFiles={appendFiles} />
+          ) : null}
+
           {safeActiveTab === 'generate' ? (
             <div className="space-y-3 text-[10px] leading-relaxed text-[#d9d9d2]">
               <div className="database-generate-sticky">
@@ -3170,6 +3175,118 @@ function DatabaseIntakeModes({ developerMode, onSelectDev }: { developerMode: bo
   );
 }
 
+function DatabaseBookLibraryView({
+  intakeStats,
+  intakeFiles,
+  onDrop,
+  appendFiles
+}: {
+  intakeStats: ReturnType<typeof summarizeIntakeFiles>;
+  intakeFiles: IntakeFile[];
+  onDrop: (event: DragEvent<HTMLDivElement>) => void;
+  appendFiles: (files: FileList | File[]) => void;
+}) {
+  const bookReady = intakeStats.book + intakeStats.pdf + intakeStats.image > 0;
+  const detectedBookFiles = intakeFiles.filter((file) => file.kind === 'book' || file.kind === 'pdf' || file.kind === 'image');
+
+  return (
+    <div className="space-y-3 text-[10px] leading-relaxed text-[#d9d9d2]">
+      <div className="database-book-hero">
+        <div>
+          <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#f5b342]">Buchbibliothek</div>
+          <p className="mt-1 text-[10px] leading-snug text-[#f7f7f4]/78">
+            Private Buchscans, Handyfotos und PDFs werden später zu sauberen digitalen Studienkopien, OCR, Projekt-Drafts und Rechte-Reports.
+          </p>
+        </div>
+        <span>{bookReady ? 'bereit' : 'geplant'}</span>
+      </div>
+
+      <div
+        className="database-book-dropzone"
+        onDragOver={(event) => {
+          event.preventDefault();
+          event.stopPropagation();
+        }}
+        onDrop={onDrop}
+      >
+        <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#f5b342]">Buchmaterial ablegen</div>
+        <p className="mt-2 text-[9.5px] leading-snug text-[#c7c7c2]">
+          Buch-PDFs, Kapitel, Scans, Doppelseiten oder Handyfotos. Aktuell nur Browser-Vorschau; später private Quarantäne mit OCR und Projekterkennung.
+        </p>
+        <label className="mt-3 inline-flex cursor-none items-center border border-[#f5b342]/70 px-3 py-1.5 text-[8.5px] uppercase tracking-[0.14em] text-[#ffe1a3]">
+          Buchdateien wählen
+          <input
+            className="sr-only"
+            type="file"
+            multiple
+            accept=".pdf,.jpg,.jpeg,.png,.webp,.tif,.tiff,.txt,.md"
+            onChange={(event) => {
+              if (event.target.files) appendFiles(event.target.files);
+              event.currentTarget.value = '';
+            }}
+          />
+        </label>
+      </div>
+
+      <div className="database-book-grid">
+        <BookPipelineCard title="1 Reinigung" body="Deskew, Crop, Doppelseiten trennen, Kontrast und Schatten korrigieren." active={bookReady} />
+        <BookPipelineCard title="2 OCR/Layout" body="Text, Bildblöcke, Pläne, Captions, Kapitel und Projektlisten erkennen." active={bookReady} />
+        <BookPipelineCard title="3 Projekte" body="Projektgruppen mit Titel, Architekt, Jahr, Ort, Seitenreferenzen und Confidence bilden." active={bookReady} />
+        <BookPipelineCard title="4 Rechte-Gate" body="Private Quellenpakete strikt von public-safe Metadaten und Paraphrasen trennen." active={bookReady} />
+      </div>
+
+      <div className="grid grid-cols-4 gap-1.5">
+        <BrainMiniMetric label="Buch/PDF" value={intakeStats.book + intakeStats.pdf} />
+        <BrainMiniMetric label="Seitenbilder" value={intakeStats.image} />
+        <BrainMiniMetric label="Text" value={intakeStats.sources} />
+        <BrainMiniMetric label="Public" value="Gate" />
+      </div>
+
+      <ArchiveList
+        title="Private / public Trennung"
+        items={[
+          'Private Library: gereinigte Seiten, OCR, Seitenverweise und Projekt-Drafts nur für den Besitzer',
+          'Öffentliche Website: nur Bibliografie, Metadaten, Links und paraphrasierte Analyse nach Rechteprüfung',
+          'Dev-Modus: tiefere interne Research-Pakete, aber keine automatische Veröffentlichung'
+        ]}
+      />
+
+      {detectedBookFiles.length ? (
+        <ArchiveCards
+          items={detectedBookFiles.slice(0, 6).map((file) => ({
+            title: file.name,
+            meta: `${fileKindLabel(file.kind)} / ${formatBytes(file.size)}`,
+            body: file.kind === 'book'
+              ? 'Wird als Buch-/Kapitelquelle klassifiziert und später für OCR und Projekt-Clustering vorbereitet.'
+              : 'Kann als Buchseite, Bildtafel oder ergänzende Quelle in das private Quellenpaket eingehen.'
+          }))}
+        />
+      ) : (
+        <p className="border border-[#f5b342]/24 bg-[#1a1105]/68 p-2 text-[9.5px] leading-snug text-[#ffe1a3]">
+          Noch kein Buchmaterial gesammelt. Diese Funktion ist als private Bibliothek geplant und speichert aktuell nichts dauerhaft.
+        </p>
+      )}
+
+      <ArchiveList
+        title="Späterer lokaler Befehl"
+        items={[
+          'npm run kosmodata:book-ingest -- --input archive-inbox/books/{book_slug} --title "Buchtitel"',
+          'Output: clean-pages, OCR, detected-projects.json, source-map.json und review-report.md'
+        ]}
+      />
+    </div>
+  );
+}
+
+function BookPipelineCard({ title, body, active }: { title: string; body: string; active: boolean }) {
+  return (
+    <div className={`database-book-card ${active ? 'database-book-card-active' : ''}`}>
+      <strong>{title}</strong>
+      <span>{body}</span>
+    </div>
+  );
+}
+
 function DatabaseTabGroup({
   title,
   tabs,
@@ -3402,6 +3519,7 @@ function ArchiveCards({ items }: { items: Array<{ title: string; meta: string; b
 
 function classifyIntakeFile(name: string): IntakeFile['kind'] {
   const normalized = name.toLowerCase();
+  if (/(book|buch|catalog|katalog|monograph|monografie|reader|chapter|kapitel|isbn)/i.test(normalized)) return 'book';
   if (normalized.endsWith('.pdf')) return 'pdf';
   if (/\.(jpg|jpeg|png|webp|tif|tiff)$/i.test(normalized)) return normalized.includes('plan') || normalized.includes('section') || normalized.includes('schnitt') || normalized.includes('grundriss') ? 'plan' : 'image';
   if (/\.(svg|dwg|dxf)$/i.test(normalized)) return 'plan';
@@ -3414,6 +3532,7 @@ function classifyIntakeFile(name: string): IntakeFile['kind'] {
 function fileKindLabel(kind: IntakeFile['kind']) {
   const labels: Record<IntakeFile['kind'], string> = {
     pdf: 'PDF',
+    book: 'Buch',
     image: 'Bild',
     plan: 'Plan',
     video: 'Video',
@@ -3427,7 +3546,15 @@ function fileKindLabel(kind: IntakeFile['kind']) {
 function summarizeIntakeFiles(files: IntakeFile[]) {
   return files.reduce(
     (summary, file) => {
-      if (file.kind === 'pdf' || file.kind === 'text') summary.sources += 1;
+      if (file.kind === 'pdf') {
+        summary.pdf += 1;
+        summary.sources += 1;
+      }
+      if (file.kind === 'text') summary.sources += 1;
+      if (file.kind === 'book') {
+        summary.book += 1;
+        summary.sources += 1;
+      }
       if (file.kind === 'image') summary.image += 1;
       if (file.kind === 'video') summary.video += 1;
       if (file.kind === 'plan') summary.plan += 1;
@@ -3435,7 +3562,7 @@ function summarizeIntakeFiles(files: IntakeFile[]) {
       if (file.kind === 'image' || file.kind === 'plan' || file.kind === 'video') summary.visual += 1;
       return summary;
     },
-    { sources: 0, image: 0, plan: 0, video: 0, visual: 0, model: 0 }
+    { sources: 0, pdf: 0, book: 0, image: 0, plan: 0, video: 0, visual: 0, model: 0 }
   );
 }
 
