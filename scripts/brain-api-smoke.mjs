@@ -4,6 +4,7 @@ import { spawn } from 'node:child_process';
 
 const port = 8787;
 const baseUrl = `http://localhost:${port}`;
+const readyTimeoutMs = Number.parseInt(process.env.BRAIN_API_SMOKE_TIMEOUT_MS ?? '180000', 10);
 
 main().catch((error) => {
   console.error(error);
@@ -11,18 +12,30 @@ main().catch((error) => {
 });
 
 async function main() {
-  const worker = spawn('npx', ['wrangler', 'dev', '--local', '--port', String(port)], {
+  const worker = spawn('npx', ['--yes', 'wrangler', 'dev', '--local', '--port', String(port)], {
     stdio: ['ignore', 'pipe', 'pipe']
   });
 
   let output = '';
   const ready = new Promise((resolve, reject) => {
-    const timeout = setTimeout(() => reject(new Error('Wrangler dev did not become ready in time.')), 30000);
+    let readySettled = false;
+    const timeout = setTimeout(() => reject(new Error(`Wrangler dev did not become ready in time.\n${output}`)), readyTimeoutMs);
+    const settleReady = () => {
+      if (readySettled) return;
+      readySettled = true;
+      clearTimeout(timeout);
+      resolve();
+    };
+    const readyPatterns = [
+      `Ready on ${baseUrl}`,
+      `http://localhost:${port}`,
+      `http://127.0.0.1:${port}`,
+      'Ready on'
+    ];
     const onData = (chunk) => {
       output += chunk.toString();
-      if (output.includes(`Ready on ${baseUrl}`)) {
-        clearTimeout(timeout);
-        resolve();
+      if (readyPatterns.some((pattern) => output.includes(pattern))) {
+        settleReady();
       }
     };
 
@@ -30,9 +43,16 @@ async function main() {
     worker.stderr.on('data', onData);
     worker.on('exit', (code) => {
       if (code !== null && code !== 0) {
+        readySettled = true;
         clearTimeout(timeout);
         reject(new Error(`Wrangler dev exited early with code ${code}.\n${output}`));
       }
+    });
+
+    waitForHttpReady('/api/brain/status', readyTimeoutMs, () => readySettled).then(() => {
+      settleReady();
+    }).catch(() => {
+      // The timeout above reports the captured Wrangler output.
     });
   });
 
@@ -70,6 +90,20 @@ async function main() {
     worker.kill('SIGTERM');
     setTimeout(() => worker.kill('SIGKILL'), 1000).unref();
   }
+}
+
+async function waitForHttpReady(path, timeoutMs, isCancelled = () => false) {
+  const startedAt = Date.now();
+  while (!isCancelled() && Date.now() - startedAt < timeoutMs) {
+    try {
+      const response = await fetch(`${baseUrl}${path}`);
+      if (response.ok) return;
+    } catch {
+      // Wrangler is still booting.
+    }
+    await new Promise((resolve) => setTimeout(resolve, 750));
+  }
+  throw new Error('HTTP readiness probe timed out.');
 }
 
 async function getJson(path) {

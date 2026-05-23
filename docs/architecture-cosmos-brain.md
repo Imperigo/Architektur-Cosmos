@@ -92,14 +92,21 @@ npm run cosmos:plan-generate -- --entry villa-savoye
 npm run cosmos:model-generate -- --entry villa-savoye
 npm run cosmos:text-generate -- --entry villa-savoye
 npm run cosmos:entry-build -- --entry villa-savoye --mode review
+npm run database:source-audit
+npm run database:research -- --agent all --topic "Villa Savoye"
 ```
 
 These tools create 2D vector study drawings, Blender/ArchiCAD model planning
-outputs and architecture-text review packs. They do not write to the public
-database, upload assets or publish. The detailed contract is documented in:
+outputs, architecture-text review packs and source-research packages. They do
+not write to the public database, upload assets or publish. The source audit is
+the first gate before Brain research runs: it checks source coverage, rights
+modes, automation readiness and unsafe URLs.
+
+The detailed contract is documented in:
 
 ```text
 docs/cosmos-tool-suite.md
+docs/database-research-agents.md
 ```
 
 ## Brain Doctor

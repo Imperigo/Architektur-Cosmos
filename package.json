@@ -57,7 +57,7 @@
     "brain:cloud-plan": "node scripts/brain-cloud-plan.mjs",
     "brain:cloud-export": "node scripts/brain-cloud-export.mjs",
     "brain:api-smoke": "node scripts/brain-api-smoke.mjs",
-    "brain:cloud-ready": "npm run brain:review && npm run brain:cloud-plan && npm run brain:cloud-export && npm run obsidian:export && npm run brain:api-smoke",
+    "brain:cloud-ready": "npm run database:source-audit && npm run brain:review && npm run brain:cloud-plan && npm run brain:cloud-export && npm run obsidian:export && npm run brain:api-smoke",
     "brain:d1-plan": "node scripts/cloudflare-brain-preview.mjs",
     "brain:d1-status": "node scripts/cloudflare-brain-preview.mjs --status",
     "brain:d1-create": "node scripts/cloudflare-brain-preview.mjs --create-d1",
