@@ -12,8 +12,8 @@ const allEintraege = entries as Entry[];
 const allRelationen = relations as EntryRelation[];
 
 export const metadata: Metadata = {
-  title: 'Archive Preview | Architecture Cosmos',
-  description: 'Static preview of the Architecture Cosmos archive structure, prepared for Cloudflare D1 and future media/model storage.'
+  title: 'KosmoData Archiv | Architektur Kosmos',
+  description: 'Statische Vorschau der KosmoData-Archivstruktur, vorbereitet für Cloudflare D1 und spätere Medien- und Modellspeicherung.'
 };
 
 export default function ArchivePage() {
@@ -39,12 +39,12 @@ export default function ArchivePage() {
       <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-6xl flex-col px-5 py-5 sm:px-8 lg:px-10">
         <header className="flex items-center justify-between gap-4 border-b border-white/12 pb-4">
           <Link href="/" className="entry-link text-[11px] font-semibold uppercase tracking-[0.28em] text-[#f7f7f4]/78">
-            Architecture Cosmos
+            Architektur Kosmos
           </Link>
           <div className="flex items-center gap-2">
             <ArchiveHistoryControls />
             <Link href="/atlas/?return=database" className="entry-link border border-white/20 px-3 py-2 text-[10px] uppercase tracking-[0.18em] text-[#d7d7d0]">
-              Zum Atlas
+              Zurück zu KosmoData
             </Link>
           </div>
         </header>
@@ -52,18 +52,18 @@ export default function ArchivePage() {
         <section className="grid gap-8 py-10 lg:grid-cols-[minmax(0,1.08fr)_360px] lg:py-14">
           <div>
             <div className="mb-4 flex flex-wrap gap-2 text-[10px] uppercase tracking-[0.16em] text-[#b8b8b2]">
-              <span className="border border-white/15 px-2.5 py-1">Static archive preview</span>
-              <span className="border border-[#00e7ff] px-2.5 py-1 text-[#00e7ff]">D1 ready</span>
-              <span className="border border-white/15 px-2.5 py-1">R2 preview bucket</span>
+              <span className="border border-white/15 px-2.5 py-1">Statische Archivvorschau</span>
+              <span className="border border-[#00e7ff] px-2.5 py-1 text-[#00e7ff]">D1 bereit</span>
+              <span className="border border-white/15 px-2.5 py-1">R2 Vorschau-Bucket</span>
             </div>
             <h1 className="max-w-4xl text-4xl font-semibold leading-[0.95] tracking-normal text-[#f7f7f4] sm:text-6xl lg:text-7xl">
-              Archive Datenbank
+              KosmoData Archiv
             </h1>
             <p className="mt-8 max-w-3xl text-xl leading-relaxed text-[#f7f7f4] sm:text-2xl">
-              Ein statischer Kontrollraum fuer Eintraege, Quellen, Medienslots, Relationen, Analyseebenen und zukuenftige 3D-Modellpakete.
+              Ein statischer Kontrollraum für Einträge, Quellen, Medienslots, Relationen, Analyseebenen und zukünftige 3D-Modellpakete.
             </p>
             <p className="mt-7 max-w-3xl text-base leading-8 text-[#cfcfca]">
-              Die Website liest weiterhin gebuendelte JSON-Daten fuer maximale Geschwindigkeit und minimales Backend-Risiko. Cloudflare D1 ist als Vorschauarchiv fuer Validierung, Schemaentwurf und spaetere Read-only-Abfragen vorbereitet. Echte Bilder, Plaene und GLB-Modelle koennen in Objektspeicher wechseln, sobald die Medienpolitik bereit ist.
+              Die Website liest weiterhin gebündelte JSON-Daten für maximale Geschwindigkeit und minimales Backend-Risiko. Cloudflare D1 ist als Vorschauarchiv für Validierung, Schemaentwurf und spätere Read-only-Abfragen vorbereitet. Echte Bilder, Pläne und GLB-Modelle können in Objektspeicher wechseln, sobald die Medienpolitik bereit ist.
             </p>
           </div>
 
@@ -78,7 +78,7 @@ export default function ArchivePage() {
               <ArchiveMeta label="Frontend" value={archivePreview.storage_target.frontend_connection.replace(/_/g, ' ')} />
               <ArchiveMeta label="R2-Bucket" value={archivePreview.storage_target.assets_bucket_name ?? 'nicht konfiguriert'} />
               <ArchiveMeta label="Assets" value={archivePreview.storage_target.assets_status.replace(/_/g, ' ')} />
-              <ArchiveMeta label="Geprueft" value={archivePreview.storage_target.last_verified} />
+              <ArchiveMeta label="Geprüft" value={archivePreview.storage_target.last_verified} />
             </dl>
           </details>
         </section>
@@ -138,10 +138,10 @@ export default function ArchivePage() {
               Echte Bilder, Pläne und Modelldateien bleiben lokal, bis Rechte- und Größenprüfungen abgeschlossen sind. Der Intake-Befehl erzeugt eine private Ordnerstruktur, scannt Dateien und schreibt ein Dry-run-Manifest ohne Cloudflare zu berühren.
             </p>
             <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-              <ArchiveMeta label="Local folder" value="archive-intake/{entry_slug}" />
+              <ArchiveMeta label="Lokaler Ordner" value="archive-intake/{entry_slug}" />
               <ArchiveMeta label="Inbox" value="archive-inbox/{entry_slug}" />
               <ArchiveMeta label="Manifest" value="out/asset-manifests/{entry_slug}.json" />
-              <ArchiveMeta label="Upload" value="blocked / dry-run only" />
+              <ArchiveMeta label="Upload" value="blockiert / nur Dry-run" />
             </div>
           </details>
 
@@ -159,24 +159,24 @@ export default function ArchivePage() {
         </section>
 
         <section className="grid gap-6 border-t border-white/12 py-8 lg:grid-cols-2">
-          <ArchiveList title="Entry Types" rows={orderedEntryTypes.map((type) => [type.replace(/_/g, ' '), `${typeCounts[type] ?? 0}`])} />
-          <ArchiveList title="Style Sectors" rows={orderedStyleSectors.map((style) => [style.replace(/_/g, ' '), `${styleCounts[style] ?? 0}`])} />
+          <ArchiveList title="Eintragstypen" rows={orderedEntryTypes.map((type) => [type.replace(/_/g, ' '), `${typeCounts[type] ?? 0}`])} />
+          <ArchiveList title="Baustil-Sektoren" rows={orderedStyleSectors.map((style) => [style.replace(/_/g, ' '), `${styleCounts[style] ?? 0}`])} />
         </section>
 
         <section className="border-t border-white/12 py-8">
           <div className="mb-4 flex items-end justify-between gap-4">
             <h2 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#00e7ff]">Datenbank Pilot</h2>
             <Link href={`/atlas/${pilot.slug}/`} className="entry-link border border-white/20 px-3 py-2 text-[10px] uppercase tracking-[0.18em] text-[#d7d7d0]">
-              Open Pilot
+              Pilot öffnen
             </Link>
           </div>
           <div className="entry-study-card border border-white/14 bg-[#071315]/55 p-5">
             <div className="text-2xl text-[#f7f7f4]">{pilot.title}</div>
             <p className="mt-3 max-w-3xl text-sm leading-7 text-[#b8b8b2]">{pilot.one_sentence}</p>
             <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-              <ArchiveMeta label="Media" value={`${pilot.media.length} slots`} />
+              <ArchiveMeta label="Medien" value={`${pilot.media.length} Slots`} />
               <ArchiveMeta label="3D" value={`${pilot.model_assets?.length ?? 0} model layers`} />
-              <ArchiveMeta label="Analysis" value={`${pilot.analysis_layers?.length ?? 0} analysis layers`} />
+              <ArchiveMeta label="Analyse" value={`${pilot.analysis_layers?.length ?? 0} Analyseebenen`} />
               <ArchiveMeta label="Tags" value={`${pilot.database_tags?.length ?? 0} tags`} />
             </div>
           </div>
@@ -190,7 +190,7 @@ export default function ArchivePage() {
                 <span className="block text-[10px] uppercase tracking-[0.16em] text-[#00e7ff]">{entry.database_profile?.status} / {entry.style_sector.replace(/_/g, ' ')}</span>
                 <span className="mt-2 block text-lg text-[#f7f7f4]">{entry.title}</span>
                 <span className="mt-2 block text-sm leading-6 text-[#b8b8b2]">
-                  {entry.database_profile?.media_count ?? entry.media.length} media / {entry.database_profile?.model_count ?? 0} models / {entry.database_profile?.analysis_count ?? 0} analysis layers
+                  {entry.database_profile?.media_count ?? entry.media.length} Medien / {entry.database_profile?.model_count ?? 0} Modelle / {entry.database_profile?.analysis_count ?? 0} Analyseebenen
                 </span>
               </Link>
             ))}
@@ -220,13 +220,13 @@ export default function ArchivePage() {
         </section>
 
         <section className="border-t border-white/12 py-8">
-          <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#00e7ff]">Richest Static Eintraege</h2>
+          <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#00e7ff]">Strukturierteste statische Einträge</h2>
           <div className="grid gap-3 sm:grid-cols-2">
             {richestEintraege.map((entry) => (
               <Link key={entry.id} href={`/atlas/${entry.slug}/`} className="entry-link entry-relation-card border border-white/14 bg-[#071315]/55 p-4">
                 <span className="block text-[10px] uppercase tracking-[0.16em] text-[#00e7ff]">{entry.entry_type.replace(/_/g, ' ')} / {entry.style_sector.replace(/_/g, ' ')}</span>
                 <span className="mt-2 block text-lg text-[#f7f7f4]">{entry.title}</span>
-                <span className="mt-2 block text-sm leading-6 text-[#b8b8b2]">{archiveWeight(entry)} Archivpunkte / {entry.year_start < 0 ? `${Math.abs(entry.year_start)} BCE` : entry.year_start}</span>
+                <span className="mt-2 block text-sm leading-6 text-[#b8b8b2]">{archiveWeight(entry)} Archivpunkte / {entry.year_start < 0 ? `${Math.abs(entry.year_start)} v. Chr.` : entry.year_start}</span>
               </Link>
             ))}
           </div>
@@ -266,12 +266,12 @@ function archiveWorkflow(entries: Entry[]) {
 
   return {
     stages: [
-      { label: 'Strukturierte Eintraege', value: entries.length, description: 'Objekte, die aktuell als statisches JSON gebuendelt und nach D1 exportierbar sind.' },
-      { label: 'Quellengestuetzt', value: withQuellen.length, description: 'Eintraege with at least one source document or source URL.' },
-      { label: 'Vier Medienslots bereit', value: withAllMedia.length, description: 'Eintraege with exterior, interior, section and plan placeholders or media rows.' },
-      { label: 'Beziehungsgraph bereit', value: withRelationen.length, description: 'Eintraege connected to at least one other archive object.' },
-      { label: 'Modelldaten bereit', value: withModelle.length, description: 'Eintraege with planned 3D model rows and R2 keys.' },
-      { label: 'Gepruefte Piloten', value: reviewed.length, description: 'Eintraege promoted beyond draft status.' }
+      { label: 'Strukturierte Einträge', value: entries.length, description: 'Objekte, die aktuell als statisches JSON gebündelt und nach D1 exportierbar sind.' },
+      { label: 'Quellengestützt', value: withQuellen.length, description: 'Einträge mit mindestens einem Quelldokument oder einer Quellen-URL.' },
+      { label: 'Vier Medienslots bereit', value: withAllMedia.length, description: 'Einträge mit Außenbild, Innenbild, Schnitt und Plan als Platzhalter oder Medienzeile.' },
+      { label: 'Beziehungsgraph bereit', value: withRelationen.length, description: 'Einträge, die mit mindestens einem weiteren Archivobjekt verbunden sind.' },
+      { label: 'Modelldaten bereit', value: withModelle.length, description: 'Einträge mit geplanten 3D-Modellzeilen und R2-Schlüsseln.' },
+      { label: 'Geprüfte Piloten', value: reviewed.length, description: 'Einträge, die über den Entwurfsstatus hinaus befördert wurden.' }
     ],
     needsQuellen: entries.filter((entry) => (entry.source_documents?.length ?? 0) === 0 && !entry.source_url).slice(0, 4),
     needsRelationen: entries.filter((entry) => !allRelationen.some((relation) => relation.source_entry_id === entry.id || relation.target_entry_id === entry.id)).slice(0, 4),

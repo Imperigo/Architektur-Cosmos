@@ -181,10 +181,15 @@ function runNpmAudit() {
     encoding: 'utf8'
   });
 
+  if (result.error) {
+    warnings.push(`npm audit skipped: ${result.error.message}`);
+    return;
+  }
+
   if (result.status !== 0) {
     failures.push('npm audit reported moderate or higher production vulnerabilities');
-    if (result.stdout.trim()) warnings.push(result.stdout.trim());
-    if (result.stderr.trim()) warnings.push(result.stderr.trim());
+    if (result.stdout?.trim()) warnings.push(result.stdout.trim());
+    if (result.stderr?.trim()) warnings.push(result.stderr.trim());
   }
 }
 

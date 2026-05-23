@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type DragEvent, type MouseEvent as ReactMouseEvent, type PointerEvent, type RefObject, type TouchEvent as ReactTouchEvent, type WheelEvent as ReactWheelEvent } from 'react';
-import { BrainStatusWidget } from '@/components/atlas/BrainStatusWidget';
 import { ProjectDetailCard } from '@/components/atlas/ProjectDetailCard';
 import { ProjectSearch } from '@/components/atlas/ProjectSearch';
 import { RelationOverlay } from '@/components/atlas/RelationOverlay';
@@ -105,7 +104,10 @@ type TouchTravelGesture = {
   mode: 'idle' | 'single' | 'pinch';
   startX: number;
   startY: number;
+  lastX: number;
   lastY: number;
+  lastMidX: number;
+  lastMidY: number;
   lastDistance: number;
   moved: number;
 };
@@ -253,9 +255,17 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     mode: 'idle',
     startX: 0,
     startY: 0,
+    lastX: 0,
     lastY: 0,
+    lastMidX: 0,
+    lastMidY: 0,
     lastDistance: 0,
     moved: 0
+  });
+  const lastFreeTapRef = useRef({
+    at: 0,
+    x: 0,
+    y: 0
   });
   const allEntries = useMemo(() => mergeEntries(entries, localEntries), [entries, localEntries]);
 
@@ -279,14 +289,13 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   const displayNodes = useMemo(() => limitDisplayNodes(nodes), [nodes]);
   const isTraveling = motion.isMoving;
   const hoveredEntry = useMemo(() => displayNodes.find((node) => node.entry.id === hoveredEntryId)?.entry ?? null, [displayNodes, hoveredEntryId]);
-  const cursorVisible = introState === 'idle';
-  const isIntroActive = introState !== 'idle';
+  const cursorVisible = !ui.isCoarsePointer;
   const fastNodeRender = performanceTier === 'reduced';
   const relationOverlayActive = !isTraveling && performanceTier !== 'reduced' && (selectedEntry || showRelations || (performanceTier === 'full' && hoveredEntry));
   const backgroundStyle = {
-    filter: isIntroActive ? 'blur(7px)' : 'blur(0px)',
-    opacity: selectedEntry ? 0.48 : introState === 'intro' ? 0.3 : introState === 'hub' ? 0.56 : introState === 'launching' ? 0.82 : 1,
-    transition: 'filter 520ms cubic-bezier(0.19, 1, 0.22, 1), opacity 520ms cubic-bezier(0.19, 1, 0.22, 1)'
+    filter: 'none',
+    opacity: selectedEntry ? 0.48 : introState === 'intro' ? 0.06 : introState === 'hub' ? 0.1 : introState === 'launching' ? 0.82 : 1,
+    transition: 'opacity 420ms cubic-bezier(0.19, 1, 0.22, 1)'
   };
   const visualZoomValue = visualZoom.currentZoom;
   const cameraTransform = buildCameraTransform(visualZoomValue, visualPan);
@@ -368,7 +377,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
         isMoving: false,
         isSettling: true
       });
-    }, 3000);
+    }, 2300);
 
     return () => {
       window.clearTimeout(motionTimeout);
@@ -395,6 +404,11 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
       if (selectedEntryRef.current && dossierHistoryRef.current) {
         dossierHistoryRef.current = false;
         setSelectedEntry(null);
+        return;
+      }
+
+      if (introState !== 'intro') {
+        setIntroState((current) => current === 'idle' ? 'hub' : 'intro');
       }
     };
 
@@ -411,6 +425,12 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
       if (selectedEntryRef.current) {
         event.preventDefault();
         closeDossier();
+        return;
+      }
+
+      if (introState !== 'intro') {
+        event.preventDefault();
+        setIntroState((current) => current === 'idle' ? 'hub' : 'intro');
       }
     };
 
@@ -421,7 +441,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
       window.removeEventListener('popstate', handlePopState);
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, []);
+  }, [introState]);
 
   useEffect(() => {
     const visualZoomState = visualZoomRef.current;
@@ -498,10 +518,12 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   function startIntro() {
     if (introState === 'idle') return;
     if (introState === 'intro') {
+      pushViewHistory('hub');
       setIntroState('hub');
       return;
     }
 
+    pushViewHistory('atlas');
     resetMotion(0);
     setIntroState('launching');
   }
@@ -516,10 +538,36 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     nudgeVisualZoom(factor);
   }
 
+  function handleFreeSpaceTap(touch: TouchPoint) {
+    const now = Date.now();
+    const previous = lastFreeTapRef.current;
+    const tapDistance = Math.hypot(touch.clientX - previous.x, touch.clientY - previous.y);
+    const isDoubleTap = now - previous.at < 320 && tapDistance < 34;
+
+    if (isDoubleTap) {
+      lastFreeTapRef.current = { at: 0, x: 0, y: 0 };
+      if (visualZoomRef.current.currentZoom > 1.04 || visualZoomRef.current.targetZoom > 1.04) {
+        resetVisualZoom();
+      } else {
+        zoomViewBy(1.38);
+      }
+      return;
+    }
+
+    lastFreeTapRef.current = {
+      at: now,
+      x: touch.clientX,
+      y: touch.clientY
+    };
+  }
+
   function focusNodeInView(event: ReactMouseEvent<SVGGElement> | undefined, fallbackNode: WormholeEntryNode) {
     if (panGestureRef.current.moved) return;
     const point = event ? pointerToSvgPoint(event) : null;
-    const nearest = point ? nearestInteractiveNode(toCameraPoint(point), displayNodes) : null;
+    const nearest = point ? nearestInteractiveNode(toCameraPoint(point), displayNodes, {
+      coarse: ui.isCoarsePointer,
+      zoom: visualZoomRef.current.currentZoom
+    }) : null;
     offenDossierFromNode(nearest?.entry ?? fallbackNode.entry);
   }
 
@@ -574,6 +622,13 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     const currentState = typeof window.history.state === 'object' && window.history.state !== null ? window.history.state : {};
     if (currentState.cosmosOverlay === name) return;
     window.history.pushState({ ...currentState, cosmosOverlay: name }, '', window.location.href);
+  }
+
+  function pushViewHistory(name: 'hub' | 'atlas') {
+    if (typeof window === 'undefined') return;
+    const currentState = typeof window.history.state === 'object' && window.history.state !== null ? window.history.state : {};
+    if (currentState.cosmosView === name) return;
+    window.history.pushState({ ...currentState, cosmosView: name }, '', window.location.href);
   }
 
   function createLocalEntryFromEntwurf(draft: EntryEntwurf) {
@@ -649,8 +704,27 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     scheduleVisualZoomStep();
   }
 
+  function setVisualZoomTarget(targetZoom: number) {
+    const ref = visualZoomRef.current;
+    ref.targetZoom = clampVisualZoom(targetZoom);
+    ref.velocity += (ref.targetZoom - ref.currentZoom) * 0.16;
+    setVisualZoom((current) => ({
+      ...current,
+      targetZoom: roundZoom(ref.targetZoom),
+      velocity: roundZoom(ref.velocity),
+      isZooming: true
+    }));
+
+    scheduleVisualZoomStep();
+  }
+
+  function resetVisualZoom() {
+    setVisualZoomTarget(1);
+    scheduleVisualPan({ x: 0, y: 0 });
+  }
+
   function setVisualPanValue(nextPan: VisualPan) {
-    const next = clampVisualPan(nextPan, visualZoomRef.current.currentZoom);
+    const next = clampVisualPan(nextPan, Math.max(visualZoomRef.current.currentZoom, visualZoomRef.current.targetZoom));
     visualPanRef.current = next;
     applyVisualTransform();
   }
@@ -835,11 +909,15 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     setHoveredEntry(null);
 
     if (touches.length >= 2) {
+      const midpoint = averageTouchPoint(touches);
       touchTravelRef.current = {
         mode: 'pinch',
-        startX: 0,
-        startY: 0,
+        startX: midpoint.clientX,
+        startY: midpoint.clientY,
+        lastX: midpoint.clientX,
         lastY: averageTouchY(touches),
+        lastMidX: midpoint.clientX,
+        lastMidY: midpoint.clientY,
         lastDistance: touchDistance(touches[0], touches[1]),
         moved: 0
       };
@@ -851,7 +929,10 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
         mode: 'single',
         startX: touches[0].clientX,
         startY: touches[0].clientY,
+        lastX: touches[0].clientX,
         lastY: touches[0].clientY,
+        lastMidX: touches[0].clientX,
+        lastMidY: touches[0].clientY,
         lastDistance: 0,
         moved: 0
       };
@@ -876,33 +957,62 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     if (touches.length >= 2) {
       const nextDistance = touchDistance(touches[0], touches[1]);
       const previousDistance = touchTravelRef.current.mode === 'pinch' ? touchTravelRef.current.lastDistance : nextDistance;
+      const midpoint = averageTouchPoint(touches);
       const distanceDelta = Math.max(-86, Math.min(86, nextDistance - previousDistance));
-      const pinchFactor = previousDistance > 0 ? Math.max(0.74, Math.min(1.34, nextDistance / previousDistance)) : 1;
+      const pinchFactor = previousDistance > 0 ? Math.max(0.78, Math.min(1.28, nextDistance / previousDistance)) : 1;
+      const previousMidX = touchTravelRef.current.mode === 'pinch' ? touchTravelRef.current.lastMidX : midpoint.clientX;
+      const previousMidY = touchTravelRef.current.mode === 'pinch' ? touchTravelRef.current.lastMidY : midpoint.clientY;
+      const midDeltaX = Math.max(-72, Math.min(72, midpoint.clientX - previousMidX));
+      const midDeltaY = Math.max(-72, Math.min(72, midpoint.clientY - previousMidY));
       touchTravelRef.current = {
         mode: 'pinch',
-        startX: touchTravelRef.current.startX,
-        startY: touchTravelRef.current.startY,
+        startX: touchTravelRef.current.startX || midpoint.clientX,
+        startY: touchTravelRef.current.startY || midpoint.clientY,
+        lastX: midpoint.clientX,
         lastY: averageTouchY(touches),
+        lastMidX: midpoint.clientX,
+        lastMidY: midpoint.clientY,
         lastDistance: nextDistance,
-        moved: touchTravelRef.current.moved + Math.abs(distanceDelta)
+        moved: touchTravelRef.current.moved + Math.abs(distanceDelta) + Math.hypot(midDeltaX, midDeltaY)
       };
 
       zoomViewBy(pinchFactor);
+      if (visualZoomRef.current.targetZoom > 1.02 || visualZoomRef.current.currentZoom > 1.02) {
+        scheduleVisualPan({
+          x: visualPanRef.current.x + midDeltaX * 0.86,
+          y: visualPanRef.current.y + midDeltaY * 0.86
+        });
+      }
       return;
     }
 
+    const nextX = touches[0].clientX;
     const nextY = touches[0].clientY;
     const currentTouch = touchTravelRef.current;
+    const previousX = currentTouch.mode === 'single' ? currentTouch.lastX : nextX;
     const previousY = currentTouch.mode === 'single' ? currentTouch.lastY : nextY;
+    const horizontalDelta = Math.max(-96, Math.min(96, nextX - previousX));
     const verticalDelta = Math.max(-92, Math.min(92, previousY - nextY));
+    const isZoomPan = visualZoomRef.current.currentZoom > 1.035 || visualZoomRef.current.targetZoom > 1.035;
     touchTravelRef.current = {
       mode: 'single',
       startX: currentTouch.mode === 'single' ? currentTouch.startX : touches[0].clientX,
       startY: currentTouch.mode === 'single' ? currentTouch.startY : touches[0].clientY,
+      lastX: nextX,
       lastY: nextY,
+      lastMidX: nextX,
+      lastMidY: nextY,
       lastDistance: 0,
-      moved: currentTouch.moved + Math.abs(verticalDelta)
+      moved: currentTouch.moved + Math.hypot(horizontalDelta, verticalDelta)
     };
+
+    if (isZoomPan) {
+      scheduleVisualPan({
+        x: visualPanRef.current.x + horizontalDelta,
+        y: visualPanRef.current.y - verticalDelta
+      });
+      return;
+    }
 
     nudgeTravel(verticalDelta * 0.0002);
   }
@@ -912,11 +1022,15 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
 
     const touches = Array.from(event.touches);
     if (touches.length >= 2) {
+      const midpoint = averageTouchPoint(touches);
       touchTravelRef.current = {
         mode: 'pinch',
-        startX: 0,
-        startY: 0,
+        startX: midpoint.clientX,
+        startY: midpoint.clientY,
+        lastX: midpoint.clientX,
         lastY: averageTouchY(touches),
+        lastMidX: midpoint.clientX,
+        lastMidY: midpoint.clientY,
         lastDistance: touchDistance(touches[0], touches[1]),
         moved: 0
       };
@@ -928,7 +1042,10 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
         mode: 'single',
         startX: touches[0].clientX,
         startY: touches[0].clientY,
+        lastX: touches[0].clientX,
         lastY: touches[0].clientY,
+        lastMidX: touches[0].clientX,
+        lastMidY: touches[0].clientY,
         lastDistance: 0,
         moved: 0
       };
@@ -943,17 +1060,26 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
 
     if (finishedTouch && currentTouch.mode === 'single' && currentTouch.moved < 10 && tapDistance < 14 && !selectedEntry) {
       const point = pointerToSvgPoint(finishedTouch);
-      const nearest = point ? nearestInteractiveNode(toCameraPoint(point), displayNodes) : null;
+      const nearest = point ? nearestInteractiveNode(toCameraPoint(point), displayNodes, {
+        coarse: ui.isCoarsePointer,
+        zoom: visualZoomRef.current.currentZoom
+      }) : null;
       if (nearest) {
         offenDossierFromNode(nearest.entry);
+      } else {
+        handleFreeSpaceTap(finishedTouch);
       }
     }
 
+    setVisualPan(visualPanRef.current);
     touchTravelRef.current = {
       mode: 'idle',
       startX: 0,
       startY: 0,
+      lastX: 0,
       lastY: 0,
+      lastMidX: 0,
+      lastMidY: 0,
       lastDistance: 0,
       moved: 0
     };
@@ -1045,7 +1171,10 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     if (panGestureRef.current.moved) return;
 
     const point = pointerToSvgPoint(event);
-    const nearest = point ? nearestInteractiveNode(toCameraPoint(point), displayNodes) : null;
+    const nearest = point ? nearestInteractiveNode(toCameraPoint(point), displayNodes, {
+      coarse: ui.isCoarsePointer,
+      zoom: visualZoomRef.current.currentZoom
+    }) : null;
     if (nearest && visualZoomRef.current.currentZoom > 1.02) {
       offenDossierFromNode(nearest.entry);
     }
@@ -1075,7 +1204,9 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
       return;
     }
 
-    const nearest = nearestInteractiveNode(toCameraPoint(point), displayNodes);
+    const nearest = nearestInteractiveNode(toCameraPoint(point), displayNodes, {
+      zoom: visualZoomRef.current.currentZoom
+    });
     setHoveredEntry(nearest?.entry.id ?? null);
   }
 
@@ -1240,22 +1371,6 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
             </g>
           </g>
           {selectedEntry ? <SnappedEntryOverlay entry={selectedEntry} onDismiss={closeDossier} /> : null}
-          {introState === 'idle' ? (
-            <RadialHud
-              showRelations={showRelations}
-              activeTagLayer={activeTagLayer}
-              tunnelDepth={state.timePosition}
-              onSelectTagLayer={(layerId) => {
-                setHoveredEntry(null);
-                setActiveTagLayer((current) => current === layerId ? null : layerId);
-                setActiveSourceLens(null);
-              }}
-              onToggleRelations={() => {
-                setHoveredEntry(null);
-                setShowRelations((current) => !current);
-              }}
-            />
-          ) : null}
           {introState === 'idle' && !ui.isCoarsePointer ? (
             <DatabaseAccess
               isOpen={showDatabasePanel}
@@ -1265,29 +1380,11 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
               }}
             />
           ) : null}
-          {showDatabasePanel && introState === 'idle' && !ui.isCoarsePointer ? (
-            <DatabaseArchivePanel
-              entries={allEntries}
-              relations={relations}
-              selectedEntry={selectedEntry}
-              draft={entryEntwurf}
-              intakeFiles={intakeFiles}
-              researchSeed={researchSeed}
-              imageIdentify={imageIdentify}
-              developerMode={developerMode}
-              onEntwurfChange={setEntryEntwurf}
-              onIntakeFilesChange={setIntakeFiles}
-              onResearchSeedChange={setResearchSeed}
-              onImageIdentifyChange={setImageIdentify}
-              onCreateLocalEntry={createLocalEntryFromEntwurf}
-              onDismiss={closeDatabasePanel}
-            />
-          ) : null}
           {introState === 'idle' && !ui.isCoarsePointer ? <TimeReadout timePosition={state.timePosition} currentYear={state.currentYear} /> : null}
           {introState === 'idle' && !ui.isCoarsePointer ? <VisualZoomReadout zoom={visualZoom.currentZoom} /> : null}
           {introState !== 'intro' && introState !== 'hub' ? <BrandChrome isArriving={introState === 'launching'} /> : null}
         </svg>
-        {showDatabasePanel && introState === 'idle' && ui.isCoarsePointer ? (
+        {showDatabasePanel && introState === 'idle' ? (
           <DatabaseArchivePanel
             renderMode="html"
             entries={allEntries}
@@ -1306,9 +1403,34 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
             onDismiss={closeDatabasePanel}
           />
         ) : null}
-        {introState === 'idle' ? <BrainStatusWidget /> : null}
         {introState === 'idle' && !showDatabasePanel ? (
           <ProjectSearch entries={allEntries} developerMode={developerMode} onDeveloperModeChange={updateDeveloperMode} />
+        ) : null}
+        {introState === 'idle' && !showDatabasePanel && !ui.isCoarsePointer ? (
+          <FilterAccess
+            showRelations={showRelations}
+            activeTagLayer={activeTagLayer}
+            activeSourceLens={activeSourceLens}
+            onSelectTagLayer={(layerId) => {
+              setHoveredEntry(null);
+              setActiveTagLayer((current) => current === layerId ? null : layerId);
+              setActiveSourceLens(null);
+            }}
+            onSelectSourceLens={(lensId) => {
+              setHoveredEntry(null);
+              setActiveSourceLens((current) => current === lensId ? null : lensId);
+              setActiveTagLayer(null);
+            }}
+            onReset={() => {
+              setHoveredEntry(null);
+              setActiveTagLayer(null);
+              setActiveSourceLens(null);
+            }}
+            onToggleRelations={() => {
+              setHoveredEntry(null);
+              setShowRelations((current) => !current);
+            }}
+          />
         ) : null}
         {introState === 'idle' && ui.isCoarsePointer && !selectedEntry && !showDatabasePanel ? (
           <MobileAtlasHud
@@ -1318,6 +1440,9 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
             showRelations={showRelations}
             activeTagLayer={activeTagLayer}
             databaseOpen={showDatabasePanel}
+            onZoomIn={() => zoomViewBy(1.22)}
+            onZoomOut={() => zoomViewBy(0.82)}
+            onResetZoom={resetVisualZoom}
             onSelectTagLayer={(layerId) => {
               setHoveredEntry(null);
               setActiveTagLayer((current) => current === layerId ? null : layerId);
@@ -1333,7 +1458,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
             }}
           />
         ) : null}
-        {cursorVisible && !ui.isCoarsePointer ? <ScreenCosmosCursor cursorRef={screenCursorRef} isDossierOpen={Boolean(selectedEntry)} isOverlayOpen={showDatabasePanel} /> : null}
+        {cursorVisible ? <ScreenCosmosCursor cursorRef={screenCursorRef} isDossierOpen={Boolean(selectedEntry)} isOverlayOpen={showDatabasePanel || introState !== 'idle'} /> : null}
       </div>
 
       {introState !== 'idle' ? <IntroGate state={introState} onStart={startIntro} /> : null}
@@ -1435,8 +1560,8 @@ function useAtlasUiMetrics(): AtlasUiMetrics {
     databasePanel: {
       width: databaseWidth,
       height: databaseHeight,
-      x: useLargeInterface ? 35 : atlasSize.width - databaseWidth - 28,
-      y: useLargeInterface ? 86 : Math.max(24, atlasSize.height - databaseHeight - 28)
+      x: useLargeInterface ? 35 : 28,
+      y: useLargeInterface ? 86 : 78
     },
     dossier: {
       cardScale: dossierScale,
@@ -1452,7 +1577,7 @@ function useAtlasUiMetrics(): AtlasUiMetrics {
 
 function isInterfaceTarget(target: EventTarget) {
   if (!(target instanceof Element)) return false;
-  return Boolean(target.closest('.radial-hud, .lens-control, .lens-control-panel, .lens-access, .lens-panel, .database-access, .database-draft, .dossier-overlay, .style-sector, .project-search'));
+  return Boolean(target.closest('.radial-hud, .filter-access, .lens-control, .lens-control-panel, .lens-access, .lens-panel, .database-access, .database-draft, .dossier-overlay, .style-sector, .project-search'));
 }
 
 function isEntryNodeTarget(target: EventTarget | null) {
@@ -1554,12 +1679,15 @@ function isTagLayerEntry(entry: Entry, activeTagLayer: ActiveTagLayer) {
   return definition.terms.some((term) => layerText.includes(term.toLowerCase()));
 }
 
-function nearestInteractiveNode(point: SvgPoint, nodes: WormholeEntryNode[]) {
+function nearestInteractiveNode(point: SvgPoint, nodes: WormholeEntryNode[], options: { coarse?: boolean; zoom?: number } = {}) {
+  const baseHitRadius = options.coarse ? 30 : 18;
+  const zoomedHitBoost = (options.zoom ?? 1) > 1.02 ? 12 : 0;
+
   return nodes.reduce<{ entry: Entry; distance: number } | null>((nearest, node) => {
     if (node.opacity < 0.14) return nearest;
 
     const distance = Math.hypot(point.x - node.x, point.y - node.y);
-    const hitRadius = Math.max(18, node.size + 10);
+    const hitRadius = Math.max(baseHitRadius, node.size + 10 + zoomedHitBoost);
     if (distance > hitRadius) return nearest;
 
     if (!nearest || distance < nearest.distance) {
@@ -1578,65 +1706,79 @@ function averageTouchY(touches: TouchPoint[]) {
   return touches.reduce((sum, touch) => sum + touch.clientY, 0) / touches.length;
 }
 
+function averageTouchPoint(touches: TouchPoint[]) {
+  return {
+    clientX: touches.reduce((sum, touch) => sum + touch.clientX, 0) / touches.length,
+    clientY: touches.reduce((sum, touch) => sum + touch.clientY, 0) / touches.length
+  };
+}
+
 function roundMotion(value: number) {
   return Math.round(value * 100000) / 100000;
 }
 
-function RadialHud({
+function FilterAccess({
   showRelations,
   activeTagLayer,
-  tunnelDepth,
+  activeSourceLens,
   onSelectTagLayer,
+  onSelectSourceLens,
+  onReset,
   onToggleRelations
 }: {
   showRelations: boolean;
   activeTagLayer: ActiveTagLayer;
-  tunnelDepth: number;
+  activeSourceLens: SourceLens;
   onSelectTagLayer: (layerId: TagLayerId | null) => void;
+  onSelectSourceLens: (lensId: SourceLensId) => void;
+  onReset: () => void;
   onToggleRelations: () => void;
 }) {
-  const ui = useAtlasUiMetrics();
-  const controlsOpacity = Math.max(0.46, 1 - tunnelDepth / 0.76);
-  const buttons: Array<{ id: string; label: string; active: boolean; width: number; onClick: () => void }> = [
-    { id: 'all', label: 'Alle', active: !activeTagLayer, width: 42, onClick: () => onSelectTagLayer(null) },
-    ...tagLayerDefinitions.map((layer) => ({
-      id: layer.id,
-      label: layer.label,
-      active: activeTagLayer === layer.id,
-      width: layer.id === 'infrastructure' ? 46 : 56,
-      onClick: () => onSelectTagLayer(layer.id)
-    })),
-    { id: 'relations', label: 'Netz', active: showRelations, width: 46, onClick: onToggleRelations }
-  ];
-  let cursorX = atlasSize.cx - buttons.reduce((sum, button) => sum + button.width + ui.dock.gap, -ui.dock.gap) / 2;
+  const activeCount = (activeTagLayer ? 1 : 0) + (activeSourceLens ? 1 : 0) + (showRelations ? 1 : 0);
 
-  if (ui.isCoarsePointer) return null;
-
-  return (
-    <g className="radial-hud navigation-dock" pointerEvents="auto" opacity={controlsOpacity}>
-      <rect x={atlasSize.cx - ui.dock.shellWidth / 2} y={ui.dock.shellY} width={ui.dock.shellWidth} height={ui.dock.shellHeight} rx={ui.dock.shellRadius} fill="#050505" stroke="#f7f7f4" strokeWidth="0.48" opacity="0.7" />
-      {buttons.map((button) => {
-        const x = cursorX;
-        cursorX += button.width + ui.dock.gap;
-        return <DockButton key={button.id} x={x} y={ui.dock.buttonY} width={button.width} height={ui.dock.buttonHeight} textY={ui.dock.buttonTextY} fontSize={ui.dock.buttonFontSize} label={button.label} active={button.active} onClick={button.onClick} />;
-      })}
-    </g>
-  );
-}
-
-function DockButton({ x, y, width, height = 20, textY = y + 13.2, fontSize = 6.6, label, active, onClick }: { x: number; y: number; width: number; height?: number; textY?: number; fontSize?: number; label: string; active: boolean; onClick: () => void }) {
-  function handleActivate(event: { stopPropagation: () => void }) {
+  function stopAndRun(event: ReactMouseEvent, action: () => void) {
+    event.preventDefault();
     event.stopPropagation();
-    onClick();
+    action();
   }
 
   return (
-    <g className="dock-button" pointerEvents="auto" onPointerDown={(event) => event.stopPropagation()} onClick={handleActivate} aria-label={label}>
-      <rect x={x} y={y} width={width} height={height} rx={height / 2} fill={active ? '#f7f7f4' : '#050505'} stroke={active ? '#00e7ff' : '#f7f7f4'} strokeWidth="0.58" opacity={active ? 0.94 : 0.76} />
-      <text x={x + width / 2} y={textY} textAnchor="middle" fill={active ? '#050505' : '#f7f7f4'} fontSize={fontSize} fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.08em">
-        {label.toUpperCase()}
-      </text>
-    </g>
+    <aside className="filter-access cosmos-text-safe" onPointerDown={(event) => event.stopPropagation()} onClick={(event) => event.stopPropagation()}>
+      <div className="filter-access-panel" aria-label="KosmoData Filter">
+        <section>
+          <div className="filter-access-section-title">Ebenen</div>
+          <div className="filter-access-grid">
+            <button type="button" className={!activeTagLayer && !activeSourceLens ? 'filter-access-active' : ''} onClick={(event) => stopAndRun(event, onReset)}>
+              Alle
+            </button>
+            {tagLayerDefinitions.map((layer) => (
+              <button key={layer.id} type="button" className={activeTagLayer === layer.id ? 'filter-access-active' : ''} onClick={(event) => stopAndRun(event, () => onSelectTagLayer(layer.id))}>
+                {layer.label}
+              </button>
+            ))}
+          </div>
+        </section>
+        <section>
+          <div className="filter-access-section-title">Quellwebseite</div>
+          <div className="filter-access-grid filter-access-source-grid">
+            {sourceLensDefinitions.map((source) => (
+              <button key={source.id} type="button" className={activeSourceLens === source.id ? 'filter-access-active' : ''} onClick={(event) => stopAndRun(event, () => onSelectSourceLens(source.id))}>
+                {source.label}
+              </button>
+            ))}
+          </div>
+        </section>
+        <section>
+          <button type="button" className={`filter-access-relations ${showRelations ? 'filter-access-active' : ''}`} onClick={(event) => stopAndRun(event, onToggleRelations)}>
+            Netzwerk {showRelations ? 'aktiv' : 'anzeigen'}
+          </button>
+        </section>
+      </div>
+      <button type="button" className={`filter-access-trigger ${activeCount ? 'filter-access-trigger-active' : ''}`} aria-label="Filter öffnen">
+        <span>Filter</span>
+        {activeCount ? <i>{activeCount}</i> : null}
+      </button>
+    </aside>
   );
 }
 
@@ -1647,6 +1789,9 @@ function MobileAtlasHud({
   showRelations,
   activeTagLayer,
   databaseOpen,
+  onZoomIn,
+  onZoomOut,
+  onResetZoom,
   onSelectTagLayer,
   onToggleRelations,
   onToggleDatabase
@@ -1657,6 +1802,9 @@ function MobileAtlasHud({
   showRelations: boolean;
   activeTagLayer: ActiveTagLayer;
   databaseOpen: boolean;
+  onZoomIn: () => void;
+  onZoomOut: () => void;
+  onResetZoom: () => void;
   onSelectTagLayer: (layerId: TagLayerId | null) => void;
   onToggleRelations: () => void;
   onToggleDatabase: () => void;
@@ -1664,7 +1812,8 @@ function MobileAtlasHud({
   const span = dominantSpanForYear(currentYear);
   const progress = Math.round(Math.max(0, Math.min(1, timePosition / wormholeTravelEnd)) * 100);
 
-  function stopAndRun(event: { stopPropagation: () => void }, action: () => void) {
+  function stopAndRun(event: { stopPropagation: () => void; preventDefault?: () => void }, action: () => void) {
+    event.preventDefault?.();
     event.stopPropagation();
     action();
   }
@@ -1681,6 +1830,18 @@ function MobileAtlasHud({
           <i>{progress}% Tiefe</i>
         </div>
         {visualZoom > 1.03 ? <em>{Math.round(visualZoom * 100)}% Lupe</em> : null}
+      </section>
+
+      <section className="mobile-atlas-gesture" aria-label="Touch-Gesten und Lupe">
+        <p>
+          <span>1 Finger: {visualZoom > 1.03 ? 'Lupe ziehen' : 'Zeitreise'}</span>
+          <small>Pinch zoomt · Doppeltipp setzt Lupe</small>
+        </p>
+        <div>
+          <button type="button" onClick={(event) => stopAndRun(event, onZoomOut)} aria-label="Lupe verkleinern">−</button>
+          <button type="button" onClick={(event) => stopAndRun(event, onResetZoom)} aria-label="Lupe zurücksetzen">1:1</button>
+          <button type="button" onClick={(event) => stopAndRun(event, onZoomIn)} aria-label="Lupe vergrößern">+</button>
+        </div>
       </section>
 
       <nav className="mobile-atlas-dock" aria-label="Mobile Atlas Navigation">
@@ -1723,11 +1884,11 @@ function styleShortLabel(id: StyleSectorId) {
 
 function DatabaseAccess({ isOpen, onToggle }: { isOpen: boolean; onToggle: () => void }) {
   const ui = useAtlasUiMetrics();
-  const width = ui.isCoarsePointer ? 284 : 100;
-  const height = ui.isCoarsePointer ? 112 : 32;
-  const x = atlasSize.width - width - (ui.isCoarsePointer ? 38 : 28);
-  const y = atlasSize.height - (ui.isCoarsePointer ? 58 : 64);
-  const iconScale = ui.isCoarsePointer ? 1.58 : 0.82;
+  const width = ui.isCoarsePointer ? 284 : 130;
+  const height = ui.isCoarsePointer ? 112 : 46;
+  const x = ui.isCoarsePointer ? 34 : 28;
+  const y = ui.isCoarsePointer ? 82 : 50;
+  const iconScale = ui.isCoarsePointer ? 1.58 : 1.02;
   function toggleOnce(event: { stopPropagation: () => void }) {
     event.stopPropagation();
     onToggle();
@@ -1738,19 +1899,19 @@ function DatabaseAccess({ isOpen, onToggle }: { isOpen: boolean; onToggle: () =>
       className={`database-access ${isOpen ? 'database-access-offen' : ''}`}
       pointerEvents="auto"
       transform={`translate(${x} ${y})`}
-      aria-label="Database archive"
+      aria-label="KosmoData database"
       onPointerDown={(event) => event.stopPropagation()}
       onClick={toggleOnce}
     >
       <rect x="0" y={-height / 2} width={width} height={height} rx={height / 2} fill={isOpen ? '#f7f7f4' : '#050505'} stroke="#00e7ff" strokeWidth="0.92" opacity="0.9" />
       <path d={`M ${height / 2} ${-height / 2 + 1} H ${width - height / 2}`} stroke="#00e7ff" strokeWidth="0.42" opacity={isOpen ? 0.18 : 0.34} />
-      <g className="database-access-core" transform={`translate(${ui.isCoarsePointer ? 24 : 10} ${ui.isCoarsePointer ? -5.8 : -1.5}) scale(${iconScale})`} stroke="#f7f7f4" fill="none" strokeWidth="0.72" opacity="0.9">
+      <g className="database-access-core" transform={`translate(${ui.isCoarsePointer ? 24 : 13} ${ui.isCoarsePointer ? -5.8 : -2.1}) scale(${iconScale})`} stroke="#f7f7f4" fill="none" strokeWidth="0.72" opacity="0.9">
         <ellipse cx="14" cy="-3.6" rx="5.6" ry="2.2" stroke={isOpen ? '#050505' : '#f7f7f4'} />
         <path d="M 8.4 -3.6 V 5.4 Q 14 8.2 19.6 5.4 V -3.6" stroke={isOpen ? '#050505' : '#f7f7f4'} />
         <path d="M 8.4 1.2 Q 14 4 19.6 1.2" stroke={isOpen ? '#050505' : '#f7f7f4'} opacity="0.52" />
       </g>
-      <text x={ui.isCoarsePointer ? 78 : 34} y={ui.isCoarsePointer ? 8.6 : 3.5} fill={isOpen ? '#050505' : '#f7f7f4'} fontSize={ui.isCoarsePointer ? 24 : 6.6} fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.08em" fontWeight="650">
-        DATABASE
+      <text x={ui.isCoarsePointer ? 78 : 45} y={ui.isCoarsePointer ? 8.6 : 4.4} fill={isOpen ? '#050505' : '#f7f7f4'} fontSize={ui.isCoarsePointer ? 24 : 8.2} fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.08em" fontWeight="650">
+        KOSMODATA
       </text>
       <rect
         x="0"
@@ -1779,7 +1940,7 @@ function BrandChrome({ isArriving = false }: { isArriving?: boolean }) {
 
 function CosmosGlyph() {
   return (
-    <g fill="none" strokeLinecap="round" strokeLinejoin="round">
+    <g className="cosmos-glyph" fill="none" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="32" cy="32" r="8.5" fill="#050505" stroke="#f7f7f4" strokeWidth="1.25" opacity="0.9" />
       <path d="M15.4 30.7c5.2-14.4 27.6-17.8 35.5-4.8 6.4 10.5-1.7 23.6-15.5 24.7-13.1 1-24.4-8.1-22.5-17.8" stroke="#f7f7f4" strokeWidth="1.65" />
       <path d="M21.2 36.8c4.8 7.8 18.6 8.5 25.1 1.6 5.9-6.3 2.5-15.4-6.5-17.3-8.3-1.8-16.5 2.5-18.6 8.6" stroke="#00e7ff" strokeWidth="1.2" opacity="0.86" />
@@ -1853,6 +2014,7 @@ function IntroGate({ state, onStart }: { state: IntroState; onStart: () => void 
         className="intro-gate intro-gate-hub absolute inset-0 z-30 flex items-center justify-center bg-[#050505]/10 text-center"
         aria-label="Architecture Cosmos Hauptmenü"
       >
+        <OrbitMenuBackdrop mode="hub" />
         <ModuleHub onOpenKosmoData={onStart} />
       </section>
     );
@@ -1884,6 +2046,7 @@ function IntroGate({ state, onStart }: { state: IntroState; onStart: () => void 
       }}
       aria-label="Start Architektur Kosmos"
     >
+      <OrbitMenuBackdrop mode="intro" />
       <span className="intro-title-lockup block">
         <svg className="intro-cosmos-mark mx-auto mb-7 block h-[clamp(5.4rem,13vw,11rem)] w-[clamp(5.4rem,13vw,11rem)]" viewBox="0 0 64 64" aria-hidden="true">
           <CosmosGlyph />
@@ -1893,6 +2056,40 @@ function IntroGate({ state, onStart }: { state: IntroState; onStart: () => void 
         </span>
       </span>
     </button>
+  );
+}
+
+function OrbitMenuBackdrop({ mode }: { mode: 'intro' | 'hub' }) {
+  const stars = Array.from({ length: 26 }, (_, index) => index);
+
+  return (
+    <span className={`orbit-menu-backdrop orbit-menu-backdrop-${mode}`} aria-hidden="true">
+      <span className="orbit-menu-nebula" />
+      <span className="orbit-menu-grid orbit-menu-grid-a" />
+      <span className="orbit-menu-grid orbit-menu-grid-b" />
+      <span className="orbit-menu-axis orbit-menu-axis-a" />
+      <span className="orbit-menu-axis orbit-menu-axis-b" />
+      <span className="orbit-menu-stars">
+        {stars.map((star) => {
+          const angleA = star * 137.5;
+          const angleB = star * 97.3;
+          const left = 50 + Math.cos((angleA * Math.PI) / 180) * (18 + (star % 5) * 6.2);
+          const top = 50 + Math.sin((angleB * Math.PI) / 180) * (16 + (star % 7) * 4.4);
+
+          return (
+            <i
+              key={star}
+              style={{
+                '--star-index': star,
+                '--star-left': `${Math.max(5, Math.min(95, left))}%`,
+                '--star-top': `${Math.max(6, Math.min(94, top))}%`,
+                '--star-opacity': 0.28 + (star % 5) * 0.1
+              } as CSSProperties}
+            />
+          );
+        })}
+      </span>
+    </span>
   );
 }
 
@@ -1925,7 +2122,7 @@ function ModuleHub({ onOpenKosmoData }: { onOpenKosmoData: () => void }) {
     },
     {
       id: 'brief',
-      name: 'KosmoBrief',
+      name: 'KosmoDesign',
       label: 'Entwurf / Wettbewerb',
       description: 'Briefing, Kontextanalyse, Strategie und Referenzpfade.',
       status: 'in Planung',
@@ -1937,7 +2134,7 @@ function ModuleHub({ onOpenKosmoData }: { onOpenKosmoData: () => void }) {
     },
     {
       id: 'form',
-      name: 'KosmoForm',
+      name: 'KosmoVis',
       label: '3D / Visualisierung',
       description: 'Blender-, ArchiCAD-, Modell- und Analyse-Layer.',
       status: 'in Planung',
@@ -1949,7 +2146,7 @@ function ModuleHub({ onOpenKosmoData }: { onOpenKosmoData: () => void }) {
     },
     {
       id: 'plan',
-      name: 'KosmoPlanwerk',
+      name: 'KosmoPlan',
       label: '2D / Layout / Export',
       description: 'Planwerk, Vektorpläne, Abgabe-Layouts und Exportprofile.',
       status: 'in Planung',
@@ -1969,7 +2166,6 @@ function ModuleHub({ onOpenKosmoData }: { onOpenKosmoData: () => void }) {
         <svg viewBox="0 0 64 64" aria-hidden="true">
           <CosmosGlyph />
         </svg>
-        <span>Projektzentrale</span>
       </div>
       {modules.map((module) => {
         const isReady = module.status === 'bereit';
@@ -1999,7 +2195,7 @@ function ModuleHub({ onOpenKosmoData }: { onOpenKosmoData: () => void }) {
 }
 
 function WormholeBirthOverlay() {
-  const sparks = Array.from({ length: 18 }, (_, index) => index);
+  const sparks = Array.from({ length: 10 }, (_, index) => index);
 
   return (
     <div className="wormhole-birth-overlay" aria-hidden="true">
@@ -2054,7 +2250,7 @@ function DatabaseArchivePanel({
   onResearchSeedChange,
   onImageIdentifyChange,
   onCreateLocalEntry,
-  onDismiss: _onDismiss
+  onDismiss
 }: {
   renderMode?: 'svg' | 'html';
   entries: Entry[];
@@ -2073,6 +2269,7 @@ function DatabaseArchivePanel({
   onDismiss: () => void;
 }) {
   const [activeTab, setActiveTab] = useState<DatabaseTab>(selectedEntry ? 'entries' : 'overview');
+  const panelRootRef = useRef<HTMLDivElement | null>(null);
   const ui = useAtlasUiMetrics();
   const panelWidth = ui.databasePanel.width;
   const panelHeight = ui.databasePanel.height;
@@ -2094,7 +2291,7 @@ function DatabaseArchivePanel({
   ];
   const tabs: Array<{ id: DatabaseTab; label: string; hint: string; group: 'create' | 'review'; devOnly?: boolean }> = [
     { id: 'generate', label: 'KI Erfassen', hint: 'Name oder Bild zu Entwurf', group: 'create', devOnly: true },
-    { id: 'intake', label: 'Dateien', hint: 'Quellenpaket sammeln', group: 'create', devOnly: true },
+    { id: 'intake', label: 'Erfassen', hint: 'Gast, Konto oder Dev', group: 'create' },
     { id: 'analysis', label: 'Analyse', hint: 'Layer und Pruefung', group: 'create', devOnly: true },
     { id: 'draft', label: 'Entwurf', hint: 'Vor Eintrag pruefen', group: 'create', devOnly: true },
     { id: 'overview', label: 'Wissen', hint: 'Stand der Datenbank', group: 'review' },
@@ -2136,6 +2333,21 @@ function DatabaseArchivePanel({
     }
 
     generateResearchEntwurf();
+  }
+
+  function printCurrentDatabaseView() {
+    if (typeof window === 'undefined') return;
+    window.print();
+  }
+
+  function activateIntakeTab(event: PointerEvent<HTMLButtonElement>) {
+    event.stopPropagation();
+    setActiveTab(developerMode ? 'generate' : 'intake');
+  }
+
+  function activatePrint(event: PointerEvent<HTMLButtonElement>) {
+    event.stopPropagation();
+    printCurrentDatabaseView();
   }
 
   function loadIngenbohlSample() {
@@ -2247,6 +2459,7 @@ function DatabaseArchivePanel({
 
   const panelContent = (
       <div
+        ref={panelRootRef}
         className="cosmos-panel cosmos-text-safe flex flex-col border border-[#00e7ff]/70 bg-[#050505]/95 p-4 text-[#f7f7f4] shadow-[0_0_28px_rgb(0_231_255_/_0.12)]"
         style={renderMode === 'svg' ? { width: panelWidth, height: panelHeight } : undefined}
         onPointerDown={(event) => event.stopPropagation()}
@@ -2255,25 +2468,51 @@ function DatabaseArchivePanel({
         onClick={(event) => event.stopPropagation()}
       >
         <div className="mb-4">
-          <div className="database-panel-title">Architektur Kosmos Datenbank</div>
-          <div className="mt-1 text-[9.5px] uppercase tracking-[0.18em] text-[#b8b8b2]">
-            {developerMode ? 'Dev Zugang aktiv / private Werkzeuge sichtbar' : 'Oeffentliche Wissensansicht / private Werkzeuge gesperrt'}
+          <div className="database-panel-title">KosmoData</div>
+          <div className="mt-1 flex flex-wrap items-center justify-between gap-2 text-[9.5px] uppercase tracking-[0.18em] text-[#b8b8b2]">
+            <span>{developerMode ? 'Dev-Zugang aktiv / private Werkzeuge sichtbar' : 'Öffentliche Wissensansicht / private Werkzeuge gesperrt'}</span>
+            <button
+              type="button"
+              className="database-print-action"
+              data-database-action="print"
+              onPointerDown={activatePrint}
+              onClick={(event) => event.stopPropagation()}
+            >
+              Ansicht drucken
+            </button>
+            <button
+              type="button"
+              className="database-back-action"
+              onPointerDown={(event) => {
+                event.stopPropagation();
+                onDismiss();
+              }}
+              onClick={(event) => event.stopPropagation()}
+            >
+              Zurück
+            </button>
           </div>
         </div>
 
-        <a className="database-gold-action mb-2" href="/archive/" aria-label="Datenbank oeffnen">
-          <span>Datenbank oeffnen</span>
+        <a className="database-gold-action mb-2" href="/archive/" aria-label="Datenbank öffnen">
+          <span>Datenbank öffnen</span>
           <small>Direkter Zugriff auf die aktuelle Archiv- und Knowledge-Plattform</small>
         </a>
 
         <button
           type="button"
           className="database-user-intake mb-3"
-          onClick={() => setActiveTab(developerMode ? 'generate' : 'overview')}
+          data-database-action="intake"
+          onPointerDown={activateIntakeTab}
+          onClick={(event) => event.stopPropagation()}
         >
           <span>Eigenes Projekt erfassen</span>
-          <small>Gast: oeffentlichen Eintragsantrag stellen. Konto: private Bibliothek mit lokalem Projektordner. Dev: geschuetzte Vollerfassung fuer nicht-oeffentliche Recherche.</small>
+          <small>Gast, Nutzerkonto oder Dev-Zugang wählen.</small>
         </button>
+
+        {safeActiveTab === 'intake' ? (
+          <DatabaseIntakeModes developerMode={developerMode} onSelectDev={() => setActiveTab(developerMode ? 'generate' : 'overview')} />
+        ) : null}
 
         <div className="mb-3 grid grid-cols-3 gap-1.5 border border-[#f7f7f4]/10 bg-[#050505]/28 px-2 py-2 sm:grid-cols-6">
           {counts.map((item) => (
@@ -2312,13 +2551,13 @@ function DatabaseArchivePanel({
 
         <div className="cosmos-scroll-panel min-h-0 flex-1 pr-1">
           <div className="database-tab-section">
-            {developerMode ? <DatabaseTabGroup title="Create entry" tabs={createTabs} activeTab={safeActiveTab} onSelect={setActiveTab} /> : null}
-            <DatabaseTabGroup title="Review archive" tabs={reviewTabs} activeTab={safeActiveTab} onSelect={setActiveTab} />
+            {createTabs.length ? <DatabaseTabGroup title="Erfassung" tabs={createTabs} activeTab={safeActiveTab} onSelect={setActiveTab} /> : null}
+            <DatabaseTabGroup title="Knowledge" tabs={reviewTabs} activeTab={safeActiveTab} onSelect={setActiveTab} />
           </div>
 
           {safeActiveTab === 'overview' ? (
             <div className="space-y-2 text-[10px] leading-relaxed text-[#d9d9d2]">
-              <ArchiveRow label="Mode" value="Static public atlas / browser drafts only" />
+              <ArchiveRow label="Modus" value="Statischer öffentlicher Atlas / Browser-Entwürfe nur lokal" />
               <ArchiveRow label="Speicher" value={`${archivePreview.storage_target.database.toUpperCase()} metadata preview / R2 planned`} />
               <ArchiveRow label="Status" value={`D1 preview bereit / ${archivePreview.storage_target.frontend_connection.replace(/_/g, ' ')}`} />
               <ArchiveRow label="D1" value={`${archivePreview.storage_target.database_name} / verified ${archivePreview.storage_target.last_verified}`} />
@@ -2673,10 +2912,18 @@ function DatabaseArchivePanel({
       </div>
   );
 
+  const htmlPanelStyle = renderMode === 'html' && !ui.isCoarsePointer ? {
+    left: x,
+    top: y,
+    width: panelWidth,
+    height: panelHeight
+  } as CSSProperties : undefined;
+
   if (renderMode === 'html') {
     return (
       <div
-        className="database-draft database-archive-panel database-mobile-overlay"
+        className={`database-draft database-archive-panel ${ui.isCoarsePointer ? 'database-mobile-overlay' : 'database-desktop-overlay'}`}
+        style={htmlPanelStyle}
         role="dialog"
         aria-modal="true"
         aria-label="Architekture Cosmos Database"
@@ -2706,6 +2953,34 @@ function ArchiveRow({ label, value }: { label: string; value: string }) {
   );
 }
 
+function DatabaseIntakeModes({ developerMode, onSelectDev }: { developerMode: boolean; onSelectDev: () => void }) {
+  return (
+    <div className="database-intake-modes mb-3">
+      <div className="database-intake-card">
+        <strong>Gast-Antrag</strong>
+        <span>Projektinformationen sammeln und als public-safe Vorschlag vorbereiten.</span>
+      </div>
+      <div className="database-intake-card">
+        <strong>Nutzerkonto</strong>
+        <span>Geplant: private Bibliothek mit lokalem Projektordner und Datenblatt-Download.</span>
+      </div>
+      <button
+        type="button"
+        className="database-intake-card"
+        data-database-action="dev"
+        onPointerDown={(event) => {
+          event.stopPropagation();
+          onSelectDev();
+        }}
+        onClick={(event) => event.stopPropagation()}
+      >
+        <strong>{developerMode ? 'Dev starten' : 'Dev-Modus'}</strong>
+        <span>Geschützte Vollerfassung für private Recherche; unter Suche mit Code freischalten.</span>
+      </button>
+    </div>
+  );
+}
+
 function DatabaseTabGroup({
   title,
   tabs,
@@ -2726,7 +3001,15 @@ function DatabaseTabGroup({
             key={tab.id}
             type="button"
             className={`database-tab ${activeTab === tab.id ? 'database-tab-active' : ''}`}
-            onClick={() => onSelect(tab.id)}
+            data-database-tab={tab.id}
+            onPointerDown={(event) => {
+              event.stopPropagation();
+              onSelect(tab.id);
+            }}
+            onClick={(event) => {
+              event.stopPropagation();
+              onSelect(tab.id);
+            }}
           >
             <span>{tab.label}</span>
             <small>{tab.hint}</small>
@@ -2766,7 +3049,7 @@ function databaseWorkflowStage(tab: DatabaseTab): 'research' | 'analysis' | 'dra
 }
 
 function isDevOnlyDatabaseTab(tab: DatabaseTab) {
-  return tab === 'generate' || tab === 'intake' || tab === 'analysis' || tab === 'draft';
+  return tab === 'generate' || tab === 'analysis' || tab === 'draft';
 }
 
 function readDeveloperSession() {

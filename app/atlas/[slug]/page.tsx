@@ -106,17 +106,17 @@ export default async function EntryPage({ params }: EntryPageProps) {
           <Link href="/" className="entry-link text-[11px] font-semibold uppercase tracking-[0.28em] text-[#f7f7f4]/78">
             Architektur Kosmos
           </Link>
-          <Link href="/atlas/" className="entry-link border border-white/20 px-3 py-2 text-[10px] uppercase tracking-[0.18em] text-[#d7d7d0]">
-            Back to Atlas
+          <Link href="/atlas/?return=kosmodata" className="entry-link border border-white/20 px-3 py-2 text-[10px] uppercase tracking-[0.18em] text-[#d7d7d0]">
+            Zurück zu KosmoData
           </Link>
         </header>
 
         <section className="grid gap-8 py-10 lg:grid-cols-[minmax(0,1.08fr)_360px] lg:py-14">
           <div>
             <div className="mb-6 grid max-w-xl grid-cols-3 border border-white/12 bg-[#071315]/45 text-center">
-              <EntryStat label="Time" value={yearLabel} />
-              <EntryStat label="Layer" value={entry.entry_type.replace(/_/g, ' ')} />
-              <EntryStat label="Network" value={`${related.length} links`} />
+              <EntryStat label="Zeit" value={yearLabel} />
+              <EntryStat label="Ebene" value={entry.entry_type.replace(/_/g, ' ')} />
+              <EntryStat label="Netzwerk" value={`${related.length} Links`} />
             </div>
             <div className="mb-4 flex flex-wrap gap-2 text-[10px] uppercase tracking-[0.16em] text-[#b8b8b2]">
               <span className="border border-white/15 px-2.5 py-1">{yearLabel}</span>
@@ -128,7 +128,7 @@ export default async function EntryPage({ params }: EntryPageProps) {
               {entry.title}
             </h1>
             <div className="mt-5 max-w-3xl text-sm uppercase tracking-[0.12em] text-[#b8b8b2]">
-              {entry.authors.join(', ') || 'Unknown author'}{location ? ` / ${location}` : ''}
+              {entry.authors.join(', ') || 'unbekannte Autorschaft'}{location ? ` / ${location}` : ''}
             </div>
             <p className="entry-text-reactive entry-text-hero mt-8 max-w-3xl text-xl leading-relaxed text-[#f7f7f4] sm:text-2xl">
               {entry.one_sentence || entry.short_description}
@@ -187,8 +187,8 @@ export default async function EntryPage({ params }: EntryPageProps) {
 
         <section className="grid gap-6 border-t border-white/12 py-8 lg:grid-cols-3">
           <InfoBlock title="Themen" items={entry.themes} accent={accent} />
-          <InfoBlock title="Source Trail" items={sourceItems(entry)} accent={accent} />
-          <InfoBlock title="Datenbank Tags" items={entry.database_tags ?? []} accent={accent} empty="No database tags yet" />
+          <InfoBlock title="Quellenpfad" items={sourceItems(entry)} accent={accent} />
+          <InfoBlock title="Datenbank Tags" items={entry.database_tags ?? []} accent={accent} empty="Noch keine Datenbank-Tags" />
         </section>
 
         {entry.analysis_layers?.length || entry.analysis_observations?.length ? (
@@ -217,21 +217,21 @@ export default async function EntryPage({ params }: EntryPageProps) {
         {entry.ingestion_status || entry.model_packages?.length || entry.splat_assets?.length || entry.analysis_observations?.length ? (
           <section className="grid gap-6 border-t border-white/12 py-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
             <article className="entry-study-card border border-white/14 bg-[#071315]/55 p-5">
-              <div className="text-[10px] uppercase tracking-[0.2em]" style={{ color: accent }}>AI Reference Pilot</div>
-              <h2 className="mt-3 text-2xl text-[#f7f7f4]">Capture, model and analysis pipeline</h2>
+              <div className="text-[10px] uppercase tracking-[0.2em]" style={{ color: accent }}>KI-Referenzpilot</div>
+              <h2 className="mt-3 text-2xl text-[#f7f7f4]">Erfassung, Modell und Analyse-Pipeline</h2>
               <div className="mt-5 grid gap-3 text-sm leading-6 text-[#cfcfca] sm:grid-cols-2">
                 {entry.ingestion_status ? (
                   <>
-                    <EntryMeta label="Wormhole status" value={entry.ingestion_status.stage.replace(/_/g, ' ')} />
-                    <EntryMeta label="Sources" value={entry.ingestion_status.source_status.replace(/_/g, ' ')} />
+                    <EntryMeta label="Wurmloch-Status" value={entry.ingestion_status.stage.replace(/_/g, ' ')} />
+                    <EntryMeta label="Quellen" value={entry.ingestion_status.source_status.replace(/_/g, ' ')} />
                     <EntryMeta label="Assets" value={entry.ingestion_status.asset_status.replace(/_/g, ' ')} />
-                    <EntryMeta label="Models" value={entry.ingestion_status.model_status.replace(/_/g, ' ')} />
+                    <EntryMeta label="Modelle" value={entry.ingestion_status.model_status.replace(/_/g, ' ')} />
                   </>
                 ) : null}
               </div>
               {entry.model_packages?.length ? (
                 <div className="mt-6">
-                  <h3 className="text-[10px] uppercase tracking-[0.18em]" style={{ color: accent }}>Model Packages</h3>
+                  <h3 className="text-[10px] uppercase tracking-[0.18em]" style={{ color: accent }}>Modellpakete</h3>
                   <div className="mt-3 grid gap-3">
                     {entry.model_packages.map((modelPackage) => (
                       <div key={modelPackage.package_type} className="border border-white/10 bg-[#050505]/45 p-3">
@@ -250,7 +250,7 @@ export default async function EntryPage({ params }: EntryPageProps) {
             <div className="grid gap-6">
               {entry.splat_assets?.length ? (
                 <article className="entry-study-card border border-white/14 bg-[#071315]/55 p-5">
-                  <div className="text-[10px] uppercase tracking-[0.2em]" style={{ color: accent }}>Gaussian Splat Layer</div>
+                  <div className="text-[10px] uppercase tracking-[0.2em]" style={{ color: accent }}>Gaussian-Splat-Ebene</div>
                   {entry.splat_assets.map((splat) => (
                     <div key={splat.r2_key} className="mt-3">
                       <h2 className="text-xl text-[#f7f7f4]">{splat.title}</h2>
@@ -279,7 +279,7 @@ export default async function EntryPage({ params }: EntryPageProps) {
           <section className="border-t border-white/12 py-8">
             <InfoBlock
               title="Asset-Kandidaten"
-              items={entry.asset_candidates.map((asset) => `${asset.kind}: ${asset.title} / ${asset.rights_status}${asset.public_display_allowed ? ' / anzeigebereit' : ' / Review vor Veroeffentlichung'}`)}
+              items={entry.asset_candidates.map((asset) => `${asset.kind}: ${asset.title} / ${asset.rights_status}${asset.public_display_allowed ? ' / anzeigebereit' : ' / Prüfung vor Veröffentlichung'}`)}
               accent={accent}
             />
           </section>
@@ -287,7 +287,7 @@ export default async function EntryPage({ params }: EntryPageProps) {
 
         {compareEntries.length ? (
           <section className="border-t border-white/12 py-8">
-            <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em]" style={{ color: accent }}>Vergleichen With</h2>
+            <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em]" style={{ color: accent }}>Vergleichen mit</h2>
             <div className="grid gap-3 lg:grid-cols-3">
               {compareEntries.map((candidate) => (
                 <Link key={candidate.id} href={`/atlas/${candidate.slug}/`} className="entry-link entry-study-card border border-white/14 bg-[#071315]/55 p-4">
@@ -318,28 +318,28 @@ export default async function EntryPage({ params }: EntryPageProps) {
               ))}
             </div>
           ) : (
-            <p className="text-sm text-[#b8b8b2]">No relations attached yet.</p>
+            <p className="text-sm text-[#b8b8b2]">Noch keine Relationen angelegt.</p>
           )}
         </section>
 
-        <nav className="entry-timeline-nav grid gap-3 border-t border-white/12 py-8 sm:grid-cols-2" aria-label="Chronological entry navigation">
+        <nav className="entry-timeline-nav grid gap-3 border-t border-white/12 py-8 sm:grid-cols-2" aria-label="Chronologische Eintragsnavigation">
           {neighbors.previous ? (
             <Link href={`/atlas/${neighbors.previous.slug}/`} className="entry-link entry-timeline-link border border-white/14 bg-[#071315]/55 p-4">
-              <span className="block text-[10px] uppercase tracking-[0.18em]" style={{ color: accent }}>Earlier</span>
+              <span className="block text-[10px] uppercase tracking-[0.18em]" style={{ color: accent }}>Früher</span>
               <span className="mt-2 block text-xl text-[#f7f7f4]">{neighbors.previous.title}</span>
               <span className="mt-2 block text-sm text-[#b8b8b2]">{formatYear(neighbors.previous.year_start)}</span>
             </Link>
           ) : (
-            <div className="entry-timeline-link border border-white/10 bg-[#071315]/25 p-4 text-[#8d8d87]">Beginning of current archive slice</div>
+            <div className="entry-timeline-link border border-white/10 bg-[#071315]/25 p-4 text-[#8d8d87]">Anfang des aktuellen Archiv-Ausschnitts</div>
           )}
           {neighbors.next ? (
             <Link href={`/atlas/${neighbors.next.slug}/`} className="entry-link entry-timeline-link border border-white/14 bg-[#071315]/55 p-4 text-right">
-              <span className="block text-[10px] uppercase tracking-[0.18em]" style={{ color: accent }}>Later</span>
+              <span className="block text-[10px] uppercase tracking-[0.18em]" style={{ color: accent }}>Später</span>
               <span className="mt-2 block text-xl text-[#f7f7f4]">{neighbors.next.title}</span>
               <span className="mt-2 block text-sm text-[#b8b8b2]">{formatYear(neighbors.next.year_start)}</span>
             </Link>
           ) : (
-            <div className="entry-timeline-link border border-white/10 bg-[#071315]/25 p-4 text-right text-[#8d8d87]">Newest object in current archive slice</div>
+            <div className="entry-timeline-link border border-white/10 bg-[#071315]/25 p-4 text-right text-[#8d8d87]">Neuestes Objekt im aktuellen Archiv-Ausschnitt</div>
           )}
         </nav>
       </div>
@@ -403,10 +403,10 @@ function comparisonEntries(entry: Entry) {
 
 function comparisonAxis(entry: Entry, candidate: Entry) {
   const pair = new Set([entry.id, candidate.id]);
-  if (pair.has('villa-savoye') && pair.has('haus-tugendhat')) return 'Manifest diagram versus material free-plan space.';
-  if (pair.has('villa-savoye') && pair.has('villa-noailles')) return 'Five-points manifesto versus leisure, movement and garden culture.';
-  if (pair.has('haus-tugendhat') && pair.has('villa-noailles')) return 'Material-screen domesticity versus terraced avant-garde lifestyle.';
-  return `Vergleichen ${entry.themes[0]?.replace(/[_:]/g, ' ') ?? 'archive logic'} with ${candidate.themes[0]?.replace(/[_:]/g, ' ') ?? 'archive logic'}.`;
+  if (pair.has('villa-savoye') && pair.has('haus-tugendhat')) return 'Manifestdiagramm versus materialisierter freier Grundriss.';
+  if (pair.has('villa-savoye') && pair.has('villa-noailles')) return 'Fünf-Punkte-Manifest versus Freizeit, Bewegung und Gartenkultur.';
+  if (pair.has('haus-tugendhat') && pair.has('villa-noailles')) return 'Materialschirm-Häuslichkeit versus terrassierte Avantgarde-Lebensform.';
+  return `Vergleiche ${entry.themes[0]?.replace(/[_:]/g, ' ') ?? 'Archivlogik'} mit ${candidate.themes[0]?.replace(/[_:]/g, ' ') ?? 'Archivlogik'}.`;
 }
 
 function EntryMeta({ label, value }: { label: string; value: string }) {

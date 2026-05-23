@@ -28,8 +28,8 @@ function StyleSectorsComponent({ state, isMoving = false, activeStyleLens = null
   const labelDepth = frontDepth + 0.045;
   const labelTwist = tubeTwist(state.timePosition + labelDepth);
   const sectorCenter = tunnelCenter(labelDepth, state.phase);
-  const outerRadius = Math.max(wormholeTunnel.minRadius + 146, tunnelRadius(frontDepth + 0.035) - 6);
-  const labelRadius = Math.max(wormholeTunnel.minRadius + 138, outerRadius - 10);
+  const outerRadius = Math.max(wormholeTunnel.minRadius + 154, tunnelRadius(frontDepth + 0.035) + 2);
+  const labelRadius = Math.max(wormholeTunnel.minRadius + 150, outerRadius - 4);
 
   return (
     <g aria-label="Stilsektoren">
@@ -46,7 +46,7 @@ function StyleSectorsComponent({ state, isMoving = false, activeStyleLens = null
         const lensBoost = activeStyleLens === sector.id ? 1.8 : activeStyleLens ? 0.36 : 1;
 
         return (
-          <g key={sector.id} className="style-sector" pointerEvents="none">
+          <g key={sector.id} className="style-sector" pointerEvents="auto">
             <path
               className="style-sector-ribbon"
               d={ribbonPath}
@@ -70,12 +70,12 @@ function StyleSectorsComponent({ state, isMoving = false, activeStyleLens = null
                 radius={labelRadius}
                 angle={labelAngle}
                 fill={accent}
-                fontSize={10.1}
+                fontSize={10.8}
                 fontWeight={460}
                 fontStyle="italic"
                 opacity={outerLabelOpacity * (activeStyleLens && activeStyleLens !== sector.id ? 0.52 : 1)}
-                letterAngleStep={5.9}
-                strokeWidth={0.62}
+                letterAngleStep={4.25}
+                strokeWidth={0.46}
                 inward={false}
                 onClick={(event) => {
                   event.stopPropagation();
