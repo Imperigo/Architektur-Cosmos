@@ -11,6 +11,8 @@ npm run cosmos:plan-generate -- --entry villa-savoye
 npm run cosmos:model-generate -- --entry villa-savoye
 npm run cosmos:text-generate -- --entry villa-savoye
 npm run cosmos:entry-build -- --entry villa-savoye --mode review
+npm run kosmodata:enrich -- --entry crystal-palace
+npm run kosmodata:promote -- --entry crystal-palace --confirm
 npm run kosmodata:book-ingest -- --input archive-inbox/books/villa-savoye-book --title "Villa Savoye Source Book"
 npm run kosmodata:book-drafts -- --book villa-savoye-source-book
 npm run kosmodata:book-pipeline -- --input archive-inbox/books/villa-savoye-book --title "Villa Savoye Source Book"
@@ -78,6 +80,40 @@ design work.
 The text generator is intentionally source-cautious. It turns dry metadata,
 analysis layers and ETH/source notes into better prose, but every factual claim
 must be reviewed before being promoted into `data/mock-entries.json`.
+
+## KosmoData Enrichment Pipeline
+
+`kosmodata:enrich` is the first proper replacement for manual JSON editing. It
+reads the current entry plus a source-backed seed from
+`data/kosmodata-enrichment-seeds.json`, then writes a review pack:
+
+- `out/kosmodata-enrichment/{slug}/enrichment-review.json`
+- `out/kosmodata-enrichment/{slug}/enrichment-review.md`
+- `archive-intake/{slug}/enrichment/proposed-entry.json`
+
+The review pack contains:
+
+- source trail;
+- proposed entry patch;
+- rights report;
+- changed fields;
+- validation blockers/warnings;
+- a promotion command only when the proposal is safe enough for owner review.
+
+`kosmodata:promote` is deliberately separate:
+
+```bash
+npm run kosmodata:promote -- --entry crystal-palace --confirm
+```
+
+Promotion writes only to `data/mock-entries.json`. It does not upload assets,
+write D1/R2, publish the site or bypass rights review. This keeps the public
+frontend static while allowing the Brain, the Website-Dev UI and local research
+pipelines to converge on the same controlled workflow.
+
+New seeds should include only public-safe metadata, links, paraphrased analysis
+and rights-reviewed media candidates. Protected plans, book scans and OCR text
+stay in local/private intake folders and are never copied into the seed file.
 
 ## Book Library Ingest
 

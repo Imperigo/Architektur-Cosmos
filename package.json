@@ -68,7 +68,9 @@
     "brain:d1-apply-preview": "node scripts/cloudflare-brain-preview.mjs --apply-remote --confirm-d1-write",
     "brain:d1-smoke-remote": "node scripts/cloudflare-brain-preview.mjs --smoke-remote",
     "obsidian:export": "node scripts/obsidian-export.mjs",
-    "i18n:check": "node scripts/i18n-guard.mjs"
+    "i18n:check": "node scripts/i18n-guard.mjs",
+    "kosmodata:enrich": "node scripts/kosmodata-enrichment-pipeline.mjs review",
+    "kosmodata:promote": "node scripts/kosmodata-enrichment-pipeline.mjs promote"
   },
   "dependencies": {
     "@types/d3": "latest",

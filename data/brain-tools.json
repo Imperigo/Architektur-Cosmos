@@ -42,6 +42,24 @@
       "approval_required_before_public_use": true
     },
     {
+      "id": "kosmodata_enrich",
+      "label": "KosmoData Enrichment Review",
+      "command": "npm run kosmodata:enrich -- --entry {slug}",
+      "output_root": "out/kosmodata-enrichment/{slug}",
+      "review_output": "out/kosmodata-enrichment/{slug}/enrichment-review.json",
+      "purpose": "Convert source-backed enrichment seeds into a proposed Entry update, rights report and promotion review without writing public data.",
+      "approval_required_before_public_use": true
+    },
+    {
+      "id": "kosmodata_promote",
+      "label": "KosmoData Promote Reviewed Entry",
+      "command": "npm run kosmodata:promote -- --entry {slug} --confirm",
+      "output_root": "archive-intake/{slug}/enrichment",
+      "review_output": "archive-intake/{slug}/enrichment/promotion-report.json",
+      "purpose": "After owner review, promote a generated proposed-entry.json into data/mock-entries.json. This still does not upload assets or write D1/R2.",
+      "approval_required_before_public_use": true
+    },
+    {
       "id": "book_library_ingest",
       "label": "Book Library Ingest",
       "command": "npm run kosmodata:book-ingest -- --input archive-inbox/books/{book_slug} --title \"{book_title}\"",
