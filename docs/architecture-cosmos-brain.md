@@ -93,16 +93,17 @@ npm run cosmos:model-generate -- --entry villa-savoye
 npm run cosmos:text-generate -- --entry villa-savoye
 npm run cosmos:entry-build -- --entry villa-savoye --mode review
 npm run kosmodata:book-ingest -- --input archive-inbox/books/villa-savoye-book --title "Villa Savoye Source Book"
+npm run kosmodata:book-drafts -- --book villa-savoye-source-book
 npm run database:source-audit
 npm run database:research -- --agent all --topic "Villa Savoye"
 ```
 
 These tools create 2D vector study drawings, Blender/ArchiCAD model planning
-outputs, architecture-text review packs, private book-ingestion review packs and
-source-research packages. They do not write to the public database, upload
-assets or publish. The source audit is the first gate before Brain research
-runs: it checks source coverage, rights modes, automation readiness and unsafe
-URLs.
+outputs, architecture-text review packs, private book-ingestion review packs,
+metadata-only book entry drafts and source-research packages. They do not write
+to the public database, upload assets or publish. The source audit is the first
+gate before Brain research runs: it checks source coverage, rights modes,
+automation readiness and unsafe URLs.
 
 The detailed contract is documented in:
 

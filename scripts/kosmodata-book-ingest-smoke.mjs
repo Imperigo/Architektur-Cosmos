@@ -44,10 +44,26 @@ async function main() {
     throw new Error(`Book ingest command failed.\n${result.stdout}\n${result.stderr}`);
   }
 
+  const draftResult = spawnSync(process.execPath, [
+    'scripts/kosmodata-book-entry-drafts.mjs',
+    '--book',
+    'villa-savoye-smoke-book'
+  ], {
+    cwd: rootDir,
+    encoding: 'utf8',
+    maxBuffer: 1024 * 1024 * 4
+  });
+
+  if (draftResult.status !== 0) {
+    throw new Error(`Book draft command failed.\n${draftResult.stdout}\n${draftResult.stderr}`);
+  }
+
   const manifest = await readJson(resolve(outputRoot, 'book-manifest.json'));
   const projects = await readJson(resolve(outputRoot, 'detected-projects.json'));
   const sourceMap = await readJson(resolve(outputRoot, 'source-map.json'));
   const report = await readFile(resolve(outputRoot, 'review-report.md'), 'utf8');
+  const draftIndex = await readJson(resolve(outputRoot, 'entry-drafts/index.json'));
+  const villaDraft = await readJson(resolve(outputRoot, 'entry-drafts/villa-savoye.json'));
 
   assert(manifest.mode === 'local_book_ingestion_preview', 'Manifest mode should be local preview.');
   assert(manifest.upload_allowed === false, 'Book ingest must not allow upload.');
@@ -57,6 +73,10 @@ async function main() {
   assert(projects[0].public_display === 'metadata_only', 'Detected project must be public metadata only.');
   assert(sourceMap.files.every((file) => file.public_display === 'blocked_private_source'), 'All book files must be blocked private sources.');
   assert(report.includes('Book pages, scans, OCR text'), 'Review report should include rights rule.');
+  assert(draftIndex.draft_count === 1, 'Book draft index should contain one draft.');
+  assert(villaDraft.slug === 'villa-savoye', 'Book draft slug should be Villa Savoye.');
+  assert(villaDraft.ingestion_status.asset_status === 'rights_blocked', 'Book draft assets must stay rights-blocked.');
+  assert(villaDraft.database_tags.includes('public-display:metadata-only'), 'Book draft must be metadata-only.');
 
   console.log('KosmoData book ingest smoke test passed.');
   console.log('Review pack: out/book-ingestion/villa-savoye-smoke-book');

@@ -188,6 +188,23 @@ safe classifier/review-pack generator. The public website can show the planned
 capability in the Database/KosmoData UI without accepting real uploads until
 authentication, storage quotas and rights review are ready.
 
+Detected projects can be converted into metadata-only entry drafts:
+
+```bash
+npm run kosmodata:book-drafts -- --book villa-savoye-source-book
+```
+
+This writes local review drafts to:
+
+```text
+out/book-ingestion/{book_slug}/entry-drafts/{project_slug}.json
+out/book-ingestion/{book_slug}/entry-drafts/index.json
+out/book-ingestion/{book_slug}/entry-drafts/review.md
+```
+
+These drafts are still not database entries. They must pass `archive:draft`,
+manual source review and the rights gate before any public promotion.
+
 Smoke test:
 
 ```bash

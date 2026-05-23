@@ -51,6 +51,15 @@
       "approval_required_before_public_use": true
     },
     {
+      "id": "book_entry_drafts",
+      "label": "Book Entry Drafts",
+      "command": "npm run kosmodata:book-drafts -- --book {book_slug}",
+      "output_root": "out/book-ingestion/{book_slug}/entry-drafts",
+      "review_output": "out/book-ingestion/{book_slug}/entry-drafts/review.md",
+      "purpose": "Convert detected private book projects into public-safe metadata-only Entry draft candidates for manual review.",
+      "approval_required_before_public_use": true
+    },
+    {
       "id": "research_agents",
       "label": "Database Research Agents",
       "command": "npm run database:research -- --agent all --topic {topic}",

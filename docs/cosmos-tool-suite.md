@@ -12,6 +12,7 @@ npm run cosmos:model-generate -- --entry villa-savoye
 npm run cosmos:text-generate -- --entry villa-savoye
 npm run cosmos:entry-build -- --entry villa-savoye --mode review
 npm run kosmodata:book-ingest -- --input archive-inbox/books/villa-savoye-book --title "Villa Savoye Source Book"
+npm run kosmodata:book-drafts -- --book villa-savoye-source-book
 ```
 
 ## 2D Vector Plan Generator
@@ -85,6 +86,11 @@ This is not a public ingest. Book pages, OCR text, photographed plans and page
 images remain private by default. Public Atlas output is limited to metadata,
 external references and paraphrased analysis until rights are explicitly
 cleared.
+
+`kosmodata:book-drafts` converts the detected project list into metadata-only
+Entry draft candidates under `out/book-ingestion/{book_slug}/entry-drafts/`.
+These drafts remain local review material and can be validated with
+`archive:draft` before any manual promotion.
 
 ## Brain Integration
 

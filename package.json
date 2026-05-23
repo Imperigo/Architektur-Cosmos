@@ -34,6 +34,7 @@
     "cosmos:entry-build": "node scripts/cosmos-entry-build-review.mjs",
     "cosmos:tools-smoke": "npm run cosmos:plan-generate -- --entry villa-savoye && npm run cosmos:model-generate -- --entry villa-savoye && npm run cosmos:text-generate -- --entry villa-savoye",
     "kosmodata:book-ingest": "node scripts/kosmodata-book-ingest.mjs",
+    "kosmodata:book-drafts": "node scripts/kosmodata-book-entry-drafts.mjs",
     "kosmodata:book-ingest:smoke": "node scripts/kosmodata-book-ingest-smoke.mjs",
     "archive:d1-preview": "node scripts/cloudflare-archive-preview.mjs",
     "archive:d1-smoke-remote": "node scripts/cloudflare-archive-preview.mjs --smoke-only",
