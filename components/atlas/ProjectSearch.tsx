@@ -256,7 +256,7 @@ export function ProjectSearch({
             {isDeveloperMode ? (
               <>
                 <div className="project-dev-title">Dev-Ansichten freigeschaltet</div>
-                <p>Lokale Session-Freischaltung fuer private Copyright- und Draft-Werkzeuge. Keine echte Authentifizierung.</p>
+                <p>Lokale Session-Freischaltung für private Copyright- und Draft-Werkzeuge. Keine echte Authentifizierung.</p>
                 <button type="button" className="project-dev-action" onClick={() => setDevMode(false)}>
                   Wieder sperren
                 </button>
@@ -283,7 +283,7 @@ export function ProjectSearch({
                   </button>
                 </div>
                 {devError ? <div className="project-dev-error">{devError}</div> : null}
-                <div className="project-dev-hint">Nur lokale Schranke / keine oeffentliche Auth</div>
+                <div className="project-dev-hint">Nur lokale Schranke / keine öffentliche Auth</div>
               </>
             )}
           </div>

@@ -10,6 +10,8 @@ import { WormholeCanvas } from '@/components/atlas/WormholeCanvas';
 import { WormholeRings } from '@/components/atlas/WormholeRings';
 import analysisPreview from '@/data/database-analysis-preview.json';
 import archivePreview from '@/data/archive-preview.json';
+import brainTools from '@/data/brain-tools.json';
+import reviewQueue from '@/data/review-queue.json';
 import { atlasSize, styleSectors } from '@/lib/atlas-layout';
 import { publicDisplayMediaUrl } from '@/lib/media';
 import type { Entry, EntryRelation, StyleSectorId } from '@/lib/types';
@@ -2020,10 +2022,10 @@ function dominantSpanForYear(year: number) {
   if (year >= 1950) return { label: 'Nachkriegsmoderne' };
   if (year >= 1900) return { label: 'Moderne' };
   if (year >= 1800) return { label: 'Industrialisierung' };
-  if (year >= 1400) return { label: 'Fruehmoderne' };
+  if (year >= 1400) return { label: 'Frühmoderne' };
   if (year >= 500) return { label: 'Mittelalter / Stadt' };
   if (year >= -500) return { label: 'Antike' };
-  if (year >= -3000) return { label: 'Fruehe Hochkulturen' };
+  if (year >= -3000) return { label: 'Frühe Hochkulturen' };
   return { label: 'Proto-Urban / Ursprung' };
 }
 
@@ -2277,7 +2279,7 @@ function DatabaseReturnOverlay() {
   );
 }
 
-type DatabaseTab = 'overview' | 'intake' | 'generate' | 'entries' | 'sources' | 'media' | 'models' | 'analysis' | 'relations' | 'draft';
+type DatabaseTab = 'overview' | 'intake' | 'generate' | 'entries' | 'sources' | 'media' | 'models' | 'analysis' | 'relations' | 'brain' | 'draft';
 
 function DatabaseArchivePanel({
   renderMode = 'svg',
@@ -2343,6 +2345,7 @@ function DatabaseArchivePanel({
     { id: 'sources', label: 'Quellen', hint: 'Nachweise', group: 'review' },
     { id: 'media', label: 'Medien', hint: 'Bilder und Pläne', group: 'review' },
     { id: 'models', label: '3D', hint: 'Modellebenen', group: 'review' },
+    { id: 'brain', label: 'Brain', hint: 'Werkzeuge', group: 'review' },
     { id: 'relations', label: 'Graph', hint: 'Verknüpfungen', group: 'review' }
   ];
   const visibleTabs = developerMode ? tabs : tabs.filter((tab) => !tab.devOnly);
@@ -2569,7 +2572,7 @@ function DatabaseArchivePanel({
 
         <div className={`mb-3 border px-2 py-1.5 text-[8.8px] uppercase leading-snug tracking-[0.12em] ${developerMode ? 'border-[#f5b342]/34 bg-[#201407]/70 text-[#ffe1a3]' : 'border-[#00e7ff]/25 bg-[#061719]/85 text-[#c9fff4]'}`}>
           {developerMode
-            ? 'Dev freigeschaltet / private Copyright-Workflows sichtbar / keine automatische Veroeffentlichung'
+            ? 'Dev freigeschaltet / private Copyright-Workflows sichtbar / keine automatische Veröffentlichung'
             : 'Dev gesperrt / nur public-safe Metadaten / private Werkzeuge unter Search entsperren'}
         </div>
 
@@ -2589,7 +2592,7 @@ function DatabaseArchivePanel({
           </div>
         ) : (
           <p className="mb-3 border border-[#f7f7f4]/12 bg-[#050505]/55 p-2 text-[9.5px] leading-snug text-[#b8b8b2]">
-            Private Erfassung, KI-Generierung, Entwurfserstellung und copyright-sensible Pruefung bleiben verborgen, bis der lokale Dev-Zugang entsperrt ist. Das ist eine UI-Schranke, keine echte Authentifizierung.
+            Private Erfassung, KI-Generierung, Entwurfserstellung und copyright-sensible Prüfung bleiben verborgen, bis der lokale Dev-Zugang entsperrt ist. Das ist eine UI-Schranke, keine echte Authentifizierung.
           </p>
         )}
 
@@ -2602,25 +2605,30 @@ function DatabaseArchivePanel({
           {safeActiveTab === 'overview' ? (
             <div className="space-y-2 text-[10px] leading-relaxed text-[#d9d9d2]">
               <ArchiveRow label="Modus" value="Statischer öffentlicher Atlas / Browser-Entwürfe nur lokal" />
-              <ArchiveRow label="Speicher" value={`${archivePreview.storage_target.database.toUpperCase()} metadata preview / R2 planned`} />
+              <ArchiveRow label="Speicher" value={`${archivePreview.storage_target.database.toUpperCase()} Metadaten-Vorschau / R2 vorbereitet`} />
               <ArchiveRow label="Status" value={`D1 preview bereit / ${archivePreview.storage_target.frontend_connection.replace(/_/g, ' ')}`} />
               <ArchiveRow label="D1" value={`${archivePreview.storage_target.database_name} / verified ${archivePreview.storage_target.last_verified}`} />
-              <ArchiveRow label="R2" value={`${archivePreview.storage_target.assets_bucket_name ?? 'not configured'} / no uploads`} />
+              <ArchiveRow label="R2" value={`${archivePreview.storage_target.assets_bucket_name ?? 'nicht konfiguriert'} / keine Uploads`} />
               <ArchiveRow label="Assets" value={archivePreview.storage_target.assets_status.replace(/_/g, ' ')} />
               <ArchiveRow label="Pilot" value={`${pilotEntry.title}, ${pilotEntry.year_start}, ${pilotEntry.city}`} />
               {selectedEntry ? <ArchiveRow label="Aktuell" value={`${selectedEntry.title} / ${selectedEntry.database_profile?.status ?? 'local entry'}`} /> : null}
+              <div className="grid grid-cols-3 gap-1.5">
+                <BrainMiniMetric label="Brain-Tools" value={brainTools.tools.length} />
+                <BrainMiniMetric label="Review" value={reviewQueue.items.length} />
+                <BrainMiniMetric label="Modus" value={brainTools.mode === 'local_review_only' ? 'lokal' : brainTools.mode} />
+              </div>
               <p className="border border-[#00e7ff]/25 bg-[#061719] p-2 text-[#c9fff4]">
-                Dieses Panel ist eine lokale Planungskonsole. Es kann Entwuerfe in der Browser-Session vorbereiten, speichert aber nicht in D1, laedt nicht nach R2 hoch und veroeffentlicht keine Nutzer- oder Privatdateien.
+                Dieses Panel ist eine lokale Planungskonsole. Es kann Entwürfe in der Browser-Session vorbereiten, speichert aber nicht in D1, lädt nicht nach R2 hoch und veröffentlicht keine Nutzer- oder Privatdateien.
               </p>
               <p className="border border-[#f7f7f4]/15 bg-[#050505]/55 p-2 text-[#b8b8b2]">
-                Spaetere private Bibliotheken brauchen Authentifizierung, Cloudflare Access oder einen Identity Provider, signierte R2-Upload-URLs, Quarantaene, Rechtepruefung und manuelle Review vor jeder oeffentlichen Veroeffentlichung.
+                Spätere private Bibliotheken brauchen Authentifizierung, Cloudflare Access oder einen Identity Provider, signierte R2-Upload-URLs, Quarantäne, Rechteprüfung und manuelle Review vor jeder öffentlichen Veröffentlichung.
               </p>
               <ArchiveList
                 title="So funktioniert dieses Panel"
                 items={[
-                  'KI Erfassen erzeugt einen temporaeren Entwurf aus Projektname, Adresse, Architekt oder Bildhinweis',
+                  'KI Erfassen erzeugt einen temporären Entwurf aus Projektname, Adresse, Architekt oder Bildhinweis',
                   'Dateien sammelt Quellenmaterial nur in dieser Browser-Session',
-                  'Entwurf erlaubt Pruefung und temporaeres Hinzufuegen eines lokalen Atlas-Eintrags',
+                  'Entwurf erlaubt Prüfung und temporäres Hinzufügen eines lokalen Atlas-Eintrags',
                   'Wissens-Tabs zeigen die aktuelle statische Archivvorschau'
                 ]}
               />
@@ -2639,10 +2647,10 @@ function DatabaseArchivePanel({
               >
                 <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#00e7ff]">Quellenpaket ablegen</div>
                 <p className="mt-2 text-[10px] leading-snug text-[#c7c7c2]">
-                  PDFs, Scans, Plaene, Bilder, Videos, Textnotizen und Modelldateien. Diese Vorschau klassifiziert das Paket und zeigt, was fuer spaetere Erfassung bereit ist.
+                  PDFs, Scans, Pläne, Bilder, Videos, Textnotizen und Modelldateien. Diese Vorschau klassifiziert das Paket und zeigt, was für spätere Erfassung bereit ist.
                 </p>
                 <label className="mt-3 inline-flex cursor-none items-center border border-[#00e7ff]/60 px-3 py-1.5 text-[8.5px] uppercase tracking-[0.14em] text-[#9cfff7]">
-                  Dateien waehlen
+                  Dateien wählen
                   <input
                     className="sr-only"
                     type="file"
@@ -2728,7 +2736,7 @@ function DatabaseArchivePanel({
                   <div>
                     <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#00e7ff]">Bild erkennen</div>
                     <p className="mt-1 text-[9.5px] leading-snug text-[#b8b8b2]">
-                      Ziehe ein Gebaeudebild hinein. V1 liest Dateiname und Kontext-Hinweise und setzt den Entwurf vor jedem neuen Resultat zurueck.
+                      Ziehe ein Gebäudebild hinein. V1 liest Dateiname und Kontext-Hinweise und setzt den Entwurf vor jedem neuen Resultat zurück.
                     </p>
                   </div>
                   <label className="shrink-0 cursor-none border border-[#00e7ff]/60 px-2 py-1 text-[8px] uppercase tracking-[0.12em] text-[#9cfff7]">
@@ -2800,11 +2808,11 @@ function DatabaseArchivePanel({
               </p>
 
               <ArchiveList
-                title="Naechster Ablauf"
+                title="Nächster Ablauf"
                 items={[
                   'Aus den aktuellen Eingaben entsteht ein sauberer editierbarer Entwurf',
-                  'Alter Projekttext wird geloescht, bevor eine neue Bildanalyse angewendet wird',
-                  'Browser-Eintrag erstellen fuegt ihn nur dieser Session hinzu; er ist nicht oeffentlich und nicht in D1/R2 gespeichert'
+                  'Alter Projekttext wird gelöscht, bevor eine neue Bildanalyse angewendet wird',
+                  'Browser-Eintrag erstellen fügt ihn nur dieser Session hinzu; er ist nicht öffentlich und nicht in D1/R2 gespeichert'
                 ]}
               />
             </div>
@@ -2841,7 +2849,7 @@ function DatabaseArchivePanel({
               return {
                 title: media.label,
                 meta: `${media.type} / ${media.credit ?? 'Platzhalter'}`,
-                body: `${media.placeholder}${mediaUrl ? ` / ${mediaUrl}` : ' / kein oeffentliches Bild angehaengt'}`,
+                body: `${media.placeholder}${mediaUrl ? ` / ${mediaUrl}` : ' / kein öffentliches Bild angehängt'}`,
                 imageUrl: mediaUrl ?? undefined
               };
             }) : archivePreview.entry_media.map((media) => ({ title: media.title, meta: `${media.media_type} / ${media.copyright_status}`, body: media.caption }))} />
@@ -2852,7 +2860,23 @@ function DatabaseArchivePanel({
           ) : null}
 
           {safeActiveTab === 'relations' ? (
-            <ArchiveList title="Wissensgraph" items={[`${relations.length} lokale Relationen aktuell verfuegbar`, 'D1-Tabelle ist fuer Einfluss-, Themen-, Quellen- und Strukturrelationen vorbereitet', 'Das Hover-Netzwerk kann spaeter denselben Graph statt lokaler JSON-Daten lesen']} />
+            <ArchiveList title="Wissensgraph" items={[`${relations.length} lokale Relationen aktuell verfügbar`, 'D1-Tabelle ist für Einfluss-, Themen-, Quellen- und Strukturrelationen vorbereitet', 'Das Hover-Netzwerk kann später denselben Graph statt lokaler JSON-Daten lesen']} />
+          ) : null}
+
+          {safeActiveTab === 'brain' ? (
+            <div className="space-y-2 text-[10px] leading-relaxed text-[#d9d9d2]">
+              <ArchiveRow label="Modus" value={brainTools.mode === 'local_review_only' ? 'Lokaler Review-Modus / keine automatischen Writes' : brainTools.mode} />
+              <ArchiveRow label="Öffentlich" value={brainTools.writes_public_database || brainTools.uploads_assets ? 'Aktionen gesperrt durch Approval Gate' : 'Keine Datenbank-Writes, keine Asset-Uploads'} />
+              <ArchiveRow label="Review" value={`${reviewQueue.items.length} offene manuelle Freigaben`} />
+              <ArchiveCards
+                items={brainTools.tools.map((tool) => ({
+                  title: tool.label,
+                  meta: tool.id.replace(/_/g, ' '),
+                  body: `${tool.purpose} Befehl: ${tool.command}`
+                }))}
+              />
+              <ArchiveList title="Brain-Guardrails" items={brainTools.guardrails} />
+            </div>
           ) : null}
 
           {safeActiveTab === 'draft' ? (
@@ -2940,7 +2964,7 @@ function DatabaseArchivePanel({
                 />
               </label>
               <ArchiveList
-                title="Lokale naechste Befehle"
+                title="Lokale nächste Befehle"
                 items={[
                   `npm run archive:draft -- --input data/drafts/${preview.slug}.json`,
                   `npm run archive:asset-manifest -- --entry ${preview.slug} --copyright ${draft.copyright_status}`,
@@ -2993,6 +3017,15 @@ function ArchiveRow({ label, value }: { label: string; value: string }) {
     <div className="flex min-w-0 gap-3 border-b border-[#f7f7f4]/10 pb-1.5">
       <span className="w-20 shrink-0 overflow-hidden text-ellipsis text-[8px] uppercase tracking-[0.12em] text-[#00e7ff]">{label}</span>
       <span className="min-w-0 overflow-wrap-anywhere text-[#f7f7f4]">{value}</span>
+    </div>
+  );
+}
+
+function BrainMiniMetric({ label, value }: { label: string; value: string | number }) {
+  return (
+    <div className="border border-[#00e7ff]/18 bg-[#061719]/82 px-2 py-1.5">
+      <div className="truncate text-[12px] font-semibold leading-none text-[#f7f7f4]">{value}</div>
+      <div className="mt-1 truncate text-[7px] uppercase tracking-[0.12em] text-[#9cfff7]/72">{label}</div>
     </div>
   );
 }
@@ -3069,7 +3102,7 @@ function DatabaseFlowSteps({ current }: { current: 'research' | 'analysis' | 'dr
     { id: 'research', label: 'Recherchepaket' },
     { id: 'analysis', label: 'Analysepaket' },
     { id: 'draft', label: 'Entwurf' },
-    { id: 'review', label: 'Bereit fuer Review' }
+    { id: 'review', label: 'Bereit für Review' }
   ] as const;
   const currentIndex = steps.findIndex((step) => step.id === current);
 
@@ -3088,7 +3121,7 @@ function DatabaseFlowSteps({ current }: { current: 'research' | 'analysis' | 'dr
 function databaseWorkflowStage(tab: DatabaseTab): 'research' | 'analysis' | 'draft' | 'review' {
   if (tab === 'analysis' || tab === 'models' || tab === 'media') return 'analysis';
   if (tab === 'draft') return 'draft';
-  if (tab === 'overview' || tab === 'entries' || tab === 'sources' || tab === 'relations') return 'review';
+  if (tab === 'overview' || tab === 'entries' || tab === 'sources' || tab === 'relations' || tab === 'brain') return 'review';
   return 'research';
 }
 
@@ -3118,9 +3151,9 @@ function DatabaseAnalysisPackView({
         <ArchiveList
           title="Analysepaket"
           items={[
-            fallbackEntry ? `Noch kein statisches Analysepaket fuer ${fallbackEntry.title}` : 'Noch kein Analysepaket fuer den ausgewaehlten Eintrag',
-            'Fuehre database:analyze im Terminal aus, um ein Recherche- und Analysepaket zu erzeugen',
-            'Gepruefte Pakete koennen fuer die statische Anzeige in data/database-analysis-preview.json ergaenzt werden'
+            fallbackEntry ? `Noch kein statisches Analysepaket für ${fallbackEntry.title}` : 'Noch kein Analysepaket für den ausgewählten Eintrag',
+            'Führe database:analyze im Terminal aus, um ein Recherche- und Analysepaket zu erzeugen',
+            'Geprüfte Pakete können für die statische Anzeige in data/database-analysis-preview.json ergänzt werden'
           ]}
         />
       </div>
@@ -3545,9 +3578,9 @@ function draftFromResearchSeed(seed: ResearchSeed): EntryEntwurf {
     lecture_cluster: 'Architekture Cosmos dev research',
     source_documents: 'Generierter Rechercheauftrag / Quellen offen',
     source_url: '',
-    short_description: `${title} ist fuer KI-gestuetzte Recherche und Archivklassifikation vorbereitet.`,
-    one_sentence: `${title} ist ein Dev-Recherche-Seed fuer Quellensuche, Rechtepruefung, Medienaufnahme, Modellplanung und Analyseklassifikation.`,
-    full_description: `${title} ist noch nicht verifiziert. Der naechste lokale Rechercheschritt sammelt offizielle Projektquellen, verlaessliche Publikationen, rechteklare Medienkandidaten, Projektdaten, Struktur-/Material-/Tektonik-Hypothesen und moegliche Inputs fuer die Modellgenerierung.`,
+    short_description: `${title} ist für KI-gestützte Recherche und Archivklassifikation vorbereitet.`,
+    one_sentence: `${title} ist ein Dev-Recherche-Seed für Quellensuche, Rechteprüfung, Medienaufnahme, Modellplanung und Analyseklassifikation.`,
+    full_description: `${title} ist noch nicht verifiziert. Der nächste lokale Rechercheschritt sammelt offizielle Projektquellen, verlässliche Publikationen, rechteklare Medienkandidaten, Projektdaten, Struktur-/Material-/Tektonik-Hypothesen und mögliche Inputs für die Modellgenerierung.`,
     copyright_status: 'needs_permission'
   };
 }
