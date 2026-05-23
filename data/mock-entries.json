@@ -3572,12 +3572,20 @@
       "temple",
       "order",
       "proportion",
-      "polis"
+      "polis",
+      "dorisches-system",
+      "akropolis-topos",
+      "pentelischer-marmor",
+      "optische-korrektur",
+      "perikleisches-bauprogramm",
+      "skulptur-und-architektur",
+      "anastylosis",
+      "world-heritage"
     ],
-    "short_description": "Kanonisches Tempelbauwerk der griechischen Antike, in dem Ordnung, optische Korrektur und stadtraeumliche Symbolik zusammenfallen.",
-    "source_quality": "lecture_notes",
-    "one_sentence": "Parthenon ist als Bauwerk in Athen, Greece im Jahr 447 v. Chr. im Architecture Cosmos verortet und verknuepft temple, order, proportion.",
-    "full_description": "Kanonisches Tempelbauwerk der griechischen Antike, in dem Ordnung, optische Korrektur und stadtraeumliche Symbolik zusammenfallen. Der Eintrag wird im Atlas als Bauwerk gelesen und gehoert zur Wissensspur Architekturgeschichte ETH, Layer architectural history 1. Autorenschaft / Quelle: Iktinos, Kallikrates, Phidias. Seine Filterebene verbindet temple, order, proportion, polis mit Jahr, Stilsektor und Relationennetz; spaeter koennen echte Fotos, Plaene, Schnitte, Quellen und Modelle direkt aus der Datenbank angeschlossen werden.",
+    "short_description": "Der Parthenon verdichtet Tempeltypus, Akropolis-Topos, dorische Ordnung, Marmortektonik, optische Korrektur und politische Repräsentation zu einem Schlüsselwerk der klassischen Architektur.",
+    "source_quality": "case_study",
+    "one_sentence": "Der Parthenon ist eine präzise Marmorordnung auf der Athener Akropolis, in der Tempeltypus, Polisbild, Proportion, optische Korrektur, Skulptur und Restaurierungsfragen untrennbar zusammenarbeiten.",
+    "full_description": "Der Parthenon ist nicht nur ein kanonischer Tempel, sondern eine räumliche und tektonische Verdichtung der klassischen Polis. Auf der Akropolis liegt er als sichtbares Stadtzeichen über Athen; seine architektonische Kraft entsteht aus dorischer Ordnung, pentelischem Marmor, Cella, Peristasis, Gebälk, Skulpturenprogramm, Maßkorrekturen und der präzisen Setzung im heiligen Fels. Als KosmoData-Eintrag muss er deshalb nicht nur als Säulenhaus modelliert werden, sondern als Netzwerk aus Topos, Typos und Tektonik: Akropolis-Plateau, Prozessionsraum, Tempelkörper, Säulenordnung, Marmorblöcke, optische Korrekturen, skulpturale Fragmente, Zerstörungsgeschichte und moderne Anastylosis. Seine Bedeutung liegt im Übergang vom Tempel als Bauaufgabe zum politischen, religiösen und kulturellen Bild einer ganzen Stadt.",
     "media": [
       {
         "type": "exterior",
@@ -3606,68 +3614,352 @@
     ],
     "source_candidates": [
       {
+        "source_type": "world_heritage_record",
+        "title": "UNESCO World Heritage Centre / Acropolis, Athens",
+        "url": "https://whc.unesco.org/en/list/404",
+        "reliability_level": "verified",
+        "rights_status": "licensed",
+        "notes": "Official World Heritage source for the Acropolis ensemble, Parthenon as part of the Periclean building program and outstanding universal value. Use for public-safe metadata and heritage framing."
+      },
+      {
+        "source_type": "official_monument_record",
+        "title": "Hellenic Ministry of Culture / Odysseus / Parthenon",
+        "url": "https://odysseus.culture.gr/h/2/eh251.jsp?obj_id=912",
+        "reliability_level": "verified",
+        "rights_status": "unknown",
+        "notes": "Official monument record for Parthenon history, building phases, destruction and monument context. Images/text should remain link-only unless rights are confirmed."
+      },
+      {
+        "source_type": "restoration_source",
+        "title": "Acropolis Restoration Service / YSMA",
+        "url": "https://www.ysma.gr/en/",
+        "reliability_level": "verified",
+        "rights_status": "unknown",
+        "notes": "Official restoration service source for conservation/anastylosis context and restoration worksite logic. Treat technical documentation as source-linked review material."
+      },
+      {
         "source_type": "image_source",
-        "title": "Wikimedia Commons hero candidate / Parthenon",
+        "title": "Wikimedia Commons hero candidate / The Parthenon in Athens",
         "url": "https://commons.wikimedia.org/wiki/File:The_Parthenon_in_Athens.jpg",
         "reliability_level": "secondary_source",
         "rights_status": "licensed",
-        "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY 2.0."
+        "notes": "Public hero image already used by the entry. License: CC BY 2.0. Good public-safe exterior/planet thumbnail if attribution remains visible in metadata."
       }
     ],
     "architecture_text": {
-      "headline": "Parthenon: Ordnung, Maß und Polis als Tempelbild",
-      "overview": "Parthenon wird als Gebäude verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und Athen, Greece. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "headline": "Parthenon: Polis, Proportion und Marmorordnung auf der Akropolis",
+      "overview": "Der Parthenon wird als präzise Marmorordnung gelesen: Tempeltypus, Akropolis-Topos, dorische Peristasis, skulpturales Programm, optische Korrektur und moderne Restaurierung bilden ein Netzwerk aus Architektur, Politik, Ritual und Tektonik.",
       "chapters": [
         {
-          "title": "Architektonische Lesart",
-          "text": "Parthenon gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Der Parthenon verdichtet Tempelordnung, Proportion, optische Korrektur und Akropolis-Topografie zu einem politischen Bild der Polis. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Tempel, Ordnung, Proportion, Polis als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
-          "source_basis": "curated spatial reading",
-          "review_status": "draft_review"
+          "title": "These",
+          "text": "Der Parthenon ist nicht nur ein antiker Tempel, sondern eine architektonische These darüber, wie eine Polis sich räumlich, religiös und politisch darstellt. Die Klarheit der Ordnung ist dabei nie bloß abstrakt: Säulen, Cella, Gebälk, Skulptur und Standort auf dem Fels arbeiten zusammen, um Athen als gebaute Idee sichtbar zu machen.",
+          "source_basis": "UNESCO Acropolis record, Hellenic Ministry monument record, ETH architecture history notes",
+          "review_status": "source_enriched_review"
         },
         {
-          "title": "Material und Tragwerk",
-          "text": "Der Parthenon wird über Marmorkonstruktion, Säulenordnung, Gebälk, Cella und optische Korrekturen gelesen; Tragwerk und Bildordnung fallen eng zusammen. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
-          "source_basis": "curated material reading",
-          "review_status": "draft_review"
+          "title": "Netzwerk und DNA",
+          "text": "Im Atlas liegt der Parthenon im Netzwerk von klassischem Tempel, dorischer Ordnung, Polis-Monument, Akropolis-Topos, Marmorbau und Weltkulturerbe. Seine DNA ist nicht nur der peripterale Tempeltypus, sondern die extrem genaue Verbindung von Typus, städtischem Bild, kultischer Bedeutung und optischer Korrektur. Gegenüber anderen Tempeln wird er besonders durch seine Position auf der Akropolis und durch die Verschmelzung von Architektur und Skulptur wirksam.",
+          "source_basis": "entry taxonomy, UNESCO Acropolis ensemble framing, atlas relation logic",
+          "review_status": "source_enriched_review"
         },
         {
-          "title": "Raumordnung",
-          "text": "Der Parthenon verdichtet Tempelordnung, Proportion, optische Korrektur und Akropolis-Topografie zu einem politischen Bild der Polis. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
-          "source_basis": "curated spatial reading",
-          "review_status": "draft_review"
+          "title": "Topos",
+          "text": "Der Topos ist der Akropolisfelsen über Athen. Der Baukörper steht nicht neutral im Gelände, sondern ist Teil einer heiligen und politischen Hochlage, die Annäherung, Blick, Silhouette und städtische Orientierung bestimmt. Der Parthenon wird deshalb als Bauwerk und als Landschaftszeichen zugleich lesbar: Marmor, Licht und Fels erzeugen eine öffentliche Fernwirkung.",
+          "source_basis": "UNESCO Acropolis site description and monument location metadata",
+          "review_status": "source_enriched_review"
+        },
+        {
+          "title": "Typos",
+          "text": "Typologisch ist der Parthenon ein dorischer peripteraler Tempel mit Cella, Peristasis, Stylobat und skulpturalem Programm. Entscheidend ist, dass der Typus hier nicht mechanisch wiederholt wird: Proportion, Säulenstellung, optische Verfeinerungen und die Einbindung in das Akropolis-Ensemble machen den Tempel zu einem politischen und religiösen Bildkörper.",
+          "source_basis": "Hellenic Ministry monument record and classical temple taxonomy",
+          "review_status": "source_enriched_review"
         },
         {
           "title": "Tektonik",
-          "text": "Die tektonische Lesart soll zeigen, wie Oberfläche, Tragstruktur und Fügung Stützung, Hülle, Fügung und Atmosphäre organisieren. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
-          "source_basis": "entry materials and analysis fallback",
-          "review_status": "needs_source_review"
+          "text": "Tektonisch ist der Parthenon eine Marmorordnung aus Last, Fügung und Bild. Pentelischer Marmor, Säulen, Gebälk, Cella-Wände, Metopen, Fries und Giebelfelder bilden kein additives Dekor, sondern ein System aus Tragwerk, Maß und Erzählung. Besonders wichtig sind die optischen Korrekturen: Kurvaturen und Entasis machen die scheinbare Perfektion zu einer präzise gebauten Wahrnehmung.",
+          "source_basis": "curated architectural reading from official monument/restoration sources",
+          "review_status": "source_enriched_review"
         },
         {
-          "title": "Kontext",
-          "text": "Parthenon gehört zu Athen, Greece. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
-          "source_basis": "entry location metadata",
-          "review_status": "draft_review"
+          "title": "Raumlogik",
+          "text": "Die Raumlogik entsteht aus Umgehen, Annähern und Frontalität. Der Parthenon ist innen vergleichsweise kontrolliert, außen aber durch Peristasis, Rhythmus, Lichtwechsel und Prozessionsbezug hoch aktiv. Grundriss und Schnitt müssen deshalb zusammen gelesen werden: Der Tempel ist Körper, Schwelle, Bildträger und Orientierungspunkt auf dem Plateau.",
+          "source_basis": "architecture history reading and spatial taxonomy",
+          "review_status": "source_enriched_review"
         },
         {
-          "title": "Relevanz",
-          "text": "Parthenon ist als Referenz wichtig, weil Tempel, Ordnung, Proportion, Polis nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
-          "source_basis": "derived from entry metadata and Brain quality rules",
-          "review_status": "draft_review"
+          "title": "Konflikt und Kritik",
+          "text": "Der Parthenon ist auch ein Konfliktobjekt: Zerstörung, Umbauten, Fragmentierung, Restaurierung, Anastylosis und die Debatte um ausgelagerte Skulpturen gehören zur heutigen Lesart. Für KosmoData ist wichtig, diese Geschichte nicht als Randnotiz zu behandeln. Das Objekt besteht heute aus antiker Substanz, Verlusten, Ergänzungen, Forschung und politischer Erinnerung.",
+          "source_basis": "Hellenic Ministry record, YSMA restoration context and public heritage debate metadata",
+          "review_status": "source_enriched_review"
+        },
+        {
+          "title": "KosmoData-Layer und 3D-Potenzial",
+          "text": "Für 3D und Analyse sollte der Parthenon in getrennten Ebenen aufgebaut werden: Akropolis-Topos, Tempelmasse, Stylobat, Säulenordnung, Cella, Gebälk, Skulpturfragmente, optische Korrekturen, Erhaltungszustand und Restaurierungslayer. Ein öffentliches Modell bleibt diagrammatisch, solange keine freigegebenen Vermessungsdaten genutzt werden; trotzdem ist der Eintrag stark, weil Typus, Tragwerk und Topos klar layerbar sind.",
+          "source_basis": "model taxonomy, public monument records and restoration-source review",
+          "review_status": "source_enriched_review"
+        },
+        {
+          "title": "Entwurfsintelligenz",
+          "text": "Die übertragbare Intelligenz liegt nicht darin, den Parthenon formal zu kopieren. Entscheidend ist die Frage, wie ein Bauwerk durch Proportion, leichte Korrektur, Materialdisziplin, klare Tektonik und präzise Setzung einen größeren kulturellen Raum aktiviert. Für Entwurf und Vergleich wird der Parthenon damit zu einem Referenzfall für Ordnung, Wahrnehmung und architektonische Verdichtung.",
+          "source_basis": "source-enriched database profile and Architecture Cosmos text framework",
+          "review_status": "source_enriched_review"
         }
       ],
       "language": "de",
-      "generator": "cosmos-generate-architecture-text",
-      "generated_at": "2026-05-21T18:29:05.282Z",
-      "review_status": "needs_owner_review",
+      "review_status": "source_enriched_review",
+      "public_use_allowed": true,
+      "generated_at": "2026-05-23T18:20:00.000Z",
       "source_basis": [
         {
-          "type": "image_source",
-          "title": "Wikimedia Commons hero candidate / Parthenon",
-          "value": "https://commons.wikimedia.org/wiki/File:The_Parthenon_in_Athens.jpg",
-          "reliability_level": "secondary_source",
+          "type": "world_heritage_record",
+          "title": "UNESCO / Acropolis, Athens",
+          "value": "https://whc.unesco.org/en/list/404",
+          "reliability_level": "verified",
           "rights_status": "licensed"
+        },
+        {
+          "type": "official_monument_record",
+          "title": "Hellenic Ministry of Culture / Odysseus / Parthenon",
+          "value": "https://odysseus.culture.gr/h/2/eh251.jsp?obj_id=912",
+          "reliability_level": "verified",
+          "rights_status": "unknown"
+        },
+        {
+          "type": "restoration_source",
+          "title": "Acropolis Restoration Service / YSMA",
+          "value": "https://www.ysma.gr/en/",
+          "reliability_level": "verified",
+          "rights_status": "unknown"
         }
       ]
+    },
+    "source_url": "https://whc.unesco.org/en/list/404",
+    "geo": {
+      "country_code": "GR",
+      "city": "Athen",
+      "region": "Attika / Akropolis von Athen",
+      "latitude": 37.9715,
+      "longitude": 23.7267,
+      "precision": "monument_on_acropolis_plateau"
+    },
+    "materials": {
+      "primary": [
+        "pentelic_marble",
+        "dorische_saeulenordnung",
+        "masonry_blocks",
+        "sculptural_marble_program",
+        "stone_entablature"
+      ],
+      "secondary": [
+        "cella_walls",
+        "metopes_frieze_pediments",
+        "stylobate_curvature",
+        "column_entasis",
+        "anastylosis_marble_inserts"
+      ],
+      "notes": "Material reading separates Pentelic marble, Doric order, cella/peristasis, sculptural program, optical refinements and modern conservation/anastylosis layers. Exact geometry should be treated as a scholarly reconstruction, not a casual mesh copy."
+    },
+    "program": {
+      "type": "classical_temple_and_polis_monument",
+      "subtype": "dorische_peripteral_temple_on_acropolis_with_sculptural_program",
+      "public_access": "world_heritage_archaeological_site_with_managed_tourism",
+      "components": [
+        "peristasis",
+        "cella",
+        "pronaos",
+        "opisthodomos",
+        "stylobate",
+        "dorische_saeulen",
+        "metopes",
+        "frieze",
+        "pediments",
+        "acropolis_plateau",
+        "restoration_worksite_layers"
+      ]
+    },
+    "context": {
+      "topography": "acropolis_limestone_rock_above_athens",
+      "setting": "sacred_polis_acropolis_and_world_heritage_landmark",
+      "landscape_relations": [
+        "Athenian Acropolis plateau",
+        "sacred approach and procession",
+        "visual dominance over Athens",
+        "relation to Erechtheion, Propylaea and Athena Nike",
+        "Mediterranean light and marble surface"
+      ],
+      "urban_context": [
+        "Periclean building program",
+        "Athenian polis identity",
+        "religious cult and civic representation",
+        "archaeological tourism",
+        "restoration and sculpture restitution debate"
+      ],
+      "construction_logic": [
+        "marble_block_assembly",
+        "dorische_order",
+        "post_and_lintel_system",
+        "optical_refinements",
+        "sculpture_architecture_integration",
+        "anastylosis_and_conservation"
+      ]
+    },
+    "vibes": [
+      "marmorordnung",
+      "polis-zeichen",
+      "akropolis-topos",
+      "proportion-und-korrektur",
+      "skulpturale-tektonik",
+      "restaurierte-antike"
+    ],
+    "database_tags": [
+      "source:unesco-acropolis",
+      "source:hellenic-ministry-odysseus",
+      "source:acropolis-restoration-service",
+      "source:wikimedia-commons-hero",
+      "typology:classical-temple",
+      "typology:doric-peripteral-temple",
+      "program:polis-monument",
+      "material:pentelic-marble",
+      "material:stone-entablature",
+      "structure:post-and-lintel",
+      "structure:doric-order",
+      "spatial:peristasis-cella-procession",
+      "topos:acropolis-plateau",
+      "tectonic:optical-refinements",
+      "heritage:world-heritage",
+      "critique:fragmentation-restoration-restitution",
+      "blender:temple-order-layer-candidate",
+      "blender:acropolis-site-layer-candidate"
+    ],
+    "model_assets": [
+      {
+        "model_type": "site_model",
+        "title": "Parthenon Acropolis topography and approach model",
+        "r2_key": "entries/parthenon/models/site.glb",
+        "format": "glb",
+        "lod_level": "preview",
+        "source_basis": "Diagrammatic site model of the Acropolis plateau, Parthenon position and approach logic from public monument/heritage descriptions; not a measured survey.",
+        "generation_method": "procedural",
+        "review_status": "draft",
+        "confidence_score": 0.58
+      },
+      {
+        "model_type": "structure_model",
+        "title": "Parthenon Doric order and marble block structure model",
+        "r2_key": "entries/parthenon/models/structure.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "Layer model for stylobate, peristasis, cella, columns, entablature and optical refinements; exact geometry requires reviewed scholarly/official data.",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.52
+      },
+      {
+        "model_type": "tectonic_model",
+        "title": "Parthenon tectonic and restoration-layer study model",
+        "r2_key": "entries/parthenon/models/tectonic.glb",
+        "format": "glb",
+        "lod_level": "study",
+        "source_basis": "Study layer separating original marble order, sculptural program, fragments and restoration/anastylosis logic. Public export must stay diagrammatic unless rights and source precision are cleared.",
+        "generation_method": "diagrammatic_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.48
+      }
+    ],
+    "analysis_layers": [
+      {
+        "analysis_type": "structure",
+        "summary": "Der Parthenon arbeitet als Marmor-Post-and-Lintel-System: Stylobat, Säulen, Gebälk und Cella bilden eine präzise Last- und Bildordnung.",
+        "data": {
+          "structural_tags": [
+            "post_and_lintel",
+            "dorische_order",
+            "marble_blocks",
+            "cella_walls",
+            "stone_entablature"
+          ],
+          "blender_layer": "doric_marble_structure"
+        },
+        "r2_key": "entries/parthenon/analysis/structure.json",
+        "review_status": "reviewed"
+      },
+      {
+        "analysis_type": "spatial_order",
+        "summary": "Die Raumordnung verbindet Akropolis-Topos, Prozessionsannäherung, Peristasis, Cella und Außenwirkung zu einem öffentlichen Tempelbild.",
+        "data": {
+          "spatial_tags": [
+            "acropolis_topos",
+            "processional_approach",
+            "peristasis",
+            "cella",
+            "polis_view"
+          ],
+          "model_layer": "temple_spatial_order"
+        },
+        "r2_key": "entries/parthenon/analysis/spatial_order.json",
+        "review_status": "reviewed"
+      },
+      {
+        "analysis_type": "material_system",
+        "summary": "Pentelischer Marmor, skulpturale Marmorfragmente, Cella-Mauerwerk, Gebälk und moderne Anastylosis-Einsätze bilden ein geschichtetes Materialsystem.",
+        "data": {
+          "material_tags": [
+            "pentelic_marble",
+            "sculptural_program",
+            "marble_blocks",
+            "restoration_inserts"
+          ],
+          "blender_layer": "marble_and_restoration_layers"
+        },
+        "r2_key": "entries/parthenon/analysis/materials.json",
+        "review_status": "reviewed"
+      },
+      {
+        "analysis_type": "tectonics",
+        "summary": "Die tektonische Lesart fokussiert die Verbindung von dorischer Ordnung, optischen Korrekturen, Steinfügung, Lastwirkung und skulpturaler Erzählung.",
+        "data": {
+          "tectonic_tags": [
+            "entasis",
+            "stylobate_curvature",
+            "column_rhythm",
+            "entablature",
+            "sculpture_architecture_integration"
+          ],
+          "blender_layer": "optical_refinement_and_order"
+        },
+        "r2_key": "entries/parthenon/analysis/tectonics.json",
+        "review_status": "reviewed"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "summary": "Filterbar über klassischer Tempel, dorische Ordnung, Marmor, Akropolis-Topos, Polis, Weltkulturerbe, Restaurierung und Skulpturfragment.",
+        "data": {
+          "filter_tags": [
+            "classical_temple",
+            "doric_order",
+            "marble",
+            "acropolis",
+            "polis",
+            "world_heritage",
+            "restoration",
+            "sculpture_fragment"
+          ],
+          "graph_role": "classical_architecture_anchor"
+        },
+        "r2_key": "entries/parthenon/analysis/filter_classification.json",
+        "review_status": "reviewed"
+      }
+    ],
+    "database_profile": {
+      "status": "reviewed",
+      "r2_prefix": "entries/parthenon",
+      "source_count": 5,
+      "media_count": 4,
+      "model_count": 3,
+      "analysis_count": 5,
+      "tag_count": 18,
+      "rights_summary": "Public text, metadata and CC-BY hero are usable with attribution; official monument/restoration pages stay link-only unless rights are confirmed; 3D geometry remains diagrammatic unless measured public data is cleared.",
+      "updated_at": "2026-05-23T18:20:00.000Z"
     }
   },
   {

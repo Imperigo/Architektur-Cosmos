@@ -670,6 +670,41 @@ function readableDe(value) {
     'garden apartment': 'Gartenwohnung',
     prefabricated_modular_garden_apartment_megastructure: 'vorgefertigte modulare Gartenwohn-Megastruktur',
     'prefabricated modular garden apartment megastructure': 'vorgefertigte modulare Gartenwohn-Megastruktur',
+    classical_temple_and_polis_monument: 'klassischer Tempel und Polis-Monument',
+    'classical temple and polis monument': 'klassischer Tempel und Polis-Monument',
+    dorische_peripteral_temple_on_acropolis_with_sculptural_program: 'dorischer Peripteraltempel auf der Akropolis mit Skulpturenprogramm',
+    'dorische peripteral temple on acropolis with sculptural program': 'dorischer Peripteraltempel auf der Akropolis mit Skulpturenprogramm',
+    sacred_polis_acropolis_and_world_heritage_landmark: 'sakrale Polis-Akropolis und Welterbe-Ort',
+    'sacred polis acropolis and world heritage landmark': 'sakrale Polis-Akropolis und Welterbe-Ort',
+    acropolis_limestone_rock_above_athens: 'Kalksteinfelsen der Akropolis über Athen',
+    'acropolis limestone rock above athens': 'Kalksteinfelsen der Akropolis über Athen',
+    doric_peripteral_temple: 'dorischer Peripteraltempel',
+    'doric peripteral temple': 'dorischer Peripteraltempel',
+    classical_temple: 'klassischer Tempel',
+    'classical temple': 'klassischer Tempel',
+    dorisches_system: 'dorisches System',
+    'dorisches system': 'dorisches System',
+    akropolis_topos: 'Akropolis-Topos',
+    'akropolis topos': 'Akropolis-Topos',
+    polis_monument: 'Polis-Monument',
+    'polis monument': 'Polis-Monument',
+    pentelic_marble: 'pentelischer Marmor',
+    'pentelic marble': 'pentelischer Marmor',
+    stone_entablature: 'Steingebälk',
+    'stone entablature': 'Steingebälk',
+    post_and_lintel: 'Stütze-und-Balken-System',
+    'post and lintel': 'Stütze-und-Balken-System',
+    doric_order: 'dorische Ordnung',
+    'doric order': 'dorische Ordnung',
+    peristasis_cella_procession: 'Peristasis, Cella und Prozession',
+    'peristasis cella procession': 'Peristasis, Cella und Prozession',
+    fragmentation_restoration_restitution: 'Fragmentierung, Restaurierung und Restitution',
+    'fragmentation restoration restitution': 'Fragmentierung, Restaurierung und Restitution',
+    site_model: 'Site-Modell',
+    'site model': 'Site-Modell',
+    tectonics: 'Tektonik',
+    greece: 'Griechenland',
+    canada: 'Kanada',
     expo_67_site_and_modern_heritage_landmark: 'Expo-67-Areal und Denkmal der Moderne',
     'expo 67 site and modern heritage landmark': 'Expo-67-Areal und Denkmal der Moderne',
     artificial_peninsula_on_saint_lawrence_river: 'künstliche Halbinsel am Sankt-Lorenz-Strom',
@@ -1337,7 +1372,7 @@ function readableDe(value) {
 }
 
 function stripTagPrefix(value) {
-  return String(value ?? '').replace(/^(source|typology|material|structure|context|style|program|theme|rights|critique|risk|license|image|credit):/i, '');
+  return String(value ?? '').replace(/^(source|typology|material|structure|context|style|program|theme|rights|critique|risk|license|image|credit|spatial|topos|tectonic|heritage|blender|labor|knowledge|landscape):/i, '');
 }
 
 function localizeArchitectureText(value) {
