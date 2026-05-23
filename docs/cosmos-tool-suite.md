@@ -65,8 +65,15 @@ The output contains:
 - headline
 - overview
 - one-sentence suggestion
-- chapter prose for architectural reading, material/structure, spatial order,
-  tectonics, context and database/model value
+- chapter prose that answers the Architecture Cosmos question framework:
+  These, Netzwerk/DNA, Topos, Typos, Tektonik, Raumlogik, Konflikt/Kritik,
+  KosmoData-Layer/3D-Potenzial and Entwurfsintelligenz
+
+The generator should never produce a neutral encyclopedia summary. Each project
+text asks what architectural idea is being tested, how the object sits in the
+atlas network, how it differs from related projects of the same "DNA", and what
+can be extracted for filters, analysis layers, Blender/ArchiCAD and future
+design work.
 
 The text generator is intentionally source-cautious. It turns dry metadata,
 analysis layers and ETH/source notes into better prose, but every factual claim

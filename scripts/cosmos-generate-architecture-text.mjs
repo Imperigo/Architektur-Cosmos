@@ -96,35 +96,50 @@ function buildTextPack(entry) {
   const headline = buildHeadline(entry, program);
   const overview = paragraph([
     `${entry.title} wird als ${program} verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf.`,
-    `Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und ${context}.`,
-    `Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.`
+    `Architektonisch entscheidend ist das Zusammenspiel von Netzwerkposition, Topos, Typos, Tektonik, Raumdramaturgie und ${context}.`,
+    `Der Text beantwortet deshalb, welche architektonische These im Objekt steckt, wie es sich von verwandten Referenzen unterscheidet und welchen Wert es als KosmoData-Referenz für Analyse, Entwurf und 3D-Layer besitzt.`
   ]);
 
   const chapters = [
-    chapter('Architektonische Lesart', paragraph([
-      `${entry.title} gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: ${spatialClaim.long}.`,
-      `Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie ${mainThemes(entry)} als räumliche, soziale und konstruktive Ordnung sichtbar werden.`
+    chapter('These', paragraph([
+      `${entry.title} wird nicht als isoliertes Objekt gelesen, sondern als architektonische These innerhalb von ${mainThemes(entry)}.`,
+      `${spatialClaim.long}.`,
+      `Die Analyse fragt, welche räumliche Intelligenz daraus entsteht und welche Idee über das einzelne Projekt hinaus übertragbar bleibt.`
     ]), spatialClaim.basis),
-    chapter('Material und Tragwerk', paragraph([
-      visibleClaimText(materialClaim),
-      visibleClaimText(structuralClaim),
-      `Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.`
-    ]), materialClaim.basis),
-    chapter('Raumordnung', paragraph([
-      spatialClaim.long,
-      `Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.`
-    ]), spatialClaim.basis),
+    chapter('Netzwerk und DNA', paragraph([
+      networkDna(entry),
+      `Im Atlas ist wichtig, ob ${entry.title} eine bekannte DNA nur fortschreibt, sie verdichtet, bricht oder in eine andere Epoche, Landschaft oder Bauaufgabe übersetzt.`,
+      `So wird das Objekt nicht nur datiert, sondern in ein Beziehungsnetz von ähnlichen Typologien, Materialien, Programmen, Quellen und historischen Problemen eingeordnet.`
+    ]), 'entry themes, source trail and atlas relation logic'),
+    chapter('Topos', paragraph([
+      `${entry.title} gehört zu ${context}.`,
+      `Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments: Gelände, Stadtlage, Landschaft, Klima, Blick, Schwelle oder institutioneller Rahmen verändern die architektonische Bedeutung.`
+    ]), contextBasis(entry)),
+    chapter('Typos', paragraph([
+      `Typologisch ist ${entry.title} als ${program} zu lesen.`,
+      `Entscheidend ist, wie Programm, Gebrauch, Erschließung, Öffentlichkeit und Privatheit organisiert werden und ob der Typus dabei stabilisiert, erweitert oder bewusst gestört wird.`
+    ]), 'entry type and program metadata'),
     chapter('Tektonik', paragraph([
       visibleClaimText(tectonicClaim),
-      `Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.`
+      visibleClaimText(materialClaim),
+      visibleClaimText(structuralClaim),
+      `Tektonik bedeutet hier nicht nur Konstruktion, sondern das Zusammenspiel von Last, Fügung, Oberfläche, Maßstab und architektonischer Wirkung.`
     ]), tectonicClaim.basis),
-    chapter('Kontext', paragraph([
-      `${entry.title} gehört zu ${context}.`,
-      `Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.`
-    ]), contextBasis(entry)),
-    chapter('Relevanz', paragraph([
+    chapter('Raumlogik', paragraph([
+      spatialClaim.long,
+      `Grundriss, Schnitt, Bewegung, Blickbeziehungen und Schwellen werden als zusammenhängendes räumliches System gelesen, nicht als getrennte Darstellungsarten.`
+    ]), spatialClaim.basis),
+    chapter('Konflikt und Kritik', paragraph([
+      critiqueClaim(entry),
+      `Die kritische Lesart verhindert, dass das Objekt nur als Ikone gespeichert wird: Maßstab, soziale Wirkung, technische Abhängigkeit, ökologische Folgen, Repräsentation und Quellenlage bleiben Teil der Bewertung.`
+    ]), 'derived from entry metadata and review questions'),
+    chapter('KosmoData-Layer und 3D-Potenzial', paragraph([
+      layerPotential(entry),
+      `Für Blender, ArchiCAD und spätere Analyseansichten zählt, welche Bestandteile als getrennte Ebenen lesbar werden: Ort, Masse, Tragstruktur, Hülle, Innenraum, Material, Zirkulation und Unsicherheit.`
+    ]), 'model assets, analysis layers and database tags'),
+    chapter('Entwurfsintelligenz', paragraph([
       `${entry.title} ist als Referenz wichtig, weil ${databaseValue(entry)} nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden.`,
-      `Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.`
+      `Die eigentliche Lernfrage lautet: Welche Regel, räumliche Operation oder konstruktive Haltung kann aus dem Projekt extrahiert werden, ohne es formal zu kopieren?`
     ]), 'derived from entry metadata and Brain quality rules')
   ];
 
@@ -492,11 +507,64 @@ function mainThemes(entry) {
 
 function databaseValue(entry) {
   const tags = [
-    ...(entry.database_tags ?? []),
+    ...(entry.database_tags ?? []).filter((tag) => !/^(source|rights|license|image|credit):/i.test(tag)),
     ...(entry.materials?.primary ?? []),
     ...(entry.themes ?? [])
   ];
   return [...new Set(tags)].slice(0, 8).map(readableDe).join(', ') || 'Tragwerk, Material, Kontext und Typologie';
+}
+
+function networkDna(entry) {
+  const related = [
+    ...(entry.themes ?? []),
+    entry.style_sector,
+    entry.program?.type,
+    entry.program?.subtype,
+    ...(entry.source_documents ?? [])
+  ].filter(Boolean);
+  const anchors = [...new Set(related)].slice(0, 6).map(readableDe);
+  if (!anchors.length) {
+    return `${entry.title} braucht noch eine präzisere Netzwerkzuordnung; vorerst wird es über Typ, Epoche, Material und Kontext mit verwandten Referenzen verglichen.`;
+  }
+  return `${entry.title} sitzt im Netzwerk von ${anchors.join(', ')}. Diese Einordnung beschreibt nicht nur Kategorien, sondern eine architektonische DNA aus Typus, Epoche, Material, Quelle und räumlicher Strategie.`;
+}
+
+function critiqueClaim(entry) {
+  const critiqueTags = (entry.database_tags ?? [])
+    .filter((tag) => /critique|risk|conflict|uncertain|needs|fragile|colonial|power|control|exclusion|copyright|rights/i.test(tag))
+    .slice(0, 4)
+    .map(stripTagPrefix)
+    .map(readableDe);
+  if (critiqueTags.length) {
+    return `${entry.title} muss auch über ${critiqueTags.join(', ')} kritisch gelesen werden; diese Punkte markieren offene Spannungen statt fertige Werturteile.`;
+  }
+  return `${entry.title} braucht eine kritische Gegenfrage: Welche sozialen, politischen, ökologischen oder technischen Bedingungen machen die räumliche Ordnung erst möglich, und welche Kosten oder Ausschlüsse produziert sie?`;
+}
+
+function layerPotential(entry) {
+  const analysisTypes = (entry.analysis_layers ?? [])
+    .map((layer) => layer.analysis_type)
+    .filter(Boolean)
+    .slice(0, 6)
+    .map(readableDe);
+  const modelTypes = (entry.model_assets ?? [])
+    .map((asset) => asset.model_type || asset.layer)
+    .filter(Boolean)
+    .slice(0, 6)
+    .map(readableDe);
+  const tags = (entry.database_tags ?? [])
+    .filter((tag) => !/^(source|rights|license|image|credit):/i.test(tag))
+    .slice(0, 6)
+    .map(readableDe);
+  const parts = [
+    analysisTypes.length && `Analyseebenen: ${analysisTypes.join(', ')}`,
+    modelTypes.length && `Modellpakete: ${modelTypes.join(', ')}`,
+    tags.length && `Filtertags: ${tags.join(', ')}`
+  ].filter(Boolean);
+  if (!parts.length) {
+    return `${entry.title} ist als KosmoData-Objekt noch im Aufbau; zuerst müssen Analyseebenen, Modell-Layer und belastbare Quellen präzisiert werden.`;
+  }
+  return `${entry.title} besitzt bereits verwertbare KosmoData-Anker: ${parts.join('; ')}.`;
 }
 
 function sourceTrail(entry) {
@@ -571,7 +639,7 @@ function readable(value) {
 }
 
 function readableDe(value) {
-  const text = readable(value);
+  const text = stripTagPrefix(readable(value));
   const dictionary = {
     building: 'Gebäude',
     urban_plan: 'Stadtplan',
@@ -588,6 +656,56 @@ function readableDe(value) {
     'modern villa': 'moderne Villa',
     private_residence: 'privates Wohnhaus',
     'private residence': 'privates Wohnhaus',
+    megastructure: 'Megastruktur',
+    housing: 'Wohnbau',
+    cluster: 'Cluster',
+    prefabrication: 'Vorfertigung',
+    modular_housing: 'modularer Wohnbau',
+    'modular housing': 'modularer Wohnbau',
+    terraced_housing: 'Terrassenwohnen',
+    'terraced housing': 'Terrassenwohnen',
+    experimental_housing: 'experimentelles Wohnen',
+    'experimental housing': 'experimentelles Wohnen',
+    garden_apartment: 'Gartenwohnung',
+    'garden apartment': 'Gartenwohnung',
+    prefabricated_modular_garden_apartment_megastructure: 'vorgefertigte modulare Gartenwohn-Megastruktur',
+    'prefabricated modular garden apartment megastructure': 'vorgefertigte modulare Gartenwohn-Megastruktur',
+    expo_67_site_and_modern_heritage_landmark: 'Expo-67-Areal und Denkmal der Moderne',
+    'expo 67 site and modern heritage landmark': 'Expo-67-Areal und Denkmal der Moderne',
+    artificial_peninsula_on_saint_lawrence_river: 'künstliche Halbinsel am Sankt-Lorenz-Strom',
+    'artificial peninsula on saint lawrence river': 'künstliche Halbinsel am Sankt-Lorenz-Strom',
+    low_poly_model: 'Low-Poly-Modell',
+    'low poly model': 'Low-Poly-Modell',
+    structure_model: 'Tragwerksmodell',
+    'structure model': 'Tragwerksmodell',
+    tectonic_model: 'Tektonikmodell',
+    'tectonic model': 'Tektonikmodell',
+    structure: 'Tragwerk',
+    spatial_order: 'Raumordnung',
+    'spatial order': 'Raumordnung',
+    material_system: 'Materialsystem',
+    'material system': 'Materialsystem',
+    circulation: 'Erschließung',
+    filter_classification: 'Filterklassifikation',
+    'filter classification': 'Filterklassifikation',
+    scalability_cost_maintenance: 'Skalierbarkeit, Kosten und Unterhalt',
+    'scalability cost maintenance': 'Skalierbarkeit, Kosten und Unterhalt',
+    prefabricated_reinforced_concrete_modules: 'vorgefertigte Stahlbetonmodule',
+    'prefabricated reinforced concrete modules': 'vorgefertigte Stahlbetonmodule',
+    concrete_box_structure: 'Betonbox-Tragstruktur',
+    'concrete box structure': 'Betonbox-Tragstruktur',
+    roof_gardens: 'Dachgärten',
+    'roof gardens': 'Dachgärten',
+    prefabricated_concrete: 'vorgefertigter Beton',
+    'prefabricated concrete': 'vorgefertigter Beton',
+    concrete_module: 'Betonmodul',
+    'concrete module': 'Betonmodul',
+    stacked_boxes: 'gestapelte Boxen',
+    'stacked boxes': 'gestapelte Boxen',
+    three_dimensional_matrix: 'dreidimensionale Matrix',
+    'three dimensional matrix': 'dreidimensionale Matrix',
+    flying_streets: 'schwebende Erschließungsstraßen',
+    'flying streets': 'schwebende Erschließungsstraßen',
     neolithic_aggregated_domestic_fabric: 'neolithisches Wohngefüge',
     'neolithic aggregated domestic fabric': 'neolithisches Wohngefüge',
     administrative_ritual_city: 'administrativ-rituelle Stadt',
@@ -1089,8 +1207,6 @@ function readableDe(value) {
     postcolonial_city: 'postkoloniale Stadt',
     'postcolonial city': 'postkoloniale Stadt',
     modulor: 'Modulor',
-    megastructure: 'Megastruktur',
-    cluster: 'Cluster',
     freedom: 'Freiheit',
     play: 'Spiel',
     situationism: 'Situationismus',
@@ -1217,7 +1333,11 @@ function readableDe(value) {
     timber: 'Holz',
     concrete: 'Beton'
   };
-  return dictionary[text] ?? text;
+  return dictionary[text] ?? dictionary[text.toLowerCase()] ?? text;
+}
+
+function stripTagPrefix(value) {
+  return String(value ?? '').replace(/^(source|typology|material|structure|context|style|program|theme|rights|critique|risk|license|image|credit):/i, '');
 }
 
 function localizeArchitectureText(value) {
@@ -1395,7 +1515,8 @@ function localizeArchitectureText(value) {
     .replaceAll('terrace_walls', 'Terrassenmauern')
     .replaceAll('geometric_diagram', 'geometrisches Diagramm')
     .replaceAll('Mauerwerk foundation', 'Mauerwerksfundament')
-    .replaceAll('Stein Mauerwerk', 'Steinmauerwerk');
+    .replaceAll('Stein Mauerwerk', 'Steinmauerwerk')
+    .replaceAll('flying streets', 'schwebende Erschließungsstraßen');
 }
 
 function titleCase(value) {

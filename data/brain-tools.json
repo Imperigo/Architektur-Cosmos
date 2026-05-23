@@ -29,7 +29,7 @@
       "command": "npm run cosmos:text-generate -- --entry {slug}",
       "output_root": "out/text-review/{slug}",
       "review_output": "archive-intake/{slug}/texts/architecture-text.json",
-      "purpose": "Rewrite dry archive data and source notes into precise architectural headliners, overview text and chapter prose.",
+      "purpose": "Rewrite dry archive data and source notes into precise architectural headliners, overview text and question-led prose around These, Netzwerk/DNA, Topos, Typos, Tektonik, Kritik and KosmoData/3D value.",
       "approval_required_before_public_use": true
     },
     {
