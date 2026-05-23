@@ -5971,10 +5971,11 @@
     "entry_type": "map",
     "year_start": 1375,
     "authors": [
-      "Abraham Cresques"
+      "Abraham Cresques",
+      "Jafudà Cresques"
     ],
-    "city": "Mallorca",
-    "country": "Spain",
+    "city": "Mallorca / Paris",
+    "country": "Spain / France",
     "style_sector": "pre_modern_architecture",
     "lecture_cluster": [
       "landscape_architecture_1_2"
@@ -5982,17 +5983,25 @@
     "themes": [
       "cartography",
       "worldview",
-      "navigation"
+      "navigation",
+      "majorcan-cartographic-school",
+      "portolan-network",
+      "cosmography",
+      "trade-routes",
+      "compass-rose",
+      "royal-gift",
+      "medieval-globalization",
+      "mansa-musa"
     ],
     "short_description": "Catalan Atlas ist im PDF-Framework als cartography / worldview verortet und bildet einen wichtigen Knoten der Architektur- und Stadtgeschichte.",
     "source_quality": "lecture_pdf",
-    "one_sentence": "Catalan Atlas ist als Karte in Mallorca, Spain im Jahr 1375 im Architecture Cosmos verortet und verknuepft cartography, worldview, navigation.",
-    "full_description": "Catalan Atlas ist im PDF-Framework als cartography / worldview verortet und bildet einen wichtigen Knoten der Architektur- und Stadtgeschichte. Der Eintrag wird im Atlas als Karte gelesen und gehoert zur Wissensspur Landschaftsarchitektur ETH, 04 Landschaftsarchitektur 1_2.pdf, Layer landscape architecture 1 2. Autorenschaft / Quelle: Abraham Cresques. Seine Filterebene verbindet cartography, worldview, navigation mit Jahr, Stilsektor und Relationennetz; spaeter koennen echte Fotos, Plaene, Schnitte, Quellen und Modelle direkt aus der Datenbank angeschlossen werden.",
+    "one_sentence": "Der Catalan Atlas verbindet nautische Präzision, kosmografisches Wissen, Herrschaftsbilder, Handelsräume und Erzählfiguren zu einem mittelalterlichen Navigations- und Weltmodell.",
+    "full_description": "Der Catalan Atlas ist eines der wichtigsten Werke der spätmittelalterlichen Kartografie. Er wird Abraham Cresques und Jafudà Cresques aus der mallorquinischen Kartografenschule zugeschrieben und befand sich spätestens 1380 in der königlichen Bibliothek Frankreichs. Anders als die Hereford Mappa Mundi verbindet er theologisches und enzyklopädisches Weltwissen mit einer stärker nautischen, mediterranen und handelspolitischen Logik. Portolanlinien, Küstenwissen, Kompassrose, Kalender, kosmografische Tafeln, Herrscherfiguren, Städte, Flaggen, Handelswege und legendäre Orte sind zu einer Bild- und Wissensmaschine verschaltet. Für Architecture Cosmos ist der Catalan Atlas ein Schlüsselobjekt, weil er die Welt nicht nur als Heilsgeschichte, sondern als Bewegungssystem darstellt: Navigation, Ware, Macht, Meer und Erzählung werden räumlich operationalisiert.",
     "media": [
       {
         "type": "exterior",
-        "label": "Aussenansicht",
-        "placeholder": "Aussenansicht / Catalan Atlas / cartography-worldview",
+        "label": "Kompassrose / Portolan-Netz",
+        "placeholder": "Catalan Atlas / Kompassrose, Portolanlinien, Kosmografie, Handel, Mansa Musa",
         "url": "https://upload.wikimedia.org/wikipedia/commons/d/d2/Compass_rose_from_Catalan_Atlas_%281375%29.jpg",
         "source_url": "https://commons.wikimedia.org/wiki/File:Compass_rose_from_Catalan_Atlas_(1375).jpg",
         "credit": "Wikimedia Commons / Cresques Abraham / Public domain",
@@ -6019,72 +6028,350 @@
     ],
     "source_candidates": [
       {
+        "source_type": "website",
+        "title": "BnF Essentiels / L’Atlas catalan",
+        "url": "https://essentiels.bnf.fr/fr/sciences/la-terre-et-la-mer/b5a6b0cb-a51b-43f8-972a-83d7fd296e77-representer-terre-avant-16e-siecle/article/ade6953c-716d-4ca3-b1a8-f4d7a46e678d-atlas-catalan",
+        "reliability_level": "verified",
+        "rights_status": "needs_permission",
+        "notes": "Official BnF educational source: Charles V royal-library context, attribution to Abraham Cresques, 1375-1380 dating, combination of cosmography, geography and imagination."
+      },
+      {
+        "source_type": "archive",
+        "title": "BnF Gallica / Atlas de cartes marines, dit Atlas catalan",
+        "url": "https://gallica.bnf.fr/ark:/12148/btv1b55002481n",
+        "reliability_level": "verified",
+        "rights_status": "needs_permission",
+        "notes": "Official digitized manuscript record, BnF Espagnol 30. Use metadata/link-only unless BnF/Gallica reuse terms are checked for the intended public display."
+      },
+      {
+        "source_type": "website",
+        "title": "Instituto Geográfico Nacional / Mapamundi de Cresques Abraham y Jafuda Cresques",
+        "url": "https://www.ign.es/web/catalogo-cartoteca/resources/webmaps/cresques.html",
+        "reliability_level": "verified",
+        "rights_status": "unknown",
+        "notes": "Cartographic source for Majorcan school, Abraham/Jafuda Cresques, commission by Peter IV of Aragon, calendar, navigation/cosmography sheets, compass rose, gold decoration and global extent."
+      },
+      {
+        "source_type": "archive",
+        "title": "Library of Congress / Mapamondi facsimile record",
+        "url": "https://www.loc.gov/item/2010587630/",
+        "reliability_level": "verified",
+        "rights_status": "unknown",
+        "notes": "Library catalogue cross-check for facsimile, BnF source, nautical chart/medieval geography headings and hand-coloured/gold-leaf facsimile notes."
+      },
+      {
         "source_type": "image_source",
-        "title": "Wikimedia Commons hero candidate / Catalan Atlas",
+        "title": "Wikimedia Commons hero candidate / Compass rose from Catalan Atlas",
         "url": "https://commons.wikimedia.org/wiki/File:Compass_rose_from_Catalan_Atlas_(1375).jpg",
         "reliability_level": "secondary_source",
         "rights_status": "public_domain",
-        "notes": "Auto-selected hero image candidate. Score: 0.98. License: Public domain."
+        "notes": "Public-domain hero image already used by the entry. Keep as a safe symbolic thumbnail for navigation/compass logic."
       }
     ],
     "architecture_text": {
-      "headline": "Catalan Atlas: Navigation, Handel und gezeichnete Welt",
-      "overview": "Catalan Atlas wird als Karte verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und Mallorca, Spain. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "headline": "Catalan Atlas: Welt als Navigation, Handel und Erzählraum",
+      "overview": "Der Catalan Atlas wird als bewegtes Weltmodell gelesen: Portolanlinien, Kompassrose, Küsten, Herrscher, Handelswege und kosmografische Tafeln machen Welt als navigierbares Netzwerk sichtbar.",
       "chapters": [
         {
           "title": "Architektonische Lesart",
-          "text": "Catalan Atlas gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Der Catalan Atlas verbindet Navigation, Küstenwissen, Herrschaftsbilder und Handelsräume; Karte wird hier zum Instrument von Bewegung und Weltvorstellung. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Kartografie, Weltbild, Navigation als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
-          "source_basis": "curated spatial reading",
-          "review_status": "draft_review"
+          "text": "Der Catalan Atlas verschiebt die Karte vom theologischen Zentrum zur navigierbaren Welt. Er zeigt nicht nur Orte, sondern Beziehungen: Küsten, Meere, Routen, Herrschaftsräume, Warenströme und Erzählfiguren. Für Architecture Cosmos ist er deshalb ein frühes Interface für Bewegung. Welt erscheint als Netzwerk aus Wissen, Macht und Reise.",
+          "source_basis": "BnF Essentiels, IGN, ETH landscape/worldview notes",
+          "review_status": "source_enriched_review"
         },
         {
-          "title": "Material und Tragwerk",
-          "text": "Der Catalan Atlas arbeitet mit Pergament, Farbe, Schrift, Küstenlinien und Figuren; seine konstruktive Ordnung liegt in Navigation, Maß und narrativer Weltgliederung. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
-          "source_basis": "curated material reading",
-          "review_status": "draft_review"
+          "title": "Material und Träger",
+          "text": "Der Atlas ist ein kostbares Manuskript aus Pergament, Farbe, Schrift, Gold und Silber. Seine Materialität ist nicht zweitrangig: Sie verbindet Gebrauch, Prestige und königliche Zirkulation. Die Karte war zugleich nautisches Wissensobjekt, politisches Geschenk und Bild der bekannten Welt.",
+          "source_basis": "BnF/Gallica and IGN manuscript descriptions",
+          "review_status": "source_enriched_review"
         },
         {
           "title": "Raumordnung",
-          "text": "Der Catalan Atlas verbindet Navigation, Küstenwissen, Herrschaftsbilder und Handelsräume; Karte wird hier zum Instrument von Bewegung und Weltvorstellung. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
-          "source_basis": "curated spatial reading",
-          "review_status": "draft_review"
+          "text": "Die Raumordnung arbeitet mit mehreren Systemen zugleich: Portolan-Netz und Kompassrose für Navigation, figürliche Szenen für Geschichte und Macht, Texte für Erklärung, Küstenlinien für empirisches Wissen. Dadurch wird die Karte nicht zu einem einzigen homogenen Raum, sondern zu einer geschichteten Oberfläche aus Bewegung, Erzählung und Messung.",
+          "source_basis": "IGN and BnF descriptions of cosmography/navigation panels",
+          "review_status": "source_enriched_review"
         },
         {
-          "title": "Tektonik",
-          "text": "Die tektonische Lesart soll zeigen, wie Oberfläche, Tragstruktur und Fügung Stützung, Hülle, Fügung und Atmosphäre organisieren. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
-          "source_basis": "entry materials and analysis fallback",
-          "review_status": "needs_source_review"
+          "title": "Tektonik des Kartenraums",
+          "text": "Tektonisch ist der Catalan Atlas ein Layer-System: Windrichtungen, Küsten, Inseln, politische Figuren, Städte, Handelsachsen, Kalender und kosmografische Tafeln überlagern sich. Für KosmoData kann daraus ein 2D-Vektorplan entstehen, in dem Navigation, Machtbilder, Textfelder und Handelsräume getrennt sichtbar werden.",
+          "source_basis": "database layer taxonomy and Catalan Atlas structure",
+          "review_status": "source_enriched_review"
         },
         {
           "title": "Kontext",
-          "text": "Catalan Atlas gehört zu Mallorca, Spain. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
-          "source_basis": "entry location metadata",
-          "review_status": "draft_review"
+          "text": "Der Atlas gehört zur mallorquinischen Kartografenschule und steht zwischen Mittelmeerhandel, jüdisch-mallorquinischem Wissen, aragonesischer Politik und französischer Hofkultur. Seine heutige Aufbewahrung in der Bibliothèque nationale de France macht ihn zudem zu einem Objekt der Sammlungsgeschichte und der digitalen Reproduktion.",
+          "source_basis": "BnF, IGN and Library of Congress catalogue context",
+          "review_status": "source_enriched_review"
         },
         {
           "title": "Relevanz",
-          "text": "Catalan Atlas ist als Referenz wichtig, weil Kartografie, Weltbild, Navigation nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
-          "source_basis": "derived from entry metadata and Brain quality rules",
-          "review_status": "draft_review"
+          "text": "Für Architecture Cosmos ist der Catalan Atlas ein Schlüssel zwischen Karte und Netzwerk. Er zeigt, wie eine Gesellschaft Welt als Routen, Macht, Ressourcen, Meere und Bilder organisiert. Im Vergleich zur Hereford Mappa Mundi wird hier besonders deutlich, dass Kartografie nicht nur Weltanschauung ist, sondern auch operative Infrastruktur für Bewegung.",
+          "source_basis": "source-enriched database profile and atlas relation system",
+          "review_status": "source_enriched_review"
         }
       ],
       "language": "de",
-      "generator": "cosmos-generate-architecture-text",
-      "generated_at": "2026-05-21T18:29:06.503Z",
-      "review_status": "needs_owner_review",
+      "review_status": "source_enriched_review",
+      "public_use_allowed": true,
+      "generated_at": "2026-05-23T20:17:18.000Z",
       "source_basis": [
         {
           "type": "source_document",
           "value": "04 Landschaftsarchitektur 1_2.pdf"
         },
         {
-          "type": "image_source",
-          "title": "Wikimedia Commons hero candidate / Catalan Atlas",
-          "value": "https://commons.wikimedia.org/wiki/File:Compass_rose_from_Catalan_Atlas_(1375).jpg",
-          "reliability_level": "secondary_source",
-          "rights_status": "public_domain"
+          "type": "official_holding_institution",
+          "title": "BnF Essentiels / L’Atlas catalan",
+          "value": "https://essentiels.bnf.fr/fr/sciences/la-terre-et-la-mer/b5a6b0cb-a51b-43f8-972a-83d7fd296e77-representer-terre-avant-16e-siecle/article/ade6953c-716d-4ca3-b1a8-f4d7a46e678d-atlas-catalan",
+          "reliability_level": "verified",
+          "rights_status": "needs_permission"
+        },
+        {
+          "type": "digital_archive",
+          "title": "BnF Gallica / Atlas catalan",
+          "value": "https://gallica.bnf.fr/ark:/12148/btv1b55002481n",
+          "reliability_level": "verified",
+          "rights_status": "needs_permission"
+        },
+        {
+          "type": "cartographic_catalogue",
+          "title": "IGN / Mapamundi de Cresques Abraham y Jafuda Cresques",
+          "value": "https://www.ign.es/web/catalogo-cartoteca/resources/webmaps/cresques.html",
+          "reliability_level": "verified",
+          "rights_status": "unknown"
+        },
+        {
+          "type": "catalogue_record",
+          "title": "Library of Congress / Mapamondi",
+          "value": "https://www.loc.gov/item/2010587630/",
+          "reliability_level": "verified",
+          "rights_status": "unknown"
         }
       ]
+    },
+    "year_end": 1380,
+    "source_url": "https://essentiels.bnf.fr/fr/sciences/la-terre-et-la-mer/b5a6b0cb-a51b-43f8-972a-83d7fd296e77-representer-terre-avant-16e-siecle/article/ade6953c-716d-4ca3-b1a8-f4d7a46e678d-atlas-catalan",
+    "geo": {
+      "country_code": "ES/FR",
+      "city": "Palma / Paris",
+      "region": "Mallorca / Bibliothèque nationale de France",
+      "latitude": 48.8338,
+      "longitude": 2.3758,
+      "precision": "origin_and_holding_institution"
+    },
+    "materials": {
+      "primary": [
+        "vellum",
+        "ink",
+        "pigment",
+        "gold_leaf",
+        "silver_leaf",
+        "wooden_panel_mounting"
+      ],
+      "secondary": [
+        "portolan_lines",
+        "compass_rose",
+        "text_blocks",
+        "figures",
+        "ships",
+        "flags",
+        "cosmographic_tables"
+      ],
+      "notes": "Material reading treats the atlas as navigational manuscript and prestige object. BnF/Gallica public display/reuse should be checked before embedding full-resolution manuscript images."
+    },
+    "program": {
+      "type": "medieval_nautical_world_atlas",
+      "subtype": "portolan_cosmography_trade_and_worldview_manuscript",
+      "public_access": "digital_archive_and_library_manuscript_with_reuse_terms",
+      "components": [
+        "compass rose",
+        "portolan network",
+        "calendar/cosmography panels",
+        "coastlines",
+        "rulers/figures",
+        "ships",
+        "trade/geography texts",
+        "gold-highlighted imagery"
+      ]
+    },
+    "context": {
+      "topography": "manuscript_surface_navigation_world_model",
+      "setting": "Majorcan cartographic school and BnF royal-library collection",
+      "worldview_relations": [
+        "navigation",
+        "trade",
+        "Mediterranean networks",
+        "royal gift",
+        "cosmography",
+        "Mansa Musa and political iconography"
+      ],
+      "knowledge_context": [
+        "medieval_cartography",
+        "portolan_charts",
+        "Aragonese_Mediterranean",
+        "Jewish_Majorcan_cartographers",
+        "French_royal_collection"
+      ],
+      "display_context": [
+        "BnF_Espagnol_30",
+        "Gallica_digital_surrogate",
+        "reuse_terms",
+        "facsimile_history"
+      ]
+    },
+    "vibes": [
+      "portolan-cosmos",
+      "navigation-as-worldview",
+      "gold-leaf-geography",
+      "trade-route-interface",
+      "medieval-global-network",
+      "compass-rose-brain"
+    ],
+    "database_tags": [
+      "source:bnf-essentiels",
+      "source:bnf-gallica",
+      "source:ign-cartoteca",
+      "source:library-of-congress",
+      "typology:medieval-world-atlas",
+      "typology:portolan-chart",
+      "material:vellum",
+      "material:gold-and-silver-leaf",
+      "spatial:compass-rose",
+      "spatial:portolan-network",
+      "knowledge:navigation",
+      "knowledge:trade-routes",
+      "knowledge:cosmography",
+      "history:majorcan-cartographic-school",
+      "plan2d:portolan-vector-layer-candidate",
+      "blender:manuscript-panel-display-candidate"
+    ],
+    "model_assets": [
+      {
+        "model_type": "site_model",
+        "title": "Catalan Atlas portolan manuscript panel model",
+        "r2_key": "entries/catalan-atlas/models/site.glb",
+        "format": "glb",
+        "lod_level": "preview",
+        "source_basis": "Diagrammatic panel model of manuscript leaves, compass rose, portolan network and text-image layers from public descriptions.",
+        "generation_method": "procedural",
+        "review_status": "draft",
+        "confidence_score": 0.57
+      },
+      {
+        "model_type": "tectonic_model",
+        "title": "Catalan Atlas navigation-layer model",
+        "r2_key": "entries/catalan-atlas/models/tectonic.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "Layer model for portolan lines, compass rose, coastline knowledge, figures, ships, trade routes and cosmographic panels; no protected full-image reproduction.",
+        "generation_method": "ai_assisted",
+        "review_status": "draft",
+        "confidence_score": 0.54
+      }
+    ],
+    "analysis_layers": [
+      {
+        "analysis_type": "spatial_order",
+        "summary": "Der Atlas ordnet Welt als Navigations- und Erzählfläche: Kompassrose, Portolanlinien, Küsten, Texte, Figuren und Handelsräume überlagern sich.",
+        "data": {
+          "spatial_tags": [
+            "compass_rose",
+            "portolan_lines",
+            "coastlines",
+            "figures",
+            "text_blocks",
+            "trade_routes"
+          ],
+          "plan2d_layers": [
+            "navigation_network",
+            "coastlines",
+            "political_figures",
+            "cosmography_panels",
+            "texts"
+          ]
+        },
+        "r2_key": "entries/catalan-atlas/analysis/spatial_order.json",
+        "review_status": "reviewed"
+      },
+      {
+        "analysis_type": "material_system",
+        "summary": "Das Materialsystem verbindet Pergament, Farbe, Gold/Silber, Schrift, Kompass- und Portolanlinien zu einem kostbaren, mobilen Wissensobjekt.",
+        "data": {
+          "primary_materials": [
+            "vellum",
+            "ink",
+            "pigment",
+            "gold_leaf",
+            "silver_leaf"
+          ],
+          "public_display": "public_domain_thumbnail_bnf_reuse_terms_to_check"
+        },
+        "r2_key": "entries/catalan-atlas/analysis/material_system.json",
+        "review_status": "reviewed"
+      },
+      {
+        "analysis_type": "typology",
+        "summary": "Typologisch liegt der Catalan Atlas zwischen Mappa Mundi, Portolan-Karte, kosmografischem Handbuch, höfischem Geschenk und Handels-/Navigationsinterface.",
+        "data": {
+          "typology_tags": [
+            "mappa_mundi",
+            "portolan_atlas",
+            "cosmography",
+            "royal_gift",
+            "navigation_interface"
+          ]
+        },
+        "r2_key": "entries/catalan-atlas/analysis/typology.json",
+        "review_status": "reviewed"
+      },
+      {
+        "analysis_type": "source_reconstruction",
+        "summary": "Öffentlich sollte der Atlas zunächst als strukturelles Layerdiagramm rekonstruiert werden: Portolan-Netz, Textfelder, Figuren, Handelsräume und Kompassrose statt ungeklärter Vollbild-Reproduktion.",
+        "data": {
+          "rights_notes": [
+            "bnf_gallica_reuse_terms_need_review",
+            "commons_detail_is_public_domain",
+            "derive_diagrammatic_layers_first"
+          ],
+          "reconstruction_layers": [
+            "panel_sequence",
+            "compass_rose",
+            "portolan_lines",
+            "figures",
+            "text_blocks",
+            "trade_routes"
+          ]
+        },
+        "r2_key": "entries/catalan-atlas/analysis/source_reconstruction.json",
+        "review_status": "reviewed"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "summary": "Catalan Atlas ist filterbar als Kartografie, Navigation, Portolan-Netz, mittelalterliche Globalisierung, mallorquinische Schule, Kompassrose, Handelsraum und kosmografisches Manuskript.",
+        "data": {
+          "filters": [
+            "cartography",
+            "worldview",
+            "navigation",
+            "portolan-network",
+            "compass-rose",
+            "majorcan-cartographic-school",
+            "trade-routes"
+          ]
+        },
+        "r2_key": "entries/catalan-atlas/analysis/filter_classification.json",
+        "review_status": "reviewed"
+      }
+    ],
+    "database_profile": {
+      "status": "reviewed",
+      "r2_prefix": "entries/catalan-atlas",
+      "source_count": 5,
+      "media_count": 4,
+      "model_count": 2,
+      "analysis_count": 5,
+      "tag_count": 16,
+      "rights_summary": "Public text, metadata and public-domain Commons hero are usable; BnF/Gallica full manuscript reuse terms must be checked before public high-resolution display.",
+      "updated_at": "2026-05-23T20:17:18.000Z"
     }
   },
   {
