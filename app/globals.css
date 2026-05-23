@@ -4370,8 +4370,8 @@ body:has(.entry-page) {
   }
 
   .mobile-atlas-gesture button {
-    min-width: 42px;
-    min-height: 42px;
+    min-width: 44px;
+    min-height: 44px;
     font-size: 13px;
   }
 
@@ -4934,8 +4934,8 @@ body:has(.entry-page) {
   }
 
   .mobile-atlas-gesture button {
-    min-width: 38px;
-    min-height: 38px;
+    min-width: 44px;
+    min-height: 44px;
     font-size: 12px;
   }
 
