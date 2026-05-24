@@ -33,6 +33,15 @@
       "approval_required_before_public_use": true
     },
     {
+      "id": "brain_entry_pipeline",
+      "label": "Brain Entry Pipeline",
+      "command": "npm run brain:entry-pipeline -- --entry {slug} --execute",
+      "output_root": "out/brain-entry-pipeline/{date}",
+      "review_output": "out/brain-entry-pipeline/{date}/latest.md",
+      "purpose": "Run the full local review chain for one entry: research seed, enrichment review, rights gate, 2D plan review, 3D model review, architecture text review, model status and archive validation.",
+      "approval_required_before_public_use": true
+    },
+    {
       "id": "brain_text_polish",
       "label": "Brain Text Polish",
       "command": "npm run brain:polish-texts -- --limit 8",

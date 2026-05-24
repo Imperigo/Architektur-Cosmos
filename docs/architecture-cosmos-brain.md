@@ -198,6 +198,40 @@ npm run brain:autopilot -- --execute --limit 5 --autopush --confirm-autopush
 
 Without those flags, Autopilot remains review-only and does not push.
 
+## Brain Entry Pipeline
+
+The Entry Pipeline is the owner-facing version of the ingestion chain. Instead
+of manually asking for one text, one model or one rights report at a time, it
+runs the complete local review stack for a selected entry:
+
+```bash
+npm run brain:entry-pipeline -- --entry villa-savoye
+npm run brain:entry-pipeline -- --entry villa-savoye --execute
+npm run brain:entry-pipeline -- --limit 1 --execute
+```
+
+Default mode is plan-only. `--execute` runs local review tools in this order:
+
+1. `kosmodata:seed-from-research`
+2. `kosmodata:enrich`
+3. `archive:rights-gate`
+4. `cosmos:entry-build`
+5. `brain:model-status`
+6. `brain:model-review`
+7. `archive:validate`
+
+The pipeline writes:
+
+```text
+out/brain-entry-pipeline/YYYY-MM-DD/latest.md
+archive-intake/{slug}/review/brain-entry-pipeline.md
+```
+
+It still does not promote data, copy models into `public/`, upload R2, write D1,
+commit, push or publish. Its purpose is to make the Brain the working source of
+truth for entry preparation: one command produces a source seed, proposed entry,
+rights report, 2D/3D/text review pack and model/archive status.
+
 ## Brain Promotion Controller
 
 Once Autopilot has prepared local review packs, the Promotion Controller checks

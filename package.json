@@ -59,6 +59,7 @@
     "brain:review": "node scripts/brain-review.mjs",
     "brain:autopilot": "node scripts/brain-autopilot.mjs",
     "brain:promote": "node scripts/brain-promote.mjs",
+    "brain:entry-pipeline": "node scripts/brain-entry-pipeline.mjs",
     "brain:polish-texts": "node scripts/brain-polish-texts.mjs",
     "brain:model-status": "node scripts/brain-model-status.mjs",
     "brain:model-batch": "node scripts/brain-model-batch.mjs",
