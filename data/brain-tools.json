@@ -60,6 +60,15 @@
       "approval_required_before_public_use": true
     },
     {
+      "id": "brain_model_promote",
+      "label": "Brain Model Promote",
+      "command": "npm run brain:promote-model -- --entry {slug} --confirm-public-model",
+      "output_root": "out/brain-model-promote/{date}",
+      "review_output": "out/brain-model-promote/{date}/latest.md",
+      "purpose": "After owner approval, validate a local review GLB, copy its low-poly preview into public/archive-models and register it in the public model manifest.",
+      "approval_required_before_public_use": true
+    },
+    {
       "id": "plan_generate",
       "label": "2D Vector Plan Generator",
       "command": "npm run cosmos:plan-generate -- --entry {slug}",

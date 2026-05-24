@@ -287,6 +287,25 @@ Ingenbohl, Habitat 67, Narkomfin Housing and Euralille Metropole have reviewed
 procedural GLB templates; other entries receive model review plans until their
 plan/section/source basis is strong enough.
 
+To promote a reviewed local GLB into the public static website, use the
+approval-gated promote tool:
+
+```bash
+npm run brain:promote-model -- --entry habitat-67
+```
+
+Without confirmation this only writes a review report. It validates the local
+`archive-intake/{slug}/models/low.glb`, the geometry profile and the model tool
+run. Public promotion requires the explicit owner flag:
+
+```bash
+npm run brain:promote-model -- --entry habitat-67 --confirm-public-model
+```
+
+That copies the checked preview to `public/archive-models/{slug}/low.glb` and
+registers the entry in `data/public-model-previews.json`. It still does not
+upload R2, does not write D1 and does not change `data/mock-entries.json`.
+
 ## Future Extensions
 
 - mail intake summary;

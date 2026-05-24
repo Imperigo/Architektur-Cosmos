@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "models": [
+    {
+      "slug": "villa-savoye",
+      "title": "Villa Savoye",
+      "url": "/archive-models/villa-savoye/low.glb",
+      "source_path": "public/archive-models/villa-savoye/low.glb",
+      "status": "public_preview_glb",
+      "license": "generated_diagrammatic_model",
+      "public_display_status": "owner_approved_public_preview",
+      "caveat": "Diagrammatisches Architecture-Cosmos-Studienmodell, keine vermessene Rekonstruktion."
+    }
+  ]
+}

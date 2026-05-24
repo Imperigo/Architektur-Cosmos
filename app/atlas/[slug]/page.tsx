@@ -6,6 +6,7 @@ import { EntryModelViewer } from '@/components/atlas/EntryModelViewer';
 import { MediaLightbox } from '@/components/atlas/MediaLightbox';
 import { ProjectSearch } from '@/components/atlas/ProjectSearch';
 import entries from '@/data/mock-entries.json';
+import publicModelPreviews from '@/data/public-model-previews.json';
 import relations from '@/data/relations.json';
 import { styleSectorColors } from '@/lib/atlas-layout';
 import { primaryPublicMediaUrl, publicDisplayMediaUrl } from '@/lib/media';
@@ -13,6 +14,7 @@ import type { Entry, EntryRelation, StyleSectorId } from '@/lib/types';
 
 const allEntries = entries as Entry[];
 const allRelationen = relations as EntryRelation[];
+const publicModels = publicModelPreviews.models as Array<{ slug: string; url: string }>;
 const siteUrl = 'https://architekturkosmos.ch';
 
 type ArchiveStatusMetric = {
@@ -918,8 +920,7 @@ function analysisItems(entry: Entry, types: string[]) {
 }
 
 function publicModelPreviewUrl(entry: Entry) {
-  if (entry.slug !== 'villa-savoye') return null;
-  return '/archive-models/villa-savoye/low.glb';
+  return publicModels.find((model) => model.slug === entry.slug)?.url ?? null;
 }
 
 function primaryMediaUrl(entry: Entry) {
