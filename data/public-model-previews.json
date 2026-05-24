@@ -2,6 +2,54 @@
   "version": 1,
   "models": [
     {
+      "slug": "alterszentrum-kloster-ingenbohl",
+      "title": "Alterszentrum Kloster Ingenbohl",
+      "url": "/archive-models/alterszentrum-kloster-ingenbohl/low.glb",
+      "source_path": "public/archive-models/alterszentrum-kloster-ingenbohl/low.glb",
+      "status": "public_preview_glb",
+      "template_id": "courtyard_institution_slope",
+      "promoted_at": "2026-05-24T18:12:45.002Z",
+      "license": "generated_diagrammatic_model",
+      "public_display_status": "owner_approved_public_preview",
+      "caveat": "Diagrammatisches Architecture-Cosmos-Studienmodell, keine vermessene Rekonstruktion."
+    },
+    {
+      "slug": "euralille-metropole",
+      "title": "Euralille Metropole",
+      "url": "/archive-models/euralille-metropole/low.glb",
+      "source_path": "public/archive-models/euralille-metropole/low.glb",
+      "status": "public_preview_glb",
+      "template_id": "metropolitan_infrastructure_node",
+      "promoted_at": "2026-05-24T18:12:45.541Z",
+      "license": "generated_diagrammatic_model",
+      "public_display_status": "owner_approved_public_preview",
+      "caveat": "Diagrammatisches Architecture-Cosmos-Studienmodell, keine vermessene Rekonstruktion."
+    },
+    {
+      "slug": "habitat-67",
+      "title": "Habitat 67",
+      "url": "/archive-models/habitat-67/low.glb",
+      "source_path": "public/archive-models/habitat-67/low.glb",
+      "status": "public_preview_glb",
+      "template_id": "modular_megastructure_stack",
+      "promoted_at": "2026-05-24T18:12:45.175Z",
+      "license": "generated_diagrammatic_model",
+      "public_display_status": "owner_approved_public_preview",
+      "caveat": "Diagrammatisches Architecture-Cosmos-Studienmodell, keine vermessene Rekonstruktion."
+    },
+    {
+      "slug": "narkomfin-housing",
+      "title": "Narkomfin Housing",
+      "url": "/archive-models/narkomfin-housing/low.glb",
+      "source_path": "public/archive-models/narkomfin-housing/low.glb",
+      "status": "public_preview_glb",
+      "template_id": "social_condenser_slab",
+      "promoted_at": "2026-05-24T18:12:45.364Z",
+      "license": "generated_diagrammatic_model",
+      "public_display_status": "owner_approved_public_preview",
+      "caveat": "Diagrammatisches Architecture-Cosmos-Studienmodell, keine vermessene Rekonstruktion."
+    },
+    {
       "slug": "villa-savoye",
       "title": "Villa Savoye",
       "url": "/archive-models/villa-savoye/low.glb",
