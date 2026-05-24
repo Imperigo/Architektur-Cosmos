@@ -115,6 +115,14 @@ function chooseTemplate(entry) {
       layer_contract: ['site', 'mass', 'structure', 'facade', 'interior', 'circulation', 'materials']
     };
   }
+  if (entry.slug === 'habitat-67') {
+    return {
+      id: 'modular_megastructure_stack',
+      can_generate: true,
+      reason: 'Habitat 67 has a reviewed diagrammatic template for prefabricated modules, terrace roofs, load transfer, circulation decks and megastructure context.',
+      layer_contract: ['site', 'mass', 'structure', 'circulation', 'terraces', 'materials']
+    };
+  }
 
   const suggested = entry.entry_type === 'landscape_project' || entry.entry_type === 'infrastructure'
     ? 'linear_landscape_infrastructure'

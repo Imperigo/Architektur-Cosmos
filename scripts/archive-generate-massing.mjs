@@ -158,9 +158,72 @@ function ingenbohlScene(entry) {
   };
 }
 
+function habitat67Scene(entry) {
+  const materials = [
+    { name: 'site / saint lawrence context', color: [0.18, 0.24, 0.28, 1] },
+    { name: 'prefabricated concrete module', color: [0.68, 0.66, 0.6, 1] },
+    { name: 'deep shadow / interstitial void', color: [0.08, 0.1, 0.11, 1] },
+    { name: 'private terrace vegetation', color: [0.18, 0.42, 0.22, 1] },
+    { name: 'shared circulation deck', color: [0.95, 0.64, 0.18, 1] },
+    { name: 'megastructure datum / service spine', color: [0.42, 0.44, 0.43, 1] },
+    { name: 'analysis accent / stepped skyline', color: [0.16, 0.72, 0.86, 1] }
+  ];
+
+  const objects = [
+    box('01_site_context / river edge plinth', [0, -0.12, 0], [34, 0.24, 22], 0),
+    box('03_structure / megastructure service datum', [0, 0.45, -3.35], [24, 0.5, 1.15], 5),
+    box('05_circulation / lower pedestrian deck', [-1.4, 1.22, -1.85], [21, 0.22, 1.0], 4),
+    box('05_circulation / upper pedestrian deck', [1.0, 3.05, -1.2], [15, 0.22, 0.92], 4),
+    box('07_context / expo landscape marker', [-13.2, 0.08, 7.2], [4.6, 0.14, 3.4], 3)
+  ];
+
+  const moduleSize = [2.9, 1.28, 2.35];
+  const modulePattern = [
+    [-10, 0, 0], [-7, 0, 0], [-4, 0, 0], [-1, 0, 0], [2, 0, 0], [5, 0, 0], [8, 0, 0],
+    [-8.5, 1, 0.9], [-5.5, 1, -0.35], [-2.5, 1, 0.9], [0.5, 1, -0.35], [3.5, 1, 0.9], [6.5, 1, -0.35],
+    [-7, 2, 1.8], [-4, 2, 0.55], [-1, 2, 1.8], [2, 2, 0.55], [5, 2, 1.8],
+    [-5.5, 3, 2.65], [-2.5, 3, 1.45], [0.5, 3, 2.65], [3.5, 3, 1.45],
+    [-4, 4, 3.45], [-1, 4, 2.32], [2, 4, 3.45],
+    [-2.5, 5, 4.2], [0.5, 5, 3.15],
+    [-1, 6, 4.85]
+  ];
+
+  modulePattern.forEach(([x, level, z], index) => {
+    const y = 0.95 + level * 1.28;
+    const stagger = index % 4 === 0 ? Math.PI * 0.012 : index % 4 === 2 ? Math.PI * -0.01 : 0;
+    objects.push(box(`02_mass_model / concrete housing module ${String(index + 1).padStart(2, '0')}`, [x, y, z], moduleSize, 1, stagger));
+    objects.push(box(`06_terrace / private garden roof ${String(index + 1).padStart(2, '0')}`, [x + 0.42, y + 0.7, z + 0.72], [1.75, 0.08, 0.88], 3, stagger));
+    if (level > 0 && index % 3 !== 1) {
+      objects.push(box(`03_structure / vertical load transfer pier ${String(index + 1).padStart(2, '0')}`, [x - 1.15, y - 0.78, z - 0.72], [0.22, 1.14, 0.22], 5));
+    }
+  });
+
+  for (const [x, y, z, length] of [
+    [-6.9, 2.12, -0.7, 7.2],
+    [-0.7, 3.4, 0.42, 7.8],
+    [-2.8, 4.68, 1.42, 6.1]
+  ]) {
+    objects.push(box(`05_circulation / bridge-link ${x}:${y}`, [x, y, z], [length, 0.16, 0.42], 4));
+  }
+
+  objects.push(box('06_terrace / stepped skyline analysis trace', [-0.9, 8.95, 4.9], [9.6, 0.16, 0.22], 6, Math.PI * 0.035));
+
+  return {
+    asset: {
+      version: '2.0',
+      generator: 'Architecture Cosmos archive-generate-massing',
+      copyright: 'Architecture Cosmos / diagrammatic model / not measured'
+    },
+    sceneName: `${entry.title} diagrammatic low-poly modular stack`,
+    materials,
+    objects
+  };
+}
+
 function sceneForEntry(entry) {
   if (entry.slug === 'villa-savoye') return villaSavoyeScene(entry);
   if (entry.slug === 'alterszentrum-kloster-ingenbohl') return ingenbohlScene(entry);
+  if (entry.slug === 'habitat-67') return habitat67Scene(entry);
   return null;
 }
 
