@@ -5339,10 +5339,10 @@
       "utilitas",
       "venustas"
     ],
-    "short_description": "Grundlegender Architekturtraktat, der Bauwissen, Proportion, Technik und kulturelle Autoritaet in ein ueberlieferbares System fasst.",
+    "short_description": "De architectura verbindet Traktat, Zeichnung, Proportion und klassische Ordnungslehre zu einem übertragbaren Architekturmodell.",
     "source_quality": "primary_text",
-    "one_sentence": "De architectura ist als Textquelle in Rome, Italy im Jahr 25 v. Chr. im Architecture Cosmos verortet und verknuepft treatise, firmitas, utilitas.",
-    "full_description": "Grundlegender Architekturtraktat, der Bauwissen, Proportion, Technik und kulturelle Autoritaet in ein ueberlieferbares System fasst. Der Eintrag wird im Atlas als Textquelle gelesen und gehoert zur Wissensspur Theoriegeschichte ETH, Layer theory history. Autorenschaft / Quelle: Vitruvius. Seine Filterebene verbindet treatise, firmitas, utilitas, venustas mit Jahr, Stilsektor und Relationennetz; spaeter koennen echte Fotos, Plaene, Schnitte, Quellen und Modelle direkt aus der Datenbank angeschlossen werden.",
+    "one_sentence": "De architectura zeigt, wie Text, Bild, Proportion und antike Referenz zu einem reproduzierbaren Regelwerk architektonischen Wissens werden.",
+    "full_description": "De architectura wird als Wissensobjekt gelesen: Der Traktat übersetzt antike Ordnung, Proportion, Villentypologien und Zeichnung in ein transportierbares architektonisches Regelwerk. Für KosmoData ist er weniger ein Gebäude als ein Betriebssystem der klassischen Architektur, aus dem Vergleichsachsen, Planlogiken, Referenzfamilien und spätere Analyse-Layer abgeleitet werden.",
     "media": [
       {
         "type": "exterior",
@@ -5404,13 +5404,211 @@
           "text": "De architectura ist als Referenz wichtig, weil Traktat, Festigkeit, Nützlichkeit, Schönheit nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
           "source_basis": "derived from entry metadata and Brain quality rules",
           "review_status": "draft_review"
+        },
+        {
+          "title": "Netzwerk und DNA",
+          "text": "De architectura wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, wie es sich innerhalb derselben architektonischen DNA unterscheidet: durch Ort, Auftrag, Fügung, Gebrauch und kulturelle Haltung.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Topos / Typos / Tektonik",
+          "text": "Topos, Typos und Tektonik werden zusammen gelesen: Ort und Landschaft bilden die Setzung, Architekturtraktat bildet den typologischen Ausgangspunkt, und needs material review markieren die konstruktiv-atmosphärische Lesart.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für KosmoData ist De architectura relevant, weil sich daraus Filter, Vergleichsgruppen, Planlayer und spätere Blender-Collections ableiten lassen: Architekturtraktat, klassische Architektur, Traktat, firmitas, utilitas, venustas, needs material review.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
         }
       ],
       "language": "de",
-      "generator": "cosmos-generate-architecture-text",
-      "generated_at": "2026-05-21T18:29:05.459Z",
+      "generator": "kosmodata-seed-from-research",
+      "generated_at": "2026-05-24T12:35:54.184Z",
       "review_status": "needs_owner_review",
       "source_basis": []
+    },
+    "source_candidates": [],
+    "materials": {
+      "primary": [
+        "needs_material_review"
+      ],
+      "secondary": [
+        "craft_details",
+        "surface_system",
+        "construction_logic"
+      ],
+      "notes": "Seeded from existing entry metadata and research packs; verify exact material claims before promotion."
+    },
+    "program": {
+      "type": "architectural_treatise",
+      "subtype": "classical_architecture_reference",
+      "public_access": "needs_review",
+      "components": [
+        "treatise",
+        "firmitas",
+        "utilitas",
+        "venustas",
+        "text",
+        "classical_architecture"
+      ]
+    },
+    "context": {
+      "topography": "needs_site_review",
+      "setting": "Rome, Italy",
+      "landscape_relations": [
+        "site_context_needs_review"
+      ],
+      "urban_context": [
+        "theory_history",
+        "primary_text"
+      ],
+      "construction_logic": [
+        "treatise",
+        "firmitas",
+        "utilitas",
+        "venustas",
+        "text",
+        "classical_architecture"
+      ]
+    },
+    "database_tags": [
+      "typology:architectural-treatise",
+      "style:classical_architecture",
+      "theme:treatise",
+      "theme:firmitas",
+      "theme:utilitas",
+      "theme:venustas",
+      "material:needs-material-review",
+      "rights:review-required",
+      "blender:architectural-treatise-layer-candidate",
+      "plan:vector-review-required",
+      "viewer:3d-layer-review-required"
+    ],
+    "model_assets": [
+      {
+        "model_type": "site_model",
+        "title": "De architectura Site/context study model",
+        "r2_key": "entries/vitruvius-de-architectura/models/site.glb",
+        "format": "glb",
+        "lod_level": "preview",
+        "source_basis": "entry metadata only; needs source review",
+        "generation_method": "procedural",
+        "review_status": "draft",
+        "confidence_score": 0.42
+      },
+      {
+        "model_type": "structure_model",
+        "title": "De architectura Structure and spatial order study model",
+        "r2_key": "entries/vitruvius-de-architectura/models/structure.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "entry metadata only; needs source review",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      },
+      {
+        "model_type": "tectonic_model",
+        "title": "De architectura Material, tectonic and filter-layer study model",
+        "r2_key": "entries/vitruvius-de-architectura/models/tectonic.glb",
+        "format": "glb",
+        "lod_level": "study",
+        "source_basis": "entry metadata only; needs source review; tags: typology:architectural-treatise, style:classical_architecture, theme:treatise, theme:firmitas, theme:utilitas, theme:venustas, material:needs-material-review, rights:review-required",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      }
+    ],
+    "analysis_layers": [
+      {
+        "analysis_type": "structure",
+        "summary": "De architectura needs a reviewed structural reading connecting needs_material_review with construction logic, span, support and assembly.",
+        "data": {
+          "seed_tags": [
+            "structure:needs_review",
+            "needs_material_review"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "material_system",
+        "summary": "De architectura should be tagged through needs_material_review and verified against primary sources before public material claims are made.",
+        "data": {
+          "seed_tags": [
+            "needs_material_review"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "spatial_order",
+        "summary": "De architectura should be read through program, movement, room sequence, exterior relation and typological position rather than as a single image.",
+        "data": {
+          "seed_tags": [
+            "spatial_order",
+            "architectural_treatise"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "typology",
+        "summary": "De architectura is currently classified as architectural_treatise; the seed must verify how this type differs from related entries with the same DNA.",
+        "data": {
+          "seed_tags": [
+            "typology",
+            "architectural_treatise",
+            "Rome, Italy"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "summary": "De architectura needs filter checks for themes, materials, rights, plan readiness, 3D layer readiness and viewer filters.",
+        "data": {
+          "seed_tags": [
+            "typology:architectural-treatise",
+            "style:classical_architecture",
+            "theme:treatise",
+            "theme:firmitas",
+            "theme:utilitas",
+            "theme:venustas",
+            "material:needs-material-review",
+            "rights:review-required",
+            "blender:architectural-treatise-layer-candidate",
+            "plan:vector-review-required"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      }
+    ],
+    "database_profile": {
+      "status": "reviewed",
+      "r2_prefix": "entries/vitruvius-de-architectura",
+      "source_count": 0,
+      "media_count": 4,
+      "model_count": 3,
+      "analysis_count": 5,
+      "tag_count": 11,
+      "rights_summary": "Public text and metadata are allowed; visual assets remain link-only/private until rights are cleared.",
+      "updated_at": "2026-05-24T12:35:54.340Z"
+    },
+    "ingestion_status": {
+      "stage": "needs_review",
+      "source_status": "candidate",
+      "asset_status": "candidate",
+      "model_status": "planned",
+      "updated_at": "2026-05-24T12:35:54.341Z"
     }
   },
   {
@@ -8871,10 +9069,10 @@
       "infrastructure",
       "sectional-city"
     ],
-    "short_description": "City in Layers ist im PDF-Framework als renaissance-city / infrastructure verortet und bildet einen wichtigen Knoten der Architektur- und Stadtgeschichte.",
+    "short_description": "City in Layers verdichtet Stahlbetonskelett, freien Grundriss und serielle Wiederholbarkeit zu einem konstruktiven Prototyp der Moderne.",
     "source_quality": "lecture_pdf",
-    "one_sentence": "City in Layers ist als Theorie in Italy, Italy im Jahr 1450 im Architecture Cosmos verortet und verknuepft renaissance city, infrastructure, sectional city.",
-    "full_description": "City in Layers ist im PDF-Framework als renaissance-city / infrastructure verortet und bildet einen wichtigen Knoten der Architektur- und Stadtgeschichte. Der Eintrag wird im Atlas als Theorie gelesen und gehoert zur Wissensspur Global History ETH, 02 Global History of Urban Design 1_2.pdf, Layer global urban design. Autorenschaft / Quelle: Leonardo da Vinci. Seine Filterebene verbindet renaissance city, infrastructure, sectional city mit Jahr, Stilsektor und Relationennetz; spaeter koennen echte Fotos, Plaene, Schnitte, Quellen und Modelle direkt aus der Datenbank angeschlossen werden.",
+    "one_sentence": "City in Layers zeigt, wie Stahlbetonskelett, Stützenraster und freier Grundriss zu einem offenen System für Plan-, Struktur- und 3D-Layer werden.",
+    "full_description": "City in Layers wird als konstruktiver Prototyp ohne festen Ort gelesen. Entscheidend ist die Trennung von Tragwerk, Grundriss und Hülle: wenige Stahlbetonelemente erzeugen ein offenes Raster, das Wiederholung, Erweiterung und freie räumliche Organisation ermöglicht. Für KosmoData wird daraus ein besonders klares Modell für Struktur-, Plan- und Blender-Layer.",
     "media": [
       {
         "type": "exterior",
@@ -8939,11 +9137,29 @@
           "text": "City in Layers ist als Referenz wichtig, weil Renaissance-Stadt, Infrastruktur, Schnittstadt nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
           "source_basis": "derived from entry metadata and Brain quality rules",
           "review_status": "draft_review"
+        },
+        {
+          "title": "Netzwerk und DNA",
+          "text": "City in Layers wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, wie es sich innerhalb derselben architektonischen DNA unterscheidet: durch Ort, Auftrag, Fügung, Gebrauch und kulturelle Haltung.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Topos / Typos / Tektonik",
+          "text": "Topos, Typos und Tektonik werden zusammen gelesen: Ort und Landschaft bilden die Setzung, Konstruktionsprototyp bildet den typologischen Ausgangspunkt, und Wasser markieren die konstruktiv-atmosphärische Lesart.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für KosmoData ist City in Layers relevant, weil sich daraus Filter, Vergleichsgruppen, Planlayer und spätere Blender-Collections ableiten lassen: Konstruktionsprototyp, vormoderne Architektur, renaissance city, infrastructure, sectional city, Wasser.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
         }
       ],
       "language": "de",
-      "generator": "cosmos-generate-architecture-text",
-      "generated_at": "2026-05-21T18:29:55.116Z",
+      "generator": "kosmodata-seed-from-research",
+      "generated_at": "2026-05-24T12:35:51.516Z",
       "review_status": "needs_owner_review",
       "source_basis": [
         {
@@ -8951,6 +9167,183 @@
           "value": "02 Global History of Urban Design 1_2.pdf"
         }
       ]
+    },
+    "source_candidates": [],
+    "materials": {
+      "primary": [
+        "water"
+      ],
+      "secondary": [
+        "craft_details",
+        "surface_system",
+        "construction_logic"
+      ],
+      "notes": "Seeded from existing entry metadata and research packs; verify exact material claims before promotion."
+    },
+    "program": {
+      "type": "structural_prototype",
+      "subtype": "pre_modern_architecture_reference",
+      "public_access": "needs_review",
+      "components": [
+        "renaissance-city",
+        "infrastructure",
+        "sectional-city",
+        "theory",
+        "pre_modern_architecture"
+      ]
+    },
+    "context": {
+      "topography": "needs_site_review",
+      "setting": "Italy, Italy",
+      "landscape_relations": [
+        "site_context_needs_review"
+      ],
+      "urban_context": [
+        "global_urban_design",
+        "lecture_pdf"
+      ],
+      "construction_logic": [
+        "renaissance-city",
+        "infrastructure",
+        "sectional-city",
+        "theory",
+        "pre_modern_architecture"
+      ]
+    },
+    "database_tags": [
+      "typology:structural-prototype",
+      "style:pre_modern_architecture",
+      "theme:renaissance-city",
+      "theme:infrastructure",
+      "theme:sectional-city",
+      "material:water",
+      "rights:review-required",
+      "blender:structural-prototype-layer-candidate",
+      "plan:vector-review-required",
+      "viewer:3d-layer-review-required"
+    ],
+    "model_assets": [
+      {
+        "model_type": "site_model",
+        "title": "City in Layers Site/context study model",
+        "r2_key": "entries/city-in-layers/models/site.glb",
+        "format": "glb",
+        "lod_level": "preview",
+        "source_basis": "entry metadata only; needs source review",
+        "generation_method": "procedural",
+        "review_status": "draft",
+        "confidence_score": 0.42
+      },
+      {
+        "model_type": "structure_model",
+        "title": "City in Layers Structure and spatial order study model",
+        "r2_key": "entries/city-in-layers/models/structure.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "entry metadata only; needs source review",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      },
+      {
+        "model_type": "tectonic_model",
+        "title": "City in Layers Material, tectonic and filter-layer study model",
+        "r2_key": "entries/city-in-layers/models/tectonic.glb",
+        "format": "glb",
+        "lod_level": "study",
+        "source_basis": "entry metadata only; needs source review; tags: typology:structural-prototype, style:pre_modern_architecture, theme:renaissance-city, theme:infrastructure, theme:sectional-city, material:water, rights:review-required, blender:structural-prototype-layer-candidate",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      }
+    ],
+    "analysis_layers": [
+      {
+        "analysis_type": "structure",
+        "summary": "City in Layers needs a reviewed structural reading connecting water with construction logic, span, support and assembly.",
+        "data": {
+          "seed_tags": [
+            "structure:needs_review",
+            "water"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "material_system",
+        "summary": "City in Layers should be tagged through water and verified against primary sources before public material claims are made.",
+        "data": {
+          "seed_tags": [
+            "water"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "spatial_order",
+        "summary": "City in Layers should be read through program, movement, room sequence, exterior relation and typological position rather than as a single image.",
+        "data": {
+          "seed_tags": [
+            "spatial_order",
+            "structural_prototype"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "typology",
+        "summary": "City in Layers is currently classified as structural_prototype; the seed must verify how this type differs from related entries with the same DNA.",
+        "data": {
+          "seed_tags": [
+            "typology",
+            "structural_prototype",
+            "Italy, Italy"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "summary": "City in Layers needs filter checks for themes, materials, rights, plan readiness, 3D layer readiness and viewer filters.",
+        "data": {
+          "seed_tags": [
+            "typology:structural-prototype",
+            "style:pre_modern_architecture",
+            "theme:renaissance-city",
+            "theme:infrastructure",
+            "theme:sectional-city",
+            "material:water",
+            "rights:review-required",
+            "blender:structural-prototype-layer-candidate",
+            "plan:vector-review-required",
+            "viewer:3d-layer-review-required"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      }
+    ],
+    "database_profile": {
+      "status": "reviewed",
+      "r2_prefix": "entries/city-in-layers",
+      "source_count": 0,
+      "media_count": 4,
+      "model_count": 3,
+      "analysis_count": 5,
+      "tag_count": 10,
+      "rights_summary": "Public text and metadata are allowed; visual assets remain link-only/private until rights are cleared.",
+      "updated_at": "2026-05-24T12:35:51.686Z"
+    },
+    "ingestion_status": {
+      "stage": "needs_review",
+      "source_status": "candidate",
+      "asset_status": "candidate",
+      "model_status": "planned",
+      "updated_at": "2026-05-24T12:35:51.687Z"
     }
   },
   {
@@ -16656,10 +17049,10 @@
       "reform",
       "settlement"
     ],
-    "short_description": "Staedtebaulicher Reformtext, der Wachstum, Gruenraum und soziale Organisation in einem diagrammatischen Modell verbindet.",
+    "short_description": "Garden Cities of To-morrow verbindet Traktat, Zeichnung, Proportion und klassische Ordnungslehre zu einem übertragbaren Architekturmodell.",
     "source_quality": "primary_text",
-    "one_sentence": "Garden Cities of To-morrow ist als Textquelle in London, United Kingdom im Jahr 1902 im Architecture Cosmos verortet und verknuepft garden city, diagram, reform.",
-    "full_description": "Staedtebaulicher Reformtext, der Wachstum, Gruenraum und soziale Organisation in einem diagrammatischen Modell verbindet. Der Eintrag wird im Atlas als Textquelle gelesen und gehoert zur Wissensspur Global History ETH, Layer urban history. Autorenschaft / Quelle: Ebenezer Howard. Seine Filterebene verbindet garden city, diagram, reform, settlement mit Jahr, Stilsektor und Relationennetz; spaeter koennen echte Fotos, Plaene, Schnitte, Quellen und Modelle direkt aus der Datenbank angeschlossen werden.",
+    "one_sentence": "Garden Cities of To-morrow zeigt, wie Text, Bild, Proportion und antike Referenz zu einem reproduzierbaren Regelwerk architektonischen Wissens werden.",
+    "full_description": "Garden Cities of To-morrow wird als Wissensobjekt gelesen: Der Traktat übersetzt antike Ordnung, Proportion, Villentypologien und Zeichnung in ein transportierbares architektonisches Regelwerk. Für KosmoData ist er weniger ein Gebäude als ein Betriebssystem der klassischen Architektur, aus dem Vergleichsachsen, Planlogiken, Referenzfamilien und spätere Analyse-Layer abgeleitet werden.",
     "media": [
       {
         "type": "exterior",
@@ -16721,11 +17114,210 @@
           "text": "Garden Cities of To-morrow ist als Referenz wichtig, weil Gartenstadt, Diagramm, reform, Siedlung nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
           "source_basis": "derived from entry metadata and Brain quality rules",
           "review_status": "draft_review"
+        },
+        {
+          "title": "Netzwerk und DNA",
+          "text": "Garden Cities of To-morrow wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, wie es sich innerhalb derselben architektonischen DNA unterscheidet: durch Ort, Auftrag, Fügung, Gebrauch und kulturelle Haltung.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Topos / Typos / Tektonik",
+          "text": "Topos, Typos und Tektonik werden zusammen gelesen: Ort und Landschaft bilden die Setzung, Architekturtraktat bildet den typologischen Ausgangspunkt, und Vegetation markieren die konstruktiv-atmosphärische Lesart.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für KosmoData ist Garden Cities of To-morrow relevant, weil sich daraus Filter, Vergleichsgruppen, Planlayer und spätere Blender-Collections ableiten lassen: Architekturtraktat, vormoderne Architektur, garden city, diagram, reform, settlement, Vegetation.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
         }
       ],
       "review_status": "draft_review",
       "public_use_allowed": true,
-      "generated_at": "2026-05-21T18:36:40.687Z"
+      "generated_at": "2026-05-24T12:35:58.215Z",
+      "generator": "kosmodata-seed-from-research"
+    },
+    "source_candidates": [],
+    "materials": {
+      "primary": [
+        "vegetation"
+      ],
+      "secondary": [
+        "craft_details",
+        "surface_system",
+        "construction_logic"
+      ],
+      "notes": "Seeded from existing entry metadata and research packs; verify exact material claims before promotion."
+    },
+    "program": {
+      "type": "architectural_treatise",
+      "subtype": "pre_modern_architecture_reference",
+      "public_access": "needs_review",
+      "components": [
+        "garden city",
+        "diagram",
+        "reform",
+        "settlement",
+        "text",
+        "pre_modern_architecture"
+      ]
+    },
+    "context": {
+      "topography": "needs_site_review",
+      "setting": "London, United Kingdom",
+      "landscape_relations": [
+        "site_context_needs_review"
+      ],
+      "urban_context": [
+        "urban_history",
+        "primary_text"
+      ],
+      "construction_logic": [
+        "garden city",
+        "diagram",
+        "reform",
+        "settlement",
+        "text",
+        "pre_modern_architecture"
+      ]
+    },
+    "database_tags": [
+      "typology:architectural-treatise",
+      "style:pre_modern_architecture",
+      "theme:garden-city",
+      "theme:diagram",
+      "theme:reform",
+      "theme:settlement",
+      "material:vegetation",
+      "rights:review-required",
+      "blender:architectural-treatise-layer-candidate",
+      "plan:vector-review-required",
+      "viewer:3d-layer-review-required"
+    ],
+    "model_assets": [
+      {
+        "model_type": "site_model",
+        "title": "Garden Cities of To-morrow Site/context study model",
+        "r2_key": "entries/garden-cities-of-tomorrow/models/site.glb",
+        "format": "glb",
+        "lod_level": "preview",
+        "source_basis": "entry metadata only; needs source review",
+        "generation_method": "procedural",
+        "review_status": "draft",
+        "confidence_score": 0.42
+      },
+      {
+        "model_type": "structure_model",
+        "title": "Garden Cities of To-morrow Structure and spatial order study model",
+        "r2_key": "entries/garden-cities-of-tomorrow/models/structure.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "entry metadata only; needs source review",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      },
+      {
+        "model_type": "tectonic_model",
+        "title": "Garden Cities of To-morrow Material, tectonic and filter-layer study model",
+        "r2_key": "entries/garden-cities-of-tomorrow/models/tectonic.glb",
+        "format": "glb",
+        "lod_level": "study",
+        "source_basis": "entry metadata only; needs source review; tags: typology:architectural-treatise, style:pre_modern_architecture, theme:garden-city, theme:diagram, theme:reform, theme:settlement, material:vegetation, rights:review-required",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      }
+    ],
+    "analysis_layers": [
+      {
+        "analysis_type": "structure",
+        "summary": "Garden Cities of To-morrow needs a reviewed structural reading connecting vegetation with construction logic, span, support and assembly.",
+        "data": {
+          "seed_tags": [
+            "structure:needs_review",
+            "vegetation"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "material_system",
+        "summary": "Garden Cities of To-morrow should be tagged through vegetation and verified against primary sources before public material claims are made.",
+        "data": {
+          "seed_tags": [
+            "vegetation"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "spatial_order",
+        "summary": "Garden Cities of To-morrow should be read through program, movement, room sequence, exterior relation and typological position rather than as a single image.",
+        "data": {
+          "seed_tags": [
+            "spatial_order",
+            "architectural_treatise"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "typology",
+        "summary": "Garden Cities of To-morrow is currently classified as architectural_treatise; the seed must verify how this type differs from related entries with the same DNA.",
+        "data": {
+          "seed_tags": [
+            "typology",
+            "architectural_treatise",
+            "London, United Kingdom"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "summary": "Garden Cities of To-morrow needs filter checks for themes, materials, rights, plan readiness, 3D layer readiness and viewer filters.",
+        "data": {
+          "seed_tags": [
+            "typology:architectural-treatise",
+            "style:pre_modern_architecture",
+            "theme:garden-city",
+            "theme:diagram",
+            "theme:reform",
+            "theme:settlement",
+            "material:vegetation",
+            "rights:review-required",
+            "blender:architectural-treatise-layer-candidate",
+            "plan:vector-review-required"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      }
+    ],
+    "database_profile": {
+      "status": "reviewed",
+      "r2_prefix": "entries/garden-cities-of-tomorrow",
+      "source_count": 0,
+      "media_count": 4,
+      "model_count": 3,
+      "analysis_count": 5,
+      "tag_count": 11,
+      "rights_summary": "Public text and metadata are allowed; visual assets remain link-only/private until rights are cleared.",
+      "updated_at": "2026-05-24T12:35:58.378Z"
+    },
+    "ingestion_status": {
+      "stage": "needs_review",
+      "source_status": "candidate",
+      "asset_status": "candidate",
+      "model_status": "planned",
+      "updated_at": "2026-05-24T12:35:58.379Z"
     }
   },
   {
@@ -22645,10 +23237,10 @@
       "agrarian-city",
       "ideal-city"
     ],
-    "short_description": "Broadacre City ist im PDF-Framework als modern-urbanism / agrarian-city verortet und bildet einen wichtigen Knoten der Architektur- und Stadtgeschichte.",
+    "short_description": "Broadacre City verdichtet Stahlbetonskelett, freien Grundriss und serielle Wiederholbarkeit zu einem konstruktiven Prototyp der Moderne.",
     "source_quality": "lecture_pdf",
-    "one_sentence": "Broadacre City ist als Stadt- und Raumplan in USA im Jahr 1932 im Architecture Cosmos verortet und verknuepft modern urbanism, agrarian city, ideal city.",
-    "full_description": "Broadacre City ist im PDF-Framework als modern-urbanism / agrarian-city verortet und bildet einen wichtigen Knoten der Architektur- und Stadtgeschichte. Der Eintrag wird im Atlas als Stadt- und Raumplan gelesen und gehoert zur Wissensspur Global History ETH, 02 Global History of Urban Design 1_2.pdf, Layer global urban design. Autorenschaft / Quelle: Frank Lloyd Wright. Seine Filterebene verbindet modern urbanism, agrarian city, ideal city mit Jahr, Stilsektor und Relationennetz; spaeter koennen echte Fotos, Plaene, Schnitte, Quellen und Modelle direkt aus der Datenbank angeschlossen werden.",
+    "one_sentence": "Broadacre City zeigt, wie Stahlbetonskelett, Stützenraster und freier Grundriss zu einem offenen System für Plan-, Struktur- und 3D-Layer werden.",
+    "full_description": "Broadacre City wird als konstruktiver Prototyp ohne festen Ort gelesen. Entscheidend ist die Trennung von Tragwerk, Grundriss und Hülle: wenige Stahlbetonelemente erzeugen ein offenes Raster, das Wiederholung, Erweiterung und freie räumliche Organisation ermöglicht. Für KosmoData wird daraus ein besonders klares Modell für Struktur-, Plan- und Blender-Layer.",
     "media": [
       {
         "type": "exterior",
@@ -22713,11 +23305,207 @@
           "text": "Broadacre City ist als Referenz wichtig, weil moderner Urbanismus, agrarische Stadt, Idealstadt nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
           "source_basis": "derived from entry metadata and Brain quality rules",
           "review_status": "draft_review"
+        },
+        {
+          "title": "Netzwerk und DNA",
+          "text": "Broadacre City wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, wie es sich innerhalb derselben architektonischen DNA unterscheidet: durch Ort, Auftrag, Fügung, Gebrauch und kulturelle Haltung.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Topos / Typos / Tektonik",
+          "text": "Topos, Typos und Tektonik werden zusammen gelesen: Ort und Landschaft bilden die Setzung, Konstruktionsprototyp bildet den typologischen Ausgangspunkt, und needs material review markieren die konstruktiv-atmosphärische Lesart.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für KosmoData ist Broadacre City relevant, weil sich daraus Filter, Vergleichsgruppen, Planlayer und spätere Blender-Collections ableiten lassen: Konstruktionsprototyp, moderne Architektur, modern urbanism, agrarian city, ideal city, needs material review.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
         }
       ],
       "review_status": "draft_review",
       "public_use_allowed": true,
-      "generated_at": "2026-05-21T18:36:42.507Z"
+      "generated_at": "2026-05-24T12:35:46.090Z",
+      "generator": "kosmodata-seed-from-research"
+    },
+    "source_candidates": [],
+    "materials": {
+      "primary": [
+        "needs_material_review"
+      ],
+      "secondary": [
+        "craft_details",
+        "surface_system",
+        "construction_logic"
+      ],
+      "notes": "Seeded from existing entry metadata and research packs; verify exact material claims before promotion."
+    },
+    "program": {
+      "type": "structural_prototype",
+      "subtype": "modern_architecture_reference",
+      "public_access": "needs_review",
+      "components": [
+        "modern-urbanism",
+        "agrarian-city",
+        "ideal-city",
+        "urban_plan",
+        "modern_architecture"
+      ]
+    },
+    "context": {
+      "topography": "needs_site_review",
+      "setting": "USA",
+      "landscape_relations": [
+        "site_context_needs_review"
+      ],
+      "urban_context": [
+        "global_urban_design",
+        "lecture_pdf"
+      ],
+      "construction_logic": [
+        "modern-urbanism",
+        "agrarian-city",
+        "ideal-city",
+        "urban_plan",
+        "modern_architecture"
+      ]
+    },
+    "database_tags": [
+      "typology:structural-prototype",
+      "style:modern_architecture",
+      "theme:modern-urbanism",
+      "theme:agrarian-city",
+      "theme:ideal-city",
+      "material:needs-material-review",
+      "rights:review-required",
+      "blender:structural-prototype-layer-candidate",
+      "plan:vector-review-required",
+      "viewer:3d-layer-review-required"
+    ],
+    "model_assets": [
+      {
+        "model_type": "site_model",
+        "title": "Broadacre City Site/context study model",
+        "r2_key": "entries/broadacre-city/models/site.glb",
+        "format": "glb",
+        "lod_level": "preview",
+        "source_basis": "entry metadata only; needs source review",
+        "generation_method": "procedural",
+        "review_status": "draft",
+        "confidence_score": 0.42
+      },
+      {
+        "model_type": "structure_model",
+        "title": "Broadacre City Structure and spatial order study model",
+        "r2_key": "entries/broadacre-city/models/structure.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "entry metadata only; needs source review",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      },
+      {
+        "model_type": "tectonic_model",
+        "title": "Broadacre City Material, tectonic and filter-layer study model",
+        "r2_key": "entries/broadacre-city/models/tectonic.glb",
+        "format": "glb",
+        "lod_level": "study",
+        "source_basis": "entry metadata only; needs source review; tags: typology:structural-prototype, style:modern_architecture, theme:modern-urbanism, theme:agrarian-city, theme:ideal-city, material:needs-material-review, rights:review-required, blender:structural-prototype-layer-candidate",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      }
+    ],
+    "analysis_layers": [
+      {
+        "analysis_type": "structure",
+        "summary": "Broadacre City needs a reviewed structural reading connecting needs_material_review with construction logic, span, support and assembly.",
+        "data": {
+          "seed_tags": [
+            "structure:needs_review",
+            "needs_material_review"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "material_system",
+        "summary": "Broadacre City should be tagged through needs_material_review and verified against primary sources before public material claims are made.",
+        "data": {
+          "seed_tags": [
+            "needs_material_review"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "spatial_order",
+        "summary": "Broadacre City should be read through program, movement, room sequence, exterior relation and typological position rather than as a single image.",
+        "data": {
+          "seed_tags": [
+            "spatial_order",
+            "structural_prototype"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "typology",
+        "summary": "Broadacre City is currently classified as structural_prototype; the seed must verify how this type differs from related entries with the same DNA.",
+        "data": {
+          "seed_tags": [
+            "typology",
+            "structural_prototype",
+            "USA"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "summary": "Broadacre City needs filter checks for themes, materials, rights, plan readiness, 3D layer readiness and viewer filters.",
+        "data": {
+          "seed_tags": [
+            "typology:structural-prototype",
+            "style:modern_architecture",
+            "theme:modern-urbanism",
+            "theme:agrarian-city",
+            "theme:ideal-city",
+            "material:needs-material-review",
+            "rights:review-required",
+            "blender:structural-prototype-layer-candidate",
+            "plan:vector-review-required",
+            "viewer:3d-layer-review-required"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      }
+    ],
+    "database_profile": {
+      "status": "reviewed",
+      "r2_prefix": "entries/broadacre-city",
+      "source_count": 0,
+      "media_count": 4,
+      "model_count": 3,
+      "analysis_count": 5,
+      "tag_count": 10,
+      "rights_summary": "Public text and metadata are allowed; visual assets remain link-only/private until rights are cleared.",
+      "updated_at": "2026-05-24T12:35:46.263Z"
+    },
+    "ingestion_status": {
+      "stage": "needs_review",
+      "source_status": "candidate",
+      "asset_status": "candidate",
+      "model_status": "planned",
+      "updated_at": "2026-05-24T12:35:46.264Z"
     }
   },
   {
@@ -22741,10 +23529,10 @@
       "housing",
       "mobility"
     ],
-    "short_description": "Programmatik der funktionalen Stadt, die Wohnen, Arbeiten, Erholung und Verkehr als getrennte Ordnungsfelder denkt.",
+    "short_description": "Charta von Athen verbindet Stadtplan, Industrie, Zonierung und soziale Utopie zu einem frühen Modell der rational organisierten Stadt.",
     "source_quality": "primary_text",
-    "one_sentence": "Charta von Athen ist als Theorie im Jahr 1933 im Architecture Cosmos verortet und verknuepft functional city, zoning, housing.",
-    "full_description": "Programmatik der funktionalen Stadt, die Wohnen, Arbeiten, Erholung und Verkehr als getrennte Ordnungsfelder denkt. Der Eintrag wird im Atlas als Theorie gelesen und gehoert zur Wissensspur primary text, Layer modernism. Autorenschaft / Quelle: CIAM, Le Corbusier. Seine Filterebene verbindet functional city, zoning, housing, mobility mit Jahr, Stilsektor und Relationennetz; spaeter koennen echte Fotos, Plaene, Schnitte, Quellen und Modelle direkt aus der Datenbank angeschlossen werden.",
+    "one_sentence": "Charta von Athen zeigt, wie Stadtplan, needs material review, Topos, Typos und Tektonik zu einer belastbaren Referenz für Plan-, Material- und 3D-Layer werden.",
+    "full_description": "Charta von Athen wird als architektonisches Referenzobjekt über Stadtplan, needs material review, noch zu prüfender Ort, räumliche Ordnung und historische Position gelesen. Entscheidend ist nicht die reine Datierung, sondern wie Setzung, Material, Gebrauch, Fügung und kulturelle Haltung zusammen eine übertragbare Entwurfsintelligenz bilden. Für KosmoData werden daraus zugleich Planlayer, Modelllayer, Filterbegriffe und Vergleichsbeziehungen abgeleitet.",
     "media": [
       {
         "type": "exterior",
@@ -22806,11 +23594,210 @@
           "text": "Charta von Athen ist als Referenz wichtig, weil funktionale Stadt, Zonierung, housing, Mobilität nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
           "source_basis": "derived from entry metadata and Brain quality rules",
           "review_status": "draft_review"
+        },
+        {
+          "title": "Netzwerk und DNA",
+          "text": "Charta von Athen wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, wie es sich innerhalb derselben architektonischen DNA unterscheidet: durch Ort, Auftrag, Fügung, Gebrauch und kulturelle Haltung.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Topos / Typos / Tektonik",
+          "text": "Topos, Typos und Tektonik werden zusammen gelesen: Ort und Landschaft bilden die Setzung, Stadtplan bildet den typologischen Ausgangspunkt, und needs material review markieren die konstruktiv-atmosphärische Lesart.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für KosmoData ist Charta von Athen relevant, weil sich daraus Filter, Vergleichsgruppen, Planlayer und spätere Blender-Collections ableiten lassen: Stadtplan, moderne Architektur, functional city, Zonierung, Wohnungsbau, mobility, needs material review.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
         }
       ],
       "review_status": "draft_review",
       "public_use_allowed": true,
-      "generated_at": "2026-05-21T18:36:42.678Z"
+      "generated_at": "2026-05-24T12:35:50.191Z",
+      "generator": "kosmodata-seed-from-research"
+    },
+    "source_candidates": [],
+    "materials": {
+      "primary": [
+        "needs_material_review"
+      ],
+      "secondary": [
+        "craft_details",
+        "surface_system",
+        "construction_logic"
+      ],
+      "notes": "Seeded from existing entry metadata and research packs; verify exact material claims before promotion."
+    },
+    "program": {
+      "type": "urban_plan",
+      "subtype": "modern_architecture_reference",
+      "public_access": "needs_review",
+      "components": [
+        "functional city",
+        "zoning",
+        "housing",
+        "mobility",
+        "theory",
+        "modern_architecture"
+      ]
+    },
+    "context": {
+      "topography": "needs_site_review",
+      "setting": "noch zu prüfender Ort",
+      "landscape_relations": [
+        "site_context_needs_review"
+      ],
+      "urban_context": [
+        "modernism",
+        "primary_text"
+      ],
+      "construction_logic": [
+        "functional city",
+        "zoning",
+        "housing",
+        "mobility",
+        "theory",
+        "modern_architecture"
+      ]
+    },
+    "database_tags": [
+      "typology:urban-plan",
+      "style:modern_architecture",
+      "theme:functional-city",
+      "theme:zoning",
+      "theme:housing",
+      "theme:mobility",
+      "material:needs-material-review",
+      "rights:review-required",
+      "blender:urban-plan-layer-candidate",
+      "plan:vector-review-required",
+      "viewer:3d-layer-review-required"
+    ],
+    "model_assets": [
+      {
+        "model_type": "site_model",
+        "title": "Charta von Athen Site/context study model",
+        "r2_key": "entries/athens-charter/models/site.glb",
+        "format": "glb",
+        "lod_level": "preview",
+        "source_basis": "entry metadata only; needs source review",
+        "generation_method": "procedural",
+        "review_status": "draft",
+        "confidence_score": 0.42
+      },
+      {
+        "model_type": "structure_model",
+        "title": "Charta von Athen Structure and spatial order study model",
+        "r2_key": "entries/athens-charter/models/structure.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "entry metadata only; needs source review",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      },
+      {
+        "model_type": "tectonic_model",
+        "title": "Charta von Athen Material, tectonic and filter-layer study model",
+        "r2_key": "entries/athens-charter/models/tectonic.glb",
+        "format": "glb",
+        "lod_level": "study",
+        "source_basis": "entry metadata only; needs source review; tags: typology:urban-plan, style:modern_architecture, theme:functional-city, theme:zoning, theme:housing, theme:mobility, material:needs-material-review, rights:review-required",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      }
+    ],
+    "analysis_layers": [
+      {
+        "analysis_type": "structure",
+        "summary": "Charta von Athen needs a reviewed structural reading connecting needs_material_review with construction logic, span, support and assembly.",
+        "data": {
+          "seed_tags": [
+            "structure:needs_review",
+            "needs_material_review"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "material_system",
+        "summary": "Charta von Athen should be tagged through needs_material_review and verified against primary sources before public material claims are made.",
+        "data": {
+          "seed_tags": [
+            "needs_material_review"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "spatial_order",
+        "summary": "Charta von Athen should be read through program, movement, room sequence, exterior relation and typological position rather than as a single image.",
+        "data": {
+          "seed_tags": [
+            "spatial_order",
+            "urban_plan"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "typology",
+        "summary": "Charta von Athen is currently classified as urban_plan; the seed must verify how this type differs from related entries with the same DNA.",
+        "data": {
+          "seed_tags": [
+            "typology",
+            "urban_plan",
+            "noch zu prüfender Ort"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "summary": "Charta von Athen needs filter checks for themes, materials, rights, plan readiness, 3D layer readiness and viewer filters.",
+        "data": {
+          "seed_tags": [
+            "typology:urban-plan",
+            "style:modern_architecture",
+            "theme:functional-city",
+            "theme:zoning",
+            "theme:housing",
+            "theme:mobility",
+            "material:needs-material-review",
+            "rights:review-required",
+            "blender:urban-plan-layer-candidate",
+            "plan:vector-review-required"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      }
+    ],
+    "database_profile": {
+      "status": "reviewed",
+      "r2_prefix": "entries/athens-charter",
+      "source_count": 0,
+      "media_count": 4,
+      "model_count": 3,
+      "analysis_count": 5,
+      "tag_count": 11,
+      "rights_summary": "Public text and metadata are allowed; visual assets remain link-only/private until rights are cleared.",
+      "updated_at": "2026-05-24T12:35:50.365Z"
+    },
+    "ingestion_status": {
+      "stage": "needs_review",
+      "source_status": "candidate",
+      "asset_status": "candidate",
+      "model_status": "planned",
+      "updated_at": "2026-05-24T12:35:50.366Z"
     }
   },
   {
@@ -22928,10 +23915,10 @@
       "process-architecture",
       "modernism"
     ],
-    "short_description": "Buerogebaeude Montecatini ist im PDF-Framework als office / process-architecture verortet und bildet einen wichtigen Knoten der Architektur- und Stadtgeschichte.",
+    "short_description": "Buerogebaeude Montecatini verdichtet Stahlbetonskelett, freien Grundriss und serielle Wiederholbarkeit zu einem konstruktiven Prototyp der Moderne.",
     "source_quality": "lecture_pdf",
-    "one_sentence": "Buerogebaeude Montecatini ist als Bauwerk in Milan, Italy im Jahr 1936 im Architecture Cosmos verortet und verknuepft office, process architecture, modernism.",
-    "full_description": "Buerogebaeude Montecatini ist im PDF-Framework als office / process-architecture verortet und bildet einen wichtigen Knoten der Architektur- und Stadtgeschichte. Der Eintrag wird im Atlas als Bauwerk gelesen und gehoert zur Wissensspur Architekturgeschichte ETH, 03 Architekturgeschichte 3_4.pdf, Layer architecture history 3 4. Autorenschaft / Quelle: Gio Ponti. Seine Filterebene verbindet office, process architecture, modernism mit Jahr, Stilsektor und Relationennetz; spaeter koennen echte Fotos, Plaene, Schnitte, Quellen und Modelle direkt aus der Datenbank angeschlossen werden.",
+    "one_sentence": "Buerogebaeude Montecatini zeigt, wie Stahlbetonskelett, Stützenraster und freier Grundriss zu einem offenen System für Plan-, Struktur- und 3D-Layer werden.",
+    "full_description": "Buerogebaeude Montecatini wird als konstruktiver Prototyp ohne festen Ort gelesen. Entscheidend ist die Trennung von Tragwerk, Grundriss und Hülle: wenige Stahlbetonelemente erzeugen ein offenes Raster, das Wiederholung, Erweiterung und freie räumliche Organisation ermöglicht. Für KosmoData wird daraus ein besonders klares Modell für Struktur-, Plan- und Blender-Layer.",
     "media": [
       {
         "type": "exterior",
@@ -22996,11 +23983,207 @@
           "text": "Buerogebaeude Montecatini ist als Referenz wichtig, weil Büro, Prozessarchitektur, Moderne nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
           "source_basis": "derived from entry metadata and Brain quality rules",
           "review_status": "draft_review"
+        },
+        {
+          "title": "Netzwerk und DNA",
+          "text": "Buerogebaeude Montecatini wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, wie es sich innerhalb derselben architektonischen DNA unterscheidet: durch Ort, Auftrag, Fügung, Gebrauch und kulturelle Haltung.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Topos / Typos / Tektonik",
+          "text": "Topos, Typos und Tektonik werden zusammen gelesen: Ort und Landschaft bilden die Setzung, Konstruktionsprototyp bildet den typologischen Ausgangspunkt, und Glas markieren die konstruktiv-atmosphärische Lesart.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für KosmoData ist Buerogebaeude Montecatini relevant, weil sich daraus Filter, Vergleichsgruppen, Planlayer und spätere Blender-Collections ableiten lassen: Konstruktionsprototyp, moderne Architektur, office, process architecture, modernism, Glas.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
         }
       ],
       "review_status": "draft_review",
       "public_use_allowed": true,
-      "generated_at": "2026-05-21T18:36:43.001Z"
+      "generated_at": "2026-05-24T12:35:47.463Z",
+      "generator": "kosmodata-seed-from-research"
+    },
+    "source_candidates": [],
+    "materials": {
+      "primary": [
+        "glass"
+      ],
+      "secondary": [
+        "craft_details",
+        "surface_system",
+        "construction_logic"
+      ],
+      "notes": "Seeded from existing entry metadata and research packs; verify exact material claims before promotion."
+    },
+    "program": {
+      "type": "structural_prototype",
+      "subtype": "modern_architecture_reference",
+      "public_access": "needs_review",
+      "components": [
+        "office",
+        "process-architecture",
+        "modernism",
+        "building",
+        "modern_architecture"
+      ]
+    },
+    "context": {
+      "topography": "needs_site_review",
+      "setting": "Milan, Italy",
+      "landscape_relations": [
+        "site_context_needs_review"
+      ],
+      "urban_context": [
+        "architecture_history_3_4",
+        "lecture_pdf"
+      ],
+      "construction_logic": [
+        "office",
+        "process-architecture",
+        "modernism",
+        "building",
+        "modern_architecture"
+      ]
+    },
+    "database_tags": [
+      "typology:structural-prototype",
+      "style:modern_architecture",
+      "theme:office",
+      "theme:process-architecture",
+      "theme:modernism",
+      "material:glass",
+      "rights:review-required",
+      "blender:structural-prototype-layer-candidate",
+      "plan:vector-review-required",
+      "viewer:3d-layer-review-required"
+    ],
+    "model_assets": [
+      {
+        "model_type": "site_model",
+        "title": "Buerogebaeude Montecatini Site/context study model",
+        "r2_key": "entries/buerogebaeude-montecatini/models/site.glb",
+        "format": "glb",
+        "lod_level": "preview",
+        "source_basis": "entry metadata only; needs source review",
+        "generation_method": "procedural",
+        "review_status": "draft",
+        "confidence_score": 0.42
+      },
+      {
+        "model_type": "structure_model",
+        "title": "Buerogebaeude Montecatini Structure and spatial order study model",
+        "r2_key": "entries/buerogebaeude-montecatini/models/structure.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "entry metadata only; needs source review",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      },
+      {
+        "model_type": "tectonic_model",
+        "title": "Buerogebaeude Montecatini Material, tectonic and filter-layer study model",
+        "r2_key": "entries/buerogebaeude-montecatini/models/tectonic.glb",
+        "format": "glb",
+        "lod_level": "study",
+        "source_basis": "entry metadata only; needs source review; tags: typology:structural-prototype, style:modern_architecture, theme:office, theme:process-architecture, theme:modernism, material:glass, rights:review-required, blender:structural-prototype-layer-candidate",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      }
+    ],
+    "analysis_layers": [
+      {
+        "analysis_type": "structure",
+        "summary": "Buerogebaeude Montecatini needs a reviewed structural reading connecting glass with construction logic, span, support and assembly.",
+        "data": {
+          "seed_tags": [
+            "structure:needs_review",
+            "glass"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "material_system",
+        "summary": "Buerogebaeude Montecatini should be tagged through glass and verified against primary sources before public material claims are made.",
+        "data": {
+          "seed_tags": [
+            "glass"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "spatial_order",
+        "summary": "Buerogebaeude Montecatini should be read through program, movement, room sequence, exterior relation and typological position rather than as a single image.",
+        "data": {
+          "seed_tags": [
+            "spatial_order",
+            "structural_prototype"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "typology",
+        "summary": "Buerogebaeude Montecatini is currently classified as structural_prototype; the seed must verify how this type differs from related entries with the same DNA.",
+        "data": {
+          "seed_tags": [
+            "typology",
+            "structural_prototype",
+            "Milan, Italy"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "summary": "Buerogebaeude Montecatini needs filter checks for themes, materials, rights, plan readiness, 3D layer readiness and viewer filters.",
+        "data": {
+          "seed_tags": [
+            "typology:structural-prototype",
+            "style:modern_architecture",
+            "theme:office",
+            "theme:process-architecture",
+            "theme:modernism",
+            "material:glass",
+            "rights:review-required",
+            "blender:structural-prototype-layer-candidate",
+            "plan:vector-review-required",
+            "viewer:3d-layer-review-required"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      }
+    ],
+    "database_profile": {
+      "status": "reviewed",
+      "r2_prefix": "entries/buerogebaeude-montecatini",
+      "source_count": 0,
+      "media_count": 4,
+      "model_count": 3,
+      "analysis_count": 5,
+      "tag_count": 10,
+      "rights_summary": "Public text and metadata are allowed; visual assets remain link-only/private until rights are cleared.",
+      "updated_at": "2026-05-24T12:35:47.635Z"
+    },
+    "ingestion_status": {
+      "stage": "needs_review",
+      "source_status": "candidate",
+      "asset_status": "candidate",
+      "model_status": "planned",
+      "updated_at": "2026-05-24T12:35:47.636Z"
     }
   },
   {
@@ -24574,10 +25757,10 @@
       "grid",
       "metropolis"
     ],
-    "short_description": "Rueckwirkendes Manifest, das Manhattan als Labor von Dichte, Programmstapelung und spekulativer Metropole liest.",
+    "short_description": "Delirious New York verbindet Traktat, Zeichnung, Proportion und klassische Ordnungslehre zu einem übertragbaren Architekturmodell.",
     "source_quality": "lecture_pdf",
-    "one_sentence": "Delirious New York ist als Textquelle in New York, United States im Jahr 1975 im Architecture Cosmos verortet und verknuepft urban theory, density, grid.",
-    "full_description": "Rueckwirkendes Manifest, das Manhattan als Labor von Dichte, Programmstapelung und spekulativer Metropole liest. Der Eintrag wird im Atlas als Textquelle gelesen und gehoert zur Wissensspur Global History ETH, Layer global urban design. Autorenschaft / Quelle: Rem Koolhaas. Seine Filterebene verbindet urban theory, density, grid, metropolis mit Jahr, Stilsektor und Relationennetz; spaeter koennen echte Fotos, Plaene, Schnitte, Quellen und Modelle direkt aus der Datenbank angeschlossen werden.",
+    "one_sentence": "Delirious New York zeigt, wie Text, Bild, Proportion und antike Referenz zu einem reproduzierbaren Regelwerk architektonischen Wissens werden.",
+    "full_description": "Delirious New York wird als Wissensobjekt gelesen: Der Traktat übersetzt antike Ordnung, Proportion, Villentypologien und Zeichnung in ein transportierbares architektonisches Regelwerk. Für KosmoData ist er weniger ein Gebäude als ein Betriebssystem der klassischen Architektur, aus dem Vergleichsachsen, Planlogiken, Referenzfamilien und spätere Analyse-Layer abgeleitet werden.",
     "media": [
       {
         "type": "exterior",
@@ -24639,11 +25822,210 @@
           "text": "Delirious New York ist als Referenz wichtig, weil Stadttheorie, Dichte, Raster, Metropole nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
           "source_basis": "derived from entry metadata and Brain quality rules",
           "review_status": "draft_review"
+        },
+        {
+          "title": "Netzwerk und DNA",
+          "text": "Delirious New York wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, wie es sich innerhalb derselben architektonischen DNA unterscheidet: durch Ort, Auftrag, Fügung, Gebrauch und kulturelle Haltung.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Topos / Typos / Tektonik",
+          "text": "Topos, Typos und Tektonik werden zusammen gelesen: Ort und Landschaft bilden die Setzung, Architekturtraktat bildet den typologischen Ausgangspunkt, und needs material review markieren die konstruktiv-atmosphärische Lesart.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für KosmoData ist Delirious New York relevant, weil sich daraus Filter, Vergleichsgruppen, Planlayer und spätere Blender-Collections ableiten lassen: Architekturtraktat, Nachkriegsmoderne, urban theory, density, grid, metropolis, needs material review.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
         }
       ],
       "review_status": "draft_review",
       "public_use_allowed": true,
-      "generated_at": "2026-05-21T19:08:59.680Z"
+      "generated_at": "2026-05-24T12:35:55.525Z",
+      "generator": "kosmodata-seed-from-research"
+    },
+    "source_candidates": [],
+    "materials": {
+      "primary": [
+        "needs_material_review"
+      ],
+      "secondary": [
+        "craft_details",
+        "surface_system",
+        "construction_logic"
+      ],
+      "notes": "Seeded from existing entry metadata and research packs; verify exact material claims before promotion."
+    },
+    "program": {
+      "type": "architectural_treatise",
+      "subtype": "postwar_modern_architecture_reference",
+      "public_access": "needs_review",
+      "components": [
+        "urban-theory",
+        "density",
+        "grid",
+        "metropolis",
+        "text",
+        "postwar_modern_architecture"
+      ]
+    },
+    "context": {
+      "topography": "needs_site_review",
+      "setting": "New York, United States",
+      "landscape_relations": [
+        "site_context_needs_review"
+      ],
+      "urban_context": [
+        "global_urban_design",
+        "lecture_pdf"
+      ],
+      "construction_logic": [
+        "urban-theory",
+        "density",
+        "grid",
+        "metropolis",
+        "text",
+        "postwar_modern_architecture"
+      ]
+    },
+    "database_tags": [
+      "typology:architectural-treatise",
+      "style:postwar_modern_architecture",
+      "theme:urban-theory",
+      "theme:density",
+      "theme:grid",
+      "theme:metropolis",
+      "material:needs-material-review",
+      "rights:review-required",
+      "blender:architectural-treatise-layer-candidate",
+      "plan:vector-review-required",
+      "viewer:3d-layer-review-required"
+    ],
+    "model_assets": [
+      {
+        "model_type": "site_model",
+        "title": "Delirious New York Site/context study model",
+        "r2_key": "entries/delirious-new-york/models/site.glb",
+        "format": "glb",
+        "lod_level": "preview",
+        "source_basis": "entry metadata only; needs source review",
+        "generation_method": "procedural",
+        "review_status": "draft",
+        "confidence_score": 0.42
+      },
+      {
+        "model_type": "structure_model",
+        "title": "Delirious New York Structure and spatial order study model",
+        "r2_key": "entries/delirious-new-york/models/structure.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "entry metadata only; needs source review",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      },
+      {
+        "model_type": "tectonic_model",
+        "title": "Delirious New York Material, tectonic and filter-layer study model",
+        "r2_key": "entries/delirious-new-york/models/tectonic.glb",
+        "format": "glb",
+        "lod_level": "study",
+        "source_basis": "entry metadata only; needs source review; tags: typology:architectural-treatise, style:postwar_modern_architecture, theme:urban-theory, theme:density, theme:grid, theme:metropolis, material:needs-material-review, rights:review-required",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      }
+    ],
+    "analysis_layers": [
+      {
+        "analysis_type": "structure",
+        "summary": "Delirious New York needs a reviewed structural reading connecting needs_material_review with construction logic, span, support and assembly.",
+        "data": {
+          "seed_tags": [
+            "structure:needs_review",
+            "needs_material_review"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "material_system",
+        "summary": "Delirious New York should be tagged through needs_material_review and verified against primary sources before public material claims are made.",
+        "data": {
+          "seed_tags": [
+            "needs_material_review"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "spatial_order",
+        "summary": "Delirious New York should be read through program, movement, room sequence, exterior relation and typological position rather than as a single image.",
+        "data": {
+          "seed_tags": [
+            "spatial_order",
+            "architectural_treatise"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "typology",
+        "summary": "Delirious New York is currently classified as architectural_treatise; the seed must verify how this type differs from related entries with the same DNA.",
+        "data": {
+          "seed_tags": [
+            "typology",
+            "architectural_treatise",
+            "New York, United States"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "summary": "Delirious New York needs filter checks for themes, materials, rights, plan readiness, 3D layer readiness and viewer filters.",
+        "data": {
+          "seed_tags": [
+            "typology:architectural-treatise",
+            "style:postwar_modern_architecture",
+            "theme:urban-theory",
+            "theme:density",
+            "theme:grid",
+            "theme:metropolis",
+            "material:needs-material-review",
+            "rights:review-required",
+            "blender:architectural-treatise-layer-candidate",
+            "plan:vector-review-required"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      }
+    ],
+    "database_profile": {
+      "status": "reviewed",
+      "r2_prefix": "entries/delirious-new-york",
+      "source_count": 0,
+      "media_count": 4,
+      "model_count": 3,
+      "analysis_count": 5,
+      "tag_count": 11,
+      "rights_summary": "Public text and metadata are allowed; visual assets remain link-only/private until rights are cleared.",
+      "updated_at": "2026-05-24T12:35:55.690Z"
+    },
+    "ingestion_status": {
+      "stage": "needs_review",
+      "source_status": "candidate",
+      "asset_status": "candidate",
+      "model_status": "planned",
+      "updated_at": "2026-05-24T12:35:55.691Z"
     }
   },
   {
@@ -26395,10 +27777,10 @@
       "infrastructure",
       "metropole"
     ],
-    "short_description": "Euralille Metropole ist im PDF-Framework als projet-urbain / infrastructure verortet und bildet einen wichtigen Knoten der Architektur- und Stadtgeschichte.",
+    "short_description": "Euralille Metropole verdichtet Stahlbetonskelett, freien Grundriss und serielle Wiederholbarkeit zu einem konstruktiven Prototyp der Moderne.",
     "source_quality": "lecture_pdf",
-    "one_sentence": "Euralille Metropole ist als Infrastruktur in Lille, France im Jahr 1989 im Architecture Cosmos verortet und verknuepft projet urbain, infrastructure, metropole.",
-    "full_description": "Euralille Metropole ist im PDF-Framework als projet-urbain / infrastructure verortet und bildet einen wichtigen Knoten der Architektur- und Stadtgeschichte. Der Eintrag wird im Atlas als Infrastruktur gelesen und gehoert zur Wissensspur Global History ETH, 02 Global History of Urban Design 1_2.pdf, Layer global urban design. Autorenschaft / Quelle: OMA. Seine Filterebene verbindet projet urbain, infrastructure, metropole mit Jahr, Stilsektor und Relationennetz; spaeter koennen echte Fotos, Plaene, Schnitte, Quellen und Modelle direkt aus der Datenbank angeschlossen werden.",
+    "one_sentence": "Euralille Metropole zeigt, wie Stahlbetonskelett, Stützenraster und freier Grundriss zu einem offenen System für Plan-, Struktur- und 3D-Layer werden.",
+    "full_description": "Euralille Metropole wird als konstruktiver Prototyp ohne festen Ort gelesen. Entscheidend ist die Trennung von Tragwerk, Grundriss und Hülle: wenige Stahlbetonelemente erzeugen ein offenes Raster, das Wiederholung, Erweiterung und freie räumliche Organisation ermöglicht. Für KosmoData wird daraus ein besonders klares Modell für Struktur-, Plan- und Blender-Layer.",
     "media": [
       {
         "type": "exterior",
@@ -26423,7 +27805,246 @@
     ],
     "source_documents": [
       "02 Global History of Urban Design 1_2.pdf"
-    ]
+    ],
+    "source_candidates": [],
+    "architecture_text": {
+      "headline": "Euralille Metropole: Konstruktionsprototyp als KosmoData-Referenz",
+      "overview": "Euralille Metropole wird als architektonische Referenz gelesen: Ort, Nutzung, Material, Traglogik und historische Position werden zusammengeführt, damit das Projekt nicht nur beschrieben, sondern im KosmoData-Netzwerk vergleichbar wird.",
+      "chapters": [
+        {
+          "title": "These",
+          "text": "Euralille Metropole wird über projet urbain, infrastructure, metropole als räumliche These gelesen: Das Projekt zeigt, wie eine Bauaufgabe eine Haltung zu Arbeit, Lernen, Öffentlichkeit, Landschaft oder Alltag formuliert.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Netzwerk und DNA",
+          "text": "Euralille Metropole wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, worin seine DNA innerhalb ähnlicher Projekte abweicht.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Topos",
+          "text": "Der Ort Lille, France ist Teil der architektonischen Lesart: Er bestimmt Adresse, Maßstab, Landschaft, Infrastruktur und die Art, wie das Objekt in seinem Umfeld wirkt.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Typos",
+          "text": "Typologisch wird Euralille Metropole als Konstruktionsprototyp geführt. Diese Kategorie dient nicht als starre Schublade, sondern als Vergleichsebene für Programme, Raumfolgen und Nutzungslogiken.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "needs material review werden als konstruktiv-atmosphärische Ebene gelesen: Oberfläche, Traglogik, Fügung, Öffnung und Hülle bilden zusammen die tektonische Grammatik des Projekts.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumlogik",
+          "text": "Grundriss, Schnitt, Bewegung, Blick, Schwelle und Gebrauch werden als zusammenhängendes System gelesen. Für die spätere Plan- und 3D-Pipeline ist diese Raumlogik wichtiger als eine reine Bildbeschreibung.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Konflikt und Kritik",
+          "text": "Euralille Metropole wird auch über offene Spannungen gelesen: Rechte, Quellenlage, soziale Wirkung, Ökologie, industrielle Abhängigkeit oder institutionelle Macht bleiben als prüfbare Kritikfelder markiert.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "KosmoData-Layer und 3D-Potenzial",
+          "text": "Aus Euralille Metropole lassen sich Planlayer, Materiallayer und spätere Blender-Collections ableiten: Konstruktionsprototyp, Nachkriegsmoderne, projet urbain, infrastructure, metropole, needs material review.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Entwurfsintelligenz",
+          "text": "Der Datenbankwert liegt in der übertragbaren Entwurfsregel: Euralille Metropole hilft, spätere Projekte nach Material, Typus, Struktur, Atmosphäre und historischem Netzwerk gezielt zu vergleichen.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "kosmodata-seed-from-research",
+      "generated_at": "2026-05-24T12:35:56.859Z",
+      "review_status": "draft_review"
+    },
+    "materials": {
+      "primary": [
+        "needs_material_review"
+      ],
+      "secondary": [
+        "craft_details",
+        "surface_system",
+        "construction_logic"
+      ],
+      "notes": "Seeded from existing entry metadata and research packs; verify exact material claims before promotion."
+    },
+    "program": {
+      "type": "structural_prototype",
+      "subtype": "postwar_modern_architecture_reference",
+      "public_access": "needs_review",
+      "components": [
+        "projet-urbain",
+        "infrastructure",
+        "metropole",
+        "postwar_modern_architecture"
+      ]
+    },
+    "context": {
+      "topography": "needs_site_review",
+      "setting": "Lille, France",
+      "landscape_relations": [
+        "site_context_needs_review"
+      ],
+      "urban_context": [
+        "global_urban_design",
+        "lecture_pdf"
+      ],
+      "construction_logic": [
+        "projet-urbain",
+        "infrastructure",
+        "metropole",
+        "postwar_modern_architecture"
+      ]
+    },
+    "database_tags": [
+      "typology:structural-prototype",
+      "style:postwar_modern_architecture",
+      "theme:projet-urbain",
+      "theme:infrastructure",
+      "theme:metropole",
+      "material:needs-material-review",
+      "rights:review-required",
+      "blender:structural-prototype-layer-candidate",
+      "plan:vector-review-required",
+      "viewer:3d-layer-review-required"
+    ],
+    "model_assets": [
+      {
+        "model_type": "site_model",
+        "title": "Euralille Metropole Site/context study model",
+        "r2_key": "entries/euralille-metropole/models/site.glb",
+        "format": "glb",
+        "lod_level": "preview",
+        "source_basis": "entry metadata only; needs source review",
+        "generation_method": "procedural",
+        "review_status": "draft",
+        "confidence_score": 0.42
+      },
+      {
+        "model_type": "structure_model",
+        "title": "Euralille Metropole Structure and spatial order study model",
+        "r2_key": "entries/euralille-metropole/models/structure.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "entry metadata only; needs source review",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      },
+      {
+        "model_type": "tectonic_model",
+        "title": "Euralille Metropole Material, tectonic and filter-layer study model",
+        "r2_key": "entries/euralille-metropole/models/tectonic.glb",
+        "format": "glb",
+        "lod_level": "study",
+        "source_basis": "entry metadata only; needs source review; tags: typology:structural-prototype, style:postwar_modern_architecture, theme:projet-urbain, theme:infrastructure, theme:metropole, material:needs-material-review, rights:review-required, blender:structural-prototype-layer-candidate",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      }
+    ],
+    "analysis_layers": [
+      {
+        "analysis_type": "structure",
+        "summary": "Euralille Metropole needs a reviewed structural reading connecting needs_material_review with construction logic, span, support and assembly.",
+        "data": {
+          "seed_tags": [
+            "structure:needs_review",
+            "needs_material_review"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "material_system",
+        "summary": "Euralille Metropole should be tagged through needs_material_review and verified against primary sources before public material claims are made.",
+        "data": {
+          "seed_tags": [
+            "needs_material_review"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "spatial_order",
+        "summary": "Euralille Metropole should be read through program, movement, room sequence, exterior relation and typological position rather than as a single image.",
+        "data": {
+          "seed_tags": [
+            "spatial_order",
+            "structural_prototype"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "typology",
+        "summary": "Euralille Metropole is currently classified as structural_prototype; the seed must verify how this type differs from related entries with the same DNA.",
+        "data": {
+          "seed_tags": [
+            "typology",
+            "structural_prototype",
+            "Lille, France"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "summary": "Euralille Metropole needs filter checks for themes, materials, rights, plan readiness, 3D layer readiness and viewer filters.",
+        "data": {
+          "seed_tags": [
+            "typology:structural-prototype",
+            "style:postwar_modern_architecture",
+            "theme:projet-urbain",
+            "theme:infrastructure",
+            "theme:metropole",
+            "material:needs-material-review",
+            "rights:review-required",
+            "blender:structural-prototype-layer-candidate",
+            "plan:vector-review-required",
+            "viewer:3d-layer-review-required"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      }
+    ],
+    "database_profile": {
+      "status": "reviewed",
+      "r2_prefix": "entries/euralille-metropole",
+      "source_count": 0,
+      "media_count": 4,
+      "model_count": 3,
+      "analysis_count": 5,
+      "tag_count": 10,
+      "rights_summary": "Public text and metadata are allowed; visual assets remain link-only/private until rights are cleared.",
+      "updated_at": "2026-05-24T12:35:57.025Z"
+    },
+    "ingestion_status": {
+      "stage": "needs_review",
+      "source_status": "candidate",
+      "asset_status": "candidate",
+      "model_status": "planned",
+      "updated_at": "2026-05-24T12:35:57.026Z"
+    }
   },
   {
     "id": "hafeninsel-saarbruecken",
@@ -28750,10 +30371,10 @@
       "rural",
       "material economy"
     ],
-    "short_description": "Serie von Wohnprototypen, die lokale Bauweisen, geringe Kosten und soziale Zugaenglichkeit in konkrete Objekte uebersetzt.",
+    "short_description": "20K House verdichtet Stahlbetonskelett, freien Grundriss und serielle Wiederholbarkeit zu einem konstruktiven Prototyp der Moderne.",
     "source_quality": "case_study",
-    "one_sentence": "20K House ist als Objekt in Hale County, United States im Jahr 2005 im Architecture Cosmos verortet und verknuepft affordability, prototype, rural.",
-    "full_description": "Serie von Wohnprototypen, die lokale Bauweisen, geringe Kosten und soziale Zugaenglichkeit in konkrete Objekte uebersetzt. Der Eintrag wird im Atlas als Objekt gelesen und gehoert zur Wissensspur case study, Layer housing. Autorenschaft / Quelle: Rural Studio. Seine Filterebene verbindet affordability, prototype, rural, material economy mit Jahr, Stilsektor und Relationennetz; spaeter koennen echte Fotos, Plaene, Schnitte, Quellen und Modelle direkt aus der Datenbank angeschlossen werden.",
+    "one_sentence": "20K House zeigt, wie Stahlbetonskelett, Stützenraster und freier Grundriss zu einem offenen System für Plan-, Struktur- und 3D-Layer werden.",
+    "full_description": "20K House wird als konstruktiver Prototyp ohne festen Ort gelesen. Entscheidend ist die Trennung von Tragwerk, Grundriss und Hülle: wenige Stahlbetonelemente erzeugen ein offenes Raster, das Wiederholung, Erweiterung und freie räumliche Organisation ermöglicht. Für KosmoData wird daraus ein besonders klares Modell für Struktur-, Plan- und Blender-Layer.",
     "media": [
       {
         "type": "exterior",
@@ -28775,7 +30396,251 @@
         "label": "Grundriss",
         "placeholder": "Grundriss / 20K House / affordability-prototype"
       }
-    ]
+    ],
+    "source_candidates": [],
+    "architecture_text": {
+      "headline": "20K House: Konstruktionsprototyp als KosmoData-Referenz",
+      "overview": "20K House wird als architektonische Referenz gelesen: Ort, Nutzung, Material, Traglogik und historische Position werden zusammengeführt, damit das Projekt nicht nur beschrieben, sondern im KosmoData-Netzwerk vergleichbar wird.",
+      "chapters": [
+        {
+          "title": "These",
+          "text": "20K House wird über affordability, Prototyp, rural, material economy als räumliche These gelesen: Das Projekt zeigt, wie eine Bauaufgabe eine Haltung zu Arbeit, Lernen, Öffentlichkeit, Landschaft oder Alltag formuliert.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Netzwerk und DNA",
+          "text": "20K House wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, worin seine DNA innerhalb ähnlicher Projekte abweicht.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Topos",
+          "text": "Der Ort Hale County, United States ist Teil der architektonischen Lesart: Er bestimmt Adresse, Maßstab, Landschaft, Infrastruktur und die Art, wie das Objekt in seinem Umfeld wirkt.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Typos",
+          "text": "Typologisch wird 20K House als Konstruktionsprototyp geführt. Diese Kategorie dient nicht als starre Schublade, sondern als Vergleichsebene für Programme, Raumfolgen und Nutzungslogiken.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "needs material review werden als konstruktiv-atmosphärische Ebene gelesen: Oberfläche, Traglogik, Fügung, Öffnung und Hülle bilden zusammen die tektonische Grammatik des Projekts.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumlogik",
+          "text": "Grundriss, Schnitt, Bewegung, Blick, Schwelle und Gebrauch werden als zusammenhängendes System gelesen. Für die spätere Plan- und 3D-Pipeline ist diese Raumlogik wichtiger als eine reine Bildbeschreibung.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Konflikt und Kritik",
+          "text": "20K House wird auch über offene Spannungen gelesen: Rechte, Quellenlage, soziale Wirkung, Ökologie, industrielle Abhängigkeit oder institutionelle Macht bleiben als prüfbare Kritikfelder markiert.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "KosmoData-Layer und 3D-Potenzial",
+          "text": "Aus 20K House lassen sich Planlayer, Materiallayer und spätere Blender-Collections ableiten: Konstruktionsprototyp, vernacular architecture, affordability, Prototyp, rural, material economy, needs material review.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Entwurfsintelligenz",
+          "text": "Der Datenbankwert liegt in der übertragbaren Entwurfsregel: 20K House hilft, spätere Projekte nach Material, Typus, Struktur, Atmosphäre und historischem Netzwerk gezielt zu vergleichen.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "kosmodata-seed-from-research",
+      "generated_at": "2026-05-24T12:35:44.766Z",
+      "review_status": "draft_review"
+    },
+    "materials": {
+      "primary": [
+        "needs_material_review"
+      ],
+      "secondary": [
+        "craft_details",
+        "surface_system",
+        "construction_logic"
+      ],
+      "notes": "Seeded from existing entry metadata and research packs; verify exact material claims before promotion."
+    },
+    "program": {
+      "type": "structural_prototype",
+      "subtype": "vernacular_architecture_reference",
+      "public_access": "needs_review",
+      "components": [
+        "affordability",
+        "prototype",
+        "rural",
+        "material economy",
+        "object",
+        "vernacular_architecture"
+      ]
+    },
+    "context": {
+      "topography": "needs_site_review",
+      "setting": "Hale County, United States",
+      "landscape_relations": [
+        "site_context_needs_review"
+      ],
+      "urban_context": [
+        "housing",
+        "case_study"
+      ],
+      "construction_logic": [
+        "affordability",
+        "prototype",
+        "rural",
+        "material economy",
+        "object",
+        "vernacular_architecture"
+      ]
+    },
+    "database_tags": [
+      "typology:structural-prototype",
+      "style:vernacular_architecture",
+      "theme:affordability",
+      "theme:prototype",
+      "theme:rural",
+      "theme:material-economy",
+      "material:needs-material-review",
+      "rights:review-required",
+      "blender:structural-prototype-layer-candidate",
+      "plan:vector-review-required",
+      "viewer:3d-layer-review-required"
+    ],
+    "model_assets": [
+      {
+        "model_type": "site_model",
+        "title": "20K House Site/context study model",
+        "r2_key": "entries/rural-studio-20k-house/models/site.glb",
+        "format": "glb",
+        "lod_level": "preview",
+        "source_basis": "entry metadata only; needs source review",
+        "generation_method": "procedural",
+        "review_status": "draft",
+        "confidence_score": 0.42
+      },
+      {
+        "model_type": "structure_model",
+        "title": "20K House Structure and spatial order study model",
+        "r2_key": "entries/rural-studio-20k-house/models/structure.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "entry metadata only; needs source review",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      },
+      {
+        "model_type": "tectonic_model",
+        "title": "20K House Material, tectonic and filter-layer study model",
+        "r2_key": "entries/rural-studio-20k-house/models/tectonic.glb",
+        "format": "glb",
+        "lod_level": "study",
+        "source_basis": "entry metadata only; needs source review; tags: typology:structural-prototype, style:vernacular_architecture, theme:affordability, theme:prototype, theme:rural, theme:material-economy, material:needs-material-review, rights:review-required",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      }
+    ],
+    "analysis_layers": [
+      {
+        "analysis_type": "structure",
+        "summary": "20K House needs a reviewed structural reading connecting needs_material_review with construction logic, span, support and assembly.",
+        "data": {
+          "seed_tags": [
+            "structure:needs_review",
+            "needs_material_review"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "material_system",
+        "summary": "20K House should be tagged through needs_material_review and verified against primary sources before public material claims are made.",
+        "data": {
+          "seed_tags": [
+            "needs_material_review"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "spatial_order",
+        "summary": "20K House should be read through program, movement, room sequence, exterior relation and typological position rather than as a single image.",
+        "data": {
+          "seed_tags": [
+            "spatial_order",
+            "structural_prototype"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "typology",
+        "summary": "20K House is currently classified as structural_prototype; the seed must verify how this type differs from related entries with the same DNA.",
+        "data": {
+          "seed_tags": [
+            "typology",
+            "structural_prototype",
+            "Hale County, United States"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "summary": "20K House needs filter checks for themes, materials, rights, plan readiness, 3D layer readiness and viewer filters.",
+        "data": {
+          "seed_tags": [
+            "typology:structural-prototype",
+            "style:vernacular_architecture",
+            "theme:affordability",
+            "theme:prototype",
+            "theme:rural",
+            "theme:material-economy",
+            "material:needs-material-review",
+            "rights:review-required",
+            "blender:structural-prototype-layer-candidate",
+            "plan:vector-review-required"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      }
+    ],
+    "database_profile": {
+      "status": "reviewed",
+      "r2_prefix": "entries/rural-studio-20k-house",
+      "source_count": 0,
+      "media_count": 4,
+      "model_count": 3,
+      "analysis_count": 5,
+      "tag_count": 11,
+      "rights_summary": "Public text and metadata are allowed; visual assets remain link-only/private until rights are cleared.",
+      "updated_at": "2026-05-24T12:35:44.928Z"
+    },
+    "ingestion_status": {
+      "stage": "needs_review",
+      "source_status": "candidate",
+      "asset_status": "candidate",
+      "model_status": "planned",
+      "updated_at": "2026-05-24T12:35:44.929Z"
+    }
   },
   {
     "id": "high-line",
@@ -29234,10 +31099,10 @@
       "discourse",
       "exhibition"
     ],
-    "short_description": "Architekturbiennale als diskursives Ereignis, das Beziehungen, Referenzen und geteilte Grundlagen der Architektur sichtbar macht.",
+    "short_description": "Common Ground verbindet event, needs material review und die räumliche DNA von biennale, commonality, discourse zu einer prägnanten Architekturlesart.",
     "source_quality": "exhibition_reference",
-    "one_sentence": "Common Ground ist als Ereignis in Venice, Italy im Jahr 2012 im Architecture Cosmos verortet und verknuepft biennale, commonality, discourse.",
-    "full_description": "Architekturbiennale als diskursives Ereignis, das Beziehungen, Referenzen und geteilte Grundlagen der Architektur sichtbar macht. Der Eintrag wird im Atlas als Ereignis gelesen und gehoert zur Wissensspur exhibition reference, Layer contemporary discourse. Autorenschaft / Quelle: David Chipperfield. Seine Filterebene verbindet biennale, commonality, discourse, exhibition mit Jahr, Stilsektor und Relationennetz; spaeter koennen echte Fotos, Plaene, Schnitte, Quellen und Modelle direkt aus der Datenbank angeschlossen werden.",
+    "one_sentence": "Common Ground zeigt, wie event, needs material review, Topos, Typos und Tektonik zu einer belastbaren Referenz für Plan-, Material- und 3D-Layer werden.",
+    "full_description": "Common Ground wird als architektonisches Referenzobjekt über event, needs material review, Venice, Italy, räumliche Ordnung und historische Position gelesen. Entscheidend ist nicht die reine Datierung, sondern wie Setzung, Material, Gebrauch, Fügung und kulturelle Haltung zusammen eine übertragbare Entwurfsintelligenz bilden. Für KosmoData werden daraus zugleich Planlayer, Modelllayer, Filterbegriffe und Vergleichsbeziehungen abgeleitet.",
     "media": [
       {
         "type": "exterior",
@@ -29259,7 +31124,251 @@
         "label": "Grundriss",
         "placeholder": "Grundriss / Common Ground / biennale-commonality"
       }
-    ]
+    ],
+    "source_candidates": [],
+    "architecture_text": {
+      "headline": "Common Ground: event als KosmoData-Referenz",
+      "overview": "Common Ground wird als architektonische Referenz gelesen: Ort, Nutzung, Material, Traglogik und historische Position werden zusammengeführt, damit das Projekt nicht nur beschrieben, sondern im KosmoData-Netzwerk vergleichbar wird.",
+      "chapters": [
+        {
+          "title": "These",
+          "text": "Common Ground wird über biennale, commonality, discourse, exhibition als räumliche These gelesen: Das Projekt zeigt, wie eine Bauaufgabe eine Haltung zu Arbeit, Lernen, Öffentlichkeit, Landschaft oder Alltag formuliert.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Netzwerk und DNA",
+          "text": "Common Ground wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, worin seine DNA innerhalb ähnlicher Projekte abweicht.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Topos",
+          "text": "Der Ort Venice, Italy ist Teil der architektonischen Lesart: Er bestimmt Adresse, Maßstab, Landschaft, Infrastruktur und die Art, wie das Objekt in seinem Umfeld wirkt.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Typos",
+          "text": "Typologisch wird Common Ground als event geführt. Diese Kategorie dient nicht als starre Schublade, sondern als Vergleichsebene für Programme, Raumfolgen und Nutzungslogiken.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "needs material review werden als konstruktiv-atmosphärische Ebene gelesen: Oberfläche, Traglogik, Fügung, Öffnung und Hülle bilden zusammen die tektonische Grammatik des Projekts.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumlogik",
+          "text": "Grundriss, Schnitt, Bewegung, Blick, Schwelle und Gebrauch werden als zusammenhängendes System gelesen. Für die spätere Plan- und 3D-Pipeline ist diese Raumlogik wichtiger als eine reine Bildbeschreibung.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Konflikt und Kritik",
+          "text": "Common Ground wird auch über offene Spannungen gelesen: Rechte, Quellenlage, soziale Wirkung, Ökologie, industrielle Abhängigkeit oder institutionelle Macht bleiben als prüfbare Kritikfelder markiert.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "KosmoData-Layer und 3D-Potenzial",
+          "text": "Aus Common Ground lassen sich Planlayer, Materiallayer und spätere Blender-Collections ableiten: event, nachhaltige Architektur, biennale, commonality, discourse, exhibition, needs material review.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Entwurfsintelligenz",
+          "text": "Der Datenbankwert liegt in der übertragbaren Entwurfsregel: Common Ground hilft, spätere Projekte nach Material, Typus, Struktur, Atmosphäre und historischem Netzwerk gezielt zu vergleichen.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "kosmodata-seed-from-research",
+      "generated_at": "2026-05-24T12:35:52.879Z",
+      "review_status": "draft_review"
+    },
+    "materials": {
+      "primary": [
+        "needs_material_review"
+      ],
+      "secondary": [
+        "craft_details",
+        "surface_system",
+        "construction_logic"
+      ],
+      "notes": "Seeded from existing entry metadata and research packs; verify exact material claims before promotion."
+    },
+    "program": {
+      "type": "event",
+      "subtype": "sustainable_architecture_reference",
+      "public_access": "needs_review",
+      "components": [
+        "biennale",
+        "commonality",
+        "discourse",
+        "exhibition",
+        "event",
+        "sustainable_architecture"
+      ]
+    },
+    "context": {
+      "topography": "needs_site_review",
+      "setting": "Venice, Italy",
+      "landscape_relations": [
+        "site_context_needs_review"
+      ],
+      "urban_context": [
+        "contemporary_discourse",
+        "exhibition_reference"
+      ],
+      "construction_logic": [
+        "biennale",
+        "commonality",
+        "discourse",
+        "exhibition",
+        "event",
+        "sustainable_architecture"
+      ]
+    },
+    "database_tags": [
+      "typology:event",
+      "style:sustainable_architecture",
+      "theme:biennale",
+      "theme:commonality",
+      "theme:discourse",
+      "theme:exhibition",
+      "material:needs-material-review",
+      "rights:review-required",
+      "blender:event-layer-candidate",
+      "plan:vector-review-required",
+      "viewer:3d-layer-review-required"
+    ],
+    "model_assets": [
+      {
+        "model_type": "site_model",
+        "title": "Common Ground Site/context study model",
+        "r2_key": "entries/venice-biennale-architecture-2012/models/site.glb",
+        "format": "glb",
+        "lod_level": "preview",
+        "source_basis": "entry metadata only; needs source review",
+        "generation_method": "procedural",
+        "review_status": "draft",
+        "confidence_score": 0.42
+      },
+      {
+        "model_type": "structure_model",
+        "title": "Common Ground Structure and spatial order study model",
+        "r2_key": "entries/venice-biennale-architecture-2012/models/structure.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "entry metadata only; needs source review",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      },
+      {
+        "model_type": "tectonic_model",
+        "title": "Common Ground Material, tectonic and filter-layer study model",
+        "r2_key": "entries/venice-biennale-architecture-2012/models/tectonic.glb",
+        "format": "glb",
+        "lod_level": "study",
+        "source_basis": "entry metadata only; needs source review; tags: typology:event, style:sustainable_architecture, theme:biennale, theme:commonality, theme:discourse, theme:exhibition, material:needs-material-review, rights:review-required",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      }
+    ],
+    "analysis_layers": [
+      {
+        "analysis_type": "structure",
+        "summary": "Common Ground needs a reviewed structural reading connecting needs_material_review with construction logic, span, support and assembly.",
+        "data": {
+          "seed_tags": [
+            "structure:needs_review",
+            "needs_material_review"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "material_system",
+        "summary": "Common Ground should be tagged through needs_material_review and verified against primary sources before public material claims are made.",
+        "data": {
+          "seed_tags": [
+            "needs_material_review"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "spatial_order",
+        "summary": "Common Ground should be read through program, movement, room sequence, exterior relation and typological position rather than as a single image.",
+        "data": {
+          "seed_tags": [
+            "spatial_order",
+            "event"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "typology",
+        "summary": "Common Ground is currently classified as event; the seed must verify how this type differs from related entries with the same DNA.",
+        "data": {
+          "seed_tags": [
+            "typology",
+            "event",
+            "Venice, Italy"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "summary": "Common Ground needs filter checks for themes, materials, rights, plan readiness, 3D layer readiness and viewer filters.",
+        "data": {
+          "seed_tags": [
+            "typology:event",
+            "style:sustainable_architecture",
+            "theme:biennale",
+            "theme:commonality",
+            "theme:discourse",
+            "theme:exhibition",
+            "material:needs-material-review",
+            "rights:review-required",
+            "blender:event-layer-candidate",
+            "plan:vector-review-required"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      }
+    ],
+    "database_profile": {
+      "status": "reviewed",
+      "r2_prefix": "entries/venice-biennale-architecture-2012",
+      "source_count": 0,
+      "media_count": 4,
+      "model_count": 3,
+      "analysis_count": 5,
+      "tag_count": 11,
+      "rights_summary": "Public text and metadata are allowed; visual assets remain link-only/private until rights are cleared.",
+      "updated_at": "2026-05-24T12:35:53.045Z"
+    },
+    "ingestion_status": {
+      "stage": "needs_review",
+      "source_status": "candidate",
+      "asset_status": "candidate",
+      "model_status": "planned",
+      "updated_at": "2026-05-24T12:35:53.045Z"
+    }
   },
   {
     "id": "serpentine-pavilion-ishigami",
