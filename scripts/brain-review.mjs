@@ -40,7 +40,8 @@ async function main() {
   console.log('Architecture Cosmos Brain Review');
   console.log(`Output: ${relativeToRoot(outputDir)}`);
   console.log(`Entries: ${review.summary.entries}`);
-  console.log(`Open tasks: ${review.tasks.length}`);
+  console.log(`Open entry tasks: ${review.summary.open_entry_tasks}`);
+  console.log(`Displayed tasks: ${review.tasks.length}`);
   console.log(`Highest priority: ${review.tasks[0]?.title ?? 'none'}`);
 }
 
@@ -84,15 +85,17 @@ function buildReview({ entries, relations, rules, tools, queue, decisions, autop
     .map((taskItem) => decorateTaskWithAutopilotState(taskItem, completedAutopilotTaskIds, failedAutopilotTaskIds));
 
   const reviewReadyTasks = generatedEntryTasks
-    .filter((taskItem) => taskItem.status === 'review_ready')
-    .slice(0, 60);
+    .filter((taskItem) => taskItem.status === 'review_ready');
 
-  const tasks = generatedEntryTasks
+  const openEntryTasks = generatedEntryTasks
     .filter((taskItem) => taskItem.status === 'open' || taskItem.status === 'failed_review')
-    .slice(0, 40);
+    .sort((a, b) => b.priority - a.priority || a.entry_title.localeCompare(b.entry_title));
+
+  const visibleReviewReadyTasks = reviewReadyTasks.slice(0, 60);
+  const visibleEntryTasks = openEntryTasks.slice(0, 40);
 
   const systemTasks = buildSystemTasks({ entries, relations, brokenRelations, rules });
-  const allTasks = [...systemTasks, ...tasks].sort((a, b) => b.priority - a.priority).slice(0, 50);
+  const allTasks = [...systemTasks, ...visibleEntryTasks].sort((a, b) => b.priority - a.priority).slice(0, 50);
 
   return {
     generated_at: new Date().toISOString(),
@@ -112,8 +115,10 @@ function buildReview({ entries, relations, rules, tools, queue, decisions, autop
       registered_tools: tools.tools?.length ?? 0,
       queue_items: queue.items?.length ?? 0,
       recorded_decisions: decisions.decisions?.length ?? 0,
-      open_entry_tasks: tasks.length,
+      open_entry_tasks: openEntryTasks.length,
+      displayed_entry_tasks: visibleEntryTasks.length,
       review_ready_tasks: reviewReadyTasks.length,
+      displayed_review_ready_tasks: visibleReviewReadyTasks.length,
       autopilot_completed_tasks: completedAutopilotTaskIds.size,
       autopilot_failed_tasks: failedAutopilotTaskIds.size
     },
@@ -149,7 +154,7 @@ function buildReview({ entries, relations, rules, tools, queue, decisions, autop
       completed_task_ids: [...completedAutopilotTaskIds].sort(),
       failed_task_ids: [...failedAutopilotTaskIds].sort(),
       runs: (autopilotState.runs ?? []).slice(-10),
-      review_ready_tasks: reviewReadyTasks
+      review_ready_tasks: visibleReviewReadyTasks
     },
     tasks: allTasks,
     next_steps: [
@@ -380,8 +385,8 @@ function renderMarkdown(review) {
     `- Analysis ready/planned: ${review.summary.analysis_ready_or_planned} (${review.coverage.analysis_percent}%)`,
     `- Source candidate entries: ${review.summary.source_candidate_entries} (${review.coverage.source_candidate_percent}%)`,
     `- Registered local tools: ${review.summary.registered_tools}`,
-    `- Open entry tasks: ${review.summary.open_entry_tasks}`,
-    `- Review-ready Autopilot tasks: ${review.summary.review_ready_tasks}`,
+    `- Open entry tasks: ${review.summary.open_entry_tasks} (${review.summary.displayed_entry_tasks} shown)`,
+    `- Review-ready Autopilot tasks: ${review.summary.review_ready_tasks} (${review.summary.displayed_review_ready_tasks} shown)`,
     `- Failed Autopilot tasks: ${review.summary.autopilot_failed_tasks}`,
     '',
     '## Tool Registry',
