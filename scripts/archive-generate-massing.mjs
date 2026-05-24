@@ -220,10 +220,62 @@ function habitat67Scene(entry) {
   };
 }
 
+function narkomfinScene(entry) {
+  const materials = [
+    { name: 'site / park ground and open terrace', color: [0.22, 0.3, 0.22, 1] },
+    { name: 'reinforced concrete frame', color: [0.62, 0.64, 0.6, 1] },
+    { name: 'rendered housing cell volume', color: [0.82, 0.8, 0.72, 1] },
+    { name: 'ribbon window shadow', color: [0.08, 0.18, 0.22, 0.82] },
+    { name: 'communal block accent', color: [0.78, 0.42, 0.22, 1] },
+    { name: 'circulation gallery / social condenser', color: [0.96, 0.72, 0.16, 1] },
+    { name: 'roof terrace and collective landscape', color: [0.18, 0.44, 0.24, 1] }
+  ];
+
+  const objects = [
+    box('01_site_context / open park ground under housing slab', [0, -0.08, 0], [30, 0.16, 18], 0),
+    box('02_mass_model / raised residential slab', [0, 4.25, 0], [21.8, 5.35, 4.1], 2),
+    box('02_mass_model / communal services block', [9.7, 2.1, 4.05], [5.8, 3.35, 4.7], 4, Math.PI * 0.02),
+    box('05_circulation / bridge to communal block', [7.1, 2.85, 2.45], [4.2, 0.28, 1.1], 5, Math.PI * 0.04),
+    box('06_roof_terrace / collective roof deck', [0, 7.05, 0], [21.6, 0.18, 4.25], 6),
+    box('05_circulation / longitudinal gallery social condenser', [0, 4.15, -2.22], [21.4, 0.28, 0.42], 5),
+    box('04_envelope / north ribbon window band', [0, 4.75, -2.12], [20.5, 0.58, 0.1], 3),
+    box('04_envelope / south ribbon window band', [0, 4.75, 2.12], [20.5, 0.58, 0.1], 3),
+    box('05_interior / maisonette section trace upper cells', [-4.8, 5.55, 0], [8.2, 0.16, 3.55], 5),
+    box('05_interior / maisonette section trace lower cells', [4.8, 3.0, 0], [8.2, 0.16, 3.55], 5)
+  ];
+
+  for (const x of [-9.4, -6.2, -3.1, 0, 3.1, 6.2, 9.4]) {
+    objects.push(cylinder(`03_structure / pilotis and concrete frame ${x}`, [x, 1.95, -1.45], 0.13, 3.8, 12, 1));
+    objects.push(cylinder(`03_structure / pilotis and concrete frame ${x}:south`, [x, 1.95, 1.45], 0.13, 3.8, 12, 1));
+  }
+
+  for (let bay = 0; bay < 8; bay += 1) {
+    const x = -9.1 + bay * 2.6;
+    objects.push(box(`05_interior / duplex cell bay ${bay + 1}`, [x, 4.28, 0.22], [2.35, 4.8, 3.35], 2));
+    objects.push(box(`04_envelope / vertical bay rhythm ${bay + 1}`, [x + 1.2, 4.55, 2.14], [0.12, 4.95, 0.18], 1));
+  }
+
+  for (const x of [-9.2, -4.6, 0, 4.6, 9.2]) {
+    objects.push(box(`03_structure / transverse frame line ${x}`, [x, 4.2, 0], [0.14, 5.0, 4.15], 1));
+  }
+
+  return {
+    asset: {
+      version: '2.0',
+      generator: 'Architecture Cosmos archive-generate-massing',
+      copyright: 'Architecture Cosmos / diagrammatic model / not measured'
+    },
+    sceneName: `${entry.title} diagrammatic social condenser massing`,
+    materials,
+    objects
+  };
+}
+
 function sceneForEntry(entry) {
   if (entry.slug === 'villa-savoye') return villaSavoyeScene(entry);
   if (entry.slug === 'alterszentrum-kloster-ingenbohl') return ingenbohlScene(entry);
   if (entry.slug === 'habitat-67') return habitat67Scene(entry);
+  if (entry.slug === 'narkomfin-housing') return narkomfinScene(entry);
   return null;
 }
 

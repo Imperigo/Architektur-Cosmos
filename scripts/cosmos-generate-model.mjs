@@ -123,6 +123,14 @@ function chooseTemplate(entry) {
       layer_contract: ['site', 'mass', 'structure', 'circulation', 'terraces', 'materials']
     };
   }
+  if (entry.slug === 'narkomfin-housing') {
+    return {
+      id: 'social_condenser_slab',
+      can_generate: true,
+      reason: 'Narkomfin has a reviewed diagrammatic template for raised slab, concrete frame, duplex cell logic, communal block, bridge and roof/galleries as social condenser layers.',
+      layer_contract: ['site', 'mass', 'structure', 'facade', 'interior', 'circulation', 'roof_terrace', 'materials']
+    };
+  }
 
   const suggested = entry.entry_type === 'landscape_project' || entry.entry_type === 'infrastructure'
     ? 'linear_landscape_infrastructure'
