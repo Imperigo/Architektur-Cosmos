@@ -16613,10 +16613,10 @@
       "industry",
       "transparency"
     ],
-    "short_description": "Industriebau, der die Ecke entmaterialisiert und die Fabrik als modernes, helles und repraesentatives Bauprogramm zeigt.",
-    "source_quality": "lecture_notes",
-    "one_sentence": "Fagus Factory ist als Bauwerk in Alfeld, Germany im Jahr 1911 im Architecture Cosmos verortet und verknuepft factory, glass corner, industry.",
-    "full_description": "Industriebau, der die Ecke entmaterialisiert und die Fabrik als modernes, helles und repraesentatives Bauprogramm zeigt. Der Eintrag wird im Atlas als Bauwerk gelesen und gehoert zur Wissensspur lecture notes, Layer modernism. Autorenschaft / Quelle: Walter Gropius, Adolf Meyer. Seine Filterebene verbindet factory, glass corner, industry, transparency mit Jahr, Stilsektor und Relationennetz; spaeter koennen echte Fotos, Plaene, Schnitte, Quellen und Modelle direkt aus der Datenbank angeschlossen werden.",
+    "short_description": "Fagus Factory verbindet Fabrik, Glas, Stahl, Backstein und die räumliche DNA von Fabrik, Glasecke, Industrie zu einer prägnanten Architekturlesart.",
+    "source_quality": "research_seed_review",
+    "one_sentence": "Fagus Factory zeigt, wie Fabrik, Glas, Stahl, Backstein, Topos, Typos und Tektonik zu einer belastbaren Referenz für Plan-, Material- und 3D-Layer werden.",
+    "full_description": "Fagus Factory wird als architektonisches Referenzobjekt über Fabrik, Glas, Stahl, Backstein, Alfeld, Germany, räumliche Ordnung und historische Position gelesen. Entscheidend ist nicht die reine Datierung, sondern wie Setzung, Material, Gebrauch, Fügung und kulturelle Haltung zusammen eine übertragbare Entwurfsintelligenz bilden. Für KosmoData werden daraus zugleich Planlayer, Modelllayer, Filterbegriffe und Vergleichsbeziehungen abgeleitet.",
     "media": [
       {
         "type": "exterior",
@@ -16651,6 +16651,30 @@
         "reliability_level": "secondary_source",
         "rights_status": "licensed",
         "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY-SA 2.0 de."
+      },
+      {
+        "source_type": "official_site",
+        "title": "Fagus-Werk / About the Fagus Factory",
+        "url": "https://www.fagus-werk.com/en/about-the-fagus-factory/",
+        "reliability_level": "high",
+        "rights_status": "link_only",
+        "notes": "Official Fagus-Werk project and heritage page. Use as factual metadata source only."
+      },
+      {
+        "source_type": "unesco_world_heritage",
+        "title": "UNESCO World Heritage Centre / Fagus Factory in Alfeld",
+        "url": "https://whc.unesco.org/en/list/1368/",
+        "reliability_level": "high",
+        "rights_status": "link_only",
+        "notes": "Official UNESCO record and Outstanding Universal Value text."
+      },
+      {
+        "source_type": "unesco_commission",
+        "title": "Deutsche UNESCO-Kommission / Fagus-Werk in Alfeld",
+        "url": "https://www.unesco.de/staette/fagus-werk-in-alfeld/",
+        "reliability_level": "high",
+        "rights_status": "link_only",
+        "notes": "German UNESCO Commission record. Use as public-safe bibliographic/factual source."
       }
     ],
     "architecture_text": {
@@ -16692,11 +16716,220 @@
           "text": "Fagus Factory ist als Referenz wichtig, weil Fabrik, Glasecke, Industrie, Transparenz nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
           "source_basis": "derived from entry metadata and Brain quality rules",
           "review_status": "draft_review"
+        },
+        {
+          "title": "Netzwerk und DNA",
+          "text": "Fagus Factory wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, wie es sich innerhalb derselben architektonischen DNA unterscheidet: durch Ort, Auftrag, Fügung, Gebrauch und kulturelle Haltung.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Topos / Typos / Tektonik",
+          "text": "Topos, Typos und Tektonik werden zusammen gelesen: Ort und Landschaft bilden die Setzung, Fabrik bildet den typologischen Ausgangspunkt, und Glas, Stahl, Backstein markieren die konstruktiv-atmosphärische Lesart.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für KosmoData ist Fagus Factory relevant, weil sich daraus Filter, Vergleichsgruppen, Planlayer und spätere Blender-Collections ableiten lassen: Fabrik, moderne Architektur, Glasecke, Industrie, Transparenz, Glas, Stahl, Backstein.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
         }
       ],
       "review_status": "draft_review",
       "public_use_allowed": true,
-      "generated_at": "2026-05-21T18:36:41.172Z"
+      "generated_at": "2026-05-24T08:40:10.840Z",
+      "generator": "kosmodata-seed-from-research"
+    },
+    "materials": {
+      "primary": [
+        "glass",
+        "steel",
+        "brick"
+      ],
+      "secondary": [
+        "craft_details",
+        "surface_system",
+        "construction_logic"
+      ],
+      "notes": "Seeded from local reviewed source metadata; verify exact material claims before publication."
+    },
+    "program": {
+      "type": "factory",
+      "subtype": "modern_architecture_reference",
+      "public_access": "needs_review",
+      "components": [
+        "factory",
+        "glass corner",
+        "industry",
+        "transparency",
+        "building",
+        "modern_architecture"
+      ]
+    },
+    "context": {
+      "topography": "needs_site_review",
+      "setting": "Alfeld, Germany",
+      "landscape_relations": [
+        "site_context_needs_review"
+      ],
+      "urban_context": [
+        "modernism",
+        "research_seed_review"
+      ],
+      "construction_logic": [
+        "glass corner",
+        "industry",
+        "transparency",
+        "building",
+        "modern_architecture"
+      ]
+    },
+    "database_tags": [
+      "source:wikimedia-commons-hero-candidate-fagus-factory",
+      "source:fagus-werk-about-the-fagus-factory",
+      "source:unesco-world-heritage-centre-fagus-factory-in-alfeld",
+      "source:deutsche-unesco-kommission-fagus-werk-in-alfeld",
+      "typology:factory",
+      "style:modern_architecture",
+      "theme:factory",
+      "theme:glass-corner",
+      "theme:industry",
+      "theme:transparency",
+      "material:glass",
+      "material:steel",
+      "material:brick",
+      "rights:review-required",
+      "blender:factory-layer-candidate",
+      "plan:vector-review-required",
+      "viewer:3d-layer-review-required"
+    ],
+    "model_assets": [
+      {
+        "model_type": "site_model",
+        "title": "Fagus Factory Site/context study model",
+        "r2_key": "entries/fagus-factory/models/site.glb",
+        "format": "glb",
+        "lod_level": "preview",
+        "source_basis": "Wikimedia Commons hero candidate / Fagus Factory | Fagus-Werk / About the Fagus Factory | UNESCO World Heritage Centre / Fagus Factory in Alfeld | Deutsche UNESCO-Kommission / Fagus-Werk in Alfeld",
+        "generation_method": "procedural",
+        "review_status": "draft",
+        "confidence_score": 0.42
+      },
+      {
+        "model_type": "structure_model",
+        "title": "Fagus Factory Structure and spatial order study model",
+        "r2_key": "entries/fagus-factory/models/structure.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "Wikimedia Commons hero candidate / Fagus Factory | Fagus-Werk / About the Fagus Factory | UNESCO World Heritage Centre / Fagus Factory in Alfeld | Deutsche UNESCO-Kommission / Fagus-Werk in Alfeld",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      },
+      {
+        "model_type": "tectonic_model",
+        "title": "Fagus Factory Material, tectonic and filter-layer study model",
+        "r2_key": "entries/fagus-factory/models/tectonic.glb",
+        "format": "glb",
+        "lod_level": "study",
+        "source_basis": "Wikimedia Commons hero candidate / Fagus Factory | Fagus-Werk / About the Fagus Factory | UNESCO World Heritage Centre / Fagus Factory in Alfeld | Deutsche UNESCO-Kommission / Fagus-Werk in Alfeld; tags: source:wikimedia-commons-hero-candidate-fagus-factory, source:fagus-werk-about-the-fagus-factory, source:unesco-world-heritage-centre-fagus-factory-in-alfeld, source:deutsche-unesco-kommission-fagus-werk-in-alfeld, typology:factory, style:modern_architecture, theme:factory, theme:glass-corner",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      }
+    ],
+    "analysis_layers": [
+      {
+        "analysis_type": "structure",
+        "summary": "Fagus Factory needs a reviewed structural reading connecting glass, steel, brick with construction logic, span, support and assembly.",
+        "data": {
+          "seed_tags": [
+            "structure:needs_review",
+            "glass",
+            "steel",
+            "brick"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "material_system",
+        "summary": "Fagus Factory should be tagged through glass, steel, brick and verified against primary sources before public material claims are made.",
+        "data": {
+          "seed_tags": [
+            "glass",
+            "steel",
+            "brick"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "spatial_order",
+        "summary": "Fagus Factory should be read through program, movement, room sequence, exterior relation and typological position rather than as a single image.",
+        "data": {
+          "seed_tags": [
+            "spatial_order",
+            "factory"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "typology",
+        "summary": "Fagus Factory is currently classified as factory; the seed must verify how this type differs from related entries with the same DNA.",
+        "data": {
+          "seed_tags": [
+            "typology",
+            "factory",
+            "Alfeld, Germany"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "summary": "Fagus Factory needs filter checks for themes, materials, rights, plan readiness, 3D layer readiness and viewer filters.",
+        "data": {
+          "seed_tags": [
+            "source:wikimedia-commons-hero-candidate-fagus-factory",
+            "source:fagus-werk-about-the-fagus-factory",
+            "source:unesco-world-heritage-centre-fagus-factory-in-alfeld",
+            "source:deutsche-unesco-kommission-fagus-werk-in-alfeld",
+            "typology:factory",
+            "style:modern_architecture",
+            "theme:factory",
+            "theme:glass-corner",
+            "theme:industry",
+            "theme:transparency"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      }
+    ],
+    "database_profile": {
+      "status": "reviewed",
+      "r2_prefix": "entries/fagus-factory",
+      "source_count": 4,
+      "media_count": 4,
+      "model_count": 3,
+      "analysis_count": 5,
+      "tag_count": 17,
+      "rights_summary": "Public text and metadata are allowed; hero media is public-safe with attribution (cc_by_sa); exact plans, protected photos and models remain review-only until rights are cleared.",
+      "updated_at": "2026-05-24T08:40:11.014Z"
+    },
+    "ingestion_status": {
+      "stage": "needs_review",
+      "source_status": "reviewed",
+      "asset_status": "ready",
+      "model_status": "planned",
+      "updated_at": "2026-05-24T08:40:11.015Z"
     }
   },
   {
@@ -17655,14 +17888,13 @@
     ],
     "themes": [
       "school",
-      "glass",
       "workshop",
       "modern pedagogy"
     ],
-    "short_description": "Schulbau und Programmarchitektur, die Werkstatt, Lehre, Wohnen und moderne Form als institutionelles Gefuege verbindet.",
-    "source_quality": "lecture_notes",
-    "one_sentence": "Bauhaus Dessau ist als Bauwerk in Dessau, Germany im Jahr 1926 im Architecture Cosmos verortet und verknuepft school, glass, workshop.",
-    "full_description": "Schulbau und Programmarchitektur, die Werkstatt, Lehre, Wohnen und moderne Form als institutionelles Gefuege verbindet. Der Eintrag wird im Atlas als Bauwerk gelesen und gehoert zur Wissensspur lecture notes, Layer modernism. Autorenschaft / Quelle: Walter Gropius. Seine Filterebene verbindet school, glass, workshop, modern pedagogy mit Jahr, Stilsektor und Relationennetz; spaeter koennen echte Fotos, Plaene, Schnitte, Quellen und Modelle direkt aus der Datenbank angeschlossen werden.",
+    "short_description": "Bauhaus Dessau verbindet Schule, Glas, Stahl, Beton und die räumliche DNA von Schule, Werkstatt, moderne Pädagogik zu einer prägnanten Architekturlesart.",
+    "source_quality": "research_seed_review",
+    "one_sentence": "Bauhaus Dessau zeigt, wie Schule, Glas, Stahl, Beton, Topos, Typos und Tektonik zu einer belastbaren Referenz für Plan-, Material- und 3D-Layer werden.",
+    "full_description": "Bauhaus Dessau wird als architektonisches Referenzobjekt über Schule, Glas, Stahl, Beton, Dessau, Germany, räumliche Ordnung und historische Position gelesen. Entscheidend ist nicht die reine Datierung, sondern wie Setzung, Material, Gebrauch, Fügung und kulturelle Haltung zusammen eine übertragbare Entwurfsintelligenz bilden. Für KosmoData werden daraus zugleich Planlayer, Modelllayer, Filterbegriffe und Vergleichsbeziehungen abgeleitet.",
     "media": [
       {
         "type": "exterior",
@@ -17697,6 +17929,30 @@
         "reliability_level": "secondary_source",
         "rights_status": "licensed",
         "notes": "Auto-selected hero image candidate. Score: 0.96. License: CC BY-SA 4.0."
+      },
+      {
+        "source_type": "official_foundation_site",
+        "title": "Stiftung Bauhaus Dessau / Bauhaus Building",
+        "url": "https://bauhaus-dessau.de/en/venues/bauhaus-building/",
+        "reliability_level": "high",
+        "rights_status": "link_only",
+        "notes": "Official Bauhaus Dessau Foundation venue page. Use as factual metadata source only."
+      },
+      {
+        "source_type": "unesco_world_heritage",
+        "title": "UNESCO World Heritage Centre / Bauhaus and its Sites in Weimar, Dessau and Bernau",
+        "url": "https://whc.unesco.org/en/list/729",
+        "reliability_level": "high",
+        "rights_status": "link_only",
+        "notes": "Official UNESCO record for Bauhaus World Heritage sites."
+      },
+      {
+        "source_type": "municipal_tourism",
+        "title": "Visit Dessau / Bauhaus",
+        "url": "https://www.visitdessau.com/en/world-heritage/bauhaus/",
+        "reliability_level": "medium",
+        "rights_status": "link_only",
+        "notes": "Municipal visitor page for contextual orientation and public access."
       }
     ],
     "architecture_text": {
@@ -17738,11 +17994,217 @@
           "text": "Bauhaus Dessau ist als Referenz wichtig, weil Schule, Glas, Werkstatt, moderne Pädagogik nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
           "source_basis": "derived from entry metadata and Brain quality rules",
           "review_status": "draft_review"
+        },
+        {
+          "title": "Netzwerk und DNA",
+          "text": "Bauhaus Dessau wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, wie es sich innerhalb derselben architektonischen DNA unterscheidet: durch Ort, Auftrag, Fügung, Gebrauch und kulturelle Haltung.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Topos / Typos / Tektonik",
+          "text": "Topos, Typos und Tektonik werden zusammen gelesen: Ort und Landschaft bilden die Setzung, Schule bildet den typologischen Ausgangspunkt, und Glas, Stahl, Beton markieren die konstruktiv-atmosphärische Lesart.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für KosmoData ist Bauhaus Dessau relevant, weil sich daraus Filter, Vergleichsgruppen, Planlayer und spätere Blender-Collections ableiten lassen: Schule, moderne Architektur, Werkstatt, moderne Pädagogik, Glas, Stahl, Beton.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
         }
       ],
       "review_status": "draft_review",
       "public_use_allowed": true,
-      "generated_at": "2026-05-21T18:36:41.515Z"
+      "generated_at": "2026-05-24T08:40:11.380Z",
+      "generator": "kosmodata-seed-from-research"
+    },
+    "materials": {
+      "primary": [
+        "glass",
+        "steel",
+        "concrete"
+      ],
+      "secondary": [
+        "craft_details",
+        "surface_system",
+        "construction_logic"
+      ],
+      "notes": "Seeded from local reviewed source metadata; verify exact material claims before publication."
+    },
+    "program": {
+      "type": "school",
+      "subtype": "modern_architecture_reference",
+      "public_access": "needs_review",
+      "components": [
+        "school",
+        "workshop",
+        "modern pedagogy",
+        "building",
+        "modern_architecture"
+      ]
+    },
+    "context": {
+      "topography": "needs_site_review",
+      "setting": "Dessau, Germany",
+      "landscape_relations": [
+        "site_context_needs_review"
+      ],
+      "urban_context": [
+        "modernism",
+        "research_seed_review"
+      ],
+      "construction_logic": [
+        "workshop",
+        "modern pedagogy",
+        "building",
+        "modern_architecture"
+      ]
+    },
+    "database_tags": [
+      "source:wikimedia-commons-hero-candidate-bauhaus-dessau",
+      "source:stiftung-bauhaus-dessau-bauhaus-building",
+      "source:unesco-world-heritage-centre-bauhaus-and-its-sites-in-weimar-dessau-and-bernau",
+      "source:visit-dessau-bauhaus",
+      "typology:school",
+      "style:modern_architecture",
+      "theme:school",
+      "theme:workshop",
+      "theme:modern-pedagogy",
+      "material:glass",
+      "material:steel",
+      "material:concrete",
+      "rights:review-required",
+      "blender:school-layer-candidate",
+      "plan:vector-review-required",
+      "viewer:3d-layer-review-required"
+    ],
+    "model_assets": [
+      {
+        "model_type": "site_model",
+        "title": "Bauhaus Dessau Site/context study model",
+        "r2_key": "entries/bauhaus-dessau/models/site.glb",
+        "format": "glb",
+        "lod_level": "preview",
+        "source_basis": "Wikimedia Commons hero candidate / Bauhaus Dessau | Stiftung Bauhaus Dessau / Bauhaus Building | UNESCO World Heritage Centre / Bauhaus and its Sites in Weimar, Dessau and Bernau | Visit Dessau / Bauhaus",
+        "generation_method": "procedural",
+        "review_status": "draft",
+        "confidence_score": 0.42
+      },
+      {
+        "model_type": "structure_model",
+        "title": "Bauhaus Dessau Structure and spatial order study model",
+        "r2_key": "entries/bauhaus-dessau/models/structure.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "Wikimedia Commons hero candidate / Bauhaus Dessau | Stiftung Bauhaus Dessau / Bauhaus Building | UNESCO World Heritage Centre / Bauhaus and its Sites in Weimar, Dessau and Bernau | Visit Dessau / Bauhaus",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      },
+      {
+        "model_type": "tectonic_model",
+        "title": "Bauhaus Dessau Material, tectonic and filter-layer study model",
+        "r2_key": "entries/bauhaus-dessau/models/tectonic.glb",
+        "format": "glb",
+        "lod_level": "study",
+        "source_basis": "Wikimedia Commons hero candidate / Bauhaus Dessau | Stiftung Bauhaus Dessau / Bauhaus Building | UNESCO World Heritage Centre / Bauhaus and its Sites in Weimar, Dessau and Bernau | Visit Dessau / Bauhaus; tags: source:wikimedia-commons-hero-candidate-bauhaus-dessau, source:stiftung-bauhaus-dessau-bauhaus-building, source:unesco-world-heritage-centre-bauhaus-and-its-sites-in-weimar-dessau-and-bernau, source:visit-dessau-bauhaus, typology:school, style:modern_architecture, theme:school, theme:workshop",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      }
+    ],
+    "analysis_layers": [
+      {
+        "analysis_type": "structure",
+        "summary": "Bauhaus Dessau needs a reviewed structural reading connecting glass, steel, concrete with construction logic, span, support and assembly.",
+        "data": {
+          "seed_tags": [
+            "structure:needs_review",
+            "glass",
+            "steel",
+            "concrete"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "material_system",
+        "summary": "Bauhaus Dessau should be tagged through glass, steel, concrete and verified against primary sources before public material claims are made.",
+        "data": {
+          "seed_tags": [
+            "glass",
+            "steel",
+            "concrete"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "spatial_order",
+        "summary": "Bauhaus Dessau should be read through program, movement, room sequence, exterior relation and typological position rather than as a single image.",
+        "data": {
+          "seed_tags": [
+            "spatial_order",
+            "school"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "typology",
+        "summary": "Bauhaus Dessau is currently classified as school; the seed must verify how this type differs from related entries with the same DNA.",
+        "data": {
+          "seed_tags": [
+            "typology",
+            "school",
+            "Dessau, Germany"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "summary": "Bauhaus Dessau needs filter checks for themes, materials, rights, plan readiness, 3D layer readiness and viewer filters.",
+        "data": {
+          "seed_tags": [
+            "source:wikimedia-commons-hero-candidate-bauhaus-dessau",
+            "source:stiftung-bauhaus-dessau-bauhaus-building",
+            "source:unesco-world-heritage-centre-bauhaus-and-its-sites-in-weimar-dessau-and-bernau",
+            "source:visit-dessau-bauhaus",
+            "typology:school",
+            "style:modern_architecture",
+            "theme:school",
+            "theme:workshop",
+            "theme:modern-pedagogy",
+            "material:glass"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      }
+    ],
+    "database_profile": {
+      "status": "reviewed",
+      "r2_prefix": "entries/bauhaus-dessau",
+      "source_count": 4,
+      "media_count": 4,
+      "model_count": 3,
+      "analysis_count": 5,
+      "tag_count": 16,
+      "rights_summary": "Public text and metadata are allowed; hero media is public-safe with attribution (cc_by_sa); exact plans, protected photos and models remain review-only until rights are cleared.",
+      "updated_at": "2026-05-24T08:40:11.553Z"
+    },
+    "ingestion_status": {
+      "stage": "needs_review",
+      "source_status": "reviewed",
+      "asset_status": "ready",
+      "model_status": "planned",
+      "updated_at": "2026-05-24T08:40:11.554Z"
     }
   },
   {
@@ -24424,12 +24886,13 @@
       "industrial-reuse",
       "landscape-urbanism",
       "palimpsest",
-      "public-space"
+      "public-space",
+      "landscape-project"
     ],
-    "short_description": "Postindustrieller Landschaftspark, der industrielle Relikte erhaelt, umnutzt und als lesbare Schichten des Ortes aktiviert.",
-    "source_quality": "lecture_pdf",
-    "one_sentence": "Landschaftspark Duisburg-Nord ist als Landschaftsprojekt in Duisburg, Germany im Jahr 1994 im Architecture Cosmos verortet und verknuepft industrial reuse, landscape urbanism, palimpsest.",
-    "full_description": "Postindustrieller Landschaftspark, der industrielle Relikte erhaelt, umnutzt und als lesbare Schichten des Ortes aktiviert. Der Eintrag wird im Atlas als Landschaftsprojekt gelesen und gehoert zur Wissensspur Global History ETH, Layer landscape architecture 1 2, global urban design. Autorenschaft / Quelle: Latz + Partner. Seine Filterebene verbindet industrial reuse, landscape urbanism, palimpsest, public space mit Jahr, Stilsektor und Relationennetz; spaeter koennen echte Fotos, Plaene, Schnitte, Quellen und Modelle direkt aus der Datenbank angeschlossen werden.",
+    "short_description": "Landschaftspark Duisburg-Nord verbindet Landschaftsprojekt, Stahl, Backstein, Vegetation und die räumliche DNA von industrielle Umnutzung, Landscape Urbanism, Palimpsest zu einer prägnanten Architekturlesart.",
+    "source_quality": "research_seed_review",
+    "one_sentence": "Landschaftspark Duisburg-Nord zeigt, wie Landschaftsprojekt, Stahl, Backstein, Vegetation, Wasser, Topos, Typos und Tektonik zu einer belastbaren Referenz für Plan-, Material- und 3D-Layer werden.",
+    "full_description": "Landschaftspark Duisburg-Nord wird als architektonisches Referenzobjekt über Landschaftsprojekt, Stahl, Backstein, Vegetation, Wasser, Duisburg, Germany, räumliche Ordnung und historische Position gelesen. Entscheidend ist nicht die reine Datierung, sondern wie Setzung, Material, Gebrauch, Fügung und kulturelle Haltung zusammen eine übertragbare Entwurfsintelligenz bilden. Für KosmoData werden daraus zugleich Planlayer, Modelllayer, Filterbegriffe und Vergleichsbeziehungen abgeleitet.",
     "media": [
       {
         "type": "exterior",
@@ -24464,8 +24927,293 @@
         "reliability_level": "secondary_source",
         "rights_status": "licensed",
         "notes": "Auto-selected hero image candidate. Score: 0.98. License: CC BY-SA 4.0."
+      },
+      {
+        "source_type": "official_site",
+        "title": "Landschaftspark Duisburg-Nord / Official Site",
+        "url": "https://www.landschaftspark.com/en/",
+        "reliability_level": "high",
+        "rights_status": "link_only",
+        "notes": "Official visitor and project site. Use as contextual source only."
+      },
+      {
+        "source_type": "office_project_page",
+        "title": "Latz + Partner / Duisburg Nord Landscape Park",
+        "url": "https://www.latzundpartner.de/en/projekte/postindustrielle-landschaften/landschaftspark-duisburg-nord-de/",
+        "reliability_level": "high",
+        "rights_status": "link_only",
+        "notes": "Office project text. Do not republish protected project images."
+      },
+      {
+        "source_type": "official_background",
+        "title": "Landschaftspark Duisburg-Nord / Water Concept",
+        "url": "https://www.landschaftspark.de/en/background-knowledge/water-concept/",
+        "reliability_level": "high",
+        "rights_status": "link_only",
+        "notes": "Official background page on the water park and Old Emscher system."
       }
-    ]
+    ],
+    "architecture_text": {
+      "headline": "Landschaftspark Duisburg-Nord: Landschaftsprojekt als KosmoData-Referenz",
+      "overview": "Landschaftspark Duisburg-Nord wird als architektonische Referenz gelesen: Ort, Nutzung, Material, Traglogik und historische Position werden zusammengeführt, damit das Projekt nicht nur beschrieben, sondern im KosmoData-Netzwerk vergleichbar wird.",
+      "chapters": [
+        {
+          "title": "These",
+          "text": "Landschaftspark Duisburg-Nord wird über industrielle Umnutzung, Landscape Urbanism, Palimpsest, öffentlicher Raum, Landschaftsprojekt als räumliche These gelesen: Das Projekt zeigt, wie eine Bauaufgabe eine Haltung zu Arbeit, Lernen, Öffentlichkeit, Landschaft oder Alltag formuliert.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Netzwerk und DNA",
+          "text": "Landschaftspark Duisburg-Nord wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, worin seine DNA innerhalb ähnlicher Projekte abweicht.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Topos",
+          "text": "Der Ort Duisburg, Germany ist Teil der architektonischen Lesart: Er bestimmt Adresse, Maßstab, Landschaft, Infrastruktur und die Art, wie das Objekt in seinem Umfeld wirkt.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Typos",
+          "text": "Typologisch wird Landschaftspark Duisburg-Nord als Landschaftsprojekt geführt. Diese Kategorie dient nicht als starre Schublade, sondern als Vergleichsebene für Programme, Raumfolgen und Nutzungslogiken.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Stahl, Backstein, Vegetation, Wasser werden als konstruktiv-atmosphärische Ebene gelesen: Oberfläche, Traglogik, Fügung, Öffnung und Hülle bilden zusammen die tektonische Grammatik des Projekts.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumlogik",
+          "text": "Grundriss, Schnitt, Bewegung, Blick, Schwelle und Gebrauch werden als zusammenhängendes System gelesen. Für die spätere Plan- und 3D-Pipeline ist diese Raumlogik wichtiger als eine reine Bildbeschreibung.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Konflikt und Kritik",
+          "text": "Landschaftspark Duisburg-Nord wird auch über offene Spannungen gelesen: Rechte, Quellenlage, soziale Wirkung, Ökologie, industrielle Abhängigkeit oder institutionelle Macht bleiben als prüfbare Kritikfelder markiert.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "KosmoData-Layer und 3D-Potenzial",
+          "text": "Aus Landschaftspark Duisburg-Nord lassen sich Planlayer, Materiallayer und spätere Blender-Collections ableiten: Landschaftsprojekt, nachhaltige Architektur, industrielle Umnutzung, Landscape Urbanism, Palimpsest, öffentlicher Raum, Stahl, Backstein.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Entwurfsintelligenz",
+          "text": "Der Datenbankwert liegt in der übertragbaren Entwurfsregel: Landschaftspark Duisburg-Nord hilft, spätere Projekte nach Material, Typus, Struktur, Atmosphäre und historischem Netzwerk gezielt zu vergleichen.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "kosmodata-seed-from-research",
+      "generated_at": "2026-05-24T08:40:11.932Z",
+      "review_status": "draft_review"
+    },
+    "materials": {
+      "primary": [
+        "steel",
+        "brick",
+        "vegetation",
+        "water"
+      ],
+      "secondary": [
+        "craft_details",
+        "surface_system",
+        "construction_logic"
+      ],
+      "notes": "Seeded from local reviewed source metadata; verify exact material claims before publication."
+    },
+    "program": {
+      "type": "landscape_project",
+      "subtype": "sustainable_architecture_reference",
+      "public_access": "needs_review",
+      "components": [
+        "industrial-reuse",
+        "landscape-urbanism",
+        "palimpsest",
+        "public-space",
+        "landscape-project",
+        "landscape_project",
+        "sustainable_architecture"
+      ]
+    },
+    "context": {
+      "topography": "needs_site_review",
+      "setting": "Duisburg, Germany",
+      "landscape_relations": [
+        "site_context_needs_review"
+      ],
+      "urban_context": [
+        "landscape_architecture_1_2",
+        "research_seed_review"
+      ],
+      "construction_logic": [
+        "industrial-reuse",
+        "landscape-urbanism",
+        "palimpsest",
+        "public-space",
+        "landscape_project",
+        "sustainable_architecture"
+      ]
+    },
+    "database_tags": [
+      "source:wikimedia-commons-hero-candidate-landschaftspark-duisburg-nord",
+      "source:landschaftspark-duisburg-nord-official-site",
+      "source:latz-partner-duisburg-nord-landscape-park",
+      "source:landschaftspark-duisburg-nord-water-concept",
+      "typology:landscape-project",
+      "style:sustainable_architecture",
+      "theme:industrial-reuse",
+      "theme:landscape-urbanism",
+      "theme:palimpsest",
+      "theme:public-space",
+      "theme:landscape-project",
+      "material:steel",
+      "material:brick",
+      "material:vegetation",
+      "material:water",
+      "rights:review-required",
+      "blender:landscape-project-layer-candidate",
+      "plan:vector-review-required",
+      "viewer:3d-layer-review-required"
+    ],
+    "model_assets": [
+      {
+        "model_type": "site_model",
+        "title": "Landschaftspark Duisburg-Nord Site/context study model",
+        "r2_key": "entries/landschaftspark-duisburg-nord/models/site.glb",
+        "format": "glb",
+        "lod_level": "preview",
+        "source_basis": "Wikimedia Commons hero candidate / Landschaftspark Duisburg-Nord | Landschaftspark Duisburg-Nord / Official Site | Latz + Partner / Duisburg Nord Landscape Park | Landschaftspark Duisburg-Nord / Water Concept",
+        "generation_method": "procedural",
+        "review_status": "draft",
+        "confidence_score": 0.42
+      },
+      {
+        "model_type": "structure_model",
+        "title": "Landschaftspark Duisburg-Nord Structure and spatial order study model",
+        "r2_key": "entries/landschaftspark-duisburg-nord/models/structure.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "Wikimedia Commons hero candidate / Landschaftspark Duisburg-Nord | Landschaftspark Duisburg-Nord / Official Site | Latz + Partner / Duisburg Nord Landscape Park | Landschaftspark Duisburg-Nord / Water Concept",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      },
+      {
+        "model_type": "tectonic_model",
+        "title": "Landschaftspark Duisburg-Nord Material, tectonic and filter-layer study model",
+        "r2_key": "entries/landschaftspark-duisburg-nord/models/tectonic.glb",
+        "format": "glb",
+        "lod_level": "study",
+        "source_basis": "Wikimedia Commons hero candidate / Landschaftspark Duisburg-Nord | Landschaftspark Duisburg-Nord / Official Site | Latz + Partner / Duisburg Nord Landscape Park | Landschaftspark Duisburg-Nord / Water Concept; tags: source:wikimedia-commons-hero-candidate-landschaftspark-duisburg-nord, source:landschaftspark-duisburg-nord-official-site, source:latz-partner-duisburg-nord-landscape-park, source:landschaftspark-duisburg-nord-water-concept, typology:landscape-project, style:sustainable_architecture, theme:industrial-reuse, theme:landscape-urbanism",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      }
+    ],
+    "analysis_layers": [
+      {
+        "analysis_type": "structure",
+        "summary": "Landschaftspark Duisburg-Nord needs a reviewed structural reading connecting steel, brick, vegetation with construction logic, span, support and assembly.",
+        "data": {
+          "seed_tags": [
+            "structure:needs_review",
+            "steel",
+            "brick",
+            "vegetation",
+            "water"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "material_system",
+        "summary": "Landschaftspark Duisburg-Nord should be tagged through steel, brick, vegetation, water and verified against primary sources before public material claims are made.",
+        "data": {
+          "seed_tags": [
+            "steel",
+            "brick",
+            "vegetation",
+            "water"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "spatial_order",
+        "summary": "Landschaftspark Duisburg-Nord should be read through program, movement, room sequence, exterior relation and typological position rather than as a single image.",
+        "data": {
+          "seed_tags": [
+            "spatial_order",
+            "landscape_project"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "typology",
+        "summary": "Landschaftspark Duisburg-Nord is currently classified as landscape_project; the seed must verify how this type differs from related entries with the same DNA.",
+        "data": {
+          "seed_tags": [
+            "typology",
+            "landscape_project",
+            "Duisburg, Germany"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "summary": "Landschaftspark Duisburg-Nord needs filter checks for themes, materials, rights, plan readiness, 3D layer readiness and viewer filters.",
+        "data": {
+          "seed_tags": [
+            "source:wikimedia-commons-hero-candidate-landschaftspark-duisburg-nord",
+            "source:landschaftspark-duisburg-nord-official-site",
+            "source:latz-partner-duisburg-nord-landscape-park",
+            "source:landschaftspark-duisburg-nord-water-concept",
+            "typology:landscape-project",
+            "style:sustainable_architecture",
+            "theme:industrial-reuse",
+            "theme:landscape-urbanism",
+            "theme:palimpsest",
+            "theme:public-space"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      }
+    ],
+    "database_profile": {
+      "status": "reviewed",
+      "r2_prefix": "entries/landschaftspark-duisburg-nord",
+      "source_count": 4,
+      "media_count": 4,
+      "model_count": 3,
+      "analysis_count": 5,
+      "tag_count": 19,
+      "rights_summary": "Public text and metadata are allowed; hero media is public-safe with attribution (cc_by_sa); exact plans, protected photos and models remain review-only until rights are cleared.",
+      "updated_at": "2026-05-24T08:40:12.107Z"
+    },
+    "ingestion_status": {
+      "stage": "needs_review",
+      "source_status": "reviewed",
+      "asset_status": "ready",
+      "model_status": "planned",
+      "updated_at": "2026-05-24T08:40:12.108Z"
+    }
   },
   {
     "id": "s-m-l-xl",

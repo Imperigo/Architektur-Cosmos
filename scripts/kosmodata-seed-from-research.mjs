@@ -56,7 +56,7 @@ function buildSeed(entry, researchPacks, localSources) {
   const program = inferProgram(entry);
   const context = inferContext(entry);
   const databaseTags = buildDatabaseTags(entry, materials, program, context);
-  const themes = [...new Set([...cleanThemes(entry.themes || []), ...tagThemes(databaseTags)])].slice(0, 10);
+  const themes = dedupeThemes([...cleanThemes(entry.themes || [], program.type), ...tagThemes(databaseTags)]).slice(0, 10);
   const analysisLayers = buildAnalysisLayers(entry, materials, program, context, databaseTags);
   const modelAssets = buildModelAssets(entry, researchPacks, databaseTags);
 
@@ -257,9 +257,11 @@ function inferMaterials(entry, localSources = []) {
     ['brick', ['brick', 'backstein', 'red house']],
     ['timber', ['timber', 'holz', 'wood', 'arts and crafts']],
     ['glass', ['glass', 'glas']],
+    ['steel', ['steel', 'stahl']],
     ['iron', ['iron', 'eisen']],
     ['concrete', ['concrete', 'beton']],
     ['stone', ['stone', 'stein', 'masonry']],
+    ['water', ['water', 'wasser', 'emscher']],
     ['vegetation', ['garden', 'garten', 'landscape', 'park']]
   ];
   const primary = dictionary.filter(([, terms]) => terms.some((term) => hasTerm(haystack, term))).map(([tag]) => tag);
@@ -272,12 +274,16 @@ function inferMaterials(entry, localSources = []) {
 
 function inferProgram(entry) {
   const haystack = normalize([entry.entry_type, entry.title, entry.short_description, ...(entry.themes || [])].join(' '));
-  const type = haystack.includes('house') || haystack.includes('domestic') || haystack.includes('wohnen') ? 'domestic_house' : entry.entry_type;
+  let type = entry.entry_type;
+  if (entry.entry_type === 'landscape_project' || haystack.includes('landscape') || haystack.includes('park')) type = 'landscape_project';
+  else if (haystack.includes('factory') || haystack.includes('fabrik') || haystack.includes('industrie') || haystack.includes('industrial')) type = 'factory';
+  else if (haystack.includes('school') || haystack.includes('schule') || haystack.includes('pedagogy') || haystack.includes('workshop') || haystack.includes('bauhaus')) type = 'school';
+  else if (haystack.includes('house') || haystack.includes('domestic') || haystack.includes('wohnen') || haystack.includes('red house')) type = 'domestic_house';
   return {
     type,
     subtype: `${entry.style_sector}_reference`,
     public_access: 'needs_review',
-    components: [...new Set([...cleanThemes(entry.themes || []), entry.entry_type, entry.style_sector])].slice(0, 10)
+    components: [...new Set([...cleanThemes(entry.themes || [], type), entry.entry_type, entry.style_sector])].slice(0, 10)
   };
 }
 
@@ -287,7 +293,7 @@ function inferContext(entry) {
     setting: [entry.city, entry.country].filter(Boolean).join(', ') || 'needs_location_review',
     landscape_relations: ['site_context_needs_review'],
     urban_context: [entry.lecture_cluster?.[0], entry.source_quality].filter(Boolean),
-    construction_logic: [...new Set([...cleanThemes(entry.themes || []), entry.style_sector])].slice(0, 8)
+    construction_logic: [...new Set([...cleanThemes(entry.themes || []), entry.entry_type, entry.style_sector].filter(Boolean))].slice(0, 8)
   };
 }
 
@@ -296,7 +302,7 @@ function buildDatabaseTags(entry, materials, program) {
     ...(entry.source_candidates || []).map((source) => `source:${slugify(source.title || source.source_type || 'source')}`),
     `typology:${slugify(program.type)}`,
     `style:${entry.style_sector}`,
-    ...cleanThemes(entry.themes || []).map((theme) => `theme:${slugify(theme)}`),
+    ...cleanThemes(entry.themes || [], program.type).map((theme) => `theme:${slugify(theme)}`),
     ...(materials.primary || []).map((material) => `material:${slugify(material)}`),
     `rights:review-required`,
     `blender:${slugify(program.type)}-layer-candidate`,
@@ -389,12 +395,14 @@ function buildArchitectureText(entry, materials, program, context, databaseTags)
   const materialText = listText(materials.primary);
   const programText = labelFor(program.type);
   if (entry.architecture_text?.chapters?.length) {
+    const curatedChapters = entry.architecture_text.chapters.filter((chapter) => !normalize(chapter.source_basis).includes('seed from research'));
+    if (curatedChapters.length < 3) return buildGeneratedArchitectureText(entry, materials, program, context, databaseTags);
     const generatedChapterTitles = new Set([
       normalize('Netzwerk und DNA'),
       normalize('Topos / Typos / Tektonik'),
       normalize('Datenbank- und Modellwert')
     ]);
-    const baseChapters = entry.architecture_text.chapters.filter((chapter) => !generatedChapterTitles.has(normalize(chapter.title)));
+    const baseChapters = curatedChapters.filter((chapter) => !generatedChapterTitles.has(normalize(chapter.title)));
     const existingTitles = new Set(baseChapters.map((chapter) => normalize(chapter.title)));
     const additions = [
       chapter('Netzwerk und DNA', `${entry.title} wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, wie es sich innerhalb derselben architektonischen DNA unterscheidet: durch Ort, Auftrag, Fügung, Gebrauch und kulturelle Haltung.`),
@@ -411,20 +419,26 @@ function buildArchitectureText(entry, materials, program, context, databaseTags)
     };
   }
 
-  const themes = (entry.themes || []).join(', ') || 'noch zu prüfende Themen';
+  return buildGeneratedArchitectureText(entry, materials, program, context, databaseTags);
+}
+
+function buildGeneratedArchitectureText(entry, materials, program, context, databaseTags) {
+  const materialText = listText(materials.primary);
+  const programText = labelFor(program.type);
+  const themes = listText(cleanThemes(entry.themes || [], program.type)) || 'noch zu prüfende Themen';
   return {
     headline: entry.architecture_text?.headline || `${entry.title}: ${programText} als KosmoData-Referenz`,
-    overview: `${entry.title} wird als Review-Kandidat gelesen. Der Seed verbindet bestehende Metadaten, Quellenpakete, Materialhinweise und Analysefragen, damit daraus nach Prüfung ein präziser KosmoData-Eintrag entstehen kann.`,
+    overview: `${entry.title} wird als architektonische Referenz gelesen: Ort, Nutzung, Material, Traglogik und historische Position werden zusammengeführt, damit das Projekt nicht nur beschrieben, sondern im KosmoData-Netzwerk vergleichbar wird.`,
     chapters: [
-      chapter('These', `${entry.title} muss als architektonische These aus ${themes} gelesen werden, nicht als neutrale Kurzbeschreibung.`),
-      chapter('Netzwerk und DNA', `${entry.title} wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen.`),
-      chapter('Topos', `Der Ort ${context.setting} wird als aktiver Teil des architektonischen Arguments geprüft.`),
-      chapter('Typos', `Typologisch ist der Seed vorerst als ${programText} angelegt; die genaue Differenz zu verwandten Typen braucht Quellenreview.`),
-      chapter('Tektonik', `Materialien wie ${materialText} werden als Fügung, Oberfläche, Traglogik und architektonische Wirkung geprüft.`),
-      chapter('Raumlogik', `Grundriss, Schnitt, Bewegung, Blick, Schwelle und Gebrauch werden als zusammenhängendes System analysiert.`),
-      chapter('Konflikt und Kritik', `Der Seed markiert offene Fragen zu Rechte, Quellen, sozialem Kontext, Macht, Ökologie oder technischer Abhängigkeit.`),
-      chapter('KosmoData-Layer und 3D-Potenzial', `Vorgeschlagene Filter und Layer: ${databaseTags.slice(0, 10).join(', ')}.`),
-      chapter('Entwurfsintelligenz', `Die spätere Textfassung soll klären, welche übertragbare Entwurfsregel aus ${entry.title} gewonnen werden kann.`)
+      chapter('These', `${entry.title} wird über ${themes} als räumliche These gelesen: Das Projekt zeigt, wie eine Bauaufgabe eine Haltung zu Arbeit, Lernen, Öffentlichkeit, Landschaft oder Alltag formuliert.`),
+      chapter('Netzwerk und DNA', `${entry.title} wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, worin seine DNA innerhalb ähnlicher Projekte abweicht.`),
+      chapter('Topos', `Der Ort ${context.setting} ist Teil der architektonischen Lesart: Er bestimmt Adresse, Maßstab, Landschaft, Infrastruktur und die Art, wie das Objekt in seinem Umfeld wirkt.`),
+      chapter('Typos', `Typologisch wird ${entry.title} als ${programText} geführt. Diese Kategorie dient nicht als starre Schublade, sondern als Vergleichsebene für Programme, Raumfolgen und Nutzungslogiken.`),
+      chapter('Tektonik', `${materialText} werden als konstruktiv-atmosphärische Ebene gelesen: Oberfläche, Traglogik, Fügung, Öffnung und Hülle bilden zusammen die tektonische Grammatik des Projekts.`),
+      chapter('Raumlogik', `Grundriss, Schnitt, Bewegung, Blick, Schwelle und Gebrauch werden als zusammenhängendes System gelesen. Für die spätere Plan- und 3D-Pipeline ist diese Raumlogik wichtiger als eine reine Bildbeschreibung.`),
+      chapter('Konflikt und Kritik', `${entry.title} wird auch über offene Spannungen gelesen: Rechte, Quellenlage, soziale Wirkung, Ökologie, industrielle Abhängigkeit oder institutionelle Macht bleiben als prüfbare Kritikfelder markiert.`),
+      chapter('KosmoData-Layer und 3D-Potenzial', `Aus ${entry.title} lassen sich Planlayer, Materiallayer und spätere Blender-Collections ableiten: ${listText(publicTagLabels(databaseTags))}.`),
+      chapter('Entwurfsintelligenz', `Der Datenbankwert liegt in der übertragbaren Entwurfsregel: ${entry.title} hilft, spätere Projekte nach Material, Typus, Struktur, Atmosphäre und historischem Netzwerk gezielt zu vergleichen.`)
     ],
     language: 'de',
     generator: 'kosmodata-seed-from-research',
@@ -474,18 +488,37 @@ function labelFor(value) {
     timber: 'Holz',
     concrete: 'Beton',
     glass: 'Glas',
+    steel: 'Stahl',
     iron: 'Eisen',
     stone: 'Stein',
     vegetation: 'Vegetation',
+    water: 'Wasser',
     'thing-modernity': 'Objektmoderne',
     'arts-and-crafts': 'Arts and Crafts',
     hygiene: 'Hygiene',
     domesticity: 'Wohnkultur',
     'domestic-house': 'Wohnhaus',
     'pre-modern-architecture': 'vormoderne Architektur',
-    pre_modern_architecture: 'vormoderne Architektur'
+    pre_modern_architecture: 'vormoderne Architektur',
+    modern_architecture: 'moderne Architektur',
+    'modern-architecture': 'moderne Architektur',
+    sustainable_architecture: 'nachhaltige Architektur',
+    'sustainable-architecture': 'nachhaltige Architektur',
+    factory: 'Fabrik',
+    school: 'Schule',
+    'glass-corner': 'Glasecke',
+    'modern-pedagogy': 'moderne Pädagogik',
+    'landscape-project': 'Landschaftsprojekt',
+    'industrial-reuse': 'industrielle Umnutzung',
+    'landscape-urbanism': 'Landscape Urbanism',
+    palimpsest: 'Palimpsest',
+    'public-space': 'öffentlicher Raum',
+    transparency: 'Transparenz',
+    industry: 'Industrie',
+    workshop: 'Werkstatt'
   };
-  return labels[value] || String(value || '').replace(/[_-]/g, ' ');
+  const raw = String(value || '');
+  return labels[raw] || labels[slugify(raw)] || raw.replace(/[_-]/g, ' ');
 }
 
 function listText(values) {
@@ -534,9 +567,26 @@ function tagThemes(databaseTags) {
     .map(stripTagPrefix);
 }
 
-function cleanThemes(themes) {
+function cleanThemes(themes, programType = null) {
   const materialLike = new Set(['brick', 'timber', 'stone', 'concrete', 'glass', 'iron', 'wood', 'holz', 'backstein', 'stein']);
-  return themes.filter((theme) => !materialLike.has(slugify(theme)));
+  const typologyLike = new Set(['domestic-house', 'building', 'landscape-project', 'factory', 'school']);
+  const allowedTypology = slugify(programType || '');
+  return dedupeThemes(themes.filter((theme) => {
+    const slug = slugify(theme);
+    if (materialLike.has(slug)) return false;
+    if (typologyLike.has(slug) && slug !== allowedTypology) return false;
+    return true;
+  }));
+}
+
+function dedupeThemes(themes) {
+  const seen = new Set();
+  return themes.filter((theme) => {
+    const slug = slugify(theme);
+    if (!slug || seen.has(slug)) return false;
+    seen.add(slug);
+    return true;
+  });
 }
 
 function sourceBasisText(entry, researchPacks) {
