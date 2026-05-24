@@ -25,8 +25,9 @@ async function main() {
   if (!entry) throw new Error(`No entry found for "${slug}".`);
 
   const researchPacks = await findResearchPacks(entry);
-  const seed = buildSeed(entry, researchPacks);
-  const review = buildSeedReview(entry, seed, researchPacks);
+  const localSources = await findLocalSources(entry);
+  const seed = buildSeed(entry, researchPacks, localSources);
+  const review = buildSeedReview(entry, seed, researchPacks, localSources);
   const outputDir = path.join(outRoot, entry.slug);
   const intakeDir = path.join(root, 'archive-intake', entry.slug, 'enrichment');
   await Promise.all([outputDir, intakeDir].map((directory) => mkdir(directory, { recursive: true })));
@@ -39,6 +40,7 @@ async function main() {
   console.log('KosmoData seed candidate from research');
   console.log(`Entry: ${entry.title} (${entry.slug})`);
   console.log(`Research packs: ${researchPacks.length}`);
+  console.log(`Local sources: ${localSources.length}`);
   console.log(`Readiness: ${review.readiness}`);
   console.log('Wrote:');
   console.log(`- out/kosmodata-enrichment/${entry.slug}/seed-candidate.md`);
@@ -48,12 +50,13 @@ async function main() {
   console.log(`npm run kosmodata:enrich -- --entry ${entry.slug}`);
 }
 
-function buildSeed(entry, researchPacks) {
-  const sourceCandidates = buildSourceCandidates(entry, researchPacks);
-  const materials = inferMaterials(entry);
+function buildSeed(entry, researchPacks, localSources) {
+  const sourceCandidates = buildSourceCandidates(entry, researchPacks, localSources);
+  const materials = inferMaterials(entry, localSources);
   const program = inferProgram(entry);
   const context = inferContext(entry);
   const databaseTags = buildDatabaseTags(entry, materials, program, context);
+  const themes = [...new Set([...cleanThemes(entry.themes || []), ...tagThemes(databaseTags)])].slice(0, 10);
   const analysisLayers = buildAnalysisLayers(entry, materials, program, context, databaseTags);
   const modelAssets = buildModelAssets(entry, researchPacks, databaseTags);
 
@@ -67,12 +70,14 @@ function buildSeed(entry, researchPacks) {
     writes_public_database: false,
     source_basis: {
       existing_entry: true,
+      local_source_count: localSources.length,
       research_pack_count: researchPacks.length,
+      local_sources: localSources.map((source) => source.url || source.title),
       research_packs: researchPacks.map((pack) => pack.path)
     },
     entry_patch: {
       source_quality: sourceCandidates.length >= 3 ? 'research_seed_review' : entry.source_quality,
-      themes: [...new Set([...(entry.themes || []), ...tagThemes(databaseTags)])].slice(0, 10),
+      themes,
       short_description: improvedShortDescription(entry, materials, program),
       one_sentence: improvedOneSentence(entry, materials, program),
       full_description: improvedFullDescription(entry, materials, program, context),
@@ -99,10 +104,12 @@ function buildSeed(entry, researchPacks) {
   };
 }
 
-function buildSeedReview(entry, seed, researchPacks) {
+function buildSeedReview(entry, seed, researchPacks, localSources) {
   const sourceCount = seed.entry_patch.source_candidates.length;
+  const projectSpecificSourceCount = seed.entry_patch.source_candidates.filter((source) => source.project_specific).length;
   const blockers = [];
   if (sourceCount < 3) blockers.push('Less than 3 source candidates; keep this as a rough seed.');
+  if (projectSpecificSourceCount < 2) blockers.push('Less than 2 project-specific source candidates; add official/archive/project sources before enrichment promotion.');
   if (!seed.entry_patch.media?.some((media) => media.type === 'exterior' && media.url)) blockers.push('No public-safe hero media found.');
   const warnings = [];
   if (!researchPacks.length) warnings.push('No existing database research pack found; seed was inferred from entry metadata and existing sources only.');
@@ -115,7 +122,13 @@ function buildSeedReview(entry, seed, researchPacks) {
     blockers,
     warnings,
     research_packs: researchPacks.map((pack) => ({ path: pack.path, topic: pack.topic, source_count: pack.sources?.length || 0 })),
+    local_sources: localSources.map((source) => ({
+      title: source.title || source.url,
+      url: source.url,
+      project_specific: source.project_specific
+    })),
     source_count: sourceCount,
+    project_specific_source_count: projectSpecificSourceCount,
     generated_outputs: {
       seed_candidate: `archive-intake/${entry.slug}/enrichment/seed-candidate.json`,
       enrichment_review: `out/kosmodata-enrichment/${entry.slug}/enrichment-review.md`
@@ -151,6 +164,40 @@ async function findResearchPacks(entry) {
   return packs.sort((a, b) => b.match_score - a.match_score).slice(0, 4);
 }
 
+async function findLocalSources(entry) {
+  const sourceFiles = [
+    path.join(root, 'archive-inbox', entry.slug, 'sources.json'),
+    path.join(root, 'archive-inbox', entry.slug, 'sources.txt')
+  ];
+  const sources = [];
+  for (const filePath of sourceFiles) {
+    const content = await readText(filePath, null);
+    if (!content) continue;
+    if (filePath.endsWith('.json')) {
+      const parsed = JSON.parse(content);
+      sources.push(...normalizeLocalSourceList(Array.isArray(parsed) ? parsed : parsed.sources || [], entry));
+      continue;
+    }
+    sources.push(...normalizeLocalSourceList(content.split(/\r?\n/).filter(Boolean).map((url) => ({ url })), entry));
+  }
+  return dedupeSources(sources);
+}
+
+function normalizeLocalSourceList(sources, entry) {
+  return sources
+    .filter((source) => source && (source.url || source.title))
+    .map((source) => ({
+      source_type: source.source_type || 'local_source_candidate',
+      title: source.title || source.url,
+      url: source.url,
+      reliability_level: source.reliability_level || 'needs_review',
+      rights_status: source.rights_status || 'link_only',
+      notes: source.notes || 'Local intake source candidate. Review before promotion.',
+      project_specific: source.project_specific ?? sourceIsProjectSpecific(source, entry),
+      material_tags: Array.isArray(source.material_tags) ? source.material_tags : []
+    }));
+}
+
 async function listFiles(directory) {
   try {
     const entries = await readdir(directory, { withFileTypes: true });
@@ -165,14 +212,15 @@ async function listFiles(directory) {
   }
 }
 
-function buildSourceCandidates(entry, researchPacks) {
+function buildSourceCandidates(entry, researchPacks, localSources) {
   const existing = (entry.source_candidates || []).map((source) => ({
     source_type: source.source_type || 'source',
     title: source.title || source.url,
     url: source.url,
     reliability_level: source.reliability_level || 'existing_entry_source',
     rights_status: source.rights_status || 'link_only',
-    notes: source.notes || 'Existing entry source candidate.'
+    notes: source.notes || 'Existing entry source candidate.',
+    project_specific: sourceIsProjectSpecific(source, entry)
   }));
   const fromPacks = researchPacks.flatMap((pack) => (pack.sources || []).map((source) => ({
     source_type: source.source_type || 'research_pack_source',
@@ -180,13 +228,31 @@ function buildSourceCandidates(entry, researchPacks) {
     url: source.url,
     reliability_level: source.reliability || 'needs_review',
     rights_status: source.rights_mode || 'link_only',
-    notes: `Research pack source for "${pack.topic || entry.title}". Query: ${source.query || 'n/a'}`
+    notes: `Research pack source for "${pack.topic || entry.title}". Query: ${source.query || 'n/a'}`,
+    project_specific: sourceIsProjectSpecific(source, entry)
   })));
-  return dedupeSources([...existing, ...fromPacks]).slice(0, 8);
+  return dedupeSources([...existing, ...localSources, ...fromPacks]).slice(0, 10);
 }
 
-function inferMaterials(entry) {
-  const haystack = normalize([entry.title, entry.short_description, entry.full_description, ...(entry.themes || [])].join(' '));
+function inferMaterials(entry, localSources = []) {
+  const localMaterialTags = localSources.flatMap((source) => source.material_tags || []).filter(Boolean);
+  if (localMaterialTags.length) {
+    return {
+      primary: [...new Set(localMaterialTags.map(slugify))],
+      secondary: ['craft_details', 'surface_system', 'construction_logic'],
+      notes: 'Seeded from local reviewed source metadata; verify exact material claims before publication.'
+    };
+  }
+
+  const curatedChapterText = (entry.architecture_text?.chapters || [])
+    .filter((chapter) => !normalize(chapter.source_basis).includes('seed from research'))
+    .map((chapter) => chapter.text);
+  const fallbackText = [entry.short_description, entry.full_description];
+  const haystack = normalize([
+    entry.title,
+    ...(curatedChapterText.length ? curatedChapterText : fallbackText),
+    ...(entry.themes || [])
+  ].join(' '));
   const dictionary = [
     ['brick', ['brick', 'backstein', 'red house']],
     ['timber', ['timber', 'holz', 'wood', 'arts and crafts']],
@@ -196,7 +262,7 @@ function inferMaterials(entry) {
     ['stone', ['stone', 'stein', 'masonry']],
     ['vegetation', ['garden', 'garten', 'landscape', 'park']]
   ];
-  const primary = dictionary.filter(([, terms]) => terms.some((term) => haystack.includes(term))).map(([tag]) => tag);
+  const primary = dictionary.filter(([, terms]) => terms.some((term) => hasTerm(haystack, term))).map(([tag]) => tag);
   return {
     primary: primary.length ? primary : ['needs_material_review'],
     secondary: ['craft_details', 'surface_system', 'construction_logic'].filter((tag) => !primary.includes(tag)),
@@ -211,7 +277,7 @@ function inferProgram(entry) {
     type,
     subtype: `${entry.style_sector}_reference`,
     public_access: 'needs_review',
-    components: [...new Set([...(entry.themes || []), entry.entry_type, entry.style_sector])].slice(0, 10)
+    components: [...new Set([...cleanThemes(entry.themes || []), entry.entry_type, entry.style_sector])].slice(0, 10)
   };
 }
 
@@ -221,7 +287,7 @@ function inferContext(entry) {
     setting: [entry.city, entry.country].filter(Boolean).join(', ') || 'needs_location_review',
     landscape_relations: ['site_context_needs_review'],
     urban_context: [entry.lecture_cluster?.[0], entry.source_quality].filter(Boolean),
-    construction_logic: [...new Set([...(entry.themes || []), entry.style_sector])].slice(0, 8)
+    construction_logic: [...new Set([...cleanThemes(entry.themes || []), entry.style_sector])].slice(0, 8)
   };
 }
 
@@ -230,7 +296,7 @@ function buildDatabaseTags(entry, materials, program) {
     ...(entry.source_candidates || []).map((source) => `source:${slugify(source.title || source.source_type || 'source')}`),
     `typology:${slugify(program.type)}`,
     `style:${entry.style_sector}`,
-    ...(entry.themes || []).map((theme) => `theme:${slugify(theme)}`),
+    ...cleanThemes(entry.themes || []).map((theme) => `theme:${slugify(theme)}`),
     ...(materials.primary || []).map((material) => `material:${slugify(material)}`),
     `rights:review-required`,
     `blender:${slugify(program.type)}-layer-candidate`,
@@ -320,16 +386,41 @@ function buildViewerRequirements(entry, materials, modelAssets) {
 }
 
 function buildArchitectureText(entry, materials, program, context, databaseTags) {
+  const materialText = listText(materials.primary);
+  const programText = labelFor(program.type);
+  if (entry.architecture_text?.chapters?.length) {
+    const generatedChapterTitles = new Set([
+      normalize('Netzwerk und DNA'),
+      normalize('Topos / Typos / Tektonik'),
+      normalize('Datenbank- und Modellwert')
+    ]);
+    const baseChapters = entry.architecture_text.chapters.filter((chapter) => !generatedChapterTitles.has(normalize(chapter.title)));
+    const existingTitles = new Set(baseChapters.map((chapter) => normalize(chapter.title)));
+    const additions = [
+      chapter('Netzwerk und DNA', `${entry.title} wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, wie es sich innerhalb derselben architektonischen DNA unterscheidet: durch Ort, Auftrag, Fügung, Gebrauch und kulturelle Haltung.`),
+      chapter('Topos / Typos / Tektonik', `Topos, Typos und Tektonik werden zusammen gelesen: Ort und Landschaft bilden die Setzung, ${programText} bildet den typologischen Ausgangspunkt, und ${materialText} markieren die konstruktiv-atmosphärische Lesart.`),
+      chapter('Datenbank- und Modellwert', `Für KosmoData ist ${entry.title} relevant, weil sich daraus Filter, Vergleichsgruppen, Planlayer und spätere Blender-Collections ableiten lassen: ${listText(publicTagLabels(databaseTags))}.`)
+    ].filter((item) => !existingTitles.has(normalize(item.title)));
+
+    return {
+      ...entry.architecture_text,
+      chapters: [...baseChapters, ...additions],
+      generator: 'kosmodata-seed-from-research',
+      generated_at: new Date().toISOString(),
+      review_status: entry.architecture_text.review_status || 'draft_review'
+    };
+  }
+
   const themes = (entry.themes || []).join(', ') || 'noch zu prüfende Themen';
   return {
-    headline: entry.architecture_text?.headline || `${entry.title}: ${program.type} als KosmoData-Referenz`,
+    headline: entry.architecture_text?.headline || `${entry.title}: ${programText} als KosmoData-Referenz`,
     overview: `${entry.title} wird als Review-Kandidat gelesen. Der Seed verbindet bestehende Metadaten, Quellenpakete, Materialhinweise und Analysefragen, damit daraus nach Prüfung ein präziser KosmoData-Eintrag entstehen kann.`,
     chapters: [
       chapter('These', `${entry.title} muss als architektonische These aus ${themes} gelesen werden, nicht als neutrale Kurzbeschreibung.`),
       chapter('Netzwerk und DNA', `${entry.title} wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen.`),
       chapter('Topos', `Der Ort ${context.setting} wird als aktiver Teil des architektonischen Arguments geprüft.`),
-      chapter('Typos', `Typologisch ist der Seed vorerst als ${program.type} angelegt; die genaue Differenz zu verwandten Typen braucht Quellenreview.`),
-      chapter('Tektonik', `Materialien wie ${materials.primary.join(', ')} werden als Fügung, Oberfläche, Traglogik und architektonische Wirkung geprüft.`),
+      chapter('Typos', `Typologisch ist der Seed vorerst als ${programText} angelegt; die genaue Differenz zu verwandten Typen braucht Quellenreview.`),
+      chapter('Tektonik', `Materialien wie ${materialText} werden als Fügung, Oberfläche, Traglogik und architektonische Wirkung geprüft.`),
       chapter('Raumlogik', `Grundriss, Schnitt, Bewegung, Blick, Schwelle und Gebrauch werden als zusammenhängendes System analysiert.`),
       chapter('Konflikt und Kritik', `Der Seed markiert offene Fragen zu Rechte, Quellen, sozialem Kontext, Macht, Ökologie oder technischer Abhängigkeit.`),
       chapter('KosmoData-Layer und 3D-Potenzial', `Vorgeschlagene Filter und Layer: ${databaseTags.slice(0, 10).join(', ')}.`),
@@ -362,21 +453,90 @@ function normalizeMedia(entry) {
 }
 
 function improvedShortDescription(entry, materials, program) {
-  return `${entry.title} wird als ${program.type} mit Fokus auf ${materials.primary.slice(0, 3).join(', ')} und räumlicher DNA aus ${entry.themes?.slice(0, 3).join(', ') || 'noch zu prüfenden Themen'} vorbereitet.`;
+  return `${entry.title} verbindet ${labelFor(program.type)}, ${listText(materials.primary.slice(0, 3))} und die räumliche DNA von ${listText(entry.themes?.slice(0, 3) || ['noch zu prüfenden Themen'])} zu einer prägnanten Architekturlesart.`;
 }
 
 function improvedOneSentence(entry, materials, program) {
-  return `${entry.title} ist ein KosmoData-Seed für ${program.type}, bei dem ${materials.primary.slice(0, 4).join(', ')} sowie Topos, Typos, Tektonik, Plan- und 3D-Layer geprüft werden.`;
+  return `${entry.title} zeigt, wie ${labelFor(program.type)}, ${listText(materials.primary.slice(0, 4))}, Topos, Typos und Tektonik zu einer belastbaren Referenz für Plan-, Material- und 3D-Layer werden.`;
 }
 
 function improvedFullDescription(entry, materials, program, context) {
-  return `${entry.title} wird über die KosmoData-Pipeline nicht direkt veröffentlicht, sondern als Review-Kandidat aufgebaut. Der Seed übernimmt bestehende Metadaten und Quellenpfade, ergänzt Material-, Programm-, Kontext-, Plan- und Modellhinweise und markiert offene Prüfstellen. Architektonisch soll der spätere Eintrag erklären, wie ${program.type}, ${materials.primary.join(', ')}, ${context.setting}, räumliche Ordnung und historische Position zusammen ein belastbares Referenzobjekt ergeben.`;
+  return `${entry.title} wird als architektonisches Referenzobjekt über ${labelFor(program.type)}, ${listText(materials.primary)}, ${context.setting}, räumliche Ordnung und historische Position gelesen. Entscheidend ist nicht die reine Datierung, sondern wie Setzung, Material, Gebrauch, Fügung und kulturelle Haltung zusammen eine übertragbare Entwurfsintelligenz bilden. Für KosmoData werden daraus zugleich Planlayer, Modelllayer, Filterbegriffe und Vergleichsbeziehungen abgeleitet.`;
+}
+
+function labelFor(value) {
+  const labels = {
+    domestic_house: 'Wohnhaus',
+    building: 'Bauwerk',
+    urban_plan: 'Stadtplan',
+    landscape_project: 'Landschaftsprojekt',
+    brick: 'Backstein',
+    timber: 'Holz',
+    concrete: 'Beton',
+    glass: 'Glas',
+    iron: 'Eisen',
+    stone: 'Stein',
+    vegetation: 'Vegetation',
+    'thing-modernity': 'Objektmoderne',
+    'arts-and-crafts': 'Arts and Crafts',
+    hygiene: 'Hygiene',
+    domesticity: 'Wohnkultur',
+    'domestic-house': 'Wohnhaus',
+    'pre-modern-architecture': 'vormoderne Architektur',
+    pre_modern_architecture: 'vormoderne Architektur'
+  };
+  return labels[value] || String(value || '').replace(/[_-]/g, ' ');
+}
+
+function listText(values) {
+  return [...new Set(values.map(labelFor))].join(', ');
+}
+
+function tagLabel(value) {
+  return String(value || '').replace(/^[a-z_ -]+:/i, '');
+}
+
+function publicTagLabels(tags) {
+  return tags
+    .filter((tag) => /^(typology|style|theme|material):/.test(tag))
+    .map(tagLabel)
+    .filter((tag, index, all) => all.indexOf(tag) === index)
+    .slice(0, 8);
+}
+
+function hasTerm(haystack, rawTerm) {
+  const term = normalize(rawTerm);
+  if (!term) return false;
+  return new RegExp(`(^|\\s)${escapeRegExp(term)}(\\s|$)`).test(haystack);
+}
+
+function escapeRegExp(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function sourceIsProjectSpecific(source, entry) {
+  const haystack = normalize([source.title, source.name, source.id, source.url].filter(Boolean).join(' '));
+  const needles = [
+    entry.slug,
+    entry.id,
+    entry.title,
+    ...(entry.authors || [])
+  ]
+    .map(normalize)
+    .flatMap((value) => [value, ...value.split(/\s+/).filter((part) => part.length > 4)])
+    .filter(Boolean);
+  return needles.some((needle) => haystack.includes(needle));
 }
 
 function tagThemes(databaseTags) {
   return databaseTags
-    .filter((tag) => /^(typology|material|structure|spatial|theme):/.test(tag))
+    .filter((tag) => /^(typology|structure|spatial|theme):/.test(tag))
     .map(stripTagPrefix);
+}
+
+function cleanThemes(themes) {
+  const materialLike = new Set(['brick', 'timber', 'stone', 'concrete', 'glass', 'iron', 'wood', 'holz', 'backstein', 'stein']);
+  return themes.filter((theme) => !materialLike.has(slugify(theme)));
 }
 
 function sourceBasisText(entry, researchPacks) {
@@ -428,6 +588,16 @@ function renderSeedMarkdown(review) {
 async function readJson(filePath, fallback = undefined) {
   try {
     return JSON.parse(await readFile(filePath, 'utf8'));
+  } catch (error) {
+    if (fallback !== undefined && error.code === 'ENOENT') return fallback;
+    if (fallback !== undefined) return fallback;
+    throw error;
+  }
+}
+
+async function readText(filePath, fallback = undefined) {
+  try {
+    return await readFile(filePath, 'utf8');
   } catch (error) {
     if (fallback !== undefined && error.code === 'ENOENT') return fallback;
     if (fallback !== undefined) return fallback;

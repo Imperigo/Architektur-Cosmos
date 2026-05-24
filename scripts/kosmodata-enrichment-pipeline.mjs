@@ -165,9 +165,13 @@ function buildReview({ entry, proposedEntry, seed }) {
   const sourceTrail = proposedEntry.source_candidates || [];
   const changes = summarizeChanges(entry, proposedEntry);
   const toolPipeline = buildToolPipeline(proposedEntry, seed);
+  const projectSpecificSourceCount = sourceTrail.filter((source) => sourceIsProjectSpecific(source, proposedEntry)).length;
   const blockers = [
     ...validation.errors,
     ...rights.blockers,
+    ...(seed?.generator === 'kosmodata-seed-from-research' && projectSpecificSourceCount < 2
+      ? [`Only ${projectSpecificSourceCount} project-specific source candidate(s); add official/archive/project sources before promotion.`]
+      : []),
     ...(seed ? [] : ['No enrichment seed found. Create a source-backed seed before promoting.'])
   ];
   const warnings = [
@@ -191,6 +195,10 @@ function buildReview({ entry, proposedEntry, seed }) {
       proposed_title: proposedEntry.title
     },
     source_trail: sourceTrail,
+    source_specificity: {
+      project_specific_source_count: projectSpecificSourceCount,
+      required_for_generated_seed: seed?.generator === 'kosmodata-seed-from-research' ? 2 : 0
+    },
     changes,
     tool_pipeline: toolPipeline,
     rights_report: rights,
@@ -333,6 +341,21 @@ function buildRightsReport(entry) {
     warnings,
     note: rightsSummary(entry)
   };
+}
+
+function sourceIsProjectSpecific(source, entry) {
+  if (source.project_specific === true) return true;
+  const haystack = normalizeText([source.title, source.url].filter(Boolean).join(' '));
+  const needles = [
+    entry.slug,
+    entry.id,
+    entry.title,
+    ...(entry.authors || [])
+  ]
+    .map(normalizeText)
+    .flatMap((value) => [value, ...value.split(/\s+/).filter((part) => part.length > 4)])
+    .filter(Boolean);
+  return needles.some((needle) => haystack.includes(needle));
 }
 
 function inferPlanRequirements(entry) {
@@ -544,6 +567,19 @@ function stripTagPrefix(value) {
 
 function readableLabel(value) {
   return stripTagPrefix(value).replace(/[_-]/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+function normalizeText(value) {
+  return String(value || '')
+    .toLowerCase()
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/ä/g, 'ae')
+    .replace(/ö/g, 'oe')
+    .replace(/ü/g, 'ue')
+    .replace(/ß/g, 'ss')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
 }
 
 async function readJson(filePath, fallback = null) {
