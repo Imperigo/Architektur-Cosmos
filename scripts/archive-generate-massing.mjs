@@ -18,8 +18,9 @@ async function main() {
   const entries = JSON.parse(await readFile(path.join(root, 'data/mock-entries.json'), 'utf8'));
   const entry = entries.find((candidate) => candidate.slug === slug || candidate.id === slug);
   if (!entry) throw new Error(`No entry found for "${slug}".`);
-  if (entry.slug !== 'villa-savoye') {
-    throw new Error('The first procedural massing template currently supports only villa-savoye.');
+  const scene = sceneForEntry(entry);
+  if (!scene) {
+    throw new Error('No reviewed procedural massing template exists for this entry yet.');
   }
 
   const intakeRoot = path.join(root, 'archive-intake', entry.slug);
@@ -27,7 +28,6 @@ async function main() {
   const analysisDir = path.join(intakeRoot, 'analysis');
   await Promise.all([modelsDir, analysisDir].map((directory) => mkdir(directory, { recursive: true })));
 
-  const scene = villaSavoyeScene(entry);
   const glb = buildGlb(scene);
   const geometryProfile = buildGeometryProfile(entry, scene);
 
@@ -100,6 +100,68 @@ function villaSavoyeScene(entry) {
     materials,
     objects
   };
+}
+
+function ingenbohlScene(entry) {
+  const materials = [
+    { name: 'monastery hill / muted landscape', color: [0.2, 0.28, 0.22, 1] },
+    { name: 'reinforced concrete skeleton', color: [0.56, 0.58, 0.55, 1] },
+    { name: 'trass lime mineral envelope', color: [0.68, 0.62, 0.5, 1] },
+    { name: 'silver fir timber facade', color: [0.58, 0.43, 0.28, 1] },
+    { name: 'chapel glass / spiritual void', color: [0.26, 0.56, 0.62, 0.72] },
+    { name: 'subterranean care base', color: [0.24, 0.25, 0.24, 1] },
+    { name: 'circulation and public threshold', color: [1, 0.72, 0.22, 1] }
+  ];
+
+  const objects = [
+    box('01_site_context / sloped monastery hill', [0, -0.18, 0], [32, 0.36, 24], 0, Math.PI * -0.018),
+    box('01_site_context / upper monastery plateau', [-5.8, 1.08, -5.4], [18, 0.28, 8.4], 0),
+    box('02_mass_model / partly embedded base floors', [2.6, 1.0, 1.2], [13.6, 2.1, 9.4], 5),
+    box('02_mass_model / seven-storey care volume at slope edge', [2.6, 5.05, 1.2], [12.2, 7.7, 7.8], 2),
+    box('03_structure / bracing service core', [-1.7, 5.0, 0.6], [1.45, 8.1, 2.1], 1),
+    box('04_envelope / mineral east facade plane', [8.82, 5.15, 1.2], [0.24, 7.4, 7.9], 2),
+    box('04_envelope / timber west facade layer', [-3.65, 5.15, 1.2], [0.22, 7.2, 7.8], 3),
+    box('04_envelope / timber south facade layer', [2.6, 5.15, 5.23], [12.0, 7.2, 0.22], 3),
+    box('04_envelope / timber north facade layer', [2.6, 5.15, -2.86], [12.0, 7.2, 0.22], 3),
+    box('05_interior / double-height chapel and foyer void', [6.4, 2.9, -1.6], [3.2, 3.9, 3.0], 4),
+    box('05_interior / dining and public care floor', [2.2, 2.15, 3.7], [8.8, 0.22, 2.4], 6),
+    box('06_circulation / vertical link from parking to plateau', [-1.7, 3.45, 3.9], [1.1, 5.0, 0.28], 6, Math.PI * 0.08),
+    box('06_circulation / public entry threshold', [2.6, 1.9, 6.2], [8.5, 0.18, 1.1], 6),
+    box('07_context / existing monastery reference mass', [-9.5, 2.8, -5.4], [6.4, 3.2, 4.4], 2)
+  ];
+
+  for (const x of [-2.1, 0.5, 3.1, 5.7, 8.3]) {
+    for (const z of [-2.2, 0.7, 3.6]) {
+      objects.push(cylinder(`03_structure / concrete column grid ${x}:${z}`, [x, 5.0, z], 0.11, 7.6, 12, 1));
+    }
+  }
+
+  for (let floor = 0; floor < 7; floor += 1) {
+    objects.push(box(`03_structure / flat slab care level ${floor + 1}`, [2.6, 1.55 + floor * 1.05, 1.2], [12.3, 0.12, 7.8], 1));
+  }
+
+  for (const x of [-3.75, 8.95]) {
+    for (const z of [-1.9, 0.4, 2.7, 5.0]) {
+      objects.push(box(`04_envelope / vertical timber-mineral rhythm ${x}:${z}`, [x, 5.18, z], [0.18, 7.2, 0.08], x < 0 ? 3 : 2));
+    }
+  }
+
+  return {
+    asset: {
+      version: '2.0',
+      generator: 'Architecture Cosmos archive-generate-massing',
+      copyright: 'Architecture Cosmos / diagrammatic model / not measured'
+    },
+    sceneName: `${entry.title} diagrammatic low-poly massing`,
+    materials,
+    objects
+  };
+}
+
+function sceneForEntry(entry) {
+  if (entry.slug === 'villa-savoye') return villaSavoyeScene(entry);
+  if (entry.slug === 'alterszentrum-kloster-ingenbohl') return ingenbohlScene(entry);
+  return null;
 }
 
 function box(name, center, size, material, rotationY = 0) {

@@ -107,6 +107,14 @@ function chooseTemplate(entry) {
       layer_contract: ['site', 'mass', 'structure', 'facade', 'circulation', 'materials']
     };
   }
+  if (entry.slug === 'alterszentrum-kloster-ingenbohl') {
+    return {
+      id: 'courtyard_institution_slope',
+      can_generate: true,
+      reason: 'Ingenbohl has a reviewed diagrammatic template for slope, care volume, chapel void, concrete structure and mineral/timber envelope layers.',
+      layer_contract: ['site', 'mass', 'structure', 'facade', 'interior', 'circulation', 'materials']
+    };
+  }
 
   const suggested = entry.entry_type === 'landscape_project' || entry.entry_type === 'infrastructure'
     ? 'linear_landscape_infrastructure'
