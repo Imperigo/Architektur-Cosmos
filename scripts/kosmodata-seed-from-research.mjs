@@ -54,7 +54,7 @@ function buildSeed(entry, researchPacks, localSources) {
   const sourceCandidates = buildSourceCandidates(entry, researchPacks, localSources);
   const materials = inferMaterials(entry, localSources);
   const program = inferProgram(entry);
-  const context = inferContext(entry);
+  const context = inferContext(entry, program);
   const databaseTags = buildDatabaseTags(entry, materials, program, context);
   const themes = dedupeThemes([...cleanThemes(entry.themes || [], program.type), ...tagThemes(databaseTags)]).slice(0, 10);
   const analysisLayers = buildAnalysisLayers(entry, materials, program, context, databaseTags);
@@ -275,7 +275,11 @@ function inferMaterials(entry, localSources = []) {
 function inferProgram(entry) {
   const haystack = normalize([entry.entry_type, entry.title, entry.short_description, ...(entry.themes || [])].join(' '));
   let type = entry.entry_type;
-  if (entry.entry_type === 'landscape_project' || haystack.includes('landscape') || haystack.includes('park')) type = 'landscape_project';
+  if (haystack.includes('iba') || haystack.includes('critical reconstruction') || haystack.includes('stadt erneuerung') || haystack.includes('stadterneuerung')) type = 'urban_renewal_program';
+  else if (haystack.includes('dom ino') || haystack.includes('prototype') || haystack.includes('free plan') || haystack.includes('frame')) type = 'structural_prototype';
+  else if (entry.entry_type === 'text' || haystack.includes('treatise') || haystack.includes('traktat') || haystack.includes('quattro libri')) type = 'architectural_treatise';
+  else if (entry.entry_type === 'urban_plan' || haystack.includes('zoning') || haystack.includes('stadtmodell') || haystack.includes('urban plan')) type = 'urban_plan';
+  else if (entry.entry_type === 'landscape_project' || haystack.includes('landscape') || haystack.includes('park')) type = 'landscape_project';
   else if (haystack.includes('factory') || haystack.includes('fabrik') || haystack.includes('industrie') || haystack.includes('industrial')) type = 'factory';
   else if (haystack.includes('school') || haystack.includes('schule') || haystack.includes('pedagogy') || haystack.includes('workshop') || haystack.includes('bauhaus')) type = 'school';
   else if (haystack.includes('house') || haystack.includes('domestic') || haystack.includes('wohnen') || haystack.includes('red house')) type = 'domestic_house';
@@ -287,14 +291,22 @@ function inferProgram(entry) {
   };
 }
 
-function inferContext(entry) {
+function inferContext(entry, program) {
   return {
     topography: 'needs_site_review',
-    setting: [entry.city, entry.country].filter(Boolean).join(', ') || 'needs_location_review',
+    setting: inferSetting(entry, program),
     landscape_relations: ['site_context_needs_review'],
     urban_context: [entry.lecture_cluster?.[0], entry.source_quality].filter(Boolean),
     construction_logic: [...new Set([...cleanThemes(entry.themes || []), entry.entry_type, entry.style_sector].filter(Boolean))].slice(0, 8)
   };
+}
+
+function inferSetting(entry, program) {
+  const place = [entry.city, entry.country].filter(Boolean).join(', ');
+  if (place) return place;
+  if (program.type === 'structural_prototype') return 'ohne festen Ort';
+  if (program.type === 'architectural_treatise') return 'als publizierte Wissensform';
+  return 'noch zu prüfender Ort';
 }
 
 function buildDatabaseTags(entry, materials, program) {
@@ -467,14 +479,38 @@ function normalizeMedia(entry) {
 }
 
 function improvedShortDescription(entry, materials, program) {
+  if (program.type === 'architectural_treatise') {
+    return `${entry.title} verbindet Traktat, Zeichnung, Proportion und klassische Ordnungslehre zu einem übertragbaren Architekturmodell.`;
+  }
+  if (program.type === 'urban_plan') {
+    return `${entry.title} verbindet Stadtplan, Industrie, Zonierung und soziale Utopie zu einem frühen Modell der rational organisierten Stadt.`;
+  }
+  if (program.type === 'structural_prototype') {
+    return `${entry.title} verdichtet Stahlbetonskelett, freien Grundriss und serielle Wiederholbarkeit zu einem konstruktiven Prototyp der Moderne.`;
+  }
+  if (program.type === 'urban_renewal_program') {
+    return `${entry.title} verbindet kritische Rekonstruktion, Blockstruktur, Reparatur und Wohnungsbau zu einem Modell stadträumlicher Erneuerung.`;
+  }
   return `${entry.title} verbindet ${labelFor(program.type)}, ${listText(materials.primary.slice(0, 3))} und die räumliche DNA von ${listText(entry.themes?.slice(0, 3) || ['noch zu prüfenden Themen'])} zu einer prägnanten Architekturlesart.`;
 }
 
 function improvedOneSentence(entry, materials, program) {
+  if (program.type === 'architectural_treatise') {
+    return `${entry.title} zeigt, wie Text, Bild, Proportion und antike Referenz zu einem reproduzierbaren Regelwerk architektonischen Wissens werden.`;
+  }
+  if (program.type === 'structural_prototype') {
+    return `${entry.title} zeigt, wie Stahlbetonskelett, Stützenraster und freier Grundriss zu einem offenen System für Plan-, Struktur- und 3D-Layer werden.`;
+  }
   return `${entry.title} zeigt, wie ${labelFor(program.type)}, ${listText(materials.primary.slice(0, 4))}, Topos, Typos und Tektonik zu einer belastbaren Referenz für Plan-, Material- und 3D-Layer werden.`;
 }
 
 function improvedFullDescription(entry, materials, program, context) {
+  if (program.type === 'architectural_treatise') {
+    return `${entry.title} wird als Wissensobjekt gelesen: Der Traktat übersetzt antike Ordnung, Proportion, Villentypologien und Zeichnung in ein transportierbares architektonisches Regelwerk. Für KosmoData ist er weniger ein Gebäude als ein Betriebssystem der klassischen Architektur, aus dem Vergleichsachsen, Planlogiken, Referenzfamilien und spätere Analyse-Layer abgeleitet werden.`;
+  }
+  if (program.type === 'structural_prototype') {
+    return `${entry.title} wird als konstruktiver Prototyp ohne festen Ort gelesen. Entscheidend ist die Trennung von Tragwerk, Grundriss und Hülle: wenige Stahlbetonelemente erzeugen ein offenes Raster, das Wiederholung, Erweiterung und freie räumliche Organisation ermöglicht. Für KosmoData wird daraus ein besonders klares Modell für Struktur-, Plan- und Blender-Layer.`;
+  }
   return `${entry.title} wird als architektonisches Referenzobjekt über ${labelFor(program.type)}, ${listText(materials.primary)}, ${context.setting}, räumliche Ordnung und historische Position gelesen. Entscheidend ist nicht die reine Datierung, sondern wie Setzung, Material, Gebrauch, Fügung und kulturelle Haltung zusammen eine übertragbare Entwurfsintelligenz bilden. Für KosmoData werden daraus zugleich Planlayer, Modelllayer, Filterbegriffe und Vergleichsbeziehungen abgeleitet.`;
 }
 
@@ -483,6 +519,9 @@ function labelFor(value) {
     domestic_house: 'Wohnhaus',
     building: 'Bauwerk',
     urban_plan: 'Stadtplan',
+    architectural_treatise: 'Architekturtraktat',
+    structural_prototype: 'Konstruktionsprototyp',
+    urban_renewal_program: 'Stadterneuerungsprogramm',
     landscape_project: 'Landschaftsprojekt',
     brick: 'Backstein',
     timber: 'Holz',
@@ -493,6 +532,8 @@ function labelFor(value) {
     stone: 'Stein',
     vegetation: 'Vegetation',
     water: 'Wasser',
+    paper: 'Papier',
+    drawing: 'Zeichnung',
     'thing-modernity': 'Objektmoderne',
     'arts-and-crafts': 'Arts and Crafts',
     hygiene: 'Hygiene',
@@ -504,8 +545,16 @@ function labelFor(value) {
     'modern-architecture': 'moderne Architektur',
     sustainable_architecture: 'nachhaltige Architektur',
     'sustainable-architecture': 'nachhaltige Architektur',
+    classical_architecture: 'klassische Architektur',
+    'classical-architecture': 'klassische Architektur',
+    postwar_modern_architecture: 'Nachkriegsmoderne',
+    'postwar-modern-architecture': 'Nachkriegsmoderne',
     factory: 'Fabrik',
     school: 'Schule',
+    'urban-renewal-program': 'Stadterneuerungsprogramm',
+    'structural-prototype': 'Konstruktionsprototyp',
+    'architectural-treatise': 'Architekturtraktat',
+    'urban-plan': 'Stadtplan',
     'glass-corner': 'Glasecke',
     'modern-pedagogy': 'moderne Pädagogik',
     'landscape-project': 'Landschaftsprojekt',
@@ -515,7 +564,22 @@ function labelFor(value) {
     'public-space': 'öffentlicher Raum',
     transparency: 'Transparenz',
     industry: 'Industrie',
-    workshop: 'Werkstatt'
+    workshop: 'Werkstatt',
+    zoning: 'Zonierung',
+    workers: 'Arbeiterschaft',
+    utopia: 'Utopie',
+    treatise: 'Traktat',
+    villa: 'Villa',
+    proportion: 'Proportion',
+    classicism: 'Klassizismus',
+    prototype: 'Prototyp',
+    frame: 'Rahmen',
+    standardization: 'Standardisierung',
+    'free-plan': 'freier Grundriss',
+    'critical-reconstruction': 'kritische Rekonstruktion',
+    block: 'Blockstruktur',
+    repair: 'Reparatur',
+    housing: 'Wohnungsbau'
   };
   const raw = String(value || '');
   return labels[raw] || labels[slugify(raw)] || raw.replace(/[_-]/g, ' ');
@@ -563,18 +627,17 @@ function sourceIsProjectSpecific(source, entry) {
 
 function tagThemes(databaseTags) {
   return databaseTags
-    .filter((tag) => /^(typology|structure|spatial|theme):/.test(tag))
+    .filter((tag) => /^(structure|spatial|theme):/.test(tag))
     .map(stripTagPrefix);
 }
 
-function cleanThemes(themes, programType = null) {
+function cleanThemes(themes) {
   const materialLike = new Set(['brick', 'timber', 'stone', 'concrete', 'glass', 'iron', 'wood', 'holz', 'backstein', 'stein']);
-  const typologyLike = new Set(['domestic-house', 'building', 'landscape-project', 'factory', 'school']);
-  const allowedTypology = slugify(programType || '');
+  const typologyLike = new Set(['domestic-house', 'building', 'landscape-project', 'factory', 'school', 'urban-plan', 'architectural-treatise', 'structural-prototype', 'urban-renewal-program']);
   return dedupeThemes(themes.filter((theme) => {
     const slug = slugify(theme);
     if (materialLike.has(slug)) return false;
-    if (typologyLike.has(slug) && slug !== allowedTypology) return false;
+    if (typologyLike.has(slug)) return false;
     return true;
   }));
 }

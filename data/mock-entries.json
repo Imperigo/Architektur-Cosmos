@@ -10723,10 +10723,10 @@
       "proportion",
       "classicism"
     ],
-    "short_description": "Architekturtraktat, der antike Ordnung, Villentypologien und zeichnerische Reproduzierbarkeit zu einem weit reisenden Modell macht.",
-    "source_quality": "primary_text",
-    "one_sentence": "I quattro libri dell'architettura ist als Textquelle in Venice, Italy im Jahr 1570 im Architecture Cosmos verortet und verknuepft treatise, villa, proportion.",
-    "full_description": "Architekturtraktat, der antike Ordnung, Villentypologien und zeichnerische Reproduzierbarkeit zu einem weit reisenden Modell macht. Der Eintrag wird im Atlas als Textquelle gelesen und gehoert zur Wissensspur Theoriegeschichte ETH, Layer theory history. Autorenschaft / Quelle: Andrea Palladio. Seine Filterebene verbindet treatise, villa, proportion, classicism mit Jahr, Stilsektor und Relationennetz; spaeter koennen echte Fotos, Plaene, Schnitte, Quellen und Modelle direkt aus der Datenbank angeschlossen werden.",
+    "short_description": "I quattro libri dell'architettura verbindet Traktat, Zeichnung, Proportion und klassische Ordnungslehre zu einem übertragbaren Architekturmodell.",
+    "source_quality": "research_seed_review",
+    "one_sentence": "I quattro libri dell'architettura zeigt, wie Text, Bild, Proportion und antike Referenz zu einem reproduzierbaren Regelwerk architektonischen Wissens werden.",
+    "full_description": "I quattro libri dell'architettura wird als Wissensobjekt gelesen: Der Traktat übersetzt antike Ordnung, Proportion, Villentypologien und Zeichnung in ein transportierbares architektonisches Regelwerk. Für KosmoData ist er weniger ein Gebäude als ein Betriebssystem der klassischen Architektur, aus dem Vergleichsachsen, Planlogiken, Referenzfamilien und spätere Analyse-Layer abgeleitet werden.",
     "media": [
       {
         "type": "exterior",
@@ -10792,11 +10792,29 @@
           "text": "I quattro libri dell'architettura ist als Referenz wichtig, weil Traktat, Villa, Proportion, Klassizismus nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
           "source_basis": "derived from entry metadata and Brain quality rules",
           "review_status": "draft_review"
+        },
+        {
+          "title": "Netzwerk und DNA",
+          "text": "I quattro libri dell'architettura wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, wie es sich innerhalb derselben architektonischen DNA unterscheidet: durch Ort, Auftrag, Fügung, Gebrauch und kulturelle Haltung.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Topos / Typos / Tektonik",
+          "text": "Topos, Typos und Tektonik werden zusammen gelesen: Ort und Landschaft bilden die Setzung, Architekturtraktat bildet den typologischen Ausgangspunkt, und Papier, Zeichnung, Stein markieren die konstruktiv-atmosphärische Lesart.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für KosmoData ist I quattro libri dell'architettura relevant, weil sich daraus Filter, Vergleichsgruppen, Planlayer und spätere Blender-Collections ableiten lassen: Architekturtraktat, klassische Architektur, Traktat, Villa, Proportion, Klassizismus, Papier, Zeichnung.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
         }
       ],
       "language": "de",
-      "generator": "cosmos-generate-architecture-text",
-      "generated_at": "2026-05-21T18:29:07.067Z",
+      "generator": "kosmodata-seed-from-research",
+      "generated_at": "2026-05-24T09:10:38.808Z",
       "review_status": "needs_owner_review",
       "source_basis": []
     },
@@ -10808,8 +10826,223 @@
         "reliability_level": "secondary_source",
         "rights_status": "public_domain",
         "notes": "Auto-selected hero image candidate. Score: 0.96. License: Public domain."
+      },
+      {
+        "source_type": "public_domain_scan",
+        "title": "Library of Congress / I quattro libri dell'architettura",
+        "url": "https://lccn.loc.gov/47044047",
+        "reliability_level": "high",
+        "rights_status": "public_domain",
+        "notes": "Library of Congress record for the first edition. Use bibliographic facts and public-domain scan metadata."
+      },
+      {
+        "source_type": "digital_library",
+        "title": "ETH e-rara / The four books of architecture",
+        "url": "https://www.e-rara.ch/zut/content/titleinfo/3982323",
+        "reliability_level": "high",
+        "rights_status": "public_domain",
+        "notes": "ETH/Zentralbibliothek digital edition record with Public Domain Mark."
+      },
+      {
+        "source_type": "digital_library",
+        "title": "Smithsonian Libraries / The architecture of A. Palladio, in four books",
+        "url": "https://library.si.edu/digital-library/book/architecturepal00pall",
+        "reliability_level": "high",
+        "rights_status": "public_domain",
+        "notes": "Smithsonian digital library public-domain edition record."
       }
-    ]
+    ],
+    "materials": {
+      "primary": [
+        "paper",
+        "drawing",
+        "stone"
+      ],
+      "secondary": [
+        "craft_details",
+        "surface_system",
+        "construction_logic"
+      ],
+      "notes": "Seeded from local reviewed source metadata; verify exact material claims before publication."
+    },
+    "program": {
+      "type": "architectural_treatise",
+      "subtype": "classical_architecture_reference",
+      "public_access": "needs_review",
+      "components": [
+        "treatise",
+        "villa",
+        "proportion",
+        "classicism",
+        "text",
+        "classical_architecture"
+      ]
+    },
+    "context": {
+      "topography": "needs_site_review",
+      "setting": "Venice, Italy",
+      "landscape_relations": [
+        "site_context_needs_review"
+      ],
+      "urban_context": [
+        "theory_history",
+        "research_seed_review"
+      ],
+      "construction_logic": [
+        "treatise",
+        "villa",
+        "proportion",
+        "classicism",
+        "text",
+        "classical_architecture"
+      ]
+    },
+    "database_tags": [
+      "source:wikimedia-commons-hero-candidate-i-quattro-libri-dell-architettura",
+      "source:library-of-congress-i-quattro-libri-dell-architettura",
+      "source:eth-e-rara-the-four-books-of-architecture",
+      "source:smithsonian-libraries-the-architecture-of-a-palladio-in-four-books",
+      "typology:architectural-treatise",
+      "style:classical_architecture",
+      "theme:treatise",
+      "theme:villa",
+      "theme:proportion",
+      "theme:classicism",
+      "material:paper",
+      "material:drawing",
+      "material:stone",
+      "rights:review-required",
+      "blender:architectural-treatise-layer-candidate",
+      "plan:vector-review-required",
+      "viewer:3d-layer-review-required"
+    ],
+    "model_assets": [
+      {
+        "model_type": "site_model",
+        "title": "I quattro libri dell'architettura Site/context study model",
+        "r2_key": "entries/palladio-four-books/models/site.glb",
+        "format": "glb",
+        "lod_level": "preview",
+        "source_basis": "Wikimedia Commons hero candidate / I quattro libri dell'architettura | Library of Congress / I quattro libri dell'architettura | ETH e-rara / The four books of architecture | Smithsonian Libraries / The architecture of A. Palladio, in four books",
+        "generation_method": "procedural",
+        "review_status": "draft",
+        "confidence_score": 0.42
+      },
+      {
+        "model_type": "structure_model",
+        "title": "I quattro libri dell'architettura Structure and spatial order study model",
+        "r2_key": "entries/palladio-four-books/models/structure.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "Wikimedia Commons hero candidate / I quattro libri dell'architettura | Library of Congress / I quattro libri dell'architettura | ETH e-rara / The four books of architecture | Smithsonian Libraries / The architecture of A. Palladio, in four books",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      },
+      {
+        "model_type": "tectonic_model",
+        "title": "I quattro libri dell'architettura Material, tectonic and filter-layer study model",
+        "r2_key": "entries/palladio-four-books/models/tectonic.glb",
+        "format": "glb",
+        "lod_level": "study",
+        "source_basis": "Wikimedia Commons hero candidate / I quattro libri dell'architettura | Library of Congress / I quattro libri dell'architettura | ETH e-rara / The four books of architecture | Smithsonian Libraries / The architecture of A. Palladio, in four books; tags: source:wikimedia-commons-hero-candidate-i-quattro-libri-dell-architettura, source:library-of-congress-i-quattro-libri-dell-architettura, source:eth-e-rara-the-four-books-of-architecture, source:smithsonian-libraries-the-architecture-of-a-palladio-in-four-books, typology:architectural-treatise, style:classical_architecture, theme:treatise, theme:villa",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      }
+    ],
+    "analysis_layers": [
+      {
+        "analysis_type": "structure",
+        "summary": "I quattro libri dell'architettura needs a reviewed structural reading connecting paper, drawing, stone with construction logic, span, support and assembly.",
+        "data": {
+          "seed_tags": [
+            "structure:needs_review",
+            "paper",
+            "drawing",
+            "stone"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "material_system",
+        "summary": "I quattro libri dell'architettura should be tagged through paper, drawing, stone and verified against primary sources before public material claims are made.",
+        "data": {
+          "seed_tags": [
+            "paper",
+            "drawing",
+            "stone"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "spatial_order",
+        "summary": "I quattro libri dell'architettura should be read through program, movement, room sequence, exterior relation and typological position rather than as a single image.",
+        "data": {
+          "seed_tags": [
+            "spatial_order",
+            "architectural_treatise"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "typology",
+        "summary": "I quattro libri dell'architettura is currently classified as architectural_treatise; the seed must verify how this type differs from related entries with the same DNA.",
+        "data": {
+          "seed_tags": [
+            "typology",
+            "architectural_treatise",
+            "Venice, Italy"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "summary": "I quattro libri dell'architettura needs filter checks for themes, materials, rights, plan readiness, 3D layer readiness and viewer filters.",
+        "data": {
+          "seed_tags": [
+            "source:wikimedia-commons-hero-candidate-i-quattro-libri-dell-architettura",
+            "source:library-of-congress-i-quattro-libri-dell-architettura",
+            "source:eth-e-rara-the-four-books-of-architecture",
+            "source:smithsonian-libraries-the-architecture-of-a-palladio-in-four-books",
+            "typology:architectural-treatise",
+            "style:classical_architecture",
+            "theme:treatise",
+            "theme:villa",
+            "theme:proportion",
+            "theme:classicism"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      }
+    ],
+    "database_profile": {
+      "status": "reviewed",
+      "r2_prefix": "entries/palladio-four-books",
+      "source_count": 4,
+      "media_count": 4,
+      "model_count": 3,
+      "analysis_count": 5,
+      "tag_count": 17,
+      "rights_summary": "Public text and metadata are allowed; hero media is public-safe with attribution (public_domain); exact plans, protected photos and models remain review-only until rights are cleared.",
+      "updated_at": "2026-05-24T09:10:38.997Z"
+    },
+    "ingestion_status": {
+      "stage": "needs_review",
+      "source_status": "reviewed",
+      "asset_status": "ready",
+      "model_status": "planned",
+      "updated_at": "2026-05-24T09:10:38.998Z"
+    }
   },
   {
     "id": "sixtus-v-rome-plan",
@@ -15942,10 +16175,10 @@
       "workers",
       "utopia"
     ],
-    "short_description": "Fruehmodernes Stadtmodell, das Industrie, Wohnen, Gesundheit und Verkehr als rational geordnete urbane Maschine denkt.",
-    "source_quality": "case_study",
-    "one_sentence": "Cite Industrielle ist als Stadt- und Raumplan in Lyon, France im Jahr 1901 im Architecture Cosmos verortet und verknuepft industry, zoning, workers.",
-    "full_description": "Fruehmodernes Stadtmodell, das Industrie, Wohnen, Gesundheit und Verkehr als rational geordnete urbane Maschine denkt. Der Eintrag wird im Atlas als Stadt- und Raumplan gelesen und gehoert zur Wissensspur Global History ETH, Layer urban history. Autorenschaft / Quelle: Tony Garnier. Seine Filterebene verbindet industry, zoning, workers, utopia mit Jahr, Stilsektor und Relationennetz; spaeter koennen echte Fotos, Plaene, Schnitte, Quellen und Modelle direkt aus der Datenbank angeschlossen werden.",
+    "short_description": "Cite Industrielle verbindet Stadtplan, Industrie, Zonierung und soziale Utopie zu einem frühen Modell der rational organisierten Stadt.",
+    "source_quality": "research_seed_review",
+    "one_sentence": "Cite Industrielle zeigt, wie Stadtplan, Beton, Topos, Typos und Tektonik zu einer belastbaren Referenz für Plan-, Material- und 3D-Layer werden.",
+    "full_description": "Cite Industrielle wird als architektonisches Referenzobjekt über Stadtplan, Beton, Lyon, France, räumliche Ordnung und historische Position gelesen. Entscheidend ist nicht die reine Datierung, sondern wie Setzung, Material, Gebrauch, Fügung und kulturelle Haltung zusammen eine übertragbare Entwurfsintelligenz bilden. Für KosmoData werden daraus zugleich Planlayer, Modelllayer, Filterbegriffe und Vergleichsbeziehungen abgeleitet.",
     "media": [
       {
         "type": "exterior",
@@ -15980,6 +16213,30 @@
         "reliability_level": "secondary_source",
         "rights_status": "public_domain",
         "notes": "Auto-selected hero image candidate. Score: 0.87. License: Public domain."
+      },
+      {
+        "source_type": "public_domain_image_source",
+        "title": "Wikimedia Commons / Cité industrielle plan",
+        "url": "https://commons.wikimedia.org/wiki/File:Garnier-Tony,_Cit%C3%A9_industrielle,_plan.jpg",
+        "reliability_level": "medium",
+        "rights_status": "public_domain",
+        "notes": "Public-domain plan reproduction from Tony Garnier's Cité industrielle. Use for metadata and rights-safe visual reference only after file-level review."
+      },
+      {
+        "source_type": "digital_collection",
+        "title": "University of Michigan Library Digital Collections / Cité Industrielle",
+        "url": "https://quod.lib.umich.edu/u/ummu/x-02-09095/02_09095",
+        "reliability_level": "high",
+        "rights_status": "link_only",
+        "notes": "University library image record for Tony Garnier's Cité Industrielle."
+      },
+      {
+        "source_type": "museum_context",
+        "title": "Cité Musée Tony Garnier / La Cité Musée",
+        "url": "https://cm-tonygarnier.org/la-cite-musee",
+        "reliability_level": "medium",
+        "rights_status": "link_only",
+        "notes": "Institutional context for Tony Garnier's urban and social legacy in Lyon."
       }
     ],
     "architecture_text": {
@@ -16021,11 +16278,213 @@
           "text": "Cite Industrielle ist als Referenz wichtig, weil Industrie, Zonierung, Arbeiterschaft, Utopie nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
           "source_basis": "derived from entry metadata and Brain quality rules",
           "review_status": "draft_review"
+        },
+        {
+          "title": "Netzwerk und DNA",
+          "text": "Cite Industrielle wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, wie es sich innerhalb derselben architektonischen DNA unterscheidet: durch Ort, Auftrag, Fügung, Gebrauch und kulturelle Haltung.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Topos / Typos / Tektonik",
+          "text": "Topos, Typos und Tektonik werden zusammen gelesen: Ort und Landschaft bilden die Setzung, Stadtplan bildet den typologischen Ausgangspunkt, und Beton markieren die konstruktiv-atmosphärische Lesart.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für KosmoData ist Cite Industrielle relevant, weil sich daraus Filter, Vergleichsgruppen, Planlayer und spätere Blender-Collections ableiten lassen: Stadtplan, vormoderne Architektur, Industrie, Zonierung, Arbeiterschaft, Utopie, Beton.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
         }
       ],
       "review_status": "draft_review",
       "public_use_allowed": true,
-      "generated_at": "2026-05-21T18:36:40.527Z"
+      "generated_at": "2026-05-24T09:10:37.233Z",
+      "generator": "kosmodata-seed-from-research"
+    },
+    "materials": {
+      "primary": [
+        "concrete"
+      ],
+      "secondary": [
+        "craft_details",
+        "surface_system",
+        "construction_logic"
+      ],
+      "notes": "Seeded from local reviewed source metadata; verify exact material claims before publication."
+    },
+    "program": {
+      "type": "urban_plan",
+      "subtype": "pre_modern_architecture_reference",
+      "public_access": "needs_review",
+      "components": [
+        "industry",
+        "zoning",
+        "workers",
+        "utopia",
+        "urban_plan",
+        "pre_modern_architecture"
+      ]
+    },
+    "context": {
+      "topography": "needs_site_review",
+      "setting": "Lyon, France",
+      "landscape_relations": [
+        "site_context_needs_review"
+      ],
+      "urban_context": [
+        "urban_history",
+        "research_seed_review"
+      ],
+      "construction_logic": [
+        "industry",
+        "zoning",
+        "workers",
+        "utopia",
+        "urban_plan",
+        "pre_modern_architecture"
+      ]
+    },
+    "database_tags": [
+      "source:wikimedia-commons-hero-candidate-cite-industrielle",
+      "source:wikimedia-commons-cite-industrielle-plan",
+      "source:university-of-michigan-library-digital-collections-cite-industrielle",
+      "source:cite-musee-tony-garnier-la-cite-musee",
+      "typology:urban-plan",
+      "style:pre_modern_architecture",
+      "theme:industry",
+      "theme:zoning",
+      "theme:workers",
+      "theme:utopia",
+      "material:concrete",
+      "rights:review-required",
+      "blender:urban-plan-layer-candidate",
+      "plan:vector-review-required",
+      "viewer:3d-layer-review-required"
+    ],
+    "model_assets": [
+      {
+        "model_type": "site_model",
+        "title": "Cite Industrielle Site/context study model",
+        "r2_key": "entries/cite-industrielle/models/site.glb",
+        "format": "glb",
+        "lod_level": "preview",
+        "source_basis": "Wikimedia Commons hero candidate / Cite Industrielle | Wikimedia Commons / Cité industrielle plan | University of Michigan Library Digital Collections / Cité Industrielle | Cité Musée Tony Garnier / La Cité Musée",
+        "generation_method": "procedural",
+        "review_status": "draft",
+        "confidence_score": 0.42
+      },
+      {
+        "model_type": "structure_model",
+        "title": "Cite Industrielle Structure and spatial order study model",
+        "r2_key": "entries/cite-industrielle/models/structure.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "Wikimedia Commons hero candidate / Cite Industrielle | Wikimedia Commons / Cité industrielle plan | University of Michigan Library Digital Collections / Cité Industrielle | Cité Musée Tony Garnier / La Cité Musée",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      },
+      {
+        "model_type": "tectonic_model",
+        "title": "Cite Industrielle Material, tectonic and filter-layer study model",
+        "r2_key": "entries/cite-industrielle/models/tectonic.glb",
+        "format": "glb",
+        "lod_level": "study",
+        "source_basis": "Wikimedia Commons hero candidate / Cite Industrielle | Wikimedia Commons / Cité industrielle plan | University of Michigan Library Digital Collections / Cité Industrielle | Cité Musée Tony Garnier / La Cité Musée; tags: source:wikimedia-commons-hero-candidate-cite-industrielle, source:wikimedia-commons-cite-industrielle-plan, source:university-of-michigan-library-digital-collections-cite-industrielle, source:cite-musee-tony-garnier-la-cite-musee, typology:urban-plan, style:pre_modern_architecture, theme:industry, theme:zoning",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      }
+    ],
+    "analysis_layers": [
+      {
+        "analysis_type": "structure",
+        "summary": "Cite Industrielle needs a reviewed structural reading connecting concrete with construction logic, span, support and assembly.",
+        "data": {
+          "seed_tags": [
+            "structure:needs_review",
+            "concrete"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "material_system",
+        "summary": "Cite Industrielle should be tagged through concrete and verified against primary sources before public material claims are made.",
+        "data": {
+          "seed_tags": [
+            "concrete"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "spatial_order",
+        "summary": "Cite Industrielle should be read through program, movement, room sequence, exterior relation and typological position rather than as a single image.",
+        "data": {
+          "seed_tags": [
+            "spatial_order",
+            "urban_plan"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "typology",
+        "summary": "Cite Industrielle is currently classified as urban_plan; the seed must verify how this type differs from related entries with the same DNA.",
+        "data": {
+          "seed_tags": [
+            "typology",
+            "urban_plan",
+            "Lyon, France"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "summary": "Cite Industrielle needs filter checks for themes, materials, rights, plan readiness, 3D layer readiness and viewer filters.",
+        "data": {
+          "seed_tags": [
+            "source:wikimedia-commons-hero-candidate-cite-industrielle",
+            "source:wikimedia-commons-cite-industrielle-plan",
+            "source:university-of-michigan-library-digital-collections-cite-industrielle",
+            "source:cite-musee-tony-garnier-la-cite-musee",
+            "typology:urban-plan",
+            "style:pre_modern_architecture",
+            "theme:industry",
+            "theme:zoning",
+            "theme:workers",
+            "theme:utopia"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      }
+    ],
+    "database_profile": {
+      "status": "reviewed",
+      "r2_prefix": "entries/cite-industrielle",
+      "source_count": 4,
+      "media_count": 4,
+      "model_count": 3,
+      "analysis_count": 5,
+      "tag_count": 15,
+      "rights_summary": "Public text and metadata are allowed; hero media is public-safe with attribution (public_domain); exact plans, protected photos and models remain review-only until rights are cleared.",
+      "updated_at": "2026-05-24T09:10:37.446Z"
+    },
+    "ingestion_status": {
+      "stage": "needs_review",
+      "source_status": "reviewed",
+      "asset_status": "ready",
+      "model_status": "planned",
+      "updated_at": "2026-05-24T09:10:37.447Z"
     }
   },
   {
@@ -17226,10 +17685,10 @@
       "standardization",
       "free plan"
     ],
-    "short_description": "Konstruktives Prototypdiagramm, das Stahlbetonrahmen, freie Grundrisse und industrielle Wiederholbarkeit als modernes System vorbereitet.",
-    "source_quality": "case_study",
-    "one_sentence": "Dom-Ino House ist als Objekt im Jahr 1914 im Architecture Cosmos verortet und verknuepft prototype, frame, standardization.",
-    "full_description": "Konstruktives Prototypdiagramm, das Stahlbetonrahmen, freie Grundrisse und industrielle Wiederholbarkeit als modernes System vorbereitet. Der Eintrag wird im Atlas als Objekt gelesen und gehoert zur Wissensspur case study, Layer modernism. Autorenschaft / Quelle: Le Corbusier. Seine Filterebene verbindet prototype, frame, standardization, free plan mit Jahr, Stilsektor und Relationennetz; spaeter koennen echte Fotos, Plaene, Schnitte, Quellen und Modelle direkt aus der Datenbank angeschlossen werden.",
+    "short_description": "Dom-Ino House verdichtet Stahlbetonskelett, freien Grundriss und serielle Wiederholbarkeit zu einem konstruktiven Prototyp der Moderne.",
+    "source_quality": "research_seed_review",
+    "one_sentence": "Dom-Ino House zeigt, wie Stahlbetonskelett, Stützenraster und freier Grundriss zu einem offenen System für Plan-, Struktur- und 3D-Layer werden.",
+    "full_description": "Dom-Ino House wird als konstruktiver Prototyp ohne festen Ort gelesen. Entscheidend ist die Trennung von Tragwerk, Grundriss und Hülle: wenige Stahlbetonelemente erzeugen ein offenes Raster, das Wiederholung, Erweiterung und freie räumliche Organisation ermöglicht. Für KosmoData wird daraus ein besonders klares Modell für Struktur-, Plan- und Blender-Layer.",
     "media": [
       {
         "type": "exterior",
@@ -17295,11 +17754,30 @@
           "text": "Dom-Ino House ist als Referenz wichtig, weil Prototyp, Skelett, Standardisierung, freier Grundriss nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
           "source_basis": "derived from entry metadata and Brain quality rules",
           "review_status": "draft_review"
+        },
+        {
+          "title": "Netzwerk und DNA",
+          "text": "Dom-Ino House wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, wie es sich innerhalb derselben architektonischen DNA unterscheidet: durch Ort, Auftrag, Fügung, Gebrauch und kulturelle Haltung.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Topos / Typos / Tektonik",
+          "text": "Topos, Typos und Tektonik werden zusammen gelesen: Ort und Landschaft bilden die Setzung, Konstruktionsprototyp bildet den typologischen Ausgangspunkt, und Beton markieren die konstruktiv-atmosphärische Lesart.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für KosmoData ist Dom-Ino House relevant, weil sich daraus Filter, Vergleichsgruppen, Planlayer und spätere Blender-Collections ableiten lassen: Konstruktionsprototyp, moderne Architektur, Prototyp, Rahmen, Standardisierung, freier Grundriss, Beton.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
         }
       ],
       "review_status": "draft_review",
       "public_use_allowed": true,
-      "generated_at": "2026-05-21T18:36:41.349Z"
+      "generated_at": "2026-05-24T09:10:40.314Z",
+      "generator": "kosmodata-seed-from-research"
     },
     "source_candidates": [
       {
@@ -17309,8 +17787,215 @@
         "reliability_level": "secondary_source",
         "rights_status": "licensed",
         "notes": "Auto-selected hero image candidate. Score: 0.94. License: CC BY 2.0."
+      },
+      {
+        "source_type": "official_foundation_site",
+        "title": "Fondation Le Corbusier / Dom-Ino House",
+        "url": "https://www.fondationlecorbusier.fr/en/work-architecture/projects-dom-ino-house-not-located-1914/",
+        "reliability_level": "high",
+        "rights_status": "link_only",
+        "notes": "Official Fondation Le Corbusier project page. Do not republish protected FLC images."
+      },
+      {
+        "source_type": "museum_collection",
+        "title": "Cité de l'architecture & du patrimoine / Maison Dom-Ino",
+        "url": "https://www.citedelarchitecture.fr/fr/oeuvre/maison-dom-ino",
+        "reliability_level": "high",
+        "rights_status": "link_only",
+        "notes": "Museum collection record for Maison Dom-Ino."
+      },
+      {
+        "source_type": "architectural_reference",
+        "title": "Archweb / House Dom-Ino",
+        "url": "https://www.archweb.com/en/architetture/maison-dom-ino/",
+        "reliability_level": "medium",
+        "rights_status": "link_only",
+        "notes": "Secondary architectural reference for the structural prototype. Use as supplementary source only."
       }
-    ]
+    ],
+    "materials": {
+      "primary": [
+        "concrete"
+      ],
+      "secondary": [
+        "craft_details",
+        "surface_system",
+        "construction_logic"
+      ],
+      "notes": "Seeded from local reviewed source metadata; verify exact material claims before publication."
+    },
+    "program": {
+      "type": "structural_prototype",
+      "subtype": "modern_architecture_reference",
+      "public_access": "needs_review",
+      "components": [
+        "prototype",
+        "frame",
+        "standardization",
+        "free plan",
+        "object",
+        "modern_architecture"
+      ]
+    },
+    "context": {
+      "topography": "needs_site_review",
+      "setting": "ohne festen Ort",
+      "landscape_relations": [
+        "site_context_needs_review"
+      ],
+      "urban_context": [
+        "modernism",
+        "research_seed_review"
+      ],
+      "construction_logic": [
+        "prototype",
+        "frame",
+        "standardization",
+        "free plan",
+        "object",
+        "modern_architecture"
+      ]
+    },
+    "database_tags": [
+      "source:wikimedia-commons-hero-candidate-dom-ino-house",
+      "source:fondation-le-corbusier-dom-ino-house",
+      "source:cite-de-l-architecture-du-patrimoine-maison-dom-ino",
+      "source:archweb-house-dom-ino",
+      "typology:structural-prototype",
+      "style:modern_architecture",
+      "theme:prototype",
+      "theme:frame",
+      "theme:standardization",
+      "theme:free-plan",
+      "material:concrete",
+      "rights:review-required",
+      "blender:structural-prototype-layer-candidate",
+      "plan:vector-review-required",
+      "viewer:3d-layer-review-required"
+    ],
+    "model_assets": [
+      {
+        "model_type": "site_model",
+        "title": "Dom-Ino House Site/context study model",
+        "r2_key": "entries/dom-ino-house/models/site.glb",
+        "format": "glb",
+        "lod_level": "preview",
+        "source_basis": "Wikimedia Commons hero candidate / Dom-Ino House | Fondation Le Corbusier / Dom-Ino House | Cité de l'architecture & du patrimoine / Maison Dom-Ino | Archweb / House Dom-Ino",
+        "generation_method": "procedural",
+        "review_status": "draft",
+        "confidence_score": 0.42
+      },
+      {
+        "model_type": "structure_model",
+        "title": "Dom-Ino House Structure and spatial order study model",
+        "r2_key": "entries/dom-ino-house/models/structure.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "Wikimedia Commons hero candidate / Dom-Ino House | Fondation Le Corbusier / Dom-Ino House | Cité de l'architecture & du patrimoine / Maison Dom-Ino | Archweb / House Dom-Ino",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      },
+      {
+        "model_type": "tectonic_model",
+        "title": "Dom-Ino House Material, tectonic and filter-layer study model",
+        "r2_key": "entries/dom-ino-house/models/tectonic.glb",
+        "format": "glb",
+        "lod_level": "study",
+        "source_basis": "Wikimedia Commons hero candidate / Dom-Ino House | Fondation Le Corbusier / Dom-Ino House | Cité de l'architecture & du patrimoine / Maison Dom-Ino | Archweb / House Dom-Ino; tags: source:wikimedia-commons-hero-candidate-dom-ino-house, source:fondation-le-corbusier-dom-ino-house, source:cite-de-l-architecture-du-patrimoine-maison-dom-ino, source:archweb-house-dom-ino, typology:structural-prototype, style:modern_architecture, theme:prototype, theme:frame",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      }
+    ],
+    "analysis_layers": [
+      {
+        "analysis_type": "structure",
+        "summary": "Dom-Ino House needs a reviewed structural reading connecting concrete with construction logic, span, support and assembly.",
+        "data": {
+          "seed_tags": [
+            "structure:needs_review",
+            "concrete"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "material_system",
+        "summary": "Dom-Ino House should be tagged through concrete and verified against primary sources before public material claims are made.",
+        "data": {
+          "seed_tags": [
+            "concrete"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "spatial_order",
+        "summary": "Dom-Ino House should be read through program, movement, room sequence, exterior relation and typological position rather than as a single image.",
+        "data": {
+          "seed_tags": [
+            "spatial_order",
+            "structural_prototype"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "typology",
+        "summary": "Dom-Ino House is currently classified as structural_prototype; the seed must verify how this type differs from related entries with the same DNA.",
+        "data": {
+          "seed_tags": [
+            "typology",
+            "structural_prototype",
+            "ohne festen Ort"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "summary": "Dom-Ino House needs filter checks for themes, materials, rights, plan readiness, 3D layer readiness and viewer filters.",
+        "data": {
+          "seed_tags": [
+            "source:wikimedia-commons-hero-candidate-dom-ino-house",
+            "source:fondation-le-corbusier-dom-ino-house",
+            "source:cite-de-l-architecture-du-patrimoine-maison-dom-ino",
+            "source:archweb-house-dom-ino",
+            "typology:structural-prototype",
+            "style:modern_architecture",
+            "theme:prototype",
+            "theme:frame",
+            "theme:standardization",
+            "theme:free-plan"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      }
+    ],
+    "database_profile": {
+      "status": "reviewed",
+      "r2_prefix": "entries/dom-ino-house",
+      "source_count": 4,
+      "media_count": 4,
+      "model_count": 3,
+      "analysis_count": 5,
+      "tag_count": 15,
+      "rights_summary": "Public text and metadata are allowed; hero media is public-safe with attribution (cc_by); exact plans, protected photos and models remain review-only until rights are cleared.",
+      "updated_at": "2026-05-24T09:10:40.499Z"
+    },
+    "ingestion_status": {
+      "stage": "needs_review",
+      "source_status": "reviewed",
+      "asset_status": "ready",
+      "model_status": "planned",
+      "updated_at": "2026-05-24T09:10:40.500Z"
+    }
   },
   {
     "id": "welwyn-garden-city",
@@ -24307,10 +24992,10 @@
       "repair",
       "housing"
     ],
-    "short_description": "Stadterneuerungsprogramm, das Reparatur, Blockstruktur, Bestand und internationale Entwurfspositionen in einer geteilten Stadt verhandelt.",
-    "source_quality": "case_study",
-    "one_sentence": "IBA Berlin 1987 ist als Ereignis in Berlin, Germany im Jahr 1979 im Architecture Cosmos verortet und verknuepft critical reconstruction, block, repair.",
-    "full_description": "Stadterneuerungsprogramm, das Reparatur, Blockstruktur, Bestand und internationale Entwurfspositionen in einer geteilten Stadt verhandelt. Der Eintrag wird im Atlas als Ereignis gelesen und gehoert zur Wissensspur Global History ETH, Layer urban history. Autorenschaft / Quelle: Josef Paul Kleihues, Hardt-Waltherr Hamer. Seine Filterebene verbindet critical reconstruction, block, repair, housing mit Jahr, Stilsektor und Relationennetz; spaeter koennen echte Fotos, Plaene, Schnitte, Quellen und Modelle direkt aus der Datenbank angeschlossen werden.",
+    "short_description": "IBA Berlin 1987 verbindet kritische Rekonstruktion, Blockstruktur, Reparatur und Wohnungsbau zu einem Modell stadträumlicher Erneuerung.",
+    "source_quality": "research_seed_review",
+    "one_sentence": "IBA Berlin 1987 zeigt, wie Stadterneuerungsprogramm, Backstein, Beton, Stein, Topos, Typos und Tektonik zu einer belastbaren Referenz für Plan-, Material- und 3D-Layer werden.",
+    "full_description": "IBA Berlin 1987 wird als architektonisches Referenzobjekt über Stadterneuerungsprogramm, Backstein, Beton, Stein, Berlin, Germany, räumliche Ordnung und historische Position gelesen. Entscheidend ist nicht die reine Datierung, sondern wie Setzung, Material, Gebrauch, Fügung und kulturelle Haltung zusammen eine übertragbare Entwurfsintelligenz bilden. Für KosmoData werden daraus zugleich Planlayer, Modelllayer, Filterbegriffe und Vergleichsbeziehungen abgeleitet.",
     "media": [
       {
         "type": "exterior",
@@ -24345,8 +25030,287 @@
         "reliability_level": "secondary_source",
         "rights_status": "licensed",
         "notes": "Auto-selected hero image candidate. Score: 0.87. License: CC BY-SA 4.0."
+      },
+      {
+        "source_type": "iba_history_site",
+        "title": "IBA Wien / History of IBAs: IBA Berlin 1987",
+        "url": "https://www.iba-wien.at/en/iba-wien/history-of-ibas/iba-berlin-1987",
+        "reliability_level": "high",
+        "rights_status": "link_only",
+        "notes": "Institutional IBA history text summarizing IBA Berlin 1987, critical reconstruction and careful urban renewal."
+      },
+      {
+        "source_type": "urban_research_archive",
+        "title": "Difu ORLIS / Internationale Bauausstellung Berlin 1987",
+        "url": "https://orlis.difu.de/items/2018e059-3dd7-4434-9603-9677671596ed",
+        "reliability_level": "high",
+        "rights_status": "link_only",
+        "notes": "German urban research archive record for IBA Berlin 1987 opening publication."
+      },
+      {
+        "source_type": "iba_network",
+        "title": "Internationale Bauausstellungen / IBA format",
+        "url": "https://www.internationale-bauausstellungen.de/en/",
+        "reliability_level": "medium",
+        "rights_status": "link_only",
+        "notes": "Contextual source on the International Building Exhibition format."
       }
-    ]
+    ],
+    "architecture_text": {
+      "headline": "IBA Berlin 1987: Stadterneuerungsprogramm als KosmoData-Referenz",
+      "overview": "IBA Berlin 1987 wird als architektonische Referenz gelesen: Ort, Nutzung, Material, Traglogik und historische Position werden zusammengeführt, damit das Projekt nicht nur beschrieben, sondern im KosmoData-Netzwerk vergleichbar wird.",
+      "chapters": [
+        {
+          "title": "These",
+          "text": "IBA Berlin 1987 wird über kritische Rekonstruktion, Blockstruktur, Reparatur, Wohnungsbau als räumliche These gelesen: Das Projekt zeigt, wie eine Bauaufgabe eine Haltung zu Arbeit, Lernen, Öffentlichkeit, Landschaft oder Alltag formuliert.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Netzwerk und DNA",
+          "text": "IBA Berlin 1987 wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, worin seine DNA innerhalb ähnlicher Projekte abweicht.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Topos",
+          "text": "Der Ort Berlin, Germany ist Teil der architektonischen Lesart: Er bestimmt Adresse, Maßstab, Landschaft, Infrastruktur und die Art, wie das Objekt in seinem Umfeld wirkt.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Typos",
+          "text": "Typologisch wird IBA Berlin 1987 als Stadterneuerungsprogramm geführt. Diese Kategorie dient nicht als starre Schublade, sondern als Vergleichsebene für Programme, Raumfolgen und Nutzungslogiken.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Backstein, Beton, Stein werden als konstruktiv-atmosphärische Ebene gelesen: Oberfläche, Traglogik, Fügung, Öffnung und Hülle bilden zusammen die tektonische Grammatik des Projekts.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumlogik",
+          "text": "Grundriss, Schnitt, Bewegung, Blick, Schwelle und Gebrauch werden als zusammenhängendes System gelesen. Für die spätere Plan- und 3D-Pipeline ist diese Raumlogik wichtiger als eine reine Bildbeschreibung.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Konflikt und Kritik",
+          "text": "IBA Berlin 1987 wird auch über offene Spannungen gelesen: Rechte, Quellenlage, soziale Wirkung, Ökologie, industrielle Abhängigkeit oder institutionelle Macht bleiben als prüfbare Kritikfelder markiert.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "KosmoData-Layer und 3D-Potenzial",
+          "text": "Aus IBA Berlin 1987 lassen sich Planlayer, Materiallayer und spätere Blender-Collections ableiten: Stadterneuerungsprogramm, Nachkriegsmoderne, kritische Rekonstruktion, Blockstruktur, Reparatur, Wohnungsbau, Backstein, Beton.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Entwurfsintelligenz",
+          "text": "Der Datenbankwert liegt in der übertragbaren Entwurfsregel: IBA Berlin 1987 hilft, spätere Projekte nach Material, Typus, Struktur, Atmosphäre und historischem Netzwerk gezielt zu vergleichen.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "kosmodata-seed-from-research",
+      "generated_at": "2026-05-24T09:10:41.823Z",
+      "review_status": "draft_review"
+    },
+    "materials": {
+      "primary": [
+        "brick",
+        "concrete",
+        "stone"
+      ],
+      "secondary": [
+        "craft_details",
+        "surface_system",
+        "construction_logic"
+      ],
+      "notes": "Seeded from local reviewed source metadata; verify exact material claims before publication."
+    },
+    "program": {
+      "type": "urban_renewal_program",
+      "subtype": "postwar_modern_architecture_reference",
+      "public_access": "needs_review",
+      "components": [
+        "critical reconstruction",
+        "block",
+        "repair",
+        "housing",
+        "event",
+        "postwar_modern_architecture"
+      ]
+    },
+    "context": {
+      "topography": "needs_site_review",
+      "setting": "Berlin, Germany",
+      "landscape_relations": [
+        "site_context_needs_review"
+      ],
+      "urban_context": [
+        "urban_history",
+        "research_seed_review"
+      ],
+      "construction_logic": [
+        "critical reconstruction",
+        "block",
+        "repair",
+        "housing",
+        "event",
+        "postwar_modern_architecture"
+      ]
+    },
+    "database_tags": [
+      "source:wikimedia-commons-hero-candidate-iba-berlin-1987",
+      "source:iba-wien-history-of-ibas-iba-berlin-1987",
+      "source:difu-orlis-internationale-bauausstellung-berlin-1987",
+      "source:internationale-bauausstellungen-iba-format",
+      "typology:urban-renewal-program",
+      "style:postwar_modern_architecture",
+      "theme:critical-reconstruction",
+      "theme:block",
+      "theme:repair",
+      "theme:housing",
+      "material:brick",
+      "material:concrete",
+      "material:stone",
+      "rights:review-required",
+      "blender:urban-renewal-program-layer-candidate",
+      "plan:vector-review-required",
+      "viewer:3d-layer-review-required"
+    ],
+    "model_assets": [
+      {
+        "model_type": "site_model",
+        "title": "IBA Berlin 1987 Site/context study model",
+        "r2_key": "entries/berlin-iba-1987/models/site.glb",
+        "format": "glb",
+        "lod_level": "preview",
+        "source_basis": "Wikimedia Commons hero candidate / IBA Berlin 1987 | IBA Wien / History of IBAs: IBA Berlin 1987 | Difu ORLIS / Internationale Bauausstellung Berlin 1987 | Internationale Bauausstellungen / IBA format",
+        "generation_method": "procedural",
+        "review_status": "draft",
+        "confidence_score": 0.42
+      },
+      {
+        "model_type": "structure_model",
+        "title": "IBA Berlin 1987 Structure and spatial order study model",
+        "r2_key": "entries/berlin-iba-1987/models/structure.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "Wikimedia Commons hero candidate / IBA Berlin 1987 | IBA Wien / History of IBAs: IBA Berlin 1987 | Difu ORLIS / Internationale Bauausstellung Berlin 1987 | Internationale Bauausstellungen / IBA format",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      },
+      {
+        "model_type": "tectonic_model",
+        "title": "IBA Berlin 1987 Material, tectonic and filter-layer study model",
+        "r2_key": "entries/berlin-iba-1987/models/tectonic.glb",
+        "format": "glb",
+        "lod_level": "study",
+        "source_basis": "Wikimedia Commons hero candidate / IBA Berlin 1987 | IBA Wien / History of IBAs: IBA Berlin 1987 | Difu ORLIS / Internationale Bauausstellung Berlin 1987 | Internationale Bauausstellungen / IBA format; tags: source:wikimedia-commons-hero-candidate-iba-berlin-1987, source:iba-wien-history-of-ibas-iba-berlin-1987, source:difu-orlis-internationale-bauausstellung-berlin-1987, source:internationale-bauausstellungen-iba-format, typology:urban-renewal-program, style:postwar_modern_architecture, theme:critical-reconstruction, theme:block",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      }
+    ],
+    "analysis_layers": [
+      {
+        "analysis_type": "structure",
+        "summary": "IBA Berlin 1987 needs a reviewed structural reading connecting brick, concrete, stone with construction logic, span, support and assembly.",
+        "data": {
+          "seed_tags": [
+            "structure:needs_review",
+            "brick",
+            "concrete",
+            "stone"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "material_system",
+        "summary": "IBA Berlin 1987 should be tagged through brick, concrete, stone and verified against primary sources before public material claims are made.",
+        "data": {
+          "seed_tags": [
+            "brick",
+            "concrete",
+            "stone"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "spatial_order",
+        "summary": "IBA Berlin 1987 should be read through program, movement, room sequence, exterior relation and typological position rather than as a single image.",
+        "data": {
+          "seed_tags": [
+            "spatial_order",
+            "urban_renewal_program"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "typology",
+        "summary": "IBA Berlin 1987 is currently classified as urban_renewal_program; the seed must verify how this type differs from related entries with the same DNA.",
+        "data": {
+          "seed_tags": [
+            "typology",
+            "urban_renewal_program",
+            "Berlin, Germany"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "summary": "IBA Berlin 1987 needs filter checks for themes, materials, rights, plan readiness, 3D layer readiness and viewer filters.",
+        "data": {
+          "seed_tags": [
+            "source:wikimedia-commons-hero-candidate-iba-berlin-1987",
+            "source:iba-wien-history-of-ibas-iba-berlin-1987",
+            "source:difu-orlis-internationale-bauausstellung-berlin-1987",
+            "source:internationale-bauausstellungen-iba-format",
+            "typology:urban-renewal-program",
+            "style:postwar_modern_architecture",
+            "theme:critical-reconstruction",
+            "theme:block",
+            "theme:repair",
+            "theme:housing"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      }
+    ],
+    "database_profile": {
+      "status": "reviewed",
+      "r2_prefix": "entries/berlin-iba-1987",
+      "source_count": 4,
+      "media_count": 4,
+      "model_count": 3,
+      "analysis_count": 5,
+      "tag_count": 17,
+      "rights_summary": "Public text and metadata are allowed; hero media is public-safe with attribution (cc_by_sa); exact plans, protected photos and models remain review-only until rights are cleared.",
+      "updated_at": "2026-05-24T09:10:42.004Z"
+    },
+    "ingestion_status": {
+      "stage": "needs_review",
+      "source_status": "reviewed",
+      "asset_status": "ready",
+      "model_status": "planned",
+      "updated_at": "2026-05-24T09:10:42.005Z"
+    }
   },
   {
     "id": "parc-de-la-villette",
