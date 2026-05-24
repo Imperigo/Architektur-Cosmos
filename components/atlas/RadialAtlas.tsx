@@ -628,12 +628,8 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
 
   function focusNodeInView(event: ReactMouseEvent<SVGGElement> | undefined, fallbackNode: WormholeEntryNode) {
     if (panGestureRef.current.active && panGestureRef.current.moved) return;
-    const point = event ? pointerToSvgPoint(event) : null;
-    const nearest = point ? nearestInteractiveNode(toCameraPoint(point), displayNodes, {
-      coarse: ui.isCoarsePointer,
-      zoom: visualZoomRef.current.currentZoom
-    }) : null;
-    offenDossierFromNode(nearest?.entry ?? fallbackNode.entry);
+    event?.stopPropagation();
+    offenDossierFromNode(fallbackNode.entry);
   }
 
   function offenDossierFromNode(entry: Entry) {
@@ -1397,7 +1393,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
                   key={node.entry.id}
                   className="node-focus-drift"
                   opacity={displayOpacity}
-                  style={{ pointerEvents: activeSourceLens && !isSourceLensMatch ? 'none' : 'auto' }}
+                  style={{ pointerEvents: node.opacity < 0.045 ? 'none' : 'auto' }}
                 >
                   <SemanticEntryNode
                     entry={node.entry}
