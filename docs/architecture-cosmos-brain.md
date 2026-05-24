@@ -283,8 +283,8 @@ npm run brain:model-batch -- --execute
 The batch calls `cosmos:model-generate` only. It does not copy GLBs to
 `public/`, does not upload R2, does not write D1 and does not modify
 `data/mock-entries.json`. At the moment Villa Savoye, Alterszentrum Kloster
-Ingenbohl, Habitat 67 and Narkomfin Housing have reviewed procedural GLB
-templates; other entries receive model review plans until their
+Ingenbohl, Habitat 67, Narkomfin Housing and Euralille Metropole have reviewed
+procedural GLB templates; other entries receive model review plans until their
 plan/section/source basis is strong enough.
 
 ## Future Extensions

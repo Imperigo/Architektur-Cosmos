@@ -271,11 +271,62 @@ function narkomfinScene(entry) {
   };
 }
 
+function euralilleScene(entry) {
+  const materials = [
+    { name: 'metropolitan ground / urban field', color: [0.2, 0.22, 0.24, 1] },
+    { name: 'rail infrastructure trench', color: [0.1, 0.12, 0.14, 1] },
+    { name: 'station hall and transport deck', color: [0.5, 0.56, 0.58, 1] },
+    { name: 'office and commercial volume', color: [0.64, 0.66, 0.62, 1] },
+    { name: 'public void / plaza surface', color: [0.82, 0.72, 0.46, 1] },
+    { name: 'bridge and movement layer', color: [1, 0.62, 0.12, 1] },
+    { name: 'metropolitan tower marker', color: [0.18, 0.66, 0.9, 1] }
+  ];
+
+  const objects = [
+    box('01_site_context / metropolitan ground field', [0, -0.1, 0], [36, 0.2, 24], 0),
+    box('02_infrastructure / TGV rail trench east-west', [0, 0.02, 0], [34, 0.28, 2.2], 1),
+    box('02_infrastructure / station deck over tracks', [-3.8, 0.42, 0], [13.6, 0.54, 5.2], 2, Math.PI * 0.015),
+    box('05_public_space / plaza hinge between city and station', [-4.2, 0.62, 4.25], [10.8, 0.16, 4.7], 4),
+    box('05_public_space / lower interchange court', [5.8, 0.52, -4.1], [8.6, 0.16, 4.2], 4),
+    box('06_circulation / bridge spine across rail field', [0, 1.05, 0.7], [26, 0.22, 1.0], 5, Math.PI * -0.035),
+    box('06_circulation / diagonal metropolitan connector', [3.2, 1.42, 2.6], [17.5, 0.2, 0.72], 5, Math.PI * 0.17),
+    box('03_structure / stacked commercial slab', [-7.5, 2.0, -4.2], [8.8, 3.2, 4.4], 3, Math.PI * -0.025),
+    box('03_structure / office bar over infrastructure', [4.2, 2.7, 4.6], [10.4, 4.0, 3.8], 3, Math.PI * 0.04),
+    box('03_structure / congress and hotel block', [10.2, 2.15, -1.7], [5.2, 3.2, 5.2], 3, Math.PI * -0.06),
+    box('04_tower / metropolitan marker tower north', [-11.2, 5.6, 2.4], [2.0, 10.6, 2.0], 6, Math.PI * 0.06),
+    box('04_tower / metropolitan marker tower south', [10.4, 6.8, 5.0], [1.8, 13.0, 1.8], 6, Math.PI * -0.04)
+  ];
+
+  for (const x of [-14, -9.4, -4.8, -0.2, 4.4, 9.0, 13.6]) {
+    objects.push(box(`02_infrastructure / rail platform rhythm ${x}`, [x, 0.25, -1.15], [2.4, 0.18, 0.36], 2));
+    objects.push(box(`02_infrastructure / rail platform rhythm south ${x}`, [x, 0.25, 1.15], [2.4, 0.18, 0.36], 2));
+  }
+
+  for (const [x, z, h] of [[-7.5, -4.2, 3.7], [4.2, 4.6, 4.5], [10.2, -1.7, 3.7]]) {
+    objects.push(box(`03_structure / vertical core ${x}:${z}`, [x - 2.8, h / 2 + 0.55, z], [0.55, h, 0.75], 2));
+    objects.push(box(`03_structure / vertical core second ${x}:${z}`, [x + 2.8, h / 2 + 0.55, z], [0.55, h, 0.75], 2));
+  }
+
+  objects.push(box('07_analysis / infrastructure-meets-city section trace', [0, 7.6, 0.18], [27, 0.14, 0.18], 6, Math.PI * 0.015));
+
+  return {
+    asset: {
+      version: '2.0',
+      generator: 'Architecture Cosmos archive-generate-massing',
+      copyright: 'Architecture Cosmos / diagrammatic model / not measured'
+    },
+    sceneName: `${entry.title} diagrammatic infrastructure node`,
+    materials,
+    objects
+  };
+}
+
 function sceneForEntry(entry) {
   if (entry.slug === 'villa-savoye') return villaSavoyeScene(entry);
   if (entry.slug === 'alterszentrum-kloster-ingenbohl') return ingenbohlScene(entry);
   if (entry.slug === 'habitat-67') return habitat67Scene(entry);
   if (entry.slug === 'narkomfin-housing') return narkomfinScene(entry);
+  if (entry.slug === 'euralille-metropole') return euralilleScene(entry);
   return null;
 }
 

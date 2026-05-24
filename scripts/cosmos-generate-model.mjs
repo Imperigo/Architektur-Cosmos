@@ -131,6 +131,14 @@ function chooseTemplate(entry) {
       layer_contract: ['site', 'mass', 'structure', 'facade', 'interior', 'circulation', 'roof_terrace', 'materials']
     };
   }
+  if (entry.slug === 'euralille-metropole') {
+    return {
+      id: 'metropolitan_infrastructure_node',
+      can_generate: true,
+      reason: 'Euralille has a reviewed diagrammatic template for rail trench, station deck, public voids, bridge spines, commercial slabs and tower markers.',
+      layer_contract: ['site', 'infrastructure', 'station_deck', 'public_space', 'mass', 'circulation', 'towers', 'materials']
+    };
+  }
 
   const suggested = entry.entry_type === 'landscape_project' || entry.entry_type === 'infrastructure'
     ? 'linear_landscape_infrastructure'
