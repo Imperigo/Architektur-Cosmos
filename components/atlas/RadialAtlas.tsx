@@ -627,7 +627,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   }
 
   function focusNodeInView(event: ReactMouseEvent<SVGGElement> | undefined, fallbackNode: WormholeEntryNode) {
-    if (panGestureRef.current.moved) return;
+    if (panGestureRef.current.active && panGestureRef.current.moved) return;
     const point = event ? pointerToSvgPoint(event) : null;
     const nearest = point ? nearestInteractiveNode(toCameraPoint(point), displayNodes, {
       coarse: ui.isCoarsePointer,
@@ -1185,7 +1185,10 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
 
   function handlePointerDown(event: PointerEvent<SVGSVGElement>) {
     if (event.pointerType === 'touch' || event.button !== 0 || isInterfaceTarget(event.target) || selectedEntry || introState !== 'idle') return;
-    if (isEntryNodeTarget(event.target)) return;
+    if (isEntryNodeTarget(event.target)) {
+      panGestureRef.current.moved = false;
+      return;
+    }
     if (visualZoomRef.current.currentZoom <= 1.02) return;
 
     panGestureRef.current = {
@@ -1527,12 +1530,12 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
             }}
           />
         ) : null}
-        {cursorVisible ? <ScreenCosmosCursor cursorRef={screenCursorRef} isDossierOpen={Boolean(selectedEntry)} isOverlayOpen={showDatabasePanel || introState !== 'idle'} /> : null}
       </div>
 
       {introState !== 'idle' ? <IntroGate state={introState} onStart={startIntro} /> : null}
       {introState === 'launching' ? <WormholeBirthOverlay /> : null}
       {returningFromDatabase ? <DatabaseReturnOverlay /> : null}
+      {cursorVisible ? <ScreenCosmosCursor cursorRef={screenCursorRef} isDossierOpen={Boolean(selectedEntry)} isOverlayOpen={showDatabasePanel || introState !== 'idle'} /> : null}
     </main>
   );
 }
@@ -1760,11 +1763,11 @@ function isTagLayerEntry(entry: Entry, activeTagLayer: ActiveTagLayer) {
 }
 
 function nearestInteractiveNode(point: SvgPoint, nodes: WormholeEntryNode[], options: { coarse?: boolean; zoom?: number } = {}) {
-  const baseHitRadius = options.coarse ? 30 : 18;
-  const zoomedHitBoost = (options.zoom ?? 1) > 1.02 ? 12 : 0;
+  const baseHitRadius = options.coarse ? 36 : 24;
+  const zoomedHitBoost = (options.zoom ?? 1) > 1.02 ? 18 : 0;
 
   return nodes.reduce<{ entry: Entry; distance: number } | null>((nearest, node) => {
-    if (node.opacity < 0.14) return nearest;
+    if (node.opacity < 0.045) return nearest;
 
     const distance = Math.hypot(point.x - node.x, point.y - node.y);
     const hitRadius = Math.max(baseHitRadius, node.size + 10 + zoomedHitBoost);

@@ -3706,7 +3706,12 @@ body:has(.entry-page) {
 .cosmos-glyph {
   transform-box: fill-box;
   transform-origin: center;
-  animation: cosmos-glyph-idle 7.2s ease-in-out infinite;
+  animation: cosmos-glyph-idle 5.8s ease-in-out infinite;
+}
+
+.cosmos-glyph path,
+.cosmos-glyph circle {
+  animation: cosmos-glyph-line-pulse 4.6s ease-in-out infinite;
 }
 
 .orbit-menu-backdrop {
@@ -4107,11 +4112,24 @@ body:has(.entry-page) {
 @keyframes cosmos-glyph-idle {
   0%, 100% {
     transform: rotate(0deg) scale(1);
-    filter: drop-shadow(0 0 10px rgb(0 231 255 / 10%));
+    filter: drop-shadow(0 0 10px rgb(0 231 255 / 14%));
+  }
+  45% {
+    transform: rotate(3.6deg) scale(1.045);
+    filter: drop-shadow(0 0 22px rgb(0 231 255 / 30%));
+  }
+  72% {
+    transform: rotate(-1.4deg) scale(1.018);
+    filter: drop-shadow(0 0 16px rgb(255 79 216 / 18%));
+  }
+}
+
+@keyframes cosmos-glyph-line-pulse {
+  0%, 100% {
+    opacity: 0.82;
   }
   50% {
-    transform: rotate(1.8deg) scale(1.025);
-    filter: drop-shadow(0 0 16px rgb(0 231 255 / 20%));
+    opacity: 1;
   }
 }
 
@@ -5150,6 +5168,8 @@ html[data-cosmos-browser="opera"] .relation-strand {
   .wormhole-whirl,
   .cosmos-node-wiggle,
   .cosmos-glyph,
+  .cosmos-glyph path,
+  .cosmos-glyph circle,
   .orbit-menu-nebula,
   .orbit-menu-grid,
   .orbit-menu-stars i,
