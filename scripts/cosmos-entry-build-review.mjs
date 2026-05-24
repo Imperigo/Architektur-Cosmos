@@ -77,7 +77,9 @@ async function loadEntry(slug) {
 }
 
 function runStep(name, npmArgs) {
-  const result = spawnSync('npm', npmArgs, {
+  const command = process.env.npm_execpath ? process.execPath : 'npm';
+  const args = process.env.npm_execpath ? [process.env.npm_execpath, ...npmArgs] : npmArgs;
+  const result = spawnSync(command, args, {
     cwd: root,
     encoding: 'utf8',
     stdio: ['ignore', 'pipe', 'pipe']

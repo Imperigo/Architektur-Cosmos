@@ -18,8 +18,8 @@ publisht nicht automatisch.
 
 Die Pipeline soll weniger manuelle Seed-Arbeit brauchen. Nächster Schritt ist,
 dass Research-Agenten aus Quellenpaketen automatisch
-`data/kosmodata-enrichment-seeds.json`-Kandidaten vorbereiten. Der Mensch bzw.
-Andrin prüft dann nur noch Review-Pack und Promotion.
+`data/kosmodata-enrichment-seeds.json`-Kandidaten vorbereiten. Die ownerseitige
+Review prüft dann nur noch Review-Pack und Promotion.
 
 ## Block 1: Seed Generator aus Research Packs
 
@@ -140,4 +140,3 @@ Wenn wir weitermachen, zuerst diesen Satz verwenden:
 
 > Wir fahren mit `docs/tomorrow-next-steps-2026-05-24.md` fort und bauen den
 > Seed Generator aus Research Packs.
-

@@ -53,8 +53,7 @@ async function createReview() {
   const entry = entries.find((item) => item.slug === slug || item.id === slug);
   if (!entry) throw new Error(`No entry found for "${slug}".`);
 
-  const seeds = await readJson(seedsPath, {});
-  const seed = seeds.entries?.[entry.slug] || seeds.entries?.[entry.id] || null;
+  const seed = await loadSeed(entry);
   const proposedEntry = buildProposedEntry(entry, seed);
   const review = buildReview({ entry, proposedEntry, seed });
 
@@ -165,6 +164,7 @@ function buildReview({ entry, proposedEntry, seed }) {
   const rights = buildRightsReport(proposedEntry);
   const sourceTrail = proposedEntry.source_candidates || [];
   const changes = summarizeChanges(entry, proposedEntry);
+  const toolPipeline = buildToolPipeline(proposedEntry, seed);
   const blockers = [
     ...validation.errors,
     ...rights.blockers,
@@ -192,6 +192,7 @@ function buildReview({ entry, proposedEntry, seed }) {
     },
     source_trail: sourceTrail,
     changes,
+    tool_pipeline: toolPipeline,
     rights_report: rights,
     validation,
     promotion: {
@@ -203,9 +204,76 @@ function buildReview({ entry, proposedEntry, seed }) {
     outputs: {
       proposed_entry: `archive-intake/${entry.slug}/enrichment/proposed-entry.json`,
       review_json: `out/kosmodata-enrichment/${entry.slug}/enrichment-review.json`,
-      review_md: `out/kosmodata-enrichment/${entry.slug}/enrichment-review.md`
+      review_md: `out/kosmodata-enrichment/${entry.slug}/enrichment-review.md`,
+      plan_review: `archive-intake/${entry.slug}/automation/plan-tool-run.json`,
+      model_review: `archive-intake/${entry.slug}/automation/model-tool-run.json`,
+      entry_build_review: `archive-intake/${entry.slug}/review/entry-build-review.json`
     }
   };
+}
+
+async function loadSeed(entry) {
+  if (args.seed) return readJson(path.resolve(root, args.seed));
+
+  const candidatePath = path.join(root, 'archive-intake', entry.slug, 'enrichment', 'seed-candidate.json');
+  const candidate = await readJson(candidatePath, null);
+  if (candidate) return candidate;
+
+  const seeds = await readJson(seedsPath, {});
+  return seeds.entries?.[entry.slug] || seeds.entries?.[entry.id] || null;
+}
+
+function buildToolPipeline(entry, seed) {
+  const planRequirements = normalizePlanRequirements(seed?.plan_requirements || inferPlanRequirements(entry));
+  const modelRequirements = normalizeModelRequirements(seed?.model_requirements || inferModelRequirements(entry));
+  const viewerRequirements = normalizeViewerRequirements(seed?.viewer_requirements || inferViewerRequirements(entry));
+  return {
+    status: 'planned_after_promotion',
+    reason: 'Plan and 3D tools use the current promoted entry data. Run them after review/promotion so they consume the approved fields.',
+    commands: {
+      plan_generate: `npm run cosmos:plan-generate -- --entry ${entry.slug}`,
+      model_generate: `npm run cosmos:model-generate -- --entry ${entry.slug}`,
+      entry_build_review: `npm run cosmos:entry-build -- --entry ${entry.slug} --mode review`
+    },
+    plan_requirements: planRequirements,
+    model_requirements: modelRequirements,
+    viewer_requirements: viewerRequirements
+  };
+}
+
+function normalizePlanRequirements(requirements) {
+  return {
+    ...requirements,
+    exports: arrayValue(requirements.exports || requirements.required_outputs),
+    required_layers: arrayValue(requirements.required_layers),
+    analysis_links: arrayValue(requirements.analysis_links),
+    material_labels: arrayValue(requirements.material_labels)
+  };
+}
+
+function normalizeModelRequirements(requirements) {
+  return {
+    ...requirements,
+    layer_contract: arrayValue(requirements.layer_contract),
+    proposed_model_layers: arrayValue(requirements.proposed_model_layers || requirements.model_targets),
+    model_targets: arrayValue(requirements.model_targets),
+    blender_filters: arrayValue(requirements.blender_filters)
+  };
+}
+
+function normalizeViewerRequirements(requirements) {
+  return {
+    ...requirements,
+    modes: arrayValue(requirements.modes),
+    filter_buttons: arrayValue(requirements.filter_buttons),
+    layer_sources: arrayValue(requirements.layer_sources)
+  };
+}
+
+function arrayValue(value) {
+  if (Array.isArray(value)) return value;
+  if (value === undefined || value === null || value === '') return [];
+  return [value];
 }
 
 function validateProposedEntry(entry) {
@@ -265,6 +333,79 @@ function buildRightsReport(entry) {
     warnings,
     note: rightsSummary(entry)
   };
+}
+
+function inferPlanRequirements(entry) {
+  return {
+    status: 'planned',
+    generator: 'cosmos:plan-generate',
+    exports: ['plan_svg', 'section_svg', 'analysis_svg', 'plan_dxf', 'vector_graph', 'archicad_2d_profile'],
+    required_layers: [
+      'site_context',
+      'structural_grid',
+      'walls_mass',
+      'openings_voids',
+      'circulation',
+      'landscape',
+      'material_annotations',
+      'uncertainty_notes'
+    ],
+    source_basis: sourceBasis(entry),
+    caveat: 'Diagrammatic study drawing until reviewed plans/sections are attached.'
+  };
+}
+
+function inferModelRequirements(entry) {
+  const modelLayers = entry.model_assets?.map((asset) => asset.model_type.replace(/_model$/, '')) || [];
+  return {
+    status: entry.model_assets?.length ? 'planned' : 'needs_model_assets',
+    generator: 'cosmos:model-generate',
+    layer_contract: [
+      'site',
+      'mass',
+      'structure',
+      'facade',
+      'interior',
+      'tectonic',
+      'materials',
+      'uncertainty'
+    ],
+    proposed_model_layers: [...new Set([...modelLayers, ...(entry.database_tags || []).filter((tag) => tag.startsWith('blender:')).map(stripTagPrefix)])],
+    source_basis: sourceBasis(entry),
+    caveat: 'Geometry remains diagrammatic unless measured plans, sections or survey-derived sources are reviewed.'
+  };
+}
+
+function inferViewerRequirements(entry) {
+  const materials = [
+    ...(entry.materials?.primary || []),
+    ...(entry.materials?.secondary || [])
+  ];
+  return {
+    status: 'planned',
+    viewer: 'project_detail_3d_viewer',
+    modes: ['realistisch', 'analysefarben', 'struktur', 'material', 'schnitt'],
+    filter_buttons: [...new Set([
+      'site',
+      'structure',
+      'facade',
+      'interior',
+      'tectonic',
+      'materials',
+      ...materials.slice(0, 6).map(readableLabel)
+    ])],
+    blender_collection_policy: 'Every visible viewer filter should map to a Blender collection/layer when a GLB package exists.',
+    archicad_export_policy: '2D SVG/DXF and metadata can be exported before a full BIM model exists; BIM semantics require later review.'
+  };
+}
+
+function sourceBasis(entry) {
+  const sources = [
+    entry.source_url,
+    ...(entry.source_documents || []),
+    ...(entry.source_candidates || []).map((source) => source.title || source.url)
+  ].filter(Boolean);
+  return sources.length ? sources.slice(0, 6) : ['entry metadata only; needs source review'];
 }
 
 function rightsSummary(entry) {
@@ -356,6 +497,20 @@ function renderReviewMarkdown(review) {
   review.changes.forEach((change) => lines.push(`- \`${change.field}\`: ${change.before} -> ${change.after}`));
   lines.push('', '## Rights', '');
   review.rights_report.media.forEach((item) => lines.push(`- ${item.type}: ${item.license}, public display ${item.public_display_allowed ? 'yes' : 'no'}`));
+  lines.push('', '## Plan / 3D / Viewer Pipeline', '');
+  lines.push(`Status: \`${review.tool_pipeline.status}\``);
+  lines.push(`Reason: ${review.tool_pipeline.reason}`);
+  lines.push('', 'Commands:');
+  Object.entries(review.tool_pipeline.commands).forEach(([key, value]) => lines.push(`- ${key}: \`${value}\``));
+  lines.push('', 'Plan requirements:');
+  lines.push(`- exports: ${review.tool_pipeline.plan_requirements.exports.join(', ')}`);
+  lines.push(`- layers: ${review.tool_pipeline.plan_requirements.required_layers.join(', ')}`);
+  lines.push('', '3D requirements:');
+  lines.push(`- layer contract: ${review.tool_pipeline.model_requirements.layer_contract.join(', ')}`);
+  lines.push(`- proposed layers: ${review.tool_pipeline.model_requirements.proposed_model_layers.join(', ') || 'needs review'}`);
+  lines.push('', 'Viewer requirements:');
+  lines.push(`- modes: ${review.tool_pipeline.viewer_requirements.modes.join(', ')}`);
+  lines.push(`- filters: ${review.tool_pipeline.viewer_requirements.filter_buttons.join(', ')}`);
   lines.push('', '## Outputs', '');
   Object.entries(review.outputs).forEach(([key, value]) => lines.push(`- ${key}: \`${value}\``));
   lines.push('');
@@ -381,6 +536,14 @@ function defaultMediaLabel(type) {
     section: 'Schnitt',
     plan: 'Grundriss'
   }[type];
+}
+
+function stripTagPrefix(value) {
+  return String(value).replace(/^[a-z_ -]+:/i, '');
+}
+
+function readableLabel(value) {
+  return stripTagPrefix(value).replace(/[_-]/g, ' ').replace(/\s+/g, ' ').trim();
 }
 
 async function readJson(filePath, fallback = null) {

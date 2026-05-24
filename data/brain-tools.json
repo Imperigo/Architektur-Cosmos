@@ -51,6 +51,15 @@
       "approval_required_before_public_use": true
     },
     {
+      "id": "kosmodata_seed_from_research",
+      "label": "KosmoData Seed From Research",
+      "command": "npm run kosmodata:seed-from-research -- --entry {slug}",
+      "output_root": "out/kosmodata-enrichment/{slug}",
+      "review_output": "out/kosmodata-enrichment/{slug}/seed-candidate.json",
+      "purpose": "Generate a review-only enrichment seed candidate from existing entry metadata and database research packs, including plan, 3D and viewer requirements.",
+      "approval_required_before_public_use": true
+    },
+    {
       "id": "kosmodata_promote",
       "label": "KosmoData Promote Reviewed Entry",
       "command": "npm run kosmodata:promote -- --entry {slug} --confirm",
