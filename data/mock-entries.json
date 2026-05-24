@@ -319,7 +319,7 @@
     "database_profile": {
       "status": "needs_sources",
       "r2_prefix": "entries/gobekli-tepe",
-      "source_count": 3,
+      "source_count": 6,
       "media_count": 4,
       "model_count": 5,
       "analysis_count": 5,
@@ -2160,7 +2160,7 @@
     "database_profile": {
       "status": "reviewed",
       "r2_prefix": "entries/pyramids-of-giza",
-      "source_count": 5,
+      "source_count": 6,
       "media_count": 4,
       "model_count": 3,
       "analysis_count": 5,
@@ -5593,7 +5593,7 @@
       }
     ],
     "database_profile": {
-      "status": "reviewed",
+      "status": "needs_sources",
       "r2_prefix": "entries/vitruvius-de-architectura",
       "source_count": 0,
       "media_count": 4,
@@ -6759,7 +6759,7 @@
     "database_profile": {
       "status": "reviewed",
       "r2_prefix": "entries/kloster-st-gallen",
-      "source_count": 3,
+      "source_count": 4,
       "media_count": 4,
       "model_count": 3,
       "analysis_count": 5,
@@ -7451,7 +7451,7 @@
     "database_profile": {
       "status": "reviewed",
       "r2_prefix": "entries/alhambra",
-      "source_count": 5,
+      "source_count": 6,
       "media_count": 4,
       "model_count": 3,
       "analysis_count": 5,
@@ -7860,7 +7860,7 @@
     "database_profile": {
       "status": "reviewed",
       "r2_prefix": "entries/hereford-mappa-mundi",
-      "source_count": 5,
+      "source_count": 7,
       "media_count": 4,
       "model_count": 2,
       "analysis_count": 5,
@@ -8292,7 +8292,7 @@
     "database_profile": {
       "status": "reviewed",
       "r2_prefix": "entries/catalan-atlas",
-      "source_count": 5,
+      "source_count": 7,
       "media_count": 4,
       "model_count": 3,
       "analysis_count": 5,
@@ -8768,7 +8768,7 @@
     "database_profile": {
       "status": "reviewed",
       "r2_prefix": "entries/brunelleschi-dome",
-      "source_count": 5,
+      "source_count": 6,
       "media_count": 4,
       "model_count": 3,
       "analysis_count": 5,
@@ -9328,9 +9328,9 @@
       }
     ],
     "database_profile": {
-      "status": "reviewed",
+      "status": "needs_sources",
       "r2_prefix": "entries/city-in-layers",
-      "source_count": 0,
+      "source_count": 1,
       "media_count": 4,
       "model_count": 3,
       "analysis_count": 5,
@@ -12696,7 +12696,7 @@
     "database_profile": {
       "status": "reviewed",
       "r2_prefix": "entries/versailles-gardens",
-      "source_count": 6,
+      "source_count": 7,
       "media_count": 4,
       "model_count": 3,
       "analysis_count": 5,
@@ -14143,7 +14143,7 @@
     "database_profile": {
       "status": "reviewed",
       "r2_prefix": "entries/crystal-palace",
-      "source_count": 6,
+      "source_count": 7,
       "media_count": 4,
       "model_count": 3,
       "analysis_count": 5,
@@ -17302,7 +17302,7 @@
       }
     ],
     "database_profile": {
-      "status": "reviewed",
+      "status": "needs_sources",
       "r2_prefix": "entries/garden-cities-of-tomorrow",
       "source_count": 0,
       "media_count": 4,
@@ -17632,7 +17632,7 @@
     "database_profile": {
       "status": "reviewed",
       "r2_prefix": "entries/25b-avenue-franklin",
-      "source_count": 3,
+      "source_count": 4,
       "media_count": 4,
       "model_count": 3,
       "analysis_count": 5,
@@ -18239,7 +18239,7 @@
     "database_profile": {
       "status": "reviewed",
       "r2_prefix": "entries/warenhaus-wertheim",
-      "source_count": 3,
+      "source_count": 4,
       "media_count": 4,
       "model_count": 3,
       "analysis_count": 5,
@@ -20660,7 +20660,7 @@
     "database_profile": {
       "status": "reviewed",
       "r2_prefix": "entries/villa-noailles",
-      "source_count": 6,
+      "source_count": 8,
       "media_count": 4,
       "model_count": 3,
       "analysis_count": 7,
@@ -21291,7 +21291,7 @@
     ],
     "database_profile": {
       "status": "reviewed",
-      "source_count": 5,
+      "source_count": 7,
       "tag_count": 12,
       "media_count": 4,
       "analysis_count": 4,
@@ -21483,7 +21483,7 @@
     "database_profile": {
       "status": "reviewed",
       "r2_prefix": "entries/haus-tugendhat",
-      "source_count": 2,
+      "source_count": 3,
       "media_count": 4,
       "model_count": 3,
       "analysis_count": 6,
@@ -22145,7 +22145,7 @@
     "database_profile": {
       "status": "reviewed",
       "r2_prefix": "entries/hufeisensiedlung",
-      "source_count": 8,
+      "source_count": 10,
       "media_count": 4,
       "model_count": 3,
       "analysis_count": 4,
@@ -22511,7 +22511,7 @@
     "database_profile": {
       "status": "reviewed",
       "r2_prefix": "entries/ville-radieuse",
-      "source_count": 5,
+      "source_count": 7,
       "media_count": 4,
       "model_count": 3,
       "analysis_count": 4,
@@ -22622,7 +22622,7 @@
     "database_profile": {
       "status": "reviewed",
       "r2_prefix": "entries/villa-savoye",
-      "source_count": 7,
+      "source_count": 16,
       "media_count": 4,
       "model_count": 5,
       "analysis_count": 8,
@@ -23490,9 +23490,9 @@
       }
     ],
     "database_profile": {
-      "status": "reviewed",
+      "status": "needs_sources",
       "r2_prefix": "entries/broadacre-city",
-      "source_count": 0,
+      "source_count": 1,
       "media_count": 4,
       "model_count": 3,
       "analysis_count": 5,
@@ -23782,7 +23782,7 @@
       }
     ],
     "database_profile": {
-      "status": "reviewed",
+      "status": "needs_sources",
       "r2_prefix": "entries/athens-charter",
       "source_count": 0,
       "media_count": 4,
@@ -24168,9 +24168,9 @@
       }
     ],
     "database_profile": {
-      "status": "reviewed",
+      "status": "needs_sources",
       "r2_prefix": "entries/buerogebaeude-montecatini",
-      "source_count": 0,
+      "source_count": 1,
       "media_count": 4,
       "model_count": 3,
       "analysis_count": 5,
@@ -24600,7 +24600,7 @@
     "database_profile": {
       "status": "reviewed",
       "r2_prefix": "entries/chandigarh",
-      "source_count": 5,
+      "source_count": 7,
       "media_count": 4,
       "model_count": 3,
       "analysis_count": 5,
@@ -25128,7 +25128,7 @@
     "database_profile": {
       "status": "reviewed",
       "r2_prefix": "entries/brasilia",
-      "source_count": 5,
+      "source_count": 7,
       "media_count": 4,
       "model_count": 3,
       "analysis_count": 5,
@@ -25539,7 +25539,7 @@
     "database_profile": {
       "status": "reviewed",
       "r2_prefix": "entries/habitat-67",
-      "source_count": 5,
+      "source_count": 7,
       "media_count": 4,
       "model_count": 3,
       "analysis_count": 5,
@@ -26010,7 +26010,7 @@
       }
     ],
     "database_profile": {
-      "status": "reviewed",
+      "status": "needs_sources",
       "r2_prefix": "entries/delirious-new-york",
       "source_count": 0,
       "media_count": 4,
@@ -26438,7 +26438,7 @@
     "database_profile": {
       "status": "reviewed",
       "r2_prefix": "entries/gas-works-park",
-      "source_count": 5,
+      "source_count": 7,
       "media_count": 4,
       "model_count": 3,
       "analysis_count": 5,
@@ -26841,7 +26841,7 @@
     "database_profile": {
       "status": "reviewed",
       "r2_prefix": "entries/willis-faber-and-dumas-office",
-      "source_count": 5,
+      "source_count": 7,
       "media_count": 4,
       "model_count": 3,
       "analysis_count": 5,
@@ -27748,7 +27748,7 @@
     "database_profile": {
       "status": "reviewed",
       "r2_prefix": "entries/parc-de-la-villette",
-      "source_count": 5,
+      "source_count": 7,
       "media_count": 4,
       "model_count": 3,
       "analysis_count": 5,
@@ -28028,9 +28028,9 @@
       }
     ],
     "database_profile": {
-      "status": "reviewed",
+      "status": "needs_sources",
       "r2_prefix": "entries/euralille-metropole",
-      "source_count": 0,
+      "source_count": 1,
       "media_count": 4,
       "model_count": 3,
       "analysis_count": 5,
@@ -28888,7 +28888,7 @@
     "database_profile": {
       "status": "reviewed",
       "r2_prefix": "entries/schurenbach-halde",
-      "source_count": 5,
+      "source_count": 7,
       "media_count": 4,
       "model_count": 3,
       "analysis_count": 5,
@@ -29348,7 +29348,7 @@
     "database_profile": {
       "status": "reviewed",
       "r2_prefix": "entries/oerliker-park",
-      "source_count": 5,
+      "source_count": 7,
       "media_count": 4,
       "model_count": 3,
       "analysis_count": 5,
@@ -29862,7 +29862,7 @@
     "database_profile": {
       "status": "reviewed",
       "r2_prefix": "entries/leutschenpark",
-      "source_count": 5,
+      "source_count": 7,
       "media_count": 4,
       "model_count": 3,
       "analysis_count": 5,
@@ -30202,7 +30202,7 @@
     "database_profile": {
       "status": "draft",
       "r2_prefix": "entries/mfo-park",
-      "source_count": 3,
+      "source_count": 6,
       "media_count": 4,
       "model_count": 6,
       "analysis_count": 5,
@@ -30624,7 +30624,7 @@
       }
     ],
     "database_profile": {
-      "status": "reviewed",
+      "status": "needs_sources",
       "r2_prefix": "entries/rural-studio-20k-house",
       "source_count": 0,
       "media_count": 4,
@@ -30979,7 +30979,7 @@
     "database_profile": {
       "status": "draft",
       "r2_prefix": "entries/high-line",
-      "source_count": 3,
+      "source_count": 6,
       "media_count": 4,
       "model_count": 6,
       "analysis_count": 5,
@@ -31352,7 +31352,7 @@
       }
     ],
     "database_profile": {
-      "status": "reviewed",
+      "status": "needs_sources",
       "r2_prefix": "entries/venice-biennale-architecture-2012",
       "source_count": 0,
       "media_count": 4,
@@ -31924,7 +31924,7 @@
     "database_profile": {
       "status": "reviewed",
       "r2_prefix": "entries/afasia-no-architecture-flower-house",
-      "source_count": 2,
+      "source_count": 17,
       "media_count": 14,
       "model_count": 4,
       "analysis_count": 7,
@@ -32393,7 +32393,7 @@
     "database_profile": {
       "status": "reviewed",
       "r2_prefix": "entries/alterszentrum-kloster-ingenbohl",
-      "source_count": 4,
+      "source_count": 8,
       "media_count": 4,
       "model_count": 5,
       "analysis_count": 5,

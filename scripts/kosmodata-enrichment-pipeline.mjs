@@ -161,10 +161,11 @@ function buildProposedEntry(entry, seed) {
 
 function buildDatabaseProfile(entry, seed) {
   const profile = entry.database_profile || {};
+  const sourceCount = sourceCoverageCount(entry);
   return {
-    status: seed ? 'reviewed' : 'draft',
+    status: seed && sourceCount >= 3 ? 'reviewed' : 'needs_sources',
     r2_prefix: profile.r2_prefix || `entries/${entry.slug}`,
-    source_count: entry.source_candidates?.length || 0,
+    source_count: sourceCount,
     media_count: entry.media?.length || 0,
     model_count: entry.model_assets?.length || 0,
     analysis_count: entry.analysis_layers?.length || 0,
@@ -172,6 +173,15 @@ function buildDatabaseProfile(entry, seed) {
     rights_summary: profile.rights_summary || rightsSummary(entry),
     updated_at: new Date().toISOString()
   };
+}
+
+function sourceCoverageCount(entry) {
+  return [
+    entry.source_url,
+    ...(entry.source_documents || []),
+    ...(entry.source_candidates || []),
+    ...(entry.source_assets || [])
+  ].filter(Boolean).length;
 }
 
 function buildReview({ entry, proposedEntry, seed }) {

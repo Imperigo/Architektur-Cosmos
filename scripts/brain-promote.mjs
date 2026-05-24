@@ -135,7 +135,10 @@ async function findCandidates(entries) {
       title: entry.title,
       change_score: changeScore,
       proposed_path: relativeToRoot(proposedPath),
-      quality_warnings: sourceDowngradeWarnings(entry, proposed)
+      quality_warnings: [
+        ...sourceDowngradeWarnings(entry, proposed),
+        ...sourceCoverageWarnings(proposed)
+      ]
     });
   }
   return candidates.sort((a, b) => b.change_score - a.change_score || a.title.localeCompare(b.title));
@@ -185,6 +188,22 @@ function sourceDowngradeWarnings(entry, proposed) {
     }
   }
   return warnings;
+}
+
+function sourceCoverageWarnings(proposed) {
+  if (args['allow-low-source']) return [];
+  const count = sourceCoverageCount(proposed);
+  if (count >= 3) return [];
+  return [`Only ${count} source reference(s). Promotion requires at least 3 unless --allow-low-source is used after manual review.`];
+}
+
+function sourceCoverageCount(entry) {
+  return [
+    entry.source_url,
+    ...(entry.source_documents || []),
+    ...(entry.source_candidates || []),
+    ...(entry.source_assets || [])
+  ].filter(Boolean).length;
 }
 
 function runPromotion(slug) {
