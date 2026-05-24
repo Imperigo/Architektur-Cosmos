@@ -11,6 +11,7 @@ const rulesPath = resolve(rootDir, 'data/brain-rules.json');
 const toolsPath = resolve(rootDir, 'data/brain-tools.json');
 const queuePath = resolve(rootDir, 'data/review-queue.json');
 const decisionsPath = resolve(rootDir, 'data/agent-decisions.json');
+const autopilotStatePath = resolve(rootDir, 'archive-intake/_brain/autopilot-state.json');
 const outputRoot = resolve(rootDir, 'out/brain-review');
 const today = new Date().toISOString().slice(0, 10);
 
@@ -20,16 +21,17 @@ main().catch((error) => {
 });
 
 async function main() {
-  const [entries, relations, rules, tools, queue, decisions] = await Promise.all([
+  const [entries, relations, rules, tools, queue, decisions, autopilotState] = await Promise.all([
     readJson(entriesPath),
     readJson(relationsPath),
     readJson(rulesPath),
     readJson(toolsPath),
     readJson(queuePath),
-    readJson(decisionsPath)
+    readJson(decisionsPath),
+    readOptionalJson(autopilotStatePath, emptyAutopilotState())
   ]);
 
-  const review = buildReview({ entries, relations, rules, tools, queue, decisions });
+  const review = buildReview({ entries, relations, rules, tools, queue, decisions, autopilotState });
   const outputDir = resolve(outputRoot, today);
   await mkdir(outputDir, { recursive: true });
   await writeFile(resolve(outputDir, 'brain-review.json'), `${JSON.stringify(review, null, 2)}\n`, 'utf8');
@@ -46,7 +48,26 @@ async function readJson(path) {
   return JSON.parse(await readFile(path, 'utf8'));
 }
 
-function buildReview({ entries, relations, rules, tools, queue, decisions }) {
+async function readOptionalJson(path, fallback) {
+  try {
+    return JSON.parse(await readFile(path, 'utf8'));
+  } catch {
+    return fallback;
+  }
+}
+
+function emptyAutopilotState() {
+  return {
+    version: 1,
+    completed_task_ids: [],
+    failed_task_ids: [],
+    runs: []
+  };
+}
+
+function buildReview({ entries, relations, rules, tools, queue, decisions, autopilotState }) {
+  const completedAutopilotTaskIds = new Set(autopilotState.completed_task_ids ?? []);
+  const failedAutopilotTaskIds = new Set(autopilotState.failed_task_ids ?? []);
   const entryIds = new Set(entries.map((entry) => entry.id));
   const relationCounts = countRelations(relations);
   const entriesWithDatabaseProfile = entries.filter((entry) => entry.database_profile);
@@ -57,9 +78,17 @@ function buildReview({ entries, relations, rules, tools, queue, decisions }) {
   const brokenRelations = relations.filter((relation) => !entryIds.has(relation.source_entry_id) || !entryIds.has(relation.target_entry_id));
 
   const entryReviews = entries.map((entry) => reviewEntry(entry, relationCounts, rules));
-  const tasks = entryReviews
+  const generatedEntryTasks = entryReviews
     .flatMap((entryReview) => entryReview.tasks)
     .sort((a, b) => b.priority - a.priority || a.entry_title.localeCompare(b.entry_title))
+    .map((taskItem) => decorateTaskWithAutopilotState(taskItem, completedAutopilotTaskIds, failedAutopilotTaskIds));
+
+  const reviewReadyTasks = generatedEntryTasks
+    .filter((taskItem) => taskItem.status === 'review_ready')
+    .slice(0, 60);
+
+  const tasks = generatedEntryTasks
+    .filter((taskItem) => taskItem.status === 'open' || taskItem.status === 'failed_review')
     .slice(0, 40);
 
   const systemTasks = buildSystemTasks({ entries, relations, brokenRelations, rules });
@@ -82,7 +111,11 @@ function buildReview({ entries, relations, rules, tools, queue, decisions }) {
       hero_image_entries: entriesWithHeroImages.length,
       registered_tools: tools.tools?.length ?? 0,
       queue_items: queue.items?.length ?? 0,
-      recorded_decisions: decisions.decisions?.length ?? 0
+      recorded_decisions: decisions.decisions?.length ?? 0,
+      open_entry_tasks: tasks.length,
+      review_ready_tasks: reviewReadyTasks.length,
+      autopilot_completed_tasks: completedAutopilotTaskIds.size,
+      autopilot_failed_tasks: failedAutopilotTaskIds.size
     },
     coverage: {
       database_profile_percent: percent(entriesWithDatabaseProfile.length, entries.length),
@@ -110,6 +143,14 @@ function buildReview({ entries, relations, rules, tools, queue, decisions }) {
         approval_required_before_public_use: tool.approval_required_before_public_use
       }))
     },
+    autopilot: {
+      state_path: 'archive-intake/_brain/autopilot-state.json',
+      updated_at: autopilotState.updated_at ?? null,
+      completed_task_ids: [...completedAutopilotTaskIds].sort(),
+      failed_task_ids: [...failedAutopilotTaskIds].sort(),
+      runs: (autopilotState.runs ?? []).slice(-10),
+      review_ready_tasks: reviewReadyTasks
+    },
     tasks: allTasks,
     next_steps: [
       'Review the top tasks and approve only one execution batch at a time.',
@@ -117,6 +158,27 @@ function buildReview({ entries, relations, rules, tools, queue, decisions }) {
       'Keep the Brain in review mode until upload/auth/database write security is implemented.',
       'Use the report as an owner dashboard, not as an automatic deploy trigger.'
     ]
+  };
+}
+
+function decorateTaskWithAutopilotState(taskItem, completedAutopilotTaskIds, failedAutopilotTaskIds) {
+  if (completedAutopilotTaskIds.has(taskItem.id)) {
+    return {
+      ...taskItem,
+      status: 'review_ready',
+      body: `${taskItem.body} Local Brain Autopilot review pack is ready; owner approval is required before promotion or public use.`
+    };
+  }
+  if (failedAutopilotTaskIds.has(taskItem.id)) {
+    return {
+      ...taskItem,
+      status: 'failed_review',
+      body: `${taskItem.body} Last Brain Autopilot attempt failed; inspect out/brain-autopilot before rerunning.`
+    };
+  }
+  return {
+    ...taskItem,
+    status: 'open'
   };
 }
 
@@ -318,6 +380,9 @@ function renderMarkdown(review) {
     `- Analysis ready/planned: ${review.summary.analysis_ready_or_planned} (${review.coverage.analysis_percent}%)`,
     `- Source candidate entries: ${review.summary.source_candidate_entries} (${review.coverage.source_candidate_percent}%)`,
     `- Registered local tools: ${review.summary.registered_tools}`,
+    `- Open entry tasks: ${review.summary.open_entry_tasks}`,
+    `- Review-ready Autopilot tasks: ${review.summary.review_ready_tasks}`,
+    `- Failed Autopilot tasks: ${review.summary.autopilot_failed_tasks}`,
     '',
     '## Tool Registry',
     '',
@@ -338,6 +403,26 @@ function renderMarkdown(review) {
       lines.push(`   - Kind: \`${taskItem.kind}\`; priority: \`${taskItem.priority}\`; entry: \`${taskItem.entry_title}\``);
       lines.push(`   - ${taskItem.body}`);
     });
+    lines.push('');
+  }
+
+  lines.push('## Brain Autopilot State', '');
+  lines.push(`- State file: \`${review.autopilot.state_path}\``);
+  lines.push(`- Updated: ${review.autopilot.updated_at ?? 'not available'}`);
+  lines.push(`- Completed task ids: ${review.summary.autopilot_completed_tasks}`);
+  lines.push(`- Failed task ids: ${review.summary.autopilot_failed_tasks}`);
+  lines.push('');
+
+  if (review.autopilot.review_ready_tasks.length) {
+    lines.push('### Review-Ready Tasks', '');
+    review.autopilot.review_ready_tasks.slice(0, 20).forEach((taskItem, index) => {
+      lines.push(`${index + 1}. **${taskItem.title}**`);
+      lines.push(`   - Kind: \`${taskItem.kind}\`; entry: \`${taskItem.entry_title}\`; status: \`${taskItem.status}\``);
+      lines.push('   - Owner approval required before promotion/public use.');
+    });
+    if (review.autopilot.review_ready_tasks.length > 20) {
+      lines.push(`- ...and ${review.autopilot.review_ready_tasks.length - 20} more review-ready tasks`);
+    }
     lines.push('');
   }
 
