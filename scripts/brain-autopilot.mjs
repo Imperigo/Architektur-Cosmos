@@ -92,6 +92,7 @@ async function readCompletedTaskIds() {
       try {
         const report = JSON.parse(await readFile(resolve(dir, file), 'utf8'));
         if (report.status !== 'ready_for_owner_review') continue;
+        if (report.execute !== true) continue;
         (report.selected_tasks || []).forEach((task) => completed.add(task.id));
       } catch {
         // Ignore malformed historic reports; the current run will still write diagnostics.
