@@ -6,6 +6,15 @@
   "uploads_assets": false,
   "tools": [
     {
+      "id": "brain_autopilot",
+      "label": "Brain Autopilot",
+      "command": "npm run brain:autopilot -- --execute --limit 1",
+      "output_root": "out/brain-autopilot/{date}",
+      "review_output": "out/brain-autopilot/{date}/brain-autopilot-*.md",
+      "purpose": "Select the next safe Brain task and run only local review pipelines such as rights-gate, enrichment review, model planning, media audit or entry-build review.",
+      "approval_required_before_public_use": true
+    },
+    {
       "id": "plan_generate",
       "label": "2D Vector Plan Generator",
       "command": "npm run cosmos:plan-generate -- --entry {slug}",

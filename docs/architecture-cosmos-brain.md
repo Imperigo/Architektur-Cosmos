@@ -138,6 +138,38 @@ out/brain-review/YYYY-MM-DD/brain-doctor.json
 
 If a safe check fails, the doctor retries once where allowed and records the failure. It does not silently edit source code or publish.
 
+## Brain Autopilot
+
+```bash
+npm run brain:autopilot
+npm run brain:autopilot -- --execute --limit 1
+npm run brain:autopilot -- --entry villa-savoye --kind model --execute
+```
+
+Brain Autopilot is the bridge between the Brain and the KosmoData ingestion
+pipeline. It reads the latest Brain task list, selects the next supported
+entry-level task and turns it into a local review-only pipeline run.
+
+Supported task kinds:
+
+- `rights` → rights gate + entry build review
+- `research` → seed from research + enrichment review + entry build review
+- `analysis` → seed from research + enrichment review + architecture text + entry build review
+- `model` → model plan + model generation/review + entry build review
+- `media` → hero/planet thumbnail audits + entry build review
+- `relations` → archive validation + entry build review
+
+The Autopilot writes reports under:
+
+```text
+out/brain-autopilot/YYYY-MM-DD/
+```
+
+It may run safe local review commands, but it does not run
+`kosmodata:promote`, does not edit tracked source files, does not commit, does
+not push, does not upload to R2 and does not write to D1. Its job is to prepare
+review packets and suggested approval commands.
+
 ## Future Extensions
 
 - mail intake summary;
