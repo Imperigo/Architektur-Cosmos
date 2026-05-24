@@ -127,9 +127,14 @@ function buildProposedEntry(entry, seed) {
   proposed.id = entry.id;
   proposed.slug = entry.slug;
   proposed.media = normalizeMedia(proposed.media, entry.title);
+  const patchHasReviewedHero = (patch.media || []).some((item) => item.type === 'exterior' && item.url);
+  const existingSources = (entry.source_candidates || []).filter((source) => {
+    if (!patchHasReviewedHero) return true;
+    return !/^Wikimedia Commons hero candidate/i.test(source.title || '');
+  });
   proposed.source_candidates = normalizeSources([
     ...(entry.source_url ? [{ source_type: 'source_url', title: `${entry.title} source URL`, url: entry.source_url, reliability_level: 'existing_entry_source', rights_status: 'link_only' }] : []),
-    ...(entry.source_candidates || []),
+    ...existingSources,
     ...(patch.source_candidates || [])
   ]);
   proposed.database_profile = buildDatabaseProfile(proposed, seed);

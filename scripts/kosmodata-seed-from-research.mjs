@@ -81,7 +81,7 @@ function buildSeed(entry, researchPacks, localSources) {
       short_description: improvedShortDescription(entry, materials, program),
       one_sentence: improvedOneSentence(entry, materials, program),
       full_description: improvedFullDescription(entry, materials, program, context),
-      media: normalizeMedia(entry),
+      media: normalizeMedia(entry, localSources),
       source_candidates: sourceCandidates,
       architecture_text: buildArchitectureText(entry, materials, program, context, databaseTags),
       materials,
@@ -194,7 +194,8 @@ function normalizeLocalSourceList(sources, entry) {
       rights_status: source.rights_status || 'link_only',
       notes: source.notes || 'Local intake source candidate. Review before promotion.',
       project_specific: source.project_specific ?? sourceIsProjectSpecific(source, entry),
-      material_tags: Array.isArray(source.material_tags) ? source.material_tags : []
+      material_tags: Array.isArray(source.material_tags) ? source.material_tags : [],
+      hero_media: source.hero_media && typeof source.hero_media === 'object' ? source.hero_media : null
     }));
 }
 
@@ -213,15 +214,21 @@ async function listFiles(directory) {
 }
 
 function buildSourceCandidates(entry, researchPacks, localSources) {
-  const existing = (entry.source_candidates || []).map((source) => ({
-    source_type: source.source_type || 'source',
-    title: source.title || source.url,
-    url: source.url,
-    reliability_level: source.reliability_level || 'existing_entry_source',
-    rights_status: source.rights_status || 'link_only',
-    notes: source.notes || 'Existing entry source candidate.',
-    project_specific: sourceIsProjectSpecific(source, entry)
-  }));
+  const hasHeroOverride = localSources.some((source) => source.hero_media);
+  const existing = (entry.source_candidates || [])
+    .filter((source) => {
+      if (!hasHeroOverride) return true;
+      return !/^Wikimedia Commons hero candidate/i.test(source.title || '');
+    })
+    .map((source) => ({
+      source_type: source.source_type || 'source',
+      title: source.title || source.url,
+      url: source.url,
+      reliability_level: source.reliability_level || 'existing_entry_source',
+      rights_status: source.rights_status || 'link_only',
+      notes: source.notes || 'Existing entry source candidate.',
+      project_specific: sourceIsProjectSpecific(source, entry)
+    }));
   const fromPacks = researchPacks.flatMap((pack) => (pack.sources || []).map((source) => ({
     source_type: source.source_type || 'research_pack_source',
     title: source.name || source.id,
@@ -275,7 +282,11 @@ function inferMaterials(entry, localSources = []) {
 function inferProgram(entry) {
   const haystack = normalize([entry.entry_type, entry.title, entry.short_description, ...(entry.themes || [])].join(' '));
   let type = entry.entry_type;
-  if (haystack.includes('iba') || haystack.includes('critical reconstruction') || haystack.includes('stadt erneuerung') || haystack.includes('stadterneuerung')) type = 'urban_renewal_program';
+  if (haystack.includes('pavilion') || haystack.includes('pavillon')) type = 'pavilion';
+  else if (haystack.includes('monastery') || haystack.includes('kloster') || haystack.includes('abbey')) type = 'monastery_plan';
+  else if (haystack.includes('department store') || haystack.includes('warenhaus') || haystack.includes('commerce') || haystack.includes('kaufhaus')) type = 'department_store';
+  else if (haystack.includes('apartment') || haystack.includes('avenue franklin') || haystack.includes('rue franklin') || haystack.includes('immeuble')) type = 'apartment_building';
+  else if (haystack.includes('iba') || haystack.includes('critical reconstruction') || haystack.includes('stadt erneuerung') || haystack.includes('stadterneuerung')) type = 'urban_renewal_program';
   else if (haystack.includes('dom ino') || haystack.includes('prototype') || haystack.includes('free plan') || haystack.includes('frame')) type = 'structural_prototype';
   else if (entry.entry_type === 'text' || haystack.includes('treatise') || haystack.includes('traktat') || haystack.includes('quattro libri')) type = 'architectural_treatise';
   else if (entry.entry_type === 'urban_plan' || haystack.includes('zoning') || haystack.includes('stadtmodell') || haystack.includes('urban plan')) type = 'urban_plan';
@@ -406,6 +417,7 @@ function buildViewerRequirements(entry, materials, modelAssets) {
 function buildArchitectureText(entry, materials, program, context, databaseTags) {
   const materialText = listText(materials.primary);
   const programText = labelFor(program.type);
+  const profile = architectureTextProfile(entry, materials, program, context, databaseTags);
   if (entry.architecture_text?.chapters?.length) {
     const curatedChapters = entry.architecture_text.chapters.filter((chapter) => !normalize(chapter.source_basis).includes('seed from research'));
     if (curatedChapters.length < 3) return buildGeneratedArchitectureText(entry, materials, program, context, databaseTags);
@@ -424,6 +436,8 @@ function buildArchitectureText(entry, materials, program, context, databaseTags)
 
     return {
       ...entry.architecture_text,
+      headline: profile.headline || entry.architecture_text.headline,
+      overview: profile.overview || entry.architecture_text.overview,
       chapters: [...baseChapters, ...additions],
       generator: 'kosmodata-seed-from-research',
       generated_at: new Date().toISOString(),
@@ -438,25 +452,84 @@ function buildGeneratedArchitectureText(entry, materials, program, context, data
   const materialText = listText(materials.primary);
   const programText = labelFor(program.type);
   const themes = listText(cleanThemes(entry.themes || [], program.type)) || 'noch zu prüfende Themen';
+  const profile = architectureTextProfile(entry, materials, program, context, databaseTags);
   return {
-    headline: entry.architecture_text?.headline || `${entry.title}: ${programText} als KosmoData-Referenz`,
-    overview: `${entry.title} wird als architektonische Referenz gelesen: Ort, Nutzung, Material, Traglogik und historische Position werden zusammengeführt, damit das Projekt nicht nur beschrieben, sondern im KosmoData-Netzwerk vergleichbar wird.`,
+    headline: profile.headline || entry.architecture_text?.headline || `${entry.title}: ${programText} als KosmoData-Referenz`,
+    overview: profile.overview || `${entry.title} wird als architektonische Referenz gelesen: Ort, Nutzung, Material, Traglogik und historische Position werden zusammengeführt, damit das Projekt nicht nur beschrieben, sondern im KosmoData-Netzwerk vergleichbar wird.`,
     chapters: [
-      chapter('These', `${entry.title} wird über ${themes} als räumliche These gelesen: Das Projekt zeigt, wie eine Bauaufgabe eine Haltung zu Arbeit, Lernen, Öffentlichkeit, Landschaft oder Alltag formuliert.`),
-      chapter('Netzwerk und DNA', `${entry.title} wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, worin seine DNA innerhalb ähnlicher Projekte abweicht.`),
-      chapter('Topos', `Der Ort ${context.setting} ist Teil der architektonischen Lesart: Er bestimmt Adresse, Maßstab, Landschaft, Infrastruktur und die Art, wie das Objekt in seinem Umfeld wirkt.`),
-      chapter('Typos', `Typologisch wird ${entry.title} als ${programText} geführt. Diese Kategorie dient nicht als starre Schublade, sondern als Vergleichsebene für Programme, Raumfolgen und Nutzungslogiken.`),
-      chapter('Tektonik', `${materialText} werden als konstruktiv-atmosphärische Ebene gelesen: Oberfläche, Traglogik, Fügung, Öffnung und Hülle bilden zusammen die tektonische Grammatik des Projekts.`),
-      chapter('Raumlogik', `Grundriss, Schnitt, Bewegung, Blick, Schwelle und Gebrauch werden als zusammenhängendes System gelesen. Für die spätere Plan- und 3D-Pipeline ist diese Raumlogik wichtiger als eine reine Bildbeschreibung.`),
-      chapter('Konflikt und Kritik', `${entry.title} wird auch über offene Spannungen gelesen: Rechte, Quellenlage, soziale Wirkung, Ökologie, industrielle Abhängigkeit oder institutionelle Macht bleiben als prüfbare Kritikfelder markiert.`),
-      chapter('KosmoData-Layer und 3D-Potenzial', `Aus ${entry.title} lassen sich Planlayer, Materiallayer und spätere Blender-Collections ableiten: ${listText(publicTagLabels(databaseTags))}.`),
-      chapter('Entwurfsintelligenz', `Der Datenbankwert liegt in der übertragbaren Entwurfsregel: ${entry.title} hilft, spätere Projekte nach Material, Typus, Struktur, Atmosphäre und historischem Netzwerk gezielt zu vergleichen.`)
+      chapter('These', profile.thesis || `${entry.title} wird über ${themes} als räumliche These gelesen: Das Projekt zeigt, wie eine Bauaufgabe eine Haltung zu Arbeit, Lernen, Öffentlichkeit, Landschaft oder Alltag formuliert.`),
+      chapter('Netzwerk und DNA', profile.network || `${entry.title} wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, worin seine DNA innerhalb ähnlicher Projekte abweicht.`),
+      chapter('Topos', profile.topos || `Der Ort ${context.setting} ist Teil der architektonischen Lesart: Er bestimmt Adresse, Maßstab, Landschaft, Infrastruktur und die Art, wie das Objekt in seinem Umfeld wirkt.`),
+      chapter('Typos', profile.typos || `Typologisch wird ${entry.title} als ${programText} geführt. Diese Kategorie dient nicht als starre Schublade, sondern als Vergleichsebene für Programme, Raumfolgen und Nutzungslogiken.`),
+      chapter('Tektonik', profile.tectonics || `${materialText} werden als konstruktiv-atmosphärische Ebene gelesen: Oberfläche, Traglogik, Fügung, Öffnung und Hülle bilden zusammen die tektonische Grammatik des Projekts.`),
+      chapter('Raumlogik', profile.spatial || `Grundriss, Schnitt, Bewegung, Blick, Schwelle und Gebrauch werden als zusammenhängendes System gelesen. Für die spätere Plan- und 3D-Pipeline ist diese Raumlogik wichtiger als eine reine Bildbeschreibung.`),
+      chapter('Konflikt und Kritik', profile.critique || `${entry.title} wird auch über offene Spannungen gelesen: Rechte, Quellenlage, soziale Wirkung, Ökologie, industrielle Abhängigkeit oder institutionelle Macht bleiben als prüfbare Kritikfelder markiert.`),
+      chapter('KosmoData-Layer und 3D-Potenzial', profile.layers || `Aus ${entry.title} lassen sich Planlayer, Materiallayer und spätere Blender-Collections ableiten: ${listText(publicTagLabels(databaseTags))}.`),
+      chapter('Entwurfsintelligenz', profile.transfer || `Der Datenbankwert liegt in der übertragbaren Entwurfsregel: ${entry.title} hilft, spätere Projekte nach Material, Typus, Struktur, Atmosphäre und historischem Netzwerk gezielt zu vergleichen.`)
     ],
     language: 'de',
     generator: 'kosmodata-seed-from-research',
     generated_at: new Date().toISOString(),
     review_status: 'draft_review'
   };
+}
+
+function architectureTextProfile(entry, materials, program, context, databaseTags) {
+  const tags = listText(publicTagLabels(databaseTags));
+  const materialText = listText(materials.primary);
+  if (program.type === 'pavilion') {
+    return {
+      headline: `${entry.title}: temporärer Pavillon als Material- und Atmosphärenexperiment`,
+      overview: `${entry.title} wird als begehbares Experiment gelesen: Eine temporäre Struktur verdichtet Dach, Stütze, Materialoberfläche und Landschaft zu einer räumlichen These. Entscheidend ist nicht Dauerhaftigkeit, sondern wie wenig Architektur nötig ist, um Ort, Schatten, Bewegung und öffentliche Aneignung zu verändern.`,
+      thesis: `Der Pavillon ist eine präzise Versuchsanordnung. Er macht sichtbar, wie Dachfigur, Traglogik und Materialwirkung ein öffentliches Zwischenfeld erzeugen, das weder reines Objekt noch klassisches Gebäude ist.`,
+      network: `${entry.title} steht im Netzwerk temporärer Ausstellungsarchitekturen, Landschaftspavillons und experimenteller Tragwerke. Seine DNA unterscheidet sich von dauerhaften Gebäuden durch Kürze, atmosphärische Intensität und hohe konstruktive Lesbarkeit.`,
+      topos: `Der Ort ${context.setting} wird als Park- und Ausstellungsraum wirksam: Das Objekt muss nicht nur stehen, sondern eine bestehende Landschaft für kurze Zeit neu rahmen.`,
+      typos: `Typologisch bleibt der Pavillon offen. Er ist Treffpunkt, Dach, Bild, Bühne und Testmodell zugleich; gerade diese Unschärfe macht ihn für Vergleichsfilter interessant.`,
+      tectonics: `${materialText} werden als Kontrast zwischen Schwere, Oberfläche und Stützlogik gelesen. Für die Analyse zählt, wie Material scheinbar einfache Geometrie in Atmosphäre übersetzt.`,
+      spatial: `Raum entsteht vor allem über Bewegung unter und um das Dach, über Blickachsen, Randzonen und Übergänge zwischen Park und überdecktem Feld.`,
+      layers: `Für Plan, Schnitt und 3D reichen wenige starke Layer: Dachfläche, Stützenpunkte, Landschaftsbezug, Schwellen, Materialwirkung und Unsicherheitszonen. Tags: ${tags}.`
+    };
+  }
+  if (program.type === 'monastery_plan') {
+    return {
+      headline: `${entry.title}: Kloster als räumliches Wissenssystem`,
+      overview: `${entry.title} wird als Planintelligenz gelesen: Sakralraum, Wohnen, Arbeit, Bildung, Heilung und Versorgung werden zu einem idealisierten Organismus verbunden. Das Projekt ist deshalb weniger ein einzelnes Bauwerk als ein frühes Netzwerkmodell von Programm, Ordnung und Alltag.`,
+      thesis: `Der Klosterplan formuliert Architektur als Ordnungssystem. Er zeigt, wie religiöse, ökonomische und soziale Funktionen räumlich so verknüpft werden, dass ein autarker Wissens- und Lebensraum entsteht.`,
+      network: `${entry.title} verknüpft sich mit Stadtplänen, Campuslogiken, Idealstädten und monastischen Bautypologien. Seine DNA liegt in der Beziehung zwischen Programmclustern, Wegen und Hierarchien.`,
+      topos: `Der Ort ${context.setting} ist nicht nur geografisch relevant, sondern als kulturelles Archiv: Der Plan wird über Überlieferung, Zeichnung und institutionelles Wissen lesbar.`,
+      typos: `Typologisch ist das Projekt ein Klosterplan und zugleich ein frühes Diagramm komplexer Nutzungsorganisation. Es ordnet nicht nur Räume, sondern Rollen, Routinen und Abhängigkeiten.`,
+      tectonics: `${materialText} markieren die Spannung zwischen gezeichneter Quelle und vermuteter Baupraxis. Die Tektonik muss deshalb als überprüfbare Hypothese und nicht als exakte Rekonstruktion geführt werden.`,
+      spatial: `Raumlogik entsteht über Achsen, Höfe, Funktionsgruppen und abgestufte Zugänglichkeit: Kirche, Klausur, Versorgung und Lernen bilden ein lesbares System.`,
+      layers: `Für KosmoData sind besonders Planlayer, Funktionscluster, Netzwerkbeziehungen, Quellenstatus und Unsicherheiten wichtig. Tags: ${tags}.`
+    };
+  }
+  if (program.type === 'apartment_building') {
+    return {
+      headline: `${entry.title}: Wohnhaus als frühes Labor der Moderne`,
+      overview: `${entry.title} wird als urbanes Wohnexperiment gelesen. Tragstruktur, Wohnungstyp, Fassade und Parzelle werden nicht getrennt betrachtet, sondern als System: Der moderne Wohnbau entsteht hier aus der Reibung zwischen Stadtadresse, konstruktiver Freiheit und neuer Häuslichkeit.`,
+      thesis: `Das Haus verschiebt den Wohnbau vom massiven Stadtkörper zu einem offeneren System aus Struktur, Hülle und Nutzung. Darin liegt seine Bedeutung für die moderne Architektur-DNA.`,
+      network: `${entry.title} gehört zu einem Netzwerk früher moderner Wohnhäuser, Stahlbetonexperimente und Fassadenstudien. Vergleichbar ist nicht nur die Form, sondern die Frage, wie Struktur neue Grundrisse erlaubt.`,
+      topos: `Der Ort ${context.setting} bestimmt Maßstab, Adresse und städtische Lesbarkeit. Das Projekt muss als Parzellenarchitektur gelesen werden, nicht als freigestelltes Objekt.`,
+      typos: `Typologisch ist es ein Wohnhaus, aber mit experimentellem Anspruch: Grundriss, Fassade und Konstruktion dienen als Testfeld für neue Wohn- und Repräsentationsformen.`,
+      tectonics: `${materialText} werden über Rahmen, Füllung, Öffnung und Oberfläche gelesen. Die Tektonik liegt in der Vermittlung zwischen tragender Logik und urbanem Ausdruck.`,
+      spatial: `Die Raumlogik entsteht durch Wohnungsschichtung, Belichtung, Fassadenbezug und den Übergang von privatem Innenraum zur Stadt.`,
+      layers: `Für 2D und 3D sind Strukturrahmen, Fassadenebene, Wohnungszonen, Öffnungen und Materiallayer entscheidend. Tags: ${tags}.`
+    };
+  }
+  if (program.type === 'department_store') {
+    return {
+      headline: `${entry.title}: Warenhaus als Bühne der Großstadtmoderne`,
+      overview: `${entry.title} wird als öffentliche Innenwelt des Konsums gelesen. Straße, Schaufenster, Eingang, Lichtraum und vertikale Bewegung bilden eine räumliche Maschine, in der Handel, Sichtbarkeit und urbane Dichte architektonisch organisiert werden.`,
+      thesis: `Das Warenhaus übersetzt Konsum in Raum. Seine Architektur entscheidet, wie Ware sichtbar wird, wie Publikum geführt wird und wie die Stadt in einen kommerziellen Innenraum übergeht.`,
+      network: `${entry.title} steht im Netzwerk von Passagen, Kaufhäusern, Bahnhofs- und Großstadtarchitekturen. Seine DNA liegt in Schwelle, Blickführung, Lichtregie und öffentlichem Innenraum.`,
+      topos: `Der Ort ${context.setting} ist Teil des Programms: Ein Warenhaus braucht städtische Frequenz, Adressbildung und eine Fassade, die zwischen Monument und Einladung vermittelt.`,
+      typos: `Typologisch ist es Warenhaus und urbaner Knoten zugleich. Es ordnet Verkauf, Erschließung, Lichthöfe und Schaufenster zu einer neuen öffentlichen Alltagstypologie.`,
+      tectonics: `${materialText} werden als Fassade, Tragstruktur, Öffnung und Lichtraum gelesen. Tektonisch wichtig ist die Spannung zwischen massiver Präsenz und transparenter Warenwelt.`,
+      spatial: `Raum entsteht über Schwellen, Blickbeziehungen, vertikale Bewegung und die Choreografie zwischen Straße, Eingang, Verkaufsflächen und Lichthof.`,
+      layers: `Für KosmoData sind Fassadenrhythmus, Handelszonen, vertikale Erschließung, Lichtstruktur und urbane Schwellen als Modelllayer interessant. Tags: ${tags}.`
+    };
+  }
+  return {};
 }
 
 function chapter(title, text) {
@@ -468,14 +541,25 @@ function chapter(title, text) {
   };
 }
 
-function normalizeMedia(entry) {
+function normalizeMedia(entry, localSources = []) {
   const byType = new Map((entry.media || []).map((item) => [item.type, item]));
-  return mediaTypes.map((type) => ({
-    type,
-    label: byType.get(type)?.label || defaultMediaLabel(type),
-    placeholder: byType.get(type)?.placeholder || `${defaultMediaLabel(type)} / ${entry.title}`,
-    ...(byType.get(type) || {})
-  }));
+  const heroOverride = localSources.find((source) => source.hero_media)?.hero_media || null;
+  return mediaTypes.map((type) => {
+    const base = {
+      type,
+      label: byType.get(type)?.label || defaultMediaLabel(type),
+      placeholder: byType.get(type)?.placeholder || `${defaultMediaLabel(type)} / ${entry.title}`,
+      ...(byType.get(type) || {})
+    };
+    if (type !== 'exterior' || !heroOverride) return base;
+    return {
+      ...base,
+      ...heroOverride,
+      type: 'exterior',
+      label: heroOverride.label || base.label || 'Außenansicht',
+      placeholder: heroOverride.placeholder || base.placeholder || `Außenansicht / ${entry.title}`
+    };
+  });
 }
 
 function improvedShortDescription(entry, materials, program) {
@@ -491,6 +575,18 @@ function improvedShortDescription(entry, materials, program) {
   if (program.type === 'urban_renewal_program') {
     return `${entry.title} verbindet kritische Rekonstruktion, Blockstruktur, Reparatur und Wohnungsbau zu einem Modell stadträumlicher Erneuerung.`;
   }
+  if (program.type === 'pavilion') {
+    return `${entry.title} verbindet temporäre Architektur, Landschaft, Dachfigur und Materialexperiment zu einem prägnanten Pavillonraum.`;
+  }
+  if (program.type === 'monastery_plan') {
+    return `${entry.title} verbindet monastische Ordnung, Wissensorganisation und idealisierten Lageplan zu einem frühmittelalterlichen Raumdiagramm.`;
+  }
+  if (program.type === 'apartment_building') {
+    return `${entry.title} verbindet Stahlbetonrahmen, Wohnungsgrundriss, Fassade und städtisches Grundstück zu einem frühen Labor der Moderne.`;
+  }
+  if (program.type === 'department_store') {
+    return `${entry.title} verbindet Warenhaus, Schwelle, Konsumraum und urbanes Parterre zu einer Schlüsselarchitektur der Großstadtmoderne.`;
+  }
   return `${entry.title} verbindet ${labelFor(program.type)}, ${listText(materials.primary.slice(0, 3))} und die räumliche DNA von ${listText(entry.themes?.slice(0, 3) || ['noch zu prüfenden Themen'])} zu einer prägnanten Architekturlesart.`;
 }
 
@@ -501,6 +597,18 @@ function improvedOneSentence(entry, materials, program) {
   if (program.type === 'structural_prototype') {
     return `${entry.title} zeigt, wie Stahlbetonskelett, Stützenraster und freier Grundriss zu einem offenen System für Plan-, Struktur- und 3D-Layer werden.`;
   }
+  if (program.type === 'pavilion') {
+    return `${entry.title} zeigt, wie ein temporärer Pavillon über Dachfigur, Landschaftsbezug, Materialwirkung und leichte Tragstruktur zu einem präzisen räumlichen Experiment wird.`;
+  }
+  if (program.type === 'monastery_plan') {
+    return `${entry.title} zeigt, wie ein idealisierter Klosterplan religiöse Ordnung, Arbeit, Wissen, Versorgung und Topografie zu einem lesbaren räumlichen System verbindet.`;
+  }
+  if (program.type === 'apartment_building') {
+    return `${entry.title} zeigt, wie Wohnungsgrundriss, Stahlbetonrahmen, Fassade und Stadtadresse zu einem frühen Labor der modernen Wohnarchitektur werden.`;
+  }
+  if (program.type === 'department_store') {
+    return `${entry.title} zeigt, wie Warenhaus, Schaufenster, vertikale Erschließung und städtische Schwelle die Architektur des modernen Konsums räumlich organisieren.`;
+  }
   return `${entry.title} zeigt, wie ${labelFor(program.type)}, ${listText(materials.primary.slice(0, 4))}, Topos, Typos und Tektonik zu einer belastbaren Referenz für Plan-, Material- und 3D-Layer werden.`;
 }
 
@@ -510,6 +618,18 @@ function improvedFullDescription(entry, materials, program, context) {
   }
   if (program.type === 'structural_prototype') {
     return `${entry.title} wird als konstruktiver Prototyp ohne festen Ort gelesen. Entscheidend ist die Trennung von Tragwerk, Grundriss und Hülle: wenige Stahlbetonelemente erzeugen ein offenes Raster, das Wiederholung, Erweiterung und freie räumliche Organisation ermöglicht. Für KosmoData wird daraus ein besonders klares Modell für Struktur-, Plan- und Blender-Layer.`;
+  }
+  if (program.type === 'pavilion') {
+    return `${entry.title} wird als temporäre Architektur gelesen, deren Wert nicht in Dauerhaftigkeit, sondern in der räumlichen Zuspitzung liegt. Dach, Stütze, Materialoberfläche und Landschaftsbezug bilden ein konzentriertes Experiment: ein begehbares Modell, an dem Atmosphäre, Schwere, Leichtigkeit und öffentliche Aneignung direkt prüfbar werden. Für KosmoData ist der Eintrag besonders wichtig, weil Pavillons als schnelle Testfelder für Struktur-, Material- und Wahrnehmungslayer funktionieren.`;
+  }
+  if (program.type === 'monastery_plan') {
+    return `${entry.title} wird als räumliches Wissensdiagramm gelesen: Der Plan ordnet Sakralraum, Wohnen, Arbeit, Bildung, Heilung und Versorgung zu einem idealisierten Klosterorganismus. Entscheidend ist weniger die exakte gebaute Umsetzung als die Klarheit der Beziehungen zwischen Programm, Weg, Hierarchie und Landschaft. Für KosmoData entsteht daraus ein früher Referenzfall für Netzwerkdenken, Typologie und planbasierte Modellrekonstruktion.`;
+  }
+  if (program.type === 'apartment_building') {
+    return `${entry.title} wird als urbanes Wohnlabor der Moderne gelesen. Stahlbetonrahmen, Grundrissorganisation, Fassade, Lichtführung und städtische Parzelle verschieben das Wohnhaus weg vom massiven Block hin zu einem offen lesbaren System aus Struktur, Hülle und Nutzung. Für KosmoData wird der Eintrag zur Vergleichsachse für Wohnbau, freie Grundrisse, Fassadentektonik und frühe moderne Materiallogik.`;
+  }
+  if (program.type === 'department_store') {
+    return `${entry.title} wird als Architektur der Großstadt gelesen: Nicht nur als Gebäude für Verkauf, sondern als räumliche Maschine aus Zugang, Blick, Ware, Licht, vertikaler Bewegung und urbanem Parterre. Fassade und Innenraum vermitteln zwischen Straße und Konsumwelt; Schwelle, Transparenz und Monumentalität werden zu tektonischen Werkzeugen des modernen Handels. Für KosmoData ist der Eintrag ein Schlüsselobjekt für Kommerz, Stadtraum und öffentliche Innenräume.`;
   }
   return `${entry.title} wird als architektonisches Referenzobjekt über ${labelFor(program.type)}, ${listText(materials.primary)}, ${context.setting}, räumliche Ordnung und historische Position gelesen. Entscheidend ist nicht die reine Datierung, sondern wie Setzung, Material, Gebrauch, Fügung und kulturelle Haltung zusammen eine übertragbare Entwurfsintelligenz bilden. Für KosmoData werden daraus zugleich Planlayer, Modelllayer, Filterbegriffe und Vergleichsbeziehungen abgeleitet.`;
 }
@@ -522,6 +642,10 @@ function labelFor(value) {
     architectural_treatise: 'Architekturtraktat',
     structural_prototype: 'Konstruktionsprototyp',
     urban_renewal_program: 'Stadterneuerungsprogramm',
+    pavilion: 'Pavillon',
+    monastery_plan: 'Klosterplan',
+    apartment_building: 'Wohnhaus',
+    department_store: 'Warenhaus',
     landscape_project: 'Landschaftsprojekt',
     brick: 'Backstein',
     timber: 'Holz',
@@ -534,6 +658,7 @@ function labelFor(value) {
     water: 'Wasser',
     paper: 'Papier',
     drawing: 'Zeichnung',
+    ceramic: 'Keramik',
     'thing-modernity': 'Objektmoderne',
     'arts-and-crafts': 'Arts and Crafts',
     hygiene: 'Hygiene',
@@ -552,6 +677,9 @@ function labelFor(value) {
     factory: 'Fabrik',
     school: 'Schule',
     'urban-renewal-program': 'Stadterneuerungsprogramm',
+    'monastery-plan': 'Klosterplan',
+    'apartment-building': 'Wohnhaus',
+    'department-store': 'Warenhaus',
     'structural-prototype': 'Konstruktionsprototyp',
     'architectural-treatise': 'Architekturtraktat',
     'urban-plan': 'Stadtplan',
@@ -579,7 +707,13 @@ function labelFor(value) {
     'critical-reconstruction': 'kritische Rekonstruktion',
     block: 'Blockstruktur',
     repair: 'Reparatur',
-    housing: 'Wohnungsbau'
+    housing: 'Wohnungsbau',
+    temporary: 'temporäre Architektur',
+    landscape: 'Landschaft',
+    'knowledge-network': 'Wissensnetzwerk',
+    'concrete-frame': 'Stahlbetonrahmen',
+    commerce: 'Handel',
+    threshold: 'Schwelle'
   };
   const raw = String(value || '');
   return labels[raw] || labels[slugify(raw)] || raw.replace(/[_-]/g, ' ');
@@ -633,7 +767,7 @@ function tagThemes(databaseTags) {
 
 function cleanThemes(themes) {
   const materialLike = new Set(['brick', 'timber', 'stone', 'concrete', 'glass', 'iron', 'wood', 'holz', 'backstein', 'stein']);
-  const typologyLike = new Set(['domestic-house', 'building', 'landscape-project', 'factory', 'school', 'urban-plan', 'architectural-treatise', 'structural-prototype', 'urban-renewal-program']);
+  const typologyLike = new Set(['domestic-house', 'building', 'landscape-project', 'factory', 'school', 'urban-plan', 'architectural-treatise', 'structural-prototype', 'urban-renewal-program', 'monastery-plan', 'apartment-building', 'department-store', 'pavilion']);
   return dedupeThemes(themes.filter((theme) => {
     const slug = slugify(theme);
     if (materialLike.has(slug)) return false;
