@@ -18,8 +18,9 @@ main().catch((error) => {
 async function main() {
   await mkdir(outputRoot, { recursive: true });
   const entries = JSON.parse(await readFile(resolve(rootDir, 'data/mock-entries.json'), 'utf8'));
+  const publicManifest = await loadPublicModelManifest();
   const selected = selectEntries(entries);
-  const results = selected.map(modelStatusForEntry);
+  const results = selected.map((entry) => modelStatusForEntry(entry, publicManifest));
   const summary = summarize(results);
 
   const report = {
@@ -45,6 +46,7 @@ async function main() {
   console.log('Architecture Cosmos Brain Model Status');
   console.log(`Entries: ${results.length}`);
   console.log(`Public preview GLB: ${summary.public_preview_glb}`);
+  console.log(`Public files missing manifest: ${summary.public_file_missing_manifest}`);
   console.log(`Local review GLB: ${summary.local_review_glb}`);
   console.log(`Planned only: ${summary.planned_only}`);
   console.log(`No model plan: ${summary.no_model_plan}`);
@@ -58,7 +60,13 @@ function selectEntries(entries) {
   return entries.filter((entry) => wanted.has(entry.slug) || wanted.has(entry.id));
 }
 
-function modelStatusForEntry(entry) {
+async function loadPublicModelManifest() {
+  const manifestPath = resolve(rootDir, 'data/public-model-previews.json');
+  if (!existsSync(manifestPath)) return { version: 1, models: [] };
+  return JSON.parse(await readFile(manifestPath, 'utf8'));
+}
+
+function modelStatusForEntry(entry, publicManifest) {
   const publicFiles = findExistingFiles([
     `public/archive-models/${entry.slug}/low.glb`,
     `public/archive-models/${entry.slug}/mass.glb`,
@@ -79,22 +87,26 @@ function modelStatusForEntry(entry) {
   const packageManifest = fileInfo(`archive-intake/${entry.slug}/models/model-package.manifest.json`);
   const modelAssets = entry.model_assets ?? [];
   const model3dParts = entry.model_3d?.parts ?? [];
+  const publicManifestEntry = (publicManifest.models ?? []).find((model) => model.slug === entry.slug) ?? null;
   const plannedTargets = [
     ...modelAssets.map((asset) => asset.r2_key).filter(Boolean),
     ...model3dParts.map((part) => part.r2_key || part.glb_url).filter(Boolean)
   ];
 
   const hasPublicPreview = publicFiles.length > 0;
+  const publicWebsiteReady = hasPublicPreview && Boolean(publicManifestEntry);
   const hasLocalReview = localFiles.length > 0;
   const hasModelPlan = modelAssets.length > 0 || model3dParts.length > 0 || packageManifest.exists;
   const blenderReady = hasLocalReview && blenderProfile.exists && packageManifest.exists;
-  const status = hasPublicPreview
+  const status = publicWebsiteReady
     ? 'public_preview_glb'
-    : hasLocalReview
-      ? 'local_review_glb'
-      : hasModelPlan
-        ? 'planned_only'
-        : 'no_model_plan';
+    : hasPublicPreview
+      ? 'public_file_missing_manifest'
+      : hasLocalReview
+        ? 'local_review_glb'
+        : hasModelPlan
+          ? 'planned_only'
+          : 'no_model_plan';
 
   return {
     id: entry.id,
@@ -102,6 +114,8 @@ function modelStatusForEntry(entry) {
     title: entry.title,
     status,
     public_preview_ready: hasPublicPreview,
+    public_website_ready: publicWebsiteReady,
+    public_manifest_entry: publicManifestEntry,
     local_review_ready: hasLocalReview,
     blender_ready: blenderReady,
     public_files: publicFiles,
@@ -120,6 +134,7 @@ function modelStatusForEntry(entry) {
 function nextAction(status, blenderReady, hasPackageManifest) {
   if (status === 'public_preview_glb' && blenderReady) return 'Review in website viewer and Blender, then decide whether to promote more layers.';
   if (status === 'public_preview_glb') return 'Add/refresh Blender import profile and layer manifest.';
+  if (status === 'public_file_missing_manifest') return 'Register the public GLB in data/public-model-previews.json or remove the orphaned public file.';
   if (status === 'local_review_glb') return 'Review local GLB, then explicitly copy reviewed preview into public/archive-models if public-safe.';
   if (status === 'planned_only' && hasPackageManifest) return 'Review generated model package, then add a project-specific procedural template before GLB generation.';
   if (status === 'planned_only') return 'Run npm run cosmos:model-generate for a review model plan; add a project-specific template before GLB generation.';
@@ -129,6 +144,7 @@ function nextAction(status, blenderReady, hasPackageManifest) {
 function summarize(results) {
   return {
     public_preview_glb: results.filter((item) => item.status === 'public_preview_glb').length,
+    public_file_missing_manifest: results.filter((item) => item.status === 'public_file_missing_manifest').length,
     local_review_glb: results.filter((item) => item.status === 'local_review_glb').length,
     planned_only: results.filter((item) => item.status === 'planned_only').length,
     no_model_plan: results.filter((item) => item.status === 'no_model_plan').length,
@@ -160,6 +176,7 @@ function renderMarkdown(report) {
     '## Summary',
     '',
     `- Public preview GLB: ${report.summary.public_preview_glb}`,
+    `- Public files missing manifest: ${report.summary.public_file_missing_manifest}`,
     `- Local review GLB: ${report.summary.local_review_glb}`,
     `- Planned only: ${report.summary.planned_only}`,
     `- No model plan: ${report.summary.no_model_plan}`,

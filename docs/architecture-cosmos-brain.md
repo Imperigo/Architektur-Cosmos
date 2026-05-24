@@ -270,6 +270,8 @@ out/brain-model-status/YYYY-MM-DD/latest.md
 The status buckets are:
 
 - `public_preview_glb` — static website can load a GLB preview;
+- `public_file_missing_manifest` — public GLB exists, but the website manifest
+  does not expose it yet;
 - `local_review_glb` — local/private GLB exists under `archive-intake` or `out`;
 - `planned_only` — model assets/R2 keys exist, but no GLB exists yet;
 - `no_model_plan` — no model layer plan exists.
