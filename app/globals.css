@@ -3698,6 +3698,41 @@ body:has(.entry-page) {
   z-index: 1;
 }
 
+.intro-cosmos-mark {
+  overflow: visible;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  box-shadow: none;
+  filter: drop-shadow(0 0 18px rgb(0 231 255 / 12%));
+}
+
+.intro-title-main {
+  display: block;
+  line-height: 0.86;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.intro-title-architecture {
+  color: rgb(247 247 244 / 92%);
+  font-size: clamp(1.28rem, 3.35vw, 3.2rem);
+  font-weight: 560;
+  letter-spacing: 0.24em;
+}
+
+.intro-title-kosmos {
+  margin-top: clamp(0.35rem, 1vw, 0.9rem);
+  background:
+    linear-gradient(90deg, #00e7ff 0%, #f5b342 42%, #ff4fd8 75%, #f7f7f4 100%);
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 18px rgb(0 231 255 / 18%));
+  font-size: clamp(2.7rem, 8vw, 7.7rem);
+  font-weight: 700;
+  letter-spacing: 0.19em;
+}
+
 .intro-gate-hub {
   pointer-events: auto;
   cursor: none !important;

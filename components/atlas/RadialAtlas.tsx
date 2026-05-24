@@ -2159,9 +2159,7 @@ function IntroGate({ state, onStart }: { state: IntroState; onStart: () => void 
           <svg className="intro-cosmos-mark mx-auto mb-7 block h-[clamp(5.4rem,13vw,11rem)] w-[clamp(5.4rem,13vw,11rem)]" viewBox="0 0 64 64" aria-hidden="true">
             <CosmosGlyph />
           </svg>
-          <span className="intro-title-main block text-[clamp(2.4rem,7vw,6.8rem)] font-semibold uppercase tracking-[0.18em] text-[#f7f7f4]">
-            architektur kosmos
-          </span>
+          <IntroTitle />
         </span>
       </div>
     );
@@ -2184,11 +2182,18 @@ function IntroGate({ state, onStart }: { state: IntroState; onStart: () => void 
         <svg className="intro-cosmos-mark mx-auto mb-7 block h-[clamp(5.4rem,13vw,11rem)] w-[clamp(5.4rem,13vw,11rem)]" viewBox="0 0 64 64" aria-hidden="true">
           <CosmosGlyph />
         </svg>
-        <span className="intro-title-main block text-[clamp(2.4rem,7vw,6.8rem)] font-semibold uppercase tracking-[0.18em] text-[#f7f7f4]">
-          architektur kosmos
-        </span>
+        <IntroTitle />
       </span>
     </button>
+  );
+}
+
+function IntroTitle() {
+  return (
+    <span className="intro-title-main block uppercase" aria-hidden="true">
+      <span className="intro-title-architecture block">architektur</span>
+      <span className="intro-title-kosmos block">kosmos</span>
+    </span>
   );
 }
 
