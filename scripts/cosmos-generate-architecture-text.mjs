@@ -52,6 +52,13 @@ async function main() {
   await writeJson(path.join(intakeTexts, 'architecture-text.json'), textPack);
   await writeJson(path.join(automationDir, 'text-tool-run.json'), toolRun);
 
+  if (args.apply) {
+    if (!args['confirm-public-text']) {
+      throw new Error('Applying text to data/mock-entries.json requires --confirm-public-text.');
+    }
+    await applyTextPackToEntry(entry.slug, textPack);
+  }
+
   console.log('Architecture Cosmos architecture text generator');
   console.log(`Entry: ${entry.title} (${entry.slug})`);
   console.log(`Chapters: ${textPack.chapters.length}`);
@@ -60,13 +67,41 @@ async function main() {
   console.log(`- out/text-review/${entry.slug}/architecture-text.md`);
   console.log(`- archive-intake/${entry.slug}/texts/architecture-text.json`);
   console.log(`- archive-intake/${entry.slug}/automation/text-tool-run.json`);
+  if (args.apply) {
+    console.log(`- data/mock-entries.json updated for ${entry.slug}`);
+  }
   console.log('');
-  console.log('No entry data was overwritten. Text remains a review draft.');
+  console.log(args.apply ? 'Entry text was updated after explicit confirmation.' : 'No entry data was overwritten. Text remains a review draft.');
 }
 
 async function loadEntry(slug) {
   const entries = JSON.parse(await readFile(path.join(root, 'data/mock-entries.json'), 'utf8'));
   return entries.find((entry) => entry.slug === slug || entry.id === slug);
+}
+
+async function applyTextPackToEntry(slug, textPack) {
+  const entriesPath = path.join(root, 'data/mock-entries.json');
+  const entries = JSON.parse(await readFile(entriesPath, 'utf8'));
+  const index = entries.findIndex((entry) => entry.slug === slug || entry.id === slug);
+  if (index === -1) throw new Error(`No entry found for "${slug}".`);
+
+  entries[index] = {
+    ...entries[index],
+    one_sentence: textPack.suggested_entry_fields.one_sentence,
+    full_description: textPack.suggested_entry_fields.full_description,
+    architecture_text: {
+      headline: textPack.headline,
+      overview: textPack.overview,
+      chapters: textPack.chapters,
+      language: 'de',
+      generator: textPack.generator,
+      generated_at: textPack.generated_at,
+      review_status: 'draft_review',
+      source_basis: textPack.source_basis
+    }
+  };
+
+  await writeJson(entriesPath, entries);
 }
 
 function parseArgs(argv) {
@@ -86,19 +121,24 @@ function buildTextPack(entry) {
   const sources = sourceTrail(entry);
   const analysis = analysisByType(entry);
   const materials = materialList(entry);
-  const program = readableDe(entry.program?.subtype || entry.program?.type || entry.entry_type);
+  const program = programPhrase(entry);
   const context = contextPhrase(entry);
   const structuralClaim = analysis.structure || materialStructureFallback(entry, materials);
-  const tectonicClaim = analysis.tectonics || tectonicFallback(entry, materials);
+  const tectonicClaim = analysis.tectonics || specificTectonicClaim(entry) || tectonicFallback(entry, materials);
   const spatialClaim = analysis.spatial_order || spatialFallback(entry);
   const materialClaim = specificMaterialClaim(entry) || analysis.material_system || materialFallback(entry, materials);
 
   const headline = buildHeadline(entry, program);
-  const overview = paragraph([
-    `${entry.title} wird als ${program} verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf.`,
-    `Architektonisch entscheidend ist das Zusammenspiel von Netzwerkposition, Topos, Typos, Tektonik, Raumdramaturgie und ${context}.`,
-    `Der Text beantwortet deshalb, welche architektonische These im Objekt steckt, wie es sich von verwandten Referenzen unterscheidet und welchen Wert es als KosmoData-Referenz für Analyse, Entwurf und 3D-Layer besitzt.`
-  ]);
+  const networkClaim = networkDna(entry);
+  const overview = buildOverview(entry, {
+    program,
+    context,
+    networkClaim,
+    spatialClaim,
+    materialClaim,
+    structuralClaim,
+    tectonicClaim
+  });
 
   const chapters = [
     chapter('These', paragraph([
@@ -107,7 +147,7 @@ function buildTextPack(entry) {
       `Die Analyse fragt, welche räumliche Intelligenz daraus entsteht und welche Idee über das einzelne Projekt hinaus übertragbar bleibt.`
     ]), spatialClaim.basis),
     chapter('Netzwerk und DNA', paragraph([
-      networkDna(entry),
+      networkClaim,
       `Im Atlas ist wichtig, ob ${entry.title} eine bekannte DNA nur fortschreibt, sie verdichtet, bricht oder in eine andere Epoche, Landschaft oder Bauaufgabe übersetzt.`,
       `So wird das Objekt nicht nur datiert, sondern in ein Beziehungsnetz von ähnlichen Typologien, Materialien, Programmen, Quellen und historischen Problemen eingeordnet.`
     ]), 'entry themes, source trail and atlas relation logic'),
@@ -162,7 +202,16 @@ function buildTextPack(entry) {
       headline,
       overview,
       one_sentence: conciseSentence(entry, spatialClaim, structuralClaim),
-      full_description: chapters.map((item) => `${item.title}: ${item.text}`).join('\n\n')
+      full_description: buildPublicFullDescription(entry, {
+        overview,
+        networkClaim,
+        spatialClaim,
+        materialClaim,
+        structuralClaim,
+        tectonicClaim,
+        context,
+        program
+      })
     },
     headline,
     overview,
@@ -173,6 +222,7 @@ function buildTextPack(entry) {
 function analysisByType(entry) {
   const result = {};
   for (const layer of entry.analysis_layers ?? []) {
+    if (isWeakGeneratedAnalysis(layer.summary)) continue;
     const summary = localizeArchitectureText(layer.summary);
     result[layer.analysis_type] = {
       short: compact(summary, 92),
@@ -181,6 +231,48 @@ function analysisByType(entry) {
     };
   }
   return result;
+}
+
+function buildOverview(entry, { program, context, networkClaim, spatialClaim, materialClaim, structuralClaim, tectonicClaim }) {
+  const spatial = visibleClaimText(spatialClaim);
+  const material = visibleClaimText(materialClaim);
+  const structure = visibleClaimText(structuralClaim);
+  const tectonic = visibleClaimText(tectonicClaim);
+  return paragraph([
+    `${entry.title} wird im Architecture Cosmos als ${program} gelesen.`,
+    `Die räumliche These entsteht aus ${context}.`,
+    spatial,
+    material || structure,
+    tectonic && tectonic !== material ? tectonic : '',
+    networkClaim
+  ]);
+}
+
+function buildPublicFullDescription(entry, { overview, networkClaim, spatialClaim, materialClaim, structuralClaim, tectonicClaim, context, program }) {
+  const paragraphs = [
+    overview,
+    paragraph([
+      `Topos und Typos greifen ineinander: ${entry.title} steht in ${context} und wird typologisch als ${program} verstanden.`,
+      visibleClaimText(spatialClaim),
+      `Entscheidend ist, wie Ort, Programm, Bewegung und Gebrauch eine architektonische Ordnung bilden.`
+    ]),
+    paragraph([
+      visibleClaimText(materialClaim),
+      visibleClaimText(structuralClaim),
+      visibleClaimText(tectonicClaim),
+      `Material und Konstruktion werden deshalb nicht als technische Nebendaten behandelt, sondern als lesbare Grammatik von Last, Fügung, Oberfläche und Atmosphäre.`
+    ]),
+    paragraph([
+      networkClaim,
+      `${entry.title} wird damit im KosmoData-Netzwerk über ${databaseValue(entry)} vergleichbar und bleibt zugleich als einzelnes architektonisches Argument erkennbar.`,
+      `Für spätere Plan-, Modell- und Blender-Layer sind besonders Ort, Masse, Tragstruktur, Hülle, Material, Zirkulation und unsichere Rekonstruktionsannahmen relevant.`
+    ])
+  ];
+
+  return paragraphs
+    .map((text) => cleanSentence(text))
+    .filter(Boolean)
+    .join('\n\n');
 }
 
 function buildHeadline(entry, program) {
@@ -269,6 +361,10 @@ function buildHeadline(entry, program) {
     'athens-charter': 'Charta von Athen: Funktionstrennung als Stadtprogramm',
     'the-capitol': 'The Capitol: Lichtarchitektur und Kino als Großstadtapparat',
     'buerogebaeude-montecatini': 'Montecatini: Büroarbeit als präzise moderne Prozessarchitektur',
+    'euralille-metropole': 'Euralille: Knotenstadt zwischen Bahnhof, Infrastruktur und Metropole',
+    'rural-studio-20k-house': '20K House: Leistbares Wohnen als konstruktive Forschungsfrage',
+    'venice-biennale-architecture-2012': 'Common Ground: Ausstellung als Netzwerk architektonischer Beziehungen',
+    leutschenpark: 'Leutschenpark: Stadtreparatur als leuchtender Freiraum',
     chandigarh: 'Chandigarh: Hauptstadt als postkoloniale Landschaft der Moderne',
     'unite-habitation': 'Unité d’Habitation: Wohnmaschine als vertikale Stadt',
     brasilia: 'Brasília: Hauptstadtachse, Monument und leere Mitte',
@@ -292,14 +388,23 @@ function buildHeadline(entry, program) {
 }
 
 function conciseSentence(entry, spatialClaim, structuralClaim) {
-  return `${entry.title} ist ein ${readableDe(entry.entry_type)}, das durch ${spatialClaim.short} und ${structuralClaim.short} geprägt wird.`;
+  const spatial = firstSentence(visibleClaimText(spatialClaim) || spatialClaim.long || spatialClaim.short);
+  const structure = firstSentence(visibleClaimText(specificMaterialClaim(entry) || structuralClaim) || structuralClaim.long || structuralClaim.short);
+  return paragraph([
+    `${entry.title} wird als ${programPhrase(entry)} im Netzwerk von ${mainThemes(entry)} gelesen.`,
+    spatial,
+    structure
+  ]);
 }
 
 function materialStructureFallback(entry, materials) {
-  const materialText = materials.length ? materials.map(readable).slice(0, 3).join(', ') : 'a source-dependent material system';
+  const structuralMaterials = materials.filter((material) => !/needs|review|craft|surface_system|surface system|detail|construction_logic|construction logic/i.test(material));
+  const materialText = structuralMaterials.length ? structuralMaterials.map(readableDe).slice(0, 3).join(', ') : 'die tragende Ordnung';
   return {
-    short: `${materialText} as construction logic`,
-    long: `Die aktuellen Archivdaten weisen ${materialText} als konstruktive Grundlage aus; die genaue strukturelle Hierarchie braucht jedoch noch Quellenprüfung`,
+    short: `${materialText} als konstruktive Logik`,
+    long: structuralMaterials.length
+      ? `Die aktuellen Archivdaten weisen ${materialText} als konstruktive Grundlage aus; die genaue strukturelle Hierarchie braucht jedoch noch Quellenprüfung.`
+      : 'Die tragende Ordnung bleibt als quellenbasiert zu präzisierende Ebene markiert.',
     basis: 'entry materials fallback'
   };
 }
@@ -341,6 +446,9 @@ function specificMaterialClaim(entry) {
     'athens-charter': 'Die Charta von Athen ist kein Baukörper, sondern eine Regelstruktur aus Wohnen, Arbeiten, Erholung und Verkehr; ihr Material ist die funktionale Stadtanalyse.',
     'the-capitol': 'The Capitol wird über Licht, Kinosaal, Foyer, Großstadtfassade und technische Inszenierung gelesen; Architektur wird hier zum Apparat der Wahrnehmung.',
     'buerogebaeude-montecatini': 'Montecatini verbindet Stahlbeton, Naturstein, Glas, präzise Haustechnik, Treppenräume und Büroorganisation zu einer kontrollierten Architektur der Arbeit.',
+    'euralille-metropole': 'Euralille wird über Bahnhofsinfrastruktur, Großform, Büro- und Handelsvolumen, Brückenräume und öffentliche Zwischenräume gelesen; Stadt entsteht hier aus der Überlagerung von Verkehr, Programm und Maßstab.',
+    'rural-studio-20k-house': 'Das 20K House arbeitet mit einfachen, robusten Konstruktionsmitteln, Kostenbewusstsein, lokaler Baupraxis und präzisem Detail als architektonischem Material.',
+    'venice-biennale-architecture-2012': 'Common Ground besitzt kein Materialsystem im klassischen Sinn; sein Material sind Ausstellungsräume, Modelle, Bilder, Texte, Beziehungen und kuratorische Nachbarschaften.',
     chandigarh: 'Chandigarh wird über Betonmonumente, Sektorenraster, breite Verkehrsachsen, Grünräume und die Capitol-Anlage gelesen; Stadt und Staatsrepräsentation fallen eng zusammen.',
     'unite-habitation': 'Die Unité d’Habitation verbindet Béton brut, Pilotis, innere Straßen, Maisonette-Wohnungen, Dachlandschaft und gemeinschaftliche Einrichtungen zu einem vertikalen Wohnkörper.',
     brasilia: 'Brasília arbeitet mit Betonmonumenten, Superquadras, Verkehrsachsen, weitem Landschaftsraum und skulpturalen Regierungsbauten als Material einer geplanten Hauptstadt.',
@@ -349,6 +457,7 @@ function specificMaterialClaim(entry) {
     'ibm-cosham': 'IBM Cosham verbindet flexible Büroflächen, Glasfassade, technische Infrastruktur und campusartige Arbeitsorganisation zu einer frühen Architektur der Informationsarbeit.',
     'delirious-new-york': 'Delirious New York ist ein theoretisches Material aus Raster, Dichte, Hochhaus, Programmstapelung und metropolitaner Fantasie; der Text liest Manhattan als architektonisches Labor.',
     'gas-works-park': 'Gas Works Park erhält industrielle Apparate, Betonfundamente, Erdmodellierung, Wiesen und Blickbeziehungen; Ruine und Park werden nicht getrennt, sondern ineinander überführt.',
+    leutschenpark: 'Leutschenpark wird über Wasser, Vegetation, Lichtobjekt, Belagsflächen und die Transformation von Zürich-Nord gelesen; Freiraum wird hier zum atmosphärischen Infrastrukturstück.',
     'willis-faber-and-dumas-office': 'Willis Faber & Dumas verbindet dunkle Glasfassade, flexible Büroflächen, Dachgarten, soziale Innenräume und Stadtblockkante zu einer offenen Arbeitslandschaft.',
     'centre-pompidou': 'Centre Pompidou legt Stahltragwerk, Rolltreppen, Lüftung, Farbcode, flexible Hallen und öffentlichen Vorplatz offen; Infrastruktur wird zur Fassade und zum Stadtereignis.'
   };
@@ -360,8 +469,27 @@ function specificMaterialClaim(entry) {
   };
 }
 
+function specificTectonicClaim(entry) {
+  const claims = {
+    'vitruvius-de-architectura': 'Die Tektonik von De architectura liegt nicht in einem Bauteil, sondern in der Ordnung von Begriffen: Festigkeit, Zweck, Schönheit, Materialkunde, Maschine und Proportion werden als übertragbares Wissenssystem gefügt.',
+    'narkomfin-housing': 'Die Tektonik liegt im sozialen Schnitt: Stahlbetonrahmen, Maisonette-Typen, Erschließung, Gemeinschaftsbereiche und Dachterrasse werden als räumliches Experiment zwischen privater Zelle und kollektivem Alltag gefügt.',
+    'habitat-67': 'Die Tektonik von Habitat 67 entsteht aus vorgefertigten Betonmodulen, Stapelung, Versatz, Terrassen und Brücken; das Tragwerk wird zugleich zur städtischen Adresse jeder Wohnung.',
+    'euralille-metropole': 'Die Tektonik ist hier urban: Bahntrasse, Bahnhof, Großvolumen, Decks, Brücken und Zwischenräume bilden eine mehrschichtige Knotenarchitektur.',
+    'rural-studio-20k-house': 'Die Tektonik liegt in der radikalen Ökonomie des Bauens: Konstruktion, Detail, Materialwahl und Gebrauchswert werden so gefügt, dass Leistbarkeit selbst zur architektonischen Qualität wird.',
+    'venice-biennale-architecture-2012': 'Die tektonische Ordnung ist kuratorisch: Modelle, Räume, Dokumente, Nachbarschaften und Blickbeziehungen bilden ein temporäres Wissensgefüge statt eines dauerhaften Baukörpers.',
+    leutschenpark: 'Die Tektonik ist landschaftlich und atmosphärisch: Wasser, Vegetation, Belag, Lichtkörper und Stadtboden erzeugen ein öffentliches Feld, das Zürich-Nord räumlich repariert.'
+  };
+  if (!claims[entry.slug]) return null;
+  return {
+    short: compact(claims[entry.slug], 92),
+    long: claims[entry.slug],
+    basis: 'curated tectonic reading'
+  };
+}
+
 function tectonicFallback(entry, materials) {
-  const materialText = materials.length ? materials.map(readableDe).slice(0, 3).join(', ') : 'Oberfläche, Tragstruktur und Fügung';
+  const structuralMaterials = materials.filter((material) => !/needs|review|craft|surface_system|surface system|detail|construction_logic|construction logic/i.test(material));
+  const materialText = structuralMaterials.length ? structuralMaterials.map(readableDe).slice(0, 3).join(', ') : 'Tragstruktur, Hülle und Oberfläche';
   return {
     short: `${materialText} als tektonische Beziehung`,
     long: `Die tektonische Lesart soll zeigen, wie ${materialText} Stützung, Hülle, Fügung und Atmosphäre organisieren.`,
@@ -447,6 +575,9 @@ function spatialFallback(entry) {
     'athens-charter': 'Die Charta von Athen beschreibt Stadt als analytisches System: Wohnen, Arbeiten, Erholung und Verkehr werden getrennt, bewertet und als Planungsprogramm neu zusammengesetzt',
     'the-capitol': 'The Capitol inszeniert Kino als Großstadterfahrung: Fassade, Licht, Foyer und Saal führen Besucher von der Straße in eine technische Innenwelt der Projektion',
     'buerogebaeude-montecatini': 'Montecatini liest Büroarbeit als präzisen Ablauf: Fassade, Treppen, Erschließung, Arbeitsräume und technische Ausstattung bilden eine disziplinierte Organisation moderner Verwaltung',
+    'euralille-metropole': 'Euralille verdichtet Bahnhof, TGV-Infrastruktur, Büro- und Handelsprogramme, Brückenräume und öffentliche Plätze zu einem metropolitanen Knoten zwischen Stadt und Verkehr',
+    'rural-studio-20k-house': 'Das 20K House liest Wohnen über Leistbarkeit, Konstruktion und Gebrauch: Der Entwurf sucht eine präzise Architektur aus begrenztem Budget, lokalen Bauweisen und robustem Alltag',
+    'venice-biennale-architecture-2012': 'Common Ground ordnet Ausstellung als Beziehungsraum: Projekte, Modelle, Texte und Installationen werden zu einem temporären Netzwerk architektonischer Argumente',
     chandigarh: 'Chandigarh ordnet die neue Hauptstadt über Sektoren, Straßenhierarchie, Grünräume und Capitol-Komplex; die Stadt wird als offenes, klimatisch und politisch aufgeladenes Raster gelesen',
     'unite-habitation': 'Die Unité d’Habitation stapelt Wohnen, Erschließung, Versorgung und Dachnutzung zu einer vertikalen Nachbarschaft, in der der Wohnblock wie eine kleine Stadt funktioniert',
     brasilia: 'Brasília formt Hauptstadt über zwei große Achsen, Superquadras, monumentale Regierungsräume und weite Leere; Bewegung, Blick und Distanz werden zum eigentlichen Stadtmaterial',
@@ -455,6 +586,7 @@ function spatialFallback(entry) {
     'ibm-cosham': 'IBM Cosham organisiert Büroarbeit als flexible technische Landschaft: Glas, offene Geschosse, Infrastruktur und Arbeitsplätze bilden eine ruhige, veränderbare Ordnung',
     'delirious-new-york': 'Delirious New York liest Manhattan als Schnittmaschine: Raster, Parzelle, Wolkenkratzer und programmatische Stapelung erzeugen eine Kultur extremer Dichte',
     'gas-works-park': 'Gas Works Park verwandelt Industrie nicht in Kulisse, sondern in nutzbaren Landschaftsbestand: Hügel, Maschinenfragmente, Wege und Seeufer bilden eine neue öffentliche Topografie',
+    leutschenpark: 'Leutschenpark übersetzt Stadtreparatur in Freiraum: Wasserbezug, Vegetation, Lichtkörper und robuste Belagsflächen bilden einen öffentlichen Anker für Zürich-Nord',
     'willis-faber-and-dumas-office': 'Willis Faber & Dumas biegt sich in die Stadt ein: Glasfassade, offenes Büro, Rolltreppen, Atrium und Dachgarten verbinden Arbeit mit urbanem Alltag',
     'centre-pompidou': 'Centre Pompidou kehrt das Museum nach außen: Erschließung, Technik, Tragwerk und Vorplatz machen Kultur als öffentliche Maschine sichtbar',
     'haus-tugendhat': 'Die räumliche Ordnung entsteht aus Zonen statt aus geschlossenen Zimmern: Wohnen, Essen, Musik und Blickfelder fließen um Materialwände, Vorhänge und Möblierungsfelder herum'
@@ -470,30 +602,48 @@ function spatialFallback(entry) {
   const hints = [...(entry.themes ?? []), ...(entry.vibes ?? [])].slice(0, 4).map(readableDe);
   const text = hints.length ? hints.join(', ') : readable(entry.entry_type);
   return {
-    short: `${text} as spatial order`,
-    long: `Die räumliche Ordnung lässt sich aktuell über ${text} beschreiben; Grundriss und Schnitt brauchen aber weitere quellenbasierte Präzisierung`,
+    short: `${text} als räumliche Ordnung`,
+    long: `Die räumliche Ordnung lässt sich aktuell über ${text} beschreiben; Grundriss, Schnitt und Bewegungsfolge brauchen aber weitere quellenbasierte Präzisierung.`,
     basis: 'themes/vibes fallback'
   };
 }
 
 function materialFallback(entry, materials) {
-  const materialText = materials.length ? materials.map(readable).slice(0, 4).join(', ') : 'materials still requiring review';
+  const materialText = materials.length ? materials.map(readableDe).slice(0, 4).join(', ') : 'ein noch zu prüfendes Materialsystem';
   return {
     short: materialText,
-    long: `Das Materialsystem ist aktuell als ${materialText} erfasst`,
+    long: `Das Materialsystem ist aktuell als ${materialText} erfasst.`,
     basis: 'entry materials fallback'
   };
 }
 
 function contextPhrase(entry) {
-  const countryLabel = entry.country ? readableDe(entry.country) : '';
+  const countryLabel = entry.country ? readableLocation(entry.country) : '';
+  const setting = entry.context?.setting && !isReviewPlaceholder(entry.context.setting) ? readableDe(entry.context.setting) : '';
+  const place = entry.city && countryLabel ? `${entry.city}, ${countryLabel}` : entry.city || countryLabel;
   const parts = [
-    entry.context?.setting && readableDe(entry.context.setting),
-    entry.context?.topography && readableDe(entry.context.topography),
-    entry.city && countryLabel ? `${entry.city}, ${countryLabel}` : entry.city || countryLabel,
-    entry.context?.heritage_context?.slice(0, 2).map(readableDe).join(' und ')
+    setting && readableLocation(setting),
+    entry.context?.topography && !isReviewPlaceholder(entry.context.topography) && readableDe(entry.context.topography),
+    place && !setting.toLowerCase().includes(String(entry.city ?? '').toLowerCase()) ? place : '',
+    entry.context?.heritage_context?.filter((value) => !isReviewPlaceholder(value)).slice(0, 2).map(readableDe).join(' und ')
   ].filter(Boolean);
   return parts.length ? parts.join(' / ') : 'einem Kontext, der noch Quellenprüfung braucht';
+}
+
+function programPhrase(entry) {
+  const raw = entry.program?.subtype || entry.program?.type || entry.entry_type;
+  if (/architecture[_\s-]reference/i.test(String(raw))) {
+    return `${readableDe(entry.style_sector)}-Referenz`;
+  }
+  return readableDe(raw);
+}
+
+function isReviewPlaceholder(value) {
+  return /needs[_\s-]|review|unknown|tbd/i.test(String(value ?? ''));
+}
+
+function isWeakGeneratedAnalysis(value) {
+  return /should be read through program|needs a reviewed structural reading|Material system planned for database filters|Context tags:|Classification:|Geometry remains reconstruction-grade/i.test(String(value ?? ''));
 }
 
 function contextBasis(entry) {
@@ -587,7 +737,7 @@ function materialList(entry) {
     ...(entry.materials?.primary ?? []),
     ...(entry.materials?.secondary ?? []),
     ...(entry.materials?.stone_type ?? [])
-  ])];
+  ])].filter((material) => !/needs|review|craft_details|craft details|surface_system|surface system|construction_logic|construction logic/i.test(material));
 }
 
 function chapter(title, text, source_basis) {
@@ -616,12 +766,19 @@ function paragraph(sentences) {
 function visibleClaimText(claim) {
   const text = cleanSentence(claim?.long);
   if (!text) return '';
+  if (/fallback/i.test(String(claim?.basis ?? '')) && /quellenbasiert zu präzisierende|braucht jedoch noch Quellenprüfung|brauchen aber weitere quellenbasierte Präzisierung/i.test(text)) {
+    return '';
+  }
   const sentences = text
     .split(/(?<=[.!?])\s+/)
     .map((sentence) => sentence.trim())
     .filter(Boolean)
     .filter((sentence) => !/(Blender|ArchiCAD|Datenbank|Database|Filter|Suchfilter|\bModell\b|\bLayer\b|Tragwerkslayer|Studienrekonstruktion|Quellenpläne|review|source|classification|context tags|R2|Upload)/i.test(sentence));
   return sentences.join(' ');
+}
+
+function firstSentence(value) {
+  return cleanSentence(value).split(/(?<=[.!?])\s+/).find(Boolean) || '';
 }
 
 function cleanSentence(value) {
@@ -639,6 +796,25 @@ function readable(value) {
   return String(value ?? '').replace(/[_-]/g, ' ').replace(/\s+/g, ' ').trim();
 }
 
+function readableLocation(value) {
+  return readableDe(value)
+    .replace(/\bSpain\b/g, 'Spanien')
+    .replace(/\bItaly\b/g, 'Italien')
+    .replace(/\bFrance\b/g, 'Frankreich')
+    .replace(/\bRussia\b/g, 'Russland')
+    .replace(/\bCanada\b/g, 'Kanada')
+    .replace(/\bBrazil\b/g, 'Brasilien')
+    .replace(/\bSwitzerland\b/g, 'Schweiz')
+    .replace(/\bUnited States\b/g, 'USA')
+    .replace(/\bUnited Kingdom\b/g, 'Vereinigtes Königreich')
+    .replace(/\bGreece\b/g, 'Griechenland')
+    .replace(/\bEgypt\b/g, 'Ägypten')
+    .replace(/\bRome\b/g, 'Rom')
+    .replace(/\bMoscow\b/g, 'Moskau')
+    .replace(/\bVenice\b/g, 'Venedig')
+    .replace(/\bZurich\b/g, 'Zürich');
+}
+
 function readableDe(value) {
   const text = stripTagPrefix(readable(value));
   const dictionary = {
@@ -653,6 +829,43 @@ function readableDe(value) {
     theory: 'Theorie',
     map: 'Karte',
     text: 'Text',
+    vernacular_architecture: 'vernakuläre Architektur',
+    'vernacular architecture': 'vernakuläre Architektur',
+    'vernacular architecture reference': 'vernakuläre Architektur-Referenz',
+    classical_architecture: 'klassische Architektur',
+    'classical architecture': 'klassische Architektur',
+    'classical architecture reference': 'klassische Architektur-Referenz',
+    pre_modern_architecture: 'vormoderne Architektur',
+    'pre modern architecture': 'vormoderne Architektur',
+    'pre modern architecture reference': 'vormoderne Architektur-Referenz',
+    modern_architecture: 'moderne Architektur',
+    'modern architecture': 'moderne Architektur',
+    'modern architecture reference': 'moderne Architektur-Referenz',
+    postwar_modern_architecture: 'Nachkriegsmoderne',
+    'postwar modern architecture': 'Nachkriegsmoderne',
+    'postwar modern architecture reference': 'Nachkriegsmoderne-Referenz',
+    sustainable_architecture: 'Landschafts- und Transformationsarchitektur',
+    'sustainable architecture': 'Landschafts- und Transformationsarchitektur',
+    'sustainable architecture reference': 'Landschafts- und Transformationsarchitektur-Referenz',
+    architecture_reference: 'Architekturreferenz',
+    'architecture reference': 'Architekturreferenz',
+    construction_logic: 'konstruktive Logik',
+    'construction logic': 'konstruktive Logik',
+    structural_prototype: 'Tragwerksprototyp',
+    'structural prototype': 'Tragwerksprototyp',
+    architectural_treatise: 'Architekturtraktat',
+    'architectural treatise': 'Architekturtraktat',
+    listed_cultural_heritage: 'denkmalgeschützter Kontext',
+    'listed cultural heritage': 'denkmalgeschützter Kontext',
+    projet_urbain: 'Projet urbain',
+    metropole: 'Metropole',
+    urban_repair: 'Stadtreparatur',
+    'urban repair': 'Stadtreparatur',
+    affordability: 'Leistbarkeit',
+    common_ground: 'gemeinsamer Grund',
+    'common ground': 'gemeinsamer Grund',
+    needs_material_review: 'noch zu prüfendes Materialsystem',
+    'needs material review': 'noch zu prüfendes Materialsystem',
     modern_villa: 'moderne Villa',
     'modern villa': 'moderne Villa',
     private_residence: 'privates Wohnhaus',
@@ -711,6 +924,12 @@ function readableDe(value) {
     egypt: 'Ägypten',
     canada: 'Kanada',
     spain: 'Spanien',
+    france: 'Frankreich',
+    russia: 'Russland',
+    brazil: 'Brasilien',
+    usa: 'USA',
+    'united states': 'USA',
+    switzerland: 'Schweiz',
     palace_city: 'Palaststadt',
     'palace city': 'Palaststadt',
     fortress_palace_garden: 'Festungs-, Palast- und Gartenanlage',
@@ -1623,6 +1842,14 @@ function localizeArchitectureText(value) {
   text = text.replace(
     /Tectonic layer planned around ([^;]+); separates material expression, enclosure and structural reading for later Blender layer toggles/g,
     'Die tektonische Lesart trennt $1 als Zusammenspiel von Materialausdruck, Hülle, Fügung und tragender Ordnung'
+  );
+  text = text.replace(
+    /(.+?) should be read through program, movement, room sequence, exterior relation and typological position rather than as a single image/g,
+    '$1 wird über Programm, Bewegung, Raumfolge, Außenbezug und typologische Position gelesen, nicht als bloßes Einzelbild'
+  );
+  text = text.replace(
+    /(.+?) needs a reviewed structural reading connecting (.+?) with construction logic/g,
+    'Die Tragwerkslesart von $1 muss noch quellenbasiert präzisieren, wie $2 als konstruktive Logik wirken'
   );
 
   return text

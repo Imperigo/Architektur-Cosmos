@@ -229,6 +229,28 @@ metadata immediately after the same gates, add guarded autopush:
 npm run brain:promote -- --limit 5 --execute --confirm-promote --autopush --confirm-autopush
 ```
 
+## Brain Text Polish
+
+The Brain should also turn reviewed research into good public contribution
+texts. This is separate from new research: it uses only existing entry metadata,
+analysis layers and source trails, then writes a review report.
+
+```bash
+npm run brain:polish-texts -- --limit 8
+```
+
+After owner approval, the polished German texts can be applied to
+`data/mock-entries.json`:
+
+```bash
+npm run brain:polish-texts -- --limit 8 --execute --confirm-public-text
+```
+
+The tool does not browse, upload media, write D1/R2 or publish private files.
+It improves `one_sentence`, `full_description` and `architecture_text` with the
+Architecture Cosmos question framework: These, Netzwerk/DNA, Topos, Typos,
+Tektonik, Raumlogik, Kritik and KosmoData/3D value.
+
 ## Future Extensions
 
 - mail intake summary;

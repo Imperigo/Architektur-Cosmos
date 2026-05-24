@@ -33,6 +33,15 @@
       "approval_required_before_public_use": true
     },
     {
+      "id": "brain_text_polish",
+      "label": "Brain Text Polish",
+      "command": "npm run brain:polish-texts -- --limit 8",
+      "output_root": "out/brain-text-polish/{date}",
+      "review_output": "out/brain-text-polish/{date}/latest.md",
+      "purpose": "Turn Brain-reviewed entry metadata, analysis layers and source trails into better German public contribution texts without new browsing or private asset use.",
+      "approval_required_before_public_use": true
+    },
+    {
       "id": "plan_generate",
       "label": "2D Vector Plan Generator",
       "command": "npm run cosmos:plan-generate -- --entry {slug}",
