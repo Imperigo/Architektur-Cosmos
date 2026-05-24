@@ -7495,10 +7495,10 @@
       "monsters-and-marvels",
       "sacred-geography"
     ],
-    "short_description": "Hereford Mappa Mundi ist im PDF-Framework als cartography / worldview verortet und bildet einen wichtigen Knoten der Architektur- und Stadtgeschichte.",
-    "source_quality": "lecture_pdf",
-    "one_sentence": "Die Hereford Mappa Mundi ist kein neutraler Weltplan, sondern ein mittelalterlicher Wissensraum auf Vellum, in dem Geografie, Bibelgeschichte, Städte, Völker, Tiere, Wunder und Theologie zu einer räumlichen Ordnung verschränkt werden.",
-    "full_description": "Die Hereford Mappa Mundi ist die größte vollständig erhaltene mittelalterliche Weltkarte und einer der wichtigsten kartografischen Wissensräume Europas um 1300. Sie zeigt die Welt nicht nach moderner Vermessungslogik, sondern als theologisch und historisch geordnete Bildfläche: Jerusalem liegt im Zentrum, Osten ist oben, biblische Ereignisse, klassische Mythen, Städte, Völker, Tiere, Pflanzen und fremde Wunder sind in die Geografie eingeschrieben. Das macht die Karte für Architecture Cosmos besonders wichtig. Sie ist eine Art mittelalterlicher Atlas, Datenbank und Weltmodell zugleich: Ort ist nicht nur Koordinate, sondern Bedeutung, Erinnerung, Heilsgeschichte und moralische Ordnung. Als materielles Objekt ist sie ebenso präzise: eine große einzelne Vellumhaut, beschriftet, bemalt, konserviert und heute in Hereford Cathedral als Gedächtnisobjekt ausgestellt.",
+    "short_description": "Hereford Mappa Mundi verdichtet Stahlbetonskelett, freien Grundriss und serielle Wiederholbarkeit zu einem konstruktiven Prototyp der Moderne.",
+    "source_quality": "research_seed_review",
+    "one_sentence": "Hereford Mappa Mundi zeigt, wie Stahlbetonskelett, Stützenraster und freier Grundriss zu einem offenen System für Plan-, Struktur- und 3D-Layer werden.",
+    "full_description": "Hereford Mappa Mundi wird als konstruktiver Prototyp ohne festen Ort gelesen. Entscheidend ist die Trennung von Tragwerk, Grundriss und Hülle: wenige Stahlbetonelemente erzeugen ein offenes Raster, das Wiederholung, Erweiterung und freie räumliche Organisation ermöglicht. Für KosmoData wird daraus ein besonders klares Modell für Struktur-, Plan- und Blender-Layer.",
     "media": [
       {
         "type": "exterior",
@@ -7609,12 +7609,30 @@
           "text": "Für Architecture Cosmos ist die Hereford Mappa Mundi ein Schlüsselobjekt, weil sie zeigt, dass Atlas, Archiv und Weltbild historisch untrennbar sind. Sie verbindet Karte, Bild, Text, Religion, Geografie und Erzählung zu einer Wissensmaschine. Genau daraus kann der digitale Kosmos lernen: Navigation bedeutet nicht nur Koordinaten, sondern Interpretation.",
           "source_basis": "source-enriched database profile and atlas relation system",
           "review_status": "source_enriched_review"
+        },
+        {
+          "title": "Netzwerk und DNA",
+          "text": "Hereford Mappa Mundi wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, wie es sich innerhalb derselben architektonischen DNA unterscheidet: durch Ort, Auftrag, Fügung, Gebrauch und kulturelle Haltung.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Topos / Typos / Tektonik",
+          "text": "Topos, Typos und Tektonik werden zusammen gelesen: Ort und Landschaft bilden die Setzung, Konstruktionsprototyp bildet den typologischen Ausgangspunkt, und needs material review markieren die konstruktiv-atmosphärische Lesart.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für KosmoData ist Hereford Mappa Mundi relevant, weil sich daraus Filter, Vergleichsgruppen, Planlayer und spätere Blender-Collections ableiten lassen: Konstruktionsprototyp, vormoderne Architektur, cartography, worldview, theocentric, medieval world map, memory of the world, visual encyclopedia.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
         }
       ],
       "language": "de",
       "review_status": "source_enriched_review",
       "public_use_allowed": true,
-      "generated_at": "2026-05-23T19:57:22.000Z",
+      "generated_at": "2026-05-24T12:29:06.841Z",
       "source_basis": [
         {
           "type": "source_document",
@@ -7648,7 +7666,8 @@
           "reliability_level": "secondary_source",
           "rights_status": "unknown"
         }
-      ]
+      ],
+      "generator": "kosmodata-seed-from-research"
     },
     "year_end": 1300,
     "source_url": "https://www.herefordcathedral.org/mappa-mundi",
@@ -7662,39 +7681,35 @@
     },
     "materials": {
       "primary": [
-        "vellum_calfskin",
-        "ink",
-        "pigment",
-        "gold_highlights",
-        "manuscript_surface"
+        "needs_material_review"
       ],
       "secondary": [
-        "text_labels",
-        "city_symbols",
-        "creature_drawings",
-        "biblical_scenes",
-        "display_case_context"
+        "craft_details",
+        "surface_system",
+        "construction_logic"
       ],
-      "notes": "Material reading treats the map as a physical manuscript and public knowledge object. Official high-resolution images are rights-controlled; public-domain hero remains low-risk."
+      "notes": "Seeded from existing entry metadata and research packs; verify exact material claims before promotion."
     },
     "program": {
-      "type": "medieval_world_map_and_visual_encyclopedia",
-      "subtype": "theological_geography_public_display_object",
-      "public_access": "museum_cathedral_display_with_image_rights_restrictions",
+      "type": "structural_prototype",
+      "subtype": "pre_modern_architecture_reference",
+      "public_access": "needs_review",
       "components": [
-        "vellum sheet",
-        "Jerusalem centre",
-        "biblical events",
-        "cities/towns",
-        "peoples",
-        "animals/creatures",
-        "classical mythology",
-        "text-image fields"
+        "cartography",
+        "worldview",
+        "theocentric",
+        "medieval-world-map",
+        "memory-of-the-world",
+        "visual-encyclopedia",
+        "jerusalem-center",
+        "vellum-manuscript",
+        "monsters-and-marvels",
+        "sacred-geography"
       ]
     },
     "context": {
-      "topography": "manuscript_surface_world_model",
-      "setting": "Hereford Cathedral manuscript and chained-library context",
+      "topography": "needs_site_review",
+      "setting": "Hereford, United Kingdom",
       "worldview_relations": [
         "Jerusalem as centre",
         "East at top",
@@ -7714,6 +7729,23 @@
         "reproduction_rights",
         "conservation",
         "digital_exploration"
+      ],
+      "landscape_relations": [
+        "site_context_needs_review"
+      ],
+      "urban_context": [
+        "landscape_architecture_1_2",
+        "lecture_pdf"
+      ],
+      "construction_logic": [
+        "cartography",
+        "worldview",
+        "theocentric",
+        "medieval-world-map",
+        "memory-of-the-world",
+        "visual-encyclopedia",
+        "jerusalem-center",
+        "vellum-manuscript"
       ]
     },
     "vibes": [
@@ -7725,148 +7757,151 @@
       "archive-before-database"
     ],
     "database_tags": [
-      "source:hereford-cathedral",
-      "source:unesco-memory-of-the-world",
-      "source:mappa-mundi-explore",
-      "source:guinness-crosscheck",
-      "typology:medieval-world-map",
-      "typology:visual-encyclopedia",
-      "material:vellum",
-      "material:ink-pigment-gold",
-      "spatial:jerusalem-center",
-      "spatial:east-at-top",
-      "knowledge:theological-geography",
-      "knowledge:monsters-and-marvels",
-      "heritage:memory-of-the-world",
-      "plan2d:semantic-map-layer-candidate",
-      "blender:manuscript-relief-display-candidate"
+      "source:hereford-cathedral-mappa-mundi",
+      "source:unesco-memory-of-the-world-hereford-mappa-mundi",
+      "source:mappa-mundi-hereford-explore-the-largest-medieval-map",
+      "source:guinness-world-records-largest-surviving-medieval-world-map",
+      "source:wikimedia-commons-hero-candidate-hereford-karte",
+      "typology:structural-prototype",
+      "style:pre_modern_architecture",
+      "theme:cartography",
+      "theme:worldview",
+      "theme:theocentric",
+      "theme:medieval-world-map",
+      "theme:memory-of-the-world",
+      "theme:visual-encyclopedia",
+      "theme:jerusalem-center",
+      "theme:vellum-manuscript",
+      "theme:monsters-and-marvels",
+      "theme:sacred-geography",
+      "material:needs-material-review",
+      "rights:review-required",
+      "blender:structural-prototype-layer-candidate",
+      "plan:vector-review-required",
+      "viewer:3d-layer-review-required"
     ],
     "model_assets": [
       {
         "model_type": "site_model",
-        "title": "Hereford Mappa Mundi semantic manuscript model",
+        "title": "Hereford Mappa Mundi Site/context study model",
         "r2_key": "entries/hereford-mappa-mundi/models/site.glb",
         "format": "glb",
         "lod_level": "preview",
-        "source_basis": "Diagrammatic raised-plane model of vellum sheet, centre/rim logic, text-image zones and display context from public descriptions.",
+        "source_basis": "https://www.herefordcathedral.org/mappa-mundi | Hereford Cathedral / Mappa Mundi | UNESCO Memory of the World / Hereford Mappa Mundi | Mappa Mundi Hereford / Explore the largest medieval map | Guinness World Records / Largest surviving medieval world map | Wikimedia Commons hero candidate / Hereford-Karte",
         "generation_method": "procedural",
         "review_status": "draft",
-        "confidence_score": 0.57
+        "confidence_score": 0.42
+      },
+      {
+        "model_type": "structure_model",
+        "title": "Hereford Mappa Mundi Structure and spatial order study model",
+        "r2_key": "entries/hereford-mappa-mundi/models/structure.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "https://www.herefordcathedral.org/mappa-mundi | Hereford Cathedral / Mappa Mundi | UNESCO Memory of the World / Hereford Mappa Mundi | Mappa Mundi Hereford / Explore the largest medieval map | Guinness World Records / Largest surviving medieval world map | Wikimedia Commons hero candidate / Hereford-Karte",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
       },
       {
         "model_type": "tectonic_model",
-        "title": "Hereford Mappa Mundi knowledge-layer model",
+        "title": "Hereford Mappa Mundi Material, tectonic and filter-layer study model",
         "r2_key": "entries/hereford-mappa-mundi/models/tectonic.glb",
         "format": "glb",
-        "lod_level": "medium",
-        "source_basis": "Layer model for vellum support, central theology, city symbols, creatures, biblical episodes, text labels and edge zones; no protected image reproduction.",
-        "generation_method": "ai_assisted",
-        "review_status": "draft",
-        "confidence_score": 0.53
+        "lod_level": "study",
+        "source_basis": "https://www.herefordcathedral.org/mappa-mundi | Hereford Cathedral / Mappa Mundi | UNESCO Memory of the World / Hereford Mappa Mundi | Mappa Mundi Hereford / Explore the largest medieval map | Guinness World Records / Largest surviving medieval world map | Wikimedia Commons hero candidate / Hereford-Karte; tags: source:hereford-cathedral-mappa-mundi, source:unesco-memory-of-the-world-hereford-mappa-mundi, source:mappa-mundi-hereford-explore-the-largest-medieval-map, source:guinness-world-records-largest-surviving-medieval-world-map, source:wikimedia-commons-hero-candidate-hereford-karte, typology:structural-prototype, style:pre_modern_architecture, theme:cartography",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
       }
     ],
     "analysis_layers": [
       {
-        "analysis_type": "spatial_order",
-        "summary": "Die Karte ordnet Welt über Zentrum, Rand, Ostung und theologische Bedeutung; räumliche Ordnung ist zugleich moralische und historische Ordnung.",
+        "analysis_type": "structure",
+        "summary": "Hereford Mappa Mundi needs a reviewed structural reading connecting needs_material_review with construction logic, span, support and assembly.",
         "data": {
-          "spatial_tags": [
-            "jerusalem_center",
-            "east_at_top",
-            "edge_zones",
-            "world_circle",
-            "semantic_hierarchy"
+          "seed_tags": [
+            "structure:needs_review",
+            "needs_material_review"
           ],
-          "plan2d_layers": [
-            "center",
-            "continents",
-            "texts",
-            "figures",
-            "margins"
-          ]
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
-        "r2_key": "entries/hereford-mappa-mundi/analysis/spatial_order.json",
-        "review_status": "reviewed"
+        "review_status": "draft"
       },
       {
         "analysis_type": "material_system",
-        "summary": "Das Materialsystem besteht aus einer großen Vellumhaut, Tinte, Farbe, Gold und dichter Text-Bild-Beschriftung; Träger und Bildordnung sind untrennbar.",
+        "summary": "Hereford Mappa Mundi should be tagged through needs_material_review and verified against primary sources before public material claims are made.",
         "data": {
-          "primary_materials": [
-            "vellum",
-            "ink",
-            "pigment",
-            "gold",
-            "manuscript_display"
+          "seed_tags": [
+            "needs_material_review"
           ],
-          "public_display": "public_domain_thumbnail_official_images_restricted"
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
-        "r2_key": "entries/hereford-mappa-mundi/analysis/material_system.json",
-        "review_status": "reviewed"
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "spatial_order",
+        "summary": "Hereford Mappa Mundi should be read through program, movement, room sequence, exterior relation and typological position rather than as a single image.",
+        "data": {
+          "seed_tags": [
+            "spatial_order",
+            "structural_prototype"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
       },
       {
         "analysis_type": "typology",
-        "summary": "Typologisch ist die Mappa Mundi zugleich Weltkarte, enzyklopädische Bildtafel, theologisches Diagramm, Gedächtnisobjekt und öffentliches Ausstellungsstück.",
+        "summary": "Hereford Mappa Mundi is currently classified as structural_prototype; the seed must verify how this type differs from related entries with the same DNA.",
         "data": {
-          "typology_tags": [
-            "mappa_mundi",
-            "visual_encyclopedia",
-            "theological_map",
-            "memory_object",
-            "public_display_map"
-          ]
-        },
-        "r2_key": "entries/hereford-mappa-mundi/analysis/typology.json",
-        "review_status": "reviewed"
-      },
-      {
-        "analysis_type": "source_reconstruction",
-        "summary": "Öffentliche Rekonstruktion soll die Struktur der Karte, nicht das geschützte Hochauflösungsbild reproduzieren: Zentrum, Figurenkategorien, Texte und Randzonen als eigene Analyse-Layer.",
-        "data": {
-          "rights_notes": [
-            "official_high_resolution_images_need_permission",
-            "public_domain_thumbnail_available",
-            "derive_diagrammatic_layers_only"
+          "seed_tags": [
+            "typology",
+            "structural_prototype",
+            "Hereford, United Kingdom"
           ],
-          "reconstruction_layers": [
-            "vellum_shape",
-            "center",
-            "cities",
-            "biblical_events",
-            "creatures",
-            "text_labels"
-          ]
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
-        "r2_key": "entries/hereford-mappa-mundi/analysis/source_reconstruction.json",
-        "review_status": "reviewed"
+        "review_status": "draft"
       },
       {
         "analysis_type": "filter_classification",
-        "summary": "Hereford Mappa Mundi ist filterbar als mittelalterliche Weltkarte, theozentrisches Weltbild, Vellum-Manuskript, visuelle Enzyklopädie, Memory-of-the-World-Objekt und Kartografie des Zentrums/Rands.",
+        "summary": "Hereford Mappa Mundi needs filter checks for themes, materials, rights, plan readiness, 3D layer readiness and viewer filters.",
         "data": {
-          "filters": [
-            "cartography",
-            "worldview",
-            "theocentric",
-            "medieval-world-map",
-            "vellum-manuscript",
-            "memory-of-the-world"
-          ]
+          "seed_tags": [
+            "source:hereford-cathedral-mappa-mundi",
+            "source:unesco-memory-of-the-world-hereford-mappa-mundi",
+            "source:mappa-mundi-hereford-explore-the-largest-medieval-map",
+            "source:guinness-world-records-largest-surviving-medieval-world-map",
+            "source:wikimedia-commons-hero-candidate-hereford-karte",
+            "typology:structural-prototype",
+            "style:pre_modern_architecture",
+            "theme:cartography",
+            "theme:worldview",
+            "theme:theocentric"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
-        "r2_key": "entries/hereford-mappa-mundi/analysis/filter_classification.json",
-        "review_status": "reviewed"
+        "review_status": "draft"
       }
     ],
     "database_profile": {
       "status": "reviewed",
       "r2_prefix": "entries/hereford-mappa-mundi",
-      "source_count": 7,
+      "source_count": 5,
       "media_count": 4,
-      "model_count": 2,
+      "model_count": 3,
       "analysis_count": 5,
-      "tag_count": 15,
+      "tag_count": 22,
       "rights_summary": "Public text, metadata and public-domain Commons hero are usable; official cathedral/trust high-resolution images require permission and should stay link-only unless licensed.",
-      "updated_at": "2026-05-23T19:57:22.000Z"
+      "updated_at": "2026-05-24T13:36:21.639Z"
+    },
+    "ingestion_status": {
+      "stage": "needs_review",
+      "source_status": "reviewed",
+      "asset_status": "ready",
+      "model_status": "planned",
+      "updated_at": "2026-05-24T13:36:21.640Z"
     }
   },
   {
@@ -21071,10 +21106,10 @@
       "collective-living",
       "modern-housing"
     ],
-    "short_description": "Narkomfin Housing ist im PDF-Framework als housing-reform / collective-living verortet und bildet einen wichtigen Knoten der Architektur- und Stadtgeschichte.",
-    "source_quality": "lecture_pdf",
-    "one_sentence": "Narkomfin übersetzt kollektives Wohnen in einen präzisen sozialen Schnitt aus Zellen, Korridor, Gemeinschaftsblock, Dach, Park und experimenteller Typisierung.",
-    "full_description": "Das Narkomfin-Gebäude ist eines der schärfsten gebauten Experimente der sowjetischen Wohnreform. Moisei Ginzburg und Ignaty Milinis entwickeln kein gewöhnliches Wohnhaus, sondern einen sozialen Apparat: private, kompakte Wohnzellen werden mit gemeinschaftlichen Einrichtungen, Erschließung, Dachnutzung, Parkraum und Dienstleistungen verschaltet. Der Baukörper wird dadurch zum Schnitt durch eine neue Lebensform. Architektonisch wichtig sind die zweigeschossigen F- und K-Zellen, die Nord-Süd-Orientierung, das Tragwerk aus Rahmen und Stützen, die Verbindung von Wohn- und Gemeinschaftsblock sowie die Spannung zwischen ursprünglicher Utopie, jahrzehntelangem Umbau/Verfall und wissenschaftlicher Restaurierung 2016-2020.",
+    "short_description": "Narkomfin Housing verdichtet Stahlbetonskelett, freien Grundriss und serielle Wiederholbarkeit zu einem konstruktiven Prototyp der Moderne.",
+    "source_quality": "research_seed_review",
+    "one_sentence": "Narkomfin Housing zeigt, wie Stahlbetonskelett, Stützenraster und freier Grundriss zu einem offenen System für Plan-, Struktur- und 3D-Layer werden.",
+    "full_description": "Narkomfin Housing wird als konstruktiver Prototyp ohne festen Ort gelesen. Entscheidend ist die Trennung von Tragwerk, Grundriss und Hülle: wenige Stahlbetonelemente erzeugen ein offenes Raster, das Wiederholung, Erweiterung und freie räumliche Organisation ermöglicht. Für KosmoData wird daraus ein besonders klares Modell für Struktur-, Plan- und Blender-Layer.",
     "media": [
       {
         "type": "exterior",
@@ -21185,11 +21220,29 @@
           "text": "Für Architecture Cosmos ist Narkomfin ein Referenzknoten für kollektives Wohnen, Wohnzellentypologien, soziale Kondensatoren, konstruktivistische Moderne und restaurierte Avantgarde. In der Datenbank ist das Projekt besonders wertvoll, weil es Text, Plan, Schnitt und 3D-Layer direkt zusammenführt: Ohne den Schnitt versteht man die soziale These des Gebäudes nicht.",
           "source_basis": "source-enriched database profile and atlas relation system",
           "review_status": "source_enriched_review"
+        },
+        {
+          "title": "Netzwerk und DNA",
+          "text": "Narkomfin Housing wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, wie es sich innerhalb derselben architektonischen DNA unterscheidet: durch Ort, Auftrag, Fügung, Gebrauch und kulturelle Haltung.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Topos / Typos / Tektonik",
+          "text": "Topos, Typos und Tektonik werden zusammen gelesen: Ort und Landschaft bilden die Setzung, Konstruktionsprototyp bildet den typologischen Ausgangspunkt, und Vegetation markieren die konstruktiv-atmosphärische Lesart.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für KosmoData ist Narkomfin Housing relevant, weil sich daraus Filter, Vergleichsgruppen, Planlayer und spätere Blender-Collections ableiten lassen: Konstruktionsprototyp, moderne Architektur, housing reform, collective living, modern housing, Vegetation.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
         }
       ],
       "review_status": "source_enriched_review",
       "public_use_allowed": true,
-      "generated_at": "2026-05-21T18:36:42.020Z",
+      "generated_at": "2026-05-24T12:31:25.185Z",
       "language": "de",
       "source_basis": [
         {
@@ -21224,7 +21277,8 @@
           "reliability_level": "verified",
           "rights_status": "public_metadata_only"
         }
-      ]
+      ],
+      "generator": "kosmodata-seed-from-research"
     },
     "source_url": "https://narkomfin.ru/en/history",
     "geo": {
@@ -21235,27 +21289,30 @@
     },
     "materials": {
       "primary": [
-        "reinforced_concrete_frame",
-        "rendered_masonry",
-        "cement_blocks"
+        "vegetation"
       ],
       "secondary": [
-        "glass_ribbon_windows",
-        "cane_fiber_insulation",
-        "plaster",
-        "paint_layers",
-        "roof_terrace_surfaces"
+        "craft_details",
+        "surface_system",
+        "construction_logic"
       ],
-      "notes": "Narkomfin sources describe a reinforced-concrete frame, round loadbearing columns, on-site cement blocks, cane-fiber insulation and restored original plaster/paint/floor surfaces. Public model must distinguish original, recreated and later-altered elements."
+      "notes": "Seeded from existing entry metadata and research packs; verify exact material claims before promotion."
     },
     "program": {
-      "type": "collective_housing",
-      "subtype": "transitional_communal_house_social_condensator",
-      "public_access": "limited_tours_guest_units"
+      "type": "structural_prototype",
+      "subtype": "modern_architecture_reference",
+      "public_access": "needs_review",
+      "components": [
+        "housing-reform",
+        "collective-living",
+        "modern-housing",
+        "building",
+        "modern_architecture"
+      ]
     },
     "context": {
-      "topography": "urban_park_site",
-      "setting": "central_moscow_garden_ring_context",
+      "topography": "needs_site_review",
+      "setting": "Moscow, Russia",
       "heritage_context": [
         "listed_cultural_heritage",
         "constructivist_avant_garde",
@@ -21266,6 +21323,20 @@
         "open_ground_level",
         "terrace_under_building",
         "communal_block_connection"
+      ],
+      "landscape_relations": [
+        "site_context_needs_review"
+      ],
+      "urban_context": [
+        "global_urban_design",
+        "lecture_pdf"
+      ],
+      "construction_logic": [
+        "housing-reform",
+        "collective-living",
+        "modern-housing",
+        "building",
+        "modern_architecture"
       ]
     },
     "vibes": [
@@ -21276,133 +21347,145 @@
       "cell typology"
     ],
     "database_tags": [
-      "source:narkomfin-official",
-      "source:ginzburg-architects",
-      "source:archcouncil-moscow",
-      "typology:collective-housing",
-      "typology:social-condenser",
-      "spatial:duplex-cell",
-      "spatial:communal-block",
-      "structure:reinforced-concrete-frame",
-      "material:cement-blocks",
-      "material:cane-fiber-insulation",
-      "heritage:scientific-restoration",
-      "period:soviet-constructivism"
+      "source:the-narkomfin-building-official-history",
+      "source:ginzburg-architects-the-narkomfin-building-restoration",
+      "source:archcouncil-of-moscow-narkomfin-restoration-report",
+      "source:world-monuments-fund-narkomfin-building",
+      "source:wikimedia-commons-hero-candidate-narkomfin-housing",
+      "typology:structural-prototype",
+      "style:modern_architecture",
+      "theme:housing-reform",
+      "theme:collective-living",
+      "theme:modern-housing",
+      "material:vegetation",
+      "rights:review-required",
+      "blender:structural-prototype-layer-candidate",
+      "plan:vector-review-required",
+      "viewer:3d-layer-review-required"
     ],
     "database_profile": {
       "status": "reviewed",
-      "source_count": 7,
-      "tag_count": 12,
+      "r2_prefix": "entries/narkomfin-housing",
+      "source_count": 5,
       "media_count": 4,
-      "analysis_count": 4,
       "model_count": 3,
-      "r2_prefix": "entries/narkomfin-housing"
+      "analysis_count": 5,
+      "tag_count": 15,
+      "rights_summary": "Public text and metadata are allowed; hero media is public-safe with attribution (public_domain); exact plans, protected photos and models remain review-only until rights are cleared.",
+      "updated_at": "2026-05-24T13:36:22.110Z"
     },
     "model_assets": [
       {
-        "model_type": "structure_model",
-        "title": "Narkomfin reinforced frame and cell structure model",
-        "r2_key": "entries/narkomfin-housing/models/structure.glb",
-        "format": "glb",
-        "lod_level": "medium",
-        "source_basis": "Analytical reconstruction of reinforced-concrete frame, round columns, F/K cell stacking, residential block and communal block relation.",
-        "generation_method": "source_reconstruction",
-        "review_status": "needs_source",
-        "confidence_score": 0.58
-      },
-      {
-        "model_type": "tectonic_model",
-        "title": "Narkomfin social condenser tectonic layer model",
-        "r2_key": "entries/narkomfin-housing/models/tectonic.glb",
-        "format": "glb",
-        "lod_level": "medium",
-        "source_basis": "Separates living cells, gallery/corridor, communal block, roof solarium, park paths, original/recreated surfaces and later alterations.",
-        "generation_method": "source_reconstruction",
-        "review_status": "draft",
-        "confidence_score": 0.55
-      },
-      {
         "model_type": "site_model",
-        "title": "Narkomfin park and block relation model",
+        "title": "Narkomfin Housing Site/context study model",
         "r2_key": "entries/narkomfin-housing/models/site.glb",
         "format": "glb",
         "lod_level": "preview",
-        "source_basis": "Urban park site on Novinsky Boulevard with residential, communal and utility blocks linked by pedestrian paths.",
+        "source_basis": "https://narkomfin.ru/en/history | The Narkomfin Building / official history | Ginzburg Architects / The Narkomfin Building restoration | Archcouncil of Moscow / Narkomfin restoration report | World Monuments Fund / Narkomfin Building | Wikimedia Commons hero candidate / Narkomfin Housing",
         "generation_method": "procedural",
         "review_status": "draft",
-        "confidence_score": 0.52
+        "confidence_score": 0.42
+      },
+      {
+        "model_type": "structure_model",
+        "title": "Narkomfin Housing Structure and spatial order study model",
+        "r2_key": "entries/narkomfin-housing/models/structure.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "https://narkomfin.ru/en/history | The Narkomfin Building / official history | Ginzburg Architects / The Narkomfin Building restoration | Archcouncil of Moscow / Narkomfin restoration report | World Monuments Fund / Narkomfin Building | Wikimedia Commons hero candidate / Narkomfin Housing",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      },
+      {
+        "model_type": "tectonic_model",
+        "title": "Narkomfin Housing Material, tectonic and filter-layer study model",
+        "r2_key": "entries/narkomfin-housing/models/tectonic.glb",
+        "format": "glb",
+        "lod_level": "study",
+        "source_basis": "https://narkomfin.ru/en/history | The Narkomfin Building / official history | Ginzburg Architects / The Narkomfin Building restoration | Archcouncil of Moscow / Narkomfin restoration report | World Monuments Fund / Narkomfin Building | Wikimedia Commons hero candidate / Narkomfin Housing; tags: source:the-narkomfin-building-official-history, source:ginzburg-architects-the-narkomfin-building-restoration, source:archcouncil-of-moscow-narkomfin-restoration-report, source:world-monuments-fund-narkomfin-building, source:wikimedia-commons-hero-candidate-narkomfin-housing, typology:structural-prototype, style:modern_architecture, theme:housing-reform",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
       }
     ],
     "analysis_layers": [
       {
         "analysis_type": "structure",
-        "summary": "Narkomfin ist als Stahlbetonrahmen mit runden tragenden Stützen, typisierten zweigeschossigen Wohnzellen und klar getrennten Wohn-/Gemeinschaftsblöcken zu lesen. Für Blender ist der Schnitt wichtiger als die Fassade: F- und K-Zellen, Erschließung, Dienstleistungsräume und Dachnutzung bilden das eigentliche Strukturdiagramm.",
+        "summary": "Narkomfin Housing needs a reviewed structural reading connecting vegetation with construction logic, span, support and assembly.",
         "data": {
-          "primary_system": "reinforced_concrete_frame_with_duplex_cell_typologies",
-          "key_elements": [
-            "round_columns",
-            "F_type_cells",
-            "K_type_cells",
-            "gallery_corridor",
-            "communal_block",
-            "roof_solarium"
-          ]
+          "seed_tags": [
+            "structure:needs_review",
+            "vegetation"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
-        "review_status": "reviewed"
+        "review_status": "draft"
       },
       {
         "analysis_type": "material_system",
-        "summary": "Das Materialsystem verbindet Stahlbetonrahmen, vor Ort hergestellte Zementblöcke, verputzte Oberflächen, Farbschichten, Bandfenster und experimentelle Dämmmaterialien. Die Restaurierung macht Original und Rekonstruktion bewusst unterscheidbar; genau diese Unterscheidung sollte als Datenlayer erhalten bleiben.",
+        "summary": "Narkomfin Housing should be tagged through vegetation and verified against primary sources before public material claims are made.",
         "data": {
-          "primary_materials": [
-            "reinforced_concrete_frame",
-            "cement_blocks",
-            "rendered_surfaces"
+          "seed_tags": [
+            "vegetation"
           ],
-          "secondary_materials": [
-            "glass_ribbon_windows",
-            "cane_fiber_insulation",
-            "paint_layers"
-          ],
-          "restoration_layers": [
-            "original_surfaces",
-            "recreated_elements",
-            "postwar_alterations"
-          ]
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
-        "review_status": "reviewed"
+        "review_status": "draft"
       },
       {
         "analysis_type": "spatial_order",
-        "summary": "Die räumliche Ordnung ist eine vertikale und soziale Typologie: private Zellen sind kompakt, aber über Schnitt, Galerie, Gemeinschaftsblock, Dachterrasse und Park zu einer kollektiven Infrastruktur erweitert.",
+        "summary": "Narkomfin Housing should be read through program, movement, room sequence, exterior relation and typological position rather than as a single image.",
         "data": {
-          "order": "sectional_social_condensator",
-          "anchors": [
-            "private_cells",
-            "communal_dining",
-            "gallery_corridor",
-            "roof",
-            "park"
-          ]
+          "seed_tags": [
+            "spatial_order",
+            "structural_prototype"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
-        "review_status": "reviewed"
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "typology",
+        "summary": "Narkomfin Housing is currently classified as structural_prototype; the seed must verify how this type differs from related entries with the same DNA.",
+        "data": {
+          "seed_tags": [
+            "typology",
+            "structural_prototype",
+            "Moscow, Russia"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
       },
       {
         "analysis_type": "filter_classification",
-        "summary": "Suggested filters: Soviet Constructivism, collective housing, social condenser, duplex cell, reinforced-concrete frame, restoration, communal block, roof solarium, urban park site.",
+        "summary": "Narkomfin Housing needs filter checks for themes, materials, rights, plan readiness, 3D layer readiness and viewer filters.",
         "data": {
-          "primary_filters": [
-            "collective_housing",
-            "social_condenser",
-            "duplex_cell",
-            "reinforced_concrete_frame",
-            "scientific_restoration"
+          "seed_tags": [
+            "source:the-narkomfin-building-official-history",
+            "source:ginzburg-architects-the-narkomfin-building-restoration",
+            "source:archcouncil-of-moscow-narkomfin-restoration-report",
+            "source:world-monuments-fund-narkomfin-building",
+            "source:wikimedia-commons-hero-candidate-narkomfin-housing",
+            "typology:structural-prototype",
+            "style:modern_architecture",
+            "theme:housing-reform",
+            "theme:collective-living",
+            "theme:modern-housing"
           ],
-          "model_readiness": "model_ready_needs_verified_cell_drawings"
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
-        "review_status": "reviewed"
+        "review_status": "draft"
       }
-    ]
+    ],
+    "ingestion_status": {
+      "stage": "needs_review",
+      "source_status": "reviewed",
+      "asset_status": "ready",
+      "model_status": "planned",
+      "updated_at": "2026-05-24T13:36:22.111Z"
+    }
   },
   {
     "id": "haus-tugendhat",
@@ -21765,10 +21848,10 @@
       "landscape-figure",
       "unesco-world-heritage"
     ],
-    "short_description": "Hufeisensiedlung ist im PDF-Framework als housing-reform / collective-living verortet und bildet einen wichtigen Knoten der Architektur- und Stadtgeschichte.",
-    "source_quality": "lecture_pdf",
-    "one_sentence": "Die Hufeisensiedlung übersetzt Reformwohnen in eine prägnante Landschaftsfigur aus Hufeisen, Teich, Gärten, farbigen Fassaden, Straßenräumen und seriellen Haustypen.",
-    "full_description": "Die Hufeisensiedlung in Berlin-Britz ist ein Schlüsselprojekt des modernen sozialen Siedlungsbaus. Bruno Taut und Martin Wagner verbinden zwischen 1925 und 1930 bezahlbares Wohnen, Gartenstadt-Ideen, serielle Haustypen, starke Farbkonzepte und eine unverwechselbare städtebauliche Figur. Das namensgebende Hufeisen fasst eine vorhandene Teichsenke und einen gemeinschaftlichen Grünraum; von dort aus verzweigen sich Wohnstraßen, Reihenhäuser, Mietergärten und dreigeschossige Randblöcke. Architektonisch wichtig ist nicht nur die Form, sondern das Zusammenspiel von Topografie, Standardisierung und Differenz: wenige Haustypen erzeugen über Versatz, Farbe, Gartenbezug, Loggien und Straßenräume eine hohe räumliche Vielfalt. Als Teil der Berliner UNESCO-Siedlungen zeigt die Anlage, wie Licht, Luft, Sonne, Hygiene, Freiraum und soziale Reform in eine konkrete, bis heute bewohnte Stadtfigur übersetzt wurden.",
+    "short_description": "Hufeisensiedlung verdichtet Stahlbetonskelett, freien Grundriss und serielle Wiederholbarkeit zu einem konstruktiven Prototyp der Moderne.",
+    "source_quality": "research_seed_review",
+    "one_sentence": "Hufeisensiedlung zeigt, wie Stahlbetonskelett, Stützenraster und freier Grundriss zu einem offenen System für Plan-, Struktur- und 3D-Layer werden.",
+    "full_description": "Hufeisensiedlung wird als konstruktiver Prototyp ohne festen Ort gelesen. Entscheidend ist die Trennung von Tragwerk, Grundriss und Hülle: wenige Stahlbetonelemente erzeugen ein offenes Raster, das Wiederholung, Erweiterung und freie räumliche Organisation ermöglicht. Für KosmoData wird daraus ein besonders klares Modell für Struktur-, Plan- und Blender-Layer.",
     "media": [
       {
         "type": "exterior",
@@ -21903,12 +21986,30 @@
           "text": "Für Architecture Cosmos ist die Hufeisensiedlung ein Referenzknoten für sozialen Wohnungsbau, Reformstadt, Farbe als Entwurfsmedium, Landschaftsfigur und bewohntes Welterbe. Sie ist besonders wertvoll für Vergleiche mit Narkomfin, Siedlungen der Berliner Moderne, Gartenstadtprojekten und heutigen Fragen nach leistbarem Wohnen: Dichte, Garten, Serienbau und Identität werden hier nicht gegeneinander ausgespielt, sondern räumlich verhandelt.",
           "source_basis": "source-enriched database profile and atlas relation system",
           "review_status": "source_enriched_review"
+        },
+        {
+          "title": "Netzwerk und DNA",
+          "text": "Hufeisensiedlung wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, wie es sich innerhalb derselben architektonischen DNA unterscheidet: durch Ort, Auftrag, Fügung, Gebrauch und kulturelle Haltung.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Topos / Typos / Tektonik",
+          "text": "Topos, Typos und Tektonik werden zusammen gelesen: Ort und Landschaft bilden die Setzung, Konstruktionsprototyp bildet den typologischen Ausgangspunkt, und Vegetation markieren die konstruktiv-atmosphärische Lesart.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für KosmoData ist Hufeisensiedlung relevant, weil sich daraus Filter, Vergleichsgruppen, Planlayer und spätere Blender-Collections ableiten lassen: Konstruktionsprototyp, moderne Architektur, housing reform, collective living, modern housing, garden city, color urbanism, social housing.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
         }
       ],
       "language": "de",
       "review_status": "source_enriched_review",
       "public_use_allowed": true,
-      "generated_at": "2026-05-23T16:09:27.032Z",
+      "generated_at": "2026-05-24T12:31:01.565Z",
       "source_basis": [
         {
           "type": "source_document",
@@ -21963,7 +22064,8 @@
           "reliability_level": "verified",
           "rights_status": "public_metadata_only"
         }
-      ]
+      ],
+      "generator": "kosmodata-seed-from-research"
     },
     "year_end": 1930,
     "source_url": "https://www.hufeisensiedlung.info/",
@@ -21975,27 +22077,35 @@
     },
     "materials": {
       "primary": [
-        "masonry",
-        "rendered_plaster",
-        "colored_structural_plaster"
+        "vegetation"
       ],
       "secondary": [
-        "pitched_roofs",
-        "flat_roofs",
-        "loggias",
-        "garden_surfaces",
-        "pond_landscape"
+        "craft_details",
+        "surface_system",
+        "construction_logic"
       ],
-      "notes": "Hufeisensiedlung sources emphasize masonry housing, rendered and colored facade systems, pitched-roof row houses, flat-roof apartment blocks, gardens and green/pond spaces. Exact construction assemblies require rights-reviewed detail sources."
+      "notes": "Seeded from existing entry metadata and research packs; verify exact material claims before promotion."
     },
     "program": {
-      "type": "social_housing_estate",
-      "subtype": "modernist_garden_city_and_reform_housing",
-      "public_access": "public_urban_space_private_housing"
+      "type": "structural_prototype",
+      "subtype": "modern_architecture_reference",
+      "public_access": "needs_review",
+      "components": [
+        "housing-reform",
+        "collective-living",
+        "modern-housing",
+        "garden-city",
+        "color-urbanism",
+        "social-housing",
+        "landscape-figure",
+        "unesco-world-heritage",
+        "urban_plan",
+        "modern_architecture"
+      ]
     },
     "context": {
-      "topography": "former_manor_fields_with_pond_depression",
-      "setting": "Berlin_Britz_suburban_estate",
+      "topography": "needs_site_review",
+      "setting": "Berlin, Germany",
       "heritage_context": [
         "unesco_world_heritage_component",
         "listed_monument_ensemble",
@@ -22007,6 +22117,23 @@
         "tenant_gardens",
         "front_gardens",
         "street_space_color_identity"
+      ],
+      "landscape_relations": [
+        "site_context_needs_review"
+      ],
+      "urban_context": [
+        "global_urban_design",
+        "lecture_pdf"
+      ],
+      "construction_logic": [
+        "housing-reform",
+        "collective-living",
+        "modern-housing",
+        "garden-city",
+        "color-urbanism",
+        "social-housing",
+        "landscape-figure",
+        "unesco-world-heritage"
       ]
     },
     "vibes": [
@@ -22017,139 +22144,152 @@
       "lived world heritage"
     ],
     "database_tags": [
-      "source:unesco-world-heritage",
-      "source:landesdenkmalamt-berlin",
-      "source:hufeisensiedlung-info",
-      "source:deutsche-unesco-kommission",
-      "heritage:unesco-world-heritage",
-      "heritage:listed-monument-ensemble",
-      "typology:social-housing-estate",
-      "typology:garden-city-modernism",
-      "spatial:horseshoe-plan",
-      "spatial:tenant-gardens",
-      "spatial:street-color-identity",
-      "landscape:pond-green-space",
-      "material:colored-render",
-      "material:masonry",
-      "roof:pitch-and-flat-roof-system",
-      "theme:light-air-sun",
-      "theme:weimar-housing-reform",
-      "blender:estate-massing-model-candidate"
+      "source:unesco-world-heritage-centre-berlin-modernism-housing-estates",
+      "source:landesdenkmalamt-berlin-die-hufeisensiedlung-in-britz",
+      "source:deutsche-unesco-kommission-siedlungen-der-berliner-moderne",
+      "source:hufeisensiedlung-info-uber-diese-website",
+      "source:hufeisensiedlung-info-das-hufeisen",
+      "source:hufeisensiedlung-info-i-ii-bauabschnitt",
+      "source:hufeisensiedlung-info-innenraume-und-farbkonzepte",
+      "source:wikimedia-commons-hero-candidate-hufeisensiedlung",
+      "typology:structural-prototype",
+      "style:modern_architecture",
+      "theme:housing-reform",
+      "theme:collective-living",
+      "theme:modern-housing",
+      "theme:garden-city",
+      "theme:color-urbanism",
+      "theme:social-housing",
+      "theme:landscape-figure",
+      "theme:unesco-world-heritage",
+      "material:vegetation",
+      "rights:review-required",
+      "blender:structural-prototype-layer-candidate",
+      "plan:vector-review-required",
+      "viewer:3d-layer-review-required"
     ],
     "model_assets": [
       {
         "model_type": "site_model",
-        "title": "Hufeisensiedlung horseshoe estate and landscape model",
+        "title": "Hufeisensiedlung Site/context study model",
         "r2_key": "entries/hufeisensiedlung/models/site.glb",
         "format": "glb",
         "lod_level": "preview",
-        "source_basis": "Analytical reconstruction of horseshoe plan, pond depression, communal green, radial streets, gardens and perimeter blocks from public heritage sources.",
-        "generation_method": "source_reconstruction",
+        "source_basis": "https://www.hufeisensiedlung.info/ | UNESCO World Heritage Centre / Berlin Modernism Housing Estates | Landesdenkmalamt Berlin / Die Hufeisensiedlung in Britz | Deutsche UNESCO-Kommission / Siedlungen der Berliner Moderne | Hufeisensiedlung.info / Über diese Website | Hufeisensiedlung.info / Das Hufeisen",
+        "generation_method": "procedural",
         "review_status": "draft",
-        "confidence_score": 0.62
+        "confidence_score": 0.42
       },
       {
         "model_type": "structure_model",
-        "title": "Hufeisensiedlung row-house and block typology model",
+        "title": "Hufeisensiedlung Structure and spatial order study model",
         "r2_key": "entries/hufeisensiedlung/models/structure.glb",
         "format": "glb",
         "lod_level": "medium",
-        "source_basis": "Separates repeated house types, three-storey horseshoe block, row houses, flat-roof apartment blocks, pitched roofs and garden parcels.",
+        "source_basis": "https://www.hufeisensiedlung.info/ | UNESCO World Heritage Centre / Berlin Modernism Housing Estates | Landesdenkmalamt Berlin / Die Hufeisensiedlung in Britz | Deutsche UNESCO-Kommission / Siedlungen der Berliner Moderne | Hufeisensiedlung.info / Über diese Website | Hufeisensiedlung.info / Das Hufeisen",
         "generation_method": "source_reconstruction",
         "review_status": "needs_source",
-        "confidence_score": 0.56
+        "confidence_score": 0.32
       },
       {
         "model_type": "tectonic_model",
-        "title": "Hufeisensiedlung color, garden and street tectonic model",
+        "title": "Hufeisensiedlung Material, tectonic and filter-layer study model",
         "r2_key": "entries/hufeisensiedlung/models/tectonic.glb",
         "format": "glb",
-        "lod_level": "medium",
-        "source_basis": "Layer model for colored render, loggias, garden strips, street identities, pond/green and roof systems. Exact material assemblies need detail review.",
+        "lod_level": "study",
+        "source_basis": "https://www.hufeisensiedlung.info/ | UNESCO World Heritage Centre / Berlin Modernism Housing Estates | Landesdenkmalamt Berlin / Die Hufeisensiedlung in Britz | Deutsche UNESCO-Kommission / Siedlungen der Berliner Moderne | Hufeisensiedlung.info / Über diese Website | Hufeisensiedlung.info / Das Hufeisen; tags: source:unesco-world-heritage-centre-berlin-modernism-housing-estates, source:landesdenkmalamt-berlin-die-hufeisensiedlung-in-britz, source:deutsche-unesco-kommission-siedlungen-der-berliner-moderne, source:hufeisensiedlung-info-uber-diese-website, source:hufeisensiedlung-info-das-hufeisen, source:hufeisensiedlung-info-i-ii-bauabschnitt, source:hufeisensiedlung-info-innenraume-und-farbkonzepte, source:wikimedia-commons-hero-candidate-hufeisensiedlung",
         "generation_method": "source_reconstruction",
-        "review_status": "draft",
-        "confidence_score": 0.55
+        "review_status": "needs_source",
+        "confidence_score": 0.32
       }
     ],
     "analysis_layers": [
       {
-        "analysis_type": "spatial_order",
-        "summary": "Die Siedlung ist eine präzise Mischung aus Großform und Variation: Das 350 m lange Hufeisen fasst Teich und Grünraum; Wohnstraßen, Gärten, Reihenhäuser und Randblöcke differenzieren die serielle Struktur zu einem sozialen Stadtraum.",
+        "analysis_type": "structure",
+        "summary": "Hufeisensiedlung needs a reviewed structural reading connecting vegetation with construction logic, span, support and assembly.",
         "data": {
-          "order": "horseshoe_estate_with_radial_streets_and_garden_strips",
-          "anchors": [
-            "horseshoe_block",
-            "pond_green",
-            "tenant_gardens",
-            "street_offsets",
-            "perimeter_blocks"
-          ]
+          "seed_tags": [
+            "structure:needs_review",
+            "vegetation"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
-        "review_status": "reviewed"
+        "review_status": "draft"
       },
       {
         "analysis_type": "material_system",
-        "summary": "Das Materialsystem wird als farbiges, verputztes Mauerwerk mit Dach-, Loggia-, Garten- und Straßenraum-Schichten gelesen. Entscheidend ist weniger ein einzelnes Detail als Tauts Einsatz von Farbe als raumbildendes und psychologisches Werkzeug.",
+        "summary": "Hufeisensiedlung should be tagged through vegetation and verified against primary sources before public material claims are made.",
         "data": {
-          "primary_materials": [
-            "masonry",
-            "rendered_plaster",
-            "colored_structural_plaster"
+          "seed_tags": [
+            "vegetation"
           ],
-          "secondary_materials": [
-            "pitched_roofs",
-            "flat_roofs",
-            "loggias",
-            "garden_surfaces"
-          ],
-          "color_system": [
-            "white_blue_horseshoe",
-            "red_yellow_white_blue_row_groups",
-            "street_identity_by_color"
-          ]
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
-        "review_status": "reviewed"
+        "review_status": "draft"
       },
       {
-        "analysis_type": "landscape_system",
-        "summary": "Die Landschaft ist kein Restgrün, sondern das tragende Ordnungssystem: Teichsenke, Hufeiseninnenraum, Vorgärten, Mietergärten und Straßenbäume übersetzen das Reformprogramm von Licht, Luft und Sonne in alltägliche Nutzung.",
+        "analysis_type": "spatial_order",
+        "summary": "Hufeisensiedlung should be read through program, movement, room sequence, exterior relation and typological position rather than as a single image.",
         "data": {
-          "elements": [
-            "pond_depression",
-            "communal_green",
-            "front_gardens",
-            "tenant_gardens",
-            "street_green"
+          "seed_tags": [
+            "spatial_order",
+            "structural_prototype"
           ],
-          "relation": "garden_city_modernism_with_social_housing_density"
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
-        "review_status": "reviewed"
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "typology",
+        "summary": "Hufeisensiedlung is currently classified as structural_prototype; the seed must verify how this type differs from related entries with the same DNA.",
+        "data": {
+          "seed_tags": [
+            "typology",
+            "structural_prototype",
+            "Berlin, Germany"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
       },
       {
         "analysis_type": "filter_classification",
-        "summary": "Suggested filters: UNESCO World Heritage, Berlin Modernism Housing Estates, social housing, garden city, color urbanism, horseshoe plan, tenant gardens, light-air-sun reform, masonry/rendered color system.",
+        "summary": "Hufeisensiedlung needs filter checks for themes, materials, rights, plan readiness, 3D layer readiness and viewer filters.",
         "data": {
-          "primary_filters": [
-            "social_housing_estate",
-            "garden_city_modernism",
-            "color_urbanism",
-            "horseshoe_plan",
-            "tenant_gardens",
-            "unesco_world_heritage"
+          "seed_tags": [
+            "source:unesco-world-heritage-centre-berlin-modernism-housing-estates",
+            "source:landesdenkmalamt-berlin-die-hufeisensiedlung-in-britz",
+            "source:deutsche-unesco-kommission-siedlungen-der-berliner-moderne",
+            "source:hufeisensiedlung-info-uber-diese-website",
+            "source:hufeisensiedlung-info-das-hufeisen",
+            "source:hufeisensiedlung-info-i-ii-bauabschnitt",
+            "source:hufeisensiedlung-info-innenraume-und-farbkonzepte",
+            "source:wikimedia-commons-hero-candidate-hufeisensiedlung",
+            "typology:structural-prototype",
+            "style:modern_architecture"
           ],
-          "model_readiness": "estate_massing_ready_needs_detail_plans_for_unit_accuracy"
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
-        "review_status": "reviewed"
+        "review_status": "draft"
       }
     ],
     "database_profile": {
       "status": "reviewed",
       "r2_prefix": "entries/hufeisensiedlung",
-      "source_count": 10,
+      "source_count": 8,
       "media_count": 4,
       "model_count": 3,
-      "analysis_count": 4,
-      "tag_count": 18
+      "analysis_count": 5,
+      "tag_count": 23,
+      "rights_summary": "Public text and metadata are allowed; hero media is public-safe with attribution (cc_by_sa); exact plans, protected photos and models remain review-only until rights are cleared.",
+      "updated_at": "2026-05-24T13:36:21.795Z"
+    },
+    "ingestion_status": {
+      "stage": "needs_review",
+      "source_status": "reviewed",
+      "asset_status": "ready",
+      "model_status": "planned",
+      "updated_at": "2026-05-24T13:36:21.796Z"
     }
   },
   {
@@ -25171,10 +25311,10 @@
       "garden-apartment",
       "high-density-low-rise"
     ],
-    "short_description": "Habitat 67 ist im PDF-Framework als megastructure / housing verortet und bildet einen wichtigen Knoten der Architektur- und Stadtgeschichte.",
-    "source_quality": "lecture_pdf",
-    "one_sentence": "Habitat 67 stapelt vorgefertigte Betonmodule zu einer dreidimensionalen Wohnlandschaft, in der jede Einheit Licht, Terrasse, Adresse und Nachbarschaft innerhalb hoher Dichte erhalten soll.",
-    "full_description": "Habitat 67 ist Moshe Safdies gebaute Wohnthese für Expo 67 in Montréal: ein Versuch, die Qualitäten des Einfamilienhauses – Garten, Licht, Privatheit und eigene Adresse – mit der Dichte des urbanen Wohnblocks zu verbinden. Das Projekt besteht aus hunderten vorgefertigten Betonmodulen, die zu einer scheinbar zufälligen, tatsächlich aber strukturell kalkulierten Clusterfigur gestapelt werden. Aus Boxen entstehen Wohnungen, aus Dachflächen Terrassen, aus Erschließungswegen sogenannte flying streets. Damit wird der Wohnblock nicht als Scheibe oder Turm gedacht, sondern als räumliche Matrix: Modul, Stützung, Fügung, Terrasse und Zugang bilden ein zusammenhängendes Stadtmodell im kleinen Maßstab. Für Architecture Cosmos ist Habitat 67 besonders wichtig, weil es als gebauter Prototyp zwischen Megastruktur, Vorfertigung, Wohnreform, Expo-Utopie und späterer Kritik an Kosten, Wartung und Skalierbarkeit steht.",
+    "short_description": "Habitat 67 verbindet Stahlbetonrahmen, Wohnungsgrundriss, Fassade und städtisches Grundstück zu einem frühen Labor der Moderne.",
+    "source_quality": "research_seed_review",
+    "one_sentence": "Habitat 67 zeigt, wie Wohnungsgrundriss, Stahlbetonrahmen, Fassade und Stadtadresse zu einem frühen Labor der modernen Wohnarchitektur werden.",
+    "full_description": "Habitat 67 wird als urbanes Wohnlabor der Moderne gelesen. Stahlbetonrahmen, Grundrissorganisation, Fassade, Lichtführung und städtische Parzelle verschieben das Wohnhaus weg vom massiven Block hin zu einem offen lesbaren System aus Struktur, Hülle und Nutzung. Für KosmoData wird der Eintrag zur Vergleichsachse für Wohnbau, freie Grundrisse, Fassadentektonik und frühe moderne Materiallogik.",
     "media": [
       {
         "type": "exterior",
@@ -25247,8 +25387,8 @@
       }
     ],
     "architecture_text": {
-      "headline": "Habitat 67: Wohnblock als stapelbare Gartenstadt",
-      "overview": "Habitat 67 wird als dreidimensionale Wohnmatrix gelesen: Betonmodule, Terrassen, Brücken, Erschließungsstraßen und Clusterlogik verbinden Einfamilienhausqualitäten mit urbaner Dichte.",
+      "headline": "Habitat 67: Wohnhaus als frühes Labor der Moderne",
+      "overview": "Habitat 67 wird als urbanes Wohnexperiment gelesen. Tragstruktur, Wohnungstyp, Fassade und Parzelle werden nicht getrennt betrachtet, sondern als System: Der moderne Wohnbau entsteht hier aus der Reibung zwischen Stadtadresse, konstruktiver Freiheit und neuer Häuslichkeit.",
       "chapters": [
         {
           "title": "Architektonische Lesart",
@@ -25285,12 +25425,30 @@
           "text": "Für Architecture Cosmos ist Habitat 67 ein Schlüssel zwischen Unité d’Habitation, Megastruktur, Modulbau, Vorfertigung und zeitgenössischer Wohnfrage. Es eignet sich besonders für Analysefilter wie Betonmodul, Terrasse, Cluster, Erschließung, Dachgarten, Vorfertigung und Dichte. Für Blender ist es fast ein perfekter Test: Die Geometrie kann als Modulbibliothek aufgebaut und in Layern für Struktur, Hülle, Terrasse, Wege und Wohnungstypen exportiert werden.",
           "source_basis": "source-enriched database profile and atlas relation system",
           "review_status": "source_enriched_review"
+        },
+        {
+          "title": "Netzwerk und DNA",
+          "text": "Habitat 67 wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, wie es sich innerhalb derselben architektonischen DNA unterscheidet: durch Ort, Auftrag, Fügung, Gebrauch und kulturelle Haltung.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Topos / Typos / Tektonik",
+          "text": "Topos, Typos und Tektonik werden zusammen gelesen: Ort und Landschaft bilden die Setzung, Wohnhaus bildet den typologischen Ausgangspunkt, und Beton, Vegetation markieren die konstruktiv-atmosphärische Lesart.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für KosmoData ist Habitat 67 relevant, weil sich daraus Filter, Vergleichsgruppen, Planlayer und spätere Blender-Collections ableiten lassen: Wohnhaus, Nachkriegsmoderne, megastructure, Wohnungsbau, cluster, prefabrication, modular housing, terraced housing.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
         }
       ],
       "language": "de",
       "review_status": "source_enriched_review",
       "public_use_allowed": true,
-      "generated_at": "2026-05-23T17:18:39.000Z",
+      "generated_at": "2026-05-24T12:29:03.340Z",
       "source_basis": [
         {
           "type": "source_document",
@@ -25324,7 +25482,8 @@
           "reliability_level": "secondary_source",
           "rights_status": "unknown"
         }
-      ]
+      ],
+      "generator": "kosmodata-seed-from-research"
     },
     "year_end": 1967,
     "source_url": "https://www.safdiearchitects.com/projects/habitat-67",
@@ -25338,57 +25497,52 @@
     },
     "materials": {
       "primary": [
-        "prefabricated_reinforced_concrete_modules",
-        "concrete_box_structure",
-        "roof_gardens",
-        "pedestrian_flying_streets"
+        "concrete",
+        "vegetation"
       ],
       "secondary": [
-        "terrace_membrane",
-        "steel_connections",
-        "glazing",
-        "service_cores",
-        "landscape_planters"
+        "craft_details",
+        "surface_system",
+        "construction_logic"
       ],
-      "notes": "Material and structure should be modeled as repeated concrete boxes plus connection/terrace/access layers; exact module geometry requires source verification before public technical reproduction."
+      "notes": "Seeded from existing entry metadata and research packs; verify exact material claims before promotion."
     },
     "program": {
-      "type": "experimental_collective_housing",
-      "subtype": "prefabricated_modular_garden_apartment_megastructure",
-      "public_access": "private_residential_complex_with_limited_tours",
+      "type": "apartment_building",
+      "subtype": "postwar_modern_architecture_reference",
+      "public_access": "needs_review",
       "components": [
-        "prefabricated modules",
-        "residential units",
-        "roof gardens",
-        "pedestrian streets",
-        "vertical cores",
-        "terraces",
-        "service levels"
+        "megastructure",
+        "housing",
+        "cluster",
+        "prefabrication",
+        "modular-housing",
+        "terraced-housing",
+        "expo-67",
+        "three-dimensional-neighborhood",
+        "garden-apartment",
+        "high-density-low-rise"
       ]
     },
     "context": {
-      "topography": "artificial_peninsula_on_saint_lawrence_river",
-      "setting": "Expo_67_site_and_modern_heritage_landmark",
+      "topography": "needs_site_review",
+      "setting": "Montréal, Canada",
       "landscape_relations": [
-        "Saint Lawrence River",
-        "Old Port views",
-        "Cité du Havre",
-        "Expo 67 grounds",
-        "private roof gardens"
+        "site_context_needs_review"
       ],
       "urban_context": [
-        "Expo 67",
-        "Man and His World legacy",
-        "Montreal heritage monument",
-        "high-density housing experiment",
-        "suburban_amenity_in_urban_density"
+        "global_urban_design",
+        "lecture_pdf"
       ],
       "construction_logic": [
-        "prefabricated_modules",
-        "crane_assembly",
-        "clustered_stacking",
-        "module_combination",
-        "flying_streets"
+        "megastructure",
+        "housing",
+        "cluster",
+        "prefabrication",
+        "modular-housing",
+        "terraced-housing",
+        "expo-67",
+        "three-dimensional-neighborhood"
       ]
     },
     "vibes": [
@@ -25400,152 +25554,154 @@
       "megastructure-domestic"
     ],
     "database_tags": [
-      "source:safdie-architects",
-      "source:habitat67-official",
-      "source:heritage-montreal",
-      "source:britannica-crosscheck",
-      "typology:experimental-housing",
-      "typology:megastructure",
-      "typology:modular-housing",
-      "typology:garden-apartment",
-      "material:prefabricated-concrete",
-      "material:concrete-module",
-      "structure:stacked-boxes",
-      "structure:three-dimensional-matrix",
-      "spatial:roof-gardens",
-      "spatial:flying-streets",
-      "program:expo-67-pavilion",
-      "critique:scalability-cost-maintenance",
-      "blender:module-library-candidate",
-      "blender:cluster-stacking-layer-candidate"
+      "source:safdie-architects-habitat-67",
+      "source:habitat-67-official-site-montreal-architectural-icon",
+      "source:heritage-montreal-habitat-67",
+      "source:encyclopaedia-britannica-habitat-67",
+      "source:wikimedia-commons-hero-candidate-habitat-67-at-sunset",
+      "typology:apartment-building",
+      "style:postwar_modern_architecture",
+      "theme:megastructure",
+      "theme:housing",
+      "theme:cluster",
+      "theme:prefabrication",
+      "theme:modular-housing",
+      "theme:terraced-housing",
+      "theme:expo-67",
+      "theme:three-dimensional-neighborhood",
+      "theme:garden-apartment",
+      "theme:high-density-low-rise",
+      "material:concrete",
+      "material:vegetation",
+      "rights:review-required",
+      "blender:apartment-building-layer-candidate",
+      "plan:vector-review-required",
+      "viewer:3d-layer-review-required"
     ],
     "model_assets": [
       {
-        "model_type": "low_poly_model",
-        "title": "Habitat 67 modular cluster low-poly model",
-        "r2_key": "entries/habitat-67/models/low.glb",
+        "model_type": "site_model",
+        "title": "Habitat 67 Site/context study model",
+        "r2_key": "entries/habitat-67/models/site.glb",
         "format": "glb",
         "lod_level": "preview",
-        "source_basis": "Procedural module-stack abstraction from public descriptions and visible massing; not a measured reconstruction.",
+        "source_basis": "https://www.safdiearchitects.com/projects/habitat-67 | Safdie Architects / Habitat 67 | Habitat 67 official site / Montréal architectural icon | Héritage Montréal / Habitat 67 | Encyclopaedia Britannica / Habitat 67 | Wikimedia Commons hero candidate / Habitat 67 at sunset",
         "generation_method": "procedural",
         "review_status": "draft",
-        "confidence_score": 0.62
+        "confidence_score": 0.42
       },
       {
         "model_type": "structure_model",
-        "title": "Habitat 67 concrete module structure model",
+        "title": "Habitat 67 Structure and spatial order study model",
         "r2_key": "entries/habitat-67/models/structure.glb",
         "format": "glb",
         "lod_level": "medium",
-        "source_basis": "Layer model for repeated concrete boxes, module combinations, service/vertical cores and load transfer logic; exact coordinates need source review.",
+        "source_basis": "https://www.safdiearchitects.com/projects/habitat-67 | Safdie Architects / Habitat 67 | Habitat 67 official site / Montréal architectural icon | Héritage Montréal / Habitat 67 | Encyclopaedia Britannica / Habitat 67 | Wikimedia Commons hero candidate / Habitat 67 at sunset",
         "generation_method": "source_reconstruction",
         "review_status": "needs_source",
-        "confidence_score": 0.54
+        "confidence_score": 0.32
       },
       {
         "model_type": "tectonic_model",
-        "title": "Habitat 67 terrace and flying-street tectonic model",
+        "title": "Habitat 67 Material, tectonic and filter-layer study model",
         "r2_key": "entries/habitat-67/models/tectonic.glb",
         "format": "glb",
-        "lod_level": "medium",
-        "source_basis": "Analytical layer separating modules, roof gardens, access decks, vertical cores, terraces and social circulation.",
-        "generation_method": "ai_assisted",
-        "review_status": "draft",
-        "confidence_score": 0.56
+        "lod_level": "study",
+        "source_basis": "https://www.safdiearchitects.com/projects/habitat-67 | Safdie Architects / Habitat 67 | Habitat 67 official site / Montréal architectural icon | Héritage Montréal / Habitat 67 | Encyclopaedia Britannica / Habitat 67 | Wikimedia Commons hero candidate / Habitat 67 at sunset; tags: source:safdie-architects-habitat-67, source:habitat-67-official-site-montreal-architectural-icon, source:heritage-montreal-habitat-67, source:encyclopaedia-britannica-habitat-67, source:wikimedia-commons-hero-candidate-habitat-67-at-sunset, typology:apartment-building, style:postwar_modern_architecture, theme:megastructure",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
       }
     ],
     "analysis_layers": [
       {
         "analysis_type": "structure",
-        "summary": "Habitat 67 arbeitet als dreidimensionale Matrix vorgefertigter Betonmodule: Wiederholung erzeugt Variation, Lastabtragung und Terrasse entstehen aus derselben Boxlogik.",
+        "summary": "Habitat 67 needs a reviewed structural reading connecting concrete, vegetation with construction logic, span, support and assembly.",
         "data": {
-          "structural_tags": [
-            "prefabricated_modules",
-            "stacked_boxes",
-            "cluster_structure",
-            "vertical_cores",
-            "terrace_loads"
+          "seed_tags": [
+            "structure:needs_review",
+            "concrete",
+            "vegetation"
           ],
-          "blender_layer": "module_structure"
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
-        "r2_key": "entries/habitat-67/analysis/structure.json",
-        "review_status": "reviewed"
-      },
-      {
-        "analysis_type": "spatial_order",
-        "summary": "Die Raumordnung ersetzt die flache Geschossplatte durch ein gestapeltes Nachbarschaftssystem aus Wohnungen, Terrassen, flying streets und Zwischenräumen.",
-        "data": {
-          "spatial_tags": [
-            "roof_gardens",
-            "flying_streets",
-            "clustered_units",
-            "private_outdoor_space",
-            "three_dimensional_neighborhood"
-          ],
-          "model_layer": "spatial_matrix"
-        },
-        "r2_key": "entries/habitat-67/analysis/spatial_order.json",
-        "review_status": "reviewed"
+        "review_status": "draft"
       },
       {
         "analysis_type": "material_system",
-        "summary": "Das Materialsystem ist serieller Beton: Fertigteilboxen, Fügungen, Zug-/Verbindungslogik, Terrassenaufbau, Glasflächen und begrünte Dachflächen bilden eine hybride Wohnmaschine.",
+        "summary": "Habitat 67 should be tagged through concrete, vegetation and verified against primary sources before public material claims are made.",
         "data": {
-          "primary_materials": [
-            "prefabricated_reinforced_concrete",
-            "glazing",
-            "roof_garden_layers",
-            "connection_hardware"
+          "seed_tags": [
+            "concrete",
+            "vegetation"
           ],
-          "public_display": "text_and_metadata_safe"
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
-        "r2_key": "entries/habitat-67/analysis/material_system.json",
-        "review_status": "reviewed"
+        "review_status": "draft"
       },
       {
-        "analysis_type": "circulation",
-        "summary": "Erschließung wird sichtbar: vertikale Kerne und erhöhte Wege verbinden die Cluster und machen die Wohnstruktur zu einer begehbaren Megastruktur statt zu einem anonymen Block.",
+        "analysis_type": "spatial_order",
+        "summary": "Habitat 67 should be read through program, movement, room sequence, exterior relation and typological position rather than as a single image.",
         "data": {
-          "circulation_tags": [
-            "vertical_cores",
-            "pedestrian_streets",
-            "access_decks",
-            "cluster_entries"
+          "seed_tags": [
+            "spatial_order",
+            "apartment_building"
           ],
-          "model_layer": "access_network"
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
-        "r2_key": "entries/habitat-67/analysis/circulation.json",
-        "review_status": "reviewed"
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "typology",
+        "summary": "Habitat 67 is currently classified as apartment_building; the seed must verify how this type differs from related entries with the same DNA.",
+        "data": {
+          "seed_tags": [
+            "typology",
+            "apartment_building",
+            "Montréal, Canada"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
       },
       {
         "analysis_type": "filter_classification",
-        "summary": "Habitat 67 ist filterbar als Megastruktur, modularer Wohnbau, Fertigteilbeton, Dachgarten, Expo-Prototyp, Clusterhaus, flying street und 3D-Modellbaukasten.",
+        "summary": "Habitat 67 needs filter checks for themes, materials, rights, plan readiness, 3D layer readiness and viewer filters.",
         "data": {
-          "filters": [
-            "megastructure",
-            "housing",
-            "cluster",
-            "prefabrication",
-            "concrete-module",
-            "roof-garden",
-            "flying-street",
-            "expo-67"
-          ]
+          "seed_tags": [
+            "source:safdie-architects-habitat-67",
+            "source:habitat-67-official-site-montreal-architectural-icon",
+            "source:heritage-montreal-habitat-67",
+            "source:encyclopaedia-britannica-habitat-67",
+            "source:wikimedia-commons-hero-candidate-habitat-67-at-sunset",
+            "typology:apartment-building",
+            "style:postwar_modern_architecture",
+            "theme:megastructure",
+            "theme:housing",
+            "theme:cluster"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
-        "r2_key": "entries/habitat-67/analysis/filter_classification.json",
-        "review_status": "reviewed"
+        "review_status": "draft"
       }
     ],
     "database_profile": {
       "status": "reviewed",
       "r2_prefix": "entries/habitat-67",
-      "source_count": 7,
+      "source_count": 5,
       "media_count": 4,
       "model_count": 3,
       "analysis_count": 5,
-      "tag_count": 18,
+      "tag_count": 23,
       "rights_summary": "Public text, metadata and CC0 hero are usable; official Safdie/Habitat imagery and technical drawings remain link-only unless licensed.",
-      "updated_at": "2026-05-23T17:18:39.000Z"
+      "updated_at": "2026-05-24T13:36:21.480Z"
+    },
+    "ingestion_status": {
+      "stage": "needs_review",
+      "source_status": "reviewed",
+      "asset_status": "ready",
+      "model_status": "planned",
+      "updated_at": "2026-05-24T13:36:21.481Z"
     }
   },
   {
@@ -26056,10 +26212,10 @@
       "public-park",
       "heritage-safety-conflict"
     ],
-    "short_description": "Gas Works Park ist im PDF-Framework als industrial-reuse / landscape-urbanism verortet und bildet einen wichtigen Knoten der Architektur- und Stadtgeschichte.",
-    "source_quality": "lecture_pdf",
-    "one_sentence": "Gas Works Park verwandelt eine ehemalige Gaswerksanlage am Lake Union in eine öffentliche Landschaft, in der kontaminierter Boden, industrielle Apparate, Hügel, Spielräume und Stadtblick als bewusst erhaltene Schichten lesbar bleiben.",
-    "full_description": "Gas Works Park ist ein Schlüsselprojekt der postindustriellen Landschaftsarchitektur. Richard Haag entfernte die industrielle Vergangenheit nicht, sondern machte sie zum räumlichen Material des Parks: Türme, Kesselhaus, Pumpenhaus, Rohrleitungen, Fundamente, Erdhügel, Wiesen und Lake-Union-Ufer werden zu einem neuen öffentlichen Terrain. Die Bedeutung liegt gerade im Nicht-Glattziehen des Ortes. Der kontaminierte Boden, die Gaswerksruine und die Topografie werden nicht als Defekt versteckt, sondern als Geschichte, Gefahr, Erinnerung und Gebrauch neu verhandelt. Dadurch ist Gas Works Park für Architecture Cosmos ein Referenzknoten für Reuse vor dem heutigen Nachhaltigkeitsdiskurs: Landschaft entsteht hier aus Sanierung, Selektion, Erhaltung, Blickführung und sozialer Aneignung. Gleichzeitig bleibt das Projekt aktuell, weil Sicherheit, Altlasten, Denkmalpflege und öffentlicher Zugang bis heute in Spannung stehen.",
+    "short_description": "Gas Works Park verdichtet Stahlbetonskelett, freien Grundriss und serielle Wiederholbarkeit zu einem konstruktiven Prototyp der Moderne.",
+    "source_quality": "research_seed_review",
+    "one_sentence": "Gas Works Park zeigt, wie Stahlbetonskelett, Stützenraster und freier Grundriss zu einem offenen System für Plan-, Struktur- und 3D-Layer werden.",
+    "full_description": "Gas Works Park wird als konstruktiver Prototyp ohne festen Ort gelesen. Entscheidend ist die Trennung von Tragwerk, Grundriss und Hülle: wenige Stahlbetonelemente erzeugen ein offenes Raster, das Wiederholung, Erweiterung und freie räumliche Organisation ermöglicht. Für KosmoData wird daraus ein besonders klares Modell für Struktur-, Plan- und Blender-Layer.",
     "media": [
       {
         "type": "exterior",
@@ -26170,12 +26326,30 @@
           "text": "Für Architecture Cosmos ist Gas Works Park ein früher und präziser Gegenentwurf zur Tabula rasa. Das Projekt verbindet Landschaftsarchitektur, Denkmalpflege, Ökologie, Altlastensanierung, industrielle Archäologie und öffentliche Nutzung. Für KosmoData ist es besonders gut filterbar über Industrie-Reuse, kontaminierten Boden, Ruinenästhetik, Uferlandschaft, Topografie, Sichtbeziehungen und Sicherheit/Erhaltung als laufende Frage.",
           "source_basis": "source-enriched database profile and atlas relation system",
           "review_status": "source_enriched_review"
+        },
+        {
+          "title": "Netzwerk und DNA",
+          "text": "Gas Works Park wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, wie es sich innerhalb derselben architektonischen DNA unterscheidet: durch Ort, Auftrag, Fügung, Gebrauch und kulturelle Haltung.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Topos / Typos / Tektonik",
+          "text": "Topos, Typos und Tektonik werden zusammen gelesen: Ort und Landschaft bilden die Setzung, Konstruktionsprototyp bildet den typologischen Ausgangspunkt, und Stahl, Beton, Wasser, Vegetation markieren die konstruktiv-atmosphärische Lesart.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für KosmoData ist Gas Works Park relevant, weil sich daraus Filter, Vergleichsgruppen, Planlayer und spätere Blender-Collections ableiten lassen: Konstruktionsprototyp, nachhaltige Architektur, industrielle Umnutzung, Landscape Urbanism, ruin, postindustrial landscape, adaptive reuse, soil remediation.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
         }
       ],
       "language": "de",
       "review_status": "source_enriched_review",
       "public_use_allowed": true,
-      "generated_at": "2026-05-23T17:42:03.000Z",
+      "generated_at": "2026-05-24T12:28:59.976Z",
       "source_basis": [
         {
           "type": "source_document",
@@ -26209,7 +26383,8 @@
           "reliability_level": "secondary_source",
           "rights_status": "unknown"
         }
-      ]
+      ],
+      "generator": "kosmodata-seed-from-research"
     },
     "year_end": 1975,
     "source_url": "https://www.seattle.gov/parks/allparks/gas-works-park",
@@ -26223,54 +26398,44 @@
     },
     "materials": {
       "primary": [
-        "industrial_steel_relics",
-        "concrete_foundations",
-        "remediated_soil",
-        "earth_mounding",
-        "grass_landscape"
+        "steel",
+        "concrete",
+        "water",
+        "vegetation"
       ],
       "secondary": [
-        "lake_edge",
-        "paths",
-        "play_structures",
-        "sundial",
-        "fenced_towers",
-        "view_corridors"
+        "craft_details",
+        "surface_system",
+        "construction_logic"
       ],
-      "notes": "Material reading must include industrial relics and contaminated/remediated soil. Public technical drawings and safety documentation should remain source-linked unless permissions are clear."
+      "notes": "Seeded from existing entry metadata and research packs; verify exact material claims before promotion."
     },
     "program": {
-      "type": "postindustrial_public_park",
-      "subtype": "industrial_reuse_landscape_and_lakefront_view_park",
-      "public_access": "public_park_with_restricted_water_and_fenced_industrial_structures",
+      "type": "structural_prototype",
+      "subtype": "sustainable_architecture_reference",
+      "public_access": "needs_review",
       "components": [
-        "gas works relics",
-        "Kite Hill",
-        "play barn",
-        "picnic shelter",
-        "sundial",
-        "Lake Union waterfront",
-        "open lawns",
-        "view terraces"
+        "industrial-reuse",
+        "landscape-urbanism",
+        "ruin",
+        "postindustrial-landscape",
+        "adaptive-reuse",
+        "soil-remediation",
+        "industrial-archaeology",
+        "lake-union",
+        "public-park",
+        "heritage-safety-conflict"
       ]
     },
     "context": {
-      "topography": "lakefront_postindustrial_site_with_artificial_mounds",
-      "setting": "urban_public_park_on_former_gasification_plant",
+      "topography": "needs_site_review",
+      "setting": "Seattle, USA",
       "landscape_relations": [
-        "Lake Union",
-        "Seattle skyline",
-        "Wallingford",
-        "waterfront edge",
-        "Kite Hill",
-        "industrial towers"
+        "site_context_needs_review"
       ],
       "urban_context": [
-        "postindustrial_reclamation",
-        "industrial_preservation",
-        "public_access_vs_safety",
-        "landmark_designation",
-        "contaminated_sediment_restriction"
+        "landscape_architecture_1_2",
+        "lecture_pdf"
       ],
       "reuse_logic": [
         "preserve_relics",
@@ -26278,6 +26443,16 @@
         "remediate_soil",
         "convert_structures",
         "frame_city_views"
+      ],
+      "construction_logic": [
+        "industrial-reuse",
+        "landscape-urbanism",
+        "ruin",
+        "postindustrial-landscape",
+        "adaptive-reuse",
+        "soil-remediation",
+        "industrial-archaeology",
+        "lake-union"
       ]
     },
     "vibes": [
@@ -26289,162 +26464,159 @@
       "ruin-as-play-and-warning"
     ],
     "database_tags": [
-      "source:seattle-parks",
-      "source:seattle-landmarks",
-      "source:tclf",
-      "source:uw-press-crosscheck",
-      "typology:postindustrial-park",
-      "typology:landscape-reuse",
-      "material:industrial-steel",
-      "material:concrete-foundations",
-      "material:remediated-soil",
-      "landscape:lakefront",
-      "landscape:earth-mound",
-      "heritage:industrial-archaeology",
-      "program:public-park",
-      "ecology:soil-remediation",
-      "risk:contaminated-sediment",
-      "critique:safety-preservation-conflict",
-      "blender:industrial-relic-layer-candidate",
-      "blender:terrain-remediation-layer-candidate"
+      "source:seattle-parks-and-recreation-gas-works-park",
+      "source:city-of-seattle-landmarks-preservation-board-gas-works-park-designation-report",
+      "source:the-cultural-landscape-foundation-gas-works-park",
+      "source:university-of-washington-press-blog-gas-works-park-history",
+      "source:wikimedia-commons-hero-candidate-aerial-gas-works-park",
+      "typology:structural-prototype",
+      "style:sustainable_architecture",
+      "theme:industrial-reuse",
+      "theme:landscape-urbanism",
+      "theme:ruin",
+      "theme:postindustrial-landscape",
+      "theme:adaptive-reuse",
+      "theme:soil-remediation",
+      "theme:industrial-archaeology",
+      "theme:lake-union",
+      "theme:public-park",
+      "theme:heritage-safety-conflict",
+      "material:steel",
+      "material:concrete",
+      "material:water",
+      "material:vegetation",
+      "rights:review-required",
+      "blender:structural-prototype-layer-candidate",
+      "plan:vector-review-required"
     ],
     "model_assets": [
       {
         "model_type": "site_model",
-        "title": "Gas Works Park lakefront terrain and view model",
+        "title": "Gas Works Park Site/context study model",
         "r2_key": "entries/gas-works-park/models/site.glb",
         "format": "glb",
         "lod_level": "preview",
-        "source_basis": "Diagrammatic terrain model of Lake Union edge, Kite Hill, open lawns and industrial relic cluster from public spatial descriptions and aerial hero image.",
+        "source_basis": "https://www.seattle.gov/parks/allparks/gas-works-park | Seattle Parks and Recreation / Gas Works Park | City of Seattle Landmarks Preservation Board / Gas Works Park designation report | The Cultural Landscape Foundation / Gas Works Park | University of Washington Press Blog / Gas Works Park history | Wikimedia Commons hero candidate / Aerial Gas Works Park",
         "generation_method": "procedural",
         "review_status": "draft",
-        "confidence_score": 0.58
+        "confidence_score": 0.42
       },
       {
         "model_type": "structure_model",
-        "title": "Gas Works Park industrial relic structure model",
+        "title": "Gas Works Park Structure and spatial order study model",
         "r2_key": "entries/gas-works-park/models/structure.glb",
         "format": "glb",
         "lod_level": "medium",
-        "source_basis": "Analytical reconstruction of preserved towers, boiler/pump structures, foundations and fenced zones; exact geometry requires landmark/source drawings review.",
+        "source_basis": "https://www.seattle.gov/parks/allparks/gas-works-park | Seattle Parks and Recreation / Gas Works Park | City of Seattle Landmarks Preservation Board / Gas Works Park designation report | The Cultural Landscape Foundation / Gas Works Park | University of Washington Press Blog / Gas Works Park history | Wikimedia Commons hero candidate / Aerial Gas Works Park",
         "generation_method": "source_reconstruction",
         "review_status": "needs_source",
-        "confidence_score": 0.46
+        "confidence_score": 0.32
       },
       {
         "model_type": "tectonic_model",
-        "title": "Gas Works Park remediation and reuse layer model",
+        "title": "Gas Works Park Material, tectonic and filter-layer study model",
         "r2_key": "entries/gas-works-park/models/tectonic.glb",
         "format": "glb",
-        "lod_level": "medium",
-        "source_basis": "Layer model separating relics, ground remediation zones, access limits, reuse structures, paths, hill and waterfront restrictions.",
-        "generation_method": "ai_assisted",
-        "review_status": "draft",
-        "confidence_score": 0.5
+        "lod_level": "study",
+        "source_basis": "https://www.seattle.gov/parks/allparks/gas-works-park | Seattle Parks and Recreation / Gas Works Park | City of Seattle Landmarks Preservation Board / Gas Works Park designation report | The Cultural Landscape Foundation / Gas Works Park | University of Washington Press Blog / Gas Works Park history | Wikimedia Commons hero candidate / Aerial Gas Works Park; tags: source:seattle-parks-and-recreation-gas-works-park, source:city-of-seattle-landmarks-preservation-board-gas-works-park-designation-report, source:the-cultural-landscape-foundation-gas-works-park, source:university-of-washington-press-blog-gas-works-park-history, source:wikimedia-commons-hero-candidate-aerial-gas-works-park, typology:structural-prototype, style:sustainable_architecture, theme:industrial-reuse",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
       }
     ],
     "analysis_layers": [
       {
-        "analysis_type": "landscape_system",
-        "summary": "Gas Works Park ist eine Landschaft aus Ufer, Aussichtshügel, Wiesen, Industriekörpern und gesperrten/umgenutzten Bereichen; der Park entsteht durch räumliche Montage statt Naturbild.",
+        "analysis_type": "structure",
+        "summary": "Gas Works Park needs a reviewed structural reading connecting steel, concrete, water with construction logic, span, support and assembly.",
         "data": {
-          "landscape_tags": [
-            "lakefront",
-            "kite_hill",
-            "industrial_relics",
-            "open_lawn",
-            "view_corridors"
+          "seed_tags": [
+            "structure:needs_review",
+            "steel",
+            "concrete",
+            "water",
+            "vegetation"
           ],
-          "model_layer": "landscape_system"
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
-        "r2_key": "entries/gas-works-park/analysis/landscape_system.json",
-        "review_status": "reviewed"
+        "review_status": "draft"
       },
       {
         "analysis_type": "material_system",
-        "summary": "Das Materialsystem verbindet Stahlapparate, Betonfundamente, Bodenmodellierung, Sanierungsschichten, Grasflächen, Wege und Wassergrenze zu einer postindustriellen Parktektonik.",
+        "summary": "Gas Works Park should be tagged through steel, concrete, water, vegetation and verified against primary sources before public material claims are made.",
         "data": {
-          "primary_materials": [
-            "industrial_steel",
-            "concrete_foundations",
-            "remediated_soil",
-            "grass",
-            "lake_edge"
+          "seed_tags": [
+            "steel",
+            "concrete",
+            "water",
+            "vegetation"
           ],
-          "public_display": "text_and_metadata_safe"
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
-        "r2_key": "entries/gas-works-park/analysis/material_system.json",
-        "review_status": "reviewed"
+        "review_status": "draft"
       },
       {
-        "analysis_type": "urban_context",
-        "summary": "Der Park funktioniert als öffentlicher Balkon gegenüber Downtown Seattle und als Denkmal des industriellen Lake-Union-Ufers; städtische Aussicht und industrielle Erinnerung sind untrennbar.",
+        "analysis_type": "spatial_order",
+        "summary": "Gas Works Park should be read through program, movement, room sequence, exterior relation and typological position rather than as a single image.",
         "data": {
-          "context_tags": [
-            "lake_union",
-            "seattle_skyline",
-            "wallingford",
-            "industrial_preservation",
-            "public_access"
+          "seed_tags": [
+            "spatial_order",
+            "structural_prototype"
           ],
-          "conflicts": [
-            "safety",
-            "heritage_preservation",
-            "contaminated_sediment"
-          ]
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
-        "r2_key": "entries/gas-works-park/analysis/urban_context.json",
-        "review_status": "reviewed"
+        "review_status": "draft"
       },
       {
-        "analysis_type": "tectonics",
-        "summary": "Tektonik heißt hier Auswahl und Umcodierung: Apparate werden nicht im ursprünglichen Produktionssinn genutzt, sondern als Gerüst, Grenze, Bild, Spiel- und Erinnerungsstruktur neu gelesen.",
+        "analysis_type": "typology",
+        "summary": "Gas Works Park is currently classified as structural_prototype; the seed must verify how this type differs from related entries with the same DNA.",
         "data": {
-          "tectonic_elements": [
-            "retained_towers",
-            "converted_pump_house",
-            "converted_boiler_house",
-            "fenced_structures",
-            "earth_mounding"
+          "seed_tags": [
+            "typology",
+            "structural_prototype",
+            "Seattle, USA"
           ],
-          "blender_layers": [
-            "relics",
-            "terrain",
-            "access_limits",
-            "reuse_programs"
-          ]
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
-        "r2_key": "entries/gas-works-park/analysis/tectonics.json",
         "review_status": "draft"
       },
       {
         "analysis_type": "filter_classification",
-        "summary": "Gas Works Park ist filterbar als postindustrielle Landschaft, Reuse-Park, Industriearchäologie, Boden-/Altlastenprojekt, Lakefront, Ruine, Denkmal und öffentlicher Konfliktraum.",
+        "summary": "Gas Works Park needs filter checks for themes, materials, rights, plan readiness, 3D layer readiness and viewer filters.",
         "data": {
-          "filters": [
-            "industrial-reuse",
-            "landscape-urbanism",
-            "ruin",
-            "postindustrial-landscape",
-            "soil-remediation",
-            "industrial-archaeology",
-            "public-park"
-          ]
+          "seed_tags": [
+            "source:seattle-parks-and-recreation-gas-works-park",
+            "source:city-of-seattle-landmarks-preservation-board-gas-works-park-designation-report",
+            "source:the-cultural-landscape-foundation-gas-works-park",
+            "source:university-of-washington-press-blog-gas-works-park-history",
+            "source:wikimedia-commons-hero-candidate-aerial-gas-works-park",
+            "typology:structural-prototype",
+            "style:sustainable_architecture",
+            "theme:industrial-reuse",
+            "theme:landscape-urbanism",
+            "theme:ruin"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
-        "r2_key": "entries/gas-works-park/analysis/filter_classification.json",
-        "review_status": "reviewed"
+        "review_status": "draft"
       }
     ],
     "database_profile": {
       "status": "reviewed",
       "r2_prefix": "entries/gas-works-park",
-      "source_count": 7,
+      "source_count": 5,
       "media_count": 4,
       "model_count": 3,
       "analysis_count": 5,
-      "tag_count": 18,
+      "tag_count": 24,
       "rights_summary": "Public text, metadata and CC hero are usable; landmark PDFs/technical drawings and municipal imagery should remain source-linked unless rights are cleared.",
-      "updated_at": "2026-05-23T17:42:03.000Z"
+      "updated_at": "2026-05-24T13:36:21.323Z"
+    },
+    "ingestion_status": {
+      "stage": "needs_review",
+      "source_status": "reviewed",
+      "asset_status": "ready",
+      "model_status": "planned",
+      "updated_at": "2026-05-24T13:36:21.324Z"
     }
   },
   {
@@ -29484,13 +29656,12 @@
       "urban-square-park",
       "contaminated-hill",
       "climate-upgrade",
-      "rainwater-management",
-      "public-stage"
+      "rainwater-management"
     ],
-    "short_description": "Leutschenpark ist im PDF-Framework als urban-repair / climate-landscape verortet und bildet einen wichtigen Knoten der Architektur- und Stadtgeschichte.",
-    "source_quality": "lecture_pdf",
-    "one_sentence": "Leutschenpark verwandelt ein dreieckiges Stadtentwicklungsareal in einen Platzpark aus Baumtopf, Bühne, Wasserbecken, Gleditschien-Schleier und blauem Leutschenlicht.",
-    "full_description": "Leutschenpark ist ein öffentlicher Park im Zürcher Entwicklungsgebiet Leutschenbach und ein Beispiel dafür, wie Landschaftsarchitektur mit schwierigen Restbedingungen arbeitet. Das Projekt von Dipol Landschaftsarchitekten und Christopher T. Hunziker nimmt einen kontaminierten Schiesshügel nicht einfach weg, sondern macht ihn als nicht begehbaren “Baumtopf” zu einer Großplastik und ökologischen Insel. Um ihn herum ordnen sich Kiesflächen, Bühne, Spielwiese, Wasserbecken, Gleditschien-Schleier und das blaue Leutschenlicht, das nachts an den unterirdisch geführten Leutschenbach erinnert. Der Park ist daher weder klassischer Grünraum noch bloßer Platz, sondern ein hybrider Platzpark. Seine aktuelle Sanierung und ökologische Aufwertung ab 2026 zeigt zusätzlich, dass solche zeitgenössischen Parks lernende Systeme sind: Entsiegelung, zusätzliche Bäume, Regenwassermanagement und Hitzeminderung werden Teil seiner zweiten Entwurfsschicht.",
+    "short_description": "Leutschenpark verdichtet Stahlbetonskelett, freien Grundriss und serielle Wiederholbarkeit zu einem konstruktiven Prototyp der Moderne.",
+    "source_quality": "research_seed_review",
+    "one_sentence": "Leutschenpark zeigt, wie Stahlbetonskelett, Stützenraster und freier Grundriss zu einem offenen System für Plan-, Struktur- und 3D-Layer werden.",
+    "full_description": "Leutschenpark wird als konstruktiver Prototyp ohne festen Ort gelesen. Entscheidend ist die Trennung von Tragwerk, Grundriss und Hülle: wenige Stahlbetonelemente erzeugen ein offenes Raster, das Wiederholung, Erweiterung und freie räumliche Organisation ermöglicht. Für KosmoData wird daraus ein besonders klares Modell für Struktur-, Plan- und Blender-Layer.",
     "media": [
       {
         "type": "exterior",
@@ -29603,12 +29774,30 @@
           "text": "Für Architecture Cosmos ist Leutschenpark wichtig, weil er zeitgenössische Landschaftsarchitektur als Betriebssystem zeigt: vorhandene Kontamination, Kunst, Quartiersbedarf, Klima, Regenwasser und öffentliche Nutzung werden miteinander verknüpft. Für KosmoData ist er filterbar über Baumtopf, Leutschenlicht, Gleditschien, Platzpark, Schwammstadt, Entsiegelung, Bühne und kontaminierten Untergrund.",
           "source_basis": "source-enriched database profile and atlas relation system",
           "review_status": "source_enriched_review"
+        },
+        {
+          "title": "Netzwerk und DNA",
+          "text": "Leutschenpark wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, wie es sich innerhalb derselben architektonischen DNA unterscheidet: durch Ort, Auftrag, Fügung, Gebrauch und kulturelle Haltung.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Topos / Typos / Tektonik",
+          "text": "Topos, Typos und Tektonik werden zusammen gelesen: Ort und Landschaft bilden die Setzung, Konstruktionsprototyp bildet den typologischen Ausgangspunkt, und Wasser, Vegetation markieren die konstruktiv-atmosphärische Lesart.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für KosmoData ist Leutschenpark relevant, weil sich daraus Filter, Vergleichsgruppen, Planlayer und spätere Blender-Collections ableiten lassen: Konstruktionsprototyp, nachhaltige Architektur, urban repair, climate landscape, öffentlicher Raum, leutschenbach, baumtopf, leutschenlicht.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
         }
       ],
       "language": "de",
       "review_status": "source_enriched_review",
       "public_use_allowed": true,
-      "generated_at": "2026-05-23T19:31:50.000Z",
+      "generated_at": "2026-05-24T12:31:17.777Z",
       "source_basis": [
         {
           "type": "source_document",
@@ -29642,7 +29831,8 @@
           "reliability_level": "verified",
           "rights_status": "needs_permission"
         }
-      ]
+      ],
+      "generator": "kosmodata-seed-from-research"
     },
     "geo": {
       "country_code": "CH",
@@ -29655,53 +29845,42 @@
     },
     "materials": {
       "primary": [
-        "tree_pot_landform",
-        "gleditsia_tree_veil",
-        "gravel_square",
-        "water_basin",
-        "blue_light_installation"
+        "water",
+        "vegetation"
       ],
       "secondary": [
-        "stage",
-        "play_lawn",
-        "concrete_silver_seat_wall",
-        "rainwater_management",
-        "desealed_surfaces",
-        "planting_substrate"
+        "craft_details",
+        "surface_system",
+        "construction_logic"
       ],
-      "notes": "Material reading separates original 2008 park layers from planned 2026-2027 climate upgrade layers. Images/drawings from offices and artist remain link-only unless licensed."
+      "notes": "Seeded from existing entry metadata and research packs; verify exact material claims before promotion."
     },
     "program": {
-      "type": "urban_square_park",
-      "subtype": "hybrid_public_space_with_tree_pot_light_installation_and_climate_upgrade",
-      "public_access": "public_city_park",
+      "type": "structural_prototype",
+      "subtype": "sustainable_architecture_reference",
+      "public_access": "needs_review",
       "components": [
-        "Baumtopf",
-        "stage",
-        "play area",
-        "water basin",
-        "Gleditsia tree veil",
-        "Leutschenlicht",
-        "gravel square",
-        "rainwater/climate upgrade"
+        "urban-repair",
+        "climate-landscape",
+        "public-space",
+        "leutschenbach",
+        "baumtopf",
+        "leutschenlicht",
+        "urban-square-park",
+        "contaminated-hill",
+        "climate-upgrade",
+        "rainwater-management"
       ]
     },
     "context": {
-      "topography": "triangular_transformation_site_with_contaminated_mound",
-      "setting": "Leutschenbach urban development area in Zurich-Seebach",
+      "topography": "needs_site_review",
+      "setting": "Zürich, Switzerland",
       "landscape_relations": [
-        "Leutschenbach stream memory",
-        "tree veil",
-        "public stage",
-        "quarter open-space network",
-        "hidden/underground water logic"
+        "site_context_needs_review"
       ],
       "urban_context": [
-        "Leutschenbach transformation",
-        "deficient former open-space network",
-        "new quarter public space",
-        "private_landowner_contributions",
-        "city_green_space_strategy"
+        "landscape_architecture_1_2",
+        "lecture_pdf"
       ],
       "climate_logic": [
         "desealing",
@@ -29709,6 +29888,16 @@
         "rainwater_retention_on_site",
         "soil_stabilization",
         "heat_reduction"
+      ],
+      "construction_logic": [
+        "urban-repair",
+        "climate-landscape",
+        "public-space",
+        "leutschenbach",
+        "baumtopf",
+        "leutschenlicht",
+        "urban-square-park",
+        "contaminated-hill"
       ]
     },
     "vibes": [
@@ -29720,155 +29909,155 @@
       "zurich-night-landscape"
     ],
     "database_tags": [
-      "source:landezine",
-      "source:stadt-zuerich",
-      "source:mueller-sigrist",
-      "source:christopher-t-hunziker",
-      "typology:urban-square-park",
-      "typology:climate-upgrade-park",
-      "landscape:baumtopf",
-      "landscape:gleditsia-tree-veil",
-      "material:gravel-square",
-      "material:water-basin",
-      "light:leutschenlicht",
-      "ecology:contaminated-mound",
-      "climate:desealing",
-      "climate:rainwater-management",
-      "program:public-stage",
-      "urban:leutschenbach",
-      "blender:tree-pot-layer-candidate",
-      "plan2d:light-band-vector-candidate"
+      "source:landezine-leutschenpark-by-westpol-landscape-architecture",
+      "source:stadt-zurich-leutschenpark-wird-saniert-und-aufgewertet",
+      "source:muller-sigrist-neuordnung-leutschenpark",
+      "source:christopher-t-hunziker-leutschenlicht",
+      "source:wikimedia-commons-hero-candidate-buhne-mit-baumtopf",
+      "typology:structural-prototype",
+      "style:sustainable_architecture",
+      "theme:urban-repair",
+      "theme:climate-landscape",
+      "theme:public-space",
+      "theme:leutschenbach",
+      "theme:baumtopf",
+      "theme:leutschenlicht",
+      "theme:urban-square-park",
+      "theme:contaminated-hill",
+      "theme:climate-upgrade",
+      "theme:rainwater-management",
+      "theme:public-stage",
+      "material:water",
+      "material:vegetation",
+      "rights:review-required",
+      "blender:structural-prototype-layer-candidate",
+      "plan:vector-review-required",
+      "viewer:3d-layer-review-required"
     ],
     "model_assets": [
       {
         "model_type": "site_model",
-        "title": "Leutschenpark Baumtopf and square-park site model",
+        "title": "Leutschenpark Site/context study model",
         "r2_key": "entries/leutschenpark/models/site.glb",
         "format": "glb",
         "lod_level": "preview",
-        "source_basis": "Procedural model separating triangular site, Baumtopf, stage, play lawn, water basin, tree veil and light band from public descriptions.",
+        "source_basis": "https://landezine.com/leutschenbach-westpol-landscape-architecture/ | Landezine / Leutschenpark by Westpol Landscape Architecture | Stadt Zürich / Leutschenpark wird saniert und aufgewertet | Müller Sigrist / Neuordnung Leutschenpark | Christopher T. Hunziker / Leutschenlicht | Wikimedia Commons hero candidate / Bühne mit Baumtopf",
         "generation_method": "procedural",
         "review_status": "draft",
-        "confidence_score": 0.58
+        "confidence_score": 0.42
       },
       {
         "model_type": "structure_model",
-        "title": "Leutschenpark tree-pot and Leutschenlicht structure model",
+        "title": "Leutschenpark Structure and spatial order study model",
         "r2_key": "entries/leutschenpark/models/structure.glb",
         "format": "glb",
         "lod_level": "medium",
-        "source_basis": "Analytical structure for Baumtopf, retaining/seat wall, stage, Leutschenlicht path and water basin; exact geometry requires source plan review.",
+        "source_basis": "https://landezine.com/leutschenbach-westpol-landscape-architecture/ | Landezine / Leutschenpark by Westpol Landscape Architecture | Stadt Zürich / Leutschenpark wird saniert und aufgewertet | Müller Sigrist / Neuordnung Leutschenpark | Christopher T. Hunziker / Leutschenlicht | Wikimedia Commons hero candidate / Bühne mit Baumtopf",
         "generation_method": "source_reconstruction",
         "review_status": "needs_source",
-        "confidence_score": 0.49
+        "confidence_score": 0.32
       },
       {
         "model_type": "tectonic_model",
-        "title": "Leutschenpark climate-upgrade tectonic layer model",
+        "title": "Leutschenpark Material, tectonic and filter-layer study model",
         "r2_key": "entries/leutschenpark/models/tectonic.glb",
         "format": "glb",
-        "lod_level": "medium",
-        "source_basis": "Layer model for original park, contaminated mound, vegetation, drainage, desealing, new trees and rainwater-management upgrade.",
-        "generation_method": "ai_assisted",
-        "review_status": "draft",
-        "confidence_score": 0.52
+        "lod_level": "study",
+        "source_basis": "https://landezine.com/leutschenbach-westpol-landscape-architecture/ | Landezine / Leutschenpark by Westpol Landscape Architecture | Stadt Zürich / Leutschenpark wird saniert und aufgewertet | Müller Sigrist / Neuordnung Leutschenpark | Christopher T. Hunziker / Leutschenlicht | Wikimedia Commons hero candidate / Bühne mit Baumtopf; tags: source:landezine-leutschenpark-by-westpol-landscape-architecture, source:stadt-zurich-leutschenpark-wird-saniert-und-aufgewertet, source:muller-sigrist-neuordnung-leutschenpark, source:christopher-t-hunziker-leutschenlicht, source:wikimedia-commons-hero-candidate-buhne-mit-baumtopf, typology:structural-prototype, style:sustainable_architecture, theme:urban-repair",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
       }
     ],
     "analysis_layers": [
       {
-        "analysis_type": "spatial_order",
-        "summary": "Leutschenpark organisiert Baumtopf, Gleditschien-Schleier, Bühne, Wasserbecken, Platzflächen und Leutschenlicht als hybride Ordnung zwischen Platz und Park.",
+        "analysis_type": "structure",
+        "summary": "Leutschenpark needs a reviewed structural reading connecting water, vegetation with construction logic, span, support and assembly.",
         "data": {
-          "landscape_tags": [
-            "baumtopf",
-            "tree_veil",
-            "stage",
-            "water_basin",
-            "light_band",
-            "gravel_square"
+          "seed_tags": [
+            "structure:needs_review",
+            "water",
+            "vegetation"
           ],
-          "model_layer": "square_park_landscape"
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
-        "r2_key": "entries/leutschenpark/analysis/spatial_order.json",
-        "review_status": "reviewed"
+        "review_status": "draft"
       },
       {
         "analysis_type": "material_system",
-        "summary": "Das Materialsystem arbeitet mit Kies, Wasser, Beton-/Sitzwand, Bauminsel, Gleditschien, Lichtband und späterer Entsiegelungs-/Regenwassertechnik.",
+        "summary": "Leutschenpark should be tagged through water, vegetation and verified against primary sources before public material claims are made.",
         "data": {
-          "primary_materials": [
-            "gravel",
+          "seed_tags": [
             "water",
-            "concrete_wall",
-            "trees",
-            "blue_light",
-            "rainwater_layers"
+            "vegetation"
           ],
-          "public_display": "text_and_metadata_safe"
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
-        "r2_key": "entries/leutschenpark/analysis/material_system.json",
-        "review_status": "reviewed"
+        "review_status": "draft"
       },
       {
-        "analysis_type": "urban_context",
-        "summary": "Der Park reagiert auf das Transformationsgebiet Leutschenbach und schafft einen öffentlichen Mittelpunkt in einem Quartier mit vormals unzureichendem Freiraumnetz.",
+        "analysis_type": "spatial_order",
+        "summary": "Leutschenpark should be read through program, movement, room sequence, exterior relation and typological position rather than as a single image.",
         "data": {
-          "context_tags": [
-            "leutschenbach",
-            "zurich_north",
-            "urban_development_area",
-            "public_space_network",
-            "quarter_identity"
+          "seed_tags": [
+            "spatial_order",
+            "structural_prototype"
           ],
-          "model_layer": "urban_context"
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
-        "r2_key": "entries/leutschenpark/analysis/urban_context.json",
-        "review_status": "reviewed"
+        "review_status": "draft"
       },
       {
-        "analysis_type": "landscape_system",
-        "summary": "Die 2026-2027 geplante Sanierung ergänzt den ursprünglichen Park um Schwammstadt-Logik: Entsiegelung, zusätzliche Bäume, Substratverbesserung und Regenwasser vor Ort.",
+        "analysis_type": "typology",
+        "summary": "Leutschenpark is currently classified as structural_prototype; the seed must verify how this type differs from related entries with the same DNA.",
         "data": {
-          "climate_tags": [
-            "desealing",
-            "large_crowned_trees",
-            "rainwater_retention",
-            "soil_stabilization",
-            "heat_reduction"
+          "seed_tags": [
+            "typology",
+            "structural_prototype",
+            "Zürich, Switzerland"
           ],
-          "model_layer": "climate_upgrade"
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
-        "r2_key": "entries/leutschenpark/analysis/climate_upgrade.json",
         "review_status": "draft"
       },
       {
         "analysis_type": "filter_classification",
-        "summary": "Leutschenpark ist filterbar als Platzpark, Baumtopf, Lichtinstallation, Gleditschien-Schleier, kontaminierter Hügel, Schwammstadt-Upgrade und öffentlicher Bühnenraum.",
+        "summary": "Leutschenpark needs filter checks for themes, materials, rights, plan readiness, 3D layer readiness and viewer filters.",
         "data": {
-          "filters": [
-            "urban-repair",
-            "climate-landscape",
-            "public-space",
-            "baumtopf",
-            "leutschenlicht",
-            "rainwater-management",
-            "desealing"
-          ]
+          "seed_tags": [
+            "source:landezine-leutschenpark-by-westpol-landscape-architecture",
+            "source:stadt-zurich-leutschenpark-wird-saniert-und-aufgewertet",
+            "source:muller-sigrist-neuordnung-leutschenpark",
+            "source:christopher-t-hunziker-leutschenlicht",
+            "source:wikimedia-commons-hero-candidate-buhne-mit-baumtopf",
+            "typology:structural-prototype",
+            "style:sustainable_architecture",
+            "theme:urban-repair",
+            "theme:climate-landscape",
+            "theme:public-space"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
-        "r2_key": "entries/leutschenpark/analysis/filter_classification.json",
-        "review_status": "reviewed"
+        "review_status": "draft"
       }
     ],
     "database_profile": {
       "status": "reviewed",
       "r2_prefix": "entries/leutschenpark",
-      "source_count": 7,
+      "source_count": 5,
       "media_count": 4,
       "model_count": 3,
       "analysis_count": 5,
-      "tag_count": 18,
+      "tag_count": 24,
       "rights_summary": "Public text, metadata and CC hero are usable; office/artist images and plans remain link-only unless licensed. 2025 city upgrade info is public metadata/source context.",
-      "updated_at": "2026-05-23T19:31:50.000Z"
+      "updated_at": "2026-05-24T13:36:21.951Z"
+    },
+    "ingestion_status": {
+      "stage": "needs_review",
+      "source_status": "reviewed",
+      "asset_status": "ready",
+      "model_status": "planned",
+      "updated_at": "2026-05-24T13:36:21.952Z"
     }
   },
   {
