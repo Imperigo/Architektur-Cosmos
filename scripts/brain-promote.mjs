@@ -26,7 +26,18 @@ async function main() {
   const entries = await readJson(entriesPath);
   const candidates = await findCandidates(entries);
   const selected = candidates.slice(0, Number.isFinite(limit) && limit > 0 ? limit : 5);
-  const checks = selected.map((candidate) => runPromotionCheck(candidate.slug));
+  const checks = selected.map((candidate) => {
+    if (candidate.quality_warnings.length > 0) {
+      return {
+        slug: candidate.slug,
+        status: 'blocked',
+        command: 'internal quality guard',
+        stdout_tail: '',
+        stderr_tail: candidate.quality_warnings.join('\n')
+      };
+    }
+    return runPromotionCheck(candidate.slug);
+  });
   const ready = checks.filter((check) => check.status === 'ready');
   const blocked = checks.filter((check) => check.status !== 'ready');
   const promoted = [];
@@ -123,7 +134,8 @@ async function findCandidates(entries) {
       id: entry.id,
       title: entry.title,
       change_score: changeScore,
-      proposed_path: relativeToRoot(proposedPath)
+      proposed_path: relativeToRoot(proposedPath),
+      quality_warnings: sourceDowngradeWarnings(entry, proposed)
     });
   }
   return candidates.sort((a, b) => b.change_score - a.change_score || a.title.localeCompare(b.title));
@@ -158,6 +170,21 @@ function runPromotionCheck(slug) {
     stdout_tail: result.stdout_tail,
     stderr_tail: result.stderr_tail
   };
+}
+
+function sourceDowngradeWarnings(entry, proposed) {
+  const warnings = [];
+  const currentSourcesByUrl = new Map((entry.source_candidates || [])
+    .filter((source) => source.url)
+    .map((source) => [source.url, source]));
+  for (const source of proposed.source_candidates || []) {
+    if (!source.url || !/source URL$/i.test(source.title || '')) continue;
+    const current = currentSourcesByUrl.get(source.url);
+    if (current?.title && !/source URL$/i.test(current.title)) {
+      warnings.push(`Would replace source title "${current.title}" with generic "${source.title}". Regenerate enrichment review first.`);
+    }
+  }
+  return warnings;
 }
 
 function runPromotion(slug) {

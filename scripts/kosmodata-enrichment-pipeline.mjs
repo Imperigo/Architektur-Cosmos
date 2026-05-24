@@ -143,9 +143,9 @@ function buildProposedEntry(entry, seed) {
     return !/^Wikimedia Commons hero candidate/i.test(source.title || '');
   });
   proposed.source_candidates = normalizeSources([
-    ...(entry.source_url ? [{ source_type: 'source_url', title: `${entry.title} source URL`, url: entry.source_url, reliability_level: 'existing_entry_source', rights_status: 'link_only' }] : []),
     ...existingSources,
-    ...(patch.source_candidates || [])
+    ...(patch.source_candidates || []),
+    ...(entry.source_url ? [{ source_type: 'source_url', title: `${entry.title} source URL`, url: entry.source_url, reliability_level: 'existing_entry_source', rights_status: 'link_only' }] : [])
   ]);
   proposed.database_profile = buildDatabaseProfile(proposed, seed);
   proposed.ingestion_status = {
