@@ -60,6 +60,15 @@
       "approval_required_before_public_use": true
     },
     {
+      "id": "brain_model_review",
+      "label": "Brain Model Review",
+      "command": "npm run brain:model-review",
+      "output_root": "out/brain-model-review/{date}",
+      "review_output": "out/brain-model-review/{date}/latest.md",
+      "purpose": "Parse local review GLBs, inspect node/material/layer coverage and recommend whether a model is ready for owner promotion review.",
+      "approval_required_before_public_use": false
+    },
+    {
       "id": "brain_model_promote",
       "label": "Brain Model Promote",
       "command": "npm run brain:promote-model -- --entry {slug} --confirm-public-model",

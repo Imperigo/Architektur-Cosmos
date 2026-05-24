@@ -289,6 +289,22 @@ Ingenbohl, Habitat 67, Narkomfin Housing and Euralille Metropole have reviewed
 procedural GLB templates; other entries receive model review plans until their
 plan/section/source basis is strong enough.
 
+To review local GLB quality before any public promotion:
+
+```bash
+npm run brain:model-review
+```
+
+This parses the GLB JSON chunk, checks scene/node/material counts, compares
+node/material names against the expected Blender layer contract and writes:
+
+```text
+out/brain-model-review/YYYY-MM-DD/latest.md
+```
+
+It is a review signal only. A good score means “ready for owner promotion
+review”, not automatic public release or measured reconstruction accuracy.
+
 To promote a reviewed local GLB into the public static website, use the
 approval-gated promote tool:
 

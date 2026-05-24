@@ -294,7 +294,8 @@ function euralilleScene(entry) {
     box('03_structure / office bar over infrastructure', [4.2, 2.7, 4.6], [10.4, 4.0, 3.8], 3, Math.PI * 0.04),
     box('03_structure / congress and hotel block', [10.2, 2.15, -1.7], [5.2, 3.2, 5.2], 3, Math.PI * -0.06),
     box('04_tower / metropolitan marker tower north', [-11.2, 5.6, 2.4], [2.0, 10.6, 2.0], 6, Math.PI * 0.06),
-    box('04_tower / metropolitan marker tower south', [10.4, 6.8, 5.0], [1.8, 13.0, 1.8], 6, Math.PI * -0.04)
+    box('04_tower / metropolitan marker tower south', [10.4, 6.8, 5.0], [1.8, 13.0, 1.8], 6, Math.PI * -0.04),
+    box('08_materials / mixed infrastructure surface sample', [1.8, 0.78, -6.8], [8.8, 0.12, 1.15], 4)
   ];
 
   for (const x of [-14, -9.4, -4.8, -0.2, 4.4, 9.0, 13.6]) {

@@ -62,6 +62,7 @@
     "brain:polish-texts": "node scripts/brain-polish-texts.mjs",
     "brain:model-status": "node scripts/brain-model-status.mjs",
     "brain:model-batch": "node scripts/brain-model-batch.mjs",
+    "brain:model-review": "node scripts/brain-review-models.mjs",
     "brain:promote-model": "node scripts/brain-promote-model.mjs",
     "brain:autopush": "node scripts/brain-autopush.mjs",
     "brain:doctor": "node scripts/brain-doctor.mjs",
