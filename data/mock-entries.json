@@ -6881,10 +6881,10 @@
       "hydraulic_landscape",
       "world_heritage_landscape"
     ],
-    "short_description": "Nasridische Palaststadt auf dem Sabika-Hügel, in der Wehrmauern, Hofsequenzen, Wasserachsen, Stuckornament, Gärten und Blickbeziehungen zu einem klimatischen Raumapparat verschränkt sind.",
-    "source_quality": "case_study",
-    "one_sentence": "Die Alhambra ist keine einzelne Palastfassade, sondern eine Palaststadt aus Festung, Hofräumen, Wassertechnik, Gartenlandschaft und ornamentaler Oberfläche, die Topografie, Klima und Herrschaft räumlich organisiert.",
-    "full_description": "Die Alhambra wird im KosmoData-Atlas als Palaststadt, Festung und Gartenlandschaft gelesen. Auf dem Sabika-Hügel über Granada verbindet sie Nasridenpaläste, Alcazaba, Generalife, Terrassen, Wasserläufe, Höfe und spätere christliche Eingriffe zu einem dichten historischen Gefüge. Architektonisch entscheidend ist der Wechsel zwischen massiver Wehrmauer und fein gearbeiteter Innenwelt: Stuck, Holzdecken, Keramik, Marmorsäulen, Muqarnas, Wasserbecken und Schatten erzeugen eine Klimamaschine, in der Raum nicht über Monumentalität allein, sondern über Sequenz, Schwelle, Reflexion und Mikroklima wirkt. Für die Datenbank ist sie ein Schlüsselobjekt, weil sich an ihr Topos, Typos und Tektonik besonders klar als Netzwerk lesen lassen: Hügel und Stadtblick, Palast/Festung/Garten als Mischtypus, massive Mauer und leichte ornamentale Haut als tektonische Spannung.",
+    "short_description": "Alhambra verbindet Landschaftsprojekt, Holz, Wasser, Vegetation und die räumliche DNA von palace city, fortress palace garden, courtyard water system zu einer prägnanten Architekturlesart.",
+    "source_quality": "research_seed_review",
+    "one_sentence": "Alhambra zeigt, wie Landschaftsprojekt, Holz, Wasser, Vegetation, Topos, Typos und Tektonik zu einer belastbaren Referenz für Plan-, Material- und 3D-Layer werden.",
+    "full_description": "Alhambra wird als architektonisches Referenzobjekt über Landschaftsprojekt, Holz, Wasser, Vegetation, Granada, Spain, räumliche Ordnung und historische Position gelesen. Entscheidend ist nicht die reine Datierung, sondern wie Setzung, Material, Gebrauch, Fügung und kulturelle Haltung zusammen eine übertragbare Entwurfsintelligenz bilden. Für KosmoData werden daraus zugleich Planlayer, Modelllayer, Filterbegriffe und Vergleichsbeziehungen abgeleitet.",
     "media": [
       {
         "type": "exterior",
@@ -6913,12 +6913,12 @@
     ],
     "source_candidates": [
       {
-        "source_type": "heritage_record",
-        "title": "UNESCO World Heritage Centre / Alhambra, Generalife and Albayzin, Granada",
+        "source_type": "source_url",
+        "title": "Alhambra source URL",
         "url": "https://whc.unesco.org/en/list/314",
-        "reliability_level": "primary_institutional_source",
+        "reliability_level": "existing_entry_source",
         "rights_status": "link_only",
-        "notes": "Primary heritage source for world-heritage boundaries, landscape relation, palatine-city reading, water/vegetation value and authenticity/integrity logic."
+        "notes": ""
       },
       {
         "source_type": "official_site",
@@ -6964,12 +6964,6 @@
           "review_status": "reviewed"
         },
         {
-          "title": "Netzwerk und DNA",
-          "text": "Im KosmoData-Netzwerk gehört die Alhambra zur DNA von Palaststadt, islamischem Garten, hydraulischer Landschaft und Hofhauslogik. Sie steht nahe bei Objekten, die Wasser, Achse, Garten und Herrschaft verbinden, unterscheidet sich aber durch die enge Verschränkung von Festung, Hofsequenz, Generalife-Landschaft und ornamentaler Textoberfläche.",
-          "source_basis": "database themes plus UNESCO palatine-city and landscape descriptions",
-          "review_status": "reviewed"
-        },
-        {
           "title": "Topos",
           "text": "Der Sabika-Hügel ist kein neutraler Sockel. Die Lage über Granada, die Beziehung zum Albaicin, zum Darro-Tal, zu den Generalife-Gärten und zur Sierra-Nevada-Silhouette macht die Alhambra zu einem topografischen Apparat. Aussicht, Verteidigung, Wasserführung und Gartenraum sind direkt an den Ort gebunden.",
           "source_basis": "UNESCO site description and official Patronato history",
@@ -7010,11 +7004,29 @@
           "text": "Die wichtigste Entwurfslektion liegt in der Kopplung von Mikroklima und Bedeutung: Wasser kühlt, klingt und spiegelt; Ornament misst und verdichtet; Höfe organisieren Licht und Bewegung; Topografie erzeugt Distanz und Blick. Aus diesen Elementen entsteht eine Architektur, die nicht laut sein muss, um monumental zu wirken.",
           "source_basis": "curated design intelligence synthesis",
           "review_status": "reviewed"
+        },
+        {
+          "title": "Netzwerk und DNA",
+          "text": "Alhambra wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, wie es sich innerhalb derselben architektonischen DNA unterscheidet: durch Ort, Auftrag, Fügung, Gebrauch und kulturelle Haltung.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Topos / Typos / Tektonik",
+          "text": "Topos, Typos und Tektonik werden zusammen gelesen: Ort und Landschaft bilden die Setzung, Landschaftsprojekt bildet den typologischen Ausgangspunkt, und Holz, Wasser, Vegetation markieren die konstruktiv-atmosphärische Lesart.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für KosmoData ist Alhambra relevant, weil sich daraus Filter, Vergleichsgruppen, Planlayer und spätere Blender-Collections ableiten lassen: Landschaftsprojekt, vernacular architecture, palace city, fortress palace garden, courtyard water system, nasrid ornament, microclimate design, hydraulic landscape.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
         }
       ],
       "language": "de",
-      "generator": "cosmos-curated-enrichment",
-      "generated_at": "2026-05-23T19:05:00.000Z",
+      "generator": "kosmodata-seed-from-research",
+      "generated_at": "2026-05-24T11:57:11.259Z",
       "review_status": "reviewed",
       "source_basis": [
         {
@@ -7051,68 +7063,52 @@
     },
     "materials": {
       "primary": [
-        "rammed_earth_and_masonry_walls",
-        "stucco_ornament",
-        "tilework_zellij",
-        "carved_wood_ceilings",
-        "water_channels_and_basins"
+        "timber",
+        "water",
+        "vegetation"
       ],
       "secondary": [
-        "brick_masonry",
-        "plaster_surfaces",
-        "marble_columns",
-        "muqarnas_vaults",
-        "garden_vegetation",
-        "reflecting_pools",
-        "terrace_walls"
+        "craft_details",
+        "surface_system",
+        "construction_logic"
       ],
-      "notes": "Material reading separates defensive mass, earthen/masonry wall systems, delicate stucco and ceramic surfaces, timber ceilings, marble columns, muqarnas, water infrastructure and garden/terrace layers."
+      "notes": "Seeded from existing entry metadata and research packs; verify exact material claims before promotion."
     },
     "program": {
-      "type": "nasrid_palace_fortress_garden_and_world_heritage_complex",
-      "subtype": "palace_city_with_courtyards_water_gardens_and_defensive_citadel",
-      "public_access": "managed_world_heritage_monument_and_museum_visit",
+      "type": "landscape_project",
+      "subtype": "vernacular_architecture_reference",
+      "public_access": "needs_review",
       "components": [
-        "Alcazaba",
-        "Nasrid palaces",
-        "Mexuar",
-        "Comares Palace",
-        "Court of the Myrtles",
-        "Court of the Lions",
-        "Partal",
-        "Generalife gardens",
-        "water stairway and channels",
-        "towers and defensive walls",
-        "Charles V Palace layer",
-        "Albayzin landscape relation"
+        "palace_city",
+        "fortress_palace_garden",
+        "courtyard_water_system",
+        "nasrid_ornament",
+        "microclimate_design",
+        "hydraulic_landscape",
+        "world_heritage_landscape",
+        "landscape_project",
+        "vernacular_architecture"
       ]
     },
     "context": {
-      "topography": "sabika_hill_above_granada",
-      "setting": "nasrid_palace_city_generalife_and_albayzin_world_heritage_landscape",
+      "topography": "needs_site_review",
+      "setting": "Granada, Spain",
       "landscape_relations": [
-        "Sabika Hill above Granada",
-        "Albayzin on the adjacent hill",
-        "Darro valley separation",
-        "Generalife gardens to the east",
-        "views toward Granada and Sierra Nevada",
-        "irrigation and garden landscape"
+        "site_context_needs_review"
       ],
       "urban_context": [
-        "Nasrid capital and court",
-        "palatine city and military fortress",
-        "Christian Royal Household after 1492",
-        "Charles V Renaissance palace intervention",
-        "World Heritage monument management",
-        "high tourism and conservation pressure"
+        "garden_history",
+        "case_study"
       ],
       "construction_logic": [
-        "fortress_wall_mass",
-        "courtyard_sequence",
-        "hydraulic_channels_and_basins",
-        "stucco_tile_wood_surface_system",
-        "muqarnas_and_light_modulation",
-        "garden_terrace_microclimate"
+        "palace_city",
+        "fortress_palace_garden",
+        "courtyard_water_system",
+        "nasrid_ornament",
+        "microclimate_design",
+        "hydraulic_landscape",
+        "world_heritage_landscape",
+        "landscape_project"
       ]
     },
     "vibes": [
@@ -7123,194 +7119,135 @@
       "threshold_sequence"
     ],
     "database_tags": [
-      "source:unesco-world-heritage",
-      "source:alhambra-patronato",
-      "source:britannica-crosscheck",
-      "source:wikimedia-commons-hero",
-      "typology:palace-city",
-      "typology:fortress-palace-garden",
-      "program:nasrid-royal-residence",
-      "material:stucco-ornament",
-      "material:tilework-zellij",
-      "material:water-channels",
-      "structure:rammed-earth-and-masonry",
-      "spatial:patio-sequence",
-      "spatial:water-axis",
-      "topos:sabika-hill",
-      "climate:shade-water-microclimate",
-      "heritage:world-heritage",
-      "critique:tourism-fragility-water-maintenance",
-      "blender:patio-water-layer-candidate",
-      "blender:ornament-surface-layer-candidate"
+      "source:unesco-world-heritage-centre-alhambra-generalife-and-albayzin-granada",
+      "source:patronato-de-la-alhambra-y-generalife-history",
+      "source:patronato-de-la-alhambra-y-generalife-buildings-and-places",
+      "source:britannica-alhambra",
+      "source:wikimedia-commons-hero-alhambra-granada-panorama",
+      "typology:landscape-project",
+      "style:vernacular_architecture",
+      "theme:palace-city",
+      "theme:fortress-palace-garden",
+      "theme:courtyard-water-system",
+      "theme:nasrid-ornament",
+      "theme:microclimate-design",
+      "theme:hydraulic-landscape",
+      "theme:world-heritage-landscape",
+      "material:timber",
+      "material:water",
+      "material:vegetation",
+      "rights:review-required",
+      "blender:landscape-project-layer-candidate",
+      "plan:vector-review-required",
+      "viewer:3d-layer-review-required"
     ],
     "model_assets": [
       {
         "model_type": "site_model",
-        "title": "Alhambra Sabika Hill, Albayzin and Generalife site model",
+        "title": "Alhambra Site/context study model",
         "r2_key": "entries/alhambra/models/site.glb",
         "format": "glb",
         "lod_level": "preview",
-        "source_basis": "Diagrammatic site model separating Sabika Hill, Granada, Albayzin, Darro valley, Generalife gardens and palace-city walls from UNESCO and official Patronato descriptions; not a measured survey.",
+        "source_basis": "https://whc.unesco.org/en/list/314 | UNESCO World Heritage Centre / Alhambra, Generalife and Albayzin, Granada | Patronato de la Alhambra y Generalife / History | Patronato de la Alhambra y Generalife / Buildings and Places | Britannica / Alhambra | Wikimedia Commons hero / Alhambra Granada panorama",
         "generation_method": "procedural",
         "review_status": "draft",
-        "confidence_score": 0.58
+        "confidence_score": 0.42
       },
       {
         "model_type": "structure_model",
-        "title": "Alhambra fortress wall, courtyard and hydraulic structure model",
+        "title": "Alhambra Structure and spatial order study model",
         "r2_key": "entries/alhambra/models/structure.glb",
         "format": "glb",
         "lod_level": "medium",
-        "source_basis": "Layer model for defensive walls, towers, courtyard sequence, water channels, basins and garden terraces; exact geometry requires verified plans and survey data.",
+        "source_basis": "https://whc.unesco.org/en/list/314 | UNESCO World Heritage Centre / Alhambra, Generalife and Albayzin, Granada | Patronato de la Alhambra y Generalife / History | Patronato de la Alhambra y Generalife / Buildings and Places | Britannica / Alhambra | Wikimedia Commons hero / Alhambra Granada panorama",
         "generation_method": "source_reconstruction",
         "review_status": "needs_source",
-        "confidence_score": 0.5
+        "confidence_score": 0.32
       },
       {
         "model_type": "tectonic_model",
-        "title": "Alhambra ornament, water and microclimate study model",
+        "title": "Alhambra Material, tectonic and filter-layer study model",
         "r2_key": "entries/alhambra/models/tectonic.glb",
         "format": "glb",
         "lod_level": "study",
-        "source_basis": "Study model separating masonry mass, stucco/tile/wood surface zones, muqarnas volumes, water reflections, shade fields and historical transformation layers. Public export remains diagrammatic until source precision and rights are cleared.",
-        "generation_method": "diagrammatic_reconstruction",
+        "source_basis": "https://whc.unesco.org/en/list/314 | UNESCO World Heritage Centre / Alhambra, Generalife and Albayzin, Granada | Patronato de la Alhambra y Generalife / History | Patronato de la Alhambra y Generalife / Buildings and Places | Britannica / Alhambra | Wikimedia Commons hero / Alhambra Granada panorama; tags: source:unesco-world-heritage-centre-alhambra-generalife-and-albayzin-granada, source:patronato-de-la-alhambra-y-generalife-history, source:patronato-de-la-alhambra-y-generalife-buildings-and-places, source:britannica-alhambra, source:wikimedia-commons-hero-alhambra-granada-panorama, typology:landscape-project, style:vernacular_architecture, theme:palace-city",
+        "generation_method": "source_reconstruction",
         "review_status": "needs_source",
-        "confidence_score": 0.48
+        "confidence_score": 0.32
       }
     ],
     "analysis_layers": [
       {
         "analysis_type": "structure",
-        "summary": "Die Alhambra verbindet defensive Mauer- und Turmmasse mit einer innenliegenden Palaststadt aus Höfen, Sälen, Wasserwegen und späteren historischen Schichten.",
+        "summary": "Alhambra needs a reviewed structural reading connecting timber, water, vegetation with construction logic, span, support and assembly.",
         "data": {
-          "structural_tags": [
-            "fortress_wall_mass",
-            "towers",
-            "palace_city",
-            "courtyard_sequence",
-            "charles_v_later_layer"
+          "seed_tags": [
+            "structure:needs_review",
+            "timber",
+            "water",
+            "vegetation"
           ],
-          "blender_layer": "fortress_mass_and_palace_city_structure",
-          "observations": [
-            "Defensive mass, towers and walls define the exterior image and protect the palatine city.",
-            "Interior spatial structure is organized by patios, thresholds and water corridors rather than by one monumental axis.",
-            "The Charles V layer must be separated as a later Renaissance intervention."
-          ]
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
-        "r2_key": "entries/alhambra/analysis/structure.json",
-        "review_status": "reviewed"
-      },
-      {
-        "analysis_type": "spatial_order",
-        "summary": "Die Raumordnung entsteht aus Schwellen, Patio-Sequenzen, Wasserachsen, Schatten, Spiegelungen und gerahmten Blicken in Richtung Granada, Generalife und Landschaft.",
-        "data": {
-          "spatial_tags": [
-            "patio_sequence",
-            "water_axis",
-            "thresholds",
-            "framed_views",
-            "garden_terrace_microclimate"
-          ],
-          "model_layer": "courtyard_water_and_threshold_sequence",
-          "observations": [
-            "Courts and basins act as spatial regulators for movement, climate, view and acoustic atmosphere.",
-            "The sequence alternates compression, release, shade, reflection and framed distance.",
-            "Generalife extends the palace logic into garden, terrace and productive hydraulic landscape."
-          ]
-        },
-        "r2_key": "entries/alhambra/analysis/spatial_order.json",
-        "review_status": "reviewed"
+        "review_status": "draft"
       },
       {
         "analysis_type": "material_system",
-        "summary": "Das Materialsystem trennt schwere Außenmasse von feiner Innenhaut: Mauerwerk, Stuck, Zellij-Fliesen, Holzdecken, Marmorsäulen, Muqarnas, Wasser und Vegetation wirken zusammen.",
+        "summary": "Alhambra should be tagged through timber, water, vegetation and verified against primary sources before public material claims are made.",
         "data": {
-          "material_tags": [
-            "rammed_earth_and_masonry_walls",
-            "stucco_ornament",
-            "tilework_zellij",
-            "water_channels",
-            "carved_wood_ceilings"
-          ],
-          "model_layers": [
-            "wall_mass",
-            "ornament_surfaces",
+          "seed_tags": [
+            "timber",
             "water",
-            "vegetation",
-            "later_interventions"
+            "vegetation"
           ],
-          "observations": [
-            "Heavy wall mass contrasts with delicate stucco, tilework, timber ceilings and muqarnas surfaces.",
-            "Water is treated as spatial material: it cools, reflects, sounds and marks axes.",
-            "Material layers should be encoded separately for Blender filtering: wall mass, surface ornament, water, vegetation and later interventions."
-          ]
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
-        "r2_key": "entries/alhambra/analysis/material_system.json",
-        "review_status": "reviewed"
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "spatial_order",
+        "summary": "Alhambra should be read through program, movement, room sequence, exterior relation and typological position rather than as a single image.",
+        "data": {
+          "seed_tags": [
+            "spatial_order",
+            "landscape_project"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
       },
       {
         "analysis_type": "typology",
-        "summary": "Typologisch überlagert die Alhambra Palaststadt, Festung, Garten, hydraulische Landschaft und heutiges Welterbe-Monument; Topos und Typos sind nicht voneinander lösbar.",
+        "summary": "Alhambra is currently classified as landscape_project; the seed must verify how this type differs from related entries with the same DNA.",
         "data": {
-          "typology_tags": [
-            "palace_city",
-            "fortress_palace_garden",
-            "world_heritage_landscape",
-            "hydraulic_landscape"
+          "seed_tags": [
+            "typology",
+            "landscape_project",
+            "Granada, Spain"
           ],
-          "topos_tags": [
-            "sabika_hill",
-            "darro_valley",
-            "albayzin_relation",
-            "generalife_relation"
-          ],
-          "tectonic_reading": "mass outside, atmospheric surface inside, with water as active connective layer",
-          "observations": [
-            "Topos: Sabika Hill, Darro valley, Albayzin and Generalife form the spatial field.",
-            "Typos: palace city, fortress, garden and world-heritage monument overlap.",
-            "Tektonik: mass outside, atmospheric surface inside, with water as active connective layer."
-          ]
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
-        "r2_key": "entries/alhambra/analysis/typology.json",
-        "review_status": "reviewed"
+        "review_status": "draft"
       },
       {
         "analysis_type": "filter_classification",
-        "summary": "Starke KosmoData-Filter sind Wasserinfrastruktur, islamischer Garten, Palaststadt, Ornament, Mikroklima, Welterbe, Topografie und historische Überlagerung.",
+        "summary": "Alhambra needs filter checks for themes, materials, rights, plan readiness, 3D layer readiness and viewer filters.",
         "data": {
-          "filter_tags": [
-            "water_infrastructure",
-            "islamic_garden",
-            "palace_city",
-            "ornament",
-            "microclimate",
-            "world_heritage",
-            "topographic_architecture"
+          "seed_tags": [
+            "source:unesco-world-heritage-centre-alhambra-generalife-and-albayzin-granada",
+            "source:patronato-de-la-alhambra-y-generalife-history",
+            "source:patronato-de-la-alhambra-y-generalife-buildings-and-places",
+            "source:britannica-alhambra",
+            "source:wikimedia-commons-hero-alhambra-granada-panorama",
+            "typology:landscape-project",
+            "style:vernacular_architecture",
+            "theme:palace-city",
+            "theme:fortress-palace-garden",
+            "theme:courtyard-water-system"
           ],
-          "relation_candidates": [
-            "versailles-gardens",
-            "villa-d-este",
-            "sforzinda",
-            "hagia-sophia"
-          ],
-          "blender_collections": [
-            "site",
-            "mass",
-            "patios",
-            "water",
-            "gardens",
-            "ornament",
-            "later_transformations",
-            "uncertainty_zones"
-          ],
-          "observations": [
-            "Strong filter candidates: water infrastructure, Islamic garden, palace-city, ornament, microclimate, world heritage, topographic architecture.",
-            "Useful comparisons: Versailles for controlled landscape, Villa d’Este for water as architecture, Sforzinda for city as ideal construct, and Hagia Sophia for surface/light and historical transformation.",
-            "For Blender, separate collections should be site, mass, patios, water, gardens, ornament, later transformations and uncertainty zones."
-          ]
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
-        "r2_key": "entries/alhambra/analysis/filter_classification.json",
-        "review_status": "reviewed"
+        "review_status": "draft"
       }
     ],
     "database_profile": {
@@ -7320,9 +7257,16 @@
       "media_count": 4,
       "model_count": 3,
       "analysis_count": 5,
-      "tag_count": 19,
+      "tag_count": 21,
       "rights_summary": "Public text, metadata and CC-BY-SA hero are usable with attribution/share-alike awareness; official UNESCO/Patronato/Britannica images and plans remain link-only unless licensed; 3D geometry remains diagrammatic until measured public data is cleared.",
-      "updated_at": "2026-05-23T19:05:00.000Z"
+      "updated_at": "2026-05-24T11:57:11.414Z"
+    },
+    "ingestion_status": {
+      "stage": "needs_review",
+      "source_status": "reviewed",
+      "asset_status": "ready",
+      "model_status": "planned",
+      "updated_at": "2026-05-24T11:57:11.416Z"
     }
   },
   {
@@ -7753,13 +7697,12 @@
       "trade-routes",
       "compass-rose",
       "royal-gift",
-      "medieval-globalization",
-      "mansa-musa"
+      "medieval-globalization"
     ],
-    "short_description": "Catalan Atlas ist im PDF-Framework als cartography / worldview verortet und bildet einen wichtigen Knoten der Architektur- und Stadtgeschichte.",
-    "source_quality": "lecture_pdf",
-    "one_sentence": "Der Catalan Atlas verbindet nautische Präzision, kosmografisches Wissen, Herrschaftsbilder, Handelsräume und Erzählfiguren zu einem mittelalterlichen Navigations- und Weltmodell.",
-    "full_description": "Der Catalan Atlas ist eines der wichtigsten Werke der spätmittelalterlichen Kartografie. Er wird Abraham Cresques und Jafudà Cresques aus der mallorquinischen Kartografenschule zugeschrieben und befand sich spätestens 1380 in der königlichen Bibliothek Frankreichs. Anders als die Hereford Mappa Mundi verbindet er theologisches und enzyklopädisches Weltwissen mit einer stärker nautischen, mediterranen und handelspolitischen Logik. Portolanlinien, Küstenwissen, Kompassrose, Kalender, kosmografische Tafeln, Herrscherfiguren, Städte, Flaggen, Handelswege und legendäre Orte sind zu einer Bild- und Wissensmaschine verschaltet. Für Architecture Cosmos ist der Catalan Atlas ein Schlüsselobjekt, weil er die Welt nicht nur als Heilsgeschichte, sondern als Bewegungssystem darstellt: Navigation, Ware, Macht, Meer und Erzählung werden räumlich operationalisiert.",
+    "short_description": "Catalan Atlas verdichtet Stahlbetonskelett, freien Grundriss und serielle Wiederholbarkeit zu einem konstruktiven Prototyp der Moderne.",
+    "source_quality": "research_seed_review",
+    "one_sentence": "Catalan Atlas zeigt, wie Stahlbetonskelett, Stützenraster und freier Grundriss zu einem offenen System für Plan-, Struktur- und 3D-Layer werden.",
+    "full_description": "Catalan Atlas wird als konstruktiver Prototyp ohne festen Ort gelesen. Entscheidend ist die Trennung von Tragwerk, Grundriss und Hülle: wenige Stahlbetonelemente erzeugen ein offenes Raster, das Wiederholung, Erweiterung und freie räumliche Organisation ermöglicht. Für KosmoData wird daraus ein besonders klares Modell für Struktur-, Plan- und Blender-Layer.",
     "media": [
       {
         "type": "exterior",
@@ -7791,12 +7734,12 @@
     ],
     "source_candidates": [
       {
-        "source_type": "website",
-        "title": "BnF Essentiels / L’Atlas catalan",
+        "source_type": "source_url",
+        "title": "Catalan Atlas source URL",
         "url": "https://essentiels.bnf.fr/fr/sciences/la-terre-et-la-mer/b5a6b0cb-a51b-43f8-972a-83d7fd296e77-representer-terre-avant-16e-siecle/article/ade6953c-716d-4ca3-b1a8-f4d7a46e678d-atlas-catalan",
-        "reliability_level": "verified",
-        "rights_status": "needs_permission",
-        "notes": "Official BnF educational source: Charles V royal-library context, attribution to Abraham Cresques, 1375-1380 dating, combination of cosmography, geography and imagination."
+        "reliability_level": "existing_entry_source",
+        "rights_status": "link_only",
+        "notes": ""
       },
       {
         "source_type": "archive",
@@ -7870,12 +7813,30 @@
           "text": "Für Architecture Cosmos ist der Catalan Atlas ein Schlüssel zwischen Karte und Netzwerk. Er zeigt, wie eine Gesellschaft Welt als Routen, Macht, Ressourcen, Meere und Bilder organisiert. Im Vergleich zur Hereford Mappa Mundi wird hier besonders deutlich, dass Kartografie nicht nur Weltanschauung ist, sondern auch operative Infrastruktur für Bewegung.",
           "source_basis": "source-enriched database profile and atlas relation system",
           "review_status": "source_enriched_review"
+        },
+        {
+          "title": "Netzwerk und DNA",
+          "text": "Catalan Atlas wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, wie es sich innerhalb derselben architektonischen DNA unterscheidet: durch Ort, Auftrag, Fügung, Gebrauch und kulturelle Haltung.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Topos / Typos / Tektonik",
+          "text": "Topos, Typos und Tektonik werden zusammen gelesen: Ort und Landschaft bilden die Setzung, Konstruktionsprototyp bildet den typologischen Ausgangspunkt, und needs material review markieren die konstruktiv-atmosphärische Lesart.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für KosmoData ist Catalan Atlas relevant, weil sich daraus Filter, Vergleichsgruppen, Planlayer und spätere Blender-Collections ableiten lassen: Konstruktionsprototyp, vormoderne Architektur, cartography, worldview, navigation, majorcan cartographic school, portolan network, cosmography.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
         }
       ],
       "language": "de",
       "review_status": "source_enriched_review",
       "public_use_allowed": true,
-      "generated_at": "2026-05-23T20:17:18.000Z",
+      "generated_at": "2026-05-24T12:10:15.931Z",
       "source_basis": [
         {
           "type": "source_document",
@@ -7909,7 +7870,8 @@
           "reliability_level": "verified",
           "rights_status": "unknown"
         }
-      ]
+      ],
+      "generator": "kosmodata-seed-from-research"
     },
     "year_end": 1380,
     "source_url": "https://essentiels.bnf.fr/fr/sciences/la-terre-et-la-mer/b5a6b0cb-a51b-43f8-972a-83d7fd296e77-representer-terre-avant-16e-siecle/article/ade6953c-716d-4ca3-b1a8-f4d7a46e678d-atlas-catalan",
@@ -7923,42 +7885,35 @@
     },
     "materials": {
       "primary": [
-        "vellum",
-        "ink",
-        "pigment",
-        "gold_leaf",
-        "silver_leaf",
-        "wooden_panel_mounting"
+        "needs_material_review"
       ],
       "secondary": [
-        "portolan_lines",
-        "compass_rose",
-        "text_blocks",
-        "figures",
-        "ships",
-        "flags",
-        "cosmographic_tables"
+        "craft_details",
+        "surface_system",
+        "construction_logic"
       ],
-      "notes": "Material reading treats the atlas as navigational manuscript and prestige object. BnF/Gallica public display/reuse should be checked before embedding full-resolution manuscript images."
+      "notes": "Seeded from existing entry metadata and research packs; verify exact material claims before promotion."
     },
     "program": {
-      "type": "medieval_nautical_world_atlas",
-      "subtype": "portolan_cosmography_trade_and_worldview_manuscript",
-      "public_access": "digital_archive_and_library_manuscript_with_reuse_terms",
+      "type": "structural_prototype",
+      "subtype": "pre_modern_architecture_reference",
+      "public_access": "needs_review",
       "components": [
-        "compass rose",
-        "portolan network",
-        "calendar/cosmography panels",
-        "coastlines",
-        "rulers/figures",
-        "ships",
-        "trade/geography texts",
-        "gold-highlighted imagery"
+        "cartography",
+        "worldview",
+        "navigation",
+        "majorcan-cartographic-school",
+        "portolan-network",
+        "cosmography",
+        "trade-routes",
+        "compass-rose",
+        "royal-gift",
+        "medieval-globalization"
       ]
     },
     "context": {
-      "topography": "manuscript_surface_navigation_world_model",
-      "setting": "Majorcan cartographic school and BnF royal-library collection",
+      "topography": "needs_site_review",
+      "setting": "Mallorca / Paris, Spain / France",
       "worldview_relations": [
         "navigation",
         "trade",
@@ -7979,6 +7934,23 @@
         "Gallica_digital_surrogate",
         "reuse_terms",
         "facsimile_history"
+      ],
+      "landscape_relations": [
+        "site_context_needs_review"
+      ],
+      "urban_context": [
+        "landscape_architecture_1_2",
+        "lecture_pdf"
+      ],
+      "construction_logic": [
+        "cartography",
+        "worldview",
+        "navigation",
+        "majorcan-cartographic-school",
+        "portolan-network",
+        "cosmography",
+        "trade-routes",
+        "compass-rose"
       ]
     },
     "vibes": [
@@ -7990,139 +7962,133 @@
       "compass-rose-brain"
     ],
     "database_tags": [
-      "source:bnf-essentiels",
-      "source:bnf-gallica",
-      "source:ign-cartoteca",
-      "source:library-of-congress",
-      "typology:medieval-world-atlas",
-      "typology:portolan-chart",
-      "material:vellum",
-      "material:gold-and-silver-leaf",
-      "spatial:compass-rose",
-      "spatial:portolan-network",
-      "knowledge:navigation",
-      "knowledge:trade-routes",
-      "knowledge:cosmography",
-      "history:majorcan-cartographic-school",
-      "plan2d:portolan-vector-layer-candidate",
-      "blender:manuscript-panel-display-candidate"
+      "source:bnf-essentiels-l-atlas-catalan",
+      "source:bnf-gallica-atlas-de-cartes-marines-dit-atlas-catalan",
+      "source:instituto-geografico-nacional-mapamundi-de-cresques-abraham-y-jafuda-cresques",
+      "source:library-of-congress-mapamondi-facsimile-record",
+      "source:wikimedia-commons-hero-candidate-compass-rose-from-catalan-atlas",
+      "typology:structural-prototype",
+      "style:pre_modern_architecture",
+      "theme:cartography",
+      "theme:worldview",
+      "theme:navigation",
+      "theme:majorcan-cartographic-school",
+      "theme:portolan-network",
+      "theme:cosmography",
+      "theme:trade-routes",
+      "theme:compass-rose",
+      "theme:royal-gift",
+      "theme:medieval-globalization",
+      "theme:mansa-musa",
+      "material:needs-material-review",
+      "rights:review-required",
+      "blender:structural-prototype-layer-candidate",
+      "plan:vector-review-required",
+      "viewer:3d-layer-review-required"
     ],
     "model_assets": [
       {
         "model_type": "site_model",
-        "title": "Catalan Atlas portolan manuscript panel model",
+        "title": "Catalan Atlas Site/context study model",
         "r2_key": "entries/catalan-atlas/models/site.glb",
         "format": "glb",
         "lod_level": "preview",
-        "source_basis": "Diagrammatic panel model of manuscript leaves, compass rose, portolan network and text-image layers from public descriptions.",
+        "source_basis": "https://essentiels.bnf.fr/fr/sciences/la-terre-et-la-mer/b5a6b0cb-a51b-43f8-972a-83d7fd296e77-representer-terre-avant-16e-siecle/article/ade6953c-716d-4ca3-b1a8-f4d7a46e678d-atlas-catalan | BnF Essentiels / L’Atlas catalan | BnF Gallica / Atlas de cartes marines, dit Atlas catalan | Instituto Geográfico Nacional / Mapamundi de Cresques Abraham y Jafuda Cresques | Library of Congress / Mapamondi facsimile record | Wikimedia Commons hero candidate / Compass rose from Catalan Atlas",
         "generation_method": "procedural",
         "review_status": "draft",
-        "confidence_score": 0.57
+        "confidence_score": 0.42
+      },
+      {
+        "model_type": "structure_model",
+        "title": "Catalan Atlas Structure and spatial order study model",
+        "r2_key": "entries/catalan-atlas/models/structure.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "https://essentiels.bnf.fr/fr/sciences/la-terre-et-la-mer/b5a6b0cb-a51b-43f8-972a-83d7fd296e77-representer-terre-avant-16e-siecle/article/ade6953c-716d-4ca3-b1a8-f4d7a46e678d-atlas-catalan | BnF Essentiels / L’Atlas catalan | BnF Gallica / Atlas de cartes marines, dit Atlas catalan | Instituto Geográfico Nacional / Mapamundi de Cresques Abraham y Jafuda Cresques | Library of Congress / Mapamondi facsimile record | Wikimedia Commons hero candidate / Compass rose from Catalan Atlas",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
       },
       {
         "model_type": "tectonic_model",
-        "title": "Catalan Atlas navigation-layer model",
+        "title": "Catalan Atlas Material, tectonic and filter-layer study model",
         "r2_key": "entries/catalan-atlas/models/tectonic.glb",
         "format": "glb",
-        "lod_level": "medium",
-        "source_basis": "Layer model for portolan lines, compass rose, coastline knowledge, figures, ships, trade routes and cosmographic panels; no protected full-image reproduction.",
-        "generation_method": "ai_assisted",
-        "review_status": "draft",
-        "confidence_score": 0.54
+        "lod_level": "study",
+        "source_basis": "https://essentiels.bnf.fr/fr/sciences/la-terre-et-la-mer/b5a6b0cb-a51b-43f8-972a-83d7fd296e77-representer-terre-avant-16e-siecle/article/ade6953c-716d-4ca3-b1a8-f4d7a46e678d-atlas-catalan | BnF Essentiels / L’Atlas catalan | BnF Gallica / Atlas de cartes marines, dit Atlas catalan | Instituto Geográfico Nacional / Mapamundi de Cresques Abraham y Jafuda Cresques | Library of Congress / Mapamondi facsimile record | Wikimedia Commons hero candidate / Compass rose from Catalan Atlas; tags: source:bnf-essentiels-l-atlas-catalan, source:bnf-gallica-atlas-de-cartes-marines-dit-atlas-catalan, source:instituto-geografico-nacional-mapamundi-de-cresques-abraham-y-jafuda-cresques, source:library-of-congress-mapamondi-facsimile-record, source:wikimedia-commons-hero-candidate-compass-rose-from-catalan-atlas, typology:structural-prototype, style:pre_modern_architecture, theme:cartography",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
       }
     ],
     "analysis_layers": [
       {
-        "analysis_type": "spatial_order",
-        "summary": "Der Atlas ordnet Welt als Navigations- und Erzählfläche: Kompassrose, Portolanlinien, Küsten, Texte, Figuren und Handelsräume überlagern sich.",
+        "analysis_type": "structure",
+        "summary": "Catalan Atlas needs a reviewed structural reading connecting needs_material_review with construction logic, span, support and assembly.",
         "data": {
-          "spatial_tags": [
-            "compass_rose",
-            "portolan_lines",
-            "coastlines",
-            "figures",
-            "text_blocks",
-            "trade_routes"
+          "seed_tags": [
+            "structure:needs_review",
+            "needs_material_review"
           ],
-          "plan2d_layers": [
-            "navigation_network",
-            "coastlines",
-            "political_figures",
-            "cosmography_panels",
-            "texts"
-          ]
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
-        "r2_key": "entries/catalan-atlas/analysis/spatial_order.json",
-        "review_status": "reviewed"
+        "review_status": "draft"
       },
       {
         "analysis_type": "material_system",
-        "summary": "Das Materialsystem verbindet Pergament, Farbe, Gold/Silber, Schrift, Kompass- und Portolanlinien zu einem kostbaren, mobilen Wissensobjekt.",
+        "summary": "Catalan Atlas should be tagged through needs_material_review and verified against primary sources before public material claims are made.",
         "data": {
-          "primary_materials": [
-            "vellum",
-            "ink",
-            "pigment",
-            "gold_leaf",
-            "silver_leaf"
+          "seed_tags": [
+            "needs_material_review"
           ],
-          "public_display": "public_domain_thumbnail_bnf_reuse_terms_to_check"
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
-        "r2_key": "entries/catalan-atlas/analysis/material_system.json",
-        "review_status": "reviewed"
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "spatial_order",
+        "summary": "Catalan Atlas should be read through program, movement, room sequence, exterior relation and typological position rather than as a single image.",
+        "data": {
+          "seed_tags": [
+            "spatial_order",
+            "structural_prototype"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
       },
       {
         "analysis_type": "typology",
-        "summary": "Typologisch liegt der Catalan Atlas zwischen Mappa Mundi, Portolan-Karte, kosmografischem Handbuch, höfischem Geschenk und Handels-/Navigationsinterface.",
+        "summary": "Catalan Atlas is currently classified as structural_prototype; the seed must verify how this type differs from related entries with the same DNA.",
         "data": {
-          "typology_tags": [
-            "mappa_mundi",
-            "portolan_atlas",
-            "cosmography",
-            "royal_gift",
-            "navigation_interface"
-          ]
-        },
-        "r2_key": "entries/catalan-atlas/analysis/typology.json",
-        "review_status": "reviewed"
-      },
-      {
-        "analysis_type": "source_reconstruction",
-        "summary": "Öffentlich sollte der Atlas zunächst als strukturelles Layerdiagramm rekonstruiert werden: Portolan-Netz, Textfelder, Figuren, Handelsräume und Kompassrose statt ungeklärter Vollbild-Reproduktion.",
-        "data": {
-          "rights_notes": [
-            "bnf_gallica_reuse_terms_need_review",
-            "commons_detail_is_public_domain",
-            "derive_diagrammatic_layers_first"
+          "seed_tags": [
+            "typology",
+            "structural_prototype",
+            "Mallorca / Paris, Spain / France"
           ],
-          "reconstruction_layers": [
-            "panel_sequence",
-            "compass_rose",
-            "portolan_lines",
-            "figures",
-            "text_blocks",
-            "trade_routes"
-          ]
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
-        "r2_key": "entries/catalan-atlas/analysis/source_reconstruction.json",
-        "review_status": "reviewed"
+        "review_status": "draft"
       },
       {
         "analysis_type": "filter_classification",
-        "summary": "Catalan Atlas ist filterbar als Kartografie, Navigation, Portolan-Netz, mittelalterliche Globalisierung, mallorquinische Schule, Kompassrose, Handelsraum und kosmografisches Manuskript.",
+        "summary": "Catalan Atlas needs filter checks for themes, materials, rights, plan readiness, 3D layer readiness and viewer filters.",
         "data": {
-          "filters": [
-            "cartography",
-            "worldview",
-            "navigation",
-            "portolan-network",
-            "compass-rose",
-            "majorcan-cartographic-school",
-            "trade-routes"
-          ]
+          "seed_tags": [
+            "source:bnf-essentiels-l-atlas-catalan",
+            "source:bnf-gallica-atlas-de-cartes-marines-dit-atlas-catalan",
+            "source:instituto-geografico-nacional-mapamundi-de-cresques-abraham-y-jafuda-cresques",
+            "source:library-of-congress-mapamondi-facsimile-record",
+            "source:wikimedia-commons-hero-candidate-compass-rose-from-catalan-atlas",
+            "typology:structural-prototype",
+            "style:pre_modern_architecture",
+            "theme:cartography",
+            "theme:worldview",
+            "theme:navigation"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
-        "r2_key": "entries/catalan-atlas/analysis/filter_classification.json",
-        "review_status": "reviewed"
+        "review_status": "draft"
       }
     ],
     "database_profile": {
@@ -8130,11 +8096,18 @@
       "r2_prefix": "entries/catalan-atlas",
       "source_count": 5,
       "media_count": 4,
-      "model_count": 2,
+      "model_count": 3,
       "analysis_count": 5,
-      "tag_count": 16,
+      "tag_count": 23,
       "rights_summary": "Public text, metadata and public-domain Commons hero are usable; BnF/Gallica full manuscript reuse terms must be checked before public high-resolution display.",
-      "updated_at": "2026-05-23T20:17:18.000Z"
+      "updated_at": "2026-05-24T12:10:16.092Z"
+    },
+    "ingestion_status": {
+      "stage": "needs_review",
+      "source_status": "reviewed",
+      "asset_status": "ready",
+      "model_status": "planned",
+      "updated_at": "2026-05-24T12:10:16.093Z"
     }
   },
   {
@@ -11953,10 +11926,10 @@
       "hydraulic_landscape",
       "royal_landscape_control"
     ],
-    "short_description": "Versailles organisiert Landschaft als höfisches Raumdiagramm: Achsen, Parterres, Bosquets, Wasserbecken, Fontänen und Blicktiefe übersetzen Macht in begehbare Perspektive.",
-    "source_quality": "case_study",
-    "one_sentence": "Die Gärten von Versailles sind ein gebautes Herrschaftsdiagramm, in dem Le Nôtre Achse, Wasser, Parterre, Bosquet, Topografie und optische Überraschung zu einem kontrollierten Landschaftsraum verschaltet.",
-    "full_description": "Die Gärten von Versailles werden im KosmoData-Atlas als Landschaftsarchitektur gelesen, die nicht neben dem Schloss steht, sondern dessen Machtlogik räumlich erweitert. André Le Nôtre ordnete die Anlage um zwei Achsen: eine Nord-Süd-Figur mit Wasserparterre, Orangerie und Schweizer See sowie die Grande Perspective, die vom Schloss über Latona, Allée Royale, Apollo-Brunnen und Grand Canal scheinbar ins Unendliche läuft. Die Anlage arbeitet mit Parterres, Bosquets, Wasserbecken, Fontänen, Terrassierungen, Baumvolumen, Skulpturen und Sichtkorrekturen. Entscheidend ist das Zusammenspiel von totaler Ordnung und inszenierter Überraschung: Der Garten erscheint von oben als präzises Machtbild, wird im Gehen aber zu einer Abfolge von Schwellen, seitlichen Räumen, Verdeckungen, Öffnungen und Wasserszenen.",
+    "short_description": "Gärten von Versailles verbindet Landschaftsprojekt, Wasser, Vegetation und die räumliche DNA von french formal garden, grande perspective, axis of power zu einer prägnanten Architekturlesart.",
+    "source_quality": "research_seed_review",
+    "one_sentence": "Gärten von Versailles zeigt, wie Landschaftsprojekt, Wasser, Vegetation, Topos, Typos und Tektonik zu einer belastbaren Referenz für Plan-, Material- und 3D-Layer werden.",
+    "full_description": "Gärten von Versailles wird als architektonisches Referenzobjekt über Landschaftsprojekt, Wasser, Vegetation, Versailles, France, räumliche Ordnung und historische Position gelesen. Entscheidend ist nicht die reine Datierung, sondern wie Setzung, Material, Gebrauch, Fügung und kulturelle Haltung zusammen eine übertragbare Entwurfsintelligenz bilden. Für KosmoData werden daraus zugleich Planlayer, Modelllayer, Filterbegriffe und Vergleichsbeziehungen abgeleitet.",
     "media": [
       {
         "type": "exterior",
@@ -11985,12 +11958,12 @@
     ],
     "source_candidates": [
       {
-        "source_type": "heritage_record",
-        "title": "UNESCO World Heritage Centre / Palace and Park of Versailles",
+        "source_type": "source_url",
+        "title": "Gärten von Versailles source URL",
         "url": "https://whc.unesco.org/en/list/83",
-        "reliability_level": "primary_institutional_source",
+        "reliability_level": "existing_entry_source",
         "rights_status": "link_only",
-        "notes": "Primary heritage source for Versailles as model royal residence and for Le Nôtre’s French-style garden typology with axial paths, parterres, water bodies and fountains."
+        "notes": ""
       },
       {
         "source_type": "official_site",
@@ -12044,12 +12017,6 @@
           "review_status": "reviewed"
         },
         {
-          "title": "Netzwerk und DNA",
-          "text": "Im KosmoData-Netzwerk steht Versailles zwischen Alhambra, Villa d’Este, Tuilerien, Central Park und späteren Stadtachsen. Verwandt ist die Arbeit mit Wasser, Topografie und Gartenraum; anders ist die extreme höfische Zentralisierung: Die Landschaft wird nicht nur schön, sondern als Modell absolutistischer Ordnung lesbar.",
-          "source_basis": "database relation logic plus UNESCO French-style garden typology",
-          "review_status": "reviewed"
-        },
-        {
           "title": "Topos",
           "text": "Der Ort wird künstlich überformt. Terrassen, Geländemodellierung, Wasserbecken, Kanäle und Baumkörper verwandeln das Gelände westlich des Schlosses in eine perspektivische Maschine. Topos bedeutet hier nicht natürliche Landschaft, sondern die kontrollierte Herstellung einer Landschaft, die als Verlängerung des Hofes funktioniert.",
           "source_basis": "official Le Nôtre and walks pages",
@@ -12090,11 +12057,29 @@
           "text": "Die Entwurfslektion liegt in der kontrollierten Mehrdeutigkeit: Ein strenges Raster kann zugleich Bühne, Bewegungsraum, Wassermaschine und politisches Bild sein. Versailles lehrt, dass Landschaft nicht weich oder nebensächlich sein muss; sie kann präziser, größer und machtvoller als ein Gebäude operieren.",
           "source_basis": "curated design intelligence synthesis",
           "review_status": "reviewed"
+        },
+        {
+          "title": "Netzwerk und DNA",
+          "text": "Gärten von Versailles wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, wie es sich innerhalb derselben architektonischen DNA unterscheidet: durch Ort, Auftrag, Fügung, Gebrauch und kulturelle Haltung.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Topos / Typos / Tektonik",
+          "text": "Topos, Typos und Tektonik werden zusammen gelesen: Ort und Landschaft bilden die Setzung, Landschaftsprojekt bildet den typologischen Ausgangspunkt, und Wasser, Vegetation markieren die konstruktiv-atmosphärische Lesart.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für KosmoData ist Gärten von Versailles relevant, weil sich daraus Filter, Vergleichsgruppen, Planlayer und spätere Blender-Collections ableiten lassen: Landschaftsprojekt, klassische Architektur, french formal garden, grande perspective, axis of power, water theatre, parterre bosquet system, hydraulic landscape.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
         }
       ],
       "language": "de",
-      "generator": "cosmos-curated-enrichment",
-      "generated_at": "2026-05-23T20:00:00.000Z",
+      "generator": "kosmodata-seed-from-research",
+      "generated_at": "2026-05-24T12:28:58.625Z",
       "review_status": "reviewed",
       "source_basis": [
         {
@@ -12131,68 +12116,51 @@
     },
     "materials": {
       "primary": [
-        "earth_modelling",
-        "gravel_paths",
-        "clipped_hedges_and_tree_walls",
-        "water_basins_and_fountains",
-        "sculptural_stone_and_bronze"
+        "water",
+        "vegetation"
       ],
       "secondary": [
-        "hydraulic_pipes_and_pumps",
-        "lawn_parterres",
-        "bosquet_tree_rooms",
-        "grand_canal_water_body",
-        "terrace_edges",
-        "seasonal_planting",
-        "maintenance_pruning_system"
+        "craft_details",
+        "surface_system",
+        "construction_logic"
       ],
-      "notes": "Material reading treats landscape elements as architectural parts: cut earth, water infrastructure, clipped vegetation, gravel, stone sculpture, basins, tree walls, lawns and maintenance systems."
+      "notes": "Seeded from existing entry metadata and research packs; verify exact material claims before promotion."
     },
     "program": {
-      "type": "royal_formal_garden_and_power_landscape",
-      "subtype": "french_formal_garden_with_grande_perspective_parterres_bosquets_fountains_and_grand_canal",
-      "public_access": "managed_world_heritage_garden_museum_and_fountain_display",
+      "type": "landscape_project",
+      "subtype": "classical_architecture_reference",
+      "public_access": "needs_review",
       "components": [
-        "palace garden facade",
-        "Water Parterre",
-        "Latona Parterre and Fountain",
-        "Royal Way / Green Carpet",
-        "Apollo Fountain",
-        "Grand Canal",
-        "north-south axis",
-        "Orangery",
-        "Lake of the Swiss Guards",
-        "bosquets",
-        "statues and vases",
-        "fountain hydraulics"
+        "french_formal_garden",
+        "grande_perspective",
+        "axis_of_power",
+        "water_theatre",
+        "parterre_bosquet_system",
+        "hydraulic_landscape",
+        "royal_landscape_control",
+        "landscape_project",
+        "classical_architecture"
       ]
     },
     "context": {
-      "topography": "controlled_royal_landscape_southwest_of_paris",
-      "setting": "palace_park_axis_bosquet_and_grand_canal_world_heritage_landscape",
+      "topography": "needs_site_review",
+      "setting": "Versailles, France",
       "landscape_relations": [
-        "Palace garden facade and Hall of Mirrors axis",
-        "Grande Perspective toward the Grand Canal",
-        "north-south Water Walk axis",
-        "Orangery and Lake of the Swiss Guards",
-        "bosquets as enclosed landscape rooms",
-        "Paris-region royal territorial network"
+        "site_context_needs_review"
       ],
       "urban_context": [
-        "royal residence and seat of power under Louis XIV",
-        "model of European royal residence",
-        "French formal garden typology",
-        "ceremonial court culture",
-        "high tourism and heritage management",
-        "water and maintenance infrastructure"
+        "garden_history",
+        "case_study"
       ],
       "construction_logic": [
-        "axis_and_perspective_control",
-        "earth_modelling_and_terraces",
-        "hydraulic_fountain_network",
-        "parterre_patterning",
-        "bosquet_room_system",
-        "tree_wall_and_pruning_maintenance"
+        "french_formal_garden",
+        "grande_perspective",
+        "axis_of_power",
+        "water_theatre",
+        "parterre_bosquet_system",
+        "hydraulic_landscape",
+        "royal_landscape_control",
+        "landscape_project"
       ]
     },
     "vibes": [
@@ -12203,196 +12171,133 @@
       "infinite_view_from_palace"
     ],
     "database_tags": [
-      "source:unesco-world-heritage",
-      "source:chateau-versailles-official",
-      "source:britannica-crosscheck",
-      "source:wikimedia-commons-hero",
-      "typology:french-formal-garden",
-      "typology:power-landscape",
-      "program:royal-residence-garden",
-      "material:clipped-hedges",
-      "material:water-basins",
-      "material:gravel-paths",
-      "structure:axis-and-perspective",
-      "structure:hydraulic-network",
-      "spatial:grande-perspective",
-      "spatial:bosquet-rooms",
-      "topos:controlled-royal-landscape",
-      "heritage:world-heritage",
-      "critique:power-water-maintenance-labor",
-      "blender:axis-water-bosquet-layer-candidate",
-      "blender:visibility-corridor-layer-candidate"
+      "source:unesco-world-heritage-centre-palace-and-park-of-versailles",
+      "source:chateau-de-versailles-the-walks",
+      "source:chateau-de-versailles-gardens-and-groves",
+      "source:chateau-de-versailles-andre-le-notre",
+      "source:britannica-palace-of-versailles-the-gardens",
+      "source:wikimedia-commons-hero-aerial-view-of-the-domain-of-versailles",
+      "typology:landscape-project",
+      "style:classical_architecture",
+      "theme:french-formal-garden",
+      "theme:grande-perspective",
+      "theme:axis-of-power",
+      "theme:water-theatre",
+      "theme:parterre-bosquet-system",
+      "theme:hydraulic-landscape",
+      "theme:royal-landscape-control",
+      "material:water",
+      "material:vegetation",
+      "rights:review-required",
+      "blender:landscape-project-layer-candidate",
+      "plan:vector-review-required",
+      "viewer:3d-layer-review-required"
     ],
     "model_assets": [
       {
         "model_type": "site_model",
-        "title": "Versailles palace, axes and park site model",
+        "title": "Gärten von Versailles Site/context study model",
         "r2_key": "entries/versailles-gardens/models/site.glb",
         "format": "glb",
         "lod_level": "preview",
-        "source_basis": "Diagrammatic site model of palace edge, main axes, parterres, bosquets, Grand Canal and surrounding park from UNESCO and official Château de Versailles descriptions; not a measured survey.",
+        "source_basis": "https://whc.unesco.org/en/list/83 | UNESCO World Heritage Centre / Palace and Park of Versailles | Château de Versailles / The Walks | Château de Versailles / Gardens and Groves | Château de Versailles / André Le Nôtre | Britannica / Palace of Versailles: The gardens",
         "generation_method": "procedural",
         "review_status": "draft",
-        "confidence_score": 0.6
+        "confidence_score": 0.42
       },
       {
         "model_type": "structure_model",
-        "title": "Versailles Grande Perspective, parterres, bosquets and hydraulic network model",
+        "title": "Gärten von Versailles Structure and spatial order study model",
         "r2_key": "entries/versailles-gardens/models/structure.glb",
         "format": "glb",
         "lod_level": "medium",
-        "source_basis": "Layer model for Grande Perspective, north-south axis, Water Parterre, Latona, Royal Way, Apollo, Grand Canal, bosquet rooms and fountain hydraulics; exact levels and pipe data require reviewed plans.",
+        "source_basis": "https://whc.unesco.org/en/list/83 | UNESCO World Heritage Centre / Palace and Park of Versailles | Château de Versailles / The Walks | Château de Versailles / Gardens and Groves | Château de Versailles / André Le Nôtre | Britannica / Palace of Versailles: The gardens",
         "generation_method": "source_reconstruction",
         "review_status": "needs_source",
-        "confidence_score": 0.53
+        "confidence_score": 0.32
       },
       {
         "model_type": "tectonic_model",
-        "title": "Versailles landscape tectonics, view corridors and maintenance study model",
+        "title": "Gärten von Versailles Material, tectonic and filter-layer study model",
         "r2_key": "entries/versailles-gardens/models/tectonic.glb",
         "format": "glb",
         "lod_level": "study",
-        "source_basis": "Study model separating earthworks, vegetation volumes, clipped edges, water bodies, fountain hydraulics, visibility corridors, bosquet rooms and maintenance cycles. Public export remains diagrammatic until source precision is cleared.",
-        "generation_method": "diagrammatic_reconstruction",
+        "source_basis": "https://whc.unesco.org/en/list/83 | UNESCO World Heritage Centre / Palace and Park of Versailles | Château de Versailles / The Walks | Château de Versailles / Gardens and Groves | Château de Versailles / André Le Nôtre | Britannica / Palace of Versailles: The gardens; tags: source:unesco-world-heritage-centre-palace-and-park-of-versailles, source:chateau-de-versailles-the-walks, source:chateau-de-versailles-gardens-and-groves, source:chateau-de-versailles-andre-le-notre, source:britannica-palace-of-versailles-the-gardens, source:wikimedia-commons-hero-aerial-view-of-the-domain-of-versailles, typology:landscape-project, style:classical_architecture",
+        "generation_method": "source_reconstruction",
         "review_status": "needs_source",
-        "confidence_score": 0.5
+        "confidence_score": 0.32
       }
     ],
     "analysis_layers": [
       {
-        "analysis_type": "landscape_system",
-        "summary": "Versailles ist ein kontrolliertes Landschaftssystem aus Terrasse, Parterre, Achse, Bosquet, Wasserbecken, Fontänen, Grand Canal, Baumvolumen und Unterhalt.",
+        "analysis_type": "structure",
+        "summary": "Gärten von Versailles needs a reviewed structural reading connecting water, vegetation with construction logic, span, support and assembly.",
         "data": {
-          "landscape_tags": [
-            "grande_perspective",
-            "water_parterre",
-            "bosquets",
-            "grand_canal",
-            "fountain_network",
-            "clipped_tree_walls"
+          "seed_tags": [
+            "structure:needs_review",
+            "water",
+            "vegetation"
           ],
-          "blender_layer": "formal_garden_landscape_system",
-          "observations": [
-            "Landscape elements should be treated as architectural parts, not decorative background.",
-            "The garden operates at several scales: palace edge, parterre surface, bosquet room, canal horizon and territorial view.",
-            "Maintenance/pruning is part of the spatial system because geometry depends on continuous labor."
-          ]
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
-        "r2_key": "entries/versailles-gardens/analysis/landscape_system.json",
-        "review_status": "reviewed"
-      },
-      {
-        "analysis_type": "spatial_order",
-        "summary": "Die Raumordnung verbindet eine scheinbar unendliche Zentralperspektive mit seitlichen Bosquet-Innenräumen und Wasserbühnen.",
-        "data": {
-          "spatial_tags": [
-            "central_axis",
-            "grande_perspective",
-            "lateral_surprise",
-            "bosquet_rooms",
-            "water_theatre"
-          ],
-          "model_layer": "axis_and_bosquet_spatial_order",
-          "observations": [
-            "The east-west axis gives the garden its dominant optical order.",
-            "North-south and lateral paths interrupt the total image with episodic garden rooms.",
-            "Movement alternates overview, procession, framed surprise and staged water scenes."
-          ]
-        },
-        "r2_key": "entries/versailles-gardens/analysis/spatial_order.json",
-        "review_status": "reviewed"
+        "review_status": "draft"
       },
       {
         "analysis_type": "material_system",
-        "summary": "Das Materialsystem besteht aus geschnittener Vegetation, Erdmodellierung, Kies, Wasser, Stein, Bronze, Leitungen, Pumpen, Becken und saisonaler Pflege.",
+        "summary": "Gärten von Versailles should be tagged through water, vegetation and verified against primary sources before public material claims are made.",
         "data": {
-          "material_tags": [
-            "clipped_hedges",
-            "tree_walls",
-            "water_basins",
-            "gravel_paths",
-            "hydraulic_pipes",
-            "sculptural_stone_and_bronze"
-          ],
-          "model_layers": [
-            "earthworks",
-            "vegetation_mass",
+          "seed_tags": [
             "water",
-            "paths",
-            "sculpture",
-            "hydraulics"
+            "vegetation"
           ],
-          "observations": [
-            "Vegetation is modelled as architectural mass and wall, not as random planting.",
-            "Water is both surface and infrastructure.",
-            "The garden needs an explicit maintenance/material-time layer."
-          ]
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
-        "r2_key": "entries/versailles-gardens/analysis/material_system.json",
-        "review_status": "reviewed"
+        "review_status": "draft"
       },
       {
-        "analysis_type": "urban_context",
-        "summary": "Versailles funktioniert als höfisches Machtzentrum südwestlich von Paris und als europäisches Modell königlicher Residenzlandschaft.",
+        "analysis_type": "spatial_order",
+        "summary": "Gärten von Versailles should be read through program, movement, room sequence, exterior relation and typological position rather than as a single image.",
         "data": {
-          "urban_tags": [
-            "royal_residence",
-            "seat_of_power",
-            "european_model",
-            "court_ceremony",
-            "territorial_axis"
+          "seed_tags": [
+            "spatial_order",
+            "landscape_project"
           ],
-          "context_layer": "royal_power_and_european_residence_model",
-          "observations": [
-            "The garden extends palace power into landscape and territory.",
-            "The model influenced European residence gardens for more than a century.",
-            "Tourism and heritage management now transform the former court machine into a public monument."
-          ]
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
-        "r2_key": "entries/versailles-gardens/analysis/urban_context.json",
-        "review_status": "reviewed"
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "typology",
+        "summary": "Gärten von Versailles is currently classified as landscape_project; the seed must verify how this type differs from related entries with the same DNA.",
+        "data": {
+          "seed_tags": [
+            "typology",
+            "landscape_project",
+            "Versailles, France"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
       },
       {
         "analysis_type": "filter_classification",
-        "summary": "Starke Filter sind Achse, Wassertechnik, französischer Formalgarten, Bosquet, Machtlandschaft, Weltkulturerbe, Sichtkorridor und Unterhaltslandschaft.",
+        "summary": "Gärten von Versailles needs filter checks for themes, materials, rights, plan readiness, 3D layer readiness and viewer filters.",
         "data": {
-          "filter_tags": [
-            "axis",
-            "hydraulic_landscape",
-            "french_formal_garden",
-            "bosquet",
-            "power_landscape",
-            "world_heritage",
-            "visibility_corridor",
-            "maintenance_landscape"
+          "seed_tags": [
+            "source:unesco-world-heritage-centre-palace-and-park-of-versailles",
+            "source:chateau-de-versailles-the-walks",
+            "source:chateau-de-versailles-gardens-and-groves",
+            "source:chateau-de-versailles-andre-le-notre",
+            "source:britannica-palace-of-versailles-the-gardens",
+            "source:wikimedia-commons-hero-aerial-view-of-the-domain-of-versailles",
+            "typology:landscape-project",
+            "style:classical_architecture",
+            "theme:french-formal-garden",
+            "theme:grande-perspective"
           ],
-          "relation_candidates": [
-            "alhambra",
-            "villa-d-este",
-            "garden-of-tuileries",
-            "central-park",
-            "sixtus-v-rome-plan"
-          ],
-          "blender_collections": [
-            "site",
-            "palace_edge",
-            "main_axes",
-            "parterres",
-            "bosquets",
-            "water",
-            "hydraulics",
-            "vegetation",
-            "visibility_corridors",
-            "maintenance_cycles"
-          ],
-          "observations": [
-            "Excellent comparison object for Alhambra and Villa d’Este through water, garden, power and spatial sequence.",
-            "The filter bar should expose water infrastructure, formal garden, power landscape and visibility corridor as separate queries.",
-            "Public models should stay diagrammatic unless historic plans and contemporary GIS/terrain data are cleared."
-          ]
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
-        "r2_key": "entries/versailles-gardens/analysis/filter_classification.json",
-        "review_status": "reviewed"
+        "review_status": "draft"
       }
     ],
     "database_profile": {
@@ -12402,9 +12307,16 @@
       "media_count": 4,
       "model_count": 3,
       "analysis_count": 5,
-      "tag_count": 19,
+      "tag_count": 21,
       "rights_summary": "Public text, metadata and CC-BY-SA hero are usable with attribution/share-alike awareness; official Château/UNESCO/Britannica images and plans remain link-only unless licensed; 3D terrain, hydraulics and garden geometry remain diagrammatic until measured public data is cleared.",
-      "updated_at": "2026-05-23T20:00:00.000Z"
+      "updated_at": "2026-05-24T12:28:58.792Z"
+    },
+    "ingestion_status": {
+      "stage": "needs_review",
+      "source_status": "reviewed",
+      "asset_status": "ready",
+      "model_status": "planned",
+      "updated_at": "2026-05-24T12:28:58.793Z"
     }
   },
   {
@@ -23121,10 +23033,10 @@
       "shivalik-landscape",
       "open-hand-symbolism"
     ],
-    "short_description": "Chandigarh ist im PDF-Framework als capital-city / postcolonial-city verortet und bildet einen wichtigen Knoten der Architektur- und Stadtgeschichte.",
-    "source_quality": "lecture_pdf",
-    "one_sentence": "Chandigarh übersetzt die Idee der modernen Hauptstadt in ein sektoriertes Stadt- und Capitol-System, in dem Betonmonumente, Landschaft, Staatsrepräsentation und Alltagsraster miteinander verschaltet werden.",
-    "full_description": "Chandigarh ist nicht nur eine geplante Stadt, sondern ein politisches und räumliches Gründungsbild des unabhängigen Indien. Nach der Teilung wird die neue Hauptstadt als modernes Gegenmodell zur kolonialen Stadt formuliert: Sektoren, Straßenhierarchien, Grünräume, öffentliche Einrichtungen und das Capitol am Fuß der Shivalik Hills ordnen die Stadt als lesbares System. Le Corbusier, Pierre Jeanneret, Jane Drew und Maxwell Fry überführen dabei funktionale Stadtprinzipien in einen konkreten Landschaftsraum. Besonders der Capitol Complex verdichtet diese Logik: High Court, Secretariat und Palace of Assembly bilden Legislative, Exekutive und Judikative als monumentale Betonlandschaft, ergänzt durch Open Hand, Tower of Shadows, Geometric Hill, Wasserflächen, Kunstwerke und künstliche Geländemodellierungen. Für Architecture Cosmos ist Chandigarh der entscheidende Übergang von Ville Radieuse als Theorie zu einer gebauten, klimatisch und politisch aufgeladenen Stadtmaschine.",
+    "short_description": "Chandigarh verdichtet Stahlbetonskelett, freien Grundriss und serielle Wiederholbarkeit zu einem konstruktiven Prototyp der Moderne.",
+    "source_quality": "research_seed_review",
+    "one_sentence": "Chandigarh zeigt, wie Stahlbetonskelett, Stützenraster und freier Grundriss zu einem offenen System für Plan-, Struktur- und 3D-Layer werden.",
+    "full_description": "Chandigarh wird als konstruktiver Prototyp ohne festen Ort gelesen. Entscheidend ist die Trennung von Tragwerk, Grundriss und Hülle: wenige Stahlbetonelemente erzeugen ein offenes Raster, das Wiederholung, Erweiterung und freie räumliche Organisation ermöglicht. Für KosmoData wird daraus ein besonders klares Modell für Struktur-, Plan- und Blender-Layer.",
     "media": [
       {
         "type": "exterior",
@@ -23156,12 +23068,12 @@
     ],
     "source_candidates": [
       {
-        "source_type": "website",
-        "title": "UNESCO World Heritage Centre / The Architectural Work of Le Corbusier",
+        "source_type": "source_url",
+        "title": "Chandigarh source URL",
         "url": "https://whc.unesco.org/en/list/1321",
-        "reliability_level": "verified",
-        "rights_status": "licensed",
-        "notes": "Official World Heritage source. Useful for serial-property status, modern-movement value, internationalization of Le Corbusier’s practice, and recognition of the Chandigarh Capitol Complex."
+        "reliability_level": "existing_entry_source",
+        "rights_status": "link_only",
+        "notes": ""
       },
       {
         "source_type": "archive",
@@ -23235,12 +23147,30 @@
           "text": "Für Architecture Cosmos ist Chandigarh der gebaute Gegenpol zu Ville Radieuse. Hier wird sichtbar, was passiert, wenn das funktionale Stadtdenken auf Verwaltung, Klima, Landschaft und Nation trifft. Für Blender und KosmoData ist das Projekt besonders wertvoll, weil sich Sektorenraster, Verkehrsstruktur, Capitol-Figuren, Schattenapparate, Betonplastik und Monumente als getrennte Analyse- und Modell-Layer erfassen lassen.",
           "source_basis": "source-enriched database profile and atlas relation system",
           "review_status": "source_enriched_review"
+        },
+        {
+          "title": "Netzwerk und DNA",
+          "text": "Chandigarh wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, wie es sich innerhalb derselben architektonischen DNA unterscheidet: durch Ort, Auftrag, Fügung, Gebrauch und kulturelle Haltung.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Topos / Typos / Tektonik",
+          "text": "Topos, Typos und Tektonik werden zusammen gelesen: Ort und Landschaft bilden die Setzung, Konstruktionsprototyp bildet den typologischen Ausgangspunkt, und Wasser, Vegetation markieren die konstruktiv-atmosphärische Lesart.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für KosmoData ist Chandigarh relevant, weil sich daraus Filter, Vergleichsgruppen, Planlayer und spätere Blender-Collections ableiten lassen: Konstruktionsprototyp, Nachkriegsmoderne, capital city, postcolonial city, modern urbanism, capitol complex, sector city, brutalist monumentality.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
         }
       ],
       "language": "de",
       "review_status": "source_enriched_review",
       "public_use_allowed": true,
-      "generated_at": "2026-05-23T16:38:44.000Z",
+      "generated_at": "2026-05-24T12:10:19.680Z",
       "source_basis": [
         {
           "type": "source_document",
@@ -23274,7 +23204,8 @@
           "reliability_level": "verified",
           "rights_status": "unknown"
         }
-      ]
+      ],
+      "generator": "kosmodata-seed-from-research"
     },
     "year_end": 1965,
     "source_url": "https://whc.unesco.org/en/list/1321",
@@ -23288,53 +23219,42 @@
     },
     "materials": {
       "primary": [
-        "exposed_reinforced_concrete",
-        "brise_soleil",
-        "sector_grid",
-        "landscape_axis"
+        "water",
+        "vegetation"
       ],
       "secondary": [
-        "polychrome_accents",
-        "water_basin",
-        "artificial_mounds",
-        "brick_annexes",
-        "modulor_public_space"
+        "craft_details",
+        "surface_system",
+        "construction_logic"
       ],
-      "notes": "Material data distinguishes the Capitol Complex from the wider city: raw concrete and climate devices dominate the monumental buildings, while the city scale is organized through sectors, roads, planting and landscape buffers."
+      "notes": "Seeded from existing entry metadata and research packs; verify exact material claims before promotion."
     },
     "program": {
-      "type": "capital_city_and_government_precinct",
-      "subtype": "sector_city_with_capitol_complex",
-      "public_access": "heritage_site_with_governmental_restrictions",
+      "type": "structural_prototype",
+      "subtype": "postwar_modern_architecture_reference",
+      "public_access": "needs_review",
       "components": [
-        "High Court",
-        "Secretariat",
-        "Palace of Assembly",
-        "Open Hand",
-        "Tower of Shadows",
-        "Geometric Hill",
-        "Martyrs Memorial",
-        "sector grid"
+        "capital-city",
+        "postcolonial-city",
+        "modern-urbanism",
+        "capitol-complex",
+        "sector-city",
+        "brutalist-monumentality",
+        "climate-responsive-modernism",
+        "postcolonial-statehood",
+        "shivalik-landscape",
+        "open-hand-symbolism"
       ]
     },
     "context": {
-      "topography": "plain_at_foot_of_shivalik_hills",
-      "setting": "postcolonial_planned_capital_city",
+      "topography": "needs_site_review",
+      "setting": "Chandigarh, India",
       "landscape_relations": [
-        "Shivalik Hills",
-        "Rajendra Park",
-        "Sukhna Lake",
-        "Capitol Park",
-        "artificial_mounds",
-        "reflecting_pools"
+        "site_context_needs_review"
       ],
       "urban_context": [
-        "partition_of_punjab",
-        "new_capital",
-        "sector_city",
-        "road_hierarchy",
-        "administrative_axis",
-        "modern_movement_internationalization"
+        "global_urban_design",
+        "lecture_pdf"
       ],
       "climate_response": [
         "brise_soleil",
@@ -23342,6 +23262,16 @@
         "deep_shadow",
         "open_air_circulation",
         "monsoon_and_sun_control"
+      ],
+      "construction_logic": [
+        "capital-city",
+        "postcolonial-city",
+        "modern-urbanism",
+        "capitol-complex",
+        "sector-city",
+        "brutalist-monumentality",
+        "climate-responsive-modernism",
+        "postcolonial-statehood"
       ]
     },
     "vibes": [
@@ -23353,144 +23283,135 @@
       "open-hand-symbol"
     ],
     "database_tags": [
-      "source:unesco-world-heritage",
-      "source:fondation-le-corbusier",
-      "source:chandigarh-administration",
-      "source:aslc-le-corbusier-sites",
-      "typology:capital-city",
-      "typology:capitol-complex",
-      "typology:sector-city",
-      "program:legislative-executive-judicial",
-      "material:exposed-concrete",
-      "material:brise-soleil",
-      "landscape:shivalik-hills",
-      "landscape:capitol-park",
-      "infrastructure:road-hierarchy",
-      "climate:double-roof",
-      "climate:sun-control",
-      "symbol:open-hand",
-      "blender:sector-grid-layer-candidate",
-      "blender:capitol-concrete-layer-candidate"
+      "source:unesco-world-heritage-centre-the-architectural-work-of-le-corbusier",
+      "source:fondation-le-corbusier-capitol-chandigarh-india-1950-1965",
+      "source:association-des-sites-le-corbusier-complexe-du-capitole-chandigarh",
+      "source:chandigarh-administration-planning-and-architecture",
+      "source:wikimedia-commons-hero-candidate-open-hand-monument-chandigarh",
+      "typology:structural-prototype",
+      "style:postwar_modern_architecture",
+      "theme:capital-city",
+      "theme:postcolonial-city",
+      "theme:modern-urbanism",
+      "theme:capitol-complex",
+      "theme:sector-city",
+      "theme:brutalist-monumentality",
+      "theme:climate-responsive-modernism",
+      "theme:postcolonial-statehood",
+      "theme:shivalik-landscape",
+      "theme:open-hand-symbolism",
+      "material:water",
+      "material:vegetation",
+      "rights:review-required",
+      "blender:structural-prototype-layer-candidate",
+      "plan:vector-review-required",
+      "viewer:3d-layer-review-required"
     ],
     "model_assets": [
       {
         "model_type": "site_model",
-        "title": "Chandigarh sector and Capitol landscape model",
+        "title": "Chandigarh Site/context study model",
         "r2_key": "entries/chandigarh/models/site.glb",
         "format": "glb",
         "lod_level": "preview",
-        "source_basis": "Diagrammatic city-sector model from public map logic, UNESCO/FLC context and entry metadata; not a survey model.",
+        "source_basis": "https://whc.unesco.org/en/list/1321 | UNESCO World Heritage Centre / The Architectural Work of Le Corbusier | Fondation Le Corbusier / Capitol, Chandigarh, India, 1950-1965 | Association des Sites Le Corbusier / Complexe du Capitole – Chandigarh | Chandigarh Administration / Planning and Architecture | Wikimedia Commons hero candidate / Open Hand monument, Chandigarh",
         "generation_method": "procedural",
         "review_status": "draft",
-        "confidence_score": 0.54
+        "confidence_score": 0.42
       },
       {
-        "model_type": "mass_model",
-        "title": "Chandigarh Capitol massing model",
-        "r2_key": "entries/chandigarh/models/mass.glb",
+        "model_type": "structure_model",
+        "title": "Chandigarh Structure and spatial order study model",
+        "r2_key": "entries/chandigarh/models/structure.glb",
         "format": "glb",
         "lod_level": "medium",
-        "source_basis": "Capitol components: High Court, Secretariat, Assembly, esplanade, monuments, artificial mounds and water bodies from official textual sources.",
+        "source_basis": "https://whc.unesco.org/en/list/1321 | UNESCO World Heritage Centre / The Architectural Work of Le Corbusier | Fondation Le Corbusier / Capitol, Chandigarh, India, 1950-1965 | Association des Sites Le Corbusier / Complexe du Capitole – Chandigarh | Chandigarh Administration / Planning and Architecture | Wikimedia Commons hero candidate / Open Hand monument, Chandigarh",
         "generation_method": "source_reconstruction",
         "review_status": "needs_source",
-        "confidence_score": 0.48
+        "confidence_score": 0.32
       },
       {
         "model_type": "tectonic_model",
-        "title": "Chandigarh concrete climate-device layer model",
+        "title": "Chandigarh Material, tectonic and filter-layer study model",
         "r2_key": "entries/chandigarh/models/tectonic.glb",
         "format": "glb",
-        "lod_level": "medium",
-        "source_basis": "Analytical layer for brise-soleil, double roofs, shadow devices, concrete shell forms and public-space landscape relations.",
-        "generation_method": "ai_assisted",
-        "review_status": "draft",
-        "confidence_score": 0.46
+        "lod_level": "study",
+        "source_basis": "https://whc.unesco.org/en/list/1321 | UNESCO World Heritage Centre / The Architectural Work of Le Corbusier | Fondation Le Corbusier / Capitol, Chandigarh, India, 1950-1965 | Association des Sites Le Corbusier / Complexe du Capitole – Chandigarh | Chandigarh Administration / Planning and Architecture | Wikimedia Commons hero candidate / Open Hand monument, Chandigarh; tags: source:unesco-world-heritage-centre-the-architectural-work-of-le-corbusier, source:fondation-le-corbusier-capitol-chandigarh-india-1950-1965, source:association-des-sites-le-corbusier-complexe-du-capitole-chandigarh, source:chandigarh-administration-planning-and-architecture, source:wikimedia-commons-hero-candidate-open-hand-monument-chandigarh, typology:structural-prototype, style:postwar_modern_architecture, theme:capital-city",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
       }
     ],
     "analysis_layers": [
       {
-        "analysis_type": "urban_context",
-        "summary": "Chandigarh verbindet Sektorenstadt, Verwaltungsachse und postkoloniale Staatsrepräsentation; das Capitol bildet den symbolischen und topografischen Kopf des Plans.",
+        "analysis_type": "structure",
+        "summary": "Chandigarh needs a reviewed structural reading connecting water, vegetation with construction logic, span, support and assembly.",
         "data": {
-          "context_tags": [
-            "postcolonial_capital",
-            "sector_grid",
-            "capitol_complex",
-            "shivalik_landscape"
+          "seed_tags": [
+            "structure:needs_review",
+            "water",
+            "vegetation"
           ],
-          "model_layer": "urban_context"
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
-        "r2_key": "entries/chandigarh/analysis/urban_context.json",
-        "review_status": "reviewed"
+        "review_status": "draft"
       },
       {
         "analysis_type": "material_system",
-        "summary": "Das Materialsystem kombiniert Sichtbeton, Brise-Soleil, plastische Dachformen, Wasserflächen, künstliche Hügel und punktuelle Polychromie zu einer monumentalen Klima- und Staatsarchitektur.",
+        "summary": "Chandigarh should be tagged through water, vegetation and verified against primary sources before public material claims are made.",
         "data": {
-          "primary_materials": [
-            "exposed_reinforced_concrete",
-            "brise_soleil",
-            "water_basin",
-            "artificial_mound"
+          "seed_tags": [
+            "water",
+            "vegetation"
           ],
-          "public_display": "text_and_metadata_safe"
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
-        "r2_key": "entries/chandigarh/analysis/material_system.json",
-        "review_status": "reviewed"
+        "review_status": "draft"
       },
       {
-        "analysis_type": "circulation",
-        "summary": "Die Stadt arbeitet über Straßenhierarchien und Sektoren; der Capitol Complex über eine große Esplanade, Querachsen, Monumentpunkte und repräsentative Wege zwischen High Court, Secretariat und Assembly.",
+        "analysis_type": "spatial_order",
+        "summary": "Chandigarh should be read through program, movement, room sequence, exterior relation and typological position rather than as a single image.",
         "data": {
-          "circulation_tags": [
-            "road_hierarchy",
-            "sector_access",
-            "450m_esplanade",
-            "pedestrian_capitol_axis"
+          "seed_tags": [
+            "spatial_order",
+            "structural_prototype"
           ],
-          "model_layer": "movement_and_axis"
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
-        "r2_key": "entries/chandigarh/analysis/circulation.json",
-        "review_status": "reviewed"
+        "review_status": "draft"
       },
       {
-        "analysis_type": "tectonics",
-        "summary": "Tektonisch ist Chandigarh eine Studie in Betonplastik und Klimaapparaten: Doppeldach, Brise-Soleil, Portikus, hyperbolische Kammerform, lange Verwaltungsplatte und roh belassene Oberflächen wirken als politische Formen.",
+        "analysis_type": "typology",
+        "summary": "Chandigarh is currently classified as structural_prototype; the seed must verify how this type differs from related entries with the same DNA.",
         "data": {
-          "tectonic_elements": [
-            "double_roof",
-            "brise_soleil",
-            "hyperbolic_assembly_chamber",
-            "concrete_slab_secretariat",
-            "monumental_portico"
+          "seed_tags": [
+            "typology",
+            "structural_prototype",
+            "Chandigarh, India"
           ],
-          "blender_layers": [
-            "facade",
-            "structure",
-            "shadow_devices",
-            "monuments"
-          ]
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
-        "r2_key": "entries/chandigarh/analysis/tectonics.json",
         "review_status": "draft"
       },
       {
         "analysis_type": "filter_classification",
-        "summary": "Chandigarh ist filterbar als Hauptstadt, postkoloniale Moderne, Sektorenstadt, Capitol-Komplex, Sichtbeton, Klimaarchitektur, Open-Hand-Symbol und Le-Corbusier-Welterbe.",
+        "summary": "Chandigarh needs filter checks for themes, materials, rights, plan readiness, 3D layer readiness and viewer filters.",
         "data": {
-          "filters": [
-            "capital-city",
-            "postcolonial-city",
-            "modern-urbanism",
-            "capitol-complex",
-            "sector-city",
-            "exposed-concrete",
-            "climate-responsive-modernism",
-            "unesco-le-corbusier"
-          ]
+          "seed_tags": [
+            "source:unesco-world-heritage-centre-the-architectural-work-of-le-corbusier",
+            "source:fondation-le-corbusier-capitol-chandigarh-india-1950-1965",
+            "source:association-des-sites-le-corbusier-complexe-du-capitole-chandigarh",
+            "source:chandigarh-administration-planning-and-architecture",
+            "source:wikimedia-commons-hero-candidate-open-hand-monument-chandigarh",
+            "typology:structural-prototype",
+            "style:postwar_modern_architecture",
+            "theme:capital-city",
+            "theme:postcolonial-city",
+            "theme:modern-urbanism"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
-        "r2_key": "entries/chandigarh/analysis/filter_classification.json",
-        "review_status": "reviewed"
+        "review_status": "draft"
       }
     ],
     "database_profile": {
@@ -23500,9 +23421,16 @@
       "media_count": 4,
       "model_count": 3,
       "analysis_count": 5,
-      "tag_count": 18,
+      "tag_count": 23,
       "rights_summary": "Public text, metadata and CC hero are usable; FLC/ASLC imagery remains protected/link-only unless licensed.",
-      "updated_at": "2026-05-23T16:38:44.000Z"
+      "updated_at": "2026-05-24T12:10:19.836Z"
+    },
+    "ingestion_status": {
+      "stage": "needs_review",
+      "source_status": "reviewed",
+      "asset_status": "ready",
+      "model_status": "planned",
+      "updated_at": "2026-05-24T12:10:19.837Z"
     }
   },
   {
@@ -23627,13 +23555,12 @@
       "residential-axis",
       "modernist-capital",
       "city-park",
-      "state-symbolism",
-      "athens-charter"
+      "state-symbolism"
     ],
-    "short_description": "Brasilia ist im PDF-Framework als capital-city / modern-urbanism verortet und bildet einen wichtigen Knoten der Architektur- und Stadtgeschichte.",
-    "source_quality": "lecture_pdf",
-    "one_sentence": "Brasília ist Lúcio Costas und Oscar Niemeyers gebaute Hauptstadtutopie, in der Monumentalachse, Wohnachse, Superquadras, Stadtpark und Staatsbauten zu einem modernen nationalen Raumdiagramm werden.",
-    "full_description": "Brasília ist eine der radikalsten gebauten Hauptstädte des 20. Jahrhunderts. Lúcio Costas Plano Piloto ordnet die Stadt über die Kreuzung zweier großer Achsen: die gerade Monumentalachse mit Ministerien, Nationalkongress und Praça dos Três Poderes sowie die gekrümmte Wohn- und Verkehrsachse mit Superquadras. Oscar Niemeyers öffentliche Bauten geben diesem Stadtgerüst eine skulpturale, weiße Betonikonografie; Roberto Burle Marx und die großen offenen Räume machen daraus zugleich eine Stadtpark-Landschaft. Im Gegensatz zu Chandigarh wirkt Brasília weniger als rauer Beton-Capitol im Terrain, sondern als weit gespannter, fast grafischer Staatsraum: Distanzen, Leere, Sichtachsen, Verkehr und isolierte Monumente werden zu eigentlichen architektonischen Materialien. Für Architecture Cosmos ist Brasília deshalb ein Schlüsselprojekt zwischen moderner Utopie, nationaler Repräsentation, Alltagswohnmaschine, UNESCO-Erbe und Kritik an Maßstab, Verkehr und sozialer Segregation.",
+    "short_description": "Brasília verdichtet Stahlbetonskelett, freien Grundriss und serielle Wiederholbarkeit zu einem konstruktiven Prototyp der Moderne.",
+    "source_quality": "research_seed_review",
+    "one_sentence": "Brasília zeigt, wie Stahlbetonskelett, Stützenraster und freier Grundriss zu einem offenen System für Plan-, Struktur- und 3D-Layer werden.",
+    "full_description": "Brasília wird als konstruktiver Prototyp ohne festen Ort gelesen. Entscheidend ist die Trennung von Tragwerk, Grundriss und Hülle: wenige Stahlbetonelemente erzeugen ein offenes Raster, das Wiederholung, Erweiterung und freie räumliche Organisation ermöglicht. Für KosmoData wird daraus ein besonders klares Modell für Struktur-, Plan- und Blender-Layer.",
     "media": [
       {
         "type": "exterior",
@@ -23665,12 +23592,12 @@
     ],
     "source_candidates": [
       {
-        "source_type": "website",
-        "title": "UNESCO World Heritage Centre / Brasilia",
+        "source_type": "source_url",
+        "title": "Brasília source URL",
         "url": "https://whc.unesco.org/en/list/445",
-        "reliability_level": "verified",
-        "rights_status": "licensed",
-        "notes": "Official World Heritage source for Outstanding Universal Value, axes, Superquadras, four urban scales, authenticity and preservation pressures."
+        "reliability_level": "existing_entry_source",
+        "rights_status": "link_only",
+        "notes": ""
       },
       {
         "source_type": "website",
@@ -23744,12 +23671,30 @@
           "text": "Für Architecture Cosmos ist Brasília ein Vergleichsknoten zu Chandigarh, Ville Radieuse und der Charta von Athen. Während Ville Radieuse Theorie bleibt und Chandigarh Staatlichkeit in rauer Betonlandschaft verdichtet, macht Brasília die Hauptstadt selbst zum grafischen und landschaftlichen Gesamtobjekt. Genau deshalb ist sie für Analysefilter stark: Achse, Superquadra, Stadtpark, Sichtbeton, Monument, Verkehr, UNESCO-Erbe und soziale Kritik lassen sich getrennt untersuchen.",
           "source_basis": "source-enriched database profile and atlas relation system",
           "review_status": "source_enriched_review"
+        },
+        {
+          "title": "Netzwerk und DNA",
+          "text": "Brasília wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, wie es sich innerhalb derselben architektonischen DNA unterscheidet: durch Ort, Auftrag, Fügung, Gebrauch und kulturelle Haltung.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Topos / Typos / Tektonik",
+          "text": "Topos, Typos und Tektonik werden zusammen gelesen: Ort und Landschaft bilden die Setzung, Konstruktionsprototyp bildet den typologischen Ausgangspunkt, und Glas, Beton, Vegetation markieren die konstruktiv-atmosphärische Lesart.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für KosmoData ist Brasília relevant, weil sich daraus Filter, Vergleichsgruppen, Planlayer und spätere Blender-Collections ableiten lassen: Konstruktionsprototyp, Nachkriegsmoderne, capital city, modern urbanism, axis, plano piloto, superquadras, monumental axis.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
         }
       ],
       "language": "de",
       "review_status": "source_enriched_review",
       "public_use_allowed": true,
-      "generated_at": "2026-05-23T16:58:12.000Z",
+      "generated_at": "2026-05-24T11:57:16.985Z",
       "source_basis": [
         {
           "type": "source_document",
@@ -23783,7 +23728,8 @@
           "reliability_level": "secondary_source",
           "rights_status": "unknown"
         }
-      ]
+      ],
+      "generator": "kosmodata-seed-from-research"
     },
     "year_end": 1960,
     "source_url": "https://whc.unesco.org/en/list/445",
@@ -23797,60 +23743,59 @@
     },
     "materials": {
       "primary": [
-        "reinforced_concrete",
-        "white_monumental_architecture",
-        "superquadra_grid",
-        "monumental_axis_landscape"
+        "glass",
+        "concrete",
+        "vegetation"
       ],
       "secondary": [
-        "glass",
-        "pilotis",
-        "open_green_space",
-        "road_infrastructure",
-        "parabolic_concrete_forms",
-        "lake_landscape"
+        "craft_details",
+        "surface_system",
+        "construction_logic"
       ],
-      "notes": "Material reading separates Costa’s urban structure from Niemeyer’s sculptural public buildings and Burle Marx/open-space landscape logics; archival drawings remain link-only unless rights are cleared."
+      "notes": "Seeded from existing entry metadata and research packs; verify exact material claims before promotion."
     },
     "program": {
-      "type": "planned_capital_city",
-      "subtype": "plano_piloto_with_monumental_and_residential_axes",
-      "public_access": "public_city_with_governmental_and_heritage_constraints",
+      "type": "structural_prototype",
+      "subtype": "postwar_modern_architecture_reference",
+      "public_access": "needs_review",
       "components": [
-        "Monumental Axis",
-        "Residential Axis",
-        "Praça dos Três Poderes",
-        "Esplanada dos Ministérios",
-        "Superquadras",
-        "National Congress",
-        "Cathedral",
-        "Lake Paranoá"
+        "capital-city",
+        "modern-urbanism",
+        "axis",
+        "plano-piloto",
+        "superquadras",
+        "monumental-axis",
+        "residential-axis",
+        "modernist-capital",
+        "city-park",
+        "state-symbolism"
       ]
     },
     "context": {
-      "topography": "central_brazilian_plateau",
-      "setting": "modernist_planned_capital_and_world_heritage_city",
+      "topography": "needs_site_review",
+      "setting": "Brasília, Brazil",
       "landscape_relations": [
-        "Lake Paranoá",
-        "open green spaces",
-        "bucolic scale",
-        "central plateau",
-        "monumental voids"
+        "site_context_needs_review"
       ],
       "urban_context": [
-        "transfer_of_capital_inland",
-        "plano_piloto",
-        "superquadras",
-        "monumental_axis",
-        "residential_axis",
-        "satellite_city_pressure",
-        "heritage_preservation"
+        "global_urban_design",
+        "lecture_pdf"
       ],
       "planning_scales": [
         "monumental",
         "residential",
         "gregarious_social",
         "bucolic"
+      ],
+      "construction_logic": [
+        "capital-city",
+        "modern-urbanism",
+        "axis",
+        "plano-piloto",
+        "superquadras",
+        "monumental-axis",
+        "residential-axis",
+        "modernist-capital"
       ]
     },
     "vibes": [
@@ -23863,146 +23808,138 @@
       "beautiful-problematic-scale"
     ],
     "database_tags": [
-      "source:unesco-world-heritage",
-      "source:atlas-distrito-federal",
-      "source:unesco-memory-of-the-world",
-      "source:britannica-crosscheck",
-      "typology:planned-capital",
-      "typology:plano-piloto",
-      "typology:superquadra",
-      "program:three-powers",
-      "urban:monumental-axis",
-      "urban:residential-axis",
-      "urban:four-scales",
-      "material:white-concrete",
-      "material:pilotis-glass-concrete",
-      "landscape:bucolic-scale",
-      "infrastructure:road-hierarchy",
-      "critique:social-segregation",
-      "blender:axis-superquadra-layer-candidate",
-      "blender:monumental-building-layer-candidate"
+      "source:unesco-world-heritage-centre-brasilia",
+      "source:atlas-do-distrito-federal-o-projeto-de-lucio-costa",
+      "source:unesco-memory-of-the-world-novacap-archival-fonds",
+      "source:encyclopaedia-britannica-brasilia-city-layout-and-architecture",
+      "source:wikimedia-commons-hero-candidate-brasilia-monumental-axis",
+      "typology:structural-prototype",
+      "style:postwar_modern_architecture",
+      "theme:capital-city",
+      "theme:modern-urbanism",
+      "theme:axis",
+      "theme:plano-piloto",
+      "theme:superquadras",
+      "theme:monumental-axis",
+      "theme:residential-axis",
+      "theme:modernist-capital",
+      "theme:city-park",
+      "theme:state-symbolism",
+      "theme:athens-charter",
+      "material:glass",
+      "material:concrete",
+      "material:vegetation",
+      "rights:review-required",
+      "blender:structural-prototype-layer-candidate",
+      "plan:vector-review-required"
     ],
     "model_assets": [
       {
         "model_type": "site_model",
-        "title": "Brasília Plano Piloto axis and superquadra model",
+        "title": "Brasília Site/context study model",
         "r2_key": "entries/brasilia/models/site.glb",
         "format": "glb",
         "lod_level": "preview",
-        "source_basis": "Diagrammatic reconstruction of Monumental Axis, Residential Axis, Superquadras and green/open-space scales from public heritage descriptions.",
+        "source_basis": "https://whc.unesco.org/en/list/445 | UNESCO World Heritage Centre / Brasilia | Atlas do Distrito Federal / O projeto de Lucio Costa | UNESCO Memory of the World / NOVACAP archival fonds | Encyclopaedia Britannica / Brasília city layout and architecture | Wikimedia Commons hero candidate / Brasília Monumental Axis",
         "generation_method": "procedural",
         "review_status": "draft",
-        "confidence_score": 0.56
+        "confidence_score": 0.42
       },
       {
-        "model_type": "mass_model",
-        "title": "Brasília monumental core massing model",
-        "r2_key": "entries/brasilia/models/mass.glb",
+        "model_type": "structure_model",
+        "title": "Brasília Structure and spatial order study model",
+        "r2_key": "entries/brasilia/models/structure.glb",
         "format": "glb",
         "lod_level": "medium",
-        "source_basis": "Analytical massing of Praça dos Três Poderes, National Congress, ministries axis, Cathedral and key civic forms; not a surveyed model.",
+        "source_basis": "https://whc.unesco.org/en/list/445 | UNESCO World Heritage Centre / Brasilia | Atlas do Distrito Federal / O projeto de Lucio Costa | UNESCO Memory of the World / NOVACAP archival fonds | Encyclopaedia Britannica / Brasília city layout and architecture | Wikimedia Commons hero candidate / Brasília Monumental Axis",
         "generation_method": "source_reconstruction",
         "review_status": "needs_source",
-        "confidence_score": 0.49
+        "confidence_score": 0.32
       },
       {
         "model_type": "tectonic_model",
-        "title": "Brasília monument and landscape tectonic layer model",
+        "title": "Brasília Material, tectonic and filter-layer study model",
         "r2_key": "entries/brasilia/models/tectonic.glb",
         "format": "glb",
-        "lod_level": "medium",
-        "source_basis": "Layer model for white concrete monuments, parabolic forms, open spaces, axes, pilotis and public ground relationships.",
-        "generation_method": "ai_assisted",
-        "review_status": "draft",
-        "confidence_score": 0.45
+        "lod_level": "study",
+        "source_basis": "https://whc.unesco.org/en/list/445 | UNESCO World Heritage Centre / Brasilia | Atlas do Distrito Federal / O projeto de Lucio Costa | UNESCO Memory of the World / NOVACAP archival fonds | Encyclopaedia Britannica / Brasília city layout and architecture | Wikimedia Commons hero candidate / Brasília Monumental Axis; tags: source:unesco-world-heritage-centre-brasilia, source:atlas-do-distrito-federal-o-projeto-de-lucio-costa, source:unesco-memory-of-the-world-novacap-archival-fonds, source:encyclopaedia-britannica-brasilia-city-layout-and-architecture, source:wikimedia-commons-hero-candidate-brasilia-monumental-axis, typology:structural-prototype, style:postwar_modern_architecture, theme:capital-city",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
       }
     ],
     "analysis_layers": [
       {
-        "analysis_type": "urban_context",
-        "summary": "Brasília verbindet Hauptstadtverlegung, Plano Piloto, Monumentalachse, Wohnachse, Superquadras und UNESCO-geschützte Stadtpark-Skalen zu einem modernen nationalen Raumdiagramm.",
+        "analysis_type": "structure",
+        "summary": "Brasília needs a reviewed structural reading connecting glass, concrete, vegetation with construction logic, span, support and assembly.",
         "data": {
-          "context_tags": [
-            "planned_capital",
-            "plano_piloto",
-            "monumental_axis",
-            "superquadras",
-            "world_heritage"
+          "seed_tags": [
+            "structure:needs_review",
+            "glass",
+            "concrete",
+            "vegetation"
           ],
-          "model_layer": "urban_context"
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
-        "r2_key": "entries/brasilia/analysis/urban_context.json",
-        "review_status": "reviewed"
-      },
-      {
-        "analysis_type": "spatial_order",
-        "summary": "Die räumliche Ordnung basiert auf der Kreuzung von Monumentalachse und gekrümmter Wohn-/Verkehrsachse, ergänzt durch vier Maßstabsebenen: monumental, residential, gregarious und bucolic.",
-        "data": {
-          "axes": [
-            "Eixo Monumental",
-            "Eixo Rodoviário"
-          ],
-          "scales": [
-            "monumental",
-            "residential",
-            "gregarious_social",
-            "bucolic"
-          ]
-        },
-        "r2_key": "entries/brasilia/analysis/spatial_order.json",
-        "review_status": "reviewed"
+        "review_status": "draft"
       },
       {
         "analysis_type": "material_system",
-        "summary": "Das Materialsystem kombiniert weiße Betonmonumente, Glas, Pilotis, parabolische Formen, große Grünräume, Straßeninfrastruktur und offene Leere als städtebauliches Material.",
+        "summary": "Brasília should be tagged through glass, concrete, vegetation and verified against primary sources before public material claims are made.",
         "data": {
-          "primary_materials": [
-            "reinforced_concrete",
+          "seed_tags": [
             "glass",
-            "pilotis",
-            "open_green_space",
-            "road_infrastructure"
+            "concrete",
+            "vegetation"
           ],
-          "public_display": "text_and_metadata_safe"
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
-        "r2_key": "entries/brasilia/analysis/material_system.json",
-        "review_status": "reviewed"
+        "review_status": "draft"
       },
       {
-        "analysis_type": "circulation",
-        "summary": "Verkehr ist in Brasília ein tragender Entwurfsapparat: die Straßenhierarchie, die Wohnachse und die automobile Lesbarkeit strukturieren Alltag und Distanz im Plano Piloto.",
+        "analysis_type": "spatial_order",
+        "summary": "Brasília should be read through program, movement, room sequence, exterior relation and typological position rather than as a single image.",
         "data": {
-          "circulation_tags": [
-            "road_hierarchy",
-            "automobility",
-            "residential_axis",
-            "monumental_axis_crossing"
+          "seed_tags": [
+            "spatial_order",
+            "structural_prototype"
           ],
-          "critique": [
-            "pedestrian_distance",
-            "metropolitan_expansion_pressure"
-          ]
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
-        "r2_key": "entries/brasilia/analysis/circulation.json",
-        "review_status": "reviewed"
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "typology",
+        "summary": "Brasília is currently classified as structural_prototype; the seed must verify how this type differs from related entries with the same DNA.",
+        "data": {
+          "seed_tags": [
+            "typology",
+            "structural_prototype",
+            "Brasília, Brazil"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
       },
       {
         "analysis_type": "filter_classification",
-        "summary": "Brasília ist filterbar als geplante Hauptstadt, Plano Piloto, Achsenstadt, Superquadra, UNESCO-Erbe, weißer Beton, Stadtpark, moderne Utopie und Maßstabskritik.",
+        "summary": "Brasília needs filter checks for themes, materials, rights, plan readiness, 3D layer readiness and viewer filters.",
         "data": {
-          "filters": [
-            "capital-city",
-            "modern-urbanism",
-            "plano-piloto",
-            "monumental-axis",
-            "superquadras",
-            "white-concrete",
-            "world-heritage",
-            "urbanism-critique"
-          ]
+          "seed_tags": [
+            "source:unesco-world-heritage-centre-brasilia",
+            "source:atlas-do-distrito-federal-o-projeto-de-lucio-costa",
+            "source:unesco-memory-of-the-world-novacap-archival-fonds",
+            "source:encyclopaedia-britannica-brasilia-city-layout-and-architecture",
+            "source:wikimedia-commons-hero-candidate-brasilia-monumental-axis",
+            "typology:structural-prototype",
+            "style:postwar_modern_architecture",
+            "theme:capital-city",
+            "theme:modern-urbanism",
+            "theme:axis"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
-        "r2_key": "entries/brasilia/analysis/filter_classification.json",
-        "review_status": "reviewed"
+        "review_status": "draft"
       }
     ],
     "database_profile": {
@@ -24012,9 +23949,16 @@
       "media_count": 4,
       "model_count": 3,
       "analysis_count": 5,
-      "tag_count": 18,
+      "tag_count": 24,
       "rights_summary": "Public text, metadata and CC hero are usable; NOVACAP/archival drawings and UNESCO-linked media remain link-only unless rights are cleared.",
-      "updated_at": "2026-05-23T16:58:12.000Z"
+      "updated_at": "2026-05-24T11:57:17.148Z"
+    },
+    "ingestion_status": {
+      "stage": "needs_review",
+      "source_status": "reviewed",
+      "asset_status": "ready",
+      "model_status": "planned",
+      "updated_at": "2026-05-24T11:57:17.149Z"
     }
   },
   {
