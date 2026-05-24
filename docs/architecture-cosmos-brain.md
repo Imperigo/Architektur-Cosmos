@@ -251,6 +251,41 @@ It improves `one_sentence`, `full_description` and `architecture_text` with the
 Architecture Cosmos question framework: These, Netzwerk/DNA, Topos, Typos,
 Tektonik, Raumlogik, Kritik and KosmoData/3D value.
 
+## Brain Model Status And Batch
+
+The Brain must be honest about 3D. A planned R2 key is not a model. A real
+public model is only a checked GLB under `public/archive-models/...` or a later
+verified object-store URL.
+
+```bash
+npm run brain:model-status
+```
+
+This writes:
+
+```text
+out/brain-model-status/YYYY-MM-DD/latest.md
+```
+
+The status buckets are:
+
+- `public_preview_glb` — static website can load a GLB preview;
+- `local_review_glb` — local/private GLB exists under `archive-intake` or `out`;
+- `planned_only` — model assets/R2 keys exist, but no GLB exists yet;
+- `no_model_plan` — no model layer plan exists.
+
+To run the local model pipeline for pilot entries:
+
+```bash
+npm run brain:model-batch -- --execute
+```
+
+The batch calls `cosmos:model-generate` only. It does not copy GLBs to
+`public/`, does not upload R2, does not write D1 and does not modify
+`data/mock-entries.json`. At the moment Villa Savoye is the only reviewed
+procedural GLB template; other entries receive model review plans until their
+plan/section/source basis is strong enough.
+
 ## Future Extensions
 
 - mail intake summary;

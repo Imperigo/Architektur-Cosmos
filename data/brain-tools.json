@@ -42,6 +42,24 @@
       "approval_required_before_public_use": true
     },
     {
+      "id": "brain_model_status",
+      "label": "Brain Model Status",
+      "command": "npm run brain:model-status",
+      "output_root": "out/brain-model-status/{date}",
+      "review_output": "out/brain-model-status/{date}/latest.md",
+      "purpose": "Audit which entries have public GLB previews, local review GLBs, planned-only model targets or no model plan.",
+      "approval_required_before_public_use": false
+    },
+    {
+      "id": "brain_model_batch",
+      "label": "Brain Model Batch",
+      "command": "npm run brain:model-batch -- --execute",
+      "output_root": "out/brain-model-batch/{date}",
+      "review_output": "out/brain-model-batch/{date}/latest.md",
+      "purpose": "Run local model planning and reviewed procedural generation for pilot entries without uploading assets or writing public data.",
+      "approval_required_before_public_use": true
+    },
+    {
       "id": "plan_generate",
       "label": "2D Vector Plan Generator",
       "command": "npm run cosmos:plan-generate -- --entry {slug}",

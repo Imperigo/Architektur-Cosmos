@@ -519,6 +519,13 @@ function ModelAnalysisSection({ entry, modelUrl, accent }: { entry: Entry; model
 
   const materialFilters = materialFilterItems(entry);
   const blenderLayers = blenderLayerItems(entry);
+  const publicPreviewReady = Boolean(modelUrl);
+  const plannedModelCount = (entry.model_assets?.length ?? 0) + (entry.model_3d?.parts?.length ?? 0);
+  const modelStatusLabel = publicPreviewReady
+    ? 'Öffentliches GLB-Preview vorhanden'
+    : plannedModelCount > 0
+      ? 'Modell-Layer geplant, GLB noch nicht öffentlich'
+      : 'Modellaufbau offen';
 
   return (
     <section className="border-t border-white/12 py-10">
@@ -533,15 +540,26 @@ function ModelAnalysisSection({ entry, modelUrl, accent }: { entry: Entry; model
           Dieser Bereich ist der spätere Importkern: Geometrie, Materialfilter, Tragwerk, Tektonik und Quellenbasis sollen in Blender als eigene Ebenen ein- und ausgeblendet werden können.
         </p>
       </div>
+      <div className="mb-4 flex flex-wrap gap-2">
+        <span className="border border-white/14 bg-[#050505]/50 px-3 py-2 text-[10px] uppercase tracking-[0.14em]" style={{ color: accent }}>
+          {modelStatusLabel}
+        </span>
+        <span className="border border-white/14 bg-[#050505]/50 px-3 py-2 text-[10px] uppercase tracking-[0.14em] text-[#b8b8b2]">
+          {plannedModelCount} geplante Layer
+        </span>
+        <span className="border border-white/14 bg-[#050505]/50 px-3 py-2 text-[10px] uppercase tracking-[0.14em] text-[#b8b8b2]">
+          Brain Model Pipeline
+        </span>
+      </div>
 
       {modelUrl ? (
         <EntryModelViewer modelUrl={modelUrl} title={entry.title} accent={accent} />
       ) : (
         <article className="border border-white/14 bg-[#071315]/55 p-5">
-          <div className="text-[10px] uppercase tracking-[0.2em]" style={{ color: accent }}>Model pending</div>
+          <div className="text-[10px] uppercase tracking-[0.2em]" style={{ color: accent }}>Modellstatus: geplant</div>
           <h3 className="mt-3 text-2xl text-[#f7f7f4]">Noch kein öffentliches 3D-Modell</h3>
           <p className="mt-3 max-w-3xl text-sm leading-7 text-[#b8b8b2]">
-            Das Projekt bleibt als Analyse- und Quellenpilot aktiv, bis rights-reviewed Plan-, Schnitt- oder Modellgrundlagen vorhanden sind.
+            Die Datenbank enthält hier Modell-Layer, R2-Zielpfade oder Analyseprofile, aber noch kein geprüftes GLB für den öffentlichen Viewer. Das Brain muss zuerst Quellenbasis, Plan-/Schnittlage, Layerstruktur und Rechte prüfen.
           </p>
         </article>
       )}
@@ -922,7 +940,11 @@ function archiveStatusMetrics(entry: Entry, relatedCount: number): ArchiveStatus
   const sourceValue = Math.min(100, (entry.source_documents?.length ?? 0) * 20 + (entry.source_url ? 24 : 0) + (entry.source_candidates?.length ?? 0) * 8 + (entry.source_quality.includes('verified') ? 24 : 0));
   const mediaValue = Math.min(100, new Set(entry.media.map((media) => media.type)).size * 20 + entry.media.filter((media) => publicDisplayMediaUrl(media)).length * 5);
   const networkValue = Math.min(100, relatedCount * 17 + (entry.database_tags?.length ?? 0) * 2);
-  const modelValue = Math.min(100, (entry.model_assets?.length ?? 0) * 18 + (entry.model_3d?.parts?.length ?? 0) * 12 + (entry.model_3d?.glb_url ? 18 : 0));
+  const hasPublicModelPreview = Boolean(publicModelPreviewUrl(entry));
+  const plannedModelLayers = (entry.model_assets?.length ?? 0) + (entry.model_3d?.parts?.length ?? 0);
+  const modelValue = hasPublicModelPreview
+    ? Math.min(100, 72 + plannedModelLayers * 4)
+    : Math.min(58, plannedModelLayers * 9);
   const analysisValue = Math.min(100, (entry.analysis_layers?.length ?? 0) * 18 + (entry.analysis_observations?.length ?? 0) * 9);
   const textValue = Math.min(100, (entry.architecture_text?.chapters.length ?? 0) * 16 + (entry.full_description.length > 320 ? 28 : 12) + (entry.one_sentence.length > 40 ? 12 : 0));
 
@@ -930,7 +952,7 @@ function archiveStatusMetrics(entry: Entry, relatedCount: number): ArchiveStatus
     { id: 'sources', label: 'Quellenlage', shortLabel: 'QU', value: Math.round(sourceValue), hint: 'Nachweise, Quellenkandidaten und Verifizierungsgrad.' },
     { id: 'media', label: 'Medien / Pläne', shortLabel: 'ME', value: Math.round(mediaValue), hint: 'Außen, Innen, Schnitt, Grundriss und öffentliche Medien.' },
     { id: 'network', label: 'Wissensnetz', shortLabel: 'NE', value: Math.round(networkValue), hint: 'Relationen, Tags und thematische Anschlussfähigkeit.' },
-    { id: 'model', label: '3D-Modell', shortLabel: '3D', value: Math.round(modelValue), hint: 'Modellpakete, GLB-Layer und Blender-Potenzial.' },
+    { id: 'model', label: '3D-Modell', shortLabel: '3D', value: Math.round(modelValue), hint: hasPublicModelPreview ? 'Öffentliches GLB-Preview plus geplante Blender-Layer.' : 'Geplante Modell-Layer; noch kein öffentliches GLB.' },
     { id: 'analysis', label: 'Analyse', shortLabel: 'AN', value: Math.round(analysisValue), hint: 'Material, Tragwerk, Tektonik und Beobachtungslayer.' },
     { id: 'text', label: 'Texttiefe', shortLabel: 'TX', value: Math.round(textValue), hint: 'Architekturtext, Kapitelstruktur und beschreibende Dichte.' }
   ];

@@ -60,6 +60,8 @@
     "brain:autopilot": "node scripts/brain-autopilot.mjs",
     "brain:promote": "node scripts/brain-promote.mjs",
     "brain:polish-texts": "node scripts/brain-polish-texts.mjs",
+    "brain:model-status": "node scripts/brain-model-status.mjs",
+    "brain:model-batch": "node scripts/brain-model-batch.mjs",
     "brain:autopush": "node scripts/brain-autopush.mjs",
     "brain:doctor": "node scripts/brain-doctor.mjs",
     "brain:cloud-plan": "node scripts/brain-cloud-plan.mjs",
