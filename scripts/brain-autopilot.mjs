@@ -11,6 +11,7 @@ const args = parseArgs(process.argv.slice(2));
 const execute = Boolean(args.execute);
 const limit = Number(args.limit ?? 1);
 const outputRoot = resolve(rootDir, 'out/brain-autopilot', today);
+const statePath = resolve(rootDir, 'archive-intake/_brain/autopilot-state.json');
 
 main().catch((error) => {
   console.error(error.message);
@@ -73,6 +74,13 @@ async function main() {
 async function readCompletedTaskIds() {
   const root = resolve(rootDir, 'out/brain-autopilot');
   const completed = new Set();
+  try {
+    const state = JSON.parse(await readFile(statePath, 'utf8'));
+    (state.completed_task_ids || []).forEach((id) => completed.add(id));
+  } catch {
+    // Runtime state is optional; historic reports below can still seed memory.
+  }
+
   let days = [];
   try {
     days = await readdir(root, { withFileTypes: true });
@@ -312,6 +320,39 @@ async function writeRun(report) {
   await writeFile(report.outputs.markdown, renderMarkdown(report), 'utf8');
   await writeFile(resolve(outputRoot, 'latest.json'), `${JSON.stringify(report, null, 2)}\n`, 'utf8');
   await writeFile(resolve(outputRoot, 'latest.md'), renderMarkdown(report), 'utf8');
+  await updateState(report);
+}
+
+async function updateState(report) {
+  if (report.execute !== true || report.status !== 'ready_for_owner_review') return;
+  let state = {
+    version: 1,
+    completed_task_ids: [],
+    runs: []
+  };
+  try {
+    state = JSON.parse(await readFile(statePath, 'utf8'));
+  } catch {
+    // First runtime state file.
+  }
+
+  const completed = new Set(state.completed_task_ids || []);
+  (report.selected_tasks || []).forEach((task) => completed.add(task.id));
+  state.version = 1;
+  state.updated_at = new Date().toISOString();
+  state.completed_task_ids = [...completed].sort();
+  state.runs = [
+    ...(state.runs || []),
+    {
+      generated_at: report.generated_at,
+      status: report.status,
+      task_ids: (report.selected_tasks || []).map((task) => task.id),
+      report: relativeToRoot(report.outputs.json)
+    }
+  ].slice(-50);
+
+  await mkdir(dirname(statePath), { recursive: true });
+  await writeFile(statePath, `${JSON.stringify(state, null, 2)}\n`, 'utf8');
 }
 
 function renderMarkdown(report) {
