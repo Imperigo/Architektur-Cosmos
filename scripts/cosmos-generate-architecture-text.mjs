@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -48,7 +48,7 @@ async function main() {
   };
 
   await writeJson(path.join(reviewRoot, 'architecture-text.json'), textPack);
-  await writeFile(path.join(reviewRoot, 'architecture-text.md'), markdown, 'utf8');
+  await writeTextFile(path.join(reviewRoot, 'architecture-text.md'), markdown);
   await writeJson(path.join(intakeTexts, 'architecture-text.json'), textPack);
   await writeJson(path.join(automationDir, 'text-tool-run.json'), toolRun);
 
@@ -1798,5 +1798,11 @@ function renderMarkdown(pack) {
 }
 
 async function writeJson(filePath, value) {
-  await writeFile(filePath, `${JSON.stringify(value, null, 2)}\n`, 'utf8');
+  await writeTextFile(filePath, `${JSON.stringify(value, null, 2)}\n`);
+}
+
+async function writeTextFile(filePath, value) {
+  const temporaryPath = `${filePath}.tmp-${process.pid}-${Date.now()}`;
+  await writeFile(temporaryPath, value, 'utf8');
+  await rename(temporaryPath, filePath);
 }

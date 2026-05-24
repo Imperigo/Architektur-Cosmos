@@ -324,10 +324,11 @@ async function writeRun(report) {
 }
 
 async function updateState(report) {
-  if (report.execute !== true || report.status !== 'ready_for_owner_review') return;
+  if (report.execute !== true) return;
   let state = {
     version: 1,
     completed_task_ids: [],
+    failed_task_ids: [],
     runs: []
   };
   try {
@@ -337,16 +338,28 @@ async function updateState(report) {
   }
 
   const completed = new Set(state.completed_task_ids || []);
-  (report.selected_tasks || []).forEach((task) => completed.add(task.id));
+  const failed = new Set(state.failed_task_ids || []);
+  const completedRuns = (report.runs || []).filter((run) => run.status === 'ready_for_owner_review');
+  const failedRuns = (report.runs || []).filter((run) => run.status === 'failed');
+  completedRuns.forEach((run) => {
+    completed.add(run.task.id);
+    failed.delete(run.task.id);
+  });
+  failedRuns.forEach((run) => {
+    if (!completed.has(run.task.id)) failed.add(run.task.id);
+  });
   state.version = 1;
   state.updated_at = new Date().toISOString();
   state.completed_task_ids = [...completed].sort();
+  state.failed_task_ids = [...failed].sort();
   state.runs = [
     ...(state.runs || []),
     {
       generated_at: report.generated_at,
       status: report.status,
       task_ids: (report.selected_tasks || []).map((task) => task.id),
+      completed_task_ids: completedRuns.map((run) => run.task.id),
+      failed_task_ids: failedRuns.map((run) => run.task.id),
       report: relativeToRoot(report.outputs.json)
     }
   ].slice(-50);
