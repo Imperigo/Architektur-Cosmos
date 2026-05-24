@@ -9,6 +9,8 @@ const rootDir = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const today = new Date().toISOString().slice(0, 10);
 const args = parseArgs(process.argv.slice(2));
 const execute = Boolean(args.execute);
+const autopush = Boolean(args.autopush || args.publish || process.env.ARCHITECTURE_COSMOS_BRAIN_AUTOPUSH === '1');
+const confirmAutopush = Boolean(args['confirm-autopush'] || process.env.ARCHITECTURE_COSMOS_BRAIN_AUTOPUSH === '1');
 const limit = Number(args.limit ?? 1);
 const outputRoot = resolve(rootDir, 'out/brain-autopilot', today);
 const statePath = resolve(rootDir, 'archive-intake/_brain/autopilot-state.json');
@@ -61,14 +63,32 @@ async function main() {
 
   await writeRun(report);
 
+  const autopushStep = autopush
+    ? runStep('brain-autopush', [
+      'run',
+      'brain:autopush',
+      '--',
+      '--message',
+      `Brain autopilot review batch ${today}`,
+      ...(confirmAutopush ? ['--confirm-autopush'] : [])
+    ])
+    : null;
+
   console.log('Architecture Cosmos Brain Autopilot');
   console.log(`Mode: ${execute ? 'execute local review-only pipeline' : 'plan only'}`);
   console.log(`Tasks selected: ${selectedTasks.length}`);
   console.log(`Report: ${relativeToRoot(report.outputs.json)}`);
   if (!execute) console.log('Tip: add --execute to run the safe local review pipeline.');
-  console.log('Safety: no promote, no commit, no push, no D1/R2 write, no public asset release.');
+  if (autopushStep) {
+    console.log(`Autopush: ${autopushStep.status}`);
+    if (autopushStep.status === 'failed') {
+      console.log('Autopush failed; report was still written locally.');
+      console.log(autopushStep.stderr_tail || autopushStep.stdout_tail);
+    }
+  }
+  console.log(`Safety: no promote, no D1/R2 write, no public asset release.${autopush ? ' Guarded commit/push was explicitly requested.' : ' No commit or push.'}`);
 
-  if (report.status === 'failed') process.exitCode = 1;
+  if (report.status === 'failed' || autopushStep?.status === 'failed') process.exitCode = 1;
 }
 
 async function readCompletedTaskIds() {
@@ -295,8 +315,8 @@ function buildRun({ reviewStep, selected_tasks, skipped_recent_task_ids = [], ru
     reason,
     writes_public_database: false,
     uploads_assets: false,
-    commits: false,
-    pushes: false,
+    commits: autopush ? 'guarded_with_confirm_autopush' : false,
+    pushes: autopush ? 'guarded_with_confirm_autopush' : false,
     approval_required_before_promotion: true,
     review_step: reviewStep,
     skipped_recent_task_ids,
@@ -305,7 +325,10 @@ function buildRun({ reviewStep, selected_tasks, skipped_recent_task_ids = [], ru
     safety_boundary: [
       'No kosmodata:promote is run by Brain Autopilot.',
       'No tracked source file is edited by Brain Autopilot.',
-      'No D1/R2 write, upload, email send, commit, push or publish is performed.',
+      autopush
+        ? 'Commit/push is allowed only through brain:autopush with --confirm-autopush after security, lint and build gates pass.'
+        : 'No D1/R2 write, upload, email send, commit, push or publish is performed.',
+      'No D1/R2 write, upload, email send or public asset release is performed.',
       'Generated outputs are review packs under out/ and archive-intake/.'
     ],
     outputs: {

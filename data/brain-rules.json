@@ -49,6 +49,19 @@
     "private_asset_publication",
     "external_email_send"
   ],
+  "approved_execution_mechanisms": {
+    "guarded_autopush": {
+      "command": "npm run brain:autopush -- --message \"Brain update\" --confirm-autopush",
+      "requires": [
+        "explicit owner approval in the current work session or signed future approval token",
+        "security:check passed",
+        "lint passed",
+        "build passed",
+        "no unsafe local/private paths staged"
+      ],
+      "effect": "commit safe repository changes and push main, which triggers Cloudflare production deploy"
+    }
+  },
   "public_rights_allowed": ["own_work", "licensed", "public_domain", "cc_by", "cc_by_sa"],
   "private_or_blocked_rights": ["unknown", "needs_permission", "private_research", "personal_only", "all_rights_reserved"],
   "entry_quality_targets": {

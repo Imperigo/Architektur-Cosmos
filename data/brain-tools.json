@@ -15,6 +15,15 @@
       "approval_required_before_public_use": true
     },
     {
+      "id": "brain_autopush",
+      "label": "Brain Guarded Autopush",
+      "command": "npm run brain:autopush -- --message \"Brain update\" --confirm-autopush",
+      "output_root": "git/main",
+      "review_output": "terminal/git-log",
+      "purpose": "After explicit owner approval, run security, lint and build gates, commit safe tracked repository changes and push main to production.",
+      "approval_required_before_public_use": true
+    },
+    {
       "id": "plan_generate",
       "label": "2D Vector Plan Generator",
       "command": "npm run cosmos:plan-generate -- --entry {slug}",

@@ -170,6 +170,34 @@ It may run safe local review commands, but it does not run
 not push, does not upload to R2 and does not write to D1. Its job is to prepare
 review packets and suggested approval commands.
 
+### Guarded Autopush
+
+After explicit owner approval, the Brain can also publish safe repository
+changes through a guarded command:
+
+```bash
+npm run brain:autopush -- --message "Brain update" --confirm-autopush
+```
+
+This command is intentionally separate from normal review mode. It:
+
+- refuses to run without `--confirm-autopush` or
+  `ARCHITECTURE_COSMOS_BRAIN_AUTOPUSH=1`;
+- refuses to run outside `main`;
+- refuses to stage local/private paths such as `archive-inbox/`,
+  `archive-intake/`, `out/`, `.env*`, `.next/` and `.wrangler/`;
+- runs `security:check`, `lint` and `build`;
+- commits safe tracked repository changes when needed;
+- pushes `main`, which triggers the Cloudflare production deploy.
+
+Autopilot can call the same guard explicitly:
+
+```bash
+npm run brain:autopilot -- --execute --limit 5 --autopush --confirm-autopush
+```
+
+Without those flags, Autopilot remains review-only and does not push.
+
 ## Future Extensions
 
 - mail intake summary;

@@ -58,6 +58,7 @@
     "database:hero-images:apply-manual": "node scripts/research-hero-images.mjs --apply --manual-only",
     "brain:review": "node scripts/brain-review.mjs",
     "brain:autopilot": "node scripts/brain-autopilot.mjs",
+    "brain:autopush": "node scripts/brain-autopush.mjs",
     "brain:doctor": "node scripts/brain-doctor.mjs",
     "brain:cloud-plan": "node scripts/brain-cloud-plan.mjs",
     "brain:cloud-export": "node scripts/brain-cloud-export.mjs",
