@@ -85,7 +85,8 @@ async function createReview() {
 async function promoteReview() {
   const slug = args.entry || args.slug;
   if (!slug) throw new Error('Missing --entry {slug}');
-  if (!args.confirm) throw new Error('Promotion writes data/mock-entries.json. Re-run with --confirm after owner review.');
+  const dryRun = Boolean(args['dry-run'] || args.dryRun || args.check);
+  if (!args.confirm && !dryRun) throw new Error('Promotion writes data/mock-entries.json. Re-run with --confirm after owner review.');
 
   const entries = await readJson(entriesPath);
   const index = entries.findIndex((item) => item.slug === slug || item.id === slug);
@@ -97,6 +98,15 @@ async function promoteReview() {
   const review = buildReview({ entry, proposedEntry, seed: { id: entry.slug, source: 'existing-review-pack' } });
   if (review.promotion.blockers.length) {
     throw new Error(`Promotion blocked:\n- ${review.promotion.blockers.join('\n- ')}`);
+  }
+
+  if (dryRun) {
+    console.log('KosmoData promotion dry run');
+    console.log(`Entry: ${proposedEntry.title} (${proposedEntry.slug})`);
+    console.log(`Readiness: ${review.promotion.readiness}`);
+    console.log(`Warnings: ${review.promotion.warnings.length}`);
+    console.log('No files changed.');
+    return;
   }
 
   entries[index] = proposedEntry;

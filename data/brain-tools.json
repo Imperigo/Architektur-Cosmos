@@ -24,6 +24,15 @@
       "approval_required_before_public_use": true
     },
     {
+      "id": "brain_promote",
+      "label": "Brain Promotion Controller",
+      "command": "npm run brain:promote -- --limit 5",
+      "output_root": "out/brain-promote/{date}",
+      "review_output": "out/brain-promote/{date}/brain-promote-*.md",
+      "purpose": "Plan or execute owner-approved batch promotion from local reviewed proposed-entry.json packs into data/mock-entries.json, without asset uploads or D1/R2 writes.",
+      "approval_required_before_public_use": true
+    },
+    {
       "id": "plan_generate",
       "label": "2D Vector Plan Generator",
       "command": "npm run cosmos:plan-generate -- --entry {slug}",

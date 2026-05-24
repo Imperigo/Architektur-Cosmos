@@ -198,6 +198,37 @@ npm run brain:autopilot -- --execute --limit 5 --autopush --confirm-autopush
 
 Without those flags, Autopilot remains review-only and does not push.
 
+## Brain Promotion Controller
+
+Once Autopilot has prepared local review packs, the Promotion Controller checks
+which proposed entries can safely move into the static public data file:
+
+```bash
+npm run brain:promote -- --limit 5
+```
+
+The default mode is a plan/dry-run. It scans local
+`archive-intake/{slug}/enrichment/proposed-entry.json` files, runs
+`kosmodata:promote --dry-run` for each candidate, and writes a report under:
+
+```text
+out/brain-promote/YYYY-MM-DD/
+```
+
+After owner approval, a small batch can be applied:
+
+```bash
+npm run brain:promote -- --limit 5 --execute --confirm-promote
+```
+
+This writes only `data/mock-entries.json`. It does not upload assets, does not
+write D1/R2 and does not publish private files. To deploy the promoted public
+metadata immediately after the same gates, add guarded autopush:
+
+```bash
+npm run brain:promote -- --limit 5 --execute --confirm-promote --autopush --confirm-autopush
+```
+
 ## Future Extensions
 
 - mail intake summary;
