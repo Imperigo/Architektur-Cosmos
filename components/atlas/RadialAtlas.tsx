@@ -2336,11 +2336,12 @@ function OrbitMenuBackdrop({ mode }: { mode: 'intro' | 'hub' }) {
 
 function ModuleHub({ onOpenKosmoData }: { onOpenKosmoData: () => void }) {
   const lastTouchActionRef = useRef(0);
-  const modules: Array<{
-    id: string;
+  type ModuleStation = {
+    id: 'data' | 'asset' | 'design' | 'shop';
     name: string;
     label: string;
     description: string;
+    detail: string[];
     status: 'bereit' | 'in Planung';
     accent: string;
     x: number;
@@ -2348,12 +2349,15 @@ function ModuleHub({ onOpenKosmoData }: { onOpenKosmoData: () => void }) {
     xMobile: number;
     yMobile: number;
     onClick?: () => void;
-  }> = [
+  };
+  const [selectedModuleId, setSelectedModuleId] = useState<ModuleStation['id'] | null>(null);
+  const modules: ModuleStation[] = [
     {
       id: 'data',
       name: 'KosmoData',
       label: 'Referenzbibliothek / Atlas',
       description: 'Wurmloch, Referenzarchiv, Projekte, Quellen und 3D-Modelle.',
+      detail: ['Architekturprojekte im Wurmloch', 'öffentliche und private Quellenlogik', 'Analyse-, Material- und Modell-Layer'],
       status: 'bereit',
       accent: '#00e7ff',
       x: 0,
@@ -2367,6 +2371,7 @@ function ModuleHub({ onOpenKosmoData }: { onOpenKosmoData: () => void }) {
       name: 'KosmoAsset',
       label: '2D / 3D / Texturen',
       description: 'Bauteile, 2D-Pläne, 3D-Modelle, Texturen und Materialpakete.',
+      detail: ['wiederverwendbare 2D-/3D-Bauteile', 'Materialien, Texturen und Referenzpakete', 'Exportlogik für Blender, ArchiCAD und Wettbewerbspipeline'],
       status: 'in Planung',
       accent: '#f5b342',
       x: 214,
@@ -2379,6 +2384,7 @@ function ModuleHub({ onOpenKosmoData }: { onOpenKosmoData: () => void }) {
       name: 'KosmoDesign',
       label: 'Prepare / Draw / Vis / Publish',
       description: 'Entwurf, Planwerk, Visualisierung und Publikation als gebündelte Pipeline.',
+      detail: ['KosmoPrepare für Briefing und Kontext', 'KosmoDraw und KosmoVis für Plan, Modell und Bild', 'KosmoPublish für Layout, Abgabe und Review-Pakete'],
       status: 'in Planung',
       accent: '#ff4fd8',
       x: 0,
@@ -2391,6 +2397,7 @@ function ModuleHub({ onOpenKosmoData }: { onOpenKosmoData: () => void }) {
       name: 'KosmoShop',
       label: 'Produkte / Tools / Käufe',
       description: 'Späterer Ort für Produktzugang, Toolkäufe und freigegebene Pakete.',
+      detail: ['freigegebene Tool- und Asset-Pakete', 'Produktzugänge und spätere Kaufmodule', 'klare Trennung zwischen Shop, Dev-Werkzeugen und privaten Daten'],
       status: 'in Planung',
       accent: '#65ff73',
       x: -214,
@@ -2399,9 +2406,17 @@ function ModuleHub({ onOpenKosmoData }: { onOpenKosmoData: () => void }) {
       yMobile: -38
     }
   ];
+  const selectedModule = modules.find((module) => module.id === selectedModuleId) || null;
 
   return (
-    <div className="module-hub cosmos-text-safe">
+    <div
+      className="module-hub cosmos-text-safe"
+      onKeyDown={(event) => {
+        if (event.key !== 'Escape' && event.key !== 'Backspace') return;
+        event.preventDefault();
+        setSelectedModuleId(null);
+      }}
+    >
       <div className="module-hub-orbit module-hub-orbit-a" />
       <div className="module-hub-orbit module-hub-orbit-b" />
       <div className="module-hub-core">
@@ -2415,23 +2430,23 @@ function ModuleHub({ onOpenKosmoData }: { onOpenKosmoData: () => void }) {
           <button
             key={module.id}
             type="button"
-            className={`module-station ${isReady ? 'module-station-ready' : 'module-station-planned'}`}
+            className={`module-station ${isReady ? 'module-station-ready' : 'module-station-planned'} ${selectedModuleId === module.id ? 'module-station-selected' : ''}`}
             style={{ '--station-x': `${module.x}px`, '--station-y': `${module.y}px`, '--station-x-mobile': `${module.xMobile}px`, '--station-y-mobile': `${module.yMobile}px`, '--station-accent': module.accent } as CSSProperties}
-            disabled={!isReady}
+            aria-pressed={selectedModuleId === module.id}
             onTouchStart={(event) => {
               lastTouchActionRef.current = Date.now();
               event.preventDefault();
               event.stopPropagation();
-              if (!isReady) return;
-              module.onClick?.();
+              if (isReady) module.onClick?.();
+              else setSelectedModuleId(module.id);
             }}
             onClick={(event) => {
               event.stopPropagation();
               if (Date.now() - lastTouchActionRef.current < 500) return;
-              if (!isReady) return;
-              module.onClick?.();
+              if (isReady) module.onClick?.();
+              else setSelectedModuleId((current) => (current === module.id ? null : module.id));
             }}
-            aria-label={isReady ? `${module.name} öffnen` : `${module.name} ist in Planung`}
+            aria-label={isReady ? `${module.name} öffnen` : `${module.name} Vorschau öffnen`}
           >
             <small>{module.status}</small>
             <strong>{module.name}</strong>
@@ -2440,6 +2455,22 @@ function ModuleHub({ onOpenKosmoData }: { onOpenKosmoData: () => void }) {
           </button>
         );
       })}
+      {selectedModule ? (
+        <aside className="module-hub-preview" style={{ '--station-accent': selectedModule.accent } as CSSProperties} onPointerDown={(event) => event.stopPropagation()} onClick={(event) => event.stopPropagation()}>
+          <small>{selectedModule.status}</small>
+          <strong>{selectedModule.name}</strong>
+          <span>{selectedModule.label}</span>
+          <p>{selectedModule.description}</p>
+          <ul>
+            {selectedModule.detail.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+          <button type="button" onClick={() => setSelectedModuleId(null)}>
+            Vorschau schliessen
+          </button>
+        </aside>
+      ) : null}
     </div>
   );
 }

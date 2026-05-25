@@ -189,6 +189,7 @@ Die Stationen sollen nicht wie normale Website-Kacheln wirken, sondern wie navig
 - Nach dem Startbild öffnet jetzt ein kosmisches Modul-Rad als Projektzentrale.
 - `KosmoData` ist als aktives Modul verbunden und startet das Wurmloch.
 - `KosmoAsset`, `KosmoDesign` und `KosmoShop` sind als geplante Orbit-Stationen sichtbar, aber noch nicht funktional ausgebaut.
+- Geplante Orbit-Stationen sind nicht mehr deaktiviert, sondern öffnen eine kurze Vorschau mit Zweck, Umfang und Planungsstatus.
 - Die Phone-Tier-Regeln wurden verdichtet, damit Brain, Suche, Dev und Mobile-Dock auf `390x844` ohne horizontalen Overflow lesbar bleiben.
 
 ### Verifiziert
