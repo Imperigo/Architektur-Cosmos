@@ -370,7 +370,7 @@ function buildRightsReport(entry) {
 
 function sourceIsProjectSpecific(source, entry) {
   if (source.project_specific === true) return true;
-  const haystack = normalizeText([source.title, source.url].filter(Boolean).join(' '));
+  const haystack = normalizeText([source.title, source.name, source.id, source.url, source.query, source.notes].filter(Boolean).join(' '));
   const needles = [
     entry.slug,
     entry.id,
@@ -503,7 +503,8 @@ function normalizeSources(sources) {
       url: source.url,
       reliability_level: source.reliability_level || 'needs_review',
       rights_status: source.rights_status || 'link_only',
-      notes: source.notes || ''
+      notes: source.notes || '',
+      project_specific: source.project_specific === true
     }))
     .filter((source) => {
       const key = source.url || source.title;

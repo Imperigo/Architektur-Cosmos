@@ -11729,10 +11729,10 @@
       "baroque city",
       "infrastructure"
     ],
-    "short_description": "Fruehes Beispiel einer grossmassstaeblichen Stadtordnung durch Sichtachsen, Obelisken und eine vernetzte sakrale Topografie.",
-    "source_quality": "lecture_notes",
-    "one_sentence": "Rom unter Sixtus V. ist als Stadt- und Raumplan in Rom, Italy im Jahr 1585 im Architecture Cosmos verortet und verknuepft axis, pilgrimage, baroque city.",
-    "full_description": "Fruehes Beispiel einer grossmassstaeblichen Stadtordnung durch Sichtachsen, Obelisken und eine vernetzte sakrale Topografie. Der Eintrag wird im Atlas als Stadt- und Raumplan gelesen und gehoert zur Wissensspur Global History ETH, Layer urban history. Autorenschaft / Quelle: Domenico Fontana, Sixtus V.. Seine Filterebene verbindet axis, pilgrimage, baroque city, infrastructure mit Jahr, Stilsektor und Relationennetz; spaeter koennen echte Fotos, Plaene, Schnitte, Quellen und Modelle direkt aus der Datenbank angeschlossen werden.",
+    "short_description": "Rom unter Sixtus V. reorganisiert die Stadt über Achsen, Pilgerwege, Obelisken, Wasserinfrastruktur und sakrale Sichtbeziehungen.",
+    "source_quality": "research_seed_review",
+    "one_sentence": "Der Stadtumbau Sixtus V. zeigt, wie barocke Urbanistik Bewegung, Religion, Infrastruktur und Monumente zu einem lesbaren Netz der Stadt macht.",
+    "full_description": "Rom unter Sixtus V. wird als urbanes Netzwerkprojekt gelesen. Domenico Fontana und Sixtus V. verbinden Kirchen, Pilgerwege, Obelisken, Straßenachsen und Wasserinfrastruktur zu einem neuen Orientierungssystem der Stadt. Architektonisch relevant ist die Verbindung von technischer und symbolischer Ordnung: Wege führen Körper durch die Stadt, während Obelisken, Brunnen und Sichtachsen religiöse und politische Bedeutung markieren. Für KosmoData ist der Eintrag zentral für Achsenplanung, Barockstadt, Infrastruktur, Pilgerurbanistik und die Frage, wie Stadt durch Bewegung und Zeichen neu lesbar wird.",
     "media": [
       {
         "type": "exterior",
@@ -11756,8 +11756,8 @@
       }
     ],
     "architecture_text": {
-      "headline": "Rom unter Sixtus V.: Achsen, Obelisken und Pilgerstadt",
-      "overview": "Rom unter Sixtus V. wird als Stadtplan verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und Rom, Italy. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "headline": "Rom unter Sixtus V.: Achsen als urbanes Glaubensnetz",
+      "overview": "Der Umbau Roms unter Sixtus V. verbindet Straßen, Obelisken, Kirchen, Wasser und Pilgerbewegung zu einem städtischen Orientierungssystem.",
       "chapters": [
         {
           "title": "Architektonische Lesart",
@@ -11794,13 +11794,267 @@
           "text": "Rom unter Sixtus V. ist als Referenz wichtig, weil Achse, Pilgerbewegung, barocke Stadt, Infrastruktur nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
           "source_basis": "derived from entry metadata and Brain quality rules",
           "review_status": "draft_review"
+        },
+        {
+          "title": "Netzwerk und DNA",
+          "text": "Rom unter Sixtus V. wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, wie es sich innerhalb derselben architektonischen DNA unterscheidet: durch Ort, Auftrag, Fügung, Gebrauch und kulturelle Haltung.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Topos / Typos / Tektonik",
+          "text": "Topos, Typos und Tektonik werden zusammen gelesen: Ort und Landschaft bilden die Setzung, Stadtplan bildet den typologischen Ausgangspunkt, und Stadtplan, rome, axes, obelisk, primary source, water infrastructure, pilgrimage, baroque city markieren die konstruktiv-atmosphärische Lesart.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für KosmoData ist Rom unter Sixtus V. relevant, weil sich daraus Filter, Vergleichsgruppen, Planlayer und spätere Blender-Collections ableiten lassen: Stadtplan, klassische Architektur, axis, pilgrimage, baroque city, infrastructure, rome, axes.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
         }
       ],
       "language": "de",
-      "generator": "cosmos-generate-architecture-text",
-      "generated_at": "2026-05-21T18:29:07.249Z",
+      "generator": "kosmodata-seed-from-research",
+      "generated_at": "2026-05-25T08:27:00.615Z",
       "review_status": "needs_owner_review",
       "source_basis": []
+    },
+    "source_candidates": [
+      {
+        "source_type": "library_digital_collection",
+        "title": "University of Michigan / Sixtus V's plan for Rome",
+        "url": "https://quod.lib.umich.edu/u/ummu/x-03-02158/03_02158",
+        "reliability_level": "high",
+        "rights_status": "record_level_license_required",
+        "notes": "Digital collection record for Sixtus V's plan for Rome. Review image rights before any public display.",
+        "project_specific": true
+      },
+      {
+        "source_type": "primary_source_digitization",
+        "title": "Smithsonian Libraries / Domenico Fontana, Della trasportatione dell'obelisco vaticano",
+        "url": "https://library.si.edu/digital-library/book/dellatrasportat00font",
+        "reliability_level": "high",
+        "rights_status": "public_domain_review",
+        "notes": "Digitized primary source by Domenico Fontana around Sixtus V's works. Use public-domain status only after record review.",
+        "project_specific": true
+      },
+      {
+        "source_type": "academic_project_page",
+        "title": "RWTH Aachen / Fontana dell'Acqua Felice in Rome",
+        "url": "https://ages.rwth-aachen.de/cms/ages/forschung/forschungsprojekte-a-z/~eovde/fontana-dell-acqua-felice-in-rom/?lidx=1",
+        "reliability_level": "high",
+        "rights_status": "link_only",
+        "notes": "Academic source on Sixtus V, Domenico Fontana, water infrastructure and the sacralization of Roman public space.",
+        "project_specific": true
+      }
+    ],
+    "materials": {
+      "primary": [
+        "urban-plan",
+        "rome",
+        "axes",
+        "obelisk",
+        "primary-source",
+        "water-infrastructure",
+        "pilgrimage",
+        "baroque-city"
+      ],
+      "secondary": [
+        "craft_details",
+        "surface_system",
+        "construction_logic"
+      ],
+      "notes": "Seeded from local reviewed source metadata; verify exact material claims before publication."
+    },
+    "program": {
+      "type": "urban_plan",
+      "subtype": "classical_architecture_reference",
+      "public_access": "needs_review",
+      "components": [
+        "axis",
+        "pilgrimage",
+        "baroque city",
+        "infrastructure",
+        "urban_plan",
+        "classical_architecture"
+      ]
+    },
+    "context": {
+      "topography": "needs_site_review",
+      "setting": "Rom, Italy",
+      "landscape_relations": [
+        "site_context_needs_review"
+      ],
+      "urban_context": [
+        "urban_history",
+        "lecture_notes"
+      ],
+      "construction_logic": [
+        "axis",
+        "pilgrimage",
+        "baroque city",
+        "infrastructure",
+        "urban_plan",
+        "classical_architecture"
+      ]
+    },
+    "database_tags": [
+      "typology:urban-plan",
+      "style:classical_architecture",
+      "theme:axis",
+      "theme:pilgrimage",
+      "theme:baroque-city",
+      "theme:infrastructure",
+      "material:urban-plan",
+      "material:rome",
+      "material:axes",
+      "material:obelisk",
+      "material:primary-source",
+      "material:water-infrastructure",
+      "material:pilgrimage",
+      "material:baroque-city",
+      "rights:review-required",
+      "blender:urban-plan-layer-candidate",
+      "plan:vector-review-required",
+      "viewer:3d-layer-review-required"
+    ],
+    "model_assets": [
+      {
+        "model_type": "site_model",
+        "title": "Rom unter Sixtus V. Site/context study model",
+        "r2_key": "entries/sixtus-v-rome-plan/models/site.glb",
+        "format": "glb",
+        "lod_level": "preview",
+        "source_basis": "entry metadata only; needs source review",
+        "generation_method": "procedural",
+        "review_status": "draft",
+        "confidence_score": 0.42
+      },
+      {
+        "model_type": "structure_model",
+        "title": "Rom unter Sixtus V. Structure and spatial order study model",
+        "r2_key": "entries/sixtus-v-rome-plan/models/structure.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "entry metadata only; needs source review",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      },
+      {
+        "model_type": "tectonic_model",
+        "title": "Rom unter Sixtus V. Material, tectonic and filter-layer study model",
+        "r2_key": "entries/sixtus-v-rome-plan/models/tectonic.glb",
+        "format": "glb",
+        "lod_level": "study",
+        "source_basis": "entry metadata only; needs source review; tags: typology:urban-plan, style:classical_architecture, theme:axis, theme:pilgrimage, theme:baroque-city, theme:infrastructure, material:urban-plan, material:rome",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      }
+    ],
+    "analysis_layers": [
+      {
+        "analysis_type": "structure",
+        "summary": "Rom unter Sixtus V. needs a reviewed structural reading connecting urban-plan, rome, axes with construction logic, span, support and assembly.",
+        "data": {
+          "seed_tags": [
+            "structure:needs_review",
+            "urban-plan",
+            "rome",
+            "axes",
+            "obelisk",
+            "primary-source",
+            "water-infrastructure",
+            "pilgrimage",
+            "baroque-city"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "material_system",
+        "summary": "Rom unter Sixtus V. should be tagged through urban-plan, rome, axes, obelisk, primary-source, water-infrastructure, pilgrimage, baroque-city and verified against primary sources before public material claims are made.",
+        "data": {
+          "seed_tags": [
+            "urban-plan",
+            "rome",
+            "axes",
+            "obelisk",
+            "primary-source",
+            "water-infrastructure",
+            "pilgrimage",
+            "baroque-city"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "spatial_order",
+        "summary": "Rom unter Sixtus V. should be read through program, movement, room sequence, exterior relation and typological position rather than as a single image.",
+        "data": {
+          "seed_tags": [
+            "spatial_order",
+            "urban_plan"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "typology",
+        "summary": "Rom unter Sixtus V. is currently classified as urban_plan; the seed must verify how this type differs from related entries with the same DNA.",
+        "data": {
+          "seed_tags": [
+            "typology",
+            "urban_plan",
+            "Rom, Italy"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "summary": "Rom unter Sixtus V. needs filter checks for themes, materials, rights, plan readiness, 3D layer readiness and viewer filters.",
+        "data": {
+          "seed_tags": [
+            "typology:urban-plan",
+            "style:classical_architecture",
+            "theme:axis",
+            "theme:pilgrimage",
+            "theme:baroque-city",
+            "theme:infrastructure",
+            "material:urban-plan",
+            "material:rome",
+            "material:axes",
+            "material:obelisk"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      }
+    ],
+    "database_profile": {
+      "status": "reviewed",
+      "r2_prefix": "entries/sixtus-v-rome-plan",
+      "source_count": 3,
+      "media_count": 4,
+      "model_count": 3,
+      "analysis_count": 5,
+      "tag_count": 18,
+      "rights_summary": "Public text and metadata are allowed; visual assets remain link-only/private until rights are cleared.",
+      "updated_at": "2026-05-25T08:27:00.770Z"
+    },
+    "ingestion_status": {
+      "stage": "needs_review",
+      "source_status": "reviewed",
+      "asset_status": "candidate",
+      "model_status": "planned",
+      "updated_at": "2026-05-25T08:27:00.771Z"
     }
   },
   {
@@ -20476,10 +20730,10 @@
       "infrastructure",
       "urban-block"
     ],
-    "short_description": "Immeuble Rue des Amiraux ist im PDF-Framework als housing / infrastructure verortet und bildet einen wichtigen Knoten der Architektur- und Stadtgeschichte.",
-    "source_quality": "lecture_pdf",
-    "one_sentence": "Immeuble Rue des Amiraux ist als Bauwerk in Paris, France im Jahr 1927 im Architecture Cosmos verortet und verknuepft housing, infrastructure, urban block.",
-    "full_description": "Immeuble Rue des Amiraux ist im PDF-Framework als housing / infrastructure verortet und bildet einen wichtigen Knoten der Architektur- und Stadtgeschichte. Der Eintrag wird im Atlas als Bauwerk gelesen und gehoert zur Wissensspur Architekturgeschichte ETH, 03 Architekturgeschichte 3_4.pdf, Layer architecture history 3 4. Autorenschaft / Quelle: Henri Sauvage, Charles Sarazin. Seine Filterebene verbindet housing, infrastructure, urban block mit Jahr, Stilsektor und Relationennetz; spaeter koennen echte Fotos, Plaene, Schnitte, Quellen und Modelle direkt aus der Datenbank angeschlossen werden.",
+    "short_description": "Das Immeuble Rue des Amiraux verbindet sozialen Wohnbau, gestufte Terrassenfassade, Keramikhaut und Schwimmbad zu einem hygienischen Stadtblock der Moderne.",
+    "source_quality": "research_seed_review",
+    "one_sentence": "Das Immeuble Rue des Amiraux zeigt, wie Henri Sauvage Wohnungsreform, Licht, Luft, keramische Oberfläche und öffentliche Infrastruktur in einem dicht gesetzten Pariser Block zusammenführt.",
+    "full_description": "Das Immeuble Rue des Amiraux wird als urbanes Wohnlabor gelesen. Henri Sauvage und Charles Sarazin entwickeln keinen neutralen Block, sondern eine gestufte Wohnmaschine, in der Terrassen, Licht, Luft, Keramikfassade und ein integriertes Schwimmbad eine hygienische Moderne formulieren. Architektonisch wichtig ist die Spannung zwischen hoher städtischer Dichte und dem Versprechen gesunder Wohnbedingungen: Der Block wird über Schnitt, Rücksprung, Oberfläche und gemeinschaftliche Infrastruktur organisiert. Für KosmoData ist der Eintrag zentral für modernen Wohnbau, Sozialreform, Hygiene, Fassadentektonik und die frühe Verbindung von Wohnen und öffentlicher Ausstattung.",
     "media": [
       {
         "type": "exterior",
@@ -20506,8 +20760,8 @@
       "03 Architekturgeschichte 3_4.pdf"
     ],
     "architecture_text": {
-      "headline": "Rue des Amiraux: Wohnblock, Bad und urbane Infrastruktur",
-      "overview": "Immeuble Rue des Amiraux wird als Gebäude verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und Paris, France. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "headline": "Rue des Amiraux: Sozialer Wohnblock als hygienische Maschine",
+      "overview": "Das Immeuble Rue des Amiraux verbindet Paris, Wohnungsreform, Terrassen, Keramik und Schwimmbad zu einem frühen Experiment der gesunden, dichten Stadt.",
       "chapters": [
         {
           "title": "Architektonische Lesart",
@@ -20544,11 +20798,255 @@
           "text": "Immeuble Rue des Amiraux ist als Referenz wichtig, weil housing, Infrastruktur, Stadtblock nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
           "source_basis": "derived from entry metadata and Brain quality rules",
           "review_status": "draft_review"
+        },
+        {
+          "title": "Netzwerk und DNA",
+          "text": "Immeuble Rue des Amiraux wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, wie es sich innerhalb derselben architektonischen DNA unterscheidet: durch Ort, Auftrag, Fügung, Gebrauch und kulturelle Haltung.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Topos / Typos / Tektonik",
+          "text": "Topos, Typos und Tektonik werden zusammen gelesen: Ort und Landschaft bilden die Setzung, Wohnhaus bildet den typologischen Ausgangspunkt, und Keramik, Beton, Glas, Wohnungsbau, Hygiene, facade markieren die konstruktiv-atmosphärische Lesart.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für KosmoData ist Immeuble Rue des Amiraux relevant, weil sich daraus Filter, Vergleichsgruppen, Planlayer und spätere Blender-Collections ableiten lassen: Wohnhaus, moderne Architektur, Wohnungsbau, infrastructure, urban block, Keramik, Beton, Glas.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
         }
       ],
       "review_status": "draft_review",
       "public_use_allowed": true,
-      "generated_at": "2026-05-21T18:36:41.688Z"
+      "generated_at": "2026-05-25T08:26:48.633Z",
+      "generator": "kosmodata-seed-from-research"
+    },
+    "source_candidates": [
+      {
+        "source_type": "museum_collection_record",
+        "title": "Cite de l'architecture / Immeuble d'habitation, 13 rue des Amiraux",
+        "url": "https://www.citedelarchitecture.fr/fr/oeuvre/immeuble-dhabitation-13-rue-des-amiraux-coupe-transversale",
+        "reliability_level": "high",
+        "rights_status": "link_only",
+        "notes": "Institutional source for the stepped HBM housing block, architects, dates, ceramic facade, hygienist logic and swimming pool. Use metadata and paraphrased analysis only.",
+        "project_specific": true
+      },
+      {
+        "source_type": "city_article",
+        "title": "Ville de Paris / Henri Sauvage, Immeuble des Amiraux",
+        "url": "https://www.paris.fr/pages/5-edifices-remarquables-d-henri-sauvage-architecte-de-la-samaritaine-17993",
+        "reliability_level": "high",
+        "rights_status": "link_only",
+        "notes": "Official city source for Henri Sauvage's Paris buildings, including Immeuble des Amiraux. Use as factual source trail.",
+        "project_specific": true
+      },
+      {
+        "source_type": "official_culture_record",
+        "title": "POP Culture / Facade sur des Amiraux",
+        "url": "https://pop.culture.gouv.fr/notice/memoire/AP12R095841",
+        "reliability_level": "high",
+        "rights_status": "record_level_license_required",
+        "notes": "French Ministry of Culture image/record candidate. File-level rights review required before any public display.",
+        "project_specific": true
+      }
+    ],
+    "materials": {
+      "primary": [
+        "ceramic",
+        "concrete",
+        "glass",
+        "housing",
+        "hygiene",
+        "facade"
+      ],
+      "secondary": [
+        "craft_details",
+        "surface_system",
+        "construction_logic"
+      ],
+      "notes": "Seeded from local reviewed source metadata; verify exact material claims before publication."
+    },
+    "program": {
+      "type": "apartment_building",
+      "subtype": "modern_architecture_reference",
+      "public_access": "needs_review",
+      "components": [
+        "housing",
+        "infrastructure",
+        "urban-block",
+        "building",
+        "modern_architecture"
+      ]
+    },
+    "context": {
+      "topography": "needs_site_review",
+      "setting": "Paris, France",
+      "landscape_relations": [
+        "site_context_needs_review"
+      ],
+      "urban_context": [
+        "architecture_history_3_4",
+        "lecture_pdf"
+      ],
+      "construction_logic": [
+        "housing",
+        "infrastructure",
+        "urban-block",
+        "building",
+        "modern_architecture"
+      ]
+    },
+    "database_tags": [
+      "typology:apartment-building",
+      "style:modern_architecture",
+      "theme:housing",
+      "theme:infrastructure",
+      "theme:urban-block",
+      "material:ceramic",
+      "material:concrete",
+      "material:glass",
+      "material:housing",
+      "material:hygiene",
+      "material:facade",
+      "rights:review-required",
+      "blender:apartment-building-layer-candidate",
+      "plan:vector-review-required",
+      "viewer:3d-layer-review-required"
+    ],
+    "model_assets": [
+      {
+        "model_type": "site_model",
+        "title": "Immeuble Rue des Amiraux Site/context study model",
+        "r2_key": "entries/immeuble-rue-des-amiraux/models/site.glb",
+        "format": "glb",
+        "lod_level": "preview",
+        "source_basis": "entry metadata only; needs source review",
+        "generation_method": "procedural",
+        "review_status": "draft",
+        "confidence_score": 0.42
+      },
+      {
+        "model_type": "structure_model",
+        "title": "Immeuble Rue des Amiraux Structure and spatial order study model",
+        "r2_key": "entries/immeuble-rue-des-amiraux/models/structure.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "entry metadata only; needs source review",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      },
+      {
+        "model_type": "tectonic_model",
+        "title": "Immeuble Rue des Amiraux Material, tectonic and filter-layer study model",
+        "r2_key": "entries/immeuble-rue-des-amiraux/models/tectonic.glb",
+        "format": "glb",
+        "lod_level": "study",
+        "source_basis": "entry metadata only; needs source review; tags: typology:apartment-building, style:modern_architecture, theme:housing, theme:infrastructure, theme:urban-block, material:ceramic, material:concrete, material:glass",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      }
+    ],
+    "analysis_layers": [
+      {
+        "analysis_type": "structure",
+        "summary": "Immeuble Rue des Amiraux needs a reviewed structural reading connecting ceramic, concrete, glass with construction logic, span, support and assembly.",
+        "data": {
+          "seed_tags": [
+            "structure:needs_review",
+            "ceramic",
+            "concrete",
+            "glass",
+            "housing",
+            "hygiene",
+            "facade"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "material_system",
+        "summary": "Immeuble Rue des Amiraux should be tagged through ceramic, concrete, glass, housing, hygiene, facade and verified against primary sources before public material claims are made.",
+        "data": {
+          "seed_tags": [
+            "ceramic",
+            "concrete",
+            "glass",
+            "housing",
+            "hygiene",
+            "facade"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "spatial_order",
+        "summary": "Immeuble Rue des Amiraux should be read through program, movement, room sequence, exterior relation and typological position rather than as a single image.",
+        "data": {
+          "seed_tags": [
+            "spatial_order",
+            "apartment_building"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "typology",
+        "summary": "Immeuble Rue des Amiraux is currently classified as apartment_building; the seed must verify how this type differs from related entries with the same DNA.",
+        "data": {
+          "seed_tags": [
+            "typology",
+            "apartment_building",
+            "Paris, France"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "summary": "Immeuble Rue des Amiraux needs filter checks for themes, materials, rights, plan readiness, 3D layer readiness and viewer filters.",
+        "data": {
+          "seed_tags": [
+            "typology:apartment-building",
+            "style:modern_architecture",
+            "theme:housing",
+            "theme:infrastructure",
+            "theme:urban-block",
+            "material:ceramic",
+            "material:concrete",
+            "material:glass",
+            "material:housing",
+            "material:hygiene"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      }
+    ],
+    "database_profile": {
+      "status": "reviewed",
+      "r2_prefix": "entries/immeuble-rue-des-amiraux",
+      "source_count": 4,
+      "media_count": 4,
+      "model_count": 3,
+      "analysis_count": 5,
+      "tag_count": 15,
+      "rights_summary": "Public text and metadata are allowed; visual assets remain link-only/private until rights are cleared.",
+      "updated_at": "2026-05-25T08:26:48.781Z"
+    },
+    "ingestion_status": {
+      "stage": "needs_review",
+      "source_status": "reviewed",
+      "asset_status": "candidate",
+      "model_status": "planned",
+      "updated_at": "2026-05-25T08:26:48.782Z"
     }
   },
   {
@@ -20572,10 +21070,10 @@
       "competition",
       "modernism"
     ],
-    "short_description": "Voelkerbundspalast Competition ist im PDF-Framework als institution / competition verortet und bildet einen wichtigen Knoten der Architektur- und Stadtgeschichte.",
-    "source_quality": "lecture_pdf",
-    "one_sentence": "Voelkerbundspalast Competition ist als Bauwerk in Geneva, Switzerland im Jahr 1927 im Architecture Cosmos verortet und verknuepft institution, competition, modernism.",
-    "full_description": "Voelkerbundspalast Competition ist im PDF-Framework als institution / competition verortet und bildet einen wichtigen Knoten der Architektur- und Stadtgeschichte. Der Eintrag wird im Atlas als Bauwerk gelesen und gehoert zur Wissensspur Architekturgeschichte ETH, 03 Architekturgeschichte 3_4.pdf, Layer architecture history 3 4. Autorenschaft / Quelle: Hannes Meyer, Hans Wittwer. Seine Filterebene verbindet institution, competition, modernism mit Jahr, Stilsektor und Relationennetz; spaeter koennen echte Fotos, Plaene, Schnitte, Quellen und Modelle direkt aus der Datenbank angeschlossen werden.",
+    "short_description": "Der Völkerbundspalast-Wettbewerb von Meyer und Wittwer liest die internationale Institution als transparente Arbeitsmaschine aus Brücke, Saal, Bürotrakt und Seeufer.",
+    "source_quality": "research_seed_review",
+    "one_sentence": "Der Völkerbundspalast-Wettbewerb zeigt, wie moderne Architektur Repräsentation nicht über Monumentalität, sondern über Organisation, Offenheit, Erschließung und institutionelle Arbeitslogik formulieren kann.",
+    "full_description": "Der Wettbewerbsentwurf für den Völkerbundspalast wird als Gegenmodell zur klassischen Staatsrepräsentation gelesen. Meyer und Wittwer zerlegen die internationale Institution in funktionale Elemente: Versammlung, Sekretariat, Verkehr, Öffentlichkeit, Seeufer und Arbeitsapparat. Architektonisch relevant ist die Brückenfigur, die nicht nur verbindet, sondern das Gebäude als offenes System von Zugängen, Blicken und Arbeitsabläufen organisiert. Für KosmoData ist der Eintrag wichtig, weil er moderne Institution, Wettbewerb, Glas-Stahl-Ästhetik, internationale Politik und Bauhaus-Denken in einem nicht gebauten, aber hochwirksamen Referenzobjekt bündelt.",
     "media": [
       {
         "type": "exterior",
@@ -20602,8 +21100,8 @@
       "03 Architekturgeschichte 3_4.pdf"
     ],
     "architecture_text": {
-      "headline": "Völkerbundpalast: Wettbewerb als Konflikt moderner Repräsentation",
-      "overview": "Voelkerbundspalast Competition wird als Gebäude verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und Geneva, Switzerland. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "headline": "Völkerbundspalast: Institution als transparente Arbeitsmaschine",
+      "overview": "Der Entwurf von Hannes Meyer und Hans Wittwer versteht den Völkerbund nicht als Palast im klassischen Sinn, sondern als organisierte internationale Infrastruktur aus Saal, Büro, Brücke und Öffentlichkeit.",
       "chapters": [
         {
           "title": "Architektonische Lesart",
@@ -20640,11 +21138,263 @@
           "text": "Voelkerbundspalast Competition ist als Referenz wichtig, weil Institution, Wettbewerb, Moderne nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
           "source_basis": "derived from entry metadata and Brain quality rules",
           "review_status": "draft_review"
+        },
+        {
+          "title": "Netzwerk und DNA",
+          "text": "Voelkerbundspalast Competition wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, wie es sich innerhalb derselben architektonischen DNA unterscheidet: durch Ort, Auftrag, Fügung, Gebrauch und kulturelle Haltung.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Topos / Typos / Tektonik",
+          "text": "Topos, Typos und Tektonik werden zusammen gelesen: Ort und Landschaft bilden die Setzung, Institutionenwettbewerb bildet den typologischen Ausgangspunkt, und Glas, Stahl, Beton, institution, competition, international institution, archive, competition drawings markieren die konstruktiv-atmosphärische Lesart.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für KosmoData ist Voelkerbundspalast Competition relevant, weil sich daraus Filter, Vergleichsgruppen, Planlayer und spätere Blender-Collections ableiten lassen: institutional competition, moderne Architektur, institution, competition, modernism, Glas, Stahl, Beton.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
         }
       ],
       "review_status": "draft_review",
       "public_use_allowed": true,
-      "generated_at": "2026-05-21T18:36:41.846Z"
+      "generated_at": "2026-05-25T08:26:49.837Z",
+      "generator": "kosmodata-seed-from-research"
+    },
+    "source_candidates": [
+      {
+        "source_type": "bauhaus_archive_project_page",
+        "title": "Bauhaus Kooperation / Palace of the League of Nations, Geneva",
+        "url": "https://bauhauskooperation.com/knowledge/the-bauhaus/works/architecture/palace-of-the-league-of-nations-geneva/",
+        "reliability_level": "high",
+        "rights_status": "link_only",
+        "notes": "Project-specific Bauhaus source for Hannes Meyer and Hans Wittwer's 1927 competition entry, program, bridge, assembly hall and secretariat tower.",
+        "project_specific": true
+      },
+      {
+        "source_type": "institutional_context",
+        "title": "United Nations Geneva / Palais des Nations",
+        "url": "https://www.ungeneva.org/en/about/palais-des-nations",
+        "reliability_level": "high",
+        "rights_status": "link_only",
+        "notes": "Official historical context for the League of Nations competition and Palais des Nations. Use for institutional background, not as direct design source for Meyer/Wittwer.",
+        "project_specific": true
+      },
+      {
+        "source_type": "academic_archive_pdf",
+        "title": "gta Papers / From the gta Archives",
+        "url": "https://assets.verlag.gta.arch.ethz.ch/api/assets/gta-data/gta/2022-07-26-104355--weiss-gta-archives-gta-papers-4.pdf",
+        "reliability_level": "high",
+        "rights_status": "citation_only",
+        "notes": "ETH/gta archive source candidate referencing Hannes Meyer and Hans Wittwer's League of Nations competition material. Use citation and paraphrase only.",
+        "project_specific": true
+      }
+    ],
+    "materials": {
+      "primary": [
+        "glass",
+        "steel",
+        "concrete",
+        "institution",
+        "competition",
+        "international-institution",
+        "archive",
+        "competition-drawings"
+      ],
+      "secondary": [
+        "craft_details",
+        "surface_system",
+        "construction_logic"
+      ],
+      "notes": "Seeded from local reviewed source metadata; verify exact material claims before publication."
+    },
+    "program": {
+      "type": "institutional_competition",
+      "subtype": "modern_architecture_reference",
+      "public_access": "needs_review",
+      "components": [
+        "institution",
+        "competition",
+        "modernism",
+        "building",
+        "modern_architecture"
+      ]
+    },
+    "context": {
+      "topography": "needs_site_review",
+      "setting": "Geneva, Switzerland",
+      "landscape_relations": [
+        "site_context_needs_review"
+      ],
+      "urban_context": [
+        "architecture_history_3_4",
+        "lecture_pdf"
+      ],
+      "construction_logic": [
+        "institution",
+        "competition",
+        "modernism",
+        "building",
+        "modern_architecture"
+      ]
+    },
+    "database_tags": [
+      "typology:institutional-competition",
+      "style:modern_architecture",
+      "theme:institution",
+      "theme:competition",
+      "theme:modernism",
+      "material:glass",
+      "material:steel",
+      "material:concrete",
+      "material:institution",
+      "material:competition",
+      "material:international-institution",
+      "material:archive",
+      "material:competition-drawings",
+      "rights:review-required",
+      "blender:institutional-competition-layer-candidate",
+      "plan:vector-review-required",
+      "viewer:3d-layer-review-required"
+    ],
+    "model_assets": [
+      {
+        "model_type": "site_model",
+        "title": "Voelkerbundspalast Competition Site/context study model",
+        "r2_key": "entries/voelkerbundspalast-competition/models/site.glb",
+        "format": "glb",
+        "lod_level": "preview",
+        "source_basis": "entry metadata only; needs source review",
+        "generation_method": "procedural",
+        "review_status": "draft",
+        "confidence_score": 0.42
+      },
+      {
+        "model_type": "structure_model",
+        "title": "Voelkerbundspalast Competition Structure and spatial order study model",
+        "r2_key": "entries/voelkerbundspalast-competition/models/structure.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "entry metadata only; needs source review",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      },
+      {
+        "model_type": "tectonic_model",
+        "title": "Voelkerbundspalast Competition Material, tectonic and filter-layer study model",
+        "r2_key": "entries/voelkerbundspalast-competition/models/tectonic.glb",
+        "format": "glb",
+        "lod_level": "study",
+        "source_basis": "entry metadata only; needs source review; tags: typology:institutional-competition, style:modern_architecture, theme:institution, theme:competition, theme:modernism, material:glass, material:steel, material:concrete",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      }
+    ],
+    "analysis_layers": [
+      {
+        "analysis_type": "structure",
+        "summary": "Voelkerbundspalast Competition needs a reviewed structural reading connecting glass, steel, concrete with construction logic, span, support and assembly.",
+        "data": {
+          "seed_tags": [
+            "structure:needs_review",
+            "glass",
+            "steel",
+            "concrete",
+            "institution",
+            "competition",
+            "international-institution",
+            "archive",
+            "competition-drawings"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "material_system",
+        "summary": "Voelkerbundspalast Competition should be tagged through glass, steel, concrete, institution, competition, international-institution, archive, competition-drawings and verified against primary sources before public material claims are made.",
+        "data": {
+          "seed_tags": [
+            "glass",
+            "steel",
+            "concrete",
+            "institution",
+            "competition",
+            "international-institution",
+            "archive",
+            "competition-drawings"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "spatial_order",
+        "summary": "Voelkerbundspalast Competition should be read through program, movement, room sequence, exterior relation and typological position rather than as a single image.",
+        "data": {
+          "seed_tags": [
+            "spatial_order",
+            "institutional_competition"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "typology",
+        "summary": "Voelkerbundspalast Competition is currently classified as institutional_competition; the seed must verify how this type differs from related entries with the same DNA.",
+        "data": {
+          "seed_tags": [
+            "typology",
+            "institutional_competition",
+            "Geneva, Switzerland"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "summary": "Voelkerbundspalast Competition needs filter checks for themes, materials, rights, plan readiness, 3D layer readiness and viewer filters.",
+        "data": {
+          "seed_tags": [
+            "typology:institutional-competition",
+            "style:modern_architecture",
+            "theme:institution",
+            "theme:competition",
+            "theme:modernism",
+            "material:glass",
+            "material:steel",
+            "material:concrete",
+            "material:institution",
+            "material:competition"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      }
+    ],
+    "database_profile": {
+      "status": "reviewed",
+      "r2_prefix": "entries/voelkerbundspalast-competition",
+      "source_count": 4,
+      "media_count": 4,
+      "model_count": 3,
+      "analysis_count": 5,
+      "tag_count": 17,
+      "rights_summary": "Public text and metadata are allowed; visual assets remain link-only/private until rights are cleared.",
+      "updated_at": "2026-05-25T08:26:49.985Z"
+    },
+    "ingestion_status": {
+      "stage": "needs_review",
+      "source_status": "reviewed",
+      "asset_status": "candidate",
+      "model_status": "planned",
+      "updated_at": "2026-05-25T08:26:49.986Z"
     }
   },
   {
@@ -24265,10 +25015,10 @@
       "light",
       "cinema"
     ],
-    "short_description": "The Capitol ist im PDF-Framework als thing-modernity / light verortet und bildet einen wichtigen Knoten der Architektur- und Stadtgeschichte.",
-    "source_quality": "lecture_pdf",
-    "one_sentence": "The Capitol ist als Bauwerk in Berlin, Germany im Jahr 1935 im Architecture Cosmos verortet und verknuepft thing modernity, light, cinema.",
-    "full_description": "The Capitol ist im PDF-Framework als thing-modernity / light verortet und bildet einen wichtigen Knoten der Architektur- und Stadtgeschichte. Der Eintrag wird im Atlas als Bauwerk gelesen und gehoert zur Wissensspur Architekturgeschichte ETH, 03 Architekturgeschichte 3_4.pdf, Layer architecture history 3 4. Autorenschaft / Quelle: Hans Poelzig. Seine Filterebene verbindet thing modernity, light, cinema mit Jahr, Stilsektor und Relationennetz; spaeter koennen echte Fotos, Plaene, Schnitte, Quellen und Modelle direkt aus der Datenbank angeschlossen werden.",
+    "short_description": "The Capitol am Zoo macht Kino zur Architektur der Großstadt: Licht, Foyer, Saal, Reklame und Bewegung erzeugen eine urbane Maschine der Nacht.",
+    "source_quality": "research_seed_review",
+    "one_sentence": "Poelzigs Capitol zeigt, wie Kinoarchitektur in der Moderne nicht nur Vorführraum ist, sondern ein choreografierter Übergang von Straße, Lichtfassade, Publikum und Innenraum.",
+    "full_description": "The Capitol wird als Großstadt- und Medienarchitektur gelesen. Hans Poelzig organisiert das Kino nicht als neutralen Saal, sondern als Abfolge aus Stadtadresse, Eingang, Licht, Foyer, Zuschauerbewegung und verdichtetem Innenraum. Entscheidend ist die Beziehung zwischen Außenwirkung und Wahrnehmung: Das Gebäude spricht zur Straße, zieht Publikum an und verwandelt Film in ein räumliches Ereignis. Für KosmoData ist The Capitol ein wichtiger Eintrag für Thing-Modernity, Lichtarchitektur, Weimarer Großstadtkultur, Kino und die Frage, wie Architektur neue Medien und Massenpublikum räumlich fasst.",
     "media": [
       {
         "type": "exterior",
@@ -24295,8 +25045,8 @@
       "03 Architekturgeschichte 3_4.pdf"
     ],
     "architecture_text": {
-      "headline": "The Capitol: Lichtarchitektur und Kino als Großstadtapparat",
-      "overview": "The Capitol wird als Gebäude verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und Berlin, Germany. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "headline": "The Capitol: Kino als Lichtmaschine der Großstadt",
+      "overview": "The Capitol verbindet urbane Adresse, Reklame, Foyer, Saal und Publikumsbewegung zu einer Architektur des Films. Das Kino wird als Schwelle zwischen Straße und immersivem Innenraum lesbar.",
       "chapters": [
         {
           "title": "Architektonische Lesart",
@@ -24333,11 +25083,255 @@
           "text": "The Capitol ist als Referenz wichtig, weil moderne Objektkultur, Licht, Kino nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
           "source_basis": "derived from entry metadata and Brain quality rules",
           "review_status": "draft_review"
+        },
+        {
+          "title": "Netzwerk und DNA",
+          "text": "The Capitol wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, wie es sich innerhalb derselben architektonischen DNA unterscheidet: durch Ort, Auftrag, Fügung, Gebrauch und kulturelle Haltung.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Topos / Typos / Tektonik",
+          "text": "Topos, Typos und Tektonik werden zusammen gelesen: Ort und Landschaft bilden die Setzung, Kino bildet den typologischen Ausgangspunkt, und Kino, light, weimar modernity, interior, urban nightlife, expressionist interior markieren die konstruktiv-atmosphärische Lesart.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für KosmoData ist The Capitol relevant, weil sich daraus Filter, Vergleichsgruppen, Planlayer und spätere Blender-Collections ableiten lassen: Kino, moderne Architektur, Objektmoderne, light, weimar modernity, interior, urban nightlife, expressionist interior.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
         }
       ],
       "review_status": "draft_review",
       "public_use_allowed": true,
-      "generated_at": "2026-05-21T18:36:42.839Z"
+      "generated_at": "2026-05-25T08:26:51.020Z",
+      "generator": "kosmodata-seed-from-research"
+    },
+    "source_candidates": [
+      {
+        "source_type": "museum_exhibition_context",
+        "title": "Deutsche Kinemathek / Modern Cinema in the Weimar Republic",
+        "url": "https://www.deutsche-kinemathek.de/en/visit/exhibitions/modern-cinema-film-weimar-republic",
+        "reliability_level": "high",
+        "rights_status": "link_only",
+        "notes": "Institutional source situating Hans Poelzig's Capitol am Zoo among Weimar cinema architecture and modern urban culture.",
+        "project_specific": true
+      },
+      {
+        "source_type": "architecture_archive_article",
+        "title": "Urbipedia / Cine Capitol Berlin",
+        "url": "https://www.urbipedia.org/hoja/Cine_Capitol_%28Berl%C3%ADn%29",
+        "reliability_level": "medium",
+        "rights_status": "cc_by_nc_sa_review",
+        "notes": "Secondary architecture archive candidate with project description, dates and interior logic. Verify citations before promotion.",
+        "project_specific": true
+      },
+      {
+        "source_type": "historical_cinema_article",
+        "title": "Weimar Berlin / The Capitol am Zoo",
+        "url": "https://www.weimarberlin.com/2021/11/the-capitol-am-zoo.html",
+        "reliability_level": "medium",
+        "rights_status": "link_only",
+        "notes": "Contextual source for the Capitol as cinema, urban facade and expressionist interior. Use as secondary lead only.",
+        "project_specific": true
+      }
+    ],
+    "materials": {
+      "primary": [
+        "cinema",
+        "light",
+        "weimar-modernity",
+        "interior",
+        "urban-nightlife",
+        "expressionist-interior"
+      ],
+      "secondary": [
+        "craft_details",
+        "surface_system",
+        "construction_logic"
+      ],
+      "notes": "Seeded from local reviewed source metadata; verify exact material claims before publication."
+    },
+    "program": {
+      "type": "cinema",
+      "subtype": "modern_architecture_reference",
+      "public_access": "needs_review",
+      "components": [
+        "thing-modernity",
+        "light",
+        "cinema",
+        "building",
+        "modern_architecture"
+      ]
+    },
+    "context": {
+      "topography": "needs_site_review",
+      "setting": "Berlin, Germany",
+      "landscape_relations": [
+        "site_context_needs_review"
+      ],
+      "urban_context": [
+        "architecture_history_3_4",
+        "lecture_pdf"
+      ],
+      "construction_logic": [
+        "thing-modernity",
+        "light",
+        "cinema",
+        "building",
+        "modern_architecture"
+      ]
+    },
+    "database_tags": [
+      "typology:cinema",
+      "style:modern_architecture",
+      "theme:thing-modernity",
+      "theme:light",
+      "theme:cinema",
+      "material:cinema",
+      "material:light",
+      "material:weimar-modernity",
+      "material:interior",
+      "material:urban-nightlife",
+      "material:expressionist-interior",
+      "rights:review-required",
+      "blender:cinema-layer-candidate",
+      "plan:vector-review-required",
+      "viewer:3d-layer-review-required"
+    ],
+    "model_assets": [
+      {
+        "model_type": "site_model",
+        "title": "The Capitol Site/context study model",
+        "r2_key": "entries/the-capitol/models/site.glb",
+        "format": "glb",
+        "lod_level": "preview",
+        "source_basis": "entry metadata only; needs source review",
+        "generation_method": "procedural",
+        "review_status": "draft",
+        "confidence_score": 0.42
+      },
+      {
+        "model_type": "structure_model",
+        "title": "The Capitol Structure and spatial order study model",
+        "r2_key": "entries/the-capitol/models/structure.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "entry metadata only; needs source review",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      },
+      {
+        "model_type": "tectonic_model",
+        "title": "The Capitol Material, tectonic and filter-layer study model",
+        "r2_key": "entries/the-capitol/models/tectonic.glb",
+        "format": "glb",
+        "lod_level": "study",
+        "source_basis": "entry metadata only; needs source review; tags: typology:cinema, style:modern_architecture, theme:thing-modernity, theme:light, theme:cinema, material:cinema, material:light, material:weimar-modernity",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      }
+    ],
+    "analysis_layers": [
+      {
+        "analysis_type": "structure",
+        "summary": "The Capitol needs a reviewed structural reading connecting cinema, light, weimar-modernity with construction logic, span, support and assembly.",
+        "data": {
+          "seed_tags": [
+            "structure:needs_review",
+            "cinema",
+            "light",
+            "weimar-modernity",
+            "interior",
+            "urban-nightlife",
+            "expressionist-interior"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "material_system",
+        "summary": "The Capitol should be tagged through cinema, light, weimar-modernity, interior, urban-nightlife, expressionist-interior and verified against primary sources before public material claims are made.",
+        "data": {
+          "seed_tags": [
+            "cinema",
+            "light",
+            "weimar-modernity",
+            "interior",
+            "urban-nightlife",
+            "expressionist-interior"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "spatial_order",
+        "summary": "The Capitol should be read through program, movement, room sequence, exterior relation and typological position rather than as a single image.",
+        "data": {
+          "seed_tags": [
+            "spatial_order",
+            "cinema"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "typology",
+        "summary": "The Capitol is currently classified as cinema; the seed must verify how this type differs from related entries with the same DNA.",
+        "data": {
+          "seed_tags": [
+            "typology",
+            "cinema",
+            "Berlin, Germany"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "summary": "The Capitol needs filter checks for themes, materials, rights, plan readiness, 3D layer readiness and viewer filters.",
+        "data": {
+          "seed_tags": [
+            "typology:cinema",
+            "style:modern_architecture",
+            "theme:thing-modernity",
+            "theme:light",
+            "theme:cinema",
+            "material:cinema",
+            "material:light",
+            "material:weimar-modernity",
+            "material:interior",
+            "material:urban-nightlife"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      }
+    ],
+    "database_profile": {
+      "status": "reviewed",
+      "r2_prefix": "entries/the-capitol",
+      "source_count": 4,
+      "media_count": 4,
+      "model_count": 3,
+      "analysis_count": 5,
+      "tag_count": 15,
+      "rights_summary": "Public text and metadata are allowed; visual assets remain link-only/private until rights are cleared.",
+      "updated_at": "2026-05-25T08:26:51.165Z"
+    },
+    "ingestion_status": {
+      "stage": "needs_review",
+      "source_status": "reviewed",
+      "asset_status": "candidate",
+      "model_status": "planned",
+      "updated_at": "2026-05-25T08:26:51.166Z"
     }
   },
   {
@@ -25100,10 +26094,10 @@
       "collective-living",
       "modulor"
     ],
-    "short_description": "Nachkriegsmodernes Wohngebaeude, das Wohnen, Versorgung, Infrastruktur und kollektive Programme in einem vertikalen System verbindet.",
-    "source_quality": "lecture_pdf",
-    "one_sentence": "Unite d'Habitation ist als Bauwerk in Marseille, France im Jahr 1952 im Architecture Cosmos verortet und verknuepft modern housing, infrastructure, collective living.",
-    "full_description": "Nachkriegsmodernes Wohngebaeude, das Wohnen, Versorgung, Infrastruktur und kollektive Programme in einem vertikalen System verbindet. Der Eintrag wird im Atlas als Bauwerk gelesen und gehoert zur Wissensspur Global History ETH, Layer global urban design, architecture history 3 4. Autorenschaft / Quelle: Le Corbusier. Seine Filterebene verbindet modern housing, infrastructure, collective living, modulor mit Jahr, Stilsektor und Relationennetz; spaeter koennen echte Fotos, Plaene, Schnitte, Quellen und Modelle direkt aus der Datenbank angeschlossen werden.",
+    "short_description": "Die Unité d’Habitation Marseille verdichtet Wohnen, Straße, Versorgung, Dachlandschaft und Modulor zu einer vertikalen Stadt aus Beton.",
+    "source_quality": "research_seed_review",
+    "one_sentence": "Die Unité d’Habitation zeigt, wie kollektives Wohnen als Infrastruktur gedacht werden kann: Wohnung, Erschließung, Versorgung und Dach werden zu einem vertikalen sozialen Organismus.",
+    "full_description": "Die Unité d’Habitation wird als vertikale Stadt gelesen. Le Corbusier organisiert Wohnen nicht als Sammlung einzelner Wohnungen, sondern als kollektive Infrastruktur aus Maisonette-Typen, inneren Straßen, Versorgung, Dachlandschaft, Tragstruktur und Modulor-Maßsystem. Architektonisch entscheidend ist die Ambivalenz zwischen Standardisierung und räumlicher Dichte: Der Betonrahmen schafft Ordnung, während Schnitt, Gemeinschaftsbereiche und Dach neue Formen des Zusammenlebens erproben. Für KosmoData ist die Unité ein Schlüsselobjekt für Nachkriegswohnbau, Brut Béton, Collective Living, Modulor, Infrastrukturdenken und die 3D-Analyse von Wohnzellen, Tragstruktur und gemeinschaftlichen Layern.",
     "media": [
       {
         "type": "exterior",
@@ -25127,8 +26121,8 @@
       }
     ],
     "architecture_text": {
-      "headline": "Unité d’Habitation: Wohnmaschine als vertikale Stadt",
-      "overview": "Unite d'Habitation wird als Gebäude verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und Marseille, France. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "headline": "Unité d’Habitation: Wohnen als vertikale Infrastruktur",
+      "overview": "Die Unité d’Habitation in Marseille verbindet Wohnung, innere Straße, Versorgung, Dach, Betontragwerk und Modulor zu einem Wohnorganismus der Nachkriegsmoderne.",
       "chapters": [
         {
           "title": "Architektonische Lesart",
@@ -25165,11 +26159,266 @@
           "text": "Unite d'Habitation ist als Referenz wichtig, weil moderne Wohnreform, Infrastruktur, kollektives Wohnen, Modulor nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
           "source_basis": "derived from entry metadata and Brain quality rules",
           "review_status": "draft_review"
+        },
+        {
+          "title": "Netzwerk und DNA",
+          "text": "Unite d'Habitation wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, wie es sich innerhalb derselben architektonischen DNA unterscheidet: durch Ort, Auftrag, Fügung, Gebrauch und kulturelle Haltung.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Topos / Typos / Tektonik",
+          "text": "Topos, Typos und Tektonik werden zusammen gelesen: Ort und Landschaft bilden die Setzung, kollektiver Wohnbau bildet den typologischen Ausgangspunkt, und Beton, wood, metal, collective housing, brut beton, Wohnungsbau, modulor, reconstruction markieren die konstruktiv-atmosphärische Lesart.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für KosmoData ist Unite d'Habitation relevant, weil sich daraus Filter, Vergleichsgruppen, Planlayer und spätere Blender-Collections ableiten lassen: collective housing, Nachkriegsmoderne, modern housing, infrastructure, collective living, modulor, Beton, wood.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
         }
       ],
       "review_status": "draft_review",
       "public_use_allowed": true,
-      "generated_at": "2026-05-21T19:08:58.426Z"
+      "generated_at": "2026-05-25T08:27:01.890Z",
+      "generator": "kosmodata-seed-from-research"
+    },
+    "source_candidates": [
+      {
+        "source_type": "official_le_corbusier_site",
+        "title": "Sites Le Corbusier / Unite d'habitation Marseille",
+        "url": "https://sites-le-corbusier.org/en/oeuvres/unite-dhabitation-marseille/",
+        "reliability_level": "high",
+        "rights_status": "link_only",
+        "notes": "Official Le Corbusier Sites source for the Unité d'habitation as vertical village, modules and individual/collective balance.",
+        "project_specific": true
+      },
+      {
+        "source_type": "foundation_project_page",
+        "title": "Fondation Le Corbusier / Unite d'Habitation Marseille",
+        "url": "https://www.fondationlecorbusier.fr/oeuvre-architecture/realisations-unite-dhabitation-marseille-france-1945-1952/",
+        "reliability_level": "high",
+        "rights_status": "link_only",
+        "notes": "Fondation Le Corbusier source for project history, research lineage from Dom-ino/Ville Radieuse and inauguration.",
+        "project_specific": true
+      },
+      {
+        "source_type": "museum_collection_record",
+        "title": "Cite de l'architecture / L'Unite d'habitation a Marseille",
+        "url": "https://www.citedelarchitecture.fr/fr/oeuvre/lunite-dhabitation-marseille",
+        "reliability_level": "high",
+        "rights_status": "link_only",
+        "notes": "Institutional source for commission, construction period and experimental reconstruction housing context.",
+        "project_specific": true
+      }
+    ],
+    "materials": {
+      "primary": [
+        "concrete",
+        "wood",
+        "metal",
+        "collective-housing",
+        "brut-beton",
+        "housing",
+        "modulor",
+        "reconstruction"
+      ],
+      "secondary": [
+        "craft_details",
+        "surface_system",
+        "construction_logic"
+      ],
+      "notes": "Seeded from local reviewed source metadata; verify exact material claims before publication."
+    },
+    "program": {
+      "type": "collective_housing",
+      "subtype": "postwar_modern_architecture_reference",
+      "public_access": "needs_review",
+      "components": [
+        "modern-housing",
+        "infrastructure",
+        "collective-living",
+        "modulor",
+        "building",
+        "postwar_modern_architecture"
+      ]
+    },
+    "context": {
+      "topography": "needs_site_review",
+      "setting": "Marseille, France",
+      "landscape_relations": [
+        "site_context_needs_review"
+      ],
+      "urban_context": [
+        "global_urban_design",
+        "lecture_pdf"
+      ],
+      "construction_logic": [
+        "modern-housing",
+        "infrastructure",
+        "collective-living",
+        "modulor",
+        "building",
+        "postwar_modern_architecture"
+      ]
+    },
+    "database_tags": [
+      "typology:collective-housing",
+      "style:postwar_modern_architecture",
+      "theme:modern-housing",
+      "theme:infrastructure",
+      "theme:collective-living",
+      "theme:modulor",
+      "material:concrete",
+      "material:wood",
+      "material:metal",
+      "material:collective-housing",
+      "material:brut-beton",
+      "material:housing",
+      "material:modulor",
+      "material:reconstruction",
+      "rights:review-required",
+      "blender:collective-housing-layer-candidate",
+      "plan:vector-review-required",
+      "viewer:3d-layer-review-required"
+    ],
+    "model_assets": [
+      {
+        "model_type": "site_model",
+        "title": "Unite d'Habitation Site/context study model",
+        "r2_key": "entries/unite-habitation/models/site.glb",
+        "format": "glb",
+        "lod_level": "preview",
+        "source_basis": "entry metadata only; needs source review",
+        "generation_method": "procedural",
+        "review_status": "draft",
+        "confidence_score": 0.42
+      },
+      {
+        "model_type": "structure_model",
+        "title": "Unite d'Habitation Structure and spatial order study model",
+        "r2_key": "entries/unite-habitation/models/structure.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "entry metadata only; needs source review",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      },
+      {
+        "model_type": "tectonic_model",
+        "title": "Unite d'Habitation Material, tectonic and filter-layer study model",
+        "r2_key": "entries/unite-habitation/models/tectonic.glb",
+        "format": "glb",
+        "lod_level": "study",
+        "source_basis": "entry metadata only; needs source review; tags: typology:collective-housing, style:postwar_modern_architecture, theme:modern-housing, theme:infrastructure, theme:collective-living, theme:modulor, material:concrete, material:wood",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      }
+    ],
+    "analysis_layers": [
+      {
+        "analysis_type": "structure",
+        "summary": "Unite d'Habitation needs a reviewed structural reading connecting concrete, wood, metal with construction logic, span, support and assembly.",
+        "data": {
+          "seed_tags": [
+            "structure:needs_review",
+            "concrete",
+            "wood",
+            "metal",
+            "collective-housing",
+            "brut-beton",
+            "housing",
+            "modulor",
+            "reconstruction"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "material_system",
+        "summary": "Unite d'Habitation should be tagged through concrete, wood, metal, collective-housing, brut-beton, housing, modulor, reconstruction and verified against primary sources before public material claims are made.",
+        "data": {
+          "seed_tags": [
+            "concrete",
+            "wood",
+            "metal",
+            "collective-housing",
+            "brut-beton",
+            "housing",
+            "modulor",
+            "reconstruction"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "spatial_order",
+        "summary": "Unite d'Habitation should be read through program, movement, room sequence, exterior relation and typological position rather than as a single image.",
+        "data": {
+          "seed_tags": [
+            "spatial_order",
+            "collective_housing"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "typology",
+        "summary": "Unite d'Habitation is currently classified as collective_housing; the seed must verify how this type differs from related entries with the same DNA.",
+        "data": {
+          "seed_tags": [
+            "typology",
+            "collective_housing",
+            "Marseille, France"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "summary": "Unite d'Habitation needs filter checks for themes, materials, rights, plan readiness, 3D layer readiness and viewer filters.",
+        "data": {
+          "seed_tags": [
+            "typology:collective-housing",
+            "style:postwar_modern_architecture",
+            "theme:modern-housing",
+            "theme:infrastructure",
+            "theme:collective-living",
+            "theme:modulor",
+            "material:concrete",
+            "material:wood",
+            "material:metal",
+            "material:collective-housing"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      }
+    ],
+    "database_profile": {
+      "status": "reviewed",
+      "r2_prefix": "entries/unite-habitation",
+      "source_count": 3,
+      "media_count": 4,
+      "model_count": 3,
+      "analysis_count": 5,
+      "tag_count": 18,
+      "rights_summary": "Public text and metadata are allowed; visual assets remain link-only/private until rights are cleared.",
+      "updated_at": "2026-05-25T08:27:02.046Z"
+    },
+    "ingestion_status": {
+      "stage": "needs_review",
+      "source_status": "reviewed",
+      "asset_status": "candidate",
+      "model_status": "planned",
+      "updated_at": "2026-05-25T08:27:02.046Z"
     }
   },
   {
@@ -26155,13 +27404,12 @@
     ],
     "themes": [
       "office",
-      "glass",
       "technology"
     ],
-    "short_description": "IBM Cosham ist im PDF-Framework als office / glass verortet und bildet einen wichtigen Knoten der Architektur- und Stadtgeschichte.",
-    "source_quality": "lecture_pdf",
-    "one_sentence": "IBM Cosham ist als Bauwerk in Portsmouth, UK im Jahr 1971 im Architecture Cosmos verortet und verknuepft office, glass, technology.",
-    "full_description": "IBM Cosham ist im PDF-Framework als office / glass verortet und bildet einen wichtigen Knoten der Architektur- und Stadtgeschichte. Der Eintrag wird im Atlas als Bauwerk gelesen und gehoert zur Wissensspur Architekturgeschichte ETH, 03 Architekturgeschichte 3_4.pdf, Layer architecture history 3 4. Autorenschaft / Quelle: Norman Foster. Seine Filterebene verbindet office, glass, technology mit Jahr, Stilsektor und Relationennetz; spaeter koennen echte Fotos, Plaene, Schnitte, Quellen und Modelle direkt aus der Datenbank angeschlossen werden.",
+    "short_description": "IBM Cosham übersetzt das frühe Computerzeitalter in eine flexible High-Tech-Bürolandschaft aus Glas, Stahl, Services und serieller Anpassbarkeit.",
+    "source_quality": "research_seed_review",
+    "one_sentence": "IBM Cosham zeigt, wie Foster Associates das Büro als leichtes, technisches System denkt: Struktur, Hülle und Haustechnik werden so organisiert, dass Arbeit, Wandel und Präzision sichtbar werden.",
+    "full_description": "IBM Cosham wird als früher High-Tech-Büroprototyp gelesen. Das Gebäude sucht keine massive Firmenrepräsentation, sondern eine präzise technische Umgebung für Arbeit, Datenverarbeitung und organisatorische Veränderung. Architektonisch wichtig ist die Klarheit der Komponenten: Stahlrahmen, Glasfassade, Dienste, flexible Fläche, Raster und industrielle Montage bilden eine Architektur, die Wandelbarkeit als Wert sichtbar macht. Für KosmoData ist IBM Cosham ein Schlüsselobjekt für Postwar Office, High-Tech, Corporate Architecture und die Frage, wie Technologie als konstruktive und ästhetische Ordnung auftritt.",
     "media": [
       {
         "type": "exterior",
@@ -26188,8 +27436,8 @@
       "03 Architekturgeschichte 3_4.pdf"
     ],
     "architecture_text": {
-      "headline": "IBM Cosham: Bürohaus als technologische Glaslandschaft",
-      "overview": "IBM Cosham wird als Gebäude verstanden; die Bedeutung des Projekts geht nicht in einem einzelnen Bild auf. Architektonisch entscheidend ist das Zusammenspiel von Raumdramaturgie, konstruktiver Ordnung, Material und Portsmouth, UK. Der Text beschreibt deshalb, wie Grundriss, Schnitt, Körper, Ort und Gebrauch zusammen eine räumliche Idee bilden.",
+      "headline": "IBM Cosham: High-Tech-Büro als präzises Arbeitssystem",
+      "overview": "IBM Cosham zeigt das Büro als technische Infrastruktur. Nicht Ornament oder Masse stehen im Vordergrund, sondern Flexibilität, Glas, Stahl, Services, Raster und die Lesbarkeit industrieller Komponenten.",
       "chapters": [
         {
           "title": "Architektonische Lesart",
@@ -26226,11 +27474,260 @@
           "text": "IBM Cosham ist als Referenz wichtig, weil Büro, Glas, Technologie nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
           "source_basis": "derived from entry metadata and Brain quality rules",
           "review_status": "draft_review"
+        },
+        {
+          "title": "Netzwerk und DNA",
+          "text": "IBM Cosham wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, wie es sich innerhalb derselben architektonischen DNA unterscheidet: durch Ort, Auftrag, Fügung, Gebrauch und kulturelle Haltung.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Topos / Typos / Tektonik",
+          "text": "Topos, Typos und Tektonik werden zusammen gelesen: Ort und Landschaft bilden die Setzung, Bürobau bildet den typologischen Ausgangspunkt, und Stahl, Glas, curtain wall, services, office, technology, postwar office, high tech markieren die konstruktiv-atmosphärische Lesart.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für KosmoData ist IBM Cosham relevant, weil sich daraus Filter, Vergleichsgruppen, Planlayer und spätere Blender-Collections ableiten lassen: office building, Nachkriegsmoderne, office, technology, Stahl, Glas, curtain wall, services.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
         }
       ],
       "review_status": "draft_review",
       "public_use_allowed": true,
-      "generated_at": "2026-05-21T19:08:59.453Z"
+      "generated_at": "2026-05-25T08:26:52.212Z",
+      "generator": "kosmodata-seed-from-research"
+    },
+    "source_candidates": [
+      {
+        "source_type": "official_heritage_record",
+        "title": "Historic England / Former IBM Pilot Head Office",
+        "url": "https://historicengland.org.uk/listing/the-list/list-entry/1422502",
+        "reliability_level": "high",
+        "rights_status": "link_only",
+        "notes": "Official listed-building record for IBM Pilot Head Office / Lynx House, including design reasons, high-tech context, glazing, steel frame and services logic.",
+        "project_specific": true
+      },
+      {
+        "source_type": "architecture_reference",
+        "title": "WikiArquitectura / IBM Pilot Head Office",
+        "url": "https://en.wikiarquitectura.com/building/ibm-pilot-head-office/",
+        "reliability_level": "medium",
+        "rights_status": "link_only",
+        "notes": "Secondary project dossier with location, architect, dates and concept notes. Use as review source, not as primary authority.",
+        "project_specific": true
+      },
+      {
+        "source_type": "official_heritage_news",
+        "title": "Historic England / Post-war office buildings listed",
+        "url": "https://historicengland.org.uk/whats-new/news/post-war-office-buildings-listed/",
+        "reliability_level": "high",
+        "rights_status": "link_only",
+        "notes": "Official context for IBM Cosham's listing and significance among post-war office buildings.",
+        "project_specific": true
+      }
+    ],
+    "materials": {
+      "primary": [
+        "steel",
+        "glass",
+        "curtain-wall",
+        "services",
+        "office",
+        "technology",
+        "postwar-office",
+        "high-tech"
+      ],
+      "secondary": [
+        "craft_details",
+        "surface_system",
+        "construction_logic"
+      ],
+      "notes": "Seeded from local reviewed source metadata; verify exact material claims before publication."
+    },
+    "program": {
+      "type": "office_building",
+      "subtype": "postwar_modern_architecture_reference",
+      "public_access": "needs_review",
+      "components": [
+        "office",
+        "technology",
+        "building",
+        "postwar_modern_architecture"
+      ]
+    },
+    "context": {
+      "topography": "needs_site_review",
+      "setting": "Portsmouth, UK",
+      "landscape_relations": [
+        "site_context_needs_review"
+      ],
+      "urban_context": [
+        "architecture_history_3_4",
+        "lecture_pdf"
+      ],
+      "construction_logic": [
+        "office",
+        "technology",
+        "building",
+        "postwar_modern_architecture"
+      ]
+    },
+    "database_tags": [
+      "typology:office-building",
+      "style:postwar_modern_architecture",
+      "theme:office",
+      "theme:technology",
+      "material:steel",
+      "material:glass",
+      "material:curtain-wall",
+      "material:services",
+      "material:office",
+      "material:technology",
+      "material:postwar-office",
+      "material:high-tech",
+      "rights:review-required",
+      "blender:office-building-layer-candidate",
+      "plan:vector-review-required",
+      "viewer:3d-layer-review-required"
+    ],
+    "model_assets": [
+      {
+        "model_type": "site_model",
+        "title": "IBM Cosham Site/context study model",
+        "r2_key": "entries/ibm-cosham/models/site.glb",
+        "format": "glb",
+        "lod_level": "preview",
+        "source_basis": "entry metadata only; needs source review",
+        "generation_method": "procedural",
+        "review_status": "draft",
+        "confidence_score": 0.42
+      },
+      {
+        "model_type": "structure_model",
+        "title": "IBM Cosham Structure and spatial order study model",
+        "r2_key": "entries/ibm-cosham/models/structure.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "entry metadata only; needs source review",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      },
+      {
+        "model_type": "tectonic_model",
+        "title": "IBM Cosham Material, tectonic and filter-layer study model",
+        "r2_key": "entries/ibm-cosham/models/tectonic.glb",
+        "format": "glb",
+        "lod_level": "study",
+        "source_basis": "entry metadata only; needs source review; tags: typology:office-building, style:postwar_modern_architecture, theme:office, theme:technology, material:steel, material:glass, material:curtain-wall, material:services",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      }
+    ],
+    "analysis_layers": [
+      {
+        "analysis_type": "structure",
+        "summary": "IBM Cosham needs a reviewed structural reading connecting steel, glass, curtain-wall with construction logic, span, support and assembly.",
+        "data": {
+          "seed_tags": [
+            "structure:needs_review",
+            "steel",
+            "glass",
+            "curtain-wall",
+            "services",
+            "office",
+            "technology",
+            "postwar-office",
+            "high-tech"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "material_system",
+        "summary": "IBM Cosham should be tagged through steel, glass, curtain-wall, services, office, technology, postwar-office, high-tech and verified against primary sources before public material claims are made.",
+        "data": {
+          "seed_tags": [
+            "steel",
+            "glass",
+            "curtain-wall",
+            "services",
+            "office",
+            "technology",
+            "postwar-office",
+            "high-tech"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "spatial_order",
+        "summary": "IBM Cosham should be read through program, movement, room sequence, exterior relation and typological position rather than as a single image.",
+        "data": {
+          "seed_tags": [
+            "spatial_order",
+            "office_building"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "typology",
+        "summary": "IBM Cosham is currently classified as office_building; the seed must verify how this type differs from related entries with the same DNA.",
+        "data": {
+          "seed_tags": [
+            "typology",
+            "office_building",
+            "Portsmouth, UK"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "summary": "IBM Cosham needs filter checks for themes, materials, rights, plan readiness, 3D layer readiness and viewer filters.",
+        "data": {
+          "seed_tags": [
+            "typology:office-building",
+            "style:postwar_modern_architecture",
+            "theme:office",
+            "theme:technology",
+            "material:steel",
+            "material:glass",
+            "material:curtain-wall",
+            "material:services",
+            "material:office",
+            "material:technology"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      }
+    ],
+    "database_profile": {
+      "status": "reviewed",
+      "r2_prefix": "entries/ibm-cosham",
+      "source_count": 4,
+      "media_count": 4,
+      "model_count": 3,
+      "analysis_count": 5,
+      "tag_count": 16,
+      "rights_summary": "Public text and metadata are allowed; visual assets remain link-only/private until rights are cleared.",
+      "updated_at": "2026-05-25T08:26:52.360Z"
+    },
+    "ingestion_status": {
+      "stage": "needs_review",
+      "source_status": "reviewed",
+      "asset_status": "candidate",
+      "model_status": "planned",
+      "updated_at": "2026-05-25T08:26:52.361Z"
     }
   },
   {
@@ -27604,10 +29101,10 @@
       "playground",
       "urban-repair"
     ],
-    "short_description": "Klingenpark ist im PDF-Framework als industrial-reuse / playground verortet und bildet einen wichtigen Knoten der Architektur- und Stadtgeschichte.",
-    "source_quality": "lecture_pdf",
-    "one_sentence": "Klingenpark ist als Landschaftsprojekt in Zurich, Switzerland im Jahr 1978 im Architecture Cosmos verortet und verknuepft industrial reuse, playground, urban repair.",
-    "full_description": "Klingenpark ist im PDF-Framework als industrial-reuse / playground verortet und bildet einen wichtigen Knoten der Architektur- und Stadtgeschichte. Der Eintrag wird im Atlas als Landschaftsprojekt gelesen und gehoert zur Wissensspur Landschaftsarchitektur ETH, 04 Landschaftsarchitektur 1_2.pdf, Layer landscape architecture 1 2. Autorenschaft / Quelle: Rene Haubensack. Seine Filterebene verbindet industrial reuse, playground, urban repair mit Jahr, Stilsektor und Relationennetz; spaeter koennen echte Fotos, Plaene, Schnitte, Quellen und Modelle direkt aus der Datenbank angeschlossen werden.",
+    "short_description": "Klingenpark wird als kleiner urbaner Reparaturraum gelesen, in dem Spiel, Grün, Museumsvorfeld und Quartieröffentlichkeit auf engem Stadtraum zusammenkommen.",
+    "source_quality": "research_seed_review",
+    "one_sentence": "Klingenpark zeigt, wie ein unspektakulärer Quartierpark über Spiel, Baumraum, Wege und Nachbarschaft eine präzise städtische Alltagstopografie erzeugt.",
+    "full_description": "Klingenpark wird als urbane Freiraumreparatur gelesen. Seine Bedeutung liegt nicht in großer landschaftlicher Geste, sondern in der Verdichtung von Spiel, Aufenthalt, Grünraum, Museumskontext und Quartiersalltag. Architektonisch relevant ist die kleine Maßstabsebene: Topografie, Belag, Baumkörper, Spielgerät, Rand und Durchwegung bilden ein öffentliches Zimmer im Stadtraum. Für KosmoData ist der Eintrag als Gegenpol zu ikonischen Landschaftsprojekten wichtig, weil er zeigt, wie Alltag, Pflege, Benutzbarkeit und städtische Mikroöffentlichkeit selbst zu Entwurfswissen werden.",
     "media": [
       {
         "type": "exterior",
@@ -27632,7 +29129,300 @@
     ],
     "source_documents": [
       "04 Landschaftsarchitektur 1_2.pdf"
-    ]
+    ],
+    "source_candidates": [
+      {
+        "source_type": "public_playground_record",
+        "title": "Spielplatz-Portal / Spielplatz Klingenpark",
+        "url": "https://spielplatz-portal.ch/spielplatz/451/spielplatz-klingenpark",
+        "reliability_level": "medium",
+        "rights_status": "link_only",
+        "notes": "Public playground and park record for Klingenpark's location, equipment and public use. Does not verify the design authorship; keep authorship review open.",
+        "project_specific": true
+      },
+      {
+        "source_type": "park_data_record",
+        "title": "ParkGuide / Klingenpark Zurich",
+        "url": "https://www.parkguide.ch/parks/klingenpark/de",
+        "reliability_level": "medium",
+        "rights_status": "link_only",
+        "notes": "Park data source for address, size and features. Use only as factual public-space metadata.",
+        "project_specific": true
+      },
+      {
+        "source_type": "architecture_context_page",
+        "title": "Architekturbibliothek / Museum fuer Gestaltung Zurich",
+        "url": "https://www.architekturbibliothek.ch/bauwerk/museum-fuer-gestaltung-zuerich/",
+        "reliability_level": "medium",
+        "rights_status": "link_only",
+        "notes": "Context source for Klingenpark as forecourt/green space around the Museum fuer Gestaltung. Use as urban-context lead.",
+        "project_specific": true
+      }
+    ],
+    "architecture_text": {
+      "headline": "Klingenpark: Quartierpark als städtisches Alltagszimmer",
+      "overview": "Klingenpark wird über Nähe, Gebrauch und Stadtreparatur gelesen. Der Park verknüpft Spiel, Grün, Rand, Weg und Museumskontext zu einem kleinen, aber wirksamen öffentlichen Raum.",
+      "chapters": [
+        {
+          "title": "These",
+          "text": "Die These liegt in der Präzision des Kleinen: Urbane Qualität entsteht nicht nur durch große Parks, sondern durch belastbare, gut gesetzte Alltagsräume.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Netzwerk und DNA",
+          "text": "Im Netzwerk steht Klingenpark zwischen Spielplatz, Quartierpark, Museumsumfeld und Zürcher Stadtreparatur.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Topos",
+          "text": "Der Topos Zurich, Switzerland macht den Park zu einer Schwelle zwischen Institution, Straße und Nachbarschaft.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Typos",
+          "text": "Typologisch ist er Park, Spielplatz und Vorfeld zugleich; die Grenzen zwischen Freizeit, Alltag und Repräsentation bleiben bewusst niedrig.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Tektonik erscheint hier als Freiraumfügung: Belag, Baum, Spielgerät, Rand, Topografie und Pflegezustand bilden die materielle Grammatik.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumlogik",
+          "text": "Die Raumlogik entsteht durch überschaubare Zonen, Bewegungsränder, Aufenthaltsinseln und die Beziehung zwischen Kindern, Begleitpersonen und Stadt.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Konflikt und Kritik",
+          "text": "Offen bleibt die genaue Quellenlage zu Entwurfsautorenschaft und Umbauphasen; diese muss vor vertiefter Veröffentlichung weiter geprüft werden.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "KosmoData-Layer und 3D-Potenzial",
+          "text": "Für KosmoData sind Baumräume, Spielbereiche, Wege, Ränder, Beläge und soziale Nutzungszonen wichtige Layer. Tags: Landschaftsprojekt, nachhaltige Architektur, industrielle Umnutzung, playground, urban repair, urban green, öffentlicher Raum, urban park.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Entwurfsintelligenz",
+          "text": "Übertragbar ist der Blick auf kleine Freiräume als ernsthafte architektonische Infrastruktur des Alltags.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "kosmodata-seed-from-research",
+      "generated_at": "2026-05-25T08:26:53.406Z",
+      "review_status": "draft_review"
+    },
+    "materials": {
+      "primary": [
+        "playground",
+        "urban-green",
+        "public-space",
+        "urban-park",
+        "trees",
+        "museum-context",
+        "forecourt"
+      ],
+      "secondary": [
+        "craft_details",
+        "surface_system",
+        "construction_logic"
+      ],
+      "notes": "Seeded from local reviewed source metadata; verify exact material claims before publication."
+    },
+    "program": {
+      "type": "landscape_project",
+      "subtype": "sustainable_architecture_reference",
+      "public_access": "needs_review",
+      "components": [
+        "industrial-reuse",
+        "playground",
+        "urban-repair",
+        "landscape_project",
+        "sustainable_architecture"
+      ]
+    },
+    "context": {
+      "topography": "needs_site_review",
+      "setting": "Zurich, Switzerland",
+      "landscape_relations": [
+        "site_context_needs_review"
+      ],
+      "urban_context": [
+        "landscape_architecture_1_2",
+        "lecture_pdf"
+      ],
+      "construction_logic": [
+        "industrial-reuse",
+        "playground",
+        "urban-repair",
+        "landscape_project",
+        "sustainable_architecture"
+      ]
+    },
+    "database_tags": [
+      "typology:landscape-project",
+      "style:sustainable_architecture",
+      "theme:industrial-reuse",
+      "theme:playground",
+      "theme:urban-repair",
+      "material:playground",
+      "material:urban-green",
+      "material:public-space",
+      "material:urban-park",
+      "material:trees",
+      "material:museum-context",
+      "material:forecourt",
+      "rights:review-required",
+      "blender:landscape-project-layer-candidate",
+      "plan:vector-review-required",
+      "viewer:3d-layer-review-required"
+    ],
+    "model_assets": [
+      {
+        "model_type": "site_model",
+        "title": "Klingenpark Site/context study model",
+        "r2_key": "entries/klingenpark/models/site.glb",
+        "format": "glb",
+        "lod_level": "preview",
+        "source_basis": "entry metadata only; needs source review",
+        "generation_method": "procedural",
+        "review_status": "draft",
+        "confidence_score": 0.42
+      },
+      {
+        "model_type": "structure_model",
+        "title": "Klingenpark Structure and spatial order study model",
+        "r2_key": "entries/klingenpark/models/structure.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "entry metadata only; needs source review",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      },
+      {
+        "model_type": "tectonic_model",
+        "title": "Klingenpark Material, tectonic and filter-layer study model",
+        "r2_key": "entries/klingenpark/models/tectonic.glb",
+        "format": "glb",
+        "lod_level": "study",
+        "source_basis": "entry metadata only; needs source review; tags: typology:landscape-project, style:sustainable_architecture, theme:industrial-reuse, theme:playground, theme:urban-repair, material:playground, material:urban-green, material:public-space",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      }
+    ],
+    "analysis_layers": [
+      {
+        "analysis_type": "structure",
+        "summary": "Klingenpark needs a reviewed structural reading connecting playground, urban-green, public-space with construction logic, span, support and assembly.",
+        "data": {
+          "seed_tags": [
+            "structure:needs_review",
+            "playground",
+            "urban-green",
+            "public-space",
+            "urban-park",
+            "trees",
+            "museum-context",
+            "forecourt"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "material_system",
+        "summary": "Klingenpark should be tagged through playground, urban-green, public-space, urban-park, trees, museum-context, forecourt and verified against primary sources before public material claims are made.",
+        "data": {
+          "seed_tags": [
+            "playground",
+            "urban-green",
+            "public-space",
+            "urban-park",
+            "trees",
+            "museum-context",
+            "forecourt"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "spatial_order",
+        "summary": "Klingenpark should be read through program, movement, room sequence, exterior relation and typological position rather than as a single image.",
+        "data": {
+          "seed_tags": [
+            "spatial_order",
+            "landscape_project"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "typology",
+        "summary": "Klingenpark is currently classified as landscape_project; the seed must verify how this type differs from related entries with the same DNA.",
+        "data": {
+          "seed_tags": [
+            "typology",
+            "landscape_project",
+            "Zurich, Switzerland"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "summary": "Klingenpark needs filter checks for themes, materials, rights, plan readiness, 3D layer readiness and viewer filters.",
+        "data": {
+          "seed_tags": [
+            "typology:landscape-project",
+            "style:sustainable_architecture",
+            "theme:industrial-reuse",
+            "theme:playground",
+            "theme:urban-repair",
+            "material:playground",
+            "material:urban-green",
+            "material:public-space",
+            "material:urban-park",
+            "material:trees"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      }
+    ],
+    "database_profile": {
+      "status": "reviewed",
+      "r2_prefix": "entries/klingenpark",
+      "source_count": 4,
+      "media_count": 4,
+      "model_count": 3,
+      "analysis_count": 5,
+      "tag_count": 16,
+      "rights_summary": "Public text and metadata are allowed; visual assets remain link-only/private until rights are cleared.",
+      "updated_at": "2026-05-25T08:26:53.553Z"
+    },
+    "ingestion_status": {
+      "stage": "needs_review",
+      "source_status": "reviewed",
+      "asset_status": "candidate",
+      "model_status": "planned",
+      "updated_at": "2026-05-25T08:26:53.554Z"
+    }
   },
   {
     "id": "berlin-iba-1987",
@@ -28830,10 +30620,10 @@
       "landscape-urbanism",
       "palimpsest"
     ],
-    "short_description": "Hafeninsel Saarbruecken ist im PDF-Framework als industrial-reuse / landscape-urbanism verortet und bildet einen wichtigen Knoten der Architektur- und Stadtgeschichte.",
-    "source_quality": "lecture_pdf",
-    "one_sentence": "Hafeninsel Saarbruecken ist als Landschaftsprojekt in Saarbruecken, Germany im Jahr 1989 im Architecture Cosmos verortet und verknuepft industrial reuse, landscape urbanism, palimpsest.",
-    "full_description": "Hafeninsel Saarbruecken ist im PDF-Framework als industrial-reuse / landscape-urbanism verortet und bildet einen wichtigen Knoten der Architektur- und Stadtgeschichte. Der Eintrag wird im Atlas als Landschaftsprojekt gelesen und gehoert zur Wissensspur Landschaftsarchitektur ETH, 04 Landschaftsarchitektur 1_2.pdf, Layer landscape architecture 1 2. Autorenschaft / Quelle: Latz + Partner. Seine Filterebene verbindet industrial reuse, landscape urbanism, palimpsest mit Jahr, Stilsektor und Relationennetz; spaeter koennen echte Fotos, Plaene, Schnitte, Quellen und Modelle direkt aus der Datenbank angeschlossen werden.",
+    "short_description": "Hafeninsel Saarbrücken transformiert einen ehemaligen Kohlehafen in eine postindustrielle Parklandschaft aus Mauern, Schutt, Wasser, Gärten und Erinnerung.",
+    "source_quality": "research_seed_review",
+    "one_sentence": "Hafeninsel Saarbrücken zeigt, wie Latz + Partner industrielle Spuren nicht entfernen, sondern als Material eines neuen öffentlichen Landschaftsraums weiterbauen.",
+    "full_description": "Hafeninsel Saarbrücken wird als frühes Projekt postindustrieller Landschaftsarchitektur gelesen. Der ehemalige Kohlehafen wird nicht gereinigt und neutralisiert, sondern über Schutt, Mauern, Wasserbezüge, Vegetation, Wege und Nutzungsfragmente neu codiert. Architektonisch relevant ist die Haltung zum Bestand: Ruine, Materialrest und technische Infrastruktur werden nicht als Problem, sondern als Träger von Atmosphäre, Geschichte und Freiraumordnung eingesetzt. Für KosmoData ist der Eintrag zentral für Industrial Reuse, Palimpsest, Landschaftsurbanismus und die Frage, wie Erinnerung räumlich produktiv wird.",
     "media": [
       {
         "type": "exterior",
@@ -28858,7 +30648,304 @@
     ],
     "source_documents": [
       "04 Landschaftsarchitektur 1_2.pdf"
-    ]
+    ],
+    "source_candidates": [
+      {
+        "source_type": "office_project_page",
+        "title": "Latz + Partner / Hafeninsel Saarbruecken",
+        "url": "https://www.latzundpartner.de/de/projekte/postindustrielle-landschaften/hafeninsel-saarbrucken-de/",
+        "reliability_level": "high",
+        "rights_status": "link_only",
+        "notes": "Official project page for the former coal harbour landscape, ecological urban renewal, rubble reuse, gardens, passages and water system.",
+        "project_specific": true
+      },
+      {
+        "source_type": "office_publication_record",
+        "title": "Latz + Partner / Die Hafeninsel in Saarbruecken",
+        "url": "https://www.latzundpartner.de/en/publikationen/die-hafeninsel-saarbrucken/",
+        "reliability_level": "high",
+        "rights_status": "bibliographic_link_only",
+        "notes": "Office publication record for Peter Latz in Garten + Landschaft 11/1987. Use as bibliography/source trail.",
+        "project_specific": true
+      },
+      {
+        "source_type": "publication_list",
+        "title": "Latz + Partner / Publikationsliste",
+        "url": "https://assets.latzundpartner.de/media/publications/pdfs/Publikationsliste_gesamt_09-01-2020.pdf",
+        "reliability_level": "medium",
+        "rights_status": "citation_only",
+        "notes": "Publication list containing project-oriented references for Hafeninsel Saarbruecken. Use as bibliographic lead only.",
+        "project_specific": true
+      }
+    ],
+    "architecture_text": {
+      "headline": "Hafeninsel Saarbrücken: Industriefragment als Parkmaterial",
+      "overview": "Hafeninsel Saarbrücken arbeitet mit Resten: Mauern, Schutt, Hafenlogik, Wasser und Vegetation werden zu einer neuen öffentlichen Landschaft zusammengesetzt.",
+      "chapters": [
+        {
+          "title": "These",
+          "text": "Die These liegt im Weiterbauen mit Spuren. Industriegeschichte wird nicht dekoriert, sondern als räumliche Struktur des Parks erhalten und transformiert.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Netzwerk und DNA",
+          "text": "Im Netzwerk steht das Projekt zwischen Latz + Partner, postindustrieller Landschaft, Landschaftspark Duisburg-Nord, Hafenrevitalisierung und Palimpsest-Denken.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Topos",
+          "text": "Der Topos Saarbruecken, Germany verbindet Fluss, Hafen, Industrie und Stadtumbau zu einem mehrschichtigen Freiraum.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Typos",
+          "text": "Typologisch ist es Park, Hafenlandschaft und Erinnerungsraum zugleich. Der Typus entsteht aus der Überlagerung von Infrastruktur und öffentlichem Raum.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Tektonisch sind Mauern, Schutt, Wasserbau, Beläge, Vegetation und industrielle Fragmente die eigentlichen Bauteile.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumlogik",
+          "text": "Die Raumlogik entsteht aus Wegen, Passagen, Gärten, Reststrukturen und der Bewegung entlang ehemaliger Produktions- und Hafenkanten.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Konflikt und Kritik",
+          "text": "Kritisch zu prüfen ist, wie viel industrielle Härte erhalten bleibt und wo Landschaftsgestaltung Erinnerung ästhetisiert.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "KosmoData-Layer und 3D-Potenzial",
+          "text": "Für KosmoData sind Wasser, Mauerreste, Schuttfelder, Vegetationsinseln, Wege, industrielle Spuren und Erinnerungslayer zentral. Tags: Landschaftsprojekt, nachhaltige Architektur, industrielle Umnutzung, Landscape Urbanism, Palimpsest, rubble, Wasser, walls.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Entwurfsintelligenz",
+          "text": "Übertragbar ist die Methode, Bestand nicht zu glätten, sondern als aktiven Entwurfsstoff zu behandeln.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "kosmodata-seed-from-research",
+      "generated_at": "2026-05-25T08:26:54.610Z",
+      "review_status": "draft_review"
+    },
+    "materials": {
+      "primary": [
+        "industrial-reuse",
+        "rubble",
+        "water",
+        "walls",
+        "publication",
+        "postindustrial-landscape",
+        "bibliography",
+        "landscape-publication"
+      ],
+      "secondary": [
+        "craft_details",
+        "surface_system",
+        "construction_logic"
+      ],
+      "notes": "Seeded from local reviewed source metadata; verify exact material claims before publication."
+    },
+    "program": {
+      "type": "landscape_project",
+      "subtype": "sustainable_architecture_reference",
+      "public_access": "needs_review",
+      "components": [
+        "industrial-reuse",
+        "landscape-urbanism",
+        "palimpsest",
+        "landscape_project",
+        "sustainable_architecture"
+      ]
+    },
+    "context": {
+      "topography": "needs_site_review",
+      "setting": "Saarbruecken, Germany",
+      "landscape_relations": [
+        "site_context_needs_review"
+      ],
+      "urban_context": [
+        "landscape_architecture_1_2",
+        "lecture_pdf"
+      ],
+      "construction_logic": [
+        "industrial-reuse",
+        "landscape-urbanism",
+        "palimpsest",
+        "landscape_project",
+        "sustainable_architecture"
+      ]
+    },
+    "database_tags": [
+      "typology:landscape-project",
+      "style:sustainable_architecture",
+      "theme:industrial-reuse",
+      "theme:landscape-urbanism",
+      "theme:palimpsest",
+      "material:industrial-reuse",
+      "material:rubble",
+      "material:water",
+      "material:walls",
+      "material:publication",
+      "material:postindustrial-landscape",
+      "material:bibliography",
+      "material:landscape-publication",
+      "rights:review-required",
+      "blender:landscape-project-layer-candidate",
+      "plan:vector-review-required",
+      "viewer:3d-layer-review-required"
+    ],
+    "model_assets": [
+      {
+        "model_type": "site_model",
+        "title": "Hafeninsel Saarbruecken Site/context study model",
+        "r2_key": "entries/hafeninsel-saarbruecken/models/site.glb",
+        "format": "glb",
+        "lod_level": "preview",
+        "source_basis": "entry metadata only; needs source review",
+        "generation_method": "procedural",
+        "review_status": "draft",
+        "confidence_score": 0.42
+      },
+      {
+        "model_type": "structure_model",
+        "title": "Hafeninsel Saarbruecken Structure and spatial order study model",
+        "r2_key": "entries/hafeninsel-saarbruecken/models/structure.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "entry metadata only; needs source review",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      },
+      {
+        "model_type": "tectonic_model",
+        "title": "Hafeninsel Saarbruecken Material, tectonic and filter-layer study model",
+        "r2_key": "entries/hafeninsel-saarbruecken/models/tectonic.glb",
+        "format": "glb",
+        "lod_level": "study",
+        "source_basis": "entry metadata only; needs source review; tags: typology:landscape-project, style:sustainable_architecture, theme:industrial-reuse, theme:landscape-urbanism, theme:palimpsest, material:industrial-reuse, material:rubble, material:water",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      }
+    ],
+    "analysis_layers": [
+      {
+        "analysis_type": "structure",
+        "summary": "Hafeninsel Saarbruecken needs a reviewed structural reading connecting industrial-reuse, rubble, water with construction logic, span, support and assembly.",
+        "data": {
+          "seed_tags": [
+            "structure:needs_review",
+            "industrial-reuse",
+            "rubble",
+            "water",
+            "walls",
+            "publication",
+            "postindustrial-landscape",
+            "bibliography",
+            "landscape-publication"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "material_system",
+        "summary": "Hafeninsel Saarbruecken should be tagged through industrial-reuse, rubble, water, walls, publication, postindustrial-landscape, bibliography, landscape-publication and verified against primary sources before public material claims are made.",
+        "data": {
+          "seed_tags": [
+            "industrial-reuse",
+            "rubble",
+            "water",
+            "walls",
+            "publication",
+            "postindustrial-landscape",
+            "bibliography",
+            "landscape-publication"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "spatial_order",
+        "summary": "Hafeninsel Saarbruecken should be read through program, movement, room sequence, exterior relation and typological position rather than as a single image.",
+        "data": {
+          "seed_tags": [
+            "spatial_order",
+            "landscape_project"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "typology",
+        "summary": "Hafeninsel Saarbruecken is currently classified as landscape_project; the seed must verify how this type differs from related entries with the same DNA.",
+        "data": {
+          "seed_tags": [
+            "typology",
+            "landscape_project",
+            "Saarbruecken, Germany"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "summary": "Hafeninsel Saarbruecken needs filter checks for themes, materials, rights, plan readiness, 3D layer readiness and viewer filters.",
+        "data": {
+          "seed_tags": [
+            "typology:landscape-project",
+            "style:sustainable_architecture",
+            "theme:industrial-reuse",
+            "theme:landscape-urbanism",
+            "theme:palimpsest",
+            "material:industrial-reuse",
+            "material:rubble",
+            "material:water",
+            "material:walls",
+            "material:publication"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      }
+    ],
+    "database_profile": {
+      "status": "reviewed",
+      "r2_prefix": "entries/hafeninsel-saarbruecken",
+      "source_count": 4,
+      "media_count": 4,
+      "model_count": 3,
+      "analysis_count": 5,
+      "tag_count": 17,
+      "rights_summary": "Public text and metadata are allowed; visual assets remain link-only/private until rights are cleared.",
+      "updated_at": "2026-05-25T08:26:54.755Z"
+    },
+    "ingestion_status": {
+      "stage": "needs_review",
+      "source_status": "reviewed",
+      "asset_status": "candidate",
+      "model_status": "planned",
+      "updated_at": "2026-05-25T08:26:54.755Z"
+    }
   },
   {
     "id": "landschaftspark-duisburg-nord",
@@ -29681,10 +31768,10 @@
       "renaturation",
       "process"
     ],
-    "short_description": "Renaturierung der Aire ist im PDF-Framework als climate-landscape / renaturation verortet und bildet einen wichtigen Knoten der Architektur- und Stadtgeschichte.",
-    "source_quality": "lecture_pdf",
-    "one_sentence": "Renaturierung der Aire ist als Landschaftsprojekt in Geneva, Switzerland im Jahr 2000 im Architecture Cosmos verortet und verknuepft climate landscape, renaturation, process.",
-    "full_description": "Renaturierung der Aire ist im PDF-Framework als climate-landscape / renaturation verortet und bildet einen wichtigen Knoten der Architektur- und Stadtgeschichte. Der Eintrag wird im Atlas als Landschaftsprojekt gelesen und gehoert zur Wissensspur Landschaftsarchitektur ETH, 04 Landschaftsarchitektur 1_2.pdf, Layer landscape architecture 1 2. Autorenschaft / Quelle: Group Superposition. Seine Filterebene verbindet climate landscape, renaturation, process mit Jahr, Stilsektor und Relationennetz; spaeter koennen echte Fotos, Plaene, Schnitte, Quellen und Modelle direkt aus der Datenbank angeschlossen werden.",
+    "short_description": "Die Renaturierung der Aire verwandelt einen kanalisierten Fluss in ein prozessuales Landschaftssystem aus Wasser, Gitter, Erosion und ökologischer Dynamik.",
+    "source_quality": "research_seed_review",
+    "one_sentence": "Die Aire-Renaturierung zeigt, wie Landschaftsarchitektur Kontrolle nicht einfach ersetzt, sondern einen Rahmen schafft, in dem Wasser, Sediment und Vegetation selbst weiterentwerfen.",
+    "full_description": "Die Renaturierung der Aire wird als prozessuales Infrastruktur- und Landschaftsprojekt gelesen. Der alte Kanal wird nicht einfach gelöscht, sondern als historische Linie neben einem neuen, dynamischen Flussraum weitergeführt. Entscheidend ist das Perkolationsdiagramm: Ein geometrischer Rahmen wird gesetzt, damit Wasser, Erosion, Ablagerung und Vegetation über Zeit eine eigene Morphologie entwickeln können. Für KosmoData ist das Projekt zentral für Klima-Landschaft, Renaturierung, Prozessdesign, Wasserbau und die Frage, wie Planung Kontrolle an natürliche Dynamik abgeben kann.",
     "media": [
       {
         "type": "exterior",
@@ -29709,7 +31796,304 @@
     ],
     "source_documents": [
       "04 Landschaftsarchitektur 1_2.pdf"
-    ]
+    ],
+    "source_candidates": [
+      {
+        "source_type": "official_project_site",
+        "title": "Superpositions / Renaturation de l'Aire",
+        "url": "https://lariviere.ch/",
+        "reliability_level": "high",
+        "rights_status": "link_only",
+        "notes": "Project-specific site for the Aire renaturation, territorial reorganization, retained canal, ecological corridor, flood management and percolation diagram.",
+        "project_specific": true
+      },
+      {
+        "source_type": "landscape_article",
+        "title": "Abitare / Switzerland, Superpositions renatures the Aire",
+        "url": "https://www.abitare.it/en/habitat-en/landascape-design-en/2017/10/28/superpositions-aire-switzerland/",
+        "reliability_level": "medium",
+        "rights_status": "link_only",
+        "notes": "Secondary article for narrative context and project phases. Use as review source only.",
+        "project_specific": true
+      },
+      {
+        "source_type": "renaturation_platform",
+        "title": "Plattform Renaturierung / Renaturation de l'Aire",
+        "url": "https://plattform-renaturierung.ch/mediathek/renaturation-de-laire/",
+        "reliability_level": "high",
+        "rights_status": "link_only",
+        "notes": "Swiss renaturation platform source for project significance and ecological restoration context.",
+        "project_specific": true
+      }
+    ],
+    "architecture_text": {
+      "headline": "Renaturierung der Aire: Prozess als Entwurfsautor",
+      "overview": "Die Aire-Renaturierung verbindet technische Wasserführung, ökologische Wiederherstellung und landschaftliche Zeit. Planung setzt hier nicht eine fertige Form, sondern eine prozessfähige Struktur.",
+      "chapters": [
+        {
+          "title": "These",
+          "text": "Die These liegt im kontrollierten Kontrollverlust: Ein Raster eröffnet die Möglichkeit, dass Wasser, Pflanzen und Sediment die endgültige Gestalt mitproduzieren.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Netzwerk und DNA",
+          "text": "Im Netzwerk steht das Projekt zwischen Renaturierung, Landschaftsurbanismus, Wasserinfrastruktur, Klimaanpassung und prozessualem Entwurf.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Topos",
+          "text": "Der Topos Geneva, Switzerland ist Flussraum, Agrarlandschaft und Infrastrukturkorridor zugleich.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Typos",
+          "text": "Typologisch ist es Renaturierungsprojekt, Park, Wasserbau und ökologisches Labor. Der Typus ist zeitlich, nicht nur räumlich.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Tektonik entsteht aus Boden, Wasser, Vegetation, Raster, Schnittprofil und Erosionsprozess.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumlogik",
+          "text": "Die Raumlogik ist longitudinal und dynamisch: Kanal, neuer Flusslauf, Ufer, Wege und ökologische Korridore verändern ihre Wirkung über Zeit.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Konflikt und Kritik",
+          "text": "Kritisch bleibt, wie stark ökologische Prozesse tatsächlich frei arbeiten dürfen und wo technische Pflege die Dynamik begrenzt.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "KosmoData-Layer und 3D-Potenzial",
+          "text": "Für KosmoData sind Wasserlauf, alter Kanal, Perkolationsraster, Vegetation, Erosion, Wege und Zeitschichten zentrale Layer. Tags: Landschaftsprojekt, nachhaltige Architektur, climate landscape, renaturation, process, Wasser, ecology, percolation diagram.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Entwurfsintelligenz",
+          "text": "Übertragbar ist der Entwurfsansatz, Prozesse als Layer zu modellieren und nicht nur finale Zustände.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "kosmodata-seed-from-research",
+      "generated_at": "2026-05-25T08:26:55.821Z",
+      "review_status": "draft_review"
+    },
+    "materials": {
+      "primary": [
+        "water",
+        "ecology",
+        "percolation-diagram",
+        "river",
+        "land-art",
+        "landscape-process",
+        "renaturation",
+        "ecological-corridor"
+      ],
+      "secondary": [
+        "craft_details",
+        "surface_system",
+        "construction_logic"
+      ],
+      "notes": "Seeded from local reviewed source metadata; verify exact material claims before publication."
+    },
+    "program": {
+      "type": "landscape_project",
+      "subtype": "sustainable_architecture_reference",
+      "public_access": "needs_review",
+      "components": [
+        "climate-landscape",
+        "renaturation",
+        "process",
+        "landscape_project",
+        "sustainable_architecture"
+      ]
+    },
+    "context": {
+      "topography": "needs_site_review",
+      "setting": "Geneva, Switzerland",
+      "landscape_relations": [
+        "site_context_needs_review"
+      ],
+      "urban_context": [
+        "landscape_architecture_1_2",
+        "lecture_pdf"
+      ],
+      "construction_logic": [
+        "climate-landscape",
+        "renaturation",
+        "process",
+        "landscape_project",
+        "sustainable_architecture"
+      ]
+    },
+    "database_tags": [
+      "typology:landscape-project",
+      "style:sustainable_architecture",
+      "theme:climate-landscape",
+      "theme:renaturation",
+      "theme:process",
+      "material:water",
+      "material:ecology",
+      "material:percolation-diagram",
+      "material:river",
+      "material:land-art",
+      "material:landscape-process",
+      "material:renaturation",
+      "material:ecological-corridor",
+      "rights:review-required",
+      "blender:landscape-project-layer-candidate",
+      "plan:vector-review-required",
+      "viewer:3d-layer-review-required"
+    ],
+    "model_assets": [
+      {
+        "model_type": "site_model",
+        "title": "Renaturierung der Aire Site/context study model",
+        "r2_key": "entries/renaturierung-der-aire/models/site.glb",
+        "format": "glb",
+        "lod_level": "preview",
+        "source_basis": "entry metadata only; needs source review",
+        "generation_method": "procedural",
+        "review_status": "draft",
+        "confidence_score": 0.42
+      },
+      {
+        "model_type": "structure_model",
+        "title": "Renaturierung der Aire Structure and spatial order study model",
+        "r2_key": "entries/renaturierung-der-aire/models/structure.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "entry metadata only; needs source review",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      },
+      {
+        "model_type": "tectonic_model",
+        "title": "Renaturierung der Aire Material, tectonic and filter-layer study model",
+        "r2_key": "entries/renaturierung-der-aire/models/tectonic.glb",
+        "format": "glb",
+        "lod_level": "study",
+        "source_basis": "entry metadata only; needs source review; tags: typology:landscape-project, style:sustainable_architecture, theme:climate-landscape, theme:renaturation, theme:process, material:water, material:ecology, material:percolation-diagram",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      }
+    ],
+    "analysis_layers": [
+      {
+        "analysis_type": "structure",
+        "summary": "Renaturierung der Aire needs a reviewed structural reading connecting water, ecology, percolation-diagram with construction logic, span, support and assembly.",
+        "data": {
+          "seed_tags": [
+            "structure:needs_review",
+            "water",
+            "ecology",
+            "percolation-diagram",
+            "river",
+            "land-art",
+            "landscape-process",
+            "renaturation",
+            "ecological-corridor"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "material_system",
+        "summary": "Renaturierung der Aire should be tagged through water, ecology, percolation-diagram, river, land-art, landscape-process, renaturation, ecological-corridor and verified against primary sources before public material claims are made.",
+        "data": {
+          "seed_tags": [
+            "water",
+            "ecology",
+            "percolation-diagram",
+            "river",
+            "land-art",
+            "landscape-process",
+            "renaturation",
+            "ecological-corridor"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "spatial_order",
+        "summary": "Renaturierung der Aire should be read through program, movement, room sequence, exterior relation and typological position rather than as a single image.",
+        "data": {
+          "seed_tags": [
+            "spatial_order",
+            "landscape_project"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "typology",
+        "summary": "Renaturierung der Aire is currently classified as landscape_project; the seed must verify how this type differs from related entries with the same DNA.",
+        "data": {
+          "seed_tags": [
+            "typology",
+            "landscape_project",
+            "Geneva, Switzerland"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "summary": "Renaturierung der Aire needs filter checks for themes, materials, rights, plan readiness, 3D layer readiness and viewer filters.",
+        "data": {
+          "seed_tags": [
+            "typology:landscape-project",
+            "style:sustainable_architecture",
+            "theme:climate-landscape",
+            "theme:renaturation",
+            "theme:process",
+            "material:water",
+            "material:ecology",
+            "material:percolation-diagram",
+            "material:river",
+            "material:land-art"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      }
+    ],
+    "database_profile": {
+      "status": "reviewed",
+      "r2_prefix": "entries/renaturierung-der-aire",
+      "source_count": 4,
+      "media_count": 4,
+      "model_count": 3,
+      "analysis_count": 5,
+      "tag_count": 17,
+      "rights_summary": "Public text and metadata are allowed; visual assets remain link-only/private until rights are cleared.",
+      "updated_at": "2026-05-25T08:26:55.977Z"
+    },
+    "ingestion_status": {
+      "stage": "needs_review",
+      "source_status": "reviewed",
+      "asset_status": "candidate",
+      "model_status": "planned",
+      "updated_at": "2026-05-25T08:26:55.977Z"
+    }
   },
   {
     "id": "oerliker-park",
@@ -30141,10 +32525,10 @@
       "water",
       "public-space"
     ],
-    "short_description": "Opfikerpark Glattpark ist im PDF-Framework als urban-repair / water verortet und bildet einen wichtigen Knoten der Architektur- und Stadtgeschichte.",
-    "source_quality": "lecture_pdf",
-    "one_sentence": "Opfikerpark Glattpark ist als Landschaftsprojekt in Zurich-Nord, Switzerland im Jahr 2001 im Architecture Cosmos verortet und verknuepft urban repair, water, public space.",
-    "full_description": "Opfikerpark Glattpark ist im PDF-Framework als urban-repair / water verortet und bildet einen wichtigen Knoten der Architektur- und Stadtgeschichte. Der Eintrag wird im Atlas als Landschaftsprojekt gelesen und gehoert zur Wissensspur Landschaftsarchitektur ETH, 04 Landschaftsarchitektur 1_2.pdf, Layer landscape architecture 1 2. Autorenschaft / Quelle: Gabriele Kiefer. Seine Filterebene verbindet urban repair, water, public space mit Jahr, Stilsektor und Relationennetz; spaeter koennen echte Fotos, Plaene, Schnitte, Quellen und Modelle direkt aus der Datenbank angeschlossen werden.",
+    "short_description": "Opfikerpark Glattpark setzt Wasser, Wiese, Wege und Quartiersränder als identitätsbildende Mitte einer neuen Agglomerationsstadt ein.",
+    "source_quality": "research_seed_review",
+    "one_sentence": "Opfikerpark zeigt, wie ein neuer Stadtteil über einen großen Wasser- und Freiraumkörper lesbar, öffentlich und landschaftlich verankert wird.",
+    "full_description": "Opfikerpark Glattpark wird als Freiraumkern einer neuen Agglomerationsentwicklung gelesen. Der Park ordnet den Stadtteil nicht durch ein einzelnes Objekt, sondern durch Wasserfläche, Wege, Wiesenräume, Baumsetzungen, Ränder und Blickbeziehungen. Architektonisch relevant ist die Frage nach Identität in einer neu geplanten Umgebung: Landschaft wird hier zur Adresse, zur Klimastruktur und zum sozialen Aufenthaltsraum. Für KosmoData ist der Eintrag wichtig für Urban Repair, Wasserraum, Agglomeration, Public Space und die Rolle von Landschaft als ordnende Infrastruktur.",
     "media": [
       {
         "type": "exterior",
@@ -30169,7 +32553,308 @@
     ],
     "source_documents": [
       "04 Landschaftsarchitektur 1_2.pdf"
-    ]
+    ],
+    "source_candidates": [
+      {
+        "source_type": "implementation_office_project_page",
+        "title": "Uniola / Opfikerpark",
+        "url": "https://www.uniola.com/de/project/opfikerpark_opfikon/",
+        "reliability_level": "high",
+        "rights_status": "link_only",
+        "notes": "Project source for Opfikerpark, execution planning, construction management, Glattpark setting and Kiefer concept.",
+        "project_specific": true
+      },
+      {
+        "source_type": "architecture_platform",
+        "title": "Divisare / Developing the Oberhauserriet Marshland Glattpark",
+        "url": "https://divisare.com/projects/16991-buro-kiefer-landschaftsarchitekt-hanns-joosten-developing-the-oberhauserriet-marshland-glattpark-opfikon",
+        "reliability_level": "medium",
+        "rights_status": "link_only",
+        "notes": "Project-specific publication with competition, lake, park and district-development context. Do not republish images.",
+        "project_specific": true
+      },
+      {
+        "source_type": "urban_space_project_page",
+        "title": "Uniola / Glattpark Urban Spaces",
+        "url": "https://www.uniola.com/en/project/stadtraeume_glattpark_opfikon/",
+        "reliability_level": "high",
+        "rights_status": "link_only",
+        "notes": "Related Glattpark public-space system source; use to understand the park's boulevard, green corridors and district context.",
+        "project_specific": true
+      }
+    ],
+    "architecture_text": {
+      "headline": "Opfikerpark Glattpark: Wasserraum als Quartiersmitte",
+      "overview": "Opfikerpark gibt einem neuen Stadtteil eine landschaftliche Mitte. See, Wege, Wiesen und Ränder schaffen Orientierung, Klima und öffentliche Nutzung.",
+      "chapters": [
+        {
+          "title": "These",
+          "text": "Die These liegt in der Freiraum-Infrastruktur: Landschaft ist nicht Dekoration, sondern das Grundgerüst, an dem Quartier und Öffentlichkeit lesbar werden.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Netzwerk und DNA",
+          "text": "Im Netzwerk steht Opfikerpark zwischen Agglomerationsentwicklung, Wasserpark, Stadtreparatur und neuer Zürcher Peripherie.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Topos",
+          "text": "Der Topos Zurich-Nord, Switzerland ist Zwischenstadt: nicht historisches Zentrum, sondern neu komponierter urbaner Rand.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Typos",
+          "text": "Typologisch ist der Park Quartiersmitte, Wasserraum und öffentlicher Landschaftsanker zugleich.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Tektonisch wirken Wasserbecken, Uferkante, Weg, Wiese, Baum, Belag und Böschung zusammen.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumlogik",
+          "text": "Die Raumlogik entsteht über Rundwege, Blick über Wasser, offene Wiesen, Ränder und Übergänge zu den umliegenden Bauten.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Konflikt und Kritik",
+          "text": "Kritisch bleibt die Frage, wie künstlich erzeugte Identität in neuen Stadtteilen langfristig sozial angenommen wird.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "KosmoData-Layer und 3D-Potenzial",
+          "text": "Für KosmoData sind See, Ufer, Wege, Wiesen, Baumfelder, Quartierskanten und klimatische Wirkung zentrale Layer. Tags: Landschaftsprojekt, nachhaltige Architektur, urban repair, Wasser, öffentlicher Raum, urban green, agglomeration, lake.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Entwurfsintelligenz",
+          "text": "Übertragbar ist die Strategie, Landschaft als erstes Ordnungsinstrument einer neuen Stadtstruktur einzusetzen.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "kosmodata-seed-from-research",
+      "generated_at": "2026-05-25T08:26:57.017Z",
+      "review_status": "draft_review"
+    },
+    "materials": {
+      "primary": [
+        "water",
+        "urban-green",
+        "agglomeration",
+        "lake",
+        "new-district",
+        "public-space",
+        "boulevard",
+        "green-corridor",
+        "water-management"
+      ],
+      "secondary": [
+        "craft_details",
+        "surface_system",
+        "construction_logic"
+      ],
+      "notes": "Seeded from local reviewed source metadata; verify exact material claims before publication."
+    },
+    "program": {
+      "type": "landscape_project",
+      "subtype": "sustainable_architecture_reference",
+      "public_access": "needs_review",
+      "components": [
+        "urban-repair",
+        "water",
+        "public-space",
+        "landscape_project",
+        "sustainable_architecture"
+      ]
+    },
+    "context": {
+      "topography": "needs_site_review",
+      "setting": "Zurich-Nord, Switzerland",
+      "landscape_relations": [
+        "site_context_needs_review"
+      ],
+      "urban_context": [
+        "landscape_architecture_1_2",
+        "lecture_pdf"
+      ],
+      "construction_logic": [
+        "urban-repair",
+        "water",
+        "public-space",
+        "landscape_project",
+        "sustainable_architecture"
+      ]
+    },
+    "database_tags": [
+      "typology:landscape-project",
+      "style:sustainable_architecture",
+      "theme:urban-repair",
+      "theme:water",
+      "theme:public-space",
+      "material:water",
+      "material:urban-green",
+      "material:agglomeration",
+      "material:lake",
+      "material:new-district",
+      "material:public-space",
+      "material:boulevard",
+      "material:green-corridor",
+      "material:water-management",
+      "rights:review-required",
+      "blender:landscape-project-layer-candidate",
+      "plan:vector-review-required",
+      "viewer:3d-layer-review-required"
+    ],
+    "model_assets": [
+      {
+        "model_type": "site_model",
+        "title": "Opfikerpark Glattpark Site/context study model",
+        "r2_key": "entries/opfikerpark-glattpark/models/site.glb",
+        "format": "glb",
+        "lod_level": "preview",
+        "source_basis": "entry metadata only; needs source review",
+        "generation_method": "procedural",
+        "review_status": "draft",
+        "confidence_score": 0.42
+      },
+      {
+        "model_type": "structure_model",
+        "title": "Opfikerpark Glattpark Structure and spatial order study model",
+        "r2_key": "entries/opfikerpark-glattpark/models/structure.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "entry metadata only; needs source review",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      },
+      {
+        "model_type": "tectonic_model",
+        "title": "Opfikerpark Glattpark Material, tectonic and filter-layer study model",
+        "r2_key": "entries/opfikerpark-glattpark/models/tectonic.glb",
+        "format": "glb",
+        "lod_level": "study",
+        "source_basis": "entry metadata only; needs source review; tags: typology:landscape-project, style:sustainable_architecture, theme:urban-repair, theme:water, theme:public-space, material:water, material:urban-green, material:agglomeration",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      }
+    ],
+    "analysis_layers": [
+      {
+        "analysis_type": "structure",
+        "summary": "Opfikerpark Glattpark needs a reviewed structural reading connecting water, urban-green, agglomeration with construction logic, span, support and assembly.",
+        "data": {
+          "seed_tags": [
+            "structure:needs_review",
+            "water",
+            "urban-green",
+            "agglomeration",
+            "lake",
+            "new-district",
+            "public-space",
+            "boulevard",
+            "green-corridor",
+            "water-management"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "material_system",
+        "summary": "Opfikerpark Glattpark should be tagged through water, urban-green, agglomeration, lake, new-district, public-space, boulevard, green-corridor, water-management and verified against primary sources before public material claims are made.",
+        "data": {
+          "seed_tags": [
+            "water",
+            "urban-green",
+            "agglomeration",
+            "lake",
+            "new-district",
+            "public-space",
+            "boulevard",
+            "green-corridor",
+            "water-management"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "spatial_order",
+        "summary": "Opfikerpark Glattpark should be read through program, movement, room sequence, exterior relation and typological position rather than as a single image.",
+        "data": {
+          "seed_tags": [
+            "spatial_order",
+            "landscape_project"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "typology",
+        "summary": "Opfikerpark Glattpark is currently classified as landscape_project; the seed must verify how this type differs from related entries with the same DNA.",
+        "data": {
+          "seed_tags": [
+            "typology",
+            "landscape_project",
+            "Zurich-Nord, Switzerland"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "summary": "Opfikerpark Glattpark needs filter checks for themes, materials, rights, plan readiness, 3D layer readiness and viewer filters.",
+        "data": {
+          "seed_tags": [
+            "typology:landscape-project",
+            "style:sustainable_architecture",
+            "theme:urban-repair",
+            "theme:water",
+            "theme:public-space",
+            "material:water",
+            "material:urban-green",
+            "material:agglomeration",
+            "material:lake",
+            "material:new-district"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      }
+    ],
+    "database_profile": {
+      "status": "reviewed",
+      "r2_prefix": "entries/opfikerpark-glattpark",
+      "source_count": 4,
+      "media_count": 4,
+      "model_count": 3,
+      "analysis_count": 5,
+      "tag_count": 18,
+      "rights_summary": "Public text and metadata are allowed; visual assets remain link-only/private until rights are cleared.",
+      "updated_at": "2026-05-25T08:26:57.166Z"
+    },
+    "ingestion_status": {
+      "stage": "needs_review",
+      "source_status": "reviewed",
+      "asset_status": "candidate",
+      "model_status": "planned",
+      "updated_at": "2026-05-25T08:26:57.166Z"
+    }
   },
   {
     "id": "shipyard-park",
@@ -30191,10 +32876,10 @@
       "industrial-reuse",
       "public-space"
     ],
-    "short_description": "Shipyard Park ist im PDF-Framework als landscape-urbanism / industrial-reuse verortet und bildet einen wichtigen Knoten der Architektur- und Stadtgeschichte.",
-    "source_quality": "lecture_pdf",
-    "one_sentence": "Shipyard Park ist als Landschaftsprojekt in Zhongshan, China im Jahr 2001 im Architecture Cosmos verortet und verknuepft landscape urbanism, industrial reuse, public space.",
-    "full_description": "Shipyard Park ist im PDF-Framework als landscape-urbanism / industrial-reuse verortet und bildet einen wichtigen Knoten der Architektur- und Stadtgeschichte. Der Eintrag wird im Atlas als Landschaftsprojekt gelesen und gehoert zur Wissensspur Global History ETH, 02 Global History of Urban Design 1_2.pdf, Layer global urban design. Autorenschaft / Quelle: Turenscape. Seine Filterebene verbindet landscape urbanism, industrial reuse, public space mit Jahr, Stilsektor und Relationennetz; spaeter koennen echte Fotos, Plaene, Schnitte, Quellen und Modelle direkt aus der Datenbank angeschlossen werden.",
+    "short_description": "Shipyard Park Zhongshan macht eine ehemalige Werft zu einem öffentlichen Landschaftsraum, in dem industrielle Relikte, Wasser und Vegetation weiterwirken.",
+    "source_quality": "research_seed_review",
+    "one_sentence": "Shipyard Park zeigt, wie Turenscape industrielle Infrastruktur nicht museal einfriert, sondern als robustes Gerüst für Öffentlichkeit, Ökologie und Erinnerung aktiviert.",
+    "full_description": "Shipyard Park wird als postindustrielle Landschaft gelesen. Die ehemalige Werft bleibt nicht bloß Kulisse, sondern liefert Material, Maßstab und Erzählung des Parks: Stahl, Maschinenreste, Wasserbezug, Wege, Vegetation und topografische Interventionen verbinden Geschichte mit neuer öffentlicher Nutzung. Architektonisch relevant ist die produktive Unvollständigkeit: Das Projekt arbeitet mit Spuren, Brüchen und rauen Elementen, um eine differenzierte Landschaft statt eines geglätteten Stadtparks zu erzeugen. Für KosmoData ist der Eintrag zentral für Industrial Reuse, chinesischen Landschaftsurbanismus, Waterfront, Erinnerung und robuste Materialästhetik.",
     "media": [
       {
         "type": "exterior",
@@ -30219,7 +32904,304 @@
     ],
     "source_documents": [
       "02 Global History of Urban Design 1_2.pdf"
-    ]
+    ],
+    "source_candidates": [
+      {
+        "source_type": "office_project_article",
+        "title": "Turenscape / Industrial Strength - Zhongshan Shipyard Park",
+        "url": "https://www.turenscape.com/en/news/detail/79.html",
+        "reliability_level": "high",
+        "rights_status": "link_only",
+        "notes": "Official Turenscape source for Zhongshan Shipyard Park, industrial heritage, collaboration and landscape strategy.",
+        "project_specific": true
+      },
+      {
+        "source_type": "academic_case_pdf",
+        "title": "University of Washington / Zhongshan Shipyard Park case PDF",
+        "url": "https://courses.washington.edu/gehlstud/gehl-studio/wp-content/themes/gehl-studio/downloads/Autumn2010/Zhongshan.pdf",
+        "reliability_level": "medium",
+        "rights_status": "citation_only",
+        "notes": "Academic case-study PDF candidate. Use as private/review citation source, not for media republication.",
+        "project_specific": true
+      },
+      {
+        "source_type": "academic_thesis_candidate",
+        "title": "University of Waterloo / Swampy Urbanism",
+        "url": "https://dspacemainprd01.lib.uwaterloo.ca/server/api/core/bitstreams/5983c5c1-2e49-47c1-a1dd-95a62d578cae/content",
+        "reliability_level": "medium",
+        "rights_status": "citation_only",
+        "notes": "Academic source candidate referencing Zhongshan Shipyard Park. Verify exact citation before promotion.",
+        "project_specific": true
+      }
+    ],
+    "architecture_text": {
+      "headline": "Shipyard Park: Werftrelikt als öffentliche Landschaft",
+      "overview": "Shipyard Park transformiert industrielle Reste in einen Park, der Wasser, Stahl, Vegetation und öffentliche Bewegung zusammenbringt.",
+      "chapters": [
+        {
+          "title": "These",
+          "text": "Die These liegt im Aktivieren des Relikts: Industriegeschichte bleibt nutzbar, lesbar und atmosphärisch wirksam.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Netzwerk und DNA",
+          "text": "Im Netzwerk steht Shipyard Park zwischen Turenscape, Sponge-City-Denken, postindustriellem Park, Waterfront und Landschaftsurbanismus.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Topos",
+          "text": "Der Topos Zhongshan, China verbindet Flussraum, Werftgeschichte und neue urbane Öffentlichkeit.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Typos",
+          "text": "Typologisch ist es Park, Denkraum, Industriefreiraum und Waterfront-Projekt zugleich.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Tektonisch sind Stahlteile, Maschinenfragmente, Wasser, Vegetation, Stege und Bodenmodellierung die prägenden Bauteile.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumlogik",
+          "text": "Die Raumlogik entsteht aus Promenade, Reststrukturen, Uferbezug, Blickachsen und der Bewegung durch industrielle Fragmente.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Konflikt und Kritik",
+          "text": "Kritisch zu prüfen ist, ob die industrielle Rauheit echte soziale Offenheit erzeugt oder als ästhetische Kulisse konsumiert wird.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "KosmoData-Layer und 3D-Potenzial",
+          "text": "Für KosmoData sind Werftrelikte, Wasser, Wege, Vegetationszonen, Materialreste, Aussichtspunkte und Erinnerungslayer zentral. Tags: Landschaftsprojekt, nachhaltige Architektur, Landscape Urbanism, industrielle Umnutzung, öffentlicher Raum, shipyard, Stahl, waterfront.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Entwurfsintelligenz",
+          "text": "Übertragbar ist der Umgang mit industrieller Vergangenheit als aktivem Material für neue öffentliche Räume.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "kosmodata-seed-from-research",
+      "generated_at": "2026-05-25T08:26:58.189Z",
+      "review_status": "draft_review"
+    },
+    "materials": {
+      "primary": [
+        "industrial-reuse",
+        "shipyard",
+        "steel",
+        "waterfront",
+        "case-study",
+        "industrial-landscape",
+        "landscape-urbanism",
+        "postindustrial"
+      ],
+      "secondary": [
+        "craft_details",
+        "surface_system",
+        "construction_logic"
+      ],
+      "notes": "Seeded from local reviewed source metadata; verify exact material claims before publication."
+    },
+    "program": {
+      "type": "landscape_project",
+      "subtype": "sustainable_architecture_reference",
+      "public_access": "needs_review",
+      "components": [
+        "landscape-urbanism",
+        "industrial-reuse",
+        "public-space",
+        "landscape_project",
+        "sustainable_architecture"
+      ]
+    },
+    "context": {
+      "topography": "needs_site_review",
+      "setting": "Zhongshan, China",
+      "landscape_relations": [
+        "site_context_needs_review"
+      ],
+      "urban_context": [
+        "global_urban_design",
+        "lecture_pdf"
+      ],
+      "construction_logic": [
+        "landscape-urbanism",
+        "industrial-reuse",
+        "public-space",
+        "landscape_project",
+        "sustainable_architecture"
+      ]
+    },
+    "database_tags": [
+      "typology:landscape-project",
+      "style:sustainable_architecture",
+      "theme:landscape-urbanism",
+      "theme:industrial-reuse",
+      "theme:public-space",
+      "material:industrial-reuse",
+      "material:shipyard",
+      "material:steel",
+      "material:waterfront",
+      "material:case-study",
+      "material:industrial-landscape",
+      "material:landscape-urbanism",
+      "material:postindustrial",
+      "rights:review-required",
+      "blender:landscape-project-layer-candidate",
+      "plan:vector-review-required",
+      "viewer:3d-layer-review-required"
+    ],
+    "model_assets": [
+      {
+        "model_type": "site_model",
+        "title": "Shipyard Park Site/context study model",
+        "r2_key": "entries/shipyard-park/models/site.glb",
+        "format": "glb",
+        "lod_level": "preview",
+        "source_basis": "entry metadata only; needs source review",
+        "generation_method": "procedural",
+        "review_status": "draft",
+        "confidence_score": 0.42
+      },
+      {
+        "model_type": "structure_model",
+        "title": "Shipyard Park Structure and spatial order study model",
+        "r2_key": "entries/shipyard-park/models/structure.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "entry metadata only; needs source review",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      },
+      {
+        "model_type": "tectonic_model",
+        "title": "Shipyard Park Material, tectonic and filter-layer study model",
+        "r2_key": "entries/shipyard-park/models/tectonic.glb",
+        "format": "glb",
+        "lod_level": "study",
+        "source_basis": "entry metadata only; needs source review; tags: typology:landscape-project, style:sustainable_architecture, theme:landscape-urbanism, theme:industrial-reuse, theme:public-space, material:industrial-reuse, material:shipyard, material:steel",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      }
+    ],
+    "analysis_layers": [
+      {
+        "analysis_type": "structure",
+        "summary": "Shipyard Park needs a reviewed structural reading connecting industrial-reuse, shipyard, steel with construction logic, span, support and assembly.",
+        "data": {
+          "seed_tags": [
+            "structure:needs_review",
+            "industrial-reuse",
+            "shipyard",
+            "steel",
+            "waterfront",
+            "case-study",
+            "industrial-landscape",
+            "landscape-urbanism",
+            "postindustrial"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "material_system",
+        "summary": "Shipyard Park should be tagged through industrial-reuse, shipyard, steel, waterfront, case-study, industrial-landscape, landscape-urbanism, postindustrial and verified against primary sources before public material claims are made.",
+        "data": {
+          "seed_tags": [
+            "industrial-reuse",
+            "shipyard",
+            "steel",
+            "waterfront",
+            "case-study",
+            "industrial-landscape",
+            "landscape-urbanism",
+            "postindustrial"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "spatial_order",
+        "summary": "Shipyard Park should be read through program, movement, room sequence, exterior relation and typological position rather than as a single image.",
+        "data": {
+          "seed_tags": [
+            "spatial_order",
+            "landscape_project"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "typology",
+        "summary": "Shipyard Park is currently classified as landscape_project; the seed must verify how this type differs from related entries with the same DNA.",
+        "data": {
+          "seed_tags": [
+            "typology",
+            "landscape_project",
+            "Zhongshan, China"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "summary": "Shipyard Park needs filter checks for themes, materials, rights, plan readiness, 3D layer readiness and viewer filters.",
+        "data": {
+          "seed_tags": [
+            "typology:landscape-project",
+            "style:sustainable_architecture",
+            "theme:landscape-urbanism",
+            "theme:industrial-reuse",
+            "theme:public-space",
+            "material:industrial-reuse",
+            "material:shipyard",
+            "material:steel",
+            "material:waterfront",
+            "material:case-study"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      }
+    ],
+    "database_profile": {
+      "status": "reviewed",
+      "r2_prefix": "entries/shipyard-park",
+      "source_count": 4,
+      "media_count": 4,
+      "model_count": 3,
+      "analysis_count": 5,
+      "tag_count": 17,
+      "rights_summary": "Public text and metadata are allowed; visual assets remain link-only/private until rights are cleared.",
+      "updated_at": "2026-05-25T08:26:58.338Z"
+    },
+    "ingestion_status": {
+      "stage": "needs_review",
+      "source_status": "reviewed",
+      "asset_status": "candidate",
+      "model_status": "planned",
+      "updated_at": "2026-05-25T08:26:58.338Z"
+    }
   },
   {
     "id": "leutschenpark",
@@ -32629,10 +35611,10 @@
       "riverfront",
       "public-space"
     ],
-    "short_description": "Uferpark Attisholz-Sued ist im PDF-Framework als industrial-reuse / riverfront verortet und bildet einen wichtigen Knoten der Architektur- und Stadtgeschichte.",
-    "source_quality": "lecture_pdf",
-    "one_sentence": "Uferpark Attisholz-Sued ist als Landschaftsprojekt in Luterbach, Switzerland im Jahr 2019 im Architecture Cosmos verortet und verknuepft industrial reuse, riverfront, public space.",
-    "full_description": "Uferpark Attisholz-Sued ist im PDF-Framework als industrial-reuse / riverfront verortet und bildet einen wichtigen Knoten der Architektur- und Stadtgeschichte. Der Eintrag wird im Atlas als Landschaftsprojekt gelesen und gehoert zur Wissensspur Landschaftsarchitektur ETH, 04 Landschaftsarchitektur 1_2.pdf, Layer landscape architecture 1 2. Autorenschaft / Quelle: MAVO Landschaftsarchitektur. Seine Filterebene verbindet industrial reuse, riverfront, public space mit Jahr, Stilsektor und Relationennetz; spaeter koennen echte Fotos, Plaene, Schnitte, Quellen und Modelle direkt aus der Datenbank angeschlossen werden.",
+    "short_description": "Uferpark Attisholz-Süd verwandelt das Areal einer ehemaligen Zellulosefabrik in einen Aare-Park aus Betonspuren, Uferraum und öffentlicher Aneignung.",
+    "source_quality": "research_seed_review",
+    "one_sentence": "Uferpark Attisholz-Süd zeigt, wie industrielle Infrastruktur am Fluss nicht gelöscht, sondern als robuste räumliche Grundlage für einen neuen öffentlichen Park weiterverwendet wird.",
+    "full_description": "Uferpark Attisholz-Süd wird als zeitgenössische postindustrielle Landschaft gelesen. Das Projekt nutzt die Spuren der ehemaligen Zelluloseproduktion, Kläranlagenlogik, Betonfragmente, Uferkante und Vegetation, um einen neuen öffentlichen Raum an der Aare zu schaffen. Architektonisch relevant ist die Balance zwischen Rohheit und Zugänglichkeit: Der Park bleibt als Industrieort lesbar, wird aber durch Wege, Aufenthaltsbereiche und landschaftliche Rahmung benutzbar. Für KosmoData ist der Eintrag wichtig für Industrial Reuse, Riverfront, Schweizer Landschaftsarchitektur, Beton als Erinnerungsträger und die Frage, wie Transformation ohne vollständige Auslöschung gelingt.",
     "media": [
       {
         "type": "exterior",
@@ -32657,7 +35639,304 @@
     ],
     "source_documents": [
       "04 Landschaftsarchitektur 1_2.pdf"
-    ]
+    ],
+    "source_candidates": [
+      {
+        "source_type": "architecture_platform_project_page",
+        "title": "Swiss-Architects / Uferpark Attisholz Sued",
+        "url": "https://www.swiss-architects.com/de/projects/view/offentlicher-uferpark-attisholz-sud",
+        "reliability_level": "high",
+        "rights_status": "link_only",
+        "notes": "Project-specific source for mavo Landschaften, client, team, timeline, invited study commission and built status.",
+        "project_specific": true
+      },
+      {
+        "source_type": "landscape_platform",
+        "title": "Landezine / Uferpark Attisholz Sued by mavo Landschaften",
+        "url": "https://landezine.com/uferpark-attisholz-sud-luterbach-by-mavo-landschaften/",
+        "reliability_level": "medium",
+        "rights_status": "link_only",
+        "notes": "Landscape architecture publication with project narrative: former industrial site, Aare edge, sewage plant traces and public park strategy.",
+        "project_specific": true
+      },
+      {
+        "source_type": "material_publication",
+        "title": "Betonsuisse / Uferpark Attisholz Sued in Luterbach",
+        "url": "https://betonsuisse.ch/Publikationen/BAUEN-IN-BETON/BAUEN-IN-BETON-2020-21/Uferpark-Attisholz-Sued-in-Luterbach/",
+        "reliability_level": "medium",
+        "rights_status": "link_only",
+        "notes": "Material-oriented publication source for the park as part of the former Attisholz cellulose factory site.",
+        "project_specific": true
+      }
+    ],
+    "architecture_text": {
+      "headline": "Uferpark Attisholz-Süd: Betonspur am Fluss",
+      "overview": "Uferpark Attisholz-Süd verbindet Aare-Ufer, industrielle Fragmente und neue öffentliche Nutzung zu einer rauen, aber zugänglichen Parklandschaft.",
+      "chapters": [
+        {
+          "title": "These",
+          "text": "Die These liegt im kontrollierten Weiterverwenden: Bestehende Industrieelemente werden nicht kaschiert, sondern als räumliche Anker des Parks aktiviert.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Netzwerk und DNA",
+          "text": "Im Netzwerk steht das Projekt zwischen Schweizer Transformationslandschaft, Riverfront, postindustriellem Park und Beton als Gedächtnismaterial.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Topos",
+          "text": "Der Topos Luterbach, Switzerland verbindet Fluss, Fabrikareal, Agglomerationsentwicklung und neue Öffentlichkeit.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Typos",
+          "text": "Typologisch ist es Uferpark, Industriebrache und öffentlicher Transformationsraum zugleich.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Tektonik",
+          "text": "Tektonisch wirken Beton, Uferkante, Vegetation, Belag, Reststruktur und Wegführung als robuste Freiraum-Bauteile.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Raumlogik",
+          "text": "Die Raumlogik entsteht entlang des Flusses: Bewegung, Aufenthalt, Blick, industrielle Reste und offene Vegetationsräume bilden eine lineare Parksequenz.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Konflikt und Kritik",
+          "text": "Kritisch bleibt, wie Transformation zwischen Aufwertung, Erinnerung und öffentlicher Alltagstauglichkeit balanciert.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "KosmoData-Layer und 3D-Potenzial",
+          "text": "Für KosmoData sind Uferkante, Betonfragmente, Wege, Vegetation, industrielle Spuren, Aufenthaltszonen und Flussbezug zentrale Layer. Tags: Landschaftsprojekt, nachhaltige Architektur, industrielle Umnutzung, riverfront, öffentlicher Raum, postindustrial, aare, sewage plant.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Entwurfsintelligenz",
+          "text": "Übertragbar ist die Methode, industrielle Restlogik als Material, Atmosphäre und Orientierungssystem zu nutzen.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        }
+      ],
+      "language": "de",
+      "generator": "kosmodata-seed-from-research",
+      "generated_at": "2026-05-25T08:26:59.378Z",
+      "review_status": "draft_review"
+    },
+    "materials": {
+      "primary": [
+        "riverfront",
+        "postindustrial",
+        "public-space",
+        "industrial-reuse",
+        "aare",
+        "sewage-plant",
+        "concrete",
+        "industrial-heritage"
+      ],
+      "secondary": [
+        "craft_details",
+        "surface_system",
+        "construction_logic"
+      ],
+      "notes": "Seeded from local reviewed source metadata; verify exact material claims before publication."
+    },
+    "program": {
+      "type": "landscape_project",
+      "subtype": "sustainable_architecture_reference",
+      "public_access": "needs_review",
+      "components": [
+        "industrial-reuse",
+        "riverfront",
+        "public-space",
+        "landscape_project",
+        "sustainable_architecture"
+      ]
+    },
+    "context": {
+      "topography": "needs_site_review",
+      "setting": "Luterbach, Switzerland",
+      "landscape_relations": [
+        "site_context_needs_review"
+      ],
+      "urban_context": [
+        "landscape_architecture_1_2",
+        "lecture_pdf"
+      ],
+      "construction_logic": [
+        "industrial-reuse",
+        "riverfront",
+        "public-space",
+        "landscape_project",
+        "sustainable_architecture"
+      ]
+    },
+    "database_tags": [
+      "typology:landscape-project",
+      "style:sustainable_architecture",
+      "theme:industrial-reuse",
+      "theme:riverfront",
+      "theme:public-space",
+      "material:riverfront",
+      "material:postindustrial",
+      "material:public-space",
+      "material:industrial-reuse",
+      "material:aare",
+      "material:sewage-plant",
+      "material:concrete",
+      "material:industrial-heritage",
+      "rights:review-required",
+      "blender:landscape-project-layer-candidate",
+      "plan:vector-review-required",
+      "viewer:3d-layer-review-required"
+    ],
+    "model_assets": [
+      {
+        "model_type": "site_model",
+        "title": "Uferpark Attisholz-Sued Site/context study model",
+        "r2_key": "entries/uferpark-attisholz-sued/models/site.glb",
+        "format": "glb",
+        "lod_level": "preview",
+        "source_basis": "entry metadata only; needs source review",
+        "generation_method": "procedural",
+        "review_status": "draft",
+        "confidence_score": 0.42
+      },
+      {
+        "model_type": "structure_model",
+        "title": "Uferpark Attisholz-Sued Structure and spatial order study model",
+        "r2_key": "entries/uferpark-attisholz-sued/models/structure.glb",
+        "format": "glb",
+        "lod_level": "medium",
+        "source_basis": "entry metadata only; needs source review",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      },
+      {
+        "model_type": "tectonic_model",
+        "title": "Uferpark Attisholz-Sued Material, tectonic and filter-layer study model",
+        "r2_key": "entries/uferpark-attisholz-sued/models/tectonic.glb",
+        "format": "glb",
+        "lod_level": "study",
+        "source_basis": "entry metadata only; needs source review; tags: typology:landscape-project, style:sustainable_architecture, theme:industrial-reuse, theme:riverfront, theme:public-space, material:riverfront, material:postindustrial, material:public-space",
+        "generation_method": "source_reconstruction",
+        "review_status": "needs_source",
+        "confidence_score": 0.32
+      }
+    ],
+    "analysis_layers": [
+      {
+        "analysis_type": "structure",
+        "summary": "Uferpark Attisholz-Sued needs a reviewed structural reading connecting riverfront, postindustrial, public-space with construction logic, span, support and assembly.",
+        "data": {
+          "seed_tags": [
+            "structure:needs_review",
+            "riverfront",
+            "postindustrial",
+            "public-space",
+            "industrial-reuse",
+            "aare",
+            "sewage-plant",
+            "concrete",
+            "industrial-heritage"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "material_system",
+        "summary": "Uferpark Attisholz-Sued should be tagged through riverfront, postindustrial, public-space, industrial-reuse, aare, sewage-plant, concrete, industrial-heritage and verified against primary sources before public material claims are made.",
+        "data": {
+          "seed_tags": [
+            "riverfront",
+            "postindustrial",
+            "public-space",
+            "industrial-reuse",
+            "aare",
+            "sewage-plant",
+            "concrete",
+            "industrial-heritage"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "spatial_order",
+        "summary": "Uferpark Attisholz-Sued should be read through program, movement, room sequence, exterior relation and typological position rather than as a single image.",
+        "data": {
+          "seed_tags": [
+            "spatial_order",
+            "landscape_project"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "typology",
+        "summary": "Uferpark Attisholz-Sued is currently classified as landscape_project; the seed must verify how this type differs from related entries with the same DNA.",
+        "data": {
+          "seed_tags": [
+            "typology",
+            "landscape_project",
+            "Luterbach, Switzerland"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      },
+      {
+        "analysis_type": "filter_classification",
+        "summary": "Uferpark Attisholz-Sued needs filter checks for themes, materials, rights, plan readiness, 3D layer readiness and viewer filters.",
+        "data": {
+          "seed_tags": [
+            "typology:landscape-project",
+            "style:sustainable_architecture",
+            "theme:industrial-reuse",
+            "theme:riverfront",
+            "theme:public-space",
+            "material:riverfront",
+            "material:postindustrial",
+            "material:public-space",
+            "material:industrial-reuse",
+            "material:aare"
+          ],
+          "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
+        },
+        "review_status": "draft"
+      }
+    ],
+    "database_profile": {
+      "status": "reviewed",
+      "r2_prefix": "entries/uferpark-attisholz-sued",
+      "source_count": 4,
+      "media_count": 4,
+      "model_count": 3,
+      "analysis_count": 5,
+      "tag_count": 17,
+      "rights_summary": "Public text and metadata are allowed; visual assets remain link-only/private until rights are cleared.",
+      "updated_at": "2026-05-25T08:26:59.522Z"
+    },
+    "ingestion_status": {
+      "stage": "needs_review",
+      "source_status": "reviewed",
+      "asset_status": "candidate",
+      "model_status": "planned",
+      "updated_at": "2026-05-25T08:26:59.523Z"
+    }
   },
   {
     "id": "afasia-no-architecture-flower-house",
