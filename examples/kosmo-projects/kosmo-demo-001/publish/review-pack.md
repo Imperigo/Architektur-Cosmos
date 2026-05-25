@@ -1,6 +1,6 @@
 # Kosmo Demo 001 Review Pack
 
-Generated: 2026-05-25T21:33:35.523Z
+Generated: 2026-05-25T21:40:48.601Z
 Project ID: `kosmo-demo-001`
 Risk level: `local_review_only`
 Readiness: `review_required`
@@ -85,6 +85,8 @@ Readiness: `review_required`
 - ok: `design/ifc-human-review-viewer.generated.html` (design, other, generated_needs_review)
 - ok: `design/ifc-human-review-decision.json` (design, other, generated_needs_review)
 - ok: `design/ifc-human-review-decision.md` (design, other, generated_needs_review)
+- ok: `design/ifc-human-review-sync.generated.json` (design, other, generated_needs_review)
+- ok: `design/ifc-human-review-sync.generated.md` (design, other, generated_needs_review)
 
 ## Context Selection
 
@@ -161,6 +163,11 @@ Readiness: `review_required`
 - IFC human review decision reviewed by: -
 - IFC human review decision open human checks: 10
 - IFC human review decision design approval: no
+- IFC human review sync: ifc_sync_blocked_pending_final_decision
+- IFC human review sync apply mode: dry_run
+- IFC human review sync can sync: no
+- IFC human review sync operations: 0
+- IFC human review sync next step: record_final_ifc_human_review_decision_first
 - model layer handoff: ready
 - model layer handoff layer exports: 5
 - model layer handoff planned GLBs: 5
@@ -240,6 +247,8 @@ Readiness: `review_required`
 - Generated output needs review: design/ifc-human-review-viewer.generated.html
 - Generated output needs review: design/ifc-human-review-decision.json
 - Generated output needs review: design/ifc-human-review-decision.md
+- Generated output needs review: design/ifc-human-review-sync.generated.json
+- Generated output needs review: design/ifc-human-review-sync.generated.md
 - Context selection still has undecided candidates: 2
 - Context source mapping still has pending review rows: 1
 - IFC human review decision exists but final human decision is not recorded.

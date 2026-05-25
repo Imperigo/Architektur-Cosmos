@@ -142,6 +142,7 @@ function checkContextSelection() {
   const ifcHumanReviewPackPath = join(projectRoot, 'design/ifc-human-review-pack.generated.json');
   const ifcHumanReviewViewerPath = join(projectRoot, 'design/ifc-human-review-viewer.generated.json');
   const ifcHumanReviewDecisionPath = join(projectRoot, 'design/ifc-human-review-decision.json');
+  const ifcHumanReviewSyncPath = join(projectRoot, 'design/ifc-human-review-sync.generated.json');
   const modelLayerHandoffPath = join(projectRoot, 'design/model-layer-handoff.generated.json');
   const contextHandoffPath = join(projectRoot, 'design/context-handoff.generated.json');
   const blenderContextImportPath = join(projectRoot, 'design/blender-context-import.generated.json');
@@ -161,6 +162,7 @@ function checkContextSelection() {
   const ifcHumanReviewPack = existsSync(ifcHumanReviewPackPath) ? readJson(ifcHumanReviewPackPath) : null;
   const ifcHumanReviewViewer = existsSync(ifcHumanReviewViewerPath) ? readJson(ifcHumanReviewViewerPath) : null;
   const ifcHumanReviewDecision = existsSync(ifcHumanReviewDecisionPath) ? readJson(ifcHumanReviewDecisionPath) : null;
+  const ifcHumanReviewSync = existsSync(ifcHumanReviewSyncPath) ? readJson(ifcHumanReviewSyncPath) : null;
   const modelLayerHandoff = existsSync(modelLayerHandoffPath) ? readJson(modelLayerHandoffPath) : null;
   const contextHandoff = existsSync(contextHandoffPath) ? readJson(contextHandoffPath) : null;
   const blenderContextImport = existsSync(blenderContextImportPath) ? readJson(blenderContextImportPath) : null;
@@ -236,6 +238,16 @@ function checkContextSelection() {
   }
   if (ifcHumanReviewDecision?.summary?.design_generation_approval_granted === true && selection.approved_for_design_generation !== true) {
     warnings.push('IFC human review grants design-generation approval, but context-selection approved_for_design_generation is still false.');
+  }
+  if (
+    ifcHumanReviewDecision?.summary?.final_decision_recorded === true
+    && (ifcHumanReviewDecision.summary?.context_selection_update_required || ifcHumanReviewDecision.summary?.source_mapping_update_required)
+    && !ifcHumanReviewSync
+  ) {
+    warnings.push('IFC human review decision is final but design/ifc-human-review-sync.generated.json is missing.');
+  }
+  if (ifcHumanReviewSync?.status === 'ifc_sync_dry_run_changes_ready') {
+    warnings.push('IFC human review sync dry-run has changes ready but they are not applied.');
   }
   if (ifcLayerPlanReady && !modelLayerHandoffReady) {
     warnings.push('IFC layer plan exists, but design/model-layer-handoff.generated.json is missing or still pending.');

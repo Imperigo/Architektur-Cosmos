@@ -343,6 +343,20 @@
       "format": "markdown",
       "status": "generated_needs_review",
       "rights_status": "generated_needs_review"
+    },
+    {
+      "path": "design/ifc-human-review-sync.generated.json",
+      "module": "Kosmo Design",
+      "format": "json",
+      "status": "generated_needs_review",
+      "rights_status": "generated_needs_review"
+    },
+    {
+      "path": "design/ifc-human-review-sync.generated.md",
+      "module": "Kosmo Design",
+      "format": "markdown",
+      "status": "generated_needs_review",
+      "rights_status": "generated_needs_review"
     }
   ]
 }

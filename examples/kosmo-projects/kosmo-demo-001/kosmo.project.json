@@ -447,6 +447,20 @@
       "module": "design",
       "rights_status": "generated_needs_review",
       "description": "Human-readable IFC decision record."
+    },
+    {
+      "path": "design/ifc-human-review-sync.generated.json",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Dry-run/apply report for syncing a final IFC human decision into context gates."
+    },
+    {
+      "path": "design/ifc-human-review-sync.generated.md",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Human-readable IFC decision sync report."
     }
   ],
   "review_gates": {

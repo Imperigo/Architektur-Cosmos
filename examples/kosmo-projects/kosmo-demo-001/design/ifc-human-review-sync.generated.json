@@ -1,0 +1,48 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-05-25T21:40:48.280Z",
+  "generator": "kosmo-ifc-human-review-sync",
+  "project_id": "kosmo-demo-001",
+  "project_name": "Kosmo Demo 001",
+  "status": "ifc_sync_blocked_pending_final_decision",
+  "rights_status": "internal_only",
+  "candidate_id": "ifc-role-3-semantic_building_elements",
+  "source_decision": "keep_needs_more_source_review",
+  "mapped_context_decision": "needs_more_source_review",
+  "policy": {
+    "dry_run_by_default": true,
+    "apply_requires_confirm_sync": true,
+    "apply_requires_mutation_confirmation": true,
+    "sync_requires_final_human_decision": true,
+    "sync_does_not_create_new_candidates": true
+  },
+  "apply": {
+    "requested": false,
+    "mode": "dry_run",
+    "confirm_sync": false,
+    "confirm_mutation": false
+  },
+  "summary": {
+    "can_sync": false,
+    "operation_count": 0,
+    "context_selection_would_write": false,
+    "source_mapping_would_write": false,
+    "design_generation_approval": false,
+    "recommended_next_step": "record_final_ifc_human_review_decision_first"
+  },
+  "operations": [],
+  "source_files": {
+    "decision": {
+      "path": "design/ifc-human-review-decision.json",
+      "exists": true
+    },
+    "context_selection": {
+      "path": "design/context-selection.json",
+      "exists": true
+    },
+    "source_mapping": {
+      "path": "design/context-source-mapping.json",
+      "exists": true
+    }
+  }
+}

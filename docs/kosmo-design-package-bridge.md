@@ -51,8 +51,9 @@ Der erste Connector ist bewusst duenn:
   Blender/ArchiCAD
 - schreibt optional `design/ifc-human-review-pack.generated.json`, `.md`,
   `design/ifc-human-review-viewer.generated.html`, `.json`,
-  `design/ifc-human-review-decision.json` und `.md` als menschliches
-  IFC-Entscheidungsgate vor jeder Design-Seed-Freigabe
+  `design/ifc-human-review-decision.json`, `.md`,
+  `design/ifc-human-review-sync.generated.json` und `.md` als menschliches
+  IFC-Entscheidungsgate und Dry-Run-Sync vor jeder Design-Seed-Freigabe
 - schreibt optional `design/model-layer-handoff.generated.json`, `.md`,
   `design/blender-collection-handoff.generated.py` und
   `design/archicad-layer-schedule.generated.csv` als review-only Uebergabe
@@ -196,6 +197,8 @@ Zusätzlich wird im Projektpaket geschrieben:
 - `design/ifc-human-review-viewer.generated.json`
 - `design/ifc-human-review-decision.json`
 - `design/ifc-human-review-decision.md`
+- `design/ifc-human-review-sync.generated.json`
+- `design/ifc-human-review-sync.generated.md`
 - `design/model-layer-handoff.generated.json`
 - `design/model-layer-handoff.generated.md`
 - `design/blender-collection-handoff.generated.py`
@@ -319,6 +322,13 @@ Design-Seed braucht darueber hinaus `--decision accepted_as_design_seed` und
 `--approve-design-generation`. Das Tool schreibt nur den Entscheidungsrecord
 und aendert `context-selection` oder `source-mapping` nicht selbst.
 
+`npm run kosmo:ifc-human-review-sync -- --project <projektpfad>` erzeugt
+`design/ifc-human-review-sync.generated.md/json`. Dieser Schritt liest den
+finalen Decision-Record und plant, welche Aenderungen in
+`context-selection.json` und `context-source-mapping.json` noetig waeren.
+Standard ist Dry-Run. Wirkliches Schreiben braucht `--apply --confirm-sync`
+und `--i-understand-context-selection-mutation`.
+
 `npm run kosmo:context-handoff -- --project <projektpfad>` erzeugt
 `design/context-handoff.generated.md/json`. Der Handoff sammelt akzeptierte
 Kontextinputs, blockierte oder offene Quellen, IFC-Preview-Evidence,
@@ -362,6 +372,7 @@ npm run kosmo:ifc-layer-plan -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:ifc-human-review-pack -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:ifc-review-viewer -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:ifc-human-review-decision -- --project examples/kosmo-projects/kosmo-demo-001
+npm run kosmo:ifc-human-review-sync -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:context-source-mapping -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:context-handoff -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:model-layer-handoff -- --project examples/kosmo-projects/kosmo-demo-001
@@ -610,6 +621,19 @@ bei `keep_needs_more_source_review` und laesst `approved_for_design_generation`
 blockiert. Ein spaeterer Finalentscheid wird erst mit explizitem Reviewer,
 Checklist-Confirm und, falls wirklich gewollt, separater Design-Seed-Freigabe
 recorded.
+
+IFC Human Review Sync:
+
+```bash
+npm run kosmo:ifc-human-review-sync -- \
+  --project archive-intake/kosmo-projects/zg-07052026
+```
+
+Status: Dry-Run-Gate erzeugt. Solange der Decision-Record nur Draft ist, bleibt
+der Sync blockiert und schreibt keine Aenderung in `context-selection` oder
+`context-source-mapping`. Nach einem echten Finalentscheid kann derselbe Befehl
+erst eine Aenderungsplanung zeigen und mit `--apply --confirm-sync
+--i-understand-context-selection-mutation` bewusst angewendet werden.
 
 Danach erzeugt der Orbit-Befehl
 `npm run kosmo:context-selection -- --project archive-intake/kosmo-projects/zg-07052026`
