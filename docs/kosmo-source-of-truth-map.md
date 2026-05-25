@@ -74,6 +74,8 @@ Aktiv fuer:
   source-review-pflichtige Kandidaten
 - `design/context-source-mapping.*` als menschliches Mapping-Gate fuer
   DXF-Layer und semantische IFC-Typen
+- `design/ifc-semantic-proof.generated.*` als read-only IFC-Semantikproof fuer
+  `IFCBUILDINGELEMENTPROXY`, Spatial Containment und Property Sets
 - `design/context-selection.json` als menschliches Gate vor Design-Seeds
 - `kosmo:context-guard` als Downstream-Stopp vor ungepruefter Designnutzung
 
@@ -180,6 +182,7 @@ KosmoData
    `design/context-source-map.generated.*` als DXF-/IFC-Inventar,
    `design/context-source-review.generated.*` als DXF-/IFC-Evidence-Review,
    `design/context-source-mapping.*` als explizites Mapping-Gate und
+   `design/ifc-semantic-proof.generated.*` als IFC-Semantikproof und
    `design/context-selection.json` als menschliches Gate. Naechster Schritt:
    diese Auswahl in ein kleines Layer-Mapping UI und spaeter freigegebene
    Design-Seeds ueberfuehren.

@@ -99,6 +99,9 @@ function buildReport(manifest, check) {
   if (contextReview.source_review_exists && contextReview.source_review_open_human_review_count > 0) {
     warnings.push(`Context source review still has open human checks: ${contextReview.source_review_open_human_review_count}`);
   }
+  if (contextReview.source_review_design_seed_possible_after_review_count > 0 && !contextReview.ifc_semantic_proof_exists) {
+    warnings.push('IFC semantic proof is missing for source-review design-seed candidate.');
+  }
   if (contextReview.accepted_as_design_seed_count > 0 && !contextReview.approved_for_design_generation) {
     warnings.push('Context candidates are selected as design seed but final design-generation approval is still false.');
   }
@@ -173,12 +176,14 @@ function readContextReview() {
   const sourceMapPath = join(projectRoot, 'design/context-source-map.generated.json');
   const sourceMappingPath = join(projectRoot, 'design/context-source-mapping.json');
   const sourceReviewPath = join(projectRoot, 'design/context-source-review.generated.json');
+  const ifcSemanticProofPath = join(projectRoot, 'design/ifc-semantic-proof.generated.json');
   const candidates = existsSync(candidatesPath) ? safeReadJson(candidatesPath) : null;
   const selection = existsSync(selectionPath) ? safeReadJson(selectionPath) : null;
   const matrix = existsSync(matrixPath) ? safeReadJson(matrixPath) : null;
   const sourceMap = existsSync(sourceMapPath) ? safeReadJson(sourceMapPath) : null;
   const sourceMapping = existsSync(sourceMappingPath) ? safeReadJson(sourceMappingPath) : null;
   const sourceReview = existsSync(sourceReviewPath) ? safeReadJson(sourceReviewPath) : null;
+  const ifcSemanticProof = existsSync(ifcSemanticProofPath) ? safeReadJson(ifcSemanticProofPath) : null;
   const selections = Array.isArray(selection?.selections) ? selection.selections : [];
   const rows = Array.isArray(matrix?.rows) ? matrix.rows : [];
   const candidateCount = numberOrDefault(candidates?.summary?.candidate_count, Array.isArray(candidates?.candidates) ? candidates.candidates.length : 0);
@@ -219,6 +224,13 @@ function readContextReview() {
     source_review_evidence_confirmed_count: numberOrDefault(sourceReview?.summary?.automated_evidence_confirmed_count, 0),
     source_review_open_human_review_count: numberOrDefault(sourceReview?.summary?.open_human_review_count, 0),
     source_review_design_seed_possible_after_review_count: numberOrDefault(sourceReview?.summary?.design_seed_possible_after_review_count, 0),
+    ifc_semantic_proof_exists: Boolean(ifcSemanticProof),
+    ifc_semantic_proof_engine: ifcSemanticProof?.engine?.name || null,
+    ifc_semantic_proof_proxy_count: numberOrDefault(ifcSemanticProof?.summary?.ifcbuildingelementproxy_count, 0),
+    ifc_semantic_proof_contained_count: numberOrDefault(ifcSemanticProof?.summary?.elements_contained_in_spatial_structure, 0),
+    ifc_semantic_proof_property_set_element_count: numberOrDefault(ifcSemanticProof?.summary?.elements_with_property_sets, 0),
+    ifc_semantic_proof_integrity_score: numberOrDefault(ifcSemanticProof?.summary?.semantic_integrity_score, 0),
+    ifc_semantic_proof_design_seed_approved: Boolean(ifcSemanticProof?.summary?.design_seed_approved),
     stale_selection_count: numberOrDefault(selection?.summary?.stale_selection_count, Array.isArray(selection?.stale_selections) ? selection.stale_selections.length : 0),
     readiness: selection?.summary?.readiness || matrix?.summary?.recommended_next_step || candidates?.summary?.suggested_next_step || null,
     approved_for_design_generation: Boolean(selection?.approved_for_design_generation)
@@ -251,6 +263,8 @@ function nextActions({ modules, gates, blockers, warnings, outputs, contextRevie
   if (contextReview?.source_mapping_pending_review_count > 0) actions.push('Review pending source-mapping rows before syncing decisions to context-selection.');
   if (contextReview?.selection_exists && contextReview.needs_more_source_review_count > 0 && !contextReview.source_review_exists) actions.push('Create design/context-source-review.generated.json for candidates marked needs_more_source_review.');
   if (contextReview?.selection_exists && contextReview.needs_more_source_review_count > 0) actions.push('Verify sources for context-selection candidates marked needs_more_source_review.');
+  if (contextReview?.source_review_design_seed_possible_after_review_count > 0 && !contextReview.ifc_semantic_proof_exists) actions.push('Run npm run kosmo:ifc-semantic-proof for semantic IFC evidence before design-seed review.');
+  if (contextReview?.ifc_semantic_proof_exists && contextReview?.source_review_open_human_review_count > 0) actions.push('Human-review IFC semantic proof before changing IFC source-review decision.');
   if (contextReview?.source_map_design_seed_candidate_after_review_count > 0) actions.push('Review source-map semantic candidates before any design-seed approval.');
   if (contextReview?.accepted_as_design_seed_count > 0 && !contextReview.approved_for_design_generation) actions.push('Set final approval only after a human has checked context-selection.');
   if (modules.some((module) => module.id === 'data' && module.status === 'pending')) actions.push('Let Kosmo Data add reviewed references, sources and asset candidates.');
@@ -363,6 +377,12 @@ function appendContextReview(lines, contextReview) {
   lines.push(`- source evidence confirmed: ${contextReview.source_review_evidence_confirmed_count}`);
   lines.push(`- source human checks open: ${contextReview.source_review_open_human_review_count}`);
   lines.push(`- source review design-seed possible after review: ${contextReview.source_review_design_seed_possible_after_review_count}`);
+  lines.push(`- IFC semantic proof: ${contextReview.ifc_semantic_proof_exists ? 'present' : 'missing'}`);
+  lines.push(`- IFC semantic proof engine: ${contextReview.ifc_semantic_proof_engine || '-'}`);
+  lines.push(`- IFC semantic proxies: ${contextReview.ifc_semantic_proof_proxy_count}`);
+  lines.push(`- IFC semantic contained proxies: ${contextReview.ifc_semantic_proof_contained_count}`);
+  lines.push(`- IFC semantic proxies with property sets: ${contextReview.ifc_semantic_proof_property_set_element_count}`);
+  lines.push(`- IFC semantic integrity score: ${contextReview.ifc_semantic_proof_integrity_score}`);
   lines.push(`- approved for design generation: ${contextReview.approved_for_design_generation ? 'yes' : 'no'}`);
   lines.push(`- readiness: ${contextReview.readiness || 'unknown'}`);
 }

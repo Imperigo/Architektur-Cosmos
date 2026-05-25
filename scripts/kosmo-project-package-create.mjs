@@ -133,6 +133,8 @@ function buildFiles({ name, projectId, site, program }) {
     'design/context-source-review.generated.md': renderContextSourceReviewSeed(projectId),
     'design/context-source-mapping.json': json(buildContextSourceMappingSeed(projectId, 'package_create')),
     'design/context-source-mapping.md': renderContextSourceMappingSeed(projectId),
+    'design/ifc-semantic-proof.generated.json': json(buildIfcSemanticProofSeed(projectId, 'package_create')),
+    'design/ifc-semantic-proof.generated.md': renderIfcSemanticProofSeed(projectId),
     'design/variants.json': json({
       schema_version: '0.1',
       variants: [
@@ -238,6 +240,20 @@ function buildFiles({ name, projectId, site, program }) {
           rights_status: 'internal_only'
         },
         {
+          path: 'design/ifc-semantic-proof.generated.json',
+          module: 'Kosmo Design',
+          format: 'json',
+          status: 'pending_ifc_source',
+          rights_status: 'generated_needs_review'
+        },
+        {
+          path: 'design/ifc-semantic-proof.generated.md',
+          module: 'Kosmo Design',
+          format: 'markdown',
+          status: 'pending_ifc_source',
+          rights_status: 'generated_needs_review'
+        },
+        {
           path: 'draw/exports/ground-floor-plan.svg',
           module: 'Kosmo Draw',
           format: 'svg',
@@ -314,6 +330,8 @@ function buildManifest({ name, projectId, site }) {
       artifact('design/context-source-review.generated.md', 'other', 'design', 'generated_needs_review', 'Human-readable source evidence review for context candidates.'),
       artifact('design/context-source-mapping.json', 'other', 'design', 'internal_only', 'Human source mapping gate for reviewed DXF layer and semantic IFC decisions.'),
       artifact('design/context-source-mapping.md', 'other', 'design', 'internal_only', 'Human-readable source mapping gate for DXF/IFC decisions.'),
+      artifact('design/ifc-semantic-proof.generated.json', 'other', 'design', 'generated_needs_review', 'Read-only semantic IFC proof before design-seed review.'),
+      artifact('design/ifc-semantic-proof.generated.md', 'other', 'design', 'generated_needs_review', 'Human-readable semantic IFC proof before design-seed review.'),
       artifact('draw/exports/ground-floor-plan.svg', 'plan_export', 'draw', 'generated_needs_review', 'Placeholder vector ground floor export.'),
       artifact('draw/exports/section-a.svg', 'plan_export', 'draw', 'generated_needs_review', 'Placeholder vector section export.'),
       artifact('publish/review-pack.md', 'review_pack', 'publish', 'internal_only', 'Local review package scaffold.')
@@ -618,6 +636,37 @@ function buildContextSourceMappingSeed(projectId, source) {
 
 function renderContextSourceMappingSeed(projectId) {
   return `# Context Source Mapping\n\nProject ID: \`${projectId}\`\n\nPending source mapping. Run \`npm run kosmo:context-source-mapping -- --project <project>\` after source-map and source-review reports exist.\n`;
+}
+
+function buildIfcSemanticProofSeed(projectId, source) {
+  return {
+    schema_version: '0.1',
+    generated_at: null,
+    generator: 'kosmo-project-package-create',
+    project_id: projectId,
+    status: 'pending_ifc_source',
+    rights_status: 'internal_only',
+    source_stage: 'phase_0_context',
+    source,
+    note: 'Run npm run kosmo:ifc-semantic-proof -- --project <project> after a local IFC source is registered.',
+    summary: {
+      ifc_exists: false,
+      ifc_total_entities: 0,
+      ifc_entity_type_count: 0,
+      ifcbuildingelementproxy_count: 0,
+      elements_with_object_placement: 0,
+      elements_with_product_shape: 0,
+      elements_contained_in_spatial_structure: 0,
+      elements_with_property_sets: 0,
+      design_seed_approved: false,
+      recommended_next_step: 'register_ifc_source'
+    },
+    elements: []
+  };
+}
+
+function renderIfcSemanticProofSeed(projectId) {
+  return `# IFC Semantic Proof\n\nProject ID: \`${projectId}\`\n\nPending IFC source. Run \`npm run kosmo:ifc-semantic-proof -- --project <project>\` after a local IFC source is available.\n`;
 }
 
 function buildCameras() {

@@ -34,6 +34,8 @@ Der erste Connector ist bewusst duenn:
   Evidence-Review fuer Kandidaten mit `needs_more_source_review`
 - schreibt optional `design/context-source-mapping.json` und `.md` als
   menschliches Mapping-Gate fuer DXF-Layer und semantische IFC-Typen
+- schreibt optional `design/ifc-semantic-proof.generated.json` und `.md` als
+  read-only IFC-Semantikproof vor jeder Design-Seed-Freigabe
 - verwendet den bestehenden Blender-Operator `kosmo_design.create_room_from_plan`
 - erzeugt Collections unter `Kosmo_Project_<project_id>`
 - taggt erzeugte Collections/Objekte mit `kosmo_project_*` und `kosmo_source_*` Custom Properties
@@ -147,6 +149,8 @@ Zusätzlich wird im Projektpaket geschrieben:
 - `design/context-source-review.generated.md`
 - `design/context-source-mapping.json`
 - `design/context-source-mapping.md`
+- `design/ifc-semantic-proof.generated.json`
+- `design/ifc-semantic-proof.generated.md`
 
 Dieser Report enthält die importierte Kontext-Collection, Objektanzahl,
 Perimeter, DXF-Zählwerte, DXF-Layerklassifikation, IFC-Entity-Gruppen,
@@ -199,6 +203,13 @@ DXF-Layer und semantischen IFC-Typen als Mapping-Zeilen. Entscheidungen wie
 pro Quelle gesetzt werden. `accepted_as_design_seed` bleibt fuer dichte
 DXF-Layer blockiert und ist fuer IFC nur mit explizitem
 `--semantic-ifc-reviewed` moeglich.
+
+`npm run kosmo:ifc-semantic-proof -- --project <projektpfad>` erzeugt
+`design/ifc-semantic-proof.generated.md/json`. Wenn IfcOpenShell/Bonsai lokal
+nicht verfuegbar ist, nutzt das Tool einen read-only STEP-Semantikparser. Es
+prueft `IFCBUILDINGELEMENTPROXY`, Spatial Containment, Placement,
+Product-Shape-Referenzen und Property Sets, importiert aber keine Geometrie und
+setzt keine Design-Freigabe.
 
 Einzelne Kandidaten koennen im gleichen Tool bewusst entschieden werden:
 
@@ -388,6 +399,14 @@ Das Source-Mapping-Gate fuer das ZG-Testpaket erzeugt 5 Mapping-Zeilen:
 Gebaeude-DXF als vorgeschlagenen Kontext, Legende/Rahmen/Layer `0` als
 vorgeschlagenen Reject und `IFCBUILDINGELEMENTPROXY` als weiterhin
 source-review-pflichtigen semantischen IFC-Kandidaten.
+
+Der IFC-Semantikproof ist im öffentlichen Demo-Paket bereits registriert,
+findet dort aber bewusst noch keine IFC-Elemente, weil das lokale
+`data/source-files/Bestand_Kontext.ifc` nicht im Repo liegt. Bei echten
+Projektpaketen prueft derselbe Schritt `IFCBUILDINGELEMENTPROXY`, GlobalId,
+Placement, Product Shape, Spatial Containment und Property Sets. Der Proof kann
+damit semantische Evidenz fuer eine spätere menschliche IFC-Pruefung liefern,
+setzt `approved_for_design_generation` aber nie selbständig auf `true`.
 
 Erste heuristische Klassifikation:
 

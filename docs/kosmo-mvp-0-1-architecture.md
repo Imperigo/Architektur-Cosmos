@@ -90,6 +90,8 @@ kosmo-project/
     context-source-review.generated.md
     context-source-mapping.json
     context-source-mapping.md
+    ifc-semantic-proof.generated.json
+    ifc-semantic-proof.generated.md
     variants.json
   draw/
     plans/
@@ -385,7 +387,9 @@ Status 2026-05-25:
     `npm run kosmo:context-source-map` und `npm run kosmo:context-source-review`.**
 14. Ein Source-Mapping-Gate fuer DXF-Layer und semantische IFC-Typen erzeugen.
     **Erledigt mit `design/context-source-mapping.*` und `npm run kosmo:context-source-mapping`.**
-15. Kosmo Zentrale spaeter als Job-Orchestrator an dieses Paket anbinden.
+15. Einen read-only IFC-Semantikproof fuer `IFCBUILDINGELEMENTPROXY` erzeugen.
+    **Erledigt mit `design/ifc-semantic-proof.generated.*` und `npm run kosmo:ifc-semantic-proof`.**
+16. Kosmo Zentrale spaeter als Job-Orchestrator an dieses Paket anbinden.
 
 ## 11. Was bewusst noch nicht gebaut wird
 
@@ -420,6 +424,7 @@ Der erste Datenvertrag ist im Repo angelegt:
 - `scripts/kosmo-context-source-map.mjs`
 - `scripts/kosmo-context-source-mapping.mjs`
 - `scripts/kosmo-context-source-review.mjs`
+- `scripts/kosmo-ifc-semantic-proof.mjs`
 - `scripts/kosmo-context-guard.mjs`
 - `scripts/kosmo-blender-package-bridge-smoke.mjs`
 - `scripts/kosmo_blender_package_bridge_smoke.py`
@@ -551,6 +556,18 @@ DXF-Gebaeudelayer als vorgeschlagener Kontext, Legende/Rahmen/Layer `0` als
 vorgeschlagene Rejects und `IFCBUILDINGELEMENTPROXY` als semantischer
 IFC-Kandidat, der weiter Source-Review braucht. Das Gate aktualisiert
 `context-selection.json` nicht automatisch.
+
+IFC-Semantikproof erzeugen:
+
+```bash
+npm run kosmo:ifc-semantic-proof -- --project archive-intake/kosmo-projects/zg-07052026
+```
+
+Status: bestanden. IfcOpenShell/Bonsai ist lokal nicht installiert; deshalb
+nutzt das Tool einen read-only STEP-Semantikparser. Im ZG-Testpaket findet es
+282 `IFCBUILDINGELEMENTPROXY`, alle mit Placement, Product Shape, Spatial
+Containment und Property Sets. Dieser Proof ist Evidence fuer die menschliche
+IFC-Pruefung, aber noch keine Design-Seed-Freigabe.
 
 Guard fuer Downstream-Design-Tools:
 

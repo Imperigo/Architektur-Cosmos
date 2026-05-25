@@ -141,6 +141,15 @@
       "approval_required_before_public_use": false
     },
     {
+      "id": "kosmo_ifc_semantic_proof",
+      "label": "Kosmo IFC Semantic Proof",
+      "command": "npm run kosmo:ifc-semantic-proof -- --project {project_path}",
+      "output_root": "{project_path}/design",
+      "review_output": "{project_path}/design/ifc-semantic-proof.generated.md",
+      "purpose": "Run a read-only semantic IFC proof for IFCBUILDINGELEMENTPROXY elements, spatial containment and property-set links before any IFC candidate can become a design seed.",
+      "approval_required_before_public_use": false
+    },
+    {
       "id": "kosmo_context_guard",
       "label": "Kosmo Context Guard",
       "command": "npm run kosmo:context-guard -- --project {project_path}",

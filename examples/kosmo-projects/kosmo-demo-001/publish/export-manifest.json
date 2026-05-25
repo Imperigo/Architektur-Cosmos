@@ -133,6 +133,20 @@
       "format": "markdown",
       "status": "source_mapping_review_required",
       "rights_status": "internal_only"
+    },
+    {
+      "path": "design/ifc-semantic-proof.generated.json",
+      "module": "Kosmo Design",
+      "format": "json",
+      "status": "generated_needs_review",
+      "rights_status": "generated_needs_review"
+    },
+    {
+      "path": "design/ifc-semantic-proof.generated.md",
+      "module": "Kosmo Design",
+      "format": "markdown",
+      "status": "generated_needs_review",
+      "rights_status": "generated_needs_review"
     }
   ]
 }

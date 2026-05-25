@@ -1,0 +1,58 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-05-25T19:04:45.716Z",
+  "generator": "kosmo-ifc-semantic-proof",
+  "project_id": "kosmo-demo-001",
+  "status": "no_semantic_ifc_elements_found",
+  "rights_status": "internal_only",
+  "source_file": {
+    "path": "data/source-files/Bestand_Kontext.ifc",
+    "name": "Bestand_Kontext.ifc",
+    "exists": false,
+    "size_bytes": 0
+  },
+  "engine": {
+    "name": "kosmo_step_semantic_probe",
+    "ifcopenshell_available": false,
+    "note": "IfcOpenShell/Bonsai was not available locally, so this proof reads STEP entity semantics only. It does not triangulate or edit IFC geometry."
+  },
+  "policy": {
+    "proof_does_not_approve_design_generation": true,
+    "proof_does_not_modify_context_selection": true,
+    "semantic_elements_require_human_review_before_design_seed": true,
+    "geometry_is_not_imported_or_edited_by_this_tool": true
+  },
+  "source_context": {
+    "source_review_status": "no_source_review_targets",
+    "source_review_open_human_review_count": 0,
+    "source_mapping_status": "source_mapping_reviewed",
+    "source_mapping_ifc_decision": null
+  },
+  "summary": {
+    "ifc_exists": false,
+    "ifc_total_entities": 0,
+    "ifc_entity_type_count": 0,
+    "ifcbuildingelementproxy_count": 0,
+    "elements_with_global_id": 0,
+    "elements_with_object_placement": 0,
+    "elements_with_product_shape": 0,
+    "elements_contained_in_spatial_structure": 0,
+    "elements_with_property_sets": 0,
+    "property_set_links": 0,
+    "semantic_integrity_score": 0,
+    "design_seed_approved": false,
+    "recommended_next_step": "provide_ifc_with_semantic_building_elements"
+  },
+  "project_structure": [],
+  "distributions": {
+    "proxy_name_top": [],
+    "proxy_object_type_top": [],
+    "container_top": [],
+    "property_set_top": []
+  },
+  "element_sample": [],
+  "elements": [],
+  "next_actions": [
+    "Add or register a local IFC source file."
+  ]
+}

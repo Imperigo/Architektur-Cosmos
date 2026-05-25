@@ -237,6 +237,20 @@
       "module": "design",
       "rights_status": "internal_only",
       "description": "Human-readable source mapping gate for DXF/IFC decisions."
+    },
+    {
+      "path": "design/ifc-semantic-proof.generated.json",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Read-only semantic IFC proof for IFCBUILDINGELEMENTPROXY elements before design-seed review."
+    },
+    {
+      "path": "design/ifc-semantic-proof.generated.md",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Human-readable semantic IFC proof before design-seed review."
     }
   ],
   "review_gates": {

@@ -134,12 +134,14 @@ function checkContextSelection() {
   const sourceMapPath = join(projectRoot, 'design/context-source-map.generated.json');
   const sourceMappingPath = join(projectRoot, 'design/context-source-mapping.json');
   const sourceReviewPath = join(projectRoot, 'design/context-source-review.generated.json');
+  const ifcSemanticProofPath = join(projectRoot, 'design/ifc-semantic-proof.generated.json');
   const candidates = existsSync(candidatesPath) ? readJson(candidatesPath) : null;
   const selection = existsSync(selectionPath) ? readJson(selectionPath) : null;
   const matrix = existsSync(matrixPath) ? readJson(matrixPath) : null;
   const sourceMap = existsSync(sourceMapPath) ? readJson(sourceMapPath) : null;
   const sourceMapping = existsSync(sourceMappingPath) ? readJson(sourceMappingPath) : null;
   const sourceReview = existsSync(sourceReviewPath) ? readJson(sourceReviewPath) : null;
+  const ifcSemanticProof = existsSync(ifcSemanticProofPath) ? readJson(ifcSemanticProofPath) : null;
 
   if (candidates && !selection) {
     warnings.push('Context candidates exist, but design/context-selection.json is missing.');
@@ -165,6 +167,9 @@ function checkContextSelection() {
   if (sourceReviewSelections.length && !sourceReview) warnings.push('Context selection has source-review candidates, but design/context-source-review.generated.json is missing.');
   if (sourceMapping?.summary?.pending_review_count > 0) warnings.push(`Context source mapping has pending review rows: ${sourceMapping.summary.pending_review_count}`);
   if (sourceReview?.summary?.open_human_review_count > 0) warnings.push(`Context source review has open human checks: ${sourceReview.summary.open_human_review_count}`);
+  if (sourceReview?.summary?.design_seed_possible_after_review_count > 0 && !ifcSemanticProof) {
+    warnings.push('Context source review has an IFC design-seed candidate, but design/ifc-semantic-proof.generated.json is missing.');
+  }
   if (acceptedDesignSeeds.length && selection.approved_for_design_generation !== true) {
     warnings.push('Context selection contains accepted design seeds but approved_for_design_generation is not true.');
   }

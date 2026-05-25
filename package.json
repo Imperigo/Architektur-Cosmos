@@ -91,6 +91,7 @@
     "kosmo:context-source-map": "node scripts/kosmo-context-source-map.mjs",
     "kosmo:context-source-mapping": "node scripts/kosmo-context-source-mapping.mjs",
     "kosmo:context-source-review": "node scripts/kosmo-context-source-review.mjs",
+    "kosmo:ifc-semantic-proof": "node scripts/kosmo-ifc-semantic-proof.mjs",
     "kosmo:context-guard": "node scripts/kosmo-context-guard.mjs",
     "kosmo:package-review": "node scripts/kosmo-project-package-review.mjs",
     "kosmodata:enrich": "node scripts/kosmodata-enrichment-pipeline.mjs review",

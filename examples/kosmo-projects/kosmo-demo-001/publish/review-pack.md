@@ -1,6 +1,6 @@
 # Kosmo Demo 001 Review Pack
 
-Generated: 2026-05-25T18:41:59.480Z
+Generated: 2026-05-25T19:04:45.909Z
 Project ID: `kosmo-demo-001`
 Risk level: `local_review_only`
 Readiness: `review_required`
@@ -55,6 +55,8 @@ Readiness: `review_required`
 - ok: `design/context-source-map.generated.md` (design, other, generated_needs_review)
 - ok: `design/context-source-mapping.json` (design, other, internal_only)
 - ok: `design/context-source-mapping.md` (design, other, internal_only)
+- ok: `design/ifc-semantic-proof.generated.json` (design, other, generated_needs_review)
+- ok: `design/ifc-semantic-proof.generated.md` (design, other, generated_needs_review)
 
 ## Context Selection
 
@@ -88,6 +90,12 @@ Readiness: `review_required`
 - source evidence confirmed: 0
 - source human checks open: 0
 - source review design-seed possible after review: 0
+- IFC semantic proof: present
+- IFC semantic proof engine: kosmo_step_semantic_probe
+- IFC semantic proxies: 0
+- IFC semantic contained proxies: 0
+- IFC semantic proxies with property sets: 0
+- IFC semantic integrity score: 0
 - approved for design generation: no
 - readiness: needs_human_selection
 
@@ -111,6 +119,8 @@ Readiness: `review_required`
 - Generated output needs review: design/context-source-review.generated.md
 - Generated output needs review: design/context-source-map.generated.json
 - Generated output needs review: design/context-source-map.generated.md
+- Generated output needs review: design/ifc-semantic-proof.generated.json
+- Generated output needs review: design/ifc-semantic-proof.generated.md
 - Context selection still has undecided candidates: 2
 
 ## Recent Memory

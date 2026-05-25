@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-25T18:41:59.480Z",
+  "generated_at": "2026-05-25T19:04:45.909Z",
   "generator": "kosmo-project-package-review",
   "project": {
     "id": "kosmo-demo-001",
@@ -230,7 +230,7 @@
       "rights_status": "internal_only",
       "description": "Local review package scaffold.",
       "exists": true,
-      "size_bytes": 5306
+      "size_bytes": 6226
     },
     {
       "path": "design/context-decision-matrix.generated.json",
@@ -321,6 +321,24 @@
       "description": "Human-readable source mapping gate for DXF/IFC decisions.",
       "exists": true,
       "size_bytes": 548
+    },
+    {
+      "path": "design/ifc-semantic-proof.generated.json",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Read-only semantic IFC proof for IFCBUILDINGELEMENTPROXY elements before design-seed review.",
+      "exists": true,
+      "size_bytes": 1923
+    },
+    {
+      "path": "design/ifc-semantic-proof.generated.md",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Human-readable semantic IFC proof before design-seed review.",
+      "exists": true,
+      "size_bytes": 974
     }
   ],
   "context_review": {
@@ -357,6 +375,13 @@
     "source_review_evidence_confirmed_count": 0,
     "source_review_open_human_review_count": 0,
     "source_review_design_seed_possible_after_review_count": 0,
+    "ifc_semantic_proof_exists": true,
+    "ifc_semantic_proof_engine": "kosmo_step_semantic_probe",
+    "ifc_semantic_proof_proxy_count": 0,
+    "ifc_semantic_proof_contained_count": 0,
+    "ifc_semantic_proof_property_set_element_count": 0,
+    "ifc_semantic_proof_integrity_score": 0,
+    "ifc_semantic_proof_design_seed_approved": false,
     "stale_selection_count": 0,
     "readiness": "needs_human_selection",
     "approved_for_design_generation": false
@@ -455,6 +480,8 @@
     "Generated output needs review: design/context-source-review.generated.md",
     "Generated output needs review: design/context-source-map.generated.json",
     "Generated output needs review: design/context-source-map.generated.md",
+    "Generated output needs review: design/ifc-semantic-proof.generated.json",
+    "Generated output needs review: design/ifc-semantic-proof.generated.md",
     "Context selection still has undecided candidates: 2"
   ],
   "next_actions": [
