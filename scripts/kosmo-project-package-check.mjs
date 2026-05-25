@@ -141,6 +141,7 @@ function checkContextSelection() {
   const modelLayerHandoffPath = join(projectRoot, 'design/model-layer-handoff.generated.json');
   const contextHandoffPath = join(projectRoot, 'design/context-handoff.generated.json');
   const blenderContextImportPath = join(projectRoot, 'design/blender-context-import.generated.json');
+  const blenderContextSmokePath = join(projectRoot, 'design/blender-context-import.smoke.json');
   const candidates = existsSync(candidatesPath) ? readJson(candidatesPath) : null;
   const selection = existsSync(selectionPath) ? readJson(selectionPath) : null;
   const matrix = existsSync(matrixPath) ? readJson(matrixPath) : null;
@@ -154,6 +155,7 @@ function checkContextSelection() {
   const modelLayerHandoff = existsSync(modelLayerHandoffPath) ? readJson(modelLayerHandoffPath) : null;
   const contextHandoff = existsSync(contextHandoffPath) ? readJson(contextHandoffPath) : null;
   const blenderContextImport = existsSync(blenderContextImportPath) ? readJson(blenderContextImportPath) : null;
+  const blenderContextSmoke = existsSync(blenderContextSmokePath) ? readJson(blenderContextSmokePath) : null;
   const ifcGeometryPreviewReady = isIfcGeometryPreviewReady(ifcGeometryPreview);
   const ifcDxfAlignmentPreviewReady = isIfcDxfAlignmentPreviewReady(ifcDxfAlignmentPreview);
   const ifcLayerPlanReady = isIfcLayerPlanReady(ifcLayerPlan);
@@ -205,6 +207,20 @@ function checkContextSelection() {
   }
   if (contextHandoffReady && !blenderContextImportReady) {
     warnings.push('Context handoff exists, but design/blender-context-import.generated.json is missing or still pending.');
+  }
+  if (blenderContextSmoke) {
+    const objectCount = Number(blenderContextSmoke.object_count || 0);
+    const lockedObjectCount = Number(blenderContextSmoke.locked_object_count || 0);
+    const reviewOnlyObjectCount = Number(blenderContextSmoke.review_only_object_count || 0);
+    if (objectCount > 0 && lockedObjectCount !== objectCount) {
+      warnings.push('Blender context smoke exists, but not all generated context objects are locked.');
+    }
+    if (objectCount > 0 && reviewOnlyObjectCount !== objectCount) {
+      warnings.push('Blender context smoke exists, but not all generated context objects are tagged review-only.');
+    }
+    if (blenderContextSmoke.output_blend && !existsSync(blenderContextSmoke.output_blend)) {
+      warnings.push('Blender context smoke summary references an output blend file that does not exist.');
+    }
   }
   if (acceptedDesignSeeds.length && selection.approved_for_design_generation !== true) {
     warnings.push('Context selection contains accepted design seeds but approved_for_design_generation is not true.');

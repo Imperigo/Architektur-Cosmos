@@ -1,6 +1,6 @@
 # Kosmo Demo 001 Review Pack
 
-Generated: 2026-05-25T20:00:48.107Z
+Generated: 2026-05-25T20:38:03.569Z
 Project ID: `kosmo-demo-001`
 Risk level: `local_review_only`
 Readiness: `review_required`
@@ -146,6 +146,11 @@ Readiness: `review_required`
 - Blender context import DXF polylines: 0
 - Blender context import IFC bboxes: 2
 - Blender context import layer collections: 5
+- Blender context smoke: passed
+- Blender context smoke objects: 4
+- Blender context smoke locked objects: 4
+- Blender context smoke review-only objects: 4
+- Blender context smoke output blend: no
 - approved for design generation: no
 - readiness: needs_human_selection
 

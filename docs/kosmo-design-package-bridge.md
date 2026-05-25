@@ -294,6 +294,12 @@ Blender nur gesperrte Review-Kontextobjekte: Ursprung, Perimeter,
 DXF-Unterlage, IFC-Bounding-Boxes und leere Layer-Collections. Es ist der
 sichere Zwischenschritt zwischen Quellenreview und spaeterer Modellarbeit.
 
+`npm run kosmo:blender-context-smoke -- --project <projektpfad>` fuehrt dieses
+generierte Script headless in Blender aus, schreibt
+`design/blender-context-import.smoke.json` und kann mit `--output-blend` eine
+lokale Review-Blend-Datei speichern. Auch dieser Test erzeugt keine
+Designgeometrie und keine GLB-Dateien.
+
 Repo-Smoke ohne private Daten:
 
 ```bash
@@ -467,6 +473,20 @@ Zusaetzlich schreibt KosmoDraw
 Ursprung, Perimeter, DXF-Layerrolle `existing_building`, eine unklassifizierte
 DXF-Layerrolle, IFC-Bounds, IFC-Projekt-/Site-Hierarchie, IFC-Mesh-Bounds,
 semantische IFC-Building-Elemente und IFC-Property-/Source-Metadata.
+
+Read-only Blender Context Import Smoke:
+
+```bash
+npm run kosmo:blender-context-smoke -- \
+  --project archive-intake/kosmo-projects/zg-07052026 \
+  --output-blend archive-intake/kosmo-projects/zg-07052026/viz/previews/zg-context-review.blend
+```
+
+Status: lokal bestanden mit Blender 5.1.2 ueber die Steam-Installation. Das
+generierte Context-Import-Script erzeugt 6 gesperrte Review-Objekte, 4'000
+DXF-Polylines als Unterlage, 282 IFC-Bounding-Box-Proxies und 2
+Layer-Collections. Der Summary-Report wird unter
+`design/blender-context-import.smoke.json` geschrieben.
 
 Danach erzeugt der Orbit-Befehl
 `npm run kosmo:context-selection -- --project archive-intake/kosmo-projects/zg-07052026`

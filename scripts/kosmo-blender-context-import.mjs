@@ -319,9 +319,24 @@ design geometry, does not import editable BIM, and does not export GLB files.
 
 from __future__ import annotations
 
+import argparse
 import json
+import sys
+from pathlib import Path
 
 KOSMO_CONTEXT_IMPORT = json.loads(r'''${payload}''')
+
+
+def parse_blender_args():
+    try:
+        marker = sys.argv.index("--")
+        raw = sys.argv[marker + 1 :]
+    except ValueError:
+        raw = []
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--output-blend", default="")
+    parser.add_argument("--summary-json", default="")
+    return parser.parse_args(raw)
 
 
 def ensure_collection(bpy, name, parent=None):
@@ -487,8 +502,29 @@ def create_kosmo_readonly_context(bpy):
         collection["kosmo_element_count"] = int(layer.get("element_count") or 0)
         collection["kosmo_review_only"] = True
 
+    generated_objects = [
+        obj
+        for obj in bpy.data.objects
+        if obj.get("kosmo_generated_by") == "kosmo-blender-context-import"
+        and obj.get("kosmo_project_id") == KOSMO_CONTEXT_IMPORT["project_id"]
+    ]
+    generated_collections = [
+        collection
+        for collection in bpy.data.collections
+        if collection.get("kosmo_generated_by") == "kosmo-blender-context-import"
+        and collection.get("kosmo_project_id") == KOSMO_CONTEXT_IMPORT["project_id"]
+    ]
+
     return {
         "root_collection": root.name,
+        "object_count": len(generated_objects),
+        "review_only_object_count": sum(1 for obj in generated_objects if obj.get("kosmo_review_only")),
+        "locked_object_count": sum(
+            1
+            for obj in generated_objects
+            if obj.hide_select and all(obj.lock_location) and all(obj.lock_rotation) and all(obj.lock_scale)
+        ),
+        "collection_count": len(generated_collections),
         "dxf_polylines": len(KOSMO_CONTEXT_IMPORT.get("dxf_polylines") or []),
         "ifc_bboxes": len(KOSMO_CONTEXT_IMPORT.get("ifc_bboxes") or []),
         "layer_collections": len(KOSMO_CONTEXT_IMPORT.get("layer_collections") or []),
@@ -498,8 +534,19 @@ def create_kosmo_readonly_context(bpy):
 if __name__ == "__main__":
     import bpy
 
+    args = parse_blender_args()
     result = create_kosmo_readonly_context(bpy)
-    print("Kosmo read-only context created:", result)
+    if args.output_blend:
+        output_blend = Path(args.output_blend).expanduser().resolve()
+        output_blend.parent.mkdir(parents=True, exist_ok=True)
+        bpy.ops.wm.save_as_mainfile(filepath=output_blend.as_posix())
+        result["output_blend"] = output_blend.as_posix()
+    if args.summary_json:
+        summary_json = Path(args.summary_json).expanduser().resolve()
+        summary_json.parent.mkdir(parents=True, exist_ok=True)
+        summary_json.write_text(json.dumps(result, indent=2, sort_keys=True) + "\\n", encoding="utf-8")
+        result["summary_json"] = summary_json.as_posix()
+    print("KOSMO_BLENDER_CONTEXT_IMPORT", json.dumps(result, sort_keys=True))
 `;
 }
 

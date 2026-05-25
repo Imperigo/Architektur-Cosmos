@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-25T20:00:48.107Z",
+  "generated_at": "2026-05-25T20:38:03.569Z",
   "generator": "kosmo-project-package-review",
   "project": {
     "id": "kosmo-demo-001",
@@ -230,7 +230,7 @@
       "rights_status": "internal_only",
       "description": "Local review package scaffold.",
       "exists": true,
-      "size_bytes": 9751
+      "size_bytes": 10502
     },
     {
       "path": "design/context-decision-matrix.generated.json",
@@ -491,7 +491,7 @@
       "rights_status": "generated_needs_review",
       "description": "Generated Blender Python script for locked context review objects.",
       "exists": true,
-      "size_bytes": 10108
+      "size_bytes": 12077
     }
   ],
   "context_review": {
@@ -582,6 +582,13 @@
     "blender_context_import_dxf_polyline_count": 0,
     "blender_context_import_ifc_bbox_count": 2,
     "blender_context_import_layer_collection_count": 5,
+    "blender_context_smoke_exists": true,
+    "blender_context_smoke_object_count": 4,
+    "blender_context_smoke_locked_object_count": 4,
+    "blender_context_smoke_review_only_object_count": 4,
+    "blender_context_smoke_dxf_polyline_count": 0,
+    "blender_context_smoke_ifc_bbox_count": 2,
+    "blender_context_smoke_output_blend_exists": false,
     "stale_selection_count": 0,
     "readiness": "needs_human_selection",
     "approved_for_design_generation": false

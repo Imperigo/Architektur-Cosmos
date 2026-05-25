@@ -98,6 +98,7 @@
     "kosmo:ifc-layer-plan": "node scripts/kosmo-ifc-layer-plan.mjs",
     "kosmo:model-layer-handoff": "node scripts/kosmo-model-layer-handoff.mjs",
     "kosmo:blender-context-import": "node scripts/kosmo-blender-context-import.mjs",
+    "kosmo:blender-context-smoke": "node scripts/kosmo-blender-context-smoke.mjs",
     "kosmo:context-guard": "node scripts/kosmo-context-guard.mjs",
     "kosmo:package-review": "node scripts/kosmo-project-package-review.mjs",
     "kosmodata:enrich": "node scripts/kosmodata-enrichment-pipeline.mjs review",

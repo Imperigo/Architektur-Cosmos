@@ -1,7 +1,7 @@
 # Blender Context Import
 
 Project ID: `kosmo-demo-001`
-Generated: 2026-05-25T20:00:39.728Z
+Generated: 2026-05-25T20:37:40.870Z
 Status: `blender_context_import_pending_context_handoff`
 
 Read-only Blender context import script. It creates locked review objects and no design geometry.

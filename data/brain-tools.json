@@ -204,6 +204,15 @@
       "approval_required_before_public_use": false
     },
     {
+      "id": "kosmo_blender_context_smoke",
+      "label": "Kosmo Blender Context Smoke",
+      "command": "npm run kosmo:blender-context-smoke -- --project {project_path} --output-blend {project_path}/viz/previews/blender-context-import-smoke.blend",
+      "output_root": "{project_path}/viz/previews",
+      "review_output": "{project_path}/design/blender-context-import.smoke.json",
+      "purpose": "Run the generated read-only Blender context import script headlessly, save an optional review blend file and verify locked context objects without generating design geometry.",
+      "approval_required_before_public_use": false
+    },
+    {
       "id": "kosmo_context_guard",
       "label": "Kosmo Context Guard",
       "command": "npm run kosmo:context-guard -- --project {project_path}",
