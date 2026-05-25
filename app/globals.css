@@ -4103,6 +4103,34 @@ body:has(.entry-page) {
   line-height: 1.45;
 }
 
+.module-hub-preview-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.module-hub-preview-metrics span {
+  display: grid;
+  gap: 4px;
+  min-height: 54px;
+  padding: 9px 8px;
+  border: 1px solid color-mix(in srgb, var(--station-accent) 34%, transparent);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--station-accent) 8%, rgb(247 247 244 / 4%));
+}
+
+.module-hub-preview-metrics small {
+  color: color-mix(in srgb, var(--station-accent) 76%, rgb(247 247 244 / 72%));
+  font-size: 8px;
+  letter-spacing: 0.12em;
+}
+
+.module-hub-preview-metrics strong {
+  color: #f7f7f4;
+  font-size: 11px;
+  line-height: 1.05;
+}
+
 .module-hub-preview ul {
   display: grid;
   gap: 6px;

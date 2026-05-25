@@ -8,6 +8,10 @@ export type KosmoOrbitModule = {
   label: string;
   description: string;
   detail: string[];
+  metrics: Array<{
+    label: string;
+    value: string;
+  }>;
   status: KosmoModuleStatus;
   accent: string;
   x: number;
@@ -23,6 +27,11 @@ export const kosmoOrbitModules: KosmoOrbitModule[] = [
     label: 'Referenzbibliothek / Atlas',
     description: 'Wurmloch, Referenzarchiv, Projekte, Quellen und 3D-Modelle.',
     detail: ['Architekturprojekte im Wurmloch', 'öffentliche und private Quellenlogik', 'Analyse-, Material- und Modell-Layer'],
+    metrics: [
+      { label: 'Status', value: 'aktiv' },
+      { label: 'Daten', value: '112 Entries' },
+      { label: 'Modus', value: 'public-safe' }
+    ],
     status: 'bereit',
     accent: '#00e7ff',
     x: 0,
@@ -36,6 +45,11 @@ export const kosmoOrbitModules: KosmoOrbitModule[] = [
     label: '2D / 3D / Texturen',
     description: 'Bauteile, 2D-Pläne, 3D-Modelle, Texturen und Materialpakete.',
     detail: ['wiederverwendbare 2D-/3D-Bauteile', 'Materialien, Texturen und Referenzpakete', 'Exportlogik für Blender, ArchiCAD und Wettbewerbspipeline'],
+    metrics: [
+      { label: 'Demo', value: '3 Assets' },
+      { label: 'Upload', value: 'gesperrt' },
+      { label: 'Gate', value: 'Review' }
+    ],
     status: 'in Planung',
     accent: '#f5b342',
     x: 214,
@@ -49,6 +63,11 @@ export const kosmoOrbitModules: KosmoOrbitModule[] = [
     label: 'Prepare / Draw / Vis / Publish',
     description: 'Entwurf, Planwerk, Visualisierung und Publikation als gebündelte Pipeline.',
     detail: ['KosmoPrepare für Briefing und Kontext', 'KosmoDraw und KosmoVis für Plan, Modell und Bild', 'KosmoPublish für Layout, Abgabe und Review-Pakete'],
+    metrics: [
+      { label: 'Pakete', value: 'lokal' },
+      { label: 'IFC', value: 'Review' },
+      { label: 'Export', value: 'Blender' }
+    ],
     status: 'in Planung',
     accent: '#ff4fd8',
     x: 0,
@@ -62,6 +81,11 @@ export const kosmoOrbitModules: KosmoOrbitModule[] = [
     label: 'Produkte / Tools / Käufe',
     description: 'Späterer Ort für Produktzugang, Toolkäufe und freigegebene Pakete.',
     detail: ['freigegebene Tool- und Asset-Pakete', 'Produktzugänge und spätere Kaufmodule', 'klare Trennung zwischen Shop, Dev-Werkzeugen und privaten Daten'],
+    metrics: [
+      { label: 'Status', value: 'später' },
+      { label: 'Shop', value: 'kein Paywall' },
+      { label: 'Public', value: 'getrennt' }
+    ],
     status: 'in Planung',
     accent: '#65ff73',
     x: -214,

@@ -2396,6 +2396,14 @@ function ModuleHub({ onOpenKosmoData }: { onOpenKosmoData: () => void }) {
           <strong>{selectedModule.name}</strong>
           <span>{selectedModule.label}</span>
           <p>{selectedModule.description}</p>
+          <div className="module-hub-preview-metrics" aria-label={`${selectedModule.name} Statuswerte`}>
+            {selectedModule.metrics.map((metric) => (
+              <span key={`${metric.label}-${metric.value}`}>
+                <small>{metric.label}</small>
+                <strong>{metric.value}</strong>
+              </span>
+            ))}
+          </div>
           <ul>
             {selectedModule.detail.map((item) => (
               <li key={item}>{item}</li>
