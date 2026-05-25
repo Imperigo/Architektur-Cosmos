@@ -37,6 +37,14 @@ const checks = [
     safe_healing: 'regenerate_book_pipeline_review'
   },
   {
+    id: 'kosmo-context-guard',
+    label: 'Kosmo context guard',
+    command: 'npm',
+    args: ['run', 'kosmo:context-guard', '--', '--project', 'examples/kosmo-projects/kosmo-demo-001'],
+    retry: false,
+    safe_healing: 'diagnostics_only'
+  },
+  {
     id: 'lint',
     label: 'Lint',
     command: 'npm',
@@ -164,6 +172,7 @@ function diagnose(check, result) {
   }
   if (check.id === 'build' && output.includes('type')) return 'Build failed during TypeScript or static generation. Needs code review before edits.';
   if (check.id === 'kosmodata-book-smoke') return 'Book pipeline smoke failed. Check local book ingest, draft generation and rights-gated review output.';
+  if (check.id === 'kosmo-context-guard') return 'Context guard failed. Downstream design tools must not use context candidates as design seeds until owner approval is complete.';
   if (check.id === 'lint') return 'Lint failed. Doctor will not auto-fix tracked source files without approval.';
   if (check.id === 'ui-audit') return 'Interface audit failed. Check shared UI tokens, mobile panel rules and touch-target consistency.';
   if (check.id === 'security-check') return 'Security check failed. Treat as approval-gated P0 before publish.';
