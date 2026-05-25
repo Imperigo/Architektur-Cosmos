@@ -96,6 +96,24 @@
       "approval_required_before_public_use": false
     },
     {
+      "id": "kosmo_context_matrix",
+      "label": "Kosmo Context Decision Matrix",
+      "command": "npm run kosmo:context-matrix -- --project {project_path}",
+      "output_root": "{project_path}/design",
+      "review_output": "{project_path}/design/context-decision-matrix.generated.md",
+      "purpose": "Generate an advisory decision matrix that recommends context-only, design-seed, more source review or rejected handling for context candidates without changing human selection approvals.",
+      "approval_required_before_public_use": false
+    },
+    {
+      "id": "kosmo_context_review",
+      "label": "Kosmo Context Review",
+      "command": "npm run kosmo:context-review -- --project {project_path}",
+      "output_root": "{project_path}/design",
+      "review_output": "{project_path}/design/context-review.md",
+      "purpose": "Create a compact owner-facing context review that combines candidates, selection state and the advisory matrix into concrete review commands before KosmoDraw uses any context as design input.",
+      "approval_required_before_public_use": false
+    },
+    {
       "id": "brain_text_polish",
       "label": "Brain Text Polish",
       "command": "npm run brain:polish-texts -- --limit 8",

@@ -31,7 +31,7 @@ Architektur Kosmos liegt nicht in einem einzigen Repo. Die sinnvolle Ordnung ist
 | Produktname / Modulnamen | `docs/architektur-kosmos-network-concept.md` + Konzeptbild | Architektur Kosmos, Kosmo, Kosmo Data, Kosmo Orbit, Kosmo Zentrale, Kosmo Design, Kosmo Prepare, Kosmo Draw, Kosmo Viz, Kosmo Publish | Historische Ordnernamen duerfen abweichen, z.B. `KosmosPrepare`. |
 | Public Data / KosmoData | `<repo_architecture_cosmos>` | Website, Atlas, Brain-Tools, Rechte-/Quellenlogik, KosmoData-Pipelines | Static export bleibt harte Grenze. |
 | Gemeinsamer Datenvertrag | `schema/kosmo-project-package.schema.json` + `examples/kosmo-projects/kosmo-demo-001` | Lokales Projektpaket fuer alle Module | Aktuell bester Integrationsanker zwischen Repos. |
-| Kosmo Design / Draw / Viz Proof | `<local_projects>/KosmoDraw` + dieses Repo | Blender-Add-on `kosmo_design`, Package Import, Kontextkandidaten, Context Selection, Write-back, SVG Draw Export, PNG Viz Preview | KosmoDraw ist aktive Werkbank; dieses Repo haelt den Gate-/Package-Vertrag. |
+| Kosmo Design / Draw / Viz Proof | `<local_projects>/KosmoDraw` + dieses Repo | Blender-Add-on `kosmo_design`, Package Import, Kontextkandidaten, Decision Matrix, Context Selection, Write-back, SVG Draw Export, PNG Viz Preview | KosmoDraw ist aktive Werkbank; dieses Repo haelt den Gate-/Package-Vertrag. |
 | Kosmo Prepare / Phase 0 | `<ai_workflow>/KosmosPrepare/01_Source_Code` | Wettbewerbsvorbereitung, NodeTree, Importer, Standort/GIS/Baugesetz/Dossier/ArchiCAD-Export | Muss in das Kosmo-Projektpaket schreiben koennen. |
 | Kosmo Publish | `<ai_workflow>/KosmoPublish` | Wettbewerbsplakate, SIA-Linien, Hatches, Storeys, IFC, Layout, PDF-Set | Reife Pipeline; sollte als Publish-Backend genutzt werden. |
 | Kosmo Zentrale | `<ai_workflow>/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter` | FastAPI Control Hub, Android/macOS, Jobs, Approvals, Artifacts, Memory, Operator Mode | Orchestrator, nicht CAD-Kern. |
@@ -66,6 +66,7 @@ Aktiv fuer:
 - Kosmo-Projektpaket-Bridge: Import, Write-back, Draw-SVGs, Viz-Preview
 - Phase-0-Kontextreports und review-pflichtige Kontextkandidaten aus
   Prepare/DXF/IFC
+- `design/context-decision-matrix.generated.*` als Empfehlungsschicht
 - `design/context-selection.json` als menschliches Gate vor Design-Seeds
 
 Risiko:
@@ -143,7 +144,7 @@ Der MVP sollte nicht mehrere Systeme parallel neu bauen. Die sauberste Kette ist
 KosmosPrepare
   -> kosmo.project.json / brief / data / design seed
 KosmoDraw
-  -> Blender Import / Kontextkandidaten / Context Selection / editierbares Modell / schnelle Draw+Viz Proofs
+  -> Blender Import / Kontextkandidaten / Decision Matrix / Context Selection / editierbares Modell / schnelle Draw+Viz Proofs
 KosmoPublish
   -> hochwertige Pläne / Poster / PDF-Abgabe
 Kosmo Zentrale
@@ -165,10 +166,11 @@ KosmoData
    sichtbares Underlay und IFC als Bounds-/Quellenanalyse und schreibt
    `design/context-import.generated.json` als persistenten Report. Zusaetzlich
    entsteht `design/context-candidates.generated.json` als Kandidatenliste fuer
-   Ursprung, Perimeter, DXF-Layerrollen und IFC-Rollen. Initial umgesetzt ist
-   auch `design/context-selection.json` als menschliches Gate. Naechster
-   Schritt: diese Auswahl in ein kleines Layer-Mapping UI und spaeter
-   freigegebene Design-Seeds ueberfuehren.
+   Ursprung, Perimeter, DXF-Layerrollen und IFC-Rollen. Initial umgesetzt sind
+   auch `design/context-decision-matrix.generated.*` als Empfehlungsschicht und
+   `design/context-selection.json` als menschliches Gate. Naechster Schritt:
+   diese Auswahl in ein kleines Layer-Mapping UI und spaeter freigegebene
+   Design-Seeds ueberfuehren.
 
 3. **KosmoPublish Package Adapter**  
    KosmoPublish soll `kosmo.project.json`, `design/model-profile.exported.json`

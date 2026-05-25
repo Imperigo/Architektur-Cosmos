@@ -63,6 +63,34 @@
       "format": "markdown",
       "status": "scaffold",
       "rights_status": "internal_only"
+    },
+    {
+      "path": "design/context-decision-matrix.generated.json",
+      "module": "Kosmo Design",
+      "format": "json",
+      "status": "generated_needs_review",
+      "rights_status": "generated_needs_review"
+    },
+    {
+      "path": "design/context-decision-matrix.generated.md",
+      "module": "Kosmo Design",
+      "format": "markdown",
+      "status": "generated_needs_review",
+      "rights_status": "generated_needs_review"
+    },
+    {
+      "path": "design/context-review.json",
+      "module": "Kosmo Design",
+      "format": "json",
+      "status": "local_review_only",
+      "rights_status": "internal_only"
+    },
+    {
+      "path": "design/context-review.md",
+      "module": "Kosmo Design",
+      "format": "markdown",
+      "status": "local_review_only",
+      "rights_status": "internal_only"
     }
   ]
 }

@@ -1,0 +1,86 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-05-25T17:38:35.087Z",
+  "generator": "kosmo-context-decision-matrix-create",
+  "project_id": "kosmo-demo-001",
+  "status": "generated_needs_review",
+  "rights_status": "internal_only",
+  "source_candidates_path": "design/context-candidates.generated.json",
+  "source_selection_path": "design/context-selection.json",
+  "note": "Recommendation matrix only. It does not approve design generation and does not overwrite context-selection decisions.",
+  "policy": {
+    "matrix_is_advisory": true,
+    "context_selection_is_source_of_truth_for_human_decisions": true,
+    "accepted_as_design_seed_requires_human_review": true,
+    "approved_for_design_generation_is_never_set_by_matrix": true
+  },
+  "summary": {
+    "candidate_count": 2,
+    "recommended_accepted_as_context_count": 0,
+    "recommended_accepted_as_design_seed_count": 0,
+    "recommended_needs_more_source_review_count": 2,
+    "recommended_rejected_count": 0,
+    "current_accepted_as_context_count": 0,
+    "current_accepted_as_design_seed_count": 0,
+    "current_needs_more_source_review_count": 0,
+    "current_rejected_count": 0,
+    "current_undecided_count": 2,
+    "recommended_next_step": "review_context_selection_against_matrix"
+  },
+  "rows": [
+    {
+      "candidate_id": "context-origin",
+      "label": "Project origin marker",
+      "kind": "project_origin",
+      "source": "fallback_origin",
+      "confidence": "low",
+      "current_decision": "undecided",
+      "recommended_decision": "needs_more_source_review",
+      "recommended_use": "coordinate_reference",
+      "design_seed_allowed_after_review": false,
+      "allowed_decisions": [
+        "accepted_as_context",
+        "needs_more_source_review",
+        "rejected"
+      ],
+      "priority": "high",
+      "rationale": "Fallback or low-confidence origin should be checked against reviewed project coordinates before use.",
+      "required_checks": [
+        "Verify LV95/WGS84/project origin against source files.",
+        "Confirm unit convention and north rotation."
+      ],
+      "warnings": [
+        "Fallback origin; add reviewed project coordinates before measured work."
+      ],
+      "evidence_ref": "design/context-candidates.generated.json#context-origin",
+      "selection_ref": "design/context-selection.json#context-origin"
+    },
+    {
+      "candidate_id": "context-perimeter",
+      "label": "Project perimeter",
+      "kind": "site_perimeter",
+      "source": "fallback_origin",
+      "confidence": "low",
+      "current_decision": "undecided",
+      "recommended_decision": "needs_more_source_review",
+      "recommended_use": "context_boundary_reference",
+      "design_seed_allowed_after_review": false,
+      "allowed_decisions": [
+        "accepted_as_context",
+        "needs_more_source_review",
+        "rejected"
+      ],
+      "priority": "high",
+      "rationale": "Fallback perimeter is only a frame and must not become a parcel or design boundary.",
+      "required_checks": [
+        "Compare with parcel/site boundary source.",
+        "Mark whether this is frame, parcel, plot, competition area or study area."
+      ],
+      "warnings": [
+        "Perimeter is a context frame, not a verified parcel boundary."
+      ],
+      "evidence_ref": "design/context-candidates.generated.json#context-perimeter",
+      "selection_ref": "design/context-selection.json#context-perimeter"
+    }
+  ]
+}

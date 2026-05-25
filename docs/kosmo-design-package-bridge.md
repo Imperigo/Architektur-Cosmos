@@ -26,6 +26,8 @@ Der erste Connector ist bewusst duenn:
   Kandidatenliste fuer Ursprung, Perimeter, DXF-Layerrollen und IFC-Rollen
 - nutzt `design/context-selection.json` als menschliches Gate, bevor Kandidaten
   zu Designinput werden duerfen
+- schreibt optional `design/context-decision-matrix.generated.json` und `.md`
+  als Empfehlungsschicht fuer Kandidatenentscheidungen
 - verwendet den bestehenden Blender-Operator `kosmo_design.create_room_from_plan`
 - erzeugt Collections unter `Kosmo_Project_<project_id>`
 - taggt erzeugte Collections/Objekte mit `kosmo_project_*` und `kosmo_source_*` Custom Properties
@@ -131,6 +133,8 @@ Zusätzlich wird im Projektpaket geschrieben:
 - `design/context-import.generated.json`
 - `design/context-candidates.generated.json`
 - `design/context-selection.json`
+- `design/context-decision-matrix.generated.json`
+- `design/context-decision-matrix.generated.md`
 
 Dieser Report enthält die importierte Kontext-Collection, Objektanzahl,
 Perimeter, DXF-Zählwerte, DXF-Layerklassifikation, IFC-Entity-Gruppen,
@@ -154,6 +158,12 @@ alle Kandidaten bleiben `undecided`, `approved_for_design_generation` bleibt
 Das Tool registriert die Selection-Datei auch in `kosmo.project.json` und
 `publish/export-manifest.json`, falls sie dort noch fehlt.
 
+`design/context-decision-matrix.generated.json` und `.md` entstehen mit
+`npm run kosmo:context-matrix -- --project <projektpfad>`. Die Matrix ist nur
+advisory: sie empfiehlt `accepted_as_context`, `needs_more_source_review`,
+`rejected` oder spaeter `accepted_as_design_seed`, schreibt aber keine
+Freigabe in `context-selection.json`.
+
 Einzelne Kandidaten koennen im gleichen Tool bewusst entschieden werden:
 
 ```bash
@@ -167,6 +177,17 @@ npm run kosmo:context-selection -- --project <projektpfad> \
 Erst wenn alle Kandidaten entschieden sind und mindestens ein Kandidat als
 `accepted_as_design_seed` markiert ist, darf mit
 `--approve-design-generation` die finale lokale Design-Freigabe gesetzt werden.
+
+Fuer die schnelle lokale Owner-Pruefung gibt es zusaetzlich:
+
+```bash
+npm run kosmo:context-review -- --project <projektpfad>
+```
+
+Das schreibt `design/context-review.md` und `design/context-review.json`. Diese
+Review-Ansicht kombiniert Kandidaten, aktuelle Auswahl und Matrix-Empfehlung zu
+einer kleinen Entscheidungsliste inklusive konkreter Commands. Sie setzt ohne
+`--decision` und `--approve-design-generation` keine Freigabe.
 
 ## 5. Was beim Write-back entsteht
 
@@ -292,6 +313,15 @@ Danach erzeugt der Orbit-Befehl
 das Gate `design/context-selection.json`. Im ZG-Testpaket stehen dort 9
 Kandidaten auf `undecided`; es ist also noch kein Design-Seed freigegeben.
 
+Die Decision-Matrix wird mit
+`npm run kosmo:context-matrix -- --project archive-intake/kosmo-projects/zg-07052026`
+erzeugt. Fuer das ZG-Testpaket empfiehlt sie aktuell:
+
+- 6 Kandidaten als `accepted_as_context`
+- 2 Kandidaten als `needs_more_source_review`
+- 1 Kandidat als `rejected`
+- 0 Kandidaten als `accepted_as_design_seed`
+
 Erste heuristische Klassifikation:
 
 - Gesamtcontext: `prepare_site_context_with_dxf_ifc`
@@ -319,6 +349,6 @@ Nach dem ersten Blender-Test:
 
 1. DXF-Unterlage besser filtern: Layer, Hoehenlinien, Parzelle, Gebaeude, Baulinien.
 2. IFC nicht nur als Bounds analysieren, sondern ueber Bonsai/IfcOpenShell oder einen separaten Importpfad als echte Kontextgeometrie laden.
-3. In `design/context-selection.json` erste menschliche Entscheidungen treffen:
-   Kontext-only, Design-Seed, weitere Quellenpruefung oder Reject.
+3. Die Empfehlungen aus `context-decision-matrix.generated.md` in
+   `design/context-selection.json` manuell akzeptieren oder korrigieren.
 4. Kosmo Zentrale Job-Log mit Paketpfad, Importresultat, Exportresultat, Draw-Export und Viz-Preview verbinden.

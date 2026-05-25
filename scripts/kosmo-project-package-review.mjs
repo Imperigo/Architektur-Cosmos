@@ -75,6 +75,9 @@ function buildReport(manifest, check) {
   if (contextReview.candidate_count > 0 && !contextReview.selection_exists) {
     warnings.push('Context candidates exist but design/context-selection.json is missing.');
   }
+  if (contextReview.candidate_count > 0 && !contextReview.matrix_exists) {
+    warnings.push('Context candidates exist but design/context-decision-matrix.generated.json is missing.');
+  }
   if (contextReview.selection_exists && contextReview.undecided_count > 0) {
     warnings.push(`Context selection still has undecided candidates: ${contextReview.undecided_count}`);
   }
@@ -148,24 +151,34 @@ function readMemoryLogs() {
 function readContextReview() {
   const candidatesPath = join(projectRoot, 'design/context-candidates.generated.json');
   const selectionPath = join(projectRoot, 'design/context-selection.json');
+  const matrixPath = join(projectRoot, 'design/context-decision-matrix.generated.json');
   const candidates = existsSync(candidatesPath) ? safeReadJson(candidatesPath) : null;
   const selection = existsSync(selectionPath) ? safeReadJson(selectionPath) : null;
+  const matrix = existsSync(matrixPath) ? safeReadJson(matrixPath) : null;
   const selections = Array.isArray(selection?.selections) ? selection.selections : [];
+  const rows = Array.isArray(matrix?.rows) ? matrix.rows : [];
   const candidateCount = numberOrDefault(candidates?.summary?.candidate_count, Array.isArray(candidates?.candidates) ? candidates.candidates.length : 0);
   const countDecision = (decision) => selections.filter((item) => item.decision === decision).length;
+  const countRecommended = (decision) => rows.filter((item) => item.recommended_decision === decision).length;
 
   return {
     candidates_exists: Boolean(candidates),
     selection_exists: Boolean(selection),
+    matrix_exists: Boolean(matrix),
     candidate_count: candidateCount,
     selection_count: selections.length,
+    matrix_row_count: rows.length,
     accepted_as_context_count: countDecision('accepted_as_context'),
     accepted_as_design_seed_count: countDecision('accepted_as_design_seed'),
     needs_more_source_review_count: countDecision('needs_more_source_review'),
     rejected_count: countDecision('rejected'),
     undecided_count: countDecision('undecided'),
+    recommended_accepted_as_context_count: countRecommended('accepted_as_context'),
+    recommended_accepted_as_design_seed_count: countRecommended('accepted_as_design_seed'),
+    recommended_needs_more_source_review_count: countRecommended('needs_more_source_review'),
+    recommended_rejected_count: countRecommended('rejected'),
     stale_selection_count: numberOrDefault(selection?.summary?.stale_selection_count, Array.isArray(selection?.stale_selections) ? selection.stale_selections.length : 0),
-    readiness: selection?.summary?.readiness || candidates?.summary?.suggested_next_step || null,
+    readiness: selection?.summary?.readiness || matrix?.summary?.recommended_next_step || candidates?.summary?.suggested_next_step || null,
     approved_for_design_generation: Boolean(selection?.approved_for_design_generation)
   };
 }
@@ -188,6 +201,7 @@ function readJsonl(pathname) {
 function nextActions({ modules, gates, blockers, warnings, outputs, contextReview }) {
   if (blockers.length) return ['Fix missing artifacts or invalid JSON before continuing.'];
   const actions = [];
+  if (contextReview?.candidate_count > 0 && !contextReview.matrix_exists) actions.push('Create design/context-decision-matrix.generated.json from context candidates.');
   if (contextReview?.candidate_count > 0 && !contextReview.selection_exists) actions.push('Create design/context-selection.json from context candidates.');
   if (contextReview?.selection_exists && contextReview.undecided_count > 0) actions.push('Review context-selection decisions before using candidates as design input.');
   if (contextReview?.accepted_as_design_seed_count > 0 && !contextReview.approved_for_design_generation) actions.push('Set final approval only after a human has checked context-selection.');
@@ -273,11 +287,16 @@ function appendContextReview(lines, contextReview) {
   }
   lines.push(`- candidates: ${contextReview.candidate_count}`);
   lines.push(`- selection file: ${contextReview.selection_exists ? 'present' : 'missing'}`);
+  lines.push(`- decision matrix: ${contextReview.matrix_exists ? 'present' : 'missing'}`);
   lines.push(`- accepted as context: ${contextReview.accepted_as_context_count}`);
   lines.push(`- accepted as design seed: ${contextReview.accepted_as_design_seed_count}`);
   lines.push(`- needs more source review: ${contextReview.needs_more_source_review_count}`);
   lines.push(`- rejected: ${contextReview.rejected_count}`);
   lines.push(`- undecided: ${contextReview.undecided_count}`);
+  lines.push(`- matrix recommends context-only: ${contextReview.recommended_accepted_as_context_count}`);
+  lines.push(`- matrix recommends design seed: ${contextReview.recommended_accepted_as_design_seed_count}`);
+  lines.push(`- matrix recommends source review: ${contextReview.recommended_needs_more_source_review_count}`);
+  lines.push(`- matrix recommends rejected: ${contextReview.recommended_rejected_count}`);
   lines.push(`- approved for design generation: ${contextReview.approved_for_design_generation ? 'yes' : 'no'}`);
   lines.push(`- readiness: ${contextReview.readiness || 'unknown'}`);
 }

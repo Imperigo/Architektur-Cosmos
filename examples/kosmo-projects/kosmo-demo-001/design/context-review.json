@@ -1,0 +1,79 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-05-25T17:38:35.095Z",
+  "generator": "kosmo-context-review",
+  "project_id": "kosmo-demo-001",
+  "project_path": "examples/kosmo-projects/kosmo-demo-001",
+  "status": "review_required",
+  "rights_status": "internal_only",
+  "policy": {
+    "context_review_is_local_only": true,
+    "suggested_commands_do_not_override_human_judgement": true,
+    "final_design_generation_requires_approve_flag": true
+  },
+  "summary": {
+    "candidate_count": 2,
+    "undecided_count": 2,
+    "accepted_as_context_count": 0,
+    "accepted_as_design_seed_count": 0,
+    "needs_more_source_review_count": 0,
+    "rejected_count": 0,
+    "recommended_accepted_as_context_count": 0,
+    "recommended_accepted_as_design_seed_count": 0,
+    "recommended_needs_more_source_review_count": 2,
+    "recommended_rejected_count": 0,
+    "approved_for_design_generation": false,
+    "selection_readiness": "needs_human_selection",
+    "matrix_next_step": "review_context_selection_against_matrix"
+  },
+  "rows": [
+    {
+      "candidate_id": "context-origin",
+      "label": "Project origin marker",
+      "kind": "project_origin",
+      "source": "fallback_origin",
+      "confidence": "low",
+      "current_decision": "undecided",
+      "recommended_decision": "needs_more_source_review",
+      "priority": "high",
+      "design_seed_allowed_after_review": false,
+      "selected_use": "coordinate_reference",
+      "rationale": "Fallback or low-confidence origin should be checked against reviewed project coordinates before use.",
+      "required_checks": [
+        "Verify LV95/WGS84/project origin against source files.",
+        "Confirm unit convention and north rotation."
+      ],
+      "warnings": [
+        "Fallback origin; add reviewed project coordinates before measured work."
+      ],
+      "notes": [],
+      "suggested_command": "npm run kosmo:context-review -- --project examples/kosmo-projects/kosmo-demo-001 --decision context-origin=needs_more_source_review --reviewed-by \"Local Reviewer\""
+    },
+    {
+      "candidate_id": "context-perimeter",
+      "label": "Project perimeter",
+      "kind": "site_perimeter",
+      "source": "fallback_origin",
+      "confidence": "low",
+      "current_decision": "undecided",
+      "recommended_decision": "needs_more_source_review",
+      "priority": "high",
+      "design_seed_allowed_after_review": false,
+      "selected_use": "context_boundary_reference",
+      "rationale": "Fallback perimeter is only a frame and must not become a parcel or design boundary.",
+      "required_checks": [
+        "Compare with parcel/site boundary source.",
+        "Mark whether this is frame, parcel, plot, competition area or study area."
+      ],
+      "warnings": [
+        "Perimeter is a context frame, not a verified parcel boundary."
+      ],
+      "notes": [],
+      "suggested_command": "npm run kosmo:context-review -- --project examples/kosmo-projects/kosmo-demo-001 --decision context-perimeter=needs_more_source_review --reviewed-by \"Local Reviewer\""
+    }
+  ],
+  "next_actions": [
+    "Review 2 undecided context candidate(s).",
+    "Start with 2 high-priority undecided candidate(s)."
+  ]
+}

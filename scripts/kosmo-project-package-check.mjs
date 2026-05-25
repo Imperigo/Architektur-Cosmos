@@ -130,13 +130,16 @@ function checkJsonlFiles(root) {
 function checkContextSelection() {
   const candidatesPath = join(projectRoot, 'design/context-candidates.generated.json');
   const selectionPath = join(projectRoot, 'design/context-selection.json');
+  const matrixPath = join(projectRoot, 'design/context-decision-matrix.generated.json');
   const candidates = existsSync(candidatesPath) ? readJson(candidatesPath) : null;
   const selection = existsSync(selectionPath) ? readJson(selectionPath) : null;
+  const matrix = existsSync(matrixPath) ? readJson(matrixPath) : null;
 
   if (candidates && !selection) {
     warnings.push('Context candidates exist, but design/context-selection.json is missing.');
     return;
   }
+  if (candidates && !matrix) warnings.push('Context candidates exist, but design/context-decision-matrix.generated.json is missing.');
   if (!candidates || !selection) return;
 
   const candidateIds = new Set((Array.isArray(candidates.candidates) ? candidates.candidates : []).map((candidate) => candidate.id).filter(Boolean));
@@ -152,6 +155,12 @@ function checkContextSelection() {
   if (undecidedSelections.length) warnings.push(`Context selection has undecided candidates: ${undecidedSelections.length}`);
   if (acceptedDesignSeeds.length && selection.approved_for_design_generation !== true) {
     warnings.push('Context selection contains accepted design seeds but approved_for_design_generation is not true.');
+  }
+  if (matrix) {
+    const rows = Array.isArray(matrix.rows) ? matrix.rows : [];
+    const rowIds = new Set(rows.map((item) => item.candidate_id).filter(Boolean));
+    const missingRows = [...candidateIds].filter((id) => !rowIds.has(id));
+    if (missingRows.length) warnings.push(`Context decision matrix is missing candidate rows: ${missingRows.join(', ')}`);
   }
 }
 

@@ -1,6 +1,6 @@
 # Kosmo Demo 001 Review Pack
 
-Generated: 2026-05-25T17:27:23.302Z
+Generated: 2026-05-25T17:38:41.882Z
 Project ID: `kosmo-demo-001`
 Risk level: `local_review_only`
 Readiness: `review_required`
@@ -45,16 +45,25 @@ Readiness: `review_required`
 - ok: `viz/previews/preview-manifest.json` (viz, viz_preview_manifest, internal_only)
 - ok: `viz/cameras.generated.json` (viz, camera_manifest, internal_only)
 - ok: `publish/review-pack.md` (publish, review_pack, internal_only)
+- ok: `design/context-decision-matrix.generated.json` (design, other, generated_needs_review)
+- ok: `design/context-decision-matrix.generated.md` (design, other, generated_needs_review)
+- ok: `design/context-review.json` (design, other, internal_only)
+- ok: `design/context-review.md` (design, other, internal_only)
 
 ## Context Selection
 
 - candidates: 2
 - selection file: present
+- decision matrix: present
 - accepted as context: 0
 - accepted as design seed: 0
 - needs more source review: 0
 - rejected: 0
 - undecided: 2
+- matrix recommends context-only: 0
+- matrix recommends design seed: 0
+- matrix recommends source review: 2
+- matrix recommends rejected: 0
 - approved for design generation: no
 - readiness: needs_human_selection
 
@@ -72,6 +81,8 @@ Readiness: `review_required`
 - Generated output needs review: draw/exports/ground-floor-plan.svg
 - Generated output needs review: draw/exports/section-a.svg
 - Generated output needs review: viz/previews/kosmo-preview-axon.png
+- Generated output needs review: design/context-decision-matrix.generated.json
+- Generated output needs review: design/context-decision-matrix.generated.md
 - Context selection still has undecided candidates: 2
 
 ## Recent Memory

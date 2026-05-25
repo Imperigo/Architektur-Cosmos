@@ -167,6 +167,34 @@
       "module": "publish",
       "rights_status": "internal_only",
       "description": "Local review package scaffold."
+    },
+    {
+      "path": "design/context-decision-matrix.generated.json",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Generated recommendation matrix for reviewing context candidates."
+    },
+    {
+      "path": "design/context-decision-matrix.generated.md",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Human-readable recommendation matrix for reviewing context candidates."
+    },
+    {
+      "path": "design/context-review.json",
+      "type": "other",
+      "module": "design",
+      "rights_status": "internal_only",
+      "description": "Human-readable local context review with recommended commands."
+    },
+    {
+      "path": "design/context-review.md",
+      "type": "other",
+      "module": "design",
+      "rights_status": "internal_only",
+      "description": "Markdown context review for owner decisions."
     }
   ],
   "review_gates": {

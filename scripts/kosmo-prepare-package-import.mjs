@@ -170,6 +170,8 @@ async function writePackage({ inputRoot, projectRoot, projectId, projectName, or
     'design/context-import.generated.json': json(buildContextImportSeed(projectId, 'kosmosprepare_import')),
     'design/context-candidates.generated.json': json(buildContextCandidatesSeed(projectId, 'kosmosprepare_import')),
     'design/context-selection.json': json(buildContextSelectionSeed(projectId, 'kosmosprepare_import')),
+    'design/context-decision-matrix.generated.json': json(buildContextDecisionMatrixSeed(projectId, 'kosmosprepare_import')),
+    'design/context-decision-matrix.generated.md': renderContextDecisionMatrixSeed(projectId),
     'design/variants.json': json({
       schema_version: '0.1',
       variants: [],
@@ -249,6 +251,8 @@ function buildManifest({ projectId, projectName, site, sourceFiles }) {
       artifact('design/context-import.generated.json', 'other', 'design', 'generated_needs_review', 'KosmoDraw Phase 0 context import report.'),
       artifact('design/context-candidates.generated.json', 'other', 'design', 'generated_needs_review', 'KosmoDraw Phase 0 context candidates.'),
       artifact('design/context-selection.json', 'other', 'design', 'internal_only', 'Human review gate for accepting context candidates as design input.'),
+      artifact('design/context-decision-matrix.generated.json', 'other', 'design', 'generated_needs_review', 'Generated recommendation matrix for reviewing context candidates.'),
+      artifact('design/context-decision-matrix.generated.md', 'other', 'design', 'generated_needs_review', 'Human-readable recommendation matrix for reviewing context candidates.'),
       artifact('draw/exports/ground-floor-plan.svg', 'plan_export', 'draw', 'generated_needs_review', 'Placeholder vector ground floor export.'),
       artifact('draw/exports/section-a.svg', 'plan_export', 'draw', 'generated_needs_review', 'Placeholder vector section export.'),
       artifact('publish/review-pack.md', 'review_pack', 'publish', 'internal_only', 'Local review package scaffold.')
@@ -443,6 +447,41 @@ function buildContextSelectionSeed(projectId, source) {
   };
 }
 
+function buildContextDecisionMatrixSeed(projectId, source) {
+  return {
+    schema_version: '0.1',
+    generated_at: null,
+    generator: 'kosmo-prepare-package-import',
+    project_id: projectId,
+    status: 'pending_context_candidates',
+    rights_status: 'internal_only',
+    source_stage: 'phase_0_context',
+    source,
+    source_candidates_path: 'design/context-candidates.generated.json',
+    source_selection_path: 'design/context-selection.json',
+    note: 'Run npm run kosmo:context-matrix -- --project <project> after context candidates exist.',
+    policy: {
+      matrix_is_advisory: true,
+      context_selection_is_source_of_truth_for_human_decisions: true,
+      approved_for_design_generation_is_never_set_by_matrix: true
+    },
+    summary: {
+      candidate_count: 0,
+      recommended_accepted_as_context_count: 0,
+      recommended_accepted_as_design_seed_count: 0,
+      recommended_needs_more_source_review_count: 0,
+      recommended_rejected_count: 0,
+      current_undecided_count: 0,
+      recommended_next_step: 'generate_context_candidates'
+    },
+    rows: []
+  };
+}
+
+function renderContextDecisionMatrixSeed(projectId) {
+  return `# Context Decision Matrix\n\nProject ID: \`${projectId}\`\n\nPending context candidates. Run \`npm run kosmo:context-matrix -- --project <project>\` after KosmoDraw has generated \`design/context-candidates.generated.json\`.\n`;
+}
+
 function buildExportManifest() {
   return {
     schema_version: '0.1',
@@ -467,6 +506,20 @@ function buildExportManifest() {
         format: 'json',
         status: 'pending_context_candidates',
         rights_status: 'internal_only'
+      },
+      {
+        path: 'design/context-decision-matrix.generated.json',
+        module: 'Kosmo Design',
+        format: 'json',
+        status: 'pending_context_candidates',
+        rights_status: 'generated_needs_review'
+      },
+      {
+        path: 'design/context-decision-matrix.generated.md',
+        module: 'Kosmo Design',
+        format: 'markdown',
+        status: 'pending_context_candidates',
+        rights_status: 'generated_needs_review'
       },
       {
         path: 'draw/exports/ground-floor-plan.svg',

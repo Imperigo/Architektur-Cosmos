@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-25T17:27:23.302Z",
+  "generated_at": "2026-05-25T17:38:41.882Z",
   "generator": "kosmo-project-package-review",
   "project": {
     "id": "kosmo-demo-001",
@@ -230,19 +230,61 @@
       "rights_status": "internal_only",
       "description": "Local review package scaffold.",
       "exists": true,
-      "size_bytes": 3643
+      "size_bytes": 4282
+    },
+    {
+      "path": "design/context-decision-matrix.generated.json",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Generated recommendation matrix for reviewing context candidates.",
+      "exists": true,
+      "size_bytes": 3426
+    },
+    {
+      "path": "design/context-decision-matrix.generated.md",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Human-readable recommendation matrix for reviewing context candidates.",
+      "exists": true,
+      "size_bytes": 1182
+    },
+    {
+      "path": "design/context-review.json",
+      "type": "other",
+      "module": "design",
+      "rights_status": "internal_only",
+      "description": "Human-readable local context review with recommended commands.",
+      "exists": true,
+      "size_bytes": 3186
+    },
+    {
+      "path": "design/context-review.md",
+      "type": "other",
+      "module": "design",
+      "rights_status": "internal_only",
+      "description": "Markdown context review for owner decisions.",
+      "exists": true,
+      "size_bytes": 1839
     }
   ],
   "context_review": {
     "candidates_exists": true,
     "selection_exists": true,
+    "matrix_exists": true,
     "candidate_count": 2,
     "selection_count": 2,
+    "matrix_row_count": 2,
     "accepted_as_context_count": 0,
     "accepted_as_design_seed_count": 0,
     "needs_more_source_review_count": 0,
     "rejected_count": 0,
     "undecided_count": 2,
+    "recommended_accepted_as_context_count": 0,
+    "recommended_accepted_as_design_seed_count": 0,
+    "recommended_needs_more_source_review_count": 2,
+    "recommended_rejected_count": 0,
     "stale_selection_count": 0,
     "readiness": "needs_human_selection",
     "approved_for_design_generation": false
@@ -335,6 +377,8 @@
     "Generated output needs review: draw/exports/ground-floor-plan.svg",
     "Generated output needs review: draw/exports/section-a.svg",
     "Generated output needs review: viz/previews/kosmo-preview-axon.png",
+    "Generated output needs review: design/context-decision-matrix.generated.json",
+    "Generated output needs review: design/context-decision-matrix.generated.md",
     "Context selection still has undecided candidates: 2"
   ],
   "next_actions": [

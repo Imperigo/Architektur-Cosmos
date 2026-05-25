@@ -82,6 +82,8 @@ kosmo-project/
     context-import.generated.json
     context-candidates.generated.json
     context-selection.json
+    context-decision-matrix.generated.json
+    context-decision-matrix.generated.md
     variants.json
   draw/
     plans/
@@ -153,7 +155,7 @@ Aufgabe:
 Minimaler MVP:
 
 - `kosmo.project.json` als zentrales Manifest
-- Commands wie `prepare`, `context-selection`, `design-import`, `draw-export`, `viz-preview`, `publish-review-pack`
+- Commands wie `prepare`, `context-matrix`, `context-selection`, `design-import`, `draw-export`, `viz-preview`, `publish-review-pack`
 - klare Modulgrenzen
 
 Noch nicht:
@@ -370,7 +372,9 @@ Status 2026-05-25:
     **Erledigt mit `design/context-candidates.generated.json`.**
 11. Kontextkandidaten in ein menschliches Auswahl-Gate ueberfuehren.
     **Erledigt mit `design/context-selection.json` und `npm run kosmo:context-selection`.**
-12. Kosmo Zentrale spaeter als Job-Orchestrator an dieses Paket anbinden.
+12. Eine Entscheidungsmatrix fuer Kontextkandidaten erzeugen.
+    **Erledigt mit `design/context-decision-matrix.generated.*` und `npm run kosmo:context-matrix`.**
+13. Kosmo Zentrale spaeter als Job-Orchestrator an dieses Paket anbinden.
 
 ## 11. Was bewusst noch nicht gebaut wird
 
@@ -400,6 +404,7 @@ Der erste Datenvertrag ist im Repo angelegt:
 - `scripts/kosmo-project-package-create.mjs`
 - `scripts/kosmo-prepare-package-import.mjs`
 - `scripts/kosmo-context-selection-create.mjs`
+- `scripts/kosmo-context-decision-matrix-create.mjs`
 - `scripts/kosmo-blender-package-bridge-smoke.mjs`
 - `scripts/kosmo_blender_package_bridge_smoke.py`
 - private lokale KosmoDesign/KosmoDraw-Bridge im separaten Arbeitsbereich
@@ -459,6 +464,17 @@ Status: bestanden. Im ZG-Testpaket erzeugt der Befehl
 `approved_for_design_generation: false`. Das ist der bewusste Stopp vor jeder
 automatischen Design-Generierung.
 
+Entscheidungsmatrix erzeugen:
+
+```bash
+npm run kosmo:context-matrix -- --project archive-intake/kosmo-projects/zg-07052026
+```
+
+Status: bestanden. Im ZG-Testpaket empfiehlt die Matrix 6 Kandidaten als
+`accepted_as_context`, 2 als `needs_more_source_review`, 1 als `rejected` und
+0 als `accepted_as_design_seed`. Die Matrix ist advisory; sie veraendert die
+menschliche Selection nicht.
+
 Entscheidungen koennen spaeter gezielt gesetzt werden, ohne die ganze Datei
 manuell zu editieren:
 
@@ -472,6 +488,17 @@ npm run kosmo:context-selection -- --project archive-intake/kosmo-projects/zg-07
 `--approve-design-generation` bleibt der separate letzte Gate-Schalter und ist
 nur sinnvoll, wenn keine Kandidaten mehr `undecided` oder
 `needs_more_source_review` sind.
+
+Kleine Review-Uebersicht erzeugen:
+
+```bash
+npm run kosmo:context-review -- --project archive-intake/kosmo-projects/zg-07052026
+```
+
+Dieser Befehl schreibt `design/context-review.md/json`, aktualisiert bei Bedarf
+Selection und Matrix und gibt pro Kandidat die naechste sichere Entscheidung
+als Command aus. Damit kann das Brain Vorschlaege vorbereiten, ohne selbst
+Design-Freigaben zu setzen.
 
 Review-Pack erzeugen:
 
@@ -495,4 +522,4 @@ Der Creator schreibt standardmaessig nach `archive-intake/kosmo-projects/`.
 Dieser Ordner ist gitignored und bleibt fuer echte Projekte, private Notizen
 und unreviewte Inputs lokal.
 
-Aktueller Status: Der Demo-Vertrag und alle JSON/JSONL-Artefakte bestehen den lokalen Package-Check. Der KosmosPrepare-Importer erzeugt aus einem Phase-0-Output ein lokales review-only Projektpaket. Der Blender-Bridge-Smoke-Test prueft jetzt Prepare-Kontextimport, Kontextkandidaten, Raum-Import, Write-back, Kosmo-Draw-SVG-Export und Kosmo-Viz-Preview. Das neue Context-Selection-Gate macht explizit sichtbar, dass erkannte DXF/IFC-Rollen noch nicht automatisch Design-Fakten sind.
+Aktueller Status: Der Demo-Vertrag und alle JSON/JSONL-Artefakte bestehen den lokalen Package-Check. Der KosmosPrepare-Importer erzeugt aus einem Phase-0-Output ein lokales review-only Projektpaket. Der Blender-Bridge-Smoke-Test prueft jetzt Prepare-Kontextimport, Kontextkandidaten, Raum-Import, Write-back, Kosmo-Draw-SVG-Export und Kosmo-Viz-Preview. Das neue Context-Selection-Gate und die Decision-Matrix machen explizit sichtbar, dass erkannte DXF/IFC-Rollen noch nicht automatisch Design-Fakten sind.
