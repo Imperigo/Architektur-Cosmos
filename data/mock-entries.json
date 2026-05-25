@@ -23437,10 +23437,10 @@
       "agrarian-city",
       "ideal-city"
     ],
-    "short_description": "Broadacre City verdichtet Stahlbetonskelett, freien Grundriss und serielle Wiederholbarkeit zu einem konstruktiven Prototyp der Moderne.",
-    "source_quality": "lecture_pdf",
-    "one_sentence": "Broadacre City wird als moderne Architektur-Referenz im Netzwerk von moderner Urbanismus, agrarische Stadt, Idealstadt gelesen. Broadacre City zerlegt Stadt in Landschaft, Parzelle, Mobilität und Selbstversorgung; Dichte wird durch ein ausgedehntes Netz dezentraler Einheiten ersetzt. Broadacre City wird über Parzelle, Straße, Auto, dezentralisierte Versorgung, Landschaft und Einzelhaus als flächiges Gegenmodell zur dichten Stadt gelesen.",
-    "full_description": "Broadacre City wird im Architecture Cosmos als moderne Architektur-Referenz gelesen. Die räumliche These entsteht aus USA. Broadacre City zerlegt Stadt in Landschaft, Parzelle, Mobilität und Selbstversorgung; Dichte wird durch ein ausgedehntes Netz dezentraler Einheiten ersetzt. Broadacre City wird über Parzelle, Straße, Auto, dezentralisierte Versorgung, Landschaft und Einzelhaus als flächiges Gegenmodell zur dichten Stadt gelesen. Die tektonische Lesart soll zeigen, wie Tragstruktur, Hülle und Oberfläche Stützung, Hülle, Fügung und Atmosphäre organisieren. Broadacre City sitzt im Netzwerk von moderner Urbanismus, agrarische Stadt, Idealstadt, moderne Architektur, Tragwerksprototyp, moderne Architektur-Referenz. Diese Einordnung beschreibt nicht nur Kategorien, sondern eine architektonische DNA aus Typus, Epoche, Material, Quelle und räumlicher Strategie.\n\nTopos und Typos greifen ineinander: Broadacre City steht in USA und wird typologisch als moderne Architektur-Referenz verstanden. Broadacre City zerlegt Stadt in Landschaft, Parzelle, Mobilität und Selbstversorgung; Dichte wird durch ein ausgedehntes Netz dezentraler Einheiten ersetzt. Entscheidend ist, wie Ort, Programm, Bewegung und Gebrauch eine architektonische Ordnung bilden.\n\nBroadacre City wird über Parzelle, Straße, Auto, dezentralisierte Versorgung, Landschaft und Einzelhaus als flächiges Gegenmodell zur dichten Stadt gelesen. Die tektonische Lesart soll zeigen, wie Tragstruktur, Hülle und Oberfläche Stützung, Hülle, Fügung und Atmosphäre organisieren. Material und Konstruktion werden deshalb nicht als technische Nebendaten behandelt, sondern als lesbare Grammatik von Last, Fügung, Oberfläche und Atmosphäre.\n\nBroadacre City sitzt im Netzwerk von moderner Urbanismus, agrarische Stadt, Idealstadt, moderne Architektur, Tragwerksprototyp, moderne Architektur-Referenz. Diese Einordnung beschreibt nicht nur Kategorien, sondern eine architektonische DNA aus Typus, Epoche, Material, Quelle und räumlicher Strategie. Broadacre City wird damit im KosmoData-Netzwerk über Tragwerksprototyp, moderne Architektur, moderner Urbanismus, agrarische Stadt, Idealstadt, noch zu prüfendes Materialsystem, structural prototype layer candidate, plan:vector review required vergleichbar und bleibt zugleich als einzelnes architektonisches Argument erkennbar. Für spätere Plan-, Modell- und Blender-Layer sind besonders Ort, Masse, Tragstruktur, Hülle, Material, Zirkulation und unsichere Rekonstruktionsannahmen relevant.",
+    "short_description": "Broadacre City entwirft eine dezentralisierte Landschaftsstadt, in der Parzelle, Auto, Landwirtschaft, Einzelhaus und Infrastruktur ein alternatives Stadtmodell bilden.",
+    "source_quality": "research_seed_review",
+    "one_sentence": "Broadacre City zeigt Frank Lloyd Wrights Vision einer aufgelösten, agrarisch-technischen Stadt: Dichte wird durch Landverteilung, Mobilität und individuelle Selbstversorgung ersetzt.",
+    "full_description": "Broadacre City wird als ideologischer Stadtentwurf gelesen. Wright ersetzt die kompakte Stadt durch ein flächiges System aus Parzellen, Straßen, Landwirtschaft, Einzelhäusern, öffentlichen Einrichtungen und moderner Mobilität. Architektonisch wichtig ist die Ambivalenz: Das Modell verspricht Freiheit, Licht, Boden und Selbstbestimmung, erzeugt aber zugleich extreme Abhängigkeit von Infrastruktur, Fläche und individueller Mobilität. Für KosmoData ist Broadacre ein starker Vergleichspunkt für Idealstadt, Suburbanisierung, Automobilurbanismus, Landschaftsraster und die politische Dimension räumlicher Dezentralisierung.",
     "media": [
       {
         "type": "exterior",
@@ -23467,19 +23467,13 @@
       "02 Global History of Urban Design 1_2.pdf"
     ],
     "architecture_text": {
-      "headline": "Broadacre City: Dezentralisierung, Land und Auto als Stadtmodell",
-      "overview": "Broadacre City wird im Architecture Cosmos als moderne Architektur-Referenz gelesen. Die räumliche These entsteht aus USA. Broadacre City zerlegt Stadt in Landschaft, Parzelle, Mobilität und Selbstversorgung; Dichte wird durch ein ausgedehntes Netz dezentraler Einheiten ersetzt. Broadacre City wird über Parzelle, Straße, Auto, dezentralisierte Versorgung, Landschaft und Einzelhaus als flächiges Gegenmodell zur dichten Stadt gelesen. Die tektonische Lesart soll zeigen, wie Tragstruktur, Hülle und Oberfläche Stützung, Hülle, Fügung und Atmosphäre organisieren. Broadacre City sitzt im Netzwerk von moderner Urbanismus, agrarische Stadt, Idealstadt, moderne Architektur, Tragwerksprototyp, moderne Architektur-Referenz. Diese Einordnung beschreibt nicht nur Kategorien, sondern eine architektonische DNA aus Typus, Epoche, Material, Quelle und räumlicher Strategie.",
+      "headline": "Broadacre City: Landschaftsstadt zwischen Freiheit und Zersiedelung",
+      "overview": "Broadacre City ist weniger Stadtplan im technischen Sinn als ein räumliches Manifest. Frank Lloyd Wright verbindet Landbesitz, Mobilität, Einzelhaus und Landschaft zu einem Gegenmodell zur dichten industriellen Stadt.",
       "chapters": [
         {
           "title": "These",
           "text": "Broadacre City wird nicht als isoliertes Objekt gelesen, sondern als architektonische These innerhalb von moderner Urbanismus, agrarische Stadt, Idealstadt. Broadacre City zerlegt Stadt in Landschaft, Parzelle, Mobilität und Selbstversorgung; Dichte wird durch ein ausgedehntes Netz dezentraler Einheiten ersetzt. Die Analyse fragt, welche räumliche Intelligenz daraus entsteht und welche Idee über das einzelne Projekt hinaus übertragbar bleibt.",
           "source_basis": "curated spatial reading",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Netzwerk und DNA",
-          "text": "Broadacre City sitzt im Netzwerk von moderner Urbanismus, agrarische Stadt, Idealstadt, moderne Architektur, Tragwerksprototyp, moderne Architektur-Referenz. Diese Einordnung beschreibt nicht nur Kategorien, sondern eine architektonische DNA aus Typus, Epoche, Material, Quelle und räumlicher Strategie. Im Atlas ist wichtig, ob Broadacre City eine bekannte DNA nur fortschreibt, sie verdichtet, bricht oder in eine andere Epoche, Landschaft oder Bauaufgabe übersetzt. So wird das Objekt nicht nur datiert, sondern in ein Beziehungsnetz von ähnlichen Typologien, Materialien, Programmen, Quellen und historischen Problemen eingeordnet.",
-          "source_basis": "entry themes, source trail and atlas relation logic",
           "review_status": "draft_review"
         },
         {
@@ -23523,11 +23517,29 @@
           "text": "Broadacre City ist als Referenz wichtig, weil Tragwerksprototyp, moderne Architektur, moderner Urbanismus, agrarische Stadt, Idealstadt, noch zu prüfendes Materialsystem, structural prototype layer candidate, plan:vector review required nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Die eigentliche Lernfrage lautet: Welche Regel, räumliche Operation oder konstruktive Haltung kann aus dem Projekt extrahiert werden, ohne es formal zu kopieren?",
           "source_basis": "derived from entry metadata and Brain quality rules",
           "review_status": "draft_review"
+        },
+        {
+          "title": "Netzwerk und DNA",
+          "text": "Broadacre City wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, wie es sich innerhalb derselben architektonischen DNA unterscheidet: durch Ort, Auftrag, Fügung, Gebrauch und kulturelle Haltung.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Topos / Typos / Tektonik",
+          "text": "Topos, Typos und Tektonik werden zusammen gelesen: Ort und Landschaft bilden die Setzung, Stadtplan bildet den typologischen Ausgangspunkt, und agrarian city, decentralized urbanism, transport, model, Stadtplan, landscape grid, bibliography, urban theory markieren die konstruktiv-atmosphärische Lesart.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für KosmoData ist Broadacre City relevant, weil sich daraus Filter, Vergleichsgruppen, Planlayer und spätere Blender-Collections ableiten lassen: Stadtplan, moderne Architektur, modern urbanism, agrarian city, ideal city, decentralized urbanism, transport, model.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
         }
       ],
       "language": "de",
-      "generator": "cosmos-generate-architecture-text",
-      "generated_at": "2026-05-24T14:41:54.597Z",
+      "generator": "kosmodata-seed-from-research",
+      "generated_at": "2026-05-25T07:26:35.762Z",
       "review_status": "draft_review",
       "source_basis": [
         {
@@ -23536,20 +23548,108 @@
         }
       ]
     },
-    "source_candidates": [],
+    "source_candidates": [
+      {
+        "source_type": "foundation_article",
+        "title": "Frank Lloyd Wright Foundation / Reading Broadacre",
+        "url": "https://franklloydwright.org/reading-broadacre/",
+        "reliability_level": "high",
+        "rights_status": "link_only",
+        "notes": "Foundation source for Broadacre City's conceptual background, exhibition context and ideological framing."
+      },
+      {
+        "source_type": "museum_collection_record",
+        "title": "MoMA / Frank Lloyd Wright Broadacre City Project model",
+        "url": "https://www.moma.org/collection/works/161773",
+        "reliability_level": "high",
+        "rights_status": "link_only",
+        "notes": "Museum collection record for the Broadacre City model. Use object metadata only unless media rights are explicitly cleared."
+      },
+      {
+        "source_type": "museum_publication",
+        "title": "MoMA Design Store / Frank Lloyd Wright: Broadacre City",
+        "url": "https://store.moma.org/products/frank-lloyd-wright-broadacre-city-one-on-one-series-paperback",
+        "reliability_level": "medium",
+        "rights_status": "bibliographic_link_only",
+        "notes": "Bibliographic reference for the MoMA One on One Broadacre City publication. Use as book/source lead."
+      },
+      {
+        "source_type": "academic_repository",
+        "title": "ETH Research Collection",
+        "url": "https://www.research-collection.ethz.ch/home",
+        "reliability_level": "high",
+        "rights_status": "record_level_license_required",
+        "notes": "Research pack source for \"Broadacre City\". Query: Broadacre City architecture history project source"
+      },
+      {
+        "source_type": "library_guide",
+        "title": "ETH Library Architecture and Urban Planning Research Guide",
+        "url": "https://library.ethz.ch/medien-finden/recherchieren/fachgebiete/architektur-stadtplanung.html",
+        "reliability_level": "high",
+        "rights_status": "bibliographic_link_only",
+        "notes": "Research pack source for \"Broadacre City\". Query: Broadacre City architecture source"
+      },
+      {
+        "source_type": "image_archive",
+        "title": "ETH E-Pics",
+        "url": "https://e-pics3.ethz.ch/de/home/",
+        "reliability_level": "high",
+        "rights_status": "record_level_license_required",
+        "notes": "Research pack source for \"Broadacre City\". Query: Broadacre City architecture building photograph plan"
+      },
+      {
+        "source_type": "lecture_video_index",
+        "title": "ETH Videoportal D-ARCH Lectures",
+        "url": "https://video.ethz.ch/lectures/d-arch/2024/autumn.html",
+        "reliability_level": "high",
+        "rights_status": "citation_only",
+        "notes": "Research pack source for \"Broadacre City\". Query: Broadacre City architecture lecture project history"
+      },
+      {
+        "source_type": "course_page",
+        "title": "Global History of Urban Design I / ETH",
+        "url": "https://avermaete.arch.ethz.ch/education/bachelor/global-history-of-urban-design-I.html",
+        "reliability_level": "high",
+        "rights_status": "citation_only",
+        "notes": "Research pack source for \"Broadacre City\". Query: Broadacre City architecture project history lecture"
+      },
+      {
+        "source_type": "course_page",
+        "title": "Global History of Urban Design II / ETH",
+        "url": "https://avermaete.arch.ethz.ch/education/bachelor/global-history-of-urban-design-II.html",
+        "reliability_level": "high",
+        "rights_status": "citation_only",
+        "notes": "Research pack source for \"Broadacre City\". Query: Broadacre City architecture project history lecture"
+      },
+      {
+        "source_type": "course_page",
+        "title": "ETH Construction History / Holzer Lectures",
+        "url": "https://holzer.arch.ethz.ch/studium/vorlesungen.html",
+        "reliability_level": "high",
+        "rights_status": "citation_only",
+        "notes": "Research pack source for \"Broadacre City\". Query: Broadacre City architecture project history lecture"
+      }
+    ],
     "materials": {
       "primary": [
-        "needs_material_review"
+        "agrarian-city",
+        "decentralized-urbanism",
+        "transport",
+        "model",
+        "urban-plan",
+        "landscape-grid",
+        "bibliography",
+        "urban-theory"
       ],
       "secondary": [
         "craft_details",
         "surface_system",
         "construction_logic"
       ],
-      "notes": "Seeded from existing entry metadata and research packs; verify exact material claims before promotion."
+      "notes": "Seeded from local reviewed source metadata; verify exact material claims before publication."
     },
     "program": {
-      "type": "structural_prototype",
+      "type": "urban_plan",
       "subtype": "modern_architecture_reference",
       "public_access": "needs_review",
       "components": [
@@ -23579,14 +23679,21 @@
       ]
     },
     "database_tags": [
-      "typology:structural-prototype",
+      "typology:urban-plan",
       "style:modern_architecture",
       "theme:modern-urbanism",
       "theme:agrarian-city",
       "theme:ideal-city",
-      "material:needs-material-review",
+      "material:agrarian-city",
+      "material:decentralized-urbanism",
+      "material:transport",
+      "material:model",
+      "material:urban-plan",
+      "material:landscape-grid",
+      "material:bibliography",
+      "material:urban-theory",
       "rights:review-required",
-      "blender:structural-prototype-layer-candidate",
+      "blender:urban-plan-layer-candidate",
       "plan:vector-review-required",
       "viewer:3d-layer-review-required"
     ],
@@ -23597,7 +23704,7 @@
         "r2_key": "entries/broadacre-city/models/site.glb",
         "format": "glb",
         "lod_level": "preview",
-        "source_basis": "entry metadata only; needs source review",
+        "source_basis": "ETH Research Collection | ETH Library Architecture and Urban Planning Research Guide | ETH E-Pics | ETH Videoportal D-ARCH Lectures | Global History of Urban Design I / ETH | Global History of Urban Design II / ETH",
         "generation_method": "procedural",
         "review_status": "draft",
         "confidence_score": 0.42
@@ -23608,7 +23715,7 @@
         "r2_key": "entries/broadacre-city/models/structure.glb",
         "format": "glb",
         "lod_level": "medium",
-        "source_basis": "entry metadata only; needs source review",
+        "source_basis": "ETH Research Collection | ETH Library Architecture and Urban Planning Research Guide | ETH E-Pics | ETH Videoportal D-ARCH Lectures | Global History of Urban Design I / ETH | Global History of Urban Design II / ETH",
         "generation_method": "source_reconstruction",
         "review_status": "needs_source",
         "confidence_score": 0.32
@@ -23619,7 +23726,7 @@
         "r2_key": "entries/broadacre-city/models/tectonic.glb",
         "format": "glb",
         "lod_level": "study",
-        "source_basis": "entry metadata only; needs source review; tags: typology:structural-prototype, style:modern_architecture, theme:modern-urbanism, theme:agrarian-city, theme:ideal-city, material:needs-material-review, rights:review-required, blender:structural-prototype-layer-candidate",
+        "source_basis": "ETH Research Collection | ETH Library Architecture and Urban Planning Research Guide | ETH E-Pics | ETH Videoportal D-ARCH Lectures | Global History of Urban Design I / ETH | Global History of Urban Design II / ETH; tags: typology:urban-plan, style:modern_architecture, theme:modern-urbanism, theme:agrarian-city, theme:ideal-city, material:agrarian-city, material:decentralized-urbanism, material:transport",
         "generation_method": "source_reconstruction",
         "review_status": "needs_source",
         "confidence_score": 0.32
@@ -23628,11 +23735,18 @@
     "analysis_layers": [
       {
         "analysis_type": "structure",
-        "summary": "Broadacre City needs a reviewed structural reading connecting needs_material_review with construction logic, span, support and assembly.",
+        "summary": "Broadacre City needs a reviewed structural reading connecting agrarian-city, decentralized-urbanism, transport with construction logic, span, support and assembly.",
         "data": {
           "seed_tags": [
             "structure:needs_review",
-            "needs_material_review"
+            "agrarian-city",
+            "decentralized-urbanism",
+            "transport",
+            "model",
+            "urban-plan",
+            "landscape-grid",
+            "bibliography",
+            "urban-theory"
           ],
           "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
@@ -23640,10 +23754,17 @@
       },
       {
         "analysis_type": "material_system",
-        "summary": "Broadacre City should be tagged through needs_material_review and verified against primary sources before public material claims are made.",
+        "summary": "Broadacre City should be tagged through agrarian-city, decentralized-urbanism, transport, model, urban-plan, landscape-grid, bibliography, urban-theory and verified against primary sources before public material claims are made.",
         "data": {
           "seed_tags": [
-            "needs_material_review"
+            "agrarian-city",
+            "decentralized-urbanism",
+            "transport",
+            "model",
+            "urban-plan",
+            "landscape-grid",
+            "bibliography",
+            "urban-theory"
           ],
           "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
@@ -23655,7 +23776,7 @@
         "data": {
           "seed_tags": [
             "spatial_order",
-            "structural_prototype"
+            "urban_plan"
           ],
           "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
@@ -23663,11 +23784,11 @@
       },
       {
         "analysis_type": "typology",
-        "summary": "Broadacre City is currently classified as structural_prototype; the seed must verify how this type differs from related entries with the same DNA.",
+        "summary": "Broadacre City is currently classified as urban_plan; the seed must verify how this type differs from related entries with the same DNA.",
         "data": {
           "seed_tags": [
             "typology",
-            "structural_prototype",
+            "urban_plan",
             "USA"
           ],
           "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
@@ -23679,16 +23800,16 @@
         "summary": "Broadacre City needs filter checks for themes, materials, rights, plan readiness, 3D layer readiness and viewer filters.",
         "data": {
           "seed_tags": [
-            "typology:structural-prototype",
+            "typology:urban-plan",
             "style:modern_architecture",
             "theme:modern-urbanism",
             "theme:agrarian-city",
             "theme:ideal-city",
-            "material:needs-material-review",
-            "rights:review-required",
-            "blender:structural-prototype-layer-candidate",
-            "plan:vector-review-required",
-            "viewer:3d-layer-review-required"
+            "material:agrarian-city",
+            "material:decentralized-urbanism",
+            "material:transport",
+            "material:model",
+            "material:urban-plan"
           ],
           "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
@@ -23696,22 +23817,22 @@
       }
     ],
     "database_profile": {
-      "status": "needs_sources",
+      "status": "reviewed",
       "r2_prefix": "entries/broadacre-city",
-      "source_count": 1,
+      "source_count": 11,
       "media_count": 4,
       "model_count": 3,
       "analysis_count": 5,
-      "tag_count": 10,
+      "tag_count": 17,
       "rights_summary": "Public text and metadata are allowed; visual assets remain link-only/private until rights are cleared.",
-      "updated_at": "2026-05-24T12:35:46.263Z"
+      "updated_at": "2026-05-25T07:26:36.121Z"
     },
     "ingestion_status": {
       "stage": "needs_review",
-      "source_status": "candidate",
+      "source_status": "reviewed",
       "asset_status": "candidate",
       "model_status": "planned",
-      "updated_at": "2026-05-24T12:35:46.264Z"
+      "updated_at": "2026-05-25T07:26:36.125Z"
     }
   },
   {
@@ -23735,10 +23856,10 @@
       "housing",
       "mobility"
     ],
-    "short_description": "Charta von Athen verbindet Stadtplan, Industrie, Zonierung und soziale Utopie zu einem frühen Modell der rational organisierten Stadt.",
-    "source_quality": "primary_text",
-    "one_sentence": "Charta von Athen wird als moderne Architektur-Referenz im Netzwerk von funktionale Stadt, Zonierung, Wohnbau, Mobilität gelesen. Die Charta von Athen beschreibt Stadt als analytisches System: Wohnen, Arbeiten, Erholung und Verkehr werden getrennt, bewertet und als Planungsprogramm neu zusammengesetzt. Die Charta von Athen ist kein Baukörper, sondern eine Regelstruktur aus Wohnen, Arbeiten, Erholung und Verkehr; ihr Material ist die funktionale Stadtanalyse.",
-    "full_description": "Charta von Athen wird im Architecture Cosmos als moderne Architektur-Referenz gelesen. Die räumliche These entsteht aus noch zu prüfender Ort. Die Charta von Athen beschreibt Stadt als analytisches System: Wohnen, Arbeiten, Erholung und Verkehr werden getrennt, bewertet und als Planungsprogramm neu zusammengesetzt. Die Charta von Athen ist kein Baukörper, sondern eine Regelstruktur aus Wohnen, Arbeiten, Erholung und Verkehr; ihr Material ist die funktionale Stadtanalyse. Die tektonische Lesart soll zeigen, wie Tragstruktur, Hülle und Oberfläche Stützung, Hülle, Fügung und Atmosphäre organisieren. Charta von Athen sitzt im Netzwerk von funktionale Stadt, Zonierung, Wohnbau, Mobilität, moderne Architektur, Stadtplan. Diese Einordnung beschreibt nicht nur Kategorien, sondern eine architektonische DNA aus Typus, Epoche, Material, Quelle und räumlicher Strategie.\n\nTopos und Typos greifen ineinander: Charta von Athen steht in noch zu prüfender Ort und wird typologisch als moderne Architektur-Referenz verstanden. Die Charta von Athen beschreibt Stadt als analytisches System: Wohnen, Arbeiten, Erholung und Verkehr werden getrennt, bewertet und als Planungsprogramm neu zusammengesetzt. Entscheidend ist, wie Ort, Programm, Bewegung und Gebrauch eine architektonische Ordnung bilden.\n\nDie Charta von Athen ist kein Baukörper, sondern eine Regelstruktur aus Wohnen, Arbeiten, Erholung und Verkehr; ihr Material ist die funktionale Stadtanalyse. Die tektonische Lesart soll zeigen, wie Tragstruktur, Hülle und Oberfläche Stützung, Hülle, Fügung und Atmosphäre organisieren. Material und Konstruktion werden deshalb nicht als technische Nebendaten behandelt, sondern als lesbare Grammatik von Last, Fügung, Oberfläche und Atmosphäre.\n\nCharta von Athen sitzt im Netzwerk von funktionale Stadt, Zonierung, Wohnbau, Mobilität, moderne Architektur, Stadtplan. Diese Einordnung beschreibt nicht nur Kategorien, sondern eine architektonische DNA aus Typus, Epoche, Material, Quelle und räumlicher Strategie. Charta von Athen wird damit im KosmoData-Netzwerk über Stadtplan, moderne Architektur, funktionale Stadt, Zonierung, Wohnbau, Mobilität, noch zu prüfendes Materialsystem, urban plan layer candidate vergleichbar und bleibt zugleich als einzelnes architektonisches Argument erkennbar. Für spätere Plan-, Modell- und Blender-Layer sind besonders Ort, Masse, Tragstruktur, Hülle, Material, Zirkulation und unsichere Rekonstruktionsannahmen relevant.",
+    "short_description": "Die Charta von Athen formuliert die funktionale Stadt als Regelwerk aus Wohnen, Arbeiten, Erholung und Verkehr.",
+    "source_quality": "research_seed_review",
+    "one_sentence": "Die Charta von Athen zeigt Stadt als analytisches Programm: urbane Probleme werden in Funktionen zerlegt und als modernistisches Planungsmodell neu geordnet.",
+    "full_description": "Die Charta von Athen wird als theoretisches Planungsinstrument gelesen. Sie ist kein Gebäude und kein einzelner Stadtplan, sondern ein normatives Regelwerk, das Wohnen, Arbeiten, Erholung und Verkehr als zentrale Funktionen der modernen Stadt definiert. Architektonisch relevant ist ihre doppelte Wirkung: Sie schafft eine klare Sprache für Hygiene, Licht, Grünraum und Mobilität, verengt Stadt aber zugleich auf funktionale Trennung und planbare Ordnung. Für KosmoData ist sie ein Schlüsseltext für CIAM, funktionale Stadt, Zonierung, Wohnungsfrage und die Kritik an modernistischer Planung.",
     "media": [
       {
         "type": "exterior",
@@ -23762,19 +23883,13 @@
       }
     ],
     "architecture_text": {
-      "headline": "Charta von Athen: Funktionstrennung als Stadtprogramm",
-      "overview": "Charta von Athen wird im Architecture Cosmos als moderne Architektur-Referenz gelesen. Die räumliche These entsteht aus noch zu prüfender Ort. Die Charta von Athen beschreibt Stadt als analytisches System: Wohnen, Arbeiten, Erholung und Verkehr werden getrennt, bewertet und als Planungsprogramm neu zusammengesetzt. Die Charta von Athen ist kein Baukörper, sondern eine Regelstruktur aus Wohnen, Arbeiten, Erholung und Verkehr; ihr Material ist die funktionale Stadtanalyse. Die tektonische Lesart soll zeigen, wie Tragstruktur, Hülle und Oberfläche Stützung, Hülle, Fügung und Atmosphäre organisieren. Charta von Athen sitzt im Netzwerk von funktionale Stadt, Zonierung, Wohnbau, Mobilität, moderne Architektur, Stadtplan. Diese Einordnung beschreibt nicht nur Kategorien, sondern eine architektonische DNA aus Typus, Epoche, Material, Quelle und räumlicher Strategie.",
+      "headline": "Charta von Athen: die funktionale Stadt als Regelapparat",
+      "overview": "Die Charta von Athen übersetzt Stadt in Funktionen. Wohnen, Arbeiten, Erholung und Verkehr werden getrennt analysiert und als Grundlage einer rational organisierten Moderne formuliert.",
       "chapters": [
         {
           "title": "These",
           "text": "Charta von Athen wird nicht als isoliertes Objekt gelesen, sondern als architektonische These innerhalb von funktionale Stadt, Zonierung, Wohnbau, Mobilität. Die Charta von Athen beschreibt Stadt als analytisches System: Wohnen, Arbeiten, Erholung und Verkehr werden getrennt, bewertet und als Planungsprogramm neu zusammengesetzt. Die Analyse fragt, welche räumliche Intelligenz daraus entsteht und welche Idee über das einzelne Projekt hinaus übertragbar bleibt.",
           "source_basis": "curated spatial reading",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Netzwerk und DNA",
-          "text": "Charta von Athen sitzt im Netzwerk von funktionale Stadt, Zonierung, Wohnbau, Mobilität, moderne Architektur, Stadtplan. Diese Einordnung beschreibt nicht nur Kategorien, sondern eine architektonische DNA aus Typus, Epoche, Material, Quelle und räumlicher Strategie. Im Atlas ist wichtig, ob Charta von Athen eine bekannte DNA nur fortschreibt, sie verdichtet, bricht oder in eine andere Epoche, Landschaft oder Bauaufgabe übersetzt. So wird das Objekt nicht nur datiert, sondern in ein Beziehungsnetz von ähnlichen Typologien, Materialien, Programmen, Quellen und historischen Problemen eingeordnet.",
-          "source_basis": "entry themes, source trail and atlas relation logic",
           "review_status": "draft_review"
         },
         {
@@ -23818,25 +23933,130 @@
           "text": "Charta von Athen ist als Referenz wichtig, weil Stadtplan, moderne Architektur, funktionale Stadt, Zonierung, Wohnbau, Mobilität, noch zu prüfendes Materialsystem, urban plan layer candidate nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Die eigentliche Lernfrage lautet: Welche Regel, räumliche Operation oder konstruktive Haltung kann aus dem Projekt extrahiert werden, ohne es formal zu kopieren?",
           "source_basis": "derived from entry metadata and Brain quality rules",
           "review_status": "draft_review"
+        },
+        {
+          "title": "Netzwerk und DNA",
+          "text": "Charta von Athen wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, wie es sich innerhalb derselben architektonischen DNA unterscheidet: durch Ort, Auftrag, Fügung, Gebrauch und kulturelle Haltung.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Topos / Typos / Tektonik",
+          "text": "Topos, Typos und Tektonik werden zusammen gelesen: Ort und Landschaft bilden die Setzung, Stadtplan bildet den typologischen Ausgangspunkt, und urban theory, functional city, ciam, bibliography, urbanism, teaching source, urban history markieren die konstruktiv-atmosphärische Lesart.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für KosmoData ist Charta von Athen relevant, weil sich daraus Filter, Vergleichsgruppen, Planlayer und spätere Blender-Collections ableiten lassen: Stadtplan, moderne Architektur, functional city, Zonierung, Wohnungsbau, mobility, urban theory, ciam.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
         }
       ],
       "language": "de",
-      "generator": "cosmos-generate-architecture-text",
-      "generated_at": "2026-05-24T14:41:54.855Z",
+      "generator": "kosmodata-seed-from-research",
+      "generated_at": "2026-05-25T07:26:38.167Z",
       "review_status": "draft_review",
       "source_basis": []
     },
-    "source_candidates": [],
+    "source_candidates": [
+      {
+        "source_type": "foundation_archive_record",
+        "title": "Fondation Le Corbusier / La Charte d'Athenes",
+        "url": "https://www.fondationlecorbusier.fr/en/work-book/la-charte-dathenes-le-corbusier-1943/",
+        "reliability_level": "high",
+        "rights_status": "link_only",
+        "notes": "Official Fondation Le Corbusier record for La Charte d'Athenes, including publication metadata and thematic sections."
+      },
+      {
+        "source_type": "national_library_record",
+        "title": "BnF Data / Charte d'Athenes",
+        "url": "https://data.bnf.fr/14636833/le_corbusier_charte_d_athenes___1957/",
+        "reliability_level": "high",
+        "rights_status": "bibliographic_link_only",
+        "notes": "National library bibliographic record. Use for publication history and source trail."
+      },
+      {
+        "source_type": "academic_glossary",
+        "title": "ENS Lyon Geoconfluences / Charte d'Athenes",
+        "url": "https://geoconfluences.ens-lyon.fr/glossaire/charte-dathenes",
+        "reliability_level": "medium",
+        "rights_status": "link_only",
+        "notes": "Academic glossary source for concise context and later teaching-oriented explanation. Verify wording before public synthesis."
+      },
+      {
+        "source_type": "academic_repository",
+        "title": "ETH Research Collection",
+        "url": "https://www.research-collection.ethz.ch/home",
+        "reliability_level": "high",
+        "rights_status": "record_level_license_required",
+        "notes": "Research pack source for \"Charta von Athen\". Query: Charta von Athen architecture history project source"
+      },
+      {
+        "source_type": "library_guide",
+        "title": "ETH Library Architecture and Urban Planning Research Guide",
+        "url": "https://library.ethz.ch/medien-finden/recherchieren/fachgebiete/architektur-stadtplanung.html",
+        "reliability_level": "high",
+        "rights_status": "bibliographic_link_only",
+        "notes": "Research pack source for \"Charta von Athen\". Query: Charta von Athen architecture source"
+      },
+      {
+        "source_type": "image_archive",
+        "title": "ETH E-Pics",
+        "url": "https://e-pics3.ethz.ch/de/home/",
+        "reliability_level": "high",
+        "rights_status": "record_level_license_required",
+        "notes": "Research pack source for \"Charta von Athen\". Query: Charta von Athen architecture building photograph plan"
+      },
+      {
+        "source_type": "lecture_video_index",
+        "title": "ETH Videoportal D-ARCH Lectures",
+        "url": "https://video.ethz.ch/lectures/d-arch/2024/autumn.html",
+        "reliability_level": "high",
+        "rights_status": "citation_only",
+        "notes": "Research pack source for \"Charta von Athen\". Query: Charta von Athen architecture lecture project history"
+      },
+      {
+        "source_type": "course_page",
+        "title": "Global History of Urban Design I / ETH",
+        "url": "https://avermaete.arch.ethz.ch/education/bachelor/global-history-of-urban-design-I.html",
+        "reliability_level": "high",
+        "rights_status": "citation_only",
+        "notes": "Research pack source for \"Charta von Athen\". Query: Charta von Athen architecture project history lecture"
+      },
+      {
+        "source_type": "course_page",
+        "title": "Global History of Urban Design II / ETH",
+        "url": "https://avermaete.arch.ethz.ch/education/bachelor/global-history-of-urban-design-II.html",
+        "reliability_level": "high",
+        "rights_status": "citation_only",
+        "notes": "Research pack source for \"Charta von Athen\". Query: Charta von Athen architecture project history lecture"
+      },
+      {
+        "source_type": "course_page",
+        "title": "ETH Construction History / Holzer Lectures",
+        "url": "https://holzer.arch.ethz.ch/studium/vorlesungen.html",
+        "reliability_level": "high",
+        "rights_status": "citation_only",
+        "notes": "Research pack source for \"Charta von Athen\". Query: Charta von Athen architecture project history lecture"
+      }
+    ],
     "materials": {
       "primary": [
-        "needs_material_review"
+        "urban-theory",
+        "functional-city",
+        "ciam",
+        "bibliography",
+        "urbanism",
+        "teaching-source",
+        "urban-history"
       ],
       "secondary": [
         "craft_details",
         "surface_system",
         "construction_logic"
       ],
-      "notes": "Seeded from existing entry metadata and research packs; verify exact material claims before promotion."
+      "notes": "Seeded from local reviewed source metadata; verify exact material claims before publication."
     },
     "program": {
       "type": "urban_plan",
@@ -23877,7 +24097,13 @@
       "theme:zoning",
       "theme:housing",
       "theme:mobility",
-      "material:needs-material-review",
+      "material:urban-theory",
+      "material:functional-city",
+      "material:ciam",
+      "material:bibliography",
+      "material:urbanism",
+      "material:teaching-source",
+      "material:urban-history",
       "rights:review-required",
       "blender:urban-plan-layer-candidate",
       "plan:vector-review-required",
@@ -23890,7 +24116,7 @@
         "r2_key": "entries/athens-charter/models/site.glb",
         "format": "glb",
         "lod_level": "preview",
-        "source_basis": "entry metadata only; needs source review",
+        "source_basis": "ETH Research Collection | ETH Library Architecture and Urban Planning Research Guide | ETH E-Pics | ETH Videoportal D-ARCH Lectures | Global History of Urban Design I / ETH | Global History of Urban Design II / ETH",
         "generation_method": "procedural",
         "review_status": "draft",
         "confidence_score": 0.42
@@ -23901,7 +24127,7 @@
         "r2_key": "entries/athens-charter/models/structure.glb",
         "format": "glb",
         "lod_level": "medium",
-        "source_basis": "entry metadata only; needs source review",
+        "source_basis": "ETH Research Collection | ETH Library Architecture and Urban Planning Research Guide | ETH E-Pics | ETH Videoportal D-ARCH Lectures | Global History of Urban Design I / ETH | Global History of Urban Design II / ETH",
         "generation_method": "source_reconstruction",
         "review_status": "needs_source",
         "confidence_score": 0.32
@@ -23912,7 +24138,7 @@
         "r2_key": "entries/athens-charter/models/tectonic.glb",
         "format": "glb",
         "lod_level": "study",
-        "source_basis": "entry metadata only; needs source review; tags: typology:urban-plan, style:modern_architecture, theme:functional-city, theme:zoning, theme:housing, theme:mobility, material:needs-material-review, rights:review-required",
+        "source_basis": "ETH Research Collection | ETH Library Architecture and Urban Planning Research Guide | ETH E-Pics | ETH Videoportal D-ARCH Lectures | Global History of Urban Design I / ETH | Global History of Urban Design II / ETH; tags: typology:urban-plan, style:modern_architecture, theme:functional-city, theme:zoning, theme:housing, theme:mobility, material:urban-theory, material:functional-city",
         "generation_method": "source_reconstruction",
         "review_status": "needs_source",
         "confidence_score": 0.32
@@ -23921,11 +24147,17 @@
     "analysis_layers": [
       {
         "analysis_type": "structure",
-        "summary": "Charta von Athen needs a reviewed structural reading connecting needs_material_review with construction logic, span, support and assembly.",
+        "summary": "Charta von Athen needs a reviewed structural reading connecting urban-theory, functional-city, ciam with construction logic, span, support and assembly.",
         "data": {
           "seed_tags": [
             "structure:needs_review",
-            "needs_material_review"
+            "urban-theory",
+            "functional-city",
+            "ciam",
+            "bibliography",
+            "urbanism",
+            "teaching-source",
+            "urban-history"
           ],
           "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
@@ -23933,10 +24165,16 @@
       },
       {
         "analysis_type": "material_system",
-        "summary": "Charta von Athen should be tagged through needs_material_review and verified against primary sources before public material claims are made.",
+        "summary": "Charta von Athen should be tagged through urban-theory, functional-city, ciam, bibliography, urbanism, teaching-source, urban-history and verified against primary sources before public material claims are made.",
         "data": {
           "seed_tags": [
-            "needs_material_review"
+            "urban-theory",
+            "functional-city",
+            "ciam",
+            "bibliography",
+            "urbanism",
+            "teaching-source",
+            "urban-history"
           ],
           "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
@@ -23978,10 +24216,10 @@
             "theme:zoning",
             "theme:housing",
             "theme:mobility",
-            "material:needs-material-review",
-            "rights:review-required",
-            "blender:urban-plan-layer-candidate",
-            "plan:vector-review-required"
+            "material:urban-theory",
+            "material:functional-city",
+            "material:ciam",
+            "material:bibliography"
           ],
           "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
@@ -23989,22 +24227,22 @@
       }
     ],
     "database_profile": {
-      "status": "needs_sources",
+      "status": "reviewed",
       "r2_prefix": "entries/athens-charter",
-      "source_count": 0,
+      "source_count": 10,
       "media_count": 4,
       "model_count": 3,
       "analysis_count": 5,
-      "tag_count": 11,
+      "tag_count": 17,
       "rights_summary": "Public text and metadata are allowed; visual assets remain link-only/private until rights are cleared.",
-      "updated_at": "2026-05-24T12:35:50.365Z"
+      "updated_at": "2026-05-25T07:26:38.437Z"
     },
     "ingestion_status": {
       "stage": "needs_review",
-      "source_status": "candidate",
+      "source_status": "reviewed",
       "asset_status": "candidate",
       "model_status": "planned",
-      "updated_at": "2026-05-24T12:35:50.366Z"
+      "updated_at": "2026-05-25T07:26:38.438Z"
     }
   },
   {
@@ -26016,10 +26254,10 @@
       "grid",
       "metropolis"
     ],
-    "short_description": "Delirious New York verbindet Traktat, Zeichnung, Proportion und klassische Ordnungslehre zu einem übertragbaren Architekturmodell.",
-    "source_quality": "lecture_pdf",
-    "one_sentence": "Delirious New York wird als Nachkriegsmoderne-Referenz im Netzwerk von Stadttheorie, Dichte, Raster, Metropole gelesen. Delirious New York liest Manhattan als Schnittmaschine: Raster, Parzelle, Wolkenkratzer und programmatische Stapelung erzeugen eine Kultur extremer Dichte. Delirious New York ist ein theoretisches Material aus Raster, Dichte, Hochhaus, Programmstapelung und metropolitaner Fantasie; der Text liest Manhattan als architektonisches Labor.",
-    "full_description": "Delirious New York wird im Architecture Cosmos als Nachkriegsmoderne-Referenz gelesen. Die räumliche These entsteht aus New York, USA. Delirious New York liest Manhattan als Schnittmaschine: Raster, Parzelle, Wolkenkratzer und programmatische Stapelung erzeugen eine Kultur extremer Dichte. Delirious New York ist ein theoretisches Material aus Raster, Dichte, Hochhaus, Programmstapelung und metropolitaner Fantasie; der Text liest Manhattan als architektonisches Labor. Die tektonische Lesart soll zeigen, wie Tragstruktur, Hülle und Oberfläche Stützung, Hülle, Fügung und Atmosphäre organisieren. Delirious New York sitzt im Netzwerk von Stadttheorie, Dichte, Raster, Metropole, Nachkriegsmoderne, Architekturtraktat. Diese Einordnung beschreibt nicht nur Kategorien, sondern eine architektonische DNA aus Typus, Epoche, Material, Quelle und räumlicher Strategie.\n\nTopos und Typos greifen ineinander: Delirious New York steht in New York, USA und wird typologisch als Nachkriegsmoderne-Referenz verstanden. Delirious New York liest Manhattan als Schnittmaschine: Raster, Parzelle, Wolkenkratzer und programmatische Stapelung erzeugen eine Kultur extremer Dichte. Entscheidend ist, wie Ort, Programm, Bewegung und Gebrauch eine architektonische Ordnung bilden.\n\nDelirious New York ist ein theoretisches Material aus Raster, Dichte, Hochhaus, Programmstapelung und metropolitaner Fantasie; der Text liest Manhattan als architektonisches Labor. Die tektonische Lesart soll zeigen, wie Tragstruktur, Hülle und Oberfläche Stützung, Hülle, Fügung und Atmosphäre organisieren. Material und Konstruktion werden deshalb nicht als technische Nebendaten behandelt, sondern als lesbare Grammatik von Last, Fügung, Oberfläche und Atmosphäre.\n\nDelirious New York sitzt im Netzwerk von Stadttheorie, Dichte, Raster, Metropole, Nachkriegsmoderne, Architekturtraktat. Diese Einordnung beschreibt nicht nur Kategorien, sondern eine architektonische DNA aus Typus, Epoche, Material, Quelle und räumlicher Strategie. Delirious New York wird damit im KosmoData-Netzwerk über Architekturtraktat, Nachkriegsmoderne, Stadttheorie, Dichte, Raster, Metropole, noch zu prüfendes Materialsystem, architectural treatise layer candidate vergleichbar und bleibt zugleich als einzelnes architektonisches Argument erkennbar. Für spätere Plan-, Modell- und Blender-Layer sind besonders Ort, Masse, Tragstruktur, Hülle, Material, Zirkulation und unsichere Rekonstruktionsannahmen relevant.",
+    "short_description": "Delirious New York liest Manhattan als Labor aus Raster, Parzelle, Wolkenkratzer, Programmstapelung und metropolitaner Fantasie.",
+    "source_quality": "research_seed_review",
+    "one_sentence": "Delirious New York zeigt, wie ein Architekturtext aus der Geschichte Manhattans eine Theorie der Dichte, des Schnitts, der Überlagerung und des kontrollierten Wahnsinns entwickelt.",
+    "full_description": "Delirious New York wird als theoretisches Projekt gelesen. Koolhaas beschreibt Manhattan nicht neutral, sondern rekonstruiert es als ein System aus Grid, Parzelle, Aufzug, Hochhaus, Programmstapelung und spekulativer Imagination. Architektonisch wichtig ist die Methode: Die Stadt wird als Retroactive Manifesto verstanden, in dem gebaute Realität nachträglich als kohärente Entwurfslogik sichtbar wird. Für KosmoData ist der Text zentral für Dichte, Großstadt, Schnittlogik, Hybridprogramm, Theorieproduktion und die Frage, wie Architekturgeschichte selbst als entwerferisches Material benutzt werden kann.",
     "media": [
       {
         "type": "exterior",
@@ -26043,19 +26281,13 @@
       }
     ],
     "architecture_text": {
-      "headline": "Delirious New York: Manhattan als Kultur der Dichte",
-      "overview": "Delirious New York wird im Architecture Cosmos als Nachkriegsmoderne-Referenz gelesen. Die räumliche These entsteht aus New York, USA. Delirious New York liest Manhattan als Schnittmaschine: Raster, Parzelle, Wolkenkratzer und programmatische Stapelung erzeugen eine Kultur extremer Dichte. Delirious New York ist ein theoretisches Material aus Raster, Dichte, Hochhaus, Programmstapelung und metropolitaner Fantasie; der Text liest Manhattan als architektonisches Labor. Die tektonische Lesart soll zeigen, wie Tragstruktur, Hülle und Oberfläche Stützung, Hülle, Fügung und Atmosphäre organisieren. Delirious New York sitzt im Netzwerk von Stadttheorie, Dichte, Raster, Metropole, Nachkriegsmoderne, Architekturtraktat. Diese Einordnung beschreibt nicht nur Kategorien, sondern eine architektonische DNA aus Typus, Epoche, Material, Quelle und räumlicher Strategie.",
+      "headline": "Delirious New York: Manhattan als rückwirkendes Manifest",
+      "overview": "Delirious New York macht die Großstadt zum theoretischen Objekt. Manhattan erscheint als Labor, in dem Raster, Parzelle, Aufzug, Wolkenkratzer und Programmstapelung eine eigene Architektur-DNA erzeugen.",
       "chapters": [
         {
           "title": "These",
           "text": "Delirious New York wird nicht als isoliertes Objekt gelesen, sondern als architektonische These innerhalb von Stadttheorie, Dichte, Raster, Metropole. Delirious New York liest Manhattan als Schnittmaschine: Raster, Parzelle, Wolkenkratzer und programmatische Stapelung erzeugen eine Kultur extremer Dichte. Die Analyse fragt, welche räumliche Intelligenz daraus entsteht und welche Idee über das einzelne Projekt hinaus übertragbar bleibt.",
           "source_basis": "curated spatial reading",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Netzwerk und DNA",
-          "text": "Delirious New York sitzt im Netzwerk von Stadttheorie, Dichte, Raster, Metropole, Nachkriegsmoderne, Architekturtraktat. Diese Einordnung beschreibt nicht nur Kategorien, sondern eine architektonische DNA aus Typus, Epoche, Material, Quelle und räumlicher Strategie. Im Atlas ist wichtig, ob Delirious New York eine bekannte DNA nur fortschreibt, sie verdichtet, bricht oder in eine andere Epoche, Landschaft oder Bauaufgabe übersetzt. So wird das Objekt nicht nur datiert, sondern in ein Beziehungsnetz von ähnlichen Typologien, Materialien, Programmen, Quellen und historischen Problemen eingeordnet.",
-          "source_basis": "entry themes, source trail and atlas relation logic",
           "review_status": "draft_review"
         },
         {
@@ -26099,25 +26331,129 @@
           "text": "Delirious New York ist als Referenz wichtig, weil Architekturtraktat, Nachkriegsmoderne, Stadttheorie, Dichte, Raster, Metropole, noch zu prüfendes Materialsystem, architectural treatise layer candidate nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Die eigentliche Lernfrage lautet: Welche Regel, räumliche Operation oder konstruktive Haltung kann aus dem Projekt extrahiert werden, ohne es formal zu kopieren?",
           "source_basis": "derived from entry metadata and Brain quality rules",
           "review_status": "draft_review"
+        },
+        {
+          "title": "Netzwerk und DNA",
+          "text": "Delirious New York wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, wie es sich innerhalb derselben architektonischen DNA unterscheidet: durch Ort, Auftrag, Fügung, Gebrauch und kulturelle Haltung.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Topos / Typos / Tektonik",
+          "text": "Topos, Typos und Tektonik werden zusammen gelesen: Ort und Landschaft bilden die Setzung, Architekturtraktat bildet den typologischen Ausgangspunkt, und manhattanism, architectural theory, book, author context, bibliography, book record markieren die konstruktiv-atmosphärische Lesart.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für KosmoData ist Delirious New York relevant, weil sich daraus Filter, Vergleichsgruppen, Planlayer und spätere Blender-Collections ableiten lassen: Architekturtraktat, Nachkriegsmoderne, urban theory, density, grid, metropolis, manhattanism, architectural theory.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
         }
       ],
       "language": "de",
-      "generator": "cosmos-generate-architecture-text",
-      "generated_at": "2026-05-24T14:41:55.229Z",
+      "generator": "kosmodata-seed-from-research",
+      "generated_at": "2026-05-25T07:26:40.282Z",
       "review_status": "draft_review",
       "source_basis": []
     },
-    "source_candidates": [],
+    "source_candidates": [
+      {
+        "source_type": "office_publication_page",
+        "title": "OMA / Delirious New York",
+        "url": "https://www.oma.com/publications/delirious-new-york",
+        "reliability_level": "high",
+        "rights_status": "link_only",
+        "notes": "Official OMA publication page for Rem Koolhaas' Delirious New York. Use as factual source trail only."
+      },
+      {
+        "source_type": "office_biography",
+        "title": "OMA / Rem Koolhaas",
+        "url": "https://www.oma.com/partners/rem-koolhaas",
+        "reliability_level": "high",
+        "rights_status": "link_only",
+        "notes": "Official biography mentioning the 1978 publication and its place in Koolhaas' work."
+      },
+      {
+        "source_type": "publisher_book_record",
+        "title": "Casa del Libro / Delirious New York",
+        "url": "https://www.casadellibro.com/libro-delirious-new-york/9789064502118/481460",
+        "reliability_level": "medium",
+        "rights_status": "bibliographic_link_only",
+        "notes": "Bibliographic source candidate for edition metadata. Use only as book/source lead."
+      },
+      {
+        "source_type": "academic_repository",
+        "title": "ETH Research Collection",
+        "url": "https://www.research-collection.ethz.ch/home",
+        "reliability_level": "high",
+        "rights_status": "record_level_license_required",
+        "notes": "Research pack source for \"Delirious New York\". Query: Delirious New York architecture history project source"
+      },
+      {
+        "source_type": "library_guide",
+        "title": "ETH Library Architecture and Urban Planning Research Guide",
+        "url": "https://library.ethz.ch/medien-finden/recherchieren/fachgebiete/architektur-stadtplanung.html",
+        "reliability_level": "high",
+        "rights_status": "bibliographic_link_only",
+        "notes": "Research pack source for \"Delirious New York\". Query: Delirious New York architecture source"
+      },
+      {
+        "source_type": "image_archive",
+        "title": "ETH E-Pics",
+        "url": "https://e-pics3.ethz.ch/de/home/",
+        "reliability_level": "high",
+        "rights_status": "record_level_license_required",
+        "notes": "Research pack source for \"Delirious New York\". Query: Delirious New York architecture building photograph plan"
+      },
+      {
+        "source_type": "lecture_video_index",
+        "title": "ETH Videoportal D-ARCH Lectures",
+        "url": "https://video.ethz.ch/lectures/d-arch/2024/autumn.html",
+        "reliability_level": "high",
+        "rights_status": "citation_only",
+        "notes": "Research pack source for \"Delirious New York\". Query: Delirious New York architecture lecture project history"
+      },
+      {
+        "source_type": "course_page",
+        "title": "Global History of Urban Design I / ETH",
+        "url": "https://avermaete.arch.ethz.ch/education/bachelor/global-history-of-urban-design-I.html",
+        "reliability_level": "high",
+        "rights_status": "citation_only",
+        "notes": "Research pack source for \"Delirious New York\". Query: Delirious New York architecture project history lecture"
+      },
+      {
+        "source_type": "course_page",
+        "title": "Global History of Urban Design II / ETH",
+        "url": "https://avermaete.arch.ethz.ch/education/bachelor/global-history-of-urban-design-II.html",
+        "reliability_level": "high",
+        "rights_status": "citation_only",
+        "notes": "Research pack source for \"Delirious New York\". Query: Delirious New York architecture project history lecture"
+      },
+      {
+        "source_type": "course_page",
+        "title": "ETH Construction History / Holzer Lectures",
+        "url": "https://holzer.arch.ethz.ch/studium/vorlesungen.html",
+        "reliability_level": "high",
+        "rights_status": "citation_only",
+        "notes": "Research pack source for \"Delirious New York\". Query: Delirious New York architecture project history lecture"
+      }
+    ],
     "materials": {
       "primary": [
-        "needs_material_review"
+        "manhattanism",
+        "architectural-theory",
+        "book",
+        "author-context",
+        "bibliography",
+        "book-record"
       ],
       "secondary": [
         "craft_details",
         "surface_system",
         "construction_logic"
       ],
-      "notes": "Seeded from existing entry metadata and research packs; verify exact material claims before promotion."
+      "notes": "Seeded from local reviewed source metadata; verify exact material claims before publication."
     },
     "program": {
       "type": "architectural_treatise",
@@ -26158,7 +26494,12 @@
       "theme:density",
       "theme:grid",
       "theme:metropolis",
-      "material:needs-material-review",
+      "material:manhattanism",
+      "material:architectural-theory",
+      "material:book",
+      "material:author-context",
+      "material:bibliography",
+      "material:book-record",
       "rights:review-required",
       "blender:architectural-treatise-layer-candidate",
       "plan:vector-review-required",
@@ -26171,7 +26512,7 @@
         "r2_key": "entries/delirious-new-york/models/site.glb",
         "format": "glb",
         "lod_level": "preview",
-        "source_basis": "entry metadata only; needs source review",
+        "source_basis": "ETH Research Collection | ETH Library Architecture and Urban Planning Research Guide | ETH E-Pics | ETH Videoportal D-ARCH Lectures | Global History of Urban Design I / ETH | Global History of Urban Design II / ETH",
         "generation_method": "procedural",
         "review_status": "draft",
         "confidence_score": 0.42
@@ -26182,7 +26523,7 @@
         "r2_key": "entries/delirious-new-york/models/structure.glb",
         "format": "glb",
         "lod_level": "medium",
-        "source_basis": "entry metadata only; needs source review",
+        "source_basis": "ETH Research Collection | ETH Library Architecture and Urban Planning Research Guide | ETH E-Pics | ETH Videoportal D-ARCH Lectures | Global History of Urban Design I / ETH | Global History of Urban Design II / ETH",
         "generation_method": "source_reconstruction",
         "review_status": "needs_source",
         "confidence_score": 0.32
@@ -26193,7 +26534,7 @@
         "r2_key": "entries/delirious-new-york/models/tectonic.glb",
         "format": "glb",
         "lod_level": "study",
-        "source_basis": "entry metadata only; needs source review; tags: typology:architectural-treatise, style:postwar_modern_architecture, theme:urban-theory, theme:density, theme:grid, theme:metropolis, material:needs-material-review, rights:review-required",
+        "source_basis": "ETH Research Collection | ETH Library Architecture and Urban Planning Research Guide | ETH E-Pics | ETH Videoportal D-ARCH Lectures | Global History of Urban Design I / ETH | Global History of Urban Design II / ETH; tags: typology:architectural-treatise, style:postwar_modern_architecture, theme:urban-theory, theme:density, theme:grid, theme:metropolis, material:manhattanism, material:architectural-theory",
         "generation_method": "source_reconstruction",
         "review_status": "needs_source",
         "confidence_score": 0.32
@@ -26202,11 +26543,16 @@
     "analysis_layers": [
       {
         "analysis_type": "structure",
-        "summary": "Delirious New York needs a reviewed structural reading connecting needs_material_review with construction logic, span, support and assembly.",
+        "summary": "Delirious New York needs a reviewed structural reading connecting manhattanism, architectural-theory, book with construction logic, span, support and assembly.",
         "data": {
           "seed_tags": [
             "structure:needs_review",
-            "needs_material_review"
+            "manhattanism",
+            "architectural-theory",
+            "book",
+            "author-context",
+            "bibliography",
+            "book-record"
           ],
           "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
@@ -26214,10 +26560,15 @@
       },
       {
         "analysis_type": "material_system",
-        "summary": "Delirious New York should be tagged through needs_material_review and verified against primary sources before public material claims are made.",
+        "summary": "Delirious New York should be tagged through manhattanism, architectural-theory, book, author-context, bibliography, book-record and verified against primary sources before public material claims are made.",
         "data": {
           "seed_tags": [
-            "needs_material_review"
+            "manhattanism",
+            "architectural-theory",
+            "book",
+            "author-context",
+            "bibliography",
+            "book-record"
           ],
           "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
@@ -26259,10 +26610,10 @@
             "theme:density",
             "theme:grid",
             "theme:metropolis",
-            "material:needs-material-review",
-            "rights:review-required",
-            "blender:architectural-treatise-layer-candidate",
-            "plan:vector-review-required"
+            "material:manhattanism",
+            "material:architectural-theory",
+            "material:book",
+            "material:author-context"
           ],
           "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
@@ -26270,22 +26621,22 @@
       }
     ],
     "database_profile": {
-      "status": "needs_sources",
+      "status": "reviewed",
       "r2_prefix": "entries/delirious-new-york",
-      "source_count": 0,
+      "source_count": 10,
       "media_count": 4,
       "model_count": 3,
       "analysis_count": 5,
-      "tag_count": 11,
+      "tag_count": 16,
       "rights_summary": "Public text and metadata are allowed; visual assets remain link-only/private until rights are cleared.",
-      "updated_at": "2026-05-24T12:35:55.690Z"
+      "updated_at": "2026-05-25T07:26:40.529Z"
     },
     "ingestion_status": {
       "stage": "needs_review",
-      "source_status": "candidate",
+      "source_status": "reviewed",
       "asset_status": "candidate",
       "model_status": "planned",
-      "updated_at": "2026-05-24T12:35:55.691Z"
+      "updated_at": "2026-05-25T07:26:40.530Z"
     }
   },
   {
@@ -28063,10 +28414,10 @@
       "infrastructure",
       "metropole"
     ],
-    "short_description": "Euralille Metropole verdichtet Stahlbetonskelett, freien Grundriss und serielle Wiederholbarkeit zu einem konstruktiven Prototyp der Moderne.",
-    "source_quality": "lecture_pdf",
-    "one_sentence": "Euralille Metropole wird als Nachkriegsmoderne-Referenz im Netzwerk von projet urbain, Infrastruktur, Metropole gelesen. Euralille verdichtet Bahnhof, TGV-Infrastruktur, Büro- und Handelsprogramme, Brückenräume und öffentliche Plätze zu einem metropolitanen Knoten zwischen Stadt und Verkehr. Euralille wird über Bahnhofsinfrastruktur, Großform, Büro- und Handelsvolumen, Brückenräume und öffentliche Zwischenräume gelesen; Stadt entsteht hier aus der Überlagerung von Verkehr, Programm und Maßstab.",
-    "full_description": "Euralille Metropole wird im Architecture Cosmos als Nachkriegsmoderne-Referenz gelesen. Die räumliche These entsteht aus Lille, Frankreich. Euralille verdichtet Bahnhof, TGV-Infrastruktur, Büro- und Handelsprogramme, Brückenräume und öffentliche Plätze zu einem metropolitanen Knoten zwischen Stadt und Verkehr. Euralille wird über Bahnhofsinfrastruktur, Großform, Büro- und Handelsvolumen, Brückenräume und öffentliche Zwischenräume gelesen; Stadt entsteht hier aus der Überlagerung von Verkehr, Programm und Maßstab. Die Tektonik ist hier urban: Bahntrasse, Bahnhof, Großvolumen, Decks, Brücken und Zwischenräume bilden eine mehrschichtige Knotenarchitektur. Euralille Metropole sitzt im Netzwerk von projet urbain, Infrastruktur, Metropole, Nachkriegsmoderne, Tragwerksprototyp, Nachkriegsmoderne-Referenz. Diese Einordnung beschreibt nicht nur Kategorien, sondern eine architektonische DNA aus Typus, Epoche, Material, Quelle und räumlicher Strategie.\n\nTopos und Typos greifen ineinander: Euralille Metropole steht in Lille, Frankreich und wird typologisch als Nachkriegsmoderne-Referenz verstanden. Euralille verdichtet Bahnhof, TGV-Infrastruktur, Büro- und Handelsprogramme, Brückenräume und öffentliche Plätze zu einem metropolitanen Knoten zwischen Stadt und Verkehr. Entscheidend ist, wie Ort, Programm, Bewegung und Gebrauch eine architektonische Ordnung bilden.\n\nEuralille wird über Bahnhofsinfrastruktur, Großform, Büro- und Handelsvolumen, Brückenräume und öffentliche Zwischenräume gelesen; Stadt entsteht hier aus der Überlagerung von Verkehr, Programm und Maßstab. Die Tektonik ist hier urban: Bahntrasse, Bahnhof, Großvolumen, Decks, Brücken und Zwischenräume bilden eine mehrschichtige Knotenarchitektur. Material und Konstruktion werden deshalb nicht als technische Nebendaten behandelt, sondern als lesbare Grammatik von Last, Fügung, Oberfläche und Atmosphäre.\n\nEuralille Metropole sitzt im Netzwerk von projet urbain, Infrastruktur, Metropole, Nachkriegsmoderne, Tragwerksprototyp, Nachkriegsmoderne-Referenz. Diese Einordnung beschreibt nicht nur Kategorien, sondern eine architektonische DNA aus Typus, Epoche, Material, Quelle und räumlicher Strategie. Euralille Metropole wird damit im KosmoData-Netzwerk über Tragwerksprototyp, Nachkriegsmoderne, projet urbain, Infrastruktur, Metropole, noch zu prüfendes Materialsystem, structural prototype layer candidate, plan:vector review required vergleichbar und bleibt zugleich als einzelnes architektonisches Argument erkennbar. Für spätere Plan-, Modell- und Blender-Layer sind besonders Ort, Masse, Tragstruktur, Hülle, Material, Zirkulation und unsichere Rekonstruktionsannahmen relevant.",
+    "short_description": "Euralille macht den TGV-Knoten von Lille zu einem verdichteten metropolitanen Projekt aus Infrastruktur, Großform, Büro, Handel und öffentlichem Stadtraum.",
+    "source_quality": "research_seed_review",
+    "one_sentence": "Euralille zeigt, wie ein Verkehrsknoten nicht nur Erschließung bleibt, sondern durch Überlagerung von Bahnhof, Brücken, Hochhäusern, Einkaufsflächen und Plätzen eine neue Form europäischer Metropole erzeugt.",
+    "full_description": "Euralille wird als metropolitanes Infrastrukturprojekt gelesen. OMA organisiert den neuen TGV-Knoten nicht als isolierten Bahnhof, sondern als überlagertes Feld aus Verkehr, Büro, Handel, Hotel, Kultur und öffentlichem Raum. Architektonisch wichtig ist die Spannung zwischen großmaßstäblicher Infrastruktur und städtischer Benutzbarkeit: Die Stadt entsteht aus Schnittstellen, Rampen, Brücken, Restflächen und programmatischen Verdichtungen. Für KosmoData ist Euralille ein Schlüsselobjekt für Projet Urbain, Verkehrsknoten, Großform, Public-Private-Development und die Frage, wie Mobilität selbst zur räumlichen Struktur einer Stadt wird.",
     "media": [
       {
         "type": "exterior",
@@ -28092,21 +28443,96 @@
     "source_documents": [
       "02 Global History of Urban Design 1_2.pdf"
     ],
-    "source_candidates": [],
+    "source_candidates": [
+      {
+        "source_type": "office_project_page",
+        "title": "OMA / Euralille",
+        "url": "https://www.oma.com/projects/euralille",
+        "reliability_level": "high",
+        "rights_status": "link_only",
+        "notes": "Official OMA project page with client, year, program, location and masterplan scale. Use as factual source only; do not republish protected media."
+      },
+      {
+        "source_type": "development_authority",
+        "title": "SPL Euralille / Euraflandres",
+        "url": "https://www.spl-euralille.fr/projets/euraflandres/",
+        "reliability_level": "high",
+        "rights_status": "link_only",
+        "notes": "Public project authority source for the ongoing Euralille/Euraflandres urban hub and Euralille 3000 context."
+      },
+      {
+        "source_type": "academic_article_candidate",
+        "title": "Valery Didelon / Euralille: The Deconstruction of the European City",
+        "url": "https://www.researchgate.net/profile/Valery_Didelon/publication/315799827_Euralille_The_Deconstruction_of_the_European_City/",
+        "reliability_level": "medium",
+        "rights_status": "link_only",
+        "notes": "Secondary academic source candidate for historical interpretation. Verify access, citation data and rights before public use."
+      },
+      {
+        "source_type": "academic_repository",
+        "title": "ETH Research Collection",
+        "url": "https://www.research-collection.ethz.ch/home",
+        "reliability_level": "high",
+        "rights_status": "record_level_license_required",
+        "notes": "Research pack source for \"Euralille Metropole\". Query: Euralille Metropole architecture history project source"
+      },
+      {
+        "source_type": "library_guide",
+        "title": "ETH Library Architecture and Urban Planning Research Guide",
+        "url": "https://library.ethz.ch/medien-finden/recherchieren/fachgebiete/architektur-stadtplanung.html",
+        "reliability_level": "high",
+        "rights_status": "bibliographic_link_only",
+        "notes": "Research pack source for \"Euralille Metropole\". Query: Euralille Metropole architecture source"
+      },
+      {
+        "source_type": "image_archive",
+        "title": "ETH E-Pics",
+        "url": "https://e-pics3.ethz.ch/de/home/",
+        "reliability_level": "high",
+        "rights_status": "record_level_license_required",
+        "notes": "Research pack source for \"Euralille Metropole\". Query: Euralille Metropole architecture building photograph plan"
+      },
+      {
+        "source_type": "lecture_video_index",
+        "title": "ETH Videoportal D-ARCH Lectures",
+        "url": "https://video.ethz.ch/lectures/d-arch/2024/autumn.html",
+        "reliability_level": "high",
+        "rights_status": "citation_only",
+        "notes": "Research pack source for \"Euralille Metropole\". Query: Euralille Metropole architecture lecture project history"
+      },
+      {
+        "source_type": "course_page",
+        "title": "Global History of Urban Design I / ETH",
+        "url": "https://avermaete.arch.ethz.ch/education/bachelor/global-history-of-urban-design-I.html",
+        "reliability_level": "high",
+        "rights_status": "citation_only",
+        "notes": "Research pack source for \"Euralille Metropole\". Query: Euralille Metropole architecture project history lecture"
+      },
+      {
+        "source_type": "course_page",
+        "title": "Global History of Urban Design II / ETH",
+        "url": "https://avermaete.arch.ethz.ch/education/bachelor/global-history-of-urban-design-II.html",
+        "reliability_level": "high",
+        "rights_status": "citation_only",
+        "notes": "Research pack source for \"Euralille Metropole\". Query: Euralille Metropole architecture project history lecture"
+      },
+      {
+        "source_type": "course_page",
+        "title": "ETH Construction History / Holzer Lectures",
+        "url": "https://holzer.arch.ethz.ch/studium/vorlesungen.html",
+        "reliability_level": "high",
+        "rights_status": "citation_only",
+        "notes": "Research pack source for \"Euralille Metropole\". Query: Euralille Metropole architecture project history lecture"
+      }
+    ],
     "architecture_text": {
-      "headline": "Euralille: Knotenstadt zwischen Bahnhof, Infrastruktur und Metropole",
-      "overview": "Euralille Metropole wird im Architecture Cosmos als Nachkriegsmoderne-Referenz gelesen. Die räumliche These entsteht aus Lille, Frankreich. Euralille verdichtet Bahnhof, TGV-Infrastruktur, Büro- und Handelsprogramme, Brückenräume und öffentliche Plätze zu einem metropolitanen Knoten zwischen Stadt und Verkehr. Euralille wird über Bahnhofsinfrastruktur, Großform, Büro- und Handelsvolumen, Brückenräume und öffentliche Zwischenräume gelesen; Stadt entsteht hier aus der Überlagerung von Verkehr, Programm und Maßstab. Die Tektonik ist hier urban: Bahntrasse, Bahnhof, Großvolumen, Decks, Brücken und Zwischenräume bilden eine mehrschichtige Knotenarchitektur. Euralille Metropole sitzt im Netzwerk von projet urbain, Infrastruktur, Metropole, Nachkriegsmoderne, Tragwerksprototyp, Nachkriegsmoderne-Referenz. Diese Einordnung beschreibt nicht nur Kategorien, sondern eine architektonische DNA aus Typus, Epoche, Material, Quelle und räumlicher Strategie.",
+      "headline": "Euralille: Infrastruktur als metropolitaner Stadtraum",
+      "overview": "Euralille übersetzt den TGV-Anschluss von Lille in ein urbanes System. Bahnhof, Brücken, Bürotürme, Einkaufsflächen und öffentliche Räume bilden kein Add-on zur Stadt, sondern eine neue Schnittstelle zwischen europäischem Verkehr, regionaler Ökonomie und lokaler Stadterfahrung.",
       "chapters": [
         {
           "title": "These",
           "text": "Euralille Metropole wird nicht als isoliertes Objekt gelesen, sondern als architektonische These innerhalb von projet urbain, Infrastruktur, Metropole. Euralille verdichtet Bahnhof, TGV-Infrastruktur, Büro- und Handelsprogramme, Brückenräume und öffentliche Plätze zu einem metropolitanen Knoten zwischen Stadt und Verkehr. Die Analyse fragt, welche räumliche Intelligenz daraus entsteht und welche Idee über das einzelne Projekt hinaus übertragbar bleibt.",
           "source_basis": "curated spatial reading",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Netzwerk und DNA",
-          "text": "Euralille Metropole sitzt im Netzwerk von projet urbain, Infrastruktur, Metropole, Nachkriegsmoderne, Tragwerksprototyp, Nachkriegsmoderne-Referenz. Diese Einordnung beschreibt nicht nur Kategorien, sondern eine architektonische DNA aus Typus, Epoche, Material, Quelle und räumlicher Strategie. Im Atlas ist wichtig, ob Euralille Metropole eine bekannte DNA nur fortschreibt, sie verdichtet, bricht oder in eine andere Epoche, Landschaft oder Bauaufgabe übersetzt. So wird das Objekt nicht nur datiert, sondern in ein Beziehungsnetz von ähnlichen Typologien, Materialien, Programmen, Quellen und historischen Problemen eingeordnet.",
-          "source_basis": "entry themes, source trail and atlas relation logic",
           "review_status": "draft_review"
         },
         {
@@ -28150,11 +28576,29 @@
           "text": "Euralille Metropole ist als Referenz wichtig, weil Tragwerksprototyp, Nachkriegsmoderne, projet urbain, Infrastruktur, Metropole, noch zu prüfendes Materialsystem, structural prototype layer candidate, plan:vector review required nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Die eigentliche Lernfrage lautet: Welche Regel, räumliche Operation oder konstruktive Haltung kann aus dem Projekt extrahiert werden, ohne es formal zu kopieren?",
           "source_basis": "derived from entry metadata and Brain quality rules",
           "review_status": "draft_review"
+        },
+        {
+          "title": "Netzwerk und DNA",
+          "text": "Euralille Metropole wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, wie es sich innerhalb derselben architektonischen DNA unterscheidet: durch Ort, Auftrag, Fügung, Gebrauch und kulturelle Haltung.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Topos / Typos / Tektonik",
+          "text": "Topos, Typos und Tektonik werden zusammen gelesen: Ort und Landschaft bilden die Setzung, infrastructure bildet den typologischen Ausgangspunkt, und infrastructure, mixed use, transport hub, urban hub, mobility, public private development, urban theory, metropolitan infrastructure markieren die konstruktiv-atmosphärische Lesart.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für KosmoData ist Euralille Metropole relevant, weil sich daraus Filter, Vergleichsgruppen, Planlayer und spätere Blender-Collections ableiten lassen: infrastructure, Nachkriegsmoderne, projet urbain, metropole, mixed use, transport hub, urban hub, mobility.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
         }
       ],
       "language": "de",
-      "generator": "cosmos-generate-architecture-text",
-      "generated_at": "2026-05-24T14:41:55.422Z",
+      "generator": "kosmodata-seed-from-research",
+      "generated_at": "2026-05-25T07:26:31.320Z",
       "review_status": "draft_review",
       "source_basis": [
         {
@@ -28165,17 +28609,24 @@
     },
     "materials": {
       "primary": [
-        "needs_material_review"
+        "infrastructure",
+        "mixed-use",
+        "transport-hub",
+        "urban-hub",
+        "mobility",
+        "public-private-development",
+        "urban-theory",
+        "metropolitan-infrastructure"
       ],
       "secondary": [
         "craft_details",
         "surface_system",
         "construction_logic"
       ],
-      "notes": "Seeded from existing entry metadata and research packs; verify exact material claims before promotion."
+      "notes": "Seeded from local reviewed source metadata; verify exact material claims before publication."
     },
     "program": {
-      "type": "structural_prototype",
+      "type": "infrastructure",
       "subtype": "postwar_modern_architecture_reference",
       "public_access": "needs_review",
       "components": [
@@ -28203,14 +28654,21 @@
       ]
     },
     "database_tags": [
-      "typology:structural-prototype",
+      "typology:infrastructure",
       "style:postwar_modern_architecture",
       "theme:projet-urbain",
       "theme:infrastructure",
       "theme:metropole",
-      "material:needs-material-review",
+      "material:infrastructure",
+      "material:mixed-use",
+      "material:transport-hub",
+      "material:urban-hub",
+      "material:mobility",
+      "material:public-private-development",
+      "material:urban-theory",
+      "material:metropolitan-infrastructure",
       "rights:review-required",
-      "blender:structural-prototype-layer-candidate",
+      "blender:infrastructure-layer-candidate",
       "plan:vector-review-required",
       "viewer:3d-layer-review-required"
     ],
@@ -28221,7 +28679,7 @@
         "r2_key": "entries/euralille-metropole/models/site.glb",
         "format": "glb",
         "lod_level": "preview",
-        "source_basis": "entry metadata only; needs source review",
+        "source_basis": "ETH Research Collection | ETH Library Architecture and Urban Planning Research Guide | ETH E-Pics | ETH Videoportal D-ARCH Lectures | Global History of Urban Design I / ETH | Global History of Urban Design II / ETH",
         "generation_method": "procedural",
         "review_status": "draft",
         "confidence_score": 0.42
@@ -28232,7 +28690,7 @@
         "r2_key": "entries/euralille-metropole/models/structure.glb",
         "format": "glb",
         "lod_level": "medium",
-        "source_basis": "entry metadata only; needs source review",
+        "source_basis": "ETH Research Collection | ETH Library Architecture and Urban Planning Research Guide | ETH E-Pics | ETH Videoportal D-ARCH Lectures | Global History of Urban Design I / ETH | Global History of Urban Design II / ETH",
         "generation_method": "source_reconstruction",
         "review_status": "needs_source",
         "confidence_score": 0.32
@@ -28243,7 +28701,7 @@
         "r2_key": "entries/euralille-metropole/models/tectonic.glb",
         "format": "glb",
         "lod_level": "study",
-        "source_basis": "entry metadata only; needs source review; tags: typology:structural-prototype, style:postwar_modern_architecture, theme:projet-urbain, theme:infrastructure, theme:metropole, material:needs-material-review, rights:review-required, blender:structural-prototype-layer-candidate",
+        "source_basis": "ETH Research Collection | ETH Library Architecture and Urban Planning Research Guide | ETH E-Pics | ETH Videoportal D-ARCH Lectures | Global History of Urban Design I / ETH | Global History of Urban Design II / ETH; tags: typology:infrastructure, style:postwar_modern_architecture, theme:projet-urbain, theme:infrastructure, theme:metropole, material:infrastructure, material:mixed-use, material:transport-hub",
         "generation_method": "source_reconstruction",
         "review_status": "needs_source",
         "confidence_score": 0.32
@@ -28252,11 +28710,18 @@
     "analysis_layers": [
       {
         "analysis_type": "structure",
-        "summary": "Euralille Metropole needs a reviewed structural reading connecting needs_material_review with construction logic, span, support and assembly.",
+        "summary": "Euralille Metropole needs a reviewed structural reading connecting infrastructure, mixed-use, transport-hub with construction logic, span, support and assembly.",
         "data": {
           "seed_tags": [
             "structure:needs_review",
-            "needs_material_review"
+            "infrastructure",
+            "mixed-use",
+            "transport-hub",
+            "urban-hub",
+            "mobility",
+            "public-private-development",
+            "urban-theory",
+            "metropolitan-infrastructure"
           ],
           "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
@@ -28264,10 +28729,17 @@
       },
       {
         "analysis_type": "material_system",
-        "summary": "Euralille Metropole should be tagged through needs_material_review and verified against primary sources before public material claims are made.",
+        "summary": "Euralille Metropole should be tagged through infrastructure, mixed-use, transport-hub, urban-hub, mobility, public-private-development, urban-theory, metropolitan-infrastructure and verified against primary sources before public material claims are made.",
         "data": {
           "seed_tags": [
-            "needs_material_review"
+            "infrastructure",
+            "mixed-use",
+            "transport-hub",
+            "urban-hub",
+            "mobility",
+            "public-private-development",
+            "urban-theory",
+            "metropolitan-infrastructure"
           ],
           "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
@@ -28279,7 +28751,7 @@
         "data": {
           "seed_tags": [
             "spatial_order",
-            "structural_prototype"
+            "infrastructure"
           ],
           "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
@@ -28287,11 +28759,11 @@
       },
       {
         "analysis_type": "typology",
-        "summary": "Euralille Metropole is currently classified as structural_prototype; the seed must verify how this type differs from related entries with the same DNA.",
+        "summary": "Euralille Metropole is currently classified as infrastructure; the seed must verify how this type differs from related entries with the same DNA.",
         "data": {
           "seed_tags": [
             "typology",
-            "structural_prototype",
+            "infrastructure",
             "Lille, France"
           ],
           "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
@@ -28303,16 +28775,16 @@
         "summary": "Euralille Metropole needs filter checks for themes, materials, rights, plan readiness, 3D layer readiness and viewer filters.",
         "data": {
           "seed_tags": [
-            "typology:structural-prototype",
+            "typology:infrastructure",
             "style:postwar_modern_architecture",
             "theme:projet-urbain",
             "theme:infrastructure",
             "theme:metropole",
-            "material:needs-material-review",
-            "rights:review-required",
-            "blender:structural-prototype-layer-candidate",
-            "plan:vector-review-required",
-            "viewer:3d-layer-review-required"
+            "material:infrastructure",
+            "material:mixed-use",
+            "material:transport-hub",
+            "material:urban-hub",
+            "material:mobility"
           ],
           "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
@@ -28320,22 +28792,22 @@
       }
     ],
     "database_profile": {
-      "status": "needs_sources",
+      "status": "reviewed",
       "r2_prefix": "entries/euralille-metropole",
-      "source_count": 1,
+      "source_count": 11,
       "media_count": 4,
       "model_count": 3,
       "analysis_count": 5,
-      "tag_count": 10,
+      "tag_count": 17,
       "rights_summary": "Public text and metadata are allowed; visual assets remain link-only/private until rights are cleared.",
-      "updated_at": "2026-05-24T12:35:57.025Z"
+      "updated_at": "2026-05-25T07:26:31.593Z"
     },
     "ingestion_status": {
       "stage": "needs_review",
-      "source_status": "candidate",
+      "source_status": "reviewed",
       "asset_status": "candidate",
       "model_status": "planned",
-      "updated_at": "2026-05-24T12:35:57.026Z"
+      "updated_at": "2026-05-25T07:26:31.594Z"
     }
   },
   {
@@ -30690,10 +31162,10 @@
       "rural",
       "material economy"
     ],
-    "short_description": "20K House verdichtet Stahlbetonskelett, freien Grundriss und serielle Wiederholbarkeit zu einem konstruktiven Prototyp der Moderne.",
-    "source_quality": "case_study",
-    "one_sentence": "20K House wird als vernakuläre Architektur-Referenz im Netzwerk von Leistbarkeit, Prototyp, rural, material economy gelesen. Das 20K House liest Wohnen über Leistbarkeit, Konstruktion und Gebrauch: Der Entwurf sucht eine präzise Architektur aus begrenztem Budget, lokalen Bauweisen und robustem Alltag. Das 20K House arbeitet mit einfachen, robusten Konstruktionsmitteln, Kostenbewusstsein, lokaler Baupraxis und präzisem Detail als architektonischem Material.",
-    "full_description": "20K House wird im Architecture Cosmos als vernakuläre Architektur-Referenz gelesen. Die räumliche These entsteht aus Hale County, USA. Das 20K House liest Wohnen über Leistbarkeit, Konstruktion und Gebrauch: Der Entwurf sucht eine präzise Architektur aus begrenztem Budget, lokalen Bauweisen und robustem Alltag. Das 20K House arbeitet mit einfachen, robusten Konstruktionsmitteln, Kostenbewusstsein, lokaler Baupraxis und präzisem Detail als architektonischem Material. Die Tektonik liegt in der radikalen Ökonomie des Bauens: Konstruktion, Detail, Materialwahl und Gebrauchswert werden so gefügt, dass Leistbarkeit selbst zur architektonischen Qualität wird. 20K House sitzt im Netzwerk von Leistbarkeit, Prototyp, rural, material economy, vernakuläre Architektur, Tragwerksprototyp. Diese Einordnung beschreibt nicht nur Kategorien, sondern eine architektonische DNA aus Typus, Epoche, Material, Quelle und räumlicher Strategie.\n\nTopos und Typos greifen ineinander: 20K House steht in Hale County, USA und wird typologisch als vernakuläre Architektur-Referenz verstanden. Das 20K House liest Wohnen über Leistbarkeit, Konstruktion und Gebrauch: Der Entwurf sucht eine präzise Architektur aus begrenztem Budget, lokalen Bauweisen und robustem Alltag. Entscheidend ist, wie Ort, Programm, Bewegung und Gebrauch eine architektonische Ordnung bilden.\n\nDas 20K House arbeitet mit einfachen, robusten Konstruktionsmitteln, Kostenbewusstsein, lokaler Baupraxis und präzisem Detail als architektonischem Material. Die Tektonik liegt in der radikalen Ökonomie des Bauens: Konstruktion, Detail, Materialwahl und Gebrauchswert werden so gefügt, dass Leistbarkeit selbst zur architektonischen Qualität wird. Material und Konstruktion werden deshalb nicht als technische Nebendaten behandelt, sondern als lesbare Grammatik von Last, Fügung, Oberfläche und Atmosphäre.\n\n20K House sitzt im Netzwerk von Leistbarkeit, Prototyp, rural, material economy, vernakuläre Architektur, Tragwerksprototyp. Diese Einordnung beschreibt nicht nur Kategorien, sondern eine architektonische DNA aus Typus, Epoche, Material, Quelle und räumlicher Strategie. 20K House wird damit im KosmoData-Netzwerk über Tragwerksprototyp, vernakuläre Architektur, Leistbarkeit, Prototyp, rural, material economy, noch zu prüfendes Materialsystem, structural prototype layer candidate vergleichbar und bleibt zugleich als einzelnes architektonisches Argument erkennbar. Für spätere Plan-, Modell- und Blender-Layer sind besonders Ort, Masse, Tragstruktur, Hülle, Material, Zirkulation und unsichere Rekonstruktionsannahmen relevant.",
+    "short_description": "Das 20K House untersucht, wie aus begrenztem Budget, lokaler Baupraxis und präzisem Detail ein robustes, bezahlbares Wohnmodell entstehen kann.",
+    "source_quality": "research_seed_review",
+    "one_sentence": "Das 20K House zeigt Architektur als soziale und konstruktive Forschung: ein kleines Wohnhaus wird über Kosten, Materialökonomie, lokale Arbeit, Dauerhaftigkeit und Alltagstauglichkeit optimiert.",
+    "full_description": "Das 20K House wird als Wohn- und Forschungsprototyp gelesen, nicht als einzelnes fertiges Objekt. Rural Studio entwickelt eine Serie kleiner Häuser, in denen Kosten, Konstruktion, Würde, Wartung und lokale Baupraxis zusammen gedacht werden. Architektonisch wichtig ist die Genauigkeit im Einfachen: Fundament, Dach, Holzrahmen, Hülle, Veranda, Belichtung und Möblierung werden so organisiert, dass geringe Mittel nicht zu geringer Qualität führen. Für KosmoData ist das Projekt zentral für bezahlbaren Wohnbau, Rural Practice, Materialökonomie und die Frage, wie Entwurf direkt auf soziale Realität und handwerkliche Umsetzbarkeit reagiert.",
     "media": [
       {
         "type": "exterior",
@@ -30716,21 +31188,96 @@
         "placeholder": "Grundriss / 20K House / affordability-prototype"
       }
     ],
-    "source_candidates": [],
+    "source_candidates": [
+      {
+        "source_type": "official_project_page",
+        "title": "Rural Studio / 20K Projects",
+        "url": "https://ruralstudio.org/project/20k-meta-project/",
+        "reliability_level": "high",
+        "rights_status": "link_only",
+        "notes": "Official Rural Studio overview of the 20K research project, its affordability logic and iterative design method."
+      },
+      {
+        "source_type": "official_project_page",
+        "title": "Rural Studio / 20K Income Home",
+        "url": "https://ruralstudio.org/project/20k-income-home/",
+        "reliability_level": "high",
+        "rights_status": "link_only",
+        "notes": "Official example project with structure, section, roof and material notes for one 20K Home iteration."
+      },
+      {
+        "source_type": "museum_exhibition_record",
+        "title": "MoMA / Small Scale, Big Change / 20K House",
+        "url": "https://www.moma.org/interactives/exhibitions/2010/smallscalebigchange/projects/house_viii_daves_house.html",
+        "reliability_level": "high",
+        "rights_status": "link_only",
+        "notes": "Museum exhibition record for the 20K House series. Use for source trail and public-safe citation only."
+      },
+      {
+        "source_type": "academic_repository",
+        "title": "ETH Research Collection",
+        "url": "https://www.research-collection.ethz.ch/home",
+        "reliability_level": "high",
+        "rights_status": "record_level_license_required",
+        "notes": "Research pack source for \"20K House Rural Studio\". Query: 20K House Rural Studio architecture history project source"
+      },
+      {
+        "source_type": "library_guide",
+        "title": "ETH Library Architecture and Urban Planning Research Guide",
+        "url": "https://library.ethz.ch/medien-finden/recherchieren/fachgebiete/architektur-stadtplanung.html",
+        "reliability_level": "high",
+        "rights_status": "bibliographic_link_only",
+        "notes": "Research pack source for \"20K House Rural Studio\". Query: 20K House Rural Studio architecture source"
+      },
+      {
+        "source_type": "image_archive",
+        "title": "ETH E-Pics",
+        "url": "https://e-pics3.ethz.ch/de/home/",
+        "reliability_level": "high",
+        "rights_status": "record_level_license_required",
+        "notes": "Research pack source for \"20K House Rural Studio\". Query: 20K House Rural Studio architecture building photograph plan"
+      },
+      {
+        "source_type": "lecture_video_index",
+        "title": "ETH Videoportal D-ARCH Lectures",
+        "url": "https://video.ethz.ch/lectures/d-arch/2024/autumn.html",
+        "reliability_level": "high",
+        "rights_status": "citation_only",
+        "notes": "Research pack source for \"20K House Rural Studio\". Query: 20K House Rural Studio architecture lecture project history"
+      },
+      {
+        "source_type": "course_page",
+        "title": "Global History of Urban Design I / ETH",
+        "url": "https://avermaete.arch.ethz.ch/education/bachelor/global-history-of-urban-design-I.html",
+        "reliability_level": "high",
+        "rights_status": "citation_only",
+        "notes": "Research pack source for \"20K House Rural Studio\". Query: 20K House Rural Studio architecture project history lecture"
+      },
+      {
+        "source_type": "course_page",
+        "title": "Global History of Urban Design II / ETH",
+        "url": "https://avermaete.arch.ethz.ch/education/bachelor/global-history-of-urban-design-II.html",
+        "reliability_level": "high",
+        "rights_status": "citation_only",
+        "notes": "Research pack source for \"20K House Rural Studio\". Query: 20K House Rural Studio architecture project history lecture"
+      },
+      {
+        "source_type": "course_page",
+        "title": "ETH Construction History / Holzer Lectures",
+        "url": "https://holzer.arch.ethz.ch/studium/vorlesungen.html",
+        "reliability_level": "high",
+        "rights_status": "citation_only",
+        "notes": "Research pack source for \"20K House Rural Studio\". Query: 20K House Rural Studio architecture project history lecture"
+      }
+    ],
     "architecture_text": {
-      "headline": "20K House: Leistbares Wohnen als konstruktive Forschungsfrage",
-      "overview": "20K House wird im Architecture Cosmos als vernakuläre Architektur-Referenz gelesen. Die räumliche These entsteht aus Hale County, USA. Das 20K House liest Wohnen über Leistbarkeit, Konstruktion und Gebrauch: Der Entwurf sucht eine präzise Architektur aus begrenztem Budget, lokalen Bauweisen und robustem Alltag. Das 20K House arbeitet mit einfachen, robusten Konstruktionsmitteln, Kostenbewusstsein, lokaler Baupraxis und präzisem Detail als architektonischem Material. Die Tektonik liegt in der radikalen Ökonomie des Bauens: Konstruktion, Detail, Materialwahl und Gebrauchswert werden so gefügt, dass Leistbarkeit selbst zur architektonischen Qualität wird. 20K House sitzt im Netzwerk von Leistbarkeit, Prototyp, rural, material economy, vernakuläre Architektur, Tragwerksprototyp. Diese Einordnung beschreibt nicht nur Kategorien, sondern eine architektonische DNA aus Typus, Epoche, Material, Quelle und räumlicher Strategie.",
+      "headline": "20K House: bezahlbares Wohnen als präzise Baukultur",
+      "overview": "Das 20K House liest Wohnen nicht über Formikone, sondern über Budget, Arbeit, Detail und Alltag. Rural Studio macht das kleine Haus zum Testfeld für eine Architektur, die soziale Würde, konstruktive Einfachheit und materielle Robustheit zusammendenkt.",
       "chapters": [
         {
           "title": "These",
           "text": "20K House wird nicht als isoliertes Objekt gelesen, sondern als architektonische These innerhalb von Leistbarkeit, Prototyp, rural, material economy. Das 20K House liest Wohnen über Leistbarkeit, Konstruktion und Gebrauch: Der Entwurf sucht eine präzise Architektur aus begrenztem Budget, lokalen Bauweisen und robustem Alltag. Die Analyse fragt, welche räumliche Intelligenz daraus entsteht und welche Idee über das einzelne Projekt hinaus übertragbar bleibt.",
           "source_basis": "curated spatial reading",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Netzwerk und DNA",
-          "text": "20K House sitzt im Netzwerk von Leistbarkeit, Prototyp, rural, material economy, vernakuläre Architektur, Tragwerksprototyp. Diese Einordnung beschreibt nicht nur Kategorien, sondern eine architektonische DNA aus Typus, Epoche, Material, Quelle und räumlicher Strategie. Im Atlas ist wichtig, ob 20K House eine bekannte DNA nur fortschreibt, sie verdichtet, bricht oder in eine andere Epoche, Landschaft oder Bauaufgabe übersetzt. So wird das Objekt nicht nur datiert, sondern in ein Beziehungsnetz von ähnlichen Typologien, Materialien, Programmen, Quellen und historischen Problemen eingeordnet.",
-          "source_basis": "entry themes, source trail and atlas relation logic",
           "review_status": "draft_review"
         },
         {
@@ -30774,27 +31321,53 @@
           "text": "20K House ist als Referenz wichtig, weil Tragwerksprototyp, vernakuläre Architektur, Leistbarkeit, Prototyp, rural, material economy, noch zu prüfendes Materialsystem, structural prototype layer candidate nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Die eigentliche Lernfrage lautet: Welche Regel, räumliche Operation oder konstruktive Haltung kann aus dem Projekt extrahiert werden, ohne es formal zu kopieren?",
           "source_basis": "derived from entry metadata and Brain quality rules",
           "review_status": "draft_review"
+        },
+        {
+          "title": "Netzwerk und DNA",
+          "text": "20K House wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, wie es sich innerhalb derselben architektonischen DNA unterscheidet: durch Ort, Auftrag, Fügung, Gebrauch und kulturelle Haltung.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Topos / Typos / Tektonik",
+          "text": "Topos, Typos und Tektonik werden zusammen gelesen: Ort und Landschaft bilden die Setzung, Wohnhaus bildet den typologischen Ausgangspunkt, und Holz, light frame, affordable housing, wood stud, metal cladding, truss roof, pier foundation, social housing research, Prototyp markieren die konstruktiv-atmosphärische Lesart.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
+        },
+        {
+          "title": "Datenbank- und Modellwert",
+          "text": "Für KosmoData ist 20K House relevant, weil sich daraus Filter, Vergleichsgruppen, Planlayer und spätere Blender-Collections ableiten lassen: Wohnhaus, vernacular architecture, affordability, Prototyp, rural, material economy, Holz, light frame.",
+          "source_basis": "seed-from-research draft; owner/source review required",
+          "review_status": "draft_review"
         }
       ],
       "language": "de",
-      "generator": "cosmos-generate-architecture-text",
-      "generated_at": "2026-05-24T14:41:55.634Z",
+      "generator": "kosmodata-seed-from-research",
+      "generated_at": "2026-05-25T07:26:33.712Z",
       "review_status": "draft_review",
       "source_basis": []
     },
     "materials": {
       "primary": [
-        "needs_material_review"
+        "timber",
+        "light-frame",
+        "affordable-housing",
+        "wood-stud",
+        "metal-cladding",
+        "truss-roof",
+        "pier-foundation",
+        "social-housing-research",
+        "prototype"
       ],
       "secondary": [
         "craft_details",
         "surface_system",
         "construction_logic"
       ],
-      "notes": "Seeded from existing entry metadata and research packs; verify exact material claims before promotion."
+      "notes": "Seeded from local reviewed source metadata; verify exact material claims before publication."
     },
     "program": {
-      "type": "structural_prototype",
+      "type": "domestic_house",
       "subtype": "vernacular_architecture_reference",
       "public_access": "needs_review",
       "components": [
@@ -30826,15 +31399,23 @@
       ]
     },
     "database_tags": [
-      "typology:structural-prototype",
+      "typology:domestic-house",
       "style:vernacular_architecture",
       "theme:affordability",
       "theme:prototype",
       "theme:rural",
       "theme:material-economy",
-      "material:needs-material-review",
+      "material:timber",
+      "material:light-frame",
+      "material:affordable-housing",
+      "material:wood-stud",
+      "material:metal-cladding",
+      "material:truss-roof",
+      "material:pier-foundation",
+      "material:social-housing-research",
+      "material:prototype",
       "rights:review-required",
-      "blender:structural-prototype-layer-candidate",
+      "blender:domestic-house-layer-candidate",
       "plan:vector-review-required",
       "viewer:3d-layer-review-required"
     ],
@@ -30845,7 +31426,7 @@
         "r2_key": "entries/rural-studio-20k-house/models/site.glb",
         "format": "glb",
         "lod_level": "preview",
-        "source_basis": "entry metadata only; needs source review",
+        "source_basis": "ETH Research Collection | ETH Library Architecture and Urban Planning Research Guide | ETH E-Pics | ETH Videoportal D-ARCH Lectures | Global History of Urban Design I / ETH | Global History of Urban Design II / ETH",
         "generation_method": "procedural",
         "review_status": "draft",
         "confidence_score": 0.42
@@ -30856,7 +31437,7 @@
         "r2_key": "entries/rural-studio-20k-house/models/structure.glb",
         "format": "glb",
         "lod_level": "medium",
-        "source_basis": "entry metadata only; needs source review",
+        "source_basis": "ETH Research Collection | ETH Library Architecture and Urban Planning Research Guide | ETH E-Pics | ETH Videoportal D-ARCH Lectures | Global History of Urban Design I / ETH | Global History of Urban Design II / ETH",
         "generation_method": "source_reconstruction",
         "review_status": "needs_source",
         "confidence_score": 0.32
@@ -30867,7 +31448,7 @@
         "r2_key": "entries/rural-studio-20k-house/models/tectonic.glb",
         "format": "glb",
         "lod_level": "study",
-        "source_basis": "entry metadata only; needs source review; tags: typology:structural-prototype, style:vernacular_architecture, theme:affordability, theme:prototype, theme:rural, theme:material-economy, material:needs-material-review, rights:review-required",
+        "source_basis": "ETH Research Collection | ETH Library Architecture and Urban Planning Research Guide | ETH E-Pics | ETH Videoportal D-ARCH Lectures | Global History of Urban Design I / ETH | Global History of Urban Design II / ETH; tags: typology:domestic-house, style:vernacular_architecture, theme:affordability, theme:prototype, theme:rural, theme:material-economy, material:timber, material:light-frame",
         "generation_method": "source_reconstruction",
         "review_status": "needs_source",
         "confidence_score": 0.32
@@ -30876,11 +31457,19 @@
     "analysis_layers": [
       {
         "analysis_type": "structure",
-        "summary": "20K House needs a reviewed structural reading connecting needs_material_review with construction logic, span, support and assembly.",
+        "summary": "20K House needs a reviewed structural reading connecting timber, light-frame, affordable-housing with construction logic, span, support and assembly.",
         "data": {
           "seed_tags": [
             "structure:needs_review",
-            "needs_material_review"
+            "timber",
+            "light-frame",
+            "affordable-housing",
+            "wood-stud",
+            "metal-cladding",
+            "truss-roof",
+            "pier-foundation",
+            "social-housing-research",
+            "prototype"
           ],
           "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
@@ -30888,10 +31477,18 @@
       },
       {
         "analysis_type": "material_system",
-        "summary": "20K House should be tagged through needs_material_review and verified against primary sources before public material claims are made.",
+        "summary": "20K House should be tagged through timber, light-frame, affordable-housing, wood-stud, metal-cladding, truss-roof, pier-foundation, social-housing-research, prototype and verified against primary sources before public material claims are made.",
         "data": {
           "seed_tags": [
-            "needs_material_review"
+            "timber",
+            "light-frame",
+            "affordable-housing",
+            "wood-stud",
+            "metal-cladding",
+            "truss-roof",
+            "pier-foundation",
+            "social-housing-research",
+            "prototype"
           ],
           "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
@@ -30903,7 +31500,7 @@
         "data": {
           "seed_tags": [
             "spatial_order",
-            "structural_prototype"
+            "domestic_house"
           ],
           "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
@@ -30911,11 +31508,11 @@
       },
       {
         "analysis_type": "typology",
-        "summary": "20K House is currently classified as structural_prototype; the seed must verify how this type differs from related entries with the same DNA.",
+        "summary": "20K House is currently classified as domestic_house; the seed must verify how this type differs from related entries with the same DNA.",
         "data": {
           "seed_tags": [
             "typology",
-            "structural_prototype",
+            "domestic_house",
             "Hale County, United States"
           ],
           "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
@@ -30927,16 +31524,16 @@
         "summary": "20K House needs filter checks for themes, materials, rights, plan readiness, 3D layer readiness and viewer filters.",
         "data": {
           "seed_tags": [
-            "typology:structural-prototype",
+            "typology:domestic-house",
             "style:vernacular_architecture",
             "theme:affordability",
             "theme:prototype",
             "theme:rural",
             "theme:material-economy",
-            "material:needs-material-review",
-            "rights:review-required",
-            "blender:structural-prototype-layer-candidate",
-            "plan:vector-review-required"
+            "material:timber",
+            "material:light-frame",
+            "material:affordable-housing",
+            "material:wood-stud"
           ],
           "review_note": "Generated by seed-from-research; owner/source review required before factual promotion."
         },
@@ -30944,22 +31541,22 @@
       }
     ],
     "database_profile": {
-      "status": "needs_sources",
+      "status": "reviewed",
       "r2_prefix": "entries/rural-studio-20k-house",
-      "source_count": 0,
+      "source_count": 10,
       "media_count": 4,
       "model_count": 3,
       "analysis_count": 5,
-      "tag_count": 11,
+      "tag_count": 19,
       "rights_summary": "Public text and metadata are allowed; visual assets remain link-only/private until rights are cleared.",
-      "updated_at": "2026-05-24T12:35:44.928Z"
+      "updated_at": "2026-05-25T07:26:33.964Z"
     },
     "ingestion_status": {
       "stage": "needs_review",
-      "source_status": "candidate",
+      "source_status": "reviewed",
       "asset_status": "candidate",
       "model_status": "planned",
-      "updated_at": "2026-05-24T12:35:44.929Z"
+      "updated_at": "2026-05-25T07:26:33.967Z"
     }
   },
   {

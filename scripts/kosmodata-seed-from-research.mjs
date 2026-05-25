@@ -287,13 +287,13 @@ function inferProgram(entry) {
   else if (haystack.includes('department store') || haystack.includes('warenhaus') || haystack.includes('commerce') || haystack.includes('kaufhaus')) type = 'department_store';
   else if (haystack.includes('apartment') || haystack.includes('avenue franklin') || haystack.includes('rue franklin') || haystack.includes('immeuble')) type = 'apartment_building';
   else if (haystack.includes('iba') || haystack.includes('critical reconstruction') || haystack.includes('stadt erneuerung') || haystack.includes('stadterneuerung')) type = 'urban_renewal_program';
-  else if (haystack.includes('dom ino') || haystack.includes('prototype') || haystack.includes('free plan') || haystack.includes('frame')) type = 'structural_prototype';
-  else if (entry.entry_type === 'text' || haystack.includes('treatise') || haystack.includes('traktat') || haystack.includes('quattro libri')) type = 'architectural_treatise';
-  else if (entry.entry_type === 'urban_plan' || haystack.includes('zoning') || haystack.includes('stadtmodell') || haystack.includes('urban plan')) type = 'urban_plan';
+  else if (entry.entry_type === 'text' || haystack.includes('treatise') || haystack.includes('traktat') || haystack.includes('quattro libri') || haystack.includes('delirious new york')) type = 'architectural_treatise';
+  else if (entry.entry_type === 'urban_plan' || haystack.includes('broadacre') || haystack.includes('zoning') || haystack.includes('stadtmodell') || haystack.includes('urban plan')) type = 'urban_plan';
   else if (entry.entry_type === 'landscape_project' || haystack.includes('landscape') || haystack.includes('park')) type = 'landscape_project';
   else if (haystack.includes('factory') || haystack.includes('fabrik') || haystack.includes('industrie') || haystack.includes('industrial')) type = 'factory';
   else if (haystack.includes('school') || haystack.includes('schule') || haystack.includes('pedagogy') || haystack.includes('workshop') || haystack.includes('bauhaus')) type = 'school';
-  else if (haystack.includes('house') || haystack.includes('domestic') || haystack.includes('wohnen') || haystack.includes('red house')) type = 'domestic_house';
+  else if (haystack.includes('house') || haystack.includes('home') || haystack.includes('domestic') || haystack.includes('wohnen') || haystack.includes('red house')) type = 'domestic_house';
+  else if (haystack.includes('dom ino') || haystack.includes('prototype') || haystack.includes('free plan') || haystack.includes('frame')) type = 'structural_prototype';
   return {
     type,
     subtype: `${entry.style_sector}_reference`,
@@ -477,6 +477,8 @@ function buildGeneratedArchitectureText(entry, materials, program, context, data
 function architectureTextProfile(entry, materials, program, context, databaseTags) {
   const tags = listText(publicTagLabels(databaseTags));
   const materialText = listText(materials.primary);
+  const curated = curatedNarrative(entry);
+  if (curated) return curated.profile(tags, materialText, context, program);
   if (program.type === 'pavilion') {
     return {
       headline: `${entry.title}: temporärer Pavillon als Material- und Atmosphärenexperiment`,
@@ -541,6 +543,102 @@ function chapter(title, text) {
   };
 }
 
+function curatedNarrative(entry) {
+  const items = {
+    'euralille-metropole': {
+      short: 'Euralille macht den TGV-Knoten von Lille zu einem verdichteten metropolitanen Projekt aus Infrastruktur, Großform, Büro, Handel und öffentlichem Stadtraum.',
+      one: 'Euralille zeigt, wie ein Verkehrsknoten nicht nur Erschließung bleibt, sondern durch Überlagerung von Bahnhof, Brücken, Hochhäusern, Einkaufsflächen und Plätzen eine neue Form europäischer Metropole erzeugt.',
+      full: 'Euralille wird als metropolitanes Infrastrukturprojekt gelesen. OMA organisiert den neuen TGV-Knoten nicht als isolierten Bahnhof, sondern als überlagertes Feld aus Verkehr, Büro, Handel, Hotel, Kultur und öffentlichem Raum. Architektonisch wichtig ist die Spannung zwischen großmaßstäblicher Infrastruktur und städtischer Benutzbarkeit: Die Stadt entsteht aus Schnittstellen, Rampen, Brücken, Restflächen und programmatischen Verdichtungen. Für KosmoData ist Euralille ein Schlüsselobjekt für Projet Urbain, Verkehrsknoten, Großform, Public-Private-Development und die Frage, wie Mobilität selbst zur räumlichen Struktur einer Stadt wird.',
+      profile: (tags, _materials, context) => ({
+        headline: 'Euralille: Infrastruktur als metropolitaner Stadtraum',
+        overview: 'Euralille übersetzt den TGV-Anschluss von Lille in ein urbanes System. Bahnhof, Brücken, Bürotürme, Einkaufsflächen und öffentliche Räume bilden kein Add-on zur Stadt, sondern eine neue Schnittstelle zwischen europäischem Verkehr, regionaler Ökonomie und lokaler Stadterfahrung.',
+        thesis: 'Die These liegt in der Überlagerung: Euralille nimmt Infrastruktur nicht als technische Rückseite der Stadt, sondern als Generator von Adresse, Dichte und öffentlichem Raum.',
+        network: 'Im Netzwerk steht Euralille zwischen Projet Urbain, Bahnhofsquartier, Großform und postindustrieller Stadtentwicklung. Anders als klassische Idealstadtmodelle operiert es mit realen Verkehrssystemen, Investitionslogiken und Restflächen.',
+        topos: `Der Topos ${context.setting} ist entscheidend: Lille wird als Knoten zwischen nationaler Stadt, TGV-System und europäischem Maßstab gelesen.`,
+        typos: 'Typologisch ist Euralille weder reines Quartier noch einzelnes Gebäude. Es ist ein Infrastruktur-Cluster, in dem Bahnhof, Dienstleistung, Handel und öffentlicher Raum eine hybride Stadtmaschine bilden.',
+        tectonics: 'Tektonisch zählen weniger einzelne Materialien als die Fügung von Brücke, Platte, Hülle, Tragwerk und Zwischenraum. Stadt wird hier aus Schnittkanten, Ebenenwechseln und programmierten Übergängen gebaut.',
+        spatial: 'Die Raumlogik entsteht über Bewegung: Ankunft, Transfer, vertikale Erschließung, Blick in die Tiefe des Verkehrsknotens und die Verdichtung kommerzieller und öffentlicher Programme.',
+        layers: `Für 2D und 3D sind Verkehrsebenen, Brückenkanten, öffentliche Plätze, Hochpunktlogik, kommerzielle Volumen und Schnittstellen als Layer zentral. Tags: ${tags}.`,
+        critique: 'Kritisch bleibt die Frage, ob die metropolitanen Großformen dauerhafte Urbanität erzeugen oder ob Infrastruktur, Kommerz und Imageproduktion den öffentlichen Stadtraum dominieren.',
+        transfer: 'Übertragbar ist die Entwurfsintelligenz, Infrastruktur als räumliches und programmatisches Gerüst zu behandeln, nicht nur als technische Funktion.'
+      })
+    },
+    'rural-studio-20k-house': {
+      short: 'Das 20K House untersucht, wie aus begrenztem Budget, lokaler Baupraxis und präzisem Detail ein robustes, bezahlbares Wohnmodell entstehen kann.',
+      one: 'Das 20K House zeigt Architektur als soziale und konstruktive Forschung: ein kleines Wohnhaus wird über Kosten, Materialökonomie, lokale Arbeit, Dauerhaftigkeit und Alltagstauglichkeit optimiert.',
+      full: 'Das 20K House wird als Wohn- und Forschungsprototyp gelesen, nicht als einzelnes fertiges Objekt. Rural Studio entwickelt eine Serie kleiner Häuser, in denen Kosten, Konstruktion, Würde, Wartung und lokale Baupraxis zusammen gedacht werden. Architektonisch wichtig ist die Genauigkeit im Einfachen: Fundament, Dach, Holzrahmen, Hülle, Veranda, Belichtung und Möblierung werden so organisiert, dass geringe Mittel nicht zu geringer Qualität führen. Für KosmoData ist das Projekt zentral für bezahlbaren Wohnbau, Rural Practice, Materialökonomie und die Frage, wie Entwurf direkt auf soziale Realität und handwerkliche Umsetzbarkeit reagiert.',
+      profile: (tags, materialText, context) => ({
+        headline: '20K House: bezahlbares Wohnen als präzise Baukultur',
+        overview: 'Das 20K House liest Wohnen nicht über Formikone, sondern über Budget, Arbeit, Detail und Alltag. Rural Studio macht das kleine Haus zum Testfeld für eine Architektur, die soziale Würde, konstruktive Einfachheit und materielle Robustheit zusammendenkt.',
+        thesis: 'Die architektonische These lautet: Begrenzung ist kein Mangel, sondern ein Entwurfsinstrument. Kosten, Wartung und lokale Baupraxis werden zur eigentlichen Grammatik des Hauses.',
+        network: 'Im Netzwerk steht das Projekt zwischen vernakulärem Bauen, Affordable Housing, Design-Build-Pädagogik und konstruktivem Prototyp. Seine DNA unterscheidet sich von industriellem Serienbau durch lokale Anpassung und reale Bauverantwortung.',
+        topos: `Der Topos ${context.setting} verweist auf ruralen Alltag, Klima, Grundstück, lokale Ressourcen und die soziale Frage des Wohnens.`,
+        typos: 'Typologisch ist es ein kleines Wohnhaus und zugleich ein Forschungsmodell. Der Typus wird iteriert, gemessen und korrigiert, statt als endgültige Form behauptet zu werden.',
+        tectonics: `${materialText} stehen für eine Logik von leichter Konstruktion, Dachschutz, einfacher Montage, reparierbaren Details und bewusster Materialökonomie.`,
+        spatial: 'Die Raumlogik entsteht aus wenigen, gut proportionierten Räumen, Schwellen zum Außenraum, einfacher Belichtung und der Beziehung zwischen Innenraum, Veranda und Landschaft.',
+        layers: `Für Plan und 3D sind Fundament, Holzrahmen, Dachform, Hülle, Schwelle, Versorgung und Kostenlogik als Layer interessant. Tags: ${tags}.`,
+        critique: 'Kritisch zu prüfen sind Skalierung, Finanzierungsmodell, langfristige Wartung und die Grenze zwischen sozialem Engagement und prototypischer Einzelproduktion.',
+        transfer: 'Übertragbar ist die Haltung, Architekturqualität aus Einschränkung, Gebrauch und konstruktiver Verantwortung zu entwickeln.'
+      })
+    },
+    'broadacre-city': {
+      short: 'Broadacre City entwirft eine dezentralisierte Landschaftsstadt, in der Parzelle, Auto, Landwirtschaft, Einzelhaus und Infrastruktur ein alternatives Stadtmodell bilden.',
+      one: 'Broadacre City zeigt Frank Lloyd Wrights Vision einer aufgelösten, agrarisch-technischen Stadt: Dichte wird durch Landverteilung, Mobilität und individuelle Selbstversorgung ersetzt.',
+      full: 'Broadacre City wird als ideologischer Stadtentwurf gelesen. Wright ersetzt die kompakte Stadt durch ein flächiges System aus Parzellen, Straßen, Landwirtschaft, Einzelhäusern, öffentlichen Einrichtungen und moderner Mobilität. Architektonisch wichtig ist die Ambivalenz: Das Modell verspricht Freiheit, Licht, Boden und Selbstbestimmung, erzeugt aber zugleich extreme Abhängigkeit von Infrastruktur, Fläche und individueller Mobilität. Für KosmoData ist Broadacre ein starker Vergleichspunkt für Idealstadt, Suburbanisierung, Automobilurbanismus, Landschaftsraster und die politische Dimension räumlicher Dezentralisierung.',
+      profile: (tags, _materials, context) => ({
+        headline: 'Broadacre City: Landschaftsstadt zwischen Freiheit und Zersiedelung',
+        overview: 'Broadacre City ist weniger Stadtplan im technischen Sinn als ein räumliches Manifest. Frank Lloyd Wright verbindet Landbesitz, Mobilität, Einzelhaus und Landschaft zu einem Gegenmodell zur dichten industriellen Stadt.',
+        thesis: 'Die These lautet Dezentralisierung: Stadt soll nicht konzentriert, sondern über Landschaft, Straße und Parzelle verteilt werden.',
+        network: 'Im Netzwerk steht Broadacre zwischen Idealstadt, Garden City, Suburbia, Automobilurbanismus und anti-urbaner Moderne. Seine DNA ist verwandt mit Landschaftsplanung, unterscheidet sich aber durch radikale Individualisierung.',
+        topos: `Der Topos ${context.setting} ist weniger ein konkreter Ort als eine amerikanische Landschaftsidee aus Boden, Mobilität und Eigentum.`,
+        typos: 'Typologisch ist Broadacre Stadtmodell, Manifest und Ausstellungsmodell zugleich. Es ordnet Wohnen, Arbeit, Landwirtschaft und Verkehr als territoriale Verteilung.',
+        tectonics: 'Tektonisch wird nicht der Einzelbau, sondern die Infrastruktur lesbar: Straße, Parzelle, Raster, Landschaft und Modellbau bilden die konstruktive Logik des Plans.',
+        spatial: 'Die Raumlogik entsteht über Distanz: Wege, Grundstücke, Sicht auf Landschaft und die Abhängigkeit vom Fahrzeug ersetzen urbane Nähe.',
+        layers: `Für KosmoData sind Parzellenraster, Straßenhierarchie, Landschaft, Gebäudetypen, öffentliche Programme und Mobilitätslayer zentral. Tags: ${tags}.`,
+        critique: 'Kritisch ist Broadacre gerade wegen seiner Wirkungsgeschichte: Das Versprechen individueller Freiheit steht neben Flächenverbrauch, Infrastrukturabhängigkeit und sozialer Fragmentierung.',
+        transfer: 'Übertragbar ist die Fähigkeit, Stadt als ideologisches Raumprogramm zu lesen, in dem Mobilität und Eigentum ebenso wichtig sind wie Gebäude.'
+      })
+    },
+    'athens-charter': {
+      short: 'Die Charta von Athen formuliert die funktionale Stadt als Regelwerk aus Wohnen, Arbeiten, Erholung und Verkehr.',
+      one: 'Die Charta von Athen zeigt Stadt als analytisches Programm: urbane Probleme werden in Funktionen zerlegt und als modernistisches Planungsmodell neu geordnet.',
+      full: 'Die Charta von Athen wird als theoretisches Planungsinstrument gelesen. Sie ist kein Gebäude und kein einzelner Stadtplan, sondern ein normatives Regelwerk, das Wohnen, Arbeiten, Erholung und Verkehr als zentrale Funktionen der modernen Stadt definiert. Architektonisch relevant ist ihre doppelte Wirkung: Sie schafft eine klare Sprache für Hygiene, Licht, Grünraum und Mobilität, verengt Stadt aber zugleich auf funktionale Trennung und planbare Ordnung. Für KosmoData ist sie ein Schlüsseltext für CIAM, funktionale Stadt, Zonierung, Wohnungsfrage und die Kritik an modernistischer Planung.',
+      profile: (tags, _materials, context) => ({
+        headline: 'Charta von Athen: die funktionale Stadt als Regelapparat',
+        overview: 'Die Charta von Athen übersetzt Stadt in Funktionen. Wohnen, Arbeiten, Erholung und Verkehr werden getrennt analysiert und als Grundlage einer rational organisierten Moderne formuliert.',
+        thesis: 'Die These liegt in der funktionalen Lesbarkeit: Stadt soll durch Analyse, Zonierung, Licht, Hygiene und Verkehr neu geordnet werden.',
+        network: 'Im Netzwerk steht die Charta zwischen CIAM, modernistischem Städtebau, Wohnungsreform, Hygiene-Diskurs und späterer Kritik an funktionaler Trennung.',
+        topos: `Der Topos ${context.setting} ist vor allem diskursiv: Die Charta ist ein publiziertes Wissensobjekt, das konkrete Städte über ein theoretisches Raster bewertet.`,
+        typos: 'Typologisch ist sie Theorie, Manifest und Planungsinstrument zugleich. Sie produziert keine Form, sondern Regeln für viele Formen.',
+        tectonics: 'Ihre Tektonik ist begrifflich: Funktion, Zone, Abstand, Verkehr, Grün und Wohnung werden zu Bausteinen eines Planungsmodells.',
+        spatial: 'Die Raumlogik entsteht durch Trennung und Zuordnung. Der Text ordnet Tätigkeiten, Verkehrsströme und Freiräume, bevor er architektonische Gestalt erzeugt.',
+        layers: `Für KosmoData sind Funktionszonen, Wohnungsfrage, Mobilitätsachsen, Grünraum, Kritik und Quellenstatus als Layer relevant. Tags: ${tags}.`,
+        critique: 'Kritisch wichtig ist, dass die Charta zugleich ein historisches Werkzeug und ein Problemfall ist: Ihre Klarheit kann urbane Komplexität reduzieren.',
+        transfer: 'Übertragbar bleibt die Frage, wann Analyse hilft und wann sie Stadt zu stark vereinfacht.'
+      })
+    },
+    'delirious-new-york': {
+      short: 'Delirious New York liest Manhattan als Labor aus Raster, Parzelle, Wolkenkratzer, Programmstapelung und metropolitaner Fantasie.',
+      one: 'Delirious New York zeigt, wie ein Architekturtext aus der Geschichte Manhattans eine Theorie der Dichte, des Schnitts, der Überlagerung und des kontrollierten Wahnsinns entwickelt.',
+      full: 'Delirious New York wird als theoretisches Projekt gelesen. Koolhaas beschreibt Manhattan nicht neutral, sondern rekonstruiert es als ein System aus Grid, Parzelle, Aufzug, Hochhaus, Programmstapelung und spekulativer Imagination. Architektonisch wichtig ist die Methode: Die Stadt wird als Retroactive Manifesto verstanden, in dem gebaute Realität nachträglich als kohärente Entwurfslogik sichtbar wird. Für KosmoData ist der Text zentral für Dichte, Großstadt, Schnittlogik, Hybridprogramm, Theorieproduktion und die Frage, wie Architekturgeschichte selbst als entwerferisches Material benutzt werden kann.',
+      profile: (tags, _materials, context) => ({
+        headline: 'Delirious New York: Manhattan als rückwirkendes Manifest',
+        overview: 'Delirious New York macht die Großstadt zum theoretischen Objekt. Manhattan erscheint als Labor, in dem Raster, Parzelle, Aufzug, Wolkenkratzer und Programmstapelung eine eigene Architektur-DNA erzeugen.',
+        thesis: 'Die These liegt in der rückwirkenden Lesart: Das scheinbar chaotische Manhattan wird als präzise Entwurfsmaschine aus Regeln, Exzess und Spekulation verstanden.',
+        network: 'Im Netzwerk verbindet der Text Hochhausgeschichte, Urban Theory, Metropolitanism, OMA-Denken und spätere Debatten über Dichte, Hybridität und Programm.',
+        topos: `Der Topos ${context.setting} ist Manhattan als kulturelle und räumliche Maschine, nicht nur als geografischer Ort.`,
+        typos: 'Typologisch ist Delirious New York Architekturtheorie, Stadtanalyse und Manifest. Es produziert Begriffe, mit denen Gebäude und Städte neu gelesen werden können.',
+        tectonics: 'Die Tektonik ist hier nicht Materialfügung, sondern Schnittlogik: Grid, Aufzug, Stahlrahmen, Grundstück und Programmstapelung bilden die eigentliche Konstruktion der Theorie.',
+        spatial: 'Raum entsteht im vertikalen Schnitt: unterschiedliche Programme liegen übereinander, ohne eine klassische Einheit bilden zu müssen.',
+        layers: `Für KosmoData sind Grid, Parzelle, Hochhaus, Schnitt, Programmstapelung, Dichte und Theoriebeziehungen als Layer zentral. Tags: ${tags}.`,
+        critique: 'Kritisch bleibt die Frage, ob die Faszination am Exzess soziale, ökonomische und politische Gewalt der Großstadt mitromantisiert.',
+        transfer: 'Übertragbar ist die Methode, Stadtgeschichte als Entwurfswissen zu lesen und daraus operative Begriffe für neue Projekte zu gewinnen.'
+      })
+    }
+  };
+  return items[entry.slug] || null;
+}
+
 function normalizeMedia(entry, localSources = []) {
   const byType = new Map((entry.media || []).map((item) => [item.type, item]));
   const heroOverride = localSources.find((source) => source.hero_media)?.hero_media || null;
@@ -563,6 +661,8 @@ function normalizeMedia(entry, localSources = []) {
 }
 
 function improvedShortDescription(entry, materials, program) {
+  const curated = curatedNarrative(entry);
+  if (curated) return curated.short;
   if (program.type === 'architectural_treatise') {
     return `${entry.title} verbindet Traktat, Zeichnung, Proportion und klassische Ordnungslehre zu einem übertragbaren Architekturmodell.`;
   }
@@ -591,6 +691,8 @@ function improvedShortDescription(entry, materials, program) {
 }
 
 function improvedOneSentence(entry, materials, program) {
+  const curated = curatedNarrative(entry);
+  if (curated) return curated.one;
   if (program.type === 'architectural_treatise') {
     return `${entry.title} zeigt, wie Text, Bild, Proportion und antike Referenz zu einem reproduzierbaren Regelwerk architektonischen Wissens werden.`;
   }
@@ -613,6 +715,8 @@ function improvedOneSentence(entry, materials, program) {
 }
 
 function improvedFullDescription(entry, materials, program, context) {
+  const curated = curatedNarrative(entry);
+  if (curated) return curated.full;
   if (program.type === 'architectural_treatise') {
     return `${entry.title} wird als Wissensobjekt gelesen: Der Traktat übersetzt antike Ordnung, Proportion, Villentypologien und Zeichnung in ein transportierbares architektonisches Regelwerk. Für KosmoData ist er weniger ein Gebäude als ein Betriebssystem der klassischen Architektur, aus dem Vergleichsachsen, Planlogiken, Referenzfamilien und spätere Analyse-Layer abgeleitet werden.`;
   }
