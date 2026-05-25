@@ -135,9 +135,11 @@ function checkContextSelection() {
   const sourceMappingPath = join(projectRoot, 'design/context-source-mapping.json');
   const sourceReviewPath = join(projectRoot, 'design/context-source-review.generated.json');
   const ifcSemanticProofPath = join(projectRoot, 'design/ifc-semantic-proof.generated.json');
+  const ifcOpenShellReviewPath = join(projectRoot, 'design/ifcopenshell-semantic-review.generated.json');
   const ifcGeometryPreviewPath = join(projectRoot, 'design/ifc-geometry-preview.generated.json');
   const ifcDxfAlignmentPreviewPath = join(projectRoot, 'design/ifc-dxf-alignment-preview.generated.json');
   const ifcLayerPlanPath = join(projectRoot, 'design/ifc-layer-plan.generated.json');
+  const ifcHumanReviewPackPath = join(projectRoot, 'design/ifc-human-review-pack.generated.json');
   const modelLayerHandoffPath = join(projectRoot, 'design/model-layer-handoff.generated.json');
   const contextHandoffPath = join(projectRoot, 'design/context-handoff.generated.json');
   const blenderContextImportPath = join(projectRoot, 'design/blender-context-import.generated.json');
@@ -150,15 +152,18 @@ function checkContextSelection() {
   const sourceMapping = existsSync(sourceMappingPath) ? readJson(sourceMappingPath) : null;
   const sourceReview = existsSync(sourceReviewPath) ? readJson(sourceReviewPath) : null;
   const ifcSemanticProof = existsSync(ifcSemanticProofPath) ? readJson(ifcSemanticProofPath) : null;
+  const ifcOpenShellReview = existsSync(ifcOpenShellReviewPath) ? readJson(ifcOpenShellReviewPath) : null;
   const ifcGeometryPreview = existsSync(ifcGeometryPreviewPath) ? readJson(ifcGeometryPreviewPath) : null;
   const ifcDxfAlignmentPreview = existsSync(ifcDxfAlignmentPreviewPath) ? readJson(ifcDxfAlignmentPreviewPath) : null;
   const ifcLayerPlan = existsSync(ifcLayerPlanPath) ? readJson(ifcLayerPlanPath) : null;
+  const ifcHumanReviewPack = existsSync(ifcHumanReviewPackPath) ? readJson(ifcHumanReviewPackPath) : null;
   const modelLayerHandoff = existsSync(modelLayerHandoffPath) ? readJson(modelLayerHandoffPath) : null;
   const contextHandoff = existsSync(contextHandoffPath) ? readJson(contextHandoffPath) : null;
   const blenderContextImport = existsSync(blenderContextImportPath) ? readJson(blenderContextImportPath) : null;
   const blenderContextSmoke = existsSync(blenderContextSmokePath) ? readJson(blenderContextSmokePath) : null;
   const blenderContextAudit = existsSync(blenderContextAuditPath) ? readJson(blenderContextAuditPath) : null;
   const ifcGeometryPreviewReady = isIfcGeometryPreviewReady(ifcGeometryPreview);
+  const ifcOpenShellReviewReady = isIfcOpenShellReviewReady(ifcOpenShellReview);
   const ifcDxfAlignmentPreviewReady = isIfcDxfAlignmentPreviewReady(ifcDxfAlignmentPreview);
   const ifcLayerPlanReady = isIfcLayerPlanReady(ifcLayerPlan);
   const modelLayerHandoffReady = isModelLayerHandoffReady(modelLayerHandoff);
@@ -192,6 +197,9 @@ function checkContextSelection() {
   if (sourceReview?.summary?.design_seed_possible_after_review_count > 0 && !ifcSemanticProof) {
     warnings.push('Context source review has an IFC design-seed candidate, but design/ifc-semantic-proof.generated.json is missing.');
   }
+  if (sourceReview?.summary?.design_seed_possible_after_review_count > 0 && !ifcOpenShellReviewReady) {
+    warnings.push('Context source review has an IFC design-seed candidate, but design/ifcopenshell-semantic-review.generated.json is missing or incomplete.');
+  }
   if (ifcSemanticProof?.summary?.ifcbuildingelementproxy_count > 0 && !ifcGeometryPreviewReady) {
     warnings.push('IFC semantic proof exists, but design/ifc-geometry-preview.generated.json is missing or still pending.');
   }
@@ -200,6 +208,12 @@ function checkContextSelection() {
   }
   if (ifcGeometryPreviewReady && !ifcLayerPlanReady) {
     warnings.push('IFC geometry preview exists, but design/ifc-layer-plan.generated.json is missing or still pending.');
+  }
+  if (sourceReview?.summary?.open_human_review_count > 0 && ifcLayerPlanReady && !ifcHumanReviewPack) {
+    warnings.push('IFC source review has open human checks, but design/ifc-human-review-pack.generated.json is missing.');
+  }
+  if (ifcHumanReviewPack && ifcHumanReviewPack.summary?.evidence_ready !== true) {
+    warnings.push('IFC human review pack exists, but machine evidence is not ready.');
   }
   if (ifcLayerPlanReady && !modelLayerHandoffReady) {
     warnings.push('IFC layer plan exists, but design/model-layer-handoff.generated.json is missing or still pending.');
@@ -251,6 +265,15 @@ function isIfcGeometryPreviewReady(preview) {
     preview
       && preview.status === 'ifc_geometry_preview_ready_for_human_review'
       && preview.summary?.elements_with_geometry_bbox > 0
+  );
+}
+
+function isIfcOpenShellReviewReady(review) {
+  return Boolean(
+    review
+      && review.status === 'ifcopenshell_semantic_review_ready'
+      && review.summary?.ifcbuildingelementproxy_count > 0
+      && review.summary?.machine_checks_passed === review.summary?.machine_check_count
   );
 }
 

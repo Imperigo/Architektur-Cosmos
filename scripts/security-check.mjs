@@ -10,6 +10,7 @@ const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..'
 const ignoredDirs = new Set([
   '.git',
   '.next',
+  '.venv-kosmo-ifc',
   'node_modules',
   'out',
   'archive-inbox',

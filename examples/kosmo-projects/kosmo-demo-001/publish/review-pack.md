@@ -1,6 +1,6 @@
 # Kosmo Demo 001 Review Pack
 
-Generated: 2026-05-25T20:56:16.411Z
+Generated: 2026-05-25T21:11:24.273Z
 Project ID: `kosmo-demo-001`
 Risk level: `local_review_only`
 Readiness: `review_required`
@@ -74,6 +74,13 @@ Readiness: `review_required`
 - ok: `design/blender-context-import.generated.json` (design, other, generated_needs_review)
 - ok: `design/blender-context-import.generated.md` (design, other, generated_needs_review)
 - ok: `design/blender-context-import.generated.py` (design, other, generated_needs_review)
+- ok: `design/ifc-human-review-pack.generated.json` (design, other, generated_needs_review)
+- ok: `design/ifc-human-review-pack.generated.md` (design, other, generated_needs_review)
+- ok: `design/ifc-dxf-alignment-preview.generated.json` (design, other, generated_needs_review)
+- ok: `design/ifc-dxf-alignment-preview.generated.md` (design, other, generated_needs_review)
+- ok: `viz/previews/ifc-dxf-alignment-preview.svg` (viz, viz_preview, generated_needs_review)
+- ok: `design/ifcopenshell-semantic-review.generated.json` (design, other, generated_needs_review)
+- ok: `design/ifcopenshell-semantic-review.generated.md` (design, other, generated_needs_review)
 
 ## Context Selection
 
@@ -113,23 +120,33 @@ Readiness: `review_required`
 - IFC semantic contained proxies: 2
 - IFC semantic proxies with property sets: 2
 - IFC semantic integrity score: 1
+- IfcOpenShell review: ready
+- IfcOpenShell version: 0.8.5
+- IfcOpenShell machine checks: 13/13
+- IfcOpenShell unit scale: 1
+- IfcOpenShell proxies / Body-Brep: 2/2
 - IFC geometry preview: ready
 - IFC geometry preview elements: 2
 - IFC geometry preview bboxes: 2
 - IFC geometry preview faces: 12
 - IFC geometry preview extents: 10 x 8 x 3.35 m
-- IFC/DXF alignment preview: missing
+- IFC/DXF alignment preview: pending (missing_dxf_source)
 - IFC/DXF alignment DXF polylines: 0
-- IFC/DXF alignment IFC bboxes: 0
+- IFC/DXF alignment IFC bboxes: 2
 - IFC/DXF alignment center offset: 0 m
 - IFC/DXF alignment overlap ratio: 0
-- IFC/DXF alignment hint: -
+- IFC/DXF alignment hint: missing_dxf_source
 - IFC layer plan: ready
 - IFC layer plan elements: 2
 - IFC layer plan groups: 5
 - IFC layer plan material groups: 1
 - IFC layer plan structure elements: 2
 - IFC layer plan facade elements: 1
+- IFC human review pack: pending (ifc_human_review_packet_incomplete)
+- IFC human review pack evidence ready: no
+- IFC human review pack machine checks: 12/15
+- IFC human review pack open human checks: 10
+- IFC human review pack recommended decision: keep_needs_more_source_review
 - model layer handoff: ready
 - model layer handoff layer exports: 5
 - model layer handoff planned GLBs: 5
@@ -198,6 +215,13 @@ Readiness: `review_required`
 - Generated output needs review: design/blender-context-import.generated.json
 - Generated output needs review: design/blender-context-import.generated.md
 - Generated output needs review: design/blender-context-import.generated.py
+- Generated output needs review: design/ifc-human-review-pack.generated.json
+- Generated output needs review: design/ifc-human-review-pack.generated.md
+- Generated output needs review: design/ifc-dxf-alignment-preview.generated.json
+- Generated output needs review: design/ifc-dxf-alignment-preview.generated.md
+- Generated output needs review: viz/previews/ifc-dxf-alignment-preview.svg
+- Generated output needs review: design/ifcopenshell-semantic-review.generated.json
+- Generated output needs review: design/ifcopenshell-semantic-review.generated.md
 - Context selection still has undecided candidates: 2
 - Context source mapping still has pending review rows: 1
 

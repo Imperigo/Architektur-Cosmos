@@ -150,6 +150,15 @@
       "approval_required_before_public_use": false
     },
     {
+      "id": "kosmo_ifcopenshell_review",
+      "label": "Kosmo IfcOpenShell Review",
+      "command": "npm run kosmo:ifcopenshell-review -- --project {project_path}",
+      "output_root": "{project_path}/design",
+      "review_output": "{project_path}/design/ifcopenshell-semantic-review.generated.md",
+      "purpose": "Open the IFC through IfcOpenShell and verify schema, units, project hierarchy, storeys, element classes, placements, representations and property sets without generating design geometry.",
+      "approval_required_before_public_use": false
+    },
+    {
       "id": "kosmo_ifc_geometry_preview",
       "label": "Kosmo IFC Geometry Preview",
       "command": "npm run kosmo:ifc-geometry-preview -- --project {project_path}",
@@ -183,6 +192,15 @@
       "output_root": "{project_path}/design",
       "review_output": "{project_path}/design/ifc-layer-plan.generated.md",
       "purpose": "Translate reviewed IFC semantic and geometry evidence into review-only Blender collections, ArchiCAD layers and material/structure layer groups before any model export.",
+      "approval_required_before_public_use": false
+    },
+    {
+      "id": "kosmo_ifc_human_review_pack",
+      "label": "Kosmo IFC Human Review Pack",
+      "command": "npm run kosmo:ifc-human-review-pack -- --project {project_path}",
+      "output_root": "{project_path}/design",
+      "review_output": "{project_path}/design/ifc-human-review-pack.generated.md",
+      "purpose": "Gather IFC semantic proof, geometry preview, DXF alignment, layer plan and Blender audit into a human checklist before any IFC design-seed approval.",
       "approval_required_before_public_use": false
     },
     {

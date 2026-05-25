@@ -370,6 +370,55 @@
       "module": "design",
       "rights_status": "generated_needs_review",
       "description": "Generated Blender Python script for locked context review objects."
+    },
+    {
+      "path": "design/ifc-human-review-pack.generated.json",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Machine evidence and human checklist for IFC semantic review."
+    },
+    {
+      "path": "design/ifc-human-review-pack.generated.md",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Human-readable IFC semantic review checklist."
+    },
+    {
+      "path": "design/ifc-dxf-alignment-preview.generated.json",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Read-only IFC/DXF overlay preview before design-seed review."
+    },
+    {
+      "path": "design/ifc-dxf-alignment-preview.generated.md",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Human-readable IFC/DXF alignment preview before design-seed review."
+    },
+    {
+      "path": "viz/previews/ifc-dxf-alignment-preview.svg",
+      "type": "viz_preview",
+      "module": "viz",
+      "rights_status": "generated_needs_review",
+      "description": "SVG overlay of accepted DXF context polylines and IFC geometry bboxes."
+    },
+    {
+      "path": "design/ifcopenshell-semantic-review.generated.json",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "IfcOpenShell semantic IFC review report."
+    },
+    {
+      "path": "design/ifcopenshell-semantic-review.generated.md",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Human-readable IfcOpenShell semantic IFC review report."
     }
   ],
   "review_gates": {

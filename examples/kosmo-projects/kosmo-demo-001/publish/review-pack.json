@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-25T20:56:16.411Z",
+  "generated_at": "2026-05-25T21:11:24.273Z",
   "generator": "kosmo-project-package-review",
   "project": {
     "id": "kosmo-demo-001",
@@ -21,7 +21,7 @@
   "package_check": {
     "ok": true,
     "command": "npm run kosmo:package-check -- --project examples/kosmo-projects/kosmo-demo-001",
-    "output": "> architecture-cosmos@0.1.0 kosmo:package-check\n> node scripts/kosmo-project-package-check.mjs --project examples/kosmo-projects/kosmo-demo-001\n\nKosmo project package check\nProject: examples/kosmo-projects/kosmo-demo-001\nSchema: schema/kosmo-project-package.schema.json\n\nWarnings:\n- Context selection has undecided candidates: 2\n- Context source mapping has pending review rows: 1\n\nPackage check passed."
+    "output": "> architecture-cosmos@0.1.0 kosmo:package-check\n> node scripts/kosmo-project-package-check.mjs --project examples/kosmo-projects/kosmo-demo-001\n\nKosmo project package check\nProject: examples/kosmo-projects/kosmo-demo-001\nSchema: schema/kosmo-project-package.schema.json\n\nWarnings:\n- Context selection has undecided candidates: 2\n- Context source mapping has pending review rows: 1\n- IFC human review pack exists, but machine evidence is not ready.\n\nPackage check passed."
   },
   "module_summary": {
     "total": 8,
@@ -230,7 +230,7 @@
       "rights_status": "internal_only",
       "description": "Local review package scaffold.",
       "exists": true,
-      "size_bytes": 10699
+      "size_bytes": 12154
     },
     {
       "path": "design/context-decision-matrix.generated.json",
@@ -492,6 +492,69 @@
       "description": "Generated Blender Python script for locked context review objects.",
       "exists": true,
       "size_bytes": 12077
+    },
+    {
+      "path": "design/ifc-human-review-pack.generated.json",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Machine evidence and human checklist for IFC semantic review.",
+      "exists": true,
+      "size_bytes": 20176
+    },
+    {
+      "path": "design/ifc-human-review-pack.generated.md",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Human-readable IFC semantic review checklist.",
+      "exists": true,
+      "size_bytes": 5781
+    },
+    {
+      "path": "design/ifc-dxf-alignment-preview.generated.json",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Read-only IFC/DXF overlay preview before design-seed review.",
+      "exists": true,
+      "size_bytes": 3994
+    },
+    {
+      "path": "design/ifc-dxf-alignment-preview.generated.md",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Human-readable IFC/DXF alignment preview before design-seed review.",
+      "exists": true,
+      "size_bytes": 999
+    },
+    {
+      "path": "viz/previews/ifc-dxf-alignment-preview.svg",
+      "type": "viz_preview",
+      "module": "viz",
+      "rights_status": "generated_needs_review",
+      "description": "SVG overlay of accepted DXF context polylines and IFC geometry bboxes.",
+      "exists": true,
+      "size_bytes": 2792
+    },
+    {
+      "path": "design/ifcopenshell-semantic-review.generated.json",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "IfcOpenShell semantic IFC review report.",
+      "exists": true,
+      "size_bytes": 5871
+    },
+    {
+      "path": "design/ifcopenshell-semantic-review.generated.md",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Human-readable IfcOpenShell semantic IFC review report.",
+      "exists": true,
+      "size_bytes": 2310
     }
   ],
   "context_review": {
@@ -535,6 +598,15 @@
     "ifc_semantic_proof_property_set_element_count": 2,
     "ifc_semantic_proof_integrity_score": 1,
     "ifc_semantic_proof_design_seed_approved": false,
+    "ifcopenshell_review_exists": true,
+    "ifcopenshell_review_status": "ifcopenshell_semantic_review_ready",
+    "ifcopenshell_review_ready": true,
+    "ifcopenshell_review_version": "0.8.5",
+    "ifcopenshell_review_machine_checks_passed": 13,
+    "ifcopenshell_review_machine_check_count": 13,
+    "ifcopenshell_review_unit_scale": 1,
+    "ifcopenshell_review_proxy_count": 2,
+    "ifcopenshell_review_body_brep_count": 2,
     "ifc_geometry_preview_exists": true,
     "ifc_geometry_preview_status": "ifc_geometry_preview_ready_for_human_review",
     "ifc_geometry_preview_ready": true,
@@ -544,14 +616,14 @@
     "ifc_geometry_preview_width": 10,
     "ifc_geometry_preview_depth": 8,
     "ifc_geometry_preview_height": 3.35,
-    "ifc_dxf_alignment_preview_exists": false,
-    "ifc_dxf_alignment_preview_status": null,
+    "ifc_dxf_alignment_preview_exists": true,
+    "ifc_dxf_alignment_preview_status": "missing_dxf_source",
     "ifc_dxf_alignment_preview_ready": false,
     "ifc_dxf_alignment_dxf_polyline_count": 0,
-    "ifc_dxf_alignment_ifc_bbox_count": 0,
+    "ifc_dxf_alignment_ifc_bbox_count": 2,
     "ifc_dxf_alignment_center_offset": 0,
     "ifc_dxf_alignment_overlap_ratio": 0,
-    "ifc_dxf_alignment_hint": null,
+    "ifc_dxf_alignment_hint": "missing_dxf_source",
     "ifc_layer_plan_exists": true,
     "ifc_layer_plan_status": "ifc_layer_plan_ready_for_human_review",
     "ifc_layer_plan_ready": true,
@@ -560,6 +632,13 @@
     "ifc_layer_plan_material_group_count": 1,
     "ifc_layer_plan_structure_element_count": 2,
     "ifc_layer_plan_facade_element_count": 1,
+    "ifc_human_review_pack_exists": true,
+    "ifc_human_review_pack_status": "ifc_human_review_packet_incomplete",
+    "ifc_human_review_pack_evidence_ready": false,
+    "ifc_human_review_pack_machine_checks_passed": 12,
+    "ifc_human_review_pack_machine_check_count": 15,
+    "ifc_human_review_pack_open_human_check_count": 10,
+    "ifc_human_review_pack_recommended_decision": "keep_needs_more_source_review",
     "model_layer_handoff_exists": true,
     "model_layer_handoff_status": "model_layer_handoff_ready_for_human_review",
     "model_layer_handoff_ready": true,
@@ -715,6 +794,13 @@
     "Generated output needs review: design/blender-context-import.generated.json",
     "Generated output needs review: design/blender-context-import.generated.md",
     "Generated output needs review: design/blender-context-import.generated.py",
+    "Generated output needs review: design/ifc-human-review-pack.generated.json",
+    "Generated output needs review: design/ifc-human-review-pack.generated.md",
+    "Generated output needs review: design/ifc-dxf-alignment-preview.generated.json",
+    "Generated output needs review: design/ifc-dxf-alignment-preview.generated.md",
+    "Generated output needs review: viz/previews/ifc-dxf-alignment-preview.svg",
+    "Generated output needs review: design/ifcopenshell-semantic-review.generated.json",
+    "Generated output needs review: design/ifcopenshell-semantic-review.generated.md",
     "Context selection still has undecided candidates: 2",
     "Context source mapping still has pending review rows: 1"
   ],

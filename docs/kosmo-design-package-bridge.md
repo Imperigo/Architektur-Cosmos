@@ -250,6 +250,13 @@ prueft `IFCBUILDINGELEMENTPROXY`, Spatial Containment, Placement,
 Product-Shape-Referenzen und Property Sets, importiert aber keine Geometrie und
 setzt keine Design-Freigabe.
 
+`npm run kosmo:ifcopenshell-review -- --project <projektpfad>` oeffnet dieselbe
+IFC-Datei mit IfcOpenShell und schreibt
+`design/ifcopenshell-semantic-review.generated.md/json`. Dieser echte
+semantische Import prueft Schema, Einheiten, Project/Site/Building/Storey,
+Elementklassen, Placements, Body/Brep-Repräsentationen und Property Sets. Auch
+dieser Schritt ist nur Review-Evidence und erzeugt keine Designgeometrie.
+
 `npm run kosmo:ifc-geometry-preview -- --project <projektpfad>` erzeugt
 `design/ifc-geometry-preview.generated.md/json` und
 `viz/previews/ifc-geometry-preview.svg`. Der Preview loest facettierte
@@ -272,6 +279,14 @@ setzt keine Design-Freigabe.
 Geometriepreview in vorgeschlagene Blender-Collections, ArchiCAD-Layer,
 Materialgruppen und geplante GLB-Pfade. Er erzeugt keine GLB-Dateien und setzt
 `approved_for_import` nicht selbst.
+
+`npm run kosmo:ifc-human-review-pack -- --project <projektpfad>` erzeugt
+`design/ifc-human-review-pack.generated.md/json`. Der Pack fasst
+IFC-Semantikproof, Geometriepreview, IFC/DXF-Alignment, Layerplan und
+Blender-Audit in eine menschliche Pruefliste zusammen. Er ist kein Approval,
+sondern das Dossier fuer die Entscheidung, ob der IFC-Kandidat weiter
+`needs_more_source_review`, nur `accepted_as_context` oder spaeter
+`accepted_as_design_seed` werden darf.
 
 `npm run kosmo:context-handoff -- --project <projektpfad>` erzeugt
 `design/context-handoff.generated.md/json`. Der Handoff sammelt akzeptierte
@@ -310,8 +325,10 @@ Repo-Smoke ohne private Daten:
 ```bash
 npm run kosmo:context-source-map -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:ifc-semantic-proof -- --project examples/kosmo-projects/kosmo-demo-001
+npm run kosmo:ifcopenshell-review -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:ifc-geometry-preview -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:ifc-layer-plan -- --project examples/kosmo-projects/kosmo-demo-001
+npm run kosmo:ifc-human-review-pack -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:context-source-mapping -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:context-handoff -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:model-layer-handoff -- --project examples/kosmo-projects/kosmo-demo-001
@@ -506,6 +523,34 @@ Status: lokal bestanden. Der Audit oeffnet
 `design/blender-context-import.audit.json`. Der ZG-Audit bestaetigt 6
 gesperrte Review-Objekte, 0 Mesh-Faces, 4'000 DXF-Polylines und 282
 IFC-Bounding-Box-Proxies.
+
+IfcOpenShell Semantic Review:
+
+```bash
+npm run kosmo:ifcopenshell-review -- \
+  --project archive-intake/kosmo-projects/zg-07052026
+```
+
+Status: lokal bestanden mit IfcOpenShell 0.8.5 in der isolierten Umgebung
+`.venv-kosmo-ifc`. Der Review bestaetigt IFC4, Meter-Units, 1 Project, 1 Site,
+1 Building, 1 Storey, 282 `IfcBuildingElementProxy`, 282 Body/Brep-
+Repräsentationen, 282 Placements und 282 Property-Set-Zuordnungen. Die
+verteilten `OBJEKTART`-Werte werden in
+`design/ifcopenshell-semantic-review.generated.md/json` dokumentiert.
+
+IFC Human Review Pack:
+
+```bash
+npm run kosmo:ifc-human-review-pack -- \
+  --project archive-intake/kosmo-projects/zg-07052026
+```
+
+Status: lokal generiert. Der Pack buendelt Semantic Proof, Geometriepreview,
+DXF-Alignment, Layerplan und Blender-Audit in
+`design/ifc-human-review-pack.generated.md/json`. Die maschinelle Evidence ist
+bereit, aber die Entscheidung bleibt `keep_needs_more_source_review`, bis ein
+Mensch die IFC in Bonsai/IfcOpenShell oder einem gleichwertigen semantischen
+IFC-Viewer geprueft hat.
 
 Danach erzeugt der Orbit-Befehl
 `npm run kosmo:context-selection -- --project archive-intake/kosmo-projects/zg-07052026`

@@ -195,9 +195,11 @@ function readContextReview() {
   const sourceMappingPath = join(projectRoot, 'design/context-source-mapping.json');
   const sourceReviewPath = join(projectRoot, 'design/context-source-review.generated.json');
   const ifcSemanticProofPath = join(projectRoot, 'design/ifc-semantic-proof.generated.json');
+  const ifcOpenShellReviewPath = join(projectRoot, 'design/ifcopenshell-semantic-review.generated.json');
   const ifcGeometryPreviewPath = join(projectRoot, 'design/ifc-geometry-preview.generated.json');
   const ifcDxfAlignmentPreviewPath = join(projectRoot, 'design/ifc-dxf-alignment-preview.generated.json');
   const ifcLayerPlanPath = join(projectRoot, 'design/ifc-layer-plan.generated.json');
+  const ifcHumanReviewPackPath = join(projectRoot, 'design/ifc-human-review-pack.generated.json');
   const modelLayerHandoffPath = join(projectRoot, 'design/model-layer-handoff.generated.json');
   const contextHandoffPath = join(projectRoot, 'design/context-handoff.generated.json');
   const blenderContextImportPath = join(projectRoot, 'design/blender-context-import.generated.json');
@@ -210,9 +212,11 @@ function readContextReview() {
   const sourceMapping = existsSync(sourceMappingPath) ? safeReadJson(sourceMappingPath) : null;
   const sourceReview = existsSync(sourceReviewPath) ? safeReadJson(sourceReviewPath) : null;
   const ifcSemanticProof = existsSync(ifcSemanticProofPath) ? safeReadJson(ifcSemanticProofPath) : null;
+  const ifcOpenShellReview = existsSync(ifcOpenShellReviewPath) ? safeReadJson(ifcOpenShellReviewPath) : null;
   const ifcGeometryPreview = existsSync(ifcGeometryPreviewPath) ? safeReadJson(ifcGeometryPreviewPath) : null;
   const ifcDxfAlignmentPreview = existsSync(ifcDxfAlignmentPreviewPath) ? safeReadJson(ifcDxfAlignmentPreviewPath) : null;
   const ifcLayerPlan = existsSync(ifcLayerPlanPath) ? safeReadJson(ifcLayerPlanPath) : null;
+  const ifcHumanReviewPack = existsSync(ifcHumanReviewPackPath) ? safeReadJson(ifcHumanReviewPackPath) : null;
   const modelLayerHandoff = existsSync(modelLayerHandoffPath) ? safeReadJson(modelLayerHandoffPath) : null;
   const contextHandoff = existsSync(contextHandoffPath) ? safeReadJson(contextHandoffPath) : null;
   const blenderContextImport = existsSync(blenderContextImportPath) ? safeReadJson(blenderContextImportPath) : null;
@@ -265,6 +269,15 @@ function readContextReview() {
     ifc_semantic_proof_property_set_element_count: numberOrDefault(ifcSemanticProof?.summary?.elements_with_property_sets, 0),
     ifc_semantic_proof_integrity_score: numberOrDefault(ifcSemanticProof?.summary?.semantic_integrity_score, 0),
     ifc_semantic_proof_design_seed_approved: Boolean(ifcSemanticProof?.summary?.design_seed_approved),
+    ifcopenshell_review_exists: Boolean(ifcOpenShellReview),
+    ifcopenshell_review_status: ifcOpenShellReview?.status || null,
+    ifcopenshell_review_ready: isIfcOpenShellReviewReady(ifcOpenShellReview),
+    ifcopenshell_review_version: ifcOpenShellReview?.summary?.ifcopenshell_version || null,
+    ifcopenshell_review_machine_checks_passed: numberOrDefault(ifcOpenShellReview?.summary?.machine_checks_passed, 0),
+    ifcopenshell_review_machine_check_count: numberOrDefault(ifcOpenShellReview?.summary?.machine_check_count, 0),
+    ifcopenshell_review_unit_scale: numberOrDefault(ifcOpenShellReview?.summary?.unit_scale, 0),
+    ifcopenshell_review_proxy_count: numberOrDefault(ifcOpenShellReview?.summary?.ifcbuildingelementproxy_count, 0),
+    ifcopenshell_review_body_brep_count: numberOrDefault(ifcOpenShellReview?.summary?.proxies_with_body_brep, 0),
     ifc_geometry_preview_exists: Boolean(ifcGeometryPreview),
     ifc_geometry_preview_status: ifcGeometryPreview?.status || null,
     ifc_geometry_preview_ready: isIfcGeometryPreviewReady(ifcGeometryPreview),
@@ -290,6 +303,13 @@ function readContextReview() {
     ifc_layer_plan_material_group_count: numberOrDefault(ifcLayerPlan?.summary?.material_group_count, 0),
     ifc_layer_plan_structure_element_count: numberOrDefault(ifcLayerPlan?.summary?.structure_element_count, 0),
     ifc_layer_plan_facade_element_count: numberOrDefault(ifcLayerPlan?.summary?.facade_element_count, 0),
+    ifc_human_review_pack_exists: Boolean(ifcHumanReviewPack),
+    ifc_human_review_pack_status: ifcHumanReviewPack?.status || null,
+    ifc_human_review_pack_evidence_ready: Boolean(ifcHumanReviewPack?.summary?.evidence_ready),
+    ifc_human_review_pack_machine_checks_passed: numberOrDefault(ifcHumanReviewPack?.summary?.machine_checks_passed, 0),
+    ifc_human_review_pack_machine_check_count: numberOrDefault(ifcHumanReviewPack?.summary?.machine_check_count, 0),
+    ifc_human_review_pack_open_human_check_count: numberOrDefault(ifcHumanReviewPack?.summary?.open_human_check_count, 0),
+    ifc_human_review_pack_recommended_decision: ifcHumanReviewPack?.summary?.recommended_decision_now || null,
     model_layer_handoff_exists: Boolean(modelLayerHandoff),
     model_layer_handoff_status: modelLayerHandoff?.status || null,
     model_layer_handoff_ready: isModelLayerHandoffReady(modelLayerHandoff),
@@ -361,10 +381,12 @@ function nextActions({ modules, gates, blockers, warnings, outputs, contextRevie
   if (contextReview?.selection_exists && contextReview.needs_more_source_review_count > 0 && !contextReview.source_review_exists) actions.push('Create design/context-source-review.generated.json for candidates marked needs_more_source_review.');
   if (contextReview?.selection_exists && contextReview.needs_more_source_review_count > 0) actions.push('Verify sources for context-selection candidates marked needs_more_source_review.');
   if (contextReview?.source_review_design_seed_possible_after_review_count > 0 && !contextReview.ifc_semantic_proof_exists) actions.push('Run npm run kosmo:ifc-semantic-proof for semantic IFC evidence before design-seed review.');
+  if (contextReview?.source_review_design_seed_possible_after_review_count > 0 && !contextReview.ifcopenshell_review_ready) actions.push('Run npm run kosmo:ifcopenshell-review to open the IFC through IfcOpenShell before any design-seed review.');
   if (contextReview?.ifc_semantic_proof_exists && contextReview?.source_review_open_human_review_count > 0) actions.push('Human-review IFC semantic proof before changing IFC source-review decision.');
   if (contextReview?.ifc_semantic_proof_proxy_count > 0 && !contextReview.ifc_geometry_preview_ready) actions.push('Run npm run kosmo:ifc-geometry-preview for a visual IFC top-projection review.');
   if (contextReview?.ifc_geometry_preview_ready && contextReview?.source_mapping_accepted_as_context_count > 0 && !contextReview.ifc_dxf_alignment_preview_ready) actions.push('Run npm run kosmo:ifc-dxf-alignment-preview to compare IFC bboxes with accepted DXF context.');
   if (contextReview?.ifc_geometry_preview_ready && !contextReview.ifc_layer_plan_ready) actions.push('Run npm run kosmo:ifc-layer-plan to propose Blender collections and ArchiCAD layers.');
+  if (contextReview?.source_review_open_human_review_count > 0 && contextReview?.ifc_layer_plan_ready && !contextReview.ifc_human_review_pack_exists) actions.push('Run npm run kosmo:ifc-human-review-pack to gather IFC evidence into a human checklist.');
   if (contextReview?.ifc_layer_plan_ready && !contextReview.model_layer_handoff_ready) actions.push('Run npm run kosmo:model-layer-handoff to create the review-only Blender/ArchiCAD export handoff.');
   if (contextReview?.selection_exists && contextReview?.undecided_count === 0 && contextReview?.accepted_as_context_count > 0 && !contextReview.context_handoff_ready) actions.push('Run npm run kosmo:context-handoff to create the Kosmo Design context-only handoff.');
   if (contextReview?.context_handoff_ready && !contextReview.blender_context_import_ready) actions.push('Run npm run kosmo:blender-context-import to create a locked Blender context review script.');
@@ -490,6 +512,11 @@ function appendContextReview(lines, contextReview) {
   lines.push(`- IFC semantic contained proxies: ${contextReview.ifc_semantic_proof_contained_count}`);
   lines.push(`- IFC semantic proxies with property sets: ${contextReview.ifc_semantic_proof_property_set_element_count}`);
   lines.push(`- IFC semantic integrity score: ${contextReview.ifc_semantic_proof_integrity_score}`);
+  lines.push(`- IfcOpenShell review: ${ifcOpenShellReviewLabel(contextReview)}`);
+  lines.push(`- IfcOpenShell version: ${contextReview.ifcopenshell_review_version || '-'}`);
+  lines.push(`- IfcOpenShell machine checks: ${contextReview.ifcopenshell_review_machine_checks_passed}/${contextReview.ifcopenshell_review_machine_check_count}`);
+  lines.push(`- IfcOpenShell unit scale: ${contextReview.ifcopenshell_review_unit_scale}`);
+  lines.push(`- IfcOpenShell proxies / Body-Brep: ${contextReview.ifcopenshell_review_proxy_count}/${contextReview.ifcopenshell_review_body_brep_count}`);
   lines.push(`- IFC geometry preview: ${ifcGeometryPreviewLabel(contextReview)}`);
   lines.push(`- IFC geometry preview elements: ${contextReview.ifc_geometry_preview_element_count}`);
   lines.push(`- IFC geometry preview bboxes: ${contextReview.ifc_geometry_preview_bbox_count}`);
@@ -507,6 +534,11 @@ function appendContextReview(lines, contextReview) {
   lines.push(`- IFC layer plan material groups: ${contextReview.ifc_layer_plan_material_group_count}`);
   lines.push(`- IFC layer plan structure elements: ${contextReview.ifc_layer_plan_structure_element_count}`);
   lines.push(`- IFC layer plan facade elements: ${contextReview.ifc_layer_plan_facade_element_count}`);
+  lines.push(`- IFC human review pack: ${ifcHumanReviewPackLabel(contextReview)}`);
+  lines.push(`- IFC human review pack evidence ready: ${contextReview.ifc_human_review_pack_evidence_ready ? 'yes' : 'no'}`);
+  lines.push(`- IFC human review pack machine checks: ${contextReview.ifc_human_review_pack_machine_checks_passed}/${contextReview.ifc_human_review_pack_machine_check_count}`);
+  lines.push(`- IFC human review pack open human checks: ${contextReview.ifc_human_review_pack_open_human_check_count}`);
+  lines.push(`- IFC human review pack recommended decision: ${contextReview.ifc_human_review_pack_recommended_decision || '-'}`);
   lines.push(`- model layer handoff: ${modelLayerHandoffLabel(contextReview)}`);
   lines.push(`- model layer handoff layer exports: ${contextReview.model_layer_handoff_layer_export_count}`);
   lines.push(`- model layer handoff planned GLBs: ${contextReview.model_layer_handoff_planned_glb_count}`);
@@ -542,6 +574,15 @@ function isIfcGeometryPreviewReady(preview) {
     preview
       && preview.status === 'ifc_geometry_preview_ready_for_human_review'
       && preview.summary?.elements_with_geometry_bbox > 0
+  );
+}
+
+function isIfcOpenShellReviewReady(review) {
+  return Boolean(
+    review
+      && review.status === 'ifcopenshell_semantic_review_ready'
+      && review.summary?.ifcbuildingelementproxy_count > 0
+      && review.summary?.machine_checks_passed === review.summary?.machine_check_count
   );
 }
 
@@ -603,6 +644,18 @@ function ifcLayerPlanLabel(contextReview) {
   if (!contextReview.ifc_layer_plan_exists) return 'missing';
   if (contextReview.ifc_layer_plan_ready) return 'ready';
   return `pending (${contextReview.ifc_layer_plan_status || 'unknown'})`;
+}
+
+function ifcOpenShellReviewLabel(contextReview) {
+  if (!contextReview.ifcopenshell_review_exists) return 'missing';
+  if (contextReview.ifcopenshell_review_ready) return 'ready';
+  return `pending (${contextReview.ifcopenshell_review_status || 'unknown'})`;
+}
+
+function ifcHumanReviewPackLabel(contextReview) {
+  if (!contextReview.ifc_human_review_pack_exists) return 'missing';
+  if (contextReview.ifc_human_review_pack_evidence_ready) return 'ready';
+  return `pending (${contextReview.ifc_human_review_pack_status || 'unknown'})`;
 }
 
 function modelLayerHandoffLabel(contextReview) {

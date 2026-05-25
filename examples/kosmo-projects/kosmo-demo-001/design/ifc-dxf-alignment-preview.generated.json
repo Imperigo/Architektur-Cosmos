@@ -1,0 +1,161 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-05-25T21:07:01.192Z",
+  "generator": "kosmo-ifc-dxf-alignment-preview",
+  "project_id": "kosmo-demo-001",
+  "status": "missing_dxf_source",
+  "rights_status": "internal_only",
+  "source_files": {
+    "ifc_geometry_preview": {
+      "path": "design/ifc-geometry-preview.generated.json",
+      "name": "ifc-geometry-preview.generated.json",
+      "exists": true,
+      "size_bytes": 5066
+    },
+    "dxf": {
+      "path": "data/source-files/Plangrundlage.dxf",
+      "name": "Plangrundlage.dxf",
+      "exists": false,
+      "size_bytes": 0
+    },
+    "source_mapping": {
+      "path": "design/context-source-mapping.json",
+      "name": "context-source-mapping.json",
+      "exists": true,
+      "size_bytes": 2929
+    },
+    "origin_metadata": null
+  },
+  "preview_svg_path": "viz/previews/ifc-dxf-alignment-preview.svg",
+  "engine": {
+    "name": "kosmo_ifc_dxf_alignment_preview",
+    "note": "Read-only SVG overlay of accepted DXF context polylines and IFC geometry bounding boxes. This is a visual alignment review, not a CAD/BIM import."
+  },
+  "policy": {
+    "preview_does_not_approve_design_generation": true,
+    "preview_does_not_modify_context_selection": true,
+    "dxf_context_is_reference_only": true,
+    "ifc_geometry_is_bbox_review_only": true,
+    "human_alignment_review_required_before_design_seed": true
+  },
+  "origin": null,
+  "summary": {
+    "accepted_dxf_layer_count": 0,
+    "dxf_exists": false,
+    "dxf_total_polyline_count": 0,
+    "dxf_accepted_polyline_count": 0,
+    "dxf_accepted_vertex_count": 0,
+    "dxf_rendered_polyline_count": 0,
+    "ifc_geometry_preview_exists": true,
+    "ifc_geometry_preview_ready": true,
+    "ifc_geometry_bbox_count": 2,
+    "ifc_faces_resolved": 12,
+    "combined_bounds_ready": true,
+    "center_offset_m_estimate": 0,
+    "overlap_ratio_of_smaller_bbox": 0,
+    "ifc_width_m_estimate": 10,
+    "ifc_depth_m_estimate": 8,
+    "dxf_width_m_estimate": 0,
+    "dxf_depth_m_estimate": 0,
+    "width_ratio_ifc_to_dxf": 0,
+    "depth_ratio_ifc_to_dxf": 0,
+    "alignment_hint": "missing_dxf_source",
+    "design_seed_approved": false,
+    "recommended_next_step": "complete_missing_ifc_or_dxf_alignment_inputs"
+  },
+  "accepted_dxf_layers": [],
+  "bounds": {
+    "ifc": {
+      "min": [
+        0,
+        0
+      ],
+      "max": [
+        10,
+        8
+      ]
+    },
+    "dxf": null,
+    "combined": {
+      "min": [
+        0,
+        0
+      ],
+      "max": [
+        10,
+        8
+      ]
+    }
+  },
+  "dxf_layer_stats": [],
+  "dxf_polyline_sample": [],
+  "ifc_element_sample": [
+    {
+      "step_id": 130,
+      "global_id": "KOSMO_WALL_001",
+      "name": "Demo Wall",
+      "object_placement_ref": 12,
+      "representation_ref": 129,
+      "product_shape_representation_count": 1,
+      "brep_count": 1,
+      "face_count": 6,
+      "loop_count": 6,
+      "unique_point_count": 8,
+      "has_geometry_bbox": true,
+      "geometry_bbox": {
+        "min": [
+          0,
+          0,
+          0
+        ],
+        "max": [
+          10,
+          0.4,
+          3
+        ]
+      },
+      "footprint_area_m2_estimate": 4,
+      "height_m_estimate": 3,
+      "placement_origin": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "step_id": 230,
+      "global_id": "KOSMO_SLAB_001",
+      "name": "Demo Slab",
+      "object_placement_ref": 12,
+      "representation_ref": 229,
+      "product_shape_representation_count": 1,
+      "brep_count": 1,
+      "face_count": 6,
+      "loop_count": 6,
+      "unique_point_count": 8,
+      "has_geometry_bbox": true,
+      "geometry_bbox": {
+        "min": [
+          0,
+          0,
+          3
+        ],
+        "max": [
+          10,
+          8,
+          3.35
+        ]
+      },
+      "footprint_area_m2_estimate": 80,
+      "height_m_estimate": 0.35,
+      "placement_origin": [
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "next_actions": [
+    "Register a local DXF source before alignment review."
+  ]
+}
