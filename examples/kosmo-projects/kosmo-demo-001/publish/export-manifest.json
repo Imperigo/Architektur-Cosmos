@@ -217,6 +217,34 @@
       "format": "markdown",
       "status": "generated_needs_review",
       "rights_status": "generated_needs_review"
+    },
+    {
+      "path": "design/model-layer-handoff.generated.json",
+      "module": "Kosmo Design",
+      "format": "json",
+      "status": "generated_needs_review",
+      "rights_status": "generated_needs_review"
+    },
+    {
+      "path": "design/model-layer-handoff.generated.md",
+      "module": "Kosmo Design",
+      "format": "markdown",
+      "status": "generated_needs_review",
+      "rights_status": "generated_needs_review"
+    },
+    {
+      "path": "design/blender-collection-handoff.generated.py",
+      "module": "Kosmo Design",
+      "format": "python",
+      "status": "generated_needs_review",
+      "rights_status": "generated_needs_review"
+    },
+    {
+      "path": "design/archicad-layer-schedule.generated.csv",
+      "module": "Kosmo Design",
+      "format": "csv",
+      "status": "generated_needs_review",
+      "rights_status": "generated_needs_review"
     }
   ]
 }

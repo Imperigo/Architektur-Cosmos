@@ -1,6 +1,6 @@
 # Kosmo Demo 001 Review Pack
 
-Generated: 2026-05-25T19:39:53.054Z
+Generated: 2026-05-25T19:56:39.741Z
 Project ID: `kosmo-demo-001`
 Risk level: `local_review_only`
 Readiness: `review_required`
@@ -67,6 +67,10 @@ Readiness: `review_required`
 - ok: `viz/previews/ifc-layer-plan.svg` (viz, render_preview, generated_needs_review)
 - ok: `design/context-handoff.generated.json` (design, other, generated_needs_review)
 - ok: `design/context-handoff.generated.md` (design, other, generated_needs_review)
+- ok: `design/model-layer-handoff.generated.json` (design, other, generated_needs_review)
+- ok: `design/model-layer-handoff.generated.md` (design, other, generated_needs_review)
+- ok: `design/blender-collection-handoff.generated.py` (design, other, generated_needs_review)
+- ok: `design/archicad-layer-schedule.generated.csv` (design, other, generated_needs_review)
 
 ## Context Selection
 
@@ -123,6 +127,12 @@ Readiness: `review_required`
 - IFC layer plan material groups: 1
 - IFC layer plan structure elements: 2
 - IFC layer plan facade elements: 1
+- model layer handoff: ready
+- model layer handoff layer exports: 5
+- model layer handoff planned GLBs: 5
+- model layer handoff Blender collections: 5
+- model layer handoff ArchiCAD layers: 5
+- model layer handoff GLB export allowed: no
 - context handoff: pending (context_handoff_pending_review)
 - context handoff mode: context_reference_only
 - context handoff context inputs: 0
@@ -163,6 +173,10 @@ Readiness: `review_required`
 - Generated output needs review: viz/previews/ifc-layer-plan.svg
 - Generated output needs review: design/context-handoff.generated.json
 - Generated output needs review: design/context-handoff.generated.md
+- Generated output needs review: design/model-layer-handoff.generated.json
+- Generated output needs review: design/model-layer-handoff.generated.md
+- Generated output needs review: design/blender-collection-handoff.generated.py
+- Generated output needs review: design/archicad-layer-schedule.generated.csv
 - Context selection still has undecided candidates: 2
 - Context source mapping still has pending review rows: 1
 

@@ -1,0 +1,6 @@
+layer_key,archicad_layer,element_count,planned_glb_path,permission,review_status
+mass,KOSMO_KOSMO_DEMO_001_MASS,1,models/kosmo-demo-001/mass.glb,review_shell_only,generated_needs_human_layer_review
+structure,KOSMO_KOSMO_DEMO_001_STRUCTURE,2,models/kosmo-demo-001/structure.glb,review_shell_only,generated_needs_human_layer_review
+facade,KOSMO_KOSMO_DEMO_001_FACADE,1,models/kosmo-demo-001/facade.glb,review_shell_only,generated_needs_human_layer_review
+tectonic,KOSMO_KOSMO_DEMO_001_TECTONIC,1,models/kosmo-demo-001/tectonic.glb,review_shell_only,generated_needs_human_layer_review
+material:concrete,KOSMO_KOSMO_DEMO_001_MATERIAL_CONCRETE,2,models/kosmo-demo-001/materials/concrete.glb,review_shell_only,generated_needs_human_layer_review

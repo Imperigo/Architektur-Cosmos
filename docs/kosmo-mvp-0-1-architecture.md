@@ -100,6 +100,10 @@ kosmo-project/
     ifc-layer-plan.generated.md
     blender-layer-profile.generated.json
     archicad-layer-profile.generated.json
+    model-layer-handoff.generated.json
+    model-layer-handoff.generated.md
+    blender-collection-handoff.generated.py
+    archicad-layer-schedule.generated.csv
     context-handoff.generated.json
     context-handoff.generated.md
     variants.json
@@ -417,7 +421,13 @@ Status 2026-05-25:
     blockierte Design-Seeds und Guardrails fuer Downstream-Tools zusammenfasst.
     **Erledigt mit `design/context-handoff.generated.*` und
     `npm run kosmo:context-handoff`.**
-20. Kosmo Zentrale spaeter als Job-Orchestrator an dieses Paket anbinden.
+20. Einen review-only Model Layer Handoff fuer Blender-Collections,
+    ArchiCAD-Layerplaene und spaetere GLB-Exports erzeugen.
+    **Erledigt mit `design/model-layer-handoff.generated.*`,
+    `design/blender-collection-handoff.generated.py`,
+    `design/archicad-layer-schedule.generated.csv` und
+    `npm run kosmo:model-layer-handoff`.**
+21. Kosmo Zentrale spaeter als Job-Orchestrator an dieses Paket anbinden.
 
 ## 11. Was bewusst noch nicht gebaut wird
 
@@ -457,7 +467,7 @@ Der erste Datenvertrag ist im Repo angelegt:
 - `scripts/kosmo-ifc-dxf-alignment-preview.mjs`
 - `scripts/kosmo-ifc-layer-plan.mjs`
 - `scripts/kosmo-design-context-handoff.mjs`
-- `scripts/kosmo-ifc-dxf-alignment-preview.mjs`
+- `scripts/kosmo-model-layer-handoff.mjs`
 - `scripts/kosmo-context-guard.mjs`
 - `scripts/kosmo-blender-package-bridge-smoke.mjs`
 - `scripts/kosmo_blender_package_bridge_smoke.py`
@@ -632,6 +642,7 @@ npm run kosmo:ifc-geometry-preview -- --project examples/kosmo-projects/kosmo-de
 npm run kosmo:ifc-layer-plan -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:context-source-mapping -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:context-handoff -- --project examples/kosmo-projects/kosmo-demo-001
+npm run kosmo:model-layer-handoff -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:package-check -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:package-review -- --project examples/kosmo-projects/kosmo-demo-001
 ```
@@ -664,6 +675,18 @@ Status: review-only. Der Handoff ist die Schnittstelle zu spaeteren
 Design-Tools: Er listet erlaubte Kontextinputs, blockierte Inputs,
 unaufgeloeste Source-Review-Punkte, IFC-Preview-Evidence und Guardrails. Er
 ist bewusst keine Freigabe fuer automatische Modellgenerierung.
+
+Model Layer Handoff erzeugen:
+
+```bash
+npm run kosmo:model-layer-handoff -- --project archive-intake/kosmo-projects/zg-07052026
+```
+
+Status: review-only. Der Handoff uebersetzt den IFC-Layerplan in einen
+trocken ausfuehrbaren Blender-Collection-Plan, eine ArchiCAD-Layer-Schedule und
+geplante GLB-Layerpfade. Er erzeugt keine GLB-Dateien; das Python-Script legt
+ohne expliziten Review-Flag nur nichts an und bleibt damit eine sichere
+Uebergabe fuer Blender/ArchiCAD statt eine automatische Modellfreigabe.
 
 Guard fuer Downstream-Design-Tools:
 

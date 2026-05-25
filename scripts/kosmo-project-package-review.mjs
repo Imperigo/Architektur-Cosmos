@@ -111,6 +111,9 @@ function buildReport(manifest, check) {
   if (contextReview.ifc_geometry_preview_ready && !contextReview.ifc_layer_plan_ready) {
     warnings.push('IFC layer plan is missing or still pending for Blender/ArchiCAD layer review.');
   }
+  if (contextReview.ifc_layer_plan_ready && !contextReview.model_layer_handoff_ready) {
+    warnings.push('Model layer handoff is missing or still pending for Blender/ArchiCAD export review.');
+  }
   if (contextReview.selection_exists && contextReview.undecided_count === 0 && contextReview.accepted_as_context_count > 0 && !contextReview.context_handoff_ready) {
     warnings.push('Kosmo Design context handoff is missing or still pending.');
   }
@@ -192,7 +195,9 @@ function readContextReview() {
   const ifcGeometryPreviewPath = join(projectRoot, 'design/ifc-geometry-preview.generated.json');
   const ifcDxfAlignmentPreviewPath = join(projectRoot, 'design/ifc-dxf-alignment-preview.generated.json');
   const ifcLayerPlanPath = join(projectRoot, 'design/ifc-layer-plan.generated.json');
+  const modelLayerHandoffPath = join(projectRoot, 'design/model-layer-handoff.generated.json');
   const contextHandoffPath = join(projectRoot, 'design/context-handoff.generated.json');
+  const blenderContextImportPath = join(projectRoot, 'design/blender-context-import.generated.json');
   const candidates = existsSync(candidatesPath) ? safeReadJson(candidatesPath) : null;
   const selection = existsSync(selectionPath) ? safeReadJson(selectionPath) : null;
   const matrix = existsSync(matrixPath) ? safeReadJson(matrixPath) : null;
@@ -203,7 +208,9 @@ function readContextReview() {
   const ifcGeometryPreview = existsSync(ifcGeometryPreviewPath) ? safeReadJson(ifcGeometryPreviewPath) : null;
   const ifcDxfAlignmentPreview = existsSync(ifcDxfAlignmentPreviewPath) ? safeReadJson(ifcDxfAlignmentPreviewPath) : null;
   const ifcLayerPlan = existsSync(ifcLayerPlanPath) ? safeReadJson(ifcLayerPlanPath) : null;
+  const modelLayerHandoff = existsSync(modelLayerHandoffPath) ? safeReadJson(modelLayerHandoffPath) : null;
   const contextHandoff = existsSync(contextHandoffPath) ? safeReadJson(contextHandoffPath) : null;
+  const blenderContextImport = existsSync(blenderContextImportPath) ? safeReadJson(blenderContextImportPath) : null;
   const selections = Array.isArray(selection?.selections) ? selection.selections : [];
   const rows = Array.isArray(matrix?.rows) ? matrix.rows : [];
   const candidateCount = numberOrDefault(candidates?.summary?.candidate_count, Array.isArray(candidates?.candidates) ? candidates.candidates.length : 0);
@@ -276,6 +283,14 @@ function readContextReview() {
     ifc_layer_plan_material_group_count: numberOrDefault(ifcLayerPlan?.summary?.material_group_count, 0),
     ifc_layer_plan_structure_element_count: numberOrDefault(ifcLayerPlan?.summary?.structure_element_count, 0),
     ifc_layer_plan_facade_element_count: numberOrDefault(ifcLayerPlan?.summary?.facade_element_count, 0),
+    model_layer_handoff_exists: Boolean(modelLayerHandoff),
+    model_layer_handoff_status: modelLayerHandoff?.status || null,
+    model_layer_handoff_ready: isModelLayerHandoffReady(modelLayerHandoff),
+    model_layer_handoff_layer_export_count: numberOrDefault(modelLayerHandoff?.summary?.layer_export_count, 0),
+    model_layer_handoff_planned_glb_count: numberOrDefault(modelLayerHandoff?.summary?.planned_glb_count, 0),
+    model_layer_handoff_blender_collection_count: numberOrDefault(modelLayerHandoff?.summary?.blender_collection_count, 0),
+    model_layer_handoff_archicad_layer_count: numberOrDefault(modelLayerHandoff?.summary?.archicad_layer_count, 0),
+    model_layer_handoff_glb_export_allowed: Boolean(modelLayerHandoff?.summary?.glb_export_allowed),
     context_handoff_exists: Boolean(contextHandoff),
     context_handoff_status: contextHandoff?.status || null,
     context_handoff_ready: isContextHandoffReady(contextHandoff),
@@ -283,6 +298,13 @@ function readContextReview() {
     context_handoff_context_input_count: numberOrDefault(contextHandoff?.summary?.context_input_count, 0),
     context_handoff_design_seed_allowed_count: numberOrDefault(contextHandoff?.summary?.design_seed_allowed_count, 0),
     context_handoff_blocked_input_count: numberOrDefault(contextHandoff?.summary?.blocked_input_count, 0),
+    blender_context_import_exists: Boolean(blenderContextImport),
+    blender_context_import_status: blenderContextImport?.status || null,
+    blender_context_import_ready: isBlenderContextImportReady(blenderContextImport),
+    blender_context_import_object_count: numberOrDefault(blenderContextImport?.summary?.blender_object_count, 0),
+    blender_context_import_dxf_polyline_count: numberOrDefault(blenderContextImport?.summary?.dxf_embedded_polyline_count, 0),
+    blender_context_import_ifc_bbox_count: numberOrDefault(blenderContextImport?.summary?.ifc_bbox_count, 0),
+    blender_context_import_layer_collection_count: numberOrDefault(blenderContextImport?.summary?.ifc_layer_collection_count, 0),
     stale_selection_count: numberOrDefault(selection?.summary?.stale_selection_count, Array.isArray(selection?.stale_selections) ? selection.stale_selections.length : 0),
     readiness: selection?.summary?.readiness || matrix?.summary?.recommended_next_step || candidates?.summary?.suggested_next_step || null,
     approved_for_design_generation: Boolean(selection?.approved_for_design_generation)
@@ -320,6 +342,7 @@ function nextActions({ modules, gates, blockers, warnings, outputs, contextRevie
   if (contextReview?.ifc_semantic_proof_proxy_count > 0 && !contextReview.ifc_geometry_preview_ready) actions.push('Run npm run kosmo:ifc-geometry-preview for a visual IFC top-projection review.');
   if (contextReview?.ifc_geometry_preview_ready && contextReview?.source_mapping_accepted_as_context_count > 0 && !contextReview.ifc_dxf_alignment_preview_ready) actions.push('Run npm run kosmo:ifc-dxf-alignment-preview to compare IFC bboxes with accepted DXF context.');
   if (contextReview?.ifc_geometry_preview_ready && !contextReview.ifc_layer_plan_ready) actions.push('Run npm run kosmo:ifc-layer-plan to propose Blender collections and ArchiCAD layers.');
+  if (contextReview?.ifc_layer_plan_ready && !contextReview.model_layer_handoff_ready) actions.push('Run npm run kosmo:model-layer-handoff to create the review-only Blender/ArchiCAD export handoff.');
   if (contextReview?.selection_exists && contextReview?.undecided_count === 0 && contextReview?.accepted_as_context_count > 0 && !contextReview.context_handoff_ready) actions.push('Run npm run kosmo:context-handoff to create the Kosmo Design context-only handoff.');
   if (contextReview?.ifc_geometry_preview_exists && contextReview?.source_review_open_human_review_count > 0) actions.push('Compare IFC geometry preview against DXF context before any design-seed approval.');
   if (contextReview?.source_map_design_seed_candidate_after_review_count > 0) actions.push('Review source-map semantic candidates before any design-seed approval.');
@@ -457,6 +480,12 @@ function appendContextReview(lines, contextReview) {
   lines.push(`- IFC layer plan material groups: ${contextReview.ifc_layer_plan_material_group_count}`);
   lines.push(`- IFC layer plan structure elements: ${contextReview.ifc_layer_plan_structure_element_count}`);
   lines.push(`- IFC layer plan facade elements: ${contextReview.ifc_layer_plan_facade_element_count}`);
+  lines.push(`- model layer handoff: ${modelLayerHandoffLabel(contextReview)}`);
+  lines.push(`- model layer handoff layer exports: ${contextReview.model_layer_handoff_layer_export_count}`);
+  lines.push(`- model layer handoff planned GLBs: ${contextReview.model_layer_handoff_planned_glb_count}`);
+  lines.push(`- model layer handoff Blender collections: ${contextReview.model_layer_handoff_blender_collection_count}`);
+  lines.push(`- model layer handoff ArchiCAD layers: ${contextReview.model_layer_handoff_archicad_layer_count}`);
+  lines.push(`- model layer handoff GLB export allowed: ${contextReview.model_layer_handoff_glb_export_allowed ? 'yes' : 'no'}`);
   lines.push(`- context handoff: ${contextHandoffLabel(contextReview)}`);
   lines.push(`- context handoff mode: ${contextReview.context_handoff_mode || '-'}`);
   lines.push(`- context handoff context inputs: ${contextReview.context_handoff_context_input_count}`);
@@ -500,6 +529,14 @@ function isContextHandoffReady(handoff) {
   );
 }
 
+function isModelLayerHandoffReady(handoff) {
+  return Boolean(
+    handoff
+      && handoff.status === 'model_layer_handoff_ready_for_human_review'
+      && handoff.summary?.layer_export_count > 0
+  );
+}
+
 function ifcGeometryPreviewLabel(contextReview) {
   if (!contextReview.ifc_geometry_preview_exists) return 'missing';
   if (contextReview.ifc_geometry_preview_ready) return 'ready';
@@ -516,6 +553,12 @@ function ifcLayerPlanLabel(contextReview) {
   if (!contextReview.ifc_layer_plan_exists) return 'missing';
   if (contextReview.ifc_layer_plan_ready) return 'ready';
   return `pending (${contextReview.ifc_layer_plan_status || 'unknown'})`;
+}
+
+function modelLayerHandoffLabel(contextReview) {
+  if (!contextReview.model_layer_handoff_exists) return 'missing';
+  if (contextReview.model_layer_handoff_ready) return 'ready';
+  return `pending (${contextReview.model_layer_handoff_status || 'unknown'})`;
 }
 
 function contextHandoffLabel(contextReview) {

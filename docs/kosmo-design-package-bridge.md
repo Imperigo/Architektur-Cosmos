@@ -46,6 +46,10 @@ Der erste Connector ist bewusst duenn:
   `design/archicad-layer-profile.generated.json` und
   `viz/previews/ifc-layer-plan.svg` als review-only Layerplan fuer
   Blender/ArchiCAD
+- schreibt optional `design/model-layer-handoff.generated.json`, `.md`,
+  `design/blender-collection-handoff.generated.py` und
+  `design/archicad-layer-schedule.generated.csv` als review-only Uebergabe
+  fuer Blender-Collections, ArchiCAD-Layer und spaetere GLB-Exports
 - schreibt optional `design/context-handoff.generated.json` und `.md` als
   explizite Grenze zwischen erlaubtem Kontext, blockierten Inputs und
   Downstream-Guardrails
@@ -175,6 +179,10 @@ Zusätzlich wird im Projektpaket geschrieben:
 - `design/blender-layer-profile.generated.json`
 - `design/archicad-layer-profile.generated.json`
 - `viz/previews/ifc-layer-plan.svg`
+- `design/model-layer-handoff.generated.json`
+- `design/model-layer-handoff.generated.md`
+- `design/blender-collection-handoff.generated.py`
+- `design/archicad-layer-schedule.generated.csv`
 - `design/context-handoff.generated.json`
 - `design/context-handoff.generated.md`
 
@@ -266,6 +274,15 @@ Kontextinputs, blockierte oder offene Quellen, IFC-Preview-Evidence,
 Layerplan-Status und Guardrails fuer KosmoDesign. Er bleibt
 `context_reference_only`, bis ein Mensch Design-Seeds freigibt.
 
+`npm run kosmo:model-layer-handoff -- --project <projektpfad>` erzeugt
+`design/model-layer-handoff.generated.md/json`,
+`design/blender-collection-handoff.generated.py` und
+`design/archicad-layer-schedule.generated.csv`. Der Handoff macht aus dem
+Layerplan eine konkrete, aber trockene Blender-/ArchiCAD-Uebergabe:
+Collections, Layernamen, Elementlisten und geplante GLB-Pfade sind sichtbar,
+aber GLB-Export und echte Modellanlage bleiben bis zur menschlichen Freigabe
+blockiert.
+
 Repo-Smoke ohne private Daten:
 
 ```bash
@@ -275,6 +292,7 @@ npm run kosmo:ifc-geometry-preview -- --project examples/kosmo-projects/kosmo-de
 npm run kosmo:ifc-layer-plan -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:context-source-mapping -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:context-handoff -- --project examples/kosmo-projects/kosmo-demo-001
+npm run kosmo:model-layer-handoff -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:package-check -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:package-review -- --project examples/kosmo-projects/kosmo-demo-001
 ```

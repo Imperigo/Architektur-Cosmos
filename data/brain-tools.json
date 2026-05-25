@@ -186,6 +186,24 @@
       "approval_required_before_public_use": false
     },
     {
+      "id": "kosmo_model_layer_handoff",
+      "label": "Kosmo Model Layer Handoff",
+      "command": "npm run kosmo:model-layer-handoff -- --project {project_path}",
+      "output_root": "{project_path}/design",
+      "review_output": "{project_path}/design/model-layer-handoff.generated.md",
+      "purpose": "Compile IFC layer plan output into dry-run Blender collection scripts, ArchiCAD layer schedules and future GLB export paths while keeping model export blocked until human approval.",
+      "approval_required_before_public_use": false
+    },
+    {
+      "id": "kosmo_blender_context_import",
+      "label": "Kosmo Blender Context Import",
+      "command": "npm run kosmo:blender-context-import -- --project {project_path}",
+      "output_root": "{project_path}/design",
+      "review_output": "{project_path}/design/blender-context-import.generated.md",
+      "purpose": "Generate a read-only Blender Python context script that creates locked origin, perimeter, DXF underlay, IFC bounds and layer-review collections without enabling design generation.",
+      "approval_required_before_public_use": false
+    },
+    {
       "id": "kosmo_context_guard",
       "label": "Kosmo Context Guard",
       "command": "npm run kosmo:context-guard -- --project {project_path}",

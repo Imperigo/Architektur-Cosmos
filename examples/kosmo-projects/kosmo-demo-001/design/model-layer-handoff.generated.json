@@ -1,0 +1,185 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-05-25T19:56:31.281Z",
+  "generator": "kosmo-model-layer-handoff",
+  "project_id": "kosmo-demo-001",
+  "status": "model_layer_handoff_ready_for_human_review",
+  "rights_status": "internal_only",
+  "source_files": {
+    "ifc_layer_plan": {
+      "path": "design/ifc-layer-plan.generated.json",
+      "exists": true,
+      "name": "ifc-layer-plan.generated.json",
+      "size_bytes": 8666
+    },
+    "blender_layer_profile": {
+      "path": "design/blender-layer-profile.generated.json",
+      "exists": true,
+      "name": "blender-layer-profile.generated.json",
+      "size_bytes": 1804
+    },
+    "archicad_layer_profile": {
+      "path": "design/archicad-layer-profile.generated.json",
+      "exists": true,
+      "name": "archicad-layer-profile.generated.json",
+      "size_bytes": 1417
+    },
+    "context_handoff": {
+      "path": "design/context-handoff.generated.json",
+      "exists": true,
+      "name": "context-handoff.generated.json",
+      "size_bytes": 6974
+    }
+  },
+  "output_files": {
+    "markdown": "design/model-layer-handoff.generated.md",
+    "blender_collection_script": "design/blender-collection-handoff.generated.py",
+    "archicad_layer_schedule": "design/archicad-layer-schedule.generated.csv"
+  },
+  "policy": {
+    "handoff_does_not_generate_glb": true,
+    "handoff_does_not_create_blender_collections_by_default": true,
+    "blender_script_is_dry_run_until_human_review": true,
+    "archicad_schedule_is_reference_only": true,
+    "human_approval_required_before_export": true
+  },
+  "summary": {
+    "layer_plan_ready": true,
+    "context_design_generation_allowed": false,
+    "blender_profile_approved_for_import": false,
+    "archicad_profile_approved_for_import": false,
+    "layer_export_count": 5,
+    "planned_glb_count": 5,
+    "blender_collection_count": 5,
+    "archicad_layer_count": 5,
+    "material_layer_count": 1,
+    "glb_export_allowed": false,
+    "recommended_next_step": "review_layer_mapping_before_any_glb_or_blender_collection_creation"
+  },
+  "layer_exports": [
+    {
+      "layer_key": "mass",
+      "layer_type": "mass",
+      "title": "Mass",
+      "element_count": 1,
+      "step_ids": [
+        230
+      ],
+      "global_ids": [
+        "KOSMO_SLAB_001"
+      ],
+      "blender_collection": "KOSMO_KOSMO_DEMO_001_MASS",
+      "archicad_layer": "KOSMO_KOSMO_DEMO_001_MASS",
+      "planned_glb_path": "models/kosmo-demo-001/mass.glb",
+      "permission": "review_shell_only",
+      "dry_run_blender_action": "can_create_empty_review_collection_with_explicit_flag",
+      "archicad_action": "schedule_layer_for_manual_exchange_setup",
+      "review_status": "generated_needs_human_layer_review",
+      "export_blockers": [
+        "human_layer_review_required",
+        "context_or_import_approval_missing"
+      ]
+    },
+    {
+      "layer_key": "structure",
+      "layer_type": "structure",
+      "title": "Structure",
+      "element_count": 2,
+      "step_ids": [
+        130,
+        230
+      ],
+      "global_ids": [
+        "KOSMO_WALL_001",
+        "KOSMO_SLAB_001"
+      ],
+      "blender_collection": "KOSMO_KOSMO_DEMO_001_STRUCTURE",
+      "archicad_layer": "KOSMO_KOSMO_DEMO_001_STRUCTURE",
+      "planned_glb_path": "models/kosmo-demo-001/structure.glb",
+      "permission": "review_shell_only",
+      "dry_run_blender_action": "can_create_empty_review_collection_with_explicit_flag",
+      "archicad_action": "schedule_layer_for_manual_exchange_setup",
+      "review_status": "generated_needs_human_layer_review",
+      "export_blockers": [
+        "human_layer_review_required",
+        "context_or_import_approval_missing"
+      ]
+    },
+    {
+      "layer_key": "facade",
+      "layer_type": "facade",
+      "title": "Facade",
+      "element_count": 1,
+      "step_ids": [
+        130
+      ],
+      "global_ids": [
+        "KOSMO_WALL_001"
+      ],
+      "blender_collection": "KOSMO_KOSMO_DEMO_001_FACADE",
+      "archicad_layer": "KOSMO_KOSMO_DEMO_001_FACADE",
+      "planned_glb_path": "models/kosmo-demo-001/facade.glb",
+      "permission": "review_shell_only",
+      "dry_run_blender_action": "can_create_empty_review_collection_with_explicit_flag",
+      "archicad_action": "schedule_layer_for_manual_exchange_setup",
+      "review_status": "generated_needs_human_layer_review",
+      "export_blockers": [
+        "human_layer_review_required",
+        "context_or_import_approval_missing"
+      ]
+    },
+    {
+      "layer_key": "tectonic",
+      "layer_type": "tectonic",
+      "title": "Tectonic",
+      "element_count": 1,
+      "step_ids": [
+        130
+      ],
+      "global_ids": [
+        "KOSMO_WALL_001"
+      ],
+      "blender_collection": "KOSMO_KOSMO_DEMO_001_TECTONIC",
+      "archicad_layer": "KOSMO_KOSMO_DEMO_001_TECTONIC",
+      "planned_glb_path": "models/kosmo-demo-001/tectonic.glb",
+      "permission": "review_shell_only",
+      "dry_run_blender_action": "can_create_empty_review_collection_with_explicit_flag",
+      "archicad_action": "schedule_layer_for_manual_exchange_setup",
+      "review_status": "generated_needs_human_layer_review",
+      "export_blockers": [
+        "human_layer_review_required",
+        "context_or_import_approval_missing"
+      ]
+    },
+    {
+      "layer_key": "material:concrete",
+      "layer_type": "material",
+      "title": "Material concrete",
+      "element_count": 2,
+      "step_ids": [
+        130,
+        230
+      ],
+      "global_ids": [
+        "KOSMO_WALL_001",
+        "KOSMO_SLAB_001"
+      ],
+      "blender_collection": "KOSMO_KOSMO_DEMO_001_MATERIAL_CONCRETE",
+      "archicad_layer": "KOSMO_KOSMO_DEMO_001_MATERIAL_CONCRETE",
+      "planned_glb_path": "models/kosmo-demo-001/materials/concrete.glb",
+      "permission": "review_shell_only",
+      "dry_run_blender_action": "can_create_empty_review_collection_with_explicit_flag",
+      "archicad_action": "schedule_layer_for_manual_exchange_setup",
+      "review_status": "generated_needs_human_layer_review",
+      "export_blockers": [
+        "human_layer_review_required",
+        "context_or_import_approval_missing"
+      ]
+    }
+  ],
+  "next_actions": [
+    "Use the Blender script only for empty review collections, not model generation.",
+    "Resolve context-selection and context-handoff gates before model export.",
+    "Keep GLB generation blocked until design generation is explicitly allowed."
+  ]
+}

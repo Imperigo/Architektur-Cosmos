@@ -138,7 +138,9 @@ function checkContextSelection() {
   const ifcGeometryPreviewPath = join(projectRoot, 'design/ifc-geometry-preview.generated.json');
   const ifcDxfAlignmentPreviewPath = join(projectRoot, 'design/ifc-dxf-alignment-preview.generated.json');
   const ifcLayerPlanPath = join(projectRoot, 'design/ifc-layer-plan.generated.json');
+  const modelLayerHandoffPath = join(projectRoot, 'design/model-layer-handoff.generated.json');
   const contextHandoffPath = join(projectRoot, 'design/context-handoff.generated.json');
+  const blenderContextImportPath = join(projectRoot, 'design/blender-context-import.generated.json');
   const candidates = existsSync(candidatesPath) ? readJson(candidatesPath) : null;
   const selection = existsSync(selectionPath) ? readJson(selectionPath) : null;
   const matrix = existsSync(matrixPath) ? readJson(matrixPath) : null;
@@ -149,11 +151,15 @@ function checkContextSelection() {
   const ifcGeometryPreview = existsSync(ifcGeometryPreviewPath) ? readJson(ifcGeometryPreviewPath) : null;
   const ifcDxfAlignmentPreview = existsSync(ifcDxfAlignmentPreviewPath) ? readJson(ifcDxfAlignmentPreviewPath) : null;
   const ifcLayerPlan = existsSync(ifcLayerPlanPath) ? readJson(ifcLayerPlanPath) : null;
+  const modelLayerHandoff = existsSync(modelLayerHandoffPath) ? readJson(modelLayerHandoffPath) : null;
   const contextHandoff = existsSync(contextHandoffPath) ? readJson(contextHandoffPath) : null;
+  const blenderContextImport = existsSync(blenderContextImportPath) ? readJson(blenderContextImportPath) : null;
   const ifcGeometryPreviewReady = isIfcGeometryPreviewReady(ifcGeometryPreview);
   const ifcDxfAlignmentPreviewReady = isIfcDxfAlignmentPreviewReady(ifcDxfAlignmentPreview);
   const ifcLayerPlanReady = isIfcLayerPlanReady(ifcLayerPlan);
+  const modelLayerHandoffReady = isModelLayerHandoffReady(modelLayerHandoff);
   const contextHandoffReady = isContextHandoffReady(contextHandoff);
+  const blenderContextImportReady = isBlenderContextImportReady(blenderContextImport);
 
   if (candidates && !selection) {
     warnings.push('Context candidates exist, but design/context-selection.json is missing.');
@@ -191,8 +197,14 @@ function checkContextSelection() {
   if (ifcGeometryPreviewReady && !ifcLayerPlanReady) {
     warnings.push('IFC geometry preview exists, but design/ifc-layer-plan.generated.json is missing or still pending.');
   }
+  if (ifcLayerPlanReady && !modelLayerHandoffReady) {
+    warnings.push('IFC layer plan exists, but design/model-layer-handoff.generated.json is missing or still pending.');
+  }
   if (!undecidedSelections.length && selections.some((item) => item.decision === 'accepted_as_context') && !contextHandoffReady) {
     warnings.push('Context selection is reviewed, but design/context-handoff.generated.json is missing or still pending.');
+  }
+  if (contextHandoffReady && !blenderContextImportReady) {
+    warnings.push('Context handoff exists, but design/blender-context-import.generated.json is missing or still pending.');
   }
   if (acceptedDesignSeeds.length && selection.approved_for_design_generation !== true) {
     warnings.push('Context selection contains accepted design seeds but approved_for_design_generation is not true.');
@@ -236,6 +248,22 @@ function isContextHandoffReady(handoff) {
     handoff
       && ['context_reference_handoff_ready', 'design_seed_handoff_ready'].includes(handoff.status)
       && handoff.summary?.context_input_count > 0
+  );
+}
+
+function isModelLayerHandoffReady(handoff) {
+  return Boolean(
+    handoff
+      && handoff.status === 'model_layer_handoff_ready_for_human_review'
+      && handoff.summary?.layer_export_count > 0
+  );
+}
+
+function isBlenderContextImportReady(importPlan) {
+  return Boolean(
+    importPlan
+      && importPlan.status === 'blender_context_import_ready_for_review'
+      && importPlan.summary?.blender_object_count > 0
   );
 }
 

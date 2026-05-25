@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-25T19:39:53.054Z",
+  "generated_at": "2026-05-25T19:56:39.741Z",
   "generator": "kosmo-project-package-review",
   "project": {
     "id": "kosmo-demo-001",
@@ -429,6 +429,42 @@
       "description": "Human-readable Kosmo Design context handoff.",
       "exists": true,
       "size_bytes": 1984
+    },
+    {
+      "path": "design/model-layer-handoff.generated.json",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Review-only model layer handoff for future GLB, Blender and ArchiCAD export.",
+      "exists": true,
+      "size_bytes": 6379
+    },
+    {
+      "path": "design/model-layer-handoff.generated.md",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Human-readable model layer handoff.",
+      "exists": true,
+      "size_bytes": 1612
+    },
+    {
+      "path": "design/blender-collection-handoff.generated.py",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Dry-run Blender collection handoff script.",
+      "exists": true,
+      "size_bytes": 3400
+    },
+    {
+      "path": "design/archicad-layer-schedule.generated.csv",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "ArchiCAD layer schedule for manual exchange setup.",
+      "exists": true,
+      "size_bytes": 739
     }
   ],
   "context_review": {
@@ -497,6 +533,14 @@
     "ifc_layer_plan_material_group_count": 1,
     "ifc_layer_plan_structure_element_count": 2,
     "ifc_layer_plan_facade_element_count": 1,
+    "model_layer_handoff_exists": true,
+    "model_layer_handoff_status": "model_layer_handoff_ready_for_human_review",
+    "model_layer_handoff_ready": true,
+    "model_layer_handoff_layer_export_count": 5,
+    "model_layer_handoff_planned_glb_count": 5,
+    "model_layer_handoff_blender_collection_count": 5,
+    "model_layer_handoff_archicad_layer_count": 5,
+    "model_layer_handoff_glb_export_allowed": false,
     "context_handoff_exists": true,
     "context_handoff_status": "context_handoff_pending_review",
     "context_handoff_ready": false,
@@ -614,6 +658,10 @@
     "Generated output needs review: viz/previews/ifc-layer-plan.svg",
     "Generated output needs review: design/context-handoff.generated.json",
     "Generated output needs review: design/context-handoff.generated.md",
+    "Generated output needs review: design/model-layer-handoff.generated.json",
+    "Generated output needs review: design/model-layer-handoff.generated.md",
+    "Generated output needs review: design/blender-collection-handoff.generated.py",
+    "Generated output needs review: design/archicad-layer-schedule.generated.csv",
     "Context selection still has undecided candidates: 2",
     "Context source mapping still has pending review rows: 1"
   ],

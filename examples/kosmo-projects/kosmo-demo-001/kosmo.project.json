@@ -321,6 +321,34 @@
       "module": "design",
       "rights_status": "generated_needs_review",
       "description": "Human-readable Kosmo Design context handoff."
+    },
+    {
+      "path": "design/model-layer-handoff.generated.json",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Review-only model layer handoff for future GLB, Blender and ArchiCAD export."
+    },
+    {
+      "path": "design/model-layer-handoff.generated.md",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Human-readable model layer handoff."
+    },
+    {
+      "path": "design/blender-collection-handoff.generated.py",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Dry-run Blender collection handoff script."
+    },
+    {
+      "path": "design/archicad-layer-schedule.generated.csv",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "ArchiCAD layer schedule for manual exchange setup."
     }
   ],
   "review_gates": {
