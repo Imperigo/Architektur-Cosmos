@@ -42,6 +42,15 @@
       "approval_required_before_public_use": true
     },
     {
+      "id": "kosmo_project_package_check",
+      "label": "Kosmo Project Package Check",
+      "command": "npm run kosmo:package-check -- --project {project_path}",
+      "output_root": "examples/kosmo-projects/{project_slug}",
+      "review_output": "terminal/package-check",
+      "purpose": "Validate a local Kosmo project package manifest, required module folders, JSON files, JSONL logs and review-gate structure before Kosmo Design, Draw, Viz or Publish consume the package.",
+      "approval_required_before_public_use": false
+    },
+    {
       "id": "brain_text_polish",
       "label": "Brain Text Polish",
       "command": "npm run brain:polish-texts -- --limit 8",
