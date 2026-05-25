@@ -1,0 +1,36 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-05-25T18:38:58.724Z",
+  "generator": "kosmo-context-source-mapping",
+  "project_id": "kosmo-demo-001",
+  "status": "source_mapping_reviewed",
+  "rights_status": "internal_only",
+  "source_map_path": "design/context-source-map.generated.json",
+  "source_review_path": "design/context-source-review.generated.json",
+  "source_selection_path": "design/context-selection.json",
+  "note": "Human source mapping gate. This file records reviewed DXF layer and semantic IFC mapping decisions but does not update context-selection automatically.",
+  "policy": {
+    "source_mapping_does_not_approve_design_generation": true,
+    "dense_dxf_layers_cannot_be_accepted_as_design_seed": true,
+    "ifc_design_seed_requires_semantic_import_review_flag": true,
+    "context_selection_remains_final_gate": true
+  },
+  "review": {
+    "reviewed_by": null,
+    "reviewed_at": null,
+    "semantic_ifc_reviewed": false,
+    "notes": []
+  },
+  "summary": {
+    "mapping_row_count": 0,
+    "pending_review_count": 0,
+    "accepted_as_context_count": 0,
+    "accepted_as_design_seed_count": 0,
+    "needs_more_source_review_count": 0,
+    "rejected_count": 0,
+    "linked_context_candidate_count": 0,
+    "design_seed_possible_after_review_count": 0,
+    "recommended_next_step": "sync_reviewed_mapping_decisions_to_context_selection"
+  },
+  "rows": []
+}

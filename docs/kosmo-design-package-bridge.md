@@ -28,6 +28,12 @@ Der erste Connector ist bewusst duenn:
   zu Designinput werden duerfen
 - schreibt optional `design/context-decision-matrix.generated.json` und `.md`
   als Empfehlungsschicht fuer Kandidatenentscheidungen
+- schreibt optional `design/context-source-map.generated.json` und `.md` als
+  DXF-/IFC-Inventar mit vorgeschlagenen Kosmo-Rollen
+- schreibt optional `design/context-source-review.generated.json` und `.md` als
+  Evidence-Review fuer Kandidaten mit `needs_more_source_review`
+- schreibt optional `design/context-source-mapping.json` und `.md` als
+  menschliches Mapping-Gate fuer DXF-Layer und semantische IFC-Typen
 - verwendet den bestehenden Blender-Operator `kosmo_design.create_room_from_plan`
 - erzeugt Collections unter `Kosmo_Project_<project_id>`
 - taggt erzeugte Collections/Objekte mit `kosmo_project_*` und `kosmo_source_*` Custom Properties
@@ -135,6 +141,12 @@ Zusätzlich wird im Projektpaket geschrieben:
 - `design/context-selection.json`
 - `design/context-decision-matrix.generated.json`
 - `design/context-decision-matrix.generated.md`
+- `design/context-source-map.generated.json`
+- `design/context-source-map.generated.md`
+- `design/context-source-review.generated.json`
+- `design/context-source-review.generated.md`
+- `design/context-source-mapping.json`
+- `design/context-source-mapping.md`
 
 Dieser Report enthält die importierte Kontext-Collection, Objektanzahl,
 Perimeter, DXF-Zählwerte, DXF-Layerklassifikation, IFC-Entity-Gruppen,
@@ -167,6 +179,26 @@ Freigabe in `context-selection.json`.
 `npm run kosmo:context-review -- --project <projektpfad>` buendelt Kandidaten,
 Selection und Matrix in `design/context-review.md` und erzeugt konkrete
 Review-Kommandos fuer die naechste menschliche Entscheidung.
+
+`npm run kosmo:context-source-map -- --project <projektpfad>` erzeugt
+`design/context-source-map.generated.md/json`. Diese Source-Map inventarisiert
+DXF-Layer, IFC-Entity-Typen, Polyline-Anteile und semantische IFC-Kandidaten.
+Sie ist nur advisory: Auch ein erkannter IFC-Design-Seed-Kandidat wird erst
+nach semantischem Import und menschlicher Pruefung nutzbar.
+
+Wenn Kandidaten auf `needs_more_source_review` stehen, erzeugt
+`npm run kosmo:context-source-review -- --project <projektpfad>` den Bericht
+`design/context-source-review.generated.md/json`. Dieser prueft lokale
+DXF-/IFC-Quellen automatisch auf vorhandene Evidence, ersetzt aber keine
+menschliche Layer- oder IFC-Pruefung.
+
+`npm run kosmo:context-source-mapping -- --project <projektpfad>` erzeugt
+`design/context-source-mapping.md/json`. Dieses Gate fuehrt die konkreten
+DXF-Layer und semantischen IFC-Typen als Mapping-Zeilen. Entscheidungen wie
+`accepted_as_context`, `rejected` oder `needs_more_source_review` koennen dort
+pro Quelle gesetzt werden. `accepted_as_design_seed` bleibt fuer dichte
+DXF-Layer blockiert und ist fuer IFC nur mit explizitem
+`--semantic-ifc-reviewed` moeglich.
 
 Einzelne Kandidaten koennen im gleichen Tool bewusst entschieden werden:
 
@@ -335,6 +367,27 @@ erzeugt. Fuer das ZG-Testpaket empfiehlt sie aktuell:
 - 2 Kandidaten als `needs_more_source_review`
 - 1 Kandidat als `rejected`
 - 0 Kandidaten als `accepted_as_design_seed`
+
+Nach dem ersten Review-Pass stehen im ZG-Testpaket 6 Kandidaten als
+`accepted_as_context`, 2 als `needs_more_source_review`, 1 als `rejected` und
+weiterhin 0 als `accepted_as_design_seed`. Der Source-Review bestaetigt fuer
+die 2 offenen Kandidaten die Quellenevidence:
+
+- DXF: `AB_Schwarzplan_Schwarzplan_Gebaeude` enthaelt 13'394 von 13'406
+  DXF-Polylines, bleibt aber Layer-Mapping-pflichtig.
+- IFC: 282 `IFCBUILDINGELEMENTPROXY`-Elemente sind vorhanden, bleiben aber bis
+  zum semantischen IFC-Import source-review-pflichtig.
+
+Die Source-Map fuer dasselbe Paket zeigt 4 DXF-Layer, davon 1 dominanter
+Gebaeude-Kontextlayer, 2 Plan-/Legendenlayer und der technische Layer `0`
+ohne Polylines. Die IFC-Datei enthaelt 32 Entity-Typen; nur
+`IFCBUILDINGELEMENTPROXY` wird als spaeter moeglicher Design-Seed nach Review
+markiert.
+
+Das Source-Mapping-Gate fuer das ZG-Testpaket erzeugt 5 Mapping-Zeilen:
+Gebaeude-DXF als vorgeschlagenen Kontext, Legende/Rahmen/Layer `0` als
+vorgeschlagenen Reject und `IFCBUILDINGELEMENTPROXY` als weiterhin
+source-review-pflichtigen semantischen IFC-Kandidaten.
 
 Erste heuristische Klassifikation:
 

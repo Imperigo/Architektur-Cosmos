@@ -1,0 +1,26 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-05-25T18:38:20.502Z",
+  "generator": "kosmo-context-source-review",
+  "project_id": "kosmo-demo-001",
+  "status": "no_source_review_targets",
+  "rights_status": "internal_only",
+  "source_candidates_path": "design/context-candidates.generated.json",
+  "source_selection_path": "design/context-selection.json",
+  "source_matrix_path": "design/context-decision-matrix.generated.json",
+  "note": "Automated source presence/evidence review only. Human layer/IFC review remains required before any design seed approval.",
+  "policy": {
+    "source_review_does_not_approve_design_generation": true,
+    "source_review_does_not_override_context_selection": true,
+    "manual_layer_or_ifc_review_required_for_design_seed": true
+  },
+  "summary": {
+    "target_count": 0,
+    "automated_evidence_confirmed_count": 0,
+    "automated_evidence_missing_or_incomplete_count": 0,
+    "open_human_review_count": 0,
+    "design_seed_possible_after_review_count": 0,
+    "recommended_next_step": "no_source_review_targets"
+  },
+  "rows": []
+}

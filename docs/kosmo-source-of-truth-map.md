@@ -68,6 +68,12 @@ Aktiv fuer:
   Prepare/DXF/IFC
 - `design/context-decision-matrix.generated.*` als Empfehlungsschicht
 - `design/context-review.*` als kompakte Owner-Review mit Vorschlagscommands
+- `design/context-source-map.generated.*` als DXF-/IFC-Inventar mit
+  vorgeschlagenen Kosmo-Rollen
+- `design/context-source-review.generated.*` als DXF-/IFC-Evidence-Review fuer
+  source-review-pflichtige Kandidaten
+- `design/context-source-mapping.*` als menschliches Mapping-Gate fuer
+  DXF-Layer und semantische IFC-Typen
 - `design/context-selection.json` als menschliches Gate vor Design-Seeds
 - `kosmo:context-guard` als Downstream-Stopp vor ungepruefter Designnutzung
 
@@ -170,7 +176,10 @@ KosmoData
    entsteht `design/context-candidates.generated.json` als Kandidatenliste fuer
    Ursprung, Perimeter, DXF-Layerrollen und IFC-Rollen. Initial umgesetzt sind
    auch `design/context-decision-matrix.generated.*` als Empfehlungsschicht,
-   `design/context-review.*` als Owner-Review und
+   `design/context-review.*` als Owner-Review,
+   `design/context-source-map.generated.*` als DXF-/IFC-Inventar,
+   `design/context-source-review.generated.*` als DXF-/IFC-Evidence-Review,
+   `design/context-source-mapping.*` als explizites Mapping-Gate und
    `design/context-selection.json` als menschliches Gate. Naechster Schritt:
    diese Auswahl in ein kleines Layer-Mapping UI und spaeter freigegebene
    Design-Seeds ueberfuehren.

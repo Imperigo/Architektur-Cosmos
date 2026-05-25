@@ -127,6 +127,12 @@ function buildFiles({ name, projectId, site, program }) {
     'design/context-selection.json': json(buildContextSelectionSeed(projectId, 'package_create')),
     'design/context-decision-matrix.generated.json': json(buildContextDecisionMatrixSeed(projectId, 'package_create')),
     'design/context-decision-matrix.generated.md': renderContextDecisionMatrixSeed(projectId),
+    'design/context-source-map.generated.json': json(buildContextSourceMapSeed(projectId, 'package_create')),
+    'design/context-source-map.generated.md': renderContextSourceMapSeed(projectId),
+    'design/context-source-review.generated.json': json(buildContextSourceReviewSeed(projectId, 'package_create')),
+    'design/context-source-review.generated.md': renderContextSourceReviewSeed(projectId),
+    'design/context-source-mapping.json': json(buildContextSourceMappingSeed(projectId, 'package_create')),
+    'design/context-source-mapping.md': renderContextSourceMappingSeed(projectId),
     'design/variants.json': json({
       schema_version: '0.1',
       variants: [
@@ -188,6 +194,48 @@ function buildFiles({ name, projectId, site, program }) {
           format: 'markdown',
           status: 'pending_context_candidates',
           rights_status: 'generated_needs_review'
+        },
+        {
+          path: 'design/context-source-map.generated.json',
+          module: 'Kosmo Design',
+          format: 'json',
+          status: 'pending_source_inventory',
+          rights_status: 'generated_needs_review'
+        },
+        {
+          path: 'design/context-source-map.generated.md',
+          module: 'Kosmo Design',
+          format: 'markdown',
+          status: 'pending_source_inventory',
+          rights_status: 'generated_needs_review'
+        },
+        {
+          path: 'design/context-source-review.generated.json',
+          module: 'Kosmo Design',
+          format: 'json',
+          status: 'pending_source_review_targets',
+          rights_status: 'generated_needs_review'
+        },
+        {
+          path: 'design/context-source-review.generated.md',
+          module: 'Kosmo Design',
+          format: 'markdown',
+          status: 'pending_source_review_targets',
+          rights_status: 'generated_needs_review'
+        },
+        {
+          path: 'design/context-source-mapping.json',
+          module: 'Kosmo Design',
+          format: 'json',
+          status: 'pending_source_mapping',
+          rights_status: 'internal_only'
+        },
+        {
+          path: 'design/context-source-mapping.md',
+          module: 'Kosmo Design',
+          format: 'markdown',
+          status: 'pending_source_mapping',
+          rights_status: 'internal_only'
         },
         {
           path: 'draw/exports/ground-floor-plan.svg',
@@ -260,6 +308,12 @@ function buildManifest({ name, projectId, site }) {
       artifact('design/context-selection.json', 'other', 'design', 'internal_only', 'Human review gate for accepting context candidates as design input.'),
       artifact('design/context-decision-matrix.generated.json', 'other', 'design', 'generated_needs_review', 'Generated recommendation matrix for reviewing context candidates.'),
       artifact('design/context-decision-matrix.generated.md', 'other', 'design', 'generated_needs_review', 'Human-readable recommendation matrix for reviewing context candidates.'),
+      artifact('design/context-source-map.generated.json', 'other', 'design', 'generated_needs_review', 'Generated DXF/IFC source inventory and mapping recommendation.'),
+      artifact('design/context-source-map.generated.md', 'other', 'design', 'generated_needs_review', 'Human-readable DXF/IFC source inventory and mapping recommendation.'),
+      artifact('design/context-source-review.generated.json', 'other', 'design', 'generated_needs_review', 'Automated source evidence review for context candidates that need source review.'),
+      artifact('design/context-source-review.generated.md', 'other', 'design', 'generated_needs_review', 'Human-readable source evidence review for context candidates.'),
+      artifact('design/context-source-mapping.json', 'other', 'design', 'internal_only', 'Human source mapping gate for reviewed DXF layer and semantic IFC decisions.'),
+      artifact('design/context-source-mapping.md', 'other', 'design', 'internal_only', 'Human-readable source mapping gate for DXF/IFC decisions.'),
       artifact('draw/exports/ground-floor-plan.svg', 'plan_export', 'draw', 'generated_needs_review', 'Placeholder vector ground floor export.'),
       artifact('draw/exports/section-a.svg', 'plan_export', 'draw', 'generated_needs_review', 'Placeholder vector section export.'),
       artifact('publish/review-pack.md', 'review_pack', 'publish', 'internal_only', 'Local review package scaffold.')
@@ -469,6 +523,101 @@ function buildContextDecisionMatrixSeed(projectId, source) {
 
 function renderContextDecisionMatrixSeed(projectId) {
   return `# Context Decision Matrix\n\nProject ID: \`${projectId}\`\n\nPending context candidates. Run \`npm run kosmo:context-matrix -- --project <project>\` after KosmoDraw has generated \`design/context-candidates.generated.json\`.\n`;
+}
+
+function buildContextSourceMapSeed(projectId, source) {
+  return {
+    schema_version: '0.1',
+    generated_at: null,
+    generator: 'kosmo-project-package-create',
+    project_id: projectId,
+    status: 'pending_source_inventory',
+    rights_status: 'internal_only',
+    source_stage: 'phase_0_context',
+    source,
+    note: 'Run npm run kosmo:context-source-map -- --project <project> after local DXF/IFC sources are registered.',
+    summary: {
+      dxf_exists: false,
+      dxf_total_entities: 0,
+      dxf_total_polylines: 0,
+      dxf_layer_count: 0,
+      ifc_exists: false,
+      ifc_total_entities: 0,
+      ifc_entity_type_count: 0,
+      ifc_semantic_building_element_count: 0,
+      design_seed_candidate_after_review_count: 0,
+      recommended_next_step: 'register_local_sources'
+    },
+    dxf: { top_layers: [] },
+    ifc: { top_entity_types: [], semantic_entity_types: [] },
+    rows: []
+  };
+}
+
+function renderContextSourceMapSeed(projectId) {
+  return `# Context Source Map\n\nProject ID: \`${projectId}\`\n\nPending source inventory. Run \`npm run kosmo:context-source-map -- --project <project>\` after local DXF/IFC sources are available.\n`;
+}
+
+function buildContextSourceReviewSeed(projectId, source) {
+  return {
+    schema_version: '0.1',
+    generated_at: null,
+    generator: 'kosmo-project-package-create',
+    project_id: projectId,
+    status: 'pending_source_review_targets',
+    rights_status: 'internal_only',
+    source_stage: 'phase_0_context',
+    source,
+    source_candidates_path: 'design/context-candidates.generated.json',
+    source_selection_path: 'design/context-selection.json',
+    note: 'Run npm run kosmo:context-source-review -- --project <project> after context-selection marks candidates as needs_more_source_review.',
+    summary: {
+      target_count: 0,
+      automated_evidence_confirmed_count: 0,
+      automated_evidence_missing_or_incomplete_count: 0,
+      open_human_review_count: 0,
+      design_seed_possible_after_review_count: 0,
+      recommended_next_step: 'review_context_selection'
+    },
+    rows: []
+  };
+}
+
+function renderContextSourceReviewSeed(projectId) {
+  return `# Context Source Review\n\nProject ID: \`${projectId}\`\n\nPending source-review targets. Run \`npm run kosmo:context-source-review -- --project <project>\` after \`design/context-selection.json\` contains \`needs_more_source_review\` candidates.\n`;
+}
+
+function buildContextSourceMappingSeed(projectId, source) {
+  return {
+    schema_version: '0.1',
+    generated_at: null,
+    generator: 'kosmo-project-package-create',
+    project_id: projectId,
+    status: 'pending_source_mapping',
+    rights_status: 'internal_only',
+    source_stage: 'phase_0_context',
+    source,
+    source_map_path: 'design/context-source-map.generated.json',
+    source_review_path: 'design/context-source-review.generated.json',
+    source_selection_path: 'design/context-selection.json',
+    note: 'Run npm run kosmo:context-source-mapping -- --project <project> after source-map/source-review exist.',
+    summary: {
+      mapping_row_count: 0,
+      pending_review_count: 0,
+      accepted_as_context_count: 0,
+      accepted_as_design_seed_count: 0,
+      needs_more_source_review_count: 0,
+      rejected_count: 0,
+      linked_context_candidate_count: 0,
+      design_seed_possible_after_review_count: 0,
+      recommended_next_step: 'generate_source_map'
+    },
+    rows: []
+  };
+}
+
+function renderContextSourceMappingSeed(projectId) {
+  return `# Context Source Mapping\n\nProject ID: \`${projectId}\`\n\nPending source mapping. Run \`npm run kosmo:context-source-mapping -- --project <project>\` after source-map and source-review reports exist.\n`;
 }
 
 function buildCameras() {

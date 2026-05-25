@@ -84,6 +84,12 @@ kosmo-project/
     context-selection.json
     context-decision-matrix.generated.json
     context-decision-matrix.generated.md
+    context-source-map.generated.json
+    context-source-map.generated.md
+    context-source-review.generated.json
+    context-source-review.generated.md
+    context-source-mapping.json
+    context-source-mapping.md
     variants.json
   draw/
     plans/
@@ -374,7 +380,12 @@ Status 2026-05-25:
     **Erledigt mit `design/context-selection.json` und `npm run kosmo:context-selection`.**
 12. Eine Entscheidungsmatrix fuer Kontextkandidaten erzeugen.
     **Erledigt mit `design/context-decision-matrix.generated.*` und `npm run kosmo:context-matrix`.**
-13. Kosmo Zentrale spaeter als Job-Orchestrator an dieses Paket anbinden.
+13. DXF-/IFC-Quellen fuer offene Kontextkandidaten inventarisieren und pruefen.
+    **Erledigt mit `design/context-source-map.generated.*`, `design/context-source-review.generated.*`,
+    `npm run kosmo:context-source-map` und `npm run kosmo:context-source-review`.**
+14. Ein Source-Mapping-Gate fuer DXF-Layer und semantische IFC-Typen erzeugen.
+    **Erledigt mit `design/context-source-mapping.*` und `npm run kosmo:context-source-mapping`.**
+15. Kosmo Zentrale spaeter als Job-Orchestrator an dieses Paket anbinden.
 
 ## 11. Was bewusst noch nicht gebaut wird
 
@@ -406,6 +417,9 @@ Der erste Datenvertrag ist im Repo angelegt:
 - `scripts/kosmo-context-selection-create.mjs`
 - `scripts/kosmo-context-decision-matrix-create.mjs`
 - `scripts/kosmo-context-review.mjs`
+- `scripts/kosmo-context-source-map.mjs`
+- `scripts/kosmo-context-source-mapping.mjs`
+- `scripts/kosmo-context-source-review.mjs`
 - `scripts/kosmo-context-guard.mjs`
 - `scripts/kosmo-blender-package-bridge-smoke.mjs`
 - `scripts/kosmo_blender_package_bridge_smoke.py`
@@ -501,6 +515,42 @@ Dieser Befehl schreibt `design/context-review.md/json`, aktualisiert bei Bedarf
 Selection und Matrix und gibt pro Kandidat die naechste sichere Entscheidung
 als Command aus. Damit kann das Brain Vorschlaege vorbereiten, ohne selbst
 Design-Freigaben zu setzen.
+
+Source-Map fuer DXF-/IFC-Inventar erzeugen:
+
+```bash
+npm run kosmo:context-source-map -- --project archive-intake/kosmo-projects/zg-07052026
+```
+
+Status: bestanden. Im ZG-Testpaket schreibt dieser Befehl
+`design/context-source-map.generated.md/json`, inventarisiert 4 DXF-Layer,
+13'406 DXF-Polylines, 32 IFC-Entity-Typen und 282 semantische
+`IFCBUILDINGELEMENTPROXY`-Elemente. Die Source-Map setzt keine Freigabe; sie
+zeigt nur, welche Quellen spaeter nach Review als Mapping- oder
+Design-Seed-Kandidaten taugen.
+
+Source-Review fuer offene Kandidaten erzeugen:
+
+```bash
+npm run kosmo:context-source-review -- --project archive-intake/kosmo-projects/zg-07052026
+```
+
+Status: bestanden. Im ZG-Testpaket prueft dieser Befehl die 2 Kandidaten mit
+`needs_more_source_review` gegen die lokalen Quellen `Plangrundlage.dxf` und
+`Bestand_Kontext.ifc`. Die Evidence ist automatisiert bestaetigt, aber beide
+Kandidaten bleiben fuer menschliche Layer-/IFC-Pruefung offen.
+
+Source-Mapping-Gate erzeugen:
+
+```bash
+npm run kosmo:context-source-mapping -- --project archive-intake/kosmo-projects/zg-07052026
+```
+
+Status: bestanden. Im ZG-Testpaket entstehen 5 Mapping-Zeilen: der dominante
+DXF-Gebaeudelayer als vorgeschlagener Kontext, Legende/Rahmen/Layer `0` als
+vorgeschlagene Rejects und `IFCBUILDINGELEMENTPROXY` als semantischer
+IFC-Kandidat, der weiter Source-Review braucht. Das Gate aktualisiert
+`context-selection.json` nicht automatisch.
 
 Guard fuer Downstream-Design-Tools:
 

@@ -114,6 +114,33 @@
       "approval_required_before_public_use": false
     },
     {
+      "id": "kosmo_context_source_map",
+      "label": "Kosmo Context Source Map",
+      "command": "npm run kosmo:context-source-map -- --project {project_path}",
+      "output_root": "{project_path}/design",
+      "review_output": "{project_path}/design/context-source-map.generated.md",
+      "purpose": "Inventory local DXF layers and IFC entity types with advisory Kosmo roles so source review can turn raw files into explicit mapping decisions without approving design generation.",
+      "approval_required_before_public_use": false
+    },
+    {
+      "id": "kosmo_context_source_review",
+      "label": "Kosmo Context Source Review",
+      "command": "npm run kosmo:context-source-review -- --project {project_path}",
+      "output_root": "{project_path}/design",
+      "review_output": "{project_path}/design/context-source-review.generated.md",
+      "purpose": "Inspect local DXF/IFC source files for candidates marked needs_more_source_review and write an evidence report with open human checks before any design-seed approval.",
+      "approval_required_before_public_use": false
+    },
+    {
+      "id": "kosmo_context_source_mapping",
+      "label": "Kosmo Context Source Mapping",
+      "command": "npm run kosmo:context-source-mapping -- --project {project_path}",
+      "output_root": "{project_path}/design",
+      "review_output": "{project_path}/design/context-source-mapping.md",
+      "purpose": "Create or update the human DXF layer and semantic IFC mapping gate after source-map/source-review, including explicit per-source decisions before syncing anything back to context-selection.",
+      "approval_required_before_public_use": false
+    },
+    {
       "id": "kosmo_context_guard",
       "label": "Kosmo Context Guard",
       "command": "npm run kosmo:context-guard -- --project {project_path}",

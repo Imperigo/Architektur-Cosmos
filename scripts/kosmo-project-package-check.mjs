@@ -131,9 +131,15 @@ function checkContextSelection() {
   const candidatesPath = join(projectRoot, 'design/context-candidates.generated.json');
   const selectionPath = join(projectRoot, 'design/context-selection.json');
   const matrixPath = join(projectRoot, 'design/context-decision-matrix.generated.json');
+  const sourceMapPath = join(projectRoot, 'design/context-source-map.generated.json');
+  const sourceMappingPath = join(projectRoot, 'design/context-source-mapping.json');
+  const sourceReviewPath = join(projectRoot, 'design/context-source-review.generated.json');
   const candidates = existsSync(candidatesPath) ? readJson(candidatesPath) : null;
   const selection = existsSync(selectionPath) ? readJson(selectionPath) : null;
   const matrix = existsSync(matrixPath) ? readJson(matrixPath) : null;
+  const sourceMap = existsSync(sourceMapPath) ? readJson(sourceMapPath) : null;
+  const sourceMapping = existsSync(sourceMappingPath) ? readJson(sourceMappingPath) : null;
+  const sourceReview = existsSync(sourceReviewPath) ? readJson(sourceReviewPath) : null;
 
   if (candidates && !selection) {
     warnings.push('Context candidates exist, but design/context-selection.json is missing.');
@@ -148,11 +154,17 @@ function checkContextSelection() {
   const missingSelections = [...candidateIds].filter((id) => !selectionIds.has(id));
   const staleSelections = selections.filter((item) => item?.candidate_id && !candidateIds.has(item.candidate_id));
   const undecidedSelections = selections.filter((item) => item.decision === 'undecided');
+  const sourceReviewSelections = selections.filter((item) => item.decision === 'needs_more_source_review');
   const acceptedDesignSeeds = selections.filter((item) => item.decision === 'accepted_as_design_seed');
 
   if (missingSelections.length) warnings.push(`Context selection is missing candidate decisions: ${missingSelections.join(', ')}`);
   if (staleSelections.length) warnings.push(`Context selection has stale decisions: ${staleSelections.map((item) => item.candidate_id).join(', ')}`);
   if (undecidedSelections.length) warnings.push(`Context selection has undecided candidates: ${undecidedSelections.length}`);
+  if (sourceReviewSelections.length && !sourceMap) warnings.push('Context selection has source-review candidates, but design/context-source-map.generated.json is missing.');
+  if (sourceReviewSelections.length && !sourceMapping) warnings.push('Context selection has source-review candidates, but design/context-source-mapping.json is missing.');
+  if (sourceReviewSelections.length && !sourceReview) warnings.push('Context selection has source-review candidates, but design/context-source-review.generated.json is missing.');
+  if (sourceMapping?.summary?.pending_review_count > 0) warnings.push(`Context source mapping has pending review rows: ${sourceMapping.summary.pending_review_count}`);
+  if (sourceReview?.summary?.open_human_review_count > 0) warnings.push(`Context source review has open human checks: ${sourceReview.summary.open_human_review_count}`);
   if (acceptedDesignSeeds.length && selection.approved_for_design_generation !== true) {
     warnings.push('Context selection contains accepted design seeds but approved_for_design_generation is not true.');
   }

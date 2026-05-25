@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-25T17:38:41.882Z",
+  "generated_at": "2026-05-25T18:41:59.480Z",
   "generator": "kosmo-project-package-review",
   "project": {
     "id": "kosmo-demo-001",
@@ -230,7 +230,7 @@
       "rights_status": "internal_only",
       "description": "Local review package scaffold.",
       "exists": true,
-      "size_bytes": 4282
+      "size_bytes": 5306
     },
     {
       "path": "design/context-decision-matrix.generated.json",
@@ -267,6 +267,60 @@
       "description": "Markdown context review for owner decisions.",
       "exists": true,
       "size_bytes": 1839
+    },
+    {
+      "path": "design/context-source-review.generated.json",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Automated source evidence review for context candidates that need source review.",
+      "exists": true,
+      "size_bytes": 1078
+    },
+    {
+      "path": "design/context-source-review.generated.md",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Human-readable source evidence review for context candidates.",
+      "exists": true,
+      "size_bytes": 510
+    },
+    {
+      "path": "design/context-source-map.generated.json",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Generated DXF/IFC source inventory and mapping recommendation.",
+      "exists": true,
+      "size_bytes": 1516
+    },
+    {
+      "path": "design/context-source-map.generated.md",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Human-readable DXF/IFC source inventory and mapping recommendation.",
+      "exists": true,
+      "size_bytes": 614
+    },
+    {
+      "path": "design/context-source-mapping.json",
+      "type": "other",
+      "module": "design",
+      "rights_status": "internal_only",
+      "description": "Human source mapping gate for reviewed DXF layer and semantic IFC mapping decisions.",
+      "exists": true,
+      "size_bytes": 1385
+    },
+    {
+      "path": "design/context-source-mapping.md",
+      "type": "other",
+      "module": "design",
+      "rights_status": "internal_only",
+      "description": "Human-readable source mapping gate for DXF/IFC decisions.",
+      "exists": true,
+      "size_bytes": 548
     }
   ],
   "context_review": {
@@ -285,6 +339,24 @@
     "recommended_accepted_as_design_seed_count": 0,
     "recommended_needs_more_source_review_count": 2,
     "recommended_rejected_count": 0,
+    "source_map_exists": true,
+    "source_map_dxf_layer_count": 0,
+    "source_map_dxf_total_polylines": 0,
+    "source_map_ifc_entity_type_count": 0,
+    "source_map_ifc_semantic_building_element_count": 0,
+    "source_map_design_seed_candidate_after_review_count": 0,
+    "source_mapping_exists": true,
+    "source_mapping_row_count": 0,
+    "source_mapping_pending_review_count": 0,
+    "source_mapping_accepted_as_context_count": 0,
+    "source_mapping_accepted_as_design_seed_count": 0,
+    "source_mapping_needs_more_source_review_count": 0,
+    "source_mapping_rejected_count": 0,
+    "source_review_exists": true,
+    "source_review_target_count": 0,
+    "source_review_evidence_confirmed_count": 0,
+    "source_review_open_human_review_count": 0,
+    "source_review_design_seed_possible_after_review_count": 0,
     "stale_selection_count": 0,
     "readiness": "needs_human_selection",
     "approved_for_design_generation": false
@@ -379,6 +451,10 @@
     "Generated output needs review: viz/previews/kosmo-preview-axon.png",
     "Generated output needs review: design/context-decision-matrix.generated.json",
     "Generated output needs review: design/context-decision-matrix.generated.md",
+    "Generated output needs review: design/context-source-review.generated.json",
+    "Generated output needs review: design/context-source-review.generated.md",
+    "Generated output needs review: design/context-source-map.generated.json",
+    "Generated output needs review: design/context-source-map.generated.md",
     "Context selection still has undecided candidates: 2"
   ],
   "next_actions": [

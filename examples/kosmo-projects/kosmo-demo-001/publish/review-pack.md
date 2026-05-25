@@ -1,6 +1,6 @@
 # Kosmo Demo 001 Review Pack
 
-Generated: 2026-05-25T17:38:41.882Z
+Generated: 2026-05-25T18:41:59.480Z
 Project ID: `kosmo-demo-001`
 Risk level: `local_review_only`
 Readiness: `review_required`
@@ -49,6 +49,12 @@ Readiness: `review_required`
 - ok: `design/context-decision-matrix.generated.md` (design, other, generated_needs_review)
 - ok: `design/context-review.json` (design, other, internal_only)
 - ok: `design/context-review.md` (design, other, internal_only)
+- ok: `design/context-source-review.generated.json` (design, other, generated_needs_review)
+- ok: `design/context-source-review.generated.md` (design, other, generated_needs_review)
+- ok: `design/context-source-map.generated.json` (design, other, generated_needs_review)
+- ok: `design/context-source-map.generated.md` (design, other, generated_needs_review)
+- ok: `design/context-source-mapping.json` (design, other, internal_only)
+- ok: `design/context-source-mapping.md` (design, other, internal_only)
 
 ## Context Selection
 
@@ -64,6 +70,24 @@ Readiness: `review_required`
 - matrix recommends design seed: 0
 - matrix recommends source review: 2
 - matrix recommends rejected: 0
+- source map: present
+- source map DXF layers: 0
+- source map DXF polylines: 0
+- source map IFC entity types: 0
+- source map IFC semantic elements: 0
+- source map design-seed candidates after review: 0
+- source mapping: present
+- source mapping rows: 0
+- source mapping pending: 0
+- source mapping accepted context: 0
+- source mapping accepted design seed: 0
+- source mapping needs source review: 0
+- source mapping rejected: 0
+- source review: present
+- source review targets: 0
+- source evidence confirmed: 0
+- source human checks open: 0
+- source review design-seed possible after review: 0
 - approved for design generation: no
 - readiness: needs_human_selection
 
@@ -83,6 +107,10 @@ Readiness: `review_required`
 - Generated output needs review: viz/previews/kosmo-preview-axon.png
 - Generated output needs review: design/context-decision-matrix.generated.json
 - Generated output needs review: design/context-decision-matrix.generated.md
+- Generated output needs review: design/context-source-review.generated.json
+- Generated output needs review: design/context-source-review.generated.md
+- Generated output needs review: design/context-source-map.generated.json
+- Generated output needs review: design/context-source-map.generated.md
 - Context selection still has undecided candidates: 2
 
 ## Recent Memory

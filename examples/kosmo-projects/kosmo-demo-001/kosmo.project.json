@@ -195,6 +195,48 @@
       "module": "design",
       "rights_status": "internal_only",
       "description": "Markdown context review for owner decisions."
+    },
+    {
+      "path": "design/context-source-review.generated.json",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Automated source evidence review for context candidates that need source review."
+    },
+    {
+      "path": "design/context-source-review.generated.md",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Human-readable source evidence review for context candidates."
+    },
+    {
+      "path": "design/context-source-map.generated.json",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Generated DXF/IFC source inventory and mapping recommendation."
+    },
+    {
+      "path": "design/context-source-map.generated.md",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Human-readable DXF/IFC source inventory and mapping recommendation."
+    },
+    {
+      "path": "design/context-source-mapping.json",
+      "type": "other",
+      "module": "design",
+      "rights_status": "internal_only",
+      "description": "Human source mapping gate for reviewed DXF layer and semantic IFC mapping decisions."
+    },
+    {
+      "path": "design/context-source-mapping.md",
+      "type": "other",
+      "module": "design",
+      "rights_status": "internal_only",
+      "description": "Human-readable source mapping gate for DXF/IFC decisions."
     }
   ],
   "review_gates": {
