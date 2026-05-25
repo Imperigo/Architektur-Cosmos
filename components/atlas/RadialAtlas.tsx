@@ -1921,7 +1921,7 @@ function FilterAccess({
       }}
     >
       {isPanelOpen ? (
-        <div className="filter-access-panel" aria-label="Projekt Data Filter">
+        <div className="filter-access-panel" aria-label="KosmoData Filter">
           <section>
             <div className="filter-access-section-title">Ebenen</div>
             <div className="filter-access-grid">
@@ -2057,10 +2057,10 @@ function MobileDatabaseAccess({ onToggle }: { onToggle: () => void }) {
         event.stopPropagation();
         onToggle();
       }}
-      aria-label="Projekt Data öffnen"
+      aria-label="KosmoData öffnen"
     >
       <span aria-hidden="true">◆</span>
-      <span>Projekt Data</span>
+      <span>KosmoData</span>
     </button>
   );
 }
@@ -2096,7 +2096,7 @@ function DatabaseAccess({ isOpen, onToggle }: { isOpen: boolean; onToggle: () =>
       transform={`translate(${x} ${y})`}
       role="button"
       tabIndex={0}
-      aria-label="Projekt Data öffnen"
+      aria-label="KosmoData öffnen"
       onPointerDown={(event) => event.stopPropagation()}
       onClick={toggleOnce}
       onKeyDown={(event) => {
@@ -2114,7 +2114,7 @@ function DatabaseAccess({ isOpen, onToggle }: { isOpen: boolean; onToggle: () =>
         <path d="M 8.4 1.2 Q 14 4 19.6 1.2" stroke={isOpen ? '#050505' : '#f7f7f4'} opacity="0.52" />
       </g>
       <text x={ui.isCoarsePointer ? 78 : 45} y={ui.isCoarsePointer ? 8.6 : 4.4} fill={isOpen ? '#050505' : '#f7f7f4'} fontSize={ui.isCoarsePointer ? 24 : 8.2} fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.08em" fontWeight="650">
-        PROJEKT DATA
+        KOSMODATA
       </text>
       <rect
         x="0"
@@ -2351,7 +2351,7 @@ function ModuleHub({ onOpenKosmoData }: { onOpenKosmoData: () => void }) {
   }> = [
     {
       id: 'data',
-      name: 'Projekt Data',
+      name: 'KosmoData',
       label: 'Referenzbibliothek / Atlas',
       description: 'Wurmloch, Referenzarchiv, Projekte, Quellen und 3D-Modelle.',
       status: 'bereit',
@@ -2363,10 +2363,10 @@ function ModuleHub({ onOpenKosmoData }: { onOpenKosmoData: () => void }) {
       onClick: onOpenKosmoData
     },
     {
-      id: 'brief',
-      name: 'Asset Data',
+      id: 'asset',
+      name: 'KosmoAsset',
       label: '2D / 3D / Texturen',
-      description: 'Pläne, Modelle, Material- und Texturassets als spätere Bibliothek.',
+      description: 'Bauteile, 2D-Pläne, 3D-Modelle, Texturen und Materialpakete.',
       status: 'in Planung',
       accent: '#f5b342',
       x: 214,
@@ -2375,10 +2375,10 @@ function ModuleHub({ onOpenKosmoData }: { onOpenKosmoData: () => void }) {
       yMobile: -38
     },
     {
-      id: 'form',
-      name: 'KosmoVis',
-      label: '3D / Visualisierung',
-      description: 'Blender-, ArchiCAD-, Modell- und Analyse-Layer.',
+      id: 'design',
+      name: 'KosmoDesign',
+      label: 'Prepare / Draw / Vis / Publish',
+      description: 'Entwurf, Planwerk, Visualisierung und Publikation als gebündelte Pipeline.',
       status: 'in Planung',
       accent: '#ff4fd8',
       x: 0,
@@ -2387,10 +2387,10 @@ function ModuleHub({ onOpenKosmoData }: { onOpenKosmoData: () => void }) {
       yMobile: 166
     },
     {
-      id: 'plan',
-      name: 'KosmoPlan',
-      label: '2D / Layout / Export',
-      description: 'Planwerk, Vektorpläne, Abgabe-Layouts und Exportprofile.',
+      id: 'shop',
+      name: 'KosmoShop',
+      label: 'Produkte / Tools / Käufe',
+      description: 'Späterer Ort für Produktzugang, Toolkäufe und freigegebene Pakete.',
       status: 'in Planung',
       accent: '#65ff73',
       x: -214,
@@ -2738,7 +2738,7 @@ function DatabaseArchivePanel({
                 <CosmosGlyph />
               </svg>
             </button>
-            <div className="database-panel-title">Projekt Data</div>
+            <div className="database-panel-title">KosmoData</div>
           </div>
           <div className="mt-1 flex flex-wrap items-center justify-between gap-2 text-[9.5px] uppercase tracking-[0.18em] text-[#b8b8b2]">
             <span>{developerMode ? 'Dev-Zugang aktiv / private Werkzeuge sichtbar' : 'Öffentliche Wissensansicht / private Werkzeuge gesperrt'}</span>

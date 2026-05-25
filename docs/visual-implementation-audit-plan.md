@@ -110,14 +110,14 @@ Die Website soll nicht nur die Datenbank zeigen. Nach dem Startbild soll künfti
 - **KosmoData**  
   Die Architektur-Datenbank: Referenzprojekte, Quellen, Bilder, Pläne, 3D-Modelle, Analyse-Layer, private/dev und öffentliche Datenlogik.
 
-- **KosmoBrief** *(Arbeitstitel / Vorschlag)*  
-  Entwurfs- und Wettbewerbsvorbereitung: Recherche, Aufgabenanalyse, Referenzsammlung, Strategie, Wettbewerbsbriefing, Konzeptlogik und KI-gestützte Projektvorbereitung.
+- **KosmoAsset**
+  Asset-Bibliothek: 2D-Pläne, 3D-Modelle, Texturen, Materialien, Bauteile, Referenzpakete und exportierbare Ressourcen.
 
-- **KosmoForm** *(Arbeitstitel / Vorschlag)*  
-  Architekturmodellierung und Visualisierung: 3D-Referenzmodelle, Blender/ArchiCAD-Pipeline, Varianten, Material-/Tektonik-Layer, KI-Bild- und Modellworkflow.
+- **KosmoDesign**
+  Gebündelte Entwurfsmaschine: KosmoPrepare, KosmoDraw, KosmoVis und KosmoPublish als Workflow für Vorbereitung, Plan, Modell, Visualisierung und Abgabe.
 
-- **KosmoPlanwerk**  
-  2D-Planexport, Layout, Wettbewerbsabgabe, Plangrafik, Vektorpläne, Schnitte, Diagramme und finale Präsentationslogik.
+- **KosmoShop**
+  Späterer Produkt- und Toolzugang: freigegebene Pakete, Käufe, Abos, Erweiterungen und professionelle Projektmodule.
 
 ### Lokale Hardware-Zentrale und Online-Klon
 
@@ -141,12 +141,11 @@ Die Notion-Suche hat am 2026-05-21 den relevanten AI-Bereich gefunden:
 
 Für den nächsten Planungsblock muss dieser Notion-Bereich detailliert ausgewertet und mit den Website-Modulen synchronisiert werden.
 
-### Offene Namensfragen
+### Festgelegte Modulnamen
 
-Die Namen `KosmoBrief` und `KosmoForm` sind Vorschläge. Alternativen für spätere Prüfung:
-
-- Entwurf/Wettbewerb: `KosmoBrief`, `KosmoQuest`, `KosmoKompass`, `KosmoStrategie`
-- Modellierung/Visualisierung: `KosmoForm`, `KosmoForge`, `KosmoStudio`, `KosmoRender`
+Die Orbit-Stationen heissen aktuell verbindlich: `KosmoData`, `KosmoAsset`,
+`KosmoDesign` und `KosmoShop`. KosmoDesign bündelt die früher separat
+angedachten Bereiche KosmoPrepare, KosmoDraw, KosmoVis und KosmoPublish.
 
 ### Leitfrage für die nächste Konzeptphase
 
@@ -154,7 +153,7 @@ Wie wird Architecture Cosmos vom Atlas zu einem modularen Architektur-Betriebssy
 
 ### Visuelle Richtung Hauptmenü
 
-Das Hauptmenü soll als **kosmisches Modul-Rad mit vier Orbit-Stationen** gestaltet werden. Nach dem Startbild entsteht ein ruhiger, aber eindrucksvoller Zentralraum: In der Mitte steht das Architecture-Cosmos-Symbol, darum kreisen vier klare Stationen als Einstieg in die Module `KosmoData`, `KosmoBrief`, `KosmoForm` und `KosmoPlanwerk`.
+Das Hauptmenü soll als **kosmisches Modul-Rad mit vier Orbit-Stationen** gestaltet werden. Nach dem Startbild entsteht ein ruhiger, aber eindrucksvoller Zentralraum: In der Mitte steht das Architecture-Cosmos-Symbol, darum kreisen vier klare Stationen als Einstieg in die Module `KosmoData`, `KosmoAsset`, `KosmoDesign` und `KosmoShop`.
 
 Die Stationen sollen nicht wie normale Website-Kacheln wirken, sondern wie navigierbare Projekt-Orbits:
 
@@ -189,7 +188,7 @@ Die Stationen sollen nicht wie normale Website-Kacheln wirken, sondern wie navig
 - Das Cosmos-Fadenkreuz wird in der schmalen/Mobile-UI ausgeblendet, damit es keine Dock-Buttons überdeckt.
 - Nach dem Startbild öffnet jetzt ein kosmisches Modul-Rad als Projektzentrale.
 - `KosmoData` ist als aktives Modul verbunden und startet das Wurmloch.
-- `KosmoBrief`, `KosmoForm` und `KosmoPlanwerk` sind als geplante Orbit-Stationen sichtbar, aber noch nicht funktional ausgebaut.
+- `KosmoAsset`, `KosmoDesign` und `KosmoShop` sind als geplante Orbit-Stationen sichtbar, aber noch nicht funktional ausgebaut.
 - Die Phone-Tier-Regeln wurden verdichtet, damit Brain, Suche, Dev und Mobile-Dock auf `390x844` ohne horizontalen Overflow lesbar bleiben.
 
 ### Verifiziert
@@ -231,4 +230,4 @@ Die Stationen sollen nicht wie normale Website-Kacheln wirken, sondern wie navig
 - Echte Mobile-QA auf iPhone/Opera/Safari bleibt eigener Block, auch wenn der schmale In-App-Viewport nun stabiler aussieht.
 - Objektflackern beim Scroll/Zoom muss noch per gezielter visueller Aufnahme/Sequenz auf echten Browsern geprüft werden; der harte Front-Cut ist aber bereits entschärft.
 - Baustilbeschriftungen und Stilfarben müssen weiterhin auf echten Browsern gegen Objektfarben geprüft werden; die gemeinsame Winkelgeometrie ist umgesetzt.
-- Die geplanten Module `KosmoBrief`, `KosmoForm` und `KosmoPlanwerk` brauchen als nächstes je eine eigene Inhalts-/Interaction-Spezifikation, bevor sie klickbar werden.
+- Die geplanten Module `KosmoAsset`, `KosmoDesign` und `KosmoShop` brauchen als nächstes je eine eigene Inhalts-/Interaction-Spezifikation, bevor sie klickbar werden.
