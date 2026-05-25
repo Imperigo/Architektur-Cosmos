@@ -1814,7 +1814,32 @@ function FilterAccess({
   onToggleRelations: () => void;
 }) {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
+  const filterRef = useRef<HTMLElement | null>(null);
   const activeCount = (activeTagLayer ? 1 : 0) + (activeSourceLens ? 1 : 0) + (showRelations ? 1 : 0);
+
+  useEffect(() => {
+    if (!isPanelOpen) return;
+
+    const closeOnOutsidePointer = (event: globalThis.PointerEvent) => {
+      const root = filterRef.current;
+      if (!root || root.contains(event.target as Node)) return;
+      setIsPanelOpen(false);
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape' && event.key !== 'Backspace') return;
+      event.preventDefault();
+      event.stopPropagation();
+      setIsPanelOpen(false);
+    };
+
+    window.addEventListener('pointerdown', closeOnOutsidePointer, { capture: true });
+    window.addEventListener('keydown', closeOnEscape, { capture: true });
+
+    return () => {
+      window.removeEventListener('pointerdown', closeOnOutsidePointer, { capture: true });
+      window.removeEventListener('keydown', closeOnEscape, { capture: true });
+    };
+  }, [isPanelOpen]);
 
   function stopAndRun(event: ReactMouseEvent, action: () => void) {
     event.preventDefault();
@@ -1823,37 +1848,52 @@ function FilterAccess({
   }
 
   return (
-    <aside className={`filter-access cosmos-text-safe ${isPanelOpen ? 'filter-access-open' : ''}`} onPointerDown={(event) => event.stopPropagation()} onClick={(event) => event.stopPropagation()}>
-      <div className="filter-access-panel" aria-label="KosmoData Filter">
-        <section>
-          <div className="filter-access-section-title">Ebenen</div>
-          <div className="filter-access-grid">
-            <button type="button" className={!activeTagLayer && !activeSourceLens ? 'filter-access-active' : ''} onClick={(event) => stopAndRun(event, onReset)}>
-              Alle
+    <aside
+      className={`filter-access cosmos-text-safe ${isPanelOpen ? 'filter-access-open' : ''}`}
+      ref={filterRef}
+      onPointerEnter={() => setIsPanelOpen(true)}
+      onPointerLeave={() => setIsPanelOpen(false)}
+      onPointerDown={(event) => event.stopPropagation()}
+      onClick={(event) => event.stopPropagation()}
+      onKeyDown={(event) => {
+        if (event.key !== 'Escape' && event.key !== 'Backspace') return;
+        event.preventDefault();
+        event.stopPropagation();
+        setIsPanelOpen(false);
+      }}
+    >
+      {isPanelOpen ? (
+        <div className="filter-access-panel" aria-label="KosmoData Filter">
+          <section>
+            <div className="filter-access-section-title">Ebenen</div>
+            <div className="filter-access-grid">
+              <button type="button" className={!activeTagLayer && !activeSourceLens ? 'filter-access-active' : ''} onClick={(event) => stopAndRun(event, onReset)}>
+                Alle
+              </button>
+              {tagLayerDefinitions.map((layer) => (
+                <button key={layer.id} type="button" className={activeTagLayer === layer.id ? 'filter-access-active' : ''} onClick={(event) => stopAndRun(event, () => onSelectTagLayer(layer.id))}>
+                  {layer.label}
+                </button>
+              ))}
+            </div>
+          </section>
+          <section>
+            <div className="filter-access-section-title">Quellwebseite</div>
+            <div className="filter-access-grid filter-access-source-grid">
+              {sourceLensDefinitions.map((source) => (
+                <button key={source.id} type="button" className={activeSourceLens === source.id ? 'filter-access-active' : ''} onClick={(event) => stopAndRun(event, () => onSelectSourceLens(source.id))}>
+                  {source.label}
+                </button>
+              ))}
+            </div>
+          </section>
+          <section>
+            <button type="button" className={`filter-access-relations ${showRelations ? 'filter-access-active' : ''}`} onClick={(event) => stopAndRun(event, onToggleRelations)}>
+              Netzwerk {showRelations ? 'aktiv' : 'anzeigen'}
             </button>
-            {tagLayerDefinitions.map((layer) => (
-              <button key={layer.id} type="button" className={activeTagLayer === layer.id ? 'filter-access-active' : ''} onClick={(event) => stopAndRun(event, () => onSelectTagLayer(layer.id))}>
-                {layer.label}
-              </button>
-            ))}
-          </div>
-        </section>
-        <section>
-          <div className="filter-access-section-title">Quellwebseite</div>
-          <div className="filter-access-grid filter-access-source-grid">
-            {sourceLensDefinitions.map((source) => (
-              <button key={source.id} type="button" className={activeSourceLens === source.id ? 'filter-access-active' : ''} onClick={(event) => stopAndRun(event, () => onSelectSourceLens(source.id))}>
-                {source.label}
-              </button>
-            ))}
-          </div>
-        </section>
-        <section>
-          <button type="button" className={`filter-access-relations ${showRelations ? 'filter-access-active' : ''}`} onClick={(event) => stopAndRun(event, onToggleRelations)}>
-            Netzwerk {showRelations ? 'aktiv' : 'anzeigen'}
-          </button>
-        </section>
-      </div>
+          </section>
+        </div>
+      ) : null}
       <button
         type="button"
         className={`filter-access-trigger ${activeCount ? 'filter-access-trigger-active' : ''}`}
@@ -1995,9 +2035,17 @@ function DatabaseAccess({ isOpen, onToggle }: { isOpen: boolean; onToggle: () =>
       className={`database-access ${isOpen ? 'database-access-offen' : ''}`}
       pointerEvents="auto"
       transform={`translate(${x} ${y})`}
-      aria-label="KosmoData database"
+      role="button"
+      tabIndex={0}
+      aria-label="KosmoData öffnen"
       onPointerDown={(event) => event.stopPropagation()}
       onClick={toggleOnce}
+      onKeyDown={(event) => {
+        if (event.key !== 'Enter' && event.key !== ' ') return;
+        event.preventDefault();
+        event.stopPropagation();
+        onToggle();
+      }}
     >
       <rect x="0" y={-height / 2} width={width} height={height} rx={height / 2} fill={isOpen ? '#f7f7f4' : '#050505'} stroke="#00e7ff" strokeWidth="0.92" opacity="0.9" />
       <path d={`M ${height / 2} ${-height / 2 + 1} H ${width - height / 2}`} stroke="#00e7ff" strokeWidth="0.42" opacity={isOpen ? 0.18 : 0.34} />
@@ -3946,10 +3994,23 @@ function SnappedEntryOverlay({ entry, onDismiss }: { entry: Entry; onDismiss: ()
       <g pointerEvents="auto" transform={`translate(${cardX} ${cardY}) scale(${cardScale})`}>
         <ProjectDetailCard entry={entry} x={0} y={0} />
       </g>
-      <g className="dossier-close" pointerEvents="auto" transform={`translate(${cardX + cardWidth - closeWidth} ${actionY})`} onClick={onDismiss}>
+      <g
+        className="dossier-close"
+        pointerEvents="auto"
+        transform={`translate(${cardX + cardWidth - closeWidth} ${actionY})`}
+        role="button"
+        tabIndex={0}
+        aria-label="Projekt schliessen"
+        onClick={onDismiss}
+        onKeyDown={(event) => {
+          if (event.key !== 'Enter' && event.key !== ' ') return;
+          event.preventDefault();
+          onDismiss();
+        }}
+      >
         <rect width={closeWidth} height={actionHeight} fill="#f7f7f4" opacity="0.94" />
         <text x={closeWidth / 2} y={ui.isCoarsePointer ? 27 : 15} textAnchor="middle" fill="#050505" fontSize={actionFont} fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.14em">
-          CLOSE
+          ZURÜCK
         </text>
       </g>
       <a href={`/atlas/${entry.slug}/`} className="dossier-page-link">

@@ -46,7 +46,7 @@ function StyleSectorsComponent({ state, isMoving = false, activeStyleLens = null
         const lensBoost = activeStyleLens === sector.id ? 1.8 : activeStyleLens ? 0.36 : 1;
 
         return (
-          <g key={sector.id} className="style-sector" pointerEvents="auto">
+          <g key={sector.id} className="style-sector" pointerEvents="none">
             <path
               className="style-sector-ribbon"
               d={ribbonPath}

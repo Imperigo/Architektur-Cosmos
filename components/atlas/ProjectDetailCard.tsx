@@ -18,8 +18,8 @@ export function ProjectDetailCard({ entry, x, y }: ProjectDetailCardProps) {
   const titleFontSize = titleLines.length > 1 ? 15.2 : entry.title.length > 33 ? 16.2 : 18;
   const metaY = y + 60 + (titleLines.length - 1) * 15;
   const mediaY = y + 88 + (titleLines.length - 1) * 8;
-  const headlineLines = ellipsizeLines(wrapText(entry.one_sentence || entry.short_description, 35), 4, 35);
-  const bodyLines = ellipsizeLines(wrapText(entry.full_description, 42), entry.source_url || entry.source_assets?.length ? 5 : 7, 42);
+  const headlineLines = ellipsizeLines(wrapText(entry.one_sentence || entry.short_description, 32), 3, 32);
+  const bodyLines = ellipsizeLines(wrapText(entry.full_description, 38), entry.source_url || entry.source_assets?.length ? 4 : 5, 38);
   const chips = [layerLabel, ...entry.themes.slice(0, 3)].map((item) => ellipsizeText(item.replace(/_/g, ' '), 28));
   const sourceLabel = sourceLabelForEntry(entry);
   const sourceAssetCount = entry.source_assets?.length ?? 0;
@@ -60,16 +60,16 @@ export function ProjectDetailCard({ entry, x, y }: ProjectDetailCardProps) {
         {formatYear(entry.year_start)}{location ? ` · ${location}` : ''}
       </text>
       <ProjectMediaGrid media={entry.media} x={x + 16} y={mediaY} slotWidth={72} slotHeight={48} gap={9} showLabels accent={accent} detailHref={detailHref} />
-      <text fill="#f7f7f4" fontSize="8.2" fontWeight="600" fontFamily="var(--font-sans), system-ui, sans-serif">
+      <text fill="#f7f7f4" fontSize="7.6" fontWeight="600" fontFamily="var(--font-sans), system-ui, sans-serif">
         {headlineLines.map((line, index) => (
-          <tspan key={`${line}-${index}`} x={x + 184} y={y + 91 + index * 11}>
+          <tspan key={`${line}-${index}`} x={x + 184} y={y + 91 + index * 10}>
             {line}
           </tspan>
         ))}
       </text>
-      <text fill="#cfcfca" fontSize="6.9" fontFamily="var(--font-sans), system-ui, sans-serif">
+      <text fill="#cfcfca" fontSize="6.55" fontFamily="var(--font-sans), system-ui, sans-serif">
         {bodyLines.map((line, index) => (
-          <tspan key={`${line}-${index}`} x={x + 184} y={y + 142 + index * 9.7}>
+          <tspan key={`${line}-${index}`} x={x + 184} y={y + 133 + index * 8.8}>
             {line}
           </tspan>
         ))}
@@ -80,19 +80,19 @@ export function ProjectDetailCard({ entry, x, y }: ProjectDetailCardProps) {
             ARCHIVE STATUS
           </text>
           <rect x={x + 184} y={y + 214} width="150" height="27" fill="#061315" stroke={accent} strokeWidth="0.45" opacity="0.86" />
-          <text x={x + 192} y={y + 225} fill="#f7f7f4" fontSize="6.5" fontFamily="var(--font-sans), system-ui, sans-serif">
-            {`${databaseProfile?.status ?? 'draft'} · ${databaseProfile?.source_count ?? 0} sources · ${databaseProfile?.media_count ?? sourceAssetCount} media`}
+          <text x={x + 192} y={y + 225} fill="#f7f7f4" fontSize="6.15" fontFamily="var(--font-sans), system-ui, sans-serif">
+            {ellipsizeText(`${databaseProfile?.status ?? 'draft'} · ${databaseProfile?.source_count ?? 0} sources · ${databaseProfile?.media_count ?? sourceAssetCount} media`, 34)}
           </text>
-          <text x={x + 192} y={y + 236} fill="#c7c7c2" fontSize="6.2" fontFamily="var(--font-sans), system-ui, sans-serif">
-            {`${databaseProfile?.model_count ?? 0} model layers · ${databaseProfile?.analysis_count ?? 0} analysis layers`}
+          <text x={x + 192} y={y + 236} fill="#c7c7c2" fontSize="5.95" fontFamily="var(--font-sans), system-ui, sans-serif">
+            {ellipsizeText(`${databaseProfile?.model_count ?? 0} model layers · ${databaseProfile?.analysis_count ?? 0} analysis layers`, 36)}
           </text>
           <text x={x + 184} y={y + 251} fill={accent} fontSize="6.6" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.1em">
             3D / ANALYSIS
           </text>
-          <text x={x + 184} y={y + 264} fill="#d7d7d0" fontSize="6.5" fontFamily="var(--font-sans), system-ui, sans-serif">
+          <text x={x + 184} y={y + 264} fill="#d7d7d0" fontSize="6.15" fontFamily="var(--font-sans), system-ui, sans-serif">
             {modelSummary}
           </text>
-          <text x={x + 184} y={y + 276} fill="#9c9c96" fontSize="6.2" fontFamily="var(--font-sans), system-ui, sans-serif">
+          <text x={x + 184} y={y + 276} fill="#9c9c96" fontSize="5.95" fontFamily="var(--font-sans), system-ui, sans-serif">
             {analysisSummary}
           </text>
         </g>

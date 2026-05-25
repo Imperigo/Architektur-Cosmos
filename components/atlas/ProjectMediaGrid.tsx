@@ -41,8 +41,8 @@ export function ProjectMediaGrid({ media, x, y, slotWidth, slotHeight, gap, show
               <MediaPlaceholder type={type} x={slotX} y={slotY} width={slotWidth} height={slotHeight} accent={accent} seed={stableHash(mediaItem?.placeholder ?? type)} />
             )}
             {showLabels ? (
-              <text x={slotX} y={slotY + slotHeight + 10} fill="#b8b8b8" fontSize="7.4" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.08em">
-                {(mediaItem?.label ?? type).toUpperCase()}
+              <text x={slotX + slotWidth / 2} y={slotY + slotHeight + 9.4} textAnchor="middle" fill="#b8b8b8" fontSize="6.2" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.06em">
+                {shortMediaLabel(type).toUpperCase()}
               </text>
             ) : null}
           </g>
@@ -112,4 +112,11 @@ function stableHash(value: string) {
   return value.split('').reduce((hash, char) => {
     return (hash * 31 + char.charCodeAt(0)) >>> 0;
   }, 7);
+}
+
+function shortMediaLabel(type: EntryMediaType) {
+  if (type === 'exterior') return 'Aussen';
+  if (type === 'interior') return 'Innen';
+  if (type === 'section') return 'Schnitt';
+  return 'Grundriss';
 }

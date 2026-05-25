@@ -64,6 +64,29 @@ export function ProjectSearch({
   }, [isDevOpen]);
 
   useEffect(() => {
+    const closeSearchFromWindow = () => {
+      const currentState = typeof window.history.state === 'object' && window.history.state !== null ? window.history.state : {};
+      if (currentState.cosmosOverlay === 'search') {
+        const { cosmosOverlay: _cosmosOverlay, ...rest } = currentState;
+        window.history.replaceState(rest, '', window.location.href);
+      }
+      searchHistoryRef.current = false;
+      setIsOpen(false);
+      setQuery('');
+    };
+
+    const closeDevGateFromWindow = () => {
+      const currentState = typeof window.history.state === 'object' && window.history.state !== null ? window.history.state : {};
+      if (currentState.cosmosOverlay === 'dev') {
+        const { cosmosOverlay: _cosmosOverlay, ...rest } = currentState;
+        window.history.replaceState(rest, '', window.location.href);
+      }
+      devHistoryRef.current = false;
+      setIsDevOpen(false);
+      setDevError('');
+      setDevCode('');
+    };
+
     const handlePopState = () => {
       if (isOpenRef.current && searchHistoryRef.current) {
         searchHistoryRef.current = false;
@@ -85,12 +108,12 @@ export function ProjectSearch({
       if (event.target instanceof Element && event.target.closest('.project-search')) return;
 
       if (isOpenRef.current) {
-        closeSearch();
+        closeSearchFromWindow();
         return;
       }
 
       if (isDevOpenRef.current) {
-        closeDevGate();
+        closeDevGateFromWindow();
       }
     };
 
@@ -99,12 +122,14 @@ export function ProjectSearch({
       if (!shouldDismiss) return;
       if (isOpenRef.current) {
         event.preventDefault();
-        closeSearch();
+        event.stopImmediatePropagation();
+        closeSearchFromWindow();
         return;
       }
       if (isDevOpenRef.current) {
         event.preventDefault();
-        closeDevGate();
+        event.stopImmediatePropagation();
+        closeDevGateFromWindow();
       }
     };
 
@@ -129,11 +154,7 @@ export function ProjectSearch({
   }
 
   function closeSearch() {
-    if (searchHistoryRef.current) {
-      window.history.back();
-      return;
-    }
-
+    clearOverlayHistory('search');
     searchHistoryRef.current = false;
     setIsOpen(false);
     setQuery('');
@@ -180,11 +201,7 @@ export function ProjectSearch({
   }
 
   function closeDevGate() {
-    if (devHistoryRef.current) {
-      window.history.back();
-      return;
-    }
-
+    clearOverlayHistory('dev');
     devHistoryRef.current = false;
     setIsDevOpen(false);
     setDevError('');
@@ -195,6 +212,13 @@ export function ProjectSearch({
     const currentState = typeof window.history.state === 'object' && window.history.state !== null ? window.history.state : {};
     if (currentState.cosmosOverlay === name) return;
     window.history.pushState({ ...currentState, cosmosOverlay: name }, '', window.location.href);
+  }
+
+  function clearOverlayHistory(name: 'search' | 'dev') {
+    const currentState = typeof window.history.state === 'object' && window.history.state !== null ? window.history.state : {};
+    if (currentState.cosmosOverlay !== name) return;
+    const { cosmosOverlay: _cosmosOverlay, ...rest } = currentState;
+    window.history.replaceState(rest, '', window.location.href);
   }
 
   function unlockDevMode() {
@@ -212,6 +236,7 @@ export function ProjectSearch({
   function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
     if (event.key === 'Escape') {
       event.stopPropagation();
+      event.preventDefault();
       closeSearch();
     }
   }
@@ -219,6 +244,7 @@ export function ProjectSearch({
   function handleDevKeyDown(event: KeyboardEvent<HTMLInputElement>) {
     if (event.key === 'Escape') {
       event.stopPropagation();
+      event.preventDefault();
       closeDevGate();
     }
 
@@ -235,7 +261,7 @@ export function ProjectSearch({
       onTouchMove={(event) => event.stopPropagation()}
       onClick={(event) => event.stopPropagation()}
     >
-      <button type="button" className="project-search-trigger cosmos-trigger" onClick={toggleSearch} aria-expanded={isOpen}>
+      <button type="button" className="project-search-trigger cosmos-trigger" onClick={toggleSearch} aria-expanded={isOpen} aria-label={isOpen ? 'Suche schliessen' : 'Suche öffnen'}>
         <span className="project-search-mark" aria-hidden="true" />
         <span>Suche</span>
       </button>
@@ -246,6 +272,7 @@ export function ProjectSearch({
           className={`project-dev-trigger cosmos-trigger ${isDeveloperMode ? 'project-dev-trigger-active' : ''}`}
           onClick={toggleDevGate}
           aria-expanded={isDevOpen}
+          aria-label={isDevOpen ? 'Dev Access schliessen' : 'Dev Access öffnen'}
         >
           <span className="project-dev-mark" aria-hidden="true" />
           <span>{isDeveloperMode ? 'Dev on' : 'Dev'}</span>

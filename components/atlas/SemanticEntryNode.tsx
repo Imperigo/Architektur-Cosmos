@@ -93,7 +93,7 @@ export function SemanticEntryNode({
   return (
     <g
       data-entry-node="true"
-      pointerEvents="none"
+      pointerEvents="auto"
       role="button"
       tabIndex={0}
       aria-label={`${entry.title}, ${entry.year_start}`}
