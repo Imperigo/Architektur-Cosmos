@@ -81,6 +81,9 @@ function buildReport(manifest, check) {
   if (contextReview.selection_exists && contextReview.undecided_count > 0) {
     warnings.push(`Context selection still has undecided candidates: ${contextReview.undecided_count}`);
   }
+  if (contextReview.selection_exists && contextReview.needs_more_source_review_count > 0) {
+    warnings.push(`Context selection needs source review for candidates: ${contextReview.needs_more_source_review_count}`);
+  }
   if (contextReview.accepted_as_design_seed_count > 0 && !contextReview.approved_for_design_generation) {
     warnings.push('Context candidates are selected as design seed but final design-generation approval is still false.');
   }
@@ -204,6 +207,7 @@ function nextActions({ modules, gates, blockers, warnings, outputs, contextRevie
   if (contextReview?.candidate_count > 0 && !contextReview.matrix_exists) actions.push('Create design/context-decision-matrix.generated.json from context candidates.');
   if (contextReview?.candidate_count > 0 && !contextReview.selection_exists) actions.push('Create design/context-selection.json from context candidates.');
   if (contextReview?.selection_exists && contextReview.undecided_count > 0) actions.push('Review context-selection decisions before using candidates as design input.');
+  if (contextReview?.selection_exists && contextReview.needs_more_source_review_count > 0) actions.push('Verify sources for context-selection candidates marked needs_more_source_review.');
   if (contextReview?.accepted_as_design_seed_count > 0 && !contextReview.approved_for_design_generation) actions.push('Set final approval only after a human has checked context-selection.');
   if (modules.some((module) => module.id === 'data' && module.status === 'pending')) actions.push('Let Kosmo Data add reviewed references, sources and asset candidates.');
   if (modules.some((module) => module.id === 'design' && module.status === 'pending')) actions.push('Import design/model-profile.json into Kosmo Design and write an import status.');
