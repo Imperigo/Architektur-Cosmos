@@ -461,6 +461,20 @@
       "module": "design",
       "rights_status": "generated_needs_review",
       "description": "Human-readable IFC decision sync report."
+    },
+    {
+      "path": "design/ifc-human-review-guide.generated.json",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Project-specific human IFC review guide."
+    },
+    {
+      "path": "design/ifc-human-review-guide.generated.md",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Human-readable IFC review Anleitung and decision commands."
     }
   ],
   "review_gates": {

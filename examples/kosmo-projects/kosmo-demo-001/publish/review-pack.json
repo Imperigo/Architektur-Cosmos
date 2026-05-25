@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-25T21:40:48.601Z",
+  "generated_at": "2026-05-25T21:50:32.978Z",
   "generator": "kosmo-project-package-review",
   "project": {
     "id": "kosmo-demo-001",
@@ -230,7 +230,7 @@
       "rights_status": "internal_only",
       "description": "Local review package scaffold.",
       "exists": true,
-      "size_bytes": 14615
+      "size_bytes": 15105
     },
     {
       "path": "design/context-decision-matrix.generated.json",
@@ -609,6 +609,24 @@
       "description": "Human-readable IFC decision sync report.",
       "exists": true,
       "size_bytes": 856
+    },
+    {
+      "path": "design/ifc-human-review-guide.generated.json",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Project-specific human IFC review guide.",
+      "exists": true,
+      "size_bytes": 11848
+    },
+    {
+      "path": "design/ifc-human-review-guide.generated.md",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Human-readable IFC review Anleitung and decision commands.",
+      "exists": true,
+      "size_bytes": 6903
     }
   ],
   "context_review": {
@@ -712,6 +730,11 @@
     "ifc_human_review_sync_can_sync": false,
     "ifc_human_review_sync_operation_count": 0,
     "ifc_human_review_sync_next_step": "record_final_ifc_human_review_decision_first",
+    "ifc_human_review_guide_exists": true,
+    "ifc_human_review_guide_status": "ifc_human_review_guide_ready",
+    "ifc_human_review_guide_ready": true,
+    "ifc_human_review_guide_open_human_check_count": 10,
+    "ifc_human_review_guide_current_decision": "keep_needs_more_source_review",
     "model_layer_handoff_exists": true,
     "model_layer_handoff_status": "model_layer_handoff_ready_for_human_review",
     "model_layer_handoff_ready": true,
@@ -880,6 +903,8 @@
     "Generated output needs review: design/ifc-human-review-decision.md",
     "Generated output needs review: design/ifc-human-review-sync.generated.json",
     "Generated output needs review: design/ifc-human-review-sync.generated.md",
+    "Generated output needs review: design/ifc-human-review-guide.generated.json",
+    "Generated output needs review: design/ifc-human-review-guide.generated.md",
     "Context selection still has undecided candidates: 2",
     "Context source mapping still has pending review rows: 1",
     "IFC human review decision exists but final human decision is not recorded."

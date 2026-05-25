@@ -143,6 +143,7 @@ function checkContextSelection() {
   const ifcHumanReviewViewerPath = join(projectRoot, 'design/ifc-human-review-viewer.generated.json');
   const ifcHumanReviewDecisionPath = join(projectRoot, 'design/ifc-human-review-decision.json');
   const ifcHumanReviewSyncPath = join(projectRoot, 'design/ifc-human-review-sync.generated.json');
+  const ifcHumanReviewGuidePath = join(projectRoot, 'design/ifc-human-review-guide.generated.json');
   const modelLayerHandoffPath = join(projectRoot, 'design/model-layer-handoff.generated.json');
   const contextHandoffPath = join(projectRoot, 'design/context-handoff.generated.json');
   const blenderContextImportPath = join(projectRoot, 'design/blender-context-import.generated.json');
@@ -163,6 +164,7 @@ function checkContextSelection() {
   const ifcHumanReviewViewer = existsSync(ifcHumanReviewViewerPath) ? readJson(ifcHumanReviewViewerPath) : null;
   const ifcHumanReviewDecision = existsSync(ifcHumanReviewDecisionPath) ? readJson(ifcHumanReviewDecisionPath) : null;
   const ifcHumanReviewSync = existsSync(ifcHumanReviewSyncPath) ? readJson(ifcHumanReviewSyncPath) : null;
+  const ifcHumanReviewGuide = existsSync(ifcHumanReviewGuidePath) ? readJson(ifcHumanReviewGuidePath) : null;
   const modelLayerHandoff = existsSync(modelLayerHandoffPath) ? readJson(modelLayerHandoffPath) : null;
   const contextHandoff = existsSync(contextHandoffPath) ? readJson(contextHandoffPath) : null;
   const blenderContextImport = existsSync(blenderContextImportPath) ? readJson(blenderContextImportPath) : null;
@@ -229,6 +231,12 @@ function checkContextSelection() {
   }
   if (ifcHumanReviewViewer?.status === 'ifc_review_viewer_ready' && !ifcHumanReviewDecision) {
     warnings.push('IFC human review viewer is ready, but design/ifc-human-review-decision.json is missing.');
+  }
+  if (ifcHumanReviewViewer?.status === 'ifc_review_viewer_ready' && !ifcHumanReviewGuide) {
+    warnings.push('IFC human review viewer is ready, but design/ifc-human-review-guide.generated.json is missing.');
+  }
+  if (ifcHumanReviewGuide && ifcHumanReviewGuide.status !== 'ifc_human_review_guide_ready') {
+    warnings.push('IFC human review guide exists, but is not ready.');
   }
   if (ifcHumanReviewDecision && ifcHumanReviewDecision.summary?.final_decision_recorded !== true) {
     warnings.push('IFC human review decision exists, but final human decision is not recorded.');

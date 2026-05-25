@@ -114,6 +114,12 @@ function buildReport(manifest, check) {
   if (contextReview.ifc_human_review_viewer_ready && !contextReview.ifc_human_review_decision_exists) {
     warnings.push('IFC human review viewer is ready but design/ifc-human-review-decision.json is missing.');
   }
+  if (contextReview.ifc_human_review_viewer_ready && !contextReview.ifc_human_review_guide_exists) {
+    warnings.push('IFC human review viewer is ready but design/ifc-human-review-guide.generated.json is missing.');
+  }
+  if (contextReview.ifc_human_review_guide_exists && !contextReview.ifc_human_review_guide_ready) {
+    warnings.push('IFC human review guide exists but is not ready.');
+  }
   if (contextReview.ifc_human_review_decision_exists && !contextReview.ifc_human_review_decision_final) {
     warnings.push('IFC human review decision exists but final human decision is not recorded.');
   }
@@ -225,6 +231,7 @@ function readContextReview() {
   const ifcHumanReviewViewerPath = join(projectRoot, 'design/ifc-human-review-viewer.generated.json');
   const ifcHumanReviewDecisionPath = join(projectRoot, 'design/ifc-human-review-decision.json');
   const ifcHumanReviewSyncPath = join(projectRoot, 'design/ifc-human-review-sync.generated.json');
+  const ifcHumanReviewGuidePath = join(projectRoot, 'design/ifc-human-review-guide.generated.json');
   const modelLayerHandoffPath = join(projectRoot, 'design/model-layer-handoff.generated.json');
   const contextHandoffPath = join(projectRoot, 'design/context-handoff.generated.json');
   const blenderContextImportPath = join(projectRoot, 'design/blender-context-import.generated.json');
@@ -245,6 +252,7 @@ function readContextReview() {
   const ifcHumanReviewViewer = existsSync(ifcHumanReviewViewerPath) ? safeReadJson(ifcHumanReviewViewerPath) : null;
   const ifcHumanReviewDecision = existsSync(ifcHumanReviewDecisionPath) ? safeReadJson(ifcHumanReviewDecisionPath) : null;
   const ifcHumanReviewSync = existsSync(ifcHumanReviewSyncPath) ? safeReadJson(ifcHumanReviewSyncPath) : null;
+  const ifcHumanReviewGuide = existsSync(ifcHumanReviewGuidePath) ? safeReadJson(ifcHumanReviewGuidePath) : null;
   const modelLayerHandoff = existsSync(modelLayerHandoffPath) ? safeReadJson(modelLayerHandoffPath) : null;
   const contextHandoff = existsSync(contextHandoffPath) ? safeReadJson(contextHandoffPath) : null;
   const blenderContextImport = existsSync(blenderContextImportPath) ? safeReadJson(blenderContextImportPath) : null;
@@ -357,6 +365,11 @@ function readContextReview() {
     ifc_human_review_sync_can_sync: Boolean(ifcHumanReviewSync?.summary?.can_sync),
     ifc_human_review_sync_operation_count: numberOrDefault(ifcHumanReviewSync?.summary?.operation_count, 0),
     ifc_human_review_sync_next_step: ifcHumanReviewSync?.summary?.recommended_next_step || null,
+    ifc_human_review_guide_exists: Boolean(ifcHumanReviewGuide),
+    ifc_human_review_guide_status: ifcHumanReviewGuide?.status || null,
+    ifc_human_review_guide_ready: isIfcHumanReviewGuideReady(ifcHumanReviewGuide),
+    ifc_human_review_guide_open_human_check_count: numberOrDefault(ifcHumanReviewGuide?.summary?.open_human_check_count, 0),
+    ifc_human_review_guide_current_decision: ifcHumanReviewGuide?.summary?.current_decision || null,
     model_layer_handoff_exists: Boolean(modelLayerHandoff),
     model_layer_handoff_status: modelLayerHandoff?.status || null,
     model_layer_handoff_ready: isModelLayerHandoffReady(modelLayerHandoff),
@@ -435,6 +448,7 @@ function nextActions({ modules, gates, blockers, warnings, outputs, contextRevie
   if (contextReview?.ifc_geometry_preview_ready && !contextReview.ifc_layer_plan_ready) actions.push('Run npm run kosmo:ifc-layer-plan to propose Blender collections and ArchiCAD layers.');
   if (contextReview?.source_review_open_human_review_count > 0 && contextReview?.ifc_layer_plan_ready && !contextReview.ifc_human_review_pack_exists) actions.push('Run npm run kosmo:ifc-human-review-pack to gather IFC evidence into a human checklist.');
   if (contextReview?.ifc_human_review_pack_evidence_ready && !contextReview.ifc_human_review_viewer_ready) actions.push('Run npm run kosmo:ifc-review-viewer to create the local IFC human decision dashboard.');
+  if (contextReview?.ifc_human_review_viewer_ready && !contextReview.ifc_human_review_guide_ready) actions.push('Run npm run kosmo:ifc-human-review-guide to create the project-specific human IFC review Anleitung.');
   if (contextReview?.ifc_human_review_viewer_ready && !contextReview.ifc_human_review_decision_exists) actions.push('Run npm run kosmo:ifc-human-review-decision to create the IFC decision gate draft.');
   if (contextReview?.ifc_human_review_decision_exists && !contextReview.ifc_human_review_decision_final) actions.push('Open the IFC review viewer, complete the checklist and record a final IFC human decision.');
   if (contextReview?.ifc_human_review_decision_final && !contextReview.ifc_human_review_sync_exists) actions.push('Run npm run kosmo:ifc-human-review-sync to dry-run syncing the final IFC decision into context gates.');
@@ -606,6 +620,9 @@ function appendContextReview(lines, contextReview) {
   lines.push(`- IFC human review sync can sync: ${contextReview.ifc_human_review_sync_can_sync ? 'yes' : 'no'}`);
   lines.push(`- IFC human review sync operations: ${contextReview.ifc_human_review_sync_operation_count}`);
   lines.push(`- IFC human review sync next step: ${contextReview.ifc_human_review_sync_next_step || '-'}`);
+  lines.push(`- IFC human review guide: ${ifcHumanReviewGuideLabel(contextReview)}`);
+  lines.push(`- IFC human review guide open human checks: ${contextReview.ifc_human_review_guide_open_human_check_count}`);
+  lines.push(`- IFC human review guide current decision: ${contextReview.ifc_human_review_guide_current_decision || '-'}`);
   lines.push(`- model layer handoff: ${modelLayerHandoffLabel(contextReview)}`);
   lines.push(`- model layer handoff layer exports: ${contextReview.model_layer_handoff_layer_export_count}`);
   lines.push(`- model layer handoff planned GLBs: ${contextReview.model_layer_handoff_planned_glb_count}`);
@@ -748,6 +765,20 @@ function ifcHumanReviewDecisionLabel(contextReview) {
 function ifcHumanReviewSyncLabel(contextReview) {
   if (!contextReview.ifc_human_review_sync_exists) return 'missing';
   return contextReview.ifc_human_review_sync_status || 'unknown';
+}
+
+function isIfcHumanReviewGuideReady(guide) {
+  return Boolean(
+    guide
+      && guide.status === 'ifc_human_review_guide_ready'
+      && guide.summary?.human_check_count > 0
+  );
+}
+
+function ifcHumanReviewGuideLabel(contextReview) {
+  if (!contextReview.ifc_human_review_guide_exists) return 'missing';
+  if (contextReview.ifc_human_review_guide_ready) return 'ready';
+  return `pending (${contextReview.ifc_human_review_guide_status || 'unknown'})`;
 }
 
 function modelLayerHandoffLabel(contextReview) {

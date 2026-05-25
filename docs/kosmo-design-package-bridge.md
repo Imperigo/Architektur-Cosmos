@@ -52,8 +52,10 @@ Der erste Connector ist bewusst duenn:
 - schreibt optional `design/ifc-human-review-pack.generated.json`, `.md`,
   `design/ifc-human-review-viewer.generated.html`, `.json`,
   `design/ifc-human-review-decision.json`, `.md`,
-  `design/ifc-human-review-sync.generated.json` und `.md` als menschliches
-  IFC-Entscheidungsgate und Dry-Run-Sync vor jeder Design-Seed-Freigabe
+  `design/ifc-human-review-sync.generated.json`, `.md`,
+  `design/ifc-human-review-guide.generated.json` und `.md` als menschliches
+  IFC-Entscheidungsgate, Dry-Run-Sync und projektspezifische Review-Anleitung
+  vor jeder Design-Seed-Freigabe
 - schreibt optional `design/model-layer-handoff.generated.json`, `.md`,
   `design/blender-collection-handoff.generated.py` und
   `design/archicad-layer-schedule.generated.csv` als review-only Uebergabe
@@ -199,6 +201,8 @@ Zusätzlich wird im Projektpaket geschrieben:
 - `design/ifc-human-review-decision.md`
 - `design/ifc-human-review-sync.generated.json`
 - `design/ifc-human-review-sync.generated.md`
+- `design/ifc-human-review-guide.generated.json`
+- `design/ifc-human-review-guide.generated.md`
 - `design/model-layer-handoff.generated.json`
 - `design/model-layer-handoff.generated.md`
 - `design/blender-collection-handoff.generated.py`
@@ -329,6 +333,13 @@ finalen Decision-Record und plant, welche Aenderungen in
 Standard ist Dry-Run. Wirkliches Schreiben braucht `--apply --confirm-sync`
 und `--i-understand-context-selection-mutation`.
 
+`npm run kosmo:ifc-human-review-guide -- --project <projektpfad>` erzeugt
+`design/ifc-human-review-guide.generated.md/json`. Die Anleitung ist
+projektspezifisch: sie sammelt IFC-Datei, statischen Viewer, Preview-Pfade,
+Machine Snapshot, Bonsai/IfcOpenShell-Pruefschritte, Red Flags,
+Entscheidungslogik und die passenden Final-Decision-Kommandos. Sie ist
+Instruction-only und setzt keine Freigabe.
+
 `npm run kosmo:context-handoff -- --project <projektpfad>` erzeugt
 `design/context-handoff.generated.md/json`. Der Handoff sammelt akzeptierte
 Kontextinputs, blockierte oder offene Quellen, IFC-Preview-Evidence,
@@ -373,6 +384,7 @@ npm run kosmo:ifc-human-review-pack -- --project examples/kosmo-projects/kosmo-d
 npm run kosmo:ifc-review-viewer -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:ifc-human-review-decision -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:ifc-human-review-sync -- --project examples/kosmo-projects/kosmo-demo-001
+npm run kosmo:ifc-human-review-guide -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:context-source-mapping -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:context-handoff -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:model-layer-handoff -- --project examples/kosmo-projects/kosmo-demo-001
@@ -634,6 +646,19 @@ der Sync blockiert und schreibt keine Aenderung in `context-selection` oder
 `context-source-mapping`. Nach einem echten Finalentscheid kann derselbe Befehl
 erst eine Aenderungsplanung zeigen und mit `--apply --confirm-sync
 --i-understand-context-selection-mutation` bewusst angewendet werden.
+
+IFC Human Review Anleitung:
+
+```bash
+npm run kosmo:ifc-human-review-guide -- \
+  --project archive-intake/kosmo-projects/zg-07052026
+```
+
+Status: lokal generiert. Die Anleitung schreibt
+`design/ifc-human-review-guide.generated.md/json` und fuehrt den menschlichen
+Review durch Viewer, Bonsai/IfcOpenShell-Tree, Units/Origin/Geometrie,
+Properties, Layerplan, Red Flags und finale Decision-Kommandos. Auch diese
+Anleitung ist nur Instruction-only und setzt keine Freigabe.
 
 Danach erzeugt der Orbit-Befehl
 `npm run kosmo:context-selection -- --project archive-intake/kosmo-projects/zg-07052026`
