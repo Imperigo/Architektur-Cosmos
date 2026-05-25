@@ -22,7 +22,7 @@ Arbeitsthese: Das eigentliche Produkt ist nicht ein einzelnes CAD, sondern ein l
 | --- | --- | --- |
 | Architecture Cosmos / KosmoData | Oeffentliche Wissens-, Referenz- und spaeter Asset-Schicht | Aktiver Next.js/Cloudflare-Static-Export, radialer Atlas, Brain-Tools, KosmoData-Pipelines, Cloud-Brain-Entwurf, Modul-Hub-Roadmap. |
 | KosmoZentrale | Lokales Kontrollzentrum / Kosmo Core | Separates OneDrive-Projekt mit FastAPI Control Hub, SQLite, Jobs, Approvals, Events, Artifacts, Memory, Benchmarks, Android/macOS Control Center und Operator Mode. |
-| AR-Blender-Claude / KosmoDesign | Blender-native Entwurfs- und Modellierwerkbank | Aktives Blender-Add-on mit Action-Bus, Plan-Sketch-to-BIM, ArchiCAD-aehnlicher UX, Snaps, Tracker, Story Stack, AI Layouts, Voice Commands, Schnitt/Fassade-Tools. |
+| KosmoDraw / Kosmo Design | Blender-native Entwurfs- und Zeichnungswerkbank | Aktives Blender-Add-on mit Action-Bus, Plan-Sketch-to-BIM, ArchiCAD-aehnlicher UX, Snaps, Tracker, Story Stack, AI Layouts, Voice Commands, Schnitt/Fassade-Tools und erster Kosmo Project Package Bridge. |
 | ArchViz Toolkit / Blender-Claude | Visualisierungs- und Variantensystem | Blender 5.1 plus KI/ComfyUI/SDXL, Materialkatalog, Masken, Multipass-Rendering, Bolognese-Refiner, ArchViz-Pipeline V6. |
 | Blender Capability Scan | Werkzeugkarte fuer Kosmo | Erfasst Blender-Subsysteme wie Python API, Geometry Nodes, Physics, Cycles/EEVEE, Sun Position, Grease Pencil, Asset Libraries und Import/Export als Kosmo-Bausteine. |
 | Notion AI Vision | Prozessvision fuer Wettbewerb/Entwurf | Beschreibt Phase 0 Grundlagenmodell, Phase 1 AR-Modelling, ArchViz, Architekturkosmos-Import, 2D-Planwerk, Layout-Designer und Innovationsliste. |
@@ -169,6 +169,7 @@ Damit entsteht schnell ein pruefbares Produktversprechen: vom architektonischen 
 - `docs/notion-ai-vision-synthesis.md`
 - `docs/architektur-kosmos-network-concept.md`
 - `docs/kosmo-mvp-0-1-architecture.md`
+- `docs/kosmo-design-package-bridge.md`
 - `schema/kosmo-project-package.schema.json`
 - `examples/kosmo-projects/kosmo-demo-001/kosmo.project.json`
 
@@ -176,6 +177,6 @@ Damit entsteht schnell ein pruefbares Produktversprechen: vom architektonischen 
 
 - KosmoZentrale / Control-Hub-Dokumentation im privaten lokalen Arbeitsbereich.
 - AR-/Blender-/KosmoDesign-Dokumentation und Code im privaten lokalen
-  Arbeitsbereich.
+  Arbeitsbereich, aktuell insbesondere die KosmoDraw Package Bridge.
 - Codex-Session-Kontext bleibt privat und wird hier nicht mit internen IDs
   dokumentiert.

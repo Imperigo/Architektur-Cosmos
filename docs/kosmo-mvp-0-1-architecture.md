@@ -13,7 +13,7 @@ Der MVP verbindet die bereits laufenden Stränge:
 
 - Kosmo Data / Architecture Cosmos
 - Kosmo Zentrale / Control Hub
-- Kosmo Design / AR-Blender-Claude
+- Kosmo Design / KosmoDraw
 - Blender / ArchViz / Kosmo Viz
 - Notion AI Workflow-Pipeline
 
@@ -167,7 +167,7 @@ Aufgabe:
 
 Minimaler MVP:
 
-- nutzt bestehende `kosmo_design`-Logik aus AR-Blender-Claude
+- nutzt bestehende `kosmo_design`-Logik aus KosmoDraw
 - Raeume, Waende, Geschosse, Flaechen, Boundary-Layer
 - schreibt `design/model-profile.json`
 - speichert Varianten in `design/variants.json`
@@ -260,7 +260,7 @@ Noch nicht:
 | --- | --- | --- |
 | Kosmo Data | dieses Repo | Website, Datenmodell, Brain-Tools, Referenz-/Assetstrategie |
 | Kosmo Zentrale | OneDrive `Architekturkosmos_Codex_Starter` | FastAPI Control Hub, Jobs, Approvals, Memory, Operator Mode |
-| Kosmo Design | privates lokales AR-/Blender-Projekt | Blender Add-on, Plan-Sketch-to-BIM, Action-Bus, AI/Voice |
+| Kosmo Design / Kosmo Draw | privates lokales KosmoDraw-Projekt | Blender Add-on, Plan-Sketch-to-BIM, Action-Bus, AI/Voice, Kosmo Project Package Bridge |
 | Kosmo Viz | ArchViz Toolkit / Blender-Claude | Cycles, ComfyUI/SDXL, Materialkatalog, Kamera-/Renderpipeline |
 | Kosmo Workflow | Notion `AI (2)` | Phase-0/Phase-1 Pipeline, Toolkits, Innovationsliste |
 | Blender Basis | Offizielle Blender APIs/Manuals | Python API, Geometry Nodes, Physics, Cycles/EEVEE, Asset Libraries |
@@ -351,10 +351,13 @@ Status 2026-05-25:
 
 1. `kosmo.project.json` Schema und Beispielprojekt in diesem Repo definieren. **Erledigt.**
 2. Minimalen lokalen Package-Checker bauen. **Erledigt.**
-3. Bestehendes `kosmo_design` Add-on auf dieses Paket lesen/schreiben lassen.
-4. Einfachen Planexport aus Blender pruefen.
-5. Review-Pack-Generator lokal bauen.
-6. Kosmo Zentrale spaeter als Job-Orchestrator an dieses Paket anbinden.
+3. Lokalen Package-Creator bauen, der neue Projektpakete unter
+   `archive-intake/kosmo-projects/` anlegt. **Erledigt.**
+4. Bestehendes `kosmo_design` Add-on auf dieses Paket lesen/schreiben lassen.
+   **Import-Bridge erledigt, Write-back offen.**
+5. Einfachen Planexport aus Blender pruefen.
+6. Review-Pack-Generator lokal bauen.
+7. Kosmo Zentrale spaeter als Job-Orchestrator an dieses Paket anbinden.
 
 ## 11. Was bewusst noch nicht gebaut wird
 
@@ -381,11 +384,22 @@ Der erste Datenvertrag ist im Repo angelegt:
 - `examples/kosmo-projects/kosmo-demo-001/kosmo.project.json`
 - `examples/kosmo-projects/kosmo-demo-001/`
 - `scripts/kosmo-project-package-check.mjs`
+- private lokale KosmoDesign/KosmoDraw-Bridge im separaten Arbeitsbereich
 
 Pruefung:
 
 ```bash
 npm run kosmo:package-check
 ```
+
+Neues lokales Projektpaket anlegen:
+
+```bash
+npm run kosmo:package-create -- --name "Test Atelier" --address "Zurich" --program "Studio:48, Library:18"
+```
+
+Der Creator schreibt standardmaessig nach `archive-intake/kosmo-projects/`.
+Dieser Ordner ist gitignored und bleibt fuer echte Projekte, private Notizen
+und unreviewte Inputs lokal.
 
 Aktueller Status: Der Demo-Vertrag und alle JSON/JSONL-Artefakte bestehen den lokalen Package-Check.

@@ -51,6 +51,15 @@
       "approval_required_before_public_use": false
     },
     {
+      "id": "kosmo_project_package_create",
+      "label": "Kosmo Project Package Create",
+      "command": "npm run kosmo:package-create -- --name \"{project_name}\" --address \"{address}\" --program \"{program}\"",
+      "output_root": "archive-intake/kosmo-projects/{project_slug}",
+      "review_output": "archive-intake/kosmo-projects/{project_slug}/kosmo.project.json",
+      "purpose": "Create a new local review-only Kosmo project package with manifest, brief, constraints, source registry, model profile, placeholder plan exports, viz presets, publish scaffold and memory logs.",
+      "approval_required_before_public_use": true
+    },
+    {
       "id": "brain_text_polish",
       "label": "Brain Text Polish",
       "command": "npm run brain:polish-texts -- --limit 8",
