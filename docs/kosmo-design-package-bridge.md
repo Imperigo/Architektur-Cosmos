@@ -193,6 +193,16 @@ Review-Ansicht kombiniert Kandidaten, aktuelle Auswahl und Matrix-Empfehlung zu
 einer kleinen Entscheidungsliste inklusive konkreter Commands. Sie setzt ohne
 `--decision` und `--approve-design-generation` keine Freigabe.
 
+Downstream-Tools koennen vor der Design-Generierung den Guard nutzen:
+
+```bash
+npm run kosmo:context-guard -- --project <projektpfad> --require-approved-design-seed
+```
+
+Ohne finale Freigabe ist das Ergebnis nicht "kaputt", sondern bewusst
+blockiert: Kontext darf als Referenz sichtbar sein, aber nicht automatisch zum
+Entwurfs-Seed werden.
+
 ## 5. Was beim Write-back entsteht
 
 Der Export-Operator liest die getaggten Blender-Raumobjekte des aktiven Projekts

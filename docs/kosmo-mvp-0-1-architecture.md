@@ -405,6 +405,8 @@ Der erste Datenvertrag ist im Repo angelegt:
 - `scripts/kosmo-prepare-package-import.mjs`
 - `scripts/kosmo-context-selection-create.mjs`
 - `scripts/kosmo-context-decision-matrix-create.mjs`
+- `scripts/kosmo-context-review.mjs`
+- `scripts/kosmo-context-guard.mjs`
 - `scripts/kosmo-blender-package-bridge-smoke.mjs`
 - `scripts/kosmo_blender_package_bridge_smoke.py`
 - private lokale KosmoDesign/KosmoDraw-Bridge im separaten Arbeitsbereich
@@ -499,6 +501,16 @@ Dieser Befehl schreibt `design/context-review.md/json`, aktualisiert bei Bedarf
 Selection und Matrix und gibt pro Kandidat die naechste sichere Entscheidung
 als Command aus. Damit kann das Brain Vorschlaege vorbereiten, ohne selbst
 Design-Freigaben zu setzen.
+
+Guard fuer Downstream-Design-Tools:
+
+```bash
+npm run kosmo:context-guard -- --project archive-intake/kosmo-projects/zg-07052026 --require-approved-design-seed
+```
+
+Dieser Befehl bricht ab, solange kein menschlich freigegebener Design-Seed
+existiert. Ohne `--require-approved-design-seed` meldet er einen sicheren
+Referenzzustand, blockiert aber implizit automatische Designnutzung.
 
 Review-Pack erzeugen:
 

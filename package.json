@@ -87,6 +87,7 @@
     "kosmo:context-selection": "node scripts/kosmo-context-selection-create.mjs",
     "kosmo:context-matrix": "node scripts/kosmo-context-decision-matrix-create.mjs",
     "kosmo:context-review": "node scripts/kosmo-context-review.mjs",
+    "kosmo:context-guard": "node scripts/kosmo-context-guard.mjs",
     "kosmo:package-review": "node scripts/kosmo-project-package-review.mjs",
     "kosmodata:enrich": "node scripts/kosmodata-enrichment-pipeline.mjs review",
     "kosmodata:promote": "node scripts/kosmodata-enrichment-pipeline.mjs promote",

@@ -114,6 +114,15 @@
       "approval_required_before_public_use": false
     },
     {
+      "id": "kosmo_context_guard",
+      "label": "Kosmo Context Guard",
+      "command": "npm run kosmo:context-guard -- --project {project_path}",
+      "output_root": "terminal/context-guard",
+      "review_output": "terminal/KOSMO_CONTEXT_GUARD",
+      "purpose": "Verify that context candidates are not used as downstream design seeds unless context-selection has explicit accepted_as_design_seed decisions and approved_for_design_generation is true.",
+      "approval_required_before_public_use": false
+    },
+    {
       "id": "brain_text_polish",
       "label": "Brain Text Polish",
       "command": "npm run brain:polish-texts -- --limit 8",
