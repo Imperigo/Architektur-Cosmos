@@ -150,6 +150,15 @@
       "approval_required_before_public_use": false
     },
     {
+      "id": "kosmo_ifc_geometry_preview",
+      "label": "Kosmo IFC Geometry Preview",
+      "command": "npm run kosmo:ifc-geometry-preview -- --project {project_path}",
+      "output_root": "{project_path}/design",
+      "review_output": "{project_path}/design/ifc-geometry-preview.generated.md",
+      "purpose": "Create a read-only faceted BREP geometry preview and SVG top projection for IFCBUILDINGELEMENTPROXY elements before any semantic IFC design-seed approval.",
+      "approval_required_before_public_use": false
+    },
+    {
       "id": "kosmo_context_guard",
       "label": "Kosmo Context Guard",
       "command": "npm run kosmo:context-guard -- --project {project_path}",

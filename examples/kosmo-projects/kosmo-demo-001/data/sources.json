@@ -16,6 +16,15 @@
       "path": "../../../docs/architektur-kosmos-network-concept.md",
       "rights_status": "internal_only",
       "confidence": "high"
+    },
+    {
+      "id": "source-ifc-fixture",
+      "title": "Kosmo Demo IFC Fixture",
+      "type": "ifc",
+      "path": "data/source-files/Bestand_Kontext.ifc",
+      "rights_status": "internal_only",
+      "confidence": "high",
+      "notes": "Synthetic two-element IFC fixture for semantic and geometry pipeline tests. Not a real project model."
     }
   ]
 }

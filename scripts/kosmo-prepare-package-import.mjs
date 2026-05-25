@@ -180,6 +180,8 @@ async function writePackage({ inputRoot, projectRoot, projectId, projectName, or
     'design/context-source-mapping.md': renderContextSourceMappingSeed(projectId),
     'design/ifc-semantic-proof.generated.json': json(buildIfcSemanticProofSeed(projectId, 'kosmosprepare_import')),
     'design/ifc-semantic-proof.generated.md': renderIfcSemanticProofSeed(projectId),
+    'design/ifc-geometry-preview.generated.json': json(buildIfcGeometryPreviewSeed(projectId, 'kosmosprepare_import')),
+    'design/ifc-geometry-preview.generated.md': renderIfcGeometryPreviewSeed(projectId),
     'design/variants.json': json({
       schema_version: '0.1',
       variants: [],
@@ -269,6 +271,8 @@ function buildManifest({ projectId, projectName, site, sourceFiles }) {
       artifact('design/context-source-mapping.md', 'other', 'design', 'internal_only', 'Human-readable source mapping gate for DXF/IFC decisions.'),
       artifact('design/ifc-semantic-proof.generated.json', 'other', 'design', 'generated_needs_review', 'Read-only semantic IFC proof before design-seed review.'),
       artifact('design/ifc-semantic-proof.generated.md', 'other', 'design', 'generated_needs_review', 'Human-readable semantic IFC proof before design-seed review.'),
+      artifact('design/ifc-geometry-preview.generated.json', 'other', 'design', 'generated_needs_review', 'Read-only IFC geometry preview before design-seed review.'),
+      artifact('design/ifc-geometry-preview.generated.md', 'other', 'design', 'generated_needs_review', 'Human-readable IFC geometry preview before design-seed review.'),
       artifact('draw/exports/ground-floor-plan.svg', 'plan_export', 'draw', 'generated_needs_review', 'Placeholder vector ground floor export.'),
       artifact('draw/exports/section-a.svg', 'plan_export', 'draw', 'generated_needs_review', 'Placeholder vector section export.'),
       artifact('publish/review-pack.md', 'review_pack', 'publish', 'internal_only', 'Local review package scaffold.')
@@ -624,6 +628,34 @@ function renderIfcSemanticProofSeed(projectId) {
   return `# IFC Semantic Proof\n\nProject ID: \`${projectId}\`\n\nPending IFC source. Run \`npm run kosmo:ifc-semantic-proof -- --project <project>\` after a local IFC source is available.\n`;
 }
 
+function buildIfcGeometryPreviewSeed(projectId, source) {
+  return {
+    schema_version: '0.1',
+    generated_at: null,
+    generator: 'kosmo-prepare-package-import',
+    project_id: projectId,
+    status: 'pending_ifc_geometry',
+    rights_status: 'internal_only',
+    source_stage: 'phase_0_context',
+    source,
+    note: 'Run npm run kosmo:ifc-geometry-preview -- --project <project> after semantic IFC proof exists.',
+    summary: {
+      ifc_exists: false,
+      ifcbuildingelementproxy_count: 0,
+      elements_with_geometry_bbox: 0,
+      faces_resolved: 0,
+      preview_svg_written: false,
+      design_seed_approved: false,
+      recommended_next_step: 'run_ifc_semantic_proof'
+    },
+    elements: []
+  };
+}
+
+function renderIfcGeometryPreviewSeed(projectId) {
+  return `# IFC Geometry Preview\n\nProject ID: \`${projectId}\`\n\nPending IFC geometry preview. Run \`npm run kosmo:ifc-geometry-preview -- --project <project>\` after a local IFC source is available.\n`;
+}
+
 function buildExportManifest() {
   return {
     schema_version: '0.1',
@@ -717,6 +749,20 @@ function buildExportManifest() {
         module: 'Kosmo Design',
         format: 'markdown',
         status: 'pending_ifc_source',
+        rights_status: 'generated_needs_review'
+      },
+      {
+        path: 'design/ifc-geometry-preview.generated.json',
+        module: 'Kosmo Design',
+        format: 'json',
+        status: 'pending_ifc_geometry',
+        rights_status: 'generated_needs_review'
+      },
+      {
+        path: 'design/ifc-geometry-preview.generated.md',
+        module: 'Kosmo Design',
+        format: 'markdown',
+        status: 'pending_ifc_geometry',
         rights_status: 'generated_needs_review'
       },
       {

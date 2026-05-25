@@ -135,6 +135,7 @@ function checkContextSelection() {
   const sourceMappingPath = join(projectRoot, 'design/context-source-mapping.json');
   const sourceReviewPath = join(projectRoot, 'design/context-source-review.generated.json');
   const ifcSemanticProofPath = join(projectRoot, 'design/ifc-semantic-proof.generated.json');
+  const ifcGeometryPreviewPath = join(projectRoot, 'design/ifc-geometry-preview.generated.json');
   const candidates = existsSync(candidatesPath) ? readJson(candidatesPath) : null;
   const selection = existsSync(selectionPath) ? readJson(selectionPath) : null;
   const matrix = existsSync(matrixPath) ? readJson(matrixPath) : null;
@@ -142,6 +143,8 @@ function checkContextSelection() {
   const sourceMapping = existsSync(sourceMappingPath) ? readJson(sourceMappingPath) : null;
   const sourceReview = existsSync(sourceReviewPath) ? readJson(sourceReviewPath) : null;
   const ifcSemanticProof = existsSync(ifcSemanticProofPath) ? readJson(ifcSemanticProofPath) : null;
+  const ifcGeometryPreview = existsSync(ifcGeometryPreviewPath) ? readJson(ifcGeometryPreviewPath) : null;
+  const ifcGeometryPreviewReady = isIfcGeometryPreviewReady(ifcGeometryPreview);
 
   if (candidates && !selection) {
     warnings.push('Context candidates exist, but design/context-selection.json is missing.');
@@ -170,6 +173,9 @@ function checkContextSelection() {
   if (sourceReview?.summary?.design_seed_possible_after_review_count > 0 && !ifcSemanticProof) {
     warnings.push('Context source review has an IFC design-seed candidate, but design/ifc-semantic-proof.generated.json is missing.');
   }
+  if (ifcSemanticProof?.summary?.ifcbuildingelementproxy_count > 0 && !ifcGeometryPreviewReady) {
+    warnings.push('IFC semantic proof exists, but design/ifc-geometry-preview.generated.json is missing or still pending.');
+  }
   if (acceptedDesignSeeds.length && selection.approved_for_design_generation !== true) {
     warnings.push('Context selection contains accepted design seeds but approved_for_design_generation is not true.');
   }
@@ -179,6 +185,14 @@ function checkContextSelection() {
     const missingRows = [...candidateIds].filter((id) => !rowIds.has(id));
     if (missingRows.length) warnings.push(`Context decision matrix is missing candidate rows: ${missingRows.join(', ')}`);
   }
+}
+
+function isIfcGeometryPreviewReady(preview) {
+  return Boolean(
+    preview
+      && preview.status === 'ifc_geometry_preview_ready_for_human_review'
+      && preview.summary?.elements_with_geometry_bbox > 0
+  );
 }
 
 function readJson(pathname) {

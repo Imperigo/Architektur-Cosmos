@@ -1,15 +1,15 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-25T19:04:45.716Z",
+  "generated_at": "2026-05-25T19:16:52.804Z",
   "generator": "kosmo-ifc-semantic-proof",
   "project_id": "kosmo-demo-001",
-  "status": "no_semantic_ifc_elements_found",
+  "status": "semantic_ifc_probe_ready_for_human_review",
   "rights_status": "internal_only",
   "source_file": {
     "path": "data/source-files/Bestand_Kontext.ifc",
     "name": "Bestand_Kontext.ifc",
-    "exists": false,
-    "size_bytes": 0
+    "exists": true,
+    "size_bytes": 3582
   },
   "engine": {
     "name": "kosmo_step_semantic_probe",
@@ -25,34 +25,224 @@
   "source_context": {
     "source_review_status": "no_source_review_targets",
     "source_review_open_human_review_count": 0,
-    "source_mapping_status": "source_mapping_reviewed",
-    "source_mapping_ifc_decision": null
+    "source_mapping_status": "source_mapping_review_required",
+    "source_mapping_ifc_decision": "pending_review"
   },
   "summary": {
-    "ifc_exists": false,
-    "ifc_total_entities": 0,
-    "ifc_entity_type_count": 0,
-    "ifcbuildingelementproxy_count": 0,
-    "elements_with_global_id": 0,
-    "elements_with_object_placement": 0,
-    "elements_with_product_shape": 0,
-    "elements_contained_in_spatial_structure": 0,
-    "elements_with_property_sets": 0,
-    "property_set_links": 0,
-    "semantic_integrity_score": 0,
+    "ifc_exists": true,
+    "ifc_total_entities": 77,
+    "ifc_entity_type_count": 20,
+    "ifcbuildingelementproxy_count": 2,
+    "elements_with_global_id": 2,
+    "elements_with_object_placement": 2,
+    "elements_with_product_shape": 2,
+    "elements_contained_in_spatial_structure": 2,
+    "elements_with_property_sets": 2,
+    "property_set_links": 2,
+    "semantic_integrity_score": 1,
     "design_seed_approved": false,
-    "recommended_next_step": "provide_ifc_with_semantic_building_elements"
+    "recommended_next_step": "human_review_semantic_ifc_elements_before_design_seed"
   },
-  "project_structure": [],
+  "project_structure": [
+    {
+      "step_id": 1,
+      "type": "IFCPROJECT",
+      "global_id": "KOSMO_PROJECT",
+      "name": "Kosmo Demo Project",
+      "parent_step_id": null
+    },
+    {
+      "step_id": 2,
+      "type": "IFCSITE",
+      "global_id": "KOSMO_SITE",
+      "name": "Demo Site",
+      "parent_step_id": 1
+    },
+    {
+      "step_id": 3,
+      "type": "IFCBUILDING",
+      "global_id": "KOSMO_BUILDING",
+      "name": "Demo Building",
+      "parent_step_id": 2
+    },
+    {
+      "step_id": 4,
+      "type": "IFCBUILDINGSTOREY",
+      "global_id": "KOSMO_STOREY_0",
+      "name": "Level 0",
+      "parent_step_id": 3
+    }
+  ],
   "distributions": {
-    "proxy_name_top": [],
-    "proxy_object_type_top": [],
-    "container_top": [],
-    "property_set_top": []
+    "proxy_name_top": [
+      {
+        "value": "Demo Slab",
+        "count": 1
+      },
+      {
+        "value": "Demo Wall",
+        "count": 1
+      }
+    ],
+    "proxy_object_type_top": [
+      {
+        "value": "Exterior wall context seed",
+        "count": 1
+      },
+      {
+        "value": "Horizontal slab context seed",
+        "count": 1
+      }
+    ],
+    "container_top": [
+      {
+        "value": "IFCBUILDINGSTOREY #4 Level 0",
+        "count": 2
+      }
+    ],
+    "property_set_top": [
+      {
+        "value": "Pset_KosmoDemo",
+        "count": 2
+      }
+    ]
   },
-  "element_sample": [],
-  "elements": [],
+  "element_sample": [
+    {
+      "step_id": 130,
+      "global_id": "KOSMO_WALL_001",
+      "name": "Demo Wall",
+      "description": null,
+      "object_type": "Exterior wall context seed",
+      "tag": "WALL-001",
+      "object_placement_ref": 12,
+      "has_local_placement": true,
+      "representation_ref": 129,
+      "has_product_definition_shape": true,
+      "shape_representation_ref_count": 1,
+      "container": {
+        "relation_id": 304,
+        "structure_id": 4,
+        "type": "IFCBUILDINGSTOREY",
+        "name": "Level 0",
+        "label": "IFCBUILDINGSTOREY #4 Level 0"
+      },
+      "property_set_count": 1,
+      "property_sets": [
+        {
+          "id": 302,
+          "name": "Pset_KosmoDemo",
+          "property_count": 2,
+          "property_names": [
+            "Material",
+            "SourceRole"
+          ]
+        }
+      ]
+    },
+    {
+      "step_id": 230,
+      "global_id": "KOSMO_SLAB_001",
+      "name": "Demo Slab",
+      "description": null,
+      "object_type": "Horizontal slab context seed",
+      "tag": "SLAB-001",
+      "object_placement_ref": 12,
+      "has_local_placement": true,
+      "representation_ref": 229,
+      "has_product_definition_shape": true,
+      "shape_representation_ref_count": 1,
+      "container": {
+        "relation_id": 304,
+        "structure_id": 4,
+        "type": "IFCBUILDINGSTOREY",
+        "name": "Level 0",
+        "label": "IFCBUILDINGSTOREY #4 Level 0"
+      },
+      "property_set_count": 1,
+      "property_sets": [
+        {
+          "id": 302,
+          "name": "Pset_KosmoDemo",
+          "property_count": 2,
+          "property_names": [
+            "Material",
+            "SourceRole"
+          ]
+        }
+      ]
+    }
+  ],
+  "elements": [
+    {
+      "step_id": 130,
+      "global_id": "KOSMO_WALL_001",
+      "name": "Demo Wall",
+      "description": null,
+      "object_type": "Exterior wall context seed",
+      "tag": "WALL-001",
+      "object_placement_ref": 12,
+      "has_local_placement": true,
+      "representation_ref": 129,
+      "has_product_definition_shape": true,
+      "shape_representation_ref_count": 1,
+      "container": {
+        "relation_id": 304,
+        "structure_id": 4,
+        "type": "IFCBUILDINGSTOREY",
+        "name": "Level 0",
+        "label": "IFCBUILDINGSTOREY #4 Level 0"
+      },
+      "property_set_count": 1,
+      "property_sets": [
+        {
+          "id": 302,
+          "name": "Pset_KosmoDemo",
+          "property_count": 2,
+          "property_names": [
+            "Material",
+            "SourceRole"
+          ]
+        }
+      ]
+    },
+    {
+      "step_id": 230,
+      "global_id": "KOSMO_SLAB_001",
+      "name": "Demo Slab",
+      "description": null,
+      "object_type": "Horizontal slab context seed",
+      "tag": "SLAB-001",
+      "object_placement_ref": 12,
+      "has_local_placement": true,
+      "representation_ref": 229,
+      "has_product_definition_shape": true,
+      "shape_representation_ref_count": 1,
+      "container": {
+        "relation_id": 304,
+        "structure_id": 4,
+        "type": "IFCBUILDINGSTOREY",
+        "name": "Level 0",
+        "label": "IFCBUILDINGSTOREY #4 Level 0"
+      },
+      "property_set_count": 1,
+      "property_sets": [
+        {
+          "id": 302,
+          "name": "Pset_KosmoDemo",
+          "property_count": 2,
+          "property_names": [
+            "Material",
+            "SourceRole"
+          ]
+        }
+      ]
+    }
+  ],
   "next_actions": [
-    "Add or register a local IFC source file."
+    "Open the IFC in Bonsai/IfcOpenShell or an equivalent semantic IFC viewer/import path.",
+    "Human-review classes, storey containment, placements, units and coordinates.",
+    "Compare semantic elements with the DXF context layer and IFC bounds.",
+    "Keep context-selection approved_for_design_generation=false until the semantic review is complete."
   ]
 }

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-25T19:04:45.909Z",
+  "generated_at": "2026-05-25T19:16:53.779Z",
   "generator": "kosmo-project-package-review",
   "project": {
     "id": "kosmo-demo-001",
@@ -21,7 +21,7 @@
   "package_check": {
     "ok": true,
     "command": "npm run kosmo:package-check -- --project examples/kosmo-projects/kosmo-demo-001",
-    "output": "> architecture-cosmos@0.1.0 kosmo:package-check\n> node scripts/kosmo-project-package-check.mjs --project examples/kosmo-projects/kosmo-demo-001\n\nKosmo project package check\nProject: examples/kosmo-projects/kosmo-demo-001\nSchema: schema/kosmo-project-package.schema.json\n\nWarnings:\n- Context selection has undecided candidates: 2\n\nPackage check passed."
+    "output": "> architecture-cosmos@0.1.0 kosmo:package-check\n> node scripts/kosmo-project-package-check.mjs --project examples/kosmo-projects/kosmo-demo-001\n\nKosmo project package check\nProject: examples/kosmo-projects/kosmo-demo-001\nSchema: schema/kosmo-project-package.schema.json\n\nWarnings:\n- Context selection has undecided candidates: 2\n- Context source mapping has pending review rows: 1\n\nPackage check passed."
   },
   "module_summary": {
     "total": 8,
@@ -230,7 +230,7 @@
       "rights_status": "internal_only",
       "description": "Local review package scaffold.",
       "exists": true,
-      "size_bytes": 6226
+      "size_bytes": 7113
     },
     {
       "path": "design/context-decision-matrix.generated.json",
@@ -293,7 +293,7 @@
       "rights_status": "generated_needs_review",
       "description": "Generated DXF/IFC source inventory and mapping recommendation.",
       "exists": true,
-      "size_bytes": 1516
+      "size_bytes": 29146
     },
     {
       "path": "design/context-source-map.generated.md",
@@ -302,7 +302,7 @@
       "rights_status": "generated_needs_review",
       "description": "Human-readable DXF/IFC source inventory and mapping recommendation.",
       "exists": true,
-      "size_bytes": 614
+      "size_bytes": 2513
     },
     {
       "path": "design/context-source-mapping.json",
@@ -311,7 +311,7 @@
       "rights_status": "internal_only",
       "description": "Human source mapping gate for reviewed DXF layer and semantic IFC mapping decisions.",
       "exists": true,
-      "size_bytes": 1385
+      "size_bytes": 2929
     },
     {
       "path": "design/context-source-mapping.md",
@@ -320,7 +320,7 @@
       "rights_status": "internal_only",
       "description": "Human-readable source mapping gate for DXF/IFC decisions.",
       "exists": true,
-      "size_bytes": 548
+      "size_bytes": 1287
     },
     {
       "path": "design/ifc-semantic-proof.generated.json",
@@ -329,7 +329,7 @@
       "rights_status": "generated_needs_review",
       "description": "Read-only semantic IFC proof for IFCBUILDINGELEMENTPROXY elements before design-seed review.",
       "exists": true,
-      "size_bytes": 1923
+      "size_bytes": 6781
     },
     {
       "path": "design/ifc-semantic-proof.generated.md",
@@ -338,7 +338,34 @@
       "rights_status": "generated_needs_review",
       "description": "Human-readable semantic IFC proof before design-seed review.",
       "exists": true,
-      "size_bytes": 974
+      "size_bytes": 1712
+    },
+    {
+      "path": "design/ifc-geometry-preview.generated.json",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Read-only IFC faceted BREP geometry preview before design-seed review.",
+      "exists": true,
+      "size_bytes": 5066
+    },
+    {
+      "path": "design/ifc-geometry-preview.generated.md",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Human-readable IFC geometry preview before design-seed review.",
+      "exists": true,
+      "size_bytes": 1134
+    },
+    {
+      "path": "viz/previews/ifc-geometry-preview.svg",
+      "type": "viz_preview",
+      "module": "viz",
+      "rights_status": "generated_needs_review",
+      "description": "SVG top projection preview of IFC faceted BREP element bounds.",
+      "exists": true,
+      "size_bytes": 1002
     }
   ],
   "context_review": {
@@ -360,12 +387,12 @@
     "source_map_exists": true,
     "source_map_dxf_layer_count": 0,
     "source_map_dxf_total_polylines": 0,
-    "source_map_ifc_entity_type_count": 0,
-    "source_map_ifc_semantic_building_element_count": 0,
-    "source_map_design_seed_candidate_after_review_count": 0,
+    "source_map_ifc_entity_type_count": 20,
+    "source_map_ifc_semantic_building_element_count": 2,
+    "source_map_design_seed_candidate_after_review_count": 1,
     "source_mapping_exists": true,
-    "source_mapping_row_count": 0,
-    "source_mapping_pending_review_count": 0,
+    "source_mapping_row_count": 1,
+    "source_mapping_pending_review_count": 1,
     "source_mapping_accepted_as_context_count": 0,
     "source_mapping_accepted_as_design_seed_count": 0,
     "source_mapping_needs_more_source_review_count": 0,
@@ -377,11 +404,20 @@
     "source_review_design_seed_possible_after_review_count": 0,
     "ifc_semantic_proof_exists": true,
     "ifc_semantic_proof_engine": "kosmo_step_semantic_probe",
-    "ifc_semantic_proof_proxy_count": 0,
-    "ifc_semantic_proof_contained_count": 0,
-    "ifc_semantic_proof_property_set_element_count": 0,
-    "ifc_semantic_proof_integrity_score": 0,
+    "ifc_semantic_proof_proxy_count": 2,
+    "ifc_semantic_proof_contained_count": 2,
+    "ifc_semantic_proof_property_set_element_count": 2,
+    "ifc_semantic_proof_integrity_score": 1,
     "ifc_semantic_proof_design_seed_approved": false,
+    "ifc_geometry_preview_exists": true,
+    "ifc_geometry_preview_status": "ifc_geometry_preview_ready_for_human_review",
+    "ifc_geometry_preview_ready": true,
+    "ifc_geometry_preview_element_count": 2,
+    "ifc_geometry_preview_bbox_count": 2,
+    "ifc_geometry_preview_face_count": 12,
+    "ifc_geometry_preview_width": 10,
+    "ifc_geometry_preview_depth": 8,
+    "ifc_geometry_preview_height": 3.35,
     "stale_selection_count": 0,
     "readiness": "needs_human_selection",
     "approved_for_design_generation": false
@@ -482,10 +518,16 @@
     "Generated output needs review: design/context-source-map.generated.md",
     "Generated output needs review: design/ifc-semantic-proof.generated.json",
     "Generated output needs review: design/ifc-semantic-proof.generated.md",
-    "Context selection still has undecided candidates: 2"
+    "Generated output needs review: design/ifc-geometry-preview.generated.json",
+    "Generated output needs review: design/ifc-geometry-preview.generated.md",
+    "Generated output needs review: viz/previews/ifc-geometry-preview.svg",
+    "Context selection still has undecided candidates: 2",
+    "Context source mapping still has pending review rows: 1"
   ],
   "next_actions": [
     "Review context-selection decisions before using candidates as design input.",
+    "Review pending source-mapping rows before syncing decisions to context-selection.",
+    "Review source-map semantic candidates before any design-seed approval.",
     "Review generated outputs before any public or external use.",
     "Ask for explicit approval before paid cloud jobs."
   ]

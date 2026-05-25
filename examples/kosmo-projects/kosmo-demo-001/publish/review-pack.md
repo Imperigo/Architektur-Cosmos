@@ -1,6 +1,6 @@
 # Kosmo Demo 001 Review Pack
 
-Generated: 2026-05-25T19:04:45.909Z
+Generated: 2026-05-25T19:16:53.779Z
 Project ID: `kosmo-demo-001`
 Risk level: `local_review_only`
 Readiness: `review_required`
@@ -57,6 +57,9 @@ Readiness: `review_required`
 - ok: `design/context-source-mapping.md` (design, other, internal_only)
 - ok: `design/ifc-semantic-proof.generated.json` (design, other, generated_needs_review)
 - ok: `design/ifc-semantic-proof.generated.md` (design, other, generated_needs_review)
+- ok: `design/ifc-geometry-preview.generated.json` (design, other, generated_needs_review)
+- ok: `design/ifc-geometry-preview.generated.md` (design, other, generated_needs_review)
+- ok: `viz/previews/ifc-geometry-preview.svg` (viz, viz_preview, generated_needs_review)
 
 ## Context Selection
 
@@ -75,12 +78,12 @@ Readiness: `review_required`
 - source map: present
 - source map DXF layers: 0
 - source map DXF polylines: 0
-- source map IFC entity types: 0
-- source map IFC semantic elements: 0
-- source map design-seed candidates after review: 0
+- source map IFC entity types: 20
+- source map IFC semantic elements: 2
+- source map design-seed candidates after review: 1
 - source mapping: present
-- source mapping rows: 0
-- source mapping pending: 0
+- source mapping rows: 1
+- source mapping pending: 1
 - source mapping accepted context: 0
 - source mapping accepted design seed: 0
 - source mapping needs source review: 0
@@ -92,10 +95,15 @@ Readiness: `review_required`
 - source review design-seed possible after review: 0
 - IFC semantic proof: present
 - IFC semantic proof engine: kosmo_step_semantic_probe
-- IFC semantic proxies: 0
-- IFC semantic contained proxies: 0
-- IFC semantic proxies with property sets: 0
-- IFC semantic integrity score: 0
+- IFC semantic proxies: 2
+- IFC semantic contained proxies: 2
+- IFC semantic proxies with property sets: 2
+- IFC semantic integrity score: 1
+- IFC geometry preview: ready
+- IFC geometry preview elements: 2
+- IFC geometry preview bboxes: 2
+- IFC geometry preview faces: 12
+- IFC geometry preview extents: 10 x 8 x 3.35 m
 - approved for design generation: no
 - readiness: needs_human_selection
 
@@ -121,7 +129,11 @@ Readiness: `review_required`
 - Generated output needs review: design/context-source-map.generated.md
 - Generated output needs review: design/ifc-semantic-proof.generated.json
 - Generated output needs review: design/ifc-semantic-proof.generated.md
+- Generated output needs review: design/ifc-geometry-preview.generated.json
+- Generated output needs review: design/ifc-geometry-preview.generated.md
+- Generated output needs review: viz/previews/ifc-geometry-preview.svg
 - Context selection still has undecided candidates: 2
+- Context source mapping still has pending review rows: 1
 
 ## Recent Memory
 
@@ -132,6 +144,8 @@ Readiness: `review_required`
 ## Next Actions
 
 - Review context-selection decisions before using candidates as design input.
+- Review pending source-mapping rows before syncing decisions to context-selection.
+- Review source-map semantic candidates before any design-seed approval.
 - Review generated outputs before any public or external use.
 - Ask for explicit approval before paid cloud jobs.
 

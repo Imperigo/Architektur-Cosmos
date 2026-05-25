@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-25T18:38:20.472Z",
+  "generated_at": "2026-05-25T19:16:52.629Z",
   "generator": "kosmo-context-source-map",
   "project_id": "kosmo-demo-001",
   "status": "generated_needs_review",
@@ -17,12 +17,12 @@
     "dxf_total_entities": 0,
     "dxf_total_polylines": 0,
     "dxf_layer_count": 0,
-    "ifc_exists": false,
-    "ifc_total_entities": 0,
-    "ifc_entity_type_count": 0,
-    "ifc_semantic_building_element_count": 0,
-    "design_seed_candidate_after_review_count": 0,
-    "recommended_next_step": "use_sources_as_context_reference_only"
+    "ifc_exists": true,
+    "ifc_total_entities": 77,
+    "ifc_entity_type_count": 20,
+    "ifc_semantic_building_element_count": 2,
+    "design_seed_candidate_after_review_count": 1,
+    "recommended_next_step": "review_layer_mapping_and_semantic_ifc_import_before_design_seed"
   },
   "dxf": {
     "source_file": {
@@ -39,12 +39,794 @@
     "source_file": {
       "path": "data/source-files/Bestand_Kontext.ifc",
       "name": "Bestand_Kontext.ifc",
-      "exists": false,
-      "size_bytes": 0
+      "exists": true,
+      "size_bytes": 3582
     },
-    "total_entities": 0,
-    "top_entity_types": [],
-    "semantic_entity_types": []
+    "total_entities": 77,
+    "top_entity_types": [
+      {
+        "id": "ifc-type-ifccartesianpoint",
+        "source_kind": "ifc_entity_type",
+        "source_file": {
+          "path": "data/source-files/Bestand_Kontext.ifc",
+          "name": "Bestand_Kontext.ifc",
+          "exists": true,
+          "size_bytes": 3582
+        },
+        "name": "IFCCARTESIANPOINT",
+        "entity_count": 17,
+        "proposed_role": "geometry_representation",
+        "mapping_status": "context_geometry_reference_only",
+        "design_seed_candidate_after_review": false,
+        "required_review": "use_through_semantic_parent_elements",
+        "notes": [
+          "Geometry representation data should be interpreted through semantic parent elements."
+        ]
+      },
+      {
+        "id": "ifc-type-ifcpolyloop",
+        "source_kind": "ifc_entity_type",
+        "source_file": {
+          "path": "data/source-files/Bestand_Kontext.ifc",
+          "name": "Bestand_Kontext.ifc",
+          "exists": true,
+          "size_bytes": 3582
+        },
+        "name": "IFCPOLYLOOP",
+        "entity_count": 12,
+        "proposed_role": "geometry_representation",
+        "mapping_status": "context_geometry_reference_only",
+        "design_seed_candidate_after_review": false,
+        "required_review": "use_through_semantic_parent_elements",
+        "notes": [
+          "Geometry representation data should be interpreted through semantic parent elements."
+        ]
+      },
+      {
+        "id": "ifc-type-ifcfaceouterbound",
+        "source_kind": "ifc_entity_type",
+        "source_file": {
+          "path": "data/source-files/Bestand_Kontext.ifc",
+          "name": "Bestand_Kontext.ifc",
+          "exists": true,
+          "size_bytes": 3582
+        },
+        "name": "IFCFACEOUTERBOUND",
+        "entity_count": 12,
+        "proposed_role": "geometry_representation",
+        "mapping_status": "context_geometry_reference_only",
+        "design_seed_candidate_after_review": false,
+        "required_review": "use_through_semantic_parent_elements",
+        "notes": [
+          "Geometry representation data should be interpreted through semantic parent elements."
+        ]
+      },
+      {
+        "id": "ifc-type-ifcface",
+        "source_kind": "ifc_entity_type",
+        "source_file": {
+          "path": "data/source-files/Bestand_Kontext.ifc",
+          "name": "Bestand_Kontext.ifc",
+          "exists": true,
+          "size_bytes": 3582
+        },
+        "name": "IFCFACE",
+        "entity_count": 12,
+        "proposed_role": "geometry_representation",
+        "mapping_status": "context_geometry_reference_only",
+        "design_seed_candidate_after_review": false,
+        "required_review": "use_through_semantic_parent_elements",
+        "notes": [
+          "Geometry representation data should be interpreted through semantic parent elements."
+        ]
+      },
+      {
+        "id": "ifc-type-ifcrelaggregates",
+        "source_kind": "ifc_entity_type",
+        "source_file": {
+          "path": "data/source-files/Bestand_Kontext.ifc",
+          "name": "Bestand_Kontext.ifc",
+          "exists": true,
+          "size_bytes": 3582
+        },
+        "name": "IFCRELAGGREGATES",
+        "entity_count": 3,
+        "proposed_role": "ifc_support_or_unclassified",
+        "mapping_status": "context_metadata_or_support",
+        "design_seed_candidate_after_review": false,
+        "required_review": "review_only_if_needed",
+        "notes": [
+          "Support entity or unclassified IFC entity type."
+        ]
+      },
+      {
+        "id": "ifc-type-ifcopenshell",
+        "source_kind": "ifc_entity_type",
+        "source_file": {
+          "path": "data/source-files/Bestand_Kontext.ifc",
+          "name": "Bestand_Kontext.ifc",
+          "exists": true,
+          "size_bytes": 3582
+        },
+        "name": "IFCOPENSHELL",
+        "entity_count": 2,
+        "proposed_role": "ifc_support_or_unclassified",
+        "mapping_status": "context_metadata_or_support",
+        "design_seed_candidate_after_review": false,
+        "required_review": "review_only_if_needed",
+        "notes": [
+          "Support entity or unclassified IFC entity type."
+        ]
+      },
+      {
+        "id": "ifc-type-ifcfacetedbrep",
+        "source_kind": "ifc_entity_type",
+        "source_file": {
+          "path": "data/source-files/Bestand_Kontext.ifc",
+          "name": "Bestand_Kontext.ifc",
+          "exists": true,
+          "size_bytes": 3582
+        },
+        "name": "IFCFACETEDBREP",
+        "entity_count": 2,
+        "proposed_role": "geometry_representation",
+        "mapping_status": "context_geometry_reference_only",
+        "design_seed_candidate_after_review": false,
+        "required_review": "use_through_semantic_parent_elements",
+        "notes": [
+          "Geometry representation data should be interpreted through semantic parent elements."
+        ]
+      },
+      {
+        "id": "ifc-type-ifcshaperepresentation",
+        "source_kind": "ifc_entity_type",
+        "source_file": {
+          "path": "data/source-files/Bestand_Kontext.ifc",
+          "name": "Bestand_Kontext.ifc",
+          "exists": true,
+          "size_bytes": 3582
+        },
+        "name": "IFCSHAPEREPRESENTATION",
+        "entity_count": 2,
+        "proposed_role": "geometry_representation",
+        "mapping_status": "context_geometry_reference_only",
+        "design_seed_candidate_after_review": false,
+        "required_review": "use_through_semantic_parent_elements",
+        "notes": [
+          "Geometry representation data should be interpreted through semantic parent elements."
+        ]
+      },
+      {
+        "id": "ifc-type-ifcproductdefinitionshape",
+        "source_kind": "ifc_entity_type",
+        "source_file": {
+          "path": "data/source-files/Bestand_Kontext.ifc",
+          "name": "Bestand_Kontext.ifc",
+          "exists": true,
+          "size_bytes": 3582
+        },
+        "name": "IFCPRODUCTDEFINITIONSHAPE",
+        "entity_count": 2,
+        "proposed_role": "geometry_representation",
+        "mapping_status": "context_geometry_reference_only",
+        "design_seed_candidate_after_review": false,
+        "required_review": "use_through_semantic_parent_elements",
+        "notes": [
+          "Geometry representation data should be interpreted through semantic parent elements."
+        ]
+      },
+      {
+        "id": "ifc-type-ifcbuildingelementproxy",
+        "source_kind": "ifc_entity_type",
+        "source_file": {
+          "path": "data/source-files/Bestand_Kontext.ifc",
+          "name": "Bestand_Kontext.ifc",
+          "exists": true,
+          "size_bytes": 3582
+        },
+        "name": "IFCBUILDINGELEMENTPROXY",
+        "entity_count": 2,
+        "proposed_role": "semantic_building_element",
+        "mapping_status": "semantic_ifc_import_required",
+        "design_seed_candidate_after_review": true,
+        "required_review": "import_semantically_and_verify_elements",
+        "notes": [
+          "Potential design/context seed only after semantic IFC import and human review."
+        ]
+      },
+      {
+        "id": "ifc-type-ifcpropertysinglevalue",
+        "source_kind": "ifc_entity_type",
+        "source_file": {
+          "path": "data/source-files/Bestand_Kontext.ifc",
+          "name": "Bestand_Kontext.ifc",
+          "exists": true,
+          "size_bytes": 3582
+        },
+        "name": "IFCPROPERTYSINGLEVALUE",
+        "entity_count": 2,
+        "proposed_role": "source_metadata",
+        "mapping_status": "accepted_as_context_metadata_candidate",
+        "design_seed_candidate_after_review": false,
+        "required_review": "review_properties_before_claims",
+        "notes": [
+          "Useful as metadata/reference, not direct geometry."
+        ]
+      },
+      {
+        "id": "ifc-type-ifcproject",
+        "source_kind": "ifc_entity_type",
+        "source_file": {
+          "path": "data/source-files/Bestand_Kontext.ifc",
+          "name": "Bestand_Kontext.ifc",
+          "exists": true,
+          "size_bytes": 3582
+        },
+        "name": "IFCPROJECT",
+        "entity_count": 1,
+        "proposed_role": "project_structure",
+        "mapping_status": "accepted_as_context_metadata_candidate",
+        "design_seed_candidate_after_review": false,
+        "required_review": "verify_ifc_project_hierarchy",
+        "notes": [
+          "Useful for source/project hierarchy, not geometry seed."
+        ]
+      },
+      {
+        "id": "ifc-type-ifcsite",
+        "source_kind": "ifc_entity_type",
+        "source_file": {
+          "path": "data/source-files/Bestand_Kontext.ifc",
+          "name": "Bestand_Kontext.ifc",
+          "exists": true,
+          "size_bytes": 3582
+        },
+        "name": "IFCSITE",
+        "entity_count": 1,
+        "proposed_role": "project_structure",
+        "mapping_status": "accepted_as_context_metadata_candidate",
+        "design_seed_candidate_after_review": false,
+        "required_review": "verify_ifc_project_hierarchy",
+        "notes": [
+          "Useful for source/project hierarchy, not geometry seed."
+        ]
+      },
+      {
+        "id": "ifc-type-ifcbuilding",
+        "source_kind": "ifc_entity_type",
+        "source_file": {
+          "path": "data/source-files/Bestand_Kontext.ifc",
+          "name": "Bestand_Kontext.ifc",
+          "exists": true,
+          "size_bytes": 3582
+        },
+        "name": "IFCBUILDING",
+        "entity_count": 1,
+        "proposed_role": "project_structure",
+        "mapping_status": "accepted_as_context_metadata_candidate",
+        "design_seed_candidate_after_review": false,
+        "required_review": "verify_ifc_project_hierarchy",
+        "notes": [
+          "Useful for source/project hierarchy, not geometry seed."
+        ]
+      },
+      {
+        "id": "ifc-type-ifcbuildingstorey",
+        "source_kind": "ifc_entity_type",
+        "source_file": {
+          "path": "data/source-files/Bestand_Kontext.ifc",
+          "name": "Bestand_Kontext.ifc",
+          "exists": true,
+          "size_bytes": 3582
+        },
+        "name": "IFCBUILDINGSTOREY",
+        "entity_count": 1,
+        "proposed_role": "project_structure",
+        "mapping_status": "accepted_as_context_metadata_candidate",
+        "design_seed_candidate_after_review": false,
+        "required_review": "verify_ifc_project_hierarchy",
+        "notes": [
+          "Useful for source/project hierarchy, not geometry seed."
+        ]
+      },
+      {
+        "id": "ifc-type-ifcaxis2placement3d",
+        "source_kind": "ifc_entity_type",
+        "source_file": {
+          "path": "data/source-files/Bestand_Kontext.ifc",
+          "name": "Bestand_Kontext.ifc",
+          "exists": true,
+          "size_bytes": 3582
+        },
+        "name": "IFCAXIS2PLACEMENT3D",
+        "entity_count": 1,
+        "proposed_role": "ifc_support_or_unclassified",
+        "mapping_status": "context_metadata_or_support",
+        "design_seed_candidate_after_review": false,
+        "required_review": "review_only_if_needed",
+        "notes": [
+          "Support entity or unclassified IFC entity type."
+        ]
+      },
+      {
+        "id": "ifc-type-ifclocalplacement",
+        "source_kind": "ifc_entity_type",
+        "source_file": {
+          "path": "data/source-files/Bestand_Kontext.ifc",
+          "name": "Bestand_Kontext.ifc",
+          "exists": true,
+          "size_bytes": 3582
+        },
+        "name": "IFCLOCALPLACEMENT",
+        "entity_count": 1,
+        "proposed_role": "ifc_support_or_unclassified",
+        "mapping_status": "context_metadata_or_support",
+        "design_seed_candidate_after_review": false,
+        "required_review": "review_only_if_needed",
+        "notes": [
+          "Support entity or unclassified IFC entity type."
+        ]
+      },
+      {
+        "id": "ifc-type-ifcpropertyset",
+        "source_kind": "ifc_entity_type",
+        "source_file": {
+          "path": "data/source-files/Bestand_Kontext.ifc",
+          "name": "Bestand_Kontext.ifc",
+          "exists": true,
+          "size_bytes": 3582
+        },
+        "name": "IFCPROPERTYSET",
+        "entity_count": 1,
+        "proposed_role": "source_metadata",
+        "mapping_status": "accepted_as_context_metadata_candidate",
+        "design_seed_candidate_after_review": false,
+        "required_review": "review_properties_before_claims",
+        "notes": [
+          "Useful as metadata/reference, not direct geometry."
+        ]
+      },
+      {
+        "id": "ifc-type-ifcreldefinesbyproperties",
+        "source_kind": "ifc_entity_type",
+        "source_file": {
+          "path": "data/source-files/Bestand_Kontext.ifc",
+          "name": "Bestand_Kontext.ifc",
+          "exists": true,
+          "size_bytes": 3582
+        },
+        "name": "IFCRELDEFINESBYPROPERTIES",
+        "entity_count": 1,
+        "proposed_role": "source_metadata",
+        "mapping_status": "accepted_as_context_metadata_candidate",
+        "design_seed_candidate_after_review": false,
+        "required_review": "review_properties_before_claims",
+        "notes": [
+          "Useful as metadata/reference, not direct geometry."
+        ]
+      },
+      {
+        "id": "ifc-type-ifcrelcontainedinspatialstructure",
+        "source_kind": "ifc_entity_type",
+        "source_file": {
+          "path": "data/source-files/Bestand_Kontext.ifc",
+          "name": "Bestand_Kontext.ifc",
+          "exists": true,
+          "size_bytes": 3582
+        },
+        "name": "IFCRELCONTAINEDINSPATIALSTRUCTURE",
+        "entity_count": 1,
+        "proposed_role": "ifc_support_or_unclassified",
+        "mapping_status": "context_metadata_or_support",
+        "design_seed_candidate_after_review": false,
+        "required_review": "review_only_if_needed",
+        "notes": [
+          "Support entity or unclassified IFC entity type."
+        ]
+      }
+    ],
+    "semantic_entity_types": [
+      {
+        "id": "ifc-type-ifcbuildingelementproxy",
+        "source_kind": "ifc_entity_type",
+        "source_file": {
+          "path": "data/source-files/Bestand_Kontext.ifc",
+          "name": "Bestand_Kontext.ifc",
+          "exists": true,
+          "size_bytes": 3582
+        },
+        "name": "IFCBUILDINGELEMENTPROXY",
+        "entity_count": 2,
+        "proposed_role": "semantic_building_element",
+        "mapping_status": "semantic_ifc_import_required",
+        "design_seed_candidate_after_review": true,
+        "required_review": "import_semantically_and_verify_elements",
+        "notes": [
+          "Potential design/context seed only after semantic IFC import and human review."
+        ]
+      }
+    ]
   },
-  "rows": []
+  "rows": [
+    {
+      "id": "ifc-type-ifccartesianpoint",
+      "source_kind": "ifc_entity_type",
+      "source_file": {
+        "path": "data/source-files/Bestand_Kontext.ifc",
+        "name": "Bestand_Kontext.ifc",
+        "exists": true,
+        "size_bytes": 3582
+      },
+      "name": "IFCCARTESIANPOINT",
+      "entity_count": 17,
+      "proposed_role": "geometry_representation",
+      "mapping_status": "context_geometry_reference_only",
+      "design_seed_candidate_after_review": false,
+      "required_review": "use_through_semantic_parent_elements",
+      "notes": [
+        "Geometry representation data should be interpreted through semantic parent elements."
+      ]
+    },
+    {
+      "id": "ifc-type-ifcpolyloop",
+      "source_kind": "ifc_entity_type",
+      "source_file": {
+        "path": "data/source-files/Bestand_Kontext.ifc",
+        "name": "Bestand_Kontext.ifc",
+        "exists": true,
+        "size_bytes": 3582
+      },
+      "name": "IFCPOLYLOOP",
+      "entity_count": 12,
+      "proposed_role": "geometry_representation",
+      "mapping_status": "context_geometry_reference_only",
+      "design_seed_candidate_after_review": false,
+      "required_review": "use_through_semantic_parent_elements",
+      "notes": [
+        "Geometry representation data should be interpreted through semantic parent elements."
+      ]
+    },
+    {
+      "id": "ifc-type-ifcfaceouterbound",
+      "source_kind": "ifc_entity_type",
+      "source_file": {
+        "path": "data/source-files/Bestand_Kontext.ifc",
+        "name": "Bestand_Kontext.ifc",
+        "exists": true,
+        "size_bytes": 3582
+      },
+      "name": "IFCFACEOUTERBOUND",
+      "entity_count": 12,
+      "proposed_role": "geometry_representation",
+      "mapping_status": "context_geometry_reference_only",
+      "design_seed_candidate_after_review": false,
+      "required_review": "use_through_semantic_parent_elements",
+      "notes": [
+        "Geometry representation data should be interpreted through semantic parent elements."
+      ]
+    },
+    {
+      "id": "ifc-type-ifcface",
+      "source_kind": "ifc_entity_type",
+      "source_file": {
+        "path": "data/source-files/Bestand_Kontext.ifc",
+        "name": "Bestand_Kontext.ifc",
+        "exists": true,
+        "size_bytes": 3582
+      },
+      "name": "IFCFACE",
+      "entity_count": 12,
+      "proposed_role": "geometry_representation",
+      "mapping_status": "context_geometry_reference_only",
+      "design_seed_candidate_after_review": false,
+      "required_review": "use_through_semantic_parent_elements",
+      "notes": [
+        "Geometry representation data should be interpreted through semantic parent elements."
+      ]
+    },
+    {
+      "id": "ifc-type-ifcrelaggregates",
+      "source_kind": "ifc_entity_type",
+      "source_file": {
+        "path": "data/source-files/Bestand_Kontext.ifc",
+        "name": "Bestand_Kontext.ifc",
+        "exists": true,
+        "size_bytes": 3582
+      },
+      "name": "IFCRELAGGREGATES",
+      "entity_count": 3,
+      "proposed_role": "ifc_support_or_unclassified",
+      "mapping_status": "context_metadata_or_support",
+      "design_seed_candidate_after_review": false,
+      "required_review": "review_only_if_needed",
+      "notes": [
+        "Support entity or unclassified IFC entity type."
+      ]
+    },
+    {
+      "id": "ifc-type-ifcopenshell",
+      "source_kind": "ifc_entity_type",
+      "source_file": {
+        "path": "data/source-files/Bestand_Kontext.ifc",
+        "name": "Bestand_Kontext.ifc",
+        "exists": true,
+        "size_bytes": 3582
+      },
+      "name": "IFCOPENSHELL",
+      "entity_count": 2,
+      "proposed_role": "ifc_support_or_unclassified",
+      "mapping_status": "context_metadata_or_support",
+      "design_seed_candidate_after_review": false,
+      "required_review": "review_only_if_needed",
+      "notes": [
+        "Support entity or unclassified IFC entity type."
+      ]
+    },
+    {
+      "id": "ifc-type-ifcfacetedbrep",
+      "source_kind": "ifc_entity_type",
+      "source_file": {
+        "path": "data/source-files/Bestand_Kontext.ifc",
+        "name": "Bestand_Kontext.ifc",
+        "exists": true,
+        "size_bytes": 3582
+      },
+      "name": "IFCFACETEDBREP",
+      "entity_count": 2,
+      "proposed_role": "geometry_representation",
+      "mapping_status": "context_geometry_reference_only",
+      "design_seed_candidate_after_review": false,
+      "required_review": "use_through_semantic_parent_elements",
+      "notes": [
+        "Geometry representation data should be interpreted through semantic parent elements."
+      ]
+    },
+    {
+      "id": "ifc-type-ifcshaperepresentation",
+      "source_kind": "ifc_entity_type",
+      "source_file": {
+        "path": "data/source-files/Bestand_Kontext.ifc",
+        "name": "Bestand_Kontext.ifc",
+        "exists": true,
+        "size_bytes": 3582
+      },
+      "name": "IFCSHAPEREPRESENTATION",
+      "entity_count": 2,
+      "proposed_role": "geometry_representation",
+      "mapping_status": "context_geometry_reference_only",
+      "design_seed_candidate_after_review": false,
+      "required_review": "use_through_semantic_parent_elements",
+      "notes": [
+        "Geometry representation data should be interpreted through semantic parent elements."
+      ]
+    },
+    {
+      "id": "ifc-type-ifcproductdefinitionshape",
+      "source_kind": "ifc_entity_type",
+      "source_file": {
+        "path": "data/source-files/Bestand_Kontext.ifc",
+        "name": "Bestand_Kontext.ifc",
+        "exists": true,
+        "size_bytes": 3582
+      },
+      "name": "IFCPRODUCTDEFINITIONSHAPE",
+      "entity_count": 2,
+      "proposed_role": "geometry_representation",
+      "mapping_status": "context_geometry_reference_only",
+      "design_seed_candidate_after_review": false,
+      "required_review": "use_through_semantic_parent_elements",
+      "notes": [
+        "Geometry representation data should be interpreted through semantic parent elements."
+      ]
+    },
+    {
+      "id": "ifc-type-ifcbuildingelementproxy",
+      "source_kind": "ifc_entity_type",
+      "source_file": {
+        "path": "data/source-files/Bestand_Kontext.ifc",
+        "name": "Bestand_Kontext.ifc",
+        "exists": true,
+        "size_bytes": 3582
+      },
+      "name": "IFCBUILDINGELEMENTPROXY",
+      "entity_count": 2,
+      "proposed_role": "semantic_building_element",
+      "mapping_status": "semantic_ifc_import_required",
+      "design_seed_candidate_after_review": true,
+      "required_review": "import_semantically_and_verify_elements",
+      "notes": [
+        "Potential design/context seed only after semantic IFC import and human review."
+      ]
+    },
+    {
+      "id": "ifc-type-ifcpropertysinglevalue",
+      "source_kind": "ifc_entity_type",
+      "source_file": {
+        "path": "data/source-files/Bestand_Kontext.ifc",
+        "name": "Bestand_Kontext.ifc",
+        "exists": true,
+        "size_bytes": 3582
+      },
+      "name": "IFCPROPERTYSINGLEVALUE",
+      "entity_count": 2,
+      "proposed_role": "source_metadata",
+      "mapping_status": "accepted_as_context_metadata_candidate",
+      "design_seed_candidate_after_review": false,
+      "required_review": "review_properties_before_claims",
+      "notes": [
+        "Useful as metadata/reference, not direct geometry."
+      ]
+    },
+    {
+      "id": "ifc-type-ifcproject",
+      "source_kind": "ifc_entity_type",
+      "source_file": {
+        "path": "data/source-files/Bestand_Kontext.ifc",
+        "name": "Bestand_Kontext.ifc",
+        "exists": true,
+        "size_bytes": 3582
+      },
+      "name": "IFCPROJECT",
+      "entity_count": 1,
+      "proposed_role": "project_structure",
+      "mapping_status": "accepted_as_context_metadata_candidate",
+      "design_seed_candidate_after_review": false,
+      "required_review": "verify_ifc_project_hierarchy",
+      "notes": [
+        "Useful for source/project hierarchy, not geometry seed."
+      ]
+    },
+    {
+      "id": "ifc-type-ifcsite",
+      "source_kind": "ifc_entity_type",
+      "source_file": {
+        "path": "data/source-files/Bestand_Kontext.ifc",
+        "name": "Bestand_Kontext.ifc",
+        "exists": true,
+        "size_bytes": 3582
+      },
+      "name": "IFCSITE",
+      "entity_count": 1,
+      "proposed_role": "project_structure",
+      "mapping_status": "accepted_as_context_metadata_candidate",
+      "design_seed_candidate_after_review": false,
+      "required_review": "verify_ifc_project_hierarchy",
+      "notes": [
+        "Useful for source/project hierarchy, not geometry seed."
+      ]
+    },
+    {
+      "id": "ifc-type-ifcbuilding",
+      "source_kind": "ifc_entity_type",
+      "source_file": {
+        "path": "data/source-files/Bestand_Kontext.ifc",
+        "name": "Bestand_Kontext.ifc",
+        "exists": true,
+        "size_bytes": 3582
+      },
+      "name": "IFCBUILDING",
+      "entity_count": 1,
+      "proposed_role": "project_structure",
+      "mapping_status": "accepted_as_context_metadata_candidate",
+      "design_seed_candidate_after_review": false,
+      "required_review": "verify_ifc_project_hierarchy",
+      "notes": [
+        "Useful for source/project hierarchy, not geometry seed."
+      ]
+    },
+    {
+      "id": "ifc-type-ifcbuildingstorey",
+      "source_kind": "ifc_entity_type",
+      "source_file": {
+        "path": "data/source-files/Bestand_Kontext.ifc",
+        "name": "Bestand_Kontext.ifc",
+        "exists": true,
+        "size_bytes": 3582
+      },
+      "name": "IFCBUILDINGSTOREY",
+      "entity_count": 1,
+      "proposed_role": "project_structure",
+      "mapping_status": "accepted_as_context_metadata_candidate",
+      "design_seed_candidate_after_review": false,
+      "required_review": "verify_ifc_project_hierarchy",
+      "notes": [
+        "Useful for source/project hierarchy, not geometry seed."
+      ]
+    },
+    {
+      "id": "ifc-type-ifcaxis2placement3d",
+      "source_kind": "ifc_entity_type",
+      "source_file": {
+        "path": "data/source-files/Bestand_Kontext.ifc",
+        "name": "Bestand_Kontext.ifc",
+        "exists": true,
+        "size_bytes": 3582
+      },
+      "name": "IFCAXIS2PLACEMENT3D",
+      "entity_count": 1,
+      "proposed_role": "ifc_support_or_unclassified",
+      "mapping_status": "context_metadata_or_support",
+      "design_seed_candidate_after_review": false,
+      "required_review": "review_only_if_needed",
+      "notes": [
+        "Support entity or unclassified IFC entity type."
+      ]
+    },
+    {
+      "id": "ifc-type-ifclocalplacement",
+      "source_kind": "ifc_entity_type",
+      "source_file": {
+        "path": "data/source-files/Bestand_Kontext.ifc",
+        "name": "Bestand_Kontext.ifc",
+        "exists": true,
+        "size_bytes": 3582
+      },
+      "name": "IFCLOCALPLACEMENT",
+      "entity_count": 1,
+      "proposed_role": "ifc_support_or_unclassified",
+      "mapping_status": "context_metadata_or_support",
+      "design_seed_candidate_after_review": false,
+      "required_review": "review_only_if_needed",
+      "notes": [
+        "Support entity or unclassified IFC entity type."
+      ]
+    },
+    {
+      "id": "ifc-type-ifcpropertyset",
+      "source_kind": "ifc_entity_type",
+      "source_file": {
+        "path": "data/source-files/Bestand_Kontext.ifc",
+        "name": "Bestand_Kontext.ifc",
+        "exists": true,
+        "size_bytes": 3582
+      },
+      "name": "IFCPROPERTYSET",
+      "entity_count": 1,
+      "proposed_role": "source_metadata",
+      "mapping_status": "accepted_as_context_metadata_candidate",
+      "design_seed_candidate_after_review": false,
+      "required_review": "review_properties_before_claims",
+      "notes": [
+        "Useful as metadata/reference, not direct geometry."
+      ]
+    },
+    {
+      "id": "ifc-type-ifcreldefinesbyproperties",
+      "source_kind": "ifc_entity_type",
+      "source_file": {
+        "path": "data/source-files/Bestand_Kontext.ifc",
+        "name": "Bestand_Kontext.ifc",
+        "exists": true,
+        "size_bytes": 3582
+      },
+      "name": "IFCRELDEFINESBYPROPERTIES",
+      "entity_count": 1,
+      "proposed_role": "source_metadata",
+      "mapping_status": "accepted_as_context_metadata_candidate",
+      "design_seed_candidate_after_review": false,
+      "required_review": "review_properties_before_claims",
+      "notes": [
+        "Useful as metadata/reference, not direct geometry."
+      ]
+    },
+    {
+      "id": "ifc-type-ifcrelcontainedinspatialstructure",
+      "source_kind": "ifc_entity_type",
+      "source_file": {
+        "path": "data/source-files/Bestand_Kontext.ifc",
+        "name": "Bestand_Kontext.ifc",
+        "exists": true,
+        "size_bytes": 3582
+      },
+      "name": "IFCRELCONTAINEDINSPATIALSTRUCTURE",
+      "entity_count": 1,
+      "proposed_role": "ifc_support_or_unclassified",
+      "mapping_status": "context_metadata_or_support",
+      "design_seed_candidate_after_review": false,
+      "required_review": "review_only_if_needed",
+      "notes": [
+        "Support entity or unclassified IFC entity type."
+      ]
+    }
+  ]
 }

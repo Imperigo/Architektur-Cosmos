@@ -251,6 +251,27 @@
       "module": "design",
       "rights_status": "generated_needs_review",
       "description": "Human-readable semantic IFC proof before design-seed review."
+    },
+    {
+      "path": "design/ifc-geometry-preview.generated.json",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Read-only IFC faceted BREP geometry preview before design-seed review."
+    },
+    {
+      "path": "design/ifc-geometry-preview.generated.md",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Human-readable IFC geometry preview before design-seed review."
+    },
+    {
+      "path": "viz/previews/ifc-geometry-preview.svg",
+      "type": "viz_preview",
+      "module": "viz",
+      "rights_status": "generated_needs_review",
+      "description": "SVG top projection preview of IFC faceted BREP element bounds."
     }
   ],
   "review_gates": {

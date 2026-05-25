@@ -102,6 +102,9 @@ function buildReport(manifest, check) {
   if (contextReview.source_review_design_seed_possible_after_review_count > 0 && !contextReview.ifc_semantic_proof_exists) {
     warnings.push('IFC semantic proof is missing for source-review design-seed candidate.');
   }
+  if (contextReview.ifc_semantic_proof_proxy_count > 0 && !contextReview.ifc_geometry_preview_ready) {
+    warnings.push('IFC geometry preview is missing or still pending for semantic IFC proof.');
+  }
   if (contextReview.accepted_as_design_seed_count > 0 && !contextReview.approved_for_design_generation) {
     warnings.push('Context candidates are selected as design seed but final design-generation approval is still false.');
   }
@@ -177,6 +180,7 @@ function readContextReview() {
   const sourceMappingPath = join(projectRoot, 'design/context-source-mapping.json');
   const sourceReviewPath = join(projectRoot, 'design/context-source-review.generated.json');
   const ifcSemanticProofPath = join(projectRoot, 'design/ifc-semantic-proof.generated.json');
+  const ifcGeometryPreviewPath = join(projectRoot, 'design/ifc-geometry-preview.generated.json');
   const candidates = existsSync(candidatesPath) ? safeReadJson(candidatesPath) : null;
   const selection = existsSync(selectionPath) ? safeReadJson(selectionPath) : null;
   const matrix = existsSync(matrixPath) ? safeReadJson(matrixPath) : null;
@@ -184,6 +188,7 @@ function readContextReview() {
   const sourceMapping = existsSync(sourceMappingPath) ? safeReadJson(sourceMappingPath) : null;
   const sourceReview = existsSync(sourceReviewPath) ? safeReadJson(sourceReviewPath) : null;
   const ifcSemanticProof = existsSync(ifcSemanticProofPath) ? safeReadJson(ifcSemanticProofPath) : null;
+  const ifcGeometryPreview = existsSync(ifcGeometryPreviewPath) ? safeReadJson(ifcGeometryPreviewPath) : null;
   const selections = Array.isArray(selection?.selections) ? selection.selections : [];
   const rows = Array.isArray(matrix?.rows) ? matrix.rows : [];
   const candidateCount = numberOrDefault(candidates?.summary?.candidate_count, Array.isArray(candidates?.candidates) ? candidates.candidates.length : 0);
@@ -231,6 +236,15 @@ function readContextReview() {
     ifc_semantic_proof_property_set_element_count: numberOrDefault(ifcSemanticProof?.summary?.elements_with_property_sets, 0),
     ifc_semantic_proof_integrity_score: numberOrDefault(ifcSemanticProof?.summary?.semantic_integrity_score, 0),
     ifc_semantic_proof_design_seed_approved: Boolean(ifcSemanticProof?.summary?.design_seed_approved),
+    ifc_geometry_preview_exists: Boolean(ifcGeometryPreview),
+    ifc_geometry_preview_status: ifcGeometryPreview?.status || null,
+    ifc_geometry_preview_ready: isIfcGeometryPreviewReady(ifcGeometryPreview),
+    ifc_geometry_preview_element_count: numberOrDefault(ifcGeometryPreview?.summary?.ifcbuildingelementproxy_count, 0),
+    ifc_geometry_preview_bbox_count: numberOrDefault(ifcGeometryPreview?.summary?.elements_with_geometry_bbox, 0),
+    ifc_geometry_preview_face_count: numberOrDefault(ifcGeometryPreview?.summary?.faces_resolved, 0),
+    ifc_geometry_preview_width: numberOrDefault(ifcGeometryPreview?.summary?.global_width_m_estimate, 0),
+    ifc_geometry_preview_depth: numberOrDefault(ifcGeometryPreview?.summary?.global_depth_m_estimate, 0),
+    ifc_geometry_preview_height: numberOrDefault(ifcGeometryPreview?.summary?.global_height_m_estimate, 0),
     stale_selection_count: numberOrDefault(selection?.summary?.stale_selection_count, Array.isArray(selection?.stale_selections) ? selection.stale_selections.length : 0),
     readiness: selection?.summary?.readiness || matrix?.summary?.recommended_next_step || candidates?.summary?.suggested_next_step || null,
     approved_for_design_generation: Boolean(selection?.approved_for_design_generation)
@@ -265,6 +279,8 @@ function nextActions({ modules, gates, blockers, warnings, outputs, contextRevie
   if (contextReview?.selection_exists && contextReview.needs_more_source_review_count > 0) actions.push('Verify sources for context-selection candidates marked needs_more_source_review.');
   if (contextReview?.source_review_design_seed_possible_after_review_count > 0 && !contextReview.ifc_semantic_proof_exists) actions.push('Run npm run kosmo:ifc-semantic-proof for semantic IFC evidence before design-seed review.');
   if (contextReview?.ifc_semantic_proof_exists && contextReview?.source_review_open_human_review_count > 0) actions.push('Human-review IFC semantic proof before changing IFC source-review decision.');
+  if (contextReview?.ifc_semantic_proof_proxy_count > 0 && !contextReview.ifc_geometry_preview_ready) actions.push('Run npm run kosmo:ifc-geometry-preview for a visual IFC top-projection review.');
+  if (contextReview?.ifc_geometry_preview_exists && contextReview?.source_review_open_human_review_count > 0) actions.push('Compare IFC geometry preview against DXF context before any design-seed approval.');
   if (contextReview?.source_map_design_seed_candidate_after_review_count > 0) actions.push('Review source-map semantic candidates before any design-seed approval.');
   if (contextReview?.accepted_as_design_seed_count > 0 && !contextReview.approved_for_design_generation) actions.push('Set final approval only after a human has checked context-selection.');
   if (modules.some((module) => module.id === 'data' && module.status === 'pending')) actions.push('Let Kosmo Data add reviewed references, sources and asset candidates.');
@@ -383,8 +399,27 @@ function appendContextReview(lines, contextReview) {
   lines.push(`- IFC semantic contained proxies: ${contextReview.ifc_semantic_proof_contained_count}`);
   lines.push(`- IFC semantic proxies with property sets: ${contextReview.ifc_semantic_proof_property_set_element_count}`);
   lines.push(`- IFC semantic integrity score: ${contextReview.ifc_semantic_proof_integrity_score}`);
+  lines.push(`- IFC geometry preview: ${ifcGeometryPreviewLabel(contextReview)}`);
+  lines.push(`- IFC geometry preview elements: ${contextReview.ifc_geometry_preview_element_count}`);
+  lines.push(`- IFC geometry preview bboxes: ${contextReview.ifc_geometry_preview_bbox_count}`);
+  lines.push(`- IFC geometry preview faces: ${contextReview.ifc_geometry_preview_face_count}`);
+  lines.push(`- IFC geometry preview extents: ${contextReview.ifc_geometry_preview_width} x ${contextReview.ifc_geometry_preview_depth} x ${contextReview.ifc_geometry_preview_height} m`);
   lines.push(`- approved for design generation: ${contextReview.approved_for_design_generation ? 'yes' : 'no'}`);
   lines.push(`- readiness: ${contextReview.readiness || 'unknown'}`);
+}
+
+function isIfcGeometryPreviewReady(preview) {
+  return Boolean(
+    preview
+      && preview.status === 'ifc_geometry_preview_ready_for_human_review'
+      && preview.summary?.elements_with_geometry_bbox > 0
+  );
+}
+
+function ifcGeometryPreviewLabel(contextReview) {
+  if (!contextReview.ifc_geometry_preview_exists) return 'missing';
+  if (contextReview.ifc_geometry_preview_ready) return 'ready';
+  return `pending (${contextReview.ifc_geometry_preview_status || 'unknown'})`;
 }
 
 function runPackageCheck() {

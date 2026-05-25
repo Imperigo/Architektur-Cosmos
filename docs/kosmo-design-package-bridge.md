@@ -36,6 +36,8 @@ Der erste Connector ist bewusst duenn:
   menschliches Mapping-Gate fuer DXF-Layer und semantische IFC-Typen
 - schreibt optional `design/ifc-semantic-proof.generated.json` und `.md` als
   read-only IFC-Semantikproof vor jeder Design-Seed-Freigabe
+- schreibt optional `design/ifc-geometry-preview.generated.json`, `.md` und
+  `viz/previews/ifc-geometry-preview.svg` als read-only IFC-Geometriepreview
 - verwendet den bestehenden Blender-Operator `kosmo_design.create_room_from_plan`
 - erzeugt Collections unter `Kosmo_Project_<project_id>`
 - taggt erzeugte Collections/Objekte mit `kosmo_project_*` und `kosmo_source_*` Custom Properties
@@ -151,6 +153,9 @@ Zusätzlich wird im Projektpaket geschrieben:
 - `design/context-source-mapping.md`
 - `design/ifc-semantic-proof.generated.json`
 - `design/ifc-semantic-proof.generated.md`
+- `design/ifc-geometry-preview.generated.json`
+- `design/ifc-geometry-preview.generated.md`
+- `viz/previews/ifc-geometry-preview.svg`
 
 Dieser Report enthält die importierte Kontext-Collection, Objektanzahl,
 Perimeter, DXF-Zählwerte, DXF-Layerklassifikation, IFC-Entity-Gruppen,
@@ -210,6 +215,29 @@ nicht verfuegbar ist, nutzt das Tool einen read-only STEP-Semantikparser. Es
 prueft `IFCBUILDINGELEMENTPROXY`, Spatial Containment, Placement,
 Product-Shape-Referenzen und Property Sets, importiert aber keine Geometrie und
 setzt keine Design-Freigabe.
+
+`npm run kosmo:ifc-geometry-preview -- --project <projektpfad>` erzeugt
+`design/ifc-geometry-preview.generated.md/json` und
+`viz/previews/ifc-geometry-preview.svg`. Der Preview loest facettierte
+BREP-Referenzen auf, berechnet pro `IFCBUILDINGELEMENTPROXY` eine Bounding Box
+und schreibt eine Top-Projection. Auch dieser Schritt ist nur Review-Evidence,
+kein editierbarer BIM-Import.
+
+Repo-Smoke ohne private Daten:
+
+```bash
+npm run kosmo:context-source-map -- --project examples/kosmo-projects/kosmo-demo-001
+npm run kosmo:ifc-semantic-proof -- --project examples/kosmo-projects/kosmo-demo-001
+npm run kosmo:ifc-geometry-preview -- --project examples/kosmo-projects/kosmo-demo-001
+npm run kosmo:context-source-mapping -- --project examples/kosmo-projects/kosmo-demo-001
+npm run kosmo:package-check -- --project examples/kosmo-projects/kosmo-demo-001
+npm run kosmo:package-review -- --project examples/kosmo-projects/kosmo-demo-001
+```
+
+Das Demo-Paket enthaelt eine synthetische Zwei-Element-IFC-Fixture
+(`Bestand_Kontext.ifc`). Sie beweist den Weg Quelle -> Semantikproof ->
+Geometriepreview -> menschliches Mapping-Gate, ohne echte Projekt- oder
+Copyrightdaten zu benutzen.
 
 Einzelne Kandidaten koennen im gleichen Tool bewusst entschieden werden:
 
@@ -407,6 +435,11 @@ Projektpaketen prueft derselbe Schritt `IFCBUILDINGELEMENTPROXY`, GlobalId,
 Placement, Product Shape, Spatial Containment und Property Sets. Der Proof kann
 damit semantische Evidenz fuer eine spätere menschliche IFC-Pruefung liefern,
 setzt `approved_for_design_generation` aber nie selbständig auf `true`.
+
+Der IFC-Geometriepreview fuer das ZG-Testpaket loest 282 von 282 Proxy-Elementen
+zu Geometrie-Bounding-Boxes auf, erkennt 282 BREPs und 41'298 Faces und schreibt
+eine SVG-Top-Projection. Die globalen Extents liegen bei ca. 1037 m x 1004 m x
+94 m. Auch hier bleibt die Design-Freigabe geschlossen.
 
 Erste heuristische Klassifikation:
 

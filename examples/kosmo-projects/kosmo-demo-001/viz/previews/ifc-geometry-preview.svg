@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1000" viewBox="0 0 1400 1000" role="img" aria-label="IFC geometry top projection preview">
+  <rect width="1400" height="1000" fill="#101820"/>
+  <rect x="72" y="72" width="1070" height="856" fill="none" stroke="#456677" stroke-width="1"/>
+  <rect x="72" y="72" width="1070" height="856" fill="hsl(204, 76%, 58%)" fill-opacity="0.24" stroke="hsl(204, 88%, 70%)" stroke-width="1"/>
+  <rect x="72" y="885.2" width="1070" height="42.8" fill="hsl(310, 76%, 58%)" fill-opacity="0.24" stroke="hsl(310, 88%, 70%)" stroke-width="1"/>
+  <text x="72" y="34" fill="#dce8ef" font-family="Arial, sans-serif" font-size="24">IFC Geometry Preview - Top Projection</text>
+  <text x="72" y="60" fill="#8fb3c6" font-family="Arial, sans-serif" font-size="14">2 elements, 12 faces, 10m x 8m</text>
+  <text x="72" y="974" fill="#8fb3c6" font-family="Arial, sans-serif" font-size="14">Read-only preview. Not a BIM import. Not approved as design seed.</text>
+</svg>

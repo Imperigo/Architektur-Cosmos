@@ -1,9 +1,9 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-25T18:38:58.724Z",
+  "generated_at": "2026-05-25T19:16:53.202Z",
   "generator": "kosmo-context-source-mapping",
   "project_id": "kosmo-demo-001",
-  "status": "source_mapping_reviewed",
+  "status": "source_mapping_review_required",
   "rights_status": "internal_only",
   "source_map_path": "design/context-source-map.generated.json",
   "source_review_path": "design/context-source-review.generated.json",
@@ -22,15 +22,57 @@
     "notes": []
   },
   "summary": {
-    "mapping_row_count": 0,
-    "pending_review_count": 0,
+    "mapping_row_count": 1,
+    "pending_review_count": 1,
     "accepted_as_context_count": 0,
     "accepted_as_design_seed_count": 0,
     "needs_more_source_review_count": 0,
     "rejected_count": 0,
-    "linked_context_candidate_count": 0,
-    "design_seed_possible_after_review_count": 0,
-    "recommended_next_step": "sync_reviewed_mapping_decisions_to_context_selection"
+    "linked_context_candidate_count": 1,
+    "design_seed_possible_after_review_count": 1,
+    "recommended_next_step": "review_source_mapping_rows"
   },
-  "rows": []
+  "rows": [
+    {
+      "mapping_id": "ifc-type-ifcbuildingelementproxy",
+      "source_kind": "ifc_entity_type",
+      "source_name": "IFCBUILDINGELEMENTPROXY",
+      "source_file": {
+        "path": "data/source-files/Bestand_Kontext.ifc",
+        "name": "Bestand_Kontext.ifc",
+        "exists": true,
+        "size_bytes": 3582
+      },
+      "source_map_status": "semantic_ifc_import_required",
+      "proposed_role": "semantic_building_element",
+      "linked_context_candidate_id": "ifc-role-3-semantic_building_elements",
+      "current_context_selection_decision": null,
+      "source_review_status": null,
+      "automated_evidence_status": null,
+      "design_seed_possible_after_review": true,
+      "suggested_decision": "needs_more_source_review",
+      "suggested_use": "semantic_ifc_import_before_design_seed",
+      "decision": "pending_review",
+      "allowed_decisions": [
+        "accepted_as_context",
+        "accepted_as_design_seed",
+        "needs_more_source_review",
+        "rejected"
+      ],
+      "review_required": true,
+      "approved_by": null,
+      "approved_at": null,
+      "notes": [],
+      "source_facts": {
+        "entity_count": 2,
+        "source_review_facts": null
+      },
+      "required_review": "import_semantically_and_verify_elements",
+      "warnings": [
+        "Potential design/context seed only after semantic IFC import and human review.",
+        "Semantic IFC candidate: requires Bonsai/IfcOpenShell-style import and human review before design-seed use."
+      ],
+      "context_selection_command": null
+    }
+  ]
 }
