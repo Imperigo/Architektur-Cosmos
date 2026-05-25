@@ -168,6 +168,7 @@ async function writePackage({ inputRoot, projectRoot, projectId, projectName, or
     }),
     'design/model-profile.json': json(buildModelProfile(projectId, origin)),
     'design/context-import.generated.json': json(buildContextImportSeed(projectId, 'kosmosprepare_import')),
+    'design/context-candidates.generated.json': json(buildContextCandidatesSeed(projectId, 'kosmosprepare_import')),
     'design/variants.json': json({
       schema_version: '0.1',
       variants: [],
@@ -245,6 +246,7 @@ function buildManifest({ projectId, projectName, site, sourceFiles }) {
     outputs: [
       artifact('design/model-profile.json', 'model_profile', 'design', 'generated_needs_review', 'Empty Phase 0 model profile seed for Kosmo Design.'),
       artifact('design/context-import.generated.json', 'other', 'design', 'generated_needs_review', 'KosmoDraw Phase 0 context import report.'),
+      artifact('design/context-candidates.generated.json', 'other', 'design', 'generated_needs_review', 'KosmoDraw Phase 0 context candidates.'),
       artifact('draw/exports/ground-floor-plan.svg', 'plan_export', 'draw', 'generated_needs_review', 'Placeholder vector ground floor export.'),
       artifact('draw/exports/section-a.svg', 'plan_export', 'draw', 'generated_needs_review', 'Placeholder vector section export.'),
       artifact('publish/review-pack.md', 'review_pack', 'publish', 'internal_only', 'Local review package scaffold.')
@@ -380,12 +382,40 @@ function buildContextImportSeed(projectId, source) {
   };
 }
 
+function buildContextCandidatesSeed(projectId, source) {
+  return {
+    schema_version: '0.1',
+    generated_at: null,
+    generator: 'kosmo-prepare-package-import',
+    project_id: projectId,
+    status: 'pending_blender_context_import',
+    rights_status: 'internal_only',
+    source_stage: 'phase_0_context',
+    source,
+    note: 'KosmoDraw should overwrite this file with review-required context candidates after importing Prepare context into Blender.',
+    summary: {
+      candidate_count: 0,
+      review_required_count: 0,
+      design_readiness: 'pending_blender_context_import',
+      suggested_next_step: 'run_kosmo_blender_package_smoke'
+    },
+    candidates: []
+  };
+}
+
 function buildExportManifest() {
   return {
     schema_version: '0.1',
     exports: [
       {
         path: 'design/context-import.generated.json',
+        module: 'Kosmo Design',
+        format: 'json',
+        status: 'pending_blender_context_import',
+        rights_status: 'generated_needs_review'
+      },
+      {
+        path: 'design/context-candidates.generated.json',
         module: 'Kosmo Design',
         format: 'json',
         status: 'pending_blender_context_import',

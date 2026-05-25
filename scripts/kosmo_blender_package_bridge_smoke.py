@@ -113,14 +113,23 @@ def main() -> None:
 
     context_imported = read_scene_json(bpy.context.scene.get("kosmo_context_imported"))
     context_report_path = project_manifest.parent / "design" / "context-import.generated.json"
+    context_candidates_path = project_manifest.parent / "design" / "context-candidates.generated.json"
     context_report = {}
+    context_candidates = {}
     if context_report_path.exists():
         with context_report_path.open("r", encoding="utf-8") as handle:
             parsed_report = json.load(handle)
         if isinstance(parsed_report, dict):
             context_report = parsed_report
+    if context_candidates_path.exists():
+        with context_candidates_path.open("r", encoding="utf-8") as handle:
+            parsed_candidates = json.load(handle)
+        if isinstance(parsed_candidates, dict):
+            context_candidates = parsed_candidates
     if args.expect_context and not context_report_path.exists():
         raise AssertionError(f"Missing context import report: {context_report_path}")
+    if args.expect_context and not context_candidates_path.exists():
+        raise AssertionError(f"Missing context candidates report: {context_candidates_path}")
     if args.expect_context:
         context_payload = context_report.get("context") if isinstance(context_report, dict) else {}
         if not isinstance(context_payload, dict) or not context_payload.get("classification"):
@@ -129,6 +138,9 @@ def main() -> None:
             source_payload = context_payload.get(source_name) or {}
             if source_payload.get("available") and not source_payload.get("classification"):
                 raise AssertionError(f"Context report is missing {source_name.upper()} classification")
+        candidates = context_candidates.get("candidates") if isinstance(context_candidates, dict) else []
+        if not isinstance(candidates, list) or not candidates:
+            raise AssertionError("Context candidates report has no candidates")
 
     if expected_rooms == 0:
         if args.output_blend:
@@ -146,6 +158,8 @@ def main() -> None:
             "context_imported": context_imported,
             "context_report": context_report,
             "context_report_path": context_report_path.as_posix() if context_report_path.exists() else None,
+            "context_candidates": context_candidates,
+            "context_candidates_path": context_candidates_path.as_posix() if context_candidates_path.exists() else None,
             "scene_context_collection": str(bpy.context.scene.get("kosmo_context_collection") or ""),
             "output_blend": args.output_blend or None,
         }
@@ -239,6 +253,8 @@ def main() -> None:
         "context_imported": context_imported,
         "context_report": context_report,
         "context_report_path": context_report_path.as_posix() if context_report_path.exists() else None,
+        "context_candidates": context_candidates,
+        "context_candidates_path": context_candidates_path.as_posix() if context_candidates_path.exists() else None,
         "output_blend": args.output_blend or None,
     }
     print("KOSMO_BLENDER_PACKAGE_BRIDGE_SMOKE " + json.dumps(report, sort_keys=True))

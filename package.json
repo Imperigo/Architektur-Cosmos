@@ -11,6 +11,8 @@
     "quality:check": "npm run archive:validate && npm run security:check && npm run ui:audit && npm run i18n:check && npm run database:hero-images:audit && npm run database:planet-thumbnails:audit && npm run lint && npm run build",
     "security:check": "node scripts/security-check.mjs",
     "security:headers": "node scripts/check-live-security.mjs",
+    "storage:report": "node scripts/local-storage-report.mjs",
+    "storage:cleanup:dry-run": "node scripts/local-storage-report.mjs --cleanup --older-than-days 14",
     "import:afasia": "node scripts/import-afasia.mjs",
     "archive:validate": "node scripts/archive-d1-tools.mjs validate",
     "archive:export": "node scripts/archive-d1-tools.mjs export-sql",

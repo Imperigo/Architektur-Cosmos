@@ -1,0 +1,58 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-05-25T19:00:35.323192+02:00",
+  "generator": "kosmo_design.load_project_package",
+  "project_id": "kosmo-demo-001",
+  "status": "generated_needs_review",
+  "rights_status": "internal_only",
+  "source_stage": "phase_0_context",
+  "note": "Heuristic context candidates derived from Kosmo Prepare context. These are review prompts, not accepted design facts.",
+  "summary": {
+    "candidate_count": 2,
+    "review_required_count": 2,
+    "design_readiness": "manual_seed_only",
+    "suggested_next_step": "add_project_sources"
+  },
+  "candidates": [
+    {
+      "id": "context-origin",
+      "label": "Project origin marker",
+      "kind": "project_origin",
+      "source": "fallback_origin",
+      "confidence": "low",
+      "status": "needs_human_review",
+      "review_required": true,
+      "suggested_use": "coordinate_reference",
+      "evidence": {
+        "object": "Kosmo_Context_Origin_kosmo-demo-001",
+        "perimeter_m": [
+          20.0,
+          20.0
+        ]
+      },
+      "warnings": [
+        "Fallback origin; add reviewed project coordinates before measured work."
+      ]
+    },
+    {
+      "id": "context-perimeter",
+      "label": "Project perimeter",
+      "kind": "site_perimeter",
+      "source": "fallback_origin",
+      "confidence": "low",
+      "status": "needs_human_review",
+      "review_required": true,
+      "suggested_use": "context_boundary_reference",
+      "evidence": {
+        "object": "Kosmo_Context_Perimeter_kosmo-demo-001",
+        "perimeter_m": [
+          20.0,
+          20.0
+        ]
+      },
+      "warnings": [
+        "Perimeter is a context frame, not a verified parcel boundary."
+      ]
+    }
+  ]
+}

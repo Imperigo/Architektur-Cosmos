@@ -56,6 +56,39 @@ npm run archive:capture -- --input archive-inbox/villa-savoye --title "Villa Sav
 The command creates only local output under `out/archive-captures/` and never
 uploads assets.
 
+## Local Disk Guardrail
+
+Generated review files can grow quickly because `out/` contains reports,
+previews and smoke-test artifacts, while `archive-intake/` contains local
+private project packages. Use the local storage report before long automation
+runs:
+
+```bash
+npm run storage:report
+```
+
+This writes:
+
+- `out/local-storage/latest.json`
+- `out/local-storage/latest.md`
+
+The report is read-only and shows the largest ignored local folders. A cleanup
+dry run is available:
+
+```bash
+npm run storage:cleanup:dry-run
+```
+
+Nothing is deleted in dry-run mode. Actual deletion requires both explicit flags:
+
+```bash
+npm run storage:cleanup:dry-run -- --apply --i-understand-local-delete
+```
+
+The cleanup tool only accepts these local generated roots: `archive-inbox/`,
+`archive-intake/` and `out/`. It refuses arbitrary paths and keeps deletion out
+of normal publish/build commands.
+
 The Cloudflare preview script still skips R2 by default. R2 bucket creation
 requires both:
 

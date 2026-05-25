@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-25T18:53:04.786601+02:00",
+  "generated_at": "2026-05-25T19:00:35.323750+02:00",
   "generator": "kosmo_design.load_project_package",
   "project_id": "kosmo-demo-001",
   "status": "generated_needs_review",
@@ -52,6 +52,7 @@
         "No IFC source was available in this package."
       ]
     },
+    "candidates_path": "design/context-candidates.generated.json",
     "report_path": "design/context-import.generated.json"
   }
 }

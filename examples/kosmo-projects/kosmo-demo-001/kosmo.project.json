@@ -113,6 +113,13 @@
       "description": "KosmoDraw context import report."
     },
     {
+      "path": "design/context-candidates.generated.json",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "KosmoDraw context candidates."
+    },
+    {
       "path": "draw/exports/ground-floor-plan.svg",
       "type": "plan_export",
       "module": "draw",
