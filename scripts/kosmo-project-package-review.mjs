@@ -105,6 +105,15 @@ function buildReport(manifest, check) {
   if (contextReview.ifc_semantic_proof_proxy_count > 0 && !contextReview.ifc_geometry_preview_ready) {
     warnings.push('IFC geometry preview is missing or still pending for semantic IFC proof.');
   }
+  if (contextReview.ifc_geometry_preview_ready && contextReview.source_mapping_accepted_as_context_count > 0 && !contextReview.ifc_dxf_alignment_preview_ready) {
+    warnings.push('IFC/DXF alignment preview is missing or still pending for reviewed DXF context.');
+  }
+  if (contextReview.ifc_geometry_preview_ready && !contextReview.ifc_layer_plan_ready) {
+    warnings.push('IFC layer plan is missing or still pending for Blender/ArchiCAD layer review.');
+  }
+  if (contextReview.selection_exists && contextReview.undecided_count === 0 && contextReview.accepted_as_context_count > 0 && !contextReview.context_handoff_ready) {
+    warnings.push('Kosmo Design context handoff is missing or still pending.');
+  }
   if (contextReview.accepted_as_design_seed_count > 0 && !contextReview.approved_for_design_generation) {
     warnings.push('Context candidates are selected as design seed but final design-generation approval is still false.');
   }
@@ -181,6 +190,9 @@ function readContextReview() {
   const sourceReviewPath = join(projectRoot, 'design/context-source-review.generated.json');
   const ifcSemanticProofPath = join(projectRoot, 'design/ifc-semantic-proof.generated.json');
   const ifcGeometryPreviewPath = join(projectRoot, 'design/ifc-geometry-preview.generated.json');
+  const ifcDxfAlignmentPreviewPath = join(projectRoot, 'design/ifc-dxf-alignment-preview.generated.json');
+  const ifcLayerPlanPath = join(projectRoot, 'design/ifc-layer-plan.generated.json');
+  const contextHandoffPath = join(projectRoot, 'design/context-handoff.generated.json');
   const candidates = existsSync(candidatesPath) ? safeReadJson(candidatesPath) : null;
   const selection = existsSync(selectionPath) ? safeReadJson(selectionPath) : null;
   const matrix = existsSync(matrixPath) ? safeReadJson(matrixPath) : null;
@@ -189,6 +201,9 @@ function readContextReview() {
   const sourceReview = existsSync(sourceReviewPath) ? safeReadJson(sourceReviewPath) : null;
   const ifcSemanticProof = existsSync(ifcSemanticProofPath) ? safeReadJson(ifcSemanticProofPath) : null;
   const ifcGeometryPreview = existsSync(ifcGeometryPreviewPath) ? safeReadJson(ifcGeometryPreviewPath) : null;
+  const ifcDxfAlignmentPreview = existsSync(ifcDxfAlignmentPreviewPath) ? safeReadJson(ifcDxfAlignmentPreviewPath) : null;
+  const ifcLayerPlan = existsSync(ifcLayerPlanPath) ? safeReadJson(ifcLayerPlanPath) : null;
+  const contextHandoff = existsSync(contextHandoffPath) ? safeReadJson(contextHandoffPath) : null;
   const selections = Array.isArray(selection?.selections) ? selection.selections : [];
   const rows = Array.isArray(matrix?.rows) ? matrix.rows : [];
   const candidateCount = numberOrDefault(candidates?.summary?.candidate_count, Array.isArray(candidates?.candidates) ? candidates.candidates.length : 0);
@@ -245,6 +260,29 @@ function readContextReview() {
     ifc_geometry_preview_width: numberOrDefault(ifcGeometryPreview?.summary?.global_width_m_estimate, 0),
     ifc_geometry_preview_depth: numberOrDefault(ifcGeometryPreview?.summary?.global_depth_m_estimate, 0),
     ifc_geometry_preview_height: numberOrDefault(ifcGeometryPreview?.summary?.global_height_m_estimate, 0),
+    ifc_dxf_alignment_preview_exists: Boolean(ifcDxfAlignmentPreview),
+    ifc_dxf_alignment_preview_status: ifcDxfAlignmentPreview?.status || null,
+    ifc_dxf_alignment_preview_ready: isIfcDxfAlignmentPreviewReady(ifcDxfAlignmentPreview),
+    ifc_dxf_alignment_dxf_polyline_count: numberOrDefault(ifcDxfAlignmentPreview?.summary?.dxf_accepted_polyline_count, 0),
+    ifc_dxf_alignment_ifc_bbox_count: numberOrDefault(ifcDxfAlignmentPreview?.summary?.ifc_geometry_bbox_count, 0),
+    ifc_dxf_alignment_center_offset: numberOrDefault(ifcDxfAlignmentPreview?.summary?.center_offset_m_estimate, 0),
+    ifc_dxf_alignment_overlap_ratio: numberOrDefault(ifcDxfAlignmentPreview?.summary?.overlap_ratio_of_smaller_bbox, 0),
+    ifc_dxf_alignment_hint: ifcDxfAlignmentPreview?.summary?.alignment_hint || null,
+    ifc_layer_plan_exists: Boolean(ifcLayerPlan),
+    ifc_layer_plan_status: ifcLayerPlan?.status || null,
+    ifc_layer_plan_ready: isIfcLayerPlanReady(ifcLayerPlan),
+    ifc_layer_plan_element_count: numberOrDefault(ifcLayerPlan?.summary?.ifc_element_count, 0),
+    ifc_layer_plan_group_count: numberOrDefault(ifcLayerPlan?.summary?.layer_group_count, 0),
+    ifc_layer_plan_material_group_count: numberOrDefault(ifcLayerPlan?.summary?.material_group_count, 0),
+    ifc_layer_plan_structure_element_count: numberOrDefault(ifcLayerPlan?.summary?.structure_element_count, 0),
+    ifc_layer_plan_facade_element_count: numberOrDefault(ifcLayerPlan?.summary?.facade_element_count, 0),
+    context_handoff_exists: Boolean(contextHandoff),
+    context_handoff_status: contextHandoff?.status || null,
+    context_handoff_ready: isContextHandoffReady(contextHandoff),
+    context_handoff_mode: contextHandoff?.summary?.handoff_mode || null,
+    context_handoff_context_input_count: numberOrDefault(contextHandoff?.summary?.context_input_count, 0),
+    context_handoff_design_seed_allowed_count: numberOrDefault(contextHandoff?.summary?.design_seed_allowed_count, 0),
+    context_handoff_blocked_input_count: numberOrDefault(contextHandoff?.summary?.blocked_input_count, 0),
     stale_selection_count: numberOrDefault(selection?.summary?.stale_selection_count, Array.isArray(selection?.stale_selections) ? selection.stale_selections.length : 0),
     readiness: selection?.summary?.readiness || matrix?.summary?.recommended_next_step || candidates?.summary?.suggested_next_step || null,
     approved_for_design_generation: Boolean(selection?.approved_for_design_generation)
@@ -280,6 +318,9 @@ function nextActions({ modules, gates, blockers, warnings, outputs, contextRevie
   if (contextReview?.source_review_design_seed_possible_after_review_count > 0 && !contextReview.ifc_semantic_proof_exists) actions.push('Run npm run kosmo:ifc-semantic-proof for semantic IFC evidence before design-seed review.');
   if (contextReview?.ifc_semantic_proof_exists && contextReview?.source_review_open_human_review_count > 0) actions.push('Human-review IFC semantic proof before changing IFC source-review decision.');
   if (contextReview?.ifc_semantic_proof_proxy_count > 0 && !contextReview.ifc_geometry_preview_ready) actions.push('Run npm run kosmo:ifc-geometry-preview for a visual IFC top-projection review.');
+  if (contextReview?.ifc_geometry_preview_ready && contextReview?.source_mapping_accepted_as_context_count > 0 && !contextReview.ifc_dxf_alignment_preview_ready) actions.push('Run npm run kosmo:ifc-dxf-alignment-preview to compare IFC bboxes with accepted DXF context.');
+  if (contextReview?.ifc_geometry_preview_ready && !contextReview.ifc_layer_plan_ready) actions.push('Run npm run kosmo:ifc-layer-plan to propose Blender collections and ArchiCAD layers.');
+  if (contextReview?.selection_exists && contextReview?.undecided_count === 0 && contextReview?.accepted_as_context_count > 0 && !contextReview.context_handoff_ready) actions.push('Run npm run kosmo:context-handoff to create the Kosmo Design context-only handoff.');
   if (contextReview?.ifc_geometry_preview_exists && contextReview?.source_review_open_human_review_count > 0) actions.push('Compare IFC geometry preview against DXF context before any design-seed approval.');
   if (contextReview?.source_map_design_seed_candidate_after_review_count > 0) actions.push('Review source-map semantic candidates before any design-seed approval.');
   if (contextReview?.accepted_as_design_seed_count > 0 && !contextReview.approved_for_design_generation) actions.push('Set final approval only after a human has checked context-selection.');
@@ -404,6 +445,23 @@ function appendContextReview(lines, contextReview) {
   lines.push(`- IFC geometry preview bboxes: ${contextReview.ifc_geometry_preview_bbox_count}`);
   lines.push(`- IFC geometry preview faces: ${contextReview.ifc_geometry_preview_face_count}`);
   lines.push(`- IFC geometry preview extents: ${contextReview.ifc_geometry_preview_width} x ${contextReview.ifc_geometry_preview_depth} x ${contextReview.ifc_geometry_preview_height} m`);
+  lines.push(`- IFC/DXF alignment preview: ${ifcDxfAlignmentPreviewLabel(contextReview)}`);
+  lines.push(`- IFC/DXF alignment DXF polylines: ${contextReview.ifc_dxf_alignment_dxf_polyline_count}`);
+  lines.push(`- IFC/DXF alignment IFC bboxes: ${contextReview.ifc_dxf_alignment_ifc_bbox_count}`);
+  lines.push(`- IFC/DXF alignment center offset: ${contextReview.ifc_dxf_alignment_center_offset} m`);
+  lines.push(`- IFC/DXF alignment overlap ratio: ${contextReview.ifc_dxf_alignment_overlap_ratio}`);
+  lines.push(`- IFC/DXF alignment hint: ${contextReview.ifc_dxf_alignment_hint || '-'}`);
+  lines.push(`- IFC layer plan: ${ifcLayerPlanLabel(contextReview)}`);
+  lines.push(`- IFC layer plan elements: ${contextReview.ifc_layer_plan_element_count}`);
+  lines.push(`- IFC layer plan groups: ${contextReview.ifc_layer_plan_group_count}`);
+  lines.push(`- IFC layer plan material groups: ${contextReview.ifc_layer_plan_material_group_count}`);
+  lines.push(`- IFC layer plan structure elements: ${contextReview.ifc_layer_plan_structure_element_count}`);
+  lines.push(`- IFC layer plan facade elements: ${contextReview.ifc_layer_plan_facade_element_count}`);
+  lines.push(`- context handoff: ${contextHandoffLabel(contextReview)}`);
+  lines.push(`- context handoff mode: ${contextReview.context_handoff_mode || '-'}`);
+  lines.push(`- context handoff context inputs: ${contextReview.context_handoff_context_input_count}`);
+  lines.push(`- context handoff design seeds allowed: ${contextReview.context_handoff_design_seed_allowed_count}`);
+  lines.push(`- context handoff blocked inputs: ${contextReview.context_handoff_blocked_input_count}`);
   lines.push(`- approved for design generation: ${contextReview.approved_for_design_generation ? 'yes' : 'no'}`);
   lines.push(`- readiness: ${contextReview.readiness || 'unknown'}`);
 }
@@ -416,10 +474,54 @@ function isIfcGeometryPreviewReady(preview) {
   );
 }
 
+function isIfcDxfAlignmentPreviewReady(preview) {
+  return Boolean(
+    preview
+      && preview.status === 'ifc_dxf_alignment_preview_ready_for_human_review'
+      && preview.summary?.dxf_accepted_polyline_count > 0
+      && preview.summary?.ifc_geometry_bbox_count > 0
+  );
+}
+
+function isIfcLayerPlanReady(plan) {
+  return Boolean(
+    plan
+      && plan.status === 'ifc_layer_plan_ready_for_human_review'
+      && plan.summary?.ifc_element_count > 0
+      && plan.summary?.layer_group_count > 0
+  );
+}
+
+function isContextHandoffReady(handoff) {
+  return Boolean(
+    handoff
+      && ['context_reference_handoff_ready', 'design_seed_handoff_ready'].includes(handoff.status)
+      && handoff.summary?.context_input_count > 0
+  );
+}
+
 function ifcGeometryPreviewLabel(contextReview) {
   if (!contextReview.ifc_geometry_preview_exists) return 'missing';
   if (contextReview.ifc_geometry_preview_ready) return 'ready';
   return `pending (${contextReview.ifc_geometry_preview_status || 'unknown'})`;
+}
+
+function ifcDxfAlignmentPreviewLabel(contextReview) {
+  if (!contextReview.ifc_dxf_alignment_preview_exists) return 'missing';
+  if (contextReview.ifc_dxf_alignment_preview_ready) return 'ready';
+  return `pending (${contextReview.ifc_dxf_alignment_preview_status || 'unknown'})`;
+}
+
+function ifcLayerPlanLabel(contextReview) {
+  if (!contextReview.ifc_layer_plan_exists) return 'missing';
+  if (contextReview.ifc_layer_plan_ready) return 'ready';
+  return `pending (${contextReview.ifc_layer_plan_status || 'unknown'})`;
+}
+
+function contextHandoffLabel(contextReview) {
+  if (!contextReview.context_handoff_exists) return 'missing';
+  if (contextReview.context_handoff_ready) return 'ready';
+  return `pending (${contextReview.context_handoff_status || 'unknown'})`;
 }
 
 function runPackageCheck() {

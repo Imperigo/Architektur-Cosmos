@@ -38,6 +38,17 @@ Der erste Connector ist bewusst duenn:
   read-only IFC-Semantikproof vor jeder Design-Seed-Freigabe
 - schreibt optional `design/ifc-geometry-preview.generated.json`, `.md` und
   `viz/previews/ifc-geometry-preview.svg` als read-only IFC-Geometriepreview
+- schreibt optional `design/ifc-dxf-alignment-preview.generated.json`, `.md`
+  und `viz/previews/ifc-dxf-alignment-preview.svg` als read-only Overlay fuer
+  Ursprung-, Massstab- und Extent-Review
+- schreibt optional `design/ifc-layer-plan.generated.json`, `.md`,
+  `design/blender-layer-profile.generated.json`,
+  `design/archicad-layer-profile.generated.json` und
+  `viz/previews/ifc-layer-plan.svg` als review-only Layerplan fuer
+  Blender/ArchiCAD
+- schreibt optional `design/context-handoff.generated.json` und `.md` als
+  explizite Grenze zwischen erlaubtem Kontext, blockierten Inputs und
+  Downstream-Guardrails
 - verwendet den bestehenden Blender-Operator `kosmo_design.create_room_from_plan`
 - erzeugt Collections unter `Kosmo_Project_<project_id>`
 - taggt erzeugte Collections/Objekte mit `kosmo_project_*` und `kosmo_source_*` Custom Properties
@@ -156,6 +167,16 @@ Zusätzlich wird im Projektpaket geschrieben:
 - `design/ifc-geometry-preview.generated.json`
 - `design/ifc-geometry-preview.generated.md`
 - `viz/previews/ifc-geometry-preview.svg`
+- `design/ifc-dxf-alignment-preview.generated.json`
+- `design/ifc-dxf-alignment-preview.generated.md`
+- `viz/previews/ifc-dxf-alignment-preview.svg`
+- `design/ifc-layer-plan.generated.json`
+- `design/ifc-layer-plan.generated.md`
+- `design/blender-layer-profile.generated.json`
+- `design/archicad-layer-profile.generated.json`
+- `viz/previews/ifc-layer-plan.svg`
+- `design/context-handoff.generated.json`
+- `design/context-handoff.generated.md`
 
 Dieser Report enthält die importierte Kontext-Collection, Objektanzahl,
 Perimeter, DXF-Zählwerte, DXF-Layerklassifikation, IFC-Entity-Gruppen,
@@ -223,21 +244,45 @@ BREP-Referenzen auf, berechnet pro `IFCBUILDINGELEMENTPROXY` eine Bounding Box
 und schreibt eine Top-Projection. Auch dieser Schritt ist nur Review-Evidence,
 kein editierbarer BIM-Import.
 
+`npm run kosmo:ifc-dxf-alignment-preview -- --project <projektpfad>` erzeugt
+`design/ifc-dxf-alignment-preview.generated.md/json` und
+`viz/previews/ifc-dxf-alignment-preview.svg`. Der Preview ueberlagert
+akzeptierte DXF-Kontext-Polylines mit den IFC Bounding Boxes, damit Ursprung,
+Massstab und Ausdehnung visuell geprueft werden koennen. Auch dieser Schritt
+setzt keine Design-Freigabe.
+
+`npm run kosmo:ifc-layer-plan -- --project <projektpfad>` erzeugt
+`design/ifc-layer-plan.generated.md/json`,
+`design/blender-layer-profile.generated.json`,
+`design/archicad-layer-profile.generated.json` und
+`viz/previews/ifc-layer-plan.svg`. Der Layerplan uebersetzt Semantikproof und
+Geometriepreview in vorgeschlagene Blender-Collections, ArchiCAD-Layer,
+Materialgruppen und geplante GLB-Pfade. Er erzeugt keine GLB-Dateien und setzt
+`approved_for_import` nicht selbst.
+
+`npm run kosmo:context-handoff -- --project <projektpfad>` erzeugt
+`design/context-handoff.generated.md/json`. Der Handoff sammelt akzeptierte
+Kontextinputs, blockierte oder offene Quellen, IFC-Preview-Evidence,
+Layerplan-Status und Guardrails fuer KosmoDesign. Er bleibt
+`context_reference_only`, bis ein Mensch Design-Seeds freigibt.
+
 Repo-Smoke ohne private Daten:
 
 ```bash
 npm run kosmo:context-source-map -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:ifc-semantic-proof -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:ifc-geometry-preview -- --project examples/kosmo-projects/kosmo-demo-001
+npm run kosmo:ifc-layer-plan -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:context-source-mapping -- --project examples/kosmo-projects/kosmo-demo-001
+npm run kosmo:context-handoff -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:package-check -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:package-review -- --project examples/kosmo-projects/kosmo-demo-001
 ```
 
 Das Demo-Paket enthaelt eine synthetische Zwei-Element-IFC-Fixture
 (`Bestand_Kontext.ifc`). Sie beweist den Weg Quelle -> Semantikproof ->
-Geometriepreview -> menschliches Mapping-Gate, ohne echte Projekt- oder
-Copyrightdaten zu benutzen.
+Geometriepreview -> Layerplan -> Context Handoff -> menschliches Mapping-Gate,
+ohne echte Projekt- oder Copyrightdaten zu benutzen.
 
 Einzelne Kandidaten koennen im gleichen Tool bewusst entschieden werden:
 
@@ -440,6 +485,16 @@ Der IFC-Geometriepreview fuer das ZG-Testpaket loest 282 von 282 Proxy-Elementen
 zu Geometrie-Bounding-Boxes auf, erkennt 282 BREPs und 41'298 Faces und schreibt
 eine SVG-Top-Projection. Die globalen Extents liegen bei ca. 1037 m x 1004 m x
 94 m. Auch hier bleibt die Design-Freigabe geschlossen.
+
+Der IFC-Layerplan kann danach Struktur-, Fassaden-, Massen-, Tektonik- und
+Materialgruppen vorschlagen. Diese Gruppen werden als Blender-Collections,
+ArchiCAD-Layer und geplante GLB-Pfade formuliert, bleiben aber
+`generated_needs_review` und `approved_for_import=false`, bis ein Mensch die
+IFC-Klassen, Materialwerte und Geometrie kontrolliert hat.
+
+Der Context Handoff verdichtet diese Evidence fuer Downstream-Tools. Er sagt
+explizit, welche Inputs nur Kontextreferenz sind, welche Inputs blockiert
+bleiben und welche Guardrails vor automatischer Modellgenerierung gelten.
 
 Erste heuristische Klassifikation:
 

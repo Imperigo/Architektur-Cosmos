@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-25T19:16:53.779Z",
+  "generated_at": "2026-05-25T19:39:53.054Z",
   "generator": "kosmo-project-package-review",
   "project": {
     "id": "kosmo-demo-001",
@@ -230,7 +230,7 @@
       "rights_status": "internal_only",
       "description": "Local review package scaffold.",
       "exists": true,
-      "size_bytes": 7113
+      "size_bytes": 8842
     },
     {
       "path": "design/context-decision-matrix.generated.json",
@@ -329,7 +329,7 @@
       "rights_status": "generated_needs_review",
       "description": "Read-only semantic IFC proof for IFCBUILDINGELEMENTPROXY elements before design-seed review.",
       "exists": true,
-      "size_bytes": 6781
+      "size_bytes": 8641
     },
     {
       "path": "design/ifc-semantic-proof.generated.md",
@@ -366,6 +366,69 @@
       "description": "SVG top projection preview of IFC faceted BREP element bounds.",
       "exists": true,
       "size_bytes": 1002
+    },
+    {
+      "path": "design/ifc-layer-plan.generated.json",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Read-only IFC element layer plan for Blender/ArchiCAD review.",
+      "exists": true,
+      "size_bytes": 8666
+    },
+    {
+      "path": "design/ifc-layer-plan.generated.md",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Human-readable IFC element layer plan for Blender/ArchiCAD review.",
+      "exists": true,
+      "size_bytes": 2006
+    },
+    {
+      "path": "design/blender-layer-profile.generated.json",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Review-only Blender collection profile derived from the IFC layer plan.",
+      "exists": true,
+      "size_bytes": 1804
+    },
+    {
+      "path": "design/archicad-layer-profile.generated.json",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Review-only ArchiCAD layer profile derived from the IFC layer plan.",
+      "exists": true,
+      "size_bytes": 1417
+    },
+    {
+      "path": "viz/previews/ifc-layer-plan.svg",
+      "type": "render_preview",
+      "module": "viz",
+      "rights_status": "generated_needs_review",
+      "description": "SVG top projection preview of IFC layer assignments.",
+      "exists": true,
+      "size_bytes": 2114
+    },
+    {
+      "path": "design/context-handoff.generated.json",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Kosmo Design context handoff: explicit context-only inputs and blocked design seeds.",
+      "exists": true,
+      "size_bytes": 6974
+    },
+    {
+      "path": "design/context-handoff.generated.md",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Human-readable Kosmo Design context handoff.",
+      "exists": true,
+      "size_bytes": 1984
     }
   ],
   "context_review": {
@@ -418,6 +481,29 @@
     "ifc_geometry_preview_width": 10,
     "ifc_geometry_preview_depth": 8,
     "ifc_geometry_preview_height": 3.35,
+    "ifc_dxf_alignment_preview_exists": false,
+    "ifc_dxf_alignment_preview_status": null,
+    "ifc_dxf_alignment_preview_ready": false,
+    "ifc_dxf_alignment_dxf_polyline_count": 0,
+    "ifc_dxf_alignment_ifc_bbox_count": 0,
+    "ifc_dxf_alignment_center_offset": 0,
+    "ifc_dxf_alignment_overlap_ratio": 0,
+    "ifc_dxf_alignment_hint": null,
+    "ifc_layer_plan_exists": true,
+    "ifc_layer_plan_status": "ifc_layer_plan_ready_for_human_review",
+    "ifc_layer_plan_ready": true,
+    "ifc_layer_plan_element_count": 2,
+    "ifc_layer_plan_group_count": 5,
+    "ifc_layer_plan_material_group_count": 1,
+    "ifc_layer_plan_structure_element_count": 2,
+    "ifc_layer_plan_facade_element_count": 1,
+    "context_handoff_exists": true,
+    "context_handoff_status": "context_handoff_pending_review",
+    "context_handoff_ready": false,
+    "context_handoff_mode": "context_reference_only",
+    "context_handoff_context_input_count": 0,
+    "context_handoff_design_seed_allowed_count": 0,
+    "context_handoff_blocked_input_count": 2,
     "stale_selection_count": 0,
     "readiness": "needs_human_selection",
     "approved_for_design_generation": false
@@ -521,6 +607,13 @@
     "Generated output needs review: design/ifc-geometry-preview.generated.json",
     "Generated output needs review: design/ifc-geometry-preview.generated.md",
     "Generated output needs review: viz/previews/ifc-geometry-preview.svg",
+    "Generated output needs review: design/ifc-layer-plan.generated.json",
+    "Generated output needs review: design/ifc-layer-plan.generated.md",
+    "Generated output needs review: design/blender-layer-profile.generated.json",
+    "Generated output needs review: design/archicad-layer-profile.generated.json",
+    "Generated output needs review: viz/previews/ifc-layer-plan.svg",
+    "Generated output needs review: design/context-handoff.generated.json",
+    "Generated output needs review: design/context-handoff.generated.md",
     "Context selection still has undecided candidates: 2",
     "Context source mapping still has pending review rows: 1"
   ],

@@ -1,0 +1,302 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-05-25T19:39:52.206Z",
+  "generator": "kosmo-ifc-layer-plan",
+  "project_id": "kosmo-demo-001",
+  "status": "ifc_layer_plan_ready_for_human_review",
+  "rights_status": "internal_only",
+  "source_files": {
+    "semantic_proof": {
+      "path": "design/ifc-semantic-proof.generated.json",
+      "exists": true,
+      "name": "ifc-semantic-proof.generated.json",
+      "size_bytes": 8641
+    },
+    "geometry_preview": {
+      "path": "design/ifc-geometry-preview.generated.json",
+      "exists": true,
+      "name": "ifc-geometry-preview.generated.json",
+      "size_bytes": 5066
+    }
+  },
+  "preview_svg_path": "viz/previews/ifc-layer-plan.svg",
+  "blender_profile_path": "design/blender-layer-profile.generated.json",
+  "archicad_profile_path": "design/archicad-layer-profile.generated.json",
+  "engine": {
+    "name": "kosmo_ifc_layer_planner",
+    "note": "Review-only layer proposal from semantic IFC proof and geometry preview. It creates no GLB and approves no design seed."
+  },
+  "policy": {
+    "layer_plan_does_not_approve_design_generation": true,
+    "layer_plan_does_not_generate_public_assets": true,
+    "human_review_required_before_blender_import": true,
+    "geometry_is_bbox_level_until_reviewed": true
+  },
+  "summary": {
+    "semantic_proof_ready": true,
+    "geometry_preview_ready": true,
+    "ifc_element_count": 2,
+    "layer_group_count": 5,
+    "material_group_count": 1,
+    "structure_element_count": 2,
+    "facade_element_count": 1,
+    "mass_element_count": 1,
+    "design_seed_approved": false,
+    "recommended_next_step": "human_review_layer_plan_before_blender_or_archicad_import"
+  },
+  "layer_groups": [
+    {
+      "layer_key": "mass",
+      "layer_type": "mass",
+      "title": "Mass",
+      "element_count": 1,
+      "step_ids": [
+        230
+      ],
+      "global_ids": [
+        "KOSMO_SLAB_001"
+      ],
+      "blender_collection": "KOSMO_KOSMO_DEMO_001_MASS",
+      "archicad_layer": "KOSMO_KOSMO_DEMO_001_MASS",
+      "planned_glb_path": "models/kosmo-demo-001/mass.glb",
+      "review_status": "generated_needs_human_layer_review"
+    },
+    {
+      "layer_key": "structure",
+      "layer_type": "structure",
+      "title": "Structure",
+      "element_count": 2,
+      "step_ids": [
+        130,
+        230
+      ],
+      "global_ids": [
+        "KOSMO_WALL_001",
+        "KOSMO_SLAB_001"
+      ],
+      "blender_collection": "KOSMO_KOSMO_DEMO_001_STRUCTURE",
+      "archicad_layer": "KOSMO_KOSMO_DEMO_001_STRUCTURE",
+      "planned_glb_path": "models/kosmo-demo-001/structure.glb",
+      "review_status": "generated_needs_human_layer_review"
+    },
+    {
+      "layer_key": "facade",
+      "layer_type": "facade",
+      "title": "Facade",
+      "element_count": 1,
+      "step_ids": [
+        130
+      ],
+      "global_ids": [
+        "KOSMO_WALL_001"
+      ],
+      "blender_collection": "KOSMO_KOSMO_DEMO_001_FACADE",
+      "archicad_layer": "KOSMO_KOSMO_DEMO_001_FACADE",
+      "planned_glb_path": "models/kosmo-demo-001/facade.glb",
+      "review_status": "generated_needs_human_layer_review"
+    },
+    {
+      "layer_key": "tectonic",
+      "layer_type": "tectonic",
+      "title": "Tectonic",
+      "element_count": 1,
+      "step_ids": [
+        130
+      ],
+      "global_ids": [
+        "KOSMO_WALL_001"
+      ],
+      "blender_collection": "KOSMO_KOSMO_DEMO_001_TECTONIC",
+      "archicad_layer": "KOSMO_KOSMO_DEMO_001_TECTONIC",
+      "planned_glb_path": "models/kosmo-demo-001/tectonic.glb",
+      "review_status": "generated_needs_human_layer_review"
+    },
+    {
+      "layer_key": "material:concrete",
+      "layer_type": "material",
+      "title": "Material concrete",
+      "element_count": 2,
+      "step_ids": [
+        130,
+        230
+      ],
+      "global_ids": [
+        "KOSMO_WALL_001",
+        "KOSMO_SLAB_001"
+      ],
+      "blender_collection": "KOSMO_KOSMO_DEMO_001_MATERIAL_CONCRETE",
+      "archicad_layer": "KOSMO_KOSMO_DEMO_001_MATERIAL_CONCRETE",
+      "planned_glb_path": "models/kosmo-demo-001/materials/concrete.glb",
+      "review_status": "generated_needs_human_layer_review"
+    }
+  ],
+  "elements": [
+    {
+      "step_id": 130,
+      "global_id": "KOSMO_WALL_001",
+      "name": "Demo Wall",
+      "source_object_type": "Exterior wall context seed",
+      "tag": "WALL-001",
+      "proposed_element_type": "wall_or_facade",
+      "proposed_layer_role": "structure",
+      "layer_keys": [
+        "structure",
+        "facade",
+        "tectonic",
+        "material:concrete"
+      ],
+      "material_tags": [
+        "concrete"
+      ],
+      "blender_collections": [
+        "KOSMO_KOSMO_DEMO_001_STRUCTURE",
+        "KOSMO_KOSMO_DEMO_001_FACADE",
+        "KOSMO_KOSMO_DEMO_001_TECTONIC",
+        "KOSMO_KOSMO_DEMO_001_MATERIAL_CONCRETE"
+      ],
+      "archicad_layers": [
+        "KOSMO_KOSMO_DEMO_001_STRUCTURE",
+        "KOSMO_KOSMO_DEMO_001_FACADE",
+        "KOSMO_KOSMO_DEMO_001_TECTONIC",
+        "KOSMO_KOSMO_DEMO_001_MATERIAL_CONCRETE"
+      ],
+      "geometry_bbox": {
+        "min": [
+          0,
+          0,
+          0
+        ],
+        "max": [
+          10,
+          0.4,
+          3
+        ]
+      },
+      "width_m_estimate": 10,
+      "depth_m_estimate": 0.4,
+      "height_m_estimate": 3,
+      "face_count": 6,
+      "footprint_area_m2_estimate": 4,
+      "semantic_container": "IFCBUILDINGSTOREY #4 Level 0",
+      "property_sets": [
+        {
+          "id": 302,
+          "name": "Pset_KosmoDemo",
+          "property_count": 2,
+          "property_names": [
+            "Material",
+            "SourceRole"
+          ],
+          "properties": [
+            {
+              "id": 300,
+              "name": "Material",
+              "nominal_value": {
+                "type": "IFCLABEL",
+                "value": "Concrete"
+              }
+            },
+            {
+              "id": 301,
+              "name": "SourceRole",
+              "nominal_value": {
+                "type": "IFCLABEL",
+                "value": "context_fixture"
+              }
+            }
+          ]
+        }
+      ],
+      "confidence_score": 0.95,
+      "review_status": "generated_needs_human_layer_review",
+      "notes": [
+        "Heuristic IFC layer assignment: wall_or_facade."
+      ]
+    },
+    {
+      "step_id": 230,
+      "global_id": "KOSMO_SLAB_001",
+      "name": "Demo Slab",
+      "source_object_type": "Horizontal slab context seed",
+      "tag": "SLAB-001",
+      "proposed_element_type": "horizontal_slab",
+      "proposed_layer_role": "structure",
+      "layer_keys": [
+        "structure",
+        "mass",
+        "material:concrete"
+      ],
+      "material_tags": [
+        "concrete"
+      ],
+      "blender_collections": [
+        "KOSMO_KOSMO_DEMO_001_STRUCTURE",
+        "KOSMO_KOSMO_DEMO_001_MASS",
+        "KOSMO_KOSMO_DEMO_001_MATERIAL_CONCRETE"
+      ],
+      "archicad_layers": [
+        "KOSMO_KOSMO_DEMO_001_STRUCTURE",
+        "KOSMO_KOSMO_DEMO_001_MASS",
+        "KOSMO_KOSMO_DEMO_001_MATERIAL_CONCRETE"
+      ],
+      "geometry_bbox": {
+        "min": [
+          0,
+          0,
+          3
+        ],
+        "max": [
+          10,
+          8,
+          3.35
+        ]
+      },
+      "width_m_estimate": 10,
+      "depth_m_estimate": 8,
+      "height_m_estimate": 0.35,
+      "face_count": 6,
+      "footprint_area_m2_estimate": 80,
+      "semantic_container": "IFCBUILDINGSTOREY #4 Level 0",
+      "property_sets": [
+        {
+          "id": 302,
+          "name": "Pset_KosmoDemo",
+          "property_count": 2,
+          "property_names": [
+            "Material",
+            "SourceRole"
+          ],
+          "properties": [
+            {
+              "id": 300,
+              "name": "Material",
+              "nominal_value": {
+                "type": "IFCLABEL",
+                "value": "Concrete"
+              }
+            },
+            {
+              "id": 301,
+              "name": "SourceRole",
+              "nominal_value": {
+                "type": "IFCLABEL",
+                "value": "context_fixture"
+              }
+            }
+          ]
+        }
+      ],
+      "confidence_score": 0.95,
+      "review_status": "generated_needs_human_layer_review",
+      "notes": [
+        "Heuristic IFC layer assignment: horizontal_slab."
+      ]
+    }
+  ],
+  "next_actions": [
+    "Open the layer-plan SVG and compare layer roles against the IFC viewer.",
+    "Human-review wall/slab/support classifications before Blender or ArchiCAD import.",
+    "Prepare 5 review-only collections/layers, but keep approved_for_import=false.",
+    "Only after review: generate GLB layer exports and Blender collections from approved layer keys."
+  ]
+}

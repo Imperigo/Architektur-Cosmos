@@ -168,6 +168,55 @@
       "format": "svg",
       "status": "generated_needs_review",
       "rights_status": "generated_needs_review"
+    },
+    {
+      "path": "design/ifc-layer-plan.generated.json",
+      "module": "Kosmo Design",
+      "format": "json",
+      "status": "generated_needs_review",
+      "rights_status": "generated_needs_review"
+    },
+    {
+      "path": "design/ifc-layer-plan.generated.md",
+      "module": "Kosmo Design",
+      "format": "markdown",
+      "status": "generated_needs_review",
+      "rights_status": "generated_needs_review"
+    },
+    {
+      "path": "design/blender-layer-profile.generated.json",
+      "module": "Kosmo Design",
+      "format": "json",
+      "status": "generated_needs_review",
+      "rights_status": "generated_needs_review"
+    },
+    {
+      "path": "design/archicad-layer-profile.generated.json",
+      "module": "Kosmo Design",
+      "format": "json",
+      "status": "generated_needs_review",
+      "rights_status": "generated_needs_review"
+    },
+    {
+      "path": "viz/previews/ifc-layer-plan.svg",
+      "module": "Kosmo Viz",
+      "format": "svg",
+      "status": "generated_needs_review",
+      "rights_status": "generated_needs_review"
+    },
+    {
+      "path": "design/context-handoff.generated.json",
+      "module": "Kosmo Design",
+      "format": "json",
+      "status": "generated_needs_review",
+      "rights_status": "generated_needs_review"
+    },
+    {
+      "path": "design/context-handoff.generated.md",
+      "module": "Kosmo Design",
+      "format": "markdown",
+      "status": "generated_needs_review",
+      "rights_status": "generated_needs_review"
     }
   ]
 }

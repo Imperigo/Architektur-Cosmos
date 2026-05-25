@@ -1,6 +1,6 @@
 # Kosmo Demo 001 Review Pack
 
-Generated: 2026-05-25T19:16:53.779Z
+Generated: 2026-05-25T19:39:53.054Z
 Project ID: `kosmo-demo-001`
 Risk level: `local_review_only`
 Readiness: `review_required`
@@ -60,6 +60,13 @@ Readiness: `review_required`
 - ok: `design/ifc-geometry-preview.generated.json` (design, other, generated_needs_review)
 - ok: `design/ifc-geometry-preview.generated.md` (design, other, generated_needs_review)
 - ok: `viz/previews/ifc-geometry-preview.svg` (viz, viz_preview, generated_needs_review)
+- ok: `design/ifc-layer-plan.generated.json` (design, other, generated_needs_review)
+- ok: `design/ifc-layer-plan.generated.md` (design, other, generated_needs_review)
+- ok: `design/blender-layer-profile.generated.json` (design, other, generated_needs_review)
+- ok: `design/archicad-layer-profile.generated.json` (design, other, generated_needs_review)
+- ok: `viz/previews/ifc-layer-plan.svg` (viz, render_preview, generated_needs_review)
+- ok: `design/context-handoff.generated.json` (design, other, generated_needs_review)
+- ok: `design/context-handoff.generated.md` (design, other, generated_needs_review)
 
 ## Context Selection
 
@@ -104,6 +111,23 @@ Readiness: `review_required`
 - IFC geometry preview bboxes: 2
 - IFC geometry preview faces: 12
 - IFC geometry preview extents: 10 x 8 x 3.35 m
+- IFC/DXF alignment preview: missing
+- IFC/DXF alignment DXF polylines: 0
+- IFC/DXF alignment IFC bboxes: 0
+- IFC/DXF alignment center offset: 0 m
+- IFC/DXF alignment overlap ratio: 0
+- IFC/DXF alignment hint: -
+- IFC layer plan: ready
+- IFC layer plan elements: 2
+- IFC layer plan groups: 5
+- IFC layer plan material groups: 1
+- IFC layer plan structure elements: 2
+- IFC layer plan facade elements: 1
+- context handoff: pending (context_handoff_pending_review)
+- context handoff mode: context_reference_only
+- context handoff context inputs: 0
+- context handoff design seeds allowed: 0
+- context handoff blocked inputs: 2
 - approved for design generation: no
 - readiness: needs_human_selection
 
@@ -132,6 +156,13 @@ Readiness: `review_required`
 - Generated output needs review: design/ifc-geometry-preview.generated.json
 - Generated output needs review: design/ifc-geometry-preview.generated.md
 - Generated output needs review: viz/previews/ifc-geometry-preview.svg
+- Generated output needs review: design/ifc-layer-plan.generated.json
+- Generated output needs review: design/ifc-layer-plan.generated.md
+- Generated output needs review: design/blender-layer-profile.generated.json
+- Generated output needs review: design/archicad-layer-profile.generated.json
+- Generated output needs review: viz/previews/ifc-layer-plan.svg
+- Generated output needs review: design/context-handoff.generated.json
+- Generated output needs review: design/context-handoff.generated.md
 - Context selection still has undecided candidates: 2
 - Context source mapping still has pending review rows: 1
 

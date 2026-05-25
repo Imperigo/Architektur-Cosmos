@@ -1,7 +1,7 @@
 # IFC Semantic Proof
 
 Project ID: `kosmo-demo-001`
-Generated: 2026-05-25T19:16:52.804Z
+Generated: 2026-05-25T19:39:51.856Z
 Status: `semantic_ifc_probe_ready_for_human_review`
 
 Read-only semantic STEP proof. This does not approve design generation.

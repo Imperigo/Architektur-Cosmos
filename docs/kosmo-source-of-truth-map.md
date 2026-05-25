@@ -78,6 +78,15 @@ Aktiv fuer:
   `IFCBUILDINGELEMENTPROXY`, Spatial Containment und Property Sets
 - `design/ifc-geometry-preview.generated.*` und
   `viz/previews/ifc-geometry-preview.svg` als read-only IFC-Geometriepreview
+- `design/ifc-dxf-alignment-preview.generated.*` und
+  `viz/previews/ifc-dxf-alignment-preview.svg` als read-only Overlay von IFC
+  Bounding Boxes und akzeptiertem DXF-Kontext
+- `design/ifc-layer-plan.generated.*`,
+  `design/blender-layer-profile.generated.json` und
+  `design/archicad-layer-profile.generated.json` als review-only
+  IFC-Layeruebersetzung fuer Blender/ArchiCAD
+- `design/context-handoff.generated.*` als KosmoDesign-Handoff fuer
+  Kontextinputs, blockierte Quellen und Guardrails
 - `design/context-selection.json` als menschliches Gate vor Design-Seeds
 - `kosmo:context-guard` als Downstream-Stopp vor ungepruefter Designnutzung
 
@@ -185,7 +194,10 @@ KosmoData
    `design/context-source-review.generated.*` als DXF-/IFC-Evidence-Review,
    `design/context-source-mapping.*` als explizites Mapping-Gate und
    `design/ifc-semantic-proof.generated.*` als IFC-Semantikproof,
-   `design/ifc-geometry-preview.generated.*` als IFC-Geometriepreview und
+   `design/ifc-geometry-preview.generated.*` als IFC-Geometriepreview,
+   `design/ifc-dxf-alignment-preview.generated.*` als IFC/DXF-Alignmentpreview,
+   `design/ifc-layer-plan.generated.*` als Blender-/ArchiCAD-Layerplan und
+   `design/context-handoff.generated.*` als explizite Downstream-Grenze sowie
    `design/context-selection.json` als menschliches Gate. Naechster Schritt:
    diese Auswahl in ein kleines Layer-Mapping UI und spaeter freigegebene
    Design-Seeds ueberfuehren.

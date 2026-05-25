@@ -159,6 +159,33 @@
       "approval_required_before_public_use": false
     },
     {
+      "id": "kosmo_ifc_dxf_alignment_preview",
+      "label": "Kosmo IFC/DXF Alignment Preview",
+      "command": "npm run kosmo:ifc-dxf-alignment-preview -- --project {project_path}",
+      "output_root": "{project_path}/design",
+      "review_output": "{project_path}/design/ifc-dxf-alignment-preview.generated.md",
+      "purpose": "Overlay accepted DXF context polylines with IFC geometry bounding boxes to review origin, scale and extent before any semantic IFC design-seed approval.",
+      "approval_required_before_public_use": false
+    },
+    {
+      "id": "kosmo_context_handoff",
+      "label": "Kosmo Design Context Handoff",
+      "command": "npm run kosmo:context-handoff -- --project {project_path}",
+      "output_root": "{project_path}/design",
+      "review_output": "{project_path}/design/context-handoff.generated.md",
+      "purpose": "Compile reviewed context, blocked source-review inputs and design-generation guardrails into a context-only handoff for Kosmo Design.",
+      "approval_required_before_public_use": false
+    },
+    {
+      "id": "kosmo_ifc_layer_plan",
+      "label": "Kosmo IFC Layer Plan",
+      "command": "npm run kosmo:ifc-layer-plan -- --project {project_path}",
+      "output_root": "{project_path}/design",
+      "review_output": "{project_path}/design/ifc-layer-plan.generated.md",
+      "purpose": "Translate reviewed IFC semantic and geometry evidence into review-only Blender collections, ArchiCAD layers and material/structure layer groups before any model export.",
+      "approval_required_before_public_use": false
+    },
+    {
       "id": "kosmo_context_guard",
       "label": "Kosmo Context Guard",
       "command": "npm run kosmo:context-guard -- --project {project_path}",

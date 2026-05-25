@@ -1,0 +1,63 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-05-25T19:39:52.206Z",
+  "generator": "kosmo-ifc-layer-plan",
+  "project_id": "kosmo-demo-001",
+  "status": "ifc_layer_plan_ready_for_human_review",
+  "units": "meters",
+  "approved_for_import": false,
+  "collections": [
+    {
+      "name": "KOSMO_KOSMO_DEMO_001_MASS",
+      "layer_key": "mass",
+      "element_step_ids": [
+        230
+      ],
+      "planned_glb_path": "models/kosmo-demo-001/mass.glb",
+      "review_status": "generated_needs_human_layer_review"
+    },
+    {
+      "name": "KOSMO_KOSMO_DEMO_001_STRUCTURE",
+      "layer_key": "structure",
+      "element_step_ids": [
+        130,
+        230
+      ],
+      "planned_glb_path": "models/kosmo-demo-001/structure.glb",
+      "review_status": "generated_needs_human_layer_review"
+    },
+    {
+      "name": "KOSMO_KOSMO_DEMO_001_FACADE",
+      "layer_key": "facade",
+      "element_step_ids": [
+        130
+      ],
+      "planned_glb_path": "models/kosmo-demo-001/facade.glb",
+      "review_status": "generated_needs_human_layer_review"
+    },
+    {
+      "name": "KOSMO_KOSMO_DEMO_001_TECTONIC",
+      "layer_key": "tectonic",
+      "element_step_ids": [
+        130
+      ],
+      "planned_glb_path": "models/kosmo-demo-001/tectonic.glb",
+      "review_status": "generated_needs_human_layer_review"
+    },
+    {
+      "name": "KOSMO_KOSMO_DEMO_001_MATERIAL_CONCRETE",
+      "layer_key": "material:concrete",
+      "element_step_ids": [
+        130,
+        230
+      ],
+      "planned_glb_path": "models/kosmo-demo-001/materials/concrete.glb",
+      "review_status": "generated_needs_human_layer_review"
+    }
+  ],
+  "import_policy": {
+    "create_collections_only_after_human_review": true,
+    "keep_source_custom_properties": true,
+    "keep_material_layers_separate": true
+  }
+}

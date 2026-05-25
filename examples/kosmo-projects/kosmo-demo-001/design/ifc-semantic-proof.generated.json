@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-25T19:16:52.804Z",
+  "generated_at": "2026-05-25T19:39:51.856Z",
   "generator": "kosmo-ifc-semantic-proof",
   "project_id": "kosmo-demo-001",
   "status": "semantic_ifc_probe_ready_for_human_review",
@@ -136,6 +136,24 @@
           "property_names": [
             "Material",
             "SourceRole"
+          ],
+          "properties": [
+            {
+              "id": 300,
+              "name": "Material",
+              "nominal_value": {
+                "type": "IFCLABEL",
+                "value": "Concrete"
+              }
+            },
+            {
+              "id": 301,
+              "name": "SourceRole",
+              "nominal_value": {
+                "type": "IFCLABEL",
+                "value": "context_fixture"
+              }
+            }
           ]
         }
       ]
@@ -168,6 +186,24 @@
           "property_names": [
             "Material",
             "SourceRole"
+          ],
+          "properties": [
+            {
+              "id": 300,
+              "name": "Material",
+              "nominal_value": {
+                "type": "IFCLABEL",
+                "value": "Concrete"
+              }
+            },
+            {
+              "id": 301,
+              "name": "SourceRole",
+              "nominal_value": {
+                "type": "IFCLABEL",
+                "value": "context_fixture"
+              }
+            }
           ]
         }
       ]
@@ -202,6 +238,24 @@
           "property_names": [
             "Material",
             "SourceRole"
+          ],
+          "properties": [
+            {
+              "id": 300,
+              "name": "Material",
+              "nominal_value": {
+                "type": "IFCLABEL",
+                "value": "Concrete"
+              }
+            },
+            {
+              "id": 301,
+              "name": "SourceRole",
+              "nominal_value": {
+                "type": "IFCLABEL",
+                "value": "context_fixture"
+              }
+            }
           ]
         }
       ]
@@ -234,6 +288,24 @@
           "property_names": [
             "Material",
             "SourceRole"
+          ],
+          "properties": [
+            {
+              "id": 300,
+              "name": "Material",
+              "nominal_value": {
+                "type": "IFCLABEL",
+                "value": "Concrete"
+              }
+            },
+            {
+              "id": 301,
+              "name": "SourceRole",
+              "nominal_value": {
+                "type": "IFCLABEL",
+                "value": "context_fixture"
+              }
+            }
           ]
         }
       ]

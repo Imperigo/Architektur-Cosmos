@@ -1,0 +1,56 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-05-25T19:39:52.206Z",
+  "generator": "kosmo-ifc-layer-plan",
+  "project_id": "kosmo-demo-001",
+  "status": "ifc_layer_plan_ready_for_human_review",
+  "approved_for_import": false,
+  "layers": [
+    {
+      "name": "KOSMO_KOSMO_DEMO_001_MASS",
+      "layer_key": "mass",
+      "element_step_ids": [
+        230
+      ],
+      "review_status": "generated_needs_human_layer_review"
+    },
+    {
+      "name": "KOSMO_KOSMO_DEMO_001_STRUCTURE",
+      "layer_key": "structure",
+      "element_step_ids": [
+        130,
+        230
+      ],
+      "review_status": "generated_needs_human_layer_review"
+    },
+    {
+      "name": "KOSMO_KOSMO_DEMO_001_FACADE",
+      "layer_key": "facade",
+      "element_step_ids": [
+        130
+      ],
+      "review_status": "generated_needs_human_layer_review"
+    },
+    {
+      "name": "KOSMO_KOSMO_DEMO_001_TECTONIC",
+      "layer_key": "tectonic",
+      "element_step_ids": [
+        130
+      ],
+      "review_status": "generated_needs_human_layer_review"
+    },
+    {
+      "name": "KOSMO_KOSMO_DEMO_001_MATERIAL_CONCRETE",
+      "layer_key": "material:concrete",
+      "element_step_ids": [
+        130,
+        230
+      ],
+      "review_status": "generated_needs_human_layer_review"
+    }
+  ],
+  "exchange_policy": {
+    "use_as_reference_layers_first": true,
+    "do_not_create_bim_elements_without_human_review": true
+  }
+}

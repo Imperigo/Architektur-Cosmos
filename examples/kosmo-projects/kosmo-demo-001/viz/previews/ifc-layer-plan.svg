@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1000" viewBox="0 0 1400 1000" role="img" aria-label="IFC layer plan top projection">
+  <rect width="1400" height="1000" fill="#101820"/>
+  <rect x="72" y="72" width="1070" height="856" fill="none" stroke="#456677" stroke-width="1"/>
+  <rect x="72" y="885.2" width="1070" height="42.8" fill="#f97316" fill-opacity="0.28" stroke="#f97316" stroke-width="2">
+    <title>Demo Wall / structure, facade, tectonic, material:concrete</title>
+  </rect>
+  <rect x="72" y="72" width="1070" height="856" fill="#f97316" fill-opacity="0.28" stroke="#f97316" stroke-width="2">
+    <title>Demo Slab / structure, mass, material:concrete</title>
+  </rect>
+  <text x="72" y="34" fill="#dce8ef" font-family="Arial, sans-serif" font-size="24">IFC Layer Plan - Blender/ArchiCAD Review</text>
+  <text x="72" y="60" fill="#8fb3c6" font-family="Arial, sans-serif" font-size="14">2 elements, 5 layer groups, review-only</text>
+  <rect x="1040" y="86" width="14" height="14" fill="#93c5fd" fill-opacity="0.7"/>
+  <text x="1062" y="98" fill="#dce8ef" font-family="Arial, sans-serif" font-size="13">Mass (1)</text>
+  <rect x="1040" y="110" width="14" height="14" fill="#f97316" fill-opacity="0.7"/>
+  <text x="1062" y="122" fill="#dce8ef" font-family="Arial, sans-serif" font-size="13">Structure (2)</text>
+  <rect x="1040" y="134" width="14" height="14" fill="#e879f9" fill-opacity="0.7"/>
+  <text x="1062" y="146" fill="#dce8ef" font-family="Arial, sans-serif" font-size="13">Facade (1)</text>
+  <rect x="1040" y="158" width="14" height="14" fill="#facc15" fill-opacity="0.7"/>
+  <text x="1062" y="170" fill="#dce8ef" font-family="Arial, sans-serif" font-size="13">Tectonic (1)</text>
+  <rect x="1040" y="182" width="14" height="14" fill="#f2c94c" fill-opacity="0.7"/>
+  <text x="1062" y="194" fill="#dce8ef" font-family="Arial, sans-serif" font-size="13">Material concrete (2)</text>
+  <text x="72" y="974" fill="#8fb3c6" font-family="Arial, sans-serif" font-size="14">Generated from semantic proof + geometry preview. Not a BIM import. Not approved as design seed.</text>
+</svg>

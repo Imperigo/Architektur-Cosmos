@@ -94,6 +94,14 @@ kosmo-project/
     ifc-semantic-proof.generated.md
     ifc-geometry-preview.generated.json
     ifc-geometry-preview.generated.md
+    ifc-dxf-alignment-preview.generated.json
+    ifc-dxf-alignment-preview.generated.md
+    ifc-layer-plan.generated.json
+    ifc-layer-plan.generated.md
+    blender-layer-profile.generated.json
+    archicad-layer-profile.generated.json
+    context-handoff.generated.json
+    context-handoff.generated.md
     variants.json
   draw/
     plans/
@@ -394,7 +402,22 @@ Status 2026-05-25:
 16. Einen read-only IFC-Geometriepreview mit SVG-Top-Projection erzeugen.
     **Erledigt mit `design/ifc-geometry-preview.generated.*`,
     `viz/previews/ifc-geometry-preview.svg` und `npm run kosmo:ifc-geometry-preview`.**
-17. Kosmo Zentrale spaeter als Job-Orchestrator an dieses Paket anbinden.
+17. Einen read-only IFC/DXF-Alignmentpreview fuer Ursprung, Massstab und Extent
+    erzeugen.
+    **Erledigt mit `design/ifc-dxf-alignment-preview.generated.*`,
+    `viz/previews/ifc-dxf-alignment-preview.svg` und
+    `npm run kosmo:ifc-dxf-alignment-preview`.**
+18. Einen review-only IFC-Layerplan fuer Blender-Collections,
+    ArchiCAD-Layer und Materialgruppen erzeugen.
+    **Erledigt mit `design/ifc-layer-plan.generated.*`,
+    `design/blender-layer-profile.generated.json`,
+    `design/archicad-layer-profile.generated.json`,
+    `viz/previews/ifc-layer-plan.svg` und `npm run kosmo:ifc-layer-plan`.**
+19. Einen KosmoDesign Context Handoff erzeugen, der erlaubte Kontextinputs,
+    blockierte Design-Seeds und Guardrails fuer Downstream-Tools zusammenfasst.
+    **Erledigt mit `design/context-handoff.generated.*` und
+    `npm run kosmo:context-handoff`.**
+20. Kosmo Zentrale spaeter als Job-Orchestrator an dieses Paket anbinden.
 
 ## 11. Was bewusst noch nicht gebaut wird
 
@@ -431,6 +454,10 @@ Der erste Datenvertrag ist im Repo angelegt:
 - `scripts/kosmo-context-source-review.mjs`
 - `scripts/kosmo-ifc-semantic-proof.mjs`
 - `scripts/kosmo-ifc-geometry-preview.mjs`
+- `scripts/kosmo-ifc-dxf-alignment-preview.mjs`
+- `scripts/kosmo-ifc-layer-plan.mjs`
+- `scripts/kosmo-design-context-handoff.mjs`
+- `scripts/kosmo-ifc-dxf-alignment-preview.mjs`
 - `scripts/kosmo-context-guard.mjs`
 - `scripts/kosmo-blender-package-bridge-smoke.mjs`
 - `scripts/kosmo_blender_package_bridge_smoke.py`
@@ -587,13 +614,24 @@ Status: bestanden. Im ZG-Testpaket loest dieser Befehl 282 von 282
 Top-Projection. Der Preview ist visuelle Review-Evidence, kein BIM-Import und
 keine Design-Seed-Freigabe.
 
+```bash
+npm run kosmo:ifc-dxf-alignment-preview -- --project archive-intake/kosmo-projects/zg-07052026
+```
+
+Status: bestanden. Der Alignmentpreview ueberlagert die 13'394 akzeptierten
+DXF-Gebaeude-Polylines mit den 282 IFC Bounding Boxes und schreibt
+`viz/previews/ifc-dxf-alignment-preview.svg`. Der Schritt prueft nur visuell
+Ursprung, Massstab und Ausdehnung; er setzt keine Design-Seed-Freigabe.
+
 Repo-Smoke ohne private Daten:
 
 ```bash
 npm run kosmo:context-source-map -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:ifc-semantic-proof -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:ifc-geometry-preview -- --project examples/kosmo-projects/kosmo-demo-001
+npm run kosmo:ifc-layer-plan -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:context-source-mapping -- --project examples/kosmo-projects/kosmo-demo-001
+npm run kosmo:context-handoff -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:package-check -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:package-review -- --project examples/kosmo-projects/kosmo-demo-001
 ```
@@ -603,6 +641,29 @@ Status: bestanden. Die eingecheckte Demo-Fixture enthaelt 2 synthetische
 Sets und facettierter BREP-Geometrie. Das Paket zeigt damit den kompletten
 lokalen Review-Weg Quelle -> Semantikproof -> Geometriepreview -> Mapping-Gate,
 ohne echte oder geschuetzte Projektquellen zu verwenden.
+
+IFC-Layerplan erzeugen:
+
+```bash
+npm run kosmo:ifc-layer-plan -- --project archive-intake/kosmo-projects/zg-07052026
+```
+
+Status: review-only. Der Layerplan uebersetzt IFC-Semantikproof und
+Geometriepreview in vorgeschlagene Blender-Collections, ArchiCAD-Layer,
+Materialgruppen und geplante GLB-Pfade (`structure.glb`, `facade.glb`,
+`materials/<tag>.glb`). Er erzeugt noch keine echten GLB-Dateien und setzt
+`approved_for_import` bewusst auf `false`.
+
+KosmoDesign Context Handoff erzeugen:
+
+```bash
+npm run kosmo:context-handoff -- --project archive-intake/kosmo-projects/zg-07052026
+```
+
+Status: review-only. Der Handoff ist die Schnittstelle zu spaeteren
+Design-Tools: Er listet erlaubte Kontextinputs, blockierte Inputs,
+unaufgeloeste Source-Review-Punkte, IFC-Preview-Evidence und Guardrails. Er
+ist bewusst keine Freigabe fuer automatische Modellgenerierung.
 
 Guard fuer Downstream-Design-Tools:
 

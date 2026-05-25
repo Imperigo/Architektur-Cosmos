@@ -203,7 +203,8 @@ function parsePropertySet(entity, propertySingleValueById) {
     global_id: decodeStepString(entity.args[0]),
     name: decodeStepString(entity.args[2]),
     property_count: properties.length,
-    property_names: properties.map((property) => property.name).filter(Boolean).slice(0, 24)
+    property_names: properties.map((property) => property.name).filter(Boolean).slice(0, 24),
+    properties: properties.slice(0, 48)
   };
 }
 
@@ -242,7 +243,8 @@ function elementRow(proxy, analysis) {
       id: propertySet.id,
       name: propertySet.name,
       property_count: propertySet.property_count,
-      property_names: propertySet.property_names
+      property_names: propertySet.property_names,
+      properties: propertySet.properties
     }))
   };
 }

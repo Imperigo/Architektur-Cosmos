@@ -136,6 +136,9 @@ function checkContextSelection() {
   const sourceReviewPath = join(projectRoot, 'design/context-source-review.generated.json');
   const ifcSemanticProofPath = join(projectRoot, 'design/ifc-semantic-proof.generated.json');
   const ifcGeometryPreviewPath = join(projectRoot, 'design/ifc-geometry-preview.generated.json');
+  const ifcDxfAlignmentPreviewPath = join(projectRoot, 'design/ifc-dxf-alignment-preview.generated.json');
+  const ifcLayerPlanPath = join(projectRoot, 'design/ifc-layer-plan.generated.json');
+  const contextHandoffPath = join(projectRoot, 'design/context-handoff.generated.json');
   const candidates = existsSync(candidatesPath) ? readJson(candidatesPath) : null;
   const selection = existsSync(selectionPath) ? readJson(selectionPath) : null;
   const matrix = existsSync(matrixPath) ? readJson(matrixPath) : null;
@@ -144,7 +147,13 @@ function checkContextSelection() {
   const sourceReview = existsSync(sourceReviewPath) ? readJson(sourceReviewPath) : null;
   const ifcSemanticProof = existsSync(ifcSemanticProofPath) ? readJson(ifcSemanticProofPath) : null;
   const ifcGeometryPreview = existsSync(ifcGeometryPreviewPath) ? readJson(ifcGeometryPreviewPath) : null;
+  const ifcDxfAlignmentPreview = existsSync(ifcDxfAlignmentPreviewPath) ? readJson(ifcDxfAlignmentPreviewPath) : null;
+  const ifcLayerPlan = existsSync(ifcLayerPlanPath) ? readJson(ifcLayerPlanPath) : null;
+  const contextHandoff = existsSync(contextHandoffPath) ? readJson(contextHandoffPath) : null;
   const ifcGeometryPreviewReady = isIfcGeometryPreviewReady(ifcGeometryPreview);
+  const ifcDxfAlignmentPreviewReady = isIfcDxfAlignmentPreviewReady(ifcDxfAlignmentPreview);
+  const ifcLayerPlanReady = isIfcLayerPlanReady(ifcLayerPlan);
+  const contextHandoffReady = isContextHandoffReady(contextHandoff);
 
   if (candidates && !selection) {
     warnings.push('Context candidates exist, but design/context-selection.json is missing.');
@@ -176,6 +185,15 @@ function checkContextSelection() {
   if (ifcSemanticProof?.summary?.ifcbuildingelementproxy_count > 0 && !ifcGeometryPreviewReady) {
     warnings.push('IFC semantic proof exists, but design/ifc-geometry-preview.generated.json is missing or still pending.');
   }
+  if (ifcGeometryPreviewReady && sourceMapping?.summary?.accepted_as_context_count > 0 && !ifcDxfAlignmentPreviewReady) {
+    warnings.push('IFC geometry preview exists, but design/ifc-dxf-alignment-preview.generated.json is missing or still pending.');
+  }
+  if (ifcGeometryPreviewReady && !ifcLayerPlanReady) {
+    warnings.push('IFC geometry preview exists, but design/ifc-layer-plan.generated.json is missing or still pending.');
+  }
+  if (!undecidedSelections.length && selections.some((item) => item.decision === 'accepted_as_context') && !contextHandoffReady) {
+    warnings.push('Context selection is reviewed, but design/context-handoff.generated.json is missing or still pending.');
+  }
   if (acceptedDesignSeeds.length && selection.approved_for_design_generation !== true) {
     warnings.push('Context selection contains accepted design seeds but approved_for_design_generation is not true.');
   }
@@ -192,6 +210,32 @@ function isIfcGeometryPreviewReady(preview) {
     preview
       && preview.status === 'ifc_geometry_preview_ready_for_human_review'
       && preview.summary?.elements_with_geometry_bbox > 0
+  );
+}
+
+function isIfcDxfAlignmentPreviewReady(preview) {
+  return Boolean(
+    preview
+      && preview.status === 'ifc_dxf_alignment_preview_ready_for_human_review'
+      && preview.summary?.dxf_accepted_polyline_count > 0
+      && preview.summary?.ifc_geometry_bbox_count > 0
+  );
+}
+
+function isIfcLayerPlanReady(plan) {
+  return Boolean(
+    plan
+      && plan.status === 'ifc_layer_plan_ready_for_human_review'
+      && plan.summary?.ifc_element_count > 0
+      && plan.summary?.layer_group_count > 0
+  );
+}
+
+function isContextHandoffReady(handoff) {
+  return Boolean(
+    handoff
+      && ['context_reference_handoff_ready', 'design_seed_handoff_ready'].includes(handoff.status)
+      && handoff.summary?.context_input_count > 0
   );
 }
 

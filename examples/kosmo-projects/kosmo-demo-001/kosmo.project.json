@@ -272,6 +272,55 @@
       "module": "viz",
       "rights_status": "generated_needs_review",
       "description": "SVG top projection preview of IFC faceted BREP element bounds."
+    },
+    {
+      "path": "design/ifc-layer-plan.generated.json",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Read-only IFC element layer plan for Blender/ArchiCAD review."
+    },
+    {
+      "path": "design/ifc-layer-plan.generated.md",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Human-readable IFC element layer plan for Blender/ArchiCAD review."
+    },
+    {
+      "path": "design/blender-layer-profile.generated.json",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Review-only Blender collection profile derived from the IFC layer plan."
+    },
+    {
+      "path": "design/archicad-layer-profile.generated.json",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Review-only ArchiCAD layer profile derived from the IFC layer plan."
+    },
+    {
+      "path": "viz/previews/ifc-layer-plan.svg",
+      "type": "render_preview",
+      "module": "viz",
+      "rights_status": "generated_needs_review",
+      "description": "SVG top projection preview of IFC layer assignments."
+    },
+    {
+      "path": "design/context-handoff.generated.json",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Kosmo Design context handoff: explicit context-only inputs and blocked design seeds."
+    },
+    {
+      "path": "design/context-handoff.generated.md",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Human-readable Kosmo Design context handoff."
     }
   ],
   "review_gates": {

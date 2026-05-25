@@ -137,6 +137,14 @@ function buildFiles({ name, projectId, site, program }) {
     'design/ifc-semantic-proof.generated.md': renderIfcSemanticProofSeed(projectId),
     'design/ifc-geometry-preview.generated.json': json(buildIfcGeometryPreviewSeed(projectId, 'package_create')),
     'design/ifc-geometry-preview.generated.md': renderIfcGeometryPreviewSeed(projectId),
+    'design/ifc-dxf-alignment-preview.generated.json': json(buildIfcDxfAlignmentPreviewSeed(projectId, 'package_create')),
+    'design/ifc-dxf-alignment-preview.generated.md': renderIfcDxfAlignmentPreviewSeed(projectId),
+    'design/ifc-layer-plan.generated.json': json(buildIfcLayerPlanSeed(projectId, 'package_create')),
+    'design/ifc-layer-plan.generated.md': renderIfcLayerPlanSeed(projectId),
+    'design/blender-layer-profile.generated.json': json(buildBlenderLayerProfileSeed(projectId, 'package_create')),
+    'design/archicad-layer-profile.generated.json': json(buildArchicadLayerProfileSeed(projectId, 'package_create')),
+    'design/context-handoff.generated.json': json(buildContextHandoffSeed(projectId, 'package_create')),
+    'design/context-handoff.generated.md': renderContextHandoffSeed(projectId),
     'design/variants.json': json({
       schema_version: '0.1',
       variants: [
@@ -270,6 +278,62 @@ function buildFiles({ name, projectId, site, program }) {
           rights_status: 'generated_needs_review'
         },
         {
+          path: 'design/ifc-dxf-alignment-preview.generated.json',
+          module: 'Kosmo Design',
+          format: 'json',
+          status: 'pending_ifc_dxf_alignment',
+          rights_status: 'generated_needs_review'
+        },
+        {
+          path: 'design/ifc-dxf-alignment-preview.generated.md',
+          module: 'Kosmo Design',
+          format: 'markdown',
+          status: 'pending_ifc_dxf_alignment',
+          rights_status: 'generated_needs_review'
+        },
+        {
+          path: 'design/ifc-layer-plan.generated.json',
+          module: 'Kosmo Design',
+          format: 'json',
+          status: 'pending_ifc_layer_plan',
+          rights_status: 'generated_needs_review'
+        },
+        {
+          path: 'design/ifc-layer-plan.generated.md',
+          module: 'Kosmo Design',
+          format: 'markdown',
+          status: 'pending_ifc_layer_plan',
+          rights_status: 'generated_needs_review'
+        },
+        {
+          path: 'design/blender-layer-profile.generated.json',
+          module: 'Kosmo Design',
+          format: 'json',
+          status: 'pending_ifc_layer_plan',
+          rights_status: 'generated_needs_review'
+        },
+        {
+          path: 'design/archicad-layer-profile.generated.json',
+          module: 'Kosmo Design',
+          format: 'json',
+          status: 'pending_ifc_layer_plan',
+          rights_status: 'generated_needs_review'
+        },
+        {
+          path: 'design/context-handoff.generated.json',
+          module: 'Kosmo Design',
+          format: 'json',
+          status: 'pending_context_handoff',
+          rights_status: 'generated_needs_review'
+        },
+        {
+          path: 'design/context-handoff.generated.md',
+          module: 'Kosmo Design',
+          format: 'markdown',
+          status: 'pending_context_handoff',
+          rights_status: 'generated_needs_review'
+        },
+        {
           path: 'draw/exports/ground-floor-plan.svg',
           module: 'Kosmo Draw',
           format: 'svg',
@@ -350,6 +414,14 @@ function buildManifest({ name, projectId, site }) {
       artifact('design/ifc-semantic-proof.generated.md', 'other', 'design', 'generated_needs_review', 'Human-readable semantic IFC proof before design-seed review.'),
       artifact('design/ifc-geometry-preview.generated.json', 'other', 'design', 'generated_needs_review', 'Read-only IFC geometry preview before design-seed review.'),
       artifact('design/ifc-geometry-preview.generated.md', 'other', 'design', 'generated_needs_review', 'Human-readable IFC geometry preview before design-seed review.'),
+      artifact('design/ifc-dxf-alignment-preview.generated.json', 'other', 'design', 'generated_needs_review', 'Read-only IFC/DXF alignment preview before design-seed review.'),
+      artifact('design/ifc-dxf-alignment-preview.generated.md', 'other', 'design', 'generated_needs_review', 'Human-readable IFC/DXF alignment preview before design-seed review.'),
+      artifact('design/ifc-layer-plan.generated.json', 'other', 'design', 'generated_needs_review', 'Read-only IFC layer plan before Blender/ArchiCAD import.'),
+      artifact('design/ifc-layer-plan.generated.md', 'other', 'design', 'generated_needs_review', 'Human-readable IFC layer plan before Blender/ArchiCAD import.'),
+      artifact('design/blender-layer-profile.generated.json', 'other', 'design', 'generated_needs_review', 'Review-only Blender collection profile.'),
+      artifact('design/archicad-layer-profile.generated.json', 'other', 'design', 'generated_needs_review', 'Review-only ArchiCAD layer profile.'),
+      artifact('design/context-handoff.generated.json', 'other', 'design', 'generated_needs_review', 'Kosmo Design context-only handoff before downstream generation.'),
+      artifact('design/context-handoff.generated.md', 'other', 'design', 'generated_needs_review', 'Human-readable Kosmo Design context-only handoff.'),
       artifact('draw/exports/ground-floor-plan.svg', 'plan_export', 'draw', 'generated_needs_review', 'Placeholder vector ground floor export.'),
       artifact('draw/exports/section-a.svg', 'plan_export', 'draw', 'generated_needs_review', 'Placeholder vector section export.'),
       artifact('publish/review-pack.md', 'review_pack', 'publish', 'internal_only', 'Local review package scaffold.')
@@ -713,6 +785,117 @@ function buildIfcGeometryPreviewSeed(projectId, source) {
 
 function renderIfcGeometryPreviewSeed(projectId) {
   return `# IFC Geometry Preview\n\nProject ID: \`${projectId}\`\n\nPending IFC geometry preview. Run \`npm run kosmo:ifc-geometry-preview -- --project <project>\` after a local IFC source is available.\n`;
+}
+
+function buildIfcDxfAlignmentPreviewSeed(projectId, source) {
+  return {
+    schema_version: '0.1',
+    generated_at: null,
+    generator: 'kosmo-project-package-create',
+    project_id: projectId,
+    status: 'pending_ifc_dxf_alignment',
+    rights_status: 'internal_only',
+    source_stage: 'phase_0_context',
+    source,
+    note: 'Run npm run kosmo:ifc-dxf-alignment-preview -- --project <project> after IFC geometry preview and reviewed DXF context mapping exist.',
+    summary: {
+      accepted_dxf_layer_count: 0,
+      dxf_accepted_polyline_count: 0,
+      ifc_geometry_bbox_count: 0,
+      center_offset_m_estimate: 0,
+      overlap_ratio_of_smaller_bbox: 0,
+      design_seed_approved: false,
+      recommended_next_step: 'run_ifc_geometry_preview_and_source_mapping'
+    },
+    accepted_dxf_layers: []
+  };
+}
+
+function renderIfcDxfAlignmentPreviewSeed(projectId) {
+  return `# IFC/DXF Alignment Preview\n\nProject ID: \`${projectId}\`\n\nPending IFC/DXF alignment preview. Run \`npm run kosmo:ifc-dxf-alignment-preview -- --project <project>\` after IFC geometry preview and reviewed DXF context mapping exist.\n`;
+}
+
+function buildIfcLayerPlanSeed(projectId, source) {
+  return {
+    schema_version: '0.1',
+    generated_at: null,
+    generator: 'kosmo-project-package-create',
+    project_id: projectId,
+    status: 'pending_ifc_layer_plan',
+    rights_status: 'internal_only',
+    source_stage: 'phase_0_context',
+    source,
+    note: 'Run npm run kosmo:ifc-layer-plan -- --project <project> after IFC semantic proof and geometry preview exist.',
+    summary: {
+      ifc_element_count: 0,
+      layer_group_count: 0,
+      material_group_count: 0,
+      design_seed_approved: false,
+      recommended_next_step: 'run_ifc_semantic_proof_and_ifc_geometry_preview'
+    },
+    layer_groups: [],
+    elements: []
+  };
+}
+
+function renderIfcLayerPlanSeed(projectId) {
+  return `# IFC Layer Plan\n\nProject ID: \`${projectId}\`\n\nPending IFC layer plan. Run \`npm run kosmo:ifc-layer-plan -- --project <project>\` after IFC semantic proof and geometry preview exist.\n`;
+}
+
+function buildBlenderLayerProfileSeed(projectId, source) {
+  return {
+    schema_version: '0.1',
+    generated_at: null,
+    generator: 'kosmo-project-package-create',
+    project_id: projectId,
+    source,
+    status: 'pending_ifc_layer_plan',
+    approved_for_import: false,
+    collections: []
+  };
+}
+
+function buildArchicadLayerProfileSeed(projectId, source) {
+  return {
+    schema_version: '0.1',
+    generated_at: null,
+    generator: 'kosmo-project-package-create',
+    project_id: projectId,
+    source,
+    status: 'pending_ifc_layer_plan',
+    approved_for_import: false,
+    layers: []
+  };
+}
+
+function buildContextHandoffSeed(projectId, source) {
+  return {
+    schema_version: '0.1',
+    generated_at: null,
+    generator: 'kosmo-project-package-create',
+    project_id: projectId,
+    status: 'pending_context_handoff',
+    rights_status: 'internal_only',
+    source_stage: 'phase_0_context_handoff',
+    source,
+    note: 'Run npm run kosmo:context-handoff -- --project <project> after context-selection, source mapping and review previews exist.',
+    summary: {
+      context_input_count: 0,
+      design_seed_input_count: 0,
+      design_seed_allowed_count: 0,
+      blocked_input_count: 0,
+      approved_for_design_generation: false,
+      design_generation_allowed: false,
+      recommended_next_step: 'review_context_selection_and_sources'
+    },
+    context_inputs: [],
+    design_seed_inputs: [],
+    blocked_inputs: []
+  };
+}
+
+function renderContextHandoffSeed(projectId) {
+  return `# Kosmo Design Context Handoff\n\nProject ID: \`${projectId}\`\n\nPending context handoff. Run \`npm run kosmo:context-handoff -- --project <project>\` after context-selection, source mapping and review previews exist.\n`;
 }
 
 function buildCameras() {

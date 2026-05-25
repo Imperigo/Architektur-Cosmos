@@ -1,7 +1,7 @@
 # Context Source Map
 
 Project ID: `kosmo-demo-001`
-Generated: 2026-05-25T19:16:52.629Z
+Generated: 2026-05-25T19:39:51.681Z
 
 Advisory inventory only. This does not approve design generation or change `context-selection.json`.
 
