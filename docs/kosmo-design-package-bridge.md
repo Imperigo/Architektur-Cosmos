@@ -164,6 +164,10 @@ advisory: sie empfiehlt `accepted_as_context`, `needs_more_source_review`,
 `rejected` oder spaeter `accepted_as_design_seed`, schreibt aber keine
 Freigabe in `context-selection.json`.
 
+`npm run kosmo:context-review -- --project <projektpfad>` buendelt Kandidaten,
+Selection und Matrix in `design/context-review.md` und erzeugt konkrete
+Review-Kommandos fuer die naechste menschliche Entscheidung.
+
 Einzelne Kandidaten koennen im gleichen Tool bewusst entschieden werden:
 
 ```bash
