@@ -11,6 +11,7 @@ Der Kern der lokalen KI heisst **Kosmo**. Die Schreibweise im Produktkontext ist
 
 - Architektur Kosmos
 - Kosmo Data
+- Kosmo Asset
 - Kosmo Orbit
 - Kosmo Zentrale
 - Kosmo Design
@@ -37,7 +38,8 @@ Das System ist nicht nur ein CAD und nicht nur eine Website. Es ist ein lokales 
 flowchart TD
   APD["Architekturprojekte Datenbank"]
   ATD["2D/3D Asset/Texturen Datenbank"]
-  DATA["Kosmo Data<br/>Wissensspeicher<br/>Empfangen / Senden fuer Architekten"]
+  DATA["Kosmo Data<br/>Referenz- und Wissensspeicher<br/>Empfangen / Senden fuer Architekten"]
+  ASSET["Kosmo Asset<br/>2D/3D/Texturen<br/>Bauteile / Materialien"]
   PREP["Kosmo Prepare"]
   DRAW["Kosmo Draw"]
   VIZ["Kosmo Viz"]
@@ -47,8 +49,9 @@ flowchart TD
   ZENTRALE["Kosmo Zentrale<br/>Home of KI, 'Kosmo'<br/>Physische Hardware<br/>KI + Hardware"]
 
   APD --> DATA
-  ATD --> DATA
+  ATD --> ASSET
   DATA --> ORBIT
+  ASSET --> ORBIT
   PREP --> DRAW
   PREP --> DESIGN
   DRAW --> DESIGN
@@ -62,16 +65,26 @@ flowchart TD
 
 ### Kosmo Data
 
-Kosmo Data ist die Wissens- und Asset-Schicht.
+Kosmo Data ist die Wissens- und Referenzschicht.
 
 Sie verbindet:
 
 - Architekturprojekte Datenbank
-- 2D-/3D-Asset- und Texturen-Datenbank
 - Referenzen, Quellen, Rechte, Projektwissen, Materialwissen
 - Senden/Empfangen fuer Architekten und andere Kosmo-Module
 
-In den bisherigen Repo-Docs entspricht Kosmo Data der Kombination aus Architecture-Cosmos-Webseite, Referenzatlas, KosmoAssets, Datenmodell, Quellen- und Rechte-Schicht.
+In den bisherigen Repo-Docs entspricht Kosmo Data der Kombination aus Architecture-Cosmos-Webseite, Referenzatlas, Datenmodell, Quellen- und Rechte-Schicht.
+
+### Kosmo Asset
+
+Kosmo Asset ist die eigene 2D-/3D-/Textur- und Bauteilschicht.
+
+Rolle:
+
+- wiederverwendbare 2D-/3D-Bauteile, Details, Fassadenmodule, Treppen, Stuetzen, Dachformen und Landschaftselemente
+- Materialien, Texturen, Asset-Familien, Blender Collections und ArchiCAD-Layer
+- Export- und Lizenzlogik fuer Kosmo Design, Blender, ArchiCAD und spaetere Shop-Pakete
+- klare Trennung zwischen projektbezogener Referenzbibliothek und wiederverwendbaren Entwurfsressourcen
 
 ### Kosmo Orbit
 
@@ -155,10 +168,11 @@ Rolle:
 
 | Bisheriger Arbeitsname | Neuer / sichtbarer Name | Bedeutung |
 | --- | --- | --- |
-| Architecture Cosmos / Architekturkosmos Website | Architektur Kosmos / Kosmo Data | Referenzatlas, Daten, Quellen, Assets |
-| KosmoData | Kosmo Data | Wissensspeicher und Datenmodul |
+| Architecture Cosmos / Architekturkosmos Website | Architektur Kosmos / Kosmo Data | Referenzatlas, Projekte, Quellen, Rechte, oeffentliche Wissensschicht |
+| KosmoData | Kosmo Data | Projekt- und Referenzbibliothek |
+| KosmoAssets / Asset-Bibliothek | Kosmo Asset | 2D-/3D-/Textur-/Material- und Bauteilbibliothek |
 | KosmoZentrale | Kosmo Zentrale | physische KI-Zentrale / HomeStation |
-| KosmoDesign | Kosmo Design | Design- und Planungsbot |
+| KosmoDesign | Kosmo Design | Design- und Planungsbot; buendelt Kosmo Prepare, Draw, Viz und Publish |
 | KosmoBrief | Kosmo Prepare | Vorbereitung, Briefing, Phase 0 |
 | KosmoPlanwerk | Kosmo Draw + Kosmo Publish | Zeichnung, Planwerk, Layout, Export |
 | KosmoForm | Teil von Kosmo Design | Entwurf, 3D, Varianten, Modellbildung |

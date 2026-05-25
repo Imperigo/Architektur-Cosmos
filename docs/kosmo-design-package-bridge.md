@@ -300,6 +300,11 @@ generierte Script headless in Blender aus, schreibt
 lokale Review-Blend-Datei speichern. Auch dieser Test erzeugt keine
 Designgeometrie und keine GLB-Dateien.
 
+`npm run kosmo:blender-context-audit -- --project <projektpfad>` oeffnet diese
+gespeicherte `.blend` erneut und prueft sie gegen den Importplan: erwartete
+Objekte, Locks, `review_only`-Tags, DXF-/IFC-Zaehler, Layer-Collections und ob
+keine Mesh-Faces als Designgeometrie entstanden sind.
+
 Repo-Smoke ohne private Daten:
 
 ```bash
@@ -487,6 +492,20 @@ generierte Context-Import-Script erzeugt 6 gesperrte Review-Objekte, 4'000
 DXF-Polylines als Unterlage, 282 IFC-Bounding-Box-Proxies und 2
 Layer-Collections. Der Summary-Report wird unter
 `design/blender-context-import.smoke.json` geschrieben.
+
+Read-only Blender Context Audit:
+
+```bash
+npm run kosmo:blender-context-audit -- \
+  --project archive-intake/kosmo-projects/zg-07052026
+```
+
+Status: lokal bestanden. Der Audit oeffnet
+`viz/previews/zg-context-review.blend` erneut, vergleicht sie mit
+`design/blender-context-import.generated.json` und schreibt
+`design/blender-context-import.audit.json`. Der ZG-Audit bestaetigt 6
+gesperrte Review-Objekte, 0 Mesh-Faces, 4'000 DXF-Polylines und 282
+IFC-Bounding-Box-Proxies.
 
 Danach erzeugt der Orbit-Befehl
 `npm run kosmo:context-selection -- --project archive-intake/kosmo-projects/zg-07052026`

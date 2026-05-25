@@ -72,12 +72,12 @@ KosmoData wird langfristig zwei interne Bibliotheken tragen:
   filter-, katalog- und exportorientiert und nutzt nicht automatisch das
   Wurmloch.
 
-KosmoAssets bleibt damit Teil von KosmoData und wird nicht als eigene
-Orbit-Station gefuehrt. Beim Umschalten zwischen Referenzbibliothek und
-Asset-Bibliothek darf sich die KosmoData-Oberflaeche grundlegend veraendern:
-Referenzen werden historisch im Wurmloch gelesen, Assets werden als
-wiederverwendbare Entwurfsbausteine gesucht, geprueft, exportiert und in
-Blender/ArchiCAD importiert.
+Produktentscheidung 2026-05-25: KosmoAsset wird als eigene Orbit-Station
+gefuehrt. KosmoData bleibt die Projekt- und Referenzbibliothek mit Wurmloch,
+waehrend KosmoAsset spaeter eine eigene katalog- und exportorientierte
+Oberflaeche fuer wiederverwendbare Entwurfsbausteine bekommt. Assets werden
+gesucht, geprueft, exportiert und in Blender/ArchiCAD importiert; historische
+Referenzen werden weiterhin im Wurmloch gelesen.
 
 Public und Private bleiben getrennt:
 

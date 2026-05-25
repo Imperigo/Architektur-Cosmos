@@ -8,31 +8,34 @@ Architecture Cosmos wird vom reinen Atlas zu einem modularen Architektur-Betrieb
 
 ## Orbit-Stationen
 
+Aktuelle sichtbare Hauptmodule:
+
+- `KosmoData`
+- `KosmoAsset`
+- `KosmoDesign`
+- `KosmoShop`
+
 ### KosmoData
 
 Status: aktiv
 
 Aufgabe: Architektur-Datenbank, Wurmloch-Atlas, Quellen, Medien, Analysefelder, 3D-Modellpakete, öffentliche und private Datenlogik.
 
-Produktentscheidung: `KosmoAssets` wird nicht als eigene Orbit-Station
-abgespalten. Die Asset-Bibliothek bleibt als zweiter interner Modus innerhalb
-von `KosmoData`.
+Produktentscheidung 2026-05-25: `KosmoAsset` ist wieder eine eigene
+Orbit-Station. KosmoData bleibt die Referenzbibliothek mit Wurmloch-Atlas;
+KosmoAsset wird die eigenständige Bibliothek fuer wiederverwendbare 2D-/3D-,
+Textur-, Material- und Bauteilressourcen.
 
-Interne KosmoData-Modi:
+KosmoData-Modi:
 
 - `Referenzbibliothek`: Architekturgeschichte, Projekte, Texte, Plaene,
   Landschaft, Stadt, Quellen und Netzwerke. Diese Ansicht nutzt das Wurmloch,
   weil Zeit, Geschichte, Stilsektoren und Relationen hier die zentrale
   Navigation bilden.
-- `Asset-Bibliothek`: wiederverwendbare 2D-/3D-Bausteine, Bauteile,
-  Fassadenmodule, Treppen, Stuetzen, Dachformen, Materialsysteme,
-  Landschaftselemente, Blender Collections und ArchiCAD-Layer. Diese Ansicht
-  bekommt spaeter eine eigene, katalog- und exportorientierte UI statt dem
-  Wurmloch.
-
-Beim Wechsel zwischen Referenz- und Asset-Bibliothek darf sich die ganze
-KosmoData-Oberflaeche veraendern. Das Wurmloch bleibt spezifisch fuer die
-Referenzbibliothek.
+- `Projektbibliothek`: Architekturgeschichte, Projekte, Texte, Plaene,
+  Landschaft, Stadt, Quellen und Netzwerke. Diese Ansicht nutzt das Wurmloch,
+  weil Zeit, Geschichte, Stilsektoren und Relationen hier die zentrale
+  Navigation bilden.
 
 Nächste Schritte:
 
@@ -40,53 +43,61 @@ Nächste Schritte:
 - Database-Popup und Archive-Seite weiter vereinheitlichen.
 - Detailseiten mit stärkerer Projektindividualität und besserem 3D-/Analyse-Reiter ausbauen.
 - Öffentliche Daten strikt public-safe halten; private/dev Daten bleiben getrennt.
-- KosmoData-Moduswechsel `Referenzen` / `Assets` als spaeteres UI-Konzept
-  spezifizieren, ohne die aktuelle Wurmloch-Performance zu belasten.
+- KosmoData klar als Projekt-/Referenzbibliothek halten, damit KosmoAsset
+  spaeter eine eigene katalog- und exportorientierte UI erhalten kann.
 
-### KosmoBrief
+### KosmoAsset
 
 Status: geplant
 
-Aufgabe: Entwurfs- und Wettbewerbsphase. Das Modul soll Wettbewerbsprogramme, Orte, Referenzen, Aufgabenstellungen und Strategien in ein strukturiertes Projektbriefing übersetzen.
+Aufgabe: 2D-/3D-/Textur- und Bauteilbibliothek. Das Modul sammelt
+wiederverwendbare Ressourcen, Materialsysteme, Details, Fassadenmodule,
+Treppen, Stuetzen, Dachformen, Landschaftselemente, Blender Collections und
+ArchiCAD-Layer.
 
 Mögliche Werkzeuge:
 
-- Aufgabenanalyse
+- 2D-/3D-Asset-Katalog
+- Material- und Texturverwaltung
+- Blender-/ArchiCAD-Exportprofile
+- Rechte- und Lizenzstatus pro Asset
+- Varianten- und Bauteilfamilien
+
+### KosmoDesign
+
+Status: geplant
+
+Aufgabe: Gebündelte Entwurfsmaschine. KosmoDesign fasst KosmoPrepare,
+KosmoDraw, KosmoVis und KosmoPublish zusammen: Vorbereitung, Kontext,
+Plan-/Modellgenerierung, Visualisierung und Abgabe.
+
+Mögliche Werkzeuge:
+
+- Aufgabenanalyse und Projektbriefing
 - Kontext- und Standortanalyse
 - Referenzpfade aus KosmoData
-- Konzeptvarianten
-- Jury-/Abgabe-Risikoanalyse
-- Wochenplan und Aufgabenpakete
-
-### KosmoForm
-
-Status: geplant
-
-Aufgabe: 3D-Modellierung, Visualisierung und Analyse. Das Modul verbindet KosmoData mit Blender, ArchiCAD und KI-basierten Modell-/Bildvarianten.
-
-Mögliche Werkzeuge:
-
 - 3D-Modellgenerator
 - Material- und Tragwerkslayer
-- Tektonik- und Fassadenanalyse
+- 2D Vector Plan Generator
+- Render-/Bildvarianten
+- Abgabe- und Layoutsystem
 - Blender-Importprofile
 - ArchiCAD-Austauschprofile
 - Gaussian-Splat- oder Photogrammetrie-Pipeline für eigene Quellen
 
-### KosmoPlanwerk
+### KosmoShop
 
 Status: geplant
 
-Aufgabe: 2D-Planexport, Layout und Wettbewerbsabgabe. Das Modul erzeugt saubere Vektorpläne, Schnitte, Diagramme und Layouts aus Projekt- oder Referenzdaten.
+Aufgabe: Späterer Produkt- und Toolzugang. KosmoShop ist fuer freigegebene
+Pakete, Käufe, Abos, Erweiterungen und professionelle Projektmodule gedacht.
 
 Mögliche Werkzeuge:
 
-- 2D Vector Plan Generator
-- Schnitt-/Grundriss-/Analyseplan-Layer
-- DXF/SVG/PDF-Export
-- Layoutsystem für Wettbewerbsabgaben
-- Plangrafik-Regeln im Cosmos-Stil
-- Legenden, Massstäbe und Quellenblöcke
+- freigegebene Asset- und Toolpakete
+- Lizenz- und Produktzugänge
+- Projektmodule fuer Wettbewerbe und Buero-Workflows
+- klare Trennung von Shop, Dev-Zugang und privaten Daten
 
 ## Lokale Zentrale und Online-Klon
 

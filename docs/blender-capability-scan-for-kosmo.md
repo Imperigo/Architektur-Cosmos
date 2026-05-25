@@ -1,7 +1,7 @@
 # Blender Capability Scan for Kosmo
 
 Stand: 2026-05-25  
-Zweck: Arbeitsnotiz, welche Blender-Faehigkeiten fuer KosmoDesign, KosmoForm, KosmoPlanwerk, KosmoData und KosmoZentrale direkt nutzbar, erweiterbar oder nur als Inspiration geeignet sind.
+Zweck: Arbeitsnotiz, welche Blender-Faehigkeiten fuer KosmoDesign, KosmoAsset, KosmoData und KosmoZentrale direkt nutzbar, erweiterbar oder nur als Inspiration geeignet sind.
 
 ## 1. Kurzfazit
 
@@ -13,7 +13,7 @@ Blender ist fuer Kosmo nicht nur ein 3D-Programm. Es ist ein offener, skriptbare
 - Cycles fuer physikalisch plausibles Path-Tracing und EEVEE fuer schnelle Echtzeit-Previews.
 - Sun Position, Sky/HDRI, Light Probes und Raytracing-Features fuer Entwurfslicht, Schattenstudien und Atmosphaere.
 - Grease Pencil fuer 2D-/3D-Skizzen, Storyboards, Planvorformen und AR-/Tablet-Interaktion.
-- Asset Libraries fuer wiederverwendbare Bauteile, Materialien, Kataloge und KosmoData/KosmoAssets.
+- Asset Libraries fuer wiederverwendbare Bauteile, Materialien, Kataloge und KosmoAsset.
 - Import/Export fuer GLB/glTF, USD, Alembic, OBJ, STL, SVG/PDF-Grease-Pencil und andere Austauschformate.
 
 Die beste Strategie bleibt: Blender nicht frueh forken, sondern als Host und Engine nutzen. Kosmo baut eigene Architektur-Intelligenz, Datenmodelle, Planlogik, Pruefungen, Freigabe-Gates und Office-Workflows um Blender herum.
@@ -60,8 +60,8 @@ Geometry Nodes sind fuer Kosmo fast wie ein visuelles parametrisches CAD-Labor. 
 
 Kosmo-Nutzung:
 
-- KosmoForm erzeugt parametrisierte Bauteile und Varianten.
-- KosmoData liefert Node-Gruppen als versionierte Assets.
+- KosmoDesign erzeugt parametrisierte Bauteile und Varianten.
+- KosmoAsset liefert Node-Gruppen als versionierte Assets.
 - KosmoZentrale kann Node-Parameter als pruefbare, dokumentierte Entwurfsentscheidungen speichern.
 
 Grenze: Geometry Nodes ersetzen kein echtes BIM-Datenmodell. Kosmo muss semantische Architektur-Objekte selbst fuehren und die Nodes als Geometrie-/Variantenmotor verwenden.
@@ -116,7 +116,7 @@ Cycles ist fuer Kosmo die hochwertige Licht-, Material- und Render-Schicht. Es n
 
 Kosmo-Nutzung:
 
-- KosmoVis rendert Varianten aus KosmoForm/KosmoDesign
+- KosmoVis rendert Varianten aus KosmoDesign
 - KosmoData speichert Material- und Lichtsetups
 - KosmoZentrale plant Renderjobs, Kosten, Prioritaeten und Freigaben
 
@@ -146,14 +146,14 @@ Das gebuendelte Sun Position Add-on kann die Sonne mit Ort, Datum, Uhrzeit, Zeit
 - Besonnungsstudien fuer Wettbewerb und Entwurf
 - Schattenverlauf ueber Tag/Jahr
 - Orientierung und Nordpfeil als Modellmetadaten
-- Verbindung zu Standortdaten aus KosmoBrief/KosmoData
+- Verbindung zu Standortdaten aus KosmoPrepare/KosmoData
 - automatische Variantenbewertung: "welche Variante bekommt morgens Licht im Wohnraum?"
 
 Kosmo-Nutzung:
 
-- Standortdaten aus KosmoBrief werden automatisch in Blender gesetzt.
+- Standortdaten aus KosmoPrepare werden automatisch in Blender gesetzt.
 - Kosmo erzeugt Sonnenpfad-Overlays und Schattenbilder.
-- KosmoPlanwerk kann Sonnen-/Schatten-Diagramme exportieren.
+- KosmoDraw/KosmoPublish kann Sonnen-/Schatten-Diagramme exportieren.
 
 Grenze: Gute Entwurfsanalyse, aber fuer normierte Tageslicht-/Energienachweise braucht es spezialisierte Simulation.
 
@@ -177,7 +177,7 @@ Kosmo-These: Grease Pencil plus KI plus Plan-Sketch-to-BIM ist einer der wichtig
 
 Relevanz: sehr hoch.
 
-Blenders Asset Libraries und Asset Catalogs sind fast eine fertige lokale Bauteil-/Materialbibliothek. KosmoData/KosmoAssets kann darauf aufbauen:
+Blenders Asset Libraries und Asset Catalogs sind fast eine fertige lokale Bauteil-/Materialbibliothek. KosmoAsset kann darauf aufbauen:
 
 - Materialien, Moebel, Bauteile, Fassadenmodule, Treppen, Vegetation
 - Kataloge nach Typologie, Material, Massstab, Projektquelle, Rechte-Status
@@ -186,7 +186,7 @@ Blenders Asset Libraries und Asset Catalogs sind fast eine fertige lokale Bautei
 
 Kosmo-Nutzung:
 
-- KosmoData fuehrt Metadaten, Rechte, Quellen, Versionen und Semantik.
+- KosmoAsset fuehrt Asset-Metadaten, Rechte, Quellen, Versionen und Semantik.
 - Blender Asset Browser dient als schnelle Entwurfsoberflaeche.
 - KosmoZentrale synchronisiert lokale Libraries, ohne private Assets oeffentlich zu machen.
 
@@ -232,7 +232,7 @@ Aber Kosmo sollte nicht versuchen, alte CAD-Interaktionen 1:1 nachzubauen. Der K
    Eine JSON/YAML-Datei, die festhaelt, welche Blender-Subsysteme Kosmo nutzt: Python Operator, Geometry Node Group, Asset Catalog, Render Preset, Simulation Preset, Export Profile.
 
 2. Kosmo Sun Study Operator  
-   Standort, Datum, Uhrzeit und Nordrichtung aus KosmoBrief setzen; Sonnenpfad, Schattenbilder und Planwerk-Diagramme erzeugen.
+   Standort, Datum, Uhrzeit und Nordrichtung aus KosmoPrepare setzen; Sonnenpfad, Schattenbilder und Planwerk-Diagramme erzeugen.
 
 3. Kosmo Geometry Node Library  
    Fassadenraster, Raumcluster, Treppen, Geländer, Dachformen, Staedtebau-Blocks, Vegetation, Moeblierung.
@@ -247,7 +247,7 @@ Aber Kosmo sollte nicht versuchen, alte CAD-Interaktionen 1:1 nachzubauen. Der K
    EEVEE fuer Live/AR, Cycles fuer Praesentation, klare Presets fuer Innenraum, Nacht, Tageslicht, Modellbau, Wettbewerb.
 
 7. Kosmo Asset Bridge  
-   KosmoData-Metadaten mit Blender Asset Browser verbinden: Rechte, Quelle, Massstab, Tags, Projekt, Material, Lizenzwarnung.
+   KosmoAsset-Metadaten mit Blender Asset Browser verbinden: Rechte, Quelle, Massstab, Tags, Projekt, Material, Lizenzwarnung.
 
 8. Kosmo Export Pack  
    GLB fuer Web, Blender-Datei fuer Weiterarbeit, PDF/SVG/PNG fuer Planwerk, spaeter IFC/OpenBIM ueber Bridge.

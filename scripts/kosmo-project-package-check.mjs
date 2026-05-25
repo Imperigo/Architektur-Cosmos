@@ -142,6 +142,7 @@ function checkContextSelection() {
   const contextHandoffPath = join(projectRoot, 'design/context-handoff.generated.json');
   const blenderContextImportPath = join(projectRoot, 'design/blender-context-import.generated.json');
   const blenderContextSmokePath = join(projectRoot, 'design/blender-context-import.smoke.json');
+  const blenderContextAuditPath = join(projectRoot, 'design/blender-context-import.audit.json');
   const candidates = existsSync(candidatesPath) ? readJson(candidatesPath) : null;
   const selection = existsSync(selectionPath) ? readJson(selectionPath) : null;
   const matrix = existsSync(matrixPath) ? readJson(matrixPath) : null;
@@ -156,6 +157,7 @@ function checkContextSelection() {
   const contextHandoff = existsSync(contextHandoffPath) ? readJson(contextHandoffPath) : null;
   const blenderContextImport = existsSync(blenderContextImportPath) ? readJson(blenderContextImportPath) : null;
   const blenderContextSmoke = existsSync(blenderContextSmokePath) ? readJson(blenderContextSmokePath) : null;
+  const blenderContextAudit = existsSync(blenderContextAuditPath) ? readJson(blenderContextAuditPath) : null;
   const ifcGeometryPreviewReady = isIfcGeometryPreviewReady(ifcGeometryPreview);
   const ifcDxfAlignmentPreviewReady = isIfcDxfAlignmentPreviewReady(ifcDxfAlignmentPreview);
   const ifcLayerPlanReady = isIfcLayerPlanReady(ifcLayerPlan);
@@ -221,6 +223,17 @@ function checkContextSelection() {
     if (blenderContextSmoke.output_blend && !existsSync(blenderContextSmoke.output_blend)) {
       warnings.push('Blender context smoke summary references an output blend file that does not exist.');
     }
+  }
+  if (blenderContextAudit) {
+    if (blenderContextAudit.status !== 'passed') {
+      warnings.push('Blender context audit exists, but did not pass.');
+    }
+    const meshPolygonCount = Number(blenderContextAudit.summary?.mesh_polygon_count || 0);
+    if (meshPolygonCount > 0) {
+      warnings.push(`Blender context audit found mesh faces in context-only import: ${meshPolygonCount}`);
+    }
+    const failures = Array.isArray(blenderContextAudit.failures) ? blenderContextAudit.failures : [];
+    for (const failure of failures) warnings.push(`Blender context audit failure: ${failure}`);
   }
   if (acceptedDesignSeeds.length && selection.approved_for_design_generation !== true) {
     warnings.push('Context selection contains accepted design seeds but approved_for_design_generation is not true.');

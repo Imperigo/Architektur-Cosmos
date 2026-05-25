@@ -59,7 +59,10 @@ Kosmo Data ist die Daten-, Referenz- und Asset-Schicht. Aus den gelesenen Dokume
 - Rechte- und Quellenstatus sind zentrale Datenfelder, nicht nachtraegliche Dekoration.
 - Public Website bleibt derzeit static-facing und liest aus `data/mock-entries.json`; D1/R2 sind geplant bzw. vorbereitend, aber nicht frei live zu beschreiben.
 
-Wichtige Produktentscheidung aus den Sessions: KosmoAssets bleibt vorerst innerhalb von Kosmo Data und wird nicht als eigenes Orbit-Modul abgespalten.
+Produktentscheidung 2026-05-25: KosmoAsset wird als eigene Orbit-Station
+gefuehrt. KosmoData bleibt die Projekt- und Referenzbibliothek; KosmoAsset
+uebernimmt die spaetere 2D-/3D-/Textur- und Bauteilbibliothek mit
+Exportbezug zu Blender, ArchiCAD und Wettbewerbsworkflows.
 
 ### Kosmo Design
 
@@ -142,10 +145,10 @@ Noch kein Rechtsgutachten, aber als Arbeitsgedaechtnis:
 Sinnvoller naechster Schritt ist nicht "CAD komplett bauen", sondern ein vertikaler Kosmo-MVP:
 
 1. Input: Text, Handskizze oder einfacher Grundriss.
-2. KosmoBrief: Programm, Kontext, offene Fragen, Constraints.
+2. KosmoPrepare: Programm, Kontext, offene Fragen, Constraints.
 3. KosmoDesign: erzeugt in Blender ein einfaches, editierbares Modell mit Raeumen, Geschossen, Flaechen und Bauteilen.
-4. KosmoData: liefert Referenzen, Assets, Material-/Typologiehinweise und Quellen.
-5. KosmoPlanwerk: erzeugt erste 2D-Planansichten, Massangaben, Schnitte/Fassaden und Layout-Entwuerfe.
+4. KosmoData und KosmoAsset: liefern Referenzen, Assets, Material-/Typologiehinweise und Quellen.
+5. KosmoDraw/KosmoPublish: erzeugen erste 2D-Planansichten, Massangaben, Schnitte/Fassaden und Layout-Entwuerfe.
 6. KosmoZentrale: koordiniert Agenten, speichert Entscheidungen, zeigt Unsicherheiten, fragt Freigaben ab.
 
 Damit entsteht schnell ein pruefbares Produktversprechen: vom architektonischen Intent zu verifizierbaren Modellen, Plaenen und Entscheidungen.

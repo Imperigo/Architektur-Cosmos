@@ -128,7 +128,7 @@ Kosmo-Relevanz:
 
 - aus Referenzbild, Foto oder Rendering eine grobe 3D-Szene erzeugen
 - statische Umgebung als Gaussian Splat, dynamische Objekte als GLB/OBJ
-- schnelle Startpunkte fuer KosmoForm, KosmoVis und Bestandsrekonstruktion
+- schnelle Startpunkte fuer KosmoDesign, KosmoVis und Bestandsrekonstruktion
 - sehr spannend fuer Phase 0 und fruehe Phase 1
 
 Grenze:
@@ -163,7 +163,7 @@ Kosmo-Entscheidung:
 | 3D Grundlagenimport | Kosmo Design | Blender-Grundmodell, Boundary-Layer |
 | AR Modelling | Kosmo Design | Entwurf in Raum, Skizze, Geste, Sprache |
 | Arch Visualizer | Kosmo Viz | Render, Material, Kamera, AI-Varianten |
-| Architekturkosmos-Import | Kosmo Data | Referenz- und Assetbibliothek |
+| Architekturkosmos-Import | Kosmo Data + KosmoAsset | Referenzbibliothek und Assetbibliothek |
 | 2D Plangenerierung | Kosmo Draw | Grundriss, Schnitt, Ansicht, Axo, Export |
 | Layout-Designer | Kosmo Publish + Kosmo Prepare | Plakat, Text, Bericht, Wettbewerbsabgabe |
 | Exportpakete | Kosmo Publish + Kosmo Zentrale | Versionierung, Freigabe, Ordnerstruktur |
@@ -188,7 +188,7 @@ Output:
 
 - Projektgedaechtnis mit Constraints, Fragen, Quellen
 - Blender-Grunddatei mit Koordinaten, Parzelle, Boundary-Layern
-- erster KosmoBrief
+- erstes KosmoPrepare-Briefing
 - Review-Report: was ist sicher, was unsicher, was fehlt
 
 ### MVP-Schnitt 2: Skizze zu Modell

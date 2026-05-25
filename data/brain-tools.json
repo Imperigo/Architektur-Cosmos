@@ -213,6 +213,15 @@
       "approval_required_before_public_use": false
     },
     {
+      "id": "kosmo_blender_context_audit",
+      "label": "Kosmo Blender Context Audit",
+      "command": "npm run kosmo:blender-context-audit -- --project {project_path}",
+      "output_root": "{project_path}/design",
+      "review_output": "{project_path}/design/blender-context-import.audit.json",
+      "purpose": "Reopen the saved Blender context blend and compare objects, locks, review-only tags, DXF/IFC counts and layer collections against the generated import plan.",
+      "approval_required_before_public_use": false
+    },
+    {
       "id": "kosmo_context_guard",
       "label": "Kosmo Context Guard",
       "command": "npm run kosmo:context-guard -- --project {project_path}",

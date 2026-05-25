@@ -202,6 +202,7 @@ function readContextReview() {
   const contextHandoffPath = join(projectRoot, 'design/context-handoff.generated.json');
   const blenderContextImportPath = join(projectRoot, 'design/blender-context-import.generated.json');
   const blenderContextSmokePath = join(projectRoot, 'design/blender-context-import.smoke.json');
+  const blenderContextAuditPath = join(projectRoot, 'design/blender-context-import.audit.json');
   const candidates = existsSync(candidatesPath) ? safeReadJson(candidatesPath) : null;
   const selection = existsSync(selectionPath) ? safeReadJson(selectionPath) : null;
   const matrix = existsSync(matrixPath) ? safeReadJson(matrixPath) : null;
@@ -216,6 +217,7 @@ function readContextReview() {
   const contextHandoff = existsSync(contextHandoffPath) ? safeReadJson(contextHandoffPath) : null;
   const blenderContextImport = existsSync(blenderContextImportPath) ? safeReadJson(blenderContextImportPath) : null;
   const blenderContextSmoke = existsSync(blenderContextSmokePath) ? safeReadJson(blenderContextSmokePath) : null;
+  const blenderContextAudit = existsSync(blenderContextAuditPath) ? safeReadJson(blenderContextAuditPath) : null;
   const selections = Array.isArray(selection?.selections) ? selection.selections : [];
   const rows = Array.isArray(matrix?.rows) ? matrix.rows : [];
   const candidateCount = numberOrDefault(candidates?.summary?.candidate_count, Array.isArray(candidates?.candidates) ? candidates.candidates.length : 0);
@@ -317,6 +319,15 @@ function readContextReview() {
     blender_context_smoke_dxf_polyline_count: numberOrDefault(blenderContextSmoke?.dxf_polylines, 0),
     blender_context_smoke_ifc_bbox_count: numberOrDefault(blenderContextSmoke?.ifc_bboxes, 0),
     blender_context_smoke_output_blend_exists: Boolean(blenderContextSmoke?.output_blend && existsSync(blenderContextSmoke.output_blend)),
+    blender_context_audit_exists: Boolean(blenderContextAudit),
+    blender_context_audit_status: blenderContextAudit?.status || null,
+    blender_context_audit_failure_count: Array.isArray(blenderContextAudit?.failures) ? blenderContextAudit.failures.length : 0,
+    blender_context_audit_warning_count: Array.isArray(blenderContextAudit?.warnings) ? blenderContextAudit.warnings.length : 0,
+    blender_context_audit_object_count: numberOrDefault(blenderContextAudit?.summary?.object_count, 0),
+    blender_context_audit_locked_object_count: numberOrDefault(blenderContextAudit?.summary?.locked_object_count, 0),
+    blender_context_audit_mesh_polygon_count: numberOrDefault(blenderContextAudit?.summary?.mesh_polygon_count, 0),
+    blender_context_audit_dxf_polyline_count: numberOrDefault(blenderContextAudit?.summary?.dxf_polyline_count, 0),
+    blender_context_audit_ifc_bbox_count: numberOrDefault(blenderContextAudit?.summary?.ifc_bbox_count, 0),
     stale_selection_count: numberOrDefault(selection?.summary?.stale_selection_count, Array.isArray(selection?.stale_selections) ? selection.stale_selections.length : 0),
     readiness: selection?.summary?.readiness || matrix?.summary?.recommended_next_step || candidates?.summary?.suggested_next_step || null,
     approved_for_design_generation: Boolean(selection?.approved_for_design_generation)
@@ -358,6 +369,8 @@ function nextActions({ modules, gates, blockers, warnings, outputs, contextRevie
   if (contextReview?.selection_exists && contextReview?.undecided_count === 0 && contextReview?.accepted_as_context_count > 0 && !contextReview.context_handoff_ready) actions.push('Run npm run kosmo:context-handoff to create the Kosmo Design context-only handoff.');
   if (contextReview?.context_handoff_ready && !contextReview.blender_context_import_ready) actions.push('Run npm run kosmo:blender-context-import to create a locked Blender context review script.');
   if (contextReview?.blender_context_import_ready && !contextReview.blender_context_smoke_exists) actions.push('Run npm run kosmo:blender-context-smoke to verify the locked Blender context import locally.');
+  if (contextReview?.blender_context_smoke_exists && !contextReview.blender_context_audit_exists) actions.push('Run npm run kosmo:blender-context-audit to reopen and verify the saved Blender review file.');
+  if (contextReview?.blender_context_audit_exists && contextReview.blender_context_audit_status !== 'passed') actions.push('Fix Blender context audit failures before using the review blend as a trusted reference.');
   if (contextReview?.ifc_geometry_preview_exists && contextReview?.source_review_open_human_review_count > 0) actions.push('Compare IFC geometry preview against DXF context before any design-seed approval.');
   if (contextReview?.source_map_design_seed_candidate_after_review_count > 0) actions.push('Review source-map semantic candidates before any design-seed approval.');
   if (contextReview?.accepted_as_design_seed_count > 0 && !contextReview.approved_for_design_generation) actions.push('Set final approval only after a human has checked context-selection.');
@@ -515,6 +528,11 @@ function appendContextReview(lines, contextReview) {
   lines.push(`- Blender context smoke locked objects: ${contextReview.blender_context_smoke_locked_object_count}`);
   lines.push(`- Blender context smoke review-only objects: ${contextReview.blender_context_smoke_review_only_object_count}`);
   lines.push(`- Blender context smoke output blend: ${contextReview.blender_context_smoke_output_blend_exists ? 'yes' : 'no'}`);
+  lines.push(`- Blender context audit: ${blenderContextAuditLabel(contextReview)}`);
+  lines.push(`- Blender context audit failures: ${contextReview.blender_context_audit_failure_count}`);
+  lines.push(`- Blender context audit mesh polygons: ${contextReview.blender_context_audit_mesh_polygon_count}`);
+  lines.push(`- Blender context audit DXF polylines: ${contextReview.blender_context_audit_dxf_polyline_count}`);
+  lines.push(`- Blender context audit IFC bboxes: ${contextReview.blender_context_audit_ifc_bbox_count}`);
   lines.push(`- approved for design generation: ${contextReview.approved_for_design_generation ? 'yes' : 'no'}`);
   lines.push(`- readiness: ${contextReview.readiness || 'unknown'}`);
 }
@@ -615,6 +633,12 @@ function blenderContextSmokeLabel(contextReview) {
     return 'passed';
   }
   return 'needs review';
+}
+
+function blenderContextAuditLabel(contextReview) {
+  if (!contextReview.blender_context_audit_exists) return 'missing';
+  if (contextReview.blender_context_audit_status === 'passed') return 'passed';
+  return `failed (${contextReview.blender_context_audit_failure_count})`;
 }
 
 function runPackageCheck() {
