@@ -69,6 +69,15 @@
       "approval_required_before_public_use": false
     },
     {
+      "id": "kosmo_blender_package_smoke",
+      "label": "Kosmo Blender Package Bridge Smoke",
+      "command": "npm run kosmo:blender-package-smoke -- --project {project_path}/kosmo.project.json --addon-code {addon_code}",
+      "output_root": "terminal/blender-smoke",
+      "review_output": "terminal/KOSMO_BLENDER_PACKAGE_BRIDGE_SMOKE",
+      "purpose": "Run a local headless Blender smoke test that imports a Kosmo project package through the KosmoDraw/KosmoDesign package bridge, verifies generated room objects, checks model-profile write-back, verifies Kosmo Draw SVG exports, and renders a Kosmo Viz PNG preview.",
+      "approval_required_before_public_use": false
+    },
+    {
       "id": "brain_text_polish",
       "label": "Brain Text Polish",
       "command": "npm run brain:polish-texts -- --limit 8",

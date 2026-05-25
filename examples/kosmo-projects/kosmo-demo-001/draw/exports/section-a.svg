@@ -1,10 +1,30 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="-40 -40 900 520" role="img" aria-label="Kosmo Demo 001 placeholder section A">
-  <rect x="0" y="240" width="760" height="150" fill="#dff7ff" stroke="#111827" stroke-width="2"/>
-  <rect x="0" y="80" width="420" height="150" fill="#f2e7ff" stroke="#111827" stroke-width="2"/>
-  <line x1="-20" y1="390" x2="800" y2="390" stroke="#111827" stroke-width="3"/>
-  <text x="380" y="320" text-anchor="middle" font-family="Arial, sans-serif" font-size="26" fill="#111827">EG Studio / Library</text>
-  <text x="210" y="165" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" fill="#111827">1.OG Meeting</text>
-  <text x="0" y="-14" font-family="Arial, sans-serif" font-size="18" fill="#111827">Kosmo Demo 001 - Section A placeholder</text>
-  <line x1="800" y1="240" x2="800" y2="390" stroke="#1f6feb" stroke-width="2"/>
-  <text x="816" y="318" font-family="Arial, sans-serif" font-size="16" fill="#111827">3.2 m</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700" role="img" aria-label="Kosmo Demo 001 Kosmo Draw generated section A" data-kosmo-export="draw-section" data-kosmo-project="kosmo-demo-001">
+  <style>
+    .title{font-family:Arial,sans-serif;font-size:26px;font-weight:700;fill:#111827}
+    .subtitle{font-family:Arial,sans-serif;font-size:15px;fill:#4b5563}
+    .room-label{font-family:Arial,sans-serif;font-size:18px;font-weight:700;fill:#111827}
+    .room-meta{font-family:Arial,sans-serif;font-size:14px;fill:#374151}
+    .small{font-family:Arial,sans-serif;font-size:13px;fill:#4b5563}
+  </style>
+  <rect x="0" y="0" width="1200" height="700" fill="#fbfdff"/>
+  <text x="72" y="52" class="title">Kosmo Demo 001 / Kosmo Draw Section A</text>
+  <text x="72" y="80" class="subtitle">Generated from Blender room objects / diagrammatic section through room extents</text>
+  <g><line x1="60" y1="620.00" x2="1140" y2="620.00" stroke="#94a3b8" stroke-width="1.2" stroke-dasharray="8 7"/><text x="72" y="612.00" class="small">EG / 0.00 m</text></g>
+  <g><line x1="60" y1="364.00" x2="1140" y2="364.00" stroke="#94a3b8" stroke-width="1.2" stroke-dasharray="8 7"/><text x="72" y="356.00" class="small">1.OG / 3.20 m</text></g>
+  <g data-room-id="room-studio" data-story-id="level-00">
+    <rect x="160.00" y="364.00" width="640.00" height="256.00" fill="#dff7ff" stroke="#111827" stroke-width="2.2"/>
+    <text x="480.00" y="486.00" text-anchor="middle" class="room-label">Shared Studio</text>
+    <text x="480.00" y="510.00" text-anchor="middle" class="room-meta">EG</text>
+  </g>
+  <g data-room-id="room-library" data-story-id="level-00">
+    <rect x="800.00" y="364.00" width="240.00" height="256.00" fill="#f2e7ff" stroke="#111827" stroke-width="2.2"/>
+    <text x="920.00" y="486.00" text-anchor="middle" class="room-label">Project Library</text>
+    <text x="920.00" y="510.00" text-anchor="middle" class="room-meta">EG</text>
+  </g>
+  <g data-room-id="room-meeting" data-story-id="level-01">
+    <rect x="160.00" y="108.00" width="320.00" height="256.00" fill="#ffe7f6" stroke="#111827" stroke-width="2.2"/>
+    <text x="320.00" y="230.00" text-anchor="middle" class="room-label">Meeting</text>
+    <text x="320.00" y="254.00" text-anchor="middle" class="room-meta">1.OG</text>
+  </g>
+  <text x="1128" y="656" text-anchor="end" class="small">local review only</text>
 </svg>

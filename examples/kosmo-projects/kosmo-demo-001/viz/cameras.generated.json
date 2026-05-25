@@ -1,0 +1,25 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-05-25T18:07:09.712688+02:00",
+  "generator": "kosmo_design.export_project_package_viz_preview",
+  "project_id": "kosmo-demo-001",
+  "cameras": [
+    {
+      "id": "cam-kosmo-axon-generated",
+      "label": "Kosmo generated axon preview",
+      "type": "orthographic",
+      "position": [
+        23.4844,
+        -19.4805,
+        18.4868
+      ],
+      "target": [
+        5.5,
+        3.0,
+        3.2
+      ],
+      "orthographic_scale": 17.422,
+      "purpose": "local Kosmo Viz preview"
+    }
+  ]
+}

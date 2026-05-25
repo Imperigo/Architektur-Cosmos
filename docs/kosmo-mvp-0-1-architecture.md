@@ -354,10 +354,11 @@ Status 2026-05-25:
 3. Lokalen Package-Creator bauen, der neue Projektpakete unter
    `archive-intake/kosmo-projects/` anlegt. **Erledigt.**
 4. Bestehendes `kosmo_design` Add-on auf dieses Paket lesen/schreiben lassen.
-   **Import-Bridge erledigt, Write-back offen.**
+   **Import-Bridge und Write-back erledigt.**
 5. Review-Pack-Generator lokal bauen. **Erledigt.**
-6. Einfachen Planexport aus Blender pruefen.
-7. Kosmo Zentrale spaeter als Job-Orchestrator an dieses Paket anbinden.
+6. Einfachen Planexport aus Blender pruefen. **Erledigt fuer SVG-Grundriss und SVG-Schnitt.**
+7. Kosmo Viz Preview aus Blender pruefen. **Erledigt fuer automatischen Axon-PNG-Preview.**
+8. Kosmo Zentrale spaeter als Job-Orchestrator an dieses Paket anbinden.
 
 ## 11. Was bewusst noch nicht gebaut wird
 
@@ -384,6 +385,8 @@ Der erste Datenvertrag ist im Repo angelegt:
 - `examples/kosmo-projects/kosmo-demo-001/kosmo.project.json`
 - `examples/kosmo-projects/kosmo-demo-001/`
 - `scripts/kosmo-project-package-check.mjs`
+- `scripts/kosmo-blender-package-bridge-smoke.mjs`
+- `scripts/kosmo_blender_package_bridge_smoke.py`
 - private lokale KosmoDesign/KosmoDraw-Bridge im separaten Arbeitsbereich
 
 Pruefung:
@@ -391,6 +394,20 @@ Pruefung:
 ```bash
 npm run kosmo:package-check
 ```
+
+Blender-Headless-Smoke-Test:
+
+```bash
+npm run kosmo:blender-package-smoke
+```
+
+Status: bestanden. Blender 5.1.2 importiert das Demo-Paket in `KosmoDraw`,
+erzeugt 3 Raeume und 12 Objekte, exportiert 3 Raeume nach
+`design/model-profile.exported.json`, erzeugt `draw/exports/ground-floor-plan.svg`
+und `draw/exports/section-a.svg` aus den Blender-Raumobjekten, rendert
+`viz/previews/kosmo-preview-axon.png` mit automatisch erzeugter Kamera und Licht
+und speichert ein lokales Test-Blend unter
+`archive-intake/kosmo-projects/kosmo-demo-001-smoke.blend`.
 
 Review-Pack erzeugen:
 
@@ -408,4 +425,4 @@ Der Creator schreibt standardmaessig nach `archive-intake/kosmo-projects/`.
 Dieser Ordner ist gitignored und bleibt fuer echte Projekte, private Notizen
 und unreviewte Inputs lokal.
 
-Aktueller Status: Der Demo-Vertrag und alle JSON/JSONL-Artefakte bestehen den lokalen Package-Check.
+Aktueller Status: Der Demo-Vertrag und alle JSON/JSONL-Artefakte bestehen den lokalen Package-Check. Der Blender-Bridge-Smoke-Test prueft jetzt Import, Write-back, Kosmo-Draw-SVG-Export und Kosmo-Viz-Preview.

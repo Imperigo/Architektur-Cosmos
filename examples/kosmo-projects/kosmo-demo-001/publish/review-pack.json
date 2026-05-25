@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-25T15:39:13.255Z",
+  "generated_at": "2026-05-25T16:09:52.539Z",
   "generator": "kosmo-project-package-review",
   "project": {
     "id": "kosmo-demo-001",
@@ -25,9 +25,9 @@
   },
   "module_summary": {
     "total": 8,
-    "pending": 3,
-    "in_progress": 2,
-    "review_ready": 3,
+    "pending": 2,
+    "in_progress": 1,
+    "review_ready": 5,
     "approved": 0,
     "blocked": 0,
     "skipped": 0
@@ -55,19 +55,19 @@
       "id": "design",
       "status": "in_progress",
       "owner": "Kosmo Design",
-      "summary": "Conceptual two-story room profile is available for Blender import."
+      "summary": "Conceptual two-story room profile imports into Blender; write-back smoke export is verified."
     },
     {
       "id": "draw",
-      "status": "in_progress",
+      "status": "review_ready",
       "owner": "Kosmo Draw",
-      "summary": "Placeholder ground floor and section SVG exports are available."
+      "summary": "Generated ground floor and section SVG exports are available from Blender room objects."
     },
     {
       "id": "viz",
-      "status": "pending",
+      "status": "review_ready",
       "owner": "Kosmo Viz",
-      "summary": "Camera and render presets are defined, no render image generated yet."
+      "summary": "Generated axon preview, camera manifest and preview manifest are available from Blender room objects."
     },
     {
       "id": "publish",
@@ -156,18 +156,45 @@
       "type": "plan_export",
       "module": "draw",
       "rights_status": "generated_needs_review",
-      "description": "Placeholder vector ground floor export.",
+      "description": "Kosmo Draw generated vector ground floor export from Blender room objects.",
       "exists": true,
-      "size_bytes": 1034
+      "size_bytes": 1928
     },
     {
       "path": "draw/exports/section-a.svg",
       "type": "plan_export",
       "module": "draw",
       "rights_status": "generated_needs_review",
-      "description": "Placeholder vector section export.",
+      "description": "Kosmo Draw generated vector section export from Blender room objects.",
       "exists": true,
-      "size_bytes": 1005
+      "size_bytes": 2413
+    },
+    {
+      "path": "viz/previews/kosmo-preview-axon.png",
+      "type": "viz_preview",
+      "module": "viz",
+      "rights_status": "generated_needs_review",
+      "description": "Kosmo Viz generated axon PNG preview from Blender room objects.",
+      "exists": true,
+      "size_bytes": 467324
+    },
+    {
+      "path": "viz/previews/preview-manifest.json",
+      "type": "viz_preview_manifest",
+      "module": "viz",
+      "rights_status": "internal_only",
+      "description": "Kosmo Viz generated preview manifest.",
+      "exists": true,
+      "size_bytes": 623
+    },
+    {
+      "path": "viz/cameras.generated.json",
+      "type": "camera_manifest",
+      "module": "viz",
+      "rights_status": "internal_only",
+      "description": "Kosmo Viz generated camera manifest.",
+      "exists": true,
+      "size_bytes": 557
     },
     {
       "path": "publish/review-pack.md",
@@ -176,7 +203,7 @@
       "rights_status": "internal_only",
       "description": "Local review package scaffold.",
       "exists": true,
-      "size_bytes": 2525
+      "size_bytes": 2576
     }
   ],
   "memory": {
@@ -210,6 +237,20 @@
         "module": "design",
         "status": "pending",
         "summary": "Import model-profile.json into Kosmo Design / Blender."
+      },
+      {
+        "timestamp": "2026-05-25T18:05:00+02:00",
+        "job_id": "job-draw-001",
+        "module": "draw",
+        "status": "completed",
+        "summary": "Blender smoke test imported the Kosmo package, wrote model-profile.exported.json and generated ground-floor-plan.svg plus section-a.svg from room objects."
+      },
+      {
+        "timestamp": "2026-05-25T18:06:00+02:00",
+        "job_id": "job-viz-001",
+        "module": "viz",
+        "status": "completed",
+        "summary": "Blender smoke test created a generated axon camera, Sun/Area light setup, preview-manifest.json, cameras.generated.json and kosmo-preview-axon.png."
       }
     ],
     "uncertainties": [
@@ -226,6 +267,20 @@
         "topic": "plan_export",
         "severity": "medium",
         "description": "SVG plans are placeholders, not generated from Blender yet."
+      },
+      {
+        "timestamp": "2026-05-25T18:05:00+02:00",
+        "module": "draw",
+        "topic": "plan_export",
+        "severity": "low",
+        "description": "Resolved for MVP smoke: SVG plan and section are now generated from imported Blender room objects, but remain generated_needs_review."
+      },
+      {
+        "timestamp": "2026-05-25T18:06:00+02:00",
+        "module": "viz",
+        "topic": "preview_render",
+        "severity": "low",
+        "description": "First Kosmo Viz preview is generated from Blender room objects with an automatic axon camera and light setup; image remains generated_needs_review."
       }
     ]
   },
@@ -235,10 +290,10 @@
     "External upload is not approved.",
     "Generated output needs review: design/model-profile.json",
     "Generated output needs review: draw/exports/ground-floor-plan.svg",
-    "Generated output needs review: draw/exports/section-a.svg"
+    "Generated output needs review: draw/exports/section-a.svg",
+    "Generated output needs review: viz/previews/kosmo-preview-axon.png"
   ],
   "next_actions": [
-    "Generate a first Kosmo Viz preview or camera check.",
     "Review generated outputs before any public or external use.",
     "Ask for explicit approval before paid cloud jobs."
   ]

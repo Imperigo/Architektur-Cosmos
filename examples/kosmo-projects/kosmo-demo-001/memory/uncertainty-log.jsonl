@@ -1,2 +1,4 @@
 {"timestamp":"2026-05-25T00:20:00+02:00","module":"prepare","topic":"site","severity":"low","description":"Demo coordinates are not a real parcel."}
 {"timestamp":"2026-05-25T00:21:00+02:00","module":"draw","topic":"plan_export","severity":"medium","description":"SVG plans are placeholders, not generated from Blender yet."}
+{"timestamp":"2026-05-25T18:05:00+02:00","module":"draw","topic":"plan_export","severity":"low","description":"Resolved for MVP smoke: SVG plan and section are now generated from imported Blender room objects, but remain generated_needs_review."}
+{"timestamp":"2026-05-25T18:06:00+02:00","module":"viz","topic":"preview_render","severity":"low","description":"First Kosmo Viz preview is generated from Blender room objects with an automatic axon camera and light setup; image remains generated_needs_review."}

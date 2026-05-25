@@ -1,10 +1,25 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="900" height="540" viewBox="-40 -40 900 540" role="img" aria-label="Kosmo Demo 001 placeholder ground floor plan">
-  <rect x="0" y="0" width="800" height="440" fill="#f8fbff" stroke="#1f6feb" stroke-width="3"/>
-  <rect x="0" y="0" width="560" height="420" fill="#dff7ff" stroke="#111827" stroke-width="2"/>
-  <rect x="560" y="0" width="210" height="420" fill="#f2e7ff" stroke="#111827" stroke-width="2"/>
-  <text x="280" y="210" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" fill="#111827">Shared Studio</text>
-  <text x="665" y="210" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" fill="#111827">Project Library</text>
-  <text x="0" y="-14" font-family="Arial, sans-serif" font-size="18" fill="#111827">Kosmo Demo 001 - EG placeholder</text>
-  <line x1="0" y1="460" x2="100" y2="460" stroke="#111827" stroke-width="2"/>
-  <text x="50" y="490" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#111827">5 m</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img" aria-label="Kosmo Demo 001 Kosmo Draw generated ground floor plan" data-kosmo-export="draw-plan" data-kosmo-project="kosmo-demo-001">
+  <style>
+    .title{font-family:Arial,sans-serif;font-size:26px;font-weight:700;fill:#111827}
+    .subtitle{font-family:Arial,sans-serif;font-size:15px;fill:#4b5563}
+    .room-label{font-family:Arial,sans-serif;font-size:20px;font-weight:700;fill:#111827}
+    .room-meta{font-family:Arial,sans-serif;font-size:14px;fill:#374151}
+    .small{font-family:Arial,sans-serif;font-size:13px;fill:#4b5563}
+  </style>
+  <rect x="0" y="0" width="1200" height="760" fill="#fbfdff"/>
+  <text x="72" y="52" class="title">Kosmo Demo 001 / Kosmo Draw Plan</text>
+  <text x="72" y="80" class="subtitle">Generated from Blender room objects / bounds 0.00,0.00 to 11.00,6.00 m</text>
+  <g data-room-id="room-library" data-story-id="level-00">
+    <polygon points="840.00,686.00 1128.00,686.00 1128.00,110.00 840.00,110.00" fill="#f2e7ff" stroke="#111827" stroke-width="2.2"/>
+    <text x="984.00" y="390.00" text-anchor="middle" class="room-label">Project Library</text>
+    <text x="984.00" y="414.00" text-anchor="middle" class="room-meta">reference / 18.0 m2</text>
+  </g>
+  <g data-room-id="room-studio" data-story-id="level-00">
+    <polygon points="72.00,686.00 840.00,686.00 840.00,110.00 72.00,110.00" fill="#dff7ff" stroke="#111827" stroke-width="2.2"/>
+    <text x="456.00" y="390.00" text-anchor="middle" class="room-label">Shared Studio</text>
+    <text x="456.00" y="414.00" text-anchor="middle" class="room-meta">work / 48.0 m2</text>
+  </g>
+  <line x1="84.00" y1="706.00" x2="564.00" y2="706.00" stroke="#111827" stroke-width="3"/>
+  <text x="324.00" y="734.00" text-anchor="middle" class="small">5 m</text>
+  <text x="1128" y="716" text-anchor="end" class="small">local review only</text>
 </svg>

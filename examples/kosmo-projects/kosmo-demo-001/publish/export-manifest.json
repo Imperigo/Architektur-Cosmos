@@ -5,15 +5,36 @@
       "path": "draw/exports/ground-floor-plan.svg",
       "module": "Kosmo Draw",
       "format": "svg",
-      "status": "placeholder",
+      "status": "generated_needs_review",
       "rights_status": "generated_needs_review"
     },
     {
       "path": "draw/exports/section-a.svg",
       "module": "Kosmo Draw",
       "format": "svg",
-      "status": "placeholder",
+      "status": "generated_needs_review",
       "rights_status": "generated_needs_review"
+    },
+    {
+      "path": "viz/previews/kosmo-preview-axon.png",
+      "module": "Kosmo Viz",
+      "format": "png",
+      "status": "generated_needs_review",
+      "rights_status": "generated_needs_review"
+    },
+    {
+      "path": "viz/previews/preview-manifest.json",
+      "module": "Kosmo Viz",
+      "format": "json",
+      "status": "generated",
+      "rights_status": "internal_only"
+    },
+    {
+      "path": "viz/cameras.generated.json",
+      "module": "Kosmo Viz",
+      "format": "json",
+      "status": "generated",
+      "rights_status": "internal_only"
     },
     {
       "path": "publish/review-pack.md",

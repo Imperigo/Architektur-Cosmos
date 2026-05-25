@@ -1,6 +1,6 @@
 # Kosmo Demo 001 Review Pack
 
-Generated: 2026-05-25T15:39:13.255Z
+Generated: 2026-05-25T16:09:52.539Z
 Project ID: `kosmo-demo-001`
 Risk level: `local_review_only`
 Readiness: `review_required`
@@ -12,9 +12,9 @@ Readiness: `review_required`
 | prepare | review_ready | Kosmo Prepare | Initial brief, constraints and open questions are available. |
 | data | review_ready | Kosmo Data | Local references, sources and asset candidates are listed. |
 | orbit | review_ready | Kosmo Orbit | Package manifest and module folders exist. |
-| design | in_progress | Kosmo Design | Conceptual two-story room profile is available for Blender import. |
-| draw | in_progress | Kosmo Draw | Placeholder ground floor and section SVG exports are available. |
-| viz | pending | Kosmo Viz | Camera and render presets are defined, no render image generated yet. |
+| design | in_progress | Kosmo Design | Conceptual two-story room profile imports into Blender; write-back smoke export is verified. |
+| draw | review_ready | Kosmo Draw | Generated ground floor and section SVG exports are available from Blender room objects. |
+| viz | review_ready | Kosmo Viz | Generated axon preview, camera manifest and preview manifest are available from Blender room objects. |
 | publish | pending | Kosmo Publish | Review pack scaffold exists and awaits generated outputs. |
 | zentrale | pending | Kosmo Zentrale | Memory logs exist, not yet registered in the live Control Hub. |
 
@@ -38,6 +38,9 @@ Readiness: `review_required`
 - ok: `design/model-profile.json` (design, model_profile, generated_needs_review)
 - ok: `draw/exports/ground-floor-plan.svg` (draw, plan_export, generated_needs_review)
 - ok: `draw/exports/section-a.svg` (draw, plan_export, generated_needs_review)
+- ok: `viz/previews/kosmo-preview-axon.png` (viz, viz_preview, generated_needs_review)
+- ok: `viz/previews/preview-manifest.json` (viz, viz_preview_manifest, internal_only)
+- ok: `viz/cameras.generated.json` (viz, camera_manifest, internal_only)
 - ok: `publish/review-pack.md` (publish, review_pack, internal_only)
 
 ## Blockers
@@ -51,15 +54,16 @@ Readiness: `review_required`
 - Generated output needs review: design/model-profile.json
 - Generated output needs review: draw/exports/ground-floor-plan.svg
 - Generated output needs review: draw/exports/section-a.svg
+- Generated output needs review: viz/previews/kosmo-preview-axon.png
 
 ## Recent Memory
 
 - decisions: 2
-- jobs: 2
-- uncertainties: 2
+- jobs: 4
+- uncertainties: 4
 
 ## Next Actions
 
-- Generate a first Kosmo Viz preview or camera check.
 - Review generated outputs before any public or external use.
 - Ask for explicit approval before paid cloud jobs.
+

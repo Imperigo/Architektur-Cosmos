@@ -36,19 +36,19 @@
     },
     "design": {
       "status": "in_progress",
-      "summary": "Conceptual two-story room profile is available for Blender import.",
+      "summary": "Conceptual two-story room profile imports into Blender; write-back smoke export is verified.",
       "last_run_at": null,
       "owner": "Kosmo Design"
     },
     "draw": {
-      "status": "in_progress",
-      "summary": "Placeholder ground floor and section SVG exports are available.",
+      "status": "review_ready",
+      "summary": "Generated ground floor and section SVG exports are available from Blender room objects.",
       "last_run_at": null,
       "owner": "Kosmo Draw"
     },
     "viz": {
-      "status": "pending",
-      "summary": "Camera and render presets are defined, no render image generated yet.",
+      "status": "review_ready",
+      "summary": "Generated axon preview, camera manifest and preview manifest are available from Blender room objects.",
       "last_run_at": null,
       "owner": "Kosmo Viz"
     },
@@ -110,14 +110,35 @@
       "type": "plan_export",
       "module": "draw",
       "rights_status": "generated_needs_review",
-      "description": "Placeholder vector ground floor export."
+      "description": "Kosmo Draw generated vector ground floor export from Blender room objects."
     },
     {
       "path": "draw/exports/section-a.svg",
       "type": "plan_export",
       "module": "draw",
       "rights_status": "generated_needs_review",
-      "description": "Placeholder vector section export."
+      "description": "Kosmo Draw generated vector section export from Blender room objects."
+    },
+    {
+      "path": "viz/previews/kosmo-preview-axon.png",
+      "type": "viz_preview",
+      "module": "viz",
+      "rights_status": "generated_needs_review",
+      "description": "Kosmo Viz generated axon PNG preview from Blender room objects."
+    },
+    {
+      "path": "viz/previews/preview-manifest.json",
+      "type": "viz_preview_manifest",
+      "module": "viz",
+      "rights_status": "internal_only",
+      "description": "Kosmo Viz generated preview manifest."
+    },
+    {
+      "path": "viz/cameras.generated.json",
+      "type": "camera_manifest",
+      "module": "viz",
+      "rights_status": "internal_only",
+      "description": "Kosmo Viz generated camera manifest."
     },
     {
       "path": "publish/review-pack.md",

@@ -11,7 +11,9 @@
         "time": "10:00",
         "timezone": "Europe/Zurich"
       },
-      "status": "planned"
+      "status": "generated_needs_review",
+      "actual_renderer": "BLENDER_EEVEE",
+      "generated_preview": "viz/previews/kosmo-preview-axon.png"
     },
     {
       "id": "cycles-review-snapshot",

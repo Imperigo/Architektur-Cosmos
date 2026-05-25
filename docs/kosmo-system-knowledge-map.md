@@ -28,6 +28,7 @@ Arbeitsthese: Das eigentliche Produkt ist nicht ein einzelnes CAD, sondern ein l
 | Notion AI Vision | Prozessvision fuer Wettbewerb/Entwurf | Beschreibt Phase 0 Grundlagenmodell, Phase 1 AR-Modelling, ArchViz, Architekturkosmos-Import, 2D-Planwerk, Layout-Designer und Innovationsliste. |
 | Architektur Kosmos Network Concept | Namens- und Netzwerkbild | Definiert die sichtbaren Namen: Architektur Kosmos, Kosmo Data, Kosmo Orbit, Kosmo Zentrale, Kosmo Design, Kosmo Prepare, Kosmo Draw, Kosmo Viz, Kosmo Publish. |
 | Kosmo MVP 0.1 Architecture | erster vertikaler Prototyp | Schneidet die Vision auf ein lokales Projektpaket von Brief/Ort/Skizze zu Blender-Modell, Planexport, Preview und Review-Pack. |
+| Kosmo Local Project Inventory | lokale Projektkarte | Haelt fest, dass wichtige Kosmo-Quellen nicht nur im aktuellen Repo liegen, sondern auch in lokalen Projekt-, Cloud- und Memory-/Scheduled-Orten. |
 | KosmoCAD | Begriff / leerer Projektordner | Der Name existiert, aber die vorhandene Substanz liegt eher in KosmoDesign, KosmoZentrale und KosmoData. |
 | Recht / Business / ETH | Gruendung, Schutz, Lizenz- und Produktstrategie | Es existieren OneDrive-Unterlagen und PDF/Markdown-Dateien zu rechtlichen und betriebswirtschaftlichen Fragen; noch nicht als kanonische Kosmo-Strategie zusammengefuehrt. |
 
@@ -170,6 +171,7 @@ Damit entsteht schnell ein pruefbares Produktversprechen: vom architektonischen 
 - `docs/architektur-kosmos-network-concept.md`
 - `docs/kosmo-mvp-0-1-architecture.md`
 - `docs/kosmo-design-package-bridge.md`
+- `docs/kosmo-local-project-inventory.md`
 - `schema/kosmo-project-package.schema.json`
 - `examples/kosmo-projects/kosmo-demo-001/kosmo.project.json`
 

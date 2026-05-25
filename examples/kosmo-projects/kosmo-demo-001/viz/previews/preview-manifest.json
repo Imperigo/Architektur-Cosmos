@@ -1,5 +1,22 @@
 {
   "schema_version": "0.1",
-  "previews": [],
-  "note": "No rendered preview exists yet. Kosmo Viz should write generated thumbnails here."
+  "generated_at": "2026-05-25T18:07:09.713375+02:00",
+  "generator": "kosmo_design.export_project_package_viz_preview",
+  "project_id": "kosmo-demo-001",
+  "previews": [
+    {
+      "id": "kosmo-viz-preview-axon",
+      "label": "Kosmo generated axon preview",
+      "path": "viz/previews/kosmo-preview-axon.png",
+      "camera_id": "cam-kosmo-axon-generated",
+      "renderer": "BLENDER_EEVEE",
+      "resolution": [
+        960,
+        540
+      ],
+      "status": "generated_needs_review",
+      "rights_status": "generated_needs_review",
+      "source": "blender_room_objects"
+    }
+  ]
 }
