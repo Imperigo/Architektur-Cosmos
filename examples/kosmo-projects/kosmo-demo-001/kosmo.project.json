@@ -433,6 +433,20 @@
       "module": "design",
       "rights_status": "generated_needs_review",
       "description": "Static local IFC human review dashboard."
+    },
+    {
+      "path": "design/ifc-human-review-decision.json",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Human IFC decision gate for context/design-seed handling."
+    },
+    {
+      "path": "design/ifc-human-review-decision.md",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Human-readable IFC decision record."
     }
   ],
   "review_gates": {

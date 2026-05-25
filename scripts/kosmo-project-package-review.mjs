@@ -111,6 +111,18 @@ function buildReport(manifest, check) {
   if (contextReview.ifc_geometry_preview_ready && !contextReview.ifc_layer_plan_ready) {
     warnings.push('IFC layer plan is missing or still pending for Blender/ArchiCAD layer review.');
   }
+  if (contextReview.ifc_human_review_viewer_ready && !contextReview.ifc_human_review_decision_exists) {
+    warnings.push('IFC human review viewer is ready but design/ifc-human-review-decision.json is missing.');
+  }
+  if (contextReview.ifc_human_review_decision_exists && !contextReview.ifc_human_review_decision_final) {
+    warnings.push('IFC human review decision exists but final human decision is not recorded.');
+  }
+  if (contextReview.ifc_human_review_decision === 'accepted_as_design_seed' && !contextReview.ifc_human_review_decision_design_generation_approval) {
+    warnings.push('IFC human review decision accepts a design seed but design-generation approval is not granted.');
+  }
+  if (contextReview.ifc_human_review_decision_design_generation_approval && !contextReview.approved_for_design_generation) {
+    warnings.push('IFC human review grants design-generation approval but context-selection approved_for_design_generation is still false.');
+  }
   if (contextReview.ifc_layer_plan_ready && !contextReview.model_layer_handoff_ready) {
     warnings.push('Model layer handoff is missing or still pending for Blender/ArchiCAD export review.');
   }
@@ -201,6 +213,7 @@ function readContextReview() {
   const ifcLayerPlanPath = join(projectRoot, 'design/ifc-layer-plan.generated.json');
   const ifcHumanReviewPackPath = join(projectRoot, 'design/ifc-human-review-pack.generated.json');
   const ifcHumanReviewViewerPath = join(projectRoot, 'design/ifc-human-review-viewer.generated.json');
+  const ifcHumanReviewDecisionPath = join(projectRoot, 'design/ifc-human-review-decision.json');
   const modelLayerHandoffPath = join(projectRoot, 'design/model-layer-handoff.generated.json');
   const contextHandoffPath = join(projectRoot, 'design/context-handoff.generated.json');
   const blenderContextImportPath = join(projectRoot, 'design/blender-context-import.generated.json');
@@ -219,6 +232,7 @@ function readContextReview() {
   const ifcLayerPlan = existsSync(ifcLayerPlanPath) ? safeReadJson(ifcLayerPlanPath) : null;
   const ifcHumanReviewPack = existsSync(ifcHumanReviewPackPath) ? safeReadJson(ifcHumanReviewPackPath) : null;
   const ifcHumanReviewViewer = existsSync(ifcHumanReviewViewerPath) ? safeReadJson(ifcHumanReviewViewerPath) : null;
+  const ifcHumanReviewDecision = existsSync(ifcHumanReviewDecisionPath) ? safeReadJson(ifcHumanReviewDecisionPath) : null;
   const modelLayerHandoff = existsSync(modelLayerHandoffPath) ? safeReadJson(modelLayerHandoffPath) : null;
   const contextHandoff = existsSync(contextHandoffPath) ? safeReadJson(contextHandoffPath) : null;
   const blenderContextImport = existsSync(blenderContextImportPath) ? safeReadJson(blenderContextImportPath) : null;
@@ -318,6 +332,13 @@ function readContextReview() {
     ifc_human_review_viewer_preview_count: numberOrDefault(ifcHumanReviewViewer?.summary?.preview_count, 0),
     ifc_human_review_viewer_open_human_check_count: numberOrDefault(ifcHumanReviewViewer?.summary?.open_human_check_count, 0),
     ifc_human_review_viewer_html: ifcHumanReviewViewer?.output_files?.html || null,
+    ifc_human_review_decision_exists: Boolean(ifcHumanReviewDecision),
+    ifc_human_review_decision_status: ifcHumanReviewDecision?.status || null,
+    ifc_human_review_decision: ifcHumanReviewDecision?.decision || null,
+    ifc_human_review_decision_final: Boolean(ifcHumanReviewDecision?.summary?.final_decision_recorded),
+    ifc_human_review_decision_reviewed_by: ifcHumanReviewDecision?.reviewed_by || null,
+    ifc_human_review_decision_open_human_check_count: numberOrDefault(ifcHumanReviewDecision?.summary?.open_human_check_count, 0),
+    ifc_human_review_decision_design_generation_approval: Boolean(ifcHumanReviewDecision?.summary?.design_generation_approval_granted),
     model_layer_handoff_exists: Boolean(modelLayerHandoff),
     model_layer_handoff_status: modelLayerHandoff?.status || null,
     model_layer_handoff_ready: isModelLayerHandoffReady(modelLayerHandoff),
@@ -396,6 +417,8 @@ function nextActions({ modules, gates, blockers, warnings, outputs, contextRevie
   if (contextReview?.ifc_geometry_preview_ready && !contextReview.ifc_layer_plan_ready) actions.push('Run npm run kosmo:ifc-layer-plan to propose Blender collections and ArchiCAD layers.');
   if (contextReview?.source_review_open_human_review_count > 0 && contextReview?.ifc_layer_plan_ready && !contextReview.ifc_human_review_pack_exists) actions.push('Run npm run kosmo:ifc-human-review-pack to gather IFC evidence into a human checklist.');
   if (contextReview?.ifc_human_review_pack_evidence_ready && !contextReview.ifc_human_review_viewer_ready) actions.push('Run npm run kosmo:ifc-review-viewer to create the local IFC human decision dashboard.');
+  if (contextReview?.ifc_human_review_viewer_ready && !contextReview.ifc_human_review_decision_exists) actions.push('Run npm run kosmo:ifc-human-review-decision to create the IFC decision gate draft.');
+  if (contextReview?.ifc_human_review_decision_exists && !contextReview.ifc_human_review_decision_final) actions.push('Open the IFC review viewer, complete the checklist and record a final IFC human decision.');
   if (contextReview?.ifc_layer_plan_ready && !contextReview.model_layer_handoff_ready) actions.push('Run npm run kosmo:model-layer-handoff to create the review-only Blender/ArchiCAD export handoff.');
   if (contextReview?.selection_exists && contextReview?.undecided_count === 0 && contextReview?.accepted_as_context_count > 0 && !contextReview.context_handoff_ready) actions.push('Run npm run kosmo:context-handoff to create the Kosmo Design context-only handoff.');
   if (contextReview?.context_handoff_ready && !contextReview.blender_context_import_ready) actions.push('Run npm run kosmo:blender-context-import to create a locked Blender context review script.');
@@ -552,6 +575,12 @@ function appendContextReview(lines, contextReview) {
   lines.push(`- IFC human review viewer previews: ${contextReview.ifc_human_review_viewer_preview_count}`);
   lines.push(`- IFC human review viewer open human checks: ${contextReview.ifc_human_review_viewer_open_human_check_count}`);
   lines.push(`- IFC human review viewer html: ${contextReview.ifc_human_review_viewer_html || '-'}`);
+  lines.push(`- IFC human review decision: ${ifcHumanReviewDecisionLabel(contextReview)}`);
+  lines.push(`- IFC human review decision value: ${contextReview.ifc_human_review_decision || '-'}`);
+  lines.push(`- IFC human review decision final: ${contextReview.ifc_human_review_decision_final ? 'yes' : 'no'}`);
+  lines.push(`- IFC human review decision reviewed by: ${contextReview.ifc_human_review_decision_reviewed_by || '-'}`);
+  lines.push(`- IFC human review decision open human checks: ${contextReview.ifc_human_review_decision_open_human_check_count}`);
+  lines.push(`- IFC human review decision design approval: ${contextReview.ifc_human_review_decision_design_generation_approval ? 'yes' : 'no'}`);
   lines.push(`- model layer handoff: ${modelLayerHandoffLabel(contextReview)}`);
   lines.push(`- model layer handoff layer exports: ${contextReview.model_layer_handoff_layer_export_count}`);
   lines.push(`- model layer handoff planned GLBs: ${contextReview.model_layer_handoff_planned_glb_count}`);
@@ -683,6 +712,12 @@ function ifcHumanReviewViewerLabel(contextReview) {
   if (!contextReview.ifc_human_review_viewer_exists) return 'missing';
   if (contextReview.ifc_human_review_viewer_ready) return 'ready';
   return `pending (${contextReview.ifc_human_review_viewer_status || 'unknown'})`;
+}
+
+function ifcHumanReviewDecisionLabel(contextReview) {
+  if (!contextReview.ifc_human_review_decision_exists) return 'missing';
+  if (contextReview.ifc_human_review_decision_final) return `final (${contextReview.ifc_human_review_decision || 'unknown'})`;
+  return `draft (${contextReview.ifc_human_review_decision_status || 'unknown'})`;
 }
 
 function modelLayerHandoffLabel(contextReview) {

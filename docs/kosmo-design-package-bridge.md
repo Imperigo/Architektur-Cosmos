@@ -1,7 +1,7 @@
 # Kosmo Design Package Bridge
 
 Stand: 2026-05-25  
-Status: Phase-0-Kontextimport, Kontextkandidaten, Context-Selection-Gate, Raum-Import, Write-back, Draw-SVG und Viz-Preview-Connector implementiert.
+Status: Phase-0-Kontextimport, Kontextkandidaten, Context-Selection-Gate, IFC-Review-Gates, Raum-Import, Write-back, Draw-SVG und Viz-Preview-Connector implementiert.
 
 ## 1. Ziel
 
@@ -36,6 +36,9 @@ Der erste Connector ist bewusst duenn:
   menschliches Mapping-Gate fuer DXF-Layer und semantische IFC-Typen
 - schreibt optional `design/ifc-semantic-proof.generated.json` und `.md` als
   read-only IFC-Semantikproof vor jeder Design-Seed-Freigabe
+- schreibt optional `design/ifcopenshell-semantic-review.generated.json` und
+  `.md` als echten IfcOpenShell-Importcheck fuer IFC-Schema, Einheiten,
+  Hierarchie, Placements, Body/Brep und Property Sets
 - schreibt optional `design/ifc-geometry-preview.generated.json`, `.md` und
   `viz/previews/ifc-geometry-preview.svg` als read-only IFC-Geometriepreview
 - schreibt optional `design/ifc-dxf-alignment-preview.generated.json`, `.md`
@@ -46,6 +49,10 @@ Der erste Connector ist bewusst duenn:
   `design/archicad-layer-profile.generated.json` und
   `viz/previews/ifc-layer-plan.svg` als review-only Layerplan fuer
   Blender/ArchiCAD
+- schreibt optional `design/ifc-human-review-pack.generated.json`, `.md`,
+  `design/ifc-human-review-viewer.generated.html`, `.json`,
+  `design/ifc-human-review-decision.json` und `.md` als menschliches
+  IFC-Entscheidungsgate vor jeder Design-Seed-Freigabe
 - schreibt optional `design/model-layer-handoff.generated.json`, `.md`,
   `design/blender-collection-handoff.generated.py` und
   `design/archicad-layer-schedule.generated.csv` als review-only Uebergabe
@@ -170,6 +177,8 @@ Zusätzlich wird im Projektpaket geschrieben:
 - `design/context-source-mapping.md`
 - `design/ifc-semantic-proof.generated.json`
 - `design/ifc-semantic-proof.generated.md`
+- `design/ifcopenshell-semantic-review.generated.json`
+- `design/ifcopenshell-semantic-review.generated.md`
 - `design/ifc-geometry-preview.generated.json`
 - `design/ifc-geometry-preview.generated.md`
 - `viz/previews/ifc-geometry-preview.svg`
@@ -181,6 +190,12 @@ Zusätzlich wird im Projektpaket geschrieben:
 - `design/blender-layer-profile.generated.json`
 - `design/archicad-layer-profile.generated.json`
 - `viz/previews/ifc-layer-plan.svg`
+- `design/ifc-human-review-pack.generated.json`
+- `design/ifc-human-review-pack.generated.md`
+- `design/ifc-human-review-viewer.generated.html`
+- `design/ifc-human-review-viewer.generated.json`
+- `design/ifc-human-review-decision.json`
+- `design/ifc-human-review-decision.md`
 - `design/model-layer-handoff.generated.json`
 - `design/model-layer-handoff.generated.md`
 - `design/blender-collection-handoff.generated.py`
@@ -294,6 +309,16 @@ lokale statische Review-Tafel mit IfcOpenShell-Semantik, OBJEKTART-Verteilung,
 SVG-Previews, Machine Checks und Human Checklist. Er ist bewusst lokal und
 setzt keine Entscheidung in `context-selection`.
 
+`npm run kosmo:ifc-human-review-decision -- --project <projektpfad>` erzeugt
+`design/ifc-human-review-decision.md/json` als explizites Entscheidungsgate.
+Ohne weitere Flags schreibt das Tool nur einen Draft und laesst Design-
+Generierung blockiert. Ein Finalentscheid braucht mindestens
+`--record-final --reviewed-by "Name"`; positive Entscheidungen brauchen
+zusaetzlich `--confirm-checklist --i-confirm-human-ifc-review`. Ein IFC-
+Design-Seed braucht darueber hinaus `--decision accepted_as_design_seed` und
+`--approve-design-generation`. Das Tool schreibt nur den Entscheidungsrecord
+und aendert `context-selection` oder `source-mapping` nicht selbst.
+
 `npm run kosmo:context-handoff -- --project <projektpfad>` erzeugt
 `design/context-handoff.generated.md/json`. Der Handoff sammelt akzeptierte
 Kontextinputs, blockierte oder offene Quellen, IFC-Preview-Evidence,
@@ -336,6 +361,7 @@ npm run kosmo:ifc-geometry-preview -- --project examples/kosmo-projects/kosmo-de
 npm run kosmo:ifc-layer-plan -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:ifc-human-review-pack -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:ifc-review-viewer -- --project examples/kosmo-projects/kosmo-demo-001
+npm run kosmo:ifc-human-review-decision -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:context-source-mapping -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:context-handoff -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:model-layer-handoff -- --project examples/kosmo-projects/kosmo-demo-001
@@ -570,6 +596,20 @@ Status: lokal generiert. Der Viewer schreibt
 `design/ifc-human-review-viewer.generated.html/json` und zeigt IfcOpenShell-
 Checks, OBJEKTART-Verteilung, die drei SVG-Previews, Machine Checks und die
 offene Human Checklist als lokale Entscheidungstafel.
+
+IFC Human Review Decision:
+
+```bash
+npm run kosmo:ifc-human-review-decision -- \
+  --project archive-intake/kosmo-projects/zg-07052026
+```
+
+Status: Draft-Gate erzeugt. Das Tool schreibt
+`design/ifc-human-review-decision.md/json`, haelt die aktuelle Entscheidung
+bei `keep_needs_more_source_review` und laesst `approved_for_design_generation`
+blockiert. Ein spaeterer Finalentscheid wird erst mit explizitem Reviewer,
+Checklist-Confirm und, falls wirklich gewollt, separater Design-Seed-Freigabe
+recorded.
 
 Danach erzeugt der Orbit-Befehl
 `npm run kosmo:context-selection -- --project archive-intake/kosmo-projects/zg-07052026`

@@ -1,6 +1,6 @@
 # Kosmo Demo 001 Review Pack
 
-Generated: 2026-05-25T21:24:36.944Z
+Generated: 2026-05-25T21:33:35.523Z
 Project ID: `kosmo-demo-001`
 Risk level: `local_review_only`
 Readiness: `review_required`
@@ -83,6 +83,8 @@ Readiness: `review_required`
 - ok: `design/ifcopenshell-semantic-review.generated.md` (design, other, generated_needs_review)
 - ok: `design/ifc-human-review-viewer.generated.json` (design, other, generated_needs_review)
 - ok: `design/ifc-human-review-viewer.generated.html` (design, other, generated_needs_review)
+- ok: `design/ifc-human-review-decision.json` (design, other, generated_needs_review)
+- ok: `design/ifc-human-review-decision.md` (design, other, generated_needs_review)
 
 ## Context Selection
 
@@ -153,6 +155,12 @@ Readiness: `review_required`
 - IFC human review viewer previews: 3
 - IFC human review viewer open human checks: 10
 - IFC human review viewer html: design/ifc-human-review-viewer.generated.html
+- IFC human review decision: draft (ifc_human_review_decision_draft)
+- IFC human review decision value: keep_needs_more_source_review
+- IFC human review decision final: no
+- IFC human review decision reviewed by: -
+- IFC human review decision open human checks: 10
+- IFC human review decision design approval: no
 - model layer handoff: ready
 - model layer handoff layer exports: 5
 - model layer handoff planned GLBs: 5
@@ -230,8 +238,11 @@ Readiness: `review_required`
 - Generated output needs review: design/ifcopenshell-semantic-review.generated.md
 - Generated output needs review: design/ifc-human-review-viewer.generated.json
 - Generated output needs review: design/ifc-human-review-viewer.generated.html
+- Generated output needs review: design/ifc-human-review-decision.json
+- Generated output needs review: design/ifc-human-review-decision.md
 - Context selection still has undecided candidates: 2
 - Context source mapping still has pending review rows: 1
+- IFC human review decision exists but final human decision is not recorded.
 
 ## Recent Memory
 
@@ -243,6 +254,7 @@ Readiness: `review_required`
 
 - Review context-selection decisions before using candidates as design input.
 - Review pending source-mapping rows before syncing decisions to context-selection.
+- Open the IFC review viewer, complete the checklist and record a final IFC human decision.
 - Run npm run kosmo:blender-context-audit to reopen and verify the saved Blender review file.
 - Review source-map semantic candidates before any design-seed approval.
 - Review generated outputs before any public or external use.

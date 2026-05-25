@@ -141,6 +141,7 @@ function checkContextSelection() {
   const ifcLayerPlanPath = join(projectRoot, 'design/ifc-layer-plan.generated.json');
   const ifcHumanReviewPackPath = join(projectRoot, 'design/ifc-human-review-pack.generated.json');
   const ifcHumanReviewViewerPath = join(projectRoot, 'design/ifc-human-review-viewer.generated.json');
+  const ifcHumanReviewDecisionPath = join(projectRoot, 'design/ifc-human-review-decision.json');
   const modelLayerHandoffPath = join(projectRoot, 'design/model-layer-handoff.generated.json');
   const contextHandoffPath = join(projectRoot, 'design/context-handoff.generated.json');
   const blenderContextImportPath = join(projectRoot, 'design/blender-context-import.generated.json');
@@ -159,6 +160,7 @@ function checkContextSelection() {
   const ifcLayerPlan = existsSync(ifcLayerPlanPath) ? readJson(ifcLayerPlanPath) : null;
   const ifcHumanReviewPack = existsSync(ifcHumanReviewPackPath) ? readJson(ifcHumanReviewPackPath) : null;
   const ifcHumanReviewViewer = existsSync(ifcHumanReviewViewerPath) ? readJson(ifcHumanReviewViewerPath) : null;
+  const ifcHumanReviewDecision = existsSync(ifcHumanReviewDecisionPath) ? readJson(ifcHumanReviewDecisionPath) : null;
   const modelLayerHandoff = existsSync(modelLayerHandoffPath) ? readJson(modelLayerHandoffPath) : null;
   const contextHandoff = existsSync(contextHandoffPath) ? readJson(contextHandoffPath) : null;
   const blenderContextImport = existsSync(blenderContextImportPath) ? readJson(blenderContextImportPath) : null;
@@ -222,6 +224,18 @@ function checkContextSelection() {
   }
   if (ifcHumanReviewViewer && ifcHumanReviewViewer.status !== 'ifc_review_viewer_ready') {
     warnings.push('IFC human review viewer exists, but is not ready.');
+  }
+  if (ifcHumanReviewViewer?.status === 'ifc_review_viewer_ready' && !ifcHumanReviewDecision) {
+    warnings.push('IFC human review viewer is ready, but design/ifc-human-review-decision.json is missing.');
+  }
+  if (ifcHumanReviewDecision && ifcHumanReviewDecision.summary?.final_decision_recorded !== true) {
+    warnings.push('IFC human review decision exists, but final human decision is not recorded.');
+  }
+  if (ifcHumanReviewDecision?.decision === 'accepted_as_design_seed' && ifcHumanReviewDecision.summary?.design_generation_approval_granted !== true) {
+    warnings.push('IFC human review decision accepts a design seed, but design-generation approval is not granted.');
+  }
+  if (ifcHumanReviewDecision?.summary?.design_generation_approval_granted === true && selection.approved_for_design_generation !== true) {
+    warnings.push('IFC human review grants design-generation approval, but context-selection approved_for_design_generation is still false.');
   }
   if (ifcLayerPlanReady && !modelLayerHandoffReady) {
     warnings.push('IFC layer plan exists, but design/model-layer-handoff.generated.json is missing or still pending.');

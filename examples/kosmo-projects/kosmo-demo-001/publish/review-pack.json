@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-25T21:24:36.944Z",
+  "generated_at": "2026-05-25T21:33:35.523Z",
   "generator": "kosmo-project-package-review",
   "project": {
     "id": "kosmo-demo-001",
@@ -21,7 +21,7 @@
   "package_check": {
     "ok": true,
     "command": "npm run kosmo:package-check -- --project examples/kosmo-projects/kosmo-demo-001",
-    "output": "> architecture-cosmos@0.1.0 kosmo:package-check\n> node scripts/kosmo-project-package-check.mjs --project examples/kosmo-projects/kosmo-demo-001\n\nKosmo project package check\nProject: examples/kosmo-projects/kosmo-demo-001\nSchema: schema/kosmo-project-package.schema.json\n\nWarnings:\n- Context selection has undecided candidates: 2\n- Context source mapping has pending review rows: 1\n\nPackage check passed."
+    "output": "> architecture-cosmos@0.1.0 kosmo:package-check\n> node scripts/kosmo-project-package-check.mjs --project examples/kosmo-projects/kosmo-demo-001\n\nKosmo project package check\nProject: examples/kosmo-projects/kosmo-demo-001\nSchema: schema/kosmo-project-package.schema.json\n\nWarnings:\n- Context selection has undecided candidates: 2\n- Context source mapping has pending review rows: 1\n- IFC human review decision exists, but final human decision is not recorded.\n\nPackage check passed."
   },
   "module_summary": {
     "total": 8,
@@ -230,7 +230,7 @@
       "rights_status": "internal_only",
       "description": "Local review package scaffold.",
       "exists": true,
-      "size_bytes": 13225
+      "size_bytes": 14017
     },
     {
       "path": "design/context-decision-matrix.generated.json",
@@ -573,6 +573,24 @@
       "description": "Static local IFC human review dashboard.",
       "exists": true,
       "size_bytes": 14916
+    },
+    {
+      "path": "design/ifc-human-review-decision.json",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Human IFC decision gate for context/design-seed handling.",
+      "exists": true,
+      "size_bytes": 7215
+    },
+    {
+      "path": "design/ifc-human-review-decision.md",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Human-readable IFC decision record.",
+      "exists": true,
+      "size_bytes": 3555
     }
   ],
   "context_review": {
@@ -663,6 +681,13 @@
     "ifc_human_review_viewer_preview_count": 3,
     "ifc_human_review_viewer_open_human_check_count": 10,
     "ifc_human_review_viewer_html": "design/ifc-human-review-viewer.generated.html",
+    "ifc_human_review_decision_exists": true,
+    "ifc_human_review_decision_status": "ifc_human_review_decision_draft",
+    "ifc_human_review_decision": "keep_needs_more_source_review",
+    "ifc_human_review_decision_final": false,
+    "ifc_human_review_decision_reviewed_by": null,
+    "ifc_human_review_decision_open_human_check_count": 10,
+    "ifc_human_review_decision_design_generation_approval": false,
     "model_layer_handoff_exists": true,
     "model_layer_handoff_status": "model_layer_handoff_ready_for_human_review",
     "model_layer_handoff_ready": true,
@@ -827,12 +852,16 @@
     "Generated output needs review: design/ifcopenshell-semantic-review.generated.md",
     "Generated output needs review: design/ifc-human-review-viewer.generated.json",
     "Generated output needs review: design/ifc-human-review-viewer.generated.html",
+    "Generated output needs review: design/ifc-human-review-decision.json",
+    "Generated output needs review: design/ifc-human-review-decision.md",
     "Context selection still has undecided candidates: 2",
-    "Context source mapping still has pending review rows: 1"
+    "Context source mapping still has pending review rows: 1",
+    "IFC human review decision exists but final human decision is not recorded."
   ],
   "next_actions": [
     "Review context-selection decisions before using candidates as design input.",
     "Review pending source-mapping rows before syncing decisions to context-selection.",
+    "Open the IFC review viewer, complete the checklist and record a final IFC human decision.",
     "Run npm run kosmo:blender-context-audit to reopen and verify the saved Blender review file.",
     "Review source-map semantic candidates before any design-seed approval.",
     "Review generated outputs before any public or external use.",

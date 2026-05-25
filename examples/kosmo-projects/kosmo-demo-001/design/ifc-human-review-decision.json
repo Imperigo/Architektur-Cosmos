@@ -1,0 +1,183 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-05-25T21:33:35.159Z",
+  "generator": "kosmo-ifc-human-review-decision",
+  "project_id": "kosmo-demo-001",
+  "project_name": "Kosmo Demo 001",
+  "status": "ifc_human_review_decision_draft",
+  "rights_status": "internal_only",
+  "candidate_id": "ifc-role-3-semantic_building_elements",
+  "decision": "keep_needs_more_source_review",
+  "reviewed_by": null,
+  "reviewed_at": null,
+  "notes": [],
+  "policy": {
+    "decision_file_does_not_modify_context_selection": true,
+    "decision_file_does_not_modify_source_mapping": true,
+    "draft_is_not_human_approval": true,
+    "accepted_as_design_seed_requires_record_final": true,
+    "accepted_as_design_seed_requires_confirm_checklist": true,
+    "accepted_as_design_seed_requires_approve_design_generation_flag": true,
+    "design_generation_still_requires_context_selection_approval": true
+  },
+  "source_files": {
+    "manifest": {
+      "path": "kosmo.project.json",
+      "name": "kosmo.project.json",
+      "exists": true,
+      "size_bytes": 16147
+    },
+    "contextSelection": {
+      "path": "design/context-selection.json",
+      "name": "context-selection.json",
+      "exists": true,
+      "size_bytes": 2100
+    },
+    "sourceMapping": {
+      "path": "design/context-source-mapping.json",
+      "name": "context-source-mapping.json",
+      "exists": true,
+      "size_bytes": 2929
+    },
+    "sourceReview": {
+      "path": "design/context-source-review.generated.json",
+      "name": "context-source-review.generated.json",
+      "exists": true,
+      "size_bytes": 1078
+    },
+    "humanReviewPack": {
+      "path": "design/ifc-human-review-pack.generated.json",
+      "name": "ifc-human-review-pack.generated.json",
+      "exists": true,
+      "size_bytes": 20176
+    },
+    "humanReviewViewer": {
+      "path": "design/ifc-human-review-viewer.generated.json",
+      "name": "ifc-human-review-viewer.generated.json",
+      "exists": true,
+      "size_bytes": 66817
+    },
+    "ifcOpenShellReview": {
+      "path": "design/ifcopenshell-semantic-review.generated.json",
+      "name": "ifcopenshell-semantic-review.generated.json",
+      "exists": true,
+      "size_bytes": 5871
+    },
+    "existingDecision": {
+      "path": "design/ifc-human-review-decision.json",
+      "name": "ifc-human-review-decision.json",
+      "exists": true,
+      "size_bytes": 7215
+    }
+  },
+  "current_state": {
+    "context_selection_decision": null,
+    "context_selection_approved_for_design_generation": false,
+    "source_mapping_decision": "pending_review",
+    "source_review_status": "no_source_review_targets",
+    "source_review_open_human_review_count": 0,
+    "human_review_pack_status": "ifc_human_review_packet_incomplete",
+    "human_review_viewer_status": "ifc_review_viewer_ready",
+    "ifcopenshell_review_status": "ifcopenshell_semantic_review_ready"
+  },
+  "evidence_snapshot": {
+    "evidence_ready": false,
+    "design_generation_allowed_before_decision": false,
+    "human_pack_machine_checks_passed": 12,
+    "human_pack_machine_check_count": 15,
+    "ifcopenshell_machine_checks_passed": 13,
+    "ifcopenshell_machine_check_count": 13,
+    "ifc_proxy_count": 2,
+    "ifc_body_brep_count": 2,
+    "open_pack_human_check_count": 10,
+    "viewer_preview_count": 3
+  },
+  "human_checklist": [
+    {
+      "id": "semantic_viewer_import",
+      "status": "pending_human_review",
+      "question": "Open `data/source-files/Bestand_Kontext.ifc` in Bonsai/IfcOpenShell or equivalent and confirm the semantic tree loads without import errors.",
+      "evidence_hint": "IfcOpenShell machine import passed 13/13; visual Bonsai-style tree review remains human.",
+      "reviewer_note": ""
+    },
+    {
+      "id": "element_class_review",
+      "status": "pending_human_review",
+      "question": "Confirm whether 2 IFCBUILDINGELEMENTPROXY objects are acceptable as semantic Bestand/context elements or need reclassification.",
+      "evidence_hint": "2 IFCBUILDINGELEMENTPROXY elements found.",
+      "reviewer_note": ""
+    },
+    {
+      "id": "storey_review",
+      "status": "pending_human_review",
+      "question": "Confirm all 2 elements belong to IFCBUILDINGSTOREY #4 Level 0 and there are no missing/extra storeys.",
+      "evidence_hint": "Container distribution: IFCBUILDINGSTOREY #4 Level 0: 2",
+      "reviewer_note": ""
+    },
+    {
+      "id": "placement_units_review",
+      "status": "pending_human_review",
+      "question": "Confirm object placements and project units match the expected meter-based project context.",
+      "evidence_hint": "2 elements have object placement; geometry extents are 10 x 8 x 3.35 m.",
+      "reviewer_note": ""
+    },
+    {
+      "id": "origin_alignment_review",
+      "status": "pending_human_review",
+      "question": "Compare the semantic IFC import against DXF underlay, IFC bounds and LV95/project origin.",
+      "evidence_hint": "Alignment hint: missing_dxf_source; center offset estimate 0 m.",
+      "reviewer_note": ""
+    },
+    {
+      "id": "geometry_outlier_review",
+      "status": "pending_human_review",
+      "question": "Inspect large footprint/height outliers in the geometry preview before trusting the IFC as a design seed.",
+      "evidence_hint": "12 faces resolved; inspect SVG preview and element samples.",
+      "reviewer_note": ""
+    },
+    {
+      "id": "property_set_review",
+      "status": "pending_human_review",
+      "question": "Check `Pset_AtelierBlaupause_Object` fields such as OBJEKTART, DACH_MIN, DACH_MAX and gml_id for reliability.",
+      "evidence_hint": "Property set distribution: Pset_KosmoDemo: 2",
+      "reviewer_note": ""
+    },
+    {
+      "id": "layer_mapping_review",
+      "status": "pending_human_review",
+      "question": "Review the generated Mass/material_unknown layer plan and decide whether finer wall/slab/roof/support classes are possible.",
+      "evidence_hint": "5 generated layer groups; approved_for_import is false.",
+      "reviewer_note": ""
+    },
+    {
+      "id": "blender_reference_review",
+      "status": "pending_human_review",
+      "question": "Open the audited Blender review blend and visually confirm it is only a locked reference underlay.",
+      "evidence_hint": "Audit status null; mesh faces 0.",
+      "reviewer_note": ""
+    },
+    {
+      "id": "final_seed_decision",
+      "status": "pending_human_review",
+      "question": "Only after the checks above: decide keep as source review, accept as context, reject or approve as design seed.",
+      "evidence_hint": "Recommended current decision remains keep_needs_more_source_review.",
+      "reviewer_note": ""
+    }
+  ],
+  "summary": {
+    "final_decision_recorded": false,
+    "positive_decision": false,
+    "design_seed_decision": false,
+    "design_generation_approval_requested": false,
+    "design_generation_approval_granted": false,
+    "context_selection_update_required": false,
+    "source_mapping_update_required": true,
+    "check_count": 10,
+    "confirmed_check_count": 0,
+    "failed_check_count": 0,
+    "open_human_check_count": 10,
+    "evidence_ready": false,
+    "recommended_next_step": "open_viewer_and_record_final_human_decision"
+  },
+  "recommended_context_selection_patch": null
+}
