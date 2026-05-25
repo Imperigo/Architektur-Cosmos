@@ -11,6 +11,8 @@ const candidatesPath = join(projectRoot, args.candidates || 'design/context-cand
 const selectionPath = join(projectRoot, args.output || 'design/context-selection.json');
 
 const decisions = new Set(['undecided', 'accepted_as_context', 'accepted_as_design_seed', 'needs_more_source_review', 'rejected']);
+const decisionUpdates = parseDecisionUpdates(asArray(args.decision));
+const noteUpdates = parseNoteUpdates(asArray(args.note));
 
 main().catch((error) => {
   console.error(error.message);
@@ -24,7 +26,12 @@ async function main() {
 
   const candidates = readJson(candidatesPath);
   const existing = existsSync(selectionPath) ? readJson(selectionPath) : null;
-  const selection = buildSelection(candidates, existing);
+  const selection = buildSelection(candidates, existing, {
+    decisionUpdates,
+    noteUpdates,
+    reviewedBy: args['reviewed-by'] || null,
+    approveDesignGeneration: Boolean(args['approve-design-generation'])
+  });
 
   await mkdir(resolve(selectionPath, '..'), { recursive: true });
   await writeFile(selectionPath, `${JSON.stringify(selection, null, 2)}\n`, 'utf8');
@@ -35,14 +42,18 @@ async function main() {
   console.log(`Candidates: ${selection.summary.candidate_count}`);
   console.log(`Undecided: ${selection.summary.undecided_count}`);
   console.log(`Accepted as design seed: ${selection.summary.accepted_as_design_seed_count}`);
+  console.log(`Approved for design generation: ${selection.approved_for_design_generation ? 'yes' : 'no'}`);
   console.log(`Wrote: ${relative(root, selectionPath)}`);
   if (registered.length) console.log(`Registered: ${registered.map((item) => relative(root, item)).join(', ')}`);
 }
 
-function buildSelection(candidatesPayload, existing) {
+function buildSelection(candidatesPayload, existing, options = {}) {
   const candidateList = Array.isArray(candidatesPayload.candidates) ? candidatesPayload.candidates : [];
   const existingById = new Map((existing?.selections || []).map((item) => [item.candidate_id, item]));
   const candidateIds = new Set(candidateList.map((candidate) => candidate.id).filter(Boolean));
+  validateUpdateTargets(candidateIds, options.decisionUpdates, '--decision');
+  validateUpdateTargets(candidateIds, options.noteUpdates, '--note');
+  const reviewAt = new Date().toISOString();
   const staleSelections = (existing?.selections || [])
     .filter((item) => item?.candidate_id && !candidateIds.has(item.candidate_id))
     .map((item) => ({
@@ -53,7 +64,12 @@ function buildSelection(candidatesPayload, existing) {
 
   const selections = candidateList.map((candidate) => {
     const previous = existingById.get(candidate.id) || {};
-    const decision = normalizeDecision(previous.decision);
+    const update = options.decisionUpdates?.get(candidate.id) || null;
+    const decision = update || normalizeDecision(previous.decision);
+    const notes = Array.isArray(previous.notes) ? [...previous.notes] : [];
+    const addedNote = options.noteUpdates?.get(candidate.id);
+    if (addedNote && !notes.includes(addedNote)) notes.push(addedNote);
+    const wasReviewed = Boolean(update || addedNote);
     return {
       candidate_id: candidate.id,
       label: candidate.label || candidate.id,
@@ -62,10 +78,10 @@ function buildSelection(candidatesPayload, existing) {
       confidence: candidate.confidence || 'unknown',
       decision,
       selected_use: previous.selected_use || candidate.suggested_use || null,
-      review_required: true,
-      approved_by: previous.approved_by || null,
-      approved_at: previous.approved_at || null,
-      notes: Array.isArray(previous.notes) ? previous.notes : [],
+      review_required: decision === 'undecided' || decision === 'needs_more_source_review',
+      approved_by: wasReviewed && decision !== 'undecided' ? options.reviewedBy || previous.approved_by || 'local-review' : previous.approved_by || null,
+      approved_at: wasReviewed && decision !== 'undecided' ? reviewAt : previous.approved_at || null,
+      notes,
       warnings: Array.isArray(candidate.warnings) ? candidate.warnings : [],
       evidence_ref: `design/context-candidates.generated.json#${candidate.id}`
     };
@@ -73,11 +89,14 @@ function buildSelection(candidatesPayload, existing) {
 
   const summary = summarize(selections, staleSelections);
   const review = {
-    reviewed_by: existing?.review?.reviewed_by || null,
-    reviewed_at: existing?.review?.reviewed_at || null,
+    reviewed_by: options.reviewedBy || existing?.review?.reviewed_by || null,
+    reviewed_at: options.reviewedBy || options.decisionUpdates?.size || options.noteUpdates?.size ? reviewAt : existing?.review?.reviewed_at || null,
     notes: Array.isArray(existing?.review?.notes) ? existing.review.notes : []
   };
-  const approvedForDesign = Boolean(existing?.approved_for_design_generation) && summary.accepted_as_design_seed_count > 0 && summary.undecided_count === 0;
+  const approvedForDesign = Boolean(options.approveDesignGeneration || existing?.approved_for_design_generation)
+    && summary.accepted_as_design_seed_count > 0
+    && summary.undecided_count === 0
+    && summary.needs_more_source_review_count === 0;
 
   return {
     schema_version: '0.1',
@@ -127,6 +146,51 @@ function readiness(summary, approvedForDesign) {
 
 function normalizeDecision(value) {
   return decisions.has(value) ? value : 'undecided';
+}
+
+function parseDecisionUpdates(items) {
+  const updates = new Map();
+  for (const item of items) {
+    const [candidateId, decision] = splitKeyValue(item, '--decision');
+    const normalized = normalizeDecision(decision);
+    if (normalized !== decision) {
+      throw new Error(`Invalid decision for ${candidateId}: ${decision}. Allowed: ${Array.from(decisions).join(', ')}`);
+    }
+    updates.set(candidateId, normalized);
+  }
+  return updates;
+}
+
+function parseNoteUpdates(items) {
+  const updates = new Map();
+  for (const item of items) {
+    const [candidateId, note] = splitKeyValue(item, '--note');
+    updates.set(candidateId, note);
+  }
+  return updates;
+}
+
+function validateUpdateTargets(candidateIds, updates, flag) {
+  for (const candidateId of updates?.keys() || []) {
+    if (!candidateIds.has(candidateId)) {
+      throw new Error(`Unknown candidate for ${flag}: ${candidateId}`);
+    }
+  }
+}
+
+function splitKeyValue(value, flag) {
+  if (typeof value !== 'string' || !value.includes('=')) {
+    throw new Error(`${flag} expects candidate_id=value`);
+  }
+  const [key, ...rest] = value.split('=');
+  const joined = rest.join('=').trim();
+  if (!key.trim() || !joined) throw new Error(`${flag} expects candidate_id=value`);
+  return [key.trim(), joined];
+}
+
+function asArray(value) {
+  if (value === undefined || value === null || value === false) return [];
+  return Array.isArray(value) ? value : [value];
 }
 
 async function ensurePackageReferences(projectRoot) {
@@ -186,11 +250,19 @@ function parseArgs(argv) {
     const key = item.slice(2);
     const next = argv[index + 1];
     if (next && !next.startsWith('--')) {
-      parsed[key] = next;
+      addArg(parsed, key, next);
       index += 1;
     } else {
-      parsed[key] = true;
+      addArg(parsed, key, true);
     }
   }
   return parsed;
+}
+
+function addArg(parsed, key, value) {
+  if (parsed[key] === undefined) {
+    parsed[key] = value;
+    return;
+  }
+  parsed[key] = Array.isArray(parsed[key]) ? [...parsed[key], value] : [parsed[key], value];
 }

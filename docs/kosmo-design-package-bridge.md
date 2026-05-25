@@ -154,6 +154,20 @@ alle Kandidaten bleiben `undecided`, `approved_for_design_generation` bleibt
 Das Tool registriert die Selection-Datei auch in `kosmo.project.json` und
 `publish/export-manifest.json`, falls sie dort noch fehlt.
 
+Einzelne Kandidaten koennen im gleichen Tool bewusst entschieden werden:
+
+```bash
+npm run kosmo:context-selection -- --project <projektpfad> \
+  --decision context-origin=accepted_as_context \
+  --decision context-perimeter=needs_more_source_review \
+  --note context-origin="Koordinaten mit Lageplan abgeglichen" \
+  --reviewed-by "Local Reviewer"
+```
+
+Erst wenn alle Kandidaten entschieden sind und mindestens ein Kandidat als
+`accepted_as_design_seed` markiert ist, darf mit
+`--approve-design-generation` die finale lokale Design-Freigabe gesetzt werden.
+
 ## 5. Was beim Write-back entsteht
 
 Der Export-Operator liest die getaggten Blender-Raumobjekte des aktiven Projekts

@@ -92,7 +92,7 @@
       "command": "npm run kosmo:context-selection -- --project {project_path}",
       "output_root": "{project_path}/design",
       "review_output": "{project_path}/design/context-selection.json",
-      "purpose": "Create or refresh a human-reviewable context selection from generated Prepare/DXF/IFC context candidates before any candidate can become a design seed.",
+      "purpose": "Create, refresh or explicitly decide a human-reviewable context selection from generated Prepare/DXF/IFC context candidates before any candidate can become a design seed. Supports --decision candidate=accepted_as_context|accepted_as_design_seed|needs_more_source_review|rejected and final --approve-design-generation.",
       "approval_required_before_public_use": false
     },
     {

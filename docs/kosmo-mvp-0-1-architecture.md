@@ -459,6 +459,20 @@ Status: bestanden. Im ZG-Testpaket erzeugt der Befehl
 `approved_for_design_generation: false`. Das ist der bewusste Stopp vor jeder
 automatischen Design-Generierung.
 
+Entscheidungen koennen spaeter gezielt gesetzt werden, ohne die ganze Datei
+manuell zu editieren:
+
+```bash
+npm run kosmo:context-selection -- --project archive-intake/kosmo-projects/zg-07052026 \
+  --decision context-origin=accepted_as_context \
+  --decision context-perimeter=needs_more_source_review \
+  --reviewed-by "Local Reviewer"
+```
+
+`--approve-design-generation` bleibt der separate letzte Gate-Schalter und ist
+nur sinnvoll, wenn keine Kandidaten mehr `undecided` oder
+`needs_more_source_review` sind.
+
 Review-Pack erzeugen:
 
 ```bash
