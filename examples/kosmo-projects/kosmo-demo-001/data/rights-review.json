@@ -1,0 +1,14 @@
+{
+  "schema_version": "0.1",
+  "overall_status": "internal_only",
+  "rules": [
+    "No output from this demo package is public-safe by default.",
+    "Generated geometry and images require human review before publication.",
+    "Reference entries are for internal design context only unless rights are checked."
+  ],
+  "blocked_actions": [
+    "public_release",
+    "external_upload",
+    "client_delivery"
+  ]
+}

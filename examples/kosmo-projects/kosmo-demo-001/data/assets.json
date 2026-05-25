@@ -1,0 +1,21 @@
+{
+  "schema_version": "0.1",
+  "assets": [
+    {
+      "id": "asset-worktable",
+      "label": "Long model worktable",
+      "type": "furniture",
+      "target_module": "Kosmo Design",
+      "rights_status": "generated_needs_review",
+      "status": "planned"
+    },
+    {
+      "id": "asset-reference-wall",
+      "label": "Project reference wall",
+      "type": "interior_element",
+      "target_module": "Kosmo Viz",
+      "rights_status": "generated_needs_review",
+      "status": "planned"
+    }
+  ]
+}

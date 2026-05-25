@@ -1,0 +1,51 @@
+{
+  "schema_version": "0.1",
+  "program": [
+    {
+      "id": "studio",
+      "label": "Shared studio",
+      "target_area_m2": 48
+    },
+    {
+      "id": "library",
+      "label": "Project library",
+      "target_area_m2": 18
+    },
+    {
+      "id": "meeting",
+      "label": "Small meeting room",
+      "target_area_m2": 16
+    },
+    {
+      "id": "service",
+      "label": "Service core",
+      "target_area_m2": 10
+    }
+  ],
+  "site_boundaries": [
+    {
+      "id": "demo-boundary",
+      "type": "conceptual_rectangle",
+      "dimensions_m": [18, 12],
+      "confidence": "manual_demo"
+    }
+  ],
+  "building_law_constraints": [],
+  "design_goals": [
+    "Keep the model simple and regeneratable.",
+    "Make rooms easy to map to Blender collections.",
+    "Keep every generated output marked as review-required."
+  ],
+  "open_questions": [
+    "Which Swiss/SIA constraints should become MVP 0.2 checks?",
+    "Should Kosmo Draw own plan style, or should it read office templates?"
+  ],
+  "uncertainties": [
+    {
+      "id": "u-001",
+      "topic": "site",
+      "description": "Coordinates are demo values and not a real project parcel.",
+      "severity": "low"
+    }
+  ]
+}

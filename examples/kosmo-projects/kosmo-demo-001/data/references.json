@@ -1,0 +1,26 @@
+{
+  "schema_version": "0.1",
+  "references": [
+    {
+      "id": "ref-villa-savoye",
+      "title": "Villa Savoye",
+      "source": "Architecture Cosmos mock entry",
+      "use": "spatial clarity and plan-to-volume reference",
+      "rights_status": "reference_only"
+    },
+    {
+      "id": "ref-bauhaus-dessau",
+      "title": "Bauhaus Dessau",
+      "source": "Architecture Cosmos mock entry",
+      "use": "studio / school / workshop atmosphere",
+      "rights_status": "reference_only"
+    },
+    {
+      "id": "ref-salk-like-lab",
+      "title": "Architecture lab typology",
+      "source": "conceptual placeholder",
+      "use": "workbench, courtyard and research mood",
+      "rights_status": "generated_needs_review"
+    }
+  ]
+}

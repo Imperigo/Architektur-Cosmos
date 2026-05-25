@@ -1,0 +1,21 @@
+{
+  "schema_version": "0.1",
+  "cameras": [
+    {
+      "id": "cam-entry-eye",
+      "label": "Entry eye-level",
+      "position": [7.5, -9, 1.7],
+      "target": [4, 3, 1.4],
+      "lens_mm": 28,
+      "purpose": "human-scale preview"
+    },
+    {
+      "id": "cam-axon",
+      "label": "Concept axon",
+      "position": [10, -12, 9],
+      "target": [4, 3, 2],
+      "lens_mm": 45,
+      "purpose": "overview"
+    }
+  ]
+}

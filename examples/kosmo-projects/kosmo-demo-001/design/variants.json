@@ -1,0 +1,12 @@
+{
+  "schema_version": "0.1",
+  "variants": [
+    {
+      "id": "variant-a",
+      "label": "Compact lab bar",
+      "status": "active",
+      "description": "Simple two-story bar with studio and reference wall on ground floor.",
+      "source": "manual_demo_seed"
+    }
+  ]
+}

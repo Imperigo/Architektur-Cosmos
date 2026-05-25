@@ -1,0 +1,26 @@
+{
+  "schema_version": "0.1",
+  "exports": [
+    {
+      "path": "draw/exports/ground-floor-plan.svg",
+      "module": "Kosmo Draw",
+      "format": "svg",
+      "status": "placeholder",
+      "rights_status": "generated_needs_review"
+    },
+    {
+      "path": "draw/exports/section-a.svg",
+      "module": "Kosmo Draw",
+      "format": "svg",
+      "status": "placeholder",
+      "rights_status": "generated_needs_review"
+    },
+    {
+      "path": "publish/review-pack.md",
+      "module": "Kosmo Publish",
+      "format": "markdown",
+      "status": "scaffold",
+      "rights_status": "internal_only"
+    }
+  ]
+}

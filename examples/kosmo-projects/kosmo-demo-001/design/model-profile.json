@@ -1,0 +1,61 @@
+{
+  "schema_version": "0.1",
+  "units": "meters",
+  "source_confidence": "conceptual",
+  "stories": [
+    {
+      "id": "level-00",
+      "label": "EG",
+      "elevation_m": 0,
+      "height_m": 3.2
+    },
+    {
+      "id": "level-01",
+      "label": "1.OG",
+      "elevation_m": 3.2,
+      "height_m": 3.2
+    }
+  ],
+  "rooms": [
+    {
+      "id": "room-studio",
+      "story_id": "level-00",
+      "name": "Shared Studio",
+      "function": "work",
+      "area_m2": 48,
+      "boundary_xy": [[0, 0], [8, 0], [8, 6], [0, 6]]
+    },
+    {
+      "id": "room-library",
+      "story_id": "level-00",
+      "name": "Project Library",
+      "function": "reference",
+      "area_m2": 18,
+      "boundary_xy": [[8, 0], [11, 0], [11, 6], [8, 6]]
+    },
+    {
+      "id": "room-meeting",
+      "story_id": "level-01",
+      "name": "Meeting",
+      "function": "meeting",
+      "area_m2": 16,
+      "boundary_xy": [[0, 0], [4, 0], [4, 4], [0, 4]]
+    }
+  ],
+  "walls": [],
+  "areas": [
+    {
+      "id": "area-gfa-concept",
+      "label": "Conceptual GFA",
+      "value_m2": 92
+    }
+  ],
+  "collections": [
+    "Kosmo_Demo_001",
+    "Kosmo_Demo_001/00_Boundaries",
+    "Kosmo_Demo_001/10_Rooms",
+    "Kosmo_Demo_001/20_Walls",
+    "Kosmo_Demo_001/30_Draw",
+    "Kosmo_Demo_001/40_Viz"
+  ]
+}

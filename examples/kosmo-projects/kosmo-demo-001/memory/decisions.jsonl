@@ -1,0 +1,2 @@
+{"timestamp":"2026-05-25T00:00:00+02:00","module":"zentrale","decision":"Use a local project package as the first Kosmo MVP 0.1 data contract.","status":"accepted","review_required":false}
+{"timestamp":"2026-05-25T00:05:00+02:00","module":"orbit","decision":"Keep MVP 0.1 local-only and review-first.","status":"accepted","review_required":false}

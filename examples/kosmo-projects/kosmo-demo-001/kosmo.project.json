@@ -1,0 +1,157 @@
+{
+  "schema_version": "0.1",
+  "project_id": "kosmo-demo-001",
+  "name": "Kosmo Demo 001",
+  "created_at": "2026-05-25",
+  "updated_at": "2026-05-25",
+  "status": "draft",
+  "risk_level": "local_review_only",
+  "site": {
+    "address": "Demo site, Zurich region",
+    "locality": "Zurich",
+    "country": "CH",
+    "latitude": 47.3769,
+    "longitude": 8.5417,
+    "north_rotation_degrees": 0,
+    "coordinate_source": "manual_demo_value"
+  },
+  "modules": {
+    "prepare": {
+      "status": "review_ready",
+      "summary": "Initial brief, constraints and open questions are available.",
+      "last_run_at": null,
+      "owner": "Kosmo Prepare"
+    },
+    "data": {
+      "status": "review_ready",
+      "summary": "Local references, sources and asset candidates are listed.",
+      "last_run_at": null,
+      "owner": "Kosmo Data"
+    },
+    "orbit": {
+      "status": "review_ready",
+      "summary": "Package manifest and module folders exist.",
+      "last_run_at": null,
+      "owner": "Kosmo Orbit"
+    },
+    "design": {
+      "status": "in_progress",
+      "summary": "Conceptual two-story room profile is available for Blender import.",
+      "last_run_at": null,
+      "owner": "Kosmo Design"
+    },
+    "draw": {
+      "status": "in_progress",
+      "summary": "Placeholder ground floor and section SVG exports are available.",
+      "last_run_at": null,
+      "owner": "Kosmo Draw"
+    },
+    "viz": {
+      "status": "pending",
+      "summary": "Camera and render presets are defined, no render image generated yet.",
+      "last_run_at": null,
+      "owner": "Kosmo Viz"
+    },
+    "publish": {
+      "status": "pending",
+      "summary": "Review pack scaffold exists and awaits generated outputs.",
+      "last_run_at": null,
+      "owner": "Kosmo Publish"
+    },
+    "zentrale": {
+      "status": "pending",
+      "summary": "Memory logs exist, not yet registered in the live Control Hub.",
+      "last_run_at": null,
+      "owner": "Kosmo Zentrale"
+    }
+  },
+  "package_paths": {
+    "brief": "brief/",
+    "data": "data/",
+    "design": "design/",
+    "draw": "draw/",
+    "viz": "viz/",
+    "publish": "publish/",
+    "memory": "memory/"
+  },
+  "inputs": [
+    {
+      "path": "brief/kosmo-brief.md",
+      "type": "brief",
+      "module": "prepare",
+      "rights_status": "internal_only",
+      "description": "Human-readable demo brief."
+    },
+    {
+      "path": "brief/constraints.json",
+      "type": "constraints",
+      "module": "prepare",
+      "rights_status": "internal_only",
+      "description": "Structured constraints and assumptions."
+    },
+    {
+      "path": "data/references.json",
+      "type": "reference_list",
+      "module": "data",
+      "rights_status": "internal_only",
+      "description": "Reference candidates for the demo concept."
+    }
+  ],
+  "outputs": [
+    {
+      "path": "design/model-profile.json",
+      "type": "model_profile",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Conceptual model profile for Blender/Kosmo Design."
+    },
+    {
+      "path": "draw/exports/ground-floor-plan.svg",
+      "type": "plan_export",
+      "module": "draw",
+      "rights_status": "generated_needs_review",
+      "description": "Placeholder vector ground floor export."
+    },
+    {
+      "path": "draw/exports/section-a.svg",
+      "type": "plan_export",
+      "module": "draw",
+      "rights_status": "generated_needs_review",
+      "description": "Placeholder vector section export."
+    },
+    {
+      "path": "publish/review-pack.md",
+      "type": "review_pack",
+      "module": "publish",
+      "rights_status": "internal_only",
+      "description": "Local review package scaffold."
+    }
+  ],
+  "review_gates": {
+    "public_release": {
+      "mode": "disabled",
+      "reason": "Demo package is local-only and contains unreviewed generated content.",
+      "approved_by": null,
+      "approved_at": null
+    },
+    "external_upload": {
+      "mode": "disabled",
+      "reason": "No external upload is allowed in MVP 0.1 demo.",
+      "approved_by": null,
+      "approved_at": null
+    },
+    "client_delivery": {
+      "mode": "disabled",
+      "reason": "Not a client package.",
+      "approved_by": null,
+      "approved_at": null
+    },
+    "paid_cloud_job": {
+      "mode": "requires_human_approval",
+      "reason": "Any paid cloud generation must be approved explicitly.",
+      "approved_by": null,
+      "approved_at": null
+    }
+  },
+  "notes": "First local package contract demo for Architektur Kosmos / Kosmo MVP 0.1."
+}

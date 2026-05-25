@@ -1,0 +1,21 @@
+{
+  "schema_version": "0.1",
+  "sources": [
+    {
+      "id": "source-brief",
+      "title": "Kosmo Demo Brief",
+      "type": "local_note",
+      "path": "brief/kosmo-brief.md",
+      "rights_status": "internal_only",
+      "confidence": "high"
+    },
+    {
+      "id": "source-vision",
+      "title": "Architektur Kosmos Network Concept",
+      "type": "repo_doc",
+      "path": "../../../docs/architektur-kosmos-network-concept.md",
+      "rights_status": "internal_only",
+      "confidence": "high"
+    }
+  ]
+}

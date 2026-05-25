@@ -1,0 +1,24 @@
+{
+  "schema_version": "0.1",
+  "presets": [
+    {
+      "id": "eevee-live-preview",
+      "engine": "EEVEE",
+      "resolution": [1280, 720],
+      "sun": {
+        "enabled": true,
+        "date": "2026-06-21",
+        "time": "10:00",
+        "timezone": "Europe/Zurich"
+      },
+      "status": "planned"
+    },
+    {
+      "id": "cycles-review-snapshot",
+      "engine": "CYCLES",
+      "resolution": [1600, 1000],
+      "samples": 64,
+      "status": "planned"
+    }
+  ]
+}

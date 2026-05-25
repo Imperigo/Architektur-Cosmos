@@ -1,0 +1,2 @@
+{"timestamp":"2026-05-25T00:20:00+02:00","module":"prepare","topic":"site","severity":"low","description":"Demo coordinates are not a real parcel."}
+{"timestamp":"2026-05-25T00:21:00+02:00","module":"draw","topic":"plan_export","severity":"medium","description":"SVG plans are placeholders, not generated from Blender yet."}

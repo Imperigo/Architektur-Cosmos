@@ -1,0 +1,229 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://architekturkosmos.ch/schema/kosmo-project-package.schema.json",
+  "title": "Kosmo Project Package",
+  "description": "Minimal local project manifest for Kosmo MVP 0.1. It connects Kosmo Prepare, Data, Orbit, Design, Draw, Viz, Publish and Zentrale without requiring a live backend.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "project_id",
+    "name",
+    "created_at",
+    "risk_level",
+    "site",
+    "modules",
+    "package_paths",
+    "review_gates"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "0.1"
+    },
+    "project_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{2,80}$"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "active", "review_ready", "archived"],
+      "default": "draft"
+    },
+    "risk_level": {
+      "type": "string",
+      "enum": ["local_review_only", "internal_pilot", "public_candidate"]
+    },
+    "site": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["address", "latitude", "longitude", "north_rotation_degrees"],
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "locality": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        },
+        "latitude": {
+          "type": ["number", "null"],
+          "minimum": -90,
+          "maximum": 90
+        },
+        "longitude": {
+          "type": ["number", "null"],
+          "minimum": -180,
+          "maximum": 180
+        },
+        "north_rotation_degrees": {
+          "type": "number",
+          "minimum": -360,
+          "maximum": 360
+        },
+        "coordinate_source": {
+          "type": "string"
+        }
+      }
+    },
+    "modules": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["prepare", "data", "orbit", "design", "draw", "viz", "publish", "zentrale"],
+      "properties": {
+        "prepare": { "$ref": "#/$defs/module_state" },
+        "data": { "$ref": "#/$defs/module_state" },
+        "orbit": { "$ref": "#/$defs/module_state" },
+        "design": { "$ref": "#/$defs/module_state" },
+        "draw": { "$ref": "#/$defs/module_state" },
+        "viz": { "$ref": "#/$defs/module_state" },
+        "publish": { "$ref": "#/$defs/module_state" },
+        "zentrale": { "$ref": "#/$defs/module_state" }
+      }
+    },
+    "package_paths": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["brief", "data", "design", "draw", "viz", "publish", "memory"],
+      "properties": {
+        "brief": { "$ref": "#/$defs/relative_path" },
+        "data": { "$ref": "#/$defs/relative_path" },
+        "design": { "$ref": "#/$defs/relative_path" },
+        "draw": { "$ref": "#/$defs/relative_path" },
+        "viz": { "$ref": "#/$defs/relative_path" },
+        "publish": { "$ref": "#/$defs/relative_path" },
+        "memory": { "$ref": "#/$defs/relative_path" }
+      }
+    },
+    "inputs": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/package_artifact" },
+      "default": []
+    },
+    "outputs": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/package_artifact" },
+      "default": []
+    },
+    "review_gates": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["public_release", "external_upload", "client_delivery", "paid_cloud_job"],
+      "properties": {
+        "public_release": { "$ref": "#/$defs/gate_state" },
+        "external_upload": { "$ref": "#/$defs/gate_state" },
+        "client_delivery": { "$ref": "#/$defs/gate_state" },
+        "paid_cloud_job": { "$ref": "#/$defs/gate_state" }
+      }
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "$defs": {
+    "module_state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["pending", "in_progress", "review_ready", "approved", "blocked", "skipped"]
+        },
+        "summary": {
+          "type": "string"
+        },
+        "last_run_at": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        },
+        "owner": {
+          "type": "string"
+        }
+      }
+    },
+    "gate_state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode"],
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": ["disabled", "requires_human_approval", "approved"]
+        },
+        "reason": {
+          "type": "string"
+        },
+        "approved_by": {
+          "type": ["string", "null"]
+        },
+        "approved_at": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        }
+      }
+    },
+    "package_artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "type", "module", "rights_status"],
+      "properties": {
+        "path": { "$ref": "#/$defs/relative_path" },
+        "type": {
+          "type": "string",
+          "enum": [
+            "brief",
+            "constraints",
+            "question_list",
+            "source_registry",
+            "reference_list",
+            "asset_list",
+            "model_profile",
+            "blend_file",
+            "variant_log",
+            "plan_export",
+            "render_preview",
+            "review_pack",
+            "change_log",
+            "decision_log",
+            "job_log",
+            "uncertainty_log",
+            "other"
+          ]
+        },
+        "module": {
+          "type": "string",
+          "enum": ["prepare", "data", "orbit", "design", "draw", "viz", "publish", "zentrale"]
+        },
+        "rights_status": {
+          "type": "string",
+          "enum": ["public_safe", "internal_only", "unknown", "blocked", "generated_needs_review"]
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "relative_path": {
+      "type": "string",
+      "minLength": 1,
+      "not": {
+        "pattern": "^(\\/|[A-Za-z]:|\\.\\.)"
+      }
+    }
+  }
+}
