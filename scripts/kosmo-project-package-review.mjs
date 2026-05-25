@@ -52,6 +52,7 @@ function buildReport(manifest, check) {
   const inputs = (manifest.inputs || []).map((item) => artifactStatus(item));
   const outputs = (manifest.outputs || []).map((item) => artifactStatus(item));
   const memory = readMemoryLogs();
+  const contextReview = readContextReview();
   const blockers = [];
   const warnings = [];
 
@@ -70,6 +71,15 @@ function buildReport(manifest, check) {
     if (artifact.rights_status === 'generated_needs_review') {
       warnings.push(`Generated output needs review: ${artifact.path}`);
     }
+  }
+  if (contextReview.candidate_count > 0 && !contextReview.selection_exists) {
+    warnings.push('Context candidates exist but design/context-selection.json is missing.');
+  }
+  if (contextReview.selection_exists && contextReview.undecided_count > 0) {
+    warnings.push(`Context selection still has undecided candidates: ${contextReview.undecided_count}`);
+  }
+  if (contextReview.accepted_as_design_seed_count > 0 && !contextReview.approved_for_design_generation) {
+    warnings.push('Context candidates are selected as design seed but final design-generation approval is still false.');
   }
 
   const moduleSummary = {
@@ -110,10 +120,11 @@ function buildReport(manifest, check) {
     gates,
     inputs,
     outputs,
+    context_review: contextReview,
     memory,
     blockers,
     warnings,
-    next_actions: nextActions({ modules, gates, blockers, warnings, outputs })
+    next_actions: nextActions({ modules, gates, blockers, warnings, outputs, contextReview })
   };
 }
 
@@ -134,6 +145,31 @@ function readMemoryLogs() {
   };
 }
 
+function readContextReview() {
+  const candidatesPath = join(projectRoot, 'design/context-candidates.generated.json');
+  const selectionPath = join(projectRoot, 'design/context-selection.json');
+  const candidates = existsSync(candidatesPath) ? safeReadJson(candidatesPath) : null;
+  const selection = existsSync(selectionPath) ? safeReadJson(selectionPath) : null;
+  const selections = Array.isArray(selection?.selections) ? selection.selections : [];
+  const candidateCount = numberOrDefault(candidates?.summary?.candidate_count, Array.isArray(candidates?.candidates) ? candidates.candidates.length : 0);
+  const countDecision = (decision) => selections.filter((item) => item.decision === decision).length;
+
+  return {
+    candidates_exists: Boolean(candidates),
+    selection_exists: Boolean(selection),
+    candidate_count: candidateCount,
+    selection_count: selections.length,
+    accepted_as_context_count: countDecision('accepted_as_context'),
+    accepted_as_design_seed_count: countDecision('accepted_as_design_seed'),
+    needs_more_source_review_count: countDecision('needs_more_source_review'),
+    rejected_count: countDecision('rejected'),
+    undecided_count: countDecision('undecided'),
+    stale_selection_count: numberOrDefault(selection?.summary?.stale_selection_count, Array.isArray(selection?.stale_selections) ? selection.stale_selections.length : 0),
+    readiness: selection?.summary?.readiness || candidates?.summary?.suggested_next_step || null,
+    approved_for_design_generation: Boolean(selection?.approved_for_design_generation)
+  };
+}
+
 function readJsonl(pathname) {
   if (!existsSync(pathname)) return [];
   return readFileSync(pathname, 'utf8')
@@ -149,9 +185,12 @@ function readJsonl(pathname) {
     });
 }
 
-function nextActions({ modules, gates, blockers, warnings, outputs }) {
+function nextActions({ modules, gates, blockers, warnings, outputs, contextReview }) {
   if (blockers.length) return ['Fix missing artifacts or invalid JSON before continuing.'];
   const actions = [];
+  if (contextReview?.candidate_count > 0 && !contextReview.selection_exists) actions.push('Create design/context-selection.json from context candidates.');
+  if (contextReview?.selection_exists && contextReview.undecided_count > 0) actions.push('Review context-selection decisions before using candidates as design input.');
+  if (contextReview?.accepted_as_design_seed_count > 0 && !contextReview.approved_for_design_generation) actions.push('Set final approval only after a human has checked context-selection.');
   if (modules.some((module) => module.id === 'data' && module.status === 'pending')) actions.push('Let Kosmo Data add reviewed references, sources and asset candidates.');
   if (modules.some((module) => module.id === 'design' && module.status === 'pending')) actions.push('Import design/model-profile.json into Kosmo Design and write an import status.');
   if (modules.some((module) => module.id === 'draw' && module.status === 'pending')) actions.push('Replace placeholder SVG exports with Kosmo Draw generated plans.');
@@ -191,6 +230,9 @@ function renderMarkdown(report) {
   lines.push('', '## Outputs', '');
   appendArtifactList(lines, report.outputs);
 
+  lines.push('', '## Context Selection', '');
+  appendContextReview(lines, report.context_review);
+
   lines.push('', '## Blockers', '');
   appendList(lines, report.blockers);
   lines.push('', '## Warnings', '');
@@ -224,6 +266,22 @@ function appendList(lines, items) {
   for (const item of items) lines.push(`- ${item}`);
 }
 
+function appendContextReview(lines, contextReview) {
+  if (!contextReview.candidates_exists && !contextReview.selection_exists) {
+    lines.push('- no context candidates or selection file yet');
+    return;
+  }
+  lines.push(`- candidates: ${contextReview.candidate_count}`);
+  lines.push(`- selection file: ${contextReview.selection_exists ? 'present' : 'missing'}`);
+  lines.push(`- accepted as context: ${contextReview.accepted_as_context_count}`);
+  lines.push(`- accepted as design seed: ${contextReview.accepted_as_design_seed_count}`);
+  lines.push(`- needs more source review: ${contextReview.needs_more_source_review_count}`);
+  lines.push(`- rejected: ${contextReview.rejected_count}`);
+  lines.push(`- undecided: ${contextReview.undecided_count}`);
+  lines.push(`- approved for design generation: ${contextReview.approved_for_design_generation ? 'yes' : 'no'}`);
+  lines.push(`- readiness: ${contextReview.readiness || 'unknown'}`);
+}
+
 function runPackageCheck() {
   const command = `npm run kosmo:package-check -- --project ${relative(root, projectRoot)}`;
   const result = spawnSync('npm', ['run', 'kosmo:package-check', '--', '--project', relative(root, projectRoot)], {
@@ -239,6 +297,18 @@ function runPackageCheck() {
 
 function readJson(pathname) {
   return JSON.parse(readFileSync(pathname, 'utf8'));
+}
+
+function safeReadJson(pathname) {
+  try {
+    return readJson(pathname);
+  } catch {
+    return null;
+  }
+}
+
+function numberOrDefault(value, fallback) {
+  return Number.isFinite(value) ? value : fallback;
 }
 
 function escapePipe(value) {

@@ -2,6 +2,27 @@
   "schema_version": "0.1",
   "exports": [
     {
+      "path": "design/context-import.generated.json",
+      "module": "Kosmo Design",
+      "format": "json",
+      "status": "generated_needs_review",
+      "rights_status": "generated_needs_review"
+    },
+    {
+      "path": "design/context-candidates.generated.json",
+      "module": "Kosmo Design",
+      "format": "json",
+      "status": "generated_needs_review",
+      "rights_status": "generated_needs_review"
+    },
+    {
+      "path": "design/context-selection.json",
+      "module": "Kosmo Design",
+      "format": "json",
+      "status": "draft_needs_human_review",
+      "rights_status": "internal_only"
+    },
+    {
       "path": "draw/exports/ground-floor-plan.svg",
       "module": "Kosmo Draw",
       "format": "svg",

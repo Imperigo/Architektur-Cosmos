@@ -80,6 +80,8 @@ kosmo-project/
     model.blend
     model-profile.json
     context-import.generated.json
+    context-candidates.generated.json
+    context-selection.json
     variants.json
   draw/
     plans/
@@ -151,7 +153,7 @@ Aufgabe:
 Minimaler MVP:
 
 - `kosmo.project.json` als zentrales Manifest
-- Commands wie `prepare`, `design-import`, `draw-export`, `viz-preview`, `publish-review-pack`
+- Commands wie `prepare`, `context-selection`, `design-import`, `draw-export`, `viz-preview`, `publish-review-pack`
 - klare Modulgrenzen
 
 Noch nicht:
@@ -332,6 +334,8 @@ Gates:
 - Externe E-Mail/Kundenversand: nicht im MVP.
 - KI-generierte Referenz/Asset: immer als `generated` und `needs_review`.
 - Recht/Baugesetz/Norm: immer als `advisory`, nicht als verbindlicher Nachweis.
+- Kontextkandidaten aus DXF/IFC: erst nach `design/context-selection.json`
+  als Designinput nutzbar.
 
 ## 9. MVP-Demo-Szenario
 
@@ -362,7 +366,11 @@ Status 2026-05-25:
 7. Einfachen Planexport aus Blender pruefen. **Erledigt fuer SVG-Grundriss und SVG-Schnitt.**
 8. Kosmo Viz Preview aus Blender pruefen. **Erledigt fuer automatischen Axon-PNG-Preview.**
 9. Persistenten Prepare-Kontextreport schreiben. **Erledigt mit `design/context-import.generated.json`.**
-10. Kosmo Zentrale spaeter als Job-Orchestrator an dieses Paket anbinden.
+10. Review-pflichtige Kontextkandidaten aus Prepare/DXF/IFC erzeugen.
+    **Erledigt mit `design/context-candidates.generated.json`.**
+11. Kontextkandidaten in ein menschliches Auswahl-Gate ueberfuehren.
+    **Erledigt mit `design/context-selection.json` und `npm run kosmo:context-selection`.**
+12. Kosmo Zentrale spaeter als Job-Orchestrator an dieses Paket anbinden.
 
 ## 11. Was bewusst noch nicht gebaut wird
 
@@ -391,6 +399,7 @@ Der erste Datenvertrag ist im Repo angelegt:
 - `scripts/kosmo-project-package-check.mjs`
 - `scripts/kosmo-project-package-create.mjs`
 - `scripts/kosmo-prepare-package-import.mjs`
+- `scripts/kosmo-context-selection-create.mjs`
 - `scripts/kosmo-blender-package-bridge-smoke.mjs`
 - `scripts/kosmo_blender_package_bridge_smoke.py`
 - private lokale KosmoDesign/KosmoDraw-Bridge im separaten Arbeitsbereich
@@ -434,6 +443,22 @@ enthaelt jetzt auch eine erste Heuristik: DXF-Layer `Schwarzplan_Gebaeude` als
 `existing_building`, IFC als `semantic_ifc_context` und die Readiness
 `context_ready_needs_human_layer_review`.
 
+KosmoDraw schreibt dazu auch `design/context-candidates.generated.json`. Beim
+ZG-Testpaket enthaelt diese Datei 9 Kandidaten fuer Ursprung, Perimeter,
+DXF-Layerrollen und IFC-Rollen. Alle bleiben review-pflichtig und duerfen erst
+nach menschlicher Layer-/Quellenfreigabe als Designinput verwendet werden.
+
+Kontextauswahl erzeugen:
+
+```bash
+npm run kosmo:context-selection -- --project archive-intake/kosmo-projects/zg-07052026
+```
+
+Status: bestanden. Im ZG-Testpaket erzeugt der Befehl
+`design/context-selection.json` mit 9 `undecided` Entscheidungen und
+`approved_for_design_generation: false`. Das ist der bewusste Stopp vor jeder
+automatischen Design-Generierung.
+
 Review-Pack erzeugen:
 
 ```bash
@@ -456,4 +481,4 @@ Der Creator schreibt standardmaessig nach `archive-intake/kosmo-projects/`.
 Dieser Ordner ist gitignored und bleibt fuer echte Projekte, private Notizen
 und unreviewte Inputs lokal.
 
-Aktueller Status: Der Demo-Vertrag und alle JSON/JSONL-Artefakte bestehen den lokalen Package-Check. Der KosmosPrepare-Importer erzeugt aus einem Phase-0-Output ein lokales review-only Projektpaket. Der Blender-Bridge-Smoke-Test prueft jetzt Prepare-Kontextimport, Raum-Import, Write-back, Kosmo-Draw-SVG-Export und Kosmo-Viz-Preview.
+Aktueller Status: Der Demo-Vertrag und alle JSON/JSONL-Artefakte bestehen den lokalen Package-Check. Der KosmosPrepare-Importer erzeugt aus einem Phase-0-Output ein lokales review-only Projektpaket. Der Blender-Bridge-Smoke-Test prueft jetzt Prepare-Kontextimport, Kontextkandidaten, Raum-Import, Write-back, Kosmo-Draw-SVG-Export und Kosmo-Viz-Preview. Das neue Context-Selection-Gate macht explizit sichtbar, dass erkannte DXF/IFC-Rollen noch nicht automatisch Design-Fakten sind.

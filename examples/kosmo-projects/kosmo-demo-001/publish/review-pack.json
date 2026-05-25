@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-25T16:09:52.539Z",
+  "generated_at": "2026-05-25T17:22:46.445Z",
   "generator": "kosmo-project-package-review",
   "project": {
     "id": "kosmo-demo-001",
@@ -21,7 +21,7 @@
   "package_check": {
     "ok": true,
     "command": "npm run kosmo:package-check -- --project examples/kosmo-projects/kosmo-demo-001",
-    "output": "> architecture-cosmos@0.1.0 kosmo:package-check\n> node scripts/kosmo-project-package-check.mjs --project examples/kosmo-projects/kosmo-demo-001\n\nKosmo project package check\nProject: examples/kosmo-projects/kosmo-demo-001\nSchema: schema/kosmo-project-package.schema.json\n\nPackage check passed."
+    "output": "> architecture-cosmos@0.1.0 kosmo:package-check\n> node scripts/kosmo-project-package-check.mjs --project examples/kosmo-projects/kosmo-demo-001\n\nKosmo project package check\nProject: examples/kosmo-projects/kosmo-demo-001\nSchema: schema/kosmo-project-package.schema.json\n\nWarnings:\n- Context selection has undecided candidates: 2\n\nPackage check passed."
   },
   "module_summary": {
     "total": 8,
@@ -152,6 +152,33 @@
       "size_bytes": 1283
     },
     {
+      "path": "design/context-import.generated.json",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "KosmoDraw context import report.",
+      "exists": true,
+      "size_bytes": 1783
+    },
+    {
+      "path": "design/context-candidates.generated.json",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "KosmoDraw context candidates.",
+      "exists": true,
+      "size_bytes": 1713
+    },
+    {
+      "path": "design/context-selection.json",
+      "type": "other",
+      "module": "design",
+      "rights_status": "internal_only",
+      "description": "Human review gate for accepting context candidates as design input.",
+      "exists": true,
+      "size_bytes": 2100
+    },
+    {
       "path": "draw/exports/ground-floor-plan.svg",
       "type": "plan_export",
       "module": "draw",
@@ -176,7 +203,7 @@
       "rights_status": "generated_needs_review",
       "description": "Kosmo Viz generated axon PNG preview from Blender room objects.",
       "exists": true,
-      "size_bytes": 467324
+      "size_bytes": 479273
     },
     {
       "path": "viz/previews/preview-manifest.json",
@@ -203,9 +230,23 @@
       "rights_status": "internal_only",
       "description": "Local review package scaffold.",
       "exists": true,
-      "size_bytes": 2576
+      "size_bytes": 3574
     }
   ],
+  "context_review": {
+    "candidates_exists": true,
+    "selection_exists": true,
+    "candidate_count": 2,
+    "selection_count": 2,
+    "accepted_as_context_count": 0,
+    "accepted_as_design_seed_count": 0,
+    "needs_more_source_review_count": 0,
+    "rejected_count": 0,
+    "undecided_count": 2,
+    "stale_selection_count": 0,
+    "readiness": "needs_human_selection",
+    "approved_for_design_generation": false
+  },
   "memory": {
     "decisions": [
       {
@@ -289,11 +330,15 @@
     "Public release is not approved.",
     "External upload is not approved.",
     "Generated output needs review: design/model-profile.json",
+    "Generated output needs review: design/context-import.generated.json",
+    "Generated output needs review: design/context-candidates.generated.json",
     "Generated output needs review: draw/exports/ground-floor-plan.svg",
     "Generated output needs review: draw/exports/section-a.svg",
-    "Generated output needs review: viz/previews/kosmo-preview-axon.png"
+    "Generated output needs review: viz/previews/kosmo-preview-axon.png",
+    "Context selection still has undecided candidates: 2"
   ],
   "next_actions": [
+    "Review context-selection decisions before using candidates as design input.",
     "Review generated outputs before any public or external use.",
     "Ask for explicit approval before paid cloud jobs."
   ]

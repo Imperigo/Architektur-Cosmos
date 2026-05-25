@@ -1,7 +1,7 @@
 # Kosmo Design Package Bridge
 
 Stand: 2026-05-25  
-Status: Phase-0-Kontextimport, Raum-Import, Write-back, Draw-SVG und Viz-Preview-Connector implementiert im aktiven Blender-Projekt `KosmoDraw`.
+Status: Phase-0-Kontextimport, Kontextkandidaten, Context-Selection-Gate, Raum-Import, Write-back, Draw-SVG und Viz-Preview-Connector implementiert.
 
 ## 1. Ziel
 
@@ -22,6 +22,10 @@ Der erste Connector ist bewusst duenn:
   "keine Raeume" abzubrechen
 - schreibt `design/context-import.generated.json` als persistenten Report zum
   importierten Kontext
+- schreibt `design/context-candidates.generated.json` als review-pflichtige
+  Kandidatenliste fuer Ursprung, Perimeter, DXF-Layerrollen und IFC-Rollen
+- nutzt `design/context-selection.json` als menschliches Gate, bevor Kandidaten
+  zu Designinput werden duerfen
 - verwendet den bestehenden Blender-Operator `kosmo_design.create_room_from_plan`
 - erzeugt Collections unter `Kosmo_Project_<project_id>`
 - taggt erzeugte Collections/Objekte mit `kosmo_project_*` und `kosmo_source_*` Custom Properties
@@ -125,12 +129,28 @@ Der DXF-Kontext ist ein limitiertes, sichtbares Mesh-Underlay aus POLYLINE/LWPOL
 Zusätzlich wird im Projektpaket geschrieben:
 
 - `design/context-import.generated.json`
+- `design/context-candidates.generated.json`
+- `design/context-selection.json`
 
 Dieser Report enthält die importierte Kontext-Collection, Objektanzahl,
 Perimeter, DXF-Zählwerte, DXF-Layerklassifikation, IFC-Entity-Gruppen,
 IFC-Heuristik und IFC-Bounds. Damit können Kosmo Zentrale oder KosmoPublish
 später prüfen, was KosmoDraw aus den Grundlagen erkannt hat, ohne Blender
 erneut zu starten.
+
+Die Kandidatenliste ist die erste vorsichtige Bruecke Richtung Designlogik. Sie
+enthaelt nur Vorschlaege wie `context-origin`, `context-perimeter`,
+`dxf-role-1-existing_building`, `ifc-bounds` oder IFC-Rollen. Jeder Eintrag
+bleibt `status: generated_needs_review` beziehungsweise
+`status: needs_human_review`, traegt eine Confidence, Evidence und Warnungen.
+Damit kann Kosmo spaeter fragen: "Soll ich diese Grundlage als Entwurfsinput
+verwenden?", statt aus DXF/IFC automatisch verbindliche Planobjekte zu machen.
+
+`design/context-selection.json` ist der naechste Gate-Layer. Er wird mit
+`npm run kosmo:context-selection -- --project <projektpfad>` aus den Kandidaten
+erzeugt oder aktualisiert. Der Default ist absichtlich konservativ:
+alle Kandidaten bleiben `undecided`, `approved_for_design_generation` bleibt
+`false`, und bestehende manuelle Entscheidungen werden beim Refresh erhalten.
 
 ## 5. Was beim Write-back entsteht
 
@@ -215,6 +235,7 @@ Resultat:
 - `kosmo.project.json` wurde geladen.
 - `design/model-profile.json` wurde gelesen.
 - `design/context-import.generated.json` wurde geschrieben.
+- `design/context-candidates.generated.json` wurde geschrieben.
 - `kosmo_design.load_project_package` hat 3 Raeume importiert.
 - Blender hat 12 Objekte erzeugt: 3 Walls, 3 Floors, 3 Ceilings, 3 Labels.
 - `kosmo_design.export_project_package_profile` hat 3 Raeume exportiert.
@@ -244,6 +265,17 @@ Design-Seed ist. Der Report `design/context-import.generated.json` enthaelt
 u.a. 13'406 erkannte DXF-Polylines, 1'800 importierte Underlay-Polylines,
 273'526 IFC-CartesianPoints und die berechneten IFC-Bounds.
 
+Zusaetzlich schreibt KosmoDraw
+`design/context-candidates.generated.json` mit 9 review-pflichtigen Kandidaten:
+Ursprung, Perimeter, DXF-Layerrolle `existing_building`, eine unklassifizierte
+DXF-Layerrolle, IFC-Bounds, IFC-Projekt-/Site-Hierarchie, IFC-Mesh-Bounds,
+semantische IFC-Building-Elemente und IFC-Property-/Source-Metadata.
+
+Danach erzeugt der Orbit-Befehl
+`npm run kosmo:context-selection -- --project archive-intake/kosmo-projects/zg-07052026`
+das Gate `design/context-selection.json`. Im ZG-Testpaket stehen dort 9
+Kandidaten auf `undecided`; es ist also noch kein Design-Seed freigegeben.
+
 Erste heuristische Klassifikation:
 
 - Gesamtcontext: `prepare_site_context_with_dxf_ifc`
@@ -271,5 +303,6 @@ Nach dem ersten Blender-Test:
 
 1. DXF-Unterlage besser filtern: Layer, Hoehenlinien, Parzelle, Gebaeude, Baulinien.
 2. IFC nicht nur als Bounds analysieren, sondern ueber Bonsai/IfcOpenShell oder einen separaten Importpfad als echte Kontextgeometrie laden.
-3. Aus Prepare-Kontext erste Designobjekt-Vorschlaege erzeugen, aber mit klarer Unsicherheitsmarkierung.
+3. In `design/context-selection.json` erste menschliche Entscheidungen treffen:
+   Kontext-only, Design-Seed, weitere Quellenpruefung oder Reject.
 4. Kosmo Zentrale Job-Log mit Paketpfad, Importresultat, Exportresultat, Draw-Export und Viz-Preview verbinden.

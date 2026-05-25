@@ -1,0 +1,68 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-05-25T17:27:11.803Z",
+  "generator": "kosmo-context-selection-create",
+  "project_id": "kosmo-demo-001",
+  "status": "draft_needs_human_review",
+  "rights_status": "internal_only",
+  "source_candidates_path": "design/context-candidates.generated.json",
+  "approved_for_design_generation": false,
+  "policy": {
+    "generated_candidates_are_not_design_facts": true,
+    "default_decision": "undecided",
+    "accepted_as_design_seed_requires_human_review": true,
+    "public_or_external_use_allowed": false
+  },
+  "review": {
+    "reviewed_by": null,
+    "reviewed_at": null,
+    "notes": []
+  },
+  "summary": {
+    "candidate_count": 2,
+    "accepted_as_context_count": 0,
+    "accepted_as_design_seed_count": 0,
+    "needs_more_source_review_count": 0,
+    "rejected_count": 0,
+    "undecided_count": 2,
+    "stale_selection_count": 0,
+    "readiness": "needs_human_selection"
+  },
+  "selections": [
+    {
+      "candidate_id": "context-origin",
+      "label": "Project origin marker",
+      "kind": "project_origin",
+      "source": "fallback_origin",
+      "confidence": "low",
+      "decision": "undecided",
+      "selected_use": "coordinate_reference",
+      "review_required": true,
+      "approved_by": null,
+      "approved_at": null,
+      "notes": [],
+      "warnings": [
+        "Fallback origin; add reviewed project coordinates before measured work."
+      ],
+      "evidence_ref": "design/context-candidates.generated.json#context-origin"
+    },
+    {
+      "candidate_id": "context-perimeter",
+      "label": "Project perimeter",
+      "kind": "site_perimeter",
+      "source": "fallback_origin",
+      "confidence": "low",
+      "decision": "undecided",
+      "selected_use": "context_boundary_reference",
+      "review_required": true,
+      "approved_by": null,
+      "approved_at": null,
+      "notes": [],
+      "warnings": [
+        "Perimeter is a context frame, not a verified parcel boundary."
+      ],
+      "evidence_ref": "design/context-candidates.generated.json#context-perimeter"
+    }
+  ],
+  "stale_selections": []
+}

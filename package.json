@@ -84,6 +84,7 @@
     "kosmo:prepare-import": "node scripts/kosmo-prepare-package-import.mjs",
     "kosmo:package-check": "node scripts/kosmo-project-package-check.mjs",
     "kosmo:blender-package-smoke": "node scripts/kosmo-blender-package-bridge-smoke.mjs",
+    "kosmo:context-selection": "node scripts/kosmo-context-selection-create.mjs",
     "kosmo:package-review": "node scripts/kosmo-project-package-review.mjs",
     "kosmodata:enrich": "node scripts/kosmodata-enrichment-pipeline.mjs review",
     "kosmodata:promote": "node scripts/kosmodata-enrichment-pipeline.mjs promote",

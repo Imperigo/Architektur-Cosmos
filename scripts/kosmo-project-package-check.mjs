@@ -27,6 +27,7 @@ function main() {
   checkPackagePaths(manifest);
   checkArtifacts('inputs', manifest.inputs ?? []);
   checkArtifacts('outputs', manifest.outputs ?? []);
+  checkContextSelection();
   checkJsonFiles(projectRoot);
   checkJsonlFiles(projectRoot);
 
@@ -123,6 +124,34 @@ function checkJsonlFiles(root) {
         failures.push(`${relative(process.cwd(), file)}:${index + 1} invalid JSONL: ${error.message}`);
       }
     });
+  }
+}
+
+function checkContextSelection() {
+  const candidatesPath = join(projectRoot, 'design/context-candidates.generated.json');
+  const selectionPath = join(projectRoot, 'design/context-selection.json');
+  const candidates = existsSync(candidatesPath) ? readJson(candidatesPath) : null;
+  const selection = existsSync(selectionPath) ? readJson(selectionPath) : null;
+
+  if (candidates && !selection) {
+    warnings.push('Context candidates exist, but design/context-selection.json is missing.');
+    return;
+  }
+  if (!candidates || !selection) return;
+
+  const candidateIds = new Set((Array.isArray(candidates.candidates) ? candidates.candidates : []).map((candidate) => candidate.id).filter(Boolean));
+  const selections = Array.isArray(selection.selections) ? selection.selections : [];
+  const selectionIds = new Set(selections.map((item) => item.candidate_id).filter(Boolean));
+  const missingSelections = [...candidateIds].filter((id) => !selectionIds.has(id));
+  const staleSelections = selections.filter((item) => item?.candidate_id && !candidateIds.has(item.candidate_id));
+  const undecidedSelections = selections.filter((item) => item.decision === 'undecided');
+  const acceptedDesignSeeds = selections.filter((item) => item.decision === 'accepted_as_design_seed');
+
+  if (missingSelections.length) warnings.push(`Context selection is missing candidate decisions: ${missingSelections.join(', ')}`);
+  if (staleSelections.length) warnings.push(`Context selection has stale decisions: ${staleSelections.map((item) => item.candidate_id).join(', ')}`);
+  if (undecidedSelections.length) warnings.push(`Context selection has undecided candidates: ${undecidedSelections.length}`);
+  if (acceptedDesignSeeds.length && selection.approved_for_design_generation !== true) {
+    warnings.push('Context selection contains accepted design seeds but approved_for_design_generation is not true.');
   }
 }
 

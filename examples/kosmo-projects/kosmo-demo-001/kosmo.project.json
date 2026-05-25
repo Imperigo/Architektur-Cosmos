@@ -120,6 +120,13 @@
       "description": "KosmoDraw context candidates."
     },
     {
+      "path": "design/context-selection.json",
+      "type": "other",
+      "module": "design",
+      "rights_status": "internal_only",
+      "description": "Human review gate for accepting context candidates as design input."
+    },
+    {
       "path": "draw/exports/ground-floor-plan.svg",
       "type": "plan_export",
       "module": "draw",

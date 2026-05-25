@@ -124,6 +124,7 @@ function buildFiles({ name, projectId, site, program }) {
     'design/model-profile.json': json(modelProfile),
     'design/context-import.generated.json': json(buildContextImportSeed(projectId, 'package_create')),
     'design/context-candidates.generated.json': json(buildContextCandidatesSeed(projectId, 'package_create')),
+    'design/context-selection.json': json(buildContextSelectionSeed(projectId, 'package_create')),
     'design/variants.json': json({
       schema_version: '0.1',
       variants: [
@@ -164,6 +165,13 @@ function buildFiles({ name, projectId, site, program }) {
           format: 'json',
           status: 'pending_blender_context_import',
           rights_status: 'generated_needs_review'
+        },
+        {
+          path: 'design/context-selection.json',
+          module: 'Kosmo Design',
+          format: 'json',
+          status: 'pending_context_candidates',
+          rights_status: 'internal_only'
         },
         {
           path: 'draw/exports/ground-floor-plan.svg',
@@ -233,6 +241,7 @@ function buildManifest({ name, projectId, site }) {
       artifact('design/model-profile.json', 'model_profile', 'design', 'generated_needs_review', 'Conceptual model profile for Blender/Kosmo Design.'),
       artifact('design/context-import.generated.json', 'other', 'design', 'generated_needs_review', 'KosmoDraw context import report.'),
       artifact('design/context-candidates.generated.json', 'other', 'design', 'generated_needs_review', 'KosmoDraw context candidates.'),
+      artifact('design/context-selection.json', 'other', 'design', 'internal_only', 'Human review gate for accepting context candidates as design input.'),
       artifact('draw/exports/ground-floor-plan.svg', 'plan_export', 'draw', 'generated_needs_review', 'Placeholder vector ground floor export.'),
       artifact('draw/exports/section-a.svg', 'plan_export', 'draw', 'generated_needs_review', 'Placeholder vector section export.'),
       artifact('publish/review-pack.md', 'review_pack', 'publish', 'internal_only', 'Local review package scaffold.')
@@ -368,6 +377,44 @@ function buildContextCandidatesSeed(projectId, source) {
       suggested_next_step: 'run_kosmo_blender_package_smoke'
     },
     candidates: []
+  };
+}
+
+function buildContextSelectionSeed(projectId, source) {
+  return {
+    schema_version: '0.1',
+    generated_at: null,
+    generator: 'kosmo-project-package-create',
+    project_id: projectId,
+    status: 'pending_context_candidates',
+    rights_status: 'internal_only',
+    source_stage: 'phase_0_context',
+    source,
+    source_candidates_path: 'design/context-candidates.generated.json',
+    approved_for_design_generation: false,
+    policy: {
+      generated_candidates_are_not_design_facts: true,
+      default_decision: 'undecided',
+      accepted_as_design_seed_requires_human_review: true,
+      public_or_external_use_allowed: false
+    },
+    review: {
+      reviewed_by: null,
+      reviewed_at: null,
+      notes: []
+    },
+    summary: {
+      candidate_count: 0,
+      accepted_as_context_count: 0,
+      accepted_as_design_seed_count: 0,
+      needs_more_source_review_count: 0,
+      rejected_count: 0,
+      undecided_count: 0,
+      stale_selection_count: 0,
+      readiness: 'pending_context_candidates'
+    },
+    selections: [],
+    stale_selections: []
   };
 }
 

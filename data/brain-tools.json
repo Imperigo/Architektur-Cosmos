@@ -56,7 +56,7 @@
       "command": "npm run kosmo:package-create -- --name \"{project_name}\" --address \"{address}\" --program \"{program}\"",
       "output_root": "archive-intake/kosmo-projects/{project_slug}",
       "review_output": "archive-intake/kosmo-projects/{project_slug}/kosmo.project.json",
-      "purpose": "Create a new local review-only Kosmo project package with manifest, brief, constraints, source registry, model profile, placeholder plan exports, viz presets, publish scaffold and memory logs.",
+      "purpose": "Create a new local review-only Kosmo project package with manifest, brief, constraints, source registry, model profile, context candidate and selection scaffolds, placeholder plan exports, viz presets, publish scaffold and memory logs.",
       "approval_required_before_public_use": true
     },
     {
@@ -65,7 +65,7 @@
       "command": "npm run kosmo:prepare-import -- --input \"{source_path}\" --slug \"{project_slug}\"",
       "output_root": "archive-intake/kosmo-projects/{project_slug}",
       "review_output": "archive-intake/kosmo-projects/{project_slug}/kosmo.project.json",
-      "purpose": "Import a local KosmosPrepare Phase 0 output folder into a review-only Kosmo project package with source registry, constraints, design seed, placeholders and memory logs.",
+      "purpose": "Import a local KosmosPrepare Phase 0 output folder into a review-only Kosmo project package with source registry, constraints, design seed, context candidate and selection scaffolds, placeholders and memory logs.",
       "approval_required_before_public_use": false
     },
     {
@@ -74,7 +74,7 @@
       "command": "npm run kosmo:package-review -- --project {project_path}",
       "output_root": "{project_path}/publish",
       "review_output": "{project_path}/publish/review-pack.md",
-      "purpose": "Assemble a local Kosmo Publish review pack from the project manifest, module states, review gates, inputs, outputs and memory logs.",
+      "purpose": "Assemble a local Kosmo Publish review pack from the project manifest, module states, review gates, inputs, outputs, context selection status and memory logs.",
       "approval_required_before_public_use": false
     },
     {
@@ -83,7 +83,16 @@
       "command": "npm run kosmo:blender-package-smoke -- --project {project_path}/kosmo.project.json --addon-code {addon_code}",
       "output_root": "terminal/blender-smoke",
       "review_output": "terminal/KOSMO_BLENDER_PACKAGE_BRIDGE_SMOKE",
-      "purpose": "Run a local headless Blender smoke test that imports a Kosmo project package through the KosmoDraw/KosmoDesign package bridge, verifies Prepare context reports with DXF/IFC heuristics, generated room objects, model-profile write-back, Kosmo Draw SVG exports and Kosmo Viz PNG previews.",
+      "purpose": "Run a local headless Blender smoke test that imports a Kosmo project package through the KosmoDraw/KosmoDesign package bridge, verifies Prepare context reports with DXF/IFC heuristics, generated context candidates, generated room objects, model-profile write-back, Kosmo Draw SVG exports and Kosmo Viz PNG previews.",
+      "approval_required_before_public_use": false
+    },
+    {
+      "id": "kosmo_context_selection",
+      "label": "Kosmo Context Selection",
+      "command": "npm run kosmo:context-selection -- --project {project_path}",
+      "output_root": "{project_path}/design",
+      "review_output": "{project_path}/design/context-selection.json",
+      "purpose": "Create or refresh a human-reviewable context selection from generated Prepare/DXF/IFC context candidates before any candidate can become a design seed.",
       "approval_required_before_public_use": false
     },
     {
