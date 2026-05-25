@@ -176,6 +176,7 @@ Damit entsteht schnell ein pruefbares Produktversprechen: vom architektonischen 
 - `docs/kosmo-source-of-truth-map.md`
 - `schema/kosmo-project-package.schema.json`
 - `examples/kosmo-projects/kosmo-demo-001/kosmo.project.json`
+- `scripts/kosmo-prepare-package-import.mjs`
 
 ### Private lokale Wissensquellen
 

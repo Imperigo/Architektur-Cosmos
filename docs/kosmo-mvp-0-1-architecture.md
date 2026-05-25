@@ -79,6 +79,7 @@ kosmo-project/
   design/
     model.blend
     model-profile.json
+    context-import.generated.json
     variants.json
   draw/
     plans/
@@ -353,12 +354,15 @@ Status 2026-05-25:
 2. Minimalen lokalen Package-Checker bauen. **Erledigt.**
 3. Lokalen Package-Creator bauen, der neue Projektpakete unter
    `archive-intake/kosmo-projects/` anlegt. **Erledigt.**
-4. Bestehendes `kosmo_design` Add-on auf dieses Paket lesen/schreiben lassen.
-   **Import-Bridge und Write-back erledigt.**
-5. Review-Pack-Generator lokal bauen. **Erledigt.**
-6. Einfachen Planexport aus Blender pruefen. **Erledigt fuer SVG-Grundriss und SVG-Schnitt.**
-7. Kosmo Viz Preview aus Blender pruefen. **Erledigt fuer automatischen Axon-PNG-Preview.**
-8. Kosmo Zentrale spaeter als Job-Orchestrator an dieses Paket anbinden.
+4. KosmosPrepare-Output in ein Kosmo-Projektpaket importieren.
+   **Initialer Adapter erledigt.**
+5. Bestehendes `kosmo_design` Add-on auf dieses Paket lesen/schreiben lassen.
+   **Phase-0-Kontextimport, Raum-Import und Write-back erledigt.**
+6. Review-Pack-Generator lokal bauen. **Erledigt.**
+7. Einfachen Planexport aus Blender pruefen. **Erledigt fuer SVG-Grundriss und SVG-Schnitt.**
+8. Kosmo Viz Preview aus Blender pruefen. **Erledigt fuer automatischen Axon-PNG-Preview.**
+9. Persistenten Prepare-Kontextreport schreiben. **Erledigt mit `design/context-import.generated.json`.**
+10. Kosmo Zentrale spaeter als Job-Orchestrator an dieses Paket anbinden.
 
 ## 11. Was bewusst noch nicht gebaut wird
 
@@ -385,6 +389,8 @@ Der erste Datenvertrag ist im Repo angelegt:
 - `examples/kosmo-projects/kosmo-demo-001/kosmo.project.json`
 - `examples/kosmo-projects/kosmo-demo-001/`
 - `scripts/kosmo-project-package-check.mjs`
+- `scripts/kosmo-project-package-create.mjs`
+- `scripts/kosmo-prepare-package-import.mjs`
 - `scripts/kosmo-blender-package-bridge-smoke.mjs`
 - `scripts/kosmo_blender_package_bridge_smoke.py`
 - private lokale KosmoDesign/KosmoDraw-Bridge im separaten Arbeitsbereich
@@ -402,12 +408,31 @@ npm run kosmo:blender-package-smoke
 ```
 
 Status: bestanden. Blender 5.1.2 importiert das Demo-Paket in `KosmoDraw`,
-erzeugt 3 Raeume und 12 Objekte, exportiert 3 Raeume nach
+erzeugt einen minimalen Projektkontext plus 3 Raeume und 12 Raumobjekte,
+exportiert 3 Raeume nach
 `design/model-profile.exported.json`, erzeugt `draw/exports/ground-floor-plan.svg`
 und `draw/exports/section-a.svg` aus den Blender-Raumobjekten, rendert
 `viz/previews/kosmo-preview-axon.png` mit automatisch erzeugter Kamera und Licht
-und speichert ein lokales Test-Blend unter
-`archive-intake/kosmo-projects/kosmo-demo-001-smoke.blend`.
+und laeuft headless durch.
+
+KosmosPrepare-Phase-0-Smoke-Test:
+
+```bash
+npm run kosmo:blender-package-smoke -- \
+  --project archive-intake/kosmo-projects/zg-07052026/kosmo.project.json \
+  --expected-rooms 0 \
+  --expect-context \
+  --output-blend archive-intake/kosmo-projects/zg-07052026-context-smoke.blend
+```
+
+Status: bestanden. Das Prepare-only-Paket erzeugt in Blender 5 Kontextobjekte
+fuer Origin, Perimeter, DXF-Underlay, IFC-Bounds und Label. Es erzeugt noch
+keine Raeume; das ist korrekt, weil die Quelle eine Grundlage/Skizze und noch
+kein Designmodell ist. KosmoDraw schreibt dazu
+`design/context-import.generated.json` als persistenten Report. Dieser Report
+enthaelt jetzt auch eine erste Heuristik: DXF-Layer `Schwarzplan_Gebaeude` als
+`existing_building`, IFC als `semantic_ifc_context` und die Readiness
+`context_ready_needs_human_layer_review`.
 
 Review-Pack erzeugen:
 
@@ -421,8 +446,14 @@ Neues lokales Projektpaket anlegen:
 npm run kosmo:package-create -- --name "Test Atelier" --address "Zurich" --program "Studio:48, Library:18"
 ```
 
+KosmosPrepare-Output importieren:
+
+```bash
+npm run kosmo:prepare-import -- --input "/path/to/KosmosPrepare/03_Output/PROJECT" --slug "project-slug"
+```
+
 Der Creator schreibt standardmaessig nach `archive-intake/kosmo-projects/`.
 Dieser Ordner ist gitignored und bleibt fuer echte Projekte, private Notizen
 und unreviewte Inputs lokal.
 
-Aktueller Status: Der Demo-Vertrag und alle JSON/JSONL-Artefakte bestehen den lokalen Package-Check. Der Blender-Bridge-Smoke-Test prueft jetzt Import, Write-back, Kosmo-Draw-SVG-Export und Kosmo-Viz-Preview.
+Aktueller Status: Der Demo-Vertrag und alle JSON/JSONL-Artefakte bestehen den lokalen Package-Check. Der KosmosPrepare-Importer erzeugt aus einem Phase-0-Output ein lokales review-only Projektpaket. Der Blender-Bridge-Smoke-Test prueft jetzt Prepare-Kontextimport, Raum-Import, Write-back, Kosmo-Draw-SVG-Export und Kosmo-Viz-Preview.

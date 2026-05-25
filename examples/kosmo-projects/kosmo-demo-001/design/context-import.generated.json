@@ -1,0 +1,57 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-05-25T18:53:04.786601+02:00",
+  "generator": "kosmo_design.load_project_package",
+  "project_id": "kosmo-demo-001",
+  "status": "generated_needs_review",
+  "rights_status": "internal_only",
+  "source_stage": "phase_0_context",
+  "note": "Kosmo Prepare context import report. This is a source/context analysis, not a verified BIM model.",
+  "context": {
+    "collection": "Kosmo_Context_kosmo-demo-001",
+    "object_count": 3,
+    "origin": {
+      "source": "fallback_origin",
+      "origin_marker": "Kosmo_Context_Origin_kosmo-demo-001",
+      "perimeter": "Kosmo_Context_Perimeter_kosmo-demo-001",
+      "perimeter_m": [
+        20.0,
+        20.0
+      ]
+    },
+    "dxf": {
+      "available": false,
+      "classification": {
+        "model_kind": "missing_dxf",
+        "confidence": "none",
+        "suggested_roles": [],
+        "warnings": [
+          "No DXF source was available in this package."
+        ]
+      }
+    },
+    "ifc": {
+      "available": false,
+      "classification": {
+        "model_kind": "missing_ifc",
+        "confidence": "none",
+        "suggested_roles": [],
+        "warnings": [
+          "No IFC source was available in this package."
+        ]
+      }
+    },
+    "classification": {
+      "context_kind": "manual_or_empty_project_context",
+      "origin_kind": "fallback_project_origin",
+      "confidence": "low",
+      "design_readiness": "manual_seed_only",
+      "suggested_next_step": "add_project_sources",
+      "warnings": [
+        "No DXF source was available in this package.",
+        "No IFC source was available in this package."
+      ]
+    },
+    "report_path": "design/context-import.generated.json"
+  }
+}

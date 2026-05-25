@@ -122,6 +122,7 @@ function buildFiles({ name, projectId, site, program }) {
       blocked_actions: ['public_release', 'external_upload', 'client_delivery']
     }),
     'design/model-profile.json': json(modelProfile),
+    'design/context-import.generated.json': json(buildContextImportSeed(projectId, 'package_create')),
     'design/variants.json': json({
       schema_version: '0.1',
       variants: [
@@ -149,6 +150,13 @@ function buildFiles({ name, projectId, site, program }) {
     'publish/export-manifest.json': json({
       schema_version: '0.1',
       exports: [
+        {
+          path: 'design/context-import.generated.json',
+          module: 'Kosmo Design',
+          format: 'json',
+          status: 'pending_blender_context_import',
+          rights_status: 'generated_needs_review'
+        },
         {
           path: 'draw/exports/ground-floor-plan.svg',
           module: 'Kosmo Draw',
@@ -215,6 +223,7 @@ function buildManifest({ name, projectId, site }) {
     ],
     outputs: [
       artifact('design/model-profile.json', 'model_profile', 'design', 'generated_needs_review', 'Conceptual model profile for Blender/Kosmo Design.'),
+      artifact('design/context-import.generated.json', 'other', 'design', 'generated_needs_review', 'KosmoDraw context import report.'),
       artifact('draw/exports/ground-floor-plan.svg', 'plan_export', 'draw', 'generated_needs_review', 'Placeholder vector ground floor export.'),
       artifact('draw/exports/section-a.svg', 'plan_export', 'draw', 'generated_needs_review', 'Placeholder vector section export.'),
       artifact('publish/review-pack.md', 'review_pack', 'publish', 'internal_only', 'Local review package scaffold.')
@@ -314,6 +323,21 @@ function buildModelProfile(projectId, program) {
       `${projectId}/30_Draw`,
       `${projectId}/40_Viz`
     ]
+  };
+}
+
+function buildContextImportSeed(projectId, source) {
+  return {
+    schema_version: '0.1',
+    generated_at: null,
+    generator: 'kosmo-project-package-create',
+    project_id: projectId,
+    status: 'pending_blender_context_import',
+    rights_status: 'internal_only',
+    source_stage: 'phase_0_context',
+    source,
+    note: 'KosmoDraw should overwrite this file after importing package context into Blender.',
+    context: null
   };
 }
 

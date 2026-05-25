@@ -1,19 +1,27 @@
 # Kosmo Design Package Bridge
 
 Stand: 2026-05-25  
-Status: Import-, Write-back-, Draw-SVG- und Viz-Preview-Connector implementiert im aktiven Blender-Projekt `KosmoDraw`.
+Status: Phase-0-Kontextimport, Raum-Import, Write-back, Draw-SVG und Viz-Preview-Connector implementiert im aktiven Blender-Projekt `KosmoDraw`.
 
 ## 1. Ziel
 
-Kosmo Design soll das lokale Kosmo-Projektpaket aus `Kosmo MVP 0.1` lesen und daraus in Blender echte, bearbeitbare Raum-/Geschossobjekte erzeugen.
+Kosmo Design soll das lokale Kosmo-Projektpaket aus `Kosmo MVP 0.1` lesen und daraus in Blender zuerst sichtbare Projektgrundlagen und spaeter echte, bearbeitbare Raum-/Geschossobjekte erzeugen.
 Bearbeitete oder importierte Raumdaten koennen wieder als separates Exportprofil in das Projektpaket geschrieben werden, ohne das urspruengliche `design/model-profile.json` zu ueberschreiben.
 Zusaetzlich kann KosmoDraw einfache SVG-Planexports direkt aus den in Blender erzeugten Raumobjekten schreiben.
 Kosmo Viz kann aus demselben Modell automatisch Kamera, Licht und einen lokalen PNG-Preview erzeugen.
+
+Wichtig: Die aktuell gefundenen Kosmo-/Prepare-/Draw-/Publish-Dateien sind noch fruehe Skizzen und Experimentierflaechen. Dieser Connector behandelt sie deshalb als Phase-0-Arbeitsmaterial, nicht als fertige CAD- oder BIM-Prototypen.
 
 Der erste Connector ist bewusst duenn:
 
 - liest `kosmo.project.json`
 - liest `design/model-profile.json`
+- liest optional `data/sources.json`, `brief/constraints.json` und
+  `data/source-files/kosmosprepare-origin.json`
+- erzeugt bei Prepare-only-Paketen einen sichtbaren Kontextlayer statt mit
+  "keine Raeume" abzubrechen
+- schreibt `design/context-import.generated.json` als persistenten Report zum
+  importierten Kontext
 - verwendet den bestehenden Blender-Operator `kosmo_design.create_room_from_plan`
 - erzeugt Collections unter `Kosmo_Project_<project_id>`
 - taggt erzeugte Collections/Objekte mit `kosmo_project_*` und `kosmo_source_*` Custom Properties
@@ -64,10 +72,26 @@ In Blender entsteht:
 
 ```plain text
 Kosmo_Project_kosmo-demo-001
+  Kosmo_Context_kosmo-demo-001
+    Kosmo_Context_Origin_*
+    Kosmo_Context_Perimeter_*
+    Kosmo_Context_Label_*
   Kosmo_Floor_EG
     Kosmo_Room_*
   Kosmo_Floor_1.OG
     Kosmo_Room_*
+```
+
+Bei einem KosmosPrepare-Phase-0-Paket ohne Raeume entsteht statt Raumobjekten:
+
+```plain text
+Kosmo_Project_<project_id>
+  Kosmo_Context_<project_id>
+    Kosmo_Context_Origin_*
+    Kosmo_Context_Perimeter_*
+    Kosmo_Context_DXF_Underlay_*
+    Kosmo_Context_IFC_Bounds_*
+    Kosmo_Context_Label_*
 ```
 
 Jeder Raum wird ueber den bestehenden Plan-Sketch-to-BIM Generator erzeugt:
@@ -89,6 +113,24 @@ Zusatz-Metadaten:
 - `kosmo_source_story_id`
 - `kosmo_source_function`
 - `kosmo_package_origin = kosmo_project_package`
+
+Phase-0-Kontextobjekte erhalten:
+
+- `kosmo_context_origin = kosmo_prepare_source`
+- `kosmo_role = prepare_origin_marker | prepare_perimeter | prepare_dxf_underlay | prepare_ifc_bounds | prepare_context_label`
+- `kosmo_context_source_path`, falls eine Quelle wie DXF oder IFC dahinterliegt
+
+Der DXF-Kontext ist ein limitiertes, sichtbares Mesh-Underlay aus POLYLINE/LWPOLYLINE-Entitaeten. Der IFC-Kontext ist aktuell noch kein voller IFC-Import, sondern eine Quellenanalyse mit sichtbarer Bounding-Box aus `IFCCARTESIANPOINT`-Daten. Das ist bewusst so: Phase 0 soll Grundlagen sichtbar machen, noch nicht behaupten, dass daraus bereits ein BIM-Modell entstanden ist.
+
+Zusätzlich wird im Projektpaket geschrieben:
+
+- `design/context-import.generated.json`
+
+Dieser Report enthält die importierte Kontext-Collection, Objektanzahl,
+Perimeter, DXF-Zählwerte, DXF-Layerklassifikation, IFC-Entity-Gruppen,
+IFC-Heuristik und IFC-Bounds. Damit können Kosmo Zentrale oder KosmoPublish
+später prüfen, was KosmoDraw aus den Grundlagen erkannt hat, ohne Blender
+erneut zu starten.
 
 ## 5. Was beim Write-back entsteht
 
@@ -162,15 +204,17 @@ npm run kosmo:blender-package-smoke
 ```
 
 Status: lokal bestanden. Der Command sucht `BLENDER_BIN`, danach `blender` im
-Shell-Pfad, danach die lokale Steam-Blender-Installation und danach den
-Standardpfad `/Applications/Blender.app/...`.
+Shell-Pfad, danach `/Applications/Blender.app/...` und danach die lokale
+Steam-Blender-Installation.
 Der KosmoDraw-Addon-Code kann mit `--addon-code` oder `KOSMO_DRAW_ADDON_CODE`
-gesetzt werden.
+gesetzt werden. Ohne expliziten Pfad findet der Command lokal auch
+`~/Documents/Claude/Projects/KosmoDraw/code`.
 
 Resultat:
 
 - `kosmo.project.json` wurde geladen.
 - `design/model-profile.json` wurde gelesen.
+- `design/context-import.generated.json` wurde geschrieben.
 - `kosmo_design.load_project_package` hat 3 Raeume importiert.
 - Blender hat 12 Objekte erzeugt: 3 Walls, 3 Floors, 3 Ceilings, 3 Labels.
 - `kosmo_design.export_project_package_profile` hat 3 Raeume exportiert.
@@ -182,6 +226,36 @@ Resultat:
 - `viz/previews/kosmo-preview-axon.png` wurde als PNG gerendert.
 - `viz/previews/preview-manifest.json` und `viz/cameras.generated.json` wurden geschrieben.
 - Projekt-Collection: `Kosmo_Project_kosmo-demo-001`.
+
+KosmosPrepare-Kontext-Smoke-Test:
+
+```bash
+npm run kosmo:blender-package-smoke -- \
+  --project archive-intake/kosmo-projects/zg-07052026/kosmo.project.json \
+  --expected-rooms 0 \
+  --expect-context \
+  --output-blend archive-intake/kosmo-projects/zg-07052026-context-smoke.blend
+```
+
+Status: lokal bestanden. Das Prepare-Paket `02_Sandbox` erzeugt 5 Kontextobjekte:
+Origin-Marker, Perimeter, DXF-Underlay, IFC-Bounds und Label. Es erzeugt bewusst
+0 Raeume, weil `design/model-profile.json` in diesem Paket noch ein leerer
+Design-Seed ist. Der Report `design/context-import.generated.json` enthaelt
+u.a. 13'406 erkannte DXF-Polylines, 1'800 importierte Underlay-Polylines,
+273'526 IFC-CartesianPoints und die berechneten IFC-Bounds.
+
+Erste heuristische Klassifikation:
+
+- Gesamtcontext: `prepare_site_context_with_dxf_ifc`
+- Design Readiness: `context_ready_needs_human_layer_review`
+- DXF: `dense_polyline_underlay`; dominanter Layer
+  `AB_Schwarzplan_Schwarzplan_Gebaeude` wird als `existing_building`
+  vorgeschlagen.
+- IFC: `semantic_ifc_context`; Projekt-/Site-/Building-Hierarchie,
+  Mesh-Bounds, Property-Daten und 282 semantische Building-Element-Entities
+  werden erkannt.
+- Warnung bleibt: Vor Design-Generierung muessen Layer/IFC-Elemente geprueft
+  und nicht automatisch als verbindliche BIM-Bauteile behandelt werden.
 
 Ein oeffnbares Test-Blend wurde erzeugt unter:
 
@@ -195,7 +269,7 @@ Hinweis: Im Headless-Test erscheinen zwei harmlose Add-on-Preference-Warnings, w
 
 Nach dem ersten Blender-Test:
 
-1. Exportprofil, Draw-SVGs und Viz-Manifeste gegen klare MVP-Schemas haerten.
-2. Kosmo Zentrale Job-Log mit Paketpfad, Importresultat, Exportresultat, Draw-Export und Viz-Preview verbinden.
-3. Optional: mehrere Kameras, Material-Presets und echte Sonne/Standortdaten aus dem Projektpaket einbinden.
-4. Optional: Headless-Test um Review-Pack-Validierung und Bildqualitaetscheck erweitern.
+1. DXF-Unterlage besser filtern: Layer, Hoehenlinien, Parzelle, Gebaeude, Baulinien.
+2. IFC nicht nur als Bounds analysieren, sondern ueber Bonsai/IfcOpenShell oder einen separaten Importpfad als echte Kontextgeometrie laden.
+3. Aus Prepare-Kontext erste Designobjekt-Vorschlaege erzeugen, aber mit klarer Unsicherheitsmarkierung.
+4. Kosmo Zentrale Job-Log mit Paketpfad, Importresultat, Exportresultat, Draw-Export und Viz-Preview verbinden.

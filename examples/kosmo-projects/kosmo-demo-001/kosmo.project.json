@@ -106,6 +106,13 @@
       "description": "Conceptual model profile for Blender/Kosmo Design."
     },
     {
+      "path": "design/context-import.generated.json",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "KosmoDraw context import report."
+    },
+    {
       "path": "draw/exports/ground-floor-plan.svg",
       "type": "plan_export",
       "module": "draw",

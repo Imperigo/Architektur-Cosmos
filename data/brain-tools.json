@@ -60,6 +60,15 @@
       "approval_required_before_public_use": true
     },
     {
+      "id": "kosmo_prepare_package_import",
+      "label": "Kosmo Prepare Package Import",
+      "command": "npm run kosmo:prepare-import -- --input \"{source_path}\" --slug \"{project_slug}\"",
+      "output_root": "archive-intake/kosmo-projects/{project_slug}",
+      "review_output": "archive-intake/kosmo-projects/{project_slug}/kosmo.project.json",
+      "purpose": "Import a local KosmosPrepare Phase 0 output folder into a review-only Kosmo project package with source registry, constraints, design seed, placeholders and memory logs.",
+      "approval_required_before_public_use": false
+    },
+    {
       "id": "kosmo_project_package_review",
       "label": "Kosmo Project Package Review",
       "command": "npm run kosmo:package-review -- --project {project_path}",
@@ -74,7 +83,7 @@
       "command": "npm run kosmo:blender-package-smoke -- --project {project_path}/kosmo.project.json --addon-code {addon_code}",
       "output_root": "terminal/blender-smoke",
       "review_output": "terminal/KOSMO_BLENDER_PACKAGE_BRIDGE_SMOKE",
-      "purpose": "Run a local headless Blender smoke test that imports a Kosmo project package through the KosmoDraw/KosmoDesign package bridge, verifies generated room objects, checks model-profile write-back, verifies Kosmo Draw SVG exports, and renders a Kosmo Viz PNG preview.",
+      "purpose": "Run a local headless Blender smoke test that imports a Kosmo project package through the KosmoDraw/KosmoDesign package bridge, verifies Prepare context reports with DXF/IFC heuristics, generated room objects, model-profile write-back, Kosmo Draw SVG exports and Kosmo Viz PNG previews.",
       "approval_required_before_public_use": false
     },
     {

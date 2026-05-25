@@ -27,6 +27,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--addon-code", required=True)
     parser.add_argument("--project", required=True)
     parser.add_argument("--expected-rooms", type=int, default=3)
+    parser.add_argument("--expect-context", action="store_true")
     parser.add_argument("--output-blend", default="")
     return parser.parse_args(raw)
 
@@ -87,13 +88,69 @@ def main() -> None:
         role = str(obj.get("kosmo_role") or "unknown")
         role_counts[role] = role_counts.get(role, 0) + 1
 
-    required_roles = ["walls", "floor", "ceiling", "label"]
-    missing_roles = [role for role in required_roles if role_counts.get(role, 0) < expected_rooms]
-    if missing_roles:
-        raise AssertionError(f"Missing expected object roles: {missing_roles}; counts={role_counts}")
+    if expected_rooms > 0:
+        required_roles = ["walls", "floor", "ceiling", "label"]
+        missing_roles = [role for role in required_roles if role_counts.get(role, 0) < expected_rooms]
+        if missing_roles:
+            raise AssertionError(f"Missing expected object roles: {missing_roles}; counts={role_counts}")
 
     if str(bpy.context.scene.get("kosmo_project_id") or "") != project_id:
         raise AssertionError("Scene kosmo_project_id was not set")
+
+    context_objects = [
+        obj
+        for obj in bpy.data.objects
+        if obj.get("kosmo_project_id") == project_id
+        and obj.get("kosmo_context_origin") == "kosmo_prepare_source"
+    ]
+    context_role_counts: dict[str, int] = {}
+    for obj in context_objects:
+        role = str(obj.get("kosmo_role") or "unknown")
+        context_role_counts[role] = context_role_counts.get(role, 0) + 1
+
+    if args.expect_context and not context_objects:
+        raise AssertionError(f"Expected Kosmo Prepare context objects for {project_id}")
+
+    context_imported = read_scene_json(bpy.context.scene.get("kosmo_context_imported"))
+    context_report_path = project_manifest.parent / "design" / "context-import.generated.json"
+    context_report = {}
+    if context_report_path.exists():
+        with context_report_path.open("r", encoding="utf-8") as handle:
+            parsed_report = json.load(handle)
+        if isinstance(parsed_report, dict):
+            context_report = parsed_report
+    if args.expect_context and not context_report_path.exists():
+        raise AssertionError(f"Missing context import report: {context_report_path}")
+    if args.expect_context:
+        context_payload = context_report.get("context") if isinstance(context_report, dict) else {}
+        if not isinstance(context_payload, dict) or not context_payload.get("classification"):
+            raise AssertionError("Context report is missing heuristic classification")
+        for source_name in ["dxf", "ifc"]:
+            source_payload = context_payload.get(source_name) or {}
+            if source_payload.get("available") and not source_payload.get("classification"):
+                raise AssertionError(f"Context report is missing {source_name.upper()} classification")
+
+    if expected_rooms == 0:
+        if args.output_blend:
+            output_blend = Path(args.output_blend).expanduser().resolve()
+            output_blend.parent.mkdir(parents=True, exist_ok=True)
+            bpy.ops.wm.save_as_mainfile(filepath=output_blend.as_posix())
+
+        report = {
+            "status": "passed",
+            "project_id": project_id,
+            "project_collection": project_collection_name,
+            "rooms": source_room_ids,
+            "context_object_count": len(context_objects),
+            "context_role_counts": context_role_counts,
+            "context_imported": context_imported,
+            "context_report": context_report,
+            "context_report_path": context_report_path.as_posix() if context_report_path.exists() else None,
+            "scene_context_collection": str(bpy.context.scene.get("kosmo_context_collection") or ""),
+            "output_blend": args.output_blend or None,
+        }
+        print("KOSMO_BLENDER_PACKAGE_BRIDGE_SMOKE " + json.dumps(report, sort_keys=True))
+        return
 
     export_result = bpy.ops.kosmo_design.export_project_package_profile(
         filepath=project_manifest.as_posix()
@@ -106,6 +163,8 @@ def main() -> None:
         raise AssertionError(f"Missing exported model profile: {exported_path}")
     with exported_path.open("r", encoding="utf-8") as handle:
         exported_profile = json.load(handle)
+    sanitize_exported_profile(exported_profile, project_manifest.parent)
+    exported_path.write_text(json.dumps(exported_profile, indent=2) + "\n", encoding="utf-8")
     exported_rooms = exported_profile.get("rooms") or []
     if len(exported_rooms) != expected_rooms:
         raise AssertionError(
@@ -175,6 +234,11 @@ def main() -> None:
         "viz_cameras": cameras_generated_path.as_posix(),
         "object_count": len(objects),
         "role_counts": role_counts,
+        "context_object_count": len(context_objects),
+        "context_role_counts": context_role_counts,
+        "context_imported": context_imported,
+        "context_report": context_report,
+        "context_report_path": context_report_path.as_posix() if context_report_path.exists() else None,
         "output_blend": args.output_blend or None,
     }
     print("KOSMO_BLENDER_PACKAGE_BRIDGE_SMOKE " + json.dumps(report, sort_keys=True))
@@ -186,6 +250,27 @@ def clear_scene(bpy) -> None:
     for collection in list(bpy.data.collections):
         if not collection.users:
             bpy.data.collections.remove(collection)
+
+
+def read_scene_json(value) -> dict:
+    if not isinstance(value, str) or not value.strip():
+        return {}
+    try:
+        parsed = json.loads(value)
+    except json.JSONDecodeError:
+        return {}
+    return parsed if isinstance(parsed, dict) else {}
+
+
+def sanitize_exported_profile(profile: dict, project_root: Path) -> None:
+    source = profile.get("source")
+    if not isinstance(source, dict):
+        return
+
+    try:
+        source["project_root"] = project_root.resolve().relative_to(Path.cwd()).as_posix()
+    except ValueError:
+        source["project_root"] = project_root.name
 
 
 if __name__ == "__main__":

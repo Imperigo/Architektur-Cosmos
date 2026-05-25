@@ -153,12 +153,16 @@ KosmoData
 
 1. **KosmosPrepare -> Kosmo Package Adapter**  
    Kleiner Exporter, der aus einem `KosmosPrepare/03_Output/<projekt>` ein
-   Kosmo-Projektpaket oder Paket-Update erzeugt.
+   Kosmo-Projektpaket oder Paket-Update erzeugt. **Initial umgesetzt** mit:
+   `npm run kosmo:prepare-import -- --input "<KosmosPrepare output>" --slug "<projekt-slug>"`.
 
 2. **KosmoDraw Package Bridge haerten**  
-   Bereits laufend: Import, Write-back, Draw-SVG und Viz-Preview. Naechster
-   Schritt ist Schema-Validierung und ein besseres Mapping fuer echte
-   KosmosPrepare-Outputs.
+   Bereits laufend: Phase-0-Kontextimport, Raum-Import, Write-back, Draw-SVG
+   und Viz-Preview. Initial liest KosmoDraw jetzt Origin, Perimeter, DXF als
+   sichtbares Underlay und IFC als Bounds-/Quellenanalyse und schreibt
+   `design/context-import.generated.json` als persistenten Report. Naechster
+   Schritt: IFC/DXF-Layer sauber klassifizieren und daraus erste, als unsicher
+   markierte Designobjekt-Vorschlaege erzeugen.
 
 3. **KosmoPublish Package Adapter**  
    KosmoPublish soll `kosmo.project.json`, `design/model-profile.exported.json`
