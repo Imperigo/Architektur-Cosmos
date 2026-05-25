@@ -9,6 +9,7 @@ import entries from '@/data/mock-entries.json';
 import publicModelPreviews from '@/data/public-model-previews.json';
 import relations from '@/data/relations.json';
 import { styleSectorColors } from '@/lib/atlas-layout';
+import { prettifyGermanText } from '@/lib/display-text';
 import { primaryPublicMediaUrl, publicDisplayMediaUrl } from '@/lib/media';
 import type { Entry, EntryRelation, StyleSectorId } from '@/lib/types';
 
@@ -44,7 +45,7 @@ export async function generateMetadata({ params }: EntryPageProps): Promise<Meta
   }
 
   const title = `${entry.title} | Architektur Kosmos`;
-  const description = entry.one_sentence || entry.short_description;
+  const description = prettifyGermanText(entry.one_sentence || entry.short_description);
   const url = `${siteUrl}/atlas/${entry.slug}/`;
 
   return {
@@ -84,6 +85,8 @@ export default async function EntryPage({ params }: EntryPageProps) {
   const publicModelUrl = publicModelPreviewUrl(entry);
   const heroImage = primaryMediaUrl(entry);
   const visualProfile = entryVisualProfile(entry);
+  const displayOneSentence = prettifyGermanText(entry.one_sentence || entry.short_description);
+  const displayFullDescription = prettifyGermanText(entry.full_description);
 
   return (
     <main
@@ -133,10 +136,10 @@ export default async function EntryPage({ params }: EntryPageProps) {
               {entry.authors.join(', ') || 'unbekannte Autorschaft'}{location ? ` / ${location}` : ''}
             </div>
             <p className="entry-text-reactive entry-text-hero mt-8 max-w-3xl text-xl leading-relaxed text-[#f7f7f4] sm:text-2xl">
-              {entry.one_sentence || entry.short_description}
+              {displayOneSentence}
             </p>
             <p className="entry-text-reactive entry-text-body mt-7 max-w-3xl text-base leading-8 text-[#cfcfca]">
-              {entry.full_description}
+              {displayFullDescription}
             </p>
           </div>
 
@@ -241,7 +244,7 @@ export default async function EntryPage({ params }: EntryPageProps) {
                           <span className="text-sm text-[#f7f7f4]">{modelPackage.package_type.replace(/_/g, ' ')}</span>
                           <span className="text-[10px] uppercase tracking-[0.14em]" style={{ color: accent }}>{modelPackage.status.replace(/_/g, ' ')}</span>
                         </div>
-                        <p className="mt-2 text-xs leading-5 text-[#b8b8b2]">{modelPackage.notes ?? modelPackage.planned_paths[0]}</p>
+                        <p className="mt-2 text-xs leading-5 text-[#b8b8b2]">{prettifyGermanText(modelPackage.notes ?? modelPackage.planned_paths[0])}</p>
                       </div>
                     ))}
                   </div>
@@ -256,7 +259,7 @@ export default async function EntryPage({ params }: EntryPageProps) {
                   {entry.splat_assets.map((splat) => (
                     <div key={splat.r2_key} className="mt-3">
                       <h2 className="text-xl text-[#f7f7f4]">{splat.title}</h2>
-                      <p className="mt-2 text-sm leading-6 text-[#b8b8b2]">{splat.use_case ?? splat.source_basis}</p>
+                      <p className="mt-2 text-sm leading-6 text-[#b8b8b2]">{prettifyGermanText(splat.use_case ?? splat.source_basis)}</p>
                       <p className="mt-3 break-words text-[10px] uppercase tracking-[0.12em] text-[#8d8d87]">{splat.r2_key}</p>
                     </div>
                   ))}
@@ -295,7 +298,7 @@ export default async function EntryPage({ params }: EntryPageProps) {
                 <Link key={candidate.id} href={`/atlas/${candidate.slug}/`} className="entry-link entry-study-card border border-white/14 bg-[#071315]/55 p-4">
                   <span className="block text-[10px] uppercase tracking-[0.16em]" style={{ color: accent }}>{candidate.year_start} / {candidate.authors[0] ?? 'unbekannt'}</span>
                   <span className="mt-2 block text-xl text-[#f7f7f4]">{candidate.title}</span>
-                  <span className="mt-3 block text-sm leading-6 text-[#b8b8b2]">{comparisonAxis(entry, candidate)}</span>
+                  <span className="mt-3 block text-sm leading-6 text-[#b8b8b2]">{prettifyGermanText(comparisonAxis(entry, candidate))}</span>
                 </Link>
               ))}
             </div>
@@ -313,7 +316,7 @@ export default async function EntryPage({ params }: EntryPageProps) {
                     <span className="min-w-0">
                       <span className="block text-[10px] uppercase tracking-[0.16em]" style={{ color: accent }}>{relation.relation_type.replace(/_/g, ' ')}</span>
                       <span className="mt-2 block text-lg text-[#f7f7f4]">{relatedEntry.title}</span>
-                      <span className="mt-2 block text-sm leading-6 text-[#b8b8b2]">{relation.description}</span>
+                      <span className="mt-2 block text-sm leading-6 text-[#b8b8b2]">{prettifyGermanText(relation.description)}</span>
                     </span>
                   </div>
                 </Link>
@@ -600,19 +603,19 @@ function ArchitectureTextSection({ entry, accent }: { entry: Entry; accent: stri
       <div className="grid gap-6 lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)]">
         <div>
           <div className="text-[10px] uppercase tracking-[0.22em]" style={{ color: accent }}>Architektonische Lesart</div>
-          <h2 className="mt-3 max-w-xl text-3xl leading-tight text-[#f7f7f4] sm:text-4xl">{text.headline}</h2>
+          <h2 className="mt-3 max-w-xl text-3xl leading-tight text-[#f7f7f4] sm:text-4xl">{prettifyGermanText(text.headline)}</h2>
           <div className="mt-4 flex flex-wrap gap-2 text-[9px] uppercase tracking-[0.14em] text-[#8d8d87]">
             <span className="border border-white/14 px-2.5 py-1">{text.language ?? 'de'}</span>
             <span className="border border-white/14 px-2.5 py-1">{text.review_status?.replace(/_/g, ' ') ?? 'draft review'}</span>
           </div>
         </div>
         <div>
-          <p className="entry-text-reactive entry-architecture-overview text-lg leading-8 text-[#e5e5df]">{text.overview}</p>
+          <p className="entry-text-reactive entry-architecture-overview text-lg leading-8 text-[#e5e5df]">{prettifyGermanText(text.overview)}</p>
           <div className="mt-6 grid gap-3">
             {chapters.map((chapter) => (
               <article key={chapter.title} className="entry-architecture-chapter border border-white/12 bg-[#071315]/56 p-4">
-                <h3 className="text-[11px] font-semibold uppercase tracking-[0.18em]" style={{ color: accent }}>{chapter.title}</h3>
-                <p className="mt-3 text-sm leading-7 text-[#cfcfca]">{chapter.text}</p>
+                <h3 className="text-[11px] font-semibold uppercase tracking-[0.18em]" style={{ color: accent }}>{prettifyGermanText(chapter.title)}</h3>
+                <p className="mt-3 text-sm leading-7 text-[#cfcfca]">{prettifyGermanText(chapter.text)}</p>
               </article>
             ))}
           </div>
@@ -629,12 +632,12 @@ function ObjectIdentityPanel({ entry, profile, accent }: { entry: Entry; profile
         <article className="entry-material-board border border-white/14 bg-[#071315]/60 p-5">
           <div className="text-[10px] uppercase tracking-[0.22em]" style={{ color: accent }}>Object Signature</div>
           <h2 className="mt-3 text-3xl leading-tight text-[#f7f7f4]">{profile.title}</h2>
-          <p className="entry-text-reactive mt-4 text-sm leading-7 text-[#cfcfca]">{profile.reading}</p>
+          <p className="entry-text-reactive mt-4 text-sm leading-7 text-[#cfcfca]">{prettifyGermanText(profile.reading)}</p>
           <div className="mt-5 grid gap-2 sm:grid-cols-3">
             {profile.materials.map((material, index) => (
               <div key={material} className="entry-material-chip border border-white/12 bg-[#050505]/45 p-3">
                 <span className="entry-material-swatch" style={{ background: profile.materialColors[index % profile.materialColors.length] }} />
-                <span className="mt-3 block text-[10px] uppercase tracking-[0.14em] text-[#d7d7d0]">{material}</span>
+                <span className="mt-3 block text-[10px] uppercase tracking-[0.14em] text-[#d7d7d0]">{prettifyGermanText(material)}</span>
               </div>
             ))}
           </div>
@@ -658,7 +661,7 @@ function ObjectIdentityPanel({ entry, profile, accent }: { entry: Entry; profile
           <div className="mt-5 grid gap-2 sm:grid-cols-2">
             {profile.composition.map((item) => (
               <div key={item} className="entry-text-reactive border border-white/10 bg-[#050505]/42 p-3 text-sm leading-6 text-[#cfcfca]">
-                {item}
+                {prettifyGermanText(item)}
               </div>
             ))}
           </div>
@@ -704,7 +707,7 @@ function MediaCard({ media, entry, profile, accent }: { media: Entry['media'][nu
           <span className="text-[#8d8d87]">slot {mediaSlotNumber(media.type)}</span>
         </div>
         <h3 className="mt-2 text-xl text-[#f7f7f4]">{media.label}</h3>
-        <p className="mt-3 text-sm leading-6 text-[#b8b8b2]">{media.placeholder}</p>
+        <p className="mt-3 text-sm leading-6 text-[#b8b8b2]">{prettifyGermanText(media.placeholder)}</p>
         {media.credit ? <p className="mt-3 text-[10px] uppercase tracking-[0.12em] text-[#8d8d87]">{media.credit}</p> : null}
       </div>
     </article>
@@ -720,7 +723,7 @@ function ObjectMediaPlaceholder({ mediaType, entry, profile }: { mediaType: Entr
       <span className="entry-object-media-core" />
       <span className="entry-object-media-slope" />
       <span className="entry-object-media-strata" />
-      <span className="entry-object-media-label">{label}</span>
+      <span className="entry-object-media-label">{prettifyGermanText(label)}</span>
     </div>
   );
 }
@@ -733,12 +736,12 @@ function InfoBlock({ title, items, accent, empty = 'Keine Eintraege vorhanden' }
         <div className="flex flex-wrap gap-2">
           {items.map((item) => (
             <span key={item} className="entry-info-chip border border-white/14 bg-[#071315]/70 px-3 py-2 text-xs uppercase tracking-[0.11em] text-[#d7d7d0]">
-              {item.replace(/[_:]/g, ' ')}
+              {prettifyGermanText(item.replace(/[_:]/g, ' '))}
             </span>
           ))}
         </div>
       ) : (
-        <p className="entry-text-reactive text-sm text-[#b8b8b2]">{empty}</p>
+        <p className="entry-text-reactive text-sm text-[#b8b8b2]">{prettifyGermanText(empty)}</p>
       )}
     </div>
   );
@@ -749,7 +752,7 @@ function StudyCard({ title, label, body, accent }: { title: string; label: strin
     <article className="entry-study-card border border-white/14 bg-[#071315]/55 p-4">
       <div className="text-[10px] uppercase tracking-[0.2em]" style={{ color: accent }}>{title}</div>
       <div className="mt-3 text-xl text-[#f7f7f4]">{label}</div>
-      <p className="mt-3 text-sm leading-6 text-[#b8b8b2]">{body}</p>
+      <p className="mt-3 text-sm leading-6 text-[#b8b8b2]">{prettifyGermanText(body)}</p>
     </article>
   );
 }
@@ -762,12 +765,12 @@ function AnalysisCard({ title, items, accent, empty }: { title: string; items: s
         <div className="mt-3 space-y-2">
           {items.slice(0, 5).map((item) => (
             <div key={item} className="entry-text-reactive border border-white/10 bg-[#050505]/45 p-2 text-sm leading-6 text-[#d7d7d0]">
-              {item.replace(/[_:]/g, ' ')}
+              {prettifyGermanText(item.replace(/[_:]/g, ' '))}
             </div>
           ))}
         </div>
       ) : (
-        <p className="mt-3 text-sm leading-6 text-[#b8b8b2]">{empty}</p>
+        <p className="mt-3 text-sm leading-6 text-[#b8b8b2]">{prettifyGermanText(empty)}</p>
       )}
     </article>
   );
@@ -977,7 +980,7 @@ function radarPoint(index: number, total: number, center: number, radius: number
 function studyPrompt(entry: Entry) {
   const type = entry.entry_type.replace(/_/g, ' ');
   const theme = entry.themes[0]?.replace(/[_:]/g, ' ') ?? 'architectural history';
-  return `Lesen this ${type} through ${theme}: locate what is formal, what is technical, and what belongs to its historical context.`;
+  return `Lies diesen ${type} über ${theme}: Wo liegt die formale Logik, was ist technisch oder tektonisch, und was gehört zum historischen Kontext?`;
 }
 
 function archiveLeseniness(entry: Entry) {
@@ -991,9 +994,9 @@ function archiveLeseniness(entry: Entry) {
 
 function archiveSummary(entry: Entry) {
   const parts = [
-    `${entry.media.length}/4 media slots`,
-    `${relatedEntries(entry).length} relations`,
-    entry.database_profile ? `${entry.database_profile.model_count} model layers` : '3D model pending'
+    `${entry.media.length}/4 Medienslots`,
+    `${relatedEntries(entry).length} Relationen`,
+    entry.database_profile ? `${entry.database_profile.model_count} Modell-Layer` : '3D-Modell offen'
   ];
   return parts.join(' / ');
 }
@@ -1004,7 +1007,7 @@ function entryJsonLd(entry: Entry) {
     '@context': 'https://schema.org',
     '@type': entry.entry_type === 'text' || entry.entry_type === 'theory' ? 'CreativeWork' : 'Place',
     name: entry.title,
-    description: entry.one_sentence || entry.short_description,
+    description: prettifyGermanText(entry.one_sentence || entry.short_description),
     url: `${siteUrl}/atlas/${entry.slug}/`,
     creator: entry.authors,
     location: location || undefined,
@@ -1014,7 +1017,7 @@ function entryJsonLd(entry: Entry) {
 }
 
 function formatYear(year: number) {
-  return year < 0 ? `${Math.abs(year)} BCE` : `${year}`;
+  return year < 0 ? `${Math.abs(year)} v. Chr.` : `${year}`;
 }
 
 function styleColor(styleSector: StyleSectorId) {

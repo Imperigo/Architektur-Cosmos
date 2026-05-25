@@ -1,5 +1,6 @@
 import { ProjectMediaGrid } from '@/components/atlas/ProjectMediaGrid';
 import { styleSectorColors } from '@/lib/atlas-layout';
+import { prettifyGermanText } from '@/lib/display-text';
 import type { Entry, StyleSectorId } from '@/lib/types';
 
 type ProjectDetailCardProps = {
@@ -25,8 +26,8 @@ export function ProjectDetailCard({ entry, x, y, onSelectFilter }: ProjectDetail
   const titleFontSize = titleLines.length > 1 ? 15.2 : entry.title.length > 33 ? 16.2 : 18;
   const metaY = y + 60 + (titleLines.length - 1) * 15;
   const mediaY = y + 88 + (titleLines.length - 1) * 8;
-  const headlineLines = ellipsizeLines(wrapText(entry.one_sentence || entry.short_description, 32), 3, 32);
-  const bodyLines = ellipsizeLines(wrapText(entry.full_description, 38), entry.source_url || entry.source_assets?.length ? 4 : 5, 38);
+  const headlineLines = ellipsizeLines(wrapText(prettifyGermanText(entry.one_sentence || entry.short_description), 32), 3, 32);
+  const bodyLines = ellipsizeLines(wrapText(prettifyGermanText(entry.full_description), 38), entry.source_url || entry.source_assets?.length ? 4 : 5, 38);
   const sourceLabel = sourceLabelForEntry(entry);
   const sourceAssetCount = entry.source_assets?.length ?? 0;
   const mediaCredit = primaryMediaCredit(entry);
