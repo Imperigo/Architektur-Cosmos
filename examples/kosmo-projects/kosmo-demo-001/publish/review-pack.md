@@ -1,6 +1,6 @@
 # Kosmo Demo 001 Review Pack
 
-Generated: 2026-05-25T20:38:03.569Z
+Generated: 2026-05-25T20:56:16.411Z
 Project ID: `kosmo-demo-001`
 Risk level: `local_review_only`
 Readiness: `review_required`
@@ -151,6 +151,11 @@ Readiness: `review_required`
 - Blender context smoke locked objects: 4
 - Blender context smoke review-only objects: 4
 - Blender context smoke output blend: no
+- Blender context audit: missing
+- Blender context audit failures: 0
+- Blender context audit mesh polygons: 0
+- Blender context audit DXF polylines: 0
+- Blender context audit IFC bboxes: 0
 - approved for design generation: no
 - readiness: needs_human_selection
 
@@ -206,6 +211,7 @@ Readiness: `review_required`
 
 - Review context-selection decisions before using candidates as design input.
 - Review pending source-mapping rows before syncing decisions to context-selection.
+- Run npm run kosmo:blender-context-audit to reopen and verify the saved Blender review file.
 - Review source-map semantic candidates before any design-seed approval.
 - Review generated outputs before any public or external use.
 - Ask for explicit approval before paid cloud jobs.

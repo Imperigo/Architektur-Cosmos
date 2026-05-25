@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-25T20:38:03.569Z",
+  "generated_at": "2026-05-25T20:56:16.411Z",
   "generator": "kosmo-project-package-review",
   "project": {
     "id": "kosmo-demo-001",
@@ -230,7 +230,7 @@
       "rights_status": "internal_only",
       "description": "Local review package scaffold.",
       "exists": true,
-      "size_bytes": 10502
+      "size_bytes": 10699
     },
     {
       "path": "design/context-decision-matrix.generated.json",
@@ -589,6 +589,15 @@
     "blender_context_smoke_dxf_polyline_count": 0,
     "blender_context_smoke_ifc_bbox_count": 2,
     "blender_context_smoke_output_blend_exists": false,
+    "blender_context_audit_exists": false,
+    "blender_context_audit_status": null,
+    "blender_context_audit_failure_count": 0,
+    "blender_context_audit_warning_count": 0,
+    "blender_context_audit_object_count": 0,
+    "blender_context_audit_locked_object_count": 0,
+    "blender_context_audit_mesh_polygon_count": 0,
+    "blender_context_audit_dxf_polyline_count": 0,
+    "blender_context_audit_ifc_bbox_count": 0,
     "stale_selection_count": 0,
     "readiness": "needs_human_selection",
     "approved_for_design_generation": false
@@ -712,6 +721,7 @@
   "next_actions": [
     "Review context-selection decisions before using candidates as design input.",
     "Review pending source-mapping rows before syncing decisions to context-selection.",
+    "Run npm run kosmo:blender-context-audit to reopen and verify the saved Blender review file.",
     "Review source-map semantic candidates before any design-seed approval.",
     "Review generated outputs before any public or external use.",
     "Ask for explicit approval before paid cloud jobs."
