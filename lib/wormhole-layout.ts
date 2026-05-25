@@ -1,6 +1,6 @@
 import { polarToCartesian } from '@/lib/polar-coordinates';
 import type { Entry } from '@/lib/types';
-import { atlasSize, sectorMidAngle, styleSectors, type AtlasNode, type SemanticLevel, type TimeRing } from '@/lib/atlas-layout';
+import { angleInSector, atlasSize, styleSectors, type AtlasNode, type SemanticLevel, type TimeRing } from '@/lib/atlas-layout';
 
 export type WormholeState = {
   phase: number;
@@ -129,7 +129,7 @@ export function layoutWormholeEntries(entries: Entry[], state: WormholeState, se
       const sector = styleSectors.find((item) => item.id === entry.style_sector) ?? styleSectors[0];
       const driftSeed = stableHash(entry.id);
       const radius = tunnelRadius(depth) + depthLaneOffset(driftSeed, closeness);
-      const angle = sectorMidAngle(sector) + tubeTwist(worldPosition) + entryAngleOffset(entry.id);
+      const angle = angleInSector(entry, sector) + tubeTwist(worldPosition);
       const point = tunnelPoint(radius, angle, depth, state.phase);
       const labelAnchor = point.x > atlasSize.cx ? 'start' as const : 'end' as const;
       const labelX = point.x + (labelAnchor === 'start' ? 22 : -22);
@@ -296,10 +296,6 @@ export function tunnelOpacity(depth: number) {
 function smoothstep(edge0: number, edge1: number, value: number) {
   const t = Math.max(0, Math.min(1, (value - edge0) / (edge1 - edge0)));
   return t * t * (3 - 2 * t);
-}
-
-function entryAngleOffset(id: string) {
-  return ((stableHash(id) % 100) / 100 - 0.5) * 50;
 }
 
 function depthLaneOffset(seed: number, closeness: number) {

@@ -1082,14 +1082,24 @@ body:has(.entry-page) {
 }
 
 .dossier-title-link,
-.dossier-media-link {
+.dossier-media-link,
+.dossier-page-link,
+.dossier-close,
+.dossier-filter-chip {
   cursor: none;
   outline: none;
 }
 
 .dossier-title-link text,
-.dossier-media-link rect {
-  transition: opacity 150ms ease, stroke-width 150ms ease, filter 150ms ease;
+.dossier-media-link rect,
+.dossier-page-link rect,
+.dossier-page-link text,
+.dossier-close rect,
+.dossier-close text,
+.dossier-reactive-textblock text,
+.dossier-filter-chip rect,
+.dossier-filter-chip text {
+  transition: opacity 150ms ease, stroke-width 150ms ease, filter 150ms ease, fill 150ms ease, transform 150ms ease;
 }
 
 .dossier-title-link:hover text,
@@ -1101,6 +1111,35 @@ body:has(.entry-page) {
 .dossier-media-link:hover rect,
 .dossier-media-link:focus-visible rect {
   stroke-width: 1.15;
+  filter: drop-shadow(0 0 7px rgb(0 231 255 / 24%));
+}
+
+.dossier-page-link:hover rect,
+.dossier-page-link:focus-visible rect,
+.dossier-close:hover rect,
+.dossier-close:focus-visible rect,
+.dossier-filter-chip:hover rect,
+.dossier-filter-chip:focus-visible rect {
+  stroke-width: 1.08;
+  filter: drop-shadow(0 0 9px rgb(0 231 255 / 30%));
+}
+
+.dossier-page-link:hover text,
+.dossier-page-link:focus-visible text {
+  fill: #00e7ff;
+  filter: drop-shadow(0 0 7px rgb(0 231 255 / 32%));
+}
+
+.dossier-close:hover text,
+.dossier-close:focus-visible text {
+  fill: #050505;
+  filter: drop-shadow(0 0 6px rgb(255 255 255 / 38%));
+}
+
+.dossier-filter-chip:hover text,
+.dossier-filter-chip:focus-visible text,
+.dossier-reactive-textblock:hover text {
+  fill: #ffffff;
   filter: drop-shadow(0 0 7px rgb(0 231 255 / 24%));
 }
 
@@ -1634,6 +1673,7 @@ body:has(.entry-page) {
 
 .filter-access-trigger:hover,
 .filter-access:hover .filter-access-trigger,
+.filter-access-pinned .filter-access-trigger,
 .filter-access-trigger-active {
   border-color: rgb(247 247 244 / 72%);
   color: #f7f7f4;
@@ -3707,6 +3747,7 @@ body:has(.entry-page) {
   outline: 0;
   box-shadow: none;
   filter: drop-shadow(0 0 18px rgb(0 231 255 / 12%));
+  transition: filter 220ms ease, transform 220ms cubic-bezier(0.19, 1, 0.22, 1);
 }
 
 .intro-title-main {
@@ -3721,6 +3762,7 @@ body:has(.entry-page) {
   font-size: clamp(1.28rem, 3.35vw, 3.2rem);
   font-weight: 560;
   letter-spacing: 0.24em;
+  transition: color 220ms ease, filter 220ms ease, letter-spacing 220ms ease;
 }
 
 .intro-title-kosmos {
@@ -3733,6 +3775,27 @@ body:has(.entry-page) {
   font-size: clamp(2.7rem, 8vw, 7.7rem);
   font-weight: 700;
   letter-spacing: 0.19em;
+  transition: filter 220ms ease, letter-spacing 220ms ease, transform 220ms cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.intro-gate:hover .intro-cosmos-mark,
+.intro-gate:focus-visible .intro-cosmos-mark {
+  filter: drop-shadow(0 0 28px rgb(0 231 255 / 24%)) drop-shadow(0 0 18px rgb(255 79 216 / 14%));
+  transform: translateY(-2px) scale(1.018);
+}
+
+.intro-gate:hover .intro-title-architecture,
+.intro-gate:focus-visible .intro-title-architecture {
+  color: #ffffff;
+  filter: drop-shadow(0 0 10px rgb(247 247 244 / 16%));
+  letter-spacing: 0.255em;
+}
+
+.intro-gate:hover .intro-title-kosmos,
+.intro-gate:focus-visible .intro-title-kosmos {
+  filter: drop-shadow(0 0 26px rgb(0 231 255 / 28%)) drop-shadow(0 0 18px rgb(245 179 66 / 15%));
+  letter-spacing: 0.205em;
+  transform: translateY(-1px);
 }
 
 .intro-gate-hub {
@@ -3931,6 +3994,11 @@ body:has(.entry-page) {
   box-shadow: 0 18px 42px rgb(0 0 0 / 32%), inset 0 1px 0 rgb(247 247 244 / 6%);
   backdrop-filter: blur(10px);
   transition: transform 220ms cubic-bezier(0.19, 1, 0.22, 1), border-color 180ms ease, background 180ms ease, opacity 180ms ease;
+}
+
+.module-station,
+.module-station * {
+  cursor: none;
 }
 
 .module-station small,

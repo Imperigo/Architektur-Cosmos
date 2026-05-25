@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type DragEvent, type MouseEvent as ReactMouseEvent, type PointerEvent, type RefObject, type TouchEvent as ReactTouchEvent, type WheelEvent as ReactWheelEvent } from 'react';
-import { ProjectDetailCard } from '@/components/atlas/ProjectDetailCard';
+import { ProjectDetailCard, type ProjectDetailFilter } from '@/components/atlas/ProjectDetailCard';
 import { ProjectSearch } from '@/components/atlas/ProjectSearch';
 import { RelationOverlay } from '@/components/atlas/RelationOverlay';
 import { SemanticEntryNode } from '@/components/atlas/SemanticEntryNode';
@@ -649,6 +649,38 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
 
     dossierHistoryRef.current = false;
     setSelectedEntry(null);
+  }
+
+  function activateFilterFromDossier(filter: ProjectDetailFilter) {
+    setHoveredEntry(null);
+    setShowRelations(true);
+
+    if (filter.kind === 'style') {
+      const styleId = resolveStyleFilter(filter.value);
+      if (styleId) {
+        setActiveStyleLens(styleId);
+        setActiveTagLayer(null);
+        setActiveSourceLens(null);
+      }
+    } else {
+      const sourceLens = resolveSourceLensFromFilter(filter.value);
+      const tagLayer = resolveTagLayerFromFilter(filter.value);
+
+      setActiveStyleLens(null);
+
+      if (sourceLens) {
+        setActiveSourceLens(sourceLens);
+        setActiveTagLayer(null);
+      } else if (tagLayer) {
+        setActiveTagLayer(tagLayer);
+        setActiveSourceLens(null);
+      } else {
+        setActiveTagLayer(null);
+        setActiveSourceLens(null);
+      }
+    }
+
+    closeDossier();
   }
 
   function offenDatabasePanel() {
@@ -1434,7 +1466,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
               />
             </g>
           </g>
-          {selectedEntry ? <SnappedEntryOverlay entry={selectedEntry} onDismiss={closeDossier} /> : null}
+          {selectedEntry ? <SnappedEntryOverlay entry={selectedEntry} onDismiss={closeDossier} onSelectFilter={activateFilterFromDossier} /> : null}
           {introState === 'idle' && !ui.isCoarsePointer ? (
             <DatabaseAccess
               isOpen={showDatabasePanel}
@@ -1758,6 +1790,27 @@ function isTagLayerEntry(entry: Entry, activeTagLayer: ActiveTagLayer) {
   return definition.terms.some((term) => layerText.includes(term.toLowerCase()));
 }
 
+function resolveStyleFilter(value: ProjectDetailFilter['value']) {
+  const normalized = String(value).toLowerCase().replace(/^style:/, '').replace(/-/g, '_');
+  return styleSectors.find((sector) => sector.id === normalized)?.id ?? null;
+}
+
+function resolveSourceLensFromFilter(value: ProjectDetailFilter['value']) {
+  const normalized = String(value).toLowerCase().replace(/[_-]/g, ' ');
+  return sourceLensDefinitions.find((definition) => {
+    if (normalized.includes(definition.id.toLowerCase())) return true;
+    return definition.terms.some((term) => normalized.includes(term.toLowerCase().replace(/[_-]/g, ' ')));
+  })?.id ?? null;
+}
+
+function resolveTagLayerFromFilter(value: ProjectDetailFilter['value']) {
+  const normalized = String(value).toLowerCase().replace(/[_-]/g, ' ');
+  return tagLayerDefinitions.find((definition) => {
+    if (normalized.includes(definition.id.toLowerCase().replace(/[_-]/g, ' '))) return true;
+    return definition.terms.some((term) => normalized.includes(term.toLowerCase().replace(/[_-]/g, ' ')));
+  })?.id ?? null;
+}
+
 function nearestInteractiveNode(point: SvgPoint, nodes: WormholeEntryNode[], options: { coarse?: boolean; zoom?: number } = {}) {
   const baseHitRadius = options.coarse ? 36 : 24;
   const zoomedHitBoost = (options.zoom ?? 1) > 1.02 ? 18 : 0;
@@ -1813,9 +1866,11 @@ function FilterAccess({
   onReset: () => void;
   onToggleRelations: () => void;
 }) {
-  const [isPanelOpen, setIsPanelOpen] = useState(false);
+  const [isHoverOpen, setIsHoverOpen] = useState(false);
+  const [isPinnedOpen, setIsPinnedOpen] = useState(false);
   const filterRef = useRef<HTMLElement | null>(null);
   const activeCount = (activeTagLayer ? 1 : 0) + (activeSourceLens ? 1 : 0) + (showRelations ? 1 : 0);
+  const isPanelOpen = isHoverOpen || isPinnedOpen;
 
   useEffect(() => {
     if (!isPanelOpen) return;
@@ -1823,13 +1878,15 @@ function FilterAccess({
     const closeOnOutsidePointer = (event: globalThis.PointerEvent) => {
       const root = filterRef.current;
       if (!root || root.contains(event.target as Node)) return;
-      setIsPanelOpen(false);
+      setIsHoverOpen(false);
+      setIsPinnedOpen(false);
     };
     const closeOnEscape = (event: KeyboardEvent) => {
       if (event.key !== 'Escape' && event.key !== 'Backspace') return;
       event.preventDefault();
       event.stopPropagation();
-      setIsPanelOpen(false);
+      setIsHoverOpen(false);
+      setIsPinnedOpen(false);
     };
 
     window.addEventListener('pointerdown', closeOnOutsidePointer, { capture: true });
@@ -1849,21 +1906,22 @@ function FilterAccess({
 
   return (
     <aside
-      className={`filter-access cosmos-text-safe ${isPanelOpen ? 'filter-access-open' : ''}`}
+      className={`filter-access cosmos-text-safe ${isPanelOpen ? 'filter-access-open' : ''} ${isPinnedOpen ? 'filter-access-pinned' : ''}`}
       ref={filterRef}
-      onPointerEnter={() => setIsPanelOpen(true)}
-      onPointerLeave={() => setIsPanelOpen(false)}
+      onPointerEnter={() => setIsHoverOpen(true)}
+      onPointerLeave={() => setIsHoverOpen(false)}
       onPointerDown={(event) => event.stopPropagation()}
       onClick={(event) => event.stopPropagation()}
       onKeyDown={(event) => {
         if (event.key !== 'Escape' && event.key !== 'Backspace') return;
         event.preventDefault();
         event.stopPropagation();
-        setIsPanelOpen(false);
+        setIsHoverOpen(false);
+        setIsPinnedOpen(false);
       }}
     >
       {isPanelOpen ? (
-        <div className="filter-access-panel" aria-label="KosmoData Filter">
+        <div className="filter-access-panel" aria-label="Projekt Data Filter">
           <section>
             <div className="filter-access-section-title">Ebenen</div>
             <div className="filter-access-grid">
@@ -1902,7 +1960,8 @@ function FilterAccess({
         onClick={(event) => {
           event.preventDefault();
           event.stopPropagation();
-          setIsPanelOpen((current) => !current);
+          setIsPinnedOpen((current) => !current);
+          setIsHoverOpen(true);
         }}
       >
         <span>Filter</span>
@@ -1998,10 +2057,10 @@ function MobileDatabaseAccess({ onToggle }: { onToggle: () => void }) {
         event.stopPropagation();
         onToggle();
       }}
-      aria-label="KosmoData öffnen"
+      aria-label="Projekt Data öffnen"
     >
       <span aria-hidden="true">◆</span>
-      <span>KosmoData</span>
+      <span>Projekt Data</span>
     </button>
   );
 }
@@ -2037,7 +2096,7 @@ function DatabaseAccess({ isOpen, onToggle }: { isOpen: boolean; onToggle: () =>
       transform={`translate(${x} ${y})`}
       role="button"
       tabIndex={0}
-      aria-label="KosmoData öffnen"
+      aria-label="Projekt Data öffnen"
       onPointerDown={(event) => event.stopPropagation()}
       onClick={toggleOnce}
       onKeyDown={(event) => {
@@ -2055,7 +2114,7 @@ function DatabaseAccess({ isOpen, onToggle }: { isOpen: boolean; onToggle: () =>
         <path d="M 8.4 1.2 Q 14 4 19.6 1.2" stroke={isOpen ? '#050505' : '#f7f7f4'} opacity="0.52" />
       </g>
       <text x={ui.isCoarsePointer ? 78 : 45} y={ui.isCoarsePointer ? 8.6 : 4.4} fill={isOpen ? '#050505' : '#f7f7f4'} fontSize={ui.isCoarsePointer ? 24 : 8.2} fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.08em" fontWeight="650">
-        KOSMODATA
+        PROJEKT DATA
       </text>
       <rect
         x="0"
@@ -2292,8 +2351,8 @@ function ModuleHub({ onOpenKosmoData }: { onOpenKosmoData: () => void }) {
   }> = [
     {
       id: 'data',
-      name: 'KosmoData',
-      label: 'Datenbank / Atlas',
+      name: 'Projekt Data',
+      label: 'Referenzbibliothek / Atlas',
       description: 'Wurmloch, Referenzarchiv, Projekte, Quellen und 3D-Modelle.',
       status: 'bereit',
       accent: '#00e7ff',
@@ -2305,9 +2364,9 @@ function ModuleHub({ onOpenKosmoData }: { onOpenKosmoData: () => void }) {
     },
     {
       id: 'brief',
-      name: 'KosmoDesign',
-      label: 'Entwurf / Wettbewerb',
-      description: 'Briefing, Kontextanalyse, Strategie und Referenzpfade.',
+      name: 'Asset Data',
+      label: '2D / 3D / Texturen',
+      description: 'Pläne, Modelle, Material- und Texturassets als spätere Bibliothek.',
       status: 'in Planung',
       accent: '#f5b342',
       x: 214,
@@ -2679,7 +2738,7 @@ function DatabaseArchivePanel({
                 <CosmosGlyph />
               </svg>
             </button>
-            <div className="database-panel-title">KosmoData</div>
+            <div className="database-panel-title">Projekt Data</div>
           </div>
           <div className="mt-1 flex flex-wrap items-center justify-between gap-2 text-[9.5px] uppercase tracking-[0.18em] text-[#b8b8b2]">
             <span>{developerMode ? 'Dev-Zugang aktiv / private Werkzeuge sichtbar' : 'Öffentliche Wissensansicht / private Werkzeuge gesperrt'}</span>
@@ -3972,7 +4031,7 @@ function stripFileExtension(value: string) {
     .trim();
 }
 
-function SnappedEntryOverlay({ entry, onDismiss }: { entry: Entry; onDismiss: () => void }) {
+function SnappedEntryOverlay({ entry, onDismiss, onSelectFilter }: { entry: Entry; onDismiss: () => void; onSelectFilter: (filter: ProjectDetailFilter) => void }) {
   const ui = useAtlasUiMetrics();
   const cardScale = ui.dossier.cardScale;
   const cardWidth = 352 * cardScale;
@@ -3992,7 +4051,7 @@ function SnappedEntryOverlay({ entry, onDismiss }: { entry: Entry; onDismiss: ()
         <rect width={cardWidth + 24} height={cardHeight + 24} fill="#050505" stroke="#f7f7f4" strokeWidth="0.85" opacity="0.88" />
       </g>
       <g pointerEvents="auto" transform={`translate(${cardX} ${cardY}) scale(${cardScale})`}>
-        <ProjectDetailCard entry={entry} x={0} y={0} />
+        <ProjectDetailCard entry={entry} x={0} y={0} onSelectFilter={onSelectFilter} />
       </g>
       <g
         className="dossier-close"

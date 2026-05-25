@@ -6,9 +6,16 @@ type ProjectDetailCardProps = {
   entry: Entry;
   x: number;
   y: number;
+  onSelectFilter?: (filter: ProjectDetailFilter) => void;
 };
 
-export function ProjectDetailCard({ entry, x, y }: ProjectDetailCardProps) {
+export type ProjectDetailFilter = {
+  kind: 'style' | 'tag';
+  value: StyleSectorId | string;
+  label: string;
+};
+
+export function ProjectDetailCard({ entry, x, y, onSelectFilter }: ProjectDetailCardProps) {
   const location = [entry.city, entry.country].filter(Boolean).join(', ');
   const accent = styleColor(entry.style_sector);
   const detailHref = `/atlas/${entry.slug}/`;
@@ -20,24 +27,26 @@ export function ProjectDetailCard({ entry, x, y }: ProjectDetailCardProps) {
   const mediaY = y + 88 + (titleLines.length - 1) * 8;
   const headlineLines = ellipsizeLines(wrapText(entry.one_sentence || entry.short_description, 32), 3, 32);
   const bodyLines = ellipsizeLines(wrapText(entry.full_description, 38), entry.source_url || entry.source_assets?.length ? 4 : 5, 38);
-  const chips = [layerLabel, ...entry.themes.slice(0, 3)].map((item) => ellipsizeText(item.replace(/_/g, ' '), 28));
   const sourceLabel = sourceLabelForEntry(entry);
   const sourceAssetCount = entry.source_assets?.length ?? 0;
   const mediaCredit = primaryMediaCredit(entry);
   const databaseProfile = entry.database_profile;
   const isDatabasePilot = Boolean(databaseProfile);
+  const filterChips = buildFilterChips({ entry, layerLabel, isDatabasePilot });
   const modelSummary = summaryList(entry.model_assets?.map((model) => model.model_type), 3);
   const analysisSummary = summaryList(entry.analysis_layers?.map((analysis) => analysis.analysis_type), 3);
-  const databaseTagChips = (entry.database_tags ?? []).slice(0, 3).map((tag) => ellipsizeText(cleanDatabaseTag(tag), 21));
 
   return (
     <g className="project-detail-card">
       <rect x={x} y={y} width="352" height="292" fill="#050505" stroke={accent} strokeWidth="0.72" opacity="0.95" />
       <rect x={x + 1} y={y + 1} width="350" height="290" fill={accent} opacity="0.045" />
       <path className="detail-card-scanline" d={`M ${x + 12} ${y + 38} H ${x + 340}`} stroke={accent} strokeWidth="0.5" strokeDasharray="2 10" opacity="0.62" />
-      <text x={x + 16} y={y + 24} fill={accent} fontSize="7.2" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.18em">
-        {courseLabel.toUpperCase()}
-      </text>
+      <g className="dossier-reactive-textblock">
+        <rect x={x + 10} y={y + 10} width="172" height="18" fill="#fff" opacity="0.001" />
+        <text x={x + 16} y={y + 24} fill={accent} fontSize="7.2" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.18em">
+          {courseLabel.toUpperCase()}
+        </text>
+      </g>
       {isDatabasePilot ? (
         <g transform={`translate(${x + 238} ${y + 13})`}>
           <rect width="96" height="16" rx="8" fill={accent} opacity="0.16" stroke={accent} strokeWidth="0.5" />
@@ -56,24 +65,33 @@ export function ProjectDetailCard({ entry, x, y }: ProjectDetailCardProps) {
           ))}
         </text>
       </a>
-      <text x={x + 16} y={metaY} fill="#b8b8b8" fontSize="7.9" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.08em">
-        {formatYear(entry.year_start)}{location ? ` · ${location}` : ''}
-      </text>
+      <g className="dossier-reactive-textblock">
+        <rect x={x + 10} y={metaY - 12} width="166" height="17" fill="#fff" opacity="0.001" />
+        <text x={x + 16} y={metaY} fill="#b8b8b8" fontSize="7.9" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.08em">
+          {formatYear(entry.year_start)}{location ? ` · ${location}` : ''}
+        </text>
+      </g>
       <ProjectMediaGrid media={entry.media} x={x + 16} y={mediaY} slotWidth={72} slotHeight={48} gap={9} showLabels accent={accent} detailHref={detailHref} />
-      <text fill="#f7f7f4" fontSize="7.6" fontWeight="600" fontFamily="var(--font-sans), system-ui, sans-serif">
-        {headlineLines.map((line, index) => (
-          <tspan key={`${line}-${index}`} x={x + 184} y={y + 91 + index * 10}>
-            {line}
-          </tspan>
-        ))}
-      </text>
-      <text fill="#cfcfca" fontSize="6.55" fontFamily="var(--font-sans), system-ui, sans-serif">
-        {bodyLines.map((line, index) => (
-          <tspan key={`${line}-${index}`} x={x + 184} y={y + 133 + index * 8.8}>
-            {line}
-          </tspan>
-        ))}
-      </text>
+      <g className="dossier-reactive-textblock">
+        <rect x={x + 178} y={y + 77} width="160" height="42" fill="#fff" opacity="0.001" />
+        <text fill="#f7f7f4" fontSize="7.6" fontWeight="600" fontFamily="var(--font-sans), system-ui, sans-serif">
+          {headlineLines.map((line, index) => (
+            <tspan key={`${line}-${index}`} x={x + 184} y={y + 91 + index * 10}>
+              {line}
+            </tspan>
+          ))}
+        </text>
+      </g>
+      <g className="dossier-reactive-textblock">
+        <rect x={x + 178} y={y + 122} width="160" height="50" fill="#fff" opacity="0.001" />
+        <text fill="#cfcfca" fontSize="6.55" fontFamily="var(--font-sans), system-ui, sans-serif">
+          {bodyLines.map((line, index) => (
+            <tspan key={`${line}-${index}`} x={x + 184} y={y + 133 + index * 8.8}>
+              {line}
+            </tspan>
+          ))}
+        </text>
+      </g>
       {isDatabasePilot ? (
         <g className="detail-database-pilot">
           <text x={x + 184} y={y + 207} fill={accent} fontSize="6.8" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.12em">
@@ -109,27 +127,73 @@ export function ProjectDetailCard({ entry, x, y }: ProjectDetailCardProps) {
           </text>
         </g>
       ) : null}
-      <text x={x + 16} y={y + 242} fill="#b8b8b2" fontSize="7.2" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.1em">
-        LAYER / FILTER
-      </text>
-      {(isDatabasePilot ? databaseTagChips : chips).slice(0, isDatabasePilot ? 3 : 4).map((chip, index) => {
+      <g className="dossier-reactive-textblock">
+        <rect x={x + 10} y={y + 230} width="108" height="17" fill="#fff" opacity="0.001" />
+        <text x={x + 16} y={y + 242} fill="#b8b8b2" fontSize="7.2" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.1em">
+          FILTER AKTIVIEREN
+        </text>
+      </g>
+      {filterChips.slice(0, isDatabasePilot ? 3 : 4).map((filter, index) => {
         const column = isDatabasePilot ? 0 : index % 2;
         const row = isDatabasePilot ? index : Math.floor(index / 2);
         const chipWidth = isDatabasePilot ? 146 : 148;
         const chipHeight = isDatabasePilot ? 11 : 13;
         const chipRadius = chipHeight / 2;
         const rowGap = isDatabasePilot ? 14 : 17;
+        const chipLabel = ellipsizeText(filter.label.replace(/_/g, ' '), isDatabasePilot ? 21 : 28);
         return (
-          <g key={`${chip}-${index}`} transform={`translate(${x + 16 + column * 160} ${y + 252 + row * rowGap})`}>
+          <g
+            key={`${filter.value}-${index}`}
+            className="dossier-filter-chip"
+            role="button"
+            tabIndex={0}
+            aria-label={`Filter aktivieren: ${filter.label}`}
+            transform={`translate(${x + 16 + column * 160} ${y + 252 + row * rowGap})`}
+            onClick={(event) => {
+              if (!onSelectFilter) return;
+              event.preventDefault();
+              event.stopPropagation();
+              onSelectFilter(filter);
+            }}
+            onKeyDown={(event) => {
+              if (!onSelectFilter || (event.key !== 'Enter' && event.key !== ' ')) return;
+              event.preventDefault();
+              event.stopPropagation();
+              onSelectFilter(filter);
+            }}
+          >
             <rect width={chipWidth} height={chipHeight} rx={chipRadius} fill="#061315" stroke={index === 0 ? accent : '#f7f7f4'} strokeWidth="0.45" opacity="0.88" />
             <text x={chipWidth / 2} y={isDatabasePilot ? 7.8 : 9} textAnchor="middle" fill={index === 0 ? accent : '#d7d7d0'} fontSize={isDatabasePilot ? 5.3 : 5.9} fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.07em">
-              {chip.toUpperCase()}
+              {chipLabel.toUpperCase()}
             </text>
           </g>
         );
       })}
     </g>
   );
+}
+
+function buildFilterChips({ entry, layerLabel, isDatabasePilot }: { entry: Entry; layerLabel: string; isDatabasePilot: boolean }): ProjectDetailFilter[] {
+  if (isDatabasePilot && entry.database_tags?.length) {
+    return entry.database_tags.slice(0, 4).map((tag) => ({
+      kind: tag.startsWith('style:') ? 'style' : 'tag',
+      value: tag,
+      label: cleanDatabaseTag(tag)
+    }));
+  }
+
+  return [
+    {
+      kind: 'style',
+      value: entry.style_sector,
+      label: layerLabel
+    },
+    ...entry.themes.slice(0, 3).map((theme) => ({
+      kind: 'tag' as const,
+      value: theme,
+      label: theme
+    }))
+  ];
 }
 
 function ellipsizeLines(lines: string[], maxLines: number, maxChars: number) {
