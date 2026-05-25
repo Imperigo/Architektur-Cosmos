@@ -15,3 +15,9 @@ npm run kosmo:package-create -- --name "Test Atelier" --address "Zurich" --progr
 By default the generated package is written to `archive-intake/kosmo-projects/`,
 which is gitignored. Use this for real or private projects. Keep `examples/`
 for small public-safe fixtures only.
+
+Regenerate a local publish review pack:
+
+```bash
+npm run kosmo:package-review -- --project examples/kosmo-projects/kosmo-demo-001
+```

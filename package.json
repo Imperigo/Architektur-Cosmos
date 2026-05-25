@@ -80,6 +80,7 @@
     "i18n:check": "node scripts/i18n-guard.mjs",
     "kosmo:package-create": "node scripts/kosmo-project-package-create.mjs",
     "kosmo:package-check": "node scripts/kosmo-project-package-check.mjs",
+    "kosmo:package-review": "node scripts/kosmo-project-package-review.mjs",
     "kosmodata:enrich": "node scripts/kosmodata-enrichment-pipeline.mjs review",
     "kosmodata:promote": "node scripts/kosmodata-enrichment-pipeline.mjs promote",
     "kosmodata:seed-from-research": "node scripts/kosmodata-seed-from-research.mjs"

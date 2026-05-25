@@ -60,6 +60,15 @@
       "approval_required_before_public_use": true
     },
     {
+      "id": "kosmo_project_package_review",
+      "label": "Kosmo Project Package Review",
+      "command": "npm run kosmo:package-review -- --project {project_path}",
+      "output_root": "{project_path}/publish",
+      "review_output": "{project_path}/publish/review-pack.md",
+      "purpose": "Assemble a local Kosmo Publish review pack from the project manifest, module states, review gates, inputs, outputs and memory logs.",
+      "approval_required_before_public_use": false
+    },
+    {
       "id": "brain_text_polish",
       "label": "Brain Text Polish",
       "command": "npm run brain:polish-texts -- --limit 8",

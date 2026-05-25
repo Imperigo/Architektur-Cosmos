@@ -1,0 +1,245 @@
+{
+  "generated_at": "2026-05-25T15:39:13.255Z",
+  "generator": "kosmo-project-package-review",
+  "project": {
+    "id": "kosmo-demo-001",
+    "name": "Kosmo Demo 001",
+    "root": "examples/kosmo-projects/kosmo-demo-001",
+    "risk_level": "local_review_only",
+    "status": "draft"
+  },
+  "site": {
+    "address": "Demo site, Zurich region",
+    "locality": "Zurich",
+    "country": "CH",
+    "latitude": 47.3769,
+    "longitude": 8.5417,
+    "north_rotation_degrees": 0,
+    "coordinate_source": "manual_demo_value"
+  },
+  "readiness": "review_required",
+  "package_check": {
+    "ok": true,
+    "command": "npm run kosmo:package-check -- --project examples/kosmo-projects/kosmo-demo-001",
+    "output": "> architecture-cosmos@0.1.0 kosmo:package-check\n> node scripts/kosmo-project-package-check.mjs --project examples/kosmo-projects/kosmo-demo-001\n\nKosmo project package check\nProject: examples/kosmo-projects/kosmo-demo-001\nSchema: schema/kosmo-project-package.schema.json\n\nPackage check passed."
+  },
+  "module_summary": {
+    "total": 8,
+    "pending": 3,
+    "in_progress": 2,
+    "review_ready": 3,
+    "approved": 0,
+    "blocked": 0,
+    "skipped": 0
+  },
+  "modules": [
+    {
+      "id": "prepare",
+      "status": "review_ready",
+      "owner": "Kosmo Prepare",
+      "summary": "Initial brief, constraints and open questions are available."
+    },
+    {
+      "id": "data",
+      "status": "review_ready",
+      "owner": "Kosmo Data",
+      "summary": "Local references, sources and asset candidates are listed."
+    },
+    {
+      "id": "orbit",
+      "status": "review_ready",
+      "owner": "Kosmo Orbit",
+      "summary": "Package manifest and module folders exist."
+    },
+    {
+      "id": "design",
+      "status": "in_progress",
+      "owner": "Kosmo Design",
+      "summary": "Conceptual two-story room profile is available for Blender import."
+    },
+    {
+      "id": "draw",
+      "status": "in_progress",
+      "owner": "Kosmo Draw",
+      "summary": "Placeholder ground floor and section SVG exports are available."
+    },
+    {
+      "id": "viz",
+      "status": "pending",
+      "owner": "Kosmo Viz",
+      "summary": "Camera and render presets are defined, no render image generated yet."
+    },
+    {
+      "id": "publish",
+      "status": "pending",
+      "owner": "Kosmo Publish",
+      "summary": "Review pack scaffold exists and awaits generated outputs."
+    },
+    {
+      "id": "zentrale",
+      "status": "pending",
+      "owner": "Kosmo Zentrale",
+      "summary": "Memory logs exist, not yet registered in the live Control Hub."
+    }
+  ],
+  "gates": [
+    {
+      "id": "public_release",
+      "mode": "disabled",
+      "reason": "Demo package is local-only and contains unreviewed generated content.",
+      "approved_by": null,
+      "approved_at": null
+    },
+    {
+      "id": "external_upload",
+      "mode": "disabled",
+      "reason": "No external upload is allowed in MVP 0.1 demo.",
+      "approved_by": null,
+      "approved_at": null
+    },
+    {
+      "id": "client_delivery",
+      "mode": "disabled",
+      "reason": "Not a client package.",
+      "approved_by": null,
+      "approved_at": null
+    },
+    {
+      "id": "paid_cloud_job",
+      "mode": "requires_human_approval",
+      "reason": "Any paid cloud generation must be approved explicitly.",
+      "approved_by": null,
+      "approved_at": null
+    }
+  ],
+  "inputs": [
+    {
+      "path": "brief/kosmo-brief.md",
+      "type": "brief",
+      "module": "prepare",
+      "rights_status": "internal_only",
+      "description": "Human-readable demo brief.",
+      "exists": true,
+      "size_bytes": 863
+    },
+    {
+      "path": "brief/constraints.json",
+      "type": "constraints",
+      "module": "prepare",
+      "rights_status": "internal_only",
+      "description": "Structured constraints and assumptions.",
+      "exists": true,
+      "size_bytes": 1186
+    },
+    {
+      "path": "data/references.json",
+      "type": "reference_list",
+      "module": "data",
+      "rights_status": "internal_only",
+      "description": "Reference candidates for the demo concept.",
+      "exists": true,
+      "size_bytes": 738
+    }
+  ],
+  "outputs": [
+    {
+      "path": "design/model-profile.json",
+      "type": "model_profile",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Conceptual model profile for Blender/Kosmo Design.",
+      "exists": true,
+      "size_bytes": 1283
+    },
+    {
+      "path": "draw/exports/ground-floor-plan.svg",
+      "type": "plan_export",
+      "module": "draw",
+      "rights_status": "generated_needs_review",
+      "description": "Placeholder vector ground floor export.",
+      "exists": true,
+      "size_bytes": 1034
+    },
+    {
+      "path": "draw/exports/section-a.svg",
+      "type": "plan_export",
+      "module": "draw",
+      "rights_status": "generated_needs_review",
+      "description": "Placeholder vector section export.",
+      "exists": true,
+      "size_bytes": 1005
+    },
+    {
+      "path": "publish/review-pack.md",
+      "type": "review_pack",
+      "module": "publish",
+      "rights_status": "internal_only",
+      "description": "Local review package scaffold.",
+      "exists": true,
+      "size_bytes": 2525
+    }
+  ],
+  "memory": {
+    "decisions": [
+      {
+        "timestamp": "2026-05-25T00:00:00+02:00",
+        "module": "zentrale",
+        "decision": "Use a local project package as the first Kosmo MVP 0.1 data contract.",
+        "status": "accepted",
+        "review_required": false
+      },
+      {
+        "timestamp": "2026-05-25T00:05:00+02:00",
+        "module": "orbit",
+        "decision": "Keep MVP 0.1 local-only and review-first.",
+        "status": "accepted",
+        "review_required": false
+      }
+    ],
+    "jobs": [
+      {
+        "timestamp": "2026-05-25T00:10:00+02:00",
+        "job_id": "job-prepare-001",
+        "module": "prepare",
+        "status": "completed",
+        "summary": "Demo brief and constraints scaffold created."
+      },
+      {
+        "timestamp": "2026-05-25T00:15:00+02:00",
+        "job_id": "job-design-001",
+        "module": "design",
+        "status": "pending",
+        "summary": "Import model-profile.json into Kosmo Design / Blender."
+      }
+    ],
+    "uncertainties": [
+      {
+        "timestamp": "2026-05-25T00:20:00+02:00",
+        "module": "prepare",
+        "topic": "site",
+        "severity": "low",
+        "description": "Demo coordinates are not a real parcel."
+      },
+      {
+        "timestamp": "2026-05-25T00:21:00+02:00",
+        "module": "draw",
+        "topic": "plan_export",
+        "severity": "medium",
+        "description": "SVG plans are placeholders, not generated from Blender yet."
+      }
+    ]
+  },
+  "blockers": [],
+  "warnings": [
+    "Public release is not approved.",
+    "External upload is not approved.",
+    "Generated output needs review: design/model-profile.json",
+    "Generated output needs review: draw/exports/ground-floor-plan.svg",
+    "Generated output needs review: draw/exports/section-a.svg"
+  ],
+  "next_actions": [
+    "Generate a first Kosmo Viz preview or camera check.",
+    "Review generated outputs before any public or external use.",
+    "Ask for explicit approval before paid cloud jobs."
+  ]
+}

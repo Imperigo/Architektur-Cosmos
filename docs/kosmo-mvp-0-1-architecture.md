@@ -355,8 +355,8 @@ Status 2026-05-25:
    `archive-intake/kosmo-projects/` anlegt. **Erledigt.**
 4. Bestehendes `kosmo_design` Add-on auf dieses Paket lesen/schreiben lassen.
    **Import-Bridge erledigt, Write-back offen.**
-5. Einfachen Planexport aus Blender pruefen.
-6. Review-Pack-Generator lokal bauen.
+5. Review-Pack-Generator lokal bauen. **Erledigt.**
+6. Einfachen Planexport aus Blender pruefen.
 7. Kosmo Zentrale spaeter als Job-Orchestrator an dieses Paket anbinden.
 
 ## 11. Was bewusst noch nicht gebaut wird
@@ -390,6 +390,12 @@ Pruefung:
 
 ```bash
 npm run kosmo:package-check
+```
+
+Review-Pack erzeugen:
+
+```bash
+npm run kosmo:package-review -- --project examples/kosmo-projects/kosmo-demo-001
 ```
 
 Neues lokales Projektpaket anlegen:
