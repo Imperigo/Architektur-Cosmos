@@ -1,6 +1,6 @@
 # Kosmo Demo 001 Review Pack
 
-Generated: 2026-05-25T19:56:39.741Z
+Generated: 2026-05-25T20:00:48.107Z
 Project ID: `kosmo-demo-001`
 Risk level: `local_review_only`
 Readiness: `review_required`
@@ -71,6 +71,9 @@ Readiness: `review_required`
 - ok: `design/model-layer-handoff.generated.md` (design, other, generated_needs_review)
 - ok: `design/blender-collection-handoff.generated.py` (design, other, generated_needs_review)
 - ok: `design/archicad-layer-schedule.generated.csv` (design, other, generated_needs_review)
+- ok: `design/blender-context-import.generated.json` (design, other, generated_needs_review)
+- ok: `design/blender-context-import.generated.md` (design, other, generated_needs_review)
+- ok: `design/blender-context-import.generated.py` (design, other, generated_needs_review)
 
 ## Context Selection
 
@@ -138,6 +141,11 @@ Readiness: `review_required`
 - context handoff context inputs: 0
 - context handoff design seeds allowed: 0
 - context handoff blocked inputs: 2
+- Blender context import: pending (blender_context_import_pending_context_handoff)
+- Blender context import objects: 4
+- Blender context import DXF polylines: 0
+- Blender context import IFC bboxes: 2
+- Blender context import layer collections: 5
 - approved for design generation: no
 - readiness: needs_human_selection
 
@@ -177,6 +185,9 @@ Readiness: `review_required`
 - Generated output needs review: design/model-layer-handoff.generated.md
 - Generated output needs review: design/blender-collection-handoff.generated.py
 - Generated output needs review: design/archicad-layer-schedule.generated.csv
+- Generated output needs review: design/blender-context-import.generated.json
+- Generated output needs review: design/blender-context-import.generated.md
+- Generated output needs review: design/blender-context-import.generated.py
 - Context selection still has undecided candidates: 2
 - Context source mapping still has pending review rows: 1
 

@@ -50,6 +50,8 @@ Der erste Connector ist bewusst duenn:
   `design/blender-collection-handoff.generated.py` und
   `design/archicad-layer-schedule.generated.csv` als review-only Uebergabe
   fuer Blender-Collections, ArchiCAD-Layer und spaetere GLB-Exports
+- schreibt optional `design/blender-context-import.generated.json`, `.md` und
+  `.py` als read-only Blender-Kontextimport fuer gesperrte Referenzobjekte
 - schreibt optional `design/context-handoff.generated.json` und `.md` als
   explizite Grenze zwischen erlaubtem Kontext, blockierten Inputs und
   Downstream-Guardrails
@@ -183,6 +185,9 @@ Zusätzlich wird im Projektpaket geschrieben:
 - `design/model-layer-handoff.generated.md`
 - `design/blender-collection-handoff.generated.py`
 - `design/archicad-layer-schedule.generated.csv`
+- `design/blender-context-import.generated.json`
+- `design/blender-context-import.generated.md`
+- `design/blender-context-import.generated.py`
 - `design/context-handoff.generated.json`
 - `design/context-handoff.generated.md`
 
@@ -283,6 +288,12 @@ Collections, Layernamen, Elementlisten und geplante GLB-Pfade sind sichtbar,
 aber GLB-Export und echte Modellanlage bleiben bis zur menschlichen Freigabe
 blockiert.
 
+`npm run kosmo:blender-context-import -- --project <projektpfad>` erzeugt
+`design/blender-context-import.generated.md/json/py`. Das Python-Script baut in
+Blender nur gesperrte Review-Kontextobjekte: Ursprung, Perimeter,
+DXF-Unterlage, IFC-Bounding-Boxes und leere Layer-Collections. Es ist der
+sichere Zwischenschritt zwischen Quellenreview und spaeterer Modellarbeit.
+
 Repo-Smoke ohne private Daten:
 
 ```bash
@@ -293,6 +304,7 @@ npm run kosmo:ifc-layer-plan -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:context-source-mapping -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:context-handoff -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:model-layer-handoff -- --project examples/kosmo-projects/kosmo-demo-001
+npm run kosmo:blender-context-import -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:package-check -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:package-review -- --project examples/kosmo-projects/kosmo-demo-001
 ```

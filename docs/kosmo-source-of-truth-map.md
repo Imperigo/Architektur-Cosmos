@@ -89,6 +89,8 @@ Aktiv fuer:
   `design/blender-collection-handoff.generated.py` und
   `design/archicad-layer-schedule.generated.csv` als review-only
   Export-Handoff fuer Blender-Collections, ArchiCAD-Layer und geplante GLB-Pfade
+- `design/blender-context-import.generated.*` als read-only Blender-Importplan
+  fuer gesperrte Kontextobjekte aus DXF-/IFC-Quellen
 - `design/context-handoff.generated.*` als KosmoDesign-Handoff fuer
   Kontextinputs, blockierte Quellen und Guardrails
 - `design/context-selection.json` als menschliches Gate vor Design-Seeds
@@ -202,6 +204,7 @@ KosmoData
    `design/ifc-dxf-alignment-preview.generated.*` als IFC/DXF-Alignmentpreview,
    `design/ifc-layer-plan.generated.*` als Blender-/ArchiCAD-Layerplan und
    `design/model-layer-handoff.generated.*` als review-only Model-Export-Handoff,
+   `design/blender-context-import.generated.*` als gesperrten Blender-Kontextimport,
    `design/context-handoff.generated.*` als explizite Downstream-Grenze sowie
    `design/context-selection.json` als menschliches Gate. Naechster Schritt:
    diese Auswahl in ein kleines Layer-Mapping UI und spaeter freigegebene

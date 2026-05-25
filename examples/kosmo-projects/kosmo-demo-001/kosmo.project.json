@@ -349,6 +349,27 @@
       "module": "design",
       "rights_status": "generated_needs_review",
       "description": "ArchiCAD layer schedule for manual exchange setup."
+    },
+    {
+      "path": "design/blender-context-import.generated.json",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Read-only Blender context import plan."
+    },
+    {
+      "path": "design/blender-context-import.generated.md",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Human-readable read-only Blender context import plan."
+    },
+    {
+      "path": "design/blender-context-import.generated.py",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Generated Blender Python script for locked context review objects."
     }
   ],
   "review_gates": {

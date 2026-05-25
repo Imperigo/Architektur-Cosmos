@@ -190,6 +190,9 @@ async function writePackage({ inputRoot, projectRoot, projectId, projectName, or
     'design/archicad-layer-profile.generated.json': json(buildArchicadLayerProfileSeed(projectId, 'kosmosprepare_import')),
     'design/context-handoff.generated.json': json(buildContextHandoffSeed(projectId, 'kosmosprepare_import')),
     'design/context-handoff.generated.md': renderContextHandoffSeed(projectId),
+    'design/blender-context-import.generated.json': json(buildBlenderContextImportSeed(projectId, 'kosmosprepare_import')),
+    'design/blender-context-import.generated.md': renderBlenderContextImportSeed(projectId),
+    'design/blender-context-import.generated.py': renderBlenderContextImportPythonSeed(projectId),
     'design/variants.json': json({
       schema_version: '0.1',
       variants: [],
@@ -289,6 +292,9 @@ function buildManifest({ projectId, projectName, site, sourceFiles }) {
       artifact('design/archicad-layer-profile.generated.json', 'other', 'design', 'generated_needs_review', 'Review-only ArchiCAD layer profile.'),
       artifact('design/context-handoff.generated.json', 'other', 'design', 'generated_needs_review', 'Kosmo Design context-only handoff before downstream generation.'),
       artifact('design/context-handoff.generated.md', 'other', 'design', 'generated_needs_review', 'Human-readable Kosmo Design context-only handoff.'),
+      artifact('design/blender-context-import.generated.json', 'other', 'design', 'generated_needs_review', 'Read-only Blender context import plan.'),
+      artifact('design/blender-context-import.generated.md', 'other', 'design', 'generated_needs_review', 'Human-readable read-only Blender context import plan.'),
+      artifact('design/blender-context-import.generated.py', 'other', 'design', 'generated_needs_review', 'Generated Blender Python script for locked context review objects.'),
       artifact('draw/exports/ground-floor-plan.svg', 'plan_export', 'draw', 'generated_needs_review', 'Placeholder vector ground floor export.'),
       artifact('draw/exports/section-a.svg', 'plan_export', 'draw', 'generated_needs_review', 'Placeholder vector section export.'),
       artifact('publish/review-pack.md', 'review_pack', 'publish', 'internal_only', 'Local review package scaffold.')
@@ -783,6 +789,37 @@ function renderContextHandoffSeed(projectId) {
   return `# Kosmo Design Context Handoff\n\nProject ID: \`${projectId}\`\n\nPending context handoff. Run \`npm run kosmo:context-handoff -- --project <project>\` after context-selection, source mapping and review previews exist.\n`;
 }
 
+function buildBlenderContextImportSeed(projectId, source) {
+  return {
+    schema_version: '0.1',
+    generated_at: null,
+    generator: 'kosmo-prepare-package-import',
+    project_id: projectId,
+    status: 'pending_blender_context_import',
+    rights_status: 'internal_only',
+    source_stage: 'phase_0_blender_context_import',
+    source,
+    note: 'Run npm run kosmo:blender-context-import -- --project <project> after context handoff and layer plan exist.',
+    summary: {
+      context_handoff_ready: false,
+      dxf_embedded_polyline_count: 0,
+      ifc_bbox_count: 0,
+      blender_object_count: 0,
+      design_generation_allowed: false,
+      recommended_next_step: 'run_context_handoff_and_layer_plan'
+    },
+    context_objects: []
+  };
+}
+
+function renderBlenderContextImportSeed(projectId) {
+  return `# Blender Context Import\n\nProject ID: \`${projectId}\`\n\nPending read-only Blender context import. Run \`npm run kosmo:blender-context-import -- --project <project>\` after context handoff and layer plan exist.\n`;
+}
+
+function renderBlenderContextImportPythonSeed(projectId) {
+  return `#!/usr/bin/env python3\n"""Pending Kosmo Blender context import for ${projectId}.\n\nRun npm run kosmo:blender-context-import -- --project <project> to replace this scaffold.\n"""\n\nraise RuntimeError("Pending Kosmo Blender context import. Generate it before running in Blender.")\n`;
+}
+
 function buildExportManifest() {
   return {
     schema_version: '0.1',
@@ -946,6 +983,27 @@ function buildExportManifest() {
         module: 'Kosmo Design',
         format: 'markdown',
         status: 'pending_context_handoff',
+        rights_status: 'generated_needs_review'
+      },
+      {
+        path: 'design/blender-context-import.generated.json',
+        module: 'Kosmo Design',
+        format: 'json',
+        status: 'pending_blender_context_import',
+        rights_status: 'generated_needs_review'
+      },
+      {
+        path: 'design/blender-context-import.generated.md',
+        module: 'Kosmo Design',
+        format: 'markdown',
+        status: 'pending_blender_context_import',
+        rights_status: 'generated_needs_review'
+      },
+      {
+        path: 'design/blender-context-import.generated.py',
+        module: 'Kosmo Design',
+        format: 'python',
+        status: 'pending_blender_context_import',
         rights_status: 'generated_needs_review'
       },
       {

@@ -104,6 +104,9 @@ kosmo-project/
     model-layer-handoff.generated.md
     blender-collection-handoff.generated.py
     archicad-layer-schedule.generated.csv
+    blender-context-import.generated.json
+    blender-context-import.generated.md
+    blender-context-import.generated.py
     context-handoff.generated.json
     context-handoff.generated.md
     variants.json
@@ -427,7 +430,11 @@ Status 2026-05-25:
     `design/blender-collection-handoff.generated.py`,
     `design/archicad-layer-schedule.generated.csv` und
     `npm run kosmo:model-layer-handoff`.**
-21. Kosmo Zentrale spaeter als Job-Orchestrator an dieses Paket anbinden.
+21. Einen read-only Blender Context Import erzeugen, der akzeptierte DXF-/IFC-
+    Grundlagen als gesperrte Review-Objekte in Blender vorbereitet.
+    **Erledigt mit `design/blender-context-import.generated.*` und
+    `npm run kosmo:blender-context-import`.**
+22. Kosmo Zentrale spaeter als Job-Orchestrator an dieses Paket anbinden.
 
 ## 11. Was bewusst noch nicht gebaut wird
 
@@ -468,6 +475,7 @@ Der erste Datenvertrag ist im Repo angelegt:
 - `scripts/kosmo-ifc-layer-plan.mjs`
 - `scripts/kosmo-design-context-handoff.mjs`
 - `scripts/kosmo-model-layer-handoff.mjs`
+- `scripts/kosmo-blender-context-import.mjs`
 - `scripts/kosmo-context-guard.mjs`
 - `scripts/kosmo-blender-package-bridge-smoke.mjs`
 - `scripts/kosmo_blender_package_bridge_smoke.py`
@@ -643,6 +651,7 @@ npm run kosmo:ifc-layer-plan -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:context-source-mapping -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:context-handoff -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:model-layer-handoff -- --project examples/kosmo-projects/kosmo-demo-001
+npm run kosmo:blender-context-import -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:package-check -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:package-review -- --project examples/kosmo-projects/kosmo-demo-001
 ```
@@ -687,6 +696,18 @@ trocken ausfuehrbaren Blender-Collection-Plan, eine ArchiCAD-Layer-Schedule und
 geplante GLB-Layerpfade. Er erzeugt keine GLB-Dateien; das Python-Script legt
 ohne expliziten Review-Flag nur nichts an und bleibt damit eine sichere
 Uebergabe fuer Blender/ArchiCAD statt eine automatische Modellfreigabe.
+
+Blender Context Import erzeugen:
+
+```bash
+npm run kosmo:blender-context-import -- --project archive-intake/kosmo-projects/zg-07052026
+```
+
+Status: review-only. Das erzeugte Python-Script legt in Blender nur gesperrte
+Kontextobjekte an: Ursprung, Perimeter, DXF-Unterlagen, IFC-Bounding-Boxes und
+leere Layer-Collections. Alle Objekte werden als `kosmo_review_only` markiert;
+das Tool erzeugt keine editierbare BIM-/Designgeometrie und exportiert keine
+GLB-Dateien.
 
 Guard fuer Downstream-Design-Tools:
 

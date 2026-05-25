@@ -117,6 +117,9 @@ function buildReport(manifest, check) {
   if (contextReview.selection_exists && contextReview.undecided_count === 0 && contextReview.accepted_as_context_count > 0 && !contextReview.context_handoff_ready) {
     warnings.push('Kosmo Design context handoff is missing or still pending.');
   }
+  if (contextReview.context_handoff_ready && !contextReview.blender_context_import_ready) {
+    warnings.push('Blender context import is missing or still pending for read-only context review.');
+  }
   if (contextReview.accepted_as_design_seed_count > 0 && !contextReview.approved_for_design_generation) {
     warnings.push('Context candidates are selected as design seed but final design-generation approval is still false.');
   }
@@ -344,6 +347,7 @@ function nextActions({ modules, gates, blockers, warnings, outputs, contextRevie
   if (contextReview?.ifc_geometry_preview_ready && !contextReview.ifc_layer_plan_ready) actions.push('Run npm run kosmo:ifc-layer-plan to propose Blender collections and ArchiCAD layers.');
   if (contextReview?.ifc_layer_plan_ready && !contextReview.model_layer_handoff_ready) actions.push('Run npm run kosmo:model-layer-handoff to create the review-only Blender/ArchiCAD export handoff.');
   if (contextReview?.selection_exists && contextReview?.undecided_count === 0 && contextReview?.accepted_as_context_count > 0 && !contextReview.context_handoff_ready) actions.push('Run npm run kosmo:context-handoff to create the Kosmo Design context-only handoff.');
+  if (contextReview?.context_handoff_ready && !contextReview.blender_context_import_ready) actions.push('Run npm run kosmo:blender-context-import to create a locked Blender context review script.');
   if (contextReview?.ifc_geometry_preview_exists && contextReview?.source_review_open_human_review_count > 0) actions.push('Compare IFC geometry preview against DXF context before any design-seed approval.');
   if (contextReview?.source_map_design_seed_candidate_after_review_count > 0) actions.push('Review source-map semantic candidates before any design-seed approval.');
   if (contextReview?.accepted_as_design_seed_count > 0 && !contextReview.approved_for_design_generation) actions.push('Set final approval only after a human has checked context-selection.');
@@ -491,6 +495,11 @@ function appendContextReview(lines, contextReview) {
   lines.push(`- context handoff context inputs: ${contextReview.context_handoff_context_input_count}`);
   lines.push(`- context handoff design seeds allowed: ${contextReview.context_handoff_design_seed_allowed_count}`);
   lines.push(`- context handoff blocked inputs: ${contextReview.context_handoff_blocked_input_count}`);
+  lines.push(`- Blender context import: ${blenderContextImportLabel(contextReview)}`);
+  lines.push(`- Blender context import objects: ${contextReview.blender_context_import_object_count}`);
+  lines.push(`- Blender context import DXF polylines: ${contextReview.blender_context_import_dxf_polyline_count}`);
+  lines.push(`- Blender context import IFC bboxes: ${contextReview.blender_context_import_ifc_bbox_count}`);
+  lines.push(`- Blender context import layer collections: ${contextReview.blender_context_import_layer_collection_count}`);
   lines.push(`- approved for design generation: ${contextReview.approved_for_design_generation ? 'yes' : 'no'}`);
   lines.push(`- readiness: ${contextReview.readiness || 'unknown'}`);
 }
@@ -537,6 +546,14 @@ function isModelLayerHandoffReady(handoff) {
   );
 }
 
+function isBlenderContextImportReady(importPlan) {
+  return Boolean(
+    importPlan
+      && importPlan.status === 'blender_context_import_ready_for_review'
+      && importPlan.summary?.blender_object_count > 0
+  );
+}
+
 function ifcGeometryPreviewLabel(contextReview) {
   if (!contextReview.ifc_geometry_preview_exists) return 'missing';
   if (contextReview.ifc_geometry_preview_ready) return 'ready';
@@ -565,6 +582,12 @@ function contextHandoffLabel(contextReview) {
   if (!contextReview.context_handoff_exists) return 'missing';
   if (contextReview.context_handoff_ready) return 'ready';
   return `pending (${contextReview.context_handoff_status || 'unknown'})`;
+}
+
+function blenderContextImportLabel(contextReview) {
+  if (!contextReview.blender_context_import_exists) return 'missing';
+  if (contextReview.blender_context_import_ready) return 'ready';
+  return `pending (${contextReview.blender_context_import_status || 'unknown'})`;
 }
 
 function runPackageCheck() {

@@ -1,0 +1,287 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-05-25T20:00:39.728Z",
+  "generator": "kosmo-blender-context-import",
+  "project_id": "kosmo-demo-001",
+  "project_name": "Kosmo Demo 001",
+  "status": "blender_context_import_pending_context_handoff",
+  "rights_status": "internal_only",
+  "source_stage": "phase_0_blender_context_import",
+  "note": "Generated Blender review-context script. It creates locked context/reference objects only and does not generate design geometry.",
+  "source_files": {
+    "context_import": {
+      "path": "design/context-import.generated.json",
+      "name": "context-import.generated.json",
+      "exists": true,
+      "size_bytes": 1783
+    },
+    "context_handoff": {
+      "path": "design/context-handoff.generated.json",
+      "name": "context-handoff.generated.json",
+      "exists": true,
+      "size_bytes": 6974
+    },
+    "source_mapping": {
+      "path": "design/context-source-mapping.json",
+      "name": "context-source-mapping.json",
+      "exists": true,
+      "size_bytes": 2929
+    },
+    "ifc_geometry_preview": {
+      "path": "design/ifc-geometry-preview.generated.json",
+      "name": "ifc-geometry-preview.generated.json",
+      "exists": true,
+      "size_bytes": 5066
+    },
+    "ifc_dxf_alignment_preview": {
+      "path": "design/ifc-dxf-alignment-preview.generated.json",
+      "name": "ifc-dxf-alignment-preview.generated.json",
+      "exists": false,
+      "size_bytes": 0
+    },
+    "ifc_layer_plan": {
+      "path": "design/ifc-layer-plan.generated.json",
+      "name": "ifc-layer-plan.generated.json",
+      "exists": true,
+      "size_bytes": 8666
+    },
+    "blender_layer_profile": {
+      "path": "design/blender-layer-profile.generated.json",
+      "name": "blender-layer-profile.generated.json",
+      "exists": true,
+      "size_bytes": 1804
+    },
+    "dxf": {
+      "path": "data/source-files/Plangrundlage.dxf",
+      "name": "Plangrundlage.dxf",
+      "exists": false,
+      "size_bytes": 0
+    }
+  },
+  "output_files": {
+    "markdown": "design/blender-context-import.generated.md",
+    "blender_script": "design/blender-context-import.generated.py"
+  },
+  "policy": {
+    "creates_review_context_only": true,
+    "objects_are_locked_and_hide_select": true,
+    "design_generation_allowed": false,
+    "generated_script_does_not_import_ifc_or_dxf_as_editable_bim": true,
+    "human_approval_required_before_design_generation": true
+  },
+  "summary": {
+    "context_handoff_ready": false,
+    "context_input_count": 0,
+    "blocked_input_count": 2,
+    "approved_for_design_generation": false,
+    "design_generation_allowed": false,
+    "accepted_dxf_layer_count": 0,
+    "dxf_accepted_polyline_count": 0,
+    "dxf_embedded_polyline_count": 0,
+    "dxf_embedding_truncated": false,
+    "ifc_bbox_count": 2,
+    "ifc_layer_collection_count": 5,
+    "blender_object_count": 4,
+    "root_collection": "KOSMO_CONTEXT_REVIEW_KOSMO_DEMO_001",
+    "recommended_next_step": "run_context_handoff_before_blender_context_import"
+  },
+  "blender": {
+    "root_collection": "KOSMO_CONTEXT_REVIEW_KOSMO_DEMO_001",
+    "collections": [
+      {
+        "name": "KOSMO_CONTEXT_REVIEW_KOSMO_DEMO_001_ORIGIN",
+        "role": "origin_and_project_frames"
+      },
+      {
+        "name": "KOSMO_CONTEXT_REVIEW_KOSMO_DEMO_001_DXF",
+        "role": "accepted_dxf_underlay_reference"
+      },
+      {
+        "name": "KOSMO_CONTEXT_REVIEW_KOSMO_DEMO_001_IFC",
+        "role": "ifc_bounds_and_bbox_reference"
+      },
+      {
+        "name": "KOSMO_CONTEXT_REVIEW_KOSMO_DEMO_001_LAYERS",
+        "role": "layer_review_collections"
+      },
+      {
+        "name": "KOSMO_KOSMO_DEMO_001_MASS",
+        "layer_key": "mass",
+        "element_count": 1,
+        "review_status": "generated_needs_human_layer_review"
+      },
+      {
+        "name": "KOSMO_KOSMO_DEMO_001_STRUCTURE",
+        "layer_key": "structure",
+        "element_count": 2,
+        "review_status": "generated_needs_human_layer_review"
+      },
+      {
+        "name": "KOSMO_KOSMO_DEMO_001_FACADE",
+        "layer_key": "facade",
+        "element_count": 1,
+        "review_status": "generated_needs_human_layer_review"
+      },
+      {
+        "name": "KOSMO_KOSMO_DEMO_001_TECTONIC",
+        "layer_key": "tectonic",
+        "element_count": 1,
+        "review_status": "generated_needs_human_layer_review"
+      },
+      {
+        "name": "KOSMO_KOSMO_DEMO_001_MATERIAL_CONCRETE",
+        "layer_key": "material:concrete",
+        "element_count": 2,
+        "review_status": "generated_needs_human_layer_review"
+      }
+    ],
+    "script_entrypoint": "create_kosmo_readonly_context(bpy)"
+  },
+  "context_geometry": {
+    "origin": {
+      "shifted_origin": [
+        0,
+        0,
+        0
+      ],
+      "lv95_origin": null,
+      "wgs84_origin": null
+    },
+    "project_perimeter": {
+      "min": [
+        -10,
+        -10
+      ],
+      "max": [
+        10,
+        10
+      ]
+    },
+    "combined_context_bounds": null,
+    "ifc_global_bounds": {
+      "min": [
+        0,
+        0,
+        0
+      ],
+      "max": [
+        10,
+        8,
+        3.35
+      ]
+    },
+    "dxf_polylines": {
+      "embedded_count": 0,
+      "note": "Full polyline payload is embedded in design/blender-context-import.generated.py."
+    },
+    "ifc_bboxes": [
+      {
+        "step_id": 130,
+        "name": "Demo Wall",
+        "layer_keys": [
+          "structure",
+          "facade",
+          "tectonic",
+          "material:concrete"
+        ],
+        "bounds": {
+          "min": [
+            0,
+            0,
+            0
+          ],
+          "max": [
+            10,
+            0.4,
+            3
+          ]
+        }
+      },
+      {
+        "step_id": 230,
+        "name": "Demo Slab",
+        "layer_keys": [
+          "structure",
+          "mass",
+          "material:concrete"
+        ],
+        "bounds": {
+          "min": [
+            0,
+            0,
+            3
+          ],
+          "max": [
+            10,
+            8,
+            3.35
+          ]
+        }
+      }
+    ],
+    "layer_collections": [
+      {
+        "name": "KOSMO_KOSMO_DEMO_001_MASS",
+        "layer_key": "mass",
+        "element_count": 1,
+        "review_status": "generated_needs_human_layer_review"
+      },
+      {
+        "name": "KOSMO_KOSMO_DEMO_001_STRUCTURE",
+        "layer_key": "structure",
+        "element_count": 2,
+        "review_status": "generated_needs_human_layer_review"
+      },
+      {
+        "name": "KOSMO_KOSMO_DEMO_001_FACADE",
+        "layer_key": "facade",
+        "element_count": 1,
+        "review_status": "generated_needs_human_layer_review"
+      },
+      {
+        "name": "KOSMO_KOSMO_DEMO_001_TECTONIC",
+        "layer_key": "tectonic",
+        "element_count": 1,
+        "review_status": "generated_needs_human_layer_review"
+      },
+      {
+        "name": "KOSMO_KOSMO_DEMO_001_MATERIAL_CONCRETE",
+        "layer_key": "material:concrete",
+        "element_count": 2,
+        "review_status": "generated_needs_human_layer_review"
+      }
+    ]
+  },
+  "context_objects": [
+    {
+      "name": "KOSMO_CONTEXT_ORIGIN",
+      "kind": "empty_origin_marker",
+      "permission": "context_reference_only"
+    },
+    {
+      "name": "KOSMO_PROJECT_PERIMETER",
+      "kind": "wire_rectangle",
+      "permission": "context_reference_only"
+    },
+    {
+      "name": "KOSMO_IFC_GLOBAL_BOUNDS",
+      "kind": "wire_box",
+      "permission": "context_reference_only"
+    },
+    {
+      "name": "KOSMO_IFC_BBOX_CONTEXT",
+      "kind": "bbox_wire_mesh",
+      "permission": "context_reference_only"
+    }
+  ],
+  "guardrails": [
+    "Blender objects created by this script are locked, hide-select and tagged kosmo_review_only.",
+    "DXF polylines are reference underlay only and must not become editable design geometry automatically.",
+    "IFC boxes are bounding-box review proxies only, not semantic BIM objects.",
+    "Layer collections are empty review containers until a human approves import.",
+    "No GLB export or design generation is enabled by this script."
+  ],
+  "next_actions": [
+    "Run npm run kosmo:context-handoff before generating the Blender context import."
+  ]
+}
