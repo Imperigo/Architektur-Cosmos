@@ -14,12 +14,34 @@ Status: aktiv
 
 Aufgabe: Architektur-Datenbank, Wurmloch-Atlas, Quellen, Medien, Analysefelder, 3D-Modellpakete, öffentliche und private Datenlogik.
 
+Produktentscheidung: `KosmoAssets` wird nicht als eigene Orbit-Station
+abgespalten. Die Asset-Bibliothek bleibt als zweiter interner Modus innerhalb
+von `KosmoData`.
+
+Interne KosmoData-Modi:
+
+- `Referenzbibliothek`: Architekturgeschichte, Projekte, Texte, Plaene,
+  Landschaft, Stadt, Quellen und Netzwerke. Diese Ansicht nutzt das Wurmloch,
+  weil Zeit, Geschichte, Stilsektoren und Relationen hier die zentrale
+  Navigation bilden.
+- `Asset-Bibliothek`: wiederverwendbare 2D-/3D-Bausteine, Bauteile,
+  Fassadenmodule, Treppen, Stuetzen, Dachformen, Materialsysteme,
+  Landschaftselemente, Blender Collections und ArchiCAD-Layer. Diese Ansicht
+  bekommt spaeter eine eigene, katalog- und exportorientierte UI statt dem
+  Wurmloch.
+
+Beim Wechsel zwischen Referenz- und Asset-Bibliothek darf sich die ganze
+KosmoData-Oberflaeche veraendern. Das Wurmloch bleibt spezifisch fuer die
+Referenzbibliothek.
+
 Nächste Schritte:
 
 - Hero-/Planetbild-Coverage von 77/112 auf 90+/112 erhöhen.
 - Database-Popup und Archive-Seite weiter vereinheitlichen.
 - Detailseiten mit stärkerer Projektindividualität und besserem 3D-/Analyse-Reiter ausbauen.
 - Öffentliche Daten strikt public-safe halten; private/dev Daten bleiben getrennt.
+- KosmoData-Moduswechsel `Referenzen` / `Assets` als spaeteres UI-Konzept
+  spezifizieren, ohne die aktuelle Wurmloch-Performance zu belasten.
 
 ### KosmoBrief
 
@@ -80,4 +102,3 @@ Grundprinzip:
 ## Sicherheitsregel
 
 Kein Modul darf automatisch veröffentlichen, was aus privaten, urheberrechtlich unklaren oder dev-only Quellen stammt. Jede automatische Erweiterung muss zuerst als Review Pack entstehen und durch Rights Gate, Security Gate und manuelle Freigabe laufen.
-

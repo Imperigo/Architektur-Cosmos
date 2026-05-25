@@ -61,6 +61,24 @@ Die Datenbank ist nicht nur fuer die Website gedacht. Sie wird die Grundlage fue
 - Material, Tragwerk, Tektonik, Raumordnung und Kontext werden filterbar;
 - Blender/ArchiCAD sollen spaeter Abfragen stellen koennen, z.B. Schweizer Holzbauten des 18. Jahrhunderts mit Satteldach.
 
+KosmoData wird langfristig zwei interne Bibliotheken tragen:
+
+- `Referenzbibliothek`: der bestehende Architekturatlas mit Wurmloch,
+  Jahresringen, Projektpositionen, Stilen, Quellen und Relationen. Diese UI ist
+  spezifisch fuer Architekturgeschichte und historisch-raeumliche Navigation.
+- `Asset-Bibliothek`: eine spaetere 2D-/3D-Asset-Datenbank fuer Bauteile,
+  Materialsysteme, Details, Fassadenmodule, Treppen, Stuetzen, Dachformen,
+  Landschaftselemente, Blender Collections und ArchiCAD-Layer. Sie ist
+  filter-, katalog- und exportorientiert und nutzt nicht automatisch das
+  Wurmloch.
+
+KosmoAssets bleibt damit Teil von KosmoData und wird nicht als eigene
+Orbit-Station gefuehrt. Beim Umschalten zwischen Referenzbibliothek und
+Asset-Bibliothek darf sich die KosmoData-Oberflaeche grundlegend veraendern:
+Referenzen werden historisch im Wurmloch gelesen, Assets werden als
+wiederverwendbare Entwurfsbausteine gesucht, geprueft, exportiert und in
+Blender/ArchiCAD importiert.
+
 Public und Private bleiben getrennt:
 
 - public: eigene Texte, Metadaten, rechteklare Medien, Links, public-domain/licensed/own-work Assets;
@@ -165,4 +183,3 @@ Standardablauf:
 Architecture Cosmos ist kein reines Archiv und keine reine Visualisierung. Es ist ein entstehendes Wissensinstrument:
 
 > Ein raeumliches, kuratiertes, lernendes Architekturgedaechtnis, das Website, Datenbank, Quellenarbeit, 3D-Analyse und Entwurfswerkzeug miteinander verbindet.
-

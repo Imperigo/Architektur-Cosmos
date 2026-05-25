@@ -116,6 +116,40 @@ The database stores `r2_key`, model type, format, review status, source basis,
 generation method, and confidence metadata. The actual `.glb`, `.gltf`, `.usdz`,
 textures, and annotation files belong in R2.
 
+## KosmoData Asset Library
+
+KosmoData will eventually contain two internal libraries:
+
+- `references`: architecture, urban plans, landscape projects, texts, maps,
+  events and theory entries. This is the current wormhole atlas.
+- `assets`: reusable 2D/3D components derived from reviewed projects or created
+  independently as Cosmos study assets.
+
+The asset library is not a separate orbit module. It is a KosmoData mode with a
+different interface and a different retrieval logic. Asset records should be
+designed for reuse and export, not for historical timeline navigation.
+
+Planned asset fields:
+
+- `id`, `slug`, `title`
+- `asset_type`: `column`, `stair`, `roof`, `facade_module`,
+  `structure_node`, `window`, `door`, `furniture`, `landscape_element`,
+  `material_system`, `plan_symbol`, `detail`
+- `source_entry_id`: optional link back to the reference entry
+- `source_scope`: `derived_from_reference`, `genericized_reference`,
+  `own_work`, `generated_study`, `external_licensed`
+- `materials`, `structure`, `period`, `style_sector`, `themes`
+- `geometry_files`: GLB/DXF/SVG/R2 keys or local review paths
+- `blender_collection_name`
+- `archicad_layer_name`
+- `rights_status`
+- `confidence_score`
+- `reuse_notes`
+
+Public asset downloads require `own_work`, `licensed`, `public_domain` or
+another explicit reusable rights status. Private/dev assets may be richer, but
+must stay behind the private rights gate.
+
 ## Local Archive Checks
 
 Run the archive validator before adding larger batches of projects:

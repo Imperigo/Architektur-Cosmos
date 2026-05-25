@@ -89,3 +89,23 @@ from public display and R2 upload.
 
 This workflow is a manifest generator, not an uploader. Real R2 upload remains a
 separate future step with a separate confirmation gate.
+
+## KosmoData Asset-Bibliothek
+
+Asset intake feeds a future `Asset-Bibliothek` inside KosmoData, not a separate
+orbit station. The reference wormhole remains the interface for architecture
+history and project relations; the asset library will use a more direct,
+filterable and export-oriented interface for reusable components.
+
+Asset examples:
+
+- project-derived facade modules;
+- genericized structural nodes;
+- stair, column, roof and window studies;
+- landscape elements and material systems;
+- SVG/DXF plan symbols;
+- Blender Collections and ArchiCAD layers.
+
+Every asset keeps a link back to its source entry when it was derived from a
+reference project. If rights are unclear, the asset can remain private/dev or be
+stored only as metadata and analysis, not as a public download.
