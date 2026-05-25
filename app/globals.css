@@ -4174,6 +4174,376 @@ body:has(.entry-page) {
   color: #f7f7f4;
 }
 
+.kosmo-asset-workspace {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: min(1180px, calc(100vw - 42px));
+  max-height: min(86dvh, 820px);
+  color: #f7f7f4;
+}
+
+.kosmo-asset-shell {
+  display: grid;
+  grid-template-rows: auto minmax(220px, 1fr) auto;
+  gap: 16px;
+  width: 100%;
+  max-height: inherit;
+  padding: clamp(16px, 2.4vw, 28px);
+  border: 1px solid rgb(245 179 66 / 36%);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 78% 14%, rgb(245 179 66 / 16%), transparent 34%),
+    radial-gradient(circle at 18% 78%, rgb(0 231 255 / 10%), transparent 36%),
+    linear-gradient(145deg, rgb(247 247 244 / 5%), transparent 46%),
+    rgb(5 5 5 / 80%);
+  box-shadow: 0 26px 80px rgb(0 0 0 / 42%), inset 0 1px 0 rgb(247 247 244 / 7%);
+  overflow: hidden;
+  backdrop-filter: blur(15px);
+  animation: kosmo-asset-arrive 520ms cubic-bezier(0.19, 1, 0.22, 1) both;
+}
+
+.kosmo-asset-header {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 18px;
+  align-items: start;
+}
+
+.kosmo-asset-header small,
+.kosmo-asset-status span,
+.kosmo-asset-card small {
+  color: rgb(245 179 66 / 84%);
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.kosmo-asset-header h2 {
+  margin: 3px 0 5px;
+  color: #f7f7f4;
+  font-size: clamp(38px, 6vw, 78px);
+  line-height: 0.92;
+  font-weight: 760;
+  letter-spacing: 0;
+}
+
+.kosmo-asset-header p {
+  max-width: 610px;
+  margin: 0;
+  color: rgb(247 247 244 / 68%);
+  font-size: clamp(12px, 1.35vw, 15px);
+  line-height: 1.45;
+}
+
+.kosmo-asset-back {
+  min-width: 72px;
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid rgb(247 247 244 / 34%);
+  border-radius: 999px;
+  background: rgb(247 247 244 / 5%);
+  color: rgb(247 247 244 / 82%);
+  font-size: 9px;
+  font-weight: 720;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
+}
+
+.kosmo-asset-back:hover,
+.kosmo-asset-back:focus-visible {
+  border-color: #f5b342;
+  background: rgb(245 179 66 / 12%);
+  transform: translateY(-1px);
+}
+
+.kosmo-asset-status {
+  display: grid;
+  gap: 5px;
+  justify-items: end;
+  padding: 10px 12px;
+  border: 1px solid rgb(245 179 66 / 34%);
+  border-radius: 15px;
+  background: rgb(5 5 5 / 48%);
+  text-align: right;
+}
+
+.kosmo-asset-status strong {
+  color: #f7f7f4;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.kosmo-asset-lab {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(240px, 0.88fr) minmax(320px, 1.12fr);
+  gap: 20px;
+  min-height: 270px;
+  align-items: center;
+}
+
+.kosmo-asset-core {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 290px;
+  border: 1px solid rgb(247 247 244 / 10%);
+  border-radius: 24px;
+  background:
+    radial-gradient(circle, rgb(245 179 66 / 10%), transparent 34%),
+    radial-gradient(circle, rgb(0 231 255 / 7%), transparent 66%);
+  overflow: hidden;
+}
+
+.kosmo-asset-core-ring {
+  position: absolute;
+  inset: 18%;
+  border: 1px dashed rgb(245 179 66 / 28%);
+  border-radius: 999px;
+  animation: kosmo-asset-orbit-spin 34s linear infinite;
+}
+
+.kosmo-asset-core-ring-b {
+  inset: 32%;
+  border-color: rgb(0 231 255 / 24%);
+  animation-duration: 48s;
+  animation-direction: reverse;
+}
+
+.kosmo-asset-core-glyph {
+  display: grid;
+  place-items: center;
+  width: clamp(86px, 12vw, 126px);
+  height: clamp(86px, 12vw, 126px);
+  border: 1px solid rgb(247 247 244 / 18%);
+  border-radius: 999px;
+  background: rgb(5 5 5 / 58%);
+  box-shadow: 0 0 34px rgb(245 179 66 / 12%);
+}
+
+.kosmo-asset-core-glyph svg {
+  width: 72%;
+  height: 72%;
+}
+
+.kosmo-asset-orbit-dot {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  border: 1px solid color-mix(in srgb, var(--asset-accent) 82%, #f7f7f4);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--asset-accent) 42%, #050505);
+  box-shadow: 0 0 18px color-mix(in srgb, var(--asset-accent) 40%, transparent);
+}
+
+.kosmo-asset-orbit-dot-1 {
+  transform: translate(-50%, -50%) rotate(16deg) translateX(118px);
+}
+
+.kosmo-asset-orbit-dot-2 {
+  transform: translate(-50%, -50%) rotate(148deg) translateX(95px);
+}
+
+.kosmo-asset-orbit-dot-3 {
+  transform: translate(-50%, -50%) rotate(266deg) translateX(132px);
+}
+
+.kosmo-asset-dashboard {
+  display: grid;
+  gap: 14px;
+}
+
+.kosmo-asset-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.kosmo-asset-metrics span {
+  display: grid;
+  gap: 6px;
+  min-height: 78px;
+  padding: 13px 12px;
+  border: 1px solid rgb(247 247 244 / 14%);
+  border-radius: 15px;
+  background: rgb(247 247 244 / 5%);
+}
+
+.kosmo-asset-metrics small {
+  color: rgb(247 247 244 / 58%);
+  font-size: 9px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.kosmo-asset-metrics strong {
+  color: #f7f7f4;
+  font-size: clamp(20px, 2.8vw, 34px);
+  line-height: 1;
+}
+
+.kosmo-asset-categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.kosmo-asset-categories span,
+.kosmo-asset-card-tags span {
+  min-height: 28px;
+  padding: 8px 10px;
+  border: 1px solid rgb(247 247 244 / 14%);
+  border-radius: 999px;
+  background: rgb(5 5 5 / 38%);
+  color: rgb(247 247 244 / 72%);
+  font-size: 9px;
+  font-weight: 650;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.kosmo-asset-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  min-height: 0;
+}
+
+.kosmo-asset-card {
+  display: grid;
+  grid-template-columns: 76px minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  gap: 10px 12px;
+  min-width: 0;
+  padding: 13px;
+  border: 1px solid color-mix(in srgb, var(--asset-accent) 34%, rgb(247 247 244 / 14%));
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 8% 8%, color-mix(in srgb, var(--asset-accent) 12%, transparent), transparent 42%),
+    rgb(5 5 5 / 54%);
+  box-shadow: inset 0 1px 0 rgb(247 247 244 / 5%);
+}
+
+.kosmo-asset-visual {
+  position: relative;
+  grid-row: span 2;
+  min-height: 92px;
+  border: 1px solid color-mix(in srgb, var(--asset-accent) 46%, transparent);
+  border-radius: 15px;
+  background: color-mix(in srgb, var(--asset-accent) 10%, rgb(247 247 244 / 4%));
+  overflow: hidden;
+}
+
+.kosmo-asset-visual span,
+.kosmo-asset-visual i {
+  position: absolute;
+  display: block;
+}
+
+.kosmo-asset-visual-vector span {
+  left: 16px;
+  top: 22px;
+  width: 42px;
+  height: 42px;
+  border: 1px solid color-mix(in srgb, var(--asset-accent) 72%, #f7f7f4);
+  border-radius: 999px;
+}
+
+.kosmo-asset-visual-vector i {
+  left: 20px;
+  top: 44px;
+  width: 46px;
+  height: 1px;
+  background: color-mix(in srgb, var(--asset-accent) 78%, #f7f7f4);
+  transform: rotate(-28deg);
+}
+
+.kosmo-asset-visual-material span {
+  inset: 0;
+  background:
+    linear-gradient(135deg, rgb(245 179 66 / 42%), transparent 42%),
+    repeating-linear-gradient(90deg, rgb(247 247 244 / 8%) 0 1px, transparent 1px 8px);
+}
+
+.kosmo-asset-visual-material i {
+  inset: 22px;
+  border: 1px solid rgb(247 247 244 / 22%);
+  border-radius: 999px;
+}
+
+.kosmo-asset-visual-model span {
+  left: 20px;
+  top: 24px;
+  width: 38px;
+  height: 38px;
+  border: 1px solid color-mix(in srgb, var(--asset-accent) 76%, #f7f7f4);
+  transform: skewY(-18deg) rotate(45deg);
+}
+
+.kosmo-asset-visual-model i {
+  left: 28px;
+  top: 32px;
+  width: 38px;
+  height: 38px;
+  border: 1px dashed color-mix(in srgb, var(--asset-accent) 54%, #f7f7f4);
+  transform: skewY(-18deg) rotate(45deg);
+}
+
+.kosmo-asset-card-body {
+  min-width: 0;
+}
+
+.kosmo-asset-card h3 {
+  margin: 4px 0 5px;
+  color: #f7f7f4;
+  font-size: clamp(15px, 1.55vw, 18px);
+  line-height: 1.05;
+}
+
+.kosmo-asset-card p {
+  margin: 0;
+  color: rgb(247 247 244 / 64%);
+  font-size: 10.5px;
+  line-height: 1.4;
+}
+
+.kosmo-asset-card-tags {
+  grid-column: 2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.kosmo-asset-card-tags span {
+  min-height: 23px;
+  padding: 6px 7px;
+  font-size: 8px;
+}
+
+.kosmo-asset-card-footer {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  color: rgb(247 247 244 / 56%);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.kosmo-asset-rights-ready {
+  color: #65ff73;
+}
+
+.kosmo-asset-rights-review {
+  color: #f5b342;
+}
+
 .intro-gate-launching > span {
   animation: intro-title-away 1.55s cubic-bezier(0.19, 1, 0.22, 1) forwards;
   transform-origin: center;
@@ -4350,6 +4720,26 @@ body:has(.entry-page) {
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes kosmo-asset-arrive {
+  0% {
+    opacity: 0;
+    transform: translateY(18px) scale(0.965);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes kosmo-asset-orbit-spin {
+  from {
+    transform: rotate(0deg) scale(1);
+  }
+  to {
+    transform: rotate(360deg) scale(1);
   }
 }
 
@@ -4642,6 +5032,70 @@ html[data-cosmos-browser="opera"] .relation-strand {
 
   .module-hub-preview strong {
     font-size: clamp(20px, 6vw, 26px);
+  }
+
+  .kosmo-asset-workspace {
+    width: min(94vw, 520px);
+    max-height: min(86dvh, 760px);
+  }
+
+  .kosmo-asset-shell {
+    grid-template-rows: auto auto auto;
+    gap: 12px;
+    padding: 14px;
+    border-radius: 22px;
+    overflow: auto;
+    overscroll-behavior: contain;
+  }
+
+  .kosmo-asset-header {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .kosmo-asset-back {
+    justify-self: start;
+    min-height: 44px;
+  }
+
+  .kosmo-asset-status {
+    justify-items: start;
+    text-align: left;
+  }
+
+  .kosmo-asset-lab {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .kosmo-asset-core {
+    min-height: 200px;
+  }
+
+  .kosmo-asset-orbit-dot-1 {
+    transform: translate(-50%, -50%) rotate(16deg) translateX(84px);
+  }
+
+  .kosmo-asset-orbit-dot-2 {
+    transform: translate(-50%, -50%) rotate(148deg) translateX(70px);
+  }
+
+  .kosmo-asset-orbit-dot-3 {
+    transform: translate(-50%, -50%) rotate(266deg) translateX(92px);
+  }
+
+  .kosmo-asset-metrics,
+  .kosmo-asset-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .kosmo-asset-card {
+    grid-template-columns: 64px minmax(0, 1fr);
+  }
+
+  .kosmo-asset-card-footer {
+    display: grid;
+    justify-content: stretch;
   }
 
   .cosmos-mobile-web .mobile-atlas-shell {
@@ -5429,6 +5883,7 @@ html[data-cosmos-browser="opera"] .relation-strand {
   .orbit-menu-nebula,
   .orbit-menu-grid,
   .orbit-menu-stars i,
+  .kosmo-asset-core-ring,
   .cosmos-cursor circle:first-child,
   .relation-strand,
   .relation-strand-glow,

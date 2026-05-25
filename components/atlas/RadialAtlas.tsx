@@ -12,6 +12,7 @@ import analysisPreview from '@/data/database-analysis-preview.json';
 import archivePreview from '@/data/archive-preview.json';
 import brainTools from '@/data/brain-tools.json';
 import reviewQueue from '@/data/review-queue.json';
+import assetLibraryPreview from '@/examples/kosmo-assets/kosmo-asset-demo/library.json';
 import { atlasSize, styleSectors } from '@/lib/atlas-layout';
 import { kosmoOrbitModules, type KosmoModuleId, type KosmoOrbitModule } from '@/lib/kosmo-modules';
 import { publicDisplayMediaUrl } from '@/lib/media';
@@ -41,7 +42,8 @@ type VisualPan = {
   y: number;
 };
 
-type IntroState = 'intro' | 'hub' | 'launching' | 'idle';
+type IntroState = 'intro' | 'hub' | 'asset' | 'launching' | 'idle';
+type AssetPreviewRecord = (typeof assetLibraryPreview.assets)[number];
 const sourceLensDefinitions = [
   { id: 'afasia', label: 'Afasia', terms: ['afasia'] },
   { id: 'espazium', label: 'Espazium', terms: ['espazium', 'tec21'] },
@@ -189,6 +191,12 @@ function readInitialIntroState(): IntroState {
   }
 }
 
+function previousIntroState(current: IntroState): IntroState {
+  if (current === 'idle' || current === 'asset' || current === 'launching') return 'hub';
+  if (current === 'hub') return 'intro';
+  return 'intro';
+}
+
 export function RadialAtlas({ entries, relations }: { entries: Entry[]; relations: EntryRelation[] }) {
   const svgRef = useRef<SVGSVGElement | null>(null);
   const cursorRef = useRef<SVGGElement | null>(null);
@@ -310,7 +318,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   const relationOverlayActive = Boolean(showRelations || (!isTraveling && (selectedEntry || (performanceTier !== 'reduced' && performanceTier === 'full' && hoveredEntry))));
   const backgroundStyle = {
     filter: 'none',
-    opacity: selectedEntry ? 0.48 : introState === 'intro' ? 0.06 : introState === 'hub' ? 0.1 : introState === 'launching' ? 0.82 : 1,
+    opacity: selectedEntry ? 0.48 : introState === 'intro' ? 0.06 : introState === 'hub' || introState === 'asset' ? 0.1 : introState === 'launching' ? 0.82 : 1,
     transition: 'opacity 420ms cubic-bezier(0.19, 1, 0.22, 1)'
   };
   const visualZoomValue = visualZoom.currentZoom;
@@ -464,7 +472,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
       }
 
       if (introState !== 'intro') {
-        setIntroState((current) => current === 'idle' ? 'hub' : 'intro');
+        setIntroState(previousIntroState);
       }
     };
 
@@ -486,7 +494,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
 
       if (introState !== 'intro') {
         event.preventDefault();
-        setIntroState((current) => current === 'idle' ? 'hub' : 'intro');
+        setIntroState(previousIntroState);
       }
     };
 
@@ -1479,7 +1487,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
           ) : null}
           {introState === 'idle' && !ui.isCoarsePointer ? <TimeReadout timePosition={state.timePosition} currentYear={state.currentYear} /> : null}
           {introState === 'idle' && !ui.isCoarsePointer ? <VisualZoomReadout zoom={visualZoom.currentZoom} /> : null}
-          {introState !== 'intro' && introState !== 'hub' ? <BrandChrome isArriving={introState === 'launching'} onReturnToHub={returnToModuleHub} /> : null}
+          {introState === 'idle' || introState === 'launching' ? <BrandChrome isArriving={introState === 'launching'} onReturnToHub={returnToModuleHub} /> : null}
         </svg>
         {showDatabasePanel && introState === 'idle' ? (
           <DatabaseArchivePanel
@@ -1561,7 +1569,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
         ) : null}
       </div>
 
-      {introState !== 'idle' ? <IntroGate state={introState} onStart={startIntro} /> : null}
+      {introState !== 'idle' ? <IntroGate state={introState} onStart={startIntro} onOpenKosmoAsset={() => setIntroState('asset')} onReturnToHub={returnToModuleHub} /> : null}
       {introState === 'launching' ? <WormholeBirthOverlay /> : null}
       {returningFromDatabase ? <DatabaseReturnOverlay /> : null}
       {cursorVisible ? <ScreenCosmosCursor cursorRef={screenCursorRef} isDossierOpen={Boolean(selectedEntry)} isOverlayOpen={showDatabasePanel || introState !== 'idle'} /> : null}
@@ -2229,7 +2237,7 @@ function dominantSpanForYear(year: number) {
   return { label: 'Proto-Urban / Ursprung' };
 }
 
-function IntroGate({ state, onStart }: { state: IntroState; onStart: () => void }) {
+function IntroGate({ state, onStart, onOpenKosmoAsset, onReturnToHub }: { state: IntroState; onStart: () => void; onOpenKosmoAsset: () => void; onReturnToHub: () => void }) {
   const lastTouchStartRef = useRef(0);
 
   function startFromTouch(event: ReactTouchEvent<HTMLElement>) {
@@ -2251,7 +2259,19 @@ function IntroGate({ state, onStart }: { state: IntroState; onStart: () => void 
         aria-label="Architecture Cosmos Hauptmenü"
       >
         <OrbitMenuBackdrop mode="hub" />
-        <ModuleHub onOpenKosmoData={onStart} />
+        <ModuleHub onOpenKosmoData={onStart} onOpenKosmoAsset={onOpenKosmoAsset} />
+      </section>
+    );
+  }
+
+  if (state === 'asset') {
+    return (
+      <section
+        className="intro-gate intro-gate-asset absolute inset-0 z-30 flex items-center justify-center bg-[#050505]/10 text-left"
+        aria-label="KosmoAsset"
+      >
+        <OrbitMenuBackdrop mode="hub" />
+        <KosmoAssetWorkspace onReturnToHub={onReturnToHub} />
       </section>
     );
   }
@@ -2335,11 +2355,11 @@ function OrbitMenuBackdrop({ mode }: { mode: 'intro' | 'hub' }) {
   );
 }
 
-function ModuleHub({ onOpenKosmoData }: { onOpenKosmoData: () => void }) {
+function ModuleHub({ onOpenKosmoData, onOpenKosmoAsset }: { onOpenKosmoData: () => void; onOpenKosmoAsset: () => void }) {
   const lastTouchActionRef = useRef(0);
   const [selectedModuleId, setSelectedModuleId] = useState<KosmoModuleId | null>(null);
   const modules: Array<KosmoOrbitModule & { onClick?: () => void }> = kosmoOrbitModules.map((module) => (
-    module.id === 'data' ? { ...module, onClick: onOpenKosmoData } : module
+    module.id === 'data' ? { ...module, onClick: onOpenKosmoData } : module.id === 'asset' ? { ...module, onClick: onOpenKosmoAsset } : module
   ));
   const selectedModule = modules.find((module) => module.id === selectedModuleId) || null;
 
@@ -2416,6 +2436,124 @@ function ModuleHub({ onOpenKosmoData }: { onOpenKosmoData: () => void }) {
       ) : null}
     </div>
   );
+}
+
+function KosmoAssetWorkspace({ onReturnToHub }: { onReturnToHub: () => void }) {
+  const assets = assetLibraryPreview.assets;
+  const formats = [...new Set(assets.flatMap((asset) => asset.formats.map((format) => format.format)))];
+  const exportTargets = [...new Set(assets.flatMap((asset) => asset.export_targets))];
+  const existingFormats = assets.reduce((total, asset) => total + asset.formats.filter((format) => format.status === 'exists').length, 0);
+  const plannedFormats = assets.reduce((total, asset) => total + asset.formats.filter((format) => format.status === 'planned').length, 0);
+
+  return (
+    <div className="kosmo-asset-workspace cosmos-text-safe">
+      <div className="kosmo-asset-shell">
+        <header className="kosmo-asset-header">
+          <button type="button" className="kosmo-asset-back" onClick={onReturnToHub} aria-label="Zurück zum Hauptmenü">
+            Zurück
+          </button>
+          <div>
+            <small>Orbit-Station / Review-Bibliothek</small>
+            <h2>KosmoAsset</h2>
+            <p>Werkstatt-Orbit für wiederverwendbare 2D-, 3D-, Material- und Exportressourcen. V1 bleibt lokal, nur im Review und ohne Upload.</p>
+          </div>
+          <div className="kosmo-asset-status">
+            <span>{assetLibraryPreview.rights_scope.replace(/_/g, ' ')}</span>
+            <strong>{assets.length} Ressourcen</strong>
+          </div>
+        </header>
+
+        <section className="kosmo-asset-lab" aria-label="KosmoAsset Library Vorschau">
+          <div className="kosmo-asset-core" aria-hidden="true">
+            <span className="kosmo-asset-core-ring kosmo-asset-core-ring-a" />
+            <span className="kosmo-asset-core-ring kosmo-asset-core-ring-b" />
+            <span className="kosmo-asset-core-glyph">
+              <svg viewBox="0 0 64 64" aria-hidden="true">
+                <CosmosGlyph />
+              </svg>
+            </span>
+            {assets.map((asset, index) => (
+              <i
+                key={asset.id}
+                className={`kosmo-asset-orbit-dot kosmo-asset-orbit-dot-${index + 1}`}
+                style={{ '--asset-accent': assetAccent(asset) } as CSSProperties}
+              />
+            ))}
+          </div>
+
+          <div className="kosmo-asset-dashboard">
+            <div className="kosmo-asset-metrics" aria-label="KosmoAsset Kennzahlen">
+              <MetricBlock label="Vorhanden" value={String(existingFormats)} />
+              <MetricBlock label="Geplant" value={String(plannedFormats)} />
+              <MetricBlock label="Formate" value={String(formats.length)} />
+              <MetricBlock label="Exportziele" value={String(exportTargets.length)} />
+            </div>
+
+            <div className="kosmo-asset-categories" aria-label="Asset Kategorien">
+              {['2D', '3D', 'Material', 'Details', 'Presets'].map((category) => (
+                <span key={category}>{category}</span>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="kosmo-asset-grid" aria-label="Demo Assets">
+          {assets.map((asset) => (
+            <AssetCard key={asset.id} asset={asset} />
+          ))}
+        </section>
+      </div>
+    </div>
+  );
+}
+
+function MetricBlock({ label, value }: { label: string; value: string }) {
+  return (
+    <span>
+      <small>{label}</small>
+      <strong>{value}</strong>
+    </span>
+  );
+}
+
+function AssetCard({ asset }: { asset: AssetPreviewRecord }) {
+  const accent = assetAccent(asset);
+  const rightsTone = asset.rights_status === 'own_work' || asset.rights_status === 'public_domain' || asset.rights_status === 'licensed' ? 'ready' : 'review';
+
+  return (
+    <article className="kosmo-asset-card" style={{ '--asset-accent': accent } as CSSProperties}>
+      <div className={`kosmo-asset-visual kosmo-asset-visual-${assetVisualKind(asset)}`} aria-hidden="true">
+        <span />
+        <i />
+      </div>
+      <div className="kosmo-asset-card-body">
+        <small>{asset.asset_type.replace(/_/g, ' ')} / {asset.category}</small>
+        <h3>{asset.title}</h3>
+        <p>{asset.description}</p>
+      </div>
+      <div className="kosmo-asset-card-tags" aria-label={`${asset.title} Exportziele`}>
+        {asset.export_targets.slice(0, 5).map((target) => (
+          <span key={target}>{target}</span>
+        ))}
+      </div>
+      <div className="kosmo-asset-card-footer">
+        <span className={`kosmo-asset-rights kosmo-asset-rights-${rightsTone}`}>{asset.rights_status.replace(/_/g, ' ')}</span>
+        <span>{asset.formats.map((format) => format.format).join(' / ')}</span>
+      </div>
+    </article>
+  );
+}
+
+function assetVisualKind(asset: AssetPreviewRecord) {
+  if (asset.asset_type.includes('material')) return 'material';
+  if (asset.asset_type.includes('glb') || asset.asset_type.includes('3d')) return 'model';
+  return 'vector';
+}
+
+function assetAccent(asset: AssetPreviewRecord) {
+  if (asset.asset_type.includes('material')) return '#f5b342';
+  if (asset.asset_type.includes('glb') || asset.asset_type.includes('3d')) return '#00e7ff';
+  return '#ff4fd8';
 }
 
 function WormholeBirthOverlay() {

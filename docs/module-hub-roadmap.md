@@ -72,6 +72,13 @@ Erster technischer Baustein:
 Diese V1 prueft nur lokale Review-Metadaten, Rechte und Exportziele. Sie
 publiziert nichts und laedt keine Assets hoch.
 
+Gestaltung:
+
+- eigenes Konzept in [`docs/kosmo-asset-visual-concept.md`](./kosmo-asset-visual-concept.md);
+- kein Wurmloch, sondern technischer Asset-Core mit Orbit-Labor;
+- V1 zeigt Demo-Assets, Rechte-Status, Formate und Exportziele direkt im
+  Hauptmenue-Flow.
+
 ### KosmoDesign
 
 Status: geplant

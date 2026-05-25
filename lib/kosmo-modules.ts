@@ -50,7 +50,7 @@ export const kosmoOrbitModules: KosmoOrbitModule[] = [
       { label: 'Upload', value: 'gesperrt' },
       { label: 'Gate', value: 'Review' }
     ],
-    status: 'in Planung',
+    status: 'bereit',
     accent: '#f5b342',
     x: 214,
     y: 8,
