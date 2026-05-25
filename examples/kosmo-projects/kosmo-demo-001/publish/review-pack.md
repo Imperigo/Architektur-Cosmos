@@ -1,6 +1,6 @@
 # Kosmo Demo 001 Review Pack
 
-Generated: 2026-05-25T17:22:46.445Z
+Generated: 2026-05-25T17:27:23.302Z
 Project ID: `kosmo-demo-001`
 Risk level: `local_review_only`
 Readiness: `review_required`

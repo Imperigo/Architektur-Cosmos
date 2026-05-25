@@ -151,6 +151,8 @@ verwenden?", statt aus DXF/IFC automatisch verbindliche Planobjekte zu machen.
 erzeugt oder aktualisiert. Der Default ist absichtlich konservativ:
 alle Kandidaten bleiben `undecided`, `approved_for_design_generation` bleibt
 `false`, und bestehende manuelle Entscheidungen werden beim Refresh erhalten.
+Das Tool registriert die Selection-Datei auch in `kosmo.project.json` und
+`publish/export-manifest.json`, falls sie dort noch fehlt.
 
 ## 5. Was beim Write-back entsteht
 

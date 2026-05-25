@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-25T17:22:46.445Z",
+  "generated_at": "2026-05-25T17:27:23.302Z",
   "generator": "kosmo-project-package-review",
   "project": {
     "id": "kosmo-demo-001",
@@ -230,7 +230,7 @@
       "rights_status": "internal_only",
       "description": "Local review package scaffold.",
       "exists": true,
-      "size_bytes": 3574
+      "size_bytes": 3643
     }
   ],
   "context_review": {
