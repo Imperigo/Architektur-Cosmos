@@ -116,18 +116,17 @@ The database stores `r2_key`, model type, format, review status, source basis,
 generation method, and confidence metadata. The actual `.glb`, `.gltf`, `.usdz`,
 textures, and annotation files belong in R2.
 
-## KosmoData Asset Library
+## KosmoAsset Library
 
-KosmoData will eventually contain two internal libraries:
+KosmoData remains the project/reference library:
 
 - `references`: architecture, urban plans, landscape projects, texts, maps,
   events and theory entries. This is the current wormhole atlas.
-- `assets`: reusable 2D/3D components derived from reviewed projects or created
-  independently as Cosmos study assets.
 
-The asset library is not a separate orbit module. It is a KosmoData mode with a
-different interface and a different retrieval logic. Asset records should be
-designed for reuse and export, not for historical timeline navigation.
+Product decision 2026-05-25: reusable 2D/3D components, textures, materials
+and export resources move into the separate `KosmoAsset` orbit station. Asset
+records are designed for reuse and export, not for historical timeline
+navigation.
 
 Planned asset fields:
 

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-24 -24 48 48" role="img" aria-label="Kosmo axis marker">
+  <metadata>{"generator":"Architecture Cosmos","asset_id":"axis-marker-svg-001","review_status":"draft"}</metadata>
+  <circle cx="0" cy="0" r="18" fill="none" stroke="#00e7ff" stroke-width="1.2" stroke-dasharray="2 3"/>
+  <path d="M0 -21V21M-21 0H21" fill="none" stroke="#f5b342" stroke-width="1"/>
+  <circle cx="0" cy="0" r="3.2" fill="#00e7ff" fill-opacity=".28" stroke="#ffffff" stroke-width=".7"/>
+  <path d="M9 -9l6 -6M-9 9l-6 6" fill="none" stroke="#ff4fd8" stroke-width="1" stroke-linecap="round"/>
+</svg>

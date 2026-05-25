@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kosmo IFC Human Review - kosmo-demo-001</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #08090b;
+      --panel: #11151a;
+      --panel-2: #171d24;
+      --text: #edf4f7;
+      --muted: #99a9b4;
+      --line: #2a3541;
+      --cyan: #66d9ff;
+      --magenta: #ff67d7;
+      --green: #8ee6a8;
+      --amber: #ffd166;
+      --red: #ff7b7b;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font: 14px/1.45 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    header, main { width: min(1440px, calc(100vw - 32px)); margin: 0 auto; }
+    header { padding: 28px 0 18px; display: grid; gap: 12px; }
+    h1, h2, h3, p { margin: 0; }
+    h1 { font-size: clamp(28px, 4vw, 48px); line-height: 1; letter-spacing: 0; }
+    h2 { font-size: 18px; margin-bottom: 12px; }
+    h3 { font-size: 13px; color: var(--cyan); margin-bottom: 8px; }
+    .sub { color: var(--muted); max-width: 900px; }
+    .badge-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .badge {
+      border: 1px solid var(--line);
+      background: #0d1116;
+      border-radius: 999px;
+      color: var(--muted);
+      padding: 6px 10px;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+    .badge.good { color: var(--green); border-color: color-mix(in srgb, var(--green) 45%, var(--line)); }
+    .badge.warn { color: var(--amber); border-color: color-mix(in srgb, var(--amber) 45%, var(--line)); }
+    .badge.block { color: var(--red); border-color: color-mix(in srgb, var(--red) 45%, var(--line)); }
+    main { display: grid; gap: 16px; padding-bottom: 32px; }
+    .grid { display: grid; gap: 16px; grid-template-columns: repeat(12, 1fr); }
+    .card {
+      background: linear-gradient(180deg, var(--panel), var(--panel-2));
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      min-width: 0;
+    }
+    .span-3 { grid-column: span 3; }
+    .span-4 { grid-column: span 4; }
+    .span-5 { grid-column: span 5; }
+    .span-6 { grid-column: span 6; }
+    .span-7 { grid-column: span 7; }
+    .span-8 { grid-column: span 8; }
+    .span-12 { grid-column: span 12; }
+    .metric { color: var(--muted); font-size: 12px; }
+    .metric strong { display: block; color: var(--text); font-size: 28px; line-height: 1.1; margin-top: 4px; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    th, td { border-bottom: 1px solid var(--line); padding: 8px; text-align: left; vertical-align: top; }
+    th { color: var(--muted); font-weight: 600; }
+    td { color: #d7e2e8; }
+    .checks { display: grid; gap: 8px; }
+    .check { display: grid; grid-template-columns: 26px 1fr; gap: 10px; align-items: start; padding: 10px; border: 1px solid var(--line); border-radius: 8px; background: #0c1014; }
+    .dot { width: 14px; height: 14px; margin-top: 3px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 0 3px color-mix(in srgb, var(--amber) 14%, transparent); }
+    .dot.passed { background: var(--green); box-shadow: 0 0 0 3px color-mix(in srgb, var(--green) 14%, transparent); }
+    .dot.failed { background: var(--red); box-shadow: 0 0 0 3px color-mix(in srgb, var(--red) 14%, transparent); }
+    .check small { color: var(--muted); display: block; margin-top: 2px; }
+    .preview-grid { display: grid; gap: 14px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .preview { background: #07090c; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; min-height: 260px; }
+    .preview img { width: 100%; height: 320px; object-fit: contain; display: block; background: #040506; }
+    .preview a { display: block; padding: 10px 12px; color: var(--cyan); text-decoration: none; border-top: 1px solid var(--line); }
+    .bar { display: grid; gap: 6px; }
+    .bar-row { display: grid; grid-template-columns: minmax(120px, 1fr) 80px; gap: 10px; align-items: center; }
+    .bar-track { height: 8px; border-radius: 999px; background: #26313b; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--cyan), var(--magenta)); }
+    .bar-label { color: var(--muted); overflow-wrap: anywhere; }
+    .bar-count { color: var(--text); text-align: right; }
+    .decision { border-color: color-mix(in srgb, var(--amber) 42%, var(--line)); }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; }
+    @media (max-width: 980px) {
+      .grid { grid-template-columns: 1fr; }
+      .span-3, .span-4, .span-5, .span-6, .span-7, .span-8, .span-12 { grid-column: 1; }
+      .preview-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="badge-row">
+      <span class="badge">Project kosmo-demo-001</span>
+      <span class="badge warn">Machine evidence incomplete</span>
+      <span class="badge warn">Human review open</span>
+      <span class="badge block">Design generation blocked</span>
+    </div>
+    <h1>IFC Human Review</h1>
+    <p class="sub">Local review-only dashboard for semantic IFC evidence. It shows what Kosmo can prove automatically and what a human still has to decide before any IFC design seed is allowed.</p>
+  </header>
+  <main>
+    <section class="grid">
+      <div class="card span-3"><p class="metric">IfcOpenShell Checks<strong>13/13</strong></p></div>
+      <div class="card span-3"><p class="metric">IFC Proxies<strong>2</strong></p></div>
+      <div class="card span-3"><p class="metric">Body/Brep<strong>2/2</strong></p></div>
+      <div class="card span-3"><p class="metric">Open Human Checks<strong>10</strong></p></div>
+      <div class="card span-5 decision">
+        <h2>Decision Gate</h2>
+        <p class="metric">Recommended current decision<strong>keep_needs_more_source_review</strong></p>
+        <p class="sub">The viewer is evidence, not approval. Keep design generation blocked until the human checklist is complete and context-selection explicitly approves a seed.</p>
+      </div>
+      <div class="card span-7">
+        <h2>Semantic Snapshot</h2>
+        <div class="badge-row">
+          <span class="badge">Schema IFC4</span>
+          <span class="badge">Unit scale 1</span>
+          <span class="badge">Storeys 1</span>
+          <span class="badge">Geometry bboxes 2</span>
+          <span class="badge">Alignment missing_dxf_source</span>
+          <span class="badge">Blender audit -</span>
+        </div>
+      </div>
+    </section>
+    <section class="grid">
+      <div class="card span-4">
+        <h2>OBJEKTART</h2>
+        <div class="bar"><div class="bar-row"><div><div class="bar-label">unclassified</div><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div></div><div class="bar-count">2</div></div></div>
+      </div>
+      <div class="card span-4">
+        <h2>Storey / Representation</h2>
+        <h3>Storey</h3>
+        <div class="bar"><div class="bar-row"><div><div class="bar-label">IfcBuildingStorey #4 Level 0</div><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div></div><div class="bar-count">2</div></div></div>
+        <h3 style="margin-top:16px">Representation</h3>
+        <div class="bar"><div class="bar-row"><div><div class="bar-label">Body/Brep</div><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div></div><div class="bar-count">2</div></div></div>
+      </div>
+      <div class="card span-4">
+        <h2>Property Sets</h2>
+        <div class="bar"><div class="bar-row"><div><div class="bar-label">Pset_KosmoDemo</div><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div></div><div class="bar-count">2</div></div></div>
+      </div>
+    </section>
+    <section class="card">
+      <h2>Preview Evidence</h2>
+      <div class="preview-grid">
+        <div class="preview"><img src="../viz/previews/ifc-geometry-preview.svg" alt="IFC Geometry"><a href="../viz/previews/ifc-geometry-preview.svg">IFC Geometry</a></div>
+<div class="preview"><img src="../viz/previews/ifc-dxf-alignment-preview.svg" alt="IFC/DXF Alignment"><a href="../viz/previews/ifc-dxf-alignment-preview.svg">IFC/DXF Alignment</a></div>
+<div class="preview"><img src="../viz/previews/ifc-layer-plan.svg" alt="IFC Layer Plan"><a href="../viz/previews/ifc-layer-plan.svg">IFC Layer Plan</a></div>
+      </div>
+    </section>
+    <section class="grid">
+      <div class="card span-6">
+        <h2>Machine Checks</h2>
+        <div class="checks">
+          <div class="check"><span class="dot passed"></span><div><strong>ifc_source_exists</strong><small>IFC source exists: data/source-files/Bestand_Kontext.ifc.</small></div></div>
+<div class="check"><span class="dot passed"></span><div><strong>source_mapping_not_seed</strong><small>IFC mapping decision is pending_review; suggested decision is needs_more_source_review.</small></div></div>
+<div class="check"><span class="dot passed"></span><div><strong>design_generation_blocked</strong><small>Context selection does not approve design generation.</small></div></div>
+<div class="check"><span class="dot passed"></span><div><strong>ifcopenshell_review_ready</strong><small>IfcOpenShell machine checks: 13/13.</small></div></div>
+<div class="check"><span class="dot passed"></span><div><strong>ifcopenshell_units_meter</strong><small>IfcOpenShell unit scale: 1.</small></div></div>
+<div class="check"><span class="dot passed"></span><div><strong>ifcopenshell_body_brep_ready</strong><small>2 Body/Brep proxy elements.</small></div></div>
+<div class="check"><span class="dot passed"></span><div><strong>semantic_elements_present</strong><small>2 IFCBUILDINGELEMENTPROXY elements found.</small></div></div>
+<div class="check"><span class="dot passed"></span><div><strong>semantic_integrity_full</strong><small>Semantic integrity score is 1.</small></div></div>
+<div class="check"><span class="dot passed"></span><div><strong>geometry_bboxes_resolved</strong><small>2 geometry bboxes resolved.</small></div></div>
+<div class="check"><span class="dot blocked"></span><div><strong>alignment_preview_ready</strong><small>Alignment hint: missing_dxf_source.</small></div></div>
+<div class="check"><span class="dot passed"></span><div><strong>layer_plan_review_ready</strong><small>5 layer groups proposed.</small></div></div>
+<div class="check"><span class="dot passed"></span><div><strong>blender_context_import_planned</strong><small>4 Blender context objects planned; status blender_context_import_pending_context_handoff.</small></div></div>
+<div class="check"><span class="dot passed"></span><div><strong>blender_context_smoke_locked</strong><small>4/4 smoke objects locked.</small></div></div>
+<div class="check"><span class="dot blocked"></span><div><strong>blender_context_audit_passed</strong><small>Audit failures: 0.</small></div></div>
+<div class="check"><span class="dot blocked"></span><div><strong>no_blender_design_mesh_faces</strong><small>not audited mesh faces found in audited context import.</small></div></div>
+        </div>
+      </div>
+      <div class="card span-6">
+        <h2>Human Checklist</h2>
+        <div class="checks">
+          <div class="check"><span class="dot"></span><div><strong>semantic_viewer_import</strong><small>Open `data/source-files/Bestand_Kontext.ifc` in Bonsai/IfcOpenShell or equivalent and confirm the semantic tree loads without import errors.</small><small>IfcOpenShell machine import passed 13/13; visual Bonsai-style tree review remains human.</small></div></div>
+<div class="check"><span class="dot"></span><div><strong>element_class_review</strong><small>Confirm whether 2 IFCBUILDINGELEMENTPROXY objects are acceptable as semantic Bestand/context elements or need reclassification.</small><small>2 IFCBUILDINGELEMENTPROXY elements found.</small></div></div>
+<div class="check"><span class="dot"></span><div><strong>storey_review</strong><small>Confirm all 2 elements belong to IFCBUILDINGSTOREY #4 Level 0 and there are no missing/extra storeys.</small><small>Container distribution: IFCBUILDINGSTOREY #4 Level 0: 2</small></div></div>
+<div class="check"><span class="dot"></span><div><strong>placement_units_review</strong><small>Confirm object placements and project units match the expected meter-based project context.</small><small>2 elements have object placement; geometry extents are 10 x 8 x 3.35 m.</small></div></div>
+<div class="check"><span class="dot"></span><div><strong>origin_alignment_review</strong><small>Compare the semantic IFC import against DXF underlay, IFC bounds and LV95/project origin.</small><small>Alignment hint: missing_dxf_source; center offset estimate 0 m.</small></div></div>
+<div class="check"><span class="dot"></span><div><strong>geometry_outlier_review</strong><small>Inspect large footprint/height outliers in the geometry preview before trusting the IFC as a design seed.</small><small>12 faces resolved; inspect SVG preview and element samples.</small></div></div>
+<div class="check"><span class="dot"></span><div><strong>property_set_review</strong><small>Check `Pset_AtelierBlaupause_Object` fields such as OBJEKTART, DACH_MIN, DACH_MAX and gml_id for reliability.</small><small>Property set distribution: Pset_KosmoDemo: 2</small></div></div>
+<div class="check"><span class="dot"></span><div><strong>layer_mapping_review</strong><small>Review the generated Mass/material_unknown layer plan and decide whether finer wall/slab/roof/support classes are possible.</small><small>5 generated layer groups; approved_for_import is false.</small></div></div>
+<div class="check"><span class="dot"></span><div><strong>blender_reference_review</strong><small>Open the audited Blender review blend and visually confirm it is only a locked reference underlay.</small><small>Audit status null; mesh faces 0.</small></div></div>
+<div class="check"><span class="dot"></span><div><strong>final_seed_decision</strong><small>Only after the checks above: decide keep as source review, accept as context, reject or approve as design seed.</small><small>Recommended current decision remains keep_needs_more_source_review.</small></div></div>
+        </div>
+      </div>
+    </section>
+    <section class="card">
+      <h2>Element Sample</h2>
+      <table>
+        <thead><tr><th>STEP</th><th>Name</th><th>Class</th><th>OBJEKTART</th><th>Container</th><th>Representation</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">#130</td><td>Demo Wall</td><td>IfcBuildingElementProxy</td><td>-</td><td>IfcBuildingStorey #4 Level 0</td><td>Body/Brep</td></tr>
+<tr><td class="mono">#230</td><td>Demo Slab</td><td>IfcBuildingElementProxy</td><td>-</td><td>IfcBuildingStorey #4 Level 0</td><td>Body/Brep</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</body>
+</html>

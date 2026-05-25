@@ -90,12 +90,13 @@ from public display and R2 upload.
 This workflow is a manifest generator, not an uploader. Real R2 upload remains a
 separate future step with a separate confirmation gate.
 
-## KosmoData Asset-Bibliothek
+## KosmoAsset Library
 
-Asset intake feeds a future `Asset-Bibliothek` inside KosmoData, not a separate
-orbit station. The reference wormhole remains the interface for architecture
-history and project relations; the asset library will use a more direct,
-filterable and export-oriented interface for reusable components.
+Produktentscheidung 2026-05-25: Asset intake speist langfristig die eigene
+Orbit-Station `KosmoAsset`. KosmoData bleibt die Referenzbibliothek mit
+Wurmloch fuer Architekturgeschichte und Projektrelationen. KosmoAsset nutzt
+spaeter eine direkte, filterbare und exportorientierte Oberflaeche fuer
+wiederverwendbare Komponenten.
 
 Asset examples:
 
@@ -109,3 +110,6 @@ Asset examples:
 Every asset keeps a link back to its source entry when it was derived from a
 reference project. If rights are unclear, the asset can remain private/dev or be
 stored only as metadata and analysis, not as a public download.
+
+Das lokale Library-Manifest fuer KosmoAsset ist dokumentiert in
+[`docs/kosmo-asset-library.md`](./kosmo-asset-library.md).

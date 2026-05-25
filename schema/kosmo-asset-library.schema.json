@@ -1,0 +1,256 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://architekturkosmos.ch/schema/kosmo-asset-library.schema.json",
+  "title": "Kosmo Asset Library",
+  "description": "Local review-only manifest for KosmoAsset: reusable 2D, 3D, texture, material and component assets with rights and export metadata.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "library_id",
+    "name",
+    "status",
+    "rights_scope",
+    "storage_policy",
+    "assets"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "0.1"
+    },
+    "library_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{2,80}$"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "description": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "review_ready", "active", "archived"]
+    },
+    "rights_scope": {
+      "type": "string",
+      "enum": ["local_review_only", "internal_pilot", "public_candidate"]
+    },
+    "created_at": {
+      "type": "string"
+    },
+    "updated_at": {
+      "type": "string"
+    },
+    "storage_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["uploads_allowed", "public_assets_allowed", "local_assets_allowed"],
+      "properties": {
+        "uploads_allowed": {
+          "type": "boolean"
+        },
+        "public_assets_allowed": {
+          "type": "boolean"
+        },
+        "local_assets_allowed": {
+          "type": "boolean"
+        },
+        "max_local_size_mb": {
+          "type": "number",
+          "minimum": 0
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "assets": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/asset"
+      }
+    }
+  },
+  "$defs": {
+    "asset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title",
+        "asset_type",
+        "category",
+        "source_kind",
+        "rights_status",
+        "public_use_allowed",
+        "review_status",
+        "formats",
+        "tags"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{2,100}$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string"
+        },
+        "asset_type": {
+          "type": "string",
+          "enum": [
+            "2d_symbol",
+            "vector_plan_component",
+            "texture",
+            "material",
+            "glb_model",
+            "blender_collection",
+            "archicad_layer",
+            "detail",
+            "component",
+            "landscape",
+            "lighting",
+            "render_preset"
+          ]
+        },
+        "category": {
+          "type": "string",
+          "enum": [
+            "structure",
+            "facade",
+            "opening",
+            "stair",
+            "roof",
+            "ground",
+            "landscape",
+            "material",
+            "furniture",
+            "annotation",
+            "site",
+            "atmosphere",
+            "utility"
+          ]
+        },
+        "source_kind": {
+          "type": "string",
+          "enum": ["generated", "own_work", "derived_from_entry", "public_domain", "licensed", "private_reference"]
+        },
+        "source_entry_id": {
+          "type": "string"
+        },
+        "source_basis": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rights_status": {
+          "type": "string",
+          "enum": ["unknown", "needs_permission", "private_research", "licensed", "public_domain", "own_work", "generated_needs_review"]
+        },
+        "license": {
+          "type": "string"
+        },
+        "credit": {
+          "type": "string"
+        },
+        "public_use_allowed": {
+          "type": "boolean"
+        },
+        "local_only": {
+          "type": "boolean"
+        },
+        "review_status": {
+          "type": "string",
+          "enum": ["planned", "draft", "reviewed", "verified", "blocked", "needs_source"]
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "formats": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/format"
+          }
+        },
+        "export_targets": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["blender", "archicad", "web", "svg", "dxf", "glb", "ifc", "layout"]
+          }
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "material_tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "dimensions": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "width_m": {
+              "type": "number"
+            },
+            "depth_m": {
+              "type": "number"
+            },
+            "height_m": {
+              "type": "number"
+            },
+            "scale": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "format": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["format"],
+      "properties": {
+        "format": {
+          "type": "string",
+          "enum": ["svg", "dxf", "glb", "blend", "gsm", "ifc", "webp", "png", "jpg", "json", "material_json"]
+        },
+        "path": {
+          "type": "string"
+        },
+        "planned_r2_key": {
+          "type": "string"
+        },
+        "software": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["blender", "archicad", "web", "kosmo", "generic"]
+          }
+        },
+        "status": {
+          "type": "string",
+          "enum": ["planned", "exists", "missing", "blocked"]
+        }
+      }
+    }
+  }
+}

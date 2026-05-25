@@ -140,6 +140,7 @@ function checkContextSelection() {
   const ifcDxfAlignmentPreviewPath = join(projectRoot, 'design/ifc-dxf-alignment-preview.generated.json');
   const ifcLayerPlanPath = join(projectRoot, 'design/ifc-layer-plan.generated.json');
   const ifcHumanReviewPackPath = join(projectRoot, 'design/ifc-human-review-pack.generated.json');
+  const ifcHumanReviewViewerPath = join(projectRoot, 'design/ifc-human-review-viewer.generated.json');
   const modelLayerHandoffPath = join(projectRoot, 'design/model-layer-handoff.generated.json');
   const contextHandoffPath = join(projectRoot, 'design/context-handoff.generated.json');
   const blenderContextImportPath = join(projectRoot, 'design/blender-context-import.generated.json');
@@ -157,6 +158,7 @@ function checkContextSelection() {
   const ifcDxfAlignmentPreview = existsSync(ifcDxfAlignmentPreviewPath) ? readJson(ifcDxfAlignmentPreviewPath) : null;
   const ifcLayerPlan = existsSync(ifcLayerPlanPath) ? readJson(ifcLayerPlanPath) : null;
   const ifcHumanReviewPack = existsSync(ifcHumanReviewPackPath) ? readJson(ifcHumanReviewPackPath) : null;
+  const ifcHumanReviewViewer = existsSync(ifcHumanReviewViewerPath) ? readJson(ifcHumanReviewViewerPath) : null;
   const modelLayerHandoff = existsSync(modelLayerHandoffPath) ? readJson(modelLayerHandoffPath) : null;
   const contextHandoff = existsSync(contextHandoffPath) ? readJson(contextHandoffPath) : null;
   const blenderContextImport = existsSync(blenderContextImportPath) ? readJson(blenderContextImportPath) : null;
@@ -212,8 +214,14 @@ function checkContextSelection() {
   if (sourceReview?.summary?.open_human_review_count > 0 && ifcLayerPlanReady && !ifcHumanReviewPack) {
     warnings.push('IFC source review has open human checks, but design/ifc-human-review-pack.generated.json is missing.');
   }
-  if (ifcHumanReviewPack && ifcHumanReviewPack.summary?.evidence_ready !== true) {
+  if (sourceReview?.summary?.open_human_review_count > 0 && ifcHumanReviewPack && ifcHumanReviewPack.summary?.evidence_ready !== true) {
     warnings.push('IFC human review pack exists, but machine evidence is not ready.');
+  }
+  if (sourceReview?.summary?.open_human_review_count > 0 && ifcHumanReviewPack?.summary?.evidence_ready === true && !ifcHumanReviewViewer) {
+    warnings.push('IFC human review pack evidence is ready, but design/ifc-human-review-viewer.generated.json is missing.');
+  }
+  if (ifcHumanReviewViewer && ifcHumanReviewViewer.status !== 'ifc_review_viewer_ready') {
+    warnings.push('IFC human review viewer exists, but is not ready.');
   }
   if (ifcLayerPlanReady && !modelLayerHandoffReady) {
     warnings.push('IFC layer plan exists, but design/model-layer-handoff.generated.json is missing or still pending.');

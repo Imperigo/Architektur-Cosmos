@@ -419,6 +419,20 @@
       "module": "design",
       "rights_status": "generated_needs_review",
       "description": "Human-readable IfcOpenShell semantic IFC review report."
+    },
+    {
+      "path": "design/ifc-human-review-viewer.generated.json",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Static IFC human review viewer manifest."
+    },
+    {
+      "path": "design/ifc-human-review-viewer.generated.html",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Static local IFC human review dashboard."
     }
   ],
   "review_gates": {

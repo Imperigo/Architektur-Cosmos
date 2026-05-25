@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-25T21:11:17.550Z",
+  "generated_at": "2026-05-25T21:21:26.071Z",
   "generator": "kosmo-ifc-human-review-pack",
   "project_id": "kosmo-demo-001",
   "project_name": "Kosmo Demo 001",
@@ -33,7 +33,7 @@
       "path": "kosmo.project.json",
       "name": "kosmo.project.json",
       "exists": true,
-      "size_bytes": 15201
+      "size_bytes": 15677
     },
     "sourceReview": {
       "path": "design/context-source-review.generated.json",

@@ -63,6 +63,15 @@ Mögliche Werkzeuge:
 - Rechte- und Lizenzstatus pro Asset
 - Varianten- und Bauteilfamilien
 
+Erster technischer Baustein:
+
+- `schema/kosmo-asset-library.schema.json`
+- `examples/kosmo-assets/kosmo-asset-demo/library.json`
+- `npm run kosmo:asset-library-check`
+
+Diese V1 prueft nur lokale Review-Metadaten, Rechte und Exportziele. Sie
+publiziert nichts und laedt keine Assets hoch.
+
 ### KosmoDesign
 
 Status: geplant

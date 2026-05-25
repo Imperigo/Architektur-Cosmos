@@ -1,0 +1,142 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-05-25T21:25:25.658Z",
+  "generator": "kosmo-asset-library-check",
+  "library_path": "examples/kosmo-assets/kosmo-asset-demo/library.json",
+  "library_id": "kosmo-asset-demo",
+  "name": "KosmoAsset Demo Library",
+  "status": "passed",
+  "mode": "local_review_only",
+  "policy": {
+    "no_uploads": true,
+    "no_public_publish": true,
+    "public_assets_require_rights": [
+      "licensed",
+      "public_domain",
+      "own_work"
+    ],
+    "generated_assets_need_review_before_public_use": true
+  },
+  "summary": {
+    "asset_count": 3,
+    "local_ready_count": 2,
+    "public_ready_count": 0,
+    "planned_only_count": 1,
+    "failure_count": 0,
+    "warning_count": 0,
+    "formats": {
+      "svg": 1,
+      "dxf": 1,
+      "material_json": 1,
+      "glb": 1
+    },
+    "asset_types": {
+      "2d_symbol": 1,
+      "material": 1,
+      "glb_model": 1
+    },
+    "categories": {
+      "annotation": 1,
+      "material": 1,
+      "structure": 1
+    },
+    "rights_status": {
+      "own_work": 1,
+      "generated_needs_review": 2
+    }
+  },
+  "assets": [
+    {
+      "id": "axis-marker-svg-001",
+      "title": "Kosmo Axis Marker",
+      "asset_type": "2d_symbol",
+      "category": "annotation",
+      "rights_status": "own_work",
+      "review_status": "draft",
+      "public_use_allowed": false,
+      "rights_public_safe": true,
+      "local_ready": true,
+      "planned_only": false,
+      "formats": [
+        "svg",
+        "dxf"
+      ],
+      "existing_format_count": 1,
+      "planned_format_count": 1,
+      "export_targets": [
+        "svg",
+        "dxf",
+        "web",
+        "layout"
+      ],
+      "tags": [
+        "axis",
+        "annotation",
+        "plan",
+        "kosmo-style"
+      ]
+    },
+    {
+      "id": "warm-concrete-material-001",
+      "title": "Warm Concrete Study Material",
+      "asset_type": "material",
+      "category": "material",
+      "rights_status": "generated_needs_review",
+      "review_status": "planned",
+      "public_use_allowed": false,
+      "rights_public_safe": false,
+      "local_ready": true,
+      "planned_only": false,
+      "formats": [
+        "material_json"
+      ],
+      "existing_format_count": 1,
+      "planned_format_count": 0,
+      "export_targets": [
+        "blender",
+        "archicad",
+        "web"
+      ],
+      "tags": [
+        "concrete",
+        "mineral",
+        "material-layer",
+        "neutral"
+      ]
+    },
+    {
+      "id": "generic-column-glb-001",
+      "title": "Generic Column GLB Slot",
+      "asset_type": "glb_model",
+      "category": "structure",
+      "rights_status": "generated_needs_review",
+      "review_status": "planned",
+      "public_use_allowed": false,
+      "rights_public_safe": false,
+      "local_ready": false,
+      "planned_only": true,
+      "formats": [
+        "glb"
+      ],
+      "existing_format_count": 0,
+      "planned_format_count": 1,
+      "export_targets": [
+        "glb",
+        "blender",
+        "archicad",
+        "web"
+      ],
+      "tags": [
+        "column",
+        "structure",
+        "glb",
+        "placeholder"
+      ]
+    }
+  ],
+  "failures": [],
+  "warnings": [],
+  "next_actions": [
+    "Generate or attach reviewed local files for planned-only assets."
+  ]
+}

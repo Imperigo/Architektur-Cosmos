@@ -288,6 +288,12 @@ sondern das Dossier fuer die Entscheidung, ob der IFC-Kandidat weiter
 `needs_more_source_review`, nur `accepted_as_context` oder spaeter
 `accepted_as_design_seed` werden darf.
 
+`npm run kosmo:ifc-review-viewer -- --project <projektpfad>` erzeugt
+`design/ifc-human-review-viewer.generated.html/json`. Der Viewer ist eine
+lokale statische Review-Tafel mit IfcOpenShell-Semantik, OBJEKTART-Verteilung,
+SVG-Previews, Machine Checks und Human Checklist. Er ist bewusst lokal und
+setzt keine Entscheidung in `context-selection`.
+
 `npm run kosmo:context-handoff -- --project <projektpfad>` erzeugt
 `design/context-handoff.generated.md/json`. Der Handoff sammelt akzeptierte
 Kontextinputs, blockierte oder offene Quellen, IFC-Preview-Evidence,
@@ -329,6 +335,7 @@ npm run kosmo:ifcopenshell-review -- --project examples/kosmo-projects/kosmo-dem
 npm run kosmo:ifc-geometry-preview -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:ifc-layer-plan -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:ifc-human-review-pack -- --project examples/kosmo-projects/kosmo-demo-001
+npm run kosmo:ifc-review-viewer -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:context-source-mapping -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:context-handoff -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:model-layer-handoff -- --project examples/kosmo-projects/kosmo-demo-001
@@ -551,6 +558,18 @@ DXF-Alignment, Layerplan und Blender-Audit in
 bereit, aber die Entscheidung bleibt `keep_needs_more_source_review`, bis ein
 Mensch die IFC in Bonsai/IfcOpenShell oder einem gleichwertigen semantischen
 IFC-Viewer geprueft hat.
+
+IFC Human Review Viewer:
+
+```bash
+npm run kosmo:ifc-review-viewer -- \
+  --project archive-intake/kosmo-projects/zg-07052026
+```
+
+Status: lokal generiert. Der Viewer schreibt
+`design/ifc-human-review-viewer.generated.html/json` und zeigt IfcOpenShell-
+Checks, OBJEKTART-Verteilung, die drei SVG-Previews, Machine Checks und die
+offene Human Checklist als lokale Entscheidungstafel.
 
 Danach erzeugt der Orbit-Befehl
 `npm run kosmo:context-selection -- --project archive-intake/kosmo-projects/zg-07052026`

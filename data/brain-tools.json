@@ -51,6 +51,15 @@
       "approval_required_before_public_use": false
     },
     {
+      "id": "kosmo_asset_library_check",
+      "label": "KosmoAsset Library Check",
+      "command": "npm run kosmo:asset-library-check -- --library {asset_library_path}",
+      "output_root": "examples/kosmo-assets/{library_slug}/review",
+      "review_output": "examples/kosmo-assets/{library_slug}/review/asset-library-check.generated.md",
+      "purpose": "Validate a local review-only KosmoAsset library manifest, rights status, public-use gates, local files and planned Blender/ArchiCAD/Web export targets before any asset is exposed or uploaded.",
+      "approval_required_before_public_use": false
+    },
+    {
       "id": "kosmo_project_package_create",
       "label": "Kosmo Project Package Create",
       "command": "npm run kosmo:package-create -- --name \"{project_name}\" --address \"{address}\" --program \"{program}\"",
@@ -201,6 +210,15 @@
       "output_root": "{project_path}/design",
       "review_output": "{project_path}/design/ifc-human-review-pack.generated.md",
       "purpose": "Gather IFC semantic proof, geometry preview, DXF alignment, layer plan and Blender audit into a human checklist before any IFC design-seed approval.",
+      "approval_required_before_public_use": false
+    },
+    {
+      "id": "kosmo_ifc_review_viewer",
+      "label": "Kosmo IFC Review Viewer",
+      "command": "npm run kosmo:ifc-review-viewer -- --project {project_path}",
+      "output_root": "{project_path}/design",
+      "review_output": "{project_path}/design/ifc-human-review-viewer.generated.html",
+      "purpose": "Create a static local HTML dashboard for IFC machine evidence, preview SVGs, semantic distributions and the human decision checklist without approving design generation.",
       "approval_required_before_public_use": false
     },
     {

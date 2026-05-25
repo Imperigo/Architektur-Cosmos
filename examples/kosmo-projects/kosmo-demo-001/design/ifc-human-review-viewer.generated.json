@@ -1,0 +1,2171 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-05-25T21:24:26.739Z",
+  "generator": "kosmo-ifc-review-viewer",
+  "project_id": "kosmo-demo-001",
+  "project_name": "Kosmo Demo 001",
+  "status": "ifc_review_viewer_ready",
+  "rights_status": "internal_only",
+  "policy": {
+    "viewer_does_not_approve_design_generation": true,
+    "viewer_does_not_modify_context_selection": true,
+    "viewer_is_local_review_only": true
+  },
+  "output_files": {
+    "html": "design/ifc-human-review-viewer.generated.html",
+    "json": "design/ifc-human-review-viewer.generated.json"
+  },
+  "source_files": {
+    "manifest": {
+      "path": "kosmo.project.json",
+      "name": "kosmo.project.json",
+      "exists": true,
+      "size_bytes": 15677
+    },
+    "ifcOpenShellReview": {
+      "path": "design/ifcopenshell-semantic-review.generated.json",
+      "name": "ifcopenshell-semantic-review.generated.json",
+      "exists": true,
+      "size_bytes": 5871
+    },
+    "humanReviewPack": {
+      "path": "design/ifc-human-review-pack.generated.json",
+      "name": "ifc-human-review-pack.generated.json",
+      "exists": true,
+      "size_bytes": 20176
+    },
+    "semanticProof": {
+      "path": "design/ifc-semantic-proof.generated.json",
+      "name": "ifc-semantic-proof.generated.json",
+      "exists": true,
+      "size_bytes": 8641
+    },
+    "geometryPreview": {
+      "path": "design/ifc-geometry-preview.generated.json",
+      "name": "ifc-geometry-preview.generated.json",
+      "exists": true,
+      "size_bytes": 5066
+    },
+    "alignmentPreview": {
+      "path": "design/ifc-dxf-alignment-preview.generated.json",
+      "name": "ifc-dxf-alignment-preview.generated.json",
+      "exists": true,
+      "size_bytes": 3994
+    },
+    "layerPlan": {
+      "path": "design/ifc-layer-plan.generated.json",
+      "name": "ifc-layer-plan.generated.json",
+      "exists": true,
+      "size_bytes": 8666
+    },
+    "blenderAudit": {
+      "path": "design/blender-context-import.audit.json",
+      "name": "blender-context-import.audit.json",
+      "exists": false,
+      "size_bytes": 0
+    },
+    "geometrySvg": {
+      "path": "viz/previews/ifc-geometry-preview.svg",
+      "name": "ifc-geometry-preview.svg",
+      "exists": true,
+      "size_bytes": 1002
+    },
+    "alignmentSvg": {
+      "path": "viz/previews/ifc-dxf-alignment-preview.svg",
+      "name": "ifc-dxf-alignment-preview.svg",
+      "exists": true,
+      "size_bytes": 2792
+    },
+    "layerSvg": {
+      "path": "viz/previews/ifc-layer-plan.svg",
+      "name": "ifc-layer-plan.svg",
+      "exists": true,
+      "size_bytes": 2114
+    }
+  },
+  "summary": {
+    "design_generation_allowed": false,
+    "evidence_ready": false,
+    "recommended_decision_now": "keep_needs_more_source_review",
+    "ifcopenshell_machine_checks_passed": 13,
+    "ifcopenshell_machine_check_count": 13,
+    "human_pack_machine_checks_passed": 12,
+    "human_pack_machine_check_count": 15,
+    "open_human_check_count": 10,
+    "preview_count": 3,
+    "ifc_proxy_count": 2,
+    "ifc_body_brep_count": 2,
+    "geometry_bbox_count": 2,
+    "alignment_hint": "missing_dxf_source",
+    "blender_audit_status": null
+  },
+  "ifcopenshell": {
+    "distributions": {
+      "kosmo_object_type": [
+        {
+          "count": 2,
+          "value": "unclassified"
+        }
+      ],
+      "property_sets": [
+        {
+          "count": 2,
+          "value": "Pset_KosmoDemo"
+        }
+      ],
+      "representation": [
+        {
+          "count": 2,
+          "value": "Body/Brep"
+        }
+      ],
+      "storey_container": [
+        {
+          "count": 2,
+          "value": "IfcBuildingStorey #4 Level 0"
+        }
+      ]
+    },
+    "element_sample": [
+      {
+        "class": "IfcBuildingElementProxy",
+        "container_label": "IfcBuildingStorey #4 Level 0",
+        "global_id": "KOSMO_WALL_001",
+        "has_object_placement": true,
+        "has_representation": true,
+        "kosmo_object_type": null,
+        "name": "Demo Wall",
+        "object_placement_class": "IfcLocalPlacement",
+        "predefined_type": null,
+        "properties_sample": {
+          "Pset_KosmoDemo": {
+            "Material": "Concrete",
+            "SourceRole": "context_fixture"
+          }
+        },
+        "property_set_count": 1,
+        "property_set_names": [
+          "Pset_KosmoDemo"
+        ],
+        "representation_signature": "Body/Brep",
+        "representations": [
+          {
+            "identifier": "Body",
+            "item_count": 1,
+            "type": "Brep"
+          }
+        ],
+        "step_id": 130
+      },
+      {
+        "class": "IfcBuildingElementProxy",
+        "container_label": "IfcBuildingStorey #4 Level 0",
+        "global_id": "KOSMO_SLAB_001",
+        "has_object_placement": true,
+        "has_representation": true,
+        "kosmo_object_type": null,
+        "name": "Demo Slab",
+        "object_placement_class": "IfcLocalPlacement",
+        "predefined_type": null,
+        "properties_sample": {
+          "Pset_KosmoDemo": {
+            "Material": "Concrete",
+            "SourceRole": "context_fixture"
+          }
+        },
+        "property_set_count": 1,
+        "property_set_names": [
+          "Pset_KosmoDemo"
+        ],
+        "representation_signature": "Body/Brep",
+        "representations": [
+          {
+            "identifier": "Body",
+            "item_count": 1,
+            "type": "Brep"
+          }
+        ],
+        "step_id": 230
+      }
+    ],
+    "generator": "kosmo-ifcopenshell-semantic-review",
+    "ifc_schema": "IFC4",
+    "machine_checks": [
+      {
+        "detail": "IfcOpenShell opened the IFC file.",
+        "id": "ifc_file_opened",
+        "status": "passed"
+      },
+      {
+        "detail": "Schema is IFC4.",
+        "id": "schema_ifc4",
+        "status": "passed"
+      },
+      {
+        "detail": "Unit scale is 1.",
+        "id": "meter_unit_scale",
+        "status": "passed"
+      },
+      {
+        "detail": "Projects: 1.",
+        "id": "single_project",
+        "status": "passed"
+      },
+      {
+        "detail": "Sites: 1.",
+        "id": "single_site",
+        "status": "passed"
+      },
+      {
+        "detail": "Buildings: 1.",
+        "id": "single_building",
+        "status": "passed"
+      },
+      {
+        "detail": "Storeys: 1.",
+        "id": "storey_present",
+        "status": "passed"
+      },
+      {
+        "detail": "IfcBuildingElementProxy: 2.",
+        "id": "proxy_elements_present",
+        "status": "passed"
+      },
+      {
+        "detail": "All proxy elements have GlobalId.",
+        "id": "all_proxies_have_global_id",
+        "status": "passed"
+      },
+      {
+        "detail": "All proxy elements have ObjectPlacement.",
+        "id": "all_proxies_have_placement",
+        "status": "passed"
+      },
+      {
+        "detail": "All proxy elements use Body/Brep representation.",
+        "id": "all_proxies_have_body_brep",
+        "status": "passed"
+      },
+      {
+        "detail": "All proxy elements are contained in a spatial structure.",
+        "id": "all_proxies_contained",
+        "status": "passed"
+      },
+      {
+        "detail": "All proxy elements have property sets.",
+        "id": "all_proxies_have_psets",
+        "status": "passed"
+      }
+    ],
+    "next_actions": [
+      "Open the same IFC visually in Bonsai/IfcOpenShell UI and compare semantic tree with this report.",
+      "Decide whether IfcBuildingElementProxy plus OBJEKTART is sufficient as context semantics or requires reclassification.",
+      "Keep context-selection approved_for_design_generation=false until a human reviewer approves a design seed."
+    ],
+    "policy": {
+      "human_decision_required_before_design_seed": true,
+      "review_does_not_approve_design_generation": true,
+      "review_does_not_create_or_modify_geometry": true
+    },
+    "project_id": "kosmo-demo-001",
+    "rights_status": "internal_only",
+    "schema_version": "0.1",
+    "source_file": {
+      "name": "Bestand_Kontext.ifc",
+      "path": "data/source-files/Bestand_Kontext.ifc",
+      "size_bytes": 3582
+    },
+    "spatial_structure": [
+      {
+        "global_id": "KOSMO_PROJECT",
+        "name": "Kosmo Demo Project",
+        "step_id": 1,
+        "type": "IfcProject"
+      },
+      {
+        "global_id": "KOSMO_SITE",
+        "name": "Demo Site",
+        "step_id": 2,
+        "type": "IfcSite"
+      },
+      {
+        "global_id": "KOSMO_BUILDING",
+        "name": "Demo Building",
+        "step_id": 3,
+        "type": "IfcBuilding"
+      },
+      {
+        "global_id": "KOSMO_STOREY_0",
+        "name": "Level 0",
+        "step_id": 4,
+        "type": "IfcBuildingStorey"
+      }
+    ],
+    "status": "ifcopenshell_semantic_review_ready",
+    "summary": {
+      "building_count": 1,
+      "design_seed_approved": false,
+      "ifcbuildingelementproxy_count": 2,
+      "ifcelement_count": 2,
+      "ifcopenshell_available": true,
+      "ifcopenshell_version": "0.8.5",
+      "machine_check_count": 13,
+      "machine_checks_passed": 13,
+      "map_conversion_count": 0,
+      "project_count": 1,
+      "projected_crs_count": 0,
+      "proxies_contained_in_spatial_structure": 2,
+      "proxies_with_body_brep": 2,
+      "proxies_with_global_id": 2,
+      "proxies_with_object_placement": 2,
+      "proxies_with_property_sets": 2,
+      "recommended_decision": "keep_needs_more_source_review",
+      "site_count": 1,
+      "storey_count": 1,
+      "unit_scale": 1
+    },
+    "units": {
+      "unit_scale": 1,
+      "units": []
+    }
+  },
+  "human_review_pack": {
+    "schema_version": "0.1",
+    "generated_at": "2026-05-25T21:21:26.071Z",
+    "generator": "kosmo-ifc-human-review-pack",
+    "project_id": "kosmo-demo-001",
+    "project_name": "Kosmo Demo 001",
+    "status": "ifc_human_review_packet_incomplete",
+    "rights_status": "internal_only",
+    "candidate_id": "ifc-role-3-semantic_building_elements",
+    "note": "Human review packet for semantic IFC design-seed assessment. This does not approve design generation.",
+    "policy": {
+      "packet_does_not_approve_design_generation": true,
+      "packet_does_not_modify_context_selection": true,
+      "bonsai_or_ifcopenshell_review_still_required": true,
+      "design_seed_approval_requires_human_decision": true
+    },
+    "summary": {
+      "evidence_ready": false,
+      "human_review_required": true,
+      "design_generation_allowed": false,
+      "design_seed_approved": false,
+      "machine_check_count": 15,
+      "machine_checks_passed": 12,
+      "machine_checks_failed": 0,
+      "machine_checks_blocked": 3,
+      "human_check_count": 10,
+      "open_human_check_count": 10,
+      "recommended_decision_now": "keep_needs_more_source_review",
+      "recommended_next_step": "complete_missing_machine_evidence_before_human_review"
+    },
+    "source_files": {
+      "manifest": {
+        "path": "kosmo.project.json",
+        "name": "kosmo.project.json",
+        "exists": true,
+        "size_bytes": 15677
+      },
+      "sourceReview": {
+        "path": "design/context-source-review.generated.json",
+        "name": "context-source-review.generated.json",
+        "exists": true,
+        "size_bytes": 1078
+      },
+      "sourceMapping": {
+        "path": "design/context-source-mapping.json",
+        "name": "context-source-mapping.json",
+        "exists": true,
+        "size_bytes": 2929
+      },
+      "contextSelection": {
+        "path": "design/context-selection.json",
+        "name": "context-selection.json",
+        "exists": true,
+        "size_bytes": 2100
+      },
+      "ifcSemanticProof": {
+        "path": "design/ifc-semantic-proof.generated.json",
+        "name": "ifc-semantic-proof.generated.json",
+        "exists": true,
+        "size_bytes": 8641
+      },
+      "ifcOpenShellReview": {
+        "path": "design/ifcopenshell-semantic-review.generated.json",
+        "name": "ifcopenshell-semantic-review.generated.json",
+        "exists": true,
+        "size_bytes": 5871
+      },
+      "ifcGeometryPreview": {
+        "path": "design/ifc-geometry-preview.generated.json",
+        "name": "ifc-geometry-preview.generated.json",
+        "exists": true,
+        "size_bytes": 5066
+      },
+      "ifcDxfAlignmentPreview": {
+        "path": "design/ifc-dxf-alignment-preview.generated.json",
+        "name": "ifc-dxf-alignment-preview.generated.json",
+        "exists": true,
+        "size_bytes": 3994
+      },
+      "ifcLayerPlan": {
+        "path": "design/ifc-layer-plan.generated.json",
+        "name": "ifc-layer-plan.generated.json",
+        "exists": true,
+        "size_bytes": 8666
+      },
+      "blenderContextImport": {
+        "path": "design/blender-context-import.generated.json",
+        "name": "blender-context-import.generated.json",
+        "exists": true,
+        "size_bytes": 8145
+      },
+      "blenderContextSmoke": {
+        "path": "design/blender-context-import.smoke.json",
+        "name": "blender-context-import.smoke.json",
+        "exists": true,
+        "size_bytes": 237
+      },
+      "blenderContextAudit": {
+        "path": "design/blender-context-import.audit.json",
+        "name": "blender-context-import.audit.json",
+        "exists": false,
+        "size_bytes": 0
+      }
+    },
+    "source_review": {
+      "status": "no_source_review_targets",
+      "source_candidate_decision": "pending_review",
+      "source_review_human_status": null,
+      "mapping_decision": "pending_review",
+      "semantic_ifc_reviewed": false
+    },
+    "evidence": {
+      "machine_checks": [
+        {
+          "id": "ifc_source_exists",
+          "status": "passed",
+          "detail": "IFC source exists: data/source-files/Bestand_Kontext.ifc."
+        },
+        {
+          "id": "source_mapping_not_seed",
+          "status": "passed",
+          "detail": "IFC mapping decision is pending_review; suggested decision is needs_more_source_review."
+        },
+        {
+          "id": "design_generation_blocked",
+          "status": "passed",
+          "detail": "Context selection does not approve design generation."
+        },
+        {
+          "id": "ifcopenshell_review_ready",
+          "status": "passed",
+          "detail": "IfcOpenShell machine checks: 13/13."
+        },
+        {
+          "id": "ifcopenshell_units_meter",
+          "status": "passed",
+          "detail": "IfcOpenShell unit scale: 1."
+        },
+        {
+          "id": "ifcopenshell_body_brep_ready",
+          "status": "passed",
+          "detail": "2 Body/Brep proxy elements."
+        },
+        {
+          "id": "semantic_elements_present",
+          "status": "passed",
+          "detail": "2 IFCBUILDINGELEMENTPROXY elements found."
+        },
+        {
+          "id": "semantic_integrity_full",
+          "status": "passed",
+          "detail": "Semantic integrity score is 1."
+        },
+        {
+          "id": "geometry_bboxes_resolved",
+          "status": "passed",
+          "detail": "2 geometry bboxes resolved."
+        },
+        {
+          "id": "alignment_preview_ready",
+          "status": "blocked",
+          "detail": "Alignment hint: missing_dxf_source."
+        },
+        {
+          "id": "layer_plan_review_ready",
+          "status": "passed",
+          "detail": "5 layer groups proposed."
+        },
+        {
+          "id": "blender_context_import_planned",
+          "status": "passed",
+          "detail": "4 Blender context objects planned; status blender_context_import_pending_context_handoff."
+        },
+        {
+          "id": "blender_context_smoke_locked",
+          "status": "passed",
+          "detail": "4/4 smoke objects locked."
+        },
+        {
+          "id": "blender_context_audit_passed",
+          "status": "blocked",
+          "detail": "Audit failures: 0."
+        },
+        {
+          "id": "no_blender_design_mesh_faces",
+          "status": "blocked",
+          "detail": "not audited mesh faces found in audited context import."
+        }
+      ],
+      "semantic_summary": {
+        "status": "semantic_ifc_probe_ready_for_human_review",
+        "engine": {
+          "name": "kosmo_step_semantic_probe",
+          "ifcopenshell_available": false,
+          "note": "IfcOpenShell/Bonsai was not available locally, so this proof reads STEP entity semantics only. It does not triangulate or edit IFC geometry."
+        },
+        "ifcbuildingelementproxy_count": 2,
+        "elements_with_object_placement": 2,
+        "elements_with_product_shape": 2,
+        "elements_contained_in_spatial_structure": 2,
+        "elements_with_property_sets": 2,
+        "semantic_integrity_score": 1,
+        "project_structure": [
+          {
+            "step_id": 1,
+            "type": "IFCPROJECT",
+            "global_id": "KOSMO_PROJECT",
+            "name": "Kosmo Demo Project",
+            "parent_step_id": null
+          },
+          {
+            "step_id": 2,
+            "type": "IFCSITE",
+            "global_id": "KOSMO_SITE",
+            "name": "Demo Site",
+            "parent_step_id": 1
+          },
+          {
+            "step_id": 3,
+            "type": "IFCBUILDING",
+            "global_id": "KOSMO_BUILDING",
+            "name": "Demo Building",
+            "parent_step_id": 2
+          },
+          {
+            "step_id": 4,
+            "type": "IFCBUILDINGSTOREY",
+            "global_id": "KOSMO_STOREY_0",
+            "name": "Level 0",
+            "parent_step_id": 3
+          }
+        ],
+        "proxy_object_type_top": [
+          {
+            "value": "Exterior wall context seed",
+            "count": 1
+          },
+          {
+            "value": "Horizontal slab context seed",
+            "count": 1
+          }
+        ],
+        "container_top": [
+          {
+            "value": "IFCBUILDINGSTOREY #4 Level 0",
+            "count": 2
+          }
+        ],
+        "property_set_top": [
+          {
+            "value": "Pset_KosmoDemo",
+            "count": 2
+          }
+        ],
+        "element_sample": [
+          {
+            "step_id": 130,
+            "global_id": "KOSMO_WALL_001",
+            "name": "Demo Wall",
+            "description": null,
+            "object_type": "Exterior wall context seed",
+            "tag": "WALL-001",
+            "object_placement_ref": 12,
+            "has_local_placement": true,
+            "representation_ref": 129,
+            "has_product_definition_shape": true,
+            "shape_representation_ref_count": 1,
+            "container": {
+              "relation_id": 304,
+              "structure_id": 4,
+              "type": "IFCBUILDINGSTOREY",
+              "name": "Level 0",
+              "label": "IFCBUILDINGSTOREY #4 Level 0"
+            },
+            "property_set_count": 1,
+            "property_sets": [
+              {
+                "id": 302,
+                "name": "Pset_KosmoDemo",
+                "property_count": 2,
+                "property_names": [
+                  "Material",
+                  "SourceRole"
+                ],
+                "properties": [
+                  {
+                    "id": 300,
+                    "name": "Material",
+                    "nominal_value": {
+                      "type": "IFCLABEL",
+                      "value": "Concrete"
+                    }
+                  },
+                  {
+                    "id": 301,
+                    "name": "SourceRole",
+                    "nominal_value": {
+                      "type": "IFCLABEL",
+                      "value": "context_fixture"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "step_id": 230,
+            "global_id": "KOSMO_SLAB_001",
+            "name": "Demo Slab",
+            "description": null,
+            "object_type": "Horizontal slab context seed",
+            "tag": "SLAB-001",
+            "object_placement_ref": 12,
+            "has_local_placement": true,
+            "representation_ref": 229,
+            "has_product_definition_shape": true,
+            "shape_representation_ref_count": 1,
+            "container": {
+              "relation_id": 304,
+              "structure_id": 4,
+              "type": "IFCBUILDINGSTOREY",
+              "name": "Level 0",
+              "label": "IFCBUILDINGSTOREY #4 Level 0"
+            },
+            "property_set_count": 1,
+            "property_sets": [
+              {
+                "id": 302,
+                "name": "Pset_KosmoDemo",
+                "property_count": 2,
+                "property_names": [
+                  "Material",
+                  "SourceRole"
+                ],
+                "properties": [
+                  {
+                    "id": 300,
+                    "name": "Material",
+                    "nominal_value": {
+                      "type": "IFCLABEL",
+                      "value": "Concrete"
+                    }
+                  },
+                  {
+                    "id": 301,
+                    "name": "SourceRole",
+                    "nominal_value": {
+                      "type": "IFCLABEL",
+                      "value": "context_fixture"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "ifcopenshell_summary": {
+        "status": "ifcopenshell_semantic_review_ready",
+        "version": "0.8.5",
+        "schema": "IFC4",
+        "unit_scale": 1,
+        "machine_checks_passed": 13,
+        "machine_check_count": 13,
+        "ifcbuildingelementproxy_count": 2,
+        "proxies_with_body_brep": 2,
+        "proxies_contained_in_spatial_structure": 2,
+        "distributions": {
+          "kosmo_object_type": [
+            {
+              "count": 2,
+              "value": "unclassified"
+            }
+          ],
+          "property_sets": [
+            {
+              "count": 2,
+              "value": "Pset_KosmoDemo"
+            }
+          ],
+          "representation": [
+            {
+              "count": 2,
+              "value": "Body/Brep"
+            }
+          ],
+          "storey_container": [
+            {
+              "count": 2,
+              "value": "IfcBuildingStorey #4 Level 0"
+            }
+          ]
+        },
+        "element_sample": [
+          {
+            "class": "IfcBuildingElementProxy",
+            "container_label": "IfcBuildingStorey #4 Level 0",
+            "global_id": "KOSMO_WALL_001",
+            "has_object_placement": true,
+            "has_representation": true,
+            "kosmo_object_type": null,
+            "name": "Demo Wall",
+            "object_placement_class": "IfcLocalPlacement",
+            "predefined_type": null,
+            "properties_sample": {
+              "Pset_KosmoDemo": {
+                "Material": "Concrete",
+                "SourceRole": "context_fixture"
+              }
+            },
+            "property_set_count": 1,
+            "property_set_names": [
+              "Pset_KosmoDemo"
+            ],
+            "representation_signature": "Body/Brep",
+            "representations": [
+              {
+                "identifier": "Body",
+                "item_count": 1,
+                "type": "Brep"
+              }
+            ],
+            "step_id": 130
+          },
+          {
+            "class": "IfcBuildingElementProxy",
+            "container_label": "IfcBuildingStorey #4 Level 0",
+            "global_id": "KOSMO_SLAB_001",
+            "has_object_placement": true,
+            "has_representation": true,
+            "kosmo_object_type": null,
+            "name": "Demo Slab",
+            "object_placement_class": "IfcLocalPlacement",
+            "predefined_type": null,
+            "properties_sample": {
+              "Pset_KosmoDemo": {
+                "Material": "Concrete",
+                "SourceRole": "context_fixture"
+              }
+            },
+            "property_set_count": 1,
+            "property_set_names": [
+              "Pset_KosmoDemo"
+            ],
+            "representation_signature": "Body/Brep",
+            "representations": [
+              {
+                "identifier": "Body",
+                "item_count": 1,
+                "type": "Brep"
+              }
+            ],
+            "step_id": 230
+          }
+        ]
+      },
+      "geometry_summary": {
+        "status": "ifc_geometry_preview_ready_for_human_review",
+        "elements_with_geometry_bbox": 2,
+        "faces_resolved": 12,
+        "global_width_m_estimate": 10,
+        "global_depth_m_estimate": 8,
+        "global_height_m_estimate": 3.35,
+        "svg_preview": "viz/previews/ifc-geometry-preview.svg"
+      },
+      "alignment_summary": {
+        "status": "missing_dxf_source",
+        "accepted_dxf_layer_count": 0,
+        "dxf_accepted_polyline_count": 0,
+        "ifc_geometry_bbox_count": 2,
+        "center_offset_m_estimate": 0,
+        "overlap_ratio_of_smaller_bbox": 0,
+        "alignment_hint": "missing_dxf_source",
+        "svg_preview": "viz/previews/ifc-dxf-alignment-preview.svg"
+      },
+      "layer_summary": {
+        "status": "ifc_layer_plan_ready_for_human_review",
+        "ifc_element_count": 2,
+        "layer_group_count": 5,
+        "material_group_count": 1,
+        "approved_for_import": false,
+        "layer_groups": [
+          {
+            "element_count": 1,
+            "review_status": "generated_needs_human_layer_review"
+          },
+          {
+            "element_count": 2,
+            "review_status": "generated_needs_human_layer_review"
+          },
+          {
+            "element_count": 1,
+            "review_status": "generated_needs_human_layer_review"
+          },
+          {
+            "element_count": 1,
+            "review_status": "generated_needs_human_layer_review"
+          },
+          {
+            "element_count": 2,
+            "review_status": "generated_needs_human_layer_review"
+          }
+        ]
+      },
+      "blender_review_summary": {
+        "import_status": "blender_context_import_pending_context_handoff",
+        "smoke_object_count": 4,
+        "smoke_locked_object_count": 4,
+        "audit_status": null,
+        "audit_mesh_polygon_count": 0,
+        "audit_dxf_polyline_count": 0,
+        "audit_ifc_bbox_count": 0,
+        "output_blend": null
+      }
+    },
+    "human_checklist": [
+      {
+        "id": "semantic_viewer_import",
+        "question": "Open `data/source-files/Bestand_Kontext.ifc` in Bonsai/IfcOpenShell or equivalent and confirm the semantic tree loads without import errors.",
+        "status": "pending_human_review",
+        "evidence_hint": "IfcOpenShell machine import passed 13/13; visual Bonsai-style tree review remains human."
+      },
+      {
+        "id": "element_class_review",
+        "question": "Confirm whether 2 IFCBUILDINGELEMENTPROXY objects are acceptable as semantic Bestand/context elements or need reclassification.",
+        "status": "pending_human_review",
+        "evidence_hint": "2 IFCBUILDINGELEMENTPROXY elements found."
+      },
+      {
+        "id": "storey_review",
+        "question": "Confirm all 2 elements belong to IFCBUILDINGSTOREY #4 Level 0 and there are no missing/extra storeys.",
+        "status": "pending_human_review",
+        "evidence_hint": "Container distribution: IFCBUILDINGSTOREY #4 Level 0: 2"
+      },
+      {
+        "id": "placement_units_review",
+        "question": "Confirm object placements and project units match the expected meter-based project context.",
+        "status": "pending_human_review",
+        "evidence_hint": "2 elements have object placement; geometry extents are 10 x 8 x 3.35 m."
+      },
+      {
+        "id": "origin_alignment_review",
+        "question": "Compare the semantic IFC import against DXF underlay, IFC bounds and LV95/project origin.",
+        "status": "pending_human_review",
+        "evidence_hint": "Alignment hint: missing_dxf_source; center offset estimate 0 m."
+      },
+      {
+        "id": "geometry_outlier_review",
+        "question": "Inspect large footprint/height outliers in the geometry preview before trusting the IFC as a design seed.",
+        "status": "pending_human_review",
+        "evidence_hint": "12 faces resolved; inspect SVG preview and element samples."
+      },
+      {
+        "id": "property_set_review",
+        "question": "Check `Pset_AtelierBlaupause_Object` fields such as OBJEKTART, DACH_MIN, DACH_MAX and gml_id for reliability.",
+        "status": "pending_human_review",
+        "evidence_hint": "Property set distribution: Pset_KosmoDemo: 2"
+      },
+      {
+        "id": "layer_mapping_review",
+        "question": "Review the generated Mass/material_unknown layer plan and decide whether finer wall/slab/roof/support classes are possible.",
+        "status": "pending_human_review",
+        "evidence_hint": "5 generated layer groups; approved_for_import is false."
+      },
+      {
+        "id": "blender_reference_review",
+        "question": "Open the audited Blender review blend and visually confirm it is only a locked reference underlay.",
+        "status": "pending_human_review",
+        "evidence_hint": "Audit status null; mesh faces 0."
+      },
+      {
+        "id": "final_seed_decision",
+        "question": "Only after the checks above: decide keep as source review, accept as context, reject or approve as design seed.",
+        "status": "pending_human_review",
+        "evidence_hint": "Recommended current decision remains keep_needs_more_source_review."
+      }
+    ],
+    "decision_options": [
+      {
+        "decision": "keep_needs_more_source_review",
+        "when": "default until the IFC has been opened in a semantic IFC viewer and checked against the list below",
+        "effect": "keeps context as reference only; no design seed, no model generation"
+      },
+      {
+        "decision": "accepted_as_context",
+        "when": "after semantic viewer confirms the IFC is reliable as reference but not yet suitable as editable seed",
+        "effect": "allows stronger reference use but still no design generation"
+      },
+      {
+        "decision": "accepted_as_design_seed",
+        "when": "only after semantic classes, storeys, placement, units, origin and layer mapping are reviewed by a human",
+        "effect": "can unlock design-seed workflow only if approved_for_design_generation is also true"
+      },
+      {
+        "decision": "rejected",
+        "when": "if semantic classes, origin, units or source authority are not trustworthy",
+        "effect": "removes this IFC semantic candidate from downstream seed consideration"
+      }
+    ],
+    "next_actions": [
+      "Open the IFC in Bonsai/IfcOpenShell or an equivalent semantic IFC viewer.",
+      "Compare the semantic element tree with design/ifc-semantic-proof.generated.md.",
+      "Compare geometry/origin with viz/previews/ifc-dxf-alignment-preview.svg and the audited Blender review file.",
+      "Keep context-selection approved_for_design_generation=false until the checklist is completed by a human reviewer."
+    ]
+  },
+  "semantic_proof": {
+    "schema_version": "0.1",
+    "generated_at": "2026-05-25T19:39:51.856Z",
+    "generator": "kosmo-ifc-semantic-proof",
+    "project_id": "kosmo-demo-001",
+    "status": "semantic_ifc_probe_ready_for_human_review",
+    "rights_status": "internal_only",
+    "source_file": {
+      "path": "data/source-files/Bestand_Kontext.ifc",
+      "name": "Bestand_Kontext.ifc",
+      "exists": true,
+      "size_bytes": 3582
+    },
+    "engine": {
+      "name": "kosmo_step_semantic_probe",
+      "ifcopenshell_available": false,
+      "note": "IfcOpenShell/Bonsai was not available locally, so this proof reads STEP entity semantics only. It does not triangulate or edit IFC geometry."
+    },
+    "policy": {
+      "proof_does_not_approve_design_generation": true,
+      "proof_does_not_modify_context_selection": true,
+      "semantic_elements_require_human_review_before_design_seed": true,
+      "geometry_is_not_imported_or_edited_by_this_tool": true
+    },
+    "source_context": {
+      "source_review_status": "no_source_review_targets",
+      "source_review_open_human_review_count": 0,
+      "source_mapping_status": "source_mapping_review_required",
+      "source_mapping_ifc_decision": "pending_review"
+    },
+    "summary": {
+      "ifc_exists": true,
+      "ifc_total_entities": 77,
+      "ifc_entity_type_count": 20,
+      "ifcbuildingelementproxy_count": 2,
+      "elements_with_global_id": 2,
+      "elements_with_object_placement": 2,
+      "elements_with_product_shape": 2,
+      "elements_contained_in_spatial_structure": 2,
+      "elements_with_property_sets": 2,
+      "property_set_links": 2,
+      "semantic_integrity_score": 1,
+      "design_seed_approved": false,
+      "recommended_next_step": "human_review_semantic_ifc_elements_before_design_seed"
+    },
+    "project_structure": [
+      {
+        "step_id": 1,
+        "type": "IFCPROJECT",
+        "global_id": "KOSMO_PROJECT",
+        "name": "Kosmo Demo Project",
+        "parent_step_id": null
+      },
+      {
+        "step_id": 2,
+        "type": "IFCSITE",
+        "global_id": "KOSMO_SITE",
+        "name": "Demo Site",
+        "parent_step_id": 1
+      },
+      {
+        "step_id": 3,
+        "type": "IFCBUILDING",
+        "global_id": "KOSMO_BUILDING",
+        "name": "Demo Building",
+        "parent_step_id": 2
+      },
+      {
+        "step_id": 4,
+        "type": "IFCBUILDINGSTOREY",
+        "global_id": "KOSMO_STOREY_0",
+        "name": "Level 0",
+        "parent_step_id": 3
+      }
+    ],
+    "distributions": {
+      "proxy_name_top": [
+        {
+          "value": "Demo Slab",
+          "count": 1
+        },
+        {
+          "value": "Demo Wall",
+          "count": 1
+        }
+      ],
+      "proxy_object_type_top": [
+        {
+          "value": "Exterior wall context seed",
+          "count": 1
+        },
+        {
+          "value": "Horizontal slab context seed",
+          "count": 1
+        }
+      ],
+      "container_top": [
+        {
+          "value": "IFCBUILDINGSTOREY #4 Level 0",
+          "count": 2
+        }
+      ],
+      "property_set_top": [
+        {
+          "value": "Pset_KosmoDemo",
+          "count": 2
+        }
+      ]
+    },
+    "element_sample": [
+      {
+        "step_id": 130,
+        "global_id": "KOSMO_WALL_001",
+        "name": "Demo Wall",
+        "description": null,
+        "object_type": "Exterior wall context seed",
+        "tag": "WALL-001",
+        "object_placement_ref": 12,
+        "has_local_placement": true,
+        "representation_ref": 129,
+        "has_product_definition_shape": true,
+        "shape_representation_ref_count": 1,
+        "container": {
+          "relation_id": 304,
+          "structure_id": 4,
+          "type": "IFCBUILDINGSTOREY",
+          "name": "Level 0",
+          "label": "IFCBUILDINGSTOREY #4 Level 0"
+        },
+        "property_set_count": 1,
+        "property_sets": [
+          {
+            "id": 302,
+            "name": "Pset_KosmoDemo",
+            "property_count": 2,
+            "property_names": [
+              "Material",
+              "SourceRole"
+            ],
+            "properties": [
+              {
+                "id": 300,
+                "name": "Material",
+                "nominal_value": {
+                  "type": "IFCLABEL",
+                  "value": "Concrete"
+                }
+              },
+              {
+                "id": 301,
+                "name": "SourceRole",
+                "nominal_value": {
+                  "type": "IFCLABEL",
+                  "value": "context_fixture"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "step_id": 230,
+        "global_id": "KOSMO_SLAB_001",
+        "name": "Demo Slab",
+        "description": null,
+        "object_type": "Horizontal slab context seed",
+        "tag": "SLAB-001",
+        "object_placement_ref": 12,
+        "has_local_placement": true,
+        "representation_ref": 229,
+        "has_product_definition_shape": true,
+        "shape_representation_ref_count": 1,
+        "container": {
+          "relation_id": 304,
+          "structure_id": 4,
+          "type": "IFCBUILDINGSTOREY",
+          "name": "Level 0",
+          "label": "IFCBUILDINGSTOREY #4 Level 0"
+        },
+        "property_set_count": 1,
+        "property_sets": [
+          {
+            "id": 302,
+            "name": "Pset_KosmoDemo",
+            "property_count": 2,
+            "property_names": [
+              "Material",
+              "SourceRole"
+            ],
+            "properties": [
+              {
+                "id": 300,
+                "name": "Material",
+                "nominal_value": {
+                  "type": "IFCLABEL",
+                  "value": "Concrete"
+                }
+              },
+              {
+                "id": 301,
+                "name": "SourceRole",
+                "nominal_value": {
+                  "type": "IFCLABEL",
+                  "value": "context_fixture"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "elements": [
+      {
+        "step_id": 130,
+        "global_id": "KOSMO_WALL_001",
+        "name": "Demo Wall",
+        "description": null,
+        "object_type": "Exterior wall context seed",
+        "tag": "WALL-001",
+        "object_placement_ref": 12,
+        "has_local_placement": true,
+        "representation_ref": 129,
+        "has_product_definition_shape": true,
+        "shape_representation_ref_count": 1,
+        "container": {
+          "relation_id": 304,
+          "structure_id": 4,
+          "type": "IFCBUILDINGSTOREY",
+          "name": "Level 0",
+          "label": "IFCBUILDINGSTOREY #4 Level 0"
+        },
+        "property_set_count": 1,
+        "property_sets": [
+          {
+            "id": 302,
+            "name": "Pset_KosmoDemo",
+            "property_count": 2,
+            "property_names": [
+              "Material",
+              "SourceRole"
+            ],
+            "properties": [
+              {
+                "id": 300,
+                "name": "Material",
+                "nominal_value": {
+                  "type": "IFCLABEL",
+                  "value": "Concrete"
+                }
+              },
+              {
+                "id": 301,
+                "name": "SourceRole",
+                "nominal_value": {
+                  "type": "IFCLABEL",
+                  "value": "context_fixture"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "step_id": 230,
+        "global_id": "KOSMO_SLAB_001",
+        "name": "Demo Slab",
+        "description": null,
+        "object_type": "Horizontal slab context seed",
+        "tag": "SLAB-001",
+        "object_placement_ref": 12,
+        "has_local_placement": true,
+        "representation_ref": 229,
+        "has_product_definition_shape": true,
+        "shape_representation_ref_count": 1,
+        "container": {
+          "relation_id": 304,
+          "structure_id": 4,
+          "type": "IFCBUILDINGSTOREY",
+          "name": "Level 0",
+          "label": "IFCBUILDINGSTOREY #4 Level 0"
+        },
+        "property_set_count": 1,
+        "property_sets": [
+          {
+            "id": 302,
+            "name": "Pset_KosmoDemo",
+            "property_count": 2,
+            "property_names": [
+              "Material",
+              "SourceRole"
+            ],
+            "properties": [
+              {
+                "id": 300,
+                "name": "Material",
+                "nominal_value": {
+                  "type": "IFCLABEL",
+                  "value": "Concrete"
+                }
+              },
+              {
+                "id": 301,
+                "name": "SourceRole",
+                "nominal_value": {
+                  "type": "IFCLABEL",
+                  "value": "context_fixture"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "next_actions": [
+      "Open the IFC in Bonsai/IfcOpenShell or an equivalent semantic IFC viewer/import path.",
+      "Human-review classes, storey containment, placements, units and coordinates.",
+      "Compare semantic elements with the DXF context layer and IFC bounds.",
+      "Keep context-selection approved_for_design_generation=false until the semantic review is complete."
+    ]
+  },
+  "geometry_preview": {
+    "schema_version": "0.1",
+    "generated_at": "2026-05-25T19:39:52.028Z",
+    "generator": "kosmo-ifc-geometry-preview",
+    "project_id": "kosmo-demo-001",
+    "status": "ifc_geometry_preview_ready_for_human_review",
+    "rights_status": "internal_only",
+    "source_file": {
+      "path": "data/source-files/Bestand_Kontext.ifc",
+      "name": "Bestand_Kontext.ifc",
+      "exists": true,
+      "size_bytes": 3582
+    },
+    "preview_svg_path": "viz/previews/ifc-geometry-preview.svg",
+    "engine": {
+      "name": "kosmo_step_geometry_preview",
+      "ifcopenshell_available": false,
+      "note": "Read-only STEP geometry preview. This resolves faceted BREP bounds and top projection but does not import editable BIM geometry."
+    },
+    "policy": {
+      "preview_does_not_approve_design_generation": true,
+      "preview_does_not_modify_context_selection": true,
+      "preview_is_not_a_bim_import": true,
+      "geometry_must_be_human_reviewed_before_design_seed": true
+    },
+    "summary": {
+      "ifc_exists": true,
+      "ifc_total_entities": 77,
+      "ifc_entity_type_count": 20,
+      "ifcbuildingelementproxy_count": 2,
+      "elements_with_geometry_bbox": 2,
+      "product_shape_representations_resolved": 2,
+      "breps_resolved": 2,
+      "faces_resolved": 12,
+      "unique_points_resolved_sum": 16,
+      "global_width_m_estimate": 10,
+      "global_depth_m_estimate": 8,
+      "global_height_m_estimate": 3.35,
+      "preview_svg_written": true,
+      "design_seed_approved": false,
+      "recommended_next_step": "human_review_ifc_geometry_preview_against_context_sources"
+    },
+    "global_bounds": {
+      "min": [
+        0,
+        0,
+        0
+      ],
+      "max": [
+        10,
+        8,
+        3.35
+      ]
+    },
+    "distributions": {
+      "face_count_top": [
+        {
+          "value": "<64",
+          "count": 2
+        }
+      ],
+      "height_top": [
+        {
+          "value": "<3m",
+          "count": 1
+        },
+        {
+          "value": "3-8m",
+          "count": 1
+        }
+      ],
+      "area_top": [
+        {
+          "value": "<25m2",
+          "count": 1
+        },
+        {
+          "value": "25-100m2",
+          "count": 1
+        }
+      ]
+    },
+    "element_sample": [
+      {
+        "step_id": 130,
+        "global_id": "KOSMO_WALL_001",
+        "name": "Demo Wall",
+        "object_placement_ref": 12,
+        "representation_ref": 129,
+        "product_shape_representation_count": 1,
+        "brep_count": 1,
+        "face_count": 6,
+        "loop_count": 6,
+        "unique_point_count": 8,
+        "has_geometry_bbox": true,
+        "geometry_bbox": {
+          "min": [
+            0,
+            0,
+            0
+          ],
+          "max": [
+            10,
+            0.4,
+            3
+          ]
+        },
+        "footprint_area_m2_estimate": 4,
+        "height_m_estimate": 3,
+        "placement_origin": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "step_id": 230,
+        "global_id": "KOSMO_SLAB_001",
+        "name": "Demo Slab",
+        "object_placement_ref": 12,
+        "representation_ref": 229,
+        "product_shape_representation_count": 1,
+        "brep_count": 1,
+        "face_count": 6,
+        "loop_count": 6,
+        "unique_point_count": 8,
+        "has_geometry_bbox": true,
+        "geometry_bbox": {
+          "min": [
+            0,
+            0,
+            3
+          ],
+          "max": [
+            10,
+            8,
+            3.35
+          ]
+        },
+        "footprint_area_m2_estimate": 80,
+        "height_m_estimate": 0.35,
+        "placement_origin": [
+          0,
+          0,
+          0
+        ]
+      }
+    ],
+    "elements": [
+      {
+        "step_id": 130,
+        "global_id": "KOSMO_WALL_001",
+        "name": "Demo Wall",
+        "object_placement_ref": 12,
+        "representation_ref": 129,
+        "product_shape_representation_count": 1,
+        "brep_count": 1,
+        "face_count": 6,
+        "loop_count": 6,
+        "unique_point_count": 8,
+        "has_geometry_bbox": true,
+        "geometry_bbox": {
+          "min": [
+            0,
+            0,
+            0
+          ],
+          "max": [
+            10,
+            0.4,
+            3
+          ]
+        },
+        "footprint_area_m2_estimate": 4,
+        "height_m_estimate": 3,
+        "placement_origin": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "step_id": 230,
+        "global_id": "KOSMO_SLAB_001",
+        "name": "Demo Slab",
+        "object_placement_ref": 12,
+        "representation_ref": 229,
+        "product_shape_representation_count": 1,
+        "brep_count": 1,
+        "face_count": 6,
+        "loop_count": 6,
+        "unique_point_count": 8,
+        "has_geometry_bbox": true,
+        "geometry_bbox": {
+          "min": [
+            0,
+            0,
+            3
+          ],
+          "max": [
+            10,
+            8,
+            3.35
+          ]
+        },
+        "footprint_area_m2_estimate": 80,
+        "height_m_estimate": 0.35,
+        "placement_origin": [
+          0,
+          0,
+          0
+        ]
+      }
+    ],
+    "next_actions": [
+      "Open the SVG preview and compare the top projection with DXF context and IFC bounds.",
+      "Review outlier extents, units and origin before considering any semantic IFC design-seed change.",
+      "Keep context-selection approved_for_design_generation=false until a human verifies geometry and semantic classes."
+    ]
+  },
+  "alignment_preview": {
+    "schema_version": "0.1",
+    "generated_at": "2026-05-25T21:07:01.192Z",
+    "generator": "kosmo-ifc-dxf-alignment-preview",
+    "project_id": "kosmo-demo-001",
+    "status": "missing_dxf_source",
+    "rights_status": "internal_only",
+    "source_files": {
+      "ifc_geometry_preview": {
+        "path": "design/ifc-geometry-preview.generated.json",
+        "name": "ifc-geometry-preview.generated.json",
+        "exists": true,
+        "size_bytes": 5066
+      },
+      "dxf": {
+        "path": "data/source-files/Plangrundlage.dxf",
+        "name": "Plangrundlage.dxf",
+        "exists": false,
+        "size_bytes": 0
+      },
+      "source_mapping": {
+        "path": "design/context-source-mapping.json",
+        "name": "context-source-mapping.json",
+        "exists": true,
+        "size_bytes": 2929
+      },
+      "origin_metadata": null
+    },
+    "preview_svg_path": "viz/previews/ifc-dxf-alignment-preview.svg",
+    "engine": {
+      "name": "kosmo_ifc_dxf_alignment_preview",
+      "note": "Read-only SVG overlay of accepted DXF context polylines and IFC geometry bounding boxes. This is a visual alignment review, not a CAD/BIM import."
+    },
+    "policy": {
+      "preview_does_not_approve_design_generation": true,
+      "preview_does_not_modify_context_selection": true,
+      "dxf_context_is_reference_only": true,
+      "ifc_geometry_is_bbox_review_only": true,
+      "human_alignment_review_required_before_design_seed": true
+    },
+    "origin": null,
+    "summary": {
+      "accepted_dxf_layer_count": 0,
+      "dxf_exists": false,
+      "dxf_total_polyline_count": 0,
+      "dxf_accepted_polyline_count": 0,
+      "dxf_accepted_vertex_count": 0,
+      "dxf_rendered_polyline_count": 0,
+      "ifc_geometry_preview_exists": true,
+      "ifc_geometry_preview_ready": true,
+      "ifc_geometry_bbox_count": 2,
+      "ifc_faces_resolved": 12,
+      "combined_bounds_ready": true,
+      "center_offset_m_estimate": 0,
+      "overlap_ratio_of_smaller_bbox": 0,
+      "ifc_width_m_estimate": 10,
+      "ifc_depth_m_estimate": 8,
+      "dxf_width_m_estimate": 0,
+      "dxf_depth_m_estimate": 0,
+      "width_ratio_ifc_to_dxf": 0,
+      "depth_ratio_ifc_to_dxf": 0,
+      "alignment_hint": "missing_dxf_source",
+      "design_seed_approved": false,
+      "recommended_next_step": "complete_missing_ifc_or_dxf_alignment_inputs"
+    },
+    "accepted_dxf_layers": [],
+    "bounds": {
+      "ifc": {
+        "min": [
+          0,
+          0
+        ],
+        "max": [
+          10,
+          8
+        ]
+      },
+      "dxf": null,
+      "combined": {
+        "min": [
+          0,
+          0
+        ],
+        "max": [
+          10,
+          8
+        ]
+      }
+    },
+    "dxf_layer_stats": [],
+    "dxf_polyline_sample": [],
+    "ifc_element_sample": [
+      {
+        "step_id": 130,
+        "global_id": "KOSMO_WALL_001",
+        "name": "Demo Wall",
+        "object_placement_ref": 12,
+        "representation_ref": 129,
+        "product_shape_representation_count": 1,
+        "brep_count": 1,
+        "face_count": 6,
+        "loop_count": 6,
+        "unique_point_count": 8,
+        "has_geometry_bbox": true,
+        "geometry_bbox": {
+          "min": [
+            0,
+            0,
+            0
+          ],
+          "max": [
+            10,
+            0.4,
+            3
+          ]
+        },
+        "footprint_area_m2_estimate": 4,
+        "height_m_estimate": 3,
+        "placement_origin": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "step_id": 230,
+        "global_id": "KOSMO_SLAB_001",
+        "name": "Demo Slab",
+        "object_placement_ref": 12,
+        "representation_ref": 229,
+        "product_shape_representation_count": 1,
+        "brep_count": 1,
+        "face_count": 6,
+        "loop_count": 6,
+        "unique_point_count": 8,
+        "has_geometry_bbox": true,
+        "geometry_bbox": {
+          "min": [
+            0,
+            0,
+            3
+          ],
+          "max": [
+            10,
+            8,
+            3.35
+          ]
+        },
+        "footprint_area_m2_estimate": 80,
+        "height_m_estimate": 0.35,
+        "placement_origin": [
+          0,
+          0,
+          0
+        ]
+      }
+    ],
+    "next_actions": [
+      "Register a local DXF source before alignment review."
+    ]
+  },
+  "layer_plan": {
+    "schema_version": "0.1",
+    "generated_at": "2026-05-25T19:39:52.206Z",
+    "generator": "kosmo-ifc-layer-plan",
+    "project_id": "kosmo-demo-001",
+    "status": "ifc_layer_plan_ready_for_human_review",
+    "rights_status": "internal_only",
+    "source_files": {
+      "semantic_proof": {
+        "path": "design/ifc-semantic-proof.generated.json",
+        "exists": true,
+        "name": "ifc-semantic-proof.generated.json",
+        "size_bytes": 8641
+      },
+      "geometry_preview": {
+        "path": "design/ifc-geometry-preview.generated.json",
+        "exists": true,
+        "name": "ifc-geometry-preview.generated.json",
+        "size_bytes": 5066
+      }
+    },
+    "preview_svg_path": "viz/previews/ifc-layer-plan.svg",
+    "blender_profile_path": "design/blender-layer-profile.generated.json",
+    "archicad_profile_path": "design/archicad-layer-profile.generated.json",
+    "engine": {
+      "name": "kosmo_ifc_layer_planner",
+      "note": "Review-only layer proposal from semantic IFC proof and geometry preview. It creates no GLB and approves no design seed."
+    },
+    "policy": {
+      "layer_plan_does_not_approve_design_generation": true,
+      "layer_plan_does_not_generate_public_assets": true,
+      "human_review_required_before_blender_import": true,
+      "geometry_is_bbox_level_until_reviewed": true
+    },
+    "summary": {
+      "semantic_proof_ready": true,
+      "geometry_preview_ready": true,
+      "ifc_element_count": 2,
+      "layer_group_count": 5,
+      "material_group_count": 1,
+      "structure_element_count": 2,
+      "facade_element_count": 1,
+      "mass_element_count": 1,
+      "design_seed_approved": false,
+      "recommended_next_step": "human_review_layer_plan_before_blender_or_archicad_import"
+    },
+    "layer_groups": [
+      {
+        "layer_key": "mass",
+        "layer_type": "mass",
+        "title": "Mass",
+        "element_count": 1,
+        "step_ids": [
+          230
+        ],
+        "global_ids": [
+          "KOSMO_SLAB_001"
+        ],
+        "blender_collection": "KOSMO_KOSMO_DEMO_001_MASS",
+        "archicad_layer": "KOSMO_KOSMO_DEMO_001_MASS",
+        "planned_glb_path": "models/kosmo-demo-001/mass.glb",
+        "review_status": "generated_needs_human_layer_review"
+      },
+      {
+        "layer_key": "structure",
+        "layer_type": "structure",
+        "title": "Structure",
+        "element_count": 2,
+        "step_ids": [
+          130,
+          230
+        ],
+        "global_ids": [
+          "KOSMO_WALL_001",
+          "KOSMO_SLAB_001"
+        ],
+        "blender_collection": "KOSMO_KOSMO_DEMO_001_STRUCTURE",
+        "archicad_layer": "KOSMO_KOSMO_DEMO_001_STRUCTURE",
+        "planned_glb_path": "models/kosmo-demo-001/structure.glb",
+        "review_status": "generated_needs_human_layer_review"
+      },
+      {
+        "layer_key": "facade",
+        "layer_type": "facade",
+        "title": "Facade",
+        "element_count": 1,
+        "step_ids": [
+          130
+        ],
+        "global_ids": [
+          "KOSMO_WALL_001"
+        ],
+        "blender_collection": "KOSMO_KOSMO_DEMO_001_FACADE",
+        "archicad_layer": "KOSMO_KOSMO_DEMO_001_FACADE",
+        "planned_glb_path": "models/kosmo-demo-001/facade.glb",
+        "review_status": "generated_needs_human_layer_review"
+      },
+      {
+        "layer_key": "tectonic",
+        "layer_type": "tectonic",
+        "title": "Tectonic",
+        "element_count": 1,
+        "step_ids": [
+          130
+        ],
+        "global_ids": [
+          "KOSMO_WALL_001"
+        ],
+        "blender_collection": "KOSMO_KOSMO_DEMO_001_TECTONIC",
+        "archicad_layer": "KOSMO_KOSMO_DEMO_001_TECTONIC",
+        "planned_glb_path": "models/kosmo-demo-001/tectonic.glb",
+        "review_status": "generated_needs_human_layer_review"
+      },
+      {
+        "layer_key": "material:concrete",
+        "layer_type": "material",
+        "title": "Material concrete",
+        "element_count": 2,
+        "step_ids": [
+          130,
+          230
+        ],
+        "global_ids": [
+          "KOSMO_WALL_001",
+          "KOSMO_SLAB_001"
+        ],
+        "blender_collection": "KOSMO_KOSMO_DEMO_001_MATERIAL_CONCRETE",
+        "archicad_layer": "KOSMO_KOSMO_DEMO_001_MATERIAL_CONCRETE",
+        "planned_glb_path": "models/kosmo-demo-001/materials/concrete.glb",
+        "review_status": "generated_needs_human_layer_review"
+      }
+    ],
+    "elements": [
+      {
+        "step_id": 130,
+        "global_id": "KOSMO_WALL_001",
+        "name": "Demo Wall",
+        "source_object_type": "Exterior wall context seed",
+        "tag": "WALL-001",
+        "proposed_element_type": "wall_or_facade",
+        "proposed_layer_role": "structure",
+        "layer_keys": [
+          "structure",
+          "facade",
+          "tectonic",
+          "material:concrete"
+        ],
+        "material_tags": [
+          "concrete"
+        ],
+        "blender_collections": [
+          "KOSMO_KOSMO_DEMO_001_STRUCTURE",
+          "KOSMO_KOSMO_DEMO_001_FACADE",
+          "KOSMO_KOSMO_DEMO_001_TECTONIC",
+          "KOSMO_KOSMO_DEMO_001_MATERIAL_CONCRETE"
+        ],
+        "archicad_layers": [
+          "KOSMO_KOSMO_DEMO_001_STRUCTURE",
+          "KOSMO_KOSMO_DEMO_001_FACADE",
+          "KOSMO_KOSMO_DEMO_001_TECTONIC",
+          "KOSMO_KOSMO_DEMO_001_MATERIAL_CONCRETE"
+        ],
+        "geometry_bbox": {
+          "min": [
+            0,
+            0,
+            0
+          ],
+          "max": [
+            10,
+            0.4,
+            3
+          ]
+        },
+        "width_m_estimate": 10,
+        "depth_m_estimate": 0.4,
+        "height_m_estimate": 3,
+        "face_count": 6,
+        "footprint_area_m2_estimate": 4,
+        "semantic_container": "IFCBUILDINGSTOREY #4 Level 0",
+        "property_sets": [
+          {
+            "id": 302,
+            "name": "Pset_KosmoDemo",
+            "property_count": 2,
+            "property_names": [
+              "Material",
+              "SourceRole"
+            ],
+            "properties": [
+              {
+                "id": 300,
+                "name": "Material",
+                "nominal_value": {
+                  "type": "IFCLABEL",
+                  "value": "Concrete"
+                }
+              },
+              {
+                "id": 301,
+                "name": "SourceRole",
+                "nominal_value": {
+                  "type": "IFCLABEL",
+                  "value": "context_fixture"
+                }
+              }
+            ]
+          }
+        ],
+        "confidence_score": 0.95,
+        "review_status": "generated_needs_human_layer_review",
+        "notes": [
+          "Heuristic IFC layer assignment: wall_or_facade."
+        ]
+      },
+      {
+        "step_id": 230,
+        "global_id": "KOSMO_SLAB_001",
+        "name": "Demo Slab",
+        "source_object_type": "Horizontal slab context seed",
+        "tag": "SLAB-001",
+        "proposed_element_type": "horizontal_slab",
+        "proposed_layer_role": "structure",
+        "layer_keys": [
+          "structure",
+          "mass",
+          "material:concrete"
+        ],
+        "material_tags": [
+          "concrete"
+        ],
+        "blender_collections": [
+          "KOSMO_KOSMO_DEMO_001_STRUCTURE",
+          "KOSMO_KOSMO_DEMO_001_MASS",
+          "KOSMO_KOSMO_DEMO_001_MATERIAL_CONCRETE"
+        ],
+        "archicad_layers": [
+          "KOSMO_KOSMO_DEMO_001_STRUCTURE",
+          "KOSMO_KOSMO_DEMO_001_MASS",
+          "KOSMO_KOSMO_DEMO_001_MATERIAL_CONCRETE"
+        ],
+        "geometry_bbox": {
+          "min": [
+            0,
+            0,
+            3
+          ],
+          "max": [
+            10,
+            8,
+            3.35
+          ]
+        },
+        "width_m_estimate": 10,
+        "depth_m_estimate": 8,
+        "height_m_estimate": 0.35,
+        "face_count": 6,
+        "footprint_area_m2_estimate": 80,
+        "semantic_container": "IFCBUILDINGSTOREY #4 Level 0",
+        "property_sets": [
+          {
+            "id": 302,
+            "name": "Pset_KosmoDemo",
+            "property_count": 2,
+            "property_names": [
+              "Material",
+              "SourceRole"
+            ],
+            "properties": [
+              {
+                "id": 300,
+                "name": "Material",
+                "nominal_value": {
+                  "type": "IFCLABEL",
+                  "value": "Concrete"
+                }
+              },
+              {
+                "id": 301,
+                "name": "SourceRole",
+                "nominal_value": {
+                  "type": "IFCLABEL",
+                  "value": "context_fixture"
+                }
+              }
+            ]
+          }
+        ],
+        "confidence_score": 0.95,
+        "review_status": "generated_needs_human_layer_review",
+        "notes": [
+          "Heuristic IFC layer assignment: horizontal_slab."
+        ]
+      }
+    ],
+    "next_actions": [
+      "Open the layer-plan SVG and compare layer roles against the IFC viewer.",
+      "Human-review wall/slab/support classifications before Blender or ArchiCAD import.",
+      "Prepare 5 review-only collections/layers, but keep approved_for_import=false.",
+      "Only after review: generate GLB layer exports and Blender collections from approved layer keys."
+    ]
+  },
+  "blender_audit": null,
+  "previews": [
+    {
+      "label": "IFC Geometry",
+      "path": "viz/previews/ifc-geometry-preview.svg",
+      "href": "../viz/previews/ifc-geometry-preview.svg",
+      "exists": true,
+      "size_bytes": 1002
+    },
+    {
+      "label": "IFC/DXF Alignment",
+      "path": "viz/previews/ifc-dxf-alignment-preview.svg",
+      "href": "../viz/previews/ifc-dxf-alignment-preview.svg",
+      "exists": true,
+      "size_bytes": 2792
+    },
+    {
+      "label": "IFC Layer Plan",
+      "path": "viz/previews/ifc-layer-plan.svg",
+      "href": "../viz/previews/ifc-layer-plan.svg",
+      "exists": true,
+      "size_bytes": 2114
+    }
+  ],
+  "machine_checks": [
+    {
+      "id": "ifc_source_exists",
+      "status": "passed",
+      "detail": "IFC source exists: data/source-files/Bestand_Kontext.ifc."
+    },
+    {
+      "id": "source_mapping_not_seed",
+      "status": "passed",
+      "detail": "IFC mapping decision is pending_review; suggested decision is needs_more_source_review."
+    },
+    {
+      "id": "design_generation_blocked",
+      "status": "passed",
+      "detail": "Context selection does not approve design generation."
+    },
+    {
+      "id": "ifcopenshell_review_ready",
+      "status": "passed",
+      "detail": "IfcOpenShell machine checks: 13/13."
+    },
+    {
+      "id": "ifcopenshell_units_meter",
+      "status": "passed",
+      "detail": "IfcOpenShell unit scale: 1."
+    },
+    {
+      "id": "ifcopenshell_body_brep_ready",
+      "status": "passed",
+      "detail": "2 Body/Brep proxy elements."
+    },
+    {
+      "id": "semantic_elements_present",
+      "status": "passed",
+      "detail": "2 IFCBUILDINGELEMENTPROXY elements found."
+    },
+    {
+      "id": "semantic_integrity_full",
+      "status": "passed",
+      "detail": "Semantic integrity score is 1."
+    },
+    {
+      "id": "geometry_bboxes_resolved",
+      "status": "passed",
+      "detail": "2 geometry bboxes resolved."
+    },
+    {
+      "id": "alignment_preview_ready",
+      "status": "blocked",
+      "detail": "Alignment hint: missing_dxf_source."
+    },
+    {
+      "id": "layer_plan_review_ready",
+      "status": "passed",
+      "detail": "5 layer groups proposed."
+    },
+    {
+      "id": "blender_context_import_planned",
+      "status": "passed",
+      "detail": "4 Blender context objects planned; status blender_context_import_pending_context_handoff."
+    },
+    {
+      "id": "blender_context_smoke_locked",
+      "status": "passed",
+      "detail": "4/4 smoke objects locked."
+    },
+    {
+      "id": "blender_context_audit_passed",
+      "status": "blocked",
+      "detail": "Audit failures: 0."
+    },
+    {
+      "id": "no_blender_design_mesh_faces",
+      "status": "blocked",
+      "detail": "not audited mesh faces found in audited context import."
+    }
+  ],
+  "ifcopenshell_checks": [
+    {
+      "detail": "IfcOpenShell opened the IFC file.",
+      "id": "ifc_file_opened",
+      "status": "passed"
+    },
+    {
+      "detail": "Schema is IFC4.",
+      "id": "schema_ifc4",
+      "status": "passed"
+    },
+    {
+      "detail": "Unit scale is 1.",
+      "id": "meter_unit_scale",
+      "status": "passed"
+    },
+    {
+      "detail": "Projects: 1.",
+      "id": "single_project",
+      "status": "passed"
+    },
+    {
+      "detail": "Sites: 1.",
+      "id": "single_site",
+      "status": "passed"
+    },
+    {
+      "detail": "Buildings: 1.",
+      "id": "single_building",
+      "status": "passed"
+    },
+    {
+      "detail": "Storeys: 1.",
+      "id": "storey_present",
+      "status": "passed"
+    },
+    {
+      "detail": "IfcBuildingElementProxy: 2.",
+      "id": "proxy_elements_present",
+      "status": "passed"
+    },
+    {
+      "detail": "All proxy elements have GlobalId.",
+      "id": "all_proxies_have_global_id",
+      "status": "passed"
+    },
+    {
+      "detail": "All proxy elements have ObjectPlacement.",
+      "id": "all_proxies_have_placement",
+      "status": "passed"
+    },
+    {
+      "detail": "All proxy elements use Body/Brep representation.",
+      "id": "all_proxies_have_body_brep",
+      "status": "passed"
+    },
+    {
+      "detail": "All proxy elements are contained in a spatial structure.",
+      "id": "all_proxies_contained",
+      "status": "passed"
+    },
+    {
+      "detail": "All proxy elements have property sets.",
+      "id": "all_proxies_have_psets",
+      "status": "passed"
+    }
+  ],
+  "human_checks": [
+    {
+      "id": "semantic_viewer_import",
+      "question": "Open `data/source-files/Bestand_Kontext.ifc` in Bonsai/IfcOpenShell or equivalent and confirm the semantic tree loads without import errors.",
+      "status": "pending_human_review",
+      "evidence_hint": "IfcOpenShell machine import passed 13/13; visual Bonsai-style tree review remains human."
+    },
+    {
+      "id": "element_class_review",
+      "question": "Confirm whether 2 IFCBUILDINGELEMENTPROXY objects are acceptable as semantic Bestand/context elements or need reclassification.",
+      "status": "pending_human_review",
+      "evidence_hint": "2 IFCBUILDINGELEMENTPROXY elements found."
+    },
+    {
+      "id": "storey_review",
+      "question": "Confirm all 2 elements belong to IFCBUILDINGSTOREY #4 Level 0 and there are no missing/extra storeys.",
+      "status": "pending_human_review",
+      "evidence_hint": "Container distribution: IFCBUILDINGSTOREY #4 Level 0: 2"
+    },
+    {
+      "id": "placement_units_review",
+      "question": "Confirm object placements and project units match the expected meter-based project context.",
+      "status": "pending_human_review",
+      "evidence_hint": "2 elements have object placement; geometry extents are 10 x 8 x 3.35 m."
+    },
+    {
+      "id": "origin_alignment_review",
+      "question": "Compare the semantic IFC import against DXF underlay, IFC bounds and LV95/project origin.",
+      "status": "pending_human_review",
+      "evidence_hint": "Alignment hint: missing_dxf_source; center offset estimate 0 m."
+    },
+    {
+      "id": "geometry_outlier_review",
+      "question": "Inspect large footprint/height outliers in the geometry preview before trusting the IFC as a design seed.",
+      "status": "pending_human_review",
+      "evidence_hint": "12 faces resolved; inspect SVG preview and element samples."
+    },
+    {
+      "id": "property_set_review",
+      "question": "Check `Pset_AtelierBlaupause_Object` fields such as OBJEKTART, DACH_MIN, DACH_MAX and gml_id for reliability.",
+      "status": "pending_human_review",
+      "evidence_hint": "Property set distribution: Pset_KosmoDemo: 2"
+    },
+    {
+      "id": "layer_mapping_review",
+      "question": "Review the generated Mass/material_unknown layer plan and decide whether finer wall/slab/roof/support classes are possible.",
+      "status": "pending_human_review",
+      "evidence_hint": "5 generated layer groups; approved_for_import is false."
+    },
+    {
+      "id": "blender_reference_review",
+      "question": "Open the audited Blender review blend and visually confirm it is only a locked reference underlay.",
+      "status": "pending_human_review",
+      "evidence_hint": "Audit status null; mesh faces 0."
+    },
+    {
+      "id": "final_seed_decision",
+      "question": "Only after the checks above: decide keep as source review, accept as context, reject or approve as design seed.",
+      "status": "pending_human_review",
+      "evidence_hint": "Recommended current decision remains keep_needs_more_source_review."
+    }
+  ]
+}

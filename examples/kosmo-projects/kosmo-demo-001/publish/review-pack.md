@@ -1,6 +1,6 @@
 # Kosmo Demo 001 Review Pack
 
-Generated: 2026-05-25T21:11:24.273Z
+Generated: 2026-05-25T21:24:36.944Z
 Project ID: `kosmo-demo-001`
 Risk level: `local_review_only`
 Readiness: `review_required`
@@ -81,6 +81,8 @@ Readiness: `review_required`
 - ok: `viz/previews/ifc-dxf-alignment-preview.svg` (viz, viz_preview, generated_needs_review)
 - ok: `design/ifcopenshell-semantic-review.generated.json` (design, other, generated_needs_review)
 - ok: `design/ifcopenshell-semantic-review.generated.md` (design, other, generated_needs_review)
+- ok: `design/ifc-human-review-viewer.generated.json` (design, other, generated_needs_review)
+- ok: `design/ifc-human-review-viewer.generated.html` (design, other, generated_needs_review)
 
 ## Context Selection
 
@@ -147,6 +149,10 @@ Readiness: `review_required`
 - IFC human review pack machine checks: 12/15
 - IFC human review pack open human checks: 10
 - IFC human review pack recommended decision: keep_needs_more_source_review
+- IFC human review viewer: ready
+- IFC human review viewer previews: 3
+- IFC human review viewer open human checks: 10
+- IFC human review viewer html: design/ifc-human-review-viewer.generated.html
 - model layer handoff: ready
 - model layer handoff layer exports: 5
 - model layer handoff planned GLBs: 5
@@ -222,6 +228,8 @@ Readiness: `review_required`
 - Generated output needs review: viz/previews/ifc-dxf-alignment-preview.svg
 - Generated output needs review: design/ifcopenshell-semantic-review.generated.json
 - Generated output needs review: design/ifcopenshell-semantic-review.generated.md
+- Generated output needs review: design/ifc-human-review-viewer.generated.json
+- Generated output needs review: design/ifc-human-review-viewer.generated.html
 - Context selection still has undecided candidates: 2
 - Context source mapping still has pending review rows: 1
 

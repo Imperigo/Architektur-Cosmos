@@ -1,0 +1,27 @@
+{
+  "schema_version": "0.1",
+  "asset_id": "warm-concrete-material-001",
+  "name": "Warm Concrete Study Material",
+  "review_status": "planned",
+  "rights_status": "generated_needs_review",
+  "public_use_allowed": false,
+  "material": {
+    "base_color": "#b9aca0",
+    "roughness": 0.72,
+    "metallic": 0,
+    "specular": 0.24,
+    "notes": [
+      "Neutral procedural material metadata for review only.",
+      "No sampled copyrighted texture is embedded."
+    ]
+  },
+  "blender_mapping": {
+    "collection": "KOSMO_ASSET_MATERIALS",
+    "shader": "principled_bsdf",
+    "units": "meter"
+  },
+  "archicad_mapping": {
+    "surface_name": "KOSMO_Warm_Concrete_Study",
+    "classification": "material/concrete/review"
+  }
+}

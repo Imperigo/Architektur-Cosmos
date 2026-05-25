@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-25T21:11:24.273Z",
+  "generated_at": "2026-05-25T21:24:36.944Z",
   "generator": "kosmo-project-package-review",
   "project": {
     "id": "kosmo-demo-001",
@@ -21,7 +21,7 @@
   "package_check": {
     "ok": true,
     "command": "npm run kosmo:package-check -- --project examples/kosmo-projects/kosmo-demo-001",
-    "output": "> architecture-cosmos@0.1.0 kosmo:package-check\n> node scripts/kosmo-project-package-check.mjs --project examples/kosmo-projects/kosmo-demo-001\n\nKosmo project package check\nProject: examples/kosmo-projects/kosmo-demo-001\nSchema: schema/kosmo-project-package.schema.json\n\nWarnings:\n- Context selection has undecided candidates: 2\n- Context source mapping has pending review rows: 1\n- IFC human review pack exists, but machine evidence is not ready.\n\nPackage check passed."
+    "output": "> architecture-cosmos@0.1.0 kosmo:package-check\n> node scripts/kosmo-project-package-check.mjs --project examples/kosmo-projects/kosmo-demo-001\n\nKosmo project package check\nProject: examples/kosmo-projects/kosmo-demo-001\nSchema: schema/kosmo-project-package.schema.json\n\nWarnings:\n- Context selection has undecided candidates: 2\n- Context source mapping has pending review rows: 1\n\nPackage check passed."
   },
   "module_summary": {
     "total": 8,
@@ -230,7 +230,7 @@
       "rights_status": "internal_only",
       "description": "Local review package scaffold.",
       "exists": true,
-      "size_bytes": 12154
+      "size_bytes": 13225
     },
     {
       "path": "design/context-decision-matrix.generated.json",
@@ -555,6 +555,24 @@
       "description": "Human-readable IfcOpenShell semantic IFC review report.",
       "exists": true,
       "size_bytes": 2310
+    },
+    {
+      "path": "design/ifc-human-review-viewer.generated.json",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Static IFC human review viewer manifest.",
+      "exists": true,
+      "size_bytes": 66817
+    },
+    {
+      "path": "design/ifc-human-review-viewer.generated.html",
+      "type": "other",
+      "module": "design",
+      "rights_status": "generated_needs_review",
+      "description": "Static local IFC human review dashboard.",
+      "exists": true,
+      "size_bytes": 14916
     }
   ],
   "context_review": {
@@ -639,6 +657,12 @@
     "ifc_human_review_pack_machine_check_count": 15,
     "ifc_human_review_pack_open_human_check_count": 10,
     "ifc_human_review_pack_recommended_decision": "keep_needs_more_source_review",
+    "ifc_human_review_viewer_exists": true,
+    "ifc_human_review_viewer_status": "ifc_review_viewer_ready",
+    "ifc_human_review_viewer_ready": true,
+    "ifc_human_review_viewer_preview_count": 3,
+    "ifc_human_review_viewer_open_human_check_count": 10,
+    "ifc_human_review_viewer_html": "design/ifc-human-review-viewer.generated.html",
     "model_layer_handoff_exists": true,
     "model_layer_handoff_status": "model_layer_handoff_ready_for_human_review",
     "model_layer_handoff_ready": true,
@@ -801,6 +825,8 @@
     "Generated output needs review: viz/previews/ifc-dxf-alignment-preview.svg",
     "Generated output needs review: design/ifcopenshell-semantic-review.generated.json",
     "Generated output needs review: design/ifcopenshell-semantic-review.generated.md",
+    "Generated output needs review: design/ifc-human-review-viewer.generated.json",
+    "Generated output needs review: design/ifc-human-review-viewer.generated.html",
     "Context selection still has undecided candidates: 2",
     "Context source mapping still has pending review rows: 1"
   ],
