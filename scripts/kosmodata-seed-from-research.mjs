@@ -59,6 +59,7 @@ function buildSeed(entry, researchPacks, localSources) {
   const themes = dedupeThemes([...cleanThemes(entry.themes || [], program.type), ...tagThemes(databaseTags)]).slice(0, 10);
   const analysisLayers = buildAnalysisLayers(entry, materials, program, context, databaseTags);
   const modelAssets = buildModelAssets(entry, researchPacks, databaseTags);
+  const textPriority = textPriorityFor(entry);
 
   return {
     id: `${entry.slug}-seed-${new Date().toISOString().slice(0, 10)}`,
@@ -70,20 +71,21 @@ function buildSeed(entry, researchPacks, localSources) {
     writes_public_database: false,
     source_basis: {
       existing_entry: true,
+      text_priority: textPriority,
       local_source_count: localSources.length,
       research_pack_count: researchPacks.length,
       local_sources: localSources.map((source) => source.url || source.title),
       research_packs: researchPacks.map((pack) => pack.path)
     },
     entry_patch: {
-      source_quality: sourceCandidates.length >= 3 ? 'research_seed_review' : entry.source_quality,
+      source_quality: textPriority === 'owner_eth_pdf_primary' ? entry.source_quality : sourceCandidates.length >= 3 ? 'research_seed_review' : entry.source_quality,
       themes,
-      short_description: improvedShortDescription(entry, materials, program),
-      one_sentence: improvedOneSentence(entry, materials, program),
-      full_description: improvedFullDescription(entry, materials, program, context),
+      short_description: preferredShortDescription(entry, materials, program),
+      one_sentence: preferredOneSentence(entry, materials, program),
+      full_description: preferredFullDescription(entry, materials, program, context),
       media: normalizeMedia(entry, localSources),
       source_candidates: sourceCandidates,
-      architecture_text: buildArchitectureText(entry, materials, program, context, databaseTags),
+      architecture_text: preferredArchitectureText(entry, materials, program, context, databaseTags),
       materials,
       program,
       context,
@@ -101,6 +103,68 @@ function buildSeed(entry, researchPacks, localSources) {
       no_d1_or_r2_write: true,
       no_publish: true
     }
+  };
+}
+
+function textPriorityFor(entry) {
+  return shouldPreserveOwnerEthText(entry) ? 'owner_eth_pdf_primary' : 'research_synthesis_after_source_check';
+}
+
+function shouldPreserveOwnerEthText(entry) {
+  if (args['allow-online-text-rewrite'] || args['allow-generated-text-rewrite']) return false;
+  const quality = normalize(entry.source_quality);
+  const documents = entry.source_documents || [];
+  const hasLectureQuality = quality.includes('lecture pdf') || quality.includes('lecture notes') || quality.includes('eth');
+  const hasOwnerPdf = documents.some((document) => {
+    const text = String(document || '');
+    return /\.pdf$/i.test(text) && /(global history|architekturgeschichte|landschaftsarchitektur|eth|\.pdf)/i.test(text);
+  });
+  const hasExistingText = Boolean(
+    entry.short_description ||
+    entry.one_sentence ||
+    entry.full_description ||
+    entry.architecture_text?.headline ||
+    entry.architecture_text?.overview ||
+    entry.architecture_text?.chapters?.length
+  );
+  return (hasLectureQuality || hasOwnerPdf) && hasExistingText;
+}
+
+function preferredShortDescription(entry, materials, program) {
+  if (shouldPreserveOwnerEthText(entry) && entry.short_description) return entry.short_description;
+  return improvedShortDescription(entry, materials, program);
+}
+
+function preferredOneSentence(entry, materials, program) {
+  if (shouldPreserveOwnerEthText(entry) && entry.one_sentence) return entry.one_sentence;
+  return improvedOneSentence(entry, materials, program);
+}
+
+function preferredFullDescription(entry, materials, program, context) {
+  if (shouldPreserveOwnerEthText(entry) && entry.full_description) return entry.full_description;
+  return improvedFullDescription(entry, materials, program, context);
+}
+
+function preferredArchitectureText(entry, materials, program, context, databaseTags) {
+  if (!shouldPreserveOwnerEthText(entry)) return buildArchitectureText(entry, materials, program, context, databaseTags);
+  if (entry.architecture_text?.chapters?.length || entry.architecture_text?.overview || entry.architecture_text?.headline) {
+    return {
+      ...entry.architecture_text,
+      source_priority: 'owner_eth_pdf_primary',
+      review_status: entry.architecture_text.review_status || 'owner_source_primary'
+    };
+  }
+  return {
+    headline: entry.one_sentence || entry.short_description || `${entry.title}: ETH/PDF-Primärnotiz`,
+    overview: entry.full_description || entry.one_sentence || entry.short_description || `${entry.title} bleibt auf Basis der ETH-/PDF-Notizen zu prüfen.`,
+    chapters: [
+      chapter('ETH/PDF-Primärtext', entry.full_description || entry.one_sentence || entry.short_description || 'Die vorhandenen ETH-/PDF-Notizen haben Vorrang vor Online-Recherche. Online-Quellen dienen nur zur Verifikation und Ergänzung.')
+    ],
+    language: 'de',
+    generator: 'kosmodata-seed-from-research',
+    generated_at: new Date().toISOString(),
+    source_priority: 'owner_eth_pdf_primary',
+    review_status: 'owner_source_primary'
   };
 }
 

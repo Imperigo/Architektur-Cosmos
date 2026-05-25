@@ -11729,10 +11729,10 @@
       "baroque city",
       "infrastructure"
     ],
-    "short_description": "Rom unter Sixtus V. reorganisiert die Stadt über Achsen, Pilgerwege, Obelisken, Wasserinfrastruktur und sakrale Sichtbeziehungen.",
-    "source_quality": "research_seed_review",
-    "one_sentence": "Der Stadtumbau Sixtus V. zeigt, wie barocke Urbanistik Bewegung, Religion, Infrastruktur und Monumente zu einem lesbaren Netz der Stadt macht.",
-    "full_description": "Rom unter Sixtus V. wird als urbanes Netzwerkprojekt gelesen. Domenico Fontana und Sixtus V. verbinden Kirchen, Pilgerwege, Obelisken, Straßenachsen und Wasserinfrastruktur zu einem neuen Orientierungssystem der Stadt. Architektonisch relevant ist die Verbindung von technischer und symbolischer Ordnung: Wege führen Körper durch die Stadt, während Obelisken, Brunnen und Sichtachsen religiöse und politische Bedeutung markieren. Für KosmoData ist der Eintrag zentral für Achsenplanung, Barockstadt, Infrastruktur, Pilgerurbanistik und die Frage, wie Stadt durch Bewegung und Zeichen neu lesbar wird.",
+    "short_description": "Sixtus V. ordnet Rom als territoriales Netz heiliger Orte: Achsen, Kirchen, Plätze und Sichtbeziehungen machen die Stadt als barockes Macht- und Glaubenssystem lesbar.",
+    "source_quality": "lecture_notes",
+    "one_sentence": "Das römische Straßennetz unter Sixtus V. verschiebt Stadtplanung vom geschlossenen Zentrum zum territorialen Achsensystem, in dem religiöse Präsenz, politische Kraft und Bewegung zusammenfallen.",
+    "full_description": "Der Plan für das Straßennetz heiliger Orte unter Sixtus V. wird im Architecture Cosmos als barockes Urban-Design-System gelesen. Domenico Fontana denkt Rom als Stadt Gottes: Die sieben Kirchen, Plätze und Monumente werden nicht mehr als unabhängige Einzelorte verstanden, sondern über territoriale Achsen in ein zusammenhängendes Netz gebunden. Entscheidend ist der Wechsel von der nach innen gerichteten Renaissance-Stadt zum nach außen greifenden barocken Stadtterritorium. Straßen werden zu Achsen, Plätze zu Knotenpunkten, und urbane Gebäude, Gärten und Monumente ordnen sich einem größeren visuellen und politischen System unter.",
     "media": [
       {
         "type": "exterior",
@@ -11756,69 +11756,31 @@
       }
     ],
     "architecture_text": {
-      "headline": "Rom unter Sixtus V.: Achsen als urbanes Glaubensnetz",
-      "overview": "Der Umbau Roms unter Sixtus V. verbindet Straßen, Obelisken, Kirchen, Wasser und Pilgerbewegung zu einem städtischen Orientierungssystem.",
+      "headline": "Das römische Straßennetz unter Sixtus V. verschiebt Stadtplanung vom geschlossenen Zentrum zum territorialen Achsensystem, in dem religiöse Präsenz, politische Kraft und Bewegung zusammenfallen.",
+      "overview": "Der Plan für das Straßennetz heiliger Orte unter Sixtus V. wird im Architecture Cosmos als barockes Urban-Design-System gelesen. Domenico Fontana denkt Rom als Stadt Gottes: Die sieben Kirchen, Plätze und Monumente werden nicht mehr als unabhängige Einzelorte verstanden, sondern über territoriale Achsen in ein zusammenhängendes Netz gebunden. Entscheidend ist der Wechsel von der nach innen gerichteten Renaissance-Stadt zum nach außen greifenden barocken Stadtterritorium. Straßen werden zu Achsen, Plätze zu Knotenpunkten, und urbane Gebäude, Gärten und Monumente ordnen sich einem größeren visuellen und politischen System unter.",
       "chapters": [
         {
-          "title": "Architektonische Lesart",
-          "text": "Rom unter Sixtus V. gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Rom unter Sixtus V. ordnet die Stadt über Sichtachsen, Obelisken, Pilgerwege und sakrale Knoten; Bewegung durch die Stadt wird zur räumlichen Dramaturgie. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Achse, Pilgerbewegung, barocke Stadt, Infrastruktur als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
-          "source_basis": "curated spatial reading",
-          "review_status": "draft_review"
+          "title": "These",
+          "text": "Sixtus V. ordnet Rom als territoriales Netz heiliger Orte: Achsen, Kirchen, Plätze und Sichtbeziehungen machen die Stadt als barockes Macht- und Glaubenssystem lesbar.",
+          "source_basis": "owner_eth_pdf_primary; paraphrased from owner ETH/PDF diagram notes",
+          "review_status": "owner_source_primary"
         },
         {
-          "title": "Material und Tragwerk",
-          "text": "Rom unter Sixtus V. wird über Straßenachsen, Obelisken, Platzräume und sakrale Knoten gelesen; die Konstruktion liegt in der städtischen Verbindung. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
-          "source_basis": "curated material reading",
-          "review_status": "draft_review"
+          "title": "Architekturlesart",
+          "text": "Der Plan für das Straßennetz heiliger Orte unter Sixtus V. wird im Architecture Cosmos als barockes Urban-Design-System gelesen. Domenico Fontana denkt Rom als Stadt Gottes: Die sieben Kirchen, Plätze und Monumente werden nicht mehr als unabhängige Einzelorte verstanden, sondern über territoriale Achsen in ein zusammenhängendes Netz gebunden. Entscheidend ist der Wechsel von der nach innen gerichteten Renaissance-Stadt zum nach außen greifenden barocken Stadtterritorium. Straßen werden zu Achsen, Plätze zu Knotenpunkten, und urbane Gebäude, Gärten und Monumente ordnen sich einem größeren visuellen und politischen System unter.",
+          "source_basis": "owner_eth_pdf_primary; paraphrased from owner ETH/PDF diagram notes",
+          "review_status": "owner_source_primary"
         },
         {
-          "title": "Raumordnung",
-          "text": "Rom unter Sixtus V. ordnet die Stadt über Sichtachsen, Obelisken, Pilgerwege und sakrale Knoten; Bewegung durch die Stadt wird zur räumlichen Dramaturgie. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
-          "source_basis": "curated spatial reading",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Tektonik",
-          "text": "Die tektonische Lesart soll zeigen, wie Oberfläche, Tragstruktur und Fügung Stützung, Hülle, Fügung und Atmosphäre organisieren. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
-          "source_basis": "entry materials and analysis fallback",
-          "review_status": "needs_source_review"
-        },
-        {
-          "title": "Kontext",
-          "text": "Rom unter Sixtus V. gehört zu Rom, Italy. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
-          "source_basis": "entry location metadata",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Relevanz",
-          "text": "Rom unter Sixtus V. ist als Referenz wichtig, weil Achse, Pilgerbewegung, barocke Stadt, Infrastruktur nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
-          "source_basis": "derived from entry metadata and Brain quality rules",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Netzwerk und DNA",
-          "text": "Rom unter Sixtus V. wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, wie es sich innerhalb derselben architektonischen DNA unterscheidet: durch Ort, Auftrag, Fügung, Gebrauch und kulturelle Haltung.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Topos / Typos / Tektonik",
-          "text": "Topos, Typos und Tektonik werden zusammen gelesen: Ort und Landschaft bilden die Setzung, Stadtplan bildet den typologischen Ausgangspunkt, und Stadtplan, rome, axes, obelisk, primary source, water infrastructure, pilgrimage, baroque city markieren die konstruktiv-atmosphärische Lesart.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Datenbank- und Modellwert",
-          "text": "Für KosmoData ist Rom unter Sixtus V. relevant, weil sich daraus Filter, Vergleichsgruppen, Planlayer und spätere Blender-Collections ableiten lassen: Stadtplan, klassische Architektur, axis, pilgrimage, baroque city, infrastructure, rome, axes.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
+          "title": "Netzwerk und KosmoData-Wert",
+          "text": "Rom unter Sixtus V. bleibt im KosmoData-Netzwerk über Jahr, Typus, Stilsektor, Themen, Quellenlage und spätere Plan-/Modell-Layer vergleichbar. Online-Quellen dienen hier nur zur Verifikation und Ergänzung, nicht als Haupttext.",
+          "source_basis": "owner_eth_pdf_primary; online sources are verification only",
+          "review_status": "owner_source_primary"
         }
       ],
       "language": "de",
-      "generator": "kosmodata-seed-from-research",
-      "generated_at": "2026-05-25T08:27:00.615Z",
-      "review_status": "needs_owner_review",
-      "source_basis": []
+      "source_priority": "owner_eth_pdf_primary",
+      "review_status": "owner_source_primary"
     },
     "source_candidates": [
       {
@@ -20730,10 +20692,10 @@
       "infrastructure",
       "urban-block"
     ],
-    "short_description": "Das Immeuble Rue des Amiraux verbindet sozialen Wohnbau, gestufte Terrassenfassade, Keramikhaut und Schwimmbad zu einem hygienischen Stadtblock der Moderne.",
-    "source_quality": "research_seed_review",
-    "one_sentence": "Das Immeuble Rue des Amiraux zeigt, wie Henri Sauvage Wohnungsreform, Licht, Luft, keramische Oberfläche und öffentliche Infrastruktur in einem dicht gesetzten Pariser Block zusammenführt.",
-    "full_description": "Das Immeuble Rue des Amiraux wird als urbanes Wohnlabor gelesen. Henri Sauvage und Charles Sarazin entwickeln keinen neutralen Block, sondern eine gestufte Wohnmaschine, in der Terrassen, Licht, Luft, Keramikfassade und ein integriertes Schwimmbad eine hygienische Moderne formulieren. Architektonisch wichtig ist die Spannung zwischen hoher städtischer Dichte und dem Versprechen gesunder Wohnbedingungen: Der Block wird über Schnitt, Rücksprung, Oberfläche und gemeinschaftliche Infrastruktur organisiert. Für KosmoData ist der Eintrag zentral für modernen Wohnbau, Sozialreform, Hygiene, Fassadentektonik und die frühe Verbindung von Wohnen und öffentlicher Ausstattung.",
+    "short_description": "Das Immeuble Rue Amiraux verbindet Rückstaffelung, Innenhof, Schwimmbad, Hygiene und Müllinfrastruktur zu einem Wohnblock der modernen Alltagsorganisation.",
+    "source_quality": "lecture_pdf",
+    "one_sentence": "Sauvage und Sarazin lesen den Wohnblock als hygienisches und infrastrukturelles System: Licht, Luft, Schwimmbad und Müllschlucker verändern die Beziehung zwischen Wohnzelle und städtischem Netzwerk.",
+    "full_description": "Das Immeuble Rue Amiraux wird als Schlüsselprojekt des modernen Wohnens gelesen. Die zurückgestaffelte Fassade, der Innenhof und das zentrale Schwimmbad formulieren eine Architektur von Licht, Luft und Hygiene. Gleichzeitig wird der Wohnblock über den Müllschlucker als unsichtbares infrastrukturelles Netzwerk organisiert: Die einzelne Wohnzelle wird entlastet und isoliert, bleibt aber über Abfall, Versorgung und technische Schächte mit dem Gebäudesystem verbunden. Für KosmoData ist der Eintrag wichtig, weil er zeigt, wie moderne Architektur nicht nur über Form, sondern über Haushaltstechnik, Gesundheitsvorstellungen und urbane Infrastruktur entsteht.",
     "media": [
       {
         "type": "exterior",
@@ -20760,68 +20722,31 @@
       "03 Architekturgeschichte 3_4.pdf"
     ],
     "architecture_text": {
-      "headline": "Rue des Amiraux: Sozialer Wohnblock als hygienische Maschine",
-      "overview": "Das Immeuble Rue des Amiraux verbindet Paris, Wohnungsreform, Terrassen, Keramik und Schwimmbad zu einem frühen Experiment der gesunden, dichten Stadt.",
+      "headline": "Sauvage und Sarazin lesen den Wohnblock als hygienisches und infrastrukturelles System: Licht, Luft, Schwimmbad und Müllschlucker verändern die Beziehung zwischen Wohnzelle und städtischem Netzwerk.",
+      "overview": "Das Immeuble Rue Amiraux wird als Schlüsselprojekt des modernen Wohnens gelesen. Die zurückgestaffelte Fassade, der Innenhof und das zentrale Schwimmbad formulieren eine Architektur von Licht, Luft und Hygiene. Gleichzeitig wird der Wohnblock über den Müllschlucker als unsichtbares infrastrukturelles Netzwerk organisiert: Die einzelne Wohnzelle wird entlastet und isoliert, bleibt aber über Abfall, Versorgung und technische Schächte mit dem Gebäudesystem verbunden. Für KosmoData ist der Eintrag wichtig, weil er zeigt, wie moderne Architektur nicht nur über Form, sondern über Haushaltstechnik, Gesundheitsvorstellungen und urbane Infrastruktur entsteht.",
       "chapters": [
         {
-          "title": "Architektonische Lesart",
-          "text": "Immeuble Rue des Amiraux gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Rue des Amiraux verdichtet Wohnblock und Badeanstalt: Der städtische Block wird nicht nur bewohnt, sondern mit kollektiver Infrastruktur räumlich aufgeladen. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie housing, Infrastruktur, Stadtblock als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
-          "source_basis": "curated spatial reading",
-          "review_status": "draft_review"
+          "title": "These",
+          "text": "Das Immeuble Rue Amiraux verbindet Rückstaffelung, Innenhof, Schwimmbad, Hygiene und Müllinfrastruktur zu einem Wohnblock der modernen Alltagsorganisation.",
+          "source_basis": "owner_eth_pdf_primary; paraphrased from owner ETH/PDF diagram notes",
+          "review_status": "owner_source_primary"
         },
         {
-          "title": "Material und Tragwerk",
-          "text": "Rue des Amiraux verbindet Stahlbeton, Wohnzellen, zentralen Baderaum, Hofraum und Blockkante; Wohnen und Infrastruktur werden in einem urbanen Körper verschaltet. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
-          "source_basis": "curated material reading",
-          "review_status": "draft_review"
+          "title": "Architekturlesart",
+          "text": "Das Immeuble Rue Amiraux wird als Schlüsselprojekt des modernen Wohnens gelesen. Die zurückgestaffelte Fassade, der Innenhof und das zentrale Schwimmbad formulieren eine Architektur von Licht, Luft und Hygiene. Gleichzeitig wird der Wohnblock über den Müllschlucker als unsichtbares infrastrukturelles Netzwerk organisiert: Die einzelne Wohnzelle wird entlastet und isoliert, bleibt aber über Abfall, Versorgung und technische Schächte mit dem Gebäudesystem verbunden. Für KosmoData ist der Eintrag wichtig, weil er zeigt, wie moderne Architektur nicht nur über Form, sondern über Haushaltstechnik, Gesundheitsvorstellungen und urbane Infrastruktur entsteht.",
+          "source_basis": "owner_eth_pdf_primary; paraphrased from owner ETH/PDF diagram notes",
+          "review_status": "owner_source_primary"
         },
         {
-          "title": "Raumordnung",
-          "text": "Rue des Amiraux verdichtet Wohnblock und Badeanstalt: Der städtische Block wird nicht nur bewohnt, sondern mit kollektiver Infrastruktur räumlich aufgeladen. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
-          "source_basis": "curated spatial reading",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Tektonik",
-          "text": "Die tektonische Lesart soll zeigen, wie Oberfläche, Tragstruktur und Fügung Stützung, Hülle, Fügung und Atmosphäre organisieren. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
-          "source_basis": "entry materials and analysis fallback",
-          "review_status": "needs_source_review"
-        },
-        {
-          "title": "Kontext",
-          "text": "Immeuble Rue des Amiraux gehört zu Paris, France. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
-          "source_basis": "entry location metadata",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Relevanz",
-          "text": "Immeuble Rue des Amiraux ist als Referenz wichtig, weil housing, Infrastruktur, Stadtblock nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
-          "source_basis": "derived from entry metadata and Brain quality rules",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Netzwerk und DNA",
-          "text": "Immeuble Rue des Amiraux wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, wie es sich innerhalb derselben architektonischen DNA unterscheidet: durch Ort, Auftrag, Fügung, Gebrauch und kulturelle Haltung.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Topos / Typos / Tektonik",
-          "text": "Topos, Typos und Tektonik werden zusammen gelesen: Ort und Landschaft bilden die Setzung, Wohnhaus bildet den typologischen Ausgangspunkt, und Keramik, Beton, Glas, Wohnungsbau, Hygiene, facade markieren die konstruktiv-atmosphärische Lesart.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Datenbank- und Modellwert",
-          "text": "Für KosmoData ist Immeuble Rue des Amiraux relevant, weil sich daraus Filter, Vergleichsgruppen, Planlayer und spätere Blender-Collections ableiten lassen: Wohnhaus, moderne Architektur, Wohnungsbau, infrastructure, urban block, Keramik, Beton, Glas.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
+          "title": "Netzwerk und KosmoData-Wert",
+          "text": "Immeuble Rue des Amiraux bleibt im KosmoData-Netzwerk über Jahr, Typus, Stilsektor, Themen, Quellenlage und spätere Plan-/Modell-Layer vergleichbar. Online-Quellen dienen hier nur zur Verifikation und Ergänzung, nicht als Haupttext.",
+          "source_basis": "owner_eth_pdf_primary; online sources are verification only",
+          "review_status": "owner_source_primary"
         }
       ],
-      "review_status": "draft_review",
-      "public_use_allowed": true,
-      "generated_at": "2026-05-25T08:26:48.633Z",
-      "generator": "kosmodata-seed-from-research"
+      "language": "de",
+      "source_priority": "owner_eth_pdf_primary",
+      "review_status": "owner_source_primary"
     },
     "source_candidates": [
       {
@@ -21070,10 +20995,10 @@
       "competition",
       "modernism"
     ],
-    "short_description": "Der Völkerbundspalast-Wettbewerb von Meyer und Wittwer liest die internationale Institution als transparente Arbeitsmaschine aus Brücke, Saal, Bürotrakt und Seeufer.",
-    "source_quality": "research_seed_review",
-    "one_sentence": "Der Völkerbundspalast-Wettbewerb zeigt, wie moderne Architektur Repräsentation nicht über Monumentalität, sondern über Organisation, Offenheit, Erschließung und institutionelle Arbeitslogik formulieren kann.",
-    "full_description": "Der Wettbewerbsentwurf für den Völkerbundspalast wird als Gegenmodell zur klassischen Staatsrepräsentation gelesen. Meyer und Wittwer zerlegen die internationale Institution in funktionale Elemente: Versammlung, Sekretariat, Verkehr, Öffentlichkeit, Seeufer und Arbeitsapparat. Architektonisch relevant ist die Brückenfigur, die nicht nur verbindet, sondern das Gebäude als offenes System von Zugängen, Blicken und Arbeitsabläufen organisiert. Für KosmoData ist der Eintrag wichtig, weil er moderne Institution, Wettbewerb, Glas-Stahl-Ästhetik, internationale Politik und Bauhaus-Denken in einem nicht gebauten, aber hochwirksamen Referenzobjekt bündelt.",
+    "short_description": "Meyer und Wittwer entwerfen den Völkerbundspalast als Kommunikationsarchitektur aus Hochhaus, Versammlungssaal, Schaltraum, Bibliothek, Fassade und Akustik.",
+    "source_quality": "lecture_pdf",
+    "one_sentence": "Der Wettbewerbsbeitrag versteht Institution nicht als klassisches Monument, sondern als Antenne: ein Gebäude, das Information speichert, überträgt und sich nach außen kommunikativ ausdrückt.",
+    "full_description": "Der Wettbewerbsentwurf für den Völkerbundspalast von Hannes Meyer und Hans Wittwer wird als moderne Institution der Kommunikation gelesen. Hochhaus für das Generalsekretariat und Versammlungshalle bilden nicht nur ein Verwaltungsprogramm, sondern ein System aus Informationsspeicher und Informationsübertragung. Der Begriff der Antenne wird räumlich erweitert: Schalträume inszenieren Kommunikation, Fassaden werden Ausdruck einer nach außen wirkenden Sendekraft, und akustisch kontrollierte Räume verbinden lokale Versammlung mit weltweiter Übertragung. Für KosmoData ist der Eintrag deshalb ein präziser Knoten zwischen moderner Institution, Medienarchitektur, Bauhaus-Denken und der Frage, wie Architektur Kommunikation formalisiert.",
     "media": [
       {
         "type": "exterior",
@@ -21100,68 +21025,31 @@
       "03 Architekturgeschichte 3_4.pdf"
     ],
     "architecture_text": {
-      "headline": "Völkerbundspalast: Institution als transparente Arbeitsmaschine",
-      "overview": "Der Entwurf von Hannes Meyer und Hans Wittwer versteht den Völkerbund nicht als Palast im klassischen Sinn, sondern als organisierte internationale Infrastruktur aus Saal, Büro, Brücke und Öffentlichkeit.",
+      "headline": "Der Wettbewerbsbeitrag versteht Institution nicht als klassisches Monument, sondern als Antenne: ein Gebäude, das Information speichert, überträgt und sich nach außen kommunikativ ausdrückt.",
+      "overview": "Der Wettbewerbsentwurf für den Völkerbundspalast von Hannes Meyer und Hans Wittwer wird als moderne Institution der Kommunikation gelesen. Hochhaus für das Generalsekretariat und Versammlungshalle bilden nicht nur ein Verwaltungsprogramm, sondern ein System aus Informationsspeicher und Informationsübertragung. Der Begriff der Antenne wird räumlich erweitert: Schalträume inszenieren Kommunikation, Fassaden werden Ausdruck einer nach außen wirkenden Sendekraft, und akustisch kontrollierte Räume verbinden lokale Versammlung mit weltweiter Übertragung. Für KosmoData ist der Eintrag deshalb ein präziser Knoten zwischen moderner Institution, Medienarchitektur, Bauhaus-Denken und der Frage, wie Architektur Kommunikation formalisiert.",
       "chapters": [
         {
-          "title": "Architektonische Lesart",
-          "text": "Voelkerbundspalast Competition gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Der Völkerbundpalast-Wettbewerb zeigt Architektur als internationale Aushandlung: Verwaltung, Versammlung, Repräsentation und Landschaft werden zwischen Monument und Moderne verhandelt. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Institution, Wettbewerb, Moderne als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
-          "source_basis": "curated spatial reading",
-          "review_status": "draft_review"
+          "title": "These",
+          "text": "Meyer und Wittwer entwerfen den Völkerbundspalast als Kommunikationsarchitektur aus Hochhaus, Versammlungssaal, Schaltraum, Bibliothek, Fassade und Akustik.",
+          "source_basis": "owner_eth_pdf_primary; paraphrased from owner ETH/PDF diagram notes",
+          "review_status": "owner_source_primary"
         },
         {
-          "title": "Material und Tragwerk",
-          "text": "Der Völkerbundpalast-Wettbewerb wird über Repräsentation, Büroorganisation, Sitzungssäle, Landschaftskante und die Spannung zwischen klassischer Monumentalität und moderner Sachlichkeit gelesen. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
-          "source_basis": "curated material reading",
-          "review_status": "draft_review"
+          "title": "Architekturlesart",
+          "text": "Der Wettbewerbsentwurf für den Völkerbundspalast von Hannes Meyer und Hans Wittwer wird als moderne Institution der Kommunikation gelesen. Hochhaus für das Generalsekretariat und Versammlungshalle bilden nicht nur ein Verwaltungsprogramm, sondern ein System aus Informationsspeicher und Informationsübertragung. Der Begriff der Antenne wird räumlich erweitert: Schalträume inszenieren Kommunikation, Fassaden werden Ausdruck einer nach außen wirkenden Sendekraft, und akustisch kontrollierte Räume verbinden lokale Versammlung mit weltweiter Übertragung. Für KosmoData ist der Eintrag deshalb ein präziser Knoten zwischen moderner Institution, Medienarchitektur, Bauhaus-Denken und der Frage, wie Architektur Kommunikation formalisiert.",
+          "source_basis": "owner_eth_pdf_primary; paraphrased from owner ETH/PDF diagram notes",
+          "review_status": "owner_source_primary"
         },
         {
-          "title": "Raumordnung",
-          "text": "Der Völkerbundpalast-Wettbewerb zeigt Architektur als internationale Aushandlung: Verwaltung, Versammlung, Repräsentation und Landschaft werden zwischen Monument und Moderne verhandelt. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
-          "source_basis": "curated spatial reading",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Tektonik",
-          "text": "Die tektonische Lesart soll zeigen, wie Oberfläche, Tragstruktur und Fügung Stützung, Hülle, Fügung und Atmosphäre organisieren. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
-          "source_basis": "entry materials and analysis fallback",
-          "review_status": "needs_source_review"
-        },
-        {
-          "title": "Kontext",
-          "text": "Voelkerbundspalast Competition gehört zu Geneva, Switzerland. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
-          "source_basis": "entry location metadata",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Relevanz",
-          "text": "Voelkerbundspalast Competition ist als Referenz wichtig, weil Institution, Wettbewerb, Moderne nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
-          "source_basis": "derived from entry metadata and Brain quality rules",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Netzwerk und DNA",
-          "text": "Voelkerbundspalast Competition wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, wie es sich innerhalb derselben architektonischen DNA unterscheidet: durch Ort, Auftrag, Fügung, Gebrauch und kulturelle Haltung.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Topos / Typos / Tektonik",
-          "text": "Topos, Typos und Tektonik werden zusammen gelesen: Ort und Landschaft bilden die Setzung, Institutionenwettbewerb bildet den typologischen Ausgangspunkt, und Glas, Stahl, Beton, institution, competition, international institution, archive, competition drawings markieren die konstruktiv-atmosphärische Lesart.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Datenbank- und Modellwert",
-          "text": "Für KosmoData ist Voelkerbundspalast Competition relevant, weil sich daraus Filter, Vergleichsgruppen, Planlayer und spätere Blender-Collections ableiten lassen: institutional competition, moderne Architektur, institution, competition, modernism, Glas, Stahl, Beton.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
+          "title": "Netzwerk und KosmoData-Wert",
+          "text": "Voelkerbundspalast Competition bleibt im KosmoData-Netzwerk über Jahr, Typus, Stilsektor, Themen, Quellenlage und spätere Plan-/Modell-Layer vergleichbar. Online-Quellen dienen hier nur zur Verifikation und Ergänzung, nicht als Haupttext.",
+          "source_basis": "owner_eth_pdf_primary; online sources are verification only",
+          "review_status": "owner_source_primary"
         }
       ],
-      "review_status": "draft_review",
-      "public_use_allowed": true,
-      "generated_at": "2026-05-25T08:26:49.837Z",
-      "generator": "kosmodata-seed-from-research"
+      "language": "de",
+      "source_priority": "owner_eth_pdf_primary",
+      "review_status": "owner_source_primary"
     },
     "source_candidates": [
       {
@@ -24187,10 +24075,10 @@
       "agrarian-city",
       "ideal-city"
     ],
-    "short_description": "Broadacre City entwirft eine dezentralisierte Landschaftsstadt, in der Parzelle, Auto, Landwirtschaft, Einzelhaus und Infrastruktur ein alternatives Stadtmodell bilden.",
-    "source_quality": "research_seed_review",
-    "one_sentence": "Broadacre City zeigt Frank Lloyd Wrights Vision einer aufgelösten, agrarisch-technischen Stadt: Dichte wird durch Landverteilung, Mobilität und individuelle Selbstversorgung ersetzt.",
-    "full_description": "Broadacre City wird als ideologischer Stadtentwurf gelesen. Wright ersetzt die kompakte Stadt durch ein flächiges System aus Parzellen, Straßen, Landwirtschaft, Einzelhäusern, öffentlichen Einrichtungen und moderner Mobilität. Architektonisch wichtig ist die Ambivalenz: Das Modell verspricht Freiheit, Licht, Boden und Selbstbestimmung, erzeugt aber zugleich extreme Abhängigkeit von Infrastruktur, Fläche und individueller Mobilität. Für KosmoData ist Broadacre ein starker Vergleichspunkt für Idealstadt, Suburbanisierung, Automobilurbanismus, Landschaftsraster und die politische Dimension räumlicher Dezentralisierung.",
+    "short_description": "Broadacre City ist Wrights Idealstadt ohne klassische Stadt: ein ausgedehntes Netz aus Parzellen, Selbstversorgung, Automobilität, Landwirtschaft und dezentralen Programmen.",
+    "source_quality": "lecture_pdf",
+    "one_sentence": "Wright ersetzt das zentralisierte Stadtzentrum durch eine “spreaded city”, in der Agrarindividualismus, definierte Zonen, Auto- und Flugmobilität sowie Selbstbewirtschaftung ein alternatives Urbanismusmodell bilden.",
+    "full_description": "Broadacre City wird im Architecture Cosmos als Idealstadt ohne Stadt gelesen. Frank Lloyd Wright formuliert ein Reformmodell gegen die zentralisierte alte Stadt: Statt dichter Zentren entsteht ein flächiges Netz aus Parzellen, spezifisch programmierten Zonen, selbstbewirtschaftender Agrikultur, Automobilinfrastruktur und Aviatoren. Die Stadt wird nicht verdichtet, sondern über Landschaft, Mobilität und individuelle Versorgung ausgebreitet. Architektonisch ist Broadacre wichtig, weil es Freiheit, Boden und Dezentralisierung verspricht, zugleich aber die Abhängigkeit von Infrastruktur, Landverbrauch und individueller Mobilität sichtbar macht.",
     "media": [
       {
         "type": "exterior",
@@ -24217,86 +24105,31 @@
       "02 Global History of Urban Design 1_2.pdf"
     ],
     "architecture_text": {
-      "headline": "Broadacre City: Landschaftsstadt zwischen Freiheit und Zersiedelung",
-      "overview": "Broadacre City ist weniger Stadtplan im technischen Sinn als ein räumliches Manifest. Frank Lloyd Wright verbindet Landbesitz, Mobilität, Einzelhaus und Landschaft zu einem Gegenmodell zur dichten industriellen Stadt.",
+      "headline": "Wright ersetzt das zentralisierte Stadtzentrum durch eine “spreaded city”, in der Agrarindividualismus, definierte Zonen, Auto- und Flugmobilität sowie Selbstbewirtschaftung ein alternatives Urbanismusmodell bilden.",
+      "overview": "Broadacre City wird im Architecture Cosmos als Idealstadt ohne Stadt gelesen. Frank Lloyd Wright formuliert ein Reformmodell gegen die zentralisierte alte Stadt: Statt dichter Zentren entsteht ein flächiges Netz aus Parzellen, spezifisch programmierten Zonen, selbstbewirtschaftender Agrikultur, Automobilinfrastruktur und Aviatoren. Die Stadt wird nicht verdichtet, sondern über Landschaft, Mobilität und individuelle Versorgung ausgebreitet. Architektonisch ist Broadacre wichtig, weil es Freiheit, Boden und Dezentralisierung verspricht, zugleich aber die Abhängigkeit von Infrastruktur, Landverbrauch und individueller Mobilität sichtbar macht.",
       "chapters": [
         {
           "title": "These",
-          "text": "Broadacre City wird nicht als isoliertes Objekt gelesen, sondern als architektonische These innerhalb von moderner Urbanismus, agrarische Stadt, Idealstadt. Broadacre City zerlegt Stadt in Landschaft, Parzelle, Mobilität und Selbstversorgung; Dichte wird durch ein ausgedehntes Netz dezentraler Einheiten ersetzt. Die Analyse fragt, welche räumliche Intelligenz daraus entsteht und welche Idee über das einzelne Projekt hinaus übertragbar bleibt.",
-          "source_basis": "curated spatial reading",
-          "review_status": "draft_review"
+          "text": "Broadacre City ist Wrights Idealstadt ohne klassische Stadt: ein ausgedehntes Netz aus Parzellen, Selbstversorgung, Automobilität, Landwirtschaft und dezentralen Programmen.",
+          "source_basis": "owner_eth_pdf_primary; paraphrased from owner ETH/PDF diagram notes",
+          "review_status": "owner_source_primary"
         },
         {
-          "title": "Topos",
-          "text": "Broadacre City gehört zu USA. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments: Gelände, Stadtlage, Landschaft, Klima, Blick, Schwelle oder institutioneller Rahmen verändern die architektonische Bedeutung.",
-          "source_basis": "entry context metadata",
-          "review_status": "draft_review"
+          "title": "Architekturlesart",
+          "text": "Broadacre City wird im Architecture Cosmos als Idealstadt ohne Stadt gelesen. Frank Lloyd Wright formuliert ein Reformmodell gegen die zentralisierte alte Stadt: Statt dichter Zentren entsteht ein flächiges Netz aus Parzellen, spezifisch programmierten Zonen, selbstbewirtschaftender Agrikultur, Automobilinfrastruktur und Aviatoren. Die Stadt wird nicht verdichtet, sondern über Landschaft, Mobilität und individuelle Versorgung ausgebreitet. Architektonisch ist Broadacre wichtig, weil es Freiheit, Boden und Dezentralisierung verspricht, zugleich aber die Abhängigkeit von Infrastruktur, Landverbrauch und individueller Mobilität sichtbar macht.",
+          "source_basis": "owner_eth_pdf_primary; paraphrased from owner ETH/PDF diagram notes",
+          "review_status": "owner_source_primary"
         },
         {
-          "title": "Typos",
-          "text": "Typologisch ist Broadacre City als moderne Architektur-Referenz zu lesen. Entscheidend ist, wie Programm, Gebrauch, Erschließung, Öffentlichkeit und Privatheit organisiert werden und ob der Typus dabei stabilisiert, erweitert oder bewusst gestört wird.",
-          "source_basis": "entry type and program metadata",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Tektonik",
-          "text": "Die tektonische Lesart soll zeigen, wie Tragstruktur, Hülle und Oberfläche Stützung, Hülle, Fügung und Atmosphäre organisieren. Broadacre City wird über Parzelle, Straße, Auto, dezentralisierte Versorgung, Landschaft und Einzelhaus als flächiges Gegenmodell zur dichten Stadt gelesen. Tektonik bedeutet hier nicht nur Konstruktion, sondern das Zusammenspiel von Last, Fügung, Oberfläche, Maßstab und architektonischer Wirkung.",
-          "source_basis": "entry materials and analysis fallback",
-          "review_status": "needs_source_review"
-        },
-        {
-          "title": "Raumlogik",
-          "text": "Broadacre City zerlegt Stadt in Landschaft, Parzelle, Mobilität und Selbstversorgung; Dichte wird durch ein ausgedehntes Netz dezentraler Einheiten ersetzt. Grundriss, Schnitt, Bewegung, Blickbeziehungen und Schwellen werden als zusammenhängendes räumliches System gelesen, nicht als getrennte Darstellungsarten.",
-          "source_basis": "curated spatial reading",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Konflikt und Kritik",
-          "text": "Broadacre City muss auch über noch zu prüfendes Materialsystem, review required kritisch gelesen werden; diese Punkte markieren offene Spannungen statt fertige Werturteile. Die kritische Lesart verhindert, dass das Objekt nur als Ikone gespeichert wird: Maßstab, soziale Wirkung, technische Abhängigkeit, ökologische Folgen, Repräsentation und Quellenlage bleiben Teil der Bewertung.",
-          "source_basis": "derived from entry metadata and review questions",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "KosmoData-Layer und 3D-Potenzial",
-          "text": "Broadacre City besitzt bereits verwertbare KosmoData-Anker: Analyseebenen: Tragwerk, Materialsystem, Raumordnung, typology, Filterklassifikation; Modellpakete: Site-Modell, Tragwerksmodell, Tektonikmodell; Filtertags: Tragwerksprototyp, moderne Architektur, moderner Urbanismus, agrarische Stadt, Idealstadt, noch zu prüfendes Materialsystem. Für Blender, ArchiCAD und spätere Analyseansichten zählt, welche Bestandteile als getrennte Ebenen lesbar werden: Ort, Masse, Tragstruktur, Hülle, Innenraum, Material, Zirkulation und Unsicherheit.",
-          "source_basis": "model assets, analysis layers and database tags",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Entwurfsintelligenz",
-          "text": "Broadacre City ist als Referenz wichtig, weil Tragwerksprototyp, moderne Architektur, moderner Urbanismus, agrarische Stadt, Idealstadt, noch zu prüfendes Materialsystem, structural prototype layer candidate, plan:vector review required nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Die eigentliche Lernfrage lautet: Welche Regel, räumliche Operation oder konstruktive Haltung kann aus dem Projekt extrahiert werden, ohne es formal zu kopieren?",
-          "source_basis": "derived from entry metadata and Brain quality rules",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Netzwerk und DNA",
-          "text": "Broadacre City wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, wie es sich innerhalb derselben architektonischen DNA unterscheidet: durch Ort, Auftrag, Fügung, Gebrauch und kulturelle Haltung.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Topos / Typos / Tektonik",
-          "text": "Topos, Typos und Tektonik werden zusammen gelesen: Ort und Landschaft bilden die Setzung, Stadtplan bildet den typologischen Ausgangspunkt, und agrarian city, decentralized urbanism, transport, model, Stadtplan, landscape grid, bibliography, urban theory markieren die konstruktiv-atmosphärische Lesart.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Datenbank- und Modellwert",
-          "text": "Für KosmoData ist Broadacre City relevant, weil sich daraus Filter, Vergleichsgruppen, Planlayer und spätere Blender-Collections ableiten lassen: Stadtplan, moderne Architektur, modern urbanism, agrarian city, ideal city, decentralized urbanism, transport, model.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
+          "title": "Netzwerk und KosmoData-Wert",
+          "text": "Broadacre City bleibt im KosmoData-Netzwerk über Jahr, Typus, Stilsektor, Themen, Quellenlage und spätere Plan-/Modell-Layer vergleichbar. Online-Quellen dienen hier nur zur Verifikation und Ergänzung, nicht als Haupttext.",
+          "source_basis": "owner_eth_pdf_primary; online sources are verification only",
+          "review_status": "owner_source_primary"
         }
       ],
       "language": "de",
-      "generator": "kosmodata-seed-from-research",
-      "generated_at": "2026-05-25T07:26:35.762Z",
-      "review_status": "draft_review",
-      "source_basis": [
-        {
-          "type": "source_document",
-          "value": "02 Global History of Urban Design 1_2.pdf"
-        }
-      ]
+      "source_priority": "owner_eth_pdf_primary",
+      "review_status": "owner_source_primary"
     },
     "source_candidates": [
       {
@@ -25015,10 +24848,10 @@
       "light",
       "cinema"
     ],
-    "short_description": "The Capitol am Zoo macht Kino zur Architektur der Großstadt: Licht, Foyer, Saal, Reklame und Bewegung erzeugen eine urbane Maschine der Nacht.",
-    "source_quality": "research_seed_review",
-    "one_sentence": "Poelzigs Capitol zeigt, wie Kinoarchitektur in der Moderne nicht nur Vorführraum ist, sondern ein choreografierter Übergang von Straße, Lichtfassade, Publikum und Innenraum.",
-    "full_description": "The Capitol wird als Großstadt- und Medienarchitektur gelesen. Hans Poelzig organisiert das Kino nicht als neutralen Saal, sondern als Abfolge aus Stadtadresse, Eingang, Licht, Foyer, Zuschauerbewegung und verdichtetem Innenraum. Entscheidend ist die Beziehung zwischen Außenwirkung und Wahrnehmung: Das Gebäude spricht zur Straße, zieht Publikum an und verwandelt Film in ein räumliches Ereignis. Für KosmoData ist The Capitol ein wichtiger Eintrag für Thing-Modernity, Lichtarchitektur, Weimarer Großstadtkultur, Kino und die Frage, wie Architektur neue Medien und Massenpublikum räumlich fasst.",
+    "short_description": "The Capitol organisiert Kino als kontrollierten Zuschauerfluss: symmetrische Gänge, Lichtabfolgen, Saaldramaturgie und Leuchtschrift machen die Glühbirne zum architektonischen Medium.",
+    "source_quality": "lecture_pdf",
+    "one_sentence": "Poelzigs Capitol zeigt Kinoarchitektur als Raum der Anziehung, Attraktion und Steuerung, in dem Licht nicht Dekor ist, sondern Bewegung, Erwartung und Wahrnehmung choreografiert.",
+    "full_description": "The Capitol von Hans Poelzig wird als Architektur der modernen Licht- und Mediengesellschaft gelesen. Der symmetrische, zweiseitige Gang ordnet den Fluss der Zuschauer, während unterschiedliche Lichtsituationen den Übergang von Stadt, Korridor und Kinosaal dramatisieren. Seitenkorridore, direkte Beleuchtung, der achteckige Saal mit indirekt beleuchtetem Dom und die Leuchtschrift des Gebäudes machen die Glühbirne zum steuernden Ding der Moderne. Das Kino ist damit nicht nur Vorführraum, sondern eine präzise Maschine für Anziehung, Orientierung und kollektive Wahrnehmung.",
     "media": [
       {
         "type": "exterior",
@@ -25045,68 +24878,31 @@
       "03 Architekturgeschichte 3_4.pdf"
     ],
     "architecture_text": {
-      "headline": "The Capitol: Kino als Lichtmaschine der Großstadt",
-      "overview": "The Capitol verbindet urbane Adresse, Reklame, Foyer, Saal und Publikumsbewegung zu einer Architektur des Films. Das Kino wird als Schwelle zwischen Straße und immersivem Innenraum lesbar.",
+      "headline": "Poelzigs Capitol zeigt Kinoarchitektur als Raum der Anziehung, Attraktion und Steuerung, in dem Licht nicht Dekor ist, sondern Bewegung, Erwartung und Wahrnehmung choreografiert.",
+      "overview": "The Capitol von Hans Poelzig wird als Architektur der modernen Licht- und Mediengesellschaft gelesen. Der symmetrische, zweiseitige Gang ordnet den Fluss der Zuschauer, während unterschiedliche Lichtsituationen den Übergang von Stadt, Korridor und Kinosaal dramatisieren. Seitenkorridore, direkte Beleuchtung, der achteckige Saal mit indirekt beleuchtetem Dom und die Leuchtschrift des Gebäudes machen die Glühbirne zum steuernden Ding der Moderne. Das Kino ist damit nicht nur Vorführraum, sondern eine präzise Maschine für Anziehung, Orientierung und kollektive Wahrnehmung.",
       "chapters": [
         {
-          "title": "Architektonische Lesart",
-          "text": "The Capitol gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: The Capitol inszeniert Kino als Großstadterfahrung: Fassade, Licht, Foyer und Saal führen Besucher von der Straße in eine technische Innenwelt der Projektion. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie moderne Objektkultur, Licht, Kino als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
-          "source_basis": "curated spatial reading",
-          "review_status": "draft_review"
+          "title": "These",
+          "text": "The Capitol organisiert Kino als kontrollierten Zuschauerfluss: symmetrische Gänge, Lichtabfolgen, Saaldramaturgie und Leuchtschrift machen die Glühbirne zum architektonischen Medium.",
+          "source_basis": "owner_eth_pdf_primary; paraphrased from owner ETH/PDF diagram notes",
+          "review_status": "owner_source_primary"
         },
         {
-          "title": "Material und Tragwerk",
-          "text": "The Capitol wird über Licht, Kinosaal, Foyer, Großstadtfassade und technische Inszenierung gelesen; Architektur wird hier zum Apparat der Wahrnehmung. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
-          "source_basis": "curated material reading",
-          "review_status": "draft_review"
+          "title": "Architekturlesart",
+          "text": "The Capitol von Hans Poelzig wird als Architektur der modernen Licht- und Mediengesellschaft gelesen. Der symmetrische, zweiseitige Gang ordnet den Fluss der Zuschauer, während unterschiedliche Lichtsituationen den Übergang von Stadt, Korridor und Kinosaal dramatisieren. Seitenkorridore, direkte Beleuchtung, der achteckige Saal mit indirekt beleuchtetem Dom und die Leuchtschrift des Gebäudes machen die Glühbirne zum steuernden Ding der Moderne. Das Kino ist damit nicht nur Vorführraum, sondern eine präzise Maschine für Anziehung, Orientierung und kollektive Wahrnehmung.",
+          "source_basis": "owner_eth_pdf_primary; paraphrased from owner ETH/PDF diagram notes",
+          "review_status": "owner_source_primary"
         },
         {
-          "title": "Raumordnung",
-          "text": "The Capitol inszeniert Kino als Großstadterfahrung: Fassade, Licht, Foyer und Saal führen Besucher von der Straße in eine technische Innenwelt der Projektion. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
-          "source_basis": "curated spatial reading",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Tektonik",
-          "text": "Die tektonische Lesart soll zeigen, wie Oberfläche, Tragstruktur und Fügung Stützung, Hülle, Fügung und Atmosphäre organisieren. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
-          "source_basis": "entry materials and analysis fallback",
-          "review_status": "needs_source_review"
-        },
-        {
-          "title": "Kontext",
-          "text": "The Capitol gehört zu Berlin, Germany. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
-          "source_basis": "entry location metadata",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Relevanz",
-          "text": "The Capitol ist als Referenz wichtig, weil moderne Objektkultur, Licht, Kino nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
-          "source_basis": "derived from entry metadata and Brain quality rules",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Netzwerk und DNA",
-          "text": "The Capitol wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, wie es sich innerhalb derselben architektonischen DNA unterscheidet: durch Ort, Auftrag, Fügung, Gebrauch und kulturelle Haltung.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Topos / Typos / Tektonik",
-          "text": "Topos, Typos und Tektonik werden zusammen gelesen: Ort und Landschaft bilden die Setzung, Kino bildet den typologischen Ausgangspunkt, und Kino, light, weimar modernity, interior, urban nightlife, expressionist interior markieren die konstruktiv-atmosphärische Lesart.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Datenbank- und Modellwert",
-          "text": "Für KosmoData ist The Capitol relevant, weil sich daraus Filter, Vergleichsgruppen, Planlayer und spätere Blender-Collections ableiten lassen: Kino, moderne Architektur, Objektmoderne, light, weimar modernity, interior, urban nightlife, expressionist interior.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
+          "title": "Netzwerk und KosmoData-Wert",
+          "text": "The Capitol bleibt im KosmoData-Netzwerk über Jahr, Typus, Stilsektor, Themen, Quellenlage und spätere Plan-/Modell-Layer vergleichbar. Online-Quellen dienen hier nur zur Verifikation und Ergänzung, nicht als Haupttext.",
+          "source_basis": "owner_eth_pdf_primary; online sources are verification only",
+          "review_status": "owner_source_primary"
         }
       ],
-      "review_status": "draft_review",
-      "public_use_allowed": true,
-      "generated_at": "2026-05-25T08:26:51.020Z",
-      "generator": "kosmodata-seed-from-research"
+      "language": "de",
+      "source_priority": "owner_eth_pdf_primary",
+      "review_status": "owner_source_primary"
     },
     "source_candidates": [
       {
@@ -26094,10 +25890,10 @@
       "collective-living",
       "modulor"
     ],
-    "short_description": "Die Unité d’Habitation Marseille verdichtet Wohnen, Straße, Versorgung, Dachlandschaft und Modulor zu einer vertikalen Stadt aus Beton.",
-    "source_quality": "research_seed_review",
-    "one_sentence": "Die Unité d’Habitation zeigt, wie kollektives Wohnen als Infrastruktur gedacht werden kann: Wohnung, Erschließung, Versorgung und Dach werden zu einem vertikalen sozialen Organismus.",
-    "full_description": "Die Unité d’Habitation wird als vertikale Stadt gelesen. Le Corbusier organisiert Wohnen nicht als Sammlung einzelner Wohnungen, sondern als kollektive Infrastruktur aus Maisonette-Typen, inneren Straßen, Versorgung, Dachlandschaft, Tragstruktur und Modulor-Maßsystem. Architektonisch entscheidend ist die Ambivalenz zwischen Standardisierung und räumlicher Dichte: Der Betonrahmen schafft Ordnung, während Schnitt, Gemeinschaftsbereiche und Dach neue Formen des Zusammenlebens erproben. Für KosmoData ist die Unité ein Schlüsselobjekt für Nachkriegswohnbau, Brut Béton, Collective Living, Modulor, Infrastrukturdenken und die 3D-Analyse von Wohnzellen, Tragstruktur und gemeinschaftlichen Layern.",
+    "short_description": "Die Unité d’habitation verbindet Nachkriegswohnen, Stahlbeton, Pilotis, Modulor, Interior Streets, Dachprogramme und Versorgung zu einer vertikalen Wohnstadt.",
+    "source_quality": "lecture_pdf",
+    "one_sentence": "Le Corbusier organisiert Massenwohnen als Gebäudesystem: Wohneinheiten, Zirkulation, Dienstleistungen, Dachgarten und Kühlkette werden zu einer neuen sozialen und technischen Infrastruktur.",
+    "full_description": "Die Unité d’habitation in Marseille wird als Nachkriegsarchitektur zwischen Wohnungsnot, Betonraster und sozialer Infrastruktur gelesen. Stahlbeton und Pilotis bilden das räumliche Raster, in das die Units nach dem Modulor-System eingesetzt werden. Wohnen und Zirkulieren erfolgen über Interior Streets wie in einer urbanen Stadt; in den oberen Geschossen liegen Dienstleistungen, Dachgarten, Kindergarten und Sportnutzungen. Besonders wichtig ist die Versorgungslogik: Anlieferung, Supermarkt, Küche, Stauraum und Kühlschrank verbinden Komfort, Massenwohnungsbau und neue Konsumgesellschaft zu einem architektonischen System.",
     "media": [
       {
         "type": "exterior",
@@ -26121,68 +25917,31 @@
       }
     ],
     "architecture_text": {
-      "headline": "Unité d’Habitation: Wohnen als vertikale Infrastruktur",
-      "overview": "Die Unité d’Habitation in Marseille verbindet Wohnung, innere Straße, Versorgung, Dach, Betontragwerk und Modulor zu einem Wohnorganismus der Nachkriegsmoderne.",
+      "headline": "Le Corbusier organisiert Massenwohnen als Gebäudesystem: Wohneinheiten, Zirkulation, Dienstleistungen, Dachgarten und Kühlkette werden zu einer neuen sozialen und technischen Infrastruktur.",
+      "overview": "Die Unité d’habitation in Marseille wird als Nachkriegsarchitektur zwischen Wohnungsnot, Betonraster und sozialer Infrastruktur gelesen. Stahlbeton und Pilotis bilden das räumliche Raster, in das die Units nach dem Modulor-System eingesetzt werden. Wohnen und Zirkulieren erfolgen über Interior Streets wie in einer urbanen Stadt; in den oberen Geschossen liegen Dienstleistungen, Dachgarten, Kindergarten und Sportnutzungen. Besonders wichtig ist die Versorgungslogik: Anlieferung, Supermarkt, Küche, Stauraum und Kühlschrank verbinden Komfort, Massenwohnungsbau und neue Konsumgesellschaft zu einem architektonischen System.",
       "chapters": [
         {
-          "title": "Architektonische Lesart",
-          "text": "Unite d'Habitation gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: Die Unité d’Habitation stapelt Wohnen, Erschließung, Versorgung und Dachnutzung zu einer vertikalen Nachbarschaft, in der der Wohnblock wie eine kleine Stadt funktioniert. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie moderne Wohnreform, Infrastruktur, kollektives Wohnen, Modulor als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
-          "source_basis": "curated spatial reading",
-          "review_status": "draft_review"
+          "title": "These",
+          "text": "Die Unité d’habitation verbindet Nachkriegswohnen, Stahlbeton, Pilotis, Modulor, Interior Streets, Dachprogramme und Versorgung zu einer vertikalen Wohnstadt.",
+          "source_basis": "owner_eth_pdf_primary; paraphrased from owner ETH/PDF diagram notes",
+          "review_status": "owner_source_primary"
         },
         {
-          "title": "Material und Tragwerk",
-          "text": "Die Unité d’Habitation verbindet Béton brut, Pilotis, innere Straßen, Maisonette-Wohnungen, Dachlandschaft und gemeinschaftliche Einrichtungen zu einem vertikalen Wohnkörper. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
-          "source_basis": "curated material reading",
-          "review_status": "draft_review"
+          "title": "Architekturlesart",
+          "text": "Die Unité d’habitation in Marseille wird als Nachkriegsarchitektur zwischen Wohnungsnot, Betonraster und sozialer Infrastruktur gelesen. Stahlbeton und Pilotis bilden das räumliche Raster, in das die Units nach dem Modulor-System eingesetzt werden. Wohnen und Zirkulieren erfolgen über Interior Streets wie in einer urbanen Stadt; in den oberen Geschossen liegen Dienstleistungen, Dachgarten, Kindergarten und Sportnutzungen. Besonders wichtig ist die Versorgungslogik: Anlieferung, Supermarkt, Küche, Stauraum und Kühlschrank verbinden Komfort, Massenwohnungsbau und neue Konsumgesellschaft zu einem architektonischen System.",
+          "source_basis": "owner_eth_pdf_primary; paraphrased from owner ETH/PDF diagram notes",
+          "review_status": "owner_source_primary"
         },
         {
-          "title": "Raumordnung",
-          "text": "Die Unité d’Habitation stapelt Wohnen, Erschließung, Versorgung und Dachnutzung zu einer vertikalen Nachbarschaft, in der der Wohnblock wie eine kleine Stadt funktioniert. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
-          "source_basis": "curated spatial reading",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Tektonik",
-          "text": "Die tektonische Lesart soll zeigen, wie Oberfläche, Tragstruktur und Fügung Stützung, Hülle, Fügung und Atmosphäre organisieren. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
-          "source_basis": "entry materials and analysis fallback",
-          "review_status": "needs_source_review"
-        },
-        {
-          "title": "Kontext",
-          "text": "Unite d'Habitation gehört zu Marseille, France. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
-          "source_basis": "entry location metadata",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Relevanz",
-          "text": "Unite d'Habitation ist als Referenz wichtig, weil moderne Wohnreform, Infrastruktur, kollektives Wohnen, Modulor nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
-          "source_basis": "derived from entry metadata and Brain quality rules",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Netzwerk und DNA",
-          "text": "Unite d'Habitation wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, wie es sich innerhalb derselben architektonischen DNA unterscheidet: durch Ort, Auftrag, Fügung, Gebrauch und kulturelle Haltung.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Topos / Typos / Tektonik",
-          "text": "Topos, Typos und Tektonik werden zusammen gelesen: Ort und Landschaft bilden die Setzung, kollektiver Wohnbau bildet den typologischen Ausgangspunkt, und Beton, wood, metal, collective housing, brut beton, Wohnungsbau, modulor, reconstruction markieren die konstruktiv-atmosphärische Lesart.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Datenbank- und Modellwert",
-          "text": "Für KosmoData ist Unite d'Habitation relevant, weil sich daraus Filter, Vergleichsgruppen, Planlayer und spätere Blender-Collections ableiten lassen: collective housing, Nachkriegsmoderne, modern housing, infrastructure, collective living, modulor, Beton, wood.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
+          "title": "Netzwerk und KosmoData-Wert",
+          "text": "Unite d'Habitation bleibt im KosmoData-Netzwerk über Jahr, Typus, Stilsektor, Themen, Quellenlage und spätere Plan-/Modell-Layer vergleichbar. Online-Quellen dienen hier nur zur Verifikation und Ergänzung, nicht als Haupttext.",
+          "source_basis": "owner_eth_pdf_primary; online sources are verification only",
+          "review_status": "owner_source_primary"
         }
       ],
-      "review_status": "draft_review",
-      "public_use_allowed": true,
-      "generated_at": "2026-05-25T08:27:01.890Z",
-      "generator": "kosmodata-seed-from-research"
+      "language": "de",
+      "source_priority": "owner_eth_pdf_primary",
+      "review_status": "owner_source_primary"
     },
     "source_candidates": [
       {
@@ -27406,10 +27165,10 @@
       "office",
       "technology"
     ],
-    "short_description": "IBM Cosham übersetzt das frühe Computerzeitalter in eine flexible High-Tech-Bürolandschaft aus Glas, Stahl, Services und serieller Anpassbarkeit.",
-    "source_quality": "research_seed_review",
-    "one_sentence": "IBM Cosham zeigt, wie Foster Associates das Büro als leichtes, technisches System denkt: Struktur, Hülle und Haustechnik werden so organisiert, dass Arbeit, Wandel und Präzision sichtbar werden.",
-    "full_description": "IBM Cosham wird als früher High-Tech-Büroprototyp gelesen. Das Gebäude sucht keine massive Firmenrepräsentation, sondern eine präzise technische Umgebung für Arbeit, Datenverarbeitung und organisatorische Veränderung. Architektonisch wichtig ist die Klarheit der Komponenten: Stahlrahmen, Glasfassade, Dienste, flexible Fläche, Raster und industrielle Montage bilden eine Architektur, die Wandelbarkeit als Wert sichtbar macht. Für KosmoData ist IBM Cosham ein Schlüsselobjekt für Postwar Office, High-Tech, Corporate Architecture und die Frage, wie Technologie als konstruktive und ästhetische Ordnung auftritt.",
+    "short_description": "IBM Cosham ist ein eingeschossiger Büro-Skelettbau aus Raster, hohlen Stützen, Haustechnik, Doppelboden, Spiegelglas und modularer Bürolandschaft.",
+    "source_quality": "lecture_pdf",
+    "one_sentence": "Fosters IBM Cosham übersetzt die postindustrielle Arbeitswelt in ein erweiterbares technisches System, in dem Teppich, Raster, Möbel und Cluster eine neue Organisationsform ausdrücken.",
+    "full_description": "IBM Cosham wird als frühe High-Tech-Bürolandschaft gelesen. Der eingeschossige Skelettbau arbeitet mit klarem Stützenraster, hohlen Stützen für Leitungen, Haustechnik in der Decke, Computerraum mit Unterboden und reflektierender Spiegelglasfassade. Das Gebäude ist auf Erweiterbarkeit und Wandel ausgelegt. Zentral ist der Teppich als Ding der Moderne: Er markiert die Bürolandschaft, unterstützt flexible Arbeitsprozesse, dezentrale Abteilungen, Cluster sowie mobile und modulare Möbel. Für KosmoData ist IBM Cosham ein Knoten zwischen Bürotypologie, Kybernetik, High-Tech, Corporate Architecture und Arbeitsorganisation.",
     "media": [
       {
         "type": "exterior",
@@ -27436,68 +27195,31 @@
       "03 Architekturgeschichte 3_4.pdf"
     ],
     "architecture_text": {
-      "headline": "IBM Cosham: High-Tech-Büro als präzises Arbeitssystem",
-      "overview": "IBM Cosham zeigt das Büro als technische Infrastruktur. Nicht Ornament oder Masse stehen im Vordergrund, sondern Flexibilität, Glas, Stahl, Services, Raster und die Lesbarkeit industrieller Komponenten.",
+      "headline": "Fosters IBM Cosham übersetzt die postindustrielle Arbeitswelt in ein erweiterbares technisches System, in dem Teppich, Raster, Möbel und Cluster eine neue Organisationsform ausdrücken.",
+      "overview": "IBM Cosham wird als frühe High-Tech-Bürolandschaft gelesen. Der eingeschossige Skelettbau arbeitet mit klarem Stützenraster, hohlen Stützen für Leitungen, Haustechnik in der Decke, Computerraum mit Unterboden und reflektierender Spiegelglasfassade. Das Gebäude ist auf Erweiterbarkeit und Wandel ausgelegt. Zentral ist der Teppich als Ding der Moderne: Er markiert die Bürolandschaft, unterstützt flexible Arbeitsprozesse, dezentrale Abteilungen, Cluster sowie mobile und modulare Möbel. Für KosmoData ist IBM Cosham ein Knoten zwischen Bürotypologie, Kybernetik, High-Tech, Corporate Architecture und Arbeitsorganisation.",
       "chapters": [
         {
-          "title": "Architektonische Lesart",
-          "text": "IBM Cosham gewinnt seine architektonische Kraft aus folgender räumlicher Ordnung: IBM Cosham organisiert Büroarbeit als flexible technische Landschaft: Glas, offene Geschosse, Infrastruktur und Arbeitsplätze bilden eine ruhige, veränderbare Ordnung. Entscheidend ist dabei nicht die reine Datierung, sondern die Frage, wie Büro, Glas, Technologie als räumliche, soziale und konstruktive Ordnung sichtbar werden.",
-          "source_basis": "curated spatial reading",
-          "review_status": "draft_review"
+          "title": "These",
+          "text": "IBM Cosham ist ein eingeschossiger Büro-Skelettbau aus Raster, hohlen Stützen, Haustechnik, Doppelboden, Spiegelglas und modularer Bürolandschaft.",
+          "source_basis": "owner_eth_pdf_primary; paraphrased from owner ETH/PDF diagram notes",
+          "review_status": "owner_source_primary"
         },
         {
-          "title": "Material und Tragwerk",
-          "text": "IBM Cosham verbindet flexible Büroflächen, Glasfassade, technische Infrastruktur und campusartige Arbeitsorganisation zu einer frühen Architektur der Informationsarbeit. Material und Tragwerk werden hier nicht als technische Randnotizen verstanden, sondern als Träger der architektonischen Wirkung.",
-          "source_basis": "curated material reading",
-          "review_status": "draft_review"
+          "title": "Architekturlesart",
+          "text": "IBM Cosham wird als frühe High-Tech-Bürolandschaft gelesen. Der eingeschossige Skelettbau arbeitet mit klarem Stützenraster, hohlen Stützen für Leitungen, Haustechnik in der Decke, Computerraum mit Unterboden und reflektierender Spiegelglasfassade. Das Gebäude ist auf Erweiterbarkeit und Wandel ausgelegt. Zentral ist der Teppich als Ding der Moderne: Er markiert die Bürolandschaft, unterstützt flexible Arbeitsprozesse, dezentrale Abteilungen, Cluster sowie mobile und modulare Möbel. Für KosmoData ist IBM Cosham ein Knoten zwischen Bürotypologie, Kybernetik, High-Tech, Corporate Architecture und Arbeitsorganisation.",
+          "source_basis": "owner_eth_pdf_primary; paraphrased from owner ETH/PDF diagram notes",
+          "review_status": "owner_source_primary"
         },
         {
-          "title": "Raumordnung",
-          "text": "IBM Cosham organisiert Büroarbeit als flexible technische Landschaft: Glas, offene Geschosse, Infrastruktur und Arbeitsplätze bilden eine ruhige, veränderbare Ordnung. Grundriss, Schnitt, Bewegung und Blickbezüge lassen sich dadurch als zusammenhängendes räumliches System lesen.",
-          "source_basis": "curated spatial reading",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Tektonik",
-          "text": "Die tektonische Lesart soll zeigen, wie Oberfläche, Tragstruktur und Fügung Stützung, Hülle, Fügung und Atmosphäre organisieren. Die tektonische Lesart fragt, wie einzelne Bauteile, Oberflächen, Fügungen und Lasten zusammen eine architektonische Haltung erzeugen.",
-          "source_basis": "entry materials and analysis fallback",
-          "review_status": "needs_source_review"
-        },
-        {
-          "title": "Kontext",
-          "text": "IBM Cosham gehört zu Portsmouth, UK. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments.",
-          "source_basis": "entry location metadata",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Relevanz",
-          "text": "IBM Cosham ist als Referenz wichtig, weil Büro, Glas, Technologie nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Für Lehre, Entwurf und Vergleich zählt vor allem, wie das Projekt eine bestimmte Bauaufgabe, Epoche oder Landschaft in architektonische Ordnung übersetzt.",
-          "source_basis": "derived from entry metadata and Brain quality rules",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Netzwerk und DNA",
-          "text": "IBM Cosham wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, wie es sich innerhalb derselben architektonischen DNA unterscheidet: durch Ort, Auftrag, Fügung, Gebrauch und kulturelle Haltung.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Topos / Typos / Tektonik",
-          "text": "Topos, Typos und Tektonik werden zusammen gelesen: Ort und Landschaft bilden die Setzung, Bürobau bildet den typologischen Ausgangspunkt, und Stahl, Glas, curtain wall, services, office, technology, postwar office, high tech markieren die konstruktiv-atmosphärische Lesart.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Datenbank- und Modellwert",
-          "text": "Für KosmoData ist IBM Cosham relevant, weil sich daraus Filter, Vergleichsgruppen, Planlayer und spätere Blender-Collections ableiten lassen: office building, Nachkriegsmoderne, office, technology, Stahl, Glas, curtain wall, services.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
+          "title": "Netzwerk und KosmoData-Wert",
+          "text": "IBM Cosham bleibt im KosmoData-Netzwerk über Jahr, Typus, Stilsektor, Themen, Quellenlage und spätere Plan-/Modell-Layer vergleichbar. Online-Quellen dienen hier nur zur Verifikation und Ergänzung, nicht als Haupttext.",
+          "source_basis": "owner_eth_pdf_primary; online sources are verification only",
+          "review_status": "owner_source_primary"
         }
       ],
-      "review_status": "draft_review",
-      "public_use_allowed": true,
-      "generated_at": "2026-05-25T08:26:52.212Z",
-      "generator": "kosmodata-seed-from-research"
+      "language": "de",
+      "source_priority": "owner_eth_pdf_primary",
+      "review_status": "owner_source_primary"
     },
     "source_candidates": [
       {
@@ -27751,10 +27473,10 @@
       "grid",
       "metropolis"
     ],
-    "short_description": "Delirious New York liest Manhattan als Labor aus Raster, Parzelle, Wolkenkratzer, Programmstapelung und metropolitaner Fantasie.",
-    "source_quality": "research_seed_review",
-    "one_sentence": "Delirious New York zeigt, wie ein Architekturtext aus der Geschichte Manhattans eine Theorie der Dichte, des Schnitts, der Überlagerung und des kontrollierten Wahnsinns entwickelt.",
-    "full_description": "Delirious New York wird als theoretisches Projekt gelesen. Koolhaas beschreibt Manhattan nicht neutral, sondern rekonstruiert es als ein System aus Grid, Parzelle, Aufzug, Hochhaus, Programmstapelung und spekulativer Imagination. Architektonisch wichtig ist die Methode: Die Stadt wird als Retroactive Manifesto verstanden, in dem gebaute Realität nachträglich als kohärente Entwurfslogik sichtbar wird. Für KosmoData ist der Text zentral für Dichte, Großstadt, Schnittlogik, Hybridprogramm, Theorieproduktion und die Frage, wie Architekturgeschichte selbst als entwerferisches Material benutzt werden kann.",
+    "short_description": "Delirious New York liest Manhattan als Theorie des Manhattanismus: Raster, Parzelle, Hochhaus und innerer Urbanismus ermöglichen unbegrenzte Kreation auf engem Grund.",
+    "source_quality": "lecture_pdf",
+    "one_sentence": "Koolhaas rekonstruiert Manhattan als retroaktives Manifest, in dem Blockraster und Stapelung eine utopische Formel für extreme Dichte und inneren Urbanismus bilden.",
+    "full_description": "Delirious New York wird als theoretisches Projekt der historischen modernen Stadt gelesen. Rem Koolhaas untersucht den Manhattanismus als Formel unbegrenzter Kreation auf einer einzelnen Parzelle: Das Blockraster, die Parzelle und das Hochhaus ermöglichen einen inneren Urbanismus, in dem Programme gestapelt und voneinander entkoppelt werden können. Der Text ist nicht nur Stadtbeschreibung, sondern Methode: Die reale Geschichte Manhattans wird nachträglich als kohärente Entwurfslogik sichtbar gemacht. Für KosmoData ist der Eintrag zentral für Dichte, Raster, Schnitt, Theorieproduktion und Metropole als Entwurfsmaterial.",
     "media": [
       {
         "type": "exterior",
@@ -27778,81 +27500,31 @@
       }
     ],
     "architecture_text": {
-      "headline": "Delirious New York: Manhattan als rückwirkendes Manifest",
-      "overview": "Delirious New York macht die Großstadt zum theoretischen Objekt. Manhattan erscheint als Labor, in dem Raster, Parzelle, Aufzug, Wolkenkratzer und Programmstapelung eine eigene Architektur-DNA erzeugen.",
+      "headline": "Koolhaas rekonstruiert Manhattan als retroaktives Manifest, in dem Blockraster und Stapelung eine utopische Formel für extreme Dichte und inneren Urbanismus bilden.",
+      "overview": "Delirious New York wird als theoretisches Projekt der historischen modernen Stadt gelesen. Rem Koolhaas untersucht den Manhattanismus als Formel unbegrenzter Kreation auf einer einzelnen Parzelle: Das Blockraster, die Parzelle und das Hochhaus ermöglichen einen inneren Urbanismus, in dem Programme gestapelt und voneinander entkoppelt werden können. Der Text ist nicht nur Stadtbeschreibung, sondern Methode: Die reale Geschichte Manhattans wird nachträglich als kohärente Entwurfslogik sichtbar gemacht. Für KosmoData ist der Eintrag zentral für Dichte, Raster, Schnitt, Theorieproduktion und Metropole als Entwurfsmaterial.",
       "chapters": [
         {
           "title": "These",
-          "text": "Delirious New York wird nicht als isoliertes Objekt gelesen, sondern als architektonische These innerhalb von Stadttheorie, Dichte, Raster, Metropole. Delirious New York liest Manhattan als Schnittmaschine: Raster, Parzelle, Wolkenkratzer und programmatische Stapelung erzeugen eine Kultur extremer Dichte. Die Analyse fragt, welche räumliche Intelligenz daraus entsteht und welche Idee über das einzelne Projekt hinaus übertragbar bleibt.",
-          "source_basis": "curated spatial reading",
-          "review_status": "draft_review"
+          "text": "Delirious New York liest Manhattan als Theorie des Manhattanismus: Raster, Parzelle, Hochhaus und innerer Urbanismus ermöglichen unbegrenzte Kreation auf engem Grund.",
+          "source_basis": "owner_eth_pdf_primary; paraphrased from owner ETH/PDF diagram notes",
+          "review_status": "owner_source_primary"
         },
         {
-          "title": "Topos",
-          "text": "Delirious New York gehört zu New York, USA. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments: Gelände, Stadtlage, Landschaft, Klima, Blick, Schwelle oder institutioneller Rahmen verändern die architektonische Bedeutung.",
-          "source_basis": "entry context metadata",
-          "review_status": "draft_review"
+          "title": "Architekturlesart",
+          "text": "Delirious New York wird als theoretisches Projekt der historischen modernen Stadt gelesen. Rem Koolhaas untersucht den Manhattanismus als Formel unbegrenzter Kreation auf einer einzelnen Parzelle: Das Blockraster, die Parzelle und das Hochhaus ermöglichen einen inneren Urbanismus, in dem Programme gestapelt und voneinander entkoppelt werden können. Der Text ist nicht nur Stadtbeschreibung, sondern Methode: Die reale Geschichte Manhattans wird nachträglich als kohärente Entwurfslogik sichtbar gemacht. Für KosmoData ist der Eintrag zentral für Dichte, Raster, Schnitt, Theorieproduktion und Metropole als Entwurfsmaterial.",
+          "source_basis": "owner_eth_pdf_primary; paraphrased from owner ETH/PDF diagram notes",
+          "review_status": "owner_source_primary"
         },
         {
-          "title": "Typos",
-          "text": "Typologisch ist Delirious New York als Nachkriegsmoderne-Referenz zu lesen. Entscheidend ist, wie Programm, Gebrauch, Erschließung, Öffentlichkeit und Privatheit organisiert werden und ob der Typus dabei stabilisiert, erweitert oder bewusst gestört wird.",
-          "source_basis": "entry type and program metadata",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Tektonik",
-          "text": "Die tektonische Lesart soll zeigen, wie Tragstruktur, Hülle und Oberfläche Stützung, Hülle, Fügung und Atmosphäre organisieren. Delirious New York ist ein theoretisches Material aus Raster, Dichte, Hochhaus, Programmstapelung und metropolitaner Fantasie; der Text liest Manhattan als architektonisches Labor. Tektonik bedeutet hier nicht nur Konstruktion, sondern das Zusammenspiel von Last, Fügung, Oberfläche, Maßstab und architektonischer Wirkung.",
-          "source_basis": "entry materials and analysis fallback",
-          "review_status": "needs_source_review"
-        },
-        {
-          "title": "Raumlogik",
-          "text": "Delirious New York liest Manhattan als Schnittmaschine: Raster, Parzelle, Wolkenkratzer und programmatische Stapelung erzeugen eine Kultur extremer Dichte. Grundriss, Schnitt, Bewegung, Blickbeziehungen und Schwellen werden als zusammenhängendes räumliches System gelesen, nicht als getrennte Darstellungsarten.",
-          "source_basis": "curated spatial reading",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Konflikt und Kritik",
-          "text": "Delirious New York muss auch über noch zu prüfendes Materialsystem, review required kritisch gelesen werden; diese Punkte markieren offene Spannungen statt fertige Werturteile. Die kritische Lesart verhindert, dass das Objekt nur als Ikone gespeichert wird: Maßstab, soziale Wirkung, technische Abhängigkeit, ökologische Folgen, Repräsentation und Quellenlage bleiben Teil der Bewertung.",
-          "source_basis": "derived from entry metadata and review questions",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "KosmoData-Layer und 3D-Potenzial",
-          "text": "Delirious New York besitzt bereits verwertbare KosmoData-Anker: Analyseebenen: Tragwerk, Materialsystem, Raumordnung, typology, Filterklassifikation; Modellpakete: Site-Modell, Tragwerksmodell, Tektonikmodell; Filtertags: Architekturtraktat, Nachkriegsmoderne, Stadttheorie, Dichte, Raster, Metropole. Für Blender, ArchiCAD und spätere Analyseansichten zählt, welche Bestandteile als getrennte Ebenen lesbar werden: Ort, Masse, Tragstruktur, Hülle, Innenraum, Material, Zirkulation und Unsicherheit.",
-          "source_basis": "model assets, analysis layers and database tags",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Entwurfsintelligenz",
-          "text": "Delirious New York ist als Referenz wichtig, weil Architekturtraktat, Nachkriegsmoderne, Stadttheorie, Dichte, Raster, Metropole, noch zu prüfendes Materialsystem, architectural treatise layer candidate nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Die eigentliche Lernfrage lautet: Welche Regel, räumliche Operation oder konstruktive Haltung kann aus dem Projekt extrahiert werden, ohne es formal zu kopieren?",
-          "source_basis": "derived from entry metadata and Brain quality rules",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Netzwerk und DNA",
-          "text": "Delirious New York wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, wie es sich innerhalb derselben architektonischen DNA unterscheidet: durch Ort, Auftrag, Fügung, Gebrauch und kulturelle Haltung.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Topos / Typos / Tektonik",
-          "text": "Topos, Typos und Tektonik werden zusammen gelesen: Ort und Landschaft bilden die Setzung, Architekturtraktat bildet den typologischen Ausgangspunkt, und manhattanism, architectural theory, book, author context, bibliography, book record markieren die konstruktiv-atmosphärische Lesart.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Datenbank- und Modellwert",
-          "text": "Für KosmoData ist Delirious New York relevant, weil sich daraus Filter, Vergleichsgruppen, Planlayer und spätere Blender-Collections ableiten lassen: Architekturtraktat, Nachkriegsmoderne, urban theory, density, grid, metropolis, manhattanism, architectural theory.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
+          "title": "Netzwerk und KosmoData-Wert",
+          "text": "Delirious New York bleibt im KosmoData-Netzwerk über Jahr, Typus, Stilsektor, Themen, Quellenlage und spätere Plan-/Modell-Layer vergleichbar. Online-Quellen dienen hier nur zur Verifikation und Ergänzung, nicht als Haupttext.",
+          "source_basis": "owner_eth_pdf_primary; online sources are verification only",
+          "review_status": "owner_source_primary"
         }
       ],
       "language": "de",
-      "generator": "kosmodata-seed-from-research",
-      "generated_at": "2026-05-25T07:26:40.282Z",
-      "review_status": "draft_review",
-      "source_basis": []
+      "source_priority": "owner_eth_pdf_primary",
+      "review_status": "owner_source_primary"
     },
     "source_candidates": [
       {
@@ -29101,10 +28773,10 @@
       "playground",
       "urban-repair"
     ],
-    "short_description": "Klingenpark wird als kleiner urbaner Reparaturraum gelesen, in dem Spiel, Grün, Museumsvorfeld und Quartieröffentlichkeit auf engem Stadtraum zusammenkommen.",
-    "source_quality": "research_seed_review",
-    "one_sentence": "Klingenpark zeigt, wie ein unspektakulärer Quartierpark über Spiel, Baumraum, Wege und Nachbarschaft eine präzise städtische Alltagstopografie erzeugt.",
-    "full_description": "Klingenpark wird als urbane Freiraumreparatur gelesen. Seine Bedeutung liegt nicht in großer landschaftlicher Geste, sondern in der Verdichtung von Spiel, Aufenthalt, Grünraum, Museumskontext und Quartiersalltag. Architektonisch relevant ist die kleine Maßstabsebene: Topografie, Belag, Baumkörper, Spielgerät, Rand und Durchwegung bilden ein öffentliches Zimmer im Stadtraum. Für KosmoData ist der Eintrag als Gegenpol zu ikonischen Landschaftsprojekten wichtig, weil er zeigt, wie Alltag, Pflege, Benutzbarkeit und städtische Mikroöffentlichkeit selbst zu Entwurfswissen werden.",
+    "short_description": "Klingenpark verwandelt industrielle Ruine im Zürcher Blockrand in einen Spielplatz und macht kleine Industrienatur zum Quartiersraum.",
+    "source_quality": "lecture_pdf",
+    "one_sentence": "Der Park liest ehemalige Kleinindustrie nicht als Störung, sondern als räumlichen Ausgangspunkt: Ruine, Innenhof und Spielnutzung erzeugen eine neue öffentliche Alltagsschicht im Wohnquartier.",
+    "full_description": "Klingenpark wird als kleine, aber präzise Transformation von Industrienatur gelesen. Im ehemaligen kleinindustriellen Innenhof eines Zürcher Blockrands wird Industrie zur Ruine und anschließend zum Spielplatz umgebaut. Die Bedeutung liegt nicht in einer großen Parkgeste, sondern in der Umcodierung eines Restortes: Ein Stück Produktionslandschaft wird in eine nachbarschaftliche Freiraumnutzung überführt. Für KosmoData ist der Eintrag wichtig, weil er Industrienatur, Spiel, Quartier, Ruine und städtische Mikroöffentlichkeit miteinander verbindet.",
     "media": [
       {
         "type": "exterior",
@@ -29160,68 +28832,31 @@
       }
     ],
     "architecture_text": {
-      "headline": "Klingenpark: Quartierpark als städtisches Alltagszimmer",
-      "overview": "Klingenpark wird über Nähe, Gebrauch und Stadtreparatur gelesen. Der Park verknüpft Spiel, Grün, Rand, Weg und Museumskontext zu einem kleinen, aber wirksamen öffentlichen Raum.",
+      "headline": "Der Park liest ehemalige Kleinindustrie nicht als Störung, sondern als räumlichen Ausgangspunkt: Ruine, Innenhof und Spielnutzung erzeugen eine neue öffentliche Alltagsschicht im Wohnquartier.",
+      "overview": "Klingenpark wird als kleine, aber präzise Transformation von Industrienatur gelesen. Im ehemaligen kleinindustriellen Innenhof eines Zürcher Blockrands wird Industrie zur Ruine und anschließend zum Spielplatz umgebaut. Die Bedeutung liegt nicht in einer großen Parkgeste, sondern in der Umcodierung eines Restortes: Ein Stück Produktionslandschaft wird in eine nachbarschaftliche Freiraumnutzung überführt. Für KosmoData ist der Eintrag wichtig, weil er Industrienatur, Spiel, Quartier, Ruine und städtische Mikroöffentlichkeit miteinander verbindet.",
       "chapters": [
         {
           "title": "These",
-          "text": "Die These liegt in der Präzision des Kleinen: Urbane Qualität entsteht nicht nur durch große Parks, sondern durch belastbare, gut gesetzte Alltagsräume.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
+          "text": "Klingenpark verwandelt industrielle Ruine im Zürcher Blockrand in einen Spielplatz und macht kleine Industrienatur zum Quartiersraum.",
+          "source_basis": "owner_eth_pdf_primary; paraphrased from owner ETH/PDF diagram notes",
+          "review_status": "owner_source_primary"
         },
         {
-          "title": "Netzwerk und DNA",
-          "text": "Im Netzwerk steht Klingenpark zwischen Spielplatz, Quartierpark, Museumsumfeld und Zürcher Stadtreparatur.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
+          "title": "Architekturlesart",
+          "text": "Klingenpark wird als kleine, aber präzise Transformation von Industrienatur gelesen. Im ehemaligen kleinindustriellen Innenhof eines Zürcher Blockrands wird Industrie zur Ruine und anschließend zum Spielplatz umgebaut. Die Bedeutung liegt nicht in einer großen Parkgeste, sondern in der Umcodierung eines Restortes: Ein Stück Produktionslandschaft wird in eine nachbarschaftliche Freiraumnutzung überführt. Für KosmoData ist der Eintrag wichtig, weil er Industrienatur, Spiel, Quartier, Ruine und städtische Mikroöffentlichkeit miteinander verbindet.",
+          "source_basis": "owner_eth_pdf_primary; paraphrased from owner ETH/PDF diagram notes",
+          "review_status": "owner_source_primary"
         },
         {
-          "title": "Topos",
-          "text": "Der Topos Zurich, Switzerland macht den Park zu einer Schwelle zwischen Institution, Straße und Nachbarschaft.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Typos",
-          "text": "Typologisch ist er Park, Spielplatz und Vorfeld zugleich; die Grenzen zwischen Freizeit, Alltag und Repräsentation bleiben bewusst niedrig.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Tektonik",
-          "text": "Tektonik erscheint hier als Freiraumfügung: Belag, Baum, Spielgerät, Rand, Topografie und Pflegezustand bilden die materielle Grammatik.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Raumlogik",
-          "text": "Die Raumlogik entsteht durch überschaubare Zonen, Bewegungsränder, Aufenthaltsinseln und die Beziehung zwischen Kindern, Begleitpersonen und Stadt.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Konflikt und Kritik",
-          "text": "Offen bleibt die genaue Quellenlage zu Entwurfsautorenschaft und Umbauphasen; diese muss vor vertiefter Veröffentlichung weiter geprüft werden.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "KosmoData-Layer und 3D-Potenzial",
-          "text": "Für KosmoData sind Baumräume, Spielbereiche, Wege, Ränder, Beläge und soziale Nutzungszonen wichtige Layer. Tags: Landschaftsprojekt, nachhaltige Architektur, industrielle Umnutzung, playground, urban repair, urban green, öffentlicher Raum, urban park.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Entwurfsintelligenz",
-          "text": "Übertragbar ist der Blick auf kleine Freiräume als ernsthafte architektonische Infrastruktur des Alltags.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
+          "title": "Netzwerk und KosmoData-Wert",
+          "text": "Klingenpark bleibt im KosmoData-Netzwerk über Jahr, Typus, Stilsektor, Themen, Quellenlage und spätere Plan-/Modell-Layer vergleichbar. Online-Quellen dienen hier nur zur Verifikation und Ergänzung, nicht als Haupttext.",
+          "source_basis": "owner_eth_pdf_primary; online sources are verification only",
+          "review_status": "owner_source_primary"
         }
       ],
       "language": "de",
-      "generator": "kosmodata-seed-from-research",
-      "generated_at": "2026-05-25T08:26:53.406Z",
-      "review_status": "draft_review"
+      "source_priority": "owner_eth_pdf_primary",
+      "review_status": "owner_source_primary"
     },
     "materials": {
       "primary": [
@@ -30204,10 +29839,10 @@
       "infrastructure",
       "metropole"
     ],
-    "short_description": "Euralille macht den TGV-Knoten von Lille zu einem verdichteten metropolitanen Projekt aus Infrastruktur, Großform, Büro, Handel und öffentlichem Stadtraum.",
-    "source_quality": "research_seed_review",
-    "one_sentence": "Euralille zeigt, wie ein Verkehrsknoten nicht nur Erschließung bleibt, sondern durch Überlagerung von Bahnhof, Brücken, Hochhäusern, Einkaufsflächen und Plätzen eine neue Form europäischer Metropole erzeugt.",
-    "full_description": "Euralille wird als metropolitanes Infrastrukturprojekt gelesen. OMA organisiert den neuen TGV-Knoten nicht als isolierten Bahnhof, sondern als überlagertes Feld aus Verkehr, Büro, Handel, Hotel, Kultur und öffentlichem Raum. Architektonisch wichtig ist die Spannung zwischen großmaßstäblicher Infrastruktur und städtischer Benutzbarkeit: Die Stadt entsteht aus Schnittstellen, Rampen, Brücken, Restflächen und programmatischen Verdichtungen. Für KosmoData ist Euralille ein Schlüsselobjekt für Projet Urbain, Verkehrsknoten, Großform, Public-Private-Development und die Frage, wie Mobilität selbst zur räumlichen Struktur einer Stadt wird.",
+    "short_description": "Euralille ist ein Projet Urbain am TGV-Knoten Paris–London–Brüssel, das Infrastruktur, Wohnen, Kommerz, Freiraum und öffentlichen Raum verknüpft.",
+    "source_quality": "lecture_pdf",
+    "one_sentence": "OMA macht Euralille nicht zu einem einzelnen Architekturprojekt, sondern zu einem verhandelten urbanen Knoten, in dem Mobilitätslayer, Bahnhof, Brückenräume und Programme metropolitan verdichtet werden.",
+    "full_description": "Euralille Metropole wird als Projet Urbain gelesen: ein spezifischer, noch nicht vollständig festgelegter Vorschlag im mittleren urbanen Maßstab, der öffentliche Räume, Infrastruktur, Wohnen und Kommerz zusammenbindet. Der TGV-Knoten zwischen Paris, London und Brüssel wird zum Ausgangspunkt einer neuen metropolitanen Ordnung. OMA fokussiert nicht zuerst auf einzelne Architektur, sondern auf Infrastruktur und die Verknotung unterschiedlicher Mobilitätslayer. Bahnhöfe, Grünflächen, öffentliche Plätze, Wohnen und großmaßstäbliche Programme bilden eine urbane Schnittstelle, die an Piranesian Space erinnert und durch Beiträge weiterer Architekten und Landschaftsplaner ergänzt wird.",
     "media": [
       {
         "type": "exterior",
@@ -30316,86 +29951,31 @@
       }
     ],
     "architecture_text": {
-      "headline": "Euralille: Infrastruktur als metropolitaner Stadtraum",
-      "overview": "Euralille übersetzt den TGV-Anschluss von Lille in ein urbanes System. Bahnhof, Brücken, Bürotürme, Einkaufsflächen und öffentliche Räume bilden kein Add-on zur Stadt, sondern eine neue Schnittstelle zwischen europäischem Verkehr, regionaler Ökonomie und lokaler Stadterfahrung.",
+      "headline": "OMA macht Euralille nicht zu einem einzelnen Architekturprojekt, sondern zu einem verhandelten urbanen Knoten, in dem Mobilitätslayer, Bahnhof, Brückenräume und Programme metropolitan verdichtet werden.",
+      "overview": "Euralille Metropole wird als Projet Urbain gelesen: ein spezifischer, noch nicht vollständig festgelegter Vorschlag im mittleren urbanen Maßstab, der öffentliche Räume, Infrastruktur, Wohnen und Kommerz zusammenbindet. Der TGV-Knoten zwischen Paris, London und Brüssel wird zum Ausgangspunkt einer neuen metropolitanen Ordnung. OMA fokussiert nicht zuerst auf einzelne Architektur, sondern auf Infrastruktur und die Verknotung unterschiedlicher Mobilitätslayer. Bahnhöfe, Grünflächen, öffentliche Plätze, Wohnen und großmaßstäbliche Programme bilden eine urbane Schnittstelle, die an Piranesian Space erinnert und durch Beiträge weiterer Architekten und Landschaftsplaner ergänzt wird.",
       "chapters": [
         {
           "title": "These",
-          "text": "Euralille Metropole wird nicht als isoliertes Objekt gelesen, sondern als architektonische These innerhalb von projet urbain, Infrastruktur, Metropole. Euralille verdichtet Bahnhof, TGV-Infrastruktur, Büro- und Handelsprogramme, Brückenräume und öffentliche Plätze zu einem metropolitanen Knoten zwischen Stadt und Verkehr. Die Analyse fragt, welche räumliche Intelligenz daraus entsteht und welche Idee über das einzelne Projekt hinaus übertragbar bleibt.",
-          "source_basis": "curated spatial reading",
-          "review_status": "draft_review"
+          "text": "Euralille ist ein Projet Urbain am TGV-Knoten Paris–London–Brüssel, das Infrastruktur, Wohnen, Kommerz, Freiraum und öffentlichen Raum verknüpft.",
+          "source_basis": "owner_eth_pdf_primary; paraphrased from owner ETH/PDF diagram notes",
+          "review_status": "owner_source_primary"
         },
         {
-          "title": "Topos",
-          "text": "Euralille Metropole gehört zu Lille, Frankreich. Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments: Gelände, Stadtlage, Landschaft, Klima, Blick, Schwelle oder institutioneller Rahmen verändern die architektonische Bedeutung.",
-          "source_basis": "entry context metadata",
-          "review_status": "draft_review"
+          "title": "Architekturlesart",
+          "text": "Euralille Metropole wird als Projet Urbain gelesen: ein spezifischer, noch nicht vollständig festgelegter Vorschlag im mittleren urbanen Maßstab, der öffentliche Räume, Infrastruktur, Wohnen und Kommerz zusammenbindet. Der TGV-Knoten zwischen Paris, London und Brüssel wird zum Ausgangspunkt einer neuen metropolitanen Ordnung. OMA fokussiert nicht zuerst auf einzelne Architektur, sondern auf Infrastruktur und die Verknotung unterschiedlicher Mobilitätslayer. Bahnhöfe, Grünflächen, öffentliche Plätze, Wohnen und großmaßstäbliche Programme bilden eine urbane Schnittstelle, die an Piranesian Space erinnert und durch Beiträge weiterer Architekten und Landschaftsplaner ergänzt wird.",
+          "source_basis": "owner_eth_pdf_primary; paraphrased from owner ETH/PDF diagram notes",
+          "review_status": "owner_source_primary"
         },
         {
-          "title": "Typos",
-          "text": "Typologisch ist Euralille Metropole als Nachkriegsmoderne-Referenz zu lesen. Entscheidend ist, wie Programm, Gebrauch, Erschließung, Öffentlichkeit und Privatheit organisiert werden und ob der Typus dabei stabilisiert, erweitert oder bewusst gestört wird.",
-          "source_basis": "entry type and program metadata",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Tektonik",
-          "text": "Die Tektonik ist hier urban: Bahntrasse, Bahnhof, Großvolumen, Decks, Brücken und Zwischenräume bilden eine mehrschichtige Knotenarchitektur. Euralille wird über Bahnhofsinfrastruktur, Großform, Büro- und Handelsvolumen, Brückenräume und öffentliche Zwischenräume gelesen; Stadt entsteht hier aus der Überlagerung von Verkehr, Programm und Maßstab. Tektonik bedeutet hier nicht nur Konstruktion, sondern das Zusammenspiel von Last, Fügung, Oberfläche, Maßstab und architektonischer Wirkung.",
-          "source_basis": "curated tectonic reading",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Raumlogik",
-          "text": "Euralille verdichtet Bahnhof, TGV-Infrastruktur, Büro- und Handelsprogramme, Brückenräume und öffentliche Plätze zu einem metropolitanen Knoten zwischen Stadt und Verkehr. Grundriss, Schnitt, Bewegung, Blickbeziehungen und Schwellen werden als zusammenhängendes räumliches System gelesen, nicht als getrennte Darstellungsarten.",
-          "source_basis": "curated spatial reading",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Konflikt und Kritik",
-          "text": "Euralille Metropole muss auch über noch zu prüfendes Materialsystem, review required kritisch gelesen werden; diese Punkte markieren offene Spannungen statt fertige Werturteile. Die kritische Lesart verhindert, dass das Objekt nur als Ikone gespeichert wird: Maßstab, soziale Wirkung, technische Abhängigkeit, ökologische Folgen, Repräsentation und Quellenlage bleiben Teil der Bewertung.",
-          "source_basis": "derived from entry metadata and review questions",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "KosmoData-Layer und 3D-Potenzial",
-          "text": "Euralille Metropole besitzt bereits verwertbare KosmoData-Anker: Analyseebenen: Tragwerk, Materialsystem, Raumordnung, typology, Filterklassifikation; Modellpakete: Site-Modell, Tragwerksmodell, Tektonikmodell; Filtertags: Tragwerksprototyp, Nachkriegsmoderne, projet urbain, Infrastruktur, Metropole, noch zu prüfendes Materialsystem. Für Blender, ArchiCAD und spätere Analyseansichten zählt, welche Bestandteile als getrennte Ebenen lesbar werden: Ort, Masse, Tragstruktur, Hülle, Innenraum, Material, Zirkulation und Unsicherheit.",
-          "source_basis": "model assets, analysis layers and database tags",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Entwurfsintelligenz",
-          "text": "Euralille Metropole ist als Referenz wichtig, weil Tragwerksprototyp, Nachkriegsmoderne, projet urbain, Infrastruktur, Metropole, noch zu prüfendes Materialsystem, structural prototype layer candidate, plan:vector review required nicht als Schlagworte stehen bleiben, sondern an einer konkreten räumlichen Struktur überprüfbar werden. Die eigentliche Lernfrage lautet: Welche Regel, räumliche Operation oder konstruktive Haltung kann aus dem Projekt extrahiert werden, ohne es formal zu kopieren?",
-          "source_basis": "derived from entry metadata and Brain quality rules",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Netzwerk und DNA",
-          "text": "Euralille Metropole wird mit verwandten Einträgen über Typus, Material, Epoche, Quellenlage und räumliche Strategie verglichen. Entscheidend ist, wie es sich innerhalb derselben architektonischen DNA unterscheidet: durch Ort, Auftrag, Fügung, Gebrauch und kulturelle Haltung.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Topos / Typos / Tektonik",
-          "text": "Topos, Typos und Tektonik werden zusammen gelesen: Ort und Landschaft bilden die Setzung, infrastructure bildet den typologischen Ausgangspunkt, und infrastructure, mixed use, transport hub, urban hub, mobility, public private development, urban theory, metropolitan infrastructure markieren die konstruktiv-atmosphärische Lesart.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Datenbank- und Modellwert",
-          "text": "Für KosmoData ist Euralille Metropole relevant, weil sich daraus Filter, Vergleichsgruppen, Planlayer und spätere Blender-Collections ableiten lassen: infrastructure, Nachkriegsmoderne, projet urbain, metropole, mixed use, transport hub, urban hub, mobility.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
+          "title": "Netzwerk und KosmoData-Wert",
+          "text": "Euralille Metropole bleibt im KosmoData-Netzwerk über Jahr, Typus, Stilsektor, Themen, Quellenlage und spätere Plan-/Modell-Layer vergleichbar. Online-Quellen dienen hier nur zur Verifikation und Ergänzung, nicht als Haupttext.",
+          "source_basis": "owner_eth_pdf_primary; online sources are verification only",
+          "review_status": "owner_source_primary"
         }
       ],
       "language": "de",
-      "generator": "kosmodata-seed-from-research",
-      "generated_at": "2026-05-25T07:26:31.320Z",
-      "review_status": "draft_review",
-      "source_basis": [
-        {
-          "type": "source_document",
-          "value": "02 Global History of Urban Design 1_2.pdf"
-        }
-      ]
+      "source_priority": "owner_eth_pdf_primary",
+      "review_status": "owner_source_primary"
     },
     "materials": {
       "primary": [
@@ -30620,10 +30200,10 @@
       "landscape-urbanism",
       "palimpsest"
     ],
-    "short_description": "Hafeninsel Saarbrücken transformiert einen ehemaligen Kohlehafen in eine postindustrielle Parklandschaft aus Mauern, Schutt, Wasser, Gärten und Erinnerung.",
-    "source_quality": "research_seed_review",
-    "one_sentence": "Hafeninsel Saarbrücken zeigt, wie Latz + Partner industrielle Spuren nicht entfernen, sondern als Material eines neuen öffentlichen Landschaftsraums weiterbauen.",
-    "full_description": "Hafeninsel Saarbrücken wird als frühes Projekt postindustrieller Landschaftsarchitektur gelesen. Der ehemalige Kohlehafen wird nicht gereinigt und neutralisiert, sondern über Schutt, Mauern, Wasserbezüge, Vegetation, Wege und Nutzungsfragmente neu codiert. Architektonisch relevant ist die Haltung zum Bestand: Ruine, Materialrest und technische Infrastruktur werden nicht als Problem, sondern als Träger von Atmosphäre, Geschichte und Freiraumordnung eingesetzt. Für KosmoData ist der Eintrag zentral für Industrial Reuse, Palimpsest, Landschaftsurbanismus und die Frage, wie Erinnerung räumlich produktiv wird.",
+    "short_description": "Hafeninsel Saarbrücken macht einen ehemaligen Umschlagplatz am Wasser zu einer syntaktischen Landschaft aus Bestand, Arena, Wegen, Baumallee und urbaner Kunst.",
+    "source_quality": "lecture_pdf",
+    "one_sentence": "Latz + Partner behandeln Industrienatur nicht als zu bereinigende Fläche, sondern entwickeln aus vorhandenen Spuren, Fragmenten und neuen Nutzungen eine eigene Landschaftssprache.",
+    "full_description": "Hafeninsel Saarbrücken wird als postindustrielle Landschaft gelesen. Der ehemalige Umschlagplatz für Industrieprodukte liegt am Wasser auf einer künstlichen Insel und wird nicht einfach in einen traditionellen Landschaftsgarten zurückübersetzt. Entscheidend ist der Wechsel vom historischen Gestaltungsvokabular zu einem experimentellen, syntaktischen Umgang mit dem Bestand. Arena, Wege, Baumallee, Urban Art und vorhandene Industriefragmente erzeugen eine neue Sprache, in der Geschichte, Nutzung und Material nicht gelöscht, sondern räumlich produktiv gemacht werden.",
     "media": [
       {
         "type": "exterior",
@@ -30679,68 +30259,31 @@
       }
     ],
     "architecture_text": {
-      "headline": "Hafeninsel Saarbrücken: Industriefragment als Parkmaterial",
-      "overview": "Hafeninsel Saarbrücken arbeitet mit Resten: Mauern, Schutt, Hafenlogik, Wasser und Vegetation werden zu einer neuen öffentlichen Landschaft zusammengesetzt.",
+      "headline": "Latz + Partner behandeln Industrienatur nicht als zu bereinigende Fläche, sondern entwickeln aus vorhandenen Spuren, Fragmenten und neuen Nutzungen eine eigene Landschaftssprache.",
+      "overview": "Hafeninsel Saarbrücken wird als postindustrielle Landschaft gelesen. Der ehemalige Umschlagplatz für Industrieprodukte liegt am Wasser auf einer künstlichen Insel und wird nicht einfach in einen traditionellen Landschaftsgarten zurückübersetzt. Entscheidend ist der Wechsel vom historischen Gestaltungsvokabular zu einem experimentellen, syntaktischen Umgang mit dem Bestand. Arena, Wege, Baumallee, Urban Art und vorhandene Industriefragmente erzeugen eine neue Sprache, in der Geschichte, Nutzung und Material nicht gelöscht, sondern räumlich produktiv gemacht werden.",
       "chapters": [
         {
           "title": "These",
-          "text": "Die These liegt im Weiterbauen mit Spuren. Industriegeschichte wird nicht dekoriert, sondern als räumliche Struktur des Parks erhalten und transformiert.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
+          "text": "Hafeninsel Saarbrücken macht einen ehemaligen Umschlagplatz am Wasser zu einer syntaktischen Landschaft aus Bestand, Arena, Wegen, Baumallee und urbaner Kunst.",
+          "source_basis": "owner_eth_pdf_primary; paraphrased from owner ETH/PDF diagram notes",
+          "review_status": "owner_source_primary"
         },
         {
-          "title": "Netzwerk und DNA",
-          "text": "Im Netzwerk steht das Projekt zwischen Latz + Partner, postindustrieller Landschaft, Landschaftspark Duisburg-Nord, Hafenrevitalisierung und Palimpsest-Denken.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
+          "title": "Architekturlesart",
+          "text": "Hafeninsel Saarbrücken wird als postindustrielle Landschaft gelesen. Der ehemalige Umschlagplatz für Industrieprodukte liegt am Wasser auf einer künstlichen Insel und wird nicht einfach in einen traditionellen Landschaftsgarten zurückübersetzt. Entscheidend ist der Wechsel vom historischen Gestaltungsvokabular zu einem experimentellen, syntaktischen Umgang mit dem Bestand. Arena, Wege, Baumallee, Urban Art und vorhandene Industriefragmente erzeugen eine neue Sprache, in der Geschichte, Nutzung und Material nicht gelöscht, sondern räumlich produktiv gemacht werden.",
+          "source_basis": "owner_eth_pdf_primary; paraphrased from owner ETH/PDF diagram notes",
+          "review_status": "owner_source_primary"
         },
         {
-          "title": "Topos",
-          "text": "Der Topos Saarbruecken, Germany verbindet Fluss, Hafen, Industrie und Stadtumbau zu einem mehrschichtigen Freiraum.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Typos",
-          "text": "Typologisch ist es Park, Hafenlandschaft und Erinnerungsraum zugleich. Der Typus entsteht aus der Überlagerung von Infrastruktur und öffentlichem Raum.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Tektonik",
-          "text": "Tektonisch sind Mauern, Schutt, Wasserbau, Beläge, Vegetation und industrielle Fragmente die eigentlichen Bauteile.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Raumlogik",
-          "text": "Die Raumlogik entsteht aus Wegen, Passagen, Gärten, Reststrukturen und der Bewegung entlang ehemaliger Produktions- und Hafenkanten.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Konflikt und Kritik",
-          "text": "Kritisch zu prüfen ist, wie viel industrielle Härte erhalten bleibt und wo Landschaftsgestaltung Erinnerung ästhetisiert.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "KosmoData-Layer und 3D-Potenzial",
-          "text": "Für KosmoData sind Wasser, Mauerreste, Schuttfelder, Vegetationsinseln, Wege, industrielle Spuren und Erinnerungslayer zentral. Tags: Landschaftsprojekt, nachhaltige Architektur, industrielle Umnutzung, Landscape Urbanism, Palimpsest, rubble, Wasser, walls.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Entwurfsintelligenz",
-          "text": "Übertragbar ist die Methode, Bestand nicht zu glätten, sondern als aktiven Entwurfsstoff zu behandeln.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
+          "title": "Netzwerk und KosmoData-Wert",
+          "text": "Hafeninsel Saarbruecken bleibt im KosmoData-Netzwerk über Jahr, Typus, Stilsektor, Themen, Quellenlage und spätere Plan-/Modell-Layer vergleichbar. Online-Quellen dienen hier nur zur Verifikation und Ergänzung, nicht als Haupttext.",
+          "source_basis": "owner_eth_pdf_primary; online sources are verification only",
+          "review_status": "owner_source_primary"
         }
       ],
       "language": "de",
-      "generator": "kosmodata-seed-from-research",
-      "generated_at": "2026-05-25T08:26:54.610Z",
-      "review_status": "draft_review"
+      "source_priority": "owner_eth_pdf_primary",
+      "review_status": "owner_source_primary"
     },
     "materials": {
       "primary": [
@@ -31768,10 +31311,10 @@
       "renaturation",
       "process"
     ],
-    "short_description": "Die Renaturierung der Aire verwandelt einen kanalisierten Fluss in ein prozessuales Landschaftssystem aus Wasser, Gitter, Erosion und ökologischer Dynamik.",
-    "source_quality": "research_seed_review",
-    "one_sentence": "Die Aire-Renaturierung zeigt, wie Landschaftsarchitektur Kontrolle nicht einfach ersetzt, sondern einen Rahmen schafft, in dem Wasser, Sediment und Vegetation selbst weiterentwerfen.",
-    "full_description": "Die Renaturierung der Aire wird als prozessuales Infrastruktur- und Landschaftsprojekt gelesen. Der alte Kanal wird nicht einfach gelöscht, sondern als historische Linie neben einem neuen, dynamischen Flussraum weitergeführt. Entscheidend ist das Perkolationsdiagramm: Ein geometrischer Rahmen wird gesetzt, damit Wasser, Erosion, Ablagerung und Vegetation über Zeit eine eigene Morphologie entwickeln können. Für KosmoData ist das Projekt zentral für Klima-Landschaft, Renaturierung, Prozessdesign, Wasserbau und die Frage, wie Planung Kontrolle an natürliche Dynamik abgeben kann.",
+    "short_description": "Die Renaturierung der Aire verbindet historischen Kanal und neuen Flusslauf zu einer hybriden Landschaft, in der Laisser-faire und Selbstformung Teil des Entwurfs werden.",
+    "source_quality": "lecture_pdf",
+    "one_sentence": "Group Superposition ersetzt Kontrolle nicht durch romantische Natur, sondern schafft einen Rahmen, in dem Wasser, Sediment und Vegetation den Flussraum weiter formen.",
+    "full_description": "Die Renaturierung der Aire wird als prozesshafte Flusslandschaft gelesen. Der historische Kanal wird erhalten und nicht ausgelöscht; ergänzend entsteht ein neuer Flusslauf, dessen Motto Laisser-faire ist. Die Landschaft wird damit hybrid: Sie zeigt technische Geschichte und natürliche Dynamik gleichzeitig. Entscheidend ist die Selbstformung des Flusses. Planung setzt nicht jede Form endgültig fest, sondern schafft Bedingungen, in denen Wasser, Erosion, Sediment und Vegetation über Zeit weiterarbeiten. Für KosmoData ist der Eintrag zentral für Renaturierung, Prozessdesign, Klimafragen und Landschaft als offenes System.",
     "media": [
       {
         "type": "exterior",
@@ -31827,68 +31370,31 @@
       }
     ],
     "architecture_text": {
-      "headline": "Renaturierung der Aire: Prozess als Entwurfsautor",
-      "overview": "Die Aire-Renaturierung verbindet technische Wasserführung, ökologische Wiederherstellung und landschaftliche Zeit. Planung setzt hier nicht eine fertige Form, sondern eine prozessfähige Struktur.",
+      "headline": "Group Superposition ersetzt Kontrolle nicht durch romantische Natur, sondern schafft einen Rahmen, in dem Wasser, Sediment und Vegetation den Flussraum weiter formen.",
+      "overview": "Die Renaturierung der Aire wird als prozesshafte Flusslandschaft gelesen. Der historische Kanal wird erhalten und nicht ausgelöscht; ergänzend entsteht ein neuer Flusslauf, dessen Motto Laisser-faire ist. Die Landschaft wird damit hybrid: Sie zeigt technische Geschichte und natürliche Dynamik gleichzeitig. Entscheidend ist die Selbstformung des Flusses. Planung setzt nicht jede Form endgültig fest, sondern schafft Bedingungen, in denen Wasser, Erosion, Sediment und Vegetation über Zeit weiterarbeiten. Für KosmoData ist der Eintrag zentral für Renaturierung, Prozessdesign, Klimafragen und Landschaft als offenes System.",
       "chapters": [
         {
           "title": "These",
-          "text": "Die These liegt im kontrollierten Kontrollverlust: Ein Raster eröffnet die Möglichkeit, dass Wasser, Pflanzen und Sediment die endgültige Gestalt mitproduzieren.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
+          "text": "Die Renaturierung der Aire verbindet historischen Kanal und neuen Flusslauf zu einer hybriden Landschaft, in der Laisser-faire und Selbstformung Teil des Entwurfs werden.",
+          "source_basis": "owner_eth_pdf_primary; paraphrased from owner ETH/PDF diagram notes",
+          "review_status": "owner_source_primary"
         },
         {
-          "title": "Netzwerk und DNA",
-          "text": "Im Netzwerk steht das Projekt zwischen Renaturierung, Landschaftsurbanismus, Wasserinfrastruktur, Klimaanpassung und prozessualem Entwurf.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
+          "title": "Architekturlesart",
+          "text": "Die Renaturierung der Aire wird als prozesshafte Flusslandschaft gelesen. Der historische Kanal wird erhalten und nicht ausgelöscht; ergänzend entsteht ein neuer Flusslauf, dessen Motto Laisser-faire ist. Die Landschaft wird damit hybrid: Sie zeigt technische Geschichte und natürliche Dynamik gleichzeitig. Entscheidend ist die Selbstformung des Flusses. Planung setzt nicht jede Form endgültig fest, sondern schafft Bedingungen, in denen Wasser, Erosion, Sediment und Vegetation über Zeit weiterarbeiten. Für KosmoData ist der Eintrag zentral für Renaturierung, Prozessdesign, Klimafragen und Landschaft als offenes System.",
+          "source_basis": "owner_eth_pdf_primary; paraphrased from owner ETH/PDF diagram notes",
+          "review_status": "owner_source_primary"
         },
         {
-          "title": "Topos",
-          "text": "Der Topos Geneva, Switzerland ist Flussraum, Agrarlandschaft und Infrastrukturkorridor zugleich.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Typos",
-          "text": "Typologisch ist es Renaturierungsprojekt, Park, Wasserbau und ökologisches Labor. Der Typus ist zeitlich, nicht nur räumlich.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Tektonik",
-          "text": "Tektonik entsteht aus Boden, Wasser, Vegetation, Raster, Schnittprofil und Erosionsprozess.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Raumlogik",
-          "text": "Die Raumlogik ist longitudinal und dynamisch: Kanal, neuer Flusslauf, Ufer, Wege und ökologische Korridore verändern ihre Wirkung über Zeit.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Konflikt und Kritik",
-          "text": "Kritisch bleibt, wie stark ökologische Prozesse tatsächlich frei arbeiten dürfen und wo technische Pflege die Dynamik begrenzt.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "KosmoData-Layer und 3D-Potenzial",
-          "text": "Für KosmoData sind Wasserlauf, alter Kanal, Perkolationsraster, Vegetation, Erosion, Wege und Zeitschichten zentrale Layer. Tags: Landschaftsprojekt, nachhaltige Architektur, climate landscape, renaturation, process, Wasser, ecology, percolation diagram.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Entwurfsintelligenz",
-          "text": "Übertragbar ist der Entwurfsansatz, Prozesse als Layer zu modellieren und nicht nur finale Zustände.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
+          "title": "Netzwerk und KosmoData-Wert",
+          "text": "Renaturierung der Aire bleibt im KosmoData-Netzwerk über Jahr, Typus, Stilsektor, Themen, Quellenlage und spätere Plan-/Modell-Layer vergleichbar. Online-Quellen dienen hier nur zur Verifikation und Ergänzung, nicht als Haupttext.",
+          "source_basis": "owner_eth_pdf_primary; online sources are verification only",
+          "review_status": "owner_source_primary"
         }
       ],
       "language": "de",
-      "generator": "kosmodata-seed-from-research",
-      "generated_at": "2026-05-25T08:26:55.821Z",
-      "review_status": "draft_review"
+      "source_priority": "owner_eth_pdf_primary",
+      "review_status": "owner_source_primary"
     },
     "materials": {
       "primary": [
@@ -32525,10 +32031,10 @@
       "water",
       "public-space"
     ],
-    "short_description": "Opfikerpark Glattpark setzt Wasser, Wiese, Wege und Quartiersränder als identitätsbildende Mitte einer neuen Agglomerationsstadt ein.",
-    "source_quality": "research_seed_review",
-    "one_sentence": "Opfikerpark zeigt, wie ein neuer Stadtteil über einen großen Wasser- und Freiraumkörper lesbar, öffentlich und landschaftlich verankert wird.",
-    "full_description": "Opfikerpark Glattpark wird als Freiraumkern einer neuen Agglomerationsentwicklung gelesen. Der Park ordnet den Stadtteil nicht durch ein einzelnes Objekt, sondern durch Wasserfläche, Wege, Wiesenräume, Baumsetzungen, Ränder und Blickbeziehungen. Architektonisch relevant ist die Frage nach Identität in einer neu geplanten Umgebung: Landschaft wird hier zur Adresse, zur Klimastruktur und zum sozialen Aufenthaltsraum. Für KosmoData ist der Eintrag wichtig für Urban Repair, Wasserraum, Agglomeration, Public Space und die Rolle von Landschaft als ordnende Infrastruktur.",
+    "short_description": "Opfikerpark/Glattpark transformiert ein Zürcher Randgebiet aus Kiesgrube, Baulager und Schwemmland in einen vollumfänglichen Park für das neue Wohngebiet.",
+    "source_quality": "lecture_pdf",
+    "one_sentence": "Gabriele Kiefer macht Landschaft zur Adresse eines neuen Quartiers: Der Park ordnet Erholung, Wasser, Freiraum und Siedlungsrand in einer ehemals peripheren Zone.",
+    "full_description": "Opfikerpark/Glattpark wird als postindustrielle und agglomerative Landschaft gelesen. Das Gebiet lag zwischen Stadt Zürich und Natur, war teils Kiesgrube, teils Baulagerplatz und zuvor Schwemmland. Heute ist daraus eine Freizeit-Anlage für das umliegende Wohngebiet geworden. Architektonisch wichtig ist die Rolle der Landschaft als ordnende Mitte: Sie erzeugt Identität, Aufenthalt, Freiraum und Orientierung in einer neuen Stadtentwicklung. Für KosmoData verbindet der Eintrag Wasser, Agglomeration, Urban Repair und Park als soziale Infrastruktur.",
     "media": [
       {
         "type": "exterior",
@@ -32584,68 +32090,31 @@
       }
     ],
     "architecture_text": {
-      "headline": "Opfikerpark Glattpark: Wasserraum als Quartiersmitte",
-      "overview": "Opfikerpark gibt einem neuen Stadtteil eine landschaftliche Mitte. See, Wege, Wiesen und Ränder schaffen Orientierung, Klima und öffentliche Nutzung.",
+      "headline": "Gabriele Kiefer macht Landschaft zur Adresse eines neuen Quartiers: Der Park ordnet Erholung, Wasser, Freiraum und Siedlungsrand in einer ehemals peripheren Zone.",
+      "overview": "Opfikerpark/Glattpark wird als postindustrielle und agglomerative Landschaft gelesen. Das Gebiet lag zwischen Stadt Zürich und Natur, war teils Kiesgrube, teils Baulagerplatz und zuvor Schwemmland. Heute ist daraus eine Freizeit-Anlage für das umliegende Wohngebiet geworden. Architektonisch wichtig ist die Rolle der Landschaft als ordnende Mitte: Sie erzeugt Identität, Aufenthalt, Freiraum und Orientierung in einer neuen Stadtentwicklung. Für KosmoData verbindet der Eintrag Wasser, Agglomeration, Urban Repair und Park als soziale Infrastruktur.",
       "chapters": [
         {
           "title": "These",
-          "text": "Die These liegt in der Freiraum-Infrastruktur: Landschaft ist nicht Dekoration, sondern das Grundgerüst, an dem Quartier und Öffentlichkeit lesbar werden.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
+          "text": "Opfikerpark/Glattpark transformiert ein Zürcher Randgebiet aus Kiesgrube, Baulager und Schwemmland in einen vollumfänglichen Park für das neue Wohngebiet.",
+          "source_basis": "owner_eth_pdf_primary; paraphrased from owner ETH/PDF diagram notes",
+          "review_status": "owner_source_primary"
         },
         {
-          "title": "Netzwerk und DNA",
-          "text": "Im Netzwerk steht Opfikerpark zwischen Agglomerationsentwicklung, Wasserpark, Stadtreparatur und neuer Zürcher Peripherie.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
+          "title": "Architekturlesart",
+          "text": "Opfikerpark/Glattpark wird als postindustrielle und agglomerative Landschaft gelesen. Das Gebiet lag zwischen Stadt Zürich und Natur, war teils Kiesgrube, teils Baulagerplatz und zuvor Schwemmland. Heute ist daraus eine Freizeit-Anlage für das umliegende Wohngebiet geworden. Architektonisch wichtig ist die Rolle der Landschaft als ordnende Mitte: Sie erzeugt Identität, Aufenthalt, Freiraum und Orientierung in einer neuen Stadtentwicklung. Für KosmoData verbindet der Eintrag Wasser, Agglomeration, Urban Repair und Park als soziale Infrastruktur.",
+          "source_basis": "owner_eth_pdf_primary; paraphrased from owner ETH/PDF diagram notes",
+          "review_status": "owner_source_primary"
         },
         {
-          "title": "Topos",
-          "text": "Der Topos Zurich-Nord, Switzerland ist Zwischenstadt: nicht historisches Zentrum, sondern neu komponierter urbaner Rand.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Typos",
-          "text": "Typologisch ist der Park Quartiersmitte, Wasserraum und öffentlicher Landschaftsanker zugleich.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Tektonik",
-          "text": "Tektonisch wirken Wasserbecken, Uferkante, Weg, Wiese, Baum, Belag und Böschung zusammen.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Raumlogik",
-          "text": "Die Raumlogik entsteht über Rundwege, Blick über Wasser, offene Wiesen, Ränder und Übergänge zu den umliegenden Bauten.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Konflikt und Kritik",
-          "text": "Kritisch bleibt die Frage, wie künstlich erzeugte Identität in neuen Stadtteilen langfristig sozial angenommen wird.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "KosmoData-Layer und 3D-Potenzial",
-          "text": "Für KosmoData sind See, Ufer, Wege, Wiesen, Baumfelder, Quartierskanten und klimatische Wirkung zentrale Layer. Tags: Landschaftsprojekt, nachhaltige Architektur, urban repair, Wasser, öffentlicher Raum, urban green, agglomeration, lake.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Entwurfsintelligenz",
-          "text": "Übertragbar ist die Strategie, Landschaft als erstes Ordnungsinstrument einer neuen Stadtstruktur einzusetzen.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
+          "title": "Netzwerk und KosmoData-Wert",
+          "text": "Opfikerpark Glattpark bleibt im KosmoData-Netzwerk über Jahr, Typus, Stilsektor, Themen, Quellenlage und spätere Plan-/Modell-Layer vergleichbar. Online-Quellen dienen hier nur zur Verifikation und Ergänzung, nicht als Haupttext.",
+          "source_basis": "owner_eth_pdf_primary; online sources are verification only",
+          "review_status": "owner_source_primary"
         }
       ],
       "language": "de",
-      "generator": "kosmodata-seed-from-research",
-      "generated_at": "2026-05-25T08:26:57.017Z",
-      "review_status": "draft_review"
+      "source_priority": "owner_eth_pdf_primary",
+      "review_status": "owner_source_primary"
     },
     "materials": {
       "primary": [
@@ -32876,10 +32345,10 @@
       "industrial-reuse",
       "public-space"
     ],
-    "short_description": "Shipyard Park Zhongshan macht eine ehemalige Werft zu einem öffentlichen Landschaftsraum, in dem industrielle Relikte, Wasser und Vegetation weiterwirken.",
-    "source_quality": "research_seed_review",
-    "one_sentence": "Shipyard Park zeigt, wie Turenscape industrielle Infrastruktur nicht museal einfriert, sondern als robustes Gerüst für Öffentlichkeit, Ökologie und Erinnerung aktiviert.",
-    "full_description": "Shipyard Park wird als postindustrielle Landschaft gelesen. Die ehemalige Werft bleibt nicht bloß Kulisse, sondern liefert Material, Maßstab und Erzählung des Parks: Stahl, Maschinenreste, Wasserbezug, Wege, Vegetation und topografische Interventionen verbinden Geschichte mit neuer öffentlicher Nutzung. Architektonisch relevant ist die produktive Unvollständigkeit: Das Projekt arbeitet mit Spuren, Brüchen und rauen Elementen, um eine differenzierte Landschaft statt eines geglätteten Stadtparks zu erzeugen. Für KosmoData ist der Eintrag zentral für Industrial Reuse, chinesischen Landschaftsurbanismus, Waterfront, Erinnerung und robuste Materialästhetik.",
+    "short_description": "Shipyard Park transformiert eine ehemalige Werft in einen offenen Landschaftsraum, der Historie, Pflanzästhetik, Überflutung und öffentliche Zugänglichkeit verbindet.",
+    "source_quality": "lecture_pdf",
+    "one_sentence": "Turenscape behandelt die ehemalige Hafen- und Werftlandschaft als gleichwertiges Kulturerbe und nutzt ihre Spuren für einen 24/7 offenen, ökologisch belastbaren Park.",
+    "full_description": "Shipyard Park in Zhongshan wird als landschaftlicher Urbanismus gelesen. Das ehemalige Hafen- und Werftareal wird nicht neutralisiert, sondern historisch angenommen: Die industrielle Vergangenheit erhält einen ähnlichen Wert wie traditionelle chinesische Architektur. Das Umgestaltungskonzept verbindet freien, durchgehenden Zugang, ästhetische Bepflanzung und Unterstützung bei Überflutung. Für KosmoData ist der Eintrag ein wichtiger Vergleichspunkt für Industrial Reuse, öffentliche Landschaft, Wasserresilienz und die Frage, wie technische Vergangenheit in eine neue ökologische und soziale Parkstruktur überführt wird.",
     "media": [
       {
         "type": "exterior",
@@ -32935,68 +32404,31 @@
       }
     ],
     "architecture_text": {
-      "headline": "Shipyard Park: Werftrelikt als öffentliche Landschaft",
-      "overview": "Shipyard Park transformiert industrielle Reste in einen Park, der Wasser, Stahl, Vegetation und öffentliche Bewegung zusammenbringt.",
+      "headline": "Turenscape behandelt die ehemalige Hafen- und Werftlandschaft als gleichwertiges Kulturerbe und nutzt ihre Spuren für einen 24/7 offenen, ökologisch belastbaren Park.",
+      "overview": "Shipyard Park in Zhongshan wird als landschaftlicher Urbanismus gelesen. Das ehemalige Hafen- und Werftareal wird nicht neutralisiert, sondern historisch angenommen: Die industrielle Vergangenheit erhält einen ähnlichen Wert wie traditionelle chinesische Architektur. Das Umgestaltungskonzept verbindet freien, durchgehenden Zugang, ästhetische Bepflanzung und Unterstützung bei Überflutung. Für KosmoData ist der Eintrag ein wichtiger Vergleichspunkt für Industrial Reuse, öffentliche Landschaft, Wasserresilienz und die Frage, wie technische Vergangenheit in eine neue ökologische und soziale Parkstruktur überführt wird.",
       "chapters": [
         {
           "title": "These",
-          "text": "Die These liegt im Aktivieren des Relikts: Industriegeschichte bleibt nutzbar, lesbar und atmosphärisch wirksam.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
+          "text": "Shipyard Park transformiert eine ehemalige Werft in einen offenen Landschaftsraum, der Historie, Pflanzästhetik, Überflutung und öffentliche Zugänglichkeit verbindet.",
+          "source_basis": "owner_eth_pdf_primary; paraphrased from owner ETH/PDF diagram notes",
+          "review_status": "owner_source_primary"
         },
         {
-          "title": "Netzwerk und DNA",
-          "text": "Im Netzwerk steht Shipyard Park zwischen Turenscape, Sponge-City-Denken, postindustriellem Park, Waterfront und Landschaftsurbanismus.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
+          "title": "Architekturlesart",
+          "text": "Shipyard Park in Zhongshan wird als landschaftlicher Urbanismus gelesen. Das ehemalige Hafen- und Werftareal wird nicht neutralisiert, sondern historisch angenommen: Die industrielle Vergangenheit erhält einen ähnlichen Wert wie traditionelle chinesische Architektur. Das Umgestaltungskonzept verbindet freien, durchgehenden Zugang, ästhetische Bepflanzung und Unterstützung bei Überflutung. Für KosmoData ist der Eintrag ein wichtiger Vergleichspunkt für Industrial Reuse, öffentliche Landschaft, Wasserresilienz und die Frage, wie technische Vergangenheit in eine neue ökologische und soziale Parkstruktur überführt wird.",
+          "source_basis": "owner_eth_pdf_primary; paraphrased from owner ETH/PDF diagram notes",
+          "review_status": "owner_source_primary"
         },
         {
-          "title": "Topos",
-          "text": "Der Topos Zhongshan, China verbindet Flussraum, Werftgeschichte und neue urbane Öffentlichkeit.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Typos",
-          "text": "Typologisch ist es Park, Denkraum, Industriefreiraum und Waterfront-Projekt zugleich.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Tektonik",
-          "text": "Tektonisch sind Stahlteile, Maschinenfragmente, Wasser, Vegetation, Stege und Bodenmodellierung die prägenden Bauteile.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Raumlogik",
-          "text": "Die Raumlogik entsteht aus Promenade, Reststrukturen, Uferbezug, Blickachsen und der Bewegung durch industrielle Fragmente.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Konflikt und Kritik",
-          "text": "Kritisch zu prüfen ist, ob die industrielle Rauheit echte soziale Offenheit erzeugt oder als ästhetische Kulisse konsumiert wird.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "KosmoData-Layer und 3D-Potenzial",
-          "text": "Für KosmoData sind Werftrelikte, Wasser, Wege, Vegetationszonen, Materialreste, Aussichtspunkte und Erinnerungslayer zentral. Tags: Landschaftsprojekt, nachhaltige Architektur, Landscape Urbanism, industrielle Umnutzung, öffentlicher Raum, shipyard, Stahl, waterfront.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Entwurfsintelligenz",
-          "text": "Übertragbar ist der Umgang mit industrieller Vergangenheit als aktivem Material für neue öffentliche Räume.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
+          "title": "Netzwerk und KosmoData-Wert",
+          "text": "Shipyard Park bleibt im KosmoData-Netzwerk über Jahr, Typus, Stilsektor, Themen, Quellenlage und spätere Plan-/Modell-Layer vergleichbar. Online-Quellen dienen hier nur zur Verifikation und Ergänzung, nicht als Haupttext.",
+          "source_basis": "owner_eth_pdf_primary; online sources are verification only",
+          "review_status": "owner_source_primary"
         }
       ],
       "language": "de",
-      "generator": "kosmodata-seed-from-research",
-      "generated_at": "2026-05-25T08:26:58.189Z",
-      "review_status": "draft_review"
+      "source_priority": "owner_eth_pdf_primary",
+      "review_status": "owner_source_primary"
     },
     "materials": {
       "primary": [
@@ -35611,10 +35043,10 @@
       "riverfront",
       "public-space"
     ],
-    "short_description": "Uferpark Attisholz-Süd verwandelt das Areal einer ehemaligen Zellulosefabrik in einen Aare-Park aus Betonspuren, Uferraum und öffentlicher Aneignung.",
-    "source_quality": "research_seed_review",
-    "one_sentence": "Uferpark Attisholz-Süd zeigt, wie industrielle Infrastruktur am Fluss nicht gelöscht, sondern als robuste räumliche Grundlage für einen neuen öffentlichen Park weiterverwendet wird.",
-    "full_description": "Uferpark Attisholz-Süd wird als zeitgenössische postindustrielle Landschaft gelesen. Das Projekt nutzt die Spuren der ehemaligen Zelluloseproduktion, Kläranlagenlogik, Betonfragmente, Uferkante und Vegetation, um einen neuen öffentlichen Raum an der Aare zu schaffen. Architektonisch relevant ist die Balance zwischen Rohheit und Zugänglichkeit: Der Park bleibt als Industrieort lesbar, wird aber durch Wege, Aufenthaltsbereiche und landschaftliche Rahmung benutzbar. Für KosmoData ist der Eintrag wichtig für Industrial Reuse, Riverfront, Schweizer Landschaftsarchitektur, Beton als Erinnerungsträger und die Frage, wie Transformation ohne vollständige Auslöschung gelingt.",
+    "short_description": "Uferpark Attisholz-Süd nutzt das ehemalige Zellulose-Industrieareal als Erholungsraum für Mensch und Natur und arbeitet bewusst mit vorhandenen Spuren.",
+    "source_quality": "lecture_pdf",
+    "one_sentence": "MAVO Landschaftsarchitektur entwickelt aus Industrieareal, Aare-Ufer, Stegen, Wasserkanälen, Kläranlagenruine und kleinen Gärten eine prozesshafte Landschaft.",
+    "full_description": "Uferpark Attisholz-Süd wird als postindustrielle Landschaft am Fluss gelesen. Das ehemalige Industrieareal der Zelluloseproduktion wird nicht vollständig bereinigt, sondern über nachhaltige Eingriffe, Stege, Wasserkanäle, kleine Gärten und die belassene Kläranlage als bauliche Ruine transformiert. Der Park arbeitet mit dem, was vorhanden war, und macht Prozesshaftigkeit zum Entwurfsprinzip. Für KosmoData ist der Eintrag relevant, weil er Industriegeschichte, ökologische Erholung, Aare-Raum, Ruinenlogik und gemeinschaftliche Aneignung miteinander verbindet.",
     "media": [
       {
         "type": "exterior",
@@ -35670,68 +35102,31 @@
       }
     ],
     "architecture_text": {
-      "headline": "Uferpark Attisholz-Süd: Betonspur am Fluss",
-      "overview": "Uferpark Attisholz-Süd verbindet Aare-Ufer, industrielle Fragmente und neue öffentliche Nutzung zu einer rauen, aber zugänglichen Parklandschaft.",
+      "headline": "MAVO Landschaftsarchitektur entwickelt aus Industrieareal, Aare-Ufer, Stegen, Wasserkanälen, Kläranlagenruine und kleinen Gärten eine prozesshafte Landschaft.",
+      "overview": "Uferpark Attisholz-Süd wird als postindustrielle Landschaft am Fluss gelesen. Das ehemalige Industrieareal der Zelluloseproduktion wird nicht vollständig bereinigt, sondern über nachhaltige Eingriffe, Stege, Wasserkanäle, kleine Gärten und die belassene Kläranlage als bauliche Ruine transformiert. Der Park arbeitet mit dem, was vorhanden war, und macht Prozesshaftigkeit zum Entwurfsprinzip. Für KosmoData ist der Eintrag relevant, weil er Industriegeschichte, ökologische Erholung, Aare-Raum, Ruinenlogik und gemeinschaftliche Aneignung miteinander verbindet.",
       "chapters": [
         {
           "title": "These",
-          "text": "Die These liegt im kontrollierten Weiterverwenden: Bestehende Industrieelemente werden nicht kaschiert, sondern als räumliche Anker des Parks aktiviert.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
+          "text": "Uferpark Attisholz-Süd nutzt das ehemalige Zellulose-Industrieareal als Erholungsraum für Mensch und Natur und arbeitet bewusst mit vorhandenen Spuren.",
+          "source_basis": "owner_eth_pdf_primary; paraphrased from owner ETH/PDF diagram notes",
+          "review_status": "owner_source_primary"
         },
         {
-          "title": "Netzwerk und DNA",
-          "text": "Im Netzwerk steht das Projekt zwischen Schweizer Transformationslandschaft, Riverfront, postindustriellem Park und Beton als Gedächtnismaterial.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
+          "title": "Architekturlesart",
+          "text": "Uferpark Attisholz-Süd wird als postindustrielle Landschaft am Fluss gelesen. Das ehemalige Industrieareal der Zelluloseproduktion wird nicht vollständig bereinigt, sondern über nachhaltige Eingriffe, Stege, Wasserkanäle, kleine Gärten und die belassene Kläranlage als bauliche Ruine transformiert. Der Park arbeitet mit dem, was vorhanden war, und macht Prozesshaftigkeit zum Entwurfsprinzip. Für KosmoData ist der Eintrag relevant, weil er Industriegeschichte, ökologische Erholung, Aare-Raum, Ruinenlogik und gemeinschaftliche Aneignung miteinander verbindet.",
+          "source_basis": "owner_eth_pdf_primary; paraphrased from owner ETH/PDF diagram notes",
+          "review_status": "owner_source_primary"
         },
         {
-          "title": "Topos",
-          "text": "Der Topos Luterbach, Switzerland verbindet Fluss, Fabrikareal, Agglomerationsentwicklung und neue Öffentlichkeit.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Typos",
-          "text": "Typologisch ist es Uferpark, Industriebrache und öffentlicher Transformationsraum zugleich.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Tektonik",
-          "text": "Tektonisch wirken Beton, Uferkante, Vegetation, Belag, Reststruktur und Wegführung als robuste Freiraum-Bauteile.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Raumlogik",
-          "text": "Die Raumlogik entsteht entlang des Flusses: Bewegung, Aufenthalt, Blick, industrielle Reste und offene Vegetationsräume bilden eine lineare Parksequenz.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Konflikt und Kritik",
-          "text": "Kritisch bleibt, wie Transformation zwischen Aufwertung, Erinnerung und öffentlicher Alltagstauglichkeit balanciert.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "KosmoData-Layer und 3D-Potenzial",
-          "text": "Für KosmoData sind Uferkante, Betonfragmente, Wege, Vegetation, industrielle Spuren, Aufenthaltszonen und Flussbezug zentrale Layer. Tags: Landschaftsprojekt, nachhaltige Architektur, industrielle Umnutzung, riverfront, öffentlicher Raum, postindustrial, aare, sewage plant.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
-        },
-        {
-          "title": "Entwurfsintelligenz",
-          "text": "Übertragbar ist die Methode, industrielle Restlogik als Material, Atmosphäre und Orientierungssystem zu nutzen.",
-          "source_basis": "seed-from-research draft; owner/source review required",
-          "review_status": "draft_review"
+          "title": "Netzwerk und KosmoData-Wert",
+          "text": "Uferpark Attisholz-Sued bleibt im KosmoData-Netzwerk über Jahr, Typus, Stilsektor, Themen, Quellenlage und spätere Plan-/Modell-Layer vergleichbar. Online-Quellen dienen hier nur zur Verifikation und Ergänzung, nicht als Haupttext.",
+          "source_basis": "owner_eth_pdf_primary; online sources are verification only",
+          "review_status": "owner_source_primary"
         }
       ],
       "language": "de",
-      "generator": "kosmodata-seed-from-research",
-      "generated_at": "2026-05-25T08:26:59.378Z",
-      "review_status": "draft_review"
+      "source_priority": "owner_eth_pdf_primary",
+      "review_status": "owner_source_primary"
     },
     "materials": {
       "primary": [

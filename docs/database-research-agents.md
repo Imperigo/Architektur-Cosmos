@@ -14,12 +14,23 @@ projects, texts, theories, maps, infrastructures, objects and events.
 
 Primary source families:
 
+- Owner-authored ETH/PDF diagram texts and course-note PDFs already supplied
+  for Architecture Cosmos. These are the primary prose basis when present.
 - ETH course pages and public lecture indexes.
 - ETH Research Collection, ETH Library and swisscovery.
 - E-Periodica, ETH E-Pics and public archive catalogues.
 - ISOS, geo.admin.ch, OpenStreetMap and historic map sources.
 - Wikimedia Commons, Europeana and Library of Congress when file-level rights
   are clear.
+
+Text priority order:
+
+1. Use owner/ETH/PDF project descriptions as the main text source.
+2. Preserve existing reviewed entry text unless the owner explicitly approves a
+   rewrite.
+3. Use online sources to verify, add missing metadata and build source trails.
+4. Generate new prose from online research only when no owner/ETH/PDF text is
+   available.
 
 Typical output:
 

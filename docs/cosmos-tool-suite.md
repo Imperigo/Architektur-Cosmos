@@ -82,6 +82,21 @@ The text generator is intentionally source-cautious. It turns dry metadata,
 analysis layers and ETH/source notes into better prose, but every factual claim
 must be reviewed before being promoted into `data/mock-entries.json`.
 
+Source priority is strict:
+
+1. owner-authored ETH/PDF notes and the original Architecture Cosmos diagram
+   texts are the primary prose basis;
+2. existing reviewed entry text in `data/mock-entries.json`;
+3. official/archive/project sources for fact checks, dates, names and missing
+   fields;
+4. online research synthesis only when no owner/ETH/PDF text is available.
+
+`kosmodata:seed-from-research` therefore preserves existing texts for entries
+with `lecture_pdf`, `lecture_notes` or ETH/PDF `source_documents` by default.
+Online research may still add source trails, tags, model requirements and review
+notes, but it must not overwrite the project prose unless the command is run
+explicitly with `--allow-online-text-rewrite` after owner review.
+
 ## KosmoData Enrichment Pipeline
 
 `kosmodata:seed-from-research` prepares the seed candidate that replaces manual
