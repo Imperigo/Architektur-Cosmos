@@ -2587,6 +2587,10 @@ function AssetCard({ asset, isSelected, onSelect }: { asset: AssetPreviewRecord;
 function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
   const accent = assetAccent(asset);
   const confidence = Math.round(asset.confidence * 100);
+  const generatedProfile = assetGeneratedProfile(asset);
+  const localFormats = asset.formats
+    .map((format) => ({ ...format, path: 'path' in format ? format.path : undefined }))
+    .filter((format) => format.status === 'exists' && format.path);
 
   return (
     <aside className="kosmo-asset-inspector" style={{ '--asset-accent': accent } as CSSProperties} aria-label={`${asset.title} Inspektor`}>
@@ -2617,6 +2621,31 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
           ))}
         </ul>
       </div>
+
+      {localFormats.length ? (
+        <div className="kosmo-asset-inspector-section kosmo-asset-local-export">
+          <strong>Lokaler Export</strong>
+          {localFormats.map((format) => (
+            <code key={`${asset.id}-${format.format}-${format.path}`}>{format.path}</code>
+          ))}
+          <p>Review-only: keine R2-Uploads, keine öffentlichen Downloads, keine Datenbank-Writes.</p>
+        </div>
+      ) : null}
+
+      {generatedProfile ? (
+        <div className="kosmo-asset-inspector-section kosmo-asset-layer-preview">
+          <strong>3D-Layer</strong>
+          <div className="kosmo-asset-layer-stack" aria-label={`${asset.title} 3D Layer`}>
+            {generatedProfile.layer_names.map((layer, index) => (
+              <span key={`${asset.id}-${layer}`} style={{ '--layer-index': index } as CSSProperties}>
+                <i />
+                <b>{layer}</b>
+              </span>
+            ))}
+          </div>
+          <p>{generatedProfile.triangle_count} Dreiecke · {formatAssetValue(generatedProfile.status)}</p>
+        </div>
+      ) : null}
 
       <div className="kosmo-asset-inspector-section">
         <strong>Exportziele</strong>
@@ -2691,6 +2720,12 @@ function assetAccent(asset: AssetPreviewRecord) {
   if (asset.asset_type.includes('material')) return '#f5b342';
   if (asset.asset_type.includes('glb') || asset.asset_type.includes('3d')) return '#00e7ff';
   return '#ff4fd8';
+}
+
+function assetGeneratedProfile(asset: AssetPreviewRecord) {
+  const profile = 'generated_asset_profile' in asset ? asset.generated_asset_profile : null;
+  if (!profile || !Array.isArray(profile.layer_names)) return null;
+  return profile;
 }
 
 function formatAssetValue(value: string) {

@@ -4866,6 +4866,71 @@ body:has(.entry-page) {
   font-size: 9px;
 }
 
+.kosmo-asset-local-export {
+  padding: 10px;
+  border: 1px solid color-mix(in srgb, var(--asset-accent) 30%, rgb(247 247 244 / 10%));
+  border-radius: 12px;
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--asset-accent) 8%, transparent), transparent),
+    rgb(247 247 244 / 3%);
+}
+
+.kosmo-asset-local-export code {
+  display: block;
+  min-width: 0;
+  padding: 8px 9px;
+  border: 1px solid rgb(247 247 244 / 10%);
+  border-radius: 9px;
+  background: rgb(0 0 0 / 32%);
+  color: color-mix(in srgb, var(--asset-accent) 78%, #f7f7f4);
+  font-size: 10px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.kosmo-asset-layer-preview {
+  padding: 10px;
+  border: 1px solid rgb(247 247 244 / 10%);
+  border-radius: 13px;
+  background:
+    radial-gradient(circle at 12% 28%, color-mix(in srgb, var(--asset-accent) 12%, transparent), transparent 42%),
+    rgb(247 247 244 / 3%);
+}
+
+.kosmo-asset-layer-stack {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.kosmo-asset-layer-stack span {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  min-height: 28px;
+  color: rgb(247 247 244 / 72%);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+}
+
+.kosmo-asset-layer-stack i {
+  display: block;
+  width: calc(18px + var(--layer-index, 0) * 3px);
+  height: 8px;
+  border: 1px solid color-mix(in srgb, var(--asset-accent) 64%, #f7f7f4);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--asset-accent) 18%, transparent);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--asset-accent) 18%, transparent);
+}
+
+.kosmo-asset-layer-stack b {
+  min-width: 0;
+  font-weight: 620;
+  overflow-wrap: anywhere;
+}
+
 .kosmo-asset-inspector-tags {
   display: flex;
   flex-wrap: wrap;
