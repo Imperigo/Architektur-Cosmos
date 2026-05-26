@@ -24,6 +24,7 @@ const paths = {
   sourceReview: join(projectRoot, 'design/context-source-review.generated.json'),
   humanReviewPack: join(projectRoot, 'design/ifc-human-review-pack.generated.json'),
   humanReviewViewer: join(projectRoot, 'design/ifc-human-review-viewer.generated.json'),
+  humanReviewSession: join(projectRoot, 'design/ifc-human-review-session.json'),
   ifcOpenShellReview: join(projectRoot, 'design/ifcopenshell-semantic-review.generated.json'),
   existingDecision: outputJsonPath
 };
@@ -63,13 +64,15 @@ function buildDecision() {
   const sourceReview = readOptionalJson(paths.sourceReview);
   const humanReviewPack = readOptionalJson(paths.humanReviewPack);
   const humanReviewViewer = readOptionalJson(paths.humanReviewViewer);
+  const humanReviewSession = readOptionalJson(paths.humanReviewSession);
   const ifcOpenShellReview = readOptionalJson(paths.ifcOpenShellReview);
   const projectId = manifest?.project_id || humanReviewPack?.project_id || basename(projectRoot);
   const candidateId = args.candidate || humanReviewPack?.candidate_id || 'ifc-role-3-semantic_building_elements';
   const decision = args.decision || humanReviewPack?.summary?.recommended_decision_now || 'keep_needs_more_source_review';
   const finalDecisionRequested = Boolean(args['record-final']);
-  const checklist = buildChecklist(humanReviewPack);
+  const checklist = buildChecklist(humanReviewPack, humanReviewSession);
   const checklistSummary = summarizeChecklist(checklist);
+  const sessionSummary = summarizeSession(humanReviewSession);
   const positiveDecision = ['accepted_as_context', 'accepted_as_design_seed'].includes(decision);
   const designSeedDecision = decision === 'accepted_as_design_seed';
   const designApprovalRequested = Boolean(args['approve-design-generation']);
@@ -78,6 +81,8 @@ function buildDecision() {
       && designSeedDecision
       && designApprovalRequested
       && args['i-confirm-human-ifc-review']
+      && sessionSummary.ready
+      && sessionSummary.proposed_decision === decision
       && checklistSummary.confirmed_count === checklistSummary.check_count
       && checklistSummary.failed_count === 0
       && humanReviewPack?.summary?.evidence_ready === true
@@ -110,6 +115,8 @@ function buildDecision() {
       draft_is_not_human_approval: true,
       accepted_as_design_seed_requires_record_final: true,
       accepted_as_design_seed_requires_confirm_checklist: true,
+      positive_decision_requires_completed_review_session: true,
+      final_decision_must_match_session_proposal: true,
       accepted_as_design_seed_requires_approve_design_generation_flag: true,
       design_generation_still_requires_context_selection_approval: true
     },
@@ -122,6 +129,10 @@ function buildDecision() {
       source_review_open_human_review_count: numberOrDefault(sourceReview?.summary?.open_human_review_count, 0),
       human_review_pack_status: humanReviewPack?.status || null,
       human_review_viewer_status: humanReviewViewer?.status || null,
+      human_review_session_status: humanReviewSession?.status || null,
+      human_review_session_proposed_decision: humanReviewSession?.proposed_decision || null,
+      human_review_session_decision_ready: Boolean(humanReviewSession?.decision_readiness?.ready),
+      human_review_session_reviewer: humanReviewSession?.reviewer || null,
       ifcopenshell_review_status: ifcOpenShellReview?.status || null
     },
     evidence_snapshot: {
@@ -148,7 +159,12 @@ function buildDecision() {
       check_count: checklistSummary.check_count,
       confirmed_check_count: checklistSummary.confirmed_count,
       failed_check_count: checklistSummary.failed_count,
+      not_applicable_check_count: checklistSummary.not_applicable_count,
       open_human_check_count: checklistSummary.open_count,
+      review_session_exists: sessionSummary.exists,
+      review_session_ready: sessionSummary.ready,
+      review_session_proposed_decision: sessionSummary.proposed_decision,
+      review_session_blockers: sessionSummary.blockers,
       evidence_ready: Boolean(humanReviewPack?.summary?.evidence_ready),
       recommended_next_step: recommendedNextStep({
         decision,
@@ -157,7 +173,8 @@ function buildDecision() {
         designGenerationApprovalGranted,
         currentSelection,
         currentMapping,
-        checklistSummary
+        checklistSummary,
+        sessionSummary
       })
     },
     recommended_context_selection_patch: buildContextSelectionPatch({
@@ -170,15 +187,17 @@ function buildDecision() {
   };
 }
 
-function buildChecklist(humanReviewPack) {
+function buildChecklist(humanReviewPack, humanReviewSession) {
   const checks = Array.isArray(humanReviewPack?.human_checklist) ? humanReviewPack.human_checklist : [];
+  const sessionById = new Map((humanReviewSession?.checks || []).map((check) => [check.id, check]));
   const failedChecks = new Set(normalizeList(args['failed-check']));
   const pendingChecks = new Set(normalizeList(args['pending-check']));
   const confirmedChecks = new Set(normalizeList(args['confirmed-check']));
   const confirmAll = Boolean(args['confirm-checklist']);
 
   return checks.map((check) => {
-    let status = confirmAll ? 'confirmed_by_reviewer' : 'pending_human_review';
+    const sessionCheck = sessionById.get(check.id);
+    let status = sessionStatusToChecklistStatus(sessionCheck?.status) || (confirmAll ? 'confirmed_by_reviewer' : 'pending_human_review');
     if (confirmedChecks.has(check.id)) status = 'confirmed_by_reviewer';
     if (failedChecks.has(check.id)) status = 'failed_by_reviewer';
     if (pendingChecks.has(check.id)) status = 'pending_human_review';
@@ -187,7 +206,7 @@ function buildChecklist(humanReviewPack) {
       status,
       question: check.question,
       evidence_hint: check.evidence_hint || '',
-      reviewer_note: ''
+      reviewer_note: Array.isArray(sessionCheck?.notes) ? sessionCheck.notes.join('; ') : ''
     };
   });
 }
@@ -197,7 +216,35 @@ function summarizeChecklist(checklist) {
     check_count: checklist.length,
     confirmed_count: checklist.filter((item) => item.status === 'confirmed_by_reviewer').length,
     failed_count: checklist.filter((item) => item.status === 'failed_by_reviewer').length,
+    not_applicable_count: checklist.filter((item) => item.status === 'not_applicable_by_reviewer').length,
     open_count: checklist.filter((item) => item.status === 'pending_human_review').length
+  };
+}
+
+function sessionStatusToChecklistStatus(status) {
+  const statusMap = {
+    confirmed: 'confirmed_by_reviewer',
+    failed: 'failed_by_reviewer',
+    pending: 'pending_human_review',
+    not_applicable: 'not_applicable_by_reviewer'
+  };
+  return statusMap[status] || null;
+}
+
+function summarizeSession(session) {
+  const blockers = Array.isArray(session?.decision_readiness?.blockers) ? session.decision_readiness.blockers : [];
+  return {
+    exists: Boolean(session),
+    status: session?.status || null,
+    proposed_decision: session?.proposed_decision || null,
+    reviewer: session?.reviewer || null,
+    ready: Boolean(session?.decision_readiness?.ready),
+    blockers,
+    check_count: numberOrDefault(session?.summary?.check_count, 0),
+    confirmed_check_count: numberOrDefault(session?.summary?.confirmed_check_count, 0),
+    pending_check_count: numberOrDefault(session?.summary?.pending_check_count, 0),
+    failed_check_count: numberOrDefault(session?.summary?.failed_check_count, 0),
+    not_applicable_check_count: numberOrDefault(session?.summary?.not_applicable_check_count, 0)
   };
 }
 
@@ -216,6 +263,22 @@ function validateDecision(decision) {
   if (decision.summary.positive_decision && decision.summary.final_decision_recorded && !args['i-confirm-human-ifc-review']) {
     errors.push('Positive final decisions require --i-confirm-human-ifc-review.');
   }
+  if (decision.summary.positive_decision && decision.summary.final_decision_recorded && !decision.summary.review_session_exists) {
+    errors.push('Positive final decisions require design/ifc-human-review-session.json.');
+  }
+  if (decision.summary.positive_decision && decision.summary.final_decision_recorded && !decision.summary.review_session_ready) {
+    const blockers = decision.summary.review_session_blockers.length
+      ? ` Blockers: ${decision.summary.review_session_blockers.join('; ')}.`
+      : '';
+    errors.push(`Positive final decisions require a completed IFC human review session.${blockers}`);
+  }
+  if (
+    decision.summary.positive_decision
+    && decision.summary.final_decision_recorded
+    && decision.summary.review_session_proposed_decision !== decision.decision
+  ) {
+    errors.push(`Final decision must match review-session proposed_decision. Session proposes ${decision.summary.review_session_proposed_decision || 'none'}, command uses ${decision.decision}.`);
+  }
   if (decision.summary.positive_decision && decision.summary.final_decision_recorded && decision.summary.open_human_check_count > 0) {
     errors.push(`Positive final decisions cannot keep pending human checks: ${decision.summary.open_human_check_count}.`);
   }
@@ -224,6 +287,9 @@ function validateDecision(decision) {
   }
   if (decision.decision === 'accepted_as_design_seed' && !decision.summary.design_generation_approval_granted) {
     errors.push('accepted_as_design_seed requires --record-final --confirm-checklist --i-confirm-human-ifc-review --approve-design-generation and ready machine evidence.');
+  }
+  if (decision.decision === 'accepted_as_design_seed' && decision.summary.not_applicable_check_count > 0) {
+    errors.push('accepted_as_design_seed cannot use not_applicable checklist rows.');
   }
   if (args['approve-design-generation'] && decision.decision !== 'accepted_as_design_seed') {
     errors.push('--approve-design-generation is only valid with --decision accepted_as_design_seed.');
@@ -255,9 +321,13 @@ function recommendedNextStep({
   designGenerationApprovalGranted,
   currentSelection,
   currentMapping,
-  checklistSummary
+  checklistSummary,
+  sessionSummary
 }) {
   if (!finalDecisionRequested) return 'open_viewer_and_record_final_human_decision';
+  if (positiveDecision && !sessionSummary.exists) return 'create_ifc_human_review_session_before_positive_decision';
+  if (positiveDecision && !sessionSummary.ready) return 'complete_ifc_human_review_session_before_positive_decision';
+  if (positiveDecision && sessionSummary.proposed_decision !== decision) return 'align_final_decision_with_review_session_proposal';
   if (positiveDecision && checklistSummary.open_count > 0) return 'complete_pending_human_checks_before_positive_decision';
   if (positiveDecision && checklistSummary.failed_count > 0) return 'resolve_failed_human_checks_or_reject_candidate';
   if (designGenerationApprovalGranted) return 'sync_context_selection_only_after_owner_confirms_design_seed_use';
@@ -320,7 +390,10 @@ function renderMarkdown(decision) {
     `- evidence ready: ${decision.summary.evidence_ready ? 'yes' : 'no'}`,
     `- confirmed checks: ${decision.summary.confirmed_check_count}/${decision.summary.check_count}`,
     `- failed checks: ${decision.summary.failed_check_count}`,
+    `- not applicable checks: ${decision.summary.not_applicable_check_count}`,
     `- open human checks: ${decision.summary.open_human_check_count}`,
+    `- review session ready: ${decision.summary.review_session_ready ? 'yes' : 'no'}`,
+    `- review session proposed decision: \`${decision.summary.review_session_proposed_decision || '-'}\``,
     `- design generation approval requested: ${decision.summary.design_generation_approval_requested ? 'yes' : 'no'}`,
     `- design generation approval granted: ${decision.summary.design_generation_approval_granted ? 'yes' : 'no'}`,
     `- context-selection update required: ${decision.summary.context_selection_update_required ? 'yes' : 'no'}`,
@@ -335,6 +408,9 @@ function renderMarkdown(decision) {
     `- source-review open human checks: ${decision.current_state.source_review_open_human_review_count}`,
     `- human review pack: \`${decision.current_state.human_review_pack_status || '-'}\``,
     `- human review viewer: \`${decision.current_state.human_review_viewer_status || '-'}\``,
+    `- human review session: \`${decision.current_state.human_review_session_status || '-'}\``,
+    `- human review session reviewer: ${decision.current_state.human_review_session_reviewer || '-'}`,
+    `- human review session decision ready: ${decision.current_state.human_review_session_decision_ready ? 'yes' : 'no'}`,
     '',
     '## Evidence Snapshot',
     '',
