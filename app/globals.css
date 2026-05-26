@@ -5218,6 +5218,92 @@ body:has(.entry-page) {
   letter-spacing: 0.08em;
 }
 
+.kosmo-asset-review-actions {
+  border-color: color-mix(in srgb, var(--asset-accent) 24%, rgb(247 247 244 / 10%));
+  background:
+    radial-gradient(circle at 18% 0%, color-mix(in srgb, var(--asset-accent) 12%, transparent), transparent 44%),
+    rgb(0 0 0 / 18%);
+}
+
+.kosmo-asset-review-action-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.kosmo-asset-review-action-grid button {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  min-height: 42px;
+  padding: 8px 9px;
+  border: 1px solid rgb(247 247 244 / 11%);
+  border-radius: 8px;
+  background: rgb(247 247 244 / 4%);
+  color: rgb(247 247 244 / 72%);
+  text-align: left;
+  cursor: none;
+  transition: border-color 160ms ease, color 160ms ease, background 160ms ease, transform 160ms ease;
+}
+
+.kosmo-asset-review-action-grid button:hover,
+.kosmo-asset-review-action-grid button:focus-visible,
+.kosmo-asset-review-action-grid button.is-active {
+  border-color: color-mix(in srgb, var(--asset-accent) 52%, rgb(247 247 244 / 10%));
+  background: color-mix(in srgb, var(--asset-accent) 12%, rgb(247 247 244 / 4%));
+  color: rgb(247 247 244 / 92%);
+  transform: translateY(-1px);
+}
+
+.kosmo-asset-review-action-grid small,
+.kosmo-asset-review-action-grid span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  text-transform: uppercase;
+}
+
+.kosmo-asset-review-action-grid small {
+  color: color-mix(in srgb, var(--asset-accent) 68%, #f7f7f4);
+  font-size: 8px;
+  letter-spacing: 0;
+}
+
+.kosmo-asset-review-action-grid span {
+  font-size: 10px;
+  font-weight: 760;
+  letter-spacing: 0;
+}
+
+.kosmo-asset-review-command {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  padding: 9px;
+  border: 1px solid rgb(247 247 244 / 9%);
+  border-radius: 8px;
+  background: rgb(0 0 0 / 20%);
+}
+
+.kosmo-asset-review-command b {
+  color: rgb(247 247 244 / 72%);
+  font-size: 10px;
+  font-weight: 620;
+  line-height: 1.45;
+}
+
+.kosmo-asset-review-command code {
+  display: block;
+  max-width: 100%;
+  padding: 8px;
+  border-radius: 8px;
+  background: rgb(247 247 244 / 6%);
+  color: color-mix(in srgb, var(--asset-accent) 66%, #f7f7f4);
+  font-size: 9px;
+  line-height: 1.45;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
 .kosmo-asset-inspector-tags {
   display: flex;
   flex-wrap: wrap;
@@ -5797,6 +5883,11 @@ html[data-cosmos-browser="opera"] .relation-strand {
   }
 
   .kosmo-asset-inspector-gates {
+    grid-template-columns: 1fr;
+  }
+
+  .kosmo-asset-review-action-grid,
+  .kosmo-asset-route-grid {
     grid-template-columns: 1fr;
   }
 

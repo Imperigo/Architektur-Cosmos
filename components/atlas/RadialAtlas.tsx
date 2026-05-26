@@ -47,6 +47,13 @@ type IntroState = 'intro' | 'hub' | 'asset' | 'launching' | 'idle';
 type AssetPreviewRecord = (typeof assetLibraryPreview.assets)[number];
 type AssetExportPlanRecord = (typeof assetExportPlanPreview.assets)[number];
 type AssetFamilyFilter = 'all' | '2d' | 'material' | '3d';
+type AssetReviewAction = {
+  id: string;
+  label: string;
+  kicker: string;
+  description: string;
+  command: string;
+};
 const sourceLensDefinitions = [
   { id: 'afasia', label: 'Afasia', terms: ['afasia'] },
   { id: 'espazium', label: 'Espazium', terms: ['espazium', 'tec21'] },
@@ -2598,6 +2605,13 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
   const localFormats = asset.formats
     .map((format) => ({ ...format, path: 'path' in format ? format.path : undefined }))
     .filter((format) => format.status === 'exists' && format.path);
+  const reviewActions = useMemo(() => assetReviewActions(asset), [asset]);
+  const [activeActionId, setActiveActionId] = useState(reviewActions[0]?.id ?? 'library-check');
+  const activeAction = reviewActions.find((action) => action.id === activeActionId) ?? reviewActions[0];
+
+  useEffect(() => {
+    setActiveActionId(reviewActions[0]?.id ?? 'library-check');
+  }, [asset.id, reviewActions]);
 
   return (
     <aside className="kosmo-asset-inspector" style={{ '--asset-accent': accent } as CSSProperties} aria-label={`${asset.title} Inspektor`}>
@@ -2689,6 +2703,30 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
           <p>{exportPlan.next_step}</p>
         </div>
       ) : null}
+
+      <div className="kosmo-asset-inspector-section kosmo-asset-review-actions">
+        <strong>Review-Aktionen</strong>
+        <p>Lokale Brain-Befehle für Prüfung und Export. Sie erzeugen Review-Dateien, aber keine Cloud-Uploads.</p>
+        <div className="kosmo-asset-review-action-grid">
+          {reviewActions.map((action) => (
+            <button
+              key={action.id}
+              type="button"
+              className={activeAction?.id === action.id ? 'is-active' : undefined}
+              onClick={() => setActiveActionId(action.id)}
+            >
+              <small>{action.kicker}</small>
+              <span>{action.label}</span>
+            </button>
+          ))}
+        </div>
+        {activeAction ? (
+          <div className="kosmo-asset-review-command">
+            <b>{activeAction.description}</b>
+            <code>{activeAction.command}</code>
+          </div>
+        ) : null}
+      </div>
 
       <div className="kosmo-asset-inspector-section">
         <strong>Quellenbasis</strong>
@@ -2792,6 +2830,56 @@ function assetAccent(asset: AssetPreviewRecord) {
 
 function assetExportPlan(assetId: string): AssetExportPlanRecord | null {
   return assetExportPlanPreview.assets.find((asset) => asset.id === assetId) ?? null;
+}
+
+function assetReviewActions(asset: AssetPreviewRecord): AssetReviewAction[] {
+  const libraryPath = 'examples/kosmo-assets/kosmo-asset-demo/library.json';
+  const commands: AssetReviewAction[] = [
+    {
+      id: 'library-check',
+      label: 'Bibliothek prüfen',
+      kicker: 'QA',
+      description: 'Validiert Rechte, Formate, Exportziele und Pflichtfelder der Asset-Bibliothek.',
+      command: `npm run kosmo:asset-library-check -- --library ${libraryPath}`
+    },
+    {
+      id: 'export-plan',
+      label: 'Exportplan',
+      kicker: 'Route',
+      description: 'Erzeugt den lokalen Exportplan für Blender, ArchiCAD, Web und Review-Schritte.',
+      command: `npm run kosmo:asset-export-plan -- --library ${libraryPath}`
+    }
+  ];
+
+  if (asset.formats.some((format) => format.format === 'glb') || asset.export_targets.includes('blender')) {
+    commands.push({
+      id: 'generate-glb',
+      label: 'GLB erzeugen',
+      kicker: '3D',
+      description: 'Generiert oder aktualisiert das diagrammatische GLB-Demoasset mit Layerprofil.',
+      command: `npm run kosmo:asset-generate-demo-glb -- --library ${libraryPath} --asset ${asset.id}`
+    });
+  }
+
+  if (asset.formats.some((format) => format.format === 'dxf') || asset.export_targets.includes('archicad') || asset.export_targets.includes('cad')) {
+    commands.push({
+      id: 'generate-dxf',
+      label: 'DXF erzeugen',
+      kicker: '2D',
+      description: 'Generiert oder aktualisiert das diagrammatische DXF-Planzeichen oder den Bauteil-Footprint.',
+      command: `npm run kosmo:asset-generate-demo-dxf -- --library ${libraryPath} --asset ${asset.id}`
+    });
+  }
+
+  commands.push({
+    id: 'brain-doctor',
+    label: 'Brain prüfen',
+    kicker: 'Brain',
+    description: 'Prüft die lokale Tool-Registry und meldet fehlende Review-Artefakte, ohne etwas zu veröffentlichen.',
+    command: 'npm run brain:doctor'
+  });
+
+  return commands;
 }
 
 type GeneratedAssetProfile = {
