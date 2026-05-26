@@ -89,6 +89,27 @@ Dieses GLB ist ein lokales Review-Bauteil, keine vermessene BIM-Komponente und
 kein oeffentlicher Download. Es dient dazu, Scale, Origin, Layernamen und den
 Blender/Web/ArchiCAD-Austausch frueh zu pruefen.
 
+## Demo-DXF
+
+Das erste lokale 2D-/CAD-Testasset erzeugt das Achsensymbol als DXF:
+
+```bash
+npm run kosmo:asset-generate-demo-dxf -- \
+  --library examples/kosmo-assets/kosmo-asset-demo/library.json \
+  --asset axis-marker-svg-001
+```
+
+Der Generator schreibt:
+
+```text
+examples/kosmo-assets/kosmo-asset-demo/assets/dxf/axis-marker-svg-001.dxf
+examples/kosmo-assets/kosmo-asset-demo/review/asset-dxf-generation.generated.json
+examples/kosmo-assets/kosmo-asset-demo/review/asset-dxf-generation.generated.md
+```
+
+Auch dieses DXF ist ein lokales Review-Asset. Es prueft Layernamen, Scale und
+CAD-Austausch, ohne daraus einen oeffentlichen Download zu machen.
+
 ## Asset-Typen
 
 V1 unterstuetzt die wichtigsten spaeteren Bibliotheksgruppen:

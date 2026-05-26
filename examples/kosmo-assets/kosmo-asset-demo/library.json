@@ -53,7 +53,8 @@
             "archicad",
             "generic"
           ],
-          "status": "planned"
+          "status": "exists",
+          "path": "assets/dxf/axis-marker-svg-001.dxf"
         }
       ],
       "preview": {
@@ -72,9 +73,23 @@
         "axis",
         "annotation",
         "plan",
-        "kosmo-style"
+        "kosmo-style",
+        "dxf",
+        "cad-export"
       ],
-      "material_tags": []
+      "material_tags": [],
+      "generated_asset_profile": {
+        "generated_at": "2026-05-26T13:10:26.001Z",
+        "generator": "kosmo-asset-generate-demo-dxf",
+        "status": "local_review_dxf_generated",
+        "caveat": "Diagrammatic axis symbol only. It is not a measured project drawing or public release.",
+        "entity_count": 7,
+        "layer_names": [
+          "KOSMO_AXIS_PRIMARY",
+          "KOSMO_AXIS_SECONDARY",
+          "KOSMO_TEXT"
+        ]
+      }
     },
     {
       "id": "warm-concrete-material-001",

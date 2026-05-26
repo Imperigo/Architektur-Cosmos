@@ -2588,6 +2588,12 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
   const accent = assetAccent(asset);
   const confidence = Math.round(asset.confidence * 100);
   const generatedProfile = assetGeneratedProfile(asset);
+  const generatedLayerLabel = generatedProfile?.status.includes('dxf') ? 'CAD-Layer' : '3D-Layer';
+  const generatedMetric = generatedProfile && 'triangle_count' in generatedProfile
+    ? `${generatedProfile.triangle_count} Dreiecke`
+    : generatedProfile && 'entity_count' in generatedProfile
+      ? `${generatedProfile.entity_count} DXF-Elemente`
+      : null;
   const localFormats = asset.formats
     .map((format) => ({ ...format, path: 'path' in format ? format.path : undefined }))
     .filter((format) => format.status === 'exists' && format.path);
@@ -2634,8 +2640,8 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
 
       {generatedProfile ? (
         <div className="kosmo-asset-inspector-section kosmo-asset-layer-preview">
-          <strong>3D-Layer</strong>
-          <div className="kosmo-asset-layer-stack" aria-label={`${asset.title} 3D Layer`}>
+          <strong>{generatedLayerLabel}</strong>
+          <div className="kosmo-asset-layer-stack" aria-label={`${asset.title} ${generatedLayerLabel}`}>
             {generatedProfile.layer_names.map((layer, index) => (
               <span key={`${asset.id}-${layer}`} style={{ '--layer-index': index } as CSSProperties}>
                 <i />
@@ -2643,7 +2649,7 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
               </span>
             ))}
           </div>
-          <p>{generatedProfile.triangle_count} Dreiecke · {formatAssetValue(generatedProfile.status)}</p>
+          <p>{generatedMetric ? `${generatedMetric} · ` : ''}{formatAssetValue(generatedProfile.status)}</p>
         </div>
       ) : null}
 

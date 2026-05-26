@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-26T12:54:21.273Z",
+  "generated_at": "2026-05-26T13:10:26.008Z",
   "generator": "kosmo-asset-library-check",
   "library_path": "examples/kosmo-assets/kosmo-asset-demo/library.json",
   "library_id": "kosmo-asset-demo",
@@ -62,8 +62,8 @@
         "dxf"
       ],
       "preview_kind": "axis_marker",
-      "existing_format_count": 1,
-      "planned_format_count": 1,
+      "existing_format_count": 2,
+      "planned_format_count": 0,
       "export_targets": [
         "svg",
         "dxf",
@@ -74,7 +74,9 @@
         "axis",
         "annotation",
         "plan",
-        "kosmo-style"
+        "kosmo-style",
+        "dxf",
+        "cad-export"
       ]
     },
     {

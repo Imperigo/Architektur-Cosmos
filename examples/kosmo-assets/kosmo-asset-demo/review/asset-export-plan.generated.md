@@ -1,7 +1,7 @@
 # KosmoAsset Export Plan
 
 Library: `kosmo-asset-demo`
-Generated: 2026-05-26T12:54:21.423Z
+Generated: 2026-05-26T13:10:26.029Z
 Status: `review_plan`
 
 This is a local review-only export plan. It does not upload assets, write D1/R2 or create public downloads.
@@ -10,8 +10,8 @@ This is a local review-only export plan. It does not upload assets, write D1/R2 
 
 - assets: 3
 - ready routes: 0
-- review routes: 9
-- planned routes: 1
+- review routes: 10
+- planned routes: 0
 - blocked routes: 1
 
 ## Asset Routes
@@ -19,7 +19,7 @@ This is a local review-only export plan. It does not upload assets, write D1/R2 
 | Asset | Target | Status | Required formats | Blockers |
 | --- | --- | --- | --- | --- |
 | Kosmo Axis Marker | svg | needs_review | svg | - |
-| Kosmo Axis Marker | dxf | planned | dxf | Required format planned but not generated: dxf |
+| Kosmo Axis Marker | dxf | needs_review | dxf | - |
 | Kosmo Axis Marker | web | needs_review | svg, glb, webp, png | Web/public route remains private because public_use_allowed or rights are not public-safe. |
 | Kosmo Axis Marker | layout | needs_review | svg | - |
 | Warm Concrete Study Material | blender | needs_review | material_json, blend | - |
@@ -33,17 +33,16 @@ This is a local review-only export plan. It does not upload assets, write D1/R2 
 ## Next Actions
 
 - Resolve blocked routes before exposing export buttons in the UI.
-- Generate planned DXF/GLB/GSM or material exports in local review mode.
 - Review assets with local source files before promoting them to reusable workflow assets.
 
 ## Per Asset
 
 ### Kosmo Axis Marker
 
-- existing formats: svg
-- planned formats: dxf
+- existing formats: svg, dxf
+- planned formats: -
 - public ready: no
-- next step: Generate planned formats: dxf.
+- next step: Run human review and move review_status to reviewed or verified.
 
 ### Warm Concrete Study Material
 
