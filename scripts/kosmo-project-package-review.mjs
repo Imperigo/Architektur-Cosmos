@@ -96,10 +96,11 @@ function buildReport(manifest, check) {
   if (contextReview.source_mapping_exists && contextReview.source_mapping_pending_review_count > 0) {
     warnings.push(`Context source mapping still has pending review rows: ${contextReview.source_mapping_pending_review_count}`);
   }
-  if (contextReview.source_review_exists && contextReview.source_review_open_human_review_count > 0) {
+  const hasActiveSourceReview = contextReview.selection_exists && contextReview.needs_more_source_review_count > 0;
+  if (hasActiveSourceReview && contextReview.source_review_exists && contextReview.source_review_open_human_review_count > 0) {
     warnings.push(`Context source review still has open human checks: ${contextReview.source_review_open_human_review_count}`);
   }
-  if (contextReview.source_review_design_seed_possible_after_review_count > 0 && !contextReview.ifc_semantic_proof_exists) {
+  if (hasActiveSourceReview && contextReview.source_review_design_seed_possible_after_review_count > 0 && !contextReview.ifc_semantic_proof_exists) {
     warnings.push('IFC semantic proof is missing for source-review design-seed candidate.');
   }
   if (contextReview.ifc_semantic_proof_proxy_count > 0 && !contextReview.ifc_geometry_preview_ready) {
@@ -476,6 +477,7 @@ function readJsonl(pathname) {
 function nextActions({ modules, gates, blockers, warnings, outputs, contextReview }) {
   if (blockers.length) return ['Fix missing artifacts or invalid JSON before continuing.'];
   const actions = [];
+  const hasActiveSourceReview = contextReview?.selection_exists && contextReview.needs_more_source_review_count > 0;
   if (contextReview?.candidate_count > 0 && !contextReview.matrix_exists) actions.push('Create design/context-decision-matrix.generated.json from context candidates.');
   if (contextReview?.candidate_count > 0 && !contextReview.selection_exists) actions.push('Create design/context-selection.json from context candidates.');
   if (contextReview?.selection_exists && contextReview.undecided_count > 0) actions.push('Review context-selection decisions before using candidates as design input.');
@@ -484,13 +486,13 @@ function nextActions({ modules, gates, blockers, warnings, outputs, contextRevie
   if (contextReview?.source_mapping_pending_review_count > 0) actions.push('Review pending source-mapping rows before syncing decisions to context-selection.');
   if (contextReview?.selection_exists && contextReview.needs_more_source_review_count > 0 && !contextReview.source_review_exists) actions.push('Create design/context-source-review.generated.json for candidates marked needs_more_source_review.');
   if (contextReview?.selection_exists && contextReview.needs_more_source_review_count > 0) actions.push('Verify sources for context-selection candidates marked needs_more_source_review.');
-  if (contextReview?.source_review_design_seed_possible_after_review_count > 0 && !contextReview.ifc_semantic_proof_exists) actions.push('Run npm run kosmo:ifc-semantic-proof for semantic IFC evidence before design-seed review.');
-  if (contextReview?.source_review_design_seed_possible_after_review_count > 0 && !contextReview.ifcopenshell_review_ready) actions.push('Run npm run kosmo:ifcopenshell-review to open the IFC through IfcOpenShell before any design-seed review.');
-  if (contextReview?.ifc_semantic_proof_exists && contextReview?.source_review_open_human_review_count > 0) actions.push('Human-review IFC semantic proof before changing IFC source-review decision.');
+  if (hasActiveSourceReview && contextReview?.source_review_design_seed_possible_after_review_count > 0 && !contextReview.ifc_semantic_proof_exists) actions.push('Run npm run kosmo:ifc-semantic-proof for semantic IFC evidence before design-seed review.');
+  if (hasActiveSourceReview && contextReview?.source_review_design_seed_possible_after_review_count > 0 && !contextReview.ifcopenshell_review_ready) actions.push('Run npm run kosmo:ifcopenshell-review to open the IFC through IfcOpenShell before any design-seed review.');
+  if (hasActiveSourceReview && contextReview?.ifc_semantic_proof_exists && contextReview?.source_review_open_human_review_count > 0) actions.push('Human-review IFC semantic proof before changing IFC source-review decision.');
   if (contextReview?.ifc_semantic_proof_proxy_count > 0 && !contextReview.ifc_geometry_preview_ready) actions.push('Run npm run kosmo:ifc-geometry-preview for a visual IFC top-projection review.');
   if (contextReview?.ifc_geometry_preview_ready && contextReview?.source_mapping_accepted_as_context_count > 0 && !contextReview.ifc_dxf_alignment_preview_ready) actions.push('Run npm run kosmo:ifc-dxf-alignment-preview to compare IFC bboxes with accepted DXF context.');
   if (contextReview?.ifc_geometry_preview_ready && !contextReview.ifc_layer_plan_ready) actions.push('Run npm run kosmo:ifc-layer-plan to propose Blender collections and ArchiCAD layers.');
-  if (contextReview?.source_review_open_human_review_count > 0 && contextReview?.ifc_layer_plan_ready && !contextReview.ifc_human_review_pack_exists) actions.push('Run npm run kosmo:ifc-human-review-pack to gather IFC evidence into a human checklist.');
+  if (hasActiveSourceReview && contextReview?.source_review_open_human_review_count > 0 && contextReview?.ifc_layer_plan_ready && !contextReview.ifc_human_review_pack_exists) actions.push('Run npm run kosmo:ifc-human-review-pack to gather IFC evidence into a human checklist.');
   if (contextReview?.ifc_human_review_pack_evidence_ready && !contextReview.ifc_human_review_viewer_ready) actions.push('Run npm run kosmo:ifc-review-viewer to create the local IFC human decision dashboard.');
   if (contextReview?.ifc_human_review_viewer_ready && !contextReview.ifc_human_review_guide_ready) actions.push('Run npm run kosmo:ifc-human-review-guide to create the project-specific human IFC review Anleitung.');
   if (contextReview?.ifc_human_review_guide_ready && !contextReview.ifc_human_review_session_exists) actions.push('Run npm run kosmo:ifc-human-review-session to create the editable human IFC review session log.');

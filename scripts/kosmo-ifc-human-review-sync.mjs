@@ -130,6 +130,27 @@ function buildOperations({ selection, sourceMapping, decision, mappedDecision, c
       reviewer
     });
   }
+  if (mappingRow && mappingRow.current_context_selection_decision !== mappedDecision) {
+    operations.push({
+      target: 'design/context-source-mapping.json',
+      action: 'update_source_mapping_context_decision',
+      mapping_id: mappingRow.mapping_id,
+      from: mappingRow.current_context_selection_decision,
+      to: mappedDecision,
+      reviewer
+    });
+  }
+  const mappedReviewStatus = sourceReviewStatusForDecision(decision.decision, mappedDecision);
+  if (mappingRow && mappedReviewStatus && mappingRow.source_review_status !== mappedReviewStatus) {
+    operations.push({
+      target: 'design/context-source-mapping.json',
+      action: 'update_source_mapping_review_status',
+      mapping_id: mappingRow.mapping_id,
+      from: mappingRow.source_review_status,
+      to: mappedReviewStatus,
+      reviewer
+    });
+  }
   if (sourceMapping && decision.decision === 'accepted_as_design_seed' && sourceMapping.review?.semantic_ifc_reviewed !== true) {
     operations.push({
       target: 'design/context-source-mapping.json',
@@ -193,6 +214,9 @@ function syncSourceMapping({ sourceMapping, decision, mappedDecision, candidateI
   const timestamp = new Date().toISOString();
   if (row) {
     row.decision = mappedDecision;
+    row.current_context_selection_decision = mappedDecision;
+    const mappedReviewStatus = sourceReviewStatusForDecision(decision.decision, mappedDecision);
+    if (mappedReviewStatus) row.source_review_status = mappedReviewStatus;
     row.review_required = mappedDecision === 'pending_review' || mappedDecision === 'needs_more_source_review';
     row.approved_by = reviewer;
     row.approved_at = timestamp;
@@ -282,6 +306,14 @@ function mapDecision(decision) {
   if (decision === 'accepted_as_context') return 'accepted_as_context';
   if (decision === 'accepted_as_design_seed') return 'accepted_as_design_seed';
   if (decision === 'rejected') return 'rejected';
+  return null;
+}
+
+function sourceReviewStatusForDecision(sourceDecision, mappedDecision) {
+  if (mappedDecision === 'needs_more_source_review') return 'pending';
+  if (['accepted_as_context', 'accepted_as_design_seed', 'rejected'].includes(sourceDecision)) {
+    return 'confirmed_by_ifc_human_review';
+  }
   return null;
 }
 

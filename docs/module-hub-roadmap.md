@@ -102,6 +102,12 @@ Mögliche Werkzeuge:
 - Blender-Importprofile
 - ArchiCAD-Austauschprofile
 - Gaussian-Splat- oder Photogrammetrie-Pipeline für eigene Quellen
+- Architekturkosmos Qualitätszertifikat: spaeterer Review-Nachweis fuer
+  menschlich gepruefte architektonische Entscheidungen, Quellen, Kontext,
+  Modell-/Planqualitaet und Abgrenzung gegen ungeprueften KI-Output. Der
+  Zertifikatspfad soll Human-Review-Sessions, Decision-Records, Source-Gates,
+  Rights-Gates und ggf. Signaturen zusammenfuehren, ohne automatisch zu
+  behaupten, dass ein KI-generierter Inhalt architektonisch belastbar ist.
 
 ### KosmoShop
 

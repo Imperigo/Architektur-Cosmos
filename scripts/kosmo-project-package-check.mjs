@@ -203,11 +203,11 @@ function checkContextSelection() {
   if (sourceReviewSelections.length && !sourceMapping) warnings.push('Context selection has source-review candidates, but design/context-source-mapping.json is missing.');
   if (sourceReviewSelections.length && !sourceReview) warnings.push('Context selection has source-review candidates, but design/context-source-review.generated.json is missing.');
   if (sourceMapping?.summary?.pending_review_count > 0) warnings.push(`Context source mapping has pending review rows: ${sourceMapping.summary.pending_review_count}`);
-  if (sourceReview?.summary?.open_human_review_count > 0) warnings.push(`Context source review has open human checks: ${sourceReview.summary.open_human_review_count}`);
-  if (sourceReview?.summary?.design_seed_possible_after_review_count > 0 && !ifcSemanticProof) {
+  if (sourceReviewSelections.length && sourceReview?.summary?.open_human_review_count > 0) warnings.push(`Context source review has open human checks: ${sourceReview.summary.open_human_review_count}`);
+  if (sourceReviewSelections.length && sourceReview?.summary?.design_seed_possible_after_review_count > 0 && !ifcSemanticProof) {
     warnings.push('Context source review has an IFC design-seed candidate, but design/ifc-semantic-proof.generated.json is missing.');
   }
-  if (sourceReview?.summary?.design_seed_possible_after_review_count > 0 && !ifcOpenShellReviewReady) {
+  if (sourceReviewSelections.length && sourceReview?.summary?.design_seed_possible_after_review_count > 0 && !ifcOpenShellReviewReady) {
     warnings.push('Context source review has an IFC design-seed candidate, but design/ifcopenshell-semantic-review.generated.json is missing or incomplete.');
   }
   if (ifcSemanticProof?.summary?.ifcbuildingelementproxy_count > 0 && !ifcGeometryPreviewReady) {
