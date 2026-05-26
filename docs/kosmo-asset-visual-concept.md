@@ -54,6 +54,8 @@ Die erste Website-Version ist eine statische Landing-Ansicht:
   Surface-Namen;
 - erzeugt mit `npm run kosmo:asset-handoff-bundle` eine review-only
   Blender-Python-Vorlage und einen ArchiCAD-Layer-/Surface-Schedule;
+- prueft mit `npm run kosmo:asset-handoff-smoke` die lokalen Handoff-Dateien
+  ohne Asset-Import, Projektdatei-Write oder Public-Gate;
 - erzeugt mit `npm run kosmo:asset-generate-demo-glb` ein erstes lokales,
   analytisches GLB-Bauteil fuer Blender/Web/ArchiCAD-Tests;
 - erzeugt mit `npm run kosmo:asset-generate-demo-dxf` erste lokale

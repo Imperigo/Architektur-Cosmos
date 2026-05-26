@@ -103,21 +103,31 @@ function checkIncludes(source, needle, label) {
 
 function findTinyFontSizes(source, file) {
   const warnings = [];
-  const regex = /font(?:-size)?[={:]\s*["']?(?:text-\[)?([0-9.]+)px/g;
-  let match;
+  const lines = source.split('\n');
+  const patterns = [
+    /font-size\s*:\s*([0-9.]+)px/g,
+    /fontSize\s*[=:]\s*["']?([0-9.]+)px/g,
+    /text-\[([0-9.]+)px\]/g
+  ];
 
-  while ((match = regex.exec(source)) !== null) {
-    const size = Number(match[1]);
-    if (Number.isFinite(size) && size < 8) {
-      warnings.push({
-        type: 'tiny-font',
-        file,
-        line: lineNumber(source, match.index),
-        value: `${size}px`,
-        note: 'Tiny SVG/meta text may be intentional, but do not use it for touch UI or readable panel content.'
-      });
+  lines.forEach((line, index) => {
+    for (const pattern of patterns) {
+      pattern.lastIndex = 0;
+      let match;
+      while ((match = pattern.exec(line)) !== null) {
+        const size = Number(match[1]);
+        if (Number.isFinite(size) && size < 8) {
+          warnings.push({
+            type: 'tiny-font',
+            file,
+            line: index + 1,
+            value: `${size}px`,
+            note: 'Tiny SVG/meta text may be intentional, but do not use it for touch UI or readable panel content.'
+          });
+        }
+      }
     }
-  }
+  });
 
   return warnings.slice(0, 40);
 }
@@ -142,8 +152,4 @@ function findUnboundedNowrap(source, file) {
   });
 
   return warnings;
-}
-
-function lineNumber(source, index) {
-  return source.slice(0, index).split('\n').length;
 }

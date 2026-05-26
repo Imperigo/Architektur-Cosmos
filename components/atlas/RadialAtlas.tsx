@@ -3012,6 +3012,13 @@ function assetReviewActions(asset: AssetPreviewRecord): AssetReviewAction[] {
       command: `npm run kosmo:asset-handoff-bundle -- --library ${libraryPath}`
     },
     {
+      id: 'handoff-smoke',
+      label: 'Smoke',
+      kicker: 'QA',
+      description: 'Prueft Blender-Python, ArchiCAD-CSV, lokale Quellen und blockierte Public-Gates ohne Asset-Import.',
+      command: `npm run kosmo:asset-handoff-smoke -- --library ${libraryPath}`
+    },
+    {
       id: 'review-pack',
       label: 'Review-Pack',
       kicker: 'Review',

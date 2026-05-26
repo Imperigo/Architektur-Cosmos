@@ -131,6 +131,27 @@ Die Blender-Datei ist standardmaessig nicht mutierend (`ALLOW_SCENE_WRITE =
 False`). Die ArchiCAD-Datei ist nur ein Layer-/Surface-Schedule fuer manuelle
 Review und spaetere Exchange-Tests.
 
+## Handoff-Smoke
+
+Das Handoff-Bundle kann lokal geprueft werden, bevor jemand die Dateien in
+Blender oder ArchiCAD anschaut:
+
+```bash
+npm run kosmo:asset-handoff-smoke -- \
+  --library examples/kosmo-assets/kosmo-asset-demo/library.json
+```
+
+Der Smoke schreibt:
+
+```text
+examples/kosmo-assets/kosmo-asset-demo/review/asset-handoff-smoke.generated.json
+examples/kosmo-assets/kosmo-asset-demo/review/asset-handoff-smoke.generated.md
+```
+
+Er fuehrt die Blender-Python-Datei im Review-only-Modus aus, prueft
+`ALLOW_SCENE_WRITE = False`, CSV-Zeilen, lokale Source-Dateien und blockierte
+Public-Gates. Er importiert keine Assets und schreibt keine Projektdateien.
+
 ## Demo-GLB
 
 Das erste lokale 3D-Testasset wird bewusst klein und analytisch erzeugt:

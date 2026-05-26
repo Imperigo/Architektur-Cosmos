@@ -1,0 +1,100 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-05-26T19:31:59.316Z",
+  "generator": "kosmo-asset-handoff-smoke",
+  "library_path": "examples/kosmo-assets/kosmo-asset-demo/library.json",
+  "bundle_path": "examples/kosmo-assets/kosmo-asset-demo/review/asset-handoff-bundle.generated.json",
+  "status": "handoff_smoke_passed",
+  "policy": {
+    "no_uploads": true,
+    "no_public_downloads": true,
+    "no_project_file_writes": true,
+    "smoke_does_not_import_assets": true
+  },
+  "summary": {
+    "check_count": 12,
+    "passed_checks": 12,
+    "failure_count": 0,
+    "blender_row_count": 2,
+    "archicad_row_count": 3,
+    "open_review_count": 3
+  },
+  "outputs": {
+    "smoke_json": "examples/kosmo-assets/kosmo-asset-demo/review/asset-handoff-smoke.generated.json",
+    "smoke_markdown": "examples/kosmo-assets/kosmo-asset-demo/review/asset-handoff-smoke.generated.md",
+    "blender_python": "examples/kosmo-assets/kosmo-asset-demo/review/asset-blender-handoff.generated.py",
+    "archicad_schedule_csv": "examples/kosmo-assets/kosmo-asset-demo/review/asset-archicad-schedule.generated.csv"
+  },
+  "checks": [
+    {
+      "id": "bundle_status",
+      "status": "passed",
+      "label": "Bundle status is local_review_handoff_bundle."
+    },
+    {
+      "id": "review_only_policy",
+      "status": "passed",
+      "label": "Bundle policy stays review-only, no uploads and no public downloads."
+    },
+    {
+      "id": "blender_output_exists",
+      "status": "passed",
+      "label": "Blender handoff exists at examples/kosmo-assets/kosmo-asset-demo/review/asset-blender-handoff.generated.py."
+    },
+    {
+      "id": "archicad_output_exists",
+      "status": "passed",
+      "label": "ArchiCAD CSV exists at examples/kosmo-assets/kosmo-asset-demo/review/asset-archicad-schedule.generated.csv."
+    },
+    {
+      "id": "blender_write_gate",
+      "status": "passed",
+      "label": "Blender script keeps ALLOW_SCENE_WRITE = False."
+    },
+    {
+      "id": "blender_no_file_write_ops",
+      "status": "passed",
+      "label": "Blender script does not call save/open mainfile operators."
+    },
+    {
+      "id": "blender_runtime_smoke",
+      "status": "passed",
+      "label": "Blender Python handoff runs in review-only mode without importing bpy."
+    },
+    {
+      "id": "csv_header",
+      "status": "passed",
+      "label": "ArchiCAD CSV header matches the handoff contract."
+    },
+    {
+      "id": "csv_row_count",
+      "status": "passed",
+      "label": "ArchiCAD CSV has 3 data rows."
+    },
+    {
+      "id": "csv_review_locked",
+      "status": "passed",
+      "label": "ArchiCAD rows remain unapproved and open for human review."
+    },
+    {
+      "id": "source_files_exist",
+      "status": "passed",
+      "label": "All referenced local source files exist."
+    },
+    {
+      "id": "public_gates_blocked",
+      "status": "passed",
+      "label": "All public gates remain blocked."
+    }
+  ],
+  "python_runtime": {
+    "command": "python3 examples/kosmo-assets/kosmo-asset-demo/review/asset-blender-handoff.generated.py",
+    "ok": true,
+    "status": 0,
+    "stdout": "KosmoAsset Blender handoff\n- Warm Concrete Study Material: create_material_from_parameters -> KOSMO_ASSET/material/warm-concrete-material-001\n  review gate: not approved for production import\n- Generic Column GLB Slot: link_glb_as_collection -> KOSMO_ASSET/structure/generic-column-glb-001\n  review gate: not approved for production import\nReview-only mode. Set ALLOW_SCENE_WRITE = True only inside an approved smoke-test file.",
+    "stderr": ""
+  },
+  "next_actions": [
+    "Handoff bundle is ready for human review-only smoke tests. Keep ALLOW_SCENE_WRITE disabled until explicit approval."
+  ]
+}

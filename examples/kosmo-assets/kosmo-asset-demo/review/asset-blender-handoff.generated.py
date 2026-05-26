@@ -19,14 +19,14 @@ ASSETS = [
       "blender/principled_bsdf",
       "archicad/material/concrete/review"
     ],
-    "approved_for_import": false
+    "approved_for_import": False
   },
   {
     "id": "generic-column-glb-001",
     "title": "Generic Column GLB Slot",
     "collection_name": "KOSMO_ASSET/structure/generic-column-glb-001",
     "import_mode": "link_glb_as_collection",
-    "material_name": null,
+    "material_name": None,
     "source_file": "examples/kosmo-assets/kosmo-asset-demo/assets/models/generic-column-glb-001.glb",
     "layer_names": [
       "structure/column_core_round",
@@ -39,7 +39,7 @@ ASSETS = [
       "KOSMO_AXIS",
       "KOSMO_TEXT"
     ],
-    "approved_for_import": false
+    "approved_for_import": False
   }
 ]
 
