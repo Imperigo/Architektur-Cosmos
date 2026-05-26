@@ -14,6 +14,7 @@ import brainTools from '@/data/brain-tools.json';
 import reviewQueue from '@/data/review-queue.json';
 import assetExportPlanPreview from '@/examples/kosmo-assets/kosmo-asset-demo/review/asset-export-plan.generated.json';
 import assetLibraryPreview from '@/examples/kosmo-assets/kosmo-asset-demo/library.json';
+import assetReviewPackPreview from '@/examples/kosmo-assets/kosmo-asset-demo/review/asset-review-pack.generated.json';
 import { atlasSize, styleSectors } from '@/lib/atlas-layout';
 import { kosmoOrbitModules, type KosmoModuleId, type KosmoOrbitModule } from '@/lib/kosmo-modules';
 import { publicDisplayMediaUrl } from '@/lib/media';
@@ -46,6 +47,7 @@ type VisualPan = {
 type IntroState = 'intro' | 'hub' | 'asset' | 'launching' | 'idle';
 type AssetPreviewRecord = (typeof assetLibraryPreview.assets)[number];
 type AssetExportPlanRecord = (typeof assetExportPlanPreview.assets)[number];
+type AssetReviewPackRecord = (typeof assetReviewPackPreview.assets)[number];
 type AssetFamilyFilter = 'all' | '2d' | 'material' | '3d';
 type AssetReviewAction = {
   id: string;
@@ -2464,6 +2466,7 @@ function KosmoAssetWorkspace({ onReturnToHub }: { onReturnToHub: () => void }) {
   const exportTargets = [...new Set(assets.flatMap((asset) => asset.export_targets))];
   const existingFormats = assets.reduce((total, asset) => total + asset.formats.filter((format) => format.status === 'exists').length, 0);
   const plannedFormats = assets.reduce((total, asset) => total + asset.formats.filter((format) => format.status === 'planned').length, 0);
+  const reviewSummary = assetReviewPackPreview.summary;
 
   return (
     <div className="kosmo-asset-workspace cosmos-text-safe">
@@ -2513,6 +2516,7 @@ function KosmoAssetWorkspace({ onReturnToHub }: { onReturnToHub: () => void }) {
               <MetricBlock label="Vorhanden" value={String(existingFormats)} />
               <MetricBlock label="Geplant" value={String(plannedFormats)} />
               <MetricBlock label="Formate" value={String(formats.length)} />
+              <MetricBlock label="Review offen" value={String(reviewSummary.open_human_review_count)} />
               <MetricBlock label="Exportziele" value={String(exportTargets.length)} />
             </div>
 
@@ -2597,6 +2601,7 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
   const accent = assetAccent(asset);
   const confidence = Math.round(asset.confidence * 100);
   const exportPlan = assetExportPlan(asset.id);
+  const reviewPack = assetReviewPack(asset.id);
   const generatedProfiles = assetGeneratedProfiles(asset);
   const generatedProfile = generatedProfiles[0] ?? null;
   const secondaryGeneratedProfiles = generatedProfiles.slice(1);
@@ -2704,6 +2709,35 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
         </div>
       ) : null}
 
+      {reviewPack ? (
+        <div className="kosmo-asset-inspector-section kosmo-asset-decision-card">
+          <strong>Entscheidkarte</strong>
+          <div className="kosmo-asset-decision-status">
+            <span data-status={reviewPack.human_review_status}>
+              <small>Menschliche Prüfung</small>
+              <b>{formatAssetValue(reviewPack.human_review_status)}</b>
+            </span>
+            <span data-status={reviewPack.public_ready ? 'ready' : 'private'}>
+              <small>Public Gate</small>
+              <b>{reviewPack.public_ready ? 'bereit' : 'gesperrt'}</b>
+            </span>
+            <span data-status={reviewPack.local_ready ? 'ready' : 'missing'}>
+              <small>Lokal</small>
+              <b>{reviewPack.local_ready ? 'bereit' : 'fehlt'}</b>
+            </span>
+          </div>
+          <div className="kosmo-asset-decision-checklist">
+            {reviewPack.checklist.map((item) => (
+              <span key={`${asset.id}-${item.id}`} data-status={item.status}>
+                <i />
+                <b>{assetChecklistLabel(item.id, item.label)}</b>
+              </span>
+            ))}
+          </div>
+          <p>Vorschlag: {formatAssetValue(reviewPack.suggested_decision)}</p>
+        </div>
+      ) : null}
+
       <div className="kosmo-asset-inspector-section kosmo-asset-review-actions">
         <strong>Review-Aktionen</strong>
         <p>Lokale Brain-Befehle für Prüfung und Export. Sie erzeugen Review-Dateien, aber keine Cloud-Uploads.</p>
@@ -2778,9 +2812,17 @@ function AssetPreviewGraphic({ asset }: { asset: AssetPreviewRecord }) {
 
 function GeneratedAssetPreview({ asset, profile }: { asset: AssetPreviewRecord; profile: GeneratedAssetProfile }) {
   const isDxf = profile.status.includes('dxf');
+  const isMaterial = profile.status.includes('material');
   const accent = assetAccent(asset);
-  const metric = generatedProfileMetric(profile)?.replace('Dreiecke', 'tris').replace('DXF-Elemente', 'entities') ?? 'review';
+  const metric = generatedProfileMetric(profile)
+    ?.replace('Dreiecke', 'tris')
+    .replace('DXF-Elemente', 'entities')
+    .replace('Parameter', 'params') ?? 'review';
   const visibleLayers = profile.layer_names.slice(0, 5);
+  const preview = asset.preview;
+  const primary = preview?.primary ?? accent;
+  const secondary = preview?.secondary ?? '#f7f7f4';
+  const swatches = preview?.swatches ?? [primary, secondary, accent];
 
   if (isDxf) {
     return (
@@ -2790,6 +2832,29 @@ function GeneratedAssetPreview({ asset, profile }: { asset: AssetPreviewRecord; 
         <span className="kosmo-generated-dxf-axis kosmo-generated-dxf-axis-y" />
         <span className="kosmo-generated-dxf-circle kosmo-generated-dxf-circle-a" />
         <span className="kosmo-generated-dxf-circle kosmo-generated-dxf-circle-b" />
+        <b>{metric}</b>
+        <em>{visibleLayers.join(' · ')}</em>
+      </div>
+    );
+  }
+
+  if (isMaterial) {
+    return (
+      <div
+        className="kosmo-generated-preview kosmo-generated-preview-material"
+        style={{
+          '--asset-accent': accent,
+          '--preview-primary': primary,
+          '--preview-secondary': secondary
+        } as CSSProperties}
+      >
+        <span className="kosmo-generated-material-swatch" />
+        <span className="kosmo-generated-material-roughness" />
+        <span className="kosmo-generated-material-grid">
+          {swatches.slice(0, 3).map((swatch) => (
+            <i key={swatch} style={{ '--preview-swatch': swatch } as CSSProperties} />
+          ))}
+        </span>
         <b>{metric}</b>
         <em>{visibleLayers.join(' · ')}</em>
       </div>
@@ -2830,6 +2895,24 @@ function assetAccent(asset: AssetPreviewRecord) {
 
 function assetExportPlan(assetId: string): AssetExportPlanRecord | null {
   return assetExportPlanPreview.assets.find((asset) => asset.id === assetId) ?? null;
+}
+
+function assetReviewPack(assetId: string): AssetReviewPackRecord | null {
+  return assetReviewPackPreview.assets.find((asset) => asset.id === assetId) ?? null;
+}
+
+function assetChecklistLabel(id: string, fallback: string) {
+  const labels: Record<string, string> = {
+    source_basis: 'Quellenbasis dokumentiert',
+    local_files: 'Lokale Dateien vorhanden',
+    rights_gate: 'Rechte-Gate sicher',
+    public_gate: 'Public-Gate blockiert unsichere Assets',
+    review_status: 'Menschliche Review fehlt',
+    export_routes: 'Export-Routen ohne Blocker',
+    generated_profile: 'Generiertes Profil vorhanden',
+    library_check: 'Library-Check bestanden'
+  };
+  return labels[id] ?? fallback;
 }
 
 function assetReviewActions(asset: AssetPreviewRecord): AssetReviewAction[] {
@@ -2878,6 +2961,16 @@ function assetReviewActions(asset: AssetPreviewRecord): AssetReviewAction[] {
     });
   }
 
+  if (asset.asset_type.includes('material') || asset.formats.some((format) => format.format === 'material_json')) {
+    commands.push({
+      id: 'generate-material-profile',
+      label: 'Materialprofil',
+      kicker: 'Mat',
+      description: 'Generiert oder aktualisiert das lokale Materialparameter-Profil fuer Blender- und ArchiCAD-Mapping.',
+      command: `npm run kosmo:asset-generate-demo-material-profile -- --library ${libraryPath} --asset ${asset.id}`
+    });
+  }
+
   commands.push({
     id: 'brain-doctor',
     label: 'Brain prüfen',
@@ -2896,6 +2989,7 @@ type GeneratedAssetProfile = {
   caveat?: string;
   triangle_count?: number;
   entity_count?: number;
+  parameter_count?: number;
   layer_names: string[];
 };
 
@@ -2923,19 +3017,23 @@ function normalizeGeneratedProfile(profile: unknown): GeneratedAssetProfile | nu
     caveat: typeof row.caveat === 'string' ? row.caveat : undefined,
     triangle_count: typeof row.triangle_count === 'number' ? row.triangle_count : undefined,
     entity_count: typeof row.entity_count === 'number' ? row.entity_count : undefined,
+    parameter_count: typeof row.parameter_count === 'number' ? row.parameter_count : undefined,
     layer_names: row.layer_names.filter((layer): layer is string => typeof layer === 'string')
   };
 }
 
 function generatedProfilePriority(asset: AssetPreviewRecord, profile: GeneratedAssetProfile) {
+  if (asset.asset_type.includes('material') && profile.status.includes('material')) return 0;
   if (asset.asset_type.includes('glb') && profile.status.includes('glb')) return 0;
   if (asset.asset_type.includes('2d') && profile.status.includes('dxf')) return 0;
+  if (profile.status.includes('material')) return 1;
   if (profile.status.includes('glb')) return 1;
   if (profile.status.includes('dxf')) return 2;
   return 3;
 }
 
 function generatedProfileLabel(profile: GeneratedAssetProfile) {
+  if (profile.status.includes('material')) return 'Material-Layer';
   if (profile.status.includes('dxf')) return 'CAD-Layer';
   if (profile.status.includes('glb')) return '3D-Layer';
   return 'Analyse-Layer';
@@ -2944,6 +3042,7 @@ function generatedProfileLabel(profile: GeneratedAssetProfile) {
 function generatedProfileMetric(profile: GeneratedAssetProfile) {
   if (typeof profile.triangle_count === 'number') return `${profile.triangle_count} Dreiecke`;
   if (typeof profile.entity_count === 'number') return `${profile.entity_count} DXF-Elemente`;
+  if (typeof profile.parameter_count === 'number') return `${profile.parameter_count} Parameter`;
   return null;
 }
 

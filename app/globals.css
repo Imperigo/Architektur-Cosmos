@@ -5218,6 +5218,93 @@ body:has(.entry-page) {
   letter-spacing: 0.08em;
 }
 
+.kosmo-asset-decision-card {
+  border-color: color-mix(in srgb, #f5b342 32%, rgb(247 247 244 / 10%));
+  background:
+    radial-gradient(circle at 85% 0%, rgb(245 179 66 / 12%), transparent 42%),
+    linear-gradient(135deg, rgb(247 247 244 / 4%), transparent),
+    rgb(0 0 0 / 18%);
+}
+
+.kosmo-asset-decision-status {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.kosmo-asset-decision-status span {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 8px;
+  border: 1px solid rgb(247 247 244 / 10%);
+  border-radius: 10px;
+  background: rgb(247 247 244 / 4%);
+}
+
+.kosmo-asset-decision-status span[data-status="ready"] {
+  border-color: rgb(101 255 115 / 38%);
+}
+
+.kosmo-asset-decision-status span[data-status="open"],
+.kosmo-asset-decision-status span[data-status="private"] {
+  border-color: color-mix(in srgb, #f5b342 38%, rgb(247 247 244 / 10%));
+}
+
+.kosmo-asset-decision-status small,
+.kosmo-asset-decision-status b {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  text-transform: uppercase;
+}
+
+.kosmo-asset-decision-status small {
+  color: rgb(247 247 244 / 48%);
+  font-size: 8px;
+  letter-spacing: 0.12em;
+}
+
+.kosmo-asset-decision-status b {
+  color: color-mix(in srgb, var(--asset-accent) 58%, #f7f7f4);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+}
+
+.kosmo-asset-decision-checklist {
+  display: grid;
+  gap: 5px;
+}
+
+.kosmo-asset-decision-checklist span {
+  display: grid;
+  grid-template-columns: 10px minmax(0, 1fr);
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  color: rgb(247 247 244 / 66%);
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.kosmo-asset-decision-checklist i {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: rgb(101 255 115 / 78%);
+  box-shadow: 0 0 12px rgb(101 255 115 / 24%);
+}
+
+.kosmo-asset-decision-checklist span[data-status="needs_human_review"] i {
+  background: #f5b342;
+  box-shadow: 0 0 12px rgb(245 179 66 / 28%);
+}
+
+.kosmo-asset-decision-checklist b {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-weight: 560;
+}
+
 .kosmo-asset-review-actions {
   border-color: color-mix(in srgb, var(--asset-accent) 24%, rgb(247 247 244 / 10%));
   background:
@@ -5883,6 +5970,10 @@ html[data-cosmos-browser="opera"] .relation-strand {
   }
 
   .kosmo-asset-inspector-gates {
+    grid-template-columns: 1fr;
+  }
+
+  .kosmo-asset-decision-status {
     grid-template-columns: 1fr;
   }
 
