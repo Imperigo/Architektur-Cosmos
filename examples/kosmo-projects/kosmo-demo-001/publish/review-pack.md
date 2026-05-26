@@ -1,6 +1,6 @@
 # Kosmo Demo 001 Review Pack
 
-Generated: 2026-05-26T11:53:34.796Z
+Generated: 2026-05-26T12:01:31.249Z
 Project ID: `kosmo-demo-001`
 Risk level: `local_review_only`
 Readiness: `review_required`
@@ -181,6 +181,7 @@ Readiness: `review_required`
 - IFC human review session confirmed checks: 0
 - IFC human review session pending checks: 10
 - IFC human review session failed checks: 0
+- IFC human review session n/a checks: 0
 - IFC human review session decision ready: no
 - model layer handoff: ready
 - model layer handoff layer exports: 5

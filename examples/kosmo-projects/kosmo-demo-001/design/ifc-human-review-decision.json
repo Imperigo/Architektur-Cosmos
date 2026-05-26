@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-25T21:33:35.159Z",
+  "generated_at": "2026-05-26T12:01:13.792Z",
   "generator": "kosmo-ifc-human-review-decision",
   "project_id": "kosmo-demo-001",
   "project_name": "Kosmo Demo 001",
@@ -17,6 +17,8 @@
     "draft_is_not_human_approval": true,
     "accepted_as_design_seed_requires_record_final": true,
     "accepted_as_design_seed_requires_confirm_checklist": true,
+    "positive_decision_requires_completed_review_session": true,
+    "final_decision_must_match_session_proposal": true,
     "accepted_as_design_seed_requires_approve_design_generation_flag": true,
     "design_generation_still_requires_context_selection_approval": true
   },
@@ -25,7 +27,7 @@
       "path": "kosmo.project.json",
       "name": "kosmo.project.json",
       "exists": true,
-      "size_bytes": 16147
+      "size_bytes": 17586
     },
     "contextSelection": {
       "path": "design/context-selection.json",
@@ -57,6 +59,12 @@
       "exists": true,
       "size_bytes": 66817
     },
+    "humanReviewSession": {
+      "path": "design/ifc-human-review-session.json",
+      "name": "ifc-human-review-session.json",
+      "exists": true,
+      "size_bytes": 8433
+    },
     "ifcOpenShellReview": {
       "path": "design/ifcopenshell-semantic-review.generated.json",
       "name": "ifcopenshell-semantic-review.generated.json",
@@ -67,7 +75,7 @@
       "path": "design/ifc-human-review-decision.json",
       "name": "ifc-human-review-decision.json",
       "exists": true,
-      "size_bytes": 7215
+      "size_bytes": 7978
     }
   },
   "current_state": {
@@ -78,6 +86,10 @@
     "source_review_open_human_review_count": 0,
     "human_review_pack_status": "ifc_human_review_packet_incomplete",
     "human_review_viewer_status": "ifc_review_viewer_ready",
+    "human_review_session_status": "ifc_human_review_session_open",
+    "human_review_session_proposed_decision": "undecided",
+    "human_review_session_decision_ready": false,
+    "human_review_session_reviewer": null,
     "ifcopenshell_review_status": "ifcopenshell_semantic_review_ready"
   },
   "evidence_snapshot": {
@@ -175,7 +187,14 @@
     "check_count": 10,
     "confirmed_check_count": 0,
     "failed_check_count": 0,
+    "not_applicable_check_count": 0,
     "open_human_check_count": 10,
+    "review_session_exists": true,
+    "review_session_ready": false,
+    "review_session_proposed_decision": "undecided",
+    "review_session_blockers": [
+      "No proposed decision selected."
+    ],
     "evidence_ready": false,
     "recommended_next_step": "open_viewer_and_record_final_human_decision"
   },

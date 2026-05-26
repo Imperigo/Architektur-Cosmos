@@ -1,7 +1,7 @@
 # IFC Human Review Decision
 
 Project ID: `kosmo-demo-001`
-Generated: 2026-05-25T21:33:35.159Z
+Generated: 2026-05-26T12:01:13.792Z
 Status: `ifc_human_review_decision_draft`
 Candidate: `ifc-role-3-semantic_building_elements`
 Decision: `keep_needs_more_source_review`
@@ -15,7 +15,10 @@ This file records the human decision gate for the IFC candidate. It does not mod
 - evidence ready: no
 - confirmed checks: 0/10
 - failed checks: 0
+- not applicable checks: 0
 - open human checks: 10
+- review session ready: no
+- review session proposed decision: `undecided`
 - design generation approval requested: no
 - design generation approval granted: no
 - context-selection update required: no
@@ -30,6 +33,9 @@ This file records the human decision gate for the IFC candidate. It does not mod
 - source-review open human checks: 0
 - human review pack: `ifc_human_review_packet_incomplete`
 - human review viewer: `ifc_review_viewer_ready`
+- human review session: `ifc_human_review_session_open`
+- human review session reviewer: -
+- human review session decision ready: no
 
 ## Evidence Snapshot
 

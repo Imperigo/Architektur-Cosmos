@@ -249,8 +249,32 @@ function checkContextSelection() {
   if (ifcHumanReviewDecision && ifcHumanReviewDecision.summary?.final_decision_recorded !== true) {
     warnings.push('IFC human review decision exists, but final human decision is not recorded.');
   }
+  if (
+    ifcHumanReviewDecision?.summary?.final_decision_recorded === true
+    && ['accepted_as_context', 'accepted_as_design_seed'].includes(ifcHumanReviewDecision.decision)
+    && !ifcHumanReviewSession
+  ) {
+    warnings.push('IFC human review decision is positive, but design/ifc-human-review-session.json is missing.');
+  }
+  if (
+    ifcHumanReviewDecision?.summary?.final_decision_recorded === true
+    && ['accepted_as_context', 'accepted_as_design_seed'].includes(ifcHumanReviewDecision.decision)
+    && ifcHumanReviewSession?.decision_readiness?.ready !== true
+  ) {
+    warnings.push('IFC human review decision is positive, but review session is not decision-ready.');
+  }
+  if (
+    ifcHumanReviewDecision?.summary?.final_decision_recorded === true
+    && ['accepted_as_context', 'accepted_as_design_seed'].includes(ifcHumanReviewDecision.decision)
+    && ifcHumanReviewSession?.proposed_decision !== ifcHumanReviewDecision.decision
+  ) {
+    warnings.push('IFC human review decision does not match review-session proposed decision.');
+  }
   if (ifcHumanReviewDecision?.decision === 'accepted_as_design_seed' && ifcHumanReviewDecision.summary?.design_generation_approval_granted !== true) {
     warnings.push('IFC human review decision accepts a design seed, but design-generation approval is not granted.');
+  }
+  if (ifcHumanReviewDecision?.decision === 'accepted_as_design_seed' && ifcHumanReviewSession?.summary?.not_applicable_check_count > 0) {
+    warnings.push('IFC design-seed decision has not-applicable review-session checks.');
   }
   if (ifcHumanReviewDecision?.summary?.design_generation_approval_granted === true && selection.approved_for_design_generation !== true) {
     warnings.push('IFC human review grants design-generation approval, but context-selection approved_for_design_generation is still false.');

@@ -129,8 +129,35 @@ function buildReport(manifest, check) {
   if (contextReview.ifc_human_review_decision_exists && !contextReview.ifc_human_review_decision_final) {
     warnings.push('IFC human review decision exists but final human decision is not recorded.');
   }
+  if (
+    contextReview.ifc_human_review_decision_final
+    && ['accepted_as_context', 'accepted_as_design_seed'].includes(contextReview.ifc_human_review_decision)
+    && !contextReview.ifc_human_review_session_exists
+  ) {
+    warnings.push('IFC human review decision is positive but review session is missing.');
+  }
+  if (
+    contextReview.ifc_human_review_decision_final
+    && ['accepted_as_context', 'accepted_as_design_seed'].includes(contextReview.ifc_human_review_decision)
+    && !contextReview.ifc_human_review_session_decision_ready
+  ) {
+    warnings.push('IFC human review decision is positive but review session is not decision-ready.');
+  }
+  if (
+    contextReview.ifc_human_review_decision_final
+    && ['accepted_as_context', 'accepted_as_design_seed'].includes(contextReview.ifc_human_review_decision)
+    && contextReview.ifc_human_review_session_proposed_decision !== contextReview.ifc_human_review_decision
+  ) {
+    warnings.push('IFC human review decision does not match review-session proposed decision.');
+  }
   if (contextReview.ifc_human_review_decision === 'accepted_as_design_seed' && !contextReview.ifc_human_review_decision_design_generation_approval) {
     warnings.push('IFC human review decision accepts a design seed but design-generation approval is not granted.');
+  }
+  if (
+    contextReview.ifc_human_review_decision === 'accepted_as_design_seed'
+    && contextReview.ifc_human_review_session_not_applicable_check_count > 0
+  ) {
+    warnings.push('IFC design-seed decision has not-applicable review-session checks.');
   }
   if (contextReview.ifc_human_review_decision_design_generation_approval && !contextReview.approved_for_design_generation) {
     warnings.push('IFC human review grants design-generation approval but context-selection approved_for_design_generation is still false.');
@@ -385,6 +412,7 @@ function readContextReview() {
     ifc_human_review_session_confirmed_check_count: numberOrDefault(ifcHumanReviewSession?.summary?.confirmed_check_count, 0),
     ifc_human_review_session_pending_check_count: numberOrDefault(ifcHumanReviewSession?.summary?.pending_check_count, 0),
     ifc_human_review_session_failed_check_count: numberOrDefault(ifcHumanReviewSession?.summary?.failed_check_count, 0),
+    ifc_human_review_session_not_applicable_check_count: numberOrDefault(ifcHumanReviewSession?.summary?.not_applicable_check_count, 0),
     ifc_human_review_session_decision_ready: Boolean(ifcHumanReviewSession?.decision_readiness?.ready),
     model_layer_handoff_exists: Boolean(modelLayerHandoff),
     model_layer_handoff_status: modelLayerHandoff?.status || null,
@@ -647,6 +675,7 @@ function appendContextReview(lines, contextReview) {
   lines.push(`- IFC human review session confirmed checks: ${contextReview.ifc_human_review_session_confirmed_check_count}`);
   lines.push(`- IFC human review session pending checks: ${contextReview.ifc_human_review_session_pending_check_count}`);
   lines.push(`- IFC human review session failed checks: ${contextReview.ifc_human_review_session_failed_check_count}`);
+  lines.push(`- IFC human review session n/a checks: ${contextReview.ifc_human_review_session_not_applicable_check_count}`);
   lines.push(`- IFC human review session decision ready: ${contextReview.ifc_human_review_session_decision_ready ? 'yes' : 'no'}`);
   lines.push(`- model layer handoff: ${modelLayerHandoffLabel(contextReview)}`);
   lines.push(`- model layer handoff layer exports: ${contextReview.model_layer_handoff_layer_export_count}`);

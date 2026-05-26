@@ -324,8 +324,10 @@ setzt keine Entscheidung in `context-selection`.
 Ohne weitere Flags schreibt das Tool nur einen Draft und laesst Design-
 Generierung blockiert. Ein Finalentscheid braucht mindestens
 `--record-final --reviewed-by "Name"`; positive Entscheidungen brauchen
-zusaetzlich `--confirm-checklist --i-confirm-human-ifc-review`. Ein IFC-
-Design-Seed braucht darueber hinaus `--decision accepted_as_design_seed` und
+zusaetzlich eine entscheidungsbereite `design/ifc-human-review-session.json`,
+`--confirm-checklist --i-confirm-human-ifc-review` und einen Session-Vorschlag,
+der zum finalen Entscheid passt. Ein IFC-Design-Seed braucht darueber hinaus
+`--decision accepted_as_design_seed`, keine `not_applicable`-Checks und
 `--approve-design-generation`. Das Tool schreibt nur den Entscheidungsrecord
 und aendert `context-selection` oder `source-mapping` nicht selbst.
 

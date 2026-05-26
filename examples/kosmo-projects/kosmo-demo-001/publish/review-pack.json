@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-26T11:53:34.796Z",
+  "generated_at": "2026-05-26T12:01:31.249Z",
   "generator": "kosmo-project-package-review",
   "project": {
     "id": "kosmo-demo-001",
@@ -230,7 +230,7 @@
       "rights_status": "internal_only",
       "description": "Local review package scaffold.",
       "exists": true,
-      "size_bytes": 15105
+      "size_bytes": 15714
     },
     {
       "path": "design/context-decision-matrix.generated.json",
@@ -581,7 +581,7 @@
       "rights_status": "generated_needs_review",
       "description": "Human IFC decision gate for context/design-seed handling.",
       "exists": true,
-      "size_bytes": 7215
+      "size_bytes": 7978
     },
     {
       "path": "design/ifc-human-review-decision.md",
@@ -590,7 +590,7 @@
       "rights_status": "generated_needs_review",
       "description": "Human-readable IFC decision record.",
       "exists": true,
-      "size_bytes": 3555
+      "size_bytes": 3790
     },
     {
       "path": "design/ifc-human-review-sync.generated.json",
@@ -760,6 +760,7 @@
     "ifc_human_review_session_confirmed_check_count": 0,
     "ifc_human_review_session_pending_check_count": 10,
     "ifc_human_review_session_failed_check_count": 0,
+    "ifc_human_review_session_not_applicable_check_count": 0,
     "ifc_human_review_session_decision_ready": false,
     "model_layer_handoff_exists": true,
     "model_layer_handoff_status": "model_layer_handoff_ready_for_human_review",
