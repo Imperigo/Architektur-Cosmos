@@ -87,6 +87,15 @@
       "approval_required_before_public_use": false
     },
     {
+      "id": "kosmo_asset_blender_sandbox",
+      "label": "KosmoAsset Blender Sandbox",
+      "command": "npm run kosmo:asset-blender-sandbox -- --library {asset_library_path} --asset {asset_id} --route blender",
+      "output_root": "examples/kosmo-assets/{library_slug}/review",
+      "review_output": "examples/kosmo-assets/{library_slug}/review/asset-blender-sandbox-{asset_id}.generated.md",
+      "purpose": "Create a local Blender sandbox Python bridge only after a local review decision and passed handoff smoke, without opening/saving project files, uploading or publishing assets.",
+      "approval_required_before_public_use": false
+    },
+    {
       "id": "kosmo_asset_handoff_bundle",
       "label": "KosmoAsset Handoff Bundle",
       "command": "npm run kosmo:asset-handoff-bundle -- --library {asset_library_path}",

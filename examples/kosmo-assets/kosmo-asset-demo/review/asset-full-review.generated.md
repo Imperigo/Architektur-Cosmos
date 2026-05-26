@@ -1,7 +1,7 @@
 # KosmoAsset Full Review
 
 Library: `kosmo-asset-demo`
-Generated: 2026-05-26T19:54:18.022Z
+Generated: 2026-05-26T20:03:08.402Z
 Status: `asset_full_review_ready_for_human_decisions`
 
 Review-only evening batch. This command runs the local KosmoAsset review chain and does not upload, publish, write D1/R2 or approve public use.

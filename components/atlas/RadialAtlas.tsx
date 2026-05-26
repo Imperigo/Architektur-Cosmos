@@ -3147,6 +3147,13 @@ function assetReviewActions(asset: AssetPreviewRecord): AssetReviewAction[] {
       kicker: 'Gate',
       description: 'Schreibt eine lokale menschliche Freigabe-Evidenz fuer ein Asset, ohne Library, Blender, ArchiCAD oder Public-Gates zu veraendern.',
       command: `npm run kosmo:asset-review-decision -- --library ${libraryPath} --asset ${asset.id} --route ${assetDecisionRoutes(asset, assetHandoffBundle(asset.id))[0]} --decision approve-local --confirm-human-review`
+    },
+    {
+      id: 'blender-sandbox',
+      label: 'Blender Sandbox',
+      kicker: 'BPy',
+      description: 'Erzeugt eine Blender-Sandbox-Python-Datei nach lokaler Freigabe und Smoke-Test. Nur fuer kopierte Sandbox-Dateien.',
+      command: `npm run kosmo:asset-blender-sandbox -- --library ${libraryPath} --asset ${asset.id} --route blender`
     }
   ];
 

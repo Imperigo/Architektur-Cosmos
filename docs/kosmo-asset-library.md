@@ -200,6 +200,31 @@ Projektdateien, laedt nichts hoch und oeffnet keine Public-Gates. Fuer echte
 Blender-/ArchiCAD-Tests bleibt danach weiterhin eine kopierte Sandbox-Datei
 noetig.
 
+## Blender-Sandbox
+
+Nach einer lokalen Review-Entscheidung und bestandenem Handoff-Smoke kann eine
+Blender-Sandbox-Datei vorbereitet werden:
+
+```bash
+npm run kosmo:asset-blender-sandbox -- \
+  --library examples/kosmo-assets/kosmo-asset-demo/library.json \
+  --asset warm-concrete-material-001 \
+  --route blender
+```
+
+Der Output bleibt lokal:
+
+```text
+examples/kosmo-assets/kosmo-asset-demo/review/asset-blender-sandbox-warm-concrete-material-001.generated.py
+examples/kosmo-assets/kosmo-asset-demo/review/asset-blender-sandbox-warm-concrete-material-001.generated.json
+examples/kosmo-assets/kosmo-asset-demo/review/asset-blender-sandbox-warm-concrete-material-001.generated.md
+```
+
+Die Python-Datei ist fuer eine kopierte `.blend`-Sandbox gedacht. Sie erstellt
+nur `KOSMO_SANDBOX`-Collections, Material-/Layer-Platzhalter und speichert oder
+oeffnet keine Projektdateien. Aus normalem System-Python heraus beendet sie sich
+ohne Aenderungen.
+
 ## Demo-GLB
 
 Das erste lokale 3D-Testasset wird bewusst klein und analytisch erzeugt:

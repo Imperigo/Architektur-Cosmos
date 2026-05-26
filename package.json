@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "build:fresh": "rm -rf .next && next build",
+    "build:fresh": "rm -rf .next out && next build",
     "start": "next start",
     "lint": "eslint .",
     "ui:audit": "node scripts/ui-audit.mjs",
@@ -86,6 +86,7 @@
     "kosmo:asset-export-plan": "node scripts/kosmo-asset-export-plan.mjs",
     "kosmo:asset-exchange-profile": "node scripts/kosmo-asset-exchange-profile.mjs",
     "kosmo:asset-full-review": "node scripts/kosmo-asset-full-review.mjs",
+    "kosmo:asset-blender-sandbox": "node scripts/kosmo-asset-blender-sandbox.mjs",
     "kosmo:asset-handoff-bundle": "node scripts/kosmo-asset-handoff-bundle.mjs",
     "kosmo:asset-handoff-smoke": "node scripts/kosmo-asset-handoff-smoke.mjs",
     "kosmo:asset-review-decision": "node scripts/kosmo-asset-review-decision.mjs",
