@@ -1,0 +1,57 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-05-26T12:54:21.120Z",
+  "generator": "kosmo-asset-generate-demo-glb",
+  "library_id": "kosmo-asset-demo",
+  "asset_id": "generic-column-glb-001",
+  "asset_title": "Generic Column GLB Slot",
+  "status": "local_review_glb_generated",
+  "caveat": "Diagrammatic study asset only. It is not a measured BIM component or public release.",
+  "no_uploads": true,
+  "public_use_allowed": false,
+  "glb_path": "examples/kosmo-assets/kosmo-asset-demo/assets/models/generic-column-glb-001.glb",
+  "dimensions": {
+    "width_m": 0.35,
+    "depth_m": 0.35,
+    "height_m": 3,
+    "scale": "1:1 diagrammatic"
+  },
+  "geometry": {
+    "unit": "meter",
+    "origin": "component_base_center",
+    "object_count": 5,
+    "triangle_count": 176,
+    "layers": [
+      {
+        "name": "structure/column_core_round",
+        "material": "material/mineral_concrete_review",
+        "triangle_count": 128
+      },
+      {
+        "name": "structure/base_plate_reference",
+        "material": "material/kosmo_magenta_review_edge",
+        "triangle_count": 12
+      },
+      {
+        "name": "structure/top_plate_reference",
+        "material": "material/kosmo_magenta_review_edge",
+        "triangle_count": 12
+      },
+      {
+        "name": "analysis/axis_x",
+        "material": "material/kosmo_cyan_axis",
+        "triangle_count": 12
+      },
+      {
+        "name": "analysis/axis_z",
+        "material": "material/kosmo_cyan_axis",
+        "triangle_count": 12
+      }
+    ]
+  },
+  "recommended_next_review": [
+    "Open the GLB in a local viewer or Blender and confirm scale, origin and layer names.",
+    "Decide whether column, plates and axes should export as separate Blender collections.",
+    "Keep this asset local until human review promotes it beyond review_only status."
+  ]
+}

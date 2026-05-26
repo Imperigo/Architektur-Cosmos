@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-26T12:05:06.594Z",
+  "generated_at": "2026-05-26T12:54:21.273Z",
   "generator": "kosmo-asset-library-check",
   "library_path": "examples/kosmo-assets/kosmo-asset-demo/library.json",
   "library_id": "kosmo-asset-demo",
@@ -19,9 +19,9 @@
   },
   "summary": {
     "asset_count": 3,
-    "local_ready_count": 2,
+    "local_ready_count": 3,
     "public_ready_count": 0,
-    "planned_only_count": 1,
+    "planned_only_count": 0,
     "failure_count": 0,
     "warning_count": 0,
     "formats": {
@@ -112,17 +112,17 @@
       "asset_type": "glb_model",
       "category": "structure",
       "rights_status": "generated_needs_review",
-      "review_status": "planned",
+      "review_status": "draft",
       "public_use_allowed": false,
       "rights_public_safe": false,
-      "local_ready": false,
-      "planned_only": true,
+      "local_ready": true,
+      "planned_only": false,
       "formats": [
         "glb"
       ],
       "preview_kind": "wireframe_component",
-      "existing_format_count": 0,
-      "planned_format_count": 1,
+      "existing_format_count": 1,
+      "planned_format_count": 0,
       "export_targets": [
         "glb",
         "blender",
@@ -133,13 +133,14 @@
         "column",
         "structure",
         "glb",
-        "placeholder"
+        "diagrammatic",
+        "asset-review"
       ]
     }
   ],
   "failures": [],
   "warnings": [],
   "next_actions": [
-    "Generate or attach reviewed local files for planned-only assets."
+    "Library is ready for local review UI prototyping."
   ]
 }

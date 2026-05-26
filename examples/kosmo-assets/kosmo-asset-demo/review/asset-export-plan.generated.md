@@ -1,7 +1,7 @@
 # KosmoAsset Export Plan
 
 Library: `kosmo-asset-demo`
-Generated: 2026-05-26T12:41:13.858Z
+Generated: 2026-05-26T12:54:21.423Z
 Status: `review_plan`
 
 This is a local review-only export plan. It does not upload assets, write D1/R2 or create public downloads.
@@ -10,8 +10,8 @@ This is a local review-only export plan. It does not upload assets, write D1/R2 
 
 - assets: 3
 - ready routes: 0
-- review routes: 6
-- planned routes: 4
+- review routes: 9
+- planned routes: 1
 - blocked routes: 1
 
 ## Asset Routes
@@ -25,10 +25,10 @@ This is a local review-only export plan. It does not upload assets, write D1/R2 
 | Warm Concrete Study Material | blender | needs_review | material_json, blend | - |
 | Warm Concrete Study Material | archicad | needs_review | material_json, gsm | - |
 | Warm Concrete Study Material | web | needs_review | material_json, webp, png | Web/public route remains private because public_use_allowed or rights are not public-safe. |
-| Generic Column GLB Slot | glb | planned | glb | Required format planned but not generated: glb |
-| Generic Column GLB Slot | blender | planned | glb, blend | Required format planned but not generated: glb or blend |
+| Generic Column GLB Slot | glb | needs_review | glb | - |
+| Generic Column GLB Slot | blender | needs_review | glb, blend | - |
 | Generic Column GLB Slot | archicad | blocked | dxf, gsm, ifc | Missing target format: dxf or gsm or ifc |
-| Generic Column GLB Slot | web | planned | svg, glb, webp, png | Web/public route remains private because public_use_allowed or rights are not public-safe.; Required format planned but not generated: svg or glb or webp or png |
+| Generic Column GLB Slot | web | needs_review | svg, glb, webp, png | Web/public route remains private because public_use_allowed or rights are not public-safe. |
 
 ## Next Actions
 
@@ -54,8 +54,8 @@ This is a local review-only export plan. It does not upload assets, write D1/R2 
 
 ### Generic Column GLB Slot
 
-- existing formats: -
-- planned formats: glb
+- existing formats: glb
+- planned formats: -
 - public ready: no
 - next step: Generate missing target formats or remove blocked export targets.
 

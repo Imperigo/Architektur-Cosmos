@@ -6,7 +6,7 @@
   "status": "draft",
   "rights_scope": "local_review_only",
   "created_at": "2026-05-25",
-  "updated_at": "2026-05-25",
+  "updated_at": "2026-05-26",
   "storage_policy": {
     "uploads_allowed": false,
     "public_assets_allowed": false,
@@ -39,13 +39,20 @@
         {
           "format": "svg",
           "path": "assets/svg/axis-marker.svg",
-          "software": ["web", "kosmo", "generic"],
+          "software": [
+            "web",
+            "kosmo",
+            "generic"
+          ],
           "status": "exists"
         },
         {
           "format": "dxf",
           "planned_r2_key": "assets/kosmo-asset-demo/axis-marker-svg-001/axis-marker.dxf",
-          "software": ["archicad", "generic"],
+          "software": [
+            "archicad",
+            "generic"
+          ],
           "status": "planned"
         }
       ],
@@ -55,8 +62,18 @@
         "primary": "#00e7ff",
         "secondary": "#f5b342"
       },
-      "export_targets": ["svg", "dxf", "web", "layout"],
-      "tags": ["axis", "annotation", "plan", "kosmo-style"],
+      "export_targets": [
+        "svg",
+        "dxf",
+        "web",
+        "layout"
+      ],
+      "tags": [
+        "axis",
+        "annotation",
+        "plan",
+        "kosmo-style"
+      ],
       "material_tags": []
     },
     {
@@ -80,7 +97,11 @@
         {
           "format": "material_json",
           "path": "assets/materials/warm-concrete.material.json",
-          "software": ["blender", "archicad", "kosmo"],
+          "software": [
+            "blender",
+            "archicad",
+            "kosmo"
+          ],
           "status": "exists"
         }
       ],
@@ -89,35 +110,57 @@
         "label": "Beton",
         "primary": "#b9aca0",
         "secondary": "#f5b342",
-        "swatches": ["#c9beb4", "#b9aca0", "#8f8175"]
+        "swatches": [
+          "#c9beb4",
+          "#b9aca0",
+          "#8f8175"
+        ]
       },
-      "export_targets": ["blender", "archicad", "web"],
-      "tags": ["concrete", "mineral", "material-layer", "neutral"],
-      "material_tags": ["beton", "mineralisch"]
+      "export_targets": [
+        "blender",
+        "archicad",
+        "web"
+      ],
+      "tags": [
+        "concrete",
+        "mineral",
+        "material-layer",
+        "neutral"
+      ],
+      "material_tags": [
+        "beton",
+        "mineralisch"
+      ]
     },
     {
       "id": "generic-column-glb-001",
       "title": "Generic Column GLB Slot",
-      "description": "Planned 3D component slot for future Blender/ArchiCAD exchange tests.",
+      "description": "Local diagrammatic GLB component for Blender/ArchiCAD exchange tests.",
       "asset_type": "glb_model",
       "category": "structure",
       "source_kind": "generated",
       "source_basis": [
-        "Placeholder metadata for future generated model; no geometry file is stored yet."
+        "Generated inside Architecture Cosmos as a neutral analytical structural component.",
+        "No protected project plan, image or third-party model was used."
       ],
       "rights_status": "generated_needs_review",
       "license": "review_only",
       "credit": "Architecture Cosmos generated asset slot",
       "public_use_allowed": false,
       "local_only": true,
-      "review_status": "planned",
-      "confidence": 0.4,
+      "review_status": "draft",
+      "confidence": 0.58,
       "formats": [
         {
           "format": "glb",
           "planned_r2_key": "assets/kosmo-asset-demo/generic-column-glb-001/generic-column.glb",
-          "software": ["blender", "web", "archicad"],
-          "status": "planned"
+          "software": [
+            "blender",
+            "web",
+            "archicad"
+          ],
+          "status": "exists",
+          "path": "assets/models/generic-column-glb-001.glb"
         }
       ],
       "preview": {
@@ -126,14 +169,42 @@
         "primary": "#00e7ff",
         "secondary": "#ff4fd8"
       },
-      "export_targets": ["glb", "blender", "archicad", "web"],
-      "tags": ["column", "structure", "glb", "placeholder"],
-      "material_tags": ["generic"],
+      "export_targets": [
+        "glb",
+        "blender",
+        "archicad",
+        "web"
+      ],
+      "tags": [
+        "column",
+        "structure",
+        "glb",
+        "diagrammatic",
+        "asset-review"
+      ],
+      "material_tags": [
+        "beton",
+        "mineralisch"
+      ],
       "dimensions": {
         "width_m": 0.35,
         "depth_m": 0.35,
         "height_m": 3,
-        "scale": "1:1 planned"
+        "scale": "1:1 diagrammatic"
+      },
+      "generated_asset_profile": {
+        "generated_at": "2026-05-26T12:54:21.120Z",
+        "generator": "kosmo-asset-generate-demo-glb",
+        "status": "local_review_glb_generated",
+        "caveat": "Diagrammatic study asset only. It is not a measured BIM component or public release.",
+        "triangle_count": 176,
+        "layer_names": [
+          "structure/column_core_round",
+          "structure/base_plate_reference",
+          "structure/top_plate_reference",
+          "analysis/axis_x",
+          "analysis/axis_z"
+        ]
       }
     }
   ]

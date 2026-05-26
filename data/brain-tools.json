@@ -69,6 +69,15 @@
       "approval_required_before_public_use": false
     },
     {
+      "id": "kosmo_asset_generate_demo_glb",
+      "label": "KosmoAsset Demo GLB Generator",
+      "command": "npm run kosmo:asset-generate-demo-glb -- --library {asset_library_path} --asset {asset_id}",
+      "output_root": "examples/kosmo-assets/{library_slug}/assets/models",
+      "review_output": "examples/kosmo-assets/{library_slug}/review/asset-glb-generation.generated.md",
+      "purpose": "Generate a local review-only analytic GLB asset for Blender/Web/ArchiCAD exchange tests without R2 upload, D1 write or public download exposure.",
+      "approval_required_before_public_use": false
+    },
+    {
       "id": "kosmo_project_package_create",
       "label": "Kosmo Project Package Create",
       "command": "npm run kosmo:package-create -- --name \"{project_name}\" --address \"{address}\" --program \"{program}\"",

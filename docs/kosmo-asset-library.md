@@ -67,6 +67,28 @@ Er prueft:
 - Exportziele fuer Blender, ArchiCAD, Web, SVG, DXF und GLB;
 - ob geplante Assets noch echte Dateien brauchen.
 
+## Demo-GLB
+
+Das erste lokale 3D-Testasset wird bewusst klein und analytisch erzeugt:
+
+```bash
+npm run kosmo:asset-generate-demo-glb -- \
+  --library examples/kosmo-assets/kosmo-asset-demo/library.json \
+  --asset generic-column-glb-001
+```
+
+Der Generator schreibt:
+
+```text
+examples/kosmo-assets/kosmo-asset-demo/assets/models/generic-column-glb-001.glb
+examples/kosmo-assets/kosmo-asset-demo/review/asset-glb-generation.generated.json
+examples/kosmo-assets/kosmo-asset-demo/review/asset-glb-generation.generated.md
+```
+
+Dieses GLB ist ein lokales Review-Bauteil, keine vermessene BIM-Komponente und
+kein oeffentlicher Download. Es dient dazu, Scale, Origin, Layernamen und den
+Blender/Web/ArchiCAD-Austausch frueh zu pruefen.
+
 ## Asset-Typen
 
 V1 unterstuetzt die wichtigsten spaeteren Bibliotheksgruppen:

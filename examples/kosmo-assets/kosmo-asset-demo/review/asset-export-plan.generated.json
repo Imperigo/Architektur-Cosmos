@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-26T12:41:13.858Z",
+  "generated_at": "2026-05-26T12:54:21.423Z",
   "generator": "kosmo-asset-export-plan",
   "library_path": "examples/kosmo-assets/kosmo-asset-demo/library.json",
   "library_id": "kosmo-asset-demo",
@@ -18,8 +18,8 @@
   "summary": {
     "asset_count": 3,
     "ready_route_count": 0,
-    "review_route_count": 6,
-    "planned_route_count": 4,
+    "review_route_count": 9,
+    "planned_route_count": 1,
     "blocked_route_count": 1,
     "targets": {
       "svg": 1,
@@ -150,36 +150,32 @@
       "asset_type": "glb_model",
       "category": "structure",
       "rights_status": "generated_needs_review",
-      "review_status": "planned",
+      "review_status": "draft",
       "public_ready": false,
-      "existing_formats": [],
-      "planned_formats": [
+      "existing_formats": [
         "glb"
       ],
+      "planned_formats": [],
       "preview_kind": "wireframe_component",
       "routes": [
         {
           "target": "glb",
-          "status": "planned",
+          "status": "needs_review",
           "required_formats": [
             "glb"
           ],
-          "blockers": [
-            "Required format planned but not generated: glb"
-          ],
-          "note": "glb route is planned but needs generation/export."
+          "blockers": [],
+          "note": "glb route needs human review before use."
         },
         {
           "target": "blender",
-          "status": "planned",
+          "status": "needs_review",
           "required_formats": [
             "glb",
             "blend"
           ],
-          "blockers": [
-            "Required format planned but not generated: glb or blend"
-          ],
-          "note": "blender route is planned but needs generation/export."
+          "blockers": [],
+          "note": "blender route needs human review before use."
         },
         {
           "target": "archicad",
@@ -196,7 +192,7 @@
         },
         {
           "target": "web",
-          "status": "planned",
+          "status": "needs_review",
           "required_formats": [
             "svg",
             "glb",
@@ -204,10 +200,9 @@
             "png"
           ],
           "blockers": [
-            "Web/public route remains private because public_use_allowed or rights are not public-safe.",
-            "Required format planned but not generated: svg or glb or webp or png"
+            "Web/public route remains private because public_use_allowed or rights are not public-safe."
           ],
-          "note": "web route is planned but needs generation/export."
+          "note": "web route needs human review before use."
         }
       ],
       "next_step": "Generate missing target formats or remove blocked export targets."

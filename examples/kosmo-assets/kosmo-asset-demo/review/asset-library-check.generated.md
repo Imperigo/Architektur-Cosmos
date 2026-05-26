@@ -1,7 +1,7 @@
 # KosmoAsset Library Check
 
 Library: `kosmo-asset-demo`
-Generated: 2026-05-26T12:05:06.594Z
+Generated: 2026-05-26T12:54:21.273Z
 Status: `passed`
 
 This is a local review-only check. It does not upload assets, write D1/R2 or publish public downloads.
@@ -9,9 +9,9 @@ This is a local review-only check. It does not upload assets, write D1/R2 or pub
 ## Summary
 
 - assets: 3
-- local ready: 2
+- local ready: 3
 - public ready: 0
-- planned only: 1
+- planned only: 0
 - failures: 0
 - warnings: 0
 
@@ -21,7 +21,7 @@ This is a local review-only check. It does not upload assets, write D1/R2 or pub
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | Kosmo Axis Marker | 2d_symbol | axis_marker | own_work | draft | svg, dxf | yes | no |
 | Warm Concrete Study Material | material | material_swatch | generated_needs_review | planned | material_json | yes | no |
-| Generic Column GLB Slot | glb_model | wireframe_component | generated_needs_review | planned | glb | no | no |
+| Generic Column GLB Slot | glb_model | wireframe_component | generated_needs_review | draft | glb | yes | no |
 
 ## Failures
 
@@ -33,4 +33,4 @@ This is a local review-only check. It does not upload assets, write D1/R2 or pub
 
 ## Next Actions
 
-- Generate or attach reviewed local files for planned-only assets.
+- Library is ready for local review UI prototyping.
