@@ -5428,6 +5428,14 @@ body:has(.entry-page) {
     rgb(0 0 0 / 18%);
 }
 
+.kosmo-asset-smoke-card {
+  border-color: color-mix(in srgb, #70d7ff 26%, rgb(247 247 244 / 10%));
+  background:
+    linear-gradient(135deg, rgb(112 215 255 / 7%), transparent 48%),
+    linear-gradient(225deg, rgb(101 255 115 / 6%), transparent 58%),
+    rgb(0 0 0 / 18%);
+}
+
 .kosmo-asset-handoff-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

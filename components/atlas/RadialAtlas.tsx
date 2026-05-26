@@ -15,6 +15,7 @@ import reviewQueue from '@/data/review-queue.json';
 import assetExportPlanPreview from '@/examples/kosmo-assets/kosmo-asset-demo/review/asset-export-plan.generated.json';
 import assetExchangeProfilePreview from '@/examples/kosmo-assets/kosmo-asset-demo/review/asset-exchange-profile.generated.json';
 import assetHandoffBundlePreview from '@/examples/kosmo-assets/kosmo-asset-demo/review/asset-handoff-bundle.generated.json';
+import assetHandoffSmokePreview from '@/examples/kosmo-assets/kosmo-asset-demo/review/asset-handoff-smoke.generated.json';
 import assetLibraryPreview from '@/examples/kosmo-assets/kosmo-asset-demo/library.json';
 import assetReviewPackPreview from '@/examples/kosmo-assets/kosmo-asset-demo/review/asset-review-pack.generated.json';
 import { atlasSize, styleSectors } from '@/lib/atlas-layout';
@@ -2607,6 +2608,7 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
   const exportPlan = assetExportPlan(asset.id);
   const exchangeProfile = assetExchangeProfile(asset.id);
   const handoffBundle = assetHandoffBundle(asset.id);
+  const handoffSmoke = handoffBundle ? assetHandoffSmokePreview : null;
   const reviewPack = assetReviewPack(asset.id);
   const generatedProfiles = assetGeneratedProfiles(asset);
   const generatedProfile = generatedProfiles[0] ?? null;
@@ -2792,6 +2794,27 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
             {handoffBundle.archicad ? <code>{assetHandoffBundlePreview.outputs.archicad_schedule_csv}</code> : null}
           </div>
           <p>Review-only: Blender schreibt standardmaessig nicht in die Szene; ArchiCAD nutzt den CSV nur als Naming-Schedule.</p>
+        </div>
+      ) : null}
+
+      {handoffSmoke ? (
+        <div className="kosmo-asset-inspector-section kosmo-asset-smoke-card">
+          <strong>Smoke-Test</strong>
+          <div className="kosmo-asset-handoff-grid">
+            <span data-enabled={handoffSmoke.summary.failure_count === 0 ? 'true' : 'false'}>
+              <small>Checks</small>
+              <b>{handoffSmoke.summary.passed_checks}/{handoffSmoke.summary.check_count}</b>
+            </span>
+            <span data-enabled={handoffSmoke.python_runtime.ok ? 'true' : 'false'}>
+              <small>Blender Python</small>
+              <b>{handoffSmoke.python_runtime.ok ? 'laeuft' : 'Fehler'}</b>
+            </span>
+            <span data-enabled={handoffSmoke.policy.no_project_file_writes ? 'false' : 'true'}>
+              <small>Scene Writes</small>
+              <b>{handoffSmoke.policy.no_project_file_writes ? 'gesperrt' : 'aktiv'}</b>
+            </span>
+          </div>
+          <p>{handoffSmoke.next_actions[0]}</p>
         </div>
       ) : null}
 
