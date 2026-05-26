@@ -83,7 +83,7 @@
       "command": "npm run kosmo:asset-full-review -- --library {asset_library_path}",
       "output_root": "examples/kosmo-assets/{library_slug}/review",
       "review_output": "examples/kosmo-assets/{library_slug}/review/asset-full-review.generated.md",
-      "purpose": "Run the complete local KosmoAsset evening batch: library check, export plan, review pack, exchange profile, handoff bundle, handoff smoke and human review session without uploads, publication or public-use approval.",
+      "purpose": "Run the complete local KosmoAsset evening batch: library check, export plan, review pack, exchange profile, handoff bundle, handoff smoke, human review session, decision ledger, certificate smoke and promotion guard without uploads, publication or public-use approval.",
       "approval_required_before_public_use": false
     },
     {
@@ -102,6 +102,15 @@
       "output_root": "examples/kosmo-assets/{library_slug}/review",
       "review_output": "examples/kosmo-assets/{library_slug}/review/asset-decision-ledger.generated.md",
       "purpose": "Audit existing KosmoAsset review-decision and review-certificate files against the human review session and show missing decisions, local approvals, certificates and sandbox readiness without creating approvals or opening public gates.",
+      "approval_required_before_public_use": false
+    },
+    {
+      "id": "kosmo_asset_promotion_guard",
+      "label": "KosmoAsset Promotion Guard",
+      "command": "npm run kosmo:asset-promotion-guard -- --library {asset_library_path}",
+      "output_root": "examples/kosmo-assets/{library_slug}/review",
+      "review_output": "examples/kosmo-assets/{library_slug}/review/asset-promotion-guard.generated.md",
+      "purpose": "Block or confirm owner-review readiness for any KosmoAsset public/export promotion by checking review pack, decision ledger, certificates, upload gates and public gates without promoting, uploading or mutating assets.",
       "approval_required_before_public_use": false
     },
     {
@@ -156,6 +165,15 @@
       "output_root": "examples/kosmo-assets/{library_slug}/review",
       "review_output": "examples/kosmo-assets/{library_slug}/review/asset-review-certificate-{asset_id}-{route}.generated.md",
       "purpose": "Create a local review certificate after an explicit human review decision, passed handoff smoke and blocked public gate, without mutating the library, writing project files, uploading or publishing assets.",
+      "approval_required_before_public_use": false
+    },
+    {
+      "id": "kosmo_asset_certificate_smoke",
+      "label": "KosmoAsset Certificate Smoke",
+      "command": "npm run kosmo:asset-certificate-smoke -- --library {asset_library_path} --asset {asset_id} --route {route}",
+      "output_root": "examples/kosmo-assets/{library_slug}/review",
+      "review_output": "examples/kosmo-assets/{library_slug}/review/asset-certificate-smoke.generated.md",
+      "purpose": "Smoke-test the local review-certificate gate by creating temporary local decision and certificate evidence, validating the ledger, then cleaning the temporary artifacts without uploads, publication or library mutation.",
       "approval_required_before_public_use": false
     },
     {

@@ -3251,6 +3251,20 @@ function assetReviewActions(asset: AssetPreviewRecord): AssetReviewAction[] {
       kicker: 'Cert',
       description: 'Bündelt lokale Freigabe, Human Session, Smoke und Public-Gate als Zertifikat fuer Sandbox-Tests. Keine Veröffentlichung.',
       command: `npm run kosmo:asset-review-certificate -- --library ${libraryPath} --asset ${asset.id} --route ${decisionRoutes[0]}`
+    },
+    {
+      id: 'certificate-smoke',
+      label: 'Cert Smoke',
+      kicker: 'QA',
+      description: 'Testet den Zertifikat-Gate mit temporärer Freigabe und räumt die Entscheid-/Zertifikatsdateien danach wieder weg.',
+      command: `npm run kosmo:asset-certificate-smoke -- --library ${libraryPath} --asset ${asset.id} --route ${decisionRoutes[0]}`
+    },
+    {
+      id: 'promotion-guard',
+      label: 'Promotion Guard',
+      kicker: 'Safe',
+      description: 'Prüft, dass keine Asset-Promotion, kein Upload und kein Public-Gate ohne eigene Rechte-/Owner-Prüfung möglich ist.',
+      command: `npm run kosmo:asset-promotion-guard -- --library ${libraryPath}`
     }
   ];
 

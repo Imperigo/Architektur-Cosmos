@@ -1,0 +1,135 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-05-26T20:56:04.726Z",
+  "generator": "kosmo-asset-certificate-smoke",
+  "library_path": "examples/kosmo-assets/kosmo-asset-demo/library.json",
+  "asset_id": "warm-concrete-material-001",
+  "route": "blender",
+  "status": "asset_certificate_smoke_passed",
+  "policy": {
+    "smoke_creates_only_temporary_local_review_files": true,
+    "cleanup_removes_decision_and_certificate_artifacts": true,
+    "no_uploads": true,
+    "no_public_downloads": true,
+    "no_d1_writes": true,
+    "no_r2_writes": true,
+    "no_library_mutation": true
+  },
+  "summary": {
+    "check_count": 12,
+    "passed_checks": 12,
+    "failed_checks": 0
+  },
+  "steps": [
+    {
+      "id": "review_decision",
+      "command": "npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmo-asset-demo/library.json --asset warm-concrete-material-001 --route blender --decision approve-local --confirm-human-review",
+      "status": "passed",
+      "exit_code": 0,
+      "stdout_tail": "> node scripts/kosmo-asset-review-decision.mjs --library examples/kosmo-assets/kosmo-asset-demo/library.json --asset warm-concrete-material-001 --route blender --decision approve-local --confirm-human-review\n\nKosmoAsset review decision\nAsset: Warm Concrete Study Material\nDecision: approve-local\nRoute: blender\nStatus: local_review_decision_recorded\nWrote: examples/kosmo-assets/kosmo-asset-demo/review/asset-review-decision-warm-concrete-material-001-blender.generated.md",
+      "stderr_tail": ""
+    },
+    {
+      "id": "review_certificate",
+      "command": "npm run kosmo:asset-review-certificate -- --library examples/kosmo-assets/kosmo-asset-demo/library.json --asset warm-concrete-material-001 --route blender",
+      "status": "passed",
+      "exit_code": 0,
+      "stdout_tail": "> node scripts/kosmo-asset-review-certificate.mjs --library examples/kosmo-assets/kosmo-asset-demo/library.json --asset warm-concrete-material-001 --route blender\n\nKosmoAsset review certificate\nAsset: Warm Concrete Study Material\nRoute: blender\nStatus: asset_local_review_certified\nChecks: 14/14\nWrote: examples/kosmo-assets/kosmo-asset-demo/review/asset-review-certificate-warm-concrete-material-001-blender.generated.md",
+      "stderr_tail": ""
+    },
+    {
+      "id": "decision_ledger_with_certificate",
+      "command": "npm run kosmo:asset-decision-ledger -- --library examples/kosmo-assets/kosmo-asset-demo/library.json",
+      "status": "passed",
+      "exit_code": 0,
+      "stdout_tail": "\nKosmoAsset decision ledger\nLibrary: examples/kosmo-assets/kosmo-asset-demo/library.json\nStatus: asset_decision_ledger_open\nRecorded decisions: 1\nMissing decisions: 2\nLocal approvals: 1\nWrote: examples/kosmo-assets/kosmo-asset-demo/review/asset-decision-ledger.generated.md",
+      "stderr_tail": ""
+    },
+    {
+      "id": "decision_ledger_after_cleanup",
+      "command": "npm run kosmo:asset-decision-ledger -- --library examples/kosmo-assets/kosmo-asset-demo/library.json",
+      "status": "passed",
+      "exit_code": 0,
+      "stdout_tail": "\nKosmoAsset decision ledger\nLibrary: examples/kosmo-assets/kosmo-asset-demo/library.json\nStatus: asset_decision_ledger_open\nRecorded decisions: 0\nMissing decisions: 3\nLocal approvals: 0\nWrote: examples/kosmo-assets/kosmo-asset-demo/review/asset-decision-ledger.generated.md",
+      "stderr_tail": ""
+    }
+  ],
+  "evidence_snapshot": {
+    "decision_status": "local_review_decision_recorded",
+    "certificate_status": "asset_local_review_certified",
+    "certificate_id": "kosmo-asset-demo:warm-concrete-material-001:blender:2026-05-26T20:56:04.071Z",
+    "ledger_status_with_certificate": "asset_decision_ledger_open",
+    "ledger_certificate_status": "asset_local_review_certified"
+  },
+  "checks": [
+    {
+      "id": "decision_step_passed",
+      "status": "passed",
+      "label": "Temporary local review decision command passed."
+    },
+    {
+      "id": "certificate_step_passed",
+      "status": "passed",
+      "label": "Temporary review certificate command passed."
+    },
+    {
+      "id": "ledger_step_passed",
+      "status": "passed",
+      "label": "Decision ledger reads temporary certificate."
+    },
+    {
+      "id": "cleanup_ledger_step_passed",
+      "status": "passed",
+      "label": "Decision ledger reruns after cleanup."
+    },
+    {
+      "id": "decision_recorded",
+      "status": "passed",
+      "label": "Decision status was local_review_decision_recorded."
+    },
+    {
+      "id": "certificate_certified",
+      "status": "passed",
+      "label": "Certificate status was asset_local_review_certified."
+    },
+    {
+      "id": "certificate_checks_passed",
+      "status": "passed",
+      "label": "Certificate failed checks: 0."
+    },
+    {
+      "id": "ledger_saw_certificate",
+      "status": "passed",
+      "label": "Ledger saw certified local review row before cleanup."
+    },
+    {
+      "id": "temp_decision_cleaned",
+      "status": "passed",
+      "label": "Temporary decision files were removed."
+    },
+    {
+      "id": "temp_certificate_cleaned",
+      "status": "passed",
+      "label": "Temporary certificate files were removed."
+    },
+    {
+      "id": "public_gate_blocked",
+      "status": "passed",
+      "label": "Public gate remained blocked during certificate smoke."
+    },
+    {
+      "id": "no_uploads",
+      "status": "passed",
+      "label": "Certificate policy disallows uploads and R2 writes."
+    }
+  ],
+  "outputs": {
+    "smoke_json": "examples/kosmo-assets/kosmo-asset-demo/review/asset-certificate-smoke.generated.json",
+    "smoke_markdown": "examples/kosmo-assets/kosmo-asset-demo/review/asset-certificate-smoke.generated.md",
+    "cleaned_decision": "examples/kosmo-assets/kosmo-asset-demo/review/asset-review-decision-warm-concrete-material-001-blender.generated.json",
+    "cleaned_certificate": "examples/kosmo-assets/kosmo-asset-demo/review/asset-review-certificate-warm-concrete-material-001-blender.generated.json"
+  },
+  "next_actions": [
+    "Certificate gate is smoke-tested; keep generated approvals explicit and local-only."
+  ]
+}

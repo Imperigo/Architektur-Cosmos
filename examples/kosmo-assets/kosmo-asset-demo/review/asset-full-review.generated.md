@@ -1,14 +1,14 @@
 # KosmoAsset Full Review
 
 Library: `kosmo-asset-demo`
-Generated: 2026-05-26T20:46:12.559Z
+Generated: 2026-05-26T20:56:04.917Z
 Status: `asset_full_review_ready_for_human_decisions`
 
 Review-only evening batch. This command runs the local KosmoAsset review chain and does not upload, publish, write D1/R2 or approve public use.
 
 ## Summary
 
-- steps: 8/8
+- steps: 10/10
 - assets: 3
 - local ready: 3
 - public ready: 0
@@ -26,6 +26,10 @@ Review-only evening batch. This command runs the local KosmoAsset review chain a
 - missing decisions: 3
 - sandbox ready: 0
 - certificates: 0/0
+- certificate smoke: asset_certificate_smoke_passed
+- promotion guard: asset_promotion_guard_blocked
+- promotion blockers: 6
+- promotion allowed: no
 
 ## Steps
 
@@ -39,6 +43,8 @@ Review-only evening batch. This command runs the local KosmoAsset review chain a
 | Handoff Smoke | passed | `examples/kosmo-assets/kosmo-asset-demo/review/asset-handoff-smoke.generated.json` |
 | Human Review Session | passed | `examples/kosmo-assets/kosmo-asset-demo/review/asset-human-review-session.generated.json` |
 | Decision Ledger | passed | `examples/kosmo-assets/kosmo-asset-demo/review/asset-decision-ledger.generated.json` |
+| Certificate Smoke | passed | `examples/kosmo-assets/kosmo-asset-demo/review/asset-certificate-smoke.generated.json` |
+| Promotion Guard | passed | `examples/kosmo-assets/kosmo-asset-demo/review/asset-promotion-guard.generated.json` |
 
 ## Assets
 
@@ -60,10 +66,13 @@ Review-only evening batch. This command runs the local KosmoAsset review chain a
 - handoff_smoke: `examples/kosmo-assets/kosmo-asset-demo/review/asset-handoff-smoke.generated.md`
 - human_review_session: `examples/kosmo-assets/kosmo-asset-demo/review/asset-human-review-session.generated.md`
 - decision_ledger: `examples/kosmo-assets/kosmo-asset-demo/review/asset-decision-ledger.generated.md`
+- certificate_smoke: `examples/kosmo-assets/kosmo-asset-demo/review/asset-certificate-smoke.generated.md`
+- promotion_guard: `examples/kosmo-assets/kosmo-asset-demo/review/asset-promotion-guard.generated.md`
 
 ## Next Actions
 
 - Use this full-review report as the evening batch checkpoint for KosmoAsset.
 - Complete asset-human-review-session.generated.md before recording explicit local decisions per asset/route.
 - Use asset-decision-ledger.generated.md to verify which decisions are still missing.
+- Use asset-promotion-guard.generated.md as the final local-only promotion stop.
 - Keep public downloads, R2 uploads and D1 writes disabled.

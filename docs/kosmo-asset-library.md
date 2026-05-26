@@ -85,9 +85,10 @@ examples/kosmo-assets/kosmo-asset-demo/review/asset-full-review.generated.md
 ```
 
 Er startet Library Check, Exportplan, Review-Pack, Exchange-Profil,
-Handoff-Bundle, Handoff-Smoke, Human-Review-Session und Decision-Ledger. Der
-Bericht ist ein lokaler Tagesabschluss: keine Uploads, keine D1-/R2-Writes,
-keine Public-Gates und keine automatische Freigabe.
+Handoff-Bundle, Handoff-Smoke, Human-Review-Session, Decision-Ledger,
+Zertifikat-Smoke und Promotion-Guard. Der Bericht ist ein lokaler
+Tagesabschluss: keine Uploads, keine D1-/R2-Writes, keine Public-Gates und
+keine automatische Freigabe.
 
 ## Review-Pack
 
@@ -269,6 +270,55 @@ examples/kosmo-assets/kosmo-asset-demo/review/asset-review-certificate-warm-conc
 Das Zertifikat ist nur lokale Evidenz fuer Sandbox-Tests. Es ist keine
 Public-Freigabe, kein Upload, kein D1-/R2-Write, keine Library-Mutation und
 keine ArchiCAD-/Blender-Projektdatei-Aenderung.
+
+## Zertifikat-Smoke
+
+Der Zertifikat-Gate kann getestet werden, ohne bleibende Entscheid- oder
+Zertifikatsdateien zu hinterlassen:
+
+```bash
+npm run kosmo:asset-certificate-smoke -- \
+  --library examples/kosmo-assets/kosmo-asset-demo/library.json \
+  --asset warm-concrete-material-001 \
+  --route blender
+```
+
+Der Smoke erzeugt kurz eine lokale Freigabe, erzeugt daraus ein Zertifikat,
+laesst das Decision-Ledger diese Zertifizierung sehen und entfernt danach die
+temporaeren Decision-/Certificate-Artefakte wieder. Uebrig bleibt nur:
+
+```text
+examples/kosmo-assets/kosmo-asset-demo/review/asset-certificate-smoke.generated.json
+examples/kosmo-assets/kosmo-asset-demo/review/asset-certificate-smoke.generated.md
+```
+
+Damit kann das Brain den Gate regelmaessig pruefen, ohne den Review-Ordner mit
+Pseudo-Freigaben zu verschmutzen.
+
+## Promotion-Guard
+
+Bevor aus lokalen Assets irgendwann ein oeffentliches Paket entstehen duerfte,
+blockiert der Promotion-Guard alle unsicheren Zustaende:
+
+```bash
+npm run kosmo:asset-promotion-guard -- \
+  --library examples/kosmo-assets/kosmo-asset-demo/library.json
+```
+
+Der Guard prueft Full-Review, Review-Pack, Decision-Ledger, Public-Gates,
+Zertifikate, Sandbox-Status und Upload-Policies. Wenn Reviews, Decisions oder
+Zertifikate fehlen, ist das ein erwarteter Blocker und keine Fehlfreigabe. Ein
+Fehler entsteht erst, wenn ein Public-/Upload-Gate unsicher offen waere. Er
+promoted nichts und schreibt nur:
+
+```text
+examples/kosmo-assets/kosmo-asset-demo/review/asset-promotion-guard.generated.json
+examples/kosmo-assets/kosmo-asset-demo/review/asset-promotion-guard.generated.md
+```
+
+V1 erwartet in der Demo bewusst `asset_promotion_guard_blocked`, weil noch keine
+echten menschlichen Review-Entscheide und lokalen Zertifikate existieren. Das
+ist korrekt: KosmoAsset bleibt local-review-only.
 
 ## Blender-Sandbox
 

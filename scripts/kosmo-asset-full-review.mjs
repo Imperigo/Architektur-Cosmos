@@ -60,6 +60,18 @@ const steps = [
     label: 'Decision Ledger',
     script: 'kosmo:asset-decision-ledger',
     report: 'review/asset-decision-ledger.generated.json'
+  },
+  {
+    id: 'certificate_smoke',
+    label: 'Certificate Smoke',
+    script: 'kosmo:asset-certificate-smoke',
+    report: 'review/asset-certificate-smoke.generated.json'
+  },
+  {
+    id: 'promotion_guard',
+    label: 'Promotion Guard',
+    script: 'kosmo:asset-promotion-guard',
+    report: 'review/asset-promotion-guard.generated.json'
   }
 ];
 
@@ -128,6 +140,8 @@ function buildReport(stepRows) {
   const handoffSmoke = readOptionalReport('review/asset-handoff-smoke.generated.json');
   const humanReviewSession = readOptionalReport('review/asset-human-review-session.generated.json');
   const decisionLedger = readOptionalReport('review/asset-decision-ledger.generated.json');
+  const certificateSmoke = readOptionalReport('review/asset-certificate-smoke.generated.json');
+  const promotionGuard = readOptionalReport('review/asset-promotion-guard.generated.json');
   const failedSteps = stepRows.filter((step) => step.status !== 'passed');
   const openHumanReviews = reviewPack?.summary?.open_human_review_count || 0;
   const status = failedSteps.length
@@ -175,7 +189,11 @@ function buildReport(stepRows) {
       missing_decision_count: decisionLedger?.summary?.missing_decision_count ?? openHumanReviews,
       sandbox_ready_count: decisionLedger?.summary?.sandbox_ready_count || 0,
       certificate_ready_count: decisionLedger?.summary?.certificate_ready_count || 0,
-      certificate_count: decisionLedger?.summary?.certificate_count || 0
+      certificate_count: decisionLedger?.summary?.certificate_count || 0,
+      certificate_smoke_status: certificateSmoke?.status || null,
+      promotion_guard_status: promotionGuard?.status || null,
+      promotion_guard_blockers: promotionGuard?.summary?.blocker_count ?? null,
+      promotion_allowed: promotionGuard?.summary?.promotion_allowed === true
     },
     outputs: {
       full_review_json: relative(root, outputJsonPath),
@@ -187,7 +205,9 @@ function buildReport(stepRows) {
       handoff_bundle: reviewPath('asset-handoff-bundle.generated.md'),
       handoff_smoke: reviewPath('asset-handoff-smoke.generated.md'),
       human_review_session: reviewPath('asset-human-review-session.generated.md'),
-      decision_ledger: reviewPath('asset-decision-ledger.generated.md')
+      decision_ledger: reviewPath('asset-decision-ledger.generated.md'),
+      certificate_smoke: reviewPath('asset-certificate-smoke.generated.md'),
+      promotion_guard: reviewPath('asset-promotion-guard.generated.md')
     },
     steps: stepRows,
     assets: fullReviewAssets({ library, reviewPack, exchangeProfile, handoffBundle, humanReviewSession, decisionLedger }),
@@ -240,6 +260,7 @@ function nextActions({ failedSteps, openHumanReviews }) {
   if (openHumanReviews > 0) {
     actions.push('Complete asset-human-review-session.generated.md before recording explicit local decisions per asset/route.');
     actions.push('Use asset-decision-ledger.generated.md to verify which decisions are still missing.');
+    actions.push('Use asset-promotion-guard.generated.md as the final local-only promotion stop.');
   }
   actions.push('Keep public downloads, R2 uploads and D1 writes disabled.');
   return actions;
@@ -296,6 +317,10 @@ function renderMarkdown(report) {
     `- missing decisions: ${report.summary.missing_decision_count}`,
     `- sandbox ready: ${report.summary.sandbox_ready_count}`,
     `- certificates: ${report.summary.certificate_ready_count}/${report.summary.certificate_count}`,
+    `- certificate smoke: ${report.summary.certificate_smoke_status || '-'}`,
+    `- promotion guard: ${report.summary.promotion_guard_status || '-'}`,
+    `- promotion blockers: ${report.summary.promotion_guard_blockers ?? '-'}`,
+    `- promotion allowed: ${report.summary.promotion_allowed ? 'yes' : 'no'}`,
     '',
     '## Steps',
     '',

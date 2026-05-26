@@ -1,0 +1,121 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-05-26T20:56:04.905Z",
+  "generator": "kosmo-asset-promotion-guard",
+  "library_path": "examples/kosmo-assets/kosmo-asset-demo/library.json",
+  "library_id": "kosmo-asset-demo",
+  "status": "asset_promotion_guard_blocked",
+  "policy": {
+    "no_uploads": true,
+    "no_public_downloads": true,
+    "no_d1_writes": true,
+    "no_r2_writes": true,
+    "promotion_guard_does_not_promote_assets": true,
+    "public_promotion_requires_separate_owner_review": true,
+    "public_promotion_requires_public_rights_review": true
+  },
+  "summary": {
+    "asset_count": 3,
+    "promotion_allowed": false,
+    "blocker_count": 6,
+    "unsafe_finding_count": 0,
+    "missing_decision_count": 3,
+    "certificate_ready_count": 0,
+    "sandbox_ready_count": 0,
+    "public_ready_count": 0,
+    "full_review_status": "asset_full_review_ready_for_human_decisions",
+    "decision_ledger_status": "asset_decision_ledger_open",
+    "recommended_next_step": "keep_assets_local_review_only"
+  },
+  "blockers": [
+    "axis-marker-svg-001:decision_missing",
+    "axis-marker-svg-001:local_certificate_missing",
+    "warm-concrete-material-001:decision_missing",
+    "warm-concrete-material-001:local_certificate_missing",
+    "generic-column-glb-001:decision_missing",
+    "generic-column-glb-001:local_certificate_missing"
+  ],
+  "unsafe_findings": [],
+  "rows": [
+    {
+      "asset_id": "axis-marker-svg-001",
+      "asset_title": "Kosmo Axis Marker",
+      "asset_type": "2d_symbol",
+      "rights_status": "own_work",
+      "review_status": "draft",
+      "public_use_allowed": false,
+      "public_gate": "blocked",
+      "local_ready": true,
+      "public_ready": false,
+      "decision_status": "missing_decision",
+      "local_certificate_ready": false,
+      "sandbox_ready": false,
+      "promotion_status": "blocked",
+      "blockers": [
+        "decision_missing",
+        "local_certificate_missing"
+      ]
+    },
+    {
+      "asset_id": "warm-concrete-material-001",
+      "asset_title": "Warm Concrete Study Material",
+      "asset_type": "material",
+      "rights_status": "generated_needs_review",
+      "review_status": "draft",
+      "public_use_allowed": false,
+      "public_gate": "blocked",
+      "local_ready": true,
+      "public_ready": false,
+      "decision_status": "missing_decision",
+      "local_certificate_ready": false,
+      "sandbox_ready": false,
+      "promotion_status": "blocked",
+      "blockers": [
+        "decision_missing",
+        "local_certificate_missing"
+      ]
+    },
+    {
+      "asset_id": "generic-column-glb-001",
+      "asset_title": "Generic Column GLB Slot",
+      "asset_type": "glb_model",
+      "rights_status": "generated_needs_review",
+      "review_status": "draft",
+      "public_use_allowed": false,
+      "public_gate": "blocked",
+      "local_ready": true,
+      "public_ready": false,
+      "decision_status": "missing_decision",
+      "local_certificate_ready": false,
+      "sandbox_ready": false,
+      "promotion_status": "blocked",
+      "blockers": [
+        "decision_missing",
+        "local_certificate_missing"
+      ]
+    }
+  ],
+  "source_reports": {
+    "review_pack": {
+      "path": "examples/kosmo-assets/kosmo-asset-demo/review/asset-review-pack.generated.json",
+      "exists": true
+    },
+    "full_review": {
+      "path": "examples/kosmo-assets/kosmo-asset-demo/review/asset-full-review.generated.json",
+      "exists": true
+    },
+    "decision_ledger": {
+      "path": "examples/kosmo-assets/kosmo-asset-demo/review/asset-decision-ledger.generated.json",
+      "exists": true
+    },
+    "handoff_bundle": {
+      "path": "examples/kosmo-assets/kosmo-asset-demo/review/asset-handoff-bundle.generated.json",
+      "exists": true
+    }
+  },
+  "next_actions": [
+    "Keep KosmoAsset in local review-only mode.",
+    "Complete human review decisions, local certificates and ledger checks before any sandbox or public promotion.",
+    "Current blocker count: 6."
+  ]
+}

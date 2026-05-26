@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-26T20:46:12.559Z",
+  "generated_at": "2026-05-26T20:56:04.917Z",
   "generator": "kosmo-asset-full-review",
   "library_path": "examples/kosmo-assets/kosmo-asset-demo/library.json",
   "library_id": "kosmo-asset-demo",
@@ -14,8 +14,8 @@
     "human_decisions_required_for_local_approval": true
   },
   "summary": {
-    "step_count": 8,
-    "passed_steps": 8,
+    "step_count": 10,
+    "passed_steps": 10,
     "failed_steps": 0,
     "asset_count": 3,
     "local_ready_count": 3,
@@ -37,7 +37,11 @@
     "missing_decision_count": 3,
     "sandbox_ready_count": 0,
     "certificate_ready_count": 0,
-    "certificate_count": 0
+    "certificate_count": 0,
+    "certificate_smoke_status": "asset_certificate_smoke_passed",
+    "promotion_guard_status": "asset_promotion_guard_blocked",
+    "promotion_guard_blockers": 6,
+    "promotion_allowed": false
   },
   "outputs": {
     "full_review_json": "examples/kosmo-assets/kosmo-asset-demo/review/asset-full-review.generated.json",
@@ -49,7 +53,9 @@
     "handoff_bundle": "examples/kosmo-assets/kosmo-asset-demo/review/asset-handoff-bundle.generated.md",
     "handoff_smoke": "examples/kosmo-assets/kosmo-asset-demo/review/asset-handoff-smoke.generated.md",
     "human_review_session": "examples/kosmo-assets/kosmo-asset-demo/review/asset-human-review-session.generated.md",
-    "decision_ledger": "examples/kosmo-assets/kosmo-asset-demo/review/asset-decision-ledger.generated.md"
+    "decision_ledger": "examples/kosmo-assets/kosmo-asset-demo/review/asset-decision-ledger.generated.md",
+    "certificate_smoke": "examples/kosmo-assets/kosmo-asset-demo/review/asset-certificate-smoke.generated.md",
+    "promotion_guard": "examples/kosmo-assets/kosmo-asset-demo/review/asset-promotion-guard.generated.md"
   },
   "steps": [
     {
@@ -147,6 +153,30 @@
       "report_status": "asset_decision_ledger_open",
       "stdout_tail": "\nKosmoAsset decision ledger\nLibrary: examples/kosmo-assets/kosmo-asset-demo/library.json\nStatus: asset_decision_ledger_open\nRecorded decisions: 0\nMissing decisions: 3\nLocal approvals: 0\nWrote: examples/kosmo-assets/kosmo-asset-demo/review/asset-decision-ledger.generated.md",
       "stderr_tail": ""
+    },
+    {
+      "id": "certificate_smoke",
+      "label": "Certificate Smoke",
+      "command": "npm run kosmo:asset-certificate-smoke -- --library examples/kosmo-assets/kosmo-asset-demo/library.json",
+      "status": "passed",
+      "exit_code": 0,
+      "report_path": "examples/kosmo-assets/kosmo-asset-demo/review/asset-certificate-smoke.generated.json",
+      "report_exists": true,
+      "report_status": "asset_certificate_smoke_passed",
+      "stdout_tail": "> node scripts/kosmo-asset-certificate-smoke.mjs --library examples/kosmo-assets/kosmo-asset-demo/library.json\n\nKosmoAsset certificate smoke\nAsset: warm-concrete-material-001\nRoute: blender\nStatus: asset_certificate_smoke_passed\nChecks: 12/12\nWrote: examples/kosmo-assets/kosmo-asset-demo/review/asset-certificate-smoke.generated.md",
+      "stderr_tail": ""
+    },
+    {
+      "id": "promotion_guard",
+      "label": "Promotion Guard",
+      "command": "npm run kosmo:asset-promotion-guard -- --library examples/kosmo-assets/kosmo-asset-demo/library.json",
+      "status": "passed",
+      "exit_code": 0,
+      "report_path": "examples/kosmo-assets/kosmo-asset-demo/review/asset-promotion-guard.generated.json",
+      "report_exists": true,
+      "report_status": "asset_promotion_guard_blocked",
+      "stdout_tail": "> node scripts/kosmo-asset-promotion-guard.mjs --library examples/kosmo-assets/kosmo-asset-demo/library.json\n\nKosmoAsset promotion guard\nLibrary: examples/kosmo-assets/kosmo-asset-demo/library.json\nStatus: asset_promotion_guard_blocked\nPromotion allowed: no\nBlockers: 6\nWrote: examples/kosmo-assets/kosmo-asset-demo/review/asset-promotion-guard.generated.md",
+      "stderr_tail": ""
     }
   ],
   "assets": [
@@ -212,6 +242,7 @@
     "Use this full-review report as the evening batch checkpoint for KosmoAsset.",
     "Complete asset-human-review-session.generated.md before recording explicit local decisions per asset/route.",
     "Use asset-decision-ledger.generated.md to verify which decisions are still missing.",
+    "Use asset-promotion-guard.generated.md as the final local-only promotion stop.",
     "Keep public downloads, R2 uploads and D1 writes disabled."
   ]
 }
