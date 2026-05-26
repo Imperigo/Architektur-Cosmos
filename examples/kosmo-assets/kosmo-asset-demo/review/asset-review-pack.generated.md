@@ -1,7 +1,7 @@
 # KosmoAsset Review Pack
 
 Library: `kosmo-asset-demo`
-Generated: 2026-05-26T13:49:02.384Z
+Generated: 2026-05-26T13:57:23.699Z
 Status: `asset_human_review_required`
 Rights scope: `local_review_only`
 
@@ -13,7 +13,7 @@ Review-only. This pack does not upload, publish, promote or write public asset r
 - local ready: 3
 - public ready: 0
 - open human reviews: 3
-- generated profiles: 3
+- generated profiles: 4
 - blocked routes: 0
 - needs-review routes: 11
 - recommended next step: `complete_asset_human_review_before_promotion`
@@ -23,7 +23,7 @@ Review-only. This pack does not upload, publish, promote or write public asset r
 | Asset | Type | Rights | Review | Local formats | Routes | Suggested decision |
 | --- | --- | --- | --- | --- | --- | --- |
 | Kosmo Axis Marker | 2d_symbol | own_work | draft | svg, dxf | svg:needs_review, dxf:needs_review, web:needs_review, layout:needs_review | complete_human_review_before_promotion |
-| Warm Concrete Study Material | material | generated_needs_review | planned | material_json | blender:needs_review, archicad:needs_review, web:needs_review | complete_human_review_before_promotion |
+| Warm Concrete Study Material | material | generated_needs_review | draft | material_json | blender:needs_review, archicad:needs_review, web:needs_review | complete_human_review_before_promotion |
 | Generic Column GLB Slot | glb_model | generated_needs_review | draft | glb, dxf | glb:needs_review, blender:needs_review, archicad:needs_review, web:needs_review | complete_human_review_before_promotion |
 
 ## Kosmo Axis Marker
@@ -60,8 +60,11 @@ Checklist:
 - passed: Public use is blocked unless rights and review are ready.
 - needs_human_review: Human review status is reviewed or verified.
 - passed: No export route is blocked.
-- needs_human_review: Generated assets carry a generated profile.
+- passed: Generated assets carry a generated profile.
 - passed: Asset passed the library check row.
+
+Generated profiles:
+- kosmo-asset-generate-demo-material-profile: local_review_material_profile_generated (4 material parameters)
 
 ## Generic Column GLB Slot
 

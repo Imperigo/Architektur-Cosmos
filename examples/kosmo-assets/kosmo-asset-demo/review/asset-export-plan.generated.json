@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-26T13:48:35.323Z",
+  "generated_at": "2026-05-26T13:57:19.199Z",
   "generator": "kosmo-asset-export-plan",
   "library_path": "examples/kosmo-assets/kosmo-asset-demo/library.json",
   "library_id": "kosmo-asset-demo",
@@ -97,7 +97,7 @@
       "asset_type": "material",
       "category": "material",
       "rights_status": "generated_needs_review",
-      "review_status": "planned",
+      "review_status": "draft",
       "public_ready": false,
       "existing_formats": [
         "material_json"

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-26T13:48:35.151Z",
+  "generated_at": "2026-05-26T13:57:13.447Z",
   "generator": "kosmo-asset-library-check",
   "library_path": "examples/kosmo-assets/kosmo-asset-demo/library.json",
   "library_id": "kosmo-asset-demo",
@@ -85,7 +85,7 @@
       "asset_type": "material",
       "category": "material",
       "rights_status": "generated_needs_review",
-      "review_status": "planned",
+      "review_status": "draft",
       "public_use_allowed": false,
       "rights_public_safe": false,
       "local_ready": true,
@@ -105,7 +105,10 @@
         "concrete",
         "mineral",
         "material-layer",
-        "neutral"
+        "neutral",
+        "material-profile",
+        "procedural-material",
+        "asset-review"
       ]
     },
     {

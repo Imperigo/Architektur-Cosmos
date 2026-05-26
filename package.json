@@ -86,6 +86,7 @@
     "kosmo:asset-review-pack": "node scripts/kosmo-asset-review-pack.mjs",
     "kosmo:asset-generate-demo-glb": "node scripts/kosmo-asset-generate-demo-glb.mjs",
     "kosmo:asset-generate-demo-dxf": "node scripts/kosmo-asset-generate-demo-dxf.mjs",
+    "kosmo:asset-generate-demo-material-profile": "node scripts/kosmo-asset-generate-demo-material-profile.mjs",
     "kosmo:package-create": "node scripts/kosmo-project-package-create.mjs",
     "kosmo:prepare-import": "node scripts/kosmo-prepare-package-import.mjs",
     "kosmo:package-check": "node scripts/kosmo-project-package-check.mjs",

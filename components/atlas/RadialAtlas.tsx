@@ -2941,7 +2941,12 @@ function assetReviewActions(asset: AssetPreviewRecord): AssetReviewAction[] {
     }
   ];
 
-  if (asset.formats.some((format) => format.format === 'glb') || asset.export_targets.includes('blender')) {
+  const hasGlbFormat = asset.formats.some((format) => format.format === 'glb');
+  const hasDxfFormat = asset.formats.some((format) => format.format === 'dxf');
+  const canGenerateGlb = hasGlbFormat || asset.asset_type.includes('glb') || asset.asset_type.includes('3d');
+  const canGenerateDxf = hasDxfFormat || asset.asset_type.includes('2d') || asset.export_targets.includes('cad');
+
+  if (canGenerateGlb) {
     commands.push({
       id: 'generate-glb',
       label: 'GLB erzeugen',
@@ -2951,7 +2956,7 @@ function assetReviewActions(asset: AssetPreviewRecord): AssetReviewAction[] {
     });
   }
 
-  if (asset.formats.some((format) => format.format === 'dxf') || asset.export_targets.includes('archicad') || asset.export_targets.includes('cad')) {
+  if (canGenerateDxf) {
     commands.push({
       id: 'generate-dxf',
       label: 'DXF erzeugen',

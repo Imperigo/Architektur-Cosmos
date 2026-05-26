@@ -1,6 +1,6 @@
 # KosmoAsset Library
 
-Stand: 2026-05-25
+Stand: 2026-05-26
 
 ## Ziel
 
@@ -140,6 +140,28 @@ examples/kosmo-assets/kosmo-asset-demo/review/asset-dxf-generation.generated.md
 
 Auch diese DXFs sind lokale Review-Assets. Sie pruefen Layernamen, Scale,
 Origin und CAD-Austausch, ohne daraus oeffentliche Downloads zu machen.
+
+## Demo-Materialprofil
+
+Das erste lokale Material-Testasset erzeugt kein Bild und keine Textur, sondern
+ein Review-Profil fuer prozedurale Materialparameter:
+
+```bash
+npm run kosmo:asset-generate-demo-material-profile -- \
+  --library examples/kosmo-assets/kosmo-asset-demo/library.json \
+  --asset warm-concrete-material-001
+```
+
+Der Generator schreibt:
+
+```text
+examples/kosmo-assets/kosmo-asset-demo/review/asset-material-profile.generated.json
+examples/kosmo-assets/kosmo-asset-demo/review/asset-material-profile.generated.md
+```
+
+Das Profil prueft Base Color, Roughness, Metallic, Specular sowie Blender- und
+ArchiCAD-Mappingnamen. Es bleibt review-only, nutzt keine gesampelte Textur und
+oeffnet keine Public-Gates.
 
 ## Asset-Typen
 

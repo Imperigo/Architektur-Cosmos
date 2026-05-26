@@ -1,6 +1,6 @@
 # KosmoAsset Visual Concept
 
-Stand: 2026-05-25
+Stand: 2026-05-26
 
 ## Rolle
 
@@ -53,6 +53,8 @@ Die erste Website-Version ist eine statische Landing-Ansicht:
   analytisches GLB-Bauteil fuer Blender/Web/ArchiCAD-Tests;
 - erzeugt mit `npm run kosmo:asset-generate-demo-dxf` erste lokale
   DXF-Planzeichen und Bauteil-Footprints fuer ArchiCAD/CAD-Tests;
+- erzeugt mit `npm run kosmo:asset-generate-demo-material-profile` ein
+  lokales Materialparameter-Profil fuer Blender-/ArchiCAD-Mappingtests;
 - keine Uploads;
 - keine Datenbank-Writes;
 - keine R2-Uploads;
@@ -61,8 +63,6 @@ Die erste Website-Version ist eine statische Landing-Ansicht:
 ## Naechste Stufen
 
 1. GLB-Vorschauen im Browser-Inspector anzeigen.
-2. Asset-Review-Pack im Inspector verlinken und pro Asset als Entscheidkarte anzeigen.
-3. DXF-Profile neben GLB-Profilen im Browser-Inspector vergleichen.
-4. Blender-/ArchiCAD-Exportprofile als Review-Karten ausgeben.
-5. Rights Gate und private/dev Asset-Modus getrennt visualisieren.
-6. Spaeter eine echte KosmoAsset Library View mit Such-/Filterlogik bauen.
+2. Blender-/ArchiCAD-Exportprofile als Review-Karten ausgeben.
+3. Rights Gate und private/dev Asset-Modus getrennt visualisieren.
+4. Spaeter eine echte KosmoAsset Library View mit Such-/Filterlogik bauen.

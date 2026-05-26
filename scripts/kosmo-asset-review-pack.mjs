@@ -158,7 +158,13 @@ function generatedAssetProfiles(asset) {
       generator: profile.generator || null,
       status: profile.status || null,
       generated_at: profile.generated_at || null,
-      metric: profile.triangle_count ? `${profile.triangle_count} triangles` : profile.entity_count ? `${profile.entity_count} DXF entities` : null,
+      metric: profile.triangle_count
+        ? `${profile.triangle_count} triangles`
+        : profile.entity_count
+          ? `${profile.entity_count} DXF entities`
+          : profile.parameter_count
+            ? `${profile.parameter_count} material parameters`
+            : null,
       layer_names: Array.isArray(profile.layer_names) ? profile.layer_names : []
     }));
 }

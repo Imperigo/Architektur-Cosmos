@@ -106,7 +106,7 @@
       "credit": "Architecture Cosmos generated material study",
       "public_use_allowed": false,
       "local_only": true,
-      "review_status": "planned",
+      "review_status": "draft",
       "confidence": 0.62,
       "formats": [
         {
@@ -140,11 +140,46 @@
         "concrete",
         "mineral",
         "material-layer",
-        "neutral"
+        "neutral",
+        "material-profile",
+        "procedural-material",
+        "asset-review"
       ],
       "material_tags": [
         "beton",
         "mineralisch"
+      ],
+      "generated_asset_profile": {
+        "generated_at": "2026-05-26T13:56:52.072Z",
+        "generator": "kosmo-asset-generate-demo-material-profile",
+        "status": "local_review_material_profile_generated",
+        "caveat": "Procedural material metadata only. It is not a sampled texture, measured product specification or public release.",
+        "parameter_count": 4,
+        "layer_names": [
+          "material/base_color",
+          "material/roughness",
+          "material/metallic",
+          "material/specular",
+          "blender/principled_bsdf",
+          "archicad/material/concrete/review"
+        ]
+      },
+      "generated_asset_profiles": [
+        {
+          "generated_at": "2026-05-26T13:56:52.072Z",
+          "generator": "kosmo-asset-generate-demo-material-profile",
+          "status": "local_review_material_profile_generated",
+          "caveat": "Procedural material metadata only. It is not a sampled texture, measured product specification or public release.",
+          "parameter_count": 4,
+          "layer_names": [
+            "material/base_color",
+            "material/roughness",
+            "material/metallic",
+            "material/specular",
+            "blender/principled_bsdf",
+            "archicad/material/concrete/review"
+          ]
+        }
       ]
     },
     {

@@ -224,6 +224,52 @@
               "type": "string"
             }
           }
+        },
+        "generated_asset_profile": {
+          "$ref": "#/$defs/generated_asset_profile"
+        },
+        "generated_asset_profiles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/generated_asset_profile"
+          }
+        }
+      }
+    },
+    "generated_asset_profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "layer_names"],
+      "properties": {
+        "generated_at": {
+          "type": "string"
+        },
+        "generator": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "caveat": {
+          "type": "string"
+        },
+        "triangle_count": {
+          "type": "number",
+          "minimum": 0
+        },
+        "entity_count": {
+          "type": "number",
+          "minimum": 0
+        },
+        "parameter_count": {
+          "type": "number",
+          "minimum": 0
+        },
+        "layer_names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },

@@ -1,0 +1,46 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-05-26T13:56:52.072Z",
+  "generator": "kosmo-asset-generate-demo-material-profile",
+  "library_id": "kosmo-asset-demo",
+  "asset_id": "warm-concrete-material-001",
+  "asset_title": "Warm Concrete Study Material",
+  "status": "local_review_material_profile_generated",
+  "caveat": "Procedural material metadata only. It is not a sampled texture, measured product specification or public release.",
+  "no_uploads": true,
+  "public_use_allowed": false,
+  "material_path": "examples/kosmo-assets/kosmo-asset-demo/assets/materials/warm-concrete.material.json",
+  "material": {
+    "name": "Warm Concrete Study Material",
+    "unit": "parameter_profile",
+    "parameter_count": 4,
+    "parameters": {
+      "base_color": "#b9aca0",
+      "roughness": 0.72,
+      "metallic": 0,
+      "specular": 0.24
+    },
+    "blender_mapping": {
+      "collection": "KOSMO_ASSET_MATERIALS",
+      "shader": "principled_bsdf",
+      "units": "meter"
+    },
+    "archicad_mapping": {
+      "surface_name": "KOSMO_Warm_Concrete_Study",
+      "classification": "material/concrete/review"
+    },
+    "layer_names": [
+      "material/base_color",
+      "material/roughness",
+      "material/metallic",
+      "material/specular",
+      "blender/principled_bsdf",
+      "archicad/material/concrete/review"
+    ]
+  },
+  "recommended_next_review": [
+    "Open the material JSON and confirm color, roughness and mapping names are suitable for local review.",
+    "Decide whether this becomes a Blender material, ArchiCAD surface or only a KosmoAsset metadata sample.",
+    "Keep this material local until human review confirms it is not copied from protected scans, photos or product data."
+  ]
+}

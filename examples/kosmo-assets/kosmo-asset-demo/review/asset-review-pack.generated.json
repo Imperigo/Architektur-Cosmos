@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-26T13:49:02.384Z",
+  "generated_at": "2026-05-26T13:57:23.699Z",
   "generator": "kosmo-asset-review-pack",
   "library_path": "examples/kosmo-assets/kosmo-asset-demo/library.json",
   "library_id": "kosmo-asset-demo",
@@ -32,7 +32,7 @@
     "local_ready_count": 3,
     "public_ready_count": 0,
     "open_human_review_count": 3,
-    "generated_profile_count": 3,
+    "generated_profile_count": 4,
     "blocked_route_count": 0,
     "needs_review_route_count": 11,
     "upload_allowed": false,
@@ -154,7 +154,7 @@
       "asset_type": "material",
       "category": "material",
       "rights_status": "generated_needs_review",
-      "review_status": "planned",
+      "review_status": "draft",
       "human_review_status": "open",
       "public_use_allowed": false,
       "public_ready": false,
@@ -189,7 +189,22 @@
           ]
         }
       ],
-      "generated_profiles": [],
+      "generated_profiles": [
+        {
+          "generator": "kosmo-asset-generate-demo-material-profile",
+          "status": "local_review_material_profile_generated",
+          "generated_at": "2026-05-26T13:56:52.072Z",
+          "metric": "4 material parameters",
+          "layer_names": [
+            "material/base_color",
+            "material/roughness",
+            "material/metallic",
+            "material/specular",
+            "blender/principled_bsdf",
+            "archicad/material/concrete/review"
+          ]
+        }
+      ],
       "checklist": [
         {
           "id": "source_basis",
@@ -223,7 +238,7 @@
         },
         {
           "id": "generated_profile",
-          "status": "needs_human_review",
+          "status": "passed",
           "label": "Generated assets carry a generated profile."
         },
         {
