@@ -109,6 +109,28 @@ Es enthaelt Blender-Collectionnamen, ArchiCAD-Layer/Oberflaechen,
 Source-Dateien, Public-Gates und Review-Notizen. V1 importiert nichts
 automatisch und schreibt keine ArchiCAD-/Blender-Dateien.
 
+## Handoff-Bundle
+
+Aus dem Exchange-Profil kann ein lokales Uebergabepaket erzeugt werden:
+
+```bash
+npm run kosmo:asset-handoff-bundle -- \
+  --library examples/kosmo-assets/kosmo-asset-demo/library.json
+```
+
+Das Bundle schreibt:
+
+```text
+examples/kosmo-assets/kosmo-asset-demo/review/asset-handoff-bundle.generated.json
+examples/kosmo-assets/kosmo-asset-demo/review/asset-handoff-bundle.generated.md
+examples/kosmo-assets/kosmo-asset-demo/review/asset-blender-handoff.generated.py
+examples/kosmo-assets/kosmo-asset-demo/review/asset-archicad-schedule.generated.csv
+```
+
+Die Blender-Datei ist standardmaessig nicht mutierend (`ALLOW_SCENE_WRITE =
+False`). Die ArchiCAD-Datei ist nur ein Layer-/Surface-Schedule fuer manuelle
+Review und spaetere Exchange-Tests.
+
 ## Demo-GLB
 
 Das erste lokale 3D-Testasset wird bewusst klein und analytisch erzeugt:

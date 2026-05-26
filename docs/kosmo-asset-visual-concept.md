@@ -52,6 +52,8 @@ Die erste Website-Version ist eine statische Landing-Ansicht:
 - erzeugt mit `npm run kosmo:asset-exchange-profile` ein lokales
   Blender-/ArchiCAD-/Web-Uebergabeprofil fuer Collection-, Layer- und
   Surface-Namen;
+- erzeugt mit `npm run kosmo:asset-handoff-bundle` eine review-only
+  Blender-Python-Vorlage und einen ArchiCAD-Layer-/Surface-Schedule;
 - erzeugt mit `npm run kosmo:asset-generate-demo-glb` ein erstes lokales,
   analytisches GLB-Bauteil fuer Blender/Web/ArchiCAD-Tests;
 - erzeugt mit `npm run kosmo:asset-generate-demo-dxf` erste lokale
@@ -66,7 +68,7 @@ Die erste Website-Version ist eine statische Landing-Ansicht:
 ## Naechste Stufen
 
 1. GLB-Vorschauen im Browser-Inspector anzeigen.
-2. Exchange-Profil im Inspector als Blender-/ArchiCAD-Uebergabekarte anzeigen.
+2. Handoff-Bundle im Inspector als lokale Blender-/ArchiCAD-Dateiliste anzeigen.
 3. Blender-/ArchiCAD-Exportprofile als kopierbare Review-Karten ausgeben.
 4. Rights Gate und private/dev Asset-Modus getrennt visualisieren.
 5. Spaeter eine echte KosmoAsset Library View mit Such-/Filterlogik bauen.

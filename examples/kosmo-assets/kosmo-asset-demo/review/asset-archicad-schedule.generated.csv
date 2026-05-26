@@ -1,0 +1,4 @@
+"asset_id","title","exchange_mode","archicad_layer","archicad_surface","source_file","approved_for_exchange","review_status"
+"axis-marker-svg-001","Kosmo Axis Marker","dxf_underlay_or_symbol","KOSMO_ANNOTATION_AXIS_MARKER_SVG_001","","examples/kosmo-assets/kosmo-asset-demo/assets/dxf/axis-marker-svg-001.dxf","false","open"
+"warm-concrete-material-001","Warm Concrete Study Material","surface_attribute_reference","","KOSMO_SURFACE_WARM_CONCRETE_MATERIAL_001","examples/kosmo-assets/kosmo-asset-demo/assets/materials/warm-concrete.material.json","false","open"
+"generic-column-glb-001","Generic Column GLB Slot","dxf_underlay_or_symbol","KOSMO_STRUCTURE_GENERIC_COLUMN_GLB_001","","examples/kosmo-assets/kosmo-asset-demo/assets/dxf/generic-column-glb-001.dxf","false","open"

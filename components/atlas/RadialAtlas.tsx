@@ -14,6 +14,7 @@ import brainTools from '@/data/brain-tools.json';
 import reviewQueue from '@/data/review-queue.json';
 import assetExportPlanPreview from '@/examples/kosmo-assets/kosmo-asset-demo/review/asset-export-plan.generated.json';
 import assetExchangeProfilePreview from '@/examples/kosmo-assets/kosmo-asset-demo/review/asset-exchange-profile.generated.json';
+import assetHandoffBundlePreview from '@/examples/kosmo-assets/kosmo-asset-demo/review/asset-handoff-bundle.generated.json';
 import assetLibraryPreview from '@/examples/kosmo-assets/kosmo-asset-demo/library.json';
 import assetReviewPackPreview from '@/examples/kosmo-assets/kosmo-asset-demo/review/asset-review-pack.generated.json';
 import { atlasSize, styleSectors } from '@/lib/atlas-layout';
@@ -49,6 +50,7 @@ type IntroState = 'intro' | 'hub' | 'asset' | 'launching' | 'idle';
 type AssetPreviewRecord = (typeof assetLibraryPreview.assets)[number];
 type AssetExportPlanRecord = (typeof assetExportPlanPreview.assets)[number];
 type AssetExchangeProfileRecord = (typeof assetExchangeProfilePreview.assets)[number];
+type AssetHandoffBundleRecord = (typeof assetHandoffBundlePreview.assets)[number];
 type AssetReviewPackRecord = (typeof assetReviewPackPreview.assets)[number];
 type AssetFamilyFilter = 'all' | '2d' | 'material' | '3d';
 type AssetReviewAction = {
@@ -2604,6 +2606,7 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
   const confidence = Math.round(asset.confidence * 100);
   const exportPlan = assetExportPlan(asset.id);
   const exchangeProfile = assetExchangeProfile(asset.id);
+  const handoffBundle = assetHandoffBundle(asset.id);
   const reviewPack = assetReviewPack(asset.id);
   const generatedProfiles = assetGeneratedProfiles(asset);
   const generatedProfile = generatedProfiles[0] ?? null;
@@ -2764,6 +2767,31 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
             {exchangeProfile.archicad?.archicad_surface ? <code>{exchangeProfile.archicad.archicad_surface}</code> : null}
           </div>
           <p>{exchangeProfile.review_note}</p>
+        </div>
+      ) : null}
+
+      {handoffBundle ? (
+        <div className="kosmo-asset-inspector-section kosmo-asset-handoff-card">
+          <strong>Handoff-Bundle</strong>
+          <div className="kosmo-asset-handoff-grid">
+            <span data-enabled={handoffBundle.blender ? 'true' : 'false'}>
+              <small>Blender Python</small>
+              <b>{handoffBundle.blender?.import_mode ? formatAssetValue(handoffBundle.blender.import_mode) : 'nicht aktiv'}</b>
+            </span>
+            <span data-enabled={handoffBundle.archicad ? 'true' : 'false'}>
+              <small>ArchiCAD CSV</small>
+              <b>{handoffBundle.archicad?.exchange_mode ? formatAssetValue(handoffBundle.archicad.exchange_mode) : 'nicht aktiv'}</b>
+            </span>
+            <span data-enabled={handoffBundle.public_gate === 'blocked' ? 'false' : 'true'}>
+              <small>Public Gate</small>
+              <b>{formatAssetValue(handoffBundle.public_gate)}</b>
+            </span>
+          </div>
+          <div className="kosmo-asset-handoff-files">
+            {handoffBundle.blender ? <code>{assetHandoffBundlePreview.outputs.blender_python}</code> : null}
+            {handoffBundle.archicad ? <code>{assetHandoffBundlePreview.outputs.archicad_schedule_csv}</code> : null}
+          </div>
+          <p>Review-only: Blender schreibt standardmaessig nicht in die Szene; ArchiCAD nutzt den CSV nur als Naming-Schedule.</p>
         </div>
       ) : null}
 
@@ -2930,6 +2958,10 @@ function assetExchangeProfile(assetId: string): AssetExchangeProfileRecord | nul
   return assetExchangeProfilePreview.assets.find((asset) => asset.id === assetId) ?? null;
 }
 
+function assetHandoffBundle(assetId: string): AssetHandoffBundleRecord | null {
+  return assetHandoffBundlePreview.assets.find((asset) => asset.id === assetId) ?? null;
+}
+
 function assetReviewPack(assetId: string): AssetReviewPackRecord | null {
   return assetReviewPackPreview.assets.find((asset) => asset.id === assetId) ?? null;
 }
@@ -2971,6 +3003,13 @@ function assetReviewActions(asset: AssetPreviewRecord): AssetReviewAction[] {
       kicker: 'Bridge',
       description: 'Erzeugt das lokale Blender-/ArchiCAD-/Web-Uebergabeprofil fuer Naming, Layer und Surface Mapping.',
       command: `npm run kosmo:asset-exchange-profile -- --library ${libraryPath}`
+    },
+    {
+      id: 'handoff-bundle',
+      label: 'Handoff',
+      kicker: 'Export',
+      description: 'Erzeugt die review-only Blender-Python-Vorlage und den ArchiCAD-Schedule aus dem Exchange-Profil.',
+      command: `npm run kosmo:asset-handoff-bundle -- --library ${libraryPath}`
     },
     {
       id: 'review-pack',

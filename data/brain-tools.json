@@ -78,6 +78,15 @@
       "approval_required_before_public_use": false
     },
     {
+      "id": "kosmo_asset_handoff_bundle",
+      "label": "KosmoAsset Handoff Bundle",
+      "command": "npm run kosmo:asset-handoff-bundle -- --library {asset_library_path}",
+      "output_root": "examples/kosmo-assets/{library_slug}/review",
+      "review_output": "examples/kosmo-assets/{library_slug}/review/asset-handoff-bundle.generated.md",
+      "purpose": "Generate a review-only Blender Python handoff and ArchiCAD schedule CSV from the KosmoAsset exchange profile without importing, writing project files, uploading or publishing assets.",
+      "approval_required_before_public_use": false
+    },
+    {
       "id": "kosmo_asset_review_pack",
       "label": "KosmoAsset Review Pack",
       "command": "npm run kosmo:asset-review-pack -- --library {asset_library_path}",
