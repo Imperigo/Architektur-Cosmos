@@ -88,6 +88,8 @@
     "kosmo:asset-full-review": "node scripts/kosmo-asset-full-review.mjs",
     "kosmo:asset-archicad-sandbox": "node scripts/kosmo-asset-archicad-sandbox.mjs",
     "kosmo:asset-blender-sandbox": "node scripts/kosmo-asset-blender-sandbox.mjs",
+    "kosmo:asset-review-certificate": "node scripts/kosmo-asset-review-certificate.mjs",
+    "kosmo:asset-decision-ledger": "node scripts/kosmo-asset-decision-ledger.mjs",
     "kosmo:asset-human-review-session": "node scripts/kosmo-asset-human-review-session.mjs",
     "kosmo:asset-handoff-bundle": "node scripts/kosmo-asset-handoff-bundle.mjs",
     "kosmo:asset-handoff-smoke": "node scripts/kosmo-asset-handoff-smoke.mjs",

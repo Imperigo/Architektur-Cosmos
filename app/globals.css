@@ -5458,6 +5458,78 @@ body:has(.entry-page) {
   overflow-wrap: anywhere;
 }
 
+.kosmo-asset-ledger-card {
+  border-color: color-mix(in srgb, #70d7ff 30%, rgb(247 247 244 / 10%));
+  background:
+    linear-gradient(135deg, rgb(112 215 255 / 8%), transparent 50%),
+    rgb(0 0 0 / 18%);
+}
+
+.kosmo-asset-ledger-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.kosmo-asset-ledger-grid span {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 8px;
+  border: 1px solid rgb(247 247 244 / 9%);
+  border-radius: 8px;
+  background: rgb(247 247 244 / 4%);
+}
+
+.kosmo-asset-ledger-grid span[data-status="local_approval_recorded"],
+.kosmo-asset-ledger-grid span[data-status="ready"],
+.kosmo-asset-ledger-grid span[data-status="recorded"] {
+  border-color: rgb(101 255 115 / 34%);
+}
+
+.kosmo-asset-ledger-grid span[data-status="missing_decision"],
+.kosmo-asset-ledger-grid span[data-status="missing"] {
+  border-color: color-mix(in srgb, #f5b342 42%, rgb(247 247 244 / 10%));
+}
+
+.kosmo-asset-ledger-grid span[data-status="blocked"],
+.kosmo-asset-ledger-grid span[data-status="blocked_decision"],
+.kosmo-asset-ledger-grid span[data-status="rejected"] {
+  border-color: rgb(255 79 116 / 36%);
+}
+
+.kosmo-asset-ledger-grid small,
+.kosmo-asset-ledger-grid b {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.kosmo-asset-ledger-grid small {
+  color: rgb(247 247 244 / 48%);
+  font-size: 8px;
+}
+
+.kosmo-asset-ledger-grid b {
+  color: color-mix(in srgb, #70d7ff 62%, #f7f7f4);
+  font-size: 9px;
+}
+
+.kosmo-asset-ledger-card code {
+  display: block;
+  max-width: 100%;
+  padding: 7px;
+  border: 1px solid rgb(247 247 244 / 8%);
+  border-radius: 8px;
+  background: rgb(247 247 244 / 5%);
+  color: color-mix(in srgb, #70d7ff 64%, #f7f7f4);
+  font-size: 9px;
+  line-height: 1.45;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
 .kosmo-asset-exchange-card {
   border-color: color-mix(in srgb, var(--asset-accent) 30%, rgb(247 247 244 / 10%));
   background:
@@ -6360,6 +6432,10 @@ html[data-cosmos-browser="opera"] .relation-strand {
   }
 
   .kosmo-asset-human-session-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .kosmo-asset-ledger-grid {
     grid-template-columns: 1fr;
   }
 

@@ -54,6 +54,12 @@ const steps = [
     label: 'Human Review Session',
     script: 'kosmo:asset-human-review-session',
     report: 'review/asset-human-review-session.generated.json'
+  },
+  {
+    id: 'decision_ledger',
+    label: 'Decision Ledger',
+    script: 'kosmo:asset-decision-ledger',
+    report: 'review/asset-decision-ledger.generated.json'
   }
 ];
 
@@ -121,6 +127,7 @@ function buildReport(stepRows) {
   const handoffBundle = readOptionalReport('review/asset-handoff-bundle.generated.json');
   const handoffSmoke = readOptionalReport('review/asset-handoff-smoke.generated.json');
   const humanReviewSession = readOptionalReport('review/asset-human-review-session.generated.json');
+  const decisionLedger = readOptionalReport('review/asset-decision-ledger.generated.json');
   const failedSteps = stepRows.filter((step) => step.status !== 'passed');
   const openHumanReviews = reviewPack?.summary?.open_human_review_count || 0;
   const status = failedSteps.length
@@ -162,7 +169,13 @@ function buildReport(stepRows) {
       handoff_archicad_rows: handoffBundle?.summary?.archicad_row_count || 0,
       handoff_smoke_failures: handoffSmoke?.summary?.failure_count ?? null,
       human_review_session_status: humanReviewSession?.status || null,
-      human_review_session_open_items: humanReviewSession?.summary?.open_item_count ?? openHumanReviews
+      human_review_session_open_items: humanReviewSession?.summary?.open_item_count ?? openHumanReviews,
+      decision_ledger_status: decisionLedger?.status || null,
+      recorded_decision_count: decisionLedger?.summary?.recorded_decision_count || 0,
+      missing_decision_count: decisionLedger?.summary?.missing_decision_count ?? openHumanReviews,
+      sandbox_ready_count: decisionLedger?.summary?.sandbox_ready_count || 0,
+      certificate_ready_count: decisionLedger?.summary?.certificate_ready_count || 0,
+      certificate_count: decisionLedger?.summary?.certificate_count || 0
     },
     outputs: {
       full_review_json: relative(root, outputJsonPath),
@@ -173,24 +186,27 @@ function buildReport(stepRows) {
       exchange_profile: reviewPath('asset-exchange-profile.generated.md'),
       handoff_bundle: reviewPath('asset-handoff-bundle.generated.md'),
       handoff_smoke: reviewPath('asset-handoff-smoke.generated.md'),
-      human_review_session: reviewPath('asset-human-review-session.generated.md')
+      human_review_session: reviewPath('asset-human-review-session.generated.md'),
+      decision_ledger: reviewPath('asset-decision-ledger.generated.md')
     },
     steps: stepRows,
-    assets: fullReviewAssets({ library, reviewPack, exchangeProfile, handoffBundle, humanReviewSession }),
+    assets: fullReviewAssets({ library, reviewPack, exchangeProfile, handoffBundle, humanReviewSession, decisionLedger }),
     next_actions: nextActions({ failedSteps, openHumanReviews })
   };
 }
 
-function fullReviewAssets({ library, reviewPack, exchangeProfile, handoffBundle, humanReviewSession }) {
+function fullReviewAssets({ library, reviewPack, exchangeProfile, handoffBundle, humanReviewSession, decisionLedger }) {
   const reviewRows = new Map((reviewPack?.assets || []).map((asset) => [asset.id, asset]));
   const exchangeRows = new Map((exchangeProfile?.assets || []).map((asset) => [asset.id, asset]));
   const handoffRows = new Map((handoffBundle?.assets || []).map((asset) => [asset.id, asset]));
   const sessionRows = new Map((humanReviewSession?.assets || []).map((asset) => [asset.id, asset]));
+  const ledgerRows = new Map((decisionLedger?.rows || []).map((asset) => [asset.asset_id, asset]));
   return (library.assets || []).map((asset) => {
     const review = reviewRows.get(asset.id);
     const exchange = exchangeRows.get(asset.id);
     const handoff = handoffRows.get(asset.id);
     const session = sessionRows.get(asset.id);
+    const ledger = ledgerRows.get(asset.id);
     return {
       id: asset.id,
       title: asset.title,
@@ -205,7 +221,10 @@ function fullReviewAssets({ library, reviewPack, exchangeProfile, handoffBundle,
       web: Boolean(exchange?.web || handoff?.web),
       suggested_decision: review?.suggested_decision || null,
       review_priority: session?.review_priority || null,
-      primary_review_route: session?.primary_route || null
+      primary_review_route: session?.primary_route || null,
+      decision_status: ledger?.ledger_status || null,
+      certificate_status: ledger?.latest_certificate?.status || null,
+      sandbox_ready: Boolean(ledger?.sandbox_ready)
     };
   });
 }
@@ -220,6 +239,7 @@ function nextActions({ failedSteps, openHumanReviews }) {
   const actions = ['Use this full-review report as the evening batch checkpoint for KosmoAsset.'];
   if (openHumanReviews > 0) {
     actions.push('Complete asset-human-review-session.generated.md before recording explicit local decisions per asset/route.');
+    actions.push('Use asset-decision-ledger.generated.md to verify which decisions are still missing.');
   }
   actions.push('Keep public downloads, R2 uploads and D1 writes disabled.');
   return actions;
@@ -271,6 +291,11 @@ function renderMarkdown(report) {
     `- Handoff smoke failures: ${report.summary.handoff_smoke_failures ?? '-'}`,
     `- human review session: ${report.summary.human_review_session_status || '-'}`,
     `- human review session open items: ${report.summary.human_review_session_open_items}`,
+    `- decision ledger: ${report.summary.decision_ledger_status || '-'}`,
+    `- recorded decisions: ${report.summary.recorded_decision_count}`,
+    `- missing decisions: ${report.summary.missing_decision_count}`,
+    `- sandbox ready: ${report.summary.sandbox_ready_count}`,
+    `- certificates: ${report.summary.certificate_ready_count}/${report.summary.certificate_count}`,
     '',
     '## Steps',
     '',
@@ -282,9 +307,9 @@ function renderMarkdown(report) {
     lines.push(`| ${escapePipe(step.label)} | ${escapePipe(step.status)} | \`${escapePipe(step.report_path)}\` |`);
   }
 
-  lines.push('', '## Assets', '', '| Asset | Human Review | Priority | Route | Public Gate | Blender | ArchiCAD | Suggested Decision |', '| --- | --- | --- | --- | --- | --- | --- | --- |');
+  lines.push('', '## Assets', '', '| Asset | Human Review | Priority | Route | Decision | Certificate | Sandbox | Public Gate | Blender | ArchiCAD | Suggested Decision |', '| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |');
   for (const asset of report.assets) {
-    lines.push(`| ${escapePipe(asset.title)} | ${escapePipe(asset.human_review_status)} | ${escapePipe(asset.review_priority || '-')} | ${escapePipe(asset.primary_review_route || '-')} | ${escapePipe(asset.public_gate)} | ${asset.blender ? 'yes' : 'no'} | ${asset.archicad ? 'yes' : 'no'} | ${escapePipe(asset.suggested_decision || '-')} |`);
+    lines.push(`| ${escapePipe(asset.title)} | ${escapePipe(asset.human_review_status)} | ${escapePipe(asset.review_priority || '-')} | ${escapePipe(asset.primary_review_route || '-')} | ${escapePipe(asset.decision_status || '-')} | ${escapePipe(asset.certificate_status || '-')} | ${asset.sandbox_ready ? 'yes' : 'no'} | ${escapePipe(asset.public_gate)} | ${asset.blender ? 'yes' : 'no'} | ${asset.archicad ? 'yes' : 'no'} | ${escapePipe(asset.suggested_decision || '-')} |`);
   }
 
   lines.push('', '## Outputs', '');

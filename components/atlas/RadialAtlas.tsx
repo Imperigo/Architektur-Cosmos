@@ -12,6 +12,7 @@ import analysisPreview from '@/data/database-analysis-preview.json';
 import archivePreview from '@/data/archive-preview.json';
 import brainTools from '@/data/brain-tools.json';
 import reviewQueue from '@/data/review-queue.json';
+import assetDecisionLedgerPreview from '@/examples/kosmo-assets/kosmo-asset-demo/review/asset-decision-ledger.generated.json';
 import assetExportPlanPreview from '@/examples/kosmo-assets/kosmo-asset-demo/review/asset-export-plan.generated.json';
 import assetExchangeProfilePreview from '@/examples/kosmo-assets/kosmo-asset-demo/review/asset-exchange-profile.generated.json';
 import assetHandoffBundlePreview from '@/examples/kosmo-assets/kosmo-asset-demo/review/asset-handoff-bundle.generated.json';
@@ -50,6 +51,13 @@ type VisualPan = {
 
 type IntroState = 'intro' | 'hub' | 'asset' | 'launching' | 'idle';
 type AssetPreviewRecord = (typeof assetLibraryPreview.assets)[number];
+type AssetDecisionLedgerDecision = {
+  decision: string;
+  status: string;
+};
+type AssetDecisionLedgerRecord = Omit<(typeof assetDecisionLedgerPreview.rows)[number], 'latest_decision'> & {
+  latest_decision: AssetDecisionLedgerDecision | null;
+};
 type AssetExportPlanRecord = (typeof assetExportPlanPreview.assets)[number];
 type AssetExchangeProfileRecord = (typeof assetExchangeProfilePreview.assets)[number];
 type AssetHandoffBundleRecord = (typeof assetHandoffBundlePreview.assets)[number];
@@ -2613,6 +2621,7 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
   const handoffSmoke = handoffBundle ? assetHandoffSmokePreview : null;
   const reviewPack = assetReviewPack(asset.id);
   const humanReviewSession = assetHumanReviewSession(asset.id);
+  const decisionLedger = assetDecisionLedger(asset.id);
   const generatedProfiles = assetGeneratedProfiles(asset);
   const generatedProfile = generatedProfiles[0] ?? null;
   const secondaryGeneratedProfiles = generatedProfiles.slice(1);
@@ -2775,6 +2784,27 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
             ))}
           </div>
           <code>{humanReviewSession.commands.record_needs_review}</code>
+        </div>
+      ) : null}
+
+      {decisionLedger ? (
+        <div className="kosmo-asset-inspector-section kosmo-asset-ledger-card">
+          <strong>Decision-Ledger</strong>
+          <div className="kosmo-asset-ledger-grid">
+            <span data-status={decisionLedger.ledger_status}>
+              <small>Status</small>
+              <b>{formatAssetValue(decisionLedger.ledger_status)}</b>
+            </span>
+            <span data-status={decisionLedger.latest_decision ? 'recorded' : 'missing'}>
+              <small>Decision</small>
+              <b>{decisionLedger.latest_decision?.decision ? formatAssetValue(decisionLedger.latest_decision.decision) : 'fehlt'}</b>
+            </span>
+            <span data-status={decisionLedger.sandbox_ready ? 'ready' : 'blocked'}>
+              <small>Sandbox</small>
+              <b>{decisionLedger.sandbox_ready ? 'bereit' : 'gesperrt'}</b>
+            </span>
+          </div>
+          <code>{decisionLedger.expected_command}</code>
         </div>
       ) : null}
 
@@ -3094,6 +3124,10 @@ function assetHumanReviewSession(assetId: string): AssetHumanReviewSessionRecord
   return assetHumanReviewSessionPreview.assets.find((asset) => asset.id === assetId) ?? null;
 }
 
+function assetDecisionLedger(assetId: string): AssetDecisionLedgerRecord | null {
+  return (assetDecisionLedgerPreview.rows.find((asset) => asset.asset_id === assetId) as AssetDecisionLedgerRecord | undefined) ?? null;
+}
+
 function assetLibraryPath() {
   return 'examples/kosmo-assets/kosmo-asset-demo/library.json';
 }
@@ -3166,7 +3200,7 @@ function assetReviewActions(asset: AssetPreviewRecord): AssetReviewAction[] {
       id: 'full-review',
       label: 'Full Review',
       kicker: 'Batch',
-      description: 'Fuehrt den ganzen lokalen Abendbatch aus: Check, Exportplan, Review-Pack, Exchange, Handoff, Smoke und Human Session.',
+      description: 'Fuehrt den ganzen lokalen Abendbatch aus: Check, Exportplan, Review-Pack, Exchange, Handoff, Smoke, Human Session und Ledger.',
       command: `npm run kosmo:asset-full-review -- --library ${libraryPath}`
     },
     {
@@ -3175,6 +3209,13 @@ function assetReviewActions(asset: AssetPreviewRecord): AssetReviewAction[] {
       kicker: 'Review',
       description: 'Erzeugt die editierbare lokale Human-Review-Session mit offenen Asset-Checks und sicheren Entscheidbefehlen.',
       command: `npm run kosmo:asset-human-review-session -- --library ${libraryPath}`
+    },
+    {
+      id: 'decision-ledger',
+      label: 'Decision Ledger',
+      kicker: 'Audit',
+      description: 'Liest lokale Review-Entscheidungen und Zertifikate als Audit-Ledger. Erzeugt keine Freigabe.',
+      command: `npm run kosmo:asset-decision-ledger -- --library ${libraryPath}`
     },
     {
       id: 'handoff-bundle',
@@ -3203,6 +3244,13 @@ function assetReviewActions(asset: AssetPreviewRecord): AssetReviewAction[] {
       kicker: 'Gate',
       description: 'Schreibt eine lokale menschliche Freigabe-Evidenz fuer ein Asset, ohne Library, Blender, ArchiCAD oder Public-Gates zu veraendern.',
       command: `npm run kosmo:asset-review-decision -- --library ${libraryPath} --asset ${asset.id} --route ${decisionRoutes[0]} --decision approve-local --confirm-human-review`
+    },
+    {
+      id: 'review-certificate',
+      label: 'Review-Zertifikat',
+      kicker: 'Cert',
+      description: 'Bündelt lokale Freigabe, Human Session, Smoke und Public-Gate als Zertifikat fuer Sandbox-Tests. Keine Veröffentlichung.',
+      command: `npm run kosmo:asset-review-certificate -- --library ${libraryPath} --asset ${asset.id} --route ${decisionRoutes[0]}`
     }
   ];
 

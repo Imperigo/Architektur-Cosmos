@@ -85,9 +85,9 @@ examples/kosmo-assets/kosmo-asset-demo/review/asset-full-review.generated.md
 ```
 
 Er startet Library Check, Exportplan, Review-Pack, Exchange-Profil,
-Handoff-Bundle, Handoff-Smoke und eine Human-Review-Session. Der Bericht ist
-ein lokaler Tagesabschluss: keine Uploads, keine D1-/R2-Writes, keine
-Public-Gates und keine automatische Freigabe.
+Handoff-Bundle, Handoff-Smoke, Human-Review-Session und Decision-Ledger. Der
+Bericht ist ein lokaler Tagesabschluss: keine Uploads, keine D1-/R2-Writes,
+keine Public-Gates und keine automatische Freigabe.
 
 ## Review-Pack
 
@@ -196,6 +196,30 @@ Rechte-/Source-Gate, lokale Datei-/Profil-Evidenz, Smoke-Status und sichere
 Entscheidbefehle. Sie ist bewusst noch kein Zertifikat: Der `certificate_seed`
 ist nur eine Vorstufe fuer spaetere menschliche Qualitaetsbestaetigung.
 
+## Decision-Ledger
+
+Das Decision-Ledger liest vorhandene Review-Decision-Dateien, erzeugt aber
+selbst keine Entscheidung:
+
+```bash
+npm run kosmo:asset-decision-ledger -- \
+  --library examples/kosmo-assets/kosmo-asset-demo/library.json
+```
+
+Der Output zeigt, welche erwarteten Asset-/Routen-Entscheidungen fehlen, welche
+lokal freigegeben, blockiert, abgelehnt oder noch `needs-review` sind. Wenn
+lokale Review-Zertifikate existieren, werden sie ebenfalls in diese Buchhaltung
+eingelesen:
+
+```text
+examples/kosmo-assets/kosmo-asset-demo/review/asset-decision-ledger.generated.json
+examples/kosmo-assets/kosmo-asset-demo/review/asset-decision-ledger.generated.md
+```
+
+Das Ledger ist die Buchhaltung zwischen Human-Review-Session, Review-Entscheid,
+Zertifikat und Sandbox. Es oeffnet keine Public-Gates und verhindert, dass eine
+Sandbox aus impliziter oder versehentlicher Freigabe abgeleitet wird.
+
 ## Lokale Review-Entscheidung
 
 Nach Review-Pack, Handoff-Bundle und bestandenem Smoke kann eine menschliche
@@ -221,6 +245,30 @@ Er veraendert die Bibliothek nicht, importiert nichts in Blender, schreibt keine
 Projektdateien, laedt nichts hoch und oeffnet keine Public-Gates. Fuer echte
 Blender-/ArchiCAD-Tests bleibt danach weiterhin eine kopierte Sandbox-Datei
 noetig.
+
+## Lokales Review-Zertifikat
+
+Nach einer expliziten lokalen Review-Entscheidung kann ein Zertifikat erzeugt
+werden, das Human-Review-Session, Entscheidung, Handoff-Smoke, lokale Dateien
+und das weiterhin blockierte Public-Gate zusammen prueft:
+
+```bash
+npm run kosmo:asset-review-certificate -- \
+  --library examples/kosmo-assets/kosmo-asset-demo/library.json \
+  --asset warm-concrete-material-001 \
+  --route blender
+```
+
+Der Befehl schreibt:
+
+```text
+examples/kosmo-assets/kosmo-asset-demo/review/asset-review-certificate-warm-concrete-material-001-blender.generated.json
+examples/kosmo-assets/kosmo-asset-demo/review/asset-review-certificate-warm-concrete-material-001-blender.generated.md
+```
+
+Das Zertifikat ist nur lokale Evidenz fuer Sandbox-Tests. Es ist keine
+Public-Freigabe, kein Upload, kein D1-/R2-Write, keine Library-Mutation und
+keine ArchiCAD-/Blender-Projektdatei-Aenderung.
 
 ## Blender-Sandbox
 

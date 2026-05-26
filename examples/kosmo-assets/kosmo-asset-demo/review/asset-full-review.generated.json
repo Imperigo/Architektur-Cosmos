@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-26T20:30:06.922Z",
+  "generated_at": "2026-05-26T20:46:12.559Z",
   "generator": "kosmo-asset-full-review",
   "library_path": "examples/kosmo-assets/kosmo-asset-demo/library.json",
   "library_id": "kosmo-asset-demo",
@@ -14,8 +14,8 @@
     "human_decisions_required_for_local_approval": true
   },
   "summary": {
-    "step_count": 7,
-    "passed_steps": 7,
+    "step_count": 8,
+    "passed_steps": 8,
     "failed_steps": 0,
     "asset_count": 3,
     "local_ready_count": 3,
@@ -31,7 +31,13 @@
     "handoff_archicad_rows": 3,
     "handoff_smoke_failures": 0,
     "human_review_session_status": "asset_human_review_session_open",
-    "human_review_session_open_items": 3
+    "human_review_session_open_items": 3,
+    "decision_ledger_status": "asset_decision_ledger_open",
+    "recorded_decision_count": 0,
+    "missing_decision_count": 3,
+    "sandbox_ready_count": 0,
+    "certificate_ready_count": 0,
+    "certificate_count": 0
   },
   "outputs": {
     "full_review_json": "examples/kosmo-assets/kosmo-asset-demo/review/asset-full-review.generated.json",
@@ -42,7 +48,8 @@
     "exchange_profile": "examples/kosmo-assets/kosmo-asset-demo/review/asset-exchange-profile.generated.md",
     "handoff_bundle": "examples/kosmo-assets/kosmo-asset-demo/review/asset-handoff-bundle.generated.md",
     "handoff_smoke": "examples/kosmo-assets/kosmo-asset-demo/review/asset-handoff-smoke.generated.md",
-    "human_review_session": "examples/kosmo-assets/kosmo-asset-demo/review/asset-human-review-session.generated.md"
+    "human_review_session": "examples/kosmo-assets/kosmo-asset-demo/review/asset-human-review-session.generated.md",
+    "decision_ledger": "examples/kosmo-assets/kosmo-asset-demo/review/asset-decision-ledger.generated.md"
   },
   "steps": [
     {
@@ -128,6 +135,18 @@
       "report_status": "asset_human_review_session_open",
       "stdout_tail": "> node scripts/kosmo-asset-human-review-session.mjs --library examples/kosmo-assets/kosmo-asset-demo/library.json\n\nKosmoAsset human review session\nLibrary: examples/kosmo-assets/kosmo-asset-demo/library.json\nStatus: asset_human_review_session_open\nOpen items: 3\nSmoke passed: yes\nWrote: examples/kosmo-assets/kosmo-asset-demo/review/asset-human-review-session.generated.md",
       "stderr_tail": ""
+    },
+    {
+      "id": "decision_ledger",
+      "label": "Decision Ledger",
+      "command": "npm run kosmo:asset-decision-ledger -- --library examples/kosmo-assets/kosmo-asset-demo/library.json",
+      "status": "passed",
+      "exit_code": 0,
+      "report_path": "examples/kosmo-assets/kosmo-asset-demo/review/asset-decision-ledger.generated.json",
+      "report_exists": true,
+      "report_status": "asset_decision_ledger_open",
+      "stdout_tail": "\nKosmoAsset decision ledger\nLibrary: examples/kosmo-assets/kosmo-asset-demo/library.json\nStatus: asset_decision_ledger_open\nRecorded decisions: 0\nMissing decisions: 3\nLocal approvals: 0\nWrote: examples/kosmo-assets/kosmo-asset-demo/review/asset-decision-ledger.generated.md",
+      "stderr_tail": ""
     }
   ],
   "assets": [
@@ -145,7 +164,10 @@
       "web": true,
       "suggested_decision": "complete_human_review_before_promotion",
       "review_priority": "normal",
-      "primary_review_route": "archicad"
+      "primary_review_route": "archicad",
+      "decision_status": "missing_decision",
+      "certificate_status": null,
+      "sandbox_ready": false
     },
     {
       "id": "warm-concrete-material-001",
@@ -161,7 +183,10 @@
       "web": true,
       "suggested_decision": "complete_human_review_before_promotion",
       "review_priority": "high",
-      "primary_review_route": "blender"
+      "primary_review_route": "blender",
+      "decision_status": "missing_decision",
+      "certificate_status": null,
+      "sandbox_ready": false
     },
     {
       "id": "generic-column-glb-001",
@@ -177,12 +202,16 @@
       "web": true,
       "suggested_decision": "complete_human_review_before_promotion",
       "review_priority": "high",
-      "primary_review_route": "blender"
+      "primary_review_route": "blender",
+      "decision_status": "missing_decision",
+      "certificate_status": null,
+      "sandbox_ready": false
     }
   ],
   "next_actions": [
     "Use this full-review report as the evening batch checkpoint for KosmoAsset.",
     "Complete asset-human-review-session.generated.md before recording explicit local decisions per asset/route.",
+    "Use asset-decision-ledger.generated.md to verify which decisions are still missing.",
     "Keep public downloads, R2 uploads and D1 writes disabled."
   ]
 }

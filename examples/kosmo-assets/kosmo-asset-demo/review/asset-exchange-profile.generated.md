@@ -1,7 +1,7 @@
 # KosmoAsset Exchange Profile
 
 Library: `kosmo-asset-demo`
-Generated: 2026-05-26T20:30:06.212Z
+Generated: 2026-05-26T20:46:11.706Z
 Status: `local_review_exchange_profile`
 
 Review-only. This profile prepares Blender, ArchiCAD and Web naming/mapping; it does not import, upload or publish assets.

@@ -1,0 +1,110 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-05-26T20:46:12.544Z",
+  "generator": "kosmo-asset-decision-ledger",
+  "library_path": "examples/kosmo-assets/kosmo-asset-demo/library.json",
+  "library_id": "kosmo-asset-demo",
+  "status": "asset_decision_ledger_open",
+  "policy": {
+    "ledger_does_not_create_decisions": true,
+    "ledger_does_not_approve_assets": true,
+    "no_uploads": true,
+    "no_public_downloads": true,
+    "no_d1_writes": true,
+    "no_r2_writes": true,
+    "public_gate_remains_blocked": true
+  },
+  "summary": {
+    "expected_decision_count": 3,
+    "recorded_decision_count": 0,
+    "missing_decision_count": 3,
+    "local_approval_count": 0,
+    "needs_review_count": 0,
+    "block_public_count": 0,
+    "rejected_count": 0,
+    "blocked_decision_count": 0,
+    "sandbox_ready_count": 0,
+    "certificate_count": 0,
+    "certificate_ready_count": 0,
+    "handoff_smoke_passed": true,
+    "certificate_ready": false,
+    "recommended_next_step": "record_or_defer_explicit_human_decisions"
+  },
+  "source_reports": {
+    "human_review_session": {
+      "path": "examples/kosmo-assets/kosmo-asset-demo/review/asset-human-review-session.generated.json",
+      "exists": true
+    },
+    "handoff_smoke": {
+      "path": "examples/kosmo-assets/kosmo-asset-demo/review/asset-handoff-smoke.generated.json",
+      "exists": true
+    }
+  },
+  "rows": [
+    {
+      "asset_id": "axis-marker-svg-001",
+      "asset_title": "Kosmo Axis Marker",
+      "asset_type": "2d_symbol",
+      "route": "archicad",
+      "review_priority": "normal",
+      "human_review_status": "open",
+      "suggested_decision": "complete_human_review_before_promotion",
+      "public_gate": "blocked",
+      "handoff_smoke_passed": true,
+      "public_use_allowed": false,
+      "expected_command": "npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmo-asset-demo/library.json --asset axis-marker-svg-001 --route archicad --decision needs-review",
+      "ledger_status": "missing_decision",
+      "latest_decision": null,
+      "latest_certificate": null,
+      "decision_count": 0,
+      "certificate_count": 0,
+      "certificate_ready": false,
+      "sandbox_ready": false
+    },
+    {
+      "asset_id": "warm-concrete-material-001",
+      "asset_title": "Warm Concrete Study Material",
+      "asset_type": "material",
+      "route": "blender",
+      "review_priority": "high",
+      "human_review_status": "open",
+      "suggested_decision": "complete_human_review_before_promotion",
+      "public_gate": "blocked",
+      "handoff_smoke_passed": true,
+      "public_use_allowed": false,
+      "expected_command": "npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmo-asset-demo/library.json --asset warm-concrete-material-001 --route blender --decision needs-review",
+      "ledger_status": "missing_decision",
+      "latest_decision": null,
+      "latest_certificate": null,
+      "decision_count": 0,
+      "certificate_count": 0,
+      "certificate_ready": false,
+      "sandbox_ready": false
+    },
+    {
+      "asset_id": "generic-column-glb-001",
+      "asset_title": "Generic Column GLB Slot",
+      "asset_type": "glb_model",
+      "route": "blender",
+      "review_priority": "high",
+      "human_review_status": "open",
+      "suggested_decision": "complete_human_review_before_promotion",
+      "public_gate": "blocked",
+      "handoff_smoke_passed": true,
+      "public_use_allowed": false,
+      "expected_command": "npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmo-asset-demo/library.json --asset generic-column-glb-001 --route blender --decision needs-review",
+      "ledger_status": "missing_decision",
+      "latest_decision": null,
+      "latest_certificate": null,
+      "decision_count": 0,
+      "certificate_count": 0,
+      "certificate_ready": false,
+      "sandbox_ready": false
+    }
+  ],
+  "unmatched_decisions": [],
+  "next_actions": [
+    "Finish or explicitly defer the open human review rows before creating Blender/ArchiCAD sandbox outputs.",
+    "Keep public downloads, R2 uploads and D1 writes disabled."
+  ]
+}
