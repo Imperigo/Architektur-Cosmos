@@ -1,0 +1,242 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-05-26T11:53:26.130Z",
+  "updated_at": "2026-05-26T11:53:26.130Z",
+  "generator": "kosmo-ifc-human-review-session",
+  "project_id": "kosmo-demo-001",
+  "project_name": "Kosmo Demo 001",
+  "status": "ifc_human_review_session_open",
+  "rights_status": "internal_only",
+  "reviewer": null,
+  "proposed_decision": "undecided",
+  "policy": {
+    "session_is_human_work_log": true,
+    "session_does_not_modify_context_selection": true,
+    "session_does_not_record_final_decision": true,
+    "final_decision_requires_kosmo_ifc_human_review_decision": true
+  },
+  "source_files": {
+    "manifest": {
+      "path": "kosmo.project.json",
+      "name": "kosmo.project.json",
+      "exists": true,
+      "size_bytes": 17586
+    },
+    "guide": {
+      "path": "design/ifc-human-review-guide.generated.json",
+      "name": "ifc-human-review-guide.generated.json",
+      "exists": true,
+      "size_bytes": 11848
+    },
+    "pack": {
+      "path": "design/ifc-human-review-pack.generated.json",
+      "name": "ifc-human-review-pack.generated.json",
+      "exists": true,
+      "size_bytes": 20176
+    },
+    "viewer": {
+      "path": "design/ifc-human-review-viewer.generated.json",
+      "name": "ifc-human-review-viewer.generated.json",
+      "exists": true,
+      "size_bytes": 66817
+    },
+    "decision": {
+      "path": "design/ifc-human-review-decision.json",
+      "name": "ifc-human-review-decision.json",
+      "exists": true,
+      "size_bytes": 7215
+    },
+    "sync": {
+      "path": "design/ifc-human-review-sync.generated.json",
+      "name": "ifc-human-review-sync.generated.json",
+      "exists": true,
+      "size_bytes": 1435
+    },
+    "existingSession": {
+      "path": "design/ifc-human-review-session.json",
+      "name": "ifc-human-review-session.json",
+      "exists": true,
+      "size_bytes": 8433
+    }
+  },
+  "current_state": {
+    "guide_status": "ifc_human_review_guide_ready",
+    "viewer_status": "ifc_review_viewer_ready",
+    "decision_status": "ifc_human_review_decision_draft",
+    "final_decision_recorded": false,
+    "sync_status": "ifc_sync_blocked_pending_final_decision",
+    "evidence_ready": false,
+    "design_generation_allowed": false
+  },
+  "review_inputs": {
+    "ifc_file": "data/source-files/Bestand_Kontext.ifc",
+    "static_viewer_html": "design/ifc-human-review-viewer.generated.html",
+    "ifcopenshell_report": "design/ifcopenshell-semantic-review.generated.md",
+    "human_review_pack": "design/ifc-human-review-pack.generated.md",
+    "decision_record": "design/ifc-human-review-decision.md",
+    "sync_report": "design/ifc-human-review-sync.generated.md",
+    "previews": [
+      {
+        "label": "IFC geometry preview",
+        "path": "viz/previews/ifc-geometry-preview.svg",
+        "exists": true,
+        "size_bytes": 1002
+      },
+      {
+        "label": "IFC/DXF alignment preview",
+        "path": "viz/previews/ifc-dxf-alignment-preview.svg",
+        "exists": true,
+        "size_bytes": 2792
+      },
+      {
+        "label": "IFC layer plan",
+        "path": "viz/previews/ifc-layer-plan.svg",
+        "exists": true,
+        "size_bytes": 2114
+      }
+    ],
+    "blender_review_blend": null
+  },
+  "machine_snapshot": {
+    "evidence_ready": false,
+    "viewer_ready": true,
+    "final_decision_recorded": false,
+    "current_decision": "keep_needs_more_source_review",
+    "sync_status": "ifc_sync_blocked_pending_final_decision",
+    "design_generation_allowed": false,
+    "human_check_count": 10,
+    "open_human_check_count": 10,
+    "ifc_proxy_count": 2,
+    "ifc_body_brep_count": 2,
+    "ifcopenshell_checks": "13/13",
+    "unit_scale": 1,
+    "storey_count": 1,
+    "geometry_extents_m": {
+      "width": 10,
+      "depth": 8,
+      "height": 3.35
+    },
+    "alignment_hint": "missing_dxf_source",
+    "alignment_center_offset_m": 0,
+    "layer_group_count": 5,
+    "blender_audit_status": null
+  },
+  "summary": {
+    "check_count": 10,
+    "pending_check_count": 10,
+    "confirmed_check_count": 0,
+    "failed_check_count": 0,
+    "not_applicable_check_count": 0
+  },
+  "checks": [
+    {
+      "id": "semantic_viewer_import",
+      "status": "pending",
+      "question": "Open `data/source-files/Bestand_Kontext.ifc` in Bonsai/IfcOpenShell or equivalent and confirm the semantic tree loads without import errors.",
+      "evidence_hint": "IfcOpenShell machine import passed 13/13; visual Bonsai-style tree review remains human.",
+      "notes": [],
+      "reviewed_by": null,
+      "reviewed_at": null
+    },
+    {
+      "id": "element_class_review",
+      "status": "pending",
+      "question": "Confirm whether 2 IFCBUILDINGELEMENTPROXY objects are acceptable as semantic Bestand/context elements or need reclassification.",
+      "evidence_hint": "2 IFCBUILDINGELEMENTPROXY elements found.",
+      "notes": [],
+      "reviewed_by": null,
+      "reviewed_at": null
+    },
+    {
+      "id": "storey_review",
+      "status": "pending",
+      "question": "Confirm all 2 elements belong to IFCBUILDINGSTOREY #4 Level 0 and there are no missing/extra storeys.",
+      "evidence_hint": "Container distribution: IFCBUILDINGSTOREY #4 Level 0: 2",
+      "notes": [],
+      "reviewed_by": null,
+      "reviewed_at": null
+    },
+    {
+      "id": "placement_units_review",
+      "status": "pending",
+      "question": "Confirm object placements and project units match the expected meter-based project context.",
+      "evidence_hint": "2 elements have object placement; geometry extents are 10 x 8 x 3.35 m.",
+      "notes": [],
+      "reviewed_by": null,
+      "reviewed_at": null
+    },
+    {
+      "id": "origin_alignment_review",
+      "status": "pending",
+      "question": "Compare the semantic IFC import against DXF underlay, IFC bounds and LV95/project origin.",
+      "evidence_hint": "Alignment hint: missing_dxf_source; center offset estimate 0 m.",
+      "notes": [],
+      "reviewed_by": null,
+      "reviewed_at": null
+    },
+    {
+      "id": "geometry_outlier_review",
+      "status": "pending",
+      "question": "Inspect large footprint/height outliers in the geometry preview before trusting the IFC as a design seed.",
+      "evidence_hint": "12 faces resolved; inspect SVG preview and element samples.",
+      "notes": [],
+      "reviewed_by": null,
+      "reviewed_at": null
+    },
+    {
+      "id": "property_set_review",
+      "status": "pending",
+      "question": "Check `Pset_AtelierBlaupause_Object` fields such as OBJEKTART, DACH_MIN, DACH_MAX and gml_id for reliability.",
+      "evidence_hint": "Property set distribution: Pset_KosmoDemo: 2",
+      "notes": [],
+      "reviewed_by": null,
+      "reviewed_at": null
+    },
+    {
+      "id": "layer_mapping_review",
+      "status": "pending",
+      "question": "Review the generated Mass/material_unknown layer plan and decide whether finer wall/slab/roof/support classes are possible.",
+      "evidence_hint": "5 generated layer groups; approved_for_import is false.",
+      "notes": [],
+      "reviewed_by": null,
+      "reviewed_at": null
+    },
+    {
+      "id": "blender_reference_review",
+      "status": "pending",
+      "question": "Open the audited Blender review blend and visually confirm it is only a locked reference underlay.",
+      "evidence_hint": "Audit status null; mesh faces 0.",
+      "notes": [],
+      "reviewed_by": null,
+      "reviewed_at": null
+    },
+    {
+      "id": "final_seed_decision",
+      "status": "pending",
+      "question": "Only after the checks above: decide keep as source review, accept as context, reject or approve as design seed.",
+      "evidence_hint": "Recommended current decision remains keep_needs_more_source_review.",
+      "notes": [],
+      "reviewed_by": null,
+      "reviewed_at": null
+    }
+  ],
+  "decision_readiness": {
+    "ready": false,
+    "blockers": [
+      "No proposed decision selected."
+    ]
+  },
+  "next_commands": [
+    {
+      "id": "refresh_session",
+      "command": "npm run kosmo:ifc-human-review-session -- --project examples/kosmo-projects/kosmo-demo-001"
+    },
+    {
+      "id": "mark_check_example",
+      "command": "npm run kosmo:ifc-human-review-session -- --project examples/kosmo-projects/kosmo-demo-001 --reviewed-by Reviewer --check semantic_viewer_import=confirmed --note semantic_viewer_import=\"IFC tree opened and matched review guide\""
+    }
+  ],
+  "next_actions": [
+    "Complete pending review checks in the session log."
+  ]
+}

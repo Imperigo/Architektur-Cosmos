@@ -53,9 +53,10 @@ Der erste Connector ist bewusst duenn:
   `design/ifc-human-review-viewer.generated.html`, `.json`,
   `design/ifc-human-review-decision.json`, `.md`,
   `design/ifc-human-review-sync.generated.json`, `.md`,
-  `design/ifc-human-review-guide.generated.json` und `.md` als menschliches
-  IFC-Entscheidungsgate, Dry-Run-Sync und projektspezifische Review-Anleitung
-  vor jeder Design-Seed-Freigabe
+  `design/ifc-human-review-guide.generated.json`, `.md`,
+  `design/ifc-human-review-session.json` und `.md` als menschliches
+  IFC-Entscheidungsgate, Dry-Run-Sync, projektspezifische Review-Anleitung und
+  ausfuellbares Review-Protokoll vor jeder Design-Seed-Freigabe
 - schreibt optional `design/model-layer-handoff.generated.json`, `.md`,
   `design/blender-collection-handoff.generated.py` und
   `design/archicad-layer-schedule.generated.csv` als review-only Uebergabe
@@ -203,6 +204,8 @@ Zusätzlich wird im Projektpaket geschrieben:
 - `design/ifc-human-review-sync.generated.md`
 - `design/ifc-human-review-guide.generated.json`
 - `design/ifc-human-review-guide.generated.md`
+- `design/ifc-human-review-session.json`
+- `design/ifc-human-review-session.md`
 - `design/model-layer-handoff.generated.json`
 - `design/model-layer-handoff.generated.md`
 - `design/blender-collection-handoff.generated.py`
@@ -340,6 +343,14 @@ Machine Snapshot, Bonsai/IfcOpenShell-Pruefschritte, Red Flags,
 Entscheidungslogik und die passenden Final-Decision-Kommandos. Sie ist
 Instruction-only und setzt keine Freigabe.
 
+`npm run kosmo:ifc-human-review-session -- --project <projektpfad>` erzeugt
+oder aktualisiert `design/ifc-human-review-session.md/json`. Dieses Protokoll
+ist das ausfuellbare Arbeitsblatt fuer den Review: einzelne Checks koennen mit
+`--check check_id=confirmed|failed|pending|not_applicable`, Notizen mit
+`--note check_id="..."`, Reviewer mit `--reviewed-by` und ein Vorschlag mit
+`--decision keep_needs_more_source_review|accepted_as_context|accepted_as_design_seed|rejected`
+eingetragen werden. Auch dieses Tool recordet noch keinen finalen Entscheid.
+
 `npm run kosmo:context-handoff -- --project <projektpfad>` erzeugt
 `design/context-handoff.generated.md/json`. Der Handoff sammelt akzeptierte
 Kontextinputs, blockierte oder offene Quellen, IFC-Preview-Evidence,
@@ -385,6 +396,7 @@ npm run kosmo:ifc-review-viewer -- --project examples/kosmo-projects/kosmo-demo-
 npm run kosmo:ifc-human-review-decision -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:ifc-human-review-sync -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:ifc-human-review-guide -- --project examples/kosmo-projects/kosmo-demo-001
+npm run kosmo:ifc-human-review-session -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:context-source-mapping -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:context-handoff -- --project examples/kosmo-projects/kosmo-demo-001
 npm run kosmo:model-layer-handoff -- --project examples/kosmo-projects/kosmo-demo-001
@@ -659,6 +671,19 @@ Status: lokal generiert. Die Anleitung schreibt
 Review durch Viewer, Bonsai/IfcOpenShell-Tree, Units/Origin/Geometrie,
 Properties, Layerplan, Red Flags und finale Decision-Kommandos. Auch diese
 Anleitung ist nur Instruction-only und setzt keine Freigabe.
+
+IFC Human Review Session:
+
+```bash
+npm run kosmo:ifc-human-review-session -- \
+  --project archive-intake/kosmo-projects/zg-07052026
+```
+
+Status: lokales Arbeitsprotokoll erzeugt. Die Session schreibt
+`design/ifc-human-review-session.md/json`, uebernimmt die 10 Human Checks aus
+dem Review-Pack und bleibt offen, bis die Checks mit Reviewer, Notizen und
+einem vorgeschlagenen Entscheid ausgefuellt sind. Erst danach wird mit
+`kosmo:ifc-human-review-decision` ein finaler Entscheid recorded.
 
 Danach erzeugt der Orbit-Befehl
 `npm run kosmo:context-selection -- --project archive-intake/kosmo-projects/zg-07052026`

@@ -103,6 +103,7 @@
     "kosmo:ifc-human-review-decision": "node scripts/kosmo-ifc-human-review-decision.mjs",
     "kosmo:ifc-human-review-sync": "node scripts/kosmo-ifc-human-review-sync.mjs",
     "kosmo:ifc-human-review-guide": "node scripts/kosmo-ifc-human-review-guide.mjs",
+    "kosmo:ifc-human-review-session": "node scripts/kosmo-ifc-human-review-session.mjs",
     "kosmo:model-layer-handoff": "node scripts/kosmo-model-layer-handoff.mjs",
     "kosmo:blender-context-import": "node scripts/kosmo-blender-context-import.mjs",
     "kosmo:blender-context-smoke": "node scripts/kosmo-blender-context-smoke.mjs",

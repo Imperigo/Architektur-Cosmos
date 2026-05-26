@@ -144,6 +144,7 @@ function checkContextSelection() {
   const ifcHumanReviewDecisionPath = join(projectRoot, 'design/ifc-human-review-decision.json');
   const ifcHumanReviewSyncPath = join(projectRoot, 'design/ifc-human-review-sync.generated.json');
   const ifcHumanReviewGuidePath = join(projectRoot, 'design/ifc-human-review-guide.generated.json');
+  const ifcHumanReviewSessionPath = join(projectRoot, 'design/ifc-human-review-session.json');
   const modelLayerHandoffPath = join(projectRoot, 'design/model-layer-handoff.generated.json');
   const contextHandoffPath = join(projectRoot, 'design/context-handoff.generated.json');
   const blenderContextImportPath = join(projectRoot, 'design/blender-context-import.generated.json');
@@ -165,6 +166,7 @@ function checkContextSelection() {
   const ifcHumanReviewDecision = existsSync(ifcHumanReviewDecisionPath) ? readJson(ifcHumanReviewDecisionPath) : null;
   const ifcHumanReviewSync = existsSync(ifcHumanReviewSyncPath) ? readJson(ifcHumanReviewSyncPath) : null;
   const ifcHumanReviewGuide = existsSync(ifcHumanReviewGuidePath) ? readJson(ifcHumanReviewGuidePath) : null;
+  const ifcHumanReviewSession = existsSync(ifcHumanReviewSessionPath) ? readJson(ifcHumanReviewSessionPath) : null;
   const modelLayerHandoff = existsSync(modelLayerHandoffPath) ? readJson(modelLayerHandoffPath) : null;
   const contextHandoff = existsSync(contextHandoffPath) ? readJson(contextHandoffPath) : null;
   const blenderContextImport = existsSync(blenderContextImportPath) ? readJson(blenderContextImportPath) : null;
@@ -237,6 +239,12 @@ function checkContextSelection() {
   }
   if (ifcHumanReviewGuide && ifcHumanReviewGuide.status !== 'ifc_human_review_guide_ready') {
     warnings.push('IFC human review guide exists, but is not ready.');
+  }
+  if (ifcHumanReviewGuide?.status === 'ifc_human_review_guide_ready' && !ifcHumanReviewSession) {
+    warnings.push('IFC human review guide is ready, but design/ifc-human-review-session.json is missing.');
+  }
+  if (ifcHumanReviewSession?.status === 'ifc_human_review_session_positive_decision_blocked') {
+    warnings.push('IFC human review session proposes a positive decision but still has pending checks.');
   }
   if (ifcHumanReviewDecision && ifcHumanReviewDecision.summary?.final_decision_recorded !== true) {
     warnings.push('IFC human review decision exists, but final human decision is not recorded.');

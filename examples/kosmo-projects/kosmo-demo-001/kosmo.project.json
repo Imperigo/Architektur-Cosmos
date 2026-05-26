@@ -475,6 +475,20 @@
       "module": "design",
       "rights_status": "generated_needs_review",
       "description": "Human-readable IFC review Anleitung and decision commands."
+    },
+    {
+      "path": "design/ifc-human-review-session.json",
+      "type": "other",
+      "module": "design",
+      "rights_status": "internal_only",
+      "description": "Editable human IFC review session log."
+    },
+    {
+      "path": "design/ifc-human-review-session.md",
+      "type": "other",
+      "module": "design",
+      "rights_status": "internal_only",
+      "description": "Human-readable IFC review session worksheet."
     }
   ],
   "review_gates": {

@@ -371,6 +371,20 @@
       "format": "markdown",
       "status": "generated_needs_review",
       "rights_status": "generated_needs_review"
+    },
+    {
+      "path": "design/ifc-human-review-session.json",
+      "module": "Kosmo Design",
+      "format": "json",
+      "status": "draft_needs_human_review",
+      "rights_status": "internal_only"
+    },
+    {
+      "path": "design/ifc-human-review-session.md",
+      "module": "Kosmo Design",
+      "format": "markdown",
+      "status": "draft_needs_human_review",
+      "rights_status": "internal_only"
     }
   ]
 }
