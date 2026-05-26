@@ -4550,6 +4550,139 @@ body:has(.entry-page) {
   transform: skewY(-18deg) rotate(45deg);
 }
 
+.kosmo-asset-preview-axis,
+.kosmo-asset-preview-axis-line,
+.kosmo-asset-preview-material,
+.kosmo-asset-preview-grain,
+.kosmo-asset-preview-wireframe,
+.kosmo-asset-preview-wireframe-depth,
+.kosmo-asset-preview-label,
+.kosmo-asset-preview-swatches,
+.kosmo-asset-preview-swatches u {
+  position: absolute;
+  display: block;
+}
+
+.kosmo-asset-preview-axis {
+  left: 50%;
+  top: 48%;
+  width: 54px;
+  height: 54px;
+  border: 1px dashed var(--preview-primary);
+  border-radius: 999px;
+  transform: translate(-50%, -50%);
+}
+
+.kosmo-asset-preview-axis::before,
+.kosmo-asset-preview-axis::after {
+  position: absolute;
+  content: '';
+  background: var(--preview-secondary);
+  opacity: 0.88;
+}
+
+.kosmo-asset-preview-axis::before {
+  left: 50%;
+  top: -6px;
+  width: 1px;
+  height: calc(100% + 12px);
+}
+
+.kosmo-asset-preview-axis::after {
+  left: -6px;
+  top: 50%;
+  width: calc(100% + 12px);
+  height: 1px;
+}
+
+.kosmo-asset-preview-axis-line {
+  left: 55%;
+  top: 24%;
+  width: 30px;
+  height: 1px;
+  background: #ff4fd8;
+  transform: rotate(-42deg);
+}
+
+.kosmo-asset-preview-material {
+  inset: 0;
+  background:
+    radial-gradient(circle at 32% 28%, color-mix(in srgb, var(--preview-secondary) 28%, transparent), transparent 38%),
+    linear-gradient(135deg, color-mix(in srgb, var(--preview-primary) 78%, #f7f7f4), color-mix(in srgb, var(--preview-primary) 56%, #050505));
+}
+
+.kosmo-asset-preview-grain {
+  inset: 0;
+  opacity: 0.44;
+  background:
+    repeating-linear-gradient(90deg, rgb(247 247 244 / 14%) 0 1px, transparent 1px 7px),
+    repeating-linear-gradient(0deg, rgb(5 5 5 / 18%) 0 1px, transparent 1px 9px);
+}
+
+.kosmo-asset-preview-swatches {
+  right: 8px;
+  bottom: 8px;
+  display: flex;
+  gap: 4px;
+}
+
+.kosmo-asset-preview-swatches u {
+  position: relative;
+  width: 13px;
+  height: 13px;
+  border: 1px solid rgb(247 247 244 / 30%);
+  border-radius: 999px;
+  background: var(--preview-swatch);
+  text-decoration: none;
+}
+
+.kosmo-asset-preview-wireframe {
+  left: 50%;
+  top: 48%;
+  width: 38px;
+  height: 62px;
+  border: 1px solid var(--preview-primary);
+  transform: translate(-50%, -50%) skewY(-14deg) rotate(42deg);
+}
+
+.kosmo-asset-preview-wireframe::before,
+.kosmo-asset-preview-wireframe::after {
+  position: absolute;
+  content: '';
+  border: 1px dashed color-mix(in srgb, var(--preview-secondary) 72%, #f7f7f4);
+}
+
+.kosmo-asset-preview-wireframe::before {
+  inset: 8px;
+}
+
+.kosmo-asset-preview-wireframe::after {
+  left: -10px;
+  top: 9px;
+  width: 36px;
+  height: 60px;
+}
+
+.kosmo-asset-preview-wireframe-depth {
+  left: 33%;
+  top: 28%;
+  width: 48px;
+  height: 1px;
+  background: color-mix(in srgb, var(--preview-secondary) 72%, #f7f7f4);
+  transform: rotate(42deg);
+}
+
+.kosmo-asset-preview-label {
+  left: 9px;
+  bottom: 8px;
+  color: rgb(247 247 244 / 68%);
+  font-size: 8px;
+  font-style: normal;
+  font-weight: 760;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
 .kosmo-asset-card-body {
   min-width: 0;
 }
@@ -4641,6 +4774,17 @@ body:has(.entry-page) {
   color: rgb(247 247 244 / 66%);
   font-size: 11px;
   line-height: 1.48;
+}
+
+.kosmo-asset-inspector-preview {
+  position: relative;
+  min-height: 120px;
+  border: 1px solid color-mix(in srgb, var(--asset-accent) 34%, rgb(247 247 244 / 10%));
+  border-radius: 15px;
+  background:
+    radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--asset-accent) 13%, transparent), transparent 54%),
+    rgb(247 247 244 / 4%);
+  overflow: hidden;
 }
 
 .kosmo-asset-inspector-gates {

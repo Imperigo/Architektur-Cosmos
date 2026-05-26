@@ -185,6 +185,9 @@
             "$ref": "#/$defs/format"
           }
         },
+        "preview": {
+          "$ref": "#/$defs/preview"
+        },
         "export_targets": {
           "type": "array",
           "items": {
@@ -220,6 +223,32 @@
             "scale": {
               "type": "string"
             }
+          }
+        }
+      }
+    },
+    "preview": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "label"],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["axis_marker", "material_swatch", "wireframe_component"]
+        },
+        "label": {
+          "type": "string"
+        },
+        "primary": {
+          "type": "string"
+        },
+        "secondary": {
+          "type": "string"
+        },
+        "swatches": {
+          "type": "array",
+          "items": {
+            "type": "string"
           }
         }
       }

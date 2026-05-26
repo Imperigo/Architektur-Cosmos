@@ -49,6 +49,12 @@
           "status": "planned"
         }
       ],
+      "preview": {
+        "kind": "axis_marker",
+        "label": "Achse",
+        "primary": "#00e7ff",
+        "secondary": "#f5b342"
+      },
       "export_targets": ["svg", "dxf", "web", "layout"],
       "tags": ["axis", "annotation", "plan", "kosmo-style"],
       "material_tags": []
@@ -78,6 +84,13 @@
           "status": "exists"
         }
       ],
+      "preview": {
+        "kind": "material_swatch",
+        "label": "Beton",
+        "primary": "#b9aca0",
+        "secondary": "#f5b342",
+        "swatches": ["#c9beb4", "#b9aca0", "#8f8175"]
+      },
       "export_targets": ["blender", "archicad", "web"],
       "tags": ["concrete", "mineral", "material-layer", "neutral"],
       "material_tags": ["beton", "mineralisch"]
@@ -107,6 +120,12 @@
           "status": "planned"
         }
       ],
+      "preview": {
+        "kind": "wireframe_component",
+        "label": "Stütze",
+        "primary": "#00e7ff",
+        "secondary": "#ff4fd8"
+      },
       "export_targets": ["glb", "blender", "archicad", "web"],
       "tags": ["column", "structure", "glb", "placeholder"],
       "material_tags": ["generic"],

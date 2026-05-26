@@ -15,6 +15,7 @@ const allowedRights = new Set(['unknown', 'needs_permission', 'private_research'
 const publicSafeRights = new Set(['licensed', 'public_domain', 'own_work']);
 const allowedReviewStatus = new Set(['planned', 'draft', 'reviewed', 'verified', 'blocked', 'needs_source']);
 const allowedFormats = new Set(['svg', 'dxf', 'glb', 'blend', 'gsm', 'ifc', 'webp', 'png', 'jpg', 'json', 'material_json']);
+const allowedPreviewKinds = new Set(['axis_marker', 'material_swatch', 'wireframe_component']);
 
 main().catch((error) => {
   console.error(error.message);
@@ -131,6 +132,7 @@ function checkAsset(asset, index, seenIds, failures, warnings) {
   if (!Array.isArray(asset.formats) || asset.formats.length === 0) {
     failures.push(`${asset.id || prefix} has no formats.`);
   }
+  const preview = checkPreview(asset, prefix, failures, warnings);
 
   const formatRows = Array.isArray(asset.formats) ? asset.formats.map((format, formatIndex) => checkFormat(asset, format, formatIndex, failures, warnings)) : [];
   const existingFormats = formatRows.filter((row) => row.exists);
@@ -148,11 +150,25 @@ function checkAsset(asset, index, seenIds, failures, warnings) {
     local_ready: existingFormats.length > 0 && asset.review_status !== 'blocked',
     planned_only: existingFormats.length === 0 && plannedFormats.length > 0,
     formats: formatRows.map((row) => row.format),
+    preview_kind: preview?.kind || null,
     existing_format_count: existingFormats.length,
     planned_format_count: plannedFormats.length,
     export_targets: Array.isArray(asset.export_targets) ? asset.export_targets : [],
     tags: Array.isArray(asset.tags) ? asset.tags : []
   };
+}
+
+function checkPreview(asset, prefix, failures, warnings) {
+  if (!asset.preview) {
+    warnings.push(`${asset.id || prefix} has no preview metadata.`);
+    return null;
+  }
+  if (!allowedPreviewKinds.has(asset.preview.kind)) failures.push(`${asset.id || prefix} has invalid preview kind: ${asset.preview.kind}`);
+  if (!asset.preview.label) failures.push(`${asset.id || prefix} preview is missing label.`);
+  if (asset.preview.kind === 'material_swatch' && (!Array.isArray(asset.preview.swatches) || asset.preview.swatches.length === 0)) {
+    warnings.push(`${asset.id || prefix} material preview has no swatches.`);
+  }
+  return asset.preview;
 }
 
 function checkFormat(asset, format, formatIndex, failures, warnings) {
@@ -221,12 +237,12 @@ function renderMarkdown(report) {
     '',
     '## Assets',
     '',
-    '| Asset | Type | Rights | Review | Formats | Local | Public |',
-    '| --- | --- | --- | --- | --- | --- | --- |'
+    '| Asset | Type | Preview | Rights | Review | Formats | Local | Public |',
+    '| --- | --- | --- | --- | --- | --- | --- | --- |'
   ];
 
   for (const asset of report.assets) {
-    lines.push(`| ${escapePipe(asset.title)} | ${escapePipe(asset.asset_type)} | ${escapePipe(asset.rights_status)} | ${escapePipe(asset.review_status)} | ${escapePipe(asset.formats.join(', '))} | ${asset.local_ready ? 'yes' : 'no'} | ${asset.public_use_allowed ? 'yes' : 'no'} |`);
+    lines.push(`| ${escapePipe(asset.title)} | ${escapePipe(asset.asset_type)} | ${escapePipe(asset.preview_kind || '-')} | ${escapePipe(asset.rights_status)} | ${escapePipe(asset.review_status)} | ${escapePipe(asset.formats.join(', '))} | ${asset.local_ready ? 'yes' : 'no'} | ${asset.public_use_allowed ? 'yes' : 'no'} |`);
   }
 
   lines.push('', '## Failures', '');

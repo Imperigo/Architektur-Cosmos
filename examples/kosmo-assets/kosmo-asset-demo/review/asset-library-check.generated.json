@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-25T21:25:25.658Z",
+  "generated_at": "2026-05-26T12:05:06.594Z",
   "generator": "kosmo-asset-library-check",
   "library_path": "examples/kosmo-assets/kosmo-asset-demo/library.json",
   "library_id": "kosmo-asset-demo",
@@ -61,6 +61,7 @@
         "svg",
         "dxf"
       ],
+      "preview_kind": "axis_marker",
       "existing_format_count": 1,
       "planned_format_count": 1,
       "export_targets": [
@@ -90,6 +91,7 @@
       "formats": [
         "material_json"
       ],
+      "preview_kind": "material_swatch",
       "existing_format_count": 1,
       "planned_format_count": 0,
       "export_targets": [
@@ -118,6 +120,7 @@
       "formats": [
         "glb"
       ],
+      "preview_kind": "wireframe_component",
       "existing_format_count": 0,
       "planned_format_count": 1,
       "export_targets": [

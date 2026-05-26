@@ -43,6 +43,8 @@ Die erste Website-Version ist eine statische Landing-Ansicht:
 - erlaubt lokale Familienfilter fuer alle, 2D, Material und 3D;
 - zeigt beim Klick auf ein Asset einen Inspektor mit Rechte-, Review-,
   Format-, Export- und Quellenstatus;
+- zeichnet lokale Preview-Metadaten direkt in der UI: Achsenmarker,
+  Material-Swatch und Drahtmodell-Komponente;
 - keine Uploads;
 - keine Datenbank-Writes;
 - keine R2-Uploads;

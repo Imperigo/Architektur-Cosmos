@@ -2557,8 +2557,7 @@ function AssetCard({ asset, isSelected, onSelect }: { asset: AssetPreviewRecord;
       aria-pressed={isSelected}
     >
       <div className={`kosmo-asset-visual kosmo-asset-visual-${assetVisualKind(asset)}`} aria-hidden="true">
-        <span />
-        <i />
+        <AssetPreviewGraphic asset={asset} />
       </div>
       <div className="kosmo-asset-card-body">
         <small>{asset.asset_type.replace(/_/g, ' ')} / {asset.category}</small>
@@ -2588,6 +2587,10 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
         <small>Asset-Inspektor</small>
         <h3>{asset.title}</h3>
         <p>{asset.description}</p>
+      </div>
+
+      <div className="kosmo-asset-inspector-preview" aria-hidden="true">
+        <AssetPreviewGraphic asset={asset} />
       </div>
 
       <div className="kosmo-asset-inspector-gates" aria-label="Rechte und Review">
@@ -2622,6 +2625,46 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
         <p>{asset.source_basis[0] ?? 'Noch keine Quellenbasis hinterlegt.'}</p>
       </div>
     </aside>
+  );
+}
+
+function AssetPreviewGraphic({ asset }: { asset: AssetPreviewRecord }) {
+  const preview = asset.preview;
+  const primary = preview?.primary ?? assetAccent(asset);
+  const secondary = preview?.secondary ?? '#f7f7f4';
+  const swatches = preview?.swatches ?? [primary, secondary];
+
+  if (preview?.kind === 'material_swatch') {
+    return (
+      <>
+        <span className="kosmo-asset-preview-material" style={{ '--preview-primary': primary, '--preview-secondary': secondary } as CSSProperties} />
+        <i className="kosmo-asset-preview-grain" />
+        <em className="kosmo-asset-preview-label">{preview.label}</em>
+        <b className="kosmo-asset-preview-swatches">
+          {swatches.slice(0, 3).map((swatch) => (
+            <u key={swatch} style={{ '--preview-swatch': swatch } as CSSProperties} />
+          ))}
+        </b>
+      </>
+    );
+  }
+
+  if (preview?.kind === 'wireframe_component') {
+    return (
+      <>
+        <span className="kosmo-asset-preview-wireframe" style={{ '--preview-primary': primary, '--preview-secondary': secondary } as CSSProperties} />
+        <i className="kosmo-asset-preview-wireframe-depth" />
+        <em className="kosmo-asset-preview-label">{preview.label}</em>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <span className="kosmo-asset-preview-axis" style={{ '--preview-primary': primary, '--preview-secondary': secondary } as CSSProperties} />
+      <i className="kosmo-asset-preview-axis-line" />
+      <em className="kosmo-asset-preview-label">{preview?.label ?? 'Asset'}</em>
+    </>
   );
 }
 
