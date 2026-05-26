@@ -1,6 +1,6 @@
 # Kosmo Demo 001 Review Pack
 
-Generated: 2026-05-26T12:42:42.045Z
+Generated: 2026-05-26T13:08:28.618Z
 Project ID: `kosmo-demo-001`
 Risk level: `local_review_only`
 Readiness: `review_required`
@@ -283,7 +283,6 @@ Readiness: `review_required`
 - Complete the IFC human review session checks before recording a final decision.
 - Open the IFC review viewer, complete the checklist and record a final IFC human decision.
 - Run npm run kosmo:blender-context-audit to reopen and verify the saved Blender review file.
-- Review source-map semantic candidates before any design-seed approval.
 - Review generated outputs before any public or external use.
 - Ask for explicit approval before paid cloud jobs.
 

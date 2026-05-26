@@ -507,8 +507,8 @@ function nextActions({ modules, gates, blockers, warnings, outputs, contextRevie
   if (contextReview?.blender_context_import_ready && !contextReview.blender_context_smoke_exists) actions.push('Run npm run kosmo:blender-context-smoke to verify the locked Blender context import locally.');
   if (contextReview?.blender_context_smoke_exists && !contextReview.blender_context_audit_exists) actions.push('Run npm run kosmo:blender-context-audit to reopen and verify the saved Blender review file.');
   if (contextReview?.blender_context_audit_exists && contextReview.blender_context_audit_status !== 'passed') actions.push('Fix Blender context audit failures before using the review blend as a trusted reference.');
-  if (contextReview?.ifc_geometry_preview_exists && contextReview?.source_review_open_human_review_count > 0) actions.push('Compare IFC geometry preview against DXF context before any design-seed approval.');
-  if (contextReview?.source_map_design_seed_candidate_after_review_count > 0) actions.push('Review source-map semantic candidates before any design-seed approval.');
+  if (hasActiveSourceReview && contextReview?.ifc_geometry_preview_exists && contextReview?.source_review_open_human_review_count > 0) actions.push('Compare IFC geometry preview against DXF context before any design-seed approval.');
+  if (hasActiveSourceReview && contextReview?.source_map_design_seed_candidate_after_review_count > 0) actions.push('Review source-map semantic candidates before any design-seed approval.');
   if (contextReview?.accepted_as_design_seed_count > 0 && !contextReview.approved_for_design_generation) actions.push('Set final approval only after a human has checked context-selection.');
   if (modules.some((module) => module.id === 'data' && module.status === 'pending')) actions.push('Let Kosmo Data add reviewed references, sources and asset candidates.');
   if (modules.some((module) => module.id === 'design' && module.status === 'pending')) actions.push('Import design/model-profile.json into Kosmo Design and write an import status.');
