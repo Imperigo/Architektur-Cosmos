@@ -12,6 +12,7 @@ import analysisPreview from '@/data/database-analysis-preview.json';
 import archivePreview from '@/data/archive-preview.json';
 import brainTools from '@/data/brain-tools.json';
 import reviewQueue from '@/data/review-queue.json';
+import assetExportPlanPreview from '@/examples/kosmo-assets/kosmo-asset-demo/review/asset-export-plan.generated.json';
 import assetLibraryPreview from '@/examples/kosmo-assets/kosmo-asset-demo/library.json';
 import { atlasSize, styleSectors } from '@/lib/atlas-layout';
 import { kosmoOrbitModules, type KosmoModuleId, type KosmoOrbitModule } from '@/lib/kosmo-modules';
@@ -44,6 +45,7 @@ type VisualPan = {
 
 type IntroState = 'intro' | 'hub' | 'asset' | 'launching' | 'idle';
 type AssetPreviewRecord = (typeof assetLibraryPreview.assets)[number];
+type AssetExportPlanRecord = (typeof assetExportPlanPreview.assets)[number];
 type AssetFamilyFilter = 'all' | '2d' | 'material' | '3d';
 const sourceLensDefinitions = [
   { id: 'afasia', label: 'Afasia', terms: ['afasia'] },
@@ -2587,6 +2589,7 @@ function AssetCard({ asset, isSelected, onSelect }: { asset: AssetPreviewRecord;
 function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
   const accent = assetAccent(asset);
   const confidence = Math.round(asset.confidence * 100);
+  const exportPlan = assetExportPlan(asset.id);
   const generatedProfiles = assetGeneratedProfiles(asset);
   const generatedProfile = generatedProfiles[0] ?? null;
   const secondaryGeneratedProfiles = generatedProfiles.slice(1);
@@ -2671,6 +2674,21 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
           ))}
         </div>
       </div>
+
+      {exportPlan ? (
+        <div className="kosmo-asset-inspector-section kosmo-asset-route-plan">
+          <strong>Export-Routen</strong>
+          <div className="kosmo-asset-route-grid">
+            {exportPlan.routes.map((route) => (
+              <span key={`${asset.id}-${route.target}`} data-status={route.status}>
+                <b>{route.target}</b>
+                <small>{formatAssetValue(route.status)}</small>
+              </span>
+            ))}
+          </div>
+          <p>{exportPlan.next_step}</p>
+        </div>
+      ) : null}
 
       <div className="kosmo-asset-inspector-section">
         <strong>Quellenbasis</strong>
@@ -2770,6 +2788,10 @@ function assetAccent(asset: AssetPreviewRecord) {
   if (asset.asset_type.includes('material')) return '#f5b342';
   if (asset.asset_type.includes('glb') || asset.asset_type.includes('3d')) return '#00e7ff';
   return '#ff4fd8';
+}
+
+function assetExportPlan(assetId: string): AssetExportPlanRecord | null {
+  return assetExportPlanPreview.assets.find((asset) => asset.id === assetId) ?? null;
 }
 
 type GeneratedAssetProfile = {

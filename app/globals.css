@@ -5161,6 +5161,63 @@ body:has(.entry-page) {
   font-size: 9px;
 }
 
+.kosmo-asset-route-plan {
+  padding: 10px;
+  border: 1px solid rgb(247 247 244 / 10%);
+  border-radius: 12px;
+  background:
+    linear-gradient(135deg, rgb(247 247 244 / 4%), transparent),
+    rgb(0 0 0 / 18%);
+}
+
+.kosmo-asset-route-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.kosmo-asset-route-grid span {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 8px;
+  border: 1px solid rgb(247 247 244 / 10%);
+  border-radius: 10px;
+  background: rgb(247 247 244 / 4%);
+}
+
+.kosmo-asset-route-grid span[data-status="needs_review"] {
+  border-color: color-mix(in srgb, #f5b342 36%, rgb(247 247 244 / 10%));
+}
+
+.kosmo-asset-route-grid span[data-status="blocked"] {
+  border-color: rgb(255 79 116 / 45%);
+}
+
+.kosmo-asset-route-grid span[data-status="ready"] {
+  border-color: rgb(101 255 115 / 42%);
+}
+
+.kosmo-asset-route-grid b,
+.kosmo-asset-route-grid small {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  text-transform: uppercase;
+}
+
+.kosmo-asset-route-grid b {
+  color: rgb(247 247 244 / 78%);
+  font-size: 9px;
+  font-weight: 760;
+  letter-spacing: 0.12em;
+}
+
+.kosmo-asset-route-grid small {
+  color: color-mix(in srgb, var(--asset-accent) 60%, #f7f7f4);
+  font-size: 8px;
+  letter-spacing: 0.08em;
+}
+
 .kosmo-asset-inspector-tags {
   display: flex;
   flex-wrap: wrap;
