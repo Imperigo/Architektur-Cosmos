@@ -69,6 +69,15 @@
       "approval_required_before_public_use": false
     },
     {
+      "id": "kosmo_asset_exchange_profile",
+      "label": "KosmoAsset Exchange Profile",
+      "command": "npm run kosmo:asset-exchange-profile -- --library {asset_library_path}",
+      "output_root": "examples/kosmo-assets/{library_slug}/review",
+      "review_output": "examples/kosmo-assets/{library_slug}/review/asset-exchange-profile.generated.md",
+      "purpose": "Create a local review-only Blender, ArchiCAD and Web exchange profile from asset metadata, review-pack gates and export routes without importing, uploading or publishing assets.",
+      "approval_required_before_public_use": false
+    },
+    {
       "id": "kosmo_asset_review_pack",
       "label": "KosmoAsset Review Pack",
       "command": "npm run kosmo:asset-review-pack -- --library {asset_library_path}",

@@ -13,6 +13,7 @@ import archivePreview from '@/data/archive-preview.json';
 import brainTools from '@/data/brain-tools.json';
 import reviewQueue from '@/data/review-queue.json';
 import assetExportPlanPreview from '@/examples/kosmo-assets/kosmo-asset-demo/review/asset-export-plan.generated.json';
+import assetExchangeProfilePreview from '@/examples/kosmo-assets/kosmo-asset-demo/review/asset-exchange-profile.generated.json';
 import assetLibraryPreview from '@/examples/kosmo-assets/kosmo-asset-demo/library.json';
 import assetReviewPackPreview from '@/examples/kosmo-assets/kosmo-asset-demo/review/asset-review-pack.generated.json';
 import { atlasSize, styleSectors } from '@/lib/atlas-layout';
@@ -47,6 +48,7 @@ type VisualPan = {
 type IntroState = 'intro' | 'hub' | 'asset' | 'launching' | 'idle';
 type AssetPreviewRecord = (typeof assetLibraryPreview.assets)[number];
 type AssetExportPlanRecord = (typeof assetExportPlanPreview.assets)[number];
+type AssetExchangeProfileRecord = (typeof assetExchangeProfilePreview.assets)[number];
 type AssetReviewPackRecord = (typeof assetReviewPackPreview.assets)[number];
 type AssetFamilyFilter = 'all' | '2d' | 'material' | '3d';
 type AssetReviewAction = {
@@ -2601,6 +2603,7 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
   const accent = assetAccent(asset);
   const confidence = Math.round(asset.confidence * 100);
   const exportPlan = assetExportPlan(asset.id);
+  const exchangeProfile = assetExchangeProfile(asset.id);
   const reviewPack = assetReviewPack(asset.id);
   const generatedProfiles = assetGeneratedProfiles(asset);
   const generatedProfile = generatedProfiles[0] ?? null;
@@ -2735,6 +2738,32 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
             ))}
           </div>
           <p>Vorschlag: {formatAssetValue(reviewPack.suggested_decision)}</p>
+        </div>
+      ) : null}
+
+      {exchangeProfile ? (
+        <div className="kosmo-asset-inspector-section kosmo-asset-exchange-card">
+          <strong>Exchange-Profil</strong>
+          <div className="kosmo-asset-exchange-grid">
+            <span data-enabled={exchangeProfile.blender ? 'true' : 'false'}>
+              <small>Blender</small>
+              <b>{exchangeProfile.blender?.import_mode ? formatAssetValue(exchangeProfile.blender.import_mode) : 'nicht aktiv'}</b>
+            </span>
+            <span data-enabled={exchangeProfile.archicad ? 'true' : 'false'}>
+              <small>ArchiCAD</small>
+              <b>{exchangeProfile.archicad?.exchange_mode ? formatAssetValue(exchangeProfile.archicad.exchange_mode) : 'nicht aktiv'}</b>
+            </span>
+            <span data-enabled={exchangeProfile.web ? 'true' : 'false'}>
+              <small>Web</small>
+              <b>{exchangeProfile.web?.public_gate ? formatAssetValue(exchangeProfile.web.public_gate) : 'nicht aktiv'}</b>
+            </span>
+          </div>
+          <div className="kosmo-asset-exchange-paths">
+            {exchangeProfile.blender?.collection_name ? <code>{exchangeProfile.blender.collection_name}</code> : null}
+            {exchangeProfile.archicad?.archicad_layer ? <code>{exchangeProfile.archicad.archicad_layer}</code> : null}
+            {exchangeProfile.archicad?.archicad_surface ? <code>{exchangeProfile.archicad.archicad_surface}</code> : null}
+          </div>
+          <p>{exchangeProfile.review_note}</p>
         </div>
       ) : null}
 
@@ -2897,6 +2926,10 @@ function assetExportPlan(assetId: string): AssetExportPlanRecord | null {
   return assetExportPlanPreview.assets.find((asset) => asset.id === assetId) ?? null;
 }
 
+function assetExchangeProfile(assetId: string): AssetExchangeProfileRecord | null {
+  return assetExchangeProfilePreview.assets.find((asset) => asset.id === assetId) ?? null;
+}
+
 function assetReviewPack(assetId: string): AssetReviewPackRecord | null {
   return assetReviewPackPreview.assets.find((asset) => asset.id === assetId) ?? null;
 }
@@ -2931,6 +2964,13 @@ function assetReviewActions(asset: AssetPreviewRecord): AssetReviewAction[] {
       kicker: 'Route',
       description: 'Erzeugt den lokalen Exportplan für Blender, ArchiCAD, Web und Review-Schritte.',
       command: `npm run kosmo:asset-export-plan -- --library ${libraryPath}`
+    },
+    {
+      id: 'exchange-profile',
+      label: 'Exchange',
+      kicker: 'Bridge',
+      description: 'Erzeugt das lokale Blender-/ArchiCAD-/Web-Uebergabeprofil fuer Naming, Layer und Surface Mapping.',
+      command: `npm run kosmo:asset-exchange-profile -- --library ${libraryPath}`
     },
     {
       id: 'review-pack',

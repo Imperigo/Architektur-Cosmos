@@ -5359,6 +5359,68 @@ body:has(.entry-page) {
   font-weight: 560;
 }
 
+.kosmo-asset-exchange-card {
+  border-color: color-mix(in srgb, var(--asset-accent) 30%, rgb(247 247 244 / 10%));
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--asset-accent) 10%, transparent), transparent 50%),
+    rgb(0 0 0 / 18%);
+}
+
+.kosmo-asset-exchange-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.kosmo-asset-exchange-grid span {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 8px;
+  border: 1px solid rgb(247 247 244 / 9%);
+  border-radius: 8px;
+  background: rgb(247 247 244 / 4%);
+}
+
+.kosmo-asset-exchange-grid span[data-enabled="true"] {
+  border-color: color-mix(in srgb, var(--asset-accent) 38%, rgb(247 247 244 / 10%));
+}
+
+.kosmo-asset-exchange-grid small,
+.kosmo-asset-exchange-grid b {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  text-transform: uppercase;
+}
+
+.kosmo-asset-exchange-grid small {
+  color: rgb(247 247 244 / 48%);
+  font-size: 8px;
+}
+
+.kosmo-asset-exchange-grid b {
+  color: color-mix(in srgb, var(--asset-accent) 62%, #f7f7f4);
+  font-size: 9px;
+}
+
+.kosmo-asset-exchange-paths {
+  display: grid;
+  gap: 5px;
+}
+
+.kosmo-asset-exchange-paths code {
+  display: block;
+  max-width: 100%;
+  padding: 7px;
+  border: 1px solid rgb(247 247 244 / 8%);
+  border-radius: 8px;
+  background: rgb(247 247 244 / 5%);
+  color: rgb(247 247 244 / 72%);
+  font-size: 9px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
 .kosmo-asset-review-actions {
   border-color: color-mix(in srgb, var(--asset-accent) 24%, rgb(247 247 244 / 10%));
   background:
@@ -6028,6 +6090,10 @@ html[data-cosmos-browser="opera"] .relation-strand {
   }
 
   .kosmo-asset-decision-status {
+    grid-template-columns: 1fr;
+  }
+
+  .kosmo-asset-exchange-grid {
     grid-template-columns: 1fr;
   }
 

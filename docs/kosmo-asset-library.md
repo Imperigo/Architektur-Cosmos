@@ -88,6 +88,27 @@ Er fasst lokale Dateien, Export-Routen, Rechte, Review-Status,
 Generated-Profile und offene menschliche Checks zusammen. Er promoted kein
 Asset, oeffnet keine Public-Gates und laedt nichts hoch.
 
+## Exchange-Profil
+
+Aus Library, Review-Pack und Exportplan wird ein lokales Uebergabeprofil fuer
+Blender, ArchiCAD und Web erzeugt:
+
+```bash
+npm run kosmo:asset-exchange-profile -- \
+  --library examples/kosmo-assets/kosmo-asset-demo/library.json
+```
+
+Das Exchange-Profil schreibt:
+
+```text
+examples/kosmo-assets/kosmo-asset-demo/review/asset-exchange-profile.generated.json
+examples/kosmo-assets/kosmo-asset-demo/review/asset-exchange-profile.generated.md
+```
+
+Es enthaelt Blender-Collectionnamen, ArchiCAD-Layer/Oberflaechen,
+Source-Dateien, Public-Gates und Review-Notizen. V1 importiert nichts
+automatisch und schreibt keine ArchiCAD-/Blender-Dateien.
+
 ## Demo-GLB
 
 Das erste lokale 3D-Testasset wird bewusst klein und analytisch erzeugt:

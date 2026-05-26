@@ -1,0 +1,273 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-05-26T14:03:22.857Z",
+  "generator": "kosmo-asset-exchange-profile",
+  "library_path": "examples/kosmo-assets/kosmo-asset-demo/library.json",
+  "library_id": "kosmo-asset-demo",
+  "status": "local_review_exchange_profile",
+  "policy": {
+    "no_uploads": true,
+    "no_public_downloads": true,
+    "no_archicad_write": true,
+    "no_blender_write": true,
+    "exchange_profile_is_review_only": true
+  },
+  "summary": {
+    "asset_count": 3,
+    "blender_profile_count": 2,
+    "archicad_profile_count": 3,
+    "web_profile_count": 3,
+    "blocked_public_count": 3,
+    "human_review_open_count": 3
+  },
+  "assets": [
+    {
+      "id": "axis-marker-svg-001",
+      "title": "Kosmo Axis Marker",
+      "asset_type": "2d_symbol",
+      "category": "annotation",
+      "rights_status": "own_work",
+      "review_status": "draft",
+      "human_review_status": "open",
+      "public_gate": "blocked",
+      "source_paths": {
+        "svg": "examples/kosmo-assets/kosmo-asset-demo/assets/svg/axis-marker.svg",
+        "dxf": "examples/kosmo-assets/kosmo-asset-demo/assets/dxf/axis-marker-svg-001.dxf"
+      },
+      "generated_profiles": [
+        {
+          "generator": "kosmo-asset-generate-demo-dxf",
+          "status": "local_review_dxf_generated",
+          "triangle_count": null,
+          "entity_count": 7,
+          "parameter_count": null,
+          "layer_names": [
+            "KOSMO_AXIS_PRIMARY",
+            "KOSMO_AXIS_SECONDARY",
+            "KOSMO_TEXT"
+          ]
+        }
+      ],
+      "blender": null,
+      "archicad": {
+        "enabled": true,
+        "approved_for_exchange": false,
+        "exchange_mode": "dxf_underlay_or_symbol",
+        "archicad_layer": "KOSMO_ANNOTATION_AXIS_MARKER_SVG_001",
+        "archicad_surface": null,
+        "source_file": "examples/kosmo-assets/kosmo-asset-demo/assets/dxf/axis-marker-svg-001.dxf",
+        "layer_names": [
+          "KOSMO_AXIS_PRIMARY",
+          "KOSMO_AXIS_SECONDARY",
+          "KOSMO_TEXT"
+        ],
+        "notes": [
+          "Review-only ArchiCAD exchange profile.",
+          "No GSM/BIM object is generated in V1; this profile prepares manual exchange naming and layer/surface mapping."
+        ]
+      },
+      "web": {
+        "enabled": true,
+        "public_gate": "blocked",
+        "preview_component": "axis_marker",
+        "route_key": "kosmo-assets/axis-marker-svg-001",
+        "source_file": "examples/kosmo-assets/kosmo-asset-demo/assets/svg/axis-marker.svg",
+        "notes": [
+          "Public web preview remains blocked; show metadata/review status only."
+        ]
+      },
+      "review_note": "Human review is still open; exchange profiles are naming proposals only."
+    },
+    {
+      "id": "warm-concrete-material-001",
+      "title": "Warm Concrete Study Material",
+      "asset_type": "material",
+      "category": "material",
+      "rights_status": "generated_needs_review",
+      "review_status": "draft",
+      "human_review_status": "open",
+      "public_gate": "blocked",
+      "source_paths": {
+        "material_json": "examples/kosmo-assets/kosmo-asset-demo/assets/materials/warm-concrete.material.json"
+      },
+      "generated_profiles": [
+        {
+          "generator": "kosmo-asset-generate-demo-material-profile",
+          "status": "local_review_material_profile_generated",
+          "triangle_count": null,
+          "entity_count": null,
+          "parameter_count": 4,
+          "layer_names": [
+            "material/base_color",
+            "material/roughness",
+            "material/metallic",
+            "material/specular",
+            "blender/principled_bsdf",
+            "archicad/material/concrete/review"
+          ]
+        }
+      ],
+      "blender": {
+        "enabled": true,
+        "approved_for_import": false,
+        "import_mode": "create_material_from_parameters",
+        "collection_name": "KOSMO_ASSET/material/warm-concrete-material-001",
+        "object_prefix": "kosmo_warm-concrete-material-001",
+        "material_name": "KOSMO_MAT_warm-concrete-material-001",
+        "source_file": "examples/kosmo-assets/kosmo-asset-demo/assets/materials/warm-concrete.material.json",
+        "unit_scale": 1,
+        "layer_names": [
+          "material/base_color",
+          "material/roughness",
+          "material/metallic",
+          "material/specular",
+          "blender/principled_bsdf",
+          "archicad/material/concrete/review"
+        ],
+        "notes": [
+          "Review-only Blender handoff.",
+          "Human review still open; do not import into production scenes."
+        ]
+      },
+      "archicad": {
+        "enabled": true,
+        "approved_for_exchange": false,
+        "exchange_mode": "surface_attribute_reference",
+        "archicad_layer": null,
+        "archicad_surface": "KOSMO_SURFACE_WARM_CONCRETE_MATERIAL_001",
+        "source_file": "examples/kosmo-assets/kosmo-asset-demo/assets/materials/warm-concrete.material.json",
+        "layer_names": [
+          "material/base_color",
+          "material/roughness",
+          "material/metallic",
+          "material/specular",
+          "blender/principled_bsdf",
+          "archicad/material/concrete/review"
+        ],
+        "notes": [
+          "Review-only ArchiCAD exchange profile.",
+          "No GSM/BIM object is generated in V1; this profile prepares manual exchange naming and layer/surface mapping."
+        ]
+      },
+      "web": {
+        "enabled": true,
+        "public_gate": "blocked",
+        "preview_component": "material_swatch",
+        "route_key": "kosmo-assets/warm-concrete-material-001",
+        "source_file": "examples/kosmo-assets/kosmo-asset-demo/assets/materials/warm-concrete.material.json",
+        "notes": [
+          "Public web preview remains blocked; show metadata/review status only."
+        ]
+      },
+      "review_note": "Human review is still open; exchange profiles are naming proposals only."
+    },
+    {
+      "id": "generic-column-glb-001",
+      "title": "Generic Column GLB Slot",
+      "asset_type": "glb_model",
+      "category": "structure",
+      "rights_status": "generated_needs_review",
+      "review_status": "draft",
+      "human_review_status": "open",
+      "public_gate": "blocked",
+      "source_paths": {
+        "glb": "examples/kosmo-assets/kosmo-asset-demo/assets/models/generic-column-glb-001.glb",
+        "dxf": "examples/kosmo-assets/kosmo-asset-demo/assets/dxf/generic-column-glb-001.dxf"
+      },
+      "generated_profiles": [
+        {
+          "generator": "kosmo-asset-generate-demo-glb",
+          "status": "local_review_glb_generated",
+          "triangle_count": 176,
+          "entity_count": null,
+          "parameter_count": null,
+          "layer_names": [
+            "structure/column_core_round",
+            "structure/base_plate_reference",
+            "structure/top_plate_reference",
+            "analysis/axis_x",
+            "analysis/axis_z"
+          ]
+        },
+        {
+          "generator": "kosmo-asset-generate-demo-dxf",
+          "status": "local_review_dxf_generated",
+          "triangle_count": null,
+          "entity_count": 12,
+          "parameter_count": null,
+          "layer_names": [
+            "KOSMO_COLUMN_FOOTPRINT",
+            "KOSMO_COLUMN_CLEARANCE",
+            "KOSMO_AXIS",
+            "KOSMO_TEXT"
+          ]
+        }
+      ],
+      "blender": {
+        "enabled": true,
+        "approved_for_import": false,
+        "import_mode": "link_glb_as_collection",
+        "collection_name": "KOSMO_ASSET/structure/generic-column-glb-001",
+        "object_prefix": "kosmo_generic-column-glb-001",
+        "material_name": null,
+        "source_file": "examples/kosmo-assets/kosmo-asset-demo/assets/models/generic-column-glb-001.glb",
+        "unit_scale": 1,
+        "layer_names": [
+          "structure/column_core_round",
+          "structure/base_plate_reference",
+          "structure/top_plate_reference",
+          "analysis/axis_x",
+          "analysis/axis_z",
+          "KOSMO_COLUMN_FOOTPRINT",
+          "KOSMO_COLUMN_CLEARANCE",
+          "KOSMO_AXIS",
+          "KOSMO_TEXT"
+        ],
+        "notes": [
+          "Review-only Blender handoff.",
+          "Human review still open; do not import into production scenes."
+        ]
+      },
+      "archicad": {
+        "enabled": true,
+        "approved_for_exchange": false,
+        "exchange_mode": "dxf_underlay_or_symbol",
+        "archicad_layer": "KOSMO_STRUCTURE_GENERIC_COLUMN_GLB_001",
+        "archicad_surface": null,
+        "source_file": "examples/kosmo-assets/kosmo-asset-demo/assets/dxf/generic-column-glb-001.dxf",
+        "layer_names": [
+          "structure/column_core_round",
+          "structure/base_plate_reference",
+          "structure/top_plate_reference",
+          "analysis/axis_x",
+          "analysis/axis_z",
+          "KOSMO_COLUMN_FOOTPRINT",
+          "KOSMO_COLUMN_CLEARANCE",
+          "KOSMO_AXIS",
+          "KOSMO_TEXT"
+        ],
+        "notes": [
+          "Review-only ArchiCAD exchange profile.",
+          "No GSM/BIM object is generated in V1; this profile prepares manual exchange naming and layer/surface mapping."
+        ]
+      },
+      "web": {
+        "enabled": true,
+        "public_gate": "blocked",
+        "preview_component": "wireframe_component",
+        "route_key": "kosmo-assets/generic-column-glb-001",
+        "source_file": "examples/kosmo-assets/kosmo-asset-demo/assets/models/generic-column-glb-001.glb",
+        "notes": [
+          "Public web preview remains blocked; show metadata/review status only."
+        ]
+      },
+      "review_note": "Human review is still open; exchange profiles are naming proposals only."
+    }
+  ],
+  "next_actions": [
+    "Close human review before importing assets into production Blender/ArchiCAD files.",
+    "Run a local Blender smoke only with review assets, not production files.",
+    "Keep ArchiCAD profiles as layer/surface naming references until reviewed.",
+    "Keep public web/download gates blocked until rights and review are explicit."
+  ]
+}
