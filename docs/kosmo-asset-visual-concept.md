@@ -68,7 +68,6 @@ Die erste Website-Version ist eine statische Landing-Ansicht:
 ## Naechste Stufen
 
 1. GLB-Vorschauen im Browser-Inspector anzeigen.
-2. Handoff-Bundle im Inspector als lokale Blender-/ArchiCAD-Dateiliste anzeigen.
-3. Blender-/ArchiCAD-Exportprofile als kopierbare Review-Karten ausgeben.
-4. Rights Gate und private/dev Asset-Modus getrennt visualisieren.
-5. Spaeter eine echte KosmoAsset Library View mit Such-/Filterlogik bauen.
+2. Blender-/ArchiCAD-Exportprofile als kopierbare Review-Karten ausgeben.
+3. Rights Gate und private/dev Asset-Modus getrennt visualisieren.
+4. Spaeter eine echte KosmoAsset Library View mit Such-/Filterlogik bauen.
