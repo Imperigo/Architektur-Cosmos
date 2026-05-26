@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-25T21:50:32.978Z",
+  "generated_at": "2026-05-26T11:53:34.796Z",
   "generator": "kosmo-project-package-review",
   "project": {
     "id": "kosmo-demo-001",
@@ -627,6 +627,24 @@
       "description": "Human-readable IFC review Anleitung and decision commands.",
       "exists": true,
       "size_bytes": 6903
+    },
+    {
+      "path": "design/ifc-human-review-session.json",
+      "type": "other",
+      "module": "design",
+      "rights_status": "internal_only",
+      "description": "Editable human IFC review session log.",
+      "exists": true,
+      "size_bytes": 8433
+    },
+    {
+      "path": "design/ifc-human-review-session.md",
+      "type": "other",
+      "module": "design",
+      "rights_status": "internal_only",
+      "description": "Human-readable IFC review session worksheet.",
+      "exists": true,
+      "size_bytes": 2907
     }
   ],
   "context_review": {
@@ -735,6 +753,14 @@
     "ifc_human_review_guide_ready": true,
     "ifc_human_review_guide_open_human_check_count": 10,
     "ifc_human_review_guide_current_decision": "keep_needs_more_source_review",
+    "ifc_human_review_session_exists": true,
+    "ifc_human_review_session_status": "ifc_human_review_session_open",
+    "ifc_human_review_session_reviewer": null,
+    "ifc_human_review_session_proposed_decision": "undecided",
+    "ifc_human_review_session_confirmed_check_count": 0,
+    "ifc_human_review_session_pending_check_count": 10,
+    "ifc_human_review_session_failed_check_count": 0,
+    "ifc_human_review_session_decision_ready": false,
     "model_layer_handoff_exists": true,
     "model_layer_handoff_status": "model_layer_handoff_ready_for_human_review",
     "model_layer_handoff_ready": true,
@@ -912,6 +938,7 @@
   "next_actions": [
     "Review context-selection decisions before using candidates as design input.",
     "Review pending source-mapping rows before syncing decisions to context-selection.",
+    "Complete the IFC human review session checks before recording a final decision.",
     "Open the IFC review viewer, complete the checklist and record a final IFC human decision.",
     "Run npm run kosmo:blender-context-audit to reopen and verify the saved Blender review file.",
     "Review source-map semantic candidates before any design-seed approval.",
