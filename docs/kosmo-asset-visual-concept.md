@@ -40,6 +40,7 @@ Die erste Website-Version ist eine statische Landing-Ansicht:
 - liest die lokale Demo-Library aus
   `examples/kosmo-assets/kosmo-asset-demo/library.json`;
 - zeigt Kennzahlen, Kategorien und drei Demo-Assets;
+- erlaubt lokale Familienfilter fuer alle, 2D, Material und 3D;
 - keine Uploads;
 - keine Datenbank-Writes;
 - keine R2-Uploads;

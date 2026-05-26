@@ -48,7 +48,7 @@ Nächste Schritte:
 
 ### KosmoAsset
 
-Status: geplant
+Status: bereit als V1-Review-Station
 
 Aufgabe: 2D-/3D-/Textur- und Bauteilbibliothek. Das Modul sammelt
 wiederverwendbare Ressourcen, Materialsysteme, Details, Fassadenmodule,
@@ -78,6 +78,8 @@ Gestaltung:
 - kein Wurmloch, sondern technischer Asset-Core mit Orbit-Labor;
 - V1 zeigt Demo-Assets, Rechte-Status, Formate und Exportziele direkt im
   Hauptmenue-Flow.
+- Die erste UI filtert Asset-Familien lokal im Orbit-Screen. Sie schreibt
+  nichts in D1/R2 und fuehrt keine Uploads aus.
 
 ### KosmoDesign
 

@@ -44,6 +44,7 @@ type VisualPan = {
 
 type IntroState = 'intro' | 'hub' | 'asset' | 'launching' | 'idle';
 type AssetPreviewRecord = (typeof assetLibraryPreview.assets)[number];
+type AssetFamilyFilter = 'all' | '2d' | 'material' | '3d';
 const sourceLensDefinitions = [
   { id: 'afasia', label: 'Afasia', terms: ['afasia'] },
   { id: 'espazium', label: 'Espazium', terms: ['espazium', 'tec21'] },
@@ -2439,7 +2440,15 @@ function ModuleHub({ onOpenKosmoData, onOpenKosmoAsset }: { onOpenKosmoData: () 
 }
 
 function KosmoAssetWorkspace({ onReturnToHub }: { onReturnToHub: () => void }) {
+  const [activeFamily, setActiveFamily] = useState<AssetFamilyFilter>('all');
   const assets = assetLibraryPreview.assets;
+  const assetFamilies = [
+    { id: 'all', label: 'Alle', description: 'Gesamte Prüfbibliothek' },
+    { id: '2d', label: '2D', description: 'Planzeichen, Vektoren, DXF' },
+    { id: 'material', label: 'Material', description: 'Texturen und Materiallayer' },
+    { id: '3d', label: '3D', description: 'GLB, Blender, ArchiCAD' }
+  ] satisfies Array<{ id: AssetFamilyFilter; label: string; description: string }>;
+  const filteredAssets = activeFamily === 'all' ? assets : assets.filter((asset) => assetFamily(asset) === activeFamily);
   const formats = [...new Set(assets.flatMap((asset) => asset.formats.map((format) => format.format)))];
   const exportTargets = [...new Set(assets.flatMap((asset) => asset.export_targets))];
   const existingFormats = assets.reduce((total, asset) => total + asset.formats.filter((format) => format.status === 'exists').length, 0);
@@ -2490,15 +2499,25 @@ function KosmoAssetWorkspace({ onReturnToHub }: { onReturnToHub: () => void }) {
             </div>
 
             <div className="kosmo-asset-categories" aria-label="Asset Kategorien">
-              {['2D', '3D', 'Material', 'Details', 'Presets'].map((category) => (
-                <span key={category}>{category}</span>
+              {assetFamilies.map((family) => (
+                <button
+                  key={family.id}
+                  type="button"
+                  className={activeFamily === family.id ? 'is-active' : undefined}
+                  onClick={() => setActiveFamily(family.id)}
+                  aria-pressed={activeFamily === family.id}
+                  title={family.description}
+                >
+                  <span>{family.label}</span>
+                  <small>{family.description}</small>
+                </button>
               ))}
             </div>
           </div>
         </section>
 
         <section className="kosmo-asset-grid" aria-label="Demo Assets">
-          {assets.map((asset) => (
+          {filteredAssets.map((asset) => (
             <AssetCard key={asset.id} asset={asset} />
           ))}
         </section>
@@ -2548,6 +2567,12 @@ function assetVisualKind(asset: AssetPreviewRecord) {
   if (asset.asset_type.includes('material')) return 'material';
   if (asset.asset_type.includes('glb') || asset.asset_type.includes('3d')) return 'model';
   return 'vector';
+}
+
+function assetFamily(asset: AssetPreviewRecord): AssetFamilyFilter {
+  if (asset.asset_type.includes('material')) return 'material';
+  if (asset.asset_type.includes('glb') || asset.asset_type.includes('3d')) return '3d';
+  return '2d';
 }
 
 function assetAccent(asset: AssetPreviewRecord) {
