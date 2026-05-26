@@ -1,0 +1,221 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-05-26T12:41:13.858Z",
+  "generator": "kosmo-asset-export-plan",
+  "library_path": "examples/kosmo-assets/kosmo-asset-demo/library.json",
+  "library_id": "kosmo-asset-demo",
+  "status": "review_plan",
+  "policy": {
+    "no_uploads": true,
+    "no_public_downloads": true,
+    "export_plan_is_not_export_execution": true,
+    "public_routes_require_rights": [
+      "licensed",
+      "public_domain",
+      "own_work"
+    ]
+  },
+  "summary": {
+    "asset_count": 3,
+    "ready_route_count": 0,
+    "review_route_count": 6,
+    "planned_route_count": 4,
+    "blocked_route_count": 1,
+    "targets": {
+      "svg": 1,
+      "dxf": 1,
+      "web": 3,
+      "layout": 1,
+      "blender": 2,
+      "archicad": 2,
+      "glb": 1
+    }
+  },
+  "assets": [
+    {
+      "id": "axis-marker-svg-001",
+      "title": "Kosmo Axis Marker",
+      "asset_type": "2d_symbol",
+      "category": "annotation",
+      "rights_status": "own_work",
+      "review_status": "draft",
+      "public_ready": false,
+      "existing_formats": [
+        "svg"
+      ],
+      "planned_formats": [
+        "dxf"
+      ],
+      "preview_kind": "axis_marker",
+      "routes": [
+        {
+          "target": "svg",
+          "status": "needs_review",
+          "required_formats": [
+            "svg"
+          ],
+          "blockers": [],
+          "note": "svg route needs human review before use."
+        },
+        {
+          "target": "dxf",
+          "status": "planned",
+          "required_formats": [
+            "dxf"
+          ],
+          "blockers": [
+            "Required format planned but not generated: dxf"
+          ],
+          "note": "dxf route is planned but needs generation/export."
+        },
+        {
+          "target": "web",
+          "status": "needs_review",
+          "required_formats": [
+            "svg",
+            "glb",
+            "webp",
+            "png"
+          ],
+          "blockers": [
+            "Web/public route remains private because public_use_allowed or rights are not public-safe."
+          ],
+          "note": "web route needs human review before use."
+        },
+        {
+          "target": "layout",
+          "status": "needs_review",
+          "required_formats": [
+            "svg"
+          ],
+          "blockers": [],
+          "note": "layout route needs human review before use."
+        }
+      ],
+      "next_step": "Generate planned formats: dxf."
+    },
+    {
+      "id": "warm-concrete-material-001",
+      "title": "Warm Concrete Study Material",
+      "asset_type": "material",
+      "category": "material",
+      "rights_status": "generated_needs_review",
+      "review_status": "planned",
+      "public_ready": false,
+      "existing_formats": [
+        "material_json"
+      ],
+      "planned_formats": [],
+      "preview_kind": "material_swatch",
+      "routes": [
+        {
+          "target": "blender",
+          "status": "needs_review",
+          "required_formats": [
+            "material_json",
+            "blend"
+          ],
+          "blockers": [],
+          "note": "blender route needs human review before use."
+        },
+        {
+          "target": "archicad",
+          "status": "needs_review",
+          "required_formats": [
+            "material_json",
+            "gsm"
+          ],
+          "blockers": [],
+          "note": "archicad route needs human review before use."
+        },
+        {
+          "target": "web",
+          "status": "needs_review",
+          "required_formats": [
+            "material_json",
+            "webp",
+            "png"
+          ],
+          "blockers": [
+            "Web/public route remains private because public_use_allowed or rights are not public-safe."
+          ],
+          "note": "web route needs human review before use."
+        }
+      ],
+      "next_step": "Run human review and move review_status to reviewed or verified."
+    },
+    {
+      "id": "generic-column-glb-001",
+      "title": "Generic Column GLB Slot",
+      "asset_type": "glb_model",
+      "category": "structure",
+      "rights_status": "generated_needs_review",
+      "review_status": "planned",
+      "public_ready": false,
+      "existing_formats": [],
+      "planned_formats": [
+        "glb"
+      ],
+      "preview_kind": "wireframe_component",
+      "routes": [
+        {
+          "target": "glb",
+          "status": "planned",
+          "required_formats": [
+            "glb"
+          ],
+          "blockers": [
+            "Required format planned but not generated: glb"
+          ],
+          "note": "glb route is planned but needs generation/export."
+        },
+        {
+          "target": "blender",
+          "status": "planned",
+          "required_formats": [
+            "glb",
+            "blend"
+          ],
+          "blockers": [
+            "Required format planned but not generated: glb or blend"
+          ],
+          "note": "blender route is planned but needs generation/export."
+        },
+        {
+          "target": "archicad",
+          "status": "blocked",
+          "required_formats": [
+            "dxf",
+            "gsm",
+            "ifc"
+          ],
+          "blockers": [
+            "Missing target format: dxf or gsm or ifc"
+          ],
+          "note": "archicad route is blocked until missing formats or rights are resolved."
+        },
+        {
+          "target": "web",
+          "status": "planned",
+          "required_formats": [
+            "svg",
+            "glb",
+            "webp",
+            "png"
+          ],
+          "blockers": [
+            "Web/public route remains private because public_use_allowed or rights are not public-safe.",
+            "Required format planned but not generated: svg or glb or webp or png"
+          ],
+          "note": "web route is planned but needs generation/export."
+        }
+      ],
+      "next_step": "Generate missing target formats or remove blocked export targets."
+    }
+  ],
+  "next_actions": [
+    "Resolve blocked routes before exposing export buttons in the UI.",
+    "Generate planned DXF/GLB/GSM or material exports in local review mode.",
+    "Review assets with local source files before promoting them to reusable workflow assets."
+  ]
+}

@@ -45,6 +45,8 @@ Die erste Website-Version ist eine statische Landing-Ansicht:
   Format-, Export- und Quellenstatus;
 - zeichnet lokale Preview-Metadaten direkt in der UI: Achsenmarker,
   Material-Swatch und Drahtmodell-Komponente;
+- erzeugt mit `npm run kosmo:asset-export-plan` eine lokale Export-Routen-
+  Analyse fuer Blender, ArchiCAD, Web, SVG, DXF und GLB;
 - keine Uploads;
 - keine Datenbank-Writes;
 - keine R2-Uploads;

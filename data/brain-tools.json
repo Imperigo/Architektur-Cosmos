@@ -60,6 +60,15 @@
       "approval_required_before_public_use": false
     },
     {
+      "id": "kosmo_asset_export_plan",
+      "label": "KosmoAsset Export Plan",
+      "command": "npm run kosmo:asset-export-plan -- --library {asset_library_path}",
+      "output_root": "examples/kosmo-assets/{library_slug}/review",
+      "review_output": "examples/kosmo-assets/{library_slug}/review/asset-export-plan.generated.md",
+      "purpose": "Create a local review-only export readiness plan for KosmoAsset routes such as Blender, ArchiCAD, Web, SVG, DXF and GLB without generating files, uploading assets or opening public downloads.",
+      "approval_required_before_public_use": false
+    },
+    {
       "id": "kosmo_project_package_create",
       "label": "Kosmo Project Package Create",
       "command": "npm run kosmo:package-create -- --name \"{project_name}\" --address \"{address}\" --program \"{program}\"",
