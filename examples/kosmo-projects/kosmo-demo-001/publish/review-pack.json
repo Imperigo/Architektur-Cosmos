@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-26T12:01:31.249Z",
+  "generated_at": "2026-05-26T12:42:42.045Z",
   "generator": "kosmo-project-package-review",
   "project": {
     "id": "kosmo-demo-001",
@@ -635,7 +635,7 @@
       "rights_status": "internal_only",
       "description": "Editable human IFC review session log.",
       "exists": true,
-      "size_bytes": 8433
+      "size_bytes": 12192
     },
     {
       "path": "design/ifc-human-review-session.md",
@@ -644,7 +644,7 @@
       "rights_status": "internal_only",
       "description": "Human-readable IFC review session worksheet.",
       "exists": true,
-      "size_bytes": 2907
+      "size_bytes": 6058
     }
   ],
   "context_review": {

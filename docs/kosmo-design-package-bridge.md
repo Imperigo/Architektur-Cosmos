@@ -351,7 +351,10 @@ ist das ausfuellbare Arbeitsblatt fuer den Review: einzelne Checks koennen mit
 `--check check_id=confirmed|failed|pending|not_applicable`, Notizen mit
 `--note check_id="..."`, Reviewer mit `--reviewed-by` und ein Vorschlag mit
 `--decision keep_needs_more_source_review|accepted_as_context|accepted_as_design_seed|rejected`
-eingetragen werden. Auch dieses Tool recordet noch keinen finalen Entscheid.
+eingetragen werden. Nach einer echten vollstaendigen Sichtpruefung kann
+`--confirm-all-reviewed --i-reviewed-all-ifc-checks --reviewed-by "Name"` alle
+Checks als bestaetigt markieren. Auch dieses Tool recordet noch keinen finalen
+Entscheid.
 
 `npm run kosmo:context-handoff -- --project <projektpfad>` erzeugt
 `design/context-handoff.generated.md/json`. Der Handoff sammelt akzeptierte

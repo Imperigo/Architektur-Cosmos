@@ -14,6 +14,7 @@ const checkStatuses = new Set(['pending', 'confirmed', 'failed', 'not_applicable
 const decisions = new Set(['undecided', 'keep_needs_more_source_review', 'accepted_as_context', 'accepted_as_design_seed', 'rejected']);
 const checkUpdates = parseKeyValueArgs(asArray(args.check), '--check');
 const noteUpdates = parseKeyValueArgs(asArray(args.note), '--note');
+const confirmAllReviewed = Boolean(args['confirm-all-reviewed']);
 
 const paths = {
   manifest: join(projectRoot, 'kosmo.project.json'),
@@ -67,10 +68,14 @@ function buildSession() {
   const updatedAt = new Date().toISOString();
   const checks = sourceChecks.map((check) => {
     const previous = existingById.get(check.id) || {};
-    const status = normalizeCheckStatus(checkUpdates.get(check.id) || previous.status || 'pending');
+    const explicitStatus = checkUpdates.get(check.id);
+    const defaultStatus = confirmAllReviewed ? 'confirmed' : previous.status || 'pending';
+    const status = normalizeCheckStatus(explicitStatus || defaultStatus);
     const notes = Array.isArray(previous.notes) ? [...previous.notes] : [];
     const addedNote = noteUpdates.get(check.id);
     if (addedNote && !notes.includes(addedNote)) notes.push(addedNote);
+    if (confirmAllReviewed && !explicitStatus) addUnique(notes, `Confirmed through --confirm-all-reviewed by ${reviewer || 'unknown reviewer'}.`);
+    const wasTouched = checkUpdates.has(check.id) || noteUpdates.has(check.id) || confirmAllReviewed;
     return {
       id: check.id,
       status,
@@ -78,7 +83,7 @@ function buildSession() {
       evidence_hint: check.evidence_hint || '',
       notes,
       reviewed_by: status !== 'pending' ? reviewer || previous.reviewed_by || null : previous.reviewed_by || null,
-      reviewed_at: status !== 'pending' && (checkUpdates.has(check.id) || noteUpdates.has(check.id)) ? updatedAt : previous.reviewed_at || null
+      reviewed_at: status !== 'pending' && wasTouched ? updatedAt : previous.reviewed_at || null
     };
   });
   validateUpdateTargets(new Set(checks.map((check) => check.id)));
@@ -100,7 +105,15 @@ function buildSession() {
       session_is_human_work_log: true,
       session_does_not_modify_context_selection: true,
       session_does_not_record_final_decision: true,
-      final_decision_requires_kosmo_ifc_human_review_decision: true
+      final_decision_requires_kosmo_ifc_human_review_decision: true,
+      confirm_all_requires_explicit_human_acknowledgement: true
+    },
+    review_actions: {
+      confirm_all_reviewed: confirmAllReviewed,
+      confirm_all_acknowledged: Boolean(args['i-reviewed-all-ifc-checks']),
+      explicit_check_update_count: checkUpdates.size,
+      note_update_count: noteUpdates.size,
+      proposed_decision_updated: Boolean(args.decision)
     },
     source_files: sourceFiles(),
     current_state: {
@@ -117,7 +130,7 @@ function buildSession() {
     summary,
     checks,
     decision_readiness: decisionReadiness({ summary, proposedDecision }),
-    next_commands: buildNextCommands({ proposedDecision, reviewer, projectRoot, summary }),
+    next_commands: buildNextCommands({ proposedDecision, reviewer, projectRoot, summary, checks }),
     next_actions: buildNextActions({ summary, proposedDecision })
   };
 }
@@ -149,7 +162,7 @@ function decisionReadiness({ summary, proposedDecision }) {
   };
 }
 
-function buildNextCommands({ proposedDecision, reviewer, projectRoot, summary }) {
+function buildNextCommands({ proposedDecision, reviewer, projectRoot, summary, checks }) {
   const project = shellQuote(relative(root, projectRoot));
   const reviewedBy = shellQuote(reviewer || 'Reviewer');
   const commands = [
@@ -162,6 +175,20 @@ function buildNextCommands({ proposedDecision, reviewer, projectRoot, summary })
     commands.push({
       id: 'mark_check_example',
       command: `npm run kosmo:ifc-human-review-session -- --project ${project} --reviewed-by ${reviewedBy} --check semantic_viewer_import=confirmed --note semantic_viewer_import="IFC tree opened and matched review guide"`
+    });
+    commands.push({
+      id: 'confirm_all_keep_source_review',
+      command: `npm run kosmo:ifc-human-review-session -- --project ${project} --reviewed-by ${reviewedBy} --confirm-all-reviewed --i-reviewed-all-ifc-checks --decision keep_needs_more_source_review`
+    });
+    commands.push({
+      id: 'confirm_all_accept_as_context',
+      command: `npm run kosmo:ifc-human-review-session -- --project ${project} --reviewed-by ${reviewedBy} --confirm-all-reviewed --i-reviewed-all-ifc-checks --decision accepted_as_context`
+    });
+  }
+  for (const check of checks.filter((item) => item.status === 'pending')) {
+    commands.push({
+      id: `confirm_${check.id}`,
+      command: `npm run kosmo:ifc-human-review-session -- --project ${project} --reviewed-by ${reviewedBy} --check ${check.id}=confirmed --note ${check.id}=${shellQuote(`Reviewed ${check.id}`)}`
     });
   }
   if (proposedDecision !== 'undecided') {
@@ -206,6 +233,12 @@ function summarizeChecks(checks) {
 
 function validateSession(session) {
   if (!existsSync(paths.pack)) throw new Error(`Missing IFC human review pack: ${relative(root, paths.pack)}`);
+  if (confirmAllReviewed && !args['i-reviewed-all-ifc-checks']) {
+    throw new Error('--confirm-all-reviewed requires --i-reviewed-all-ifc-checks.');
+  }
+  if (confirmAllReviewed && !session.reviewer) {
+    throw new Error('--confirm-all-reviewed requires --reviewed-by "Name".');
+  }
   if (!decisions.has(session.proposed_decision)) {
     throw new Error(`Invalid proposed decision: ${session.proposed_decision}`);
   }
@@ -236,6 +269,7 @@ function renderMarkdown(session) {
     '',
     `- evidence ready: ${session.current_state.evidence_ready ? 'yes' : 'no'}`,
     `- final decision recorded: ${session.current_state.final_decision_recorded ? 'yes' : 'no'}`,
+    `- confirm all reviewed used: ${session.review_actions.confirm_all_reviewed ? 'yes' : 'no'}`,
     `- checks confirmed: ${session.summary.confirmed_check_count}/${session.summary.check_count}`,
     `- checks pending: ${session.summary.pending_check_count}`,
     `- checks failed: ${session.summary.failed_check_count}`,
@@ -327,6 +361,10 @@ function ensureItem(items, pathname, item) {
   if (items.some((existing) => existing?.path === pathname)) return false;
   items.push(item);
   return true;
+}
+
+function addUnique(items, value) {
+  if (!items.includes(value)) items.push(value);
 }
 
 function sourceFiles() {

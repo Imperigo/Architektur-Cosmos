@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-26T11:53:26.130Z",
-  "updated_at": "2026-05-26T11:53:26.130Z",
+  "generated_at": "2026-05-26T12:42:35.329Z",
+  "updated_at": "2026-05-26T12:42:35.329Z",
   "generator": "kosmo-ifc-human-review-session",
   "project_id": "kosmo-demo-001",
   "project_name": "Kosmo Demo 001",
@@ -13,7 +13,15 @@
     "session_is_human_work_log": true,
     "session_does_not_modify_context_selection": true,
     "session_does_not_record_final_decision": true,
-    "final_decision_requires_kosmo_ifc_human_review_decision": true
+    "final_decision_requires_kosmo_ifc_human_review_decision": true,
+    "confirm_all_requires_explicit_human_acknowledgement": true
+  },
+  "review_actions": {
+    "confirm_all_reviewed": false,
+    "confirm_all_acknowledged": false,
+    "explicit_check_update_count": 0,
+    "note_update_count": 0,
+    "proposed_decision_updated": false
   },
   "source_files": {
     "manifest": {
@@ -44,7 +52,7 @@
       "path": "design/ifc-human-review-decision.json",
       "name": "ifc-human-review-decision.json",
       "exists": true,
-      "size_bytes": 7215
+      "size_bytes": 7978
     },
     "sync": {
       "path": "design/ifc-human-review-sync.generated.json",
@@ -56,7 +64,7 @@
       "path": "design/ifc-human-review-session.json",
       "name": "ifc-human-review-session.json",
       "exists": true,
-      "size_bytes": 8433
+      "size_bytes": 12191
     }
   },
   "current_state": {
@@ -234,6 +242,54 @@
     {
       "id": "mark_check_example",
       "command": "npm run kosmo:ifc-human-review-session -- --project examples/kosmo-projects/kosmo-demo-001 --reviewed-by Reviewer --check semantic_viewer_import=confirmed --note semantic_viewer_import=\"IFC tree opened and matched review guide\""
+    },
+    {
+      "id": "confirm_all_keep_source_review",
+      "command": "npm run kosmo:ifc-human-review-session -- --project examples/kosmo-projects/kosmo-demo-001 --reviewed-by Reviewer --confirm-all-reviewed --i-reviewed-all-ifc-checks --decision keep_needs_more_source_review"
+    },
+    {
+      "id": "confirm_all_accept_as_context",
+      "command": "npm run kosmo:ifc-human-review-session -- --project examples/kosmo-projects/kosmo-demo-001 --reviewed-by Reviewer --confirm-all-reviewed --i-reviewed-all-ifc-checks --decision accepted_as_context"
+    },
+    {
+      "id": "confirm_semantic_viewer_import",
+      "command": "npm run kosmo:ifc-human-review-session -- --project examples/kosmo-projects/kosmo-demo-001 --reviewed-by Reviewer --check semantic_viewer_import=confirmed --note semantic_viewer_import=\"Reviewed semantic_viewer_import\""
+    },
+    {
+      "id": "confirm_element_class_review",
+      "command": "npm run kosmo:ifc-human-review-session -- --project examples/kosmo-projects/kosmo-demo-001 --reviewed-by Reviewer --check element_class_review=confirmed --note element_class_review=\"Reviewed element_class_review\""
+    },
+    {
+      "id": "confirm_storey_review",
+      "command": "npm run kosmo:ifc-human-review-session -- --project examples/kosmo-projects/kosmo-demo-001 --reviewed-by Reviewer --check storey_review=confirmed --note storey_review=\"Reviewed storey_review\""
+    },
+    {
+      "id": "confirm_placement_units_review",
+      "command": "npm run kosmo:ifc-human-review-session -- --project examples/kosmo-projects/kosmo-demo-001 --reviewed-by Reviewer --check placement_units_review=confirmed --note placement_units_review=\"Reviewed placement_units_review\""
+    },
+    {
+      "id": "confirm_origin_alignment_review",
+      "command": "npm run kosmo:ifc-human-review-session -- --project examples/kosmo-projects/kosmo-demo-001 --reviewed-by Reviewer --check origin_alignment_review=confirmed --note origin_alignment_review=\"Reviewed origin_alignment_review\""
+    },
+    {
+      "id": "confirm_geometry_outlier_review",
+      "command": "npm run kosmo:ifc-human-review-session -- --project examples/kosmo-projects/kosmo-demo-001 --reviewed-by Reviewer --check geometry_outlier_review=confirmed --note geometry_outlier_review=\"Reviewed geometry_outlier_review\""
+    },
+    {
+      "id": "confirm_property_set_review",
+      "command": "npm run kosmo:ifc-human-review-session -- --project examples/kosmo-projects/kosmo-demo-001 --reviewed-by Reviewer --check property_set_review=confirmed --note property_set_review=\"Reviewed property_set_review\""
+    },
+    {
+      "id": "confirm_layer_mapping_review",
+      "command": "npm run kosmo:ifc-human-review-session -- --project examples/kosmo-projects/kosmo-demo-001 --reviewed-by Reviewer --check layer_mapping_review=confirmed --note layer_mapping_review=\"Reviewed layer_mapping_review\""
+    },
+    {
+      "id": "confirm_blender_reference_review",
+      "command": "npm run kosmo:ifc-human-review-session -- --project examples/kosmo-projects/kosmo-demo-001 --reviewed-by Reviewer --check blender_reference_review=confirmed --note blender_reference_review=\"Reviewed blender_reference_review\""
+    },
+    {
+      "id": "confirm_final_seed_decision",
+      "command": "npm run kosmo:ifc-human-review-session -- --project examples/kosmo-projects/kosmo-demo-001 --reviewed-by Reviewer --check final_seed_decision=confirmed --note final_seed_decision=\"Reviewed final_seed_decision\""
     }
   ],
   "next_actions": [
