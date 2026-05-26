@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-26T20:03:08.402Z",
+  "generated_at": "2026-05-26T20:30:06.922Z",
   "generator": "kosmo-asset-full-review",
   "library_path": "examples/kosmo-assets/kosmo-asset-demo/library.json",
   "library_id": "kosmo-asset-demo",
@@ -14,8 +14,8 @@
     "human_decisions_required_for_local_approval": true
   },
   "summary": {
-    "step_count": 6,
-    "passed_steps": 6,
+    "step_count": 7,
+    "passed_steps": 7,
     "failed_steps": 0,
     "asset_count": 3,
     "local_ready_count": 3,
@@ -29,7 +29,9 @@
     "archicad_profile_count": 3,
     "handoff_blender_rows": 2,
     "handoff_archicad_rows": 3,
-    "handoff_smoke_failures": 0
+    "handoff_smoke_failures": 0,
+    "human_review_session_status": "asset_human_review_session_open",
+    "human_review_session_open_items": 3
   },
   "outputs": {
     "full_review_json": "examples/kosmo-assets/kosmo-asset-demo/review/asset-full-review.generated.json",
@@ -39,7 +41,8 @@
     "review_pack": "examples/kosmo-assets/kosmo-asset-demo/review/asset-review-pack.generated.md",
     "exchange_profile": "examples/kosmo-assets/kosmo-asset-demo/review/asset-exchange-profile.generated.md",
     "handoff_bundle": "examples/kosmo-assets/kosmo-asset-demo/review/asset-handoff-bundle.generated.md",
-    "handoff_smoke": "examples/kosmo-assets/kosmo-asset-demo/review/asset-handoff-smoke.generated.md"
+    "handoff_smoke": "examples/kosmo-assets/kosmo-asset-demo/review/asset-handoff-smoke.generated.md",
+    "human_review_session": "examples/kosmo-assets/kosmo-asset-demo/review/asset-human-review-session.generated.md"
   },
   "steps": [
     {
@@ -113,6 +116,18 @@
       "report_status": "handoff_smoke_passed",
       "stdout_tail": "> node scripts/kosmo-asset-handoff-smoke.mjs --library examples/kosmo-assets/kosmo-asset-demo/library.json\n\nKosmoAsset handoff smoke\nLibrary: examples/kosmo-assets/kosmo-asset-demo/library.json\nStatus: handoff_smoke_passed\nChecks: 12/12 passed\nFailures: 0\nWrote: examples/kosmo-assets/kosmo-asset-demo/review/asset-handoff-smoke.generated.md",
       "stderr_tail": ""
+    },
+    {
+      "id": "human_review_session",
+      "label": "Human Review Session",
+      "command": "npm run kosmo:asset-human-review-session -- --library examples/kosmo-assets/kosmo-asset-demo/library.json",
+      "status": "passed",
+      "exit_code": 0,
+      "report_path": "examples/kosmo-assets/kosmo-asset-demo/review/asset-human-review-session.generated.json",
+      "report_exists": true,
+      "report_status": "asset_human_review_session_open",
+      "stdout_tail": "> node scripts/kosmo-asset-human-review-session.mjs --library examples/kosmo-assets/kosmo-asset-demo/library.json\n\nKosmoAsset human review session\nLibrary: examples/kosmo-assets/kosmo-asset-demo/library.json\nStatus: asset_human_review_session_open\nOpen items: 3\nSmoke passed: yes\nWrote: examples/kosmo-assets/kosmo-asset-demo/review/asset-human-review-session.generated.md",
+      "stderr_tail": ""
     }
   ],
   "assets": [
@@ -128,7 +143,9 @@
       "blender": false,
       "archicad": true,
       "web": true,
-      "suggested_decision": "complete_human_review_before_promotion"
+      "suggested_decision": "complete_human_review_before_promotion",
+      "review_priority": "normal",
+      "primary_review_route": "archicad"
     },
     {
       "id": "warm-concrete-material-001",
@@ -142,7 +159,9 @@
       "blender": true,
       "archicad": true,
       "web": true,
-      "suggested_decision": "complete_human_review_before_promotion"
+      "suggested_decision": "complete_human_review_before_promotion",
+      "review_priority": "high",
+      "primary_review_route": "blender"
     },
     {
       "id": "generic-column-glb-001",
@@ -156,12 +175,14 @@
       "blender": true,
       "archicad": true,
       "web": true,
-      "suggested_decision": "complete_human_review_before_promotion"
+      "suggested_decision": "complete_human_review_before_promotion",
+      "review_priority": "high",
+      "primary_review_route": "blender"
     }
   ],
   "next_actions": [
     "Use this full-review report as the evening batch checkpoint for KosmoAsset.",
-    "Record explicit local human review decisions per asset/route before any production import smoke.",
+    "Complete asset-human-review-session.generated.md before recording explicit local decisions per asset/route.",
     "Keep public downloads, R2 uploads and D1 writes disabled."
   ]
 }

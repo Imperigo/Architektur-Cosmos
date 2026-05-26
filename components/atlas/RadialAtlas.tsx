@@ -16,6 +16,7 @@ import assetExportPlanPreview from '@/examples/kosmo-assets/kosmo-asset-demo/rev
 import assetExchangeProfilePreview from '@/examples/kosmo-assets/kosmo-asset-demo/review/asset-exchange-profile.generated.json';
 import assetHandoffBundlePreview from '@/examples/kosmo-assets/kosmo-asset-demo/review/asset-handoff-bundle.generated.json';
 import assetHandoffSmokePreview from '@/examples/kosmo-assets/kosmo-asset-demo/review/asset-handoff-smoke.generated.json';
+import assetHumanReviewSessionPreview from '@/examples/kosmo-assets/kosmo-asset-demo/review/asset-human-review-session.generated.json';
 import assetLibraryPreview from '@/examples/kosmo-assets/kosmo-asset-demo/library.json';
 import assetReviewPackPreview from '@/examples/kosmo-assets/kosmo-asset-demo/review/asset-review-pack.generated.json';
 import { atlasSize, styleSectors } from '@/lib/atlas-layout';
@@ -52,6 +53,7 @@ type AssetPreviewRecord = (typeof assetLibraryPreview.assets)[number];
 type AssetExportPlanRecord = (typeof assetExportPlanPreview.assets)[number];
 type AssetExchangeProfileRecord = (typeof assetExchangeProfilePreview.assets)[number];
 type AssetHandoffBundleRecord = (typeof assetHandoffBundlePreview.assets)[number];
+type AssetHumanReviewSessionRecord = (typeof assetHumanReviewSessionPreview.assets)[number];
 type AssetReviewPackRecord = (typeof assetReviewPackPreview.assets)[number];
 type AssetFamilyFilter = 'all' | '2d' | 'material' | '3d';
 type AssetReviewAction = {
@@ -2610,6 +2612,7 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
   const handoffBundle = assetHandoffBundle(asset.id);
   const handoffSmoke = handoffBundle ? assetHandoffSmokePreview : null;
   const reviewPack = assetReviewPack(asset.id);
+  const humanReviewSession = assetHumanReviewSession(asset.id);
   const generatedProfiles = assetGeneratedProfiles(asset);
   const generatedProfile = generatedProfiles[0] ?? null;
   const secondaryGeneratedProfiles = generatedProfiles.slice(1);
@@ -2743,6 +2746,35 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
             ))}
           </div>
           <p>Vorschlag: {formatAssetValue(reviewPack.suggested_decision)}</p>
+        </div>
+      ) : null}
+
+      {humanReviewSession ? (
+        <div className="kosmo-asset-inspector-section kosmo-asset-human-session-card">
+          <strong>Human-Review-Session</strong>
+          <div className="kosmo-asset-human-session-grid">
+            <span data-status={humanReviewSession.review_priority}>
+              <small>Priorität</small>
+              <b>{formatAssetValue(humanReviewSession.review_priority)}</b>
+            </span>
+            <span data-status={humanReviewSession.human_review_status}>
+              <small>Status</small>
+              <b>{formatAssetValue(humanReviewSession.human_review_status)}</b>
+            </span>
+            <span data-status={humanReviewSession.machine_evidence.handoff_smoke_passed ? 'ready' : 'blocked'}>
+              <small>Smoke</small>
+              <b>{humanReviewSession.machine_evidence.handoff_smoke_passed ? 'bestanden' : 'offen'}</b>
+            </span>
+          </div>
+          <div className="kosmo-asset-human-session-checks">
+            {humanReviewSession.human_session.checklist.slice(0, 4).map((item) => (
+              <span key={`${asset.id}-${item.id}`} data-status={item.status}>
+                <i />
+                <b>{assetHumanSessionCheckLabel(item.id, item.label)}</b>
+              </span>
+            ))}
+          </div>
+          <code>{humanReviewSession.commands.record_needs_review}</code>
         </div>
       ) : null}
 
@@ -3058,6 +3090,10 @@ function assetReviewPack(assetId: string): AssetReviewPackRecord | null {
   return assetReviewPackPreview.assets.find((asset) => asset.id === assetId) ?? null;
 }
 
+function assetHumanReviewSession(assetId: string): AssetHumanReviewSessionRecord | null {
+  return assetHumanReviewSessionPreview.assets.find((asset) => asset.id === assetId) ?? null;
+}
+
 function assetLibraryPath() {
   return 'examples/kosmo-assets/kosmo-asset-demo/library.json';
 }
@@ -3089,8 +3125,21 @@ function assetChecklistLabel(id: string, fallback: string) {
   return labels[id] ?? fallback;
 }
 
+function assetHumanSessionCheckLabel(id: string, fallback: string) {
+  const labels: Record<string, string> = {
+    source_basis_read: 'Quellenbasis gelesen',
+    rights_risk_checked: 'Rechte-/Public-Gate geprueft',
+    local_file_opened: 'Lokale Datei angeschaut',
+    scale_origin_layer_checked: 'Scale, Origin und Layer geprueft',
+    ai_slop_risk_checked: 'Qualitaet gegen KI-Slop geprueft',
+    route_decision_ready: 'Routenentscheidung bereit'
+  };
+  return labels[id] ?? fallback;
+}
+
 function assetReviewActions(asset: AssetPreviewRecord): AssetReviewAction[] {
   const libraryPath = assetLibraryPath();
+  const decisionRoutes = assetDecisionRoutes(asset, assetHandoffBundle(asset.id));
   const commands: AssetReviewAction[] = [
     {
       id: 'library-check',
@@ -3117,8 +3166,15 @@ function assetReviewActions(asset: AssetPreviewRecord): AssetReviewAction[] {
       id: 'full-review',
       label: 'Full Review',
       kicker: 'Batch',
-      description: 'Fuehrt den ganzen lokalen Abendbatch aus: Check, Exportplan, Review-Pack, Exchange, Handoff und Smoke.',
+      description: 'Fuehrt den ganzen lokalen Abendbatch aus: Check, Exportplan, Review-Pack, Exchange, Handoff, Smoke und Human Session.',
       command: `npm run kosmo:asset-full-review -- --library ${libraryPath}`
+    },
+    {
+      id: 'human-review-session',
+      label: 'Human Session',
+      kicker: 'Review',
+      description: 'Erzeugt die editierbare lokale Human-Review-Session mit offenen Asset-Checks und sicheren Entscheidbefehlen.',
+      command: `npm run kosmo:asset-human-review-session -- --library ${libraryPath}`
     },
     {
       id: 'handoff-bundle',
@@ -3146,14 +3202,7 @@ function assetReviewActions(asset: AssetPreviewRecord): AssetReviewAction[] {
       label: 'Freigabe-Draft',
       kicker: 'Gate',
       description: 'Schreibt eine lokale menschliche Freigabe-Evidenz fuer ein Asset, ohne Library, Blender, ArchiCAD oder Public-Gates zu veraendern.',
-      command: `npm run kosmo:asset-review-decision -- --library ${libraryPath} --asset ${asset.id} --route ${assetDecisionRoutes(asset, assetHandoffBundle(asset.id))[0]} --decision approve-local --confirm-human-review`
-    },
-    {
-      id: 'blender-sandbox',
-      label: 'Blender Sandbox',
-      kicker: 'BPy',
-      description: 'Erzeugt eine Blender-Sandbox-Python-Datei nach lokaler Freigabe und Smoke-Test. Nur fuer kopierte Sandbox-Dateien.',
-      command: `npm run kosmo:asset-blender-sandbox -- --library ${libraryPath} --asset ${asset.id} --route blender`
+      command: `npm run kosmo:asset-review-decision -- --library ${libraryPath} --asset ${asset.id} --route ${decisionRoutes[0]} --decision approve-local --confirm-human-review`
     }
   ];
 
@@ -3161,6 +3210,26 @@ function assetReviewActions(asset: AssetPreviewRecord): AssetReviewAction[] {
   const hasDxfFormat = asset.formats.some((format) => format.format === 'dxf');
   const canGenerateGlb = hasGlbFormat || asset.asset_type.includes('glb') || asset.asset_type.includes('3d');
   const canGenerateDxf = hasDxfFormat || asset.asset_type.includes('2d') || asset.export_targets.includes('cad');
+
+  if (decisionRoutes.includes('blender')) {
+    commands.push({
+      id: 'blender-sandbox',
+      label: 'Blender Sandbox',
+      kicker: 'BPy',
+      description: 'Erzeugt eine Blender-Sandbox-Python-Datei nach lokaler Freigabe und Smoke-Test. Nur fuer kopierte Sandbox-Dateien.',
+      command: `npm run kosmo:asset-blender-sandbox -- --library ${libraryPath} --asset ${asset.id} --route blender`
+    });
+  }
+
+  if (decisionRoutes.includes('archicad')) {
+    commands.push({
+      id: 'archicad-sandbox',
+      label: 'ArchiCAD Sandbox',
+      kicker: 'AC',
+      description: 'Erzeugt einen ArchiCAD-Sandbox-Schedule nach lokaler Freigabe und Smoke-Test. Nur fuer manuelle Attribut-/Layer-Pruefung.',
+      command: `npm run kosmo:asset-archicad-sandbox -- --library ${libraryPath} --asset ${asset.id} --route archicad`
+    });
+  }
 
   if (canGenerateGlb) {
     commands.push({

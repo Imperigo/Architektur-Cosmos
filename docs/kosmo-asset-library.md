@@ -85,9 +85,9 @@ examples/kosmo-assets/kosmo-asset-demo/review/asset-full-review.generated.md
 ```
 
 Er startet Library Check, Exportplan, Review-Pack, Exchange-Profil,
-Handoff-Bundle und Handoff-Smoke. Der Bericht ist ein lokaler Tagesabschluss:
-keine Uploads, keine D1-/R2-Writes, keine Public-Gates und keine automatische
-Freigabe.
+Handoff-Bundle, Handoff-Smoke und eine Human-Review-Session. Der Bericht ist
+ein lokaler Tagesabschluss: keine Uploads, keine D1-/R2-Writes, keine
+Public-Gates und keine automatische Freigabe.
 
 ## Review-Pack
 
@@ -174,6 +174,28 @@ Er fuehrt die Blender-Python-Datei im Review-only-Modus aus, prueft
 `ALLOW_SCENE_WRITE = False`, CSV-Zeilen, lokale Source-Dateien und blockierte
 Public-Gates. Er importiert keine Assets und schreibt keine Projektdateien.
 
+## Human-Review-Session
+
+Wenn der Abendbatch technisch durchlaeuft, aber menschliche Entscheidungen
+offen bleiben, erzeugt die Review-Session eine editierbare lokale Checkliste:
+
+```bash
+npm run kosmo:asset-human-review-session -- \
+  --library examples/kosmo-assets/kosmo-asset-demo/library.json
+```
+
+Der Befehl schreibt:
+
+```text
+examples/kosmo-assets/kosmo-asset-demo/review/asset-human-review-session.generated.json
+examples/kosmo-assets/kosmo-asset-demo/review/asset-human-review-session.generated.md
+```
+
+Die Session sammelt pro Asset offene Review-Punkte, Haupt-Route,
+Rechte-/Source-Gate, lokale Datei-/Profil-Evidenz, Smoke-Status und sichere
+Entscheidbefehle. Sie ist bewusst noch kein Zertifikat: Der `certificate_seed`
+ist nur eine Vorstufe fuer spaetere menschliche Qualitaetsbestaetigung.
+
 ## Lokale Review-Entscheidung
 
 Nach Review-Pack, Handoff-Bundle und bestandenem Smoke kann eine menschliche
@@ -224,6 +246,36 @@ Die Python-Datei ist fuer eine kopierte `.blend`-Sandbox gedacht. Sie erstellt
 nur `KOSMO_SANDBOX`-Collections, Material-/Layer-Platzhalter und speichert oder
 oeffnet keine Projektdateien. Aus normalem System-Python heraus beendet sie sich
 ohne Aenderungen.
+
+## ArchiCAD-Sandbox
+
+Der gleiche lokale Review-Gate existiert fuer ArchiCAD als CSV-Schedule:
+
+```bash
+npm run kosmo:asset-review-decision -- \
+  --library examples/kosmo-assets/kosmo-asset-demo/library.json \
+  --asset warm-concrete-material-001 \
+  --route archicad \
+  --decision approve-local \
+  --confirm-human-review
+
+npm run kosmo:asset-archicad-sandbox -- \
+  --library examples/kosmo-assets/kosmo-asset-demo/library.json \
+  --asset warm-concrete-material-001 \
+  --route archicad
+```
+
+Der Output bleibt ein manueller Sandbox-Schedule:
+
+```text
+examples/kosmo-assets/kosmo-asset-demo/review/asset-archicad-sandbox-warm-concrete-material-001.generated.csv
+examples/kosmo-assets/kosmo-asset-demo/review/asset-archicad-sandbox-warm-concrete-material-001.generated.json
+examples/kosmo-assets/kosmo-asset-demo/review/asset-archicad-sandbox-warm-concrete-material-001.generated.md
+```
+
+Er schreibt keine `.pln`-Datei und erzeugt keine echten ArchiCAD-Attribute. Die
+CSV dient als kontrollierte Layer-/Surface-Vorlage fuer eine kopierte
+ArchiCAD-Sandbox.
 
 ## Demo-GLB
 

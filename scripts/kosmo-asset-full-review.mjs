@@ -48,6 +48,12 @@ const steps = [
     label: 'Handoff Smoke',
     script: 'kosmo:asset-handoff-smoke',
     report: 'review/asset-handoff-smoke.generated.json'
+  },
+  {
+    id: 'human_review_session',
+    label: 'Human Review Session',
+    script: 'kosmo:asset-human-review-session',
+    report: 'review/asset-human-review-session.generated.json'
   }
 ];
 
@@ -114,6 +120,7 @@ function buildReport(stepRows) {
   const exchangeProfile = readOptionalReport('review/asset-exchange-profile.generated.json');
   const handoffBundle = readOptionalReport('review/asset-handoff-bundle.generated.json');
   const handoffSmoke = readOptionalReport('review/asset-handoff-smoke.generated.json');
+  const humanReviewSession = readOptionalReport('review/asset-human-review-session.generated.json');
   const failedSteps = stepRows.filter((step) => step.status !== 'passed');
   const openHumanReviews = reviewPack?.summary?.open_human_review_count || 0;
   const status = failedSteps.length
@@ -153,7 +160,9 @@ function buildReport(stepRows) {
       archicad_profile_count: exchangeProfile?.summary?.archicad_profile_count || 0,
       handoff_blender_rows: handoffBundle?.summary?.blender_row_count || 0,
       handoff_archicad_rows: handoffBundle?.summary?.archicad_row_count || 0,
-      handoff_smoke_failures: handoffSmoke?.summary?.failure_count ?? null
+      handoff_smoke_failures: handoffSmoke?.summary?.failure_count ?? null,
+      human_review_session_status: humanReviewSession?.status || null,
+      human_review_session_open_items: humanReviewSession?.summary?.open_item_count ?? openHumanReviews
     },
     outputs: {
       full_review_json: relative(root, outputJsonPath),
@@ -163,22 +172,25 @@ function buildReport(stepRows) {
       review_pack: reviewPath('asset-review-pack.generated.md'),
       exchange_profile: reviewPath('asset-exchange-profile.generated.md'),
       handoff_bundle: reviewPath('asset-handoff-bundle.generated.md'),
-      handoff_smoke: reviewPath('asset-handoff-smoke.generated.md')
+      handoff_smoke: reviewPath('asset-handoff-smoke.generated.md'),
+      human_review_session: reviewPath('asset-human-review-session.generated.md')
     },
     steps: stepRows,
-    assets: fullReviewAssets({ library, reviewPack, exchangeProfile, handoffBundle }),
+    assets: fullReviewAssets({ library, reviewPack, exchangeProfile, handoffBundle, humanReviewSession }),
     next_actions: nextActions({ failedSteps, openHumanReviews })
   };
 }
 
-function fullReviewAssets({ library, reviewPack, exchangeProfile, handoffBundle }) {
+function fullReviewAssets({ library, reviewPack, exchangeProfile, handoffBundle, humanReviewSession }) {
   const reviewRows = new Map((reviewPack?.assets || []).map((asset) => [asset.id, asset]));
   const exchangeRows = new Map((exchangeProfile?.assets || []).map((asset) => [asset.id, asset]));
   const handoffRows = new Map((handoffBundle?.assets || []).map((asset) => [asset.id, asset]));
+  const sessionRows = new Map((humanReviewSession?.assets || []).map((asset) => [asset.id, asset]));
   return (library.assets || []).map((asset) => {
     const review = reviewRows.get(asset.id);
     const exchange = exchangeRows.get(asset.id);
     const handoff = handoffRows.get(asset.id);
+    const session = sessionRows.get(asset.id);
     return {
       id: asset.id,
       title: asset.title,
@@ -191,7 +203,9 @@ function fullReviewAssets({ library, reviewPack, exchangeProfile, handoffBundle 
       blender: Boolean(exchange?.blender || handoff?.blender),
       archicad: Boolean(exchange?.archicad || handoff?.archicad),
       web: Boolean(exchange?.web || handoff?.web),
-      suggested_decision: review?.suggested_decision || null
+      suggested_decision: review?.suggested_decision || null,
+      review_priority: session?.review_priority || null,
+      primary_review_route: session?.primary_route || null
     };
   });
 }
@@ -205,7 +219,7 @@ function nextActions({ failedSteps, openHumanReviews }) {
   }
   const actions = ['Use this full-review report as the evening batch checkpoint for KosmoAsset.'];
   if (openHumanReviews > 0) {
-    actions.push('Record explicit local human review decisions per asset/route before any production import smoke.');
+    actions.push('Complete asset-human-review-session.generated.md before recording explicit local decisions per asset/route.');
   }
   actions.push('Keep public downloads, R2 uploads and D1 writes disabled.');
   return actions;
@@ -255,6 +269,8 @@ function renderMarkdown(report) {
     `- Blender profiles: ${report.summary.blender_profile_count}`,
     `- ArchiCAD profiles: ${report.summary.archicad_profile_count}`,
     `- Handoff smoke failures: ${report.summary.handoff_smoke_failures ?? '-'}`,
+    `- human review session: ${report.summary.human_review_session_status || '-'}`,
+    `- human review session open items: ${report.summary.human_review_session_open_items}`,
     '',
     '## Steps',
     '',
@@ -266,9 +282,9 @@ function renderMarkdown(report) {
     lines.push(`| ${escapePipe(step.label)} | ${escapePipe(step.status)} | \`${escapePipe(step.report_path)}\` |`);
   }
 
-  lines.push('', '## Assets', '', '| Asset | Human Review | Public Gate | Blender | ArchiCAD | Suggested Decision |', '| --- | --- | --- | --- | --- | --- |');
+  lines.push('', '## Assets', '', '| Asset | Human Review | Priority | Route | Public Gate | Blender | ArchiCAD | Suggested Decision |', '| --- | --- | --- | --- | --- | --- | --- | --- |');
   for (const asset of report.assets) {
-    lines.push(`| ${escapePipe(asset.title)} | ${escapePipe(asset.human_review_status)} | ${escapePipe(asset.public_gate)} | ${asset.blender ? 'yes' : 'no'} | ${asset.archicad ? 'yes' : 'no'} | ${escapePipe(asset.suggested_decision || '-')} |`);
+    lines.push(`| ${escapePipe(asset.title)} | ${escapePipe(asset.human_review_status)} | ${escapePipe(asset.review_priority || '-')} | ${escapePipe(asset.primary_review_route || '-')} | ${escapePipe(asset.public_gate)} | ${asset.blender ? 'yes' : 'no'} | ${asset.archicad ? 'yes' : 'no'} | ${escapePipe(asset.suggested_decision || '-')} |`);
   }
 
   lines.push('', '## Outputs', '');

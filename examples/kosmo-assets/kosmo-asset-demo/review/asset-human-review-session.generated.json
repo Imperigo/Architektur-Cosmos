@@ -1,0 +1,432 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-05-26T20:30:06.903Z",
+  "generator": "kosmo-asset-human-review-session",
+  "library_path": "examples/kosmo-assets/kosmo-asset-demo/library.json",
+  "library_id": "kosmo-asset-demo",
+  "status": "asset_human_review_session_open",
+  "rights_scope": "local_review_only",
+  "policy": {
+    "no_uploads": true,
+    "no_public_downloads": true,
+    "no_d1_writes": true,
+    "no_r2_writes": true,
+    "session_does_not_approve_assets": true,
+    "session_does_not_mutate_library": true,
+    "approve_local_requires_explicit_human_command": true,
+    "certificate_status_is_not_certified": true
+  },
+  "summary": {
+    "asset_count": 3,
+    "open_item_count": 3,
+    "blocked_item_count": 0,
+    "local_ready_count": 3,
+    "public_ready_count": 0,
+    "handoff_smoke_passed": true,
+    "generated_profile_count": 4,
+    "recommended_next_step": "complete_asset_human_review_session_before_approval_commands"
+  },
+  "source_reports": {
+    "review_pack": {
+      "path": "examples/kosmo-assets/kosmo-asset-demo/review/asset-review-pack.generated.json",
+      "exists": true
+    },
+    "export_plan": {
+      "path": "examples/kosmo-assets/kosmo-asset-demo/review/asset-export-plan.generated.json",
+      "exists": true
+    },
+    "exchange_profile": {
+      "path": "examples/kosmo-assets/kosmo-asset-demo/review/asset-exchange-profile.generated.json",
+      "exists": true
+    },
+    "handoff_bundle": {
+      "path": "examples/kosmo-assets/kosmo-asset-demo/review/asset-handoff-bundle.generated.json",
+      "exists": true
+    },
+    "handoff_smoke": {
+      "path": "examples/kosmo-assets/kosmo-asset-demo/review/asset-handoff-smoke.generated.json",
+      "exists": true
+    }
+  },
+  "certificate_seed": {
+    "status": "not_certified",
+    "note": "This session is evidence for later Architecture Kosmos quality certification, but it does not certify the asset yet.",
+    "required_before_certificate": [
+      "named human reviewer",
+      "asset and route decision",
+      "rights-source confirmation",
+      "local file inspection",
+      "handoff smoke check",
+      "public gate decision"
+    ]
+  },
+  "assets": [
+    {
+      "id": "axis-marker-svg-001",
+      "title": "Kosmo Axis Marker",
+      "asset_type": "2d_symbol",
+      "category": "annotation",
+      "rights_status": "own_work",
+      "review_status": "draft",
+      "human_review_status": "open",
+      "public_use_allowed": false,
+      "public_ready": false,
+      "local_ready": true,
+      "public_gate": "blocked",
+      "suggested_decision": "complete_human_review_before_promotion",
+      "review_priority": "normal",
+      "routes": [
+        "archicad",
+        "web",
+        "svg",
+        "dxf"
+      ],
+      "primary_route": "archicad",
+      "generated_profile_count": 1,
+      "machine_evidence": {
+        "review_pack_status": "available",
+        "export_route_summary": [
+          {
+            "target": "svg",
+            "status": "needs_review",
+            "blockers": []
+          },
+          {
+            "target": "dxf",
+            "status": "needs_review",
+            "blockers": []
+          },
+          {
+            "target": "web",
+            "status": "needs_review",
+            "blockers": [
+              "Web/public route remains private because public_use_allowed or rights are not public-safe."
+            ]
+          },
+          {
+            "target": "layout",
+            "status": "needs_review",
+            "blockers": []
+          }
+        ],
+        "blender_profile": false,
+        "archicad_profile": true,
+        "web_profile": true,
+        "handoff_smoke_status": "handoff_smoke_passed",
+        "handoff_smoke_passed": true
+      },
+      "human_session": {
+        "reviewer": null,
+        "reviewed_at": null,
+        "proposed_decision": "needs-review",
+        "final_decision_recorded": false,
+        "notes": "",
+        "checklist": [
+          {
+            "id": "source_basis_read",
+            "label": "Source basis was read and is plausible for local review.",
+            "status": "pending_human_review"
+          },
+          {
+            "id": "rights_risk_checked",
+            "label": "Rights status and public gate were checked by a human.",
+            "status": "pending_human_review"
+          },
+          {
+            "id": "local_file_opened",
+            "label": "At least one local file/profile was opened or inspected.",
+            "status": "pending_human_review"
+          },
+          {
+            "id": "scale_origin_layer_checked",
+            "label": "Scale, origin, naming and layer/surface mapping were checked.",
+            "status": "pending_human_review"
+          },
+          {
+            "id": "ai_slop_risk_checked",
+            "label": "Reviewer checked whether the asset is generic, coherent and not low-quality AI output.",
+            "status": "pending_human_review"
+          },
+          {
+            "id": "route_decision_ready",
+            "label": "Reviewer can choose a route decision for archicad.",
+            "status": "pending_human_review"
+          }
+        ]
+      },
+      "decision_options": [
+        {
+          "decision": "needs-review",
+          "when": "default while the human checklist is still open",
+          "effect": "records a local note only; no approval and no public use"
+        },
+        {
+          "decision": "approve-local",
+          "when": "only after a human reviewer inspected Kosmo Axis Marker for route archicad",
+          "effect": "records local route evidence; still no public gate and no upload"
+        },
+        {
+          "decision": "block-public",
+          "when": "default for generated or unclear rights",
+          "effect": "keeps web/download/R2 gates closed"
+        },
+        {
+          "decision": "reject",
+          "when": "if quality, rights, source basis or export mapping are not acceptable",
+          "effect": "keeps the asset out of exchange workflows"
+        }
+      ],
+      "commands": {
+        "record_needs_review": "npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmo-asset-demo/library.json --asset axis-marker-svg-001 --route archicad --decision needs-review",
+        "record_local_approval": "npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmo-asset-demo/library.json --asset axis-marker-svg-001 --route archicad --decision approve-local --confirm-human-review",
+        "keep_public_blocked": "npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmo-asset-demo/library.json --asset axis-marker-svg-001 --route archicad --decision block-public"
+      },
+      "blockers": []
+    },
+    {
+      "id": "warm-concrete-material-001",
+      "title": "Warm Concrete Study Material",
+      "asset_type": "material",
+      "category": "material",
+      "rights_status": "generated_needs_review",
+      "review_status": "draft",
+      "human_review_status": "open",
+      "public_use_allowed": false,
+      "public_ready": false,
+      "local_ready": true,
+      "public_gate": "blocked",
+      "suggested_decision": "complete_human_review_before_promotion",
+      "review_priority": "high",
+      "routes": [
+        "blender",
+        "archicad",
+        "web",
+        "material_json"
+      ],
+      "primary_route": "blender",
+      "generated_profile_count": 1,
+      "machine_evidence": {
+        "review_pack_status": "available",
+        "export_route_summary": [
+          {
+            "target": "blender",
+            "status": "needs_review",
+            "blockers": []
+          },
+          {
+            "target": "archicad",
+            "status": "needs_review",
+            "blockers": []
+          },
+          {
+            "target": "web",
+            "status": "needs_review",
+            "blockers": [
+              "Web/public route remains private because public_use_allowed or rights are not public-safe."
+            ]
+          }
+        ],
+        "blender_profile": true,
+        "archicad_profile": true,
+        "web_profile": true,
+        "handoff_smoke_status": "handoff_smoke_passed",
+        "handoff_smoke_passed": true
+      },
+      "human_session": {
+        "reviewer": null,
+        "reviewed_at": null,
+        "proposed_decision": "needs-review",
+        "final_decision_recorded": false,
+        "notes": "",
+        "checklist": [
+          {
+            "id": "source_basis_read",
+            "label": "Source basis was read and is plausible for local review.",
+            "status": "pending_human_review"
+          },
+          {
+            "id": "rights_risk_checked",
+            "label": "Rights status and public gate were checked by a human.",
+            "status": "pending_human_review"
+          },
+          {
+            "id": "local_file_opened",
+            "label": "At least one local file/profile was opened or inspected.",
+            "status": "pending_human_review"
+          },
+          {
+            "id": "scale_origin_layer_checked",
+            "label": "Scale, origin, naming and layer/surface mapping were checked.",
+            "status": "pending_human_review"
+          },
+          {
+            "id": "ai_slop_risk_checked",
+            "label": "Reviewer checked whether the asset is generic, coherent and not low-quality AI output.",
+            "status": "pending_human_review"
+          },
+          {
+            "id": "route_decision_ready",
+            "label": "Reviewer can choose a route decision for blender.",
+            "status": "pending_human_review"
+          }
+        ]
+      },
+      "decision_options": [
+        {
+          "decision": "needs-review",
+          "when": "default while the human checklist is still open",
+          "effect": "records a local note only; no approval and no public use"
+        },
+        {
+          "decision": "approve-local",
+          "when": "only after a human reviewer inspected Warm Concrete Study Material for route blender",
+          "effect": "records local route evidence; still no public gate and no upload"
+        },
+        {
+          "decision": "block-public",
+          "when": "default for generated or unclear rights",
+          "effect": "keeps web/download/R2 gates closed"
+        },
+        {
+          "decision": "reject",
+          "when": "if quality, rights, source basis or export mapping are not acceptable",
+          "effect": "keeps the asset out of exchange workflows"
+        }
+      ],
+      "commands": {
+        "record_needs_review": "npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmo-asset-demo/library.json --asset warm-concrete-material-001 --route blender --decision needs-review",
+        "record_local_approval": "npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmo-asset-demo/library.json --asset warm-concrete-material-001 --route blender --decision approve-local --confirm-human-review",
+        "keep_public_blocked": "npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmo-asset-demo/library.json --asset warm-concrete-material-001 --route blender --decision block-public"
+      },
+      "blockers": []
+    },
+    {
+      "id": "generic-column-glb-001",
+      "title": "Generic Column GLB Slot",
+      "asset_type": "glb_model",
+      "category": "structure",
+      "rights_status": "generated_needs_review",
+      "review_status": "draft",
+      "human_review_status": "open",
+      "public_use_allowed": false,
+      "public_ready": false,
+      "local_ready": true,
+      "public_gate": "blocked",
+      "suggested_decision": "complete_human_review_before_promotion",
+      "review_priority": "high",
+      "routes": [
+        "blender",
+        "archicad",
+        "web",
+        "glb",
+        "dxf"
+      ],
+      "primary_route": "blender",
+      "generated_profile_count": 2,
+      "machine_evidence": {
+        "review_pack_status": "available",
+        "export_route_summary": [
+          {
+            "target": "glb",
+            "status": "needs_review",
+            "blockers": []
+          },
+          {
+            "target": "blender",
+            "status": "needs_review",
+            "blockers": []
+          },
+          {
+            "target": "archicad",
+            "status": "needs_review",
+            "blockers": []
+          },
+          {
+            "target": "web",
+            "status": "needs_review",
+            "blockers": [
+              "Web/public route remains private because public_use_allowed or rights are not public-safe."
+            ]
+          }
+        ],
+        "blender_profile": true,
+        "archicad_profile": true,
+        "web_profile": true,
+        "handoff_smoke_status": "handoff_smoke_passed",
+        "handoff_smoke_passed": true
+      },
+      "human_session": {
+        "reviewer": null,
+        "reviewed_at": null,
+        "proposed_decision": "needs-review",
+        "final_decision_recorded": false,
+        "notes": "",
+        "checklist": [
+          {
+            "id": "source_basis_read",
+            "label": "Source basis was read and is plausible for local review.",
+            "status": "pending_human_review"
+          },
+          {
+            "id": "rights_risk_checked",
+            "label": "Rights status and public gate were checked by a human.",
+            "status": "pending_human_review"
+          },
+          {
+            "id": "local_file_opened",
+            "label": "At least one local file/profile was opened or inspected.",
+            "status": "pending_human_review"
+          },
+          {
+            "id": "scale_origin_layer_checked",
+            "label": "Scale, origin, naming and layer/surface mapping were checked.",
+            "status": "pending_human_review"
+          },
+          {
+            "id": "ai_slop_risk_checked",
+            "label": "Reviewer checked whether the asset is generic, coherent and not low-quality AI output.",
+            "status": "pending_human_review"
+          },
+          {
+            "id": "route_decision_ready",
+            "label": "Reviewer can choose a route decision for blender.",
+            "status": "pending_human_review"
+          }
+        ]
+      },
+      "decision_options": [
+        {
+          "decision": "needs-review",
+          "when": "default while the human checklist is still open",
+          "effect": "records a local note only; no approval and no public use"
+        },
+        {
+          "decision": "approve-local",
+          "when": "only after a human reviewer inspected Generic Column GLB Slot for route blender",
+          "effect": "records local route evidence; still no public gate and no upload"
+        },
+        {
+          "decision": "block-public",
+          "when": "default for generated or unclear rights",
+          "effect": "keeps web/download/R2 gates closed"
+        },
+        {
+          "decision": "reject",
+          "when": "if quality, rights, source basis or export mapping are not acceptable",
+          "effect": "keeps the asset out of exchange workflows"
+        }
+      ],
+      "commands": {
+        "record_needs_review": "npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmo-asset-demo/library.json --asset generic-column-glb-001 --route blender --decision needs-review",
+        "record_local_approval": "npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmo-asset-demo/library.json --asset generic-column-glb-001 --route blender --decision approve-local --confirm-human-review",
+        "keep_public_blocked": "npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmo-asset-demo/library.json --asset generic-column-glb-001 --route blender --decision block-public"
+      },
+      "blockers": []
+    }
+  ],
+  "next_actions": [
+    "Open local asset files/profiles and complete the human checklist for every open row.",
+    "Record only explicit human decisions with kosmo:asset-review-decision.",
+    "Keep public downloads, R2 uploads and D1 writes disabled."
+  ]
+}

@@ -1,14 +1,14 @@
 # KosmoAsset Full Review
 
 Library: `kosmo-asset-demo`
-Generated: 2026-05-26T20:03:08.402Z
+Generated: 2026-05-26T20:30:06.922Z
 Status: `asset_full_review_ready_for_human_decisions`
 
 Review-only evening batch. This command runs the local KosmoAsset review chain and does not upload, publish, write D1/R2 or approve public use.
 
 ## Summary
 
-- steps: 6/6
+- steps: 7/7
 - assets: 3
 - local ready: 3
 - public ready: 0
@@ -19,6 +19,8 @@ Review-only evening batch. This command runs the local KosmoAsset review chain a
 - Blender profiles: 2
 - ArchiCAD profiles: 3
 - Handoff smoke failures: 0
+- human review session: asset_human_review_session_open
+- human review session open items: 3
 
 ## Steps
 
@@ -30,14 +32,15 @@ Review-only evening batch. This command runs the local KosmoAsset review chain a
 | Exchange Profile | passed | `examples/kosmo-assets/kosmo-asset-demo/review/asset-exchange-profile.generated.json` |
 | Handoff Bundle | passed | `examples/kosmo-assets/kosmo-asset-demo/review/asset-handoff-bundle.generated.json` |
 | Handoff Smoke | passed | `examples/kosmo-assets/kosmo-asset-demo/review/asset-handoff-smoke.generated.json` |
+| Human Review Session | passed | `examples/kosmo-assets/kosmo-asset-demo/review/asset-human-review-session.generated.json` |
 
 ## Assets
 
-| Asset | Human Review | Public Gate | Blender | ArchiCAD | Suggested Decision |
-| --- | --- | --- | --- | --- | --- |
-| Kosmo Axis Marker | open | blocked | no | yes | complete_human_review_before_promotion |
-| Warm Concrete Study Material | open | blocked | yes | yes | complete_human_review_before_promotion |
-| Generic Column GLB Slot | open | blocked | yes | yes | complete_human_review_before_promotion |
+| Asset | Human Review | Priority | Route | Public Gate | Blender | ArchiCAD | Suggested Decision |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Kosmo Axis Marker | open | normal | archicad | blocked | no | yes | complete_human_review_before_promotion |
+| Warm Concrete Study Material | open | high | blender | blocked | yes | yes | complete_human_review_before_promotion |
+| Generic Column GLB Slot | open | high | blender | blocked | yes | yes | complete_human_review_before_promotion |
 
 ## Outputs
 
@@ -49,9 +52,10 @@ Review-only evening batch. This command runs the local KosmoAsset review chain a
 - exchange_profile: `examples/kosmo-assets/kosmo-asset-demo/review/asset-exchange-profile.generated.md`
 - handoff_bundle: `examples/kosmo-assets/kosmo-asset-demo/review/asset-handoff-bundle.generated.md`
 - handoff_smoke: `examples/kosmo-assets/kosmo-asset-demo/review/asset-handoff-smoke.generated.md`
+- human_review_session: `examples/kosmo-assets/kosmo-asset-demo/review/asset-human-review-session.generated.md`
 
 ## Next Actions
 
 - Use this full-review report as the evening batch checkpoint for KosmoAsset.
-- Record explicit local human review decisions per asset/route before any production import smoke.
+- Complete asset-human-review-session.generated.md before recording explicit local decisions per asset/route.
 - Keep public downloads, R2 uploads and D1 writes disabled.

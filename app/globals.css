@@ -5359,6 +5359,105 @@ body:has(.entry-page) {
   font-weight: 560;
 }
 
+.kosmo-asset-human-session-card {
+  border-color: color-mix(in srgb, #f5b342 30%, rgb(247 247 244 / 10%));
+  background:
+    linear-gradient(135deg, rgb(245 179 66 / 8%), transparent 52%),
+    rgb(0 0 0 / 18%);
+}
+
+.kosmo-asset-human-session-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.kosmo-asset-human-session-grid span {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 8px;
+  border: 1px solid rgb(247 247 244 / 9%);
+  border-radius: 8px;
+  background: rgb(247 247 244 / 4%);
+}
+
+.kosmo-asset-human-session-grid span[data-status="high"],
+.kosmo-asset-human-session-grid span[data-status="open"] {
+  border-color: color-mix(in srgb, #f5b342 42%, rgb(247 247 244 / 10%));
+}
+
+.kosmo-asset-human-session-grid span[data-status="ready"],
+.kosmo-asset-human-session-grid span[data-status="closed"] {
+  border-color: rgb(101 255 115 / 34%);
+}
+
+.kosmo-asset-human-session-grid span[data-status="blocked"] {
+  border-color: rgb(255 79 116 / 36%);
+}
+
+.kosmo-asset-human-session-grid small,
+.kosmo-asset-human-session-grid b {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.kosmo-asset-human-session-grid small {
+  color: rgb(247 247 244 / 48%);
+  font-size: 8px;
+}
+
+.kosmo-asset-human-session-grid b {
+  color: color-mix(in srgb, #f5b342 62%, #f7f7f4);
+  font-size: 9px;
+}
+
+.kosmo-asset-human-session-checks {
+  display: grid;
+  gap: 5px;
+}
+
+.kosmo-asset-human-session-checks span {
+  display: grid;
+  grid-template-columns: 10px minmax(0, 1fr);
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  color: rgb(247 247 244 / 66%);
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.kosmo-asset-human-session-checks i {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #f5b342;
+  box-shadow: 0 0 12px rgb(245 179 66 / 28%);
+}
+
+.kosmo-asset-human-session-checks b {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-weight: 560;
+}
+
+.kosmo-asset-human-session-card code {
+  display: block;
+  max-width: 100%;
+  padding: 7px;
+  border: 1px solid rgb(247 247 244 / 8%);
+  border-radius: 8px;
+  background: rgb(247 247 244 / 5%);
+  color: color-mix(in srgb, #f5b342 64%, #f7f7f4);
+  font-size: 9px;
+  line-height: 1.45;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
 .kosmo-asset-exchange-card {
   border-color: color-mix(in srgb, var(--asset-accent) 30%, rgb(247 247 244 / 10%));
   background:
@@ -6257,6 +6356,10 @@ html[data-cosmos-browser="opera"] .relation-strand {
   }
 
   .kosmo-asset-decision-status {
+    grid-template-columns: 1fr;
+  }
+
+  .kosmo-asset-human-session-grid {
     grid-template-columns: 1fr;
   }
 

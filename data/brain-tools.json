@@ -83,7 +83,16 @@
       "command": "npm run kosmo:asset-full-review -- --library {asset_library_path}",
       "output_root": "examples/kosmo-assets/{library_slug}/review",
       "review_output": "examples/kosmo-assets/{library_slug}/review/asset-full-review.generated.md",
-      "purpose": "Run the complete local KosmoAsset evening batch: library check, export plan, review pack, exchange profile, handoff bundle and handoff smoke without uploads, publication or public-use approval.",
+      "purpose": "Run the complete local KosmoAsset evening batch: library check, export plan, review pack, exchange profile, handoff bundle, handoff smoke and human review session without uploads, publication or public-use approval.",
+      "approval_required_before_public_use": false
+    },
+    {
+      "id": "kosmo_asset_human_review_session",
+      "label": "KosmoAsset Human Review Session",
+      "command": "npm run kosmo:asset-human-review-session -- --library {asset_library_path}",
+      "output_root": "examples/kosmo-assets/{library_slug}/review",
+      "review_output": "examples/kosmo-assets/{library_slug}/review/asset-human-review-session.generated.md",
+      "purpose": "Create an editable local human-review session for open KosmoAsset rows with checklist, route decisions and later certificate evidence, without approving, uploading, publishing or mutating assets.",
       "approval_required_before_public_use": false
     },
     {
@@ -93,6 +102,15 @@
       "output_root": "examples/kosmo-assets/{library_slug}/review",
       "review_output": "examples/kosmo-assets/{library_slug}/review/asset-blender-sandbox-{asset_id}.generated.md",
       "purpose": "Create a local Blender sandbox Python bridge only after a local review decision and passed handoff smoke, without opening/saving project files, uploading or publishing assets.",
+      "approval_required_before_public_use": false
+    },
+    {
+      "id": "kosmo_asset_archicad_sandbox",
+      "label": "KosmoAsset ArchiCAD Sandbox",
+      "command": "npm run kosmo:asset-archicad-sandbox -- --library {asset_library_path} --asset {asset_id} --route archicad",
+      "output_root": "examples/kosmo-assets/{library_slug}/review",
+      "review_output": "examples/kosmo-assets/{library_slug}/review/asset-archicad-sandbox-{asset_id}.generated.md",
+      "purpose": "Create a local ArchiCAD sandbox schedule only after a local review decision and passed handoff smoke, without writing PLN files, uploading or publishing assets.",
       "approval_required_before_public_use": false
     },
     {
