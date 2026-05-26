@@ -67,6 +67,27 @@ Er prueft:
 - Exportziele fuer Blender, ArchiCAD, Web, SVG, DXF und GLB;
 - ob geplante Assets noch echte Dateien brauchen.
 
+## Review-Pack
+
+Nach Check und Exportplan kann ein kompaktes menschliches Asset-Review-Pack
+erzeugt werden:
+
+```bash
+npm run kosmo:asset-review-pack -- \
+  --library examples/kosmo-assets/kosmo-asset-demo/library.json
+```
+
+Der Review-Pack schreibt:
+
+```text
+examples/kosmo-assets/kosmo-asset-demo/review/asset-review-pack.generated.json
+examples/kosmo-assets/kosmo-asset-demo/review/asset-review-pack.generated.md
+```
+
+Er fasst lokale Dateien, Export-Routen, Rechte, Review-Status,
+Generated-Profile und offene menschliche Checks zusammen. Er promoted kein
+Asset, oeffnet keine Public-Gates und laedt nichts hoch.
+
 ## Demo-GLB
 
 Das erste lokale 3D-Testasset wird bewusst klein und analytisch erzeugt:

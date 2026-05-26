@@ -1,0 +1,364 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-05-26T13:49:02.384Z",
+  "generator": "kosmo-asset-review-pack",
+  "library_path": "examples/kosmo-assets/kosmo-asset-demo/library.json",
+  "library_id": "kosmo-asset-demo",
+  "status": "asset_human_review_required",
+  "rights_scope": "local_review_only",
+  "policy": {
+    "no_uploads": true,
+    "no_public_publish": true,
+    "review_pack_does_not_promote_assets": true,
+    "public_use_requires_reviewed_status": true,
+    "public_use_requires_rights": [
+      "licensed",
+      "public_domain",
+      "own_work"
+    ]
+  },
+  "source_reports": {
+    "library_check": {
+      "path": "examples/kosmo-assets/kosmo-asset-demo/review/asset-library-check.generated.json",
+      "exists": true
+    },
+    "export_plan": {
+      "path": "examples/kosmo-assets/kosmo-asset-demo/review/asset-export-plan.generated.json",
+      "exists": true
+    }
+  },
+  "summary": {
+    "asset_count": 3,
+    "local_ready_count": 3,
+    "public_ready_count": 0,
+    "open_human_review_count": 3,
+    "generated_profile_count": 3,
+    "blocked_route_count": 0,
+    "needs_review_route_count": 11,
+    "upload_allowed": false,
+    "public_assets_allowed": false,
+    "recommended_next_step": "complete_asset_human_review_before_promotion"
+  },
+  "assets": [
+    {
+      "id": "axis-marker-svg-001",
+      "title": "Kosmo Axis Marker",
+      "asset_type": "2d_symbol",
+      "category": "annotation",
+      "rights_status": "own_work",
+      "review_status": "draft",
+      "human_review_status": "open",
+      "public_use_allowed": false,
+      "public_ready": false,
+      "local_ready": true,
+      "local_formats": [
+        {
+          "format": "svg",
+          "path": "assets/svg/axis-marker.svg"
+        },
+        {
+          "format": "dxf",
+          "path": "assets/dxf/axis-marker-svg-001.dxf"
+        }
+      ],
+      "export_targets": [
+        "svg",
+        "dxf",
+        "web",
+        "layout"
+      ],
+      "routes": [
+        {
+          "target": "svg",
+          "status": "needs_review",
+          "blockers": []
+        },
+        {
+          "target": "dxf",
+          "status": "needs_review",
+          "blockers": []
+        },
+        {
+          "target": "web",
+          "status": "needs_review",
+          "blockers": [
+            "Web/public route remains private because public_use_allowed or rights are not public-safe."
+          ]
+        },
+        {
+          "target": "layout",
+          "status": "needs_review",
+          "blockers": []
+        }
+      ],
+      "generated_profiles": [
+        {
+          "generator": "kosmo-asset-generate-demo-dxf",
+          "status": "local_review_dxf_generated",
+          "generated_at": "2026-05-26T13:10:26.001Z",
+          "metric": "7 DXF entities",
+          "layer_names": [
+            "KOSMO_AXIS_PRIMARY",
+            "KOSMO_AXIS_SECONDARY",
+            "KOSMO_TEXT"
+          ]
+        }
+      ],
+      "checklist": [
+        {
+          "id": "source_basis",
+          "status": "passed",
+          "label": "Source basis is documented."
+        },
+        {
+          "id": "local_files",
+          "status": "passed",
+          "label": "At least one local source/export file exists."
+        },
+        {
+          "id": "rights_gate",
+          "status": "passed",
+          "label": "Rights status does not allow unsafe public use."
+        },
+        {
+          "id": "public_gate",
+          "status": "passed",
+          "label": "Public use is blocked unless rights and review are ready."
+        },
+        {
+          "id": "review_status",
+          "status": "needs_human_review",
+          "label": "Human review status is reviewed or verified."
+        },
+        {
+          "id": "export_routes",
+          "status": "passed",
+          "label": "No export route is blocked."
+        },
+        {
+          "id": "generated_profile",
+          "status": "passed",
+          "label": "Generated assets carry a generated profile."
+        },
+        {
+          "id": "library_check",
+          "status": "passed",
+          "label": "Asset passed the library check row."
+        }
+      ],
+      "suggested_decision": "complete_human_review_before_promotion"
+    },
+    {
+      "id": "warm-concrete-material-001",
+      "title": "Warm Concrete Study Material",
+      "asset_type": "material",
+      "category": "material",
+      "rights_status": "generated_needs_review",
+      "review_status": "planned",
+      "human_review_status": "open",
+      "public_use_allowed": false,
+      "public_ready": false,
+      "local_ready": true,
+      "local_formats": [
+        {
+          "format": "material_json",
+          "path": "assets/materials/warm-concrete.material.json"
+        }
+      ],
+      "export_targets": [
+        "blender",
+        "archicad",
+        "web"
+      ],
+      "routes": [
+        {
+          "target": "blender",
+          "status": "needs_review",
+          "blockers": []
+        },
+        {
+          "target": "archicad",
+          "status": "needs_review",
+          "blockers": []
+        },
+        {
+          "target": "web",
+          "status": "needs_review",
+          "blockers": [
+            "Web/public route remains private because public_use_allowed or rights are not public-safe."
+          ]
+        }
+      ],
+      "generated_profiles": [],
+      "checklist": [
+        {
+          "id": "source_basis",
+          "status": "passed",
+          "label": "Source basis is documented."
+        },
+        {
+          "id": "local_files",
+          "status": "passed",
+          "label": "At least one local source/export file exists."
+        },
+        {
+          "id": "rights_gate",
+          "status": "passed",
+          "label": "Rights status does not allow unsafe public use."
+        },
+        {
+          "id": "public_gate",
+          "status": "passed",
+          "label": "Public use is blocked unless rights and review are ready."
+        },
+        {
+          "id": "review_status",
+          "status": "needs_human_review",
+          "label": "Human review status is reviewed or verified."
+        },
+        {
+          "id": "export_routes",
+          "status": "passed",
+          "label": "No export route is blocked."
+        },
+        {
+          "id": "generated_profile",
+          "status": "needs_human_review",
+          "label": "Generated assets carry a generated profile."
+        },
+        {
+          "id": "library_check",
+          "status": "passed",
+          "label": "Asset passed the library check row."
+        }
+      ],
+      "suggested_decision": "complete_human_review_before_promotion"
+    },
+    {
+      "id": "generic-column-glb-001",
+      "title": "Generic Column GLB Slot",
+      "asset_type": "glb_model",
+      "category": "structure",
+      "rights_status": "generated_needs_review",
+      "review_status": "draft",
+      "human_review_status": "open",
+      "public_use_allowed": false,
+      "public_ready": false,
+      "local_ready": true,
+      "local_formats": [
+        {
+          "format": "glb",
+          "path": "assets/models/generic-column-glb-001.glb"
+        },
+        {
+          "format": "dxf",
+          "path": "assets/dxf/generic-column-glb-001.dxf"
+        }
+      ],
+      "export_targets": [
+        "glb",
+        "blender",
+        "archicad",
+        "web"
+      ],
+      "routes": [
+        {
+          "target": "glb",
+          "status": "needs_review",
+          "blockers": []
+        },
+        {
+          "target": "blender",
+          "status": "needs_review",
+          "blockers": []
+        },
+        {
+          "target": "archicad",
+          "status": "needs_review",
+          "blockers": []
+        },
+        {
+          "target": "web",
+          "status": "needs_review",
+          "blockers": [
+            "Web/public route remains private because public_use_allowed or rights are not public-safe."
+          ]
+        }
+      ],
+      "generated_profiles": [
+        {
+          "generator": "kosmo-asset-generate-demo-glb",
+          "status": "local_review_glb_generated",
+          "generated_at": "2026-05-26T12:54:21.120Z",
+          "metric": "176 triangles",
+          "layer_names": [
+            "structure/column_core_round",
+            "structure/base_plate_reference",
+            "structure/top_plate_reference",
+            "analysis/axis_x",
+            "analysis/axis_z"
+          ]
+        },
+        {
+          "generator": "kosmo-asset-generate-demo-dxf",
+          "status": "local_review_dxf_generated",
+          "generated_at": "2026-05-26T13:23:01.150Z",
+          "metric": "12 DXF entities",
+          "layer_names": [
+            "KOSMO_COLUMN_FOOTPRINT",
+            "KOSMO_COLUMN_CLEARANCE",
+            "KOSMO_AXIS",
+            "KOSMO_TEXT"
+          ]
+        }
+      ],
+      "checklist": [
+        {
+          "id": "source_basis",
+          "status": "passed",
+          "label": "Source basis is documented."
+        },
+        {
+          "id": "local_files",
+          "status": "passed",
+          "label": "At least one local source/export file exists."
+        },
+        {
+          "id": "rights_gate",
+          "status": "passed",
+          "label": "Rights status does not allow unsafe public use."
+        },
+        {
+          "id": "public_gate",
+          "status": "passed",
+          "label": "Public use is blocked unless rights and review are ready."
+        },
+        {
+          "id": "review_status",
+          "status": "needs_human_review",
+          "label": "Human review status is reviewed or verified."
+        },
+        {
+          "id": "export_routes",
+          "status": "passed",
+          "label": "No export route is blocked."
+        },
+        {
+          "id": "generated_profile",
+          "status": "passed",
+          "label": "Generated assets carry a generated profile."
+        },
+        {
+          "id": "library_check",
+          "status": "passed",
+          "label": "Asset passed the library check row."
+        }
+      ],
+      "suggested_decision": "complete_human_review_before_promotion"
+    }
+  ],
+  "next_actions": [
+    "Open local SVG/DXF/GLB/material files and record a human review decision before promotion.",
+    "Confirm generated assets are not derived from protected project images, scans or third-party models."
+  ]
+}

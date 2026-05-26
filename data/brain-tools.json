@@ -69,6 +69,15 @@
       "approval_required_before_public_use": false
     },
     {
+      "id": "kosmo_asset_review_pack",
+      "label": "KosmoAsset Review Pack",
+      "command": "npm run kosmo:asset-review-pack -- --library {asset_library_path}",
+      "output_root": "examples/kosmo-assets/{library_slug}/review",
+      "review_output": "examples/kosmo-assets/{library_slug}/review/asset-review-pack.generated.md",
+      "purpose": "Assemble local asset library checks, export routes, generated profiles and human-review checklist rows into one review-only KosmoAsset pack without promoting, uploading or publishing assets.",
+      "approval_required_before_public_use": false
+    },
+    {
       "id": "kosmo_asset_generate_demo_glb",
       "label": "KosmoAsset Demo GLB Generator",
       "command": "npm run kosmo:asset-generate-demo-glb -- --library {asset_library_path} --asset {asset_id}",

@@ -47,6 +47,8 @@ Die erste Website-Version ist eine statische Landing-Ansicht:
   Material-Swatch und Drahtmodell-Komponente;
 - erzeugt mit `npm run kosmo:asset-export-plan` eine lokale Export-Routen-
   Analyse fuer Blender, ArchiCAD, Web, SVG, DXF und GLB;
+- erzeugt mit `npm run kosmo:asset-review-pack` ein kompaktes menschliches
+  Review-Pack fuer Rechte, lokale Dateien, Generated-Profile und Export-Routen;
 - erzeugt mit `npm run kosmo:asset-generate-demo-glb` ein erstes lokales,
   analytisches GLB-Bauteil fuer Blender/Web/ArchiCAD-Tests;
 - erzeugt mit `npm run kosmo:asset-generate-demo-dxf` erste lokale
@@ -59,7 +61,8 @@ Die erste Website-Version ist eine statische Landing-Ansicht:
 ## Naechste Stufen
 
 1. GLB-Vorschauen im Browser-Inspector anzeigen.
-2. DXF-Profile neben GLB-Profilen im Browser-Inspector vergleichen.
-3. Blender-/ArchiCAD-Exportprofile als Review-Karten ausgeben.
-4. Rights Gate und private/dev Asset-Modus getrennt visualisieren.
-5. Spaeter eine echte KosmoAsset Library View mit Such-/Filterlogik bauen.
+2. Asset-Review-Pack im Inspector verlinken und pro Asset als Entscheidkarte anzeigen.
+3. DXF-Profile neben GLB-Profilen im Browser-Inspector vergleichen.
+4. Blender-/ArchiCAD-Exportprofile als Review-Karten ausgeben.
+5. Rights Gate und private/dev Asset-Modus getrennt visualisieren.
+6. Spaeter eine echte KosmoAsset Library View mit Such-/Filterlogik bauen.

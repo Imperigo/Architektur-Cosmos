@@ -83,6 +83,7 @@
     "i18n:check": "node scripts/i18n-guard.mjs",
     "kosmo:asset-library-check": "node scripts/kosmo-asset-library-check.mjs",
     "kosmo:asset-export-plan": "node scripts/kosmo-asset-export-plan.mjs",
+    "kosmo:asset-review-pack": "node scripts/kosmo-asset-review-pack.mjs",
     "kosmo:asset-generate-demo-glb": "node scripts/kosmo-asset-generate-demo-glb.mjs",
     "kosmo:asset-generate-demo-dxf": "node scripts/kosmo-asset-generate-demo-dxf.mjs",
     "kosmo:package-create": "node scripts/kosmo-project-package-create.mjs",

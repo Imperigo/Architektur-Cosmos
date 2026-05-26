@@ -2848,6 +2848,13 @@ function assetReviewActions(asset: AssetPreviewRecord): AssetReviewAction[] {
       kicker: 'Route',
       description: 'Erzeugt den lokalen Exportplan für Blender, ArchiCAD, Web und Review-Schritte.',
       command: `npm run kosmo:asset-export-plan -- --library ${libraryPath}`
+    },
+    {
+      id: 'review-pack',
+      label: 'Review-Pack',
+      kicker: 'Review',
+      description: 'Bündelt Check, Export-Routen, lokale Dateien und offene menschliche Asset-Prüfungen.',
+      command: `npm run kosmo:asset-review-pack -- --library ${libraryPath}`
     }
   ];
 
