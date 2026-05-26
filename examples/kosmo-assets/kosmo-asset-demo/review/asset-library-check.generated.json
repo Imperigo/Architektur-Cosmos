@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-26T13:10:26.008Z",
+  "generated_at": "2026-05-26T13:26:36.361Z",
   "generator": "kosmo-asset-library-check",
   "library_path": "examples/kosmo-assets/kosmo-asset-demo/library.json",
   "library_id": "kosmo-asset-demo",
@@ -26,7 +26,7 @@
     "warning_count": 0,
     "formats": {
       "svg": 1,
-      "dxf": 1,
+      "dxf": 2,
       "material_json": 1,
       "glb": 1
     },
@@ -120,10 +120,11 @@
       "local_ready": true,
       "planned_only": false,
       "formats": [
-        "glb"
+        "glb",
+        "dxf"
       ],
       "preview_kind": "wireframe_component",
-      "existing_format_count": 1,
+      "existing_format_count": 2,
       "planned_format_count": 0,
       "export_targets": [
         "glb",
@@ -136,7 +137,10 @@
         "structure",
         "glb",
         "diagrammatic",
-        "asset-review"
+        "asset-review",
+        "dxf",
+        "cad-export",
+        "footprint"
       ]
     }
   ],

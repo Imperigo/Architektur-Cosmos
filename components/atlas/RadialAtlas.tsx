@@ -2587,13 +2587,11 @@ function AssetCard({ asset, isSelected, onSelect }: { asset: AssetPreviewRecord;
 function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
   const accent = assetAccent(asset);
   const confidence = Math.round(asset.confidence * 100);
-  const generatedProfile = assetGeneratedProfile(asset);
-  const generatedLayerLabel = generatedProfile?.status.includes('dxf') ? 'CAD-Layer' : '3D-Layer';
-  const generatedMetric = generatedProfile && 'triangle_count' in generatedProfile
-    ? `${generatedProfile.triangle_count} Dreiecke`
-    : generatedProfile && 'entity_count' in generatedProfile
-      ? `${generatedProfile.entity_count} DXF-Elemente`
-      : null;
+  const generatedProfiles = assetGeneratedProfiles(asset);
+  const generatedProfile = generatedProfiles[0] ?? null;
+  const secondaryGeneratedProfiles = generatedProfiles.slice(1);
+  const generatedLayerLabel = generatedProfile ? generatedProfileLabel(generatedProfile) : 'Layer';
+  const generatedMetric = generatedProfile ? generatedProfileMetric(generatedProfile) : null;
   const localFormats = asset.formats
     .map((format) => ({ ...format, path: 'path' in format ? format.path : undefined }))
     .filter((format) => format.status === 'exists' && format.path);
@@ -2606,8 +2604,8 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
         <p>{asset.description}</p>
       </div>
 
-      <div className="kosmo-asset-inspector-preview" aria-hidden="true">
-        <AssetPreviewGraphic asset={asset} />
+      <div className={`kosmo-asset-inspector-preview${generatedProfile ? ' kosmo-asset-inspector-preview-generated' : ''}`} aria-hidden="true">
+        {generatedProfile ? <GeneratedAssetPreview asset={asset} profile={generatedProfile} /> : <AssetPreviewGraphic asset={asset} />}
       </div>
 
       <div className="kosmo-asset-inspector-gates" aria-label="Rechte und Review">
@@ -2650,6 +2648,18 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
             ))}
           </div>
           <p>{generatedMetric ? `${generatedMetric} · ` : ''}{formatAssetValue(generatedProfile.status)}</p>
+        </div>
+      ) : null}
+
+      {secondaryGeneratedProfiles.length ? (
+        <div className="kosmo-asset-inspector-section kosmo-asset-profile-list">
+          <strong>Weitere Profile</strong>
+          {secondaryGeneratedProfiles.map((profile) => (
+            <span key={`${asset.id}-${profile.generator}-${profile.status}`}>
+              <b>{generatedProfileLabel(profile)}</b>
+              <small>{generatedProfileMetric(profile) ?? formatAssetValue(profile.status)}</small>
+            </span>
+          ))}
         </div>
       ) : null}
 
@@ -2710,6 +2720,40 @@ function AssetPreviewGraphic({ asset }: { asset: AssetPreviewRecord }) {
   );
 }
 
+function GeneratedAssetPreview({ asset, profile }: { asset: AssetPreviewRecord; profile: GeneratedAssetProfile }) {
+  const isDxf = profile.status.includes('dxf');
+  const accent = assetAccent(asset);
+  const metric = generatedProfileMetric(profile)?.replace('Dreiecke', 'tris').replace('DXF-Elemente', 'entities') ?? 'review';
+  const visibleLayers = profile.layer_names.slice(0, 5);
+
+  if (isDxf) {
+    return (
+      <div className="kosmo-generated-preview kosmo-generated-preview-dxf" style={{ '--asset-accent': accent } as CSSProperties}>
+        <span className="kosmo-generated-dxf-grid" />
+        <span className="kosmo-generated-dxf-axis kosmo-generated-dxf-axis-x" />
+        <span className="kosmo-generated-dxf-axis kosmo-generated-dxf-axis-y" />
+        <span className="kosmo-generated-dxf-circle kosmo-generated-dxf-circle-a" />
+        <span className="kosmo-generated-dxf-circle kosmo-generated-dxf-circle-b" />
+        <b>{metric}</b>
+        <em>{visibleLayers.join(' · ')}</em>
+      </div>
+    );
+  }
+
+  return (
+    <div className="kosmo-generated-preview kosmo-generated-preview-glb" style={{ '--asset-accent': accent } as CSSProperties}>
+      <span className="kosmo-generated-model-shadow" />
+      <span className="kosmo-generated-model-plate kosmo-generated-model-plate-base" />
+      <span className="kosmo-generated-model-column" />
+      <span className="kosmo-generated-model-plate kosmo-generated-model-plate-top" />
+      <span className="kosmo-generated-model-axis kosmo-generated-model-axis-x" />
+      <span className="kosmo-generated-model-axis kosmo-generated-model-axis-z" />
+      <b>{metric}</b>
+      <em>{visibleLayers.join(' · ')}</em>
+    </div>
+  );
+}
+
 function assetVisualKind(asset: AssetPreviewRecord) {
   if (asset.asset_type.includes('material')) return 'material';
   if (asset.asset_type.includes('glb') || asset.asset_type.includes('3d')) return 'model';
@@ -2728,10 +2772,62 @@ function assetAccent(asset: AssetPreviewRecord) {
   return '#ff4fd8';
 }
 
-function assetGeneratedProfile(asset: AssetPreviewRecord) {
-  const profile = 'generated_asset_profile' in asset ? asset.generated_asset_profile : null;
-  if (!profile || !Array.isArray(profile.layer_names)) return null;
-  return profile;
+type GeneratedAssetProfile = {
+  generated_at?: string;
+  generator?: string;
+  status: string;
+  caveat?: string;
+  triangle_count?: number;
+  entity_count?: number;
+  layer_names: string[];
+};
+
+function assetGeneratedProfiles(asset: AssetPreviewRecord): GeneratedAssetProfile[] {
+  const primary = 'generated_asset_profile' in asset ? asset.generated_asset_profile : null;
+  const rows = 'generated_asset_profiles' in asset && Array.isArray(asset.generated_asset_profiles) ? asset.generated_asset_profiles : [];
+  const profiles = [primary, ...rows]
+    .map((profile) => normalizeGeneratedProfile(profile))
+    .filter((profile): profile is GeneratedAssetProfile => Boolean(profile));
+  const uniqueProfiles = profiles.filter((profile, index, list) => (
+    list.findIndex((candidate) => candidate.generator === profile.generator && candidate.status === profile.status) === index
+  ));
+
+  return uniqueProfiles.sort((a, b) => generatedProfilePriority(asset, a) - generatedProfilePriority(asset, b));
+}
+
+function normalizeGeneratedProfile(profile: unknown): GeneratedAssetProfile | null {
+  if (!profile || typeof profile !== 'object') return null;
+  const row = profile as Record<string, unknown>;
+  if (typeof row.status !== 'string' || !Array.isArray(row.layer_names)) return null;
+  return {
+    generated_at: typeof row.generated_at === 'string' ? row.generated_at : undefined,
+    generator: typeof row.generator === 'string' ? row.generator : undefined,
+    status: row.status,
+    caveat: typeof row.caveat === 'string' ? row.caveat : undefined,
+    triangle_count: typeof row.triangle_count === 'number' ? row.triangle_count : undefined,
+    entity_count: typeof row.entity_count === 'number' ? row.entity_count : undefined,
+    layer_names: row.layer_names.filter((layer): layer is string => typeof layer === 'string')
+  };
+}
+
+function generatedProfilePriority(asset: AssetPreviewRecord, profile: GeneratedAssetProfile) {
+  if (asset.asset_type.includes('glb') && profile.status.includes('glb')) return 0;
+  if (asset.asset_type.includes('2d') && profile.status.includes('dxf')) return 0;
+  if (profile.status.includes('glb')) return 1;
+  if (profile.status.includes('dxf')) return 2;
+  return 3;
+}
+
+function generatedProfileLabel(profile: GeneratedAssetProfile) {
+  if (profile.status.includes('dxf')) return 'CAD-Layer';
+  if (profile.status.includes('glb')) return '3D-Layer';
+  return 'Analyse-Layer';
+}
+
+function generatedProfileMetric(profile: GeneratedAssetProfile) {
+  if (typeof profile.triangle_count === 'number') return `${profile.triangle_count} Dreiecke`;
+  if (typeof profile.entity_count === 'number') return `${profile.entity_count} DXF-Elemente`;
+  return null;
 }
 
 function formatAssetValue(value: string) {

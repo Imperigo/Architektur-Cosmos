@@ -1,19 +1,20 @@
 # KosmoAsset Demo DXF Generation
 
-Asset: `axis-marker-svg-001`
-Generated: 2026-05-26T13:10:26.001Z
+Asset: `generic-column-glb-001`
+Generated: 2026-05-26T13:23:01.150Z
 Status: `local_review_dxf_generated`
 
-Diagrammatic axis symbol only. It is not a measured project drawing or public release.
+Diagrammatic column footprint only. It is not a measured BIM element, reinforcement plan or public release.
 
 ## Output
 
-- DXF: `examples/kosmo-assets/kosmo-asset-demo/assets/dxf/axis-marker-svg-001.dxf`
-- entities: 7
-- layers: KOSMO_AXIS_PRIMARY, KOSMO_AXIS_SECONDARY, KOSMO_TEXT
+- DXF: `examples/kosmo-assets/kosmo-asset-demo/assets/dxf/generic-column-glb-001.dxf`
+- asset kind: `column_footprint`
+- entities: 12
+- layers: KOSMO_COLUMN_FOOTPRINT, KOSMO_COLUMN_CLEARANCE, KOSMO_AXIS, KOSMO_TEXT
 
 ## Next Review
 
-- Open the DXF in a local CAD viewer or ArchiCAD and confirm scale and layers.
-- Decide whether lineweights and text style should be mapped to a KosmoPlan template.
+- Open the footprint DXF in a local CAD viewer or ArchiCAD and confirm 1:1 scale, origin and layers.
+- Decide whether the footprint should become a 2D symbol, an ArchiCAD object profile or only an import reference.
 - Keep this asset local until human review promotes it beyond review_only status.

@@ -4800,6 +4800,196 @@ body:has(.entry-page) {
   overflow: hidden;
 }
 
+.kosmo-asset-inspector-preview-generated {
+  min-height: 154px;
+}
+
+.kosmo-generated-preview {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #f7f7f4;
+  overflow: hidden;
+}
+
+.kosmo-generated-preview::before {
+  content: "";
+  position: absolute;
+  inset: 10px;
+  border: 1px solid color-mix(in srgb, var(--asset-accent) 26%, transparent);
+  border-radius: 8px;
+  background:
+    radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--asset-accent) 12%, transparent), transparent 48%),
+    linear-gradient(135deg, rgb(247 247 244 / 4%), transparent);
+}
+
+.kosmo-generated-preview b,
+.kosmo-generated-preview em {
+  position: absolute;
+  z-index: 2;
+  left: 17px;
+  right: 17px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  text-align: left;
+}
+
+.kosmo-generated-preview b {
+  top: 14px;
+  color: color-mix(in srgb, var(--asset-accent) 78%, #f7f7f4);
+  font-size: 9px;
+  font-weight: 780;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.kosmo-generated-preview em {
+  bottom: 14px;
+  color: rgb(247 247 244 / 64%);
+  font-size: 8px;
+  font-style: normal;
+  letter-spacing: 0;
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+
+.kosmo-generated-dxf-grid {
+  position: absolute;
+  inset: 22px 28px 30px;
+  border: 1px solid rgb(247 247 244 / 8%);
+  background-image:
+    linear-gradient(rgb(247 247 244 / 7%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(247 247 244 / 7%) 1px, transparent 1px);
+  background-size: 18px 18px;
+  transform: skewX(-12deg) rotate(-8deg);
+}
+
+.kosmo-generated-dxf-axis,
+.kosmo-generated-dxf-circle {
+  position: absolute;
+  z-index: 1;
+  display: block;
+  border-color: color-mix(in srgb, var(--asset-accent) 76%, #f7f7f4);
+  opacity: 0.82;
+}
+
+.kosmo-generated-dxf-axis-x,
+.kosmo-generated-dxf-axis-y {
+  top: 50%;
+  left: 24%;
+  width: 52%;
+  height: 1px;
+  border-top: 1px solid;
+  transform: rotate(-8deg);
+}
+
+.kosmo-generated-dxf-axis-y {
+  transform: rotate(82deg);
+}
+
+.kosmo-generated-dxf-circle {
+  top: 50%;
+  left: 50%;
+  width: 54px;
+  height: 54px;
+  border: 1px solid;
+  border-radius: 999px;
+  transform: translate(-50%, -50%) skewX(-12deg) rotate(-8deg);
+}
+
+.kosmo-generated-dxf-circle-b {
+  width: 18px;
+  height: 18px;
+  border-color: color-mix(in srgb, #f5b342 80%, var(--asset-accent));
+}
+
+.kosmo-generated-model-shadow,
+.kosmo-generated-model-column,
+.kosmo-generated-model-plate,
+.kosmo-generated-model-axis {
+  position: absolute;
+  z-index: 1;
+  display: block;
+  left: 50%;
+  transform-style: preserve-3d;
+}
+
+.kosmo-generated-model-shadow {
+  top: 74%;
+  width: 104px;
+  height: 28px;
+  border-radius: 999px;
+  background: radial-gradient(ellipse, color-mix(in srgb, var(--asset-accent) 22%, transparent), transparent 68%);
+  transform: translateX(-50%) rotate(-8deg);
+}
+
+.kosmo-generated-model-column {
+  top: 31%;
+  width: 38px;
+  height: 76px;
+  border: 1px solid color-mix(in srgb, var(--asset-accent) 72%, #f7f7f4);
+  border-radius: 999px / 18px;
+  background:
+    linear-gradient(90deg, rgb(247 247 244 / 12%), color-mix(in srgb, var(--asset-accent) 26%, transparent), rgb(0 0 0 / 16%)),
+    color-mix(in srgb, var(--asset-accent) 10%, transparent);
+  box-shadow:
+    inset 10px 0 18px rgb(247 247 244 / 8%),
+    inset -14px 0 18px rgb(0 0 0 / 22%),
+    0 0 24px color-mix(in srgb, var(--asset-accent) 20%, transparent);
+  transform: translateX(-50%) skewY(-10deg);
+}
+
+.kosmo-generated-model-column::before,
+.kosmo-generated-model-column::after {
+  content: "";
+  position: absolute;
+  left: -1px;
+  right: -1px;
+  height: 18px;
+  border: 1px solid color-mix(in srgb, var(--asset-accent) 58%, #f7f7f4);
+  border-radius: 999px / 18px;
+  background: color-mix(in srgb, var(--asset-accent) 18%, rgb(247 247 244 / 5%));
+}
+
+.kosmo-generated-model-column::before {
+  top: -2px;
+}
+
+.kosmo-generated-model-column::after {
+  bottom: -2px;
+}
+
+.kosmo-generated-model-plate {
+  width: 92px;
+  height: 24px;
+  border: 1px solid color-mix(in srgb, #ff4fd8 62%, var(--asset-accent));
+  border-radius: 4px;
+  background: linear-gradient(135deg, color-mix(in srgb, #ff4fd8 18%, transparent), rgb(247 247 244 / 5%));
+  transform: translateX(-50%) skewX(-28deg) rotate(-7deg);
+}
+
+.kosmo-generated-model-plate-base {
+  top: 71%;
+}
+
+.kosmo-generated-model-plate-top {
+  top: 24%;
+}
+
+.kosmo-generated-model-axis {
+  top: 22%;
+  width: 110px;
+  height: 1px;
+  border-top: 1px dashed color-mix(in srgb, var(--asset-accent) 70%, #f7f7f4);
+  opacity: 0.75;
+  transform: translateX(-50%) rotate(22deg);
+}
+
+.kosmo-generated-model-axis-z {
+  transform: translateX(-50%) rotate(-18deg);
+}
+
 .kosmo-asset-inspector-gates {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -4813,7 +5003,7 @@ body:has(.entry-page) {
   min-height: 64px;
   padding: 10px;
   border: 1px solid rgb(247 247 244 / 12%);
-  border-radius: 12px;
+  border-radius: 8px;
   background: rgb(247 247 244 / 4%);
 }
 
@@ -4929,6 +5119,46 @@ body:has(.entry-page) {
   min-width: 0;
   font-weight: 620;
   overflow-wrap: anywhere;
+}
+
+.kosmo-asset-profile-list {
+  padding: 10px;
+  border: 1px solid rgb(247 247 244 / 10%);
+  border-radius: 12px;
+  background: rgb(247 247 244 / 3%);
+}
+
+.kosmo-asset-profile-list span {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+  padding: 7px 0;
+  border-top: 1px solid rgb(247 247 244 / 8%);
+}
+
+.kosmo-asset-profile-list span:first-of-type {
+  border-top: 0;
+}
+
+.kosmo-asset-profile-list b,
+.kosmo-asset-profile-list small {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.kosmo-asset-profile-list b {
+  color: rgb(247 247 244 / 76%);
+  font-size: 9px;
+  font-weight: 680;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.kosmo-asset-profile-list small {
+  color: color-mix(in srgb, var(--asset-accent) 68%, #f7f7f4);
+  font-size: 9px;
 }
 
 .kosmo-asset-inspector-tags {

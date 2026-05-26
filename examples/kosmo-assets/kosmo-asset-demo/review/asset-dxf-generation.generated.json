@@ -1,27 +1,41 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-26T13:10:26.001Z",
+  "generated_at": "2026-05-26T13:23:01.150Z",
   "generator": "kosmo-asset-generate-demo-dxf",
   "library_id": "kosmo-asset-demo",
-  "asset_id": "axis-marker-svg-001",
-  "asset_title": "Kosmo Axis Marker",
+  "asset_id": "generic-column-glb-001",
+  "asset_title": "Generic Column GLB Slot",
+  "asset_kind": "column_footprint",
   "status": "local_review_dxf_generated",
-  "caveat": "Diagrammatic axis symbol only. It is not a measured project drawing or public release.",
+  "caveat": "Diagrammatic column footprint only. It is not a measured BIM element, reinforcement plan or public release.",
   "no_uploads": true,
   "public_use_allowed": false,
-  "dxf_path": "examples/kosmo-assets/kosmo-asset-demo/assets/dxf/axis-marker-svg-001.dxf",
+  "dxf_path": "examples/kosmo-assets/kosmo-asset-demo/assets/dxf/generic-column-glb-001.dxf",
+  "dimensions": {
+    "width_m": 0.35,
+    "depth_m": 0.35,
+    "height_m": 3,
+    "scale": "1:1 diagrammatic"
+  },
   "geometry": {
     "unit": "meter",
-    "entity_count": 7,
+    "entity_count": 12,
     "layers": [
-      "KOSMO_AXIS_PRIMARY",
-      "KOSMO_AXIS_SECONDARY",
+      "KOSMO_COLUMN_FOOTPRINT",
+      "KOSMO_COLUMN_CLEARANCE",
+      "KOSMO_AXIS",
       "KOSMO_TEXT"
+    ],
+    "tags": [
+      "dxf",
+      "cad-export",
+      "column",
+      "footprint"
     ]
   },
   "recommended_next_review": [
-    "Open the DXF in a local CAD viewer or ArchiCAD and confirm scale and layers.",
-    "Decide whether lineweights and text style should be mapped to a KosmoPlan template.",
+    "Open the footprint DXF in a local CAD viewer or ArchiCAD and confirm 1:1 scale, origin and layers.",
+    "Decide whether the footprint should become a 2D symbol, an ArchiCAD object profile or only an import reference.",
     "Keep this asset local until human review promotes it beyond review_only status."
   ]
 }

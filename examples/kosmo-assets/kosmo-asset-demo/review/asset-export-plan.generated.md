@@ -1,7 +1,7 @@
 # KosmoAsset Export Plan
 
 Library: `kosmo-asset-demo`
-Generated: 2026-05-26T13:10:26.029Z
+Generated: 2026-05-26T13:26:36.556Z
 Status: `review_plan`
 
 This is a local review-only export plan. It does not upload assets, write D1/R2 or create public downloads.
@@ -10,9 +10,9 @@ This is a local review-only export plan. It does not upload assets, write D1/R2 
 
 - assets: 3
 - ready routes: 0
-- review routes: 10
+- review routes: 11
 - planned routes: 0
-- blocked routes: 1
+- blocked routes: 0
 
 ## Asset Routes
 
@@ -27,12 +27,11 @@ This is a local review-only export plan. It does not upload assets, write D1/R2 
 | Warm Concrete Study Material | web | needs_review | material_json, webp, png | Web/public route remains private because public_use_allowed or rights are not public-safe. |
 | Generic Column GLB Slot | glb | needs_review | glb | - |
 | Generic Column GLB Slot | blender | needs_review | glb, blend | - |
-| Generic Column GLB Slot | archicad | blocked | dxf, gsm, ifc | Missing target format: dxf or gsm or ifc |
+| Generic Column GLB Slot | archicad | needs_review | dxf, gsm, ifc | - |
 | Generic Column GLB Slot | web | needs_review | svg, glb, webp, png | Web/public route remains private because public_use_allowed or rights are not public-safe. |
 
 ## Next Actions
 
-- Resolve blocked routes before exposing export buttons in the UI.
 - Review assets with local source files before promoting them to reusable workflow assets.
 
 ## Per Asset
@@ -53,8 +52,8 @@ This is a local review-only export plan. It does not upload assets, write D1/R2 
 
 ### Generic Column GLB Slot
 
-- existing formats: glb
+- existing formats: glb, dxf
 - planned formats: -
 - public ready: no
-- next step: Generate missing target formats or remove blocked export targets.
+- next step: Run human review and move review_status to reviewed or verified.
 

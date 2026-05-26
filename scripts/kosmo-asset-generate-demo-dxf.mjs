@@ -24,10 +24,11 @@ async function main() {
   const asset = (library.assets || []).find((item) => item.id === assetId);
   if (!asset) throw new Error(`Asset not found in library: ${assetId}`);
 
+  const dxfProfile = buildDxfProfile(asset);
   const dxfFormat = findOrCreateDxfFormat(asset);
   const dxfPath = resolve(libraryRoot, dxfFormat.path || `assets/dxf/${asset.id}.dxf`);
-  const dxf = buildAxisMarkerDxf(asset);
-  const report = buildReport({ library, asset, dxfPath });
+  const dxf = buildDxfDocument(dxfProfile);
+  const report = buildReport({ library, asset, dxfPath, dxfProfile });
 
   await mkdir(dirname(dxfPath), { recursive: true });
   await mkdir(dirname(outputJsonPath), { recursive: true });
@@ -62,22 +63,76 @@ function findOrCreateDxfFormat(asset) {
   return format;
 }
 
-function buildAxisMarkerDxf(asset) {
-  const layers = [
-    ['KOSMO_AXIS_PRIMARY', 4],
-    ['KOSMO_AXIS_SECONDARY', 2],
-    ['KOSMO_TEXT', 7]
-  ];
-  const entities = [
-    line('KOSMO_AXIS_PRIMARY', -1.2, 0, 1.2, 0),
-    line('KOSMO_AXIS_PRIMARY', 0, -1.2, 0, 1.2),
-    line('KOSMO_AXIS_SECONDARY', -0.42, -0.42, 0.42, 0.42),
-    line('KOSMO_AXIS_SECONDARY', -0.42, 0.42, 0.42, -0.42),
-    circle('KOSMO_AXIS_PRIMARY', 0, 0, 0.32),
-    circle('KOSMO_AXIS_SECONDARY', 0, 0, 0.08),
-    text('KOSMO_TEXT', 0.44, -0.58, 0.12, asset.preview?.label || 'ACHSE')
-  ];
+function buildDxfProfile(asset) {
+  if (asset.asset_type === 'glb_model' || asset.id.includes('column')) return buildColumnFootprintProfile(asset);
+  return buildAxisMarkerProfile(asset);
+}
 
+function buildAxisMarkerProfile(asset) {
+  return {
+    kind: 'axis_marker',
+    status: 'local_review_dxf_generated',
+    caveat: 'Diagrammatic axis symbol only. It is not a measured project drawing or public release.',
+    layers: [
+      ['KOSMO_AXIS_PRIMARY', 4],
+      ['KOSMO_AXIS_SECONDARY', 2],
+      ['KOSMO_TEXT', 7]
+    ],
+    entities: [
+      line('KOSMO_AXIS_PRIMARY', -1.2, 0, 1.2, 0),
+      line('KOSMO_AXIS_PRIMARY', 0, -1.2, 0, 1.2),
+      line('KOSMO_AXIS_SECONDARY', -0.42, -0.42, 0.42, 0.42),
+      line('KOSMO_AXIS_SECONDARY', -0.42, 0.42, 0.42, -0.42),
+      circle('KOSMO_AXIS_PRIMARY', 0, 0, 0.32),
+      circle('KOSMO_AXIS_SECONDARY', 0, 0, 0.08),
+      text('KOSMO_TEXT', 0.44, -0.58, 0.12, asset.preview?.label || 'ACHSE')
+    ],
+    tags: ['dxf', 'cad-export', 'axis'],
+    recommended_next_review: [
+      'Open the DXF in a local CAD viewer or ArchiCAD and confirm scale and layers.',
+      'Decide whether lineweights and text style should be mapped to a KosmoPlan template.',
+      'Keep this asset local until human review promotes it beyond review_only status.'
+    ]
+  };
+}
+
+function buildColumnFootprintProfile(asset) {
+  const dimensions = normalizeDimensions(asset.dimensions);
+  const halfWidth = dimensions.width_m / 2;
+  const halfDepth = dimensions.depth_m / 2;
+  const clearanceHalfWidth = halfWidth * 1.65;
+  const clearanceHalfDepth = halfDepth * 1.65;
+  const axisLength = Math.max(dimensions.width_m, dimensions.depth_m) * 1.9;
+
+  return {
+    kind: 'column_footprint',
+    status: 'local_review_dxf_generated',
+    caveat: 'Diagrammatic column footprint only. It is not a measured BIM element, reinforcement plan or public release.',
+    dimensions,
+    layers: [
+      ['KOSMO_COLUMN_FOOTPRINT', 4],
+      ['KOSMO_COLUMN_CLEARANCE', 6],
+      ['KOSMO_AXIS', 2],
+      ['KOSMO_TEXT', 7]
+    ],
+    entities: [
+      ...rectangle('KOSMO_COLUMN_FOOTPRINT', halfWidth, halfDepth),
+      circle('KOSMO_COLUMN_FOOTPRINT', 0, 0, Math.min(halfWidth, halfDepth)),
+      ...rectangle('KOSMO_COLUMN_CLEARANCE', clearanceHalfWidth, clearanceHalfDepth),
+      line('KOSMO_AXIS', -axisLength / 2, 0, axisLength / 2, 0),
+      line('KOSMO_AXIS', 0, -axisLength / 2, 0, axisLength / 2),
+      text('KOSMO_TEXT', clearanceHalfWidth + 0.08, -clearanceHalfDepth, 0.08, asset.preview?.label || 'STUETZE')
+    ],
+    tags: ['dxf', 'cad-export', 'column', 'footprint'],
+    recommended_next_review: [
+      'Open the footprint DXF in a local CAD viewer or ArchiCAD and confirm 1:1 scale, origin and layers.',
+      'Decide whether the footprint should become a 2D symbol, an ArchiCAD object profile or only an import reference.',
+      'Keep this asset local until human review promotes it beyond review_only status.'
+    ]
+  };
+}
+
+function buildDxfDocument(profile) {
   return [
     '0', 'SECTION',
     '2', 'HEADER',
@@ -90,17 +145,38 @@ function buildAxisMarkerDxf(asset) {
     '2', 'TABLES',
     '0', 'TABLE',
     '2', 'LAYER',
-    '70', String(layers.length),
-    ...layers.flatMap(([name, color]) => ['0', 'LAYER', '2', name, '70', '0', '62', String(color), '6', 'CONTINUOUS']),
+    '70', String(profile.layers.length),
+    ...profile.layers.flatMap(([name, color]) => ['0', 'LAYER', '2', name, '70', '0', '62', String(color), '6', 'CONTINUOUS']),
     '0', 'ENDTAB',
     '0', 'ENDSEC',
     '0', 'SECTION',
     '2', 'ENTITIES',
-    ...entities.flat(),
+    ...profile.entities.flat(),
     '0', 'ENDSEC',
     '0', 'EOF',
     ''
   ].join('\n');
+}
+
+function normalizeDimensions(dimensions = {}) {
+  const width = numberOr(dimensions.width_m, 0.35);
+  const depth = numberOr(dimensions.depth_m, width);
+  const height = numberOr(dimensions.height_m, 3);
+  return {
+    width_m: width,
+    depth_m: depth,
+    height_m: height,
+    scale: dimensions.scale || '1:1 diagrammatic'
+  };
+}
+
+function rectangle(layer, halfWidth, halfDepth) {
+  return [
+    line(layer, -halfWidth, -halfDepth, halfWidth, -halfDepth),
+    line(layer, halfWidth, -halfDepth, halfWidth, halfDepth),
+    line(layer, halfWidth, halfDepth, -halfWidth, halfDepth),
+    line(layer, -halfWidth, halfDepth, -halfWidth, -halfDepth)
+  ];
 }
 
 function line(layer, x1, y1, x2, y2) {
@@ -112,7 +188,7 @@ function circle(layer, x, y, radius) {
 }
 
 function text(layer, x, y, height, value) {
-  return ['0', 'TEXT', '8', layer, '10', n(x), '20', n(y), '30', '0', '40', n(height), '1', String(value).toUpperCase(), '50', '0'];
+  return ['0', 'TEXT', '8', layer, '10', n(x), '20', n(y), '30', '0', '40', n(height), '1', dxfText(value), '50', '0'];
 }
 
 function applyLibraryUpdates({ library, asset, dxfFormat, dxfPath, report }) {
@@ -124,8 +200,8 @@ function applyLibraryUpdates({ library, asset, dxfFormat, dxfPath, report }) {
   asset.review_status = asset.review_status === 'planned' ? 'draft' : asset.review_status;
   asset.local_only = true;
   asset.public_use_allowed = false;
-  asset.tags = unique([...(asset.tags || []), 'dxf', 'cad-export', 'axis']);
-  asset.generated_asset_profile = {
+  asset.tags = unique([...(asset.tags || []), ...report.geometry.tags]);
+  const generatedProfile = {
     generated_at: report.generated_at,
     generator: report.generator,
     status: 'local_review_dxf_generated',
@@ -133,12 +209,16 @@ function applyLibraryUpdates({ library, asset, dxfFormat, dxfPath, report }) {
     entity_count: report.geometry.entity_count,
     layer_names: report.geometry.layers
   };
+  asset.generated_asset_profiles = upsertGeneratedProfile(asset.generated_asset_profiles, generatedProfile, asset.generated_asset_profile);
+  if (!asset.generated_asset_profile || asset.asset_type === '2d_symbol') {
+    asset.generated_asset_profile = generatedProfile;
+  }
   dxfFormat.path = relative(libraryRoot, dxfPath);
   dxfFormat.status = 'exists';
   dxfFormat.software = unique([...(dxfFormat.software || []), 'archicad', 'generic']);
 }
 
-function buildReport({ library, asset, dxfPath }) {
+function buildReport({ library, asset, dxfPath, dxfProfile }) {
   return {
     schema_version: '0.1',
     generated_at: new Date().toISOString(),
@@ -146,21 +226,20 @@ function buildReport({ library, asset, dxfPath }) {
     library_id: library.library_id || null,
     asset_id: asset.id,
     asset_title: asset.title,
-    status: 'local_review_dxf_generated',
-    caveat: 'Diagrammatic axis symbol only. It is not a measured project drawing or public release.',
+    asset_kind: dxfProfile.kind,
+    status: dxfProfile.status,
+    caveat: dxfProfile.caveat,
     no_uploads: true,
     public_use_allowed: false,
     dxf_path: relative(root, dxfPath),
+    dimensions: dxfProfile.dimensions || null,
     geometry: {
       unit: 'meter',
-      entity_count: 7,
-      layers: ['KOSMO_AXIS_PRIMARY', 'KOSMO_AXIS_SECONDARY', 'KOSMO_TEXT']
+      entity_count: dxfProfile.entities.length,
+      layers: dxfProfile.layers.map(([name]) => name),
+      tags: dxfProfile.tags
     },
-    recommended_next_review: [
-      'Open the DXF in a local CAD viewer or ArchiCAD and confirm scale and layers.',
-      'Decide whether lineweights and text style should be mapped to a KosmoPlan template.',
-      'Keep this asset local until human review promotes it beyond review_only status.'
-    ]
+    recommended_next_review: dxfProfile.recommended_next_review
   };
 }
 
@@ -177,6 +256,7 @@ function renderMarkdown(report) {
     '## Output',
     '',
     `- DXF: \`${report.dxf_path}\``,
+    `- asset kind: \`${report.asset_kind}\``,
     `- entities: ${report.geometry.entity_count}`,
     `- layers: ${report.geometry.layers.join(', ')}`,
     '',
@@ -212,6 +292,35 @@ function n(value) {
   return Number(value).toFixed(4).replace(/\.?0+$/, '');
 }
 
+function numberOr(value, fallback) {
+  const numeric = Number(value);
+  return Number.isFinite(numeric) && numeric > 0 ? numeric : fallback;
+}
+
+function dxfText(value) {
+  return String(value)
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/ä/g, 'ae')
+    .replace(/ö/g, 'oe')
+    .replace(/ü/g, 'ue')
+    .replace(/Ä/g, 'AE')
+    .replace(/Ö/g, 'OE')
+    .replace(/Ü/g, 'UE')
+    .toUpperCase();
+}
+
 function unique(values) {
   return [...new Set(values.filter(Boolean))];
+}
+
+function upsertGeneratedProfile(profiles, profile, primaryProfile) {
+  const rows = Array.isArray(profiles) ? profiles.filter(Boolean) : [];
+  const seeded = primaryProfile ? [primaryProfile, ...rows] : rows;
+  const next = seeded.filter((item, index, items) => (
+    item.generator !== profile.generator
+    && items.findIndex((candidate) => candidate.generator === item.generator) === index
+  ));
+  next.push(profile);
+  return next;
 }

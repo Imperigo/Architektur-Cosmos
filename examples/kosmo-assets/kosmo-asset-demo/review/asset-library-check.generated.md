@@ -1,7 +1,7 @@
 # KosmoAsset Library Check
 
 Library: `kosmo-asset-demo`
-Generated: 2026-05-26T13:10:26.008Z
+Generated: 2026-05-26T13:26:36.361Z
 Status: `passed`
 
 This is a local review-only check. It does not upload assets, write D1/R2 or publish public downloads.
@@ -21,7 +21,7 @@ This is a local review-only check. It does not upload assets, write D1/R2 or pub
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | Kosmo Axis Marker | 2d_symbol | axis_marker | own_work | draft | svg, dxf | yes | no |
 | Warm Concrete Study Material | material | material_swatch | generated_needs_review | planned | material_json | yes | no |
-| Generic Column GLB Slot | glb_model | wireframe_component | generated_needs_review | draft | glb | yes | no |
+| Generic Column GLB Slot | glb_model | wireframe_component | generated_needs_review | draft | glb, dxf | yes | no |
 
 ## Failures
 

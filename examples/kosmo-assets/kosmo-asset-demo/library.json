@@ -176,6 +176,15 @@
           ],
           "status": "exists",
           "path": "assets/models/generic-column-glb-001.glb"
+        },
+        {
+          "format": "dxf",
+          "path": "assets/dxf/generic-column-glb-001.dxf",
+          "software": [
+            "archicad",
+            "generic"
+          ],
+          "status": "exists"
         }
       ],
       "preview": {
@@ -195,7 +204,10 @@
         "structure",
         "glb",
         "diagrammatic",
-        "asset-review"
+        "asset-review",
+        "dxf",
+        "cad-export",
+        "footprint"
       ],
       "material_tags": [
         "beton",
@@ -220,7 +232,36 @@
           "analysis/axis_x",
           "analysis/axis_z"
         ]
-      }
+      },
+      "generated_asset_profiles": [
+        {
+          "generated_at": "2026-05-26T12:54:21.120Z",
+          "generator": "kosmo-asset-generate-demo-glb",
+          "status": "local_review_glb_generated",
+          "caveat": "Diagrammatic study asset only. It is not a measured BIM component or public release.",
+          "triangle_count": 176,
+          "layer_names": [
+            "structure/column_core_round",
+            "structure/base_plate_reference",
+            "structure/top_plate_reference",
+            "analysis/axis_x",
+            "analysis/axis_z"
+          ]
+        },
+        {
+          "generated_at": "2026-05-26T13:23:01.150Z",
+          "generator": "kosmo-asset-generate-demo-dxf",
+          "status": "local_review_dxf_generated",
+          "caveat": "Diagrammatic column footprint only. It is not a measured BIM element, reinforcement plan or public release.",
+          "entity_count": 12,
+          "layer_names": [
+            "KOSMO_COLUMN_FOOTPRINT",
+            "KOSMO_COLUMN_CLEARANCE",
+            "KOSMO_AXIS",
+            "KOSMO_TEXT"
+          ]
+        }
+      ]
     }
   ]
 }

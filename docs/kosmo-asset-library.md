@@ -99,16 +99,26 @@ npm run kosmo:asset-generate-demo-dxf -- \
   --asset axis-marker-svg-001
 ```
 
+Der gleiche Generator kann auch fuer das GLB-Stuetzenasset einen
+diagrammatischen CAD-Footprint erzeugen:
+
+```bash
+npm run kosmo:asset-generate-demo-dxf -- \
+  --library examples/kosmo-assets/kosmo-asset-demo/library.json \
+  --asset generic-column-glb-001
+```
+
 Der Generator schreibt:
 
 ```text
 examples/kosmo-assets/kosmo-asset-demo/assets/dxf/axis-marker-svg-001.dxf
+examples/kosmo-assets/kosmo-asset-demo/assets/dxf/generic-column-glb-001.dxf
 examples/kosmo-assets/kosmo-asset-demo/review/asset-dxf-generation.generated.json
 examples/kosmo-assets/kosmo-asset-demo/review/asset-dxf-generation.generated.md
 ```
 
-Auch dieses DXF ist ein lokales Review-Asset. Es prueft Layernamen, Scale und
-CAD-Austausch, ohne daraus einen oeffentlichen Download zu machen.
+Auch diese DXFs sind lokale Review-Assets. Sie pruefen Layernamen, Scale,
+Origin und CAD-Austausch, ohne daraus oeffentliche Downloads zu machen.
 
 ## Asset-Typen
 

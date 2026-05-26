@@ -83,7 +83,7 @@
       "command": "npm run kosmo:asset-generate-demo-dxf -- --library {asset_library_path} --asset {asset_id}",
       "output_root": "examples/kosmo-assets/{library_slug}/assets/dxf",
       "review_output": "examples/kosmo-assets/{library_slug}/review/asset-dxf-generation.generated.md",
-      "purpose": "Generate a local review-only DXF plan symbol asset for ArchiCAD/CAD exchange tests without R2 upload, D1 write or public download exposure.",
+      "purpose": "Generate local review-only DXF plan symbols and component footprints for ArchiCAD/CAD exchange tests without R2 upload, D1 write or public download exposure.",
       "approval_required_before_public_use": false
     },
     {

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-26T13:10:26.029Z",
+  "generated_at": "2026-05-26T13:26:36.556Z",
   "generator": "kosmo-asset-export-plan",
   "library_path": "examples/kosmo-assets/kosmo-asset-demo/library.json",
   "library_id": "kosmo-asset-demo",
@@ -18,9 +18,9 @@
   "summary": {
     "asset_count": 3,
     "ready_route_count": 0,
-    "review_route_count": 10,
+    "review_route_count": 11,
     "planned_route_count": 0,
-    "blocked_route_count": 1,
+    "blocked_route_count": 0,
     "targets": {
       "svg": 1,
       "dxf": 1,
@@ -150,7 +150,8 @@
       "review_status": "draft",
       "public_ready": false,
       "existing_formats": [
-        "glb"
+        "glb",
+        "dxf"
       ],
       "planned_formats": [],
       "preview_kind": "wireframe_component",
@@ -176,16 +177,14 @@
         },
         {
           "target": "archicad",
-          "status": "blocked",
+          "status": "needs_review",
           "required_formats": [
             "dxf",
             "gsm",
             "ifc"
           ],
-          "blockers": [
-            "Missing target format: dxf or gsm or ifc"
-          ],
-          "note": "archicad route is blocked until missing formats or rights are resolved."
+          "blockers": [],
+          "note": "archicad route needs human review before use."
         },
         {
           "target": "web",
@@ -202,11 +201,10 @@
           "note": "web route needs human review before use."
         }
       ],
-      "next_step": "Generate missing target formats or remove blocked export targets."
+      "next_step": "Run human review and move review_status to reviewed or verified."
     }
   ],
   "next_actions": [
-    "Resolve blocked routes before exposing export buttons in the UI.",
     "Review assets with local source files before promoting them to reusable workflow assets."
   ]
 }
