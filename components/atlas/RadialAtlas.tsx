@@ -2441,6 +2441,7 @@ function ModuleHub({ onOpenKosmoData, onOpenKosmoAsset }: { onOpenKosmoData: () 
 
 function KosmoAssetWorkspace({ onReturnToHub }: { onReturnToHub: () => void }) {
   const [activeFamily, setActiveFamily] = useState<AssetFamilyFilter>('all');
+  const [selectedAssetId, setSelectedAssetId] = useState<string | null>(assetLibraryPreview.assets[0]?.id ?? null);
   const assets = assetLibraryPreview.assets;
   const assetFamilies = [
     { id: 'all', label: 'Alle', description: 'Gesamte Prüfbibliothek' },
@@ -2449,6 +2450,7 @@ function KosmoAssetWorkspace({ onReturnToHub }: { onReturnToHub: () => void }) {
     { id: '3d', label: '3D', description: 'GLB, Blender, ArchiCAD' }
   ] satisfies Array<{ id: AssetFamilyFilter; label: string; description: string }>;
   const filteredAssets = activeFamily === 'all' ? assets : assets.filter((asset) => assetFamily(asset) === activeFamily);
+  const selectedAsset = filteredAssets.find((asset) => asset.id === selectedAssetId) ?? filteredAssets[0] ?? assets[0];
   const formats = [...new Set(assets.flatMap((asset) => asset.formats.map((format) => format.format)))];
   const exportTargets = [...new Set(assets.flatMap((asset) => asset.export_targets))];
   const existingFormats = assets.reduce((total, asset) => total + asset.formats.filter((format) => format.status === 'exists').length, 0);
@@ -2504,7 +2506,11 @@ function KosmoAssetWorkspace({ onReturnToHub }: { onReturnToHub: () => void }) {
                   key={family.id}
                   type="button"
                   className={activeFamily === family.id ? 'is-active' : undefined}
-                  onClick={() => setActiveFamily(family.id)}
+                  onClick={() => {
+                    setActiveFamily(family.id);
+                    const nextAsset = family.id === 'all' ? assets[0] : assets.find((asset) => assetFamily(asset) === family.id);
+                    setSelectedAssetId(nextAsset?.id ?? null);
+                  }}
                   aria-pressed={activeFamily === family.id}
                   title={family.description}
                 >
@@ -2516,10 +2522,13 @@ function KosmoAssetWorkspace({ onReturnToHub }: { onReturnToHub: () => void }) {
           </div>
         </section>
 
-        <section className="kosmo-asset-grid" aria-label="Demo Assets">
-          {filteredAssets.map((asset) => (
-            <AssetCard key={asset.id} asset={asset} />
-          ))}
+        <section className="kosmo-asset-library" aria-label="Demo Assets">
+          <div className="kosmo-asset-grid">
+            {filteredAssets.map((asset) => (
+              <AssetCard key={asset.id} asset={asset} isSelected={selectedAsset?.id === asset.id} onSelect={() => setSelectedAssetId(asset.id)} />
+            ))}
+          </div>
+          {selectedAsset ? <AssetInspector asset={selectedAsset} /> : null}
         </section>
       </div>
     </div>
@@ -2535,12 +2544,18 @@ function MetricBlock({ label, value }: { label: string; value: string }) {
   );
 }
 
-function AssetCard({ asset }: { asset: AssetPreviewRecord }) {
+function AssetCard({ asset, isSelected, onSelect }: { asset: AssetPreviewRecord; isSelected: boolean; onSelect: () => void }) {
   const accent = assetAccent(asset);
   const rightsTone = asset.rights_status === 'own_work' || asset.rights_status === 'public_domain' || asset.rights_status === 'licensed' ? 'ready' : 'review';
 
   return (
-    <article className="kosmo-asset-card" style={{ '--asset-accent': accent } as CSSProperties}>
+    <button
+      type="button"
+      className={`kosmo-asset-card${isSelected ? ' is-selected' : ''}`}
+      style={{ '--asset-accent': accent } as CSSProperties}
+      onClick={onSelect}
+      aria-pressed={isSelected}
+    >
       <div className={`kosmo-asset-visual kosmo-asset-visual-${assetVisualKind(asset)}`} aria-hidden="true">
         <span />
         <i />
@@ -2559,7 +2574,54 @@ function AssetCard({ asset }: { asset: AssetPreviewRecord }) {
         <span className={`kosmo-asset-rights kosmo-asset-rights-${rightsTone}`}>{asset.rights_status.replace(/_/g, ' ')}</span>
         <span>{asset.formats.map((format) => format.format).join(' / ')}</span>
       </div>
-    </article>
+    </button>
+  );
+}
+
+function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
+  const accent = assetAccent(asset);
+  const confidence = Math.round(asset.confidence * 100);
+
+  return (
+    <aside className="kosmo-asset-inspector" style={{ '--asset-accent': accent } as CSSProperties} aria-label={`${asset.title} Inspektor`}>
+      <div className="kosmo-asset-inspector-head">
+        <small>Asset-Inspektor</small>
+        <h3>{asset.title}</h3>
+        <p>{asset.description}</p>
+      </div>
+
+      <div className="kosmo-asset-inspector-gates" aria-label="Rechte und Review">
+        <MetricBlock label="Rechte" value={formatAssetValue(asset.rights_status)} />
+        <MetricBlock label="Review" value={formatAssetValue(asset.review_status)} />
+        <MetricBlock label="Sicherheit" value={`${confidence}%`} />
+      </div>
+
+      <div className="kosmo-asset-inspector-section">
+        <strong>Formate</strong>
+        <ul>
+          {asset.formats.map((format) => (
+            <li key={`${asset.id}-${format.format}`}>
+              <span>{format.format}</span>
+              <small>{format.status === 'exists' ? 'vorhanden' : 'geplant'}</small>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="kosmo-asset-inspector-section">
+        <strong>Exportziele</strong>
+        <div className="kosmo-asset-inspector-tags">
+          {asset.export_targets.map((target) => (
+            <span key={`${asset.id}-${target}`}>{target}</span>
+          ))}
+        </div>
+      </div>
+
+      <div className="kosmo-asset-inspector-section">
+        <strong>Quellenbasis</strong>
+        <p>{asset.source_basis[0] ?? 'Noch keine Quellenbasis hinterlegt.'}</p>
+      </div>
+    </aside>
   );
 }
 
@@ -2579,6 +2641,10 @@ function assetAccent(asset: AssetPreviewRecord) {
   if (asset.asset_type.includes('material')) return '#f5b342';
   if (asset.asset_type.includes('glb') || asset.asset_type.includes('3d')) return '#00e7ff';
   return '#ff4fd8';
+}
+
+function formatAssetValue(value: string) {
+  return value.replace(/_/g, ' ');
 }
 
 function WormholeBirthOverlay() {

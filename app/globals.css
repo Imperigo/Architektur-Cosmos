@@ -4443,9 +4443,16 @@ body:has(.entry-page) {
   text-transform: uppercase;
 }
 
+.kosmo-asset-library {
+  display: grid;
+  grid-template-columns: minmax(0, 1.18fr) minmax(280px, 0.82fr);
+  gap: 12px;
+  min-height: 0;
+}
+
 .kosmo-asset-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
   min-height: 0;
 }
@@ -4462,12 +4469,15 @@ body:has(.entry-page) {
   background:
     radial-gradient(circle at 8% 8%, color-mix(in srgb, var(--asset-accent) 12%, transparent), transparent 42%),
     rgb(5 5 5 / 54%);
+  color: inherit;
+  text-align: left;
   box-shadow: inset 0 1px 0 rgb(247 247 244 / 5%);
   transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
 }
 
 .kosmo-asset-card:hover,
-.kosmo-asset-card:focus-within {
+.kosmo-asset-card:focus-visible,
+.kosmo-asset-card.is-selected {
   border-color: color-mix(in srgb, var(--asset-accent) 64%, rgb(247 247 244 / 16%));
   background:
     radial-gradient(circle at 8% 8%, color-mix(in srgb, var(--asset-accent) 18%, transparent), transparent 42%),
@@ -4588,6 +4598,134 @@ body:has(.entry-page) {
 
 .kosmo-asset-rights-review {
   color: #f5b342;
+}
+
+.kosmo-asset-inspector {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  min-width: 0;
+  padding: 15px;
+  border: 1px solid color-mix(in srgb, var(--asset-accent) 34%, rgb(247 247 244 / 12%));
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 92% 8%, color-mix(in srgb, var(--asset-accent) 14%, transparent), transparent 40%),
+    linear-gradient(145deg, rgb(247 247 244 / 5%), transparent),
+    rgb(5 5 5 / 62%);
+  box-shadow: inset 0 1px 0 rgb(247 247 244 / 5%);
+}
+
+.kosmo-asset-inspector-head {
+  min-width: 0;
+}
+
+.kosmo-asset-inspector-head small,
+.kosmo-asset-inspector-section strong {
+  color: color-mix(in srgb, var(--asset-accent) 74%, #f7f7f4);
+  font-size: 9px;
+  font-weight: 760;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.kosmo-asset-inspector-head h3 {
+  margin: 4px 0 6px;
+  color: #f7f7f4;
+  font-size: clamp(20px, 2.3vw, 30px);
+  line-height: 1.02;
+}
+
+.kosmo-asset-inspector-head p,
+.kosmo-asset-inspector-section p {
+  margin: 0;
+  color: rgb(247 247 244 / 66%);
+  font-size: 11px;
+  line-height: 1.48;
+}
+
+.kosmo-asset-inspector-gates {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.kosmo-asset-inspector-gates > span {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  min-height: 64px;
+  padding: 10px;
+  border: 1px solid rgb(247 247 244 / 12%);
+  border-radius: 12px;
+  background: rgb(247 247 244 / 4%);
+}
+
+.kosmo-asset-inspector-gates small {
+  color: rgb(247 247 244 / 52%);
+  font-size: 8px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.kosmo-asset-inspector-gates strong {
+  color: #f7f7f4;
+  font-size: clamp(11px, 1vw, 14px);
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+
+.kosmo-asset-inspector-section {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.kosmo-asset-inspector-section ul {
+  display: grid;
+  gap: 5px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.kosmo-asset-inspector-section li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+  padding: 8px 9px;
+  border: 1px solid rgb(247 247 244 / 10%);
+  border-radius: 10px;
+  background: rgb(247 247 244 / 4%);
+  color: rgb(247 247 244 / 76%);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.kosmo-asset-inspector-section li small {
+  color: color-mix(in srgb, var(--asset-accent) 68%, #f7f7f4);
+  font-size: 9px;
+}
+
+.kosmo-asset-inspector-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.kosmo-asset-inspector-tags span {
+  min-height: 24px;
+  padding: 6px 8px;
+  border: 1px solid rgb(247 247 244 / 12%);
+  border-radius: 999px;
+  background: rgb(5 5 5 / 42%);
+  color: rgb(247 247 244 / 72%);
+  font-size: 8px;
+  font-weight: 680;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
 .intro-gate-launching > span {
@@ -5130,6 +5268,7 @@ html[data-cosmos-browser="opera"] .relation-strand {
     transform: translate(-50%, -50%) rotate(266deg) translateX(92px);
   }
 
+  .kosmo-asset-library,
   .kosmo-asset-metrics,
   .kosmo-asset-grid {
     grid-template-columns: 1fr;
@@ -5146,6 +5285,10 @@ html[data-cosmos-browser="opera"] .relation-strand {
   .kosmo-asset-card-footer {
     display: grid;
     justify-content: stretch;
+  }
+
+  .kosmo-asset-inspector-gates {
+    grid-template-columns: 1fr;
   }
 
   .cosmos-mobile-web .mobile-atlas-shell {
