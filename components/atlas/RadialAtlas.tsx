@@ -2475,7 +2475,7 @@ function KosmoAssetWorkspace({ onReturnToHub }: { onReturnToHub: () => void }) {
         </header>
 
         <section className="kosmo-asset-lab" aria-label="KosmoAsset Library Vorschau">
-          <div className="kosmo-asset-core" aria-hidden="true">
+          <div className="kosmo-asset-core" aria-label="KosmoAsset Asset-Orbits">
             <span className="kosmo-asset-core-ring kosmo-asset-core-ring-a" />
             <span className="kosmo-asset-core-ring kosmo-asset-core-ring-b" />
             <span className="kosmo-asset-core-glyph">
@@ -2484,10 +2484,17 @@ function KosmoAssetWorkspace({ onReturnToHub }: { onReturnToHub: () => void }) {
               </svg>
             </span>
             {assets.map((asset, index) => (
-              <i
+              <button
                 key={asset.id}
-                className={`kosmo-asset-orbit-dot kosmo-asset-orbit-dot-${index + 1}`}
+                type="button"
+                className={`kosmo-asset-orbit-dot kosmo-asset-orbit-dot-${index + 1}${selectedAsset?.id === asset.id ? ' is-selected' : ''}`}
                 style={{ '--asset-accent': assetAccent(asset) } as CSSProperties}
+                onClick={() => {
+                  setActiveFamily(assetFamily(asset));
+                  setSelectedAssetId(asset.id);
+                }}
+                aria-label={`${asset.title} auswählen`}
+                title={asset.title}
               />
             ))}
           </div>
