@@ -2818,6 +2818,8 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
         </div>
       ) : null}
 
+      <AssetReviewWorkflow asset={asset} reviewPack={reviewPack} handoffBundle={handoffBundle} handoffSmoke={handoffSmoke} />
+
       <div className="kosmo-asset-inspector-section kosmo-asset-review-actions">
         <strong>Review-Aktionen</strong>
         <p>Lokale Brain-Befehle für Prüfung und Export. Sie erzeugen Review-Dateien, aber keine Cloud-Uploads.</p>
@@ -2847,6 +2849,73 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
         <p>{asset.source_basis[0] ?? 'Noch keine Quellenbasis hinterlegt.'}</p>
       </div>
     </aside>
+  );
+}
+
+function AssetReviewWorkflow({
+  asset,
+  reviewPack,
+  handoffBundle,
+  handoffSmoke
+}: {
+  asset: AssetPreviewRecord;
+  reviewPack: AssetReviewPackRecord | null;
+  handoffBundle: AssetHandoffBundleRecord | null;
+  handoffSmoke: typeof assetHandoffSmokePreview | null;
+}) {
+  const smokePassed = handoffSmoke?.summary.failure_count === 0;
+  const reviewOpen = reviewPack?.human_review_status === 'open';
+  const availableRoutes = assetDecisionRoutes(asset, handoffBundle);
+  const commands = availableRoutes.map((route) => ({
+    route,
+    command: `npm run kosmo:asset-review-decision -- --library ${assetLibraryPath()} --asset ${asset.id} --route ${route} --decision approve-local --confirm-human-review`
+  }));
+  const steps = [
+    {
+      label: '1 Auswahl',
+      status: 'bereit',
+      tone: 'ready',
+      text: `${asset.title} ist als Review-Asset gewaehlt.`
+    },
+    {
+      label: '2 Review lesen',
+      status: reviewOpen ? 'offen' : 'geschlossen',
+      tone: reviewOpen ? 'review' : 'ready',
+      text: reviewPack?.suggested_decision ? `Vorschlag: ${formatAssetValue(reviewPack.suggested_decision)}` : 'Review-Pack fehlt noch.'
+    },
+    {
+      label: '3 Smoke',
+      status: smokePassed ? `${handoffSmoke.summary.passed_checks}/${handoffSmoke.summary.check_count}` : 'blockiert',
+      tone: smokePassed ? 'ready' : 'blocked',
+      text: smokePassed ? 'Blender/ArchiCAD-Handoff ist review-only geprueft.' : 'Vor Freigabe zuerst Handoff-Smoke ausfuehren.'
+    },
+    {
+      label: '4 Manuelle Freigabe',
+      status: smokePassed ? 'lokal moeglich' : 'gesperrt',
+      tone: smokePassed ? 'review' : 'blocked',
+      text: smokePassed ? 'Freigabe schreibt nur lokale Evidenz, keine Assets und keine Public Gates.' : 'Ohne Smoke keine lokale Freigabe.'
+    }
+  ];
+
+  return (
+    <div className="kosmo-asset-inspector-section kosmo-asset-workflow-card">
+      <strong>Review-Workflow</strong>
+      <div className="kosmo-asset-workflow-steps">
+        {steps.map((step) => (
+          <span key={step.label} data-tone={step.tone}>
+            <small>{step.label}</small>
+            <b>{step.status}</b>
+            <em>{step.text}</em>
+          </span>
+        ))}
+      </div>
+      <div className="kosmo-asset-approval-commands">
+        <small>Lokale Freigabe-Befehle</small>
+        {commands.map((item) => (
+          <code key={`${asset.id}-${item.route}`}>{item.command}</code>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -2989,6 +3058,23 @@ function assetReviewPack(assetId: string): AssetReviewPackRecord | null {
   return assetReviewPackPreview.assets.find((asset) => asset.id === assetId) ?? null;
 }
 
+function assetLibraryPath() {
+  return 'examples/kosmo-assets/kosmo-asset-demo/library.json';
+}
+
+function assetDecisionRoutes(asset: AssetPreviewRecord, handoffBundle: AssetHandoffBundleRecord | null) {
+  const routes = new Set<string>();
+  if (handoffBundle?.blender) routes.add('blender');
+  if (handoffBundle?.archicad) routes.add('archicad');
+  if (asset.export_targets.includes('blender')) routes.add('blender');
+  if (asset.export_targets.includes('archicad') || asset.export_targets.includes('cad')) routes.add('archicad');
+  if (asset.formats.some((format) => format.format === 'glb')) routes.add('glb');
+  if (asset.formats.some((format) => format.format === 'dxf')) routes.add('dxf');
+  if (asset.asset_type.includes('material')) routes.add('material');
+  if (!routes.size) routes.add('all');
+  return [...routes].slice(0, 3);
+}
+
 function assetChecklistLabel(id: string, fallback: string) {
   const labels: Record<string, string> = {
     source_basis: 'Quellenbasis dokumentiert',
@@ -3004,7 +3090,7 @@ function assetChecklistLabel(id: string, fallback: string) {
 }
 
 function assetReviewActions(asset: AssetPreviewRecord): AssetReviewAction[] {
-  const libraryPath = 'examples/kosmo-assets/kosmo-asset-demo/library.json';
+  const libraryPath = assetLibraryPath();
   const commands: AssetReviewAction[] = [
     {
       id: 'library-check',
@@ -3028,6 +3114,13 @@ function assetReviewActions(asset: AssetPreviewRecord): AssetReviewAction[] {
       command: `npm run kosmo:asset-exchange-profile -- --library ${libraryPath}`
     },
     {
+      id: 'full-review',
+      label: 'Full Review',
+      kicker: 'Batch',
+      description: 'Fuehrt den ganzen lokalen Abendbatch aus: Check, Exportplan, Review-Pack, Exchange, Handoff und Smoke.',
+      command: `npm run kosmo:asset-full-review -- --library ${libraryPath}`
+    },
+    {
       id: 'handoff-bundle',
       label: 'Handoff',
       kicker: 'Export',
@@ -3047,6 +3140,13 @@ function assetReviewActions(asset: AssetPreviewRecord): AssetReviewAction[] {
       kicker: 'Review',
       description: 'Bündelt Check, Export-Routen, lokale Dateien und offene menschliche Asset-Prüfungen.',
       command: `npm run kosmo:asset-review-pack -- --library ${libraryPath}`
+    },
+    {
+      id: 'review-decision',
+      label: 'Freigabe-Draft',
+      kicker: 'Gate',
+      description: 'Schreibt eine lokale menschliche Freigabe-Evidenz fuer ein Asset, ohne Library, Blender, ArchiCAD oder Public-Gates zu veraendern.',
+      command: `npm run kosmo:asset-review-decision -- --library ${libraryPath} --asset ${asset.id} --route ${assetDecisionRoutes(asset, assetHandoffBundle(asset.id))[0]} --decision approve-local --confirm-human-review`
     }
   ];
 

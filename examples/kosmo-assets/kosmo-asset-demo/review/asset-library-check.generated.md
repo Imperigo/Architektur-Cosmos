@@ -1,7 +1,7 @@
 # KosmoAsset Library Check
 
 Library: `kosmo-asset-demo`
-Generated: 2026-05-26T14:11:40.601Z
+Generated: 2026-05-26T19:54:16.995Z
 Status: `passed`
 
 This is a local review-only check. It does not upload assets, write D1/R2 or publish public downloads.

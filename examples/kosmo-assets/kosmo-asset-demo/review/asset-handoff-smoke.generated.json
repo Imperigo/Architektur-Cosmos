@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-26T19:31:59.316Z",
+  "generated_at": "2026-05-26T19:54:18.010Z",
   "generator": "kosmo-asset-handoff-smoke",
   "library_path": "examples/kosmo-assets/kosmo-asset-demo/library.json",
   "bundle_path": "examples/kosmo-assets/kosmo-asset-demo/review/asset-handoff-bundle.generated.json",

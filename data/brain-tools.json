@@ -78,6 +78,15 @@
       "approval_required_before_public_use": false
     },
     {
+      "id": "kosmo_asset_full_review",
+      "label": "KosmoAsset Full Review",
+      "command": "npm run kosmo:asset-full-review -- --library {asset_library_path}",
+      "output_root": "examples/kosmo-assets/{library_slug}/review",
+      "review_output": "examples/kosmo-assets/{library_slug}/review/asset-full-review.generated.md",
+      "purpose": "Run the complete local KosmoAsset evening batch: library check, export plan, review pack, exchange profile, handoff bundle and handoff smoke without uploads, publication or public-use approval.",
+      "approval_required_before_public_use": false
+    },
+    {
       "id": "kosmo_asset_handoff_bundle",
       "label": "KosmoAsset Handoff Bundle",
       "command": "npm run kosmo:asset-handoff-bundle -- --library {asset_library_path}",
@@ -93,6 +102,15 @@
       "output_root": "examples/kosmo-assets/{library_slug}/review",
       "review_output": "examples/kosmo-assets/{library_slug}/review/asset-handoff-smoke.generated.md",
       "purpose": "Verify the review-only Blender Python handoff and ArchiCAD schedule CSV without importing assets, writing project files, uploading or publishing anything.",
+      "approval_required_before_public_use": false
+    },
+    {
+      "id": "kosmo_asset_review_decision",
+      "label": "KosmoAsset Review Decision",
+      "command": "npm run kosmo:asset-review-decision -- --library {asset_library_path} --asset {asset_id} --route {route} --decision approve-local --confirm-human-review",
+      "output_root": "examples/kosmo-assets/{library_slug}/review",
+      "review_output": "examples/kosmo-assets/{library_slug}/review/asset-review-decision-{asset_id}-{route}.generated.md",
+      "purpose": "Record a local human review decision for one asset and route after smoke tests pass, without mutating the library, importing into Blender, writing project files, uploading or publishing assets.",
       "approval_required_before_public_use": false
     },
     {

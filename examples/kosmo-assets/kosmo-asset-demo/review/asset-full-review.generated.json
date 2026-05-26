@@ -1,0 +1,167 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-05-26T19:54:18.022Z",
+  "generator": "kosmo-asset-full-review",
+  "library_path": "examples/kosmo-assets/kosmo-asset-demo/library.json",
+  "library_id": "kosmo-asset-demo",
+  "status": "asset_full_review_ready_for_human_decisions",
+  "policy": {
+    "no_uploads": true,
+    "no_public_downloads": true,
+    "no_d1_writes": true,
+    "no_r2_writes": true,
+    "review_does_not_approve_public_use": true,
+    "human_decisions_required_for_local_approval": true
+  },
+  "summary": {
+    "step_count": 6,
+    "passed_steps": 6,
+    "failed_steps": 0,
+    "asset_count": 3,
+    "local_ready_count": 3,
+    "public_ready_count": 0,
+    "open_human_review_count": 3,
+    "library_check_status": "passed",
+    "generated_profile_count": 4,
+    "blocked_route_count": 0,
+    "needs_review_route_count": 11,
+    "blender_profile_count": 2,
+    "archicad_profile_count": 3,
+    "handoff_blender_rows": 2,
+    "handoff_archicad_rows": 3,
+    "handoff_smoke_failures": 0
+  },
+  "outputs": {
+    "full_review_json": "examples/kosmo-assets/kosmo-asset-demo/review/asset-full-review.generated.json",
+    "full_review_markdown": "examples/kosmo-assets/kosmo-asset-demo/review/asset-full-review.generated.md",
+    "library_check": "examples/kosmo-assets/kosmo-asset-demo/review/asset-library-check.generated.md",
+    "export_plan": "examples/kosmo-assets/kosmo-asset-demo/review/asset-export-plan.generated.md",
+    "review_pack": "examples/kosmo-assets/kosmo-asset-demo/review/asset-review-pack.generated.md",
+    "exchange_profile": "examples/kosmo-assets/kosmo-asset-demo/review/asset-exchange-profile.generated.md",
+    "handoff_bundle": "examples/kosmo-assets/kosmo-asset-demo/review/asset-handoff-bundle.generated.md",
+    "handoff_smoke": "examples/kosmo-assets/kosmo-asset-demo/review/asset-handoff-smoke.generated.md"
+  },
+  "steps": [
+    {
+      "id": "library_check",
+      "label": "Library Check",
+      "command": "npm run kosmo:asset-library-check -- --library examples/kosmo-assets/kosmo-asset-demo/library.json",
+      "status": "passed",
+      "exit_code": 0,
+      "report_path": "examples/kosmo-assets/kosmo-asset-demo/review/asset-library-check.generated.json",
+      "report_exists": true,
+      "report_status": "passed",
+      "stdout_tail": "\nKosmoAsset library check\nLibrary: examples/kosmo-assets/kosmo-asset-demo/library.json\nStatus: passed\nAssets: 3\nFailures: 0\nWarnings: 0\nWrote: examples/kosmo-assets/kosmo-asset-demo/review/asset-library-check.generated.md",
+      "stderr_tail": ""
+    },
+    {
+      "id": "export_plan",
+      "label": "Export Plan",
+      "command": "npm run kosmo:asset-export-plan -- --library examples/kosmo-assets/kosmo-asset-demo/library.json",
+      "status": "passed",
+      "exit_code": 0,
+      "report_path": "examples/kosmo-assets/kosmo-asset-demo/review/asset-export-plan.generated.json",
+      "report_exists": true,
+      "report_status": "review_plan",
+      "stdout_tail": "> node scripts/kosmo-asset-export-plan.mjs --library examples/kosmo-assets/kosmo-asset-demo/library.json\n\nKosmoAsset export plan\nLibrary: examples/kosmo-assets/kosmo-asset-demo/library.json\nAssets: 3\nReady routes: 0\nBlocked routes: 0\nWrote: examples/kosmo-assets/kosmo-asset-demo/review/asset-export-plan.generated.md",
+      "stderr_tail": ""
+    },
+    {
+      "id": "review_pack",
+      "label": "Review Pack",
+      "command": "npm run kosmo:asset-review-pack -- --library examples/kosmo-assets/kosmo-asset-demo/library.json",
+      "status": "passed",
+      "exit_code": 0,
+      "report_path": "examples/kosmo-assets/kosmo-asset-demo/review/asset-review-pack.generated.json",
+      "report_exists": true,
+      "report_status": "asset_human_review_required",
+      "stdout_tail": "> node scripts/kosmo-asset-review-pack.mjs --library examples/kosmo-assets/kosmo-asset-demo/library.json\n\nKosmoAsset review pack generated\nLibrary: examples/kosmo-assets/kosmo-asset-demo/library.json\nAssets: 3\nOpen human reviews: 3\nBlocked routes: 0\nWrote: examples/kosmo-assets/kosmo-asset-demo/review/asset-review-pack.generated.md",
+      "stderr_tail": ""
+    },
+    {
+      "id": "exchange_profile",
+      "label": "Exchange Profile",
+      "command": "npm run kosmo:asset-exchange-profile -- --library examples/kosmo-assets/kosmo-asset-demo/library.json",
+      "status": "passed",
+      "exit_code": 0,
+      "report_path": "examples/kosmo-assets/kosmo-asset-demo/review/asset-exchange-profile.generated.json",
+      "report_exists": true,
+      "report_status": "local_review_exchange_profile",
+      "stdout_tail": "> node scripts/kosmo-asset-exchange-profile.mjs --library examples/kosmo-assets/kosmo-asset-demo/library.json\n\nKosmoAsset exchange profile generated\nLibrary: examples/kosmo-assets/kosmo-asset-demo/library.json\nAssets: 3\nBlender profiles: 2\nArchiCAD profiles: 3\nWrote: examples/kosmo-assets/kosmo-asset-demo/review/asset-exchange-profile.generated.md",
+      "stderr_tail": ""
+    },
+    {
+      "id": "handoff_bundle",
+      "label": "Handoff Bundle",
+      "command": "npm run kosmo:asset-handoff-bundle -- --library examples/kosmo-assets/kosmo-asset-demo/library.json",
+      "status": "passed",
+      "exit_code": 0,
+      "report_path": "examples/kosmo-assets/kosmo-asset-demo/review/asset-handoff-bundle.generated.json",
+      "report_exists": true,
+      "report_status": "local_review_handoff_bundle",
+      "stdout_tail": "> node scripts/kosmo-asset-handoff-bundle.mjs --library examples/kosmo-assets/kosmo-asset-demo/library.json\n\nKosmoAsset handoff bundle generated\nLibrary: examples/kosmo-assets/kosmo-asset-demo/library.json\nAssets: 3\nBlender rows: 2\nArchiCAD rows: 3\nWrote: examples/kosmo-assets/kosmo-asset-demo/review/asset-handoff-bundle.generated.md",
+      "stderr_tail": ""
+    },
+    {
+      "id": "handoff_smoke",
+      "label": "Handoff Smoke",
+      "command": "npm run kosmo:asset-handoff-smoke -- --library examples/kosmo-assets/kosmo-asset-demo/library.json",
+      "status": "passed",
+      "exit_code": 0,
+      "report_path": "examples/kosmo-assets/kosmo-asset-demo/review/asset-handoff-smoke.generated.json",
+      "report_exists": true,
+      "report_status": "handoff_smoke_passed",
+      "stdout_tail": "> node scripts/kosmo-asset-handoff-smoke.mjs --library examples/kosmo-assets/kosmo-asset-demo/library.json\n\nKosmoAsset handoff smoke\nLibrary: examples/kosmo-assets/kosmo-asset-demo/library.json\nStatus: handoff_smoke_passed\nChecks: 12/12 passed\nFailures: 0\nWrote: examples/kosmo-assets/kosmo-asset-demo/review/asset-handoff-smoke.generated.md",
+      "stderr_tail": ""
+    }
+  ],
+  "assets": [
+    {
+      "id": "axis-marker-svg-001",
+      "title": "Kosmo Axis Marker",
+      "asset_type": "2d_symbol",
+      "rights_status": "own_work",
+      "review_status": "draft",
+      "human_review_status": "open",
+      "public_gate": "blocked",
+      "local_ready": true,
+      "blender": false,
+      "archicad": true,
+      "web": true,
+      "suggested_decision": "complete_human_review_before_promotion"
+    },
+    {
+      "id": "warm-concrete-material-001",
+      "title": "Warm Concrete Study Material",
+      "asset_type": "material",
+      "rights_status": "generated_needs_review",
+      "review_status": "draft",
+      "human_review_status": "open",
+      "public_gate": "blocked",
+      "local_ready": true,
+      "blender": true,
+      "archicad": true,
+      "web": true,
+      "suggested_decision": "complete_human_review_before_promotion"
+    },
+    {
+      "id": "generic-column-glb-001",
+      "title": "Generic Column GLB Slot",
+      "asset_type": "glb_model",
+      "rights_status": "generated_needs_review",
+      "review_status": "draft",
+      "human_review_status": "open",
+      "public_gate": "blocked",
+      "local_ready": true,
+      "blender": true,
+      "archicad": true,
+      "web": true,
+      "suggested_decision": "complete_human_review_before_promotion"
+    }
+  ],
+  "next_actions": [
+    "Use this full-review report as the evening batch checkpoint for KosmoAsset.",
+    "Record explicit local human review decisions per asset/route before any production import smoke.",
+    "Keep public downloads, R2 uploads and D1 writes disabled."
+  ]
+}

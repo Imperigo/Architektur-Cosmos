@@ -5492,6 +5492,102 @@ body:has(.entry-page) {
   overflow-wrap: anywhere;
 }
 
+.kosmo-asset-workflow-card {
+  border-color: color-mix(in srgb, var(--asset-accent) 34%, rgb(247 247 244 / 10%));
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--asset-accent) 10%, transparent), transparent 46%),
+    rgb(0 0 0 / 18%);
+}
+
+.kosmo-asset-workflow-steps {
+  display: grid;
+  gap: 7px;
+}
+
+.kosmo-asset-workflow-steps span {
+  display: grid;
+  grid-template-columns: minmax(80px, 0.7fr) minmax(72px, 0.55fr) minmax(0, 1.5fr);
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 8px;
+  border: 1px solid rgb(247 247 244 / 9%);
+  border-radius: 8px;
+  background: rgb(247 247 244 / 4%);
+}
+
+.kosmo-asset-workflow-steps span[data-tone="ready"] {
+  border-color: rgb(101 255 115 / 34%);
+}
+
+.kosmo-asset-workflow-steps span[data-tone="review"] {
+  border-color: color-mix(in srgb, #f5b342 38%, rgb(247 247 244 / 10%));
+}
+
+.kosmo-asset-workflow-steps span[data-tone="blocked"] {
+  border-color: rgb(255 79 116 / 36%);
+}
+
+.kosmo-asset-workflow-steps small,
+.kosmo-asset-workflow-steps b,
+.kosmo-asset-workflow-steps em {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  letter-spacing: 0;
+}
+
+.kosmo-asset-workflow-steps small {
+  color: color-mix(in srgb, var(--asset-accent) 66%, #f7f7f4);
+  font-size: 8px;
+  font-weight: 720;
+  text-transform: uppercase;
+}
+
+.kosmo-asset-workflow-steps b {
+  color: rgb(247 247 244 / 84%);
+  font-size: 9px;
+  font-weight: 760;
+  text-transform: uppercase;
+}
+
+.kosmo-asset-workflow-steps em {
+  color: rgb(247 247 244 / 58%);
+  font-size: 9px;
+  font-style: normal;
+  line-height: 1.35;
+}
+
+.kosmo-asset-approval-commands {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  padding: 9px;
+  border: 1px solid rgb(247 247 244 / 9%);
+  border-radius: 8px;
+  background: rgb(0 0 0 / 22%);
+}
+
+.kosmo-asset-approval-commands small {
+  color: rgb(247 247 244 / 48%);
+  font-size: 8px;
+  font-weight: 740;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.kosmo-asset-approval-commands code {
+  display: block;
+  max-width: 100%;
+  padding: 7px;
+  border-radius: 8px;
+  background: rgb(247 247 244 / 6%);
+  color: color-mix(in srgb, var(--asset-accent) 66%, #f7f7f4);
+  font-size: 9px;
+  line-height: 1.45;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
 .kosmo-asset-review-actions {
   border-color: color-mix(in srgb, var(--asset-accent) 24%, rgb(247 247 244 / 10%));
   background:
@@ -6169,6 +6265,10 @@ html[data-cosmos-browser="opera"] .relation-strand {
   }
 
   .kosmo-asset-handoff-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .kosmo-asset-workflow-steps span {
     grid-template-columns: 1fr;
   }
 

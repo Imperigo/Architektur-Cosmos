@@ -47,6 +47,8 @@ Die erste Website-Version ist eine statische Landing-Ansicht:
   Material-Swatch und Drahtmodell-Komponente;
 - erzeugt mit `npm run kosmo:asset-export-plan` eine lokale Export-Routen-
   Analyse fuer Blender, ArchiCAD, Web, SVG, DXF und GLB;
+- fuehrt mit `npm run kosmo:asset-full-review` den lokalen Abendbatch fuer
+  Check, Exportplan, Review-Pack, Exchange, Handoff und Smoke aus;
 - erzeugt mit `npm run kosmo:asset-review-pack` ein kompaktes menschliches
   Review-Pack fuer Rechte, lokale Dateien, Generated-Profile und Export-Routen;
 - erzeugt mit `npm run kosmo:asset-exchange-profile` ein lokales
