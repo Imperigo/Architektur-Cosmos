@@ -2609,9 +2609,9 @@ function AssetCard({ asset, isSelected, onSelect }: { asset: AssetPreviewRecord;
         <AssetPreviewGraphic asset={asset} />
       </div>
       <div className="kosmo-asset-card-body">
-        <small>{asset.asset_type.replace(/_/g, ' ')} / {asset.category}</small>
+        <small>{formatAssetValue(asset.asset_type)} / {formatAssetValue(asset.category)}</small>
         <h3>{asset.title}</h3>
-        <p>{asset.description}</p>
+        <p>{formatAssetText(asset.description)}</p>
       </div>
       <div className="kosmo-asset-card-tags" aria-label={`${asset.title} Exportziele`}>
         {asset.export_targets.slice(0, 5).map((target) => (
@@ -2619,7 +2619,7 @@ function AssetCard({ asset, isSelected, onSelect }: { asset: AssetPreviewRecord;
         ))}
       </div>
       <div className="kosmo-asset-card-footer">
-        <span className={`kosmo-asset-rights kosmo-asset-rights-${rightsTone}`}>{asset.rights_status.replace(/_/g, ' ')}</span>
+        <span className={`kosmo-asset-rights kosmo-asset-rights-${rightsTone}`}>{formatAssetValue(asset.rights_status)}</span>
         <span>{asset.formats.map((format) => format.format).join(' / ')}</span>
       </div>
     </button>
@@ -2658,7 +2658,7 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
       <div className="kosmo-asset-inspector-head">
         <small>Asset-Inspektor</small>
         <h3>{asset.title}</h3>
-        <p>{asset.description}</p>
+        <p>{formatAssetText(asset.description)}</p>
       </div>
 
       <div className={`kosmo-asset-inspector-preview${generatedProfile ? ' kosmo-asset-inspector-preview-generated' : ''}`} aria-hidden="true">
@@ -2754,7 +2754,7 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
               </span>
             ))}
           </div>
-          <p>{exportPlan.next_step}</p>
+          <p>{formatAssetText(exportPlan.next_step)}</p>
         </div>
       ) : null}
 
@@ -2859,7 +2859,7 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
             {exchangeProfile.archicad?.archicad_layer ? <code>{exchangeProfile.archicad.archicad_layer}</code> : null}
             {exchangeProfile.archicad?.archicad_surface ? <code>{exchangeProfile.archicad.archicad_surface}</code> : null}
           </div>
-          <p>{exchangeProfile.review_note}</p>
+          <p>{formatAssetText(exchangeProfile.review_note)}</p>
         </div>
       ) : null}
 
@@ -2905,7 +2905,7 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
               <b>{handoffSmoke.policy.no_project_file_writes ? 'gesperrt' : 'aktiv'}</b>
             </span>
           </div>
-          <p>{handoffSmoke.next_actions[0]}</p>
+          <p>{formatAssetText(handoffSmoke.next_actions[0])}</p>
         </div>
       ) : null}
 
@@ -2937,7 +2937,7 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
 
       <div className="kosmo-asset-inspector-section">
         <strong>Quellenbasis</strong>
-        <p>{asset.source_basis[0] ?? 'Noch keine Quellenbasis hinterlegt.'}</p>
+        <p>{asset.source_basis[0] ? formatAssetText(asset.source_basis[0]) : 'Noch keine Quellenbasis hinterlegt.'}</p>
       </div>
     </aside>
   );
@@ -3511,15 +3511,29 @@ function generatedProfileMetric(profile: GeneratedAssetProfile) {
 
 function formatAssetValue(value: string) {
   const labels: Record<string, string> = {
+    '2d_symbol': '2D-Zeichen',
+    annotation: 'Annotation',
+    material: 'Material',
+    structure: 'Struktur',
+    glb_model: 'GLB-Modell',
     own_work: 'eigene Arbeit',
+    generated_needs_review: 'generiert, Prüfung offen',
     public_domain: 'gemeinfrei',
     licensed: 'lizenziert',
     needs_review: 'Prüfung offen',
+    open: 'offen',
+    draft: 'Entwurf',
+    reviewed: 'geprüft',
+    verified: 'verifiziert',
     needs_more_evidence: 'mehr Evidenz nötig',
     local_review_only: 'nur lokale Prüfung',
+    local_review_dxf_generated: 'lokales DXF generiert',
+    local_review_glb_generated: 'lokales GLB generiert',
+    local_review_material_profile_generated: 'lokales Materialprofil generiert',
     local_review_decision_recorded: 'lokaler Entscheid verbucht',
     asset_decision_ledger_open: 'Entscheidbuch offen',
     asset_local_review_certified: 'lokal zertifiziert',
+    complete_human_review_before_promotion: 'vor Promotion menschlich prüfen',
     missing_certificate: 'Zertifikat fehlt',
     blocked: 'gesperrt',
     ready: 'bereit',
@@ -3538,9 +3552,38 @@ function formatAssetValue(value: string) {
     local_only: 'nur lokal',
     local_file: 'lokale Datei',
     planned: 'geplant',
-    exists: 'vorhanden'
+    exists: 'vorhanden',
+    review_only: 'nur Prüfung'
   };
   return labels[value] ?? value.replace(/_/g, ' ');
+}
+
+function formatAssetText(value: string) {
+  const labels: Record<string, string> = {
+    'Minimal SVG annotation symbol for plan and section overlays.': 'Minimales SVG-Annotationszeichen für Plan- und Schnitt-Overlays.',
+    'Neutral material metadata sample for Blender/ArchiCAD material mapping.': 'Neutrales Material-Metadatenbeispiel für Blender- und ArchiCAD-Materialmapping.',
+    'Local diagrammatic GLB component for Blender/ArchiCAD exchange tests.': 'Lokale diagrammatische GLB-Komponente für Blender- und ArchiCAD-Übergabetests.',
+    'Run human review and move review_status to reviewed or verified.': 'Menschliche Prüfung durchführen und den Prüfstatus danach auf geprüft oder verifiziert setzen.',
+    'Review assets with local source files before promoting them to reusable workflow assets.': 'Assets mit lokalen Quelldateien prüfen, bevor sie zu wiederverwendbaren Workflow-Assets werden.',
+    'Human review is still open; exchange profiles are naming proposals only.': 'Die menschliche Prüfung ist noch offen; Übergabeprofile sind aktuell nur Benennungsvorschläge.',
+    'Close human review before importing assets into production Blender/ArchiCAD files.': 'Menschliche Prüfung abschließen, bevor Assets in produktive Blender- oder ArchiCAD-Dateien importiert werden.',
+    'Run a local Blender smoke only with review assets, not production files.': 'Lokalen Blender-Smoke-Test nur mit Prüfassets ausführen, nicht mit produktiven Dateien.',
+    'Keep ArchiCAD profiles as layer/surface naming references until reviewed.': 'ArchiCAD-Profile bis zur Prüfung nur als Layer- und Oberflächenreferenz verwenden.',
+    'Keep public web/download gates blocked until rights and review are explicit.': 'Öffentliche Web- und Download-Gates gesperrt halten, bis Rechte und Prüfung explizit geklärt sind.',
+    'Source basis is documented.': 'Die Quellenbasis ist dokumentiert.',
+    'No KosmoData references are attached to this asset.': 'Dieses Asset ist noch mit keiner KosmoData-Referenz verknüpft.',
+    'At least one local source/export file exists.': 'Mindestens eine lokale Quellen- oder Exportdatei ist vorhanden.',
+    'Rights status does not allow unsafe public use.': 'Der Rechte-Status verhindert unsichere öffentliche Nutzung.',
+    'Public use is blocked unless rights and review are ready.': 'Öffentliche Nutzung bleibt gesperrt, bis Rechte und Prüfung bereit sind.',
+    'Human review status is reviewed or verified.': 'Der menschliche Prüfstatus ist geprüft oder verifiziert.',
+    'No export route is blocked.': 'Keine Exportroute ist blockiert.',
+    'Generated assets carry a generated profile.': 'Generierte Assets besitzen ein generiertes Profil.',
+    'Asset passed the library check row.': 'Das Asset hat den Bibliothekscheck bestanden.',
+    'Open local SVG/DXF/GLB/material files and record a human review decision before promotion.': 'Lokale SVG-, DXF-, GLB- oder Materialdateien öffnen und vor Promotion einen menschlichen Prüfentscheid erfassen.',
+    'Confirm generated assets are not derived from protected project images, scans or third-party models.': 'Bestätigen, dass generierte Assets nicht aus geschützten Projektbildern, Scans oder Drittmodellen abgeleitet sind.',
+    'Handoff bundle is ready for human review-only smoke tests. Keep ALLOW_SCENE_WRITE disabled until explicit approval.': 'Das Übergabepaket ist bereit für menschliche Review-only-Smoke-Tests. ALLOW_SCENE_WRITE bleibt bis zur expliziten Freigabe deaktiviert.'
+  };
+  return labels[value] ?? value;
 }
 
 function WormholeBirthOverlay() {
