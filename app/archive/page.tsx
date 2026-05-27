@@ -44,7 +44,7 @@ export default function ArchivePage() {
           </Link>
           <div className="flex items-center gap-2">
             <ArchiveHistoryControls />
-            <Link href="/atlas/?return=database" className="entry-link border border-white/20 px-3 py-2 text-[10px] uppercase tracking-[0.18em] text-[#d7d7d0]">
+            <Link href="/atlas/?return=kosmodata" className="entry-link border border-white/20 px-3 py-2 text-[10px] uppercase tracking-[0.18em] text-[#d7d7d0]">
               Zurück zu KosmoData
             </Link>
           </div>

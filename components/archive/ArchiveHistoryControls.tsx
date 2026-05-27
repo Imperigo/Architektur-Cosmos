@@ -18,7 +18,7 @@ export function ArchiveHistoryControls() {
       return;
     }
 
-    window.location.href = '/atlas/?return=database';
+    window.location.href = '/atlas/?return=kosmodata';
   }
 
   function goForward() {
