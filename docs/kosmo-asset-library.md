@@ -220,6 +220,9 @@ examples/kosmo-assets/kosmo-asset-demo/review/asset-decision-ledger.generated.md
 Das Ledger ist die Buchhaltung zwischen Human-Review-Session, Review-Entscheid,
 Zertifikat und Sandbox. Es oeffnet keine Public-Gates und verhindert, dass eine
 Sandbox aus impliziter oder versehentlicher Freigabe abgeleitet wird.
+Der Markdown-Bericht zeigt pro Asset zusaetzlich Reviewer-Gate,
+Zertifikat-Status, Sandbox-Status, Promotion-Blocker und die naechste
+menschliche Aktion.
 
 ## Lokale Review-Entscheidung
 

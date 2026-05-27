@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-27T05:25:32.804Z",
+  "generated_at": "2026-05-27T11:14:38.026Z",
   "generator": "kosmo-asset-decision-ledger",
   "library_path": "examples/kosmo-assets/kosmo-asset-demo/library.json",
   "library_id": "kosmo-asset-demo",
@@ -26,6 +26,9 @@
     "sandbox_ready_count": 0,
     "certificate_count": 0,
     "certificate_ready_count": 0,
+    "named_reviewer_count": 0,
+    "reviewer_blocker_count": 0,
+    "promotion_blocker_count": 6,
     "handoff_smoke_passed": true,
     "certificate_ready": false,
     "recommended_next_step": "record_or_defer_explicit_human_decisions"
@@ -58,8 +61,16 @@
       "latest_certificate": null,
       "decision_count": 0,
       "certificate_count": 0,
+      "reviewer_status": "missing_decision",
+      "reviewer": null,
+      "certificate_status": "missing_certificate",
       "certificate_ready": false,
-      "sandbox_ready": false
+      "sandbox_ready": false,
+      "promotion_blockers": [
+        "decision_missing",
+        "local_certificate_missing"
+      ],
+      "next_human_action": "record_or_defer_human_decision"
     },
     {
       "asset_id": "warm-concrete-material-001",
@@ -78,8 +89,16 @@
       "latest_certificate": null,
       "decision_count": 0,
       "certificate_count": 0,
+      "reviewer_status": "missing_decision",
+      "reviewer": null,
+      "certificate_status": "missing_certificate",
       "certificate_ready": false,
-      "sandbox_ready": false
+      "sandbox_ready": false,
+      "promotion_blockers": [
+        "decision_missing",
+        "local_certificate_missing"
+      ],
+      "next_human_action": "record_or_defer_human_decision"
     },
     {
       "asset_id": "generic-column-glb-001",
@@ -98,8 +117,16 @@
       "latest_certificate": null,
       "decision_count": 0,
       "certificate_count": 0,
+      "reviewer_status": "missing_decision",
+      "reviewer": null,
+      "certificate_status": "missing_certificate",
       "certificate_ready": false,
-      "sandbox_ready": false
+      "sandbox_ready": false,
+      "promotion_blockers": [
+        "decision_missing",
+        "local_certificate_missing"
+      ],
+      "next_human_action": "record_or_defer_human_decision"
     }
   ],
   "unmatched_decisions": [],

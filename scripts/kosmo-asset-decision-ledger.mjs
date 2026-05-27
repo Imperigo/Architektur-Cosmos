@@ -57,15 +57,43 @@ function buildLedger({ library, humanReviewSession, handoffSmoke, decisions, cer
       .sort((a, b) => String(b.generated_at).localeCompare(String(a.generated_at)));
     const latest = matches[0] || null;
     const latestCertificate = certificateMatches[0] || null;
+    const currentLedgerStatus = latest ? ledgerStatus(latest) : 'missing_decision';
+    const currentReviewerStatus = reviewerStatus(latest);
+    const certificateReady = latestCertificate?.status === 'asset_local_review_certified';
+    const sandboxReady = Boolean(
+      latest?.status === 'local_review_decision_recorded'
+      && latest?.decision === 'approve-local'
+      && currentReviewerStatus === 'named_human_reviewer_recorded'
+      && expected.handoff_smoke_passed
+      && certificateReady
+    );
+    const blockers = promotionBlockers({
+      expected,
+      latest,
+      latestCertificate,
+      ledgerStatus: currentLedgerStatus,
+      reviewerStatus: currentReviewerStatus,
+      certificateReady
+    });
     return {
       ...expected,
-      ledger_status: latest ? ledgerStatus(latest) : 'missing_decision',
+      ledger_status: currentLedgerStatus,
       latest_decision: latest,
       latest_certificate: latestCertificate,
       decision_count: matches.length,
       certificate_count: certificateMatches.length,
-      certificate_ready: latestCertificate?.status === 'asset_local_review_certified',
-      sandbox_ready: Boolean(latest?.status === 'local_review_decision_recorded' && latest?.decision === 'approve-local' && expected.handoff_smoke_passed)
+      reviewer_status: currentReviewerStatus,
+      reviewer: latest?.reviewer || null,
+      certificate_status: latestCertificate?.status || 'missing_certificate',
+      certificate_ready: certificateReady,
+      sandbox_ready: sandboxReady,
+      promotion_blockers: blockers,
+      next_human_action: nextHumanAction({
+        ledgerStatus: currentLedgerStatus,
+        reviewerStatus: currentReviewerStatus,
+        certificateReady,
+        sandboxReady
+      })
     };
   });
   const unmatchedDecisions = decisionRows.filter((decision) => !rows.some((row) => (
@@ -109,6 +137,9 @@ function buildLedger({ library, humanReviewSession, handoffSmoke, decisions, cer
       sandbox_ready_count: rows.filter((row) => row.sandbox_ready).length,
       certificate_count: certificateRows.length,
       certificate_ready_count: certificateReadyRows.length,
+      named_reviewer_count: rows.filter((row) => row.reviewer_status === 'named_human_reviewer_recorded').length,
+      reviewer_blocker_count: rows.filter((row) => row.reviewer_status === 'missing_named_human_reviewer').length,
+      promotion_blocker_count: rows.reduce((sum, row) => sum + row.promotion_blockers.length, 0),
       handoff_smoke_passed: handoffSmoke?.summary?.failure_count === 0,
       certificate_ready: rows.length > 0 && certificateReadyRows.length === rows.length,
       recommended_next_step: missingRows.length
@@ -193,12 +224,51 @@ function ledgerStatus(decision) {
   return 'decision_recorded';
 }
 
+function reviewerStatus(decision) {
+  if (!decision) return 'missing_decision';
+  if (decision.decision !== 'approve-local' && decision.decision !== 'reject') return 'not_required_for_note';
+  return hasNamedHumanReviewer(decision.reviewer)
+    ? 'named_human_reviewer_recorded'
+    : 'missing_named_human_reviewer';
+}
+
+function promotionBlockers({ expected, latest, latestCertificate, ledgerStatus, reviewerStatus, certificateReady }) {
+  const blockers = [];
+  if (!latest) blockers.push('decision_missing');
+  else if (ledgerStatus === 'blocked_decision') blockers.push('decision_blocked');
+  else if (ledgerStatus === 'rejected') blockers.push('asset_route_rejected');
+  else if (latest.decision !== 'approve-local') blockers.push('local_approval_missing');
+  if (reviewerStatus === 'missing_named_human_reviewer') blockers.push('named_reviewer_missing');
+  if (!certificateReady) blockers.push('local_certificate_missing');
+  if (latest && latest.public_gate_remains_blocked !== true) blockers.push('public_gate_not_confirmed_blocked');
+  if (!expected.handoff_smoke_passed) blockers.push('handoff_smoke_not_passed');
+  if (latestCertificate && latestCertificate.failed_checks !== 0) blockers.push('certificate_failed_checks');
+  return blockers;
+}
+
+function nextHumanAction({ ledgerStatus, reviewerStatus, certificateReady, sandboxReady }) {
+  if (ledgerStatus === 'missing_decision') return 'record_or_defer_human_decision';
+  if (ledgerStatus === 'blocked_decision') return 'resolve_blocked_decision_file';
+  if (reviewerStatus === 'missing_named_human_reviewer') return 'record_named_human_reviewer';
+  if (!certificateReady) return 'create_local_review_certificate';
+  if (!sandboxReady) return 'keep_review_only_until_sandbox_gate_is_ready';
+  return 'certified_local_sandbox_candidate';
+}
+
 function decisionLedgerNote(decision) {
   if (decision.status === 'decision_blocked') return 'Decision file exists but is blocked; do not use it for sandbox generation.';
   if (decision.decision === 'approve-local') return 'Local-only approval evidence; public gate must remain blocked.';
   if (decision.decision === 'block-public') return 'Public use remains blocked for this route.';
   if (decision.decision === 'reject') return 'Asset route is rejected for exchange use.';
   return 'Manual review remains open or deferred.';
+}
+
+function hasNamedHumanReviewer(value) {
+  const normalized = String(value || '').trim().toLowerCase();
+  if (!normalized) return false;
+  if (normalized.length < 3) return false;
+  if (normalized.includes('replace_with')) return false;
+  return !new Set(['owner', 'reviewer', 'reviewer name', 'unknown', 'tbd', 'n/a', 'na']).has(normalized);
 }
 
 function primaryRouteForAsset(asset) {
@@ -280,19 +350,38 @@ function renderMarkdown(ledger) {
     `- blocked decision files: ${ledger.summary.blocked_decision_count}`,
     `- sandbox ready: ${ledger.summary.sandbox_ready_count}`,
     `- certificates: ${ledger.summary.certificate_ready_count}/${ledger.summary.certificate_count}`,
+    `- named reviewers: ${ledger.summary.named_reviewer_count}`,
+    `- reviewer blockers: ${ledger.summary.reviewer_blocker_count}`,
+    `- promotion blockers: ${ledger.summary.promotion_blocker_count}`,
     `- all certificates ready: ${ledger.summary.certificate_ready ? 'yes' : 'no'}`,
     `- recommended next step: \`${ledger.summary.recommended_next_step}\``,
     '',
     '## Expected Rows',
     '',
-    '| Asset | Route | Ledger Status | Priority | Latest Decision | Certificate | Sandbox Ready |',
-    '| --- | --- | --- | --- | --- | --- | --- |'
+    '| Asset | Route | Ledger Status | Decision | Reviewer Gate | Certificate | Sandbox | Blockers |',
+    '| --- | --- | --- | --- | --- | --- | --- | --- |'
   ];
 
   for (const row of ledger.rows) {
     const latest = row.latest_decision ? `${row.latest_decision.decision}/${row.latest_decision.status}` : '-';
-    const certificate = row.latest_certificate ? row.latest_certificate.status : '-';
-    lines.push(`| ${escapePipe(row.asset_title)} | ${escapePipe(row.route)} | ${escapePipe(row.ledger_status)} | ${escapePipe(row.review_priority)} | ${escapePipe(latest)} | ${escapePipe(certificate)} | ${row.sandbox_ready ? 'yes' : 'no'} |`);
+    const reviewer = row.reviewer ? `${row.reviewer} (${row.reviewer_status})` : row.reviewer_status;
+    const blockers = row.promotion_blockers.length ? row.promotion_blockers.join(', ') : '-';
+    lines.push(`| ${escapePipe(row.asset_title)} | ${escapePipe(row.route)} | ${escapePipe(row.ledger_status)} | ${escapePipe(latest)} | ${escapePipe(reviewer)} | ${escapePipe(row.certificate_status)} | ${row.sandbox_ready ? 'yes' : 'no'} | ${escapePipe(blockers)} |`);
+  }
+
+  lines.push('', '## Human Gate Detail', '');
+  for (const row of ledger.rows) {
+    lines.push(`### ${row.asset_title}`, '');
+    lines.push(`- asset id: \`${row.asset_id}\``);
+    lines.push(`- route: \`${row.route}\``);
+    lines.push(`- reviewer: ${row.reviewer ? `\`${row.reviewer}\`` : '-'}`);
+    lines.push(`- reviewer gate: \`${row.reviewer_status}\``);
+    lines.push(`- certificate: \`${row.certificate_status}\``);
+    lines.push(`- sandbox ready: ${row.sandbox_ready ? 'yes' : 'no'}`);
+    lines.push(`- promotion blockers: ${row.promotion_blockers.length ? row.promotion_blockers.map((blocker) => `\`${blocker}\``).join(', ') : '-'}`);
+    lines.push(`- next human action: \`${row.next_human_action}\``);
+    if (row.latest_decision?.ledger_note) lines.push(`- ledger note: ${row.latest_decision.ledger_note}`);
+    lines.push('');
   }
 
   if (ledger.unmatched_decisions.length) {
