@@ -981,11 +981,14 @@ function germanStatusLabel(value: string) {
     draft_review: 'Entwurf in Prüfung',
     generated_needs_review: 'generiert, Prüfung nötig',
     needs_review: 'Prüfung nötig',
+    needs_source: 'Quelle nötig',
+    needs_source_review: 'Quellenprüfung nötig',
     needs_sources: 'Quellen nötig',
     planned: 'geplant',
     published: 'veröffentlicht',
     reviewed: 'geprüft',
-    review: 'Prüfung'
+    review: 'Prüfung',
+    verified: 'verifiziert'
   };
   return labels[value] ?? value.replace(/_/g, ' ');
 }
