@@ -271,10 +271,10 @@ export function EntryModelViewer({ modelUrl, title, accent }: EntryModelViewerPr
     <article id="model-viewer" className="entry-model-viewer border border-white/14 bg-[#050505]">
       <div className="flex flex-wrap items-start justify-between gap-3 border-b border-white/10 px-4 py-3">
         <div className="min-w-0 flex-1">
-          <div className="text-[10px] uppercase tracking-[0.2em]" style={{ color: accent }}>3D Reference Core / Blender Layers</div>
-          <h2 className="mt-1 max-w-full overflow-wrap-anywhere text-lg leading-tight text-[#f7f7f4] sm:text-xl">{title} / material, structure and analysis model</h2>
+          <div className="text-[10px] uppercase tracking-[0.2em]" style={{ color: accent }}>3D-Referenzkern / Blender-Layer</div>
+          <h2 className="mt-1 max-w-full overflow-wrap-anywhere text-lg leading-tight text-[#f7f7f4] sm:text-xl">{title} / Material-, Tragwerks- und Analysemodell</h2>
         </div>
-        <div className="shrink-0 text-[9px] uppercase tracking-[0.14em] text-[#8d8d87]">drag rotate / scroll zoom</div>
+        <div className="shrink-0 text-[9px] uppercase tracking-[0.14em] text-[#8d8d87]">ziehen drehen / scroll zoomen</div>
       </div>
       <div className="relative h-[420px] min-h-[320px] w-full overflow-hidden" style={{ '--viewer-accent': accent } as CSSProperties}>
         <div ref={mountRef} className="h-full w-full" />
@@ -332,14 +332,14 @@ export function EntryModelViewer({ modelUrl, title, accent }: EntryModelViewerPr
         ) : null}
         {status !== 'ready' ? (
           <div className="absolute inset-0 flex items-center justify-center bg-[#050505]/82 text-[10px] uppercase tracking-[0.18em] text-[#d7d7d0]">
-            {status === 'loading' ? 'loading 3d model' : '3d model could not be loaded'}
+            {status === 'loading' ? '3D-Modell wird geladen' : '3D-Modell konnte nicht geladen werden'}
           </div>
         ) : null}
       </div>
       <div className="grid gap-3 border-t border-white/10 p-4 text-sm leading-6 text-[#b8b8b2] md:grid-cols-3">
-        <div><span style={{ color: accent }}>Model:</span> site, mass, Tragwerk, Hülle, Zirkulation, Dachgarten.</div>
+        <div><span style={{ color: accent }}>Modell:</span> Site, Masse, Tragwerk, Hülle, Zirkulation, Dachgarten.</div>
         <div><span style={{ color: accent }}>Material:</span> mineral, Beton, Glas, Landschaft, Pfad, Spur.</div>
-        <div><span style={{ color: accent }}>Blender:</span> layer naming mirrors future import collections.</div>
+        <div><span style={{ color: accent }}>Blender:</span> Layernamen spiegeln spätere Import-Collections.</div>
       </div>
     </article>
   );

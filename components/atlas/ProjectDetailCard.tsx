@@ -58,7 +58,7 @@ export function ProjectDetailCard({ entry, x, y, onSelectFilter }: ProjectDetail
         <g transform={`translate(${x + 238} ${y + 13})`}>
           <rect width="96" height="16" rx="8" fill={accent} opacity="0.16" stroke={accent} strokeWidth="0.5" />
           <text x="48" y="10.7" textAnchor="middle" fill={accent} fontSize="5.7" fontWeight="700" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.12em">
-            DATABASE PILOT
+            DATENBANK PILOT
           </text>
         </g>
       ) : null}
@@ -134,13 +134,13 @@ export function ProjectDetailCard({ entry, x, y, onSelectFilter }: ProjectDetail
       ) : sourceLabel ? (
         <g className="detail-source-trail">
           <text x={x + 184} y={y + 218} fill={accent} fontSize="6.8" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.12em">
-            SOURCE TRAIL
+            QUELLENPFAD
           </text>
           <text x={x + 184} y={y + 231} fill="#d7d7d0" fontSize="7.1" fontFamily="var(--font-sans), system-ui, sans-serif">
             {sourceLabel}
           </text>
           <text x={x + 184} y={y + 243} fill="#9c9c96" fontSize="6.4" fontFamily="var(--font-sans), system-ui, sans-serif">
-            {sourceAssetCount ? `${sourceAssetCount} local assets` : 'source linked'}{mediaCredit ? ` · ${mediaCredit}` : ''}
+            {sourceAssetCount ? `${sourceAssetCount} lokale Assets` : 'Quelle verlinkt'}{mediaCredit ? ` · ${mediaCredit}` : ''}
           </text>
         </g>
       ) : null}
@@ -245,7 +245,7 @@ function archiveStatusMetrics(values: { sources: number; media: number; models: 
 
 function summaryList(items: string[] | undefined, maxItems: number) {
   const cleanItems = (items ?? []).map((item) => item.replace(/_/g, ' '));
-  if (cleanItems.length === 0) return 'planned layers pending';
+  if (cleanItems.length === 0) return 'geplante Layer offen';
   const visible = cleanItems.slice(0, maxItems).join(' / ');
   const suffix = cleanItems.length > maxItems ? ` +${cleanItems.length - maxItems}` : '';
   return ellipsizeText(`${visible}${suffix}`, 39);

@@ -536,7 +536,7 @@ function ModelAnalysisSection({ entry, modelUrl, accent }: { entry: Entry; model
     <section className="border-t border-white/12 py-10">
       <div className="mb-5 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <div className="text-[10px] uppercase tracking-[0.24em]" style={{ color: accent }}>3D Reference Core</div>
+          <div className="text-[10px] uppercase tracking-[0.24em]" style={{ color: accent }}>3D-Referenzkern</div>
           <h2 className="mt-2 max-w-3xl text-3xl leading-tight text-[#f7f7f4] sm:text-4xl">
             Modell, Materialanalyse und Blender-Layer
           </h2>
@@ -553,7 +553,7 @@ function ModelAnalysisSection({ entry, modelUrl, accent }: { entry: Entry; model
           {plannedModelCount} geplante Layer
         </span>
         <span className="border border-white/14 bg-[#050505]/50 px-3 py-2 text-[10px] uppercase tracking-[0.14em] text-[#b8b8b2]">
-          Brain Model Pipeline
+          Brain-Modellpipeline
         </span>
       </div>
 
@@ -571,22 +571,22 @@ function ModelAnalysisSection({ entry, modelUrl, accent }: { entry: Entry; model
 
       <div className="mt-5 grid gap-4 lg:grid-cols-3">
         <InfoBlock
-          title="Blender Collections"
+          title="Blender-Collections"
           items={blenderLayers}
           accent={accent}
-          empty="No model collections planned yet"
+          empty="Noch keine Modell-Collections geplant"
         />
         <InfoBlock
-          title="Material Filters"
+          title="Materialfilter"
           items={materialFilters}
           accent={accent}
-          empty="No material filters yet"
+          empty="Noch keine Materialfilter"
         />
         <InfoBlock
-          title="Source Basis"
+          title="Quellenbasis"
           items={modelSourceItems(entry)}
           accent={accent}
-          empty="No model source basis yet"
+          empty="Noch keine Modell-Quellenbasis"
         />
       </div>
     </section>
