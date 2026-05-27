@@ -47,9 +47,19 @@ export function RadialLetterText({
   const baseStep = letterAngleStep ?? Math.max(1.2, Math.min(3.6, fontSize * 38 / Math.max(80, radius)));
   const step = Math.abs(baseStep) * direction;
   const startAngle = angle - ((readableLetters.length - 1) * step) / 2;
+  const centerPoint = polarToCartesian(cx, cy, radius, angle);
 
   return (
-    <g className={className} opacity={opacity} aria-label={text} pointerEvents={onClick ? 'auto' : 'none'}>
+    <g className={className} opacity={opacity} aria-label={text} pointerEvents={onClick ? 'auto' : 'none'} onClick={onClick}>
+      {onClick ? (
+        <circle
+          cx={centerPoint.x}
+          cy={centerPoint.y}
+          r={fontSize * 2.2}
+          fill="transparent"
+          pointerEvents="all"
+        />
+      ) : null}
       {readableLetters.map((letter, index) => {
         const letterAngle = startAngle + index * step;
         const point = polarToCartesian(cx, cy, radius, letterAngle);
