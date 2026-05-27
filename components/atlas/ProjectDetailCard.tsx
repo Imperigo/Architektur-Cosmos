@@ -61,7 +61,7 @@ export function ProjectDetailCard({ entry, x, y, onSelectFilter }: ProjectDetail
         <text fill="#f7f7f4" fontSize={titleFontSize} fontWeight="700" fontFamily="var(--font-sans), system-ui, sans-serif">
           {titleLines.map((line, index) => (
             <tspan key={`${line}-${index}`} x={x + 16} y={y + 47 + index * 15}>
-              {line}
+              {readableSvgLine(line, index, titleLines.length)}
             </tspan>
           ))}
         </text>
@@ -78,7 +78,7 @@ export function ProjectDetailCard({ entry, x, y, onSelectFilter }: ProjectDetail
         <text fill="#f7f7f4" fontSize="7.6" fontWeight="600" fontFamily="var(--font-sans), system-ui, sans-serif">
           {headlineLines.map((line, index) => (
             <tspan key={`${line}-${index}`} x={x + 184} y={y + 91 + index * 10}>
-              {line}
+              {readableSvgLine(line, index, headlineLines.length)}
             </tspan>
           ))}
         </text>
@@ -88,7 +88,7 @@ export function ProjectDetailCard({ entry, x, y, onSelectFilter }: ProjectDetail
         <text fill="#cfcfca" fontSize="6.55" fontFamily="var(--font-sans), system-ui, sans-serif">
           {bodyLines.map((line, index) => (
             <tspan key={`${line}-${index}`} x={x + 184} y={y + 133 + index * 8.8}>
-              {line}
+              {readableSvgLine(line, index, bodyLines.length)}
             </tspan>
           ))}
         </text>
@@ -209,6 +209,10 @@ function ellipsizeLines(lines: string[], maxLines: number, maxChars: number) {
 function ellipsizeText(text: string, maxChars: number) {
   if (text.length <= maxChars) return text;
   return `${text.slice(0, Math.max(0, maxChars - 3)).trim()}...`;
+}
+
+function readableSvgLine(line: string, index: number, total: number) {
+  return index < total - 1 && !line.endsWith('...') ? `${line} ` : line;
 }
 
 function summaryList(items: string[] | undefined, maxItems: number) {
