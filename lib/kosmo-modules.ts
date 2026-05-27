@@ -62,7 +62,7 @@ export const kosmoOrbitModules: KosmoOrbitModule[] = [
     name: 'KosmoDesign',
     label: 'Prepare / Draw / Vis / Publish',
     description: 'Entwurf, Planwerk, Visualisierung und Publikation als gebündelte Pipeline.',
-    detail: ['KosmoPrepare für Briefing und Kontext', 'KosmoDraw und KosmoVis für Plan, Modell und Bild', 'KosmoPublish für Layout, Abgabe und Review-Pakete'],
+    detail: ['KosmoPrepare für Briefing und Kontext', 'KosmoDraw und KosmoVis für Plan, Modell und Bild', 'KosmoPublish für Layout, Abgabe und Prüfpakete'],
     metrics: [
       { label: 'Pakete', value: 'lokal' },
       { label: 'IFC', value: 'Prüfung' },

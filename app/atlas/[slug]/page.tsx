@@ -839,7 +839,7 @@ function entryVisualProfile(entry: Entry): EntryVisualProfile {
       entry.short_description,
       `Typologie: ${entry.entry_type.replace(/_/g, ' ')}`,
       `Stilsektor: ${entry.style_sector.replace(/_/g, ' ')}`,
-      `Filter: ${entry.themes.slice(0, 3).join(', ') || 'Review offen'}`
+      `Filter: ${entry.themes.slice(0, 3).join(', ') || 'Prüfung offen'}`
     ],
     diagramType: 'generic',
     slotLesenings: {
