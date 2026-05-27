@@ -1,0 +1,93 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-05-27T20:38:11.664Z",
+  "generator": "kosmo-asset-blender-sandbox",
+  "library_path": "examples/kosmo-assets/kosmo-asset-demo/library.json",
+  "library_id": "kosmo-asset-demo",
+  "asset_id": "warm-concrete-material-001",
+  "asset_title": "Warm Concrete Study Material",
+  "status": "blender_sandbox_script_ready",
+  "policy": {
+    "sandbox_only": true,
+    "no_blend_save": true,
+    "no_mainfile_open": true,
+    "no_asset_upload": true,
+    "no_public_download": true,
+    "no_library_mutation": true,
+    "requires_copied_blender_file": true
+  },
+  "summary": {
+    "check_count": 8,
+    "passed_checks": 8,
+    "failure_count": 0
+  },
+  "blender": {
+    "collection_name": "KOSMO_SANDBOX/warm-concrete-material-001",
+    "import_mode": "create_material_from_parameters",
+    "material_name": "KOSMO_MAT_warm-concrete-material-001",
+    "source_file": "examples/kosmo-assets/kosmo-asset-demo/assets/materials/warm-concrete.material.json",
+    "layer_names": [
+      "material/base_color",
+      "material/roughness",
+      "material/metallic",
+      "material/specular",
+      "blender/principled_bsdf",
+      "archicad/material/concrete/review"
+    ]
+  },
+  "outputs": {
+    "sandbox_json": "examples/kosmo-assets/kosmo-asset-demo/review/asset-blender-sandbox-warm-concrete-material-001.generated.json",
+    "sandbox_markdown": "examples/kosmo-assets/kosmo-asset-demo/review/asset-blender-sandbox-warm-concrete-material-001.generated.md",
+    "sandbox_python": "examples/kosmo-assets/kosmo-asset-demo/review/asset-blender-sandbox-warm-concrete-material-001.generated.py",
+    "decision": "examples/kosmo-assets/kosmo-asset-demo/review/asset-review-decision-warm-concrete-material-001-blender.generated.json",
+    "handoff_bundle": "examples/kosmo-assets/kosmo-asset-demo/review/asset-handoff-bundle.generated.md",
+    "handoff_smoke": "examples/kosmo-assets/kosmo-asset-demo/review/asset-handoff-smoke.generated.md"
+  },
+  "checks": [
+    {
+      "id": "decision_recorded",
+      "status": "passed",
+      "label": "Decision status is local_review_decision_recorded."
+    },
+    {
+      "id": "decision_route",
+      "status": "passed",
+      "label": "Decision route is blender."
+    },
+    {
+      "id": "smoke_passed",
+      "status": "passed",
+      "label": "Handoff smoke status is handoff_smoke_passed."
+    },
+    {
+      "id": "handoff_blender_profile",
+      "status": "passed",
+      "label": "Handoff bundle has a Blender profile for this asset."
+    },
+    {
+      "id": "public_gate_blocked",
+      "status": "passed",
+      "label": "Public gate remains blocked."
+    },
+    {
+      "id": "source_file_exists",
+      "status": "passed",
+      "label": "Referenced local source file exists."
+    },
+    {
+      "id": "no_project_file_writes",
+      "status": "passed",
+      "label": "Generated sandbox script does not save or open Blender project files."
+    },
+    {
+      "id": "no_uploads",
+      "status": "passed",
+      "label": "Generated sandbox script does not upload or publish assets."
+    }
+  ],
+  "next_actions": [
+    "Open a copied Blender sandbox file, not a production project.",
+    "Run the generated Python script from Blender Text Editor or console.",
+    "Inspect created KOSMO_SANDBOX collections/materials, then discard or save the copied sandbox manually."
+  ]
+}
