@@ -1,7 +1,7 @@
 # KosmoAsset Review Pack
 
 Library: `kosmo-asset-demo`
-Generated: 2026-05-27T11:14:36.358Z
+Generated: 2026-05-27T11:22:47.964Z
 Status: `asset_human_review_required`
 Rights scope: `local_review_only`
 

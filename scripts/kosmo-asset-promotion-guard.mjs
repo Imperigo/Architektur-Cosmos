@@ -57,7 +57,7 @@ function buildGuard({ library, reviewPack, fullReview, decisionLedger, handoffBu
     ...(!decisionLedger ? ['decision_ledger_missing'] : []),
     ...(library.storage_policy?.uploads_allowed ? ['library_uploads_allowed'] : []),
     ...(library.storage_policy?.public_assets_allowed ? ['library_public_assets_allowed'] : []),
-    ...rows.flatMap((row) => row.blockers.map((blocker) => `${row.asset_id}:${blocker}`))
+    ...rows.flatMap((row) => row.promotion_blockers.map((blocker) => `${row.asset_id}:${blocker}`))
   ];
   const unsafeFindings = blockers.filter((blocker) => (
     blocker.includes('public_gate_ready_without_certificate')
@@ -97,6 +97,9 @@ function buildGuard({ library, reviewPack, fullReview, decisionLedger, handoffBu
       missing_decision_count: decisionLedger?.summary?.missing_decision_count ?? rows.length,
       certificate_ready_count: decisionLedger?.summary?.certificate_ready_count || 0,
       sandbox_ready_count: decisionLedger?.summary?.sandbox_ready_count || 0,
+      named_reviewer_count: decisionLedger?.summary?.named_reviewer_count || 0,
+      reviewer_blocker_count: decisionLedger?.summary?.reviewer_blocker_count || 0,
+      ledger_promotion_blocker_count: decisionLedger?.summary?.promotion_blocker_count ?? null,
       public_ready_count: reviewPack?.summary?.public_ready_count || 0,
       full_review_status: fullReview?.status || null,
       decision_ledger_status: decisionLedger?.status || null,
@@ -122,7 +125,7 @@ function guardRow({ asset, review, ledger, handoff }) {
   const publicUseAllowed = asset.public_use_allowed === true;
   const localCertificateReady = ledger?.certificate_ready === true;
   const sandboxReady = ledger?.sandbox_ready === true;
-  const blockers = [
+  const fallbackBlockers = [
     ...(!review?.local_ready ? ['local_review_not_ready'] : []),
     ...(!ledger ? ['decision_ledger_row_missing'] : []),
     ...(ledger?.ledger_status === 'missing_decision' ? ['decision_missing'] : []),
@@ -131,6 +134,13 @@ function guardRow({ asset, review, ledger, handoff }) {
     ...(publicGate !== 'blocked' && !localCertificateReady ? ['public_gate_ready_without_certificate'] : []),
     ...(sandboxReady && !localCertificateReady ? ['sandbox_ready_without_certificate'] : [])
   ];
+  const ledgerBlockers = Array.isArray(ledger?.promotion_blockers) ? ledger.promotion_blockers : [];
+  const blockers = unique([
+    ...fallbackBlockers,
+    ...ledgerBlockers,
+    ...(publicUseAllowed ? ['public_use_allowed_without_public_review'] : []),
+    ...(publicGate !== 'blocked' && !localCertificateReady ? ['public_gate_ready_without_certificate'] : [])
+  ]);
 
   return {
     asset_id: asset.id,
@@ -143,9 +153,14 @@ function guardRow({ asset, review, ledger, handoff }) {
     local_ready: review?.local_ready === true,
     public_ready: review?.public_ready === true,
     decision_status: ledger?.ledger_status || 'missing_ledger',
+    reviewer_status: ledger?.reviewer_status || 'missing_ledger',
+    reviewer: ledger?.reviewer || null,
+    certificate_status: ledger?.certificate_status || (localCertificateReady ? 'asset_local_review_certified' : 'missing_certificate'),
     local_certificate_ready: localCertificateReady,
     sandbox_ready: sandboxReady,
+    next_human_action: ledger?.next_human_action || 'run_decision_ledger',
     promotion_status: blockers.length ? 'blocked' : 'ready_for_owner_review',
+    promotion_blockers: blockers,
     blockers
   };
 }
@@ -189,6 +204,9 @@ function renderMarkdown(guard) {
     `- missing decisions: ${guard.summary.missing_decision_count}`,
     `- local certificates ready: ${guard.summary.certificate_ready_count}`,
     `- sandbox ready: ${guard.summary.sandbox_ready_count}`,
+    `- named reviewers: ${guard.summary.named_reviewer_count}`,
+    `- reviewer blockers: ${guard.summary.reviewer_blocker_count}`,
+    `- ledger promotion blockers: ${guard.summary.ledger_promotion_blocker_count ?? '-'}`,
     `- public ready: ${guard.summary.public_ready_count}`,
     `- full review: \`${guard.summary.full_review_status || 'missing'}\``,
     `- decision ledger: \`${guard.summary.decision_ledger_status || 'missing'}\``,
@@ -196,12 +214,24 @@ function renderMarkdown(guard) {
     '',
     '## Assets',
     '',
-    '| Asset | Decision | Certificate | Sandbox | Public Gate | Promotion | Blockers |',
-    '| --- | --- | --- | --- | --- | --- | --- |'
+    '| Asset | Decision | Reviewer Gate | Certificate | Sandbox | Public Gate | Promotion | Blockers |',
+    '| --- | --- | --- | --- | --- | --- | --- | --- |'
   ];
 
   for (const row of guard.rows) {
-    lines.push(`| ${escapePipe(row.asset_title)} | ${escapePipe(row.decision_status)} | ${row.local_certificate_ready ? 'yes' : 'no'} | ${row.sandbox_ready ? 'yes' : 'no'} | ${escapePipe(row.public_gate)} | ${escapePipe(row.promotion_status)} | ${escapePipe(row.blockers.join(', ') || '-')} |`);
+    lines.push(`| ${escapePipe(row.asset_title)} | ${escapePipe(row.decision_status)} | ${escapePipe(row.reviewer_status)} | ${escapePipe(row.certificate_status)} | ${row.sandbox_ready ? 'yes' : 'no'} | ${escapePipe(row.public_gate)} | ${escapePipe(row.promotion_status)} | ${escapePipe(row.promotion_blockers.join(', ') || '-')} |`);
+  }
+
+  lines.push('', '## Human Gate Detail', '');
+  for (const row of guard.rows) {
+    lines.push(`### ${row.asset_title}`, '');
+    lines.push(`- asset id: \`${row.asset_id}\``);
+    lines.push(`- reviewer: ${row.reviewer ? `\`${row.reviewer}\`` : '-'}`);
+    lines.push(`- reviewer gate: \`${row.reviewer_status}\``);
+    lines.push(`- certificate: \`${row.certificate_status}\``);
+    lines.push(`- next human action: \`${row.next_human_action}\``);
+    lines.push(`- promotion blockers: ${row.promotion_blockers.length ? row.promotion_blockers.map((blocker) => `\`${blocker}\``).join(', ') : '-'}`);
+    lines.push('');
   }
 
   lines.push('', '## Blockers', '');
@@ -231,6 +261,10 @@ function readOptionalJson(pathname) {
 
 function escapePipe(value) {
   return String(value ?? '').replace(/\|/g, '\\|').replace(/\n/g, ' ');
+}
+
+function unique(values) {
+  return [...new Set(values.filter(Boolean))];
 }
 
 function parseArgs(argv) {

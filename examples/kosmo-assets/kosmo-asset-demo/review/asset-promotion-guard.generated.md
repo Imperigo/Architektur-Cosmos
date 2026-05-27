@@ -1,7 +1,7 @@
 # KosmoAsset Promotion Guard
 
 Library: `kosmo-asset-demo`
-Generated: 2026-05-27T11:14:38.190Z
+Generated: 2026-05-27T11:22:49.924Z
 Status: `asset_promotion_guard_blocked`
 
 Promotion guard. This report does not promote assets, upload files, write D1/R2, open public downloads or mutate the library.
@@ -15,6 +15,9 @@ Promotion guard. This report does not promote assets, upload files, write D1/R2,
 - missing decisions: 3
 - local certificates ready: 0
 - sandbox ready: 0
+- named reviewers: 0
+- reviewer blockers: 0
+- ledger promotion blockers: 6
 - public ready: 0
 - full review: `asset_full_review_ready_for_human_decisions`
 - decision ledger: `asset_decision_ledger_open`
@@ -22,11 +25,41 @@ Promotion guard. This report does not promote assets, upload files, write D1/R2,
 
 ## Assets
 
-| Asset | Decision | Certificate | Sandbox | Public Gate | Promotion | Blockers |
-| --- | --- | --- | --- | --- | --- | --- |
-| Kosmo Axis Marker | missing_decision | no | no | blocked | blocked | decision_missing, local_certificate_missing |
-| Warm Concrete Study Material | missing_decision | no | no | blocked | blocked | decision_missing, local_certificate_missing |
-| Generic Column GLB Slot | missing_decision | no | no | blocked | blocked | decision_missing, local_certificate_missing |
+| Asset | Decision | Reviewer Gate | Certificate | Sandbox | Public Gate | Promotion | Blockers |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Kosmo Axis Marker | missing_decision | missing_decision | missing_certificate | no | blocked | blocked | decision_missing, local_certificate_missing |
+| Warm Concrete Study Material | missing_decision | missing_decision | missing_certificate | no | blocked | blocked | decision_missing, local_certificate_missing |
+| Generic Column GLB Slot | missing_decision | missing_decision | missing_certificate | no | blocked | blocked | decision_missing, local_certificate_missing |
+
+## Human Gate Detail
+
+### Kosmo Axis Marker
+
+- asset id: `axis-marker-svg-001`
+- reviewer: -
+- reviewer gate: `missing_decision`
+- certificate: `missing_certificate`
+- next human action: `record_or_defer_human_decision`
+- promotion blockers: `decision_missing`, `local_certificate_missing`
+
+### Warm Concrete Study Material
+
+- asset id: `warm-concrete-material-001`
+- reviewer: -
+- reviewer gate: `missing_decision`
+- certificate: `missing_certificate`
+- next human action: `record_or_defer_human_decision`
+- promotion blockers: `decision_missing`, `local_certificate_missing`
+
+### Generic Column GLB Slot
+
+- asset id: `generic-column-glb-001`
+- reviewer: -
+- reviewer gate: `missing_decision`
+- certificate: `missing_certificate`
+- next human action: `record_or_defer_human_decision`
+- promotion blockers: `decision_missing`, `local_certificate_missing`
+
 
 ## Blockers
 

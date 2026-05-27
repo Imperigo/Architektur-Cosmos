@@ -315,7 +315,9 @@ Der Guard prueft Full-Review, Review-Pack, Decision-Ledger, Public-Gates,
 Zertifikate, Sandbox-Status und Upload-Policies. Wenn Reviews, Decisions oder
 Zertifikate fehlen, ist das ein erwarteter Blocker und keine Fehlfreigabe. Ein
 Fehler entsteht erst, wenn ein Public-/Upload-Gate unsicher offen waere. Er
-promoted nichts und schreibt nur:
+uebernimmt die gleichen Promotion-Blocker-Begriffe wie das Decision-Ledger,
+damit Reviewer-Gate, Zertifikat, Sandbox und naechste menschliche Aktion in
+beiden Reports gleich lesbar sind. Er promoted nichts und schreibt nur:
 
 ```text
 examples/kosmo-assets/kosmo-asset-demo/review/asset-promotion-guard.generated.json
