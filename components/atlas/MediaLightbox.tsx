@@ -64,7 +64,7 @@ export function MediaLightbox({ src, label, type, credit, isDrawing = false, acc
                 {credit ? <p>{credit}</p> : null}
               </div>
               <button type="button" className="cosmos-media-lightbox-close" onClick={() => setIsOpen(false)}>
-                Close
+                Schließen
               </button>
             </figcaption>
           </figure>

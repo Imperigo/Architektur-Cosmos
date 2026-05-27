@@ -2505,17 +2505,17 @@ function KosmoAssetWorkspace({ onReturnToHub }: { onReturnToHub: () => void }) {
             Zurück
           </button>
           <div>
-            <small>Orbit-Station / Review-Bibliothek</small>
+            <small>Orbit-Station / Prüfbibliothek</small>
             <h2>KosmoAsset</h2>
-            <p>Werkstatt-Orbit für wiederverwendbare 2D-, 3D-, Material- und Exportressourcen. V1 bleibt lokal, nur im Review und ohne Upload.</p>
+            <p>Werkstatt-Orbit für wiederverwendbare 2D-, 3D-, Material- und Exportressourcen. V1 bleibt lokal, nur in Prüfung und ohne Upload.</p>
           </div>
           <div className="kosmo-asset-status">
-            <span>{assetLibraryPreview.rights_scope.replace(/_/g, ' ')}</span>
+            <span>{formatAssetValue(assetLibraryPreview.rights_scope)}</span>
             <strong>{assets.length} Ressourcen</strong>
           </div>
         </header>
 
-        <section className="kosmo-asset-lab" aria-label="KosmoAsset Library Vorschau">
+        <section className="kosmo-asset-lab" aria-label="KosmoAsset Bibliotheksvorschau">
           <div className="kosmo-asset-core" aria-label="KosmoAsset Asset-Orbits">
             <span className="kosmo-asset-core-ring kosmo-asset-core-ring-a" />
             <span className="kosmo-asset-core-ring kosmo-asset-core-ring-b" />
@@ -2545,7 +2545,7 @@ function KosmoAssetWorkspace({ onReturnToHub }: { onReturnToHub: () => void }) {
               <MetricBlock label="Vorhanden" value={String(existingFormats)} />
               <MetricBlock label="Geplant" value={String(plannedFormats)} />
               <MetricBlock label="Formate" value={String(formats.length)} />
-              <MetricBlock label="Review offen" value={String(reviewSummary.open_human_review_count)} />
+              <MetricBlock label="Prüfung offen" value={String(reviewSummary.open_human_review_count)} />
               <MetricBlock label="Exportziele" value={String(exportTargets.length)} />
             </div>
 
@@ -2571,7 +2571,7 @@ function KosmoAssetWorkspace({ onReturnToHub }: { onReturnToHub: () => void }) {
           </div>
         </section>
 
-        <section className="kosmo-asset-library" aria-label="Demo Assets">
+        <section className="kosmo-asset-library" aria-label="Demo-Assets">
           <div className="kosmo-asset-grid">
             {filteredAssets.map((asset) => (
               <AssetCard key={asset.id} asset={asset} isSelected={selectedAsset?.id === asset.id} onSelect={() => setSelectedAssetId(asset.id)} />
@@ -2665,9 +2665,9 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
         {generatedProfile ? <GeneratedAssetPreview asset={asset} profile={generatedProfile} /> : <AssetPreviewGraphic asset={asset} />}
       </div>
 
-      <div className="kosmo-asset-inspector-gates" aria-label="Rechte und Review">
+      <div className="kosmo-asset-inspector-gates" aria-label="Rechte und Prüfung">
         <MetricBlock label="Rechte" value={formatAssetValue(asset.rights_status)} />
-        <MetricBlock label="Review" value={formatAssetValue(asset.review_status)} />
+        <MetricBlock label="Prüfung" value={formatAssetValue(asset.review_status)} />
         <MetricBlock label="Sicherheit" value={`${confidence}%`} />
       </div>
 
@@ -2703,7 +2703,7 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
           {localFormats.map((format) => (
             <code key={`${asset.id}-${format.format}-${format.path}`}>{format.path}</code>
           ))}
-          <p>Review-only: keine R2-Uploads, keine öffentlichen Downloads, keine Datenbank-Writes.</p>
+          <p>Nur lokale Prüfung: keine R2-Uploads, keine öffentlichen Downloads, keine Datenbank-Schreibvorgänge.</p>
         </div>
       ) : null}
 
@@ -2767,7 +2767,7 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
               <b>{formatAssetValue(reviewPack.human_review_status)}</b>
             </span>
             <span data-status={reviewPack.public_ready ? 'ready' : 'private'}>
-              <small>Public Gate</small>
+              <small>Öffentlichkeits-Gate</small>
               <b>{reviewPack.public_ready ? 'bereit' : 'gesperrt'}</b>
             </span>
             <span data-status={reviewPack.local_ready ? 'ready' : 'missing'}>
@@ -2789,7 +2789,7 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
 
       {humanReviewSession ? (
         <div className="kosmo-asset-inspector-section kosmo-asset-human-session-card">
-          <strong>Human-Review-Session</strong>
+          <strong>Menschliche Prüfsession</strong>
           <div className="kosmo-asset-human-session-grid">
             <span data-status={humanReviewSession.review_priority}>
               <small>Priorität</small>
@@ -2800,7 +2800,7 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
               <b>{formatAssetValue(humanReviewSession.human_review_status)}</b>
             </span>
             <span data-status={humanReviewSession.machine_evidence.handoff_smoke_passed ? 'ready' : 'blocked'}>
-              <small>Smoke</small>
+              <small>Smoke-Test</small>
               <b>{humanReviewSession.machine_evidence.handoff_smoke_passed ? 'bestanden' : 'offen'}</b>
             </span>
           </div>
@@ -2818,14 +2818,14 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
 
       {decisionLedger ? (
         <div className="kosmo-asset-inspector-section kosmo-asset-ledger-card">
-          <strong>Decision-Ledger</strong>
+          <strong>Entscheidungsbuch</strong>
           <div className="kosmo-asset-ledger-grid">
             <span data-status={decisionLedger.ledger_status}>
               <small>Status</small>
               <b>{formatAssetValue(decisionLedger.ledger_status)}</b>
             </span>
             <span data-status={decisionLedger.latest_decision ? 'recorded' : 'missing'}>
-              <small>Decision</small>
+              <small>Entscheid</small>
               <b>{decisionLedger.latest_decision?.decision ? formatAssetValue(decisionLedger.latest_decision.decision) : 'fehlt'}</b>
             </span>
             <span data-status={decisionLedger.sandbox_ready ? 'ready' : 'blocked'}>
@@ -2839,7 +2839,7 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
 
       {exchangeProfile ? (
         <div className="kosmo-asset-inspector-section kosmo-asset-exchange-card">
-          <strong>Exchange-Profil</strong>
+          <strong>Übergabeprofil</strong>
           <div className="kosmo-asset-exchange-grid">
             <span data-enabled={exchangeProfile.blender ? 'true' : 'false'}>
               <small>Blender</small>
@@ -2865,7 +2865,7 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
 
       {handoffBundle ? (
         <div className="kosmo-asset-inspector-section kosmo-asset-handoff-card">
-          <strong>Handoff-Bundle</strong>
+          <strong>Übergabepaket</strong>
           <div className="kosmo-asset-handoff-grid">
             <span data-enabled={handoffBundle.blender ? 'true' : 'false'}>
               <small>Blender Python</small>
@@ -2876,7 +2876,7 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
               <b>{handoffBundle.archicad?.exchange_mode ? formatAssetValue(handoffBundle.archicad.exchange_mode) : 'nicht aktiv'}</b>
             </span>
             <span data-enabled={handoffBundle.public_gate === 'blocked' ? 'false' : 'true'}>
-              <small>Public Gate</small>
+              <small>Öffentlichkeits-Gate</small>
               <b>{formatAssetValue(handoffBundle.public_gate)}</b>
             </span>
           </div>
@@ -2884,7 +2884,7 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
             {handoffBundle.blender ? <code>{assetHandoffBundlePreview.outputs.blender_python}</code> : null}
             {handoffBundle.archicad ? <code>{assetHandoffBundlePreview.outputs.archicad_schedule_csv}</code> : null}
           </div>
-          <p>Review-only: Blender schreibt standardmäßig nicht in die Szene; ArchiCAD nutzt den CSV nur als Naming-Schedule.</p>
+          <p>Nur lokale Prüfung: Blender schreibt standardmäßig nicht in die Szene; ArchiCAD nutzt den CSV nur als Namens- und Layerliste.</p>
         </div>
       ) : null}
 
@@ -2901,7 +2901,7 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
               <b>{handoffSmoke.python_runtime.ok ? 'läuft' : 'Fehler'}</b>
             </span>
             <span data-enabled={handoffSmoke.policy.no_project_file_writes ? 'false' : 'true'}>
-              <small>Scene Writes</small>
+              <small>Szenenänderung</small>
               <b>{handoffSmoke.policy.no_project_file_writes ? 'gesperrt' : 'aktiv'}</b>
             </span>
           </div>
@@ -2912,8 +2912,8 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
       <AssetReviewWorkflow asset={asset} reviewPack={reviewPack} handoffBundle={handoffBundle} handoffSmoke={handoffSmoke} />
 
       <div className="kosmo-asset-inspector-section kosmo-asset-review-actions">
-        <strong>Review-Aktionen</strong>
-        <p>Lokale Brain-Befehle für Prüfung und Export. Sie erzeugen Review-Dateien, aber keine Cloud-Uploads.</p>
+        <strong>Prüfaktionen</strong>
+        <p>Lokale Brain-Befehle für Prüfung und Export. Sie erzeugen Prüfdateien, aber keine Cloud-Uploads.</p>
         <div className="kosmo-asset-review-action-grid">
           {reviewActions.map((action) => (
             <button
@@ -2966,31 +2966,31 @@ function AssetReviewWorkflow({
       label: '1 Auswahl',
       status: 'bereit',
       tone: 'ready',
-      text: `${asset.title} ist als Review-Asset gewählt.`
+      text: `${asset.title} ist als Prüf-Asset gewählt.`
     },
     {
-      label: '2 Review lesen',
+      label: '2 Prüfung lesen',
       status: reviewOpen ? 'offen' : 'geschlossen',
       tone: reviewOpen ? 'review' : 'ready',
-      text: reviewPack?.suggested_decision ? `Vorschlag: ${formatAssetValue(reviewPack.suggested_decision)}` : 'Review-Pack fehlt noch.'
+      text: reviewPack?.suggested_decision ? `Vorschlag: ${formatAssetValue(reviewPack.suggested_decision)}` : 'Prüfpaket fehlt noch.'
     },
     {
       label: '3 Smoke',
       status: smokePassed ? `${handoffSmoke.summary.passed_checks}/${handoffSmoke.summary.check_count}` : 'blockiert',
       tone: smokePassed ? 'ready' : 'blocked',
-      text: smokePassed ? 'Blender/ArchiCAD-Handoff ist review-only geprüft.' : 'Vor Freigabe zuerst Handoff-Smoke ausführen.'
+      text: smokePassed ? 'Blender/ArchiCAD-Übergabe ist lokal geprüft.' : 'Vor Freigabe zuerst Übergabe-Smoke ausführen.'
     },
     {
       label: '4 Manuelle Freigabe',
       status: smokePassed ? 'lokal möglich' : 'gesperrt',
       tone: smokePassed ? 'review' : 'blocked',
-      text: smokePassed ? 'Freigabe schreibt nur lokale Evidenz, keine Assets und keine Public Gates.' : 'Ohne Smoke keine lokale Freigabe.'
+      text: smokePassed ? 'Freigabe schreibt nur lokale Evidenz, keine Assets und keine Öffentlichkeits-Gates.' : 'Ohne Smoke-Test keine lokale Freigabe.'
     }
   ];
 
   return (
     <div className="kosmo-asset-inspector-section kosmo-asset-workflow-card">
-      <strong>Review-Workflow</strong>
+      <strong>Prüfworkflow</strong>
       <div className="kosmo-asset-workflow-steps">
         {steps.map((step) => (
           <span key={step.label} data-tone={step.tone}>
@@ -3200,7 +3200,7 @@ function assetGateSignals({
       id: 'technical',
       label: 'Technik',
       value: technicalReady ? 'OK' : technicalTone === 'blocked' ? 'Blockiert' : 'Prüfen',
-      detail: smokePassed ? 'Lokale Dateien und Smoke-Test sind grün.' : 'Vor Sandbox zuerst Full Review und Smoke prüfen.',
+      detail: smokePassed ? 'Lokale Dateien und Smoke-Test sind grün.' : 'Vor Sandbox zuerst Vollprüfung und Smoke-Test prüfen.',
       tone: technicalTone
     },
     {
@@ -3212,9 +3212,9 @@ function assetGateSignals({
     },
     {
       id: 'public',
-      label: 'Public',
-      value: publicLocalOnly ? 'Gesperrt' : publicGate === 'blocked' ? 'Review' : 'Risiko',
-      detail: publicLocalOnly ? 'Lokale Review-only Spur, kein Download und kein R2.' : 'Public Gate braucht separate Rechte-/Owner-Prüfung.',
+      label: 'Öffentlich',
+      value: publicLocalOnly ? 'Gesperrt' : publicGate === 'blocked' ? 'Prüfung' : 'Risiko',
+      detail: publicLocalOnly ? 'Lokale Prüfspur, kein Download und kein R2.' : 'Öffentlichkeits-Gate braucht separate Rechte-/Owner-Prüfung.',
       tone: publicLocalOnly ? 'local' : publicGate === 'blocked' ? 'review' : 'blocked'
     },
     {
@@ -3238,20 +3238,20 @@ function humanGateSignal(state: string): Pick<AssetGateSignal, 'value' | 'detail
   if (state === 'blocked') {
     return {
       value: 'blockiert',
-      detail: 'Public- oder Routen-Gate bleibt bewusst geschlossen.',
+      detail: 'Öffentlichkeits- oder Routen-Gate bleibt bewusst geschlossen.',
       tone: 'local'
     };
   }
   if (state === 'rejected') {
     return {
       value: 'abgelehnt',
-      detail: 'Asset-Route darf nicht in Exchange-Workflows.',
+      detail: 'Asset-Route darf nicht in Übergabe-Workflows.',
       tone: 'blocked'
     };
   }
   return {
     value: 'Evidenz fehlt',
-    detail: 'Menschliche Checkliste und Decision-Record sind noch offen.',
+    detail: 'Menschliche Checkliste und Entscheidungsrecord sind noch offen.',
     tone: 'review'
   };
 }
@@ -3261,11 +3261,11 @@ function assetChecklistLabel(id: string, fallback: string) {
     source_basis: 'Quellenbasis dokumentiert',
     local_files: 'Lokale Dateien vorhanden',
     rights_gate: 'Rechte-Gate sicher',
-    public_gate: 'Public-Gate blockiert unsichere Assets',
-    review_status: 'Menschliche Review fehlt',
+    public_gate: 'Öffentlichkeits-Gate blockiert unsichere Assets',
+    review_status: 'Menschliche Prüfung fehlt',
     export_routes: 'Export-Routen ohne Blocker',
     generated_profile: 'Generiertes Profil vorhanden',
-    library_check: 'Library-Check bestanden'
+    library_check: 'Bibliothekscheck bestanden'
   };
   return labels[id] ?? fallback;
 }
@@ -3273,7 +3273,7 @@ function assetChecklistLabel(id: string, fallback: string) {
 function assetHumanSessionCheckLabel(id: string, fallback: string) {
   const labels: Record<string, string> = {
     source_basis_read: 'Quellenbasis gelesen',
-    rights_risk_checked: 'Rechte-/Public-Gate geprüft',
+    rights_risk_checked: 'Rechte-/Öffentlichkeits-Gate geprüft',
     local_file_opened: 'Lokale Datei angeschaut',
     scale_origin_layer_checked: 'Scale, Origin und Layer geprüft',
     ai_slop_risk_checked: 'Qualität gegen KI-Slop geprüft',
@@ -3297,55 +3297,55 @@ function assetReviewActions(asset: AssetPreviewRecord): AssetReviewAction[] {
       id: 'export-plan',
       label: 'Exportplan',
       kicker: 'Route',
-      description: 'Erzeugt den lokalen Exportplan für Blender, ArchiCAD, Web und Review-Schritte.',
+      description: 'Erzeugt den lokalen Exportplan für Blender, ArchiCAD, Web und Prüfschritte.',
       command: `npm run kosmo:asset-export-plan -- --library ${libraryPath}`
     },
     {
       id: 'exchange-profile',
-      label: 'Exchange',
-      kicker: 'Bridge',
-      description: 'Erzeugt das lokale Blender-/ArchiCAD-/Web-Übergabeprofil für Naming, Layer und Surface Mapping.',
+      label: 'Übergabeprofil',
+      kicker: 'Brücke',
+      description: 'Erzeugt das lokale Blender-/ArchiCAD-/Web-Übergabeprofil für Benennung, Layer und Oberflächenmapping.',
       command: `npm run kosmo:asset-exchange-profile -- --library ${libraryPath}`
     },
     {
       id: 'full-review',
-      label: 'Full Review',
+      label: 'Vollprüfung',
       kicker: 'Batch',
-      description: 'Führt den ganzen lokalen Abendbatch aus: Check, Exportplan, Review-Pack, Exchange, Handoff, Smoke, Human Session und Ledger.',
+      description: 'Führt den ganzen lokalen Prüfbatch aus: Check, Exportplan, Prüfpaket, Übergabeprofil, Übergabepaket, Smoke-Test, menschliche Prüfsession und Entscheidungsbuch.',
       command: `npm run kosmo:asset-full-review -- --library ${libraryPath}`
     },
     {
       id: 'human-review-session',
-      label: 'Human Session',
-      kicker: 'Review',
-      description: 'Erzeugt die editierbare lokale Human-Review-Session mit offenen Asset-Checks und sicheren Entscheidbefehlen.',
+      label: 'Prüfsession',
+      kicker: 'Prüfung',
+      description: 'Erzeugt die editierbare lokale menschliche Prüfsession mit offenen Asset-Checks und sicheren Entscheidbefehlen.',
       command: `npm run kosmo:asset-human-review-session -- --library ${libraryPath}`
     },
     {
       id: 'decision-ledger',
-      label: 'Decision Ledger',
+      label: 'Entscheidbuch',
       kicker: 'Audit',
-      description: 'Liest lokale Review-Entscheidungen und Zertifikate als Audit-Ledger. Erzeugt keine Freigabe.',
+      description: 'Liest lokale Prüfentscheidungen und Zertifikate als Auditbuch. Erzeugt keine Freigabe.',
       command: `npm run kosmo:asset-decision-ledger -- --library ${libraryPath}`
     },
     {
       id: 'handoff-bundle',
-      label: 'Handoff',
+      label: 'Übergabepaket',
       kicker: 'Export',
-      description: 'Erzeugt die review-only Blender-Python-Vorlage und den ArchiCAD-Schedule aus dem Exchange-Profil.',
+      description: 'Erzeugt die lokale Prüfvorlage für Blender-Python und den ArchiCAD-Schedule aus dem Übergabeprofil.',
       command: `npm run kosmo:asset-handoff-bundle -- --library ${libraryPath}`
     },
     {
       id: 'handoff-smoke',
-      label: 'Smoke',
+      label: 'Smoke-Test',
       kicker: 'QA',
-      description: 'Prüft Blender-Python, ArchiCAD-CSV, lokale Quellen und blockierte Public-Gates ohne Asset-Import.',
+      description: 'Prüft Blender-Python, ArchiCAD-CSV, lokale Quellen und blockierte Öffentlichkeits-Gates ohne Asset-Import.',
       command: `npm run kosmo:asset-handoff-smoke -- --library ${libraryPath}`
     },
     {
       id: 'review-pack',
-      label: 'Review-Pack',
-      kicker: 'Review',
+      label: 'Prüfpaket',
+      kicker: 'Prüfung',
       description: 'Bündelt Check, Export-Routen, lokale Dateien und offene menschliche Asset-Prüfungen.',
       command: `npm run kosmo:asset-review-pack -- --library ${libraryPath}`
     },
@@ -3353,28 +3353,28 @@ function assetReviewActions(asset: AssetPreviewRecord): AssetReviewAction[] {
       id: 'review-decision',
       label: 'Freigabe-Draft',
       kicker: 'Gate',
-      description: 'Schreibt eine lokale menschliche Freigabe-Evidenz für ein Asset, ohne Library, Blender, ArchiCAD oder Public-Gates zu verändern.',
+      description: 'Schreibt eine lokale menschliche Freigabe-Evidenz für ein Asset, ohne Bibliothek, Blender, ArchiCAD oder Öffentlichkeits-Gates zu verändern.',
       command: `npm run kosmo:asset-review-decision -- --library ${libraryPath} --asset ${asset.id} --route ${decisionRoutes[0]} --decision approve-local --confirm-human-review --reviewer "REPLACE_WITH_REVIEWER_NAME"`
     },
     {
       id: 'review-certificate',
-      label: 'Review-Zertifikat',
+      label: 'Prüfzertifikat',
       kicker: 'Cert',
-      description: 'Bündelt lokale Freigabe, Human Session, Smoke und Public-Gate als Zertifikat für Sandbox-Tests. Keine Veröffentlichung.',
+      description: 'Bündelt lokale Freigabe, menschliche Prüfsession, Smoke-Test und Öffentlichkeits-Gate als Zertifikat für Sandbox-Tests. Keine Veröffentlichung.',
       command: `npm run kosmo:asset-review-certificate -- --library ${libraryPath} --asset ${asset.id} --route ${decisionRoutes[0]}`
     },
     {
       id: 'certificate-smoke',
       label: 'Cert Smoke',
       kicker: 'QA',
-      description: 'Testet den Zertifikat-Gate mit temporärer Freigabe und räumt die Entscheid-/Zertifikatsdateien danach wieder weg.',
+      description: 'Testet das Zertifikat-Gate mit temporärer Freigabe und räumt die Entscheid-/Zertifikatsdateien danach wieder weg.',
       command: `npm run kosmo:asset-certificate-smoke -- --library ${libraryPath} --asset ${asset.id} --route ${decisionRoutes[0]}`
     },
     {
       id: 'promotion-guard',
       label: 'Promotion Guard',
-      kicker: 'Safe',
-      description: 'Prüft, dass keine Asset-Promotion, kein Upload und kein Public-Gate ohne eigene Rechte-/Owner-Prüfung möglich ist.',
+      kicker: 'Sicher',
+      description: 'Prüft, dass keine Asset-Promotion, kein Upload und kein Öffentlichkeits-Gate ohne eigene Rechte-/Owner-Prüfung möglich ist.',
       command: `npm run kosmo:asset-promotion-guard -- --library ${libraryPath}`
     }
   ];
@@ -3389,7 +3389,7 @@ function assetReviewActions(asset: AssetPreviewRecord): AssetReviewAction[] {
       id: 'blender-sandbox',
       label: 'Blender Sandbox',
       kicker: 'BPy',
-      description: 'Erzeugt eine Blender-Sandbox-Python-Datei nach lokaler Freigabe und Smoke-Test. Nur für kopierte Sandbox-Dateien.',
+      description: 'Erzeugt eine Blender-Sandbox-Python-Datei nach lokaler Freigabe und Smoke-Test. Nur für kopierte Testdateien.',
       command: `npm run kosmo:asset-blender-sandbox -- --library ${libraryPath} --asset ${asset.id} --route blender`
     });
   }
@@ -3399,7 +3399,7 @@ function assetReviewActions(asset: AssetPreviewRecord): AssetReviewAction[] {
       id: 'archicad-sandbox',
       label: 'ArchiCAD Sandbox',
       kicker: 'AC',
-      description: 'Erzeugt einen ArchiCAD-Sandbox-Schedule nach lokaler Freigabe und Smoke-Test. Nur für manuelle Attribut-/Layer-Prüfung.',
+      description: 'Erzeugt einen ArchiCAD-Sandbox-Schedule nach lokaler Freigabe und Smoke-Test. Nur für manuelle Attribut- und Layerprüfung.',
       command: `npm run kosmo:asset-archicad-sandbox -- --library ${libraryPath} --asset ${asset.id} --route archicad`
     });
   }
@@ -3438,7 +3438,7 @@ function assetReviewActions(asset: AssetPreviewRecord): AssetReviewAction[] {
     id: 'brain-doctor',
     label: 'Brain prüfen',
     kicker: 'Brain',
-    description: 'Prüft die lokale Tool-Registry und meldet fehlende Review-Artefakte, ohne etwas zu veröffentlichen.',
+    description: 'Prüft die lokale Tool-Registry und meldet fehlende Prüfarbeitsstände, ohne etwas zu veröffentlichen.',
     command: 'npm run brain:doctor'
   });
 
@@ -3510,7 +3510,37 @@ function generatedProfileMetric(profile: GeneratedAssetProfile) {
 }
 
 function formatAssetValue(value: string) {
-  return value.replace(/_/g, ' ');
+  const labels: Record<string, string> = {
+    own_work: 'eigene Arbeit',
+    public_domain: 'gemeinfrei',
+    licensed: 'lizenziert',
+    needs_review: 'Prüfung offen',
+    needs_more_evidence: 'mehr Evidenz nötig',
+    local_review_only: 'nur lokale Prüfung',
+    local_review_decision_recorded: 'lokaler Entscheid verbucht',
+    asset_decision_ledger_open: 'Entscheidbuch offen',
+    asset_local_review_certified: 'lokal zertifiziert',
+    missing_certificate: 'Zertifikat fehlt',
+    blocked: 'gesperrt',
+    ready: 'bereit',
+    approved: 'freigegeben',
+    rejected: 'abgelehnt',
+    review: 'Prüfung',
+    private: 'privat',
+    recorded: 'verbucht',
+    missing: 'fehlt',
+    approve_local: 'lokal freigeben',
+    generate_local_evidence: 'lokale Evidenz erzeugen',
+    manual_review_required: 'manuelle Prüfung nötig',
+    web_public_blocked: 'Web öffentlich gesperrt',
+    blender_review_only: 'Blender nur zur Prüfung',
+    archicad_review_only: 'ArchiCAD nur zur Prüfung',
+    local_only: 'nur lokal',
+    local_file: 'lokale Datei',
+    planned: 'geplant',
+    exists: 'vorhanden'
+  };
+  return labels[value] ?? value.replace(/_/g, ' ');
 }
 
 function WormholeBirthOverlay() {
@@ -4385,7 +4415,7 @@ function DatabaseBookLibraryView({
         <div>
           <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#f5b342]">Buchbibliothek / Privatarchiv</div>
           <p className="mt-1 text-[10px] leading-snug text-[#f7f7f4]/78">
-            Private Buchscans, Handyfotos und PDFs werden zu lokalen Review-Paketen. Keine Veröffentlichung, keine Cloud, keine Datenbank-Schreibvorgänge.
+            Private Buchscans, Handyfotos und PDFs werden zu lokalen Prüfpaketen. Keine Veröffentlichung, keine Cloud, keine Datenbank-Schreibvorgänge.
           </p>
         </div>
         <span>{bookReady ? 'bereit' : 'geplant'}</span>
