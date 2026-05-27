@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-27T20:17:45.400Z",
+  "generated_at": "2026-05-27T20:29:36.102Z",
   "generator": "kosmo-asset-full-review",
   "library_path": "examples/kosmo-assets/kosmo-asset-demo/library.json",
   "library_id": "kosmo-asset-demo",
@@ -37,10 +37,10 @@
     "missing_decision_count": 2,
     "sandbox_ready_count": 0,
     "certificate_ready_count": 0,
-    "certificate_count": 0,
+    "certificate_count": 1,
     "certificate_smoke_status": "asset_certificate_smoke_passed",
     "promotion_guard_status": "asset_promotion_guard_blocked",
-    "promotion_guard_blockers": 6,
+    "promotion_guard_blockers": 7,
     "promotion_allowed": false
   },
   "outputs": {
@@ -175,7 +175,7 @@
       "report_path": "examples/kosmo-assets/kosmo-asset-demo/review/asset-promotion-guard.generated.json",
       "report_exists": true,
       "report_status": "asset_promotion_guard_blocked",
-      "stdout_tail": "> node scripts/kosmo-asset-promotion-guard.mjs --library examples/kosmo-assets/kosmo-asset-demo/library.json\n\nKosmoAsset promotion guard\nLibrary: examples/kosmo-assets/kosmo-asset-demo/library.json\nStatus: asset_promotion_guard_blocked\nPromotion allowed: no\nBlockers: 6\nWrote: examples/kosmo-assets/kosmo-asset-demo/review/asset-promotion-guard.generated.md",
+      "stdout_tail": "> node scripts/kosmo-asset-promotion-guard.mjs --library examples/kosmo-assets/kosmo-asset-demo/library.json\n\nKosmoAsset promotion guard\nLibrary: examples/kosmo-assets/kosmo-asset-demo/library.json\nStatus: asset_promotion_guard_blocked\nPromotion allowed: no\nBlockers: 7\nWrote: examples/kosmo-assets/kosmo-asset-demo/review/asset-promotion-guard.generated.md",
       "stderr_tail": ""
     }
   ],
@@ -215,7 +215,7 @@
       "review_priority": "high",
       "primary_review_route": "blender",
       "decision_status": "needs_review_recorded",
-      "certificate_status": null,
+      "certificate_status": "asset_local_review_certificate_blocked",
       "sandbox_ready": false
     },
     {

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-27T20:17:44.832Z",
+  "generated_at": "2026-05-27T20:29:35.687Z",
   "generator": "kosmo-asset-certificate-smoke",
   "library_path": "examples/kosmo-assets/kosmo-asset-demo/library.json",
   "asset_id": "warm-concrete-material-001",
@@ -58,7 +58,7 @@
   "evidence_snapshot": {
     "decision_status": "local_review_decision_recorded",
     "certificate_status": "asset_local_review_certified",
-    "certificate_id": "kosmo-asset-demo:warm-concrete-material-001:blender:2026-05-27T20:17:42.393Z",
+    "certificate_id": "kosmo-asset-demo:warm-concrete-material-001:blender:2026-05-27T20:29:34.307Z",
     "ledger_status_with_certificate": "asset_decision_ledger_open",
     "ledger_certificate_status": "asset_local_review_certified"
   },

@@ -1,0 +1,161 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-05-27T20:27:49.403Z",
+  "generator": "kosmo-asset-review-certificate",
+  "library_path": "examples/kosmo-assets/kosmo-asset-demo/library.json",
+  "library_id": "kosmo-asset-demo",
+  "asset_id": "warm-concrete-material-001",
+  "asset_title": "Warm Concrete Study Material",
+  "route": "blender",
+  "certificate_title": "Architecture Kosmos Local Quality Certificate V1",
+  "status": "asset_local_review_certificate_blocked",
+  "certificate_id": "kosmo-asset-demo:warm-concrete-material-001:blender:2026-05-27T20:27:49.061Z",
+  "certificate_scope": "local_review_only",
+  "quality_scope": {
+    "human_architecture_review": true,
+    "source_and_rights_review": true,
+    "ai_slop_quality_gate": true,
+    "local_sandbox_evidence_only": true,
+    "public_release_approval": false,
+    "official_external_certification": false
+  },
+  "quality_statement": [
+    "Architecture Kosmos local quality evidence confirms that a named human reviewer checked the asset route for local sandbox use.",
+    "It is not an official external certification, not a legal rights opinion and not a public release approval.",
+    "Public use still requires a separate owner, source, rights and publication review."
+  ],
+  "policy": {
+    "local_review_evidence_only": true,
+    "no_public_use_approval": true,
+    "no_uploads": true,
+    "no_public_downloads": true,
+    "no_d1_writes": true,
+    "no_r2_writes": true,
+    "no_library_mutation": true,
+    "no_blender_scene_write": true,
+    "no_archicad_project_write": true
+  },
+  "summary": {
+    "check_count": 15,
+    "passed_checks": 13,
+    "failed_checks": 2,
+    "public_gate": "blocked",
+    "rights_status": "generated_needs_review",
+    "local_ready": true,
+    "human_review_session_status": "asset_human_review_session_open"
+  },
+  "evidence": {
+    "decision": {
+      "path": "examples/kosmo-assets/kosmo-asset-demo/review/asset-review-decision-warm-concrete-material-001-blender.generated.json",
+      "status": "local_review_decision_recorded",
+      "decision": "needs-review",
+      "route": "blender",
+      "reviewer": null,
+      "generated_at": "2026-05-27T20:27:49.061Z"
+    },
+    "human_session": {
+      "path": "examples/kosmo-assets/kosmo-asset-demo/review/asset-human-review-session.generated.json",
+      "review_priority": "high",
+      "primary_route": "blender",
+      "human_review_status": "open"
+    },
+    "handoff_smoke": {
+      "path": "examples/kosmo-assets/kosmo-asset-demo/review/asset-handoff-smoke.generated.json",
+      "status": "handoff_smoke_passed",
+      "failure_count": 0
+    },
+    "route_profile": {
+      "source_file": "examples/kosmo-assets/kosmo-asset-demo/assets/materials/warm-concrete.material.json",
+      "approved_for_exchange": false,
+      "exchange_mode": "create_material_from_parameters",
+      "layer": null,
+      "surface": null
+    }
+  },
+  "checks": [
+    {
+      "id": "human_session_available",
+      "status": "passed",
+      "label": "Human-review session exists."
+    },
+    {
+      "id": "human_session_asset_row",
+      "status": "passed",
+      "label": "Human-review session contains this asset."
+    },
+    {
+      "id": "decision_exists",
+      "status": "passed",
+      "label": "Explicit local review decision exists."
+    },
+    {
+      "id": "decision_status_recorded",
+      "status": "passed",
+      "label": "Decision status is local_review_decision_recorded."
+    },
+    {
+      "id": "decision_is_local_approval",
+      "status": "failed",
+      "label": "Decision is needs-review."
+    },
+    {
+      "id": "decision_named_reviewer",
+      "status": "failed",
+      "label": "Decision reviewer is missing."
+    },
+    {
+      "id": "decision_route_matches",
+      "status": "passed",
+      "label": "Decision route is blender, expected blender."
+    },
+    {
+      "id": "review_pack_local_ready",
+      "status": "passed",
+      "label": "Review-pack marks the asset as local-ready."
+    },
+    {
+      "id": "handoff_smoke_passed",
+      "status": "passed",
+      "label": "Handoff smoke status is handoff_smoke_passed."
+    },
+    {
+      "id": "handoff_route_profile",
+      "status": "passed",
+      "label": "Handoff bundle contains a blender profile."
+    },
+    {
+      "id": "source_file_exists",
+      "status": "passed",
+      "label": "Route source file exists locally."
+    },
+    {
+      "id": "public_gate_blocked",
+      "status": "passed",
+      "label": "Public gate remains blocked."
+    },
+    {
+      "id": "no_uploads",
+      "status": "passed",
+      "label": "Decision records no uploads."
+    },
+    {
+      "id": "no_public_downloads",
+      "status": "passed",
+      "label": "Decision records no public downloads."
+    },
+    {
+      "id": "no_library_mutation",
+      "status": "passed",
+      "label": "Decision records no library mutation."
+    }
+  ],
+  "outputs": {
+    "certificate_json": "examples/kosmo-assets/kosmo-asset-demo/review/asset-review-certificate-warm-concrete-material-001-blender.generated.json",
+    "certificate_markdown": "examples/kosmo-assets/kosmo-asset-demo/review/asset-review-certificate-warm-concrete-material-001-blender.generated.md",
+    "source_file": "examples/kosmo-assets/kosmo-asset-demo/assets/materials/warm-concrete.material.json",
+    "decision": "examples/kosmo-assets/kosmo-asset-demo/review/asset-review-decision-warm-concrete-material-001-blender.generated.json"
+  },
+  "next_actions": [
+    "Resolve failed checks before treating this asset/route as locally certified."
+  ]
+}

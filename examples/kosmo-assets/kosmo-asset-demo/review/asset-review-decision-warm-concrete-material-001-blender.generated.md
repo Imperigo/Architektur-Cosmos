@@ -1,7 +1,7 @@
 # KosmoAsset Review Decision
 
 Asset: Warm Concrete Study Material (`warm-concrete-material-001`)
-Generated: 2026-05-27T19:54:37.395Z
+Generated: 2026-05-27T20:27:49.061Z
 Decision: `needs-review`
 Route: `blender`
 Reviewer: -

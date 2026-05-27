@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-27T20:17:44.779Z",
+  "generated_at": "2026-05-27T20:29:35.665Z",
   "generator": "kosmo-asset-decision-ledger",
   "library_path": "examples/kosmo-assets/kosmo-asset-demo/library.json",
   "library_id": "kosmo-asset-demo",
@@ -24,7 +24,7 @@
     "rejected_count": 0,
     "blocked_decision_count": 0,
     "sandbox_ready_count": 0,
-    "certificate_count": 0,
+    "certificate_count": 1,
     "certificate_ready_count": 0,
     "approved_state_count": 0,
     "blocked_state_count": 0,
@@ -32,7 +32,7 @@
     "needs_more_evidence_state_count": 3,
     "named_reviewer_count": 0,
     "reviewer_blocker_count": 0,
-    "promotion_blocker_count": 6,
+    "promotion_blocker_count": 7,
     "handoff_smoke_passed": true,
     "certificate_ready": false,
     "recommended_next_step": "record_or_defer_explicit_human_decisions"
@@ -100,7 +100,7 @@
         "decision": "needs-review",
         "reviewer": null,
         "status": "local_review_decision_recorded",
-        "generated_at": "2026-05-27T19:54:37.395Z",
+        "generated_at": "2026-05-27T20:27:49.061Z",
         "public_gate_remains_blocked": true,
         "smoke_passed": true,
         "route_available": true,
@@ -110,17 +110,30 @@
         "expected_route": "blender",
         "ledger_note": "Manual review remains open or deferred."
       },
-      "latest_certificate": null,
+      "latest_certificate": {
+        "asset_id": "warm-concrete-material-001",
+        "asset_title": "Warm Concrete Study Material",
+        "route": "blender",
+        "status": "asset_local_review_certificate_blocked",
+        "generated_at": "2026-05-27T20:27:49.403Z",
+        "certificate_id": "kosmo-asset-demo:warm-concrete-material-001:blender:2026-05-27T20:27:49.061Z",
+        "failed_checks": 2,
+        "public_gate": "blocked",
+        "file": "examples/kosmo-assets/kosmo-asset-demo/review/asset-review-certificate-warm-concrete-material-001-blender.generated.json",
+        "markdown": "examples/kosmo-assets/kosmo-asset-demo/review/asset-review-certificate-warm-concrete-material-001-blender.generated.md",
+        "expected_route": "blender"
+      },
       "decision_count": 1,
-      "certificate_count": 0,
+      "certificate_count": 1,
       "reviewer_status": "not_required_for_note",
       "reviewer": null,
-      "certificate_status": "missing_certificate",
+      "certificate_status": "asset_local_review_certificate_blocked",
       "certificate_ready": false,
       "sandbox_ready": false,
       "promotion_blockers": [
         "local_approval_missing",
-        "local_certificate_missing"
+        "local_certificate_missing",
+        "certificate_failed_checks"
       ],
       "next_human_action": "create_local_review_certificate"
     },
