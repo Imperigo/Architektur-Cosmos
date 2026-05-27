@@ -2925,7 +2925,40 @@ body:has(.entry-page) {
   text-align: left;
 }
 
-.database-intake-card:hover {
+.database-intake-card-head {
+  display: flex;
+  min-width: 0;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.database-intake-card-active {
+  border-color: rgb(0 231 255 / 54%);
+  background:
+    radial-gradient(circle at 0% 0%, rgb(0 231 255 / 18%), transparent 48%),
+    rgb(6 23 25 / 84%);
+}
+
+.database-intake-card-dev {
+  border-color: rgb(245 179 66 / 42%);
+  background:
+    radial-gradient(circle at 0% 0%, rgb(245 179 66 / 16%), transparent 46%),
+    rgb(20 12 3 / 72%);
+}
+
+.database-intake-card-planned,
+.database-intake-card-locked {
+  border-style: dashed;
+  opacity: 0.78;
+}
+
+button.database-intake-card:disabled {
+  color: #d9d9d2;
+}
+
+.database-intake-card-active:hover,
+button.database-intake-card:not(:disabled):hover {
   border-color: rgb(0 231 255 / 44%);
   background:
     radial-gradient(circle at 0% 0%, rgb(0 231 255 / 16%), transparent 48%),
@@ -2945,6 +2978,30 @@ body:has(.entry-page) {
   font-size: 9px;
   line-height: 1.35;
   overflow-wrap: anywhere;
+}
+
+.database-intake-modes .database-intake-status {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  border: 1px solid currentColor;
+  color: #9cfff7;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  opacity: 0.86;
+  padding: 3px 5px;
+  text-transform: uppercase;
+}
+
+.database-intake-card-dev .database-intake-status {
+  color: #ffe1a3;
+}
+
+.database-intake-card-planned .database-intake-status,
+.database-intake-card-locked .database-intake-status {
+  color: #b8b8b2;
 }
 
 .database-book-hero {
@@ -3521,6 +3578,12 @@ body:has(.entry-page) {
   border: 1px solid rgb(247 247 244 / 10%);
   background: rgb(5 5 5 / 42%);
   padding: 8px;
+}
+
+.database-tab-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
 }
 
 .cosmos-moving .entry-node-label,
@@ -6518,6 +6581,11 @@ html[data-cosmos-browser="opera"] .relation-strand {
   .database-tab {
     min-height: 58px;
     padding: 9px 10px;
+  }
+
+  .database-tab-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 7px;
   }
 
   .database-top-workflow {

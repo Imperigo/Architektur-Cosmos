@@ -2463,7 +2463,7 @@ function ModuleHub({ onOpenKosmoData, onOpenKosmoAsset }: { onOpenKosmoData: () 
             ))}
           </ul>
           <button type="button" onClick={() => setSelectedModuleId(null)}>
-            Vorschau schliessen
+            Vorschau schließen
           </button>
         </aside>
       ) : null}
@@ -4225,25 +4225,35 @@ function BrainMiniMetric({ label, value }: { label: string; value: string | numb
 function DatabaseIntakeModes({ developerMode, onSelectDev }: { developerMode: boolean; onSelectDev: () => void }) {
   return (
     <div className="database-intake-modes mb-3">
-      <div className="database-intake-card">
-        <strong>Gast-Antrag</strong>
+      <div className="database-intake-card database-intake-card-active" aria-current="true">
+        <div className="database-intake-card-head">
+          <strong>Gast-Antrag</strong>
+          <span className="database-intake-status">Aktiv</span>
+        </div>
         <span>Projektinformationen sammeln und als public-safe Vorschlag vorbereiten.</span>
       </div>
-      <div className="database-intake-card">
-        <strong>Nutzerkonto</strong>
+      <div className="database-intake-card database-intake-card-planned" aria-disabled="true">
+        <div className="database-intake-card-head">
+          <strong>Nutzerkonto</strong>
+          <span className="database-intake-status">Geplant</span>
+        </div>
         <span>Geplant: private Bibliothek mit lokalem Projektordner und Datenblatt-Download.</span>
       </div>
       <button
         type="button"
-        className="database-intake-card"
+        className={`database-intake-card ${developerMode ? 'database-intake-card-dev' : 'database-intake-card-locked'}`}
         data-database-action="dev"
+        disabled={!developerMode}
         onPointerDown={(event) => {
           event.stopPropagation();
           onSelectDev();
         }}
         onClick={(event) => event.stopPropagation()}
       >
-        <strong>{developerMode ? 'Dev starten' : 'Dev-Modus'}</strong>
+        <div className="database-intake-card-head">
+          <strong>{developerMode ? 'Dev starten' : 'Dev-Modus'}</strong>
+          <span className="database-intake-status">{developerMode ? 'Bereit' : 'Gesperrt'}</span>
+        </div>
         <span>Geschützte Vollerfassung für private Recherche; unter Suche mit Code freischalten.</span>
       </button>
     </div>
@@ -4378,7 +4388,7 @@ function DatabaseTabGroup({
   return (
     <div>
       <div className="mb-1.5 text-[8px] uppercase tracking-[0.18em] text-[#00e7ff]/80">{title}</div>
-      <div className="grid grid-cols-3 gap-1.5">
+      <div className="database-tab-grid">
         {tabs.map((tab) => (
           <button
             key={tab.id}
@@ -5023,7 +5033,7 @@ function SnappedEntryOverlay({ entry, onDismiss, onSelectFilter }: { entry: Entr
         transform={`translate(${cardX + cardWidth - closeWidth} ${actionY})`}
         role="button"
         tabIndex={0}
-        aria-label="Projekt schliessen"
+        aria-label="Projekt schließen"
         onClick={onDismiss}
         onKeyDown={(event) => {
           if (event.key !== 'Enter' && event.key !== ' ') return;

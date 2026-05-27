@@ -261,7 +261,7 @@ export function ProjectSearch({
       onTouchMove={(event) => event.stopPropagation()}
       onClick={(event) => event.stopPropagation()}
     >
-      <button type="button" className="project-search-trigger cosmos-trigger" onClick={toggleSearch} aria-expanded={isOpen} aria-label={isOpen ? 'Suche schliessen' : 'Suche öffnen'}>
+      <button type="button" className="project-search-trigger cosmos-trigger" onClick={toggleSearch} aria-expanded={isOpen} aria-label={isOpen ? 'Suche schließen' : 'Suche öffnen'}>
         <span className="project-search-mark" aria-hidden="true" />
         <span>Suche</span>
       </button>
@@ -272,7 +272,7 @@ export function ProjectSearch({
           className={`project-dev-trigger cosmos-trigger ${isDeveloperMode ? 'project-dev-trigger-active' : ''}`}
           onClick={toggleDevGate}
           aria-expanded={isDevOpen}
-          aria-label={isDevOpen ? 'Dev Access schliessen' : 'Dev Access öffnen'}
+          aria-label={isDevOpen ? 'Dev Access schließen' : 'Dev Access öffnen'}
         >
           <span className="project-dev-mark" aria-hidden="true" />
           <span>{isDeveloperMode ? 'Dev on' : 'Dev'}</span>
