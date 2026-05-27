@@ -342,7 +342,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   const hoveredEntry = useMemo(() => displayNodes.find((node) => node.entry.id === hoveredEntryId)?.entry ?? null, [displayNodes, hoveredEntryId]);
   const cursorVisible = !ui.isCoarsePointer;
   const fastNodeRender = performanceTier === 'reduced';
-  const relationOverlayActive = Boolean(showRelations || (!isTraveling && (selectedEntry || (performanceTier !== 'reduced' && performanceTier === 'full' && hoveredEntry))));
+  const relationOverlayActive = Boolean(showRelations || (!isTraveling && (selectedEntry || (performanceTier !== 'reduced' && hoveredEntry))));
   const backgroundStyle = {
     filter: 'none',
     opacity: selectedEntry ? 0.48 : introState === 'intro' ? 0.06 : introState === 'hub' || introState === 'asset' ? 0.1 : introState === 'launching' ? 0.82 : 1,
