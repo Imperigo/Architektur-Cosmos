@@ -1,26 +1,32 @@
-# Morgenplan 2026-05-28: KosmoAsset vom Review-Gate zum ersten echten Asset-Test
+# Naechster Einstieg: KosmoAsset, KosmoData und Website-Polish
 
 ## Ausgangspunkt
 
-Stand nach Abendbatch 2026-05-27:
+Stand nach Spaetbatch 2026-05-27:
 
 ```text
-010c41f Clarify KosmoAsset review gates
+5566d20 Record Warm Concrete Blender run
+7d8e2a0 Polish KosmoAsset exchange labels
 ```
 
-`main` ist lokal sauber, mit `origin/main` synchron und auf
-`architekturkosmos.ch` angekommen. Der Live-Smoke hat bestaetigt, dass der
-ausgelieferte Atlas-Bundle die neue `Asset-Ampel` enthaelt.
+`main` war vor dem letzten Sicherungspush sauber bis auf den lokalen
+KosmoAsset-Label-Commit `7d8e2a0`. Beim naechsten Einstieg zuerst pruefen, ob
+dieser Commit auf `origin/main` angekommen ist.
 
-Letzte lokale Gates:
+Letzte gesicherte Richtung:
 
-- `npm run kosmo:asset-full-review -- --library examples/kosmo-assets/kosmo-asset-demo/library.json`: 10/10 passed;
-- `npm run lint`: passed;
-- `npx tsc --noEmit`: passed;
-- `npm run brain:doctor`: 8/8 passed;
-- `npm run ui:audit`: 25/25 checks, 6 bekannte Warnings;
-- `npm run build:fresh`: passed;
-- `git diff --check`: passed.
+- KosmoAsset-Orbit ist live-ready und sichtbar im Hub.
+- Warm Concrete hat eine lokale Blender-Sandbox-Evidenz.
+- KosmoAsset-Reviewwerte werden im Frontend deutlich deutscher formatiert:
+  `Entscheid fehlt`, `KosmoData-Bruecke dokumentiert`, `Massstab, Ursprung und
+  Layer geprueft`, `DXF-Unterlage / Symbol`, `Material aus Parametern`,
+  `GLB als Collection verlinken`.
+- Frischer Live-Smoke mit Cache-Buster zeigte keine alten Rohwerte wie
+  `MISSING DECISION`, `7 ENTITIES` oder `Scale, Origin`.
+- `git diff --check` war sauber.
+- `npm run lint` und `npm run security:check` hingen lokal beim letzten Lauf
+  wieder mit 0% CPU; das wurde als lokales Tooling-Problem notiert, nicht als
+  Produktcode-Fehler.
 
 KosmoAsset ist jetzt besser lesbar:
 
@@ -30,25 +36,27 @@ KosmoAsset ist jetzt besser lesbar:
 - Decision-Ledger und Promotion-Guard zeigen denselben Decision-State;
 - Zertifikat ist als Architecture Kosmos Local Quality Certificate V1
   formuliert, aber klar nur als lokale Review-Evidenz;
-- KosmoData/KosmoAsset-Grenze ist dokumentiert.
+- KosmoData/KosmoAsset-Grenze ist dokumentiert;
+- Export-/Exchange-Routen wirken im UI weniger wie rohe Tool-Ausgaben.
 
 ## Tagesziel
 
-Aus der stabilen Gate-Logik soll ein erster echter lokaler Asset-Test werden.
-Nicht mehr nur Reports lesen, sondern ein Demo-Asset einmal kontrolliert durch
-die lokale Review-Kette fuehren:
+Die naechste Arbeitsphase soll den stabilen KosmoAsset-Stand nutzen und danach
+wieder zur sichtbaren Website-Qualitaet wechseln. Empfohlene Reihenfolge:
 
-1. lokales Asset oeffnen/pruefen;
-2. menschliche Entscheidung bewusst setzen;
-3. lokales Zertifikat erzeugen;
-4. Ledger und Promotion Guard lesen;
-5. Public Gate bleibt trotzdem geschlossen;
-6. temporaere Testartefakte wieder aufraeumen oder bewusst als Demo-Evidenz
-   markieren.
+1. Synchronitaet pruefen: `git status`, `git log`, Live-Cache-Buster.
+2. KosmoAsset schnell visuell testen: Hub -> KosmoAsset, Inspector,
+   Reviewkarten, Exchange-Labels.
+3. Danach einen kleinen Website-Polishblock waehlen:
+   - KosmoData-Projektklicks und Wurmloch-Flackern;
+   - KosmoAsset-Workspace weiter visuell ausbauen;
+   - Mobile/Touch-HUD nochmals ruhiger machen.
+4. Erst danach den naechsten Brain-/Pipeline-Block starten.
 
-Empfohlener Kandidat: `warm-concrete-material-001` ueber Route `blender`, weil
-das Materialprofil den spaeteren Architekturbuero-Workflow gut zeigt, ohne
-echte fremde Texturen oder CAD-Dateien zu riskieren.
+Empfohlener technischer Kandidat bleibt `warm-concrete-material-001` ueber
+Route `blender`, weil dieses Demo-Material den spaeteren Architekturbuero- und
+Blender/ArchiCAD-Workflow gut zeigt, ohne echte fremde Texturen oder CAD-Dateien
+zu riskieren.
 
 ## Start-Check
 
@@ -57,45 +65,44 @@ Direkt beim Einstieg:
 ```bash
 git status --short --branch --ahead-behind
 git log --oneline -5
-npm run kosmo:asset-full-review -- \
-  --library examples/kosmo-assets/kosmo-asset-demo/library.json
+git diff --check
 ```
 
-Dann lesen:
+Dann optional, wenn die lokale Toolchain nicht haengt:
+
+```bash
+npm run kosmo:asset-full-review -- \
+  --library examples/kosmo-assets/kosmo-asset-demo/library.json
+npm run lint
+npm run security:check
+```
+
+Wichtige Dateien:
 
 ```text
 examples/kosmo-assets/kosmo-asset-demo/review/asset-human-review-session.generated.md
 examples/kosmo-assets/kosmo-asset-demo/review/asset-decision-ledger.generated.md
 examples/kosmo-assets/kosmo-asset-demo/review/asset-promotion-guard.generated.md
+examples/kosmo-assets/kosmo-asset-demo/review/asset-blender-sandbox-warm-concrete-material-001.blender-run.generated.md
 docs/kosmo-asset-library.md
 ```
 
 ## Erster Arbeitsschritt
 
-Warm Concrete als lokalen Review-Fall vorbereiten:
-
-```bash
-npm run kosmo:asset-review-decision -- \
-  --library examples/kosmo-assets/kosmo-asset-demo/library.json \
-  --asset warm-concrete-material-001 \
-  --route blender \
-  --decision needs-review
-```
-
-Danach pruefen, ob Ledger und Promotion Guard die Entscheidung sauber als
-`needs_more_evidence` lesen und weiterhin keine Sandbox-/Public-Freigabe
-ableiten.
+Kleiner, sicherer Start: Live-Website mit Cache-Buster oeffnen und in
+KosmoAsset pruefen, ob die Review-/Exchange-Begriffe weiterhin deutsch bleiben.
+Wenn ja, weiter mit einem sichtbaren Website-Bugblock; wenn nein, zuerst
+Bundle/Deploy/Cache pruefen.
 
 ## Danach
 
-Wenn der Needs-Review-Pfad sauber ist:
+Wenn KosmoAsset visuell stabil ist:
 
-- einen expliziten lokalen Approval-Test mit benanntem Reviewer nur als
-  kontrollierte Demo-Evidenz durchspielen;
-- dazu ein lokales Review-Zertifikat erzeugen;
-- Promotion Guard muss weiterhin public-blocked bleiben;
-- entscheiden, ob die Demo-Decision-Dateien als Beispiel im Repo bleiben oder
-  wieder geloescht werden.
+- KosmoData-Projektklicks und Detail-Dossier nochmals testen;
+- Wurmloch-Objektflackern und Sektorfarbzuordnung weiter haerten;
+- KosmoAsset als eigene Asset-Bibliothek visuell ausbauen;
+- Brain-/Pipeline-Schritte erst wieder anfassen, wenn die sichtbare Website
+  ruhig und klicksicher bleibt.
 
 ## Nicht tun
 
