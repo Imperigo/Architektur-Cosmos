@@ -1097,6 +1097,8 @@ body:has(.entry-page) {
 .dossier-close rect,
 .dossier-close text,
 .dossier-reactive-textblock text,
+.dossier-archive-metric rect,
+.dossier-archive-metric text,
 .dossier-filter-chip rect,
 .dossier-filter-chip text {
   transition: opacity 150ms ease, stroke-width 150ms ease, filter 150ms ease, fill 150ms ease, transform 150ms ease;
@@ -1138,9 +1140,15 @@ body:has(.entry-page) {
 
 .dossier-filter-chip:hover text,
 .dossier-filter-chip:focus-visible text,
-.dossier-reactive-textblock:hover text {
+.dossier-reactive-textblock:hover text,
+.dossier-archive-metric:hover text {
   fill: #ffffff;
   filter: drop-shadow(0 0 7px rgb(0 231 255 / 24%));
+}
+
+.dossier-archive-metric:hover rect {
+  opacity: 0.98;
+  filter: drop-shadow(0 0 6px rgb(0 231 255 / 20%));
 }
 
 .detail-card-scanline {

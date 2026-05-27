@@ -36,6 +36,12 @@ export function ProjectDetailCard({ entry, x, y, onSelectFilter }: ProjectDetail
   const filterChips = buildFilterChips({ entry, layerLabel, isDatabasePilot });
   const modelSummary = summaryList(entry.model_assets?.map((model) => model.model_type), 3);
   const analysisSummary = summaryList(entry.analysis_layers?.map((analysis) => analysis.analysis_type), 3);
+  const archiveMetrics = archiveStatusMetrics({
+    sources: databaseProfile?.source_count ?? 0,
+    media: databaseProfile?.media_count ?? sourceAssetCount,
+    models: databaseProfile?.model_count ?? entry.model_assets?.length ?? 0,
+    analysis: databaseProfile?.analysis_count ?? entry.analysis_layers?.length ?? 0
+  });
 
   return (
     <g className="project-detail-card">
@@ -96,22 +102,32 @@ export function ProjectDetailCard({ entry, x, y, onSelectFilter }: ProjectDetail
       {isDatabasePilot ? (
         <g className="detail-database-pilot">
           <text x={x + 184} y={y + 207} fill={accent} fontSize="6.8" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.12em">
-            ARCHIVE STATUS
+            ARCHIVPROFIL
           </text>
-          <rect x={x + 184} y={y + 214} width="150" height="27" fill="#061315" stroke={accent} strokeWidth="0.45" opacity="0.86" />
-          <text x={x + 192} y={y + 225} fill="#f7f7f4" fontSize="6.15" fontFamily="var(--font-sans), system-ui, sans-serif">
-            {ellipsizeText(`${databaseProfile?.status ?? 'draft'} · ${databaseProfile?.source_count ?? 0} sources · ${databaseProfile?.media_count ?? sourceAssetCount} media`, 34)}
+          <rect x={x + 184} y={y + 214} width="150" height="43" fill="#061315" stroke={accent} strokeWidth="0.45" opacity="0.86" />
+          {archiveMetrics.map((metric, index) => {
+            const rowY = y + 225 + index * 8;
+            const barWidth = 52 * metric.ratio;
+            return (
+              <g key={metric.label} className="dossier-archive-metric">
+                <text x={x + 192} y={rowY} fill="#f7f7f4" fontSize="5.65" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.05em">
+                  {metric.label}
+                </text>
+                <rect x={x + 252} y={rowY - 4.4} width="52" height="3.2" rx="1.6" fill="#f7f7f4" opacity="0.11" />
+                <rect x={x + 252} y={rowY - 4.4} width={barWidth} height="3.2" rx="1.6" fill={metric.color ?? accent} opacity="0.78" />
+                <text x={x + 312} y={rowY} fill="#c7c7c2" fontSize="5.55" fontFamily="var(--font-sans), system-ui, sans-serif" textAnchor="end">
+                  {metric.value}
+                </text>
+              </g>
+            );
+          })}
+          <text x={x + 184} y={y + 269} fill={accent} fontSize="6.6" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.1em">
+            3D / ANALYSE
           </text>
-          <text x={x + 192} y={y + 236} fill="#c7c7c2" fontSize="5.95" fontFamily="var(--font-sans), system-ui, sans-serif">
-            {ellipsizeText(`${databaseProfile?.model_count ?? 0} model layers · ${databaseProfile?.analysis_count ?? 0} analysis layers`, 36)}
-          </text>
-          <text x={x + 184} y={y + 251} fill={accent} fontSize="6.6" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.1em">
-            3D / ANALYSIS
-          </text>
-          <text x={x + 184} y={y + 264} fill="#d7d7d0" fontSize="6.15" fontFamily="var(--font-sans), system-ui, sans-serif">
+          <text x={x + 184} y={y + 281} fill="#d7d7d0" fontSize="6.05" fontFamily="var(--font-sans), system-ui, sans-serif">
             {modelSummary}
           </text>
-          <text x={x + 184} y={y + 276} fill="#9c9c96" fontSize="5.95" fontFamily="var(--font-sans), system-ui, sans-serif">
+          <text x={x + 184} y={y + 290} fill="#9c9c96" fontSize="5.75" fontFamily="var(--font-sans), system-ui, sans-serif">
             {analysisSummary}
           </text>
         </g>
@@ -213,6 +229,18 @@ function ellipsizeText(text: string, maxChars: number) {
 
 function readableSvgLine(line: string, index: number, total: number) {
   return index < total - 1 && !line.endsWith('...') ? `${line} ` : line;
+}
+
+function archiveStatusMetrics(values: { sources: number; media: number; models: number; analysis: number }) {
+  return [
+    { label: 'QUELLEN', value: values.sources, max: 6, color: '#00e7ff' },
+    { label: 'MEDIEN', value: values.media, max: 4, color: '#f6d15f' },
+    { label: 'MODELLE', value: values.models, max: 4, color: '#ff5ad8' },
+    { label: 'ANALYSE', value: values.analysis, max: 6, color: '#7dff6a' }
+  ].map((metric) => ({
+    ...metric,
+    ratio: Math.max(0.08, Math.min(1, metric.value / metric.max))
+  }));
 }
 
 function summaryList(items: string[] | undefined, maxItems: number) {
