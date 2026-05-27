@@ -1,0 +1,41 @@
+{
+  "schema_version": "0.1",
+  "generator": "kosmo-asset-blender-sandbox-background-run",
+  "blender_version": "5.1.2",
+  "asset_id": "warm-concrete-material-001",
+  "status": "blender_background_sandbox_passed",
+  "collections": {
+    "KOSMO_SANDBOX": true,
+    "KOSMO_SANDBOX/warm-concrete-material-001": true,
+    "material/base_color": true,
+    "material/roughness": true,
+    "material/metallic": true,
+    "material/specular": true,
+    "blender/principled_bsdf": true,
+    "archicad/material/concrete/review": true
+  },
+  "material": {
+    "name": "KOSMO_MAT_warm-concrete-material-001",
+    "exists": true,
+    "diffuse_color": [
+      0.7200000286102295,
+      0.6200000047683716,
+      0.47999998927116394,
+      1.0
+    ]
+  },
+  "anchor_count": 6,
+  "anchors": [
+    "archicad/material/concrete/review/review_anchor",
+    "blender/principled_bsdf/review_anchor",
+    "material/base_color/review_anchor",
+    "material/metallic/review_anchor",
+    "material/roughness/review_anchor",
+    "material/specular/review_anchor"
+  ],
+  "policy_observed": {
+    "background_factory_startup": true,
+    "no_blend_save_command": true,
+    "no_uploads": true
+  }
+}
