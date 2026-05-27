@@ -1,7 +1,7 @@
 # KosmoAsset Decision Ledger
 
 Library: `kosmo-asset-demo`
-Generated: 2026-05-27T11:49:06.178Z
+Generated: 2026-05-27T13:54:53.903Z
 Status: `asset_decision_ledger_open`
 
 Local audit ledger. This file reads decision evidence only; it does not create approvals, mutate assets, upload, publish, write D1/R2 or open public gates.
@@ -16,6 +16,10 @@ Local audit ledger. This file reads decision evidence only; it does not create a
 - public blocks: 0
 - rejected: 0
 - blocked decision files: 0
+- state approved: 0
+- state blocked: 0
+- state rejected: 0
+- state needs more evidence: 3
 - sandbox ready: 0
 - certificates: 0/0
 - named reviewers: 0
@@ -26,11 +30,11 @@ Local audit ledger. This file reads decision evidence only; it does not create a
 
 ## Expected Rows
 
-| Asset | Route | Ledger Status | Decision | Reviewer Gate | Certificate | Sandbox | Blockers |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| Kosmo Axis Marker | archicad | missing_decision | - | missing_decision | missing_certificate | no | decision_missing, local_certificate_missing |
-| Warm Concrete Study Material | blender | missing_decision | - | missing_decision | missing_certificate | no | decision_missing, local_certificate_missing |
-| Generic Column GLB Slot | blender | missing_decision | - | missing_decision | missing_certificate | no | decision_missing, local_certificate_missing |
+| Asset | Route | Decision State | Ledger Status | Decision | Reviewer Gate | Certificate | Sandbox | Blockers |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Kosmo Axis Marker | archicad | needs_more_evidence | missing_decision | - | missing_decision | missing_certificate | no | decision_missing, local_certificate_missing |
+| Warm Concrete Study Material | blender | needs_more_evidence | missing_decision | - | missing_decision | missing_certificate | no | decision_missing, local_certificate_missing |
+| Generic Column GLB Slot | blender | needs_more_evidence | missing_decision | - | missing_decision | missing_certificate | no | decision_missing, local_certificate_missing |
 
 ## Human Gate Detail
 
@@ -38,6 +42,7 @@ Local audit ledger. This file reads decision evidence only; it does not create a
 
 - asset id: `axis-marker-svg-001`
 - route: `archicad`
+- decision state: `needs_more_evidence` (needs more human evidence)
 - reviewer: -
 - reviewer gate: `missing_decision`
 - certificate: `missing_certificate`
@@ -49,6 +54,7 @@ Local audit ledger. This file reads decision evidence only; it does not create a
 
 - asset id: `warm-concrete-material-001`
 - route: `blender`
+- decision state: `needs_more_evidence` (needs more human evidence)
 - reviewer: -
 - reviewer gate: `missing_decision`
 - certificate: `missing_certificate`
@@ -60,6 +66,7 @@ Local audit ledger. This file reads decision evidence only; it does not create a
 
 - asset id: `generic-column-glb-001`
 - route: `blender`
+- decision state: `needs_more_evidence` (needs more human evidence)
 - reviewer: -
 - reviewer gate: `missing_decision`
 - certificate: `missing_certificate`

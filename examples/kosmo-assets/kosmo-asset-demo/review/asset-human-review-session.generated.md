@@ -1,7 +1,7 @@
 # KosmoAsset Human Review Session
 
 Library: `kosmo-asset-demo`
-Generated: 2026-05-27T11:49:05.036Z
+Generated: 2026-05-27T13:54:52.855Z
 Status: `asset_human_review_session_open`
 
 Editable local human-review session. This file does not approve assets, does not certify quality, does not upload, publish, write D1/R2 or open public gates.
@@ -21,6 +21,15 @@ Editable local human-review session. This file does not approve assets, does not
 
 - status: `not_certified`
 - note: This session is evidence for later Architecture Kosmos quality certification, but it does not certify the asset yet.
+
+## Decision States
+
+| State | Command | Meaning | Guard |
+| --- | --- | --- | --- |
+| approved | `approve-local` | A named human reviewer accepted this asset/route for local sandbox evidence only. | Public gate stays blocked and a local review certificate is still required before sandbox-ready status. |
+| needs_more_evidence | `needs-review` | The asset remains in human review because source, rights, file, scale, layer or quality checks are not complete. | No sandbox, public gate or publication can be inferred from this note. |
+| blocked | `block-public` | The reviewer explicitly keeps web/download/R2 release closed. | Local metadata may remain visible for review; public use needs a separate rights and owner review. |
+| rejected | `reject` | The asset/route is not acceptable for exchange workflows. | Keep it out of Blender, ArchiCAD and public promotion paths until a new review replaces this decision. |
 
 ## Review Rows
 

@@ -1,7 +1,7 @@
 # KosmoAsset Promotion Guard
 
 Library: `kosmo-asset-demo`
-Generated: 2026-05-27T11:49:06.396Z
+Generated: 2026-05-27T13:54:54.095Z
 Status: `asset_promotion_guard_blocked`
 
 Promotion guard. This report does not promote assets, upload files, write D1/R2, open public downloads or mutate the library.
@@ -25,17 +25,18 @@ Promotion guard. This report does not promote assets, upload files, write D1/R2,
 
 ## Assets
 
-| Asset | Decision | Reviewer Gate | Certificate | Sandbox | Public Gate | Promotion | Blockers |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| Kosmo Axis Marker | missing_decision | missing_decision | missing_certificate | no | blocked | blocked | decision_missing, local_certificate_missing |
-| Warm Concrete Study Material | missing_decision | missing_decision | missing_certificate | no | blocked | blocked | decision_missing, local_certificate_missing |
-| Generic Column GLB Slot | missing_decision | missing_decision | missing_certificate | no | blocked | blocked | decision_missing, local_certificate_missing |
+| Asset | Decision State | Decision | Reviewer Gate | Certificate | Sandbox | Public Gate | Promotion | Blockers |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Kosmo Axis Marker | needs_more_evidence | missing_decision | missing_decision | missing_certificate | no | blocked | blocked | decision_missing, local_certificate_missing |
+| Warm Concrete Study Material | needs_more_evidence | missing_decision | missing_decision | missing_certificate | no | blocked | blocked | decision_missing, local_certificate_missing |
+| Generic Column GLB Slot | needs_more_evidence | missing_decision | missing_decision | missing_certificate | no | blocked | blocked | decision_missing, local_certificate_missing |
 
 ## Human Gate Detail
 
 ### Kosmo Axis Marker
 
 - asset id: `axis-marker-svg-001`
+- decision state: `needs_more_evidence` (needs more human evidence)
 - reviewer: -
 - reviewer gate: `missing_decision`
 - certificate: `missing_certificate`
@@ -45,6 +46,7 @@ Promotion guard. This report does not promote assets, upload files, write D1/R2,
 ### Warm Concrete Study Material
 
 - asset id: `warm-concrete-material-001`
+- decision state: `needs_more_evidence` (needs more human evidence)
 - reviewer: -
 - reviewer gate: `missing_decision`
 - certificate: `missing_certificate`
@@ -54,6 +56,7 @@ Promotion guard. This report does not promote assets, upload files, write D1/R2,
 ### Generic Column GLB Slot
 
 - asset id: `generic-column-glb-001`
+- decision state: `needs_more_evidence` (needs more human evidence)
 - reviewer: -
 - reviewer gate: `missing_decision`
 - certificate: `missing_certificate`

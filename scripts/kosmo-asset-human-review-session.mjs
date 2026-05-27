@@ -102,6 +102,7 @@ function buildSession({ library, reviewPack, exportPlan, exchangeProfile, handof
       handoff_bundle: fileStatus(resolve(libraryRoot, 'review/asset-handoff-bundle.generated.json')),
       handoff_smoke: fileStatus(resolve(libraryRoot, 'review/asset-handoff-smoke.generated.json'))
     },
+    decision_taxonomy: decisionTaxonomy(),
     certificate_seed: {
       status: 'not_certified',
       note: 'This session is evidence for later Architecture Kosmos quality certification, but it does not certify the asset yet.',
@@ -172,6 +173,7 @@ function sessionAssetRow({ asset, review, exportPlan, exchange, handoff, handoff
     human_session: {
       reviewer: null,
       reviewed_at: null,
+      proposed_state: humanReviewStatus === 'open' ? 'needs_more_evidence' : 'approved',
       proposed_decision: humanReviewStatus === 'open' ? 'needs-review' : 'no_action',
       final_decision_recorded: false,
       notes: '',
@@ -200,23 +202,60 @@ function decisionOptions({ asset, primaryRoute, publicReady }) {
   return [
     {
       decision: 'needs-review',
+      state: 'needs_more_evidence',
       when: 'default while the human checklist is still open',
       effect: 'records a local note only; no approval and no public use'
     },
     {
       decision: 'approve-local',
+      state: 'approved',
       when: `only after a human reviewer inspected ${asset.title} for route ${primaryRoute}`,
       effect: 'records local route evidence; still no public gate and no upload'
     },
     {
       decision: 'block-public',
+      state: 'blocked',
       when: publicReady ? 'if public release should remain blocked despite local readiness' : 'default for generated or unclear rights',
       effect: 'keeps web/download/R2 gates closed'
     },
     {
       decision: 'reject',
+      state: 'rejected',
       when: 'if quality, rights, source basis or export mapping are not acceptable',
       effect: 'keeps the asset out of exchange workflows'
+    }
+  ];
+}
+
+function decisionTaxonomy() {
+  return [
+    {
+      state: 'approved',
+      command_decision: 'approve-local',
+      label: 'Local human approval recorded',
+      meaning: 'A named human reviewer accepted this asset/route for local sandbox evidence only.',
+      guard: 'Public gate stays blocked and a local review certificate is still required before sandbox-ready status.'
+    },
+    {
+      state: 'needs_more_evidence',
+      command_decision: 'needs-review',
+      label: 'Needs more evidence',
+      meaning: 'The asset remains in human review because source, rights, file, scale, layer or quality checks are not complete.',
+      guard: 'No sandbox, public gate or publication can be inferred from this note.'
+    },
+    {
+      state: 'blocked',
+      command_decision: 'block-public',
+      label: 'Public use blocked',
+      meaning: 'The reviewer explicitly keeps web/download/R2 release closed.',
+      guard: 'Local metadata may remain visible for review; public use needs a separate rights and owner review.'
+    },
+    {
+      state: 'rejected',
+      command_decision: 'reject',
+      label: 'Rejected for exchange use',
+      meaning: 'The asset/route is not acceptable for exchange workflows.',
+      guard: 'Keep it out of Blender, ArchiCAD and public promotion paths until a new review replaces this decision.'
     }
   ];
 }
@@ -311,11 +350,23 @@ function renderMarkdown(session) {
     `- status: \`${session.certificate_seed.status}\``,
     `- note: ${session.certificate_seed.note}`,
     '',
+    '## Decision States',
+    '',
+    '| State | Command | Meaning | Guard |',
+    '| --- | --- | --- | --- |'
+  ];
+
+  for (const item of session.decision_taxonomy) {
+    lines.push(`| ${escapePipe(item.state)} | \`${item.command_decision}\` | ${escapePipe(item.meaning)} | ${escapePipe(item.guard)} |`);
+  }
+
+  lines.push(
+    '',
     '## Review Rows',
     '',
     '| Asset | Priority | Human Review | Route | Rights | Suggested Decision | Blockers |',
     '| --- | --- | --- | --- | --- | --- | --- |'
-  ];
+  );
 
   for (const asset of session.assets) {
     lines.push(`| ${escapePipe(asset.title)} | ${asset.review_priority} | ${asset.human_review_status} | ${asset.primary_route} | ${escapePipe(asset.rights_status)} | ${escapePipe(asset.suggested_decision)} | ${escapePipe(asset.blockers.join(', ') || '-')} |`);

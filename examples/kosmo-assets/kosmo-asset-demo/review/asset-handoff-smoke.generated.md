@@ -1,7 +1,7 @@
 # KosmoAsset Handoff Smoke
 
 Library: `examples/kosmo-assets/kosmo-asset-demo/library.json`
-Generated: 2026-05-27T11:49:04.858Z
+Generated: 2026-05-27T13:54:52.679Z
 Status: `handoff_smoke_passed`
 
 Review-only. This smoke checks generated handoff files and does not import assets, write project files, upload or publish anything.

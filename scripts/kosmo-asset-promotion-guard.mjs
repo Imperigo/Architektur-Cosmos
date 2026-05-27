@@ -153,6 +153,8 @@ function guardRow({ asset, review, ledger, handoff }) {
     local_ready: review?.local_ready === true,
     public_ready: review?.public_ready === true,
     decision_status: ledger?.ledger_status || 'missing_ledger',
+    human_decision_state: ledger?.human_decision_state || 'needs_more_evidence',
+    human_decision_label: ledger?.human_decision_label || 'needs more human evidence',
     reviewer_status: ledger?.reviewer_status || 'missing_ledger',
     reviewer: ledger?.reviewer || null,
     certificate_status: ledger?.certificate_status || (localCertificateReady ? 'asset_local_review_certified' : 'missing_certificate'),
@@ -214,18 +216,19 @@ function renderMarkdown(guard) {
     '',
     '## Assets',
     '',
-    '| Asset | Decision | Reviewer Gate | Certificate | Sandbox | Public Gate | Promotion | Blockers |',
-    '| --- | --- | --- | --- | --- | --- | --- | --- |'
+    '| Asset | Decision State | Decision | Reviewer Gate | Certificate | Sandbox | Public Gate | Promotion | Blockers |',
+    '| --- | --- | --- | --- | --- | --- | --- | --- | --- |'
   ];
 
   for (const row of guard.rows) {
-    lines.push(`| ${escapePipe(row.asset_title)} | ${escapePipe(row.decision_status)} | ${escapePipe(row.reviewer_status)} | ${escapePipe(row.certificate_status)} | ${row.sandbox_ready ? 'yes' : 'no'} | ${escapePipe(row.public_gate)} | ${escapePipe(row.promotion_status)} | ${escapePipe(row.promotion_blockers.join(', ') || '-')} |`);
+    lines.push(`| ${escapePipe(row.asset_title)} | ${escapePipe(row.human_decision_state)} | ${escapePipe(row.decision_status)} | ${escapePipe(row.reviewer_status)} | ${escapePipe(row.certificate_status)} | ${row.sandbox_ready ? 'yes' : 'no'} | ${escapePipe(row.public_gate)} | ${escapePipe(row.promotion_status)} | ${escapePipe(row.promotion_blockers.join(', ') || '-')} |`);
   }
 
   lines.push('', '## Human Gate Detail', '');
   for (const row of guard.rows) {
     lines.push(`### ${row.asset_title}`, '');
     lines.push(`- asset id: \`${row.asset_id}\``);
+    lines.push(`- decision state: \`${row.human_decision_state}\` (${row.human_decision_label})`);
     lines.push(`- reviewer: ${row.reviewer ? `\`${row.reviewer}\`` : '-'}`);
     lines.push(`- reviewer gate: \`${row.reviewer_status}\``);
     lines.push(`- certificate: \`${row.certificate_status}\``);

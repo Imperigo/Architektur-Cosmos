@@ -75,9 +75,12 @@ function buildLedger({ library, humanReviewSession, handoffSmoke, decisions, cer
       reviewerStatus: currentReviewerStatus,
       certificateReady
     });
+    const currentHumanDecisionState = humanDecisionState({ latest, ledgerStatus: currentLedgerStatus });
     return {
       ...expected,
       ledger_status: currentLedgerStatus,
+      human_decision_state: currentHumanDecisionState,
+      human_decision_label: humanDecisionStateLabel(currentHumanDecisionState),
       latest_decision: latest,
       latest_certificate: latestCertificate,
       decision_count: matches.length,
@@ -103,6 +106,7 @@ function buildLedger({ library, humanReviewSession, handoffSmoke, decisions, cer
   const blockedDecisions = decisionRows.filter((decision) => decision.status === 'decision_blocked' || decision.decision === 'reject');
   const missingRows = rows.filter((row) => row.ledger_status === 'missing_decision');
   const certificateReadyRows = rows.filter((row) => row.certificate_ready);
+  const decisionStateCounts = countDecisionStates(rows);
   const status = blockedDecisions.length
     ? 'asset_decision_ledger_blocked'
     : missingRows.length
@@ -137,6 +141,10 @@ function buildLedger({ library, humanReviewSession, handoffSmoke, decisions, cer
       sandbox_ready_count: rows.filter((row) => row.sandbox_ready).length,
       certificate_count: certificateRows.length,
       certificate_ready_count: certificateReadyRows.length,
+      approved_state_count: decisionStateCounts.approved || 0,
+      blocked_state_count: decisionStateCounts.blocked || 0,
+      rejected_state_count: decisionStateCounts.rejected || 0,
+      needs_more_evidence_state_count: decisionStateCounts.needs_more_evidence || 0,
       named_reviewer_count: rows.filter((row) => row.reviewer_status === 'named_human_reviewer_recorded').length,
       reviewer_blocker_count: rows.filter((row) => row.reviewer_status === 'missing_named_human_reviewer').length,
       promotion_blocker_count: rows.reduce((sum, row) => sum + row.promotion_blockers.length, 0),
@@ -222,6 +230,31 @@ function ledgerStatus(decision) {
   if (decision.decision === 'block-public') return 'public_block_recorded';
   if (decision.decision === 'reject') return 'rejected';
   return 'decision_recorded';
+}
+
+function humanDecisionState({ latest, ledgerStatus }) {
+  if (!latest || ledgerStatus === 'missing_decision') return 'needs_more_evidence';
+  if (ledgerStatus === 'local_approval_recorded') return 'approved';
+  if (ledgerStatus === 'public_block_recorded' || ledgerStatus === 'blocked_decision') return 'blocked';
+  if (ledgerStatus === 'rejected') return 'rejected';
+  return 'needs_more_evidence';
+}
+
+function humanDecisionStateLabel(state) {
+  const labels = {
+    approved: 'local human approval recorded',
+    blocked: 'public or route gate blocked',
+    rejected: 'rejected for exchange use',
+    needs_more_evidence: 'needs more human evidence'
+  };
+  return labels[state] || state;
+}
+
+function countDecisionStates(rows) {
+  return rows.reduce((counts, row) => {
+    counts[row.human_decision_state] = (counts[row.human_decision_state] || 0) + 1;
+    return counts;
+  }, {});
 }
 
 function reviewerStatus(decision) {
@@ -348,6 +381,10 @@ function renderMarkdown(ledger) {
     `- public blocks: ${ledger.summary.block_public_count}`,
     `- rejected: ${ledger.summary.rejected_count}`,
     `- blocked decision files: ${ledger.summary.blocked_decision_count}`,
+    `- state approved: ${ledger.summary.approved_state_count}`,
+    `- state blocked: ${ledger.summary.blocked_state_count}`,
+    `- state rejected: ${ledger.summary.rejected_state_count}`,
+    `- state needs more evidence: ${ledger.summary.needs_more_evidence_state_count}`,
     `- sandbox ready: ${ledger.summary.sandbox_ready_count}`,
     `- certificates: ${ledger.summary.certificate_ready_count}/${ledger.summary.certificate_count}`,
     `- named reviewers: ${ledger.summary.named_reviewer_count}`,
@@ -358,15 +395,15 @@ function renderMarkdown(ledger) {
     '',
     '## Expected Rows',
     '',
-    '| Asset | Route | Ledger Status | Decision | Reviewer Gate | Certificate | Sandbox | Blockers |',
-    '| --- | --- | --- | --- | --- | --- | --- | --- |'
+    '| Asset | Route | Decision State | Ledger Status | Decision | Reviewer Gate | Certificate | Sandbox | Blockers |',
+    '| --- | --- | --- | --- | --- | --- | --- | --- | --- |'
   ];
 
   for (const row of ledger.rows) {
     const latest = row.latest_decision ? `${row.latest_decision.decision}/${row.latest_decision.status}` : '-';
     const reviewer = row.reviewer ? `${row.reviewer} (${row.reviewer_status})` : row.reviewer_status;
     const blockers = row.promotion_blockers.length ? row.promotion_blockers.join(', ') : '-';
-    lines.push(`| ${escapePipe(row.asset_title)} | ${escapePipe(row.route)} | ${escapePipe(row.ledger_status)} | ${escapePipe(latest)} | ${escapePipe(reviewer)} | ${escapePipe(row.certificate_status)} | ${row.sandbox_ready ? 'yes' : 'no'} | ${escapePipe(blockers)} |`);
+    lines.push(`| ${escapePipe(row.asset_title)} | ${escapePipe(row.route)} | ${escapePipe(row.human_decision_state)} | ${escapePipe(row.ledger_status)} | ${escapePipe(latest)} | ${escapePipe(reviewer)} | ${escapePipe(row.certificate_status)} | ${row.sandbox_ready ? 'yes' : 'no'} | ${escapePipe(blockers)} |`);
   }
 
   lines.push('', '## Human Gate Detail', '');
@@ -374,6 +411,7 @@ function renderMarkdown(ledger) {
     lines.push(`### ${row.asset_title}`, '');
     lines.push(`- asset id: \`${row.asset_id}\``);
     lines.push(`- route: \`${row.route}\``);
+    lines.push(`- decision state: \`${row.human_decision_state}\` (${row.human_decision_label})`);
     lines.push(`- reviewer: ${row.reviewer ? `\`${row.reviewer}\`` : '-'}`);
     lines.push(`- reviewer gate: \`${row.reviewer_status}\``);
     lines.push(`- certificate: \`${row.certificate_status}\``);

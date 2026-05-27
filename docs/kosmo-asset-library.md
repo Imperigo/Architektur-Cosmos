@@ -23,6 +23,39 @@ Die erste Version bleibt lokal und review-only:
 - keine automatisch public-safe Assets;
 - jedes Asset braucht Rechte-, Quellen-, Review- und Exportmetadaten.
 
+## KosmoData/KosmoAsset-Bruecke
+
+KosmoData und KosmoAsset bleiben absichtlich getrennte, aber verbundene
+Schichten:
+
+- KosmoData ist Projektwissen: Referenzen, Quellen, Texte, Relationen,
+  Buerogedaechtnis und Kontext fuer Entwurfsentscheidungen.
+- KosmoAsset ist Materialwissen: wiederverwendbare 2D-/3D-Dateien,
+  Materialprofile, Texturen, Layernamen und Software-Handoffs.
+- Ein Asset darf auf KosmoData-Projekte oder Quellen verweisen, aber seine
+  Freigabe bleibt asset-spezifisch. Ein gutes Projekt macht ein daraus
+  abgeleitetes Asset nicht automatisch public-safe.
+- Umgekehrt darf ein lokal geprueftes Asset in KosmoData sichtbar sein, ohne
+  dadurch ein oeffentlicher Download, R2-Upload oder D1-Write zu werden.
+
+## Human-Gate-Ampel
+
+Die V1-Oberflaeche und die Reports lesen denselben Gate-Zustand:
+
+- Gruen: technische Checks oder lokale menschliche Evidenz sind vorhanden.
+- Gelb: menschliche Review oder zusaetzliche Evidenz fehlt.
+- Rot: Route, Qualitaet, Rechte oder Decision sind blockiert/abgelehnt.
+- Blau: bewusst local-review-only; Public-Gate bleibt geschlossen.
+
+Die menschlichen Entscheid-Zustaende werden auf vier Begriffe reduziert:
+
+| Zustand | CLI-Decision | Bedeutung |
+| --- | --- | --- |
+| `approved` | `approve-local` | benannte menschliche lokale Freigabe, weiter ohne Public-Gate |
+| `needs_more_evidence` | `needs-review` | Quellen, Rechte, Datei, Scale, Layer oder Qualitaet noch offen |
+| `blocked` | `block-public` | Public-/Download-/R2-Gate bleibt bewusst zu |
+| `rejected` | `reject` | Asset-Route nicht fuer Exchange-Workflows verwenden |
+
 ## Manifest
 
 Das zentrale Format ist:
@@ -273,9 +306,13 @@ examples/kosmo-assets/kosmo-asset-demo/review/asset-review-certificate-warm-conc
 examples/kosmo-assets/kosmo-asset-demo/review/asset-review-certificate-warm-concrete-material-001-blender.generated.md
 ```
 
-Das Zertifikat ist nur lokale Evidenz fuer Sandbox-Tests. Es ist keine
-Public-Freigabe, kein Upload, kein D1-/R2-Write, keine Library-Mutation und
-keine ArchiCAD-/Blender-Projektdatei-Aenderung.
+Das Zertifikat ist ein **Architecture Kosmos Local Quality Certificate V1**.
+Es bestaetigt nur lokale Review-Evidenz fuer Sandbox-Tests: benannter
+menschlicher Architektur-Review, Quellen-/Rechte-Check, AI-Slop-Qualitaetsgate,
+Handoff-Smoke und weiterhin blockiertes Public-Gate. Es ist keine offizielle
+externe Zertifizierung, keine Rechtsmeinung, keine Public-Freigabe, kein
+Upload, kein D1-/R2-Write, keine Library-Mutation und keine
+ArchiCAD-/Blender-Projektdatei-Aenderung.
 
 ## Zertifikat-Smoke
 

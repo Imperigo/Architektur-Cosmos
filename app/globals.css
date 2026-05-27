@@ -4249,9 +4249,10 @@ button.database-intake-card:not(:disabled):hover {
 
 .kosmo-asset-shell {
   display: grid;
-  grid-template-rows: auto minmax(220px, 1fr) auto;
+  grid-template-rows: auto minmax(220px, 0.9fr) minmax(0, 1.1fr);
   gap: 16px;
   width: 100%;
+  height: min(86dvh, 820px);
   max-height: inherit;
   padding: clamp(16px, 2.4vw, 28px);
   border: 1px solid rgb(245 179 66 / 36%);
@@ -4524,6 +4525,7 @@ button.database-intake-card:not(:disabled):hover {
   grid-template-columns: minmax(0, 1.18fr) minmax(280px, 0.82fr);
   gap: 12px;
   min-height: 0;
+  overflow: hidden;
 }
 
 .kosmo-asset-grid {
@@ -4531,6 +4533,8 @@ button.database-intake-card:not(:disabled):hover {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
   min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
 }
 
 .kosmo-asset-card {
@@ -4814,6 +4818,8 @@ button.database-intake-card:not(:disabled):hover {
   align-content: start;
   gap: 12px;
   min-width: 0;
+  min-height: 0;
+  max-height: 100%;
   padding: 15px;
   border: 1px solid color-mix(in srgb, var(--asset-accent) 34%, rgb(247 247 244 / 12%));
   border-radius: 18px;
@@ -4822,6 +4828,8 @@ button.database-intake-card:not(:disabled):hover {
     linear-gradient(145deg, rgb(247 247 244 / 5%), transparent),
     rgb(5 5 5 / 62%);
   box-shadow: inset 0 1px 0 rgb(247 247 244 / 5%);
+  overflow: auto;
+  overscroll-behavior: contain;
 }
 
 .kosmo-asset-inspector-head {
@@ -5137,6 +5145,100 @@ button.database-intake-card:not(:disabled):hover {
   font-size: clamp(11px, 1vw, 14px);
   line-height: 1.1;
   overflow-wrap: anywhere;
+}
+
+.kosmo-asset-gate-card {
+  padding: 10px;
+  border: 1px solid rgb(247 247 244 / 10%);
+  border-radius: 12px;
+  background:
+    linear-gradient(135deg, rgb(112 215 255 / 7%), transparent 42%),
+    linear-gradient(225deg, rgb(245 179 66 / 6%), transparent 54%),
+    rgb(0 0 0 / 18%);
+}
+
+.kosmo-asset-gate-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.kosmo-asset-gate-grid span {
+  display: grid;
+  grid-template-columns: 12px minmax(0, 1fr);
+  gap: 3px 7px;
+  min-width: 0;
+  min-height: 74px;
+  padding: 8px;
+  border: 1px solid rgb(247 247 244 / 10%);
+  border-radius: 8px;
+  background: rgb(247 247 244 / 4%);
+}
+
+.kosmo-asset-gate-grid i {
+  grid-row: 1 / 4;
+  width: 8px;
+  height: 8px;
+  margin-top: 3px;
+  border-radius: 999px;
+  background: #f5b342;
+  box-shadow: 0 0 14px rgb(245 179 66 / 28%);
+}
+
+.kosmo-asset-gate-grid span[data-tone="ready"] {
+  border-color: rgb(101 255 115 / 36%);
+}
+
+.kosmo-asset-gate-grid span[data-tone="ready"] i {
+  background: #65ff73;
+  box-shadow: 0 0 14px rgb(101 255 115 / 26%);
+}
+
+.kosmo-asset-gate-grid span[data-tone="blocked"] {
+  border-color: rgb(255 79 116 / 42%);
+}
+
+.kosmo-asset-gate-grid span[data-tone="blocked"] i {
+  background: #ff4f74;
+  box-shadow: 0 0 14px rgb(255 79 116 / 26%);
+}
+
+.kosmo-asset-gate-grid span[data-tone="local"] {
+  border-color: rgb(112 215 255 / 38%);
+}
+
+.kosmo-asset-gate-grid span[data-tone="local"] i {
+  background: #70d7ff;
+  box-shadow: 0 0 14px rgb(112 215 255 / 24%);
+}
+
+.kosmo-asset-gate-grid small,
+.kosmo-asset-gate-grid b,
+.kosmo-asset-gate-grid em {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  letter-spacing: 0;
+}
+
+.kosmo-asset-gate-grid small {
+  color: rgb(247 247 244 / 48%);
+  font-size: 8px;
+  font-weight: 720;
+  text-transform: uppercase;
+}
+
+.kosmo-asset-gate-grid b {
+  color: rgb(247 247 244 / 88%);
+  font-size: 10px;
+  font-weight: 760;
+  text-transform: uppercase;
+}
+
+.kosmo-asset-gate-grid em {
+  color: rgb(247 247 244 / 58%);
+  font-size: 9px;
+  font-style: normal;
+  line-height: 1.32;
 }
 
 .kosmo-asset-inspector-section {
@@ -6473,6 +6575,13 @@ html[data-cosmos-browser="opera"] .relation-strand {
     grid-template-columns: 1fr;
   }
 
+  .kosmo-asset-library,
+  .kosmo-asset-grid,
+  .kosmo-asset-inspector {
+    max-height: none;
+    overflow: visible;
+  }
+
   .kosmo-asset-categories {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -6487,6 +6596,10 @@ html[data-cosmos-browser="opera"] .relation-strand {
   }
 
   .kosmo-asset-inspector-gates {
+    grid-template-columns: 1fr;
+  }
+
+  .kosmo-asset-gate-grid {
     grid-template-columns: 1fr;
   }
 

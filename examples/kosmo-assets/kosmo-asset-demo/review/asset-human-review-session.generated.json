@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-27T11:49:05.036Z",
+  "generated_at": "2026-05-27T13:54:52.855Z",
   "generator": "kosmo-asset-human-review-session",
   "library_path": "examples/kosmo-assets/kosmo-asset-demo/library.json",
   "library_id": "kosmo-asset-demo",
@@ -48,6 +48,36 @@
       "exists": true
     }
   },
+  "decision_taxonomy": [
+    {
+      "state": "approved",
+      "command_decision": "approve-local",
+      "label": "Local human approval recorded",
+      "meaning": "A named human reviewer accepted this asset/route for local sandbox evidence only.",
+      "guard": "Public gate stays blocked and a local review certificate is still required before sandbox-ready status."
+    },
+    {
+      "state": "needs_more_evidence",
+      "command_decision": "needs-review",
+      "label": "Needs more evidence",
+      "meaning": "The asset remains in human review because source, rights, file, scale, layer or quality checks are not complete.",
+      "guard": "No sandbox, public gate or publication can be inferred from this note."
+    },
+    {
+      "state": "blocked",
+      "command_decision": "block-public",
+      "label": "Public use blocked",
+      "meaning": "The reviewer explicitly keeps web/download/R2 release closed.",
+      "guard": "Local metadata may remain visible for review; public use needs a separate rights and owner review."
+    },
+    {
+      "state": "rejected",
+      "command_decision": "reject",
+      "label": "Rejected for exchange use",
+      "meaning": "The asset/route is not acceptable for exchange workflows.",
+      "guard": "Keep it out of Blender, ArchiCAD and public promotion paths until a new review replaces this decision."
+    }
+  ],
   "certificate_seed": {
     "status": "not_certified",
     "note": "This session is evidence for later Architecture Kosmos quality certification, but it does not certify the asset yet.",
@@ -118,6 +148,7 @@
       "human_session": {
         "reviewer": null,
         "reviewed_at": null,
+        "proposed_state": "needs_more_evidence",
         "proposed_decision": "needs-review",
         "final_decision_recorded": false,
         "notes": "",
@@ -157,21 +188,25 @@
       "decision_options": [
         {
           "decision": "needs-review",
+          "state": "needs_more_evidence",
           "when": "default while the human checklist is still open",
           "effect": "records a local note only; no approval and no public use"
         },
         {
           "decision": "approve-local",
+          "state": "approved",
           "when": "only after a human reviewer inspected Kosmo Axis Marker for route archicad",
           "effect": "records local route evidence; still no public gate and no upload"
         },
         {
           "decision": "block-public",
+          "state": "blocked",
           "when": "default for generated or unclear rights",
           "effect": "keeps web/download/R2 gates closed"
         },
         {
           "decision": "reject",
+          "state": "rejected",
           "when": "if quality, rights, source basis or export mapping are not acceptable",
           "effect": "keeps the asset out of exchange workflows"
         }
@@ -235,6 +270,7 @@
       "human_session": {
         "reviewer": null,
         "reviewed_at": null,
+        "proposed_state": "needs_more_evidence",
         "proposed_decision": "needs-review",
         "final_decision_recorded": false,
         "notes": "",
@@ -274,21 +310,25 @@
       "decision_options": [
         {
           "decision": "needs-review",
+          "state": "needs_more_evidence",
           "when": "default while the human checklist is still open",
           "effect": "records a local note only; no approval and no public use"
         },
         {
           "decision": "approve-local",
+          "state": "approved",
           "when": "only after a human reviewer inspected Warm Concrete Study Material for route blender",
           "effect": "records local route evidence; still no public gate and no upload"
         },
         {
           "decision": "block-public",
+          "state": "blocked",
           "when": "default for generated or unclear rights",
           "effect": "keeps web/download/R2 gates closed"
         },
         {
           "decision": "reject",
+          "state": "rejected",
           "when": "if quality, rights, source basis or export mapping are not acceptable",
           "effect": "keeps the asset out of exchange workflows"
         }
@@ -358,6 +398,7 @@
       "human_session": {
         "reviewer": null,
         "reviewed_at": null,
+        "proposed_state": "needs_more_evidence",
         "proposed_decision": "needs-review",
         "final_decision_recorded": false,
         "notes": "",
@@ -397,21 +438,25 @@
       "decision_options": [
         {
           "decision": "needs-review",
+          "state": "needs_more_evidence",
           "when": "default while the human checklist is still open",
           "effect": "records a local note only; no approval and no public use"
         },
         {
           "decision": "approve-local",
+          "state": "approved",
           "when": "only after a human reviewer inspected Generic Column GLB Slot for route blender",
           "effect": "records local route evidence; still no public gate and no upload"
         },
         {
           "decision": "block-public",
+          "state": "blocked",
           "when": "default for generated or unclear rights",
           "effect": "keeps web/download/R2 gates closed"
         },
         {
           "decision": "reject",
+          "state": "rejected",
           "when": "if quality, rights, source basis or export mapping are not acceptable",
           "effect": "keeps the asset out of exchange workflows"
         }

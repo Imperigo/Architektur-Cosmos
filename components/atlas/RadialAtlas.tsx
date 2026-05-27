@@ -71,6 +71,14 @@ type AssetReviewAction = {
   description: string;
   command: string;
 };
+type AssetGateTone = 'ready' | 'review' | 'blocked' | 'local';
+type AssetGateSignal = {
+  id: string;
+  label: string;
+  value: string;
+  detail: string;
+  tone: AssetGateTone;
+};
 const sourceLensDefinitions = [
   { id: 'afasia', label: 'Afasia', terms: ['afasia'] },
   { id: 'espazium', label: 'Espazium', terms: ['espazium', 'tec21'] },
@@ -2637,6 +2645,7 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
     .map((format) => ({ ...format, path: 'path' in format ? format.path : undefined }))
     .filter((format) => format.status === 'exists' && format.path);
   const reviewActions = useMemo(() => assetReviewActions(asset), [asset]);
+  const gateSignals = assetGateSignals({ asset, reviewPack, decisionLedger, handoffSmoke });
   const [activeActionId, setActiveActionId] = useState(reviewActions[0]?.id ?? 'library-check');
   const activeAction = reviewActions.find((action) => action.id === activeActionId) ?? reviewActions[0];
 
@@ -2660,6 +2669,20 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
         <MetricBlock label="Rechte" value={formatAssetValue(asset.rights_status)} />
         <MetricBlock label="Review" value={formatAssetValue(asset.review_status)} />
         <MetricBlock label="Sicherheit" value={`${confidence}%`} />
+      </div>
+
+      <div className="kosmo-asset-inspector-section kosmo-asset-gate-card" aria-label={`${asset.title} Asset-Ampel`}>
+        <strong>Asset-Ampel</strong>
+        <div className="kosmo-asset-gate-grid">
+          {gateSignals.map((signal) => (
+            <span key={`${asset.id}-${signal.id}`} data-tone={signal.tone}>
+              <i aria-hidden="true" />
+              <small>{signal.label}</small>
+              <b>{signal.value}</b>
+              <em>{signal.detail}</em>
+            </span>
+          ))}
+        </div>
       </div>
 
       <div className="kosmo-asset-inspector-section">
@@ -3149,6 +3172,88 @@ function assetDecisionRoutes(asset: AssetPreviewRecord, handoffBundle: AssetHand
   if (asset.asset_type.includes('material')) routes.add('material');
   if (!routes.size) routes.add('all');
   return [...routes].slice(0, 3);
+}
+
+function assetGateSignals({
+  asset,
+  reviewPack,
+  decisionLedger,
+  handoffSmoke
+}: {
+  asset: AssetPreviewRecord;
+  reviewPack: AssetReviewPackRecord | null;
+  decisionLedger: AssetDecisionLedgerRecord | null;
+  handoffSmoke: typeof assetHandoffSmokePreview | null;
+}): AssetGateSignal[] {
+  const smokePassed = handoffSmoke?.summary.failure_count === 0;
+  const technicalReady = reviewPack?.local_ready === true && smokePassed;
+  const technicalTone: AssetGateTone = technicalReady ? 'ready' : handoffSmoke && !smokePassed ? 'blocked' : 'review';
+  const humanDecisionState = decisionLedger?.human_decision_state ?? 'needs_more_evidence';
+  const humanSignal = humanGateSignal(humanDecisionState);
+  const publicGate = decisionLedger?.public_gate ?? (reviewPack?.public_ready ? 'ready' : 'blocked');
+  const publicLocalOnly = publicGate === 'blocked' && asset.public_use_allowed === false;
+  const certificateStatus = decisionLedger?.certificate_status ?? 'missing_certificate';
+  const certificateReady = decisionLedger?.certificate_ready === true;
+
+  return [
+    {
+      id: 'technical',
+      label: 'Technik',
+      value: technicalReady ? 'OK' : technicalTone === 'blocked' ? 'Blockiert' : 'Prüfen',
+      detail: smokePassed ? 'Lokale Dateien und Smoke-Test sind grün.' : 'Vor Sandbox zuerst Full Review und Smoke prüfen.',
+      tone: technicalTone
+    },
+    {
+      id: 'human',
+      label: 'Mensch',
+      value: humanSignal.value,
+      detail: humanSignal.detail,
+      tone: humanSignal.tone
+    },
+    {
+      id: 'public',
+      label: 'Public',
+      value: publicLocalOnly ? 'Gesperrt' : publicGate === 'blocked' ? 'Review' : 'Risiko',
+      detail: publicLocalOnly ? 'Lokale Review-only Spur, kein Download und kein R2.' : 'Public Gate braucht separate Rechte-/Owner-Prüfung.',
+      tone: publicLocalOnly ? 'local' : publicGate === 'blocked' ? 'review' : 'blocked'
+    },
+    {
+      id: 'certificate',
+      label: 'Zertifikat',
+      value: certificateReady ? 'bereit' : 'offen',
+      detail: certificateReady ? 'Lokales Qualitätszertifikat liegt als Evidenz vor.' : formatAssetValue(certificateStatus),
+      tone: certificateReady ? 'ready' : 'review'
+    }
+  ];
+}
+
+function humanGateSignal(state: string): Pick<AssetGateSignal, 'value' | 'detail' | 'tone'> {
+  if (state === 'approved') {
+    return {
+      value: 'lokal OK',
+      detail: 'Benannte menschliche Freigabe ist lokal verbucht.',
+      tone: 'ready'
+    };
+  }
+  if (state === 'blocked') {
+    return {
+      value: 'blockiert',
+      detail: 'Public- oder Routen-Gate bleibt bewusst geschlossen.',
+      tone: 'local'
+    };
+  }
+  if (state === 'rejected') {
+    return {
+      value: 'abgelehnt',
+      detail: 'Asset-Route darf nicht in Exchange-Workflows.',
+      tone: 'blocked'
+    };
+  }
+  return {
+    value: 'Evidenz fehlt',
+    detail: 'Menschliche Checkliste und Decision-Record sind noch offen.',
+    tone: 'review'
+  };
 }
 
 function assetChecklistLabel(id: string, fallback: string) {
