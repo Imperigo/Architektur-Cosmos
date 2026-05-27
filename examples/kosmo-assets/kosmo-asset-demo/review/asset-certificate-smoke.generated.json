@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-27T16:09:49.714Z",
+  "generated_at": "2026-05-27T19:59:13.011Z",
   "generator": "kosmo-asset-certificate-smoke",
   "library_path": "examples/kosmo-assets/kosmo-asset-demo/library.json",
   "asset_id": "warm-concrete-material-001",
@@ -9,6 +9,7 @@
   "policy": {
     "smoke_creates_only_temporary_local_review_files": true,
     "cleanup_removes_decision_and_certificate_artifacts": true,
+    "cleanup_preserves_existing_review_decisions": true,
     "no_uploads": true,
     "no_public_downloads": true,
     "no_d1_writes": true,
@@ -23,18 +24,18 @@
   "steps": [
     {
       "id": "review_decision",
-      "command": "npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmo-asset-demo/library.json --asset warm-concrete-material-001 --route blender --decision approve-local --confirm-human-review --reviewer Kosmo Certificate Smoke",
+      "command": "npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmo-asset-demo/library.json --asset warm-concrete-material-001 --route blender --decision approve-local --confirm-human-review --reviewer Kosmo Certificate Smoke --output review/asset-review-decision-warm-concrete-material-001-blender-certificate-smoke.generated.json --markdown review/asset-review-decision-warm-concrete-material-001-blender-certificate-smoke.generated.md",
       "status": "passed",
       "exit_code": 0,
-      "stdout_tail": "> node scripts/kosmo-asset-review-decision.mjs --library examples/kosmo-assets/kosmo-asset-demo/library.json --asset warm-concrete-material-001 --route blender --decision approve-local --confirm-human-review --reviewer Kosmo Certificate Smoke\n\nKosmoAsset review decision\nAsset: Warm Concrete Study Material\nDecision: approve-local\nRoute: blender\nStatus: local_review_decision_recorded\nWrote: examples/kosmo-assets/kosmo-asset-demo/review/asset-review-decision-warm-concrete-material-001-blender.generated.md",
+      "stdout_tail": "> node scripts/kosmo-asset-review-decision.mjs --library examples/kosmo-assets/kosmo-asset-demo/library.json --asset warm-concrete-material-001 --route blender --decision approve-local --confirm-human-review --reviewer Kosmo Certificate Smoke --output review/asset-review-decision-warm-concrete-material-001-blender-certificate-smoke.generated.json --markdown review/asset-review-decision-warm-concrete-material-001-blender-certificate-smoke.generated.md\n\nKosmoAsset review decision\nAsset: Warm Concrete Study Material\nDecision: approve-local\nRoute: blender\nStatus: local_review_decision_recorded\nWrote: examples/kosmo-assets/kosmo-asset-demo/review/asset-review-decision-warm-concrete-material-001-blender-certificate-smoke.generated.md",
       "stderr_tail": ""
     },
     {
       "id": "review_certificate",
-      "command": "npm run kosmo:asset-review-certificate -- --library examples/kosmo-assets/kosmo-asset-demo/library.json --asset warm-concrete-material-001 --route blender",
+      "command": "npm run kosmo:asset-review-certificate -- --library examples/kosmo-assets/kosmo-asset-demo/library.json --asset warm-concrete-material-001 --route blender --decision review/asset-review-decision-warm-concrete-material-001-blender-certificate-smoke.generated.json --output review/asset-review-certificate-warm-concrete-material-001-blender-certificate-smoke.generated.json --markdown review/asset-review-certificate-warm-concrete-material-001-blender-certificate-smoke.generated.md",
       "status": "passed",
       "exit_code": 0,
-      "stdout_tail": "> node scripts/kosmo-asset-review-certificate.mjs --library examples/kosmo-assets/kosmo-asset-demo/library.json --asset warm-concrete-material-001 --route blender\n\nKosmoAsset review certificate\nAsset: Warm Concrete Study Material\nRoute: blender\nStatus: asset_local_review_certified\nChecks: 15/15\nWrote: examples/kosmo-assets/kosmo-asset-demo/review/asset-review-certificate-warm-concrete-material-001-blender.generated.md",
+      "stdout_tail": "> node scripts/kosmo-asset-review-certificate.mjs --library examples/kosmo-assets/kosmo-asset-demo/library.json --asset warm-concrete-material-001 --route blender --decision review/asset-review-decision-warm-concrete-material-001-blender-certificate-smoke.generated.json --output review/asset-review-certificate-warm-concrete-material-001-blender-certificate-smoke.generated.json --markdown review/asset-review-certificate-warm-concrete-material-001-blender-certificate-smoke.generated.md\n\nKosmoAsset review certificate\nAsset: Warm Concrete Study Material\nRoute: blender\nStatus: asset_local_review_certified\nChecks: 15/15\nWrote: examples/kosmo-assets/kosmo-asset-demo/review/asset-review-certificate-warm-concrete-material-001-blender-certificate-smoke.generated.md",
       "stderr_tail": ""
     },
     {
@@ -42,7 +43,7 @@
       "command": "npm run kosmo:asset-decision-ledger -- --library examples/kosmo-assets/kosmo-asset-demo/library.json",
       "status": "passed",
       "exit_code": 0,
-      "stdout_tail": "\nKosmoAsset decision ledger\nLibrary: examples/kosmo-assets/kosmo-asset-demo/library.json\nStatus: asset_decision_ledger_open\nRecorded decisions: 1\nMissing decisions: 2\nLocal approvals: 1\nWrote: examples/kosmo-assets/kosmo-asset-demo/review/asset-decision-ledger.generated.md",
+      "stdout_tail": "\nKosmoAsset decision ledger\nLibrary: examples/kosmo-assets/kosmo-asset-demo/library.json\nStatus: asset_decision_ledger_open\nRecorded decisions: 2\nMissing decisions: 2\nLocal approvals: 1\nWrote: examples/kosmo-assets/kosmo-asset-demo/review/asset-decision-ledger.generated.md",
       "stderr_tail": ""
     },
     {
@@ -50,14 +51,14 @@
       "command": "npm run kosmo:asset-decision-ledger -- --library examples/kosmo-assets/kosmo-asset-demo/library.json",
       "status": "passed",
       "exit_code": 0,
-      "stdout_tail": "\nKosmoAsset decision ledger\nLibrary: examples/kosmo-assets/kosmo-asset-demo/library.json\nStatus: asset_decision_ledger_open\nRecorded decisions: 0\nMissing decisions: 3\nLocal approvals: 0\nWrote: examples/kosmo-assets/kosmo-asset-demo/review/asset-decision-ledger.generated.md",
+      "stdout_tail": "\nKosmoAsset decision ledger\nLibrary: examples/kosmo-assets/kosmo-asset-demo/library.json\nStatus: asset_decision_ledger_open\nRecorded decisions: 1\nMissing decisions: 2\nLocal approvals: 0\nWrote: examples/kosmo-assets/kosmo-asset-demo/review/asset-decision-ledger.generated.md",
       "stderr_tail": ""
     }
   ],
   "evidence_snapshot": {
     "decision_status": "local_review_decision_recorded",
     "certificate_status": "asset_local_review_certified",
-    "certificate_id": "kosmo-asset-demo:warm-concrete-material-001:blender:2026-05-27T16:09:49.153Z",
+    "certificate_id": "kosmo-asset-demo:warm-concrete-material-001:blender:2026-05-27T19:59:10.577Z",
     "ledger_status_with_certificate": "asset_decision_ledger_open",
     "ledger_certificate_status": "asset_local_review_certified"
   },
@@ -126,8 +127,8 @@
   "outputs": {
     "smoke_json": "examples/kosmo-assets/kosmo-asset-demo/review/asset-certificate-smoke.generated.json",
     "smoke_markdown": "examples/kosmo-assets/kosmo-asset-demo/review/asset-certificate-smoke.generated.md",
-    "cleaned_decision": "examples/kosmo-assets/kosmo-asset-demo/review/asset-review-decision-warm-concrete-material-001-blender.generated.json",
-    "cleaned_certificate": "examples/kosmo-assets/kosmo-asset-demo/review/asset-review-certificate-warm-concrete-material-001-blender.generated.json"
+    "cleaned_temp_decision": "examples/kosmo-assets/kosmo-asset-demo/review/asset-review-decision-warm-concrete-material-001-blender-certificate-smoke.generated.json",
+    "cleaned_temp_certificate": "examples/kosmo-assets/kosmo-asset-demo/review/asset-review-certificate-warm-concrete-material-001-blender-certificate-smoke.generated.json"
   },
   "next_actions": [
     "Certificate gate is smoke-tested; keep generated approvals explicit and local-only."

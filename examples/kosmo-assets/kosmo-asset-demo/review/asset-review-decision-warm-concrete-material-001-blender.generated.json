@@ -1,0 +1,43 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-05-27T19:54:37.395Z",
+  "generator": "kosmo-asset-review-decision",
+  "library_path": "examples/kosmo-assets/kosmo-asset-demo/library.json",
+  "library_id": "kosmo-asset-demo",
+  "asset_id": "warm-concrete-material-001",
+  "asset_title": "Warm Concrete Study Material",
+  "route": "blender",
+  "decision": "needs-review",
+  "reviewer": null,
+  "status": "local_review_decision_recorded",
+  "policy": {
+    "no_uploads": true,
+    "no_public_downloads": true,
+    "no_library_mutation": true,
+    "no_scene_write": true,
+    "public_gate_remains_blocked": true,
+    "approve_local_requires_named_reviewer": true,
+    "reject_requires_named_reviewer": true
+  },
+  "evidence": {
+    "rights_status": "generated_needs_review",
+    "review_status": "draft",
+    "human_review_status": "open",
+    "suggested_decision": "complete_human_review_before_promotion",
+    "smoke_status": "handoff_smoke_passed",
+    "smoke_passed": true,
+    "route_available": true,
+    "named_human_reviewer": false,
+    "handoff_bundle_status": "local_review_handoff_bundle"
+  },
+  "outputs": {
+    "decision_json": "examples/kosmo-assets/kosmo-asset-demo/review/asset-review-decision-warm-concrete-material-001-blender.generated.json",
+    "decision_markdown": "examples/kosmo-assets/kosmo-asset-demo/review/asset-review-decision-warm-concrete-material-001-blender.generated.md",
+    "blender_python": "examples/kosmo-assets/kosmo-asset-demo/review/asset-blender-handoff.generated.py",
+    "archicad_schedule_csv": "examples/kosmo-assets/kosmo-asset-demo/review/asset-archicad-schedule.generated.csv"
+  },
+  "blockers": [],
+  "next_actions": [
+    "Continue manual review. Open local source/export files and rerun smoke after changes."
+  ]
+}

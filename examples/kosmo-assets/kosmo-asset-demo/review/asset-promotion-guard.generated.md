@@ -1,7 +1,7 @@
 # KosmoAsset Promotion Guard
 
 Library: `kosmo-asset-demo`
-Generated: 2026-05-27T16:09:49.906Z
+Generated: 2026-05-27T19:59:13.440Z
 Status: `asset_promotion_guard_blocked`
 
 Promotion guard. This report does not promote assets, upload files, write D1/R2, open public downloads or mutate the library.
@@ -12,7 +12,7 @@ Promotion guard. This report does not promote assets, upload files, write D1/R2,
 - promotion allowed: no
 - blockers: 6
 - unsafe findings: 0
-- missing decisions: 3
+- missing decisions: 2
 - local certificates ready: 0
 - sandbox ready: 0
 - named reviewers: 0
@@ -28,7 +28,7 @@ Promotion guard. This report does not promote assets, upload files, write D1/R2,
 | Asset | Decision State | Decision | Reviewer Gate | Certificate | Sandbox | Public Gate | Promotion | Blockers |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Kosmo Axis Marker | needs_more_evidence | missing_decision | missing_decision | missing_certificate | no | blocked | blocked | decision_missing, local_certificate_missing |
-| Warm Concrete Study Material | needs_more_evidence | missing_decision | missing_decision | missing_certificate | no | blocked | blocked | decision_missing, local_certificate_missing |
+| Warm Concrete Study Material | needs_more_evidence | needs_review_recorded | not_required_for_note | missing_certificate | no | blocked | blocked | local_certificate_missing, local_approval_missing |
 | Generic Column GLB Slot | needs_more_evidence | missing_decision | missing_decision | missing_certificate | no | blocked | blocked | decision_missing, local_certificate_missing |
 
 ## Human Gate Detail
@@ -48,10 +48,10 @@ Promotion guard. This report does not promote assets, upload files, write D1/R2,
 - asset id: `warm-concrete-material-001`
 - decision state: `needs_more_evidence` (needs more human evidence)
 - reviewer: -
-- reviewer gate: `missing_decision`
+- reviewer gate: `not_required_for_note`
 - certificate: `missing_certificate`
-- next human action: `record_or_defer_human_decision`
-- promotion blockers: `decision_missing`, `local_certificate_missing`
+- next human action: `create_local_review_certificate`
+- promotion blockers: `local_certificate_missing`, `local_approval_missing`
 
 ### Generic Column GLB Slot
 
@@ -68,8 +68,8 @@ Promotion guard. This report does not promote assets, upload files, write D1/R2,
 
 - axis-marker-svg-001:decision_missing
 - axis-marker-svg-001:local_certificate_missing
-- warm-concrete-material-001:decision_missing
 - warm-concrete-material-001:local_certificate_missing
+- warm-concrete-material-001:local_approval_missing
 - generic-column-glb-001:decision_missing
 - generic-column-glb-001:local_certificate_missing
 

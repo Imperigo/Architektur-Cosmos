@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-27T16:09:49.919Z",
+  "generated_at": "2026-05-27T19:59:13.478Z",
   "generator": "kosmo-asset-full-review",
   "library_path": "examples/kosmo-assets/kosmo-asset-demo/library.json",
   "library_id": "kosmo-asset-demo",
@@ -33,8 +33,8 @@
     "human_review_session_status": "asset_human_review_session_open",
     "human_review_session_open_items": 3,
     "decision_ledger_status": "asset_decision_ledger_open",
-    "recorded_decision_count": 0,
-    "missing_decision_count": 3,
+    "recorded_decision_count": 1,
+    "missing_decision_count": 2,
     "sandbox_ready_count": 0,
     "certificate_ready_count": 0,
     "certificate_count": 0,
@@ -151,7 +151,7 @@
       "report_path": "examples/kosmo-assets/kosmo-asset-demo/review/asset-decision-ledger.generated.json",
       "report_exists": true,
       "report_status": "asset_decision_ledger_open",
-      "stdout_tail": "\nKosmoAsset decision ledger\nLibrary: examples/kosmo-assets/kosmo-asset-demo/library.json\nStatus: asset_decision_ledger_open\nRecorded decisions: 0\nMissing decisions: 3\nLocal approvals: 0\nWrote: examples/kosmo-assets/kosmo-asset-demo/review/asset-decision-ledger.generated.md",
+      "stdout_tail": "\nKosmoAsset decision ledger\nLibrary: examples/kosmo-assets/kosmo-asset-demo/library.json\nStatus: asset_decision_ledger_open\nRecorded decisions: 1\nMissing decisions: 2\nLocal approvals: 0\nWrote: examples/kosmo-assets/kosmo-asset-demo/review/asset-decision-ledger.generated.md",
       "stderr_tail": ""
     },
     {
@@ -214,7 +214,7 @@
       "suggested_decision": "complete_human_review_before_promotion",
       "review_priority": "high",
       "primary_review_route": "blender",
-      "decision_status": "missing_decision",
+      "decision_status": "needs_review_recorded",
       "certificate_status": null,
       "sandbox_ready": false
     },

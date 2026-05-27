@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-27T16:09:49.906Z",
+  "generated_at": "2026-05-27T19:59:13.440Z",
   "generator": "kosmo-asset-promotion-guard",
   "library_path": "examples/kosmo-assets/kosmo-asset-demo/library.json",
   "library_id": "kosmo-asset-demo",
@@ -19,7 +19,7 @@
     "promotion_allowed": false,
     "blocker_count": 6,
     "unsafe_finding_count": 0,
-    "missing_decision_count": 3,
+    "missing_decision_count": 2,
     "certificate_ready_count": 0,
     "sandbox_ready_count": 0,
     "named_reviewer_count": 0,
@@ -33,8 +33,8 @@
   "blockers": [
     "axis-marker-svg-001:decision_missing",
     "axis-marker-svg-001:local_certificate_missing",
-    "warm-concrete-material-001:decision_missing",
     "warm-concrete-material-001:local_certificate_missing",
+    "warm-concrete-material-001:local_approval_missing",
     "generic-column-glb-001:decision_missing",
     "generic-column-glb-001:local_certificate_missing"
   ],
@@ -79,23 +79,23 @@
       "public_gate": "blocked",
       "local_ready": true,
       "public_ready": false,
-      "decision_status": "missing_decision",
+      "decision_status": "needs_review_recorded",
       "human_decision_state": "needs_more_evidence",
       "human_decision_label": "needs more human evidence",
-      "reviewer_status": "missing_decision",
+      "reviewer_status": "not_required_for_note",
       "reviewer": null,
       "certificate_status": "missing_certificate",
       "local_certificate_ready": false,
       "sandbox_ready": false,
-      "next_human_action": "record_or_defer_human_decision",
+      "next_human_action": "create_local_review_certificate",
       "promotion_status": "blocked",
       "promotion_blockers": [
-        "decision_missing",
-        "local_certificate_missing"
+        "local_certificate_missing",
+        "local_approval_missing"
       ],
       "blockers": [
-        "decision_missing",
-        "local_certificate_missing"
+        "local_certificate_missing",
+        "local_approval_missing"
       ]
     },
     {

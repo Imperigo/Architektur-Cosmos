@@ -2,7 +2,7 @@
 
 Asset: `warm-concrete-material-001`
 Route: `blender`
-Generated: 2026-05-27T16:09:49.714Z
+Generated: 2026-05-27T19:59:13.011Z
 Status: `asset_certificate_smoke_passed`
 
 This smoke test creates temporary local review evidence, verifies the certificate gate, then removes the temporary decision and certificate files. It does not upload, publish, write D1/R2 or mutate the asset library.
@@ -42,8 +42,8 @@ This smoke test creates temporary local review evidence, verifies the certificat
 
 - smoke_json: `examples/kosmo-assets/kosmo-asset-demo/review/asset-certificate-smoke.generated.json`
 - smoke_markdown: `examples/kosmo-assets/kosmo-asset-demo/review/asset-certificate-smoke.generated.md`
-- cleaned_decision: `examples/kosmo-assets/kosmo-asset-demo/review/asset-review-decision-warm-concrete-material-001-blender.generated.json`
-- cleaned_certificate: `examples/kosmo-assets/kosmo-asset-demo/review/asset-review-certificate-warm-concrete-material-001-blender.generated.json`
+- cleaned_temp_decision: `examples/kosmo-assets/kosmo-asset-demo/review/asset-review-decision-warm-concrete-material-001-blender-certificate-smoke.generated.json`
+- cleaned_temp_certificate: `examples/kosmo-assets/kosmo-asset-demo/review/asset-review-certificate-warm-concrete-material-001-blender-certificate-smoke.generated.json`
 
 ## Next Actions
 

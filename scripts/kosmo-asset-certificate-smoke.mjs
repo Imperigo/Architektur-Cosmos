@@ -13,10 +13,11 @@ const assetId = String(args.asset || 'warm-concrete-material-001').trim();
 const route = String(args.route || 'blender').trim();
 const outputJsonPath = resolve(libraryRoot, args.output || 'review/asset-certificate-smoke.generated.json');
 const outputMdPath = resolve(libraryRoot, args.markdown || 'review/asset-certificate-smoke.generated.md');
-const decisionPath = resolve(libraryRoot, `review/asset-review-decision-${assetId}-${route}.generated.json`);
-const decisionMdPath = resolve(libraryRoot, `review/asset-review-decision-${assetId}-${route}.generated.md`);
-const certificatePath = resolve(libraryRoot, `review/asset-review-certificate-${assetId}-${route}.generated.json`);
-const certificateMdPath = resolve(libraryRoot, `review/asset-review-certificate-${assetId}-${route}.generated.md`);
+const smokeArtifactBase = `${assetId}-${route}-certificate-smoke`;
+const decisionPath = resolve(libraryRoot, `review/asset-review-decision-${smokeArtifactBase}.generated.json`);
+const decisionMdPath = resolve(libraryRoot, `review/asset-review-decision-${smokeArtifactBase}.generated.md`);
+const certificatePath = resolve(libraryRoot, `review/asset-review-certificate-${smokeArtifactBase}.generated.json`);
+const certificateMdPath = resolve(libraryRoot, `review/asset-review-certificate-${smokeArtifactBase}.generated.md`);
 
 main().catch((error) => {
   console.error(error.message);
@@ -28,8 +29,43 @@ async function main() {
 
   removeTempArtifacts();
   const steps = [
-    runStep('review_decision', ['run', 'kosmo:asset-review-decision', '--', '--library', relative(root, libraryPath), '--asset', assetId, '--route', route, '--decision', 'approve-local', '--confirm-human-review', '--reviewer', 'Kosmo Certificate Smoke']),
-    runStep('review_certificate', ['run', 'kosmo:asset-review-certificate', '--', '--library', relative(root, libraryPath), '--asset', assetId, '--route', route]),
+    runStep('review_decision', [
+      'run',
+      'kosmo:asset-review-decision',
+      '--',
+      '--library',
+      relative(root, libraryPath),
+      '--asset',
+      assetId,
+      '--route',
+      route,
+      '--decision',
+      'approve-local',
+      '--confirm-human-review',
+      '--reviewer',
+      'Kosmo Certificate Smoke',
+      '--output',
+      relative(libraryRoot, decisionPath),
+      '--markdown',
+      relative(libraryRoot, decisionMdPath)
+    ]),
+    runStep('review_certificate', [
+      'run',
+      'kosmo:asset-review-certificate',
+      '--',
+      '--library',
+      relative(root, libraryPath),
+      '--asset',
+      assetId,
+      '--route',
+      route,
+      '--decision',
+      relative(libraryRoot, decisionPath),
+      '--output',
+      relative(libraryRoot, certificatePath),
+      '--markdown',
+      relative(libraryRoot, certificateMdPath)
+    ]),
     runStep('decision_ledger_with_certificate', ['run', 'kosmo:asset-decision-ledger', '--', '--library', relative(root, libraryPath)])
   ];
 
@@ -85,6 +121,7 @@ function buildSmokeReport({ steps, decision, certificate, ledgerWithCertificate 
     policy: {
       smoke_creates_only_temporary_local_review_files: true,
       cleanup_removes_decision_and_certificate_artifacts: true,
+      cleanup_preserves_existing_review_decisions: true,
       no_uploads: true,
       no_public_downloads: true,
       no_d1_writes: true,
@@ -108,8 +145,8 @@ function buildSmokeReport({ steps, decision, certificate, ledgerWithCertificate 
     outputs: {
       smoke_json: relative(root, outputJsonPath),
       smoke_markdown: relative(root, outputMdPath),
-      cleaned_decision: relative(root, decisionPath),
-      cleaned_certificate: relative(root, certificatePath)
+      cleaned_temp_decision: relative(root, decisionPath),
+      cleaned_temp_certificate: relative(root, certificatePath)
     },
     next_actions: failedChecks.length
       ? ['Fix failed certificate smoke checks before using review certificates as sandbox gates.']
