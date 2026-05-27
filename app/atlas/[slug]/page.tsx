@@ -40,7 +40,7 @@ export async function generateMetadata({ params }: EntryPageProps): Promise<Meta
 
   if (!entry) {
     return {
-      title: 'Entry not found | Architektur Kosmos'
+      title: 'Eintrag nicht gefunden | Architektur Kosmos'
     };
   }
 
@@ -606,7 +606,7 @@ function ArchitectureTextSection({ entry, accent }: { entry: Entry; accent: stri
           <h2 className="mt-3 max-w-xl text-3xl leading-tight text-[#f7f7f4] sm:text-4xl">{prettifyGermanText(text.headline)}</h2>
           <div className="mt-4 flex flex-wrap gap-2 text-[9px] uppercase tracking-[0.14em] text-[#8d8d87]">
             <span className="border border-white/14 px-2.5 py-1">{text.language ?? 'de'}</span>
-            <span className="border border-white/14 px-2.5 py-1">{text.review_status?.replace(/_/g, ' ') ?? 'draft review'}</span>
+            <span className="border border-white/14 px-2.5 py-1">{germanStatusLabel(text.review_status ?? 'draft_review')}</span>
           </div>
         </div>
         <div>
@@ -630,7 +630,7 @@ function ObjectIdentityPanel({ entry, profile, accent }: { entry: Entry; profile
     <section className="entry-object-signature border-t border-white/12 py-8">
       <div className="grid gap-5 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
         <article className="entry-material-board border border-white/14 bg-[#071315]/60 p-5">
-          <div className="text-[10px] uppercase tracking-[0.22em]" style={{ color: accent }}>Object Signature</div>
+          <div className="text-[10px] uppercase tracking-[0.22em]" style={{ color: accent }}>Objekt-Signatur</div>
           <h2 className="mt-3 text-3xl leading-tight text-[#f7f7f4]">{profile.title}</h2>
           <p className="entry-text-reactive mt-4 text-sm leading-7 text-[#cfcfca]">{prettifyGermanText(profile.reading)}</p>
           <div className="mt-5 grid gap-2 sm:grid-cols-3">
@@ -703,8 +703,8 @@ function MediaCard({ media, entry, profile, accent }: { media: Entry['media'][nu
       </div>
       <div className="entry-media-caption">
         <div className="flex items-center justify-between gap-3 text-[10px] uppercase tracking-[0.18em]" style={{ color: accent }}>
-          <span>{media.type}</span>
-          <span className="text-[#8d8d87]">slot {mediaSlotNumber(media.type)}</span>
+          <span>{germanMediaTypeLabel(media.type)}</span>
+          <span className="text-[#8d8d87]">Slot {mediaSlotNumber(media.type)}</span>
         </div>
         <h3 className="mt-2 text-xl text-[#f7f7f4]">{media.label}</h3>
         <p className="mt-3 text-sm leading-6 text-[#b8b8b2]">{prettifyGermanText(media.placeholder)}</p>
@@ -832,14 +832,14 @@ function entryVisualProfile(entry: Entry): EntryVisualProfile {
   return {
     title: 'Objektlogik aus Quellen, Material und Filter',
     reading: 'Dieses Datenblatt verwendet die vorhandenen Quellen, Themen und Analysefelder, um eine objektspezifische Oberfläche aufzubauen. Mit echten Medien kann die visuelle Identität später präziser werden.',
-    materials: entry.themes.slice(0, 3).length ? entry.themes.slice(0, 3) : ['source', 'type', 'context'],
+    materials: entry.themes.slice(0, 3).length ? entry.themes.slice(0, 3) : ['Quelle', 'Typ', 'Kontext'],
     materialColors: ['#6d7674', '#8f8b75', '#6f677e'],
     compositionTitle: 'Kompositionslesung',
     composition: [
       entry.short_description,
       `Typologie: ${entry.entry_type.replace(/_/g, ' ')}`,
       `Stilsektor: ${entry.style_sector.replace(/_/g, ' ')}`,
-      `Filter: ${entry.themes.slice(0, 3).join(', ') || 'needs review'}`
+      `Filter: ${entry.themes.slice(0, 3).join(', ') || 'Review offen'}`
     ],
     diagramType: 'generic',
     slotLesenings: {
@@ -855,25 +855,25 @@ function sourceItems(entry: Entry) {
   return [
     ...(entry.source_documents ?? []),
     ...(entry.source_url ? [entry.source_url] : []),
-    ...(entry.source_assets?.length ? [`${entry.source_assets.length} source assets`] : [])
+    ...(entry.source_assets?.length ? [`${entry.source_assets.length} Quellenassets`] : [])
   ];
 }
 
 function blenderLayerItems(entry: Entry) {
-  const modelLayers = (entry.model_assets ?? []).map((model) => `${model.model_type.replace(/_/g, ' ')} / ${model.review_status}`);
-  const analysisLayers = (entry.analysis_layers ?? []).map((analysis) => `analysis ${analysis.analysis_type.replace(/_/g, ' ')} / ${analysis.review_status}`);
+  const modelLayers = (entry.model_assets ?? []).map((model) => `${germanTechnicalLabel(model.model_type)} / ${germanStatusLabel(model.review_status)}`);
+  const analysisLayers = (entry.analysis_layers ?? []).map((analysis) => `Analyse ${germanTechnicalLabel(analysis.analysis_type)} / ${germanStatusLabel(analysis.review_status)}`);
 
   if (modelLayers.length || analysisLayers.length) {
     return [...modelLayers, ...analysisLayers].slice(0, 10);
   }
 
   return [
-    'site context / planned',
-    'mass model / planned',
-    'structure / planned',
-    'envelope / planned',
-    'circulation / planned',
-    'tectonics / planned'
+    'Site-Kontext / geplant',
+    'Massenmodell / geplant',
+    'Tragwerk / geplant',
+    'Hülle / geplant',
+    'Zirkulation / geplant',
+    'Tektonik / geplant'
   ];
 }
 
@@ -896,7 +896,7 @@ function modelSourceItems(entry: Entry) {
   if (modelSources.length) return modelSources.slice(0, 6);
   return [
     ...(entry.source_documents ?? []).slice(0, 3),
-    entry.source_url ?? 'rights-reviewed plans, sections and images needed'
+    entry.source_url ?? 'rechtegeprüfte Pläne, Schnitte und Bilder nötig'
   ].filter(Boolean);
 }
 
@@ -940,6 +940,56 @@ function mediaSlotNumber(type: Entry['media'][number]['type']) {
   return order[type];
 }
 
+function germanMediaTypeLabel(type: Entry['media'][number]['type']) {
+  const labels: Record<Entry['media'][number]['type'], string> = {
+    exterior: 'Außen',
+    interior: 'Innen',
+    section: 'Schnitt',
+    plan: 'Plan'
+  };
+  return labels[type];
+}
+
+function germanTechnicalLabel(value: string) {
+  const labels: Record<string, string> = {
+    analysis: 'Analyse',
+    circulation: 'Zirkulation',
+    envelope: 'Hülle',
+    facade: 'Fassade',
+    filter_classification: 'Filterklassifikation',
+    full: 'Vollmodell',
+    interior: 'Innenraum',
+    low: 'Low-Poly-Modell',
+    mass: 'Massenmodell',
+    material_system: 'Materialsystem',
+    material_tag: 'Materialtag',
+    model: 'Modell',
+    roof_form: 'Dachform',
+    site: 'Site',
+    source_reconstruction: 'Quellenrekonstruktion',
+    structure: 'Tragwerk',
+    tectonic: 'Tektonik',
+    tectonics: 'Tektonik',
+    typology: 'Typologie'
+  };
+  return labels[value] ?? value.replace(/_/g, ' ');
+}
+
+function germanStatusLabel(value: string) {
+  const labels: Record<string, string> = {
+    draft: 'Entwurf',
+    draft_review: 'Entwurf in Prüfung',
+    generated_needs_review: 'generiert, Prüfung nötig',
+    needs_review: 'Prüfung nötig',
+    needs_sources: 'Quellen nötig',
+    planned: 'geplant',
+    published: 'veröffentlicht',
+    reviewed: 'geprüft',
+    review: 'Prüfung'
+  };
+  return labels[value] ?? value.replace(/_/g, ' ');
+}
+
 function archiveStatusMetrics(entry: Entry, relatedCount: number): ArchiveStatusMetric[] {
   const sourceValue = Math.min(100, (entry.source_documents?.length ?? 0) * 20 + (entry.source_url ? 24 : 0) + (entry.source_candidates?.length ?? 0) * 8 + (entry.source_quality.includes('verified') ? 24 : 0));
   const mediaValue = Math.min(100, new Set(entry.media.map((media) => media.type)).size * 20 + entry.media.filter((media) => publicDisplayMediaUrl(media)).length * 5);
@@ -979,7 +1029,7 @@ function radarPoint(index: number, total: number, center: number, radius: number
 
 function studyPrompt(entry: Entry) {
   const type = entry.entry_type.replace(/_/g, ' ');
-  const theme = entry.themes[0]?.replace(/[_:]/g, ' ') ?? 'architectural history';
+  const theme = entry.themes[0]?.replace(/[_:]/g, ' ') ?? 'Architekturgeschichte';
   return `Lies diesen ${type} über ${theme}: Wo liegt die formale Logik, was ist technisch oder tektonisch, und was gehört zum historischen Kontext?`;
 }
 
