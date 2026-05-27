@@ -101,6 +101,24 @@
       "source_basis": [
         "Generated from generic material-analysis taxonomy; not derived from a protected project image."
       ],
+      "kosmodata_refs": [
+        {
+          "kind": "reference_entry",
+          "entry_id": "villa-savoye",
+          "relation": "material_context",
+          "usage_policy": "context_only",
+          "review_status": "context_only",
+          "notes": "Used only as KosmoData material/layer taxonomy context. No texture, geometry or protected project image is derived from this entry."
+        },
+        {
+          "kind": "reference_entry",
+          "entry_id": "pantheon",
+          "relation": "material_context",
+          "usage_policy": "context_only",
+          "review_status": "context_only",
+          "notes": "Used only as mineral/concrete reference context for naming and review vocabulary."
+        }
+      ],
       "rights_status": "generated_needs_review",
       "license": "review_only",
       "credit": "Architecture Cosmos generated material study",

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-27T13:54:52.267Z",
+  "generated_at": "2026-05-27T16:09:48.087Z",
   "generator": "kosmo-asset-exchange-profile",
   "library_path": "examples/kosmo-assets/kosmo-asset-demo/library.json",
   "library_id": "kosmo-asset-demo",
@@ -18,7 +18,8 @@
     "archicad_profile_count": 3,
     "web_profile_count": 3,
     "blocked_public_count": 3,
-    "human_review_open_count": 3
+    "human_review_open_count": 3,
+    "kosmodata_ref_count": 2
   },
   "assets": [
     {
@@ -30,6 +31,7 @@
       "review_status": "draft",
       "human_review_status": "open",
       "public_gate": "blocked",
+      "kosmodata_refs": [],
       "source_paths": {
         "svg": "examples/kosmo-assets/kosmo-asset-demo/assets/svg/axis-marker.svg",
         "dxf": "examples/kosmo-assets/kosmo-asset-demo/assets/dxf/axis-marker-svg-001.dxf"
@@ -87,6 +89,24 @@
       "review_status": "draft",
       "human_review_status": "open",
       "public_gate": "blocked",
+      "kosmodata_refs": [
+        {
+          "kind": "reference_entry",
+          "entry_id": "villa-savoye",
+          "relation": "material_context",
+          "usage_policy": "context_only",
+          "review_status": "context_only",
+          "notes": "Used only as KosmoData material/layer taxonomy context. No texture, geometry or protected project image is derived from this entry."
+        },
+        {
+          "kind": "reference_entry",
+          "entry_id": "pantheon",
+          "relation": "material_context",
+          "usage_policy": "context_only",
+          "review_status": "context_only",
+          "notes": "Used only as mineral/concrete reference context for naming and review vocabulary."
+        }
+      ],
       "source_paths": {
         "material_json": "examples/kosmo-assets/kosmo-asset-demo/assets/materials/warm-concrete.material.json"
       },
@@ -170,6 +190,7 @@
       "review_status": "draft",
       "human_review_status": "open",
       "public_gate": "blocked",
+      "kosmodata_refs": [],
       "source_paths": {
         "glb": "examples/kosmo-assets/kosmo-asset-demo/assets/models/generic-column-glb-001.glb",
         "dxf": "examples/kosmo-assets/kosmo-asset-demo/assets/dxf/generic-column-glb-001.dxf"

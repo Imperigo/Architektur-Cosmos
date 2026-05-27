@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-27T13:54:51.729Z",
+  "generated_at": "2026-05-27T16:09:47.549Z",
   "generator": "kosmo-asset-library-check",
   "library_path": "examples/kosmo-assets/kosmo-asset-demo/library.json",
   "library_id": "kosmo-asset-demo",
@@ -43,7 +43,8 @@
     "rights_status": {
       "own_work": 1,
       "generated_needs_review": 2
-    }
+    },
+    "kosmodata_ref_count": 2
   },
   "assets": [
     {
@@ -62,6 +63,8 @@
         "dxf"
       ],
       "preview_kind": "axis_marker",
+      "kosmodata_ref_count": 0,
+      "kosmodata_refs": [],
       "existing_format_count": 2,
       "planned_format_count": 0,
       "export_targets": [
@@ -94,6 +97,27 @@
         "material_json"
       ],
       "preview_kind": "material_swatch",
+      "kosmodata_ref_count": 2,
+      "kosmodata_refs": [
+        {
+          "kind": "reference_entry",
+          "entry_id": "villa-savoye",
+          "entry_title": "Villa Savoye",
+          "relation": "material_context",
+          "usage_policy": "context_only",
+          "review_status": "context_only",
+          "entry_exists": true
+        },
+        {
+          "kind": "reference_entry",
+          "entry_id": "pantheon",
+          "entry_title": "Pantheon",
+          "relation": "material_context",
+          "usage_policy": "context_only",
+          "review_status": "context_only",
+          "entry_exists": true
+        }
+      ],
       "existing_format_count": 1,
       "planned_format_count": 0,
       "export_targets": [
@@ -127,6 +151,8 @@
         "dxf"
       ],
       "preview_kind": "wireframe_component",
+      "kosmodata_ref_count": 0,
+      "kosmodata_refs": [],
       "existing_format_count": 2,
       "planned_format_count": 0,
       "export_targets": [

@@ -1,7 +1,7 @@
 # KosmoAsset Exchange Profile
 
 Library: `kosmo-asset-demo`
-Generated: 2026-05-27T13:54:52.267Z
+Generated: 2026-05-27T16:09:48.087Z
 Status: `local_review_exchange_profile`
 
 Review-only. This profile prepares Blender, ArchiCAD and Web naming/mapping; it does not import, upload or publish assets.
@@ -14,14 +14,15 @@ Review-only. This profile prepares Blender, ArchiCAD and Web naming/mapping; it 
 - Web profiles: 3
 - public gates blocked: 3
 - human reviews open: 3
+- KosmoData refs: 2
 
 ## Assets
 
-| Asset | Blender | ArchiCAD | Web | Review note |
-| --- | --- | --- | --- | --- |
-| Kosmo Axis Marker | - | dxf_underlay_or_symbol | blocked | Human review is still open; exchange profiles are naming proposals only. |
-| Warm Concrete Study Material | create_material_from_parameters | surface_attribute_reference | blocked | Human review is still open; exchange profiles are naming proposals only. |
-| Generic Column GLB Slot | link_glb_as_collection | dxf_underlay_or_symbol | blocked | Human review is still open; exchange profiles are naming proposals only. |
+| Asset | Blender | ArchiCAD | Web | KosmoData | Review note |
+| --- | --- | --- | --- | --- | --- |
+| Kosmo Axis Marker | - | dxf_underlay_or_symbol | blocked | 0 | Human review is still open; exchange profiles are naming proposals only. |
+| Warm Concrete Study Material | create_material_from_parameters | surface_attribute_reference | blocked | 2 | Human review is still open; exchange profiles are naming proposals only. |
+| Generic Column GLB Slot | link_glb_as_collection | dxf_underlay_or_symbol | blocked | 0 | Human review is still open; exchange profiles are naming proposals only. |
 
 ## Kosmo Axis Marker
 
@@ -44,6 +45,10 @@ ArchiCAD:
 - layer: `-`
 - surface: `KOSMO_SURFACE_WARM_CONCRETE_MATERIAL_001`
 - source: `examples/kosmo-assets/kosmo-asset-demo/assets/materials/warm-concrete.material.json`
+
+KosmoData context:
+- `villa-savoye`: material_context / context_only / context_only
+- `pantheon`: material_context / context_only / context_only
 
 ## Generic Column GLB Slot
 

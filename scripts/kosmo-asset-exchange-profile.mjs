@@ -60,7 +60,8 @@ function buildExchangeProfile({ library, reviewPack }) {
       archicad_profile_count: rows.filter((asset) => asset.archicad).length,
       web_profile_count: rows.filter((asset) => asset.web).length,
       blocked_public_count: rows.filter((asset) => asset.public_gate === 'blocked').length,
-      human_review_open_count: rows.filter((asset) => asset.human_review_status === 'open').length
+      human_review_open_count: rows.filter((asset) => asset.human_review_status === 'open').length,
+      kosmodata_ref_count: rows.reduce((sum, asset) => sum + asset.kosmodata_refs.length, 0)
     },
     assets: rows,
     next_actions: nextActions(rows)
@@ -70,6 +71,7 @@ function buildExchangeProfile({ library, reviewPack }) {
 function exchangeAssetRow(asset, review) {
   const formats = Array.isArray(asset.formats) ? asset.formats : [];
   const profiles = generatedAssetProfiles(asset);
+  const kosmoDataRefs = kosmoDataRefsForAsset(asset);
   const sourcePaths = sourcePathMap(formats);
   const slug = slugify(asset.id);
   const publicGate = review?.public_ready ? 'ready' : 'blocked';
@@ -93,12 +95,13 @@ function exchangeAssetRow(asset, review) {
     review_status: asset.review_status,
     human_review_status: humanReviewStatus,
     public_gate: publicGate,
+    kosmodata_refs: kosmoDataRefs,
     source_paths: sourcePaths,
     generated_profiles: profiles,
     blender,
     archicad,
     web,
-    review_note: reviewNote({ publicGate, humanReviewStatus, blender, archicad })
+    review_note: reviewNote({ publicGate, humanReviewStatus, blender, archicad, kosmoDataRefs })
   };
 }
 
@@ -180,8 +183,20 @@ function generatedAssetProfiles(asset) {
     }));
 }
 
-function reviewNote({ publicGate, humanReviewStatus, blender, archicad }) {
+function kosmoDataRefsForAsset(asset) {
+  return (Array.isArray(asset.kosmodata_refs) ? asset.kosmodata_refs : []).map((ref) => ({
+    kind: ref.kind || null,
+    entry_id: ref.entry_id || null,
+    relation: ref.relation || null,
+    usage_policy: ref.usage_policy || null,
+    review_status: ref.review_status || null,
+    notes: ref.notes || null
+  }));
+}
+
+function reviewNote({ publicGate, humanReviewStatus, blender, archicad, kosmoDataRefs }) {
   if (humanReviewStatus === 'open') return 'Human review is still open; exchange profiles are naming proposals only.';
+  if (kosmoDataRefs.length) return 'KosmoData references travel as context metadata only; they do not authorize geometry, texture or public asset derivation.';
   if (publicGate === 'blocked') return 'Local workflow may continue, but public web/download gates remain blocked.';
   if (blender?.approved_for_import || archicad?.approved_for_exchange) return 'Exchange profile can move to manual import smoke test after explicit owner approval.';
   return 'Review exchange profile before any import or release.';
@@ -215,15 +230,16 @@ function renderMarkdown(profile) {
     `- Web profiles: ${profile.summary.web_profile_count}`,
     `- public gates blocked: ${profile.summary.blocked_public_count}`,
     `- human reviews open: ${profile.summary.human_review_open_count}`,
+    `- KosmoData refs: ${profile.summary.kosmodata_ref_count}`,
     '',
     '## Assets',
     '',
-    '| Asset | Blender | ArchiCAD | Web | Review note |',
-    '| --- | --- | --- | --- | --- |'
+    '| Asset | Blender | ArchiCAD | Web | KosmoData | Review note |',
+    '| --- | --- | --- | --- | --- | --- |'
   ];
 
   for (const asset of profile.assets) {
-    lines.push(`| ${escapePipe(asset.title)} | ${escapePipe(asset.blender?.import_mode || '-')} | ${escapePipe(asset.archicad?.exchange_mode || '-')} | ${escapePipe(asset.web?.public_gate || '-')} | ${escapePipe(asset.review_note)} |`);
+    lines.push(`| ${escapePipe(asset.title)} | ${escapePipe(asset.blender?.import_mode || '-')} | ${escapePipe(asset.archicad?.exchange_mode || '-')} | ${escapePipe(asset.web?.public_gate || '-')} | ${asset.kosmodata_refs.length} | ${escapePipe(asset.review_note)} |`);
   }
 
   for (const asset of profile.assets) {
@@ -240,6 +256,12 @@ function renderMarkdown(profile) {
       lines.push(`- layer: \`${asset.archicad.archicad_layer || '-'}\``);
       lines.push(`- surface: \`${asset.archicad.archicad_surface || '-'}\``);
       lines.push(`- source: \`${asset.archicad.source_file || '-'}\``);
+    }
+    if (asset.kosmodata_refs.length) {
+      lines.push('', 'KosmoData context:');
+      for (const ref of asset.kosmodata_refs) {
+        lines.push(`- \`${ref.entry_id}\`: ${ref.relation || 'context'} / ${ref.usage_policy || 'context_only'} / ${ref.review_status || 'context_only'}`);
+      }
     }
   }
 

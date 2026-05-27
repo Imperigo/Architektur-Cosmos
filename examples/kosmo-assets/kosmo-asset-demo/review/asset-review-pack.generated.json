@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-27T13:54:52.087Z",
+  "generated_at": "2026-05-27T16:09:47.915Z",
   "generator": "kosmo-asset-review-pack",
   "library_path": "examples/kosmo-assets/kosmo-asset-demo/library.json",
   "library_id": "kosmo-asset-demo",
@@ -32,6 +32,7 @@
     "local_ready_count": 3,
     "public_ready_count": 0,
     "open_human_review_count": 3,
+    "kosmodata_ref_count": 2,
     "generated_profile_count": 4,
     "blocked_route_count": 0,
     "needs_review_route_count": 11,
@@ -61,6 +62,7 @@
           "path": "assets/dxf/axis-marker-svg-001.dxf"
         }
       ],
+      "kosmodata_refs": [],
       "export_targets": [
         "svg",
         "dxf",
@@ -109,6 +111,11 @@
           "id": "source_basis",
           "status": "passed",
           "label": "Source basis is documented."
+        },
+        {
+          "id": "kosmodata_bridge",
+          "status": "passed",
+          "label": "No KosmoData references are attached to this asset."
         },
         {
           "id": "local_files",
@@ -165,6 +172,24 @@
           "path": "assets/materials/warm-concrete.material.json"
         }
       ],
+      "kosmodata_refs": [
+        {
+          "kind": "reference_entry",
+          "entry_id": "villa-savoye",
+          "relation": "material_context",
+          "usage_policy": "context_only",
+          "review_status": "context_only",
+          "notes": "Used only as KosmoData material/layer taxonomy context. No texture, geometry or protected project image is derived from this entry."
+        },
+        {
+          "kind": "reference_entry",
+          "entry_id": "pantheon",
+          "relation": "material_context",
+          "usage_policy": "context_only",
+          "review_status": "context_only",
+          "notes": "Used only as mineral/concrete reference context for naming and review vocabulary."
+        }
+      ],
       "export_targets": [
         "blender",
         "archicad",
@@ -210,6 +235,11 @@
           "id": "source_basis",
           "status": "passed",
           "label": "Source basis is documented."
+        },
+        {
+          "id": "kosmodata_bridge",
+          "status": "passed",
+          "label": "KosmoData references are explicit context/source metadata and do not imply automatic asset derivation."
         },
         {
           "id": "local_files",
@@ -270,6 +300,7 @@
           "path": "assets/dxf/generic-column-glb-001.dxf"
         }
       ],
+      "kosmodata_refs": [],
       "export_targets": [
         "glb",
         "blender",
@@ -332,6 +363,11 @@
           "id": "source_basis",
           "status": "passed",
           "label": "Source basis is documented."
+        },
+        {
+          "id": "kosmodata_bridge",
+          "status": "passed",
+          "label": "No KosmoData references are attached to this asset."
         },
         {
           "id": "local_files",

@@ -1,7 +1,7 @@
 # KosmoAsset Export Plan
 
 Library: `kosmo-asset-demo`
-Generated: 2026-05-27T13:54:51.901Z
+Generated: 2026-05-27T16:09:47.737Z
 Status: `review_plan`
 
 This is a local review-only export plan. It does not upload assets, write D1/R2 or create public downloads.

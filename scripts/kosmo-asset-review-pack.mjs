@@ -50,6 +50,7 @@ function buildReviewPack({ library, check, exportPlan }) {
     local_ready_count: rows.filter((asset) => asset.local_ready).length,
     public_ready_count: rows.filter((asset) => asset.public_ready).length,
     open_human_review_count: rows.filter((asset) => asset.human_review_status === 'open').length,
+    kosmodata_ref_count: rows.reduce((sum, asset) => sum + asset.kosmodata_refs.length, 0),
     generated_profile_count: rows.reduce((sum, asset) => sum + asset.generated_profiles.length, 0),
     blocked_route_count: routeRows.filter((route) => route.status === 'blocked').length,
     needs_review_route_count: routeRows.filter((route) => route.status === 'needs_review').length,
@@ -92,11 +93,12 @@ function assetReviewRow({ asset, exportPlan, check }) {
     blockers: Array.isArray(route.blockers) ? route.blockers : []
   })) : [];
   const generatedProfiles = generatedAssetProfiles(asset);
+  const kosmoDataRefs = kosmoDataRefsForAsset(asset);
   const localFormats = (asset.formats || []).filter((format) => format.path && existsSync(resolve(libraryRoot, format.path)));
   const rightsPublicSafe = publicSafeRights.has(asset.rights_status);
   const publicReady = asset.public_use_allowed === true && rightsPublicSafe && reviewedStatuses.has(asset.review_status);
   const humanReviewStatus = reviewedStatuses.has(asset.review_status) ? 'closed' : 'open';
-  const checklist = reviewChecklist({ asset, check, localFormats, routes, generatedProfiles, publicReady });
+  const checklist = reviewChecklist({ asset, check, localFormats, routes, generatedProfiles, kosmoDataRefs, publicReady });
 
   return {
     id: asset.id,
@@ -110,6 +112,7 @@ function assetReviewRow({ asset, exportPlan, check }) {
     public_ready: publicReady,
     local_ready: Boolean(check?.local_ready ?? localFormats.length > 0),
     local_formats: localFormats.map((format) => ({ format: format.format, path: format.path })),
+    kosmodata_refs: kosmoDataRefs,
     export_targets: Array.isArray(asset.export_targets) ? asset.export_targets : [],
     routes,
     generated_profiles: generatedProfiles,
@@ -118,9 +121,19 @@ function assetReviewRow({ asset, exportPlan, check }) {
   };
 }
 
-function reviewChecklist({ asset, check, localFormats, routes, generatedProfiles, publicReady }) {
+function reviewChecklist({ asset, check, localFormats, routes, generatedProfiles, kosmoDataRefs, publicReady }) {
+  const kosmoDataRefsAreSafe = kosmoDataRefs.every((ref) => (
+    ref.usage_policy !== 'derived_asset_review_required' || ref.review_status !== 'context_only'
+  ));
   return [
     checkItem('source_basis', Array.isArray(asset.source_basis) && asset.source_basis.length > 0, 'Source basis is documented.'),
+    checkItem(
+      'kosmodata_bridge',
+      kosmoDataRefsAreSafe,
+      kosmoDataRefs.length
+        ? 'KosmoData references are explicit context/source metadata and do not imply automatic asset derivation.'
+        : 'No KosmoData references are attached to this asset.'
+    ),
     checkItem('local_files', localFormats.length > 0, 'At least one local source/export file exists.'),
     checkItem('rights_gate', publicSafeRights.has(asset.rights_status) || asset.public_use_allowed !== true, 'Rights status does not allow unsafe public use.'),
     checkItem('public_gate', publicReady || asset.public_use_allowed !== true, 'Public use is blocked unless rights and review are ready.'),
@@ -129,6 +142,17 @@ function reviewChecklist({ asset, check, localFormats, routes, generatedProfiles
     checkItem('generated_profile', generatedProfiles.length > 0 || asset.source_kind !== 'generated', 'Generated assets carry a generated profile.'),
     checkItem('library_check', check?.local_ready === true, 'Asset passed the library check row.')
   ];
+}
+
+function kosmoDataRefsForAsset(asset) {
+  return (Array.isArray(asset.kosmodata_refs) ? asset.kosmodata_refs : []).map((ref) => ({
+    kind: ref.kind || null,
+    entry_id: ref.entry_id || null,
+    relation: ref.relation || null,
+    usage_policy: ref.usage_policy || null,
+    review_status: ref.review_status || null,
+    notes: ref.notes || null
+  }));
 }
 
 function checkItem(id, passed, label) {
@@ -196,6 +220,7 @@ function renderMarkdown(pack) {
     `- local ready: ${pack.summary.local_ready_count}`,
     `- public ready: ${pack.summary.public_ready_count}`,
     `- open human reviews: ${pack.summary.open_human_review_count}`,
+    `- KosmoData refs: ${pack.summary.kosmodata_ref_count}`,
     `- generated profiles: ${pack.summary.generated_profile_count}`,
     `- blocked routes: ${pack.summary.blocked_route_count}`,
     `- needs-review routes: ${pack.summary.needs_review_route_count}`,
@@ -203,12 +228,12 @@ function renderMarkdown(pack) {
     '',
     '## Assets',
     '',
-    '| Asset | Type | Rights | Review | Local formats | Routes | Suggested decision |',
-    '| --- | --- | --- | --- | --- | --- | --- |'
+    '| Asset | Type | Rights | Review | KosmoData | Local formats | Routes | Suggested decision |',
+    '| --- | --- | --- | --- | --- | --- | --- | --- |'
   ];
 
   for (const asset of pack.assets) {
-    lines.push(`| ${escapePipe(asset.title)} | ${escapePipe(asset.asset_type)} | ${escapePipe(asset.rights_status)} | ${escapePipe(asset.review_status)} | ${escapePipe(asset.local_formats.map((format) => format.format).join(', ') || '-')} | ${escapePipe(routeSummary(asset.routes))} | ${escapePipe(asset.suggested_decision)} |`);
+    lines.push(`| ${escapePipe(asset.title)} | ${escapePipe(asset.asset_type)} | ${escapePipe(asset.rights_status)} | ${escapePipe(asset.review_status)} | ${asset.kosmodata_refs.length} | ${escapePipe(asset.local_formats.map((format) => format.format).join(', ') || '-')} | ${escapePipe(routeSummary(asset.routes))} | ${escapePipe(asset.suggested_decision)} |`);
   }
 
   for (const asset of pack.assets) {
@@ -217,6 +242,12 @@ function renderMarkdown(pack) {
     lines.push(`- human review: \`${asset.human_review_status}\``);
     lines.push(`- public ready: ${asset.public_ready ? 'yes' : 'no'}`);
     lines.push(`- suggested decision: \`${asset.suggested_decision}\``);
+    if (asset.kosmodata_refs.length) {
+      lines.push('', 'KosmoData bridge:');
+      for (const ref of asset.kosmodata_refs) {
+        lines.push(`- \`${ref.entry_id}\`: ${ref.relation || 'context'} / ${ref.usage_policy || 'context_only'} / ${ref.review_status || 'context_only'}`);
+      }
+    }
     lines.push('', 'Checklist:');
     for (const item of asset.checklist) lines.push(`- ${item.status}: ${item.label}`);
     if (asset.generated_profiles.length) {

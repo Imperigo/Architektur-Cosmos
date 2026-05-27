@@ -38,6 +38,40 @@ Schichten:
 - Umgekehrt darf ein lokal geprueftes Asset in KosmoData sichtbar sein, ohne
   dadurch ein oeffentlicher Download, R2-Upload oder D1-Write zu werden.
 
+### Brueckenvertrag V1
+
+Die erste maschinenlesbare Bruecke heisst `kosmodata_refs` und lebt direkt am
+Asset. Sie ist bewusst Metadaten- und Review-Logik, kein Importbefehl.
+
+```json
+{
+  "kosmodata_refs": [
+    {
+      "kind": "reference_entry",
+      "entry_id": "villa-savoye",
+      "relation": "material_context",
+      "usage_policy": "context_only",
+      "review_status": "context_only"
+    }
+  ]
+}
+```
+
+Die Felder bedeuten:
+
+- `entry_id`: verweist auf einen KosmoData-Eintrag aus `data/mock-entries.json`;
+- `relation`: erklaert, warum die Referenz fuer das Asset relevant ist;
+- `usage_policy`: trennt Kontext von echter Ableitung. `context_only` bedeutet:
+  keine Geometrie, keine Textur, kein geschuetztes Bild und kein Plan werden
+  aus dem Eintrag uebernommen;
+- `review_status`: haelt fest, ob die Referenz nur Kontext ist oder spaeter
+  menschliche Quellenpruefung braucht.
+
+Wichtig: `kosmodata_refs` duerfen Layernamen, Materialvokabular,
+Typologie-Hinweise und Suchkontext tragen. Sie duerfen in V1 keine
+automatische Asset-Freigabe, Public-Freigabe, R2-Upload, D1-Write oder
+Produktion-Importentscheidung ausloesen.
+
 ## Human-Gate-Ampel
 
 Die V1-Oberflaeche und die Reports lesen denselben Gate-Zustand:

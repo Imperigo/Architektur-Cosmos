@@ -48,6 +48,11 @@ Aktiv fuer:
 - Datenmodell, Rechte-/Quellenstatus, Brain-Tools
 - KosmoData-Enrichment und Recherche-Pipelines
 - Kosmo-Projektpaket als erster repo-uebergreifender Vertrag
+- KosmoAsset-Manifest und lokale Review-Gates fuer wiederverwendbare
+  Materialien, 2D-/3D-Assets und Exchange-Profile
+- `kosmodata_refs` als sichere Bruecke: KosmoData liefert Kontext,
+  Taxonomie und Quellenhinweise; KosmoAsset behaelt eigene Rechte-,
+  Human-Review- und Public-Gates
 
 Nicht hier hinein gehoert:
 

@@ -147,6 +147,12 @@
         "source_entry_id": {
           "type": "string"
         },
+        "kosmodata_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/kosmodata_ref"
+          }
+        },
         "source_basis": {
           "type": "array",
           "items": {
@@ -233,6 +239,35 @@
           "items": {
             "$ref": "#/$defs/generated_asset_profile"
           }
+        }
+      }
+    },
+    "kosmodata_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "entry_id", "relation", "usage_policy", "review_status"],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["reference_entry", "source_entry", "project_context", "material_context", "typology_context"]
+        },
+        "entry_id": {
+          "type": "string"
+        },
+        "relation": {
+          "type": "string",
+          "enum": ["taxonomy_hint", "material_context", "model_context", "typology_context", "source_trail"]
+        },
+        "usage_policy": {
+          "type": "string",
+          "enum": ["context_only", "source_trail_only", "derived_asset_review_required"]
+        },
+        "review_status": {
+          "type": "string",
+          "enum": ["context_only", "needs_human_review", "accepted_as_context", "blocked"]
+        },
+        "notes": {
+          "type": "string"
         }
       }
     },

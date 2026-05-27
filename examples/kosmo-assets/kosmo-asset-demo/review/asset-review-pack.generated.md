@@ -1,7 +1,7 @@
 # KosmoAsset Review Pack
 
 Library: `kosmo-asset-demo`
-Generated: 2026-05-27T13:54:52.087Z
+Generated: 2026-05-27T16:09:47.915Z
 Status: `asset_human_review_required`
 Rights scope: `local_review_only`
 
@@ -13,6 +13,7 @@ Review-only. This pack does not upload, publish, promote or write public asset r
 - local ready: 3
 - public ready: 0
 - open human reviews: 3
+- KosmoData refs: 2
 - generated profiles: 4
 - blocked routes: 0
 - needs-review routes: 11
@@ -20,11 +21,11 @@ Review-only. This pack does not upload, publish, promote or write public asset r
 
 ## Assets
 
-| Asset | Type | Rights | Review | Local formats | Routes | Suggested decision |
-| --- | --- | --- | --- | --- | --- | --- |
-| Kosmo Axis Marker | 2d_symbol | own_work | draft | svg, dxf | svg:needs_review, dxf:needs_review, web:needs_review, layout:needs_review | complete_human_review_before_promotion |
-| Warm Concrete Study Material | material | generated_needs_review | draft | material_json | blender:needs_review, archicad:needs_review, web:needs_review | complete_human_review_before_promotion |
-| Generic Column GLB Slot | glb_model | generated_needs_review | draft | glb, dxf | glb:needs_review, blender:needs_review, archicad:needs_review, web:needs_review | complete_human_review_before_promotion |
+| Asset | Type | Rights | Review | KosmoData | Local formats | Routes | Suggested decision |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Kosmo Axis Marker | 2d_symbol | own_work | draft | 0 | svg, dxf | svg:needs_review, dxf:needs_review, web:needs_review, layout:needs_review | complete_human_review_before_promotion |
+| Warm Concrete Study Material | material | generated_needs_review | draft | 2 | material_json | blender:needs_review, archicad:needs_review, web:needs_review | complete_human_review_before_promotion |
+| Generic Column GLB Slot | glb_model | generated_needs_review | draft | 0 | glb, dxf | glb:needs_review, blender:needs_review, archicad:needs_review, web:needs_review | complete_human_review_before_promotion |
 
 ## Kosmo Axis Marker
 
@@ -35,6 +36,7 @@ Review-only. This pack does not upload, publish, promote or write public asset r
 
 Checklist:
 - passed: Source basis is documented.
+- passed: No KosmoData references are attached to this asset.
 - passed: At least one local source/export file exists.
 - passed: Rights status does not allow unsafe public use.
 - passed: Public use is blocked unless rights and review are ready.
@@ -53,8 +55,13 @@ Generated profiles:
 - public ready: no
 - suggested decision: `complete_human_review_before_promotion`
 
+KosmoData bridge:
+- `villa-savoye`: material_context / context_only / context_only
+- `pantheon`: material_context / context_only / context_only
+
 Checklist:
 - passed: Source basis is documented.
+- passed: KosmoData references are explicit context/source metadata and do not imply automatic asset derivation.
 - passed: At least one local source/export file exists.
 - passed: Rights status does not allow unsafe public use.
 - passed: Public use is blocked unless rights and review are ready.
@@ -75,6 +82,7 @@ Generated profiles:
 
 Checklist:
 - passed: Source basis is documented.
+- passed: No KosmoData references are attached to this asset.
 - passed: At least one local source/export file exists.
 - passed: Rights status does not allow unsafe public use.
 - passed: Public use is blocked unless rights and review are ready.
