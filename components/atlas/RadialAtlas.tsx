@@ -3560,7 +3560,7 @@ function DatabaseArchivePanel({
 
   function activateIntakeTab(event: PointerEvent<HTMLButtonElement>) {
     event.stopPropagation();
-    setActiveTab(developerMode ? 'generate' : 'intake');
+    setActiveTab('intake');
   }
 
   function activatePrint(event: PointerEvent<HTMLButtonElement>) {
