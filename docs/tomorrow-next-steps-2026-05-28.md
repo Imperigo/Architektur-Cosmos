@@ -7,11 +7,12 @@ Stand nach Spaetbatch 2026-05-27:
 ```text
 5566d20 Record Warm Concrete Blender run
 7d8e2a0 Polish KosmoAsset exchange labels
+8d1022b Add KosmoAsset pause handoff
 ```
 
-`main` war vor dem letzten Sicherungspush sauber bis auf den lokalen
-KosmoAsset-Label-Commit `7d8e2a0`. Beim naechsten Einstieg zuerst pruefen, ob
-dieser Commit auf `origin/main` angekommen ist.
+`main` wurde zum Pausenabschluss auf `origin/main` gesichert. Beim naechsten
+Einstieg trotzdem zuerst `git status --short --branch --ahead-behind` pruefen,
+weil mehrere Worker parallel am Kosmo-Projekt arbeiten koennen.
 
 Letzte gesicherte Richtung:
 
@@ -27,6 +28,8 @@ Letzte gesicherte Richtung:
 - `npm run lint` und `npm run security:check` hingen lokal beim letzten Lauf
   wieder mit 0% CPU; das wurde als lokales Tooling-Problem notiert, nicht als
   Produktcode-Fehler.
+- Zusaetzlicher Langzeit-Handoff:
+  `docs/pause-handoff-2026-05-27.md`.
 
 KosmoAsset ist jetzt besser lesbar:
 
