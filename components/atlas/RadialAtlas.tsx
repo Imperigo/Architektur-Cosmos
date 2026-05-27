@@ -1503,7 +1503,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
               />
             </g>
           </g>
-          {selectedEntry ? <SnappedEntryOverlay entry={selectedEntry} onDismiss={closeDossier} onSelectFilter={activateFilterFromDossier} /> : null}
+          {selectedEntry && !showDatabasePanel ? <SnappedEntryOverlay entry={selectedEntry} onDismiss={closeDossier} onSelectFilter={activateFilterFromDossier} /> : null}
           {introState === 'idle' && !ui.isCoarsePointer ? (
             <DatabaseAccess
               isOpen={showDatabasePanel}
