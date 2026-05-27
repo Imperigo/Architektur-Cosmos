@@ -27,11 +27,11 @@ export function ArchiveHistoryControls() {
 
   return (
     <nav className="archive-history-controls" aria-label="Datenbank Navigation">
-      <button type="button" onClick={goBack} aria-label="Zurueck">
+      <button type="button" onClick={goBack} aria-label="Zurück">
         <span>←</span>
         Zurück
       </button>
-      <button type="button" onClick={goForward} aria-label="Vorwaerts">
+      <button type="button" onClick={goForward} aria-label="Vorwärts">
         Vorwärts
         <span>→</span>
       </button>

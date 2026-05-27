@@ -3878,7 +3878,7 @@ function DatabaseArchivePanel({
                 </div>
               ) : (
                 <p className="border border-[#f7f7f4]/12 bg-[#050505]/45 p-2 text-[#b8b8b2]">
-                  Noch keine Dateien gesammelt. Fuege ein Projektpaket hinzu, um Quellen-, Bild- und 3D-Bereitschaft zu sehen.
+                  Noch keine Dateien gesammelt. Füge ein Projektpaket hinzu, um Quellen-, Bild- und 3D-Bereitschaft zu sehen.
                 </p>
               )}
 
