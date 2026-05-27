@@ -1,7 +1,7 @@
 # KosmoAsset Human Review Session
 
 Library: `kosmo-asset-demo`
-Generated: 2026-05-27T11:22:48.663Z
+Generated: 2026-05-27T11:49:05.036Z
 Status: `asset_human_review_session_open`
 
 Editable local human-review session. This file does not approve assets, does not certify quality, does not upload, publish, write D1/R2 or open public gates.
