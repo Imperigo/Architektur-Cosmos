@@ -212,10 +212,15 @@ function readInitialIntroState(): IntroState {
   try {
     const params = new URLSearchParams(window.location.search);
     if (params.get('view') === 'hub') return 'hub';
-    return params.get('return') === 'database' ? 'idle' : 'intro';
+    return isKosmoDataReturn(params) ? 'idle' : 'intro';
   } catch {
     return 'intro';
   }
+}
+
+function isKosmoDataReturn(params: URLSearchParams) {
+  const returnTarget = params.get('return');
+  return returnTarget === 'database' || returnTarget === 'kosmodata';
 }
 
 function previousIntroState(current: IntroState): IntroState {
@@ -360,7 +365,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const params = new URLSearchParams(window.location.search);
-    if (params.get('return') !== 'database') return;
+    if (!isKosmoDataReturn(params)) return;
 
     setIntroState('idle');
     setReturningFromDatabase(true);
