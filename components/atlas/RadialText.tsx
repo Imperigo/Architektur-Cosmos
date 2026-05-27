@@ -17,7 +17,7 @@ type RadialLetterTextProps = {
   className?: string;
   inward?: boolean;
   fontStyle?: 'normal' | 'italic';
-  onClick?: (event: ReactMouseEvent<SVGTextElement>) => void;
+  onClick?: (event: ReactMouseEvent<SVGElement>) => void;
 };
 
 export function RadialLetterText({
@@ -42,9 +42,8 @@ export function RadialLetterText({
   const centerRadialRotation = inward ? angle + 180 : angle;
   const normalizedCenterRotation = ((centerRadialRotation % 360) + 360) % 360;
   const centerNeedsFlip = normalizedCenterRotation > 90 && normalizedCenterRotation < 270;
-  const reverseArc = centerNeedsFlip;
-  const readableLetters = reverseArc ? [...letters].reverse() : letters;
-  const direction = reverseArc ? -1 : 1;
+  const readableLetters = letters;
+  const direction = centerNeedsFlip ? -1 : 1;
   const baseStep = letterAngleStep ?? Math.max(1.2, Math.min(3.6, fontSize * 38 / Math.max(80, radius)));
   const step = Math.abs(baseStep) * direction;
   const startAngle = angle - ((readableLetters.length - 1) * step) / 2;
@@ -58,27 +57,38 @@ export function RadialLetterText({
         const rotation = centerNeedsFlip ? radialRotation + 180 : radialRotation;
 
         return (
-          <text
-            key={`${letter}-${index}`}
-            x={point.x}
-            y={point.y}
-            textAnchor="middle"
-            dominantBaseline="central"
-            fill={fill}
-            fontSize={fontSize}
-            fontWeight={fontWeight}
-            fontStyle={fontStyle}
-            fontFamily="var(--font-sans), system-ui, sans-serif"
-            letterSpacing="0"
-            stroke={stroke}
-            strokeWidth={strokeWidth}
-            paintOrder="stroke"
-            transform={`rotate(${rotation} ${point.x} ${point.y})`}
-            pointerEvents={onClick ? 'visiblePainted' : 'none'}
-            onClick={onClick}
-          >
-            {letter === ' ' ? '\u00a0' : letter}
-          </text>
+          <g key={`${letter}-${index}`}>
+            {onClick ? (
+              <circle
+                cx={point.x}
+                cy={point.y}
+                r={fontSize * 0.86}
+                fill="transparent"
+                pointerEvents="all"
+                onClick={onClick}
+              />
+            ) : null}
+            <text
+              x={point.x}
+              y={point.y}
+              textAnchor="middle"
+              dominantBaseline="central"
+              fill={fill}
+              fontSize={fontSize}
+              fontWeight={fontWeight}
+              fontStyle={fontStyle}
+              fontFamily="var(--font-sans), system-ui, sans-serif"
+              letterSpacing="0"
+              stroke={stroke}
+              strokeWidth={strokeWidth}
+              paintOrder="stroke"
+              transform={`rotate(${rotation} ${point.x} ${point.y})`}
+              pointerEvents={onClick ? 'visiblePainted' : 'none'}
+              onClick={onClick}
+            >
+              {letter === ' ' ? '\u00a0' : letter}
+            </text>
+          </g>
         );
       })}
     </g>
