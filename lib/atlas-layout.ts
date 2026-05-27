@@ -138,7 +138,7 @@ export function angleInSector(entry: Entry, sector: StyleSector) {
     ? sector.endAngle + 360 - sector.startAngle
     : sector.endAngle - sector.startAngle;
   const hash = stableHash(entry.id);
-  const offset = ((hash % 100) / 100 - 0.5) * Math.min(span * 0.52, 30);
+  const offset = ((hash % 100) / 100 - 0.5) * Math.min(span * 0.34, 20);
   const angle = sectorMidAngle(sector) + offset;
   return (angle + 360) % 360;
 }

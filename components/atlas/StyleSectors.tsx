@@ -90,12 +90,12 @@ function StyleSectorsComponent({ state, isMoving = false, activeStyleLens = null
                 radius={labelRadius}
                 angle={labelAngle}
                 fill={accent}
-                fontSize={12.2}
-                fontWeight={520}
+                fontSize={13.1}
+                fontWeight={540}
                 fontStyle="italic"
                 opacity={outerLabelOpacity * (activeStyleLens && activeStyleLens !== sector.id ? 0.52 : 1)}
-                letterAngleStep={3.75}
-                strokeWidth={0.32}
+                letterAngleStep={3.05}
+                strokeWidth={0.24}
                 inward={false}
                 onClick={(event) => {
                   event.stopPropagation();

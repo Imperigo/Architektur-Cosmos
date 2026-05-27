@@ -50,7 +50,7 @@ export function RadialLetterText({
   const startAngle = angle - ((readableLetters.length - 1) * step) / 2;
 
   return (
-    <g className={className} opacity={opacity} aria-label={text} pointerEvents="none">
+    <g className={className} opacity={opacity} aria-label={text} pointerEvents={onClick ? 'auto' : 'none'}>
       {readableLetters.map((letter, index) => {
         const letterAngle = startAngle + index * step;
         const point = polarToCartesian(cx, cy, radius, letterAngle);
