@@ -1,7 +1,7 @@
 # KosmoAsset Promotion Guard
 
 Library: `kosmo-asset-demo`
-Generated: 2026-05-27T20:29:36.079Z
+Generated: 2026-05-27T20:34:29.659Z
 Status: `asset_promotion_guard_blocked`
 
 Promotion guard. This report does not promote assets, upload files, write D1/R2, open public downloads or mutate the library.
@@ -10,14 +10,14 @@ Promotion guard. This report does not promote assets, upload files, write D1/R2,
 
 - assets: 3
 - promotion allowed: no
-- blockers: 7
+- blockers: 4
 - unsafe findings: 0
 - missing decisions: 2
-- local certificates ready: 0
-- sandbox ready: 0
-- named reviewers: 0
+- local certificates ready: 1
+- sandbox ready: 1
+- named reviewers: 1
 - reviewer blockers: 0
-- ledger promotion blockers: 7
+- ledger promotion blockers: 4
 - public ready: 0
 - full review: `asset_full_review_ready_for_human_decisions`
 - decision ledger: `asset_decision_ledger_open`
@@ -28,7 +28,7 @@ Promotion guard. This report does not promote assets, upload files, write D1/R2,
 | Asset | Decision State | Decision | Reviewer Gate | Certificate | Sandbox | Public Gate | Promotion | Blockers |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Kosmo Axis Marker | needs_more_evidence | missing_decision | missing_decision | missing_certificate | no | blocked | blocked | decision_missing, local_certificate_missing |
-| Warm Concrete Study Material | needs_more_evidence | needs_review_recorded | not_required_for_note | asset_local_review_certificate_blocked | no | blocked | blocked | local_certificate_missing, local_approval_missing, certificate_failed_checks |
+| Warm Concrete Study Material | approved | local_approval_recorded | named_human_reviewer_recorded | asset_local_review_certified | yes | blocked | ready_for_owner_review | - |
 | Generic Column GLB Slot | needs_more_evidence | missing_decision | missing_decision | missing_certificate | no | blocked | blocked | decision_missing, local_certificate_missing |
 
 ## Human Gate Detail
@@ -46,12 +46,12 @@ Promotion guard. This report does not promote assets, upload files, write D1/R2,
 ### Warm Concrete Study Material
 
 - asset id: `warm-concrete-material-001`
-- decision state: `needs_more_evidence` (needs more human evidence)
-- reviewer: -
-- reviewer gate: `not_required_for_note`
-- certificate: `asset_local_review_certificate_blocked`
-- next human action: `create_local_review_certificate`
-- promotion blockers: `local_certificate_missing`, `local_approval_missing`, `certificate_failed_checks`
+- decision state: `approved` (local human approval recorded)
+- reviewer: `Andrin Baumann`
+- reviewer gate: `named_human_reviewer_recorded`
+- certificate: `asset_local_review_certified`
+- next human action: `certified_local_sandbox_candidate`
+- promotion blockers: -
 
 ### Generic Column GLB Slot
 
@@ -68,9 +68,6 @@ Promotion guard. This report does not promote assets, upload files, write D1/R2,
 
 - axis-marker-svg-001:decision_missing
 - axis-marker-svg-001:local_certificate_missing
-- warm-concrete-material-001:local_certificate_missing
-- warm-concrete-material-001:local_approval_missing
-- warm-concrete-material-001:certificate_failed_checks
 - generic-column-glb-001:decision_missing
 - generic-column-glb-001:local_certificate_missing
 
@@ -78,4 +75,4 @@ Promotion guard. This report does not promote assets, upload files, write D1/R2,
 
 - Keep KosmoAsset in local review-only mode.
 - Complete human review decisions, local certificates and ledger checks before any sandbox or public promotion.
-- Current blocker count: 7.
+- Current blocker count: 4.

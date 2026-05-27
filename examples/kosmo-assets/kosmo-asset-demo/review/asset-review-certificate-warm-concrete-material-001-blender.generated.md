@@ -2,16 +2,16 @@
 
 Asset: Warm Concrete Study Material (`warm-concrete-material-001`)
 Route: `blender`
-Generated: 2026-05-27T20:27:49.403Z
-Status: `asset_local_review_certificate_blocked`
-Certificate ID: `kosmo-asset-demo:warm-concrete-material-001:blender:2026-05-27T20:27:49.061Z`
+Generated: 2026-05-27T20:33:52.498Z
+Status: `asset_local_review_certified`
+Certificate ID: `kosmo-asset-demo:warm-concrete-material-001:blender:2026-05-27T20:33:52.099Z`
 
 Architecture Kosmos Local Quality Certificate V1. This is local review evidence only. It does not approve public use, upload assets, write D1/R2, mutate the library, write Blender scenes or write ArchiCAD project files.
 
 ## Summary
 
-- checks: 13/15
-- failed checks: 2
+- checks: 15/15
+- failed checks: 0
 - public gate: `blocked`
 - rights: `generated_needs_review`
 - local ready: yes
@@ -43,8 +43,8 @@ Architecture Kosmos Local Quality Certificate V1. This is local review evidence 
 - passed: Human-review session contains this asset.
 - passed: Explicit local review decision exists.
 - passed: Decision status is local_review_decision_recorded.
-- failed: Decision is needs-review.
-- failed: Decision reviewer is missing.
+- passed: Decision is approve-local.
+- passed: Decision reviewer is Andrin Baumann.
 - passed: Decision route is blender, expected blender.
 - passed: Review-pack marks the asset as local-ready.
 - passed: Handoff smoke status is handoff_smoke_passed.
@@ -64,4 +64,6 @@ Architecture Kosmos Local Quality Certificate V1. This is local review evidence 
 
 ## Next Actions
 
-- Resolve failed checks before treating this asset/route as locally certified.
+- Use this certificate only as local review evidence.
+- Proceed to Blender or ArchiCAD sandbox tests only in copied project files.
+- Keep public downloads, D1/R2 writes and R2 uploads disabled until a separate public-rights review exists.

@@ -1,10 +1,10 @@
 # KosmoAsset Review Decision
 
 Asset: Warm Concrete Study Material (`warm-concrete-material-001`)
-Generated: 2026-05-27T20:27:49.061Z
-Decision: `needs-review`
+Generated: 2026-05-27T20:33:52.099Z
+Decision: `approve-local`
 Route: `blender`
-Reviewer: -
+Reviewer: `Andrin Baumann`
 Status: `local_review_decision_recorded`
 
 This decision is local review evidence only. It does not mutate the library, import into Blender, write ArchiCAD files, upload assets or publish downloads.
@@ -14,7 +14,7 @@ This decision is local review evidence only. It does not mutate the library, imp
 - rights: `generated_needs_review`
 - review: `draft`
 - human review: `open`
-- named human reviewer: false
+- named human reviewer: true
 - smoke: `handoff_smoke_passed`
 - route available: true
 - public gate remains blocked: true
@@ -32,4 +32,6 @@ This decision is local review evidence only. It does not mutate the library, imp
 
 ## Next Actions
 
-- Continue manual review. Open local source/export files and rerun smoke after changes.
+- Local blender review has been recorded. Keep generated files local and review-only.
+- Only run Blender scene-write tests in a copied sandbox file with explicit owner approval.
+- Do not enable public downloads or R2 upload from this decision.

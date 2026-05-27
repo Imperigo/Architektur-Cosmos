@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-27T20:27:49.403Z",
+  "generated_at": "2026-05-27T20:33:52.498Z",
   "generator": "kosmo-asset-review-certificate",
   "library_path": "examples/kosmo-assets/kosmo-asset-demo/library.json",
   "library_id": "kosmo-asset-demo",
@@ -8,8 +8,8 @@
   "asset_title": "Warm Concrete Study Material",
   "route": "blender",
   "certificate_title": "Architecture Kosmos Local Quality Certificate V1",
-  "status": "asset_local_review_certificate_blocked",
-  "certificate_id": "kosmo-asset-demo:warm-concrete-material-001:blender:2026-05-27T20:27:49.061Z",
+  "status": "asset_local_review_certified",
+  "certificate_id": "kosmo-asset-demo:warm-concrete-material-001:blender:2026-05-27T20:33:52.099Z",
   "certificate_scope": "local_review_only",
   "quality_scope": {
     "human_architecture_review": true,
@@ -37,8 +37,8 @@
   },
   "summary": {
     "check_count": 15,
-    "passed_checks": 13,
-    "failed_checks": 2,
+    "passed_checks": 15,
+    "failed_checks": 0,
     "public_gate": "blocked",
     "rights_status": "generated_needs_review",
     "local_ready": true,
@@ -48,10 +48,10 @@
     "decision": {
       "path": "examples/kosmo-assets/kosmo-asset-demo/review/asset-review-decision-warm-concrete-material-001-blender.generated.json",
       "status": "local_review_decision_recorded",
-      "decision": "needs-review",
+      "decision": "approve-local",
       "route": "blender",
-      "reviewer": null,
-      "generated_at": "2026-05-27T20:27:49.061Z"
+      "reviewer": "Andrin Baumann",
+      "generated_at": "2026-05-27T20:33:52.099Z"
     },
     "human_session": {
       "path": "examples/kosmo-assets/kosmo-asset-demo/review/asset-human-review-session.generated.json",
@@ -95,13 +95,13 @@
     },
     {
       "id": "decision_is_local_approval",
-      "status": "failed",
-      "label": "Decision is needs-review."
+      "status": "passed",
+      "label": "Decision is approve-local."
     },
     {
       "id": "decision_named_reviewer",
-      "status": "failed",
-      "label": "Decision reviewer is missing."
+      "status": "passed",
+      "label": "Decision reviewer is Andrin Baumann."
     },
     {
       "id": "decision_route_matches",
@@ -156,6 +156,8 @@
     "decision": "examples/kosmo-assets/kosmo-asset-demo/review/asset-review-decision-warm-concrete-material-001-blender.generated.json"
   },
   "next_actions": [
-    "Resolve failed checks before treating this asset/route as locally certified."
+    "Use this certificate only as local review evidence.",
+    "Proceed to Blender or ArchiCAD sandbox tests only in copied project files.",
+    "Keep public downloads, D1/R2 writes and R2 uploads disabled until a separate public-rights review exists."
   ]
 }

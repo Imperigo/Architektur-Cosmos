@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-27T20:29:35.687Z",
+  "generated_at": "2026-05-27T20:34:00.423Z",
   "generator": "kosmo-asset-certificate-smoke",
   "library_path": "examples/kosmo-assets/kosmo-asset-demo/library.json",
   "asset_id": "warm-concrete-material-001",
@@ -43,7 +43,7 @@
       "command": "npm run kosmo:asset-decision-ledger -- --library examples/kosmo-assets/kosmo-asset-demo/library.json",
       "status": "passed",
       "exit_code": 0,
-      "stdout_tail": "\nKosmoAsset decision ledger\nLibrary: examples/kosmo-assets/kosmo-asset-demo/library.json\nStatus: asset_decision_ledger_open\nRecorded decisions: 2\nMissing decisions: 2\nLocal approvals: 1\nWrote: examples/kosmo-assets/kosmo-asset-demo/review/asset-decision-ledger.generated.md",
+      "stdout_tail": "\nKosmoAsset decision ledger\nLibrary: examples/kosmo-assets/kosmo-asset-demo/library.json\nStatus: asset_decision_ledger_open\nRecorded decisions: 2\nMissing decisions: 2\nLocal approvals: 2\nWrote: examples/kosmo-assets/kosmo-asset-demo/review/asset-decision-ledger.generated.md",
       "stderr_tail": ""
     },
     {
@@ -51,14 +51,14 @@
       "command": "npm run kosmo:asset-decision-ledger -- --library examples/kosmo-assets/kosmo-asset-demo/library.json",
       "status": "passed",
       "exit_code": 0,
-      "stdout_tail": "\nKosmoAsset decision ledger\nLibrary: examples/kosmo-assets/kosmo-asset-demo/library.json\nStatus: asset_decision_ledger_open\nRecorded decisions: 1\nMissing decisions: 2\nLocal approvals: 0\nWrote: examples/kosmo-assets/kosmo-asset-demo/review/asset-decision-ledger.generated.md",
+      "stdout_tail": "\nKosmoAsset decision ledger\nLibrary: examples/kosmo-assets/kosmo-asset-demo/library.json\nStatus: asset_decision_ledger_open\nRecorded decisions: 1\nMissing decisions: 2\nLocal approvals: 1\nWrote: examples/kosmo-assets/kosmo-asset-demo/review/asset-decision-ledger.generated.md",
       "stderr_tail": ""
     }
   ],
   "evidence_snapshot": {
     "decision_status": "local_review_decision_recorded",
     "certificate_status": "asset_local_review_certified",
-    "certificate_id": "kosmo-asset-demo:warm-concrete-material-001:blender:2026-05-27T20:29:34.307Z",
+    "certificate_id": "kosmo-asset-demo:warm-concrete-material-001:blender:2026-05-27T20:33:58.936Z",
     "ledger_status_with_certificate": "asset_decision_ledger_open",
     "ledger_certificate_status": "asset_local_review_certified"
   },

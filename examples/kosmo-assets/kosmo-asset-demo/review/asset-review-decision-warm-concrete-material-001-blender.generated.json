@@ -1,14 +1,14 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-27T20:27:49.061Z",
+  "generated_at": "2026-05-27T20:33:52.099Z",
   "generator": "kosmo-asset-review-decision",
   "library_path": "examples/kosmo-assets/kosmo-asset-demo/library.json",
   "library_id": "kosmo-asset-demo",
   "asset_id": "warm-concrete-material-001",
   "asset_title": "Warm Concrete Study Material",
   "route": "blender",
-  "decision": "needs-review",
-  "reviewer": null,
+  "decision": "approve-local",
+  "reviewer": "Andrin Baumann",
   "status": "local_review_decision_recorded",
   "policy": {
     "no_uploads": true,
@@ -27,7 +27,7 @@
     "smoke_status": "handoff_smoke_passed",
     "smoke_passed": true,
     "route_available": true,
-    "named_human_reviewer": false,
+    "named_human_reviewer": true,
     "handoff_bundle_status": "local_review_handoff_bundle"
   },
   "outputs": {
@@ -38,6 +38,8 @@
   },
   "blockers": [],
   "next_actions": [
-    "Continue manual review. Open local source/export files and rerun smoke after changes."
+    "Local blender review has been recorded. Keep generated files local and review-only.",
+    "Only run Blender scene-write tests in a copied sandbox file with explicit owner approval.",
+    "Do not enable public downloads or R2 upload from this decision."
   ]
 }

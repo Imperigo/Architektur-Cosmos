@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-27T20:29:36.079Z",
+  "generated_at": "2026-05-27T20:34:29.659Z",
   "generator": "kosmo-asset-promotion-guard",
   "library_path": "examples/kosmo-assets/kosmo-asset-demo/library.json",
   "library_id": "kosmo-asset-demo",
@@ -17,14 +17,14 @@
   "summary": {
     "asset_count": 3,
     "promotion_allowed": false,
-    "blocker_count": 7,
+    "blocker_count": 4,
     "unsafe_finding_count": 0,
     "missing_decision_count": 2,
-    "certificate_ready_count": 0,
-    "sandbox_ready_count": 0,
-    "named_reviewer_count": 0,
+    "certificate_ready_count": 1,
+    "sandbox_ready_count": 1,
+    "named_reviewer_count": 1,
     "reviewer_blocker_count": 0,
-    "ledger_promotion_blocker_count": 7,
+    "ledger_promotion_blocker_count": 4,
     "public_ready_count": 0,
     "full_review_status": "asset_full_review_ready_for_human_decisions",
     "decision_ledger_status": "asset_decision_ledger_open",
@@ -33,9 +33,6 @@
   "blockers": [
     "axis-marker-svg-001:decision_missing",
     "axis-marker-svg-001:local_certificate_missing",
-    "warm-concrete-material-001:local_certificate_missing",
-    "warm-concrete-material-001:local_approval_missing",
-    "warm-concrete-material-001:certificate_failed_checks",
     "generic-column-glb-001:decision_missing",
     "generic-column-glb-001:local_certificate_missing"
   ],
@@ -80,26 +77,18 @@
       "public_gate": "blocked",
       "local_ready": true,
       "public_ready": false,
-      "decision_status": "needs_review_recorded",
-      "human_decision_state": "needs_more_evidence",
-      "human_decision_label": "needs more human evidence",
-      "reviewer_status": "not_required_for_note",
-      "reviewer": null,
-      "certificate_status": "asset_local_review_certificate_blocked",
-      "local_certificate_ready": false,
-      "sandbox_ready": false,
-      "next_human_action": "create_local_review_certificate",
-      "promotion_status": "blocked",
-      "promotion_blockers": [
-        "local_certificate_missing",
-        "local_approval_missing",
-        "certificate_failed_checks"
-      ],
-      "blockers": [
-        "local_certificate_missing",
-        "local_approval_missing",
-        "certificate_failed_checks"
-      ]
+      "decision_status": "local_approval_recorded",
+      "human_decision_state": "approved",
+      "human_decision_label": "local human approval recorded",
+      "reviewer_status": "named_human_reviewer_recorded",
+      "reviewer": "Andrin Baumann",
+      "certificate_status": "asset_local_review_certified",
+      "local_certificate_ready": true,
+      "sandbox_ready": true,
+      "next_human_action": "certified_local_sandbox_candidate",
+      "promotion_status": "ready_for_owner_review",
+      "promotion_blockers": [],
+      "blockers": []
     },
     {
       "asset_id": "generic-column-glb-001",
@@ -152,6 +141,6 @@
   "next_actions": [
     "Keep KosmoAsset in local review-only mode.",
     "Complete human review decisions, local certificates and ledger checks before any sandbox or public promotion.",
-    "Current blocker count: 7."
+    "Current blocker count: 4."
   ]
 }

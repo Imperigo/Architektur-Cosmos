@@ -1,7 +1,7 @@
 # KosmoAsset Decision Ledger
 
 Library: `kosmo-asset-demo`
-Generated: 2026-05-27T20:29:35.665Z
+Generated: 2026-05-27T20:34:00.399Z
 Status: `asset_decision_ledger_open`
 
 Local audit ledger. This file reads decision evidence only; it does not create approvals, mutate assets, upload, publish, write D1/R2 or open public gates.
@@ -11,20 +11,20 @@ Local audit ledger. This file reads decision evidence only; it does not create a
 - expected decisions: 3
 - recorded decisions: 1
 - missing decisions: 2
-- local approvals: 0
-- needs-review notes: 1
+- local approvals: 1
+- needs-review notes: 0
 - public blocks: 0
 - rejected: 0
 - blocked decision files: 0
-- state approved: 0
+- state approved: 1
 - state blocked: 0
 - state rejected: 0
-- state needs more evidence: 3
-- sandbox ready: 0
-- certificates: 0/1
-- named reviewers: 0
+- state needs more evidence: 2
+- sandbox ready: 1
+- certificates: 1/1
+- named reviewers: 1
 - reviewer blockers: 0
-- promotion blockers: 7
+- promotion blockers: 4
 - all certificates ready: no
 - recommended next step: `record_or_defer_explicit_human_decisions`
 
@@ -33,7 +33,7 @@ Local audit ledger. This file reads decision evidence only; it does not create a
 | Asset | Route | Decision State | Ledger Status | Decision | Reviewer Gate | Certificate | Sandbox | Blockers |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Kosmo Axis Marker | archicad | needs_more_evidence | missing_decision | - | missing_decision | missing_certificate | no | decision_missing, local_certificate_missing |
-| Warm Concrete Study Material | blender | needs_more_evidence | needs_review_recorded | needs-review/local_review_decision_recorded | not_required_for_note | asset_local_review_certificate_blocked | no | local_approval_missing, local_certificate_missing, certificate_failed_checks |
+| Warm Concrete Study Material | blender | approved | local_approval_recorded | approve-local/local_review_decision_recorded | Andrin Baumann (named_human_reviewer_recorded) | asset_local_review_certified | yes | - |
 | Generic Column GLB Slot | blender | needs_more_evidence | missing_decision | - | missing_decision | missing_certificate | no | decision_missing, local_certificate_missing |
 
 ## Human Gate Detail
@@ -54,14 +54,14 @@ Local audit ledger. This file reads decision evidence only; it does not create a
 
 - asset id: `warm-concrete-material-001`
 - route: `blender`
-- decision state: `needs_more_evidence` (needs more human evidence)
-- reviewer: -
-- reviewer gate: `not_required_for_note`
-- certificate: `asset_local_review_certificate_blocked`
-- sandbox ready: no
-- promotion blockers: `local_approval_missing`, `local_certificate_missing`, `certificate_failed_checks`
-- next human action: `create_local_review_certificate`
-- ledger note: Manual review remains open or deferred.
+- decision state: `approved` (local human approval recorded)
+- reviewer: `Andrin Baumann`
+- reviewer gate: `named_human_reviewer_recorded`
+- certificate: `asset_local_review_certified`
+- sandbox ready: yes
+- promotion blockers: -
+- next human action: `certified_local_sandbox_candidate`
+- ledger note: Local-only approval evidence; public gate must remain blocked.
 
 ### Generic Column GLB Slot
 
@@ -84,4 +84,6 @@ Local audit ledger. This file reads decision evidence only; it does not create a
 ## Next Actions
 
 - Finish or explicitly defer the open human review rows before creating Blender/ArchiCAD sandbox outputs.
+- Sandbox generation is only allowed for local approvals with passed smoke and blocked public gates.
+- Use certified assets only in copied local sandbox files; keep public gates blocked.
 - Keep public downloads, R2 uploads and D1 writes disabled.
