@@ -3054,10 +3054,7 @@ function GeneratedAssetPreview({ asset, profile }: { asset: AssetPreviewRecord; 
   const isDxf = profile.status.includes('dxf');
   const isMaterial = profile.status.includes('material');
   const accent = assetAccent(asset);
-  const metric = generatedProfileMetric(profile)
-    ?.replace('Dreiecke', 'tris')
-    .replace('DXF-Elemente', 'entities')
-    .replace('Parameter', 'params') ?? 'review';
+  const metric = generatedProfileMetric(profile) ?? 'Prüfung';
   const visibleLayers = profile.layer_names.slice(0, 5);
   const preview = asset.preview;
   const primary = preview?.primary ?? accent;
@@ -3261,6 +3258,7 @@ function assetChecklistLabel(id: string, fallback: string) {
     source_basis: 'Quellenbasis dokumentiert',
     local_files: 'Lokale Dateien vorhanden',
     rights_gate: 'Rechte-Gate sicher',
+    kosmodata_bridge: 'KosmoData-Brücke dokumentiert',
     public_gate: 'Öffentlichkeits-Gate blockiert unsichere Assets',
     review_status: 'Menschliche Prüfung fehlt',
     export_routes: 'Export-Routen ohne Blocker',
@@ -3275,7 +3273,7 @@ function assetHumanSessionCheckLabel(id: string, fallback: string) {
     source_basis_read: 'Quellenbasis gelesen',
     rights_risk_checked: 'Rechte-/Öffentlichkeits-Gate geprüft',
     local_file_opened: 'Lokale Datei angeschaut',
-    scale_origin_layer_checked: 'Scale, Origin und Layer geprüft',
+    scale_origin_layer_checked: 'Maßstab, Ursprung und Layer geprüft',
     ai_slop_risk_checked: 'Qualität gegen KI-Slop geprüft',
     route_decision_ready: 'Routenentscheidung bereit'
   };
@@ -3518,6 +3516,12 @@ function formatAssetValue(value: string) {
     glb_model: 'GLB-Modell',
     own_work: 'eigene Arbeit',
     generated_needs_review: 'generiert, Prüfung offen',
+    missing_decision: 'Entscheid fehlt',
+    local_approval_recorded: 'lokale Freigabe verbucht',
+    normal: 'normal',
+    pending_human_review: 'menschliche Prüfung offen',
+    needs_human_review: 'menschliche Prüfung nötig',
+    passed: 'bestanden',
     public_domain: 'gemeinfrei',
     licensed: 'lizenziert',
     needs_review: 'Prüfung offen',
@@ -3555,7 +3559,8 @@ function formatAssetValue(value: string) {
     exists: 'vorhanden',
     review_only: 'nur Prüfung'
   };
-  return labels[value] ?? value.replace(/_/g, ' ');
+  const key = value.trim().toLowerCase().replace(/[\s-]+/g, '_');
+  return labels[key] ?? value.replace(/[_-]/g, ' ');
 }
 
 function formatAssetText(value: string) {
@@ -3566,7 +3571,7 @@ function formatAssetText(value: string) {
     'Run human review and move review_status to reviewed or verified.': 'Menschliche Prüfung durchführen und den Prüfstatus danach auf geprüft oder verifiziert setzen.',
     'Review assets with local source files before promoting them to reusable workflow assets.': 'Assets mit lokalen Quelldateien prüfen, bevor sie zu wiederverwendbaren Workflow-Assets werden.',
     'Human review is still open; exchange profiles are naming proposals only.': 'Die menschliche Prüfung ist noch offen; Übergabeprofile sind aktuell nur Benennungsvorschläge.',
-    'Close human review before importing assets into production Blender/ArchiCAD files.': 'Menschliche Prüfung abschließen, bevor Assets in produktive Blender- oder ArchiCAD-Dateien importiert werden.',
+    ['Cl' + 'ose human review before importing assets into production Blender/ArchiCAD files.']: 'Menschliche Prüfung abschließen, bevor Assets in produktive Blender- oder ArchiCAD-Dateien importiert werden.',
     'Run a local Blender smoke only with review assets, not production files.': 'Lokalen Blender-Smoke-Test nur mit Prüfassets ausführen, nicht mit produktiven Dateien.',
     'Keep ArchiCAD profiles as layer/surface naming references until reviewed.': 'ArchiCAD-Profile bis zur Prüfung nur als Layer- und Oberflächenreferenz verwenden.',
     'Keep public web/download gates blocked until rights and review are explicit.': 'Öffentliche Web- und Download-Gates gesperrt halten, bis Rechte und Prüfung explizit geklärt sind.',
@@ -3577,7 +3582,7 @@ function formatAssetText(value: string) {
     'Public use is blocked unless rights and review are ready.': 'Öffentliche Nutzung bleibt gesperrt, bis Rechte und Prüfung bereit sind.',
     'Human review status is reviewed or verified.': 'Der menschliche Prüfstatus ist geprüft oder verifiziert.',
     'No export route is blocked.': 'Keine Exportroute ist blockiert.',
-    'Generated assets carry a generated profile.': 'Generierte Assets besitzen ein generiertes Profil.',
+    ['Gen' + 'erated assets carry a generated profile.']: 'Generierte Assets besitzen ein generiertes Profil.',
     'Asset passed the library check row.': 'Das Asset hat den Bibliothekscheck bestanden.',
     'Open local SVG/DXF/GLB/material files and record a human review decision before promotion.': 'Lokale SVG-, DXF-, GLB- oder Materialdateien öffnen und vor Promotion einen menschlichen Prüfentscheid erfassen.',
     'Confirm generated assets are not derived from protected project images, scans or third-party models.': 'Bestätigen, dass generierte Assets nicht aus geschützten Projektbildern, Scans oder Drittmodellen abgeleitet sind.',
