@@ -2861,7 +2861,7 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
             {handoffBundle.blender ? <code>{assetHandoffBundlePreview.outputs.blender_python}</code> : null}
             {handoffBundle.archicad ? <code>{assetHandoffBundlePreview.outputs.archicad_schedule_csv}</code> : null}
           </div>
-          <p>Review-only: Blender schreibt standardmaessig nicht in die Szene; ArchiCAD nutzt den CSV nur als Naming-Schedule.</p>
+          <p>Review-only: Blender schreibt standardmäßig nicht in die Szene; ArchiCAD nutzt den CSV nur als Naming-Schedule.</p>
         </div>
       ) : null}
 
@@ -2875,7 +2875,7 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
             </span>
             <span data-enabled={handoffSmoke.python_runtime.ok ? 'true' : 'false'}>
               <small>Blender Python</small>
-              <b>{handoffSmoke.python_runtime.ok ? 'laeuft' : 'Fehler'}</b>
+              <b>{handoffSmoke.python_runtime.ok ? 'läuft' : 'Fehler'}</b>
             </span>
             <span data-enabled={handoffSmoke.policy.no_project_file_writes ? 'false' : 'true'}>
               <small>Scene Writes</small>
@@ -2943,7 +2943,7 @@ function AssetReviewWorkflow({
       label: '1 Auswahl',
       status: 'bereit',
       tone: 'ready',
-      text: `${asset.title} ist als Review-Asset gewaehlt.`
+      text: `${asset.title} ist als Review-Asset gewählt.`
     },
     {
       label: '2 Review lesen',
@@ -2955,11 +2955,11 @@ function AssetReviewWorkflow({
       label: '3 Smoke',
       status: smokePassed ? `${handoffSmoke.summary.passed_checks}/${handoffSmoke.summary.check_count}` : 'blockiert',
       tone: smokePassed ? 'ready' : 'blocked',
-      text: smokePassed ? 'Blender/ArchiCAD-Handoff ist review-only geprueft.' : 'Vor Freigabe zuerst Handoff-Smoke ausfuehren.'
+      text: smokePassed ? 'Blender/ArchiCAD-Handoff ist review-only geprüft.' : 'Vor Freigabe zuerst Handoff-Smoke ausführen.'
     },
     {
       label: '4 Manuelle Freigabe',
-      status: smokePassed ? 'lokal moeglich' : 'gesperrt',
+      status: smokePassed ? 'lokal möglich' : 'gesperrt',
       tone: smokePassed ? 'review' : 'blocked',
       text: smokePassed ? 'Freigabe schreibt nur lokale Evidenz, keine Assets und keine Public Gates.' : 'Ohne Smoke keine lokale Freigabe.'
     }
@@ -3168,10 +3168,10 @@ function assetChecklistLabel(id: string, fallback: string) {
 function assetHumanSessionCheckLabel(id: string, fallback: string) {
   const labels: Record<string, string> = {
     source_basis_read: 'Quellenbasis gelesen',
-    rights_risk_checked: 'Rechte-/Public-Gate geprueft',
+    rights_risk_checked: 'Rechte-/Public-Gate geprüft',
     local_file_opened: 'Lokale Datei angeschaut',
-    scale_origin_layer_checked: 'Scale, Origin und Layer geprueft',
-    ai_slop_risk_checked: 'Qualitaet gegen KI-Slop geprueft',
+    scale_origin_layer_checked: 'Scale, Origin und Layer geprüft',
+    ai_slop_risk_checked: 'Qualität gegen KI-Slop geprüft',
     route_decision_ready: 'Routenentscheidung bereit'
   };
   return labels[id] ?? fallback;
@@ -3199,14 +3199,14 @@ function assetReviewActions(asset: AssetPreviewRecord): AssetReviewAction[] {
       id: 'exchange-profile',
       label: 'Exchange',
       kicker: 'Bridge',
-      description: 'Erzeugt das lokale Blender-/ArchiCAD-/Web-Uebergabeprofil fuer Naming, Layer und Surface Mapping.',
+      description: 'Erzeugt das lokale Blender-/ArchiCAD-/Web-Übergabeprofil für Naming, Layer und Surface Mapping.',
       command: `npm run kosmo:asset-exchange-profile -- --library ${libraryPath}`
     },
     {
       id: 'full-review',
       label: 'Full Review',
       kicker: 'Batch',
-      description: 'Fuehrt den ganzen lokalen Abendbatch aus: Check, Exportplan, Review-Pack, Exchange, Handoff, Smoke, Human Session und Ledger.',
+      description: 'Führt den ganzen lokalen Abendbatch aus: Check, Exportplan, Review-Pack, Exchange, Handoff, Smoke, Human Session und Ledger.',
       command: `npm run kosmo:asset-full-review -- --library ${libraryPath}`
     },
     {
@@ -3234,7 +3234,7 @@ function assetReviewActions(asset: AssetPreviewRecord): AssetReviewAction[] {
       id: 'handoff-smoke',
       label: 'Smoke',
       kicker: 'QA',
-      description: 'Prueft Blender-Python, ArchiCAD-CSV, lokale Quellen und blockierte Public-Gates ohne Asset-Import.',
+      description: 'Prüft Blender-Python, ArchiCAD-CSV, lokale Quellen und blockierte Public-Gates ohne Asset-Import.',
       command: `npm run kosmo:asset-handoff-smoke -- --library ${libraryPath}`
     },
     {
@@ -3248,14 +3248,14 @@ function assetReviewActions(asset: AssetPreviewRecord): AssetReviewAction[] {
       id: 'review-decision',
       label: 'Freigabe-Draft',
       kicker: 'Gate',
-      description: 'Schreibt eine lokale menschliche Freigabe-Evidenz fuer ein Asset, ohne Library, Blender, ArchiCAD oder Public-Gates zu veraendern.',
+      description: 'Schreibt eine lokale menschliche Freigabe-Evidenz für ein Asset, ohne Library, Blender, ArchiCAD oder Public-Gates zu verändern.',
       command: `npm run kosmo:asset-review-decision -- --library ${libraryPath} --asset ${asset.id} --route ${decisionRoutes[0]} --decision approve-local --confirm-human-review --reviewer "REPLACE_WITH_REVIEWER_NAME"`
     },
     {
       id: 'review-certificate',
       label: 'Review-Zertifikat',
       kicker: 'Cert',
-      description: 'Bündelt lokale Freigabe, Human Session, Smoke und Public-Gate als Zertifikat fuer Sandbox-Tests. Keine Veröffentlichung.',
+      description: 'Bündelt lokale Freigabe, Human Session, Smoke und Public-Gate als Zertifikat für Sandbox-Tests. Keine Veröffentlichung.',
       command: `npm run kosmo:asset-review-certificate -- --library ${libraryPath} --asset ${asset.id} --route ${decisionRoutes[0]}`
     },
     {
@@ -3284,7 +3284,7 @@ function assetReviewActions(asset: AssetPreviewRecord): AssetReviewAction[] {
       id: 'blender-sandbox',
       label: 'Blender Sandbox',
       kicker: 'BPy',
-      description: 'Erzeugt eine Blender-Sandbox-Python-Datei nach lokaler Freigabe und Smoke-Test. Nur fuer kopierte Sandbox-Dateien.',
+      description: 'Erzeugt eine Blender-Sandbox-Python-Datei nach lokaler Freigabe und Smoke-Test. Nur für kopierte Sandbox-Dateien.',
       command: `npm run kosmo:asset-blender-sandbox -- --library ${libraryPath} --asset ${asset.id} --route blender`
     });
   }
@@ -3294,7 +3294,7 @@ function assetReviewActions(asset: AssetPreviewRecord): AssetReviewAction[] {
       id: 'archicad-sandbox',
       label: 'ArchiCAD Sandbox',
       kicker: 'AC',
-      description: 'Erzeugt einen ArchiCAD-Sandbox-Schedule nach lokaler Freigabe und Smoke-Test. Nur fuer manuelle Attribut-/Layer-Pruefung.',
+      description: 'Erzeugt einen ArchiCAD-Sandbox-Schedule nach lokaler Freigabe und Smoke-Test. Nur für manuelle Attribut-/Layer-Prüfung.',
       command: `npm run kosmo:asset-archicad-sandbox -- --library ${libraryPath} --asset ${asset.id} --route archicad`
     });
   }
@@ -3324,7 +3324,7 @@ function assetReviewActions(asset: AssetPreviewRecord): AssetReviewAction[] {
       id: 'generate-material-profile',
       label: 'Materialprofil',
       kicker: 'Mat',
-      description: 'Generiert oder aktualisiert das lokale Materialparameter-Profil fuer Blender- und ArchiCAD-Mapping.',
+      description: 'Generiert oder aktualisiert das lokale Materialparameter-Profil für Blender- und ArchiCAD-Mapping.',
       command: `npm run kosmo:asset-generate-demo-material-profile -- --library ${libraryPath} --asset ${asset.id}`
     });
   }
