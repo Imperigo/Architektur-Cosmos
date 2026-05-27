@@ -177,40 +177,40 @@ export function BrainStatusWidget() {
       </button>
 
       {isOpen ? (
-        <section className="brain-status-panel cosmos-panel cosmos-text-safe" aria-label="Architecture Cosmos Brain status">
+        <section className="brain-status-panel cosmos-panel cosmos-text-safe" aria-label="Architektur-Kosmos Brain-Status">
           <div className="brain-status-header">
             <span>Cloud Brain V2</span>
-            <button type="button" onClick={closePanel} aria-label="Close Brain status">Close</button>
+            <button type="button" onClick={closePanel} aria-label="Brain-Status schließen">Schließen</button>
           </div>
 
-          {isLoading ? <p className="brain-status-muted">Reading live Brain snapshot...</p> : null}
-          {error ? <p className="brain-status-error">Brain API not available: {error}</p> : null}
+          {isLoading ? <p className="brain-status-muted">Live-Brain-Snapshot wird gelesen...</p> : null}
+          {error ? <p className="brain-status-error">Brain-API nicht verfügbar: {error}</p> : null}
 
           {status ? (
             <>
               <div className="brain-status-grid">
                 <BrainMetric label="Status" value={status.status} />
-                <BrainMetric label="Mode" value={status.mode.replace(/_/g, ' ')} />
-                <BrainMetric label="Entries" value={String(status.summary.entries)} />
-                <BrainMetric label="Tasks" value={String(status.open_tasks)} />
+                <BrainMetric label="Modus" value={status.mode.replace(/_/g, ' ')} />
+                <BrainMetric label="Einträge" value={String(status.summary.entries)} />
+                <BrainMetric label="Aufgaben" value={String(status.open_tasks)} />
               </div>
 
               <div className="brain-status-bars">
-                <BrainBar label="Profiles" value={status.coverage.database_profile_percent} />
-                <BrainBar label="Models" value={status.coverage.model_percent} />
-                <BrainBar label="Analysis" value={status.coverage.analysis_percent} />
-                <BrainBar label="Sources" value={status.coverage.source_candidate_percent} />
-                <BrainBar label="Hero images" value={status.coverage.hero_image_percent ?? 0} />
+                <BrainBar label="Profile" value={status.coverage.database_profile_percent} />
+                <BrainBar label="Modelle" value={status.coverage.model_percent} />
+                <BrainBar label="Analyse" value={status.coverage.analysis_percent} />
+                <BrainBar label="Quellen" value={status.coverage.source_candidate_percent} />
+                <BrainBar label="Hauptbilder" value={status.coverage.hero_image_percent ?? 0} />
               </div>
 
               <div className="brain-status-guard">
-                <span>{status.writes_database || status.publishes ? 'ACTION GATED' : 'READ ONLY'}</span>
-                <small>No database writes, no publish, approval required.</small>
+                <span>{status.writes_database || status.publishes ? 'FREIGABE NÖTIG' : 'NUR LESEN'}</span>
+                <small>Keine Datenbank-Schreibvorgänge, kein Publish ohne Freigabe.</small>
               </div>
 
               {activation ? (
                 <div className="brain-activation-card">
-                  <small>Official activation</small>
+                  <small>Offizielle Aktivierung</small>
                   <strong>{activation.official_status.replace(/_/g, ' ')}</strong>
                   <span>{activation.current_phase.replace(/_/g, ' ')}</span>
                 </div>
@@ -218,7 +218,7 @@ export function BrainStatusWidget() {
 
               {status.highest_priority_task ? (
                 <div className="brain-status-priority">
-                  <small>Highest priority</small>
+                  <small>Höchste Priorität</small>
                   <strong>{status.highest_priority_task.title}</strong>
                 </div>
               ) : null}
@@ -237,7 +237,7 @@ export function BrainStatusWidget() {
               </div>
 
               <div className="brain-status-tasks">
-                <div className="brain-task-count">{taskCount} matching tasks</div>
+                <div className="brain-task-count">{taskCount} passende Aufgaben</div>
                 {tasks.map((task) => (
                   <div key={task.id} className="brain-status-task">
                     <span>{task.kind}</span>
@@ -249,7 +249,7 @@ export function BrainStatusWidget() {
 
               {activation ? (
                 <div className="brain-next-action">
-                  <small>Next gated action</small>
+                  <small>Nächste Freigabe-Aktion</small>
                   <span>{activation.next_recommended_action}</span>
                 </div>
               ) : null}

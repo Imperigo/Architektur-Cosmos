@@ -29,7 +29,7 @@ export const kosmoOrbitModules: KosmoOrbitModule[] = [
     detail: ['Architekturprojekte im Wurmloch', 'öffentliche und private Quellenlogik', 'Analyse-, Material- und Modell-Layer'],
     metrics: [
       { label: 'Status', value: 'aktiv' },
-      { label: 'Daten', value: '112 Entries' },
+      { label: 'Daten', value: '112 Einträge' },
       { label: 'Modus', value: 'public-safe' }
     ],
     status: 'bereit',
@@ -48,7 +48,7 @@ export const kosmoOrbitModules: KosmoOrbitModule[] = [
     metrics: [
       { label: 'Demo', value: '3 Assets' },
       { label: 'Upload', value: 'gesperrt' },
-      { label: 'Gate', value: 'Review' }
+      { label: 'Gate', value: 'Prüfung' }
     ],
     status: 'bereit',
     accent: '#f5b342',
@@ -65,7 +65,7 @@ export const kosmoOrbitModules: KosmoOrbitModule[] = [
     detail: ['KosmoPrepare für Briefing und Kontext', 'KosmoDraw und KosmoVis für Plan, Modell und Bild', 'KosmoPublish für Layout, Abgabe und Review-Pakete'],
     metrics: [
       { label: 'Pakete', value: 'lokal' },
-      { label: 'IFC', value: 'Review' },
+      { label: 'IFC', value: 'Prüfung' },
       { label: 'Export', value: 'Blender' }
     ],
     status: 'in Planung',
@@ -84,7 +84,7 @@ export const kosmoOrbitModules: KosmoOrbitModule[] = [
     metrics: [
       { label: 'Status', value: 'später' },
       { label: 'Shop', value: 'kein Paywall' },
-      { label: 'Public', value: 'getrennt' }
+      { label: 'Öffentlich', value: 'getrennt' }
     ],
     status: 'in Planung',
     accent: '#65ff73',

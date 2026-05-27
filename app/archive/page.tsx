@@ -119,7 +119,7 @@ export default function ArchivePage() {
         <section className="grid gap-6 border-t border-white/12 py-8 lg:grid-cols-[1.05fr_0.95fr]">
           <details className="entry-archive-panel archive-expandable-card border border-[#00e7ff]/35 bg-[#06171a]/75 p-5" open>
             <summary>
-              <span>Asset Intake</span>
+              <span>Asset-Erfassung</span>
               <i>Details</i>
             </summary>
             <p className="mt-4 max-w-3xl text-sm leading-7 text-[#d7d7d0]">
@@ -135,7 +135,7 @@ export default function ArchivePage() {
 
           <details className="entry-archive-panel archive-expandable-card border border-white/14 bg-[#071315]/70 p-5">
             <summary>
-              <span>Asset-Intake-Befehl</span>
+              <span>Asset-Erfassungsbefehl</span>
               <i>anzeigen</i>
             </summary>
             <ol className="mt-4 space-y-3 text-sm leading-6 text-[#d7d7d0]">
@@ -162,10 +162,10 @@ export default function ArchivePage() {
             <div className="text-2xl text-[#f7f7f4]">{pilot.title}</div>
             <p className="mt-3 max-w-3xl text-sm leading-7 text-[#b8b8b2]">{pilot.one_sentence}</p>
             <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-              <ArchiveMeta label="Medien" value={`${pilot.media.length} Slots`} />
-              <ArchiveMeta label="3D" value={`${pilot.model_assets?.length ?? 0} model layers`} />
+              <ArchiveMeta label="Medien" value={`${pilot.media.length} Medienslots`} />
+              <ArchiveMeta label="3D" value={`${pilot.model_assets?.length ?? 0} Modellebenen`} />
               <ArchiveMeta label="Analyse" value={`${pilot.analysis_layers?.length ?? 0} Analyseebenen`} />
-              <ArchiveMeta label="Tags" value={`${pilot.database_tags?.length ?? 0} tags`} />
+              <ArchiveMeta label="Tags" value={`${pilot.database_tags?.length ?? 0} Tags`} />
             </div>
           </div>
         </section>
@@ -186,7 +186,7 @@ export default function ArchivePage() {
         </section>
 
         <section className="border-t border-white/12 py-8">
-          <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#00e7ff]">Pilot Cluster / Modern Villa</h2>
+          <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#00e7ff]">Pilotcluster / moderne Villa</h2>
           <div className="grid gap-3 lg:grid-cols-3">
             {modernVillaCluster.map((entry) => (
               <Link key={entry.id} href={`/atlas/${entry.slug}/`} className="entry-link entry-study-card border border-white/14 bg-[#071315]/55 p-4">
@@ -308,8 +308,8 @@ function archiveHealth(entries: Entry[], entryRelations: EntryRelation[]): Archi
     },
     {
       id: 'review',
-      label: 'Review-Status',
-      shortLabel: 'Review',
+      label: 'Prüfstatus',
+      shortLabel: 'Prüfung',
       value: percentOf(reviewed.length, total),
       hint: 'Einträge, die über Draft hinaus als geprüft oder publiziert markiert sind.'
     }
@@ -365,7 +365,7 @@ function ArchiveHealthPanel({ health }: { health: ArchiveHealth }) {
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#00e7ff]">Archivgesundheit</p>
-          <h2 className="mt-2 text-2xl font-semibold text-[#f7f7f4]">KosmoData ist lesbar, aber noch im Review.</h2>
+          <h2 className="mt-2 text-2xl font-semibold text-[#f7f7f4]">KosmoData ist lesbar, aber noch in Prüfung.</h2>
         </div>
         <div className="entry-archive-score" style={{ borderColor: '#00e7ff', color: '#00e7ff' }}>
           <span>{health.score}</span>

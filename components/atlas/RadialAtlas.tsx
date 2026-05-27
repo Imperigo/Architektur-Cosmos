@@ -3836,7 +3836,7 @@ function DatabaseArchivePanel({
 
         <a className="database-gold-action mb-2" href="/archive/" aria-label="Datenbank öffnen">
           <span>Datenbank öffnen</span>
-          <small>Direkter Zugriff auf die aktuelle Archiv- und Knowledge-Plattform</small>
+          <small>Direkter Zugriff auf die aktuelle Archiv- und Wissensplattform</small>
         </a>
 
         <button
@@ -3892,7 +3892,7 @@ function DatabaseArchivePanel({
         <div className="cosmos-scroll-panel min-h-0 flex-1 pr-1">
           <div className="database-tab-section">
             {createTabs.length ? <DatabaseTabGroup title="Erfassung" tabs={createTabs} activeTab={safeActiveTab} onSelect={setActiveTab} /> : null}
-            <DatabaseTabGroup title="Knowledge" tabs={reviewTabs} activeTab={safeActiveTab} onSelect={setActiveTab} />
+            <DatabaseTabGroup title="Wissen" tabs={reviewTabs} activeTab={safeActiveTab} onSelect={setActiveTab} />
           </div>
 
           {safeActiveTab === 'overview' ? (
@@ -3900,21 +3900,21 @@ function DatabaseArchivePanel({
               <ArchiveRow label="Modus" value="Statischer öffentlicher Atlas / Browser-Entwürfe nur lokal" />
               <ArchiveRow label="Speicher" value={`${archivePreview.storage_target.database.toUpperCase()} Metadaten-Vorschau / R2 vorbereitet`} />
               <ArchiveRow label="Status" value={`D1 preview bereit / ${archivePreview.storage_target.frontend_connection.replace(/_/g, ' ')}`} />
-              <ArchiveRow label="D1" value={`${archivePreview.storage_target.database_name} / verified ${archivePreview.storage_target.last_verified}`} />
+              <ArchiveRow label="D1" value={`${archivePreview.storage_target.database_name} / geprüft ${archivePreview.storage_target.last_verified}`} />
               <ArchiveRow label="R2" value={`${archivePreview.storage_target.assets_bucket_name ?? 'nicht konfiguriert'} / keine Uploads`} />
               <ArchiveRow label="Assets" value={archivePreview.storage_target.assets_status.replace(/_/g, ' ')} />
               <ArchiveRow label="Pilot" value={`${pilotEntry.title}, ${pilotEntry.year_start}, ${pilotEntry.city}`} />
               {selectedEntry ? <ArchiveRow label="Aktuell" value={`${selectedEntry.title} / ${selectedEntry.database_profile?.status ?? 'local entry'}`} /> : null}
               <div className="grid grid-cols-3 gap-1.5">
                 <BrainMiniMetric label="Brain-Tools" value={brainTools.tools.length} />
-                <BrainMiniMetric label="Review" value={reviewQueue.items.length} />
+                <BrainMiniMetric label="Prüfung" value={reviewQueue.items.length} />
                 <BrainMiniMetric label="Modus" value={brainTools.mode === 'local_review_only' ? 'lokal' : brainTools.mode} />
               </div>
               <p className="border border-[#00e7ff]/25 bg-[#061719] p-2 text-[#c9fff4]">
                 Dieses Panel ist eine lokale Planungskonsole. Es kann Entwürfe in der Browser-Session vorbereiten, speichert aber nicht in D1, lädt nicht nach R2 hoch und veröffentlicht keine Nutzer- oder Privatdateien.
               </p>
               <p className="border border-[#f7f7f4]/15 bg-[#050505]/55 p-2 text-[#b8b8b2]">
-                Spätere private Bibliotheken brauchen Authentifizierung, Cloudflare Access oder einen Identity Provider, signierte R2-Upload-URLs, Quarantäne, Rechteprüfung und manuelle Review vor jeder öffentlichen Veröffentlichung.
+                Spätere private Bibliotheken brauchen Authentifizierung, Cloudflare Access oder einen Identity Provider, signierte R2-Upload-URLs, Quarantäne, Rechteprüfung und manuelle Kontrolle vor jeder öffentlichen Veröffentlichung.
               </p>
               <ArchiveList
                 title="So funktioniert dieses Panel"
@@ -4054,7 +4054,7 @@ function DatabaseArchivePanel({
                 {imageIdentify.previewUrl ? (
                   <div className="mt-3 grid grid-cols-[96px_minmax(0,1fr)] gap-3">
                     {/* eslint-disable-next-line @next/next/no-img-element -- Local browser preview uses a blob URL. */}
-                    <img className="h-20 w-24 object-cover" src={imageIdentify.previewUrl} alt="Image identification preview" />
+                    <img className="h-20 w-24 object-cover" src={imageIdentify.previewUrl} alt="Vorschau der Bilderkennung" />
                     <div className="min-w-0">
                       <div className="truncate text-[10px] text-[#f7f7f4]">{imageIdentify.fileName}</div>
                       <div className="mt-1 text-[8px] uppercase tracking-[0.12em] text-[#8d8d87]">
@@ -4162,9 +4162,9 @@ function DatabaseArchivePanel({
 
           {safeActiveTab === 'brain' ? (
             <div className="space-y-2 text-[10px] leading-relaxed text-[#d9d9d2]">
-              <ArchiveRow label="Modus" value={brainTools.mode === 'local_review_only' ? 'Lokaler Review-Modus / keine automatischen Writes' : brainTools.mode} />
-              <ArchiveRow label="Öffentlich" value={brainTools.writes_public_database || brainTools.uploads_assets ? 'Aktionen gesperrt durch Approval Gate' : 'Keine Datenbank-Writes, keine Asset-Uploads'} />
-              <ArchiveRow label="Review" value={`${reviewQueue.items.length} offene manuelle Freigaben`} />
+              <ArchiveRow label="Modus" value={brainTools.mode === 'local_review_only' ? 'Lokaler Prüfmodus / keine automatischen Schreibvorgänge' : brainTools.mode} />
+              <ArchiveRow label="Öffentlich" value={brainTools.writes_public_database || brainTools.uploads_assets ? 'Aktionen durch Freigabe-Gate gesperrt' : 'Keine Datenbank-Schreibvorgänge, keine Asset-Uploads'} />
+              <ArchiveRow label="Prüfung" value={`${reviewQueue.items.length} offene manuelle Freigaben`} />
               <ArchiveCards
                 items={brainTools.tools.map((tool) => ({
                   title: tool.label,
@@ -4172,7 +4172,7 @@ function DatabaseArchivePanel({
                   body: `${tool.purpose} Befehl: ${tool.command}`
                 }))}
               />
-              <ArchiveList title="Brain-Guardrails" items={brainTools.guardrails} />
+              <ArchiveList title="Brain-Leitplanken" items={brainTools.guardrails} />
             </div>
           ) : null}
 
@@ -4383,9 +4383,9 @@ function DatabaseBookLibraryView({
     <div className="space-y-3 text-[10px] leading-relaxed text-[#d9d9d2]">
       <div className="database-book-hero">
         <div>
-          <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#f5b342]">Buchbibliothek / Private Library</div>
+          <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#f5b342]">Buchbibliothek / Privatarchiv</div>
           <p className="mt-1 text-[10px] leading-snug text-[#f7f7f4]/78">
-            Private Buchscans, Handyfotos und PDFs werden zu lokalen Review-Paketen. Keine Veröffentlichung, keine Cloud, keine Datenbank-Schreibung.
+            Private Buchscans, Handyfotos und PDFs werden zu lokalen Review-Paketen. Keine Veröffentlichung, keine Cloud, keine Datenbank-Schreibvorgänge.
           </p>
         </div>
         <span>{bookReady ? 'bereit' : 'geplant'}</span>
@@ -4401,7 +4401,7 @@ function DatabaseBookLibraryView({
       >
         <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#f5b342]">Buchmaterial ablegen</div>
         <p className="mt-2 text-[9.5px] leading-snug text-[#c7c7c2]">
-          Buch-PDFs, Kapitel, Scans, Doppelseiten oder Handyfotos. Aktuell Browser-Vorschau und lokale Pipeline: Ingest, Projekt-Drafts, Draft-Validation.
+          Buch-PDFs, Kapitel, Scans, Doppelseiten oder Handyfotos. Aktuell Browser-Vorschau und lokale Pipeline: Import, Projektentwürfe, Entwurfsprüfung.
         </p>
         <label className="mt-3 inline-flex cursor-none items-center border border-[#f5b342]/70 px-3 py-1.5 text-[8.5px] uppercase tracking-[0.14em] text-[#ffe1a3]">
           Buchdateien wählen
@@ -4419,9 +4419,9 @@ function DatabaseBookLibraryView({
       </div>
 
       <div className="database-book-grid">
-        <BookPipelineCard title="1 Reinigung" body="Deskew, Crop, Doppelseiten trennen, Kontrast und Schatten korrigieren." active={bookReady} />
-        <BookPipelineCard title="2 OCR/Layout" body="Text, Bildblöcke, Pläne, Captions, Kapitel und Projektlisten erkennen." active={bookReady} />
-        <BookPipelineCard title="3 Projekte" body="Projektgruppen mit Titel, Architekt, Jahr, Ort, Seitenreferenzen und Confidence bilden." active={bookReady} />
+        <BookPipelineCard title="1 Reinigung" body="Seiten ausrichten, zuschneiden, Doppelseiten trennen, Kontrast und Schatten korrigieren." active={bookReady} />
+        <BookPipelineCard title="2 OCR/Layout" body="Text, Bildblöcke, Pläne, Bildlegenden, Kapitel und Projektlisten erkennen." active={bookReady} />
+        <BookPipelineCard title="3 Projekte" body="Projektgruppen mit Titel, Architekt, Jahr, Ort, Seitenreferenzen und Konfidenzwert bilden." active={bookReady} />
         <BookPipelineCard title="4 Rechte-Gate" body="Private Quellenpakete strikt von public-safe Metadaten und Paraphrasen trennen." active={bookReady} />
       </div>
 
@@ -4429,13 +4429,13 @@ function DatabaseBookLibraryView({
         <BrainMiniMetric label="Buch/PDF" value={intakeStats.book + intakeStats.pdf} />
         <BrainMiniMetric label="Seitenbilder" value={intakeStats.image} />
         <BrainMiniMetric label="Text" value={intakeStats.sources} />
-        <BrainMiniMetric label="Public" value="Gate" />
+        <BrainMiniMetric label="Öffentlich" value="Gate" />
       </div>
 
       <ArchiveList
-        title="Private / public Trennung"
+        title="Private / öffentliche Trennung"
         items={[
-          'Private Library: gereinigte Seiten, OCR, Seitenverweise und Projekt-Drafts nur für den Besitzer',
+          'Privatarchiv: gereinigte Seiten, OCR, Seitenverweise und Projektentwürfe nur für den Besitzer',
           'Öffentliche Website: nur Bibliografie, Metadaten, Links und paraphrasierte Analyse nach Rechteprüfung',
           'Dev-Modus: tiefere interne Research-Pakete, aber keine automatische Veröffentlichung'
         ]}
@@ -4463,7 +4463,7 @@ function DatabaseBookLibraryView({
           'npm run kosmodata:book-ingest -- --input archive-inbox/books/{book_slug} --title "Buchtitel"',
           'npm run kosmodata:book-drafts -- --book {book_slug}',
           'npm run kosmodata:book-pipeline -- --input archive-inbox/books/{book_slug} --title "Buchtitel"',
-          'Output: clean-pages, OCR, detected-projects.json, source-map.json und review-report.md'
+          'Ausgabe: clean-pages, OCR, detected-projects.json, source-map.json und review-report.md'
         ]}
       />
     </div>
@@ -4523,7 +4523,7 @@ function DatabaseFlowSteps({ current }: { current: 'research' | 'analysis' | 'dr
     { id: 'research', label: 'Recherchepaket' },
     { id: 'analysis', label: 'Analysepaket' },
     { id: 'draft', label: 'Entwurf' },
-    { id: 'review', label: 'Bereit für Review' }
+    { id: 'review', label: 'Bereit zur Prüfung' }
   ] as const;
   const currentIndex = steps.findIndex((step) => step.id === current);
 
@@ -4600,21 +4600,21 @@ function DatabaseAnalysisPackView({
       </div>
 
       <div className="grid grid-cols-3 gap-1.5">
-        <AnalysisMetric label="Source mix" value={pack.source_score.source_mix.replace(/_/g, ' ')} />
-        <AnalysisMetric label="Primary" value={`${pack.source_score.primary_sources}`} />
+        <AnalysisMetric label="Quellenmix" value={pack.source_score.source_mix.replace(/_/g, ' ')} />
+        <AnalysisMetric label="Primärquellen" value={`${pack.source_score.primary_sources}`} />
         <AnalysisMetric label="Rechte" value={pack.rights_summary.publication_default.replace(/_/g, ' ')} />
       </div>
 
-      <AnalysisTagGroup title="Material" tags={materialTags} empty="No material tags yet" />
-      <AnalysisTagGroup title="Structure" tags={structureTags} empty="No structure tags yet" />
-      <AnalysisTagGroup title="Tectonics / Site" tags={tectonicTags} empty="No tectonic tags yet" />
+      <AnalysisTagGroup title="Material" tags={materialTags} empty="Noch keine Material-Tags" />
+      <AnalysisTagGroup title="Tragwerk" tags={structureTags} empty="Noch keine Tragwerk-Tags" />
+      <AnalysisTagGroup title="Tektonik / Ort" tags={tectonicTags} empty="Noch keine Tektonik-Tags" />
 
       <ArchiveList
-        title="3D / Blender Layers"
+        title="3D / Blender-Ebenen"
         items={[
-          `Readiness: ${pack.model_potential.readiness.replace(/_/g, ' ')} / score ${Math.round(pack.model_potential.score * 100)}%`,
-          `Layers: ${pack.model_potential.recommended_layers.join(', ')}`,
-          `Collections: ${pack.model_potential.blender_collections.join(', ')}`
+          `Bereitschaft: ${pack.model_potential.readiness.replace(/_/g, ' ')} / Wert ${Math.round(pack.model_potential.score * 100)}%`,
+          `Ebenen: ${pack.model_potential.recommended_layers.join(', ')}`,
+          `Blender-Sammlungen: ${pack.model_potential.blender_collections.join(', ')}`
         ]}
       />
 
@@ -4627,7 +4627,7 @@ function DatabaseAnalysisPackView({
       />
 
       <ArchiveList
-        title="Rechte Gate"
+        title="Rechte-Gate"
         items={[
           pack.rights_summary.note,
           ...pack.readiness_score.blockers.map((blocker) => `Blocker: ${blocker}`)
@@ -4769,8 +4769,8 @@ function sourceCardsForEntry(entry: Entry) {
 
   if (entry.source_url) {
     cards.push({
-      title: entry.source_url.includes('afasia') ? 'Afasia project source' : 'Linked web source',
-      meta: entry.source_quality || 'source',
+      title: entry.source_url.includes('afasia') ? 'Afasia-Projektquelle' : 'Verknüpfte Webquelle',
+      meta: entry.source_quality || 'Quelle',
       body: entry.source_url
     });
   }
@@ -4778,24 +4778,24 @@ function sourceCardsForEntry(entry: Entry) {
   (entry.source_documents ?? []).forEach((document) => {
     cards.push({
       title: document,
-      meta: 'lecture reference',
-      body: `Course/document cluster for ${entry.title}.`
+      meta: 'Vorlesungsreferenz',
+      body: `Kurs- oder Dokumentcluster für ${entry.title}.`
     });
   });
 
   if (entry.source_assets?.length) {
     cards.push({
-      title: `${entry.source_assets.length} source assets`,
-      meta: 'asset package',
+      title: `${entry.source_assets.length} Quellen-Assets`,
+      meta: 'Asset-Paket',
       body: entry.source_assets.slice(0, 4).map((asset) => asset.label).join(' / ')
     });
   }
 
   if (cards.length === 0) {
     cards.push({
-      title: 'Source Platzhalter',
-      meta: 'unverified',
-      body: 'No source records are attached yet.'
+      title: 'Quellenplatzhalter',
+      meta: 'ungeprüft',
+      body: 'Für diesen Eintrag sind noch keine Quellenrecords verknüpft.'
     });
   }
 
@@ -4808,15 +4808,15 @@ function findAnalysisPackForEntry(entry: Entry | null) {
 }
 
 const entryTypeOptions: Array<{ value: Entry['entry_type']; label: string }> = [
-  { value: 'building', label: 'Building' },
-  { value: 'urban_plan', label: 'Urban' },
-  { value: 'landscape_project', label: 'Landscape' },
+  { value: 'building', label: 'Gebäude' },
+  { value: 'urban_plan', label: 'Städtebau' },
+  { value: 'landscape_project', label: 'Landschaft' },
   { value: 'text', label: 'Text' },
-  { value: 'theory', label: 'Theory' },
-  { value: 'map', label: 'Map' },
-  { value: 'infrastructure', label: 'Infrastructure' },
-  { value: 'object', label: 'Object' },
-  { value: 'event', label: 'Event' }
+  { value: 'theory', label: 'Theorie' },
+  { value: 'map', label: 'Karte' },
+  { value: 'infrastructure', label: 'Infrastruktur' },
+  { value: 'object', label: 'Objekt' },
+  { value: 'event', label: 'Ereignis' }
 ];
 
 function DraftInput({ label, value, onChange }: { label: string; value: string; onChange: (value: string) => void }) {
@@ -4848,16 +4848,16 @@ function DraftSelect({ label, value, options, onChange }: { label: string; value
 }
 
 function draftToEntryPreview(draft: EntryEntwurf) {
-  const title = draft.title.trim() || 'Untitled Entry';
+  const title = draft.title.trim() || 'Unbenannter Eintrag';
   const slug = slugify(title);
   const year = Number.parseInt(draft.year, 10) || 2025;
   const themes = splitList(draft.themes);
   const sourceDocuments = splitList(draft.source_documents);
   const lectureCluster = splitList(draft.lecture_cluster);
   const authors = splitList(draft.authors);
-  const shortDescription = draft.short_description.trim() || `Entwurf archive entry for ${title}.`;
-  const oneSentence = draft.one_sentence.trim() || `${title} is a draft Architekture Cosmos entry prepared for source, media, model and relation review.`;
-  const fullDescription = draft.full_description.trim() || `${title} is currently staged as a local archive draft. Before publication, the entry needs source verification, media-rights review, relation mapping and analysis-layer classification.`;
+  const shortDescription = draft.short_description.trim() || `Archiv-Entwurf für ${title}.`;
+  const oneSentence = draft.one_sentence.trim() || `${title} ist ein lokaler Architektur-Kosmos-Entwurf für Quellen-, Medien-, Modell- und Relationsprüfung.`;
+  const fullDescription = draft.full_description.trim() || `${title} ist aktuell als lokaler Archiv-Entwurf vorgemerkt. Vor einer Veröffentlichung braucht der Eintrag Quellenprüfung, Medienrechteprüfung, Relationsmapping und Analyse-Layer-Klassifikation.`;
   const databaseTags = [
     `source:${draft.source_url.trim() ? 'web-source' : 'needs-source'}`,
     `typology:${draft.entry_type.replace(/_/g, '-')}`,
@@ -4885,12 +4885,12 @@ function draftToEntryPreview(draft: EntryEntwurf) {
     one_sentence: oneSentence,
     full_description: fullDescription,
     source_quality: draft.source_url.trim() || sourceDocuments.length > 0 ? 'draft_source_attached' : 'needs_source',
-    source_documents: sourceDocuments.length > 0 ? sourceDocuments : ['Entwurf source note'],
+    source_documents: sourceDocuments.length > 0 ? sourceDocuments : ['Entwurfsnotiz zur Quelle'],
     source_url: draft.source_url.trim(),
     media: mediaTypes.map((type) => ({
       type,
       label: `${mediaTypeLabels[type]} Platzhalter`,
-      placeholder: `${mediaTypeLabels[type]} media slot planned for ${title}.`,
+      placeholder: `${mediaTypeLabels[type]}-Medienslot für ${title} geplant.`,
       credit: draft.copyright_status
     })),
     database_tags: Array.from(new Set(databaseTags)),
@@ -4964,17 +4964,17 @@ function draftFromResearchSeed(seed: ResearchSeed): EntryEntwurf {
       country: 'Schweiz',
       authors: 'Boltshauser Architekten, Roger Boltshauser',
       themes: 'adaptive reuse, monastery, care architecture, concrete structure, lime plaster, clay plaster, timber facade, inner courtyard, roof garden, existing fabric',
-      lecture_cluster: 'Architekture Cosmos dev research, contemporary Swiss architecture',
+      lecture_cluster: 'Architektur-Kosmos Dev-Recherche, zeitgenössische Schweizer Architektur',
       source_documents: 'Boltshauser Architekten project page, Baunetz project report, swiss-architects project note',
       source_url: 'https://boltshauser.info/projekt/alterszentrum-kloster-ingenbohl/',
       short_description: 'Umbau und Erweiterung des Klosterareals Ingenbohl zu einem Alterszentrum mit präziser Einbindung in Bestand, Hofstruktur und Landschaft.',
       one_sentence: 'Das Alterszentrum Kloster Ingenbohl verbindet klösterlichen Bestand, neue Pflegearchitektur, Betontragwerk, mineralische Oberflächen und landschaftliche Terrassen zu einem zeitgenössischen Schweizer Umbauprojekt.',
-      full_description: 'Der Umbau des Klosters Ingenbohl in Brunnen wird als Weiterbauen am Bestand gelesen: Die neue Struktur ergänzt das klösterliche Ensemble, arbeitet mit Hof, Sockel, Terrassen und präzisen Materialschichten und übersetzt Pflegearchitektur in eine ruhige räumliche Ordnung. Für den Architekture Cosmos ist das Projekt ein wichtiger Referenzknoten für Transformation, Tragwerk, Materialökologie und tektonische Analyse: Beton, mineralische Putze, Holz- und Fassadenschichten, innere Organisation und Landschaftsbezug lassen sich später als Modell- und Filterlayer auswerten.',
+      full_description: 'Der Umbau des Klosters Ingenbohl in Brunnen wird als Weiterbauen am Bestand gelesen: Die neue Struktur ergänzt das klösterliche Ensemble, arbeitet mit Hof, Sockel, Terrassen und präzisen Materialschichten und übersetzt Pflegearchitektur in eine ruhige räumliche Ordnung. Für den Architektur Kosmos ist das Projekt ein wichtiger Referenzknoten für Transformation, Tragwerk, Materialökologie und tektonische Analyse: Beton, mineralische Putze, Holz- und Fassadenschichten, innere Organisation und Landschaftsbezug lassen sich später als Modell- und Filterlayer auswerten.',
       copyright_status: 'needs_permission'
     };
   }
 
-  const title = normalizedProjekt || 'New Research Entry';
+  const title = normalizedProjekt || 'Neuer Rechercheeintrag';
   const normalizedSeed = normalizeForMatch(`${normalizedProjekt} ${normalizedArchitekt} ${normalizedAddress}`);
 
   if (normalizedSeed.includes('kispi') || normalizedSeed.includes('kinderspital') || (normalizedSeed.includes('herzog') && normalizedSeed.includes('meuron'))) {
@@ -4987,12 +4987,12 @@ function draftFromResearchSeed(seed: ResearchSeed): EntryEntwurf {
       country: 'Schweiz',
       authors: 'Herzog & de Meuron',
       themes: 'hospital architecture, concrete frame, timber infill, healthcare, landscape campus, low-rise hospital, patient cottages, courtyard, daylight, children hospital',
-      lecture_cluster: 'Architekture Cosmos dev research, contemporary Swiss architecture',
+      lecture_cluster: 'Architektur-Kosmos Dev-Recherche, zeitgenössische Schweizer Architektur',
       source_documents: 'Herzog & de Meuron project page, Kinderspital Zürich project information, architecture press review',
       source_url: 'https://www.herzogdemeuron.com/projects/377-kinderspital-zurich/',
       short_description: 'Neubau des Kinderspitals Zürich als flache, landschaftlich eingebettete Gesundheitsarchitektur mit starker Holz-, Licht- und Hoflogik.',
       one_sentence: 'Das Kinderspital Zürich von Herzog & de Meuron verbindet Gesundheitsbau, dreigeschossiges Betontragwerk, hölzerne Ausfachungen, Höfe, Tageslicht und landschaftliche Einbettung zu einem zeitgenössischen Spitaltyp.',
-      full_description: 'Das Kinderspital Zürich wird als Referenz für eine neue Generation von Gesundheitsbauten gelesen: nicht als monolithisches Spital, sondern als räumlich gegliederte, horizontale und landschaftlich eingebundene Architektur. Der Akutspitalbereich wird als dreigeschossiger Betonrahmen mit komplexen hölzernen Ausfachungen beschrieben; im Inneren organisiert eine städtische Logik aus Strassen, Plätzen und grünen Höfen Orientierung und Tageslicht. Für Architekture Cosmos eignet sich das Projekt besonders für Material-, Tragwerks- und Atmosphärenanalyse: Betonrahmen, Holz, Glas, Vegetation, Patientenzimmer als kleine Cottages, Hofräume, Erschliessung und therapeutische Landschaft sollen später als filterbare 3D- und Datenbanklayer geprüft werden.',
+      full_description: 'Das Kinderspital Zürich wird als Referenz für eine neue Generation von Gesundheitsbauten gelesen: nicht als monolithisches Spital, sondern als räumlich gegliederte, horizontale und landschaftlich eingebundene Architektur. Der Akutspitalbereich wird als dreigeschossiger Betonrahmen mit komplexen hölzernen Ausfachungen beschrieben; im Inneren organisiert eine städtische Logik aus Strassen, Plätzen und grünen Höfen Orientierung und Tageslicht. Für Architektur Kosmos eignet sich das Projekt besonders für Material-, Tragwerks- und Atmosphärenanalyse: Betonrahmen, Holz, Glas, Vegetation, Patientenzimmer als kleine Cottages, Hofräume, Erschliessung und therapeutische Landschaft sollen später als filterbare 3D- und Datenbanklayer geprüft werden.',
       copyright_status: 'needs_permission'
     };
   }
@@ -5006,7 +5006,7 @@ function draftFromResearchSeed(seed: ResearchSeed): EntryEntwurf {
     country: '',
     authors: normalizedArchitekt,
     themes: 'needs research, source verification, rights review, material analysis, structure analysis, tectonic analysis',
-    lecture_cluster: 'Architekture Cosmos dev research',
+    lecture_cluster: 'Architektur-Kosmos Dev-Recherche',
     source_documents: 'Generierter Rechercheauftrag / Quellen offen',
     source_url: '',
     short_description: `${title} ist für KI-gestützte Recherche und Archivklassifikation vorbereitet.`,
@@ -5025,7 +5025,7 @@ function identifyBuildingFromImageName(fileName: string, entries: Entry[]) {
       architect: 'Le Corbusier, Pierre Jeanneret',
       address: 'Poissy, France',
       confidence: 0.86,
-      reason: 'filename/context matched Villa Savoye aliases',
+      reason: 'Dateiname oder Kontext passt zu Villa-Savoye-Aliasnamen',
       aliases: ['villa-savoye', 'savoye', 'poissy', 'le-corbusier']
     },
     {
@@ -5033,7 +5033,7 @@ function identifyBuildingFromImageName(fileName: string, entries: Entry[]) {
       architect: 'Boltshauser Architekten / Roger Boltshauser',
       address: 'Klosterstrasse 20, 6440 Brunnen, Schweiz',
       confidence: 0.82,
-      reason: 'filename/context matched Ingenbohl/Boltshauser aliases',
+      reason: 'Dateiname oder Kontext passt zu Ingenbohl-/Boltshauser-Aliasnamen',
       aliases: ['ingenbohl', 'boltshauser', 'brunnen', 'kloster']
     },
     {
@@ -5041,7 +5041,7 @@ function identifyBuildingFromImageName(fileName: string, entries: Entry[]) {
       architect: 'Herzog & de Meuron',
       address: 'Lenggstrasse 30, Zürich, Schweiz',
       confidence: 0.78,
-      reason: 'filename/context matched Kispi/Kinderspital Zürich aliases',
+      reason: 'Dateiname oder Kontext passt zu Kispi-/Kinderspital-Zürich-Aliasnamen',
       aliases: ['kispi', 'kinderspital', 'kinderspital-zuerich', 'kinderspital-zurich', 'children-hospital-zurich', 'herzog-de-meuron', 'lengg']
     }
   ];
@@ -5061,26 +5061,26 @@ function identifyBuildingFromImageName(fileName: string, entries: Entry[]) {
     architect: matchedEntry.authors.join(', '),
     address: [matchedEntry.city, matchedEntry.country].filter(Boolean).join(', '),
     confidence: 0.72,
-    reason: 'filename matched an existing Architekture Cosmos entry'
+    reason: 'Dateiname passt zu einem bestehenden Architektur-Kosmos-Eintrag'
   };
 }
 
 function draftReadiness(draft: EntryEntwurf) {
   return [
-    { label: 'identity', bereit: Boolean(draft.title.trim() && draft.year.trim() && draft.authors.trim()) },
-    { label: 'place', bereit: Boolean(draft.city.trim() || draft.country.trim()) },
-    { label: 'sources', bereit: Boolean(draft.source_url.trim() || draft.source_documents.trim()) },
-    { label: 'themes', bereit: Boolean(draft.themes.trim() || draft.lecture_cluster.trim()) },
-    { label: 'text', bereit: Boolean(draft.short_description.trim() && draft.one_sentence.trim()) },
-    { label: 'rights', bereit: draft.copyright_status !== 'needs_permission' }
+    { label: 'Identität', bereit: Boolean(draft.title.trim() && draft.year.trim() && draft.authors.trim()) },
+    { label: 'Ort', bereit: Boolean(draft.city.trim() || draft.country.trim()) },
+    { label: 'Quellen', bereit: Boolean(draft.source_url.trim() || draft.source_documents.trim()) },
+    { label: 'Themen', bereit: Boolean(draft.themes.trim() || draft.lecture_cluster.trim()) },
+    { label: 'Text', bereit: Boolean(draft.short_description.trim() && draft.one_sentence.trim()) },
+    { label: 'Rechte', bereit: draft.copyright_status !== 'needs_permission' }
   ];
 }
 
 const mediaTypes: Array<'exterior' | 'interior' | 'section' | 'plan'> = ['exterior', 'interior', 'section', 'plan'];
 const mediaTypeLabels = {
-  exterior: 'Exterior',
-  interior: 'Interior',
-  section: 'Section',
+  exterior: 'Außen',
+  interior: 'Innen',
+  section: 'Schnitt',
   plan: 'Plan'
 } satisfies Record<(typeof mediaTypes)[number], string>;
 
