@@ -247,7 +247,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     velocity: 0,
     isZooming: false
   });
-  const [visualPan, setVisualPan] = useState<VisualPan>({ x: 0, y: 0 });
+  const [, setVisualPan] = useState<VisualPan>({ x: 0, y: 0 });
   const [introState, setIntroState] = useState<IntroState>(readInitialIntroState);
   const [returningFromDatabase, setReturningFromDatabase] = useState(false);
   const [showDatabasePanel, setShowDatabasePanel] = useState(false);
@@ -349,11 +349,12 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     transition: 'opacity 420ms cubic-bezier(0.19, 1, 0.22, 1)'
   };
   const visualZoomValue = visualZoom.currentZoom;
-  const cameraTransform = buildCameraTransform(visualZoomValue, visualPan);
+  const visualPanForRender = visualPanRef.current;
+  const cameraTransform = buildCameraTransform(visualZoomValue, visualPanForRender);
   const visualZoomStyle = {
     '--cosmos-visual-zoom': String(roundZoom(visualZoomValue)),
-    '--cosmos-visual-pan-x': `${roundMotion(visualPan.x)}px`,
-    '--cosmos-visual-pan-y': `${roundMotion(visualPan.y)}px`
+    '--cosmos-visual-pan-x': `${roundMotion(visualPanForRender.x)}px`,
+    '--cosmos-visual-pan-y': `${roundMotion(visualPanForRender.y)}px`
   } as CSSProperties;
 
   useEffect(() => {

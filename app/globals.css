@@ -1058,7 +1058,7 @@ body:has(.entry-page) {
 }
 
 .wormhole-camera {
-  transition: transform 260ms linear;
+  transition: none;
   transform-box: view-box;
   will-change: transform;
 }
@@ -6240,7 +6240,7 @@ body:has(.entry-page) {
 }
 
 .cosmos-perf-reduced .wormhole-camera {
-  transition-duration: 260ms;
+  transition: none;
 }
 
 html[data-cosmos-browser="safari"] .wormhole-stream,
