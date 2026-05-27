@@ -28,7 +28,7 @@ async function main() {
 
   removeTempArtifacts();
   const steps = [
-    runStep('review_decision', ['run', 'kosmo:asset-review-decision', '--', '--library', relative(root, libraryPath), '--asset', assetId, '--route', route, '--decision', 'approve-local', '--confirm-human-review']),
+    runStep('review_decision', ['run', 'kosmo:asset-review-decision', '--', '--library', relative(root, libraryPath), '--asset', assetId, '--route', route, '--decision', 'approve-local', '--confirm-human-review', '--reviewer', 'Kosmo Certificate Smoke']),
     runStep('review_certificate', ['run', 'kosmo:asset-review-certificate', '--', '--library', relative(root, libraryPath), '--asset', assetId, '--route', route]),
     runStep('decision_ledger_with_certificate', ['run', 'kosmo:asset-decision-ledger', '--', '--library', relative(root, libraryPath)])
   ];

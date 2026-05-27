@@ -232,7 +232,8 @@ npm run kosmo:asset-review-decision -- \
   --asset warm-concrete-material-001 \
   --route blender \
   --decision approve-local \
-  --confirm-human-review
+  --confirm-human-review \
+  --reviewer "REPLACE_WITH_REVIEWER_NAME"
 ```
 
 Der Befehl schreibt nur lokale Review-Dateien:
@@ -242,10 +243,12 @@ examples/kosmo-assets/kosmo-asset-demo/review/asset-review-decision-warm-concret
 examples/kosmo-assets/kosmo-asset-demo/review/asset-review-decision-warm-concrete-material-001-blender.generated.md
 ```
 
-Er veraendert die Bibliothek nicht, importiert nichts in Blender, schreibt keine
-Projektdateien, laedt nichts hoch und oeffnet keine Public-Gates. Fuer echte
-Blender-/ArchiCAD-Tests bleibt danach weiterhin eine kopierte Sandbox-Datei
-noetig.
+Er verlangt fuer `approve-local` und `reject` einen benannten menschlichen
+Reviewer. Platzhalter wie `REPLACE_WITH_REVIEWER_NAME` oder `owner` werden
+nicht als echte Freigabe akzeptiert. Der Befehl veraendert die Bibliothek nicht,
+importiert nichts in Blender, schreibt keine Projektdateien, laedt nichts hoch
+und oeffnet keine Public-Gates. Fuer echte Blender-/ArchiCAD-Tests bleibt danach
+weiterhin eine kopierte Sandbox-Datei noetig.
 
 ## Lokales Review-Zertifikat
 
@@ -355,7 +358,8 @@ npm run kosmo:asset-review-decision -- \
   --asset warm-concrete-material-001 \
   --route archicad \
   --decision approve-local \
-  --confirm-human-review
+  --confirm-human-review \
+  --reviewer "REPLACE_WITH_REVIEWER_NAME"
 
 npm run kosmo:asset-archicad-sandbox -- \
   --library examples/kosmo-assets/kosmo-asset-demo/library.json \

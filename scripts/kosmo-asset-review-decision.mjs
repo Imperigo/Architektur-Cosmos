@@ -11,13 +11,14 @@ const libraryRoot = dirname(libraryPath);
 const assetId = String(args.asset || '').trim();
 const route = String(args.route || 'all').trim();
 const decision = String(args.decision || 'needs-review').trim();
-const reviewer = String(args.reviewer || 'owner').trim();
+const reviewer = String(args.reviewer || args['reviewed-by'] || '').trim();
 const outputBase = [assetId || 'asset', route || 'all'].join('-');
 const outputJsonPath = resolve(libraryRoot, args.output || `review/asset-review-decision-${outputBase}.generated.json`);
 const outputMdPath = resolve(libraryRoot, args.markdown || `review/asset-review-decision-${outputBase}.generated.md`);
 
 const allowedRoutes = new Set(['all', 'blender', 'archicad', 'web', 'svg', 'dxf', 'glb', 'material']);
 const allowedDecisions = new Set(['approve-local', 'needs-review', 'reject', 'block-public']);
+const decisionsRequiringNamedReviewer = new Set(['approve-local', 'reject']);
 
 main().catch((error) => {
   console.error(error.message);
@@ -63,14 +64,18 @@ function buildDecision({ library, asset, reviewPack, handoffBundle, handoffSmoke
     || asset.formats?.some((format) => format.format === route)
   );
   const humanConfirmed = args['confirm-human-review'] === true;
+  const namedHumanReviewer = hasNamedHumanReviewer(reviewer);
+  const reviewerRequired = decisionsRequiringNamedReviewer.has(decision);
   const canApproveLocal = decision !== 'approve-local' || (
     humanConfirmed
+    && namedHumanReviewer
     && routeAvailable
     && smokePassed
     && handoffAsset?.public_gate === 'blocked'
   );
   const blockers = [
     ...(!routeAvailable ? [`Route '${route}' is not available for this asset.`] : []),
+    ...(reviewerRequired && !namedHumanReviewer ? [`--reviewer "<human name>" is required for ${decision}.`] : []),
     ...(decision === 'approve-local' && !humanConfirmed ? ['--confirm-human-review is required for approve-local.'] : []),
     ...(decision === 'approve-local' && !smokePassed ? ['Handoff smoke must pass before local approval.'] : []),
     ...(decision === 'approve-local' && handoffAsset?.public_gate !== 'blocked' ? ['Public gate must remain blocked during local approval.'] : [])
@@ -86,14 +91,16 @@ function buildDecision({ library, asset, reviewPack, handoffBundle, handoffSmoke
     asset_title: asset.title,
     route,
     decision,
-    reviewer,
+    reviewer: reviewer || null,
     status: blockers.length ? 'decision_blocked' : canApproveLocal ? 'local_review_decision_recorded' : 'local_review_note_recorded',
     policy: {
       no_uploads: true,
       no_public_downloads: true,
       no_library_mutation: true,
       no_scene_write: true,
-      public_gate_remains_blocked: handoffAsset?.public_gate === 'blocked'
+      public_gate_remains_blocked: handoffAsset?.public_gate === 'blocked',
+      approve_local_requires_named_reviewer: true,
+      reject_requires_named_reviewer: true
     },
     evidence: {
       rights_status: asset.rights_status,
@@ -103,6 +110,7 @@ function buildDecision({ library, asset, reviewPack, handoffBundle, handoffSmoke
       smoke_status: handoffSmoke?.status || 'missing',
       smoke_passed: smokePassed,
       route_available: routeAvailable,
+      named_human_reviewer: namedHumanReviewer,
       handoff_bundle_status: handoffBundle?.status || 'missing'
     },
     outputs: {
@@ -139,6 +147,7 @@ function renderMarkdown(report) {
     `Generated: ${report.generated_at}`,
     `Decision: \`${report.decision}\``,
     `Route: \`${report.route}\``,
+    `Reviewer: ${report.reviewer ? `\`${report.reviewer}\`` : '-'}`,
     `Status: \`${report.status}\``,
     '',
     'This decision is local review evidence only. It does not mutate the library, import into Blender, write ArchiCAD files, upload assets or publish downloads.',
@@ -148,6 +157,7 @@ function renderMarkdown(report) {
     `- rights: \`${report.evidence.rights_status}\``,
     `- review: \`${report.evidence.review_status}\``,
     `- human review: \`${report.evidence.human_review_status}\``,
+    `- named human reviewer: ${report.evidence.named_human_reviewer}`,
     `- smoke: \`${report.evidence.smoke_status}\``,
     `- route available: ${report.evidence.route_available}`,
     `- public gate remains blocked: ${report.policy.public_gate_remains_blocked}`,
@@ -171,6 +181,14 @@ function readJson(pathname) {
 function readOptionalJson(pathname) {
   if (!existsSync(pathname)) return null;
   return readJson(pathname);
+}
+
+function hasNamedHumanReviewer(value) {
+  const normalized = String(value || '').trim().toLowerCase();
+  if (!normalized) return false;
+  if (normalized.length < 3) return false;
+  if (normalized.includes('replace_with')) return false;
+  return !new Set(['owner', 'reviewer', 'reviewer name', 'unknown', 'tbd', 'n/a', 'na']).has(normalized);
 }
 
 function parseArgs(argv) {

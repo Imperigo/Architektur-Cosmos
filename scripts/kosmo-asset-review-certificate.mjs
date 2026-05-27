@@ -68,6 +68,7 @@ function buildCertificate({ library, asset, route, decisionPath, humanSession, h
     check('decision_exists', Boolean(decision), 'Explicit local review decision exists.'),
     check('decision_status_recorded', decision?.status === 'local_review_decision_recorded', `Decision status is ${decision?.status || 'missing'}.`),
     check('decision_is_local_approval', decision?.decision === 'approve-local', `Decision is ${decision?.decision || 'missing'}.`),
+    check('decision_named_reviewer', hasNamedHumanReviewer(decision?.reviewer), `Decision reviewer is ${decision?.reviewer || 'missing'}.`),
     check('decision_route_matches', decision?.route === route, `Decision route is ${decision?.route || 'missing'}, expected ${route}.`),
     check('review_pack_local_ready', reviewAsset?.local_ready === true, 'Review-pack marks the asset as local-ready.'),
     check('handoff_smoke_passed', handoffSmoke?.summary?.failure_count === 0, `Handoff smoke status is ${handoffSmoke?.status || 'missing'}.`),
@@ -222,6 +223,14 @@ function readJson(pathname) {
 function readOptionalJson(pathname) {
   if (!existsSync(pathname)) return null;
   return readJson(pathname);
+}
+
+function hasNamedHumanReviewer(value) {
+  const normalized = String(value || '').trim().toLowerCase();
+  if (!normalized) return false;
+  if (normalized.length < 3) return false;
+  if (normalized.includes('replace_with')) return false;
+  return !new Set(['owner', 'reviewer', 'reviewer name', 'unknown', 'tbd', 'n/a', 'na']).has(normalized);
 }
 
 function parseArgs(argv) {

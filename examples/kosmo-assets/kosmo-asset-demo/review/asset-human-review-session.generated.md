@@ -1,7 +1,7 @@
 # KosmoAsset Human Review Session
 
 Library: `kosmo-asset-demo`
-Generated: 2026-05-27T05:16:37.984Z
+Generated: 2026-05-27T05:25:31.855Z
 Status: `asset_human_review_session_open`
 
 Editable local human-review session. This file does not approve assets, does not certify quality, does not upload, publish, write D1/R2 or open public gates.
@@ -48,7 +48,7 @@ Human checklist:
 
 Decision commands:
 - record_needs_review: `npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmo-asset-demo/library.json --asset axis-marker-svg-001 --route archicad --decision needs-review`
-- record_local_approval: `npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmo-asset-demo/library.json --asset axis-marker-svg-001 --route archicad --decision approve-local --confirm-human-review`
+- record_local_approval: `npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmo-asset-demo/library.json --asset axis-marker-svg-001 --route archicad --decision approve-local --confirm-human-review --reviewer "REPLACE_WITH_REVIEWER_NAME"`
 - keep_public_blocked: `npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmo-asset-demo/library.json --asset axis-marker-svg-001 --route archicad --decision block-public`
 
 ## Warm Concrete Study Material
@@ -69,7 +69,7 @@ Human checklist:
 
 Decision commands:
 - record_needs_review: `npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmo-asset-demo/library.json --asset warm-concrete-material-001 --route blender --decision needs-review`
-- record_local_approval: `npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmo-asset-demo/library.json --asset warm-concrete-material-001 --route blender --decision approve-local --confirm-human-review`
+- record_local_approval: `npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmo-asset-demo/library.json --asset warm-concrete-material-001 --route blender --decision approve-local --confirm-human-review --reviewer "REPLACE_WITH_REVIEWER_NAME"`
 - keep_public_blocked: `npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmo-asset-demo/library.json --asset warm-concrete-material-001 --route blender --decision block-public`
 
 ## Generic Column GLB Slot
@@ -90,7 +90,7 @@ Human checklist:
 
 Decision commands:
 - record_needs_review: `npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmo-asset-demo/library.json --asset generic-column-glb-001 --route blender --decision needs-review`
-- record_local_approval: `npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmo-asset-demo/library.json --asset generic-column-glb-001 --route blender --decision approve-local --confirm-human-review`
+- record_local_approval: `npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmo-asset-demo/library.json --asset generic-column-glb-001 --route blender --decision approve-local --confirm-human-review --reviewer "REPLACE_WITH_REVIEWER_NAME"`
 - keep_public_blocked: `npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmo-asset-demo/library.json --asset generic-column-glb-001 --route blender --decision block-public`
 
 ## Next Actions

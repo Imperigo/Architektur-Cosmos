@@ -2930,7 +2930,7 @@ function AssetReviewWorkflow({
   const availableRoutes = assetDecisionRoutes(asset, handoffBundle);
   const commands = availableRoutes.map((route) => ({
     route,
-    command: `npm run kosmo:asset-review-decision -- --library ${assetLibraryPath()} --asset ${asset.id} --route ${route} --decision approve-local --confirm-human-review`
+    command: `npm run kosmo:asset-review-decision -- --library ${assetLibraryPath()} --asset ${asset.id} --route ${route} --decision approve-local --confirm-human-review --reviewer "REPLACE_WITH_REVIEWER_NAME"`
   }));
   const steps = [
     {
@@ -3243,7 +3243,7 @@ function assetReviewActions(asset: AssetPreviewRecord): AssetReviewAction[] {
       label: 'Freigabe-Draft',
       kicker: 'Gate',
       description: 'Schreibt eine lokale menschliche Freigabe-Evidenz fuer ein Asset, ohne Library, Blender, ArchiCAD oder Public-Gates zu veraendern.',
-      command: `npm run kosmo:asset-review-decision -- --library ${libraryPath} --asset ${asset.id} --route ${decisionRoutes[0]} --decision approve-local --confirm-human-review`
+      command: `npm run kosmo:asset-review-decision -- --library ${libraryPath} --asset ${asset.id} --route ${decisionRoutes[0]} --decision approve-local --confirm-human-review --reviewer "REPLACE_WITH_REVIEWER_NAME"`
     },
     {
       id: 'review-certificate',

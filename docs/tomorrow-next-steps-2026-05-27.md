@@ -94,7 +94,7 @@ npm run kosmo:asset-review-decision -- \
   --asset warm-concrete-material-001 \
   --route blender \
   --decision local_review_approved \
-  --reviewer "Andrin Baumann" \
+  --reviewer "REPLACE_WITH_REVIEWER_NAME" \
   --notes "Lokaler Test fuer Demo-Asset, keine Public-Freigabe."
 ```
 

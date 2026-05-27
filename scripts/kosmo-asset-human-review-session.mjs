@@ -10,6 +10,7 @@ const libraryPath = resolve(root, args.library || 'examples/kosmo-assets/kosmo-a
 const libraryRoot = dirname(libraryPath);
 const outputJsonPath = resolve(libraryRoot, args.output || 'review/asset-human-review-session.generated.json');
 const outputMdPath = resolve(libraryRoot, args.markdown || 'review/asset-human-review-session.generated.md');
+const commandReviewer = String(args.reviewer || args['reviewed-by'] || '').trim();
 
 const publicSafeRights = new Set(['licensed', 'public_domain', 'own_work']);
 const reviewedStatuses = new Set(['reviewed', 'verified']);
@@ -222,9 +223,11 @@ function decisionOptions({ asset, primaryRoute, publicReady }) {
 
 function decisionCommands({ asset, primaryRoute }) {
   const library = relative(root, libraryPath);
+  const reviewer = commandReviewer || 'REPLACE_WITH_REVIEWER_NAME';
+  const reviewerFlag = ` --reviewer ${shellQuote(reviewer)}`;
   return {
     record_needs_review: `npm run kosmo:asset-review-decision -- --library ${library} --asset ${asset.id} --route ${primaryRoute} --decision needs-review`,
-    record_local_approval: `npm run kosmo:asset-review-decision -- --library ${library} --asset ${asset.id} --route ${primaryRoute} --decision approve-local --confirm-human-review`,
+    record_local_approval: `npm run kosmo:asset-review-decision -- --library ${library} --asset ${asset.id} --route ${primaryRoute} --decision approve-local --confirm-human-review${reviewerFlag}`,
     keep_public_blocked: `npm run kosmo:asset-review-decision -- --library ${library} --asset ${asset.id} --route ${primaryRoute} --decision block-public`
   };
 }
@@ -354,6 +357,10 @@ function readOptionalJson(pathname) {
 
 function escapePipe(value) {
   return String(value ?? '').replace(/\|/g, '\\|').replace(/\n/g, ' ');
+}
+
+function shellQuote(value) {
+  return `"${String(value).replace(/(["\\$`])/g, '\\$1')}"`;
 }
 
 function parseArgs(argv) {
