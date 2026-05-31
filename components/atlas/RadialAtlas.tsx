@@ -1466,6 +1466,8 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
         <svg
           ref={svgRef}
           viewBox={`0 0 ${atlasSize.width} ${atlasSize.height}`}
+          aria-hidden={introState !== 'idle'}
+          aria-label={introState === 'idle' ? 'KosmoData Wurmloch-Atlas' : undefined}
           className="h-full w-full touch-none cursor-none"
           onWheel={handleWheel}
           onTouchStart={handleTouchStart}
