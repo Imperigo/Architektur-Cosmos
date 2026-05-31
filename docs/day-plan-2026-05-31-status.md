@@ -94,6 +94,9 @@ KosmoData:
 - Stilsektor-Baender und feine Sektor-Ticks wurden fuer Pointer-Events
   deaktiviert. Die farbige Architektur-Ebenen-Grafik bleibt klickbar ueber die
   Beschriftung, faengt aber keine Projektklicks im Wurmloch mehr ab.
+- Detailseiten-Polish: Das Archivstatus-Radar nutzt nun lesbare Achsenlabels
+  (`Quelle`, `Medien`, `Netz`, `3D`, `Analyse`, `Text`) statt kryptischer
+  Zweibuchstaben-Codes.
 - Hero-/Planetenbild-Audit: 79/112 Eintraege haben rechteklare Hauptbilder,
   keine Duplikat-URLs, keine blockierten/unklaren Public-Lizenzen.
 

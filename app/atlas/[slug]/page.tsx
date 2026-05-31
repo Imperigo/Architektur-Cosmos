@@ -1006,12 +1006,12 @@ function archiveStatusMetrics(entry: Entry, relatedCount: number): ArchiveStatus
   const textValue = Math.min(100, (entry.architecture_text?.chapters.length ?? 0) * 16 + (entry.full_description.length > 320 ? 28 : 12) + (entry.one_sentence.length > 40 ? 12 : 0));
 
   return [
-    { id: 'sources', label: 'Quellenlage', shortLabel: 'QU', value: Math.round(sourceValue), hint: 'Nachweise, Quellenkandidaten und Verifizierungsgrad.' },
-    { id: 'media', label: 'Medien / Pläne', shortLabel: 'ME', value: Math.round(mediaValue), hint: 'Außen, Innen, Schnitt, Grundriss und öffentliche Medien.' },
-    { id: 'network', label: 'Wissensnetz', shortLabel: 'NE', value: Math.round(networkValue), hint: 'Relationen, Tags und thematische Anschlussfähigkeit.' },
+    { id: 'sources', label: 'Quellenlage', shortLabel: 'Quelle', value: Math.round(sourceValue), hint: 'Nachweise, Quellenkandidaten und Verifizierungsgrad.' },
+    { id: 'media', label: 'Medien / Pläne', shortLabel: 'Medien', value: Math.round(mediaValue), hint: 'Außen, Innen, Schnitt, Grundriss und öffentliche Medien.' },
+    { id: 'network', label: 'Wissensnetz', shortLabel: 'Netz', value: Math.round(networkValue), hint: 'Relationen, Tags und thematische Anschlussfähigkeit.' },
     { id: 'model', label: '3D-Modell', shortLabel: '3D', value: Math.round(modelValue), hint: hasPublicModelPreview ? 'Öffentliches GLB-Preview plus geplante Blender-Layer.' : 'Geplante Modell-Layer; noch kein öffentliches GLB.' },
-    { id: 'analysis', label: 'Analyse', shortLabel: 'AN', value: Math.round(analysisValue), hint: 'Material, Tragwerk, Tektonik und Beobachtungslayer.' },
-    { id: 'text', label: 'Texttiefe', shortLabel: 'TX', value: Math.round(textValue), hint: 'Architekturtext, Kapitelstruktur und beschreibende Dichte.' }
+    { id: 'analysis', label: 'Analyse', shortLabel: 'Analyse', value: Math.round(analysisValue), hint: 'Material, Tragwerk, Tektonik und Beobachtungslayer.' },
+    { id: 'text', label: 'Texttiefe', shortLabel: 'Text', value: Math.round(textValue), hint: 'Architekturtext, Kapitelstruktur und beschreibende Dichte.' }
   ];
 }
 
