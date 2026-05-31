@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-31T12:46:50.809Z",
+  "generated_at": "2026-05-31T12:51:52.283Z",
   "generator": "kosmo-orbit-full-review",
   "workspace_path": "examples/kosmo-orbit/workspace.demo.json",
   "project_root": "examples/kosmo-projects/kosmo-demo-001",
@@ -15,8 +15,8 @@
     "no_geometry_generation": true
   },
   "summary": {
-    "step_count": 9,
-    "passed_steps": 9,
+    "step_count": 10,
+    "passed_steps": 10,
     "failed_steps": 0,
     "workspace_status": "orbit_blocked_gates_present",
     "project_status": "local_review_only",
@@ -39,7 +39,9 @@
     "role_design_capable_count": 4,
     "role_ui_smoke_status": "role_ui_smoke_passed",
     "role_ui_smoke_passed_checks": 12,
-    "role_ui_smoke_check_count": 12
+    "role_ui_smoke_check_count": 12,
+    "role_shell_prototype_status": "role_shell_prototype_ready",
+    "role_shell_prototype_html": "examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-prototype.generated.html"
   },
   "outputs": {
     "full_review_json": "examples/kosmo-orbit/review/orbit-full-review.generated.json",
@@ -51,7 +53,8 @@
     "design_ui_prototype_html": "examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-ui-prototype.generated.html",
     "design_ui_smoke_markdown": "examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-ui-smoke.generated.md",
     "role_variants_markdown": "examples/kosmo-projects/kosmo-demo-001/orbit/role-ui-variants.generated.md",
-    "role_ui_smoke_markdown": "examples/kosmo-projects/kosmo-demo-001/orbit/role-ui-smoke.generated.md"
+    "role_ui_smoke_markdown": "examples/kosmo-projects/kosmo-demo-001/orbit/role-ui-smoke.generated.md",
+    "role_shell_prototype_html": "examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-prototype.generated.html"
   },
   "steps": [
     {
@@ -161,6 +164,18 @@
       "report_status": "role_ui_smoke_passed",
       "stdout_tail": "> architecture-cosmos@0.1.0 kosmo:orbit-role-smoke\n> node scripts/kosmo-orbit-role-ui-smoke.mjs --project examples/kosmo-projects/kosmo-demo-001 --variants orbit/role-ui-variants.generated.json\n\nKosmoOrbit role UI smoke\nProject: Kosmo Demo 001\nStatus: role_ui_smoke_passed\nChecks: 12/12 passed\nWrote: examples/kosmo-projects/kosmo-demo-001/orbit/role-ui-smoke.generated.md",
       "stderr_tail": ""
+    },
+    {
+      "id": "role_shell_prototype",
+      "label": "Role Shell Prototype",
+      "command": "npm run kosmo:orbit-role-shell-prototype -- --project examples/kosmo-projects/kosmo-demo-001 --variants orbit/role-ui-variants.generated.json --smoke orbit/role-ui-smoke.generated.json",
+      "status": "passed",
+      "exit_code": 0,
+      "report_path": "examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-prototype.generated.json",
+      "report_exists": true,
+      "report_status": "role_shell_prototype_ready",
+      "stdout_tail": "> architecture-cosmos@0.1.0 kosmo:orbit-role-shell-prototype\n> node scripts/kosmo-orbit-role-shell-prototype.mjs --project examples/kosmo-projects/kosmo-demo-001 --variants orbit/role-ui-variants.generated.json --smoke orbit/role-ui-smoke.generated.json\n\nKosmoOrbit role shell prototype generated\nProject: Kosmo Demo 001\nRoles: 8\nHTML: examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-prototype.generated.html\nManifest: examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-prototype.generated.json",
+      "stderr_tail": ""
     }
   ],
   "next_actions": [
@@ -171,6 +186,7 @@
     "Use the generated static HTML prototype as the visual reference for the first KosmoOrbit app screen.",
     "Keep the UI smoke in the Orbit full review before any UI handoff or prototype change.",
     "Use the generated role variants to drive the next KosmoOrbit UI prototype pass.",
-    "Keep the role UI smoke in the Orbit full review before changing role permissions or learning modes."
+    "Keep the role UI smoke in the Orbit full review before changing role permissions or learning modes.",
+    "Use the generated role shell prototype as the visual reference for the first role-aware KosmoOrbit app screen."
   ]
 }

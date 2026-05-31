@@ -1,0 +1,38 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-05-31T12:51:52.269Z",
+  "generator": "kosmo-orbit-role-shell-prototype",
+  "source_variants": "examples/kosmo-projects/kosmo-demo-001/orbit/role-ui-variants.generated.json",
+  "source_smoke": "examples/kosmo-projects/kosmo-demo-001/orbit/role-ui-smoke.generated.json",
+  "html_output": "examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-prototype.generated.html",
+  "status": "role_shell_prototype_ready",
+  "project": {
+    "id": "kosmo-demo-001",
+    "name": "Kosmo Demo 001",
+    "risk_level": "local_review_only"
+  },
+  "summary": {
+    "variant_count": 8,
+    "design_capable_count": 4,
+    "learning_variant_count": 3,
+    "generation_capable_count": 0,
+    "smoke_status": "role_ui_smoke_passed",
+    "smoke_passed_checks": 12,
+    "smoke_check_count": 12
+  },
+  "safety": {
+    "static_html_only": true,
+    "no_auth_runtime": true,
+    "no_user_data_write": true,
+    "no_network_calls": true,
+    "no_blender_launch": true,
+    "no_geometry_generation": true,
+    "no_uploads": true,
+    "no_public_publish": true
+  },
+  "next_actions": [
+    "Use this static role shell as the visual reference for the first KosmoOrbit app screen.",
+    "Add a smoke check for the role shell before turning it into a real Next route.",
+    "Keep role permissions data-driven and review-only until local auth exists."
+  ]
+}

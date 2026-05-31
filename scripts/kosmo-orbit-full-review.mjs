@@ -112,6 +112,20 @@ const steps = [
       'orbit/role-ui-variants.generated.json'
     ],
     report: resolve(projectRoot, 'orbit/role-ui-smoke.generated.json')
+  },
+  {
+    id: 'role_shell_prototype',
+    label: 'Role Shell Prototype',
+    script: 'kosmo:orbit-role-shell-prototype',
+    args: [
+      '--project',
+      relative(root, projectRoot),
+      '--variants',
+      'orbit/role-ui-variants.generated.json',
+      '--smoke',
+      'orbit/role-ui-smoke.generated.json'
+    ],
+    report: resolve(projectRoot, 'orbit/role-shell-prototype.generated.json')
   }
 ];
 
@@ -185,6 +199,7 @@ function buildReport(stepRows) {
   const designUiSmoke = readOptionalJson(resolve(projectRoot, 'orbit/design-handoff-ui-smoke.generated.json'));
   const roleVariants = readOptionalJson(resolve(projectRoot, 'orbit/role-ui-variants.generated.json'));
   const roleUiSmoke = readOptionalJson(resolve(projectRoot, 'orbit/role-ui-smoke.generated.json'));
+  const roleShellPrototype = readOptionalJson(resolve(projectRoot, 'orbit/role-shell-prototype.generated.json'));
 
   const status = failedSteps.length
     ? 'orbit_full_review_failed'
@@ -235,7 +250,9 @@ function buildReport(stepRows) {
       role_design_capable_count: roleVariants?.summary?.design_capable_count ?? null,
       role_ui_smoke_status: roleUiSmoke?.status || null,
       role_ui_smoke_passed_checks: roleUiSmoke?.summary?.passed_checks ?? null,
-      role_ui_smoke_check_count: roleUiSmoke?.summary?.check_count ?? null
+      role_ui_smoke_check_count: roleUiSmoke?.summary?.check_count ?? null,
+      role_shell_prototype_status: roleShellPrototype?.status || null,
+      role_shell_prototype_html: roleShellPrototype?.html_output || null
     },
     outputs: {
       full_review_json: relative(root, outputJsonPath),
@@ -247,14 +264,15 @@ function buildReport(stepRows) {
       design_ui_prototype_html: relative(root, resolve(projectRoot, 'orbit/design-handoff-ui-prototype.generated.html')),
       design_ui_smoke_markdown: relative(root, resolve(projectRoot, 'orbit/design-handoff-ui-smoke.generated.md')),
       role_variants_markdown: relative(root, resolve(projectRoot, 'orbit/role-ui-variants.generated.md')),
-      role_ui_smoke_markdown: relative(root, resolve(projectRoot, 'orbit/role-ui-smoke.generated.md'))
+      role_ui_smoke_markdown: relative(root, resolve(projectRoot, 'orbit/role-ui-smoke.generated.md')),
+      role_shell_prototype_html: relative(root, resolve(projectRoot, 'orbit/role-shell-prototype.generated.html'))
     },
     steps: stepRows,
-    next_actions: nextActions({ failedSteps, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke })
+    next_actions: nextActions({ failedSteps, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke, roleShellPrototype })
   };
 }
 
-function nextActions({ failedSteps, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke }) {
+function nextActions({ failedSteps, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke, roleShellPrototype }) {
   const actions = [];
   if (failedSteps.length) {
     failedSteps.forEach((step) => actions.push(`Review failed step: ${step.label}`));
@@ -283,6 +301,9 @@ function nextActions({ failedSteps, workspaceStatus, projectInspector, designHan
   }
   if (roleUiSmoke?.status === 'role_ui_smoke_passed') {
     actions.push('Keep the role UI smoke in the Orbit full review before changing role permissions or learning modes.');
+  }
+  if (roleShellPrototype?.status === 'role_shell_prototype_ready') {
+    actions.push('Use the generated role shell prototype as the visual reference for the first role-aware KosmoOrbit app screen.');
   }
   if (!actions.length) actions.push('KosmoOrbit full review is ready for the next implementation step.');
   return actions;
@@ -322,6 +343,8 @@ function renderMarkdown(report) {
     `- design-capable roles: ${report.summary.role_design_capable_count}`,
     `- role UI smoke: \`${report.summary.role_ui_smoke_status}\``,
     `- role UI smoke checks: ${report.summary.role_ui_smoke_passed_checks}/${report.summary.role_ui_smoke_check_count}`,
+    `- role shell prototype: \`${report.summary.role_shell_prototype_status}\``,
+    `- role shell prototype HTML: \`${report.summary.role_shell_prototype_html}\``,
     '',
     '## Steps',
     '',

@@ -290,12 +290,15 @@ laufen. Initial umgesetzt:
 - prueft den statischen UI-Prototyp mit einem Smoke-Check;
 - erzeugt Rollenvarianten fuer die KosmoDesign-Oberflaeche;
 - prueft die Rollenvarianten mit einem Role-UI-Smoke;
+- erzeugt einen statischen Role-Shell-Prototyp fuer die erste
+  rollenbasierte KosmoOrbit-Oberflaeche;
 - schreibt `examples/kosmo-orbit/review/orbit-full-review.generated.json`;
 - schreibt `examples/kosmo-orbit/review/orbit-full-review.generated.md`.
 
 Der Full Review ist der erste echte KosmoOrbit-Steuerzentralen-Durchlauf:
 Workspace -> Status -> Projektpaket -> Design-Handoff -> UI-Panel-Spec ->
-statischer UI-Prototyp -> UI-Smoke -> Rollenvarianten -> Role-UI-Smoke.
+statischer UI-Prototyp -> UI-Smoke -> Rollenvarianten -> Role-UI-Smoke ->
+Role-Shell-Prototyp.
 
 Auch dieser Durchlauf bleibt strikt review-only: kein Blender-Start, keine
 Geometrie-Generierung, keine Uploads, keine externen Accounts, keine Kosten und
@@ -398,3 +401,27 @@ Der Smoke prueft u.a.:
 Damit hat KosmoOrbit eine erste automatische Absicherung dafuer, dass
 Rollenlogik, Lernmodus und Review-only-Grenzen nicht versehentlich aus der
 Hauptsoftware-Shell verschwinden.
+
+## 17. Role Shell Prototype
+
+Aus den geprueften Rollenvarianten kann KosmoOrbit eine erste sichtbare
+Hauptsoftware-Shell erzeugen. Initial umgesetzt:
+
+- `npm run kosmo:orbit-role-shell-prototype`
+- liest `orbit/role-ui-variants.generated.json`;
+- liest `orbit/role-ui-smoke.generated.json`;
+- schreibt `orbit/role-shell-prototype.generated.html`;
+- schreibt `orbit/role-shell-prototype.generated.json`.
+
+Der Prototyp zeigt:
+
+- eine linke Rollenleiste fuer alle acht Buero-Rollen;
+- pro Rolle Detailkarten mit Fokus, UI-Modus, Review-Rechten und Lernmodus;
+- `Generate Design` sichtbar blockiert;
+- Public-Gate-Rechte nur bei Owner Admin;
+- Lern-/Observer-Zustaende fuer Praktikant, Lehrling und Schnupperstift;
+- sichtbare Warnungen und Sections als Grundlage fuer die spaetere App.
+
+Auch dieser Prototyp bleibt ein lokales statisches Artefakt im Projektpaket:
+keine Next-Route, keine Auth-Runtime, keine User-Daten, keine externen
+Netzwerkaufrufe, kein Blender-Start und keine Geometrie-Generierung.

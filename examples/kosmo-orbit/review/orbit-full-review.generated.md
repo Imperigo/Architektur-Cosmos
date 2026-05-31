@@ -1,6 +1,6 @@
 # KosmoOrbit Full Review
 
-Generated: 2026-05-31T12:46:50.809Z
+Generated: 2026-05-31T12:51:52.283Z
 Status: `orbit_full_review_ready_for_review_mode`
 Workspace: `examples/kosmo-orbit/workspace.demo.json`
 Project: `examples/kosmo-projects/kosmo-demo-001`
@@ -9,7 +9,7 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 
 ## Summary
 
-- steps: 9/9 passed
+- steps: 10/10 passed
 - workspace status: `orbit_blocked_gates_present`
 - project status: `local_review_only`
 - project artifacts: 59
@@ -30,6 +30,8 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 - design-capable roles: 4
 - role UI smoke: `role_ui_smoke_passed`
 - role UI smoke checks: 12/12
+- role shell prototype: `role_shell_prototype_ready`
+- role shell prototype HTML: `examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-prototype.generated.html`
 
 ## Steps
 
@@ -44,6 +46,7 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 | KosmoDesign UI Smoke | `passed` | `examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-ui-smoke.generated.json` |
 | Role UI Variants | `passed` | `examples/kosmo-projects/kosmo-demo-001/orbit/role-ui-variants.generated.json` |
 | Role UI Smoke | `passed` | `examples/kosmo-projects/kosmo-demo-001/orbit/role-ui-smoke.generated.json` |
+| Role Shell Prototype | `passed` | `examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-prototype.generated.json` |
 
 ## Outputs
 
@@ -57,6 +60,7 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 - design_ui_smoke_markdown: `examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-ui-smoke.generated.md`
 - role_variants_markdown: `examples/kosmo-projects/kosmo-demo-001/orbit/role-ui-variants.generated.md`
 - role_ui_smoke_markdown: `examples/kosmo-projects/kosmo-demo-001/orbit/role-ui-smoke.generated.md`
+- role_shell_prototype_html: `examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-prototype.generated.html`
 
 ## Next Actions
 
@@ -68,3 +72,4 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 - Keep the UI smoke in the Orbit full review before any UI handoff or prototype change.
 - Use the generated role variants to drive the next KosmoOrbit UI prototype pass.
 - Keep the role UI smoke in the Orbit full review before changing role permissions or learning modes.
+- Use the generated role shell prototype as the visual reference for the first role-aware KosmoOrbit app screen.
