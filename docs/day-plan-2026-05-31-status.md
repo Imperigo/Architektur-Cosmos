@@ -87,6 +87,13 @@ KosmoAsset:
   85%. Wiederkehrende Schwaeche ist nicht Material oder 3D, sondern
   `Netzwerk / DNA`: die Texte sollen staerker erklaeren, wie ein Objekt mit
   verwandten Projekten, Typologien und historischen Linien verbunden ist.
+- Textgenerator erweitert: `cosmos:text-generate` liest nun zusaetzlich die
+  Atlas-Relationen und Nachbarobjekte aus `data/relations.json` /
+  `data/mock-entries.json`. Review-Texte koennen damit echte Kanten wie
+  Einflusslinie, Autor-/Werkbezug, thematische Verwandtschaft und typologische
+  Referenz ausweisen. Beispiel Villa Savoye: Dom-Ino House, Charta von Athen,
+  Ville Radieuse, Haus Tugendhat. Die Ausgabe bleibt bewusst Review-Pack und
+  schreibt ohne explizites `--apply --confirm-public-text` nichts live.
 
 Naechster Textstandard bleibt:
 

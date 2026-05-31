@@ -16,7 +16,7 @@ async function main() {
   const slug = args.entry || args.slug;
   if (!slug) throw new Error('Usage: npm run cosmos:text-generate -- --entry villa-savoye');
 
-  const entry = await loadEntry(slug);
+  const { entry, entries, relations } = await loadEntryContext(slug);
   if (!entry) throw new Error(`No entry found for "${slug}".`);
 
   const reviewRoot = path.join(root, 'out/text-review', entry.slug);
@@ -24,7 +24,7 @@ async function main() {
   const automationDir = path.join(root, 'archive-intake', entry.slug, 'automation');
   await Promise.all([reviewRoot, intakeTexts, automationDir].map((directory) => mkdir(directory, { recursive: true })));
 
-  const textPack = buildTextPack(entry);
+  const textPack = buildTextPack(entry, { entries, relations });
   const markdown = renderMarkdown(textPack);
   const toolRun = {
     tool_id: 'text_generate',
@@ -74,9 +74,14 @@ async function main() {
   console.log(args.apply ? 'Entry text was updated after explicit confirmation.' : 'No entry data was overwritten. Text remains a review draft.');
 }
 
-async function loadEntry(slug) {
+async function loadEntryContext(slug) {
   const entries = JSON.parse(await readFile(path.join(root, 'data/mock-entries.json'), 'utf8'));
-  return entries.find((entry) => entry.slug === slug || entry.id === slug);
+  const relations = JSON.parse(await readFile(path.join(root, 'data/relations.json'), 'utf8'));
+  return {
+    entry: entries.find((entry) => entry.slug === slug || entry.id === slug),
+    entries,
+    relations
+  };
 }
 
 async function applyTextPackToEntry(slug, textPack) {
@@ -117,7 +122,7 @@ function parseArgs(argv) {
   return parsed;
 }
 
-function buildTextPack(entry) {
+function buildTextPack(entry, atlasContext = {}) {
   const sources = sourceTrail(entry);
   const analysis = analysisByType(entry);
   const materials = materialList(entry);
@@ -129,7 +134,8 @@ function buildTextPack(entry) {
   const materialClaim = specificMaterialClaim(entry) || analysis.material_system || materialFallback(entry, materials);
 
   const headline = buildHeadline(entry, program);
-  const networkClaim = networkDna(entry);
+  const networkContext = buildNetworkContext(entry, atlasContext);
+  const networkClaim = networkDna(entry, networkContext);
   const overview = buildOverview(entry, {
     program,
     context,
@@ -148,9 +154,9 @@ function buildTextPack(entry) {
     ]), spatialClaim.basis),
     chapter('Netzwerk und DNA', paragraph([
       networkClaim,
-      `Im Atlas ist wichtig, ob ${entry.title} eine bekannte DNA nur fortschreibt, sie verdichtet, bricht oder in eine andere Epoche, Landschaft oder Bauaufgabe übersetzt.`,
+      networkDifferenceClaim(entry, networkContext),
       `So wird das Objekt nicht nur datiert, sondern in ein Beziehungsnetz von ähnlichen Typologien, Materialien, Programmen, Quellen und historischen Problemen eingeordnet.`
-    ]), 'entry themes, source trail and atlas relation logic'),
+    ]), networkContext.basis),
     chapter('Topos', paragraph([
       `${entry.title} gehört zu ${context}.`,
       `Der Ort ist dabei keine Hintergrundinformation, sondern ein aktiver Teil des architektonischen Arguments: Gelände, Stadtlage, Landschaft, Klima, Blick, Schwelle oder institutioneller Rahmen verändern die architektonische Bedeutung.`
@@ -193,6 +199,7 @@ function buildTextPack(entry) {
     public_use_allowed: false,
     review_status: 'needs_owner_review',
     source_basis: sources,
+    network_basis: networkContext.summary,
     claims_policy: {
       verified: 'only claims backed by entry fields or reviewed source notes should be promoted',
       private_notes: 'lecture/book-derived notes must remain paraphrased and rights-safe before public display',
@@ -665,7 +672,85 @@ function databaseValue(entry) {
   return [...new Set(tags)].slice(0, 8).map(readableDe).join(', ') || 'Tragwerk, Material, Kontext und Typologie';
 }
 
-function networkDna(entry) {
+function buildNetworkContext(entry, { entries = [], relations = [] } = {}) {
+  const entryKeys = new Set([entry.id, entry.slug].filter(Boolean));
+  const entryByKey = new Map();
+  for (const item of entries) {
+    for (const key of [item.id, item.slug].filter(Boolean)) {
+      entryByKey.set(key, item);
+    }
+  }
+
+  const explicitRelations = relations
+    .filter((relation) => entryKeys.has(relation.source_entry_id) || entryKeys.has(relation.target_entry_id))
+    .map((relation) => {
+      const neighborKey = entryKeys.has(relation.source_entry_id) ? relation.target_entry_id : relation.source_entry_id;
+      const neighbor = entryByKey.get(neighborKey);
+      return {
+        ...relation,
+        neighbor_key: neighborKey,
+        neighbor_title: neighbor?.title ?? readableDe(neighborKey),
+        neighbor_slug: neighbor?.slug ?? neighborKey,
+        neighbor_style: neighbor?.style_sector,
+        neighbor_type: neighbor?.entry_type
+      };
+    });
+
+  const themeSet = new Set(entry.themes ?? []);
+  const materialSet = new Set([...(entry.materials?.primary ?? []), ...(entry.materials?.secondary ?? [])]);
+  const sourceSet = new Set(entry.source_documents ?? []);
+  const similarEntries = entries
+    .filter((candidate) => candidate.slug !== entry.slug && candidate.id !== entry.id)
+    .map((candidate) => {
+      const sharedThemes = (candidate.themes ?? []).filter((theme) => themeSet.has(theme));
+      const sharedMaterials = [
+        ...(candidate.materials?.primary ?? []),
+        ...(candidate.materials?.secondary ?? [])
+      ].filter((material) => materialSet.has(material));
+      const sharedSources = (candidate.source_documents ?? []).filter((source) => sourceSet.has(source));
+      const sameStyle = candidate.style_sector && candidate.style_sector === entry.style_sector;
+      const sameType = candidate.entry_type && candidate.entry_type === entry.entry_type;
+      const score = sharedThemes.length * 3 + sharedMaterials.length * 2 + sharedSources.length * 2 + (sameStyle ? 2 : 0) + (sameType ? 1 : 0);
+      return {
+        slug: candidate.slug,
+        title: candidate.title,
+        style_sector: candidate.style_sector,
+        entry_type: candidate.entry_type,
+        sharedThemes,
+        sharedMaterials,
+        sharedSources,
+        sameStyle,
+        sameType,
+        score
+      };
+    })
+    .filter((candidate) => candidate.score > 0)
+    .sort((a, b) => b.score - a.score || a.title.localeCompare(b.title))
+    .slice(0, 5);
+
+  const relationTypes = [...new Set(explicitRelations.map((relation) => relation.relation_type).filter(Boolean))];
+  const relationTitles = explicitRelations.slice(0, 4).map((relation) => relation.neighbor_title);
+  const similarTitles = similarEntries.slice(0, 4).map((candidate) => candidate.title);
+
+  return {
+    explicitRelations,
+    similarEntries,
+    relationTypes,
+    relationTitles,
+    similarTitles,
+    basis: explicitRelations.length
+      ? 'atlas relations.json, entry themes, materials, source trail and metadata'
+      : 'entry themes, materials, source trail and similarity metadata',
+    summary: {
+      explicit_relation_count: explicitRelations.length,
+      relation_types: relationTypes,
+      related_entries: relationTitles,
+      similar_entries: similarTitles
+    }
+  };
+}
+
+function networkDna(entry, context = {}) {
   const related = [
     ...(entry.themes ?? []),
     entry.style_sector,
@@ -674,10 +759,67 @@ function networkDna(entry) {
     ...(entry.source_documents ?? [])
   ].filter(Boolean);
   const anchors = [...new Set(related)].slice(0, 6).map(readableDe);
+  const explicitRelations = context.explicitRelations ?? [];
+  const similarEntries = context.similarEntries ?? [];
+
+  if (explicitRelations.length) {
+    const relationPhrase = explicitRelations
+      .slice(0, 3)
+      .map((relation) => `${relation.neighbor_title} (${readableRelationType(relation.relation_type)})`)
+      .join(', ');
+    const typePhrase = context.relationTypes?.length
+      ? ` Die stärksten Kanten sind ${context.relationTypes.map(readableRelationType).join(', ')}.`
+      : '';
+    return `${entry.title} ist nicht nur über Tags, sondern über konkrete Atlas-Kanten vernetzt: ${relationPhrase}.${typePhrase} Dadurch wird sichtbar, aus welchen Referenzen, Gegenpositionen oder gemeinsamen Problemen seine architektonische DNA entsteht.`;
+  }
+
+  if (similarEntries.length) {
+    const similarPhrase = similarEntries
+      .slice(0, 4)
+      .map((candidate) => candidate.title)
+      .join(', ');
+    return `${entry.title} wird über gemeinsame Themen, Materialhinweise, Quellen und Typologie mit ${similarPhrase} verglichen. Diese Nähe ist vorerst eine kuratierte Ähnlichkeit, noch keine harte historische Einflusslinie.`;
+  }
+
   if (!anchors.length) {
     return `${entry.title} braucht noch eine präzisere Netzwerkzuordnung; vorerst wird es über Typ, Epoche, Material und Kontext mit verwandten Referenzen verglichen.`;
   }
   return `${entry.title} sitzt im Netzwerk von ${anchors.join(', ')}. Diese Einordnung beschreibt nicht nur Kategorien, sondern eine architektonische DNA aus Typus, Epoche, Material, Quelle und räumlicher Strategie.`;
+}
+
+function networkDifferenceClaim(entry, context = {}) {
+  const explicitRelations = context.explicitRelations ?? [];
+  const similarEntries = context.similarEntries ?? [];
+  if (explicitRelations.length) {
+    const examples = explicitRelations.slice(0, 2).map((relation) => relation.neighbor_title).join(' und ');
+    return `Gegenüber ${examples} wird geprüft, ob ${entry.title} dieselbe Denkfigur übernimmt, in ein anderes Programm verschiebt oder als Gegenmodell lesbar macht.`;
+  }
+  if (similarEntries.length) {
+    const candidate = similarEntries[0];
+    const shared = [
+      candidate.sameStyle && `Baustil ${readableDe(candidate.style_sector)}`,
+      candidate.sameType && `Typus ${readableDe(candidate.entry_type)}`,
+      candidate.sharedThemes?.length && `Themen ${candidate.sharedThemes.slice(0, 3).map(readableDe).join(', ')}`,
+      candidate.sharedMaterials?.length && `Material ${candidate.sharedMaterials.slice(0, 3).map(readableDe).join(', ')}`
+    ].filter(Boolean).join('; ');
+    return `Der Vergleich mit ${candidate.title} zeigt die nächste Familienähnlichkeit (${shared || 'gemeinsame Metadaten'}), zugleich muss die Differenz über Ort, Maßstab, Konstruktion und Gebrauch präzisiert werden.`;
+  }
+  return `Im Atlas ist wichtig, ob ${entry.title} eine bekannte DNA nur fortschreibt, sie verdichtet, bricht oder in eine andere Epoche, Landschaft oder Bauaufgabe übersetzt.`;
+}
+
+function readableRelationType(type) {
+  const labels = {
+    context: 'Kontextbezug',
+    influences: 'Einflusslinie',
+    typological_reference: 'typologische Referenz',
+    shares_theme: 'thematische Verwandtschaft',
+    responds_to: 'Antwort/Gegenposition',
+    material_reference: 'Materialreferenz',
+    same_author: 'Autor-/Werkbezug',
+    precedent_for: 'Präzedenzfall',
+    urban_reference: 'Stadt-/Raumbezug'
+  };
+  return labels[type] ?? readableDe(type);
 }
 
 function critiqueClaim(entry) {
@@ -1866,6 +2008,8 @@ function localizeArchitectureText(value) {
     .replaceAll('Glass, concrete and earth/topography form the primary material system: transparent pavilion edges meet a heavy ground datum and hillside thermal envelope', 'Glas, Beton und Erd-/Hangbezug bilden das primäre Materialsystem: transparente Pavillonränder treffen auf einen schweren Bodensockel und eine in den Hang eingebettete Hülle')
     .replaceAll('Six pavilion roofs act as canopy-like structural fields. Vertical supports and concrete retaining elements organize a light/heavy contrast across the radial plan', 'Sechs Pavillondächer wirken wie schirmartige Tragfelder. Vertikale Stützen und haltende Betonelemente organisieren den Kontrast von Leichtigkeit und Schwere im radialen Grundriss')
     .replaceAll('The tectonic reading separates frame, glass, curtain, Onyx wall, Holz wall and floor plane into layered elements that produce fluid domestic space', 'Die tektonische Lesart trennt Rahmen, Glas, Vorhang, Onyxwand, Holzwand und Bodenebene als Schichten, die einen fließenden Wohnraum erzeugen')
+    .replaceAll('The tectonic reading separates frame, glass, curtain, Onyx wall, timber wall and floor plane into layered elements that produce fluid domestic space', 'Die tektonische Lesart trennt Rahmen, Glas, Vorhang, Onyxwand, Holzwand und Bodenebene als Schichten, die einen fließenden Wohnraum erzeugen')
+    .replaceAll('The tectonic reading separates the lifted frame, white envelope, horizontal window band, ramp, service cores and roof-garden plane as distinct modern layers', 'Die tektonische Lesart trennt angehobenes Tragwerk, weiße Hülle, horizontales Fensterband, Rampe, dienende Kerne und Dachgartenebene als klare moderne Schichten')
     .replaceAll('The tectonic reading separates the lifted frame, white envelope, horizontal window band, ramp, service cores and Dachgarten plane as distinct modern layers', 'Die tektonische Lesart trennt angehobenes Tragwerk, weiße Hülle, horizontales Fensterband, Rampe, dienende Kerne und Dachgartenebene als klare moderne Schichten')
     .replaceAll('reinforced-concrete', 'Stahlbeton')
     .replaceAll('roof terrace', 'Dachterrasse')
