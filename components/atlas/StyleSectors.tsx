@@ -25,11 +25,11 @@ const sectorLabel: Record<StyleSector['id'], string> = {
 function StyleSectorsComponent({ state, isMoving = false, activeStyleLens = null, onSelectStyleLens }: { state: WormholeState; isMoving?: boolean; activeStyleLens?: StyleSector['id'] | null; onSelectStyleLens?: (styleId: StyleSector['id']) => void }) {
   const outerLabelOpacity = 0.64 + smoothstep(0.08, 0.42, state.timePosition) * 0.2;
   const frontDepth = tunnelFrontDepth(state);
-  const labelDepth = frontDepth + 0.045;
-  const labelTwist = tubeTwist(state.timePosition + labelDepth);
+  const labelDepth = frontDepth + 0.025;
+  const labelTwist = tubeTwist(state.timePosition + labelDepth) * 0.72;
   const sectorCenter = tunnelCenter(labelDepth, state.phase);
-  const outerRadius = Math.max(wormholeTunnel.minRadius + 154, tunnelRadius(frontDepth + 0.035) + 2);
-  const labelRadius = Math.max(wormholeTunnel.minRadius + 150, outerRadius - 4);
+  const outerRadius = Math.max(wormholeTunnel.minRadius + 166, tunnelRadius(frontDepth + 0.018) + 8);
+  const labelRadius = Math.max(wormholeTunnel.minRadius + 164, outerRadius + 8);
   const depthBandOffsets = isMoving ? [0.08, 0.34, 0.68] : [0.08, 0.24, 0.43, 0.66, 0.92];
 
   return (
@@ -57,7 +57,7 @@ function StyleSectorsComponent({ state, isMoving = false, activeStyleLens = null
 
             return {
               path: sectorRibbonPath(depthStartAngle, depthEndAngle, Math.max(wormholeTunnel.minRadius + 12, depthRadius - thickness), depthRadius + thickness, depthCenter.x, depthCenter.y),
-              opacity: (isMoving ? 0.012 : 0.04) * accentBoost * lensBoost * (1 - depthIndex * 0.1)
+              opacity: (isMoving ? 0.012 : 0.06) * accentBoost * lensBoost * (1 - depthIndex * 0.09)
             };
           })
           .filter((band): band is { path: string; opacity: number } => Boolean(band));
@@ -92,12 +92,12 @@ function StyleSectorsComponent({ state, isMoving = false, activeStyleLens = null
                 radius={labelRadius}
                 angle={labelAngle}
                 fill={accent}
-                fontSize={14.2}
-                fontWeight={500}
+                fontSize={15.4}
+                fontWeight={440}
                 fontStyle="italic"
                 opacity={outerLabelOpacity * (activeStyleLens && activeStyleLens !== sector.id ? 0.52 : 1)}
-                letterAngleStep={3.08}
-                strokeWidth={0.1}
+                letterAngleStep={2.38}
+                strokeWidth={0.08}
                 inward
                 onClick={(event) => {
                   event.stopPropagation();

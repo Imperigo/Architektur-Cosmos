@@ -47,6 +47,7 @@ export function RadialLetterText({
   const step = Math.abs(baseStep) * direction;
   const startAngle = angle - ((letters.length - 1) * step) / 2;
   const centerPoint = polarToCartesian(cx, cy, radius, angle);
+  const readableRotationOffset = centerNeedsFlip ? 180 : 0;
 
   return (
     <g className={className} opacity={opacity} aria-label={text} pointerEvents={onClick ? 'auto' : 'none'} onClick={onClick}>
@@ -63,7 +64,7 @@ export function RadialLetterText({
         const letterAngle = startAngle + index * step;
         const point = polarToCartesian(cx, cy, radius, letterAngle);
         const radialRotation = inward ? letterAngle + 180 : letterAngle;
-        const rotation = centerNeedsFlip ? radialRotation + 180 : radialRotation;
+        const rotation = radialRotation + readableRotationOffset;
 
         return (
           <g key={`${letter}-${index}`}>
