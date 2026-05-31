@@ -2672,6 +2672,7 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
     .filter((format) => format.status === 'exists' && format.path);
   const reviewActions = useMemo(() => assetReviewActions(asset), [asset]);
   const gateSignals = assetGateSignals({ asset, reviewPack, decisionLedger, handoffSmoke });
+  const reviewSummary = assetReviewSummary({ asset, reviewPack, decisionLedger, handoffSmoke });
   const [activeActionId, setActiveActionId] = useState(reviewActions[0]?.id ?? 'library-check');
   const activeAction = reviewActions.find((action) => action.id === activeActionId) ?? reviewActions[0];
 
@@ -2685,6 +2686,18 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
         <small>Asset-Inspektor</small>
         <h3>{asset.title}</h3>
         <p>{formatAssetText(asset.description)}</p>
+      </div>
+
+      <div className="kosmo-asset-review-banner" data-tone={reviewSummary.tone}>
+        <span>
+          <small>Status</small>
+          <strong>{reviewSummary.status}</strong>
+        </span>
+        <span>
+          <small>Public Gate</small>
+          <strong>{reviewSummary.publicGate}</strong>
+        </span>
+        <p>{reviewSummary.message}</p>
       </div>
 
       <div className={`kosmo-asset-inspector-preview${generatedProfile ? ' kosmo-asset-inspector-preview-generated' : ''}`} aria-hidden="true">
@@ -3362,6 +3375,38 @@ function assetGateSignals({
       tone: certificateReady ? 'ready' : 'review'
     }
   ];
+}
+
+function assetReviewSummary({
+  asset,
+  reviewPack,
+  decisionLedger,
+  handoffSmoke
+}: {
+  asset: AssetPreviewRecord;
+  reviewPack: AssetReviewPackRecord | null;
+  decisionLedger: AssetDecisionLedgerRecord | null;
+  handoffSmoke: typeof assetHandoffSmokePreview | null;
+}) {
+  const publicBlocked = asset.public_use_allowed === false || decisionLedger?.public_gate === 'blocked' || reviewPack?.public_ready === false;
+  const humanState = decisionLedger?.human_decision_state ?? reviewPack?.human_review_status ?? asset.review_status;
+  const localReady = reviewPack?.local_ready === true || decisionLedger?.certificate_ready === true;
+  const smokePassed = handoffSmoke?.summary.failure_count === 0;
+  const needsHuman = humanState !== 'approved';
+  const status = localReady && smokePassed && !needsHuman
+    ? 'lokal geprüft'
+    : localReady || smokePassed
+      ? 'lokale Evidenz'
+      : 'Review offen';
+  const publicGate = publicBlocked ? 'gesperrt' : 'separat prüfen';
+  const tone: AssetGateTone = publicBlocked ? (needsHuman ? 'review' : 'local') : 'blocked';
+  const message = publicBlocked
+    ? needsHuman
+      ? 'Dieses Asset ist nur als lokale Prüfspur gedacht. Vor Blender-/ArchiCAD-Promotion braucht es menschliche Sichtprüfung; öffentliche Downloads und R2 bleiben gesperrt.'
+      : 'Dieses Asset hat lokale Evidenz, bleibt aber bewusst nicht öffentlich: kein R2, kein Download, kein automatisches Publishing.'
+    : 'Dieses Asset darf nicht automatisch öffentlich werden. Rechte, Quelle, Owner und Review müssen separat entschieden werden.';
+
+  return { status, publicGate, message, tone };
 }
 
 function humanGateSignal(state: string): Pick<AssetGateSignal, 'value' | 'detail' | 'tone'> {
