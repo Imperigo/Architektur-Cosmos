@@ -64,6 +64,9 @@ KosmoAsset:
   `needs-review` / `local_review_note_recorded` verbucht. Das ist keine lokale
   Freigabe, kein Zertifikat und keine Sandbox-Erlaubnis, sondern eine saubere
   Review-Spur fuer die naechste menschliche GLB-/Blender-Pruefung.
+- KosmoData-Bruecke im Asset-Inspector sichtbar gemacht: Referenzprojekte wie
+  `villa-savoye` und `pantheon` duerfen als Kontextsprache dienen, aber die
+  Asset-Freigabe bleibt ein eigener Rechte-, Review- und Public-Gate-Prozess.
 
 ## Heute weiter
 

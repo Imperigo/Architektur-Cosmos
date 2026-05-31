@@ -5829,6 +5829,58 @@ button.database-intake-card:not(:disabled):hover {
     rgb(0 0 0 / 18%);
 }
 
+.kosmo-asset-kosmodata-card {
+  padding: 10px;
+  border: 1px solid color-mix(in srgb, #70d7ff 28%, rgb(247 247 244 / 10%));
+  border-radius: 12px;
+  background:
+    linear-gradient(135deg, rgb(112 215 255 / 8%), transparent 48%),
+    rgb(0 0 0 / 18%);
+}
+
+.kosmo-asset-kosmodata-grid {
+  display: grid;
+  gap: 6px;
+}
+
+.kosmo-asset-kosmodata-grid span {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 8px;
+  border: 1px solid rgb(112 215 255 / 22%);
+  border-radius: 8px;
+  background: rgb(247 247 244 / 4%);
+}
+
+.kosmo-asset-kosmodata-grid small,
+.kosmo-asset-kosmodata-grid b,
+.kosmo-asset-kosmodata-grid em {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  letter-spacing: 0;
+}
+
+.kosmo-asset-kosmodata-grid small {
+  color: color-mix(in srgb, #70d7ff 66%, #f7f7f4);
+  font-size: 8px;
+  font-weight: 720;
+  text-transform: uppercase;
+}
+
+.kosmo-asset-kosmodata-grid b {
+  color: #f7f7f4;
+  font-size: 10px;
+  font-weight: 760;
+}
+
+.kosmo-asset-kosmodata-grid em {
+  color: rgb(247 247 244 / 58%);
+  font-size: 9px;
+  font-style: normal;
+  line-height: 1.35;
+}
+
 .kosmo-asset-exchange-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

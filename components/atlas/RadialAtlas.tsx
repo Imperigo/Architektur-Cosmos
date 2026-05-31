@@ -85,6 +85,14 @@ type AssetReviewAction = {
   description: string;
   command: string;
 };
+type AssetKosmoDataRef = {
+  kind?: string;
+  entry_id?: string;
+  relation?: string;
+  usage_policy?: string;
+  review_status?: string;
+  notes?: string;
+};
 type AssetGateTone = 'ready' | 'review' | 'blocked' | 'local';
 type AssetGateSignal = {
   id: string;
@@ -2653,6 +2661,7 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
   const generatedProfiles = assetGeneratedProfiles(asset);
   const generatedProfile = generatedProfiles[0] ?? null;
   const secondaryGeneratedProfiles = generatedProfiles.slice(1);
+  const kosmodataRefs = assetKosmoDataRefs(asset);
   const generatedLayerLabel = generatedProfile ? generatedProfileLabel(generatedProfile) : 'Layer';
   const generatedMetric = generatedProfile ? generatedProfileMetric(generatedProfile) : null;
   const localFormats = asset.formats
@@ -2758,6 +2767,22 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
           ))}
         </div>
       </div>
+
+      {kosmodataRefs.length ? (
+        <div className="kosmo-asset-inspector-section kosmo-asset-kosmodata-card">
+          <strong>KosmoData-Brücke</strong>
+          <div className="kosmo-asset-kosmodata-grid">
+            {kosmodataRefs.map((ref) => (
+              <span key={`${asset.id}-${ref.entry_id}-${ref.relation}`}>
+                <small>{formatAssetValue(ref.relation ?? ref.kind ?? 'reference')}</small>
+                <b>{ref.entry_id ?? 'Referenz'}</b>
+                <em>{formatAssetValue(ref.usage_policy ?? 'context_only')} / {formatAssetValue(ref.review_status ?? 'review')}</em>
+              </span>
+            ))}
+          </div>
+          <p>Projektwissen darf die Sprache und Taxonomie des Assets stuetzen. Die Asset-Freigabe bleibt trotzdem ein eigener Review-, Rechte- und Public-Gate-Prozess.</p>
+        </div>
+      ) : null}
 
       {exportPlan ? (
         <div className="kosmo-asset-inspector-section kosmo-asset-route-plan">
@@ -3248,6 +3273,11 @@ function assetDecisionLedger(assetId: string): AssetDecisionLedgerRecord | null 
   return (assetDecisionLedgerPreview.rows.find((asset) => asset.asset_id === assetId) as AssetDecisionLedgerRecord | undefined) ?? null;
 }
 
+function assetKosmoDataRefs(asset: AssetPreviewRecord): AssetKosmoDataRef[] {
+  if (!('kosmodata_refs' in asset) || !Array.isArray(asset.kosmodata_refs)) return [];
+  return asset.kosmodata_refs.filter((ref): ref is AssetKosmoDataRef => Boolean(ref && typeof ref === 'object'));
+}
+
 function assetBlenderSandboxRun(assetId: string) {
   return assetWarmConcreteBlenderRunPreview.asset_id === assetId ? assetWarmConcreteBlenderRunPreview : null;
 }
@@ -3628,6 +3658,9 @@ function formatAssetValue(value: string) {
     local_approval_recorded: 'lokale Freigabe verbucht',
     local_approval_missing: 'lokale Freigabe fehlt',
     local_certificate_missing: 'lokales Zertifikat fehlt',
+    material_context: 'Materialkontext',
+    context_only: 'nur Kontext',
+    reference_entry: 'Referenzeintrag',
     not_required_for_note: 'für Notiz nicht nötig',
     continue_manual_review: 'manuelle Prüfung fortsetzen',
     keep_public_gate_blocked: 'Öffentlichkeits-Gate gesperrt halten',
