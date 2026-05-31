@@ -43,6 +43,10 @@ Die erste Website-Version ist eine statische Landing-Ansicht:
 - erlaubt lokale Familienfilter fuer alle, 2D, Material und 3D;
 - zeigt beim Klick auf ein Asset einen Inspektor mit Rechte-, Review-,
   Format-, Export- und Quellenstatus;
+- zeigt lokale Qualitaetsnachweise als ruhige Review-Karte: Human-Entscheid,
+  Zertifikat, Blender-Sandbox und Public-Gate werden getrennt lesbar, damit
+  ein Asset nicht wie "public ready" wirkt, solange es nur lokal freigegeben
+  ist;
 - zeichnet lokale Preview-Metadaten direkt in der UI: Achsenmarker,
   Material-Swatch und Drahtmodell-Komponente;
 - erzeugt mit `npm run kosmo:asset-export-plan` eine lokale Export-Routen-

@@ -63,7 +63,7 @@ function StyleSectorsComponent({ state, isMoving = false, activeStyleLens = null
           .filter((band): band is { path: string; opacity: number } => Boolean(band));
 
         return (
-          <g key={sector.id} className="style-sector" pointerEvents="none">
+          <g key={sector.id} className="style-sector" pointerEvents="auto">
             {depthBands.map((band, depthIndex) => (
               <path
                 key={`${sector.id}-depth-${depthIndex}`}
@@ -94,9 +94,9 @@ function StyleSectorsComponent({ state, isMoving = false, activeStyleLens = null
                 fontWeight={540}
                 fontStyle="italic"
                 opacity={outerLabelOpacity * (activeStyleLens && activeStyleLens !== sector.id ? 0.52 : 1)}
-                letterAngleStep={3.05}
+                letterAngleStep={2.88}
                 strokeWidth={0.24}
-                inward={false}
+                inward
                 onClick={(event) => {
                   event.stopPropagation();
                   onSelectStyleLens?.(sector.id);

@@ -72,6 +72,11 @@ Erster technischer Baustein:
 Diese V1 prueft nur lokale Review-Metadaten, Rechte und Exportziele. Sie
 publiziert nichts und laedt keine Assets hoch.
 
+Statusnotiz 2026-05-31: Warm Concrete ist der erste sichtbare
+Blender-Sandbox-Pilot. Die UI soll diesen Erfolg als lokale Review-Evidenz
+zeigen, aber gleichzeitig klar markieren, dass Public-Gate, R2-Upload und
+Download-Freigabe weiterhin blockiert bleiben.
+
 Gestaltung:
 
 - eigenes Konzept in [`docs/kosmo-asset-visual-concept.md`](./kosmo-asset-visual-concept.md);

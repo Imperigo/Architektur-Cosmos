@@ -74,7 +74,7 @@ export function SemanticEntryNode({
   const isFast = renderMode === 'fast';
   const hasImageThumbnail = Boolean(primaryImageUrl(entry));
   const glyphRadius = nodeRadius ?? (semanticLevel === 'global' ? 4.8 : 7.2);
-  const hitRadius = Math.max(isFast ? 18 : 15, glyphRadius + 8);
+  const hitRadius = Math.max(isFast ? 22 : 20, glyphRadius + 13);
   const glyphFontSize = Math.max(7, Math.min(14, glyphRadius * 0.72));
   const accent = styleSectorColors[entry.style_sector];
   const labelWidth = Math.min(230, entry.title.length * 6.4 + 72);

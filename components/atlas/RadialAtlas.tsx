@@ -12,6 +12,7 @@ import analysisPreview from '@/data/database-analysis-preview.json';
 import archivePreview from '@/data/archive-preview.json';
 import brainTools from '@/data/brain-tools.json';
 import reviewQueue from '@/data/review-queue.json';
+import assetWarmConcreteBlenderRunPreview from '@/examples/kosmo-assets/kosmo-asset-demo/review/asset-blender-sandbox-warm-concrete-material-001.blender-run.generated.json';
 import assetDecisionLedgerPreview from '@/examples/kosmo-assets/kosmo-asset-demo/review/asset-decision-ledger.generated.json';
 import assetExportPlanPreview from '@/examples/kosmo-assets/kosmo-asset-demo/review/asset-export-plan.generated.json';
 import assetExchangeProfilePreview from '@/examples/kosmo-assets/kosmo-asset-demo/review/asset-exchange-profile.generated.json';
@@ -52,11 +53,24 @@ type VisualPan = {
 type IntroState = 'intro' | 'hub' | 'asset' | 'launching' | 'idle';
 type AssetPreviewRecord = (typeof assetLibraryPreview.assets)[number];
 type AssetDecisionLedgerDecision = {
+  route?: string;
   decision: string;
+  reviewer?: string | null;
   status: string;
+  generated_at?: string;
+  public_gate_remains_blocked?: boolean;
 };
-type AssetDecisionLedgerRecord = Omit<(typeof assetDecisionLedgerPreview.rows)[number], 'latest_decision'> & {
+type AssetDecisionLedgerCertificate = {
+  route?: string;
+  status: string;
+  generated_at?: string;
+  certificate_id?: string;
+  failed_checks?: number;
+  public_gate?: string;
+};
+type AssetDecisionLedgerRecord = Omit<(typeof assetDecisionLedgerPreview.rows)[number], 'latest_decision' | 'latest_certificate'> & {
   latest_decision: AssetDecisionLedgerDecision | null;
+  latest_certificate: AssetDecisionLedgerCertificate | null;
 };
 type AssetExportPlanRecord = (typeof assetExportPlanPreview.assets)[number];
 type AssetExchangeProfileRecord = (typeof assetExchangeProfilePreview.assets)[number];
@@ -2685,6 +2699,8 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
         </div>
       </div>
 
+      <AssetLocalProofSummary asset={asset} decisionLedger={decisionLedger} handoffSmoke={handoffSmoke} />
+
       <div className="kosmo-asset-inspector-section">
         <strong>Formate</strong>
         <ul>
@@ -2943,6 +2959,84 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
   );
 }
 
+function AssetLocalProofSummary({
+  asset,
+  decisionLedger,
+  handoffSmoke
+}: {
+  asset: AssetPreviewRecord;
+  decisionLedger: AssetDecisionLedgerRecord | null;
+  handoffSmoke: typeof assetHandoffSmokePreview | null;
+}) {
+  const blenderRun = assetBlenderSandboxRun(asset.id);
+  const decision = decisionLedger?.latest_decision ?? null;
+  const certificate = decisionLedger?.latest_certificate ?? null;
+  const smokePassed = handoffSmoke?.summary.failure_count === 0;
+  const isApproved = decisionLedger?.human_decision_state === 'approved';
+  const isCertified = decisionLedger?.certificate_ready === true;
+  const blenderPassed = blenderRun?.status === 'blender_background_sandbox_passed';
+
+  if (!isApproved && !isCertified && !blenderPassed) return null;
+
+  const reviewer = decision?.reviewer ?? decisionLedger?.reviewer ?? 'nicht benannt';
+  const route = decision?.route ?? decisionLedger?.route ?? 'lokal';
+  const publicGateBlocked = decisionLedger?.public_gate === 'blocked' || certificate?.public_gate === 'blocked' || asset.public_use_allowed === false;
+  const proofStatus = isCertified && blenderPassed
+    ? 'lokal zertifiziert + Blender geprüft'
+    : isCertified
+      ? 'lokal zertifiziert'
+      : 'lokale Review-Evidenz';
+  const proofDate = formatProofDate(certificate?.generated_at ?? decision?.generated_at);
+
+  return (
+    <div className="kosmo-asset-inspector-section kosmo-asset-proof-card" aria-label={`${asset.title} lokaler Qualitätsnachweis`}>
+      <div className="kosmo-asset-proof-head">
+        <small>Lokaler Qualitätsnachweis</small>
+        <strong>{proofStatus}</strong>
+        <p>Dieses Asset ist für lokale Sandbox-Arbeit nachvollziehbar geprüft. Das Öffentlichkeits-Gate bleibt geschlossen: keine R2-Uploads, keine Downloads und keine Datenbank-Schreibvorgänge.</p>
+      </div>
+      <div className="kosmo-asset-proof-grid">
+        <span data-tone={isApproved ? 'ready' : 'review'}>
+          <small>Mensch</small>
+          <b>{reviewer}</b>
+          <em>{decision ? `${formatAssetValue(decision.decision)} / ${formatAssetValue(route)}` : 'Entscheid fehlt'}</em>
+        </span>
+        <span data-tone={isCertified ? 'ready' : 'review'}>
+          <small>Zertifikat</small>
+          <b>{isCertified ? 'gültig lokal' : 'offen'}</b>
+          <em>{certificate ? `${formatAssetValue(certificate.status)} / ${certificate.failed_checks ?? 0} Fehler` : 'Noch kein Zertifikat'}</em>
+        </span>
+        <span data-tone={blenderPassed ? 'ready' : smokePassed ? 'review' : 'blocked'}>
+          <small>Blender</small>
+          <b>{blenderPassed ? `Run ${blenderRun?.blender_version ?? 'bestanden'}` : smokePassed ? 'Smoke grün' : 'offen'}</b>
+          <em>{blenderPassed ? `${blenderRun?.anchor_count ?? 0} Review-Anker im Sandbox-Lauf` : 'Noch kein echter Blender-Background-Run'}</em>
+        </span>
+        <span data-tone={publicGateBlocked ? 'local' : 'blocked'}>
+          <small>Öffentlich</small>
+          <b>{publicGateBlocked ? 'gesperrt' : 'prüfen'}</b>
+          <em>{publicGateBlocked ? 'nur lokal/review-only, keine öffentliche Freigabe' : 'Public-Gate separat entscheiden'}</em>
+        </span>
+      </div>
+      {blenderRun ? (
+        <div className="kosmo-asset-proof-details">
+          <span>
+            <small>Material</small>
+            <b>{blenderRun.material.exists ? blenderRun.material.name : 'nicht erstellt'}</b>
+          </span>
+          <span>
+            <small>Collection</small>
+            <b>{assetBlenderCollectionExists(blenderRun.collections, `KOSMO_SANDBOX/${asset.id}`) ? `KOSMO_SANDBOX/${asset.id}` : 'nicht gefunden'}</b>
+          </span>
+          <span>
+            <small>Datum</small>
+            <b>{proofDate}</b>
+          </span>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 function AssetReviewWorkflow({
   asset,
   reviewPack,
@@ -3152,6 +3246,19 @@ function assetHumanReviewSession(assetId: string): AssetHumanReviewSessionRecord
 
 function assetDecisionLedger(assetId: string): AssetDecisionLedgerRecord | null {
   return (assetDecisionLedgerPreview.rows.find((asset) => asset.asset_id === assetId) as AssetDecisionLedgerRecord | undefined) ?? null;
+}
+
+function assetBlenderSandboxRun(assetId: string) {
+  return assetWarmConcreteBlenderRunPreview.asset_id === assetId ? assetWarmConcreteBlenderRunPreview : null;
+}
+
+function assetBlenderCollectionExists(collections: typeof assetWarmConcreteBlenderRunPreview.collections, key: string) {
+  return (collections as Record<string, boolean>)[key] === true;
+}
+
+function formatProofDate(value?: string | null) {
+  if (!value) return 'ohne Datum';
+  return value.replace('T', ' ').replace(/\.\d{3}Z$/, ' UTC');
 }
 
 function assetLibraryPath() {

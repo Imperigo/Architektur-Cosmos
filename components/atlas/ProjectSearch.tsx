@@ -261,7 +261,14 @@ export function ProjectSearch({
       onTouchMove={(event) => event.stopPropagation()}
       onClick={(event) => event.stopPropagation()}
     >
-      <button type="button" className="project-search-trigger cosmos-trigger" onClick={toggleSearch} aria-expanded={isOpen} aria-label={isOpen ? 'Suche schließen' : 'Suche öffnen'}>
+      <button
+        type="button"
+        className="project-search-trigger cosmos-trigger"
+        data-ui-action="search"
+        onClick={toggleSearch}
+        aria-expanded={isOpen}
+        aria-label={isOpen ? 'Suche schließen' : 'Suche öffnen'}
+      >
         <span className="project-search-mark" aria-hidden="true" />
         <span>Suche</span>
       </button>
