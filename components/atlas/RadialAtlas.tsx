@@ -2432,6 +2432,7 @@ function ModuleHub({ onOpenKosmoData, onOpenKosmoAsset }: { onOpenKosmoData: () 
     module.id === 'data' ? { ...module, onClick: onOpenKosmoData } : module.id === 'asset' ? { ...module, onClick: onOpenKosmoAsset } : module
   ));
   const selectedModule = modules.find((module) => module.id === selectedModuleId) || null;
+  const selectedOrbitRole = orbitWorkspacePreview.roles.find((role) => role.id === selectedOrbitRoleId);
 
   useEffect(() => {
     hubRef.current?.focus({ preventScroll: true });
@@ -2459,11 +2460,14 @@ function ModuleHub({ onOpenKosmoData, onOpenKosmoAsset }: { onOpenKosmoData: () 
       <OrbitRoleStatePanel selectedRoleId={selectedOrbitRoleId} onSelectRole={setSelectedOrbitRoleId} />
       {modules.map((module) => {
         const isReady = module.status === 'bereit';
+        const tool = orbitWorkspacePreview.tools.find((candidate) => candidate.id === kosmoModuleToolId(module.id));
+        const roleCanUseModule = Boolean(selectedOrbitRole && tool?.primary_roles.includes(selectedOrbitRole.id));
+        const visibleModule = orbitRoleStatePreview.visible_modules.find((candidate) => candidate.tool_id === tool?.id);
         return (
           <button
             key={module.id}
             type="button"
-            className={`module-station ${isReady ? 'module-station-ready' : 'module-station-planned'} ${selectedModuleId === module.id ? 'module-station-selected' : ''}`}
+            className={`module-station ${isReady ? 'module-station-ready' : 'module-station-planned'} ${selectedModuleId === module.id ? 'module-station-selected' : ''} ${roleCanUseModule ? 'module-station-role-ready' : 'module-station-role-limited'}`}
             style={{ '--station-x': `${module.x}px`, '--station-y': `${module.y}px`, '--station-x-mobile': `${module.xMobile}px`, '--station-y-mobile': `${module.yMobile}px`, '--station-accent': module.accent } as CSSProperties}
             aria-pressed={selectedModuleId === module.id}
             onTouchStart={(event) => {
@@ -2485,6 +2489,9 @@ function ModuleHub({ onOpenKosmoData, onOpenKosmoAsset }: { onOpenKosmoData: () 
             <strong>{module.name}</strong>
             <span>{module.label}</span>
             <em>{module.description}</em>
+            <b className="module-station-role">
+              {roleCanUseModule ? 'Rolle frei' : 'nur Vorschau'} · {formatOrbitGateLabel(tool?.status ?? visibleModule?.visibility ?? 'planned')}
+            </b>
           </button>
         );
       })}
@@ -2510,6 +2517,14 @@ function ModuleHub({ onOpenKosmoData, onOpenKosmoAsset }: { onOpenKosmoData: () 
               <small>Nächster Schritt</small>
               <strong>{selectedModule.status === 'bereit' ? 'öffnen' : 'Roadmap prüfen'}</strong>
             </span>
+            <span>
+              <small>Rolle</small>
+              <strong>{moduleRoleAccessLabel(selectedModule.id, selectedOrbitRole?.id)}</strong>
+            </span>
+            <span>
+              <small>Gates</small>
+              <strong>{moduleGateCountLabel(selectedModule.id)}</strong>
+            </span>
           </div>
           <div className="module-hub-preview-metrics" aria-label={`${selectedModule.name} Statuswerte`}>
             {selectedModule.metrics.map((metric) => (
@@ -2531,6 +2546,25 @@ function ModuleHub({ onOpenKosmoData, onOpenKosmoAsset }: { onOpenKosmoData: () 
       ) : null}
     </div>
   );
+}
+
+function kosmoModuleToolId(moduleId: KosmoModuleId) {
+  if (moduleId === 'data') return 'kosmo-data';
+  if (moduleId === 'asset') return 'kosmo-asset';
+  if (moduleId === 'design') return 'kosmo-design';
+  return 'kosmo-publish';
+}
+
+function moduleRoleAccessLabel(moduleId: KosmoModuleId, roleId?: string) {
+  const tool = orbitWorkspacePreview.tools.find((candidate) => candidate.id === kosmoModuleToolId(moduleId));
+  if (!roleId || !tool) return 'Review';
+  return tool.primary_roles.includes(roleId) ? 'freigegeben' : 'Vorschau';
+}
+
+function moduleGateCountLabel(moduleId: KosmoModuleId) {
+  const tool = orbitWorkspacePreview.tools.find((candidate) => candidate.id === kosmoModuleToolId(moduleId));
+  if (!tool?.gates.length) return 'keine';
+  return `${tool.gates.length} Gates`;
 }
 
 function OrbitRoleStatePanel({ selectedRoleId, onSelectRole }: { selectedRoleId: string; onSelectRole: (roleId: string) => void }) {

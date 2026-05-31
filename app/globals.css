@@ -4294,6 +4294,32 @@ button.database-intake-card:not(:disabled):hover {
   line-height: 1.35;
 }
 
+.module-station-role {
+  justify-self: start;
+  min-height: 24px;
+  padding: 6px 8px;
+  border: 1px solid color-mix(in srgb, var(--station-accent) 24%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--station-accent) 7%, rgb(247 247 244 / 4%));
+  color: rgb(247 247 244 / 58%);
+  font-size: 8px;
+  font-weight: 720;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.module-station-role-ready .module-station-role {
+  border-color: color-mix(in srgb, var(--station-accent) 44%, transparent);
+  color: color-mix(in srgb, var(--station-accent) 76%, #f7f7f4);
+}
+
+.module-station-role-limited .module-station-role {
+  border-color: rgb(245 179 66 / 24%);
+  background: rgb(245 179 66 / 6%);
+  color: rgb(245 179 66 / 76%);
+}
+
 .module-station:hover,
 .module-station:focus-visible,
 .module-station-selected {
@@ -7134,6 +7160,12 @@ html[data-cosmos-browser="opera"] .relation-strand {
   .module-station em {
     font-size: 9px;
     line-height: 1.28;
+  }
+
+  .module-station-role {
+    min-height: 22px;
+    padding: 5px 7px;
+    font-size: 8px;
   }
 
   .module-hub-preview {

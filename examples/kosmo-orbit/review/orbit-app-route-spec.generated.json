@@ -1,0 +1,182 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-05-31T14:16:34.503Z",
+  "generator": "kosmo-orbit-app-route-spec",
+  "status": "orbit_app_route_spec_ready",
+  "inputs": {
+    "handoff": "examples/kosmo-orbit/review/orbit-role-state-handoff.generated.json",
+    "role_state": "examples/kosmo-orbit/role-state.demo.json",
+    "shell_manifest": "examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-prototype.generated.json"
+  },
+  "route_spec": {
+    "proposed_path": "/orbit",
+    "implementation_file": "app/orbit/page.tsx",
+    "route_type": "static_export_safe",
+    "data_mode": "local_static_imports_only",
+    "write_mode": "none",
+    "interaction_mode": "preview_only",
+    "status": "not_implemented"
+  },
+  "policy": {
+    "review_only": true,
+    "no_api_routes": true,
+    "no_server_actions": true,
+    "no_middleware": true,
+    "no_auth_runtime": true,
+    "no_user_data_write": true,
+    "no_network_calls": true,
+    "no_uploads": true,
+    "no_public_publish": true,
+    "no_design_generation": true,
+    "no_wrangler_change": true
+  },
+  "summary": {
+    "check_count": 10,
+    "passed_checks": 10,
+    "failed_checks": 0,
+    "section_count": 5,
+    "visible_module_count": 8,
+    "disabled_action_count": 3,
+    "active_role_id": "owner_admin",
+    "selected_role_id": "owner_admin",
+    "active_project_id": "kosmo-demo-001"
+  },
+  "sections": [
+    {
+      "id": "orbit-header",
+      "label": "Orbit Header",
+      "source": "role_state",
+      "content": [
+        "active role",
+        "selected preview role",
+        "active project",
+        "review-only status"
+      ]
+    },
+    {
+      "id": "module-visibility",
+      "label": "Module Visibility",
+      "source": "role_state.visible_modules",
+      "content": [
+        "kosmo-data:available",
+        "kosmo-asset:available",
+        "kosmo-design:primary",
+        "kosmo-prepare:summary_only",
+        "kosmo-draw:summary_only",
+        "kosmo-viz:summary_only",
+        "kosmo-publish:summary_only",
+        "kosmo-zentrale:summary_only"
+      ]
+    },
+    {
+      "id": "blocked-actions",
+      "label": "Blocked Actions",
+      "source": "role_state.blocked_actions",
+      "content": [
+        "generate-design:human-review-gate",
+        "publish-public:publish-gate",
+        "start-cloud-job:cost-gate"
+      ]
+    },
+    {
+      "id": "role-shell-reference",
+      "label": "Role Shell Reference",
+      "source": "shell_manifest",
+      "content": [
+        "examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-prototype.generated.html"
+      ]
+    },
+    {
+      "id": "safety-copy",
+      "label": "Safety Copy",
+      "source": "handoff.policy",
+      "content": [
+        "no auth runtime",
+        "no user writes",
+        "no network calls",
+        "no generation",
+        "no publish"
+      ]
+    }
+  ],
+  "disabled_actions": [
+    {
+      "id": "generate-design",
+      "label": "Generate Design",
+      "gate_id": "human-review-gate",
+      "reason": "Context and human-review gates are not approved.",
+      "display": "visible_disabled"
+    },
+    {
+      "id": "publish-public",
+      "label": "Publish Public",
+      "gate_id": "publish-gate",
+      "reason": "Publish and rights gates remain blocked in the local demo.",
+      "display": "visible_disabled"
+    },
+    {
+      "id": "start-cloud-job",
+      "label": "Start Cloud Job",
+      "gate_id": "cost-gate",
+      "reason": "Cost gate is local-only and external network access is disabled.",
+      "display": "visible_disabled"
+    }
+  ],
+  "checks": [
+    {
+      "id": "handoff_ready",
+      "label": "Role-state handoff is ready.",
+      "status": "passed"
+    },
+    {
+      "id": "shell_ready",
+      "label": "Role shell manifest is ready.",
+      "status": "passed"
+    },
+    {
+      "id": "role_state_review_only",
+      "label": "Role state remains review-only.",
+      "status": "passed"
+    },
+    {
+      "id": "no_route_file_written",
+      "label": "This spec does not write a real app route.",
+      "status": "passed"
+    },
+    {
+      "id": "visible_modules_available",
+      "label": "Visible modules are present.",
+      "status": "passed"
+    },
+    {
+      "id": "blocked_actions_available",
+      "label": "Blocked actions are present.",
+      "status": "passed"
+    },
+    {
+      "id": "generation_blocked",
+      "label": "Generate Design remains blocked.",
+      "status": "passed"
+    },
+    {
+      "id": "publish_blocked",
+      "label": "Publish Public remains blocked.",
+      "status": "passed"
+    },
+    {
+      "id": "network_blocked",
+      "label": "External network access remains blocked.",
+      "status": "passed"
+    },
+    {
+      "id": "shell_matches_state_project",
+      "label": "Shell manifest matches active project.",
+      "status": "passed"
+    }
+  ],
+  "next_actions": [
+    "Use this spec as the implementation contract before creating app/orbit/page.tsx.",
+    "Keep the future route static-export-safe and driven by local JSON imports.",
+    "Add a route smoke before any public navigation points at /orbit."
+  ]
+}
