@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-31T11:38:45.302Z",
+  "generated_at": "2026-05-31T12:33:58.768Z",
   "generator": "kosmo-orbit-full-review",
   "workspace_path": "examples/kosmo-orbit/workspace.demo.json",
   "project_root": "examples/kosmo-projects/kosmo-demo-001",
@@ -15,8 +15,8 @@
     "no_geometry_generation": true
   },
   "summary": {
-    "step_count": 7,
-    "passed_steps": 7,
+    "step_count": 8,
+    "passed_steps": 8,
     "failed_steps": 0,
     "workspace_status": "orbit_blocked_gates_present",
     "project_status": "local_review_only",
@@ -33,7 +33,10 @@
     "design_ui_prototype_html": "examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-ui-prototype.generated.html",
     "design_ui_smoke_status": "ui_smoke_passed",
     "design_ui_smoke_passed_checks": 12,
-    "design_ui_smoke_check_count": 12
+    "design_ui_smoke_check_count": 12,
+    "role_variant_status": "role_ui_variants_ready",
+    "role_variant_count": 8,
+    "role_design_capable_count": 4
   },
   "outputs": {
     "full_review_json": "examples/kosmo-orbit/review/orbit-full-review.generated.json",
@@ -43,7 +46,8 @@
     "design_handoff_markdown": "examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-preview.generated.md",
     "design_ui_panel_markdown": "examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-ui-panel.generated.md",
     "design_ui_prototype_html": "examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-ui-prototype.generated.html",
-    "design_ui_smoke_markdown": "examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-ui-smoke.generated.md"
+    "design_ui_smoke_markdown": "examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-ui-smoke.generated.md",
+    "role_variants_markdown": "examples/kosmo-projects/kosmo-demo-001/orbit/role-ui-variants.generated.md"
   },
   "steps": [
     {
@@ -129,6 +133,18 @@
       "report_status": "ui_smoke_passed",
       "stdout_tail": "> architecture-cosmos@0.1.0 kosmo:orbit-design-ui-smoke\n> node scripts/kosmo-orbit-design-ui-smoke.mjs --project examples/kosmo-projects/kosmo-demo-001 --html orbit/design-handoff-ui-prototype.generated.html --manifest orbit/design-handoff-ui-prototype.generated.json\n\nKosmoOrbit KosmoDesign UI smoke\nHTML: examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-ui-prototype.generated.html\nStatus: ui_smoke_passed\nChecks: 12/12 passed\nWrote: examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-ui-smoke.generated.md",
       "stderr_tail": ""
+    },
+    {
+      "id": "role_ui_variants",
+      "label": "Role UI Variants",
+      "command": "npm run kosmo:orbit-role-variants -- --workspace examples/kosmo-orbit/workspace.demo.json --project examples/kosmo-projects/kosmo-demo-001 --panel orbit/design-handoff-ui-panel.generated.json",
+      "status": "passed",
+      "exit_code": 0,
+      "report_path": "examples/kosmo-projects/kosmo-demo-001/orbit/role-ui-variants.generated.json",
+      "report_exists": true,
+      "report_status": "role_ui_variants_ready",
+      "stdout_tail": "> node scripts/kosmo-orbit-role-ui-variants.mjs --workspace examples/kosmo-orbit/workspace.demo.json --project examples/kosmo-projects/kosmo-demo-001 --panel orbit/design-handoff-ui-panel.generated.json\n\nKosmoOrbit role UI variants generated\nProject: Kosmo Demo 001\nVariants: 8\nDesign-capable roles: 4\nLearning roles: 3\nWrote: examples/kosmo-projects/kosmo-demo-001/orbit/role-ui-variants.generated.md",
+      "stderr_tail": ""
     }
   ],
   "next_actions": [
@@ -137,6 +153,7 @@
     "Keep generated project artifacts local until human review closes design/draw/viz evidence.",
     "Keep public, rights and publish gates visible as blocked in the Orbit shell.",
     "Use the generated static HTML prototype as the visual reference for the first KosmoOrbit app screen.",
-    "Keep the UI smoke in the Orbit full review before any UI handoff or prototype change."
+    "Keep the UI smoke in the Orbit full review before any UI handoff or prototype change.",
+    "Use the generated role variants to drive the next KosmoOrbit UI prototype pass."
   ]
 }

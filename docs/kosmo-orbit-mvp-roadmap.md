@@ -288,12 +288,13 @@ laufen. Initial umgesetzt:
 - erzeugt KosmoDesign UI Panel Spec;
 - erzeugt den statischen KosmoDesign UI Prototype;
 - prueft den statischen UI-Prototyp mit einem Smoke-Check;
+- erzeugt Rollenvarianten fuer die KosmoDesign-Oberflaeche;
 - schreibt `examples/kosmo-orbit/review/orbit-full-review.generated.json`;
 - schreibt `examples/kosmo-orbit/review/orbit-full-review.generated.md`.
 
 Der Full Review ist der erste echte KosmoOrbit-Steuerzentralen-Durchlauf:
 Workspace -> Status -> Projektpaket -> Design-Handoff -> UI-Panel-Spec ->
-statischer UI-Prototyp -> UI-Smoke.
+statischer UI-Prototyp -> UI-Smoke -> Rollenvarianten.
 
 Auch dieser Durchlauf bleibt strikt review-only: kein Blender-Start, keine
 Geometrie-Generierung, keine Uploads, keine externen Accounts, keine Kosten und
@@ -346,3 +347,28 @@ Der Smoke prueft u.a.:
 
 Damit kann KosmoOrbit spaeter verhindern, dass eine UI-Aenderung versehentlich
 die Sicherheitslogik aus der Oberflaeche entfernt.
+
+## 15. Role UI Variants
+
+KosmoOrbit muss dieselbe Hauptsoftware je nach Rolle unterschiedlich zeigen.
+Initial umgesetzt:
+
+- `npm run kosmo:orbit-role-variants`
+- liest `examples/kosmo-orbit/workspace.demo.json`;
+- liest `orbit/design-handoff-ui-panel.generated.json`;
+- schreibt `orbit/role-ui-variants.generated.json`;
+- schreibt `orbit/role-ui-variants.generated.md`.
+
+Die Varianten unterscheiden u.a.:
+
+- Chef / Owner Admin: Buero- und Gate-Kontrolle;
+- IT-/KI-Spezialist: Infrastruktur, Runtime, Smoke Checks;
+- Projektleiter Architekt: Entscheidungen, Review und Abgabe;
+- Entwurfsarchitekt: Design-Kontext, Modell und Varianten;
+- Zeichner EFZ: Modellqualitaet, Layer und technische Pruefung;
+- Praktikant: gefuehrte Assistenz;
+- Lehrling: Lernmodus;
+- Schnupperstift: Demo-/Observer-Modus.
+
+Design-Generierung bleibt in allen Rollen deaktiviert, bis Kontext- und
+Human-Review-Gates freigegeben sind.

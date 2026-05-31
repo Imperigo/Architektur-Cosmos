@@ -1,6 +1,6 @@
 # KosmoOrbit Full Review
 
-Generated: 2026-05-31T11:38:45.302Z
+Generated: 2026-05-31T12:33:58.768Z
 Status: `orbit_full_review_ready_for_review_mode`
 Workspace: `examples/kosmo-orbit/workspace.demo.json`
 Project: `examples/kosmo-projects/kosmo-demo-001`
@@ -9,7 +9,7 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 
 ## Summary
 
-- steps: 7/7 passed
+- steps: 8/8 passed
 - workspace status: `orbit_blocked_gates_present`
 - project status: `local_review_only`
 - project artifacts: 59
@@ -25,6 +25,9 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 - UI prototype HTML: `examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-ui-prototype.generated.html`
 - UI smoke: `ui_smoke_passed`
 - UI smoke checks: 12/12
+- role variants: `role_ui_variants_ready`
+- role variant count: 8
+- design-capable roles: 4
 
 ## Steps
 
@@ -37,6 +40,7 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 | KosmoDesign UI Panel Spec | `passed` | `examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-ui-panel.generated.json` |
 | KosmoDesign Static UI Prototype | `passed` | `examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-ui-prototype.generated.json` |
 | KosmoDesign UI Smoke | `passed` | `examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-ui-smoke.generated.json` |
+| Role UI Variants | `passed` | `examples/kosmo-projects/kosmo-demo-001/orbit/role-ui-variants.generated.json` |
 
 ## Outputs
 
@@ -48,6 +52,7 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 - design_ui_panel_markdown: `examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-ui-panel.generated.md`
 - design_ui_prototype_html: `examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-ui-prototype.generated.html`
 - design_ui_smoke_markdown: `examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-ui-smoke.generated.md`
+- role_variants_markdown: `examples/kosmo-projects/kosmo-demo-001/orbit/role-ui-variants.generated.md`
 
 ## Next Actions
 
@@ -57,3 +62,4 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 - Keep public, rights and publish gates visible as blocked in the Orbit shell.
 - Use the generated static HTML prototype as the visual reference for the first KosmoOrbit app screen.
 - Keep the UI smoke in the Orbit full review before any UI handoff or prototype change.
+- Use the generated role variants to drive the next KosmoOrbit UI prototype pass.

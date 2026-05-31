@@ -1,0 +1,630 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-05-31T12:33:58.756Z",
+  "generator": "kosmo-orbit-role-ui-variants",
+  "workspace_path": "examples/kosmo-orbit/workspace.demo.json",
+  "panel_spec": "examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-ui-panel.generated.json",
+  "status": "role_ui_variants_ready",
+  "policy": {
+    "review_only": true,
+    "no_auth_runtime": true,
+    "no_user_data_write": true,
+    "no_blender_launch": true,
+    "no_geometry_generation": true
+  },
+  "project": {
+    "id": "kosmo-demo-001",
+    "name": "Kosmo Demo 001",
+    "risk_level": "local_review_only"
+  },
+  "summary": {
+    "variant_count": 8,
+    "design_capable_count": 4,
+    "generation_capable_count": 0,
+    "admin_variant_count": 2,
+    "learning_variant_count": 3
+  },
+  "variants": [
+    {
+      "role": {
+        "id": "owner_admin",
+        "label": "Chef / Owner Admin",
+        "level": "admin",
+        "ui_mode": "full_admin",
+        "focus": "office_control",
+        "detail_level": "full"
+      },
+      "permissions": {
+        "can_open_design_review": true,
+        "can_request_design_generation": false,
+        "can_approve_local": true,
+        "can_approve_public": true,
+        "read_only": false
+      },
+      "panel_state": {
+        "base_state": "review_only",
+        "tone": "yellow",
+        "primary_label": "Open Review Mode",
+        "primary_enabled": true,
+        "generation_enabled": false,
+        "generation_reason": "Design generation is blocked for all roles until context and human-review gates are approved."
+      },
+      "visible_sections": [
+        "status_header",
+        "role_gate",
+        "blockers",
+        "allowed_actions",
+        "model_profile",
+        "context_inputs",
+        "guardrails",
+        "next_actions",
+        "admin_gates",
+        "publish_risk"
+      ],
+      "hidden_sections": [],
+      "badges": [
+        {
+          "id": "role",
+          "label": "Chef / Owner Admin",
+          "tone": "neutral"
+        },
+        {
+          "id": "ui-mode",
+          "label": "full_admin",
+          "tone": "blue"
+        },
+        {
+          "id": "design-access",
+          "label": "design review allowed",
+          "tone": "yellow"
+        },
+        {
+          "id": "generation",
+          "label": "generation blocked",
+          "tone": "red"
+        },
+        {
+          "id": "base-panel",
+          "label": "review_only",
+          "tone": "yellow"
+        }
+      ],
+      "warnings": [
+        "Design generation stays disabled until context and human-review gates are approved."
+      ],
+      "learning_support": {
+        "enabled": false,
+        "mode": null,
+        "guidance": null
+      }
+    },
+    {
+      "role": {
+        "id": "it_ai_admin",
+        "label": "IT / KI Spezialist",
+        "level": "admin",
+        "ui_mode": "full_admin",
+        "focus": "infrastructure_control",
+        "detail_level": "full"
+      },
+      "permissions": {
+        "can_open_design_review": false,
+        "can_request_design_generation": false,
+        "can_approve_local": false,
+        "can_approve_public": false,
+        "read_only": false
+      },
+      "panel_state": {
+        "base_state": "review_only",
+        "tone": "red",
+        "primary_label": "View Summary Only",
+        "primary_enabled": false,
+        "generation_enabled": false,
+        "generation_reason": "Design generation is blocked for all roles until context and human-review gates are approved."
+      },
+      "visible_sections": [
+        "status_header",
+        "role_gate",
+        "blockers",
+        "model_profile",
+        "context_inputs",
+        "guardrails",
+        "next_actions",
+        "runtime_safety",
+        "smoke_checks"
+      ],
+      "hidden_sections": [
+        "allowed_actions"
+      ],
+      "badges": [
+        {
+          "id": "role",
+          "label": "IT / KI Spezialist",
+          "tone": "neutral"
+        },
+        {
+          "id": "ui-mode",
+          "label": "full_admin",
+          "tone": "blue"
+        },
+        {
+          "id": "design-access",
+          "label": "design review blocked",
+          "tone": "red"
+        },
+        {
+          "id": "generation",
+          "label": "generation blocked",
+          "tone": "red"
+        },
+        {
+          "id": "base-panel",
+          "label": "review_only",
+          "tone": "yellow"
+        }
+      ],
+      "warnings": [
+        "This role cannot open KosmoDesign review mode.",
+        "This role cannot clear public release or publish gates.",
+        "Design generation stays disabled until context and human-review gates are approved."
+      ],
+      "learning_support": {
+        "enabled": false,
+        "mode": null,
+        "guidance": null
+      }
+    },
+    {
+      "role": {
+        "id": "project_lead_architect",
+        "label": "Projektleiter Architekt",
+        "level": "lead",
+        "ui_mode": "project_control",
+        "focus": "project_decision",
+        "detail_level": "decision"
+      },
+      "permissions": {
+        "can_open_design_review": true,
+        "can_request_design_generation": false,
+        "can_approve_local": true,
+        "can_approve_public": false,
+        "read_only": false
+      },
+      "panel_state": {
+        "base_state": "review_only",
+        "tone": "yellow",
+        "primary_label": "Open Project Review",
+        "primary_enabled": true,
+        "generation_enabled": false,
+        "generation_reason": "Design generation is blocked for all roles until context and human-review gates are approved."
+      },
+      "visible_sections": [
+        "status_header",
+        "role_gate",
+        "blockers",
+        "allowed_actions",
+        "model_profile",
+        "context_inputs",
+        "guardrails",
+        "next_actions",
+        "human_review"
+      ],
+      "hidden_sections": [],
+      "badges": [
+        {
+          "id": "role",
+          "label": "Projektleiter Architekt",
+          "tone": "neutral"
+        },
+        {
+          "id": "ui-mode",
+          "label": "project_control",
+          "tone": "blue"
+        },
+        {
+          "id": "design-access",
+          "label": "design review allowed",
+          "tone": "yellow"
+        },
+        {
+          "id": "generation",
+          "label": "generation blocked",
+          "tone": "red"
+        },
+        {
+          "id": "base-panel",
+          "label": "review_only",
+          "tone": "yellow"
+        }
+      ],
+      "warnings": [
+        "This role cannot clear public release or publish gates.",
+        "Design generation stays disabled until context and human-review gates are approved."
+      ],
+      "learning_support": {
+        "enabled": false,
+        "mode": null,
+        "guidance": null
+      }
+    },
+    {
+      "role": {
+        "id": "design_architect",
+        "label": "Entwurfsarchitekt",
+        "level": "professional",
+        "ui_mode": "creative_pro",
+        "focus": "design_context",
+        "detail_level": "creative"
+      },
+      "permissions": {
+        "can_open_design_review": true,
+        "can_request_design_generation": false,
+        "can_approve_local": false,
+        "can_approve_public": false,
+        "read_only": false
+      },
+      "panel_state": {
+        "base_state": "review_only",
+        "tone": "yellow",
+        "primary_label": "Open Design Context",
+        "primary_enabled": true,
+        "generation_enabled": false,
+        "generation_reason": "Design generation is blocked for all roles until context and human-review gates are approved."
+      },
+      "visible_sections": [
+        "status_header",
+        "role_gate",
+        "blockers",
+        "allowed_actions",
+        "model_profile",
+        "context_inputs",
+        "guardrails",
+        "next_actions"
+      ],
+      "hidden_sections": [],
+      "badges": [
+        {
+          "id": "role",
+          "label": "Entwurfsarchitekt",
+          "tone": "neutral"
+        },
+        {
+          "id": "ui-mode",
+          "label": "creative_pro",
+          "tone": "blue"
+        },
+        {
+          "id": "design-access",
+          "label": "design review allowed",
+          "tone": "yellow"
+        },
+        {
+          "id": "generation",
+          "label": "generation blocked",
+          "tone": "red"
+        },
+        {
+          "id": "base-panel",
+          "label": "review_only",
+          "tone": "yellow"
+        }
+      ],
+      "warnings": [
+        "This role cannot clear public release or publish gates.",
+        "Design generation stays disabled until context and human-review gates are approved."
+      ],
+      "learning_support": {
+        "enabled": false,
+        "mode": null,
+        "guidance": null
+      }
+    },
+    {
+      "role": {
+        "id": "drafter_efz",
+        "label": "Zeichner EFZ",
+        "level": "professional",
+        "ui_mode": "production_pro",
+        "focus": "production_quality",
+        "detail_level": "technical"
+      },
+      "permissions": {
+        "can_open_design_review": false,
+        "can_request_design_generation": false,
+        "can_approve_local": false,
+        "can_approve_public": false,
+        "read_only": false
+      },
+      "panel_state": {
+        "base_state": "review_only",
+        "tone": "red",
+        "primary_label": "View Summary Only",
+        "primary_enabled": false,
+        "generation_enabled": false,
+        "generation_reason": "Design generation is blocked for all roles until context and human-review gates are approved."
+      },
+      "visible_sections": [
+        "status_header",
+        "role_gate",
+        "blockers",
+        "model_profile",
+        "context_inputs",
+        "guardrails",
+        "next_actions"
+      ],
+      "hidden_sections": [
+        "allowed_actions"
+      ],
+      "badges": [
+        {
+          "id": "role",
+          "label": "Zeichner EFZ",
+          "tone": "neutral"
+        },
+        {
+          "id": "ui-mode",
+          "label": "production_pro",
+          "tone": "blue"
+        },
+        {
+          "id": "design-access",
+          "label": "design review blocked",
+          "tone": "red"
+        },
+        {
+          "id": "generation",
+          "label": "generation blocked",
+          "tone": "red"
+        },
+        {
+          "id": "base-panel",
+          "label": "review_only",
+          "tone": "yellow"
+        }
+      ],
+      "warnings": [
+        "This role cannot open KosmoDesign review mode.",
+        "This role cannot clear public release or publish gates.",
+        "Design generation stays disabled until context and human-review gates are approved."
+      ],
+      "learning_support": {
+        "enabled": false,
+        "mode": null,
+        "guidance": null
+      }
+    },
+    {
+      "role": {
+        "id": "intern",
+        "label": "Praktikant",
+        "level": "guided",
+        "ui_mode": "guided",
+        "focus": "guided_assist",
+        "detail_level": "guided"
+      },
+      "permissions": {
+        "can_open_design_review": true,
+        "can_request_design_generation": false,
+        "can_approve_local": false,
+        "can_approve_public": false,
+        "read_only": false
+      },
+      "panel_state": {
+        "base_state": "review_only",
+        "tone": "yellow",
+        "primary_label": "Open Guided Review",
+        "primary_enabled": true,
+        "generation_enabled": false,
+        "generation_reason": "Design generation is blocked for all roles until context and human-review gates are approved."
+      },
+      "visible_sections": [
+        "status_header",
+        "role_gate",
+        "blockers",
+        "allowed_actions",
+        "model_profile",
+        "context_inputs",
+        "guardrails",
+        "next_actions"
+      ],
+      "hidden_sections": [],
+      "badges": [
+        {
+          "id": "role",
+          "label": "Praktikant",
+          "tone": "neutral"
+        },
+        {
+          "id": "ui-mode",
+          "label": "guided",
+          "tone": "blue"
+        },
+        {
+          "id": "design-access",
+          "label": "design review allowed",
+          "tone": "yellow"
+        },
+        {
+          "id": "generation",
+          "label": "generation blocked",
+          "tone": "red"
+        },
+        {
+          "id": "base-panel",
+          "label": "review_only",
+          "tone": "yellow"
+        }
+      ],
+      "warnings": [
+        "This role cannot clear public release or publish gates.",
+        "Design generation stays disabled until context and human-review gates are approved."
+      ],
+      "learning_support": {
+        "enabled": true,
+        "mode": "guided",
+        "guidance": "Show simplified explanations, safe examples and no destructive actions."
+      }
+    },
+    {
+      "role": {
+        "id": "apprentice",
+        "label": "Lehrling",
+        "level": "learning",
+        "ui_mode": "learning",
+        "focus": "learning",
+        "detail_level": "learning"
+      },
+      "permissions": {
+        "can_open_design_review": false,
+        "can_request_design_generation": false,
+        "can_approve_local": false,
+        "can_approve_public": false,
+        "read_only": true
+      },
+      "panel_state": {
+        "base_state": "review_only",
+        "tone": "red",
+        "primary_label": "View Summary Only",
+        "primary_enabled": false,
+        "generation_enabled": false,
+        "generation_reason": "Design generation is blocked for all roles until context and human-review gates are approved."
+      },
+      "visible_sections": [
+        "status_header",
+        "role_gate",
+        "blockers",
+        "model_profile",
+        "context_inputs",
+        "guardrails",
+        "next_actions",
+        "explanations"
+      ],
+      "hidden_sections": [
+        "allowed_actions",
+        "admin_gates",
+        "publish_risk"
+      ],
+      "badges": [
+        {
+          "id": "role",
+          "label": "Lehrling",
+          "tone": "neutral"
+        },
+        {
+          "id": "ui-mode",
+          "label": "learning",
+          "tone": "blue"
+        },
+        {
+          "id": "design-access",
+          "label": "design review blocked",
+          "tone": "red"
+        },
+        {
+          "id": "generation",
+          "label": "generation blocked",
+          "tone": "red"
+        },
+        {
+          "id": "base-panel",
+          "label": "review_only",
+          "tone": "yellow"
+        }
+      ],
+      "warnings": [
+        "This role cannot open KosmoDesign review mode.",
+        "This role cannot clear public release or publish gates.",
+        "Keep this role in learning/read-only mode.",
+        "Design generation stays disabled until context and human-review gates are approved."
+      ],
+      "learning_support": {
+        "enabled": true,
+        "mode": "learning",
+        "guidance": "Show simplified explanations, safe examples and no destructive actions."
+      }
+    },
+    {
+      "role": {
+        "id": "trial_user",
+        "label": "Schnupperstift",
+        "level": "observer",
+        "ui_mode": "observer",
+        "focus": "observer",
+        "detail_level": "observer"
+      },
+      "permissions": {
+        "can_open_design_review": false,
+        "can_request_design_generation": false,
+        "can_approve_local": false,
+        "can_approve_public": false,
+        "read_only": true
+      },
+      "panel_state": {
+        "base_state": "review_only",
+        "tone": "red",
+        "primary_label": "View Summary Only",
+        "primary_enabled": false,
+        "generation_enabled": false,
+        "generation_reason": "Design generation is blocked for all roles until context and human-review gates are approved."
+      },
+      "visible_sections": [
+        "status_header",
+        "role_gate",
+        "blockers",
+        "model_profile",
+        "guardrails",
+        "next_actions",
+        "explanations"
+      ],
+      "hidden_sections": [
+        "allowed_actions",
+        "admin_gates",
+        "publish_risk",
+        "context_inputs"
+      ],
+      "badges": [
+        {
+          "id": "role",
+          "label": "Schnupperstift",
+          "tone": "neutral"
+        },
+        {
+          "id": "ui-mode",
+          "label": "observer",
+          "tone": "blue"
+        },
+        {
+          "id": "design-access",
+          "label": "design review blocked",
+          "tone": "red"
+        },
+        {
+          "id": "generation",
+          "label": "generation blocked",
+          "tone": "red"
+        },
+        {
+          "id": "base-panel",
+          "label": "review_only",
+          "tone": "yellow"
+        }
+      ],
+      "warnings": [
+        "This role cannot open KosmoDesign review mode.",
+        "This role cannot clear public release or publish gates.",
+        "Keep this role in learning/read-only mode.",
+        "Design generation stays disabled until context and human-review gates are approved."
+      ],
+      "learning_support": {
+        "enabled": true,
+        "mode": "observer",
+        "guidance": "Show simplified explanations, safe examples and no destructive actions."
+      }
+    }
+  ],
+  "next_actions": [
+    "Use these variants as the role matrix for the first KosmoOrbit app screen.",
+    "Keep design generation disabled for every role until context and human-review gates are approved.",
+    "Turn learning variants into simplified UI copy before apprentices or trial users see the tool."
+  ]
+}

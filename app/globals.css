@@ -4476,6 +4476,62 @@ button.database-intake-card:not(:disabled):hover {
   line-height: 1;
 }
 
+.kosmo-asset-mode-strip {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 0.9fr) minmax(0, 1.4fr);
+  gap: 8px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgb(245 179 66 / 28%);
+  border-radius: 16px;
+  background:
+    radial-gradient(circle at 8% 50%, rgb(245 179 66 / 12%), transparent 48%),
+    rgb(5 5 5 / 42%);
+}
+
+.kosmo-asset-mode-strip span {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 8px 9px;
+  border-radius: 12px;
+  background: rgb(247 247 244 / 5%);
+}
+
+.kosmo-asset-mode-strip small {
+  color: rgb(247 247 244 / 52%);
+  font-size: 8px;
+  font-weight: 780;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.kosmo-asset-mode-strip strong {
+  min-width: 0;
+  color: #f5b342;
+  font-size: 11px;
+  line-height: 1.12;
+  overflow-wrap: anywhere;
+}
+
+.kosmo-asset-mode-strip p {
+  align-self: center;
+  min-width: 0;
+  margin: 0;
+  color: rgb(247 247 244 / 64%);
+  font-size: 10px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.kosmo-asset-mode-strip[data-public-ready="true"] {
+  border-color: rgb(101 255 115 / 30%);
+}
+
+.kosmo-asset-mode-strip[data-public-ready="true"] strong {
+  color: #65ff73;
+}
+
 .kosmo-asset-categories {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));

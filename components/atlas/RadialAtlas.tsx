@@ -2569,9 +2569,22 @@ function KosmoAssetWorkspace({ onReturnToHub }: { onReturnToHub: () => void }) {
             <div className="kosmo-asset-metrics" aria-label="KosmoAsset Kennzahlen">
               <MetricBlock label="Vorhanden" value={String(existingFormats)} />
               <MetricBlock label="Geplant" value={String(plannedFormats)} />
-              <MetricBlock label="Formate" value={String(formats.length)} />
+              <MetricBlock label="Lokal bereit" value={String(reviewSummary.local_ready_count)} />
+              <MetricBlock label="Public bereit" value={String(reviewSummary.public_ready_count)} />
               <MetricBlock label="Prüfung offen" value={String(reviewSummary.open_human_review_count)} />
               <MetricBlock label="Exportziele" value={String(exportTargets.length)} />
+            </div>
+
+            <div className="kosmo-asset-mode-strip" data-public-ready={reviewSummary.public_assets_allowed ? 'true' : 'false'}>
+              <span>
+                <small>Modus</small>
+                <strong>{reviewSummary.upload_allowed ? 'Upload möglich' : 'Review-only lokal'}</strong>
+              </span>
+              <span>
+                <small>Public Assets</small>
+                <strong>{reviewSummary.public_assets_allowed ? 'freigegeben' : 'gesperrt'}</strong>
+              </span>
+              <p>{formatAssetValue(reviewSummary.recommended_next_step)}</p>
             </div>
 
             <div className="kosmo-asset-categories" aria-label="Asset Kategorien">

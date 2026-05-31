@@ -74,6 +74,8 @@ async function main() {
     checkIncludes(sources.atlas, 'className="kosmo-asset-card-status"', 'KosmoAsset cards show local review status before opening inspector'),
     checkIncludes(sources.css, '.kosmo-asset-card-gate', 'KosmoAsset card public gate badge has styling'),
     checkIncludes(sources.css, '.kosmo-asset-card-status', 'KosmoAsset card review badge has styling'),
+    checkIncludes(sources.atlas, 'className="kosmo-asset-mode-strip"', 'KosmoAsset dashboard explains local review/public gate mode'),
+    checkIncludes(sources.css, '.kosmo-asset-mode-strip', 'KosmoAsset dashboard mode strip has styling'),
     checkIncludes(sources.css, '.kosmo-asset-shell {\n    display: block;', 'mobile KosmoAsset shell uses document flow'),
     checkIncludes(sources.css, '.kosmo-asset-library,\n  .kosmo-asset-grid,\n  .kosmo-asset-inspector {\n    min-height: auto;', 'mobile KosmoAsset cards cannot collapse into inspector'),
     checkIncludes(sources.atlas, 'const dossierScale = useLargeInterface ? 2.72 : 1.42;', 'mobile dossier card uses readable scale'),
