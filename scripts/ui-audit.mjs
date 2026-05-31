@@ -61,6 +61,8 @@ async function main() {
     checkIncludes(sources.entryPage, "shortLabel: 'Text'", 'entry archive radar uses readable Text label'),
     checkIncludes(sources.css, '.kosmo-asset-shell {\n    display: block;', 'mobile KosmoAsset shell uses document flow'),
     checkIncludes(sources.css, '.kosmo-asset-library,\n  .kosmo-asset-grid,\n  .kosmo-asset-inspector {\n    min-height: auto;', 'mobile KosmoAsset cards cannot collapse into inspector'),
+    checkIncludes(sources.atlas, 'const dossierScale = useLargeInterface ? 2.72 : 1.42;', 'mobile dossier card uses readable scale'),
+    checkIncludes(sources.atlas, 'cardY: useLargeInterface ? 104', 'mobile dossier card is framed near top'),
     checkIncludes(sources.atlas, "renderMode?: 'svg' | 'html'", 'Database panel supports HTML render mode'),
     checkIncludes(sources.atlas, "renderMode=\"html\"", 'Mobile database uses HTML overlay'),
     checkIncludes(sources.search, 'project-search-trigger cosmos-trigger', 'Search trigger uses shared trigger class'),

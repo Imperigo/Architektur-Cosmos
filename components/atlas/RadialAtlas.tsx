@@ -1725,7 +1725,7 @@ function useAtlasUiMetrics(): AtlasUiMetrics {
   const useLargeInterface = isCoarsePointer || isNarrowViewport;
   const databaseWidth = useLargeInterface ? 910 : 468;
   const databaseHeight = useLargeInterface ? 810 : 660;
-  const dossierScale = useLargeInterface ? 2.36 : 1.42;
+  const dossierScale = useLargeInterface ? 2.72 : 1.42;
   const dossierHeight = 292 * dossierScale;
 
   return {
@@ -1749,12 +1749,12 @@ function useAtlasUiMetrics(): AtlasUiMetrics {
     },
     dossier: {
       cardScale: dossierScale,
-      cardY: useLargeInterface ? 136 : atlasSize.cy - dossierHeight / 2,
-      closeWidth: useLargeInterface ? 86 : 46,
-      actionHeight: useLargeInterface ? 42 : 22,
-      actionOffsetY: useLargeInterface ? -56 : -34,
-      actionFontSize: useLargeInterface ? 13 : 9,
-      openWidth: useLargeInterface ? 132 : 76
+      cardY: useLargeInterface ? 104 : atlasSize.cy - dossierHeight / 2,
+      closeWidth: useLargeInterface ? 96 : 46,
+      actionHeight: useLargeInterface ? 44 : 22,
+      actionOffsetY: useLargeInterface ? -58 : -34,
+      actionFontSize: useLargeInterface ? 13.5 : 9,
+      openWidth: useLargeInterface ? 142 : 76
     }
   };
 }
