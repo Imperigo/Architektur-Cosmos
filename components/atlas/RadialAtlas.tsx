@@ -2621,6 +2621,13 @@ function MetricBlock({ label, value }: { label: string; value: string }) {
 function AssetCard({ asset, isSelected, onSelect }: { asset: AssetPreviewRecord; isSelected: boolean; onSelect: () => void }) {
   const accent = assetAccent(asset);
   const rightsTone = asset.rights_status === 'own_work' || asset.rights_status === 'public_domain' || asset.rights_status === 'licensed' ? 'ready' : 'review';
+  const handoffBundle = assetHandoffBundle(asset.id);
+  const cardSummary = assetReviewSummary({
+    asset,
+    reviewPack: assetReviewPack(asset.id),
+    decisionLedger: assetDecisionLedger(asset.id),
+    handoffSmoke: handoffBundle ? assetHandoffSmokePreview : null
+  });
 
   return (
     <button
@@ -2632,11 +2639,15 @@ function AssetCard({ asset, isSelected, onSelect }: { asset: AssetPreviewRecord;
     >
       <div className={`kosmo-asset-visual kosmo-asset-visual-${assetVisualKind(asset)}`} aria-hidden="true">
         <AssetPreviewGraphic asset={asset} />
+        <span className="kosmo-asset-card-gate" data-tone={cardSummary.tone}>
+          {cardSummary.publicGate === 'gesperrt' ? 'Public gesperrt' : 'Public offen?'}
+        </span>
       </div>
       <div className="kosmo-asset-card-body">
         <small>{formatAssetValue(asset.asset_type)} / {formatAssetValue(asset.category)}</small>
         <h3>{asset.title}</h3>
         <p>{formatAssetText(asset.description)}</p>
+        <span className="kosmo-asset-card-status" data-tone={cardSummary.tone}>{cardSummary.status}</span>
       </div>
       <div className="kosmo-asset-card-tags" aria-label={`${asset.title} Exportziele`}>
         {asset.export_targets.slice(0, 5).map((target) => (
