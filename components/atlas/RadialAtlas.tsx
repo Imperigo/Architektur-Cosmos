@@ -2432,6 +2432,7 @@ function ModuleHub({ onOpenKosmoData, onOpenKosmoAsset }: { onOpenKosmoData: () 
   return (
     <div
       className="module-hub cosmos-text-safe"
+      tabIndex={-1}
       onClick={() => setSelectedModuleId(null)}
       onKeyDown={(event) => {
         if (event.key !== 'Escape' && event.key !== 'Backspace') return;
@@ -2478,7 +2479,14 @@ function ModuleHub({ onOpenKosmoData, onOpenKosmoAsset }: { onOpenKosmoData: () 
         );
       })}
       {selectedModule ? (
-        <aside className="module-hub-preview" style={{ '--station-accent': selectedModule.accent } as CSSProperties} onPointerDown={(event) => event.stopPropagation()} onClick={(event) => event.stopPropagation()}>
+        <aside
+          className="module-hub-preview"
+          style={{ '--station-accent': selectedModule.accent } as CSSProperties}
+          role="dialog"
+          aria-label={`${selectedModule.name} Modulvorschau`}
+          onPointerDown={(event) => event.stopPropagation()}
+          onClick={(event) => event.stopPropagation()}
+        >
           <small>{selectedModule.status}</small>
           <strong>{selectedModule.name}</strong>
           <span>{selectedModule.label}</span>
