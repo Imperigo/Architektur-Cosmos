@@ -1234,7 +1234,7 @@ body:has(.entry-page) {
 }
 
 .screen-cosmos-cursor-dossier {
-  opacity: 0.78;
+  opacity: 0;
 }
 
 .screen-cosmos-cursor-overlay {

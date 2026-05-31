@@ -66,6 +66,7 @@ async function main() {
     checkIncludes(sources.css, '.kosmo-asset-library,\n  .kosmo-asset-grid,\n  .kosmo-asset-inspector {\n    min-height: auto;', 'mobile KosmoAsset cards cannot collapse into inspector'),
     checkIncludes(sources.atlas, 'const dossierScale = useLargeInterface ? 2.72 : 1.42;', 'mobile dossier card uses readable scale'),
     checkIncludes(sources.atlas, 'cardY: useLargeInterface ? 104', 'mobile dossier card is framed near top'),
+    checkIncludes(sources.css, '.screen-cosmos-cursor-dossier {\n  opacity: 0;', 'Dossier hides custom cursor over readable text'),
     checkIncludes(sources.atlas, "renderMode?: 'svg' | 'html'", 'Database panel supports HTML render mode'),
     checkIncludes(sources.atlas, "renderMode=\"html\"", 'Mobile database uses HTML overlay'),
     checkIncludes(sources.search, 'project-search-trigger cosmos-trigger', 'Search trigger uses shared trigger class'),
