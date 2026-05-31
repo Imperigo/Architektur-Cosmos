@@ -330,9 +330,15 @@ function spreadWormholeClusters(nodes: WormholeEntryNode[], phase: number) {
       const spread = Math.min(42, 7 + sortedBucket.length * 2.7) * (0.36 + node.closeness * 0.72);
       const radialSpread = Math.min(24, 5 + sortedBucket.length * 1.15) * (0.32 + node.closeness * 0.55);
       const radialLane = ((index % 3) - 1) * radialSpread;
-      const constrained = constrainToTunnelSkin(
+      const sectorConstrained = constrainToSectorWedge(
         node.x + tangent.x * lane * spread + radial.x * radialLane,
         node.y + tangent.y * lane * spread + radial.y * radialLane,
+        node,
+        phase
+      );
+      const constrained = constrainToTunnelSkin(
+        sectorConstrained.x,
+        sectorConstrained.y,
         node.depth,
         phase
       );
@@ -378,6 +384,44 @@ function constrainToTunnelSkin(x: number, y: number, depth: number, phase: numbe
     x: center.x + (dx / length) * maxRadius,
     y: center.y + (dy / length) * maxRadius
   };
+}
+
+function constrainToSectorWedge(x: number, y: number, node: WormholeEntryNode, phase: number) {
+  const center = tunnelCenter(node.depth, phase);
+  const dx = x - center.x;
+  const dy = y - center.y;
+  const radius = Math.hypot(dx, dy) || 1;
+  const angle = normalizeAngle((Math.atan2(dy, dx) * 180) / Math.PI);
+  const twist = tubeTwist(node.worldPosition);
+  const start = normalizeAngle(node.sector.startAngle + twist);
+  const span = sectorSpan(node.sector);
+  const local = normalizeAngle(angle - start);
+  const margin = Math.min(7.5, Math.max(3.5, span * 0.12));
+  const maxLocal = Math.max(margin, span - margin);
+
+  if (local >= margin && local <= maxLocal) {
+    return { x, y };
+  }
+
+  const distanceToStart = Math.min(local, 360 - local);
+  const distanceToEnd = Math.abs(local - span);
+  const clampedLocal = local > span
+    ? (distanceToStart <= distanceToEnd ? margin : maxLocal)
+    : Math.max(margin, Math.min(maxLocal, local));
+  const clampedAngle = start + clampedLocal;
+  const point = polarToCartesian(center.x, center.y, radius, clampedAngle);
+
+  return { x: point.x, y: point.y };
+}
+
+function sectorSpan(sector: WormholeEntryNode['sector']) {
+  return sector.startAngle > sector.endAngle
+    ? sector.endAngle + 360 - sector.startAngle
+    : sector.endAngle - sector.startAngle;
+}
+
+function normalizeAngle(angle: number) {
+  return ((angle % 360) + 360) % 360;
 }
 
 function stableHash(value: string) {

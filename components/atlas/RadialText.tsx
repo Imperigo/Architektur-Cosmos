@@ -42,7 +42,7 @@ export function RadialLetterText({
   const centerRadialRotation = inward ? angle + 180 : angle;
   const normalizedCenterRotation = ((centerRadialRotation % 360) + 360) % 360;
   const centerNeedsFlip = normalizedCenterRotation > 90 && normalizedCenterRotation < 270;
-  const readableLetters = letters;
+  const readableLetters = centerNeedsFlip ? [...letters].reverse() : letters;
   const direction = centerNeedsFlip ? -1 : 1;
   const baseStep = letterAngleStep ?? Math.max(1.2, Math.min(3.6, fontSize * 38 / Math.max(80, radius)));
   const step = Math.abs(baseStep) * direction;

@@ -93,12 +93,16 @@ export function SemanticEntryNode({
   return (
     <g
       data-entry-node="true"
+      data-entry-id={entry.id}
       pointerEvents="auto"
       role="button"
       tabIndex={0}
       aria-label={`${entry.title}, ${entry.year_start}`}
       className="group cosmos-node-wiggle cursor-pointer outline-none"
       style={driftStyle}
+      onPointerDown={(event) => {
+        event.stopPropagation();
+      }}
       onPointerEnter={() => onHover?.(entry.id)}
       onPointerLeave={() => onHover?.(null)}
       onClick={(event) => {
