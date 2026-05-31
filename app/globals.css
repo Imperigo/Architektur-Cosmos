@@ -2731,19 +2731,18 @@ body:has(.orbit-page) {
 
 .mobile-atlas-dock {
   display: flex;
+  flex-wrap: wrap;
   gap: 7px;
   margin-inline: calc(var(--ui-safe-edge) * -0.25);
-  overflow-x: auto;
-  overflow-y: hidden;
+  overflow: hidden;
   padding: 1px calc(var(--ui-safe-edge) * 0.25) 4px;
   scrollbar-width: none;
-  scroll-snap-type: x proximity;
   -webkit-overflow-scrolling: touch;
 }
 
 .mobile-atlas-dock button {
-  flex: 0 0 auto;
-  min-width: 84px;
+  flex: 1 1 calc(25% - 7px);
+  min-width: 68px;
   min-height: 48px;
   border: 1px solid rgb(247 247 244 / 22%);
   border-radius: 999px;
@@ -2756,7 +2755,6 @@ body:has(.orbit-page) {
   font-weight: 680;
   letter-spacing: 0.08em;
   line-height: 1;
-  scroll-snap-align: start;
   text-transform: uppercase;
   touch-action: manipulation;
 }

@@ -132,10 +132,10 @@ type ShellManifest = {
   safety: Record<string, boolean>;
 };
 
-const roleState = roleStateData as RoleState;
-const roleVariantsReport = roleVariantsData as RoleVariantsReport;
-const appRouteSpec = appRouteSpecData as AppRouteSpec;
-const shellManifest = shellManifestData as ShellManifest;
+const roleState = roleStateData as unknown as RoleState;
+const roleVariantsReport = roleVariantsData as unknown as RoleVariantsReport;
+const appRouteSpec = appRouteSpecData as unknown as AppRouteSpec;
+const shellManifest = shellManifestData as unknown as ShellManifest;
 const activeRole = roleVariantsReport.variants.find((variant) => variant.role.id === roleState.session.active_role_id) ?? roleVariantsReport.variants[0];
 
 const toneClasses: Record<Tone, string> = {
