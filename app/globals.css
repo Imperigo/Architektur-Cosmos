@@ -6706,6 +6706,7 @@ html[data-cosmos-browser="opera"] .relation-strand {
   }
 
   .kosmo-asset-shell {
+    display: block;
     grid-template-rows: auto auto auto;
     gap: 12px;
     height: 100%;
@@ -6717,6 +6718,12 @@ html[data-cosmos-browser="opera"] .relation-strand {
     overflow-y: auto;
     overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
+  }
+
+  .kosmo-asset-header,
+  .kosmo-asset-lab,
+  .kosmo-asset-library {
+    margin-bottom: 12px;
   }
 
   .kosmo-asset-header {
@@ -6776,6 +6783,7 @@ html[data-cosmos-browser="opera"] .relation-strand {
   .kosmo-asset-library,
   .kosmo-asset-grid,
   .kosmo-asset-inspector {
+    min-height: auto;
     max-height: none;
     overflow: visible;
   }

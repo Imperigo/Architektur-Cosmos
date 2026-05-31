@@ -88,6 +88,10 @@ KosmoAsset:
 - KosmoData-Bruecke im Asset-Inspector sichtbar gemacht: Referenzprojekte wie
   `villa-savoye` und `pantheon` duerfen als Kontextsprache dienen, aber die
   Asset-Freigabe bleibt ein eigener Rechte-, Review- und Public-Gate-Prozess.
+- Mobile-KosmoAsset-Fix: Die schmale Ansicht nutzt in der Shell nun normalen
+  Dokumentfluss mit internem Scrollen, damit Assetkarten nicht mehr in den
+  Inspektor kollabieren. Der Bruch wurde live im schmalen Browser-Viewport
+  gemessen: die Grid-Hoehe war kleiner als die erste Karte.
 
 ## Informationsqualitaet
 
