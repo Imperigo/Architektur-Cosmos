@@ -26,6 +26,10 @@ Gruen:
 - `npm run database:planet-thumbnails:audit`
 - `npm run kosmo:asset-library-check`
 - `npm run kosmo:asset-handoff-smoke`
+- `npm run database:profile-audit`
+- `npm run database:pilot-quality`
+- `npm run brain:model-status`
+- `npm run brain:polish-texts`
 
 Tooling-Haenger:
 
@@ -67,6 +71,31 @@ KosmoAsset:
 - KosmoData-Bruecke im Asset-Inspector sichtbar gemacht: Referenzprojekte wie
   `villa-savoye` und `pantheon` duerfen als Kontextsprache dienen, aber die
   Asset-Freigabe bleibt ein eigener Rechte-, Review- und Public-Gate-Prozess.
+
+## Informationsqualitaet
+
+- Database Profile Audit: 106/112 Eintraege haben Profile. Naechster
+  vorgeschlagener Batch: `centre-pompidou`, `elemental-quinta-monroy`,
+  `marc-antoine-laugier-primitive-hut`, `panopticon`, `new-babylon`,
+  `s-m-l-xl`.
+- Text-Polish Review: 8 Eintraege wurden im Review-Modus geprueft, ohne
+  `data/mock-entries.json` zu beschreiben.
+- Model Status: 5 Eintraege haben ein public Preview-GLB, 107 sind geplant,
+  0 fehlen komplett im Modellplan.
+- Pilot Quality Audit: 5/5 Kernpiloten bestehen ohne `needs_work`. Villa
+  Savoye ist bei 100%, High Line bei 92%, Ingenbohl/MFO Park/Goebekli Tepe bei
+  85%. Wiederkehrende Schwaeche ist nicht Material oder 3D, sondern
+  `Netzwerk / DNA`: die Texte sollen staerker erklaeren, wie ein Objekt mit
+  verwandten Projekten, Typologien und historischen Linien verbunden ist.
+
+Naechster Textstandard bleibt:
+
+1. These / architektonische Pointe.
+2. Netzwerk und DNA: Wie steht das Objekt zu aehnlichen Projekten?
+3. Topos: Ort, Landschaft, Stadt, kultureller Kontext.
+4. Typos: Programm, Typologie, Raumordnung.
+5. Tektonik: Material, Tragwerk, Fuge, Konstruktion.
+6. Modellwert: Was kann das 2D-/3D-/Blender-Modell spaeter sinnvoll zeigen?
 
 ## Heute weiter
 

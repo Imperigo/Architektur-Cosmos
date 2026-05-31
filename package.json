@@ -55,6 +55,7 @@
     "database:source-audit": "node scripts/research-source-registry-audit.mjs",
     "database:pilot-enrich": "node scripts/pilot-enrichment-review.mjs",
     "database:profile-audit": "node scripts/database-profile-audit.mjs",
+    "database:pilot-quality": "node scripts/database-pilot-quality-audit.mjs",
     "database:hero-images": "node scripts/research-hero-images.mjs",
     "database:hero-images:audit": "node scripts/audit-hero-images.mjs",
     "database:planet-thumbnails:audit": "node scripts/audit-planet-thumbnails.mjs",
