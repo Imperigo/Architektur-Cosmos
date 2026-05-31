@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-31T13:46:15.146Z",
+  "generated_at": "2026-05-31T13:50:09.864Z",
   "generator": "kosmo-orbit-role-ui-variants",
   "workspace_path": "examples/kosmo-orbit/workspace.demo.json",
   "panel_spec": "examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-ui-panel.generated.json",

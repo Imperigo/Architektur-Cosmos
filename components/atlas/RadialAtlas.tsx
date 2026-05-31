@@ -21,6 +21,8 @@ import assetHandoffSmokePreview from '@/examples/kosmo-assets/kosmo-asset-demo/r
 import assetHumanReviewSessionPreview from '@/examples/kosmo-assets/kosmo-asset-demo/review/asset-human-review-session.generated.json';
 import assetLibraryPreview from '@/examples/kosmo-assets/kosmo-asset-demo/library.json';
 import assetReviewPackPreview from '@/examples/kosmo-assets/kosmo-asset-demo/review/asset-review-pack.generated.json';
+import orbitRoleStatePreview from '@/examples/kosmo-orbit/role-state.demo.json';
+import orbitWorkspacePreview from '@/examples/kosmo-orbit/workspace.demo.json';
 import { atlasSize, styleSectors } from '@/lib/atlas-layout';
 import { kosmoOrbitModules, type KosmoModuleId, type KosmoOrbitModule } from '@/lib/kosmo-modules';
 import { publicDisplayMediaUrl } from '@/lib/media';
@@ -2453,6 +2455,7 @@ function ModuleHub({ onOpenKosmoData, onOpenKosmoAsset }: { onOpenKosmoData: () 
           <CosmosGlyph />
         </svg>
       </div>
+      <OrbitRoleStatePanel />
       {modules.map((module) => {
         const isReady = module.status === 'bereit';
         return (
@@ -2527,6 +2530,57 @@ function ModuleHub({ onOpenKosmoData, onOpenKosmoAsset }: { onOpenKosmoData: () 
       ) : null}
     </div>
   );
+}
+
+function OrbitRoleStatePanel() {
+  const activeRole = orbitWorkspacePreview.roles.find((role) => role.id === orbitRoleStatePreview.session.active_role_id);
+  const selectedRole = orbitWorkspacePreview.roles.find((role) => role.id === orbitRoleStatePreview.role_preview.selected_role_id);
+  const primaryModule = orbitRoleStatePreview.visible_modules.find((module) => module.visibility === 'primary');
+  const primaryTool = orbitWorkspacePreview.tools.find((tool) => tool.id === primaryModule?.tool_id);
+  const availableCount = orbitRoleStatePreview.visible_modules.filter((module) => module.visibility === 'available' || module.visibility === 'primary').length;
+
+  return (
+    <aside
+      className="module-role-state"
+      aria-label="KosmoOrbit Rollen- und Gate-Status"
+      onClick={(event) => event.stopPropagation()}
+      onPointerDown={(event) => event.stopPropagation()}
+    >
+      <div className="module-role-state-head">
+        <small>Rollenstatus</small>
+        <strong>{selectedRole?.label ?? activeRole?.label ?? 'Review Rolle'}</strong>
+        <span>{orbitRoleStatePreview.state.mode === 'local_demo' ? 'lokale Demo' : orbitRoleStatePreview.state.mode}</span>
+      </div>
+      <div className="module-role-state-grid">
+        <span data-tone="ready">
+          <small>Sichtbar</small>
+          <strong>{availableCount}</strong>
+        </span>
+        <span data-tone="review">
+          <small>Primär</small>
+          <strong>{primaryTool?.name ?? 'KosmoDesign'}</strong>
+        </span>
+        <span data-tone="blocked">
+          <small>Gesperrt</small>
+          <strong>{orbitRoleStatePreview.blocked_actions.length}</strong>
+        </span>
+      </div>
+      <ul className="module-role-state-blockers" aria-label="Blockierte Aktionen">
+        {orbitRoleStatePreview.blocked_actions.map((action) => (
+          <li key={action.id}>
+            <span>{action.label}</span>
+            <small>{formatOrbitGateLabel(action.gate_id)}</small>
+          </li>
+        ))}
+      </ul>
+    </aside>
+  );
+}
+
+function formatOrbitGateLabel(gateId: string) {
+  return gateId
+    .replace(/-/g, ' ')
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
 function KosmoAssetWorkspace({ onReturnToHub }: { onReturnToHub: () => void }) {
