@@ -9,6 +9,12 @@ Kosmo MVP 0.1 soll nicht "ein CAD" werden. Der erste Beweis soll sein:
 
 **Von Wettbewerb/Ort/Skizze zu einem nachvollziehbaren Kosmo-Projektpaket mit Brief, Daten, Blender-Grundmodell, einfachem Planexport und Variantenprotokoll.**
 
+Produktentscheidung 2026-05-31: KosmoOrbit ist die Hauptsoftware des
+Architektur-Kosmos-Produkts. Der MVP darf deshalb nicht nur ein loses
+Kommando-Set beweisen, sondern muss langfristig auf eine lokale
+Software-Zentrale zielen, ueber die Kosmo alle Untertools, Benutzerprofile,
+Rechte, Jobs, Updates, Reparaturen, Freigaben und Projektpakete steuert.
+
 Der MVP verbindet die bereits laufenden Stränge:
 
 - Kosmo Data / Architecture Cosmos
@@ -174,19 +180,28 @@ Noch nicht:
 
 Aufgabe:
 
-- Software-Schicht zwischen Modulen.
-- Definiert Schemas, Commands, Paketstruktur und Status.
+- Hauptsoftware und Steuerzentrale zwischen lokaler KI, Kosmo Zentrale,
+  Arbeitsstationen und Untertools.
+- Definiert Schemas, Commands, Paketstruktur, Status, Rollenprofile,
+  Rechte, Tool-Handoffs und Review-Gates.
+- Oeffnet Kosmo Design, Kosmo Prepare, Kosmo Draw, Kosmo Viz, Kosmo Publish,
+  Kosmo Data und KosmoAsset je nach Benutzerrolle mit passender Tiefe.
 
 Minimaler MVP:
 
 - `kosmo.project.json` als zentrales Manifest
 - Commands wie `prepare`, `context-matrix`, `context-selection`, `design-import`, `draw-export`, `viz-preview`, `publish-review-pack`
 - klare Modulgrenzen
+- erste Rollen- und Rechtebegriffe fuer Admin, Projektleitung, Entwurf,
+  Zeichnung und Ausbildung
+- lokale Diagnose-/Review-Reports als Vorstufe fuer spaetere Update- und
+  Reparaturfunktionen
 
 Noch nicht:
 
 - grosser Plugin-Marktplatz
 - Cloud-SaaS-Orchestrierung
+- vollstaendige Arbeitsstations-App mit allen Rollenoberflaechen
 
 ### Kosmo Design
 

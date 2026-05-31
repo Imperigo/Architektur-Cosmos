@@ -1,0 +1,142 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-05-31T11:38:45.302Z",
+  "generator": "kosmo-orbit-full-review",
+  "workspace_path": "examples/kosmo-orbit/workspace.demo.json",
+  "project_root": "examples/kosmo-projects/kosmo-demo-001",
+  "status": "orbit_full_review_ready_for_review_mode",
+  "policy": {
+    "review_only": true,
+    "no_uploads": true,
+    "no_public_publish": true,
+    "no_external_accounts": true,
+    "no_costs": true,
+    "no_blender_launch": true,
+    "no_geometry_generation": true
+  },
+  "summary": {
+    "step_count": 7,
+    "passed_steps": 7,
+    "failed_steps": 0,
+    "workspace_status": "orbit_blocked_gates_present",
+    "project_status": "local_review_only",
+    "project_artifact_count": 59,
+    "project_review_artifact_count": 46,
+    "design_handoff_status": "handoff_review_only",
+    "design_open_mode": "context_review_only",
+    "design_generation_allowed": false,
+    "design_blocker_count": 4,
+    "design_panel_state": "review_only",
+    "primary_action": "Open Review Mode",
+    "primary_action_enabled": true,
+    "design_ui_prototype_status": "ui_prototype_ready",
+    "design_ui_prototype_html": "examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-ui-prototype.generated.html",
+    "design_ui_smoke_status": "ui_smoke_passed",
+    "design_ui_smoke_passed_checks": 12,
+    "design_ui_smoke_check_count": 12
+  },
+  "outputs": {
+    "full_review_json": "examples/kosmo-orbit/review/orbit-full-review.generated.json",
+    "full_review_markdown": "examples/kosmo-orbit/review/orbit-full-review.generated.md",
+    "workspace_status_markdown": "examples/kosmo-orbit/review/orbit-status-report.generated.md",
+    "project_inspector_markdown": "examples/kosmo-projects/kosmo-demo-001/orbit/project-inspector.generated.md",
+    "design_handoff_markdown": "examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-preview.generated.md",
+    "design_ui_panel_markdown": "examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-ui-panel.generated.md",
+    "design_ui_prototype_html": "examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-ui-prototype.generated.html",
+    "design_ui_smoke_markdown": "examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-ui-smoke.generated.md"
+  },
+  "steps": [
+    {
+      "id": "workspace_check",
+      "label": "Workspace Check",
+      "command": "npm run kosmo:orbit-check -- --workspace examples/kosmo-orbit/workspace.demo.json",
+      "status": "passed",
+      "exit_code": 0,
+      "report_path": null,
+      "report_exists": false,
+      "report_status": null,
+      "stdout_tail": "File: examples/kosmo-orbit/workspace.demo.json\nStatus: passed\nRoles: 8\nTools: 8\nProjects: 1\nGates: 7\nFailures: 0\nWarnings: 0",
+      "stderr_tail": ""
+    },
+    {
+      "id": "workspace_status",
+      "label": "Workspace Status",
+      "command": "npm run kosmo:orbit-status -- --workspace examples/kosmo-orbit/workspace.demo.json",
+      "status": "passed",
+      "exit_code": 0,
+      "report_path": "examples/kosmo-orbit/review/orbit-status-report.generated.json",
+      "report_exists": true,
+      "report_status": "orbit_blocked_gates_present",
+      "stdout_tail": "KosmoOrbit status report generated\nWorkspace: Architecture Kosmos Demo Office\nStatus: orbit_blocked_gates_present\nTools: 8\nGates: 7\nBlocked gates: 2\nNeeds review: 4\nWrote: examples/kosmo-orbit/review/orbit-status-report.generated.md",
+      "stderr_tail": ""
+    },
+    {
+      "id": "project_inspector",
+      "label": "Project Package Inspector",
+      "command": "npm run kosmo:orbit-project-inspector -- --project examples/kosmo-projects/kosmo-demo-001",
+      "status": "passed",
+      "exit_code": 0,
+      "report_path": "examples/kosmo-projects/kosmo-demo-001/orbit/project-inspector.generated.json",
+      "report_exists": true,
+      "report_status": "local_review_only",
+      "stdout_tail": "Project: Kosmo Demo 001\nStatus: local_review_only\nModules: 8\nArtifacts: 59\nMissing artifacts: 0\nReview artifacts: 46\nDisabled gates: 3\nWrote: examples/kosmo-projects/kosmo-demo-001/orbit/project-inspector.generated.md",
+      "stderr_tail": ""
+    },
+    {
+      "id": "design_handoff",
+      "label": "KosmoDesign Handoff Preview",
+      "command": "npm run kosmo:orbit-design-handoff -- --project examples/kosmo-projects/kosmo-demo-001 --workspaceReport examples/kosmo-orbit/review/orbit-status-report.generated.json --projectInspector examples/kosmo-projects/kosmo-demo-001/orbit/project-inspector.generated.json",
+      "status": "passed",
+      "exit_code": 0,
+      "report_path": "examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-preview.generated.json",
+      "report_exists": true,
+      "report_status": "handoff_review_only",
+      "stdout_tail": "> node scripts/kosmo-orbit-design-handoff-preview.mjs --project examples/kosmo-projects/kosmo-demo-001 --workspaceReport examples/kosmo-orbit/review/orbit-status-report.generated.json --projectInspector examples/kosmo-projects/kosmo-demo-001/orbit/project-inspector.generated.json\n\nKosmoOrbit KosmoDesign handoff preview generated\nProject: Kosmo Demo 001\nMode: context_review_only\nDesign generation allowed: false\nBlocked inputs: 2\nWrote: examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-preview.generated.md",
+      "stderr_tail": ""
+    },
+    {
+      "id": "design_ui_panel",
+      "label": "KosmoDesign UI Panel Spec",
+      "command": "npm run kosmo:orbit-design-ui-panel -- --project examples/kosmo-projects/kosmo-demo-001 --handoff orbit/design-handoff-preview.generated.json",
+      "status": "passed",
+      "exit_code": 0,
+      "report_path": "examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-ui-panel.generated.json",
+      "report_exists": true,
+      "report_status": "ui_panel_spec_ready",
+      "stdout_tail": "> node scripts/kosmo-orbit-design-ui-panel-spec.mjs --project examples/kosmo-projects/kosmo-demo-001 --handoff orbit/design-handoff-preview.generated.json\n\nKosmoOrbit KosmoDesign UI panel spec generated\nProject: Kosmo Demo 001\nPanel state: review_only\nPrimary action: Open Review Mode\nPrimary enabled: true\nWrote: examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-ui-panel.generated.md",
+      "stderr_tail": ""
+    },
+    {
+      "id": "design_ui_prototype",
+      "label": "KosmoDesign Static UI Prototype",
+      "command": "npm run kosmo:orbit-design-ui-prototype -- --project examples/kosmo-projects/kosmo-demo-001 --panel orbit/design-handoff-ui-panel.generated.json",
+      "status": "passed",
+      "exit_code": 0,
+      "report_path": "examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-ui-prototype.generated.json",
+      "report_exists": true,
+      "report_status": "ui_prototype_ready",
+      "stdout_tail": "> architecture-cosmos@0.1.0 kosmo:orbit-design-ui-prototype\n> node scripts/kosmo-orbit-design-ui-prototype.mjs --project examples/kosmo-projects/kosmo-demo-001 --panel orbit/design-handoff-ui-panel.generated.json\n\nKosmoOrbit KosmoDesign UI prototype generated\nProject: Kosmo Demo 001\nPanel state: review_only\nHTML: examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-ui-prototype.generated.html\nManifest: examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-ui-prototype.generated.json",
+      "stderr_tail": ""
+    },
+    {
+      "id": "design_ui_smoke",
+      "label": "KosmoDesign UI Smoke",
+      "command": "npm run kosmo:orbit-design-ui-smoke -- --project examples/kosmo-projects/kosmo-demo-001 --html orbit/design-handoff-ui-prototype.generated.html --manifest orbit/design-handoff-ui-prototype.generated.json",
+      "status": "passed",
+      "exit_code": 0,
+      "report_path": "examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-ui-smoke.generated.json",
+      "report_exists": true,
+      "report_status": "ui_smoke_passed",
+      "stdout_tail": "> architecture-cosmos@0.1.0 kosmo:orbit-design-ui-smoke\n> node scripts/kosmo-orbit-design-ui-smoke.mjs --project examples/kosmo-projects/kosmo-demo-001 --html orbit/design-handoff-ui-prototype.generated.html --manifest orbit/design-handoff-ui-prototype.generated.json\n\nKosmoOrbit KosmoDesign UI smoke\nHTML: examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-ui-prototype.generated.html\nStatus: ui_smoke_passed\nChecks: 12/12 passed\nWrote: examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-ui-smoke.generated.md",
+      "stderr_tail": ""
+    }
+  ],
+  "next_actions": [
+    "Implement the first local/static Orbit UI prototype from the generated KosmoDesign panel spec.",
+    "Resolve or explicitly reject blocked context inputs before allowing design generation.",
+    "Keep generated project artifacts local until human review closes design/draw/viz evidence.",
+    "Keep public, rights and publish gates visible as blocked in the Orbit shell.",
+    "Use the generated static HTML prototype as the visual reference for the first KosmoOrbit app screen.",
+    "Keep the UI smoke in the Orbit full review before any UI handoff or prototype change."
+  ]
+}

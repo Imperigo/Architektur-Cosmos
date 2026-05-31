@@ -28,9 +28,17 @@ Das System ist nicht nur ein CAD und nicht nur eine Website. Es ist ein lokales 
 
 - Datenbanken speichern Architekturprojekte, 2D-/3D-Assets und Texturen.
 - Kosmo Data ist der Wissensspeicher, der Informationen fuer Architekten empfaengt und sendet.
-- Kosmo Orbit ist die Software-Schicht, in der die spezialisierten Kosmo-Module kreisen.
+- Kosmo Orbit ist die installierte Hauptsoftware und Steuerzentrale, in der die lokale KI Kosmo alle spezialisierten Tools nutzt, ueberwacht, aktualisiert, repariert und miteinander verbindet.
 - Kosmo Design ist das zentrale Designtool / der Planungsbot fuer Architekten.
 - Kosmo Zentrale ist die physische Hardware und das Zuhause der lokalen KI `Kosmo`.
+
+Produktentscheidung 2026-05-31: Wenn ein Buero Architektur Kosmos kauft,
+erhaelt es perspektivisch eine starke lokale Kosmo Zentrale als Hardware plus
+KosmoOrbit als Hauptsoftware. Kosmo laeuft lokal auf dieser Hardware und bedient
+das Buero ueber KosmoOrbit: Tool-Start, Tool-Verbindung, Monitoring, Updates,
+Reparatur, Projektgedaechtnis, Rechte- und Freigabegates, Rollenprofile und
+Handoffs zwischen den Untertools. KosmoOrbit ist damit nicht nur ein
+Modul-Hub, sondern die operative Software-Zentrale des gesamten Produkts.
 
 ## 3. Systemkarte
 
@@ -88,14 +96,47 @@ Rolle:
 
 ### Kosmo Orbit
 
-Kosmo Orbit ist die Software-Umlaufbahn um die physische Zentrale. Es ist die verbindende Software-Schicht zwischen:
+Kosmo Orbit ist die Hauptsoftware, die auf der lokalen Kosmo Zentrale und auf
+den Arbeitsstationen im Architekturbuero installiert wird. Es ist die
+Bedienoberflaeche, Steuerzentrale und Integrationsschicht, ueber die Kosmo alle
+Tools nutzt.
+
+Kosmo Orbit verbindet:
 
 - Kosmo Data
 - Kosmo Design
 - Kosmo Prepare / Draw / Viz / Publish
 - Kosmo Zentrale
 
-Kosmo Orbit kann als Modul-Hub, Plugin-System und Integrationsschicht verstanden werden.
+Kosmo Orbit kann als Produkt-Shell, Modul-Hub, Plugin-System,
+Agenten-Kontrollraum und Buero-Betriebssystem verstanden werden.
+
+Kernaufgaben:
+
+- lokale KI Kosmo starten, ueberwachen, updaten und bei Fehlern reparieren
+- Tools, Agenten, Jobs, Datenbanken, Blender-/ArchiCAD-/Cloud-Connectoren und
+  lokale Modelle verbinden
+- projektbezogene Aufgaben, Freigaben, Unsicherheiten, Rechtepruefungen und
+  Qualitaetsgates sichtbar machen
+- alle Untertools rollenbasiert oeffnen, vereinfachen oder erweitern
+- Benutzerprofile, Rechte und Oberflaechen pro Person steuern
+- auf jeder Arbeitsstation einen passenden Zugang zur zentralen Kosmo-Logik
+  bereitstellen
+
+Rollenprofile sind Teil des Produktkerns. Erste Zielrollen:
+
+- Chef / Buero-Inhaber: Admin, Strategie, Freigaben, Kosten, Public-Gates
+- IT-/KI-Spezialist: Admin, Modelle, Infrastruktur, Updates, Integrationen
+- Projektleiter Architekt: Projektsteuerung, Entscheidungen, Review,
+  Abgabe- und Koordinationslogik
+- Entwurfsarchitekt: Kosmo Design, Varianten, Referenzen, Modelle, Visualisierung
+- Zeichner EFZ: Planwerk, Layer, Details, Ausfuehrung, Korrekturen
+- Praktikant: gefuehrte Recherche, Modell-/Planassistenz, begrenzte Schreibrechte
+- Lehrling: Lernmodus, Erklaerungen, Schulstoff, sichere Uebungen
+- Schnupperstift: sehr einfache, gefuehrte Oberflaeche ohne riskante Aktionen
+
+Damit passt sich nicht nur die IT-Verwaltung, sondern auch die eigentliche
+Architektursoftware an den Erfahrungsstand und die Verantwortung der Person an.
 
 ### Kosmo Zentrale
 
@@ -119,6 +160,13 @@ Rolle:
 - Blender-/AR-/KI-gestuetzte Designarbeit
 - Verbindung von Skizze, Sprache, Geste, Referenz und 3D-Modell
 - Ausgangspunkt fuer Planwerk, Visualisierung und Publishing
+
+Kosmo Design ist die wichtigste Untersoftware von KosmoOrbit fuer die
+architektonische Produktion. Die Basis entsteht in Kooperation mit den
+laufenden Claude-Code-/Cowork-Straengen KosmoDraw, KosmoViz, KosmoPrepare und
+KosmoPublish. KosmoOrbit stellt die zentrale Shell, Rechte, Rollen,
+Projektpakete und Tool-Orchestrierung; KosmoDesign ist die raeumliche Werkbank,
+in der Entwurf, Modell, Plan und Architekturentscheidung konkret werden.
 
 ### Kosmo Prepare
 
@@ -183,7 +231,7 @@ Rolle:
 
 Die Grafik bestaetigt eine wichtige Produktentscheidung:
 
-**Architektur Kosmos ist das Netzwerk. Kosmo ist die KI. Kosmo Zentrale ist die lokale Hardware. Kosmo Orbit ist die Software-Schicht. Kosmo Design ist das zentrale Arbeitswerkzeug.**
+**Architektur Kosmos ist das Netzwerk. Kosmo ist die lokale KI. Kosmo Zentrale ist die lokale Hardware. KosmoOrbit ist die Hauptsoftware und Steuerzentrale. Kosmo Design ist die wichtigste architektonische Untersoftware und raeumliche Arbeitswerkbank.**
 
 Damit wird die Software-Idee greifbarer:
 

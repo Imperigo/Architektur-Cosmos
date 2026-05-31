@@ -10,6 +10,10 @@ Architektur Kosmos liegt nicht in einem einzigen Repo. Die sinnvolle Ordnung ist
 
 - **Dieses Repo** ist die kanonische Public-/KosmoData-Schicht und der Ort fuer
   gemeinsame Datenvertraege wie das Kosmo-Projektpaket.
+- **KosmoOrbit** ist die entstehende Hauptsoftware- und Steuerzentrale des
+  Produkts. Die kanonische Produktentscheidung liegt in
+  `docs/kosmo-orbit-product-vision.md`, der erste Bauplan in
+  `docs/kosmo-orbit-mvp-roadmap.md`.
 - **KosmoDraw** ist die aktive Blender-Werkbank fuer Kosmo Design, Kosmo Draw
   und den ersten Kosmo Viz Proof.
 - **Kosmo Zentrale** ist die Control-Hub- und HomeStation-Schicht fuer Jobs,
@@ -29,6 +33,7 @@ Architektur Kosmos liegt nicht in einem einzigen Repo. Die sinnvolle Ordnung ist
 | Ebene | Quelle der Wahrheit | Aktive Rolle | Bemerkung |
 | --- | --- | --- | --- |
 | Produktname / Modulnamen | `docs/architektur-kosmos-network-concept.md` + Konzeptbild | Architektur Kosmos, Kosmo, Kosmo Data, Kosmo Orbit, Kosmo Zentrale, Kosmo Design, Kosmo Prepare, Kosmo Draw, Kosmo Viz, Kosmo Publish | Historische Ordnernamen duerfen abweichen, z.B. `KosmosPrepare`. |
+| KosmoOrbit Hauptsoftware | `docs/kosmo-orbit-product-vision.md` + `docs/kosmo-orbit-mvp-roadmap.md` | Installierte Hauptsoftware, Arbeitsstations-Shell, Rollenprofile, Tool-Hub, Review-Gates, lokale KI-Bedienung | Neue Produktentscheidung 2026-05-31: KosmoOrbit ist die operative Software-Zentrale, nicht nur Modul-Umlaufbahn. |
 | Public Data / KosmoData | `<repo_architecture_cosmos>` | Website, Atlas, Brain-Tools, Rechte-/Quellenlogik, KosmoData-Pipelines | Static export bleibt harte Grenze. |
 | Gemeinsamer Datenvertrag | `schema/kosmo-project-package.schema.json` + `examples/kosmo-projects/kosmo-demo-001` | Lokales Projektpaket fuer alle Module | Aktuell bester Integrationsanker zwischen Repos. |
 | Kosmo Design / Draw / Viz Proof | `<local_projects>/KosmoDraw` + dieses Repo | Blender-Add-on `kosmo_design`, Package Import, Kontextkandidaten, Decision Matrix, Context Review, Context Selection, Write-back, SVG Draw Export, PNG Viz Preview | KosmoDraw ist aktive Werkbank; dieses Repo haelt den Gate-/Package-Vertrag. |
@@ -59,6 +64,34 @@ Nicht hier hinein gehoert:
 - serverseitige Runtime fuer private Projektdaten
 - R2/D1-Schreibpfade ohne expliziten Auftrag
 - Blender Add-on-Quellcode als primaerer Entwicklungsort
+
+### KosmoOrbit
+
+Aktiv fuer:
+
+- Hauptsoftware- und Steuerzentralen-Vision
+- Rollenprofile fuer Chef, IT-/KI-Spezialist, Projektleitung, Entwurf,
+  Zeichnung, Praktikum, Lehre und Schnupperzugang
+- Tool-Hub zwischen KosmoData, KosmoAsset, KosmoDesign, KosmoPrepare,
+  KosmoDraw, KosmoViz, KosmoPublish und KosmoZentrale
+- lokale Projektpakete, Gates, Handoffs, Diagnosen, Updates und spaetere
+  Reparatur-/Monitoringlogik
+- gemeinsame Sprache fuer `ready`, `needs_review`, `blocked`, `local_only`,
+  `approved_local` und `approved_public`
+
+Noch nicht hier hinein gehoert:
+
+- echte lokale Runtime mit Zugriff auf private Buero-Daten ohne
+  KosmoZentrale-Konzept
+- Auth-/Account-System fuer Produktion
+- Cloud-SaaS-Orchestrierung
+- automatische Updates, Publikationen oder externe Kosten ohne Gate
+
+Naechster Schritt:
+
+- `schema/kosmo-orbit-workspace.schema.json`
+- `examples/kosmo-orbit/workspace.demo.json`
+- `npm run kosmo:orbit-check`
 
 ### KosmoDraw
 

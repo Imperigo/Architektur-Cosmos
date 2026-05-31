@@ -1,0 +1,37 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-05-31T11:38:45.029Z",
+  "generator": "kosmo-orbit-design-ui-prototype",
+  "source_panel_spec": "examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-ui-panel.generated.json",
+  "html_output": "examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-ui-prototype.generated.html",
+  "status": "ui_prototype_ready",
+  "project": {
+    "id": "kosmo-demo-001",
+    "name": "Kosmo Demo 001",
+    "risk_level": "local_review_only"
+  },
+  "panel_state": "review_only",
+  "primary_action": {
+    "id": "open-kosmo-design-review-mode",
+    "label": "Open Review Mode",
+    "enabled": true,
+    "mode": "context_review_only",
+    "requires_confirmation": false,
+    "effect": "open_kosmo_design_context_review_only"
+  },
+  "safety": {
+    "static_html_only": true,
+    "no_network_calls": true,
+    "no_blender_launch": true,
+    "no_geometry_generation": true,
+    "no_uploads": true,
+    "no_public_publish": true
+  },
+  "smoke_expectations": {
+    "contains_panel_title": "KosmoDesign",
+    "primary_action_enabled": true,
+    "generation_enabled": false,
+    "blocker_count": 4,
+    "guardrail_count": 7
+  }
+}

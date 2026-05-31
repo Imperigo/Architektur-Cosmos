@@ -1,0 +1,311 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-05-31T11:38:44.778Z",
+  "generator": "kosmo-orbit-design-ui-panel-spec",
+  "source_handoff": "examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-preview.generated.json",
+  "status": "ui_panel_spec_ready",
+  "project": {
+    "id": "kosmo-demo-001",
+    "name": "Kosmo Demo 001",
+    "risk_level": "local_review_only"
+  },
+  "current_user": {
+    "name": "Andrin Baumann",
+    "role_label": "Chef / Owner Admin",
+    "ui_mode": "full_admin"
+  },
+  "panel": {
+    "id": "kosmo-design-handoff-panel",
+    "title": "KosmoDesign",
+    "subtitle": "Design handoff",
+    "state": "review_only",
+    "tone": "yellow",
+    "purpose": "Decide how KosmoOrbit may open KosmoDesign for this project and role.",
+    "layout": {
+      "width": "orbit-side-panel",
+      "sections": [
+        "status_header",
+        "role_gate",
+        "blockers",
+        "allowed_actions",
+        "model_profile",
+        "context_inputs",
+        "guardrails",
+        "next_actions"
+      ]
+    }
+  },
+  "badges": [
+    {
+      "id": "open-mode",
+      "label": "context_review_only",
+      "tone": "yellow"
+    },
+    {
+      "id": "role",
+      "label": "Chef / Owner Admin",
+      "tone": "neutral"
+    },
+    {
+      "id": "generation",
+      "label": "generation blocked",
+      "tone": "red"
+    },
+    {
+      "id": "risk",
+      "label": "local_review_only",
+      "tone": "blue"
+    }
+  ],
+  "sections": {
+    "status_header": {
+      "title": "Open Mode",
+      "value": "context_review_only",
+      "description": "KosmoDesign may show context and model data, but must not generate or mutate design geometry."
+    },
+    "role_gate": {
+      "title": "Current Role",
+      "rows": [
+        {
+          "label": "User",
+          "value": "Andrin Baumann"
+        },
+        {
+          "label": "Role",
+          "value": "Chef / Owner Admin"
+        },
+        {
+          "label": "UI mode",
+          "value": "full_admin"
+        },
+        {
+          "label": "Can use KosmoDesign",
+          "value": "yes"
+        }
+      ]
+    },
+    "blockers": {
+      "title": "Blockers",
+      "empty_label": "No blockers",
+      "items": [
+        {
+          "tone": "red",
+          "text": "Context handoff does not approve design generation."
+        },
+        {
+          "tone": "red",
+          "text": "Workspace gates for KosmoDesign are blocked, needs_review or unknown."
+        },
+        {
+          "tone": "red",
+          "text": "Design artifacts still require human review."
+        },
+        {
+          "tone": "red",
+          "text": "Context handoff contains blocked inputs."
+        }
+      ]
+    },
+    "allowed_actions": {
+      "title": "Allowed Actions",
+      "items": [
+        {
+          "tone": "blue",
+          "text": "Open KosmoDesign only in context review mode."
+        },
+        {
+          "tone": "blue",
+          "text": "Show model-profile rooms, stories, areas and collections as read-only project context."
+        },
+        {
+          "tone": "blue",
+          "text": "Show blocked context inputs and guardrails before any geometry action."
+        },
+        {
+          "tone": "blue",
+          "text": "Keep generation, public release and external upload disabled."
+        }
+      ]
+    },
+    "model_profile": {
+      "title": "Model Profile",
+      "summary": [
+        {
+          "label": "Source confidence",
+          "value": "conceptual"
+        },
+        {
+          "label": "Stories",
+          "value": 2
+        },
+        {
+          "label": "Rooms",
+          "value": 3
+        },
+        {
+          "label": "Areas",
+          "value": 1
+        },
+        {
+          "label": "Collections",
+          "value": 6
+        }
+      ],
+      "rooms": [
+        {
+          "id": "room-studio",
+          "name": "Shared Studio",
+          "story": "level-00",
+          "function": "work",
+          "area_m2": 48
+        },
+        {
+          "id": "room-library",
+          "name": "Project Library",
+          "story": "level-00",
+          "function": "reference",
+          "area_m2": 18
+        },
+        {
+          "id": "room-meeting",
+          "name": "Meeting",
+          "story": "level-01",
+          "function": "meeting",
+          "area_m2": 16
+        }
+      ]
+    },
+    "context_inputs": {
+      "title": "Context Inputs",
+      "summary": [
+        {
+          "label": "Candidates",
+          "value": 2
+        },
+        {
+          "label": "Context inputs",
+          "value": 0
+        },
+        {
+          "label": "Design seeds",
+          "value": 0
+        },
+        {
+          "label": "Blocked inputs",
+          "value": 2
+        },
+        {
+          "label": "Unresolved inputs",
+          "value": 2
+        }
+      ],
+      "blocked_inputs": [
+        {
+          "id": "context-origin",
+          "label": "Project origin marker",
+          "reason": "human_context_selection_required",
+          "selected_use": "coordinate_reference",
+          "downstream_permission": "blocked"
+        },
+        {
+          "id": "context-perimeter",
+          "label": "Project perimeter",
+          "reason": "human_context_selection_required",
+          "selected_use": "context_boundary_reference",
+          "downstream_permission": "blocked"
+        }
+      ]
+    },
+    "guardrails": {
+      "title": "Guardrails",
+      "items": [
+        {
+          "tone": "yellow",
+          "text": "Use context inputs only as reference, snapping aid, extent check or visual underlay."
+        },
+        {
+          "tone": "yellow",
+          "text": "Do not convert dense DXF context polylines into editable design geometry automatically."
+        },
+        {
+          "tone": "yellow",
+          "text": "Do not claim BIM semantics from IFC bounding boxes or STEP fallback previews."
+        },
+        {
+          "tone": "yellow",
+          "text": "Do not instantiate Blender collections from generated layer plans until a human approves the layer mapping."
+        },
+        {
+          "tone": "yellow",
+          "text": "Do not run design generation unless context-selection has accepted_as_design_seed and approved_for_design_generation=true."
+        },
+        {
+          "tone": "yellow",
+          "text": "Keep all outputs internal until public_release/external_upload/client_delivery gates are explicitly approved."
+        },
+        {
+          "tone": "yellow",
+          "text": "Resolve needs_more_source_review or undecided inputs before promoting any design seed."
+        }
+      ]
+    },
+    "next_actions": {
+      "title": "Next Actions",
+      "items": [
+        {
+          "tone": "neutral",
+          "text": "Build the first Orbit UI panel for this handoff: role, open mode, blockers, model profile and guardrails."
+        },
+        {
+          "tone": "neutral",
+          "text": "Resolve or explicitly accept/reject blocked context inputs in design/context-selection.json."
+        },
+        {
+          "tone": "neutral",
+          "text": "Close the relevant design human-review records before allowing generation."
+        }
+      ]
+    }
+  },
+  "actions": {
+    "primary": {
+      "id": "open-kosmo-design-review-mode",
+      "label": "Open Review Mode",
+      "enabled": true,
+      "mode": "context_review_only",
+      "requires_confirmation": false,
+      "effect": "open_kosmo_design_context_review_only"
+    },
+    "secondary": [
+      {
+        "id": "view-project-inspector",
+        "label": "View Project Inspector",
+        "enabled": true,
+        "effect": "open_orbit_project_inspector"
+      },
+      {
+        "id": "view-context-selection",
+        "label": "Review Context Selection",
+        "enabled": true,
+        "effect": "open_context_selection_for_human_review"
+      },
+      {
+        "id": "copy-guardrails",
+        "label": "Copy Guardrails",
+        "enabled": true,
+        "effect": "copy_guardrails_to_clipboard"
+      }
+    ],
+    "disabled_generation": {
+      "label": "Generate Design",
+      "enabled": false,
+      "reason": "Design generation is blocked until context and human-review gates are approved."
+    }
+  },
+  "safety": {
+    "no_blender_launch_in_spec": true,
+    "no_geometry_generation_in_spec": true,
+    "no_public_publish_in_spec": true,
+    "no_uploads_in_spec": true
+  }
+}

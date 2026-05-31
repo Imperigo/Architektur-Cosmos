@@ -1,0 +1,162 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-05-31T11:38:44.518Z",
+  "generator": "kosmo-orbit-design-handoff-preview",
+  "status": "handoff_review_only",
+  "policy": {
+    "review_only_by_default": true,
+    "does_not_open_blender": true,
+    "does_not_generate_geometry": true,
+    "does_not_approve_design_generation": true,
+    "no_uploads": true,
+    "no_public_publish": true
+  },
+  "workspace": {
+    "name": "Architecture Kosmos Demo Office",
+    "mode": "local_dev"
+  },
+  "current_user": {
+    "name": "Andrin Baumann",
+    "role_id": "owner_admin",
+    "role_label": "Chef / Owner Admin",
+    "ui_mode": "full_admin",
+    "can_use_design": true,
+    "permissions": [
+      "admin_all",
+      "approve_public",
+      "approve_local",
+      "manage_projects",
+      "review_gates"
+    ]
+  },
+  "project": {
+    "id": "kosmo-demo-001",
+    "name": "Kosmo Demo 001",
+    "risk_level": "local_review_only",
+    "package_status": "draft"
+  },
+  "handoff": {
+    "target_tool": "kosmo-design",
+    "target_runtime": "KosmoDraw / Blender kosmo_design",
+    "mode": "context_review_only",
+    "design_generation_allowed": false,
+    "orbit_readiness": "review_required",
+    "module_readiness": "review_required",
+    "recommended_open_mode": "context_review_only"
+  },
+  "context": {
+    "status": "context_handoff_pending_review",
+    "handoff_mode": "context_reference_only",
+    "candidate_count": 2,
+    "context_input_count": 0,
+    "design_seed_input_count": 0,
+    "blocked_input_count": 2,
+    "unresolved_input_count": 2,
+    "recommended_next_step": "use_context_as_reference_only_and_complete_open_source_review",
+    "blocked_inputs": [
+      {
+        "candidate_id": "context-origin",
+        "label": "Project origin marker",
+        "kind": "project_origin",
+        "source": "fallback_origin",
+        "decision": "undecided",
+        "selected_use": "coordinate_reference",
+        "blocked_reason": "human_context_selection_required",
+        "downstream_permission": "blocked",
+        "design_generation_allowed": false,
+        "evidence_ref": "design/context-candidates.generated.json#context-origin",
+        "source_artifacts": [
+          "design/context-import.generated.json"
+        ],
+        "warnings": [
+          "Fallback origin; add reviewed project coordinates before measured work."
+        ],
+        "notes": []
+      },
+      {
+        "candidate_id": "context-perimeter",
+        "label": "Project perimeter",
+        "kind": "site_perimeter",
+        "source": "fallback_origin",
+        "decision": "undecided",
+        "selected_use": "context_boundary_reference",
+        "blocked_reason": "human_context_selection_required",
+        "downstream_permission": "blocked",
+        "design_generation_allowed": false,
+        "evidence_ref": "design/context-candidates.generated.json#context-perimeter",
+        "source_artifacts": [
+          "design/context-import.generated.json"
+        ],
+        "warnings": [
+          "Perimeter is a context frame, not a verified parcel boundary."
+        ],
+        "notes": []
+      }
+    ],
+    "guardrails": [
+      "Use context inputs only as reference, snapping aid, extent check or visual underlay.",
+      "Do not convert dense DXF context polylines into editable design geometry automatically.",
+      "Do not claim BIM semantics from IFC bounding boxes or STEP fallback previews.",
+      "Do not instantiate Blender collections from generated layer plans until a human approves the layer mapping.",
+      "Do not run design generation unless context-selection has accepted_as_design_seed and approved_for_design_generation=true.",
+      "Keep all outputs internal until public_release/external_upload/client_delivery gates are explicitly approved.",
+      "Resolve needs_more_source_review or undecided inputs before promoting any design seed."
+    ]
+  },
+  "model_profile": {
+    "units": "meters",
+    "source_confidence": "conceptual",
+    "story_count": 2,
+    "room_count": 3,
+    "area_count": 1,
+    "collection_count": 6,
+    "rooms": [
+      {
+        "id": "room-studio",
+        "name": "Shared Studio",
+        "story_id": "level-00",
+        "function": "work",
+        "area_m2": 48
+      },
+      {
+        "id": "room-library",
+        "name": "Project Library",
+        "story_id": "level-00",
+        "function": "reference",
+        "area_m2": 18
+      },
+      {
+        "id": "room-meeting",
+        "name": "Meeting",
+        "story_id": "level-01",
+        "function": "meeting",
+        "area_m2": 16
+      }
+    ],
+    "collections": [
+      "Kosmo_Demo_001",
+      "Kosmo_Demo_001/00_Boundaries",
+      "Kosmo_Demo_001/10_Rooms",
+      "Kosmo_Demo_001/20_Walls",
+      "Kosmo_Demo_001/30_Draw",
+      "Kosmo_Demo_001/40_Viz"
+    ]
+  },
+  "blockers": [
+    "Context handoff does not approve design generation.",
+    "Workspace gates for KosmoDesign are blocked, needs_review or unknown.",
+    "Design artifacts still require human review.",
+    "Context handoff contains blocked inputs."
+  ],
+  "allowed_actions": [
+    "Open KosmoDesign only in context review mode.",
+    "Show model-profile rooms, stories, areas and collections as read-only project context.",
+    "Show blocked context inputs and guardrails before any geometry action.",
+    "Keep generation, public release and external upload disabled."
+  ],
+  "next_actions": [
+    "Build the first Orbit UI panel for this handoff: role, open mode, blockers, model profile and guardrails.",
+    "Resolve or explicitly accept/reject blocked context inputs in design/context-selection.json.",
+    "Close the relevant design human-review records before allowing generation."
+  ]
+}

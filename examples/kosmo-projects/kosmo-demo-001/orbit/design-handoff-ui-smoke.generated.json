@@ -1,0 +1,90 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-05-31T11:38:45.282Z",
+  "generator": "kosmo-orbit-design-ui-smoke",
+  "prototype_html": "examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-ui-prototype.generated.html",
+  "prototype_manifest": "examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-ui-prototype.generated.json",
+  "status": "ui_smoke_passed",
+  "policy": {
+    "static_html_only": true,
+    "no_network_calls": true,
+    "no_blender_launch": true,
+    "no_geometry_generation": true,
+    "no_uploads": true,
+    "no_public_publish": true
+  },
+  "summary": {
+    "check_count": 12,
+    "passed_checks": 12,
+    "failed_checks": 0,
+    "blocker_count": 4,
+    "guardrail_count": 7,
+    "primary_action_enabled": true,
+    "generation_enabled": false
+  },
+  "checks": [
+    {
+      "id": "html_exists",
+      "status": "passed",
+      "label": "Prototype HTML exists."
+    },
+    {
+      "id": "manifest_ready",
+      "status": "passed",
+      "label": "Prototype manifest is ready."
+    },
+    {
+      "id": "title_visible",
+      "status": "passed",
+      "label": "KosmoDesign title is visible."
+    },
+    {
+      "id": "review_mode_visible",
+      "status": "passed",
+      "label": "Review-only open mode is visible."
+    },
+    {
+      "id": "primary_review_action_visible",
+      "status": "passed",
+      "label": "Primary review action is visible."
+    },
+    {
+      "id": "generate_design_visible",
+      "status": "passed",
+      "label": "Generate Design action is visible."
+    },
+    {
+      "id": "generate_design_disabled",
+      "status": "passed",
+      "label": "Generate Design is disabled."
+    },
+    {
+      "id": "blocked_generation_reason_visible",
+      "status": "passed",
+      "label": "Blocked generation reason is visible."
+    },
+    {
+      "id": "blockers_visible",
+      "status": "passed",
+      "label": "Critical blocker is visible."
+    },
+    {
+      "id": "guardrails_visible",
+      "status": "passed",
+      "label": "Critical guardrail is visible."
+    },
+    {
+      "id": "no_network_scripts",
+      "status": "passed",
+      "label": "Prototype has no script tags."
+    },
+    {
+      "id": "no_external_assets",
+      "status": "passed",
+      "label": "Prototype has no external assets or network URLs."
+    }
+  ],
+  "next_actions": [
+    "UI prototype is safe as a local visual reference for the first KosmoOrbit app screen."
+  ]
+}

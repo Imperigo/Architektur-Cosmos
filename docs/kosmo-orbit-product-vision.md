@@ -1,0 +1,113 @@
+# KosmoOrbit Product Vision
+
+Stand: 2026-05-31  
+Status: kanonische Produktergaenzung fuer die Rolle von KosmoOrbit.
+
+## 1. Entscheidung
+
+KosmoOrbit ist die Hauptsoftware von Architektur Kosmos.
+
+Architektur Kosmos ist als Produkt nicht nur eine Website, nicht nur ein CAD
+und nicht nur ein einzelnes Blender-Add-on. Das Zielprodukt besteht aus:
+
+- einer starken lokalen Kosmo Zentrale als Hardware im Architekturbuero;
+- der lokalen KI Kosmo als steuerndem, pruefendem und helfendem System;
+- KosmoOrbit als installierter Hauptsoftware auf der Zentrale und auf den
+  Arbeitsstationen;
+- spezialisierten Untertools wie KosmoDesign, KosmoPrepare, KosmoDraw,
+  KosmoViz, KosmoPublish, KosmoData und KosmoAsset.
+
+KosmoOrbit ist die Software, ueber die Kosmo alle Tools nutzt, verbindet,
+ueberwacht, aktualisiert, repariert und rollengerecht fuer Menschen im Buero
+bereitstellt.
+
+## 2. Produktbild
+
+Wenn ein Buero Architektur Kosmos kauft, soll es perspektivisch nicht nur einen
+Online-Zugang erhalten, sondern ein lokales System:
+
+1. Kosmo Zentrale: leistungsstarker lokaler Rechner fuer KI, Daten, Jobs,
+   Modelle, Blender-/ArchiCAD-Pipelines und Buero-Gedaechtnis.
+2. KosmoOrbit: Hauptsoftware auf der Zentrale und auf jeder Arbeitsstation.
+3. Kosmo: lokale KI, die ueber KosmoOrbit beobachtet, hilft, prueft,
+   repariert, updated und Tools bedient.
+4. Untertools: spezialisierte Arbeitsbereiche fuer Entwurf, Plan, Visualisierung,
+   Vorbereitung, Publishing, Daten und Assets.
+
+Die Vision ist ein lokales Architektur-Betriebssystem fuer ein Buero.
+
+## 3. Rollenprofile
+
+KosmoOrbit muss nicht fuer alle Menschen gleich aussehen. Die Oberflaeche,
+Zugriffe und Tool-Tiefe werden an Rolle, Verantwortung und Erfahrungsstand
+angepasst.
+
+Erste Zielprofile:
+
+- Chef / Buero-Inhaber: Admin, Strategie, Kosten, Public-Gates, finale
+  Freigaben, Produkt-/Buero-Standards.
+- IT-/KI-Spezialist: Admin, lokale Modelle, Infrastruktur, Updates,
+  Integrationen, Sicherheit, Reparatur.
+- Projektleiter Architekt: Projektsteuerung, Aufgaben, Koordination,
+  Entscheidungen, Review, Abgabe.
+- Entwurfsarchitekt: KosmoDesign, Varianten, Referenzen, Modell, Material,
+  Visualisierung.
+- Zeichner EFZ: Planwerk, Layer, Details, Ausfuehrungslogik, Korrekturen,
+  Modellpflege.
+- Praktikant: gefuehrte Recherche, einfache Modell- und Planassistenz,
+  begrenzte Schreibrechte.
+- Lehrling: Lernmodus, Schulstoff, Erklaerungen, sichere Uebungen,
+  Buero-Standards.
+- Schnupperstift: sehr einfache, gefuehrte Oberflaeche ohne riskante Aktionen.
+
+Diese Rollenlogik gilt nicht nur fuer IT-Administration, sondern direkt fuer
+die architektonischen Tools. KosmoDesign kann fuer einen Lehrling erklaerend
+und gefuehrt sein, fuer einen Projektleiter entscheidungs- und revieworientiert
+und fuer einen Entwurfsarchitekten frei, schnell und variantenstark.
+
+## 4. KosmoDesign als wichtigste Untersoftware
+
+KosmoDesign ist die wichtigste architektonische Untersoftware von KosmoOrbit.
+
+KosmoOrbit stellt die zentrale Shell, Benutzerprofile, Rechte, Pakete,
+Monitoring, Updates, Reparatur, Freigaben und Orchestrierung. KosmoDesign ist
+die raeumliche Werkbank, in der Architektur entsteht:
+
+- Entwurf aus Skizze, Text, Referenz, Foto, AR-Geste oder Sprache;
+- bearbeitbare Modelle, Raeume, Geschosse, Bauteile und Varianten;
+- Verbindung zu KosmoPrepare, KosmoDraw, KosmoViz und KosmoPublish;
+- Grundlage fuer Plan, Visualisierung, Abgabe und spaetere BIM-nahe Workflows.
+
+Die Entwicklung von KosmoDesign soll in Kooperation mit den bestehenden
+Claude-Code-/Cowork-Straengen KosmoDraw, KosmoViz, KosmoPrepare und
+KosmoPublish entstehen. KosmoOrbit haelt die Produkt- und Integrationslogik
+zusammen.
+
+## 5. Was KosmoOrbit koennen muss
+
+Langfristige Kernfaehigkeiten:
+
+- Tool-Launcher und Modul-Hub fuer alle Kosmo-Untertools.
+- Rollen- und Rechteverwaltung fuer Menschen im Buero.
+- Lokale KI-Kontrolle fuer Kosmo: Start, Stop, Diagnose, Jobs, Memory.
+- Monitoring fuer Tools, Daten, Modelle, Deployments, lokale Services und
+  Arbeitsstationen.
+- Update- und Reparaturlogik fuer lokale Software und Connectoren.
+- Projektpakete, Review-Packs, Decision-Records und Freigabegates.
+- Rechte-, Quellen-, Sicherheits- und Qualitaetsstatus pro Projekt/Asset.
+- Lern- und Assistenzmodus fuer Ausbildung, Buero-Standards und Schulstoff.
+- Handoffs zwischen KosmoData, KosmoAsset, KosmoDesign, KosmoPrepare,
+  KosmoDraw, KosmoViz, KosmoPublish und KosmoZentrale.
+
+## 6. MVP-Konsequenz
+
+Der erste MVP bleibt klein, aber die Richtung ist klar:
+
+- nicht nur einzelne Scripts bauen;
+- nicht nur Website-UI verbessern;
+- nicht nur Blender-Add-ons isoliert testen;
+- sondern einen ersten sichtbaren KosmoOrbit-Kern schaffen, der Projektpakete,
+  Tools, Rollen, Review-Gates und Handoffs zusammenbringt.
+
+KosmoOrbit ist damit die Produktmitte. Alles andere kreist nicht lose, sondern
+geordnet um diese Hauptsoftware.

@@ -14,7 +14,16 @@ Architektur Kosmos ist nicht als 1:1-Kopie von ArchiCAD, Vectorworks, Rhino oder
 - Das Ziel ist nicht, manuelles Zeichnen besser zu kopieren, sondern den Weg von Skizze, Sprache, Referenz, Kontext, AR-Geste oder Foto zu pruefbaren Plaenen, 3D-Modellen und Entscheidungen neu zu bauen.
 - Der Mensch bleibt Autor, Kritiker und Freigabeinstanz. Kosmo bereitet vor, prueft, dokumentiert und schlaegt vor.
 
-Arbeitsthese: Das eigentliche Produkt ist nicht ein einzelnes CAD, sondern ein lokales Architektur-Produktionssystem mit Kosmo Design als raeumlicher Werkbank, Kosmo Data als Wissens- und Asset-Gedaechtnis, Kosmo Orbit als Software-Schicht und Kosmo Zentrale als physischer KI-Zentrale.
+Arbeitsthese: Das eigentliche Produkt ist nicht ein einzelnes CAD, sondern ein lokales Architektur-Produktionssystem mit KosmoOrbit als installierter Hauptsoftware und Steuerzentrale, Kosmo Design als raeumlicher Werkbank, Kosmo Data/KosmoAsset als Wissens- und Asset-Gedaechtnis und Kosmo Zentrale als physischer KI-Hardware.
+
+Produktentscheidung 2026-05-31: KosmoOrbit ist die Hauptsoftware des Produkts.
+Wenn ein Architekturbuero Architektur Kosmos kauft, besteht das Zielprodukt
+aus einer starken lokalen Kosmo Zentrale plus KosmoOrbit auf der Zentrale und
+auf den Arbeitsstationen. Die lokale KI Kosmo nutzt KosmoOrbit, um alle Tools zu
+starten, zu verbinden, zu ueberwachen, zu aktualisieren, zu reparieren und
+rollengerecht fuer die Mitarbeitenden bereitzustellen. KosmoOrbit ist damit
+nicht nur eine abstrakte Software-Schicht, sondern die operative
+Software-Zentrale des gesamten Architektur-Kosmos-Systems.
 
 ## 2. Projektkarte
 
@@ -22,6 +31,7 @@ Arbeitsthese: Das eigentliche Produkt ist nicht ein einzelnes CAD, sondern ein l
 | --- | --- | --- |
 | Architecture Cosmos / KosmoData | Oeffentliche Wissens-, Referenz- und spaeter Asset-Schicht | Aktiver Next.js/Cloudflare-Static-Export, radialer Atlas, Brain-Tools, KosmoData-Pipelines, Cloud-Brain-Entwurf, Modul-Hub-Roadmap. |
 | KosmoZentrale | Lokales Kontrollzentrum / Kosmo Core | Separates OneDrive-Projekt mit FastAPI Control Hub, SQLite, Jobs, Approvals, Events, Artifacts, Memory, Benchmarks, Android/macOS Control Center und Operator Mode. |
+| KosmoOrbit | Hauptsoftware / Steuerzentrale | Installierte Software-Shell fuer Zentrale und Arbeitsstationen; verbindet alle Tools, Rollenprofile, Freigaben, Updates, Reparatur, Monitoring und lokale KI-Bedienung. |
 | KosmoDraw / Kosmo Design | Blender-native Entwurfs- und Zeichnungswerkbank | Aktives Blender-Add-on mit Action-Bus, Plan-Sketch-to-BIM, ArchiCAD-aehnlicher UX, Snaps, Tracker, Story Stack, AI Layouts, Voice Commands, Schnitt/Fassade-Tools und erster Kosmo Project Package Bridge. |
 | ArchViz Toolkit / Blender-Claude | Visualisierungs- und Variantensystem | Blender 5.1 plus KI/ComfyUI/SDXL, Materialkatalog, Masken, Multipass-Rendering, Bolognese-Refiner, ArchViz-Pipeline V6. |
 | Blender Capability Scan | Werkzeugkarte fuer Kosmo | Erfasst Blender-Subsysteme wie Python API, Geometry Nodes, Physics, Cycles/EEVEE, Sun Position, Grease Pencil, Asset Libraries und Import/Export als Kosmo-Bausteine. |
@@ -78,11 +88,42 @@ Kosmo Design ist die konkrete Blender-native Entwurfswerkbank und der zentrale P
 
 Dies ist der derzeit staerkste Beweis, dass die Vision nicht bei Theorie bleibt: Skizze, Sprache und KI koennen bereits in Blender-nahe Architektur-Geometrie uebersetzt werden.
 
-### Kosmo Orbit, Kosmo Prepare, Kosmo Draw, Kosmo Viz, Kosmo Publish
+### Kosmo Orbit
+
+KosmoOrbit ist die Hauptsoftware und Steuerzentrale von Architektur Kosmos. Es
+laeuft perspektivisch auf der lokalen Kosmo Zentrale und auf jeder
+Arbeitsstation im Buero. Die lokale KI Kosmo bedient, ueberwacht und repariert
+das System ueber KosmoOrbit.
+
+Kernrolle:
+
+- alle Kosmo-Tools in einer gemeinsamen Produkt-Shell verbinden
+- Benutzerprofile, Rollen, Rechte und Erfahrungslevel steuern
+- Tool-Oberflaechen je nach Rolle vereinfachen oder erweitern
+- lokale KI-Modelle, Agenten, Jobs, Blender-/ArchiCAD-/Cloud-Connectoren,
+  Datenbanken und Projektpakete koordinieren
+- Updates, Diagnosen, Reparaturen, Tests und Review-Gates sichtbar machen
+- Projektwissen, Freigaben, Unsicherheiten, Rechtepruefungen und
+  Qualitaetsnachweise zusammenfuehren
+
+Erste Rollenlogik:
+
+- Chef und IT-/KI-Spezialist: Adminrechte, Infrastruktur, Modelle, Kosten,
+  Freigaben, Public-Gates
+- Projektleiter Architekt: Projektsteuerung, Review, Koordination, Abgabe
+- Entwurfsarchitekt: Design, Varianten, Referenzen, Modell und Visualisierung
+- Zeichner EFZ: Planwerk, Details, Layer, Korrekturen und Ausfuehrungslogik
+- Praktikant, Lehrling, Schnupperstift: gefuehrte Oberflaechen, Lernmodus,
+  begrenzte Rechte und sichere Uebungsraeume
+
+KosmoOrbit ist dadurch auch Ausbildungsschicht: Kosmo kann Lernende beim
+Schulstoff, bei Buero-Standards und beim Verstehen der Software begleiten,
+waehrend riskante Aktionen gesperrt bleiben.
+
+### Kosmo Prepare, Kosmo Draw, Kosmo Viz, Kosmo Publish
 
 Diese sichtbaren Modulnamen stammen aus der visuellen Architektur-Kosmos-Grafik und ersetzen/ordnen einige fruehere Arbeitsnamen:
 
-- Kosmo Orbit: Software-Schicht und Modul-Umlaufbahn zwischen Data, Design und Zentrale.
 - Kosmo Prepare: Vorbereitung, Wettbewerb/Briefing, Standort, Baugesetz, Programm, Boundaries.
 - Kosmo Draw: Zeichnung, Skizze, Grundriss/Schnitt/Ansicht, vektorisierte Plaene.
 - Kosmo Viz: Visualisierung, Bildvarianten, Rendering, KI-Refinement, Praesentationsmaterial.

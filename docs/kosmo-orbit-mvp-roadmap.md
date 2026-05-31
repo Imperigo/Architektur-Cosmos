@@ -1,0 +1,348 @@
+# KosmoOrbit MVP Roadmap
+
+Stand: 2026-05-31  
+Status: erster konkreter Bauplan fuer die Hauptsoftware.
+
+## 1. Ziel des MVP
+
+KosmoOrbit MVP 0.1 soll beweisen, dass Architektur Kosmos als lokale
+Hauptsoftware funktioniert: KosmoOrbit zeigt Projekte, Rollen, Tools,
+Review-Gates und lokale Handoffs an einem Ort und fuehrt Menschen kontrolliert
+durch die wichtigsten Schritte.
+
+Der MVP ist noch keine fertige Buero-Appliance und kein vollstaendiges CAD. Er
+ist der erste sichtbare Kern der Steuerzentrale.
+
+## 2. Produktkern
+
+KosmoOrbit MVP 0.1 muss vier Dinge sauber zeigen:
+
+1. **Tool-Zentrale**  
+   KosmoOrbit kennt die Untertools KosmoData, KosmoAsset, KosmoDesign,
+   KosmoPrepare, KosmoDraw, KosmoViz, KosmoPublish und KosmoZentrale.
+
+2. **Projektpaket-Zentrale**  
+   KosmoOrbit liest ein lokales `kosmo.project.json` und zeigt, welche
+   Bereiche vorhanden, reviewpflichtig, blockiert oder bereit sind.
+
+3. **Rollen-Zentrale**  
+   KosmoOrbit kann mindestens zwischen Admin, Projektleitung, Entwurf,
+   Zeichnung und Ausbildung unterscheiden und daraus Rechte sowie
+   Oberflaechentiefe ableiten.
+
+4. **Review-Zentrale**  
+   KosmoOrbit zeigt, was Kosmo automatisch pruefen darf und wo menschliche
+   Freigabe noetig bleibt: Quellen, Rechte, Modellqualitaet, Public-Gates,
+   Export und Publish.
+
+## 3. MVP-Ansichten
+
+### Start / Orbit Home
+
+Zweck: schnelle Orientierung fuer das Buero.
+
+Inhalte:
+
+- aktives Projekt
+- angemeldete Rolle
+- Status der Untertools
+- offene Freigaben
+- letzte Kosmo-Diagnose
+- naechster sinnvoller Schritt
+
+### Tool Hub
+
+Zweck: alle Untertools sichtbar und rollenbasiert oeffnen.
+
+V1-Tools:
+
+- KosmoData: Referenzen, Quellen, Projektwissen
+- KosmoAsset: Assets, Materialien, Rechte, lokale Review-Evidenz
+- KosmoDesign: architektonische Hauptwerkbank
+- KosmoPrepare: Briefing, Standort, Programm, Constraints
+- KosmoDraw: Plan, Schnitt, Ansicht, Vektor-Export
+- KosmoViz: Kamera, Licht, Material, Rendering
+- KosmoPublish: Review-Pack, Abgabe, Bericht, Export
+- KosmoZentrale: Jobs, Memory, Approvals, lokale KI und Hardware
+
+### Project Package Inspector
+
+Zweck: das lokale Projektpaket fuer Menschen lesbar machen.
+
+Zeigt:
+
+- `brief/`: Projektbrief, Constraints, offene Fragen
+- `data/`: Quellen, Referenzen, Rechte, Assets
+- `design/`: Modellstatus, Kontext, Varianten, IFC/DXF-Gates
+- `draw/`: Plaene, Schnitte, Exporte
+- `viz/`: Kameras, Render-Presets, Previews
+- `publish/`: Review-Pack, Exportmanifest, Change Log
+- `memory/`: Entscheidungen, Jobs, Unsicherheiten
+
+### Role Preview
+
+Zweck: frueh beweisen, dass die gleiche Software je nach Person anders wirkt.
+
+MVP-Rollen:
+
+- Admin: sieht alle Tools, Diagnosen, Rechte, Kosten, Public-Gates
+- Projektleitung: sieht Projektstatus, Freigaben, offene Fragen, Abgabe
+- Entwurf: sieht KosmoDesign, Varianten, Referenzen, Modell/Viz
+- Zeichnung: sieht Draw, Layer, Detailstatus, Export-Handoffs
+- Ausbildung: sieht Lernmodus, Erklaerungen, sichere Uebungen
+
+## 4. Erste Rechte- und Gate-Logik
+
+KosmoOrbit muss V1 nicht als echtes Auth-System bauen, aber das Datenmodell
+muss die spaetere Auth-Logik vorbereiten.
+
+Empfohlene Statusbegriffe:
+
+- `ready`: technisch bereit
+- `needs_review`: menschliche Pruefung noetig
+- `blocked`: darf nicht weiterverwendet oder publiziert werden
+- `local_only`: lokal erlaubt, nicht public-safe
+- `approved_local`: fuer lokale Arbeit freigegeben
+- `approved_public`: public-safe freigegeben
+- `unknown`: Status fehlt
+
+Empfohlene Gate-Typen:
+
+- `source_gate`: Quellen und Herkunft
+- `rights_gate`: Rechte, Lizenz, Public-Safe
+- `human_review_gate`: architektonische menschliche Pruefung
+- `model_quality_gate`: Geometrie, Layer, Massstab, Semantik
+- `publish_gate`: externe Publikation, Upload, Website, Shop
+- `cost_gate`: bezahlte Dienste, Cloud-Kosten, GPU-Jobs
+- `security_gate`: Secrets, private Daten, externe Accounts
+
+## 5. Datenmodell V1
+
+KosmoOrbit braucht spaeter eigene lokale Daten. Fuer den ersten MVP reicht ein
+kleiner lesbarer Vertrag:
+
+```json
+{
+  "orbit_version": "0.1",
+  "workspace": {
+    "name": "Demo Buero",
+    "mode": "local_dev"
+  },
+  "current_user": {
+    "name": "Andrin Baumann",
+    "role": "admin"
+  },
+  "tools": [
+    {
+      "id": "kosmo-design",
+      "name": "KosmoDesign",
+      "status": "planned",
+      "primary_roles": ["admin", "project_lead", "design_architect"]
+    }
+  ],
+  "projects": [
+    {
+      "id": "kosmo-demo-001",
+      "package_path": "examples/kosmo-projects/kosmo-demo-001/kosmo.project.json",
+      "status": "needs_review"
+    }
+  ],
+  "gates": [
+    {
+      "id": "demo-human-review",
+      "type": "human_review_gate",
+      "status": "needs_review"
+    }
+  ]
+}
+```
+
+Das ist noch kein Backend. Es ist ein lokaler, statischer Entwicklungsanker,
+der spaeter in KosmoZentrale oder eine lokale Orbit-Datenbank wachsen kann.
+
+## 6. Umsetzung in diesem Repo
+
+Dieses Repo ist public/deployment-nah und bleibt static export. Deshalb:
+
+- keine API-Routes
+- keine Server Actions
+- keine Middleware
+- keine Live-D1-/R2-Schreibpfade
+- keine externen Accounts oder Kosten
+- keine Aenderungen an `wrangler.jsonc`
+
+Sichere erste Umsetzung:
+
+1. `schema/kosmo-orbit-workspace.schema.json` (**initial umgesetzt**)
+2. `examples/kosmo-orbit/workspace.demo.json` (**initial umgesetzt**)
+3. lokaler Check `npm run kosmo:orbit-check` (**initial umgesetzt**)
+4. kleine statische Orbit-Ansicht oder Report, der Rollen, Tools und Gates zeigt
+5. spaeter Handoff an KosmoZentrale fuer echte lokale Runtime
+
+## 7. Zusammenarbeit mit anderen Workern
+
+KosmoOrbit ist Produktmitte, aber nicht alleiniger Facharbeiter.
+
+- KosmoWebsite baut public UI, Atlas, Marketing-/Demo-Oberflaechen.
+- KosmoZentrale baut lokale Jobs, Approvals, Hardware, Agent Router und Memory.
+- KosmoDesign/KosmoDraw bauen die Blender-native Entwurfs- und Planwerkbank.
+- KosmoPrepare baut Phase-0-Briefing, Standort, Wettbewerb und Kontext.
+- KosmoViz baut Render, Kamera, Material und Bildvarianten.
+- KosmoPublish baut Abgabe, Layout, PDF, Bericht und Export.
+- KosmoData/KosmoAsset bauen Wissens- und Asset-Schichten.
+
+KosmoOrbit definiert die gemeinsame Shell, Rollenlogik, Paketvertraege,
+Gate-Sprache und Handoffs zwischen diesen Bereichen.
+
+## 8. Naechster kleiner Entwicklungsschritt
+
+Der naechste konkrete Schritt nach dem Workspace-Vertrag ist ein lesbarer
+KosmoOrbit-Statusreport (**initial umgesetzt mit `npm run kosmo:orbit-status`**):
+
+- Markdown- und JSON-Report aus `workspace.demo.json`.
+- Ampeluebersicht fuer Tools, Rollen und Gates.
+- klare Anzeige, dass Publish, Kosten und Security in der Demo blockiert oder
+  reviewpflichtig bleiben.
+
+Damit beginnt KosmoOrbit als echte Hauptsoftware zu werden, ohne sofort eine
+grosse lokale Runtime oder eine riskante Cloud-Integration zu bauen.
+
+## 9. Project Package Inspector
+
+KosmoOrbit muss als Hauptsoftware echte Projektpakete lesen koennen. Initial
+umgesetzt:
+
+- `npm run kosmo:orbit-project-inspector`
+- liest `examples/kosmo-projects/kosmo-demo-001/kosmo.project.json`
+- schreibt `orbit/project-inspector.generated.json`
+- schreibt `orbit/project-inspector.generated.md`
+
+Der Inspector zeigt:
+
+- Modulstatus fuer Prepare, Data, Orbit, Design, Draw, Viz, Publish und
+  Zentrale;
+- vorhandene und fehlende Paketordner;
+- Inputs und Outputs mit Rechte-/Reviewstatus;
+- Review-Gates fuer Public Release, External Upload, Client Delivery und
+  Paid Cloud Job;
+- konkrete Next Actions fuer KosmoOrbit, bevor ein KosmoDesign-Handoff oder
+  eine Publish-/Cloud-Aktion erlaubt waere.
+
+Diese Stufe ist weiterhin review-only und startet keine Tools.
+
+## 10. KosmoDesign Handoff Preview
+
+KosmoOrbit muss vor dem Oeffnen von KosmoDesign entscheiden, ob ein Projekt nur
+als Kontext/Review geoeffnet werden darf oder ob Design-Generierung erlaubt
+ist. Initial umgesetzt:
+
+- `npm run kosmo:orbit-design-handoff`
+- liest den Orbit-Workspace-Statusreport;
+- liest den Project Package Inspector;
+- liest `design/context-handoff.generated.json`;
+- liest `design/model-profile.json`;
+- schreibt `orbit/design-handoff-preview.generated.json`;
+- schreibt `orbit/design-handoff-preview.generated.md`.
+
+Die aktuelle Demo fuehrt bewusst zu `context_review_only`: Andrin als Owner
+Admin darf KosmoDesign grundsaetzlich nutzen, aber Design-Generierung bleibt
+blockiert, weil Kontextinputs noch blockiert/undecided sind und viele
+generierte Design-Artefakte menschliche Review benoetigen.
+
+Das ist die richtige Orbit-Logik: KosmoOrbit oeffnet nicht blind ein
+Design-Werkzeug, sondern zeigt zuerst Rolle, Open Mode, Blocker, Modellprofil,
+Guardrails und erlaubte Aktionen.
+
+## 11. KosmoDesign UI Panel Spec
+
+KosmoOrbit braucht aus dem Handoff eine konkrete Panel-Spezifikation fuer die
+spaetere Hauptsoftware-Oberflaeche. Initial umgesetzt:
+
+- `npm run kosmo:orbit-design-ui-panel`
+- liest `orbit/design-handoff-preview.generated.json`
+- schreibt `orbit/design-handoff-ui-panel.generated.json`
+- schreibt `orbit/design-handoff-ui-panel.generated.md`
+
+Die Spezifikation definiert:
+
+- Panel-State, Tone und Badges;
+- Primary Action (`Open Review Mode` in der Demo);
+- Secondary Actions fuer Project Inspector, Context Selection und Guardrails;
+- deaktivierte Design-Generation mit sichtbarem Grund;
+- Sections fuer Rolle, Blocker, Allowed Actions, Modellprofil, Context Inputs,
+  Guardrails und Next Actions.
+
+Damit ist der erste KosmoOrbit-UI-Baustein produktlogisch beschrieben, ohne
+schon eine Frontend-Implementierung zu starten.
+
+## 12. KosmoOrbit Full Review
+
+Die ersten Orbit-Bausteine koennen als eine zusammenhaengende Review-Kette
+laufen. Initial umgesetzt:
+
+- `npm run kosmo:orbit-full-review`
+- fuehrt Workspace Check aus;
+- erzeugt Workspace Status;
+- erzeugt Project Package Inspector;
+- erzeugt KosmoDesign Handoff Preview;
+- erzeugt KosmoDesign UI Panel Spec;
+- erzeugt den statischen KosmoDesign UI Prototype;
+- prueft den statischen UI-Prototyp mit einem Smoke-Check;
+- schreibt `examples/kosmo-orbit/review/orbit-full-review.generated.json`;
+- schreibt `examples/kosmo-orbit/review/orbit-full-review.generated.md`.
+
+Der Full Review ist der erste echte KosmoOrbit-Steuerzentralen-Durchlauf:
+Workspace -> Status -> Projektpaket -> Design-Handoff -> UI-Panel-Spec ->
+statischer UI-Prototyp -> UI-Smoke.
+
+Auch dieser Durchlauf bleibt strikt review-only: kein Blender-Start, keine
+Geometrie-Generierung, keine Uploads, keine externen Accounts, keine Kosten und
+keine Publikation.
+
+## 13. Static KosmoDesign UI Prototype
+
+Aus der Panel-Spezifikation kann KosmoOrbit einen ersten lokalen HTML-Prototyp
+erzeugen. Initial umgesetzt:
+
+- `npm run kosmo:orbit-design-ui-prototype`
+- liest `orbit/design-handoff-ui-panel.generated.json`
+- schreibt `orbit/design-handoff-ui-prototype.generated.html`
+- schreibt `orbit/design-handoff-ui-prototype.generated.json`
+
+Der Prototyp ist kein Public-Website-Feature und keine Next-Route. Er ist ein
+lokales Artefakt im Projektpaket und zeigt:
+
+- linken Orbit-Rail mit Projekt, Status, Badges, Aktionen und Rolle;
+- rechtes Detailpanel mit Blockern, erlaubten Aktionen, Modellprofil,
+  Context Inputs, Guardrails und Next Actions;
+- `Open Review Mode` als erlaubte Primaeraktion;
+- `Generate Design` sichtbar deaktiviert.
+
+Damit wird die Hauptsoftware-Logik erstmals als konkrete Oberflaeche sichtbar,
+ohne die statische Cloudflare-Website, Backend-Grenzen oder Runtime-Regeln zu
+beruehren.
+
+## 14. KosmoDesign UI Smoke
+
+Der statische Prototyp wird automatisch auf sicherheitsrelevante UI-Zustaende
+geprueft. Initial umgesetzt:
+
+- `npm run kosmo:orbit-design-ui-smoke`
+- liest `orbit/design-handoff-ui-prototype.generated.html`;
+- liest `orbit/design-handoff-ui-prototype.generated.json`;
+- schreibt `orbit/design-handoff-ui-smoke.generated.json`;
+- schreibt `orbit/design-handoff-ui-smoke.generated.md`.
+
+Der Smoke prueft u.a.:
+
+- KosmoDesign-Titel sichtbar;
+- `context_review_only` sichtbar;
+- `Open Review Mode` sichtbar;
+- `Generate Design` sichtbar, aber disabled;
+- Blockiergrund sichtbar;
+- kritischer Guardrail sichtbar;
+- keine Script-Tags;
+- keine externen Netzwerk-URLs.
+
+Damit kann KosmoOrbit spaeter verhindern, dass eine UI-Aenderung versehentlich
+die Sicherheitslogik aus der Oberflaeche entfernt.

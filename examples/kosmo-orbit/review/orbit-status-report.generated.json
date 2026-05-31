@@ -1,0 +1,581 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-05-31T11:38:43.905Z",
+  "generator": "kosmo-orbit-status-report",
+  "workspace_path": "examples/kosmo-orbit/workspace.demo.json",
+  "status": "orbit_blocked_gates_present",
+  "policy": {
+    "review_only": true,
+    "no_uploads": true,
+    "no_public_publish": true,
+    "no_external_accounts": true,
+    "no_costs": true
+  },
+  "workspace": {
+    "id": "architecture-kosmos-demo-office",
+    "name": "Architecture Kosmos Demo Office",
+    "mode": "local_dev",
+    "hardware_profile": "developer_laptop"
+  },
+  "current_user": {
+    "id": "andrin-baumann",
+    "name": "Andrin Baumann",
+    "role_id": "owner_admin",
+    "role_label": "Chef / Owner Admin",
+    "ui_mode": "full_admin",
+    "permissions": [
+      "admin_all",
+      "approve_public",
+      "approve_local",
+      "manage_projects",
+      "review_gates"
+    ]
+  },
+  "summary": {
+    "role_count": 8,
+    "tool_count": 8,
+    "project_count": 1,
+    "gate_count": 7,
+    "blocked_gate_count": 2,
+    "needs_review_gate_count": 4,
+    "tools_by_status": {
+      "active": 1,
+      "prototype": 2,
+      "planned": 4,
+      "external": 1
+    },
+    "gates_by_status": {
+      "needs_review": 3,
+      "blocked": 2,
+      "unknown": 1,
+      "local_only": 1
+    },
+    "projects_by_status": {
+      "needs_review": 1
+    }
+  },
+  "roles": [
+    {
+      "id": "owner_admin",
+      "label": "Chef / Owner Admin",
+      "level": "admin",
+      "ui_mode": "full_admin",
+      "permission_count": 5,
+      "description": "Full office/product authority: strategy, final approvals, public gates and business-critical decisions."
+    },
+    {
+      "id": "it_ai_admin",
+      "label": "IT / KI Spezialist",
+      "level": "admin",
+      "ui_mode": "full_admin",
+      "permission_count": 5,
+      "description": "Infrastructure, local models, connectors, updates, diagnostics and repair."
+    },
+    {
+      "id": "project_lead_architect",
+      "label": "Projektleiter Architekt",
+      "level": "lead",
+      "ui_mode": "project_control",
+      "permission_count": 6,
+      "description": "Project coordination, review decisions, local approvals and delivery oversight."
+    },
+    {
+      "id": "design_architect",
+      "label": "Entwurfsarchitekt",
+      "level": "professional",
+      "ui_mode": "creative_pro",
+      "permission_count": 4,
+      "description": "Design, variants, references, model development, material and visualization work."
+    },
+    {
+      "id": "drafter_efz",
+      "label": "Zeichner EFZ",
+      "level": "professional",
+      "ui_mode": "production_pro",
+      "permission_count": 3,
+      "description": "Plans, details, layers, corrections, production exports and model maintenance."
+    },
+    {
+      "id": "intern",
+      "label": "Praktikant",
+      "level": "guided",
+      "ui_mode": "guided",
+      "permission_count": 3,
+      "description": "Guided research and simple model/plan assistance with limited write authority."
+    },
+    {
+      "id": "apprentice",
+      "label": "Lehrling",
+      "level": "learning",
+      "ui_mode": "learning",
+      "permission_count": 3,
+      "description": "Learning mode for school topics, office standards and safe exercises."
+    },
+    {
+      "id": "trial_user",
+      "label": "Schnupperstift",
+      "level": "observer",
+      "ui_mode": "observer",
+      "permission_count": 2,
+      "description": "Very simple guided access without risky actions."
+    }
+  ],
+  "tools": [
+    {
+      "id": "kosmo-data",
+      "name": "KosmoData",
+      "category": "data",
+      "status": "active",
+      "readiness": "blocked_by_gate",
+      "primary_roles": [
+        {
+          "id": "owner_admin",
+          "label": "Chef / Owner Admin"
+        },
+        {
+          "id": "project_lead_architect",
+          "label": "Projektleiter Architekt"
+        },
+        {
+          "id": "design_architect",
+          "label": "Entwurfsarchitekt"
+        },
+        {
+          "id": "intern",
+          "label": "Praktikant"
+        },
+        {
+          "id": "apprentice",
+          "label": "Lehrling"
+        }
+      ],
+      "gates": [
+        {
+          "id": "rights-gate",
+          "type": "rights_gate",
+          "status": "blocked"
+        },
+        {
+          "id": "source-gate",
+          "type": "source_gate",
+          "status": "needs_review"
+        }
+      ],
+      "handoff_target": null,
+      "description": "Reference library, project knowledge, sources, rights and public-safe data layer."
+    },
+    {
+      "id": "kosmo-asset",
+      "name": "KosmoAsset",
+      "category": "asset",
+      "status": "prototype",
+      "readiness": "blocked_by_gate",
+      "primary_roles": [
+        {
+          "id": "owner_admin",
+          "label": "Chef / Owner Admin"
+        },
+        {
+          "id": "it_ai_admin",
+          "label": "IT / KI Spezialist"
+        },
+        {
+          "id": "design_architect",
+          "label": "Entwurfsarchitekt"
+        },
+        {
+          "id": "drafter_efz",
+          "label": "Zeichner EFZ"
+        }
+      ],
+      "gates": [
+        {
+          "id": "rights-gate",
+          "type": "rights_gate",
+          "status": "blocked"
+        },
+        {
+          "id": "publish-gate",
+          "type": "publish_gate",
+          "status": "blocked"
+        },
+        {
+          "id": "human-review-gate",
+          "type": "human_review_gate",
+          "status": "needs_review"
+        }
+      ],
+      "handoff_target": null,
+      "description": "Reusable assets, materials, textures, exchange profiles and local review evidence."
+    },
+    {
+      "id": "kosmo-design",
+      "name": "KosmoDesign",
+      "category": "design",
+      "status": "planned",
+      "readiness": "review_required",
+      "primary_roles": [
+        {
+          "id": "owner_admin",
+          "label": "Chef / Owner Admin"
+        },
+        {
+          "id": "project_lead_architect",
+          "label": "Projektleiter Architekt"
+        },
+        {
+          "id": "design_architect",
+          "label": "Entwurfsarchitekt"
+        },
+        {
+          "id": "intern",
+          "label": "Praktikant"
+        }
+      ],
+      "gates": [
+        {
+          "id": "human-review-gate",
+          "type": "human_review_gate",
+          "status": "needs_review"
+        },
+        {
+          "id": "model-quality-gate",
+          "type": "model_quality_gate",
+          "status": "unknown"
+        }
+      ],
+      "handoff_target": "KosmoDraw / Blender kosmo_design",
+      "description": "Main architectural subsoftware for design, model, variants, AR/sketch/speech and spatial work."
+    },
+    {
+      "id": "kosmo-prepare",
+      "name": "KosmoPrepare",
+      "category": "prepare",
+      "status": "planned",
+      "readiness": "review_required",
+      "primary_roles": [
+        {
+          "id": "project_lead_architect",
+          "label": "Projektleiter Architekt"
+        },
+        {
+          "id": "design_architect",
+          "label": "Entwurfsarchitekt"
+        },
+        {
+          "id": "intern",
+          "label": "Praktikant"
+        }
+      ],
+      "gates": [
+        {
+          "id": "source-gate",
+          "type": "source_gate",
+          "status": "needs_review"
+        },
+        {
+          "id": "human-review-gate",
+          "type": "human_review_gate",
+          "status": "needs_review"
+        }
+      ],
+      "handoff_target": null,
+      "description": "Project brief, competition PDF, site, constraints, program and open questions."
+    },
+    {
+      "id": "kosmo-draw",
+      "name": "KosmoDraw",
+      "category": "draw",
+      "status": "prototype",
+      "readiness": "review_required",
+      "primary_roles": [
+        {
+          "id": "project_lead_architect",
+          "label": "Projektleiter Architekt"
+        },
+        {
+          "id": "design_architect",
+          "label": "Entwurfsarchitekt"
+        },
+        {
+          "id": "drafter_efz",
+          "label": "Zeichner EFZ"
+        }
+      ],
+      "gates": [
+        {
+          "id": "human-review-gate",
+          "type": "human_review_gate",
+          "status": "needs_review"
+        },
+        {
+          "id": "model-quality-gate",
+          "type": "model_quality_gate",
+          "status": "unknown"
+        }
+      ],
+      "handoff_target": null,
+      "description": "Plan, section, elevation, vector export, layers and drawing production."
+    },
+    {
+      "id": "kosmo-viz",
+      "name": "KosmoViz",
+      "category": "viz",
+      "status": "planned",
+      "readiness": "blocked_by_gate",
+      "primary_roles": [
+        {
+          "id": "design_architect",
+          "label": "Entwurfsarchitekt"
+        },
+        {
+          "id": "project_lead_architect",
+          "label": "Projektleiter Architekt"
+        }
+      ],
+      "gates": [
+        {
+          "id": "rights-gate",
+          "type": "rights_gate",
+          "status": "blocked"
+        },
+        {
+          "id": "human-review-gate",
+          "type": "human_review_gate",
+          "status": "needs_review"
+        },
+        {
+          "id": "cost-gate",
+          "type": "cost_gate",
+          "status": "local_only"
+        }
+      ],
+      "handoff_target": null,
+      "description": "Cameras, light, material, rendering and AI image variants."
+    },
+    {
+      "id": "kosmo-publish",
+      "name": "KosmoPublish",
+      "category": "publish",
+      "status": "planned",
+      "readiness": "blocked_by_gate",
+      "primary_roles": [
+        {
+          "id": "owner_admin",
+          "label": "Chef / Owner Admin"
+        },
+        {
+          "id": "project_lead_architect",
+          "label": "Projektleiter Architekt"
+        },
+        {
+          "id": "drafter_efz",
+          "label": "Zeichner EFZ"
+        }
+      ],
+      "gates": [
+        {
+          "id": "publish-gate",
+          "type": "publish_gate",
+          "status": "blocked"
+        },
+        {
+          "id": "rights-gate",
+          "type": "rights_gate",
+          "status": "blocked"
+        },
+        {
+          "id": "security-gate",
+          "type": "security_gate",
+          "status": "needs_review"
+        }
+      ],
+      "handoff_target": null,
+      "description": "Review pack, layout, report, PDF set, public promotion and delivery exports."
+    },
+    {
+      "id": "kosmo-zentrale",
+      "name": "KosmoZentrale",
+      "category": "control",
+      "status": "external",
+      "readiness": "review_required",
+      "primary_roles": [
+        {
+          "id": "owner_admin",
+          "label": "Chef / Owner Admin"
+        },
+        {
+          "id": "it_ai_admin",
+          "label": "IT / KI Spezialist"
+        }
+      ],
+      "gates": [
+        {
+          "id": "security-gate",
+          "type": "security_gate",
+          "status": "needs_review"
+        },
+        {
+          "id": "cost-gate",
+          "type": "cost_gate",
+          "status": "local_only"
+        }
+      ],
+      "handoff_target": null,
+      "description": "Local hardware, jobs, memory, approvals, agent router and Kosmo runtime."
+    }
+  ],
+  "projects": [
+    {
+      "id": "kosmo-demo-001",
+      "name": "Kosmo Demo 001",
+      "package_path": "examples/kosmo-projects/kosmo-demo-001/kosmo.project.json",
+      "package_exists": true,
+      "status": "needs_review",
+      "allowed_roles": [
+        {
+          "id": "owner_admin",
+          "label": "Chef / Owner Admin"
+        },
+        {
+          "id": "project_lead_architect",
+          "label": "Projektleiter Architekt"
+        },
+        {
+          "id": "design_architect",
+          "label": "Entwurfsarchitekt"
+        },
+        {
+          "id": "drafter_efz",
+          "label": "Zeichner EFZ"
+        }
+      ],
+      "gates": [
+        {
+          "id": "source-gate",
+          "type": "source_gate",
+          "status": "needs_review"
+        },
+        {
+          "id": "rights-gate",
+          "type": "rights_gate",
+          "status": "blocked"
+        },
+        {
+          "id": "human-review-gate",
+          "type": "human_review_gate",
+          "status": "needs_review"
+        },
+        {
+          "id": "model-quality-gate",
+          "type": "model_quality_gate",
+          "status": "unknown"
+        },
+        {
+          "id": "publish-gate",
+          "type": "publish_gate",
+          "status": "blocked"
+        }
+      ]
+    }
+  ],
+  "gates": [
+    {
+      "id": "source-gate",
+      "type": "source_gate",
+      "status": "needs_review",
+      "owner_role": "project_lead_architect",
+      "owner_label": "Projektleiter Architekt",
+      "tool_id": "kosmo-data",
+      "tool_name": "KosmoData",
+      "project_id": "kosmo-demo-001",
+      "project_name": "Kosmo Demo 001",
+      "severity": "yellow",
+      "description": "Sources and origin must be clear before downstream design or public use."
+    },
+    {
+      "id": "rights-gate",
+      "type": "rights_gate",
+      "status": "blocked",
+      "owner_role": "owner_admin",
+      "owner_label": "Chef / Owner Admin",
+      "tool_id": "kosmo-asset",
+      "tool_name": "KosmoAsset",
+      "project_id": "kosmo-demo-001",
+      "project_name": "Kosmo Demo 001",
+      "severity": "red",
+      "description": "Unknown or private rights remain blocked for public use."
+    },
+    {
+      "id": "human-review-gate",
+      "type": "human_review_gate",
+      "status": "needs_review",
+      "owner_role": "project_lead_architect",
+      "owner_label": "Projektleiter Architekt",
+      "tool_id": "kosmo-design",
+      "tool_name": "KosmoDesign",
+      "project_id": "kosmo-demo-001",
+      "project_name": "Kosmo Demo 001",
+      "severity": "yellow",
+      "description": "Architectural decisions need human review before local approval."
+    },
+    {
+      "id": "model-quality-gate",
+      "type": "model_quality_gate",
+      "status": "unknown",
+      "owner_role": "drafter_efz",
+      "owner_label": "Zeichner EFZ",
+      "tool_id": "kosmo-draw",
+      "tool_name": "KosmoDraw",
+      "project_id": "kosmo-demo-001",
+      "project_name": "Kosmo Demo 001",
+      "severity": "yellow",
+      "description": "Geometry, layers, scale and semantic model quality are not proven yet."
+    },
+    {
+      "id": "publish-gate",
+      "type": "publish_gate",
+      "status": "blocked",
+      "owner_role": "owner_admin",
+      "owner_label": "Chef / Owner Admin",
+      "tool_id": "kosmo-publish",
+      "tool_name": "KosmoPublish",
+      "project_id": "kosmo-demo-001",
+      "project_name": "Kosmo Demo 001",
+      "severity": "red",
+      "description": "No public promotion, upload or shop release without explicit owner approval."
+    },
+    {
+      "id": "cost-gate",
+      "type": "cost_gate",
+      "status": "local_only",
+      "owner_role": "it_ai_admin",
+      "owner_label": "IT / KI Spezialist",
+      "tool_id": "kosmo-zentrale",
+      "tool_name": "KosmoZentrale",
+      "project_id": null,
+      "project_name": null,
+      "severity": "blue",
+      "description": "No paid cloud or GPU job may start from this demo workspace."
+    },
+    {
+      "id": "security-gate",
+      "type": "security_gate",
+      "status": "needs_review",
+      "owner_role": "it_ai_admin",
+      "owner_label": "IT / KI Spezialist",
+      "tool_id": "kosmo-zentrale",
+      "tool_name": "KosmoZentrale",
+      "project_id": null,
+      "project_name": null,
+      "severity": "yellow",
+      "description": "Secrets, external accounts and private office data stay out of the public repo."
+    }
+  ],
+  "next_actions": [
+    "Keep public promotion, uploads and unsafe routes blocked until owner/admin review clears the relevant gates.",
+    "Resolve source, human-review, model-quality and security gates before using the project as a real production example.",
+    "Define the first KosmoDesign handoff screen: what Orbit opens, what Blender/KosmoDraw receives, and which role may trigger it.",
+    "Use the existing demo project package as the first Orbit Project Package Inspector input."
+  ]
+}
