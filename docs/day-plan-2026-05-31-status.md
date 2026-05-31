@@ -43,6 +43,23 @@ beendet und bleiben als lokales Tooling-Thema markiert, nicht als
 Produktcode-Bug. Fuer kleine Aenderungen wurden stattdessen fokussierte Checks
 und visuelle QA verwendet.
 
+Build-Diagnose 10:10-10:40:
+
+- `next build` braucht lokal rund 60-70 Sekunden, bis der Next-Build-Stack
+  ueberhaupt geladen ist; in dieser Phase gibt es fast keine Ausgabe.
+- Danach schreibt der Build `.next` bis ca. 86-87 MB und bleibt in der
+  optimierten Build-Phase stehen, ohne `out/` zu erzeugen.
+- Webpack-Build-Worker an/aus wurde kontrolliert getestet. Beide Varianten
+  bleiben lokal stehen; die bestehende Produktionskonfiguration wurde deshalb
+  nicht veraendert.
+- Prozess-Samples zeigen wiederholte Node/Next-Datei- und Package-Reads
+  innerhalb des Next/SWC/Webpack/Tailwind-Stacks, nicht in
+  Architecture-Kosmos-Produktcode.
+- Arbeitsregel fuer heute: kein lokaler `next build` als Blocker fuer kleine
+  Review-/UI-Schritte verwenden. Stattdessen fokussierte Checks, `ui:audit`,
+  TypeScript-Transpile-Smokes und `git diff --check`; Cloudflare prueft den
+  Static-Export nach Push auf `main`.
+
 ## Erster Stabilitaetsblock
 
 KosmoData:
