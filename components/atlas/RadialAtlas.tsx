@@ -2432,6 +2432,7 @@ function ModuleHub({ onOpenKosmoData, onOpenKosmoAsset }: { onOpenKosmoData: () 
   return (
     <div
       className="module-hub cosmos-text-safe"
+      onClick={() => setSelectedModuleId(null)}
       onKeyDown={(event) => {
         if (event.key !== 'Escape' && event.key !== 'Backspace') return;
         event.preventDefault();
