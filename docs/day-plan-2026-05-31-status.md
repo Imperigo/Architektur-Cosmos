@@ -251,3 +251,22 @@ Noch offen:
   Hero Image Audit, Planet Thumbnail Audit und Security Check.
 - Der volle `brain:doctor` bleibt erhalten und fuehrt weiterhin auch `lint`
   und `build` mit Timeout-Diagnose aus.
+
+## Goldstandard-Pilot Villa Savoye
+
+- Villa Savoye wurde als erster Goldstandard-Pilot bestaetigt.
+- `npm run cosmos:text-generate -- --entry villa-savoye` erzeugt ein
+  Review-Pack mit These, Netzwerk/DNA, Topos, Typos, Tektonik, Raumlogik,
+  Kritik, KosmoData-Layer/3D-Potenzial und Entwurfsintelligenz.
+- `npm run cosmos:plan-generate -- --entry villa-savoye` erzeugt lokale
+  review-only SVG/DXF-Studienplaene und einen Vector-Plan-Graph.
+- `npm run cosmos:model-generate -- --entry villa-savoye` erzeugt den
+  lokalen Modelllauf fuer den vorhandenen Modern-Villa-Frame-Templatepfad.
+- `npm run cosmos:entry-build -- --entry villa-savoye --mode review` fasst
+  Plan, Modell und Text als reproduzierbaren Entry-Build-Review zusammen.
+- `npm run database:pilot-quality` bewertet Villa Savoye danach mit 100%.
+  Der Gesamtpilotdurchschnitt steigt auf 85%; die uebrigen Luecken liegen
+  vor allem bei Netzwerk/DNA fuer Ingenbohl, MFO Park, High Line und Goebekli
+  Tepe.
+- Es wurden keine Live-Daten, keine D1/R2-Daten und keine oeffentlichen Assets
+  geschrieben. Alle neuen Goldstandard-Artefakte bleiben lokale Review-Ausgabe.
