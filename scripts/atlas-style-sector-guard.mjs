@@ -48,8 +48,8 @@ if (!styleSectorsSource.includes('style-sector-depth-band')) {
   failures.push('StyleSectors should render depth bands so style color fields follow the tunnel instead of one flat sector wedge.');
 }
 
-if (!radialTextSource.includes('centerNeedsFlip') || radialTextSource.includes('reverse()')) {
-  failures.push('RadialLetterText should keep the text order readable and must not reverse the label string.');
+if (!radialTextSource.includes('centerNeedsFlip') || !radialTextSource.includes('visibleLetters') || !radialTextSource.includes('[...letters].reverse()')) {
+  failures.push('RadialLetterText should flip glyph placement on the far side so radial labels stay readable instead of mirrored.');
 }
 
 if (failures.length > 0) {
