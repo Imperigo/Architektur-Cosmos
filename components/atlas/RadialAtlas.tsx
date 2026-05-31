@@ -2440,9 +2440,9 @@ function ModuleHub({ onOpenKosmoData, onOpenKosmoAsset }: { onOpenKosmoData: () 
         setSelectedModuleId(null);
       }}
     >
-      <div className="module-hub-orbit module-hub-orbit-a" />
-      <div className="module-hub-orbit module-hub-orbit-b" />
-      <div className="module-hub-core">
+      <div className="module-hub-orbit module-hub-orbit-a" aria-hidden="true" />
+      <div className="module-hub-orbit module-hub-orbit-b" aria-hidden="true" />
+      <div className="module-hub-core" aria-hidden="true">
         <svg viewBox="0 0 64 64" aria-hidden="true">
           <CosmosGlyph />
         </svg>

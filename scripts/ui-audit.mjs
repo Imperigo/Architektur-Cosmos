@@ -66,6 +66,8 @@ async function main() {
     checkIncludes(sources.atlas, "ui.hasFinePointer ? 'cosmos-fine-pointer' : 'cosmos-touch-web'", 'atlas distinguishes touch from narrow responsive layout'),
     checkIncludes(sources.css, '.cosmos-touch-web .screen-cosmos-cursor', 'custom cursor is hidden only for touch mode'),
     checkIncludes(sources.atlas, 'tabIndex={-1}', 'Orbit hub can receive keyboard dismissal focus'),
+    checkIncludes(sources.atlas, 'className="module-hub-orbit module-hub-orbit-a" aria-hidden="true"', 'Orbit decorative rings are hidden from screen readers'),
+    checkIncludes(sources.atlas, 'className="module-hub-core" aria-hidden="true"', 'Orbit decorative center glyph is hidden from screen readers'),
     checkIncludes(sources.atlas, 'role="dialog"', 'Orbit module preview exposes dialog semantics'),
     checkIncludes(sources.atlas, 'aria-label={`${selectedModule.name} Modulvorschau`}', 'Orbit module preview has a module-specific label'),
     checkIncludes(sources.atlas, 'onClick={() => setSelectedModuleId(null)}', 'Orbit preview can be dismissed by clicking the empty hub area'),
