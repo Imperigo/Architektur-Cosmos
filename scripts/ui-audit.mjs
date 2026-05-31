@@ -53,6 +53,8 @@ async function main() {
     checkIncludes(sources.css, '.database-draft .grid-cols-4', 'mobile database grid collapse'),
     checkIncludes(sources.css, '.entry-model-controls .grid', 'mobile 3D controls grid rule'),
     checkIncludes(sources.css, '.entry-page header .entry-link', 'mobile entry header touch rule'),
+    checkIncludes(sources.css, '.mobile-atlas-dock {\n  display: flex;\n  flex-wrap: wrap;', 'mobile atlas filter dock wraps instead of overflowing horizontally'),
+    checkIncludes(sources.css, '.mobile-atlas-dock button {\n  flex: 1 1 calc(25% - 7px);', 'mobile atlas filter buttons use responsive wrapped widths'),
     checkIncludes(sources.entryPage, "shortLabel: 'Quelle'", 'entry archive radar uses readable Quelle label'),
     checkIncludes(sources.entryPage, "shortLabel: 'Medien'", 'entry archive radar uses readable Medien label'),
     checkIncludes(sources.entryPage, "shortLabel: 'Netz'", 'entry archive radar uses readable Netz label'),
