@@ -65,6 +65,8 @@ async function main() {
     checkIncludes(sources.atlas, 'hasFinePointer: !isCoarsePointer', 'narrow desktop keeps fine pointer cursor support'),
     checkIncludes(sources.atlas, "ui.hasFinePointer ? 'cosmos-fine-pointer' : 'cosmos-touch-web'", 'atlas distinguishes touch from narrow responsive layout'),
     checkIncludes(sources.css, '.cosmos-touch-web .screen-cosmos-cursor', 'custom cursor is hidden only for touch mode'),
+    checkIncludes(sources.atlas, "module.id === 'asset' ? { ...module, onClick: onOpenKosmoAsset }", 'KosmoAsset orbit station opens the asset workspace'),
+    checkIncludes(sources.atlas, 'className="kosmo-asset-back" onClick={onReturnToHub} aria-label="Zurück zum Hauptmenü"', 'KosmoAsset workspace has a stable return button'),
     checkIncludes(sources.css, '.kosmo-asset-shell {\n    display: block;', 'mobile KosmoAsset shell uses document flow'),
     checkIncludes(sources.css, '.kosmo-asset-library,\n  .kosmo-asset-grid,\n  .kosmo-asset-inspector {\n    min-height: auto;', 'mobile KosmoAsset cards cannot collapse into inspector'),
     checkIncludes(sources.atlas, 'const dossierScale = useLargeInterface ? 2.72 : 1.42;', 'mobile dossier card uses readable scale'),
