@@ -182,8 +182,10 @@ Sichere erste Umsetzung:
    (**initial umgesetzt**)
 6. lokaler Handoff `npm run kosmo:orbit-role-state-handoff`
    (**initial umgesetzt**)
-7. kleine statische Orbit-Ansicht oder Report, der Rollen, Tools und Gates zeigt
-8. spaeter Handoff an KosmoZentrale fuer echte lokale Runtime
+7. lokaler App-Route-Vertrag `npm run kosmo:orbit-app-route-spec`
+   (**initial umgesetzt**)
+8. kleine statische Orbit-Ansicht oder Report, der Rollen, Tools und Gates zeigt
+9. spaeter Handoff an KosmoZentrale fuer echte lokale Runtime
 
 ## 7. Zusammenarbeit mit anderen Workern
 
@@ -301,6 +303,7 @@ laufen. Initial umgesetzt:
   rollenbasierte KosmoOrbit-Oberflaeche;
 - prueft den Role-Shell-Prototyp mit einem Role-Shell-Smoke;
 - erzeugt einen Role-State-Handoff fuer die spaetere statische Orbit-App-Route;
+- erzeugt eine App-Route-Spezifikation fuer die spaetere `/orbit`-Route;
 - schreibt `examples/kosmo-orbit/review/orbit-full-review.generated.json`;
 - schreibt `examples/kosmo-orbit/review/orbit-full-review.generated.md`.
 
@@ -308,7 +311,7 @@ Der Full Review ist der erste echte KosmoOrbit-Steuerzentralen-Durchlauf:
 Workspace -> Role-State-Check -> Status -> Projektpaket -> Design-Handoff ->
 UI-Panel-Spec -> statischer UI-Prototyp -> UI-Smoke -> Rollenvarianten ->
 Role-UI-Smoke -> Role-Shell-Prototyp -> Role-Shell-Smoke ->
-Role-State-Handoff.
+Role-State-Handoff -> App-Route-Spec.
 
 Auch dieser Durchlauf bleibt strikt review-only: kein Blender-Start, keine
 Geometrie-Generierung, keine Uploads, keine externen Accounts, keine Kosten und
@@ -516,3 +519,32 @@ visuelle Referenz und Smoke-Gates als Pflicht vor echter Interaktion.
 
 Auch dieser Handoff bleibt review-only: keine Auth-Runtime, keine User-Writes,
 keine Netzwerke, keine Uploads, keine Publikation und keine Design-Generierung.
+
+## 21. Orbit App Route Spec
+
+Bevor KosmoOrbit als echte statische App-Route in diesem Next-Projekt sichtbar
+wird, braucht die Route einen klaren Vertrag. Initial umgesetzt:
+
+- `npm run kosmo:orbit-app-route-spec`
+- liest `examples/kosmo-orbit/review/orbit-role-state-handoff.generated.json`;
+- liest `examples/kosmo-orbit/role-state.demo.json`;
+- liest `orbit/role-shell-prototype.generated.json`;
+- schreibt `examples/kosmo-orbit/review/orbit-app-route-spec.generated.json`;
+- schreibt `examples/kosmo-orbit/review/orbit-app-route-spec.generated.md`.
+
+Die Spezifikation definiert:
+
+- vorgeschlagene Route `/orbit`;
+- spaetere Implementierungsdatei `app/orbit/page.tsx`;
+- Static-Export-Modus ohne API, Server Actions, Middleware oder Backend;
+- lokale statische Imports als einzige Datenquelle;
+- keine Writes, Uploads, Public-Publish-Aktionen, Netzwerkaufrufe oder
+  Design-Generierung;
+- erlaubte Review-only-Interaktionen fuer Rollenwechsel, Modulwechsel,
+  Detailansicht und Safe-Mode-Anzeige;
+- deaktivierte Aktionen mit sichtbarem Grund.
+
+Wichtig: Dieser Schritt erstellt bewusst noch keine echte Next-Route. Er ist
+der pruefbare Vertrag vor der Implementierung, damit KosmoOrbit spaeter als
+Hauptsoftware-Shell sichtbar werden kann, ohne die Deployment-Grenzen des
+statischen Cloudflare-Exports zu verletzen.
