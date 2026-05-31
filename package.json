@@ -112,6 +112,7 @@
     "kosmo:orbit-role-variants": "node scripts/kosmo-orbit-role-ui-variants.mjs",
     "kosmo:orbit-role-smoke": "node scripts/kosmo-orbit-role-ui-smoke.mjs",
     "kosmo:orbit-role-shell-prototype": "node scripts/kosmo-orbit-role-shell-prototype.mjs",
+    "kosmo:orbit-role-shell-smoke": "node scripts/kosmo-orbit-role-shell-smoke.mjs",
     "kosmo:orbit-full-review": "node scripts/kosmo-orbit-full-review.mjs",
     "kosmo:package-create": "node scripts/kosmo-project-package-create.mjs",
     "kosmo:prepare-import": "node scripts/kosmo-prepare-package-import.mjs",

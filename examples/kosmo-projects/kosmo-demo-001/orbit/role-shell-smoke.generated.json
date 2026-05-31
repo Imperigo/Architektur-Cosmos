@@ -1,0 +1,94 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-05-31T12:59:41.602Z",
+  "generator": "kosmo-orbit-role-shell-smoke",
+  "prototype_html": "examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-prototype.generated.html",
+  "prototype_manifest": "examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-prototype.generated.json",
+  "status": "role_shell_smoke_passed",
+  "policy": {
+    "static_html_only": true,
+    "no_auth_runtime": true,
+    "no_user_data_write": true,
+    "no_network_calls": true,
+    "no_blender_launch": true,
+    "no_geometry_generation": true,
+    "no_uploads": true,
+    "no_public_publish": true
+  },
+  "summary": {
+    "check_count": 12,
+    "passed_checks": 12,
+    "failed_checks": 0,
+    "role_count": 8,
+    "role_card_count": 8,
+    "role_button_count": 8,
+    "blocked_generation_action_count": 8
+  },
+  "checks": [
+    {
+      "id": "html_exists",
+      "label": "Role shell HTML exists.",
+      "status": "passed"
+    },
+    {
+      "id": "manifest_ready",
+      "label": "Role shell manifest is ready.",
+      "status": "passed"
+    },
+    {
+      "id": "title_visible",
+      "label": "Role-aware Orbit Shell title is visible.",
+      "status": "passed"
+    },
+    {
+      "id": "all_role_labels_visible",
+      "label": "All eight office roles are visible.",
+      "status": "passed"
+    },
+    {
+      "id": "role_card_count",
+      "label": "Eight role cards are rendered.",
+      "status": "passed"
+    },
+    {
+      "id": "role_button_count",
+      "label": "Eight role buttons are rendered.",
+      "status": "passed"
+    },
+    {
+      "id": "generate_design_blocked_everywhere",
+      "label": "Generate Design is blocked on all role cards.",
+      "status": "passed"
+    },
+    {
+      "id": "static_safety_copy_visible",
+      "label": "Static safety copy is visible.",
+      "status": "passed"
+    },
+    {
+      "id": "no_script_tags",
+      "label": "Role shell has no script tags.",
+      "status": "passed"
+    },
+    {
+      "id": "no_external_assets",
+      "label": "Role shell has no external assets or network URLs.",
+      "status": "passed"
+    },
+    {
+      "id": "manifest_no_generation",
+      "label": "Manifest keeps generation-capable roles at zero.",
+      "status": "passed"
+    },
+    {
+      "id": "manifest_smoke_passed",
+      "label": "Manifest references a passed role UI smoke.",
+      "status": "passed"
+    }
+  ],
+  "next_actions": [
+    "Keep this smoke check in the Orbit full review before changing the role shell prototype.",
+    "Use the role shell as the local visual reference for a future role-aware app route.",
+    "Add real interaction only after local auth and role state contracts are explicit."
+  ]
+}

@@ -1,7 +1,7 @@
 # KosmoOrbit Project Package Inspector
 
 Project: `Kosmo Demo 001`
-Generated: 2026-05-31T12:51:50.789Z
+Generated: 2026-05-31T12:59:39.637Z
 Status: `local_review_only`
 Risk level: `local_review_only`
 Manifest: `examples/kosmo-projects/kosmo-demo-001/kosmo.project.json`

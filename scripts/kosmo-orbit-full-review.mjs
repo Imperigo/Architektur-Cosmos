@@ -126,6 +126,20 @@ const steps = [
       'orbit/role-ui-smoke.generated.json'
     ],
     report: resolve(projectRoot, 'orbit/role-shell-prototype.generated.json')
+  },
+  {
+    id: 'role_shell_smoke',
+    label: 'Role Shell Smoke',
+    script: 'kosmo:orbit-role-shell-smoke',
+    args: [
+      '--project',
+      relative(root, projectRoot),
+      '--html',
+      'orbit/role-shell-prototype.generated.html',
+      '--manifest',
+      'orbit/role-shell-prototype.generated.json'
+    ],
+    report: resolve(projectRoot, 'orbit/role-shell-smoke.generated.json')
   }
 ];
 
@@ -200,6 +214,7 @@ function buildReport(stepRows) {
   const roleVariants = readOptionalJson(resolve(projectRoot, 'orbit/role-ui-variants.generated.json'));
   const roleUiSmoke = readOptionalJson(resolve(projectRoot, 'orbit/role-ui-smoke.generated.json'));
   const roleShellPrototype = readOptionalJson(resolve(projectRoot, 'orbit/role-shell-prototype.generated.json'));
+  const roleShellSmoke = readOptionalJson(resolve(projectRoot, 'orbit/role-shell-smoke.generated.json'));
 
   const status = failedSteps.length
     ? 'orbit_full_review_failed'
@@ -252,7 +267,10 @@ function buildReport(stepRows) {
       role_ui_smoke_passed_checks: roleUiSmoke?.summary?.passed_checks ?? null,
       role_ui_smoke_check_count: roleUiSmoke?.summary?.check_count ?? null,
       role_shell_prototype_status: roleShellPrototype?.status || null,
-      role_shell_prototype_html: roleShellPrototype?.html_output || null
+      role_shell_prototype_html: roleShellPrototype?.html_output || null,
+      role_shell_smoke_status: roleShellSmoke?.status || null,
+      role_shell_smoke_passed_checks: roleShellSmoke?.summary?.passed_checks ?? null,
+      role_shell_smoke_check_count: roleShellSmoke?.summary?.check_count ?? null
     },
     outputs: {
       full_review_json: relative(root, outputJsonPath),
@@ -265,14 +283,15 @@ function buildReport(stepRows) {
       design_ui_smoke_markdown: relative(root, resolve(projectRoot, 'orbit/design-handoff-ui-smoke.generated.md')),
       role_variants_markdown: relative(root, resolve(projectRoot, 'orbit/role-ui-variants.generated.md')),
       role_ui_smoke_markdown: relative(root, resolve(projectRoot, 'orbit/role-ui-smoke.generated.md')),
-      role_shell_prototype_html: relative(root, resolve(projectRoot, 'orbit/role-shell-prototype.generated.html'))
+      role_shell_prototype_html: relative(root, resolve(projectRoot, 'orbit/role-shell-prototype.generated.html')),
+      role_shell_smoke_markdown: relative(root, resolve(projectRoot, 'orbit/role-shell-smoke.generated.md'))
     },
     steps: stepRows,
-    next_actions: nextActions({ failedSteps, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke, roleShellPrototype })
+    next_actions: nextActions({ failedSteps, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke, roleShellPrototype, roleShellSmoke })
   };
 }
 
-function nextActions({ failedSteps, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke, roleShellPrototype }) {
+function nextActions({ failedSteps, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke, roleShellPrototype, roleShellSmoke }) {
   const actions = [];
   if (failedSteps.length) {
     failedSteps.forEach((step) => actions.push(`Review failed step: ${step.label}`));
@@ -304,6 +323,9 @@ function nextActions({ failedSteps, workspaceStatus, projectInspector, designHan
   }
   if (roleShellPrototype?.status === 'role_shell_prototype_ready') {
     actions.push('Use the generated role shell prototype as the visual reference for the first role-aware KosmoOrbit app screen.');
+  }
+  if (roleShellSmoke?.status === 'role_shell_smoke_passed') {
+    actions.push('Keep the role shell smoke in the Orbit full review before adding interaction or real app routing.');
   }
   if (!actions.length) actions.push('KosmoOrbit full review is ready for the next implementation step.');
   return actions;
@@ -345,6 +367,8 @@ function renderMarkdown(report) {
     `- role UI smoke checks: ${report.summary.role_ui_smoke_passed_checks}/${report.summary.role_ui_smoke_check_count}`,
     `- role shell prototype: \`${report.summary.role_shell_prototype_status}\``,
     `- role shell prototype HTML: \`${report.summary.role_shell_prototype_html}\``,
+    `- role shell smoke: \`${report.summary.role_shell_smoke_status}\``,
+    `- role shell smoke checks: ${report.summary.role_shell_smoke_passed_checks}/${report.summary.role_shell_smoke_check_count}`,
     '',
     '## Steps',
     '',

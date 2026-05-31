@@ -292,13 +292,14 @@ laufen. Initial umgesetzt:
 - prueft die Rollenvarianten mit einem Role-UI-Smoke;
 - erzeugt einen statischen Role-Shell-Prototyp fuer die erste
   rollenbasierte KosmoOrbit-Oberflaeche;
+- prueft den Role-Shell-Prototyp mit einem Role-Shell-Smoke;
 - schreibt `examples/kosmo-orbit/review/orbit-full-review.generated.json`;
 - schreibt `examples/kosmo-orbit/review/orbit-full-review.generated.md`.
 
 Der Full Review ist der erste echte KosmoOrbit-Steuerzentralen-Durchlauf:
 Workspace -> Status -> Projektpaket -> Design-Handoff -> UI-Panel-Spec ->
 statischer UI-Prototyp -> UI-Smoke -> Rollenvarianten -> Role-UI-Smoke ->
-Role-Shell-Prototyp.
+Role-Shell-Prototyp -> Role-Shell-Smoke.
 
 Auch dieser Durchlauf bleibt strikt review-only: kein Blender-Start, keine
 Geometrie-Generierung, keine Uploads, keine externen Accounts, keine Kosten und
@@ -425,3 +426,28 @@ Der Prototyp zeigt:
 Auch dieser Prototyp bleibt ein lokales statisches Artefakt im Projektpaket:
 keine Next-Route, keine Auth-Runtime, keine User-Daten, keine externen
 Netzwerkaufrufe, kein Blender-Start und keine Geometrie-Generierung.
+
+## 18. Role Shell Smoke
+
+Der rollenbasierte Shell-Prototyp wird automatisch geprueft, bevor er als
+visuelle Vorlage fuer eine echte KosmoOrbit-App-Route dienen darf. Initial
+umgesetzt:
+
+- `npm run kosmo:orbit-role-shell-smoke`
+- liest `orbit/role-shell-prototype.generated.html`;
+- liest `orbit/role-shell-prototype.generated.json`;
+- schreibt `orbit/role-shell-smoke.generated.json`;
+- schreibt `orbit/role-shell-smoke.generated.md`.
+
+Der Smoke prueft u.a.:
+
+- alle acht Rollenlabels sind sichtbar;
+- acht Rollenkarten und acht Rollenbuttons sind vorhanden;
+- `Generate Design` ist in allen Rollenkarten blockiert;
+- statische Sicherheitskopie ist sichtbar;
+- keine Script-Tags;
+- keine externen Netzwerk-URLs;
+- das Manifest bleibt generation-safe.
+
+Damit ist auch der erste sichtbare rollenbasierte KosmoOrbit-Shell-Prototyp
+automatisch gegen die wichtigsten Sicherheits- und Rollenregeln abgesichert.
