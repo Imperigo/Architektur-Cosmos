@@ -17,6 +17,7 @@ The first version builds the core atlas without filters, search, database, CMS, 
 - `docs/ai-reference-archive-vision.md`
 - `docs/asset-intake-workflow.md`
 - `docs/media-and-model-policy.md`
+- `docs/architecture-kosmos-quality-certificate.md`
 - `docs/pilot-entry-standard.md`
 - `docs/storage-cost-guardrails.md`
 - `docs/cloudflare-archive-preview.md`

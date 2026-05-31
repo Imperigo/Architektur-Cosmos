@@ -347,6 +347,9 @@ Handoff-Smoke und weiterhin blockiertes Public-Gate. Es ist keine offizielle
 externe Zertifizierung, keine Rechtsmeinung, keine Public-Freigabe, kein
 Upload, kein D1-/R2-Write, keine Library-Mutation und keine
 ArchiCAD-/Blender-Projektdatei-Aenderung.
+Der uebergeordnete Standard ist in
+[`architecture-kosmos-quality-certificate.md`](./architecture-kosmos-quality-certificate.md)
+dokumentiert.
 
 ## Zertifikat-Smoke
 

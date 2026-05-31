@@ -113,6 +113,9 @@ Mögliche Werkzeuge:
   Zertifikatspfad soll Human-Review-Sessions, Decision-Records, Source-Gates,
   Rights-Gates und ggf. Signaturen zusammenfuehren, ohne automatisch zu
   behaupten, dass ein KI-generierter Inhalt architektonisch belastbar ist.
+  V1 ist als interner Standard in
+  [`docs/architecture-kosmos-quality-certificate.md`](./architecture-kosmos-quality-certificate.md)
+  festgehalten.
 
 ### KosmoShop
 
