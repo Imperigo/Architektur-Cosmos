@@ -180,8 +180,10 @@ Sichere erste Umsetzung:
    fuer rollenbasierte Shells (**initial umgesetzt**)
 5. lokaler Check `npm run kosmo:orbit-role-state-check`
    (**initial umgesetzt**)
-6. kleine statische Orbit-Ansicht oder Report, der Rollen, Tools und Gates zeigt
-7. spaeter Handoff an KosmoZentrale fuer echte lokale Runtime
+6. lokaler Handoff `npm run kosmo:orbit-role-state-handoff`
+   (**initial umgesetzt**)
+7. kleine statische Orbit-Ansicht oder Report, der Rollen, Tools und Gates zeigt
+8. spaeter Handoff an KosmoZentrale fuer echte lokale Runtime
 
 ## 7. Zusammenarbeit mit anderen Workern
 
@@ -298,13 +300,15 @@ laufen. Initial umgesetzt:
 - erzeugt einen statischen Role-Shell-Prototyp fuer die erste
   rollenbasierte KosmoOrbit-Oberflaeche;
 - prueft den Role-Shell-Prototyp mit einem Role-Shell-Smoke;
+- erzeugt einen Role-State-Handoff fuer die spaetere statische Orbit-App-Route;
 - schreibt `examples/kosmo-orbit/review/orbit-full-review.generated.json`;
 - schreibt `examples/kosmo-orbit/review/orbit-full-review.generated.md`.
 
 Der Full Review ist der erste echte KosmoOrbit-Steuerzentralen-Durchlauf:
 Workspace -> Role-State-Check -> Status -> Projektpaket -> Design-Handoff ->
 UI-Panel-Spec -> statischer UI-Prototyp -> UI-Smoke -> Rollenvarianten ->
-Role-UI-Smoke -> Role-Shell-Prototyp -> Role-Shell-Smoke.
+Role-UI-Smoke -> Role-Shell-Prototyp -> Role-Shell-Smoke ->
+Role-State-Handoff.
 
 Auch dieser Durchlauf bleibt strikt review-only: kein Blender-Start, keine
 Geometrie-Generierung, keine Uploads, keine externen Accounts, keine Kosten und
@@ -491,3 +495,24 @@ kontrolliert und pruefbar bleibt.
 Der Role-State-Check vergleicht den State mit dem Workspace und prueft zugleich,
 ob Schema, Pflichtfelder, Safety-Policy, Rollenliste, sichtbare Module und
 blockierte Aktionen als statischer Vertrag vollstaendig vorhanden sind.
+
+## 20. Role State Handoff
+
+Der Role-State-Handoff verbindet den geprueften Role State mit dem statischen
+Role-Shell-Prototyp. Initial umgesetzt:
+
+- `npm run kosmo:orbit-role-state-handoff`
+- liest `examples/kosmo-orbit/role-state.demo.json`;
+- liest Role-State-Check und Role-State-Smoke;
+- liest `orbit/role-shell-prototype.generated.json`;
+- liest `orbit/role-shell-smoke.generated.json`;
+- schreibt `examples/kosmo-orbit/review/orbit-role-state-handoff.generated.json`;
+- schreibt `examples/kosmo-orbit/review/orbit-role-state-handoff.generated.md`.
+
+Der Handoff zeigt, welche Teile spaeter in eine lokale statische App-Route
+uebergehen duerfen: aktive Rolle, Preview-Rolle, aktives Projektpaket,
+sichtbare Module, blockierte Aktionen mit Gate-Gruenden, Role-Shell als
+visuelle Referenz und Smoke-Gates als Pflicht vor echter Interaktion.
+
+Auch dieser Handoff bleibt review-only: keine Auth-Runtime, keine User-Writes,
+keine Netzwerke, keine Uploads, keine Publikation und keine Design-Generierung.

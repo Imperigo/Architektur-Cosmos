@@ -1,0 +1,190 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-05-31T13:53:14.475Z",
+  "generator": "kosmo-orbit-role-state-handoff",
+  "status": "role_state_handoff_ready",
+  "inputs": {
+    "role_state": "examples/kosmo-orbit/role-state.demo.json",
+    "role_state_check": "examples/kosmo-orbit/review/orbit-role-state-check.generated.json",
+    "role_state_smoke": "examples/kosmo-orbit/review/orbit-role-state-smoke.generated.json",
+    "shell_manifest": "examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-prototype.generated.json",
+    "shell_smoke": "examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-smoke.generated.json"
+  },
+  "policy": {
+    "review_only": true,
+    "no_auth_runtime": true,
+    "no_user_data_write": true,
+    "no_network_calls": true,
+    "no_uploads": true,
+    "no_public_publish": true,
+    "no_design_generation": true
+  },
+  "summary": {
+    "check_count": 10,
+    "passed_checks": 10,
+    "failed_checks": 0,
+    "handoff_item_count": 6,
+    "active_role_id": "owner_admin",
+    "selected_role_id": "owner_admin",
+    "active_project_id": "kosmo-demo-001",
+    "visible_module_count": 8,
+    "blocked_action_count": 3
+  },
+  "handoff_items": [
+    {
+      "id": "session-role",
+      "label": "Session role state",
+      "app_use": "Drive the displayed active role and preview role in a future local Orbit app route.",
+      "source": "examples/kosmo-orbit/role-state.demo.json"
+    },
+    {
+      "id": "active-project",
+      "label": "Active project binding",
+      "app_use": "Load the selected project package without introducing network or backend reads.",
+      "source": "examples/kosmo-projects/kosmo-demo-001/kosmo.project.json"
+    },
+    {
+      "id": "visible-modules",
+      "label": "Visible module policy",
+      "app_use": "Render primary, available and summary-only modules from data instead of hardcoded UI branches.",
+      "source": "examples/kosmo-orbit/role-state.demo.json"
+    },
+    {
+      "id": "blocked-actions",
+      "label": "Blocked action policy",
+      "app_use": "Keep dangerous actions visible but disabled with gate reasons.",
+      "source": "examples/kosmo-orbit/role-state.demo.json"
+    },
+    {
+      "id": "role-shell-reference",
+      "label": "Role shell visual reference",
+      "app_use": "Use the generated HTML shell as the visual baseline before a Next route exists.",
+      "source": "examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-prototype.generated.html"
+    },
+    {
+      "id": "smoke-gates",
+      "label": "Smoke gates",
+      "app_use": "Run role state and role shell smokes before interaction or routing changes.",
+      "source": "examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-smoke.generated.json"
+    }
+  ],
+  "visible_modules": [
+    {
+      "tool_id": "kosmo-data",
+      "visibility": "available",
+      "reason": "Reference and project knowledge can be inspected locally."
+    },
+    {
+      "tool_id": "kosmo-asset",
+      "visibility": "available",
+      "reason": "Asset review evidence can be inspected locally."
+    },
+    {
+      "tool_id": "kosmo-design",
+      "visibility": "primary",
+      "reason": "Current Orbit prototype focuses on the KosmoDesign review handoff."
+    },
+    {
+      "tool_id": "kosmo-prepare",
+      "visibility": "summary_only",
+      "reason": "Prepare is visible as planned context, but not active in this demo shell."
+    },
+    {
+      "tool_id": "kosmo-draw",
+      "visibility": "summary_only",
+      "reason": "Draw handoff stays summary-only until model-quality review is closed."
+    },
+    {
+      "tool_id": "kosmo-viz",
+      "visibility": "summary_only",
+      "reason": "Viz is planned and remains blocked from generation in this state."
+    },
+    {
+      "tool_id": "kosmo-publish",
+      "visibility": "summary_only",
+      "reason": "Publish stays visible but blocked by publish and rights gates."
+    },
+    {
+      "tool_id": "kosmo-zentrale",
+      "visibility": "summary_only",
+      "reason": "Zentrale runtime is external to this static repo and only shown as status."
+    }
+  ],
+  "blocked_actions": [
+    {
+      "id": "generate-design",
+      "label": "Generate Design",
+      "reason": "Context and human-review gates are not approved.",
+      "gate_id": "human-review-gate"
+    },
+    {
+      "id": "publish-public",
+      "label": "Publish Public",
+      "reason": "Publish and rights gates remain blocked in the local demo.",
+      "gate_id": "publish-gate"
+    },
+    {
+      "id": "start-cloud-job",
+      "label": "Start Cloud Job",
+      "reason": "Cost gate is local-only and external network access is disabled.",
+      "gate_id": "cost-gate"
+    }
+  ],
+  "checks": [
+    {
+      "id": "role_state_check_passed",
+      "label": "Role state check passed.",
+      "status": "passed"
+    },
+    {
+      "id": "role_state_smoke_passed",
+      "label": "Role state smoke passed.",
+      "status": "passed"
+    },
+    {
+      "id": "role_shell_ready",
+      "label": "Role shell prototype is ready.",
+      "status": "passed"
+    },
+    {
+      "id": "role_shell_smoke_passed",
+      "label": "Role shell smoke passed.",
+      "status": "passed"
+    },
+    {
+      "id": "same_active_role",
+      "label": "Role shell active role matches role state.",
+      "status": "passed"
+    },
+    {
+      "id": "same_selected_role",
+      "label": "Role shell selected role matches role state.",
+      "status": "passed"
+    },
+    {
+      "id": "same_active_project",
+      "label": "Role shell active project matches role state.",
+      "status": "passed"
+    },
+    {
+      "id": "visible_modules_preserved",
+      "label": "Visible module count is preserved in shell manifest.",
+      "status": "passed"
+    },
+    {
+      "id": "blocked_actions_preserved",
+      "label": "Blocked action count is preserved in shell manifest.",
+      "status": "passed"
+    },
+    {
+      "id": "review_only_preserved",
+      "label": "Review-only policy is preserved.",
+      "status": "passed"
+    }
+  ],
+  "next_actions": [
+    "Use this handoff as the contract for the first local/static KosmoOrbit role-state app route.",
+    "Keep the next route static and data-read-only until auth/runtime decisions are explicit.",
+    "Do not enable generation, publish, uploads or external network actions from this handoff."
+  ]
+}

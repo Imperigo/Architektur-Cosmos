@@ -167,6 +167,26 @@ const steps = [
       'orbit/role-shell-prototype.generated.json'
     ],
     report: resolve(projectRoot, 'orbit/role-shell-smoke.generated.json')
+  },
+  {
+    id: 'role_state_handoff',
+    label: 'Role State Handoff',
+    script: 'kosmo:orbit-role-state-handoff',
+    args: [
+      '--state',
+      relative(root, roleStatePath),
+      '--check',
+      relative(root, resolve(workspaceRoot, 'review/orbit-role-state-check.generated.json')),
+      '--stateSmoke',
+      relative(root, resolve(workspaceRoot, 'review/orbit-role-state-smoke.generated.json')),
+      '--project',
+      relative(root, projectRoot),
+      '--shell',
+      'orbit/role-shell-prototype.generated.json',
+      '--shellSmoke',
+      'orbit/role-shell-smoke.generated.json'
+    ],
+    report: resolve(workspaceRoot, 'review/orbit-role-state-handoff.generated.json')
   }
 ];
 
@@ -235,6 +255,7 @@ function buildReport(stepRows) {
   const failedSteps = stepRows.filter((step) => step.status !== 'passed');
   const roleStateCheck = readOptionalJson(resolve(workspaceRoot, 'review/orbit-role-state-check.generated.json'));
   const roleStateSmoke = readOptionalJson(resolve(workspaceRoot, 'review/orbit-role-state-smoke.generated.json'));
+  const roleStateHandoff = readOptionalJson(resolve(workspaceRoot, 'review/orbit-role-state-handoff.generated.json'));
   const workspaceStatus = readOptionalJson(resolve(workspaceRoot, 'review/orbit-status-report.generated.json'));
   const projectInspector = readOptionalJson(resolve(projectRoot, 'orbit/project-inspector.generated.json'));
   const designHandoff = readOptionalJson(resolve(projectRoot, 'orbit/design-handoff-preview.generated.json'));
@@ -282,6 +303,8 @@ function buildReport(stepRows) {
       role_state_smoke_status: roleStateSmoke?.status || null,
       role_state_smoke_passed_checks: roleStateSmoke?.summary?.passed_checks ?? null,
       role_state_smoke_check_count: roleStateSmoke?.summary?.check_count ?? null,
+      role_state_handoff_status: roleStateHandoff?.status || null,
+      role_state_handoff_items: roleStateHandoff?.summary?.handoff_item_count ?? null,
       workspace_status: workspaceStatus?.status || null,
       project_status: projectInspector?.status || null,
       project_artifact_count: projectInspector?.summary?.artifact_count ?? null,
@@ -315,6 +338,7 @@ function buildReport(stepRows) {
       full_review_markdown: relative(root, outputMdPath),
       role_state_check_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-role-state-check.generated.md')),
       role_state_smoke_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-role-state-smoke.generated.md')),
+      role_state_handoff_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-role-state-handoff.generated.md')),
       workspace_status_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-status-report.generated.md')),
       project_inspector_markdown: relative(root, resolve(projectRoot, 'orbit/project-inspector.generated.md')),
       design_handoff_markdown: relative(root, resolve(projectRoot, 'orbit/design-handoff-preview.generated.md')),
@@ -327,11 +351,11 @@ function buildReport(stepRows) {
       role_shell_smoke_markdown: relative(root, resolve(projectRoot, 'orbit/role-shell-smoke.generated.md'))
     },
     steps: stepRows,
-    next_actions: nextActions({ failedSteps, roleStateCheck, roleStateSmoke, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke, roleShellPrototype, roleShellSmoke })
+    next_actions: nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHandoff, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke, roleShellPrototype, roleShellSmoke })
   };
 }
 
-function nextActions({ failedSteps, roleStateCheck, roleStateSmoke, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke, roleShellPrototype, roleShellSmoke }) {
+function nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHandoff, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke, roleShellPrototype, roleShellSmoke }) {
   const actions = [];
   if (failedSteps.length) {
     failedSteps.forEach((step) => actions.push(`Review failed step: ${step.label}`));
@@ -345,6 +369,9 @@ function nextActions({ failedSteps, roleStateCheck, roleStateSmoke, workspaceSta
   }
   if (roleStateSmoke?.status === 'role_state_smoke_passed') {
     actions.push('Keep the role state smoke in the Orbit full review before adding role-state interaction.');
+  }
+  if (roleStateHandoff?.status === 'role_state_handoff_ready') {
+    actions.push('Use the role state handoff as the next contract before implementing a static Orbit app route.');
   }
   if (designHandoff?.context?.blocked_input_count > 0) {
     actions.push('Resolve or explicitly reject blocked context inputs before allowing design generation.');
@@ -398,6 +425,8 @@ function renderMarkdown(report) {
     `- role state blocked actions: ${report.summary.role_state_blocked_action_count}`,
     `- role state smoke: \`${report.summary.role_state_smoke_status}\``,
     `- role state smoke checks: ${report.summary.role_state_smoke_passed_checks}/${report.summary.role_state_smoke_check_count}`,
+    `- role state handoff: \`${report.summary.role_state_handoff_status}\``,
+    `- role state handoff items: ${report.summary.role_state_handoff_items}`,
     `- workspace status: \`${report.summary.workspace_status}\``,
     `- project status: \`${report.summary.project_status}\``,
     `- project artifacts: ${report.summary.project_artifact_count}`,

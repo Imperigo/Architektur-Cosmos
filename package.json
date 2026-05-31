@@ -105,6 +105,7 @@
     "kosmo:orbit-check": "node scripts/kosmo-orbit-workspace-check.mjs",
     "kosmo:orbit-role-state-check": "node scripts/kosmo-orbit-role-state-check.mjs",
     "kosmo:orbit-role-state-smoke": "node scripts/kosmo-orbit-role-state-smoke.mjs",
+    "kosmo:orbit-role-state-handoff": "node scripts/kosmo-orbit-role-state-handoff.mjs",
     "kosmo:orbit-status": "node scripts/kosmo-orbit-status-report.mjs",
     "kosmo:orbit-project-inspector": "node scripts/kosmo-orbit-project-inspector.mjs",
     "kosmo:orbit-design-handoff": "node scripts/kosmo-orbit-design-handoff-preview.mjs",

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-31T13:50:11.138Z",
+  "generated_at": "2026-05-31T13:53:14.492Z",
   "generator": "kosmo-orbit-full-review",
   "workspace_path": "examples/kosmo-orbit/workspace.demo.json",
   "project_root": "examples/kosmo-projects/kosmo-demo-001",
@@ -15,8 +15,8 @@
     "no_geometry_generation": true
   },
   "summary": {
-    "step_count": 13,
-    "passed_steps": 13,
+    "step_count": 14,
+    "passed_steps": 14,
     "failed_steps": 0,
     "role_state_status": "role_state_check_passed",
     "role_state_active_role": "owner_admin",
@@ -26,6 +26,8 @@
     "role_state_smoke_status": "role_state_smoke_passed",
     "role_state_smoke_passed_checks": 16,
     "role_state_smoke_check_count": 16,
+    "role_state_handoff_status": "role_state_handoff_ready",
+    "role_state_handoff_items": 6,
     "workspace_status": "orbit_blocked_gates_present",
     "project_status": "local_review_only",
     "project_artifact_count": 59,
@@ -59,6 +61,7 @@
     "full_review_markdown": "examples/kosmo-orbit/review/orbit-full-review.generated.md",
     "role_state_check_markdown": "examples/kosmo-orbit/review/orbit-role-state-check.generated.md",
     "role_state_smoke_markdown": "examples/kosmo-orbit/review/orbit-role-state-smoke.generated.md",
+    "role_state_handoff_markdown": "examples/kosmo-orbit/review/orbit-role-state-handoff.generated.md",
     "workspace_status_markdown": "examples/kosmo-orbit/review/orbit-status-report.generated.md",
     "project_inspector_markdown": "examples/kosmo-projects/kosmo-demo-001/orbit/project-inspector.generated.md",
     "design_handoff_markdown": "examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-preview.generated.md",
@@ -226,12 +229,25 @@
       "report_status": "role_shell_smoke_passed",
       "stdout_tail": "> architecture-cosmos@0.1.0 kosmo:orbit-role-shell-smoke\n> node scripts/kosmo-orbit-role-shell-smoke.mjs --project examples/kosmo-projects/kosmo-demo-001 --html orbit/role-shell-prototype.generated.html --manifest orbit/role-shell-prototype.generated.json\n\nKosmoOrbit role shell smoke\nHTML: examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-prototype.generated.html\nStatus: role_shell_smoke_passed\nChecks: 17/17 passed\nWrote: examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-smoke.generated.md",
       "stderr_tail": ""
+    },
+    {
+      "id": "role_state_handoff",
+      "label": "Role State Handoff",
+      "command": "npm run kosmo:orbit-role-state-handoff -- --state examples/kosmo-orbit/role-state.demo.json --check examples/kosmo-orbit/review/orbit-role-state-check.generated.json --stateSmoke examples/kosmo-orbit/review/orbit-role-state-smoke.generated.json --project examples/kosmo-projects/kosmo-demo-001 --shell orbit/role-shell-prototype.generated.json --shellSmoke orbit/role-shell-smoke.generated.json",
+      "status": "passed",
+      "exit_code": 0,
+      "report_path": "examples/kosmo-orbit/review/orbit-role-state-handoff.generated.json",
+      "report_exists": true,
+      "report_status": "role_state_handoff_ready",
+      "stdout_tail": "> architecture-cosmos@0.1.0 kosmo:orbit-role-state-handoff\n> node scripts/kosmo-orbit-role-state-handoff.mjs --state examples/kosmo-orbit/role-state.demo.json --check examples/kosmo-orbit/review/orbit-role-state-check.generated.json --stateSmoke examples/kosmo-orbit/review/orbit-role-state-smoke.generated.json --project examples/kosmo-projects/kosmo-demo-001 --shell orbit/role-shell-prototype.generated.json --shellSmoke orbit/role-shell-smoke.generated.json\n\nKosmoOrbit role state handoff\nStatus: role_state_handoff_ready\nHandoff items: 6\nBlocked actions: 3\nWrote: examples/kosmo-orbit/review/orbit-role-state-handoff.generated.md",
+      "stderr_tail": ""
     }
   ],
   "next_actions": [
     "Implement the first local/static Orbit UI prototype from the generated KosmoDesign panel spec.",
     "Use the checked role state contract before adding real role switching or app routing.",
     "Keep the role state smoke in the Orbit full review before adding role-state interaction.",
+    "Use the role state handoff as the next contract before implementing a static Orbit app route.",
     "Resolve or explicitly reject blocked context inputs before allowing design generation.",
     "Keep generated project artifacts local until human review closes design/draw/viz evidence.",
     "Keep public, rights and publish gates visible as blocked in the Orbit shell.",
