@@ -6929,6 +6929,16 @@ html[data-cosmos-browser="opera"] .relation-strand {
     font-size: clamp(20px, 6vw, 26px);
   }
 
+  .module-hub-preview-gate,
+  .module-hub-preview-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .module-hub-preview-gate span,
+  .module-hub-preview-metrics span {
+    min-height: 44px;
+  }
+
   .kosmo-asset-workspace {
     place-items: stretch;
     width: min(94vw, 560px);
