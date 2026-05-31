@@ -48,6 +48,12 @@ const checks = [
     patterns: ['data-entry-node="true"', 'onPointerDown={(event) =>', 'event.stopPropagation();']
   },
   {
+    id: 'entry-node-click-delegates-to-atlas-nearest-node',
+    file: files.node,
+    patterns: ['data-entry-node="true"', "onKeyDown={(event) =>"],
+    forbiddenPatterns: ['onSelect(event);']
+  },
+  {
     id: 'dossier-hover-reacts-to-crosshair',
     file: files.css,
     patterns: ['.dossier-reactive-textblock:hover text', '.dossier-filter-chip:hover text', '.dossier-archive-metric:hover text']
@@ -66,11 +72,13 @@ async function main() {
   for (const check of checks) {
     const source = await readFileCached(cache, check.file);
     const missing = check.patterns.filter((pattern) => !source.includes(pattern));
+    const forbidden = (check.forbiddenPatterns ?? []).filter((pattern) => source.includes(pattern));
     results.push({
       id: check.id,
       file: check.file,
-      status: missing.length ? 'fail' : 'pass',
-      missing
+      status: missing.length || forbidden.length ? 'fail' : 'pass',
+      missing,
+      forbidden
     });
   }
 
@@ -82,6 +90,7 @@ async function main() {
     for (const item of failed) {
       console.log(`FAIL ${item.id} (${item.file})`);
       item.missing.forEach((pattern) => console.log(`  missing: ${pattern}`));
+      item.forbidden.forEach((pattern) => console.log(`  forbidden: ${pattern}`));
     }
     process.exitCode = 1;
   }

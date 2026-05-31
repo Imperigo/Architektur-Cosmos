@@ -87,6 +87,10 @@ KosmoData:
   Klickflaechen bleiben robust.
 - Projektplaneten haben groessere unsichtbare Hitboxes, damit Klicks in
   normaler Ansicht und optischer Lupe leichter treffen.
+- Cluster-Klicks wurden weiter stabilisiert: Projektknoten stoppen nur noch
+  das Grab/Pan beim Pointer-Down; der eigentliche Klick wird vom Atlas ueber
+  die naechste sichtbare Node aufgeloest. Dadurch blockiert ein obenliegender
+  SVG-Knoten weniger stark den Nachbarn im engen Cluster.
 - Hero-/Planetenbild-Audit: 79/112 Eintraege haben rechteklare Hauptbilder,
   keine Duplikat-URLs, keine blockierten/unklaren Public-Lizenzen.
 

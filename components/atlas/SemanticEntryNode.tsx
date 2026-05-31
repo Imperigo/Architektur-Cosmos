@@ -105,10 +105,6 @@ export function SemanticEntryNode({
       }}
       onPointerEnter={() => onHover?.(entry.id)}
       onPointerLeave={() => onHover?.(null)}
-      onClick={(event) => {
-        event.stopPropagation();
-        onSelect(event);
-      }}
       onKeyDown={(event) => {
         if (event.key === 'Enter' || event.key === ' ') {
           event.preventDefault();
