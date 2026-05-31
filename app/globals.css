@@ -4100,6 +4100,42 @@ button.database-intake-card:not(:disabled):hover {
   color: rgb(247 247 244 / 48%);
 }
 
+.module-role-state-switcher {
+  display: flex;
+  gap: 5px;
+  min-width: 0;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+
+.module-role-state-switcher::-webkit-scrollbar {
+  display: none;
+}
+
+.module-role-state-switcher button {
+  flex: 0 0 auto;
+  min-height: 32px;
+  padding: 0 9px;
+  border: 1px solid rgb(247 247 244 / 12%);
+  border-radius: 999px;
+  background: rgb(247 247 244 / 5%);
+  color: rgb(247 247 244 / 62%);
+  font-size: 8px;
+  font-weight: 740;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: border-color 150ms ease, background 150ms ease, color 150ms ease;
+}
+
+.module-role-state-switcher button:hover,
+.module-role-state-switcher button:focus-visible,
+.module-role-state-switcher button.is-active {
+  border-color: rgb(0 231 255 / 46%);
+  background: rgb(0 231 255 / 11%);
+  color: #f7f7f4;
+}
+
 .module-role-state-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -4140,6 +4176,25 @@ button.database-intake-card:not(:disabled):hover {
   overflow-wrap: anywhere;
 }
 
+.module-role-state-permissions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.module-role-state-permissions span {
+  min-height: 24px;
+  padding: 6px 8px;
+  border: 1px solid rgb(0 231 255 / 18%);
+  border-radius: 999px;
+  background: rgb(0 231 255 / 6%);
+  color: rgb(247 247 244 / 64%);
+  font-size: 8px;
+  font-weight: 720;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .module-role-state-blockers {
   display: grid;
   gap: 6px;
@@ -4171,8 +4226,11 @@ button.database-intake-card:not(:disabled):hover {
 }
 
 .module-role-state-blockers small {
+  max-width: 86px;
   color: rgb(245 179 66 / 78%);
-  font-size: 7px;
+  font-size: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
@@ -7044,6 +7102,14 @@ html[data-cosmos-browser="opera"] .relation-strand {
   }
 
   .module-role-state-blockers {
+    display: none;
+  }
+
+  .module-role-state-switcher {
+    padding-bottom: 1px;
+  }
+
+  .module-role-state-permissions {
     display: none;
   }
 

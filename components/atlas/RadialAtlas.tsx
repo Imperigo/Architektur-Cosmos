@@ -2427,6 +2427,7 @@ function ModuleHub({ onOpenKosmoData, onOpenKosmoAsset }: { onOpenKosmoData: () 
   const hubRef = useRef<HTMLDivElement | null>(null);
   const lastTouchActionRef = useRef(0);
   const [selectedModuleId, setSelectedModuleId] = useState<KosmoModuleId | null>(null);
+  const [selectedOrbitRoleId, setSelectedOrbitRoleId] = useState(orbitRoleStatePreview.role_preview.selected_role_id);
   const modules: Array<KosmoOrbitModule & { onClick?: () => void }> = kosmoOrbitModules.map((module) => (
     module.id === 'data' ? { ...module, onClick: onOpenKosmoData } : module.id === 'asset' ? { ...module, onClick: onOpenKosmoAsset } : module
   ));
@@ -2455,7 +2456,7 @@ function ModuleHub({ onOpenKosmoData, onOpenKosmoAsset }: { onOpenKosmoData: () 
           <CosmosGlyph />
         </svg>
       </div>
-      <OrbitRoleStatePanel />
+      <OrbitRoleStatePanel selectedRoleId={selectedOrbitRoleId} onSelectRole={setSelectedOrbitRoleId} />
       {modules.map((module) => {
         const isReady = module.status === 'bereit';
         return (
@@ -2532,12 +2533,15 @@ function ModuleHub({ onOpenKosmoData, onOpenKosmoAsset }: { onOpenKosmoData: () 
   );
 }
 
-function OrbitRoleStatePanel() {
+function OrbitRoleStatePanel({ selectedRoleId, onSelectRole }: { selectedRoleId: string; onSelectRole: (roleId: string) => void }) {
   const activeRole = orbitWorkspacePreview.roles.find((role) => role.id === orbitRoleStatePreview.session.active_role_id);
-  const selectedRole = orbitWorkspacePreview.roles.find((role) => role.id === orbitRoleStatePreview.role_preview.selected_role_id);
+  const selectedRole = orbitWorkspacePreview.roles.find((role) => role.id === selectedRoleId) ?? activeRole;
+  const availableRoleIds = new Set(orbitRoleStatePreview.role_preview.available_role_ids);
+  const availableRoles = orbitWorkspacePreview.roles.filter((role) => availableRoleIds.has(role.id));
   const primaryModule = orbitRoleStatePreview.visible_modules.find((module) => module.visibility === 'primary');
   const primaryTool = orbitWorkspacePreview.tools.find((tool) => tool.id === primaryModule?.tool_id);
   const availableCount = orbitRoleStatePreview.visible_modules.filter((module) => module.visibility === 'available' || module.visibility === 'primary').length;
+  const visiblePermissions = selectedRole?.permissions.slice(0, 3) ?? [];
 
   return (
     <aside
@@ -2549,7 +2553,20 @@ function OrbitRoleStatePanel() {
       <div className="module-role-state-head">
         <small>Rollenstatus</small>
         <strong>{selectedRole?.label ?? activeRole?.label ?? 'Review Rolle'}</strong>
-        <span>{orbitRoleStatePreview.state.mode === 'local_demo' ? 'lokale Demo' : orbitRoleStatePreview.state.mode}</span>
+        <span>{selectedRole?.ui_mode ?? (orbitRoleStatePreview.state.mode === 'local_demo' ? 'lokale Demo' : orbitRoleStatePreview.state.mode)}</span>
+      </div>
+      <div className="module-role-state-switcher" aria-label="Rollenvorschau auswählen">
+        {availableRoles.map((role) => (
+          <button
+            key={role.id}
+            type="button"
+            className={role.id === selectedRole?.id ? 'is-active' : undefined}
+            onClick={() => onSelectRole(role.id)}
+            aria-pressed={role.id === selectedRole?.id}
+          >
+            {shortRoleLabel(role.label)}
+          </button>
+        ))}
       </div>
       <div className="module-role-state-grid">
         <span data-tone="ready">
@@ -2565,6 +2582,11 @@ function OrbitRoleStatePanel() {
           <strong>{orbitRoleStatePreview.blocked_actions.length}</strong>
         </span>
       </div>
+      <div className="module-role-state-permissions" aria-label="Rollenrechte">
+        {visiblePermissions.map((permission) => (
+          <span key={permission}>{formatOrbitGateLabel(permission)}</span>
+        ))}
+      </div>
       <ul className="module-role-state-blockers" aria-label="Blockierte Aktionen">
         {orbitRoleStatePreview.blocked_actions.map((action) => (
           <li key={action.id}>
@@ -2575,6 +2597,15 @@ function OrbitRoleStatePanel() {
       </ul>
     </aside>
   );
+}
+
+function shortRoleLabel(label: string) {
+  return label
+    .replace('Chef / ', '')
+    .replace('Projektleiter ', 'PL ')
+    .replace('Entwurfsarchitekt', 'Entwurf')
+    .replace('Zeichner EFZ', 'Zeichner')
+    .replace('Schnupperstift', 'Trial');
 }
 
 function formatOrbitGateLabel(gateId: string) {
