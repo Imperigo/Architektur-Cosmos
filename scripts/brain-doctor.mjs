@@ -61,6 +61,22 @@ const checks = [
     safe_healing: 'diagnostics_only'
   },
   {
+    id: 'hero-image-audit',
+    label: 'Public hero image audit',
+    command: 'npm',
+    args: ['run', 'database:hero-images:audit'],
+    retry: false,
+    safe_healing: 'diagnostics_only'
+  },
+  {
+    id: 'planet-thumbnail-audit',
+    label: 'Planet thumbnail audit',
+    command: 'npm',
+    args: ['run', 'database:planet-thumbnails:audit'],
+    retry: false,
+    safe_healing: 'diagnostics_only'
+  },
+  {
     id: 'build',
     label: 'Build',
     command: 'npm',

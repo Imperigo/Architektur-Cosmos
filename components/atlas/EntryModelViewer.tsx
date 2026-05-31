@@ -1,8 +1,9 @@
-// @ts-nocheck
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
 import type { CSSProperties } from 'react';
+import type { Material, Mesh, Object3D } from 'three';
+import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 type EntryModelViewerProps = {
   modelUrl: string;
@@ -15,16 +16,8 @@ type ViewerStyle = 'realistic' | 'analysis' | 'materials' | 'ghost';
 type AnalysisLayerId = 'site' | 'mass' | 'structure' | 'envelope' | 'circulation' | 'roof_garden';
 type MaterialLayerId = 'mineral' | 'concrete' | 'glass' | 'landscape' | 'circulation' | 'annotation';
 
-type ViewerMaterial = {
-  name: string;
-  dispose?: () => void;
-};
-
-type ViewerMesh = {
-  name: string;
-  visible: boolean;
-  material: ViewerMaterial | ViewerMaterial[];
-};
+type ViewerMaterial = Material & { name: string };
+type ViewerMesh = Mesh & { material: ViewerMaterial | ViewerMaterial[] };
 
 type MeshRecord = {
   mesh: ViewerMesh;
@@ -195,11 +188,11 @@ export function EntryModelViewer({ modelUrl, title, accent }: EntryModelViewerPr
       const loader = new GLTFLoader();
       loader.load(
         modelUrl,
-        (gltf) => {
+        (gltf: GLTF) => {
           if (disposed) return;
           const model = gltf.scene;
           const meshRecords: MeshRecord[] = [];
-          model.traverse((child) => {
+          model.traverse((child: Object3D) => {
             if ('isMesh' in child && child.isMesh) {
               const mesh = child as ViewerMesh;
               child.castShadow = false;
@@ -244,7 +237,9 @@ export function EntryModelViewer({ modelUrl, title, accent }: EntryModelViewerPr
         window.removeEventListener('resize', resize);
         window.cancelAnimationFrame(frame);
         controls.dispose();
-        [...Object.values(analysisMaterialsRef.current), ...Object.values(materialModeMaterialsRef.current), ...Object.values(ghostMaterialsRef.current)].forEach((material) => material?.dispose());
+        [...Object.values(analysisMaterialsRef.current), ...Object.values(materialModeMaterialsRef.current), ...Object.values(ghostMaterialsRef.current)].forEach((material) => {
+          material?.dispose();
+        });
         meshRecordsRef.current = [];
         analysisMaterialsRef.current = {};
         materialModeMaterialsRef.current = {};

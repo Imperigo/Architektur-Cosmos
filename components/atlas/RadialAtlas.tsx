@@ -3459,7 +3459,7 @@ function assetDecisionLedger(assetId: string): AssetDecisionLedgerRecord | null 
 
 function assetKosmoDataRefs(asset: AssetPreviewRecord): AssetKosmoDataRef[] {
   if (!('kosmodata_refs' in asset) || !Array.isArray(asset.kosmodata_refs)) return [];
-  return asset.kosmodata_refs.filter((ref): ref is AssetKosmoDataRef => Boolean(ref && typeof ref === 'object'));
+  return asset.kosmodata_refs.filter((ref) => Boolean(ref && typeof ref === 'object')) as AssetKosmoDataRef[];
 }
 
 function assetBlenderSandboxRun(assetId: string) {
