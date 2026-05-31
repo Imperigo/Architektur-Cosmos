@@ -94,6 +94,12 @@ KosmoAsset:
   Referenz ausweisen. Beispiel Villa Savoye: Dom-Ino House, Charta von Athen,
   Ville Radieuse, Haus Tugendhat. Die Ausgabe bleibt bewusst Review-Pack und
   schreibt ohne explizites `--apply --confirm-public-text` nichts live.
+- Pilot-Audit erweitert: `database:pilot-quality` erkennt nun vorhandene
+  Text-Review-Packs und weist sie separat als `Netzwerk-Review-Pack` aus.
+  Dadurch bleibt sichtbar, ob ein Live-Eintrag noch Relationserweiterung
+  braucht, waehrend das Brain die inhaltliche Netzwerklesart schon vorbereitet
+  hat. Nach Review-Pack-Generierung stehen die 5 Kernpiloten lokal bei 96%
+  Durchschnitt / 5 ready, ohne Live-Daten zu beschreiben.
 
 Naechster Textstandard bleibt:
 

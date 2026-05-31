@@ -27,7 +27,7 @@ async function main() {
   const entries = JSON.parse(await fs.readFile(entriesPath, 'utf8'));
   const relations = JSON.parse(await fs.readFile(relationsPath, 'utf8'));
   const relationCounts = countRelations(relations);
-  const rows = requestedSlugs.map((slug) => auditEntry(slug, entries, relationCounts));
+  const rows = await Promise.all(requestedSlugs.map((slug) => auditEntry(slug, entries, relationCounts)));
   const summary = summarize(rows);
 
   await fs.mkdir(outDir, { recursive: true });
@@ -55,7 +55,7 @@ function readArgList(name) {
   return value.split(',').map((item) => item.trim()).filter(Boolean);
 }
 
-function auditEntry(slug, entries, relationCounts) {
+async function auditEntry(slug, entries, relationCounts) {
   const entry = entries.find((item) => item.slug === slug || item.id === slug);
   if (!entry) {
     return {
@@ -68,6 +68,8 @@ function auditEntry(slug, entries, relationCounts) {
     };
   }
 
+  const reviewPack = await loadTextReviewPack(entry.slug);
+  const reviewNetworkBasis = reviewPack?.network_basis;
   const textBlob = [
     entry.one_sentence,
     entry.short_description,
@@ -75,6 +77,8 @@ function auditEntry(slug, entries, relationCounts) {
     entry.architecture_text?.headline,
     entry.architecture_text?.overview,
     ...(entry.architecture_text?.chapters?.map((chapter) => `${chapter.title} ${chapter.body}`) ?? []),
+    reviewPack?.overview,
+    ...(reviewPack?.chapters?.map((chapter) => `${chapter.title} ${chapter.body}`) ?? []),
     ...(entry.analysis_observations?.map((observation) => `${observation.analysis_type} ${observation.label} ${observation.note ?? ''}`) ?? [])
   ].filter(Boolean).join(' ').toLowerCase();
 
@@ -87,6 +91,14 @@ function auditEntry(slug, entries, relationCounts) {
     check('program', 'Typos/Programm', Boolean(entry.program?.type || entry.entry_type), entry.program?.type ?? entry.entry_type),
     check('model', '3D-/Modellplan', Boolean(entry.model_3d?.parts?.length || entry.model_assets?.length || entry.model_packages?.length), modelNote(entry)),
     check('relations', 'Netzwerk', (relationCounts.get(entry.id) ?? 0) >= 2, `${relationCounts.get(entry.id) ?? 0} Relationen`),
+    check(
+      'network_review_pack',
+      'Netzwerk-Review-Pack',
+      Boolean(reviewNetworkBasis?.explicit_relation_count || reviewNetworkBasis?.similar_entries?.length),
+      reviewNetworkBasis
+        ? `${reviewNetworkBasis.explicit_relation_count ?? 0} Relationen im Review; ${reviewNetworkBasis.similar_entries?.length ?? 0} Aehnlichkeiten`
+        : 'kein Text-Review-Pack'
+    ),
     ...frameworkTerms.map((framework) => {
       const hits = framework.terms.filter((term) => textBlob.includes(term));
       return check(framework.id, framework.label, hits.length > 0, hits.length ? hits.slice(0, 4).join(', ') : 'im Text kaum sichtbar');
@@ -103,8 +115,23 @@ function auditEntry(slug, entries, relationCounts) {
     status,
     score,
     checks,
+    review_pack: reviewNetworkBasis ? {
+      network_relation_count: reviewNetworkBasis.explicit_relation_count ?? 0,
+      related_entries: reviewNetworkBasis.related_entries ?? [],
+      similar_entries: reviewNetworkBasis.similar_entries ?? []
+    } : null,
     missing: checks.filter((item) => item.score === 0).map((item) => item.id)
   };
+}
+
+async function loadTextReviewPack(slug) {
+  const reviewPath = path.join(root, 'out/text-review', slug, 'architecture-text.json');
+  try {
+    return JSON.parse(await fs.readFile(reviewPath, 'utf8'));
+  } catch (error) {
+    if (error.code === 'ENOENT') return null;
+    throw error;
+  }
 }
 
 function check(id, label, passed, note) {
