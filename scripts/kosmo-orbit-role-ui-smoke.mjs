@@ -66,6 +66,8 @@ function buildReport(variantsReport) {
     check('drafter_review_blocked', 'Zeichner EFZ stays blocked from design review opening.', byRole.get('drafter_efz')?.permissions?.can_open_design_review === false),
     check('trial_user_read_only', 'Schnupperstift remains read-only.', byRole.get('trial_user')?.permissions?.read_only === true),
     check('learning_roles_supported', 'Praktikant, Lehrling and Schnupperstift have learning support.', learningRoleIds.every((roleId) => byRole.get(roleId)?.learning_support?.enabled === true)),
+    check('role_explanations_present', 'Every variant has plain-language role explanations.', variants.every((variant) => roleExplanationComplete(variant))),
+    check('professional_depths_distinct', 'Professional roles use distinct interface depth levels.', ['full', 'decision', 'creative', 'technical'].every((depth) => variants.some((variant) => variant.role?.detail_level === depth))),
     check('visible_sections_present', 'Every variant has visible UI sections.', variants.every((variant) => Array.isArray(variant.visible_sections) && variant.visible_sections.length > 0)),
     check('warnings_present', 'Every variant keeps at least one warning visible.', variants.every((variant) => Array.isArray(variant.warnings) && variant.warnings.length > 0))
   ];
@@ -92,7 +94,8 @@ function buildReport(variantsReport) {
       variant_count: variants.length,
       required_role_count: requiredRoleIds.length,
       generation_capable_count: variants.filter((variant) => variant.permissions?.can_request_design_generation).length,
-      learning_variant_count: variants.filter((variant) => variant.learning_support?.enabled).length
+      learning_variant_count: variants.filter((variant) => variant.learning_support?.enabled).length,
+      explained_variant_count: variants.filter((variant) => roleExplanationComplete(variant)).length
     },
     checks,
     next_actions: failedChecks.length
@@ -113,6 +116,15 @@ function check(id, label, passed) {
   };
 }
 
+function roleExplanationComplete(variant) {
+  return Boolean(
+    variant.explanation?.purpose &&
+      variant.explanation?.interface_depth &&
+      variant.explanation?.decision_scope &&
+      variant.explanation?.safe_next_step
+  );
+}
+
 function renderMarkdown(report) {
   const lines = [
     '# KosmoOrbit Role UI Smoke',
@@ -130,6 +142,7 @@ function renderMarkdown(report) {
     `- required roles: ${report.summary.required_role_count}`,
     `- generation-capable roles: ${report.summary.generation_capable_count}`,
     `- learning variants: ${report.summary.learning_variant_count}`,
+    `- explained variants: ${report.summary.explained_variant_count}`,
     '',
     '## Checks',
     '',

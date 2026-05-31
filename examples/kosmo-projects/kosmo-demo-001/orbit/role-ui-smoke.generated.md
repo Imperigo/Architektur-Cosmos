@@ -1,6 +1,6 @@
 # KosmoOrbit Role UI Smoke
 
-Generated: 2026-05-31T16:02:14.060Z
+Generated: 2026-05-31T20:04:59.013Z
 Status: `role_ui_smoke_passed`
 Project: `Kosmo Demo 001`
 
@@ -8,11 +8,12 @@ Review-only role guard. This does not create users, write auth data, open Blende
 
 ## Summary
 
-- checks: 12/12 passed
+- checks: 14/14 passed
 - variants: 8
 - required roles: 8
 - generation-capable roles: 0
 - learning variants: 3
+- explained variants: 8
 
 ## Checks
 
@@ -28,6 +29,8 @@ Review-only role guard. This does not create users, write auth data, open Blende
 | `drafter_review_blocked` | `passed` | Zeichner EFZ stays blocked from design review opening. |
 | `trial_user_read_only` | `passed` | Schnupperstift remains read-only. |
 | `learning_roles_supported` | `passed` | Praktikant, Lehrling and Schnupperstift have learning support. |
+| `role_explanations_present` | `passed` | Every variant has plain-language role explanations. |
+| `professional_depths_distinct` | `passed` | Professional roles use distinct interface depth levels. |
 | `visible_sections_present` | `passed` | Every variant has visible UI sections. |
 | `warnings_present` | `passed` | Every variant keeps at least one warning visible. |
 

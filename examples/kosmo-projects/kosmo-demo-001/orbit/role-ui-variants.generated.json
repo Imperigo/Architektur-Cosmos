@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-31T16:02:13.805Z",
+  "generated_at": "2026-05-31T20:04:32.671Z",
   "generator": "kosmo-orbit-role-ui-variants",
   "workspace_path": "examples/kosmo-orbit/workspace.demo.json",
   "panel_spec": "examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-ui-panel.generated.json",
@@ -22,7 +22,8 @@
     "design_capable_count": 4,
     "generation_capable_count": 0,
     "admin_variant_count": 2,
-    "learning_variant_count": 3
+    "learning_variant_count": 3,
+    "explained_variant_count": 8
   },
   "variants": [
     {
@@ -33,6 +34,12 @@
         "ui_mode": "full_admin",
         "focus": "office_control",
         "detail_level": "full"
+      },
+      "explanation": {
+        "purpose": "Steuert Buero, Rollen, Freigaben, Public-Gates und kritische Risiken.",
+        "interface_depth": "Vollstaendige Steuerzentrale mit allen Warnungen, Gates und technischen Details.",
+        "decision_scope": "Darf lokale und oeffentliche Freigaben sehen und entscheiden, startet aber keine Generation ohne geschlossene Review-Gates.",
+        "safe_next_step": "Projektstatus pruefen und entscheiden, welche Blocker zuerst menschlich geklaert werden."
       },
       "permissions": {
         "can_open_design_review": true,
@@ -106,6 +113,12 @@
         "ui_mode": "full_admin",
         "focus": "infrastructure_control",
         "detail_level": "full"
+      },
+      "explanation": {
+        "purpose": "Prueft lokale KI, Hardware, Smokes, Build-Zustand und technische Betriebsrisiken.",
+        "interface_depth": "Technische Diagnoseoberflaeche mit Runtime-, Smoke- und Sicherheitszustand.",
+        "decision_scope": "Darf Systemzustand pruefen und Reparaturpfade vorbereiten, aber keine Architekturfreigabe ersetzen.",
+        "safe_next_step": "Smokes und lokale Runtime pruefen, bevor ein Tool fuer Menschen freigegeben wird."
       },
       "permissions": {
         "can_open_design_review": false,
@@ -183,6 +196,12 @@
         "focus": "project_decision",
         "detail_level": "decision"
       },
+      "explanation": {
+        "purpose": "Fuehrt das Projekt durch Review, offene Fragen, Entscheidungen und Abgabe-Risiken.",
+        "interface_depth": "Entscheidungsoberflaeche mit Projektstatus, Blockern, naechsten Schritten und Human Review.",
+        "decision_scope": "Darf lokale Review-Entscheide vorbereiten, aber keine oeffentliche Publikation freigeben.",
+        "safe_next_step": "Blocker priorisieren und KosmoDesign nur im Review Mode oeffnen."
+      },
       "permissions": {
         "can_open_design_review": true,
         "can_request_design_generation": false,
@@ -256,6 +275,12 @@
         "focus": "design_context",
         "detail_level": "creative"
       },
+      "explanation": {
+        "purpose": "Arbeitet mit Kontext, Modellprofil, Referenzen und Entwurfsabsichten.",
+        "interface_depth": "Kreative Review-Oberflaeche mit Kontextinputs, Modellprofil und Design-Handoff.",
+        "decision_scope": "Darf Design-Kontext pruefen, aber keine automatische Design-Generierung starten.",
+        "safe_next_step": "KosmoDesign Review Mode oeffnen und blockierte Kontextinputs beurteilen."
+      },
       "permissions": {
         "can_open_design_review": true,
         "can_request_design_generation": false,
@@ -327,6 +352,12 @@
         "ui_mode": "production_pro",
         "focus": "production_quality",
         "detail_level": "technical"
+      },
+      "explanation": {
+        "purpose": "Prueft technische Modellqualitaet, Layer, Massstab, Export- und Planlogik.",
+        "interface_depth": "Technische Oberflaeche mit Modellprofil, Guardrails und Qualitaetsstatus.",
+        "decision_scope": "Darf Qualitaetsmaengel sichtbar machen, aber keine Entwurfs- oder Public-Gates freigeben.",
+        "safe_next_step": "Modellqualitaet und Draw/Viz-Handoffs pruefen, bevor Exporte vorbereitet werden."
       },
       "permissions": {
         "can_open_design_review": false,
@@ -402,6 +433,12 @@
         "focus": "guided_assist",
         "detail_level": "guided"
       },
+      "explanation": {
+        "purpose": "Unterstuetzt sicher mit gefuehrten Aufgaben, ohne kritische Entscheide ausloesen zu koennen.",
+        "interface_depth": "Gefuehrte Assistenzoberflaeche mit klaren erlaubten Aktionen und Erklaerungen.",
+        "decision_scope": "Darf verstehen, sortieren und vorbereiten, aber keine Freigaben oder Generierung ausloesen.",
+        "safe_next_step": "Gefuehrte Review-Aufgabe oeffnen und eine sichere Beobachtung dokumentieren."
+      },
       "permissions": {
         "can_open_design_review": true,
         "can_request_design_generation": false,
@@ -473,6 +510,12 @@
         "ui_mode": "learning",
         "focus": "learning",
         "detail_level": "learning"
+      },
+      "explanation": {
+        "purpose": "Lernt Projektlogik, Rollen, Begriffe und Review-Gates anhand echter Bueroablaeufe.",
+        "interface_depth": "Lernoberflaeche mit vereinfachter Sprache, Beispielen und blockierten Risikoaktionen.",
+        "decision_scope": "Darf erklaerte Schritte nachvollziehen, aber keine Projektentscheidung schreiben.",
+        "safe_next_step": "Lernansicht oeffnen und den Unterschied zwischen Review und Generation verstehen."
       },
       "permissions": {
         "can_open_design_review": false,
@@ -551,6 +594,12 @@
         "ui_mode": "observer",
         "focus": "observer",
         "detail_level": "observer"
+      },
+      "explanation": {
+        "purpose": "Sieht eine sichere Demo des Systems, ohne Zugriff auf echte Projektsteuerung.",
+        "interface_depth": "Observer-Oberflaeche mit Demo-Status, einfachen Erklaerungen und read-only Verhalten.",
+        "decision_scope": "Darf nur ansehen, nicht entscheiden, schreiben, generieren oder publizieren.",
+        "safe_next_step": "Demo ansehen und verstehen, warum kritische Aktionen blockiert bleiben."
       },
       "permissions": {
         "can_open_design_review": false,

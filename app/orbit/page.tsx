@@ -61,6 +61,12 @@ type RoleVariant = {
     focus: string;
     detail_level: string;
   };
+  explanation: {
+    purpose: string;
+    interface_depth: string;
+    decision_scope: string;
+    safe_next_step: string;
+  };
   permissions: {
     can_open_design_review: boolean;
     can_request_design_generation: boolean;
@@ -152,6 +158,35 @@ const visibilityTone: Record<string, Tone> = {
   summary_only: 'neutral'
 };
 
+const moduleDescriptions: Record<string, string> = {
+  'kosmo-data': 'Projektwissen, Quellen, Referenzen und Buero-Gedaechtnis.',
+  'kosmo-asset': 'Gepruefte Materialien, Texturen, 2D/3D-Assets und Rechte.',
+  'kosmo-design': 'Review-Werkbank fuer Kontext, Modellprofil und spaeter Entwurfslogik.',
+  'kosmo-prepare': 'Briefing, Standort, Programm und Constraints.',
+  'kosmo-draw': 'Plan, Schnitt, Ansicht, Layer und technische Exporte.',
+  'kosmo-viz': 'Licht, Kamera, Material und Render-/Bildvarianten.',
+  'kosmo-publish': 'Abgabe, Bericht, Exportpaket und Public-Gates.',
+  'kosmo-zentrale': 'Lokale KI, Jobs, Updates, Reparatur und Hardwarezustand.'
+};
+
+const demoSteps = [
+  {
+    title: 'Projektpaket pruefen',
+    label: '1',
+    text: 'KosmoOrbit liest das lokale Projektpaket und zeigt Rolle, Risiko, offene Gates und sichere Module.'
+  },
+  {
+    title: 'KosmoDesign Review Mode oeffnen',
+    label: '2',
+    text: 'Der Architekt wechselt in den Review Mode, sieht Kontext, Modellprofil und warum Generierung noch blockiert ist.'
+  },
+  {
+    title: 'Blocker menschlich entscheiden',
+    label: '3',
+    text: 'Freigaben bleiben bewusst menschlich: erst Review, dann lokale Entscheidung, spaeter Public-Gate.'
+  }
+];
+
 function prettyId(value: string) {
   return value
     .replace(/^kosmo-/, 'Kosmo ')
@@ -177,8 +212,9 @@ export default function OrbitPage() {
               <p className="text-xs font-semibold uppercase tracking-[0.28em] text-cyan-200">Architektur Kosmos</p>
               <h1 className="mt-2 text-3xl font-semibold tracking-normal text-white sm:text-5xl">KosmoOrbit</h1>
               <p className="mt-3 max-w-3xl text-sm leading-6 text-stone-300 sm:text-base">
-                Statische Steuerzentrale fuer Rollen, Projektstatus, Tool-Zugriff und sichere Review-Gates.
-                Diese Preview liest nur lokale Artefakte und bleibt ohne API, Auth-Runtime, Uploads oder Generierung.
+                Installierte Hauptsoftware-Zentrale fuer Rollen, Projektstatus, Tool-Zugriff und sichere Review-Gates.
+                Diese Preview zeigt den 3-Minuten-Demo-Pfad, liest nur lokale Artefakte und bleibt ohne API, Auth-Runtime,
+                Uploads oder Generierung.
               </p>
             </div>
             <div className="grid gap-2 rounded-lg border border-cyan-200/25 bg-black/35 p-4 shadow-[0_0_32px_rgba(0,231,255,0.08)]">
@@ -208,10 +244,12 @@ export default function OrbitPage() {
                 <Badge label={activeRole.role.detail_level} />
                 <Badge label={activeRole.permissions.can_approve_public ? 'public gate sichtbar' : 'public gate blockiert'} tone={activeRole.permissions.can_approve_public ? 'yellow' : 'red'} />
               </div>
-              <p className="mt-4 text-sm leading-6 text-stone-300">
-                Fokus: {activeRole.role.focus.replace(/_/g, ' ')}. Die Rolle darf Design-Review oeffnen,
-                aber keine Design-Generierung starten.
-              </p>
+              <p className="mt-4 text-sm leading-6 text-stone-300">{activeRole.explanation.purpose}</p>
+              <div className="mt-4 grid gap-2 text-sm">
+                <p className="rounded-md bg-black/25 px-3 py-2 text-stone-300">{activeRole.explanation.interface_depth}</p>
+                <p className="rounded-md bg-black/25 px-3 py-2 text-stone-300">{activeRole.explanation.decision_scope}</p>
+                <p className="rounded-md border border-cyan-200/20 bg-cyan-300/10 px-3 py-2 text-cyan-100">{activeRole.explanation.safe_next_step}</p>
+              </div>
             </div>
 
             <div className="rounded-lg border border-white/10 bg-white/[0.04] p-4">
@@ -248,6 +286,30 @@ export default function OrbitPage() {
             </div>
           </section>
 
+          <section className="rounded-lg border border-cyan-200/20 bg-black/30 p-4">
+            <div className="grid gap-4 lg:grid-cols-[0.9fr_1.4fr] lg:items-start">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-200">3-Minuten-Demo</p>
+                <h2 className="mt-2 text-xl font-semibold text-white">Projektpaket zu KosmoDesign Review Mode</h2>
+                <p className="mt-3 text-sm leading-6 text-stone-300">
+                  Der erste vorfuehrbare Pfad ist bewusst ein sicherer Review-Ablauf: KosmoOrbit zeigt Kontext,
+                  Blocker und Rollenlogik, bevor irgendeine Entwurfs- oder Geometrie-Generierung erlaubt wird.
+                </p>
+              </div>
+              <div className="grid gap-3 md:grid-cols-3">
+                {demoSteps.map((step) => (
+                  <article key={step.label} className="rounded-lg border border-white/10 bg-white/[0.04] p-3">
+                    <span className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-cyan-200/35 bg-cyan-300/10 text-xs font-semibold text-cyan-100">
+                      {step.label}
+                    </span>
+                    <h3 className="mt-3 text-base font-semibold text-white">{step.title}</h3>
+                    <p className="mt-2 text-sm leading-5 text-stone-400">{step.text}</p>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </section>
+
           <section className="grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
             <div className="rounded-lg border border-white/10 bg-black/28 p-4">
               <div className="flex flex-wrap items-end justify-between gap-3">
@@ -264,7 +326,8 @@ export default function OrbitPage() {
                       <h3 className="text-base font-semibold text-white">{prettyId(module.tool_id)}</h3>
                       <Badge label={module.visibility} tone={visibilityTone[module.visibility] ?? 'neutral'} />
                     </div>
-                    <p className="mt-3 text-sm leading-5 text-stone-400">{module.reason}</p>
+                    <p className="mt-3 text-sm leading-5 text-stone-300">{moduleDescriptions[module.tool_id] ?? 'Lokales KosmoOrbit-Modul mit review-only Zugriff.'}</p>
+                    <p className="mt-2 text-xs leading-5 text-stone-500">{module.reason}</p>
                   </article>
                 ))}
               </div>
@@ -277,6 +340,13 @@ export default function OrbitPage() {
                   <h2 className="mt-2 text-xl font-semibold text-white">Blockierte Aktionen</h2>
                 </div>
                 <Badge label={`${roleState.blocked_actions.length} sichtbar blockiert`} tone="red" />
+              </div>
+              <div className="mt-4 rounded-lg border border-cyan-200/20 bg-cyan-300/10 p-3">
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cyan-100">KosmoDesign Review Mode</p>
+                <p className="mt-2 text-sm leading-5 text-stone-200">
+                  Projektpaket - KosmoOrbit - KosmoDesign Review Mode. Design-Generation bleibt blockiert,
+                  bis Kontext- und Human-Review-Gates geschlossen sind.
+                </p>
               </div>
               <div className="mt-4 grid gap-3">
                 {roleState.blocked_actions.map((action) => (
@@ -319,9 +389,9 @@ export default function OrbitPage() {
                       <Badge key={badge.id} label={badge.label} tone={badge.tone} />
                     ))}
                   </div>
-                  <p className="mt-3 text-sm leading-5 text-stone-400">
-                    Sections: {variant.visible_sections.slice(0, 5).join(', ')}
-                    {variant.visible_sections.length > 5 ? ' ...' : ''}
+                  <p className="mt-3 text-sm leading-5 text-stone-300">{variant.explanation.purpose}</p>
+                  <p className="mt-2 rounded-md bg-white/[0.04] px-3 py-2 text-sm leading-5 text-stone-400">
+                    {variant.explanation.safe_next_step}
                   </p>
                   {variant.learning_support.enabled ? (
                     <p className="mt-3 rounded-md border border-emerald-300/20 bg-emerald-300/10 px-3 py-2 text-sm text-emerald-100">

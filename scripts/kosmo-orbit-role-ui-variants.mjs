@@ -18,56 +18,88 @@ const rolePresets = {
     detail_level: 'full',
     primary_label: 'Open Review Mode',
     extra_sections: ['admin_gates', 'publish_risk'],
-    learning_support: false
+    learning_support: false,
+    purpose: 'Steuert Buero, Rollen, Freigaben, Public-Gates und kritische Risiken.',
+    interface_depth: 'Vollstaendige Steuerzentrale mit allen Warnungen, Gates und technischen Details.',
+    decision_scope: 'Darf lokale und oeffentliche Freigaben sehen und entscheiden, startet aber keine Generation ohne geschlossene Review-Gates.',
+    safe_next_step: 'Projektstatus pruefen und entscheiden, welche Blocker zuerst menschlich geklaert werden.'
   },
   it_ai_admin: {
     focus: 'infrastructure_control',
     detail_level: 'full',
     primary_label: 'Inspect System State',
     extra_sections: ['runtime_safety', 'smoke_checks'],
-    learning_support: false
+    learning_support: false,
+    purpose: 'Prueft lokale KI, Hardware, Smokes, Build-Zustand und technische Betriebsrisiken.',
+    interface_depth: 'Technische Diagnoseoberflaeche mit Runtime-, Smoke- und Sicherheitszustand.',
+    decision_scope: 'Darf Systemzustand pruefen und Reparaturpfade vorbereiten, aber keine Architekturfreigabe ersetzen.',
+    safe_next_step: 'Smokes und lokale Runtime pruefen, bevor ein Tool fuer Menschen freigegeben wird.'
   },
   project_lead_architect: {
     focus: 'project_decision',
     detail_level: 'decision',
     primary_label: 'Open Project Review',
     extra_sections: ['human_review', 'next_actions'],
-    learning_support: false
+    learning_support: false,
+    purpose: 'Fuehrt das Projekt durch Review, offene Fragen, Entscheidungen und Abgabe-Risiken.',
+    interface_depth: 'Entscheidungsoberflaeche mit Projektstatus, Blockern, naechsten Schritten und Human Review.',
+    decision_scope: 'Darf lokale Review-Entscheide vorbereiten, aber keine oeffentliche Publikation freigeben.',
+    safe_next_step: 'Blocker priorisieren und KosmoDesign nur im Review Mode oeffnen.'
   },
   design_architect: {
     focus: 'design_context',
     detail_level: 'creative',
     primary_label: 'Open Design Context',
     extra_sections: ['model_profile', 'context_inputs'],
-    learning_support: false
+    learning_support: false,
+    purpose: 'Arbeitet mit Kontext, Modellprofil, Referenzen und Entwurfsabsichten.',
+    interface_depth: 'Kreative Review-Oberflaeche mit Kontextinputs, Modellprofil und Design-Handoff.',
+    decision_scope: 'Darf Design-Kontext pruefen, aber keine automatische Design-Generierung starten.',
+    safe_next_step: 'KosmoDesign Review Mode oeffnen und blockierte Kontextinputs beurteilen.'
   },
   drafter_efz: {
     focus: 'production_quality',
     detail_level: 'technical',
     primary_label: 'View Model Quality',
     extra_sections: ['model_profile', 'guardrails'],
-    learning_support: false
+    learning_support: false,
+    purpose: 'Prueft technische Modellqualitaet, Layer, Massstab, Export- und Planlogik.',
+    interface_depth: 'Technische Oberflaeche mit Modellprofil, Guardrails und Qualitaetsstatus.',
+    decision_scope: 'Darf Qualitaetsmaengel sichtbar machen, aber keine Entwurfs- oder Public-Gates freigeben.',
+    safe_next_step: 'Modellqualitaet und Draw/Viz-Handoffs pruefen, bevor Exporte vorbereitet werden.'
   },
   intern: {
     focus: 'guided_assist',
     detail_level: 'guided',
     primary_label: 'Open Guided Review',
     extra_sections: ['allowed_actions', 'guardrails'],
-    learning_support: true
+    learning_support: true,
+    purpose: 'Unterstuetzt sicher mit gefuehrten Aufgaben, ohne kritische Entscheide ausloesen zu koennen.',
+    interface_depth: 'Gefuehrte Assistenzoberflaeche mit klaren erlaubten Aktionen und Erklaerungen.',
+    decision_scope: 'Darf verstehen, sortieren und vorbereiten, aber keine Freigaben oder Generierung ausloesen.',
+    safe_next_step: 'Gefuehrte Review-Aufgabe oeffnen und eine sichere Beobachtung dokumentieren.'
   },
   apprentice: {
     focus: 'learning',
     detail_level: 'learning',
     primary_label: 'Open Learning View',
     extra_sections: ['explanations', 'guardrails'],
-    learning_support: true
+    learning_support: true,
+    purpose: 'Lernt Projektlogik, Rollen, Begriffe und Review-Gates anhand echter Bueroablaeufe.',
+    interface_depth: 'Lernoberflaeche mit vereinfachter Sprache, Beispielen und blockierten Risikoaktionen.',
+    decision_scope: 'Darf erklaerte Schritte nachvollziehen, aber keine Projektentscheidung schreiben.',
+    safe_next_step: 'Lernansicht oeffnen und den Unterschied zwischen Review und Generation verstehen.'
   },
   trial_user: {
     focus: 'observer',
     detail_level: 'observer',
     primary_label: 'View Demo Only',
     extra_sections: ['explanations'],
-    learning_support: true
+    learning_support: true,
+    purpose: 'Sieht eine sichere Demo des Systems, ohne Zugriff auf echte Projektsteuerung.',
+    interface_depth: 'Observer-Oberflaeche mit Demo-Status, einfachen Erklaerungen und read-only Verhalten.',
+    decision_scope: 'Darf nur ansehen, nicht entscheiden, schreiben, generieren oder publizieren.',
+    safe_next_step: 'Demo ansehen und verstehen, warum kritische Aktionen blockiert bleiben.'
   }
 };
 
@@ -122,7 +154,8 @@ function buildReport({ workspace, panelSpec }) {
       design_capable_count: variants.filter((variant) => variant.permissions.can_open_design_review).length,
       generation_capable_count: variants.filter((variant) => variant.permissions.can_request_design_generation).length,
       admin_variant_count: variants.filter((variant) => variant.role.level === 'admin').length,
-      learning_variant_count: variants.filter((variant) => variant.learning_support.enabled).length
+      learning_variant_count: variants.filter((variant) => variant.learning_support.enabled).length,
+      explained_variant_count: variants.filter((variant) => roleExplanationComplete(variant)).length
     },
     variants,
     next_actions: [
@@ -151,6 +184,12 @@ function variantForRole(role, panelSpec) {
       focus: preset.focus,
       detail_level: preset.detail_level
     },
+    explanation: {
+      purpose: preset.purpose,
+      interface_depth: preset.interface_depth,
+      decision_scope: preset.decision_scope,
+      safe_next_step: preset.safe_next_step
+    },
     permissions: {
       can_open_design_review: canOpenDesignReview,
       can_request_design_generation: canRequestDesignGeneration,
@@ -178,6 +217,15 @@ function variantForRole(role, panelSpec) {
         : null
     }
   };
+}
+
+function roleExplanationComplete(variant) {
+  return Boolean(
+    variant.explanation?.purpose &&
+      variant.explanation?.interface_depth &&
+      variant.explanation?.decision_scope &&
+      variant.explanation?.safe_next_step
+  );
 }
 
 function visibleSectionsFor({ panelSpec, hiddenSections, preset }) {
@@ -237,21 +285,26 @@ function renderMarkdown(report) {
     `- generation-capable roles: ${report.summary.generation_capable_count}`,
     `- admin variants: ${report.summary.admin_variant_count}`,
     `- learning variants: ${report.summary.learning_variant_count}`,
+    `- explained variants: ${report.summary.explained_variant_count}`,
     '',
     '## Variants',
     '',
-    '| Role | UI mode | Focus | Primary | Design review | Public approve | Learning |',
-    '| --- | --- | --- | --- | --- | --- | --- |'
+    '| Role | UI mode | Focus | Purpose | Primary | Design review | Public approve | Learning |',
+    '| --- | --- | --- | --- | --- | --- | --- | --- |'
   ];
 
   for (const variant of report.variants) {
-    lines.push(`| ${escapePipe(variant.role.label)} | \`${variant.role.ui_mode}\` | \`${variant.role.focus}\` | ${escapePipe(variant.panel_state.primary_label)} | ${variant.permissions.can_open_design_review ? 'yes' : 'no'} | ${variant.permissions.can_approve_public ? 'yes' : 'no'} | ${variant.learning_support.enabled ? 'yes' : 'no'} |`);
+    lines.push(`| ${escapePipe(variant.role.label)} | \`${variant.role.ui_mode}\` | \`${variant.role.focus}\` | ${escapePipe(variant.explanation.purpose)} | ${escapePipe(variant.panel_state.primary_label)} | ${variant.permissions.can_open_design_review ? 'yes' : 'no'} | ${variant.permissions.can_approve_public ? 'yes' : 'no'} | ${variant.learning_support.enabled ? 'yes' : 'no'} |`);
   }
 
   for (const variant of report.variants) {
     lines.push('', `## ${variant.role.label}`, '');
     lines.push(`- focus: \`${variant.role.focus}\``);
     lines.push(`- detail level: \`${variant.role.detail_level}\``);
+    lines.push(`- purpose: ${variant.explanation.purpose}`);
+    lines.push(`- interface depth: ${variant.explanation.interface_depth}`);
+    lines.push(`- decision scope: ${variant.explanation.decision_scope}`);
+    lines.push(`- safe next step: ${variant.explanation.safe_next_step}`);
     lines.push(`- primary action: ${variant.panel_state.primary_label}`);
     lines.push(`- primary enabled: ${variant.panel_state.primary_enabled ? 'yes' : 'no'}`);
     lines.push(`- generation enabled: ${variant.panel_state.generation_enabled ? 'yes' : 'no'}`);

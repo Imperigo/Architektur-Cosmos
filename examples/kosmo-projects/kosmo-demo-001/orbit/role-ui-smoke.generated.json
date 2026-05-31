@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-31T16:02:14.060Z",
+  "generated_at": "2026-05-31T20:04:59.013Z",
   "generator": "kosmo-orbit-role-ui-smoke",
   "variants_path": "examples/kosmo-projects/kosmo-demo-001/orbit/role-ui-variants.generated.json",
   "status": "role_ui_smoke_passed",
@@ -17,13 +17,14 @@
     "risk_level": "local_review_only"
   },
   "summary": {
-    "check_count": 12,
-    "passed_checks": 12,
+    "check_count": 14,
+    "passed_checks": 14,
     "failed_checks": 0,
     "variant_count": 8,
     "required_role_count": 8,
     "generation_capable_count": 0,
-    "learning_variant_count": 3
+    "learning_variant_count": 3,
+    "explained_variant_count": 8
   },
   "checks": [
     {
@@ -74,6 +75,16 @@
     {
       "id": "learning_roles_supported",
       "label": "Praktikant, Lehrling and Schnupperstift have learning support.",
+      "status": "passed"
+    },
+    {
+      "id": "role_explanations_present",
+      "label": "Every variant has plain-language role explanations.",
+      "status": "passed"
+    },
+    {
+      "id": "professional_depths_distinct",
+      "label": "Professional roles use distinct interface depth levels.",
       "status": "passed"
     },
     {
