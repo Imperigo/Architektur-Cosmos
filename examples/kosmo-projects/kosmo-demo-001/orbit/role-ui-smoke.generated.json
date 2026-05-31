@@ -1,0 +1,95 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-05-31T12:46:50.776Z",
+  "generator": "kosmo-orbit-role-ui-smoke",
+  "variants_path": "examples/kosmo-projects/kosmo-demo-001/orbit/role-ui-variants.generated.json",
+  "status": "role_ui_smoke_passed",
+  "policy": {
+    "review_only": true,
+    "no_auth_runtime": true,
+    "no_user_data_write": true,
+    "no_blender_launch": true,
+    "no_geometry_generation": true
+  },
+  "project": {
+    "id": "kosmo-demo-001",
+    "name": "Kosmo Demo 001",
+    "risk_level": "local_review_only"
+  },
+  "summary": {
+    "check_count": 12,
+    "passed_checks": 12,
+    "failed_checks": 0,
+    "variant_count": 8,
+    "required_role_count": 8,
+    "generation_capable_count": 0,
+    "learning_variant_count": 3
+  },
+  "checks": [
+    {
+      "id": "source_status_ready",
+      "label": "Role variants report is ready.",
+      "status": "passed"
+    },
+    {
+      "id": "variant_count",
+      "label": "Exactly eight office role variants exist.",
+      "status": "passed"
+    },
+    {
+      "id": "required_roles_present",
+      "label": "All required KosmoOrbit office roles exist.",
+      "status": "passed"
+    },
+    {
+      "id": "generation_summary_blocked",
+      "label": "No role is generation-capable in the summary.",
+      "status": "passed"
+    },
+    {
+      "id": "generation_disabled_everywhere",
+      "label": "Every role keeps design generation disabled.",
+      "status": "passed"
+    },
+    {
+      "id": "owner_admin_public_approval",
+      "label": "Owner admin can approve public gates.",
+      "status": "passed"
+    },
+    {
+      "id": "design_architect_review_access",
+      "label": "Entwurfsarchitekt can open design review context.",
+      "status": "passed"
+    },
+    {
+      "id": "drafter_review_blocked",
+      "label": "Zeichner EFZ stays blocked from design review opening.",
+      "status": "passed"
+    },
+    {
+      "id": "trial_user_read_only",
+      "label": "Schnupperstift remains read-only.",
+      "status": "passed"
+    },
+    {
+      "id": "learning_roles_supported",
+      "label": "Praktikant, Lehrling and Schnupperstift have learning support.",
+      "status": "passed"
+    },
+    {
+      "id": "visible_sections_present",
+      "label": "Every variant has visible UI sections.",
+      "status": "passed"
+    },
+    {
+      "id": "warnings_present",
+      "label": "Every variant keeps at least one warning visible.",
+      "status": "passed"
+    }
+  ],
+  "next_actions": [
+    "Keep this smoke check in the Orbit full review before changing role permissions.",
+    "Use the role variants as a safe input for the first role-aware KosmoOrbit app screen.",
+    "Do not enable design generation until context and human-review gates are approved."
+  ]
+}

@@ -100,6 +100,18 @@ const steps = [
       'orbit/design-handoff-ui-panel.generated.json'
     ],
     report: resolve(projectRoot, 'orbit/role-ui-variants.generated.json')
+  },
+  {
+    id: 'role_ui_smoke',
+    label: 'Role UI Smoke',
+    script: 'kosmo:orbit-role-smoke',
+    args: [
+      '--project',
+      relative(root, projectRoot),
+      '--variants',
+      'orbit/role-ui-variants.generated.json'
+    ],
+    report: resolve(projectRoot, 'orbit/role-ui-smoke.generated.json')
   }
 ];
 
@@ -172,6 +184,7 @@ function buildReport(stepRows) {
   const designPrototype = readOptionalJson(resolve(projectRoot, 'orbit/design-handoff-ui-prototype.generated.json'));
   const designUiSmoke = readOptionalJson(resolve(projectRoot, 'orbit/design-handoff-ui-smoke.generated.json'));
   const roleVariants = readOptionalJson(resolve(projectRoot, 'orbit/role-ui-variants.generated.json'));
+  const roleUiSmoke = readOptionalJson(resolve(projectRoot, 'orbit/role-ui-smoke.generated.json'));
 
   const status = failedSteps.length
     ? 'orbit_full_review_failed'
@@ -219,7 +232,10 @@ function buildReport(stepRows) {
       design_ui_smoke_check_count: designUiSmoke?.summary?.check_count ?? null,
       role_variant_status: roleVariants?.status || null,
       role_variant_count: roleVariants?.summary?.variant_count ?? null,
-      role_design_capable_count: roleVariants?.summary?.design_capable_count ?? null
+      role_design_capable_count: roleVariants?.summary?.design_capable_count ?? null,
+      role_ui_smoke_status: roleUiSmoke?.status || null,
+      role_ui_smoke_passed_checks: roleUiSmoke?.summary?.passed_checks ?? null,
+      role_ui_smoke_check_count: roleUiSmoke?.summary?.check_count ?? null
     },
     outputs: {
       full_review_json: relative(root, outputJsonPath),
@@ -228,17 +244,17 @@ function buildReport(stepRows) {
       project_inspector_markdown: relative(root, resolve(projectRoot, 'orbit/project-inspector.generated.md')),
       design_handoff_markdown: relative(root, resolve(projectRoot, 'orbit/design-handoff-preview.generated.md')),
       design_ui_panel_markdown: relative(root, resolve(projectRoot, 'orbit/design-handoff-ui-panel.generated.md')),
-      design_ui_prototype_html: relative(root, resolve(projectRoot, 'orbit/design-handoff-ui-prototype.generated.html'))
-      ,
+      design_ui_prototype_html: relative(root, resolve(projectRoot, 'orbit/design-handoff-ui-prototype.generated.html')),
       design_ui_smoke_markdown: relative(root, resolve(projectRoot, 'orbit/design-handoff-ui-smoke.generated.md')),
-      role_variants_markdown: relative(root, resolve(projectRoot, 'orbit/role-ui-variants.generated.md'))
+      role_variants_markdown: relative(root, resolve(projectRoot, 'orbit/role-ui-variants.generated.md')),
+      role_ui_smoke_markdown: relative(root, resolve(projectRoot, 'orbit/role-ui-smoke.generated.md'))
     },
     steps: stepRows,
-    next_actions: nextActions({ failedSteps, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants })
+    next_actions: nextActions({ failedSteps, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke })
   };
 }
 
-function nextActions({ failedSteps, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants }) {
+function nextActions({ failedSteps, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke }) {
   const actions = [];
   if (failedSteps.length) {
     failedSteps.forEach((step) => actions.push(`Review failed step: ${step.label}`));
@@ -264,6 +280,9 @@ function nextActions({ failedSteps, workspaceStatus, projectInspector, designHan
   }
   if (roleVariants?.status === 'role_ui_variants_ready') {
     actions.push('Use the generated role variants to drive the next KosmoOrbit UI prototype pass.');
+  }
+  if (roleUiSmoke?.status === 'role_ui_smoke_passed') {
+    actions.push('Keep the role UI smoke in the Orbit full review before changing role permissions or learning modes.');
   }
   if (!actions.length) actions.push('KosmoOrbit full review is ready for the next implementation step.');
   return actions;
@@ -301,6 +320,8 @@ function renderMarkdown(report) {
     `- role variants: \`${report.summary.role_variant_status}\``,
     `- role variant count: ${report.summary.role_variant_count}`,
     `- design-capable roles: ${report.summary.role_design_capable_count}`,
+    `- role UI smoke: \`${report.summary.role_ui_smoke_status}\``,
+    `- role UI smoke checks: ${report.summary.role_ui_smoke_passed_checks}/${report.summary.role_ui_smoke_check_count}`,
     '',
     '## Steps',
     '',

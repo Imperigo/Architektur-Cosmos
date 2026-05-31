@@ -289,12 +289,13 @@ laufen. Initial umgesetzt:
 - erzeugt den statischen KosmoDesign UI Prototype;
 - prueft den statischen UI-Prototyp mit einem Smoke-Check;
 - erzeugt Rollenvarianten fuer die KosmoDesign-Oberflaeche;
+- prueft die Rollenvarianten mit einem Role-UI-Smoke;
 - schreibt `examples/kosmo-orbit/review/orbit-full-review.generated.json`;
 - schreibt `examples/kosmo-orbit/review/orbit-full-review.generated.md`.
 
 Der Full Review ist der erste echte KosmoOrbit-Steuerzentralen-Durchlauf:
 Workspace -> Status -> Projektpaket -> Design-Handoff -> UI-Panel-Spec ->
-statischer UI-Prototyp -> UI-Smoke -> Rollenvarianten.
+statischer UI-Prototyp -> UI-Smoke -> Rollenvarianten -> Role-UI-Smoke.
 
 Auch dieser Durchlauf bleibt strikt review-only: kein Blender-Start, keine
 Geometrie-Generierung, keine Uploads, keine externen Accounts, keine Kosten und
@@ -372,3 +373,28 @@ Die Varianten unterscheiden u.a.:
 
 Design-Generierung bleibt in allen Rollen deaktiviert, bis Kontext- und
 Human-Review-Gates freigegeben sind.
+
+## 16. Role UI Smoke
+
+Die Rollenvarianten werden automatisch gegen die wichtigsten Orbit-Regeln
+geprueft. Initial umgesetzt:
+
+- `npm run kosmo:orbit-role-smoke`
+- liest `orbit/role-ui-variants.generated.json`;
+- schreibt `orbit/role-ui-smoke.generated.json`;
+- schreibt `orbit/role-ui-smoke.generated.md`.
+
+Der Smoke prueft u.a.:
+
+- alle acht Buero-Rollen sind vorhanden;
+- keine Rolle darf Design-Generierung anfordern;
+- Owner Admin darf Public-Gates freigeben;
+- Entwurfsarchitekt darf Design Review oeffnen;
+- Zeichner EFZ bleibt vom Design-Review-Oeffnen getrennt;
+- Schnupperstift bleibt read-only;
+- Praktikant, Lehrling und Schnupperstift behalten Lern-/Guidance-Support;
+- jede Rollenoberflaeche zeigt sichtbare Sections und Warnungen.
+
+Damit hat KosmoOrbit eine erste automatische Absicherung dafuer, dass
+Rollenlogik, Lernmodus und Review-only-Grenzen nicht versehentlich aus der
+Hauptsoftware-Shell verschwinden.
