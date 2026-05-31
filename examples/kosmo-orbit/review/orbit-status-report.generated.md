@@ -1,7 +1,7 @@
 # KosmoOrbit Status Report
 
 Workspace: `Architecture Kosmos Demo Office`
-Generated: 2026-05-31T14:18:19.209Z
+Generated: 2026-05-31T14:31:54.323Z
 Status: `orbit_blocked_gates_present`
 Mode: `local_dev`
 Hardware: `developer_laptop`
@@ -10,7 +10,7 @@ Review-only. This report does not start tools, upload files, publish data, spend
 
 ## Current User
 
-- name: Andrin Baumann
+- name: Kosmo Owner
 - role: Chef / Owner Admin (`owner_admin`)
 - UI mode: `full_admin`
 - permissions: `admin_all`, `approve_public`, `approve_local`, `manage_projects`, `review_gates`

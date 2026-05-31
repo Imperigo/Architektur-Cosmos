@@ -47,7 +47,7 @@ Promotion guard. This report does not promote assets, upload files, write D1/R2,
 
 - asset id: `warm-concrete-material-001`
 - decision state: `approved` (local human approval recorded)
-- reviewer: `Andrin Baumann`
+- reviewer: `Kosmo Owner`
 - reviewer gate: `named_human_reviewer_recorded`
 - certificate: `asset_local_review_certified`
 - next human action: `certified_local_sandbox_candidate`

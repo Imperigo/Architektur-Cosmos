@@ -1,11 +1,12 @@
 # KosmoOrbit App Route Spec
 
-Generated: 2026-05-31T14:18:22.173Z
+Generated: 2026-05-31T14:31:56.441Z
 Status: `orbit_app_route_spec_ready`
 Proposed path: `/orbit`
 Implementation file: `app/orbit/page.tsx`
+Implementation status: `implemented_static_preview`
 
-Review-only route specification. This does not create a Next route, API route, auth runtime, server action, middleware, network call, upload, publish action or design generation.
+Review-only route specification for the static `/orbit` preview. The route contract allows local JSON imports only and rejects API routes, auth runtime, server actions, middleware, network calls, uploads, publish actions and design generation.
 
 ## Summary
 
@@ -41,7 +42,7 @@ Review-only route specification. This does not create a Next route, API route, a
 | `handoff_ready` | `passed` | Role-state handoff is ready. |
 | `shell_ready` | `passed` | Role shell manifest is ready. |
 | `role_state_review_only` | `passed` | Role state remains review-only. |
-| `no_route_file_written` | `passed` | This spec does not write a real app route. |
+| `route_is_static_preview` | `passed` | Orbit route is absent or remains a static preview page. |
 | `visible_modules_available` | `passed` | Visible modules are present. |
 | `blocked_actions_available` | `passed` | Blocked actions are present. |
 | `generation_blocked` | `passed` | Generate Design remains blocked. |
@@ -51,6 +52,6 @@ Review-only route specification. This does not create a Next route, API route, a
 
 ## Next Actions
 
-- Use this spec as the implementation contract before creating app/orbit/page.tsx.
-- Keep the future route static-export-safe and driven by local JSON imports.
-- Add a route smoke before any public navigation points at /orbit.
+- Keep app/orbit/page.tsx aligned with this static route contract.
+- Keep the Orbit route static-export-safe and driven by local JSON imports.
+- Keep a route smoke before any public navigation points at /orbit.

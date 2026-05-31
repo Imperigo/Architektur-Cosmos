@@ -1,0 +1,105 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-05-31T14:32:06.186Z",
+  "generator": "kosmo-orbit-route-smoke",
+  "status": "orbit_route_smoke_passed",
+  "route_file": "app/orbit/page.tsx",
+  "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
+  "summary": {
+    "check_count": 17,
+    "passed_checks": 17,
+    "failed_checks": 0
+  },
+  "checks": [
+    {
+      "id": "route_file_exists",
+      "label": "app/orbit/page.tsx exists.",
+      "status": "passed"
+    },
+    {
+      "id": "spec_ready",
+      "label": "App route spec is ready.",
+      "status": "passed"
+    },
+    {
+      "id": "spec_sees_implemented_route",
+      "label": "App route spec sees the route as implemented static preview.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_route_spec",
+      "label": "Route imports the local route spec JSON.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_role_state",
+      "label": "Route imports the local role state JSON.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_role_variants",
+      "label": "Route imports the local role variants JSON.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_shell_manifest",
+      "label": "Route imports the local shell manifest JSON.",
+      "status": "passed"
+    },
+    {
+      "id": "uses_force_static",
+      "label": "Route declares force-static rendering.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_kosmo_orbit",
+      "label": "Route renders KosmoOrbit heading.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_blocked_actions",
+      "label": "Route renders blocked action labels from role state.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_review_only_copy",
+      "label": "Route keeps review-only safety copy visible.",
+      "status": "passed"
+    },
+    {
+      "id": "no_use_server",
+      "label": "Forbidden pattern is absent: no_use_server.",
+      "status": "passed"
+    },
+    {
+      "id": "no_next_server",
+      "label": "Forbidden pattern is absent: no_next_server.",
+      "status": "passed"
+    },
+    {
+      "id": "no_fetch",
+      "label": "Forbidden pattern is absent: no_fetch.",
+      "status": "passed"
+    },
+    {
+      "id": "no_cookies",
+      "label": "Forbidden pattern is absent: no_cookies.",
+      "status": "passed"
+    },
+    {
+      "id": "no_headers",
+      "label": "Forbidden pattern is absent: no_headers.",
+      "status": "passed"
+    },
+    {
+      "id": "no_redirect",
+      "label": "Forbidden pattern is absent: no_redirect.",
+      "status": "passed"
+    }
+  ],
+  "next_actions": [
+    "Keep /orbit static-export-safe until a local Orbit runtime exists.",
+    "Do not add public navigation to /orbit before a human review approves the preview.",
+    "Use this route as the first visible KosmoOrbit cockpit for role and gate review."
+  ]
+}

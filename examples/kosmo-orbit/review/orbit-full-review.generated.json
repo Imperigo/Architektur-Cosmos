@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-31T14:18:22.198Z",
+  "generated_at": "2026-05-31T14:31:56.726Z",
   "generator": "kosmo-orbit-full-review",
   "workspace_path": "examples/kosmo-orbit/workspace.demo.json",
   "project_root": "examples/kosmo-projects/kosmo-demo-001",
@@ -15,8 +15,8 @@
     "no_geometry_generation": true
   },
   "summary": {
-    "step_count": 15,
-    "passed_steps": 15,
+    "step_count": 16,
+    "passed_steps": 16,
     "failed_steps": 0,
     "role_state_status": "role_state_check_passed",
     "role_state_active_role": "owner_admin",
@@ -30,6 +30,9 @@
     "role_state_handoff_items": 6,
     "app_route_spec_status": "orbit_app_route_spec_ready",
     "app_route_spec_sections": 5,
+    "orbit_route_smoke_status": "orbit_route_smoke_passed",
+    "orbit_route_smoke_passed_checks": 17,
+    "orbit_route_smoke_check_count": 17,
     "workspace_status": "orbit_blocked_gates_present",
     "project_status": "local_review_only",
     "project_artifact_count": 59,
@@ -65,6 +68,7 @@
     "role_state_smoke_markdown": "examples/kosmo-orbit/review/orbit-role-state-smoke.generated.md",
     "role_state_handoff_markdown": "examples/kosmo-orbit/review/orbit-role-state-handoff.generated.md",
     "app_route_spec_markdown": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.md",
+    "orbit_route_smoke_markdown": "examples/kosmo-orbit/review/orbit-route-smoke.generated.md",
     "workspace_status_markdown": "examples/kosmo-orbit/review/orbit-status-report.generated.md",
     "project_inspector_markdown": "examples/kosmo-projects/kosmo-demo-001/orbit/project-inspector.generated.md",
     "design_handoff_markdown": "examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-preview.generated.md",
@@ -256,6 +260,18 @@
       "report_status": "orbit_app_route_spec_ready",
       "stdout_tail": "> architecture-cosmos@0.1.0 kosmo:orbit-app-route-spec\n> node scripts/kosmo-orbit-app-route-spec.mjs --handoff examples/kosmo-orbit/review/orbit-role-state-handoff.generated.json --state examples/kosmo-orbit/role-state.demo.json --project examples/kosmo-projects/kosmo-demo-001 --shell orbit/role-shell-prototype.generated.json\n\nKosmoOrbit app route spec\nStatus: orbit_app_route_spec_ready\nSections: 5\nDisabled actions: 3\nWrote: examples/kosmo-orbit/review/orbit-app-route-spec.generated.md",
       "stderr_tail": ""
+    },
+    {
+      "id": "orbit_route_smoke",
+      "label": "Orbit Route Smoke",
+      "command": "npm run kosmo:orbit-route-smoke -- --route app/orbit/page.tsx --spec examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
+      "status": "passed",
+      "exit_code": 0,
+      "report_path": "examples/kosmo-orbit/review/orbit-route-smoke.generated.json",
+      "report_exists": true,
+      "report_status": "orbit_route_smoke_passed",
+      "stdout_tail": "> architecture-cosmos@0.1.0 kosmo:orbit-route-smoke\n> node scripts/kosmo-orbit-route-smoke.mjs --route app/orbit/page.tsx --spec examples/kosmo-orbit/review/orbit-app-route-spec.generated.json\n\nKosmoOrbit route smoke\nStatus: orbit_route_smoke_passed\nChecks: 17/17\nWrote: examples/kosmo-orbit/review/orbit-route-smoke.generated.md",
+      "stderr_tail": ""
     }
   ],
   "next_actions": [
@@ -263,7 +279,8 @@
     "Use the checked role state contract before adding real role switching or app routing.",
     "Keep the role state smoke in the Orbit full review before adding role-state interaction.",
     "Use the role state handoff as the next contract before implementing a static Orbit app route.",
-    "Use the Orbit app route spec before creating app/orbit/page.tsx.",
+    "Use the Orbit app route spec before changing app/orbit/page.tsx.",
+    "Keep the Orbit route smoke in the full review before promoting /orbit in public navigation.",
     "Resolve or explicitly reject blocked context inputs before allowing design generation.",
     "Keep generated project artifacts local until human review closes design/draw/viz evidence.",
     "Keep public, rights and publish gates visible as blocked in the Orbit shell.",

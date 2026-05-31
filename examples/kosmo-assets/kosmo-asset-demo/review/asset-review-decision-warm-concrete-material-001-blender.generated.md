@@ -4,7 +4,7 @@ Asset: Warm Concrete Study Material (`warm-concrete-material-001`)
 Generated: 2026-05-27T20:33:52.099Z
 Decision: `approve-local`
 Route: `blender`
-Reviewer: `Andrin Baumann`
+Reviewer: `Kosmo Owner`
 Status: `local_review_decision_recorded`
 
 This decision is local review evidence only. It does not mutate the library, import into Blender, write ArchiCAD files, upload assets or publish downloads.

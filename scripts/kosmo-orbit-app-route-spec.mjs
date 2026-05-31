@@ -12,6 +12,7 @@ const projectRoot = resolve(root, args.project || 'examples/kosmo-projects/kosmo
 const shellManifestPath = resolve(projectRoot, args.shell || 'orbit/role-shell-prototype.generated.json');
 const outputJsonPath = resolve(root, args.output || 'examples/kosmo-orbit/review/orbit-app-route-spec.generated.json');
 const outputMdPath = resolve(root, args.markdown || 'examples/kosmo-orbit/review/orbit-app-route-spec.generated.md');
+const routeFilePath = resolve(root, 'app/orbit/page.tsx');
 
 main().catch((error) => {
   console.error(error.message);
@@ -84,7 +85,7 @@ function buildReport({ handoff, roleState, shellManifest }) {
     check('handoff_ready', 'Role-state handoff is ready.', handoff.status === 'role_state_handoff_ready'),
     check('shell_ready', 'Role shell manifest is ready.', shellManifest.status === 'role_shell_prototype_ready'),
     check('role_state_review_only', 'Role state remains review-only.', roleState.interaction_policy?.review_only === true),
-    check('no_route_file_written', 'This spec does not write a real app route.', !existsSync(resolve(root, 'app/orbit/page.tsx'))),
+    check('route_is_static_preview', 'Orbit route is absent or remains a static preview page.', routeIsStaticPreview()),
     check('visible_modules_available', 'Visible modules are present.', visibleModules.length >= 8),
     check('blocked_actions_available', 'Blocked actions are present.', blockedActions.length >= 3),
     check('generation_blocked', 'Generate Design remains blocked.', blockedActions.some((action) => action.id === 'generate-design') && roleState.interaction_policy?.allow_design_generation === false),
@@ -111,7 +112,7 @@ function buildReport({ handoff, roleState, shellManifest }) {
       data_mode: 'local_static_imports_only',
       write_mode: 'none',
       interaction_mode: 'preview_only',
-      status: 'not_implemented'
+      status: existsSync(routeFilePath) ? 'implemented_static_preview' : 'not_implemented'
     },
     policy: {
       review_only: true,
@@ -149,11 +150,27 @@ function buildReport({ handoff, roleState, shellManifest }) {
     next_actions: failed.length
       ? failed.map((item) => `Fix failed Orbit app route spec check: ${item.id}`)
       : [
-          'Use this spec as the implementation contract before creating app/orbit/page.tsx.',
-          'Keep the future route static-export-safe and driven by local JSON imports.',
-          'Add a route smoke before any public navigation points at /orbit.'
+          existsSync(routeFilePath)
+            ? 'Keep app/orbit/page.tsx aligned with this static route contract.'
+            : 'Use this spec as the implementation contract before creating app/orbit/page.tsx.',
+          'Keep the Orbit route static-export-safe and driven by local JSON imports.',
+          'Keep a route smoke before any public navigation points at /orbit.'
         ]
   };
+}
+
+function routeIsStaticPreview() {
+  if (!existsSync(routeFilePath)) return true;
+  const source = readFileSync(routeFilePath, 'utf8');
+  const blockedPatterns = [
+    /['"]use server['"]/,
+    /from ['"]next\/server['"]/,
+    /redirect\s*\(/,
+    /fetch\s*\(/,
+    /cookies\s*\(/,
+    /headers\s*\(/
+  ];
+  return !blockedPatterns.some((pattern) => pattern.test(source));
 }
 
 function check(id, label, passed) {
@@ -172,8 +189,9 @@ function renderMarkdown(report) {
     `Status: \`${report.status}\``,
     `Proposed path: \`${report.route_spec.proposed_path}\``,
     `Implementation file: \`${report.route_spec.implementation_file}\``,
+    `Implementation status: \`${report.route_spec.status}\``,
     '',
-    'Review-only route specification. This does not create a Next route, API route, auth runtime, server action, middleware, network call, upload, publish action or design generation.',
+    'Review-only route specification for the static `/orbit` preview. The route contract allows local JSON imports only and rejects API routes, auth runtime, server actions, middleware, network calls, uploads, publish actions and design generation.',
     '',
     '## Summary',
     '',

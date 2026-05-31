@@ -161,6 +161,23 @@ body:has(.entry-page) {
   cursor: auto !important;
 }
 
+.orbit-page,
+.orbit-page * {
+  cursor: auto !important;
+}
+
+html:has(.orbit-page),
+body:has(.orbit-page) {
+  height: 100%;
+  overflow: hidden;
+  touch-action: auto;
+}
+
+body:has(.orbit-page) {
+  position: static;
+  inset: auto;
+}
+
 .entry-link {
   transition: border-color 180ms ease, color 180ms ease, background 180ms ease;
 }

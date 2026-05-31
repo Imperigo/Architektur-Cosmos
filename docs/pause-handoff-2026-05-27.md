@@ -12,7 +12,7 @@ Public/R2/D1: weiterhin gesperrt
 
 Wichtigste erledigte Schritte:
 
-- `warm-concrete-material-001` wurde von Andrin Baumann menschlich geprüft.
+- `warm-concrete-material-001` wurde von Kosmo Owner menschlich geprüft.
 - Die Route `blender` wurde mit `approve-local` verbucht.
 - Das lokale KosmoAsset-Zertifikat ist grün: `asset_local_review_certified`, 15/15 Checks.
 - Der Decision-Ledger liest Warm Concrete als `local_approval_recorded`.
@@ -29,7 +29,7 @@ Wichtigste erledigte Schritte:
 Zuletzt erfolgreich:
 
 ```bash
-npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmo-asset-demo/library.json --asset warm-concrete-material-001 --route blender --decision approve-local --confirm-human-review --reviewer "Andrin Baumann"
+npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmo-asset-demo/library.json --asset warm-concrete-material-001 --route blender --decision approve-local --confirm-human-review --reviewer "Kosmo Owner"
 npm run kosmo:asset-review-certificate -- --library examples/kosmo-assets/kosmo-asset-demo/library.json --asset warm-concrete-material-001 --route blender
 npm run kosmo:asset-full-review -- --library examples/kosmo-assets/kosmo-asset-demo/library.json
 npm run kosmo:asset-blender-sandbox -- --library examples/kosmo-assets/kosmo-asset-demo/library.json --asset warm-concrete-material-001 --route blender
@@ -41,7 +41,7 @@ git diff --check
 Der Blender-Background-Test wurde ueber die Steam-Blender-App ausgefuehrt:
 
 ```text
-/Users/andrinbaumann/Library/Application Support/Steam/steamapps/common/Blender/Blender.app/Contents/MacOS/Blender
+/Users/local-user/Library/Application Support/Steam/steamapps/common/Blender/Blender.app/Contents/MacOS/Blender
 ```
 
 Ergebnis:

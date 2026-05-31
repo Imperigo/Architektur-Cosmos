@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-31T14:18:19.209Z",
+  "generated_at": "2026-05-31T14:31:54.323Z",
   "generator": "kosmo-orbit-status-report",
   "workspace_path": "examples/kosmo-orbit/workspace.demo.json",
   "status": "orbit_blocked_gates_present",
@@ -18,8 +18,8 @@
     "hardware_profile": "developer_laptop"
   },
   "current_user": {
-    "id": "andrin-baumann",
-    "name": "Andrin Baumann",
+    "id": "kosmo-owner",
+    "name": "Kosmo Owner",
     "role_id": "owner_admin",
     "role_label": "Chef / Owner Admin",
     "ui_mode": "full_admin",

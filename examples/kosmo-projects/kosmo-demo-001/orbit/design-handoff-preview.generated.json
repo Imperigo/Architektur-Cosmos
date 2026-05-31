@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-31T14:18:19.808Z",
+  "generated_at": "2026-05-31T14:31:54.684Z",
   "generator": "kosmo-orbit-design-handoff-preview",
   "status": "handoff_review_only",
   "policy": {
@@ -16,7 +16,7 @@
     "mode": "local_dev"
   },
   "current_user": {
-    "name": "Andrin Baumann",
+    "name": "Kosmo Owner",
     "role_id": "owner_admin",
     "role_label": "Chef / Owner Admin",
     "ui_mode": "full_admin",

@@ -33,7 +33,7 @@ Local audit ledger. This file reads decision evidence only; it does not create a
 | Asset | Route | Decision State | Ledger Status | Decision | Reviewer Gate | Certificate | Sandbox | Blockers |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Kosmo Axis Marker | archicad | needs_more_evidence | missing_decision | - | missing_decision | missing_certificate | no | decision_missing, local_certificate_missing |
-| Warm Concrete Study Material | blender | approved | local_approval_recorded | approve-local/local_review_decision_recorded | Andrin Baumann (named_human_reviewer_recorded) | asset_local_review_certified | yes | - |
+| Warm Concrete Study Material | blender | approved | local_approval_recorded | approve-local/local_review_decision_recorded | Kosmo Owner (named_human_reviewer_recorded) | asset_local_review_certified | yes | - |
 | Generic Column GLB Slot | blender | needs_more_evidence | needs_review_recorded | needs-review/local_review_note_recorded | not_required_for_note | missing_certificate | no | local_approval_missing, local_certificate_missing |
 
 ## Human Gate Detail
@@ -55,7 +55,7 @@ Local audit ledger. This file reads decision evidence only; it does not create a
 - asset id: `warm-concrete-material-001`
 - route: `blender`
 - decision state: `approved` (local human approval recorded)
-- reviewer: `Andrin Baumann`
+- reviewer: `Kosmo Owner`
 - reviewer gate: `named_human_reviewer_recorded`
 - certificate: `asset_local_review_certified`
 - sandbox ready: yes

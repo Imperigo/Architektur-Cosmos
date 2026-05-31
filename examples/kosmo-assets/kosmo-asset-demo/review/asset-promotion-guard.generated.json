@@ -81,7 +81,7 @@
       "human_decision_state": "approved",
       "human_decision_label": "local human approval recorded",
       "reviewer_status": "named_human_reviewer_recorded",
-      "reviewer": "Andrin Baumann",
+      "reviewer": "Kosmo Owner",
       "certificate_status": "asset_local_review_certified",
       "local_certificate_ready": true,
       "sandbox_ready": true,

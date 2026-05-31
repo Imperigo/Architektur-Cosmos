@@ -1,7 +1,7 @@
 # KosmoOrbit KosmoDesign Handoff Preview
 
 Project: `Kosmo Demo 001`
-Generated: 2026-05-31T14:18:19.808Z
+Generated: 2026-05-31T14:31:54.684Z
 Status: `handoff_review_only`
 Mode: `context_review_only`
 
@@ -9,7 +9,7 @@ Review-only. This preview does not open Blender, generate geometry, approve desi
 
 ## Current Role
 
-- user: Andrin Baumann
+- user: Kosmo Owner
 - role: Chef / Owner Admin (`owner_admin`)
 - UI mode: `full_admin`
 - can use KosmoDesign: yes

@@ -8,7 +8,7 @@ Diese Notiz haelt die Arbeitsweise fuer diesen KosmoOrbit-Worker fest.
 
 Ab jetzt arbeitet der KosmoOrbit-Worker in groesseren autonomen Batches von
 ungefaehr einer Stunde. Diese Regel gilt in diesem Chat als Standard, bis
-Andrin sie explizit aendert.
+Owner sie explizit aendert.
 
 Der Worker soll:
 
@@ -21,7 +21,7 @@ Der Worker soll:
 
 ## Wann gefragt werden muss
 
-Der Worker fragt Andrin nur bei echten wichtigen Abzweigern, besonders bevor er:
+Der Worker fragt Owner nur bei echten wichtigen Abzweigern, besonders bevor er:
 
 - externe Accounts, Cloud-Ressourcen, Kosten oder Uploads beruehrt;
 - Secrets, private Daten oder produktive Kundendaten sichtbar macht;

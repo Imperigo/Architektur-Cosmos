@@ -44,7 +44,7 @@ Architecture Kosmos Local Quality Certificate V1. This is local review evidence 
 - passed: Explicit local review decision exists.
 - passed: Decision status is local_review_decision_recorded.
 - passed: Decision is approve-local.
-- passed: Decision reviewer is Andrin Baumann.
+- passed: Decision reviewer is Kosmo Owner.
 - passed: Decision route is blender, expected blender.
 - passed: Review-pack marks the asset as local-ready.
 - passed: Handoff smoke status is handoff_smoke_passed.

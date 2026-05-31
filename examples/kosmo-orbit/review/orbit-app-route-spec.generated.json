@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-31T14:18:22.173Z",
+  "generated_at": "2026-05-31T14:31:56.441Z",
   "generator": "kosmo-orbit-app-route-spec",
   "status": "orbit_app_route_spec_ready",
   "inputs": {
@@ -15,7 +15,7 @@
     "data_mode": "local_static_imports_only",
     "write_mode": "none",
     "interaction_mode": "preview_only",
-    "status": "not_implemented"
+    "status": "implemented_static_preview"
   },
   "policy": {
     "review_only": true,
@@ -139,8 +139,8 @@
       "status": "passed"
     },
     {
-      "id": "no_route_file_written",
-      "label": "This spec does not write a real app route.",
+      "id": "route_is_static_preview",
+      "label": "Orbit route is absent or remains a static preview page.",
       "status": "passed"
     },
     {
@@ -175,8 +175,8 @@
     }
   ],
   "next_actions": [
-    "Use this spec as the implementation contract before creating app/orbit/page.tsx.",
-    "Keep the future route static-export-safe and driven by local JSON imports.",
-    "Add a route smoke before any public navigation points at /orbit."
+    "Keep app/orbit/page.tsx aligned with this static route contract.",
+    "Keep the Orbit route static-export-safe and driven by local JSON imports.",
+    "Keep a route smoke before any public navigation points at /orbit."
   ]
 }

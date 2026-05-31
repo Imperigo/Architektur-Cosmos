@@ -50,7 +50,7 @@
       "status": "local_review_decision_recorded",
       "decision": "approve-local",
       "route": "blender",
-      "reviewer": "Andrin Baumann",
+      "reviewer": "Kosmo Owner",
       "generated_at": "2026-05-27T20:33:52.099Z"
     },
     "human_session": {
@@ -101,7 +101,7 @@
     {
       "id": "decision_named_reviewer",
       "status": "passed",
-      "label": "Decision reviewer is Andrin Baumann."
+      "label": "Decision reviewer is Kosmo Owner."
     },
     {
       "id": "decision_route_matches",

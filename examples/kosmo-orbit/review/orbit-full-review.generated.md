@@ -1,6 +1,6 @@
 # KosmoOrbit Full Review
 
-Generated: 2026-05-31T14:18:22.198Z
+Generated: 2026-05-31T14:31:56.726Z
 Status: `orbit_full_review_ready_for_review_mode`
 Workspace: `examples/kosmo-orbit/workspace.demo.json`
 Project: `examples/kosmo-projects/kosmo-demo-001`
@@ -9,7 +9,7 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 
 ## Summary
 
-- steps: 15/15 passed
+- steps: 16/16 passed
 - role state: `role_state_check_passed`
 - role state active role: `owner_admin`
 - role state selected role: `owner_admin`
@@ -21,6 +21,8 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 - role state handoff items: 6
 - app route spec: `orbit_app_route_spec_ready`
 - app route spec sections: 5
+- orbit route smoke: `orbit_route_smoke_passed`
+- orbit route smoke checks: 17/17
 - workspace status: `orbit_blocked_gates_present`
 - project status: `local_review_only`
 - project artifacts: 59
@@ -65,6 +67,7 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 | Role Shell Smoke | `passed` | `examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-smoke.generated.json` |
 | Role State Handoff | `passed` | `examples/kosmo-orbit/review/orbit-role-state-handoff.generated.json` |
 | Orbit App Route Spec | `passed` | `examples/kosmo-orbit/review/orbit-app-route-spec.generated.json` |
+| Orbit Route Smoke | `passed` | `examples/kosmo-orbit/review/orbit-route-smoke.generated.json` |
 
 ## Outputs
 
@@ -74,6 +77,7 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 - role_state_smoke_markdown: `examples/kosmo-orbit/review/orbit-role-state-smoke.generated.md`
 - role_state_handoff_markdown: `examples/kosmo-orbit/review/orbit-role-state-handoff.generated.md`
 - app_route_spec_markdown: `examples/kosmo-orbit/review/orbit-app-route-spec.generated.md`
+- orbit_route_smoke_markdown: `examples/kosmo-orbit/review/orbit-route-smoke.generated.md`
 - workspace_status_markdown: `examples/kosmo-orbit/review/orbit-status-report.generated.md`
 - project_inspector_markdown: `examples/kosmo-projects/kosmo-demo-001/orbit/project-inspector.generated.md`
 - design_handoff_markdown: `examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-preview.generated.md`
@@ -91,7 +95,8 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 - Use the checked role state contract before adding real role switching or app routing.
 - Keep the role state smoke in the Orbit full review before adding role-state interaction.
 - Use the role state handoff as the next contract before implementing a static Orbit app route.
-- Use the Orbit app route spec before creating app/orbit/page.tsx.
+- Use the Orbit app route spec before changing app/orbit/page.tsx.
+- Keep the Orbit route smoke in the full review before promoting /orbit in public navigation.
 - Resolve or explicitly reject blocked context inputs before allowing design generation.
 - Keep generated project artifacts local until human review closes design/draw/viz evidence.
 - Keep public, rights and publish gates visible as blocked in the Orbit shell.
