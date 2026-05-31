@@ -2482,6 +2482,16 @@ function ModuleHub({ onOpenKosmoData, onOpenKosmoAsset }: { onOpenKosmoData: () 
           <strong>{selectedModule.name}</strong>
           <span>{selectedModule.label}</span>
           <p>{selectedModule.description}</p>
+          <div className="module-hub-preview-gate" data-ready={selectedModule.status === 'bereit' ? 'true' : 'false'}>
+            <span>
+              <small>Zugang</small>
+              <strong>{selectedModule.status === 'bereit' ? 'freigeschaltet' : 'geplant'}</strong>
+            </span>
+            <span>
+              <small>Nächster Schritt</small>
+              <strong>{selectedModule.status === 'bereit' ? 'öffnen' : 'Roadmap prüfen'}</strong>
+            </span>
+          </div>
           <div className="module-hub-preview-metrics" aria-label={`${selectedModule.name} Statuswerte`}>
             {selectedModule.metrics.map((metric) => (
               <span key={`${metric.label}-${metric.value}`}>

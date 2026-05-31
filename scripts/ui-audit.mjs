@@ -65,6 +65,8 @@ async function main() {
     checkIncludes(sources.atlas, 'hasFinePointer: !isCoarsePointer', 'narrow desktop keeps fine pointer cursor support'),
     checkIncludes(sources.atlas, "ui.hasFinePointer ? 'cosmos-fine-pointer' : 'cosmos-touch-web'", 'atlas distinguishes touch from narrow responsive layout'),
     checkIncludes(sources.css, '.cosmos-touch-web .screen-cosmos-cursor', 'custom cursor is hidden only for touch mode'),
+    checkIncludes(sources.atlas, 'className="module-hub-preview-gate"', 'Orbit preview explains whether a module is active or planned'),
+    checkIncludes(sources.css, '.module-hub-preview-gate', 'Orbit preview gate has dedicated styling'),
     checkIncludes(sources.atlas, "module.id === 'asset' ? { ...module, onClick: onOpenKosmoAsset }", 'KosmoAsset orbit station opens the asset workspace'),
     checkIncludes(sources.atlas, 'className="kosmo-asset-back" onClick={onReturnToHub} aria-label="Zurück zum Hauptmenü"', 'KosmoAsset workspace has a stable return button'),
     checkIncludes(sources.atlas, 'className="kosmo-asset-review-banner"', 'KosmoAsset inspector shows local/public review summary'),
