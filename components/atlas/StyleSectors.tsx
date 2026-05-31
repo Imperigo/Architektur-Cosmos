@@ -71,6 +71,7 @@ function StyleSectorsComponent({ state, isMoving = false, activeStyleLens = null
                 d={band.path}
                 fill={accent}
                 opacity={band.opacity}
+                pointerEvents="none"
               />
             ))}
             <path
@@ -80,6 +81,7 @@ function StyleSectorsComponent({ state, isMoving = false, activeStyleLens = null
               strokeWidth="0.72"
               strokeDasharray="1 14"
               opacity={(isMoving ? 0.16 : 0.25) * lensBoost}
+              pointerEvents="none"
             />
             <g pointerEvents="auto">
               <RadialLetterText

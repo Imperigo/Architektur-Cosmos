@@ -8,6 +8,7 @@ const files = {
   detailCard: 'components/atlas/ProjectDetailCard.tsx',
   mediaGrid: 'components/atlas/ProjectMediaGrid.tsx',
   node: 'components/atlas/SemanticEntryNode.tsx',
+  styleSectors: 'components/atlas/StyleSectors.tsx',
   css: 'app/globals.css'
 };
 
@@ -52,6 +53,11 @@ const checks = [
     file: files.node,
     patterns: ['data-entry-node="true"', "onKeyDown={(event) =>"],
     forbiddenPatterns: ['onSelect(event);']
+  },
+  {
+    id: 'style-sector-bands-do-not-steal-node-clicks',
+    file: files.styleSectors,
+    patterns: ['className="style-sector-ribbon style-sector-depth-band"', 'className="style-sector-tick"', 'pointerEvents="none"', '<g pointerEvents="auto">']
   },
   {
     id: 'dossier-hover-reacts-to-crosshair',

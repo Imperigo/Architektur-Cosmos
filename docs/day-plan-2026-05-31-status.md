@@ -91,6 +91,9 @@ KosmoData:
   das Grab/Pan beim Pointer-Down; der eigentliche Klick wird vom Atlas ueber
   die naechste sichtbare Node aufgeloest. Dadurch blockiert ein obenliegender
   SVG-Knoten weniger stark den Nachbarn im engen Cluster.
+- Stilsektor-Baender und feine Sektor-Ticks wurden fuer Pointer-Events
+  deaktiviert. Die farbige Architektur-Ebenen-Grafik bleibt klickbar ueber die
+  Beschriftung, faengt aber keine Projektklicks im Wurmloch mehr ab.
 - Hero-/Planetenbild-Audit: 79/112 Eintraege haben rechteklare Hauptbilder,
   keine Duplikat-URLs, keine blockierten/unklaren Public-Lizenzen.
 
