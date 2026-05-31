@@ -60,6 +60,19 @@ Build-Diagnose 10:10-10:40:
   TypeScript-Transpile-Smokes und `git diff --check`; Cloudflare prueft den
   Static-Export nach Push auf `main`.
 
+Live-Smoke 10:46:
+
+- Lokaler Stand: `main` synchron mit `origin/main` auf `bd477e5`.
+- `https://architekturkosmos.ch/` und `/atlas/` liefern HTTP 200 ueber
+  Cloudflare.
+- `/atlas/` HTML enthaelt Next-Assets und Hydration-Skripte; 10 gepruefte
+  `_next/static` CSS-/JS-Assets liefern HTTP 200.
+- Browser-Smoke: Startscreen sichtbar, `KosmoData oeffnen` fuehrt in den
+  Atlas. Stilsektor-Labels und Projekt-Nodes sind sichtbar, UI-Buttons
+  `Suche`, `Dev`, `Filter` sind vorhanden.
+- Kleine Zoom-/Scroll-Geste im Atlas bleibt stabil; keine Browser-Console-
+  Errors im Live-Smoke.
+
 ## Erster Stabilitaetsblock
 
 KosmoData:
