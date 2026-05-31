@@ -270,3 +270,20 @@ Noch offen:
   Tepe.
 - Es wurden keine Live-Daten, keine D1/R2-Daten und keine oeffentlichen Assets
   geschrieben. Alle neuen Goldstandard-Artefakte bleiben lokale Review-Ausgabe.
+
+## Live-Smoke Goldstandard-Stand
+
+- Nach Push auf `main` liefert `https://architekturkosmos.ch/` HTTP 200 mit
+  Security-Headern.
+- Desktop-Smoke:
+  - Startbild und Orbit-Hub laden.
+  - Fadenkreuz ist im Start- und Orbit-Zustand vorhanden.
+  - KosmoData oeffnet den Atlas mit 91 sichtbaren Nodes.
+  - Der SVG-Atlas ist im Idle als `KosmoData Wurmloch-Atlas` gelabelt.
+  - Ein direkter Node-Klick oeffnet ein Projekt-Dossier.
+  - `/atlas/villa-savoye/` laedt mit Titel, Medieninhalt und 3D-Viewer.
+- Mobile-Narrow-Smoke bei `390x844`:
+  - Kein horizontaler Overflow.
+  - Mobile-Dock und KosmoData-Trigger sind sichtbar.
+  - Sichtbare Touch-Buttons liegen bei ca. 44px oder groesser.
+  - 91 Entry-Nodes bleiben im Atlas vorhanden.
