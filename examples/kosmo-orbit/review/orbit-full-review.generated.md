@@ -1,6 +1,6 @@
 # KosmoOrbit Full Review
 
-Generated: 2026-05-31T12:59:41.623Z
+Generated: 2026-05-31T13:14:26.864Z
 Status: `orbit_full_review_ready_for_review_mode`
 Workspace: `examples/kosmo-orbit/workspace.demo.json`
 Project: `examples/kosmo-projects/kosmo-demo-001`
@@ -9,7 +9,14 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 
 ## Summary
 
-- steps: 11/11 passed
+- steps: 13/13 passed
+- role state: `role_state_check_passed`
+- role state active role: `owner_admin`
+- role state selected role: `owner_admin`
+- role state visible modules: 8
+- role state blocked actions: 3
+- role state smoke: `role_state_smoke_passed`
+- role state smoke checks: 16/16
 - workspace status: `orbit_blocked_gates_present`
 - project status: `local_review_only`
 - project artifacts: 59
@@ -40,6 +47,8 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 | Step | Status | Report |
 | --- | --- | --- |
 | Workspace Check | `passed` | - |
+| Role State Check | `passed` | `examples/kosmo-orbit/review/orbit-role-state-check.generated.json` |
+| Role State Smoke | `passed` | `examples/kosmo-orbit/review/orbit-role-state-smoke.generated.json` |
 | Workspace Status | `passed` | `examples/kosmo-orbit/review/orbit-status-report.generated.json` |
 | Project Package Inspector | `passed` | `examples/kosmo-projects/kosmo-demo-001/orbit/project-inspector.generated.json` |
 | KosmoDesign Handoff Preview | `passed` | `examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-preview.generated.json` |
@@ -55,6 +64,8 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 
 - full_review_json: `examples/kosmo-orbit/review/orbit-full-review.generated.json`
 - full_review_markdown: `examples/kosmo-orbit/review/orbit-full-review.generated.md`
+- role_state_check_markdown: `examples/kosmo-orbit/review/orbit-role-state-check.generated.md`
+- role_state_smoke_markdown: `examples/kosmo-orbit/review/orbit-role-state-smoke.generated.md`
 - workspace_status_markdown: `examples/kosmo-orbit/review/orbit-status-report.generated.md`
 - project_inspector_markdown: `examples/kosmo-projects/kosmo-demo-001/orbit/project-inspector.generated.md`
 - design_handoff_markdown: `examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-preview.generated.md`
@@ -69,6 +80,8 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 ## Next Actions
 
 - Implement the first local/static Orbit UI prototype from the generated KosmoDesign panel spec.
+- Use the checked role state contract before adding real role switching or app routing.
+- Keep the role state smoke in the Orbit full review before adding role-state interaction.
 - Resolve or explicitly reject blocked context inputs before allowing design generation.
 - Keep generated project artifacts local until human review closes design/draw/viz evidence.
 - Keep public, rights and publish gates visible as blocked in the Orbit shell.

@@ -1,0 +1,191 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-05-31T13:14:23.242Z",
+  "generator": "kosmo-orbit-role-state-check",
+  "workspace_path": "examples/kosmo-orbit/workspace.demo.json",
+  "role_state_path": "examples/kosmo-orbit/role-state.demo.json",
+  "status": "role_state_check_passed",
+  "policy": {
+    "review_only": true,
+    "no_auth_runtime": true,
+    "no_user_data_write": true,
+    "no_design_generation": true,
+    "no_public_publish": true,
+    "no_external_network": true
+  },
+  "state": {
+    "id": "kosmo-orbit-demo-role-state",
+    "mode": "local_demo",
+    "active_role_id": "owner_admin",
+    "selected_role_id": "owner_admin",
+    "active_project_id": "kosmo-demo-001"
+  },
+  "summary": {
+    "check_count": 18,
+    "passed_checks": 18,
+    "failed_checks": 0,
+    "available_role_count": 8,
+    "visible_module_count": 8,
+    "blocked_action_count": 3,
+    "primary_module_count": 1
+  },
+  "checks": [
+    {
+      "id": "schema_version",
+      "label": "Role state schema version is supported.",
+      "status": "passed"
+    },
+    {
+      "id": "active_user_matches_workspace",
+      "label": "Role state user matches workspace current user.",
+      "status": "passed"
+    },
+    {
+      "id": "active_role_exists",
+      "label": "Active role exists in workspace roles.",
+      "status": "passed"
+    },
+    {
+      "id": "selected_role_exists",
+      "label": "Selected preview role exists in workspace roles.",
+      "status": "passed"
+    },
+    {
+      "id": "default_role_exists",
+      "label": "Default preview role exists in workspace roles.",
+      "status": "passed"
+    },
+    {
+      "id": "available_roles_exist",
+      "label": "Every available preview role exists in workspace roles.",
+      "status": "passed"
+    },
+    {
+      "id": "project_exists",
+      "label": "Active project exists in workspace projects.",
+      "status": "passed"
+    },
+    {
+      "id": "package_path_exists",
+      "label": "Active project package path exists locally.",
+      "status": "passed"
+    },
+    {
+      "id": "review_only_policy",
+      "label": "Role state remains review-only.",
+      "status": "passed"
+    },
+    {
+      "id": "no_user_write",
+      "label": "Role state does not allow user writes.",
+      "status": "passed"
+    },
+    {
+      "id": "no_design_generation",
+      "label": "Role state does not allow design generation.",
+      "status": "passed"
+    },
+    {
+      "id": "no_public_publish",
+      "label": "Role state does not allow public publish.",
+      "status": "passed"
+    },
+    {
+      "id": "no_external_network",
+      "label": "Role state does not allow external network access.",
+      "status": "passed"
+    },
+    {
+      "id": "visible_modules_reference_tools",
+      "label": "Every visible module references a known tool.",
+      "status": "passed"
+    },
+    {
+      "id": "primary_design_module_visible",
+      "label": "KosmoDesign is the primary visible module for this demo state.",
+      "status": "passed"
+    },
+    {
+      "id": "blocked_actions_reference_gates",
+      "label": "Every blocked action references a known gate.",
+      "status": "passed"
+    },
+    {
+      "id": "generate_design_blocked",
+      "label": "Generate Design remains explicitly blocked.",
+      "status": "passed"
+    },
+    {
+      "id": "publish_public_blocked",
+      "label": "Public publish remains explicitly blocked.",
+      "status": "passed"
+    }
+  ],
+  "visible_modules": [
+    {
+      "tool_id": "kosmo-data",
+      "visibility": "available",
+      "reason": "Reference and project knowledge can be inspected locally."
+    },
+    {
+      "tool_id": "kosmo-asset",
+      "visibility": "available",
+      "reason": "Asset review evidence can be inspected locally."
+    },
+    {
+      "tool_id": "kosmo-design",
+      "visibility": "primary",
+      "reason": "Current Orbit prototype focuses on the KosmoDesign review handoff."
+    },
+    {
+      "tool_id": "kosmo-prepare",
+      "visibility": "summary_only",
+      "reason": "Prepare is visible as planned context, but not active in this demo shell."
+    },
+    {
+      "tool_id": "kosmo-draw",
+      "visibility": "summary_only",
+      "reason": "Draw handoff stays summary-only until model-quality review is closed."
+    },
+    {
+      "tool_id": "kosmo-viz",
+      "visibility": "summary_only",
+      "reason": "Viz is planned and remains blocked from generation in this state."
+    },
+    {
+      "tool_id": "kosmo-publish",
+      "visibility": "summary_only",
+      "reason": "Publish stays visible but blocked by publish and rights gates."
+    },
+    {
+      "tool_id": "kosmo-zentrale",
+      "visibility": "summary_only",
+      "reason": "Zentrale runtime is external to this static repo and only shown as status."
+    }
+  ],
+  "blocked_actions": [
+    {
+      "id": "generate-design",
+      "label": "Generate Design",
+      "reason": "Context and human-review gates are not approved.",
+      "gate_id": "human-review-gate"
+    },
+    {
+      "id": "publish-public",
+      "label": "Publish Public",
+      "reason": "Publish and rights gates remain blocked in the local demo.",
+      "gate_id": "publish-gate"
+    },
+    {
+      "id": "start-cloud-job",
+      "label": "Start Cloud Job",
+      "reason": "Cost gate is local-only and external network access is disabled.",
+      "gate_id": "cost-gate"
+    }
+  ],
+  "next_actions": [
+    "Use this role state as the data contract for the next role-aware Orbit prototype pass.",
+    "Keep this check in the full review before adding real interaction or routing.",
+    "Do not treat this role state as auth; it is a local UI contract only."
+  ]
+}

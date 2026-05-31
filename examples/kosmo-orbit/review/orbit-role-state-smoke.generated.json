@@ -1,0 +1,114 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-05-31T13:14:23.507Z",
+  "generator": "kosmo-orbit-role-state-smoke",
+  "role_state": "examples/kosmo-orbit/role-state.demo.json",
+  "schema": "schema/kosmo-orbit-role-state.schema.json",
+  "status": "role_state_smoke_passed",
+  "policy": {
+    "static_review_only": true,
+    "no_auth_runtime": true,
+    "no_user_data_write": true,
+    "no_network_calls": true,
+    "no_uploads": true,
+    "no_public_publish": true
+  },
+  "summary": {
+    "check_count": 16,
+    "passed_checks": 16,
+    "failed_checks": 0,
+    "available_role_count": 8,
+    "visible_module_count": 8,
+    "blocked_action_count": 3,
+    "active_role_id": "owner_admin",
+    "selected_role_id": "owner_admin",
+    "active_project_id": "kosmo-demo-001"
+  },
+  "checks": [
+    {
+      "id": "state_file_exists",
+      "label": "Role-state JSON exists.",
+      "status": "passed"
+    },
+    {
+      "id": "schema_file_exists",
+      "label": "Role-state schema exists.",
+      "status": "passed"
+    },
+    {
+      "id": "schema_version",
+      "label": "Role-state version is 0.1.",
+      "status": "passed"
+    },
+    {
+      "id": "required_top_level_keys",
+      "label": "All required top-level keys are present.",
+      "status": "passed"
+    },
+    {
+      "id": "review_only_policy",
+      "label": "Interaction policy remains review-only.",
+      "status": "passed"
+    },
+    {
+      "id": "active_role_available",
+      "label": "Active role is included in available roles.",
+      "status": "passed"
+    },
+    {
+      "id": "selected_role_available",
+      "label": "Selected preview role is included in available roles.",
+      "status": "passed"
+    },
+    {
+      "id": "default_role_available",
+      "label": "Default preview role is included in available roles.",
+      "status": "passed"
+    },
+    {
+      "id": "known_role_ids_only",
+      "label": "Every available role id is known.",
+      "status": "passed"
+    },
+    {
+      "id": "project_package_path_local",
+      "label": "Active project points at a local project package path.",
+      "status": "passed"
+    },
+    {
+      "id": "visible_modules_have_reasons",
+      "label": "Every visible module has a valid visibility and reason.",
+      "status": "passed"
+    },
+    {
+      "id": "kosmo_design_primary",
+      "label": "KosmoDesign is the primary visible module in this demo state.",
+      "status": "passed"
+    },
+    {
+      "id": "blocked_actions_have_gates",
+      "label": "Every blocked action has a gate id and reason.",
+      "status": "passed"
+    },
+    {
+      "id": "generation_blocked",
+      "label": "Generate Design is explicitly blocked.",
+      "status": "passed"
+    },
+    {
+      "id": "publish_blocked",
+      "label": "Public publishing is explicitly blocked.",
+      "status": "passed"
+    },
+    {
+      "id": "no_external_network",
+      "label": "External network access is blocked.",
+      "status": "passed"
+    }
+  ],
+  "next_actions": [
+    "Use this role-state contract as the safe local state input for the next KosmoOrbit UI shell pass.",
+    "Keep this state review-only until real auth and role storage are explicitly designed.",
+    "Do not wire role state to public writes, uploads, network jobs or generation actions without approval gates."
+  ]
+}

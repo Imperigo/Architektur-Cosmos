@@ -1,0 +1,106 @@
+{
+  "schema_version": "0.1",
+  "state": {
+    "id": "kosmo-orbit-demo-role-state",
+    "mode": "local_demo",
+    "source": "manual_demo",
+    "notes": [
+      "Review-only state for the first role-aware KosmoOrbit shell.",
+      "This is not auth and does not write users, accounts or office data."
+    ]
+  },
+  "session": {
+    "user_id": "andrin-baumann",
+    "active_role_id": "owner_admin",
+    "can_switch_preview_role": true
+  },
+  "active_project": {
+    "project_id": "kosmo-demo-001",
+    "package_path": "examples/kosmo-projects/kosmo-demo-001/kosmo.project.json",
+    "status": "needs_review"
+  },
+  "role_preview": {
+    "selected_role_id": "owner_admin",
+    "default_role_id": "owner_admin",
+    "available_role_ids": [
+      "owner_admin",
+      "it_ai_admin",
+      "project_lead_architect",
+      "design_architect",
+      "drafter_efz",
+      "intern",
+      "apprentice",
+      "trial_user"
+    ]
+  },
+  "interaction_policy": {
+    "review_only": true,
+    "allow_role_preview_switch": true,
+    "allow_user_write": false,
+    "allow_design_generation": false,
+    "allow_public_publish": false,
+    "allow_external_network": false
+  },
+  "visible_modules": [
+    {
+      "tool_id": "kosmo-data",
+      "visibility": "available",
+      "reason": "Reference and project knowledge can be inspected locally."
+    },
+    {
+      "tool_id": "kosmo-asset",
+      "visibility": "available",
+      "reason": "Asset review evidence can be inspected locally."
+    },
+    {
+      "tool_id": "kosmo-design",
+      "visibility": "primary",
+      "reason": "Current Orbit prototype focuses on the KosmoDesign review handoff."
+    },
+    {
+      "tool_id": "kosmo-prepare",
+      "visibility": "summary_only",
+      "reason": "Prepare is visible as planned context, but not active in this demo shell."
+    },
+    {
+      "tool_id": "kosmo-draw",
+      "visibility": "summary_only",
+      "reason": "Draw handoff stays summary-only until model-quality review is closed."
+    },
+    {
+      "tool_id": "kosmo-viz",
+      "visibility": "summary_only",
+      "reason": "Viz is planned and remains blocked from generation in this state."
+    },
+    {
+      "tool_id": "kosmo-publish",
+      "visibility": "summary_only",
+      "reason": "Publish stays visible but blocked by publish and rights gates."
+    },
+    {
+      "tool_id": "kosmo-zentrale",
+      "visibility": "summary_only",
+      "reason": "Zentrale runtime is external to this static repo and only shown as status."
+    }
+  ],
+  "blocked_actions": [
+    {
+      "id": "generate-design",
+      "label": "Generate Design",
+      "reason": "Context and human-review gates are not approved.",
+      "gate_id": "human-review-gate"
+    },
+    {
+      "id": "publish-public",
+      "label": "Publish Public",
+      "reason": "Publish and rights gates remain blocked in the local demo.",
+      "gate_id": "publish-gate"
+    },
+    {
+      "id": "start-cloud-job",
+      "label": "Start Cloud Job",
+      "reason": "Cost gate is local-only and external network access is disabled.",
+      "gate_id": "cost-gate"
+    }
+  ]
+}

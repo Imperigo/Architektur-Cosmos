@@ -176,8 +176,12 @@ Sichere erste Umsetzung:
 1. `schema/kosmo-orbit-workspace.schema.json` (**initial umgesetzt**)
 2. `examples/kosmo-orbit/workspace.demo.json` (**initial umgesetzt**)
 3. lokaler Check `npm run kosmo:orbit-check` (**initial umgesetzt**)
-4. kleine statische Orbit-Ansicht oder Report, der Rollen, Tools und Gates zeigt
-5. spaeter Handoff an KosmoZentrale fuer echte lokale Runtime
+4. `examples/kosmo-orbit/role-state.demo.json` als lokaler UI-State-Vertrag
+   fuer rollenbasierte Shells (**initial umgesetzt**)
+5. lokaler Check `npm run kosmo:orbit-role-state-check`
+   (**initial umgesetzt**)
+6. kleine statische Orbit-Ansicht oder Report, der Rollen, Tools und Gates zeigt
+7. spaeter Handoff an KosmoZentrale fuer echte lokale Runtime
 
 ## 7. Zusammenarbeit mit anderen Workern
 
@@ -282,6 +286,7 @@ laufen. Initial umgesetzt:
 
 - `npm run kosmo:orbit-full-review`
 - fuehrt Workspace Check aus;
+- prueft den lokalen Role-State-Vertrag;
 - erzeugt Workspace Status;
 - erzeugt Project Package Inspector;
 - erzeugt KosmoDesign Handoff Preview;
@@ -297,9 +302,9 @@ laufen. Initial umgesetzt:
 - schreibt `examples/kosmo-orbit/review/orbit-full-review.generated.md`.
 
 Der Full Review ist der erste echte KosmoOrbit-Steuerzentralen-Durchlauf:
-Workspace -> Status -> Projektpaket -> Design-Handoff -> UI-Panel-Spec ->
-statischer UI-Prototyp -> UI-Smoke -> Rollenvarianten -> Role-UI-Smoke ->
-Role-Shell-Prototyp -> Role-Shell-Smoke.
+Workspace -> Role-State-Check -> Status -> Projektpaket -> Design-Handoff ->
+UI-Panel-Spec -> statischer UI-Prototyp -> UI-Smoke -> Rollenvarianten ->
+Role-UI-Smoke -> Role-Shell-Prototyp -> Role-Shell-Smoke.
 
 Auch dieser Durchlauf bleibt strikt review-only: kein Blender-Start, keine
 Geometrie-Generierung, keine Uploads, keine externen Accounts, keine Kosten und
@@ -451,3 +456,33 @@ Der Smoke prueft u.a.:
 
 Damit ist auch der erste sichtbare rollenbasierte KosmoOrbit-Shell-Prototyp
 automatisch gegen die wichtigsten Sicherheits- und Rollenregeln abgesichert.
+
+## 19. Role State Contract
+
+Bevor die statische Role Shell zu einer echten App-Route oder interaktiven
+Oberflaeche wird, braucht KosmoOrbit einen klaren lokalen UI-State-Vertrag.
+Initial umgesetzt:
+
+- `schema/kosmo-orbit-role-state.schema.json`
+- `examples/kosmo-orbit/role-state.demo.json`
+- `npm run kosmo:orbit-role-state-check`
+- schreibt `examples/kosmo-orbit/review/orbit-role-state-check.generated.json`;
+- schreibt `examples/kosmo-orbit/review/orbit-role-state-check.generated.md`.
+
+Der Vertrag beschreibt:
+
+- aktive Person und aktive Rolle;
+- ausgewaehlte Preview-Rolle fuer die Role Shell;
+- aktives Projektpaket;
+- sichtbare Module und warum sie sichtbar sind;
+- blockierte Aktionen mit Gate-Bezug;
+- lokale Review-only-Interaktionsregeln.
+
+Wichtig: Der Role State ist noch kein Auth-System. Er schreibt keine Userdaten,
+erlaubt keine externen Netzwerke, keine Design-Generierung und keine
+Publikation. Er ist ein lokaler Datenvertrag, damit spaetere UI-Interaktion
+kontrolliert und pruefbar bleibt.
+
+Der Role-State-Check vergleicht den State mit dem Workspace und prueft zugleich,
+ob Schema, Pflichtfelder, Safety-Policy, Rollenliste, sichtbare Module und
+blockierte Aktionen als statischer Vertrag vollstaendig vorhanden sind.

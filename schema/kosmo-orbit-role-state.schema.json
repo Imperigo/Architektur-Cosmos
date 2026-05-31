@@ -1,0 +1,200 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://architekturkosmos.ch/schema/kosmo-orbit-role-state.schema.json",
+  "title": "KosmoOrbit Role State",
+  "description": "Local review-only UI state contract for KosmoOrbit role-aware shells.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "state",
+    "session",
+    "active_project",
+    "role_preview",
+    "interaction_policy",
+    "visible_modules",
+    "blocked_actions"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "0.1"
+    },
+    "state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "mode", "source"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{2,100}$"
+        },
+        "mode": {
+          "type": "string",
+          "enum": ["local_demo", "office_pilot_preview", "production_local_preview"]
+        },
+        "source": {
+          "type": "string",
+          "enum": ["manual_demo", "workspace_default", "kosmo_zentrale_preview"]
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "session": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["user_id", "active_role_id", "can_switch_preview_role"],
+      "properties": {
+        "user_id": {
+          "type": "string"
+        },
+        "active_role_id": {
+          "$ref": "#/$defs/role_id"
+        },
+        "can_switch_preview_role": {
+          "type": "boolean"
+        }
+      }
+    },
+    "active_project": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["project_id", "package_path", "status"],
+      "properties": {
+        "project_id": {
+          "type": "string"
+        },
+        "package_path": {
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/status"
+        }
+      }
+    },
+    "role_preview": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["selected_role_id", "available_role_ids", "default_role_id"],
+      "properties": {
+        "selected_role_id": {
+          "$ref": "#/$defs/role_id"
+        },
+        "default_role_id": {
+          "$ref": "#/$defs/role_id"
+        },
+        "available_role_ids": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/role_id"
+          }
+        }
+      }
+    },
+    "interaction_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "review_only",
+        "allow_role_preview_switch",
+        "allow_user_write",
+        "allow_design_generation",
+        "allow_public_publish",
+        "allow_external_network"
+      ],
+      "properties": {
+        "review_only": {
+          "type": "boolean",
+          "const": true
+        },
+        "allow_role_preview_switch": {
+          "type": "boolean"
+        },
+        "allow_user_write": {
+          "type": "boolean",
+          "const": false
+        },
+        "allow_design_generation": {
+          "type": "boolean",
+          "const": false
+        },
+        "allow_public_publish": {
+          "type": "boolean",
+          "const": false
+        },
+        "allow_external_network": {
+          "type": "boolean",
+          "const": false
+        }
+      }
+    },
+    "visible_modules": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["tool_id", "visibility", "reason"],
+        "properties": {
+          "tool_id": {
+            "type": "string"
+          },
+          "visibility": {
+            "type": "string",
+            "enum": ["primary", "available", "summary_only", "hidden"]
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "blocked_actions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "label", "reason", "gate_id"],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "gate_id": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "role_id": {
+      "type": "string",
+      "enum": [
+        "owner_admin",
+        "it_ai_admin",
+        "project_lead_architect",
+        "design_architect",
+        "drafter_efz",
+        "intern",
+        "apprentice",
+        "trial_user"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "enum": ["ready", "needs_review", "blocked", "local_only", "approved_local", "approved_public", "unknown"]
+    }
+  }
+}

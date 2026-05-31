@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-31T12:59:41.623Z",
+  "generated_at": "2026-05-31T13:14:26.864Z",
   "generator": "kosmo-orbit-full-review",
   "workspace_path": "examples/kosmo-orbit/workspace.demo.json",
   "project_root": "examples/kosmo-projects/kosmo-demo-001",
@@ -15,9 +15,17 @@
     "no_geometry_generation": true
   },
   "summary": {
-    "step_count": 11,
-    "passed_steps": 11,
+    "step_count": 13,
+    "passed_steps": 13,
     "failed_steps": 0,
+    "role_state_status": "role_state_check_passed",
+    "role_state_active_role": "owner_admin",
+    "role_state_selected_role": "owner_admin",
+    "role_state_visible_module_count": 8,
+    "role_state_blocked_action_count": 3,
+    "role_state_smoke_status": "role_state_smoke_passed",
+    "role_state_smoke_passed_checks": 16,
+    "role_state_smoke_check_count": 16,
     "workspace_status": "orbit_blocked_gates_present",
     "project_status": "local_review_only",
     "project_artifact_count": 59,
@@ -49,6 +57,8 @@
   "outputs": {
     "full_review_json": "examples/kosmo-orbit/review/orbit-full-review.generated.json",
     "full_review_markdown": "examples/kosmo-orbit/review/orbit-full-review.generated.md",
+    "role_state_check_markdown": "examples/kosmo-orbit/review/orbit-role-state-check.generated.md",
+    "role_state_smoke_markdown": "examples/kosmo-orbit/review/orbit-role-state-smoke.generated.md",
     "workspace_status_markdown": "examples/kosmo-orbit/review/orbit-status-report.generated.md",
     "project_inspector_markdown": "examples/kosmo-projects/kosmo-demo-001/orbit/project-inspector.generated.md",
     "design_handoff_markdown": "examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-preview.generated.md",
@@ -71,6 +81,30 @@
       "report_exists": false,
       "report_status": null,
       "stdout_tail": "File: examples/kosmo-orbit/workspace.demo.json\nStatus: passed\nRoles: 8\nTools: 8\nProjects: 1\nGates: 7\nFailures: 0\nWarnings: 0",
+      "stderr_tail": ""
+    },
+    {
+      "id": "role_state_check",
+      "label": "Role State Check",
+      "command": "npm run kosmo:orbit-role-state-check -- --workspace examples/kosmo-orbit/workspace.demo.json --state examples/kosmo-orbit/role-state.demo.json",
+      "status": "passed",
+      "exit_code": 0,
+      "report_path": "examples/kosmo-orbit/review/orbit-role-state-check.generated.json",
+      "report_exists": true,
+      "report_status": "role_state_check_passed",
+      "stdout_tail": "> architecture-cosmos@0.1.0 kosmo:orbit-role-state-check\n> node scripts/kosmo-orbit-role-state-check.mjs --workspace examples/kosmo-orbit/workspace.demo.json --state examples/kosmo-orbit/role-state.demo.json\n\nKosmoOrbit role state check\nState: examples/kosmo-orbit/role-state.demo.json\nStatus: role_state_check_passed\nChecks: 18/18 passed\nWrote: examples/kosmo-orbit/review/orbit-role-state-check.generated.md",
+      "stderr_tail": ""
+    },
+    {
+      "id": "role_state_smoke",
+      "label": "Role State Smoke",
+      "command": "npm run kosmo:orbit-role-state-smoke -- --state examples/kosmo-orbit/role-state.demo.json --schema schema/kosmo-orbit-role-state.schema.json",
+      "status": "passed",
+      "exit_code": 0,
+      "report_path": "examples/kosmo-orbit/review/orbit-role-state-smoke.generated.json",
+      "report_exists": true,
+      "report_status": "role_state_smoke_passed",
+      "stdout_tail": "> architecture-cosmos@0.1.0 kosmo:orbit-role-state-smoke\n> node scripts/kosmo-orbit-role-state-smoke.mjs --state examples/kosmo-orbit/role-state.demo.json --schema schema/kosmo-orbit-role-state.schema.json\n\nKosmoOrbit role state smoke\nState: examples/kosmo-orbit/role-state.demo.json\nStatus: role_state_smoke_passed\nChecks: 16/16 passed\nWrote: examples/kosmo-orbit/review/orbit-role-state-smoke.generated.md",
       "stderr_tail": ""
     },
     {
@@ -196,6 +230,8 @@
   ],
   "next_actions": [
     "Implement the first local/static Orbit UI prototype from the generated KosmoDesign panel spec.",
+    "Use the checked role state contract before adding real role switching or app routing.",
+    "Keep the role state smoke in the Orbit full review before adding role-state interaction.",
     "Resolve or explicitly reject blocked context inputs before allowing design generation.",
     "Keep generated project artifacts local until human review closes design/draw/viz evidence.",
     "Keep public, rights and publish gates visible as blocked in the Orbit shell.",
