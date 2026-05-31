@@ -2422,6 +2422,7 @@ function OrbitMenuBackdrop({ mode }: { mode: 'intro' | 'hub' }) {
 }
 
 function ModuleHub({ onOpenKosmoData, onOpenKosmoAsset }: { onOpenKosmoData: () => void; onOpenKosmoAsset: () => void }) {
+  const hubRef = useRef<HTMLDivElement | null>(null);
   const lastTouchActionRef = useRef(0);
   const [selectedModuleId, setSelectedModuleId] = useState<KosmoModuleId | null>(null);
   const modules: Array<KosmoOrbitModule & { onClick?: () => void }> = kosmoOrbitModules.map((module) => (
@@ -2429,8 +2430,13 @@ function ModuleHub({ onOpenKosmoData, onOpenKosmoAsset }: { onOpenKosmoData: () 
   ));
   const selectedModule = modules.find((module) => module.id === selectedModuleId) || null;
 
+  useEffect(() => {
+    hubRef.current?.focus({ preventScroll: true });
+  }, []);
+
   return (
     <div
+      ref={hubRef}
       className="module-hub cosmos-text-safe"
       tabIndex={-1}
       onClick={() => setSelectedModuleId(null)}

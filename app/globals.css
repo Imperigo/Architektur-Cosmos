@@ -6818,6 +6818,17 @@ button.database-intake-card:not(:disabled):hover {
   transition: none;
 }
 
+.cosmos-perf-reduced .orbit-menu-nebula,
+.cosmos-perf-reduced .orbit-menu-grid,
+.cosmos-perf-reduced .orbit-menu-stars i,
+.cosmos-perf-reduced .module-hub,
+.cosmos-perf-reduced .module-hub-orbit,
+.cosmos-perf-reduced .module-hub-preview,
+.cosmos-perf-reduced .kosmo-asset-workspace,
+.cosmos-perf-reduced .kosmo-asset-core-ring {
+  animation: none;
+}
+
 html[data-cosmos-browser="safari"] .wormhole-stream,
 html[data-cosmos-browser="safari"] .wormhole-speed-line,
 html[data-cosmos-browser="safari"] .wormhole-energy-band,
@@ -7922,6 +7933,10 @@ html[data-cosmos-browser="opera"] .relation-strand {
   .orbit-menu-nebula,
   .orbit-menu-grid,
   .orbit-menu-stars i,
+  .module-hub,
+  .module-hub-orbit,
+  .module-hub-preview,
+  .kosmo-asset-workspace,
   .kosmo-asset-core-ring,
   .cosmos-cursor circle:first-child,
   .relation-strand,
