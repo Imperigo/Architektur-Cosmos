@@ -239,3 +239,15 @@ Noch offen:
 - `npm run lint`, `npx tsc --noEmit` und `npm run build` bleiben lokal als
   haengende Tooling-Themen markiert. Brain Doctor bricht solche Haenger nun
   kontrolliert ab; Cloudflare/CI bleibt der finale Build-Gate nach Push.
+
+## Brain Doctor Fast
+
+- Neuer Command: `npm run brain:doctor-fast`.
+- Zweck: schneller autonomer Diagnosemodus fuer laufende Arbeitsbloecke, ohne
+  die lokal haengenden Slow-Checks `lint` und `build`.
+- Ergebnis im Testlauf: 10/10 Checks bestanden.
+- Enthaltene Gates: Brain Review, Archive Validation, Book Pipeline Smoke,
+  Kosmo Context Guard, UI Audit, Atlas Interaction Guard, Atlas Style Guard,
+  Hero Image Audit, Planet Thumbnail Audit und Security Check.
+- Der volle `brain:doctor` bleibt erhalten und fuehrt weiterhin auch `lint`
+  und `build` mit Timeout-Diagnose aus.

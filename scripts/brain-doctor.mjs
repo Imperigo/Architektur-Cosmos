@@ -11,6 +11,8 @@ const rulesPath = resolve(rootDir, 'data/brain-rules.json');
 const outputRoot = resolve(rootDir, 'out/brain-review');
 const today = new Date().toISOString().slice(0, 10);
 const defaultTimeoutMs = 180_000;
+const args = new Set(process.argv.slice(2));
+const fastMode = args.has('--fast');
 
 const checks = [
   {
@@ -52,7 +54,8 @@ const checks = [
     args: ['run', 'lint'],
     retry: false,
     safe_healing: 'diagnostics_only',
-    timeout_ms: 120_000
+    timeout_ms: 120_000,
+    slow: true
   },
   {
     id: 'ui-audit',
@@ -101,7 +104,8 @@ const checks = [
     args: ['run', 'build'],
     retry: true,
     safe_healing: 'rerun_failed_checks_once',
-    timeout_ms: 180_000
+    timeout_ms: 180_000,
+    slow: true
   },
   {
     id: 'security-check',
@@ -125,7 +129,9 @@ async function main() {
 
   const results = [];
 
-  for (const check of checks) {
+  const activeChecks = fastMode ? checks.filter((check) => !check.slow) : checks;
+
+  for (const check of activeChecks) {
     const first = runCheck(check);
     let final = first;
 
@@ -145,7 +151,7 @@ async function main() {
   await writeFile(resolve(outputDir, 'brain-doctor.json'), `${JSON.stringify(report, null, 2)}\n`, 'utf8');
   await writeFile(resolve(outputDir, 'brain-doctor.md'), renderMarkdown(report), 'utf8');
 
-  console.log('Architecture Cosmos Brain Doctor');
+  console.log(`Architecture Cosmos Brain Doctor${fastMode ? ' Fast' : ''}`);
   console.log(`Output: ${relativeToRoot(outputDir)}`);
   console.log(`Checks: ${report.summary.passed}/${report.summary.total} passed`);
   console.log(`Self-healing retries: ${report.summary.retries}`);
@@ -228,6 +234,7 @@ function buildReport({ rules, results }) {
   return {
     generated_at: new Date().toISOString(),
     mode: rules.default_mode,
+    doctor_mode: fastMode ? 'fast' : 'full',
     posture: rules.autonomy?.posture,
     writes_source_files: false,
     publishes: false,
@@ -255,6 +262,7 @@ function renderMarkdown(report) {
     '',
     `Generated: ${report.generated_at}`,
     `Mode: \`${report.mode}\``,
+    `Doctor mode: \`${report.doctor_mode}\``,
     `Posture: \`${report.posture}\``,
     `Writes source files: \`${report.writes_source_files}\``,
     `Publishes: \`${report.publishes}\``,
