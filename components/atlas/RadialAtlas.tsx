@@ -179,6 +179,7 @@ type TouchPoint = {
 };
 type AtlasUiMetrics = {
   isCoarsePointer: boolean;
+  hasFinePointer: boolean;
   dock: {
     buttonHeight: number;
     buttonY: number;
@@ -376,7 +377,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   const displayNodes = useMemo(() => limitDisplayNodes(nodes), [nodes]);
   const isTraveling = motion.isMoving;
   const hoveredEntry = useMemo(() => displayNodes.find((node) => node.entry.id === hoveredEntryId)?.entry ?? null, [displayNodes, hoveredEntryId]);
-  const cursorVisible = !ui.isCoarsePointer;
+  const cursorVisible = ui.hasFinePointer;
   const fastNodeRender = performanceTier === 'reduced';
   const relationOverlayActive = Boolean(showRelations || (!isTraveling && (selectedEntry || (performanceTier !== 'reduced' && hoveredEntry))));
   const backgroundStyle = {
@@ -1457,7 +1458,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   }
 
   return (
-    <main ref={mainRef} style={visualZoomStyle} className={`relative h-screen w-screen overflow-hidden bg-[#050505] text-[#f7f7f4] cosmos-perf-${performanceTier} cosmos-intro-${introState} ${ui.isCoarsePointer ? 'cosmos-mobile-web' : 'cosmos-desktop-web'} ${introState === 'launching' ? 'cosmos-launching' : ''} ${returningFromDatabase ? 'cosmos-returning-from-database' : ''} ${isTraveling || visualZoom.isZooming ? 'cosmos-moving' : ''} ${visualZoom.currentZoom > 1.01 ? 'cosmos-lensing' : ''} ${introState === 'idle' && !isTraveling && !visualZoom.isZooming ? 'cosmos-idle' : ''}`}>
+    <main ref={mainRef} style={visualZoomStyle} className={`relative h-screen w-screen overflow-hidden bg-[#050505] text-[#f7f7f4] cosmos-perf-${performanceTier} cosmos-intro-${introState} ${ui.isCoarsePointer ? 'cosmos-mobile-web' : 'cosmos-desktop-web'} ${ui.hasFinePointer ? 'cosmos-fine-pointer' : 'cosmos-touch-web'} ${introState === 'launching' ? 'cosmos-launching' : ''} ${returningFromDatabase ? 'cosmos-returning-from-database' : ''} ${isTraveling || visualZoom.isZooming ? 'cosmos-moving' : ''} ${visualZoom.currentZoom > 1.01 ? 'cosmos-lensing' : ''} ${introState === 'idle' && !isTraveling && !visualZoom.isZooming ? 'cosmos-idle' : ''}`}>
       <WormholeCanvas state={state} isMoving={isTraveling} quality={performanceTier} />
       <div className="relative z-10 h-full w-full">
         <svg
@@ -1730,6 +1731,7 @@ function useAtlasUiMetrics(): AtlasUiMetrics {
 
   return {
     isCoarsePointer: useLargeInterface,
+    hasFinePointer: !isCoarsePointer,
     dock: {
       buttonHeight: useLargeInterface ? 78 : 20,
       buttonY: useLargeInterface ? 844 : 923,

@@ -1253,8 +1253,8 @@ body:has(.entry-page) {
   background: rgb(247 247 244 / 88%);
 }
 
-.cosmos-mobile-web .screen-cosmos-cursor,
-.cosmos-mobile-web .cosmos-cursor {
+.cosmos-touch-web .screen-cosmos-cursor,
+.cosmos-touch-web .cosmos-cursor {
   display: none;
 }
 
@@ -7505,7 +7505,7 @@ html[data-cosmos-browser="opera"] .relation-strand {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .screen-cosmos-cursor {
+  .cosmos-touch-web .screen-cosmos-cursor {
     display: none;
   }
 
