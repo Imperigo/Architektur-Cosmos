@@ -42,11 +42,10 @@ export function RadialLetterText({
   const centerRadialRotation = inward ? angle + 180 : angle;
   const normalizedCenterRotation = ((centerRadialRotation % 360) + 360) % 360;
   const centerNeedsFlip = normalizedCenterRotation > 90 && normalizedCenterRotation < 270;
-  const readableLetters = centerNeedsFlip ? [...letters].reverse() : letters;
   const direction = centerNeedsFlip ? -1 : 1;
   const baseStep = letterAngleStep ?? Math.max(1.2, Math.min(3.6, fontSize * 38 / Math.max(80, radius)));
   const step = Math.abs(baseStep) * direction;
-  const startAngle = angle - ((readableLetters.length - 1) * step) / 2;
+  const startAngle = angle - ((letters.length - 1) * step) / 2;
   const centerPoint = polarToCartesian(cx, cy, radius, angle);
 
   return (
@@ -60,7 +59,7 @@ export function RadialLetterText({
           pointerEvents="all"
         />
       ) : null}
-      {readableLetters.map((letter, index) => {
+      {letters.map((letter, index) => {
         const letterAngle = startAngle + index * step;
         const point = polarToCartesian(cx, cy, radius, letterAngle);
         const radialRotation = inward ? letterAngle + 180 : letterAngle;
