@@ -10,6 +10,7 @@ const rootDir = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const rulesPath = resolve(rootDir, 'data/brain-rules.json');
 const outputRoot = resolve(rootDir, 'out/brain-review');
 const today = new Date().toISOString().slice(0, 10);
+const defaultTimeoutMs = 180_000;
 
 const checks = [
   {
@@ -50,13 +51,30 @@ const checks = [
     command: 'npm',
     args: ['run', 'lint'],
     retry: false,
-    safe_healing: 'diagnostics_only'
+    safe_healing: 'diagnostics_only',
+    timeout_ms: 120_000
   },
   {
     id: 'ui-audit',
     label: 'Interface continuity audit',
     command: 'npm',
     args: ['run', 'ui:audit'],
+    retry: false,
+    safe_healing: 'diagnostics_only'
+  },
+  {
+    id: 'atlas-interaction-guard',
+    label: 'Atlas interaction guard',
+    command: 'npm',
+    args: ['run', 'atlas:interaction-guard'],
+    retry: false,
+    safe_healing: 'diagnostics_only'
+  },
+  {
+    id: 'atlas-style-guard',
+    label: 'Atlas style-sector guard',
+    command: 'npm',
+    args: ['run', 'atlas:style-guard'],
     retry: false,
     safe_healing: 'diagnostics_only'
   },
@@ -82,7 +100,8 @@ const checks = [
     command: 'npm',
     args: ['run', 'build'],
     retry: true,
-    safe_healing: 'rerun_failed_checks_once'
+    safe_healing: 'rerun_failed_checks_once',
+    timeout_ms: 180_000
   },
   {
     id: 'security-check',
@@ -143,7 +162,8 @@ function runCheck(check) {
   const result = spawnSync(invocation.command, invocation.args, {
     cwd: rootDir,
     encoding: 'utf8',
-    maxBuffer: 1024 * 1024 * 16
+    maxBuffer: 1024 * 1024 * 16,
+    timeout: check.timeout_ms ?? defaultTimeoutMs
   });
 
   return {
@@ -153,7 +173,7 @@ function runCheck(check) {
     safe_healing: check.safe_healing,
     started_at: startedAt,
     finished_at: new Date().toISOString(),
-    status: result.status ?? 1,
+    status: result.status ?? (result.signal === 'SIGTERM' ? 124 : 1),
     passed: result.status === 0,
     retried: false,
     stdout_tail: tail(result.stdout),
@@ -182,6 +202,7 @@ function diagnose(check, result) {
   if (result.status === 0) return 'passed';
 
   const output = `${result.stdout}\n${result.stderr}`.toLowerCase();
+  if (result.signal === 'SIGTERM') return `Timed out after ${check.timeout_ms ?? defaultTimeoutMs}ms. Treat as local tooling hang unless CI also fails.`;
   if (output.includes('spawnsync npm enoent') || result.error?.code === 'ENOENT') return 'npm is not available on PATH. Run Brain Doctor through npm or use the bundled Node/npm environment.';
   if (check.id === 'build' && (output.includes('failed to load swc') || output.includes('next-swc') || output.includes('different team ids'))) {
     return 'Local Next SWC binary failed to load because of macOS code-signature/runtime environment. Product checks passed; reinstall dependencies or run build in a clean terminal/CI.';
@@ -191,6 +212,10 @@ function diagnose(check, result) {
   if (check.id === 'kosmo-context-guard') return 'Context guard failed. Downstream design tools must not use context candidates as design seeds until owner approval is complete.';
   if (check.id === 'lint') return 'Lint failed. Doctor will not auto-fix tracked source files without approval.';
   if (check.id === 'ui-audit') return 'Interface audit failed. Check shared UI tokens, mobile panel rules and touch-target consistency.';
+  if (check.id === 'atlas-interaction-guard') return 'Atlas interaction guard failed. Check dossier opening, filter chips, entry-node click propagation and filter panel pinning.';
+  if (check.id === 'atlas-style-guard') return 'Atlas style-sector guard failed. Check wormhole sector angles, color bands and radial label readability.';
+  if (check.id === 'hero-image-audit') return 'Hero image audit failed. Check duplicate URLs, blocked licenses or missing public-safe source metadata.';
+  if (check.id === 'planet-thumbnail-audit') return 'Planet thumbnail audit failed. Check project thumbnail coverage, duplicate URLs and node rendering bindings.';
   if (check.id === 'security-check') return 'Security check failed. Treat as approval-gated P0 before publish.';
   if (check.id === 'archive-validate') return 'Archive validation failed. Check entry schema, relations, media, model or analysis rows.';
   if (check.id === 'brain-review') return 'Brain review failed. Check rules, queue and data JSON validity.';
