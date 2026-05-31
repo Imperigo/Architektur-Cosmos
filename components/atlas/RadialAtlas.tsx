@@ -1487,7 +1487,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
               {performanceTier === 'full' ? <WormholeRings state={state} isMoving={isTraveling} quality={performanceTier} /> : null}
 
               {relationOverlayActive ? (
-                <RelationOverlay nodes={displayNodes} relations={relations} selectedEntry={selectedEntry} focusEntry={hoveredEntry} isMoving={isTraveling && !showRelations} />
+                <RelationOverlay nodes={displayNodes} relations={relations} selectedEntry={selectedEntry} focusEntry={hoveredEntry} isMoving={isTraveling && !showRelations} forceVisible={showRelations} />
               ) : null}
 
               {displayNodes.map((node) => {

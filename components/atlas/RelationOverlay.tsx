@@ -14,6 +14,7 @@ type RelationOverlayProps = {
   selectedEntry: Entry | null;
   focusEntry?: Entry | null;
   isMoving?: boolean;
+  forceVisible?: boolean;
 };
 
 const relationDash: Record<RelationType, string | undefined> = {
@@ -42,7 +43,7 @@ const relationColor: Record<RelationType, string> = {
   context: '#f7f7f4'
 };
 
-function RelationOverlayComponent({ nodes, relations, selectedEntry, focusEntry = null, isMoving = false }: RelationOverlayProps) {
+function RelationOverlayComponent({ nodes, relations, selectedEntry, focusEntry = null, isMoving = false, forceVisible = false }: RelationOverlayProps) {
   const nodeById = new Map(nodes.map((node) => [node.entry.id, node]));
   const activeEntry = selectedEntry ?? focusEntry;
   const visibleRelations = isMoving && !selectedEntry
@@ -62,11 +63,12 @@ function RelationOverlayComponent({ nodes, relations, selectedEntry, focusEntry 
           ? relation.source_entry_id === activeEntry.id || relation.target_entry_id === activeEntry.id
           : false;
         const visibility = relationVisibility(source, target);
-        if (!isSelectedRelation && visibility < 0.18) return null;
+        if (!forceVisible && !isSelectedRelation && visibility < 0.18) return null;
 
         const relationStroke = isSelectedRelation ? '#fff8d6' : relationColor[relation.relation_type];
-        const relationOpacity = isSelectedRelation ? 0.9 : activeEntry ? 0.16 * visibility : 0.3 * visibility;
-        const relationWidth = isSelectedRelation ? 1.95 : 0.72 + visibility * 0.32;
+        const baseVisibility = forceVisible ? Math.max(0.34, visibility) : visibility;
+        const relationOpacity = isSelectedRelation ? 0.9 : activeEntry ? 0.16 * baseVisibility : forceVisible ? 0.46 * baseVisibility : 0.3 * baseVisibility;
+        const relationWidth = isSelectedRelation ? 1.95 : forceVisible ? 0.96 + baseVisibility * 0.42 : 0.72 + baseVisibility * 0.32;
         const path = relationPath(source, target);
 
         return (

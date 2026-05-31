@@ -54,10 +54,9 @@ const checks = [
     patterns: ['data-entry-node="true"', 'onPointerDown={(event) =>', 'event.stopPropagation();']
   },
   {
-    id: 'entry-node-click-delegates-to-atlas-nearest-node',
+    id: 'entry-node-click-opens-dossier-directly',
     file: files.node,
-    patterns: ['data-entry-node="true"', "onKeyDown={(event) =>"],
-    forbiddenPatterns: ['onSelect(event);']
+    patterns: ['data-entry-node="true"', 'onClick={(event) =>', 'event.stopPropagation();', 'onSelect(event);', "onKeyDown={(event) =>"]
   },
   {
     id: 'style-sector-bands-do-not-steal-node-clicks',

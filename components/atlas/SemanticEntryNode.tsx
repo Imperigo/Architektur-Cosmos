@@ -103,6 +103,10 @@ export function SemanticEntryNode({
       onPointerDown={(event) => {
         event.stopPropagation();
       }}
+      onClick={(event) => {
+        event.stopPropagation();
+        onSelect(event);
+      }}
       onPointerEnter={() => onHover?.(entry.id)}
       onPointerLeave={() => onHover?.(null)}
       onKeyDown={(event) => {
