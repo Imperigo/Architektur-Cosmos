@@ -268,8 +268,8 @@ function renderMarkdown(report) {
     '| --- | --- | --- | --- | ---: | ---: | ---: |'
   ];
 
-  for (const module of report.modules) {
-    lines.push(`| ${module.id} | \`${module.status}\` | \`${module.readiness}\` | ${escapePipe(module.owner || '-')} | ${module.artifact_count} | ${module.review_artifact_count} | ${module.missing_artifact_count} |`);
+  for (const projectModule of report.modules) {
+    lines.push(`| ${projectModule.id} | \`${projectModule.status}\` | \`${projectModule.readiness}\` | ${escapePipe(projectModule.owner || '-')} | ${projectModule.artifact_count} | ${projectModule.review_artifact_count} | ${projectModule.missing_artifact_count} |`);
   }
 
   lines.push('', '## Package Paths', '', '| Area | Path | Status |', '| --- | --- | --- |');

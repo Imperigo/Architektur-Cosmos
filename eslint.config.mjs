@@ -1,9 +1,12 @@
 import js from '@eslint/js';
 import nextPlugin from '@next/eslint-plugin-next';
 import tsParser from '@typescript-eslint/parser';
-import tsPlugin from '@typescript-eslint/eslint-plugin';
 import reactHooks from 'eslint-plugin-react-hooks';
 
+// Keep TypeScript correctness in `tsc --noEmit`. The full
+// @typescript-eslint rule plugin currently stalls local Node/ESLint startup in
+// this repo, while the parser itself remains fast and lets ESLint cover syntax,
+// Next and React Hooks rules.
 const eslintConfig = [
   {
     ignores: [
@@ -54,21 +57,16 @@ const eslintConfig = [
       }
     },
     plugins: {
-      '@typescript-eslint': tsPlugin,
       '@next/next': nextPlugin,
       'react-hooks': reactHooks
     },
     rules: {
-      ...tsPlugin.configs.recommended.rules,
       ...nextPlugin.configs.recommended.rules,
       ...nextPlugin.configs['core-web-vitals'].rules,
       ...reactHooks.configs.recommended.rules,
       'no-undef': 'off',
       'no-dupe-keys': 'warn',
-      'no-unused-vars': 'off',
-      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
-      '@typescript-eslint/no-explicit-any': 'warn',
-      '@typescript-eslint/no-require-imports': 'off'
+      'no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }]
     }
   }
 ];

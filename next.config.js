@@ -28,11 +28,11 @@ const nextConfig = {
     ignoreDuringBuilds: true
   },
 
-  // Local macOS/Node builds can stall inside the separate webpack build worker
-  // while compiling the atlas bundle. Keep the production output identical but
-  // run webpack in-process so `npm run build` finishes reliably.
+  // Local macOS/Node 24 builds currently stall in the in-process webpack path
+  // while compiling the atlas bundle. Keep webpack isolated in its build worker
+  // so `npm run build` and the Cloudflare build can finish reliably.
   experimental: {
-    webpackBuildWorker: false,
+    webpackBuildWorker: true,
     disablePostcssPresetEnv: true
   }
 };

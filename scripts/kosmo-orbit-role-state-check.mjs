@@ -149,8 +149,8 @@ function renderMarkdown(report) {
     '| --- | --- | --- |'
   ];
 
-  for (const module of report.visible_modules) {
-    lines.push(`| \`${module.tool_id}\` | \`${module.visibility}\` | ${escapePipe(module.reason)} |`);
+  for (const visibleModule of report.visible_modules) {
+    lines.push(`| \`${visibleModule.tool_id}\` | \`${visibleModule.visibility}\` | ${escapePipe(visibleModule.reason)} |`);
   }
 
   lines.push('', '## Blocked Actions', '', '| Action | Gate | Reason |', '| --- | --- | --- |');
