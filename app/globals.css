@@ -6980,6 +6980,15 @@ html[data-cosmos-browser="opera"] .relation-strand {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .kosmo-asset-mode-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .kosmo-asset-mode-strip span,
+  .kosmo-asset-mode-strip p {
+    min-height: 44px;
+  }
+
   .kosmo-asset-library,
   .kosmo-asset-grid,
   .kosmo-asset-inspector {
