@@ -242,6 +242,7 @@ function readInitialIntroState(): IntroState {
   try {
     const params = new URLSearchParams(window.location.search);
     if (params.get('view') === 'hub') return 'hub';
+    if (window.location.pathname.startsWith('/atlas')) return 'idle';
     return isKosmoDataReturn(params) ? 'idle' : 'intro';
   } catch {
     return 'intro';

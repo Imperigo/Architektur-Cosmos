@@ -42,6 +42,11 @@ Diese Prozesse starteten lokal, liefen aber ohne Ausgabe weiter. Sie wurden
 beendet und bleiben als lokales Tooling-Thema markiert, nicht als
 Produktcode-Bug. Fuer kleine Aenderungen wurden stattdessen fokussierte Checks
 und visuelle QA verwendet.
+- Zusatzdiagnose 11:15-11:25: TypeScript haengt auch einzeln, ohne parallele
+  Prozesse und auch mit Node 22 statt Node 24. Ein Trace zeigte, dass der
+  Compiler zuerst sehr viel Typ- und Dateiaufloesung betreibt; der Befund bleibt
+  lokal als Tooling-/Compiler-Thema markiert. Produktseitige Schritte werden
+  weiter ueber fokussierte Guards, UI-Audit und Live-Smokes abgesichert.
 
 Build-Diagnose 10:10-10:40:
 
@@ -94,6 +99,10 @@ KosmoData:
 - Stilsektor-Baender und feine Sektor-Ticks wurden fuer Pointer-Events
   deaktiviert. Die farbige Architektur-Ebenen-Grafik bleibt klickbar ueber die
   Beschriftung, faengt aber keine Projektklicks im Wurmloch mehr ab.
+- Direkte `/atlas/`-Aufrufe starten nun bewusst im interaktiven KosmoData-Atlas.
+  Die Start-/Hub-Inszenierung bleibt ueber die Hauptseite und `?view=hub`
+  erreichbar, aber QA-Links und direkte Atlas-Deep-Links brauchen keinen
+  zusaetzlichen Intro-Klick mehr.
 - Detailseiten-Polish: Das Archivstatus-Radar nutzt nun lesbare Achsenlabels
   (`Quelle`, `Medien`, `Netz`, `3D`, `Analyse`, `Text`) statt kryptischer
   Zweibuchstaben-Codes.
@@ -107,6 +116,10 @@ KosmoAsset:
   Inspektor nicht gegeneinander laufen.
 - Asset-Library-Check und Handoff-Smoke sind gruen; Warm Concrete bleibt als
   lokaler Blender-/Review-Pilot sichtbar, aber public-gated.
+- KosmoAsset Full Review erneut ausgefuehrt: 10/10 Schritte bestanden,
+  Certificate Smoke 12/12 bestanden, Promotion Guard bleibt korrekt blockiert.
+  Das bestaetigt: lokale Review-Evidenz ist nutzbar, oeffentliche Promotion ist
+  weiterhin absichtlich gesperrt.
 - Zweiter Asset-Pfad gestartet: `generic-column-glb-001` ist bewusst als
   `needs-review` / `local_review_note_recorded` verbucht. Das ist keine lokale
   Freigabe, kein Zertifikat und keine Sandbox-Erlaubnis, sondern eine saubere

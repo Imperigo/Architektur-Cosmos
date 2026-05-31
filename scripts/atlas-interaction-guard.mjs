@@ -34,6 +34,11 @@ const checks = [
     patterns: ['function activateFilterFromDossier', 'setShowRelations(true)', 'closeDossier();']
   },
   {
+    id: 'direct-atlas-url-starts-interactive',
+    file: files.radialAtlas,
+    patterns: ["window.location.pathname.startsWith('/atlas')", "return 'idle';"]
+  },
+  {
     id: 'filter-button-can-pin-panel',
     file: files.radialAtlas,
     patterns: ['const [isPinnedOpen, setIsPinnedOpen]', 'setIsPinnedOpen((current) => !current)', 'filter-access-pinned']

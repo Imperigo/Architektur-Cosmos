@@ -1,7 +1,7 @@
 # KosmoAsset Promotion Guard
 
 Library: `kosmo-asset-demo`
-Generated: 2026-05-31T07:50:26.384Z
+Generated: 2026-05-31T09:26:53.060Z
 Status: `asset_promotion_guard_blocked`
 
 Promotion guard. This report does not promote assets, upload files, write D1/R2, open public downloads or mutate the library.
