@@ -62,7 +62,8 @@ Build-Diagnose 10:10-10:40:
 
 Live-Smoke 10:46:
 
-- Lokaler Stand: `main` synchron mit `origin/main` auf `bd477e5`.
+- Lokaler Stand: `main` lokal auf `ce0430f`, ein KosmoAsset-Mobile-Fix vor
+  `origin/main`; noch nicht gepusht.
 - `https://architekturkosmos.ch/` und `/atlas/` liefern HTTP 200 ueber
   Cloudflare.
 - `/atlas/` HTML enthaelt Next-Assets und Hydration-Skripte; 10 gepruefte
@@ -72,6 +73,8 @@ Live-Smoke 10:46:
   `Suche`, `Dev`, `Filter` sind vorhanden.
 - Kleine Zoom-/Scroll-Geste im Atlas bleibt stabil; keine Browser-Console-
   Errors im Live-Smoke.
+- `ui:audit` wurde um zwei KosmoAsset-Mobile-Regeln erweitert, damit die
+  Assetkarten nicht wieder in den Inspektor kollabieren.
 
 ## Erster Stabilitaetsblock
 

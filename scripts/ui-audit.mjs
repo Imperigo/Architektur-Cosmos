@@ -53,6 +53,8 @@ async function main() {
     checkIncludes(sources.css, '.database-draft .grid-cols-4', 'mobile database grid collapse'),
     checkIncludes(sources.css, '.entry-model-controls .grid', 'mobile 3D controls grid rule'),
     checkIncludes(sources.css, '.entry-page header .entry-link', 'mobile entry header touch rule'),
+    checkIncludes(sources.css, '.kosmo-asset-shell {\n    display: block;', 'mobile KosmoAsset shell uses document flow'),
+    checkIncludes(sources.css, '.kosmo-asset-library,\n  .kosmo-asset-grid,\n  .kosmo-asset-inspector {\n    min-height: auto;', 'mobile KosmoAsset cards cannot collapse into inspector'),
     checkIncludes(sources.atlas, "renderMode?: 'svg' | 'html'", 'Database panel supports HTML render mode'),
     checkIncludes(sources.atlas, "renderMode=\"html\"", 'Mobile database uses HTML overlay'),
     checkIncludes(sources.search, 'project-search-trigger cosmos-trigger', 'Search trigger uses shared trigger class'),
