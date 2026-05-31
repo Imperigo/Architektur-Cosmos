@@ -141,7 +141,7 @@ const activeRole = roleVariantsReport.variants.find((variant) => variant.role.id
 const toneClasses: Record<Tone, string> = {
   blue: 'border-sky-300/45 bg-sky-400/10 text-sky-100',
   green: 'border-emerald-300/45 bg-emerald-400/10 text-emerald-100',
-  neutral: 'border-white/20 bg-white/8 text-stone-100',
+  neutral: 'border-white/20 bg-white/[0.08] text-stone-100',
   red: 'border-rose-300/50 bg-rose-500/12 text-rose-100',
   yellow: 'border-amber-300/50 bg-amber-400/12 text-amber-100'
 };
