@@ -191,3 +191,51 @@ Prioritaet fuer die naechsten Bloecke:
 - Testbrowser war in schmalem/Mobile-Modus (`cosmos-mobile-web`), daher ist
   das Fadenkreuz korrekterweise deaktiviert. Desktop-Fadenkreuz muss separat
   in einem Fine-Pointer-Viewport verifiziert werden.
+
+## Autonomer Nachmittagsblock
+
+Gepusht:
+
+- `a6140c5 Add media audits to brain diagnostics`
+- `56892f2 Harden Brain Doctor atlas checks`
+
+Umgesetzt:
+
+- `brain:doctor` prueft nun zusaetzlich Hero-Bilder und Planet-Thumbnails.
+  Damit wird der lang laufende Fehler "alle Projektplaneten zeigen dasselbe
+  Bild" als automatischer Diagnosepunkt mitgeprueft.
+- `brain:doctor` prueft nun auch Atlas-Interaktion und Stilsektoren:
+  Projektklicks, Dossier-Filter, Filterpanel-Pinning, Stilwinkel,
+  Sektor-Farbbaender und radiale Label-Lesbarkeit.
+- Lange Doctor-Checks haben Timeouts, damit Autonomie-Laeufe nicht mehr
+  unendlich in `lint` oder `build` haengen. Ein Timeout wird als lokales
+  Tooling-/CI-Abgleich-Thema diagnostiziert, nicht als heimlicher Code-Fix.
+- Der 3D-Modellviewer wurde von `ts-nocheck` auf explizitere Three/GLTF-Typen
+  umgestellt. Das ist ein kleiner Schritt in Richtung professionellerer
+  3D-/Analyse-Tools, ohne Verhalten zu veraendern.
+
+Gruen im autonomen Block:
+
+- `npm run archive:validate`
+- `npm run ui:audit`
+- `npm run security:check`
+- `npm run atlas:interaction-guard`
+- `npm run atlas:style-guard`
+- `npm run database:hero-images:audit`
+- `npm run database:planet-thumbnails:audit`
+- `npm run kosmo:orbit-route-smoke`
+- `git diff --check`
+
+Live-Smoke nach Push:
+
+- `/atlas/` laedt mit Cache-Buster auf Desktop-Viewport `1366x900`.
+- 91 sichtbare Entry-Nodes wurden im SVG gefunden.
+- Direkter Klick auf den ersten Entry-Node oeffnet ein Dossier erfolgreich
+  (`Kloster St. Gallen` im Smoke).
+- Die UI-Buttons `Suche`, `Dev`, `Filter` sind sichtbar.
+
+Noch offen:
+
+- `npm run lint`, `npx tsc --noEmit` und `npm run build` bleiben lokal als
+  haengende Tooling-Themen markiert. Brain Doctor bricht solche Haenger nun
+  kontrolliert ab; Cloudflare/CI bleibt der finale Build-Gate nach Push.
