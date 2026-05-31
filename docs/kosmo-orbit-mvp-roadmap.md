@@ -416,12 +416,15 @@ Hauptsoftware-Shell erzeugen. Initial umgesetzt:
 - `npm run kosmo:orbit-role-shell-prototype`
 - liest `orbit/role-ui-variants.generated.json`;
 - liest `orbit/role-ui-smoke.generated.json`;
+- liest `examples/kosmo-orbit/role-state.demo.json`;
 - schreibt `orbit/role-shell-prototype.generated.html`;
 - schreibt `orbit/role-shell-prototype.generated.json`.
 
 Der Prototyp zeigt:
 
 - eine linke Rollenleiste fuer alle acht Buero-Rollen;
+- den geprueften Role State mit aktivem Projekt, aktiver Rolle und Preview-Rolle;
+- sichtbare Module und blockierte Aktionen aus dem Role-State-Vertrag;
 - pro Rolle Detailkarten mit Fokus, UI-Modus, Review-Rechten und Lernmodus;
 - `Generate Design` sichtbar blockiert;
 - Public-Gate-Rechte nur bei Owner Admin;
@@ -448,6 +451,8 @@ Der Smoke prueft u.a.:
 
 - alle acht Rollenlabels sind sichtbar;
 - acht Rollenkarten und acht Rollenbuttons sind vorhanden;
+- der Role State ist sichtbar;
+- sichtbare Module und blockierte Aktionen sind sichtbar;
 - `Generate Design` ist in allen Rollenkarten blockiert;
 - statische Sicherheitskopie ist sichtbar;
 - keine Script-Tags;

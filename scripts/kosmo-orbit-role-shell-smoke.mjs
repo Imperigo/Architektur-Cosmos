@@ -61,11 +61,16 @@ function buildReport({ html, manifest }) {
     check('role_card_count', 'Eight role cards are rendered.', countMatches(html, 'class="role-card"') === 8),
     check('role_button_count', 'Eight role buttons are rendered.', countMatches(html, 'class="role-button"') === 8),
     check('generate_design_blocked_everywhere', 'Generate Design is blocked on all role cards.', countMatches(html, 'data-enabled="false">Generate Design</div>') === 8),
+    check('role_state_visible', 'Role-state panel is visible.', html.includes('Role State') && html.includes('active: owner_admin') && html.includes('selected: owner_admin')),
+    check('active_project_visible', 'Active project from role state is visible.', html.includes('project: kosmo-demo-001') && html.includes('Active Project')),
+    check('visible_modules_visible', 'Visible modules from role state are visible.', html.includes('Visible Modules') && html.includes('kosmo-design') && html.includes('kosmo-zentrale')),
+    check('blocked_actions_visible', 'Blocked actions from role state are visible.', html.includes('Blocked Actions') && html.includes('Publish Public') && html.includes('Start Cloud Job')),
     check('static_safety_copy_visible', 'Static safety copy is visible.', html.includes('Static HTML only. No auth runtime, no user data writes, no network calls')),
     check('no_script_tags', 'Role shell has no script tags.', !/<script\b/i.test(html)),
     check('no_external_assets', 'Role shell has no external assets or network URLs.', !/(https?:\/\/|\/\/)/i.test(html)),
     check('manifest_no_generation', 'Manifest keeps generation-capable roles at zero.', manifest.summary?.generation_capable_count === 0),
-    check('manifest_smoke_passed', 'Manifest references a passed role UI smoke.', manifest.summary?.smoke_status === 'role_ui_smoke_passed')
+    check('manifest_smoke_passed', 'Manifest references a passed role UI smoke.', manifest.summary?.smoke_status === 'role_ui_smoke_passed'),
+    check('manifest_role_state_present', 'Manifest references the role-state contract.', manifest.source_role_state === 'examples/kosmo-orbit/role-state.demo.json' && manifest.summary?.blocked_action_count === 3)
   ];
   const failed = checks.filter((item) => item.status !== 'passed');
 
@@ -93,7 +98,9 @@ function buildReport({ html, manifest }) {
       role_count: roleLabels.length,
       role_card_count: countMatches(html, 'class="role-card"'),
       role_button_count: countMatches(html, 'class="role-button"'),
-      blocked_generation_action_count: countMatches(html, 'data-enabled="false">Generate Design</div>')
+      blocked_generation_action_count: countMatches(html, 'data-enabled="false">Generate Design</div>'),
+      visible_module_count: manifest.summary?.visible_module_count ?? null,
+      blocked_action_count: manifest.summary?.blocked_action_count ?? null
     },
     checks,
     next_actions: failed.length
@@ -131,6 +138,8 @@ function renderMarkdown(report) {
     `- role cards: ${report.summary.role_card_count}`,
     `- role buttons: ${report.summary.role_button_count}`,
     `- blocked generation actions: ${report.summary.blocked_generation_action_count}`,
+    `- visible modules: ${report.summary.visible_module_count}`,
+    `- blocked actions: ${report.summary.blocked_action_count}`,
     '',
     '## Checks',
     '',

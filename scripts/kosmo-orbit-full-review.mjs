@@ -148,7 +148,9 @@ const steps = [
       '--variants',
       'orbit/role-ui-variants.generated.json',
       '--smoke',
-      'orbit/role-ui-smoke.generated.json'
+      'orbit/role-ui-smoke.generated.json',
+      '--state',
+      relative(root, roleStatePath)
     ],
     report: resolve(projectRoot, 'orbit/role-shell-prototype.generated.json')
   },

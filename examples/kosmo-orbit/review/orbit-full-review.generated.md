@@ -1,6 +1,6 @@
 # KosmoOrbit Full Review
 
-Generated: 2026-05-31T13:15:12.949Z
+Generated: 2026-05-31T13:46:16.189Z
 Status: `orbit_full_review_ready_for_review_mode`
 Workspace: `examples/kosmo-orbit/workspace.demo.json`
 Project: `examples/kosmo-projects/kosmo-demo-001`
@@ -40,7 +40,7 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 - role shell prototype: `role_shell_prototype_ready`
 - role shell prototype HTML: `examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-prototype.generated.html`
 - role shell smoke: `role_shell_smoke_passed`
-- role shell smoke checks: 12/12
+- role shell smoke checks: 17/17
 
 ## Steps
 

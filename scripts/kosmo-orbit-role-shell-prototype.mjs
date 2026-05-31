@@ -9,6 +9,7 @@ const args = parseArgs(process.argv.slice(2));
 const projectRoot = resolve(root, args.project || 'examples/kosmo-projects/kosmo-demo-001');
 const variantsPath = resolve(projectRoot, args.variants || 'orbit/role-ui-variants.generated.json');
 const smokePath = resolve(projectRoot, args.smoke || 'orbit/role-ui-smoke.generated.json');
+const roleStatePath = resolve(root, args.state || 'examples/kosmo-orbit/role-state.demo.json');
 const outputHtmlPath = resolve(projectRoot, args.output || 'orbit/role-shell-prototype.generated.html');
 const outputJsonPath = resolve(projectRoot, args.manifest || 'orbit/role-shell-prototype.generated.json');
 
@@ -20,11 +21,13 @@ main().catch((error) => {
 async function main() {
   if (!existsSync(variantsPath)) throw new Error(`KosmoOrbit role variants not found: ${variantsPath}`);
   if (!existsSync(smokePath)) throw new Error(`KosmoOrbit role smoke report not found: ${smokePath}`);
+  if (!existsSync(roleStatePath)) throw new Error(`KosmoOrbit role state not found: ${roleStatePath}`);
 
   const variantsReport = readJson(variantsPath);
   const smokeReport = readJson(smokePath);
-  const manifest = buildManifest({ variantsReport, smokeReport });
-  const html = renderHtml({ variantsReport, smokeReport, manifest });
+  const roleState = readJson(roleStatePath);
+  const manifest = buildManifest({ variantsReport, smokeReport, roleState });
+  const html = renderHtml({ variantsReport, smokeReport, roleState, manifest });
 
   await Promise.all([
     mkdir(dirname(outputHtmlPath), { recursive: true }),
@@ -40,7 +43,7 @@ async function main() {
   console.log(`Manifest: ${relative(root, outputJsonPath)}`);
 }
 
-function buildManifest({ variantsReport, smokeReport }) {
+function buildManifest({ variantsReport, smokeReport, roleState }) {
   const variants = asArray(variantsReport.variants);
   return {
     schema_version: '0.1',
@@ -48,6 +51,7 @@ function buildManifest({ variantsReport, smokeReport }) {
     generator: 'kosmo-orbit-role-shell-prototype',
     source_variants: relative(root, variantsPath),
     source_smoke: relative(root, smokePath),
+    source_role_state: relative(root, roleStatePath),
     html_output: relative(root, outputHtmlPath),
     status: smokeReport.status === 'role_ui_smoke_passed'
       ? 'role_shell_prototype_ready'
@@ -60,7 +64,20 @@ function buildManifest({ variantsReport, smokeReport }) {
       generation_capable_count: variants.filter((variant) => variant.permissions?.can_request_design_generation).length,
       smoke_status: smokeReport.status || null,
       smoke_passed_checks: smokeReport.summary?.passed_checks ?? null,
-      smoke_check_count: smokeReport.summary?.check_count ?? null
+      smoke_check_count: smokeReport.summary?.check_count ?? null,
+      active_role_id: roleState.session?.active_role_id || null,
+      selected_role_id: roleState.role_preview?.selected_role_id || null,
+      active_project_id: roleState.active_project?.project_id || null,
+      visible_module_count: asArray(roleState.visible_modules).length,
+      blocked_action_count: asArray(roleState.blocked_actions).length
+    },
+    role_state: {
+      state_id: roleState.state?.id || null,
+      mode: roleState.state?.mode || null,
+      active_role_id: roleState.session?.active_role_id || null,
+      selected_role_id: roleState.role_preview?.selected_role_id || null,
+      active_project_id: roleState.active_project?.project_id || null,
+      review_only: roleState.interaction_policy?.review_only === true
     },
     safety: {
       static_html_only: true,
@@ -80,8 +97,11 @@ function buildManifest({ variantsReport, smokeReport }) {
   };
 }
 
-function renderHtml({ variantsReport, smokeReport, manifest }) {
+function renderHtml({ variantsReport, smokeReport, roleState, manifest }) {
   const variants = asArray(variantsReport.variants);
+  const visibleModules = asArray(roleState.visible_modules);
+  const blockedActions = asArray(roleState.blocked_actions);
+  const selectedRoleId = roleState.role_preview?.selected_role_id || roleState.session?.active_role_id;
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -191,6 +211,12 @@ function renderHtml({ variantsReport, smokeReport, manifest }) {
       gap: 10px;
     }
 
+    .state-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
     .summary strong {
       color: var(--green);
       font-size: 13px;
@@ -226,6 +252,12 @@ function renderHtml({ variantsReport, smokeReport, manifest }) {
     .cards {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .state-panels {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
       gap: 14px;
     }
 
@@ -331,7 +363,7 @@ function renderHtml({ variantsReport, smokeReport, manifest }) {
       main { padding: 14px; }
       .shell { grid-template-columns: 1fr; }
       .rail { border-right: 0; border-bottom: 1px solid var(--construction); }
-      .cards { grid-template-columns: 1fr; }
+      .cards, .state-panels, .state-grid { grid-template-columns: 1fr; }
       h1 { font-size: 24px; }
     }
 
@@ -356,8 +388,15 @@ function renderHtml({ variantsReport, smokeReport, manifest }) {
           <p class="text mono">${escapeHtml(smokeReport.status)} · ${escapeHtml(manifest.summary.smoke_passed_checks)}/${escapeHtml(manifest.summary.smoke_check_count)} checks</p>
         </div>
 
+        <div class="summary">
+          <h2>Role State</h2>
+          <p class="text mono">active: ${escapeHtml(roleState.session?.active_role_id)}</p>
+          <p class="text mono">selected: ${escapeHtml(roleState.role_preview?.selected_role_id)}</p>
+          <p class="text mono">project: ${escapeHtml(roleState.active_project?.project_id)}</p>
+        </div>
+
         <div class="role-list">
-          ${variants.map((variant, index) => renderRoleButton(variant, index === 0)).join('\n          ')}
+          ${variants.map((variant) => renderRoleButton(variant, variant.role?.id === selectedRoleId)).join('\n          ')}
         </div>
       </aside>
 
@@ -366,6 +405,23 @@ function renderHtml({ variantsReport, smokeReport, manifest }) {
           <div class="eyebrow">Workspace Preview</div>
           <h2>One software shell, different depth per person</h2>
           <p class="text">Every role sees the same project state through a safer, role-shaped surface. Generation remains blocked for everyone.</p>
+        </div>
+
+        <div class="state-grid">
+          <div class="metric"><span>Active Project</span><strong>${escapeHtml(roleState.active_project?.project_id)}</strong></div>
+          <div class="metric"><span>Visible Modules</span><strong>${visibleModules.length}</strong></div>
+          <div class="metric"><span>Blocked Actions</span><strong>${blockedActions.length}</strong></div>
+        </div>
+
+        <div class="state-panels">
+          <div class="summary">
+            <h2>Visible Modules</h2>
+            <ul>${visibleModules.map((module) => `<li><strong>${escapeHtml(module.tool_id)}</strong> · ${escapeHtml(module.visibility)} · ${escapeHtml(module.reason)}</li>`).join('')}</ul>
+          </div>
+          <div class="summary">
+            <h2>Blocked Actions</h2>
+            <ul>${blockedActions.map((action) => `<li><strong>${escapeHtml(action.label)}</strong> · ${escapeHtml(action.gate_id)} · ${escapeHtml(action.reason)}</li>`).join('')}</ul>
+          </div>
         </div>
 
         <div class="cards">

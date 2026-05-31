@@ -1,6 +1,6 @@
 # KosmoOrbit Role Shell Smoke
 
-Generated: 2026-05-31T13:15:12.936Z
+Generated: 2026-05-31T13:46:16.165Z
 Status: `role_shell_smoke_passed`
 HTML: `examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-prototype.generated.html`
 
@@ -8,11 +8,13 @@ Review-only smoke. This check reads static files only and does not create users,
 
 ## Summary
 
-- checks: 12/12 passed
+- checks: 17/17 passed
 - failed checks: 0
 - role cards: 8
 - role buttons: 8
 - blocked generation actions: 8
+- visible modules: 8
+- blocked actions: 3
 
 ## Checks
 
@@ -25,11 +27,16 @@ Review-only smoke. This check reads static files only and does not create users,
 | `role_card_count` | `passed` | Eight role cards are rendered. |
 | `role_button_count` | `passed` | Eight role buttons are rendered. |
 | `generate_design_blocked_everywhere` | `passed` | Generate Design is blocked on all role cards. |
+| `role_state_visible` | `passed` | Role-state panel is visible. |
+| `active_project_visible` | `passed` | Active project from role state is visible. |
+| `visible_modules_visible` | `passed` | Visible modules from role state are visible. |
+| `blocked_actions_visible` | `passed` | Blocked actions from role state are visible. |
 | `static_safety_copy_visible` | `passed` | Static safety copy is visible. |
 | `no_script_tags` | `passed` | Role shell has no script tags. |
 | `no_external_assets` | `passed` | Role shell has no external assets or network URLs. |
 | `manifest_no_generation` | `passed` | Manifest keeps generation-capable roles at zero. |
 | `manifest_smoke_passed` | `passed` | Manifest references a passed role UI smoke. |
+| `manifest_role_state_present` | `passed` | Manifest references the role-state contract. |
 
 ## Next Actions
 

@@ -107,6 +107,12 @@
       gap: 10px;
     }
 
+    .state-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
     .summary strong {
       color: var(--green);
       font-size: 13px;
@@ -142,6 +148,12 @@
     .cards {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .state-panels {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
       gap: 14px;
     }
 
@@ -247,7 +259,7 @@
       main { padding: 14px; }
       .shell { grid-template-columns: 1fr; }
       .rail { border-right: 0; border-bottom: 1px solid var(--construction); }
-      .cards { grid-template-columns: 1fr; }
+      .cards, .state-panels, .state-grid { grid-template-columns: 1fr; }
       h1 { font-size: 24px; }
     }
 
@@ -270,6 +282,13 @@
           <strong>role_shell_prototype_ready</strong>
           <p class="text">Kosmo Demo 001</p>
           <p class="text mono">role_ui_smoke_passed · 12/12 checks</p>
+        </div>
+
+        <div class="summary">
+          <h2>Role State</h2>
+          <p class="text mono">active: owner_admin</p>
+          <p class="text mono">selected: owner_admin</p>
+          <p class="text mono">project: kosmo-demo-001</p>
         </div>
 
         <div class="role-list">
@@ -313,6 +332,23 @@
           <div class="eyebrow">Workspace Preview</div>
           <h2>One software shell, different depth per person</h2>
           <p class="text">Every role sees the same project state through a safer, role-shaped surface. Generation remains blocked for everyone.</p>
+        </div>
+
+        <div class="state-grid">
+          <div class="metric"><span>Active Project</span><strong>kosmo-demo-001</strong></div>
+          <div class="metric"><span>Visible Modules</span><strong>8</strong></div>
+          <div class="metric"><span>Blocked Actions</span><strong>3</strong></div>
+        </div>
+
+        <div class="state-panels">
+          <div class="summary">
+            <h2>Visible Modules</h2>
+            <ul><li><strong>kosmo-data</strong> · available · Reference and project knowledge can be inspected locally.</li><li><strong>kosmo-asset</strong> · available · Asset review evidence can be inspected locally.</li><li><strong>kosmo-design</strong> · primary · Current Orbit prototype focuses on the KosmoDesign review handoff.</li><li><strong>kosmo-prepare</strong> · summary_only · Prepare is visible as planned context, but not active in this demo shell.</li><li><strong>kosmo-draw</strong> · summary_only · Draw handoff stays summary-only until model-quality review is closed.</li><li><strong>kosmo-viz</strong> · summary_only · Viz is planned and remains blocked from generation in this state.</li><li><strong>kosmo-publish</strong> · summary_only · Publish stays visible but blocked by publish and rights gates.</li><li><strong>kosmo-zentrale</strong> · summary_only · Zentrale runtime is external to this static repo and only shown as status.</li></ul>
+          </div>
+          <div class="summary">
+            <h2>Blocked Actions</h2>
+            <ul><li><strong>Generate Design</strong> · human-review-gate · Context and human-review gates are not approved.</li><li><strong>Publish Public</strong> · publish-gate · Publish and rights gates remain blocked in the local demo.</li><li><strong>Start Cloud Job</strong> · cost-gate · Cost gate is local-only and external network access is disabled.</li></ul>
+          </div>
         </div>
 
         <div class="cards">

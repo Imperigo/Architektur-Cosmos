@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-31T13:15:12.949Z",
+  "generated_at": "2026-05-31T13:46:16.189Z",
   "generator": "kosmo-orbit-full-review",
   "workspace_path": "examples/kosmo-orbit/workspace.demo.json",
   "project_root": "examples/kosmo-projects/kosmo-demo-001",
@@ -51,8 +51,8 @@
     "role_shell_prototype_status": "role_shell_prototype_ready",
     "role_shell_prototype_html": "examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-prototype.generated.html",
     "role_shell_smoke_status": "role_shell_smoke_passed",
-    "role_shell_smoke_passed_checks": 12,
-    "role_shell_smoke_check_count": 12
+    "role_shell_smoke_passed_checks": 17,
+    "role_shell_smoke_check_count": 17
   },
   "outputs": {
     "full_review_json": "examples/kosmo-orbit/review/orbit-full-review.generated.json",
@@ -206,13 +206,13 @@
     {
       "id": "role_shell_prototype",
       "label": "Role Shell Prototype",
-      "command": "npm run kosmo:orbit-role-shell-prototype -- --project examples/kosmo-projects/kosmo-demo-001 --variants orbit/role-ui-variants.generated.json --smoke orbit/role-ui-smoke.generated.json",
+      "command": "npm run kosmo:orbit-role-shell-prototype -- --project examples/kosmo-projects/kosmo-demo-001 --variants orbit/role-ui-variants.generated.json --smoke orbit/role-ui-smoke.generated.json --state examples/kosmo-orbit/role-state.demo.json",
       "status": "passed",
       "exit_code": 0,
       "report_path": "examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-prototype.generated.json",
       "report_exists": true,
       "report_status": "role_shell_prototype_ready",
-      "stdout_tail": "> architecture-cosmos@0.1.0 kosmo:orbit-role-shell-prototype\n> node scripts/kosmo-orbit-role-shell-prototype.mjs --project examples/kosmo-projects/kosmo-demo-001 --variants orbit/role-ui-variants.generated.json --smoke orbit/role-ui-smoke.generated.json\n\nKosmoOrbit role shell prototype generated\nProject: Kosmo Demo 001\nRoles: 8\nHTML: examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-prototype.generated.html\nManifest: examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-prototype.generated.json",
+      "stdout_tail": "> architecture-cosmos@0.1.0 kosmo:orbit-role-shell-prototype\n> node scripts/kosmo-orbit-role-shell-prototype.mjs --project examples/kosmo-projects/kosmo-demo-001 --variants orbit/role-ui-variants.generated.json --smoke orbit/role-ui-smoke.generated.json --state examples/kosmo-orbit/role-state.demo.json\n\nKosmoOrbit role shell prototype generated\nProject: Kosmo Demo 001\nRoles: 8\nHTML: examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-prototype.generated.html\nManifest: examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-prototype.generated.json",
       "stderr_tail": ""
     },
     {
@@ -224,7 +224,7 @@
       "report_path": "examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-smoke.generated.json",
       "report_exists": true,
       "report_status": "role_shell_smoke_passed",
-      "stdout_tail": "> architecture-cosmos@0.1.0 kosmo:orbit-role-shell-smoke\n> node scripts/kosmo-orbit-role-shell-smoke.mjs --project examples/kosmo-projects/kosmo-demo-001 --html orbit/role-shell-prototype.generated.html --manifest orbit/role-shell-prototype.generated.json\n\nKosmoOrbit role shell smoke\nHTML: examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-prototype.generated.html\nStatus: role_shell_smoke_passed\nChecks: 12/12 passed\nWrote: examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-smoke.generated.md",
+      "stdout_tail": "> architecture-cosmos@0.1.0 kosmo:orbit-role-shell-smoke\n> node scripts/kosmo-orbit-role-shell-smoke.mjs --project examples/kosmo-projects/kosmo-demo-001 --html orbit/role-shell-prototype.generated.html --manifest orbit/role-shell-prototype.generated.json\n\nKosmoOrbit role shell smoke\nHTML: examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-prototype.generated.html\nStatus: role_shell_smoke_passed\nChecks: 17/17 passed\nWrote: examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-smoke.generated.md",
       "stderr_tail": ""
     }
   ],

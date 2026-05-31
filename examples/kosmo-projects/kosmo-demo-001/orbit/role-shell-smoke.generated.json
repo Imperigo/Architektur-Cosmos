@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-31T13:15:12.936Z",
+  "generated_at": "2026-05-31T13:46:16.165Z",
   "generator": "kosmo-orbit-role-shell-smoke",
   "prototype_html": "examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-prototype.generated.html",
   "prototype_manifest": "examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-prototype.generated.json",
@@ -16,13 +16,15 @@
     "no_public_publish": true
   },
   "summary": {
-    "check_count": 12,
-    "passed_checks": 12,
+    "check_count": 17,
+    "passed_checks": 17,
     "failed_checks": 0,
     "role_count": 8,
     "role_card_count": 8,
     "role_button_count": 8,
-    "blocked_generation_action_count": 8
+    "blocked_generation_action_count": 8,
+    "visible_module_count": 8,
+    "blocked_action_count": 3
   },
   "checks": [
     {
@@ -61,6 +63,26 @@
       "status": "passed"
     },
     {
+      "id": "role_state_visible",
+      "label": "Role-state panel is visible.",
+      "status": "passed"
+    },
+    {
+      "id": "active_project_visible",
+      "label": "Active project from role state is visible.",
+      "status": "passed"
+    },
+    {
+      "id": "visible_modules_visible",
+      "label": "Visible modules from role state are visible.",
+      "status": "passed"
+    },
+    {
+      "id": "blocked_actions_visible",
+      "label": "Blocked actions from role state are visible.",
+      "status": "passed"
+    },
+    {
       "id": "static_safety_copy_visible",
       "label": "Static safety copy is visible.",
       "status": "passed"
@@ -83,6 +105,11 @@
     {
       "id": "manifest_smoke_passed",
       "label": "Manifest references a passed role UI smoke.",
+      "status": "passed"
+    },
+    {
+      "id": "manifest_role_state_present",
+      "label": "Manifest references the role-state contract.",
       "status": "passed"
     }
   ],
