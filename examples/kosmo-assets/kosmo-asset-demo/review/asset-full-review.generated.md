@@ -1,7 +1,7 @@
 # KosmoAsset Full Review
 
 Library: `kosmo-asset-demo`
-Generated: 2026-05-31T07:33:17.112Z
+Generated: 2026-05-31T07:50:26.397Z
 Status: `asset_full_review_ready_for_human_decisions`
 
 Review-only evening batch. This command runs the local KosmoAsset review chain and does not upload, publish, write D1/R2 or approve public use.
@@ -22,8 +22,8 @@ Review-only evening batch. This command runs the local KosmoAsset review chain a
 - human review session: asset_human_review_session_open
 - human review session open items: 3
 - decision ledger: asset_decision_ledger_open
-- recorded decisions: 1
-- missing decisions: 2
+- recorded decisions: 2
+- missing decisions: 1
 - sandbox ready: 1
 - certificates: 1/1
 - certificate smoke: asset_certificate_smoke_passed
@@ -52,7 +52,7 @@ Review-only evening batch. This command runs the local KosmoAsset review chain a
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Kosmo Axis Marker | open | normal | archicad | missing_decision | - | no | blocked | no | yes | complete_human_review_before_promotion |
 | Warm Concrete Study Material | open | high | blender | local_approval_recorded | asset_local_review_certified | yes | blocked | yes | yes | complete_human_review_before_promotion |
-| Generic Column GLB Slot | open | high | blender | missing_decision | - | no | blocked | yes | yes | complete_human_review_before_promotion |
+| Generic Column GLB Slot | open | high | blender | needs_review_recorded | - | no | blocked | yes | yes | complete_human_review_before_promotion |
 
 ## Outputs
 

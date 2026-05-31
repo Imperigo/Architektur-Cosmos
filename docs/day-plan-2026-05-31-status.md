@@ -60,6 +60,10 @@ KosmoAsset:
   Inspektor nicht gegeneinander laufen.
 - Asset-Library-Check und Handoff-Smoke sind gruen; Warm Concrete bleibt als
   lokaler Blender-/Review-Pilot sichtbar, aber public-gated.
+- Zweiter Asset-Pfad gestartet: `generic-column-glb-001` ist bewusst als
+  `needs-review` / `local_review_note_recorded` verbucht. Das ist keine lokale
+  Freigabe, kein Zertifikat und keine Sandbox-Erlaubnis, sondern eine saubere
+  Review-Spur fuer die naechste menschliche GLB-/Blender-Pruefung.
 
 ## Heute weiter
 

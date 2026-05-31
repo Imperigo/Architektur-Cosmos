@@ -66,13 +66,14 @@ function buildDecision({ library, asset, reviewPack, handoffBundle, handoffSmoke
   const humanConfirmed = args['confirm-human-review'] === true;
   const namedHumanReviewer = hasNamedHumanReviewer(reviewer);
   const reviewerRequired = decisionsRequiringNamedReviewer.has(decision);
-  const canApproveLocal = decision !== 'approve-local' || (
+  const canApproveLocal = decision === 'approve-local' && (
     humanConfirmed
     && namedHumanReviewer
     && routeAvailable
     && smokePassed
     && handoffAsset?.public_gate === 'blocked'
   );
+  const recordsFinalLocalDecision = decision === 'approve-local' || decision === 'reject';
   const blockers = [
     ...(!routeAvailable ? [`Route '${route}' is not available for this asset.`] : []),
     ...(reviewerRequired && !namedHumanReviewer ? [`--reviewer "<human name>" is required for ${decision}.`] : []),
@@ -92,7 +93,7 @@ function buildDecision({ library, asset, reviewPack, handoffBundle, handoffSmoke
     route,
     decision,
     reviewer: reviewer || null,
-    status: blockers.length ? 'decision_blocked' : canApproveLocal ? 'local_review_decision_recorded' : 'local_review_note_recorded',
+    status: blockers.length ? 'decision_blocked' : canApproveLocal || recordsFinalLocalDecision ? 'local_review_decision_recorded' : 'local_review_note_recorded',
     policy: {
       no_uploads: true,
       no_public_downloads: true,

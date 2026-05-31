@@ -282,6 +282,8 @@ function promotionBlockers({ expected, latest, latestCertificate, ledgerStatus, 
 function nextHumanAction({ ledgerStatus, reviewerStatus, certificateReady, sandboxReady }) {
   if (ledgerStatus === 'missing_decision') return 'record_or_defer_human_decision';
   if (ledgerStatus === 'blocked_decision') return 'resolve_blocked_decision_file';
+  if (ledgerStatus === 'needs_review_recorded') return 'continue_manual_review';
+  if (ledgerStatus === 'public_block_recorded') return 'keep_public_gate_blocked';
   if (reviewerStatus === 'missing_named_human_reviewer') return 'record_named_human_reviewer';
   if (!certificateReady) return 'create_local_review_certificate';
   if (!sandboxReady) return 'keep_review_only_until_sandbox_gate_is_ready';

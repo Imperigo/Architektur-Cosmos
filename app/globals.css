@@ -5775,8 +5775,13 @@ button.database-intake-card:not(:disabled):hover {
 }
 
 .kosmo-asset-ledger-grid span[data-status="missing_decision"],
-.kosmo-asset-ledger-grid span[data-status="missing"] {
+.kosmo-asset-ledger-grid span[data-status="missing"],
+.kosmo-asset-ledger-grid span[data-status="needs_review_recorded"] {
   border-color: color-mix(in srgb, #f5b342 42%, rgb(247 247 244 / 10%));
+}
+
+.kosmo-asset-ledger-grid span[data-status="public_block_recorded"] {
+  border-color: rgb(112 215 255 / 38%);
 }
 
 .kosmo-asset-ledger-grid span[data-status="blocked"],

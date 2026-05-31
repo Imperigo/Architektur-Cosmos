@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-31T07:33:17.099Z",
+  "generated_at": "2026-05-31T07:50:26.384Z",
   "generator": "kosmo-asset-promotion-guard",
   "library_path": "examples/kosmo-assets/kosmo-asset-demo/library.json",
   "library_id": "kosmo-asset-demo",
@@ -19,7 +19,7 @@
     "promotion_allowed": false,
     "blocker_count": 4,
     "unsafe_finding_count": 0,
-    "missing_decision_count": 2,
+    "missing_decision_count": 1,
     "certificate_ready_count": 1,
     "sandbox_ready_count": 1,
     "named_reviewer_count": 1,
@@ -33,8 +33,8 @@
   "blockers": [
     "axis-marker-svg-001:decision_missing",
     "axis-marker-svg-001:local_certificate_missing",
-    "generic-column-glb-001:decision_missing",
-    "generic-column-glb-001:local_certificate_missing"
+    "generic-column-glb-001:local_certificate_missing",
+    "generic-column-glb-001:local_approval_missing"
   ],
   "unsafe_findings": [],
   "rows": [
@@ -100,23 +100,23 @@
       "public_gate": "blocked",
       "local_ready": true,
       "public_ready": false,
-      "decision_status": "missing_decision",
+      "decision_status": "needs_review_recorded",
       "human_decision_state": "needs_more_evidence",
       "human_decision_label": "needs more human evidence",
-      "reviewer_status": "missing_decision",
+      "reviewer_status": "not_required_for_note",
       "reviewer": null,
       "certificate_status": "missing_certificate",
       "local_certificate_ready": false,
       "sandbox_ready": false,
-      "next_human_action": "record_or_defer_human_decision",
+      "next_human_action": "continue_manual_review",
       "promotion_status": "blocked",
       "promotion_blockers": [
-        "decision_missing",
-        "local_certificate_missing"
+        "local_certificate_missing",
+        "local_approval_missing"
       ],
       "blockers": [
-        "decision_missing",
-        "local_certificate_missing"
+        "local_certificate_missing",
+        "local_approval_missing"
       ]
     }
   ],
