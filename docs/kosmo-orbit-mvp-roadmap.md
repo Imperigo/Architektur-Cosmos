@@ -1,6 +1,6 @@
 # KosmoOrbit MVP Roadmap
 
-Stand: 2026-05-31  
+Stand: 2026-05-31
 Status: erster konkreter Bauplan fuer die Hauptsoftware.
 
 ## 1. Ziel des MVP
@@ -185,6 +185,7 @@ Sichere erste Umsetzung:
 7. lokaler App-Route-Vertrag `npm run kosmo:orbit-app-route-spec`
    (**initial umgesetzt**)
 8. kleine statische Orbit-Ansicht oder Report, der Rollen, Tools und Gates zeigt
+   (**initial umgesetzt unter `/orbit`**)
 9. spaeter Handoff an KosmoZentrale fuer echte lokale Runtime
 
 ## 7. Zusammenarbeit mit anderen Workern
@@ -318,7 +319,34 @@ Auch dieser Durchlauf bleibt strikt review-only: kein Blender-Start, keine
 Geometrie-Generierung, keine Uploads, keine externen Accounts, keine Kosten und
 keine Publikation.
 
-## 13. Static KosmoDesign UI Prototype
+## 13. Statische `/orbit` Preview
+
+Die erste sichtbare KosmoOrbit-Hauptsoftware-Preview ist initial umgesetzt:
+
+- Route: `/orbit`
+- Render-Modus: `force-static`
+- Datenmodus: lokale JSON-Artefakte aus dem Orbit-Review- und Demo-Projekt
+- Sicherheitsmodus: review-only, keine API, keine Auth-Runtime, keine Uploads,
+  keine externen Netzwerke, keine Generierung
+
+Die Preview ist fachlich auf einen kurzen menschlichen Demo-Pfad getrimmt:
+
+1. Projektpaket pruefen.
+2. KosmoDesign Review Mode oeffnen.
+3. Blocker menschlich entscheiden.
+
+Sie zeigt die Tool-Zentrale, die aktive Rolle, Safety Policy, sichtbare
+Module, blockierte Aktionen und eine rollenprofilierte Shell. Die Rollen sind
+nicht nur technisch unterscheidbar, sondern erklaeren Zweck,
+Oberflaechentiefe, Entscheidungsradius und naechsten sicheren Schritt.
+
+Damit kann ein Architekt ohne Informatik-Kontext verstehen, warum KosmoOrbit
+fuer Chef/Admin, Projektleitung, Entwurf, Zeichnung und Ausbildung anders
+aussehen muss. Gleichzeitig bleibt die produktkritische Linie sauber:
+KosmoDesign ist im MVP nur Review Mode; Entwurfs- oder Geometrie-Generierung
+bleibt blockiert, bis Kontext- und Human-Review-Gates geschlossen sind.
+
+## 14. Static KosmoDesign UI Prototype
 
 Aus der Panel-Spezifikation kann KosmoOrbit einen ersten lokalen HTML-Prototyp
 erzeugen. Initial umgesetzt:

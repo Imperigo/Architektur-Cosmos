@@ -1,6 +1,6 @@
 # KosmoOrbit Product Vision
 
-Stand: 2026-05-31  
+Stand: 2026-05-31
 Status: kanonische Produktergaenzung fuer die Rolle von KosmoOrbit.
 
 ## 1. Entscheidung
@@ -111,3 +111,30 @@ Der erste MVP bleibt klein, aber die Richtung ist klar:
 
 KosmoOrbit ist damit die Produktmitte. Alles andere kreist nicht lose, sondern
 geordnet um diese Hauptsoftware.
+
+## 7. Aktueller sichtbarer MVP-Kern
+
+Der aktuelle Stand in diesem Worker ist noch keine lokale Kosmo-Zentrale und
+kein CAD-Ersatz. Sichtbar existiert ein statischer, review-only
+KosmoOrbit-Kern unter `/orbit`.
+
+Dieser Kern zeigt:
+
+- KosmoOrbit als installierte Hauptsoftware-Zentrale, nicht als Website-Seite
+  und nicht als CAD;
+- ein lokales Projektpaket mit Risiko, Shell-Smoke und Paketpfad;
+- sichtbare Kosmo-Module wie KosmoData, KosmoAsset, KosmoDesign, Prepare,
+  Draw, Viz, Publish und Zentrale;
+- Rollenprofile fuer Chef/Admin, IT/KI, Projektleitung, Entwurf, Zeichnung,
+  Praktikum, Lehre und Schnupperstift;
+- pro Rolle Zweck, Oberflaechentiefe, Entscheidungsradius und naechsten
+  sicheren Schritt;
+- den 3-Minuten-Demo-Pfad:
+  Projektpaket pruefen, KosmoDesign Review Mode oeffnen, Blocker menschlich
+  entscheiden;
+- klare Sperre gegen Design-Generation, Public-Publish, externe Netzwerke,
+  Uploads und echte User-Schreibaktionen.
+
+Damit ist der erste pruefbare Produktkern vorhanden: KosmoOrbit beweist die
+Steuerzentralen-Logik, ohne schon echte lokale Runtime, Auth, Blender-Start,
+Geometrie-Generierung oder Cloud-Integrationen zu aktivieren.
