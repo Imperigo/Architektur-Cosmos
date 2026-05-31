@@ -120,3 +120,14 @@ Prioritaet fuer die naechsten Bloecke:
 4. Keine R2-Uploads, keine D1-Writes, keine echten Uploads/Auth-Schritte.
 5. Bei gutem Stand logisch committen; Publish nur, wenn der sichtbare Stand
    wirklich stabiler ist.
+
+## Live-QA Kurznotiz
+
+- Live-Check auf `architekturkosmos.ch` mit Cache-Buster durchgefuehrt.
+- Startbildschirm laedt, Orbit-Hauptmenue erscheint nach Klick.
+- KosmoAsset laesst sich aus dem Orbit oeffnen; `Zurueck` ist vorhanden.
+- KosmoAsset zeigt 3 Ressourcen, 5 vorhandene Formate, 7 Exportziele und den
+  Asset-Inspector mit Statusampel.
+- Testbrowser war in schmalem/Mobile-Modus (`cosmos-mobile-web`), daher ist
+  das Fadenkreuz korrekterweise deaktiviert. Desktop-Fadenkreuz muss separat
+  in einem Fine-Pointer-Viewport verifiziert werden.
