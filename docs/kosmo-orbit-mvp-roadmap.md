@@ -740,6 +740,7 @@ Architekturburo:
 - Pilotmessung fuer Suchzeit, Blocker-Frueherkennung, Rollenpassung und
   Wiederholbarkeit;
 - Pilot-Runbook fuer einen 45-60-Minuten-Buero-Test ohne Live-Risiko;
+- Pilot-Session-Vertrag als lokales Template fuer spaetere echte Messwerte;
 - Vision-zu-MVP-Fortschrittskarte;
 - Vision Bridge zwischen KosmoZentrale, Prepare, Design, Draw/Viz/Publish,
   Data und Asset;
@@ -773,7 +774,8 @@ Die wichtigste Produktlinie ist damit klarer:
 
 Aktuelle lokale Nachweise:
 
-- `npm run kosmo:orbit-full-review` — 20/20 passed;
+- `npm run kosmo:orbit-full-review` — 21/21 passed;
+- `npm run kosmo:orbit-pilot-session` — 17/17 passed;
 - `npm run kosmo:orbit-route-smoke` — 145/145 passed;
 - `npm run kosmo:orbit-demo-audit` — 31/31 passed;
 - `npm run kosmo:orbit-responsive-audit` — 26/26 passed;

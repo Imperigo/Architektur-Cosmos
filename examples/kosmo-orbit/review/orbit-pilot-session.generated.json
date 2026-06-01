@@ -1,0 +1,110 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-01T13:36:15.342Z",
+  "generator": "kosmo-orbit-pilot-session-check",
+  "status": "orbit_pilot_session_template_ready",
+  "session_file": "examples/kosmo-orbit/pilot/orbit-office-pilot-session.demo.json",
+  "schema_file": "schema/kosmo-orbit-pilot-session.schema.json",
+  "summary": {
+    "check_count": 17,
+    "passed_checks": 17,
+    "failed_checks": 0,
+    "warning_count": 0,
+    "role_count": 5,
+    "runbook_step_count": 5,
+    "measurement_point_count": 5
+  },
+  "checks": [
+    {
+      "id": "schema_exists",
+      "label": "Pilot session schema exists.",
+      "status": "passed"
+    },
+    {
+      "id": "session_exists",
+      "label": "Pilot session template exists.",
+      "status": "passed"
+    },
+    {
+      "id": "no_parse_failures",
+      "label": "Pilot session JSON parsed successfully.",
+      "status": "passed"
+    },
+    {
+      "id": "schema_version",
+      "label": "Pilot session uses schema version 0.1.",
+      "status": "passed"
+    },
+    {
+      "id": "local_review_only",
+      "label": "Pilot session stays local review only.",
+      "status": "passed"
+    },
+    {
+      "id": "planned_not_claimed",
+      "label": "Demo pilot session is planned, not claimed as completed.",
+      "status": "passed"
+    },
+    {
+      "id": "duration_guard",
+      "label": "Pilot duration is 45 to 60 minutes.",
+      "status": "passed"
+    },
+    {
+      "id": "project_package_exists",
+      "label": "Referenced demo project package exists.",
+      "status": "passed"
+    },
+    {
+      "id": "safety_flags",
+      "label": "All required safety flags are true.",
+      "status": "passed"
+    },
+    {
+      "id": "roles_known",
+      "label": "Pilot roles use known KosmoOrbit role ids.",
+      "status": "passed"
+    },
+    {
+      "id": "runbook_complete",
+      "label": "Pilot runbook has all five required steps.",
+      "status": "passed"
+    },
+    {
+      "id": "metrics_complete",
+      "label": "Pilot measurement points cover all required metrics.",
+      "status": "passed"
+    },
+    {
+      "id": "metrics_are_empty_template",
+      "label": "Demo measurement values are still empty until a real pilot runs.",
+      "status": "passed"
+    },
+    {
+      "id": "decision_not_run_yet",
+      "label": "Pilot decision is not claimed yet.",
+      "status": "passed"
+    },
+    {
+      "id": "no_human_reviewer_in_template",
+      "label": "Demo template contains no human reviewer name.",
+      "status": "passed"
+    },
+    {
+      "id": "no_failures",
+      "label": "No blocking validation failures were collected.",
+      "status": "passed"
+    },
+    {
+      "id": "warnings_allowed",
+      "label": "Warnings are informational only.",
+      "status": "passed"
+    }
+  ],
+  "warnings": [],
+  "next_actions": [
+    "Use this template for a real office pilot only after anonymising project inputs.",
+    "Keep values null until a human records real pilot measurements.",
+    "Do not treat planned pilot templates as proof of time or cost savings."
+  ]
+}

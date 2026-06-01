@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T13:19:48.032Z",
+  "generated_at": "2026-06-01T13:36:15.536Z",
   "generator": "kosmo-orbit-full-review",
   "workspace_path": "examples/kosmo-orbit/workspace.demo.json",
   "project_root": "examples/kosmo-projects/kosmo-demo-001",
@@ -15,8 +15,8 @@
     "no_geometry_generation": true
   },
   "summary": {
-    "step_count": 20,
-    "passed_steps": 20,
+    "step_count": 21,
+    "passed_steps": 21,
     "failed_steps": 0,
     "role_state_status": "role_state_check_passed",
     "role_state_active_role": "owner_admin",
@@ -49,6 +49,10 @@
     "office_routine_check_count": 10,
     "office_routine_count": 6,
     "office_routine_blocked_count": 9,
+    "pilot_session_status": "orbit_pilot_session_template_ready",
+    "pilot_session_passed_checks": 17,
+    "pilot_session_check_count": 17,
+    "pilot_session_measurement_points": 5,
     "orbit_route_smoke_status": "orbit_route_smoke_passed",
     "orbit_route_smoke_passed_checks": 145,
     "orbit_route_smoke_check_count": 145,
@@ -91,6 +95,7 @@
     "command_contract_markdown": "examples/kosmo-orbit/review/orbit-command-contract.generated.md",
     "audit_trail_markdown": "examples/kosmo-orbit/review/orbit-audit-trail.generated.md",
     "office_routine_markdown": "examples/kosmo-orbit/review/orbit-office-routine.generated.md",
+    "pilot_session_markdown": "examples/kosmo-orbit/review/orbit-pilot-session.generated.md",
     "orbit_route_smoke_markdown": "examples/kosmo-orbit/review/orbit-route-smoke.generated.md",
     "workspace_status_markdown": "examples/kosmo-orbit/review/orbit-status-report.generated.md",
     "project_inspector_markdown": "examples/kosmo-projects/kosmo-demo-001/orbit/project-inspector.generated.md",
@@ -333,6 +338,18 @@
       "stderr_tail": ""
     },
     {
+      "id": "pilot_session",
+      "label": "Orbit Pilot Session Template",
+      "command": "npm run kosmo:orbit-pilot-session -- --session examples/kosmo-orbit/pilot/orbit-office-pilot-session.demo.json --schema schema/kosmo-orbit-pilot-session.schema.json",
+      "status": "passed",
+      "exit_code": 0,
+      "report_path": "examples/kosmo-orbit/review/orbit-pilot-session.generated.json",
+      "report_exists": true,
+      "report_status": "orbit_pilot_session_template_ready",
+      "stdout_tail": "> architecture-cosmos@0.1.0 kosmo:orbit-pilot-session\n> node scripts/kosmo-orbit-pilot-session-check.mjs --session examples/kosmo-orbit/pilot/orbit-office-pilot-session.demo.json --schema schema/kosmo-orbit-pilot-session.schema.json\n\nKosmoOrbit pilot session check\nStatus: orbit_pilot_session_template_ready\nChecks: 17/17\nWrote: examples/kosmo-orbit/review/orbit-pilot-session.generated.md",
+      "stderr_tail": ""
+    },
+    {
       "id": "orbit_route_smoke",
       "label": "Orbit Route Smoke",
       "command": "npm run kosmo:orbit-route-smoke -- --route app/orbit/page.tsx --spec examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
@@ -354,6 +371,7 @@
     "Keep the Health Readiness contract read-only until a local runtime adapter is approved.",
     "Keep the Command Contract static until command schemas, logs and rollback behavior are approved.",
     "Keep the Audit Trail static until persistence, retention and privacy rules are approved.",
+    "Use the pilot session template for a real office pilot only after anonymising project inputs.",
     "Keep the Orbit route smoke in the full review before promoting /orbit in public navigation.",
     "Resolve or explicitly reject blocked context inputs before allowing design generation.",
     "Keep generated project artifacts local until human review closes design/draw/viz evidence.",

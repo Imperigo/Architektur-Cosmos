@@ -1,0 +1,110 @@
+{
+  "schema_version": "0.1",
+  "session": {
+    "id": "orbit-office-pilot-demo-001",
+    "status": "planned",
+    "mode": "local_review_only",
+    "project_package": "examples/kosmo-projects/kosmo-demo-001/kosmo.project.json",
+    "duration_minutes": 60,
+    "note": "Template for a later real office pilot. No real customer data is stored here."
+  },
+  "safety": {
+    "no_customer_data": true,
+    "no_uploads": true,
+    "no_costs": true,
+    "no_design_generation": true,
+    "no_push_without_owner_go": true,
+    "no_external_accounts": true
+  },
+  "roles": [
+    "owner_admin",
+    "project_lead_architect",
+    "design_architect",
+    "drafter_efz",
+    "apprentice"
+  ],
+  "runbook_steps": [
+    {
+      "id": "baseline",
+      "minutes": "00-05",
+      "owner_role": "project_lead_architect",
+      "prompt": "Where are status, blockers and next action found today?",
+      "expected_output": "baseline-note"
+    },
+    {
+      "id": "central_read",
+      "minutes": "05-15",
+      "owner_role": "owner_admin",
+      "prompt": "Can the office lead understand KosmoOrbit as central software?",
+      "expected_output": "owner-orientation"
+    },
+    {
+      "id": "project_package_review",
+      "minutes": "15-30",
+      "owner_role": "project_lead_architect",
+      "prompt": "Are project package, gates and KosmoDesign handoff understandable?",
+      "expected_output": "review-question-list"
+    },
+    {
+      "id": "role_round",
+      "minutes": "30-45",
+      "owner_role": "drafter_efz",
+      "prompt": "Does each role see the right surface depth and restriction?",
+      "expected_output": "role-feedback"
+    },
+    {
+      "id": "pilot_decision",
+      "minutes": "45-60",
+      "owner_role": "owner_admin",
+      "prompt": "Which next sprint should be selected after the pilot?",
+      "expected_output": "pilot-decision"
+    }
+  ],
+  "measurement_points": [
+    {
+      "id": "orientation_time",
+      "label": "Time until project orientation",
+      "unit": "minutes",
+      "before_value": null,
+      "after_value": null
+    },
+    {
+      "id": "blocker_count",
+      "label": "Blockers found before design or export work",
+      "unit": "count",
+      "before_value": null,
+      "after_value": null
+    },
+    {
+      "id": "open_questions",
+      "label": "Open questions after first review pass",
+      "unit": "count",
+      "before_value": null,
+      "after_value": null
+    },
+    {
+      "id": "role_clarity",
+      "label": "Role clarity from 1 to 5",
+      "unit": "score_1_to_5",
+      "before_value": null,
+      "after_value": null
+    },
+    {
+      "id": "missing_inputs",
+      "label": "Missing inputs for real operation",
+      "unit": "count",
+      "before_value": null,
+      "after_value": null
+    }
+  ],
+  "decision": {
+    "status": "not_run_yet",
+    "next_options": [
+      "ui_interaction",
+      "kosmo_design_handoff",
+      "data_rights_review"
+    ],
+    "selected_option": null,
+    "human_reviewer": null
+  }
+}

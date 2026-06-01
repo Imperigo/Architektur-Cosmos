@@ -114,6 +114,7 @@
     "kosmo:orbit-command-contract": "node scripts/kosmo-orbit-command-contract-smoke.mjs",
     "kosmo:orbit-audit-trail": "node scripts/kosmo-orbit-audit-trail-smoke.mjs",
     "kosmo:orbit-office-routine": "node scripts/kosmo-orbit-office-routine-smoke.mjs",
+    "kosmo:orbit-pilot-session": "node scripts/kosmo-orbit-pilot-session-check.mjs",
     "kosmo:orbit-static-smoke": "node scripts/kosmo-orbit-static-export-smoke.mjs",
     "kosmo:orbit-demo-audit": "node scripts/kosmo-orbit-demo-audit.mjs",
     "kosmo:orbit-responsive-audit": "node scripts/kosmo-orbit-responsive-audit.mjs",

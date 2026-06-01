@@ -288,6 +288,13 @@ Arbeitsstation zuerst welches Panel braucht.
     - Desktop 1440 x 900 und Mobile 390 x 844 ohne horizontalen Overflow;
     - bestaetigt Pilot-Runbook, Live-Gate und keine Klickziele unter 32 px.
 
+40. **Pilot-Session-Vertrag**
+    - legt `schema/kosmo-orbit-pilot-session.schema.json` an;
+    - legt ein lokales Template fuer eine spaetere Buero-Pilotmessung an;
+    - prueft mit `npm run kosmo:orbit-pilot-session`, dass keine echten
+      Messwerte, Kundendaten, Uploads, Kosten oder Design-Generation behauptet
+      werden.
+
 ## Lokale Commits seit `origin/main`
 
 - `6ad9372` Add KosmoOrbit role switcher preview
@@ -306,7 +313,8 @@ Arbeitsstation zuerst welches Panel braucht.
 Zuletzt gruene lokale Checks:
 
 - `npm run kosmo:orbit-route-smoke` — 145/145 passed
-- `npm run kosmo:orbit-full-review` — 20/20 passed
+- `npm run kosmo:orbit-full-review` — 21/21 passed
+- `npm run kosmo:orbit-pilot-session` — 17/17 passed
 - `npm run kosmo:orbit-demo-audit` — 31/31 passed
 - `npm run kosmo:orbit-responsive-audit` — 26/26 passed
 - `npm run kosmo:orbit-health-readiness` — 14/14 passed

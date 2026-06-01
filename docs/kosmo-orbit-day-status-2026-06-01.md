@@ -168,6 +168,9 @@ Wichtig fuer die Kommunikation:
 - Der In-App-Browser-Smoke wurde nach Pilot-Runbook und Live-Gate erneuert:
   Desktop 1440 x 900 und Mobile 390 x 844 ohne horizontalen Overflow, beide
   neuen Panels sichtbar, keine Klickziele unter 32 px.
+- Ein Pilot-Session-Vertrag ist angelegt: Schema, lokales Demo-Template,
+  Checkskript und Report. Alle Messwerte bleiben `null`, bis ein echter
+  menschlicher Buero-Pilot durchgefuehrt wird.
 - System-Knowledge und Source-of-Truth sind nachgezogen, damit KosmoOrbit in
   der Gesamtlandkarte als Hauptsoftware/Steuerzentrale und nicht als
   Website-Feature gelesen wird.
@@ -191,7 +194,8 @@ Wichtig fuer die Kommunikation:
 - `npm run kosmo:orbit-audit-trail` — 11/11 passed.
 - `npm run kosmo:orbit-office-routine` — 10/10 passed.
 - `npm run kosmo:orbit-route-smoke` — 145/145 passed.
-- `npm run kosmo:orbit-full-review` — 20/20 passed.
+- `npm run kosmo:orbit-full-review` — 21/21 passed.
+- `npm run kosmo:orbit-pilot-session` — 17/17 passed.
 - `npm run kosmo:orbit-demo-audit` — 31/31 passed.
 - `npm run kosmo:orbit-responsive-audit` — 26/26 passed.
 - `npm run kosmo:orbit-static-smoke` — 45/45 passed.

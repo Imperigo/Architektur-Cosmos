@@ -34,6 +34,8 @@ In drei Minuten soll ein Architekturbueroleiter verstehen:
    Erklaeren: Der naechste echte Test ist kein Livegang, sondern ein
    45-60-Minuten-Bueroablauf: Ausgangslage messen, Zentrale lesen,
    Projektpaket pruefen, Rollenrunde testen und bewusst entscheiden.
+   Messwerte bleiben im Template leer, bis ein echter Mensch den Pilot
+   durchgefuehrt hat.
 
 5. **Buero-Routine zeigen**
    Erklaeren: KosmoOrbit denkt den Arbeitstag als lokale Routine:

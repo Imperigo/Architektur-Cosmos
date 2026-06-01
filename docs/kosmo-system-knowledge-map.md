@@ -135,6 +135,9 @@ Aktueller Repo-Stand 2026-06-01:
 - Lokale Nachweise liegen in `examples/kosmo-orbit/review/`; der aktuelle
   Stand ist in `docs/kosmo-orbit-push-package-2026-06-01.md` als
   Push-/Review-Paket dokumentiert.
+- Der Pilot-Session-Vertrag ist nur ein Mess-Template. Echte Zeit-,
+  Qualitaets- oder Kostenwerte duerfen erst nach einem menschlich
+  durchgefuehrten Buero-Pilot eingetragen werden.
 
 ### Kosmo Prepare, Kosmo Draw, Kosmo Viz, Kosmo Publish
 

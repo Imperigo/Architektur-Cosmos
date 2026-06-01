@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://architekturkosmos.ch/schema/kosmo-orbit-pilot-session.schema.json",
+  "title": "KosmoOrbit Pilot Session",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "session",
+    "safety",
+    "roles",
+    "runbook_steps",
+    "measurement_points",
+    "decision"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1"
+    },
+    "session": {
+      "type": "object",
+      "required": ["id", "status", "mode", "project_package", "duration_minutes"],
+      "properties": {
+        "id": { "type": "string" },
+        "status": {
+          "enum": ["planned", "in_review", "completed_local", "blocked"]
+        },
+        "mode": {
+          "const": "local_review_only"
+        },
+        "project_package": { "type": "string" },
+        "duration_minutes": {
+          "type": "integer",
+          "minimum": 45,
+          "maximum": 60
+        }
+      },
+      "additionalProperties": true
+    },
+    "safety": {
+      "type": "object",
+      "required": [
+        "no_customer_data",
+        "no_uploads",
+        "no_costs",
+        "no_design_generation",
+        "no_push_without_owner_go"
+      ],
+      "properties": {
+        "no_customer_data": { "const": true },
+        "no_uploads": { "const": true },
+        "no_costs": { "const": true },
+        "no_design_generation": { "const": true },
+        "no_push_without_owner_go": { "const": true }
+      },
+      "additionalProperties": true
+    },
+    "roles": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 3
+    },
+    "runbook_steps": {
+      "type": "array",
+      "items": { "type": "object" },
+      "minItems": 5
+    },
+    "measurement_points": {
+      "type": "array",
+      "items": { "type": "object" },
+      "minItems": 5
+    },
+    "decision": {
+      "type": "object",
+      "required": ["status", "next_options"],
+      "properties": {
+        "status": {
+          "enum": ["not_run_yet", "needs_more_evidence", "continue", "pause", "blocked"]
+        },
+        "next_options": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

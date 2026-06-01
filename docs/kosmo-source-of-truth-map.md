@@ -75,6 +75,8 @@ Aktiv fuer:
   Workflow-Delta, Pilotmessung, Pilot-Runbook, Live-Gate, Buero-Routine,
   Projektpaket, KosmoDesign Handoff Console, Ausbildungsmodus und
   Review-/Safety-Vertraegen
+- Pilot-Session-Vertrag fuer spaetere echte Buero-Messwerte ohne Kundendaten,
+  Uploads, Kosten oder behauptete Resultate im Template
 - Rollenprofile fuer Chef, IT-/KI-Spezialist, Projektleitung, Entwurf,
   Zeichnung, Praktikum, Lehre und Schnupperzugang
 - Tool-Hub zwischen KosmoData, KosmoAsset, KosmoDesign, KosmoPrepare,

@@ -6,7 +6,7 @@ Status: lokales Review- und Push-Paket. Kein Push wurde ausgefuehrt.
 
 - Branch: `main`
 - Remote: `origin/main`
-- Lokaler Stand: 45 Commits vor `origin/main`
+- Lokaler Stand: 46 Commits vor `origin/main`
 - Live/Deploy: nicht ausgefuehrt, weil Push/Live-Go fehlt
 
 ## Inhalt des Pakets
@@ -25,13 +25,15 @@ deutlich reifer:
 - Presenter-Modus, Demo-Fragen, Workflow-Delta, Pilotmessung und
   Pilot-Runbook;
 - Live-Gate mit Owner-Go, Security Review und Live-Smoke vor Push/Deploy;
+- Pilot-Session-Vertrag mit Schema, Template und lokalem Check;
 - Office Pilot Plan;
 - aktualisierte Vision, Roadmap, Tagesstatus, Demo-Briefing,
   System-Knowledge und Source-of-Truth.
 
 ## Letzte lokale Nachweise
 
-- `npm run kosmo:orbit-full-review` — 20/20 passed
+- `npm run kosmo:orbit-full-review` — 21/21 passed
+- `npm run kosmo:orbit-pilot-session` — 17/17 passed
 - `npm run kosmo:orbit-route-smoke` — 145/145 passed
 - `npm run kosmo:orbit-demo-audit` — 31/31 passed
 - `npm run kosmo:orbit-responsive-audit` — 26/26 passed
