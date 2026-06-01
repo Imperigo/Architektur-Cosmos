@@ -100,6 +100,16 @@ const checks = [
     ]
   },
   {
+    id: 'search-results-open-static-detail-routes',
+    file: files.search,
+    patterns: [
+      'href={`/atlas/${entry.slug}/`}',
+      'className={`project-search-result ${currentSlug === entry.slug ? \'project-search-result-active\' : \'\'}`}',
+      'setIsOpen(false);',
+      'setQuery(\'\');'
+    ]
+  },
+  {
     id: 'filter-css-position-and-shared-trigger-size',
     file: files.css,
     patterns: [
