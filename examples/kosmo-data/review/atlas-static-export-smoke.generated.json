@@ -1,0 +1,120 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-01T20:09:19.262Z",
+  "generator": "atlas-static-export-smoke",
+  "status": "atlas_static_export_smoke_passed",
+  "html_file": "out/atlas/index.html",
+  "summary": {
+    "check_count": 17,
+    "passed_checks": 17,
+    "failed_checks": 0,
+    "referenced_static_asset_count": 10,
+    "missing_static_asset_count": 0
+  },
+  "static_assets": {
+    "referenced": [
+      "_next/static/chunks/255-81ba70bd132d3eed.js",
+      "_next/static/chunks/4bd1b696-c023c6e3521b1417.js",
+      "_next/static/chunks/605-ddca559a4d05c1f5.js",
+      "_next/static/chunks/619-ba102abea3e3d0e4.js",
+      "_next/static/chunks/985-1d62502d38b9abd1.js",
+      "_next/static/chunks/app/atlas/page-843ce700d3fb4699.js",
+      "_next/static/chunks/main-app-36e74dfd8b1eb57a.js",
+      "_next/static/chunks/polyfills-42372ed130431b0a.js",
+      "_next/static/chunks/webpack-81624dd509abd812.js",
+      "_next/static/css/86cb1f11460028f2.css"
+    ],
+    "missing": []
+  },
+  "checks": [
+    {
+      "id": "html_exists",
+      "label": "Static /atlas HTML exists.",
+      "status": "passed"
+    },
+    {
+      "id": "referenced_static_assets_exist",
+      "label": "Every _next/static asset referenced by /atlas exists in out/.",
+      "status": "passed"
+    },
+    {
+      "id": "renders_architektur_kosmos_intro",
+      "label": "Export renders the intro title.",
+      "status": "passed"
+    },
+    {
+      "id": "renders_kosmodata_module",
+      "label": "Export includes the KosmoData module handoff.",
+      "status": "passed"
+    },
+    {
+      "id": "renders_database_copy",
+      "label": "Export includes database panel copy.",
+      "status": "passed"
+    },
+    {
+      "id": "renders_relation_copy",
+      "label": "Export includes relation/network copy.",
+      "status": "passed"
+    },
+    {
+      "id": "renders_known_entry_villa_savoye",
+      "label": "Export includes Villa Savoye data.",
+      "status": "passed"
+    },
+    {
+      "id": "renders_known_entry_hagia_sophia",
+      "label": "Export includes Hagia Sophia data.",
+      "status": "passed"
+    },
+    {
+      "id": "renders_known_entry_mfo_park",
+      "label": "Export includes MFO Park data.",
+      "status": "passed"
+    },
+    {
+      "id": "exports_entry_detail_routes",
+      "label": "Export includes static detail route HTML files.",
+      "status": "passed"
+    },
+    {
+      "id": "renders_image_media_slots",
+      "label": "Export includes media/image vocabulary.",
+      "status": "passed"
+    },
+    {
+      "id": "renders_model_vocabulary",
+      "label": "Export includes 3D/model vocabulary.",
+      "status": "passed"
+    },
+    {
+      "id": "keeps_public_safe_boundary",
+      "label": "Export keeps public/private boundary copy.",
+      "status": "passed"
+    },
+    {
+      "id": "keeps_static_frontend_boundary",
+      "label": "Export does not include server runtime markers.",
+      "status": "passed"
+    },
+    {
+      "id": "has_serialized_entry_payload",
+      "label": "Export includes serialized entry data for hydration.",
+      "status": "passed"
+    },
+    {
+      "id": "has_german_metadata",
+      "label": "Export has German document language.",
+      "status": "passed"
+    },
+    {
+      "id": "has_icon_links",
+      "label": "Export includes icon links.",
+      "status": "passed"
+    }
+  ],
+  "next_actions": [
+    "Use this smoke after build:fresh before publishing KosmoData changes.",
+    "Pair with atlas:interaction-guard for click, filter and dossier contracts."
+  ]
+}
