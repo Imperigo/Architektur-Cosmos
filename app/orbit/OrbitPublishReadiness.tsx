@@ -11,8 +11,8 @@ const readinessRows = [
   },
   {
     label: 'Security Review',
-    status: 'needs_review',
-    evidence: 'brain:doctor-fast meldet weiterhin eine npm-audit Dependency-Fundstelle, die bewusst beurteilt werden muss.'
+    status: 'ready',
+    evidence: 'security:check, npm audit --omit=dev und brain:doctor-fast sind lokal gruen; finale Review bleibt Teil des Owner-Go.'
   },
   {
     label: 'Live-Smoke',
@@ -64,8 +64,8 @@ export function OrbitPublishReadiness() {
       </div>
 
       <p className="mt-4 rounded-md border border-amber-300/25 bg-amber-400/10 px-3 py-2 text-sm leading-5 text-amber-100">
-        Interne Demo ist moeglich. Oeffentlicher Publish ist bewusst kein Automatismus: erst Security-Fundstelle beurteilen,
-        dann Owner-Go, dann Push, dann Live-Smoke.
+        Interne Demo ist moeglich. Oeffentlicher Publish ist bewusst kein Automatismus: erst Owner-Go,
+        dann Push, dann Live-Smoke.
       </p>
     </section>
   );
