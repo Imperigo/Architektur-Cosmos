@@ -1,6 +1,6 @@
 # KosmoOrbit Route Smoke
 
-Generated: 2026-06-01T07:15:26.201Z
+Generated: 2026-06-01T07:19:13.893Z
 Status: `orbit_route_smoke_passed`
 Route: `app/orbit/page.tsx`
 
@@ -8,7 +8,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 
 ## Summary
 
-- checks: 56/56 passed
+- checks: 60/60 passed
 
 ## Checks
 
@@ -30,6 +30,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `runtime_boundary_file_exists` | `passed` | Orbit MVP/runtime boundary component exists. |
 | `quality_evidence_file_exists` | `passed` | Orbit quality evidence component exists. |
 | `workstation_priorities_file_exists` | `passed` | Orbit workstation priorities component exists. |
+| `autonomy_status_file_exists` | `passed` | Orbit autonomy status component exists. |
 | `imports_role_switcher` | `passed` | Route imports the role switcher preview component. |
 | `imports_demo_review_path` | `passed` | Route imports the guided demo review component. |
 | `imports_project_dashboard` | `passed` | Route imports the project package dashboard component. |
@@ -39,6 +40,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `imports_runtime_boundary` | `passed` | Route imports the MVP/runtime boundary component. |
 | `imports_quality_evidence` | `passed` | Route imports the quality evidence component. |
 | `imports_workstation_priorities` | `passed` | Route imports the workstation priorities component. |
+| `imports_autonomy_status` | `passed` | Route imports the autonomy status component. |
 | `uses_force_static` | `passed` | Route declares force-static rendering. |
 | `shows_kosmo_orbit` | `passed` | Route renders KosmoOrbit heading. |
 | `shows_demo_path` | `passed` | Route renders the 3-minute human demo path. |
@@ -62,6 +64,8 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `imports_quality_reports` | `passed` | Route imports full review and route smoke reports. |
 | `shows_workstation_priorities` | `passed` | Route renders role-first workstation priorities. |
 | `covers_core_workstation_roles` | `passed` | Workstation priorities cover owner, project lead, design, drafting and education. |
+| `shows_autonomy_status` | `passed` | Route renders local autonomy status and safety limits. |
+| `keeps_autonomy_cost_safe` | `passed` | Autonomy status keeps Cloud costs and writes blocked. |
 | `shows_blocked_actions` | `passed` | Route renders blocked action labels from role state. |
 | `shows_review_only_copy` | `passed` | Route keeps review-only safety copy visible. |
 | `no_use_server` | `passed` | Forbidden pattern is absent: no_use_server. |

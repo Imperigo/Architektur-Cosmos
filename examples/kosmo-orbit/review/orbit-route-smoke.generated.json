@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T07:15:26.201Z",
+  "generated_at": "2026-06-01T07:19:13.893Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 56,
-    "passed_checks": 56,
+    "check_count": 60,
+    "passed_checks": 60,
     "failed_checks": 0
   },
   "checks": [
@@ -92,6 +92,11 @@
       "status": "passed"
     },
     {
+      "id": "autonomy_status_file_exists",
+      "label": "Orbit autonomy status component exists.",
+      "status": "passed"
+    },
+    {
       "id": "imports_role_switcher",
       "label": "Route imports the role switcher preview component.",
       "status": "passed"
@@ -134,6 +139,11 @@
     {
       "id": "imports_workstation_priorities",
       "label": "Route imports the workstation priorities component.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_autonomy_status",
+      "label": "Route imports the autonomy status component.",
       "status": "passed"
     },
     {
@@ -249,6 +259,16 @@
     {
       "id": "covers_core_workstation_roles",
       "label": "Workstation priorities cover owner, project lead, design, drafting and education.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_autonomy_status",
+      "label": "Route renders local autonomy status and safety limits.",
+      "status": "passed"
+    },
+    {
+      "id": "keeps_autonomy_cost_safe",
+      "label": "Autonomy status keeps Cloud costs and writes blocked.",
       "status": "passed"
     },
     {

@@ -7,6 +7,7 @@ import projectInspectorData from '@/examples/kosmo-projects/kosmo-demo-001/orbit
 import roleVariantsData from '@/examples/kosmo-projects/kosmo-demo-001/orbit/role-ui-variants.generated.json';
 import shellManifestData from '@/examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-prototype.generated.json';
 import type { Metadata } from 'next';
+import { OrbitAutonomyStatus } from './OrbitAutonomyStatus';
 import { OrbitDemoQuestions } from './OrbitDemoQuestions';
 import { OrbitDemoReviewPath } from './OrbitDemoReviewPath';
 import { OrbitPresenterBrief } from './OrbitPresenterBrief';
@@ -326,6 +327,8 @@ export default function OrbitPage() {
               </div>
             </div>
           </section>
+
+          <OrbitAutonomyStatus />
 
           <OrbitPresenterBrief />
 
