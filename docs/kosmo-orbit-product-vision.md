@@ -159,6 +159,9 @@ Dieser Kern zeigt:
 - eine Health-Readiness-Schicht, die spaetere lokale Signale fuer Hardware,
   Modelle, Speicher, Tool-Connectoren, Job Queue und Logs/Reparatur als
   read-only Telemetrievertrag mit eigenem lokalem JSON-Vertrag vorbereitet;
+- ein Risiko-Register, das Runtime, Design-Generation, Quellen/Rechte,
+  Rollen/Profile, Buero-Daten und externe Zusammenarbeit als menschlich zu
+  entscheidende Freigabegates sichtbar macht;
 - ein Pruefevidenz-Panel, das Full Review, Route-Smoke, Reviewlast und Open
   Mode direkt an der Oberflaeche belegt;
 - eine Demo-Bereitschaft, die Full Review, Route-Smoke und Static-Smoke zu

@@ -116,6 +116,9 @@ Wichtig fuer die Kommunikation:
   Modelle, scannt kein Dateisystem und fuehrt keine Hardware- oder Queue-
   Aktionen aus. Die Quelle ist jetzt ein lokaler JSON-Vertrag mit eigenem
   Smoke-Check.
+- Ein Risiko-Register auf `/orbit` zeigt die wichtigsten menschlichen
+  Freigabegates: lokale Runtime, Design-Generation, Quellen/Rechte,
+  Rollen/Profile, Buero-Daten und externe Zusammenarbeit.
 - Ein neuer KosmoData-HUD-Guard schuetzt die wiederkehrenden Website-Bedienpunkte:
   Database oben links, Suche/Dev rechts, Filterzugang rechts unten, HTML-
   Database-Overlay, globales Fadenkreuz in Start/Hauptmenue/Popups und

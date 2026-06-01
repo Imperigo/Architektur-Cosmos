@@ -1,79 +1,84 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T08:27:36.794Z",
+  "generated_at": "2026-06-01T08:40:16.835Z",
   "generator": "kosmo-orbit-demo-audit",
   "status": "orbit_demo_audit_passed",
   "html_file": "out/orbit/index.html",
   "summary": {
-    "check_count": 14,
-    "passed_checks": 14,
+    "check_count": 15,
+    "passed_checks": 15,
     "failed_checks": 0
   },
   "demo_order": [
     {
       "id": "autonomie",
       "label": "Autonomie-Status",
-      "index": 12690
+      "index": 12937
     },
     {
       "id": "presenter",
       "label": "3-Minuten-Erklaerung",
-      "index": 15166
+      "index": 15413
     },
     {
       "id": "fortschritt",
       "label": "Projektfortschritt",
-      "index": 18183
+      "index": 18430
     },
     {
       "id": "vision",
       "label": "Vision Bridge",
-      "index": 24928
+      "index": 25175
     },
     {
       "id": "demo-ready",
       "label": "Demo-Bereitschaft",
-      "index": 29268
+      "index": 29515
     },
     {
       "id": "projektpaket",
       "label": "Projektpaket Tagesansicht",
-      "index": 32010
+      "index": 32259
     },
     {
       "id": "entscheidung",
       "label": "Review Decision Draft",
-      "index": 45658
+      "index": 45907
     },
     {
       "id": "runtime-contract",
       "label": "Runtime-Vertrag",
-      "index": 52967
+      "index": 53216
     },
     {
       "id": "installation",
       "label": "Buero-Installation",
-      "index": 58963
+      "index": 59212
     },
     {
       "id": "health",
       "label": "Health Readiness",
-      "index": 66702
+      "index": 66951
+    },
+    {
+      "id": "risiken",
+      "label": "Risiko-Register",
+      "index": 73808
     },
     {
       "id": "evidenz",
       "label": "Pruefevidenz",
-      "index": 73501
+      "index": 81097
     },
     {
       "id": "rechte",
       "label": "Rechte-Matrix",
-      "index": 81758
+      "index": 89356
     },
     {
       "id": "rollen",
       "label": "Rollenumschaltung Preview",
-      "index": 99513
+      "index": 107111
     }
   ],
   "checks": [
@@ -125,6 +130,11 @@
     {
       "id": "health_readiness_visible",
       "label": "Health readiness contract is visible in the export.",
+      "status": "passed"
+    },
+    {
+      "id": "risk_register_visible",
+      "label": "Risk register is visible in the export.",
       "status": "passed"
     },
     {

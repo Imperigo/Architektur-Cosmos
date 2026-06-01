@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T08:33:03.888Z",
+  "generated_at": "2026-06-01T08:40:43.758Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 96,
-    "passed_checks": 96,
+    "check_count": 100,
+    "passed_checks": 100,
     "failed_checks": 0
   },
   "checks": [
@@ -94,6 +94,11 @@
     {
       "id": "health_readiness_contract_file_exists",
       "label": "Orbit health readiness contract exists.",
+      "status": "passed"
+    },
+    {
+      "id": "risk_register_file_exists",
+      "label": "Orbit risk register component exists.",
       "status": "passed"
     },
     {
@@ -189,6 +194,11 @@
     {
       "id": "imports_health_readiness_contract",
       "label": "Health readiness component imports the local contract JSON.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_risk_register",
+      "label": "Route imports the risk register component.",
       "status": "passed"
     },
     {
@@ -344,6 +354,16 @@
     {
       "id": "keeps_health_readiness_safe",
       "label": "Health readiness keeps hardware, model, filesystem, process and queue actions gated.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_risk_register",
+      "label": "Route renders the human approval risk register.",
+      "status": "passed"
+    },
+    {
+      "id": "risk_register_covers_core_gates",
+      "label": "Risk register covers runtime, generation, rights, profiles, data and external collaboration.",
       "status": "passed"
     },
     {

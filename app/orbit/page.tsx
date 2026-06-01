@@ -20,6 +20,7 @@ import { OrbitProgressMap } from './OrbitProgressMap';
 import { OrbitProjectDashboard, type DesignHandoffPreview, type ProjectInspectorReport } from './OrbitProjectDashboard';
 import { OrbitQualityEvidence, type OrbitFullReviewReport, type OrbitRouteSmokeReport } from './OrbitQualityEvidence';
 import { OrbitReviewDecisionDraft } from './OrbitReviewDecisionDraft';
+import { OrbitRiskRegister } from './OrbitRiskRegister';
 import { OrbitRuntimeBoundary } from './OrbitRuntimeBoundary';
 import { OrbitRuntimeContract } from './OrbitRuntimeContract';
 import { OrbitRoleSwitcher } from './OrbitRoleSwitcher';
@@ -384,6 +385,10 @@ export default function OrbitPage() {
 
           <div id="health" className="scroll-mt-4">
             <OrbitHealthReadiness />
+          </div>
+
+          <div id="risiken" className="scroll-mt-4">
+            <OrbitRiskRegister />
           </div>
 
           <div id="evidenz" className="scroll-mt-4">

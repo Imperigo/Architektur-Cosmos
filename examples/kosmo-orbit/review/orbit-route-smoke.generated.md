@@ -1,6 +1,6 @@
 # KosmoOrbit Route Smoke
 
-Generated: 2026-06-01T08:33:03.888Z
+Generated: 2026-06-01T08:40:43.758Z
 Status: `orbit_route_smoke_passed`
 Route: `app/orbit/page.tsx`
 
@@ -8,7 +8,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 
 ## Summary
 
-- checks: 96/96 passed
+- checks: 100/100 passed
 
 ## Checks
 
@@ -31,6 +31,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `installation_topology_file_exists` | `passed` | Orbit local installation topology component exists. |
 | `health_readiness_file_exists` | `passed` | Orbit local health readiness component exists. |
 | `health_readiness_contract_file_exists` | `passed` | Orbit health readiness contract exists. |
+| `risk_register_file_exists` | `passed` | Orbit risk register component exists. |
 | `review_decision_draft_file_exists` | `passed` | Orbit review decision draft component exists. |
 | `runtime_boundary_file_exists` | `passed` | Orbit MVP/runtime boundary component exists. |
 | `runtime_contract_file_exists` | `passed` | Orbit local runtime contract component exists. |
@@ -50,6 +51,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `imports_installation_topology` | `passed` | Route imports the local installation topology component. |
 | `imports_health_readiness` | `passed` | Route imports the local health readiness component. |
 | `imports_health_readiness_contract` | `passed` | Health readiness component imports the local contract JSON. |
+| `imports_risk_register` | `passed` | Route imports the risk register component. |
 | `imports_review_decision_draft` | `passed` | Route imports the review decision draft component. |
 | `imports_runtime_boundary` | `passed` | Route imports the MVP/runtime boundary component. |
 | `imports_runtime_contract` | `passed` | Route imports the local runtime contract component. |
@@ -81,6 +83,8 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `keeps_installation_topology_safe` | `passed` | Installation topology keeps auth, upload, process and network actions gated. |
 | `shows_health_readiness` | `passed` | Route renders the local health readiness contract. |
 | `keeps_health_readiness_safe` | `passed` | Health readiness keeps hardware, model, filesystem, process and queue actions gated. |
+| `shows_risk_register` | `passed` | Route renders the human approval risk register. |
+| `risk_register_covers_core_gates` | `passed` | Risk register covers runtime, generation, rights, profiles, data and external collaboration. |
 | `shows_demo_questions` | `passed` | Route renders architect-facing demo questions. |
 | `anchors_demo_claims` | `passed` | Demo questions point claims back to visible panels. |
 | `shows_review_decision_draft` | `passed` | Route renders a local non-writing review decision draft. |

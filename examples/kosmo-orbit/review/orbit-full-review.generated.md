@@ -1,6 +1,6 @@
 # KosmoOrbit Full Review
 
-Generated: 2026-06-01T08:33:03.899Z
+Generated: 2026-06-01T08:40:43.768Z
 Status: `orbit_full_review_ready_for_review_mode`
 Workspace: `examples/kosmo-orbit/workspace.demo.json`
 Project: `examples/kosmo-projects/kosmo-demo-001`
@@ -25,7 +25,7 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 - health readiness checks: 14/14
 - health readiness channels: 6
 - orbit route smoke: `orbit_route_smoke_passed`
-- orbit route smoke checks: 96/96
+- orbit route smoke checks: 100/100
 - workspace status: `orbit_blocked_gates_present`
 - project status: `local_review_only`
 - project artifacts: 59

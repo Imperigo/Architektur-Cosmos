@@ -1,6 +1,6 @@
 # KosmoOrbit Demo Audit
 
-Generated: 2026-06-01T08:27:36.794Z
+Generated: 2026-06-01T08:40:16.835Z
 Status: `orbit_demo_audit_passed`
 HTML: `out/orbit/index.html`
 
@@ -8,25 +8,26 @@ Static audit for the human presentation flow of `/orbit`. It checks section orde
 
 ## Summary
 
-- checks: 14/14 passed
+- checks: 15/15 passed
 
 ## Demo Order
 
 | Anchor | Section | Position |
 | --- | --- | ---: |
-| `autonomie` | Autonomie-Status | 12690 |
-| `presenter` | 3-Minuten-Erklaerung | 15166 |
-| `fortschritt` | Projektfortschritt | 18183 |
-| `vision` | Vision Bridge | 24928 |
-| `demo-ready` | Demo-Bereitschaft | 29268 |
-| `projektpaket` | Projektpaket Tagesansicht | 32010 |
-| `entscheidung` | Review Decision Draft | 45658 |
-| `runtime-contract` | Runtime-Vertrag | 52967 |
-| `installation` | Buero-Installation | 58963 |
-| `health` | Health Readiness | 66702 |
-| `evidenz` | Pruefevidenz | 73501 |
-| `rechte` | Rechte-Matrix | 81758 |
-| `rollen` | Rollenumschaltung Preview | 99513 |
+| `autonomie` | Autonomie-Status | 12937 |
+| `presenter` | 3-Minuten-Erklaerung | 15413 |
+| `fortschritt` | Projektfortschritt | 18430 |
+| `vision` | Vision Bridge | 25175 |
+| `demo-ready` | Demo-Bereitschaft | 29515 |
+| `projektpaket` | Projektpaket Tagesansicht | 32259 |
+| `entscheidung` | Review Decision Draft | 45907 |
+| `runtime-contract` | Runtime-Vertrag | 53216 |
+| `installation` | Buero-Installation | 59212 |
+| `health` | Health Readiness | 66951 |
+| `risiken` | Risiko-Register | 73808 |
+| `evidenz` | Pruefevidenz | 81097 |
+| `rechte` | Rechte-Matrix | 89356 |
+| `rollen` | Rollenumschaltung Preview | 107111 |
 
 ## Checks
 
@@ -42,6 +43,7 @@ Static audit for the human presentation flow of `/orbit`. It checks section orde
 | `runtime_contract_visible` | `passed` | Runtime contract is visible and non-operational. |
 | `installation_topology_visible` | `passed` | Office installation topology is visible in the export. |
 | `health_readiness_visible` | `passed` | Health readiness contract is visible in the export. |
+| `risk_register_visible` | `passed` | Risk register is visible in the export. |
 | `permission_boundary_visible` | `passed` | Role permission boundary is visible in the export. |
 | `no_runtime_promise` | `passed` | Export does not claim live runtime execution. |
 | `no_render_artifacts` | `passed` | Visible export HTML has no obvious unresolved render artifacts. |

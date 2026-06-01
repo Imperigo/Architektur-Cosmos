@@ -1,12 +1,12 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T08:27:36.774Z",
+  "generated_at": "2026-06-01T08:40:16.791Z",
   "generator": "kosmo-orbit-static-export-smoke",
   "status": "orbit_static_export_smoke_passed",
   "html_file": "out/orbit/index.html",
   "summary": {
-    "check_count": 25,
-    "passed_checks": 25,
+    "check_count": 27,
+    "passed_checks": 27,
     "failed_checks": 0
   },
   "checks": [
@@ -81,6 +81,11 @@
       "status": "passed"
     },
     {
+      "id": "renders_risk_register",
+      "label": "Export renders human approval risk register.",
+      "status": "passed"
+    },
+    {
       "id": "renders_quality_evidence",
       "label": "Export renders quality evidence.",
       "status": "passed"
@@ -128,6 +133,11 @@
     {
       "id": "keeps_health_readiness_safe",
       "label": "Export keeps health readiness non-operational.",
+      "status": "passed"
+    },
+    {
+      "id": "keeps_risk_register_human_gated",
+      "label": "Export keeps risk register human-gated.",
       "status": "passed"
     },
     {

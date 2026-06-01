@@ -161,6 +161,15 @@ Arbeitsstation zuerst welches Panel braucht.
       kritische Review-Gates;
     - ist in `brain:doctor` eingebunden und bleibt rein diagnostisch.
 
+24. **Risiko-Register**
+    - macht lokale Runtime, Design-Generation, Quellen/Rechte,
+      Rollen/Profile, Buero-Daten und externe Zusammenarbeit als menschliche
+      Freigabegates sichtbar;
+    - benennt je Risiko Schutzmassnahme, verantwortliche Rolle und naechstes
+      Gate;
+    - verhindert, dass die Demo wie eine bereits freigegebene Vollautomation
+      wirkt.
+
 ## Lokale Commits seit `origin/main`
 
 - `6ad9372` Add KosmoOrbit role switcher preview
@@ -178,10 +187,10 @@ Arbeitsstation zuerst welches Panel braucht.
 
 Zuletzt gruene lokale Checks:
 
-- `npm run kosmo:orbit-route-smoke` — 96/96 passed
+- `npm run kosmo:orbit-route-smoke` — 100/100 passed
 - `npm run kosmo:orbit-full-review` — 17/17 passed
-- `npm run kosmo:orbit-demo-audit` — 14/14 passed
-- `npm run kosmo:orbit-responsive-audit` — 16/16 passed
+- `npm run kosmo:orbit-demo-audit` — 15/15 passed
+- `npm run kosmo:orbit-responsive-audit` — 17/17 passed
 - `npm run kosmo:orbit-health-readiness` — 14/14 passed
 - `npm run kosmodata:hud-guard` — 13/13 passed
 - `npm run database:pilot-quality` — passed, 5 Piloten, 97% Durchschnitt
@@ -193,7 +202,7 @@ Zuletzt gruene lokale Checks:
 - `npm run security:check` — passed, grosse bekannte Dateien uebersprungen
 - `npx tsc --noEmit` — passed
 - `npm run build` — static export passed
-- `npm run build` + `npm run kosmo:orbit-static-smoke` — 25/25 static
+- `npm run build` + `npm run kosmo:orbit-static-smoke` — 27/27 static
   `/orbit` HTML enthaelt die wichtigsten Demo-Panels und Anker
 
 ## Sicherheitsgrenzen
