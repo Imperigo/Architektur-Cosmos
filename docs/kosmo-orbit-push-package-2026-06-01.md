@@ -6,7 +6,7 @@ Status: lokales Review- und Push-Paket. Kein Push wurde ausgefuehrt.
 
 - Branch: `main`
 - Remote: `origin/main`
-- Lokaler Stand: 51 Commits vor `origin/main`
+- Lokaler Stand: 52 Commits vor `origin/main`
 - Live/Deploy: nicht ausgefuehrt, weil Push/Live-Go fehlt
 
 ## Inhalt des Pakets
@@ -27,6 +27,8 @@ deutlich reifer:
 - Live-Gate mit Owner-Go, Security Review und Live-Smoke vor Push/Deploy;
 - Pilot-Session-Vertrag mit Schema, Template und lokalem Check;
 - Pilot-Session-Template sichtbar in `/orbit` mit leeren Messwerten;
+- Pilot-Messkit sichtbar in `/orbit` mit leeren Messkarten, Evidenzlinks,
+  Schema und lokalem Check;
 - Chef-Demo-Skript fuer eine nicht-technische 5-Minuten-Erklaerung;
 - Afternoon Checkpoint als kurzer lokaler Zwischenabschluss;
 - Autonomous Closeout als finaler lokaler Abschluss des 5h-Batches;
@@ -38,12 +40,13 @@ deutlich reifer:
 
 Stand: finaler Abschluss-Sweep am 2026-06-01, kein Push/Deploy.
 
-- `npm run kosmo:orbit-full-review` — 21/21 passed
+- `npm run kosmo:orbit-full-review` — 22/22 passed
+- `npm run kosmo:orbit-pilot-kit` — 19/19 passed
 - `npm run kosmo:orbit-pilot-session` — 17/17 passed
-- `npm run kosmo:orbit-route-smoke` — 149/149 passed
+- `npm run kosmo:orbit-route-smoke` — 153/153 passed
 - `npm run kosmo:orbit-demo-audit` — 33/33 passed
 - `npm run kosmo:orbit-responsive-audit` — 27/27 passed
-- `npm run kosmo:orbit-static-smoke` — 47/47 passed
+- `npm run kosmo:orbit-static-smoke` — 49/49 passed
 - `npm run ui:audit` — 72/72 passed
 - `npx tsc --noEmit --pretty false --incremental false` — passed
 - `npm run lint` — 0 Errors, bekannte 25 Warnings

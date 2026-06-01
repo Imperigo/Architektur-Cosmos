@@ -153,6 +153,8 @@ Dieser Kern zeigt:
   Zielarbeitsweise vergleicht, ohne unbewiesene ROI-Zahlen zu behaupten;
 - eine Pilotmessung, die Suchzeit, Blocker-Frueherkennung, Rollenpassung und
   Wiederholbarkeit als echte Buero-Evidenz pruefbar macht;
+- ein Pilot-Messkit, das Baseline, Evidenzrunde, Rollenrunde, Entscheidung und
+  leere Messkarten vorbereitet, ohne bereits Resultate zu behaupten;
 - einen Presenter-Modus fuer eine 3-Minuten-Erklaerung, der die
   Buero-Argumente besser, schneller und guenstiger ohne Informatik-Sprache
   zusammenfasst;

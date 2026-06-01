@@ -33,10 +33,12 @@ klarer und nachvollziehbarer machen.
    - Sagen: KosmoOrbit soll zuerst Orientierung, Blocker und naechste Schritte
      sichtbar machen.
 
-3. **Pilotmessung und Pilot-Runbook zeigen**
+3. **Pilotmessung, Messkit und Pilot-Runbook zeigen**
    - Sagen: Wir behaupten keine Prozentersparnis.
    - Sagen: Wir messen an einem kleinen Projekt, ob Suchzeit, Blocker,
      Rollenverstaendnis und Wiederholbarkeit besser werden.
+   - Sagen: Das Messkit ist die leere Struktur fuer diese Beobachtung, nicht
+     schon das Resultat.
 
 4. **Pilot-Session Template zeigen**
    - Sagen: Das Template ist noch leer.

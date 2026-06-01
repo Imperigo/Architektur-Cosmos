@@ -5,20 +5,21 @@ Status: finaler lokaler Abschluss des autonomen 5h-KosmoOrbit-Batches.
 ## Kurzfazit
 
 KosmoOrbit ist lokal als erste vorfuehrbare Steuerzentrale deutlich weiter:
-`/orbit` zeigt Rollen, Rechte, KosmoDesign-Handoff, Office-Pilot, Live-Gate,
-Pilot-Session-Template und die wichtigsten Sicherheitsgrenzen als statische
-review-only Preview.
+`/orbit` zeigt Rollen, Rechte, KosmoDesign-Handoff, Office-Pilot, Pilot-
+Messkit, Live-Gate, Pilot-Session-Template und die wichtigsten
+Sicherheitsgrenzen als statische review-only Preview.
 
 Der Stand ist fuer eine interne Demo geeignet. Fuer oeffentlichen Livegang
 fehlt bewusst noch das Owner-Go, danach Push und Live-Smoke.
 
 ## Finaler Qualitaets-Sweep
 
-- `npm run kosmo:orbit-full-review` - 21/21 passed
-- `npm run kosmo:orbit-route-smoke` - 149/149 passed
+- `npm run kosmo:orbit-full-review` - 22/22 passed
+- `npm run kosmo:orbit-pilot-kit` - 19/19 passed
+- `npm run kosmo:orbit-route-smoke` - 153/153 passed
 - `npm run kosmo:orbit-demo-audit` - 33/33 passed
 - `npm run kosmo:orbit-responsive-audit` - 27/27 passed
-- `npm run kosmo:orbit-static-smoke` - 47/47 passed
+- `npm run kosmo:orbit-static-smoke` - 49/49 passed
 - `npx tsc --noEmit --pretty false --incremental false` - passed
 - `npm run lint` - 0 Errors, 25 bekannte Bestandswarnungen
 - `npm run ui:audit` - 72/72 passed

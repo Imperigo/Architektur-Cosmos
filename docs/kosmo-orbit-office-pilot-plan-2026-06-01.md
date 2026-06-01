@@ -35,6 +35,7 @@ KosmoOrbit-Logik im Buero verstaendlich und nuetzlich ist:
    - Presenter-Modus;
    - Workflow-Delta;
    - Pilotmessung;
+   - Pilot-Messkit;
    - Buero-Routine;
    - Projektpaket Tagesansicht;
    - KosmoDesign Handoff Console;
@@ -73,6 +74,12 @@ KosmoOrbit-Logik im Buero verstaendlich und nuetzlich ist:
 - `npm run kosmo:orbit-pilot-session` prueft, dass das Template keine
   Kundendaten, Uploads, Kosten, Design-Generation oder erfundenen Resultate
   behauptet.
+- `schema/kosmo-orbit-pilot-measurement-kit.schema.json` als lokaler Vertrag
+  fuer die Messkarten.
+- `examples/kosmo-orbit/pilot/orbit-office-pilot-measurement-kit.demo.json`
+  als leeres Messkit mit Evidenzlinks und ohne behauptete Resultate.
+- `npm run kosmo:orbit-pilot-kit` prueft, dass Messwerte, Notizen,
+  Scoring und Entscheidung leer bleiben, bis ein Mensch den Pilot ausfuellt.
 
 ## Fragen an die Chefs
 

@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://architekturkosmos.ch/schema/kosmo-orbit-pilot-measurement-kit.schema.json",
+  "title": "KosmoOrbit Pilot Measurement Kit",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "kit",
+    "safety",
+    "phases",
+    "measurement_cards",
+    "evidence_links",
+    "scoring",
+    "decision"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1"
+    },
+    "kit": {
+      "type": "object",
+      "required": ["id", "status", "mode", "project_package"],
+      "properties": {
+        "id": { "type": "string" },
+        "status": {
+          "enum": ["template_ready", "in_review", "completed_local", "blocked"]
+        },
+        "mode": {
+          "const": "local_review_only"
+        },
+        "project_package": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "safety": {
+      "type": "object",
+      "required": [
+        "no_customer_data",
+        "anonymized_or_demo_inputs_only",
+        "no_uploads",
+        "no_costs",
+        "no_design_generation",
+        "no_external_accounts",
+        "no_public_publish",
+        "no_push_without_owner_go",
+        "no_real_result_claims"
+      ],
+      "additionalProperties": true
+    },
+    "phases": {
+      "type": "array",
+      "items": { "type": "object" },
+      "minItems": 4
+    },
+    "measurement_cards": {
+      "type": "array",
+      "items": { "type": "object" },
+      "minItems": 5
+    },
+    "evidence_links": {
+      "type": "array",
+      "items": { "type": "object" },
+      "minItems": 4
+    },
+    "scoring": {
+      "type": "object",
+      "required": ["status", "minimum_evidence_links", "allowed_decisions"],
+      "properties": {
+        "status": {
+          "enum": ["not_scored", "draft", "human_reviewed"]
+        },
+        "minimum_evidence_links": {
+          "type": "integer",
+          "minimum": 4
+        },
+        "allowed_decisions": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 3
+        }
+      },
+      "additionalProperties": true
+    },
+    "decision": {
+      "type": "object",
+      "required": ["status", "selected_option", "human_reviewer"],
+      "properties": {
+        "status": {
+          "enum": ["not_run_yet", "needs_more_evidence", "continue", "pause", "blocked"]
+        },
+        "selected_option": {
+          "type": ["string", "null"]
+        },
+        "human_reviewer": {
+          "type": ["string", "null"]
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

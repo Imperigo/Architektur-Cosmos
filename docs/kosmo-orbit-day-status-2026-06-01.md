@@ -176,6 +176,9 @@ Wichtig fuer die Kommunikation:
   menschlicher Buero-Pilot durchgefuehrt wird.
 - Das Pilot-Session-Template ist direkt in `/orbit` sichtbar: Session-Status,
   Sicherheitsflags, Messpunkte und leere before/after-Werte sind lesbar.
+- Ein Pilot-Messkit ist direkt in `/orbit` sichtbar: Baseline, Evidenzrunde,
+  Rollenrunde, Entscheidung, Messkarten und Evidenzlinks bleiben leer, bis ein
+  Mensch echte Pilotbeobachtungen eintraegt.
 - Ein Chef-Demo-Skript fasst die nicht-technische 5-Minuten-Erklaerung
   zusammen und ist im Office Pilot Plan als Arbeitsartefakt verlinkt.
 - Ein Afternoon Checkpoint fasst lokalen Stand, Checks, Grenzen und naechste
@@ -204,12 +207,13 @@ Wichtig fuer die Kommunikation:
 
 - `npm run kosmo:orbit-audit-trail` — 11/11 passed.
 - `npm run kosmo:orbit-office-routine` — 10/10 passed.
-- `npm run kosmo:orbit-route-smoke` — 149/149 passed.
-- `npm run kosmo:orbit-full-review` — 21/21 passed.
+- `npm run kosmo:orbit-route-smoke` — 153/153 passed.
+- `npm run kosmo:orbit-full-review` — 22/22 passed.
+- `npm run kosmo:orbit-pilot-kit` — 19/19 passed.
 - `npm run kosmo:orbit-pilot-session` — 17/17 passed.
 - `npm run kosmo:orbit-demo-audit` — 33/33 passed.
 - `npm run kosmo:orbit-responsive-audit` — 27/27 passed.
-- `npm run kosmo:orbit-static-smoke` — 47/47 passed.
+- `npm run kosmo:orbit-static-smoke` — 49/49 passed.
 - `npx tsc --noEmit --pretty false --incremental false` — passed.
 - `npm run lint` — passed mit bekannten Bestandswarnungen, keine Errors.
 - `npm run build` mit Node 22 — passed.

@@ -1,6 +1,6 @@
 # KosmoOrbit Demo Audit
 
-Generated: 2026-06-01T14:07:30.073Z
+Generated: 2026-06-01T14:24:52.614Z
 Status: `orbit_demo_audit_passed`
 HTML: `out/orbit/index.html`
 
@@ -14,30 +14,30 @@ Static audit for the human presentation flow of `/orbit`. It checks section orde
 
 | Anchor | Section | Position |
 | --- | --- | ---: |
-| `autonomie` | Autonomie-Status | 15443 |
-| `routine` | Buero-Routine | 17919 |
-| `presenter` | 3-Minuten-Erklaerung | 30731 |
-| `workflow-delta` | Workflow-Delta | 33748 |
-| `pilotmessung` | Pilotmessung | 39470 |
-| `pilotplan` | Pilot-Runbook | 43564 |
-| `pilot-session` | Pilot-Session Template | 51182 |
-| `fortschritt` | Projektfortschritt | 56621 |
-| `vision` | Vision Bridge | 63366 |
-| `demo-ready` | Demo-Bereitschaft | 67706 |
-| `live-gate` | Live-Gate | 70450 |
-| `projektpaket` | Projektpaket Tagesansicht | 74019 |
-| `design-handoff` | KosmoDesign Handoff | 83611 |
-| `entscheidung` | Review Decision Draft | 97742 |
-| `runtime-contract` | Runtime-Vertrag | 105051 |
-| `installation` | Buero-Installation | 111047 |
-| `health` | Health Readiness | 118786 |
-| `risiken` | Risiko-Register | 125643 |
-| `commands` | Command-Vertrag | 132932 |
-| `audit` | Audit-Trail-Vertrag | 142295 |
-| `evidenz` | Pruefevidenz | 149809 |
-| `ausbildung` | Ausbildungsmodus | 158068 |
-| `rechte` | Rechte-Matrix | 163378 |
-| `rollen` | Rollenumschaltung Preview | 181133 |
+| `autonomie` | Autonomie-Status | 15692 |
+| `routine` | Buero-Routine | 18168 |
+| `presenter` | 3-Minuten-Erklaerung | 30980 |
+| `workflow-delta` | Workflow-Delta | 33997 |
+| `pilotmessung` | Pilotmessung | 39719 |
+| `pilotplan` | Pilot-Runbook | 50752 |
+| `pilot-session` | Pilot-Session Template | 58370 |
+| `fortschritt` | Projektfortschritt | 63809 |
+| `vision` | Vision Bridge | 70554 |
+| `demo-ready` | Demo-Bereitschaft | 74894 |
+| `live-gate` | Live-Gate | 77638 |
+| `projektpaket` | Projektpaket Tagesansicht | 81207 |
+| `design-handoff` | KosmoDesign Handoff | 90799 |
+| `entscheidung` | Review Decision Draft | 104930 |
+| `runtime-contract` | Runtime-Vertrag | 112239 |
+| `installation` | Buero-Installation | 118235 |
+| `health` | Health Readiness | 125974 |
+| `risiken` | Risiko-Register | 132831 |
+| `commands` | Command-Vertrag | 140120 |
+| `audit` | Audit-Trail-Vertrag | 149483 |
+| `evidenz` | Pruefevidenz | 156997 |
+| `ausbildung` | Ausbildungsmodus | 165256 |
+| `rechte` | Rechte-Matrix | 170566 |
+| `rollen` | Rollenumschaltung Preview | 188321 |
 
 ## Checks
 

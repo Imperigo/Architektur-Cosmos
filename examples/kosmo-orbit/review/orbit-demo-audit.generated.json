@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T14:07:30.073Z",
+  "generated_at": "2026-06-01T14:24:52.614Z",
   "generator": "kosmo-orbit-demo-audit",
   "status": "orbit_demo_audit_passed",
   "html_file": "out/orbit/index.html",
@@ -13,122 +13,122 @@
     {
       "id": "autonomie",
       "label": "Autonomie-Status",
-      "index": 15443
+      "index": 15692
     },
     {
       "id": "routine",
       "label": "Buero-Routine",
-      "index": 17919
+      "index": 18168
     },
     {
       "id": "presenter",
       "label": "3-Minuten-Erklaerung",
-      "index": 30731
+      "index": 30980
     },
     {
       "id": "workflow-delta",
       "label": "Workflow-Delta",
-      "index": 33748
+      "index": 33997
     },
     {
       "id": "pilotmessung",
       "label": "Pilotmessung",
-      "index": 39470
+      "index": 39719
     },
     {
       "id": "pilotplan",
       "label": "Pilot-Runbook",
-      "index": 43564
+      "index": 50752
     },
     {
       "id": "pilot-session",
       "label": "Pilot-Session Template",
-      "index": 51182
+      "index": 58370
     },
     {
       "id": "fortschritt",
       "label": "Projektfortschritt",
-      "index": 56621
+      "index": 63809
     },
     {
       "id": "vision",
       "label": "Vision Bridge",
-      "index": 63366
+      "index": 70554
     },
     {
       "id": "demo-ready",
       "label": "Demo-Bereitschaft",
-      "index": 67706
+      "index": 74894
     },
     {
       "id": "live-gate",
       "label": "Live-Gate",
-      "index": 70450
+      "index": 77638
     },
     {
       "id": "projektpaket",
       "label": "Projektpaket Tagesansicht",
-      "index": 74019
+      "index": 81207
     },
     {
       "id": "design-handoff",
       "label": "KosmoDesign Handoff",
-      "index": 83611
+      "index": 90799
     },
     {
       "id": "entscheidung",
       "label": "Review Decision Draft",
-      "index": 97742
+      "index": 104930
     },
     {
       "id": "runtime-contract",
       "label": "Runtime-Vertrag",
-      "index": 105051
+      "index": 112239
     },
     {
       "id": "installation",
       "label": "Buero-Installation",
-      "index": 111047
+      "index": 118235
     },
     {
       "id": "health",
       "label": "Health Readiness",
-      "index": 118786
+      "index": 125974
     },
     {
       "id": "risiken",
       "label": "Risiko-Register",
-      "index": 125643
+      "index": 132831
     },
     {
       "id": "commands",
       "label": "Command-Vertrag",
-      "index": 132932
+      "index": 140120
     },
     {
       "id": "audit",
       "label": "Audit-Trail-Vertrag",
-      "index": 142295
+      "index": 149483
     },
     {
       "id": "evidenz",
       "label": "Pruefevidenz",
-      "index": 149809
+      "index": 156997
     },
     {
       "id": "ausbildung",
       "label": "Ausbildungsmodus",
-      "index": 158068
+      "index": 165256
     },
     {
       "id": "rechte",
       "label": "Rechte-Matrix",
-      "index": 163378
+      "index": 170566
     },
     {
       "id": "rollen",
       "label": "Rollenumschaltung Preview",
-      "index": 181133
+      "index": 188321
     }
   ],
   "checks": [

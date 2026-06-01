@@ -739,6 +739,8 @@ Architekturburo:
 - Workflow-Delta fuer heutigen Bueroablauf gegen KosmoOrbit-Zielablauf;
 - Pilotmessung fuer Suchzeit, Blocker-Frueherkennung, Rollenpassung und
   Wiederholbarkeit;
+- Pilot-Messkit mit leeren Messkarten, Evidenzlinks und lokaler
+  Sicherheitspruefung;
 - Pilot-Runbook fuer einen 45-60-Minuten-Buero-Test ohne Live-Risiko;
 - Pilot-Session-Vertrag als lokales Template fuer spaetere echte Messwerte;
 - Pilot-Session-Template sichtbar in `/orbit` mit leeren before/after-Werten;
@@ -775,12 +777,13 @@ Die wichtigste Produktlinie ist damit klarer:
 
 Aktuelle lokale Nachweise:
 
-- `npm run kosmo:orbit-full-review` — 21/21 passed;
+- `npm run kosmo:orbit-full-review` — 22/22 passed;
+- `npm run kosmo:orbit-pilot-kit` — 19/19 passed;
 - `npm run kosmo:orbit-pilot-session` — 17/17 passed;
-- `npm run kosmo:orbit-route-smoke` — 149/149 passed;
+- `npm run kosmo:orbit-route-smoke` — 153/153 passed;
 - `npm run kosmo:orbit-demo-audit` — 33/33 passed;
 - `npm run kosmo:orbit-responsive-audit` — 27/27 passed;
-- `npm run kosmo:orbit-static-smoke` — 47/47 passed;
+- `npm run kosmo:orbit-static-smoke` — 49/49 passed;
 - `npx tsc --noEmit --pretty false --incremental false` — passed;
 - `npm run lint` — 0 Errors, bekannte Bestandswarnungen;
 - `npm run ui:audit` — 72/72 passed;

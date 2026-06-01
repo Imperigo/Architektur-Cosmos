@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T14:07:14.016Z",
+  "generated_at": "2026-06-01T14:21:08.417Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 149,
-    "passed_checks": 149,
+    "check_count": 153,
+    "passed_checks": 153,
     "failed_checks": 0
   },
   "checks": [
@@ -84,6 +84,11 @@
     {
       "id": "pilot_measurement_file_exists",
       "label": "Orbit pilot measurement component exists.",
+      "status": "passed"
+    },
+    {
+      "id": "pilot_measurement_kit_file_exists",
+      "label": "Orbit pilot measurement kit component exists.",
       "status": "passed"
     },
     {
@@ -249,6 +254,11 @@
     {
       "id": "imports_pilot_measurement",
       "label": "Route imports the pilot measurement component.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_pilot_measurement_kit",
+      "label": "Route imports the pilot measurement kit component.",
       "status": "passed"
     },
     {
@@ -479,6 +489,16 @@
     {
       "id": "pilot_measurement_blocks_live_actions",
       "label": "Pilot measurement blocks live data, uploads, costs and generation.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_pilot_measurement_kit",
+      "label": "Route renders office pilot measurement kit.",
+      "status": "passed"
+    },
+    {
+      "id": "pilot_measurement_kit_avoids_fake_results",
+      "label": "Pilot measurement kit keeps values empty and avoids claimed results.",
       "status": "passed"
     },
     {

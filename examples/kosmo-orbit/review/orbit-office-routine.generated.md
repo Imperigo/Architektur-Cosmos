@@ -1,6 +1,6 @@
 # KosmoOrbit Office Routine Smoke
 
-Generated: 2026-06-01T14:06:51.441Z
+Generated: 2026-06-01T14:21:08.037Z
 Status: `orbit_office_routine_contract_passed`
 Contract: `examples/kosmo-orbit/routines/orbit-office-routine.contract.json`
 

@@ -72,13 +72,15 @@ Aktiv fuer:
 
 - Hauptsoftware- und Steuerzentralen-Vision
 - aktuelle statische `/orbit`-Preview mit Demo-Navigation, Presenter-Modus,
-  Workflow-Delta, Pilotmessung, Pilot-Runbook, Live-Gate, Buero-Routine,
-  Projektpaket, KosmoDesign Handoff Console, Ausbildungsmodus und
-  Review-/Safety-Vertraegen
+  Workflow-Delta, Pilotmessung, Pilot-Messkit, Pilot-Runbook, Live-Gate,
+  Buero-Routine, Projektpaket, KosmoDesign Handoff Console, Ausbildungsmodus
+  und Review-/Safety-Vertraegen
 - Pilot-Session-Vertrag fuer spaetere echte Buero-Messwerte ohne Kundendaten,
   Uploads, Kosten oder behauptete Resultate im Template
 - sichtbares Pilot-Session-Template in `/orbit`, das leere before/after-Werte
   statt erfundener Pilotresultate zeigt
+- Pilot-Messkit fuer Baseline, Evidenzrunde, Rollenrunde, Entscheidung,
+  leere Messkarten und Evidenzlinks ohne behauptete Resultate
 - Chef-Demo-Skript und Office Pilot Plan fuer die erste nicht-technische
   Bueroerklaerung
 - Rollenprofile fuer Chef, IT-/KI-Spezialist, Projektleitung, Entwurf,

@@ -321,6 +321,16 @@ Arbeitsstation zuerst welches Panel braucht.
       TypeScript, Lint, UI-Audit, Build, Security, Brain-Doctor und
       Whitespace-Check.
 
+45. **Office Pilot Messkit**
+    - legt Schema, Demo-JSON, Checkskript und Review-Report fuer ein
+      lokales Pilot-Messkit an;
+    - macht das Messkit in `/orbit` sichtbar, inklusive Baseline,
+      Evidenzrunde, Rollenrunde, Entscheidung, leeren Messkarten und
+      Evidenzlinks;
+    - fuegt `npm run kosmo:orbit-pilot-kit` in den Full Review ein, ohne
+      echte Pilotwerte, Kundendaten, Uploads, Kosten oder Generation zu
+      behaupten.
+
 ## Lokale Commits seit `origin/main`
 
 - `6ad9372` Add KosmoOrbit role switcher preview
@@ -338,8 +348,9 @@ Arbeitsstation zuerst welches Panel braucht.
 
 Zuletzt gruene lokale Checks:
 
-- `npm run kosmo:orbit-route-smoke` — 149/149 passed
-- `npm run kosmo:orbit-full-review` — 21/21 passed
+- `npm run kosmo:orbit-route-smoke` — 153/153 passed
+- `npm run kosmo:orbit-full-review` — 22/22 passed
+- `npm run kosmo:orbit-pilot-kit` — 19/19 passed
 - `npm run kosmo:orbit-pilot-session` — 17/17 passed
 - `npm run kosmo:orbit-demo-audit` — 33/33 passed
 - `npm run kosmo:orbit-responsive-audit` — 27/27 passed
@@ -357,7 +368,7 @@ Zuletzt gruene lokale Checks:
 - `npm run brain:doctor-fast` — 12/12 passed
 - `npx tsc --noEmit` — passed
 - `npm run build` — static export passed
-- `npm run build` + `npm run kosmo:orbit-static-smoke` — 47/47 static
+- `npm run build` + `npm run kosmo:orbit-static-smoke` — 49/49 static
   `/orbit` HTML enthaelt die wichtigsten Demo-Panels und Anker
 
 ## Sicherheitsgrenzen
@@ -378,7 +389,7 @@ In diesem Batch wurde nicht gemacht:
 ## Aktueller Zustand
 
 - Branch: `main`
-- Lokaler Stand: 51 Commits vor `origin/main` nach finalem Closeout-Commit
+- Lokaler Stand: 52 Commits vor `origin/main` nach finalem Messkit-Commit
 - Live-Publish: noch nicht automatisch ausgefuehrt, ausser ein spaeterer
   expliziter Push/Publish-Befehl folgt.
 

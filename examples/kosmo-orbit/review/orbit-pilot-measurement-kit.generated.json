@@ -1,0 +1,120 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-01T14:21:08.280Z",
+  "generator": "kosmo-orbit-pilot-measurement-kit-check",
+  "status": "orbit_pilot_measurement_kit_ready",
+  "kit_file": "examples/kosmo-orbit/pilot/orbit-office-pilot-measurement-kit.demo.json",
+  "schema_file": "schema/kosmo-orbit-pilot-measurement-kit.schema.json",
+  "summary": {
+    "check_count": 19,
+    "passed_checks": 19,
+    "failed_checks": 0,
+    "warning_count": 0,
+    "phase_count": 4,
+    "measurement_card_count": 5,
+    "evidence_link_count": 4
+  },
+  "checks": [
+    {
+      "id": "schema_exists",
+      "label": "Pilot measurement kit schema exists.",
+      "status": "passed"
+    },
+    {
+      "id": "kit_exists",
+      "label": "Pilot measurement kit template exists.",
+      "status": "passed"
+    },
+    {
+      "id": "no_parse_failures",
+      "label": "Pilot measurement kit JSON parsed successfully.",
+      "status": "passed"
+    },
+    {
+      "id": "schema_version",
+      "label": "Pilot measurement kit uses schema version 0.1.",
+      "status": "passed"
+    },
+    {
+      "id": "template_ready",
+      "label": "Pilot measurement kit is a template, not a completed claim.",
+      "status": "passed"
+    },
+    {
+      "id": "local_review_only",
+      "label": "Pilot measurement kit stays local review only.",
+      "status": "passed"
+    },
+    {
+      "id": "project_package_exists",
+      "label": "Referenced demo project package exists.",
+      "status": "passed"
+    },
+    {
+      "id": "safety_flags",
+      "label": "All required safety flags are true.",
+      "status": "passed"
+    },
+    {
+      "id": "phase_set_complete",
+      "label": "Pilot kit has baseline, evidence, role and decision phases.",
+      "status": "passed"
+    },
+    {
+      "id": "measurement_cards_complete",
+      "label": "Pilot kit has all required measurement cards.",
+      "status": "passed"
+    },
+    {
+      "id": "measurement_values_empty",
+      "label": "Pilot kit measurement values are empty until a real pilot runs.",
+      "status": "passed"
+    },
+    {
+      "id": "measurement_targets_present",
+      "label": "Each measurement card references a visible evidence target.",
+      "status": "passed"
+    },
+    {
+      "id": "evidence_links_complete",
+      "label": "Pilot kit links to visible panels and office pilot plan.",
+      "status": "passed"
+    },
+    {
+      "id": "scoring_not_claimed",
+      "label": "Pilot kit scoring is not claimed yet.",
+      "status": "passed"
+    },
+    {
+      "id": "decision_not_run_yet",
+      "label": "Pilot kit decision is not claimed yet.",
+      "status": "passed"
+    },
+    {
+      "id": "no_selected_option",
+      "label": "Pilot kit has no selected option before human review.",
+      "status": "passed"
+    },
+    {
+      "id": "no_human_reviewer_in_template",
+      "label": "Pilot kit template contains no human reviewer name.",
+      "status": "passed"
+    },
+    {
+      "id": "no_failures",
+      "label": "No blocking validation failures were collected.",
+      "status": "passed"
+    },
+    {
+      "id": "warnings_allowed",
+      "label": "Warnings are informational only.",
+      "status": "passed"
+    }
+  ],
+  "warnings": [],
+  "next_actions": [
+    "Use the kit only with demo or anonymized project input.",
+    "Keep all values null until a human office pilot records observations.",
+    "Treat the kit as evidence structure, not as proof of time or cost savings."
+  ]
+}

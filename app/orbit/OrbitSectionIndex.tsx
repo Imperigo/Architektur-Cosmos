@@ -4,6 +4,7 @@ const sectionLinks = [
   { href: '#presenter', label: '3-Minuten' },
   { href: '#workflow-delta', label: 'Workflow' },
   { href: '#pilotmessung', label: 'Pilot' },
+  { href: '#pilot-kit', label: 'Messkit' },
   { href: '#pilotplan', label: 'Pilotplan' },
   { href: '#pilot-session', label: 'Session' },
   { href: '#fortschritt', label: 'Fortschritt' },

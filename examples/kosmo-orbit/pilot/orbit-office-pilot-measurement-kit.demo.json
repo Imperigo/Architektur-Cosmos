@@ -1,0 +1,139 @@
+{
+  "schema_version": "0.1",
+  "kit": {
+    "id": "orbit-office-pilot-measurement-kit-demo-001",
+    "status": "template_ready",
+    "mode": "local_review_only",
+    "project_package": "examples/kosmo-projects/kosmo-demo-001/kosmo.project.json",
+    "scope": "Prepare a later human office pilot without storing real customer data or claiming measured savings."
+  },
+  "safety": {
+    "no_customer_data": true,
+    "anonymized_or_demo_inputs_only": true,
+    "no_uploads": true,
+    "no_costs": true,
+    "no_design_generation": true,
+    "no_external_accounts": true,
+    "no_public_publish": true,
+    "no_push_without_owner_go": true,
+    "no_real_result_claims": true
+  },
+  "phases": [
+    {
+      "id": "baseline",
+      "label": "Baseline before KosmoOrbit",
+      "output": "short human note",
+      "guard": "Use only anonymized or demo project context."
+    },
+    {
+      "id": "evidence_capture",
+      "label": "KosmoOrbit evidence capture",
+      "output": "panel references and blocker list",
+      "guard": "Read local panels only; do not write customer data."
+    },
+    {
+      "id": "role_round",
+      "label": "Role surface round",
+      "output": "role fit notes",
+      "guard": "No real accounts or permissions are created."
+    },
+    {
+      "id": "decision",
+      "label": "Human pilot decision",
+      "output": "continue, pause, blocked or needs more evidence",
+      "guard": "Decision remains local until owner approves sharing."
+    }
+  ],
+  "measurement_cards": [
+    {
+      "id": "orientation_time",
+      "label": "Time to understand project state",
+      "unit": "minutes",
+      "target_evidence": "#projektpaket",
+      "baseline_prompt": "How long does orientation take in the normal workflow?",
+      "kosmoorbit_prompt": "How long until the project package, gates and next action are understood in KosmoOrbit?",
+      "before_value": null,
+      "after_value": null,
+      "human_note": null
+    },
+    {
+      "id": "blocker_visibility",
+      "label": "Important blockers visible before design work",
+      "unit": "count",
+      "target_evidence": "#risiken",
+      "baseline_prompt": "Which blockers are normally found late?",
+      "kosmoorbit_prompt": "Which blockers are visible before KosmoDesign work starts?",
+      "before_value": null,
+      "after_value": null,
+      "human_note": null
+    },
+    {
+      "id": "role_fit",
+      "label": "Role surface fit",
+      "unit": "score_1_to_5",
+      "target_evidence": "#rechte",
+      "baseline_prompt": "How well does the normal tool surface fit this person?",
+      "kosmoorbit_prompt": "How well does the KosmoOrbit role surface fit this person?",
+      "before_value": null,
+      "after_value": null,
+      "human_note": null
+    },
+    {
+      "id": "design_handoff_clarity",
+      "label": "KosmoDesign handoff clarity",
+      "unit": "score_1_to_5",
+      "target_evidence": "#design-handoff",
+      "baseline_prompt": "How clear is the current route from context to design work?",
+      "kosmoorbit_prompt": "How clear is the review-only KosmoDesign handoff?",
+      "before_value": null,
+      "after_value": null,
+      "human_note": null
+    },
+    {
+      "id": "repeatability",
+      "label": "Can the same review be repeated tomorrow?",
+      "unit": "score_1_to_5",
+      "target_evidence": "#audit",
+      "baseline_prompt": "How repeatable is the normal review path?",
+      "kosmoorbit_prompt": "How repeatable is the KosmoOrbit review path with evidence links?",
+      "before_value": null,
+      "after_value": null,
+      "human_note": null
+    }
+  ],
+  "evidence_links": [
+    {
+      "id": "orbit_pilot_measurement_panel",
+      "target": "/orbit/#pilotmessung"
+    },
+    {
+      "id": "orbit_pilot_runbook_panel",
+      "target": "/orbit/#pilotplan"
+    },
+    {
+      "id": "orbit_pilot_session_panel",
+      "target": "/orbit/#pilot-session"
+    },
+    {
+      "id": "orbit_office_pilot_plan_doc",
+      "target": "docs/kosmo-orbit-office-pilot-plan-2026-06-01.md"
+    }
+  ],
+  "scoring": {
+    "status": "not_scored",
+    "minimum_evidence_links": 4,
+    "allowed_decisions": [
+      "needs_more_evidence",
+      "continue",
+      "pause",
+      "blocked"
+    ],
+    "note": "No score is calculated until a human pilot fills the cards."
+  },
+  "decision": {
+    "status": "not_run_yet",
+    "selected_option": null,
+    "human_reviewer": null,
+    "review_note": null
+  }
+}
