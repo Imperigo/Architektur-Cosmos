@@ -10,46 +10,73 @@ In drei Minuten soll ein Architekturbueroleiter verstehen:
   Kosmos.
 - KosmoOrbit ist heute noch kein CAD und keine fertige lokale Appliance.
 - Der sichtbare MVP zeigt bereits die Kernlogik: Rollen, Projektpaket,
-  Review-Gates, KosmoDesign Review Mode und sichere naechste Aktion.
+  Review-Gates, KosmoDesign Review Mode, Tagesroutine, Ausbildung und sichere
+  naechste Aktion.
 
 ## Demo-Reihenfolge
 
-1. **Presenter-Modus zeigen**  
+1. **Presenter-Modus zeigen**
    Ein Satz: KosmoOrbit sammelt Projekt, Rollen, Tools, KI-Hilfe und
    Review-Gates lokal an einem Ort.
 
-2. **Projektpaket Tagesansicht zeigen**  
+2. **Workflow-Delta zeigen**
+   Erklaeren: Der Mehrwert ist zuerst weniger Suchzeit, fruehere Blocker,
+   weniger Ueberforderung und mehr Wiederholbarkeit. Keine unbewiesenen
+   Prozent- oder ROI-Zahlen versprechen.
+
+3. **Buero-Routine zeigen**
+   Erklaeren: KosmoOrbit denkt den Arbeitstag als lokale Routine:
+   Morgenstart, Projektfokus, KosmoDesign Review Session, Lernmodus,
+   Abendabschluss und Not-Stopp. Heute bleibt das statisch und nicht
+   operativ.
+
+4. **Projektpaket Tagesansicht zeigen**
    Erklaeren: Hier sieht man Reviewlast, Modellprofil, Gates und warum das
    Projekt noch lokal bleibt.
 
-3. **Demo-Fragen zeigen**  
+5. **KosmoDesign Handoff Console zeigen**
+   Erklaeren: KosmoDesign darf heute nur im `context_review_only`-Modus
+   oeffnen. `Generate Design` bleibt sichtbar blockiert, bis Kontext,
+   Quellen, Modellqualitaet und Human Review geschlossen sind.
+
+6. **Demo-Fragen zeigen**
    Die wahrscheinlichsten Chef-Fragen werden direkt beantwortet und auf die
    passenden Panels verlinkt.
 
-4. **Rollenumschaltung zeigen**  
+7. **Rollenumschaltung und Rechte-Matrix zeigen**
    Erklaeren: Ein Chef, Projektleiter, Entwurfsarchitekt, Zeichner oder
    Lehrling sieht nicht dieselbe Oberflaeche.
 
-5. **Gefuehrter Demo-Review-Pfad zeigen**  
+8. **Ausbildungsmodus zeigen**
+   Erklaeren: Praktikant, Lehrling und Schnupperstift bekommen Lernprofile:
+   Schulstoff/Buero-Standards, gefuehrte Projektbeobachtung und Review statt
+   Aktion, ohne Projekt-Writes oder Public-Publish.
+
+9. **Gefuehrter Demo-Review-Pfad zeigen**
    Ablauf: Projektleitung klaert Blocker, Entwurf prueft KosmoDesign im
    Review Mode, Admin haelt Public-/Freigabe-Gates geschlossen.
 
-6. **Review Decision Draft zeigen**
+10. **Review Decision Draft zeigen**
    Erklaeren: KosmoOrbit soll spaeter nicht blind freigeben, sondern einen
    Entscheid mit Evidenz und Write Guard vorbereiten. In der Preview bleibt
    der Status deshalb bewusst `needs_more_evidence`.
 
-7. **MVP-Grenze zeigen**
+11. **Runtime-, Command-, Audit- und Risiko-Vertraege zeigen**
+   Erklaeren: KosmoOrbit benennt genau, was spaeter lokale Runtime wird und
+   was heute blockiert bleibt: Modellstart, Blender-Launch, Geometrie,
+   Userdaten-Writes, Upload, Publish, externer Sync und Push ohne Go.
+
+12. **MVP-Grenze zeigen**
    Erklaeren: Heute ist die Produktlogik sichtbar. Echte lokale KI,
    Benutzerprofile, Toolsteuerung und persistente Entscheidungen gehoeren zur
    spaeteren KosmoZentrale-Runtime.
 
-8. **Pruefevidenz zeigen**
+13. **Pruefevidenz und Demo-Bereitschaft zeigen**
    Erklaeren: Die Preview zeigt Full Review, Route-Smoke und Open Mode direkt
    im Tool. Das ist keine Garantie fuer ein fertiges Produkt, aber ein Beleg,
    dass der aktuelle MVP-Kern lokal geprueft wird.
 
-9. **Arbeitsstations-Prioritaeten zeigen**
+14. **Arbeitsstations-Prioritaeten zeigen**
    Erklaeren: Dieselbe Hauptsoftware wird spaeter je Rolle anders starten:
    Chef/Admin sieht Risiko und Evidenz, Projektleitung sieht Review-Entscheide,
    Entwurf sieht KosmoDesign-Kontext, Zeichnung sieht Modell/Artefakte,
@@ -61,11 +88,14 @@ In drei Minuten soll ein Architekturbueroleiter verstehen:
   passenden Entscheidungsradius.
 - Schneller: Blocker, Reviewlast und naechste Aktion liegen an einem Ort.
 - Guenstiger: Kosmo kann lokal pruefen und vorbereiten, bevor teure Fehler,
-  Cloudjobs oder Abgaben entstehen.
+  Cloudjobs oder Abgaben entstehen. Das ist eine Hypothese fuer Pilotmessung,
+  keine garantierte Prozentersparnis.
 - Sicherer: Generierung, Publikation und Upload bleiben blockiert, bis ein
   Mensch die Review-Gates freigibt.
 - Nachvollziehbarer: Jede spaetere Freigabe braucht Evidenz, Gate-Status und
   eine menschliche Verantwortung.
+- Ausbildung: Lernende bekommen Erklaerung und sichere Uebungen statt dieselbe
+  komplexe Oberflaeche wie ein Chef.
 
 ## Was bewusst noch nicht behauptet wird
 
@@ -75,10 +105,11 @@ In drei Minuten soll ein Architekturbueroleiter verstehen:
 - Keine echte lokale KosmoZentrale-Runtime.
 - Kein Cloud-, Upload-, Kunden- oder Fachplaner-Liveworkflow.
 - Keine offizielle Norm- oder Rechtszertifizierung.
+- Keine garantierte Kosten- oder Zeitersparnis ohne reale Pilotmessung.
 
 ## Naechste Produktfrage
 
-Der naechste sinnvolle Schritt ist nicht mehr Vision, sondern Bedienlogik:
-Wie fuehrt KosmoOrbit eine Projektleitung konkret durch einen echten
-Review-Entscheid, inklusive Entscheidungsprotokoll, Evidenz und naechster
-Freigabe?
+Der naechste sinnvolle Schritt ist eine echte Pilotmessung: ein kleines
+Bueroprojekt als Projektpaket anlegen, den Review-Pfad mit Projektleitung,
+Entwurf, Zeichnung und Ausbildung durchspielen und messen, wo Suchzeit,
+Blocker, Wiederholbarkeit und Entscheidungsqualitaet besser werden.

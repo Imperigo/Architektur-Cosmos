@@ -143,6 +143,10 @@ Wichtig fuer die Kommunikation:
   KosmoOrbit-Zielarbeitsweise: weniger Suchzeit, fruehere Fehlerbremse,
   weniger Ueberforderung und mehr Wiederholbarkeit, ohne unbewiesene ROI-
   oder Prozentersparnis zu behaupten.
+- Das Demo-Briefing ist auf den neuen Stand gebracht und fuehrt jetzt durch
+  Workflow-Delta, Buero-Routine, KosmoDesign Handoff Console,
+  Ausbildungsmodus, Runtime-/Command-/Audit-/Risiko-Vertraege und
+  Demo-Bereitschaft.
 - Ein neuer KosmoData-HUD-Guard schuetzt die wiederkehrenden Website-Bedienpunkte:
   Database oben links, Suche/Dev rechts, Filterzugang rechts unten, HTML-
   Database-Overlay, globales Fadenkreuz in Start/Hauptmenue/Popups und

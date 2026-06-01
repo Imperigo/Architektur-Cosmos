@@ -222,6 +222,15 @@ Arbeitsstation zuerst welches Panel braucht.
     - bleibt ehrlich: keine konkrete Prozentersparnis oder ROI-Behauptung ohne
       echte Buero-Pilotmessung.
 
+31. **Demo-Briefing aktualisiert**
+    - bringt `docs/kosmo-orbit-demo-briefing-2026-06-01.md` auf den neuen
+      Stand der `/orbit`-Preview;
+    - fuegt Workflow-Delta, Buero-Routine, KosmoDesign Handoff Console,
+      Ausbildungsmodus, Runtime-/Command-/Audit-/Risiko-Vertraege und
+      Demo-Bereitschaft in die Vorfuehrreihenfolge ein;
+    - formuliert die naechste Produktfrage als echte Pilotmessung statt als
+      weitere Vision.
+
 ## Lokale Commits seit `origin/main`
 
 - `6ad9372` Add KosmoOrbit role switcher preview
