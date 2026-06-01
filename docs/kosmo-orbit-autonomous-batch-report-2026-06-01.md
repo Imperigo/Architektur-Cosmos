@@ -239,6 +239,14 @@ Arbeitsstation zuerst welches Panel braucht.
     - bleibt ohne Kundendaten, externe Accounts, Uploads, Kostenjobs und
       automatische Plan-/Design-Generierung.
 
+33. **Office Pilot Plan**
+    - legt unter `docs/kosmo-orbit-office-pilot-plan-2026-06-01.md` einen
+      45- bis 60-Minuten-Pilot fuer ein kleines reales oder anonymisiertes
+      Projektpaket fest;
+    - beschreibt Rollen, Ablauf, Messpunkte, Chef-Fragen, Sicherheitslinie und
+      Erfolgskriterium;
+    - macht aus der Demo einen naechsten pruefbaren Produktschritt.
+
 ## Lokale Commits seit `origin/main`
 
 - `6ad9372` Add KosmoOrbit role switcher preview

@@ -119,3 +119,5 @@ Der naechste sinnvolle Schritt ist eine echte Pilotmessung: ein kleines
 Bueroprojekt als Projektpaket anlegen, den Review-Pfad mit Projektleitung,
 Entwurf, Zeichnung und Ausbildung durchspielen und messen, wo Suchzeit,
 Blocker, Wiederholbarkeit und Entscheidungsqualitaet besser werden.
+
+Arbeitsdokument: `docs/kosmo-orbit-office-pilot-plan-2026-06-01.md`.

@@ -151,6 +151,9 @@ Wichtig fuer die Kommunikation:
   kann: Suchzeit, Blocker-Frueherkennung, Rollenpassung und Wiederholbarkeit,
   ohne Kundendaten, Uploads, Kostenjobs oder automatische Plan-/Design-
   Generierung.
+- Ein Office Pilot Plan dokumentiert den naechsten 45- bis 60-Minuten-Test:
+  kleines reales oder anonymisiertes Projektpaket, Rollen, Ablauf,
+  Messpunkte, Chef-Fragen, Sicherheitslinie und Erfolgskriterium.
 - Ein neuer KosmoData-HUD-Guard schuetzt die wiederkehrenden Website-Bedienpunkte:
   Database oben links, Suche/Dev rechts, Filterzugang rechts unten, HTML-
   Database-Overlay, globales Fadenkreuz in Start/Hauptmenue/Popups und
