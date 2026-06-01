@@ -98,6 +98,9 @@ Aktiv fuer:
 - lokale Nachweise ueber `kosmo:orbit-full-review`, `kosmo:orbit-route-smoke`,
   `kosmo:orbit-demo-audit`, `kosmo:orbit-responsive-audit` und
   `kosmo:orbit-static-smoke`
+- KosmoData-Static-Nachweis ueber `atlas:static-smoke`, damit der gebaute
+  `/atlas`-Export, seine CSS/JS-Assets, serialisierten Eintragsdaten und
+  Detailseiten als Demo-Basis pruefbar bleiben
 - Browser-Smoke-Nachweise fuer Pilot-Messkit, Facilitator-Checkliste und
   Pilot-Result-Draft
 - finaler lokaler Abschluss in
