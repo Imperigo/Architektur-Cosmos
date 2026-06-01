@@ -1,7 +1,7 @@
 # KosmoAsset Decision Ledger
 
 Library: `kosmo-asset-demo`
-Generated: 2026-05-31T09:26:52.839Z
+Generated: 2026-06-01T19:33:47.409Z
 Status: `asset_decision_ledger_open`
 
 Local audit ledger. This file reads decision evidence only; it does not create approvals, mutate assets, upload, publish, write D1/R2 or open public gates.

@@ -1,7 +1,7 @@
 # KosmoAsset Handoff Bundle
 
 Library: `kosmo-asset-demo`
-Generated: 2026-05-31T09:26:50.672Z
+Generated: 2026-06-01T19:33:44.814Z
 Status: `local_review_handoff_bundle`
 
 Review-only. The generated Blender script is non-mutating by default and the ArchiCAD CSV is a reference schedule.

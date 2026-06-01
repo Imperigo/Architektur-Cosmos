@@ -2,7 +2,7 @@
 
 Asset: `warm-concrete-material-001`
 Route: `blender`
-Generated: 2026-05-31T09:26:52.861Z
+Generated: 2026-06-01T19:33:47.423Z
 Status: `asset_certificate_smoke_passed`
 
 This smoke test creates temporary local review evidence, verifies the certificate gate, then removes the temporary decision and certificate files. It does not upload, publish, write D1/R2 or mutate the asset library.
