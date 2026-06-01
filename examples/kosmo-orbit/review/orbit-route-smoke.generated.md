@@ -1,6 +1,6 @@
 # KosmoOrbit Route Smoke
 
-Generated: 2026-06-01T12:44:54.291Z
+Generated: 2026-06-01T12:51:18.067Z
 Status: `orbit_route_smoke_passed`
 Route: `app/orbit/page.tsx`
 
@@ -8,7 +8,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 
 ## Summary
 
-- checks: 133/133 passed
+- checks: 137/137 passed
 
 ## Checks
 
@@ -28,6 +28,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `design_handoff_panel_data_file_exists` | `passed` | Orbit KosmoDesign handoff panel spec exists. |
 | `presenter_brief_file_exists` | `passed` | Orbit presenter brief component exists. |
 | `workflow_delta_file_exists` | `passed` | Orbit workflow delta component exists. |
+| `pilot_measurement_file_exists` | `passed` | Orbit pilot measurement component exists. |
 | `progress_map_file_exists` | `passed` | Orbit progress map component exists. |
 | `vision_bridge_file_exists` | `passed` | Orbit vision bridge component exists. |
 | `demo_questions_file_exists` | `passed` | Orbit demo questions component exists. |
@@ -57,6 +58,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `imports_design_handoff_panel` | `passed` | Route imports the KosmoDesign handoff panel component. |
 | `imports_presenter_brief` | `passed` | Route imports the presenter brief component. |
 | `imports_workflow_delta` | `passed` | Route imports the workflow delta component. |
+| `imports_pilot_measurement` | `passed` | Route imports the pilot measurement component. |
 | `imports_progress_map` | `passed` | Route imports the vision-to-MVP progress map component. |
 | `imports_vision_bridge` | `passed` | Route imports the vision bridge component. |
 | `imports_demo_questions` | `passed` | Route imports the demo questions briefing component. |
@@ -98,6 +100,8 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `shows_value_claims` | `passed` | Presenter brief covers better, faster and cheaper value claims. |
 | `shows_workflow_delta` | `passed` | Route renders workflow delta for non-technical office value. |
 | `workflow_delta_avoids_roi_claim` | `passed` | Workflow delta avoids unproven ROI claims. |
+| `shows_pilot_measurement` | `passed` | Route renders pilot measurement for evidence before claims. |
+| `pilot_measurement_blocks_live_actions` | `passed` | Pilot measurement blocks live data, uploads, costs and generation. |
 | `shows_progress_map` | `passed` | Route renders a visible project progress map. |
 | `keeps_progress_map_non_absolute` | `passed` | Progress map avoids claiming one absolute total project percentage. |
 | `shows_runtime_and_generation_lanes` | `passed` | Progress map separates local runtime from CAD/plan generation. |

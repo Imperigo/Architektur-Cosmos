@@ -225,11 +225,19 @@ Arbeitsstation zuerst welches Panel braucht.
 31. **Demo-Briefing aktualisiert**
     - bringt `docs/kosmo-orbit-demo-briefing-2026-06-01.md` auf den neuen
       Stand der `/orbit`-Preview;
-    - fuegt Workflow-Delta, Buero-Routine, KosmoDesign Handoff Console,
+    - fuegt Workflow-Delta, Pilotmessung, Buero-Routine,
+      KosmoDesign Handoff Console,
       Ausbildungsmodus, Runtime-/Command-/Audit-/Risiko-Vertraege und
       Demo-Bereitschaft in die Vorfuehrreihenfolge ein;
     - formuliert die naechste Produktfrage als echte Pilotmessung statt als
       weitere Vision.
+
+32. **Pilotmessung**
+    - zeigt, wie ein Architekturburo den Nutzen real pruefen kann:
+      Suchzeit, Blocker-Frueherkennung, Rollenpassung und Wiederholbarkeit;
+    - verknuepft jede Messfrage mit sichtbarer `/orbit`-Evidenz;
+    - bleibt ohne Kundendaten, externe Accounts, Uploads, Kostenjobs und
+      automatische Plan-/Design-Generierung.
 
 ## Lokale Commits seit `origin/main`
 
@@ -248,10 +256,10 @@ Arbeitsstation zuerst welches Panel braucht.
 
 Zuletzt gruene lokale Checks:
 
-- `npm run kosmo:orbit-route-smoke` — 133/133 passed
+- `npm run kosmo:orbit-route-smoke` — 137/137 passed
 - `npm run kosmo:orbit-full-review` — 20/20 passed
-- `npm run kosmo:orbit-demo-audit` — 25/25 passed
-- `npm run kosmo:orbit-responsive-audit` — 23/23 passed
+- `npm run kosmo:orbit-demo-audit` — 27/27 passed
+- `npm run kosmo:orbit-responsive-audit` — 24/24 passed
 - `npm run kosmo:orbit-health-readiness` — 14/14 passed
 - `npm run kosmo:orbit-command-contract` — 14/14 passed
 - `npm run kosmo:orbit-audit-trail` — 11/11 passed
@@ -266,7 +274,7 @@ Zuletzt gruene lokale Checks:
   `security:check` durch bestehende npm-audit Dependency-Fundstelle
 - `npx tsc --noEmit` — passed
 - `npm run build` — static export passed
-- `npm run build` + `npm run kosmo:orbit-static-smoke` — 39/39 static
+- `npm run build` + `npm run kosmo:orbit-static-smoke` — 41/41 static
   `/orbit` HTML enthaelt die wichtigsten Demo-Panels und Anker
 
 ## Sicherheitsgrenzen

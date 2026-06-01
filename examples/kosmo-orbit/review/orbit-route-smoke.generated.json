@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T12:44:54.291Z",
+  "generated_at": "2026-06-01T12:51:18.067Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 133,
-    "passed_checks": 133,
+    "check_count": 137,
+    "passed_checks": 137,
     "failed_checks": 0
   },
   "checks": [
@@ -79,6 +79,11 @@
     {
       "id": "workflow_delta_file_exists",
       "label": "Orbit workflow delta component exists.",
+      "status": "passed"
+    },
+    {
+      "id": "pilot_measurement_file_exists",
+      "label": "Orbit pilot measurement component exists.",
       "status": "passed"
     },
     {
@@ -224,6 +229,11 @@
     {
       "id": "imports_workflow_delta",
       "label": "Route imports the workflow delta component.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_pilot_measurement",
+      "label": "Route imports the pilot measurement component.",
       "status": "passed"
     },
     {
@@ -429,6 +439,16 @@
     {
       "id": "workflow_delta_avoids_roi_claim",
       "label": "Workflow delta avoids unproven ROI claims.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_pilot_measurement",
+      "label": "Route renders pilot measurement for evidence before claims.",
+      "status": "passed"
+    },
+    {
+      "id": "pilot_measurement_blocks_live_actions",
+      "label": "Pilot measurement blocks live data, uploads, costs and generation.",
       "status": "passed"
     },
     {

@@ -151,6 +151,8 @@ Dieser Kern zeigt:
   Aktion unterstuetzt;
 - ein Workflow-Delta, das heutigen verstreuten Bueroablauf und KosmoOrbit-
   Zielarbeitsweise vergleicht, ohne unbewiesene ROI-Zahlen zu behaupten;
+- eine Pilotmessung, die Suchzeit, Blocker-Frueherkennung, Rollenpassung und
+  Wiederholbarkeit als echte Buero-Evidenz pruefbar macht;
 - einen Presenter-Modus fuer eine 3-Minuten-Erklaerung, der die
   Buero-Argumente besser, schneller und guenstiger ohne Informatik-Sprache
   zusammenfasst;

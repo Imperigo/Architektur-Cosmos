@@ -20,6 +20,7 @@ import { OrbitInstallationTopology } from './OrbitInstallationTopology';
 import { OrbitLearningMode } from './OrbitLearningMode';
 import { OrbitOfficeRoutine } from './OrbitOfficeRoutine';
 import { OrbitPermissionMatrix } from './OrbitPermissionMatrix';
+import { OrbitPilotMeasurement } from './OrbitPilotMeasurement';
 import { OrbitPresenterBrief } from './OrbitPresenterBrief';
 import { OrbitProgressMap } from './OrbitProgressMap';
 import { OrbitProjectDashboard, type DesignHandoffPreview, type ProjectInspectorReport } from './OrbitProjectDashboard';
@@ -361,6 +362,10 @@ export default function OrbitPage() {
 
           <div id="workflow-delta" className="scroll-mt-4">
             <OrbitWorkflowDelta />
+          </div>
+
+          <div id="pilotmessung" className="scroll-mt-4">
+            <OrbitPilotMeasurement />
           </div>
 
           <div id="fortschritt" className="scroll-mt-4">

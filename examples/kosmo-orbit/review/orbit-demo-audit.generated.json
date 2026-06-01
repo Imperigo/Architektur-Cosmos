@@ -1,114 +1,119 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T12:44:35.568Z",
+  "generated_at": "2026-06-01T12:51:00.065Z",
   "generator": "kosmo-orbit-demo-audit",
   "status": "orbit_demo_audit_passed",
   "html_file": "out/orbit/index.html",
   "summary": {
-    "check_count": 25,
-    "passed_checks": 25,
+    "check_count": 27,
+    "passed_checks": 27,
     "failed_checks": 0
   },
   "demo_order": [
     {
       "id": "autonomie",
       "label": "Autonomie-Status",
-      "index": 14438
+      "index": 14688
     },
     {
       "id": "routine",
       "label": "Buero-Routine",
-      "index": 16914
+      "index": 17164
     },
     {
       "id": "presenter",
       "label": "3-Minuten-Erklaerung",
-      "index": 29726
+      "index": 29976
     },
     {
       "id": "workflow-delta",
       "label": "Workflow-Delta",
-      "index": 32743
+      "index": 32993
+    },
+    {
+      "id": "pilotmessung",
+      "label": "Pilotmessung",
+      "index": 38715
     },
     {
       "id": "fortschritt",
       "label": "Projektfortschritt",
-      "index": 38465
+      "index": 42809
     },
     {
       "id": "vision",
       "label": "Vision Bridge",
-      "index": 45210
+      "index": 49554
     },
     {
       "id": "demo-ready",
       "label": "Demo-Bereitschaft",
-      "index": 49550
+      "index": 53894
     },
     {
       "id": "projektpaket",
       "label": "Projektpaket Tagesansicht",
-      "index": 52294
+      "index": 56638
     },
     {
       "id": "design-handoff",
       "label": "KosmoDesign Handoff",
-      "index": 61886
+      "index": 66230
     },
     {
       "id": "entscheidung",
       "label": "Review Decision Draft",
-      "index": 76017
+      "index": 80361
     },
     {
       "id": "runtime-contract",
       "label": "Runtime-Vertrag",
-      "index": 83326
+      "index": 87670
     },
     {
       "id": "installation",
       "label": "Buero-Installation",
-      "index": 89322
+      "index": 93666
     },
     {
       "id": "health",
       "label": "Health Readiness",
-      "index": 97061
+      "index": 101405
     },
     {
       "id": "risiken",
       "label": "Risiko-Register",
-      "index": 103918
+      "index": 108262
     },
     {
       "id": "commands",
       "label": "Command-Vertrag",
-      "index": 111207
+      "index": 115551
     },
     {
       "id": "audit",
       "label": "Audit-Trail-Vertrag",
-      "index": 120570
+      "index": 124914
     },
     {
       "id": "evidenz",
       "label": "Pruefevidenz",
-      "index": 128084
+      "index": 132428
     },
     {
       "id": "ausbildung",
       "label": "Ausbildungsmodus",
-      "index": 136343
+      "index": 140687
     },
     {
       "id": "rechte",
       "label": "Rechte-Matrix",
-      "index": 141653
+      "index": 145997
     },
     {
       "id": "rollen",
       "label": "Rollenumschaltung Preview",
-      "index": 159408
+      "index": 163752
     }
   ],
   "checks": [
@@ -160,6 +165,16 @@
     {
       "id": "workflow_delta_honest",
       "label": "Workflow delta avoids unsupported savings claims.",
+      "status": "passed"
+    },
+    {
+      "id": "pilot_measurement_visible",
+      "label": "Pilot measurement is visible in the export.",
+      "status": "passed"
+    },
+    {
+      "id": "pilot_measurement_safe",
+      "label": "Pilot measurement keeps live actions blocked.",
       "status": "passed"
     },
     {

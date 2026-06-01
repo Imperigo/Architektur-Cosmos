@@ -49,6 +49,7 @@ function buildReport(html) {
     { id: 'routine', label: 'Buero-Routine' },
     { id: 'presenter', label: '3-Minuten-Erklaerung' },
     { id: 'workflow-delta', label: 'Workflow-Delta' },
+    { id: 'pilotmessung', label: 'Pilotmessung' },
     { id: 'fortschritt', label: 'Projektfortschritt' },
     { id: 'vision', label: 'Vision Bridge' },
     { id: 'demo-ready', label: 'Demo-Bereitschaft' },
@@ -71,7 +72,7 @@ function buildReport(html) {
     label: section.label,
     index: normalized.indexOf(`id="${section.id}"`)
   }));
-  const navLabels = ['Autonomie', 'Routine', '3-Minuten', 'Workflow', 'Fortschritt', 'Vision', 'Demo', 'Projektpaket', 'Handoff', 'Decision', 'Runtime', 'Installation', 'Health', 'Risiken', 'Commands', 'Audit', 'Evidenz', 'Ausbildung', 'Rechte', 'Rollen', 'Guardrails'];
+  const navLabels = ['Autonomie', 'Routine', '3-Minuten', 'Workflow', 'Pilot', 'Fortschritt', 'Vision', 'Demo', 'Projektpaket', 'Handoff', 'Decision', 'Runtime', 'Installation', 'Health', 'Risiken', 'Commands', 'Audit', 'Evidenz', 'Ausbildung', 'Rechte', 'Rollen', 'Guardrails'];
   const forbiddenArtifacts = ['[object Object]', 'NaN%', 'null null'];
   const checks = [
     check('html_exists', 'Built /orbit HTML exists.', existsSync(htmlPath)),
@@ -84,6 +85,8 @@ function buildReport(html) {
     check('office_routine_safety_visible', 'Office routine safety line is visible in the export.', normalized.includes('Keine versteckte Vollautomation') && normalized.includes('spend money')),
     check('workflow_delta_visible', 'Workflow delta is visible in the export.', normalized.includes('Workflow-Delta') && normalized.includes('heutigen Bueroablauf')),
     check('workflow_delta_honest', 'Workflow delta avoids unsupported savings claims.', normalized.includes('no-roi-claim') && normalized.includes('Keine Garantie auf konkrete Prozentersparnis')),
+    check('pilot_measurement_visible', 'Pilot measurement is visible in the export.', normalized.includes('Pilotmessung') && normalized.includes('evidence-before-claim')),
+    check('pilot_measurement_safe', 'Pilot measurement keeps live actions blocked.', normalized.includes('keine Kundendaten') && normalized.includes('keine Kostenjobs')),
     check('vision_bridge_visible', 'Vision bridge is visible in the export.', normalized.includes('Vision Bridge') && normalized.includes('Orchestrierung vor Generierung')),
     check('design_handoff_visible', 'KosmoDesign handoff console is visible in the export.', normalized.includes('KosmoDesign Handoff') && normalized.includes('Review Console')),
     check('design_handoff_blocks_generation', 'KosmoDesign handoff keeps generation visibly blocked.', normalized.includes('Generate Design') && normalized.includes('Design generation is blocked')),

@@ -1,6 +1,6 @@
 # KosmoOrbit Demo Audit
 
-Generated: 2026-06-01T12:44:35.568Z
+Generated: 2026-06-01T12:51:00.065Z
 Status: `orbit_demo_audit_passed`
 HTML: `out/orbit/index.html`
 
@@ -8,32 +8,33 @@ Static audit for the human presentation flow of `/orbit`. It checks section orde
 
 ## Summary
 
-- checks: 25/25 passed
+- checks: 27/27 passed
 
 ## Demo Order
 
 | Anchor | Section | Position |
 | --- | --- | ---: |
-| `autonomie` | Autonomie-Status | 14438 |
-| `routine` | Buero-Routine | 16914 |
-| `presenter` | 3-Minuten-Erklaerung | 29726 |
-| `workflow-delta` | Workflow-Delta | 32743 |
-| `fortschritt` | Projektfortschritt | 38465 |
-| `vision` | Vision Bridge | 45210 |
-| `demo-ready` | Demo-Bereitschaft | 49550 |
-| `projektpaket` | Projektpaket Tagesansicht | 52294 |
-| `design-handoff` | KosmoDesign Handoff | 61886 |
-| `entscheidung` | Review Decision Draft | 76017 |
-| `runtime-contract` | Runtime-Vertrag | 83326 |
-| `installation` | Buero-Installation | 89322 |
-| `health` | Health Readiness | 97061 |
-| `risiken` | Risiko-Register | 103918 |
-| `commands` | Command-Vertrag | 111207 |
-| `audit` | Audit-Trail-Vertrag | 120570 |
-| `evidenz` | Pruefevidenz | 128084 |
-| `ausbildung` | Ausbildungsmodus | 136343 |
-| `rechte` | Rechte-Matrix | 141653 |
-| `rollen` | Rollenumschaltung Preview | 159408 |
+| `autonomie` | Autonomie-Status | 14688 |
+| `routine` | Buero-Routine | 17164 |
+| `presenter` | 3-Minuten-Erklaerung | 29976 |
+| `workflow-delta` | Workflow-Delta | 32993 |
+| `pilotmessung` | Pilotmessung | 38715 |
+| `fortschritt` | Projektfortschritt | 42809 |
+| `vision` | Vision Bridge | 49554 |
+| `demo-ready` | Demo-Bereitschaft | 53894 |
+| `projektpaket` | Projektpaket Tagesansicht | 56638 |
+| `design-handoff` | KosmoDesign Handoff | 66230 |
+| `entscheidung` | Review Decision Draft | 80361 |
+| `runtime-contract` | Runtime-Vertrag | 87670 |
+| `installation` | Buero-Installation | 93666 |
+| `health` | Health Readiness | 101405 |
+| `risiken` | Risiko-Register | 108262 |
+| `commands` | Command-Vertrag | 115551 |
+| `audit` | Audit-Trail-Vertrag | 124914 |
+| `evidenz` | Pruefevidenz | 132428 |
+| `ausbildung` | Ausbildungsmodus | 140687 |
+| `rechte` | Rechte-Matrix | 145997 |
+| `rollen` | Rollenumschaltung Preview | 163752 |
 
 ## Checks
 
@@ -49,6 +50,8 @@ Static audit for the human presentation flow of `/orbit`. It checks section orde
 | `office_routine_safety_visible` | `passed` | Office routine safety line is visible in the export. |
 | `workflow_delta_visible` | `passed` | Workflow delta is visible in the export. |
 | `workflow_delta_honest` | `passed` | Workflow delta avoids unsupported savings claims. |
+| `pilot_measurement_visible` | `passed` | Pilot measurement is visible in the export. |
+| `pilot_measurement_safe` | `passed` | Pilot measurement keeps live actions blocked. |
 | `vision_bridge_visible` | `passed` | Vision bridge is visible in the export. |
 | `design_handoff_visible` | `passed` | KosmoDesign handoff console is visible in the export. |
 | `design_handoff_blocks_generation` | `passed` | KosmoDesign handoff keeps generation visibly blocked. |

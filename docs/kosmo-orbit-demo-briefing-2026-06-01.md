@@ -24,59 +24,65 @@ In drei Minuten soll ein Architekturbueroleiter verstehen:
    weniger Ueberforderung und mehr Wiederholbarkeit. Keine unbewiesenen
    Prozent- oder ROI-Zahlen versprechen.
 
-3. **Buero-Routine zeigen**
+3. **Pilotmessung zeigen**
+   Erklaeren: Der Nutzen soll an einem kleinen echten Projektpaket gemessen
+   werden: Suchzeit, Blocker-Frueherkennung, Rollenpassung und
+   Wiederholbarkeit. Keine Kundendaten, Uploads, Kostenjobs oder automatische
+   Plan-/Design-Generierung.
+
+4. **Buero-Routine zeigen**
    Erklaeren: KosmoOrbit denkt den Arbeitstag als lokale Routine:
    Morgenstart, Projektfokus, KosmoDesign Review Session, Lernmodus,
    Abendabschluss und Not-Stopp. Heute bleibt das statisch und nicht
    operativ.
 
-4. **Projektpaket Tagesansicht zeigen**
+5. **Projektpaket Tagesansicht zeigen**
    Erklaeren: Hier sieht man Reviewlast, Modellprofil, Gates und warum das
    Projekt noch lokal bleibt.
 
-5. **KosmoDesign Handoff Console zeigen**
+6. **KosmoDesign Handoff Console zeigen**
    Erklaeren: KosmoDesign darf heute nur im `context_review_only`-Modus
    oeffnen. `Generate Design` bleibt sichtbar blockiert, bis Kontext,
    Quellen, Modellqualitaet und Human Review geschlossen sind.
 
-6. **Demo-Fragen zeigen**
+7. **Demo-Fragen zeigen**
    Die wahrscheinlichsten Chef-Fragen werden direkt beantwortet und auf die
    passenden Panels verlinkt.
 
-7. **Rollenumschaltung und Rechte-Matrix zeigen**
+8. **Rollenumschaltung und Rechte-Matrix zeigen**
    Erklaeren: Ein Chef, Projektleiter, Entwurfsarchitekt, Zeichner oder
    Lehrling sieht nicht dieselbe Oberflaeche.
 
-8. **Ausbildungsmodus zeigen**
+9. **Ausbildungsmodus zeigen**
    Erklaeren: Praktikant, Lehrling und Schnupperstift bekommen Lernprofile:
    Schulstoff/Buero-Standards, gefuehrte Projektbeobachtung und Review statt
    Aktion, ohne Projekt-Writes oder Public-Publish.
 
-9. **Gefuehrter Demo-Review-Pfad zeigen**
+10. **Gefuehrter Demo-Review-Pfad zeigen**
    Ablauf: Projektleitung klaert Blocker, Entwurf prueft KosmoDesign im
    Review Mode, Admin haelt Public-/Freigabe-Gates geschlossen.
 
-10. **Review Decision Draft zeigen**
+11. **Review Decision Draft zeigen**
    Erklaeren: KosmoOrbit soll spaeter nicht blind freigeben, sondern einen
    Entscheid mit Evidenz und Write Guard vorbereiten. In der Preview bleibt
    der Status deshalb bewusst `needs_more_evidence`.
 
-11. **Runtime-, Command-, Audit- und Risiko-Vertraege zeigen**
+12. **Runtime-, Command-, Audit- und Risiko-Vertraege zeigen**
    Erklaeren: KosmoOrbit benennt genau, was spaeter lokale Runtime wird und
    was heute blockiert bleibt: Modellstart, Blender-Launch, Geometrie,
    Userdaten-Writes, Upload, Publish, externer Sync und Push ohne Go.
 
-12. **MVP-Grenze zeigen**
+13. **MVP-Grenze zeigen**
    Erklaeren: Heute ist die Produktlogik sichtbar. Echte lokale KI,
    Benutzerprofile, Toolsteuerung und persistente Entscheidungen gehoeren zur
    spaeteren KosmoZentrale-Runtime.
 
-13. **Pruefevidenz und Demo-Bereitschaft zeigen**
+14. **Pruefevidenz und Demo-Bereitschaft zeigen**
    Erklaeren: Die Preview zeigt Full Review, Route-Smoke und Open Mode direkt
    im Tool. Das ist keine Garantie fuer ein fertiges Produkt, aber ein Beleg,
    dass der aktuelle MVP-Kern lokal geprueft wird.
 
-14. **Arbeitsstations-Prioritaeten zeigen**
+15. **Arbeitsstations-Prioritaeten zeigen**
    Erklaeren: Dieselbe Hauptsoftware wird spaeter je Rolle anders starten:
    Chef/Admin sieht Risiko und Evidenz, Projektleitung sieht Review-Entscheide,
    Entwurf sieht KosmoDesign-Kontext, Zeichnung sieht Modell/Artefakte,
