@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T06:32:39.983Z",
+  "generated_at": "2026-06-01T06:46:54.724Z",
   "generator": "kosmo-orbit-project-inspector",
   "project_root": "examples/kosmo-projects/kosmo-demo-001",
   "manifest_path": "examples/kosmo-projects/kosmo-demo-001/kosmo.project.json",

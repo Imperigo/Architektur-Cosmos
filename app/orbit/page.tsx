@@ -1,9 +1,12 @@
 import appRouteSpecData from '@/examples/kosmo-orbit/review/orbit-app-route-spec.generated.json';
 import roleStateData from '@/examples/kosmo-orbit/role-state.demo.json';
+import designHandoffData from '@/examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-preview.generated.json';
+import projectInspectorData from '@/examples/kosmo-projects/kosmo-demo-001/orbit/project-inspector.generated.json';
 import roleVariantsData from '@/examples/kosmo-projects/kosmo-demo-001/orbit/role-ui-variants.generated.json';
 import shellManifestData from '@/examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-prototype.generated.json';
 import type { Metadata } from 'next';
 import { OrbitDemoReviewPath } from './OrbitDemoReviewPath';
+import { OrbitProjectDashboard, type DesignHandoffPreview, type ProjectInspectorReport } from './OrbitProjectDashboard';
 import { OrbitRoleSwitcher } from './OrbitRoleSwitcher';
 
 export const dynamic = 'force-static';
@@ -144,6 +147,8 @@ const roleState = roleStateData as unknown as RoleState;
 const roleVariantsReport = roleVariantsData as unknown as RoleVariantsReport;
 const appRouteSpec = appRouteSpecData as unknown as AppRouteSpec;
 const shellManifest = shellManifestData as unknown as ShellManifest;
+const projectInspector = projectInspectorData as unknown as ProjectInspectorReport;
+const designHandoff = designHandoffData as unknown as DesignHandoffPreview;
 const activeRole = roleVariantsReport.variants.find((variant) => variant.role.id === roleState.session.active_role_id) ?? roleVariantsReport.variants[0];
 
 const toneClasses: Record<Tone, string> = {
@@ -311,6 +316,8 @@ export default function OrbitPage() {
               </div>
             </div>
           </section>
+
+          <OrbitProjectDashboard projectInspector={projectInspector} designHandoff={designHandoff} />
 
           <OrbitRoleSwitcher initialRoleId={roleState.session.active_role_id} variants={roleVariantsReport.variants} />
 

@@ -378,6 +378,24 @@ keine Simulation echter Rechteverwaltung. Der Pfad demonstriert nur die
 Produktlogik: KosmoOrbit fuehrt durch Review, bevor KosmoDesign generieren,
 publizieren oder externe Aktionen ausloesen duerfte.
 
+### Projektpaket Tagesansicht
+
+Die `/orbit` Preview zeigt nun eine kompakte Tagesansicht fuer das aktive
+Projektpaket:
+
+- Artefaktzahl und Reviewlast;
+- Gate-Uebersicht fuer Public Release, External Upload, Client Delivery und
+  Paid Cloud Job;
+- Modellprofil mit Raeumen, Geschossen und Quellvertrauen;
+- Module mit Reviewbedarf;
+- naechste reviewpflichtige Artefakte;
+- naechste sichere Aktion aus Design-Handoff und Project Inspector.
+
+Diese Ansicht ist die erste Bruecke zwischen Projektpaket und Buero-Alltag:
+Ein Projektleiter sieht auf einen Blick, warum ein Paket noch lokal bleibt,
+welche Module zuerst geprueft werden und warum KosmoDesign weiter im Review
+Mode bleiben muss.
+
 ## 14. Static KosmoDesign UI Prototype
 
 Aus der Panel-Spezifikation kann KosmoOrbit einen ersten lokalen HTML-Prototyp

@@ -54,6 +54,9 @@ Wichtig fuer die Kommunikation:
 - Zusaetzlich gibt es jetzt einen gefuehrten Demo-Review-Pfad:
   Projektleitung klaert Blocker, Entwurf prueft KosmoDesign im Review Mode,
   Admin haelt Freigabe- und Public-Gates geschlossen.
+- Eine Projektpaket-Tagesansicht fasst Artefakte, Reviewlast, Gates,
+  Modellprofil, Module mit Reviewbedarf und die naechste sichere Aktion
+  zusammen.
 
 ## Qualitaetsgrenzen
 
@@ -64,7 +67,7 @@ Wichtig fuer die Kommunikation:
 
 ## Naechster sinnvoller Schritt
 
-Nach den lokalen Checks ist der naechste Produktschritt ein konkreteres
-Projektpaket-Dashboard: offene Quellen, Modellprofil, Gate-Status und
-naechste Review-Aktion sollen als eine zusammenhaengende Tagesansicht lesbar
-werden.
+Nach den lokalen Checks ist der naechste Produktschritt die visuelle
+Verdichtung: Mobile/kleine Viewports pruefen und die wichtigsten Panels so
+ordnen, dass die 3-Minuten-Demo in einem Buero ohne Informatik-Kontext ruhig
+und verstaendlich wirkt.

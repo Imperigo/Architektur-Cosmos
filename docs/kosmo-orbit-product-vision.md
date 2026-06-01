@@ -138,6 +138,8 @@ Dieser Kern zeigt:
 - einen gefuehrten Demo-Review-Pfad fuer Projektleitung, Entwurf und Admin,
   der den Ablauf vom Projektblocker zum sicheren KosmoDesign Review Mode
   erklaert;
+- eine Projektpaket-Tagesansicht, die Artefakte, Reviewlast, Modellprofil,
+  Gates und naechste sichere Aktion zusammenfuehrt;
 - klare Sperre gegen Design-Generation, Public-Publish, externe Netzwerke,
   Uploads und echte User-Schreibaktionen.
 
