@@ -26,6 +26,7 @@ Status: `passed`
 | --- | --- | --- |
 | Haupttitel sichtbar | `KosmoOrbit` | `passed` |
 | Demo-Navigation sichtbar | Links umbrechen statt horizontal zu laufen | `passed` |
+| Vision Bridge sichtbar | `Orchestrierung vor Generierung` | `passed` |
 | Demo-Bereitschaft sichtbar | `human-demo-ready` sichtbar | `passed` |
 | Rechte-Matrix sichtbar | Karten bleiben lesbar | `passed` |
 | Rollenumschaltung sichtbar | Rollenchips bleiben erreichbar | `passed` |
@@ -44,6 +45,9 @@ Status: `passed`
 - In-App-Browser-Smoke bei 390 x 844 px bestaetigt: `scrollWidth === clientWidth`,
   keine zu kleinen sichtbaren Buttons/Links, Rollenumschaltung und Demo-Schritt
   klickbar.
+- Nach der Vision Bridge bestaetigt der 390px-Smoke weiter: Vision-Navigation
+  sichtbar, kein horizontaler Overflow und keine sichtbaren Buttons/Links unter
+  32 px.
 
 ## Grenzen
 
