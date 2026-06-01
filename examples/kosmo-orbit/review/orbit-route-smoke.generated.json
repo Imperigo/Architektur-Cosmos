@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T19:54:26.964Z",
+  "generated_at": "2026-06-01T19:57:57.094Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 164,
-    "passed_checks": 164,
+    "check_count": 165,
+    "passed_checks": 165,
     "failed_checks": 0
   },
   "checks": [
@@ -769,6 +769,11 @@
     {
       "id": "shows_demo_readiness",
       "label": "Route renders demo readiness with explicit human approval boundary.",
+      "status": "passed"
+    },
+    {
+      "id": "demo_readiness_shows_static_assets",
+      "label": "Demo readiness exposes static export CSS/JS asset verification.",
       "status": "passed"
     },
     {

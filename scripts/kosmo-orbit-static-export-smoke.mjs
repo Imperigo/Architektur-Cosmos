@@ -62,6 +62,7 @@ function buildReport(html) {
     check('renders_progress_map', 'Export renders progress map.', html.includes('Projektfortschritt')),
     check('renders_vision_bridge', 'Export renders vision bridge.', html.includes('Vision Bridge') && html.includes('Orchestrierung vor Generierung')),
     check('renders_demo_readiness', 'Export renders demo readiness.', html.includes('Demo-Bereitschaft') && html.includes('Static Export')),
+    check('renders_static_asset_readiness', 'Export renders static CSS/JS asset readiness.', html.includes('CSS/JS-Assets') && html.includes('fehlend')),
     check('renders_publish_readiness', 'Export renders publish readiness live gate.', html.includes('Live-Gate') && html.includes('no-push-without-owner-go')),
     check('renders_project_dashboard', 'Export renders project package dashboard.', html.includes('Projektpaket Tagesansicht')),
     check('renders_design_handoff_panel', 'Export renders KosmoDesign handoff review console.', html.includes('KosmoDesign Handoff') && html.includes('Review Console')),

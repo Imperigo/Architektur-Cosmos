@@ -749,7 +749,8 @@ Architekturburo:
 - Vision-zu-MVP-Fortschrittskarte;
 - Vision Bridge zwischen KosmoZentrale, Prepare, Design, Draw/Viz/Publish,
   Data und Asset;
-- Demo-Bereitschaft mit Full Review, Route-Smoke und Static-Smoke;
+- Demo-Bereitschaft mit Full Review, Route-Smoke, Static-Smoke und sichtbarem
+  CSS/JS-Asset-Nachweis;
 - Live-Gate mit Owner-Go, Security Review und Live-Smoke vor Push/Deploy;
 - Projektpaket Tagesansicht;
 - KosmoDesign Handoff Console mit blockierter Design-Generation;
@@ -783,10 +784,10 @@ Aktuelle lokale Nachweise:
 - `npm run kosmo:orbit-pilot-kit` — 19/19 passed;
 - `npm run kosmo:orbit-pilot-session` — 17/17 passed;
 - `npm run kosmo:orbit-pilot-result` — 21/21 passed;
-- `npm run kosmo:orbit-route-smoke` — 164/164 passed;
+- `npm run kosmo:orbit-route-smoke` — 165/165 passed;
 - `npm run kosmo:orbit-demo-audit` — 33/33 passed;
 - `npm run kosmo:orbit-responsive-audit` — 27/27 passed;
-- `npm run kosmo:orbit-static-smoke` — 56/56 passed;
+- `npm run kosmo:orbit-static-smoke` — 57/57 passed;
 - `npx tsc --noEmit --pretty false --incremental false` — passed;
 - `npm run lint` — 0 Errors, bekannte Bestandswarnungen;
 - `npm run ui:audit` — 72/72 passed;

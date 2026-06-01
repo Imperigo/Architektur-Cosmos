@@ -1,12 +1,12 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T19:53:53.275Z",
+  "generated_at": "2026-06-01T19:57:53.635Z",
   "generator": "kosmo-orbit-static-export-smoke",
   "status": "orbit_static_export_smoke_passed",
   "html_file": "out/orbit/index.html",
   "summary": {
-    "check_count": 56,
-    "passed_checks": 56,
+    "check_count": 57,
+    "passed_checks": 57,
     "failed_checks": 0,
     "referenced_static_asset_count": 8,
     "missing_static_asset_count": 0
@@ -118,6 +118,11 @@
     {
       "id": "renders_demo_readiness",
       "label": "Export renders demo readiness.",
+      "status": "passed"
+    },
+    {
+      "id": "renders_static_asset_readiness",
+      "label": "Export renders static CSS/JS asset readiness.",
       "status": "passed"
     },
     {

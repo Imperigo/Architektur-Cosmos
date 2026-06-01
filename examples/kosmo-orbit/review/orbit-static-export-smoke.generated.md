@@ -1,6 +1,6 @@
 # KosmoOrbit Static Export Smoke
 
-Generated: 2026-06-01T19:53:53.275Z
+Generated: 2026-06-01T19:57:53.635Z
 Status: `orbit_static_export_smoke_passed`
 HTML: `out/orbit/index.html`
 
@@ -8,7 +8,7 @@ Checks the built static export for the visible KosmoOrbit demo panels. It does n
 
 ## Summary
 
-- checks: 56/56 passed
+- checks: 57/57 passed
 
 ## Checks
 
@@ -33,6 +33,7 @@ Checks the built static export for the visible KosmoOrbit demo panels. It does n
 | `renders_progress_map` | `passed` | Export renders progress map. |
 | `renders_vision_bridge` | `passed` | Export renders vision bridge. |
 | `renders_demo_readiness` | `passed` | Export renders demo readiness. |
+| `renders_static_asset_readiness` | `passed` | Export renders static CSS/JS asset readiness. |
 | `renders_publish_readiness` | `passed` | Export renders publish readiness live gate. |
 | `renders_project_dashboard` | `passed` | Export renders project package dashboard. |
 | `renders_design_handoff_panel` | `passed` | Export renders KosmoDesign handoff review console. |

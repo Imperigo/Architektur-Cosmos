@@ -7,6 +7,12 @@ export type OrbitStaticExportSmokeReport = {
     check_count: number;
     passed_checks: number;
     failed_checks: number;
+    referenced_static_asset_count?: number;
+    missing_static_asset_count?: number;
+  };
+  static_assets?: {
+    referenced: string[];
+    missing: string[];
   };
   next_actions: string[];
 };
@@ -37,8 +43,11 @@ export function OrbitDemoReadiness({ fullReview, routeSmoke, staticSmoke }: Demo
     },
     {
       label: 'Static Export',
-      value: `${staticSmoke.summary.check_count} HTML-Smoke-Vertragschecks nach build:fresh`,
-      passed: staticSmoke.html_file === 'out/orbit/index.html' && staticSmoke.summary.check_count >= 16
+      value: `${staticSmoke.summary.check_count} HTML-Smoke-Vertragschecks, ${staticSmoke.summary.referenced_static_asset_count ?? 0} CSS/JS-Assets, ${staticSmoke.summary.missing_static_asset_count ?? 0} fehlend`,
+      passed: staticSmoke.html_file === 'out/orbit/index.html'
+        && staticSmoke.summary.check_count >= 16
+        && (staticSmoke.summary.referenced_static_asset_count ?? 0) > 0
+        && (staticSmoke.summary.missing_static_asset_count ?? 0) === 0
     }
   ];
   const ready = checks.every((check) => check.passed);

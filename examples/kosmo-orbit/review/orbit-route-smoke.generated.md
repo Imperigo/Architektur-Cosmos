@@ -1,6 +1,6 @@
 # KosmoOrbit Route Smoke
 
-Generated: 2026-06-01T19:54:26.964Z
+Generated: 2026-06-01T19:57:57.094Z
 Status: `orbit_route_smoke_passed`
 Route: `app/orbit/page.tsx`
 
@@ -8,7 +8,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 
 ## Summary
 
-- checks: 164/164 passed
+- checks: 165/165 passed
 
 ## Checks
 
@@ -166,6 +166,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `office_routine_covers_day_phases` | `passed` | Office routine covers morning, workday, training, evening and safety. |
 | `office_routine_blocks_live_automation` | `passed` | Office routine blocks model start, Blender launch, uploads, publish, push and costs. |
 | `shows_demo_readiness` | `passed` | Route renders demo readiness with explicit human approval boundary. |
+| `demo_readiness_shows_static_assets` | `passed` | Demo readiness exposes static export CSS/JS asset verification. |
 | `shows_publish_readiness` | `passed` | Route renders publish readiness and the live gate. |
 | `publish_readiness_blocks_live_push` | `passed` | Publish readiness blocks push/deploy until owner go, security review and live smoke. |
 | `shows_section_index` | `passed` | Route renders compact demo section navigation. |
