@@ -84,6 +84,8 @@ Zuletzt gruene lokale Checks:
 - `npm run security:check` — passed, grosse bekannte Dateien uebersprungen
 - `npx tsc --noEmit` — passed
 - `npm run build` — static export passed
+- `npm run build:fresh` + `npm run kosmo:orbit-static-smoke` — static
+  `/orbit` HTML enthaelt die wichtigsten Demo-Panels und Anker
 
 ## Sicherheitsgrenzen
 

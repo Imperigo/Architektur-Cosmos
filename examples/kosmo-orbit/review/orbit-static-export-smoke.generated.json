@@ -1,0 +1,98 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-01T07:25:59.862Z",
+  "generator": "kosmo-orbit-static-export-smoke",
+  "status": "orbit_static_export_smoke_passed",
+  "html_file": "out/orbit/index.html",
+  "summary": {
+    "check_count": 16,
+    "passed_checks": 16,
+    "failed_checks": 0
+  },
+  "checks": [
+    {
+      "id": "html_exists",
+      "label": "Static /orbit HTML exists.",
+      "status": "passed"
+    },
+    {
+      "id": "renders_kosmo_orbit",
+      "label": "Export renders KosmoOrbit heading.",
+      "status": "passed"
+    },
+    {
+      "id": "renders_demo_navigation",
+      "label": "Export renders compact demo navigation.",
+      "status": "passed"
+    },
+    {
+      "id": "renders_autonomy_status",
+      "label": "Export renders autonomy status.",
+      "status": "passed"
+    },
+    {
+      "id": "renders_presenter_mode",
+      "label": "Export renders presenter mode.",
+      "status": "passed"
+    },
+    {
+      "id": "renders_progress_map",
+      "label": "Export renders progress map.",
+      "status": "passed"
+    },
+    {
+      "id": "renders_project_dashboard",
+      "label": "Export renders project package dashboard.",
+      "status": "passed"
+    },
+    {
+      "id": "renders_review_decision",
+      "label": "Export renders review decision draft.",
+      "status": "passed"
+    },
+    {
+      "id": "renders_runtime_boundary",
+      "label": "Export renders MVP/runtime boundary.",
+      "status": "passed"
+    },
+    {
+      "id": "renders_quality_evidence",
+      "label": "Export renders quality evidence.",
+      "status": "passed"
+    },
+    {
+      "id": "renders_workstation_priorities",
+      "label": "Export renders workstation priorities.",
+      "status": "passed"
+    },
+    {
+      "id": "renders_role_switcher",
+      "label": "Export renders role switcher.",
+      "status": "passed"
+    },
+    {
+      "id": "renders_guided_review_path",
+      "label": "Export renders guided review path.",
+      "status": "passed"
+    },
+    {
+      "id": "anchors_core_sections",
+      "label": "Export contains section anchors.",
+      "status": "passed"
+    },
+    {
+      "id": "keeps_no_runtime_side_effects",
+      "label": "Export states that runtime side effects are off.",
+      "status": "passed"
+    },
+    {
+      "id": "no_server_runtime_markers",
+      "label": "Export does not include server runtime markers.",
+      "status": "passed"
+    }
+  ],
+  "next_actions": [
+    "Use this smoke after build:fresh before publishing /orbit changes.",
+    "Add visual browser smoke only after the static export contract stays green."
+  ]
+}

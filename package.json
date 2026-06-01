@@ -109,6 +109,7 @@
     "kosmo:orbit-role-state-handoff": "node scripts/kosmo-orbit-role-state-handoff.mjs",
     "kosmo:orbit-app-route-spec": "node scripts/kosmo-orbit-app-route-spec.mjs",
     "kosmo:orbit-route-smoke": "node scripts/kosmo-orbit-route-smoke.mjs",
+    "kosmo:orbit-static-smoke": "node scripts/kosmo-orbit-static-export-smoke.mjs",
     "kosmo:orbit-status": "node scripts/kosmo-orbit-status-report.mjs",
     "kosmo:orbit-project-inspector": "node scripts/kosmo-orbit-project-inspector.mjs",
     "kosmo:orbit-design-handoff": "node scripts/kosmo-orbit-design-handoff-preview.mjs",

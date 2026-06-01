@@ -79,6 +79,8 @@ Wichtig fuer die Kommunikation:
   Preview, Rollen/Arbeitsstationen, KosmoDesign-Handoff, spaetere
   KosmoZentrale-Runtime und gesperrte CAD-/Plan-Generation.
 - Der Autonomie-Status spricht nun korrekt von KosmoOrbit statt KosmoWebsite.
+- Ein neuer Static-Export-Smoke prueft nach `build:fresh`, ob die gebaute
+  `/orbit` HTML-Datei die wichtigsten Demo-Panels und Anker enthaelt.
 
 ## Qualitaetsgrenzen
 
@@ -89,7 +91,6 @@ Wichtig fuer die Kommunikation:
 
 ## Naechster sinnvoller Schritt
 
-Nach den lokalen Checks ist der naechste Produktschritt ein kompakter
-Static-/Viewport-Smoke fuer `/orbit`, damit Fortschrittskarte,
-Rollenumschaltung und Demo-Navigation in einer menschlichen Vorfuehrung
-robust wirken.
+Nach den lokalen Checks ist der naechste Produktschritt ein visueller
+Browser-Smoke fuer `/orbit`, damit Fortschrittskarte, Rollenumschaltung und
+Demo-Navigation in einer menschlichen Vorfuehrung robust wirken.
