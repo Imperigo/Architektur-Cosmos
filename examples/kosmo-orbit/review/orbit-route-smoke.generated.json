@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T07:00:30.249Z",
+  "generated_at": "2026-06-01T07:04:28.297Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 40,
-    "passed_checks": 40,
+    "check_count": 44,
+    "passed_checks": 44,
     "failed_checks": 0
   },
   "checks": [
@@ -72,6 +72,11 @@
       "status": "passed"
     },
     {
+      "id": "review_decision_draft_file_exists",
+      "label": "Orbit review decision draft component exists.",
+      "status": "passed"
+    },
+    {
       "id": "imports_role_switcher",
       "label": "Route imports the role switcher preview component.",
       "status": "passed"
@@ -94,6 +99,11 @@
     {
       "id": "imports_demo_questions",
       "label": "Route imports the demo questions briefing component.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_review_decision_draft",
+      "label": "Route imports the review decision draft component.",
       "status": "passed"
     },
     {
@@ -169,6 +179,16 @@
     {
       "id": "anchors_demo_claims",
       "label": "Demo questions point claims back to visible panels.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_review_decision_draft",
+      "label": "Route renders a local non-writing review decision draft.",
+      "status": "passed"
+    },
+    {
+      "id": "keeps_decision_draft_non_writing",
+      "label": "Decision draft states that it writes no decision record.",
       "status": "passed"
     },
     {

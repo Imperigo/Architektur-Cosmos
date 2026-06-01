@@ -34,6 +34,11 @@ In drei Minuten soll ein Architekturbueroleiter verstehen:
    Ablauf: Projektleitung klaert Blocker, Entwurf prueft KosmoDesign im
    Review Mode, Admin haelt Public-/Freigabe-Gates geschlossen.
 
+6. **Review Decision Draft zeigen**
+   Erklaeren: KosmoOrbit soll spaeter nicht blind freigeben, sondern einen
+   Entscheid mit Evidenz und Write Guard vorbereiten. In der Preview bleibt
+   der Status deshalb bewusst `needs_more_evidence`.
+
 ## Kernsaetze
 
 - Besser: Jede Rolle bekommt die richtige Oberflaechentiefe und sieht den
@@ -43,6 +48,8 @@ In drei Minuten soll ein Architekturbueroleiter verstehen:
   Cloudjobs oder Abgaben entstehen.
 - Sicherer: Generierung, Publikation und Upload bleiben blockiert, bis ein
   Mensch die Review-Gates freigibt.
+- Nachvollziehbarer: Jede spaetere Freigabe braucht Evidenz, Gate-Status und
+  eine menschliche Verantwortung.
 
 ## Was bewusst noch nicht behauptet wird
 

@@ -1,6 +1,6 @@
 # KosmoOrbit Route Smoke
 
-Generated: 2026-06-01T07:00:30.249Z
+Generated: 2026-06-01T07:04:28.297Z
 Status: `orbit_route_smoke_passed`
 Route: `app/orbit/page.tsx`
 
@@ -8,7 +8,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 
 ## Summary
 
-- checks: 40/40 passed
+- checks: 44/44 passed
 
 ## Checks
 
@@ -26,11 +26,13 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `project_dashboard_file_exists` | `passed` | Orbit project package dashboard component exists. |
 | `presenter_brief_file_exists` | `passed` | Orbit presenter brief component exists. |
 | `demo_questions_file_exists` | `passed` | Orbit demo questions component exists. |
+| `review_decision_draft_file_exists` | `passed` | Orbit review decision draft component exists. |
 | `imports_role_switcher` | `passed` | Route imports the role switcher preview component. |
 | `imports_demo_review_path` | `passed` | Route imports the guided demo review component. |
 | `imports_project_dashboard` | `passed` | Route imports the project package dashboard component. |
 | `imports_presenter_brief` | `passed` | Route imports the presenter brief component. |
 | `imports_demo_questions` | `passed` | Route imports the demo questions briefing component. |
+| `imports_review_decision_draft` | `passed` | Route imports the review decision draft component. |
 | `uses_force_static` | `passed` | Route declares force-static rendering. |
 | `shows_kosmo_orbit` | `passed` | Route renders KosmoOrbit heading. |
 | `shows_demo_path` | `passed` | Route renders the 3-minute human demo path. |
@@ -46,6 +48,8 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `shows_value_claims` | `passed` | Presenter brief covers better, faster and cheaper value claims. |
 | `shows_demo_questions` | `passed` | Route renders architect-facing demo questions. |
 | `anchors_demo_claims` | `passed` | Demo questions point claims back to visible panels. |
+| `shows_review_decision_draft` | `passed` | Route renders a local non-writing review decision draft. |
+| `keeps_decision_draft_non_writing` | `passed` | Decision draft states that it writes no decision record. |
 | `shows_blocked_actions` | `passed` | Route renders blocked action labels from role state. |
 | `shows_review_only_copy` | `passed` | Route keeps review-only safety copy visible. |
 | `no_use_server` | `passed` | Forbidden pattern is absent: no_use_server. |

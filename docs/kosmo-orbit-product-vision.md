@@ -145,6 +145,8 @@ Dieser Kern zeigt:
   zusammenfasst;
 - einen Demo-Fragen-Block, der typische Chef-/Buero-Fragen direkt im Tool
   beantwortet und auf sichtbare Evidenz-Panels verweist;
+- einen nicht-schreibenden Review Decision Draft, der zeigt, wie KosmoOrbit
+  spaeter evidenzbasierte menschliche Review-Entscheide vorbereiten soll;
 - klare Sperre gegen Design-Generation, Public-Publish, externe Netzwerke,
   Uploads und echte User-Schreibaktionen.
 

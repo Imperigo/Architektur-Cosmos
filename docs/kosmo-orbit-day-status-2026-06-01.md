@@ -67,6 +67,8 @@ Wichtig fuer die Kommunikation:
   in `/orbit` und verweist jede Antwort auf sichtbare Panels.
 - `docs/kosmo-orbit-demo-briefing-2026-06-01.md` haelt die 3-Minuten-Demo,
   Kernsaetze und bewusste Nicht-Behauptungen fest.
+- Ein Review Decision Draft zeigt eine lokale `needs_more_evidence`-Empfehlung
+  mit Evidenz-Refs und Write Guard, ohne Decision Record zu schreiben.
 
 ## Qualitaetsgrenzen
 
@@ -77,7 +79,6 @@ Wichtig fuer die Kommunikation:
 
 ## Naechster sinnvoller Schritt
 
-Nach den lokalen Checks ist der naechste Produktschritt ein echter
-Review-Entscheidungsfluss: Projektleitung soll aus dem Dashboard heraus eine
-lokale Review-Entscheidung vorbereiten koennen, weiterhin ohne echte
-Schreibaktion, Auth oder Generierung.
+Nach den lokalen Checks ist der naechste Produktschritt eine noch klarere
+Abgrenzung zwischen Demo, MVP-Vertrag und spaeterer echter Runtime:
+Was ist heute sichtbar, was ist nur vorbereitet, und was braucht KosmoZentrale.

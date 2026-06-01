@@ -428,6 +428,21 @@ Jede Antwort verweist auf den sichtbaren Panel-Kontext, der die Aussage
 stuetzt. Damit wird die Demo weniger erklaerungsabhaengig und kann in einem
 Chef-/Buero-Gespraech ruhiger gefuehrt werden.
 
+### Review Decision Draft
+
+Die `/orbit` Preview zeigt nun einen nicht-schreibenden Entscheidungsentwurf:
+
+- empfohlener Status: `needs_more_evidence`;
+- Evidenz-Refs aus Projekt, Handoff, Kontextblockern, Review-Artefakten und
+  Gates;
+- sichtbarer Grund, warum lokale Freigabe noch nicht angezeigt wird;
+- Write Guard: kein Decision Record, keine Rollen- oder Paketveraenderung,
+  keine Tool-Oeffnung und keine Generierung.
+
+Damit ist der naechste Produktvertrag sichtbar: KosmoOrbit soll spaeter nicht
+einfach Buttons freischalten, sondern Review-Entscheide mit Evidenz,
+Verantwortung und Gate-Status vorbereiten.
+
 ## 14. Static KosmoDesign UI Prototype
 
 Aus der Panel-Spezifikation kann KosmoOrbit einen ersten lokalen HTML-Prototyp
