@@ -1,6 +1,6 @@
 # KosmoOrbit Responsive Audit
 
-Generated: 2026-06-01T12:33:18.694Z
+Generated: 2026-06-01T12:38:35.451Z
 Status: `orbit_responsive_audit_passed`
 Source: `app/orbit`
 
@@ -8,10 +8,10 @@ Source-level responsive guard for `/orbit`. This does not replace a visual brows
 
 ## Summary
 
-- checks: 21/21 passed
-- min-w-0 guards: 69
-- flex-wrap usages: 52
-- responsive grid usages: 55
+- checks: 22/22 passed
+- min-w-0 guards: 72
+- flex-wrap usages: 54
+- responsive grid usages: 57
 
 ## Checks
 
@@ -35,6 +35,7 @@ Source-level responsive guard for `/orbit`. This does not replace a visual brows
 | `runtime_contract_responsive` | `passed` | Runtime contract uses responsive cards for the runtime stages. |
 | `progress_bars_have_stable_height` | `passed` | Progress map uses stable bar height and constrained width. |
 | `demo_readiness_uses_responsive_grid` | `passed` | Demo readiness summary uses responsive columns. |
+| `learning_mode_responsive` | `passed` | Learning mode uses responsive cards for learning profiles and tracks. |
 | `badges_can_wrap_long_words` | `passed` | Long labels can break instead of overflowing pills. |
 | `no_viewport_scaled_font` | `passed` | No /orbit source scales font size directly with viewport width. |
 | `no_negative_letter_spacing` | `passed` | No /orbit source uses negative letter spacing. |

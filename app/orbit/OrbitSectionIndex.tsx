@@ -15,6 +15,7 @@ const sectionLinks = [
   { href: '#commands', label: 'Commands' },
   { href: '#audit', label: 'Audit' },
   { href: '#evidenz', label: 'Evidenz' },
+  { href: '#ausbildung', label: 'Ausbildung' },
   { href: '#rechte', label: 'Rechte' },
   { href: '#rollen', label: 'Rollen' },
   { href: '#guardrails', label: 'Guardrails' }

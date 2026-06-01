@@ -62,10 +62,11 @@ function buildReport(html) {
     check('renders_audit_trail', 'Export renders static audit trail contract.', html.includes('Audit-Trail-Vertrag') && html.includes('static-audit-trail-contract')),
     check('renders_quality_evidence', 'Export renders quality evidence.', html.includes('Pruefevidenz')),
     check('renders_workstation_priorities', 'Export renders workstation priorities.', html.includes('Arbeitsstationen')),
+    check('renders_learning_mode', 'Export renders education mode.', html.includes('Ausbildungsmodus') && html.includes('Kosmo als sicherer Lernbegleiter')),
     check('renders_permission_matrix', 'Export renders permission matrix.', html.includes('Rechte-Matrix') && html.includes('generation bleibt gesperrt')),
     check('renders_role_switcher', 'Export renders role switcher.', html.includes('Rollenumschaltung Preview')),
     check('renders_guided_review_path', 'Export renders guided review path.', html.includes('Gefuehrter Demo-Review-Pfad')),
-    check('anchors_core_sections', 'Export contains section anchors.', ['autonomie', 'routine', 'fortschritt', 'vision', 'demo-ready', 'projektpaket', 'design-handoff', 'entscheidung', 'runtime', 'runtime-contract', 'installation', 'health', 'risiken', 'commands', 'audit', 'evidenz', 'rechte', 'rollen', 'guardrails'].every((id) => html.includes(`id="${id}"`))),
+    check('anchors_core_sections', 'Export contains section anchors.', ['autonomie', 'routine', 'fortschritt', 'vision', 'demo-ready', 'projektpaket', 'design-handoff', 'entscheidung', 'runtime', 'runtime-contract', 'installation', 'health', 'risiken', 'commands', 'audit', 'evidenz', 'ausbildung', 'rechte', 'rollen', 'guardrails'].every((id) => html.includes(`id="${id}"`))),
     check('keeps_no_runtime_side_effects', 'Export states that runtime side effects are off.', html.includes('no-runtime-side-effects')),
     check('keeps_runtime_contract_safe', 'Export keeps runtime process/model/queue actions gated.', html.includes('kein Modellstart') && html.includes('keine Prozessstarts') && html.includes('keine Queue') && html.includes('kein Memory-Write')),
     check('keeps_installation_topology_safe', 'Export keeps installation topology non-operational.', html.includes('keine Hardware-Steuerung') && html.includes('keine echte Auth-Runtime') && html.includes('keine Netzwerksteuerung')),
@@ -75,6 +76,7 @@ function buildReport(html) {
     check('keeps_command_contract_static', 'Export keeps command contract non-operational.', html.includes('keine Prozessstarts') && html.includes('keine Geometrie-Generierung') && html.includes('keine User-Writes')),
     check('keeps_audit_trail_static', 'Export keeps audit trail non-writing.', normalizedHtml.includes('keine Userdaten') && normalizedHtml.includes('Writes: nein')),
     check('keeps_design_handoff_generation_blocked', 'Export keeps KosmoDesign generation blocked.', html.includes('Generate Design') && html.includes('Design generation is blocked')),
+    check('keeps_learning_mode_safe', 'Export keeps learning mode read-safe.', html.includes('ohne Accounts') && html.includes('Projekt-Writes') && html.includes('Public-Publish')),
     check('no_server_runtime_markers', 'Export does not include server runtime markers.', !html.includes('use server') && !html.includes('next/server'))
   ];
   const failed = checks.filter((item) => item.status !== 'passed');

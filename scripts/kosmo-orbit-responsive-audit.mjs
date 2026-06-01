@@ -32,6 +32,7 @@ const files = [
   'OrbitRuntimeContract.tsx',
   'OrbitQualityEvidence.tsx',
   'OrbitWorkstationPriorities.tsx',
+  'OrbitLearningMode.tsx',
   'OrbitPermissionMatrix.tsx',
   'OrbitOfficeRoutine.tsx'
 ];
@@ -93,6 +94,7 @@ function buildReport(sources) {
     check('runtime_contract_responsive', 'Runtime contract uses responsive cards for the runtime stages.', sources['OrbitRuntimeContract.tsx'].includes('md:grid-cols-2') && sources['OrbitRuntimeContract.tsx'].includes('xl:grid-cols-5')),
     check('progress_bars_have_stable_height', 'Progress map uses stable bar height and constrained width.', sources['OrbitProgressMap.tsx'].includes('h-2.5 overflow-hidden') && sources['OrbitProgressMap.tsx'].includes('style={{ width')),
     check('demo_readiness_uses_responsive_grid', 'Demo readiness summary uses responsive columns.', sources['OrbitDemoReadiness.tsx'].includes('md:grid-cols-3') && sources['OrbitDemoReadiness.tsx'].includes('lg:grid-cols')),
+    check('learning_mode_responsive', 'Learning mode uses responsive cards for learning profiles and tracks.', sources['OrbitLearningMode.tsx'].includes('lg:grid-cols-3') && sources['OrbitLearningMode.tsx'].includes('md:grid-cols-3')),
     check('badges_can_wrap_long_words', 'Long labels can break instead of overflowing pills.', combined.includes('break-words')),
     check('no_viewport_scaled_font', 'No /orbit source scales font size directly with viewport width.', !/text-\[[^\]]*vw|font-size\s*:\s*[^;]*vw/i.test(combined)),
     check('no_negative_letter_spacing', 'No /orbit source uses negative letter spacing.', !/tracking-\[-|letter-spacing\s*:\s*-/i.test(combined))

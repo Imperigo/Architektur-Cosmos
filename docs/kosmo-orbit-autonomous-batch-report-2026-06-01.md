@@ -206,6 +206,14 @@ Arbeitsstation zuerst welches Panel braucht.
     - blockiert Modellstart, Blender-Launch, Geometrie, Userdaten-Writes,
       Uploads, externen Sync, Public-Publish, Push ohne Go und Kosten.
 
+29. **Ausbildungsmodus**
+    - macht Praktikant, Lehrling und Schnupperstift als eigene Lernprofile
+      sichtbar;
+    - zeigt Schulstoff/Buero-Standards, gefuehrte Projektbeobachtung und
+      Review statt Aktion als sichere Lernspuren;
+    - bleibt ohne Accounts, Noten, externe Schulplattformen, Projekt-Writes,
+      Design-Generation oder Public-Publish.
+
 ## Lokale Commits seit `origin/main`
 
 - `6ad9372` Add KosmoOrbit role switcher preview
@@ -223,10 +231,10 @@ Arbeitsstation zuerst welches Panel braucht.
 
 Zuletzt gruene lokale Checks:
 
-- `npm run kosmo:orbit-route-smoke` — 125/125 passed
+- `npm run kosmo:orbit-route-smoke` — 129/129 passed
 - `npm run kosmo:orbit-full-review` — 20/20 passed
-- `npm run kosmo:orbit-demo-audit` — 21/21 passed
-- `npm run kosmo:orbit-responsive-audit` — 21/21 passed
+- `npm run kosmo:orbit-demo-audit` — 23/23 passed
+- `npm run kosmo:orbit-responsive-audit` — 22/22 passed
 - `npm run kosmo:orbit-health-readiness` — 14/14 passed
 - `npm run kosmo:orbit-command-contract` — 14/14 passed
 - `npm run kosmo:orbit-audit-trail` — 11/11 passed
@@ -241,7 +249,7 @@ Zuletzt gruene lokale Checks:
   `security:check` durch bestehende npm-audit Dependency-Fundstelle
 - `npx tsc --noEmit` — passed
 - `npm run build` — static export passed
-- `npm run build` + `npm run kosmo:orbit-static-smoke` — 35/35 static
+- `npm run build` + `npm run kosmo:orbit-static-smoke` — 37/37 static
   `/orbit` HTML enthaelt die wichtigsten Demo-Panels und Anker
 
 ## Sicherheitsgrenzen

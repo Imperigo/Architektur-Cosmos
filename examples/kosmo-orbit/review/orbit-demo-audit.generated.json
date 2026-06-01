@@ -1,104 +1,109 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T12:34:06.958Z",
+  "generated_at": "2026-06-01T12:39:18.981Z",
   "generator": "kosmo-orbit-demo-audit",
   "status": "orbit_demo_audit_passed",
   "html_file": "out/orbit/index.html",
   "summary": {
-    "check_count": 21,
-    "passed_checks": 21,
+    "check_count": 23,
+    "passed_checks": 23,
     "failed_checks": 0
   },
   "demo_order": [
     {
       "id": "autonomie",
       "label": "Autonomie-Status",
-      "index": 13930
+      "index": 14183
     },
     {
       "id": "routine",
       "label": "Buero-Routine",
-      "index": 16406
+      "index": 16659
     },
     {
       "id": "presenter",
       "label": "3-Minuten-Erklaerung",
-      "index": 29218
+      "index": 29471
     },
     {
       "id": "fortschritt",
       "label": "Projektfortschritt",
-      "index": 32235
+      "index": 32488
     },
     {
       "id": "vision",
       "label": "Vision Bridge",
-      "index": 38980
+      "index": 39233
     },
     {
       "id": "demo-ready",
       "label": "Demo-Bereitschaft",
-      "index": 43320
+      "index": 43573
     },
     {
       "id": "projektpaket",
       "label": "Projektpaket Tagesansicht",
-      "index": 46064
+      "index": 46317
     },
     {
       "id": "design-handoff",
       "label": "KosmoDesign Handoff",
-      "index": 55656
+      "index": 55909
     },
     {
       "id": "entscheidung",
       "label": "Review Decision Draft",
-      "index": 69787
+      "index": 70040
     },
     {
       "id": "runtime-contract",
       "label": "Runtime-Vertrag",
-      "index": 77096
+      "index": 77349
     },
     {
       "id": "installation",
       "label": "Buero-Installation",
-      "index": 83092
+      "index": 83345
     },
     {
       "id": "health",
       "label": "Health Readiness",
-      "index": 90831
+      "index": 91084
     },
     {
       "id": "risiken",
       "label": "Risiko-Register",
-      "index": 97688
+      "index": 97941
     },
     {
       "id": "commands",
       "label": "Command-Vertrag",
-      "index": 104977
+      "index": 105230
     },
     {
       "id": "audit",
       "label": "Audit-Trail-Vertrag",
-      "index": 114340
+      "index": 114593
     },
     {
       "id": "evidenz",
       "label": "Pruefevidenz",
-      "index": 121854
+      "index": 122107
+    },
+    {
+      "id": "ausbildung",
+      "label": "Ausbildungsmodus",
+      "index": 130366
     },
     {
       "id": "rechte",
       "label": "Rechte-Matrix",
-      "index": 130113
+      "index": 135676
     },
     {
       "id": "rollen",
       "label": "Rollenumschaltung Preview",
-      "index": 147868
+      "index": 153431
     }
   ],
   "checks": [
@@ -185,6 +190,16 @@
     {
       "id": "audit_trail_visible",
       "label": "Audit trail is visible in the export.",
+      "status": "passed"
+    },
+    {
+      "id": "learning_mode_visible",
+      "label": "Education mode is visible in the export.",
+      "status": "passed"
+    },
+    {
+      "id": "learning_mode_safety_visible",
+      "label": "Education mode safety line is visible in the export.",
       "status": "passed"
     },
     {

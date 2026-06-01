@@ -1,16 +1,16 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T12:33:18.694Z",
+  "generated_at": "2026-06-01T12:38:35.451Z",
   "generator": "kosmo-orbit-responsive-audit",
   "status": "orbit_responsive_audit_passed",
   "source_dir": "app/orbit",
   "summary": {
-    "check_count": 21,
-    "passed_checks": 21,
+    "check_count": 22,
+    "passed_checks": 22,
     "failed_checks": 0,
-    "min_width_guard_count": 69,
-    "flex_wrap_count": 52,
-    "responsive_grid_count": 55
+    "min_width_guard_count": 72,
+    "flex_wrap_count": 54,
+    "responsive_grid_count": 57
   },
   "checks": [
     {
@@ -101,6 +101,11 @@
     {
       "id": "demo_readiness_uses_responsive_grid",
       "label": "Demo readiness summary uses responsive columns.",
+      "status": "passed"
+    },
+    {
+      "id": "learning_mode_responsive",
+      "label": "Learning mode uses responsive cards for learning profiles and tracks.",
       "status": "passed"
     },
     {

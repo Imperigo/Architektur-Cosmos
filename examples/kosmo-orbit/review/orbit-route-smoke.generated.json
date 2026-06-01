@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T12:34:26.502Z",
+  "generated_at": "2026-06-01T12:39:36.611Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 125,
-    "passed_checks": 125,
+    "check_count": 129,
+    "passed_checks": 129,
     "failed_checks": 0
   },
   "checks": [
@@ -157,6 +157,11 @@
       "status": "passed"
     },
     {
+      "id": "learning_mode_file_exists",
+      "label": "Orbit learning mode component exists.",
+      "status": "passed"
+    },
+    {
       "id": "permission_matrix_file_exists",
       "label": "Orbit permission matrix component exists.",
       "status": "passed"
@@ -289,6 +294,11 @@
     {
       "id": "imports_workstation_priorities",
       "label": "Route imports the workstation priorities component.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_learning_mode",
+      "label": "Route imports the learning mode component.",
       "status": "passed"
     },
     {
@@ -539,6 +549,16 @@
     {
       "id": "covers_core_workstation_roles",
       "label": "Workstation priorities cover owner, project lead, design, drafting and education.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_learning_mode",
+      "label": "Route renders education mode for learning roles.",
+      "status": "passed"
+    },
+    {
+      "id": "learning_mode_keeps_actions_blocked",
+      "label": "Learning mode blocks accounts, writes, generation and public publish.",
       "status": "passed"
     },
     {

@@ -135,6 +135,10 @@ Wichtig fuer die Kommunikation:
   Abendabschluss und Not-Stopp. Heute bleibt das ein statischer Vertrag ohne
   Modellstart, Tool-Launch, Userdaten-Writes, Uploads, externen Sync, Push
   oder Kosten.
+- Ein Ausbildungsmodus macht Praktikant, Lehrling und Schnupperstift als
+  sichere Lernprofile sichtbar: Schulstoff/Buero-Standards, gefuehrte
+  Projektbeobachtung und Review statt Aktion, ohne Accounts, Noten,
+  Schulplattformen, Projekt-Writes, Design-Generation oder Public-Publish.
 - Ein neuer KosmoData-HUD-Guard schuetzt die wiederkehrenden Website-Bedienpunkte:
   Database oben links, Suche/Dev rechts, Filterzugang rechts unten, HTML-
   Database-Overlay, globales Fadenkreuz in Start/Hauptmenue/Popups und
@@ -154,11 +158,11 @@ Wichtig fuer die Kommunikation:
 
 - `npm run kosmo:orbit-audit-trail` — 11/11 passed.
 - `npm run kosmo:orbit-office-routine` — 10/10 passed.
-- `npm run kosmo:orbit-route-smoke` — 125/125 passed.
+- `npm run kosmo:orbit-route-smoke` — 129/129 passed.
 - `npm run kosmo:orbit-full-review` — 20/20 passed.
-- `npm run kosmo:orbit-demo-audit` — 21/21 passed.
-- `npm run kosmo:orbit-responsive-audit` — 21/21 passed.
-- `npm run kosmo:orbit-static-smoke` — 35/35 passed.
+- `npm run kosmo:orbit-demo-audit` — 23/23 passed.
+- `npm run kosmo:orbit-responsive-audit` — 22/22 passed.
+- `npm run kosmo:orbit-static-smoke` — 37/37 passed.
 - `npx tsc --noEmit --pretty false --incremental false` — passed.
 - `npm run lint` — passed mit bekannten Bestandswarnungen, keine Errors.
 - `npm run build` mit Node 22 — passed.

@@ -61,6 +61,7 @@ function buildReport(html) {
     { id: 'commands', label: 'Command-Vertrag' },
     { id: 'audit', label: 'Audit-Trail-Vertrag' },
     { id: 'evidenz', label: 'Pruefevidenz' },
+    { id: 'ausbildung', label: 'Ausbildungsmodus' },
     { id: 'rechte', label: 'Rechte-Matrix' },
     { id: 'rollen', label: 'Rollenumschaltung Preview' }
   ];
@@ -69,7 +70,7 @@ function buildReport(html) {
     label: section.label,
     index: normalized.indexOf(`id="${section.id}"`)
   }));
-  const navLabels = ['Autonomie', 'Routine', '3-Minuten', 'Fortschritt', 'Vision', 'Demo', 'Projektpaket', 'Handoff', 'Decision', 'Runtime', 'Installation', 'Health', 'Risiken', 'Commands', 'Audit', 'Evidenz', 'Rechte', 'Rollen', 'Guardrails'];
+  const navLabels = ['Autonomie', 'Routine', '3-Minuten', 'Fortschritt', 'Vision', 'Demo', 'Projektpaket', 'Handoff', 'Decision', 'Runtime', 'Installation', 'Health', 'Risiken', 'Commands', 'Audit', 'Evidenz', 'Ausbildung', 'Rechte', 'Rollen', 'Guardrails'];
   const forbiddenArtifacts = ['[object Object]', 'NaN%', 'null null'];
   const checks = [
     check('html_exists', 'Built /orbit HTML exists.', existsSync(htmlPath)),
@@ -89,6 +90,8 @@ function buildReport(html) {
     check('risk_register_visible', 'Risk register is visible in the export.', normalized.includes('Risiko-Register') && normalized.includes('human-approval-risk-register')),
     check('command_contract_visible', 'Command contract is visible in the export.', normalized.includes('Command-Vertrag') && normalized.includes('static-command-contract')),
     check('audit_trail_visible', 'Audit trail is visible in the export.', normalized.includes('Audit-Trail-Vertrag') && normalized.includes('static-audit-trail-contract')),
+    check('learning_mode_visible', 'Education mode is visible in the export.', normalized.includes('Ausbildungsmodus') && normalized.includes('Kosmo als sicherer Lernbegleiter')),
+    check('learning_mode_safety_visible', 'Education mode safety line is visible in the export.', normalized.includes('ohne Accounts') && normalized.includes('Projekt-Writes') && normalized.includes('Public-Publish')),
     check('permission_boundary_visible', 'Role permission boundary is visible in the export.', normalized.includes('Rechte-Matrix') && normalized.includes('generation bleibt gesperrt')),
     check('no_runtime_promise', 'Export does not claim live runtime execution.', !normalized.includes('automatisch live schreibt') && !normalized.includes('Cloud Writes aktiv')),
     check('no_render_artifacts', 'Visible export HTML has no obvious unresolved render artifacts.', forbiddenArtifacts.every((artifact) => !visibleHtml.includes(artifact))),

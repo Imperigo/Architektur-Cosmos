@@ -1,6 +1,6 @@
 # KosmoOrbit Route Smoke
 
-Generated: 2026-06-01T12:34:26.502Z
+Generated: 2026-06-01T12:39:36.611Z
 Status: `orbit_route_smoke_passed`
 Route: `app/orbit/page.tsx`
 
@@ -8,7 +8,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 
 ## Summary
 
-- checks: 125/125 passed
+- checks: 129/129 passed
 
 ## Checks
 
@@ -43,6 +43,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `runtime_contract_file_exists` | `passed` | Orbit local runtime contract component exists. |
 | `quality_evidence_file_exists` | `passed` | Orbit quality evidence component exists. |
 | `workstation_priorities_file_exists` | `passed` | Orbit workstation priorities component exists. |
+| `learning_mode_file_exists` | `passed` | Orbit learning mode component exists. |
 | `permission_matrix_file_exists` | `passed` | Orbit permission matrix component exists. |
 | `autonomy_status_file_exists` | `passed` | Orbit autonomy status component exists. |
 | `office_routine_file_exists` | `passed` | Orbit office routine component exists. |
@@ -70,6 +71,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `imports_runtime_contract` | `passed` | Route imports the local runtime contract component. |
 | `imports_quality_evidence` | `passed` | Route imports the quality evidence component. |
 | `imports_workstation_priorities` | `passed` | Route imports the workstation priorities component. |
+| `imports_learning_mode` | `passed` | Route imports the learning mode component. |
 | `imports_permission_matrix` | `passed` | Route imports the permission matrix component. |
 | `imports_autonomy_status` | `passed` | Route imports the autonomy status component. |
 | `imports_office_routine` | `passed` | Route imports the office routine component. |
@@ -120,6 +122,8 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `imports_static_smoke_report` | `passed` | Route imports the static export smoke report. |
 | `shows_workstation_priorities` | `passed` | Route renders role-first workstation priorities. |
 | `covers_core_workstation_roles` | `passed` | Workstation priorities cover owner, project lead, design, drafting and education. |
+| `shows_learning_mode` | `passed` | Route renders education mode for learning roles. |
+| `learning_mode_keeps_actions_blocked` | `passed` | Learning mode blocks accounts, writes, generation and public publish. |
 | `shows_permission_matrix` | `passed` | Route renders role permission matrix. |
 | `keeps_generation_blocked_in_matrix` | `passed` | Permission matrix keeps generation and public gates visibly blocked. |
 | `shows_autonomy_status` | `passed` | Route renders local autonomy status and safety limits. |

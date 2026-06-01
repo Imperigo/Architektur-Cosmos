@@ -1,6 +1,6 @@
 # KosmoOrbit Static Export Smoke
 
-Generated: 2026-06-01T12:34:06.905Z
+Generated: 2026-06-01T12:39:18.940Z
 Status: `orbit_static_export_smoke_passed`
 HTML: `out/orbit/index.html`
 
@@ -8,7 +8,7 @@ Checks the built static export for the visible KosmoOrbit demo panels. It does n
 
 ## Summary
 
-- checks: 35/35 passed
+- checks: 37/37 passed
 
 ## Checks
 
@@ -35,6 +35,7 @@ Checks the built static export for the visible KosmoOrbit demo panels. It does n
 | `renders_audit_trail` | `passed` | Export renders static audit trail contract. |
 | `renders_quality_evidence` | `passed` | Export renders quality evidence. |
 | `renders_workstation_priorities` | `passed` | Export renders workstation priorities. |
+| `renders_learning_mode` | `passed` | Export renders education mode. |
 | `renders_permission_matrix` | `passed` | Export renders permission matrix. |
 | `renders_role_switcher` | `passed` | Export renders role switcher. |
 | `renders_guided_review_path` | `passed` | Export renders guided review path. |
@@ -48,6 +49,7 @@ Checks the built static export for the visible KosmoOrbit demo panels. It does n
 | `keeps_command_contract_static` | `passed` | Export keeps command contract non-operational. |
 | `keeps_audit_trail_static` | `passed` | Export keeps audit trail non-writing. |
 | `keeps_design_handoff_generation_blocked` | `passed` | Export keeps KosmoDesign generation blocked. |
+| `keeps_learning_mode_safe` | `passed` | Export keeps learning mode read-safe. |
 | `no_server_runtime_markers` | `passed` | Export does not include server runtime markers. |
 
 ## Next Actions

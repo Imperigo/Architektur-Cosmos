@@ -1,6 +1,6 @@
 # KosmoOrbit Demo Audit
 
-Generated: 2026-06-01T12:34:06.958Z
+Generated: 2026-06-01T12:39:18.981Z
 Status: `orbit_demo_audit_passed`
 HTML: `out/orbit/index.html`
 
@@ -8,30 +8,31 @@ Static audit for the human presentation flow of `/orbit`. It checks section orde
 
 ## Summary
 
-- checks: 21/21 passed
+- checks: 23/23 passed
 
 ## Demo Order
 
 | Anchor | Section | Position |
 | --- | --- | ---: |
-| `autonomie` | Autonomie-Status | 13930 |
-| `routine` | Buero-Routine | 16406 |
-| `presenter` | 3-Minuten-Erklaerung | 29218 |
-| `fortschritt` | Projektfortschritt | 32235 |
-| `vision` | Vision Bridge | 38980 |
-| `demo-ready` | Demo-Bereitschaft | 43320 |
-| `projektpaket` | Projektpaket Tagesansicht | 46064 |
-| `design-handoff` | KosmoDesign Handoff | 55656 |
-| `entscheidung` | Review Decision Draft | 69787 |
-| `runtime-contract` | Runtime-Vertrag | 77096 |
-| `installation` | Buero-Installation | 83092 |
-| `health` | Health Readiness | 90831 |
-| `risiken` | Risiko-Register | 97688 |
-| `commands` | Command-Vertrag | 104977 |
-| `audit` | Audit-Trail-Vertrag | 114340 |
-| `evidenz` | Pruefevidenz | 121854 |
-| `rechte` | Rechte-Matrix | 130113 |
-| `rollen` | Rollenumschaltung Preview | 147868 |
+| `autonomie` | Autonomie-Status | 14183 |
+| `routine` | Buero-Routine | 16659 |
+| `presenter` | 3-Minuten-Erklaerung | 29471 |
+| `fortschritt` | Projektfortschritt | 32488 |
+| `vision` | Vision Bridge | 39233 |
+| `demo-ready` | Demo-Bereitschaft | 43573 |
+| `projektpaket` | Projektpaket Tagesansicht | 46317 |
+| `design-handoff` | KosmoDesign Handoff | 55909 |
+| `entscheidung` | Review Decision Draft | 70040 |
+| `runtime-contract` | Runtime-Vertrag | 77349 |
+| `installation` | Buero-Installation | 83345 |
+| `health` | Health Readiness | 91084 |
+| `risiken` | Risiko-Register | 97941 |
+| `commands` | Command-Vertrag | 105230 |
+| `audit` | Audit-Trail-Vertrag | 114593 |
+| `evidenz` | Pruefevidenz | 122107 |
+| `ausbildung` | Ausbildungsmodus | 130366 |
+| `rechte` | Rechte-Matrix | 135676 |
+| `rollen` | Rollenumschaltung Preview | 153431 |
 
 ## Checks
 
@@ -54,6 +55,8 @@ Static audit for the human presentation flow of `/orbit`. It checks section orde
 | `risk_register_visible` | `passed` | Risk register is visible in the export. |
 | `command_contract_visible` | `passed` | Command contract is visible in the export. |
 | `audit_trail_visible` | `passed` | Audit trail is visible in the export. |
+| `learning_mode_visible` | `passed` | Education mode is visible in the export. |
+| `learning_mode_safety_visible` | `passed` | Education mode safety line is visible in the export. |
 | `permission_boundary_visible` | `passed` | Role permission boundary is visible in the export. |
 | `no_runtime_promise` | `passed` | Export does not claim live runtime execution. |
 | `no_render_artifacts` | `passed` | Visible export HTML has no obvious unresolved render artifacts. |

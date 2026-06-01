@@ -146,6 +146,9 @@ Dieser Kern zeigt:
 - einen Buero-Routine-Vertrag fuer Morgenstart, Projektfokus, KosmoDesign
   Review Session, Lernmodus, Abendabschluss und Not-Stopp, ohne echte
   Automationen oder externe Aktionen zu starten;
+- einen Ausbildungsmodus, der Praktikant, Lehrling und Schnupperstift mit
+  Schulstoff/Buero-Standards, gefuehrter Projektbeobachtung und Review statt
+  Aktion unterstuetzt;
 - einen Presenter-Modus fuer eine 3-Minuten-Erklaerung, der die
   Buero-Argumente besser, schneller und guenstiger ohne Informatik-Sprache
   zusammenfasst;

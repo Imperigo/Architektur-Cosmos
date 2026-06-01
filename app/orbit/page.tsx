@@ -17,6 +17,7 @@ import { OrbitDemoQuestions } from './OrbitDemoQuestions';
 import { OrbitDemoReviewPath } from './OrbitDemoReviewPath';
 import { OrbitHealthReadiness } from './OrbitHealthReadiness';
 import { OrbitInstallationTopology } from './OrbitInstallationTopology';
+import { OrbitLearningMode } from './OrbitLearningMode';
 import { OrbitOfficeRoutine } from './OrbitOfficeRoutine';
 import { OrbitPermissionMatrix } from './OrbitPermissionMatrix';
 import { OrbitPresenterBrief } from './OrbitPresenterBrief';
@@ -416,6 +417,10 @@ export default function OrbitPage() {
           </div>
 
           <OrbitWorkstationPriorities />
+
+          <div id="ausbildung" className="scroll-mt-4">
+            <OrbitLearningMode variants={roleVariantsReport.variants} />
+          </div>
 
           <div id="rechte" className="scroll-mt-4">
             <OrbitPermissionMatrix variants={roleVariantsReport.variants} />
