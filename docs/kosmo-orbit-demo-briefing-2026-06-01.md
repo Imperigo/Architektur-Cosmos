@@ -53,57 +53,57 @@ In drei Minuten soll ein Architekturbueroleiter verstehen:
    Abendabschluss und Not-Stopp. Heute bleibt das statisch und nicht
    operativ.
 
-7. **Projektpaket Tagesansicht zeigen**
+8. **Projektpaket Tagesansicht zeigen**
    Erklaeren: Hier sieht man Reviewlast, Modellprofil, Gates und warum das
    Projekt noch lokal bleibt.
 
-8. **KosmoDesign Handoff Console zeigen**
+9. **KosmoDesign Handoff Console zeigen**
    Erklaeren: KosmoDesign darf heute nur im `context_review_only`-Modus
    oeffnen. `Generate Design` bleibt sichtbar blockiert, bis Kontext,
    Quellen, Modellqualitaet und Human Review geschlossen sind.
 
-9. **Demo-Fragen zeigen**
+10. **Demo-Fragen zeigen**
    Die wahrscheinlichsten Chef-Fragen werden direkt beantwortet und auf die
    passenden Panels verlinkt.
 
-10. **Rollenumschaltung und Rechte-Matrix zeigen**
+11. **Rollenumschaltung und Rechte-Matrix zeigen**
    Erklaeren: Ein Chef, Projektleiter, Entwurfsarchitekt, Zeichner oder
    Lehrling sieht nicht dieselbe Oberflaeche.
 
-11. **Ausbildungsmodus zeigen**
+12. **Ausbildungsmodus zeigen**
    Erklaeren: Praktikant, Lehrling und Schnupperstift bekommen Lernprofile:
    Schulstoff/Buero-Standards, gefuehrte Projektbeobachtung und Review statt
    Aktion, ohne Projekt-Writes oder Public-Publish.
 
-12. **Gefuehrter Demo-Review-Pfad zeigen**
+13. **Gefuehrter Demo-Review-Pfad zeigen**
    Ablauf: Projektleitung klaert Blocker, Entwurf prueft KosmoDesign im
    Review Mode, Admin haelt Public-/Freigabe-Gates geschlossen.
 
-13. **Review Decision Draft zeigen**
+14. **Review Decision Draft zeigen**
    Erklaeren: KosmoOrbit soll spaeter nicht blind freigeben, sondern einen
    Entscheid mit Evidenz und Write Guard vorbereiten. In der Preview bleibt
    der Status deshalb bewusst `needs_more_evidence`.
 
-14. **Runtime-, Command-, Audit- und Risiko-Vertraege zeigen**
+15. **Runtime-, Command-, Audit- und Risiko-Vertraege zeigen**
    Erklaeren: KosmoOrbit benennt genau, was spaeter lokale Runtime wird und
    was heute blockiert bleibt: Modellstart, Blender-Launch, Geometrie,
    Userdaten-Writes, Upload, Publish, externer Sync und Push ohne Go.
 
-15. **MVP-Grenze zeigen**
+16. **MVP-Grenze zeigen**
    Erklaeren: Heute ist die Produktlogik sichtbar. Echte lokale KI,
    Benutzerprofile, Toolsteuerung und persistente Entscheidungen gehoeren zur
    spaeteren KosmoZentrale-Runtime.
 
-15. **Pruefevidenz und Demo-Bereitschaft zeigen**
+17. **Pruefevidenz und Demo-Bereitschaft zeigen**
    Erklaeren: Die Preview zeigt Full Review, Route-Smoke und Open Mode direkt
    im Tool. Das ist keine Garantie fuer ein fertiges Produkt, aber ein Beleg,
    dass der aktuelle MVP-Kern lokal geprueft wird.
 
-16. **Live-Gate zeigen**
+18. **Live-Gate zeigen**
    Erklaeren: Lokal vorfuehrbar heisst nicht automatisch public-ready. Vor
    Push/Deploy braucht es Owner-Go, Security Review und danach Live-Smoke.
 
-17. **Arbeitsstations-Prioritaeten zeigen**
+19. **Arbeitsstations-Prioritaeten zeigen**
    Erklaeren: Dieselbe Hauptsoftware wird spaeter je Rolle anders starten:
    Chef/Admin sieht Risiko und Evidenz, Projektleitung sieht Review-Entscheide,
    Entwurf sieht KosmoDesign-Kontext, Zeichnung sieht Modell/Artefakte,

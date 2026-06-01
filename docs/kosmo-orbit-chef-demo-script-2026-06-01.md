@@ -55,13 +55,13 @@ klarer und nachvollziehbarer machen.
    - Sagen: Heute ist nur Review Mode erlaubt; Design-Generation bleibt
      gesperrt.
 
-6. **Rollen und Ausbildung zeigen**
+7. **Rollen und Ausbildung zeigen**
    - Sagen: Chef, Projektleitung, Entwurf, Zeichnung und Lernende brauchen
      unterschiedliche Oberflaechen.
    - Sagen: Lernende bekommen Erklaerung und sichere Uebungen statt kritische
      Rechte.
 
-7. **Live-Gate zeigen**
+8. **Live-Gate zeigen**
    - Sagen: Lokal vorfuehrbar ist nicht gleich public-ready.
    - Sagen: Push, Livegang und Cloudflare-Deploy brauchen Owner-Go und
      Live-Smoke.
