@@ -167,7 +167,7 @@ Wichtig fuer die Kommunikation:
   Pflicht vor Push/Deploy.
 - Der fruehere Publish-Blocker wurde neu geprueft: `security:check` passed,
   `npm audit --omit=dev` meldet 0 Vulnerabilities und
-  `brain:doctor-fast` ist 12/12 gruen.
+  `brain:doctor-fast` ist 14/14 gruen.
 - Der In-App-Browser-Smoke wurde nach Pilot-Runbook und Live-Gate erneuert:
   Desktop 1440 x 900 und Mobile 390 x 844 ohne horizontalen Overflow, beide
   neuen Panels sichtbar, keine Klickziele unter 32 px.
@@ -218,7 +218,6 @@ Wichtig fuer die Kommunikation:
 
 - `npm run kosmo:orbit-audit-trail` — 11/11 passed.
 - `npm run kosmo:orbit-office-routine` — 10/10 passed.
-- `npm run kosmo:orbit-route-smoke` — 157/157 passed.
 - `npm run kosmo:orbit-route-smoke` — 161/161 passed.
 - `npm run kosmo:orbit-full-review` — 23/23 passed.
 - `npm run kosmo:orbit-pilot-kit` — 19/19 passed.
