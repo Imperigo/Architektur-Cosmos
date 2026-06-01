@@ -60,7 +60,8 @@ Stand: finaler Abschluss-Sweep am 2026-06-01, kein Push/Deploy.
 - In-App-Browser-Smoke fuer `/orbit/#pilot-checklist` — passed
 - In-App-Browser-Smoke fuer `/orbit/#pilot-result` — passed
 - `npm run security:check` — passed
-- `npm run brain:doctor-fast` — 14/14 passed
+- `npm run atlas:static-smoke` — 17/17 passed
+- `npm run brain:doctor-fast` — 15/15 passed
 
 ## Security-Stand
 
@@ -70,7 +71,7 @@ nicht mehr aktiv:
 - `npm audit --audit-level=moderate --omit=dev --json` meldet 0
   Vulnerabilities;
 - `npm run security:check` passed;
-- `npm run brain:doctor-fast` passed 14/14.
+- `npm run brain:doctor-fast` passed 15/15.
 
 Es wurde kein automatischer Dependency-Fix ausgefuehrt. Vor einem echten Push
 sollte dieser Security-Stand nochmals kurz bestaetigt werden.

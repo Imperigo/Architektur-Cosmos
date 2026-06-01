@@ -383,6 +383,13 @@ Arbeitsstation zuerst welches Panel braucht.
     - der zentrale schnelle Doctor deckt damit Website/KosmoData, Orbit,
       Asset und Pilot-Gates in einem Lauf ab.
 
+53. **KosmoData Static Export Smoke**
+    - neuer Command `npm run atlas:static-smoke`;
+    - prueft den gebauten `/atlas`-Export auf vorhandene `_next/static`
+      CSS/JS-Assets, serialisierte Eintragsdaten, Pilotobjekte, Detailseiten
+      und statische Frontend-Grenzen;
+    - `brain:doctor-fast` fuehrt diesen Check nun mit.
+
 ## Lokale Commits seit `origin/main`
 
 - `6ad9372` Add KosmoOrbit role switcher preview
@@ -412,6 +419,7 @@ Zuletzt gruene lokale Checks:
 - `npm run kosmo:orbit-audit-trail` — 11/11 passed
 - `npm run kosmo:orbit-office-routine` — 10/10 passed
 - `npm run kosmodata:hud-guard` — 13/13 passed
+- `npm run atlas:static-smoke` — 17/17 passed
 - `npm run database:pilot-quality` — passed, 5 Piloten, 97% Durchschnitt
 - Browser-Smoke fuer `/orbit/` — passed
 - 390px-Mobile-Smoke fuer `/orbit/` — passed
@@ -419,7 +427,7 @@ Zuletzt gruene lokale Checks:
 - `npm run ui:audit` — 72/72 passed, 0 Warnings
 - `npm run archive:validate` — passed
 - `npm run security:check` — passed
-- `npm run brain:doctor-fast` — 14/14 passed
+- `npm run brain:doctor-fast` — 15/15 passed
 - `npx tsc --noEmit` — passed
 - `npm run build` — static export passed
 - `npm run build` + `npm run kosmo:orbit-static-smoke` — 57/57 static

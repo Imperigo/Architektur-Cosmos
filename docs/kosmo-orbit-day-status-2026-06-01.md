@@ -168,7 +168,7 @@ Wichtig fuer die Kommunikation:
   Pflicht vor Push/Deploy.
 - Der fruehere Publish-Blocker wurde neu geprueft: `security:check` passed,
   `npm audit --omit=dev` meldet 0 Vulnerabilities und
-  `brain:doctor-fast` ist 14/14 gruen.
+  `brain:doctor-fast` ist 15/15 gruen.
 - Der In-App-Browser-Smoke wurde nach Pilot-Runbook und Live-Gate erneuert:
   Desktop 1440 x 900 und Mobile 390 x 844 ohne horizontalen Overflow, beide
   neuen Panels sichtbar, keine Klickziele unter 32 px.
@@ -207,6 +207,9 @@ Wichtig fuer die Kommunikation:
 - Der KosmoData Pilot-Quality-Audit prueft die ersten Datenbankpiloten nun
   schaerfer auf Text-Review-Pack, Quellen, Modell-/Layer-Vertrag,
   2D-Planpipeline, Viewer-Faehigkeit und Netzwerkrelationen.
+- Ein neuer `atlas:static-smoke` prueft den gebauten `/atlas`-Export auf
+  vorhandene CSS/JS-Assets, serialisierte Eintragsdaten, bekannte
+  Pilotobjekte, Detailseiten und statische Frontend-Grenzen.
 
 ## Qualitaetsgrenzen
 
@@ -227,12 +230,13 @@ Wichtig fuer die Kommunikation:
 - `npm run kosmo:orbit-demo-audit` — 33/33 passed.
 - `npm run kosmo:orbit-responsive-audit` — 27/27 passed.
 - `npm run kosmo:orbit-static-smoke` — 57/57 passed.
+- `npm run atlas:static-smoke` — 17/17 passed.
 - `npx tsc --noEmit --pretty false --incremental false` — passed.
 - `npm run lint` — passed mit bekannten Bestandswarnungen, keine Errors.
 - `npm run build` mit Node 22 — passed.
 - In-App-Browser-Smoke Desktop/Mobile — passed.
 - `npm run security:check` — passed.
-- `npm run brain:doctor-fast` — 14/14 passed.
+- `npm run brain:doctor-fast` — 15/15 passed.
 - In-App-Browser-Smoke fuer `/orbit/#pilot-kit` — passed.
 - In-App-Browser-Smoke fuer `/orbit/#pilot-checklist` — passed.
 - In-App-Browser-Smoke fuer `/orbit/#pilot-result` — passed.

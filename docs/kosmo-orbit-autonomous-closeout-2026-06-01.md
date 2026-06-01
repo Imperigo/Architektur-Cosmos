@@ -29,12 +29,13 @@ durchgefuehrt und freigegeben hat.
 - `npm run kosmo:orbit-demo-audit` - 33/33 passed
 - `npm run kosmo:orbit-responsive-audit` - 27/27 passed
 - `npm run kosmo:orbit-static-smoke` - 57/57 passed
+- `npm run atlas:static-smoke` - 17/17 passed
 - `npx tsc --noEmit --pretty false --incremental false` - passed
 - `npm run lint` - 0 Errors, 25 bekannte Bestandswarnungen
 - `npm run ui:audit` - 72/72 passed
 - `npm run build` mit Node 22 - static export passed
 - `npm run security:check` - passed
-- `npm run brain:doctor-fast` - 14/14 passed
+- `npm run brain:doctor-fast` - 15/15 passed
 - `git diff --check` - passed
 - In-App-Browser-Smoke fuer `/orbit/#pilot-kit` - passed
 - In-App-Browser-Smoke fuer `/orbit/#pilot-checklist` - passed
