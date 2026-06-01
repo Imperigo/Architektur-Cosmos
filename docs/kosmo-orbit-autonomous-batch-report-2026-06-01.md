@@ -422,7 +422,7 @@ Zuletzt gruene lokale Checks:
 - `npm run brain:doctor-fast` — 14/14 passed
 - `npx tsc --noEmit` — passed
 - `npm run build` — static export passed
-- `npm run build` + `npm run kosmo:orbit-static-smoke` — 51/51 static
+- `npm run build` + `npm run kosmo:orbit-static-smoke` — 53/53 static
   `/orbit` HTML enthaelt die wichtigsten Demo-Panels und Anker
 
 ## Sicherheitsgrenzen

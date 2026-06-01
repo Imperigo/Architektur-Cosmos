@@ -70,7 +70,7 @@ nicht mehr aktiv:
 - `npm audit --audit-level=moderate --omit=dev --json` meldet 0
   Vulnerabilities;
 - `npm run security:check` passed;
-- `npm run brain:doctor-fast` passed 12/12.
+- `npm run brain:doctor-fast` passed 14/14.
 
 Es wurde kein automatischer Dependency-Fix ausgefuehrt. Vor einem echten Push
 sollte dieser Security-Stand nochmals kurz bestaetigt werden.
