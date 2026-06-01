@@ -101,6 +101,10 @@ Aktiv fuer:
 - KosmoData-Static-Nachweis ueber `atlas:static-smoke`, damit der gebaute
   `/atlas`-Export, seine CSS/JS-Assets, serialisierten Eintragsdaten und
   Detailseiten als Demo-Basis pruefbar bleiben
+- Hero-/Planetbild-Review-Queue in
+  `docs/kosmodata-hero-image-review-queue.md`, damit fehlende Projektbilder
+  public-safe, priorisiert und ohne blinde Fremdbild-Uebernahme bearbeitet
+  werden
 - Browser-Smoke-Nachweise fuer Pilot-Messkit, Facilitator-Checkliste und
   Pilot-Result-Draft
 - finaler lokaler Abschluss in
