@@ -1,6 +1,6 @@
 # KosmoOrbit Route Smoke
 
-Generated: 2026-06-01T06:46:56.508Z
+Generated: 2026-06-01T06:56:52.940Z
 Status: `orbit_route_smoke_passed`
 Route: `app/orbit/page.tsx`
 
@@ -8,7 +8,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 
 ## Summary
 
-- checks: 32/32 passed
+- checks: 36/36 passed
 
 ## Checks
 
@@ -24,9 +24,11 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `role_switcher_file_exists` | `passed` | Orbit role switcher client component exists. |
 | `demo_review_file_exists` | `passed` | Orbit guided demo review component exists. |
 | `project_dashboard_file_exists` | `passed` | Orbit project package dashboard component exists. |
+| `presenter_brief_file_exists` | `passed` | Orbit presenter brief component exists. |
 | `imports_role_switcher` | `passed` | Route imports the role switcher preview component. |
 | `imports_demo_review_path` | `passed` | Route imports the guided demo review component. |
 | `imports_project_dashboard` | `passed` | Route imports the project package dashboard component. |
+| `imports_presenter_brief` | `passed` | Route imports the presenter brief component. |
 | `uses_force_static` | `passed` | Route declares force-static rendering. |
 | `shows_kosmo_orbit` | `passed` | Route renders KosmoOrbit heading. |
 | `shows_demo_path` | `passed` | Route renders the 3-minute human demo path. |
@@ -38,6 +40,8 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `shows_project_lead_and_design_roles` | `passed` | Guided demo includes Projektleitung and Entwurf roles. |
 | `shows_project_package_dashboard` | `passed` | Route renders the project package day view. |
 | `imports_project_review_artifacts` | `passed` | Route imports project inspector and design handoff artifacts. |
+| `shows_presenter_brief` | `passed` | Route renders the three-minute presenter explanation. |
+| `shows_value_claims` | `passed` | Presenter brief covers better, faster and cheaper value claims. |
 | `shows_blocked_actions` | `passed` | Route renders blocked action labels from role state. |
 | `shows_review_only_copy` | `passed` | Route keeps review-only safety copy visible. |
 | `no_use_server` | `passed` | Forbidden pattern is absent: no_use_server. |

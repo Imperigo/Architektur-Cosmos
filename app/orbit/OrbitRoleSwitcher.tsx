@@ -88,7 +88,7 @@ export function OrbitRoleSwitcher({ initialRoleId, variants }: OrbitRoleSwitcher
   return (
     <section className="rounded-lg border border-cyan-200/20 bg-black/32 p-4">
       <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
+        <div className="min-w-0">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-200">Rollenumschaltung Preview</p>
           <h2 className="mt-2 text-xl font-semibold text-white">Wie KosmoOrbit je Person anders wird</h2>
           <p className="mt-3 max-w-3xl text-sm leading-6 text-stone-300">
@@ -96,7 +96,7 @@ export function OrbitRoleSwitcher({ initialRoleId, variants }: OrbitRoleSwitcher
             und schaltet keine echte Berechtigung frei.
           </p>
         </div>
-        <span className="rounded-full border border-white/20 bg-white/[0.08] px-2.5 py-1 text-[11px] font-medium text-stone-100">
+        <span className="inline-flex max-w-full items-center break-words rounded-full border border-white/20 bg-white/[0.08] px-2.5 py-1 text-[11px] font-medium leading-tight text-stone-100">
           {variants.length} Rollenprofile
         </span>
       </div>
@@ -112,13 +112,13 @@ export function OrbitRoleSwitcher({ initialRoleId, variants }: OrbitRoleSwitcher
                 role="tab"
                 aria-selected={selected}
                 onClick={() => setSelectedRoleId(variant.role.id)}
-                className={`min-h-16 rounded-lg border px-3 py-2 text-left transition ${
+                className={`min-h-16 min-w-0 rounded-lg border px-3 py-2 text-left transition ${
                   selected
                     ? 'border-cyan-200/60 bg-cyan-300/12 text-white shadow-[0_0_24px_rgba(0,231,255,0.08)]'
                     : 'border-white/10 bg-white/[0.04] text-stone-300 hover:border-white/25 hover:bg-white/[0.07]'
                 }`}
               >
-                <span className="block text-sm font-semibold">{variant.role.label}</span>
+                <span className="block break-words text-sm font-semibold">{variant.role.label}</span>
                 <span className="mt-1 block text-xs text-stone-500">
                   {roleDepthLabel(variant.role.detail_level)} / {variant.role.ui_mode}
                 </span>
@@ -129,11 +129,11 @@ export function OrbitRoleSwitcher({ initialRoleId, variants }: OrbitRoleSwitcher
 
         <div className="rounded-lg border border-white/10 bg-white/[0.04] p-4">
           <div className="flex flex-wrap items-start justify-between gap-3">
-            <div>
+            <div className="min-w-0">
               <p className="text-xs uppercase tracking-[0.16em] text-stone-500">{selectedRole.role.level}</p>
               <h3 className="mt-1 text-2xl font-semibold text-white">{selectedRole.role.label}</h3>
             </div>
-            <span className="rounded-full border border-amber-300/45 bg-amber-400/12 px-2.5 py-1 text-[11px] font-medium text-amber-100">
+            <span className="inline-flex max-w-full items-center break-words rounded-full border border-amber-300/45 bg-amber-400/12 px-2.5 py-1 text-[11px] font-medium leading-tight text-amber-100">
               {selectedRole.panel_state.primary_label}
             </span>
           </div>
@@ -164,7 +164,7 @@ export function OrbitRoleSwitcher({ initialRoleId, variants }: OrbitRoleSwitcher
                 {permissionLabels.map(([key, label]) => {
                   const enabled = selectedRole.permissions[key];
                   return (
-                    <div key={key} className={`rounded-md border px-3 py-2 text-xs ${stateTone(enabled)}`}>
+                    <div key={key} className={`min-w-0 rounded-md border px-3 py-2 text-xs ${stateTone(enabled)}`}>
                       <span className="font-medium">{label}</span>
                       <span className="ml-2 font-mono">{enabled ? 'on' : 'off'}</span>
                     </div>

@@ -396,6 +396,24 @@ Ein Projektleiter sieht auf einen Blick, warum ein Paket noch lokal bleibt,
 welche Module zuerst geprueft werden und warum KosmoDesign weiter im Review
 Mode bleiben muss.
 
+### Presenter-Modus
+
+Die `/orbit` Preview enthaelt nun eine kurze Presenter-Spur fuer Gespraeche
+mit Architekten:
+
+- Minute 0: KosmoOrbit als installierte Hauptsoftware-Zentrale erklaeren.
+- Minute 1: Nutzen zeigen: Projektstatus, Reviewlast und Blocker an einem Ort.
+- Minute 2: Sicherheitslogik zeigen: KosmoDesign bleibt im Review Mode, bis
+  Kontext, Quellen und Gates sauber geprueft sind.
+
+Der Block macht die Vision ohne Informatik-Sprache vorfuehrbar und verbindet
+die Produktargumente:
+
+- besser: rollen- und verantwortungsgerechte Oberflaechen;
+- schneller: Projektblocker und naechste Aktion liegen an einem Ort;
+- guenstiger: lokale Pruefung und Vorbereitung vor teuren Fehlern, Cloudjobs
+  oder Abgaben.
+
 ## 14. Static KosmoDesign UI Prototype
 
 Aus der Panel-Spezifikation kann KosmoOrbit einen ersten lokalen HTML-Prototyp

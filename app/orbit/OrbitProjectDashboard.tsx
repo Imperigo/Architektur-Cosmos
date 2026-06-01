@@ -121,7 +121,7 @@ export function OrbitProjectDashboard({ projectInspector, designHandoff }: Orbit
   return (
     <section className="rounded-lg border border-white/10 bg-white/[0.04] p-4">
       <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
+        <div className="min-w-0">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-stone-400">Projektpaket Tagesansicht</p>
           <h2 className="mt-2 text-xl font-semibold text-white">{projectInspector.project.name}</h2>
           <p className="mt-3 max-w-3xl text-sm leading-6 text-stone-300">
@@ -135,22 +135,22 @@ export function OrbitProjectDashboard({ projectInspector, designHandoff }: Orbit
       </div>
 
       <div className="mt-4 grid gap-3 md:grid-cols-4">
-        <div className="rounded-lg border border-white/10 bg-black/24 p-3">
+        <div className="min-w-0 rounded-lg border border-white/10 bg-black/24 p-3">
           <p className="text-xs uppercase tracking-[0.14em] text-stone-500">Artefakte</p>
           <p className="mt-2 text-2xl font-semibold text-white">{projectInspector.summary.artifact_count}</p>
           <p className="mt-1 text-xs text-stone-400">{projectInspector.summary.review_artifact_count} reviewpflichtig</p>
         </div>
-        <div className="rounded-lg border border-white/10 bg-black/24 p-3">
+        <div className="min-w-0 rounded-lg border border-white/10 bg-black/24 p-3">
           <p className="text-xs uppercase tracking-[0.14em] text-stone-500">Gates</p>
           <p className="mt-2 text-2xl font-semibold text-white">{projectInspector.review_gates.length}</p>
           <p className="mt-1 text-xs text-stone-400">{projectInspector.summary.disabled_gate_count} disabled, {projectInspector.summary.approval_gate_count} approval</p>
         </div>
-        <div className="rounded-lg border border-white/10 bg-black/24 p-3">
+        <div className="min-w-0 rounded-lg border border-white/10 bg-black/24 p-3">
           <p className="text-xs uppercase tracking-[0.14em] text-stone-500">Modell</p>
           <p className="mt-2 text-2xl font-semibold text-white">{designHandoff.model_profile.room_count} Raeume</p>
           <p className="mt-1 text-xs text-stone-400">{designHandoff.model_profile.story_count} Geschosse, {designHandoff.model_profile.source_confidence}</p>
         </div>
-        <div className="rounded-lg border border-white/10 bg-black/24 p-3">
+        <div className="min-w-0 rounded-lg border border-white/10 bg-black/24 p-3">
           <p className="text-xs uppercase tracking-[0.14em] text-stone-500">Kontext</p>
           <p className="mt-2 text-2xl font-semibold text-white">{designHandoff.context.blocked_input_count}</p>
           <p className="mt-1 text-xs text-stone-400">{designHandoff.context.unresolved_input_count} offene Inputs</p>
@@ -163,9 +163,9 @@ export function OrbitProjectDashboard({ projectInspector, designHandoff }: Orbit
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-stone-500">Module mit Reviewbedarf</p>
             <div className="mt-3 grid gap-2">
               {reviewModules.map((module) => (
-                <div key={module.id} className="rounded-md bg-white/[0.04] px-3 py-2">
+                <div key={module.id} className="min-w-0 rounded-md bg-white/[0.04] px-3 py-2">
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <p className="text-sm font-semibold text-white">{module.owner}</p>
+                    <p className="break-words text-sm font-semibold text-white">{module.owner}</p>
                     <span className="font-mono text-xs text-amber-100">{formatStatus(module.readiness)}</span>
                   </div>
                   <p className="mt-2 text-sm leading-5 text-stone-400">{module.summary}</p>
@@ -179,7 +179,7 @@ export function OrbitProjectDashboard({ projectInspector, designHandoff }: Orbit
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-stone-500">Naechste Review-Artefakte</p>
             <div className="mt-3 grid gap-2">
               {reviewArtifacts.map((artifact) => (
-                <div key={artifact.id} className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2">
+                <div key={artifact.id} className="min-w-0 rounded-md border border-white/10 bg-white/[0.04] px-3 py-2">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <p className="break-all font-mono text-xs text-cyan-100">{artifact.path}</p>
                     <span className="text-xs text-amber-100">{formatStatus(artifact.rights_status)}</span>
@@ -196,9 +196,9 @@ export function OrbitProjectDashboard({ projectInspector, designHandoff }: Orbit
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-stone-500">Review Gates</p>
             <div className="mt-3 grid gap-2">
               {projectInspector.review_gates.map((gate) => (
-                <div key={gate.id} className={`rounded-md border px-3 py-2 ${gateTone[gate.severity] ?? gateTone.yellow}`}>
+                <div key={gate.id} className={`min-w-0 rounded-md border px-3 py-2 ${gateTone[gate.severity] ?? gateTone.yellow}`}>
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <p className="font-mono text-xs">{gate.id}</p>
+                    <p className="break-all font-mono text-xs">{gate.id}</p>
                     <span className="text-xs">{formatStatus(gate.mode)}</span>
                   </div>
                   <p className="mt-2 text-sm leading-5">{gate.reason}</p>
@@ -211,8 +211,8 @@ export function OrbitProjectDashboard({ projectInspector, designHandoff }: Orbit
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-stone-500">Modellprofil</p>
             <div className="mt-3 grid gap-2">
               {rooms.map((room) => (
-                <div key={room.id} className="flex items-center justify-between gap-3 rounded-md bg-white/[0.04] px-3 py-2 text-sm">
-                  <span className="text-stone-200">{room.name}</span>
+                <div key={room.id} className="flex min-w-0 items-center justify-between gap-3 rounded-md bg-white/[0.04] px-3 py-2 text-sm">
+                  <span className="min-w-0 break-words text-stone-200">{room.name}</span>
                   <span className="font-mono text-cyan-100">{room.area_m2} m2</span>
                 </div>
               ))}

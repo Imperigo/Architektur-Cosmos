@@ -140,6 +140,9 @@ Dieser Kern zeigt:
   erklaert;
 - eine Projektpaket-Tagesansicht, die Artefakte, Reviewlast, Modellprofil,
   Gates und naechste sichere Aktion zusammenfuehrt;
+- einen Presenter-Modus fuer eine 3-Minuten-Erklaerung, der die
+  Buero-Argumente besser, schneller und guenstiger ohne Informatik-Sprache
+  zusammenfasst;
 - klare Sperre gegen Design-Generation, Public-Publish, externe Netzwerke,
   Uploads und echte User-Schreibaktionen.
 

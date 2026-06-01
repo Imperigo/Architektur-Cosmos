@@ -6,6 +6,7 @@ import roleVariantsData from '@/examples/kosmo-projects/kosmo-demo-001/orbit/rol
 import shellManifestData from '@/examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-prototype.generated.json';
 import type { Metadata } from 'next';
 import { OrbitDemoReviewPath } from './OrbitDemoReviewPath';
+import { OrbitPresenterBrief } from './OrbitPresenterBrief';
 import { OrbitProjectDashboard, type DesignHandoffPreview, type ProjectInspectorReport } from './OrbitProjectDashboard';
 import { OrbitRoleSwitcher } from './OrbitRoleSwitcher';
 
@@ -206,16 +207,16 @@ function PolicyDot({ enabled }: { enabled: boolean }) {
 }
 
 function Badge({ label, tone = 'neutral' }: { label: string; tone?: Tone }) {
-  return <span className={`rounded-full border px-2.5 py-1 text-[11px] font-medium ${toneClasses[tone]}`}>{label}</span>;
+  return <span className={`inline-flex max-w-full items-center break-words rounded-full border px-2.5 py-1 text-[11px] font-medium leading-tight ${toneClasses[tone]}`}>{label}</span>;
 }
 
 export default function OrbitPage() {
   return (
     <main className="orbit-page h-dvh overflow-auto bg-[#080909] text-stone-100">
       <div className="min-h-dvh bg-[linear-gradient(135deg,rgba(0,231,255,0.12),transparent_28%),radial-gradient(circle_at_78%_12%,rgba(255,96,210,0.16),transparent_30%),linear-gradient(180deg,#080909,#11130f_52%,#080909)] px-4 py-5 sm:px-6 lg:px-8">
-        <div className="mx-auto flex max-w-7xl flex-col gap-5">
+        <div className="mx-auto flex min-w-0 max-w-7xl flex-col gap-5">
           <header className="grid gap-4 border-b border-white/10 pb-5 lg:grid-cols-[1.5fr_1fr] lg:items-end">
-            <div>
+            <div className="min-w-0">
               <p className="text-xs font-semibold uppercase tracking-[0.28em] text-cyan-200">Architektur Kosmos</p>
               <h1 className="mt-2 text-3xl font-semibold tracking-normal text-white sm:text-5xl">KosmoOrbit</h1>
               <p className="mt-3 max-w-3xl text-sm leading-6 text-stone-300 sm:text-base">
@@ -224,10 +225,10 @@ export default function OrbitPage() {
                 Uploads oder Generierung.
               </p>
             </div>
-            <div className="grid gap-2 rounded-lg border border-cyan-200/25 bg-black/35 p-4 shadow-[0_0_32px_rgba(0,231,255,0.08)]">
+            <div className="grid min-w-0 gap-2 rounded-lg border border-cyan-200/25 bg-black/35 p-4 shadow-[0_0_32px_rgba(0,231,255,0.08)]">
               <div className="flex items-center justify-between gap-3 text-sm">
                 <span className="text-stone-400">Route</span>
-                <span className="font-mono text-cyan-100">{appRouteSpec.route_spec.proposed_path}</span>
+                <span className="break-all font-mono text-cyan-100">{appRouteSpec.route_spec.proposed_path}</span>
               </div>
               <div className="flex items-center justify-between gap-3 text-sm">
                 <span className="text-stone-400">Status</span>
@@ -316,6 +317,8 @@ export default function OrbitPage() {
               </div>
             </div>
           </section>
+
+          <OrbitPresenterBrief />
 
           <OrbitProjectDashboard projectInspector={projectInspector} designHandoff={designHandoff} />
 

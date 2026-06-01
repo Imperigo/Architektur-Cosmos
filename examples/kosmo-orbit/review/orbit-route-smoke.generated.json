@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T06:46:56.508Z",
+  "generated_at": "2026-06-01T06:56:52.940Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 32,
-    "passed_checks": 32,
+    "check_count": 36,
+    "passed_checks": 36,
     "failed_checks": 0
   },
   "checks": [
@@ -62,6 +62,11 @@
       "status": "passed"
     },
     {
+      "id": "presenter_brief_file_exists",
+      "label": "Orbit presenter brief component exists.",
+      "status": "passed"
+    },
+    {
       "id": "imports_role_switcher",
       "label": "Route imports the role switcher preview component.",
       "status": "passed"
@@ -74,6 +79,11 @@
     {
       "id": "imports_project_dashboard",
       "label": "Route imports the project package dashboard component.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_presenter_brief",
+      "label": "Route imports the presenter brief component.",
       "status": "passed"
     },
     {
@@ -129,6 +139,16 @@
     {
       "id": "imports_project_review_artifacts",
       "label": "Route imports project inspector and design handoff artifacts.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_presenter_brief",
+      "label": "Route renders the three-minute presenter explanation.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_value_claims",
+      "label": "Presenter brief covers better, faster and cheaper value claims.",
       "status": "passed"
     },
     {

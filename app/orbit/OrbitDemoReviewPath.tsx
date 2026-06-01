@@ -61,7 +61,7 @@ export function OrbitDemoReviewPath({ variants, blockedActions }: OrbitDemoRevie
   return (
     <section className="rounded-lg border border-amber-300/20 bg-amber-300/[0.05] p-4">
       <div className="grid gap-4 lg:grid-cols-[0.9fr_1.4fr] lg:items-start">
-        <div>
+        <div className="min-w-0">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-200">Gefuehrter Demo-Review-Pfad</p>
           <h2 className="mt-2 text-xl font-semibold text-white">Vom Projektblocker zum sicheren Review Mode</h2>
           <p className="mt-3 text-sm leading-6 text-stone-300">
@@ -80,7 +80,7 @@ export function OrbitDemoReviewPath({ variants, blockedActions }: OrbitDemoRevie
                 role="tab"
                 aria-selected={selected}
                 onClick={() => setSelectedStepId(step.id)}
-                className={`min-h-24 rounded-lg border p-3 text-left transition ${
+                className={`min-h-24 min-w-0 rounded-lg border p-3 text-left transition ${
                   selected
                     ? 'border-amber-200/60 bg-amber-300/14 text-white shadow-[0_0_24px_rgba(251,191,36,0.08)]'
                     : 'border-white/10 bg-black/24 text-stone-300 hover:border-white/25 hover:bg-white/[0.06]'
@@ -97,11 +97,11 @@ export function OrbitDemoReviewPath({ variants, blockedActions }: OrbitDemoRevie
       <div className="mt-4 grid gap-4 xl:grid-cols-[1fr_0.85fr]">
         <div className="rounded-lg border border-white/10 bg-black/28 p-4">
           <div className="flex flex-wrap items-start justify-between gap-3">
-            <div>
+            <div className="min-w-0">
               <p className="text-xs uppercase tracking-[0.16em] text-stone-500">{selectedRole.role.label}</p>
               <h3 className="mt-1 text-2xl font-semibold text-white">{selectedStep.title}</h3>
             </div>
-            <span className="rounded-full border border-cyan-200/35 bg-cyan-300/10 px-2.5 py-1 text-[11px] font-medium text-cyan-100">
+            <span className="inline-flex max-w-full items-center break-words rounded-full border border-cyan-200/35 bg-cyan-300/10 px-2.5 py-1 text-[11px] font-medium leading-tight text-cyan-100">
               {selectedRole.panel_state.primary_label}
             </span>
           </div>
@@ -110,11 +110,11 @@ export function OrbitDemoReviewPath({ variants, blockedActions }: OrbitDemoRevie
             {selectedStep.output}
           </p>
           <div className="mt-4 grid gap-3 md:grid-cols-2">
-            <div className="rounded-md bg-white/[0.04] px-3 py-2">
+            <div className="min-w-0 rounded-md bg-white/[0.04] px-3 py-2">
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-500">Warum diese Rolle</p>
               <p className="mt-2 text-sm leading-5 text-stone-300">{selectedRole.explanation.decision_scope}</p>
             </div>
-            <div className="rounded-md bg-white/[0.04] px-3 py-2">
+            <div className="min-w-0 rounded-md bg-white/[0.04] px-3 py-2">
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-500">Naechster Schritt</p>
               <p className="mt-2 text-sm leading-5 text-stone-300">{selectedRole.explanation.safe_next_step}</p>
             </div>

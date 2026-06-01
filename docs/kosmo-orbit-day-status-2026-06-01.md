@@ -57,6 +57,12 @@ Wichtig fuer die Kommunikation:
 - Eine Projektpaket-Tagesansicht fasst Artefakte, Reviewlast, Gates,
   Modellprofil, Module mit Reviewbedarf und die naechste sichere Aktion
   zusammen.
+- Der autonome 5h-Block hat einen Presenter-Modus ergaenzt: eine
+  3-Minuten-Erklaerung fuer Architekten mit den Argumenten besser, schneller
+  und guenstiger.
+- Die neuen Panels wurden fuer kleine Viewports robuster gemacht:
+  stabilere Chips, bessere Umbrueche und weniger Risiko fuer ueberlaufende
+  Gate-/Rollenbegriffe.
 
 ## Qualitaetsgrenzen
 
@@ -67,7 +73,7 @@ Wichtig fuer die Kommunikation:
 
 ## Naechster sinnvoller Schritt
 
-Nach den lokalen Checks ist der naechste Produktschritt die visuelle
-Verdichtung: Mobile/kleine Viewports pruefen und die wichtigsten Panels so
-ordnen, dass die 3-Minuten-Demo in einem Buero ohne Informatik-Kontext ruhig
-und verstaendlich wirkt.
+Nach den lokalen Checks ist der naechste Produktschritt ein echtes
+Vorbereitungsprotokoll fuer die Demo: Welche Rolle wird zuerst gezeigt,
+welche Aussagen werden gemacht, welche Aktionen bleiben sichtbar blockiert
+und welche Frage eines Chefs beantwortet welches Panel.
