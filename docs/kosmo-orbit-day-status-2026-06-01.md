@@ -114,7 +114,8 @@ Wichtig fuer die Kommunikation:
   Read-only-Signale fuer Hardware/GPU, lokale Modelle, Speicher/Backup,
   Tool-Connectoren, Job Queue und Logs/Reparatur. Heute startet sie keine
   Modelle, scannt kein Dateisystem und fuehrt keine Hardware- oder Queue-
-  Aktionen aus.
+  Aktionen aus. Die Quelle ist jetzt ein lokaler JSON-Vertrag mit eigenem
+  Smoke-Check.
 - Ein neuer KosmoData-HUD-Guard schuetzt die wiederkehrenden Website-Bedienpunkte:
   Database oben links, Suche/Dev rechts, Filterzugang rechts unten, HTML-
   Database-Overlay, globales Fadenkreuz in Start/Hauptmenue/Popups und

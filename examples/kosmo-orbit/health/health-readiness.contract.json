@@ -1,0 +1,68 @@
+{
+  "schema_version": "0.1",
+  "status": "health_readiness_contract_ready",
+  "mode": "read_only_telemetry_contract",
+  "title": "KosmoOrbit Health Readiness",
+  "summary": "Static read-only contract for future KosmoZentrale health telemetry. It defines required signal channels without reading sensors, scanning the filesystem, starting models, launching tools, mutating systems, controlling queues or touching networks.",
+  "channels": [
+    {
+      "id": "hardware-gpu",
+      "label": "Hardware / GPU",
+      "today": "Nur als erwarteter Health-Kanal beschrieben.",
+      "later": "GPU, CPU, RAM, Temperatur, VRAM und lokale Beschleuniger lesen.",
+      "guard": "keine Hardwarebefehle"
+    },
+    {
+      "id": "local-models",
+      "label": "Lokale Modelle",
+      "today": "Modellstart und Memory bleiben im Runtime-Vertrag gesperrt.",
+      "later": "Modellstatus, Kontextfenster, Quantisierung und Verfuegbarkeit anzeigen.",
+      "guard": "keine Modellstarts"
+    },
+    {
+      "id": "storage-backup",
+      "label": "Speicher / Backup",
+      "today": "Projektpakete werden nur aus statischen lokalen Artefakten gelesen.",
+      "later": "Projektpfade, Backup-Stand, Speicherverbrauch und Rechteketten pruefen.",
+      "guard": "keine Dateisystem-Scans"
+    },
+    {
+      "id": "tool-connectors",
+      "label": "Tool-Connectoren",
+      "today": "Prepare, Design, Draw, Viz, Publish, Data und Asset sind als Pfade sichtbar.",
+      "later": "Blender, Renderer, Exporter und Add-ons im lokalen Netz pruefen.",
+      "guard": "keine Prozessstarts"
+    },
+    {
+      "id": "job-queue",
+      "label": "Job Queue",
+      "today": "Jobs sind nur als spaetere Orchestrierung benannt.",
+      "later": "Analyse-, Render-, Plan-, Export- und Reparaturjobs beobachten.",
+      "guard": "keine Queue-Aktionen"
+    },
+    {
+      "id": "logs-repair",
+      "label": "Logs / Repair",
+      "today": "Autonomie-Status und QA-Reports belegen nur Repo-Arbeit.",
+      "later": "Fehlerlogs, Update-Status und Reparaturvorschlaege zusammenfuehren.",
+      "guard": "keine Systemaenderung"
+    }
+  ],
+  "safety": {
+    "no_hardware_commands": true,
+    "no_model_starts": true,
+    "no_filesystem_scans": true,
+    "no_process_launches": true,
+    "no_queue_actions": true,
+    "no_system_changes": true,
+    "no_network_control": true,
+    "no_uploads": true,
+    "no_external_accounts": true,
+    "no_costs": true
+  },
+  "next_actions": [
+    "Define the future read-only health JSON schema before any real local sensor adapter exists.",
+    "Keep runtime, queue, process and network actions disabled until a human-approved local runtime is implemented.",
+    "Use the contract as a demo-safe bridge between KosmoOrbit UI and future KosmoZentrale telemetry."
+  ]
+}

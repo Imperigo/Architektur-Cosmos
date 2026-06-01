@@ -1,6 +1,6 @@
 # KosmoOrbit Route Smoke
 
-Generated: 2026-06-01T08:27:05.556Z
+Generated: 2026-06-01T08:33:03.888Z
 Status: `orbit_route_smoke_passed`
 Route: `app/orbit/page.tsx`
 
@@ -8,7 +8,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 
 ## Summary
 
-- checks: 94/94 passed
+- checks: 96/96 passed
 
 ## Checks
 
@@ -30,6 +30,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `demo_questions_file_exists` | `passed` | Orbit demo questions component exists. |
 | `installation_topology_file_exists` | `passed` | Orbit local installation topology component exists. |
 | `health_readiness_file_exists` | `passed` | Orbit local health readiness component exists. |
+| `health_readiness_contract_file_exists` | `passed` | Orbit health readiness contract exists. |
 | `review_decision_draft_file_exists` | `passed` | Orbit review decision draft component exists. |
 | `runtime_boundary_file_exists` | `passed` | Orbit MVP/runtime boundary component exists. |
 | `runtime_contract_file_exists` | `passed` | Orbit local runtime contract component exists. |
@@ -48,6 +49,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `imports_demo_questions` | `passed` | Route imports the demo questions briefing component. |
 | `imports_installation_topology` | `passed` | Route imports the local installation topology component. |
 | `imports_health_readiness` | `passed` | Route imports the local health readiness component. |
+| `imports_health_readiness_contract` | `passed` | Health readiness component imports the local contract JSON. |
 | `imports_review_decision_draft` | `passed` | Route imports the review decision draft component. |
 | `imports_runtime_boundary` | `passed` | Route imports the MVP/runtime boundary component. |
 | `imports_runtime_contract` | `passed` | Route imports the local runtime contract component. |

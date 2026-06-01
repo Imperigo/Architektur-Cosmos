@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T08:27:05.556Z",
+  "generated_at": "2026-06-01T08:33:03.888Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 94,
-    "passed_checks": 94,
+    "check_count": 96,
+    "passed_checks": 96,
     "failed_checks": 0
   },
   "checks": [
@@ -89,6 +89,11 @@
     {
       "id": "health_readiness_file_exists",
       "label": "Orbit local health readiness component exists.",
+      "status": "passed"
+    },
+    {
+      "id": "health_readiness_contract_file_exists",
+      "label": "Orbit health readiness contract exists.",
       "status": "passed"
     },
     {
@@ -179,6 +184,11 @@
     {
       "id": "imports_health_readiness",
       "label": "Route imports the local health readiness component.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_health_readiness_contract",
+      "label": "Health readiness component imports the local contract JSON.",
       "status": "passed"
     },
     {

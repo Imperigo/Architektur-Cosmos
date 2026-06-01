@@ -16,6 +16,7 @@ const visionBridgePath = resolve(root, args.visionBridge || 'app/orbit/OrbitVisi
 const demoQuestionsPath = resolve(root, args.demoQuestions || 'app/orbit/OrbitDemoQuestions.tsx');
 const installationTopologyPath = resolve(root, args.installationTopology || 'app/orbit/OrbitInstallationTopology.tsx');
 const healthReadinessPath = resolve(root, args.healthReadiness || 'app/orbit/OrbitHealthReadiness.tsx');
+const healthReadinessContractPath = resolve(root, args.healthReadinessContract || 'examples/kosmo-orbit/health/health-readiness.contract.json');
 const reviewDecisionDraftPath = resolve(root, args.reviewDecisionDraft || 'app/orbit/OrbitReviewDecisionDraft.tsx');
 const runtimeBoundaryPath = resolve(root, args.runtimeBoundary || 'app/orbit/OrbitRuntimeBoundary.tsx');
 const runtimeContractPath = resolve(root, args.runtimeContract || 'app/orbit/OrbitRuntimeContract.tsx');
@@ -48,6 +49,7 @@ async function main() {
   const demoQuestionsSource = existsSync(demoQuestionsPath) ? readFileSync(demoQuestionsPath, 'utf8') : '';
   const installationTopologySource = existsSync(installationTopologyPath) ? readFileSync(installationTopologyPath, 'utf8') : '';
   const healthReadinessSource = existsSync(healthReadinessPath) ? readFileSync(healthReadinessPath, 'utf8') : '';
+  const healthReadinessContractSource = existsSync(healthReadinessContractPath) ? readFileSync(healthReadinessContractPath, 'utf8') : '';
   const reviewDecisionDraftSource = existsSync(reviewDecisionDraftPath) ? readFileSync(reviewDecisionDraftPath, 'utf8') : '';
   const runtimeBoundarySource = existsSync(runtimeBoundaryPath) ? readFileSync(runtimeBoundaryPath, 'utf8') : '';
   const runtimeContractSource = existsSync(runtimeContractPath) ? readFileSync(runtimeContractPath, 'utf8') : '';
@@ -58,7 +60,7 @@ async function main() {
   const demoReadinessSource = existsSync(demoReadinessPath) ? readFileSync(demoReadinessPath, 'utf8') : '';
   const sectionIndexSource = existsSync(sectionIndexPath) ? readFileSync(sectionIndexPath, 'utf8') : '';
   const spec = readJson(specPath);
-  const report = buildReport({ routeSource, roleSwitcherSource, demoReviewSource, projectDashboardSource, presenterBriefSource, progressMapSource, visionBridgeSource, demoQuestionsSource, installationTopologySource, healthReadinessSource, reviewDecisionDraftSource, runtimeBoundarySource, runtimeContractSource, qualityEvidenceSource, workstationPrioritiesSource, permissionMatrixSource, autonomyStatusSource, demoReadinessSource, sectionIndexSource, spec });
+  const report = buildReport({ routeSource, roleSwitcherSource, demoReviewSource, projectDashboardSource, presenterBriefSource, progressMapSource, visionBridgeSource, demoQuestionsSource, installationTopologySource, healthReadinessSource, healthReadinessContractSource, reviewDecisionDraftSource, runtimeBoundarySource, runtimeContractSource, qualityEvidenceSource, workstationPrioritiesSource, permissionMatrixSource, autonomyStatusSource, demoReadinessSource, sectionIndexSource, spec });
 
   await Promise.all([
     mkdir(dirname(outputJsonPath), { recursive: true }),
@@ -75,8 +77,8 @@ async function main() {
   if (report.status !== 'orbit_route_smoke_passed') process.exit(1);
 }
 
-function buildReport({ routeSource, roleSwitcherSource, demoReviewSource, projectDashboardSource, presenterBriefSource, progressMapSource, visionBridgeSource, demoQuestionsSource, installationTopologySource, healthReadinessSource, reviewDecisionDraftSource, runtimeBoundarySource, runtimeContractSource, qualityEvidenceSource, workstationPrioritiesSource, permissionMatrixSource, autonomyStatusSource, demoReadinessSource, sectionIndexSource, spec }) {
-  const source = `${routeSource}\n${roleSwitcherSource}\n${demoReviewSource}\n${projectDashboardSource}\n${presenterBriefSource}\n${progressMapSource}\n${visionBridgeSource}\n${demoQuestionsSource}\n${installationTopologySource}\n${healthReadinessSource}\n${reviewDecisionDraftSource}\n${runtimeBoundarySource}\n${runtimeContractSource}\n${qualityEvidenceSource}\n${workstationPrioritiesSource}\n${permissionMatrixSource}\n${autonomyStatusSource}\n${demoReadinessSource}\n${sectionIndexSource}`;
+function buildReport({ routeSource, roleSwitcherSource, demoReviewSource, projectDashboardSource, presenterBriefSource, progressMapSource, visionBridgeSource, demoQuestionsSource, installationTopologySource, healthReadinessSource, healthReadinessContractSource, reviewDecisionDraftSource, runtimeBoundarySource, runtimeContractSource, qualityEvidenceSource, workstationPrioritiesSource, permissionMatrixSource, autonomyStatusSource, demoReadinessSource, sectionIndexSource, spec }) {
+  const source = `${routeSource}\n${roleSwitcherSource}\n${demoReviewSource}\n${projectDashboardSource}\n${presenterBriefSource}\n${progressMapSource}\n${visionBridgeSource}\n${demoQuestionsSource}\n${installationTopologySource}\n${healthReadinessSource}\n${healthReadinessContractSource}\n${reviewDecisionDraftSource}\n${runtimeBoundarySource}\n${runtimeContractSource}\n${qualityEvidenceSource}\n${workstationPrioritiesSource}\n${permissionMatrixSource}\n${autonomyStatusSource}\n${demoReadinessSource}\n${sectionIndexSource}`;
   const forbiddenPatterns = [
     { id: 'no_use_server', pattern: /['"]use server['"]/ },
     { id: 'no_next_server', pattern: /from ['"]next\/server['"]/ },
@@ -103,6 +105,7 @@ function buildReport({ routeSource, roleSwitcherSource, demoReviewSource, projec
     check('demo_questions_file_exists', 'Orbit demo questions component exists.', existsSync(demoQuestionsPath)),
     check('installation_topology_file_exists', 'Orbit local installation topology component exists.', existsSync(installationTopologyPath)),
     check('health_readiness_file_exists', 'Orbit local health readiness component exists.', existsSync(healthReadinessPath)),
+    check('health_readiness_contract_file_exists', 'Orbit health readiness contract exists.', existsSync(healthReadinessContractPath)),
     check('review_decision_draft_file_exists', 'Orbit review decision draft component exists.', existsSync(reviewDecisionDraftPath)),
     check('runtime_boundary_file_exists', 'Orbit MVP/runtime boundary component exists.', existsSync(runtimeBoundaryPath)),
     check('runtime_contract_file_exists', 'Orbit local runtime contract component exists.', existsSync(runtimeContractPath)),
@@ -121,6 +124,7 @@ function buildReport({ routeSource, roleSwitcherSource, demoReviewSource, projec
     check('imports_demo_questions', 'Route imports the demo questions briefing component.', routeSource.includes('OrbitDemoQuestions')),
     check('imports_installation_topology', 'Route imports the local installation topology component.', routeSource.includes('OrbitInstallationTopology')),
     check('imports_health_readiness', 'Route imports the local health readiness component.', routeSource.includes('OrbitHealthReadiness')),
+    check('imports_health_readiness_contract', 'Health readiness component imports the local contract JSON.', source.includes('health-readiness.contract.json')),
     check('imports_review_decision_draft', 'Route imports the review decision draft component.', routeSource.includes('OrbitReviewDecisionDraft')),
     check('imports_runtime_boundary', 'Route imports the MVP/runtime boundary component.', routeSource.includes('OrbitRuntimeBoundary')),
     check('imports_runtime_contract', 'Route imports the local runtime contract component.', routeSource.includes('OrbitRuntimeContract')),

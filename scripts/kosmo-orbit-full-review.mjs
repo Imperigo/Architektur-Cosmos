@@ -205,6 +205,16 @@ const steps = [
     report: resolve(workspaceRoot, 'review/orbit-app-route-spec.generated.json')
   },
   {
+    id: 'health_readiness',
+    label: 'Health Readiness Contract',
+    script: 'kosmo:orbit-health-readiness',
+    args: [
+      '--contract',
+      'examples/kosmo-orbit/health/health-readiness.contract.json'
+    ],
+    report: resolve(workspaceRoot, 'review/orbit-health-readiness.generated.json')
+  },
+  {
     id: 'orbit_route_smoke',
     label: 'Orbit Route Smoke',
     script: 'kosmo:orbit-route-smoke',
@@ -285,6 +295,7 @@ function buildReport(stepRows) {
   const roleStateSmoke = readOptionalJson(resolve(workspaceRoot, 'review/orbit-role-state-smoke.generated.json'));
   const roleStateHandoff = readOptionalJson(resolve(workspaceRoot, 'review/orbit-role-state-handoff.generated.json'));
   const appRouteSpec = readOptionalJson(resolve(workspaceRoot, 'review/orbit-app-route-spec.generated.json'));
+  const healthReadiness = readOptionalJson(resolve(workspaceRoot, 'review/orbit-health-readiness.generated.json'));
   const orbitRouteSmoke = readOptionalJson(resolve(workspaceRoot, 'review/orbit-route-smoke.generated.json'));
   const workspaceStatus = readOptionalJson(resolve(workspaceRoot, 'review/orbit-status-report.generated.json'));
   const projectInspector = readOptionalJson(resolve(projectRoot, 'orbit/project-inspector.generated.json'));
@@ -337,6 +348,10 @@ function buildReport(stepRows) {
       role_state_handoff_items: roleStateHandoff?.summary?.handoff_item_count ?? null,
       app_route_spec_status: appRouteSpec?.status || null,
       app_route_spec_sections: appRouteSpec?.summary?.section_count ?? null,
+      health_readiness_status: healthReadiness?.status || null,
+      health_readiness_passed_checks: healthReadiness?.summary?.passed_checks ?? null,
+      health_readiness_check_count: healthReadiness?.summary?.check_count ?? null,
+      health_readiness_channel_count: healthReadiness?.summary?.channel_count ?? null,
       orbit_route_smoke_status: orbitRouteSmoke?.status || null,
       orbit_route_smoke_passed_checks: orbitRouteSmoke?.summary?.passed_checks ?? null,
       orbit_route_smoke_check_count: orbitRouteSmoke?.summary?.check_count ?? null,
@@ -375,6 +390,7 @@ function buildReport(stepRows) {
       role_state_smoke_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-role-state-smoke.generated.md')),
       role_state_handoff_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-role-state-handoff.generated.md')),
       app_route_spec_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-app-route-spec.generated.md')),
+      health_readiness_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-health-readiness.generated.md')),
       orbit_route_smoke_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-route-smoke.generated.md')),
       workspace_status_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-status-report.generated.md')),
       project_inspector_markdown: relative(root, resolve(projectRoot, 'orbit/project-inspector.generated.md')),
@@ -388,11 +404,11 @@ function buildReport(stepRows) {
       role_shell_smoke_markdown: relative(root, resolve(projectRoot, 'orbit/role-shell-smoke.generated.md'))
     },
     steps: stepRows,
-    next_actions: nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHandoff, appRouteSpec, orbitRouteSmoke, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke, roleShellPrototype, roleShellSmoke })
+    next_actions: nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHandoff, appRouteSpec, healthReadiness, orbitRouteSmoke, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke, roleShellPrototype, roleShellSmoke })
   };
 }
 
-function nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHandoff, appRouteSpec, orbitRouteSmoke, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke, roleShellPrototype, roleShellSmoke }) {
+function nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHandoff, appRouteSpec, healthReadiness, orbitRouteSmoke, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke, roleShellPrototype, roleShellSmoke }) {
   const actions = [];
   if (failedSteps.length) {
     failedSteps.forEach((step) => actions.push(`Review failed step: ${step.label}`));
@@ -412,6 +428,9 @@ function nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHan
   }
   if (appRouteSpec?.status === 'orbit_app_route_spec_ready') {
     actions.push('Use the Orbit app route spec before changing app/orbit/page.tsx.');
+  }
+  if (healthReadiness?.status === 'health_readiness_contract_passed') {
+    actions.push('Keep the Health Readiness contract read-only until a local runtime adapter is approved.');
   }
   if (orbitRouteSmoke?.status === 'orbit_route_smoke_passed') {
     actions.push('Keep the Orbit route smoke in the full review before promoting /orbit in public navigation.');
@@ -472,6 +491,9 @@ function renderMarkdown(report) {
     `- role state handoff items: ${report.summary.role_state_handoff_items}`,
     `- app route spec: \`${report.summary.app_route_spec_status}\``,
     `- app route spec sections: ${report.summary.app_route_spec_sections}`,
+    `- health readiness: \`${report.summary.health_readiness_status}\``,
+    `- health readiness checks: ${report.summary.health_readiness_passed_checks}/${report.summary.health_readiness_check_count}`,
+    `- health readiness channels: ${report.summary.health_readiness_channel_count}`,
     `- orbit route smoke: \`${report.summary.orbit_route_smoke_status}\``,
     `- orbit route smoke checks: ${report.summary.orbit_route_smoke_passed_checks}/${report.summary.orbit_route_smoke_check_count}`,
     `- workspace status: \`${report.summary.workspace_status}\``,

@@ -158,7 +158,7 @@ Dieser Kern zeigt:
   Freigabe und spaetere externe Zusammenarbeit als Buero-System ordnet;
 - eine Health-Readiness-Schicht, die spaetere lokale Signale fuer Hardware,
   Modelle, Speicher, Tool-Connectoren, Job Queue und Logs/Reparatur als
-  read-only Telemetrievertrag vorbereitet;
+  read-only Telemetrievertrag mit eigenem lokalem JSON-Vertrag vorbereitet;
 - ein Pruefevidenz-Panel, das Full Review, Route-Smoke, Reviewlast und Open
   Mode direkt an der Oberflaeche belegt;
 - eine Demo-Bereitschaft, die Full Review, Route-Smoke und Static-Smoke zu
