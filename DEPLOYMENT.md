@@ -46,7 +46,7 @@ passes every non-API request through to Cloudflare Static Assets.
 
 1. CF Pages clones the repo at `main`
 2. Runs `npm clean-install`
-3. Runs `npm run build` (which runs `next build`)
+3. Runs `npm run build` (which runs `next build` and then verifies/copies referenced `/_next/static` assets)
 4. Next.js produces a static export in `./out/` (because `next.config.js` has `output: 'export'`)
 5. Runs `npx wrangler deploy`
 6. Wrangler reads `wrangler.jsonc` → compiles `src/worker.ts` and uploads `./out/` as Workers Static Assets
@@ -57,6 +57,11 @@ passes every non-API request through to Cloudflare Static Assets.
 - **`next.config.js`** — must keep `output: 'export'`, `trailingSlash: true`, `images: { unoptimized: true }` for static export to work
 - **`wrangler.jsonc`** — must keep `main: "./src/worker.ts"`, `assets.binding: "ASSETS"` and `assets.directory: "./out"` so `/api/*` works while all page routes remain static
 - **`package.json`** name (`architektur-cosmos-browser`) — does NOT need to match the CF Worker name (`architekturkosmos`); a previous setup attempt failed because of this mismatch, the current static-assets-only setup avoids the issue
+
+`scripts/next-static-export-assets.mjs` is part of the local/CI build guard:
+after `next build`, it ensures that CSS and JS assets referenced from exported
+HTML exist under `out/_next/static`. Keep it in the build command unless the
+Next static export pipeline is replaced entirely.
 
 ---
 

@@ -40,8 +40,11 @@ async function main() {
 
 function buildReport(html) {
   const normalizedHtml = html.replace(/<!--\s*-->/g, '').replace(/\s+/g, ' ');
+  const referencedStaticAssets = staticAssetReferences(html);
+  const missingStaticAssets = referencedStaticAssets.filter((assetPath) => !existsSync(resolve(root, 'out', assetPath)));
   const checks = [
     check('html_exists', 'Static /orbit HTML exists.', existsSync(htmlPath)),
+    check('referenced_static_assets_exist', 'Every _next/static asset referenced by /orbit exists in out/.', referencedStaticAssets.length > 0 && missingStaticAssets.length === 0),
     check('renders_kosmo_orbit', 'Export renders KosmoOrbit heading.', html.includes('KosmoOrbit')),
     check('renders_hub_return', 'Export renders safe return link to the Kosmo Hub.', html.includes('Zurueck zum Kosmo-Hub')),
     check('renders_demo_navigation', 'Export renders compact demo navigation.', html.includes('Demo-Navigation')),
@@ -108,7 +111,13 @@ function buildReport(html) {
     summary: {
       check_count: checks.length,
       passed_checks: checks.filter((item) => item.status === 'passed').length,
-      failed_checks: failed.length
+      failed_checks: failed.length,
+      referenced_static_asset_count: referencedStaticAssets.length,
+      missing_static_asset_count: missingStaticAssets.length
+    },
+    static_assets: {
+      referenced: referencedStaticAssets,
+      missing: missingStaticAssets
     },
     checks,
     next_actions: failed.length
@@ -126,6 +135,21 @@ function check(id, label, passed) {
     label,
     status: passed ? 'passed' : 'failed'
   };
+}
+
+function staticAssetReferences(html) {
+  const matches = new Set();
+  const patterns = [
+    /(?:href|src)="\/?(_next\/static\/[^"]+)"/g,
+    /(?:href|src)=\\?"\/?(_next\/static\/[^"\\]+)\\?"/g
+  ];
+  patterns.forEach((pattern) => {
+    let match;
+    while ((match = pattern.exec(html))) {
+      matches.add(match[1].replace(/\\+$/g, ''));
+    }
+  });
+  return [...matches].sort();
 }
 
 function renderMarkdown(report) {

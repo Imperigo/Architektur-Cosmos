@@ -8,6 +8,7 @@ import projectInspectorData from '@/examples/kosmo-projects/kosmo-demo-001/orbit
 import roleVariantsData from '@/examples/kosmo-projects/kosmo-demo-001/orbit/role-ui-variants.generated.json';
 import shellManifestData from '@/examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-prototype.generated.json';
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { OrbitAutonomyStatus } from './OrbitAutonomyStatus';
 import { OrbitAuditTrail } from './OrbitAuditTrail';
 import { OrbitCommandContract } from './OrbitCommandContract';
@@ -250,12 +251,12 @@ export default function OrbitPage() {
       <div className="min-h-dvh bg-[linear-gradient(135deg,rgba(0,231,255,0.12),transparent_28%),radial-gradient(circle_at_78%_12%,rgba(255,96,210,0.16),transparent_30%),linear-gradient(180deg,#080909,#11130f_52%,#080909)] px-4 py-5 sm:px-6 lg:px-8">
         <div className="mx-auto flex min-w-0 max-w-7xl flex-col gap-5">
           <nav className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-white/10 bg-black/24 px-3 py-2" aria-label="KosmoOrbit Rueckkehr">
-            <a
+            <Link
               href="/"
               className="inline-flex min-h-9 items-center rounded-full border border-cyan-200/25 bg-cyan-300/[0.08] px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-cyan-100 transition hover:border-cyan-100/60 hover:bg-cyan-300/15 focus-visible:border-cyan-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-200/30"
             >
               Zurueck zum Kosmo-Hub
-            </a>
+            </Link>
             <span className="text-xs leading-5 text-stone-500">Review-only Preview - keine API, keine Uploads, kein Publish ohne Owner-Go.</span>
           </nav>
 

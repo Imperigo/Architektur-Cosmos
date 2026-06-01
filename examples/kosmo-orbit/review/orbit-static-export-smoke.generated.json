@@ -1,18 +1,38 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T19:40:58.312Z",
+  "generated_at": "2026-06-01T19:53:53.275Z",
   "generator": "kosmo-orbit-static-export-smoke",
   "status": "orbit_static_export_smoke_passed",
   "html_file": "out/orbit/index.html",
   "summary": {
-    "check_count": 55,
-    "passed_checks": 55,
-    "failed_checks": 0
+    "check_count": 56,
+    "passed_checks": 56,
+    "failed_checks": 0,
+    "referenced_static_asset_count": 8,
+    "missing_static_asset_count": 0
+  },
+  "static_assets": {
+    "referenced": [
+      "_next/static/chunks/255-81ba70bd132d3eed.js",
+      "_next/static/chunks/4bd1b696-c023c6e3521b1417.js",
+      "_next/static/chunks/619-ba102abea3e3d0e4.js",
+      "_next/static/chunks/app/orbit/page-98e77b3b47da0b2e.js",
+      "_next/static/chunks/main-app-36e74dfd8b1eb57a.js",
+      "_next/static/chunks/polyfills-42372ed130431b0a.js",
+      "_next/static/chunks/webpack-81624dd509abd812.js",
+      "_next/static/css/86cb1f11460028f2.css"
+    ],
+    "missing": []
   },
   "checks": [
     {
       "id": "html_exists",
       "label": "Static /orbit HTML exists.",
+      "status": "passed"
+    },
+    {
+      "id": "referenced_static_assets_exist",
+      "label": "Every _next/static asset referenced by /orbit exists in out/.",
       "status": "passed"
     },
     {

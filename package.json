@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
-    "build:fresh": "rm -rf .next out && next build",
+    "build": "next build && node scripts/next-static-export-assets.mjs",
+    "build:fresh": "rm -rf .next out && next build && node scripts/next-static-export-assets.mjs",
     "start": "next start",
     "lint": "eslint .",
     "ui:audit": "node scripts/ui-audit.mjs",

@@ -1,6 +1,6 @@
 # KosmoOrbit Role State Handoff
 
-Generated: 2026-06-01T19:33:41.198Z
+Generated: 2026-06-01T19:54:25.610Z
 Status: `role_state_handoff_ready`
 
 Review-only handoff from checked role state to the static role shell. This does not create auth, write user data, call networks, open Blender, generate geometry, upload files or publish.
