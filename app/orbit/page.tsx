@@ -12,6 +12,7 @@ import { OrbitAutonomyStatus } from './OrbitAutonomyStatus';
 import { OrbitDemoReadiness, type OrbitStaticExportSmokeReport } from './OrbitDemoReadiness';
 import { OrbitDemoQuestions } from './OrbitDemoQuestions';
 import { OrbitDemoReviewPath } from './OrbitDemoReviewPath';
+import { OrbitHealthReadiness } from './OrbitHealthReadiness';
 import { OrbitInstallationTopology } from './OrbitInstallationTopology';
 import { OrbitPermissionMatrix } from './OrbitPermissionMatrix';
 import { OrbitPresenterBrief } from './OrbitPresenterBrief';
@@ -379,6 +380,10 @@ export default function OrbitPage() {
 
           <div id="installation" className="scroll-mt-4">
             <OrbitInstallationTopology />
+          </div>
+
+          <div id="health" className="scroll-mt-4">
+            <OrbitHealthReadiness />
           </div>
 
           <div id="evidenz" className="scroll-mt-4">

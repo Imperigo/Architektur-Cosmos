@@ -8,6 +8,7 @@ const sectionLinks = [
   { href: '#entscheidung', label: 'Decision' },
   { href: '#runtime-contract', label: 'Runtime' },
   { href: '#installation', label: 'Installation' },
+  { href: '#health', label: 'Health' },
   { href: '#evidenz', label: 'Evidenz' },
   { href: '#rechte', label: 'Rechte' },
   { href: '#rollen', label: 'Rollen' },

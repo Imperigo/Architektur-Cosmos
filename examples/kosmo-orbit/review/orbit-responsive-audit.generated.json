@@ -1,16 +1,16 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T08:22:29.538Z",
+  "generated_at": "2026-06-01T08:27:05.740Z",
   "generator": "kosmo-orbit-responsive-audit",
   "status": "orbit_responsive_audit_passed",
   "source_dir": "app/orbit",
   "summary": {
-    "check_count": 15,
-    "passed_checks": 15,
+    "check_count": 16,
+    "passed_checks": 16,
     "failed_checks": 0,
-    "min_width_guard_count": 52,
-    "flex_wrap_count": 35,
-    "responsive_grid_count": 40
+    "min_width_guard_count": 54,
+    "flex_wrap_count": 37,
+    "responsive_grid_count": 42
   },
   "checks": [
     {
@@ -56,6 +56,11 @@
     {
       "id": "installation_topology_responsive",
       "label": "Installation topology uses responsive cards for the office system map.",
+      "status": "passed"
+    },
+    {
+      "id": "health_readiness_responsive",
+      "label": "Health readiness uses responsive cards for local telemetry channels.",
       "status": "passed"
     },
     {

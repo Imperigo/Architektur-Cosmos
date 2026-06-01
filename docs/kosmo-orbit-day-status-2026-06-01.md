@@ -110,6 +110,11 @@ Wichtig fuer die Kommunikation:
   Architektur-Tools, menschliche Freigabe und spaetere externe Zusammenarbeit.
   Heute bleibt es eine statische Landkarte ohne Hardware-, Auth-, Prozess-,
   Upload- oder Netzwerksteuerung.
+- Eine Health-Readiness-Schicht auf `/orbit` beschreibt die spaeteren
+  Read-only-Signale fuer Hardware/GPU, lokale Modelle, Speicher/Backup,
+  Tool-Connectoren, Job Queue und Logs/Reparatur. Heute startet sie keine
+  Modelle, scannt kein Dateisystem und fuehrt keine Hardware- oder Queue-
+  Aktionen aus.
 - Ein neuer KosmoData-HUD-Guard schuetzt die wiederkehrenden Website-Bedienpunkte:
   Database oben links, Suche/Dev rechts, Filterzugang rechts unten, HTML-
   Database-Overlay, globales Fadenkreuz in Start/Hauptmenue/Popups und

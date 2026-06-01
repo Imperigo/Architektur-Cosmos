@@ -141,7 +141,15 @@ Arbeitsstation zuerst welches Panel braucht.
     - haelt Hardware-Steuerung, Auth-Runtime, Upload-Writes, Prozessstarts
       und Netzwerksteuerung weiterhin gesperrt.
 
-22. **KosmoData Pilot-Quality-Audit**
+22. **Health Readiness**
+    - beschreibt die spaeteren lokalen Read-only-Signale fuer Hardware/GPU,
+      lokale Modelle, Speicher/Backup, Tool-Connectoren, Job Queue und
+      Logs/Reparatur;
+    - macht KosmoOrbit als Diagnose-Schicht der KosmoZentrale konkreter;
+    - haelt Hardwarebefehle, Modellstarts, Dateisystem-Scans, Prozessstarts,
+      Queue-Aktionen und Systemaenderungen weiter gesperrt.
+
+23. **KosmoData Pilot-Quality-Audit**
     - prueft die ersten Datenbankpiloten schaerfer auf Text-Review-Pack,
       Quellen, Modell-/Layer-Vertrag, 2D-Planpipeline, Viewer-Faehigkeit und
       Netzwerkrelationen;
@@ -166,9 +174,9 @@ Arbeitsstation zuerst welches Panel braucht.
 
 Zuletzt gruene lokale Checks:
 
-- `npm run kosmo:orbit-route-smoke` — 90/90 passed
-- `npm run kosmo:orbit-demo-audit` — 13/13 passed
-- `npm run kosmo:orbit-responsive-audit` — 15/15 passed
+- `npm run kosmo:orbit-route-smoke` — 94/94 passed
+- `npm run kosmo:orbit-demo-audit` — 14/14 passed
+- `npm run kosmo:orbit-responsive-audit` — 16/16 passed
 - `npm run kosmodata:hud-guard` — 13/13 passed
 - `npm run database:pilot-quality` — passed, 5 Piloten, 97% Durchschnitt
 - Browser-Smoke fuer `/orbit/` — passed
@@ -179,7 +187,7 @@ Zuletzt gruene lokale Checks:
 - `npm run security:check` — passed, grosse bekannte Dateien uebersprungen
 - `npx tsc --noEmit` — passed
 - `npm run build` — static export passed
-- `npm run build` + `npm run kosmo:orbit-static-smoke` — 23/23 static
+- `npm run build` + `npm run kosmo:orbit-static-smoke` — 25/25 static
   `/orbit` HTML enthaelt die wichtigsten Demo-Panels und Anker
 
 ## Sicherheitsgrenzen

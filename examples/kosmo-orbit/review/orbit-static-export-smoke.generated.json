@@ -1,12 +1,12 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T08:21:35.660Z",
+  "generated_at": "2026-06-01T08:27:36.774Z",
   "generator": "kosmo-orbit-static-export-smoke",
   "status": "orbit_static_export_smoke_passed",
   "html_file": "out/orbit/index.html",
   "summary": {
-    "check_count": 23,
-    "passed_checks": 23,
+    "check_count": 25,
+    "passed_checks": 25,
     "failed_checks": 0
   },
   "checks": [
@@ -76,6 +76,11 @@
       "status": "passed"
     },
     {
+      "id": "renders_health_readiness",
+      "label": "Export renders local health readiness contract.",
+      "status": "passed"
+    },
+    {
       "id": "renders_quality_evidence",
       "label": "Export renders quality evidence.",
       "status": "passed"
@@ -118,6 +123,11 @@
     {
       "id": "keeps_installation_topology_safe",
       "label": "Export keeps installation topology non-operational.",
+      "status": "passed"
+    },
+    {
+      "id": "keeps_health_readiness_safe",
+      "label": "Export keeps health readiness non-operational.",
       "status": "passed"
     },
     {

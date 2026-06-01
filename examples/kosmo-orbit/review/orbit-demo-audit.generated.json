@@ -1,74 +1,79 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T08:21:35.669Z",
+  "generated_at": "2026-06-01T08:27:36.794Z",
   "generator": "kosmo-orbit-demo-audit",
   "status": "orbit_demo_audit_passed",
   "html_file": "out/orbit/index.html",
   "summary": {
-    "check_count": 13,
-    "passed_checks": 13,
+    "check_count": 14,
+    "passed_checks": 14,
     "failed_checks": 0
   },
   "demo_order": [
     {
       "id": "autonomie",
       "label": "Autonomie-Status",
-      "index": 12445
+      "index": 12690
     },
     {
       "id": "presenter",
       "label": "3-Minuten-Erklaerung",
-      "index": 14921
+      "index": 15166
     },
     {
       "id": "fortschritt",
       "label": "Projektfortschritt",
-      "index": 17938
+      "index": 18183
     },
     {
       "id": "vision",
       "label": "Vision Bridge",
-      "index": 24682
+      "index": 24928
     },
     {
       "id": "demo-ready",
       "label": "Demo-Bereitschaft",
-      "index": 29022
+      "index": 29268
     },
     {
       "id": "projektpaket",
       "label": "Projektpaket Tagesansicht",
-      "index": 31764
+      "index": 32010
     },
     {
       "id": "entscheidung",
       "label": "Review Decision Draft",
-      "index": 45412
+      "index": 45658
     },
     {
       "id": "runtime-contract",
       "label": "Runtime-Vertrag",
-      "index": 52721
+      "index": 52967
     },
     {
       "id": "installation",
       "label": "Buero-Installation",
-      "index": 58717
+      "index": 58963
+    },
+    {
+      "id": "health",
+      "label": "Health Readiness",
+      "index": 66702
     },
     {
       "id": "evidenz",
       "label": "Pruefevidenz",
-      "index": 66456
+      "index": 73501
     },
     {
       "id": "rechte",
       "label": "Rechte-Matrix",
-      "index": 74713
+      "index": 81758
     },
     {
       "id": "rollen",
       "label": "Rollenumschaltung Preview",
-      "index": 92468
+      "index": 99513
     }
   ],
   "checks": [
@@ -115,6 +120,11 @@
     {
       "id": "installation_topology_visible",
       "label": "Office installation topology is visible in the export.",
+      "status": "passed"
+    },
+    {
+      "id": "health_readiness_visible",
+      "label": "Health readiness contract is visible in the export.",
       "status": "passed"
     },
     {

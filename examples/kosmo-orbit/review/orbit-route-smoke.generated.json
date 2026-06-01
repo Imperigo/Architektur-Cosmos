@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T08:22:29.350Z",
+  "generated_at": "2026-06-01T08:27:05.556Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 90,
-    "passed_checks": 90,
+    "check_count": 94,
+    "passed_checks": 94,
     "failed_checks": 0
   },
   "checks": [
@@ -84,6 +84,11 @@
     {
       "id": "installation_topology_file_exists",
       "label": "Orbit local installation topology component exists.",
+      "status": "passed"
+    },
+    {
+      "id": "health_readiness_file_exists",
+      "label": "Orbit local health readiness component exists.",
       "status": "passed"
     },
     {
@@ -169,6 +174,11 @@
     {
       "id": "imports_installation_topology",
       "label": "Route imports the local installation topology component.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_health_readiness",
+      "label": "Route imports the local health readiness component.",
       "status": "passed"
     },
     {
@@ -314,6 +324,16 @@
     {
       "id": "keeps_installation_topology_safe",
       "label": "Installation topology keeps auth, upload, process and network actions gated.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_health_readiness",
+      "label": "Route renders the local health readiness contract.",
+      "status": "passed"
+    },
+    {
+      "id": "keeps_health_readiness_safe",
+      "label": "Health readiness keeps hardware, model, filesystem, process and queue actions gated.",
       "status": "passed"
     },
     {

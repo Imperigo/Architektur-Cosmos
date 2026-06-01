@@ -1,6 +1,6 @@
 # KosmoOrbit Route Smoke
 
-Generated: 2026-06-01T08:22:29.350Z
+Generated: 2026-06-01T08:27:05.556Z
 Status: `orbit_route_smoke_passed`
 Route: `app/orbit/page.tsx`
 
@@ -8,7 +8,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 
 ## Summary
 
-- checks: 90/90 passed
+- checks: 94/94 passed
 
 ## Checks
 
@@ -29,6 +29,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `vision_bridge_file_exists` | `passed` | Orbit vision bridge component exists. |
 | `demo_questions_file_exists` | `passed` | Orbit demo questions component exists. |
 | `installation_topology_file_exists` | `passed` | Orbit local installation topology component exists. |
+| `health_readiness_file_exists` | `passed` | Orbit local health readiness component exists. |
 | `review_decision_draft_file_exists` | `passed` | Orbit review decision draft component exists. |
 | `runtime_boundary_file_exists` | `passed` | Orbit MVP/runtime boundary component exists. |
 | `runtime_contract_file_exists` | `passed` | Orbit local runtime contract component exists. |
@@ -46,6 +47,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `imports_vision_bridge` | `passed` | Route imports the vision bridge component. |
 | `imports_demo_questions` | `passed` | Route imports the demo questions briefing component. |
 | `imports_installation_topology` | `passed` | Route imports the local installation topology component. |
+| `imports_health_readiness` | `passed` | Route imports the local health readiness component. |
 | `imports_review_decision_draft` | `passed` | Route imports the review decision draft component. |
 | `imports_runtime_boundary` | `passed` | Route imports the MVP/runtime boundary component. |
 | `imports_runtime_contract` | `passed` | Route imports the local runtime contract component. |
@@ -75,6 +77,8 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `keeps_vision_bridge_review_only` | `passed` | Vision bridge keeps runtime and write actions gated. |
 | `shows_installation_topology` | `passed` | Route renders the local office installation topology. |
 | `keeps_installation_topology_safe` | `passed` | Installation topology keeps auth, upload, process and network actions gated. |
+| `shows_health_readiness` | `passed` | Route renders the local health readiness contract. |
+| `keeps_health_readiness_safe` | `passed` | Health readiness keeps hardware, model, filesystem, process and queue actions gated. |
 | `shows_demo_questions` | `passed` | Route renders architect-facing demo questions. |
 | `anchors_demo_claims` | `passed` | Demo questions point claims back to visible panels. |
 | `shows_review_decision_draft` | `passed` | Route renders a local non-writing review decision draft. |

@@ -156,6 +156,9 @@ Dieser Kern zeigt:
 - ein Installationsbild, das KosmoZentrale als lokale Appliance, KosmoOrbit
   auf Arbeitsstationen, lokales Wissen, Architektur-Tools, menschliche
   Freigabe und spaetere externe Zusammenarbeit als Buero-System ordnet;
+- eine Health-Readiness-Schicht, die spaetere lokale Signale fuer Hardware,
+  Modelle, Speicher, Tool-Connectoren, Job Queue und Logs/Reparatur als
+  read-only Telemetrievertrag vorbereitet;
 - ein Pruefevidenz-Panel, das Full Review, Route-Smoke, Reviewlast und Open
   Mode direkt an der Oberflaeche belegt;
 - eine Demo-Bereitschaft, die Full Review, Route-Smoke und Static-Smoke zu

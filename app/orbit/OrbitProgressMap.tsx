@@ -42,8 +42,8 @@ const progressLanes: ProgressLane[] = [
     percent: 18,
     tone: 'from-amber-300 to-orange-300',
     scope: 'Lokale KI, starke Hardware, Updates, Reparatur, Jobsteuerung und Arbeitsstationen bleiben Produktvertrag.',
-    evidence: 'Runtime-Vertrag und Buero-Installation zeigen no-runtime-side-effects, no-process-launch und lokale Systemgrenzen.',
-    next: 'Als Naechstes echte lokale Health-Daten und Log-Schnittstellen als Read-only-Vertrag spezifizieren.'
+    evidence: 'Runtime-Vertrag, Buero-Installation und Health Readiness zeigen no-runtime-side-effects, no-process-launch und lokale Systemgrenzen.',
+    next: 'Als Naechstes echte lokale Health-Daten als eigene Read-only-Quelle spezifizieren.'
   },
   {
     title: 'CAD-/Plan-Generation',
