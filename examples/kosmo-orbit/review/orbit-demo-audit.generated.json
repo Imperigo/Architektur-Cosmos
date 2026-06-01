@@ -1,129 +1,134 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T13:19:36.940Z",
+  "generated_at": "2026-06-01T13:45:01.287Z",
   "generator": "kosmo-orbit-demo-audit",
   "status": "orbit_demo_audit_passed",
   "html_file": "out/orbit/index.html",
   "summary": {
-    "check_count": 31,
-    "passed_checks": 31,
+    "check_count": 33,
+    "passed_checks": 33,
     "failed_checks": 0
   },
   "demo_order": [
     {
       "id": "autonomie",
       "label": "Autonomie-Status",
-      "index": 15190
+      "index": 15443
     },
     {
       "id": "routine",
       "label": "Buero-Routine",
-      "index": 17666
+      "index": 17919
     },
     {
       "id": "presenter",
       "label": "3-Minuten-Erklaerung",
-      "index": 30478
+      "index": 30731
     },
     {
       "id": "workflow-delta",
       "label": "Workflow-Delta",
-      "index": 33495
+      "index": 33748
     },
     {
       "id": "pilotmessung",
       "label": "Pilotmessung",
-      "index": 39217
+      "index": 39470
     },
     {
       "id": "pilotplan",
       "label": "Pilot-Runbook",
-      "index": 43311
+      "index": 43564
+    },
+    {
+      "id": "pilot-session",
+      "label": "Pilot-Session Template",
+      "index": 51182
     },
     {
       "id": "fortschritt",
       "label": "Projektfortschritt",
-      "index": 50929
+      "index": 56621
     },
     {
       "id": "vision",
       "label": "Vision Bridge",
-      "index": 57674
+      "index": 63366
     },
     {
       "id": "demo-ready",
       "label": "Demo-Bereitschaft",
-      "index": 62014
+      "index": 67706
     },
     {
       "id": "live-gate",
       "label": "Live-Gate",
-      "index": 64758
+      "index": 70450
     },
     {
       "id": "projektpaket",
       "label": "Projektpaket Tagesansicht",
-      "index": 68324
+      "index": 74016
     },
     {
       "id": "design-handoff",
       "label": "KosmoDesign Handoff",
-      "index": 77916
+      "index": 83608
     },
     {
       "id": "entscheidung",
       "label": "Review Decision Draft",
-      "index": 92047
+      "index": 97739
     },
     {
       "id": "runtime-contract",
       "label": "Runtime-Vertrag",
-      "index": 99356
+      "index": 105048
     },
     {
       "id": "installation",
       "label": "Buero-Installation",
-      "index": 105352
+      "index": 111044
     },
     {
       "id": "health",
       "label": "Health Readiness",
-      "index": 113091
+      "index": 118783
     },
     {
       "id": "risiken",
       "label": "Risiko-Register",
-      "index": 119948
+      "index": 125640
     },
     {
       "id": "commands",
       "label": "Command-Vertrag",
-      "index": 127237
+      "index": 132929
     },
     {
       "id": "audit",
       "label": "Audit-Trail-Vertrag",
-      "index": 136600
+      "index": 142292
     },
     {
       "id": "evidenz",
       "label": "Pruefevidenz",
-      "index": 144114
+      "index": 149806
     },
     {
       "id": "ausbildung",
       "label": "Ausbildungsmodus",
-      "index": 152373
+      "index": 158065
     },
     {
       "id": "rechte",
       "label": "Rechte-Matrix",
-      "index": 157683
+      "index": 163375
     },
     {
       "id": "rollen",
       "label": "Rollenumschaltung Preview",
-      "index": 175438
+      "index": 181130
     }
   ],
   "checks": [
@@ -195,6 +200,16 @@
     {
       "id": "pilot_runbook_safe",
       "label": "Pilot runbook keeps live actions blocked.",
+      "status": "passed"
+    },
+    {
+      "id": "pilot_session_template_visible",
+      "label": "Pilot session template is visible in the export.",
+      "status": "passed"
+    },
+    {
+      "id": "pilot_session_template_empty",
+      "label": "Pilot session template keeps demo measurements empty.",
       "status": "passed"
     },
     {

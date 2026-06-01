@@ -51,6 +51,7 @@ function buildReport(html) {
     { id: 'workflow-delta', label: 'Workflow-Delta' },
     { id: 'pilotmessung', label: 'Pilotmessung' },
     { id: 'pilotplan', label: 'Pilot-Runbook' },
+    { id: 'pilot-session', label: 'Pilot-Session Template' },
     { id: 'fortschritt', label: 'Projektfortschritt' },
     { id: 'vision', label: 'Vision Bridge' },
     { id: 'demo-ready', label: 'Demo-Bereitschaft' },
@@ -74,7 +75,7 @@ function buildReport(html) {
     label: section.label,
     index: normalized.indexOf(`id="${section.id}"`)
   }));
-  const navLabels = ['Autonomie', 'Routine', '3-Minuten', 'Workflow', 'Pilot', 'Pilotplan', 'Fortschritt', 'Vision', 'Demo', 'Live-Gate', 'Projektpaket', 'Handoff', 'Decision', 'Runtime', 'Installation', 'Health', 'Risiken', 'Commands', 'Audit', 'Evidenz', 'Ausbildung', 'Rechte', 'Rollen', 'Guardrails'];
+  const navLabels = ['Autonomie', 'Routine', '3-Minuten', 'Workflow', 'Pilot', 'Pilotplan', 'Session', 'Fortschritt', 'Vision', 'Demo', 'Live-Gate', 'Projektpaket', 'Handoff', 'Decision', 'Runtime', 'Installation', 'Health', 'Risiken', 'Commands', 'Audit', 'Evidenz', 'Ausbildung', 'Rechte', 'Rollen', 'Guardrails'];
   const forbiddenArtifacts = ['[object Object]', 'NaN%', 'null null'];
   const checks = [
     check('html_exists', 'Built /orbit HTML exists.', existsSync(htmlPath)),
@@ -91,6 +92,8 @@ function buildReport(html) {
     check('pilot_measurement_safe', 'Pilot measurement keeps live actions blocked.', normalized.includes('keine Kundendaten') && normalized.includes('keine Kostenjobs')),
     check('pilot_runbook_visible', 'Pilot runbook is visible in the export.', normalized.includes('Pilot-Runbook') && normalized.includes('45-60 Minuten')),
     check('pilot_runbook_safe', 'Pilot runbook keeps live actions blocked.', normalized.includes('keine Kundendaten') && normalized.includes('keine Design-Generation') && normalized.includes('kein Push ohne Owner-Go')),
+    check('pilot_session_template_visible', 'Pilot session template is visible in the export.', normalized.includes('Pilot-Session Template') && normalized.includes('Messstruktur bereit')),
+    check('pilot_session_template_empty', 'Pilot session template keeps demo measurements empty.', normalized.includes('before null') && normalized.includes('after null') && normalized.includes('Keine Pilotwerte sind behauptet')),
     check('publish_readiness_visible', 'Publish readiness live gate is visible in the export.', normalized.includes('Live-Gate') && normalized.includes('no-push-without-owner-go')),
     check('publish_readiness_safe', 'Publish readiness keeps public push blocked until owner and security review.', normalized.includes('Owner-Go') && normalized.includes('Security Review') && normalized.includes('Live-Smoke')),
     check('vision_bridge_visible', 'Vision bridge is visible in the export.', normalized.includes('Vision Bridge') && normalized.includes('Orchestrierung vor Generierung')),

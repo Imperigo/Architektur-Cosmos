@@ -29,6 +29,7 @@ Status: `passed`
 | Vision Bridge sichtbar | `Orchestrierung vor Generierung` | `passed` |
 | Demo-Bereitschaft sichtbar | `human-demo-ready` | `passed` |
 | Pilot-Runbook sichtbar | `45-60 Minuten` | `passed` |
+| Pilot-Session sichtbar | `before null - after null` | `passed` |
 | Live-Gate sichtbar | `no-push-without-owner-go` | `passed` |
 | Rechte-Matrix sichtbar | `generation bleibt gesperrt` | `passed` |
 | Desktop-Viewport | 1440 x 900 ohne horizontalen Overflow | `passed` |
@@ -43,12 +44,14 @@ Status: `passed`
 - `npm run kosmo:orbit-static-smoke` prueft den gebauten HTML-Export.
 - `npm run kosmo:orbit-demo-audit` prueft Vorfuehrreihenfolge, Navigation,
   Freigabelinie und offensichtliche Render-Artefakte.
-- In-App-Browser-Smoke hat die Demo-Navigation mit Pilotplan und Live-Gate
-  bestaetigt.
+- In-App-Browser-Smoke hat die Demo-Navigation mit Pilotplan, Session und
+  Live-Gate bestaetigt.
 - Desktop-Smoke bei 1440 x 900 px bestaetigt: `scrollWidth === clientWidth`,
-  Pilot-Runbook sichtbar, Live-Gate sichtbar und keine Klickziele unter 32 px.
+  Pilot-Runbook sichtbar, Pilot-Session sichtbar, Live-Gate sichtbar und keine
+  Klickziele unter 32 px.
 - Mobile-Smoke bei 390 x 844 px bestaetigt: `scrollWidth === clientWidth`,
-  Pilot-Runbook sichtbar, Live-Gate sichtbar und keine Klickziele unter 32 px.
+  Pilot-Runbook sichtbar, Pilot-Session sichtbar, Live-Gate sichtbar und keine
+  Klickziele unter 32 px.
 
 ## Grenzen
 

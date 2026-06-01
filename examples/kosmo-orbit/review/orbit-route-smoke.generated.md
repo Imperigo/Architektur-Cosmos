@@ -1,6 +1,6 @@
 # KosmoOrbit Route Smoke
 
-Generated: 2026-06-01T13:36:15.518Z
+Generated: 2026-06-01T13:45:04.276Z
 Status: `orbit_route_smoke_passed`
 Route: `app/orbit/page.tsx`
 
@@ -8,7 +8,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 
 ## Summary
 
-- checks: 145/145 passed
+- checks: 149/149 passed
 
 ## Checks
 
@@ -30,6 +30,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `workflow_delta_file_exists` | `passed` | Orbit workflow delta component exists. |
 | `pilot_measurement_file_exists` | `passed` | Orbit pilot measurement component exists. |
 | `pilot_runbook_file_exists` | `passed` | Orbit pilot runbook component exists. |
+| `pilot_session_template_file_exists` | `passed` | Orbit pilot session template component exists. |
 | `progress_map_file_exists` | `passed` | Orbit progress map component exists. |
 | `vision_bridge_file_exists` | `passed` | Orbit vision bridge component exists. |
 | `demo_questions_file_exists` | `passed` | Orbit demo questions component exists. |
@@ -62,6 +63,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `imports_workflow_delta` | `passed` | Route imports the workflow delta component. |
 | `imports_pilot_measurement` | `passed` | Route imports the pilot measurement component. |
 | `imports_pilot_runbook` | `passed` | Route imports the pilot runbook component. |
+| `imports_pilot_session_template` | `passed` | Route imports the pilot session template component. |
 | `imports_progress_map` | `passed` | Route imports the vision-to-MVP progress map component. |
 | `imports_vision_bridge` | `passed` | Route imports the vision bridge component. |
 | `imports_demo_questions` | `passed` | Route imports the demo questions briefing component. |
@@ -108,6 +110,8 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `pilot_measurement_blocks_live_actions` | `passed` | Pilot measurement blocks live data, uploads, costs and generation. |
 | `shows_pilot_runbook` | `passed` | Route renders a concrete 45-60 minute office pilot runbook. |
 | `pilot_runbook_keeps_live_actions_blocked` | `passed` | Pilot runbook keeps customer data, uploads, costs, design generation and push blocked. |
+| `shows_pilot_session_template` | `passed` | Route renders pilot session template and empty measurement copy. |
+| `pilot_session_template_avoids_fake_results` | `passed` | Pilot session template does not claim completed measurements. |
 | `shows_progress_map` | `passed` | Route renders a visible project progress map. |
 | `keeps_progress_map_non_absolute` | `passed` | Progress map avoids claiming one absolute total project percentage. |
 | `shows_runtime_and_generation_lanes` | `passed` | Progress map separates local runtime from CAD/plan generation. |

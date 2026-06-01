@@ -1,7 +1,7 @@
 # KosmoOrbit Status Report
 
 Workspace: `Architecture Kosmos Demo Office`
-Generated: 2026-06-01T13:36:12.939Z
+Generated: 2026-06-01T13:45:01.870Z
 Status: `orbit_blocked_gates_present`
 Mode: `local_dev`
 Hardware: `developer_laptop`

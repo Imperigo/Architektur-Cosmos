@@ -295,6 +295,11 @@ Arbeitsstation zuerst welches Panel braucht.
       Messwerte, Kundendaten, Uploads, Kosten oder Design-Generation behauptet
       werden.
 
+41. **Pilot-Session-Template sichtbar**
+    - integriert das Pilot-Session-Template als eigenes `/orbit`-Panel;
+    - zeigt Sicherheitsflags, Messpunkte und leere before/after-Werte;
+    - macht sichtbar, dass keine Pilotresultate behauptet werden.
+
 ## Lokale Commits seit `origin/main`
 
 - `6ad9372` Add KosmoOrbit role switcher preview
@@ -312,11 +317,11 @@ Arbeitsstation zuerst welches Panel braucht.
 
 Zuletzt gruene lokale Checks:
 
-- `npm run kosmo:orbit-route-smoke` — 145/145 passed
+- `npm run kosmo:orbit-route-smoke` — 149/149 passed
 - `npm run kosmo:orbit-full-review` — 21/21 passed
 - `npm run kosmo:orbit-pilot-session` — 17/17 passed
-- `npm run kosmo:orbit-demo-audit` — 31/31 passed
-- `npm run kosmo:orbit-responsive-audit` — 26/26 passed
+- `npm run kosmo:orbit-demo-audit` — 33/33 passed
+- `npm run kosmo:orbit-responsive-audit` — 27/27 passed
 - `npm run kosmo:orbit-health-readiness` — 14/14 passed
 - `npm run kosmo:orbit-command-contract` — 14/14 passed
 - `npm run kosmo:orbit-audit-trail` — 11/11 passed
@@ -331,7 +336,7 @@ Zuletzt gruene lokale Checks:
   `security:check` durch bestehende npm-audit Dependency-Fundstelle
 - `npx tsc --noEmit` — passed
 - `npm run build` — static export passed
-- `npm run build` + `npm run kosmo:orbit-static-smoke` — 45/45 static
+- `npm run build` + `npm run kosmo:orbit-static-smoke` — 47/47 static
   `/orbit` HTML enthaelt die wichtigsten Demo-Panels und Anker
 
 ## Sicherheitsgrenzen

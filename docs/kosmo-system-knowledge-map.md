@@ -138,6 +138,8 @@ Aktueller Repo-Stand 2026-06-01:
 - Der Pilot-Session-Vertrag ist nur ein Mess-Template. Echte Zeit-,
   Qualitaets- oder Kostenwerte duerfen erst nach einem menschlich
   durchgefuehrten Buero-Pilot eingetragen werden.
+- `/orbit` zeigt das Pilot-Session-Template bewusst mit leeren before/after-
+  Werten, damit keine Demo-Zahl als reales Resultat missverstanden wird.
 
 ### Kosmo Prepare, Kosmo Draw, Kosmo Viz, Kosmo Publish
 

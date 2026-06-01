@@ -77,6 +77,8 @@ Aktiv fuer:
   Review-/Safety-Vertraegen
 - Pilot-Session-Vertrag fuer spaetere echte Buero-Messwerte ohne Kundendaten,
   Uploads, Kosten oder behauptete Resultate im Template
+- sichtbares Pilot-Session-Template in `/orbit`, das leere before/after-Werte
+  statt erfundener Pilotresultate zeigt
 - Rollenprofile fuer Chef, IT-/KI-Spezialist, Projektleitung, Entwurf,
   Zeichnung, Praktikum, Lehre und Schnupperzugang
 - Tool-Hub zwischen KosmoData, KosmoAsset, KosmoDesign, KosmoPrepare,

@@ -1,16 +1,16 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T13:18:47.663Z",
+  "generated_at": "2026-06-01T13:43:42.625Z",
   "generator": "kosmo-orbit-responsive-audit",
   "status": "orbit_responsive_audit_passed",
   "source_dir": "app/orbit",
   "summary": {
-    "check_count": 26,
-    "passed_checks": 26,
+    "check_count": 27,
+    "passed_checks": 27,
     "failed_checks": 0,
-    "min_width_guard_count": 84,
-    "flex_wrap_count": 62,
-    "responsive_grid_count": 65
+    "min_width_guard_count": 88,
+    "flex_wrap_count": 64,
+    "responsive_grid_count": 68
   },
   "checks": [
     {
@@ -121,6 +121,11 @@
     {
       "id": "pilot_runbook_responsive",
       "label": "Pilot runbook uses responsive cards for timed steps, evidence and hard stops.",
+      "status": "passed"
+    },
+    {
+      "id": "pilot_session_template_responsive",
+      "label": "Pilot session template uses responsive columns for session and metric cards.",
       "status": "passed"
     },
     {

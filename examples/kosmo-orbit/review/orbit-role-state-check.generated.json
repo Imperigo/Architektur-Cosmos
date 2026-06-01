@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T13:36:12.596Z",
+  "generated_at": "2026-06-01T13:45:01.597Z",
   "generator": "kosmo-orbit-role-state-check",
   "workspace_path": "examples/kosmo-orbit/workspace.demo.json",
   "role_state_path": "examples/kosmo-orbit/role-state.demo.json",

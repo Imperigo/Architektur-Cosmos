@@ -171,6 +171,8 @@ Wichtig fuer die Kommunikation:
 - Ein Pilot-Session-Vertrag ist angelegt: Schema, lokales Demo-Template,
   Checkskript und Report. Alle Messwerte bleiben `null`, bis ein echter
   menschlicher Buero-Pilot durchgefuehrt wird.
+- Das Pilot-Session-Template ist direkt in `/orbit` sichtbar: Session-Status,
+  Sicherheitsflags, Messpunkte und leere before/after-Werte sind lesbar.
 - System-Knowledge und Source-of-Truth sind nachgezogen, damit KosmoOrbit in
   der Gesamtlandkarte als Hauptsoftware/Steuerzentrale und nicht als
   Website-Feature gelesen wird.
@@ -193,12 +195,12 @@ Wichtig fuer die Kommunikation:
 
 - `npm run kosmo:orbit-audit-trail` — 11/11 passed.
 - `npm run kosmo:orbit-office-routine` — 10/10 passed.
-- `npm run kosmo:orbit-route-smoke` — 145/145 passed.
+- `npm run kosmo:orbit-route-smoke` — 149/149 passed.
 - `npm run kosmo:orbit-full-review` — 21/21 passed.
 - `npm run kosmo:orbit-pilot-session` — 17/17 passed.
-- `npm run kosmo:orbit-demo-audit` — 31/31 passed.
-- `npm run kosmo:orbit-responsive-audit` — 26/26 passed.
-- `npm run kosmo:orbit-static-smoke` — 45/45 passed.
+- `npm run kosmo:orbit-demo-audit` — 33/33 passed.
+- `npm run kosmo:orbit-responsive-audit` — 27/27 passed.
+- `npm run kosmo:orbit-static-smoke` — 47/47 passed.
 - `npx tsc --noEmit --pretty false --incremental false` — passed.
 - `npm run lint` — passed mit bekannten Bestandswarnungen, keine Errors.
 - `npm run build` mit Node 22 — passed.

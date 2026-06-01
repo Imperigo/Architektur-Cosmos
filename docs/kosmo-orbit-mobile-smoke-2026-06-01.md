@@ -29,6 +29,7 @@ Status: `passed`
 | Vision Bridge sichtbar | `Orchestrierung vor Generierung` | `passed` |
 | Demo-Bereitschaft sichtbar | `human-demo-ready` sichtbar | `passed` |
 | Pilot-Runbook sichtbar | `45-60 Minuten` sichtbar | `passed` |
+| Pilot-Session sichtbar | `before null - after null` sichtbar | `passed` |
 | Live-Gate sichtbar | `no-push-without-owner-go` sichtbar | `passed` |
 | Rechte-Matrix sichtbar | Karten bleiben lesbar | `passed` |
 | Rollenumschaltung sichtbar | Rollenchips bleiben erreichbar | `passed` |
@@ -43,8 +44,8 @@ Status: `passed`
 - `npm run kosmo:orbit-static-smoke` prueft, ob die wichtigsten Panels im
   gebauten HTML-Export vorhanden sind.
 - In-App-Browser-Smoke bei 390 x 844 px bestaetigt: `scrollWidth === clientWidth`,
-  keine zu kleinen sichtbaren Buttons/Links, Pilot-Runbook sichtbar und
-  Live-Gate sichtbar.
+  keine zu kleinen sichtbaren Buttons/Links, Pilot-Runbook sichtbar,
+  Pilot-Session sichtbar und Live-Gate sichtbar.
 - Nach der Vision Bridge bestaetigt der 390px-Smoke weiter: Vision-Navigation
   sichtbar, kein horizontaler Overflow und keine sichtbaren Buttons/Links unter
   32 px.
