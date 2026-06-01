@@ -18,6 +18,8 @@
     "security:headers": "node scripts/check-live-security.mjs",
     "storage:report": "node scripts/local-storage-report.mjs",
     "storage:cleanup:dry-run": "node scripts/local-storage-report.mjs --cleanup --older-than-days 14",
+    "generated:cleanup": "node scripts/cleanup-generated-report-noise.mjs",
+    "generated:cleanup:dry-run": "node scripts/cleanup-generated-report-noise.mjs --dry-run",
     "import:afasia": "node scripts/import-afasia.mjs",
     "archive:validate": "node scripts/archive-d1-tools.mjs validate",
     "archive:export": "node scripts/archive-d1-tools.mjs export-sql",
