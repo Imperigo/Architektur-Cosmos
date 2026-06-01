@@ -1,6 +1,6 @@
 # KosmoOrbit MVP Roadmap
 
-Stand: 2026-05-31
+Stand: 2026-06-01
 Status: erster konkreter Bauplan fuer die Hauptsoftware.
 
 ## 1. Ziel des MVP
@@ -345,6 +345,23 @@ fuer Chef/Admin, Projektleitung, Entwurf, Zeichnung und Ausbildung anders
 aussehen muss. Gleichzeitig bleibt die produktkritische Linie sauber:
 KosmoDesign ist im MVP nur Review Mode; Entwurfs- oder Geometrie-Generierung
 bleibt blockiert, bis Kontext- und Human-Review-Gates geschlossen sind.
+
+### Rollenumschaltung Preview
+
+Die `/orbit` Preview zeigt nun auch eine lokale Rollenumschaltung:
+
+- Auswahl zwischen acht Buero-Rollen;
+- pro Rolle sichtbarer Zweck, Oberflaechentiefe, Entscheidungsradius und
+  naechster sicherer Schritt;
+- Rechte-Preview fuer KosmoDesign Review, lokale Freigabe, Public Gate,
+  Design-Generation und Read-only;
+- sichtbare und versteckte UI-Bereiche pro Rolle;
+- klare Aussage, dass diese Umschaltung keine Userdaten schreibt, keine
+  Accounts erstellt und keine echten Berechtigungen freischaltet.
+
+Damit wird der zentrale Produktgedanke greifbarer: KosmoOrbit ist dieselbe
+Hauptsoftware, aber nicht dieselbe Oberflaeche fuer Chef, Projektleitung,
+Entwurf, Zeichnung, Praktikum, Lehre und Demo-Nutzer.
 
 ## 14. Static KosmoDesign UI Prototype
 

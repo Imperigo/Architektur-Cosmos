@@ -1,6 +1,6 @@
 # KosmoOrbit Product Vision
 
-Stand: 2026-05-31
+Stand: 2026-06-01
 Status: kanonische Produktergaenzung fuer die Rolle von KosmoOrbit.
 
 ## 1. Entscheidung
@@ -132,6 +132,9 @@ Dieser Kern zeigt:
 - den 3-Minuten-Demo-Pfad:
   Projektpaket pruefen, KosmoDesign Review Mode oeffnen, Blocker menschlich
   entscheiden;
+- eine lokale Rollenumschaltung, mit der sichtbar wird, wie Chef/Admin,
+  Projektleitung, Entwurf, Zeichnung und Ausbildung dieselbe Software anders
+  sehen;
 - klare Sperre gegen Design-Generation, Public-Publish, externe Netzwerke,
   Uploads und echte User-Schreibaktionen.
 

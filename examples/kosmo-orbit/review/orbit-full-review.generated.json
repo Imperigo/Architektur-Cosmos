@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-31T16:02:15.282Z",
+  "generated_at": "2026-06-01T06:32:41.927Z",
   "generator": "kosmo-orbit-full-review",
   "workspace_path": "examples/kosmo-orbit/workspace.demo.json",
   "project_root": "examples/kosmo-projects/kosmo-demo-001",
@@ -31,8 +31,8 @@
     "app_route_spec_status": "orbit_app_route_spec_ready",
     "app_route_spec_sections": 5,
     "orbit_route_smoke_status": "orbit_route_smoke_passed",
-    "orbit_route_smoke_passed_checks": 17,
-    "orbit_route_smoke_check_count": 17,
+    "orbit_route_smoke_passed_checks": 24,
+    "orbit_route_smoke_check_count": 24,
     "workspace_status": "orbit_blocked_gates_present",
     "project_status": "local_review_only",
     "project_artifact_count": 59,
@@ -53,8 +53,8 @@
     "role_variant_count": 8,
     "role_design_capable_count": 4,
     "role_ui_smoke_status": "role_ui_smoke_passed",
-    "role_ui_smoke_passed_checks": 12,
-    "role_ui_smoke_check_count": 12,
+    "role_ui_smoke_passed_checks": 14,
+    "role_ui_smoke_check_count": 14,
     "role_shell_prototype_status": "role_shell_prototype_ready",
     "role_shell_prototype_html": "examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-prototype.generated.html",
     "role_shell_smoke_status": "role_shell_smoke_passed",
@@ -210,7 +210,7 @@
       "report_path": "examples/kosmo-projects/kosmo-demo-001/orbit/role-ui-smoke.generated.json",
       "report_exists": true,
       "report_status": "role_ui_smoke_passed",
-      "stdout_tail": "> architecture-cosmos@0.1.0 kosmo:orbit-role-smoke\n> node scripts/kosmo-orbit-role-ui-smoke.mjs --project examples/kosmo-projects/kosmo-demo-001 --variants orbit/role-ui-variants.generated.json\n\nKosmoOrbit role UI smoke\nProject: Kosmo Demo 001\nStatus: role_ui_smoke_passed\nChecks: 12/12 passed\nWrote: examples/kosmo-projects/kosmo-demo-001/orbit/role-ui-smoke.generated.md",
+      "stdout_tail": "> architecture-cosmos@0.1.0 kosmo:orbit-role-smoke\n> node scripts/kosmo-orbit-role-ui-smoke.mjs --project examples/kosmo-projects/kosmo-demo-001 --variants orbit/role-ui-variants.generated.json\n\nKosmoOrbit role UI smoke\nProject: Kosmo Demo 001\nStatus: role_ui_smoke_passed\nChecks: 14/14 passed\nWrote: examples/kosmo-projects/kosmo-demo-001/orbit/role-ui-smoke.generated.md",
       "stderr_tail": ""
     },
     {
@@ -270,7 +270,7 @@
       "report_path": "examples/kosmo-orbit/review/orbit-route-smoke.generated.json",
       "report_exists": true,
       "report_status": "orbit_route_smoke_passed",
-      "stdout_tail": "> architecture-cosmos@0.1.0 kosmo:orbit-route-smoke\n> node scripts/kosmo-orbit-route-smoke.mjs --route app/orbit/page.tsx --spec examples/kosmo-orbit/review/orbit-app-route-spec.generated.json\n\nKosmoOrbit route smoke\nStatus: orbit_route_smoke_passed\nChecks: 17/17\nWrote: examples/kosmo-orbit/review/orbit-route-smoke.generated.md",
+      "stdout_tail": "> architecture-cosmos@0.1.0 kosmo:orbit-route-smoke\n> node scripts/kosmo-orbit-route-smoke.mjs --route app/orbit/page.tsx --spec examples/kosmo-orbit/review/orbit-app-route-spec.generated.json\n\nKosmoOrbit route smoke\nStatus: orbit_route_smoke_passed\nChecks: 24/24\nWrote: examples/kosmo-orbit/review/orbit-route-smoke.generated.md",
       "stderr_tail": ""
     }
   ],

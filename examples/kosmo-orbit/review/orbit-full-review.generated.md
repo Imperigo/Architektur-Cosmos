@@ -1,6 +1,6 @@
 # KosmoOrbit Full Review
 
-Generated: 2026-05-31T16:02:15.282Z
+Generated: 2026-06-01T06:32:41.927Z
 Status: `orbit_full_review_ready_for_review_mode`
 Workspace: `examples/kosmo-orbit/workspace.demo.json`
 Project: `examples/kosmo-projects/kosmo-demo-001`
@@ -22,7 +22,7 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 - app route spec: `orbit_app_route_spec_ready`
 - app route spec sections: 5
 - orbit route smoke: `orbit_route_smoke_passed`
-- orbit route smoke checks: 17/17
+- orbit route smoke checks: 24/24
 - workspace status: `orbit_blocked_gates_present`
 - project status: `local_review_only`
 - project artifacts: 59
@@ -42,7 +42,7 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 - role variant count: 8
 - design-capable roles: 4
 - role UI smoke: `role_ui_smoke_passed`
-- role UI smoke checks: 12/12
+- role UI smoke checks: 14/14
 - role shell prototype: `role_shell_prototype_ready`
 - role shell prototype HTML: `examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-prototype.generated.html`
 - role shell smoke: `role_shell_smoke_passed`

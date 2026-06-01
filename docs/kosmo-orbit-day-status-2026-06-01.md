@@ -41,6 +41,17 @@ Wichtig fuer die Kommunikation:
 - Smoke-Checks pruefen neu, dass Rollen-Erklaerungen, Demo-Pfad und
   KosmoDesign Review Mode sichtbar bleiben.
 
+## Morgen-Fortsetzung
+
+- `/orbit` hat jetzt eine lokale Rollenumschaltung als echte Browser-Preview.
+- Die Umschaltung zeigt je Rolle Zweck, Oberflaechentiefe,
+  Entscheidungsradius, naechsten sicheren Schritt, Rechte-Preview und
+  sichtbare UI-Bereiche.
+- Die Preview bleibt bewusst harmlos: keine Userdaten, keine Accounts, keine
+  echte Rechteverwaltung und keine Design-Generierung.
+- Der Route-Smoke prueft neu auch die Rollenumschaltung und ihren lokalen
+  Sicherheitscharakter.
+
 ## Qualitaetsgrenzen
 
 - Keine Aenderung an `wrangler.jsonc`.
@@ -51,5 +62,5 @@ Wichtig fuer die Kommunikation:
 ## Naechster sinnvoller Schritt
 
 Nach den lokalen Checks ist der naechste Produktschritt eine vorfuehrbare
-Interaktion: Rollenumschaltung oder ein gefuehrter Demo-Review-Pfad fuer
-Projektleitung und Entwurf, weiterhin statisch und review-only.
+Interaktion: ein gefuehrter Demo-Review-Pfad fuer Projektleitung und Entwurf,
+weiterhin statisch und review-only.

@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-31T20:04:59.253Z",
+  "generated_at": "2026-06-01T06:37:04.762Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 17,
-    "passed_checks": 17,
+    "check_count": 24,
+    "passed_checks": 24,
     "failed_checks": 0
   },
   "checks": [
@@ -47,6 +47,16 @@
       "status": "passed"
     },
     {
+      "id": "role_switcher_file_exists",
+      "label": "Orbit role switcher client component exists.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_role_switcher",
+      "label": "Route imports the role switcher preview component.",
+      "status": "passed"
+    },
+    {
       "id": "uses_force_static",
       "label": "Route declares force-static rendering.",
       "status": "passed"
@@ -54,6 +64,31 @@
     {
       "id": "shows_kosmo_orbit",
       "label": "Route renders KosmoOrbit heading.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_demo_path",
+      "label": "Route renders the 3-minute human demo path.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_design_review_mode",
+      "label": "Route renders KosmoDesign Review Mode handoff copy.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_role_explanations",
+      "label": "Route renders role explanations from variants.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_role_switcher_preview",
+      "label": "Route renders a local role switching preview.",
+      "status": "passed"
+    },
+    {
+      "id": "keeps_role_switcher_local",
+      "label": "Role switcher explains that it writes no user data.",
       "status": "passed"
     },
     {

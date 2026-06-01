@@ -7,6 +7,7 @@ import { dirname, relative, resolve } from 'node:path';
 const root = process.cwd();
 const args = parseArgs(process.argv.slice(2));
 const routePath = resolve(root, args.route || 'app/orbit/page.tsx');
+const roleSwitcherPath = resolve(root, args.roleSwitcher || 'app/orbit/OrbitRoleSwitcher.tsx');
 const specPath = resolve(root, args.spec || 'examples/kosmo-orbit/review/orbit-app-route-spec.generated.json');
 const outputJsonPath = resolve(root, args.output || 'examples/kosmo-orbit/review/orbit-route-smoke.generated.json');
 const outputMdPath = resolve(root, args.markdown || 'examples/kosmo-orbit/review/orbit-route-smoke.generated.md');
@@ -20,9 +21,10 @@ async function main() {
   if (!existsSync(routePath)) throw new Error(`KosmoOrbit route file not found: ${routePath}`);
   if (!existsSync(specPath)) throw new Error(`KosmoOrbit app route spec not found: ${specPath}`);
 
-  const source = readFileSync(routePath, 'utf8');
+  const routeSource = readFileSync(routePath, 'utf8');
+  const roleSwitcherSource = existsSync(roleSwitcherPath) ? readFileSync(roleSwitcherPath, 'utf8') : '';
   const spec = readJson(specPath);
-  const report = buildReport({ source, spec });
+  const report = buildReport({ routeSource, roleSwitcherSource, spec });
 
   await Promise.all([
     mkdir(dirname(outputJsonPath), { recursive: true }),
@@ -39,7 +41,8 @@ async function main() {
   if (report.status !== 'orbit_route_smoke_passed') process.exit(1);
 }
 
-function buildReport({ source, spec }) {
+function buildReport({ routeSource, roleSwitcherSource, spec }) {
+  const source = `${routeSource}\n${roleSwitcherSource}`;
   const forbiddenPatterns = [
     { id: 'no_use_server', pattern: /['"]use server['"]/ },
     { id: 'no_next_server', pattern: /from ['"]next\/server['"]/ },
@@ -57,11 +60,15 @@ function buildReport({ source, spec }) {
     check('imports_role_state', 'Route imports the local role state JSON.', source.includes('role-state.demo.json')),
     check('imports_role_variants', 'Route imports the local role variants JSON.', source.includes('role-ui-variants.generated.json')),
     check('imports_shell_manifest', 'Route imports the local shell manifest JSON.', source.includes('role-shell-prototype.generated.json')),
+    check('role_switcher_file_exists', 'Orbit role switcher client component exists.', existsSync(roleSwitcherPath)),
+    check('imports_role_switcher', 'Route imports the role switcher preview component.', routeSource.includes('OrbitRoleSwitcher')),
     check('uses_force_static', 'Route declares force-static rendering.', source.includes("dynamic = 'force-static'") || source.includes('dynamic = "force-static"')),
     check('shows_kosmo_orbit', 'Route renders KosmoOrbit heading.', source.includes('KosmoOrbit')),
     check('shows_demo_path', 'Route renders the 3-minute human demo path.', source.includes('3-Minuten-Demo') && source.includes('demoSteps')),
     check('shows_design_review_mode', 'Route renders KosmoDesign Review Mode handoff copy.', source.includes('KosmoDesign Review Mode')),
     check('shows_role_explanations', 'Route renders role explanations from variants.', source.includes('variant.explanation')),
+    check('shows_role_switcher_preview', 'Route renders a local role switching preview.', source.includes('Rollenumschaltung Preview') && source.includes('setSelectedRoleId')),
+    check('keeps_role_switcher_local', 'Role switcher explains that it writes no user data.', source.includes('schreibt keine Userdaten')),
     check('shows_blocked_actions', 'Route renders blocked action labels from role state.', source.includes('Blockierte Aktionen') && source.includes('roleState.blocked_actions.map')),
     check('shows_review_only_copy', 'Route keeps review-only safety copy visible.', source.includes('review-only') || source.includes('Review')),
     ...forbiddenPatterns.map((item) => check(item.id, `Forbidden pattern is absent: ${item.id}.`, !item.pattern.test(source)))
