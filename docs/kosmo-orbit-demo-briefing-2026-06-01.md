@@ -39,6 +39,11 @@ In drei Minuten soll ein Architekturbueroleiter verstehen:
    Entscheid mit Evidenz und Write Guard vorbereiten. In der Preview bleibt
    der Status deshalb bewusst `needs_more_evidence`.
 
+7. **MVP-Grenze zeigen**
+   Erklaeren: Heute ist die Produktlogik sichtbar. Echte lokale KI,
+   Benutzerprofile, Toolsteuerung und persistente Entscheidungen gehoeren zur
+   spaeteren KosmoZentrale-Runtime.
+
 ## Kernsaetze
 
 - Besser: Jede Rolle bekommt die richtige Oberflaechentiefe und sieht den
@@ -56,6 +61,7 @@ In drei Minuten soll ein Architekturbueroleiter verstehen:
 - Keine fertige CAD-Alternative.
 - Keine automatische Design-Generierung.
 - Keine echte Auth-/Rechteverwaltung.
+- Keine echte lokale KosmoZentrale-Runtime.
 - Kein Cloud-, Upload-, Kunden- oder Fachplaner-Liveworkflow.
 - Keine offizielle Norm- oder Rechtszertifizierung.
 

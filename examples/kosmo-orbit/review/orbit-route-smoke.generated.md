@@ -1,6 +1,6 @@
 # KosmoOrbit Route Smoke
 
-Generated: 2026-06-01T07:04:28.297Z
+Generated: 2026-06-01T07:08:18.337Z
 Status: `orbit_route_smoke_passed`
 Route: `app/orbit/page.tsx`
 
@@ -8,7 +8,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 
 ## Summary
 
-- checks: 44/44 passed
+- checks: 48/48 passed
 
 ## Checks
 
@@ -27,12 +27,14 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `presenter_brief_file_exists` | `passed` | Orbit presenter brief component exists. |
 | `demo_questions_file_exists` | `passed` | Orbit demo questions component exists. |
 | `review_decision_draft_file_exists` | `passed` | Orbit review decision draft component exists. |
+| `runtime_boundary_file_exists` | `passed` | Orbit MVP/runtime boundary component exists. |
 | `imports_role_switcher` | `passed` | Route imports the role switcher preview component. |
 | `imports_demo_review_path` | `passed` | Route imports the guided demo review component. |
 | `imports_project_dashboard` | `passed` | Route imports the project package dashboard component. |
 | `imports_presenter_brief` | `passed` | Route imports the presenter brief component. |
 | `imports_demo_questions` | `passed` | Route imports the demo questions briefing component. |
 | `imports_review_decision_draft` | `passed` | Route imports the review decision draft component. |
+| `imports_runtime_boundary` | `passed` | Route imports the MVP/runtime boundary component. |
 | `uses_force_static` | `passed` | Route declares force-static rendering. |
 | `shows_kosmo_orbit` | `passed` | Route renders KosmoOrbit heading. |
 | `shows_demo_path` | `passed` | Route renders the 3-minute human demo path. |
@@ -50,6 +52,8 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `anchors_demo_claims` | `passed` | Demo questions point claims back to visible panels. |
 | `shows_review_decision_draft` | `passed` | Route renders a local non-writing review decision draft. |
 | `keeps_decision_draft_non_writing` | `passed` | Decision draft states that it writes no decision record. |
+| `shows_runtime_boundary` | `passed` | Route renders visible MVP and runtime boundaries. |
+| `keeps_runtime_side_effects_off` | `passed` | Runtime boundary states no runtime side effects. |
 | `shows_blocked_actions` | `passed` | Route renders blocked action labels from role state. |
 | `shows_review_only_copy` | `passed` | Route keeps review-only safety copy visible. |
 | `no_use_server` | `passed` | Forbidden pattern is absent: no_use_server. |

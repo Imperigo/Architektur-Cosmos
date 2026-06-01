@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T07:04:28.297Z",
+  "generated_at": "2026-06-01T07:08:18.337Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 44,
-    "passed_checks": 44,
+    "check_count": 48,
+    "passed_checks": 48,
     "failed_checks": 0
   },
   "checks": [
@@ -77,6 +77,11 @@
       "status": "passed"
     },
     {
+      "id": "runtime_boundary_file_exists",
+      "label": "Orbit MVP/runtime boundary component exists.",
+      "status": "passed"
+    },
+    {
       "id": "imports_role_switcher",
       "label": "Route imports the role switcher preview component.",
       "status": "passed"
@@ -104,6 +109,11 @@
     {
       "id": "imports_review_decision_draft",
       "label": "Route imports the review decision draft component.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_runtime_boundary",
+      "label": "Route imports the MVP/runtime boundary component.",
       "status": "passed"
     },
     {
@@ -189,6 +199,16 @@
     {
       "id": "keeps_decision_draft_non_writing",
       "label": "Decision draft states that it writes no decision record.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_runtime_boundary",
+      "label": "Route renders visible MVP and runtime boundaries.",
+      "status": "passed"
+    },
+    {
+      "id": "keeps_runtime_side_effects_off",
+      "label": "Runtime boundary states no runtime side effects.",
       "status": "passed"
     },
     {

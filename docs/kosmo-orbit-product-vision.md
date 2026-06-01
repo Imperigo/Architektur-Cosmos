@@ -147,6 +147,8 @@ Dieser Kern zeigt:
   beantwortet und auf sichtbare Evidenz-Panels verweist;
 - einen nicht-schreibenden Review Decision Draft, der zeigt, wie KosmoOrbit
   spaeter evidenzbasierte menschliche Review-Entscheide vorbereiten soll;
+- eine klare MVP-/Runtime-Grenze zwischen heute sichtbarer Preview,
+  MVP-Vertrag und spaeterer KosmoZentrale-Runtime;
 - klare Sperre gegen Design-Generation, Public-Publish, externe Netzwerke,
   Uploads und echte User-Schreibaktionen.
 

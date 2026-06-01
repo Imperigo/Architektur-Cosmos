@@ -69,6 +69,8 @@ Wichtig fuer die Kommunikation:
   Kernsaetze und bewusste Nicht-Behauptungen fest.
 - Ein Review Decision Draft zeigt eine lokale `needs_more_evidence`-Empfehlung
   mit Evidenz-Refs und Write Guard, ohne Decision Record zu schreiben.
+- Eine MVP-Grenze unterscheidet sichtbar zwischen heute gebauter Preview,
+  MVP-Vertrag und spaeterer KosmoZentrale-Runtime.
 
 ## Qualitaetsgrenzen
 
@@ -79,6 +81,6 @@ Wichtig fuer die Kommunikation:
 
 ## Naechster sinnvoller Schritt
 
-Nach den lokalen Checks ist der naechste Produktschritt eine noch klarere
-Abgrenzung zwischen Demo, MVP-Vertrag und spaeterer echter Runtime:
-Was ist heute sichtbar, was ist nur vorbereitet, und was braucht KosmoZentrale.
+Nach den lokalen Checks ist der naechste Produktschritt die Ordnung der
+technischen Verifikation: ein kompakter Abend-/Batchreport soll alle lokalen
+Checks, Commits, Risiken und den ersten naechsten Schritt zusammenziehen.

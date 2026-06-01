@@ -10,6 +10,7 @@ import { OrbitDemoReviewPath } from './OrbitDemoReviewPath';
 import { OrbitPresenterBrief } from './OrbitPresenterBrief';
 import { OrbitProjectDashboard, type DesignHandoffPreview, type ProjectInspectorReport } from './OrbitProjectDashboard';
 import { OrbitReviewDecisionDraft } from './OrbitReviewDecisionDraft';
+import { OrbitRuntimeBoundary } from './OrbitRuntimeBoundary';
 import { OrbitRoleSwitcher } from './OrbitRoleSwitcher';
 
 export const dynamic = 'force-static';
@@ -327,6 +328,8 @@ export default function OrbitPage() {
           <OrbitDemoQuestions />
 
           <OrbitReviewDecisionDraft projectInspector={projectInspector} designHandoff={designHandoff} />
+
+          <OrbitRuntimeBoundary />
 
           <OrbitRoleSwitcher initialRoleId={roleState.session.active_role_id} variants={roleVariantsReport.variants} />
 

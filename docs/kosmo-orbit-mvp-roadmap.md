@@ -443,6 +443,22 @@ Damit ist der naechste Produktvertrag sichtbar: KosmoOrbit soll spaeter nicht
 einfach Buttons freischalten, sondern Review-Entscheide mit Evidenz,
 Verantwortung und Gate-Status vorbereiten.
 
+### MVP- und Runtime-Grenze
+
+Die `/orbit` Preview zeigt nun explizit drei Ebenen:
+
+- Heute sichtbar: statische Preview, Tagesansicht, Rollenumschaltung,
+  Demo-Review-Pfad und nicht-schreibender Decision Draft.
+- MVP-Vertrag: lokale Projektpakete lesen, Rollen-/Gate-Sprache stabilisieren,
+  KosmoDesign im Review Mode halten und menschliche Review vorbereiten.
+- Spaetere Runtime: KosmoZentrale-Hardware, lokale KI, echte Benutzerprofile,
+  Tool-Start, Updates, persistente Decision Records, Fachplaner- und
+  Publishing-Schnittstellen.
+
+Diese Grenze ist fuer die Produktkommunikation wichtig: KosmoOrbit darf die
+Vision zeigen, ohne eine fertige lokale Runtime, Auth oder Toolsteuerung zu
+behaupten.
+
 ## 14. Static KosmoDesign UI Prototype
 
 Aus der Panel-Spezifikation kann KosmoOrbit einen ersten lokalen HTML-Prototyp
