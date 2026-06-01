@@ -5,7 +5,7 @@ Status: lokaler Abschluss des autonomen KosmoOrbit-Batches.
 ## Kurzstand
 
 - Branch: `main`
-- Lokaler Stand: 53 Commits vor `origin/main` nach finalem Browser-Smoke-Commit
+- Lokaler Stand: 54 Commits vor `origin/main` nach finalem Facilitator-Commit
 - Push/Deploy: nicht ausgefuehrt
 - `/orbit`: statische review-only Hauptsoftware-Preview
 - Security: finaler Abschlusscheck gruen, vor Push trotzdem bewusst bestaetigen
@@ -18,6 +18,7 @@ Status: lokaler Abschluss des autonomen KosmoOrbit-Batches.
 - Pilot-Session-Template direkt in `/orbit`
 - Pilot-Messkit mit leeren Messkarten, Evidenzlinks und eigenem Checkskript
 - Chef-Demo-Skript fuer die nicht-technische 5-Minuten-Erklaerung
+- Facilitator-Checkliste fuer den ersten 45-60-Minuten-Buero-Pilot
 - aktualisierte Browser-, Mobile-, Roadmap-, Source-of-Truth- und Push-Doku
 - finaler Autonomous Closeout mit frischem Qualitaets-Sweep
 

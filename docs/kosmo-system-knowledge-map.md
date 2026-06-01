@@ -145,6 +145,8 @@ Aktueller Repo-Stand 2026-06-01:
 - `/orbit` zeigt zusaetzlich ein Pilot-Messkit mit leeren Messkarten und
   Evidenzlinks, damit der erste Buero-Pilot strukturiert, aber nicht
   vorweggenommen wird.
+- Eine Office Pilot Facilitator Checklist uebersetzt den ersten Test in eine
+  moderierbare Abfolge fuer nicht-technische Architekt:innen.
 
 ### Kosmo Prepare, Kosmo Draw, Kosmo Viz, Kosmo Publish
 

@@ -81,8 +81,8 @@ Aktiv fuer:
   statt erfundener Pilotresultate zeigt
 - Pilot-Messkit fuer Baseline, Evidenzrunde, Rollenrunde, Entscheidung,
   leere Messkarten und Evidenzlinks ohne behauptete Resultate
-- Chef-Demo-Skript und Office Pilot Plan fuer die erste nicht-technische
-  Bueroerklaerung
+- Chef-Demo-Skript, Office Pilot Plan und Facilitator-Checkliste fuer die
+  erste nicht-technische Bueroerklaerung
 - Rollenprofile fuer Chef, IT-/KI-Spezialist, Projektleitung, Entwurf,
   Zeichnung, Praktikum, Lehre und Schnupperzugang
 - Tool-Hub zwischen KosmoData, KosmoAsset, KosmoDesign, KosmoPrepare,

@@ -338,6 +338,14 @@ Arbeitsstation zuerst welches Panel braucht.
     - dokumentiert den lokalen Screenshot unter
       `/private/tmp/kosmo-orbit-pilot-kit-smoke-2026-06-01.png`.
 
+47. **Office Pilot Facilitator Checklist**
+    - legt eine nicht-technische Moderations-Checkliste fuer den ersten
+      45-60-Minuten-Buero-Pilot an;
+    - fuehrt durch Baseline, KosmoOrbit-Lesung, Messkit, KosmoDesign-Handoff,
+      Rollenrunde und Abschlussfragen;
+    - haelt harte Stopps fuer Kundendaten, Uploads, Kosten, externe Accounts,
+      Generierung, Push/Deploy und unbewiesene Zeit-/Kostenclaims fest.
+
 ## Lokale Commits seit `origin/main`
 
 - `6ad9372` Add KosmoOrbit role switcher preview
@@ -396,7 +404,7 @@ In diesem Batch wurde nicht gemacht:
 ## Aktueller Zustand
 
 - Branch: `main`
-- Lokaler Stand: 53 Commits vor `origin/main` nach finalem Browser-Smoke-Commit
+- Lokaler Stand: 54 Commits vor `origin/main` nach finalem Facilitator-Commit
 - Live-Publish: noch nicht automatisch ausgefuehrt, ausser ein spaeterer
   expliziter Push/Publish-Befehl folgt.
 

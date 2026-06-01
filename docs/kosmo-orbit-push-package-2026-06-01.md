@@ -6,7 +6,7 @@ Status: lokales Review- und Push-Paket. Kein Push wurde ausgefuehrt.
 
 - Branch: `main`
 - Remote: `origin/main`
-- Lokaler Stand: 53 Commits vor `origin/main`
+- Lokaler Stand: 54 Commits vor `origin/main`
 - Live/Deploy: nicht ausgefuehrt, weil Push/Live-Go fehlt
 
 ## Inhalt des Pakets
@@ -30,6 +30,7 @@ deutlich reifer:
 - Pilot-Messkit sichtbar in `/orbit` mit leeren Messkarten, Evidenzlinks,
   Schema und lokalem Check;
 - Chef-Demo-Skript fuer eine nicht-technische 5-Minuten-Erklaerung;
+- Facilitator-Checkliste fuer den ersten 45-60-Minuten-Buero-Pilot;
 - Afternoon Checkpoint als kurzer lokaler Zwischenabschluss;
 - Autonomous Closeout als finaler lokaler Abschluss des 5h-Batches;
 - Office Pilot Plan;

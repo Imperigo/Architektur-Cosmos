@@ -12,6 +12,10 @@ Sicherheitsgrenzen als statische review-only Preview.
 Der Stand ist fuer eine interne Demo geeignet. Fuer oeffentlichen Livegang
 fehlt bewusst noch das Owner-Go, danach Push und Live-Smoke.
 
+Zusaetzlich liegt eine Facilitator-Checkliste fuer den ersten 45-60-Minuten-
+Buero-Pilot vor, damit die Demo als gefuehrter Review-Test und nicht als
+Produktivversprechen gezeigt wird.
+
 ## Finaler Qualitaets-Sweep
 
 - `npm run kosmo:orbit-full-review` - 22/22 passed

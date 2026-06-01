@@ -181,6 +181,9 @@ Wichtig fuer die Kommunikation:
   Mensch echte Pilotbeobachtungen eintraegt.
 - Ein Chef-Demo-Skript fasst die nicht-technische 5-Minuten-Erklaerung
   zusammen und ist im Office Pilot Plan als Arbeitsartefakt verlinkt.
+- Eine Office Pilot Facilitator Checklist fuehrt den ersten 45-60-Minuten-
+  Buero-Pilot ohne Informatik-Sprache durch Baseline, KosmoOrbit-Lesung,
+  Messkit, Handoff, Rollenrunde und harte Stopps.
 - Ein Afternoon Checkpoint fasst lokalen Stand, Checks, Grenzen und naechste
   Push-Entscheidung kompakt zusammen.
 - System-Knowledge und Source-of-Truth sind nachgezogen, damit KosmoOrbit in
