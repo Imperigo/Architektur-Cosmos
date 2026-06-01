@@ -31,10 +31,10 @@ Status: lokaler Abschluss des autonomen KosmoOrbit-Batches.
 - `npm run kosmo:orbit-pilot-kit` - 19/19 passed
 - `npm run kosmo:orbit-pilot-session` - 17/17 passed
 - `npm run kosmo:orbit-pilot-result` - 21/21 passed
-- `npm run kosmo:orbit-route-smoke` - 161/161 passed
+- `npm run kosmo:orbit-route-smoke` - 163/163 passed
 - `npm run kosmo:orbit-demo-audit` - 33/33 passed
 - `npm run kosmo:orbit-responsive-audit` - 27/27 passed
-- `npm run kosmo:orbit-static-smoke` - 53/53 passed
+- `npm run kosmo:orbit-static-smoke` - 54/54 passed
 - `npm run ui:audit` - 72/72 passed
 - `npx tsc --noEmit --pretty false --incremental false` - passed
 - `npm run lint` - 0 Errors, bekannte 25 Warnings

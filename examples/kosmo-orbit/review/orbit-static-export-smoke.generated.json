@@ -1,12 +1,12 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T19:34:02.924Z",
+  "generated_at": "2026-06-01T19:36:26.962Z",
   "generator": "kosmo-orbit-static-export-smoke",
   "status": "orbit_static_export_smoke_passed",
   "html_file": "out/orbit/index.html",
   "summary": {
-    "check_count": 53,
-    "passed_checks": 53,
+    "check_count": 54,
+    "passed_checks": 54,
     "failed_checks": 0
   },
   "checks": [
@@ -23,6 +23,11 @@
     {
       "id": "renders_demo_navigation",
       "label": "Export renders compact demo navigation.",
+      "status": "passed"
+    },
+    {
+      "id": "renders_grouped_demo_navigation",
+      "label": "Export renders grouped demo navigation lanes.",
       "status": "passed"
     },
     {

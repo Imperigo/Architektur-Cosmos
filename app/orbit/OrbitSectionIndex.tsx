@@ -62,13 +62,13 @@ const sectionGroups = [
 export function OrbitSectionIndex() {
   return (
     <nav className="rounded-lg border border-white/10 bg-black/24 p-3" aria-label="KosmoOrbit Abschnitte">
-      <div className="grid gap-3 xl:grid-cols-[0.72fr_repeat(5,minmax(0,1fr))]">
-        <div className="min-w-0 rounded-md border border-cyan-200/20 bg-cyan-300/[0.06] px-3 py-2">
+      <div className="flex gap-3 overflow-x-auto pb-1 [scrollbar-width:thin]">
+        <div className="min-w-[12rem] max-w-[15rem] shrink-0 rounded-md border border-cyan-200/20 bg-cyan-300/[0.06] px-3 py-2 lg:min-w-[13rem]">
           <span className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-100">Demo-Navigation</span>
           <p className="mt-1 text-xs leading-5 text-stone-400">Schnellpfad zuerst, danach Pilot, Betrieb und Rollen.</p>
         </div>
         {sectionGroups.map((group) => (
-          <div key={group.label} className="min-w-0 rounded-md border border-white/10 bg-white/[0.025] p-2">
+          <div key={group.label} className="min-w-[12rem] shrink-0 rounded-md border border-white/10 bg-white/[0.025] p-2 lg:min-w-[13rem]">
             <p className="px-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-stone-500">{group.label}</p>
             <div className="mt-2 flex flex-wrap gap-1.5">
               {group.links.map((link) => (

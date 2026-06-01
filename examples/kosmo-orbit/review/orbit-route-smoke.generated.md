@@ -1,6 +1,6 @@
 # KosmoOrbit Route Smoke
 
-Generated: 2026-06-01T19:33:43.296Z
+Generated: 2026-06-01T19:36:43.388Z
 Status: `orbit_route_smoke_passed`
 Route: `app/orbit/page.tsx`
 
@@ -8,7 +8,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 
 ## Summary
 
-- checks: 161/161 passed
+- checks: 163/163 passed
 
 ## Checks
 
@@ -93,6 +93,8 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `imports_demo_readiness` | `passed` | Route imports the demo readiness component. |
 | `imports_publish_readiness` | `passed` | Route imports the publish readiness component. |
 | `imports_section_index` | `passed` | Route imports the section index navigation component. |
+| `section_index_groups_navigation` | `passed` | Section index groups the dense demo navigation into readable lanes. |
+| `section_index_keeps_horizontal_scroll` | `passed` | Section index uses horizontal overflow for dense navigation instead of wrapping the whole cockpit. |
 | `uses_force_static` | `passed` | Route declares force-static rendering. |
 | `shows_kosmo_orbit` | `passed` | Route renders KosmoOrbit heading. |
 | `shows_demo_path` | `passed` | Route renders the 3-minute human demo path. |

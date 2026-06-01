@@ -204,6 +204,8 @@ function buildReport({ routeSource, roleSwitcherSource, demoReviewSource, projec
     check('imports_demo_readiness', 'Route imports the demo readiness component.', routeSource.includes('OrbitDemoReadiness')),
     check('imports_publish_readiness', 'Route imports the publish readiness component.', routeSource.includes('OrbitPublishReadiness')),
     check('imports_section_index', 'Route imports the section index navigation component.', routeSource.includes('OrbitSectionIndex')),
+    check('section_index_groups_navigation', 'Section index groups the dense demo navigation into readable lanes.', sectionIndexSource.includes('sectionGroups') && sectionIndexSource.includes("label: 'Schnellpfad'") && sectionIndexSource.includes("label: 'Pilot'") && sectionIndexSource.includes("label: 'System'") && sectionIndexSource.includes("label: 'Review'") && sectionIndexSource.includes("label: 'Betrieb'") && sectionIndexSource.includes("label: 'Rollen'")),
+    check('section_index_keeps_horizontal_scroll', 'Section index uses horizontal overflow for dense navigation instead of wrapping the whole cockpit.', sectionIndexSource.includes('overflow-x-auto') && sectionIndexSource.includes('shrink-0') && sectionIndexSource.includes('truncate')),
     check('uses_force_static', 'Route declares force-static rendering.', source.includes("dynamic = 'force-static'") || source.includes('dynamic = "force-static"')),
     check('shows_kosmo_orbit', 'Route renders KosmoOrbit heading.', source.includes('KosmoOrbit')),
     check('shows_demo_path', 'Route renders the 3-minute human demo path.', source.includes('3-Minuten-Demo') && source.includes('demoSteps')),

@@ -1,6 +1,6 @@
 # KosmoOrbit Static Export Smoke
 
-Generated: 2026-06-01T19:34:02.924Z
+Generated: 2026-06-01T19:36:26.962Z
 Status: `orbit_static_export_smoke_passed`
 HTML: `out/orbit/index.html`
 
@@ -8,7 +8,7 @@ Checks the built static export for the visible KosmoOrbit demo panels. It does n
 
 ## Summary
 
-- checks: 53/53 passed
+- checks: 54/54 passed
 
 ## Checks
 
@@ -17,6 +17,7 @@ Checks the built static export for the visible KosmoOrbit demo panels. It does n
 | `html_exists` | `passed` | Static /orbit HTML exists. |
 | `renders_kosmo_orbit` | `passed` | Export renders KosmoOrbit heading. |
 | `renders_demo_navigation` | `passed` | Export renders compact demo navigation. |
+| `renders_grouped_demo_navigation` | `passed` | Export renders grouped demo navigation lanes. |
 | `renders_autonomy_status` | `passed` | Export renders autonomy status. |
 | `renders_office_routine` | `passed` | Export renders office routine contract. |
 | `renders_presenter_mode` | `passed` | Export renders presenter mode. |

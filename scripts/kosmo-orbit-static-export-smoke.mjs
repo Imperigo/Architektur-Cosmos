@@ -44,6 +44,7 @@ function buildReport(html) {
     check('html_exists', 'Static /orbit HTML exists.', existsSync(htmlPath)),
     check('renders_kosmo_orbit', 'Export renders KosmoOrbit heading.', html.includes('KosmoOrbit')),
     check('renders_demo_navigation', 'Export renders compact demo navigation.', html.includes('Demo-Navigation')),
+    check('renders_grouped_demo_navigation', 'Export renders grouped demo navigation lanes.', ['Schnellpfad', 'Pilot', 'System', 'Review', 'Betrieb', 'Rollen'].every((label) => html.includes(label))),
     check('renders_autonomy_status', 'Export renders autonomy status.', html.includes('Autonomie-Status')),
     check('renders_office_routine', 'Export renders office routine contract.', html.includes('Buero-Routine') && html.includes('Morgenstart der KosmoZentrale')),
     check('renders_presenter_mode', 'Export renders presenter mode.', html.includes('Presenter-Modus')),

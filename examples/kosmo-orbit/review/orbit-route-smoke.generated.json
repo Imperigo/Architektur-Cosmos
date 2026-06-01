@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T19:33:43.296Z",
+  "generated_at": "2026-06-01T19:36:43.388Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 161,
-    "passed_checks": 161,
+    "check_count": 163,
+    "passed_checks": 163,
     "failed_checks": 0
   },
   "checks": [
@@ -404,6 +404,16 @@
     {
       "id": "imports_section_index",
       "label": "Route imports the section index navigation component.",
+      "status": "passed"
+    },
+    {
+      "id": "section_index_groups_navigation",
+      "label": "Section index groups the dense demo navigation into readable lanes.",
+      "status": "passed"
+    },
+    {
+      "id": "section_index_keeps_horizontal_scroll",
+      "label": "Section index uses horizontal overflow for dense navigation instead of wrapping the whole cockpit.",
       "status": "passed"
     },
     {
