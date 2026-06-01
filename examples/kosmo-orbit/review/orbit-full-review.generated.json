@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T08:40:43.768Z",
+  "generated_at": "2026-06-01T08:45:53.421Z",
   "generator": "kosmo-orbit-full-review",
   "workspace_path": "examples/kosmo-orbit/workspace.demo.json",
   "project_root": "examples/kosmo-projects/kosmo-demo-001",
@@ -15,8 +15,8 @@
     "no_geometry_generation": true
   },
   "summary": {
-    "step_count": 17,
-    "passed_steps": 17,
+    "step_count": 18,
+    "passed_steps": 18,
     "failed_steps": 0,
     "role_state_status": "role_state_check_passed",
     "role_state_active_role": "owner_admin",
@@ -34,9 +34,14 @@
     "health_readiness_passed_checks": 14,
     "health_readiness_check_count": 14,
     "health_readiness_channel_count": 6,
+    "command_contract_status": "orbit_command_contract_passed",
+    "command_contract_passed_checks": 14,
+    "command_contract_check_count": 14,
+    "command_contract_command_count": 9,
+    "command_contract_blocked_count": 6,
     "orbit_route_smoke_status": "orbit_route_smoke_passed",
-    "orbit_route_smoke_passed_checks": 100,
-    "orbit_route_smoke_check_count": 100,
+    "orbit_route_smoke_passed_checks": 106,
+    "orbit_route_smoke_check_count": 106,
     "workspace_status": "orbit_blocked_gates_present",
     "project_status": "local_review_only",
     "project_artifact_count": 59,
@@ -73,6 +78,7 @@
     "role_state_handoff_markdown": "examples/kosmo-orbit/review/orbit-role-state-handoff.generated.md",
     "app_route_spec_markdown": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.md",
     "health_readiness_markdown": "examples/kosmo-orbit/review/orbit-health-readiness.generated.md",
+    "command_contract_markdown": "examples/kosmo-orbit/review/orbit-command-contract.generated.md",
     "orbit_route_smoke_markdown": "examples/kosmo-orbit/review/orbit-route-smoke.generated.md",
     "workspace_status_markdown": "examples/kosmo-orbit/review/orbit-status-report.generated.md",
     "project_inspector_markdown": "examples/kosmo-projects/kosmo-demo-001/orbit/project-inspector.generated.md",
@@ -279,6 +285,18 @@
       "stderr_tail": ""
     },
     {
+      "id": "command_contract",
+      "label": "Orbit Command Contract",
+      "command": "npm run kosmo:orbit-command-contract -- --contract examples/kosmo-orbit/commands/orbit-command.contract.json",
+      "status": "passed",
+      "exit_code": 0,
+      "report_path": "examples/kosmo-orbit/review/orbit-command-contract.generated.json",
+      "report_exists": true,
+      "report_status": "orbit_command_contract_passed",
+      "stdout_tail": "> architecture-cosmos@0.1.0 kosmo:orbit-command-contract\n> node scripts/kosmo-orbit-command-contract-smoke.mjs --contract examples/kosmo-orbit/commands/orbit-command.contract.json\n\nKosmoOrbit command contract smoke\nStatus: orbit_command_contract_passed\nChecks: 14/14\nWrote: examples/kosmo-orbit/review/orbit-command-contract.generated.md",
+      "stderr_tail": ""
+    },
+    {
       "id": "orbit_route_smoke",
       "label": "Orbit Route Smoke",
       "command": "npm run kosmo:orbit-route-smoke -- --route app/orbit/page.tsx --spec examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
@@ -287,7 +305,7 @@
       "report_path": "examples/kosmo-orbit/review/orbit-route-smoke.generated.json",
       "report_exists": true,
       "report_status": "orbit_route_smoke_passed",
-      "stdout_tail": "> architecture-cosmos@0.1.0 kosmo:orbit-route-smoke\n> node scripts/kosmo-orbit-route-smoke.mjs --route app/orbit/page.tsx --spec examples/kosmo-orbit/review/orbit-app-route-spec.generated.json\n\nKosmoOrbit route smoke\nStatus: orbit_route_smoke_passed\nChecks: 100/100\nWrote: examples/kosmo-orbit/review/orbit-route-smoke.generated.md",
+      "stdout_tail": "> architecture-cosmos@0.1.0 kosmo:orbit-route-smoke\n> node scripts/kosmo-orbit-route-smoke.mjs --route app/orbit/page.tsx --spec examples/kosmo-orbit/review/orbit-app-route-spec.generated.json\n\nKosmoOrbit route smoke\nStatus: orbit_route_smoke_passed\nChecks: 106/106\nWrote: examples/kosmo-orbit/review/orbit-route-smoke.generated.md",
       "stderr_tail": ""
     }
   ],
@@ -298,6 +316,7 @@
     "Use the role state handoff as the next contract before implementing a static Orbit app route.",
     "Use the Orbit app route spec before changing app/orbit/page.tsx.",
     "Keep the Health Readiness contract read-only until a local runtime adapter is approved.",
+    "Keep the Command Contract static until command schemas, logs and rollback behavior are approved.",
     "Keep the Orbit route smoke in the full review before promoting /orbit in public navigation.",
     "Resolve or explicitly reject blocked context inputs before allowing design generation.",
     "Keep generated project artifacts local until human review closes design/draw/viz evidence.",

@@ -9,6 +9,7 @@ import roleVariantsData from '@/examples/kosmo-projects/kosmo-demo-001/orbit/rol
 import shellManifestData from '@/examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-prototype.generated.json';
 import type { Metadata } from 'next';
 import { OrbitAutonomyStatus } from './OrbitAutonomyStatus';
+import { OrbitCommandContract } from './OrbitCommandContract';
 import { OrbitDemoReadiness, type OrbitStaticExportSmokeReport } from './OrbitDemoReadiness';
 import { OrbitDemoQuestions } from './OrbitDemoQuestions';
 import { OrbitDemoReviewPath } from './OrbitDemoReviewPath';
@@ -389,6 +390,10 @@ export default function OrbitPage() {
 
           <div id="risiken" className="scroll-mt-4">
             <OrbitRiskRegister />
+          </div>
+
+          <div id="commands" className="scroll-mt-4">
+            <OrbitCommandContract />
           </div>
 
           <div id="evidenz" className="scroll-mt-4">

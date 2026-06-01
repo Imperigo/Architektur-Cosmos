@@ -170,6 +170,16 @@ Arbeitsstation zuerst welches Panel braucht.
     - verhindert, dass die Demo wie eine bereits freigegebene Vollautomation
       wirkt.
 
+25. **Command-Vertrag**
+    - legt unter `examples/kosmo-orbit/commands/orbit-command.contract.json`
+      fest, welche KosmoOrbit-Kommandos heute review-faehig, lokal pruefend
+      oder blockiert sind;
+    - trennt Projektpaket, KosmoDesign Review Mode und lokale QA von
+      Blender-Start, Design-Generation, Writes, Publishing, Reparatur und
+      externem Sync;
+    - hat mit `npm run kosmo:orbit-command-contract` einen eigenen lokalen
+      Smoke-Check.
+
 ## Lokale Commits seit `origin/main`
 
 - `6ad9372` Add KosmoOrbit role switcher preview
@@ -187,11 +197,12 @@ Arbeitsstation zuerst welches Panel braucht.
 
 Zuletzt gruene lokale Checks:
 
-- `npm run kosmo:orbit-route-smoke` — 100/100 passed
-- `npm run kosmo:orbit-full-review` — 17/17 passed
-- `npm run kosmo:orbit-demo-audit` — 15/15 passed
-- `npm run kosmo:orbit-responsive-audit` — 17/17 passed
+- `npm run kosmo:orbit-route-smoke` — 106/106 passed
+- `npm run kosmo:orbit-full-review` — 18/18 passed
+- `npm run kosmo:orbit-demo-audit` — 16/16 passed
+- `npm run kosmo:orbit-responsive-audit` — 18/18 passed
 - `npm run kosmo:orbit-health-readiness` — 14/14 passed
+- `npm run kosmo:orbit-command-contract` — 14/14 passed
 - `npm run kosmodata:hud-guard` — 13/13 passed
 - `npm run database:pilot-quality` — passed, 5 Piloten, 97% Durchschnitt
 - Browser-Smoke fuer `/orbit/` — passed
@@ -202,7 +213,7 @@ Zuletzt gruene lokale Checks:
 - `npm run security:check` — passed, grosse bekannte Dateien uebersprungen
 - `npx tsc --noEmit` — passed
 - `npm run build` — static export passed
-- `npm run build` + `npm run kosmo:orbit-static-smoke` — 27/27 static
+- `npm run build` + `npm run kosmo:orbit-static-smoke` — 29/29 static
   `/orbit` HTML enthaelt die wichtigsten Demo-Panels und Anker
 
 ## Sicherheitsgrenzen

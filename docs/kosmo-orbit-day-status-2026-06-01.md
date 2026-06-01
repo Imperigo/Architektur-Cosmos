@@ -119,6 +119,10 @@ Wichtig fuer die Kommunikation:
 - Ein Risiko-Register auf `/orbit` zeigt die wichtigsten menschlichen
   Freigabegates: lokale Runtime, Design-Generation, Quellen/Rechte,
   Rollen/Profile, Buero-Daten und externe Zusammenarbeit.
+- Ein Command-Vertrag trennt sichere Review-Kommandos wie Projektpaket,
+  KosmoDesign Review Mode und lokale QA von blockierten Runtime-Kommandos wie
+  Blender-Start, Design-Generation, Decision Record, Publishing, Reparatur und
+  externem Sync.
 - Ein neuer KosmoData-HUD-Guard schuetzt die wiederkehrenden Website-Bedienpunkte:
   Database oben links, Suche/Dev rechts, Filterzugang rechts unten, HTML-
   Database-Overlay, globales Fadenkreuz in Start/Hauptmenue/Popups und

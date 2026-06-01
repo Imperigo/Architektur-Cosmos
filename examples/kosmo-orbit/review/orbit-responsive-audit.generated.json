@@ -1,16 +1,16 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T08:39:12.317Z",
+  "generated_at": "2026-06-01T08:45:36.464Z",
   "generator": "kosmo-orbit-responsive-audit",
   "status": "orbit_responsive_audit_passed",
   "source_dir": "app/orbit",
   "summary": {
-    "check_count": 17,
-    "passed_checks": 17,
+    "check_count": 18,
+    "passed_checks": 18,
     "failed_checks": 0,
-    "min_width_guard_count": 56,
-    "flex_wrap_count": 39,
-    "responsive_grid_count": 44
+    "min_width_guard_count": 59,
+    "flex_wrap_count": 41,
+    "responsive_grid_count": 46
   },
   "checks": [
     {
@@ -66,6 +66,11 @@
     {
       "id": "risk_register_responsive",
       "label": "Risk register uses responsive cards for approval gates.",
+      "status": "passed"
+    },
+    {
+      "id": "command_contract_responsive",
+      "label": "Command contract uses responsive cards for command intents.",
       "status": "passed"
     },
     {

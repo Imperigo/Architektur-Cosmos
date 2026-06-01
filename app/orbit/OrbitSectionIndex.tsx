@@ -10,6 +10,7 @@ const sectionLinks = [
   { href: '#installation', label: 'Installation' },
   { href: '#health', label: 'Health' },
   { href: '#risiken', label: 'Risiken' },
+  { href: '#commands', label: 'Commands' },
   { href: '#evidenz', label: 'Evidenz' },
   { href: '#rechte', label: 'Rechte' },
   { href: '#rollen', label: 'Rollen' },

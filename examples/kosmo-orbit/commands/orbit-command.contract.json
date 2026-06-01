@@ -1,0 +1,105 @@
+{
+  "schema_version": "0.1",
+  "status": "orbit_command_contract_ready",
+  "mode": "static_review_only",
+  "title": "KosmoOrbit Command Contract",
+  "summary": "Static command contract for the future KosmoOrbit tool center. It lists command intents, current availability and human gates without launching processes, generating geometry, writing user data, uploading, publishing or touching external accounts.",
+  "commands": [
+    {
+      "id": "open-project-package",
+      "label": "Projektpaket oeffnen",
+      "area": "Projekt",
+      "state": "review_enabled",
+      "role": "Projektleitung",
+      "today": "Lokale Projekt- und Review-Artefakte sichtbar machen.",
+      "gate": "nur lesen"
+    },
+    {
+      "id": "open-design-review",
+      "label": "KosmoDesign Review Mode",
+      "area": "Design",
+      "state": "review_enabled",
+      "role": "Entwurf",
+      "today": "Kontext, Modellprofil, Blocker und Decision Draft pruefen.",
+      "gate": "keine Design-Generation"
+    },
+    {
+      "id": "run-quality-checks",
+      "label": "Lokale QA laufen lassen",
+      "area": "Qualitaet",
+      "state": "local_check",
+      "role": "IT/KI",
+      "today": "Route-Smoke, Full Review, Static-Smoke und Health-Smoke auswerten.",
+      "gate": "keine Cloud-Kosten"
+    },
+    {
+      "id": "start-blender-pipeline",
+      "label": "Blender Pipeline starten",
+      "area": "Tool Launch",
+      "state": "blocked",
+      "role": "IT/KI",
+      "today": "Nur als spaeterer Tool-Launch benannt.",
+      "gate": "keine Prozessstarts"
+    },
+    {
+      "id": "generate-design-variant",
+      "label": "Design-Variante generieren",
+      "area": "Design",
+      "state": "blocked",
+      "role": "Entwurf",
+      "today": "KosmoDesign bleibt review-only.",
+      "gate": "keine Geometrie-Generierung"
+    },
+    {
+      "id": "write-decision-record",
+      "label": "Decision Record schreiben",
+      "area": "Review",
+      "state": "blocked",
+      "role": "Projektleitung",
+      "today": "Decision Draft bleibt nicht-schreibend.",
+      "gate": "keine User-Writes"
+    },
+    {
+      "id": "publish-package",
+      "label": "Abgabepaket publizieren",
+      "area": "Publish",
+      "state": "blocked",
+      "role": "Chef / Admin",
+      "today": "Public Gate bleibt geschlossen.",
+      "gate": "kein Public-Publish"
+    },
+    {
+      "id": "repair-connector",
+      "label": "Connector reparieren",
+      "area": "Repair",
+      "state": "blocked",
+      "role": "IT/KI",
+      "today": "Reparatur bleibt Diagnose- und Vertragslogik.",
+      "gate": "keine Systemaenderung"
+    },
+    {
+      "id": "sync-external-collab",
+      "label": "Externen Austausch synchronisieren",
+      "area": "Extern",
+      "state": "blocked",
+      "role": "Projektleitung",
+      "today": "Fachplaner-Schnittstellen sind spaeterer Ausbau.",
+      "gate": "keine Netzwerksteuerung"
+    }
+  ],
+  "safety": {
+    "no_process_launches": true,
+    "no_geometry_generation": true,
+    "no_user_writes": true,
+    "no_public_publish": true,
+    "no_uploads": true,
+    "no_external_accounts": true,
+    "no_network_control": true,
+    "no_costs": true
+  },
+  "next_actions": [
+    "Keep review-enabled commands separate from blocked runtime commands.",
+    "Before real execution exists, define command input schemas, logs, owners and rollback behavior.",
+    "Do not connect Blender, publishing, repair or external sync commands without human approval."
+  ]
+}

@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T08:40:43.758Z",
+  "generated_at": "2026-06-01T08:45:53.410Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 100,
-    "passed_checks": 100,
+    "check_count": 106,
+    "passed_checks": 106,
     "failed_checks": 0
   },
   "checks": [
@@ -99,6 +99,16 @@
     {
       "id": "risk_register_file_exists",
       "label": "Orbit risk register component exists.",
+      "status": "passed"
+    },
+    {
+      "id": "command_contract_file_exists",
+      "label": "Orbit command contract component exists.",
+      "status": "passed"
+    },
+    {
+      "id": "command_contract_data_file_exists",
+      "label": "Orbit command contract data exists.",
       "status": "passed"
     },
     {
@@ -199,6 +209,16 @@
     {
       "id": "imports_risk_register",
       "label": "Route imports the risk register component.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_command_contract",
+      "label": "Route imports the command contract component.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_command_contract_data",
+      "label": "Command contract component imports the local contract JSON.",
       "status": "passed"
     },
     {
@@ -364,6 +384,16 @@
     {
       "id": "risk_register_covers_core_gates",
       "label": "Risk register covers runtime, generation, rights, profiles, data and external collaboration.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_command_contract",
+      "label": "Route renders the static Orbit command contract.",
+      "status": "passed"
+    },
+    {
+      "id": "command_contract_blocks_runtime_actions",
+      "label": "Command contract blocks runtime, generation, write, publish and network actions.",
       "status": "passed"
     },
     {

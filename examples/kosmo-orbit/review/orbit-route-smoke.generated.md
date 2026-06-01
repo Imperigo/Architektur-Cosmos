@@ -1,6 +1,6 @@
 # KosmoOrbit Route Smoke
 
-Generated: 2026-06-01T08:40:43.758Z
+Generated: 2026-06-01T08:45:53.410Z
 Status: `orbit_route_smoke_passed`
 Route: `app/orbit/page.tsx`
 
@@ -8,7 +8,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 
 ## Summary
 
-- checks: 100/100 passed
+- checks: 106/106 passed
 
 ## Checks
 
@@ -32,6 +32,8 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `health_readiness_file_exists` | `passed` | Orbit local health readiness component exists. |
 | `health_readiness_contract_file_exists` | `passed` | Orbit health readiness contract exists. |
 | `risk_register_file_exists` | `passed` | Orbit risk register component exists. |
+| `command_contract_file_exists` | `passed` | Orbit command contract component exists. |
+| `command_contract_data_file_exists` | `passed` | Orbit command contract data exists. |
 | `review_decision_draft_file_exists` | `passed` | Orbit review decision draft component exists. |
 | `runtime_boundary_file_exists` | `passed` | Orbit MVP/runtime boundary component exists. |
 | `runtime_contract_file_exists` | `passed` | Orbit local runtime contract component exists. |
@@ -52,6 +54,8 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `imports_health_readiness` | `passed` | Route imports the local health readiness component. |
 | `imports_health_readiness_contract` | `passed` | Health readiness component imports the local contract JSON. |
 | `imports_risk_register` | `passed` | Route imports the risk register component. |
+| `imports_command_contract` | `passed` | Route imports the command contract component. |
+| `imports_command_contract_data` | `passed` | Command contract component imports the local contract JSON. |
 | `imports_review_decision_draft` | `passed` | Route imports the review decision draft component. |
 | `imports_runtime_boundary` | `passed` | Route imports the MVP/runtime boundary component. |
 | `imports_runtime_contract` | `passed` | Route imports the local runtime contract component. |
@@ -85,6 +89,8 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `keeps_health_readiness_safe` | `passed` | Health readiness keeps hardware, model, filesystem, process and queue actions gated. |
 | `shows_risk_register` | `passed` | Route renders the human approval risk register. |
 | `risk_register_covers_core_gates` | `passed` | Risk register covers runtime, generation, rights, profiles, data and external collaboration. |
+| `shows_command_contract` | `passed` | Route renders the static Orbit command contract. |
+| `command_contract_blocks_runtime_actions` | `passed` | Command contract blocks runtime, generation, write, publish and network actions. |
 | `shows_demo_questions` | `passed` | Route renders architect-facing demo questions. |
 | `anchors_demo_claims` | `passed` | Demo questions point claims back to visible panels. |
 | `shows_review_decision_draft` | `passed` | Route renders a local non-writing review decision draft. |

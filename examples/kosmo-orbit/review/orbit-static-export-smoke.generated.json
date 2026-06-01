@@ -1,12 +1,12 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T08:40:16.791Z",
+  "generated_at": "2026-06-01T08:47:38.361Z",
   "generator": "kosmo-orbit-static-export-smoke",
   "status": "orbit_static_export_smoke_passed",
   "html_file": "out/orbit/index.html",
   "summary": {
-    "check_count": 27,
-    "passed_checks": 27,
+    "check_count": 29,
+    "passed_checks": 29,
     "failed_checks": 0
   },
   "checks": [
@@ -86,6 +86,11 @@
       "status": "passed"
     },
     {
+      "id": "renders_command_contract",
+      "label": "Export renders static command contract.",
+      "status": "passed"
+    },
+    {
       "id": "renders_quality_evidence",
       "label": "Export renders quality evidence.",
       "status": "passed"
@@ -138,6 +143,11 @@
     {
       "id": "keeps_risk_register_human_gated",
       "label": "Export keeps risk register human-gated.",
+      "status": "passed"
+    },
+    {
+      "id": "keeps_command_contract_static",
+      "label": "Export keeps command contract non-operational.",
       "status": "passed"
     },
     {

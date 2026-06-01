@@ -1,0 +1,92 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-01T08:45:53.259Z",
+  "generator": "kosmo-orbit-command-contract-smoke",
+  "status": "orbit_command_contract_passed",
+  "contract_file": "examples/kosmo-orbit/commands/orbit-command.contract.json",
+  "summary": {
+    "check_count": 14,
+    "passed_checks": 14,
+    "failed_checks": 0,
+    "command_count": 9,
+    "blocked_command_count": 6,
+    "review_enabled_command_count": 2
+  },
+  "checks": [
+    {
+      "id": "contract_file_exists",
+      "label": "Command contract file exists.",
+      "status": "passed"
+    },
+    {
+      "id": "status_ready",
+      "label": "Command contract status is ready.",
+      "status": "passed"
+    },
+    {
+      "id": "mode_static_review_only",
+      "label": "Command contract is static review-only.",
+      "status": "passed"
+    },
+    {
+      "id": "required_commands_present",
+      "label": "All required command intents are present.",
+      "status": "passed"
+    },
+    {
+      "id": "command_count",
+      "label": "Contract defines at least nine command intents.",
+      "status": "passed"
+    },
+    {
+      "id": "states_cover_review_and_blocked",
+      "label": "Contract separates review, local check and blocked states.",
+      "status": "passed"
+    },
+    {
+      "id": "all_commands_have_copy",
+      "label": "Every command has label, area, role, today and gate copy.",
+      "status": "passed"
+    },
+    {
+      "id": "safety_flags_present",
+      "label": "All safety flags are present and true.",
+      "status": "passed"
+    },
+    {
+      "id": "blocks_process_launches",
+      "label": "Process launches stay blocked.",
+      "status": "passed"
+    },
+    {
+      "id": "blocks_geometry_generation",
+      "label": "Geometry generation stays blocked.",
+      "status": "passed"
+    },
+    {
+      "id": "blocks_user_writes",
+      "label": "User writes stay blocked.",
+      "status": "passed"
+    },
+    {
+      "id": "blocks_public_publish",
+      "label": "Public publish stays blocked.",
+      "status": "passed"
+    },
+    {
+      "id": "blocks_network_control",
+      "label": "Network control stays blocked.",
+      "status": "passed"
+    },
+    {
+      "id": "has_next_actions",
+      "label": "Contract records next safe actions.",
+      "status": "passed"
+    }
+  ],
+  "next_actions": [
+    "Keep review-enabled commands separate from blocked runtime commands.",
+    "Before real execution exists, define command input schemas, logs, owners and rollback behavior.",
+    "Do not connect Blender, publishing, repair or external sync commands without human approval."
+  ]
+}
