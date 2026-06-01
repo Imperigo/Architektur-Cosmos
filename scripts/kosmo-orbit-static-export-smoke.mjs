@@ -43,6 +43,7 @@ function buildReport(html) {
   const checks = [
     check('html_exists', 'Static /orbit HTML exists.', existsSync(htmlPath)),
     check('renders_kosmo_orbit', 'Export renders KosmoOrbit heading.', html.includes('KosmoOrbit')),
+    check('renders_hub_return', 'Export renders safe return link to the Kosmo Hub.', html.includes('Zurueck zum Kosmo-Hub')),
     check('renders_demo_navigation', 'Export renders compact demo navigation.', html.includes('Demo-Navigation')),
     check('renders_grouped_demo_navigation', 'Export renders grouped demo navigation lanes.', ['Schnellpfad', 'Pilot', 'System', 'Review', 'Betrieb', 'Rollen'].every((label) => html.includes(label))),
     check('renders_autonomy_status', 'Export renders autonomy status.', html.includes('Autonomie-Status')),

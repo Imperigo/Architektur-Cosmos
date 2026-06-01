@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T19:36:43.388Z",
+  "generated_at": "2026-06-01T19:41:28.967Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 163,
-    "passed_checks": 163,
+    "check_count": 164,
+    "passed_checks": 164,
     "failed_checks": 0
   },
   "checks": [
@@ -404,6 +404,11 @@
     {
       "id": "imports_section_index",
       "label": "Route imports the section index navigation component.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_hub_return",
+      "label": "Route exposes a safe return link to the Kosmo Hub.",
       "status": "passed"
     },
     {

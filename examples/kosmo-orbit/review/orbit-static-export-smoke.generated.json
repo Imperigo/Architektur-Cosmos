@@ -1,12 +1,12 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T19:36:26.962Z",
+  "generated_at": "2026-06-01T19:40:58.312Z",
   "generator": "kosmo-orbit-static-export-smoke",
   "status": "orbit_static_export_smoke_passed",
   "html_file": "out/orbit/index.html",
   "summary": {
-    "check_count": 54,
-    "passed_checks": 54,
+    "check_count": 55,
+    "passed_checks": 55,
     "failed_checks": 0
   },
   "checks": [
@@ -18,6 +18,11 @@
     {
       "id": "renders_kosmo_orbit",
       "label": "Export renders KosmoOrbit heading.",
+      "status": "passed"
+    },
+    {
+      "id": "renders_hub_return",
+      "label": "Export renders safe return link to the Kosmo Hub.",
       "status": "passed"
     },
     {
