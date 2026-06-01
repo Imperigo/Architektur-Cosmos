@@ -13,9 +13,8 @@ Owner sie explizit aendert.
 Der Worker soll:
 
 - eigenstaendig den naechsten sicheren Schritt ableiten;
-- implementieren, pruefen, generierte Artefakte aktualisieren, committen und
-  bei sicheren Website-/Doku-/Review-only-Schritten auch auf `main` pushen,
-  wenn der Stand sauber ist;
+- implementieren, pruefen, generierte Artefakte aktualisieren und committen;
+- nur bei expliziter Push-/Live-/Deploy-Freigabe auf `main` pushen;
 - kurze Statusmeldungen geben, aber nicht fuer jeden kleinen Schritt fragen;
 - nur fragen, wenn ein echter wichtiger Abzweiger entsteht.
 
@@ -38,8 +37,7 @@ Der Worker arbeitet ohne Rueckfrage weiter, wenn der Schritt:
 - bestehende KosmoOrbit-Vertraege, Reports, Smokes oder Dokus schaerft;
 - generierte Demo-Artefakte aktualisiert;
 - Tests, Smokes, Guards oder Full-Reviews verbessert;
-- einen sauberen Commit erzeugt und bei laufend freigegebenen Website-Batches
-  pushed.
+- einen sauberen lokalen Commit erzeugt und der Push bewusst freigegeben ist.
 
 ## Aktueller Fokus
 

@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T07:19:13.893Z",
+  "generated_at": "2026-06-01T07:23:56.809Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 60,
-    "passed_checks": 60,
+    "check_count": 70,
+    "passed_checks": 70,
     "failed_checks": 0
   },
   "checks": [
@@ -67,6 +67,11 @@
       "status": "passed"
     },
     {
+      "id": "progress_map_file_exists",
+      "label": "Orbit progress map component exists.",
+      "status": "passed"
+    },
+    {
       "id": "demo_questions_file_exists",
       "label": "Orbit demo questions component exists.",
       "status": "passed"
@@ -97,6 +102,11 @@
       "status": "passed"
     },
     {
+      "id": "section_index_file_exists",
+      "label": "Orbit section index component exists.",
+      "status": "passed"
+    },
+    {
       "id": "imports_role_switcher",
       "label": "Route imports the role switcher preview component.",
       "status": "passed"
@@ -114,6 +124,11 @@
     {
       "id": "imports_presenter_brief",
       "label": "Route imports the presenter brief component.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_progress_map",
+      "label": "Route imports the vision-to-MVP progress map component.",
       "status": "passed"
     },
     {
@@ -144,6 +159,11 @@
     {
       "id": "imports_autonomy_status",
       "label": "Route imports the autonomy status component.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_section_index",
+      "label": "Route imports the section index navigation component.",
       "status": "passed"
     },
     {
@@ -212,6 +232,21 @@
       "status": "passed"
     },
     {
+      "id": "shows_progress_map",
+      "label": "Route renders a visible project progress map.",
+      "status": "passed"
+    },
+    {
+      "id": "keeps_progress_map_non_absolute",
+      "label": "Progress map avoids claiming one absolute total project percentage.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_runtime_and_generation_lanes",
+      "label": "Progress map separates local runtime from CAD/plan generation.",
+      "status": "passed"
+    },
+    {
       "id": "shows_demo_questions",
       "label": "Route renders architect-facing demo questions.",
       "status": "passed"
@@ -269,6 +304,21 @@
     {
       "id": "keeps_autonomy_cost_safe",
       "label": "Autonomy status keeps Cloud costs and writes blocked.",
+      "status": "passed"
+    },
+    {
+      "id": "keeps_autonomy_named_orbit",
+      "label": "Autonomy status names KosmoOrbit, not KosmoWebsite.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_section_index",
+      "label": "Route renders compact demo section navigation.",
+      "status": "passed"
+    },
+    {
+      "id": "anchors_core_sections",
+      "label": "Route contains anchors for core demo sections.",
       "status": "passed"
     },
     {

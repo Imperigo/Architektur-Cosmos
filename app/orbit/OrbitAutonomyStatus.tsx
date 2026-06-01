@@ -7,7 +7,7 @@ type AutonomyItem = {
 const autonomyItems: AutonomyItem[] = [
   {
     label: 'Arbeitsmodus',
-    value: 'autonomer Website-Batch',
+    value: 'autonomer KosmoOrbit-Batch',
     tone: 'border-cyan-300/30 bg-cyan-400/10 text-cyan-100'
   },
   {
@@ -35,10 +35,10 @@ export function OrbitAutonomyStatus() {
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div className="min-w-0">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-200">Autonomie-Status</p>
-          <h2 className="mt-2 text-xl font-semibold text-white">Was KosmoWebsite gerade selbststaendig tut</h2>
+          <h2 className="mt-2 text-xl font-semibold text-white">Was KosmoOrbit gerade selbststaendig tut</h2>
           <p className="mt-3 max-w-3xl text-sm leading-6 text-stone-300">
-            Dieser Block macht den Arbeitsmodus sichtbar: KosmoWebsite darf lokal planen, pruefen, dokumentieren
-            und kleine Website-Schritte bauen. Riskante Infrastruktur bleibt gesperrt.
+            Dieser Block macht den Arbeitsmodus sichtbar: KosmoOrbit darf lokal planen, pruefen, dokumentieren
+            und kleine UI-/Produkt-Schritte bauen. Riskante Infrastruktur bleibt gesperrt.
           </p>
         </div>
         <span className="inline-flex max-w-full items-center break-words rounded-full border border-cyan-300/35 bg-cyan-400/10 px-2.5 py-1 text-[11px] font-medium leading-tight text-cyan-100">
@@ -65,4 +65,3 @@ export function OrbitAutonomyStatus() {
     </section>
   );
 }
-

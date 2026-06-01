@@ -11,11 +11,13 @@ import { OrbitAutonomyStatus } from './OrbitAutonomyStatus';
 import { OrbitDemoQuestions } from './OrbitDemoQuestions';
 import { OrbitDemoReviewPath } from './OrbitDemoReviewPath';
 import { OrbitPresenterBrief } from './OrbitPresenterBrief';
+import { OrbitProgressMap } from './OrbitProgressMap';
 import { OrbitProjectDashboard, type DesignHandoffPreview, type ProjectInspectorReport } from './OrbitProjectDashboard';
 import { OrbitQualityEvidence, type OrbitFullReviewReport, type OrbitRouteSmokeReport } from './OrbitQualityEvidence';
 import { OrbitReviewDecisionDraft } from './OrbitReviewDecisionDraft';
 import { OrbitRuntimeBoundary } from './OrbitRuntimeBoundary';
 import { OrbitRoleSwitcher } from './OrbitRoleSwitcher';
+import { OrbitSectionIndex } from './OrbitSectionIndex';
 import { OrbitWorkstationPriorities } from './OrbitWorkstationPriorities';
 
 export const dynamic = 'force-static';
@@ -253,6 +255,8 @@ export default function OrbitPage() {
             </div>
           </header>
 
+          <OrbitSectionIndex />
+
           <section className="grid gap-4 lg:grid-cols-[0.95fr_1.35fr_0.9fr]">
             <div className="rounded-lg border border-white/10 bg-white/[0.04] p-4">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-stone-400">Aktive Rolle</p>
@@ -304,7 +308,7 @@ export default function OrbitPage() {
             </div>
           </section>
 
-          <section className="rounded-lg border border-cyan-200/20 bg-black/30 p-4">
+          <section id="demo" className="scroll-mt-4 rounded-lg border border-cyan-200/20 bg-black/30 p-4">
             <div className="grid gap-4 lg:grid-cols-[0.9fr_1.4fr] lg:items-start">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-200">3-Minuten-Demo</p>
@@ -328,27 +332,43 @@ export default function OrbitPage() {
             </div>
           </section>
 
-          <OrbitAutonomyStatus />
+          <div id="autonomie" className="scroll-mt-4">
+            <OrbitAutonomyStatus />
+          </div>
 
-          <OrbitPresenterBrief />
+          <div id="presenter" className="scroll-mt-4">
+            <OrbitPresenterBrief />
+          </div>
 
-          <OrbitProjectDashboard projectInspector={projectInspector} designHandoff={designHandoff} />
+          <div id="fortschritt" className="scroll-mt-4">
+            <OrbitProgressMap />
+          </div>
+
+          <div id="projektpaket" className="scroll-mt-4">
+            <OrbitProjectDashboard projectInspector={projectInspector} designHandoff={designHandoff} />
+          </div>
 
           <OrbitDemoQuestions />
 
-          <OrbitReviewDecisionDraft projectInspector={projectInspector} designHandoff={designHandoff} />
+          <div id="entscheidung" className="scroll-mt-4">
+            <OrbitReviewDecisionDraft projectInspector={projectInspector} designHandoff={designHandoff} />
+          </div>
 
           <OrbitRuntimeBoundary />
 
-          <OrbitQualityEvidence fullReview={fullReview} routeSmoke={routeSmoke} />
+          <div id="evidenz" className="scroll-mt-4">
+            <OrbitQualityEvidence fullReview={fullReview} routeSmoke={routeSmoke} />
+          </div>
 
           <OrbitWorkstationPriorities />
 
-          <OrbitRoleSwitcher initialRoleId={roleState.session.active_role_id} variants={roleVariantsReport.variants} />
+          <div id="rollen" className="scroll-mt-4">
+            <OrbitRoleSwitcher initialRoleId={roleState.session.active_role_id} variants={roleVariantsReport.variants} />
+          </div>
 
           <OrbitDemoReviewPath variants={roleVariantsReport.variants} blockedActions={roleState.blocked_actions} />
 
-          <section className="grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
+          <section id="guardrails" className="grid scroll-mt-4 gap-4 xl:grid-cols-[1.15fr_0.85fr]">
             <div className="rounded-lg border border-white/10 bg-black/28 p-4">
               <div className="flex flex-wrap items-end justify-between gap-3">
                 <div>

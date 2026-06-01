@@ -75,6 +75,10 @@ Wichtig fuer die Kommunikation:
   Mode direkt in `/orbit`, damit die Demo ihre lokale Qualitaet belegen kann.
 - Eine Arbeitsstations-Prioritaet zeigt, welche Panels Chef/Admin,
   Projektleitung, Entwurf, Zeichnung und Ausbildung zuerst sehen sollten.
+- Eine Fortschrittskarte erklaert die Vision-zu-MVP-Spuren: sichtbare
+  Preview, Rollen/Arbeitsstationen, KosmoDesign-Handoff, spaetere
+  KosmoZentrale-Runtime und gesperrte CAD-/Plan-Generation.
+- Der Autonomie-Status spricht nun korrekt von KosmoOrbit statt KosmoWebsite.
 
 ## Qualitaetsgrenzen
 
@@ -85,6 +89,7 @@ Wichtig fuer die Kommunikation:
 
 ## Naechster sinnvoller Schritt
 
-Nach den lokalen Checks ist der naechste Produktschritt eine konsolidierte
-Autonomie-Zwischenbilanz: Plan, gebaute Panels, Checks, lokale Commits,
-Risiken und naechste Prioritaet in einem kurzen Batchreport.
+Nach den lokalen Checks ist der naechste Produktschritt ein kompakter
+Static-/Viewport-Smoke fuer `/orbit`, damit Fortschrittskarte,
+Rollenumschaltung und Demo-Navigation in einer menschlichen Vorfuehrung
+robust wirken.

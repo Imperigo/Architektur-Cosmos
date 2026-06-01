@@ -1,6 +1,6 @@
 # KosmoOrbit Autonomer Batchreport 2026-06-01
 
-Status: lokaler Zwischenbericht nach dem ersten autonomen Website-Batch.
+Status: lokaler Zwischenbericht nach dem ersten autonomen KosmoOrbit-Batch.
 
 ## Ziel des Batches
 
@@ -10,7 +10,7 @@ Informatik-Vorwissen verstehen, welche Rolle KosmoOrbit spielt, warum
 KosmoDesign noch gesperrt bleibt, welche Evidenz vorliegt und welche
 Arbeitsstation zuerst welches Panel braucht.
 
-## Gebaute Website-Schritte
+## Gebaute KosmoOrbit-Schritte
 
 1. **Rollenumschaltung Preview**
    - acht Buero-Rollen direkt in `/orbit`;
@@ -48,6 +48,18 @@ Arbeitsstation zuerst welches Panel braucht.
    - Chef/Admin, Projektleitung, Entwurf, Zeichnung und Ausbildung bekommen
      jeweils eine sinnvolle erste Panel-Prioritaet.
 
+9. **Vision-zu-MVP-Fortschrittskarte**
+   - zeigt bewusst keine absolute Gesamtprojekt-Prozentzahl;
+   - trennt sichtbare Preview, Rollenlogik, KosmoDesign-Handoff, spaetere
+     KosmoZentrale-Runtime und gesperrte CAD-/Plan-Generation;
+   - macht fuer Architekt:innen klar, was heute vorfuehrbar ist und was noch
+     menschliche, technische oder rechtliche Freigabe braucht.
+
+10. **Autonomie-Status als KosmoOrbit**
+    - korrigiert die Worker-Sprache weg von KosmoWebsite;
+    - zeigt, dass dieser Worker lokal planen, pruefen und dokumentieren darf,
+      aber keine Cloud-Kosten, Writes oder externen Aktionen ausloest.
+
 ## Lokale Commits seit `origin/main`
 
 - `6ad9372` Add KosmoOrbit role switcher preview
@@ -65,7 +77,7 @@ Arbeitsstation zuerst welches Panel braucht.
 
 Zuletzt gruene lokale Checks:
 
-- `npm run kosmo:orbit-route-smoke` — 56/56 passed
+- `npm run kosmo:orbit-route-smoke` — 70/70 passed
 - `npm run ui:audit` — 72/72 passed, 7 bekannte Warnings
 - `npm run archive:validate` — passed
 - `npm run brain:doctor-fast` — 10/10 passed
@@ -105,4 +117,3 @@ gemacht werden:
 3. Demo-Review-Pfad klicken.
 4. Textueberlauf in schmalem Viewport pruefen.
 5. Dann entscheiden: Push auf `main` oder noch ein UI-Polish-Batch.
-
