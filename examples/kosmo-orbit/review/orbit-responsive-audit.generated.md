@@ -1,6 +1,6 @@
 # KosmoOrbit Responsive Audit
 
-Generated: 2026-06-01T08:45:36.464Z
+Generated: 2026-06-01T12:12:21.117Z
 Status: `orbit_responsive_audit_passed`
 Source: `app/orbit`
 
@@ -8,10 +8,10 @@ Source-level responsive guard for `/orbit`. This does not replace a visual brows
 
 ## Summary
 
-- checks: 18/18 passed
-- min-w-0 guards: 59
-- flex-wrap usages: 41
-- responsive grid usages: 46
+- checks: 19/19 passed
+- min-w-0 guards: 62
+- flex-wrap usages: 43
+- responsive grid usages: 48
 
 ## Checks
 
@@ -29,6 +29,7 @@ Source-level responsive guard for `/orbit`. This does not replace a visual brows
 | `health_readiness_responsive` | `passed` | Health readiness uses responsive cards for local telemetry channels. |
 | `risk_register_responsive` | `passed` | Risk register uses responsive cards for approval gates. |
 | `command_contract_responsive` | `passed` | Command contract uses responsive cards for command intents. |
+| `audit_trail_responsive` | `passed` | Audit trail uses responsive cards for trace events. |
 | `runtime_contract_responsive` | `passed` | Runtime contract uses responsive cards for the runtime stages. |
 | `progress_bars_have_stable_height` | `passed` | Progress map uses stable bar height and constrained width. |
 | `demo_readiness_uses_responsive_grid` | `passed` | Demo readiness summary uses responsive columns. |

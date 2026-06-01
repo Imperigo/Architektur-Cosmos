@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T08:45:53.410Z",
+  "generated_at": "2026-06-01T12:18:08.171Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 106,
-    "passed_checks": 106,
+    "check_count": 112,
+    "passed_checks": 112,
     "failed_checks": 0
   },
   "checks": [
@@ -109,6 +109,16 @@
     {
       "id": "command_contract_data_file_exists",
       "label": "Orbit command contract data exists.",
+      "status": "passed"
+    },
+    {
+      "id": "audit_trail_file_exists",
+      "label": "Orbit audit trail component exists.",
+      "status": "passed"
+    },
+    {
+      "id": "audit_trail_data_file_exists",
+      "label": "Orbit audit trail contract data exists.",
       "status": "passed"
     },
     {
@@ -219,6 +229,16 @@
     {
       "id": "imports_command_contract_data",
       "label": "Command contract component imports the local contract JSON.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_audit_trail",
+      "label": "Route imports the audit trail component.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_audit_trail_data",
+      "label": "Audit trail component imports the local contract JSON.",
       "status": "passed"
     },
     {
@@ -394,6 +414,16 @@
     {
       "id": "command_contract_blocks_runtime_actions",
       "label": "Command contract blocks runtime, generation, write, publish and network actions.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_audit_trail",
+      "label": "Route renders the static Orbit audit trail contract.",
+      "status": "passed"
+    },
+    {
+      "id": "audit_trail_tracks_intent_evidence_gate_outcome",
+      "label": "Audit trail tracks intent, evidence, gate, outcome and non-writing events.",
       "status": "passed"
     },
     {

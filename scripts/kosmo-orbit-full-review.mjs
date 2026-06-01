@@ -225,6 +225,16 @@ const steps = [
     report: resolve(workspaceRoot, 'review/orbit-command-contract.generated.json')
   },
   {
+    id: 'audit_trail',
+    label: 'Orbit Audit Trail Contract',
+    script: 'kosmo:orbit-audit-trail',
+    args: [
+      '--contract',
+      'examples/kosmo-orbit/audit/orbit-audit-trail.contract.json'
+    ],
+    report: resolve(workspaceRoot, 'review/orbit-audit-trail.generated.json')
+  },
+  {
     id: 'orbit_route_smoke',
     label: 'Orbit Route Smoke',
     script: 'kosmo:orbit-route-smoke',
@@ -307,6 +317,7 @@ function buildReport(stepRows) {
   const appRouteSpec = readOptionalJson(resolve(workspaceRoot, 'review/orbit-app-route-spec.generated.json'));
   const healthReadiness = readOptionalJson(resolve(workspaceRoot, 'review/orbit-health-readiness.generated.json'));
   const commandContract = readOptionalJson(resolve(workspaceRoot, 'review/orbit-command-contract.generated.json'));
+  const auditTrail = readOptionalJson(resolve(workspaceRoot, 'review/orbit-audit-trail.generated.json'));
   const orbitRouteSmoke = readOptionalJson(resolve(workspaceRoot, 'review/orbit-route-smoke.generated.json'));
   const workspaceStatus = readOptionalJson(resolve(workspaceRoot, 'review/orbit-status-report.generated.json'));
   const projectInspector = readOptionalJson(resolve(projectRoot, 'orbit/project-inspector.generated.json'));
@@ -368,6 +379,11 @@ function buildReport(stepRows) {
       command_contract_check_count: commandContract?.summary?.check_count ?? null,
       command_contract_command_count: commandContract?.summary?.command_count ?? null,
       command_contract_blocked_count: commandContract?.summary?.blocked_command_count ?? null,
+      audit_trail_status: auditTrail?.status || null,
+      audit_trail_passed_checks: auditTrail?.summary?.passed_checks ?? null,
+      audit_trail_check_count: auditTrail?.summary?.check_count ?? null,
+      audit_trail_event_count: auditTrail?.summary?.event_count ?? null,
+      audit_trail_writing_count: auditTrail?.summary?.writing_event_count ?? null,
       orbit_route_smoke_status: orbitRouteSmoke?.status || null,
       orbit_route_smoke_passed_checks: orbitRouteSmoke?.summary?.passed_checks ?? null,
       orbit_route_smoke_check_count: orbitRouteSmoke?.summary?.check_count ?? null,
@@ -408,6 +424,7 @@ function buildReport(stepRows) {
       app_route_spec_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-app-route-spec.generated.md')),
       health_readiness_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-health-readiness.generated.md')),
       command_contract_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-command-contract.generated.md')),
+      audit_trail_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-audit-trail.generated.md')),
       orbit_route_smoke_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-route-smoke.generated.md')),
       workspace_status_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-status-report.generated.md')),
       project_inspector_markdown: relative(root, resolve(projectRoot, 'orbit/project-inspector.generated.md')),
@@ -421,11 +438,11 @@ function buildReport(stepRows) {
       role_shell_smoke_markdown: relative(root, resolve(projectRoot, 'orbit/role-shell-smoke.generated.md'))
     },
     steps: stepRows,
-    next_actions: nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHandoff, appRouteSpec, healthReadiness, commandContract, orbitRouteSmoke, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke, roleShellPrototype, roleShellSmoke })
+    next_actions: nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHandoff, appRouteSpec, healthReadiness, commandContract, auditTrail, orbitRouteSmoke, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke, roleShellPrototype, roleShellSmoke })
   };
 }
 
-function nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHandoff, appRouteSpec, healthReadiness, commandContract, orbitRouteSmoke, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke, roleShellPrototype, roleShellSmoke }) {
+function nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHandoff, appRouteSpec, healthReadiness, commandContract, auditTrail, orbitRouteSmoke, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke, roleShellPrototype, roleShellSmoke }) {
   const actions = [];
   if (failedSteps.length) {
     failedSteps.forEach((step) => actions.push(`Review failed step: ${step.label}`));
@@ -451,6 +468,9 @@ function nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHan
   }
   if (commandContract?.status === 'orbit_command_contract_passed') {
     actions.push('Keep the Command Contract static until command schemas, logs and rollback behavior are approved.');
+  }
+  if (auditTrail?.status === 'orbit_audit_trail_contract_passed') {
+    actions.push('Keep the Audit Trail static until persistence, retention and privacy rules are approved.');
   }
   if (orbitRouteSmoke?.status === 'orbit_route_smoke_passed') {
     actions.push('Keep the Orbit route smoke in the full review before promoting /orbit in public navigation.');
@@ -518,6 +538,10 @@ function renderMarkdown(report) {
     `- command contract checks: ${report.summary.command_contract_passed_checks}/${report.summary.command_contract_check_count}`,
     `- command contract commands: ${report.summary.command_contract_command_count}`,
     `- command contract blocked: ${report.summary.command_contract_blocked_count}`,
+    `- audit trail: \`${report.summary.audit_trail_status}\``,
+    `- audit trail checks: ${report.summary.audit_trail_passed_checks}/${report.summary.audit_trail_check_count}`,
+    `- audit trail events: ${report.summary.audit_trail_event_count}`,
+    `- audit trail writes: ${report.summary.audit_trail_writing_count}`,
     `- orbit route smoke: \`${report.summary.orbit_route_smoke_status}\``,
     `- orbit route smoke checks: ${report.summary.orbit_route_smoke_passed_checks}/${report.summary.orbit_route_smoke_check_count}`,
     `- workspace status: \`${report.summary.workspace_status}\``,

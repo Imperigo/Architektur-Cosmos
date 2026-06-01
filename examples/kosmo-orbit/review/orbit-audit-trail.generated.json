@@ -1,0 +1,77 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-01T12:18:08.030Z",
+  "generator": "kosmo-orbit-audit-trail-smoke",
+  "status": "orbit_audit_trail_contract_passed",
+  "contract_file": "examples/kosmo-orbit/audit/orbit-audit-trail.contract.json",
+  "summary": {
+    "check_count": 11,
+    "passed_checks": 11,
+    "failed_checks": 0,
+    "event_count": 6,
+    "blocked_event_count": 3,
+    "writing_event_count": 0
+  },
+  "checks": [
+    {
+      "id": "contract_file_exists",
+      "label": "Audit trail contract file exists.",
+      "status": "passed"
+    },
+    {
+      "id": "status_ready",
+      "label": "Audit trail contract status is ready.",
+      "status": "passed"
+    },
+    {
+      "id": "mode_static_review_only",
+      "label": "Audit trail contract is static review-only.",
+      "status": "passed"
+    },
+    {
+      "id": "required_event_commands_present",
+      "label": "Audit trail covers required command intents.",
+      "status": "passed"
+    },
+    {
+      "id": "event_count",
+      "label": "Audit trail defines at least six representative events.",
+      "status": "passed"
+    },
+    {
+      "id": "outcomes_cover_review_check_and_blocked",
+      "label": "Audit trail covers review, local check and blocked outcomes.",
+      "status": "passed"
+    },
+    {
+      "id": "all_events_have_trace_fields",
+      "label": "Every event has command, role, intent, evidence, gate, outcome and writes flag.",
+      "status": "passed"
+    },
+    {
+      "id": "all_events_non_writing",
+      "label": "Current audit events do not write user data.",
+      "status": "passed"
+    },
+    {
+      "id": "retention_is_static_today",
+      "label": "Retention policy stays static today and requires review before persistence.",
+      "status": "passed"
+    },
+    {
+      "id": "safety_flags_present",
+      "label": "All safety flags are present and true.",
+      "status": "passed"
+    },
+    {
+      "id": "has_next_actions",
+      "label": "Contract records next safe actions.",
+      "status": "passed"
+    }
+  ],
+  "next_actions": [
+    "Define the future local audit log schema before real command execution exists.",
+    "Keep audit events static until persistence, retention and privacy rules are approved.",
+    "Require every future executable command to produce intent, evidence, gate, outcome and rollback metadata."
+  ]
+}

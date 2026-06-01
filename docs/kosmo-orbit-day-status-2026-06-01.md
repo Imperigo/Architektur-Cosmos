@@ -123,6 +123,9 @@ Wichtig fuer die Kommunikation:
   KosmoDesign Review Mode und lokale QA von blockierten Runtime-Kommandos wie
   Blender-Start, Design-Generation, Decision Record, Publishing, Reparatur und
   externem Sync.
+- Ein Audit-Trail-Vertrag macht sichtbar, wie spaetere Kommandos mit Rolle,
+  Intent, Evidenz, Gate, Outcome und Schreibverhalten protokolliert werden
+  sollen. Heute bleibt das statisch und nicht-schreibend.
 - Ein neuer KosmoData-HUD-Guard schuetzt die wiederkehrenden Website-Bedienpunkte:
   Database oben links, Suche/Dev rechts, Filterzugang rechts unten, HTML-
   Database-Overlay, globales Fadenkreuz in Start/Hauptmenue/Popups und
@@ -137,6 +140,20 @@ Wichtig fuer die Kommunikation:
 - Keine API-Routes, Server Actions oder Middleware.
 - Keine Cloud-Ressourcen, Uploads, Secrets oder Kosten.
 - Kein Push ohne explizites Push-/Live-/Deploy-Go.
+
+## Aktuelle Verifikation
+
+- `npm run kosmo:orbit-audit-trail` — 11/11 passed.
+- `npm run kosmo:orbit-route-smoke` — 112/112 passed.
+- `npm run kosmo:orbit-full-review` — 19/19 passed.
+- `npm run kosmo:orbit-demo-audit` — 17/17 passed.
+- `npm run kosmo:orbit-responsive-audit` — 19/19 passed.
+- `npm run kosmo:orbit-static-smoke` — 31/31 passed.
+- `npx tsc --noEmit --pretty false --incremental false` — passed.
+- `npm run lint` — passed mit bekannten Bestandswarnungen, keine Errors.
+- `npm run build` mit Node 22 — passed.
+- `npm run brain:doctor-fast` — 11/12 passed; aktueller Blocker ist
+  `security:check` wegen einer bestehenden npm-audit Dependency-Fundstelle.
 
 ## Naechster sinnvoller Schritt
 

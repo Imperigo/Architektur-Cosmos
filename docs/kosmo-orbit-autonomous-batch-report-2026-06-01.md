@@ -180,6 +180,15 @@ Arbeitsstation zuerst welches Panel braucht.
     - hat mit `npm run kosmo:orbit-command-contract` einen eigenen lokalen
       Smoke-Check.
 
+26. **Audit-Trail-Vertrag**
+    - legt unter `examples/kosmo-orbit/audit/orbit-audit-trail.contract.json`
+      fest, wie spaetere KosmoOrbit-Kommandos als Intent, Rolle, Evidenz,
+      Gate, Outcome und Schreibverhalten nachvollziehbar werden;
+    - zeigt im `/orbit`-Panel representative review-enabled, local-check und
+      blocked Events;
+    - bleibt statisch, nicht-schreibend und ohne Persistenz, bis Datenschutz-,
+      Retention- und Runtime-Regeln freigegeben sind.
+
 ## Lokale Commits seit `origin/main`
 
 - `6ad9372` Add KosmoOrbit role switcher preview
@@ -197,23 +206,24 @@ Arbeitsstation zuerst welches Panel braucht.
 
 Zuletzt gruene lokale Checks:
 
-- `npm run kosmo:orbit-route-smoke` — 106/106 passed
-- `npm run kosmo:orbit-full-review` — 18/18 passed
-- `npm run kosmo:orbit-demo-audit` — 16/16 passed
-- `npm run kosmo:orbit-responsive-audit` — 18/18 passed
+- `npm run kosmo:orbit-route-smoke` — 112/112 passed
+- `npm run kosmo:orbit-full-review` — 19/19 passed
+- `npm run kosmo:orbit-demo-audit` — 17/17 passed
+- `npm run kosmo:orbit-responsive-audit` — 19/19 passed
 - `npm run kosmo:orbit-health-readiness` — 14/14 passed
 - `npm run kosmo:orbit-command-contract` — 14/14 passed
+- `npm run kosmo:orbit-audit-trail` — 11/11 passed
 - `npm run kosmodata:hud-guard` — 13/13 passed
 - `npm run database:pilot-quality` — passed, 5 Piloten, 97% Durchschnitt
 - Browser-Smoke fuer `/orbit/` — passed
 - 390px-Mobile-Smoke fuer `/orbit/` — passed
 - `npm run ui:audit` — 72/72 passed, 7 bekannte Warnings
 - `npm run archive:validate` — passed
-- `npm run brain:doctor-fast` — 12/12 passed
-- `npm run security:check` — passed, grosse bekannte Dateien uebersprungen
+- `npm run brain:doctor-fast` — 11/12 passed; blockiert bei
+  `security:check` durch bestehende npm-audit Dependency-Fundstelle
 - `npx tsc --noEmit` — passed
 - `npm run build` — static export passed
-- `npm run build` + `npm run kosmo:orbit-static-smoke` — 29/29 static
+- `npm run build` + `npm run kosmo:orbit-static-smoke` — 31/31 static
   `/orbit` HTML enthaelt die wichtigsten Demo-Panels und Anker
 
 ## Sicherheitsgrenzen

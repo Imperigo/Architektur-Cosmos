@@ -1,89 +1,94 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T08:47:38.385Z",
+  "generated_at": "2026-06-01T12:14:16.586Z",
   "generator": "kosmo-orbit-demo-audit",
   "status": "orbit_demo_audit_passed",
   "html_file": "out/orbit/index.html",
   "summary": {
-    "check_count": 16,
-    "passed_checks": 16,
+    "check_count": 17,
+    "passed_checks": 17,
     "failed_checks": 0
   },
   "demo_order": [
     {
       "id": "autonomie",
       "label": "Autonomie-Status",
-      "index": 13186
+      "index": 13429
     },
     {
       "id": "presenter",
       "label": "3-Minuten-Erklaerung",
-      "index": 15662
+      "index": 15905
     },
     {
       "id": "fortschritt",
       "label": "Projektfortschritt",
-      "index": 18679
+      "index": 18922
     },
     {
       "id": "vision",
       "label": "Vision Bridge",
-      "index": 25424
+      "index": 25667
     },
     {
       "id": "demo-ready",
       "label": "Demo-Bereitschaft",
-      "index": 29764
+      "index": 30007
     },
     {
       "id": "projektpaket",
       "label": "Projektpaket Tagesansicht",
-      "index": 32508
+      "index": 32751
     },
     {
       "id": "entscheidung",
       "label": "Review Decision Draft",
-      "index": 46156
+      "index": 46399
     },
     {
       "id": "runtime-contract",
       "label": "Runtime-Vertrag",
-      "index": 53465
+      "index": 53708
     },
     {
       "id": "installation",
       "label": "Buero-Installation",
-      "index": 59461
+      "index": 59704
     },
     {
       "id": "health",
       "label": "Health Readiness",
-      "index": 67200
+      "index": 67443
     },
     {
       "id": "risiken",
       "label": "Risiko-Register",
-      "index": 74057
+      "index": 74300
     },
     {
       "id": "commands",
       "label": "Command-Vertrag",
-      "index": 81346
+      "index": 81589
+    },
+    {
+      "id": "audit",
+      "label": "Audit-Trail-Vertrag",
+      "index": 90952
     },
     {
       "id": "evidenz",
       "label": "Pruefevidenz",
-      "index": 90709
+      "index": 98466
     },
     {
       "id": "rechte",
       "label": "Rechte-Matrix",
-      "index": 98968
+      "index": 106725
     },
     {
       "id": "rollen",
       "label": "Rollenumschaltung Preview",
-      "index": 116723
+      "index": 124480
     }
   ],
   "checks": [
@@ -145,6 +150,11 @@
     {
       "id": "command_contract_visible",
       "label": "Command contract is visible in the export.",
+      "status": "passed"
+    },
+    {
+      "id": "audit_trail_visible",
+      "label": "Audit trail is visible in the export.",
       "status": "passed"
     },
     {

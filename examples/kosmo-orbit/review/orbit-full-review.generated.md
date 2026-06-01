@@ -1,6 +1,6 @@
 # KosmoOrbit Full Review
 
-Generated: 2026-06-01T08:45:53.421Z
+Generated: 2026-06-01T12:18:08.182Z
 Status: `orbit_full_review_ready_for_review_mode`
 Workspace: `examples/kosmo-orbit/workspace.demo.json`
 Project: `examples/kosmo-projects/kosmo-demo-001`
@@ -9,7 +9,7 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 
 ## Summary
 
-- steps: 18/18 passed
+- steps: 19/19 passed
 - role state: `role_state_check_passed`
 - role state active role: `owner_admin`
 - role state selected role: `owner_admin`
@@ -28,8 +28,12 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 - command contract checks: 14/14
 - command contract commands: 9
 - command contract blocked: 6
+- audit trail: `orbit_audit_trail_contract_passed`
+- audit trail checks: 11/11
+- audit trail events: 6
+- audit trail writes: 0
 - orbit route smoke: `orbit_route_smoke_passed`
-- orbit route smoke checks: 106/106
+- orbit route smoke checks: 112/112
 - workspace status: `orbit_blocked_gates_present`
 - project status: `local_review_only`
 - project artifacts: 59
@@ -76,6 +80,7 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 | Orbit App Route Spec | `passed` | `examples/kosmo-orbit/review/orbit-app-route-spec.generated.json` |
 | Health Readiness Contract | `passed` | `examples/kosmo-orbit/review/orbit-health-readiness.generated.json` |
 | Orbit Command Contract | `passed` | `examples/kosmo-orbit/review/orbit-command-contract.generated.json` |
+| Orbit Audit Trail Contract | `passed` | `examples/kosmo-orbit/review/orbit-audit-trail.generated.json` |
 | Orbit Route Smoke | `passed` | `examples/kosmo-orbit/review/orbit-route-smoke.generated.json` |
 
 ## Outputs
@@ -88,6 +93,7 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 - app_route_spec_markdown: `examples/kosmo-orbit/review/orbit-app-route-spec.generated.md`
 - health_readiness_markdown: `examples/kosmo-orbit/review/orbit-health-readiness.generated.md`
 - command_contract_markdown: `examples/kosmo-orbit/review/orbit-command-contract.generated.md`
+- audit_trail_markdown: `examples/kosmo-orbit/review/orbit-audit-trail.generated.md`
 - orbit_route_smoke_markdown: `examples/kosmo-orbit/review/orbit-route-smoke.generated.md`
 - workspace_status_markdown: `examples/kosmo-orbit/review/orbit-status-report.generated.md`
 - project_inspector_markdown: `examples/kosmo-projects/kosmo-demo-001/orbit/project-inspector.generated.md`
@@ -109,6 +115,7 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 - Use the Orbit app route spec before changing app/orbit/page.tsx.
 - Keep the Health Readiness contract read-only until a local runtime adapter is approved.
 - Keep the Command Contract static until command schemas, logs and rollback behavior are approved.
+- Keep the Audit Trail static until persistence, retention and privacy rules are approved.
 - Keep the Orbit route smoke in the full review before promoting /orbit in public navigation.
 - Resolve or explicitly reject blocked context inputs before allowing design generation.
 - Keep generated project artifacts local until human review closes design/draw/viz evidence.

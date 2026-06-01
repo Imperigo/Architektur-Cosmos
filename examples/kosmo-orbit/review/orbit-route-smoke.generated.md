@@ -1,6 +1,6 @@
 # KosmoOrbit Route Smoke
 
-Generated: 2026-06-01T08:45:53.410Z
+Generated: 2026-06-01T12:18:08.171Z
 Status: `orbit_route_smoke_passed`
 Route: `app/orbit/page.tsx`
 
@@ -8,7 +8,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 
 ## Summary
 
-- checks: 106/106 passed
+- checks: 112/112 passed
 
 ## Checks
 
@@ -34,6 +34,8 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `risk_register_file_exists` | `passed` | Orbit risk register component exists. |
 | `command_contract_file_exists` | `passed` | Orbit command contract component exists. |
 | `command_contract_data_file_exists` | `passed` | Orbit command contract data exists. |
+| `audit_trail_file_exists` | `passed` | Orbit audit trail component exists. |
+| `audit_trail_data_file_exists` | `passed` | Orbit audit trail contract data exists. |
 | `review_decision_draft_file_exists` | `passed` | Orbit review decision draft component exists. |
 | `runtime_boundary_file_exists` | `passed` | Orbit MVP/runtime boundary component exists. |
 | `runtime_contract_file_exists` | `passed` | Orbit local runtime contract component exists. |
@@ -56,6 +58,8 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `imports_risk_register` | `passed` | Route imports the risk register component. |
 | `imports_command_contract` | `passed` | Route imports the command contract component. |
 | `imports_command_contract_data` | `passed` | Command contract component imports the local contract JSON. |
+| `imports_audit_trail` | `passed` | Route imports the audit trail component. |
+| `imports_audit_trail_data` | `passed` | Audit trail component imports the local contract JSON. |
 | `imports_review_decision_draft` | `passed` | Route imports the review decision draft component. |
 | `imports_runtime_boundary` | `passed` | Route imports the MVP/runtime boundary component. |
 | `imports_runtime_contract` | `passed` | Route imports the local runtime contract component. |
@@ -91,6 +95,8 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `risk_register_covers_core_gates` | `passed` | Risk register covers runtime, generation, rights, profiles, data and external collaboration. |
 | `shows_command_contract` | `passed` | Route renders the static Orbit command contract. |
 | `command_contract_blocks_runtime_actions` | `passed` | Command contract blocks runtime, generation, write, publish and network actions. |
+| `shows_audit_trail` | `passed` | Route renders the static Orbit audit trail contract. |
+| `audit_trail_tracks_intent_evidence_gate_outcome` | `passed` | Audit trail tracks intent, evidence, gate, outcome and non-writing events. |
 | `shows_demo_questions` | `passed` | Route renders architect-facing demo questions. |
 | `anchors_demo_claims` | `passed` | Demo questions point claims back to visible panels. |
 | `shows_review_decision_draft` | `passed` | Route renders a local non-writing review decision draft. |

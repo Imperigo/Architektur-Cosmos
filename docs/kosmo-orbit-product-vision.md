@@ -164,6 +164,8 @@ Dieser Kern zeigt:
   entscheidende Freigabegates sichtbar macht;
 - ein Command-Vertrag, der review-faehige Kommandos von gesperrten Runtime-,
   Generierungs-, Write-, Publish-, Reparatur- und Netzwerkkommandos trennt;
+- ein Audit-Trail-Vertrag, der fuer spaetere Kommandos Rolle, Intent,
+  Evidenz, Gate, Outcome und Schreibverhalten nachvollziehbar macht;
 - ein Pruefevidenz-Panel, das Full Review, Route-Smoke, Reviewlast und Open
   Mode direkt an der Oberflaeche belegt;
 - eine Demo-Bereitschaft, die Full Review, Route-Smoke und Static-Smoke zu

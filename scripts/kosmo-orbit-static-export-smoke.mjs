@@ -39,6 +39,7 @@ async function main() {
 }
 
 function buildReport(html) {
+  const normalizedHtml = html.replace(/<!--\s*-->/g, '').replace(/\s+/g, ' ');
   const checks = [
     check('html_exists', 'Static /orbit HTML exists.', existsSync(htmlPath)),
     check('renders_kosmo_orbit', 'Export renders KosmoOrbit heading.', html.includes('KosmoOrbit')),
@@ -56,18 +57,20 @@ function buildReport(html) {
     check('renders_health_readiness', 'Export renders local health readiness contract.', html.includes('Health Readiness') && html.includes('read-only-telemetry-contract')),
     check('renders_risk_register', 'Export renders human approval risk register.', html.includes('Risiko-Register') && html.includes('human-approval-risk-register')),
     check('renders_command_contract', 'Export renders static command contract.', html.includes('Command-Vertrag') && html.includes('static-command-contract')),
+    check('renders_audit_trail', 'Export renders static audit trail contract.', html.includes('Audit-Trail-Vertrag') && html.includes('static-audit-trail-contract')),
     check('renders_quality_evidence', 'Export renders quality evidence.', html.includes('Pruefevidenz')),
     check('renders_workstation_priorities', 'Export renders workstation priorities.', html.includes('Arbeitsstationen')),
     check('renders_permission_matrix', 'Export renders permission matrix.', html.includes('Rechte-Matrix') && html.includes('generation bleibt gesperrt')),
     check('renders_role_switcher', 'Export renders role switcher.', html.includes('Rollenumschaltung Preview')),
     check('renders_guided_review_path', 'Export renders guided review path.', html.includes('Gefuehrter Demo-Review-Pfad')),
-    check('anchors_core_sections', 'Export contains section anchors.', ['autonomie', 'fortschritt', 'vision', 'demo-ready', 'projektpaket', 'entscheidung', 'runtime', 'runtime-contract', 'installation', 'health', 'risiken', 'commands', 'evidenz', 'rechte', 'rollen', 'guardrails'].every((id) => html.includes(`id="${id}"`))),
+    check('anchors_core_sections', 'Export contains section anchors.', ['autonomie', 'fortschritt', 'vision', 'demo-ready', 'projektpaket', 'entscheidung', 'runtime', 'runtime-contract', 'installation', 'health', 'risiken', 'commands', 'audit', 'evidenz', 'rechte', 'rollen', 'guardrails'].every((id) => html.includes(`id="${id}"`))),
     check('keeps_no_runtime_side_effects', 'Export states that runtime side effects are off.', html.includes('no-runtime-side-effects')),
     check('keeps_runtime_contract_safe', 'Export keeps runtime process/model/queue actions gated.', html.includes('kein Modellstart') && html.includes('keine Prozessstarts') && html.includes('keine Queue') && html.includes('kein Memory-Write')),
     check('keeps_installation_topology_safe', 'Export keeps installation topology non-operational.', html.includes('keine Hardware-Steuerung') && html.includes('keine echte Auth-Runtime') && html.includes('keine Netzwerksteuerung')),
     check('keeps_health_readiness_safe', 'Export keeps health readiness non-operational.', html.includes('keine Hardwarebefehle') && html.includes('keine Dateisystem-Scans') && html.includes('keine Queue-Aktionen')),
     check('keeps_risk_register_human_gated', 'Export keeps risk register human-gated.', html.includes('menschliche Freigaben') && html.includes('Naechstes Gate')),
     check('keeps_command_contract_static', 'Export keeps command contract non-operational.', html.includes('keine Prozessstarts') && html.includes('keine Geometrie-Generierung') && html.includes('keine User-Writes')),
+    check('keeps_audit_trail_static', 'Export keeps audit trail non-writing.', normalizedHtml.includes('keine Userdaten') && normalizedHtml.includes('Writes: nein')),
     check('no_server_runtime_markers', 'Export does not include server runtime markers.', !html.includes('use server') && !html.includes('next/server'))
   ];
   const failed = checks.filter((item) => item.status !== 'passed');

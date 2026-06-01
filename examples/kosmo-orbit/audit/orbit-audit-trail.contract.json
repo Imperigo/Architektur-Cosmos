@@ -1,0 +1,90 @@
+{
+  "schema_version": "0.1",
+  "status": "orbit_audit_trail_contract_ready",
+  "mode": "static_review_only",
+  "title": "KosmoOrbit Audit Trail Contract",
+  "summary": "Static audit trail contract for future KosmoOrbit command execution. It defines how intent, role, evidence, gate and outcome should be recorded without writing user data, running commands, launching tools, uploading, publishing or touching external accounts.",
+  "events": [
+    {
+      "id": "evt-project-package-open",
+      "command_id": "open-project-package",
+      "actor_role": "Projektleitung",
+      "intent": "Projektpaket pruefen",
+      "evidence": "Projektpaket Tagesansicht, Review-Artefakte, offene Gates",
+      "gate": "nur lesen",
+      "outcome": "review_enabled",
+      "writes": false
+    },
+    {
+      "id": "evt-design-review-open",
+      "command_id": "open-design-review",
+      "actor_role": "Entwurf",
+      "intent": "KosmoDesign Review Mode oeffnen",
+      "evidence": "Design-Handoff, Modellprofil, Decision Draft",
+      "gate": "keine Design-Generation",
+      "outcome": "review_enabled",
+      "writes": false
+    },
+    {
+      "id": "evt-local-qa-run",
+      "command_id": "run-quality-checks",
+      "actor_role": "IT/KI",
+      "intent": "Lokale Pruefkette auswerten",
+      "evidence": "Full Review, Route-Smoke, Static-Smoke, Health-Smoke, Command-Smoke",
+      "gate": "keine Cloud-Kosten",
+      "outcome": "local_check",
+      "writes": false
+    },
+    {
+      "id": "evt-blender-blocked",
+      "command_id": "start-blender-pipeline",
+      "actor_role": "IT/KI",
+      "intent": "Blender Pipeline starten",
+      "evidence": "Runtime-Vertrag, Health Readiness, Risiko-Register",
+      "gate": "keine Prozessstarts",
+      "outcome": "blocked",
+      "writes": false
+    },
+    {
+      "id": "evt-generation-blocked",
+      "command_id": "generate-design-variant",
+      "actor_role": "Entwurf",
+      "intent": "Design-Variante generieren",
+      "evidence": "KosmoDesign Review Mode, blocked actions, Human Approval Gate",
+      "gate": "keine Geometrie-Generierung",
+      "outcome": "blocked",
+      "writes": false
+    },
+    {
+      "id": "evt-publish-blocked",
+      "command_id": "publish-package",
+      "actor_role": "Chef / Admin",
+      "intent": "Abgabepaket publizieren",
+      "evidence": "Rechte-Matrix, Risiko-Register, Pruefevidenz",
+      "gate": "kein Public-Publish",
+      "outcome": "blocked",
+      "writes": false
+    }
+  ],
+  "retention_policy": {
+    "future_storage": "local_audit_log",
+    "today_storage": "static_contract_only",
+    "contains_personal_data": false,
+    "requires_human_review_before_persistence": true
+  },
+  "safety": {
+    "no_user_writes": true,
+    "no_process_launches": true,
+    "no_geometry_generation": true,
+    "no_public_publish": true,
+    "no_uploads": true,
+    "no_external_accounts": true,
+    "no_network_control": true,
+    "no_costs": true
+  },
+  "next_actions": [
+    "Define the future local audit log schema before real command execution exists.",
+    "Keep audit events static until persistence, retention and privacy rules are approved.",
+    "Require every future executable command to produce intent, evidence, gate, outcome and rollback metadata."
+  ]
+}

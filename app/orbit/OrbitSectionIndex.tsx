@@ -11,6 +11,7 @@ const sectionLinks = [
   { href: '#health', label: 'Health' },
   { href: '#risiken', label: 'Risiken' },
   { href: '#commands', label: 'Commands' },
+  { href: '#audit', label: 'Audit' },
   { href: '#evidenz', label: 'Evidenz' },
   { href: '#rechte', label: 'Rechte' },
   { href: '#rollen', label: 'Rollen' },
