@@ -400,7 +400,7 @@ Arbeitsstation zuerst welches Panel braucht.
 
 Zuletzt gruene lokale Checks:
 
-- `npm run kosmo:orbit-route-smoke` — 164/164 passed
+- `npm run kosmo:orbit-route-smoke` — 165/165 passed
 - `npm run kosmo:orbit-full-review` — 23/23 passed
 - `npm run kosmo:orbit-pilot-kit` — 19/19 passed
 - `npm run kosmo:orbit-pilot-session` — 17/17 passed
@@ -422,7 +422,7 @@ Zuletzt gruene lokale Checks:
 - `npm run brain:doctor-fast` — 14/14 passed
 - `npx tsc --noEmit` — passed
 - `npm run build` — static export passed
-- `npm run build` + `npm run kosmo:orbit-static-smoke` — 56/56 static
+- `npm run build` + `npm run kosmo:orbit-static-smoke` — 57/57 static
   `/orbit` HTML enthaelt die wichtigsten Demo-Panels und Anker
 
 ## Sicherheitsgrenzen

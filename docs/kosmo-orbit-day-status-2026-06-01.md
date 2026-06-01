@@ -81,9 +81,10 @@ Wichtig fuer die Kommunikation:
 - Der Autonomie-Status spricht nun korrekt von KosmoOrbit statt KosmoWebsite.
 - Ein neuer Static-Export-Smoke prueft nach `build:fresh`, ob die gebaute
   `/orbit` HTML-Datei die wichtigsten Demo-Panels und Anker enthaelt.
-- Ein Demo-Bereitschafts-Panel verbindet Full Review, Route-Smoke und
-  Static-Smoke und formuliert die Grenze: menschlich vorfuehrbar, aber kein
-  Push, kein Livegang, keine Generierung und keine Writes ohne Freigabe.
+- Ein Demo-Bereitschafts-Panel verbindet Full Review, Route-Smoke,
+  Static-Smoke und sichtbare CSS/JS-Asset-Pruefung. Es formuliert die Grenze:
+  menschlich vorfuehrbar, aber kein Push, kein Livegang, keine Generierung und
+  keine Writes ohne Freigabe.
 - Ein neuer `kosmo:orbit-demo-audit` prueft den gebauten `/orbit`-Export auf
   Vorfuehrreihenfolge, Navigation, sichtbare Freigabelinie und offensichtliche
   Render-Artefakte.
@@ -218,14 +219,14 @@ Wichtig fuer die Kommunikation:
 
 - `npm run kosmo:orbit-audit-trail` — 11/11 passed.
 - `npm run kosmo:orbit-office-routine` — 10/10 passed.
-- `npm run kosmo:orbit-route-smoke` — 164/164 passed.
+- `npm run kosmo:orbit-route-smoke` — 165/165 passed.
 - `npm run kosmo:orbit-full-review` — 23/23 passed.
 - `npm run kosmo:orbit-pilot-kit` — 19/19 passed.
 - `npm run kosmo:orbit-pilot-session` — 17/17 passed.
 - `npm run kosmo:orbit-pilot-result` — 21/21 passed.
 - `npm run kosmo:orbit-demo-audit` — 33/33 passed.
 - `npm run kosmo:orbit-responsive-audit` — 27/27 passed.
-- `npm run kosmo:orbit-static-smoke` — 56/56 passed.
+- `npm run kosmo:orbit-static-smoke` — 57/57 passed.
 - `npx tsc --noEmit --pretty false --incremental false` — passed.
 - `npm run lint` — passed mit bekannten Bestandswarnungen, keine Errors.
 - `npm run build` mit Node 22 — passed.
