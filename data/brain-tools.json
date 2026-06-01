@@ -607,6 +607,15 @@
       "review_output": "out/research-source-registry/source-registry-audit.json",
       "purpose": "Check source coverage, rights modes, automation readiness and unsafe URLs before Brain research runs.",
       "approval_required_before_public_use": false
+    },
+    {
+      "id": "hero_image_review_queue",
+      "label": "Hero Image Review Queue",
+      "command": "npm run database:hero-images:audit",
+      "output_root": "out",
+      "review_output": "out/hero-image-audit.json",
+      "purpose": "Audit public-safe hero/planet image coverage, detect duplicate or blocked media and expose a next_review_batch of missing public-domain and institutional candidates without writing public entry data.",
+      "approval_required_before_public_use": false
     }
   ],
   "guardrails": [

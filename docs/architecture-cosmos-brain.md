@@ -159,6 +159,18 @@ Supported task kinds:
 - `media` → hero/planet thumbnail audits + entry build review
 - `relations` → archive validation + entry build review
 
+For media work, the Brain now has a dedicated hero-image queue:
+
+```bash
+npm run database:hero-images:audit
+```
+
+The audit writes `out/hero-image-audit.json` with `missing_hero_review` and
+`next_review_batch`. Public-domain candidates are listed before institutional
+sources; private or copyright-sensitive entries remain link-only until owner
+review. The human-readable queue lives in
+`docs/kosmodata-hero-image-review-queue.md`.
+
 The Autopilot writes reports under:
 
 ```text

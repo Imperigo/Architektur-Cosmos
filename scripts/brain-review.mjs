@@ -306,6 +306,26 @@ function buildSystemTasks({ entries, brokenRelations, rules }) {
     });
   }
 
+  const entriesWithoutHero = entries.filter((entry) => !hasHeroImage(entry));
+  if (entriesWithoutHero.length > 0) {
+    const publicCandidateCount = entriesWithoutHero.filter((entry) => {
+      const year = Number(entry.year_start);
+      const entryType = String(entry.entry_type ?? '');
+      return year <= 1928 && ['text', 'theory', 'map', 'urban_plan'].includes(entryType);
+    }).length;
+    tasks.push({
+      id: 'system-hero-image-review-queue',
+      scope: 'system',
+      kind: 'media',
+      entry_id: null,
+      entry_title: 'KosmoData media coverage',
+      title: 'Review missing public-safe hero images',
+      body: `${entriesWithoutHero.length} entries still lack public-safe hero/planet images. Start with ${publicCandidateCount} likely public-domain candidates from docs/kosmodata-hero-image-review-queue.md and keep unclear media link-only.`,
+      priority: 42 + Math.min(14, entriesWithoutHero.length),
+      approval_required: true
+    });
+  }
+
   return tasks;
 }
 
