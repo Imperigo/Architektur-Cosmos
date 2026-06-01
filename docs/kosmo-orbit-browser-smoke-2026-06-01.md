@@ -26,6 +26,7 @@ Status: `passed`
 | --- | --- | --- |
 | Static server liefert `/orbit/` | `HTTP 200` | `passed` |
 | Haupttitel sichtbar | `KosmoOrbit` | `passed` |
+| Vision Bridge sichtbar | `Orchestrierung vor Generierung` | `passed` |
 | Demo-Bereitschaft sichtbar | `human-demo-ready` | `passed` |
 | Rechte-Matrix sichtbar | `generation bleibt gesperrt` | `passed` |
 | Rollenumschaltung sichtbar | Rollenchips sind klickbar | `passed` |
@@ -40,6 +41,9 @@ Status: `passed`
 - `npm run kosmo:orbit-static-smoke` prueft den gebauten HTML-Export.
 - `npm run kosmo:orbit-demo-audit` prueft Vorfuehrreihenfolge, Navigation,
   Freigabelinie und offensichtliche Render-Artefakte.
+- In-App-Browser-Smoke hat die Vision Bridge mit KosmoZentrale,
+  KosmoPrepare, KosmoDesign, KosmoDraw/Viz/Publish und KosmoData/KosmoAsset
+  bestaetigt.
 - In-App-Browser-Smoke hat `Entwurfsarchitekt` und `02 Entwurf prueft Kontext`
   geklickt und die erwarteten Texte bestaetigt.
 
