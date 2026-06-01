@@ -261,6 +261,14 @@ Arbeitsstation zuerst welches Panel braucht.
       Push-Entscheidungen zusammen;
     - dokumentiert explizit, dass kein Push/Deploy ausgefuehrt wurde.
 
+36. **System-Knowledge und Source-of-Truth nachgezogen**
+    - aktualisiert `docs/kosmo-system-knowledge-map.md` mit dem aktuellen
+      `/orbit`-Preview-Stand;
+    - aktualisiert `docs/kosmo-source-of-truth-map.md` mit Push-Paket,
+      Office-Pilot und den aktuellen Orbit-Nachweisen;
+    - verhindert, dass KosmoOrbit in der Gesamtlandkarte wieder als
+      Website-Feature statt als Hauptsoftware gelesen wird.
+
 ## Lokale Commits seit `origin/main`
 
 - `6ad9372` Add KosmoOrbit role switcher preview

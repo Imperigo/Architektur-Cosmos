@@ -120,6 +120,22 @@ KosmoOrbit ist dadurch auch Ausbildungsschicht: Kosmo kann Lernende beim
 Schulstoff, bei Buero-Standards und beim Verstehen der Software begleiten,
 waehrend riskante Aktionen gesperrt bleiben.
 
+Aktueller Repo-Stand 2026-06-01:
+
+- `/orbit` existiert als statische, review-only KosmoOrbit-Preview.
+- Sichtbar sind Rollenumschaltung, Rechte-Matrix, Ausbildungsmodus,
+  Arbeitsstations-Prioritaeten, Projektpaket Tagesansicht und KosmoDesign
+  Handoff Console.
+- Runtime-, Health-, Installation-, Risiko-, Command-, Audit- und
+  Buero-Routine-Vertraege zeigen, was spaeter lokal gesteuert werden soll und
+  heute blockiert bleibt.
+- Presenter-Modus, Demo-Fragen, Workflow-Delta, Pilotmessung und Office Pilot
+  Plan machen den Nutzen fuer ein Architekturburo erklaerbar, ohne ROI-Zahlen
+  oder fertige Automation zu behaupten.
+- Lokale Nachweise liegen in `examples/kosmo-orbit/review/`; der aktuelle
+  Stand ist in `docs/kosmo-orbit-push-package-2026-06-01.md` als
+  Push-/Review-Paket dokumentiert.
+
 ### Kosmo Prepare, Kosmo Draw, Kosmo Viz, Kosmo Publish
 
 Diese sichtbaren Modulnamen stammen aus der visuellen Architektur-Kosmos-Grafik und ersetzen/ordnen einige fruehere Arbeitsnamen:

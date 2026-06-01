@@ -13,7 +13,8 @@ Architektur Kosmos liegt nicht in einem einzigen Repo. Die sinnvolle Ordnung ist
 - **KosmoOrbit** ist die entstehende Hauptsoftware- und Steuerzentrale des
   Produkts. Die kanonische Produktentscheidung liegt in
   `docs/kosmo-orbit-product-vision.md`, der erste Bauplan in
-  `docs/kosmo-orbit-mvp-roadmap.md`.
+  `docs/kosmo-orbit-mvp-roadmap.md`, das aktuelle lokale Push-/Review-Paket in
+  `docs/kosmo-orbit-push-package-2026-06-01.md`.
 - **KosmoDraw** ist die aktive Blender-Werkbank fuer Kosmo Design, Kosmo Draw
   und den ersten Kosmo Viz Proof.
 - **Kosmo Zentrale** ist die Control-Hub- und HomeStation-Schicht fuer Jobs,
@@ -33,7 +34,7 @@ Architektur Kosmos liegt nicht in einem einzigen Repo. Die sinnvolle Ordnung ist
 | Ebene | Quelle der Wahrheit | Aktive Rolle | Bemerkung |
 | --- | --- | --- | --- |
 | Produktname / Modulnamen | `docs/architektur-kosmos-network-concept.md` + Konzeptbild | Architektur Kosmos, Kosmo, Kosmo Data, Kosmo Orbit, Kosmo Zentrale, Kosmo Design, Kosmo Prepare, Kosmo Draw, Kosmo Viz, Kosmo Publish | Historische Ordnernamen duerfen abweichen, z.B. `KosmosPrepare`. |
-| KosmoOrbit Hauptsoftware | `docs/kosmo-orbit-product-vision.md` + `docs/kosmo-orbit-mvp-roadmap.md` | Installierte Hauptsoftware, Arbeitsstations-Shell, Rollenprofile, Tool-Hub, Review-Gates, lokale KI-Bedienung | Neue Produktentscheidung 2026-05-31: KosmoOrbit ist die operative Software-Zentrale, nicht nur Modul-Umlaufbahn. |
+| KosmoOrbit Hauptsoftware | `docs/kosmo-orbit-product-vision.md` + `docs/kosmo-orbit-mvp-roadmap.md` + `docs/kosmo-orbit-push-package-2026-06-01.md` | Installierte Hauptsoftware, Arbeitsstations-Shell, Rollenprofile, Tool-Hub, Review-Gates, lokale KI-Bedienung | Neue Produktentscheidung 2026-05-31: KosmoOrbit ist die operative Software-Zentrale, nicht nur Modul-Umlaufbahn. `/orbit` ist die aktuelle statische review-only Preview. |
 | Public Data / KosmoData | `<repo_architecture_cosmos>` | Website, Atlas, Brain-Tools, Rechte-/Quellenlogik, KosmoData-Pipelines | Static export bleibt harte Grenze. |
 | Gemeinsamer Datenvertrag | `schema/kosmo-project-package.schema.json` + `examples/kosmo-projects/kosmo-demo-001` | Lokales Projektpaket fuer alle Module | Aktuell bester Integrationsanker zwischen Repos. |
 | Kosmo Design / Draw / Viz Proof | `<local_projects>/KosmoDraw` + dieses Repo | Blender-Add-on `kosmo_design`, Package Import, Kontextkandidaten, Decision Matrix, Context Review, Context Selection, Write-back, SVG Draw Export, PNG Viz Preview | KosmoDraw ist aktive Werkbank; dieses Repo haelt den Gate-/Package-Vertrag. |
@@ -70,6 +71,9 @@ Nicht hier hinein gehoert:
 Aktiv fuer:
 
 - Hauptsoftware- und Steuerzentralen-Vision
+- aktuelle statische `/orbit`-Preview mit Demo-Navigation, Presenter-Modus,
+  Workflow-Delta, Pilotmessung, Buero-Routine, Projektpaket, KosmoDesign
+  Handoff Console, Ausbildungsmodus und Review-/Safety-Vertraegen
 - Rollenprofile fuer Chef, IT-/KI-Spezialist, Projektleitung, Entwurf,
   Zeichnung, Praktikum, Lehre und Schnupperzugang
 - Tool-Hub zwischen KosmoData, KosmoAsset, KosmoDesign, KosmoPrepare,
@@ -78,6 +82,9 @@ Aktiv fuer:
   Reparatur-/Monitoringlogik
 - gemeinsame Sprache fuer `ready`, `needs_review`, `blocked`, `local_only`,
   `approved_local` und `approved_public`
+- lokale Nachweise ueber `kosmo:orbit-full-review`, `kosmo:orbit-route-smoke`,
+  `kosmo:orbit-demo-audit`, `kosmo:orbit-responsive-audit` und
+  `kosmo:orbit-static-smoke`
 
 Noch nicht hier hinein gehoert:
 
@@ -89,9 +96,10 @@ Noch nicht hier hinein gehoert:
 
 Naechster Schritt:
 
-- `schema/kosmo-orbit-workspace.schema.json`
-- `examples/kosmo-orbit/workspace.demo.json`
-- `npm run kosmo:orbit-check`
+- kleiner Office Pilot nach
+  `docs/kosmo-orbit-office-pilot-plan-2026-06-01.md`;
+- Security-/Dependency-Audit vor Live-Push bewusst beurteilen;
+- danach erst Push/Deploy mit Live-Smoke, falls Owner explizit freigibt.
 
 ### KosmoDraw
 

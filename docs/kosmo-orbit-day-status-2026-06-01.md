@@ -159,6 +159,9 @@ Wichtig fuer die Kommunikation:
 - Ein Push Package dokumentiert lokale Commits, Inhalt, Nachweise,
   Security-Blocker, Sicherheitsgrenzen und Push-Optionen. Es wurde kein Push
   und kein Deploy ausgefuehrt.
+- System-Knowledge und Source-of-Truth sind nachgezogen, damit KosmoOrbit in
+  der Gesamtlandkarte als Hauptsoftware/Steuerzentrale und nicht als
+  Website-Feature gelesen wird.
 - Ein neuer KosmoData-HUD-Guard schuetzt die wiederkehrenden Website-Bedienpunkte:
   Database oben links, Suche/Dev rechts, Filterzugang rechts unten, HTML-
   Database-Overlay, globales Fadenkreuz in Start/Hauptmenue/Popups und
