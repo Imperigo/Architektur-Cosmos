@@ -1,12 +1,12 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T19:06:24.457Z",
+  "generated_at": "2026-06-01T19:22:12.328Z",
   "generator": "kosmo-orbit-static-export-smoke",
   "status": "orbit_static_export_smoke_passed",
   "html_file": "out/orbit/index.html",
   "summary": {
-    "check_count": 51,
-    "passed_checks": 51,
+    "check_count": 53,
+    "passed_checks": 53,
     "failed_checks": 0
   },
   "checks": [
@@ -58,6 +58,11 @@
     {
       "id": "renders_pilot_facilitator_checklist",
       "label": "Export renders pilot facilitator checklist.",
+      "status": "passed"
+    },
+    {
+      "id": "renders_pilot_result_draft",
+      "label": "Export renders pilot result draft.",
       "status": "passed"
     },
     {
@@ -203,6 +208,11 @@
     {
       "id": "keeps_pilot_facilitator_safe",
       "label": "Export keeps pilot facilitator checklist safe and local.",
+      "status": "passed"
+    },
+    {
+      "id": "keeps_pilot_result_draft_empty",
+      "label": "Export keeps pilot result draft empty before real pilot.",
       "status": "passed"
     },
     {

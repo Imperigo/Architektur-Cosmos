@@ -1,6 +1,6 @@
 # KosmoOrbit Route Smoke
 
-Generated: 2026-06-01T19:05:05.769Z
+Generated: 2026-06-01T19:22:27.604Z
 Status: `orbit_route_smoke_passed`
 Route: `app/orbit/page.tsx`
 
@@ -8,7 +8,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 
 ## Summary
 
-- checks: 157/157 passed
+- checks: 161/161 passed
 
 ## Checks
 
@@ -31,6 +31,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `pilot_measurement_file_exists` | `passed` | Orbit pilot measurement component exists. |
 | `pilot_measurement_kit_file_exists` | `passed` | Orbit pilot measurement kit component exists. |
 | `pilot_facilitator_checklist_file_exists` | `passed` | Orbit pilot facilitator checklist component exists. |
+| `pilot_result_draft_file_exists` | `passed` | Orbit pilot result draft component exists. |
 | `pilot_runbook_file_exists` | `passed` | Orbit pilot runbook component exists. |
 | `pilot_session_template_file_exists` | `passed` | Orbit pilot session template component exists. |
 | `progress_map_file_exists` | `passed` | Orbit progress map component exists. |
@@ -66,6 +67,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `imports_pilot_measurement` | `passed` | Route imports the pilot measurement component. |
 | `imports_pilot_measurement_kit` | `passed` | Route imports the pilot measurement kit component. |
 | `imports_pilot_facilitator_checklist` | `passed` | Route imports the pilot facilitator checklist component. |
+| `imports_pilot_result_draft` | `passed` | Route imports the pilot result draft component. |
 | `imports_pilot_runbook` | `passed` | Route imports the pilot runbook component. |
 | `imports_pilot_session_template` | `passed` | Route imports the pilot session template component. |
 | `imports_progress_map` | `passed` | Route imports the vision-to-MVP progress map component. |
@@ -116,6 +118,8 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `pilot_measurement_kit_avoids_fake_results` | `passed` | Pilot measurement kit keeps values empty and avoids claimed results. |
 | `shows_pilot_facilitator_checklist` | `passed` | Route renders office pilot facilitator checklist. |
 | `pilot_facilitator_checklist_keeps_live_actions_blocked` | `passed` | Pilot facilitator checklist blocks live actions and unsupported claims. |
+| `shows_pilot_result_draft` | `passed` | Route renders pilot result draft panel. |
+| `pilot_result_draft_avoids_fake_results` | `passed` | Pilot result draft keeps values empty and public claims blocked. |
 | `shows_pilot_runbook` | `passed` | Route renders a concrete 45-60 minute office pilot runbook. |
 | `pilot_runbook_keeps_live_actions_blocked` | `passed` | Pilot runbook keeps customer data, uploads, costs, design generation and push blocked. |
 | `shows_pilot_session_template` | `passed` | Route renders pilot session template and empty measurement copy. |

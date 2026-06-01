@@ -360,6 +360,21 @@ Arbeitsstation zuerst welches Panel braucht.
     - dokumentiert den lokalen Screenshot unter
       `/private/tmp/kosmo-orbit-pilot-checklist-smoke-2026-06-01.png`.
 
+50. **Pilot-Result-Draft**
+    - legt ein leeres Resultat-Draft-Template fuer den spaeteren
+      menschlichen Buero-Pilot an;
+    - macht in `/orbit` sichtbar, dass Orientierung, Blocker,
+      Rollenpassung, KosmoDesign-Handoff und Wiederholbarkeit erst nach
+      echter Beobachtung Werte erhalten;
+    - blockiert Public Claims zu Zeit, Kosten, Qualitaet und Validierung, bis
+      menschliche Evidenz geprueft ist.
+
+51. **Brain Doctor Ausweitung**
+    - `brain:doctor-fast` prueft nun zusaetzlich KosmoOrbit Full Review und
+      KosmoAsset Full Review;
+    - der zentrale schnelle Doctor deckt damit Website/KosmoData, Orbit,
+      Asset und Pilot-Gates in einem Lauf ab.
+
 ## Lokale Commits seit `origin/main`
 
 - `6ad9372` Add KosmoOrbit role switcher preview
@@ -377,10 +392,11 @@ Arbeitsstation zuerst welches Panel braucht.
 
 Zuletzt gruene lokale Checks:
 
-- `npm run kosmo:orbit-route-smoke` — 157/157 passed
-- `npm run kosmo:orbit-full-review` — 22/22 passed
+- `npm run kosmo:orbit-route-smoke` — 161/161 passed
+- `npm run kosmo:orbit-full-review` — 23/23 passed
 - `npm run kosmo:orbit-pilot-kit` — 19/19 passed
 - `npm run kosmo:orbit-pilot-session` — 17/17 passed
+- `npm run kosmo:orbit-pilot-result` — 21/21 passed
 - `npm run kosmo:orbit-demo-audit` — 33/33 passed
 - `npm run kosmo:orbit-responsive-audit` — 27/27 passed
 - `npm run kosmo:orbit-health-readiness` — 14/14 passed
@@ -394,7 +410,7 @@ Zuletzt gruene lokale Checks:
 - `npm run ui:audit` — 72/72 passed, 0 Warnings
 - `npm run archive:validate` — passed
 - `npm run security:check` — passed
-- `npm run brain:doctor-fast` — 12/12 passed
+- `npm run brain:doctor-fast` — 14/14 passed
 - `npx tsc --noEmit` — passed
 - `npm run build` — static export passed
 - `npm run build` + `npm run kosmo:orbit-static-smoke` — 51/51 static

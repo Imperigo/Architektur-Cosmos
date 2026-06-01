@@ -1,0 +1,98 @@
+{
+  "schema_version": "0.1",
+  "result_draft": {
+    "id": "orbit-office-pilot-result-draft-demo-001",
+    "status": "not_recorded",
+    "mode": "local_review_only",
+    "source_kit": "examples/kosmo-orbit/pilot/orbit-office-pilot-measurement-kit.demo.json",
+    "source_session": "examples/kosmo-orbit/pilot/orbit-office-pilot-session.demo.json",
+    "scope": "Empty result draft for a later human office pilot. No real pilot result is recorded here."
+  },
+  "safety": {
+    "no_customer_data": true,
+    "no_uploads": true,
+    "no_costs": true,
+    "no_design_generation": true,
+    "no_external_accounts": true,
+    "no_public_publish": true,
+    "no_push_without_owner_go": true,
+    "no_unverified_savings_claims": true
+  },
+  "result_slots": [
+    {
+      "id": "orientation_time_result",
+      "label": "Orientation time result",
+      "source_measurement": "orientation_time",
+      "value": null,
+      "unit": "minutes",
+      "human_note": null,
+      "evidence_ref": null
+    },
+    {
+      "id": "blocker_visibility_result",
+      "label": "Blocker visibility result",
+      "source_measurement": "blocker_visibility",
+      "value": null,
+      "unit": "count",
+      "human_note": null,
+      "evidence_ref": null
+    },
+    {
+      "id": "role_fit_result",
+      "label": "Role surface fit result",
+      "source_measurement": "role_fit",
+      "value": null,
+      "unit": "score_1_to_5",
+      "human_note": null,
+      "evidence_ref": null
+    },
+    {
+      "id": "design_handoff_clarity_result",
+      "label": "KosmoDesign handoff clarity result",
+      "source_measurement": "design_handoff_clarity",
+      "value": null,
+      "unit": "score_1_to_5",
+      "human_note": null,
+      "evidence_ref": null
+    },
+    {
+      "id": "repeatability_result",
+      "label": "Review repeatability result",
+      "source_measurement": "repeatability",
+      "value": null,
+      "unit": "score_1_to_5",
+      "human_note": null,
+      "evidence_ref": null
+    }
+  ],
+  "evidence_review": {
+    "status": "not_reviewed",
+    "required_sources": [
+      "examples/kosmo-orbit/pilot/orbit-office-pilot-measurement-kit.demo.json",
+      "examples/kosmo-orbit/pilot/orbit-office-pilot-session.demo.json",
+      "docs/kosmo-orbit-office-pilot-facilitator-checklist-2026-06-01.md",
+      "docs/kosmo-orbit-office-pilot-plan-2026-06-01.md"
+    ],
+    "missing_sources": [
+      "human pilot notes",
+      "filled measurement card values",
+      "human decision record"
+    ]
+  },
+  "publication": {
+    "status": "blocked",
+    "allowed_public_claims": [],
+    "blocked_claims": [
+      "time savings",
+      "cost savings",
+      "quality improvement",
+      "completed office validation"
+    ]
+  },
+  "decision": {
+    "status": "not_run_yet",
+    "selected_option": null,
+    "human_reviewer": null,
+    "review_note": null
+  }
+}

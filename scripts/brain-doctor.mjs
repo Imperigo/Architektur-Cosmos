@@ -114,6 +114,24 @@ const checks = [
     safe_healing: 'diagnostics_only'
   },
   {
+    id: 'kosmo-orbit-full-review',
+    label: 'KosmoOrbit full review',
+    command: 'npm',
+    args: ['run', 'kosmo:orbit-full-review'],
+    retry: false,
+    safe_healing: 'diagnostics_only',
+    timeout_ms: 120_000
+  },
+  {
+    id: 'kosmo-asset-full-review',
+    label: 'KosmoAsset full review',
+    command: 'npm',
+    args: ['run', 'kosmo:asset-full-review'],
+    retry: false,
+    safe_healing: 'diagnostics_only',
+    timeout_ms: 120_000
+  },
+  {
     id: 'build',
     label: 'Build',
     command: 'npm',
@@ -240,6 +258,8 @@ function diagnose(check, result) {
   if (check.id === 'hero-image-audit') return 'Hero image audit failed. Check duplicate URLs, blocked licenses or missing public-safe source metadata.';
   if (check.id === 'planet-thumbnail-audit') return 'Planet thumbnail audit failed. Check project thumbnail coverage, duplicate URLs and node rendering bindings.';
   if (check.id === 'pilot-quality-audit') return 'Pilot quality audit failed. Check source-backed text framework, network relations, 2D plan artifacts, 3D layers and viewer requirements.';
+  if (check.id === 'kosmo-orbit-full-review') return 'KosmoOrbit full review failed. Keep /orbit, role gates, command contracts, pilot templates and static demo evidence in review-only mode.';
+  if (check.id === 'kosmo-asset-full-review') return 'KosmoAsset full review failed. Check local review certificates, export routes, decision ledger and public promotion gates before using assets.';
   if (check.id === 'security-check') return 'Security check failed. Treat as approval-gated P0 before publish.';
   if (check.id === 'archive-validate') return 'Archive validation failed. Check entry schema, relations, media, model or analysis rows.';
   if (check.id === 'brain-review') return 'Brain review failed. Check rules, queue and data JSON validity.';

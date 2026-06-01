@@ -23,6 +23,7 @@ import { OrbitPermissionMatrix } from './OrbitPermissionMatrix';
 import { OrbitPilotFacilitatorChecklist } from './OrbitPilotFacilitatorChecklist';
 import { OrbitPilotMeasurement } from './OrbitPilotMeasurement';
 import { OrbitPilotMeasurementKit } from './OrbitPilotMeasurementKit';
+import { OrbitPilotResultDraft } from './OrbitPilotResultDraft';
 import { OrbitPilotRunbook } from './OrbitPilotRunbook';
 import { OrbitPilotSessionTemplate } from './OrbitPilotSessionTemplate';
 import { OrbitPresenterBrief } from './OrbitPresenterBrief';
@@ -379,6 +380,10 @@ export default function OrbitPage() {
 
           <div id="pilot-checklist" className="scroll-mt-4">
             <OrbitPilotFacilitatorChecklist />
+          </div>
+
+          <div id="pilot-result" className="scroll-mt-4">
+            <OrbitPilotResultDraft />
           </div>
 
           <div id="pilotplan" className="scroll-mt-4">

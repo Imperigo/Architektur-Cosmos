@@ -1,0 +1,130 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-01T19:22:27.406Z",
+  "generator": "kosmo-orbit-pilot-result-draft-check",
+  "status": "orbit_pilot_result_draft_template_ready",
+  "draft_file": "examples/kosmo-orbit/pilot/orbit-office-pilot-result-draft.demo.json",
+  "schema_file": "schema/kosmo-orbit-pilot-result-draft.schema.json",
+  "summary": {
+    "check_count": 21,
+    "passed_checks": 21,
+    "failed_checks": 0,
+    "warning_count": 0,
+    "result_slot_count": 5,
+    "empty_result_slot_count": 5,
+    "missing_source_count": 3
+  },
+  "checks": [
+    {
+      "id": "schema_exists",
+      "label": "Pilot result draft schema exists.",
+      "status": "passed"
+    },
+    {
+      "id": "draft_exists",
+      "label": "Pilot result draft template exists.",
+      "status": "passed"
+    },
+    {
+      "id": "no_parse_failures",
+      "label": "Pilot result draft JSON parsed successfully.",
+      "status": "passed"
+    },
+    {
+      "id": "schema_version",
+      "label": "Pilot result draft uses schema version 0.1.",
+      "status": "passed"
+    },
+    {
+      "id": "not_recorded",
+      "label": "Pilot result draft is empty, not a completed result.",
+      "status": "passed"
+    },
+    {
+      "id": "local_review_only",
+      "label": "Pilot result draft stays local review only.",
+      "status": "passed"
+    },
+    {
+      "id": "source_kit_exists",
+      "label": "Source pilot measurement kit exists.",
+      "status": "passed"
+    },
+    {
+      "id": "source_session_exists",
+      "label": "Source pilot session exists.",
+      "status": "passed"
+    },
+    {
+      "id": "safety_flags",
+      "label": "All required safety flags are true.",
+      "status": "passed"
+    },
+    {
+      "id": "result_slots_complete",
+      "label": "Result slots cover all required measurements.",
+      "status": "passed"
+    },
+    {
+      "id": "result_slots_empty",
+      "label": "All result slots are empty until a human pilot records evidence.",
+      "status": "passed"
+    },
+    {
+      "id": "required_sources_listed",
+      "label": "All required sources are listed for evidence review.",
+      "status": "passed"
+    },
+    {
+      "id": "required_sources_exist",
+      "label": "All required source files exist locally.",
+      "status": "passed"
+    },
+    {
+      "id": "evidence_not_reviewed",
+      "label": "Evidence is not reviewed yet.",
+      "status": "passed"
+    },
+    {
+      "id": "human_notes_missing",
+      "label": "Human pilot notes remain explicitly missing.",
+      "status": "passed"
+    },
+    {
+      "id": "publication_blocked",
+      "label": "Publication is blocked before real evidence exists.",
+      "status": "passed"
+    },
+    {
+      "id": "no_public_claims",
+      "label": "No public claims are allowed from the empty template.",
+      "status": "passed"
+    },
+    {
+      "id": "decision_not_run_yet",
+      "label": "Pilot result decision is not claimed yet.",
+      "status": "passed"
+    },
+    {
+      "id": "no_decision_values",
+      "label": "Template contains no selected option, reviewer or review note.",
+      "status": "passed"
+    },
+    {
+      "id": "no_failures",
+      "label": "No blocking validation failures were collected.",
+      "status": "passed"
+    },
+    {
+      "id": "warnings_allowed",
+      "label": "Warnings are informational only.",
+      "status": "passed"
+    }
+  ],
+  "warnings": [],
+  "next_actions": [
+    "Keep result values empty until a human office pilot records observations.",
+    "Do not publish savings, quality or validation claims from this empty template.",
+    "Use this draft only as the future landing place for reviewed pilot evidence."
+  ]
+}

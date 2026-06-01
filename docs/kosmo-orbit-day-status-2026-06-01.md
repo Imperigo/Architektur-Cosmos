@@ -179,6 +179,9 @@ Wichtig fuer die Kommunikation:
 - Ein Pilot-Messkit ist direkt in `/orbit` sichtbar: Baseline, Evidenzrunde,
   Rollenrunde, Entscheidung, Messkarten und Evidenzlinks bleiben leer, bis ein
   Mensch echte Pilotbeobachtungen eintraegt.
+- Ein Pilot-Result-Draft ist direkt in `/orbit` sichtbar: Er nimmt spaeter
+  echte Beobachtungswerte, Notizen und Evidenz auf, bleibt heute aber komplett
+  leer, lokal und public-claim-blocked.
 - Ein Chef-Demo-Skript fasst die nicht-technische 5-Minuten-Erklaerung
   zusammen und ist im Office Pilot Plan als Arbeitsartefakt verlinkt.
 - Eine Office Pilot Facilitator Checklist fuehrt den ersten 45-60-Minuten-
@@ -213,9 +216,11 @@ Wichtig fuer die Kommunikation:
 - `npm run kosmo:orbit-audit-trail` — 11/11 passed.
 - `npm run kosmo:orbit-office-routine` — 10/10 passed.
 - `npm run kosmo:orbit-route-smoke` — 157/157 passed.
-- `npm run kosmo:orbit-full-review` — 22/22 passed.
+- `npm run kosmo:orbit-route-smoke` — 161/161 passed.
+- `npm run kosmo:orbit-full-review` — 23/23 passed.
 - `npm run kosmo:orbit-pilot-kit` — 19/19 passed.
 - `npm run kosmo:orbit-pilot-session` — 17/17 passed.
+- `npm run kosmo:orbit-pilot-result` — 21/21 passed.
 - `npm run kosmo:orbit-demo-audit` — 33/33 passed.
 - `npm run kosmo:orbit-responsive-audit` — 27/27 passed.
 - `npm run kosmo:orbit-static-smoke` — 51/51 passed.
@@ -224,7 +229,7 @@ Wichtig fuer die Kommunikation:
 - `npm run build` mit Node 22 — passed.
 - In-App-Browser-Smoke Desktop/Mobile — passed.
 - `npm run security:check` — passed.
-- `npm run brain:doctor-fast` — 12/12 passed.
+- `npm run brain:doctor-fast` — 14/14 passed.
 - In-App-Browser-Smoke fuer `/orbit/#pilot-kit` — passed.
 - In-App-Browser-Smoke fuer `/orbit/#pilot-checklist` — passed.
 

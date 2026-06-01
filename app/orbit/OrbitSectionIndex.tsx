@@ -6,6 +6,7 @@ const sectionLinks = [
   { href: '#pilotmessung', label: 'Pilot' },
   { href: '#pilot-kit', label: 'Messkit' },
   { href: '#pilot-checklist', label: 'Checkliste' },
+  { href: '#pilot-result', label: 'Resultat' },
   { href: '#pilotplan', label: 'Pilotplan' },
   { href: '#pilot-session', label: 'Session' },
   { href: '#fortschritt', label: 'Fortschritt' },

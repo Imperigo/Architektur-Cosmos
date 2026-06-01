@@ -1,6 +1,6 @@
 # KosmoOrbit Static Export Smoke
 
-Generated: 2026-06-01T19:06:24.457Z
+Generated: 2026-06-01T19:22:12.328Z
 Status: `orbit_static_export_smoke_passed`
 HTML: `out/orbit/index.html`
 
@@ -8,7 +8,7 @@ Checks the built static export for the visible KosmoOrbit demo panels. It does n
 
 ## Summary
 
-- checks: 51/51 passed
+- checks: 53/53 passed
 
 ## Checks
 
@@ -24,6 +24,7 @@ Checks the built static export for the visible KosmoOrbit demo panels. It does n
 | `renders_pilot_measurement` | `passed` | Export renders pilot measurement. |
 | `renders_pilot_measurement_kit` | `passed` | Export renders pilot measurement kit. |
 | `renders_pilot_facilitator_checklist` | `passed` | Export renders pilot facilitator checklist. |
+| `renders_pilot_result_draft` | `passed` | Export renders pilot result draft. |
 | `renders_pilot_runbook` | `passed` | Export renders pilot runbook. |
 | `renders_pilot_session_template` | `passed` | Export renders pilot session template. |
 | `renders_progress_map` | `passed` | Export renders progress map. |
@@ -53,6 +54,7 @@ Checks the built static export for the visible KosmoOrbit demo panels. It does n
 | `keeps_pilot_measurement_safe` | `passed` | Export keeps pilot measurement safe and local. |
 | `keeps_pilot_measurement_kit_empty` | `passed` | Export keeps pilot measurement kit empty before real pilot. |
 | `keeps_pilot_facilitator_safe` | `passed` | Export keeps pilot facilitator checklist safe and local. |
+| `keeps_pilot_result_draft_empty` | `passed` | Export keeps pilot result draft empty before real pilot. |
 | `keeps_pilot_runbook_safe` | `passed` | Export keeps pilot runbook safe and local. |
 | `keeps_pilot_session_template_empty` | `passed` | Export keeps pilot session measurements empty. |
 | `keeps_publish_readiness_safe` | `passed` | Export keeps publish readiness blocked without owner go. |

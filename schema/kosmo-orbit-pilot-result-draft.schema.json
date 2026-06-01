@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://architekturkosmos.ch/schema/kosmo-orbit-pilot-result-draft.schema.json",
+  "title": "KosmoOrbit Pilot Result Draft",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "result_draft",
+    "safety",
+    "result_slots",
+    "evidence_review",
+    "publication",
+    "decision"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1"
+    },
+    "result_draft": {
+      "type": "object",
+      "required": ["id", "status", "mode", "source_kit", "source_session"],
+      "properties": {
+        "id": { "type": "string" },
+        "status": {
+          "enum": ["not_recorded", "in_human_review", "completed_local", "blocked"]
+        },
+        "mode": {
+          "const": "local_review_only"
+        },
+        "source_kit": { "type": "string" },
+        "source_session": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "safety": {
+      "type": "object",
+      "required": [
+        "no_customer_data",
+        "no_uploads",
+        "no_costs",
+        "no_design_generation",
+        "no_external_accounts",
+        "no_public_publish",
+        "no_push_without_owner_go",
+        "no_unverified_savings_claims"
+      ],
+      "additionalProperties": true
+    },
+    "result_slots": {
+      "type": "array",
+      "items": { "type": "object" },
+      "minItems": 5
+    },
+    "evidence_review": {
+      "type": "object",
+      "required": ["status", "required_sources", "missing_sources"],
+      "properties": {
+        "status": {
+          "enum": ["not_reviewed", "needs_more_evidence", "reviewed_local"]
+        },
+        "required_sources": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 3
+        },
+        "missing_sources": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": true
+    },
+    "publication": {
+      "type": "object",
+      "required": ["status", "allowed_public_claims"],
+      "properties": {
+        "status": {
+          "enum": ["blocked", "local_only", "approved_public"]
+        },
+        "allowed_public_claims": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": true
+    },
+    "decision": {
+      "type": "object",
+      "required": ["status", "selected_option", "human_reviewer"],
+      "properties": {
+        "status": {
+          "enum": ["not_run_yet", "needs_more_evidence", "continue", "pause", "blocked"]
+        },
+        "selected_option": {
+          "type": ["string", "null"]
+        },
+        "human_reviewer": {
+          "type": ["string", "null"]
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}
