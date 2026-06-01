@@ -220,6 +220,7 @@ Wichtig fuer die Kommunikation:
 - In-App-Browser-Smoke Desktop/Mobile — passed.
 - `npm run security:check` — passed.
 - `npm run brain:doctor-fast` — 12/12 passed.
+- In-App-Browser-Smoke fuer `/orbit/#pilot-kit` — passed.
 
 ## Naechster sinnvoller Schritt
 

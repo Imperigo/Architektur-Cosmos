@@ -27,6 +27,7 @@ fehlt bewusst noch das Owner-Go, danach Push und Live-Smoke.
 - `npm run security:check` - passed
 - `npm run brain:doctor-fast` - 12/12 passed
 - `git diff --check` - passed
+- In-App-Browser-Smoke fuer `/orbit/#pilot-kit` - passed
 
 ## Bewusst nicht gemacht
 

@@ -331,6 +331,13 @@ Arbeitsstation zuerst welches Panel braucht.
       echte Pilotwerte, Kundendaten, Uploads, Kosten oder Generation zu
       behaupten.
 
+46. **Pilot-Messkit Browser-Smoke**
+    - prueft `http://127.0.0.1:4174/orbit/#pilot-kit` im In-App-Browser;
+    - bestaetigt sichtbares Messkit, leere Messwerte, `not scored`,
+      0 px horizontalen Overflow und keine sichtbaren Klickziele unter 32 px;
+    - dokumentiert den lokalen Screenshot unter
+      `/private/tmp/kosmo-orbit-pilot-kit-smoke-2026-06-01.png`.
+
 ## Lokale Commits seit `origin/main`
 
 - `6ad9372` Add KosmoOrbit role switcher preview
@@ -389,7 +396,7 @@ In diesem Batch wurde nicht gemacht:
 ## Aktueller Zustand
 
 - Branch: `main`
-- Lokaler Stand: 52 Commits vor `origin/main` nach finalem Messkit-Commit
+- Lokaler Stand: 53 Commits vor `origin/main` nach finalem Browser-Smoke-Commit
 - Live-Publish: noch nicht automatisch ausgefuehrt, ausser ein spaeterer
   expliziter Push/Publish-Befehl folgt.
 
