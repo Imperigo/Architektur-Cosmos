@@ -6,7 +6,7 @@ Status: lokales Review- und Push-Paket. Kein Push wurde ausgefuehrt.
 
 - Branch: `main`
 - Remote: `origin/main`
-- Lokaler Stand: 49 Commits vor `origin/main`
+- Lokaler Stand: 50 Commits vor `origin/main`
 - Live/Deploy: nicht ausgefuehrt, weil Push/Live-Go fehlt
 
 ## Inhalt des Pakets
@@ -28,6 +28,7 @@ deutlich reifer:
 - Pilot-Session-Vertrag mit Schema, Template und lokalem Check;
 - Pilot-Session-Template sichtbar in `/orbit` mit leeren Messwerten;
 - Chef-Demo-Skript fuer eine nicht-technische 5-Minuten-Erklaerung;
+- Afternoon Checkpoint als kurzer lokaler Zwischenabschluss;
 - Office Pilot Plan;
 - aktualisierte Vision, Roadmap, Tagesstatus, Demo-Briefing,
   System-Knowledge und Source-of-Truth.
