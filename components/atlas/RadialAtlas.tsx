@@ -4309,7 +4309,7 @@ function DatabaseArchivePanel({
           {counts.map((item) => (
             <div key={item.label} className="min-w-0">
               <span className="block text-[10px] font-semibold leading-none text-[#f7f7f4]/78">{item.value}</span>
-              <span className="mt-1 block truncate text-[7px] uppercase tracking-[0.1em] text-[#b8b8b2]/62">{databaseCountLabels[item.label] ?? item.label}</span>
+              <span className="mt-1 block truncate text-[8px] uppercase tracking-[0.1em] text-[#b8b8b2]/62">{databaseCountLabels[item.label] ?? item.label}</span>
             </div>
           ))}
         </div>
@@ -4417,7 +4417,7 @@ function DatabaseArchivePanel({
                 ].map(([label, value]) => (
                   <div key={label} className="border border-[#f7f7f4]/14 bg-[#07181a]/70 px-2 py-1.5">
                     <div className="text-[13px] font-semibold leading-none text-[#f7f7f4]">{value}</div>
-                    <div className="mt-1 truncate text-[7.5px] uppercase tracking-[0.12em] text-[#b8b8b2]">{label}</div>
+                    <div className="mt-1 truncate text-[8px] uppercase tracking-[0.12em] text-[#b8b8b2]">{label}</div>
                   </div>
                 ))}
               </div>
@@ -4655,7 +4655,7 @@ function DatabaseArchivePanel({
                 {draftReadiness(draft).map((item) => (
                   <div key={item.label} className={`border px-2 py-1 ${item.bereit ? 'border-[#00e7ff]/45 bg-[#061719]' : 'border-[#f7f7f4]/14 bg-[#050505]/55'}`}>
                     <div className={`text-[10px] font-semibold ${item.bereit ? 'text-[#00e7ff]' : 'text-[#8d8d87]'}`}>{item.bereit ? 'bereit' : 'offen'}</div>
-                    <div className="mt-0.5 truncate text-[7.5px] uppercase tracking-[0.1em] text-[#b8b8b2]">{item.label}</div>
+                    <div className="mt-0.5 truncate text-[8px] uppercase tracking-[0.1em] text-[#b8b8b2]">{item.label}</div>
                   </div>
                 ))}
               </div>
@@ -4773,7 +4773,7 @@ function BrainMiniMetric({ label, value }: { label: string; value: string | numb
   return (
     <div className="border border-[#00e7ff]/18 bg-[#061719]/82 px-2 py-1.5">
       <div className="truncate text-[12px] font-semibold leading-none text-[#f7f7f4]">{value}</div>
-      <div className="mt-1 truncate text-[7px] uppercase tracking-[0.12em] text-[#9cfff7]/72">{label}</div>
+      <div className="mt-1 truncate text-[8px] uppercase tracking-[0.12em] text-[#9cfff7]/72">{label}</div>
     </div>
   );
 }
@@ -5092,7 +5092,7 @@ function AnalysisMetric({ label, value }: { label: string; value: string }) {
   return (
     <div className="border border-[#f7f7f4]/12 bg-[#07181a]/65 px-2 py-1.5">
       <div className="truncate text-[9.5px] font-semibold text-[#f7f7f4]">{value}</div>
-      <div className="mt-1 truncate text-[7.5px] uppercase tracking-[0.1em] text-[#b8b8b2]">{label}</div>
+      <div className="mt-1 truncate text-[8px] uppercase tracking-[0.1em] text-[#b8b8b2]">{label}</div>
     </div>
   );
 }
@@ -5131,7 +5131,7 @@ function IntakeAction({ label, bereit }: { label: string; bereit: boolean }) {
   return (
     <div className={`border px-2 py-1.5 ${bereit ? 'border-[#00e7ff]/55 bg-[#061719]' : 'border-[#f7f7f4]/14 bg-[#050505]/55'}`}>
       <div className={`text-[10px] font-semibold uppercase tracking-[0.12em] ${bereit ? 'text-[#00e7ff]' : 'text-[#8d8d87]'}`}>{label}</div>
-      <div className="mt-1 text-[7.5px] uppercase tracking-[0.1em] text-[#b8b8b2]">{bereit ? 'bereit' : 'braucht Input'}</div>
+      <div className="mt-1 text-[8px] uppercase tracking-[0.1em] text-[#b8b8b2]">{bereit ? 'bereit' : 'braucht Input'}</div>
     </div>
   );
 }
