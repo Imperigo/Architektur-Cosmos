@@ -254,6 +254,13 @@ Arbeitsstation zuerst welches Panel braucht.
       Nachweise;
     - markiert den kleinen Buero-Pilot als naechsten echten Produktschritt.
 
+35. **Push Package**
+    - legt unter `docs/kosmo-orbit-push-package-2026-06-01.md` ein lokales
+      Review-/Push-Paket an;
+    - fasst Inhalt, Nachweise, Security-Blocker, Sicherheitsgrenzen und
+      Push-Entscheidungen zusammen;
+    - dokumentiert explizit, dass kein Push/Deploy ausgefuehrt wurde.
+
 ## Lokale Commits seit `origin/main`
 
 - `6ad9372` Add KosmoOrbit role switcher preview

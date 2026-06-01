@@ -156,6 +156,9 @@ Wichtig fuer die Kommunikation:
   Messpunkte, Chef-Fragen, Sicherheitslinie und Erfolgskriterium.
 - Die MVP-Roadmap ist mit dem aktuellen `/orbit`-Preview-Stand synchronisiert:
   sichtbare Panels, Produktlinie, lokale Nachweise und naechster Buero-Pilot.
+- Ein Push Package dokumentiert lokale Commits, Inhalt, Nachweise,
+  Security-Blocker, Sicherheitsgrenzen und Push-Optionen. Es wurde kein Push
+  und kein Deploy ausgefuehrt.
 - Ein neuer KosmoData-HUD-Guard schuetzt die wiederkehrenden Website-Bedienpunkte:
   Database oben links, Suche/Dev rechts, Filterzugang rechts unten, HTML-
   Database-Overlay, globales Fadenkreuz in Start/Hauptmenue/Popups und
