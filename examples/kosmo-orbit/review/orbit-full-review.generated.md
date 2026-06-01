@@ -1,6 +1,6 @@
 # KosmoOrbit Full Review
 
-Generated: 2026-06-01T07:04:28.309Z
+Generated: 2026-06-01T07:11:43.932Z
 Status: `orbit_full_review_ready_for_review_mode`
 Workspace: `examples/kosmo-orbit/workspace.demo.json`
 Project: `examples/kosmo-projects/kosmo-demo-001`
@@ -22,7 +22,7 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 - app route spec: `orbit_app_route_spec_ready`
 - app route spec sections: 5
 - orbit route smoke: `orbit_route_smoke_passed`
-- orbit route smoke checks: 44/44
+- orbit route smoke checks: 52/52
 - workspace status: `orbit_blocked_gates_present`
 - project status: `local_review_only`
 - project artifacts: 59

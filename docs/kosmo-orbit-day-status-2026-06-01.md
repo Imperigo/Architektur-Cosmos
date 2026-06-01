@@ -71,6 +71,8 @@ Wichtig fuer die Kommunikation:
   mit Evidenz-Refs und Write Guard, ohne Decision Record zu schreiben.
 - Eine MVP-Grenze unterscheidet sichtbar zwischen heute gebauter Preview,
   MVP-Vertrag und spaeterer KosmoZentrale-Runtime.
+- Ein Pruefevidenz-Panel zeigt Full Review, Route-Smoke, Reviewlast und Open
+  Mode direkt in `/orbit`, damit die Demo ihre lokale Qualitaet belegen kann.
 
 ## Qualitaetsgrenzen
 
@@ -82,5 +84,5 @@ Wichtig fuer die Kommunikation:
 ## Naechster sinnvoller Schritt
 
 Nach den lokalen Checks ist der naechste Produktschritt die Ordnung der
-technischen Verifikation: ein kompakter Abend-/Batchreport soll alle lokalen
-Checks, Commits, Risiken und den ersten naechsten Schritt zusammenziehen.
+Arbeitsstation-Perspektive: Welche Panels braucht Chef, Projektleitung,
+Entwurf, Zeichnung und Ausbildung wirklich als erstes?

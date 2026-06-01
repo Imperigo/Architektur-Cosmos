@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T07:08:18.337Z",
+  "generated_at": "2026-06-01T07:11:43.918Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 48,
-    "passed_checks": 48,
+    "check_count": 52,
+    "passed_checks": 52,
     "failed_checks": 0
   },
   "checks": [
@@ -82,6 +82,11 @@
       "status": "passed"
     },
     {
+      "id": "quality_evidence_file_exists",
+      "label": "Orbit quality evidence component exists.",
+      "status": "passed"
+    },
+    {
       "id": "imports_role_switcher",
       "label": "Route imports the role switcher preview component.",
       "status": "passed"
@@ -114,6 +119,11 @@
     {
       "id": "imports_runtime_boundary",
       "label": "Route imports the MVP/runtime boundary component.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_quality_evidence",
+      "label": "Route imports the quality evidence component.",
       "status": "passed"
     },
     {
@@ -209,6 +219,16 @@
     {
       "id": "keeps_runtime_side_effects_off",
       "label": "Runtime boundary states no runtime side effects.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_quality_evidence",
+      "label": "Route renders local review and route-smoke quality evidence.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_quality_reports",
+      "label": "Route imports full review and route smoke reports.",
       "status": "passed"
     },
     {

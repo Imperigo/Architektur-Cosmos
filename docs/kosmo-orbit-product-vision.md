@@ -149,6 +149,8 @@ Dieser Kern zeigt:
   spaeter evidenzbasierte menschliche Review-Entscheide vorbereiten soll;
 - eine klare MVP-/Runtime-Grenze zwischen heute sichtbarer Preview,
   MVP-Vertrag und spaeterer KosmoZentrale-Runtime;
+- ein Pruefevidenz-Panel, das Full Review, Route-Smoke, Reviewlast und Open
+  Mode direkt an der Oberflaeche belegt;
 - klare Sperre gegen Design-Generation, Public-Publish, externe Netzwerke,
   Uploads und echte User-Schreibaktionen.
 

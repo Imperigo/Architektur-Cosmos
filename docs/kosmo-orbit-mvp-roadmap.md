@@ -459,6 +459,19 @@ Diese Grenze ist fuer die Produktkommunikation wichtig: KosmoOrbit darf die
 Vision zeigen, ohne eine fertige lokale Runtime, Auth oder Toolsteuerung zu
 behaupten.
 
+### Pruefevidenz im Tool
+
+Die `/orbit` Preview zeigt nun lokale Qualitaetsevidenz direkt im Tool:
+
+- Orbit Full Review mit bestandenen Schritten;
+- Route-Smoke mit bestandenen Checks;
+- Reviewlast des Demo-Projektpakets;
+- aktueller KosmoDesign Open Mode;
+- sichtbare Aussage, dass Design-Generation weiterhin aus ist.
+
+Damit kann eine Demo nicht nur behaupten, dass KosmoOrbit sicher bleibt,
+sondern die lokale Pruefkette direkt an der Oberflaeche zeigen.
+
 ## 14. Static KosmoDesign UI Prototype
 
 Aus der Panel-Spezifikation kann KosmoOrbit einen ersten lokalen HTML-Prototyp

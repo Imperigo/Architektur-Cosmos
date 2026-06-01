@@ -44,6 +44,11 @@ In drei Minuten soll ein Architekturbueroleiter verstehen:
    Benutzerprofile, Toolsteuerung und persistente Entscheidungen gehoeren zur
    spaeteren KosmoZentrale-Runtime.
 
+8. **Pruefevidenz zeigen**
+   Erklaeren: Die Preview zeigt Full Review, Route-Smoke und Open Mode direkt
+   im Tool. Das ist keine Garantie fuer ein fertiges Produkt, aber ein Beleg,
+   dass der aktuelle MVP-Kern lokal geprueft wird.
+
 ## Kernsaetze
 
 - Besser: Jede Rolle bekommt die richtige Oberflaechentiefe und sieht den

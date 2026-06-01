@@ -1,4 +1,6 @@
 import appRouteSpecData from '@/examples/kosmo-orbit/review/orbit-app-route-spec.generated.json';
+import fullReviewData from '@/examples/kosmo-orbit/review/orbit-full-review.generated.json';
+import routeSmokeData from '@/examples/kosmo-orbit/review/orbit-route-smoke.generated.json';
 import roleStateData from '@/examples/kosmo-orbit/role-state.demo.json';
 import designHandoffData from '@/examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-preview.generated.json';
 import projectInspectorData from '@/examples/kosmo-projects/kosmo-demo-001/orbit/project-inspector.generated.json';
@@ -9,6 +11,7 @@ import { OrbitDemoQuestions } from './OrbitDemoQuestions';
 import { OrbitDemoReviewPath } from './OrbitDemoReviewPath';
 import { OrbitPresenterBrief } from './OrbitPresenterBrief';
 import { OrbitProjectDashboard, type DesignHandoffPreview, type ProjectInspectorReport } from './OrbitProjectDashboard';
+import { OrbitQualityEvidence, type OrbitFullReviewReport, type OrbitRouteSmokeReport } from './OrbitQualityEvidence';
 import { OrbitReviewDecisionDraft } from './OrbitReviewDecisionDraft';
 import { OrbitRuntimeBoundary } from './OrbitRuntimeBoundary';
 import { OrbitRoleSwitcher } from './OrbitRoleSwitcher';
@@ -150,6 +153,8 @@ type ShellManifest = {
 const roleState = roleStateData as unknown as RoleState;
 const roleVariantsReport = roleVariantsData as unknown as RoleVariantsReport;
 const appRouteSpec = appRouteSpecData as unknown as AppRouteSpec;
+const fullReview = fullReviewData as unknown as OrbitFullReviewReport;
+const routeSmoke = routeSmokeData as unknown as OrbitRouteSmokeReport;
 const shellManifest = shellManifestData as unknown as ShellManifest;
 const projectInspector = projectInspectorData as unknown as ProjectInspectorReport;
 const designHandoff = designHandoffData as unknown as DesignHandoffPreview;
@@ -330,6 +335,8 @@ export default function OrbitPage() {
           <OrbitReviewDecisionDraft projectInspector={projectInspector} designHandoff={designHandoff} />
 
           <OrbitRuntimeBoundary />
+
+          <OrbitQualityEvidence fullReview={fullReview} routeSmoke={routeSmoke} />
 
           <OrbitRoleSwitcher initialRoleId={roleState.session.active_role_id} variants={roleVariantsReport.variants} />
 
