@@ -1,6 +1,6 @@
 # KosmoOrbit Static Export Smoke
 
-Generated: 2026-06-01T12:26:07.832Z
+Generated: 2026-06-01T12:34:06.905Z
 Status: `orbit_static_export_smoke_passed`
 HTML: `out/orbit/index.html`
 
@@ -8,7 +8,7 @@ Checks the built static export for the visible KosmoOrbit demo panels. It does n
 
 ## Summary
 
-- checks: 33/33 passed
+- checks: 35/35 passed
 
 ## Checks
 
@@ -18,6 +18,7 @@ Checks the built static export for the visible KosmoOrbit demo panels. It does n
 | `renders_kosmo_orbit` | `passed` | Export renders KosmoOrbit heading. |
 | `renders_demo_navigation` | `passed` | Export renders compact demo navigation. |
 | `renders_autonomy_status` | `passed` | Export renders autonomy status. |
+| `renders_office_routine` | `passed` | Export renders office routine contract. |
 | `renders_presenter_mode` | `passed` | Export renders presenter mode. |
 | `renders_progress_map` | `passed` | Export renders progress map. |
 | `renders_vision_bridge` | `passed` | Export renders vision bridge. |
@@ -41,6 +42,7 @@ Checks the built static export for the visible KosmoOrbit demo panels. It does n
 | `keeps_no_runtime_side_effects` | `passed` | Export states that runtime side effects are off. |
 | `keeps_runtime_contract_safe` | `passed` | Export keeps runtime process/model/queue actions gated. |
 | `keeps_installation_topology_safe` | `passed` | Export keeps installation topology non-operational. |
+| `keeps_office_routine_safe` | `passed` | Export keeps office routine non-operational. |
 | `keeps_health_readiness_safe` | `passed` | Export keeps health readiness non-operational. |
 | `keeps_risk_register_human_gated` | `passed` | Export keeps risk register human-gated. |
 | `keeps_command_contract_static` | `passed` | Export keeps command contract non-operational. |

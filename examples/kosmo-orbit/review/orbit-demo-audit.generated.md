@@ -1,6 +1,6 @@
 # KosmoOrbit Demo Audit
 
-Generated: 2026-06-01T12:26:07.904Z
+Generated: 2026-06-01T12:34:06.958Z
 Status: `orbit_demo_audit_passed`
 HTML: `out/orbit/index.html`
 
@@ -8,29 +8,30 @@ Static audit for the human presentation flow of `/orbit`. It checks section orde
 
 ## Summary
 
-- checks: 19/19 passed
+- checks: 21/21 passed
 
 ## Demo Order
 
 | Anchor | Section | Position |
 | --- | --- | ---: |
-| `autonomie` | Autonomie-Status | 13683 |
-| `presenter` | 3-Minuten-Erklaerung | 16159 |
-| `fortschritt` | Projektfortschritt | 19176 |
-| `vision` | Vision Bridge | 25921 |
-| `demo-ready` | Demo-Bereitschaft | 30261 |
-| `projektpaket` | Projektpaket Tagesansicht | 33005 |
-| `design-handoff` | KosmoDesign Handoff | 42597 |
-| `entscheidung` | Review Decision Draft | 56728 |
-| `runtime-contract` | Runtime-Vertrag | 64037 |
-| `installation` | Buero-Installation | 70033 |
-| `health` | Health Readiness | 77772 |
-| `risiken` | Risiko-Register | 84629 |
-| `commands` | Command-Vertrag | 91918 |
-| `audit` | Audit-Trail-Vertrag | 101281 |
-| `evidenz` | Pruefevidenz | 108795 |
-| `rechte` | Rechte-Matrix | 117054 |
-| `rollen` | Rollenumschaltung Preview | 134809 |
+| `autonomie` | Autonomie-Status | 13930 |
+| `routine` | Buero-Routine | 16406 |
+| `presenter` | 3-Minuten-Erklaerung | 29218 |
+| `fortschritt` | Projektfortschritt | 32235 |
+| `vision` | Vision Bridge | 38980 |
+| `demo-ready` | Demo-Bereitschaft | 43320 |
+| `projektpaket` | Projektpaket Tagesansicht | 46064 |
+| `design-handoff` | KosmoDesign Handoff | 55656 |
+| `entscheidung` | Review Decision Draft | 69787 |
+| `runtime-contract` | Runtime-Vertrag | 77096 |
+| `installation` | Buero-Installation | 83092 |
+| `health` | Health Readiness | 90831 |
+| `risiken` | Risiko-Register | 97688 |
+| `commands` | Command-Vertrag | 104977 |
+| `audit` | Audit-Trail-Vertrag | 114340 |
+| `evidenz` | Pruefevidenz | 121854 |
+| `rechte` | Rechte-Matrix | 130113 |
+| `rollen` | Rollenumschaltung Preview | 147868 |
 
 ## Checks
 
@@ -42,6 +43,8 @@ Static audit for the human presentation flow of `/orbit`. It checks section orde
 | `navigation_complete` | `passed` | Demo navigation exposes all core stops. |
 | `approval_boundary_visible` | `passed` | Approval boundary is visible in the export. |
 | `review_only_visible` | `passed` | Review-only mode is visible in the export. |
+| `office_routine_visible` | `passed` | Office routine is visible in the export. |
+| `office_routine_safety_visible` | `passed` | Office routine safety line is visible in the export. |
 | `vision_bridge_visible` | `passed` | Vision bridge is visible in the export. |
 | `design_handoff_visible` | `passed` | KosmoDesign handoff console is visible in the export. |
 | `design_handoff_blocks_generation` | `passed` | KosmoDesign handoff keeps generation visibly blocked. |

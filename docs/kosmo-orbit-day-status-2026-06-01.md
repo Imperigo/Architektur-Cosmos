@@ -130,6 +130,11 @@ Wichtig fuer die Kommunikation:
   KosmoDesign konkreter: Open Mode, Rolle, Modellprofil, Blocker, erlaubte
   Review-Aktionen, Kontextinputs, Guardrails und naechste Schritte. `Generate
   Design` bleibt sichtbar blockiert.
+- Ein Buero-Routine-Vertrag zeigt den spaeteren lokalen Tagesrhythmus:
+  Morgenstart, Projektfokus, KosmoDesign Review Session, Lernmodus,
+  Abendabschluss und Not-Stopp. Heute bleibt das ein statischer Vertrag ohne
+  Modellstart, Tool-Launch, Userdaten-Writes, Uploads, externen Sync, Push
+  oder Kosten.
 - Ein neuer KosmoData-HUD-Guard schuetzt die wiederkehrenden Website-Bedienpunkte:
   Database oben links, Suche/Dev rechts, Filterzugang rechts unten, HTML-
   Database-Overlay, globales Fadenkreuz in Start/Hauptmenue/Popups und
@@ -148,11 +153,12 @@ Wichtig fuer die Kommunikation:
 ## Aktuelle Verifikation
 
 - `npm run kosmo:orbit-audit-trail` — 11/11 passed.
-- `npm run kosmo:orbit-route-smoke` — 119/119 passed.
-- `npm run kosmo:orbit-full-review` — 19/19 passed.
-- `npm run kosmo:orbit-demo-audit` — 19/19 passed.
-- `npm run kosmo:orbit-responsive-audit` — 20/20 passed.
-- `npm run kosmo:orbit-static-smoke` — 33/33 passed.
+- `npm run kosmo:orbit-office-routine` — 10/10 passed.
+- `npm run kosmo:orbit-route-smoke` — 125/125 passed.
+- `npm run kosmo:orbit-full-review` — 20/20 passed.
+- `npm run kosmo:orbit-demo-audit` — 21/21 passed.
+- `npm run kosmo:orbit-responsive-audit` — 21/21 passed.
+- `npm run kosmo:orbit-static-smoke` — 35/35 passed.
 - `npx tsc --noEmit --pretty false --incremental false` — passed.
 - `npm run lint` — passed mit bekannten Bestandswarnungen, keine Errors.
 - `npm run build` mit Node 22 — passed.

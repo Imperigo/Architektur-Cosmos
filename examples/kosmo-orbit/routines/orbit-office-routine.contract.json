@@ -1,0 +1,101 @@
+{
+  "schema_version": "0.1",
+  "status": "orbit_office_routine_contract_ready",
+  "mode": "static_review_only",
+  "purpose": "Describe the future local office rhythm that KosmoOrbit may orchestrate without enabling live automation today.",
+  "routines": [
+    {
+      "id": "morning-startup",
+      "phase": "morning",
+      "owner_role": "it_ai_admin",
+      "title": "Morgenstart der KosmoZentrale",
+      "intent": "Read local health, project packages, review gates and blocked actions before the office starts.",
+      "allowed_signals": ["health-readiness", "project-packages", "review-gates", "local-check-reports"],
+      "output": "daily-orbit-briefing-draft",
+      "writes_user_data": false,
+      "requires_human_confirmation": true
+    },
+    {
+      "id": "project-focus",
+      "phase": "workday",
+      "owner_role": "project_lead_architect",
+      "title": "Projektfokus und Blocker",
+      "intent": "Show project status, next safe action, open context inputs and human review decisions.",
+      "allowed_signals": ["project-inspector", "design-handoff", "audit-trail", "command-contract"],
+      "output": "project-review-queue",
+      "writes_user_data": false,
+      "requires_human_confirmation": true
+    },
+    {
+      "id": "design-review-session",
+      "phase": "workday",
+      "owner_role": "design_architect",
+      "title": "KosmoDesign Review Session",
+      "intent": "Open KosmoDesign only as context review and keep design generation blocked until gates are closed.",
+      "allowed_signals": ["model-profile", "context-inputs", "guardrails", "human-review-gate"],
+      "output": "context-review-notes-draft",
+      "writes_user_data": false,
+      "requires_human_confirmation": true
+    },
+    {
+      "id": "education-support",
+      "phase": "training",
+      "owner_role": "apprentice",
+      "title": "Lern- und Ausbildungsmodus",
+      "intent": "Explain office standards, school topics and safe project context without write authority.",
+      "allowed_signals": ["role-profile", "learning-mode", "safe-examples", "read-only-project-summary"],
+      "output": "guided-learning-view",
+      "writes_user_data": false,
+      "requires_human_confirmation": false
+    },
+    {
+      "id": "evening-closeout",
+      "phase": "evening",
+      "owner_role": "owner_admin",
+      "title": "Abendabschluss",
+      "intent": "Summarize completed checks, open risks, suggested next actions and whether a push decision is needed.",
+      "allowed_signals": ["full-review", "route-smoke", "static-smoke", "lint", "build"],
+      "output": "evening-closeout-report-draft",
+      "writes_user_data": false,
+      "requires_human_confirmation": true
+    },
+    {
+      "id": "emergency-stop",
+      "phase": "safety",
+      "owner_role": "owner_admin",
+      "title": "Not-Stopp und Freigabelinie",
+      "intent": "Keep uploads, external sync, public publish, model start, tool launch and destructive writes blocked until explicit approval.",
+      "allowed_signals": ["risk-register", "command-contract", "audit-trail"],
+      "output": "blocked-action-explanation",
+      "writes_user_data": false,
+      "requires_human_confirmation": true
+    }
+  ],
+  "blocked_actions": [
+    "start_local_model",
+    "launch_blender",
+    "generate_geometry",
+    "write_user_project_data",
+    "upload_to_cloud",
+    "sync_external_account",
+    "public_publish",
+    "push_to_main_without_go",
+    "spend_money"
+  ],
+  "safety": {
+    "no_cloud_costs": true,
+    "no_external_accounts": true,
+    "no_uploads": true,
+    "no_runtime_processes": true,
+    "no_model_start": true,
+    "no_geometry_generation": true,
+    "no_public_publish": true,
+    "no_user_data_writes": true,
+    "no_unapproved_push": true
+  },
+  "next_actions": [
+    "Show this routine as a static KosmoOrbit panel.",
+    "Later connect routines to local telemetry only after privacy, persistence and owner approval rules are defined.",
+    "Keep the current demo in review-only mode until a real local runtime contract exists."
+  ]
+}

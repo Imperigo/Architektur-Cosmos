@@ -143,6 +143,9 @@ Dieser Kern zeigt:
 - eine KosmoDesign Handoff Console, die Open Mode, Rolle, Modellprofil,
   Blocker, erlaubte Review-Aktionen, Kontextinputs und Guardrails als
   sicheren Uebergang von KosmoOrbit zu KosmoDesign sichtbar macht;
+- einen Buero-Routine-Vertrag fuer Morgenstart, Projektfokus, KosmoDesign
+  Review Session, Lernmodus, Abendabschluss und Not-Stopp, ohne echte
+  Automationen oder externe Aktionen zu starten;
 - einen Presenter-Modus fuer eine 3-Minuten-Erklaerung, der die
   Buero-Argumente besser, schneller und guenstiger ohne Informatik-Sprache
   zusammenfasst;

@@ -1,6 +1,6 @@
 # KosmoOrbit Full Review
 
-Generated: 2026-06-01T12:26:23.221Z
+Generated: 2026-06-01T12:34:26.513Z
 Status: `orbit_full_review_ready_for_review_mode`
 Workspace: `examples/kosmo-orbit/workspace.demo.json`
 Project: `examples/kosmo-projects/kosmo-demo-001`
@@ -9,7 +9,7 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 
 ## Summary
 
-- steps: 19/19 passed
+- steps: 20/20 passed
 - role state: `role_state_check_passed`
 - role state active role: `owner_admin`
 - role state selected role: `owner_admin`
@@ -32,8 +32,12 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 - audit trail checks: 11/11
 - audit trail events: 6
 - audit trail writes: 0
+- office routine: `orbit_office_routine_contract_passed`
+- office routine checks: 10/10
+- office routine moments: 6
+- office routine blocked actions: 9
 - orbit route smoke: `orbit_route_smoke_passed`
-- orbit route smoke checks: 119/119
+- orbit route smoke checks: 125/125
 - workspace status: `orbit_blocked_gates_present`
 - project status: `local_review_only`
 - project artifacts: 59
@@ -81,6 +85,7 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 | Health Readiness Contract | `passed` | `examples/kosmo-orbit/review/orbit-health-readiness.generated.json` |
 | Orbit Command Contract | `passed` | `examples/kosmo-orbit/review/orbit-command-contract.generated.json` |
 | Orbit Audit Trail Contract | `passed` | `examples/kosmo-orbit/review/orbit-audit-trail.generated.json` |
+| Orbit Office Routine Contract | `passed` | `examples/kosmo-orbit/review/orbit-office-routine.generated.json` |
 | Orbit Route Smoke | `passed` | `examples/kosmo-orbit/review/orbit-route-smoke.generated.json` |
 
 ## Outputs
@@ -94,6 +99,7 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 - health_readiness_markdown: `examples/kosmo-orbit/review/orbit-health-readiness.generated.md`
 - command_contract_markdown: `examples/kosmo-orbit/review/orbit-command-contract.generated.md`
 - audit_trail_markdown: `examples/kosmo-orbit/review/orbit-audit-trail.generated.md`
+- office_routine_markdown: `examples/kosmo-orbit/review/orbit-office-routine.generated.md`
 - orbit_route_smoke_markdown: `examples/kosmo-orbit/review/orbit-route-smoke.generated.md`
 - workspace_status_markdown: `examples/kosmo-orbit/review/orbit-status-report.generated.md`
 - project_inspector_markdown: `examples/kosmo-projects/kosmo-demo-001/orbit/project-inspector.generated.md`

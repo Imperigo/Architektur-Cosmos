@@ -31,6 +31,8 @@ const qualityEvidencePath = resolve(root, args.qualityEvidence || 'app/orbit/Orb
 const workstationPrioritiesPath = resolve(root, args.workstationPriorities || 'app/orbit/OrbitWorkstationPriorities.tsx');
 const permissionMatrixPath = resolve(root, args.permissionMatrix || 'app/orbit/OrbitPermissionMatrix.tsx');
 const autonomyStatusPath = resolve(root, args.autonomyStatus || 'app/orbit/OrbitAutonomyStatus.tsx');
+const officeRoutinePath = resolve(root, args.officeRoutine || 'app/orbit/OrbitOfficeRoutine.tsx');
+const officeRoutineDataPath = resolve(root, args.officeRoutineData || 'examples/kosmo-orbit/routines/orbit-office-routine.contract.json');
 const demoReadinessPath = resolve(root, args.demoReadiness || 'app/orbit/OrbitDemoReadiness.tsx');
 const sectionIndexPath = resolve(root, args.sectionIndex || 'app/orbit/OrbitSectionIndex.tsx');
 const specPath = resolve(root, args.spec || 'examples/kosmo-orbit/review/orbit-app-route-spec.generated.json');
@@ -71,10 +73,12 @@ async function main() {
   const workstationPrioritiesSource = existsSync(workstationPrioritiesPath) ? readFileSync(workstationPrioritiesPath, 'utf8') : '';
   const permissionMatrixSource = existsSync(permissionMatrixPath) ? readFileSync(permissionMatrixPath, 'utf8') : '';
   const autonomyStatusSource = existsSync(autonomyStatusPath) ? readFileSync(autonomyStatusPath, 'utf8') : '';
+  const officeRoutineSource = existsSync(officeRoutinePath) ? readFileSync(officeRoutinePath, 'utf8') : '';
+  const officeRoutineDataSource = existsSync(officeRoutineDataPath) ? readFileSync(officeRoutineDataPath, 'utf8') : '';
   const demoReadinessSource = existsSync(demoReadinessPath) ? readFileSync(demoReadinessPath, 'utf8') : '';
   const sectionIndexSource = existsSync(sectionIndexPath) ? readFileSync(sectionIndexPath, 'utf8') : '';
   const spec = readJson(specPath);
-  const report = buildReport({ routeSource, roleSwitcherSource, demoReviewSource, projectDashboardSource, designHandoffPanelSource, designHandoffPanelDataSource, presenterBriefSource, progressMapSource, visionBridgeSource, demoQuestionsSource, installationTopologySource, healthReadinessSource, healthReadinessContractSource, riskRegisterSource, commandContractSource, commandContractDataSource, auditTrailSource, auditTrailDataSource, reviewDecisionDraftSource, runtimeBoundarySource, runtimeContractSource, qualityEvidenceSource, workstationPrioritiesSource, permissionMatrixSource, autonomyStatusSource, demoReadinessSource, sectionIndexSource, spec });
+  const report = buildReport({ routeSource, roleSwitcherSource, demoReviewSource, projectDashboardSource, designHandoffPanelSource, designHandoffPanelDataSource, presenterBriefSource, progressMapSource, visionBridgeSource, demoQuestionsSource, installationTopologySource, healthReadinessSource, healthReadinessContractSource, riskRegisterSource, commandContractSource, commandContractDataSource, auditTrailSource, auditTrailDataSource, reviewDecisionDraftSource, runtimeBoundarySource, runtimeContractSource, qualityEvidenceSource, workstationPrioritiesSource, permissionMatrixSource, autonomyStatusSource, officeRoutineSource, officeRoutineDataSource, demoReadinessSource, sectionIndexSource, spec });
 
   await Promise.all([
     mkdir(dirname(outputJsonPath), { recursive: true }),
@@ -91,8 +95,8 @@ async function main() {
   if (report.status !== 'orbit_route_smoke_passed') process.exit(1);
 }
 
-function buildReport({ routeSource, roleSwitcherSource, demoReviewSource, projectDashboardSource, designHandoffPanelSource, designHandoffPanelDataSource, presenterBriefSource, progressMapSource, visionBridgeSource, demoQuestionsSource, installationTopologySource, healthReadinessSource, healthReadinessContractSource, riskRegisterSource, commandContractSource, commandContractDataSource, auditTrailSource, auditTrailDataSource, reviewDecisionDraftSource, runtimeBoundarySource, runtimeContractSource, qualityEvidenceSource, workstationPrioritiesSource, permissionMatrixSource, autonomyStatusSource, demoReadinessSource, sectionIndexSource, spec }) {
-  const source = `${routeSource}\n${roleSwitcherSource}\n${demoReviewSource}\n${projectDashboardSource}\n${designHandoffPanelSource}\n${designHandoffPanelDataSource}\n${presenterBriefSource}\n${progressMapSource}\n${visionBridgeSource}\n${demoQuestionsSource}\n${installationTopologySource}\n${healthReadinessSource}\n${healthReadinessContractSource}\n${riskRegisterSource}\n${commandContractSource}\n${commandContractDataSource}\n${auditTrailSource}\n${auditTrailDataSource}\n${reviewDecisionDraftSource}\n${runtimeBoundarySource}\n${runtimeContractSource}\n${qualityEvidenceSource}\n${workstationPrioritiesSource}\n${permissionMatrixSource}\n${autonomyStatusSource}\n${demoReadinessSource}\n${sectionIndexSource}`;
+function buildReport({ routeSource, roleSwitcherSource, demoReviewSource, projectDashboardSource, designHandoffPanelSource, designHandoffPanelDataSource, presenterBriefSource, progressMapSource, visionBridgeSource, demoQuestionsSource, installationTopologySource, healthReadinessSource, healthReadinessContractSource, riskRegisterSource, commandContractSource, commandContractDataSource, auditTrailSource, auditTrailDataSource, reviewDecisionDraftSource, runtimeBoundarySource, runtimeContractSource, qualityEvidenceSource, workstationPrioritiesSource, permissionMatrixSource, autonomyStatusSource, officeRoutineSource, officeRoutineDataSource, demoReadinessSource, sectionIndexSource, spec }) {
+  const source = `${routeSource}\n${roleSwitcherSource}\n${demoReviewSource}\n${projectDashboardSource}\n${designHandoffPanelSource}\n${designHandoffPanelDataSource}\n${presenterBriefSource}\n${progressMapSource}\n${visionBridgeSource}\n${demoQuestionsSource}\n${installationTopologySource}\n${healthReadinessSource}\n${healthReadinessContractSource}\n${riskRegisterSource}\n${commandContractSource}\n${commandContractDataSource}\n${auditTrailSource}\n${auditTrailDataSource}\n${reviewDecisionDraftSource}\n${runtimeBoundarySource}\n${runtimeContractSource}\n${qualityEvidenceSource}\n${workstationPrioritiesSource}\n${permissionMatrixSource}\n${autonomyStatusSource}\n${officeRoutineSource}\n${officeRoutineDataSource}\n${demoReadinessSource}\n${sectionIndexSource}`;
   const forbiddenPatterns = [
     { id: 'no_use_server', pattern: /['"]use server['"]/ },
     { id: 'no_next_server', pattern: /from ['"]next\/server['"]/ },
@@ -134,6 +138,8 @@ function buildReport({ routeSource, roleSwitcherSource, demoReviewSource, projec
     check('workstation_priorities_file_exists', 'Orbit workstation priorities component exists.', existsSync(workstationPrioritiesPath)),
     check('permission_matrix_file_exists', 'Orbit permission matrix component exists.', existsSync(permissionMatrixPath)),
     check('autonomy_status_file_exists', 'Orbit autonomy status component exists.', existsSync(autonomyStatusPath)),
+    check('office_routine_file_exists', 'Orbit office routine component exists.', existsSync(officeRoutinePath)),
+    check('office_routine_data_file_exists', 'Orbit office routine contract exists.', existsSync(officeRoutineDataPath)),
     check('demo_readiness_file_exists', 'Orbit demo readiness component exists.', existsSync(demoReadinessPath)),
     check('section_index_file_exists', 'Orbit section index component exists.', existsSync(sectionIndexPath)),
     check('imports_role_switcher', 'Route imports the role switcher preview component.', routeSource.includes('OrbitRoleSwitcher')),
@@ -159,6 +165,7 @@ function buildReport({ routeSource, roleSwitcherSource, demoReviewSource, projec
     check('imports_workstation_priorities', 'Route imports the workstation priorities component.', routeSource.includes('OrbitWorkstationPriorities')),
     check('imports_permission_matrix', 'Route imports the permission matrix component.', routeSource.includes('OrbitPermissionMatrix')),
     check('imports_autonomy_status', 'Route imports the autonomy status component.', routeSource.includes('OrbitAutonomyStatus')),
+    check('imports_office_routine', 'Route imports the office routine component.', routeSource.includes('OrbitOfficeRoutine')),
     check('imports_demo_readiness', 'Route imports the demo readiness component.', routeSource.includes('OrbitDemoReadiness')),
     check('imports_section_index', 'Route imports the section index navigation component.', routeSource.includes('OrbitSectionIndex')),
     check('uses_force_static', 'Route declares force-static rendering.', source.includes("dynamic = 'force-static'") || source.includes('dynamic = "force-static"')),
@@ -211,9 +218,12 @@ function buildReport({ routeSource, roleSwitcherSource, demoReviewSource, projec
     check('shows_autonomy_status', 'Route renders local autonomy status and safety limits.', source.includes('Autonomie-Status') && source.includes('local-autonomy')),
     check('keeps_autonomy_cost_safe', 'Autonomy status keeps Cloud costs and writes blocked.', source.includes('keine Cloud-Kosten') && source.includes('keine Writes')),
     check('keeps_autonomy_named_orbit', 'Autonomy status names KosmoOrbit, not KosmoWebsite.', source.includes('Was KosmoOrbit gerade selbststaendig tut') && !source.includes('KosmoWebsite')),
+    check('shows_office_routine', 'Route renders the static office routine contract.', source.includes('Buero-Routine') && source.includes('Morgenstart der KosmoZentrale')),
+    check('office_routine_covers_day_phases', 'Office routine covers morning, workday, training, evening and safety.', source.includes('"phase": "morning"') && source.includes('"phase": "workday"') && source.includes('"phase": "training"') && source.includes('"phase": "evening"') && source.includes('"phase": "safety"')),
+    check('office_routine_blocks_live_automation', 'Office routine blocks model start, Blender launch, uploads, publish, push and costs.', source.includes('start_local_model') && source.includes('launch_blender') && source.includes('upload_to_cloud') && source.includes('public_publish') && source.includes('push_to_main_without_go') && source.includes('spend_money')),
     check('shows_demo_readiness', 'Route renders demo readiness with explicit human approval boundary.', source.includes('Demo-Bereitschaft') && source.includes('human-demo-ready') && source.includes('kein Push ohne Freigabe')),
-    check('shows_section_index', 'Route renders compact demo section navigation.', source.includes('Demo-Navigation') && source.includes('#fortschritt') && source.includes('#vision') && source.includes('#runtime-contract') && source.includes('#installation') && source.includes('#health') && source.includes('#risiken') && source.includes('#commands') && source.includes('#audit') && source.includes('#demo-ready') && source.includes('#rechte') && source.includes('#projektpaket') && source.includes('#design-handoff') && source.includes('#guardrails')),
-    check('anchors_core_sections', 'Route contains anchors for core demo sections.', source.includes('id="autonomie"') && source.includes('id="vision"') && source.includes('id="demo-ready"') && source.includes('id="runtime-contract"') && source.includes('id="installation"') && source.includes('id="health"') && source.includes('id="risiken"') && source.includes('id="commands"') && source.includes('id="audit"') && source.includes('id="projektpaket"') && source.includes('id="design-handoff"') && source.includes('id="rechte"') && source.includes('id="rollen"')),
+    check('shows_section_index', 'Route renders compact demo section navigation.', source.includes('Demo-Navigation') && source.includes('#fortschritt') && source.includes('#vision') && source.includes('#runtime-contract') && source.includes('#installation') && source.includes('#health') && source.includes('#risiken') && source.includes('#commands') && source.includes('#audit') && source.includes('#demo-ready') && source.includes('#routine') && source.includes('#rechte') && source.includes('#projektpaket') && source.includes('#design-handoff') && source.includes('#guardrails')),
+    check('anchors_core_sections', 'Route contains anchors for core demo sections.', source.includes('id="autonomie"') && source.includes('id="routine"') && source.includes('id="vision"') && source.includes('id="demo-ready"') && source.includes('id="runtime-contract"') && source.includes('id="installation"') && source.includes('id="health"') && source.includes('id="risiken"') && source.includes('id="commands"') && source.includes('id="audit"') && source.includes('id="projektpaket"') && source.includes('id="design-handoff"') && source.includes('id="rechte"') && source.includes('id="rollen"')),
     check('shows_blocked_actions', 'Route renders blocked action labels from role state.', source.includes('Blockierte Aktionen') && source.includes('roleState.blocked_actions.map')),
     check('shows_review_only_copy', 'Route keeps review-only safety copy visible.', source.includes('review-only') || source.includes('Review')),
     ...forbiddenPatterns.map((item) => check(item.id, `Forbidden pattern is absent: ${item.id}.`, !item.pattern.test(source)))

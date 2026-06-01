@@ -1,6 +1,6 @@
 # KosmoOrbit Route Smoke
 
-Generated: 2026-06-01T12:26:23.201Z
+Generated: 2026-06-01T12:34:26.502Z
 Status: `orbit_route_smoke_passed`
 Route: `app/orbit/page.tsx`
 
@@ -8,7 +8,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 
 ## Summary
 
-- checks: 119/119 passed
+- checks: 125/125 passed
 
 ## Checks
 
@@ -45,6 +45,8 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `workstation_priorities_file_exists` | `passed` | Orbit workstation priorities component exists. |
 | `permission_matrix_file_exists` | `passed` | Orbit permission matrix component exists. |
 | `autonomy_status_file_exists` | `passed` | Orbit autonomy status component exists. |
+| `office_routine_file_exists` | `passed` | Orbit office routine component exists. |
+| `office_routine_data_file_exists` | `passed` | Orbit office routine contract exists. |
 | `demo_readiness_file_exists` | `passed` | Orbit demo readiness component exists. |
 | `section_index_file_exists` | `passed` | Orbit section index component exists. |
 | `imports_role_switcher` | `passed` | Route imports the role switcher preview component. |
@@ -70,6 +72,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `imports_workstation_priorities` | `passed` | Route imports the workstation priorities component. |
 | `imports_permission_matrix` | `passed` | Route imports the permission matrix component. |
 | `imports_autonomy_status` | `passed` | Route imports the autonomy status component. |
+| `imports_office_routine` | `passed` | Route imports the office routine component. |
 | `imports_demo_readiness` | `passed` | Route imports the demo readiness component. |
 | `imports_section_index` | `passed` | Route imports the section index navigation component. |
 | `uses_force_static` | `passed` | Route declares force-static rendering. |
@@ -122,6 +125,9 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `shows_autonomy_status` | `passed` | Route renders local autonomy status and safety limits. |
 | `keeps_autonomy_cost_safe` | `passed` | Autonomy status keeps Cloud costs and writes blocked. |
 | `keeps_autonomy_named_orbit` | `passed` | Autonomy status names KosmoOrbit, not KosmoWebsite. |
+| `shows_office_routine` | `passed` | Route renders the static office routine contract. |
+| `office_routine_covers_day_phases` | `passed` | Office routine covers morning, workday, training, evening and safety. |
+| `office_routine_blocks_live_automation` | `passed` | Office routine blocks model start, Blender launch, uploads, publish, push and costs. |
 | `shows_demo_readiness` | `passed` | Route renders demo readiness with explicit human approval boundary. |
 | `shows_section_index` | `passed` | Route renders compact demo section navigation. |
 | `anchors_core_sections` | `passed` | Route contains anchors for core demo sections. |

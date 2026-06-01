@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T12:26:23.201Z",
+  "generated_at": "2026-06-01T12:34:26.502Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 119,
-    "passed_checks": 119,
+    "check_count": 125,
+    "passed_checks": 125,
     "failed_checks": 0
   },
   "checks": [
@@ -167,6 +167,16 @@
       "status": "passed"
     },
     {
+      "id": "office_routine_file_exists",
+      "label": "Orbit office routine component exists.",
+      "status": "passed"
+    },
+    {
+      "id": "office_routine_data_file_exists",
+      "label": "Orbit office routine contract exists.",
+      "status": "passed"
+    },
+    {
       "id": "demo_readiness_file_exists",
       "label": "Orbit demo readiness component exists.",
       "status": "passed"
@@ -289,6 +299,11 @@
     {
       "id": "imports_autonomy_status",
       "label": "Route imports the autonomy status component.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_office_routine",
+      "label": "Route imports the office routine component.",
       "status": "passed"
     },
     {
@@ -549,6 +564,21 @@
     {
       "id": "keeps_autonomy_named_orbit",
       "label": "Autonomy status names KosmoOrbit, not KosmoWebsite.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_office_routine",
+      "label": "Route renders the static office routine contract.",
+      "status": "passed"
+    },
+    {
+      "id": "office_routine_covers_day_phases",
+      "label": "Office routine covers morning, workday, training, evening and safety.",
+      "status": "passed"
+    },
+    {
+      "id": "office_routine_blocks_live_automation",
+      "label": "Office routine blocks model start, Blender launch, uploads, publish, push and costs.",
       "status": "passed"
     },
     {

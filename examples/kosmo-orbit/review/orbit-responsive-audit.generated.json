@@ -1,16 +1,16 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T12:25:26.578Z",
+  "generated_at": "2026-06-01T12:33:18.694Z",
   "generator": "kosmo-orbit-responsive-audit",
   "status": "orbit_responsive_audit_passed",
   "source_dir": "app/orbit",
   "summary": {
-    "check_count": 20,
-    "passed_checks": 20,
+    "check_count": 21,
+    "passed_checks": 21,
     "failed_checks": 0,
-    "min_width_guard_count": 66,
-    "flex_wrap_count": 48,
-    "responsive_grid_count": 52
+    "min_width_guard_count": 69,
+    "flex_wrap_count": 52,
+    "responsive_grid_count": 55
   },
   "checks": [
     {
@@ -81,6 +81,11 @@
     {
       "id": "design_handoff_responsive",
       "label": "KosmoDesign handoff panel uses responsive columns for role, model, blockers and context.",
+      "status": "passed"
+    },
+    {
+      "id": "office_routine_responsive",
+      "label": "Office routine uses responsive cards for day phases and hard stops.",
       "status": "passed"
     },
     {

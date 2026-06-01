@@ -1,5 +1,6 @@
 const sectionLinks = [
   { href: '#autonomie', label: 'Autonomie' },
+  { href: '#routine', label: 'Routine' },
   { href: '#presenter', label: '3-Minuten' },
   { href: '#fortschritt', label: 'Fortschritt' },
   { href: '#vision', label: 'Vision' },

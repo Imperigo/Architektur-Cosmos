@@ -197,6 +197,15 @@ Arbeitsstation zuerst welches Panel braucht.
     - haelt `Generate Design` sichtbar blockiert und bleibt ohne Blender-Start,
       Geometrie-Generierung, Upload oder Public-Publish.
 
+28. **Buero-Routine-Vertrag**
+    - legt als statischen Vertrag fest, wie KosmoOrbit spaeter Morgenstart,
+      Projektfokus, KosmoDesign Review Session, Lernmodus, Abendabschluss und
+      Not-Stopp fuehren soll;
+    - zeigt auf `/orbit`, welche Signale pro Tagesphase gelesen werden duerfen
+      und welche Outputs nur als Entwurf entstehen;
+    - blockiert Modellstart, Blender-Launch, Geometrie, Userdaten-Writes,
+      Uploads, externen Sync, Public-Publish, Push ohne Go und Kosten.
+
 ## Lokale Commits seit `origin/main`
 
 - `6ad9372` Add KosmoOrbit role switcher preview
@@ -214,13 +223,14 @@ Arbeitsstation zuerst welches Panel braucht.
 
 Zuletzt gruene lokale Checks:
 
-- `npm run kosmo:orbit-route-smoke` — 119/119 passed
-- `npm run kosmo:orbit-full-review` — 19/19 passed
-- `npm run kosmo:orbit-demo-audit` — 19/19 passed
-- `npm run kosmo:orbit-responsive-audit` — 20/20 passed
+- `npm run kosmo:orbit-route-smoke` — 125/125 passed
+- `npm run kosmo:orbit-full-review` — 20/20 passed
+- `npm run kosmo:orbit-demo-audit` — 21/21 passed
+- `npm run kosmo:orbit-responsive-audit` — 21/21 passed
 - `npm run kosmo:orbit-health-readiness` — 14/14 passed
 - `npm run kosmo:orbit-command-contract` — 14/14 passed
 - `npm run kosmo:orbit-audit-trail` — 11/11 passed
+- `npm run kosmo:orbit-office-routine` — 10/10 passed
 - `npm run kosmodata:hud-guard` — 13/13 passed
 - `npm run database:pilot-quality` — passed, 5 Piloten, 97% Durchschnitt
 - Browser-Smoke fuer `/orbit/` — passed
@@ -231,7 +241,7 @@ Zuletzt gruene lokale Checks:
   `security:check` durch bestehende npm-audit Dependency-Fundstelle
 - `npx tsc --noEmit` — passed
 - `npm run build` — static export passed
-- `npm run build` + `npm run kosmo:orbit-static-smoke` — 33/33 static
+- `npm run build` + `npm run kosmo:orbit-static-smoke` — 35/35 static
   `/orbit` HTML enthaelt die wichtigsten Demo-Panels und Anker
 
 ## Sicherheitsgrenzen

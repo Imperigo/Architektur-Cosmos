@@ -1,0 +1,73 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-01T12:34:26.292Z",
+  "generator": "kosmo-orbit-office-routine-smoke",
+  "status": "orbit_office_routine_contract_passed",
+  "contract_file": "examples/kosmo-orbit/routines/orbit-office-routine.contract.json",
+  "summary": {
+    "check_count": 10,
+    "passed_checks": 10,
+    "failed_checks": 0,
+    "routine_count": 6,
+    "phase_count": 5,
+    "blocked_action_count": 9,
+    "writing_routine_count": 0
+  },
+  "checks": [
+    {
+      "id": "contract_file_exists",
+      "label": "Office routine contract file exists.",
+      "status": "passed"
+    },
+    {
+      "id": "status_ready",
+      "label": "Office routine contract status is ready.",
+      "status": "passed"
+    },
+    {
+      "id": "mode_static_review_only",
+      "label": "Office routine contract is static review-only.",
+      "status": "passed"
+    },
+    {
+      "id": "routine_count",
+      "label": "Office routine defines at least six routine moments.",
+      "status": "passed"
+    },
+    {
+      "id": "required_phases_present",
+      "label": "Office routine covers morning, workday, training, evening and safety phases.",
+      "status": "passed"
+    },
+    {
+      "id": "all_routines_have_trace_fields",
+      "label": "Every routine has phase, owner, intent, signals, output and confirmation flag.",
+      "status": "passed"
+    },
+    {
+      "id": "all_routines_non_writing",
+      "label": "Current routines do not write user data.",
+      "status": "passed"
+    },
+    {
+      "id": "blocked_actions_complete",
+      "label": "Routine contract blocks runtime, cloud, publish, push and cost actions.",
+      "status": "passed"
+    },
+    {
+      "id": "safety_flags_present",
+      "label": "All safety flags are present and true.",
+      "status": "passed"
+    },
+    {
+      "id": "has_next_actions",
+      "label": "Contract records next safe actions.",
+      "status": "passed"
+    }
+  ],
+  "next_actions": [
+    "Show this routine as a static KosmoOrbit panel.",
+    "Later connect routines to local telemetry only after privacy, persistence and owner approval rules are defined.",
+    "Keep the current demo in review-only mode until a real local runtime contract exists."
+  ]
+}

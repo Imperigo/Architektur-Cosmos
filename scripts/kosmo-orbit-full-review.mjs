@@ -235,6 +235,16 @@ const steps = [
     report: resolve(workspaceRoot, 'review/orbit-audit-trail.generated.json')
   },
   {
+    id: 'office_routine',
+    label: 'Orbit Office Routine Contract',
+    script: 'kosmo:orbit-office-routine',
+    args: [
+      '--contract',
+      'examples/kosmo-orbit/routines/orbit-office-routine.contract.json'
+    ],
+    report: resolve(workspaceRoot, 'review/orbit-office-routine.generated.json')
+  },
+  {
     id: 'orbit_route_smoke',
     label: 'Orbit Route Smoke',
     script: 'kosmo:orbit-route-smoke',
@@ -318,6 +328,7 @@ function buildReport(stepRows) {
   const healthReadiness = readOptionalJson(resolve(workspaceRoot, 'review/orbit-health-readiness.generated.json'));
   const commandContract = readOptionalJson(resolve(workspaceRoot, 'review/orbit-command-contract.generated.json'));
   const auditTrail = readOptionalJson(resolve(workspaceRoot, 'review/orbit-audit-trail.generated.json'));
+  const officeRoutine = readOptionalJson(resolve(workspaceRoot, 'review/orbit-office-routine.generated.json'));
   const orbitRouteSmoke = readOptionalJson(resolve(workspaceRoot, 'review/orbit-route-smoke.generated.json'));
   const workspaceStatus = readOptionalJson(resolve(workspaceRoot, 'review/orbit-status-report.generated.json'));
   const projectInspector = readOptionalJson(resolve(projectRoot, 'orbit/project-inspector.generated.json'));
@@ -384,6 +395,11 @@ function buildReport(stepRows) {
       audit_trail_check_count: auditTrail?.summary?.check_count ?? null,
       audit_trail_event_count: auditTrail?.summary?.event_count ?? null,
       audit_trail_writing_count: auditTrail?.summary?.writing_event_count ?? null,
+      office_routine_status: officeRoutine?.status || null,
+      office_routine_passed_checks: officeRoutine?.summary?.passed_checks ?? null,
+      office_routine_check_count: officeRoutine?.summary?.check_count ?? null,
+      office_routine_count: officeRoutine?.summary?.routine_count ?? null,
+      office_routine_blocked_count: officeRoutine?.summary?.blocked_action_count ?? null,
       orbit_route_smoke_status: orbitRouteSmoke?.status || null,
       orbit_route_smoke_passed_checks: orbitRouteSmoke?.summary?.passed_checks ?? null,
       orbit_route_smoke_check_count: orbitRouteSmoke?.summary?.check_count ?? null,
@@ -425,6 +441,7 @@ function buildReport(stepRows) {
       health_readiness_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-health-readiness.generated.md')),
       command_contract_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-command-contract.generated.md')),
       audit_trail_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-audit-trail.generated.md')),
+      office_routine_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-office-routine.generated.md')),
       orbit_route_smoke_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-route-smoke.generated.md')),
       workspace_status_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-status-report.generated.md')),
       project_inspector_markdown: relative(root, resolve(projectRoot, 'orbit/project-inspector.generated.md')),
@@ -542,6 +559,10 @@ function renderMarkdown(report) {
     `- audit trail checks: ${report.summary.audit_trail_passed_checks}/${report.summary.audit_trail_check_count}`,
     `- audit trail events: ${report.summary.audit_trail_event_count}`,
     `- audit trail writes: ${report.summary.audit_trail_writing_count}`,
+    `- office routine: \`${report.summary.office_routine_status}\``,
+    `- office routine checks: ${report.summary.office_routine_passed_checks}/${report.summary.office_routine_check_count}`,
+    `- office routine moments: ${report.summary.office_routine_count}`,
+    `- office routine blocked actions: ${report.summary.office_routine_blocked_count}`,
     `- orbit route smoke: \`${report.summary.orbit_route_smoke_status}\``,
     `- orbit route smoke checks: ${report.summary.orbit_route_smoke_passed_checks}/${report.summary.orbit_route_smoke_check_count}`,
     `- workspace status: \`${report.summary.workspace_status}\``,

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T12:26:23.221Z",
+  "generated_at": "2026-06-01T12:34:26.513Z",
   "generator": "kosmo-orbit-full-review",
   "workspace_path": "examples/kosmo-orbit/workspace.demo.json",
   "project_root": "examples/kosmo-projects/kosmo-demo-001",
@@ -15,8 +15,8 @@
     "no_geometry_generation": true
   },
   "summary": {
-    "step_count": 19,
-    "passed_steps": 19,
+    "step_count": 20,
+    "passed_steps": 20,
     "failed_steps": 0,
     "role_state_status": "role_state_check_passed",
     "role_state_active_role": "owner_admin",
@@ -44,9 +44,14 @@
     "audit_trail_check_count": 11,
     "audit_trail_event_count": 6,
     "audit_trail_writing_count": 0,
+    "office_routine_status": "orbit_office_routine_contract_passed",
+    "office_routine_passed_checks": 10,
+    "office_routine_check_count": 10,
+    "office_routine_count": 6,
+    "office_routine_blocked_count": 9,
     "orbit_route_smoke_status": "orbit_route_smoke_passed",
-    "orbit_route_smoke_passed_checks": 119,
-    "orbit_route_smoke_check_count": 119,
+    "orbit_route_smoke_passed_checks": 125,
+    "orbit_route_smoke_check_count": 125,
     "workspace_status": "orbit_blocked_gates_present",
     "project_status": "local_review_only",
     "project_artifact_count": 59,
@@ -85,6 +90,7 @@
     "health_readiness_markdown": "examples/kosmo-orbit/review/orbit-health-readiness.generated.md",
     "command_contract_markdown": "examples/kosmo-orbit/review/orbit-command-contract.generated.md",
     "audit_trail_markdown": "examples/kosmo-orbit/review/orbit-audit-trail.generated.md",
+    "office_routine_markdown": "examples/kosmo-orbit/review/orbit-office-routine.generated.md",
     "orbit_route_smoke_markdown": "examples/kosmo-orbit/review/orbit-route-smoke.generated.md",
     "workspace_status_markdown": "examples/kosmo-orbit/review/orbit-status-report.generated.md",
     "project_inspector_markdown": "examples/kosmo-projects/kosmo-demo-001/orbit/project-inspector.generated.md",
@@ -315,6 +321,18 @@
       "stderr_tail": ""
     },
     {
+      "id": "office_routine",
+      "label": "Orbit Office Routine Contract",
+      "command": "npm run kosmo:orbit-office-routine -- --contract examples/kosmo-orbit/routines/orbit-office-routine.contract.json",
+      "status": "passed",
+      "exit_code": 0,
+      "report_path": "examples/kosmo-orbit/review/orbit-office-routine.generated.json",
+      "report_exists": true,
+      "report_status": "orbit_office_routine_contract_passed",
+      "stdout_tail": "> architecture-cosmos@0.1.0 kosmo:orbit-office-routine\n> node scripts/kosmo-orbit-office-routine-smoke.mjs --contract examples/kosmo-orbit/routines/orbit-office-routine.contract.json\n\nKosmoOrbit office routine smoke\nStatus: orbit_office_routine_contract_passed\nChecks: 10/10\nWrote: examples/kosmo-orbit/review/orbit-office-routine.generated.md",
+      "stderr_tail": ""
+    },
+    {
       "id": "orbit_route_smoke",
       "label": "Orbit Route Smoke",
       "command": "npm run kosmo:orbit-route-smoke -- --route app/orbit/page.tsx --spec examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
@@ -323,7 +341,7 @@
       "report_path": "examples/kosmo-orbit/review/orbit-route-smoke.generated.json",
       "report_exists": true,
       "report_status": "orbit_route_smoke_passed",
-      "stdout_tail": "> architecture-cosmos@0.1.0 kosmo:orbit-route-smoke\n> node scripts/kosmo-orbit-route-smoke.mjs --route app/orbit/page.tsx --spec examples/kosmo-orbit/review/orbit-app-route-spec.generated.json\n\nKosmoOrbit route smoke\nStatus: orbit_route_smoke_passed\nChecks: 119/119\nWrote: examples/kosmo-orbit/review/orbit-route-smoke.generated.md",
+      "stdout_tail": "> architecture-cosmos@0.1.0 kosmo:orbit-route-smoke\n> node scripts/kosmo-orbit-route-smoke.mjs --route app/orbit/page.tsx --spec examples/kosmo-orbit/review/orbit-app-route-spec.generated.json\n\nKosmoOrbit route smoke\nStatus: orbit_route_smoke_passed\nChecks: 125/125\nWrote: examples/kosmo-orbit/review/orbit-route-smoke.generated.md",
       "stderr_tail": ""
     }
   ],

@@ -46,6 +46,7 @@ function buildReport(html) {
     .replace(/\s+/g, ' ');
   const demoOrder = [
     { id: 'autonomie', label: 'Autonomie-Status' },
+    { id: 'routine', label: 'Buero-Routine' },
     { id: 'presenter', label: '3-Minuten-Erklaerung' },
     { id: 'fortschritt', label: 'Projektfortschritt' },
     { id: 'vision', label: 'Vision Bridge' },
@@ -68,7 +69,7 @@ function buildReport(html) {
     label: section.label,
     index: normalized.indexOf(`id="${section.id}"`)
   }));
-  const navLabels = ['Autonomie', '3-Minuten', 'Fortschritt', 'Vision', 'Demo', 'Projektpaket', 'Handoff', 'Decision', 'Runtime', 'Installation', 'Health', 'Risiken', 'Commands', 'Audit', 'Evidenz', 'Rechte', 'Rollen', 'Guardrails'];
+  const navLabels = ['Autonomie', 'Routine', '3-Minuten', 'Fortschritt', 'Vision', 'Demo', 'Projektpaket', 'Handoff', 'Decision', 'Runtime', 'Installation', 'Health', 'Risiken', 'Commands', 'Audit', 'Evidenz', 'Rechte', 'Rollen', 'Guardrails'];
   const forbiddenArtifacts = ['[object Object]', 'NaN%', 'null null'];
   const checks = [
     check('html_exists', 'Built /orbit HTML exists.', existsSync(htmlPath)),
@@ -77,6 +78,8 @@ function buildReport(html) {
     check('navigation_complete', 'Demo navigation exposes all core stops.', navLabels.every((label) => normalized.includes(label))),
     check('approval_boundary_visible', 'Approval boundary is visible in the export.', normalized.includes('kein Push ohne Freigabe') && normalized.includes('keine Cloud-Kosten')),
     check('review_only_visible', 'Review-only mode is visible in the export.', normalized.includes('review-only') || normalized.includes('Review Mode')),
+    check('office_routine_visible', 'Office routine is visible in the export.', normalized.includes('Buero-Routine') && normalized.includes('Morgenstart der KosmoZentrale')),
+    check('office_routine_safety_visible', 'Office routine safety line is visible in the export.', normalized.includes('Keine versteckte Vollautomation') && normalized.includes('spend money')),
     check('vision_bridge_visible', 'Vision bridge is visible in the export.', normalized.includes('Vision Bridge') && normalized.includes('Orchestrierung vor Generierung')),
     check('design_handoff_visible', 'KosmoDesign handoff console is visible in the export.', normalized.includes('KosmoDesign Handoff') && normalized.includes('Review Console')),
     check('design_handoff_blocks_generation', 'KosmoDesign handoff keeps generation visibly blocked.', normalized.includes('Generate Design') && normalized.includes('Design generation is blocked')),
