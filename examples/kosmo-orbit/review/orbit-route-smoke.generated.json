@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T06:56:52.940Z",
+  "generated_at": "2026-06-01T07:00:30.249Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 36,
-    "passed_checks": 36,
+    "check_count": 40,
+    "passed_checks": 40,
     "failed_checks": 0
   },
   "checks": [
@@ -67,6 +67,11 @@
       "status": "passed"
     },
     {
+      "id": "demo_questions_file_exists",
+      "label": "Orbit demo questions component exists.",
+      "status": "passed"
+    },
+    {
       "id": "imports_role_switcher",
       "label": "Route imports the role switcher preview component.",
       "status": "passed"
@@ -84,6 +89,11 @@
     {
       "id": "imports_presenter_brief",
       "label": "Route imports the presenter brief component.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_demo_questions",
+      "label": "Route imports the demo questions briefing component.",
       "status": "passed"
     },
     {
@@ -149,6 +159,16 @@
     {
       "id": "shows_value_claims",
       "label": "Presenter brief covers better, faster and cheaper value claims.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_demo_questions",
+      "label": "Route renders architect-facing demo questions.",
+      "status": "passed"
+    },
+    {
+      "id": "anchors_demo_claims",
+      "label": "Demo questions point claims back to visible panels.",
       "status": "passed"
     },
     {

@@ -414,6 +414,20 @@ die Produktargumente:
 - guenstiger: lokale Pruefung und Vorbereitung vor teuren Fehlern, Cloudjobs
   oder Abgaben.
 
+### Demo-Fragen fuer ein Architekturbuero
+
+Die `/orbit` Preview beantwortet nun die wichtigsten Fragen direkt im Tool:
+
+- Was ist das Produkt in einem Satz?
+- Was kann man heute schon zeigen?
+- Warum ist das besser als der heutige Workflow?
+- Warum ist es sicher und nicht KI-Slop?
+- Was ist der naechste Entwicklungsschritt?
+
+Jede Antwort verweist auf den sichtbaren Panel-Kontext, der die Aussage
+stuetzt. Damit wird die Demo weniger erklaerungsabhaengig und kann in einem
+Chef-/Buero-Gespraech ruhiger gefuehrt werden.
+
 ## 14. Static KosmoDesign UI Prototype
 
 Aus der Panel-Spezifikation kann KosmoOrbit einen ersten lokalen HTML-Prototyp

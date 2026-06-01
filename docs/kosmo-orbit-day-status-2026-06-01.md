@@ -63,6 +63,10 @@ Wichtig fuer die Kommunikation:
 - Die neuen Panels wurden fuer kleine Viewports robuster gemacht:
   stabilere Chips, bessere Umbrueche und weniger Risiko fuer ueberlaufende
   Gate-/Rollenbegriffe.
+- Ein Demo-Fragen-Block beantwortet die wichtigsten Chef-/Buero-Fragen direkt
+  in `/orbit` und verweist jede Antwort auf sichtbare Panels.
+- `docs/kosmo-orbit-demo-briefing-2026-06-01.md` haelt die 3-Minuten-Demo,
+  Kernsaetze und bewusste Nicht-Behauptungen fest.
 
 ## Qualitaetsgrenzen
 
@@ -73,7 +77,7 @@ Wichtig fuer die Kommunikation:
 
 ## Naechster sinnvoller Schritt
 
-Nach den lokalen Checks ist der naechste Produktschritt ein echtes
-Vorbereitungsprotokoll fuer die Demo: Welche Rolle wird zuerst gezeigt,
-welche Aussagen werden gemacht, welche Aktionen bleiben sichtbar blockiert
-und welche Frage eines Chefs beantwortet welches Panel.
+Nach den lokalen Checks ist der naechste Produktschritt ein echter
+Review-Entscheidungsfluss: Projektleitung soll aus dem Dashboard heraus eine
+lokale Review-Entscheidung vorbereiten koennen, weiterhin ohne echte
+Schreibaktion, Auth oder Generierung.

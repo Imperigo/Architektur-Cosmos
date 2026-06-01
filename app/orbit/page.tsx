@@ -5,6 +5,7 @@ import projectInspectorData from '@/examples/kosmo-projects/kosmo-demo-001/orbit
 import roleVariantsData from '@/examples/kosmo-projects/kosmo-demo-001/orbit/role-ui-variants.generated.json';
 import shellManifestData from '@/examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-prototype.generated.json';
 import type { Metadata } from 'next';
+import { OrbitDemoQuestions } from './OrbitDemoQuestions';
 import { OrbitDemoReviewPath } from './OrbitDemoReviewPath';
 import { OrbitPresenterBrief } from './OrbitPresenterBrief';
 import { OrbitProjectDashboard, type DesignHandoffPreview, type ProjectInspectorReport } from './OrbitProjectDashboard';
@@ -321,6 +322,8 @@ export default function OrbitPage() {
           <OrbitPresenterBrief />
 
           <OrbitProjectDashboard projectInspector={projectInspector} designHandoff={designHandoff} />
+
+          <OrbitDemoQuestions />
 
           <OrbitRoleSwitcher initialRoleId={roleState.session.active_role_id} variants={roleVariantsReport.variants} />
 

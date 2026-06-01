@@ -143,6 +143,8 @@ Dieser Kern zeigt:
 - einen Presenter-Modus fuer eine 3-Minuten-Erklaerung, der die
   Buero-Argumente besser, schneller und guenstiger ohne Informatik-Sprache
   zusammenfasst;
+- einen Demo-Fragen-Block, der typische Chef-/Buero-Fragen direkt im Tool
+  beantwortet und auf sichtbare Evidenz-Panels verweist;
 - klare Sperre gegen Design-Generation, Public-Publish, externe Netzwerke,
   Uploads und echte User-Schreibaktionen.
 
