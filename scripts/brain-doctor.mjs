@@ -74,6 +74,14 @@ const checks = [
     safe_healing: 'diagnostics_only'
   },
   {
+    id: 'kosmodata-hud-guard',
+    label: 'KosmoData HUD guard',
+    command: 'npm',
+    args: ['run', 'kosmodata:hud-guard'],
+    retry: false,
+    safe_healing: 'diagnostics_only'
+  },
+  {
     id: 'atlas-style-guard',
     label: 'Atlas style-sector guard',
     command: 'npm',
@@ -219,6 +227,7 @@ function diagnose(check, result) {
   if (check.id === 'lint') return 'Lint failed. Doctor will not auto-fix tracked source files without approval.';
   if (check.id === 'ui-audit') return 'Interface audit failed. Check shared UI tokens, mobile panel rules and touch-target consistency.';
   if (check.id === 'atlas-interaction-guard') return 'Atlas interaction guard failed. Check dossier opening, filter chips, entry-node click propagation and filter panel pinning.';
+  if (check.id === 'kosmodata-hud-guard') return 'KosmoData HUD guard failed. Check Database/Search/Dev/Filter placement, global crosshair rendering and overlay close behavior.';
   if (check.id === 'atlas-style-guard') return 'Atlas style-sector guard failed. Check wormhole sector angles, color bands and radial label readability.';
   if (check.id === 'hero-image-audit') return 'Hero image audit failed. Check duplicate URLs, blocked licenses or missing public-safe source metadata.';
   if (check.id === 'planet-thumbnail-audit') return 'Planet thumbnail audit failed. Check project thumbnail coverage, duplicate URLs and node rendering bindings.';

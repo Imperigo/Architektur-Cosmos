@@ -1,12 +1,12 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T08:01:36.239Z",
+  "generated_at": "2026-06-01T08:13:42.176Z",
   "generator": "kosmo-orbit-static-export-smoke",
   "status": "orbit_static_export_smoke_passed",
   "html_file": "out/orbit/index.html",
   "summary": {
-    "check_count": 19,
-    "passed_checks": 19,
+    "check_count": 21,
+    "passed_checks": 21,
     "failed_checks": 0
   },
   "checks": [
@@ -66,6 +66,11 @@
       "status": "passed"
     },
     {
+      "id": "renders_runtime_contract",
+      "label": "Export renders local runtime contract.",
+      "status": "passed"
+    },
+    {
       "id": "renders_quality_evidence",
       "label": "Export renders quality evidence.",
       "status": "passed"
@@ -98,6 +103,11 @@
     {
       "id": "keeps_no_runtime_side_effects",
       "label": "Export states that runtime side effects are off.",
+      "status": "passed"
+    },
+    {
+      "id": "keeps_runtime_contract_safe",
+      "label": "Export keeps runtime process/model/queue actions gated.",
       "status": "passed"
     },
     {

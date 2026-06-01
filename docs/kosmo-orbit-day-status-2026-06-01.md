@@ -102,6 +102,13 @@ Wichtig fuer die Kommunikation:
 - Eine sichtbare Vision Bridge auf `/orbit` uebersetzt diese Pipeline in
   KosmoZentrale, Prepare, Design, Draw/Viz/Publish und Data/Asset, ohne die
   gesperrten Runtime-/Write-/Generatorgrenzen aufzuweichen.
+- Ein Runtime-Vertrag auf `/orbit` formuliert die spaetere lokale
+  Steuerungsschicht fuer Health, lokale KI, Tool Launch, Jobs und Reparatur,
+  bleibt aber heute strikt no-process-launch/no-memory-write.
+- Ein neuer KosmoData-HUD-Guard schuetzt die wiederkehrenden Website-Bedienpunkte:
+  Database oben links, Suche/Dev rechts, Filterzugang rechts unten, HTML-
+  Database-Overlay, globales Fadenkreuz in Start/Hauptmenue/Popups und
+  Mobile-Datenbankzugang.
 
 ## Qualitaetsgrenzen
 

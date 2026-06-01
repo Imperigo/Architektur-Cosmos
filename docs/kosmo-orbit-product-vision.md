@@ -149,6 +149,10 @@ Dieser Kern zeigt:
   spaeter evidenzbasierte menschliche Review-Entscheide vorbereiten soll;
 - eine klare MVP-/Runtime-Grenze zwischen heute sichtbarer Preview,
   MVP-Vertrag und spaeterer KosmoZentrale-Runtime;
+- einen Runtime-Vertrag, der KosmoZentrale Health, lokale KI Kosmo,
+  Tool-Launch, Job-Orchestrierung und Repair/Update als spaetere lokale
+  Steuerbereiche sichtbar macht, aber heute Modellstart, Prozessstarts,
+  Queue, Memory-Writes und Systemaenderungen blockiert;
 - ein Pruefevidenz-Panel, das Full Review, Route-Smoke, Reviewlast und Open
   Mode direkt an der Oberflaeche belegt;
 - eine Demo-Bereitschaft, die Full Review, Route-Smoke und Static-Smoke zu

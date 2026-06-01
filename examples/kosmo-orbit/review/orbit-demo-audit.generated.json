@@ -1,64 +1,69 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T08:01:36.402Z",
+  "generated_at": "2026-06-01T08:13:42.356Z",
   "generator": "kosmo-orbit-demo-audit",
   "status": "orbit_demo_audit_passed",
   "html_file": "out/orbit/index.html",
   "summary": {
-    "check_count": 11,
-    "passed_checks": 11,
+    "check_count": 12,
+    "passed_checks": 12,
     "failed_checks": 0
   },
   "demo_order": [
     {
       "id": "autonomie",
       "label": "Autonomie-Status",
-      "index": 11932
+      "index": 12188
     },
     {
       "id": "presenter",
       "label": "3-Minuten-Erklaerung",
-      "index": 14408
+      "index": 14664
     },
     {
       "id": "fortschritt",
       "label": "Projektfortschritt",
-      "index": 17425
+      "index": 17681
     },
     {
       "id": "vision",
       "label": "Vision Bridge",
-      "index": 24067
+      "index": 24323
     },
     {
       "id": "demo-ready",
       "label": "Demo-Bereitschaft",
-      "index": 28407
+      "index": 28663
     },
     {
       "id": "projektpaket",
       "label": "Projektpaket Tagesansicht",
-      "index": 31149
+      "index": 31405
     },
     {
       "id": "entscheidung",
       "label": "Review Decision Draft",
-      "index": 44797
+      "index": 45053
+    },
+    {
+      "id": "runtime-contract",
+      "label": "Runtime-Vertrag",
+      "index": 52362
     },
     {
       "id": "evidenz",
       "label": "Pruefevidenz",
-      "index": 52062
+      "index": 58358
     },
     {
       "id": "rechte",
       "label": "Rechte-Matrix",
-      "index": 60319
+      "index": 66615
     },
     {
       "id": "rollen",
       "label": "Rollenumschaltung Preview",
-      "index": 78074
+      "index": 84370
     }
   ],
   "checks": [
@@ -95,6 +100,11 @@
     {
       "id": "vision_bridge_visible",
       "label": "Vision bridge is visible in the export.",
+      "status": "passed"
+    },
+    {
+      "id": "runtime_contract_visible",
+      "label": "Runtime contract is visible and non-operational.",
       "status": "passed"
     },
     {

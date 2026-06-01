@@ -19,6 +19,7 @@ import { OrbitProjectDashboard, type DesignHandoffPreview, type ProjectInspector
 import { OrbitQualityEvidence, type OrbitFullReviewReport, type OrbitRouteSmokeReport } from './OrbitQualityEvidence';
 import { OrbitReviewDecisionDraft } from './OrbitReviewDecisionDraft';
 import { OrbitRuntimeBoundary } from './OrbitRuntimeBoundary';
+import { OrbitRuntimeContract } from './OrbitRuntimeContract';
 import { OrbitRoleSwitcher } from './OrbitRoleSwitcher';
 import { OrbitSectionIndex } from './OrbitSectionIndex';
 import { OrbitVisionBridge } from './OrbitVisionBridge';
@@ -367,7 +368,13 @@ export default function OrbitPage() {
             <OrbitReviewDecisionDraft projectInspector={projectInspector} designHandoff={designHandoff} />
           </div>
 
-          <OrbitRuntimeBoundary />
+          <div id="runtime" className="scroll-mt-4">
+            <OrbitRuntimeBoundary />
+          </div>
+
+          <div id="runtime-contract" className="scroll-mt-4">
+            <OrbitRuntimeContract />
+          </div>
 
           <div id="evidenz" className="scroll-mt-4">
             <OrbitQualityEvidence fullReview={fullReview} routeSmoke={routeSmoke} />

@@ -23,6 +23,7 @@ const files = [
   'OrbitDemoQuestions.tsx',
   'OrbitReviewDecisionDraft.tsx',
   'OrbitRuntimeBoundary.tsx',
+  'OrbitRuntimeContract.tsx',
   'OrbitQualityEvidence.tsx',
   'OrbitWorkstationPriorities.tsx',
   'OrbitPermissionMatrix.tsx'
@@ -75,6 +76,7 @@ function buildReport(sources) {
     check('responsive_grids_present', 'Orbit components use breakpoint grids instead of fixed desktop-only columns.', responsiveGridCount >= 12),
     check('permission_matrix_responsive', 'Permission matrix collapses before the five-column desktop layout.', sources['OrbitPermissionMatrix.tsx'].includes('sm:grid-cols-2') && sources['OrbitPermissionMatrix.tsx'].includes('lg:grid-cols-5')),
     check('vision_bridge_responsive', 'Vision bridge uses responsive cards for the pipeline tracks.', sources['OrbitVisionBridge.tsx'].includes('md:grid-cols-2') && sources['OrbitVisionBridge.tsx'].includes('xl:grid-cols-5')),
+    check('runtime_contract_responsive', 'Runtime contract uses responsive cards for the runtime stages.', sources['OrbitRuntimeContract.tsx'].includes('md:grid-cols-2') && sources['OrbitRuntimeContract.tsx'].includes('xl:grid-cols-5')),
     check('progress_bars_have_stable_height', 'Progress map uses stable bar height and constrained width.', sources['OrbitProgressMap.tsx'].includes('h-2.5 overflow-hidden') && sources['OrbitProgressMap.tsx'].includes('style={{ width')),
     check('demo_readiness_uses_responsive_grid', 'Demo readiness summary uses responsive columns.', sources['OrbitDemoReadiness.tsx'].includes('md:grid-cols-3') && sources['OrbitDemoReadiness.tsx'].includes('lg:grid-cols')),
     check('badges_can_wrap_long_words', 'Long labels can break instead of overflowing pills.', combined.includes('break-words')),

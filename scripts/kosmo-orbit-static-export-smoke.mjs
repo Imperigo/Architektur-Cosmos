@@ -51,13 +51,15 @@ function buildReport(html) {
     check('renders_project_dashboard', 'Export renders project package dashboard.', html.includes('Projektpaket Tagesansicht')),
     check('renders_review_decision', 'Export renders review decision draft.', html.includes('Review Decision Draft')),
     check('renders_runtime_boundary', 'Export renders MVP/runtime boundary.', html.includes('MVP-Grenze')),
+    check('renders_runtime_contract', 'Export renders local runtime contract.', html.includes('Runtime-Vertrag') && html.includes('no-process-launch')),
     check('renders_quality_evidence', 'Export renders quality evidence.', html.includes('Pruefevidenz')),
     check('renders_workstation_priorities', 'Export renders workstation priorities.', html.includes('Arbeitsstationen')),
     check('renders_permission_matrix', 'Export renders permission matrix.', html.includes('Rechte-Matrix') && html.includes('generation bleibt gesperrt')),
     check('renders_role_switcher', 'Export renders role switcher.', html.includes('Rollenumschaltung Preview')),
     check('renders_guided_review_path', 'Export renders guided review path.', html.includes('Gefuehrter Demo-Review-Pfad')),
-    check('anchors_core_sections', 'Export contains section anchors.', ['autonomie', 'fortschritt', 'vision', 'demo-ready', 'projektpaket', 'entscheidung', 'evidenz', 'rechte', 'rollen', 'guardrails'].every((id) => html.includes(`id="${id}"`))),
+    check('anchors_core_sections', 'Export contains section anchors.', ['autonomie', 'fortschritt', 'vision', 'demo-ready', 'projektpaket', 'entscheidung', 'runtime', 'runtime-contract', 'evidenz', 'rechte', 'rollen', 'guardrails'].every((id) => html.includes(`id="${id}"`))),
     check('keeps_no_runtime_side_effects', 'Export states that runtime side effects are off.', html.includes('no-runtime-side-effects')),
+    check('keeps_runtime_contract_safe', 'Export keeps runtime process/model/queue actions gated.', html.includes('kein Modellstart') && html.includes('keine Prozessstarts') && html.includes('keine Queue') && html.includes('kein Memory-Write')),
     check('no_server_runtime_markers', 'Export does not include server runtime markers.', !html.includes('use server') && !html.includes('next/server'))
   ];
   const failed = checks.filter((item) => item.status !== 'passed');

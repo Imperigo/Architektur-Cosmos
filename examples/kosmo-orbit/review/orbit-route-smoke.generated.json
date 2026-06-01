@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T08:00:42.294Z",
+  "generated_at": "2026-06-01T08:14:40.638Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 82,
-    "passed_checks": 82,
+    "check_count": 86,
+    "passed_checks": 86,
     "failed_checks": 0
   },
   "checks": [
@@ -92,6 +92,11 @@
       "status": "passed"
     },
     {
+      "id": "runtime_contract_file_exists",
+      "label": "Orbit local runtime contract component exists.",
+      "status": "passed"
+    },
+    {
       "id": "quality_evidence_file_exists",
       "label": "Orbit quality evidence component exists.",
       "status": "passed"
@@ -164,6 +169,11 @@
     {
       "id": "imports_runtime_boundary",
       "label": "Route imports the MVP/runtime boundary component.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_runtime_contract",
+      "label": "Route imports the local runtime contract component.",
       "status": "passed"
     },
     {
@@ -314,6 +324,16 @@
     {
       "id": "keeps_runtime_side_effects_off",
       "label": "Runtime boundary states no runtime side effects.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_runtime_contract",
+      "label": "Route renders the future local runtime contract.",
+      "status": "passed"
+    },
+    {
+      "id": "keeps_runtime_contract_non_operational",
+      "label": "Runtime contract keeps model, process, queue and memory actions gated.",
       "status": "passed"
     },
     {

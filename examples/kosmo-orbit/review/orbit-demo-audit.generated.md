@@ -1,6 +1,6 @@
 # KosmoOrbit Demo Audit
 
-Generated: 2026-06-01T08:01:36.402Z
+Generated: 2026-06-01T08:13:42.356Z
 Status: `orbit_demo_audit_passed`
 HTML: `out/orbit/index.html`
 
@@ -8,22 +8,23 @@ Static audit for the human presentation flow of `/orbit`. It checks section orde
 
 ## Summary
 
-- checks: 11/11 passed
+- checks: 12/12 passed
 
 ## Demo Order
 
 | Anchor | Section | Position |
 | --- | --- | ---: |
-| `autonomie` | Autonomie-Status | 11932 |
-| `presenter` | 3-Minuten-Erklaerung | 14408 |
-| `fortschritt` | Projektfortschritt | 17425 |
-| `vision` | Vision Bridge | 24067 |
-| `demo-ready` | Demo-Bereitschaft | 28407 |
-| `projektpaket` | Projektpaket Tagesansicht | 31149 |
-| `entscheidung` | Review Decision Draft | 44797 |
-| `evidenz` | Pruefevidenz | 52062 |
-| `rechte` | Rechte-Matrix | 60319 |
-| `rollen` | Rollenumschaltung Preview | 78074 |
+| `autonomie` | Autonomie-Status | 12188 |
+| `presenter` | 3-Minuten-Erklaerung | 14664 |
+| `fortschritt` | Projektfortschritt | 17681 |
+| `vision` | Vision Bridge | 24323 |
+| `demo-ready` | Demo-Bereitschaft | 28663 |
+| `projektpaket` | Projektpaket Tagesansicht | 31405 |
+| `entscheidung` | Review Decision Draft | 45053 |
+| `runtime-contract` | Runtime-Vertrag | 52362 |
+| `evidenz` | Pruefevidenz | 58358 |
+| `rechte` | Rechte-Matrix | 66615 |
+| `rollen` | Rollenumschaltung Preview | 84370 |
 
 ## Checks
 
@@ -36,6 +37,7 @@ Static audit for the human presentation flow of `/orbit`. It checks section orde
 | `approval_boundary_visible` | `passed` | Approval boundary is visible in the export. |
 | `review_only_visible` | `passed` | Review-only mode is visible in the export. |
 | `vision_bridge_visible` | `passed` | Vision bridge is visible in the export. |
+| `runtime_contract_visible` | `passed` | Runtime contract is visible and non-operational. |
 | `permission_boundary_visible` | `passed` | Role permission boundary is visible in the export. |
 | `no_runtime_promise` | `passed` | Export does not claim live runtime execution. |
 | `no_render_artifacts` | `passed` | Visible export HTML has no obvious unresolved render artifacts. |

@@ -117,6 +117,21 @@ Arbeitsstation zuerst welches Panel braucht.
     - haelt Runtime, D1/R2-/Upload-Writes und Generatoraktionen weiter
       sichtbar gesperrt.
 
+19. **KosmoData-HUD-Guard**
+    - prueft Database, Suche, Dev, Filterzugang, mobile Datenbank und globale
+      Fadenkreuz-Maus als eigene Regressionsschicht;
+    - stellt sicher, dass Brain/Lenses nicht wieder als prominente KosmoData-
+      HUD-Buttons auftauchen;
+    - ist in `brain:doctor` eingebunden und bleibt rein diagnostisch.
+
+20. **Runtime-Vertrag**
+    - zeigt auf `/orbit`, welche spaetere lokale Steuerung KosmoOrbit einmal
+      uebernehmen soll: Health, lokale KI, Tool Launch, Job Orchestration und
+      Repair/Update;
+    - markiert den heutigen Zustand weiterhin als nur lesend und blockierend;
+    - haelt Prozessstarts, Modellstarts, Memory-Writes und Systemaenderungen
+      bis zu einer echten Runtime-Freigabe gesperrt.
+
 ## Lokale Commits seit `origin/main`
 
 - `6ad9372` Add KosmoOrbit role switcher preview
@@ -134,9 +149,10 @@ Arbeitsstation zuerst welches Panel braucht.
 
 Zuletzt gruene lokale Checks:
 
-- `npm run kosmo:orbit-route-smoke` — 82/82 passed
-- `npm run kosmo:orbit-demo-audit` — 11/11 passed
-- `npm run kosmo:orbit-responsive-audit` — 13/13 passed
+- `npm run kosmo:orbit-route-smoke` — 86/86 passed
+- `npm run kosmo:orbit-demo-audit` — 12/12 passed
+- `npm run kosmo:orbit-responsive-audit` — 14/14 passed
+- `npm run kosmodata:hud-guard` — 13/13 passed
 - Browser-Smoke fuer `/orbit/` — passed
 - 390px-Mobile-Smoke fuer `/orbit/` — passed
 - `npm run ui:audit` — 72/72 passed, 7 bekannte Warnings
@@ -145,7 +161,7 @@ Zuletzt gruene lokale Checks:
 - `npm run security:check` — passed, grosse bekannte Dateien uebersprungen
 - `npx tsc --noEmit` — passed
 - `npm run build` — static export passed
-- `npm run build` + `npm run kosmo:orbit-static-smoke` — 19/19 static
+- `npm run build` + `npm run kosmo:orbit-static-smoke` — 21/21 static
   `/orbit` HTML enthaelt die wichtigsten Demo-Panels und Anker
 
 ## Sicherheitsgrenzen

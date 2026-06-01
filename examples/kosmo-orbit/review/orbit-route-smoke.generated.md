@@ -1,6 +1,6 @@
 # KosmoOrbit Route Smoke
 
-Generated: 2026-06-01T08:00:42.294Z
+Generated: 2026-06-01T08:14:40.638Z
 Status: `orbit_route_smoke_passed`
 Route: `app/orbit/page.tsx`
 
@@ -8,7 +8,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 
 ## Summary
 
-- checks: 82/82 passed
+- checks: 86/86 passed
 
 ## Checks
 
@@ -30,6 +30,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `demo_questions_file_exists` | `passed` | Orbit demo questions component exists. |
 | `review_decision_draft_file_exists` | `passed` | Orbit review decision draft component exists. |
 | `runtime_boundary_file_exists` | `passed` | Orbit MVP/runtime boundary component exists. |
+| `runtime_contract_file_exists` | `passed` | Orbit local runtime contract component exists. |
 | `quality_evidence_file_exists` | `passed` | Orbit quality evidence component exists. |
 | `workstation_priorities_file_exists` | `passed` | Orbit workstation priorities component exists. |
 | `permission_matrix_file_exists` | `passed` | Orbit permission matrix component exists. |
@@ -45,6 +46,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `imports_demo_questions` | `passed` | Route imports the demo questions briefing component. |
 | `imports_review_decision_draft` | `passed` | Route imports the review decision draft component. |
 | `imports_runtime_boundary` | `passed` | Route imports the MVP/runtime boundary component. |
+| `imports_runtime_contract` | `passed` | Route imports the local runtime contract component. |
 | `imports_quality_evidence` | `passed` | Route imports the quality evidence component. |
 | `imports_workstation_priorities` | `passed` | Route imports the workstation priorities component. |
 | `imports_permission_matrix` | `passed` | Route imports the permission matrix component. |
@@ -75,6 +77,8 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `keeps_decision_draft_non_writing` | `passed` | Decision draft states that it writes no decision record. |
 | `shows_runtime_boundary` | `passed` | Route renders visible MVP and runtime boundaries. |
 | `keeps_runtime_side_effects_off` | `passed` | Runtime boundary states no runtime side effects. |
+| `shows_runtime_contract` | `passed` | Route renders the future local runtime contract. |
+| `keeps_runtime_contract_non_operational` | `passed` | Runtime contract keeps model, process, queue and memory actions gated. |
 | `shows_quality_evidence` | `passed` | Route renders local review and route-smoke quality evidence. |
 | `imports_quality_reports` | `passed` | Route imports full review and route smoke reports. |
 | `imports_static_smoke_report` | `passed` | Route imports the static export smoke report. |
