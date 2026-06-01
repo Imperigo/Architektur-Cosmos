@@ -165,6 +165,9 @@ Wichtig fuer die Kommunikation:
 - Ein sichtbares Live-Gate auf `/orbit` trennt interne Demo-Bereitschaft von
   oeffentlichem Publish: Owner-Go, Security Review und Live-Smoke bleiben
   Pflicht vor Push/Deploy.
+- Der fruehere Publish-Blocker wurde neu geprueft: `security:check` passed,
+  `npm audit --omit=dev` meldet 0 Vulnerabilities und
+  `brain:doctor-fast` ist 12/12 gruen.
 - Der In-App-Browser-Smoke wurde nach Pilot-Runbook und Live-Gate erneuert:
   Desktop 1440 x 900 und Mobile 390 x 844 ohne horizontalen Overflow, beide
   neuen Panels sichtbar, keine Klickziele unter 32 px.
@@ -205,8 +208,8 @@ Wichtig fuer die Kommunikation:
 - `npm run lint` — passed mit bekannten Bestandswarnungen, keine Errors.
 - `npm run build` mit Node 22 — passed.
 - In-App-Browser-Smoke Desktop/Mobile — passed.
-- `npm run brain:doctor-fast` — 11/12 passed; aktueller Blocker ist
-  `security:check` wegen einer bestehenden npm-audit Dependency-Fundstelle.
+- `npm run security:check` — passed.
+- `npm run brain:doctor-fast` — 12/12 passed.
 
 ## Naechster sinnvoller Schritt
 

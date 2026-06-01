@@ -1,6 +1,6 @@
 # KosmoOrbit Demo Audit
 
-Generated: 2026-06-01T13:45:01.287Z
+Generated: 2026-06-01T13:57:15.237Z
 Status: `orbit_demo_audit_passed`
 HTML: `out/orbit/index.html`
 
@@ -25,19 +25,19 @@ Static audit for the human presentation flow of `/orbit`. It checks section orde
 | `vision` | Vision Bridge | 63366 |
 | `demo-ready` | Demo-Bereitschaft | 67706 |
 | `live-gate` | Live-Gate | 70450 |
-| `projektpaket` | Projektpaket Tagesansicht | 74016 |
-| `design-handoff` | KosmoDesign Handoff | 83608 |
-| `entscheidung` | Review Decision Draft | 97739 |
-| `runtime-contract` | Runtime-Vertrag | 105048 |
-| `installation` | Buero-Installation | 111044 |
-| `health` | Health Readiness | 118783 |
-| `risiken` | Risiko-Register | 125640 |
-| `commands` | Command-Vertrag | 132929 |
-| `audit` | Audit-Trail-Vertrag | 142292 |
-| `evidenz` | Pruefevidenz | 149806 |
-| `ausbildung` | Ausbildungsmodus | 158065 |
-| `rechte` | Rechte-Matrix | 163375 |
-| `rollen` | Rollenumschaltung Preview | 181130 |
+| `projektpaket` | Projektpaket Tagesansicht | 74019 |
+| `design-handoff` | KosmoDesign Handoff | 83611 |
+| `entscheidung` | Review Decision Draft | 97742 |
+| `runtime-contract` | Runtime-Vertrag | 105051 |
+| `installation` | Buero-Installation | 111047 |
+| `health` | Health Readiness | 118786 |
+| `risiken` | Risiko-Register | 125643 |
+| `commands` | Command-Vertrag | 132932 |
+| `audit` | Audit-Trail-Vertrag | 142295 |
+| `evidenz` | Pruefevidenz | 149809 |
+| `ausbildung` | Ausbildungsmodus | 158068 |
+| `rechte` | Rechte-Matrix | 163378 |
+| `rollen` | Rollenumschaltung Preview | 181133 |
 
 ## Checks
 

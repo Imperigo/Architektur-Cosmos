@@ -6,7 +6,7 @@ Status: lokales Review- und Push-Paket. Kein Push wurde ausgefuehrt.
 
 - Branch: `main`
 - Remote: `origin/main`
-- Lokaler Stand: 47 Commits vor `origin/main`
+- Lokaler Stand: 48 Commits vor `origin/main`
 - Live/Deploy: nicht ausgefuehrt, weil Push/Live-Go fehlt
 
 ## Inhalt des Pakets
@@ -45,16 +45,21 @@ deutlich reifer:
 - `npm run build` mit Node 22 — static export passed
 - `git diff --check` — passed
 - In-App-Browser-Smoke Desktop/Mobile — passed
+- `npm run security:check` — passed
+- `npm run brain:doctor-fast` — 12/12 passed
 
-## Bekannter Publish-Blocker
+## Security-Stand
 
-`brain:doctor-fast` war zuletzt 11/12, weil `security:check` bei
-`npm audit --audit-level=moderate --omit=dev` eine Production-Dependency-
-Fundstelle meldete.
+Der fruehere Security-/Dependency-Blocker wurde neu geprueft und ist aktuell
+nicht mehr aktiv:
 
-Das wurde nicht automatisch repariert, weil Dependency-Audit-Fixes eine
-bewusste Paketentscheidung brauchen und potentiell Lockfile-/Build-Verhalten
-veraendern koennen.
+- `npm audit --audit-level=moderate --omit=dev --json` meldet 0
+  Vulnerabilities;
+- `npm run security:check` passed;
+- `npm run brain:doctor-fast` passed 12/12.
+
+Es wurde kein automatischer Dependency-Fix ausgefuehrt. Vor einem echten Push
+sollte dieser Security-Stand nochmals kurz bestaetigt werden.
 
 ## Sicherheitsgrenzen
 
@@ -83,5 +88,6 @@ Vor einem Push sollte Owner bewusst entscheiden:
 3. **Weiter lokal polieren:** kein Push, naechster lokaler Batch auf
    Pilotprojekt oder visuelle QA.
 
-Empfehlung: vor einem echten Livegang zuerst den Security-Blocker beurteilen.
-Fuer eine interne lokale Demo ist der aktuelle Stand vorfuehrbar.
+Empfehlung: vor einem echten Livegang Owner-Go einholen, pushen und danach
+Live-Smoke mit Cache-Buster pruefen. Fuer eine interne lokale Demo ist der
+aktuelle Stand vorfuehrbar.

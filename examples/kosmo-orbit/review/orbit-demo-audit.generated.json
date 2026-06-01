@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T13:45:01.287Z",
+  "generated_at": "2026-06-01T13:57:15.237Z",
   "generator": "kosmo-orbit-demo-audit",
   "status": "orbit_demo_audit_passed",
   "html_file": "out/orbit/index.html",
@@ -68,67 +68,67 @@
     {
       "id": "projektpaket",
       "label": "Projektpaket Tagesansicht",
-      "index": 74016
+      "index": 74019
     },
     {
       "id": "design-handoff",
       "label": "KosmoDesign Handoff",
-      "index": 83608
+      "index": 83611
     },
     {
       "id": "entscheidung",
       "label": "Review Decision Draft",
-      "index": 97739
+      "index": 97742
     },
     {
       "id": "runtime-contract",
       "label": "Runtime-Vertrag",
-      "index": 105048
+      "index": 105051
     },
     {
       "id": "installation",
       "label": "Buero-Installation",
-      "index": 111044
+      "index": 111047
     },
     {
       "id": "health",
       "label": "Health Readiness",
-      "index": 118783
+      "index": 118786
     },
     {
       "id": "risiken",
       "label": "Risiko-Register",
-      "index": 125640
+      "index": 125643
     },
     {
       "id": "commands",
       "label": "Command-Vertrag",
-      "index": 132929
+      "index": 132932
     },
     {
       "id": "audit",
       "label": "Audit-Trail-Vertrag",
-      "index": 142292
+      "index": 142295
     },
     {
       "id": "evidenz",
       "label": "Pruefevidenz",
-      "index": 149806
+      "index": 149809
     },
     {
       "id": "ausbildung",
       "label": "Ausbildungsmodus",
-      "index": 158065
+      "index": 158068
     },
     {
       "id": "rechte",
       "label": "Rechte-Matrix",
-      "index": 163375
+      "index": 163378
     },
     {
       "id": "rollen",
       "label": "Rollenumschaltung Preview",
-      "index": 181130
+      "index": 181133
     }
   ],
   "checks": [

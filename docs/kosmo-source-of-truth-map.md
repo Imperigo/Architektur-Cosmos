@@ -103,8 +103,8 @@ Naechster Schritt:
 
 - kleiner Office Pilot nach
   `docs/kosmo-orbit-office-pilot-plan-2026-06-01.md`;
-- Security-/Dependency-Audit vor Live-Push bewusst beurteilen;
-- danach erst Push/Deploy mit Live-Smoke, falls Owner explizit freigibt.
+- Security-/Dependency-Audit vor Live-Push kurz erneut bestaetigen;
+- Push/Deploy erst mit Live-Smoke, falls Owner explizit freigibt.
 
 ### KosmoDraw
 

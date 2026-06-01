@@ -300,6 +300,13 @@ Arbeitsstation zuerst welches Panel braucht.
     - zeigt Sicherheitsflags, Messpunkte und leere before/after-Werte;
     - macht sichtbar, dass keine Pilotresultate behauptet werden.
 
+42. **Security-/Doctor-Blocker geloest**
+    - ersetzt einen persoenlichen Namen im Live-Gate durch rollenbasierte
+      Owner-Sprache;
+    - `npm audit --omit=dev`, `npm run security:check` und
+      `npm run brain:doctor-fast` laufen danach gruen;
+    - Push bleibt trotzdem ohne explizites Owner-Go und Live-Smoke blockiert.
+
 ## Lokale Commits seit `origin/main`
 
 - `6ad9372` Add KosmoOrbit role switcher preview
@@ -332,8 +339,8 @@ Zuletzt gruene lokale Checks:
 - 390px-Mobile-Smoke fuer `/orbit/` — passed
 - `npm run ui:audit` — 72/72 passed, 0 Warnings
 - `npm run archive:validate` — passed
-- `npm run brain:doctor-fast` — 11/12 passed; blockiert bei
-  `security:check` durch bestehende npm-audit Dependency-Fundstelle
+- `npm run security:check` — passed
+- `npm run brain:doctor-fast` — 12/12 passed
 - `npx tsc --noEmit` — passed
 - `npm run build` — static export passed
 - `npm run build` + `npm run kosmo:orbit-static-smoke` — 47/47 static

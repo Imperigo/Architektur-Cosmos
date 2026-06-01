@@ -7,7 +7,7 @@ const readinessRows = [
   {
     label: 'Owner-Go',
     status: 'missing',
-    evidence: 'Push, Livegang und Cloudflare-Deploy bleiben blockiert, bis Andrin explizit Push/Live/Deploy sagt.'
+    evidence: 'Push, Livegang und Cloudflare-Deploy bleiben blockiert, bis der Owner explizit Push/Live/Deploy sagt.'
   },
   {
     label: 'Security Review',
