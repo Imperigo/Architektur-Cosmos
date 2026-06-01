@@ -165,6 +165,9 @@ Wichtig fuer die Kommunikation:
 - Ein sichtbares Live-Gate auf `/orbit` trennt interne Demo-Bereitschaft von
   oeffentlichem Publish: Owner-Go, Security Review und Live-Smoke bleiben
   Pflicht vor Push/Deploy.
+- Der In-App-Browser-Smoke wurde nach Pilot-Runbook und Live-Gate erneuert:
+  Desktop 1440 x 900 und Mobile 390 x 844 ohne horizontalen Overflow, beide
+  neuen Panels sichtbar, keine Klickziele unter 32 px.
 - System-Knowledge und Source-of-Truth sind nachgezogen, damit KosmoOrbit in
   der Gesamtlandkarte als Hauptsoftware/Steuerzentrale und nicht als
   Website-Feature gelesen wird.
@@ -195,6 +198,7 @@ Wichtig fuer die Kommunikation:
 - `npx tsc --noEmit --pretty false --incremental false` — passed.
 - `npm run lint` — passed mit bekannten Bestandswarnungen, keine Errors.
 - `npm run build` mit Node 22 — passed.
+- In-App-Browser-Smoke Desktop/Mobile — passed.
 - `npm run brain:doctor-fast` — 11/12 passed; aktueller Blocker ist
   `security:check` wegen einer bestehenden npm-audit Dependency-Fundstelle.
 

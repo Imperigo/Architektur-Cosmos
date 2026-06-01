@@ -283,6 +283,11 @@ Arbeitsstation zuerst welches Panel braucht.
     - macht Owner-Go, Security Review und Live-Smoke als Pflicht vor
       Push/Deploy sichtbar.
 
+39. **Browser-Smoke erneuert**
+    - prueft den gebauten `/orbit`-Export ueber lokalen Testserver;
+    - Desktop 1440 x 900 und Mobile 390 x 844 ohne horizontalen Overflow;
+    - bestaetigt Pilot-Runbook, Live-Gate und keine Klickziele unter 32 px.
+
 ## Lokale Commits seit `origin/main`
 
 - `6ad9372` Add KosmoOrbit role switcher preview

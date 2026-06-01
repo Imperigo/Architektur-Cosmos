@@ -9,7 +9,7 @@ Responsive-Audit und einen echten 390px-In-App-Browser-Klicktest ausgefuehrt.
 Getestete URL:
 
 ```text
-http://127.0.0.1:3001/orbit/
+http://127.0.0.1:4173/orbit/
 ```
 
 Ziel-Viewport:
@@ -28,12 +28,12 @@ Status: `passed`
 | Demo-Navigation sichtbar | Links umbrechen statt horizontal zu laufen | `passed` |
 | Vision Bridge sichtbar | `Orchestrierung vor Generierung` | `passed` |
 | Demo-Bereitschaft sichtbar | `human-demo-ready` sichtbar | `passed` |
+| Pilot-Runbook sichtbar | `45-60 Minuten` sichtbar | `passed` |
+| Live-Gate sichtbar | `no-push-without-owner-go` sichtbar | `passed` |
 | Rechte-Matrix sichtbar | Karten bleiben lesbar | `passed` |
 | Rollenumschaltung sichtbar | Rollenchips bleiben erreichbar | `passed` |
 | Horizontaler Overflow | kein horizontaler Layoutbruch | `0 px` |
 | Sichtbare Buttons/Links | keine zu kleinen Klickziele | `0 unter 32 px` |
-| Rolle `Entwurfsarchitekt` klickbar | Panel wechselt ohne Reload | `passed` |
-| Demo-Schritt `02 Entwurf prueft Kontext` klickbar | Demo-Pfad wechselt auf Entwurfs-Schritt | `passed` |
 
 ## Bereits Geprueft
 
@@ -43,8 +43,8 @@ Status: `passed`
 - `npm run kosmo:orbit-static-smoke` prueft, ob die wichtigsten Panels im
   gebauten HTML-Export vorhanden sind.
 - In-App-Browser-Smoke bei 390 x 844 px bestaetigt: `scrollWidth === clientWidth`,
-  keine zu kleinen sichtbaren Buttons/Links, Rollenumschaltung und Demo-Schritt
-  klickbar.
+  keine zu kleinen sichtbaren Buttons/Links, Pilot-Runbook sichtbar und
+  Live-Gate sichtbar.
 - Nach der Vision Bridge bestaetigt der 390px-Smoke weiter: Vision-Navigation
   sichtbar, kein horizontaler Overflow und keine sichtbaren Buttons/Links unter
   32 px.

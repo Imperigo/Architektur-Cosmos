@@ -6,7 +6,7 @@ Status: lokales Review- und Push-Paket. Kein Push wurde ausgefuehrt.
 
 - Branch: `main`
 - Remote: `origin/main`
-- Lokaler Stand: 44 Commits vor `origin/main`
+- Lokaler Stand: 45 Commits vor `origin/main`
 - Live/Deploy: nicht ausgefuehrt, weil Push/Live-Go fehlt
 
 ## Inhalt des Pakets
@@ -41,6 +41,7 @@ deutlich reifer:
 - `npm run lint` — 0 Errors, bekannte 25 Warnings
 - `npm run build` mit Node 22 — static export passed
 - `git diff --check` — passed
+- In-App-Browser-Smoke Desktop/Mobile — passed
 
 ## Bekannter Publish-Blocker
 
