@@ -59,6 +59,11 @@ const checks = [
     patterns: ['data-entry-node="true"', 'onClick={(event) =>', 'event.stopPropagation();', 'onSelect(event);', "onKeyDown={(event) =>"]
   },
   {
+    id: 'overlapping-node-click-uses-nearest-entry',
+    file: files.radialAtlas,
+    patterns: ['function focusNodeInView', 'pointerToSvgPoint(event)', 'nearestInteractiveNode(toCameraPoint(point), displayNodes', 'offenDossierFromNode(nearest?.entry ?? fallbackNode.entry);']
+  },
+  {
     id: 'style-sector-bands-do-not-steal-node-clicks',
     file: files.styleSectors,
     patterns: ['className="style-sector-ribbon style-sector-depth-band"', 'className="style-sector-tick"', 'pointerEvents="none"', '<g pointerEvents="auto">']

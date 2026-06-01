@@ -705,7 +705,13 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
   function focusNodeInView(event: ReactMouseEvent<SVGGElement> | undefined, fallbackNode: WormholeEntryNode) {
     if (panGestureRef.current.active && panGestureRef.current.moved) return;
     event?.stopPropagation();
-    offenDossierFromNode(fallbackNode.entry);
+
+    const point = event ? pointerToSvgPoint(event) : null;
+    const nearest = point ? nearestInteractiveNode(toCameraPoint(point), displayNodes, {
+      zoom: visualZoomRef.current.currentZoom
+    }) : null;
+
+    offenDossierFromNode(nearest?.entry ?? fallbackNode.entry);
   }
 
   function offenDossierFromNode(entry: Entry) {
