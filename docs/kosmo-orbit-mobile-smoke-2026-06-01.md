@@ -1,11 +1,10 @@
-# KosmoOrbit Mobile Smoke Checkliste 2026-06-01
+# KosmoOrbit Mobile Smoke 2026-06-01
 
 ## Kontext
 
-Diese Notiz beschreibt den naechsten schmalen Viewport-Smoke fuer den gebauten
-statischen `/orbit`-Export. Der aktuelle autonome Batch hat bereits einen
-Source-Level-Responsive-Audit ausgefuehrt; ein echter Mobile-/Viewport-Klicktest
-im Browser bleibt offen.
+Diese Notiz dokumentiert den schmalen Viewport-Smoke fuer den gebauten
+statischen `/orbit`-Export. Der autonome Batch hat den Source-Level-
+Responsive-Audit und einen echten 390px-In-App-Browser-Klicktest ausgefuehrt.
 
 Getestete URL:
 
@@ -21,19 +20,19 @@ Ziel-Viewport:
 
 ## Ergebnis
 
-Status: `pending_browser_tool_or_manual_check`
+Status: `passed`
 
-| Check | Erwartung |
-| --- | --- |
-| Haupttitel sichtbar | `KosmoOrbit` |
-| Demo-Navigation sichtbar | Links umbrechen statt horizontal zu laufen |
-| Demo-Bereitschaft sichtbar | `human-demo-ready` sichtbar |
-| Rechte-Matrix sichtbar | Karten bleiben lesbar |
-| Rollenumschaltung sichtbar | Rollenchips bleiben erreichbar |
-| Horizontaler Overflow | kein horizontaler Layoutbruch |
-| Sichtbare Buttons/Links | keine zu kleinen Klickziele |
-| Rolle `Entwurfsarchitekt` klickbar | Panel wechselt ohne Reload |
-| Demo-Schritt `02 Entwurf prueft Kontext` klickbar | Demo-Pfad wechselt auf Entwurfs-Schritt |
+| Check | Erwartung | Ergebnis |
+| --- | --- | --- |
+| Haupttitel sichtbar | `KosmoOrbit` | `passed` |
+| Demo-Navigation sichtbar | Links umbrechen statt horizontal zu laufen | `passed` |
+| Demo-Bereitschaft sichtbar | `human-demo-ready` sichtbar | `passed` |
+| Rechte-Matrix sichtbar | Karten bleiben lesbar | `passed` |
+| Rollenumschaltung sichtbar | Rollenchips bleiben erreichbar | `passed` |
+| Horizontaler Overflow | kein horizontaler Layoutbruch | `0 px` |
+| Sichtbare Buttons/Links | keine zu kleinen Klickziele | `0 unter 32 px` |
+| Rolle `Entwurfsarchitekt` klickbar | Panel wechselt ohne Reload | `passed` |
+| Demo-Schritt `02 Entwurf prueft Kontext` klickbar | Demo-Pfad wechselt auf Entwurfs-Schritt | `passed` |
 
 ## Bereits Geprueft
 
@@ -42,10 +41,12 @@ Status: `pending_browser_tool_or_manual_check`
   viewport-Fonttricks.
 - `npm run kosmo:orbit-static-smoke` prueft, ob die wichtigsten Panels im
   gebauten HTML-Export vorhanden sind.
+- In-App-Browser-Smoke bei 390 x 844 px bestaetigt: `scrollWidth === clientWidth`,
+  keine zu kleinen sichtbaren Buttons/Links, Rollenumschaltung und Demo-Schritt
+  klickbar.
 
 ## Grenzen
 
-- Noch kein echter Klick-Smoke im mobilen Browser.
 - Kein echter Touch-Gesten-Test auf physischem Smartphone.
 - Keine Safari-/Opera-Mobile-Matrix.
 - Keine externe Live-URL geprueft.
@@ -53,10 +54,6 @@ Status: `pending_browser_tool_or_manual_check`
 
 ## Naechster sinnvoller Schritt
 
-Sobald ein Browser-Tool oder eine manuelle Pruefung verfuegbar ist:
-
-1. `npm run build`
-2. `cd out && python3 -m http.server 3001 --bind 127.0.0.1`
-3. `http://127.0.0.1:3001/orbit/` bei 390 x 844 px oeffnen
-4. Checkliste oben durchklicken
-5. Ergebnis in dieser Datei auf `passed` oder `blocked` setzen
+Wenn `/orbit` live gepusht wird, sollte danach ein kurzer Live-Smoke mit
+Cache-Buster folgen. Danach kann der Fokus wieder auf KosmoData/KosmoAsset
+oder auf das naechste Orbit-Panel gelegt werden.

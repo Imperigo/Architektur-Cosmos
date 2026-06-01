@@ -123,10 +123,8 @@ Zuletzt gruene lokale Checks:
 - `npm run kosmo:orbit-route-smoke` — 78/78 passed
 - `npm run kosmo:orbit-demo-audit` — 10/10 passed
 - `npm run kosmo:orbit-responsive-audit` — 12/12 passed
-- Browser-Smoke-Checkliste fuer `/orbit/` — vorbereitet, echter Klick-Smoke
-  noch offen
-- 390px-Mobile-Smoke-Checkliste fuer `/orbit/` — vorbereitet, echter
-  Viewport-Smoke noch offen
+- Browser-Smoke fuer `/orbit/` — passed
+- 390px-Mobile-Smoke fuer `/orbit/` — passed
 - `npm run ui:audit` — 72/72 passed, 7 bekannte Warnings
 - `npm run archive:validate` — passed
 - `npm run brain:doctor-fast` — 10/10 passed
