@@ -147,6 +147,8 @@ Aktueller Repo-Stand 2026-06-01:
   vorweggenommen wird.
 - Eine Office Pilot Facilitator Checklist uebersetzt den ersten Test in eine
   moderierbare Abfolge fuer nicht-technische Architekt:innen.
+- Das Facilitator-Panel ist direkt in `/orbit` sichtbar und durch Route- sowie
+  Static-Smoke abgesichert.
 
 ### Kosmo Prepare, Kosmo Draw, Kosmo Viz, Kosmo Publish
 

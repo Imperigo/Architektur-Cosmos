@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T14:21:08.417Z",
+  "generated_at": "2026-06-01T19:05:05.769Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 153,
-    "passed_checks": 153,
+    "check_count": 157,
+    "passed_checks": 157,
     "failed_checks": 0
   },
   "checks": [
@@ -89,6 +89,11 @@
     {
       "id": "pilot_measurement_kit_file_exists",
       "label": "Orbit pilot measurement kit component exists.",
+      "status": "passed"
+    },
+    {
+      "id": "pilot_facilitator_checklist_file_exists",
+      "label": "Orbit pilot facilitator checklist component exists.",
       "status": "passed"
     },
     {
@@ -259,6 +264,11 @@
     {
       "id": "imports_pilot_measurement_kit",
       "label": "Route imports the pilot measurement kit component.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_pilot_facilitator_checklist",
+      "label": "Route imports the pilot facilitator checklist component.",
       "status": "passed"
     },
     {
@@ -499,6 +509,16 @@
     {
       "id": "pilot_measurement_kit_avoids_fake_results",
       "label": "Pilot measurement kit keeps values empty and avoids claimed results.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_pilot_facilitator_checklist",
+      "label": "Route renders office pilot facilitator checklist.",
+      "status": "passed"
+    },
+    {
+      "id": "pilot_facilitator_checklist_keeps_live_actions_blocked",
+      "label": "Pilot facilitator checklist blocks live actions and unsupported claims.",
       "status": "passed"
     },
     {

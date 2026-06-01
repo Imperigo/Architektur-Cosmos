@@ -5,7 +5,7 @@ Status: lokaler Abschluss des autonomen KosmoOrbit-Batches.
 ## Kurzstand
 
 - Branch: `main`
-- Lokaler Stand: 54 Commits vor `origin/main` nach finalem Facilitator-Commit
+- Lokaler Stand: 55 Commits vor `origin/main` nach sichtbarer Facilitator-Checkliste
 - Push/Deploy: nicht ausgefuehrt
 - `/orbit`: statische review-only Hauptsoftware-Preview
 - Security: finaler Abschlusscheck gruen, vor Push trotzdem bewusst bestaetigen
@@ -19,6 +19,7 @@ Status: lokaler Abschluss des autonomen KosmoOrbit-Batches.
 - Pilot-Messkit mit leeren Messkarten, Evidenzlinks und eigenem Checkskript
 - Chef-Demo-Skript fuer die nicht-technische 5-Minuten-Erklaerung
 - Facilitator-Checkliste fuer den ersten 45-60-Minuten-Buero-Pilot
+- Facilitator-Checkliste direkt in `/orbit`
 - aktualisierte Browser-, Mobile-, Roadmap-, Source-of-Truth- und Push-Doku
 - finaler Autonomous Closeout mit frischem Qualitaets-Sweep
 
@@ -27,10 +28,10 @@ Status: lokaler Abschluss des autonomen KosmoOrbit-Batches.
 - `npm run kosmo:orbit-full-review` - 22/22 passed
 - `npm run kosmo:orbit-pilot-kit` - 19/19 passed
 - `npm run kosmo:orbit-pilot-session` - 17/17 passed
-- `npm run kosmo:orbit-route-smoke` - 153/153 passed
+- `npm run kosmo:orbit-route-smoke` - 157/157 passed
 - `npm run kosmo:orbit-demo-audit` - 33/33 passed
 - `npm run kosmo:orbit-responsive-audit` - 27/27 passed
-- `npm run kosmo:orbit-static-smoke` - 49/49 passed
+- `npm run kosmo:orbit-static-smoke` - 51/51 passed
 - `npm run ui:audit` - 72/72 passed
 - `npx tsc --noEmit --pretty false --incremental false` - passed
 - `npm run lint` - 0 Errors, bekannte 25 Warnings

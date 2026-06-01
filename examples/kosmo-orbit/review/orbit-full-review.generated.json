@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T14:21:08.429Z",
+  "generated_at": "2026-06-01T19:05:05.783Z",
   "generator": "kosmo-orbit-full-review",
   "workspace_path": "examples/kosmo-orbit/workspace.demo.json",
   "project_root": "examples/kosmo-projects/kosmo-demo-001",
@@ -59,8 +59,8 @@
     "pilot_measurement_kit_cards": 5,
     "pilot_measurement_kit_evidence_links": 4,
     "orbit_route_smoke_status": "orbit_route_smoke_passed",
-    "orbit_route_smoke_passed_checks": 153,
-    "orbit_route_smoke_check_count": 153,
+    "orbit_route_smoke_passed_checks": 157,
+    "orbit_route_smoke_check_count": 157,
     "workspace_status": "orbit_blocked_gates_present",
     "project_status": "local_review_only",
     "project_artifact_count": 59,
@@ -376,7 +376,7 @@
       "report_path": "examples/kosmo-orbit/review/orbit-route-smoke.generated.json",
       "report_exists": true,
       "report_status": "orbit_route_smoke_passed",
-      "stdout_tail": "> architecture-cosmos@0.1.0 kosmo:orbit-route-smoke\n> node scripts/kosmo-orbit-route-smoke.mjs --route app/orbit/page.tsx --spec examples/kosmo-orbit/review/orbit-app-route-spec.generated.json\n\nKosmoOrbit route smoke\nStatus: orbit_route_smoke_passed\nChecks: 153/153\nWrote: examples/kosmo-orbit/review/orbit-route-smoke.generated.md",
+      "stdout_tail": "> architecture-cosmos@0.1.0 kosmo:orbit-route-smoke\n> node scripts/kosmo-orbit-route-smoke.mjs --route app/orbit/page.tsx --spec examples/kosmo-orbit/review/orbit-app-route-spec.generated.json\n\nKosmoOrbit route smoke\nStatus: orbit_route_smoke_passed\nChecks: 157/157\nWrote: examples/kosmo-orbit/review/orbit-route-smoke.generated.md",
       "stderr_tail": ""
     }
   ],

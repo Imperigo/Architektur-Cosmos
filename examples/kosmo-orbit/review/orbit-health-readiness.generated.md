@@ -1,6 +1,6 @@
 # KosmoOrbit Health Readiness Smoke
 
-Generated: 2026-06-01T14:21:07.650Z
+Generated: 2026-06-01T19:05:04.753Z
 Status: `health_readiness_contract_passed`
 Contract: `examples/kosmo-orbit/health/health-readiness.contract.json`
 

@@ -20,6 +20,7 @@ import { OrbitInstallationTopology } from './OrbitInstallationTopology';
 import { OrbitLearningMode } from './OrbitLearningMode';
 import { OrbitOfficeRoutine } from './OrbitOfficeRoutine';
 import { OrbitPermissionMatrix } from './OrbitPermissionMatrix';
+import { OrbitPilotFacilitatorChecklist } from './OrbitPilotFacilitatorChecklist';
 import { OrbitPilotMeasurement } from './OrbitPilotMeasurement';
 import { OrbitPilotMeasurementKit } from './OrbitPilotMeasurementKit';
 import { OrbitPilotRunbook } from './OrbitPilotRunbook';
@@ -374,6 +375,10 @@ export default function OrbitPage() {
 
           <div id="pilot-kit" className="scroll-mt-4">
             <OrbitPilotMeasurementKit />
+          </div>
+
+          <div id="pilot-checklist" className="scroll-mt-4">
+            <OrbitPilotFacilitatorChecklist />
           </div>
 
           <div id="pilotplan" className="scroll-mt-4">

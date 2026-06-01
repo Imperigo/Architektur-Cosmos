@@ -780,10 +780,10 @@ Aktuelle lokale Nachweise:
 - `npm run kosmo:orbit-full-review` — 22/22 passed;
 - `npm run kosmo:orbit-pilot-kit` — 19/19 passed;
 - `npm run kosmo:orbit-pilot-session` — 17/17 passed;
-- `npm run kosmo:orbit-route-smoke` — 153/153 passed;
+- `npm run kosmo:orbit-route-smoke` — 157/157 passed;
 - `npm run kosmo:orbit-demo-audit` — 33/33 passed;
 - `npm run kosmo:orbit-responsive-audit` — 27/27 passed;
-- `npm run kosmo:orbit-static-smoke` — 49/49 passed;
+- `npm run kosmo:orbit-static-smoke` — 51/51 passed;
 - `npx tsc --noEmit --pretty false --incremental false` — passed;
 - `npm run lint` — 0 Errors, bekannte Bestandswarnungen;
 - `npm run ui:audit` — 72/72 passed;

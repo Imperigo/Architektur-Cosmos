@@ -13,17 +13,17 @@ Der Stand ist fuer eine interne Demo geeignet. Fuer oeffentlichen Livegang
 fehlt bewusst noch das Owner-Go, danach Push und Live-Smoke.
 
 Zusaetzlich liegt eine Facilitator-Checkliste fuer den ersten 45-60-Minuten-
-Buero-Pilot vor, damit die Demo als gefuehrter Review-Test und nicht als
-Produktivversprechen gezeigt wird.
+Buero-Pilot vor und ist direkt in `/orbit` sichtbar, damit die Demo als
+gefuehrter Review-Test und nicht als Produktivversprechen gezeigt wird.
 
 ## Finaler Qualitaets-Sweep
 
 - `npm run kosmo:orbit-full-review` - 22/22 passed
 - `npm run kosmo:orbit-pilot-kit` - 19/19 passed
-- `npm run kosmo:orbit-route-smoke` - 153/153 passed
+- `npm run kosmo:orbit-route-smoke` - 157/157 passed
 - `npm run kosmo:orbit-demo-audit` - 33/33 passed
 - `npm run kosmo:orbit-responsive-audit` - 27/27 passed
-- `npm run kosmo:orbit-static-smoke` - 49/49 passed
+- `npm run kosmo:orbit-static-smoke` - 51/51 passed
 - `npx tsc --noEmit --pretty false --incremental false` - passed
 - `npm run lint` - 0 Errors, 25 bekannte Bestandswarnungen
 - `npm run ui:audit` - 72/72 passed

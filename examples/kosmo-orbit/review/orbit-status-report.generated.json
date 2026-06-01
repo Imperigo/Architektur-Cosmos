@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T14:21:05.962Z",
+  "generated_at": "2026-06-01T19:05:02.648Z",
   "generator": "kosmo-orbit-status-report",
   "workspace_path": "examples/kosmo-orbit/workspace.demo.json",
   "status": "orbit_blocked_gates_present",

@@ -346,6 +346,13 @@ Arbeitsstation zuerst welches Panel braucht.
     - haelt harte Stopps fuer Kundendaten, Uploads, Kosten, externe Accounts,
       Generierung, Push/Deploy und unbewiesene Zeit-/Kostenclaims fest.
 
+48. **Facilitator-Panel in `/orbit`**
+    - macht die Moderations-Checkliste direkt in der KosmoOrbit-Preview
+      sichtbar;
+    - fuegt den Abschnitt `#pilot-checklist` zur Demo-Navigation hinzu;
+    - erweitert Route- und Static-Smoke, damit Vorbereitung, Ablauf und harte
+      Stopps sichtbar bleiben.
+
 ## Lokale Commits seit `origin/main`
 
 - `6ad9372` Add KosmoOrbit role switcher preview
@@ -363,7 +370,7 @@ Arbeitsstation zuerst welches Panel braucht.
 
 Zuletzt gruene lokale Checks:
 
-- `npm run kosmo:orbit-route-smoke` — 153/153 passed
+- `npm run kosmo:orbit-route-smoke` — 157/157 passed
 - `npm run kosmo:orbit-full-review` — 22/22 passed
 - `npm run kosmo:orbit-pilot-kit` — 19/19 passed
 - `npm run kosmo:orbit-pilot-session` — 17/17 passed
@@ -383,7 +390,7 @@ Zuletzt gruene lokale Checks:
 - `npm run brain:doctor-fast` — 12/12 passed
 - `npx tsc --noEmit` — passed
 - `npm run build` — static export passed
-- `npm run build` + `npm run kosmo:orbit-static-smoke` — 49/49 static
+- `npm run build` + `npm run kosmo:orbit-static-smoke` — 51/51 static
   `/orbit` HTML enthaelt die wichtigsten Demo-Panels und Anker
 
 ## Sicherheitsgrenzen
@@ -404,7 +411,7 @@ In diesem Batch wurde nicht gemacht:
 ## Aktueller Zustand
 
 - Branch: `main`
-- Lokaler Stand: 54 Commits vor `origin/main` nach finalem Facilitator-Commit
+- Lokaler Stand: 55 Commits vor `origin/main` nach sichtbarer Facilitator-Checkliste
 - Live-Publish: noch nicht automatisch ausgefuehrt, ausser ein spaeterer
   expliziter Push/Publish-Befehl folgt.
 

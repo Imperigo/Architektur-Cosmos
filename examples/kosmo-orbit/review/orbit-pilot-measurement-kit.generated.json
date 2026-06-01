@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T14:21:08.280Z",
+  "generated_at": "2026-06-01T19:05:05.594Z",
   "generator": "kosmo-orbit-pilot-measurement-kit-check",
   "status": "orbit_pilot_measurement_kit_ready",
   "kit_file": "examples/kosmo-orbit/pilot/orbit-office-pilot-measurement-kit.demo.json",

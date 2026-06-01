@@ -1,6 +1,6 @@
 # KosmoOrbit Full Review
 
-Generated: 2026-06-01T14:21:08.429Z
+Generated: 2026-06-01T19:05:05.783Z
 Status: `orbit_full_review_ready_for_review_mode`
 Workspace: `examples/kosmo-orbit/workspace.demo.json`
 Project: `examples/kosmo-projects/kosmo-demo-001`
@@ -44,7 +44,7 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 - pilot measurement kit cards: 5
 - pilot measurement kit evidence links: 4
 - orbit route smoke: `orbit_route_smoke_passed`
-- orbit route smoke checks: 153/153
+- orbit route smoke checks: 157/157
 - workspace status: `orbit_blocked_gates_present`
 - project status: `local_review_only`
 - project artifacts: 59

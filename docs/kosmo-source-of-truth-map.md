@@ -83,6 +83,8 @@ Aktiv fuer:
   leere Messkarten und Evidenzlinks ohne behauptete Resultate
 - Chef-Demo-Skript, Office Pilot Plan und Facilitator-Checkliste fuer die
   erste nicht-technische Bueroerklaerung
+- sichtbares Facilitator-Panel in `/orbit`, damit die Pilotmoderation direkt
+  aus der Steuerzentrale gefuehrt werden kann
 - Rollenprofile fuer Chef, IT-/KI-Spezialist, Projektleitung, Entwurf,
   Zeichnung, Praktikum, Lehre und Schnupperzugang
 - Tool-Hub zwischen KosmoData, KosmoAsset, KosmoDesign, KosmoPrepare,

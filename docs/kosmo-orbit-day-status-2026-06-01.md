@@ -184,6 +184,8 @@ Wichtig fuer die Kommunikation:
 - Eine Office Pilot Facilitator Checklist fuehrt den ersten 45-60-Minuten-
   Buero-Pilot ohne Informatik-Sprache durch Baseline, KosmoOrbit-Lesung,
   Messkit, Handoff, Rollenrunde und harte Stopps.
+- Die Facilitator-Checkliste ist nun direkt in `/orbit` sichtbar und in
+  Route-/Static-Smokes abgesichert.
 - Ein Afternoon Checkpoint fasst lokalen Stand, Checks, Grenzen und naechste
   Push-Entscheidung kompakt zusammen.
 - System-Knowledge und Source-of-Truth sind nachgezogen, damit KosmoOrbit in
@@ -210,13 +212,13 @@ Wichtig fuer die Kommunikation:
 
 - `npm run kosmo:orbit-audit-trail` — 11/11 passed.
 - `npm run kosmo:orbit-office-routine` — 10/10 passed.
-- `npm run kosmo:orbit-route-smoke` — 153/153 passed.
+- `npm run kosmo:orbit-route-smoke` — 157/157 passed.
 - `npm run kosmo:orbit-full-review` — 22/22 passed.
 - `npm run kosmo:orbit-pilot-kit` — 19/19 passed.
 - `npm run kosmo:orbit-pilot-session` — 17/17 passed.
 - `npm run kosmo:orbit-demo-audit` — 33/33 passed.
 - `npm run kosmo:orbit-responsive-audit` — 27/27 passed.
-- `npm run kosmo:orbit-static-smoke` — 49/49 passed.
+- `npm run kosmo:orbit-static-smoke` — 51/51 passed.
 - `npx tsc --noEmit --pretty false --incremental false` — passed.
 - `npm run lint` — passed mit bekannten Bestandswarnungen, keine Errors.
 - `npm run build` mit Node 22 — passed.
