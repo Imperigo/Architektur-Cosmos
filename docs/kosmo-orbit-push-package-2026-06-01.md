@@ -6,7 +6,7 @@ Status: lokales Review- und Push-Paket. Kein Push wurde ausgefuehrt.
 
 - Branch: `main`
 - Remote: `origin/main`
-- Lokaler Stand: 39 Commits vor `origin/main`
+- Lokaler Stand: 41 Commits vor `origin/main`
 - Live/Deploy: nicht ausgefuehrt, weil Push/Live-Go fehlt
 
 ## Inhalt des Pakets
@@ -24,7 +24,8 @@ deutlich reifer:
   Buero-Routine-Vertraege;
 - Presenter-Modus, Demo-Fragen, Workflow-Delta, Pilotmessung und
   Office Pilot Plan;
-- aktualisierte Vision, Roadmap, Tagesstatus und Demo-Briefing.
+- aktualisierte Vision, Roadmap, Tagesstatus, Demo-Briefing,
+  System-Knowledge und Source-of-Truth.
 
 ## Letzte lokale Nachweise
 
