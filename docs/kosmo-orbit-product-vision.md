@@ -151,6 +151,8 @@ Dieser Kern zeigt:
   MVP-Vertrag und spaeterer KosmoZentrale-Runtime;
 - ein Pruefevidenz-Panel, das Full Review, Route-Smoke, Reviewlast und Open
   Mode direkt an der Oberflaeche belegt;
+- Arbeitsstations-Prioritaeten, die zeigen, welche Panels Chef, Projektleitung,
+  Entwurf, Zeichnung und Ausbildung zuerst brauchen;
 - klare Sperre gegen Design-Generation, Public-Publish, externe Netzwerke,
   Uploads und echte User-Schreibaktionen.
 
