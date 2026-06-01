@@ -99,6 +99,23 @@ explicitly with `--allow-online-text-rewrite` after owner review.
 
 ## KosmoData Enrichment Pipeline
 
+`database:pilot-quality` is the local quality gate for the current pilot set:
+
+```bash
+npm run database:pilot-quality
+```
+
+It reads `data/mock-entries.json`, `data/relations.json` and local review
+artifacts under `archive-intake/{slug}/`. It checks whether the entry has
+source-backed architectural prose, the question-led text framework, network/DNA
+placement, material/context/program fields, 2D plan-pipeline artifacts, 3D
+model-layer contracts and viewer/filter readiness. It does not browse, upload,
+write D1/R2 or modify entries.
+
+The gate is intentionally honest: an entry can have a high score and still stay
+in `review` when a critical network, source, 2D, 3D or viewer requirement is
+missing.
+
 `kosmodata:seed-from-research` prepares the seed candidate that replaces manual
 JSON drafting. It reads the current entry plus matching research packs from
 `out/database-research/`, then writes:

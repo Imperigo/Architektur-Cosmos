@@ -1,16 +1,16 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T08:14:23.478Z",
+  "generated_at": "2026-06-01T08:22:29.538Z",
   "generator": "kosmo-orbit-responsive-audit",
   "status": "orbit_responsive_audit_passed",
   "source_dir": "app/orbit",
   "summary": {
-    "check_count": 14,
-    "passed_checks": 14,
+    "check_count": 15,
+    "passed_checks": 15,
     "failed_checks": 0,
-    "min_width_guard_count": 49,
-    "flex_wrap_count": 33,
-    "responsive_grid_count": 38
+    "min_width_guard_count": 52,
+    "flex_wrap_count": 35,
+    "responsive_grid_count": 40
   },
   "checks": [
     {
@@ -51,6 +51,11 @@
     {
       "id": "vision_bridge_responsive",
       "label": "Vision bridge uses responsive cards for the pipeline tracks.",
+      "status": "passed"
+    },
+    {
+      "id": "installation_topology_responsive",
+      "label": "Installation topology uses responsive cards for the office system map.",
       "status": "passed"
     },
     {

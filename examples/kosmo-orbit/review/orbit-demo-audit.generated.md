@@ -1,6 +1,6 @@
 # KosmoOrbit Demo Audit
 
-Generated: 2026-06-01T08:15:50.843Z
+Generated: 2026-06-01T08:21:35.669Z
 Status: `orbit_demo_audit_passed`
 HTML: `out/orbit/index.html`
 
@@ -8,23 +8,24 @@ Static audit for the human presentation flow of `/orbit`. It checks section orde
 
 ## Summary
 
-- checks: 12/12 passed
+- checks: 13/13 passed
 
 ## Demo Order
 
 | Anchor | Section | Position |
 | --- | --- | ---: |
-| `autonomie` | Autonomie-Status | 12188 |
-| `presenter` | 3-Minuten-Erklaerung | 14664 |
-| `fortschritt` | Projektfortschritt | 17681 |
-| `vision` | Vision Bridge | 24323 |
-| `demo-ready` | Demo-Bereitschaft | 28663 |
-| `projektpaket` | Projektpaket Tagesansicht | 31405 |
-| `entscheidung` | Review Decision Draft | 45053 |
-| `runtime-contract` | Runtime-Vertrag | 52362 |
-| `evidenz` | Pruefevidenz | 58358 |
-| `rechte` | Rechte-Matrix | 66615 |
-| `rollen` | Rollenumschaltung Preview | 84370 |
+| `autonomie` | Autonomie-Status | 12445 |
+| `presenter` | 3-Minuten-Erklaerung | 14921 |
+| `fortschritt` | Projektfortschritt | 17938 |
+| `vision` | Vision Bridge | 24682 |
+| `demo-ready` | Demo-Bereitschaft | 29022 |
+| `projektpaket` | Projektpaket Tagesansicht | 31764 |
+| `entscheidung` | Review Decision Draft | 45412 |
+| `runtime-contract` | Runtime-Vertrag | 52721 |
+| `installation` | Buero-Installation | 58717 |
+| `evidenz` | Pruefevidenz | 66456 |
+| `rechte` | Rechte-Matrix | 74713 |
+| `rollen` | Rollenumschaltung Preview | 92468 |
 
 ## Checks
 
@@ -38,6 +39,7 @@ Static audit for the human presentation flow of `/orbit`. It checks section orde
 | `review_only_visible` | `passed` | Review-only mode is visible in the export. |
 | `vision_bridge_visible` | `passed` | Vision bridge is visible in the export. |
 | `runtime_contract_visible` | `passed` | Runtime contract is visible and non-operational. |
+| `installation_topology_visible` | `passed` | Office installation topology is visible in the export. |
 | `permission_boundary_visible` | `passed` | Role permission boundary is visible in the export. |
 | `no_runtime_promise` | `passed` | Export does not claim live runtime execution. |
 | `no_render_artifacts` | `passed` | Visible export HTML has no obvious unresolved render artifacts. |

@@ -38,12 +38,12 @@ const progressLanes: ProgressLane[] = [
   },
   {
     title: 'KosmoZentrale Runtime',
-    status: 'spaeter',
-    percent: 14,
+    status: 'Installationsvertrag',
+    percent: 18,
     tone: 'from-amber-300 to-orange-300',
-    scope: 'Lokale KI, starke Hardware, Updates, Reparatur und Jobsteuerung bleiben noch Produktvertrag.',
-    evidence: 'Runtime Boundary zeigt bewusst no-runtime-side-effects.',
-    next: 'Lokalen Runtime-Vertrag mit Hardware, Netzwerk, Logs und Reparaturmodus entwerfen.'
+    scope: 'Lokale KI, starke Hardware, Updates, Reparatur, Jobsteuerung und Arbeitsstationen bleiben Produktvertrag.',
+    evidence: 'Runtime-Vertrag und Buero-Installation zeigen no-runtime-side-effects, no-process-launch und lokale Systemgrenzen.',
+    next: 'Als Naechstes echte lokale Health-Daten und Log-Schnittstellen als Read-only-Vertrag spezifizieren.'
   },
   {
     title: 'CAD-/Plan-Generation',

@@ -1,69 +1,74 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T08:15:50.843Z",
+  "generated_at": "2026-06-01T08:21:35.669Z",
   "generator": "kosmo-orbit-demo-audit",
   "status": "orbit_demo_audit_passed",
   "html_file": "out/orbit/index.html",
   "summary": {
-    "check_count": 12,
-    "passed_checks": 12,
+    "check_count": 13,
+    "passed_checks": 13,
     "failed_checks": 0
   },
   "demo_order": [
     {
       "id": "autonomie",
       "label": "Autonomie-Status",
-      "index": 12188
+      "index": 12445
     },
     {
       "id": "presenter",
       "label": "3-Minuten-Erklaerung",
-      "index": 14664
+      "index": 14921
     },
     {
       "id": "fortschritt",
       "label": "Projektfortschritt",
-      "index": 17681
+      "index": 17938
     },
     {
       "id": "vision",
       "label": "Vision Bridge",
-      "index": 24323
+      "index": 24682
     },
     {
       "id": "demo-ready",
       "label": "Demo-Bereitschaft",
-      "index": 28663
+      "index": 29022
     },
     {
       "id": "projektpaket",
       "label": "Projektpaket Tagesansicht",
-      "index": 31405
+      "index": 31764
     },
     {
       "id": "entscheidung",
       "label": "Review Decision Draft",
-      "index": 45053
+      "index": 45412
     },
     {
       "id": "runtime-contract",
       "label": "Runtime-Vertrag",
-      "index": 52362
+      "index": 52721
+    },
+    {
+      "id": "installation",
+      "label": "Buero-Installation",
+      "index": 58717
     },
     {
       "id": "evidenz",
       "label": "Pruefevidenz",
-      "index": 58358
+      "index": 66456
     },
     {
       "id": "rechte",
       "label": "Rechte-Matrix",
-      "index": 66615
+      "index": 74713
     },
     {
       "id": "rollen",
       "label": "Rollenumschaltung Preview",
-      "index": 84370
+      "index": 92468
     }
   ],
   "checks": [
@@ -105,6 +110,11 @@
     {
       "id": "runtime_contract_visible",
       "label": "Runtime contract is visible and non-operational.",
+      "status": "passed"
+    },
+    {
+      "id": "installation_topology_visible",
+      "label": "Office installation topology is visible in the export.",
       "status": "passed"
     },
     {

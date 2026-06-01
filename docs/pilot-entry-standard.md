@@ -1,32 +1,34 @@
 # Pilot Entry Standard
 
-Flower House is the current database pilot. It defines the minimum standard for
-turning a project from an atlas point into a full Architecture Cosmos archive
-object.
+Villa Savoye is the current goldstandard pilot. It defines the target standard
+for turning a project from an atlas point into a full Architecture Cosmos archive
+object with source-backed prose, 2D plan artifacts, 3D layer contracts and a
+viewer-ready analysis profile.
 
 ## Pilot Object
 
-- Entry: `afasia-no-architecture-flower-house`
-- Title: Flower House
-- Authors: NO Architecture
-- Year: 2020
-- Source basis: Afasia project post and office-source placeholder
+- Entry: `villa-savoye`
+- Title: Villa Savoye
+- Authors: Le Corbusier, Pierre Jeanneret
+- Year: 1931
+- Source basis: ETH/lecture notes, Fondation Le Corbusier, Centre des monuments
+  nationaux, UNESCO context and Architecture Cosmos diagrammatic plans
 - Database status: reviewed
-- R2 prefix: `entries/afasia-no-architecture-flower-house`
+- R2 prefix: `entries/villa-savoye`
 
 ## Required Archive Layers
 
-| Layer | Flower House status | Meaning |
+| Layer | Villa Savoye status | Meaning |
 |---|---:|---|
 | Entry metadata | ready | title, slug, year, location, authors, type, style sector |
-| Text layers | ready | short, one-sentence, full description |
-| Sources | ready for preview | Afasia source + office placeholder |
+| Text layers | ready | one-sentence, full description and 9-part text review |
+| Sources | ready for preview | ETH/lecture, official, heritage and public-safe source trail |
 | Media slots | ready as metadata | exterior, interior, section, plan |
-| Source assets | planned | 14 Afasia source references, no R2 upload yet |
+| 2D plan artifacts | local review | SVG plan, SVG section, SVG analysis, DXF and plan graph |
 | Tags | ready | source, typology, structure, material, landscape, analysis |
-| Relations | pending | no project relations attached yet |
-| 3D model rows | planned | mass, low, full, site, structure, tectonic |
-| Analysis layers | planned/reviewed mix | structure, tectonics, spatial order and filter layers |
+| Relations | ready | explicit atlas edges plus text-review network basis |
+| 3D model rows | local review | mass, low, full, site, structure, tectonic, facade/material |
+| Analysis layers | reviewed/draft mix | structure, tectonics, spatial order, materials and filter layers |
 
 ## Review Status Rules
 
@@ -35,8 +37,9 @@ object.
 - `verified`: confirmed against reliable primary/source material.
 - `needs_source`: concept is plausible but needs stronger evidence.
 
-Flower House deliberately mixes these statuses. That is good: the archive can
-show what is known, what is planned and what still needs source work.
+Villa Savoye deliberately separates reviewed public metadata from local/private
+model and plan review. That is good: the archive can show what is known, what is
+planned and what still needs source or rights review before public release.
 
 ## Minimum For A New Mature Entry
 
@@ -61,14 +64,28 @@ It is “model-ready” only when it additionally has:
 4. at least one analysis layer
 5. clear confidence score and source basis
 
+It is “goldstandard-ready” only when it additionally has:
+
+1. a text review pack answering These, Netzwerk/DNA, Topos, Typos, Tektonik,
+   Konflikt/Kritik, KosmoData-Layer and Entwurfsintelligenz
+2. a network basis from explicit relations or close comparison candidates
+3. 2D plan-pipeline artifacts: plan SVG, section SVG, analysis SVG, DXF and
+   vector graph
+4. Blender/ArchiCAD layer contract: site, mass/full, structure, tectonic,
+   material/facade
+5. viewer/filter requirements for materials, structure, spatial order and model
+   layers
+6. a rights note that distinguishes public metadata from private/local geometry
+   or plan evidence
+
 ## Next Pilot Improvements
 
-- Add 3-5 relations from Flower House to Glass House typology, courtyard houses,
-  landscape-embedded houses or contemporary sustainable architecture.
-- Add a rights decision for Afasia-referenced images.
-- Build a tiny low-poly procedural massing model only after upload policy is
-  enforced.
-- Promote one analysis layer from `draft` to `reviewed` only after source
+- Use `database:pilot-quality` as the repeatable gate for the first five
+  pilots.
+- Add missing explicit network relations for Ingenbohl, MFO Park and Goebekli
+  Tepe.
+- Keep local plan/model artifacts out of Git and public R2 until reviewed.
+- Promote analysis layers from `draft` to `reviewed` only after source
   verification.
 
 ## Current Pilot Queue

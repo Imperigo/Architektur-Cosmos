@@ -153,6 +153,9 @@ Dieser Kern zeigt:
   Tool-Launch, Job-Orchestrierung und Repair/Update als spaetere lokale
   Steuerbereiche sichtbar macht, aber heute Modellstart, Prozessstarts,
   Queue, Memory-Writes und Systemaenderungen blockiert;
+- ein Installationsbild, das KosmoZentrale als lokale Appliance, KosmoOrbit
+  auf Arbeitsstationen, lokales Wissen, Architektur-Tools, menschliche
+  Freigabe und spaetere externe Zusammenarbeit als Buero-System ordnet;
 - ein Pruefevidenz-Panel, das Full Review, Route-Smoke, Reviewlast und Open
   Mode direkt an der Oberflaeche belegt;
 - eine Demo-Bereitschaft, die Full Review, Route-Smoke und Static-Smoke zu

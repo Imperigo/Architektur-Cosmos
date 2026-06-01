@@ -132,6 +132,23 @@ Arbeitsstation zuerst welches Panel braucht.
     - haelt Prozessstarts, Modellstarts, Memory-Writes und Systemaenderungen
       bis zu einer echten Runtime-Freigabe gesperrt.
 
+21. **Buero-Installation**
+    - zeigt Architektur Kosmos als lokales Buero-System mit KosmoZentrale,
+      KosmoOrbit-Arbeitsstationen, lokalem Wissen, Architektur-Tools,
+      menschlicher Freigabe und spaeterer externer Zusammenarbeit;
+    - macht die Produktform "lokale Appliance plus installierte Software"
+      in `/orbit` greifbar;
+    - haelt Hardware-Steuerung, Auth-Runtime, Upload-Writes, Prozessstarts
+      und Netzwerksteuerung weiterhin gesperrt.
+
+22. **KosmoData Pilot-Quality-Audit**
+    - prueft die ersten Datenbankpiloten schaerfer auf Text-Review-Pack,
+      Quellen, Modell-/Layer-Vertrag, 2D-Planpipeline, Viewer-Faehigkeit und
+      Netzwerkrelationen;
+    - unterscheidet `ready`, `review` und `needs_work` zusaetzlich ueber
+      kritische Review-Gates;
+    - ist in `brain:doctor` eingebunden und bleibt rein diagnostisch.
+
 ## Lokale Commits seit `origin/main`
 
 - `6ad9372` Add KosmoOrbit role switcher preview
@@ -149,19 +166,20 @@ Arbeitsstation zuerst welches Panel braucht.
 
 Zuletzt gruene lokale Checks:
 
-- `npm run kosmo:orbit-route-smoke` — 86/86 passed
-- `npm run kosmo:orbit-demo-audit` — 12/12 passed
-- `npm run kosmo:orbit-responsive-audit` — 14/14 passed
+- `npm run kosmo:orbit-route-smoke` — 90/90 passed
+- `npm run kosmo:orbit-demo-audit` — 13/13 passed
+- `npm run kosmo:orbit-responsive-audit` — 15/15 passed
 - `npm run kosmodata:hud-guard` — 13/13 passed
+- `npm run database:pilot-quality` — passed, 5 Piloten, 97% Durchschnitt
 - Browser-Smoke fuer `/orbit/` — passed
 - 390px-Mobile-Smoke fuer `/orbit/` — passed
 - `npm run ui:audit` — 72/72 passed, 7 bekannte Warnings
 - `npm run archive:validate` — passed
-- `npm run brain:doctor-fast` — 11/11 passed
+- `npm run brain:doctor-fast` — 12/12 passed
 - `npm run security:check` — passed, grosse bekannte Dateien uebersprungen
 - `npx tsc --noEmit` — passed
 - `npm run build` — static export passed
-- `npm run build` + `npm run kosmo:orbit-static-smoke` — 21/21 static
+- `npm run build` + `npm run kosmo:orbit-static-smoke` — 23/23 static
   `/orbit` HTML enthaelt die wichtigsten Demo-Panels und Anker
 
 ## Sicherheitsgrenzen

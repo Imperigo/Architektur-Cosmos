@@ -53,6 +53,7 @@ function buildReport(html) {
     { id: 'projektpaket', label: 'Projektpaket Tagesansicht' },
     { id: 'entscheidung', label: 'Review Decision Draft' },
     { id: 'runtime-contract', label: 'Runtime-Vertrag' },
+    { id: 'installation', label: 'Buero-Installation' },
     { id: 'evidenz', label: 'Pruefevidenz' },
     { id: 'rechte', label: 'Rechte-Matrix' },
     { id: 'rollen', label: 'Rollenumschaltung Preview' }
@@ -62,7 +63,7 @@ function buildReport(html) {
     label: section.label,
     index: normalized.indexOf(`id="${section.id}"`)
   }));
-  const navLabels = ['Autonomie', '3-Minuten', 'Fortschritt', 'Vision', 'Demo', 'Projektpaket', 'Decision', 'Runtime', 'Evidenz', 'Rechte', 'Rollen', 'Guardrails'];
+  const navLabels = ['Autonomie', '3-Minuten', 'Fortschritt', 'Vision', 'Demo', 'Projektpaket', 'Decision', 'Runtime', 'Installation', 'Evidenz', 'Rechte', 'Rollen', 'Guardrails'];
   const forbiddenArtifacts = ['[object Object]', 'NaN%', 'null null'];
   const checks = [
     check('html_exists', 'Built /orbit HTML exists.', existsSync(htmlPath)),
@@ -73,6 +74,7 @@ function buildReport(html) {
     check('review_only_visible', 'Review-only mode is visible in the export.', normalized.includes('review-only') || normalized.includes('Review Mode')),
     check('vision_bridge_visible', 'Vision bridge is visible in the export.', normalized.includes('Vision Bridge') && normalized.includes('Orchestrierung vor Generierung')),
     check('runtime_contract_visible', 'Runtime contract is visible and non-operational.', normalized.includes('Runtime-Vertrag') && normalized.includes('no-process-launch')),
+    check('installation_topology_visible', 'Office installation topology is visible in the export.', normalized.includes('Buero-Installation') && normalized.includes('local-appliance-map')),
     check('permission_boundary_visible', 'Role permission boundary is visible in the export.', normalized.includes('Rechte-Matrix') && normalized.includes('generation bleibt gesperrt')),
     check('no_runtime_promise', 'Export does not claim live runtime execution.', !normalized.includes('automatisch live schreibt') && !normalized.includes('Cloud Writes aktiv')),
     check('no_render_artifacts', 'Visible export HTML has no obvious unresolved render artifacts.', forbiddenArtifacts.every((artifact) => !visibleHtml.includes(artifact))),

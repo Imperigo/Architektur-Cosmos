@@ -106,6 +106,14 @@ const checks = [
     safe_healing: 'diagnostics_only'
   },
   {
+    id: 'pilot-quality-audit',
+    label: 'KosmoData pilot quality audit',
+    command: 'npm',
+    args: ['run', 'database:pilot-quality'],
+    retry: false,
+    safe_healing: 'diagnostics_only'
+  },
+  {
     id: 'build',
     label: 'Build',
     command: 'npm',
@@ -231,6 +239,7 @@ function diagnose(check, result) {
   if (check.id === 'atlas-style-guard') return 'Atlas style-sector guard failed. Check wormhole sector angles, color bands and radial label readability.';
   if (check.id === 'hero-image-audit') return 'Hero image audit failed. Check duplicate URLs, blocked licenses or missing public-safe source metadata.';
   if (check.id === 'planet-thumbnail-audit') return 'Planet thumbnail audit failed. Check project thumbnail coverage, duplicate URLs and node rendering bindings.';
+  if (check.id === 'pilot-quality-audit') return 'Pilot quality audit failed. Check source-backed text framework, network relations, 2D plan artifacts, 3D layers and viewer requirements.';
   if (check.id === 'security-check') return 'Security check failed. Treat as approval-gated P0 before publish.';
   if (check.id === 'archive-validate') return 'Archive validation failed. Check entry schema, relations, media, model or analysis rows.';
   if (check.id === 'brain-review') return 'Brain review failed. Check rules, queue and data JSON validity.';

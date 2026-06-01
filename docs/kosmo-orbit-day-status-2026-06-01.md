@@ -105,10 +105,18 @@ Wichtig fuer die Kommunikation:
 - Ein Runtime-Vertrag auf `/orbit` formuliert die spaetere lokale
   Steuerungsschicht fuer Health, lokale KI, Tool Launch, Jobs und Reparatur,
   bleibt aber heute strikt no-process-launch/no-memory-write.
+- Ein Installationsbild auf `/orbit` zeigt Architektur Kosmos als lokales
+  Buero-System: KosmoZentrale, Arbeitsstationen, lokales Wissen,
+  Architektur-Tools, menschliche Freigabe und spaetere externe Zusammenarbeit.
+  Heute bleibt es eine statische Landkarte ohne Hardware-, Auth-, Prozess-,
+  Upload- oder Netzwerksteuerung.
 - Ein neuer KosmoData-HUD-Guard schuetzt die wiederkehrenden Website-Bedienpunkte:
   Database oben links, Suche/Dev rechts, Filterzugang rechts unten, HTML-
   Database-Overlay, globales Fadenkreuz in Start/Hauptmenue/Popups und
   Mobile-Datenbankzugang.
+- Der KosmoData Pilot-Quality-Audit prueft die ersten Datenbankpiloten nun
+  schaerfer auf Text-Review-Pack, Quellen, Modell-/Layer-Vertrag,
+  2D-Planpipeline, Viewer-Faehigkeit und Netzwerkrelationen.
 
 ## Qualitaetsgrenzen
 

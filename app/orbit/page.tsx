@@ -12,6 +12,7 @@ import { OrbitAutonomyStatus } from './OrbitAutonomyStatus';
 import { OrbitDemoReadiness, type OrbitStaticExportSmokeReport } from './OrbitDemoReadiness';
 import { OrbitDemoQuestions } from './OrbitDemoQuestions';
 import { OrbitDemoReviewPath } from './OrbitDemoReviewPath';
+import { OrbitInstallationTopology } from './OrbitInstallationTopology';
 import { OrbitPermissionMatrix } from './OrbitPermissionMatrix';
 import { OrbitPresenterBrief } from './OrbitPresenterBrief';
 import { OrbitProgressMap } from './OrbitProgressMap';
@@ -374,6 +375,10 @@ export default function OrbitPage() {
 
           <div id="runtime-contract" className="scroll-mt-4">
             <OrbitRuntimeContract />
+          </div>
+
+          <div id="installation" className="scroll-mt-4">
+            <OrbitInstallationTopology />
           </div>
 
           <div id="evidenz" className="scroll-mt-4">

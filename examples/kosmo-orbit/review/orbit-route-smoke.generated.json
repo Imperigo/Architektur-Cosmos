@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T08:14:40.638Z",
+  "generated_at": "2026-06-01T08:22:29.350Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 86,
-    "passed_checks": 86,
+    "check_count": 90,
+    "passed_checks": 90,
     "failed_checks": 0
   },
   "checks": [
@@ -79,6 +79,11 @@
     {
       "id": "demo_questions_file_exists",
       "label": "Orbit demo questions component exists.",
+      "status": "passed"
+    },
+    {
+      "id": "installation_topology_file_exists",
+      "label": "Orbit local installation topology component exists.",
       "status": "passed"
     },
     {
@@ -159,6 +164,11 @@
     {
       "id": "imports_demo_questions",
       "label": "Route imports the demo questions briefing component.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_installation_topology",
+      "label": "Route imports the local installation topology component.",
       "status": "passed"
     },
     {
@@ -294,6 +304,16 @@
     {
       "id": "keeps_vision_bridge_review_only",
       "label": "Vision bridge keeps runtime and write actions gated.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_installation_topology",
+      "label": "Route renders the local office installation topology.",
+      "status": "passed"
+    },
+    {
+      "id": "keeps_installation_topology_safe",
+      "label": "Installation topology keeps auth, upload, process and network actions gated.",
       "status": "passed"
     },
     {
