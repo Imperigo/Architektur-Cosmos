@@ -129,9 +129,9 @@ Aktueller Repo-Stand 2026-06-01:
 - Runtime-, Health-, Installation-, Risiko-, Command-, Audit- und
   Buero-Routine-Vertraege zeigen, was spaeter lokal gesteuert werden soll und
   heute blockiert bleibt.
-- Presenter-Modus, Demo-Fragen, Workflow-Delta, Pilotmessung und Office Pilot
-  Plan machen den Nutzen fuer ein Architekturburo erklaerbar, ohne ROI-Zahlen
-  oder fertige Automation zu behaupten.
+- Presenter-Modus, Demo-Fragen, Workflow-Delta, Pilotmessung, Pilot-Runbook
+  und Office Pilot Plan machen den Nutzen fuer ein Architekturburo
+  erklaerbar, ohne ROI-Zahlen oder fertige Automation zu behaupten.
 - Lokale Nachweise liegen in `examples/kosmo-orbit/review/`; der aktuelle
   Stand ist in `docs/kosmo-orbit-push-package-2026-06-01.md` als
   Push-/Review-Paket dokumentiert.

@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T12:51:18.067Z",
+  "generated_at": "2026-06-01T13:10:16.380Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 137,
-    "passed_checks": 137,
+    "check_count": 141,
+    "passed_checks": 141,
     "failed_checks": 0
   },
   "checks": [
@@ -84,6 +84,11 @@
     {
       "id": "pilot_measurement_file_exists",
       "label": "Orbit pilot measurement component exists.",
+      "status": "passed"
+    },
+    {
+      "id": "pilot_runbook_file_exists",
+      "label": "Orbit pilot runbook component exists.",
       "status": "passed"
     },
     {
@@ -234,6 +239,11 @@
     {
       "id": "imports_pilot_measurement",
       "label": "Route imports the pilot measurement component.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_pilot_runbook",
+      "label": "Route imports the pilot runbook component.",
       "status": "passed"
     },
     {
@@ -449,6 +459,16 @@
     {
       "id": "pilot_measurement_blocks_live_actions",
       "label": "Pilot measurement blocks live data, uploads, costs and generation.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_pilot_runbook",
+      "label": "Route renders a concrete 45-60 minute office pilot runbook.",
+      "status": "passed"
+    },
+    {
+      "id": "pilot_runbook_keeps_live_actions_blocked",
+      "label": "Pilot runbook keeps customer data, uploads, costs, design generation and push blocked.",
       "status": "passed"
     },
     {

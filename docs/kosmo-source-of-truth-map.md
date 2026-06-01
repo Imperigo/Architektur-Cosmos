@@ -72,8 +72,8 @@ Aktiv fuer:
 
 - Hauptsoftware- und Steuerzentralen-Vision
 - aktuelle statische `/orbit`-Preview mit Demo-Navigation, Presenter-Modus,
-  Workflow-Delta, Pilotmessung, Buero-Routine, Projektpaket, KosmoDesign
-  Handoff Console, Ausbildungsmodus und Review-/Safety-Vertraegen
+  Workflow-Delta, Pilotmessung, Pilot-Runbook, Buero-Routine, Projektpaket,
+  KosmoDesign Handoff Console, Ausbildungsmodus und Review-/Safety-Vertraegen
 - Rollenprofile fuer Chef, IT-/KI-Spezialist, Projektleitung, Entwurf,
   Zeichnung, Praktikum, Lehre und Schnupperzugang
 - Tool-Hub zwischen KosmoData, KosmoAsset, KosmoDesign, KosmoPrepare,

@@ -739,6 +739,7 @@ Architekturburo:
 - Workflow-Delta fuer heutigen Bueroablauf gegen KosmoOrbit-Zielablauf;
 - Pilotmessung fuer Suchzeit, Blocker-Frueherkennung, Rollenpassung und
   Wiederholbarkeit;
+- Pilot-Runbook fuer einen 45-60-Minuten-Buero-Test ohne Live-Risiko;
 - Vision-zu-MVP-Fortschrittskarte;
 - Vision Bridge zwischen KosmoZentrale, Prepare, Design, Draw/Viz/Publish,
   Data und Asset;
@@ -772,10 +773,10 @@ Die wichtigste Produktlinie ist damit klarer:
 Aktuelle lokale Nachweise:
 
 - `npm run kosmo:orbit-full-review` — 20/20 passed;
-- `npm run kosmo:orbit-route-smoke` — 137/137 passed;
-- `npm run kosmo:orbit-demo-audit` — 27/27 passed;
-- `npm run kosmo:orbit-responsive-audit` — 24/24 passed;
-- `npm run kosmo:orbit-static-smoke` — 41/41 passed;
+- `npm run kosmo:orbit-route-smoke` — 141/141 passed;
+- `npm run kosmo:orbit-demo-audit` — 29/29 passed;
+- `npm run kosmo:orbit-responsive-audit` — 25/25 passed;
+- `npm run kosmo:orbit-static-smoke` — 43/43 passed;
 - `npx tsc --noEmit --pretty false --incremental false` — passed;
 - `npm run lint` — 0 Errors, bekannte Bestandswarnungen;
 - `npm run ui:audit` — 72/72 passed;

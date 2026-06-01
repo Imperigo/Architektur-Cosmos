@@ -1,12 +1,12 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T12:51:00.065Z",
+  "generated_at": "2026-06-01T13:10:06.025Z",
   "generator": "kosmo-orbit-static-export-smoke",
   "status": "orbit_static_export_smoke_passed",
   "html_file": "out/orbit/index.html",
   "summary": {
-    "check_count": 41,
-    "passed_checks": 41,
+    "check_count": 43,
+    "passed_checks": 43,
     "failed_checks": 0
   },
   "checks": [
@@ -48,6 +48,11 @@
     {
       "id": "renders_pilot_measurement",
       "label": "Export renders pilot measurement.",
+      "status": "passed"
+    },
+    {
+      "id": "renders_pilot_runbook",
+      "label": "Export renders pilot runbook.",
       "status": "passed"
     },
     {
@@ -168,6 +173,11 @@
     {
       "id": "keeps_pilot_measurement_safe",
       "label": "Export keeps pilot measurement safe and local.",
+      "status": "passed"
+    },
+    {
+      "id": "keeps_pilot_runbook_safe",
+      "label": "Export keeps pilot runbook safe and local.",
       "status": "passed"
     },
     {

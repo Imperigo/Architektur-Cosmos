@@ -1,16 +1,16 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T12:50:16.831Z",
+  "generated_at": "2026-06-01T13:09:02.233Z",
   "generator": "kosmo-orbit-responsive-audit",
   "status": "orbit_responsive_audit_passed",
   "source_dir": "app/orbit",
   "summary": {
-    "check_count": 24,
-    "passed_checks": 24,
+    "check_count": 25,
+    "passed_checks": 25,
     "failed_checks": 0,
-    "min_width_guard_count": 78,
-    "flex_wrap_count": 56,
-    "responsive_grid_count": 61
+    "min_width_guard_count": 82,
+    "flex_wrap_count": 60,
+    "responsive_grid_count": 63
   },
   "checks": [
     {
@@ -111,6 +111,11 @@
     {
       "id": "pilot_measurement_responsive",
       "label": "Pilot measurement uses responsive metric and rule grids.",
+      "status": "passed"
+    },
+    {
+      "id": "pilot_runbook_responsive",
+      "label": "Pilot runbook uses responsive cards for timed steps, evidence and hard stops.",
       "status": "passed"
     },
     {

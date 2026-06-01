@@ -151,6 +151,9 @@ Wichtig fuer die Kommunikation:
   kann: Suchzeit, Blocker-Frueherkennung, Rollenpassung und Wiederholbarkeit,
   ohne Kundendaten, Uploads, Kostenjobs oder automatische Plan-/Design-
   Generierung.
+- Ein Pilot-Runbook ist jetzt direkt in `/orbit` sichtbar: 45-60 Minuten
+  Ausgangslage messen, Zentrale lesen, Projektpaket pruefen, Rollenrunde
+  testen und Pilotentscheidung treffen, weiterhin ohne Live-Risiko.
 - Ein Office Pilot Plan dokumentiert den naechsten 45- bis 60-Minuten-Test:
   kleines reales oder anonymisiertes Projektpaket, Rollen, Ablauf,
   Messpunkte, Chef-Fragen, Sicherheitslinie und Erfolgskriterium.
@@ -181,11 +184,11 @@ Wichtig fuer die Kommunikation:
 
 - `npm run kosmo:orbit-audit-trail` — 11/11 passed.
 - `npm run kosmo:orbit-office-routine` — 10/10 passed.
-- `npm run kosmo:orbit-route-smoke` — 137/137 passed.
+- `npm run kosmo:orbit-route-smoke` — 141/141 passed.
 - `npm run kosmo:orbit-full-review` — 20/20 passed.
-- `npm run kosmo:orbit-demo-audit` — 27/27 passed.
-- `npm run kosmo:orbit-responsive-audit` — 24/24 passed.
-- `npm run kosmo:orbit-static-smoke` — 41/41 passed.
+- `npm run kosmo:orbit-demo-audit` — 29/29 passed.
+- `npm run kosmo:orbit-responsive-audit` — 25/25 passed.
+- `npm run kosmo:orbit-static-smoke` — 43/43 passed.
 - `npx tsc --noEmit --pretty false --incremental false` — passed.
 - `npm run lint` — passed mit bekannten Bestandswarnungen, keine Errors.
 - `npm run build` mit Node 22 — passed.

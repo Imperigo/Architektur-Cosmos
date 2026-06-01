@@ -269,6 +269,14 @@ Arbeitsstation zuerst welches Panel braucht.
     - verhindert, dass KosmoOrbit in der Gesamtlandkarte wieder als
       Website-Feature statt als Hauptsoftware gelesen wird.
 
+37. **Pilot-Runbook in `/orbit`**
+    - fuegt ein sichtbares 45-60-Minuten-Runbook fuer den ersten Buero-Test
+      hinzu;
+    - strukturiert Ausgangslage, Zentrale, Projektpaket, Rollenrunde und
+      Pilotentscheidung;
+    - haelt Kundendaten, Uploads, Kosten, Design-Generation und Push ohne
+      Owner-Go weiterhin blockiert.
+
 ## Lokale Commits seit `origin/main`
 
 - `6ad9372` Add KosmoOrbit role switcher preview
@@ -286,10 +294,10 @@ Arbeitsstation zuerst welches Panel braucht.
 
 Zuletzt gruene lokale Checks:
 
-- `npm run kosmo:orbit-route-smoke` — 137/137 passed
+- `npm run kosmo:orbit-route-smoke` — 141/141 passed
 - `npm run kosmo:orbit-full-review` — 20/20 passed
-- `npm run kosmo:orbit-demo-audit` — 27/27 passed
-- `npm run kosmo:orbit-responsive-audit` — 24/24 passed
+- `npm run kosmo:orbit-demo-audit` — 29/29 passed
+- `npm run kosmo:orbit-responsive-audit` — 25/25 passed
 - `npm run kosmo:orbit-health-readiness` — 14/14 passed
 - `npm run kosmo:orbit-command-contract` — 14/14 passed
 - `npm run kosmo:orbit-audit-trail` — 11/11 passed
@@ -298,13 +306,13 @@ Zuletzt gruene lokale Checks:
 - `npm run database:pilot-quality` — passed, 5 Piloten, 97% Durchschnitt
 - Browser-Smoke fuer `/orbit/` — passed
 - 390px-Mobile-Smoke fuer `/orbit/` — passed
-- `npm run ui:audit` — 72/72 passed, 7 bekannte Warnings
+- `npm run ui:audit` — 72/72 passed, 0 Warnings
 - `npm run archive:validate` — passed
 - `npm run brain:doctor-fast` — 11/12 passed; blockiert bei
   `security:check` durch bestehende npm-audit Dependency-Fundstelle
 - `npx tsc --noEmit` — passed
 - `npm run build` — static export passed
-- `npm run build` + `npm run kosmo:orbit-static-smoke` — 41/41 static
+- `npm run build` + `npm run kosmo:orbit-static-smoke` — 43/43 static
   `/orbit` HTML enthaelt die wichtigsten Demo-Panels und Anker
 
 ## Sicherheitsgrenzen

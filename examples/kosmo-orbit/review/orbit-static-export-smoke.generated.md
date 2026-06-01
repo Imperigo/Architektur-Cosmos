@@ -1,6 +1,6 @@
 # KosmoOrbit Static Export Smoke
 
-Generated: 2026-06-01T12:51:00.065Z
+Generated: 2026-06-01T13:10:06.025Z
 Status: `orbit_static_export_smoke_passed`
 HTML: `out/orbit/index.html`
 
@@ -8,7 +8,7 @@ Checks the built static export for the visible KosmoOrbit demo panels. It does n
 
 ## Summary
 
-- checks: 41/41 passed
+- checks: 43/43 passed
 
 ## Checks
 
@@ -22,6 +22,7 @@ Checks the built static export for the visible KosmoOrbit demo panels. It does n
 | `renders_presenter_mode` | `passed` | Export renders presenter mode. |
 | `renders_workflow_delta` | `passed` | Export renders workflow delta. |
 | `renders_pilot_measurement` | `passed` | Export renders pilot measurement. |
+| `renders_pilot_runbook` | `passed` | Export renders pilot runbook. |
 | `renders_progress_map` | `passed` | Export renders progress map. |
 | `renders_vision_bridge` | `passed` | Export renders vision bridge. |
 | `renders_demo_readiness` | `passed` | Export renders demo readiness. |
@@ -46,6 +47,7 @@ Checks the built static export for the visible KosmoOrbit demo panels. It does n
 | `keeps_runtime_contract_safe` | `passed` | Export keeps runtime process/model/queue actions gated. |
 | `keeps_workflow_delta_honest` | `passed` | Export keeps workflow delta honest about savings. |
 | `keeps_pilot_measurement_safe` | `passed` | Export keeps pilot measurement safe and local. |
+| `keeps_pilot_runbook_safe` | `passed` | Export keeps pilot runbook safe and local. |
 | `keeps_installation_topology_safe` | `passed` | Export keeps installation topology non-operational. |
 | `keeps_office_routine_safe` | `passed` | Export keeps office routine non-operational. |
 | `keeps_health_readiness_safe` | `passed` | Export keeps health readiness non-operational. |
