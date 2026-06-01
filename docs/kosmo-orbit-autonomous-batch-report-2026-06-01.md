@@ -157,7 +157,7 @@ Zuletzt gruene lokale Checks:
 - 390px-Mobile-Smoke fuer `/orbit/` — passed
 - `npm run ui:audit` — 72/72 passed, 7 bekannte Warnings
 - `npm run archive:validate` — passed
-- `npm run brain:doctor-fast` — 10/10 passed
+- `npm run brain:doctor-fast` — 11/11 passed
 - `npm run security:check` — passed, grosse bekannte Dateien uebersprungen
 - `npx tsc --noEmit` — passed
 - `npm run build` — static export passed
