@@ -5,7 +5,7 @@ Status: lokaler Abschluss des autonomen KosmoOrbit-Batches.
 ## Kurzstand
 
 - Branch: `main`
-- Lokaler Stand: 55 Commits vor `origin/main` nach sichtbarer Facilitator-Checkliste
+- Lokaler Stand: 56 Commits vor `origin/main` nach Facilitator-Browser-Smoke
 - Push/Deploy: nicht ausgefuehrt
 - `/orbit`: statische review-only Hauptsoftware-Preview
 - Security: finaler Abschlusscheck gruen, vor Push trotzdem bewusst bestaetigen
@@ -40,6 +40,7 @@ Status: lokaler Abschluss des autonomen KosmoOrbit-Batches.
 - `npm run brain:doctor-fast` - 12/12 passed
 - `git diff --check` - passed
 - In-App-Browser-Smoke Desktop/Mobile - passed
+- In-App-Browser-Smoke fuer `/orbit/#pilot-checklist` - passed
 
 ## Wichtige Grenzen
 

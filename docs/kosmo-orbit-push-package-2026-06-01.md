@@ -6,7 +6,7 @@ Status: lokales Review- und Push-Paket. Kein Push wurde ausgefuehrt.
 
 - Branch: `main`
 - Remote: `origin/main`
-- Lokaler Stand: 55 Commits vor `origin/main`
+- Lokaler Stand: 56 Commits vor `origin/main`
 - Live/Deploy: nicht ausgefuehrt, weil Push/Live-Go fehlt
 
 ## Inhalt des Pakets
@@ -56,6 +56,7 @@ Stand: finaler Abschluss-Sweep am 2026-06-01, kein Push/Deploy.
 - `git diff --check` — passed
 - In-App-Browser-Smoke Desktop/Mobile — passed
 - In-App-Browser-Smoke fuer `/orbit/#pilot-kit` — passed
+- In-App-Browser-Smoke fuer `/orbit/#pilot-checklist` — passed
 - `npm run security:check` — passed
 - `npm run brain:doctor-fast` — 12/12 passed
 

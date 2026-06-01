@@ -353,6 +353,13 @@ Arbeitsstation zuerst welches Panel braucht.
     - erweitert Route- und Static-Smoke, damit Vorbereitung, Ablauf und harte
       Stopps sichtbar bleiben.
 
+49. **Facilitator-Panel Browser-Smoke**
+    - prueft `http://127.0.0.1:4175/orbit/#pilot-checklist` im In-App-Browser;
+    - bestaetigt sichtbare Checkliste, Pilot-Ablauf, harte Stopps,
+      0 px horizontalen Overflow und keine sichtbaren Klickziele unter 32 px;
+    - dokumentiert den lokalen Screenshot unter
+      `/private/tmp/kosmo-orbit-pilot-checklist-smoke-2026-06-01.png`.
+
 ## Lokale Commits seit `origin/main`
 
 - `6ad9372` Add KosmoOrbit role switcher preview
@@ -411,7 +418,7 @@ In diesem Batch wurde nicht gemacht:
 ## Aktueller Zustand
 
 - Branch: `main`
-- Lokaler Stand: 55 Commits vor `origin/main` nach sichtbarer Facilitator-Checkliste
+- Lokaler Stand: 56 Commits vor `origin/main` nach Facilitator-Browser-Smoke
 - Live-Publish: noch nicht automatisch ausgefuehrt, ausser ein spaeterer
   expliziter Push/Publish-Befehl folgt.
 

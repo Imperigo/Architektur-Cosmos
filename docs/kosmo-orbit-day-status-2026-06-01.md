@@ -226,6 +226,7 @@ Wichtig fuer die Kommunikation:
 - `npm run security:check` — passed.
 - `npm run brain:doctor-fast` — 12/12 passed.
 - In-App-Browser-Smoke fuer `/orbit/#pilot-kit` — passed.
+- In-App-Browser-Smoke fuer `/orbit/#pilot-checklist` — passed.
 
 ## Naechster sinnvoller Schritt
 
