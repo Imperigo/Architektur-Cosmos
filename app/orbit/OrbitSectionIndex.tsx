@@ -6,6 +6,7 @@ const sectionLinks = [
   { href: '#projektpaket', label: 'Projektpaket' },
   { href: '#entscheidung', label: 'Decision' },
   { href: '#evidenz', label: 'Evidenz' },
+  { href: '#rechte', label: 'Rechte' },
   { href: '#rollen', label: 'Rollen' },
   { href: '#guardrails', label: 'Guardrails' }
 ];

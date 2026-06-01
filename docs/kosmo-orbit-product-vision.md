@@ -159,6 +159,9 @@ Dieser Kern zeigt:
   prueft;
 - Arbeitsstations-Prioritaeten, die zeigen, welche Panels Chef, Projektleitung,
   Entwurf, Zeichnung und Ausbildung zuerst brauchen;
+- eine Rechte-Matrix, die sichtbar macht, welche Rolle Design Review,
+  lokale Freigabe, Public Gate, Read-only und Generation sehen oder nicht
+  nutzen darf;
 - klare Sperre gegen Design-Generation, Public-Publish, externe Netzwerke,
   Uploads und echte User-Schreibaktionen.
 

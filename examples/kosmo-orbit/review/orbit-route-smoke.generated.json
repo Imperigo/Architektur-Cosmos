@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T07:32:24.497Z",
+  "generated_at": "2026-06-01T07:46:28.107Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 74,
-    "passed_checks": 74,
+    "check_count": 78,
+    "passed_checks": 78,
     "failed_checks": 0
   },
   "checks": [
@@ -97,6 +97,11 @@
       "status": "passed"
     },
     {
+      "id": "permission_matrix_file_exists",
+      "label": "Orbit permission matrix component exists.",
+      "status": "passed"
+    },
+    {
       "id": "autonomy_status_file_exists",
       "label": "Orbit autonomy status component exists.",
       "status": "passed"
@@ -159,6 +164,11 @@
     {
       "id": "imports_workstation_priorities",
       "label": "Route imports the workstation priorities component.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_permission_matrix",
+      "label": "Route imports the permission matrix component.",
       "status": "passed"
     },
     {
@@ -309,6 +319,16 @@
     {
       "id": "covers_core_workstation_roles",
       "label": "Workstation priorities cover owner, project lead, design, drafting and education.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_permission_matrix",
+      "label": "Route renders role permission matrix.",
+      "status": "passed"
+    },
+    {
+      "id": "keeps_generation_blocked_in_matrix",
+      "label": "Permission matrix keeps generation and public gates visibly blocked.",
       "status": "passed"
     },
     {

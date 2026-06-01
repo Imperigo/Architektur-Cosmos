@@ -1,6 +1,6 @@
 # KosmoOrbit Route Smoke
 
-Generated: 2026-06-01T07:32:24.497Z
+Generated: 2026-06-01T07:46:28.107Z
 Status: `orbit_route_smoke_passed`
 Route: `app/orbit/page.tsx`
 
@@ -8,7 +8,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 
 ## Summary
 
-- checks: 74/74 passed
+- checks: 78/78 passed
 
 ## Checks
 
@@ -31,6 +31,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `runtime_boundary_file_exists` | `passed` | Orbit MVP/runtime boundary component exists. |
 | `quality_evidence_file_exists` | `passed` | Orbit quality evidence component exists. |
 | `workstation_priorities_file_exists` | `passed` | Orbit workstation priorities component exists. |
+| `permission_matrix_file_exists` | `passed` | Orbit permission matrix component exists. |
 | `autonomy_status_file_exists` | `passed` | Orbit autonomy status component exists. |
 | `demo_readiness_file_exists` | `passed` | Orbit demo readiness component exists. |
 | `section_index_file_exists` | `passed` | Orbit section index component exists. |
@@ -44,6 +45,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `imports_runtime_boundary` | `passed` | Route imports the MVP/runtime boundary component. |
 | `imports_quality_evidence` | `passed` | Route imports the quality evidence component. |
 | `imports_workstation_priorities` | `passed` | Route imports the workstation priorities component. |
+| `imports_permission_matrix` | `passed` | Route imports the permission matrix component. |
 | `imports_autonomy_status` | `passed` | Route imports the autonomy status component. |
 | `imports_demo_readiness` | `passed` | Route imports the demo readiness component. |
 | `imports_section_index` | `passed` | Route imports the section index navigation component. |
@@ -74,6 +76,8 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `imports_static_smoke_report` | `passed` | Route imports the static export smoke report. |
 | `shows_workstation_priorities` | `passed` | Route renders role-first workstation priorities. |
 | `covers_core_workstation_roles` | `passed` | Workstation priorities cover owner, project lead, design, drafting and education. |
+| `shows_permission_matrix` | `passed` | Route renders role permission matrix. |
+| `keeps_generation_blocked_in_matrix` | `passed` | Permission matrix keeps generation and public gates visibly blocked. |
 | `shows_autonomy_status` | `passed` | Route renders local autonomy status and safety limits. |
 | `keeps_autonomy_cost_safe` | `passed` | Autonomy status keeps Cloud costs and writes blocked. |
 | `keeps_autonomy_named_orbit` | `passed` | Autonomy status names KosmoOrbit, not KosmoWebsite. |

@@ -1,54 +1,59 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T07:39:10.136Z",
+  "generated_at": "2026-06-01T07:46:28.535Z",
   "generator": "kosmo-orbit-demo-audit",
   "status": "orbit_demo_audit_passed",
   "html_file": "out/orbit/index.html",
   "summary": {
-    "check_count": 9,
-    "passed_checks": 9,
+    "check_count": 10,
+    "passed_checks": 10,
     "failed_checks": 0
   },
   "demo_order": [
     {
       "id": "autonomie",
       "label": "Autonomie-Status",
-      "index": 11442
+      "index": 11687
     },
     {
       "id": "presenter",
       "label": "3-Minuten-Erklaerung",
-      "index": 13918
+      "index": 14163
     },
     {
       "id": "fortschritt",
       "label": "Projektfortschritt",
-      "index": 16935
+      "index": 17180
     },
     {
       "id": "demo-ready",
       "label": "Demo-Bereitschaft",
-      "index": 23577
+      "index": 23822
     },
     {
       "id": "projektpaket",
       "label": "Projektpaket Tagesansicht",
-      "index": 26319
+      "index": 26564
     },
     {
       "id": "entscheidung",
       "label": "Review Decision Draft",
-      "index": 39967
+      "index": 40212
     },
     {
       "id": "evidenz",
       "label": "Pruefevidenz",
-      "index": 47232
+      "index": 47477
+    },
+    {
+      "id": "rechte",
+      "label": "Rechte-Matrix",
+      "index": 55734
     },
     {
       "id": "rollen",
       "label": "Rollenumschaltung Preview",
-      "index": 55489
+      "index": 73489
     }
   ],
   "checks": [
@@ -80,6 +85,11 @@
     {
       "id": "review_only_visible",
       "label": "Review-only mode is visible in the export.",
+      "status": "passed"
+    },
+    {
+      "id": "permission_boundary_visible",
+      "label": "Role permission boundary is visible in the export.",
       "status": "passed"
     },
     {

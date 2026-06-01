@@ -12,6 +12,7 @@ import { OrbitAutonomyStatus } from './OrbitAutonomyStatus';
 import { OrbitDemoReadiness, type OrbitStaticExportSmokeReport } from './OrbitDemoReadiness';
 import { OrbitDemoQuestions } from './OrbitDemoQuestions';
 import { OrbitDemoReviewPath } from './OrbitDemoReviewPath';
+import { OrbitPermissionMatrix } from './OrbitPermissionMatrix';
 import { OrbitPresenterBrief } from './OrbitPresenterBrief';
 import { OrbitProgressMap } from './OrbitProgressMap';
 import { OrbitProjectDashboard, type DesignHandoffPreview, type ProjectInspectorReport } from './OrbitProjectDashboard';
@@ -368,6 +369,10 @@ export default function OrbitPage() {
           </div>
 
           <OrbitWorkstationPriorities />
+
+          <div id="rechte" className="scroll-mt-4">
+            <OrbitPermissionMatrix variants={roleVariantsReport.variants} />
+          </div>
 
           <div id="rollen" className="scroll-mt-4">
             <OrbitRoleSwitcher initialRoleId={roleState.session.active_role_id} variants={roleVariantsReport.variants} />

@@ -87,6 +87,10 @@ Wichtig fuer die Kommunikation:
 - Ein neuer `kosmo:orbit-demo-audit` prueft den gebauten `/orbit`-Export auf
   Vorfuehrreihenfolge, Navigation, sichtbare Freigabelinie und offensichtliche
   Render-Artefakte.
+- Eine Browser-Smoke-Checkliste beschreibt den naechsten echten Klicktest;
+  der visuelle Browser-/Mobile-Smoke ist bewusst noch offen.
+- Eine Rechte-Matrix zeigt je Rolle Design-Review, Design-Generation,
+  lokale Freigabe, Public Gate und Read-only-Status.
 
 ## Qualitaetsgrenzen
 
@@ -97,7 +101,6 @@ Wichtig fuer die Kommunikation:
 
 ## Naechster sinnvoller Schritt
 
-Nach den lokalen Checks ist der naechste Produktschritt ein echter visueller
-Browser-Smoke fuer `/orbit`, damit Fortschrittskarte, Rollenumschaltung und
-Demo-Navigation nicht nur statisch, sondern auch interaktiv in einer
-menschlichen Vorfuehrung robust wirken.
+Nach den lokalen Checks ist der naechste Produktschritt ein schmaler
+Mobile-/Viewport-Smoke fuer `/orbit`, damit Demo-Navigation, Rollenumschaltung
+und Karten nicht nur am Desktop, sondern auch in engeren Layouts robust wirken.

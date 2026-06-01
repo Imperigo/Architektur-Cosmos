@@ -1,6 +1,6 @@
 # KosmoOrbit Static Export Smoke
 
-Generated: 2026-06-01T07:31:51.734Z
+Generated: 2026-06-01T07:46:28.352Z
 Status: `orbit_static_export_smoke_passed`
 HTML: `out/orbit/index.html`
 
@@ -8,7 +8,7 @@ Checks the built static export for the visible KosmoOrbit demo panels. It does n
 
 ## Summary
 
-- checks: 17/17 passed
+- checks: 18/18 passed
 
 ## Checks
 
@@ -26,6 +26,7 @@ Checks the built static export for the visible KosmoOrbit demo panels. It does n
 | `renders_runtime_boundary` | `passed` | Export renders MVP/runtime boundary. |
 | `renders_quality_evidence` | `passed` | Export renders quality evidence. |
 | `renders_workstation_priorities` | `passed` | Export renders workstation priorities. |
+| `renders_permission_matrix` | `passed` | Export renders permission matrix. |
 | `renders_role_switcher` | `passed` | Export renders role switcher. |
 | `renders_guided_review_path` | `passed` | Export renders guided review path. |
 | `anchors_core_sections` | `passed` | Export contains section anchors. |

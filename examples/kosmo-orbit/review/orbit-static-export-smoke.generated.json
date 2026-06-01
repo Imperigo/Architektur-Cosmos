@@ -1,12 +1,12 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T07:31:51.734Z",
+  "generated_at": "2026-06-01T07:46:28.352Z",
   "generator": "kosmo-orbit-static-export-smoke",
   "status": "orbit_static_export_smoke_passed",
   "html_file": "out/orbit/index.html",
   "summary": {
-    "check_count": 17,
-    "passed_checks": 17,
+    "check_count": 18,
+    "passed_checks": 18,
     "failed_checks": 0
   },
   "checks": [
@@ -68,6 +68,11 @@
     {
       "id": "renders_workstation_priorities",
       "label": "Export renders workstation priorities.",
+      "status": "passed"
+    },
+    {
+      "id": "renders_permission_matrix",
+      "label": "Export renders permission matrix.",
       "status": "passed"
     },
     {

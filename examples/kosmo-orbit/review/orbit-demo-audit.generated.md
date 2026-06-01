@@ -1,6 +1,6 @@
 # KosmoOrbit Demo Audit
 
-Generated: 2026-06-01T07:39:10.136Z
+Generated: 2026-06-01T07:46:28.535Z
 Status: `orbit_demo_audit_passed`
 HTML: `out/orbit/index.html`
 
@@ -8,20 +8,21 @@ Static audit for the human presentation flow of `/orbit`. It checks section orde
 
 ## Summary
 
-- checks: 9/9 passed
+- checks: 10/10 passed
 
 ## Demo Order
 
 | Anchor | Section | Position |
 | --- | --- | ---: |
-| `autonomie` | Autonomie-Status | 11442 |
-| `presenter` | 3-Minuten-Erklaerung | 13918 |
-| `fortschritt` | Projektfortschritt | 16935 |
-| `demo-ready` | Demo-Bereitschaft | 23577 |
-| `projektpaket` | Projektpaket Tagesansicht | 26319 |
-| `entscheidung` | Review Decision Draft | 39967 |
-| `evidenz` | Pruefevidenz | 47232 |
-| `rollen` | Rollenumschaltung Preview | 55489 |
+| `autonomie` | Autonomie-Status | 11687 |
+| `presenter` | 3-Minuten-Erklaerung | 14163 |
+| `fortschritt` | Projektfortschritt | 17180 |
+| `demo-ready` | Demo-Bereitschaft | 23822 |
+| `projektpaket` | Projektpaket Tagesansicht | 26564 |
+| `entscheidung` | Review Decision Draft | 40212 |
+| `evidenz` | Pruefevidenz | 47477 |
+| `rechte` | Rechte-Matrix | 55734 |
+| `rollen` | Rollenumschaltung Preview | 73489 |
 
 ## Checks
 
@@ -33,6 +34,7 @@ Static audit for the human presentation flow of `/orbit`. It checks section orde
 | `navigation_complete` | `passed` | Demo navigation exposes all core stops. |
 | `approval_boundary_visible` | `passed` | Approval boundary is visible in the export. |
 | `review_only_visible` | `passed` | Review-only mode is visible in the export. |
+| `permission_boundary_visible` | `passed` | Role permission boundary is visible in the export. |
 | `no_runtime_promise` | `passed` | Export does not claim live runtime execution. |
 | `no_render_artifacts` | `passed` | Visible export HTML has no obvious unresolved render artifacts. |
 | `no_server_runtime_markers` | `passed` | Export has no server-runtime markers. |
