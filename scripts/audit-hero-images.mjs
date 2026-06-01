@@ -60,6 +60,10 @@ for (const entry of entries) {
 const duplicateHeroUrls = [...heroByUrl.entries()]
   .filter(([, urlEntries]) => urlEntries.length > 1)
   .map(([url, urlEntries]) => ({ url, entries: urlEntries }));
+const nextReviewBatch = missingHero
+  .filter((item) => item.review_priority.startsWith('p1_'))
+  .sort((a, b) => priorityRank(a.review_priority) - priorityRank(b.review_priority) || Number(a.year_start) - Number(b.year_start))
+  .slice(0, 14);
 
 const report = {
   generated_at: new Date().toISOString(),
@@ -68,6 +72,7 @@ const report = {
   coverage_percent: Math.round((heroByUrl.size / entries.length) * 1000) / 10,
   missing_hero: missingHero,
   missing_hero_review: missingHero,
+  next_review_batch: nextReviewBatch,
   duplicate_hero_urls: duplicateHeroUrls,
   blocked_or_unknown_licenses: blockedLicense,
   missing_attribution: missingAttribution
@@ -136,4 +141,12 @@ function prioritySummary(items) {
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([priority, count]) => `${priority}=${count}`)
     .join(', ');
+}
+
+function priorityRank(priority) {
+  if (priority === 'p1_public_domain_candidate') return 1;
+  if (priority === 'p1_institutional_source_candidate') return 2;
+  if (priority === 'p2_manual_rights_review') return 3;
+  if (priority === 'p3_private_or_link_only') return 4;
+  return 9;
 }
