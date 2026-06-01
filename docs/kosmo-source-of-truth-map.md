@@ -81,6 +81,8 @@ Aktiv fuer:
   statt erfundener Pilotresultate zeigt
 - Pilot-Messkit fuer Baseline, Evidenzrunde, Rollenrunde, Entscheidung,
   leere Messkarten und Evidenzlinks ohne behauptete Resultate
+- Pilot-Result-Draft fuer spaetere echte Buero-Pilotwerte, bewusst mit
+  `null`-Slots, fehlender Evidenz und blockierten Public Claims
 - Chef-Demo-Skript, Office Pilot Plan und Facilitator-Checkliste fuer die
   erste nicht-technische Bueroerklaerung
 - sichtbares Facilitator-Panel in `/orbit`, damit die Pilotmoderation direkt
@@ -96,6 +98,8 @@ Aktiv fuer:
 - lokale Nachweise ueber `kosmo:orbit-full-review`, `kosmo:orbit-route-smoke`,
   `kosmo:orbit-demo-audit`, `kosmo:orbit-responsive-audit` und
   `kosmo:orbit-static-smoke`
+- Browser-Smoke-Nachweise fuer Pilot-Messkit, Facilitator-Checkliste und
+  Pilot-Result-Draft
 - finaler lokaler Abschluss in
   `docs/kosmo-orbit-autonomous-closeout-2026-06-01.md`
 

@@ -145,6 +145,9 @@ Aktueller Repo-Stand 2026-06-01:
 - `/orbit` zeigt zusaetzlich ein Pilot-Messkit mit leeren Messkarten und
   Evidenzlinks, damit der erste Buero-Pilot strukturiert, aber nicht
   vorweggenommen wird.
+- `/orbit` zeigt zusaetzlich einen Pilot-Result-Draft mit leeren `null`-
+  Slots, fehlender Evidenz und blockierten Public Claims. Das trennt
+  Messstruktur und echte Pilotresultate klar.
 - Eine Office Pilot Facilitator Checklist uebersetzt den ersten Test in eine
   moderierbare Abfolge fuer nicht-technische Architekt:innen.
 - Das Facilitator-Panel ist direkt in `/orbit` sichtbar und durch Route- sowie

@@ -42,7 +42,12 @@ In drei Minuten soll ein Architekturbueroleiter verstehen:
    Messwerte bleiben im Template leer, bis ein echter Mensch den Pilot
    durchgefuehrt hat.
 
-6. **Buero-Routine zeigen**
+6. **Pilot-Result-Draft zeigen**
+   Erklaeren: Hier wuerden spaeter die echten Pilotresultate landen. Heute
+   bleiben Werte, Notizen, Evidenz und Public Claims bewusst leer oder
+   blockiert, damit keine Demo-Zahl wie ein echtes Ergebnis wirkt.
+
+7. **Buero-Routine zeigen**
    Erklaeren: KosmoOrbit denkt den Arbeitstag als lokale Routine:
    Morgenstart, Projektfokus, KosmoDesign Review Session, Lernmodus,
    Abendabschluss und Not-Stopp. Heute bleibt das statisch und nicht

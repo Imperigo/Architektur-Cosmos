@@ -45,7 +45,12 @@ klarer und nachvollziehbarer machen.
    - Sagen: Vorher/Nachher-Werte werden erst eingetragen, wenn ein echter
      Mensch den Pilot durchgefuehrt hat.
 
-5. **KosmoDesign Handoff zeigen**
+5. **Pilot-Result-Draft zeigen**
+   - Sagen: Das ist die leere Ergebnisstruktur fuer den spaeteren Pilot.
+   - Sagen: Werte, Notizen, Evidenz und oeffentliche Claims bleiben blockiert,
+     bis eine menschliche Pruefung echte Beobachtungen bestaetigt.
+
+6. **KosmoDesign Handoff zeigen**
    - Sagen: KosmoDesign ist das spaetere architektonische Haupttool.
    - Sagen: Heute ist nur Review Mode erlaubt; Design-Generation bleibt
      gesperrt.

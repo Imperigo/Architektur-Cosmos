@@ -744,6 +744,8 @@ Architekturburo:
 - Pilot-Runbook fuer einen 45-60-Minuten-Buero-Test ohne Live-Risiko;
 - Pilot-Session-Vertrag als lokales Template fuer spaetere echte Messwerte;
 - Pilot-Session-Template sichtbar in `/orbit` mit leeren before/after-Werten;
+- Pilot-Result-Draft sichtbar in `/orbit` mit leeren `null`-Slots,
+  fehlender Evidenz und blockierten Public Claims;
 - Vision-zu-MVP-Fortschrittskarte;
 - Vision Bridge zwischen KosmoZentrale, Prepare, Design, Draw/Viz/Publish,
   Data und Asset;
@@ -777,13 +779,14 @@ Die wichtigste Produktlinie ist damit klarer:
 
 Aktuelle lokale Nachweise:
 
-- `npm run kosmo:orbit-full-review` — 22/22 passed;
+- `npm run kosmo:orbit-full-review` — 23/23 passed;
 - `npm run kosmo:orbit-pilot-kit` — 19/19 passed;
 - `npm run kosmo:orbit-pilot-session` — 17/17 passed;
-- `npm run kosmo:orbit-route-smoke` — 157/157 passed;
+- `npm run kosmo:orbit-pilot-result` — 21/21 passed;
+- `npm run kosmo:orbit-route-smoke` — 161/161 passed;
 - `npm run kosmo:orbit-demo-audit` — 33/33 passed;
 - `npm run kosmo:orbit-responsive-audit` — 27/27 passed;
-- `npm run kosmo:orbit-static-smoke` — 51/51 passed;
+- `npm run kosmo:orbit-static-smoke` — 53/53 passed;
 - `npx tsc --noEmit --pretty false --incremental false` — passed;
 - `npm run lint` — 0 Errors, bekannte Bestandswarnungen;
 - `npm run ui:audit` — 72/72 passed;

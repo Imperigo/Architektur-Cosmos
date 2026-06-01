@@ -369,7 +369,15 @@ Arbeitsstation zuerst welches Panel braucht.
     - blockiert Public Claims zu Zeit, Kosten, Qualitaet und Validierung, bis
       menschliche Evidenz geprueft ist.
 
-51. **Brain Doctor Ausweitung**
+51. **Pilot-Result Browser-Smoke**
+    - prueft `http://127.0.0.1:4176/orbit/#pilot-result` lokal im
+      In-App-Browser;
+    - bestaetigt mobile und Desktop-Darstellung, 0 px horizontalen Overflow,
+      sichtbare `null`-Slots, `Publication: blocked` und fehlende Evidenz;
+    - dokumentiert Screenshots unter `/private/tmp/kosmo-orbit-pilot-result-smoke-2026-06-01.png`
+      und `/private/tmp/kosmo-orbit-pilot-result-desktop-smoke-2026-06-01.png`.
+
+52. **Brain Doctor Ausweitung**
     - `brain:doctor-fast` prueft nun zusaetzlich KosmoOrbit Full Review und
       KosmoAsset Full Review;
     - der zentrale schnelle Doctor deckt damit Website/KosmoData, Orbit,
@@ -407,6 +415,7 @@ Zuletzt gruene lokale Checks:
 - `npm run database:pilot-quality` — passed, 5 Piloten, 97% Durchschnitt
 - Browser-Smoke fuer `/orbit/` — passed
 - 390px-Mobile-Smoke fuer `/orbit/` — passed
+- Browser-Smoke fuer `/orbit/#pilot-result` — passed
 - `npm run ui:audit` — 72/72 passed, 0 Warnings
 - `npm run archive:validate` — passed
 - `npm run security:check` — passed

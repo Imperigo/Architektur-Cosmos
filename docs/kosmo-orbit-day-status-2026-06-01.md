@@ -182,6 +182,9 @@ Wichtig fuer die Kommunikation:
 - Ein Pilot-Result-Draft ist direkt in `/orbit` sichtbar: Er nimmt spaeter
   echte Beobachtungswerte, Notizen und Evidenz auf, bleibt heute aber komplett
   leer, lokal und public-claim-blocked.
+- Der Browser-Smoke fuer `/orbit/#pilot-result` bestaetigt mobile und Desktop-
+  Darstellung, 0 px horizontalen Overflow, eine einzige Result-Section,
+  sichtbare `null`-Slots, `Publication: blocked` und fehlende Evidenz.
 - Ein Chef-Demo-Skript fasst die nicht-technische 5-Minuten-Erklaerung
   zusammen und ist im Office Pilot Plan als Arbeitsartefakt verlinkt.
 - Eine Office Pilot Facilitator Checklist fuehrt den ersten 45-60-Minuten-
@@ -223,7 +226,7 @@ Wichtig fuer die Kommunikation:
 - `npm run kosmo:orbit-pilot-result` — 21/21 passed.
 - `npm run kosmo:orbit-demo-audit` — 33/33 passed.
 - `npm run kosmo:orbit-responsive-audit` — 27/27 passed.
-- `npm run kosmo:orbit-static-smoke` — 51/51 passed.
+- `npm run kosmo:orbit-static-smoke` — 53/53 passed.
 - `npx tsc --noEmit --pretty false --incremental false` — passed.
 - `npm run lint` — passed mit bekannten Bestandswarnungen, keine Errors.
 - `npm run build` mit Node 22 — passed.
@@ -232,6 +235,7 @@ Wichtig fuer die Kommunikation:
 - `npm run brain:doctor-fast` — 14/14 passed.
 - In-App-Browser-Smoke fuer `/orbit/#pilot-kit` — passed.
 - In-App-Browser-Smoke fuer `/orbit/#pilot-checklist` — passed.
+- In-App-Browser-Smoke fuer `/orbit/#pilot-result` — passed.
 
 ## Naechster sinnvoller Schritt
 

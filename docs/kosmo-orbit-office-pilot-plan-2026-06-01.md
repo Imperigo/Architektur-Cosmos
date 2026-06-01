@@ -82,6 +82,13 @@ KosmoOrbit-Logik im Buero verstaendlich und nuetzlich ist:
   als leeres Messkit mit Evidenzlinks und ohne behauptete Resultate.
 - `npm run kosmo:orbit-pilot-kit` prueft, dass Messwerte, Notizen,
   Scoring und Entscheidung leer bleiben, bis ein Mensch den Pilot ausfuellt.
+- `schema/kosmo-orbit-pilot-result-draft.schema.json` als lokaler Vertrag fuer
+  spaetere echte Pilotresultate.
+- `examples/kosmo-orbit/pilot/orbit-office-pilot-result-draft.demo.json` als
+  leerer Resultat-Draft mit `null`-Slots, fehlender Evidenz und blockierten
+  Public Claims.
+- `npm run kosmo:orbit-pilot-result` prueft, dass keine Zeit-, Kosten-,
+  Qualitaets- oder Validierungsclaims ohne menschliche Pilot-Evidenz entstehen.
 
 ## Fragen an die Chefs
 
