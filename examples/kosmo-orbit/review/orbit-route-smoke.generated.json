@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T07:11:43.918Z",
+  "generated_at": "2026-06-01T07:15:26.201Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 52,
-    "passed_checks": 52,
+    "check_count": 56,
+    "passed_checks": 56,
     "failed_checks": 0
   },
   "checks": [
@@ -87,6 +87,11 @@
       "status": "passed"
     },
     {
+      "id": "workstation_priorities_file_exists",
+      "label": "Orbit workstation priorities component exists.",
+      "status": "passed"
+    },
+    {
       "id": "imports_role_switcher",
       "label": "Route imports the role switcher preview component.",
       "status": "passed"
@@ -124,6 +129,11 @@
     {
       "id": "imports_quality_evidence",
       "label": "Route imports the quality evidence component.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_workstation_priorities",
+      "label": "Route imports the workstation priorities component.",
       "status": "passed"
     },
     {
@@ -229,6 +239,16 @@
     {
       "id": "imports_quality_reports",
       "label": "Route imports full review and route smoke reports.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_workstation_priorities",
+      "label": "Route renders role-first workstation priorities.",
+      "status": "passed"
+    },
+    {
+      "id": "covers_core_workstation_roles",
+      "label": "Workstation priorities cover owner, project lead, design, drafting and education.",
       "status": "passed"
     },
     {

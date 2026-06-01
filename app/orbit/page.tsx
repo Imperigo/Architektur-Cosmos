@@ -15,6 +15,7 @@ import { OrbitQualityEvidence, type OrbitFullReviewReport, type OrbitRouteSmokeR
 import { OrbitReviewDecisionDraft } from './OrbitReviewDecisionDraft';
 import { OrbitRuntimeBoundary } from './OrbitRuntimeBoundary';
 import { OrbitRoleSwitcher } from './OrbitRoleSwitcher';
+import { OrbitWorkstationPriorities } from './OrbitWorkstationPriorities';
 
 export const dynamic = 'force-static';
 
@@ -337,6 +338,8 @@ export default function OrbitPage() {
           <OrbitRuntimeBoundary />
 
           <OrbitQualityEvidence fullReview={fullReview} routeSmoke={routeSmoke} />
+
+          <OrbitWorkstationPriorities />
 
           <OrbitRoleSwitcher initialRoleId={roleState.session.active_role_id} variants={roleVariantsReport.variants} />
 

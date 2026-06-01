@@ -472,6 +472,20 @@ Die `/orbit` Preview zeigt nun lokale Qualitaetsevidenz direkt im Tool:
 Damit kann eine Demo nicht nur behaupten, dass KosmoOrbit sicher bleibt,
 sondern die lokale Pruefkette direkt an der Oberflaeche zeigen.
 
+### Arbeitsstations-Prioritaeten
+
+Die `/orbit` Preview zeigt nun pro Hauptrolle, welches Panel zuerst wichtig
+ist:
+
+- Chef/Admin: MVP-Grenze und Pruefevidenz.
+- Projektleitung: Projektpaket Tagesansicht und Review Decision Draft.
+- Entwurf: Gefuehrter Demo-Review-Pfad und KosmoDesign Review Mode.
+- Zeichnung: Modellprofil und naechste Review-Artefakte.
+- Ausbildung: Presenter-Modus und Demo-Fragen.
+
+Damit wird die spaetere Arbeitsplatzlogik konkreter: KosmoOrbit ist nicht
+ein grosses Einheitsdashboard, sondern eine rollengerechte Steuerzentrale.
+
 ## 14. Static KosmoDesign UI Prototype
 
 Aus der Panel-Spezifikation kann KosmoOrbit einen ersten lokalen HTML-Prototyp

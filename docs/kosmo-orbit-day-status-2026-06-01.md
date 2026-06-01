@@ -73,6 +73,8 @@ Wichtig fuer die Kommunikation:
   MVP-Vertrag und spaeterer KosmoZentrale-Runtime.
 - Ein Pruefevidenz-Panel zeigt Full Review, Route-Smoke, Reviewlast und Open
   Mode direkt in `/orbit`, damit die Demo ihre lokale Qualitaet belegen kann.
+- Eine Arbeitsstations-Prioritaet zeigt, welche Panels Chef/Admin,
+  Projektleitung, Entwurf, Zeichnung und Ausbildung zuerst sehen sollten.
 
 ## Qualitaetsgrenzen
 
@@ -83,6 +85,6 @@ Wichtig fuer die Kommunikation:
 
 ## Naechster sinnvoller Schritt
 
-Nach den lokalen Checks ist der naechste Produktschritt die Ordnung der
-Arbeitsstation-Perspektive: Welche Panels braucht Chef, Projektleitung,
-Entwurf, Zeichnung und Ausbildung wirklich als erstes?
+Nach den lokalen Checks ist der naechste Produktschritt eine konsolidierte
+Autonomie-Zwischenbilanz: Plan, gebaute Panels, Checks, lokale Commits,
+Risiken und naechste Prioritaet in einem kurzen Batchreport.

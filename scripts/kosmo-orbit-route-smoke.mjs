@@ -15,6 +15,7 @@ const demoQuestionsPath = resolve(root, args.demoQuestions || 'app/orbit/OrbitDe
 const reviewDecisionDraftPath = resolve(root, args.reviewDecisionDraft || 'app/orbit/OrbitReviewDecisionDraft.tsx');
 const runtimeBoundaryPath = resolve(root, args.runtimeBoundary || 'app/orbit/OrbitRuntimeBoundary.tsx');
 const qualityEvidencePath = resolve(root, args.qualityEvidence || 'app/orbit/OrbitQualityEvidence.tsx');
+const workstationPrioritiesPath = resolve(root, args.workstationPriorities || 'app/orbit/OrbitWorkstationPriorities.tsx');
 const specPath = resolve(root, args.spec || 'examples/kosmo-orbit/review/orbit-app-route-spec.generated.json');
 const outputJsonPath = resolve(root, args.output || 'examples/kosmo-orbit/review/orbit-route-smoke.generated.json');
 const outputMdPath = resolve(root, args.markdown || 'examples/kosmo-orbit/review/orbit-route-smoke.generated.md');
@@ -37,8 +38,9 @@ async function main() {
   const reviewDecisionDraftSource = existsSync(reviewDecisionDraftPath) ? readFileSync(reviewDecisionDraftPath, 'utf8') : '';
   const runtimeBoundarySource = existsSync(runtimeBoundaryPath) ? readFileSync(runtimeBoundaryPath, 'utf8') : '';
   const qualityEvidenceSource = existsSync(qualityEvidencePath) ? readFileSync(qualityEvidencePath, 'utf8') : '';
+  const workstationPrioritiesSource = existsSync(workstationPrioritiesPath) ? readFileSync(workstationPrioritiesPath, 'utf8') : '';
   const spec = readJson(specPath);
-  const report = buildReport({ routeSource, roleSwitcherSource, demoReviewSource, projectDashboardSource, presenterBriefSource, demoQuestionsSource, reviewDecisionDraftSource, runtimeBoundarySource, qualityEvidenceSource, spec });
+  const report = buildReport({ routeSource, roleSwitcherSource, demoReviewSource, projectDashboardSource, presenterBriefSource, demoQuestionsSource, reviewDecisionDraftSource, runtimeBoundarySource, qualityEvidenceSource, workstationPrioritiesSource, spec });
 
   await Promise.all([
     mkdir(dirname(outputJsonPath), { recursive: true }),
@@ -55,8 +57,8 @@ async function main() {
   if (report.status !== 'orbit_route_smoke_passed') process.exit(1);
 }
 
-function buildReport({ routeSource, roleSwitcherSource, demoReviewSource, projectDashboardSource, presenterBriefSource, demoQuestionsSource, reviewDecisionDraftSource, runtimeBoundarySource, qualityEvidenceSource, spec }) {
-  const source = `${routeSource}\n${roleSwitcherSource}\n${demoReviewSource}\n${projectDashboardSource}\n${presenterBriefSource}\n${demoQuestionsSource}\n${reviewDecisionDraftSource}\n${runtimeBoundarySource}\n${qualityEvidenceSource}`;
+function buildReport({ routeSource, roleSwitcherSource, demoReviewSource, projectDashboardSource, presenterBriefSource, demoQuestionsSource, reviewDecisionDraftSource, runtimeBoundarySource, qualityEvidenceSource, workstationPrioritiesSource, spec }) {
+  const source = `${routeSource}\n${roleSwitcherSource}\n${demoReviewSource}\n${projectDashboardSource}\n${presenterBriefSource}\n${demoQuestionsSource}\n${reviewDecisionDraftSource}\n${runtimeBoundarySource}\n${qualityEvidenceSource}\n${workstationPrioritiesSource}`;
   const forbiddenPatterns = [
     { id: 'no_use_server', pattern: /['"]use server['"]/ },
     { id: 'no_next_server', pattern: /from ['"]next\/server['"]/ },
@@ -82,6 +84,7 @@ function buildReport({ routeSource, roleSwitcherSource, demoReviewSource, projec
     check('review_decision_draft_file_exists', 'Orbit review decision draft component exists.', existsSync(reviewDecisionDraftPath)),
     check('runtime_boundary_file_exists', 'Orbit MVP/runtime boundary component exists.', existsSync(runtimeBoundaryPath)),
     check('quality_evidence_file_exists', 'Orbit quality evidence component exists.', existsSync(qualityEvidencePath)),
+    check('workstation_priorities_file_exists', 'Orbit workstation priorities component exists.', existsSync(workstationPrioritiesPath)),
     check('imports_role_switcher', 'Route imports the role switcher preview component.', routeSource.includes('OrbitRoleSwitcher')),
     check('imports_demo_review_path', 'Route imports the guided demo review component.', routeSource.includes('OrbitDemoReviewPath')),
     check('imports_project_dashboard', 'Route imports the project package dashboard component.', routeSource.includes('OrbitProjectDashboard')),
@@ -90,6 +93,7 @@ function buildReport({ routeSource, roleSwitcherSource, demoReviewSource, projec
     check('imports_review_decision_draft', 'Route imports the review decision draft component.', routeSource.includes('OrbitReviewDecisionDraft')),
     check('imports_runtime_boundary', 'Route imports the MVP/runtime boundary component.', routeSource.includes('OrbitRuntimeBoundary')),
     check('imports_quality_evidence', 'Route imports the quality evidence component.', routeSource.includes('OrbitQualityEvidence')),
+    check('imports_workstation_priorities', 'Route imports the workstation priorities component.', routeSource.includes('OrbitWorkstationPriorities')),
     check('uses_force_static', 'Route declares force-static rendering.', source.includes("dynamic = 'force-static'") || source.includes('dynamic = "force-static"')),
     check('shows_kosmo_orbit', 'Route renders KosmoOrbit heading.', source.includes('KosmoOrbit')),
     check('shows_demo_path', 'Route renders the 3-minute human demo path.', source.includes('3-Minuten-Demo') && source.includes('demoSteps')),
@@ -111,6 +115,8 @@ function buildReport({ routeSource, roleSwitcherSource, demoReviewSource, projec
     check('keeps_runtime_side_effects_off', 'Runtime boundary states no runtime side effects.', source.includes('no-runtime-side-effects')),
     check('shows_quality_evidence', 'Route renders local review and route-smoke quality evidence.', source.includes('Pruefevidenz') && source.includes('Warum diese Preview belastbar ist')),
     check('imports_quality_reports', 'Route imports full review and route smoke reports.', source.includes('orbit-full-review.generated.json') && source.includes('orbit-route-smoke.generated.json')),
+    check('shows_workstation_priorities', 'Route renders role-first workstation priorities.', source.includes('Arbeitsstationen') && source.includes('role-first-ui')),
+    check('covers_core_workstation_roles', 'Workstation priorities cover owner, project lead, design, drafting and education.', source.includes('Chef / Admin') && source.includes('Projektleitung') && source.includes('Entwurf') && source.includes('Zeichnung') && source.includes('Ausbildung')),
     check('shows_blocked_actions', 'Route renders blocked action labels from role state.', source.includes('Blockierte Aktionen') && source.includes('roleState.blocked_actions.map')),
     check('shows_review_only_copy', 'Route keeps review-only safety copy visible.', source.includes('review-only') || source.includes('Review')),
     ...forbiddenPatterns.map((item) => check(item.id, `Forbidden pattern is absent: ${item.id}.`, !item.pattern.test(source)))
