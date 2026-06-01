@@ -154,6 +154,8 @@ Wichtig fuer die Kommunikation:
 - Ein Office Pilot Plan dokumentiert den naechsten 45- bis 60-Minuten-Test:
   kleines reales oder anonymisiertes Projektpaket, Rollen, Ablauf,
   Messpunkte, Chef-Fragen, Sicherheitslinie und Erfolgskriterium.
+- Die MVP-Roadmap ist mit dem aktuellen `/orbit`-Preview-Stand synchronisiert:
+  sichtbare Panels, Produktlinie, lokale Nachweise und naechster Buero-Pilot.
 - Ein neuer KosmoData-HUD-Guard schuetzt die wiederkehrenden Website-Bedienpunkte:
   Database oben links, Suche/Dev rechts, Filterzugang rechts unten, HTML-
   Database-Overlay, globales Fadenkreuz in Start/Hauptmenue/Popups und

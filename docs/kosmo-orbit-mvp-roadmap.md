@@ -725,3 +725,58 @@ Wichtig: Diese Route ist noch keine echte lokale Kosmo-Runtime und keine
 Produktivnavigation. Sie ist der erste sichtbare Orbit-Cockpit-Prototyp im
 statischen Repo, damit KosmoOrbit als Hauptsoftware-Shell geprueft werden kann,
 ohne die Deployment-Grenzen des statischen Cloudflare-Exports zu verletzen.
+
+## 22. Aktueller `/orbit` Preview-Stand 2026-06-01
+
+Die Route ist inzwischen mehr als ein reines Cockpit. Sie bleibt statisch und
+review-only, zeigt aber den ersten zusammenhaengenden Produktpfad fuer ein
+Architekturburo:
+
+- Autonomie-Status fuer den lokalen Arbeitsmodus;
+- Buero-Routine fuer Morgenstart, Projektfokus, KosmoDesign Review Session,
+  Lernmodus, Abendabschluss und Not-Stopp;
+- Presenter-Modus fuer eine kurze nicht-technische Erklaerung;
+- Workflow-Delta fuer heutigen Bueroablauf gegen KosmoOrbit-Zielablauf;
+- Pilotmessung fuer Suchzeit, Blocker-Frueherkennung, Rollenpassung und
+  Wiederholbarkeit;
+- Vision-zu-MVP-Fortschrittskarte;
+- Vision Bridge zwischen KosmoZentrale, Prepare, Design, Draw/Viz/Publish,
+  Data und Asset;
+- Demo-Bereitschaft mit Full Review, Route-Smoke und Static-Smoke;
+- Projektpaket Tagesansicht;
+- KosmoDesign Handoff Console mit blockierter Design-Generation;
+- Demo-Fragen fuer ein Architekturbuero;
+- Review Decision Draft;
+- Runtime-, Health-, Installation-, Risiko-, Command- und Audit-Vertraege;
+- Pruefevidenz;
+- Arbeitsstations-Prioritaeten;
+- Ausbildungsmodus;
+- Rechte-Matrix;
+- Rollenumschaltung;
+- gefuehrter Demo-Review-Pfad;
+- Tool-Zentrale und blockierte Aktionen.
+
+Die wichtigste Produktlinie ist damit klarer:
+
+1. KosmoOrbit ist die installierte Hauptsoftware-Zentrale.
+2. KosmoOrbit zeigt Rollen, Projektwissen, Gates, Evidenz und naechste sichere
+   Schritte.
+3. KosmoDesign wird sichtbar als Haupt-Untertool vorbereitet, bleibt aber im
+   Review Mode.
+4. Generation, Runtime, Tool-Launch, Upload, Publish, externe Accounts,
+   Kostenjobs und Push bleiben ohne explizite Freigabe blockiert.
+5. Der naechste echte Produktschritt ist ein kleiner Buero-Pilot mit
+   messbarer Suchzeit, Blocker-Frueherkennung, Rollenpassung und
+   Wiederholbarkeit.
+
+Aktuelle lokale Nachweise:
+
+- `npm run kosmo:orbit-full-review` — 20/20 passed;
+- `npm run kosmo:orbit-route-smoke` — 137/137 passed;
+- `npm run kosmo:orbit-demo-audit` — 27/27 passed;
+- `npm run kosmo:orbit-responsive-audit` — 24/24 passed;
+- `npm run kosmo:orbit-static-smoke` — 41/41 passed;
+- `npx tsc --noEmit --pretty false --incremental false` — passed;
+- `npm run lint` — 0 Errors, bekannte Bestandswarnungen;
+- `npm run ui:audit` — 72/72 passed;
+- `npm run build` mit Node 22 — static export passed.

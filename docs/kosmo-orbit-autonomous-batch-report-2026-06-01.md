@@ -247,6 +247,13 @@ Arbeitsstation zuerst welches Panel braucht.
       Erfolgskriterium;
     - macht aus der Demo einen naechsten pruefbaren Produktschritt.
 
+34. **MVP-Roadmap synchronisiert**
+    - ergaenzt `docs/kosmo-orbit-mvp-roadmap.md` mit dem aktuellen
+      `/orbit`-Preview-Stand vom 2026-06-01;
+    - listet die sichtbaren Panels, die wichtigste Produktlinie und lokale
+      Nachweise;
+    - markiert den kleinen Buero-Pilot als naechsten echten Produktschritt.
+
 ## Lokale Commits seit `origin/main`
 
 - `6ad9372` Add KosmoOrbit role switcher preview
