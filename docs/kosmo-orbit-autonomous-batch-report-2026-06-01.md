@@ -307,6 +307,13 @@ Arbeitsstation zuerst welches Panel braucht.
       `npm run brain:doctor-fast` laufen danach gruen;
     - Push bleibt trotzdem ohne explizites Owner-Go und Live-Smoke blockiert.
 
+43. **Chef-Demo-Skript**
+    - legt ein 5-Minuten-Erklaerskript fuer eine nicht-technische
+      Architekturburo-Demo an;
+    - verlinkt das Skript im Office Pilot Plan;
+    - grenzt klar ab: kein fertiges CAD, keine automatische Generation, keine
+      garantierten Zeit-/Kostenwerte.
+
 ## Lokale Commits seit `origin/main`
 
 - `6ad9372` Add KosmoOrbit role switcher preview

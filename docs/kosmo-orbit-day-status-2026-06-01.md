@@ -176,6 +176,8 @@ Wichtig fuer die Kommunikation:
   menschlicher Buero-Pilot durchgefuehrt wird.
 - Das Pilot-Session-Template ist direkt in `/orbit` sichtbar: Session-Status,
   Sicherheitsflags, Messpunkte und leere before/after-Werte sind lesbar.
+- Ein Chef-Demo-Skript fasst die nicht-technische 5-Minuten-Erklaerung
+  zusammen und ist im Office Pilot Plan als Arbeitsartefakt verlinkt.
 - System-Knowledge und Source-of-Truth sind nachgezogen, damit KosmoOrbit in
   der Gesamtlandkarte als Hauptsoftware/Steuerzentrale und nicht als
   Website-Feature gelesen wird.

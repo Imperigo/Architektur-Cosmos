@@ -63,6 +63,17 @@ KosmoOrbit-Logik im Buero verstaendlich und nuetzlich ist:
    - Nicht live stellen, solange Runtime, Auth, Persistenz, Datenschutz,
      Rechte und Haftung nicht geklaert sind.
 
+## Arbeitsartefakte
+
+- `docs/kosmo-orbit-chef-demo-script-2026-06-01.md` fuer die kurze
+  nicht-technische Erklaerung.
+- `schema/kosmo-orbit-pilot-session.schema.json` als lokaler Messvertrag.
+- `examples/kosmo-orbit/pilot/orbit-office-pilot-session.demo.json` als
+  leeres Template fuer spaetere echte Pilotwerte.
+- `npm run kosmo:orbit-pilot-session` prueft, dass das Template keine
+  Kundendaten, Uploads, Kosten, Design-Generation oder erfundenen Resultate
+  behauptet.
+
 ## Fragen an die Chefs
 
 - Wuerde diese Zentrale im Buero Orientierung sparen?

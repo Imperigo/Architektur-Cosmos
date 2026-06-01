@@ -79,6 +79,8 @@ Aktiv fuer:
   Uploads, Kosten oder behauptete Resultate im Template
 - sichtbares Pilot-Session-Template in `/orbit`, das leere before/after-Werte
   statt erfundener Pilotresultate zeigt
+- Chef-Demo-Skript und Office Pilot Plan fuer die erste nicht-technische
+  Bueroerklaerung
 - Rollenprofile fuer Chef, IT-/KI-Spezialist, Projektleitung, Entwurf,
   Zeichnung, Praktikum, Lehre und Schnupperzugang
 - Tool-Hub zwischen KosmoData, KosmoAsset, KosmoDesign, KosmoPrepare,
