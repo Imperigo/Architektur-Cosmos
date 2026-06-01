@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T06:37:04.762Z",
+  "generated_at": "2026-06-01T06:41:09.931Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 24,
-    "passed_checks": 24,
+    "check_count": 28,
+    "passed_checks": 28,
     "failed_checks": 0
   },
   "checks": [
@@ -52,8 +52,18 @@
       "status": "passed"
     },
     {
+      "id": "demo_review_file_exists",
+      "label": "Orbit guided demo review component exists.",
+      "status": "passed"
+    },
+    {
       "id": "imports_role_switcher",
       "label": "Route imports the role switcher preview component.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_demo_review_path",
+      "label": "Route imports the guided demo review component.",
       "status": "passed"
     },
     {
@@ -89,6 +99,16 @@
     {
       "id": "keeps_role_switcher_local",
       "label": "Role switcher explains that it writes no user data.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_guided_demo_review_path",
+      "label": "Route renders a guided project lead and design review path.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_project_lead_and_design_roles",
+      "label": "Guided demo includes Projektleitung and Entwurf roles.",
       "status": "passed"
     },
     {

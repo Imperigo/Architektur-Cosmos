@@ -3,6 +3,7 @@ import roleStateData from '@/examples/kosmo-orbit/role-state.demo.json';
 import roleVariantsData from '@/examples/kosmo-projects/kosmo-demo-001/orbit/role-ui-variants.generated.json';
 import shellManifestData from '@/examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-prototype.generated.json';
 import type { Metadata } from 'next';
+import { OrbitDemoReviewPath } from './OrbitDemoReviewPath';
 import { OrbitRoleSwitcher } from './OrbitRoleSwitcher';
 
 export const dynamic = 'force-static';
@@ -312,6 +313,8 @@ export default function OrbitPage() {
           </section>
 
           <OrbitRoleSwitcher initialRoleId={roleState.session.active_role_id} variants={roleVariantsReport.variants} />
+
+          <OrbitDemoReviewPath variants={roleVariantsReport.variants} blockedActions={roleState.blocked_actions} />
 
           <section className="grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
             <div className="rounded-lg border border-white/10 bg-black/28 p-4">

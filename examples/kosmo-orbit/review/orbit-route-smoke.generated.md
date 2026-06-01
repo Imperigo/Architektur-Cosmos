@@ -1,6 +1,6 @@
 # KosmoOrbit Route Smoke
 
-Generated: 2026-06-01T06:37:04.762Z
+Generated: 2026-06-01T06:41:09.931Z
 Status: `orbit_route_smoke_passed`
 Route: `app/orbit/page.tsx`
 
@@ -8,7 +8,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 
 ## Summary
 
-- checks: 24/24 passed
+- checks: 28/28 passed
 
 ## Checks
 
@@ -22,7 +22,9 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `imports_role_variants` | `passed` | Route imports the local role variants JSON. |
 | `imports_shell_manifest` | `passed` | Route imports the local shell manifest JSON. |
 | `role_switcher_file_exists` | `passed` | Orbit role switcher client component exists. |
+| `demo_review_file_exists` | `passed` | Orbit guided demo review component exists. |
 | `imports_role_switcher` | `passed` | Route imports the role switcher preview component. |
+| `imports_demo_review_path` | `passed` | Route imports the guided demo review component. |
 | `uses_force_static` | `passed` | Route declares force-static rendering. |
 | `shows_kosmo_orbit` | `passed` | Route renders KosmoOrbit heading. |
 | `shows_demo_path` | `passed` | Route renders the 3-minute human demo path. |
@@ -30,6 +32,8 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `shows_role_explanations` | `passed` | Route renders role explanations from variants. |
 | `shows_role_switcher_preview` | `passed` | Route renders a local role switching preview. |
 | `keeps_role_switcher_local` | `passed` | Role switcher explains that it writes no user data. |
+| `shows_guided_demo_review_path` | `passed` | Route renders a guided project lead and design review path. |
+| `shows_project_lead_and_design_roles` | `passed` | Guided demo includes Projektleitung and Entwurf roles. |
 | `shows_blocked_actions` | `passed` | Route renders blocked action labels from role state. |
 | `shows_review_only_copy` | `passed` | Route keeps review-only safety copy visible. |
 | `no_use_server` | `passed` | Forbidden pattern is absent: no_use_server. |

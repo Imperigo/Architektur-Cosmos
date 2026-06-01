@@ -135,6 +135,9 @@ Dieser Kern zeigt:
 - eine lokale Rollenumschaltung, mit der sichtbar wird, wie Chef/Admin,
   Projektleitung, Entwurf, Zeichnung und Ausbildung dieselbe Software anders
   sehen;
+- einen gefuehrten Demo-Review-Pfad fuer Projektleitung, Entwurf und Admin,
+  der den Ablauf vom Projektblocker zum sicheren KosmoDesign Review Mode
+  erklaert;
 - klare Sperre gegen Design-Generation, Public-Publish, externe Netzwerke,
   Uploads und echte User-Schreibaktionen.
 

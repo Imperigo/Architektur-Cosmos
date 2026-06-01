@@ -363,6 +363,21 @@ Damit wird der zentrale Produktgedanke greifbarer: KosmoOrbit ist dieselbe
 Hauptsoftware, aber nicht dieselbe Oberflaeche fuer Chef, Projektleitung,
 Entwurf, Zeichnung, Praktikum, Lehre und Demo-Nutzer.
 
+### Gefuehrter Demo-Review-Pfad
+
+Die `/orbit` Preview hat nun eine zweite interaktive Spur fuer den
+3-Minuten-Demo-Pfad:
+
+1. Projektleitung klaert Blocker.
+2. Entwurf prueft Kontext im KosmoDesign Review Mode.
+3. Admin haelt Freigabe- und Public-Gates geschlossen.
+
+Diese Spur zeigt pro Schritt die passende Rolle, den Zweck, den naechsten
+sicheren Schritt und den aktuell sichtbaren Sicherheitsanker. Sie ist bewusst
+keine Simulation echter Rechteverwaltung. Der Pfad demonstriert nur die
+Produktlogik: KosmoOrbit fuehrt durch Review, bevor KosmoDesign generieren,
+publizieren oder externe Aktionen ausloesen duerfte.
+
 ## 14. Static KosmoDesign UI Prototype
 
 Aus der Panel-Spezifikation kann KosmoOrbit einen ersten lokalen HTML-Prototyp
