@@ -162,6 +162,9 @@ Wichtig fuer die Kommunikation:
 - Ein Push Package dokumentiert lokale Commits, Inhalt, Nachweise,
   Security-Blocker, Sicherheitsgrenzen und Push-Optionen. Es wurde kein Push
   und kein Deploy ausgefuehrt.
+- Ein sichtbares Live-Gate auf `/orbit` trennt interne Demo-Bereitschaft von
+  oeffentlichem Publish: Owner-Go, Security Review und Live-Smoke bleiben
+  Pflicht vor Push/Deploy.
 - System-Knowledge und Source-of-Truth sind nachgezogen, damit KosmoOrbit in
   der Gesamtlandkarte als Hauptsoftware/Steuerzentrale und nicht als
   Website-Feature gelesen wird.
@@ -184,11 +187,11 @@ Wichtig fuer die Kommunikation:
 
 - `npm run kosmo:orbit-audit-trail` — 11/11 passed.
 - `npm run kosmo:orbit-office-routine` — 10/10 passed.
-- `npm run kosmo:orbit-route-smoke` — 141/141 passed.
+- `npm run kosmo:orbit-route-smoke` — 145/145 passed.
 - `npm run kosmo:orbit-full-review` — 20/20 passed.
-- `npm run kosmo:orbit-demo-audit` — 29/29 passed.
-- `npm run kosmo:orbit-responsive-audit` — 25/25 passed.
-- `npm run kosmo:orbit-static-smoke` — 43/43 passed.
+- `npm run kosmo:orbit-demo-audit` — 31/31 passed.
+- `npm run kosmo:orbit-responsive-audit` — 26/26 passed.
+- `npm run kosmo:orbit-static-smoke` — 45/45 passed.
 - `npx tsc --noEmit --pretty false --incremental false` — passed.
 - `npm run lint` — passed mit bekannten Bestandswarnungen, keine Errors.
 - `npm run build` mit Node 22 — passed.

@@ -8,6 +8,7 @@ const sectionLinks = [
   { href: '#fortschritt', label: 'Fortschritt' },
   { href: '#vision', label: 'Vision' },
   { href: '#demo-ready', label: 'Demo' },
+  { href: '#live-gate', label: 'Live-Gate' },
   { href: '#projektpaket', label: 'Projektpaket' },
   { href: '#design-handoff', label: 'Handoff' },
   { href: '#entscheidung', label: 'Decision' },

@@ -1,16 +1,16 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T13:09:02.233Z",
+  "generated_at": "2026-06-01T13:18:47.663Z",
   "generator": "kosmo-orbit-responsive-audit",
   "status": "orbit_responsive_audit_passed",
   "source_dir": "app/orbit",
   "summary": {
-    "check_count": 25,
-    "passed_checks": 25,
+    "check_count": 26,
+    "passed_checks": 26,
     "failed_checks": 0,
-    "min_width_guard_count": 82,
-    "flex_wrap_count": 60,
-    "responsive_grid_count": 63
+    "min_width_guard_count": 84,
+    "flex_wrap_count": 62,
+    "responsive_grid_count": 65
   },
   "checks": [
     {
@@ -101,6 +101,11 @@
     {
       "id": "demo_readiness_uses_responsive_grid",
       "label": "Demo readiness summary uses responsive columns.",
+      "status": "passed"
+    },
+    {
+      "id": "publish_readiness_responsive",
+      "label": "Publish readiness uses responsive columns for live gate statuses.",
       "status": "passed"
     },
     {

@@ -1,6 +1,6 @@
 # KosmoOrbit Route Smoke
 
-Generated: 2026-06-01T13:10:16.380Z
+Generated: 2026-06-01T13:19:48.009Z
 Status: `orbit_route_smoke_passed`
 Route: `app/orbit/page.tsx`
 
@@ -8,7 +8,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 
 ## Summary
 
-- checks: 141/141 passed
+- checks: 145/145 passed
 
 ## Checks
 
@@ -52,6 +52,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `office_routine_file_exists` | `passed` | Orbit office routine component exists. |
 | `office_routine_data_file_exists` | `passed` | Orbit office routine contract exists. |
 | `demo_readiness_file_exists` | `passed` | Orbit demo readiness component exists. |
+| `publish_readiness_file_exists` | `passed` | Orbit publish readiness component exists. |
 | `section_index_file_exists` | `passed` | Orbit section index component exists. |
 | `imports_role_switcher` | `passed` | Route imports the role switcher preview component. |
 | `imports_demo_review_path` | `passed` | Route imports the guided demo review component. |
@@ -82,6 +83,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `imports_autonomy_status` | `passed` | Route imports the autonomy status component. |
 | `imports_office_routine` | `passed` | Route imports the office routine component. |
 | `imports_demo_readiness` | `passed` | Route imports the demo readiness component. |
+| `imports_publish_readiness` | `passed` | Route imports the publish readiness component. |
 | `imports_section_index` | `passed` | Route imports the section index navigation component. |
 | `uses_force_static` | `passed` | Route declares force-static rendering. |
 | `shows_kosmo_orbit` | `passed` | Route renders KosmoOrbit heading. |
@@ -145,6 +147,8 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `office_routine_covers_day_phases` | `passed` | Office routine covers morning, workday, training, evening and safety. |
 | `office_routine_blocks_live_automation` | `passed` | Office routine blocks model start, Blender launch, uploads, publish, push and costs. |
 | `shows_demo_readiness` | `passed` | Route renders demo readiness with explicit human approval boundary. |
+| `shows_publish_readiness` | `passed` | Route renders publish readiness and the live gate. |
+| `publish_readiness_blocks_live_push` | `passed` | Publish readiness blocks push/deploy until owner go, security review and live smoke. |
 | `shows_section_index` | `passed` | Route renders compact demo section navigation. |
 | `anchors_core_sections` | `passed` | Route contains anchors for core demo sections. |
 | `shows_blocked_actions` | `passed` | Route renders blocked action labels from role state. |

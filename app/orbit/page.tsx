@@ -24,6 +24,7 @@ import { OrbitPilotMeasurement } from './OrbitPilotMeasurement';
 import { OrbitPilotRunbook } from './OrbitPilotRunbook';
 import { OrbitPresenterBrief } from './OrbitPresenterBrief';
 import { OrbitProgressMap } from './OrbitProgressMap';
+import { OrbitPublishReadiness } from './OrbitPublishReadiness';
 import { OrbitProjectDashboard, type DesignHandoffPreview, type ProjectInspectorReport } from './OrbitProjectDashboard';
 import { OrbitQualityEvidence, type OrbitFullReviewReport, type OrbitRouteSmokeReport } from './OrbitQualityEvidence';
 import { OrbitReviewDecisionDraft } from './OrbitReviewDecisionDraft';
@@ -383,6 +384,10 @@ export default function OrbitPage() {
 
           <div id="demo-ready" className="scroll-mt-4">
             <OrbitDemoReadiness fullReview={fullReview} routeSmoke={routeSmoke} staticSmoke={staticSmoke} />
+          </div>
+
+          <div id="live-gate" className="scroll-mt-4">
+            <OrbitPublishReadiness />
           </div>
 
           <div id="projektpaket" className="scroll-mt-4">

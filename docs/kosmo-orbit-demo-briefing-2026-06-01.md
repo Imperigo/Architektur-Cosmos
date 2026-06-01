@@ -87,7 +87,11 @@ In drei Minuten soll ein Architekturbueroleiter verstehen:
    im Tool. Das ist keine Garantie fuer ein fertiges Produkt, aber ein Beleg,
    dass der aktuelle MVP-Kern lokal geprueft wird.
 
-16. **Arbeitsstations-Prioritaeten zeigen**
+16. **Live-Gate zeigen**
+   Erklaeren: Lokal vorfuehrbar heisst nicht automatisch public-ready. Vor
+   Push/Deploy braucht es Owner-Go, Security Review und danach Live-Smoke.
+
+17. **Arbeitsstations-Prioritaeten zeigen**
    Erklaeren: Dieselbe Hauptsoftware wird spaeter je Rolle anders starten:
    Chef/Admin sieht Risiko und Evidenz, Projektleitung sieht Review-Entscheide,
    Entwurf sieht KosmoDesign-Kontext, Zeichnung sieht Modell/Artefakte,

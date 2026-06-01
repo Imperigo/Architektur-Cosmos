@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T13:10:16.380Z",
+  "generated_at": "2026-06-01T13:19:48.009Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 141,
-    "passed_checks": 141,
+    "check_count": 145,
+    "passed_checks": 145,
     "failed_checks": 0
   },
   "checks": [
@@ -202,6 +202,11 @@
       "status": "passed"
     },
     {
+      "id": "publish_readiness_file_exists",
+      "label": "Orbit publish readiness component exists.",
+      "status": "passed"
+    },
+    {
       "id": "section_index_file_exists",
       "label": "Orbit section index component exists.",
       "status": "passed"
@@ -349,6 +354,11 @@
     {
       "id": "imports_demo_readiness",
       "label": "Route imports the demo readiness component.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_publish_readiness",
+      "label": "Route imports the publish readiness component.",
       "status": "passed"
     },
     {
@@ -664,6 +674,16 @@
     {
       "id": "shows_demo_readiness",
       "label": "Route renders demo readiness with explicit human approval boundary.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_publish_readiness",
+      "label": "Route renders publish readiness and the live gate.",
+      "status": "passed"
+    },
+    {
+      "id": "publish_readiness_blocks_live_push",
+      "label": "Publish readiness blocks push/deploy until owner go, security review and live smoke.",
       "status": "passed"
     },
     {

@@ -1,12 +1,12 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T13:10:06.025Z",
+  "generated_at": "2026-06-01T13:19:36.865Z",
   "generator": "kosmo-orbit-static-export-smoke",
   "status": "orbit_static_export_smoke_passed",
   "html_file": "out/orbit/index.html",
   "summary": {
-    "check_count": 43,
-    "passed_checks": 43,
+    "check_count": 45,
+    "passed_checks": 45,
     "failed_checks": 0
   },
   "checks": [
@@ -68,6 +68,11 @@
     {
       "id": "renders_demo_readiness",
       "label": "Export renders demo readiness.",
+      "status": "passed"
+    },
+    {
+      "id": "renders_publish_readiness",
+      "label": "Export renders publish readiness live gate.",
       "status": "passed"
     },
     {
@@ -178,6 +183,11 @@
     {
       "id": "keeps_pilot_runbook_safe",
       "label": "Export keeps pilot runbook safe and local.",
+      "status": "passed"
+    },
+    {
+      "id": "keeps_publish_readiness_safe",
+      "label": "Export keeps publish readiness blocked without owner go.",
       "status": "passed"
     },
     {

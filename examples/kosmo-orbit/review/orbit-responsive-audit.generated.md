@@ -1,6 +1,6 @@
 # KosmoOrbit Responsive Audit
 
-Generated: 2026-06-01T13:09:02.233Z
+Generated: 2026-06-01T13:18:47.663Z
 Status: `orbit_responsive_audit_passed`
 Source: `app/orbit`
 
@@ -8,10 +8,10 @@ Source-level responsive guard for `/orbit`. This does not replace a visual brows
 
 ## Summary
 
-- checks: 25/25 passed
-- min-w-0 guards: 82
-- flex-wrap usages: 60
-- responsive grid usages: 63
+- checks: 26/26 passed
+- min-w-0 guards: 84
+- flex-wrap usages: 62
+- responsive grid usages: 65
 
 ## Checks
 
@@ -35,6 +35,7 @@ Source-level responsive guard for `/orbit`. This does not replace a visual brows
 | `runtime_contract_responsive` | `passed` | Runtime contract uses responsive cards for the runtime stages. |
 | `progress_bars_have_stable_height` | `passed` | Progress map uses stable bar height and constrained width. |
 | `demo_readiness_uses_responsive_grid` | `passed` | Demo readiness summary uses responsive columns. |
+| `publish_readiness_responsive` | `passed` | Publish readiness uses responsive columns for live gate statuses. |
 | `workflow_delta_responsive` | `passed` | Workflow delta uses a responsive comparison grid. |
 | `pilot_measurement_responsive` | `passed` | Pilot measurement uses responsive metric and rule grids. |
 | `pilot_runbook_responsive` | `passed` | Pilot runbook uses responsive cards for timed steps, evidence and hard stops. |
