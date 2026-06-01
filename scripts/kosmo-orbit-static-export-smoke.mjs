@@ -50,6 +50,7 @@ function buildReport(html) {
     check('renders_vision_bridge', 'Export renders vision bridge.', html.includes('Vision Bridge') && html.includes('Orchestrierung vor Generierung')),
     check('renders_demo_readiness', 'Export renders demo readiness.', html.includes('Demo-Bereitschaft') && html.includes('Static Export')),
     check('renders_project_dashboard', 'Export renders project package dashboard.', html.includes('Projektpaket Tagesansicht')),
+    check('renders_design_handoff_panel', 'Export renders KosmoDesign handoff review console.', html.includes('KosmoDesign Handoff') && html.includes('Review Console')),
     check('renders_review_decision', 'Export renders review decision draft.', html.includes('Review Decision Draft')),
     check('renders_runtime_boundary', 'Export renders MVP/runtime boundary.', html.includes('MVP-Grenze')),
     check('renders_runtime_contract', 'Export renders local runtime contract.', html.includes('Runtime-Vertrag') && html.includes('no-process-launch')),
@@ -63,7 +64,7 @@ function buildReport(html) {
     check('renders_permission_matrix', 'Export renders permission matrix.', html.includes('Rechte-Matrix') && html.includes('generation bleibt gesperrt')),
     check('renders_role_switcher', 'Export renders role switcher.', html.includes('Rollenumschaltung Preview')),
     check('renders_guided_review_path', 'Export renders guided review path.', html.includes('Gefuehrter Demo-Review-Pfad')),
-    check('anchors_core_sections', 'Export contains section anchors.', ['autonomie', 'fortschritt', 'vision', 'demo-ready', 'projektpaket', 'entscheidung', 'runtime', 'runtime-contract', 'installation', 'health', 'risiken', 'commands', 'audit', 'evidenz', 'rechte', 'rollen', 'guardrails'].every((id) => html.includes(`id="${id}"`))),
+    check('anchors_core_sections', 'Export contains section anchors.', ['autonomie', 'fortschritt', 'vision', 'demo-ready', 'projektpaket', 'design-handoff', 'entscheidung', 'runtime', 'runtime-contract', 'installation', 'health', 'risiken', 'commands', 'audit', 'evidenz', 'rechte', 'rollen', 'guardrails'].every((id) => html.includes(`id="${id}"`))),
     check('keeps_no_runtime_side_effects', 'Export states that runtime side effects are off.', html.includes('no-runtime-side-effects')),
     check('keeps_runtime_contract_safe', 'Export keeps runtime process/model/queue actions gated.', html.includes('kein Modellstart') && html.includes('keine Prozessstarts') && html.includes('keine Queue') && html.includes('kein Memory-Write')),
     check('keeps_installation_topology_safe', 'Export keeps installation topology non-operational.', html.includes('keine Hardware-Steuerung') && html.includes('keine echte Auth-Runtime') && html.includes('keine Netzwerksteuerung')),
@@ -71,6 +72,7 @@ function buildReport(html) {
     check('keeps_risk_register_human_gated', 'Export keeps risk register human-gated.', html.includes('menschliche Freigaben') && html.includes('Naechstes Gate')),
     check('keeps_command_contract_static', 'Export keeps command contract non-operational.', html.includes('keine Prozessstarts') && html.includes('keine Geometrie-Generierung') && html.includes('keine User-Writes')),
     check('keeps_audit_trail_static', 'Export keeps audit trail non-writing.', normalizedHtml.includes('keine Userdaten') && normalizedHtml.includes('Writes: nein')),
+    check('keeps_design_handoff_generation_blocked', 'Export keeps KosmoDesign generation blocked.', html.includes('Generate Design') && html.includes('Design generation is blocked')),
     check('no_server_runtime_markers', 'Export does not include server runtime markers.', !html.includes('use server') && !html.includes('next/server'))
   ];
   const failed = checks.filter((item) => item.status !== 'passed');

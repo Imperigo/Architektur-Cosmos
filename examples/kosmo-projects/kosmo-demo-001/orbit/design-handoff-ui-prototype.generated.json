@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T12:18:06.585Z",
+  "generated_at": "2026-06-01T12:26:21.241Z",
   "generator": "kosmo-orbit-design-ui-prototype",
   "source_panel_spec": "examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-ui-panel.generated.json",
   "html_output": "examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-ui-prototype.generated.html",

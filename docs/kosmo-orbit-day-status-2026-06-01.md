@@ -126,6 +126,10 @@ Wichtig fuer die Kommunikation:
 - Ein Audit-Trail-Vertrag macht sichtbar, wie spaetere Kommandos mit Rolle,
   Intent, Evidenz, Gate, Outcome und Schreibverhalten protokolliert werden
   sollen. Heute bleibt das statisch und nicht-schreibend.
+- Eine KosmoDesign Handoff Console zeigt den Uebergang von KosmoOrbit zu
+  KosmoDesign konkreter: Open Mode, Rolle, Modellprofil, Blocker, erlaubte
+  Review-Aktionen, Kontextinputs, Guardrails und naechste Schritte. `Generate
+  Design` bleibt sichtbar blockiert.
 - Ein neuer KosmoData-HUD-Guard schuetzt die wiederkehrenden Website-Bedienpunkte:
   Database oben links, Suche/Dev rechts, Filterzugang rechts unten, HTML-
   Database-Overlay, globales Fadenkreuz in Start/Hauptmenue/Popups und
@@ -144,11 +148,11 @@ Wichtig fuer die Kommunikation:
 ## Aktuelle Verifikation
 
 - `npm run kosmo:orbit-audit-trail` — 11/11 passed.
-- `npm run kosmo:orbit-route-smoke` — 112/112 passed.
+- `npm run kosmo:orbit-route-smoke` — 119/119 passed.
 - `npm run kosmo:orbit-full-review` — 19/19 passed.
-- `npm run kosmo:orbit-demo-audit` — 17/17 passed.
-- `npm run kosmo:orbit-responsive-audit` — 19/19 passed.
-- `npm run kosmo:orbit-static-smoke` — 31/31 passed.
+- `npm run kosmo:orbit-demo-audit` — 19/19 passed.
+- `npm run kosmo:orbit-responsive-audit` — 20/20 passed.
+- `npm run kosmo:orbit-static-smoke` — 33/33 passed.
 - `npx tsc --noEmit --pretty false --incremental false` — passed.
 - `npm run lint` — passed mit bekannten Bestandswarnungen, keine Errors.
 - `npm run build` mit Node 22 — passed.

@@ -1,6 +1,6 @@
 # KosmoOrbit Route Smoke
 
-Generated: 2026-06-01T12:18:08.171Z
+Generated: 2026-06-01T12:26:23.201Z
 Status: `orbit_route_smoke_passed`
 Route: `app/orbit/page.tsx`
 
@@ -8,7 +8,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 
 ## Summary
 
-- checks: 112/112 passed
+- checks: 119/119 passed
 
 ## Checks
 
@@ -24,6 +24,8 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `role_switcher_file_exists` | `passed` | Orbit role switcher client component exists. |
 | `demo_review_file_exists` | `passed` | Orbit guided demo review component exists. |
 | `project_dashboard_file_exists` | `passed` | Orbit project package dashboard component exists. |
+| `design_handoff_panel_file_exists` | `passed` | Orbit KosmoDesign handoff panel component exists. |
+| `design_handoff_panel_data_file_exists` | `passed` | Orbit KosmoDesign handoff panel spec exists. |
 | `presenter_brief_file_exists` | `passed` | Orbit presenter brief component exists. |
 | `progress_map_file_exists` | `passed` | Orbit progress map component exists. |
 | `vision_bridge_file_exists` | `passed` | Orbit vision bridge component exists. |
@@ -48,6 +50,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `imports_role_switcher` | `passed` | Route imports the role switcher preview component. |
 | `imports_demo_review_path` | `passed` | Route imports the guided demo review component. |
 | `imports_project_dashboard` | `passed` | Route imports the project package dashboard component. |
+| `imports_design_handoff_panel` | `passed` | Route imports the KosmoDesign handoff panel component. |
 | `imports_presenter_brief` | `passed` | Route imports the presenter brief component. |
 | `imports_progress_map` | `passed` | Route imports the vision-to-MVP progress map component. |
 | `imports_vision_bridge` | `passed` | Route imports the vision bridge component. |
@@ -80,6 +83,10 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `shows_project_lead_and_design_roles` | `passed` | Guided demo includes Projektleitung and Entwurf roles. |
 | `shows_project_package_dashboard` | `passed` | Route renders the project package day view. |
 | `imports_project_review_artifacts` | `passed` | Route imports project inspector and design handoff artifacts. |
+| `shows_design_handoff_panel` | `passed` | Route renders the KosmoDesign handoff review console. |
+| `design_handoff_uses_ui_panel_spec` | `passed` | KosmoDesign handoff panel imports the generated UI panel spec. |
+| `design_handoff_blocks_generation` | `passed` | KosmoDesign handoff panel keeps design generation blocked. |
+| `design_handoff_shows_context_inputs` | `passed` | KosmoDesign handoff panel shows blocked context inputs and guardrails. |
 | `shows_presenter_brief` | `passed` | Route renders the three-minute presenter explanation. |
 | `shows_value_claims` | `passed` | Presenter brief covers better, faster and cheaper value claims. |
 | `shows_progress_map` | `passed` | Route renders a visible project progress map. |

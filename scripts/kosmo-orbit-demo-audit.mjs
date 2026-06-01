@@ -51,6 +51,7 @@ function buildReport(html) {
     { id: 'vision', label: 'Vision Bridge' },
     { id: 'demo-ready', label: 'Demo-Bereitschaft' },
     { id: 'projektpaket', label: 'Projektpaket Tagesansicht' },
+    { id: 'design-handoff', label: 'KosmoDesign Handoff' },
     { id: 'entscheidung', label: 'Review Decision Draft' },
     { id: 'runtime-contract', label: 'Runtime-Vertrag' },
     { id: 'installation', label: 'Buero-Installation' },
@@ -67,7 +68,7 @@ function buildReport(html) {
     label: section.label,
     index: normalized.indexOf(`id="${section.id}"`)
   }));
-  const navLabels = ['Autonomie', '3-Minuten', 'Fortschritt', 'Vision', 'Demo', 'Projektpaket', 'Decision', 'Runtime', 'Installation', 'Health', 'Risiken', 'Commands', 'Audit', 'Evidenz', 'Rechte', 'Rollen', 'Guardrails'];
+  const navLabels = ['Autonomie', '3-Minuten', 'Fortschritt', 'Vision', 'Demo', 'Projektpaket', 'Handoff', 'Decision', 'Runtime', 'Installation', 'Health', 'Risiken', 'Commands', 'Audit', 'Evidenz', 'Rechte', 'Rollen', 'Guardrails'];
   const forbiddenArtifacts = ['[object Object]', 'NaN%', 'null null'];
   const checks = [
     check('html_exists', 'Built /orbit HTML exists.', existsSync(htmlPath)),
@@ -77,6 +78,8 @@ function buildReport(html) {
     check('approval_boundary_visible', 'Approval boundary is visible in the export.', normalized.includes('kein Push ohne Freigabe') && normalized.includes('keine Cloud-Kosten')),
     check('review_only_visible', 'Review-only mode is visible in the export.', normalized.includes('review-only') || normalized.includes('Review Mode')),
     check('vision_bridge_visible', 'Vision bridge is visible in the export.', normalized.includes('Vision Bridge') && normalized.includes('Orchestrierung vor Generierung')),
+    check('design_handoff_visible', 'KosmoDesign handoff console is visible in the export.', normalized.includes('KosmoDesign Handoff') && normalized.includes('Review Console')),
+    check('design_handoff_blocks_generation', 'KosmoDesign handoff keeps generation visibly blocked.', normalized.includes('Generate Design') && normalized.includes('Design generation is blocked')),
     check('runtime_contract_visible', 'Runtime contract is visible and non-operational.', normalized.includes('Runtime-Vertrag') && normalized.includes('no-process-launch')),
     check('installation_topology_visible', 'Office installation topology is visible in the export.', normalized.includes('Buero-Installation') && normalized.includes('local-appliance-map')),
     check('health_readiness_visible', 'Health readiness contract is visible in the export.', normalized.includes('Health Readiness') && normalized.includes('read-only-telemetry-contract')),

@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T12:18:08.171Z",
+  "generated_at": "2026-06-01T12:26:23.201Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 112,
-    "passed_checks": 112,
+    "check_count": 119,
+    "passed_checks": 119,
     "failed_checks": 0
   },
   "checks": [
@@ -59,6 +59,16 @@
     {
       "id": "project_dashboard_file_exists",
       "label": "Orbit project package dashboard component exists.",
+      "status": "passed"
+    },
+    {
+      "id": "design_handoff_panel_file_exists",
+      "label": "Orbit KosmoDesign handoff panel component exists.",
+      "status": "passed"
+    },
+    {
+      "id": "design_handoff_panel_data_file_exists",
+      "label": "Orbit KosmoDesign handoff panel spec exists.",
       "status": "passed"
     },
     {
@@ -179,6 +189,11 @@
     {
       "id": "imports_project_dashboard",
       "label": "Route imports the project package dashboard component.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_design_handoff_panel",
+      "label": "Route imports the KosmoDesign handoff panel component.",
       "status": "passed"
     },
     {
@@ -339,6 +354,26 @@
     {
       "id": "imports_project_review_artifacts",
       "label": "Route imports project inspector and design handoff artifacts.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_design_handoff_panel",
+      "label": "Route renders the KosmoDesign handoff review console.",
+      "status": "passed"
+    },
+    {
+      "id": "design_handoff_uses_ui_panel_spec",
+      "label": "KosmoDesign handoff panel imports the generated UI panel spec.",
+      "status": "passed"
+    },
+    {
+      "id": "design_handoff_blocks_generation",
+      "label": "KosmoDesign handoff panel keeps design generation blocked.",
+      "status": "passed"
+    },
+    {
+      "id": "design_handoff_shows_context_inputs",
+      "label": "KosmoDesign handoff panel shows blocked context inputs and guardrails.",
       "status": "passed"
     },
     {

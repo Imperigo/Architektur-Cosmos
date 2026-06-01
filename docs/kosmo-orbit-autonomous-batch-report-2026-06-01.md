@@ -189,6 +189,14 @@ Arbeitsstation zuerst welches Panel braucht.
     - bleibt statisch, nicht-schreibend und ohne Persistenz, bis Datenschutz-,
       Retention- und Runtime-Regeln freigegeben sind.
 
+27. **KosmoDesign Handoff Console**
+    - macht den vorhandenen Design-Handoff-Spec als sichtbares `/orbit`-Panel
+      lesbar;
+    - zeigt Open Mode, Rolle, Modellprofil, Blocker, erlaubte Review-Aktionen,
+      Kontextinputs, Guardrails und naechste Schritte;
+    - haelt `Generate Design` sichtbar blockiert und bleibt ohne Blender-Start,
+      Geometrie-Generierung, Upload oder Public-Publish.
+
 ## Lokale Commits seit `origin/main`
 
 - `6ad9372` Add KosmoOrbit role switcher preview
@@ -206,10 +214,10 @@ Arbeitsstation zuerst welches Panel braucht.
 
 Zuletzt gruene lokale Checks:
 
-- `npm run kosmo:orbit-route-smoke` — 112/112 passed
+- `npm run kosmo:orbit-route-smoke` — 119/119 passed
 - `npm run kosmo:orbit-full-review` — 19/19 passed
-- `npm run kosmo:orbit-demo-audit` — 17/17 passed
-- `npm run kosmo:orbit-responsive-audit` — 19/19 passed
+- `npm run kosmo:orbit-demo-audit` — 19/19 passed
+- `npm run kosmo:orbit-responsive-audit` — 20/20 passed
 - `npm run kosmo:orbit-health-readiness` — 14/14 passed
 - `npm run kosmo:orbit-command-contract` — 14/14 passed
 - `npm run kosmo:orbit-audit-trail` — 11/11 passed
@@ -223,7 +231,7 @@ Zuletzt gruene lokale Checks:
   `security:check` durch bestehende npm-audit Dependency-Fundstelle
 - `npx tsc --noEmit` — passed
 - `npm run build` — static export passed
-- `npm run build` + `npm run kosmo:orbit-static-smoke` — 31/31 static
+- `npm run build` + `npm run kosmo:orbit-static-smoke` — 33/33 static
   `/orbit` HTML enthaelt die wichtigsten Demo-Panels und Anker
 
 ## Sicherheitsgrenzen

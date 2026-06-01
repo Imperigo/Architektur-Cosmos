@@ -11,6 +11,7 @@ import type { Metadata } from 'next';
 import { OrbitAutonomyStatus } from './OrbitAutonomyStatus';
 import { OrbitAuditTrail } from './OrbitAuditTrail';
 import { OrbitCommandContract } from './OrbitCommandContract';
+import { OrbitDesignHandoffPanel } from './OrbitDesignHandoffPanel';
 import { OrbitDemoReadiness, type OrbitStaticExportSmokeReport } from './OrbitDemoReadiness';
 import { OrbitDemoQuestions } from './OrbitDemoQuestions';
 import { OrbitDemoReviewPath } from './OrbitDemoReviewPath';
@@ -365,6 +366,10 @@ export default function OrbitPage() {
 
           <div id="projektpaket" className="scroll-mt-4">
             <OrbitProjectDashboard projectInspector={projectInspector} designHandoff={designHandoff} />
+          </div>
+
+          <div id="design-handoff" className="scroll-mt-4">
+            <OrbitDesignHandoffPanel />
           </div>
 
           <OrbitDemoQuestions />

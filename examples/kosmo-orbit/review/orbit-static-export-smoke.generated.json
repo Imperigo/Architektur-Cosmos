@@ -1,12 +1,12 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T12:17:42.050Z",
+  "generated_at": "2026-06-01T12:26:07.832Z",
   "generator": "kosmo-orbit-static-export-smoke",
   "status": "orbit_static_export_smoke_passed",
   "html_file": "out/orbit/index.html",
   "summary": {
-    "check_count": 31,
-    "passed_checks": 31,
+    "check_count": 33,
+    "passed_checks": 33,
     "failed_checks": 0
   },
   "checks": [
@@ -53,6 +53,11 @@
     {
       "id": "renders_project_dashboard",
       "label": "Export renders project package dashboard.",
+      "status": "passed"
+    },
+    {
+      "id": "renders_design_handoff_panel",
+      "label": "Export renders KosmoDesign handoff review console.",
       "status": "passed"
     },
     {
@@ -158,6 +163,11 @@
     {
       "id": "keeps_audit_trail_static",
       "label": "Export keeps audit trail non-writing.",
+      "status": "passed"
+    },
+    {
+      "id": "keeps_design_handoff_generation_blocked",
+      "label": "Export keeps KosmoDesign generation blocked.",
       "status": "passed"
     },
     {

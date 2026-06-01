@@ -1,94 +1,99 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T12:14:16.586Z",
+  "generated_at": "2026-06-01T12:26:07.904Z",
   "generator": "kosmo-orbit-demo-audit",
   "status": "orbit_demo_audit_passed",
   "html_file": "out/orbit/index.html",
   "summary": {
-    "check_count": 17,
-    "passed_checks": 17,
+    "check_count": 19,
+    "passed_checks": 19,
     "failed_checks": 0
   },
   "demo_order": [
     {
       "id": "autonomie",
       "label": "Autonomie-Status",
-      "index": 13429
+      "index": 13683
     },
     {
       "id": "presenter",
       "label": "3-Minuten-Erklaerung",
-      "index": 15905
+      "index": 16159
     },
     {
       "id": "fortschritt",
       "label": "Projektfortschritt",
-      "index": 18922
+      "index": 19176
     },
     {
       "id": "vision",
       "label": "Vision Bridge",
-      "index": 25667
+      "index": 25921
     },
     {
       "id": "demo-ready",
       "label": "Demo-Bereitschaft",
-      "index": 30007
+      "index": 30261
     },
     {
       "id": "projektpaket",
       "label": "Projektpaket Tagesansicht",
-      "index": 32751
+      "index": 33005
+    },
+    {
+      "id": "design-handoff",
+      "label": "KosmoDesign Handoff",
+      "index": 42597
     },
     {
       "id": "entscheidung",
       "label": "Review Decision Draft",
-      "index": 46399
+      "index": 56728
     },
     {
       "id": "runtime-contract",
       "label": "Runtime-Vertrag",
-      "index": 53708
+      "index": 64037
     },
     {
       "id": "installation",
       "label": "Buero-Installation",
-      "index": 59704
+      "index": 70033
     },
     {
       "id": "health",
       "label": "Health Readiness",
-      "index": 67443
+      "index": 77772
     },
     {
       "id": "risiken",
       "label": "Risiko-Register",
-      "index": 74300
+      "index": 84629
     },
     {
       "id": "commands",
       "label": "Command-Vertrag",
-      "index": 81589
+      "index": 91918
     },
     {
       "id": "audit",
       "label": "Audit-Trail-Vertrag",
-      "index": 90952
+      "index": 101281
     },
     {
       "id": "evidenz",
       "label": "Pruefevidenz",
-      "index": 98466
+      "index": 108795
     },
     {
       "id": "rechte",
       "label": "Rechte-Matrix",
-      "index": 106725
+      "index": 117054
     },
     {
       "id": "rollen",
       "label": "Rollenumschaltung Preview",
-      "index": 124480
+      "index": 134809
     }
   ],
   "checks": [
@@ -125,6 +130,16 @@
     {
       "id": "vision_bridge_visible",
       "label": "Vision bridge is visible in the export.",
+      "status": "passed"
+    },
+    {
+      "id": "design_handoff_visible",
+      "label": "KosmoDesign handoff console is visible in the export.",
+      "status": "passed"
+    },
+    {
+      "id": "design_handoff_blocks_generation",
+      "label": "KosmoDesign handoff keeps generation visibly blocked.",
       "status": "passed"
     },
     {

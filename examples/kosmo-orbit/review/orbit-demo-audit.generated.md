@@ -1,6 +1,6 @@
 # KosmoOrbit Demo Audit
 
-Generated: 2026-06-01T12:14:16.586Z
+Generated: 2026-06-01T12:26:07.904Z
 Status: `orbit_demo_audit_passed`
 HTML: `out/orbit/index.html`
 
@@ -8,28 +8,29 @@ Static audit for the human presentation flow of `/orbit`. It checks section orde
 
 ## Summary
 
-- checks: 17/17 passed
+- checks: 19/19 passed
 
 ## Demo Order
 
 | Anchor | Section | Position |
 | --- | --- | ---: |
-| `autonomie` | Autonomie-Status | 13429 |
-| `presenter` | 3-Minuten-Erklaerung | 15905 |
-| `fortschritt` | Projektfortschritt | 18922 |
-| `vision` | Vision Bridge | 25667 |
-| `demo-ready` | Demo-Bereitschaft | 30007 |
-| `projektpaket` | Projektpaket Tagesansicht | 32751 |
-| `entscheidung` | Review Decision Draft | 46399 |
-| `runtime-contract` | Runtime-Vertrag | 53708 |
-| `installation` | Buero-Installation | 59704 |
-| `health` | Health Readiness | 67443 |
-| `risiken` | Risiko-Register | 74300 |
-| `commands` | Command-Vertrag | 81589 |
-| `audit` | Audit-Trail-Vertrag | 90952 |
-| `evidenz` | Pruefevidenz | 98466 |
-| `rechte` | Rechte-Matrix | 106725 |
-| `rollen` | Rollenumschaltung Preview | 124480 |
+| `autonomie` | Autonomie-Status | 13683 |
+| `presenter` | 3-Minuten-Erklaerung | 16159 |
+| `fortschritt` | Projektfortschritt | 19176 |
+| `vision` | Vision Bridge | 25921 |
+| `demo-ready` | Demo-Bereitschaft | 30261 |
+| `projektpaket` | Projektpaket Tagesansicht | 33005 |
+| `design-handoff` | KosmoDesign Handoff | 42597 |
+| `entscheidung` | Review Decision Draft | 56728 |
+| `runtime-contract` | Runtime-Vertrag | 64037 |
+| `installation` | Buero-Installation | 70033 |
+| `health` | Health Readiness | 77772 |
+| `risiken` | Risiko-Register | 84629 |
+| `commands` | Command-Vertrag | 91918 |
+| `audit` | Audit-Trail-Vertrag | 101281 |
+| `evidenz` | Pruefevidenz | 108795 |
+| `rechte` | Rechte-Matrix | 117054 |
+| `rollen` | Rollenumschaltung Preview | 134809 |
 
 ## Checks
 
@@ -42,6 +43,8 @@ Static audit for the human presentation flow of `/orbit`. It checks section orde
 | `approval_boundary_visible` | `passed` | Approval boundary is visible in the export. |
 | `review_only_visible` | `passed` | Review-only mode is visible in the export. |
 | `vision_bridge_visible` | `passed` | Vision bridge is visible in the export. |
+| `design_handoff_visible` | `passed` | KosmoDesign handoff console is visible in the export. |
+| `design_handoff_blocks_generation` | `passed` | KosmoDesign handoff keeps generation visibly blocked. |
 | `runtime_contract_visible` | `passed` | Runtime contract is visible and non-operational. |
 | `installation_topology_visible` | `passed` | Office installation topology is visible in the export. |
 | `health_readiness_visible` | `passed` | Health readiness contract is visible in the export. |

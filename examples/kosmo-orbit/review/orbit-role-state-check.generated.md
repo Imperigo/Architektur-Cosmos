@@ -1,6 +1,6 @@
 # KosmoOrbit Role State Check
 
-Generated: 2026-06-01T12:18:05.720Z
+Generated: 2026-06-01T12:26:20.306Z
 Status: `role_state_check_passed`
 Role state: `examples/kosmo-orbit/role-state.demo.json`
 

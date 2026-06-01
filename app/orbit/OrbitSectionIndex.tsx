@@ -5,6 +5,7 @@ const sectionLinks = [
   { href: '#vision', label: 'Vision' },
   { href: '#demo-ready', label: 'Demo' },
   { href: '#projektpaket', label: 'Projektpaket' },
+  { href: '#design-handoff', label: 'Handoff' },
   { href: '#entscheidung', label: 'Decision' },
   { href: '#runtime-contract', label: 'Runtime' },
   { href: '#installation', label: 'Installation' },

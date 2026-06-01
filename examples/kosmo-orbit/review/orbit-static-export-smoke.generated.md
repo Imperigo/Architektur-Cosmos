@@ -1,6 +1,6 @@
 # KosmoOrbit Static Export Smoke
 
-Generated: 2026-06-01T12:17:42.050Z
+Generated: 2026-06-01T12:26:07.832Z
 Status: `orbit_static_export_smoke_passed`
 HTML: `out/orbit/index.html`
 
@@ -8,7 +8,7 @@ Checks the built static export for the visible KosmoOrbit demo panels. It does n
 
 ## Summary
 
-- checks: 31/31 passed
+- checks: 33/33 passed
 
 ## Checks
 
@@ -23,6 +23,7 @@ Checks the built static export for the visible KosmoOrbit demo panels. It does n
 | `renders_vision_bridge` | `passed` | Export renders vision bridge. |
 | `renders_demo_readiness` | `passed` | Export renders demo readiness. |
 | `renders_project_dashboard` | `passed` | Export renders project package dashboard. |
+| `renders_design_handoff_panel` | `passed` | Export renders KosmoDesign handoff review console. |
 | `renders_review_decision` | `passed` | Export renders review decision draft. |
 | `renders_runtime_boundary` | `passed` | Export renders MVP/runtime boundary. |
 | `renders_runtime_contract` | `passed` | Export renders local runtime contract. |
@@ -44,6 +45,7 @@ Checks the built static export for the visible KosmoOrbit demo panels. It does n
 | `keeps_risk_register_human_gated` | `passed` | Export keeps risk register human-gated. |
 | `keeps_command_contract_static` | `passed` | Export keeps command contract non-operational. |
 | `keeps_audit_trail_static` | `passed` | Export keeps audit trail non-writing. |
+| `keeps_design_handoff_generation_blocked` | `passed` | Export keeps KosmoDesign generation blocked. |
 | `no_server_runtime_markers` | `passed` | Export does not include server runtime markers. |
 
 ## Next Actions
