@@ -84,6 +84,9 @@ Wichtig fuer die Kommunikation:
 - Ein Demo-Bereitschafts-Panel verbindet Full Review, Route-Smoke und
   Static-Smoke und formuliert die Grenze: menschlich vorfuehrbar, aber kein
   Push, kein Livegang, keine Generierung und keine Writes ohne Freigabe.
+- Ein neuer `kosmo:orbit-demo-audit` prueft den gebauten `/orbit`-Export auf
+  Vorfuehrreihenfolge, Navigation, sichtbare Freigabelinie und offensichtliche
+  Render-Artefakte.
 
 ## Qualitaetsgrenzen
 
@@ -94,6 +97,7 @@ Wichtig fuer die Kommunikation:
 
 ## Naechster sinnvoller Schritt
 
-Nach den lokalen Checks ist der naechste Produktschritt ein visueller
+Nach den lokalen Checks ist der naechste Produktschritt ein echter visueller
 Browser-Smoke fuer `/orbit`, damit Fortschrittskarte, Rollenumschaltung und
-Demo-Navigation in einer menschlichen Vorfuehrung robust wirken.
+Demo-Navigation nicht nur statisch, sondern auch interaktiv in einer
+menschlichen Vorfuehrung robust wirken.

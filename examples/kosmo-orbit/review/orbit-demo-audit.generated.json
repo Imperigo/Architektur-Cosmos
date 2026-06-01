@@ -1,0 +1,105 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-01T07:39:10.136Z",
+  "generator": "kosmo-orbit-demo-audit",
+  "status": "orbit_demo_audit_passed",
+  "html_file": "out/orbit/index.html",
+  "summary": {
+    "check_count": 9,
+    "passed_checks": 9,
+    "failed_checks": 0
+  },
+  "demo_order": [
+    {
+      "id": "autonomie",
+      "label": "Autonomie-Status",
+      "index": 11442
+    },
+    {
+      "id": "presenter",
+      "label": "3-Minuten-Erklaerung",
+      "index": 13918
+    },
+    {
+      "id": "fortschritt",
+      "label": "Projektfortschritt",
+      "index": 16935
+    },
+    {
+      "id": "demo-ready",
+      "label": "Demo-Bereitschaft",
+      "index": 23577
+    },
+    {
+      "id": "projektpaket",
+      "label": "Projektpaket Tagesansicht",
+      "index": 26319
+    },
+    {
+      "id": "entscheidung",
+      "label": "Review Decision Draft",
+      "index": 39967
+    },
+    {
+      "id": "evidenz",
+      "label": "Pruefevidenz",
+      "index": 47232
+    },
+    {
+      "id": "rollen",
+      "label": "Rollenumschaltung Preview",
+      "index": 55489
+    }
+  ],
+  "checks": [
+    {
+      "id": "html_exists",
+      "label": "Built /orbit HTML exists.",
+      "status": "passed"
+    },
+    {
+      "id": "demo_order_complete",
+      "label": "Core demo section anchors are all present.",
+      "status": "passed"
+    },
+    {
+      "id": "demo_order_logical",
+      "label": "Core demo sections appear in the intended presentation order.",
+      "status": "passed"
+    },
+    {
+      "id": "navigation_complete",
+      "label": "Demo navigation exposes all core stops.",
+      "status": "passed"
+    },
+    {
+      "id": "approval_boundary_visible",
+      "label": "Approval boundary is visible in the export.",
+      "status": "passed"
+    },
+    {
+      "id": "review_only_visible",
+      "label": "Review-only mode is visible in the export.",
+      "status": "passed"
+    },
+    {
+      "id": "no_runtime_promise",
+      "label": "Export does not claim live runtime execution.",
+      "status": "passed"
+    },
+    {
+      "id": "no_render_artifacts",
+      "label": "Visible export HTML has no obvious unresolved render artifacts.",
+      "status": "passed"
+    },
+    {
+      "id": "no_server_runtime_markers",
+      "label": "Export has no server-runtime markers.",
+      "status": "passed"
+    }
+  ],
+  "next_actions": [
+    "Use this after build when /orbit changes affect the human presentation flow.",
+    "Keep browser visual QA separate; this audit only verifies static demo structure."
+  ]
+}

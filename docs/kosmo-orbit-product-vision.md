@@ -154,6 +154,9 @@ Dieser Kern zeigt:
 - eine Demo-Bereitschaft, die Full Review, Route-Smoke und Static-Smoke zu
   einer menschlich vorfuehrbaren, aber weiterhin gesperrten Produktdemo
   zusammenzieht;
+- einen statischen Demo-Audit, der Vorfuehrreihenfolge, Navigation,
+  Freigabelinie und sichtbare Render-Artefakte im exportierten `/orbit`
+  prueft;
 - Arbeitsstations-Prioritaeten, die zeigen, welche Panels Chef, Projektleitung,
   Entwurf, Zeichnung und Ausbildung zuerst brauchen;
 - klare Sperre gegen Design-Generation, Public-Publish, externe Netzwerke,

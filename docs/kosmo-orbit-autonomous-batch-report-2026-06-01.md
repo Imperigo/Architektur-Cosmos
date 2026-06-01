@@ -66,6 +66,14 @@ Arbeitsstation zuerst welches Panel braucht.
     - haelt Push, Livegang, Generierung und Writes ohne Freigabe weiter
       blockiert.
 
+12. **Statischer Demo-Audit**
+    - prueft die gebaute `/orbit`-HTML auf Vorfuehrreihenfolge,
+      vollstaendige Demo-Navigation, sichtbare Freigabelinie und offensichtliche
+      Render-Artefakte;
+    - bleibt bewusst browserlos und cloudfrei, damit der Autonomieblock nicht
+      von externer UI-Automation abhaengt;
+    - schreibt nur Review-Artefakte unter `examples/kosmo-orbit/review/`.
+
 ## Lokale Commits seit `origin/main`
 
 - `6ad9372` Add KosmoOrbit role switcher preview
@@ -84,13 +92,14 @@ Arbeitsstation zuerst welches Panel braucht.
 Zuletzt gruene lokale Checks:
 
 - `npm run kosmo:orbit-route-smoke` — 74/74 passed
+- `npm run kosmo:orbit-demo-audit` — 9/9 passed
 - `npm run ui:audit` — 72/72 passed, 7 bekannte Warnings
 - `npm run archive:validate` — passed
 - `npm run brain:doctor-fast` — 10/10 passed
 - `npm run security:check` — passed, grosse bekannte Dateien uebersprungen
 - `npx tsc --noEmit` — passed
 - `npm run build` — static export passed
-- `npm run build:fresh` + `npm run kosmo:orbit-static-smoke` — 17/17 static
+- `npm run build` + `npm run kosmo:orbit-static-smoke` — 17/17 static
   `/orbit` HTML enthaelt die wichtigsten Demo-Panels und Anker
 
 ## Sicherheitsgrenzen
@@ -117,8 +126,8 @@ In diesem Batch wurde nicht gemacht:
 
 ## Naechste sichere Prioritaet
 
-Vor einem grossen Publish sollte ein kompakter Live-/Static-Smoke fuer `/orbit`
-gemacht werden:
+Vor einem grossen Publish sollte als naechstes ein echter Browser-Smoke fuer
+`/orbit` gemacht werden:
 
 1. Static Export `/orbit/` oeffnen.
 2. Rollenumschaltung klicken.
