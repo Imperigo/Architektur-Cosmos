@@ -96,6 +96,12 @@ Wichtig fuer die Kommunikation:
   mobile Layout-Risiken.
 - Ein 390px-Mobile-Smoke bestaetigt: kein horizontaler Overflow, keine zu
   kleinen sichtbaren Buttons/Links und klickbare Demo-Interaktionen.
+- Ein lesender Notion-Vision-Check bestaetigt KosmoZentrale, KosmoDesign,
+  Prepare/Draw/Viz/Publish, Blender/AR/Render/Plan/Layout und KosmoData als
+  grosse Pipeline und ordnet KosmoOrbit als Steuerzentrale ein.
+- Eine sichtbare Vision Bridge auf `/orbit` uebersetzt diese Pipeline in
+  KosmoZentrale, Prepare, Design, Draw/Viz/Publish und Data/Asset, ohne die
+  gesperrten Runtime-/Write-/Generatorgrenzen aufzuweichen.
 
 ## Qualitaetsgrenzen
 

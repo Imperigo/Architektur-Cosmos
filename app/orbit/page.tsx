@@ -21,6 +21,7 @@ import { OrbitReviewDecisionDraft } from './OrbitReviewDecisionDraft';
 import { OrbitRuntimeBoundary } from './OrbitRuntimeBoundary';
 import { OrbitRoleSwitcher } from './OrbitRoleSwitcher';
 import { OrbitSectionIndex } from './OrbitSectionIndex';
+import { OrbitVisionBridge } from './OrbitVisionBridge';
 import { OrbitWorkstationPriorities } from './OrbitWorkstationPriorities';
 
 export const dynamic = 'force-static';
@@ -346,6 +347,10 @@ export default function OrbitPage() {
 
           <div id="fortschritt" className="scroll-mt-4">
             <OrbitProgressMap />
+          </div>
+
+          <div id="vision" className="scroll-mt-4">
+            <OrbitVisionBridge />
           </div>
 
           <div id="demo-ready" className="scroll-mt-4">

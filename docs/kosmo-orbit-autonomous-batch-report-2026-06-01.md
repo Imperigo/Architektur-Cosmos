@@ -103,6 +103,20 @@ Arbeitsstation zuerst welches Panel braucht.
     - haelt das Ergebnis in `docs/kosmo-orbit-mobile-smoke-2026-06-01.md`
       fest.
 
+17. **Notion-Vision-Check**
+    - liest die Notion-Seiten `AI (2)` und `Architektur Workflow-Pipeline`;
+    - bestaetigt KosmoZentrale, KosmoDesign, Prepare/Draw/Viz/Publish,
+      Blender/AR/Render/Plan/Layout und KosmoData als grosse Vision;
+    - ordnet KosmoOrbit sauber als Steuerzentrale statt Generator ein.
+
+18. **Vision Bridge Auf `/orbit`**
+    - macht die Notion-/Projektvision als sichtbares Panel in der Demo
+      lesbar;
+    - trennt KosmoZentrale, KosmoPrepare, KosmoDesign, KosmoDraw/Viz/Publish
+      und KosmoData/KosmoAsset;
+    - haelt Runtime, D1/R2-/Upload-Writes und Generatoraktionen weiter
+      sichtbar gesperrt.
+
 ## Lokale Commits seit `origin/main`
 
 - `6ad9372` Add KosmoOrbit role switcher preview
@@ -120,9 +134,9 @@ Arbeitsstation zuerst welches Panel braucht.
 
 Zuletzt gruene lokale Checks:
 
-- `npm run kosmo:orbit-route-smoke` — 78/78 passed
-- `npm run kosmo:orbit-demo-audit` — 10/10 passed
-- `npm run kosmo:orbit-responsive-audit` — 12/12 passed
+- `npm run kosmo:orbit-route-smoke` — 82/82 passed
+- `npm run kosmo:orbit-demo-audit` — 11/11 passed
+- `npm run kosmo:orbit-responsive-audit` — 13/13 passed
 - Browser-Smoke fuer `/orbit/` — passed
 - 390px-Mobile-Smoke fuer `/orbit/` — passed
 - `npm run ui:audit` — 72/72 passed, 7 bekannte Warnings
@@ -131,7 +145,7 @@ Zuletzt gruene lokale Checks:
 - `npm run security:check` — passed, grosse bekannte Dateien uebersprungen
 - `npx tsc --noEmit` — passed
 - `npm run build` — static export passed
-- `npm run build` + `npm run kosmo:orbit-static-smoke` — 18/18 static
+- `npm run build` + `npm run kosmo:orbit-static-smoke` — 19/19 static
   `/orbit` HTML enthaelt die wichtigsten Demo-Panels und Anker
 
 ## Sicherheitsgrenzen

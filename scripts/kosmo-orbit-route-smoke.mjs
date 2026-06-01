@@ -12,6 +12,7 @@ const demoReviewPath = resolve(root, args.demoReview || 'app/orbit/OrbitDemoRevi
 const projectDashboardPath = resolve(root, args.projectDashboard || 'app/orbit/OrbitProjectDashboard.tsx');
 const presenterBriefPath = resolve(root, args.presenterBrief || 'app/orbit/OrbitPresenterBrief.tsx');
 const progressMapPath = resolve(root, args.progressMap || 'app/orbit/OrbitProgressMap.tsx');
+const visionBridgePath = resolve(root, args.visionBridge || 'app/orbit/OrbitVisionBridge.tsx');
 const demoQuestionsPath = resolve(root, args.demoQuestions || 'app/orbit/OrbitDemoQuestions.tsx');
 const reviewDecisionDraftPath = resolve(root, args.reviewDecisionDraft || 'app/orbit/OrbitReviewDecisionDraft.tsx');
 const runtimeBoundaryPath = resolve(root, args.runtimeBoundary || 'app/orbit/OrbitRuntimeBoundary.tsx');
@@ -40,6 +41,7 @@ async function main() {
   const projectDashboardSource = existsSync(projectDashboardPath) ? readFileSync(projectDashboardPath, 'utf8') : '';
   const presenterBriefSource = existsSync(presenterBriefPath) ? readFileSync(presenterBriefPath, 'utf8') : '';
   const progressMapSource = existsSync(progressMapPath) ? readFileSync(progressMapPath, 'utf8') : '';
+  const visionBridgeSource = existsSync(visionBridgePath) ? readFileSync(visionBridgePath, 'utf8') : '';
   const demoQuestionsSource = existsSync(demoQuestionsPath) ? readFileSync(demoQuestionsPath, 'utf8') : '';
   const reviewDecisionDraftSource = existsSync(reviewDecisionDraftPath) ? readFileSync(reviewDecisionDraftPath, 'utf8') : '';
   const runtimeBoundarySource = existsSync(runtimeBoundaryPath) ? readFileSync(runtimeBoundaryPath, 'utf8') : '';
@@ -50,7 +52,7 @@ async function main() {
   const demoReadinessSource = existsSync(demoReadinessPath) ? readFileSync(demoReadinessPath, 'utf8') : '';
   const sectionIndexSource = existsSync(sectionIndexPath) ? readFileSync(sectionIndexPath, 'utf8') : '';
   const spec = readJson(specPath);
-  const report = buildReport({ routeSource, roleSwitcherSource, demoReviewSource, projectDashboardSource, presenterBriefSource, progressMapSource, demoQuestionsSource, reviewDecisionDraftSource, runtimeBoundarySource, qualityEvidenceSource, workstationPrioritiesSource, permissionMatrixSource, autonomyStatusSource, demoReadinessSource, sectionIndexSource, spec });
+  const report = buildReport({ routeSource, roleSwitcherSource, demoReviewSource, projectDashboardSource, presenterBriefSource, progressMapSource, visionBridgeSource, demoQuestionsSource, reviewDecisionDraftSource, runtimeBoundarySource, qualityEvidenceSource, workstationPrioritiesSource, permissionMatrixSource, autonomyStatusSource, demoReadinessSource, sectionIndexSource, spec });
 
   await Promise.all([
     mkdir(dirname(outputJsonPath), { recursive: true }),
@@ -67,8 +69,8 @@ async function main() {
   if (report.status !== 'orbit_route_smoke_passed') process.exit(1);
 }
 
-function buildReport({ routeSource, roleSwitcherSource, demoReviewSource, projectDashboardSource, presenterBriefSource, progressMapSource, demoQuestionsSource, reviewDecisionDraftSource, runtimeBoundarySource, qualityEvidenceSource, workstationPrioritiesSource, permissionMatrixSource, autonomyStatusSource, demoReadinessSource, sectionIndexSource, spec }) {
-  const source = `${routeSource}\n${roleSwitcherSource}\n${demoReviewSource}\n${projectDashboardSource}\n${presenterBriefSource}\n${progressMapSource}\n${demoQuestionsSource}\n${reviewDecisionDraftSource}\n${runtimeBoundarySource}\n${qualityEvidenceSource}\n${workstationPrioritiesSource}\n${permissionMatrixSource}\n${autonomyStatusSource}\n${demoReadinessSource}\n${sectionIndexSource}`;
+function buildReport({ routeSource, roleSwitcherSource, demoReviewSource, projectDashboardSource, presenterBriefSource, progressMapSource, visionBridgeSource, demoQuestionsSource, reviewDecisionDraftSource, runtimeBoundarySource, qualityEvidenceSource, workstationPrioritiesSource, permissionMatrixSource, autonomyStatusSource, demoReadinessSource, sectionIndexSource, spec }) {
+  const source = `${routeSource}\n${roleSwitcherSource}\n${demoReviewSource}\n${projectDashboardSource}\n${presenterBriefSource}\n${progressMapSource}\n${visionBridgeSource}\n${demoQuestionsSource}\n${reviewDecisionDraftSource}\n${runtimeBoundarySource}\n${qualityEvidenceSource}\n${workstationPrioritiesSource}\n${permissionMatrixSource}\n${autonomyStatusSource}\n${demoReadinessSource}\n${sectionIndexSource}`;
   const forbiddenPatterns = [
     { id: 'no_use_server', pattern: /['"]use server['"]/ },
     { id: 'no_next_server', pattern: /from ['"]next\/server['"]/ },
@@ -91,6 +93,7 @@ function buildReport({ routeSource, roleSwitcherSource, demoReviewSource, projec
     check('project_dashboard_file_exists', 'Orbit project package dashboard component exists.', existsSync(projectDashboardPath)),
     check('presenter_brief_file_exists', 'Orbit presenter brief component exists.', existsSync(presenterBriefPath)),
     check('progress_map_file_exists', 'Orbit progress map component exists.', existsSync(progressMapPath)),
+    check('vision_bridge_file_exists', 'Orbit vision bridge component exists.', existsSync(visionBridgePath)),
     check('demo_questions_file_exists', 'Orbit demo questions component exists.', existsSync(demoQuestionsPath)),
     check('review_decision_draft_file_exists', 'Orbit review decision draft component exists.', existsSync(reviewDecisionDraftPath)),
     check('runtime_boundary_file_exists', 'Orbit MVP/runtime boundary component exists.', existsSync(runtimeBoundaryPath)),
@@ -105,6 +108,7 @@ function buildReport({ routeSource, roleSwitcherSource, demoReviewSource, projec
     check('imports_project_dashboard', 'Route imports the project package dashboard component.', routeSource.includes('OrbitProjectDashboard')),
     check('imports_presenter_brief', 'Route imports the presenter brief component.', routeSource.includes('OrbitPresenterBrief')),
     check('imports_progress_map', 'Route imports the vision-to-MVP progress map component.', routeSource.includes('OrbitProgressMap')),
+    check('imports_vision_bridge', 'Route imports the vision bridge component.', routeSource.includes('OrbitVisionBridge')),
     check('imports_demo_questions', 'Route imports the demo questions briefing component.', routeSource.includes('OrbitDemoQuestions')),
     check('imports_review_decision_draft', 'Route imports the review decision draft component.', routeSource.includes('OrbitReviewDecisionDraft')),
     check('imports_runtime_boundary', 'Route imports the MVP/runtime boundary component.', routeSource.includes('OrbitRuntimeBoundary')),
@@ -130,6 +134,8 @@ function buildReport({ routeSource, roleSwitcherSource, demoReviewSource, projec
     check('shows_progress_map', 'Route renders a visible project progress map.', source.includes('Projektfortschritt') && source.includes('Von Vision zu sichtbarem KosmoOrbit-MVP')),
     check('keeps_progress_map_non_absolute', 'Progress map avoids claiming one absolute total project percentage.', source.includes('keine Gesamtprojekt-Prozentzahl')),
     check('shows_runtime_and_generation_lanes', 'Progress map separates local runtime from CAD/plan generation.', source.includes('KosmoZentrale Runtime') && source.includes('CAD-/Plan-Generation')),
+    check('shows_vision_bridge', 'Route renders the KosmoOrbit vision bridge.', source.includes('Vision Bridge') && source.includes('Orchestrierung vor Generierung')),
+    check('keeps_vision_bridge_review_only', 'Vision bridge keeps runtime and write actions gated.', source.includes('keine Runtime in dieser Preview') && source.includes('keine D1/R2-/Upload-Writes')),
     check('shows_demo_questions', 'Route renders architect-facing demo questions.', source.includes('Demo-Fragen') && source.includes('Antworten fuer ein Architekturbuero')),
     check('anchors_demo_claims', 'Demo questions point claims back to visible panels.', source.includes('Welche Panel') || (source.includes('Presenter-Modus') && source.includes('Projektpaket Tagesansicht') && source.includes('Guardrails'))),
     check('shows_review_decision_draft', 'Route renders a local non-writing review decision draft.', source.includes('Review Decision Draft') && source.includes('needs_more_evidence')),
@@ -147,8 +153,8 @@ function buildReport({ routeSource, roleSwitcherSource, demoReviewSource, projec
     check('keeps_autonomy_cost_safe', 'Autonomy status keeps Cloud costs and writes blocked.', source.includes('keine Cloud-Kosten') && source.includes('keine Writes')),
     check('keeps_autonomy_named_orbit', 'Autonomy status names KosmoOrbit, not KosmoWebsite.', source.includes('Was KosmoOrbit gerade selbststaendig tut') && !source.includes('KosmoWebsite')),
     check('shows_demo_readiness', 'Route renders demo readiness with explicit human approval boundary.', source.includes('Demo-Bereitschaft') && source.includes('human-demo-ready') && source.includes('kein Push ohne Freigabe')),
-    check('shows_section_index', 'Route renders compact demo section navigation.', source.includes('Demo-Navigation') && source.includes('#fortschritt') && source.includes('#demo-ready') && source.includes('#rechte') && source.includes('#projektpaket') && source.includes('#guardrails')),
-    check('anchors_core_sections', 'Route contains anchors for core demo sections.', source.includes('id="autonomie"') && source.includes('id="demo-ready"') && source.includes('id="projektpaket"') && source.includes('id="rechte"') && source.includes('id="rollen"')),
+    check('shows_section_index', 'Route renders compact demo section navigation.', source.includes('Demo-Navigation') && source.includes('#fortschritt') && source.includes('#vision') && source.includes('#demo-ready') && source.includes('#rechte') && source.includes('#projektpaket') && source.includes('#guardrails')),
+    check('anchors_core_sections', 'Route contains anchors for core demo sections.', source.includes('id="autonomie"') && source.includes('id="vision"') && source.includes('id="demo-ready"') && source.includes('id="projektpaket"') && source.includes('id="rechte"') && source.includes('id="rollen"')),
     check('shows_blocked_actions', 'Route renders blocked action labels from role state.', source.includes('Blockierte Aktionen') && source.includes('roleState.blocked_actions.map')),
     check('shows_review_only_copy', 'Route keeps review-only safety copy visible.', source.includes('review-only') || source.includes('Review')),
     ...forbiddenPatterns.map((item) => check(item.id, `Forbidden pattern is absent: ${item.id}.`, !item.pattern.test(source)))

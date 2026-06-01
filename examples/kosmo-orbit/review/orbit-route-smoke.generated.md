@@ -1,6 +1,6 @@
 # KosmoOrbit Route Smoke
 
-Generated: 2026-06-01T07:46:28.107Z
+Generated: 2026-06-01T08:00:42.294Z
 Status: `orbit_route_smoke_passed`
 Route: `app/orbit/page.tsx`
 
@@ -8,7 +8,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 
 ## Summary
 
-- checks: 78/78 passed
+- checks: 82/82 passed
 
 ## Checks
 
@@ -26,6 +26,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `project_dashboard_file_exists` | `passed` | Orbit project package dashboard component exists. |
 | `presenter_brief_file_exists` | `passed` | Orbit presenter brief component exists. |
 | `progress_map_file_exists` | `passed` | Orbit progress map component exists. |
+| `vision_bridge_file_exists` | `passed` | Orbit vision bridge component exists. |
 | `demo_questions_file_exists` | `passed` | Orbit demo questions component exists. |
 | `review_decision_draft_file_exists` | `passed` | Orbit review decision draft component exists. |
 | `runtime_boundary_file_exists` | `passed` | Orbit MVP/runtime boundary component exists. |
@@ -40,6 +41,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `imports_project_dashboard` | `passed` | Route imports the project package dashboard component. |
 | `imports_presenter_brief` | `passed` | Route imports the presenter brief component. |
 | `imports_progress_map` | `passed` | Route imports the vision-to-MVP progress map component. |
+| `imports_vision_bridge` | `passed` | Route imports the vision bridge component. |
 | `imports_demo_questions` | `passed` | Route imports the demo questions briefing component. |
 | `imports_review_decision_draft` | `passed` | Route imports the review decision draft component. |
 | `imports_runtime_boundary` | `passed` | Route imports the MVP/runtime boundary component. |
@@ -65,6 +67,8 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `shows_progress_map` | `passed` | Route renders a visible project progress map. |
 | `keeps_progress_map_non_absolute` | `passed` | Progress map avoids claiming one absolute total project percentage. |
 | `shows_runtime_and_generation_lanes` | `passed` | Progress map separates local runtime from CAD/plan generation. |
+| `shows_vision_bridge` | `passed` | Route renders the KosmoOrbit vision bridge. |
+| `keeps_vision_bridge_review_only` | `passed` | Vision bridge keeps runtime and write actions gated. |
 | `shows_demo_questions` | `passed` | Route renders architect-facing demo questions. |
 | `anchors_demo_claims` | `passed` | Demo questions point claims back to visible panels. |
 | `shows_review_decision_draft` | `passed` | Route renders a local non-writing review decision draft. |

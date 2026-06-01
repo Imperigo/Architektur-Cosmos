@@ -1,6 +1,6 @@
 # KosmoOrbit Responsive Audit
 
-Generated: 2026-06-01T07:50:41.835Z
+Generated: 2026-06-01T08:00:39.990Z
 Status: `orbit_responsive_audit_passed`
 Source: `app/orbit`
 
@@ -8,10 +8,10 @@ Source-level responsive guard for `/orbit`. This does not replace a visual brows
 
 ## Summary
 
-- checks: 12/12 passed
-- min-w-0 guards: 45
-- flex-wrap usages: 29
-- responsive grid usages: 34
+- checks: 13/13 passed
+- min-w-0 guards: 47
+- flex-wrap usages: 31
+- responsive grid usages: 36
 
 ## Checks
 
@@ -24,6 +24,7 @@ Source-level responsive guard for `/orbit`. This does not replace a visual brows
 | `wrapping_controls_present` | `passed` | Orbit components use flex-wrap for dense controls. |
 | `responsive_grids_present` | `passed` | Orbit components use breakpoint grids instead of fixed desktop-only columns. |
 | `permission_matrix_responsive` | `passed` | Permission matrix collapses before the five-column desktop layout. |
+| `vision_bridge_responsive` | `passed` | Vision bridge uses responsive cards for the pipeline tracks. |
 | `progress_bars_have_stable_height` | `passed` | Progress map uses stable bar height and constrained width. |
 | `demo_readiness_uses_responsive_grid` | `passed` | Demo readiness summary uses responsive columns. |
 | `badges_can_wrap_long_words` | `passed` | Long labels can break instead of overflowing pills. |

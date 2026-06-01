@@ -1,16 +1,16 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T07:50:41.835Z",
+  "generated_at": "2026-06-01T08:00:39.990Z",
   "generator": "kosmo-orbit-responsive-audit",
   "status": "orbit_responsive_audit_passed",
   "source_dir": "app/orbit",
   "summary": {
-    "check_count": 12,
-    "passed_checks": 12,
+    "check_count": 13,
+    "passed_checks": 13,
     "failed_checks": 0,
-    "min_width_guard_count": 45,
-    "flex_wrap_count": 29,
-    "responsive_grid_count": 34
+    "min_width_guard_count": 47,
+    "flex_wrap_count": 31,
+    "responsive_grid_count": 36
   },
   "checks": [
     {
@@ -46,6 +46,11 @@
     {
       "id": "permission_matrix_responsive",
       "label": "Permission matrix collapses before the five-column desktop layout.",
+      "status": "passed"
+    },
+    {
+      "id": "vision_bridge_responsive",
+      "label": "Vision bridge uses responsive cards for the pipeline tracks.",
       "status": "passed"
     },
     {

@@ -157,6 +157,9 @@ Dieser Kern zeigt:
 - einen statischen Demo-Audit, der Vorfuehrreihenfolge, Navigation,
   Freigabelinie und sichtbare Render-Artefakte im exportierten `/orbit`
   prueft;
+- eine Vision Bridge, die KosmoZentrale, KosmoPrepare, KosmoDesign,
+  KosmoDraw/Viz/Publish und KosmoData/KosmoAsset als gesperrte bzw.
+  reviewfaehige Pipeline sichtbar macht;
 - Arbeitsstations-Prioritaeten, die zeigen, welche Panels Chef, Projektleitung,
   Entwurf, Zeichnung und Ausbildung zuerst brauchen;
 - eine Rechte-Matrix, die sichtbar macht, welche Rolle Design Review,

@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T07:46:28.107Z",
+  "generated_at": "2026-06-01T08:00:42.294Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 78,
-    "passed_checks": 78,
+    "check_count": 82,
+    "passed_checks": 82,
     "failed_checks": 0
   },
   "checks": [
@@ -69,6 +69,11 @@
     {
       "id": "progress_map_file_exists",
       "label": "Orbit progress map component exists.",
+      "status": "passed"
+    },
+    {
+      "id": "vision_bridge_file_exists",
+      "label": "Orbit vision bridge component exists.",
       "status": "passed"
     },
     {
@@ -139,6 +144,11 @@
     {
       "id": "imports_progress_map",
       "label": "Route imports the vision-to-MVP progress map component.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_vision_bridge",
+      "label": "Route imports the vision bridge component.",
       "status": "passed"
     },
     {
@@ -264,6 +274,16 @@
     {
       "id": "shows_runtime_and_generation_lanes",
       "label": "Progress map separates local runtime from CAD/plan generation.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_vision_bridge",
+      "label": "Route renders the KosmoOrbit vision bridge.",
+      "status": "passed"
+    },
+    {
+      "id": "keeps_vision_bridge_review_only",
+      "label": "Vision bridge keeps runtime and write actions gated.",
       "status": "passed"
     },
     {

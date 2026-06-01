@@ -2,6 +2,7 @@ const sectionLinks = [
   { href: '#autonomie', label: 'Autonomie' },
   { href: '#presenter', label: '3-Minuten' },
   { href: '#fortschritt', label: 'Fortschritt' },
+  { href: '#vision', label: 'Vision' },
   { href: '#demo-ready', label: 'Demo' },
   { href: '#projektpaket', label: 'Projektpaket' },
   { href: '#entscheidung', label: 'Decision' },

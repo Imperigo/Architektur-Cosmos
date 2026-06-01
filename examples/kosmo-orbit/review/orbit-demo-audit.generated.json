@@ -1,59 +1,64 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T07:46:28.535Z",
+  "generated_at": "2026-06-01T08:01:36.402Z",
   "generator": "kosmo-orbit-demo-audit",
   "status": "orbit_demo_audit_passed",
   "html_file": "out/orbit/index.html",
   "summary": {
-    "check_count": 10,
-    "passed_checks": 10,
+    "check_count": 11,
+    "passed_checks": 11,
     "failed_checks": 0
   },
   "demo_order": [
     {
       "id": "autonomie",
       "label": "Autonomie-Status",
-      "index": 11687
+      "index": 11932
     },
     {
       "id": "presenter",
       "label": "3-Minuten-Erklaerung",
-      "index": 14163
+      "index": 14408
     },
     {
       "id": "fortschritt",
       "label": "Projektfortschritt",
-      "index": 17180
+      "index": 17425
+    },
+    {
+      "id": "vision",
+      "label": "Vision Bridge",
+      "index": 24067
     },
     {
       "id": "demo-ready",
       "label": "Demo-Bereitschaft",
-      "index": 23822
+      "index": 28407
     },
     {
       "id": "projektpaket",
       "label": "Projektpaket Tagesansicht",
-      "index": 26564
+      "index": 31149
     },
     {
       "id": "entscheidung",
       "label": "Review Decision Draft",
-      "index": 40212
+      "index": 44797
     },
     {
       "id": "evidenz",
       "label": "Pruefevidenz",
-      "index": 47477
+      "index": 52062
     },
     {
       "id": "rechte",
       "label": "Rechte-Matrix",
-      "index": 55734
+      "index": 60319
     },
     {
       "id": "rollen",
       "label": "Rollenumschaltung Preview",
-      "index": 73489
+      "index": 78074
     }
   ],
   "checks": [
@@ -85,6 +90,11 @@
     {
       "id": "review_only_visible",
       "label": "Review-only mode is visible in the export.",
+      "status": "passed"
+    },
+    {
+      "id": "vision_bridge_visible",
+      "label": "Vision bridge is visible in the export.",
       "status": "passed"
     },
     {
