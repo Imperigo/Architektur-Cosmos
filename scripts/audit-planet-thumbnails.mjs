@@ -7,6 +7,7 @@ const ROOT = process.cwd();
 const OUT_DIR = path.join(ROOT, 'out');
 const REPORT_PATH = path.join(OUT_DIR, 'planet-thumbnail-audit.json');
 const blockedLicenses = new Set(['all_rights_reserved', 'needs_permission', 'private_research', 'personal_only', 'unknown']);
+const minimumCoveragePercent = 70;
 
 const entries = JSON.parse(await readFile(path.join(ROOT, 'data/mock-entries.json'), 'utf8'));
 const componentSource = await readFile(path.join(ROOT, 'components/atlas/SemanticEntryNode.tsx'), 'utf8');
@@ -26,6 +27,7 @@ const rows = entries.map((entry) => {
 const withThumbnail = rows.filter((row) => row.thumbnail_url);
 const missing = rows.filter((row) => !row.thumbnail_url);
 const duplicateUrls = duplicateValues(withThumbnail.map((row) => row.thumbnail_url));
+const coveragePercent = round((withThumbnail.length / entries.length) * 100);
 const componentChecks = [
   {
     label: 'SemanticEntryNode imports primaryPublicMediaUrl',
@@ -49,7 +51,8 @@ const report = {
   generated_at: new Date().toISOString(),
   entries: entries.length,
   planet_thumbnails: withThumbnail.length,
-  coverage_percent: round((withThumbnail.length / entries.length) * 100),
+  coverage_percent: coveragePercent,
+  minimum_coverage_percent: minimumCoveragePercent,
   duplicate_thumbnail_urls: duplicateUrls,
   component_checks: componentChecks,
   missing_thumbnails: missing.map(({ id, title }) => ({ id, title })),
@@ -61,11 +64,12 @@ await writeFile(REPORT_PATH, `${JSON.stringify(report, null, 2)}\n`);
 
 console.log('Architecture Cosmos planet thumbnail audit');
 console.log(`Planet thumbnails: ${report.planet_thumbnails}/${report.entries} (${report.coverage_percent}%)`);
+console.log(`Minimum coverage: ${minimumCoveragePercent}%`);
 console.log(`Duplicate thumbnail URLs: ${duplicateUrls.length}`);
 console.log(`Component checks: ${componentChecks.filter((check) => check.passed).length}/${componentChecks.length}`);
 console.log(`Report: ${path.relative(ROOT, REPORT_PATH)}`);
 
-if (duplicateUrls.length || componentChecks.some((check) => !check.passed)) {
+if (coveragePercent < minimumCoveragePercent || duplicateUrls.length || componentChecks.some((check) => !check.passed)) {
   process.exit(1);
 }
 
