@@ -1,6 +1,7 @@
 import appRouteSpecData from '@/examples/kosmo-orbit/review/orbit-app-route-spec.generated.json';
 import fullReviewData from '@/examples/kosmo-orbit/review/orbit-full-review.generated.json';
 import routeSmokeData from '@/examples/kosmo-orbit/review/orbit-route-smoke.generated.json';
+import staticSmokeData from '@/examples/kosmo-orbit/review/orbit-static-export-smoke.generated.json';
 import roleStateData from '@/examples/kosmo-orbit/role-state.demo.json';
 import designHandoffData from '@/examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-preview.generated.json';
 import projectInspectorData from '@/examples/kosmo-projects/kosmo-demo-001/orbit/project-inspector.generated.json';
@@ -8,6 +9,7 @@ import roleVariantsData from '@/examples/kosmo-projects/kosmo-demo-001/orbit/rol
 import shellManifestData from '@/examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-prototype.generated.json';
 import type { Metadata } from 'next';
 import { OrbitAutonomyStatus } from './OrbitAutonomyStatus';
+import { OrbitDemoReadiness, type OrbitStaticExportSmokeReport } from './OrbitDemoReadiness';
 import { OrbitDemoQuestions } from './OrbitDemoQuestions';
 import { OrbitDemoReviewPath } from './OrbitDemoReviewPath';
 import { OrbitPresenterBrief } from './OrbitPresenterBrief';
@@ -159,6 +161,7 @@ const roleVariantsReport = roleVariantsData as unknown as RoleVariantsReport;
 const appRouteSpec = appRouteSpecData as unknown as AppRouteSpec;
 const fullReview = fullReviewData as unknown as OrbitFullReviewReport;
 const routeSmoke = routeSmokeData as unknown as OrbitRouteSmokeReport;
+const staticSmoke = staticSmokeData as unknown as OrbitStaticExportSmokeReport;
 const shellManifest = shellManifestData as unknown as ShellManifest;
 const projectInspector = projectInspectorData as unknown as ProjectInspectorReport;
 const designHandoff = designHandoffData as unknown as DesignHandoffPreview;
@@ -342,6 +345,10 @@ export default function OrbitPage() {
 
           <div id="fortschritt" className="scroll-mt-4">
             <OrbitProgressMap />
+          </div>
+
+          <div id="demo-ready" className="scroll-mt-4">
+            <OrbitDemoReadiness fullReview={fullReview} routeSmoke={routeSmoke} staticSmoke={staticSmoke} />
           </div>
 
           <div id="projektpaket" className="scroll-mt-4">

@@ -81,6 +81,9 @@ Wichtig fuer die Kommunikation:
 - Der Autonomie-Status spricht nun korrekt von KosmoOrbit statt KosmoWebsite.
 - Ein neuer Static-Export-Smoke prueft nach `build:fresh`, ob die gebaute
   `/orbit` HTML-Datei die wichtigsten Demo-Panels und Anker enthaelt.
+- Ein Demo-Bereitschafts-Panel verbindet Full Review, Route-Smoke und
+  Static-Smoke und formuliert die Grenze: menschlich vorfuehrbar, aber kein
+  Push, kein Livegang, keine Generierung und keine Writes ohne Freigabe.
 
 ## Qualitaetsgrenzen
 

@@ -1,12 +1,12 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T07:25:59.862Z",
+  "generated_at": "2026-06-01T07:31:51.734Z",
   "generator": "kosmo-orbit-static-export-smoke",
   "status": "orbit_static_export_smoke_passed",
   "html_file": "out/orbit/index.html",
   "summary": {
-    "check_count": 16,
-    "passed_checks": 16,
+    "check_count": 17,
+    "passed_checks": 17,
     "failed_checks": 0
   },
   "checks": [
@@ -38,6 +38,11 @@
     {
       "id": "renders_progress_map",
       "label": "Export renders progress map.",
+      "status": "passed"
+    },
+    {
+      "id": "renders_demo_readiness",
+      "label": "Export renders demo readiness.",
       "status": "passed"
     },
     {

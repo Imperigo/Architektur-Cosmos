@@ -46,6 +46,7 @@ function buildReport(html) {
     check('renders_autonomy_status', 'Export renders autonomy status.', html.includes('Autonomie-Status')),
     check('renders_presenter_mode', 'Export renders presenter mode.', html.includes('Presenter-Modus')),
     check('renders_progress_map', 'Export renders progress map.', html.includes('Projektfortschritt')),
+    check('renders_demo_readiness', 'Export renders demo readiness.', html.includes('Demo-Bereitschaft') && html.includes('Static Export')),
     check('renders_project_dashboard', 'Export renders project package dashboard.', html.includes('Projektpaket Tagesansicht')),
     check('renders_review_decision', 'Export renders review decision draft.', html.includes('Review Decision Draft')),
     check('renders_runtime_boundary', 'Export renders MVP/runtime boundary.', html.includes('MVP-Grenze')),
@@ -53,7 +54,7 @@ function buildReport(html) {
     check('renders_workstation_priorities', 'Export renders workstation priorities.', html.includes('Arbeitsstationen')),
     check('renders_role_switcher', 'Export renders role switcher.', html.includes('Rollenumschaltung Preview')),
     check('renders_guided_review_path', 'Export renders guided review path.', html.includes('Gefuehrter Demo-Review-Pfad')),
-    check('anchors_core_sections', 'Export contains section anchors.', ['autonomie', 'fortschritt', 'projektpaket', 'entscheidung', 'evidenz', 'rollen', 'guardrails'].every((id) => html.includes(`id="${id}"`))),
+    check('anchors_core_sections', 'Export contains section anchors.', ['autonomie', 'fortschritt', 'demo-ready', 'projektpaket', 'entscheidung', 'evidenz', 'rollen', 'guardrails'].every((id) => html.includes(`id="${id}"`))),
     check('keeps_no_runtime_side_effects', 'Export states that runtime side effects are off.', html.includes('no-runtime-side-effects')),
     check('no_server_runtime_markers', 'Export does not include server runtime markers.', !html.includes('use server') && !html.includes('next/server'))
   ];
@@ -138,4 +139,3 @@ function parseArgs(argv) {
 function escapePipe(value) {
   return String(value ?? '').replace(/\|/g, '\\|');
 }
-

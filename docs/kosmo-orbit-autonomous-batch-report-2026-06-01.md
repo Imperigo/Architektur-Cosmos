@@ -60,6 +60,12 @@ Arbeitsstation zuerst welches Panel braucht.
     - zeigt, dass dieser Worker lokal planen, pruefen und dokumentieren darf,
       aber keine Cloud-Kosten, Writes oder externen Aktionen ausloest.
 
+11. **Demo-Bereitschaft**
+    - verbindet Full Review, Route-Smoke und Static-Smoke;
+    - markiert `/orbit` als menschlich vorfuehrbar;
+    - haelt Push, Livegang, Generierung und Writes ohne Freigabe weiter
+      blockiert.
+
 ## Lokale Commits seit `origin/main`
 
 - `6ad9372` Add KosmoOrbit role switcher preview
@@ -77,14 +83,14 @@ Arbeitsstation zuerst welches Panel braucht.
 
 Zuletzt gruene lokale Checks:
 
-- `npm run kosmo:orbit-route-smoke` — 70/70 passed
+- `npm run kosmo:orbit-route-smoke` — 74/74 passed
 - `npm run ui:audit` — 72/72 passed, 7 bekannte Warnings
 - `npm run archive:validate` — passed
 - `npm run brain:doctor-fast` — 10/10 passed
 - `npm run security:check` — passed, grosse bekannte Dateien uebersprungen
 - `npx tsc --noEmit` — passed
 - `npm run build` — static export passed
-- `npm run build:fresh` + `npm run kosmo:orbit-static-smoke` — static
+- `npm run build:fresh` + `npm run kosmo:orbit-static-smoke` — 17/17 static
   `/orbit` HTML enthaelt die wichtigsten Demo-Panels und Anker
 
 ## Sicherheitsgrenzen

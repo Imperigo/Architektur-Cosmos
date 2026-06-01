@@ -1,6 +1,6 @@
 # KosmoOrbit Route Smoke
 
-Generated: 2026-06-01T07:23:56.809Z
+Generated: 2026-06-01T07:32:24.497Z
 Status: `orbit_route_smoke_passed`
 Route: `app/orbit/page.tsx`
 
@@ -8,7 +8,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 
 ## Summary
 
-- checks: 70/70 passed
+- checks: 74/74 passed
 
 ## Checks
 
@@ -32,6 +32,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `quality_evidence_file_exists` | `passed` | Orbit quality evidence component exists. |
 | `workstation_priorities_file_exists` | `passed` | Orbit workstation priorities component exists. |
 | `autonomy_status_file_exists` | `passed` | Orbit autonomy status component exists. |
+| `demo_readiness_file_exists` | `passed` | Orbit demo readiness component exists. |
 | `section_index_file_exists` | `passed` | Orbit section index component exists. |
 | `imports_role_switcher` | `passed` | Route imports the role switcher preview component. |
 | `imports_demo_review_path` | `passed` | Route imports the guided demo review component. |
@@ -44,6 +45,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `imports_quality_evidence` | `passed` | Route imports the quality evidence component. |
 | `imports_workstation_priorities` | `passed` | Route imports the workstation priorities component. |
 | `imports_autonomy_status` | `passed` | Route imports the autonomy status component. |
+| `imports_demo_readiness` | `passed` | Route imports the demo readiness component. |
 | `imports_section_index` | `passed` | Route imports the section index navigation component. |
 | `uses_force_static` | `passed` | Route declares force-static rendering. |
 | `shows_kosmo_orbit` | `passed` | Route renders KosmoOrbit heading. |
@@ -69,11 +71,13 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `keeps_runtime_side_effects_off` | `passed` | Runtime boundary states no runtime side effects. |
 | `shows_quality_evidence` | `passed` | Route renders local review and route-smoke quality evidence. |
 | `imports_quality_reports` | `passed` | Route imports full review and route smoke reports. |
+| `imports_static_smoke_report` | `passed` | Route imports the static export smoke report. |
 | `shows_workstation_priorities` | `passed` | Route renders role-first workstation priorities. |
 | `covers_core_workstation_roles` | `passed` | Workstation priorities cover owner, project lead, design, drafting and education. |
 | `shows_autonomy_status` | `passed` | Route renders local autonomy status and safety limits. |
 | `keeps_autonomy_cost_safe` | `passed` | Autonomy status keeps Cloud costs and writes blocked. |
 | `keeps_autonomy_named_orbit` | `passed` | Autonomy status names KosmoOrbit, not KosmoWebsite. |
+| `shows_demo_readiness` | `passed` | Route renders demo readiness with explicit human approval boundary. |
 | `shows_section_index` | `passed` | Route renders compact demo section navigation. |
 | `anchors_core_sections` | `passed` | Route contains anchors for core demo sections. |
 | `shows_blocked_actions` | `passed` | Route renders blocked action labels from role state. |

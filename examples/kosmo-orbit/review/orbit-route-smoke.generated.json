@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T07:23:56.809Z",
+  "generated_at": "2026-06-01T07:32:24.497Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 70,
-    "passed_checks": 70,
+    "check_count": 74,
+    "passed_checks": 74,
     "failed_checks": 0
   },
   "checks": [
@@ -102,6 +102,11 @@
       "status": "passed"
     },
     {
+      "id": "demo_readiness_file_exists",
+      "label": "Orbit demo readiness component exists.",
+      "status": "passed"
+    },
+    {
       "id": "section_index_file_exists",
       "label": "Orbit section index component exists.",
       "status": "passed"
@@ -159,6 +164,11 @@
     {
       "id": "imports_autonomy_status",
       "label": "Route imports the autonomy status component.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_demo_readiness",
+      "label": "Route imports the demo readiness component.",
       "status": "passed"
     },
     {
@@ -287,6 +297,11 @@
       "status": "passed"
     },
     {
+      "id": "imports_static_smoke_report",
+      "label": "Route imports the static export smoke report.",
+      "status": "passed"
+    },
+    {
       "id": "shows_workstation_priorities",
       "label": "Route renders role-first workstation priorities.",
       "status": "passed"
@@ -309,6 +324,11 @@
     {
       "id": "keeps_autonomy_named_orbit",
       "label": "Autonomy status names KosmoOrbit, not KosmoWebsite.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_demo_readiness",
+      "label": "Route renders demo readiness with explicit human approval boundary.",
       "status": "passed"
     },
     {
