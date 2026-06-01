@@ -92,6 +92,8 @@ Aktiv fuer:
 - lokale Nachweise ueber `kosmo:orbit-full-review`, `kosmo:orbit-route-smoke`,
   `kosmo:orbit-demo-audit`, `kosmo:orbit-responsive-audit` und
   `kosmo:orbit-static-smoke`
+- finaler lokaler Abschluss in
+  `docs/kosmo-orbit-autonomous-closeout-2026-06-01.md`
 
 Noch nicht hier hinein gehoert:
 

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T13:56:32.389Z",
+  "generated_at": "2026-06-01T14:06:49.232Z",
   "generator": "kosmo-orbit-role-state-smoke",
   "role_state": "examples/kosmo-orbit/role-state.demo.json",
   "schema": "schema/kosmo-orbit-role-state.schema.json",

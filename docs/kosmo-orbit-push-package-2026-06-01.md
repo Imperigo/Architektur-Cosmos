@@ -6,7 +6,7 @@ Status: lokales Review- und Push-Paket. Kein Push wurde ausgefuehrt.
 
 - Branch: `main`
 - Remote: `origin/main`
-- Lokaler Stand: 50 Commits vor `origin/main`
+- Lokaler Stand: 51 Commits vor `origin/main`
 - Live/Deploy: nicht ausgefuehrt, weil Push/Live-Go fehlt
 
 ## Inhalt des Pakets
@@ -29,11 +29,14 @@ deutlich reifer:
 - Pilot-Session-Template sichtbar in `/orbit` mit leeren Messwerten;
 - Chef-Demo-Skript fuer eine nicht-technische 5-Minuten-Erklaerung;
 - Afternoon Checkpoint als kurzer lokaler Zwischenabschluss;
+- Autonomous Closeout als finaler lokaler Abschluss des 5h-Batches;
 - Office Pilot Plan;
 - aktualisierte Vision, Roadmap, Tagesstatus, Demo-Briefing,
   System-Knowledge und Source-of-Truth.
 
 ## Letzte lokale Nachweise
+
+Stand: finaler Abschluss-Sweep am 2026-06-01, kein Push/Deploy.
 
 - `npm run kosmo:orbit-full-review` — 21/21 passed
 - `npm run kosmo:orbit-pilot-session` — 17/17 passed
@@ -85,8 +88,9 @@ Vor einem Push sollte Owner bewusst entscheiden:
 
 1. **Push jetzt:** `git push origin main`, danach Cloudflare-Deploy und
    Live-Smoke pruefen.
-2. **Erst Security klaeren:** npm-audit-Fundstelle gezielt beurteilen und
-   danach erneut Full/Build/Static-Smoke laufen lassen.
+2. **Security bewusst re-bestaetigen:** bei Unsicherheit `npm run
+   security:check` und `npm run brain:doctor-fast` direkt vor Push erneut
+   laufen lassen.
 3. **Weiter lokal polieren:** kein Push, naechster lokaler Batch auf
    Pilotprojekt oder visuelle QA.
 

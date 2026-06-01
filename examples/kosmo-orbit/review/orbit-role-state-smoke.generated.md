@@ -1,6 +1,6 @@
 # KosmoOrbit Role State Smoke
 
-Generated: 2026-06-01T13:56:32.389Z
+Generated: 2026-06-01T14:06:49.232Z
 Status: `role_state_smoke_passed`
 Role state: `examples/kosmo-orbit/role-state.demo.json`
 Schema: `schema/kosmo-orbit-role-state.schema.json`

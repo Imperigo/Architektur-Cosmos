@@ -183,6 +183,8 @@ Wichtig fuer die Kommunikation:
 - System-Knowledge und Source-of-Truth sind nachgezogen, damit KosmoOrbit in
   der Gesamtlandkarte als Hauptsoftware/Steuerzentrale und nicht als
   Website-Feature gelesen wird.
+- Ein Autonomous Closeout dokumentiert den finalen lokalen Abschluss des
+  5h-Batches mit frischem Qualitaets-Sweep und ohne Push/Deploy.
 - Ein neuer KosmoData-HUD-Guard schuetzt die wiederkehrenden Website-Bedienpunkte:
   Database oben links, Suche/Dev rechts, Filterzugang rechts unten, HTML-
   Database-Overlay, globales Fadenkreuz in Start/Hauptmenue/Popups und

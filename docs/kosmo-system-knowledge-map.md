@@ -134,7 +134,8 @@ Aktueller Repo-Stand 2026-06-01:
   erklaerbar, ohne ROI-Zahlen, Livegang oder fertige Automation zu behaupten.
 - Lokale Nachweise liegen in `examples/kosmo-orbit/review/`; der aktuelle
   Stand ist in `docs/kosmo-orbit-push-package-2026-06-01.md` als
-  Push-/Review-Paket dokumentiert.
+  Push-/Review-Paket dokumentiert, mit finalem Closeout in
+  `docs/kosmo-orbit-autonomous-closeout-2026-06-01.md`.
 - Der Pilot-Session-Vertrag ist nur ein Mess-Template. Echte Zeit-,
   Qualitaets- oder Kostenwerte duerfen erst nach einem menschlich
   durchgefuehrten Buero-Pilot eingetragen werden.

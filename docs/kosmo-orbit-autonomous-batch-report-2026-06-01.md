@@ -257,7 +257,7 @@ Arbeitsstation zuerst welches Panel braucht.
 35. **Push Package**
     - legt unter `docs/kosmo-orbit-push-package-2026-06-01.md` ein lokales
       Review-/Push-Paket an;
-    - fasst Inhalt, Nachweise, Security-Blocker, Sicherheitsgrenzen und
+    - fasst Inhalt, Nachweise, Security-Stand, Sicherheitsgrenzen und
       Push-Entscheidungen zusammen;
     - dokumentiert explizit, dass kein Push/Deploy ausgefuehrt wurde.
 
@@ -313,6 +313,13 @@ Arbeitsstation zuerst welches Panel braucht.
     - verlinkt das Skript im Office Pilot Plan;
     - grenzt klar ab: kein fertiges CAD, keine automatische Generation, keine
       garantierten Zeit-/Kostenwerte.
+
+44. **Finaler Autonomous Closeout**
+    - schreibt `docs/kosmo-orbit-autonomous-closeout-2026-06-01.md`;
+    - erneuert die generierten Review-Reports nach dem finalen Sweep;
+    - bestaetigt Full Review, Route-Smoke, Demo-/Responsive-/Static-Smoke,
+      TypeScript, Lint, UI-Audit, Build, Security, Brain-Doctor und
+      Whitespace-Check.
 
 ## Lokale Commits seit `origin/main`
 
@@ -371,7 +378,7 @@ In diesem Batch wurde nicht gemacht:
 ## Aktueller Zustand
 
 - Branch: `main`
-- Lokaler Stand: mehrere Commits vor `origin/main`
+- Lokaler Stand: 51 Commits vor `origin/main` nach finalem Closeout-Commit
 - Live-Publish: noch nicht automatisch ausgefuehrt, ausser ein spaeterer
   expliziter Push/Publish-Befehl folgt.
 
