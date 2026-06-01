@@ -1,0 +1,81 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-01T07:50:41.835Z",
+  "generator": "kosmo-orbit-responsive-audit",
+  "status": "orbit_responsive_audit_passed",
+  "source_dir": "app/orbit",
+  "summary": {
+    "check_count": 12,
+    "passed_checks": 12,
+    "failed_checks": 0,
+    "min_width_guard_count": 45,
+    "flex_wrap_count": 29,
+    "responsive_grid_count": 34
+  },
+  "checks": [
+    {
+      "id": "all_orbit_files_present",
+      "label": "All expected /orbit source files exist.",
+      "status": "passed"
+    },
+    {
+      "id": "page_uses_safe_viewport_scroll",
+      "label": "Page uses a stable viewport shell with internal scroll.",
+      "status": "passed"
+    },
+    {
+      "id": "section_index_wraps",
+      "label": "Demo navigation wraps and keeps touch-height links.",
+      "status": "passed"
+    },
+    {
+      "id": "text_width_guards_present",
+      "label": "Orbit components use min-w-0 guards in dense panels.",
+      "status": "passed"
+    },
+    {
+      "id": "wrapping_controls_present",
+      "label": "Orbit components use flex-wrap for dense controls.",
+      "status": "passed"
+    },
+    {
+      "id": "responsive_grids_present",
+      "label": "Orbit components use breakpoint grids instead of fixed desktop-only columns.",
+      "status": "passed"
+    },
+    {
+      "id": "permission_matrix_responsive",
+      "label": "Permission matrix collapses before the five-column desktop layout.",
+      "status": "passed"
+    },
+    {
+      "id": "progress_bars_have_stable_height",
+      "label": "Progress map uses stable bar height and constrained width.",
+      "status": "passed"
+    },
+    {
+      "id": "demo_readiness_uses_responsive_grid",
+      "label": "Demo readiness summary uses responsive columns.",
+      "status": "passed"
+    },
+    {
+      "id": "badges_can_wrap_long_words",
+      "label": "Long labels can break instead of overflowing pills.",
+      "status": "passed"
+    },
+    {
+      "id": "no_viewport_scaled_font",
+      "label": "No /orbit source scales font size directly with viewport width.",
+      "status": "passed"
+    },
+    {
+      "id": "no_negative_letter_spacing",
+      "label": "No /orbit source uses negative letter spacing.",
+      "status": "passed"
+    }
+  ],
+  "next_actions": [
+    "Use this as a source-level guard before the real browser/mobile smoke.",
+    "Do not treat this as a replacement for a visual browser check."
+  ]
+}

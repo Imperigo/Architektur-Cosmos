@@ -1,0 +1,172 @@
+#!/usr/bin/env node
+
+import { existsSync, readFileSync } from 'node:fs';
+import { mkdir, writeFile } from 'node:fs/promises';
+import { dirname, relative, resolve } from 'node:path';
+
+const root = process.cwd();
+const args = parseArgs(process.argv.slice(2));
+const orbitDir = resolve(root, args.dir || 'app/orbit');
+const outputJsonPath = resolve(root, args.output || 'examples/kosmo-orbit/review/orbit-responsive-audit.generated.json');
+const outputMdPath = resolve(root, args.markdown || 'examples/kosmo-orbit/review/orbit-responsive-audit.generated.md');
+
+const files = [
+  'page.tsx',
+  'OrbitSectionIndex.tsx',
+  'OrbitRoleSwitcher.tsx',
+  'OrbitDemoReviewPath.tsx',
+  'OrbitProjectDashboard.tsx',
+  'OrbitPresenterBrief.tsx',
+  'OrbitProgressMap.tsx',
+  'OrbitDemoReadiness.tsx',
+  'OrbitDemoQuestions.tsx',
+  'OrbitReviewDecisionDraft.tsx',
+  'OrbitRuntimeBoundary.tsx',
+  'OrbitQualityEvidence.tsx',
+  'OrbitWorkstationPriorities.tsx',
+  'OrbitPermissionMatrix.tsx'
+];
+
+main().catch((error) => {
+  console.error(error.message);
+  process.exit(1);
+});
+
+async function main() {
+  const sources = readSources();
+  const report = buildReport(sources);
+
+  await Promise.all([
+    mkdir(dirname(outputJsonPath), { recursive: true }),
+    mkdir(dirname(outputMdPath), { recursive: true })
+  ]);
+  await writeFile(outputJsonPath, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
+  await writeFile(outputMdPath, renderMarkdown(report), 'utf8');
+
+  console.log('KosmoOrbit responsive audit');
+  console.log(`Status: ${report.status}`);
+  console.log(`Checks: ${report.summary.passed_checks}/${report.summary.check_count}`);
+  console.log(`Wrote: ${relative(root, outputMdPath)}`);
+
+  if (report.status !== 'orbit_responsive_audit_passed') process.exit(1);
+}
+
+function readSources() {
+  const entries = {};
+  for (const file of files) {
+    const absolutePath = resolve(orbitDir, file);
+    entries[file] = existsSync(absolutePath) ? readFileSync(absolutePath, 'utf8') : '';
+  }
+  return entries;
+}
+
+function buildReport(sources) {
+  const combined = Object.values(sources).join('\n');
+  const minWidthGuardCount = countMatches(combined, /\bmin-w-0\b/g);
+  const flexWrapCount = countMatches(combined, /\bflex-wrap\b/g);
+  const responsiveGridCount = countMatches(combined, /\b(sm|md|lg|xl):grid-cols-/g);
+  const checks = [
+    check('all_orbit_files_present', 'All expected /orbit source files exist.', files.every((file) => sources[file].length > 0)),
+    check('page_uses_safe_viewport_scroll', 'Page uses a stable viewport shell with internal scroll.', sources['page.tsx'].includes('h-dvh overflow-auto')),
+    check('section_index_wraps', 'Demo navigation wraps and keeps touch-height links.', sources['OrbitSectionIndex.tsx'].includes('flex-wrap') && sources['OrbitSectionIndex.tsx'].includes('min-h-9')),
+    check('text_width_guards_present', 'Orbit components use min-w-0 guards in dense panels.', minWidthGuardCount >= 18),
+    check('wrapping_controls_present', 'Orbit components use flex-wrap for dense controls.', flexWrapCount >= 12),
+    check('responsive_grids_present', 'Orbit components use breakpoint grids instead of fixed desktop-only columns.', responsiveGridCount >= 12),
+    check('permission_matrix_responsive', 'Permission matrix collapses before the five-column desktop layout.', sources['OrbitPermissionMatrix.tsx'].includes('sm:grid-cols-2') && sources['OrbitPermissionMatrix.tsx'].includes('lg:grid-cols-5')),
+    check('progress_bars_have_stable_height', 'Progress map uses stable bar height and constrained width.', sources['OrbitProgressMap.tsx'].includes('h-2.5 overflow-hidden') && sources['OrbitProgressMap.tsx'].includes('style={{ width')),
+    check('demo_readiness_uses_responsive_grid', 'Demo readiness summary uses responsive columns.', sources['OrbitDemoReadiness.tsx'].includes('md:grid-cols-3') && sources['OrbitDemoReadiness.tsx'].includes('lg:grid-cols')),
+    check('badges_can_wrap_long_words', 'Long labels can break instead of overflowing pills.', combined.includes('break-words')),
+    check('no_viewport_scaled_font', 'No /orbit source scales font size directly with viewport width.', !/text-\[[^\]]*vw|font-size\s*:\s*[^;]*vw/i.test(combined)),
+    check('no_negative_letter_spacing', 'No /orbit source uses negative letter spacing.', !/tracking-\[-|letter-spacing\s*:\s*-/i.test(combined))
+  ];
+  const failed = checks.filter((item) => item.status !== 'passed');
+
+  return {
+    schema_version: '0.1',
+    generated_at: new Date().toISOString(),
+    generator: 'kosmo-orbit-responsive-audit',
+    status: failed.length ? 'orbit_responsive_audit_blocked' : 'orbit_responsive_audit_passed',
+    source_dir: relative(root, orbitDir),
+    summary: {
+      check_count: checks.length,
+      passed_checks: checks.filter((item) => item.status === 'passed').length,
+      failed_checks: failed.length,
+      min_width_guard_count: minWidthGuardCount,
+      flex_wrap_count: flexWrapCount,
+      responsive_grid_count: responsiveGridCount
+    },
+    checks,
+    next_actions: failed.length
+      ? failed.map((item) => `Fix failed KosmoOrbit responsive audit check: ${item.id}`)
+      : [
+          'Use this as a source-level guard before the real browser/mobile smoke.',
+          'Do not treat this as a replacement for a visual browser check.'
+        ]
+  };
+}
+
+function check(id, label, passed) {
+  return {
+    id,
+    label,
+    status: passed ? 'passed' : 'failed'
+  };
+}
+
+function countMatches(value, pattern) {
+  return Array.from(value.matchAll(pattern)).length;
+}
+
+function renderMarkdown(report) {
+  const lines = [
+    '# KosmoOrbit Responsive Audit',
+    '',
+    `Generated: ${report.generated_at}`,
+    `Status: \`${report.status}\``,
+    `Source: \`${report.source_dir}\``,
+    '',
+    'Source-level responsive guard for `/orbit`. This does not replace a visual browser/mobile smoke; it only catches layout-risk patterns before that step.',
+    '',
+    '## Summary',
+    '',
+    `- checks: ${report.summary.passed_checks}/${report.summary.check_count} passed`,
+    `- min-w-0 guards: ${report.summary.min_width_guard_count}`,
+    `- flex-wrap usages: ${report.summary.flex_wrap_count}`,
+    `- responsive grid usages: ${report.summary.responsive_grid_count}`,
+    '',
+    '## Checks',
+    '',
+    '| Check | Status | Meaning |',
+    '| --- | --- | --- |'
+  ];
+
+  report.checks.forEach((item) => {
+    lines.push(`| \`${item.id}\` | \`${item.status}\` | ${escapePipe(item.label)} |`);
+  });
+
+  lines.push('', '## Next Actions', '');
+  report.next_actions.forEach((action) => lines.push(`- ${action}`));
+
+  return `${lines.join('\n')}\n`;
+}
+
+function escapePipe(value) {
+  return String(value ?? '').replace(/\|/g, '\\|');
+}
+
+function parseArgs(argv) {
+  const parsed = {};
+  for (let index = 0; index < argv.length; index += 1) {
+    const token = argv[index];
+    if (!token.startsWith('--')) continue;
+    const key = token.slice(2);
+    const next = argv[index + 1];
+    if (next && !next.startsWith('--')) {
+      parsed[key] = next;
+      index += 1;
+    } else {
+      parsed[key] = true;
+    }
+  }
+  return parsed;
+}

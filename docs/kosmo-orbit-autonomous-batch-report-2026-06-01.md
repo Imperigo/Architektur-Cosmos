@@ -81,12 +81,27 @@ Arbeitsstation zuerst welches Panel braucht.
       Chef/Admin, Projektleitung, Entwurf, Zeichnung und Ausbildung lesbar;
     - haelt Design-Generation sichtbar blockiert.
 
-14. **Browser-Smoke-Checkliste**
-    - haelt fest, wie `/orbit` im lokalen Browser manuell oder mit Browser-Tool
-      geprueft werden soll;
-    - markiert den echten Klick-/Mobile-Smoke bewusst als offen;
-    - verhindert, dass statische Checks als visueller Browser-Test
-      ueberverkauft werden.
+14. **Browser-Smoke**
+    - oeffnet den statischen Export unter `http://127.0.0.1:3001/orbit/`;
+    - bestaetigt sichtbaren Haupttitel, Demo-Bereitschaft, Rechte-Matrix und
+      Rollenumschaltung;
+    - klickt `Entwurfsarchitekt` und den Demo-Schritt
+      `02 Entwurf prueft Kontext`;
+    - haelt das Ergebnis in `docs/kosmo-orbit-browser-smoke-2026-06-01.md`
+      fest.
+
+15. **Responsive-Audit**
+    - prueft `/orbit`-Quellen auf min-width-Guards, flex-wrap,
+      breakpoint-grids, stabile Progress-Bars und fehlende viewport-Fonttricks;
+    - bleibt ein Source-Level-Guard und ersetzt keinen visuellen Browser-Smoke.
+
+16. **Mobile-Smoke**
+    - prueft `/orbit` im Viewport `390 x 844`;
+    - bestaetigt: kein horizontaler Overflow, keine sichtbaren Buttons/Links
+      unter 32 px, Kernpanels sichtbar;
+    - klickt Rollenumschaltung und Demo-Schritt auch in schmaler Breite;
+    - haelt das Ergebnis in `docs/kosmo-orbit-mobile-smoke-2026-06-01.md`
+      fest.
 
 ## Lokale Commits seit `origin/main`
 
@@ -107,8 +122,11 @@ Zuletzt gruene lokale Checks:
 
 - `npm run kosmo:orbit-route-smoke` — 78/78 passed
 - `npm run kosmo:orbit-demo-audit` — 10/10 passed
+- `npm run kosmo:orbit-responsive-audit` — 12/12 passed
 - Browser-Smoke-Checkliste fuer `/orbit/` — vorbereitet, echter Klick-Smoke
   noch offen
+- 390px-Mobile-Smoke-Checkliste fuer `/orbit/` — vorbereitet, echter
+  Viewport-Smoke noch offen
 - `npm run ui:audit` — 72/72 passed, 7 bekannte Warnings
 - `npm run archive:validate` — passed
 - `npm run brain:doctor-fast` — 10/10 passed
@@ -142,10 +160,9 @@ In diesem Batch wurde nicht gemacht:
 
 ## Naechste sichere Prioritaet
 
-Vor einem grossen Publish sollte als naechstes ein Mobile-/schmaler Viewport
-Smoke fuer `/orbit` gemacht werden:
+Vor einem grossen Publish sollte als naechstes nur noch entschieden werden, ob
+die lokalen Commits bewusst auf `main` gepusht werden sollen:
 
-1. Static Export `/orbit/` in schmalem Viewport oeffnen.
-2. Demo-Navigation und Rollenumschaltung pruefen.
-3. Textueberlauf in Karten und Chips pruefen.
-4. Dann entscheiden: Push auf `main` oder noch ein UI-Polish-Batch.
+1. Bei Push-Freigabe: `git push origin main`.
+2. Danach Live-Smoke mit Cache-Buster.
+3. Ohne Push-Freigabe: naechster lokaler UI-Polish-Batch.

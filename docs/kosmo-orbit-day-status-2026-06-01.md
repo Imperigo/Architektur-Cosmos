@@ -87,10 +87,15 @@ Wichtig fuer die Kommunikation:
 - Ein neuer `kosmo:orbit-demo-audit` prueft den gebauten `/orbit`-Export auf
   Vorfuehrreihenfolge, Navigation, sichtbare Freigabelinie und offensichtliche
   Render-Artefakte.
-- Eine Browser-Smoke-Checkliste beschreibt den naechsten echten Klicktest;
-  der visuelle Browser-/Mobile-Smoke ist bewusst noch offen.
+- Ein lokaler Browser-Smoke bestaetigt, dass der statische `/orbit`-Export
+  im In-App-Browser laedt und Rollenumschaltung plus Demo-Schritt klickbar
+  sind.
 - Eine Rechte-Matrix zeigt je Rolle Design-Review, Design-Generation,
   lokale Freigabe, Public Gate und Read-only-Status.
+- Ein Responsive-Audit prueft `/orbit` auf Source-Level gegen typische
+  mobile Layout-Risiken.
+- Ein 390px-Mobile-Smoke bestaetigt: kein horizontaler Overflow, keine zu
+  kleinen sichtbaren Buttons/Links und klickbare Demo-Interaktionen.
 
 ## Qualitaetsgrenzen
 
@@ -101,6 +106,6 @@ Wichtig fuer die Kommunikation:
 
 ## Naechster sinnvoller Schritt
 
-Nach den lokalen Checks ist der naechste Produktschritt ein schmaler
-Mobile-/Viewport-Smoke fuer `/orbit`, damit Demo-Navigation, Rollenumschaltung
-und Karten nicht nur am Desktop, sondern auch in engeren Layouts robust wirken.
+Nach den lokalen Checks ist der naechste Produktschritt entweder ein expliziter
+Push/Live-Go mit anschliessendem Live-Smoke oder ein weiterer lokaler
+UI-Polish-Batch.
