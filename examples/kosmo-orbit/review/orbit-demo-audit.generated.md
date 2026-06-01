@@ -1,6 +1,6 @@
 # KosmoOrbit Demo Audit
 
-Generated: 2026-06-01T12:39:18.981Z
+Generated: 2026-06-01T12:44:35.568Z
 Status: `orbit_demo_audit_passed`
 HTML: `out/orbit/index.html`
 
@@ -8,31 +8,32 @@ Static audit for the human presentation flow of `/orbit`. It checks section orde
 
 ## Summary
 
-- checks: 23/23 passed
+- checks: 25/25 passed
 
 ## Demo Order
 
 | Anchor | Section | Position |
 | --- | --- | ---: |
-| `autonomie` | Autonomie-Status | 14183 |
-| `routine` | Buero-Routine | 16659 |
-| `presenter` | 3-Minuten-Erklaerung | 29471 |
-| `fortschritt` | Projektfortschritt | 32488 |
-| `vision` | Vision Bridge | 39233 |
-| `demo-ready` | Demo-Bereitschaft | 43573 |
-| `projektpaket` | Projektpaket Tagesansicht | 46317 |
-| `design-handoff` | KosmoDesign Handoff | 55909 |
-| `entscheidung` | Review Decision Draft | 70040 |
-| `runtime-contract` | Runtime-Vertrag | 77349 |
-| `installation` | Buero-Installation | 83345 |
-| `health` | Health Readiness | 91084 |
-| `risiken` | Risiko-Register | 97941 |
-| `commands` | Command-Vertrag | 105230 |
-| `audit` | Audit-Trail-Vertrag | 114593 |
-| `evidenz` | Pruefevidenz | 122107 |
-| `ausbildung` | Ausbildungsmodus | 130366 |
-| `rechte` | Rechte-Matrix | 135676 |
-| `rollen` | Rollenumschaltung Preview | 153431 |
+| `autonomie` | Autonomie-Status | 14438 |
+| `routine` | Buero-Routine | 16914 |
+| `presenter` | 3-Minuten-Erklaerung | 29726 |
+| `workflow-delta` | Workflow-Delta | 32743 |
+| `fortschritt` | Projektfortschritt | 38465 |
+| `vision` | Vision Bridge | 45210 |
+| `demo-ready` | Demo-Bereitschaft | 49550 |
+| `projektpaket` | Projektpaket Tagesansicht | 52294 |
+| `design-handoff` | KosmoDesign Handoff | 61886 |
+| `entscheidung` | Review Decision Draft | 76017 |
+| `runtime-contract` | Runtime-Vertrag | 83326 |
+| `installation` | Buero-Installation | 89322 |
+| `health` | Health Readiness | 97061 |
+| `risiken` | Risiko-Register | 103918 |
+| `commands` | Command-Vertrag | 111207 |
+| `audit` | Audit-Trail-Vertrag | 120570 |
+| `evidenz` | Pruefevidenz | 128084 |
+| `ausbildung` | Ausbildungsmodus | 136343 |
+| `rechte` | Rechte-Matrix | 141653 |
+| `rollen` | Rollenumschaltung Preview | 159408 |
 
 ## Checks
 
@@ -46,6 +47,8 @@ Static audit for the human presentation flow of `/orbit`. It checks section orde
 | `review_only_visible` | `passed` | Review-only mode is visible in the export. |
 | `office_routine_visible` | `passed` | Office routine is visible in the export. |
 | `office_routine_safety_visible` | `passed` | Office routine safety line is visible in the export. |
+| `workflow_delta_visible` | `passed` | Workflow delta is visible in the export. |
+| `workflow_delta_honest` | `passed` | Workflow delta avoids unsupported savings claims. |
 | `vision_bridge_visible` | `passed` | Vision bridge is visible in the export. |
 | `design_handoff_visible` | `passed` | KosmoDesign handoff console is visible in the export. |
 | `design_handoff_blocks_generation` | `passed` | KosmoDesign handoff keeps generation visibly blocked. |

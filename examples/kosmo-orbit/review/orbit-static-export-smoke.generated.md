@@ -1,6 +1,6 @@
 # KosmoOrbit Static Export Smoke
 
-Generated: 2026-06-01T12:39:18.940Z
+Generated: 2026-06-01T12:44:35.576Z
 Status: `orbit_static_export_smoke_passed`
 HTML: `out/orbit/index.html`
 
@@ -8,7 +8,7 @@ Checks the built static export for the visible KosmoOrbit demo panels. It does n
 
 ## Summary
 
-- checks: 37/37 passed
+- checks: 39/39 passed
 
 ## Checks
 
@@ -20,6 +20,7 @@ Checks the built static export for the visible KosmoOrbit demo panels. It does n
 | `renders_autonomy_status` | `passed` | Export renders autonomy status. |
 | `renders_office_routine` | `passed` | Export renders office routine contract. |
 | `renders_presenter_mode` | `passed` | Export renders presenter mode. |
+| `renders_workflow_delta` | `passed` | Export renders workflow delta. |
 | `renders_progress_map` | `passed` | Export renders progress map. |
 | `renders_vision_bridge` | `passed` | Export renders vision bridge. |
 | `renders_demo_readiness` | `passed` | Export renders demo readiness. |
@@ -42,6 +43,7 @@ Checks the built static export for the visible KosmoOrbit demo panels. It does n
 | `anchors_core_sections` | `passed` | Export contains section anchors. |
 | `keeps_no_runtime_side_effects` | `passed` | Export states that runtime side effects are off. |
 | `keeps_runtime_contract_safe` | `passed` | Export keeps runtime process/model/queue actions gated. |
+| `keeps_workflow_delta_honest` | `passed` | Export keeps workflow delta honest about savings. |
 | `keeps_installation_topology_safe` | `passed` | Export keeps installation topology non-operational. |
 | `keeps_office_routine_safe` | `passed` | Export keeps office routine non-operational. |
 | `keeps_health_readiness_safe` | `passed` | Export keeps health readiness non-operational. |

@@ -1,12 +1,12 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T12:39:18.940Z",
+  "generated_at": "2026-06-01T12:44:35.576Z",
   "generator": "kosmo-orbit-static-export-smoke",
   "status": "orbit_static_export_smoke_passed",
   "html_file": "out/orbit/index.html",
   "summary": {
-    "check_count": 37,
-    "passed_checks": 37,
+    "check_count": 39,
+    "passed_checks": 39,
     "failed_checks": 0
   },
   "checks": [
@@ -38,6 +38,11 @@
     {
       "id": "renders_presenter_mode",
       "label": "Export renders presenter mode.",
+      "status": "passed"
+    },
+    {
+      "id": "renders_workflow_delta",
+      "label": "Export renders workflow delta.",
       "status": "passed"
     },
     {
@@ -148,6 +153,11 @@
     {
       "id": "keeps_runtime_contract_safe",
       "label": "Export keeps runtime process/model/queue actions gated.",
+      "status": "passed"
+    },
+    {
+      "id": "keeps_workflow_delta_honest",
+      "label": "Export keeps workflow delta honest about savings.",
       "status": "passed"
     },
     {

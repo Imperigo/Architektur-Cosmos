@@ -1,109 +1,114 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T12:39:18.981Z",
+  "generated_at": "2026-06-01T12:44:35.568Z",
   "generator": "kosmo-orbit-demo-audit",
   "status": "orbit_demo_audit_passed",
   "html_file": "out/orbit/index.html",
   "summary": {
-    "check_count": 23,
-    "passed_checks": 23,
+    "check_count": 25,
+    "passed_checks": 25,
     "failed_checks": 0
   },
   "demo_order": [
     {
       "id": "autonomie",
       "label": "Autonomie-Status",
-      "index": 14183
+      "index": 14438
     },
     {
       "id": "routine",
       "label": "Buero-Routine",
-      "index": 16659
+      "index": 16914
     },
     {
       "id": "presenter",
       "label": "3-Minuten-Erklaerung",
-      "index": 29471
+      "index": 29726
+    },
+    {
+      "id": "workflow-delta",
+      "label": "Workflow-Delta",
+      "index": 32743
     },
     {
       "id": "fortschritt",
       "label": "Projektfortschritt",
-      "index": 32488
+      "index": 38465
     },
     {
       "id": "vision",
       "label": "Vision Bridge",
-      "index": 39233
+      "index": 45210
     },
     {
       "id": "demo-ready",
       "label": "Demo-Bereitschaft",
-      "index": 43573
+      "index": 49550
     },
     {
       "id": "projektpaket",
       "label": "Projektpaket Tagesansicht",
-      "index": 46317
+      "index": 52294
     },
     {
       "id": "design-handoff",
       "label": "KosmoDesign Handoff",
-      "index": 55909
+      "index": 61886
     },
     {
       "id": "entscheidung",
       "label": "Review Decision Draft",
-      "index": 70040
+      "index": 76017
     },
     {
       "id": "runtime-contract",
       "label": "Runtime-Vertrag",
-      "index": 77349
+      "index": 83326
     },
     {
       "id": "installation",
       "label": "Buero-Installation",
-      "index": 83345
+      "index": 89322
     },
     {
       "id": "health",
       "label": "Health Readiness",
-      "index": 91084
+      "index": 97061
     },
     {
       "id": "risiken",
       "label": "Risiko-Register",
-      "index": 97941
+      "index": 103918
     },
     {
       "id": "commands",
       "label": "Command-Vertrag",
-      "index": 105230
+      "index": 111207
     },
     {
       "id": "audit",
       "label": "Audit-Trail-Vertrag",
-      "index": 114593
+      "index": 120570
     },
     {
       "id": "evidenz",
       "label": "Pruefevidenz",
-      "index": 122107
+      "index": 128084
     },
     {
       "id": "ausbildung",
       "label": "Ausbildungsmodus",
-      "index": 130366
+      "index": 136343
     },
     {
       "id": "rechte",
       "label": "Rechte-Matrix",
-      "index": 135676
+      "index": 141653
     },
     {
       "id": "rollen",
       "label": "Rollenumschaltung Preview",
-      "index": 153431
+      "index": 159408
     }
   ],
   "checks": [
@@ -145,6 +150,16 @@
     {
       "id": "office_routine_safety_visible",
       "label": "Office routine safety line is visible in the export.",
+      "status": "passed"
+    },
+    {
+      "id": "workflow_delta_visible",
+      "label": "Workflow delta is visible in the export.",
+      "status": "passed"
+    },
+    {
+      "id": "workflow_delta_honest",
+      "label": "Workflow delta avoids unsupported savings claims.",
       "status": "passed"
     },
     {

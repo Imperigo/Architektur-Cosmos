@@ -149,6 +149,8 @@ Dieser Kern zeigt:
 - einen Ausbildungsmodus, der Praktikant, Lehrling und Schnupperstift mit
   Schulstoff/Buero-Standards, gefuehrter Projektbeobachtung und Review statt
   Aktion unterstuetzt;
+- ein Workflow-Delta, das heutigen verstreuten Bueroablauf und KosmoOrbit-
+  Zielarbeitsweise vergleicht, ohne unbewiesene ROI-Zahlen zu behaupten;
 - einen Presenter-Modus fuer eine 3-Minuten-Erklaerung, der die
   Buero-Argumente besser, schneller und guenstiger ohne Informatik-Sprache
   zusammenfasst;

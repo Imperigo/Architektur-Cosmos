@@ -1,16 +1,16 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T12:38:35.451Z",
+  "generated_at": "2026-06-01T12:43:44.331Z",
   "generator": "kosmo-orbit-responsive-audit",
   "status": "orbit_responsive_audit_passed",
   "source_dir": "app/orbit",
   "summary": {
-    "check_count": 22,
-    "passed_checks": 22,
+    "check_count": 23,
+    "passed_checks": 23,
     "failed_checks": 0,
-    "min_width_guard_count": 72,
-    "flex_wrap_count": 54,
-    "responsive_grid_count": 57
+    "min_width_guard_count": 76,
+    "flex_wrap_count": 55,
+    "responsive_grid_count": 59
   },
   "checks": [
     {
@@ -101,6 +101,11 @@
     {
       "id": "demo_readiness_uses_responsive_grid",
       "label": "Demo readiness summary uses responsive columns.",
+      "status": "passed"
+    },
+    {
+      "id": "workflow_delta_responsive",
+      "label": "Workflow delta uses a responsive comparison grid.",
       "status": "passed"
     },
     {

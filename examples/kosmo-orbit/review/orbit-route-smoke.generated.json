@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T12:39:36.611Z",
+  "generated_at": "2026-06-01T12:44:54.291Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 129,
-    "passed_checks": 129,
+    "check_count": 133,
+    "passed_checks": 133,
     "failed_checks": 0
   },
   "checks": [
@@ -74,6 +74,11 @@
     {
       "id": "presenter_brief_file_exists",
       "label": "Orbit presenter brief component exists.",
+      "status": "passed"
+    },
+    {
+      "id": "workflow_delta_file_exists",
+      "label": "Orbit workflow delta component exists.",
       "status": "passed"
     },
     {
@@ -214,6 +219,11 @@
     {
       "id": "imports_presenter_brief",
       "label": "Route imports the presenter brief component.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_workflow_delta",
+      "label": "Route imports the workflow delta component.",
       "status": "passed"
     },
     {
@@ -409,6 +419,16 @@
     {
       "id": "shows_value_claims",
       "label": "Presenter brief covers better, faster and cheaper value claims.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_workflow_delta",
+      "label": "Route renders workflow delta for non-technical office value.",
+      "status": "passed"
+    },
+    {
+      "id": "workflow_delta_avoids_roi_claim",
+      "label": "Workflow delta avoids unproven ROI claims.",
       "status": "passed"
     },
     {

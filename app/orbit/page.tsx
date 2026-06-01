@@ -31,6 +31,7 @@ import { OrbitRuntimeContract } from './OrbitRuntimeContract';
 import { OrbitRoleSwitcher } from './OrbitRoleSwitcher';
 import { OrbitSectionIndex } from './OrbitSectionIndex';
 import { OrbitVisionBridge } from './OrbitVisionBridge';
+import { OrbitWorkflowDelta } from './OrbitWorkflowDelta';
 import { OrbitWorkstationPriorities } from './OrbitWorkstationPriorities';
 
 export const dynamic = 'force-static';
@@ -356,6 +357,10 @@ export default function OrbitPage() {
 
           <div id="presenter" className="scroll-mt-4">
             <OrbitPresenterBrief />
+          </div>
+
+          <div id="workflow-delta" className="scroll-mt-4">
+            <OrbitWorkflowDelta />
           </div>
 
           <div id="fortschritt" className="scroll-mt-4">
