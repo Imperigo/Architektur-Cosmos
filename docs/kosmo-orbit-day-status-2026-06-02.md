@@ -119,6 +119,21 @@ Zweck:
 - erneutes Generieren erzeugt nur Zeitstempelrauschen, das
   `npm run generated:cleanup` sauber zuruecksetzt.
 
+### Readiness Sweep
+
+Neu gibt es `npm run kosmo:orbit-readiness-sweep`.
+
+Diese Routine laeuft lokal und review-only:
+
+1. `npm run kosmo:orbit-route-smoke`
+2. `npm run kosmo:orbit-static-smoke`
+3. `npm run generated:cleanup`
+4. `npm run kosmo:orbit-push-readiness`
+5. `npm run generated:cleanup`
+
+Zweck: die richtige Reihenfolge fuer lokale Orbit-Readiness automatisieren,
+ohne Push, Deploy, Upload, externe Accounts oder Kosten auszuloesen.
+
 ## Lokale Nachweise
 
 Heute gruen geprueft:
@@ -131,6 +146,7 @@ Heute gruen geprueft:
 - `npm run lint` - 0 Errors, 0 Warnings
 - `npm run brain:doctor` - 17/17 passed
 - `npm run kosmo:orbit-push-readiness` - 12/12 passed
+- `npm run kosmo:orbit-readiness-sweep` - 5/5 passed
 - `npm run generated:cleanup` - Zeitstempelrauschen entfernt, semantische
   Report-Diffs behalten
 - `git diff --check` - passed
