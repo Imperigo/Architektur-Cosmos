@@ -102,6 +102,8 @@ Nachgezogen:
   Szene jetzt als lokalen Demo-Vertrag;
 - `/orbit` liest Schritte, Rollen, Safety, Evidenzfragen und Decision-Status
   aus diesem Vertrag;
+- `npm run kosmo:orbit-office-pilot-scene` prueft diesen Vertrag mit
+  13/13 Checks;
 - `npm run kosmo:orbit-route-smoke` prueft den Datenvertrag explizit mit.
 
 ### Push-Readiness Stabilisierung
@@ -125,11 +127,12 @@ Neu gibt es `npm run kosmo:orbit-readiness-sweep`.
 
 Diese Routine laeuft lokal und review-only:
 
-1. `npm run kosmo:orbit-route-smoke`
-2. `npm run kosmo:orbit-static-smoke`
-3. `npm run generated:cleanup`
-4. `npm run kosmo:orbit-push-readiness`
-5. `npm run generated:cleanup`
+1. `npm run kosmo:orbit-office-pilot-scene`
+2. `npm run kosmo:orbit-route-smoke`
+3. `npm run kosmo:orbit-static-smoke`
+4. `npm run generated:cleanup`
+5. `npm run kosmo:orbit-push-readiness`
+6. `npm run generated:cleanup`
 
 Zweck: die richtige Reihenfolge fuer lokale Orbit-Readiness automatisieren,
 ohne Push, Deploy, Upload, externe Accounts oder Kosten auszuloesen.
@@ -145,8 +148,9 @@ Heute gruen geprueft:
 - `npx tsc --noEmit --pretty false --incremental false` - passed
 - `npm run lint` - 0 Errors, 0 Warnings
 - `npm run brain:doctor` - 17/17 passed
+- `npm run kosmo:orbit-office-pilot-scene` - 13/13 passed
 - `npm run kosmo:orbit-push-readiness` - 12/12 passed
-- `npm run kosmo:orbit-readiness-sweep` - 5/5 passed
+- `npm run kosmo:orbit-readiness-sweep` - 6/6 passed
 - `npm run generated:cleanup` - Zeitstempelrauschen entfernt, semantische
   Report-Diffs behalten
 - `git diff --check` - passed

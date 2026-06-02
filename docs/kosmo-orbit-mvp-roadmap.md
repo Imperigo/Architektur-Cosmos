@@ -269,12 +269,13 @@ sondern die menschliche Entscheidung gut vorbereiten. Initial umgesetzt:
 
 - `npm run kosmo:orbit-push-readiness`
 - `npm run kosmo:orbit-readiness-sweep`
+- `npm run kosmo:orbit-office-pilot-scene`
 - liest Route-Smoke, Static-Smoke, Full Review und Atlas Static-Smoke;
 - fuehrt lokale Evidence-Kommandos aus: `git diff --check`, `npm run lint`,
   `node_modules/.bin/tsc --noEmit --pretty false --incremental false`;
 - schreibt einen stabilen Review-only Report ohne fluechtige Commitliste;
-- automatisiert die sichere lokale Reihenfolge Route-Smoke, Static-Smoke,
-  Cleanup, Push-Readiness und Cleanup;
+- automatisiert die sichere lokale Reihenfolge Office-Pilot-Scene-Check,
+  Route-Smoke, Static-Smoke, Cleanup, Push-Readiness und Cleanup;
 - bleibt ohne Push, Deploy, Upload, Kosten oder externe Accounts.
 
 In `/orbit` sichtbar:
