@@ -1,6 +1,6 @@
 # KosmoOrbit Push Readiness
 
-Generated: 2026-06-02T13:20:19.951Z
+Generated: 2026-06-02T13:50:31.602Z
 Status: `orbit_push_readiness_review_only`
 
 This is a local review-only push decision report. It does not push, deploy, upload, spend money or call external accounts.
@@ -16,8 +16,8 @@ This is a local review-only push decision report. It does not push, deploy, uplo
 
 | Report | Status | Checks |
 | --- | --- | --- |
-| `route_smoke` | `orbit_route_smoke_passed` | 211 / 211 |
-| `static_smoke` | `orbit_static_export_smoke_passed` | 74 / 74 |
+| `route_smoke` | `orbit_route_smoke_passed` | 218 / 218 |
+| `static_smoke` | `orbit_static_export_smoke_passed` | 76 / 76 |
 | `full_review` | `orbit_full_review_ready_for_review_mode` | - / - |
 | `atlas_static_smoke` | `atlas_static_export_smoke_passed` | 17 / 17 |
 
