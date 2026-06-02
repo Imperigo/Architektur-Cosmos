@@ -1,6 +1,6 @@
 # KosmoOrbit Static Export Smoke
 
-Generated: 2026-06-02T05:14:33.526Z
+Generated: 2026-06-02T05:26:08.046Z
 Status: `orbit_static_export_smoke_passed`
 HTML: `out/orbit/index.html`
 
@@ -8,7 +8,7 @@ Checks the built static export for the visible KosmoOrbit demo panels. It does n
 
 ## Summary
 
-- checks: 61/61 passed
+- checks: 63/63 passed
 
 ## Checks
 
@@ -36,6 +36,7 @@ Checks the built static export for the visible KosmoOrbit demo panels. It does n
 | `renders_static_asset_readiness` | `passed` | Export renders static CSS/JS asset readiness. |
 | `renders_publish_readiness` | `passed` | Export renders publish readiness live gate. |
 | `renders_launch_decision_brief` | `passed` | Export renders launch decision brief. |
+| `renders_push_readiness_report` | `passed` | Export renders push readiness report summary. |
 | `renders_project_dashboard` | `passed` | Export renders project package dashboard. |
 | `renders_design_handoff_panel` | `passed` | Export renders KosmoDesign handoff review console. |
 | `renders_design_pilot_path` | `passed` | Export renders KosmoDesign pilot path. |
@@ -65,6 +66,7 @@ Checks the built static export for the visible KosmoOrbit demo panels. It does n
 | `keeps_pilot_session_template_empty` | `passed` | Export keeps pilot session measurements empty. |
 | `keeps_publish_readiness_safe` | `passed` | Export keeps publish readiness blocked without owner go. |
 | `keeps_launch_decision_human_gated` | `passed` | Export keeps launch decision human-gated. |
+| `keeps_push_readiness_owner_gated` | `passed` | Export keeps push readiness owner-gated. |
 | `keeps_design_pilot_before_generation` | `passed` | Export keeps KosmoDesign pilot review before generation. |
 | `keeps_installation_topology_safe` | `passed` | Export keeps installation topology non-operational. |
 | `keeps_office_routine_safe` | `passed` | Export keeps office routine non-operational. |

@@ -1,6 +1,6 @@
 # KosmoOrbit Route Smoke
 
-Generated: 2026-06-02T05:14:33.505Z
+Generated: 2026-06-02T05:25:39.102Z
 Status: `orbit_route_smoke_passed`
 Route: `app/orbit/page.tsx`
 
@@ -8,7 +8,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 
 ## Summary
 
-- checks: 173/173 passed
+- checks: 175/175 passed
 
 ## Checks
 
@@ -177,6 +177,8 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `publish_readiness_blocks_live_push` | `passed` | Publish readiness blocks push/deploy until owner go, security review and live smoke. |
 | `shows_launch_decision_brief` | `passed` | Route renders a launch decision brief after the live gate. |
 | `launch_decision_keeps_owner_gate` | `passed` | Launch decision brief keeps push, public claims and pilot evidence human-gated. |
+| `launch_decision_uses_push_readiness_report` | `passed` | Launch decision brief imports the push readiness report. |
+| `launch_decision_shows_owner_go_boundary` | `passed` | Launch decision brief shows push-ready only with Owner-Go. |
 | `shows_section_index` | `passed` | Route renders compact demo section navigation. |
 | `anchors_core_sections` | `passed` | Route contains anchors for core demo sections. |
 | `shows_blocked_actions` | `passed` | Route renders blocked action labels from role state. |

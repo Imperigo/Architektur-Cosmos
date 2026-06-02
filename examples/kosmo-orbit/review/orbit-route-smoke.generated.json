@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-02T05:14:33.505Z",
+  "generated_at": "2026-06-02T05:25:39.102Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 173,
-    "passed_checks": 173,
+    "check_count": 175,
+    "passed_checks": 175,
     "failed_checks": 0
   },
   "checks": [
@@ -824,6 +824,16 @@
     {
       "id": "launch_decision_keeps_owner_gate",
       "label": "Launch decision brief keeps push, public claims and pilot evidence human-gated.",
+      "status": "passed"
+    },
+    {
+      "id": "launch_decision_uses_push_readiness_report",
+      "label": "Launch decision brief imports the push readiness report.",
+      "status": "passed"
+    },
+    {
+      "id": "launch_decision_shows_owner_go_boundary",
+      "label": "Launch decision brief shows push-ready only with Owner-Go.",
       "status": "passed"
     },
     {

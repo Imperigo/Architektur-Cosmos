@@ -1,12 +1,12 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-02T05:14:33.526Z",
+  "generated_at": "2026-06-02T05:26:08.046Z",
   "generator": "kosmo-orbit-static-export-smoke",
   "status": "orbit_static_export_smoke_passed",
   "html_file": "out/orbit/index.html",
   "summary": {
-    "check_count": 61,
-    "passed_checks": 61,
+    "check_count": 63,
+    "passed_checks": 63,
     "failed_checks": 0,
     "referenced_static_asset_count": 8,
     "missing_static_asset_count": 0
@@ -20,7 +20,7 @@
       "_next/static/chunks/main-app-36e74dfd8b1eb57a.js",
       "_next/static/chunks/polyfills-42372ed130431b0a.js",
       "_next/static/chunks/webpack-81624dd509abd812.js",
-      "_next/static/css/774c3af8e4f2921a.css"
+      "_next/static/css/210ea41c0ca721a2.css"
     ],
     "missing": []
   },
@@ -133,6 +133,11 @@
     {
       "id": "renders_launch_decision_brief",
       "label": "Export renders launch decision brief.",
+      "status": "passed"
+    },
+    {
+      "id": "renders_push_readiness_report",
+      "label": "Export renders push readiness report summary.",
       "status": "passed"
     },
     {
@@ -278,6 +283,11 @@
     {
       "id": "keeps_launch_decision_human_gated",
       "label": "Export keeps launch decision human-gated.",
+      "status": "passed"
+    },
+    {
+      "id": "keeps_push_readiness_owner_gated",
+      "label": "Export keeps push readiness owner-gated.",
       "status": "passed"
     },
     {

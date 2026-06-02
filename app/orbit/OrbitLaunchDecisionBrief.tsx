@@ -1,3 +1,24 @@
+import pushReadinessData from '@/examples/kosmo-orbit/review/orbit-push-readiness.generated.json';
+
+type PushReadinessReport = {
+  status: string;
+  git: {
+    worktree_clean: boolean;
+  };
+  summary: {
+    passed_checks: number;
+    check_count: number;
+    failed_checks: number;
+  };
+  decision: {
+    local_demo_ready: boolean;
+    push_ready_if_owner_go: boolean;
+    push_blocked_without_owner_go: boolean;
+  };
+};
+
+const pushReadiness = pushReadinessData as PushReadinessReport;
+
 const proofRows = [
   {
     label: 'Lokaler Build',
@@ -54,6 +75,27 @@ export function OrbitLaunchDecisionBrief() {
         <span className="inline-flex max-w-full items-center break-words rounded-full border border-cyan-300/40 bg-cyan-400/10 px-2.5 py-1 text-[11px] font-medium leading-tight text-cyan-100">
           push-decision-not-automatic
         </span>
+      </div>
+
+      <div className="mt-4 grid gap-3 rounded-lg border border-emerald-300/25 bg-emerald-400/10 p-3 md:grid-cols-[0.8fr_1.2fr]">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-100">Push Readiness Report</p>
+          <h3 className="mt-2 text-lg font-semibold text-white">{pushReadiness.summary.passed_checks}/{pushReadiness.summary.check_count} Checks gruen</h3>
+          <p className="mt-2 text-sm leading-5 text-stone-300">
+            Status: {pushReadiness.status}. Worktree bei Report-Erstellung: {pushReadiness.git.worktree_clean ? 'clean' : 'nicht clean'}.
+          </p>
+        </div>
+        <div className="grid gap-2 text-sm">
+          <p className="rounded-md bg-black/24 px-3 py-2 text-stone-200">
+            Lokale Demo bereit: {pushReadiness.decision.local_demo_ready ? 'ja' : 'nein'}.
+          </p>
+          <p className="rounded-md bg-black/24 px-3 py-2 text-stone-200">
+            Push-ready nur falls Owner-Go: {pushReadiness.decision.push_ready_if_owner_go ? 'ja' : 'nein'}.
+          </p>
+          <p className="rounded-md border border-amber-300/25 bg-amber-400/10 px-3 py-2 text-amber-100">
+            Ohne Owner-Go blockiert: {pushReadiness.decision.push_blocked_without_owner_go ? 'ja' : 'nein'}.
+          </p>
+        </div>
       </div>
 
       <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
