@@ -1,6 +1,6 @@
 # KosmoOrbit Product Vision
 
-Stand: 2026-06-01
+Stand: 2026-06-02
 Status: kanonische Produktergaenzung fuer die Rolle von KosmoOrbit.
 
 ## 1. Entscheidung
@@ -186,6 +186,15 @@ Dieser Kern zeigt:
 - eine Demo-Bereitschaft, die Full Review, Route-Smoke und Static-Smoke zu
   einer menschlich vorfuehrbaren, aber weiterhin gesperrten Produktdemo
   zusammenzieht;
+- einen Launch Decision Brief, der lokalen Gruenstand, Owner-Go, Push-Grenze,
+  Command Evidence und Pilot-Evidenz als menschliche Entscheidung sichtbar
+  macht;
+- eine Buero-Pilot Szene, die den ersten sicheren Alltagstest in einem kleinen
+  Architekturbuero erklaert: Projektpaket oeffnen, KosmoDesign lesen,
+  Rollen vergleichen und erst beobachtete Evidenz festhalten;
+- einen KosmoDesign Pilotpfad, der den Review Mode bewusst vor jede
+  Design-Generation stellt und damit keine Geometrie-Writes, keine
+  automatischen Varianten und keine unbewiesenen Zeit-/Kostenclaims erlaubt;
 - einen statischen Demo-Audit, der Vorfuehrreihenfolge, Navigation,
   Freigabelinie und sichtbare Render-Artefakte im exportierten `/orbit`
   prueft;
@@ -199,6 +208,9 @@ Dieser Kern zeigt:
   nutzen darf;
 - klare Sperre gegen Design-Generation, Public-Publish, externe Netzwerke,
   Uploads und echte User-Schreibaktionen.
+- einen stabilen Push-Readiness-Report, der ohne fluechtige Commitlisten
+  auskommt und lokale Evidence wie `git diff --check`, Lint und TypeScript
+  in die menschliche Pushentscheidung einbindet.
 
 Damit ist der erste pruefbare Produktkern vorhanden: KosmoOrbit beweist die
 Steuerzentralen-Logik, ohne schon echte lokale Runtime, Auth, Blender-Start,

@@ -1,6 +1,6 @@
 # KosmoOrbit MVP Roadmap
 
-Stand: 2026-06-01
+Stand: 2026-06-02
 Status: erster konkreter Bauplan fuer die Hauptsoftware.
 
 ## 1. Ziel des MVP
@@ -186,7 +186,11 @@ Sichere erste Umsetzung:
    (**initial umgesetzt**)
 8. kleine statische Orbit-Ansicht oder Report, der Rollen, Tools und Gates zeigt
    (**initial umgesetzt unter `/orbit`**)
-9. spaeter Handoff an KosmoZentrale fuer echte lokale Runtime
+9. Launch-/Push-Readiness als menschlich gesperrter Entscheidungsreport
+   (**initial umgesetzt mit `npm run kosmo:orbit-push-readiness`**)
+10. Buero-Pilot Szene und KosmoDesign Pilotpfad als sichtbarer, review-only
+    Alltagstest vor jeder Generierung (**initial umgesetzt unter `/orbit`**)
+11. spaeter Handoff an KosmoZentrale fuer echte lokale Runtime
 
 ## 7. Zusammenarbeit mit anderen Workern
 
@@ -257,6 +261,29 @@ Die aktuelle Demo fuehrt bewusst zu `context_review_only`: Owner als Owner
 Admin darf KosmoDesign grundsaetzlich nutzen, aber Design-Generierung bleibt
 blockiert, weil Kontextinputs noch blockiert/undecided sind und viele
 generierte Design-Artefakte menschliche Review benoetigen.
+
+## 11. Launch- und Buero-Pilot-Readiness
+
+KosmoOrbit muss vor einem Push oder Buero-Pilot nicht nur technisch gruen sein,
+sondern die menschliche Entscheidung gut vorbereiten. Initial umgesetzt:
+
+- `npm run kosmo:orbit-push-readiness`
+- liest Route-Smoke, Static-Smoke, Full Review und Atlas Static-Smoke;
+- fuehrt lokale Evidence-Kommandos aus: `git diff --check`, `npm run lint`,
+  `node_modules/.bin/tsc --noEmit --pretty false --incremental false`;
+- schreibt einen stabilen Review-only Report ohne fluechtige Commitliste;
+- bleibt ohne Push, Deploy, Upload, Kosten oder externe Accounts.
+
+In `/orbit` sichtbar:
+
+- Launch Decision Brief mit Owner-Go-Grenze, Push-Readiness und Command
+  Evidence;
+- Buero-Pilot Szene fuer den ersten sicheren Alltagstest in einem kleinen
+  Architekturbuero;
+- KosmoDesign Pilotpfad, der Review Mode vor Generierung stellt.
+
+Diese Stufe macht KosmoOrbit vorfuehrbarer, ohne das System bereits als echte
+lokale Runtime, CAD-Ersatz oder automatische Planmaschine zu behaupten.
 
 Das ist die richtige Orbit-Logik: KosmoOrbit oeffnet nicht blind ein
 Design-Werkzeug, sondern zeigt zuerst Rolle, Open Mode, Blocker, Modellprofil,
