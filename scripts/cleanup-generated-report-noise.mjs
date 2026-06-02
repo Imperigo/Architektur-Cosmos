@@ -74,6 +74,10 @@ function normalizeReport(text) {
     .replace(/"created_at": "[^"]+"/g, '"created_at": "<created_at>"')
     .replace(/"updated_at": "[^"]+"/g, '"updated_at": "<updated_at>"')
     .replace(/"certificate_id": "[^"]+"/g, '"certificate_id": "<certificate_id>"')
+    .replace(/_next\/static\/chunks\/([^/"-]+)-[a-z0-9]{8,}\.js/g, '_next/static/chunks/$1-<hash>.js')
+    .replace(/_next\/static\/chunks\/(main-app|webpack)-[a-z0-9]{8,}\.js/g, '_next/static/chunks/$1-<hash>.js')
+    .replace(/_next\/static\/chunks\/app\/([^"]+?)\/([^/"-]+)-[a-z0-9]{8,}\.js/g, '_next/static/chunks/app/$1/$2-<hash>.js')
+    .replace(/_next\/static\/css\/[a-z0-9]{8,}\.css/g, '_next/static/css/<hash>.css')
     .replace(/^Generated: .+$/gm, 'Generated: <generated_at>')
     .replace(/^Checked: .+$/gm, 'Checked: <checked_at>');
 }
