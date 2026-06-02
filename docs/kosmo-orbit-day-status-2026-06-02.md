@@ -253,6 +253,10 @@ Browser-Smokes:
 - `/orbit/#tool-registry`: HTTP 200 im lokalen Static Export, Tool-Registry
   sichtbar, 8 Toolkarten, Safety-Copy sichtbar, keine horizontale
   Ueberbreite bei schmaler Viewport-Pruefung.
+- `/orbit/#runtime-adapter`: HTTP 200 im lokalen Static Export,
+  Runtime-Adapter sichtbar, 6 Adapter-Cards, Promotion Requirements und
+  Safety-Copy sichtbar, keine horizontale Ueberbreite bei schmaler
+  Viewport-Pruefung.
 
 Hinweis: Ein paralleler TypeScript-Lauf waehrend `next build` hatte kurz
 fehlende `.next/types` gemeldet. Seriell nach abgeschlossenem Build war
