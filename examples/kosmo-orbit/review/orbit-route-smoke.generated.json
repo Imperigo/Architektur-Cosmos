@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-02T14:10:13.089Z",
+  "generated_at": "2026-06-02T14:33:43.260Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 225,
-    "passed_checks": 225,
+    "check_count": 232,
+    "passed_checks": 232,
     "failed_checks": 0
   },
   "checks": [
@@ -244,6 +244,16 @@
     {
       "id": "office_memory_data_file_exists",
       "label": "Orbit office memory readiness contract data exists.",
+      "status": "passed"
+    },
+    {
+      "id": "local_storage_decision_file_exists",
+      "label": "Orbit local storage decision component exists.",
+      "status": "passed"
+    },
+    {
+      "id": "local_storage_decision_data_file_exists",
+      "label": "Orbit local storage decision draft data exists.",
       "status": "passed"
     },
     {
@@ -504,6 +514,16 @@
     {
       "id": "imports_office_memory_data",
       "label": "Office memory readiness component imports the local contract JSON.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_local_storage_decision",
+      "label": "Route imports the local storage decision component.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_local_storage_decision_data",
+      "label": "Local storage decision component imports the local draft JSON.",
       "status": "passed"
     },
     {
@@ -959,6 +979,21 @@
     {
       "id": "keeps_office_memory_review_only",
       "label": "Office memory readiness keeps memory writes, scans, embeddings, backup status, external sync and cloud vector stores blocked.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_local_storage_decision",
+      "label": "Route renders the local storage decision draft.",
+      "status": "passed"
+    },
+    {
+      "id": "local_storage_decision_uses_local_draft",
+      "label": "Local storage decision panel uses the local draft for fields, blocks and approval roles.",
+      "status": "passed"
+    },
+    {
+      "id": "keeps_local_storage_decision_review_only",
+      "label": "Local storage decision blocks storage writes, memory writes, indexing, embeddings, backup, restore and external sync.",
       "status": "passed"
     },
     {

@@ -22,6 +22,7 @@ import { OrbitInstallationTopology } from './OrbitInstallationTopology';
 import { OrbitDesignPilotPath } from './OrbitDesignPilotPath';
 import { OrbitLearningMode } from './OrbitLearningMode';
 import { OrbitLocalIdentityContract } from './OrbitLocalIdentityContract';
+import { OrbitLocalStorageDecisionDraft } from './OrbitLocalStorageDecisionDraft';
 import { OrbitLaunchDecisionBrief } from './OrbitLaunchDecisionBrief';
 import { OrbitOfficeMemoryReadiness } from './OrbitOfficeMemoryReadiness';
 import { OrbitOfficeRoutine } from './OrbitOfficeRoutine';
@@ -512,6 +513,10 @@ export default function OrbitPage() {
 
           <div id="office-memory" className="scroll-mt-4">
             <OrbitOfficeMemoryReadiness />
+          </div>
+
+          <div id="local-storage-decision" className="scroll-mt-4">
+            <OrbitLocalStorageDecisionDraft />
           </div>
 
           <div id="ausbildung" className="scroll-mt-4">

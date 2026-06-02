@@ -336,6 +336,49 @@ Nachgezogen:
 - `npm run kosmo:orbit-demo-audit` steht bei 41/41;
 - `npm run kosmo:orbit-responsive-audit` steht bei 31/31.
 
+### Local-Storage-Decision-Draft
+
+Der Local-Storage-Decision-Draft ist als menschliche Entscheidungsstufe vor
+echtem lokalem Storage umgesetzt.
+
+Zweck:
+
+- Speicherort, Retention, Delete/Export/Restore, Backup-Test,
+  Rollen-Sichtbarkeit und Datenschutz als Entscheidfelder sichtbar machen;
+- verhindern, dass aus Office Memory direkt produktive Persistenz wird;
+- approval roles fuer Chef/Admin, IT/KI, Projektleitung und Datenschutz Review
+  festhalten;
+- alle Storage-/Memory-Writes blockieren, bis jedes Feld menschlich
+  entschieden und belegt ist.
+
+Wichtige Grenze:
+
+- kein local storage write;
+- kein Memory-Write;
+- kein Kundendaten-Index;
+- kein Embedding-Job;
+- kein Backup-Job;
+- kein Restore-Job;
+- keine Retention-Automation;
+- kein externer Sync;
+- kein Cloud Vector Store;
+- keine Profil-/Audit-Persistenz.
+
+Nachgezogen:
+
+- `examples/kosmo-orbit/storage/orbit-local-storage-decision.draft.json`
+  haelt den Entscheidungsentwurf;
+- `app/orbit/OrbitLocalStorageDecisionDraft.tsx` rendert Entscheidfelder,
+  Required Evidence, Approval Roles und blockierte Faehigkeiten;
+- `npm run kosmo:orbit-local-storage-decision` prueft den Entwurf mit 16/16
+  Checks;
+- `npm run kosmo:orbit-full-review` enthaelt den Entwurf als eigenen Schritt
+  und steht dadurch bei 31/31;
+- `npm run kosmo:orbit-route-smoke` steht bei 232/232;
+- `npm run kosmo:orbit-static-smoke` steht bei 80/80;
+- `npm run kosmo:orbit-demo-audit` steht bei 43/43;
+- `npm run kosmo:orbit-responsive-audit` steht bei 32/32.
+
 ### Push-Readiness Stabilisierung
 
 Der Push-Readiness-Report wurde stabilisiert.
@@ -370,7 +413,7 @@ ohne Push, Deploy, Upload, externe Accounts oder Kosten auszuloesen.
 ### Full Review und IFC-Kontext
 
 `npm run kosmo:orbit-full-review` wurde zuerst auf 24, danach auf 25, 26, 27,
-28, 29 und nun auf 30 Schritte erweitert.
+28, 29, 30 und nun auf 31 Schritte erweitert.
 
 Neu enthalten:
 
@@ -393,6 +436,9 @@ Neu enthalten:
 - `npm run kosmo:orbit-office-memory` als eigener Full-Review-Schritt mit
   16/16 Checks, 5 Memory-Lanes, 7 Readiness-Gates und 11 blockierten
   Memory-Faehigkeiten;
+- `npm run kosmo:orbit-local-storage-decision` als eigener
+  Full-Review-Schritt mit 16/16 Checks, 6 Entscheidfeldern, 11 blockierten
+  Storage-/Memory-Faehigkeiten und 4 Approval Roles;
 - aktualisierte Design-Kontext-Artefakte fuer das Demo-Projekt mit IFC-Bounds
   und IFC-Rollenhinweisen.
 
@@ -403,9 +449,9 @@ ist kein BIM-Import, kein editierbares Modell und kein Design-Generation-Go.
 
 Heute gruen geprueft:
 
-- `npm run kosmo:orbit-route-smoke` - 225/225 passed
-- `npm run kosmo:orbit-static-smoke` - 78/78 passed
-- `npm run kosmo:orbit-full-review` - 30/30 passed
+- `npm run kosmo:orbit-route-smoke` - 232/232 passed
+- `npm run kosmo:orbit-static-smoke` - 80/80 passed
+- `npm run kosmo:orbit-full-review` - 31/31 passed
 - `npm run atlas:static-smoke` - 17/17 passed
 - `npm run build` - static export passed
 - `npx tsc --noEmit --pretty false --incremental false` - passed
@@ -418,8 +464,9 @@ Heute gruen geprueft:
 - `npm run kosmo:orbit-local-identity` - 16/16 passed
 - `npm run kosmo:orbit-data-governance` - 16/16 passed
 - `npm run kosmo:orbit-office-memory` - 16/16 passed
-- `npm run kosmo:orbit-demo-audit` - 41/41 passed
-- `npm run kosmo:orbit-responsive-audit` - 31/31 passed
+- `npm run kosmo:orbit-local-storage-decision` - 16/16 passed
+- `npm run kosmo:orbit-demo-audit` - 43/43 passed
+- `npm run kosmo:orbit-responsive-audit` - 32/32 passed
 - `npm run kosmo:orbit-push-readiness` - 12/12 passed
 - `npm run kosmo:orbit-readiness-sweep` - 6/6 passed
 - `npm run generated:cleanup` - Zeitstempelrauschen entfernt, semantische
@@ -459,6 +506,11 @@ Browser-Smokes:
   vorhanden, 5 Memory-Lanes und Safety-Copy fuer Memory-Write,
   Kundendatei-Scan, Embedding-Job, Backup-Status-Write, Cloud Vector Store und
   externen Memory-Sync sichtbar.
+- `/orbit/?v=local-storage-decision-20260602#local-storage-decision`: HTTP
+  200 im lokalen Static Export, Local-Storage-Decision-Draft sichtbar,
+  Storage-Navigation vorhanden, 6 Entscheidfelder und Safety-Copy fuer local
+  storage write, Memory-Write, Kundendaten-Index, Embedding-Job, Backup-Job,
+  Restore-Job und externen Sync sichtbar.
 
 Hinweis: Ein paralleler TypeScript-Lauf waehrend `next build` hatte kurz
 fehlende `.next/types` gemeldet. Seriell nach abgeschlossenem Build war

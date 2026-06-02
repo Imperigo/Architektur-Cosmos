@@ -1,6 +1,6 @@
 # KosmoOrbit Demo Audit
 
-Generated: 2026-06-02T13:58:30.429Z
+Generated: 2026-06-02T14:18:57.778Z
 Status: `orbit_demo_audit_passed`
 HTML: `out/orbit/index.html`
 
@@ -8,40 +8,41 @@ Static audit for the human presentation flow of `/orbit`. It checks section orde
 
 ## Summary
 
-- checks: 41/41 passed
+- checks: 43/43 passed
 
 ## Demo Order
 
 | Anchor | Section | Position |
 | --- | --- | ---: |
-| `autonomie` | Autonomie-Status | 27103 |
-| `routine` | Buero-Routine | 29579 |
-| `presenter` | 3-Minuten-Erklaerung | 59277 |
-| `workflow-delta` | Workflow-Delta | 62294 |
-| `pilotmessung` | Pilotmessung | 68016 |
-| `pilotplan` | Pilot-Runbook | 88968 |
-| `pilot-session` | Pilot-Session Template | 96586 |
-| `fortschritt` | Projektfortschritt | 102025 |
-| `vision` | Vision Bridge | 108770 |
-| `demo-ready` | Demo-Bereitschaft | 113110 |
-| `live-gate` | Live-Gate | 115865 |
-| `projektpaket` | Projektpaket Tagesansicht | 135187 |
-| `design-handoff` | KosmoDesign Handoff | 144779 |
-| `entscheidung` | Review Decision Draft | 164637 |
-| `runtime-contract` | Runtime-Vertrag | 171946 |
-| `installation` | Buero-Installation | 196107 |
-| `health` | Health Readiness | 203846 |
-| `risiken` | Risiko-Register | 210703 |
-| `commands` | Command-Vertrag | 217992 |
-| `audit` | Audit-Trail-Vertrag | 227355 |
-| `evidenz` | Pruefevidenz | 234869 |
-| `workstation-profile` | Workstation Profile Contract | 243128 |
-| `local-identity` | Local Identity Boundary | 265135 |
-| `data-governance` | Data Governance Boundary | 281069 |
-| `office-memory` | Office Memory Readiness | 299583 |
-| `ausbildung` | Ausbildungsmodus | 312968 |
-| `rechte` | Rechte-Matrix | 318278 |
-| `rollen` | Rollenumschaltung Preview | 336033 |
+| `autonomie` | Autonomie-Status | 27529 |
+| `routine` | Buero-Routine | 30005 |
+| `presenter` | 3-Minuten-Erklaerung | 59703 |
+| `workflow-delta` | Workflow-Delta | 62720 |
+| `pilotmessung` | Pilotmessung | 68442 |
+| `pilotplan` | Pilot-Runbook | 89394 |
+| `pilot-session` | Pilot-Session Template | 97012 |
+| `fortschritt` | Projektfortschritt | 102451 |
+| `vision` | Vision Bridge | 109196 |
+| `demo-ready` | Demo-Bereitschaft | 113536 |
+| `live-gate` | Live-Gate | 116291 |
+| `projektpaket` | Projektpaket Tagesansicht | 135613 |
+| `design-handoff` | KosmoDesign Handoff | 145205 |
+| `entscheidung` | Review Decision Draft | 165063 |
+| `runtime-contract` | Runtime-Vertrag | 172372 |
+| `installation` | Buero-Installation | 196533 |
+| `health` | Health Readiness | 204272 |
+| `risiken` | Risiko-Register | 211129 |
+| `commands` | Command-Vertrag | 218418 |
+| `audit` | Audit-Trail-Vertrag | 227781 |
+| `evidenz` | Pruefevidenz | 235295 |
+| `workstation-profile` | Workstation Profile Contract | 243554 |
+| `local-identity` | Local Identity Boundary | 265561 |
+| `data-governance` | Data Governance Boundary | 281495 |
+| `office-memory` | Office Memory Readiness | 300009 |
+| `local-storage-decision` | Local Storage Decision Draft | 313394 |
+| `ausbildung` | Ausbildungsmodus | 323215 |
+| `rechte` | Rechte-Matrix | 328525 |
+| `rollen` | Rollenumschaltung Preview | 346280 |
 
 ## Checks
 
@@ -82,6 +83,8 @@ Static audit for the human presentation flow of `/orbit`. It checks section orde
 | `data_governance_safe` | `passed` | Data governance blocks database writes, uploads, customer data writes and external sync. |
 | `office_memory_visible` | `passed` | Office memory readiness is visible in the export. |
 | `office_memory_safe` | `passed` | Office memory keeps writes, scans, embeddings, backup status and external sync blocked. |
+| `local_storage_decision_visible` | `passed` | Local storage decision draft is visible in the export. |
+| `local_storage_decision_safe` | `passed` | Local storage decision keeps writes, indexing, embeddings, backup, restore and sync blocked. |
 | `learning_mode_visible` | `passed` | Education mode is visible in the export. |
 | `learning_mode_safety_visible` | `passed` | Education mode safety line is visible in the export. |
 | `permission_boundary_visible` | `passed` | Role permission boundary is visible in the export. |

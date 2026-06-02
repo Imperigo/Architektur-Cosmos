@@ -107,7 +107,15 @@ klarer und nachvollziehbarer machen.
    - Sagen: Heute gibt es keinen Memory-Write, keinen Kundendatei-Scan, keinen
      Embedding-Job und keinen externen Memory-Sync.
 
-14. **Live-Gate zeigen**
+14. **Local Storage Decision Draft zeigen**
+   - Sagen: Vor echten Writes muss das Buero Speicherort, Retention,
+     Delete/Export/Restore, Backup-Test, Rollen-Sichtbarkeit und Datenschutz
+     entscheiden.
+   - Sagen: Heute ist das ein Entscheidungsformular, kein Speicher-Setup.
+   - Sagen: Storage-Writes, Memory-Writes, Kundendaten-Index, Backup-/Restore-
+     Jobs und externer Sync bleiben blockiert.
+
+15. **Live-Gate zeigen**
    - Sagen: Lokal vorfuehrbar ist nicht gleich public-ready.
    - Sagen: Push, Livegang und Cloudflare-Deploy brauchen Owner-Go und
      Live-Smoke.

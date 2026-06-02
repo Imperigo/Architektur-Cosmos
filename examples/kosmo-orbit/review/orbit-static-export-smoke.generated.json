@@ -1,12 +1,12 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-02T13:58:30.416Z",
+  "generated_at": "2026-06-02T14:18:57.734Z",
   "generator": "kosmo-orbit-static-export-smoke",
   "status": "orbit_static_export_smoke_passed",
   "html_file": "out/orbit/index.html",
   "summary": {
-    "check_count": 78,
-    "passed_checks": 78,
+    "check_count": 80,
+    "passed_checks": 80,
     "failed_checks": 0,
     "referenced_static_asset_count": 8,
     "missing_static_asset_count": 0
@@ -20,7 +20,7 @@
       "_next/static/chunks/main-app-36e74dfd8b1eb57a.js",
       "_next/static/chunks/polyfills-42372ed130431b0a.js",
       "_next/static/chunks/webpack-81624dd509abd812.js",
-      "_next/static/css/4343824a06d15a0b.css"
+      "_next/static/css/d466078c02363e89.css"
     ],
     "missing": []
   },
@@ -246,6 +246,11 @@
       "status": "passed"
     },
     {
+      "id": "renders_local_storage_decision",
+      "label": "Export renders local storage decision draft.",
+      "status": "passed"
+    },
+    {
       "id": "renders_learning_mode",
       "label": "Export renders education mode.",
       "status": "passed"
@@ -308,6 +313,11 @@
     {
       "id": "keeps_office_memory_review_only",
       "label": "Export keeps office memory writes, scans, embeddings, backup status, external sync and cloud vector stores blocked.",
+      "status": "passed"
+    },
+    {
+      "id": "keeps_local_storage_decision_review_only",
+      "label": "Export keeps storage writes, memory writes, indexing, embeddings, backup, restore and external sync blocked.",
       "status": "passed"
     },
     {

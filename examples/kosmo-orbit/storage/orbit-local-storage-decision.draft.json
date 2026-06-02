@@ -1,0 +1,105 @@
+{
+  "schema_version": "0.1",
+  "status": "local_storage_decision_draft_ready",
+  "mode": "static_review_only",
+  "decision_id": "orbit-local-storage-decision-v1",
+  "decision_statement": "KosmoOrbit darf erst persistente lokale Buero-Daten schreiben, wenn Speicherort, Retention, Delete/Export/Restore, Backup-Test, Rollen-Sichtbarkeit und Datenschutz menschlich freigegeben sind.",
+  "decision_fields": [
+    {
+      "id": "storage_location",
+      "label": "Speicherort",
+      "question": "Wo liegt der lokale KosmoOrbit-Speicher physisch und logisch?",
+      "required_evidence": [
+        "lokaler Pfad oder Appliance-Volume benannt",
+        "Owner des Speicherorts benannt",
+        "keine Cloud-Sync-Annahme ohne Freigabe"
+      ],
+      "status": "needs_human_decision"
+    },
+    {
+      "id": "retention_policy",
+      "label": "Retention",
+      "question": "Wie lange bleiben Projektwissen, Entscheide, Asset-Evidenz, Ausbildung und Betriebseintraege erhalten?",
+      "required_evidence": [
+        "Retention je Memory-Lane definiert",
+        "Offboarding-Regel beschrieben",
+        "Projektabschluss-Regel beschrieben"
+      ],
+      "status": "needs_human_decision"
+    },
+    {
+      "id": "delete_export_restore",
+      "label": "Delete / Export / Restore",
+      "question": "Wie kann ein kleines Buero Daten loeschen, exportieren und wiederherstellen?",
+      "required_evidence": [
+        "Delete-Pfad menschlich ausloesbar",
+        "Export-Format beschrieben",
+        "Restore-Test vor Produktivfreigabe geplant"
+      ],
+      "status": "needs_human_decision"
+    },
+    {
+      "id": "backup_test",
+      "label": "Backup-Test",
+      "question": "Wie wird bewiesen, dass lokale Backups nicht nur existieren, sondern wiederherstellbar sind?",
+      "required_evidence": [
+        "Backup-Zyklus definiert",
+        "Restore-Test-Termin definiert",
+        "Verantwortliche Rolle benannt"
+      ],
+      "status": "needs_human_decision"
+    },
+    {
+      "id": "role_visibility",
+      "label": "Rollen-Sichtbarkeit",
+      "question": "Welche Rolle darf welche Memory-Lane sehen, vorbereiten, bestaetigen oder sperren?",
+      "required_evidence": [
+        "Chef/Admin-Gate definiert",
+        "Projektleitung-Gate definiert",
+        "Ausbildungsdaten besonders geschuetzt"
+      ],
+      "status": "needs_human_decision"
+    },
+    {
+      "id": "privacy_review",
+      "label": "Datenschutz",
+      "question": "Welche personenbezogenen oder projektsensiblen Daten duerfen ueberhaupt in lokales Memory?",
+      "required_evidence": [
+        "personenbezogene Writes geprueft",
+        "Kundendaten-Grenze dokumentiert",
+        "externer Sync ausgeschlossen oder freigegeben"
+      ],
+      "status": "needs_human_decision"
+    }
+  ],
+  "blocked_until_decision": [
+    "persistent_memory_write",
+    "local_storage_write",
+    "customer_data_index",
+    "automatic_embedding_job",
+    "backup_job_start",
+    "restore_job_start",
+    "retention_auto_delete",
+    "external_sync",
+    "cloud_vector_store",
+    "profile_memory_persistence",
+    "audit_log_persistence"
+  ],
+  "allowed_today": [
+    "static_decision_draft_render",
+    "human_review_prompt",
+    "local_html_smoke",
+    "readiness_report_generation"
+  ],
+  "approval_roles": [
+    "Chef / Admin",
+    "IT/KI Spezialist",
+    "Projektleitung",
+    "Datenschutz Review"
+  ],
+  "next_actions": [
+    "Use this draft in a human storage decision session before implementing local persistence.",
+    "Keep all storage and memory writes blocked until every decision field is approved.",
+    "Connect this draft to KosmoZentrale only after backup, restore and privacy evidence exists."
+  ]
+}

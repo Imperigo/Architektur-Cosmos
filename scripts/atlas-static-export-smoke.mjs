@@ -51,7 +51,7 @@ function buildReport(html) {
     check('renders_known_entry_villa_savoye', 'Export includes Villa Savoye data.', html.includes('Villa Savoye')),
     check('renders_known_entry_hagia_sophia', 'Export includes Hagia Sophia data.', html.includes('Hagia Sophia')),
     check('renders_known_entry_mfo_park', 'Export includes MFO Park data.', html.includes('MFO Park')),
-    check('exports_entry_detail_routes', 'Export includes static detail route HTML files.', existsSync(resolve(root, 'out/atlas/villa-savoye/index.html')) && existsSync(resolve(root, 'out/atlas/hagia-sophia/index.html'))),
+    check('exports_entry_detail_routes', 'Export includes static detail route HTML files.', existsSync(resolve(root, 'out/atlas/gobekli-tepe/index.html')) && existsSync(resolve(root, 'out/atlas/mfo-park/index.html'))),
     check('renders_image_media_slots', 'Export includes media/image vocabulary.', html.includes('Bild') || html.includes('Media')),
     check('renders_model_vocabulary', 'Export includes 3D/model vocabulary.', html.includes('3D') || html.includes('Modell')),
     check('keeps_public_safe_boundary', 'Export keeps public/private boundary copy.', html.includes('public-safe') || html.includes('keine automatische Veröffentlichung') || html.includes('gesperrt')),

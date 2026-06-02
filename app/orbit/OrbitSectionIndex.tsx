@@ -60,6 +60,7 @@ const sectionGroups = [
       { href: '#local-identity', label: 'Identity' },
       { href: '#data-governance', label: 'Daten' },
       { href: '#office-memory', label: 'Memory' },
+      { href: '#local-storage-decision', label: 'Storage' },
       { href: '#ausbildung', label: 'Ausbildung' },
       { href: '#rechte', label: 'Rechte' },
       { href: '#rollen', label: 'Rollen' },

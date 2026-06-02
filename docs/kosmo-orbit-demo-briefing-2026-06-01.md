@@ -149,6 +149,13 @@ In drei Minuten soll ein Architekturbueroleiter verstehen:
    keinen Backup-Status-Write, keinen Cloud Vector Store und keinen externen
    Memory-Sync.
 
+25. **Local-Storage-Decision-Draft zeigen**
+   Erklaeren: Bevor echtes Memory gebaut wird, braucht das Buero eine
+   menschliche Speicherentscheidung: Speicherort, Retention,
+   Delete/Export/Restore, Backup-Test, Rollen-Sichtbarkeit und Datenschutz.
+   Heute bleiben local storage write, Memory-Write, Kundendaten-Index,
+   Embedding-Job, Backup-Job, Restore-Job und externer Sync blockiert.
+
 ## Kernsaetze
 
 - Besser: Jede Rolle bekommt die richtige Oberflaechentiefe und sieht den
