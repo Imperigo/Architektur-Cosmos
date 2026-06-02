@@ -1,12 +1,12 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-02T06:15:50.088Z",
+  "generated_at": "2026-06-02T11:41:27.331Z",
   "generator": "kosmo-orbit-static-export-smoke",
   "status": "orbit_static_export_smoke_passed",
   "html_file": "out/orbit/index.html",
   "summary": {
-    "check_count": 68,
-    "passed_checks": 68,
+    "check_count": 70,
+    "passed_checks": 70,
     "failed_checks": 0,
     "referenced_static_asset_count": 8,
     "missing_static_asset_count": 0
@@ -20,7 +20,7 @@
       "_next/static/chunks/main-app-36e74dfd8b1eb57a.js",
       "_next/static/chunks/polyfills-42372ed130431b0a.js",
       "_next/static/chunks/webpack-81624dd509abd812.js",
-      "_next/static/css/2a280b2f7d42d33c.css"
+      "_next/static/css/f36665d6308fa591.css"
     ],
     "missing": []
   },
@@ -186,6 +186,11 @@
       "status": "passed"
     },
     {
+      "id": "renders_runtime_adapter",
+      "label": "Export renders runtime adapter contract.",
+      "status": "passed"
+    },
+    {
       "id": "renders_installation_topology",
       "label": "Export renders local office installation topology.",
       "status": "passed"
@@ -253,6 +258,11 @@
     {
       "id": "keeps_runtime_contract_safe",
       "label": "Export keeps runtime process/model/queue actions gated.",
+      "status": "passed"
+    },
+    {
+      "id": "keeps_runtime_adapter_safe",
+      "label": "Export keeps runtime adapters non-operational.",
       "status": "passed"
     },
     {

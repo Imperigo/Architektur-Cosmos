@@ -1,0 +1,99 @@
+{
+  "schema_version": "0.1",
+  "status": "runtime_adapter_contract_ready",
+  "mode": "static_review_only",
+  "title": "KosmoOrbit Runtime Adapter Contract",
+  "summary": "Static contract for future local KosmoZentrale adapters. It defines adapter lanes, required evidence, human gates and blocked side effects without launching tools, starting models, reading sensors, scanning files, writing user data, uploading, publishing, touching external accounts or spending money.",
+  "adapter_lanes": [
+    {
+      "id": "health-telemetry-adapter",
+      "label": "Health Telemetry Adapter",
+      "target": "KosmoZentrale",
+      "future_capability": "Read local hardware, model, storage, connector and queue status.",
+      "today_contract": "Only the static Health Readiness JSON is rendered.",
+      "required_evidence": ["health-readiness-contract", "human-runtime-review"],
+      "human_gate": "IT/KI Freigabe",
+      "blocked_side_effects": ["hardware_commands", "filesystem_scans", "process_launches"]
+    },
+    {
+      "id": "local-model-adapter",
+      "label": "Local Kosmo Model Adapter",
+      "target": "Kosmo",
+      "future_capability": "Start, stop, observe and repair the local AI model.",
+      "today_contract": "Kosmo is visible as product role only; no model process exists.",
+      "required_evidence": ["model-safety-review", "memory-policy", "operator-approval"],
+      "human_gate": "Owner + IT/KI Freigabe",
+      "blocked_side_effects": ["model_starts", "memory_writes", "system_changes"]
+    },
+    {
+      "id": "tool-launch-adapter",
+      "label": "Tool Launch Adapter",
+      "target": "Blender / Kosmo Tools",
+      "future_capability": "Open Blender, KosmoDesign, Draw, Viz, Prepare and Publish tools locally.",
+      "today_contract": "Tools are listed in the Tool Registry only.",
+      "required_evidence": ["tool-registry", "command-contract", "rollback-plan"],
+      "human_gate": "IT/KI Freigabe",
+      "blocked_side_effects": ["process_launches", "geometry_generation", "network_control"]
+    },
+    {
+      "id": "job-queue-adapter",
+      "label": "Job Queue Adapter",
+      "target": "KosmoZentrale Jobs",
+      "future_capability": "Queue analysis, render, plan, export and repair jobs.",
+      "today_contract": "Jobs are named in runtime copy only; no queue is created.",
+      "required_evidence": ["cost-gate", "queue-schema", "audit-trail-contract"],
+      "human_gate": "Owner Freigabe fuer Kosten und Queue",
+      "blocked_side_effects": ["queue_actions", "cost_jobs", "public_publish"]
+    },
+    {
+      "id": "audit-log-adapter",
+      "label": "Audit Log Adapter",
+      "target": "Lokaler Audit Trail",
+      "future_capability": "Persist command intent, evidence, gate, outcome and rollback metadata.",
+      "today_contract": "Only static audit examples exist.",
+      "required_evidence": ["privacy-review", "retention-policy", "audit-trail-contract"],
+      "human_gate": "Owner + Datenschutz Review",
+      "blocked_side_effects": ["user_writes", "personal_data_persistence", "external_sync"]
+    },
+    {
+      "id": "publish-sync-adapter",
+      "label": "Publish / External Sync Adapter",
+      "target": "KosmoPublish / Fachplaner",
+      "future_capability": "Create delivery packages, external sync and public release workflows.",
+      "today_contract": "Publish and external sync stay blocked in command and risk contracts.",
+      "required_evidence": ["rights-gate", "security-review", "owner-go"],
+      "human_gate": "Chef / Owner Admin",
+      "blocked_side_effects": ["uploads", "external_accounts", "public_publish", "network_control"]
+    }
+  ],
+  "safety": {
+    "no_hardware_commands": true,
+    "no_model_starts": true,
+    "no_memory_writes": true,
+    "no_filesystem_scans": true,
+    "no_process_launches": true,
+    "no_geometry_generation": true,
+    "no_queue_actions": true,
+    "no_cost_jobs": true,
+    "no_user_writes": true,
+    "no_personal_data_persistence": true,
+    "no_uploads": true,
+    "no_external_accounts": true,
+    "no_public_publish": true,
+    "no_network_control": true,
+    "no_system_changes": true
+  },
+  "promotion_requirements": [
+    "Human-approved runtime adapter schema",
+    "Local-only permission model",
+    "Command audit log with rollback metadata",
+    "Privacy and retention review",
+    "Cost gate and owner approval",
+    "Manual kill switch for every executable adapter"
+  ],
+  "next_actions": [
+    "Use this as the bridge between the visible Tool Registry and any future local KosmoZentrale runtime.",
+    "Do not implement executable adapters until schemas, gates, audit retention, rollback and kill switch behavior are approved.",
+    "Keep the current public repo in static review-only mode."
+  ]
+}

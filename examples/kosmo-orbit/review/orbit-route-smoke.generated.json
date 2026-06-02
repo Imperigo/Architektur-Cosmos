@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-02T06:15:16.396Z",
+  "generated_at": "2026-06-02T11:40:52.178Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 190,
-    "passed_checks": 190,
+    "check_count": 197,
+    "passed_checks": 197,
     "failed_checks": 0
   },
   "checks": [
@@ -179,6 +179,16 @@
     {
       "id": "runtime_boundary_file_exists",
       "label": "Orbit MVP/runtime boundary component exists.",
+      "status": "passed"
+    },
+    {
+      "id": "runtime_adapter_file_exists",
+      "label": "Orbit runtime adapter component exists.",
+      "status": "passed"
+    },
+    {
+      "id": "runtime_adapter_data_file_exists",
+      "label": "Orbit runtime adapter contract exists.",
       "status": "passed"
     },
     {
@@ -389,6 +399,16 @@
     {
       "id": "imports_runtime_boundary",
       "label": "Route imports the MVP/runtime boundary component.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_runtime_adapter",
+      "label": "Route imports the runtime adapter component.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_runtime_adapter_data",
+      "label": "Runtime adapter component imports the local contract JSON.",
       "status": "passed"
     },
     {
@@ -749,6 +769,21 @@
     {
       "id": "keeps_runtime_side_effects_off",
       "label": "Runtime boundary states no runtime side effects.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_runtime_adapter",
+      "label": "Route renders the Runtime Adapter contract.",
+      "status": "passed"
+    },
+    {
+      "id": "runtime_adapter_uses_local_contract",
+      "label": "Runtime adapter uses the local JSON contract for lanes and promotion requirements.",
+      "status": "passed"
+    },
+    {
+      "id": "keeps_runtime_adapter_non_operational",
+      "label": "Runtime adapter keeps adapters, processes, data writes and external accounts blocked.",
       "status": "passed"
     },
     {

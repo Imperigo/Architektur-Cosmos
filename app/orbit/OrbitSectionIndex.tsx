@@ -46,6 +46,7 @@ const sectionGroups = [
     label: 'Betrieb',
     links: [
       { href: '#runtime-contract', label: 'Runtime' },
+      { href: '#runtime-adapter', label: 'Adapter' },
       { href: '#installation', label: 'Installation' },
       { href: '#health', label: 'Health' },
       { href: '#commands', label: 'Commands' },

@@ -38,6 +38,7 @@ import { OrbitQualityEvidence, type OrbitFullReviewReport, type OrbitRouteSmokeR
 import { OrbitReviewDecisionDraft } from './OrbitReviewDecisionDraft';
 import { OrbitRiskRegister } from './OrbitRiskRegister';
 import { OrbitRuntimeBoundary } from './OrbitRuntimeBoundary';
+import { OrbitRuntimeAdapterContract } from './OrbitRuntimeAdapterContract';
 import { OrbitRuntimeContract } from './OrbitRuntimeContract';
 import { OrbitRoleSwitcher } from './OrbitRoleSwitcher';
 import { OrbitSectionIndex } from './OrbitSectionIndex';
@@ -461,6 +462,10 @@ export default function OrbitPage() {
 
           <div id="runtime-contract" className="scroll-mt-4">
             <OrbitRuntimeContract />
+          </div>
+
+          <div id="runtime-adapter" className="scroll-mt-4">
+            <OrbitRuntimeAdapterContract />
           </div>
 
           <div id="installation" className="scroll-mt-4">

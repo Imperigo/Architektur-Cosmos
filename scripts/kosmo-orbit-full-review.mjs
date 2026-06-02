@@ -271,6 +271,22 @@ const steps = [
     report: resolve(workspaceRoot, 'review/orbit-tool-registry.generated.json')
   },
   {
+    id: 'runtime_adapter',
+    label: 'Orbit Runtime Adapter Contract',
+    script: 'kosmo:orbit-runtime-adapter',
+    args: [
+      '--contract',
+      'examples/kosmo-orbit/runtime/orbit-runtime-adapter.contract.json',
+      '--component',
+      'app/orbit/OrbitRuntimeAdapterContract.tsx',
+      '--route',
+      'app/orbit/page.tsx',
+      '--sectionIndex',
+      'app/orbit/OrbitSectionIndex.tsx'
+    ],
+    report: resolve(workspaceRoot, 'review/orbit-runtime-adapter.generated.json')
+  },
+  {
     id: 'pilot_session',
     label: 'Orbit Pilot Session Template',
     script: 'kosmo:orbit-pilot-session',
@@ -393,6 +409,7 @@ function buildReport(stepRows) {
   const officeRoutine = readOptionalJson(resolve(workspaceRoot, 'review/orbit-office-routine.generated.json'));
   const officePilotScene = readOptionalJson(resolve(workspaceRoot, 'review/orbit-office-pilot-scene.generated.json'));
   const toolRegistry = readOptionalJson(resolve(workspaceRoot, 'review/orbit-tool-registry.generated.json'));
+  const runtimeAdapter = readOptionalJson(resolve(workspaceRoot, 'review/orbit-runtime-adapter.generated.json'));
   const pilotSession = readOptionalJson(resolve(workspaceRoot, 'review/orbit-pilot-session.generated.json'));
   const pilotMeasurementKit = readOptionalJson(resolve(workspaceRoot, 'review/orbit-pilot-measurement-kit.generated.json'));
   const pilotResultDraft = readOptionalJson(resolve(workspaceRoot, 'review/orbit-pilot-result-draft.generated.json'));
@@ -477,6 +494,11 @@ function buildReport(stepRows) {
       tool_registry_check_count: toolRegistry?.summary?.check_count ?? null,
       tool_registry_tool_count: toolRegistry?.summary?.tool_count ?? null,
       tool_registry_blocked_or_review_gate_count: toolRegistry?.summary?.blocked_or_review_gate_count ?? null,
+      runtime_adapter_status: runtimeAdapter?.status || null,
+      runtime_adapter_passed_checks: runtimeAdapter?.summary?.passed_checks ?? null,
+      runtime_adapter_check_count: runtimeAdapter?.summary?.check_count ?? null,
+      runtime_adapter_lane_count: runtimeAdapter?.summary?.adapter_lane_count ?? null,
+      runtime_adapter_promotion_requirement_count: runtimeAdapter?.summary?.promotion_requirement_count ?? null,
       pilot_session_status: pilotSession?.status || null,
       pilot_session_passed_checks: pilotSession?.summary?.passed_checks ?? null,
       pilot_session_check_count: pilotSession?.summary?.check_count ?? null,
@@ -535,6 +557,7 @@ function buildReport(stepRows) {
       office_routine_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-office-routine.generated.md')),
       office_pilot_scene_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-office-pilot-scene.generated.md')),
       tool_registry_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-tool-registry.generated.md')),
+      runtime_adapter_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-runtime-adapter.generated.md')),
       pilot_session_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-pilot-session.generated.md')),
       pilot_measurement_kit_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-pilot-measurement-kit.generated.md')),
       pilot_result_draft_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-pilot-result-draft.generated.md')),
@@ -551,11 +574,11 @@ function buildReport(stepRows) {
       role_shell_smoke_markdown: relative(root, resolve(projectRoot, 'orbit/role-shell-smoke.generated.md'))
     },
     steps: stepRows,
-    next_actions: nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHandoff, appRouteSpec, healthReadiness, commandContract, auditTrail, officePilotScene, toolRegistry, pilotSession, pilotMeasurementKit, pilotResultDraft, orbitRouteSmoke, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke, roleShellPrototype, roleShellSmoke })
+    next_actions: nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHandoff, appRouteSpec, healthReadiness, commandContract, auditTrail, officePilotScene, toolRegistry, runtimeAdapter, pilotSession, pilotMeasurementKit, pilotResultDraft, orbitRouteSmoke, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke, roleShellPrototype, roleShellSmoke })
   };
 }
 
-function nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHandoff, appRouteSpec, healthReadiness, commandContract, auditTrail, officePilotScene, toolRegistry, pilotSession, pilotMeasurementKit, pilotResultDraft, orbitRouteSmoke, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke, roleShellPrototype, roleShellSmoke }) {
+function nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHandoff, appRouteSpec, healthReadiness, commandContract, auditTrail, officePilotScene, toolRegistry, runtimeAdapter, pilotSession, pilotMeasurementKit, pilotResultDraft, orbitRouteSmoke, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke, roleShellPrototype, roleShellSmoke }) {
   const actions = [];
   if (failedSteps.length) {
     failedSteps.forEach((step) => actions.push(`Review failed step: ${step.label}`));
@@ -590,6 +613,9 @@ function nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHan
   }
   if (toolRegistry?.status === 'orbit_tool_registry_ready') {
     actions.push('Use the tool registry as the KosmoOrbit orchestration contract before adding any real tool launch or local runtime action.');
+  }
+  if (runtimeAdapter?.status === 'runtime_adapter_contract_passed') {
+    actions.push('Use the runtime adapter contract as the bridge from Tool Registry to KosmoZentrale before implementing executable local adapters.');
   }
   if (pilotSession?.status === 'orbit_pilot_session_template_ready') {
     actions.push('Use the pilot session template for a real office pilot only after anonymising project inputs.');
@@ -682,6 +708,10 @@ function renderMarkdown(report) {
     `- tool registry checks: ${report.summary.tool_registry_passed_checks}/${report.summary.tool_registry_check_count}`,
     `- tool registry tools: ${report.summary.tool_registry_tool_count}`,
     `- tool registry blocked/review gates: ${report.summary.tool_registry_blocked_or_review_gate_count}`,
+    `- runtime adapter: \`${report.summary.runtime_adapter_status}\``,
+    `- runtime adapter checks: ${report.summary.runtime_adapter_passed_checks}/${report.summary.runtime_adapter_check_count}`,
+    `- runtime adapter lanes: ${report.summary.runtime_adapter_lane_count}`,
+    `- runtime adapter promotion requirements: ${report.summary.runtime_adapter_promotion_requirement_count}`,
     `- pilot session: \`${report.summary.pilot_session_status}\``,
     `- pilot session checks: ${report.summary.pilot_session_passed_checks}/${report.summary.pilot_session_check_count}`,
     `- pilot session measurement points: ${report.summary.pilot_session_measurement_points}`,

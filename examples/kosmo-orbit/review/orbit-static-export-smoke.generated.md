@@ -1,6 +1,6 @@
 # KosmoOrbit Static Export Smoke
 
-Generated: 2026-06-02T06:15:50.088Z
+Generated: 2026-06-02T11:41:27.331Z
 Status: `orbit_static_export_smoke_passed`
 HTML: `out/orbit/index.html`
 
@@ -8,7 +8,7 @@ Checks the built static export for the visible KosmoOrbit demo panels. It does n
 
 ## Summary
 
-- checks: 68/68 passed
+- checks: 70/70 passed
 
 ## Checks
 
@@ -46,6 +46,7 @@ Checks the built static export for the visible KosmoOrbit demo panels. It does n
 | `renders_review_decision` | `passed` | Export renders review decision draft. |
 | `renders_runtime_boundary` | `passed` | Export renders MVP/runtime boundary. |
 | `renders_runtime_contract` | `passed` | Export renders local runtime contract. |
+| `renders_runtime_adapter` | `passed` | Export renders runtime adapter contract. |
 | `renders_installation_topology` | `passed` | Export renders local office installation topology. |
 | `renders_health_readiness` | `passed` | Export renders local health readiness contract. |
 | `renders_risk_register` | `passed` | Export renders human approval risk register. |
@@ -60,6 +61,7 @@ Checks the built static export for the visible KosmoOrbit demo panels. It does n
 | `anchors_core_sections` | `passed` | Export contains section anchors. |
 | `keeps_no_runtime_side_effects` | `passed` | Export states that runtime side effects are off. |
 | `keeps_runtime_contract_safe` | `passed` | Export keeps runtime process/model/queue actions gated. |
+| `keeps_runtime_adapter_safe` | `passed` | Export keeps runtime adapters non-operational. |
 | `keeps_workflow_delta_honest` | `passed` | Export keeps workflow delta honest about savings. |
 | `keeps_pilot_measurement_safe` | `passed` | Export keeps pilot measurement safe and local. |
 | `keeps_pilot_measurement_kit_empty` | `passed` | Export keeps pilot measurement kit empty before real pilot. |

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-02T06:15:16.415Z",
+  "generated_at": "2026-06-02T11:40:52.192Z",
   "generator": "kosmo-orbit-full-review",
   "workspace_path": "examples/kosmo-orbit/workspace.demo.json",
   "project_root": "examples/kosmo-projects/kosmo-demo-001",
@@ -15,8 +15,8 @@
     "no_geometry_generation": true
   },
   "summary": {
-    "step_count": 25,
-    "passed_steps": 25,
+    "step_count": 26,
+    "passed_steps": 26,
     "failed_steps": 0,
     "role_state_status": "role_state_check_passed",
     "role_state_active_role": "owner_admin",
@@ -59,6 +59,11 @@
     "tool_registry_check_count": 13,
     "tool_registry_tool_count": 8,
     "tool_registry_blocked_or_review_gate_count": 5,
+    "runtime_adapter_status": "runtime_adapter_contract_passed",
+    "runtime_adapter_passed_checks": 16,
+    "runtime_adapter_check_count": 16,
+    "runtime_adapter_lane_count": 6,
+    "runtime_adapter_promotion_requirement_count": 6,
     "pilot_session_status": "orbit_pilot_session_template_ready",
     "pilot_session_passed_checks": 17,
     "pilot_session_check_count": 17,
@@ -74,8 +79,8 @@
     "pilot_result_draft_slots": 5,
     "pilot_result_draft_empty_slots": 5,
     "orbit_route_smoke_status": "orbit_route_smoke_passed",
-    "orbit_route_smoke_passed_checks": 190,
-    "orbit_route_smoke_check_count": 190,
+    "orbit_route_smoke_passed_checks": 197,
+    "orbit_route_smoke_check_count": 197,
     "workspace_status": "orbit_blocked_gates_present",
     "project_status": "local_review_only",
     "project_artifact_count": 59,
@@ -117,6 +122,7 @@
     "office_routine_markdown": "examples/kosmo-orbit/review/orbit-office-routine.generated.md",
     "office_pilot_scene_markdown": "examples/kosmo-orbit/review/orbit-office-pilot-scene.generated.md",
     "tool_registry_markdown": "examples/kosmo-orbit/review/orbit-tool-registry.generated.md",
+    "runtime_adapter_markdown": "examples/kosmo-orbit/review/orbit-runtime-adapter.generated.md",
     "pilot_session_markdown": "examples/kosmo-orbit/review/orbit-pilot-session.generated.md",
     "pilot_measurement_kit_markdown": "examples/kosmo-orbit/review/orbit-pilot-measurement-kit.generated.md",
     "pilot_result_draft_markdown": "examples/kosmo-orbit/review/orbit-pilot-result-draft.generated.md",
@@ -386,6 +392,18 @@
       "stderr_tail": ""
     },
     {
+      "id": "runtime_adapter",
+      "label": "Orbit Runtime Adapter Contract",
+      "command": "npm run kosmo:orbit-runtime-adapter -- --contract examples/kosmo-orbit/runtime/orbit-runtime-adapter.contract.json --component app/orbit/OrbitRuntimeAdapterContract.tsx --route app/orbit/page.tsx --sectionIndex app/orbit/OrbitSectionIndex.tsx",
+      "status": "passed",
+      "exit_code": 0,
+      "report_path": "examples/kosmo-orbit/review/orbit-runtime-adapter.generated.json",
+      "report_exists": true,
+      "report_status": "runtime_adapter_contract_passed",
+      "stdout_tail": "> architecture-cosmos@0.1.0 kosmo:orbit-runtime-adapter\n> node scripts/kosmo-orbit-runtime-adapter-check.mjs --contract examples/kosmo-orbit/runtime/orbit-runtime-adapter.contract.json --component app/orbit/OrbitRuntimeAdapterContract.tsx --route app/orbit/page.tsx --sectionIndex app/orbit/OrbitSectionIndex.tsx\n\nKosmoOrbit runtime adapter check\nStatus: runtime_adapter_contract_passed\nChecks: 16/16\nWrote: examples/kosmo-orbit/review/orbit-runtime-adapter.generated.md",
+      "stderr_tail": ""
+    },
+    {
       "id": "pilot_session",
       "label": "Orbit Pilot Session Template",
       "command": "npm run kosmo:orbit-pilot-session -- --session examples/kosmo-orbit/pilot/orbit-office-pilot-session.demo.json --schema schema/kosmo-orbit-pilot-session.schema.json",
@@ -430,7 +448,7 @@
       "report_path": "examples/kosmo-orbit/review/orbit-route-smoke.generated.json",
       "report_exists": true,
       "report_status": "orbit_route_smoke_passed",
-      "stdout_tail": "> architecture-cosmos@0.1.0 kosmo:orbit-route-smoke\n> node scripts/kosmo-orbit-route-smoke.mjs --route app/orbit/page.tsx --spec examples/kosmo-orbit/review/orbit-app-route-spec.generated.json\n\nKosmoOrbit route smoke\nStatus: orbit_route_smoke_passed\nChecks: 190/190\nWrote: examples/kosmo-orbit/review/orbit-route-smoke.generated.md",
+      "stdout_tail": "> architecture-cosmos@0.1.0 kosmo:orbit-route-smoke\n> node scripts/kosmo-orbit-route-smoke.mjs --route app/orbit/page.tsx --spec examples/kosmo-orbit/review/orbit-app-route-spec.generated.json\n\nKosmoOrbit route smoke\nStatus: orbit_route_smoke_passed\nChecks: 197/197\nWrote: examples/kosmo-orbit/review/orbit-route-smoke.generated.md",
       "stderr_tail": ""
     }
   ],
@@ -445,6 +463,7 @@
     "Keep the Audit Trail static until persistence, retention and privacy rules are approved.",
     "Use the office pilot scene contract to explain the first local office pilot without claiming completed results.",
     "Use the tool registry as the KosmoOrbit orchestration contract before adding any real tool launch or local runtime action.",
+    "Use the runtime adapter contract as the bridge from Tool Registry to KosmoZentrale before implementing executable local adapters.",
     "Use the pilot session template for a real office pilot only after anonymising project inputs.",
     "Use the pilot measurement kit to structure the first office pilot without claiming savings before human data exists.",
     "Use the pilot result draft only after a human office pilot creates evidence-backed observations.",
