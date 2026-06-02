@@ -1,0 +1,178 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-02T13:05:39.232Z",
+  "generator": "kosmo-orbit-workstation-profile-check",
+  "status": "workstation_profile_contract_passed",
+  "contract_file": "examples/kosmo-orbit/workstations/orbit-workstation-profile.contract.json",
+  "component_file": "app/orbit/OrbitWorkstationProfileContract.tsx",
+  "summary": {
+    "check_count": 16,
+    "passed_checks": 16,
+    "failed_checks": 0,
+    "profile_count": 8,
+    "learning_profile_count": 3,
+    "safety_flag_count": 12,
+    "escalation_rule_count": 4
+  },
+  "profiles": [
+    {
+      "id": "owner-admin-workstation",
+      "role_id": "owner_admin",
+      "station_type": "decision_station",
+      "interface_depth": "full",
+      "visible_module_count": 5,
+      "blocked_action_count": 3,
+      "human_gate": "Owner-Go und Security Review"
+    },
+    {
+      "id": "it-ai-admin-workstation",
+      "role_id": "it_ai_admin",
+      "station_type": "infrastructure_station",
+      "interface_depth": "full",
+      "visible_module_count": 4,
+      "blocked_action_count": 4,
+      "human_gate": "IT/KI Freigabe und Owner-Kostenfreigabe"
+    },
+    {
+      "id": "project-lead-workstation",
+      "role_id": "project_lead_architect",
+      "station_type": "project_control_station",
+      "interface_depth": "decision",
+      "visible_module_count": 5,
+      "blocked_action_count": 3,
+      "human_gate": "Projektleitungs-Review und Owner-Go fuer Public Gate"
+    },
+    {
+      "id": "design-architect-workstation",
+      "role_id": "design_architect",
+      "station_type": "design_review_station",
+      "interface_depth": "creative",
+      "visible_module_count": 5,
+      "blocked_action_count": 3,
+      "human_gate": "Design Review und Modellqualitaets-Gate"
+    },
+    {
+      "id": "drafter-efz-workstation",
+      "role_id": "drafter_efz",
+      "station_type": "production_review_station",
+      "interface_depth": "technical",
+      "visible_module_count": 4,
+      "blocked_action_count": 3,
+      "human_gate": "Modellqualitaets-Review und Projektleitungsfreigabe"
+    },
+    {
+      "id": "intern-workstation",
+      "role_id": "intern",
+      "station_type": "guided_assist_station",
+      "interface_depth": "guided",
+      "visible_module_count": 3,
+      "blocked_action_count": 4,
+      "human_gate": "Betreuung durch Projektleitung oder Entwurf"
+    },
+    {
+      "id": "apprentice-workstation",
+      "role_id": "apprentice",
+      "station_type": "learning_station",
+      "interface_depth": "learning",
+      "visible_module_count": 2,
+      "blocked_action_count": 4,
+      "human_gate": "Ausbildner-Review"
+    },
+    {
+      "id": "trial-user-workstation",
+      "role_id": "trial_user",
+      "station_type": "observer_station",
+      "interface_depth": "observer",
+      "visible_module_count": 1,
+      "blocked_action_count": 5,
+      "human_gate": "Begleitperson im Buero"
+    }
+  ],
+  "checks": [
+    {
+      "id": "contract_file_exists",
+      "label": "Workstation profile contract file exists.",
+      "status": "passed"
+    },
+    {
+      "id": "status_ready",
+      "label": "Workstation profile contract status is ready.",
+      "status": "passed"
+    },
+    {
+      "id": "mode_static_review_only",
+      "label": "Workstation profile contract is static review-only.",
+      "status": "passed"
+    },
+    {
+      "id": "required_roles_present",
+      "label": "Contract covers all expected office roles.",
+      "status": "passed"
+    },
+    {
+      "id": "profile_count",
+      "label": "Contract defines at least eight workstation profiles.",
+      "status": "passed"
+    },
+    {
+      "id": "all_profiles_have_startup_contract",
+      "label": "Every profile has station type, startup surface, focus, modules, safe actions, blocked actions and human gate.",
+      "status": "passed"
+    },
+    {
+      "id": "learning_profiles_are_guided",
+      "label": "Learning and observer profiles stay guided or observer depth.",
+      "status": "passed"
+    },
+    {
+      "id": "safety_flags_present",
+      "label": "All workstation safety flags are present and true.",
+      "status": "passed"
+    },
+    {
+      "id": "blocks_sensitive_actions",
+      "label": "Workstation profiles block runtime, write, upload, publish and external actions.",
+      "status": "passed"
+    },
+    {
+      "id": "has_escalation_rules",
+      "label": "Contract includes explicit escalation rules.",
+      "status": "passed"
+    },
+    {
+      "id": "component_imports_contract",
+      "label": "Component imports the local workstation profile contract.",
+      "status": "passed"
+    },
+    {
+      "id": "component_renders_workstation_copy",
+      "label": "Component renders workstation profile copy.",
+      "status": "passed"
+    },
+    {
+      "id": "component_renders_safety_boundary",
+      "label": "Component states no accounts, user writes, persistence or auth runtime.",
+      "status": "passed"
+    },
+    {
+      "id": "route_imports_workstation_profile",
+      "label": "Orbit route imports the workstation profile component.",
+      "status": "passed"
+    },
+    {
+      "id": "route_anchors_workstation_profile",
+      "label": "Orbit route renders a workstation-profile anchor.",
+      "status": "passed"
+    },
+    {
+      "id": "section_index_links_workstation_profile",
+      "label": "Section index links to workstation profiles.",
+      "status": "passed"
+    }
+  ],
+  "next_actions": [
+    "Use this contract as the safe local profile map before building persistent users or auth.",
+    "Keep every workstation profile review-only until KosmoZentrale runtime and local identity storage are explicitly designed.",
+    "Use the profile contract in a future pilot to decide which role-specific surface should be built first."
+  ]
+}

@@ -1,6 +1,6 @@
 # KosmoOrbit Route Smoke
 
-Generated: 2026-06-02T11:40:52.178Z
+Generated: 2026-06-02T13:05:39.815Z
 Status: `orbit_route_smoke_passed`
 Route: `app/orbit/page.tsx`
 
@@ -8,7 +8,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 
 ## Summary
 
-- checks: 197/197 passed
+- checks: 204/204 passed
 
 ## Checks
 
@@ -53,6 +53,8 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `runtime_contract_file_exists` | `passed` | Orbit local runtime contract component exists. |
 | `quality_evidence_file_exists` | `passed` | Orbit quality evidence component exists. |
 | `workstation_priorities_file_exists` | `passed` | Orbit workstation priorities component exists. |
+| `workstation_profile_file_exists` | `passed` | Orbit workstation profile contract component exists. |
+| `workstation_profile_data_file_exists` | `passed` | Orbit workstation profile contract data exists. |
 | `learning_mode_file_exists` | `passed` | Orbit learning mode component exists. |
 | `permission_matrix_file_exists` | `passed` | Orbit permission matrix component exists. |
 | `autonomy_status_file_exists` | `passed` | Orbit autonomy status component exists. |
@@ -97,6 +99,8 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `imports_runtime_contract` | `passed` | Route imports the local runtime contract component. |
 | `imports_quality_evidence` | `passed` | Route imports the quality evidence component. |
 | `imports_workstation_priorities` | `passed` | Route imports the workstation priorities component. |
+| `imports_workstation_profile` | `passed` | Route imports the workstation profile component. |
+| `imports_workstation_profile_data` | `passed` | Workstation profile component imports the local contract JSON. |
 | `imports_learning_mode` | `passed` | Route imports the learning mode component. |
 | `imports_permission_matrix` | `passed` | Route imports the permission matrix component. |
 | `imports_autonomy_status` | `passed` | Route imports the autonomy status component. |
@@ -176,6 +180,9 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `imports_static_smoke_report` | `passed` | Route imports the static export smoke report. |
 | `shows_workstation_priorities` | `passed` | Route renders role-first workstation priorities. |
 | `covers_core_workstation_roles` | `passed` | Workstation priorities cover owner, project lead, design, drafting and education. |
+| `shows_workstation_profile_contract` | `passed` | Route renders the workstation profile contract. |
+| `workstation_profile_uses_local_contract` | `passed` | Workstation profile panel uses the local contract for role-specific startup surfaces. |
+| `keeps_workstation_profile_review_only` | `passed` | Workstation profile contract keeps accounts, writes, persistence and auth runtime blocked. |
 | `shows_learning_mode` | `passed` | Route renders education mode for learning roles. |
 | `learning_mode_keeps_actions_blocked` | `passed` | Learning mode blocks accounts, writes, generation and public publish. |
 | `shows_permission_matrix` | `passed` | Route renders role permission matrix. |

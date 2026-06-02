@@ -1,0 +1,138 @@
+{
+  "schema_version": "0.1",
+  "status": "workstation_profile_contract_ready",
+  "mode": "static_review_only",
+  "contract_id": "orbit-workstation-profile-v1",
+  "description": "Review-only contract for the future KosmoOrbit workstation profiles in a small architecture office.",
+  "global_policy": {
+    "no_auth_runtime": true,
+    "no_user_account_writes": true,
+    "no_profile_persistence": true,
+    "no_model_starts": true,
+    "no_tool_launches": true,
+    "no_filesystem_scans": true,
+    "no_project_writes": true,
+    "no_uploads": true,
+    "no_external_accounts": true,
+    "no_public_publish": true,
+    "no_cost_jobs": true,
+    "owner_go_required_for_live": true
+  },
+  "profiles": [
+    {
+      "id": "owner-admin-workstation",
+      "role_id": "owner_admin",
+      "label": "Chef / Owner Admin",
+      "station_type": "decision_station",
+      "startup_surface": "business_and_risk_overview",
+      "interface_depth": "full",
+      "primary_focus": "Strategie, Freigaben, Risiko, Pilotentscheid und Public Gate.",
+      "visible_modules": ["KosmoData", "KosmoAsset", "KosmoDesign", "KosmoPublish", "KosmoZentrale"],
+      "safe_actions": ["Review-Status lesen", "lokale Freigabe vorbereiten", "Pilotentscheid dokumentieren"],
+      "blocked_actions": ["public_publish", "push_without_owner_go", "external_account_sync"],
+      "human_gate": "Owner-Go und Security Review"
+    },
+    {
+      "id": "it-ai-admin-workstation",
+      "role_id": "it_ai_admin",
+      "label": "IT / KI Spezialist",
+      "station_type": "infrastructure_station",
+      "startup_surface": "health_runtime_and_adapter_review",
+      "interface_depth": "full",
+      "primary_focus": "KosmoZentrale Health, lokale Modelle, Adapter, Updates und Reparaturpfade.",
+      "visible_modules": ["KosmoZentrale", "KosmoData", "KosmoAsset", "KosmoDraw"],
+      "safe_actions": ["Health-Vertrag pruefen", "Adapter-Evidenz lesen", "Kill-Switch-Anforderungen pruefen"],
+      "blocked_actions": ["start_local_model", "launch_process", "scan_filesystem", "spend_money"],
+      "human_gate": "IT/KI Freigabe und Owner-Kostenfreigabe"
+    },
+    {
+      "id": "project-lead-workstation",
+      "role_id": "project_lead_architect",
+      "label": "Projektleiter Architekt",
+      "station_type": "project_control_station",
+      "startup_surface": "project_package_and_review_gates",
+      "interface_depth": "decision",
+      "primary_focus": "Projektpaket, Blocker, Rollenrunde, lokale Freigaben und Lieferstatus.",
+      "visible_modules": ["KosmoPrepare", "KosmoData", "KosmoDesign", "KosmoDraw", "KosmoPublish"],
+      "safe_actions": ["Projektpaket pruefen", "Review-Runde starten", "lokale Entscheidung vorbereiten"],
+      "blocked_actions": ["design_generation", "public_publish", "customer_upload"],
+      "human_gate": "Projektleitungs-Review und Owner-Go fuer Public Gate"
+    },
+    {
+      "id": "design-architect-workstation",
+      "role_id": "design_architect",
+      "label": "Entwurfsarchitekt",
+      "station_type": "design_review_station",
+      "startup_surface": "kosmo_design_review_mode",
+      "interface_depth": "creative",
+      "primary_focus": "KosmoDesign Kontext, Variantenlogik, Referenzen, Material und Visualisierung.",
+      "visible_modules": ["KosmoDesign", "KosmoPrepare", "KosmoData", "KosmoAsset", "KosmoViz"],
+      "safe_actions": ["Kontext lesen", "Variantenfragen sammeln", "Modellprofil reviewen"],
+      "blocked_actions": ["geometry_generation", "write_design_variant", "paid_render_job"],
+      "human_gate": "Design Review und Modellqualitaets-Gate"
+    },
+    {
+      "id": "drafter-efz-workstation",
+      "role_id": "drafter_efz",
+      "label": "Zeichner EFZ",
+      "station_type": "production_review_station",
+      "startup_surface": "model_draw_publish_review",
+      "interface_depth": "technical",
+      "primary_focus": "Modellqualitaet, Layer, Planartefakte, DXF/IFC-Kontext und Abgabevorbereitung.",
+      "visible_modules": ["KosmoDraw", "KosmoAsset", "KosmoPublish", "KosmoData"],
+      "safe_actions": ["Layer-Hinweise lesen", "Modellqualitaetsfragen markieren", "Abgabecheck vorbereiten"],
+      "blocked_actions": ["export_public_package", "overwrite_project_files", "external_delivery"],
+      "human_gate": "Modellqualitaets-Review und Projektleitungsfreigabe"
+    },
+    {
+      "id": "intern-workstation",
+      "role_id": "intern",
+      "label": "Praktikant",
+      "station_type": "guided_assist_station",
+      "startup_surface": "guided_research_and_simple_review",
+      "interface_depth": "guided",
+      "primary_focus": "Gefuehrte Recherche, einfache Kontextpruefung und sichere Assistenz.",
+      "visible_modules": ["KosmoData", "KosmoPrepare", "KosmoDesign"],
+      "safe_actions": ["Quellen sammeln", "Fragen vorbereiten", "Review-Notizen vorschlagen"],
+      "blocked_actions": ["project_write", "approval", "design_generation", "public_publish"],
+      "human_gate": "Betreuung durch Projektleitung oder Entwurf"
+    },
+    {
+      "id": "apprentice-workstation",
+      "role_id": "apprentice",
+      "label": "Lehrling",
+      "station_type": "learning_station",
+      "startup_surface": "learning_mode_and_office_standards",
+      "interface_depth": "learning",
+      "primary_focus": "Schulstoff, Buero-Standards, sichere Uebungen und Begriffserklaerung.",
+      "visible_modules": ["KosmoData", "KosmoPrepare"],
+      "safe_actions": ["Begriffe lernen", "Uebungsaufgaben lesen", "Review-Fragen beantworten"],
+      "blocked_actions": ["project_write", "approval", "tool_launch", "public_publish"],
+      "human_gate": "Ausbildner-Review"
+    },
+    {
+      "id": "trial-user-workstation",
+      "role_id": "trial_user",
+      "label": "Schnupperstift",
+      "station_type": "observer_station",
+      "startup_surface": "observer_intro_and_safe_demo",
+      "interface_depth": "observer",
+      "primary_focus": "Sehr einfache Demo, Berufseinblick und sichere Beobachtung ohne Projektzugriff.",
+      "visible_modules": ["KosmoData"],
+      "safe_actions": ["Demo ansehen", "Begriffe lesen", "Fragen sammeln"],
+      "blocked_actions": ["project_write", "approval", "tool_launch", "customer_data_access", "public_publish"],
+      "human_gate": "Begleitperson im Buero"
+    }
+  ],
+  "escalation_rules": [
+    "Learning and observer stations escalate to a supervising human before any project decision.",
+    "Design and drafting stations escalate to project lead before writes, generation or delivery.",
+    "Infrastructure station escalates to owner before costs, external accounts or model/runtime activation.",
+    "Owner station still needs explicit owner confirmation before push, public publish or external sync."
+  ],
+  "next_actions": [
+    "Use this contract as the safe local profile map before building persistent users or auth.",
+    "Keep every workstation profile review-only until KosmoZentrale runtime and local identity storage are explicitly designed.",
+    "Use the profile contract in a future pilot to decide which role-specific surface should be built first."
+  ]
+}

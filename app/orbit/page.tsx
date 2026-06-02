@@ -46,6 +46,7 @@ import { OrbitToolRegistry } from './OrbitToolRegistry';
 import { OrbitVisionBridge } from './OrbitVisionBridge';
 import { OrbitWorkflowDelta } from './OrbitWorkflowDelta';
 import { OrbitWorkstationPriorities } from './OrbitWorkstationPriorities';
+import { OrbitWorkstationProfileContract } from './OrbitWorkstationProfileContract';
 
 export const dynamic = 'force-static';
 
@@ -493,6 +494,10 @@ export default function OrbitPage() {
           </div>
 
           <OrbitWorkstationPriorities />
+
+          <div id="workstation-profile" className="scroll-mt-4">
+            <OrbitWorkstationProfileContract />
+          </div>
 
           <div id="ausbildung" className="scroll-mt-4">
             <OrbitLearningMode variants={roleVariantsReport.variants} />

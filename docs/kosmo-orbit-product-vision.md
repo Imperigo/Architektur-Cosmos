@@ -211,6 +211,11 @@ Dieser Kern zeigt:
   reviewfaehige Pipeline sichtbar macht;
 - Arbeitsstations-Prioritaeten, die zeigen, welche Panels Chef, Projektleitung,
   Entwurf, Zeichnung und Ausbildung zuerst brauchen;
+- einen Workstation-Profil-Vertrag, der Chef/Admin, IT/KI, Projektleitung,
+  Entwurf, Zeichnung, Praktikum, Lehrling und Schnupperstift als spaetere
+  KosmoOrbit-Startoberflaechen mit sichtbaren Modulen, sicheren Aktionen,
+  blockierten Aktionen und menschlichen Eskalationsgates beschreibt, ohne
+  Auth, User-Writes oder Profilpersistenz zu aktivieren;
 - eine Rechte-Matrix, die sichtbar macht, welche Rolle Design Review,
   lokale Freigabe, Public Gate, Read-only und Generation sehen oder nicht
   nutzen darf;
@@ -221,6 +226,6 @@ Dieser Kern zeigt:
   in die menschliche Pushentscheidung einbindet.
 
 Damit ist der erste pruefbare Produktkern vorhanden: KosmoOrbit beweist die
-Steuerzentralen-Logik mit geprueftem Tool-Register und Runtime-Adapter-
-Vertrag, ohne schon echte lokale Runtime, Auth, Blender-Start,
+Steuerzentralen-Logik mit geprueftem Tool-Register, Runtime-Adapter-Vertrag
+und Workstation-Profil-Vertrag, ohne schon echte lokale Runtime, Auth, Blender-Start,
 Geometrie-Generierung oder Cloud-Integrationen zu aktivieren.

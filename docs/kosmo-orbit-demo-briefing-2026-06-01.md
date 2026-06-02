@@ -119,6 +119,13 @@ In drei Minuten soll ein Architekturbueroleiter verstehen:
    Entwurf sieht KosmoDesign-Kontext, Zeichnung sieht Modell/Artefakte,
    Ausbildung sieht Erklaerung und sichere Uebungen.
 
+21. **Workstation-Profil-Vertrag zeigen**
+   Erklaeren: KosmoOrbit beschreibt jetzt auch die spaeteren Startoberflaechen
+   je Arbeitsplatz: Chef/Admin, IT/KI, Projektleitung, Entwurf, Zeichnung,
+   Praktikum, Lehrling und Schnupperstift. Heute ist das noch keine echte
+   Auth- oder Userverwaltung, sondern ein sicherer Vertrag: keine Accounts,
+   keine User-Writes, keine Profilpersistenz und keine echte Auth-Runtime.
+
 ## Kernsaetze
 
 - Besser: Jede Rolle bekommt die richtige Oberflaechentiefe und sieht den

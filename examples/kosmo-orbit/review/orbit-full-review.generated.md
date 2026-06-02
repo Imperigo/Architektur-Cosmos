@@ -1,6 +1,6 @@
 # KosmoOrbit Full Review
 
-Generated: 2026-06-02T11:40:52.192Z
+Generated: 2026-06-02T13:05:39.827Z
 Status: `orbit_full_review_ready_for_review_mode`
 Workspace: `examples/kosmo-orbit/workspace.demo.json`
 Project: `examples/kosmo-projects/kosmo-demo-001`
@@ -9,7 +9,7 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 
 ## Summary
 
-- steps: 26/26 passed
+- steps: 27/27 passed
 - role state: `role_state_check_passed`
 - role state active role: `owner_admin`
 - role state selected role: `owner_admin`
@@ -48,6 +48,11 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 - runtime adapter checks: 16/16
 - runtime adapter lanes: 6
 - runtime adapter promotion requirements: 6
+- workstation profile: `workstation_profile_contract_passed`
+- workstation profile checks: 16/16
+- workstation profiles: 8
+- workstation learning profiles: 3
+- workstation escalation rules: 4
 - pilot session: `orbit_pilot_session_template_ready`
 - pilot session checks: 17/17
 - pilot session measurement points: 5
@@ -60,7 +65,7 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 - pilot result draft slots: 5
 - pilot result draft empty slots: 5
 - orbit route smoke: `orbit_route_smoke_passed`
-- orbit route smoke checks: 197/197
+- orbit route smoke checks: 204/204
 - workspace status: `orbit_blocked_gates_present`
 - project status: `local_review_only`
 - project artifacts: 59
@@ -112,6 +117,7 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 | Orbit Office Pilot Scene | `passed` | `examples/kosmo-orbit/review/orbit-office-pilot-scene.generated.json` |
 | Orbit Tool Registry | `passed` | `examples/kosmo-orbit/review/orbit-tool-registry.generated.json` |
 | Orbit Runtime Adapter Contract | `passed` | `examples/kosmo-orbit/review/orbit-runtime-adapter.generated.json` |
+| Orbit Workstation Profile Contract | `passed` | `examples/kosmo-orbit/review/orbit-workstation-profile.generated.json` |
 | Orbit Pilot Session Template | `passed` | `examples/kosmo-orbit/review/orbit-pilot-session.generated.json` |
 | Orbit Pilot Measurement Kit | `passed` | `examples/kosmo-orbit/review/orbit-pilot-measurement-kit.generated.json` |
 | Orbit Pilot Result Draft | `passed` | `examples/kosmo-orbit/review/orbit-pilot-result-draft.generated.json` |
@@ -132,6 +138,7 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 - office_pilot_scene_markdown: `examples/kosmo-orbit/review/orbit-office-pilot-scene.generated.md`
 - tool_registry_markdown: `examples/kosmo-orbit/review/orbit-tool-registry.generated.md`
 - runtime_adapter_markdown: `examples/kosmo-orbit/review/orbit-runtime-adapter.generated.md`
+- workstation_profile_markdown: `examples/kosmo-orbit/review/orbit-workstation-profile.generated.md`
 - pilot_session_markdown: `examples/kosmo-orbit/review/orbit-pilot-session.generated.md`
 - pilot_measurement_kit_markdown: `examples/kosmo-orbit/review/orbit-pilot-measurement-kit.generated.md`
 - pilot_result_draft_markdown: `examples/kosmo-orbit/review/orbit-pilot-result-draft.generated.md`
@@ -160,6 +167,7 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 - Use the office pilot scene contract to explain the first local office pilot without claiming completed results.
 - Use the tool registry as the KosmoOrbit orchestration contract before adding any real tool launch or local runtime action.
 - Use the runtime adapter contract as the bridge from Tool Registry to KosmoZentrale before implementing executable local adapters.
+- Use the workstation profile contract before building persistent users, auth or real per-workstation Orbit shells.
 - Use the pilot session template for a real office pilot only after anonymising project inputs.
 - Use the pilot measurement kit to structure the first office pilot without claiming savings before human data exists.
 - Use the pilot result draft only after a human office pilot creates evidence-backed observations.

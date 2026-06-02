@@ -169,6 +169,45 @@ Nachgezogen:
 - `npm run kosmo:orbit-route-smoke` steht bei 197/197;
 - `npm run kosmo:orbit-static-smoke` steht bei 70/70.
 
+### Workstation-Profil-Vertrag
+
+`/orbit` hat einen sichtbaren Workstation-Profil-Vertrag erhalten.
+
+Zweck:
+
+- KosmoOrbit wird konkreter als installierte Hauptsoftware auf jeder
+  Arbeitsstation;
+- Chef/Admin, IT/KI, Projektleitung, Entwurf, Zeichnung, Praktikum, Lehrling
+  und Schnupperstift bekommen eigene spaetere Startoberflaechen;
+- pro Profil sind Stationstyp, Startoberflaeche, UI-Tiefe, Fokus, sichtbare
+  Module, sichere Aktionen, blockierte Aktionen und Human Gate sichtbar;
+- Eskalationsregeln machen klar, wann Lernende, Entwurf, Zeichnung,
+  Infrastruktur oder Owner eine menschliche Freigabe brauchen.
+
+Wichtige Grenze:
+
+- keine echte Auth-Runtime;
+- keine Accounts;
+- keine User-Writes;
+- keine Profilpersistenz;
+- keine Tool-Launches;
+- keine Modellstarts;
+- keine Projekt-Writes;
+- keine Uploads, externen Accounts, Kostenjobs oder Public-Publish.
+
+Nachgezogen:
+
+- `examples/kosmo-orbit/workstations/orbit-workstation-profile.contract.json`
+  haelt den lokalen Workstation-Vertrag;
+- `app/orbit/OrbitWorkstationProfileContract.tsx` rendert die
+  rollenbasierten Arbeitsplatzprofile;
+- `npm run kosmo:orbit-workstation-profile` prueft den Vertrag mit 16/16
+  Checks;
+- `npm run kosmo:orbit-full-review` enthaelt den Vertrag als eigenen Schritt
+  und steht dadurch bei 27/27;
+- `npm run kosmo:orbit-route-smoke` steht bei 204/204;
+- `npm run kosmo:orbit-static-smoke` steht bei 72/72.
+
 ### Push-Readiness Stabilisierung
 
 Der Push-Readiness-Report wurde stabilisiert.
@@ -202,8 +241,8 @@ ohne Push, Deploy, Upload, externe Accounts oder Kosten auszuloesen.
 
 ### Full Review und IFC-Kontext
 
-`npm run kosmo:orbit-full-review` wurde zuerst auf 24, danach auf 25 und nun
-auf 26 Schritte erweitert.
+`npm run kosmo:orbit-full-review` wurde zuerst auf 24, danach auf 25, 26 und
+nun auf 27 Schritte erweitert.
 
 Neu enthalten:
 
@@ -214,6 +253,9 @@ Neu enthalten:
   13/13 Checks, 8 Tools, 8 Rollen und 7 Gates;
 - `npm run kosmo:orbit-runtime-adapter` als eigener Full-Review-Schritt mit
   16/16 Checks, 6 Adapter-Lanes und 6 Promotion Requirements;
+- `npm run kosmo:orbit-workstation-profile` als eigener Full-Review-Schritt
+  mit 16/16 Checks, 8 Profilen, 3 Lern-/Observer-Profilen und 4
+  Eskalationsregeln;
 - aktualisierte Design-Kontext-Artefakte fuer das Demo-Projekt mit IFC-Bounds
   und IFC-Rollenhinweisen.
 
@@ -224,9 +266,9 @@ ist kein BIM-Import, kein editierbares Modell und kein Design-Generation-Go.
 
 Heute gruen geprueft:
 
-- `npm run kosmo:orbit-route-smoke` - 197/197 passed
-- `npm run kosmo:orbit-static-smoke` - 70/70 passed
-- `npm run kosmo:orbit-full-review` - 26/26 passed
+- `npm run kosmo:orbit-route-smoke` - 204/204 passed
+- `npm run kosmo:orbit-static-smoke` - 72/72 passed
+- `npm run kosmo:orbit-full-review` - 27/27 passed
 - `npm run atlas:static-smoke` - 17/17 passed
 - `npm run build` - static export passed
 - `npx tsc --noEmit --pretty false --incremental false` - passed
@@ -235,6 +277,7 @@ Heute gruen geprueft:
 - `npm run kosmo:orbit-office-pilot-scene` - 13/13 passed
 - `npm run kosmo:orbit-tool-registry` - 13/13 passed
 - `npm run kosmo:orbit-runtime-adapter` - 16/16 passed
+- `npm run kosmo:orbit-workstation-profile` - 16/16 passed
 - `npm run kosmo:orbit-push-readiness` - 12/12 passed
 - `npm run kosmo:orbit-readiness-sweep` - 6/6 passed
 - `npm run generated:cleanup` - Zeitstempelrauschen entfernt, semantische
@@ -257,6 +300,10 @@ Browser-Smokes:
   Runtime-Adapter sichtbar, 6 Adapter-Cards, Promotion Requirements und
   Safety-Copy sichtbar, keine horizontale Ueberbreite bei schmaler
   Viewport-Pruefung.
+- `/orbit/?v=workstation-profile-20260602#workstation-profile`: HTTP 200 im
+  lokalen Static Export, Workstation-Profil-Vertrag sichtbar, 8 Profilkarten,
+  Safety-Copy und alle Rollen sichtbar, keine horizontale Ueberbreite bei
+  schmaler Viewport-Pruefung.
 
 Hinweis: Ein paralleler TypeScript-Lauf waehrend `next build` hatte kurz
 fehlende `.next/types` gemeldet. Seriell nach abgeschlossenem Build war

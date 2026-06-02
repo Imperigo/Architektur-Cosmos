@@ -76,7 +76,15 @@ klarer und nachvollziehbarer machen.
    - Sagen: Lernende bekommen Erklaerung und sichere Uebungen statt kritische
      Rechte.
 
-10. **Live-Gate zeigen**
+10. **Workstation-Profile zeigen**
+   - Sagen: KosmoOrbit beschreibt, wie jede Arbeitsstation spaeter startet:
+     Chef als Entscheidung, IT/KI als Infrastruktur, Projektleitung als Gates,
+     Entwurf als KosmoDesign Review, Zeichnung als Modellqualitaet und
+     Ausbildung als Lernmodus.
+   - Sagen: Heute ist das kein Login-System, sondern ein sicherer Vertrag:
+     keine Accounts, keine User-Writes und keine echte Auth-Runtime.
+
+11. **Live-Gate zeigen**
    - Sagen: Lokal vorfuehrbar ist nicht gleich public-ready.
    - Sagen: Push, Livegang und Cloudflare-Deploy brauchen Owner-Go und
      Live-Smoke.

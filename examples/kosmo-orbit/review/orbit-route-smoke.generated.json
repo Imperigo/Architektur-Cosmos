@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-02T11:40:52.178Z",
+  "generated_at": "2026-06-02T13:05:39.815Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 197,
-    "passed_checks": 197,
+    "check_count": 204,
+    "passed_checks": 204,
     "failed_checks": 0
   },
   "checks": [
@@ -204,6 +204,16 @@
     {
       "id": "workstation_priorities_file_exists",
       "label": "Orbit workstation priorities component exists.",
+      "status": "passed"
+    },
+    {
+      "id": "workstation_profile_file_exists",
+      "label": "Orbit workstation profile contract component exists.",
+      "status": "passed"
+    },
+    {
+      "id": "workstation_profile_data_file_exists",
+      "label": "Orbit workstation profile contract data exists.",
       "status": "passed"
     },
     {
@@ -424,6 +434,16 @@
     {
       "id": "imports_workstation_priorities",
       "label": "Route imports the workstation priorities component.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_workstation_profile",
+      "label": "Route imports the workstation profile component.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_workstation_profile_data",
+      "label": "Workstation profile component imports the local contract JSON.",
       "status": "passed"
     },
     {
@@ -819,6 +839,21 @@
     {
       "id": "covers_core_workstation_roles",
       "label": "Workstation priorities cover owner, project lead, design, drafting and education.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_workstation_profile_contract",
+      "label": "Route renders the workstation profile contract.",
+      "status": "passed"
+    },
+    {
+      "id": "workstation_profile_uses_local_contract",
+      "label": "Workstation profile panel uses the local contract for role-specific startup surfaces.",
+      "status": "passed"
+    },
+    {
+      "id": "keeps_workstation_profile_review_only",
+      "label": "Workstation profile contract keeps accounts, writes, persistence and auth runtime blocked.",
       "status": "passed"
     },
     {

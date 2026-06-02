@@ -198,7 +198,12 @@ Sichere erste Umsetzung:
     KosmoZentrale-Runtime, mit Adapter-Lanes, Human Gates, Promotion
     Requirements und Kill-Switch-Pflicht
     (**initial umgesetzt mit `npm run kosmo:orbit-runtime-adapter` und `/orbit`**)
-13. spaeter Handoff an KosmoZentrale fuer echte lokale Runtime
+13. Workstation-Profil-Vertrag fuer Chef/Admin, IT/KI, Projektleitung,
+    Entwurf, Zeichnung, Praktikum, Lehrling und Schnupperstift als
+    rollenbasierte Startoberflaechen mit sicheren Aktionen, blockierten
+    Aktionen und Eskalationsgates
+    (**initial umgesetzt mit `npm run kosmo:orbit-workstation-profile` und `/orbit`**)
+14. spaeter Handoff an KosmoZentrale fuer echte lokale Runtime
 
 ## 7. Zusammenarbeit mit anderen Workern
 
@@ -799,6 +804,7 @@ Architekturburo:
   Audit-Vertraege;
 - Pruefevidenz;
 - Arbeitsstations-Prioritaeten;
+- Workstation-Profil-Vertrag;
 - Ausbildungsmodus;
 - Rechte-Matrix;
 - Rollenumschaltung;
@@ -820,15 +826,16 @@ Die wichtigste Produktlinie ist damit klarer:
 
 Aktuelle lokale Nachweise:
 
-- `npm run kosmo:orbit-full-review` — 26/26 passed;
+- `npm run kosmo:orbit-full-review` — 27/27 passed;
 - `npm run kosmo:orbit-runtime-adapter` — 16/16 passed;
+- `npm run kosmo:orbit-workstation-profile` — 16/16 passed;
 - `npm run kosmo:orbit-pilot-kit` — 19/19 passed;
 - `npm run kosmo:orbit-pilot-session` — 17/17 passed;
 - `npm run kosmo:orbit-pilot-result` — 21/21 passed;
-- `npm run kosmo:orbit-route-smoke` — 197/197 passed;
+- `npm run kosmo:orbit-route-smoke` — 204/204 passed;
 - `npm run kosmo:orbit-demo-audit` — 33/33 passed;
 - `npm run kosmo:orbit-responsive-audit` — 27/27 passed;
-- `npm run kosmo:orbit-static-smoke` — 70/70 passed;
+- `npm run kosmo:orbit-static-smoke` — 72/72 passed;
 - `npx tsc --noEmit --pretty false --incremental false` — passed;
 - `npm run lint` — 0 Errors, 0 Warnings;
 - `npm run ui:audit` — 72/72 passed;
