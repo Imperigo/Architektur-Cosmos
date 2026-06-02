@@ -105,7 +105,8 @@ function buildReport({ workspace, componentSource, routeSource, sectionIndexSour
       status: tool.status,
       category: tool.category,
       primary_roles: asArray(tool.primary_roles),
-      gate_count: asArray(gatesByTool[tool.id]).length
+      declared_gate_count: asArray(tool.gates).length,
+      workspace_gate_count: asArray(gatesByTool[tool.id]).length
     })),
     checks,
     next_actions: failed.length
@@ -163,12 +164,12 @@ function renderMarkdown(report) {
     '',
     '## Tools',
     '',
-    '| Tool | Status | Roles | Gates |',
-    '| --- | --- | --- | --- |'
+    '| Tool | Status | Roles | Declared Gates | Workspace Gates |',
+    '| --- | --- | --- | --- | --- |'
   ];
 
   report.tools.forEach((tool) => {
-    lines.push(`| \`${tool.id}\` | \`${tool.status}\` | ${tool.primary_roles.length} | ${tool.gate_count} |`);
+    lines.push(`| \`${tool.id}\` | \`${tool.status}\` | ${tool.primary_roles.length} | ${tool.declared_gate_count} | ${tool.workspace_gate_count} |`);
   });
 
   lines.push('', '## Checks', '', '| Check | Status | Meaning |', '| --- | --- | --- |');

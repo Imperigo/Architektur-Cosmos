@@ -1,6 +1,6 @@
 # KosmoOrbit Tool Registry Check
 
-Generated: 2026-06-02T06:15:15.705Z
+Generated: 2026-06-02T06:23:54.570Z
 Status: `orbit_tool_registry_ready`
 Workspace: `examples/kosmo-orbit/workspace.demo.json`
 
@@ -17,16 +17,16 @@ Review-only check for the visible KosmoOrbit tool registry. It validates local J
 
 ## Tools
 
-| Tool | Status | Roles | Gates |
-| --- | --- | --- | --- |
-| `kosmo-data` | `active` | 5 | 1 |
-| `kosmo-asset` | `prototype` | 4 | 1 |
-| `kosmo-design` | `planned` | 4 | 1 |
-| `kosmo-prepare` | `planned` | 3 | 0 |
-| `kosmo-draw` | `prototype` | 3 | 1 |
-| `kosmo-viz` | `planned` | 2 | 0 |
-| `kosmo-publish` | `planned` | 3 | 1 |
-| `kosmo-zentrale` | `external` | 2 | 2 |
+| Tool | Status | Roles | Declared Gates | Workspace Gates |
+| --- | --- | --- | --- | --- |
+| `kosmo-data` | `active` | 5 | 2 | 1 |
+| `kosmo-asset` | `prototype` | 4 | 3 | 1 |
+| `kosmo-design` | `planned` | 4 | 2 | 1 |
+| `kosmo-prepare` | `planned` | 3 | 2 | 0 |
+| `kosmo-draw` | `prototype` | 3 | 2 | 1 |
+| `kosmo-viz` | `planned` | 2 | 3 | 0 |
+| `kosmo-publish` | `planned` | 3 | 3 | 1 |
+| `kosmo-zentrale` | `external` | 2 | 2 | 2 |
 
 ## Checks
 

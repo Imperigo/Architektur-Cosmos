@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-02T06:15:15.705Z",
+  "generated_at": "2026-06-02T06:23:54.570Z",
   "generator": "kosmo-orbit-tool-registry-check",
   "status": "orbit_tool_registry_ready",
   "workspace_path": "examples/kosmo-orbit/workspace.demo.json",
@@ -28,7 +28,8 @@
         "intern",
         "apprentice"
       ],
-      "gate_count": 1
+      "declared_gate_count": 2,
+      "workspace_gate_count": 1
     },
     {
       "id": "kosmo-asset",
@@ -41,7 +42,8 @@
         "design_architect",
         "drafter_efz"
       ],
-      "gate_count": 1
+      "declared_gate_count": 3,
+      "workspace_gate_count": 1
     },
     {
       "id": "kosmo-design",
@@ -54,7 +56,8 @@
         "design_architect",
         "intern"
       ],
-      "gate_count": 1
+      "declared_gate_count": 2,
+      "workspace_gate_count": 1
     },
     {
       "id": "kosmo-prepare",
@@ -66,7 +69,8 @@
         "design_architect",
         "intern"
       ],
-      "gate_count": 0
+      "declared_gate_count": 2,
+      "workspace_gate_count": 0
     },
     {
       "id": "kosmo-draw",
@@ -78,7 +82,8 @@
         "design_architect",
         "drafter_efz"
       ],
-      "gate_count": 1
+      "declared_gate_count": 2,
+      "workspace_gate_count": 1
     },
     {
       "id": "kosmo-viz",
@@ -89,7 +94,8 @@
         "design_architect",
         "project_lead_architect"
       ],
-      "gate_count": 0
+      "declared_gate_count": 3,
+      "workspace_gate_count": 0
     },
     {
       "id": "kosmo-publish",
@@ -101,7 +107,8 @@
         "project_lead_architect",
         "drafter_efz"
       ],
-      "gate_count": 1
+      "declared_gate_count": 3,
+      "workspace_gate_count": 1
     },
     {
       "id": "kosmo-zentrale",
@@ -112,7 +119,8 @@
         "owner_admin",
         "it_ai_admin"
       ],
-      "gate_count": 2
+      "declared_gate_count": 2,
+      "workspace_gate_count": 2
     }
   ],
   "checks": [
