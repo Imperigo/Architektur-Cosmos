@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-02T05:46:04.609Z",
+  "generated_at": "2026-06-02T05:50:50.957Z",
   "generator": "kosmo-orbit-push-readiness",
   "status": "orbit_push_readiness_review_only",
   "git": {
@@ -13,8 +13,8 @@
   "evidence": {
     "route_smoke": {
       "status": "orbit_route_smoke_passed",
-      "passed_checks": 180,
-      "check_count": 180,
+      "passed_checks": 183,
+      "check_count": 183,
       "failed_checks": 0
     },
     "static_smoke": {
