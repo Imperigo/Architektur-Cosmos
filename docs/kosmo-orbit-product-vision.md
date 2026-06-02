@@ -216,6 +216,11 @@ Dieser Kern zeigt:
   KosmoOrbit-Startoberflaechen mit sichtbaren Modulen, sicheren Aktionen,
   blockierten Aktionen und menschlichen Eskalationsgates beschreibt, ohne
   Auth, User-Writes oder Profilpersistenz zu aktivieren;
+- einen Local-Identity-Vertrag, der spaetere lokale Profile, Auth und
+  Sessions in Profilklassen, Session-Grenzen, Privacy-Anforderungen,
+  blockierte Identity-Faehigkeiten und Promotion Requirements trennt, ohne
+  Logins, Accounts, Passwoerter, Session-Cookies, personenbezogene Writes oder
+  externe Identity Provider zu aktivieren;
 - eine Rechte-Matrix, die sichtbar macht, welche Rolle Design Review,
   lokale Freigabe, Public Gate, Read-only und Generation sehen oder nicht
   nutzen darf;
@@ -226,6 +231,7 @@ Dieser Kern zeigt:
   in die menschliche Pushentscheidung einbindet.
 
 Damit ist der erste pruefbare Produktkern vorhanden: KosmoOrbit beweist die
-Steuerzentralen-Logik mit geprueftem Tool-Register, Runtime-Adapter-Vertrag
-und Workstation-Profil-Vertrag, ohne schon echte lokale Runtime, Auth, Blender-Start,
-Geometrie-Generierung oder Cloud-Integrationen zu aktivieren.
+Steuerzentralen-Logik mit geprueftem Tool-Register, Runtime-Adapter-Vertrag,
+Workstation-Profil-Vertrag und Local-Identity-Vertrag, ohne schon echte
+lokale Runtime, Auth, Blender-Start, Geometrie-Generierung oder
+Cloud-Integrationen zu aktivieren.

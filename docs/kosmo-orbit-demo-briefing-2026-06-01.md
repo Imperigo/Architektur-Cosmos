@@ -126,6 +126,13 @@ In drei Minuten soll ein Architekturbueroleiter verstehen:
    Auth- oder Userverwaltung, sondern ein sicherer Vertrag: keine Accounts,
    keine User-Writes, keine Profilpersistenz und keine echte Auth-Runtime.
 
+22. **Local-Identity-Grenze zeigen**
+   Erklaeren: KosmoOrbit trennt jetzt sauber zwischen heutiger Rollen-Preview
+   und spaeterer lokaler Identitaet. Heute gibt es keine Logins, keine
+   Accounts, keine Passwoerter, keine Session-Cookies, keine personenbezogenen
+   Writes und keinen externen Identity Provider. Erst ein lokaler
+   Datenschutz-/Retention-/Backup-Entscheid darf daraus echte Profile machen.
+
 ## Kernsaetze
 
 - Besser: Jede Rolle bekommt die richtige Oberflaechentiefe und sieht den

@@ -121,6 +121,7 @@
     "kosmo:orbit-tool-registry": "node scripts/kosmo-orbit-tool-registry-check.mjs",
     "kosmo:orbit-runtime-adapter": "node scripts/kosmo-orbit-runtime-adapter-check.mjs",
     "kosmo:orbit-workstation-profile": "node scripts/kosmo-orbit-workstation-profile-check.mjs",
+    "kosmo:orbit-local-identity": "node scripts/kosmo-orbit-local-identity-check.mjs",
     "kosmo:orbit-pilot-session": "node scripts/kosmo-orbit-pilot-session-check.mjs",
     "kosmo:orbit-pilot-kit": "node scripts/kosmo-orbit-pilot-measurement-kit-check.mjs",
     "kosmo:orbit-pilot-result": "node scripts/kosmo-orbit-pilot-result-draft-check.mjs",

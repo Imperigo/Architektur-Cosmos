@@ -208,6 +208,49 @@ Nachgezogen:
 - `npm run kosmo:orbit-route-smoke` steht bei 204/204;
 - `npm run kosmo:orbit-static-smoke` steht bei 72/72.
 
+### Local-Identity-Vertrag
+
+`/orbit` hat einen sichtbaren Local-Identity-Vertrag erhalten.
+
+Zweck:
+
+- KosmoOrbit trennt heutige Rollen-Preview von spaeterer lokaler Identitaet;
+- Owner, IT/KI, Projektleitung, Design/Zeichnung und Lernprofile sind als
+  Profilklassen mit Preview-Scope, Zukunftsscope, Human Gate und Privacy
+  Requirement beschrieben;
+- Preview-, Decision- und Learning-Sessions haben eigene Grenzen;
+- blockierte Identity-Faehigkeiten und Promotion Requirements machen klar,
+  was vor echter Auth, Profilpersistenz oder Session-Speicherung entschieden
+  werden muss.
+
+Wichtige Grenze:
+
+- keine Logins;
+- keine Accounts;
+- keine Passwoerter;
+- keine Permission-Mutation;
+- keine Profilpersistenz;
+- keine Session-Cookies;
+- keine personenbezogenen Writes;
+- kein Hidden Tracking;
+- keine Learning Scores;
+- keine externen Directory-/Cloud-Identity-Provider;
+- keine automatische Freigabe.
+
+Nachgezogen:
+
+- `examples/kosmo-orbit/identity/orbit-local-identity.contract.json` haelt
+  den lokalen Identity-Vertrag;
+- `app/orbit/OrbitLocalIdentityContract.tsx` rendert Profilklassen,
+  Session-Grenzen, blockierte Faehigkeiten und Promotion Requirements;
+- `npm run kosmo:orbit-local-identity` prueft den Vertrag mit 16/16 Checks;
+- `npm run kosmo:orbit-full-review` enthaelt den Vertrag als eigenen Schritt
+  und steht dadurch bei 28/28;
+- `npm run kosmo:orbit-route-smoke` steht bei 211/211;
+- `npm run kosmo:orbit-static-smoke` steht bei 74/74;
+- `npm run kosmo:orbit-demo-audit` steht bei 37/37;
+- `npm run kosmo:orbit-responsive-audit` steht bei 29/29.
+
 ### Push-Readiness Stabilisierung
 
 Der Push-Readiness-Report wurde stabilisiert.
@@ -241,8 +284,8 @@ ohne Push, Deploy, Upload, externe Accounts oder Kosten auszuloesen.
 
 ### Full Review und IFC-Kontext
 
-`npm run kosmo:orbit-full-review` wurde zuerst auf 24, danach auf 25, 26 und
-nun auf 27 Schritte erweitert.
+`npm run kosmo:orbit-full-review` wurde zuerst auf 24, danach auf 25, 26, 27
+und nun auf 28 Schritte erweitert.
 
 Neu enthalten:
 
@@ -256,6 +299,9 @@ Neu enthalten:
 - `npm run kosmo:orbit-workstation-profile` als eigener Full-Review-Schritt
   mit 16/16 Checks, 8 Profilen, 3 Lern-/Observer-Profilen und 4
   Eskalationsregeln;
+- `npm run kosmo:orbit-local-identity` als eigener Full-Review-Schritt mit
+  16/16 Checks, 5 Profilklassen, 3 Session-Grenzen und 12 blockierten
+  Identity-Faehigkeiten;
 - aktualisierte Design-Kontext-Artefakte fuer das Demo-Projekt mit IFC-Bounds
   und IFC-Rollenhinweisen.
 
@@ -266,9 +312,9 @@ ist kein BIM-Import, kein editierbares Modell und kein Design-Generation-Go.
 
 Heute gruen geprueft:
 
-- `npm run kosmo:orbit-route-smoke` - 204/204 passed
-- `npm run kosmo:orbit-static-smoke` - 72/72 passed
-- `npm run kosmo:orbit-full-review` - 27/27 passed
+- `npm run kosmo:orbit-route-smoke` - 211/211 passed
+- `npm run kosmo:orbit-static-smoke` - 74/74 passed
+- `npm run kosmo:orbit-full-review` - 28/28 passed
 - `npm run atlas:static-smoke` - 17/17 passed
 - `npm run build` - static export passed
 - `npx tsc --noEmit --pretty false --incremental false` - passed
@@ -278,8 +324,9 @@ Heute gruen geprueft:
 - `npm run kosmo:orbit-tool-registry` - 13/13 passed
 - `npm run kosmo:orbit-runtime-adapter` - 16/16 passed
 - `npm run kosmo:orbit-workstation-profile` - 16/16 passed
-- `npm run kosmo:orbit-demo-audit` - 35/35 passed
-- `npm run kosmo:orbit-responsive-audit` - 28/28 passed
+- `npm run kosmo:orbit-local-identity` - 16/16 passed
+- `npm run kosmo:orbit-demo-audit` - 37/37 passed
+- `npm run kosmo:orbit-responsive-audit` - 29/29 passed
 - `npm run kosmo:orbit-push-readiness` - 12/12 passed
 - `npm run kosmo:orbit-readiness-sweep` - 6/6 passed
 - `npm run generated:cleanup` - Zeitstempelrauschen entfernt, semantische
@@ -306,6 +353,10 @@ Browser-Smokes:
   lokalen Static Export, Workstation-Profil-Vertrag sichtbar, 8 Profilkarten,
   Safety-Copy und alle Rollen sichtbar, keine horizontale Ueberbreite bei
   schmaler Viewport-Pruefung.
+- `/orbit/?v=local-identity-20260602#local-identity`: HTTP 200 im lokalen
+  Static Export, Local-Identity-Grenze sichtbar, 8 Karten, Profilklassen und
+  Safety-Copy sichtbar, keine horizontale Ueberbreite bei schmaler
+  Viewport-Pruefung.
 
 Hinweis: Ein paralleler TypeScript-Lauf waehrend `next build` hatte kurz
 fehlende `.next/types` gemeldet. Seriell nach abgeschlossenem Build war

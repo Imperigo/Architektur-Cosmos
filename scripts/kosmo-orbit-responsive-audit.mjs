@@ -38,6 +38,7 @@ const files = [
   'OrbitQualityEvidence.tsx',
   'OrbitWorkstationPriorities.tsx',
   'OrbitWorkstationProfileContract.tsx',
+  'OrbitLocalIdentityContract.tsx',
   'OrbitLearningMode.tsx',
   'OrbitPermissionMatrix.tsx',
   'OrbitOfficeRoutine.tsx'
@@ -99,6 +100,7 @@ function buildReport(sources) {
     check('office_routine_responsive', 'Office routine uses responsive cards for day phases and hard stops.', sources['OrbitOfficeRoutine.tsx'].includes('sm:grid-cols-2') && sources['OrbitOfficeRoutine.tsx'].includes('lg:grid-cols-3')),
     check('runtime_contract_responsive', 'Runtime contract uses responsive cards for the runtime stages.', sources['OrbitRuntimeContract.tsx'].includes('md:grid-cols-2') && sources['OrbitRuntimeContract.tsx'].includes('xl:grid-cols-5')),
     check('workstation_profile_responsive', 'Workstation profile contract uses responsive cards for profile and escalation layouts.', sources['OrbitWorkstationProfileContract.tsx'].includes('lg:grid-cols-2') && sources['OrbitWorkstationProfileContract.tsx'].includes('md:grid-cols-2')),
+    check('local_identity_responsive', 'Local identity contract uses responsive cards for profile classes, sessions and promotion requirements.', sources['OrbitLocalIdentityContract.tsx'].includes('lg:grid-cols-[0.85fr_1.15fr]') && sources['OrbitLocalIdentityContract.tsx'].includes('xl:grid-cols-5') && sources['OrbitLocalIdentityContract.tsx'].includes('lg:grid-cols-3')),
     check('progress_bars_have_stable_height', 'Progress map uses stable bar height and constrained width.', sources['OrbitProgressMap.tsx'].includes('h-2.5 overflow-hidden') && sources['OrbitProgressMap.tsx'].includes('style={{ width')),
     check('demo_readiness_uses_responsive_grid', 'Demo readiness summary uses responsive columns.', sources['OrbitDemoReadiness.tsx'].includes('md:grid-cols-3') && sources['OrbitDemoReadiness.tsx'].includes('lg:grid-cols')),
     check('publish_readiness_responsive', 'Publish readiness uses responsive columns for live gate statuses.', sources['OrbitPublishReadiness.tsx'].includes('md:grid-cols-2') && sources['OrbitPublishReadiness.tsx'].includes('xl:grid-cols-4')),

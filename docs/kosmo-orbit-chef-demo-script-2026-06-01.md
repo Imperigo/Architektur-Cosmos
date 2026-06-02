@@ -84,7 +84,14 @@ klarer und nachvollziehbarer machen.
    - Sagen: Heute ist das kein Login-System, sondern ein sicherer Vertrag:
      keine Accounts, keine User-Writes und keine echte Auth-Runtime.
 
-11. **Live-Gate zeigen**
+11. **Local Identity Boundary zeigen**
+   - Sagen: Profile und Auth sind ein eigenes Produktgate, nicht einfach ein
+     Login-Button.
+   - Sagen: Heute gibt es keine Logins, keine Passwoerter, keine
+     Session-Cookies, keine personenbezogenen Writes und keinen externen
+     Identity Provider.
+
+12. **Live-Gate zeigen**
    - Sagen: Lokal vorfuehrbar ist nicht gleich public-ready.
    - Sagen: Push, Livegang und Cloudflare-Deploy brauchen Owner-Go und
      Live-Smoke.

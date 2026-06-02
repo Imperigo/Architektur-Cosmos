@@ -1,6 +1,6 @@
 # KosmoOrbit Demo Audit
 
-Generated: 2026-06-02T13:08:58.160Z
+Generated: 2026-06-02T13:17:18.387Z
 Status: `orbit_demo_audit_passed`
 HTML: `out/orbit/index.html`
 
@@ -8,37 +8,38 @@ Static audit for the human presentation flow of `/orbit`. It checks section orde
 
 ## Summary
 
-- checks: 35/35 passed
+- checks: 37/37 passed
 
 ## Demo Order
 
 | Anchor | Section | Position |
 | --- | --- | ---: |
-| `autonomie` | Autonomie-Status | 25851 |
-| `routine` | Buero-Routine | 28327 |
-| `presenter` | 3-Minuten-Erklaerung | 58025 |
-| `workflow-delta` | Workflow-Delta | 61042 |
-| `pilotmessung` | Pilotmessung | 66764 |
-| `pilotplan` | Pilot-Runbook | 87716 |
-| `pilot-session` | Pilot-Session Template | 95334 |
-| `fortschritt` | Projektfortschritt | 100773 |
-| `vision` | Vision Bridge | 107518 |
-| `demo-ready` | Demo-Bereitschaft | 111858 |
-| `live-gate` | Live-Gate | 114613 |
-| `projektpaket` | Projektpaket Tagesansicht | 133935 |
-| `design-handoff` | KosmoDesign Handoff | 143527 |
-| `entscheidung` | Review Decision Draft | 163385 |
-| `runtime-contract` | Runtime-Vertrag | 170694 |
-| `installation` | Buero-Installation | 194855 |
-| `health` | Health Readiness | 202594 |
-| `risiken` | Risiko-Register | 209451 |
-| `commands` | Command-Vertrag | 216740 |
-| `audit` | Audit-Trail-Vertrag | 226103 |
-| `evidenz` | Pruefevidenz | 233617 |
-| `workstation-profile` | Workstation Profile Contract | 241876 |
-| `ausbildung` | Ausbildungsmodus | 263883 |
-| `rechte` | Rechte-Matrix | 269193 |
-| `rollen` | Rollenumschaltung Preview | 286948 |
+| `autonomie` | Autonomie-Status | 26270 |
+| `routine` | Buero-Routine | 28746 |
+| `presenter` | 3-Minuten-Erklaerung | 58444 |
+| `workflow-delta` | Workflow-Delta | 61461 |
+| `pilotmessung` | Pilotmessung | 67183 |
+| `pilotplan` | Pilot-Runbook | 88135 |
+| `pilot-session` | Pilot-Session Template | 95753 |
+| `fortschritt` | Projektfortschritt | 101192 |
+| `vision` | Vision Bridge | 107937 |
+| `demo-ready` | Demo-Bereitschaft | 112277 |
+| `live-gate` | Live-Gate | 115032 |
+| `projektpaket` | Projektpaket Tagesansicht | 134354 |
+| `design-handoff` | KosmoDesign Handoff | 143946 |
+| `entscheidung` | Review Decision Draft | 163804 |
+| `runtime-contract` | Runtime-Vertrag | 171113 |
+| `installation` | Buero-Installation | 195274 |
+| `health` | Health Readiness | 203013 |
+| `risiken` | Risiko-Register | 209870 |
+| `commands` | Command-Vertrag | 217159 |
+| `audit` | Audit-Trail-Vertrag | 226522 |
+| `evidenz` | Pruefevidenz | 234036 |
+| `workstation-profile` | Workstation Profile Contract | 242295 |
+| `local-identity` | Local Identity Boundary | 264302 |
+| `ausbildung` | Ausbildungsmodus | 280236 |
+| `rechte` | Rechte-Matrix | 285546 |
+| `rollen` | Rollenumschaltung Preview | 303301 |
 
 ## Checks
 
@@ -73,6 +74,8 @@ Static audit for the human presentation flow of `/orbit`. It checks section orde
 | `audit_trail_visible` | `passed` | Audit trail is visible in the export. |
 | `workstation_profile_visible` | `passed` | Workstation profile contract is visible in the export. |
 | `workstation_profile_safe` | `passed` | Workstation profile keeps accounts, user writes, persistence and auth runtime blocked. |
+| `local_identity_visible` | `passed` | Local identity boundary is visible in the export. |
+| `local_identity_safe` | `passed` | Local identity blocks logins, profile persistence, session cookies and external identity providers. |
 | `learning_mode_visible` | `passed` | Education mode is visible in the export. |
 | `learning_mode_safety_visible` | `passed` | Education mode safety line is visible in the export. |
 | `permission_boundary_visible` | `passed` | Role permission boundary is visible in the export. |

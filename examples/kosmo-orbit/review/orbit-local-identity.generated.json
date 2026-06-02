@@ -1,0 +1,156 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-02T13:16:53.455Z",
+  "generator": "kosmo-orbit-local-identity-check",
+  "status": "local_identity_contract_passed",
+  "contract_file": "examples/kosmo-orbit/identity/orbit-local-identity.contract.json",
+  "component_file": "app/orbit/OrbitLocalIdentityContract.tsx",
+  "summary": {
+    "check_count": 16,
+    "passed_checks": 16,
+    "failed_checks": 0,
+    "principle_count": 4,
+    "profile_class_count": 5,
+    "session_boundary_count": 3,
+    "blocked_capability_count": 12,
+    "promotion_requirement_count": 6
+  },
+  "profile_classes": [
+    {
+      "id": "owner_identity",
+      "role_count": 1,
+      "future_scope_count": 3,
+      "preview_scope_count": 3,
+      "required_human_gate": "Owner confirms live, public and cost decisions explicitly."
+    },
+    {
+      "id": "infrastructure_identity",
+      "role_count": 1,
+      "future_scope_count": 3,
+      "preview_scope_count": 3,
+      "required_human_gate": "IT/KI confirms local runtime readiness; owner confirms costs and external accounts."
+    },
+    {
+      "id": "project_identity",
+      "role_count": 1,
+      "future_scope_count": 3,
+      "preview_scope_count": 3,
+      "required_human_gate": "Project lead confirms project-local decisions before design, draw or publish handoff."
+    },
+    {
+      "id": "design_identity",
+      "role_count": 2,
+      "future_scope_count": 3,
+      "preview_scope_count": 3,
+      "required_human_gate": "Design/drawing actions need project lead or model-quality review before writes."
+    },
+    {
+      "id": "learning_identity",
+      "role_count": 3,
+      "future_scope_count": 3,
+      "preview_scope_count": 3,
+      "required_human_gate": "Every project-impacting step escalates to a supervising human."
+    }
+  ],
+  "session_boundaries": [
+    {
+      "id": "preview_session",
+      "blocked_today_count": 3
+    },
+    {
+      "id": "decision_session",
+      "blocked_today_count": 3
+    },
+    {
+      "id": "learning_session",
+      "blocked_today_count": 3
+    }
+  ],
+  "checks": [
+    {
+      "id": "contract_file_exists",
+      "label": "Local identity contract file exists.",
+      "status": "passed"
+    },
+    {
+      "id": "status_ready",
+      "label": "Local identity contract status is ready.",
+      "status": "passed"
+    },
+    {
+      "id": "mode_static_review_only",
+      "label": "Local identity contract is static review-only.",
+      "status": "passed"
+    },
+    {
+      "id": "principles_present",
+      "label": "Identity principles are explicit.",
+      "status": "passed"
+    },
+    {
+      "id": "required_profile_classes_present",
+      "label": "All required profile classes are present.",
+      "status": "passed"
+    },
+    {
+      "id": "profile_classes_have_gates_and_privacy",
+      "label": "Every profile class has roles, future scope, preview scope, human gate and privacy requirement.",
+      "status": "passed"
+    },
+    {
+      "id": "session_boundaries_present",
+      "label": "Preview, decision and learning session boundaries are present.",
+      "status": "passed"
+    },
+    {
+      "id": "session_boundaries_block_writes",
+      "label": "Session boundaries block persistence, signatures, scores or sync today.",
+      "status": "passed"
+    },
+    {
+      "id": "blocked_capabilities_present",
+      "label": "All sensitive identity capabilities are blocked today.",
+      "status": "passed"
+    },
+    {
+      "id": "promotion_requirements_present",
+      "label": "Promotion requirements are explicit.",
+      "status": "passed"
+    },
+    {
+      "id": "component_imports_contract",
+      "label": "Component imports the local identity contract.",
+      "status": "passed"
+    },
+    {
+      "id": "component_renders_identity_copy",
+      "label": "Component renders local identity boundary copy.",
+      "status": "passed"
+    },
+    {
+      "id": "component_renders_safety_boundary",
+      "label": "Component states logins, accounts, passwords, persistence, cookies, personal writes and external identity providers are blocked.",
+      "status": "passed"
+    },
+    {
+      "id": "route_imports_local_identity",
+      "label": "Orbit route imports the local identity component.",
+      "status": "passed"
+    },
+    {
+      "id": "route_anchors_local_identity",
+      "label": "Orbit route renders a local-identity anchor.",
+      "status": "passed"
+    },
+    {
+      "id": "section_index_links_local_identity",
+      "label": "Section index links to local identity.",
+      "status": "passed"
+    }
+  ],
+  "next_actions": [
+    "Use this contract before implementing real auth, profile persistence or session storage.",
+    "Keep role switching as browser preview until local identity storage is explicitly designed.",
+    "Use the profile classes to connect Workstation Profiles, Permission Matrix and Audit Trail."
+  ]
+}

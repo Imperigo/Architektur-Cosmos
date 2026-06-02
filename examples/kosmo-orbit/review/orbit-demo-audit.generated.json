@@ -1,139 +1,144 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-02T13:08:58.160Z",
+  "generated_at": "2026-06-02T13:17:18.387Z",
   "generator": "kosmo-orbit-demo-audit",
   "status": "orbit_demo_audit_passed",
   "html_file": "out/orbit/index.html",
   "summary": {
-    "check_count": 35,
-    "passed_checks": 35,
+    "check_count": 37,
+    "passed_checks": 37,
     "failed_checks": 0
   },
   "demo_order": [
     {
       "id": "autonomie",
       "label": "Autonomie-Status",
-      "index": 25851
+      "index": 26270
     },
     {
       "id": "routine",
       "label": "Buero-Routine",
-      "index": 28327
+      "index": 28746
     },
     {
       "id": "presenter",
       "label": "3-Minuten-Erklaerung",
-      "index": 58025
+      "index": 58444
     },
     {
       "id": "workflow-delta",
       "label": "Workflow-Delta",
-      "index": 61042
+      "index": 61461
     },
     {
       "id": "pilotmessung",
       "label": "Pilotmessung",
-      "index": 66764
+      "index": 67183
     },
     {
       "id": "pilotplan",
       "label": "Pilot-Runbook",
-      "index": 87716
+      "index": 88135
     },
     {
       "id": "pilot-session",
       "label": "Pilot-Session Template",
-      "index": 95334
+      "index": 95753
     },
     {
       "id": "fortschritt",
       "label": "Projektfortschritt",
-      "index": 100773
+      "index": 101192
     },
     {
       "id": "vision",
       "label": "Vision Bridge",
-      "index": 107518
+      "index": 107937
     },
     {
       "id": "demo-ready",
       "label": "Demo-Bereitschaft",
-      "index": 111858
+      "index": 112277
     },
     {
       "id": "live-gate",
       "label": "Live-Gate",
-      "index": 114613
+      "index": 115032
     },
     {
       "id": "projektpaket",
       "label": "Projektpaket Tagesansicht",
-      "index": 133935
+      "index": 134354
     },
     {
       "id": "design-handoff",
       "label": "KosmoDesign Handoff",
-      "index": 143527
+      "index": 143946
     },
     {
       "id": "entscheidung",
       "label": "Review Decision Draft",
-      "index": 163385
+      "index": 163804
     },
     {
       "id": "runtime-contract",
       "label": "Runtime-Vertrag",
-      "index": 170694
+      "index": 171113
     },
     {
       "id": "installation",
       "label": "Buero-Installation",
-      "index": 194855
+      "index": 195274
     },
     {
       "id": "health",
       "label": "Health Readiness",
-      "index": 202594
+      "index": 203013
     },
     {
       "id": "risiken",
       "label": "Risiko-Register",
-      "index": 209451
+      "index": 209870
     },
     {
       "id": "commands",
       "label": "Command-Vertrag",
-      "index": 216740
+      "index": 217159
     },
     {
       "id": "audit",
       "label": "Audit-Trail-Vertrag",
-      "index": 226103
+      "index": 226522
     },
     {
       "id": "evidenz",
       "label": "Pruefevidenz",
-      "index": 233617
+      "index": 234036
     },
     {
       "id": "workstation-profile",
       "label": "Workstation Profile Contract",
-      "index": 241876
+      "index": 242295
+    },
+    {
+      "id": "local-identity",
+      "label": "Local Identity Boundary",
+      "index": 264302
     },
     {
       "id": "ausbildung",
       "label": "Ausbildungsmodus",
-      "index": 263883
+      "index": 280236
     },
     {
       "id": "rechte",
       "label": "Rechte-Matrix",
-      "index": 269193
+      "index": 285546
     },
     {
       "id": "rollen",
       "label": "Rollenumschaltung Preview",
-      "index": 286948
+      "index": 303301
     }
   ],
   "checks": [
@@ -280,6 +285,16 @@
     {
       "id": "workstation_profile_safe",
       "label": "Workstation profile keeps accounts, user writes, persistence and auth runtime blocked.",
+      "status": "passed"
+    },
+    {
+      "id": "local_identity_visible",
+      "label": "Local identity boundary is visible in the export.",
+      "status": "passed"
+    },
+    {
+      "id": "local_identity_safe",
+      "label": "Local identity blocks logins, profile persistence, session cookies and external identity providers.",
       "status": "passed"
     },
     {

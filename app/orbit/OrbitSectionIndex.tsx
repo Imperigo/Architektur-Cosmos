@@ -57,6 +57,7 @@ const sectionGroups = [
     label: 'Rollen',
     links: [
       { href: '#workstation-profile', label: 'Profile' },
+      { href: '#local-identity', label: 'Identity' },
       { href: '#ausbildung', label: 'Ausbildung' },
       { href: '#rechte', label: 'Rechte' },
       { href: '#rollen', label: 'Rollen' },

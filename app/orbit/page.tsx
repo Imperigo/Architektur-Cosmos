@@ -20,6 +20,7 @@ import { OrbitHealthReadiness } from './OrbitHealthReadiness';
 import { OrbitInstallationTopology } from './OrbitInstallationTopology';
 import { OrbitDesignPilotPath } from './OrbitDesignPilotPath';
 import { OrbitLearningMode } from './OrbitLearningMode';
+import { OrbitLocalIdentityContract } from './OrbitLocalIdentityContract';
 import { OrbitLaunchDecisionBrief } from './OrbitLaunchDecisionBrief';
 import { OrbitOfficeRoutine } from './OrbitOfficeRoutine';
 import { OrbitOfficePilotScene } from './OrbitOfficePilotScene';
@@ -497,6 +498,10 @@ export default function OrbitPage() {
 
           <div id="workstation-profile" className="scroll-mt-4">
             <OrbitWorkstationProfileContract />
+          </div>
+
+          <div id="local-identity" className="scroll-mt-4">
+            <OrbitLocalIdentityContract />
           </div>
 
           <div id="ausbildung" className="scroll-mt-4">

@@ -1,0 +1,107 @@
+{
+  "schema_version": "0.1",
+  "status": "local_identity_contract_ready",
+  "mode": "static_review_only",
+  "contract_id": "orbit-local-identity-v1",
+  "description": "Review-only contract for future local KosmoOrbit identity, profile and session boundaries.",
+  "identity_principles": [
+    "Local identity belongs to the office and must stay under human and IT/KI control.",
+    "Profiles describe responsibility and interface depth before they describe permissions.",
+    "Learning profiles must be protective by default and escalate to a supervising human.",
+    "Every persistent profile, session log or preference needs privacy, retention and backup rules before implementation."
+  ],
+  "profile_classes": [
+    {
+      "id": "owner_identity",
+      "role_ids": ["owner_admin"],
+      "profile_depth": "strategic_admin",
+      "allowed_future_scope": ["owner_go", "public_gate_review", "business_risk_review"],
+      "today_preview_scope": ["read role label", "read workstation profile", "read push boundary"],
+      "required_human_gate": "Owner confirms live, public and cost decisions explicitly.",
+      "privacy_requirement": "Owner decisions must be auditable without exposing private credentials."
+    },
+    {
+      "id": "infrastructure_identity",
+      "role_ids": ["it_ai_admin"],
+      "profile_depth": "technical_admin",
+      "allowed_future_scope": ["local_health_review", "adapter_review", "model_runtime_review"],
+      "today_preview_scope": ["read health contract", "read runtime adapter contract", "read workstation profile"],
+      "required_human_gate": "IT/KI confirms local runtime readiness; owner confirms costs and external accounts.",
+      "privacy_requirement": "Diagnostics must hide secrets, tokens, private project paths and personal data."
+    },
+    {
+      "id": "project_identity",
+      "role_ids": ["project_lead_architect"],
+      "profile_depth": "project_decision",
+      "allowed_future_scope": ["project_gate_review", "local_approval_review", "team_handoff_review"],
+      "today_preview_scope": ["read project package", "read gate status", "read review decision draft"],
+      "required_human_gate": "Project lead confirms project-local decisions before design, draw or publish handoff.",
+      "privacy_requirement": "Project notes need project-level retention, anonymisation and backup rules."
+    },
+    {
+      "id": "design_identity",
+      "role_ids": ["design_architect", "drafter_efz"],
+      "profile_depth": "professional_workbench",
+      "allowed_future_scope": ["design_review", "model_quality_review", "artifact_review"],
+      "today_preview_scope": ["read KosmoDesign review mode", "read model profile", "read blocked actions"],
+      "required_human_gate": "Design/drawing actions need project lead or model-quality review before writes.",
+      "privacy_requirement": "Design preferences may not become hidden approvals or automatic generation consent."
+    },
+    {
+      "id": "learning_identity",
+      "role_ids": ["intern", "apprentice", "trial_user"],
+      "profile_depth": "guided_learning",
+      "allowed_future_scope": ["learning_mode", "guided_research", "safe_exercise_review"],
+      "today_preview_scope": ["read learning mode", "read safe exercises", "read simplified project context"],
+      "required_human_gate": "Every project-impacting step escalates to a supervising human.",
+      "privacy_requirement": "Learning profiles must avoid grades, surveillance, personal scoring and public exposure."
+    }
+  ],
+  "session_boundaries": [
+    {
+      "id": "preview_session",
+      "today": "The browser can switch preview roles without writing user data.",
+      "future_requirement": "Persisted sessions need local storage rules, timeout, operator visibility and manual logout.",
+      "blocked_today": ["session_persistence", "login_cookie", "account_creation"]
+    },
+    {
+      "id": "decision_session",
+      "today": "Review decisions are drafts and evidence summaries only.",
+      "future_requirement": "Decision records need signer, timestamp, evidence, rollback and retention policy.",
+      "blocked_today": ["persistent_decision_record", "electronic_signature", "automatic_approval"]
+    },
+    {
+      "id": "learning_session",
+      "today": "Learning mode explains and guides without writing scores.",
+      "future_requirement": "Training history needs explicit consent, guardian/school boundary where relevant and delete/export rules.",
+      "blocked_today": ["learning_score_write", "surveillance_log", "school_platform_sync"]
+    }
+  ],
+  "blocked_capabilities": [
+    "real_login",
+    "account_creation",
+    "password_storage",
+    "permission_mutation",
+    "profile_persistence",
+    "session_cookie",
+    "personal_data_write",
+    "hidden_tracking",
+    "learning_score_write",
+    "external_directory_sync",
+    "cloud_identity_provider",
+    "automatic_approval"
+  ],
+  "promotion_requirements": [
+    "Local identity schema with role, profile depth, consent and retention fields.",
+    "Privacy review for office data, project notes, learning data and audit logs.",
+    "Local storage and backup policy approved by owner and IT/KI.",
+    "Manual account recovery and offboarding process.",
+    "Clear distinction between UI preference, review permission and legal approval.",
+    "Browser and local-runtime tests that prove no hidden external identity provider is used."
+  ],
+  "next_actions": [
+    "Use this contract before implementing real auth, profile persistence or session storage.",
+    "Keep role switching as browser preview until local identity storage is explicitly designed.",
+    "Use the profile classes to connect Workstation Profiles, Permission Matrix and Audit Trail."
+  ]
+}

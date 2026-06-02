@@ -1,16 +1,16 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-02T13:08:58.183Z",
+  "generated_at": "2026-06-02T13:17:18.490Z",
   "generator": "kosmo-orbit-responsive-audit",
   "status": "orbit_responsive_audit_passed",
   "source_dir": "app/orbit",
   "summary": {
-    "check_count": 28,
-    "passed_checks": 28,
+    "check_count": 29,
+    "passed_checks": 29,
     "failed_checks": 0,
-    "min_width_guard_count": 90,
-    "flex_wrap_count": 69,
-    "responsive_grid_count": 72
+    "min_width_guard_count": 91,
+    "flex_wrap_count": 74,
+    "responsive_grid_count": 77
   },
   "checks": [
     {
@@ -96,6 +96,11 @@
     {
       "id": "workstation_profile_responsive",
       "label": "Workstation profile contract uses responsive cards for profile and escalation layouts.",
+      "status": "passed"
+    },
+    {
+      "id": "local_identity_responsive",
+      "label": "Local identity contract uses responsive cards for profile classes, sessions and promotion requirements.",
       "status": "passed"
     },
     {
