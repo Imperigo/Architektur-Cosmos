@@ -207,6 +207,9 @@ Browser-Smokes:
 - `/orbit/?v=office-pilot-20260602`: HTTP 200, Office-Pilot-Navigation,
   `#office-pilot`, `local-office-pilot-review-only` und Sicherheitscopy im
   statischen HTML vorhanden.
+- `/orbit/#tool-registry`: HTTP 200 im lokalen Static Export, Tool-Registry
+  sichtbar, 8 Toolkarten, Safety-Copy sichtbar, keine horizontale
+  Ueberbreite bei schmaler Viewport-Pruefung.
 
 Hinweis: Ein paralleler TypeScript-Lauf waehrend `next build` hatte kurz
 fehlende `.next/types` gemeldet. Seriell nach abgeschlossenem Build war
