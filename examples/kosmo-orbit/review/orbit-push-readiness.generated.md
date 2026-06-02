@@ -1,6 +1,6 @@
 # KosmoOrbit Push Readiness
 
-Generated: 2026-06-02T05:23:09.635Z
+Generated: 2026-06-02T05:30:32.626Z
 Status: `orbit_push_readiness_review_only`
 
 This is a local review-only push decision report. It does not push, deploy, upload, spend money or call external accounts.
@@ -9,15 +9,15 @@ This is a local review-only push decision report. It does not push, deploy, uplo
 
 - branch: `main`
 - remote: `origin/main`
-- ahead count: 87
+- ahead count: 91
 - worktree clean: yes
 
 ## Evidence
 
 | Report | Status | Checks |
 | --- | --- | --- |
-| `route_smoke` | `orbit_route_smoke_passed` | 173 / 173 |
-| `static_smoke` | `orbit_static_export_smoke_passed` | 61 / 61 |
+| `route_smoke` | `orbit_route_smoke_passed` | 175 / 175 |
+| `static_smoke` | `orbit_static_export_smoke_passed` | 63 / 63 |
 | `full_review` | `orbit_full_review_ready_for_review_mode` | - / - |
 | `atlas_static_smoke` | `atlas_static_export_smoke_passed` | 17 / 17 |
 
@@ -49,8 +49,8 @@ This is a local review-only push decision report. It does not push, deploy, uplo
 
 ## Latest Commits
 
+- `3d73869 Clear Atlas lint warnings`
+- `01f03f1 Show push readiness in KosmoOrbit launch brief`
+- `cf252da Clarify volatile KosmoOrbit push counts`
+- `fac089e Add KosmoOrbit push readiness report output`
 - `0014f83 Add KosmoOrbit push readiness report`
-- `e22c70f Normalize static asset hashes in report cleanup`
-- `c9c3337 Refresh KosmoOrbit launch review reports`
-- `2ac03b2 Document KosmoOrbit launch batch status`
-- `14ca4a2 Add KosmoDesign pilot path`
