@@ -71,6 +71,7 @@ function buildReport(html) {
     { id: 'data-governance', label: 'Data Governance Boundary' },
     { id: 'office-memory', label: 'Office Memory Readiness' },
     { id: 'local-storage-decision', label: 'Local Storage Decision Draft' },
+    { id: 'delete-export-restore', label: 'Delete / Export / Restore Drill' },
     { id: 'ausbildung', label: 'Ausbildungsmodus' },
     { id: 'rechte', label: 'Rechte-Matrix' },
     { id: 'rollen', label: 'Rollenumschaltung Preview' }
@@ -80,7 +81,7 @@ function buildReport(html) {
     label: section.label,
     index: normalized.indexOf(`id="${section.id}"`)
   }));
-  const navLabels = ['Autonomie', 'Routine', '3-Minuten', 'Workflow', 'Pilot', 'Pilotplan', 'Session', 'Fortschritt', 'Vision', 'Demo', 'Live-Gate', 'Projektpaket', 'Handoff', 'Decision', 'Runtime', 'Installation', 'Health', 'Risiken', 'Commands', 'Audit', 'Evidenz', 'Profile', 'Identity', 'Daten', 'Memory', 'Storage', 'Ausbildung', 'Rechte', 'Rollen', 'Guardrails'];
+  const navLabels = ['Autonomie', 'Routine', '3-Minuten', 'Workflow', 'Pilot', 'Pilotplan', 'Session', 'Fortschritt', 'Vision', 'Demo', 'Live-Gate', 'Projektpaket', 'Handoff', 'Decision', 'Runtime', 'Installation', 'Health', 'Risiken', 'Commands', 'Audit', 'Evidenz', 'Profile', 'Identity', 'Daten', 'Memory', 'Storage', 'Restore', 'Ausbildung', 'Rechte', 'Rollen', 'Guardrails'];
   const forbiddenArtifacts = ['[object Object]', 'NaN%', 'null null'];
   const checks = [
     check('html_exists', 'Built /orbit HTML exists.', existsSync(htmlPath)),
@@ -120,6 +121,8 @@ function buildReport(html) {
     check('office_memory_safe', 'Office memory keeps writes, scans, embeddings, backup status and external sync blocked.', normalized.includes('kein Memory-Write') && normalized.includes('kein Kundendatei-Scan') && normalized.includes('kein Embedding-Job') && normalized.includes('kein Backup-Status-Write') && normalized.includes('kein externer Memory-Sync')),
     check('local_storage_decision_visible', 'Local storage decision draft is visible in the export.', normalized.includes('Local Storage Decision Draft') && normalized.includes('Welche Speicherentscheidung vor echtem Memory noetig ist')),
     check('local_storage_decision_safe', 'Local storage decision keeps writes, indexing, embeddings, backup, restore and sync blocked.', normalized.includes('kein local storage write') && normalized.includes('kein Kundendaten-Index') && normalized.includes('kein Backup-Job') && normalized.includes('kein Restore-Job') && normalized.includes('kein externer Sync')),
+    check('delete_export_restore_visible', 'Delete/export/restore drill is visible in the export.', normalized.includes('Delete / Export / Restore Drill') && normalized.includes('Wie KosmoOrbit lokale Daten reversibel und pruefbar halten muss')),
+    check('delete_export_restore_safe', 'Delete/export/restore drill keeps real jobs, customer data actions, backup restore and external archive sync blocked.', normalized.includes('kein real delete job') && normalized.includes('kein real export job') && normalized.includes('kein real restore job') && normalized.includes('kein Kundendaten-Export') && normalized.includes('kein Kundendaten-Delete') && normalized.includes('kein Backup-Restore') && normalized.includes('kein externer Archiv-Sync')),
     check('learning_mode_visible', 'Education mode is visible in the export.', normalized.includes('Ausbildungsmodus') && normalized.includes('Kosmo als sicherer Lernbegleiter')),
     check('learning_mode_safety_visible', 'Education mode safety line is visible in the export.', normalized.includes('ohne Accounts') && normalized.includes('Projekt-Writes') && normalized.includes('Public-Publish')),
     check('permission_boundary_visible', 'Role permission boundary is visible in the export.', normalized.includes('Rechte-Matrix') && normalized.includes('generation bleibt gesperrt')),

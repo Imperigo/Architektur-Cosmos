@@ -1,12 +1,12 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-02T14:18:57.734Z",
+  "generated_at": "2026-06-02T14:43:07.648Z",
   "generator": "kosmo-orbit-static-export-smoke",
   "status": "orbit_static_export_smoke_passed",
   "html_file": "out/orbit/index.html",
   "summary": {
-    "check_count": 80,
-    "passed_checks": 80,
+    "check_count": 82,
+    "passed_checks": 82,
     "failed_checks": 0,
     "referenced_static_asset_count": 8,
     "missing_static_asset_count": 0
@@ -20,7 +20,7 @@
       "_next/static/chunks/main-app-36e74dfd8b1eb57a.js",
       "_next/static/chunks/polyfills-42372ed130431b0a.js",
       "_next/static/chunks/webpack-81624dd509abd812.js",
-      "_next/static/css/d466078c02363e89.css"
+      "_next/static/css/c54327aad473751c.css"
     ],
     "missing": []
   },
@@ -251,6 +251,11 @@
       "status": "passed"
     },
     {
+      "id": "renders_delete_export_restore_drill",
+      "label": "Export renders delete/export/restore drill.",
+      "status": "passed"
+    },
+    {
       "id": "renders_learning_mode",
       "label": "Export renders education mode.",
       "status": "passed"
@@ -318,6 +323,11 @@
     {
       "id": "keeps_local_storage_decision_review_only",
       "label": "Export keeps storage writes, memory writes, indexing, embeddings, backup, restore and external sync blocked.",
+      "status": "passed"
+    },
+    {
+      "id": "keeps_delete_export_restore_review_only",
+      "label": "Export keeps delete, export, restore, customer data, backup restore and external archive sync blocked.",
       "status": "passed"
     },
     {

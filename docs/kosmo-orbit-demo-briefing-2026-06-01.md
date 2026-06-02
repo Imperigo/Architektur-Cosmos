@@ -156,6 +156,13 @@ In drei Minuten soll ein Architekturbueroleiter verstehen:
    Heute bleiben local storage write, Memory-Write, Kundendaten-Index,
    Embedding-Job, Backup-Job, Restore-Job und externer Sync blockiert.
 
+26. **Delete-/Export-/Restore-Drill zeigen**
+   Erklaeren: Lokale Datenhaltung ist erst buerotauglich, wenn Loeschen,
+   Exportieren und Wiederherstellen mit Testdaten nachvollziehbar geprueft
+   werden koennen. Heute gibt es keinen real delete job, keinen real export
+   job, keinen real restore job, keinen Kundendaten-Export, keinen
+   Kundendaten-Delete, keinen Backup-Restore und keinen externen Archiv-Sync.
+
 ## Kernsaetze
 
 - Besser: Jede Rolle bekommt die richtige Oberflaechentiefe und sieht den

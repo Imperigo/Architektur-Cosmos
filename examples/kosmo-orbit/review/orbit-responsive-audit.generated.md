@@ -1,6 +1,6 @@
 # KosmoOrbit Responsive Audit
 
-Generated: 2026-06-02T14:18:57.836Z
+Generated: 2026-06-02T14:44:51.540Z
 Status: `orbit_responsive_audit_passed`
 Source: `app/orbit`
 
@@ -8,10 +8,10 @@ Source-level responsive guard for `/orbit`. This does not replace a visual brows
 
 ## Summary
 
-- checks: 32/32 passed
-- min-w-0 guards: 94
-- flex-wrap usages: 87
-- responsive grid usages: 91
+- checks: 33/33 passed
+- min-w-0 guards: 95
+- flex-wrap usages: 91
+- responsive grid usages: 97
 
 ## Checks
 
@@ -38,6 +38,7 @@ Source-level responsive guard for `/orbit`. This does not replace a visual brows
 | `data_governance_responsive` | `passed` | Data governance contract uses responsive cards for domains, storage lanes and promotion requirements. |
 | `office_memory_responsive` | `passed` | Office memory readiness uses responsive cards for lanes and readiness gates. |
 | `local_storage_decision_responsive` | `passed` | Local storage decision draft uses responsive cards for fields and allowed actions. |
+| `delete_export_restore_responsive` | `passed` | Delete/export/restore drill uses responsive cards for scope, allowed actions and promotion requirements. |
 | `progress_bars_have_stable_height` | `passed` | Progress map uses stable bar height and constrained width. |
 | `demo_readiness_uses_responsive_grid` | `passed` | Demo readiness summary uses responsive columns. |
 | `publish_readiness_responsive` | `passed` | Publish readiness uses responsive columns for live gate statuses. |

@@ -1,16 +1,16 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-02T14:18:57.836Z",
+  "generated_at": "2026-06-02T14:44:51.540Z",
   "generator": "kosmo-orbit-responsive-audit",
   "status": "orbit_responsive_audit_passed",
   "source_dir": "app/orbit",
   "summary": {
-    "check_count": 32,
-    "passed_checks": 32,
+    "check_count": 33,
+    "passed_checks": 33,
     "failed_checks": 0,
-    "min_width_guard_count": 94,
-    "flex_wrap_count": 87,
-    "responsive_grid_count": 91
+    "min_width_guard_count": 95,
+    "flex_wrap_count": 91,
+    "responsive_grid_count": 97
   },
   "checks": [
     {
@@ -116,6 +116,11 @@
     {
       "id": "local_storage_decision_responsive",
       "label": "Local storage decision draft uses responsive cards for fields and allowed actions.",
+      "status": "passed"
+    },
+    {
+      "id": "delete_export_restore_responsive",
+      "label": "Delete/export/restore drill uses responsive cards for scope, allowed actions and promotion requirements.",
       "status": "passed"
     },
     {

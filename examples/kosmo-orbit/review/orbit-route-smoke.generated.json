@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-02T14:33:43.260Z",
+  "generated_at": "2026-06-02T14:44:51.631Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 232,
-    "passed_checks": 232,
+    "check_count": 239,
+    "passed_checks": 239,
     "failed_checks": 0
   },
   "checks": [
@@ -254,6 +254,16 @@
     {
       "id": "local_storage_decision_data_file_exists",
       "label": "Orbit local storage decision draft data exists.",
+      "status": "passed"
+    },
+    {
+      "id": "delete_export_restore_file_exists",
+      "label": "Orbit delete/export/restore drill component exists.",
+      "status": "passed"
+    },
+    {
+      "id": "delete_export_restore_data_file_exists",
+      "label": "Orbit delete/export/restore drill contract exists.",
       "status": "passed"
     },
     {
@@ -524,6 +534,16 @@
     {
       "id": "imports_local_storage_decision_data",
       "label": "Local storage decision component imports the local draft JSON.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_delete_export_restore",
+      "label": "Route imports the delete/export/restore drill component.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_delete_export_restore_data",
+      "label": "Delete/export/restore drill component imports the local contract JSON.",
       "status": "passed"
     },
     {
@@ -994,6 +1014,21 @@
     {
       "id": "keeps_local_storage_decision_review_only",
       "label": "Local storage decision blocks storage writes, memory writes, indexing, embeddings, backup, restore and external sync.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_delete_export_restore_drill",
+      "label": "Route renders the delete/export/restore drill.",
+      "status": "passed"
+    },
+    {
+      "id": "delete_export_restore_uses_local_contract",
+      "label": "Delete/export/restore drill panel uses the local contract for scope, blocked actions and promotion requirements.",
+      "status": "passed"
+    },
+    {
+      "id": "keeps_delete_export_restore_review_only",
+      "label": "Delete/export/restore drill blocks real jobs, customer data actions, backup restore and external archive sync.",
       "status": "passed"
     },
     {

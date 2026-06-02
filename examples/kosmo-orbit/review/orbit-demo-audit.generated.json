@@ -1,159 +1,164 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-02T14:18:57.778Z",
+  "generated_at": "2026-06-02T14:43:36.115Z",
   "generator": "kosmo-orbit-demo-audit",
   "status": "orbit_demo_audit_passed",
   "html_file": "out/orbit/index.html",
   "summary": {
-    "check_count": 43,
-    "passed_checks": 43,
+    "check_count": 45,
+    "passed_checks": 45,
     "failed_checks": 0
   },
   "demo_order": [
     {
       "id": "autonomie",
       "label": "Autonomie-Status",
-      "index": 27529
+      "index": 27954
     },
     {
       "id": "routine",
       "label": "Buero-Routine",
-      "index": 30005
+      "index": 30430
     },
     {
       "id": "presenter",
       "label": "3-Minuten-Erklaerung",
-      "index": 59703
+      "index": 60128
     },
     {
       "id": "workflow-delta",
       "label": "Workflow-Delta",
-      "index": 62720
+      "index": 63145
     },
     {
       "id": "pilotmessung",
       "label": "Pilotmessung",
-      "index": 68442
+      "index": 68867
     },
     {
       "id": "pilotplan",
       "label": "Pilot-Runbook",
-      "index": 89394
+      "index": 89819
     },
     {
       "id": "pilot-session",
       "label": "Pilot-Session Template",
-      "index": 97012
+      "index": 97437
     },
     {
       "id": "fortschritt",
       "label": "Projektfortschritt",
-      "index": 102451
+      "index": 102876
     },
     {
       "id": "vision",
       "label": "Vision Bridge",
-      "index": 109196
+      "index": 109621
     },
     {
       "id": "demo-ready",
       "label": "Demo-Bereitschaft",
-      "index": 113536
+      "index": 113961
     },
     {
       "id": "live-gate",
       "label": "Live-Gate",
-      "index": 116291
+      "index": 116716
     },
     {
       "id": "projektpaket",
       "label": "Projektpaket Tagesansicht",
-      "index": 135613
+      "index": 136038
     },
     {
       "id": "design-handoff",
       "label": "KosmoDesign Handoff",
-      "index": 145205
+      "index": 145630
     },
     {
       "id": "entscheidung",
       "label": "Review Decision Draft",
-      "index": 165063
+      "index": 165488
     },
     {
       "id": "runtime-contract",
       "label": "Runtime-Vertrag",
-      "index": 172372
+      "index": 172797
     },
     {
       "id": "installation",
       "label": "Buero-Installation",
-      "index": 196533
+      "index": 196958
     },
     {
       "id": "health",
       "label": "Health Readiness",
-      "index": 204272
+      "index": 204697
     },
     {
       "id": "risiken",
       "label": "Risiko-Register",
-      "index": 211129
+      "index": 211554
     },
     {
       "id": "commands",
       "label": "Command-Vertrag",
-      "index": 218418
+      "index": 218843
     },
     {
       "id": "audit",
       "label": "Audit-Trail-Vertrag",
-      "index": 227781
+      "index": 228206
     },
     {
       "id": "evidenz",
       "label": "Pruefevidenz",
-      "index": 235295
+      "index": 235720
     },
     {
       "id": "workstation-profile",
       "label": "Workstation Profile Contract",
-      "index": 243554
+      "index": 243979
     },
     {
       "id": "local-identity",
       "label": "Local Identity Boundary",
-      "index": 265561
+      "index": 265986
     },
     {
       "id": "data-governance",
       "label": "Data Governance Boundary",
-      "index": 281495
+      "index": 281920
     },
     {
       "id": "office-memory",
       "label": "Office Memory Readiness",
-      "index": 300009
+      "index": 300434
     },
     {
       "id": "local-storage-decision",
       "label": "Local Storage Decision Draft",
-      "index": 313394
+      "index": 313819
+    },
+    {
+      "id": "delete-export-restore",
+      "label": "Delete / Export / Restore Drill",
+      "index": 323640
     },
     {
       "id": "ausbildung",
       "label": "Ausbildungsmodus",
-      "index": 323215
+      "index": 332535
     },
     {
       "id": "rechte",
       "label": "Rechte-Matrix",
-      "index": 328525
+      "index": 337845
     },
     {
       "id": "rollen",
       "label": "Rollenumschaltung Preview",
-      "index": 346280
+      "index": 355600
     }
   ],
   "checks": [
@@ -340,6 +345,16 @@
     {
       "id": "local_storage_decision_safe",
       "label": "Local storage decision keeps writes, indexing, embeddings, backup, restore and sync blocked.",
+      "status": "passed"
+    },
+    {
+      "id": "delete_export_restore_visible",
+      "label": "Delete/export/restore drill is visible in the export.",
+      "status": "passed"
+    },
+    {
+      "id": "delete_export_restore_safe",
+      "label": "Delete/export/restore drill keeps real jobs, customer data actions, backup restore and external archive sync blocked.",
       "status": "passed"
     },
     {

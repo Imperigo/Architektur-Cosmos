@@ -115,7 +115,14 @@ klarer und nachvollziehbarer machen.
    - Sagen: Storage-Writes, Memory-Writes, Kundendaten-Index, Backup-/Restore-
      Jobs und externer Sync bleiben blockiert.
 
-15. **Live-Gate zeigen**
+15. **Delete / Export / Restore Drill zeigen**
+   - Sagen: Ein lokales Buero-System muss Daten nicht nur speichern, sondern
+     auch pruefbar loeschen, exportieren und wiederherstellen koennen.
+   - Sagen: Heute ist das ein Testdaten-Drill, kein echter Datenjob.
+   - Sagen: Real Delete, Real Export, Real Restore, Kundendaten-Aktionen,
+     Backup-Restore und externer Archiv-Sync bleiben blockiert.
+
+16. **Live-Gate zeigen**
    - Sagen: Lokal vorfuehrbar ist nicht gleich public-ready.
    - Sagen: Push, Livegang und Cloudflare-Deploy brauchen Owner-Go und
      Live-Smoke.

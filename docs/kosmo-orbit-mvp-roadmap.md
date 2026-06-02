@@ -220,7 +220,12 @@ Sichere erste Umsetzung:
     Delete/Export/Restore, Backup-Test, Rollen-Sichtbarkeit und Datenschutz
     vor echten Storage-/Memory-Writes
     (**initial umgesetzt mit `npm run kosmo:orbit-local-storage-decision` und `/orbit`**)
-18. spaeter Handoff an KosmoZentrale fuer echte lokale Runtime
+18. Delete-/Export-/Restore-Drill fuer Loeschanfrage, Exportpaket,
+    Restore-Probe und Audit-Spur, bevor echte Delete-/Export-/Restore-Jobs,
+    Backup-Restore, Retention-Automation oder externer Archiv-Sync erlaubt
+    werden
+    (**initial umgesetzt mit `npm run kosmo:orbit-delete-export-restore-drill` und `/orbit`**)
+19. spaeter Handoff an KosmoZentrale fuer echte lokale Runtime
 
 ## 7. Zusammenarbeit mit anderen Workern
 
@@ -826,6 +831,7 @@ Architekturburo:
 - Data-Governance-Vertrag;
 - Office-Memory-Readiness-Vertrag;
 - Local-Storage-Decision-Draft;
+- Delete-/Export-/Restore-Drill;
 - Ausbildungsmodus;
 - Rechte-Matrix;
 - Rollenumschaltung;
@@ -847,20 +853,21 @@ Die wichtigste Produktlinie ist damit klarer:
 
 Aktuelle lokale Nachweise:
 
-- `npm run kosmo:orbit-full-review` — 31/31 passed;
+- `npm run kosmo:orbit-full-review` — 32/32 passed;
 - `npm run kosmo:orbit-runtime-adapter` — 16/16 passed;
 - `npm run kosmo:orbit-workstation-profile` — 16/16 passed;
 - `npm run kosmo:orbit-local-identity` — 16/16 passed;
 - `npm run kosmo:orbit-data-governance` — 16/16 passed;
 - `npm run kosmo:orbit-office-memory` — 16/16 passed;
 - `npm run kosmo:orbit-local-storage-decision` — 16/16 passed;
+- `npm run kosmo:orbit-delete-export-restore-drill` — 16/16 passed;
 - `npm run kosmo:orbit-pilot-kit` — 19/19 passed;
 - `npm run kosmo:orbit-pilot-session` — 17/17 passed;
 - `npm run kosmo:orbit-pilot-result` — 21/21 passed;
-- `npm run kosmo:orbit-route-smoke` — 232/232 passed;
-- `npm run kosmo:orbit-demo-audit` — 43/43 passed;
-- `npm run kosmo:orbit-responsive-audit` — 32/32 passed;
-- `npm run kosmo:orbit-static-smoke` — 80/80 passed;
+- `npm run kosmo:orbit-route-smoke` — 239/239 passed;
+- `npm run kosmo:orbit-demo-audit` — 45/45 passed;
+- `npm run kosmo:orbit-responsive-audit` — 33/33 passed;
+- `npm run kosmo:orbit-static-smoke` — 82/82 passed;
 - `npx tsc --noEmit --pretty false --incremental false` — passed;
 - `npm run lint` — 0 Errors, 0 Warnings;
 - `npm run ui:audit` — 72/72 passed;

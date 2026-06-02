@@ -236,6 +236,11 @@ Dieser Kern zeigt:
   menschliche Entscheidfelder vorbereitet, bevor lokale Storage- oder
   Memory-Writes, Kundendaten-Index, Embedding-Jobs, Backup-/Restore-Jobs oder
   externer Sync erlaubt werden;
+- einen Delete-/Export-/Restore-Drill, der Loeschanfrage, Exportpaket,
+  Restore-Probe und Audit-Spur als menschlich pruefbare Reversibilitaet
+  vorbereitet, ohne real delete jobs, real export jobs, real restore jobs,
+  Kundendaten-Export, Kundendaten-Delete, Backup-Restore oder externen
+  Archiv-Sync zu aktivieren;
 - eine Rechte-Matrix, die sichtbar macht, welche Rolle Design Review,
   lokale Freigabe, Public Gate, Read-only und Generation sehen oder nicht
   nutzen darf;
@@ -249,6 +254,7 @@ Damit ist der erste pruefbare Produktkern vorhanden: KosmoOrbit beweist die
 Steuerzentralen-Logik mit geprueftem Tool-Register, Runtime-Adapter-Vertrag,
 Workstation-Profil-Vertrag, Local-Identity-Vertrag und
 Data-Governance-Vertrag, Office-Memory-Readiness-Vertrag und
-Local-Storage-Decision-Draft, ohne schon echte lokale Runtime, Auth,
-Daten-Writes, Memory-Writes, Storage-Writes, Blender-Start, Geometrie-Generierung oder
+Local-Storage-Decision-Draft sowie Delete-/Export-/Restore-Drill, ohne schon
+echte lokale Runtime, Auth, Daten-Writes, Memory-Writes, Storage-Writes,
+Delete-/Export-/Restore-Jobs, Blender-Start, Geometrie-Generierung oder
 Cloud-Integrationen zu aktivieren.

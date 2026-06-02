@@ -42,6 +42,7 @@ const files = [
   'OrbitDataGovernanceContract.tsx',
   'OrbitOfficeMemoryReadiness.tsx',
   'OrbitLocalStorageDecisionDraft.tsx',
+  'OrbitDeleteExportRestoreDrill.tsx',
   'OrbitLearningMode.tsx',
   'OrbitPermissionMatrix.tsx',
   'OrbitOfficeRoutine.tsx'
@@ -107,6 +108,7 @@ function buildReport(sources) {
     check('data_governance_responsive', 'Data governance contract uses responsive cards for domains, storage lanes and promotion requirements.', sources['OrbitDataGovernanceContract.tsx'].includes('lg:grid-cols-[0.85fr_1.15fr]') && sources['OrbitDataGovernanceContract.tsx'].includes('xl:grid-cols-5') && sources['OrbitDataGovernanceContract.tsx'].includes('lg:grid-cols-3')),
     check('office_memory_responsive', 'Office memory readiness uses responsive cards for lanes and readiness gates.', sources['OrbitOfficeMemoryReadiness.tsx'].includes('lg:grid-cols-[0.85fr_1.15fr]') && sources['OrbitOfficeMemoryReadiness.tsx'].includes('xl:grid-cols-5') && sources['OrbitOfficeMemoryReadiness.tsx'].includes('xl:grid-cols-4')),
     check('local_storage_decision_responsive', 'Local storage decision draft uses responsive cards for fields and allowed actions.', sources['OrbitLocalStorageDecisionDraft.tsx'].includes('lg:grid-cols-[0.9fr_1.1fr]') && sources['OrbitLocalStorageDecisionDraft.tsx'].includes('xl:grid-cols-3') && sources['OrbitLocalStorageDecisionDraft.tsx'].includes('lg:grid-cols-4')),
+    check('delete_export_restore_responsive', 'Delete/export/restore drill uses responsive cards for scope, allowed actions and promotion requirements.', sources['OrbitDeleteExportRestoreDrill.tsx'].includes('lg:grid-cols-[0.9fr_1.1fr]') && sources['OrbitDeleteExportRestoreDrill.tsx'].includes('xl:grid-cols-4') && sources['OrbitDeleteExportRestoreDrill.tsx'].includes('lg:grid-cols-[0.85fr_1.15fr]')),
     check('progress_bars_have_stable_height', 'Progress map uses stable bar height and constrained width.', sources['OrbitProgressMap.tsx'].includes('h-2.5 overflow-hidden') && sources['OrbitProgressMap.tsx'].includes('style={{ width')),
     check('demo_readiness_uses_responsive_grid', 'Demo readiness summary uses responsive columns.', sources['OrbitDemoReadiness.tsx'].includes('md:grid-cols-3') && sources['OrbitDemoReadiness.tsx'].includes('lg:grid-cols')),
     check('publish_readiness_responsive', 'Publish readiness uses responsive columns for live gate statuses.', sources['OrbitPublishReadiness.tsx'].includes('md:grid-cols-2') && sources['OrbitPublishReadiness.tsx'].includes('xl:grid-cols-4')),

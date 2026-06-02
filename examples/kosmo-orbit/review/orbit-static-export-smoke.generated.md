@@ -1,6 +1,6 @@
 # KosmoOrbit Static Export Smoke
 
-Generated: 2026-06-02T14:18:57.734Z
+Generated: 2026-06-02T14:43:07.648Z
 Status: `orbit_static_export_smoke_passed`
 HTML: `out/orbit/index.html`
 
@@ -8,7 +8,7 @@ Checks the built static export for the visible KosmoOrbit demo panels. It does n
 
 ## Summary
 
-- checks: 80/80 passed
+- checks: 82/82 passed
 
 ## Checks
 
@@ -59,6 +59,7 @@ Checks the built static export for the visible KosmoOrbit demo panels. It does n
 | `renders_data_governance_contract` | `passed` | Export renders data governance contract. |
 | `renders_office_memory_readiness` | `passed` | Export renders office memory readiness. |
 | `renders_local_storage_decision` | `passed` | Export renders local storage decision draft. |
+| `renders_delete_export_restore_drill` | `passed` | Export renders delete/export/restore drill. |
 | `renders_learning_mode` | `passed` | Export renders education mode. |
 | `renders_permission_matrix` | `passed` | Export renders permission matrix. |
 | `renders_role_switcher` | `passed` | Export renders role switcher. |
@@ -73,6 +74,7 @@ Checks the built static export for the visible KosmoOrbit demo panels. It does n
 | `keeps_data_governance_review_only` | `passed` | Export keeps data governance storage, backup and sync actions blocked. |
 | `keeps_office_memory_review_only` | `passed` | Export keeps office memory writes, scans, embeddings, backup status, external sync and cloud vector stores blocked. |
 | `keeps_local_storage_decision_review_only` | `passed` | Export keeps storage writes, memory writes, indexing, embeddings, backup, restore and external sync blocked. |
+| `keeps_delete_export_restore_review_only` | `passed` | Export keeps delete, export, restore, customer data, backup restore and external archive sync blocked. |
 | `keeps_pilot_measurement_safe` | `passed` | Export keeps pilot measurement safe and local. |
 | `keeps_pilot_measurement_kit_empty` | `passed` | Export keeps pilot measurement kit empty before real pilot. |
 | `keeps_pilot_facilitator_safe` | `passed` | Export keeps pilot facilitator checklist safe and local. |

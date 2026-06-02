@@ -1,0 +1,88 @@
+{
+  "schema_version": "0.1",
+  "status": "delete_export_restore_drill_ready",
+  "mode": "static_review_only",
+  "drill_statement": "KosmoOrbit darf lokale Buero- oder Projektdaten erst persistent schreiben, wenn Loeschen, Exportieren und Wiederherstellen als menschlich gepruefter Drill verstanden, dokumentiert und freigegeben sind.",
+  "drill_scope": [
+    {
+      "id": "delete_request",
+      "label": "Loeschanfrage",
+      "purpose": "Ein Mensch muss erkennen, welche Projekt-, Rollen-, Audit- oder Lernnotizen geloescht werden sollen.",
+      "required_evidence": [
+        "betroffene Datenbereiche benennen",
+        "Owner oder Projektleitung bestaetigt Anfrage",
+        "Archiv-/Aufbewahrungspflicht geprueft"
+      ],
+      "status": "needs_human_review"
+    },
+    {
+      "id": "export_package",
+      "label": "Exportpaket",
+      "purpose": "Vor Loeschung oder Migration muss ein lokal lesbares Exportpaket als Pruefansicht existieren.",
+      "required_evidence": [
+        "Exportmanifest mit Datenbereichen",
+        "keine Secrets oder fremde private Daten enthalten",
+        "menschlich lesbare Zusammenfassung vorhanden"
+      ],
+      "status": "needs_human_review"
+    },
+    {
+      "id": "restore_probe",
+      "label": "Restore-Probe",
+      "purpose": "Ein Restore darf nicht behauptet werden, sondern muss mit Testdaten lokal nachweisbar sein.",
+      "required_evidence": [
+        "Testdatensatz statt Kundendaten",
+        "Wiederherstellungsweg beschrieben",
+        "Abweichungen und Risiken notiert"
+      ],
+      "status": "needs_human_review"
+    },
+    {
+      "id": "audit_trace",
+      "label": "Audit-Spur",
+      "purpose": "Jede spaetere Delete/Export/Restore-Aktion muss Rolle, Intent, Gate, Evidence und Outcome nachvollziehbar machen.",
+      "required_evidence": [
+        "Rolle und Freigabe sichtbar",
+        "Zeitpunkt und Aktionstyp sichtbar",
+        "Outcome ohne personenbezogene Zusatzdaten dokumentiert"
+      ],
+      "status": "needs_human_review"
+    }
+  ],
+  "blocked_until_drill": [
+    "real_delete_job",
+    "real_export_job",
+    "real_restore_job",
+    "customer_data_export",
+    "customer_data_delete",
+    "backup_restore",
+    "retention_auto_delete",
+    "profile_memory_migration",
+    "audit_log_write",
+    "external_archive_sync"
+  ],
+  "allowed_today": [
+    "static_drill_render",
+    "human_review_prompt",
+    "testdata_only_walkthrough",
+    "readiness_report_generation"
+  ],
+  "review_roles": [
+    "Chef / Admin",
+    "IT/KI Spezialist",
+    "Projektleitung",
+    "Datenschutz Review"
+  ],
+  "promotion_requirements": [
+    "Loesch-/Export-/Restore-Drill mit Testdaten durchgespielt",
+    "Datenschutz- und Aufbewahrungsgrenzen durch Menschen akzeptiert",
+    "Backup- und Restore-Risiken dokumentiert",
+    "Audit-Trail ohne personenbezogene Zusatzdaten spezifiziert",
+    "Owner bestaetigt, dass keine Kundendaten im Drill verwendet wurden"
+  ],
+  "next_actions": [
+    "Drill als sichtbares Orbit-Panel pruefen.",
+    "Mit Testdaten definieren, was ein Exportmanifest enthalten muss.",
+    "Erst nach menschlicher Freigabe ueber echte lokale Delete/Export/Restore-Jobs sprechen."
+  ]
+}

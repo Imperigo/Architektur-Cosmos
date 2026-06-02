@@ -47,6 +47,7 @@ const sectionGroups = [
     links: [
       { href: '#runtime-contract', label: 'Runtime' },
       { href: '#runtime-adapter', label: 'Adapter' },
+      { href: '#kosmosketch-adapter', label: 'Sketch' },
       { href: '#installation', label: 'Installation' },
       { href: '#health', label: 'Health' },
       { href: '#commands', label: 'Commands' },
@@ -61,6 +62,7 @@ const sectionGroups = [
       { href: '#data-governance', label: 'Daten' },
       { href: '#office-memory', label: 'Memory' },
       { href: '#local-storage-decision', label: 'Storage' },
+      { href: '#delete-export-restore', label: 'Restore' },
       { href: '#ausbildung', label: 'Ausbildung' },
       { href: '#rechte', label: 'Rechte' },
       { href: '#rollen', label: 'Rollen' },

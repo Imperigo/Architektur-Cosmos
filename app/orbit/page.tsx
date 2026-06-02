@@ -23,6 +23,7 @@ import { OrbitDesignPilotPath } from './OrbitDesignPilotPath';
 import { OrbitLearningMode } from './OrbitLearningMode';
 import { OrbitLocalIdentityContract } from './OrbitLocalIdentityContract';
 import { OrbitLocalStorageDecisionDraft } from './OrbitLocalStorageDecisionDraft';
+import { OrbitDeleteExportRestoreDrill } from './OrbitDeleteExportRestoreDrill';
 import { OrbitLaunchDecisionBrief } from './OrbitLaunchDecisionBrief';
 import { OrbitOfficeMemoryReadiness } from './OrbitOfficeMemoryReadiness';
 import { OrbitOfficeRoutine } from './OrbitOfficeRoutine';
@@ -44,6 +45,7 @@ import { OrbitRiskRegister } from './OrbitRiskRegister';
 import { OrbitRuntimeBoundary } from './OrbitRuntimeBoundary';
 import { OrbitRuntimeAdapterContract } from './OrbitRuntimeAdapterContract';
 import { OrbitRuntimeContract } from './OrbitRuntimeContract';
+import { OrbitKosmoSketchAdapterContract } from './OrbitKosmoSketchAdapterContract';
 import { OrbitRoleSwitcher } from './OrbitRoleSwitcher';
 import { OrbitSectionIndex } from './OrbitSectionIndex';
 import { OrbitToolRegistry } from './OrbitToolRegistry';
@@ -473,6 +475,10 @@ export default function OrbitPage() {
             <OrbitRuntimeAdapterContract />
           </div>
 
+          <div id="kosmosketch-adapter" className="scroll-mt-4">
+            <OrbitKosmoSketchAdapterContract />
+          </div>
+
           <div id="installation" className="scroll-mt-4">
             <OrbitInstallationTopology />
           </div>
@@ -517,6 +523,10 @@ export default function OrbitPage() {
 
           <div id="local-storage-decision" className="scroll-mt-4">
             <OrbitLocalStorageDecisionDraft />
+          </div>
+
+          <div id="delete-export-restore" className="scroll-mt-4">
+            <OrbitDeleteExportRestoreDrill />
           </div>
 
           <div id="ausbildung" className="scroll-mt-4">

@@ -1,0 +1,126 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-02T14:44:34.380Z",
+  "generator": "kosmo-orbit-delete-export-restore-drill-check",
+  "status": "delete_export_restore_drill_passed",
+  "contract_file": "examples/kosmo-orbit/storage/orbit-delete-export-restore-drill.contract.json",
+  "component_file": "app/orbit/OrbitDeleteExportRestoreDrill.tsx",
+  "summary": {
+    "check_count": 16,
+    "passed_checks": 16,
+    "failed_checks": 0,
+    "scope_count": 4,
+    "blocked_capability_count": 10,
+    "review_role_count": 4,
+    "promotion_requirement_count": 5
+  },
+  "drill_scope": [
+    {
+      "id": "delete_request",
+      "evidence_count": 3,
+      "status": "needs_human_review"
+    },
+    {
+      "id": "export_package",
+      "evidence_count": 3,
+      "status": "needs_human_review"
+    },
+    {
+      "id": "restore_probe",
+      "evidence_count": 3,
+      "status": "needs_human_review"
+    },
+    {
+      "id": "audit_trace",
+      "evidence_count": 3,
+      "status": "needs_human_review"
+    }
+  ],
+  "checks": [
+    {
+      "id": "contract_file_exists",
+      "label": "Delete/export/restore drill contract exists.",
+      "status": "passed"
+    },
+    {
+      "id": "status_ready",
+      "label": "Drill contract status is ready.",
+      "status": "passed"
+    },
+    {
+      "id": "mode_static_review_only",
+      "label": "Drill contract is static review-only.",
+      "status": "passed"
+    },
+    {
+      "id": "required_scope_present",
+      "label": "Delete, export, restore and audit trace scopes are present.",
+      "status": "passed"
+    },
+    {
+      "id": "scope_needs_human_review",
+      "label": "Every drill scope still needs human review and evidence.",
+      "status": "passed"
+    },
+    {
+      "id": "blocked_capabilities_present",
+      "label": "Real delete, export, restore, customer data, backup and sync actions are blocked.",
+      "status": "passed"
+    },
+    {
+      "id": "allowed_today_is_review_only",
+      "label": "Allowed actions are static, human-review and test-data only.",
+      "status": "passed"
+    },
+    {
+      "id": "review_roles_present",
+      "label": "Review roles include owner, IT/KI, project lead and privacy review.",
+      "status": "passed"
+    },
+    {
+      "id": "promotion_requirements_present",
+      "label": "Promotion requirements include drill, privacy, backup, audit and owner gates.",
+      "status": "passed"
+    },
+    {
+      "id": "component_imports_contract",
+      "label": "Component imports the delete/export/restore drill contract.",
+      "status": "passed"
+    },
+    {
+      "id": "component_renders_drill_copy",
+      "label": "Component renders delete/export/restore drill copy.",
+      "status": "passed"
+    },
+    {
+      "id": "component_renders_safety_boundary",
+      "label": "Component keeps real delete, export, restore, customer data, backup restore and external archive sync blocked.",
+      "status": "passed"
+    },
+    {
+      "id": "route_imports_drill",
+      "label": "Orbit route imports the delete/export/restore drill component.",
+      "status": "passed"
+    },
+    {
+      "id": "route_anchors_drill",
+      "label": "Orbit route renders a delete-export-restore anchor.",
+      "status": "passed"
+    },
+    {
+      "id": "section_index_links_drill",
+      "label": "Section index links to delete/export/restore drill.",
+      "status": "passed"
+    },
+    {
+      "id": "next_actions_present",
+      "label": "Next actions are explicit.",
+      "status": "passed"
+    }
+  ],
+  "next_actions": [
+    "Drill als sichtbares Orbit-Panel pruefen.",
+    "Mit Testdaten definieren, was ein Exportmanifest enthalten muss.",
+    "Erst nach menschlicher Freigabe ueber echte lokale Delete/Export/Restore-Jobs sprechen."
+  ]
+}

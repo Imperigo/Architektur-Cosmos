@@ -245,11 +245,11 @@ Nachgezogen:
   Session-Grenzen, blockierte Faehigkeiten und Promotion Requirements;
 - `npm run kosmo:orbit-local-identity` prueft den Vertrag mit 16/16 Checks;
 - `npm run kosmo:orbit-full-review` enthaelt den Vertrag als eigenen Schritt
-  und ist inzwischen mit Data Governance auf 29/29 erweitert;
-- `npm run kosmo:orbit-route-smoke` steht inzwischen bei 218/218;
-- `npm run kosmo:orbit-static-smoke` steht inzwischen bei 76/76;
-- `npm run kosmo:orbit-demo-audit` steht inzwischen bei 39/39;
-- `npm run kosmo:orbit-responsive-audit` steht inzwischen bei 30/30.
+  und ist inzwischen mit Storage- und Restore-Grenzen auf 32/32 erweitert;
+- `npm run kosmo:orbit-route-smoke` steht inzwischen bei 239/239;
+- `npm run kosmo:orbit-static-smoke` steht inzwischen bei 82/82;
+- `npm run kosmo:orbit-demo-audit` steht inzwischen bei 45/45;
+- `npm run kosmo:orbit-responsive-audit` steht inzwischen bei 33/33.
 
 ### Data-Governance-Vertrag
 
@@ -287,11 +287,11 @@ Nachgezogen:
   Speicher-Lanes, blockierte Faehigkeiten und Promotion Requirements;
 - `npm run kosmo:orbit-data-governance` prueft den Vertrag mit 16/16 Checks;
 - `npm run kosmo:orbit-full-review` enthaelt den Vertrag als eigenen Schritt
-  und steht dadurch bei 29/29;
-- `npm run kosmo:orbit-route-smoke` steht bei 218/218;
-- `npm run kosmo:orbit-static-smoke` steht bei 76/76;
-- `npm run kosmo:orbit-demo-audit` steht bei 39/39;
-- `npm run kosmo:orbit-responsive-audit` steht bei 30/30.
+  und steht nach Storage- und Restore-Grenzen bei 32/32;
+- `npm run kosmo:orbit-route-smoke` steht bei 239/239;
+- `npm run kosmo:orbit-static-smoke` steht bei 82/82;
+- `npm run kosmo:orbit-demo-audit` steht bei 45/45;
+- `npm run kosmo:orbit-responsive-audit` steht bei 33/33.
 
 ### Office-Memory-Readiness-Vertrag
 
@@ -330,11 +330,11 @@ Nachgezogen:
   Readiness-Gates, blockierte Faehigkeiten und Safety-Copy;
 - `npm run kosmo:orbit-office-memory` prueft den Vertrag mit 16/16 Checks;
 - `npm run kosmo:orbit-full-review` enthaelt den Vertrag als eigenen Schritt
-  und steht dadurch bei 30/30;
-- `npm run kosmo:orbit-route-smoke` steht bei 225/225;
-- `npm run kosmo:orbit-static-smoke` steht bei 78/78;
-- `npm run kosmo:orbit-demo-audit` steht bei 41/41;
-- `npm run kosmo:orbit-responsive-audit` steht bei 31/31.
+  und steht nach Storage- und Restore-Grenzen bei 32/32;
+- `npm run kosmo:orbit-route-smoke` steht bei 239/239;
+- `npm run kosmo:orbit-static-smoke` steht bei 82/82;
+- `npm run kosmo:orbit-demo-audit` steht bei 45/45;
+- `npm run kosmo:orbit-responsive-audit` steht bei 33/33.
 
 ### Local-Storage-Decision-Draft
 
@@ -373,11 +373,52 @@ Nachgezogen:
 - `npm run kosmo:orbit-local-storage-decision` prueft den Entwurf mit 16/16
   Checks;
 - `npm run kosmo:orbit-full-review` enthaelt den Entwurf als eigenen Schritt
-  und steht dadurch bei 31/31;
-- `npm run kosmo:orbit-route-smoke` steht bei 232/232;
-- `npm run kosmo:orbit-static-smoke` steht bei 80/80;
-- `npm run kosmo:orbit-demo-audit` steht bei 43/43;
-- `npm run kosmo:orbit-responsive-audit` steht bei 32/32.
+  und steht nach dem Restore-Drill bei 32/32;
+- `npm run kosmo:orbit-route-smoke` steht bei 239/239;
+- `npm run kosmo:orbit-static-smoke` steht bei 82/82;
+- `npm run kosmo:orbit-demo-audit` steht bei 45/45;
+- `npm run kosmo:orbit-responsive-audit` steht bei 33/33.
+
+### Delete-/Export-/Restore-Drill
+
+Der Delete-/Export-/Restore-Drill ist als Reversibilitaetsgrenze vor echten
+lokalen Datenjobs umgesetzt.
+
+Zweck:
+
+- Loeschanfrage, Exportpaket, Restore-Probe und Audit-Spur mit Testdaten
+  sichtbar machen;
+- verhindern, dass lokale Speicherung ohne nachweisbaren Rueckweg entsteht;
+- Review Roles fuer Chef/Admin, IT/KI, Projektleitung und Datenschutz Review
+  festhalten;
+- echte Delete-/Export-/Restore-Jobs, Kundendaten-Aktionen, Backup-Restore,
+  Retention-Automation und externen Archiv-Sync blockieren.
+
+Wichtige Grenze:
+
+- kein real delete job;
+- kein real export job;
+- kein real restore job;
+- kein Kundendaten-Export;
+- kein Kundendaten-Delete;
+- kein Backup-Restore;
+- kein Audit-Log-Write;
+- kein externer Archiv-Sync.
+
+Nachgezogen:
+
+- `examples/kosmo-orbit/storage/orbit-delete-export-restore-drill.contract.json`
+  haelt den Drill-Vertrag;
+- `app/orbit/OrbitDeleteExportRestoreDrill.tsx` rendert Scope, Evidence,
+  Review Roles, blockierte Faehigkeiten und Promotion Requirements;
+- `npm run kosmo:orbit-delete-export-restore-drill` prueft den Drill mit
+  16/16 Checks;
+- `npm run kosmo:orbit-full-review` enthaelt den Drill als eigenen Schritt
+  und steht bei 32/32;
+- `npm run kosmo:orbit-route-smoke` steht bei 239/239;
+- `npm run kosmo:orbit-static-smoke` steht bei 82/82;
+- `npm run kosmo:orbit-demo-audit` steht bei 45/45;
+- `npm run kosmo:orbit-responsive-audit` steht bei 33/33.
 
 ### Push-Readiness Stabilisierung
 
@@ -449,9 +490,9 @@ ist kein BIM-Import, kein editierbares Modell und kein Design-Generation-Go.
 
 Heute gruen geprueft:
 
-- `npm run kosmo:orbit-route-smoke` - 232/232 passed
-- `npm run kosmo:orbit-static-smoke` - 80/80 passed
-- `npm run kosmo:orbit-full-review` - 31/31 passed
+- `npm run kosmo:orbit-route-smoke` - 239/239 passed
+- `npm run kosmo:orbit-static-smoke` - 82/82 passed
+- `npm run kosmo:orbit-full-review` - 32/32 passed
 - `npm run atlas:static-smoke` - 17/17 passed
 - `npm run build` - static export passed
 - `npx tsc --noEmit --pretty false --incremental false` - passed
@@ -465,8 +506,9 @@ Heute gruen geprueft:
 - `npm run kosmo:orbit-data-governance` - 16/16 passed
 - `npm run kosmo:orbit-office-memory` - 16/16 passed
 - `npm run kosmo:orbit-local-storage-decision` - 16/16 passed
-- `npm run kosmo:orbit-demo-audit` - 43/43 passed
-- `npm run kosmo:orbit-responsive-audit` - 32/32 passed
+- `npm run kosmo:orbit-delete-export-restore-drill` - 16/16 passed
+- `npm run kosmo:orbit-demo-audit` - 45/45 passed
+- `npm run kosmo:orbit-responsive-audit` - 33/33 passed
 - `npm run kosmo:orbit-push-readiness` - 12/12 passed
 - `npm run kosmo:orbit-readiness-sweep` - 6/6 passed
 - `npm run generated:cleanup` - Zeitstempelrauschen entfernt, semantische
@@ -511,6 +553,11 @@ Browser-Smokes:
   Storage-Navigation vorhanden, 6 Entscheidfelder und Safety-Copy fuer local
   storage write, Memory-Write, Kundendaten-Index, Embedding-Job, Backup-Job,
   Restore-Job und externen Sync sichtbar.
+- `/orbit/?v=delete-export-restore-20260602#delete-export-restore`: HTTP
+  200 im lokalen Static Export, Delete-/Export-/Restore-Drill sichtbar,
+  Restore-Navigation vorhanden, 4 Drill-Bereiche und Safety-Copy fuer real
+  delete job, real export job, real restore job, Kundendaten-Export,
+  Kundendaten-Delete, Backup-Restore und externen Archiv-Sync sichtbar.
 
 Hinweis: Ein paralleler TypeScript-Lauf waehrend `next build` hatte kurz
 fehlende `.next/types` gemeldet. Seriell nach abgeschlossenem Build war

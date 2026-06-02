@@ -1,6 +1,6 @@
 # KosmoOrbit Full Review
 
-Generated: 2026-06-02T14:33:43.273Z
+Generated: 2026-06-02T14:45:56.781Z
 Status: `orbit_full_review_ready_for_review_mode`
 Workspace: `examples/kosmo-orbit/workspace.demo.json`
 Project: `examples/kosmo-projects/kosmo-demo-001`
@@ -9,7 +9,7 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 
 ## Summary
 
-- steps: 31/31 passed
+- steps: 32/32 passed
 - role state: `role_state_check_passed`
 - role state active role: `owner_admin`
 - role state selected role: `owner_admin`
@@ -73,6 +73,11 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 - local storage decision fields: 6
 - local storage decision blocked capabilities: 11
 - local storage decision approval roles: 4
+- delete/export/restore drill: `delete_export_restore_drill_passed`
+- delete/export/restore checks: 16/16
+- delete/export/restore scope items: 4
+- delete/export/restore blocked capabilities: 10
+- delete/export/restore promotion requirements: 5
 - pilot session: `orbit_pilot_session_template_ready`
 - pilot session checks: 17/17
 - pilot session measurement points: 5
@@ -85,7 +90,7 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 - pilot result draft slots: 5
 - pilot result draft empty slots: 5
 - orbit route smoke: `orbit_route_smoke_passed`
-- orbit route smoke checks: 232/232
+- orbit route smoke checks: 239/239
 - workspace status: `orbit_blocked_gates_present`
 - project status: `local_review_only`
 - project artifacts: 59
@@ -142,6 +147,7 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 | Orbit Data Governance Contract | `passed` | `examples/kosmo-orbit/review/orbit-data-governance.generated.json` |
 | Orbit Office Memory Readiness | `passed` | `examples/kosmo-orbit/review/orbit-office-memory-readiness.generated.json` |
 | Orbit Local Storage Decision Draft | `passed` | `examples/kosmo-orbit/review/orbit-local-storage-decision.generated.json` |
+| Orbit Delete / Export / Restore Drill | `passed` | `examples/kosmo-orbit/review/orbit-delete-export-restore-drill.generated.json` |
 | Orbit Pilot Session Template | `passed` | `examples/kosmo-orbit/review/orbit-pilot-session.generated.json` |
 | Orbit Pilot Measurement Kit | `passed` | `examples/kosmo-orbit/review/orbit-pilot-measurement-kit.generated.json` |
 | Orbit Pilot Result Draft | `passed` | `examples/kosmo-orbit/review/orbit-pilot-result-draft.generated.json` |
@@ -167,6 +173,7 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 - data_governance_markdown: `examples/kosmo-orbit/review/orbit-data-governance.generated.md`
 - office_memory_markdown: `examples/kosmo-orbit/review/orbit-office-memory-readiness.generated.md`
 - local_storage_decision_markdown: `examples/kosmo-orbit/review/orbit-local-storage-decision.generated.md`
+- delete_export_restore_markdown: `examples/kosmo-orbit/review/orbit-delete-export-restore-drill.generated.md`
 - pilot_session_markdown: `examples/kosmo-orbit/review/orbit-pilot-session.generated.md`
 - pilot_measurement_kit_markdown: `examples/kosmo-orbit/review/orbit-pilot-measurement-kit.generated.md`
 - pilot_result_draft_markdown: `examples/kosmo-orbit/review/orbit-pilot-result-draft.generated.md`
@@ -200,6 +207,7 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 - Use the data governance contract before implementing local storage, backup jobs, retention automation or persistent office memory.
 - Use the office memory readiness contract before adding persistent memory writes, customer file scans, embeddings, backup status writes or external memory sync.
 - Use the local storage decision draft before implementing local storage writes, backup/restore jobs, retention automation or embeddings.
+- Use the delete/export/restore drill before implementing real delete jobs, export jobs, restore jobs, backup restore, retention automation or external archive sync.
 - Use the pilot session template for a real office pilot only after anonymising project inputs.
 - Use the pilot measurement kit to structure the first office pilot without claiming savings before human data exists.
 - Use the pilot result draft only after a human office pilot creates evidence-backed observations.

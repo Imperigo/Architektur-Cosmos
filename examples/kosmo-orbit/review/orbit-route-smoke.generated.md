@@ -1,6 +1,6 @@
 # KosmoOrbit Route Smoke
 
-Generated: 2026-06-02T14:33:43.260Z
+Generated: 2026-06-02T14:44:51.631Z
 Status: `orbit_route_smoke_passed`
 Route: `app/orbit/page.tsx`
 
@@ -8,7 +8,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 
 ## Summary
 
-- checks: 232/232 passed
+- checks: 239/239 passed
 
 ## Checks
 
@@ -63,6 +63,8 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `office_memory_data_file_exists` | `passed` | Orbit office memory readiness contract data exists. |
 | `local_storage_decision_file_exists` | `passed` | Orbit local storage decision component exists. |
 | `local_storage_decision_data_file_exists` | `passed` | Orbit local storage decision draft data exists. |
+| `delete_export_restore_file_exists` | `passed` | Orbit delete/export/restore drill component exists. |
+| `delete_export_restore_data_file_exists` | `passed` | Orbit delete/export/restore drill contract exists. |
 | `learning_mode_file_exists` | `passed` | Orbit learning mode component exists. |
 | `permission_matrix_file_exists` | `passed` | Orbit permission matrix component exists. |
 | `autonomy_status_file_exists` | `passed` | Orbit autonomy status component exists. |
@@ -117,6 +119,8 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `imports_office_memory_data` | `passed` | Office memory readiness component imports the local contract JSON. |
 | `imports_local_storage_decision` | `passed` | Route imports the local storage decision component. |
 | `imports_local_storage_decision_data` | `passed` | Local storage decision component imports the local draft JSON. |
+| `imports_delete_export_restore` | `passed` | Route imports the delete/export/restore drill component. |
+| `imports_delete_export_restore_data` | `passed` | Delete/export/restore drill component imports the local contract JSON. |
 | `imports_learning_mode` | `passed` | Route imports the learning mode component. |
 | `imports_permission_matrix` | `passed` | Route imports the permission matrix component. |
 | `imports_autonomy_status` | `passed` | Route imports the autonomy status component. |
@@ -211,6 +215,9 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `shows_local_storage_decision` | `passed` | Route renders the local storage decision draft. |
 | `local_storage_decision_uses_local_draft` | `passed` | Local storage decision panel uses the local draft for fields, blocks and approval roles. |
 | `keeps_local_storage_decision_review_only` | `passed` | Local storage decision blocks storage writes, memory writes, indexing, embeddings, backup, restore and external sync. |
+| `shows_delete_export_restore_drill` | `passed` | Route renders the delete/export/restore drill. |
+| `delete_export_restore_uses_local_contract` | `passed` | Delete/export/restore drill panel uses the local contract for scope, blocked actions and promotion requirements. |
+| `keeps_delete_export_restore_review_only` | `passed` | Delete/export/restore drill blocks real jobs, customer data actions, backup restore and external archive sync. |
 | `shows_learning_mode` | `passed` | Route renders education mode for learning roles. |
 | `learning_mode_keeps_actions_blocked` | `passed` | Learning mode blocks accounts, writes, generation and public publish. |
 | `shows_permission_matrix` | `passed` | Route renders role permission matrix. |

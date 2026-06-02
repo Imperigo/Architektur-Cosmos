@@ -367,6 +367,22 @@ const steps = [
     report: resolve(workspaceRoot, 'review/orbit-local-storage-decision.generated.json')
   },
   {
+    id: 'delete_export_restore_drill',
+    label: 'Orbit Delete / Export / Restore Drill',
+    script: 'kosmo:orbit-delete-export-restore-drill',
+    args: [
+      '--contract',
+      'examples/kosmo-orbit/storage/orbit-delete-export-restore-drill.contract.json',
+      '--component',
+      'app/orbit/OrbitDeleteExportRestoreDrill.tsx',
+      '--route',
+      'app/orbit/page.tsx',
+      '--sectionIndex',
+      'app/orbit/OrbitSectionIndex.tsx'
+    ],
+    report: resolve(workspaceRoot, 'review/orbit-delete-export-restore-drill.generated.json')
+  },
+  {
     id: 'pilot_session',
     label: 'Orbit Pilot Session Template',
     script: 'kosmo:orbit-pilot-session',
@@ -495,6 +511,7 @@ function buildReport(stepRows) {
   const dataGovernance = readOptionalJson(resolve(workspaceRoot, 'review/orbit-data-governance.generated.json'));
   const officeMemory = readOptionalJson(resolve(workspaceRoot, 'review/orbit-office-memory-readiness.generated.json'));
   const localStorageDecision = readOptionalJson(resolve(workspaceRoot, 'review/orbit-local-storage-decision.generated.json'));
+  const deleteExportRestoreDrill = readOptionalJson(resolve(workspaceRoot, 'review/orbit-delete-export-restore-drill.generated.json'));
   const pilotSession = readOptionalJson(resolve(workspaceRoot, 'review/orbit-pilot-session.generated.json'));
   const pilotMeasurementKit = readOptionalJson(resolve(workspaceRoot, 'review/orbit-pilot-measurement-kit.generated.json'));
   const pilotResultDraft = readOptionalJson(resolve(workspaceRoot, 'review/orbit-pilot-result-draft.generated.json'));
@@ -614,6 +631,12 @@ function buildReport(stepRows) {
       local_storage_decision_field_count: localStorageDecision?.summary?.decision_field_count ?? null,
       local_storage_decision_blocked_capability_count: localStorageDecision?.summary?.blocked_capability_count ?? null,
       local_storage_decision_approval_role_count: localStorageDecision?.summary?.approval_role_count ?? null,
+      delete_export_restore_status: deleteExportRestoreDrill?.status || null,
+      delete_export_restore_passed_checks: deleteExportRestoreDrill?.summary?.passed_checks ?? null,
+      delete_export_restore_check_count: deleteExportRestoreDrill?.summary?.check_count ?? null,
+      delete_export_restore_scope_count: deleteExportRestoreDrill?.summary?.scope_count ?? null,
+      delete_export_restore_blocked_capability_count: deleteExportRestoreDrill?.summary?.blocked_capability_count ?? null,
+      delete_export_restore_promotion_requirement_count: deleteExportRestoreDrill?.summary?.promotion_requirement_count ?? null,
       pilot_session_status: pilotSession?.status || null,
       pilot_session_passed_checks: pilotSession?.summary?.passed_checks ?? null,
       pilot_session_check_count: pilotSession?.summary?.check_count ?? null,
@@ -678,6 +701,7 @@ function buildReport(stepRows) {
       data_governance_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-data-governance.generated.md')),
       office_memory_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-office-memory-readiness.generated.md')),
       local_storage_decision_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-local-storage-decision.generated.md')),
+      delete_export_restore_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-delete-export-restore-drill.generated.md')),
       pilot_session_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-pilot-session.generated.md')),
       pilot_measurement_kit_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-pilot-measurement-kit.generated.md')),
       pilot_result_draft_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-pilot-result-draft.generated.md')),
@@ -694,11 +718,11 @@ function buildReport(stepRows) {
       role_shell_smoke_markdown: relative(root, resolve(projectRoot, 'orbit/role-shell-smoke.generated.md'))
     },
     steps: stepRows,
-    next_actions: nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHandoff, appRouteSpec, healthReadiness, commandContract, auditTrail, officePilotScene, toolRegistry, runtimeAdapter, workstationProfile, localIdentity, dataGovernance, officeMemory, localStorageDecision, pilotSession, pilotMeasurementKit, pilotResultDraft, orbitRouteSmoke, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke, roleShellPrototype, roleShellSmoke })
+    next_actions: nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHandoff, appRouteSpec, healthReadiness, commandContract, auditTrail, officePilotScene, toolRegistry, runtimeAdapter, workstationProfile, localIdentity, dataGovernance, officeMemory, localStorageDecision, deleteExportRestoreDrill, pilotSession, pilotMeasurementKit, pilotResultDraft, orbitRouteSmoke, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke, roleShellPrototype, roleShellSmoke })
   };
 }
 
-function nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHandoff, appRouteSpec, healthReadiness, commandContract, auditTrail, officePilotScene, toolRegistry, runtimeAdapter, workstationProfile, localIdentity, dataGovernance, officeMemory, localStorageDecision, pilotSession, pilotMeasurementKit, pilotResultDraft, orbitRouteSmoke, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke, roleShellPrototype, roleShellSmoke }) {
+function nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHandoff, appRouteSpec, healthReadiness, commandContract, auditTrail, officePilotScene, toolRegistry, runtimeAdapter, workstationProfile, localIdentity, dataGovernance, officeMemory, localStorageDecision, deleteExportRestoreDrill, pilotSession, pilotMeasurementKit, pilotResultDraft, orbitRouteSmoke, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke, roleShellPrototype, roleShellSmoke }) {
   const actions = [];
   if (failedSteps.length) {
     failedSteps.forEach((step) => actions.push(`Review failed step: ${step.label}`));
@@ -751,6 +775,9 @@ function nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHan
   }
   if (localStorageDecision?.status === 'local_storage_decision_passed') {
     actions.push('Use the local storage decision draft before implementing local storage writes, backup/restore jobs, retention automation or embeddings.');
+  }
+  if (deleteExportRestoreDrill?.status === 'delete_export_restore_drill_passed') {
+    actions.push('Use the delete/export/restore drill before implementing real delete jobs, export jobs, restore jobs, backup restore, retention automation or external archive sync.');
   }
   if (pilotSession?.status === 'orbit_pilot_session_template_ready') {
     actions.push('Use the pilot session template for a real office pilot only after anonymising project inputs.');
@@ -872,6 +899,11 @@ function renderMarkdown(report) {
     `- local storage decision fields: ${report.summary.local_storage_decision_field_count}`,
     `- local storage decision blocked capabilities: ${report.summary.local_storage_decision_blocked_capability_count}`,
     `- local storage decision approval roles: ${report.summary.local_storage_decision_approval_role_count}`,
+    `- delete/export/restore drill: \`${report.summary.delete_export_restore_status}\``,
+    `- delete/export/restore checks: ${report.summary.delete_export_restore_passed_checks}/${report.summary.delete_export_restore_check_count}`,
+    `- delete/export/restore scope items: ${report.summary.delete_export_restore_scope_count}`,
+    `- delete/export/restore blocked capabilities: ${report.summary.delete_export_restore_blocked_capability_count}`,
+    `- delete/export/restore promotion requirements: ${report.summary.delete_export_restore_promotion_requirement_count}`,
     `- pilot session: \`${report.summary.pilot_session_status}\``,
     `- pilot session checks: ${report.summary.pilot_session_passed_checks}/${report.summary.pilot_session_check_count}`,
     `- pilot session measurement points: ${report.summary.pilot_session_measurement_points}`,

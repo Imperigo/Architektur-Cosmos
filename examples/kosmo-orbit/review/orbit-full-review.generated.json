@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-02T14:33:43.273Z",
+  "generated_at": "2026-06-02T14:45:56.781Z",
   "generator": "kosmo-orbit-full-review",
   "workspace_path": "examples/kosmo-orbit/workspace.demo.json",
   "project_root": "examples/kosmo-projects/kosmo-demo-001",
@@ -15,8 +15,8 @@
     "no_geometry_generation": true
   },
   "summary": {
-    "step_count": 31,
-    "passed_steps": 31,
+    "step_count": 32,
+    "passed_steps": 32,
     "failed_steps": 0,
     "role_state_status": "role_state_check_passed",
     "role_state_active_role": "owner_admin",
@@ -94,6 +94,12 @@
     "local_storage_decision_field_count": 6,
     "local_storage_decision_blocked_capability_count": 11,
     "local_storage_decision_approval_role_count": 4,
+    "delete_export_restore_status": "delete_export_restore_drill_passed",
+    "delete_export_restore_passed_checks": 16,
+    "delete_export_restore_check_count": 16,
+    "delete_export_restore_scope_count": 4,
+    "delete_export_restore_blocked_capability_count": 10,
+    "delete_export_restore_promotion_requirement_count": 5,
     "pilot_session_status": "orbit_pilot_session_template_ready",
     "pilot_session_passed_checks": 17,
     "pilot_session_check_count": 17,
@@ -109,8 +115,8 @@
     "pilot_result_draft_slots": 5,
     "pilot_result_draft_empty_slots": 5,
     "orbit_route_smoke_status": "orbit_route_smoke_passed",
-    "orbit_route_smoke_passed_checks": 232,
-    "orbit_route_smoke_check_count": 232,
+    "orbit_route_smoke_passed_checks": 239,
+    "orbit_route_smoke_check_count": 239,
     "workspace_status": "orbit_blocked_gates_present",
     "project_status": "local_review_only",
     "project_artifact_count": 59,
@@ -158,6 +164,7 @@
     "data_governance_markdown": "examples/kosmo-orbit/review/orbit-data-governance.generated.md",
     "office_memory_markdown": "examples/kosmo-orbit/review/orbit-office-memory-readiness.generated.md",
     "local_storage_decision_markdown": "examples/kosmo-orbit/review/orbit-local-storage-decision.generated.md",
+    "delete_export_restore_markdown": "examples/kosmo-orbit/review/orbit-delete-export-restore-drill.generated.md",
     "pilot_session_markdown": "examples/kosmo-orbit/review/orbit-pilot-session.generated.md",
     "pilot_measurement_kit_markdown": "examples/kosmo-orbit/review/orbit-pilot-measurement-kit.generated.md",
     "pilot_result_draft_markdown": "examples/kosmo-orbit/review/orbit-pilot-result-draft.generated.md",
@@ -499,6 +506,18 @@
       "stderr_tail": ""
     },
     {
+      "id": "delete_export_restore_drill",
+      "label": "Orbit Delete / Export / Restore Drill",
+      "command": "npm run kosmo:orbit-delete-export-restore-drill -- --contract examples/kosmo-orbit/storage/orbit-delete-export-restore-drill.contract.json --component app/orbit/OrbitDeleteExportRestoreDrill.tsx --route app/orbit/page.tsx --sectionIndex app/orbit/OrbitSectionIndex.tsx",
+      "status": "passed",
+      "exit_code": 0,
+      "report_path": "examples/kosmo-orbit/review/orbit-delete-export-restore-drill.generated.json",
+      "report_exists": true,
+      "report_status": "delete_export_restore_drill_passed",
+      "stdout_tail": "> architecture-cosmos@0.1.0 kosmo:orbit-delete-export-restore-drill\n> node scripts/kosmo-orbit-delete-export-restore-drill-check.mjs --contract examples/kosmo-orbit/storage/orbit-delete-export-restore-drill.contract.json --component app/orbit/OrbitDeleteExportRestoreDrill.tsx --route app/orbit/page.tsx --sectionIndex app/orbit/OrbitSectionIndex.tsx\n\nKosmoOrbit delete/export/restore drill check\nStatus: delete_export_restore_drill_passed\nChecks: 16/16\nWrote: examples/kosmo-orbit/review/orbit-delete-export-restore-drill.generated.md",
+      "stderr_tail": ""
+    },
+    {
       "id": "pilot_session",
       "label": "Orbit Pilot Session Template",
       "command": "npm run kosmo:orbit-pilot-session -- --session examples/kosmo-orbit/pilot/orbit-office-pilot-session.demo.json --schema schema/kosmo-orbit-pilot-session.schema.json",
@@ -543,7 +562,7 @@
       "report_path": "examples/kosmo-orbit/review/orbit-route-smoke.generated.json",
       "report_exists": true,
       "report_status": "orbit_route_smoke_passed",
-      "stdout_tail": "> architecture-cosmos@0.1.0 kosmo:orbit-route-smoke\n> node scripts/kosmo-orbit-route-smoke.mjs --route app/orbit/page.tsx --spec examples/kosmo-orbit/review/orbit-app-route-spec.generated.json\n\nKosmoOrbit route smoke\nStatus: orbit_route_smoke_passed\nChecks: 232/232\nWrote: examples/kosmo-orbit/review/orbit-route-smoke.generated.md",
+      "stdout_tail": "> architecture-cosmos@0.1.0 kosmo:orbit-route-smoke\n> node scripts/kosmo-orbit-route-smoke.mjs --route app/orbit/page.tsx --spec examples/kosmo-orbit/review/orbit-app-route-spec.generated.json\n\nKosmoOrbit route smoke\nStatus: orbit_route_smoke_passed\nChecks: 239/239\nWrote: examples/kosmo-orbit/review/orbit-route-smoke.generated.md",
       "stderr_tail": ""
     }
   ],
@@ -564,6 +583,7 @@
     "Use the data governance contract before implementing local storage, backup jobs, retention automation or persistent office memory.",
     "Use the office memory readiness contract before adding persistent memory writes, customer file scans, embeddings, backup status writes or external memory sync.",
     "Use the local storage decision draft before implementing local storage writes, backup/restore jobs, retention automation or embeddings.",
+    "Use the delete/export/restore drill before implementing real delete jobs, export jobs, restore jobs, backup restore, retention automation or external archive sync.",
     "Use the pilot session template for a real office pilot only after anonymising project inputs.",
     "Use the pilot measurement kit to structure the first office pilot without claiming savings before human data exists.",
     "Use the pilot result draft only after a human office pilot creates evidence-backed observations.",
