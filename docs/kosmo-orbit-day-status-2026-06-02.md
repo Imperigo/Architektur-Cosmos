@@ -106,6 +106,29 @@ Nachgezogen:
   13/13 Checks;
 - `npm run kosmo:orbit-route-smoke` prueft den Datenvertrag explizit mit.
 
+### Tool-Orchestrierungsregister
+
+`/orbit` hat ein sichtbares Tool-Orchestrierungsregister erhalten.
+
+Zweck:
+
+- KosmoOrbit wird als Software-Zentrale aller Architektur-Kosmos-Tools
+  sichtbar, nicht nur als lose Sammlung einzelner Panels;
+- KosmoData, KosmoAsset, KosmoDesign, KosmoPrepare, KosmoDraw, KosmoViz,
+  KosmoPublish und KosmoZentrale werden aus `workspace.demo.json` gelesen;
+- pro Tool werden Status, Rollen, Gate-Bezug und Handoff-Ziel sichtbar;
+- die Grenze zur spaeteren Runtime bleibt klar: Tool-Launch, Modellstart,
+  Upload, Kostenjob und Public-Freigabe bleiben gesperrt.
+
+Nachgezogen:
+
+- `app/orbit/OrbitToolRegistry.tsx` liest den lokalen Workspace-Vertrag;
+- `npm run kosmo:orbit-tool-registry` prueft das Register mit 13/13 Checks;
+- `npm run kosmo:orbit-full-review` enthaelt das Tool-Register als eigenen
+  Schritt und steht dadurch bei 25/25;
+- `npm run kosmo:orbit-route-smoke` steht bei 190/190;
+- `npm run kosmo:orbit-static-smoke` steht bei 68/68.
+
 ### Push-Readiness Stabilisierung
 
 Der Push-Readiness-Report wurde stabilisiert.
@@ -139,13 +162,16 @@ ohne Push, Deploy, Upload, externe Accounts oder Kosten auszuloesen.
 
 ### Full Review und IFC-Kontext
 
-`npm run kosmo:orbit-full-review` wurde auf 24 Schritte erweitert.
+`npm run kosmo:orbit-full-review` wurde zuerst auf 24 und danach auf 25
+Schritte erweitert.
 
 Neu enthalten:
 
 - `npm run kosmo:orbit-office-pilot-scene` als eigener Full-Review-Schritt;
 - Full Review Summary mit Office-Pilot-Scene-Status, 13/13 Checks, 4 Steps
   und 4 Rollen;
+- `npm run kosmo:orbit-tool-registry` als eigener Full-Review-Schritt mit
+  13/13 Checks, 8 Tools, 8 Rollen und 7 Gates;
 - aktualisierte Design-Kontext-Artefakte fuer das Demo-Projekt mit IFC-Bounds
   und IFC-Rollenhinweisen.
 
@@ -156,15 +182,16 @@ ist kein BIM-Import, kein editierbares Modell und kein Design-Generation-Go.
 
 Heute gruen geprueft:
 
-- `npm run kosmo:orbit-route-smoke` - 183/183 passed
-- `npm run kosmo:orbit-static-smoke` - 65/65 passed
-- `npm run kosmo:orbit-full-review` - 24/24 passed
+- `npm run kosmo:orbit-route-smoke` - 190/190 passed
+- `npm run kosmo:orbit-static-smoke` - 68/68 passed
+- `npm run kosmo:orbit-full-review` - 25/25 passed
 - `npm run atlas:static-smoke` - 17/17 passed
 - `npm run build` - static export passed
 - `npx tsc --noEmit --pretty false --incremental false` - passed
 - `npm run lint` - 0 Errors, 0 Warnings
 - `npm run brain:doctor` - 17/17 passed
 - `npm run kosmo:orbit-office-pilot-scene` - 13/13 passed
+- `npm run kosmo:orbit-tool-registry` - 13/13 passed
 - `npm run kosmo:orbit-push-readiness` - 12/12 passed
 - `npm run kosmo:orbit-readiness-sweep` - 6/6 passed
 - `npm run generated:cleanup` - Zeitstempelrauschen entfernt, semantische
@@ -194,6 +221,9 @@ Codefehler.
 - `fc0c2ca` Add KosmoOrbit office pilot scene
 - `77adb4b` Add KosmoOrbit office pilot scene contract
 - `2fae082` Refresh stable KosmoOrbit push readiness
+- `944ad27` Stabilize brain doctor static export order
+- `00932ae` Add KosmoOrbit tool registry
+- `ded70ce` Refresh KosmoOrbit push readiness evidence
 
 ## Push-/Live-Grenze
 

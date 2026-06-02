@@ -192,6 +192,10 @@ Dieser Kern zeigt:
 - eine Buero-Pilot Szene, die den ersten sicheren Alltagstest in einem kleinen
   Architekturbuero erklaert: Projektpaket oeffnen, KosmoDesign lesen,
   Rollen vergleichen und erst beobachtete Evidenz festhalten;
+- ein Tool-Orchestrierungsregister, das KosmoData, KosmoAsset, KosmoDesign,
+  KosmoPrepare, KosmoDraw, KosmoViz, KosmoPublish und KosmoZentrale als lokale
+  Software-Zentrale mit Rollen, Gates, Status und Runtime-Sperren sichtbar
+  macht;
 - einen KosmoDesign Pilotpfad, der den Review Mode bewusst vor jede
   Design-Generation stellt und damit keine Geometrie-Writes, keine
   automatischen Varianten und keine unbewiesenen Zeit-/Kostenclaims erlaubt;
@@ -213,5 +217,6 @@ Dieser Kern zeigt:
   in die menschliche Pushentscheidung einbindet.
 
 Damit ist der erste pruefbare Produktkern vorhanden: KosmoOrbit beweist die
-Steuerzentralen-Logik, ohne schon echte lokale Runtime, Auth, Blender-Start,
-Geometrie-Generierung oder Cloud-Integrationen zu aktivieren.
+Steuerzentralen-Logik mit einem geprueften Tool-Register, ohne schon echte
+lokale Runtime, Auth, Blender-Start, Geometrie-Generierung oder
+Cloud-Integrationen zu aktivieren.

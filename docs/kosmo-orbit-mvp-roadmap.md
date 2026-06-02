@@ -190,7 +190,11 @@ Sichere erste Umsetzung:
    (**initial umgesetzt mit `npm run kosmo:orbit-push-readiness`**)
 10. Buero-Pilot Szene und KosmoDesign Pilotpfad als sichtbarer, review-only
     Alltagstest vor jeder Generierung (**initial umgesetzt unter `/orbit`**)
-11. spaeter Handoff an KosmoZentrale fuer echte lokale Runtime
+11. sichtbares Tool-Orchestrierungsregister fuer KosmoData, KosmoAsset,
+    KosmoDesign, KosmoPrepare, KosmoDraw, KosmoViz, KosmoPublish und
+    KosmoZentrale mit Rollen, Gates und Runtime-Sperren
+    (**initial umgesetzt mit `npm run kosmo:orbit-tool-registry` und `/orbit`**)
+12. spaeter Handoff an KosmoZentrale fuer echte lokale Runtime
 
 ## 7. Zusammenarbeit mit anderen Workern
 
