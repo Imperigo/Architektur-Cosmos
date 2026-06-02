@@ -1,20 +1,20 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-02T05:36:22.430Z",
+  "generated_at": "2026-06-02T05:39:24.278Z",
   "generator": "kosmo-orbit-push-readiness",
   "status": "orbit_push_readiness_review_only",
   "git": {
     "branch": "main",
     "remote": "origin/main",
-    "ahead_count": 93,
+    "ahead_count": 96,
     "worktree_clean": true,
     "status_short": "",
     "latest_commits": [
+      "d0dd934 Strengthen KosmoOrbit push readiness checks",
+      "d188a69 Document KosmoOrbit office pilot batch",
+      "48b4524 Refresh KosmoOrbit office pilot readiness",
       "fc0c2ca Add KosmoOrbit office pilot scene",
-      "fb943d1 Refresh KosmoOrbit push readiness report",
-      "3d73869 Clear Atlas lint warnings",
-      "01f03f1 Show push readiness in KosmoOrbit launch brief",
-      "cf252da Clarify volatile KosmoOrbit push counts"
+      "fb943d1 Refresh KosmoOrbit push readiness report"
     ]
   },
   "evidence": {
@@ -41,7 +41,30 @@
       "passed_checks": 17,
       "check_count": 17,
       "failed_checks": 0
-    }
+    },
+    "commands": [
+      {
+        "id": "git_diff_check",
+        "label": "git diff --check has no whitespace errors.",
+        "command": "git diff --check",
+        "status": "passed",
+        "output_excerpt": ""
+      },
+      {
+        "id": "lint_zero_warnings",
+        "label": "ESLint passes with zero warnings.",
+        "command": "npm run lint",
+        "status": "passed",
+        "output_excerpt": "> architecture-cosmos@0.1.0 lint | > eslint ."
+      },
+      {
+        "id": "typescript_no_emit",
+        "label": "TypeScript no-emit check passes.",
+        "command": "node_modules/.bin/tsc --noEmit --pretty false --incremental false",
+        "status": "passed",
+        "output_excerpt": ""
+      }
+    ]
   },
   "decision": {
     "local_demo_ready": true,
@@ -54,8 +77,8 @@
     ]
   },
   "summary": {
-    "check_count": 9,
-    "passed_checks": 9,
+    "check_count": 12,
+    "passed_checks": 12,
     "failed_checks": 0
   },
   "checks": [
@@ -92,6 +115,21 @@
     {
       "id": "atlas_static_smoke_green",
       "label": "KosmoData atlas static export smoke is green.",
+      "status": "passed"
+    },
+    {
+      "id": "git_diff_check",
+      "label": "git diff --check has no whitespace errors.",
+      "status": "passed"
+    },
+    {
+      "id": "lint_zero_warnings",
+      "label": "ESLint passes with zero warnings.",
+      "status": "passed"
+    },
+    {
+      "id": "typescript_no_emit",
+      "label": "TypeScript no-emit check passes.",
       "status": "passed"
     },
     {

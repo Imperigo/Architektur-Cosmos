@@ -1,6 +1,6 @@
 # KosmoOrbit Push Readiness
 
-Generated: 2026-06-02T05:36:22.430Z
+Generated: 2026-06-02T05:39:24.278Z
 Status: `orbit_push_readiness_review_only`
 
 This is a local review-only push decision report. It does not push, deploy, upload, spend money or call external accounts.
@@ -9,7 +9,7 @@ This is a local review-only push decision report. It does not push, deploy, uplo
 
 - branch: `main`
 - remote: `origin/main`
-- ahead count: 93
+- ahead count: 96
 - worktree clean: yes
 
 ## Evidence
@@ -20,6 +20,14 @@ This is a local review-only push decision report. It does not push, deploy, uplo
 | `static_smoke` | `orbit_static_export_smoke_passed` | 65 / 65 |
 | `full_review` | `orbit_full_review_ready_for_review_mode` | - / - |
 | `atlas_static_smoke` | `atlas_static_export_smoke_passed` | 17 / 17 |
+
+## Command Evidence
+
+| Command | Status | Output |
+| --- | --- | --- |
+| `git diff --check` | `passed` | no output |
+| `npm run lint` | `passed` | > architecture-cosmos@0.1.0 lint \| > eslint . |
+| `node_modules/.bin/tsc --noEmit --pretty false --incremental false` | `passed` | no output |
 
 ## Checks
 
@@ -32,6 +40,9 @@ This is a local review-only push decision report. It does not push, deploy, uplo
 | `static_smoke_green` | `passed` | KosmoOrbit static export smoke is green. |
 | `full_review_green` | `passed` | KosmoOrbit full review is green. |
 | `atlas_static_smoke_green` | `passed` | KosmoData atlas static export smoke is green. |
+| `git_diff_check` | `passed` | git diff --check has no whitespace errors. |
+| `lint_zero_warnings` | `passed` | ESLint passes with zero warnings. |
+| `typescript_no_emit` | `passed` | TypeScript no-emit check passes. |
 | `owner_gate_required` | `passed` | Push remains blocked until explicit Owner-Go. |
 | `no_live_action_taken` | `passed` | This report does not push, deploy, upload or call external accounts. |
 
@@ -49,8 +60,8 @@ This is a local review-only push decision report. It does not push, deploy, uplo
 
 ## Latest Commits
 
+- `d0dd934 Strengthen KosmoOrbit push readiness checks`
+- `d188a69 Document KosmoOrbit office pilot batch`
+- `48b4524 Refresh KosmoOrbit office pilot readiness`
 - `fc0c2ca Add KosmoOrbit office pilot scene`
 - `fb943d1 Refresh KosmoOrbit push readiness report`
-- `3d73869 Clear Atlas lint warnings`
-- `01f03f1 Show push readiness in KosmoOrbit launch brief`
-- `cf252da Clarify volatile KosmoOrbit push counts`
