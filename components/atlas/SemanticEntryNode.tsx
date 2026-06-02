@@ -30,8 +30,8 @@ type SemanticEntryNodeProps = {
   driftX?: number;
   driftY?: number;
   driftDelay?: number;
-  onSelect: (event?: ReactMouseEvent<SVGGElement>) => void;
-  onHover?: (entryId: string | null) => void;
+  onSelect: (_event?: ReactMouseEvent<SVGGElement>) => void;
+  onHover?: (_entryId: string | null) => void;
 };
 
 const entryGlyph: Record<Entry['entry_type'], string> = {

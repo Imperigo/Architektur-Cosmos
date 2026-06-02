@@ -7,7 +7,7 @@ type ProjectDetailCardProps = {
   entry: Entry;
   x: number;
   y: number;
-  onSelectFilter?: (filter: ProjectDetailFilter) => void;
+  onSelectFilter?: (_filter: ProjectDetailFilter) => void;
 };
 
 export type ProjectDetailFilter = {

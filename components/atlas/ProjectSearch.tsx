@@ -10,7 +10,7 @@ type ProjectSearchProps = {
   currentSlug?: string;
   variant?: 'atlas' | 'entry';
   developerMode?: boolean;
-  onDeveloperModeChange?: (enabled: boolean) => void;
+  onDeveloperModeChange?: (_enabled: boolean) => void;
 };
 
 const MAX_RESULTS = 8;

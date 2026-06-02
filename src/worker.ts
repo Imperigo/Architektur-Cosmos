@@ -4,7 +4,7 @@ import rulesData from '../data/brain-rules.json';
 import type { Entry, EntryRelation } from '../lib/types';
 
 type AssetsBinding = {
-  fetch(request: Request): Promise<Response>;
+  fetch(_request: Request): Promise<Response>;
 };
 
 type Env = {

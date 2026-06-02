@@ -312,7 +312,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     frame: null as number | null,
     timeout: null as number | null
   });
-  const nudgeTravelRef = useRef<(delta: number) => void>(() => undefined);
+  const nudgeTravelRef = useRef<(_delta: number) => void>(() => undefined);
   const visualZoomRef = useRef({
     currentZoom: 1,
     targetZoom: 1,
@@ -1946,8 +1946,8 @@ function FilterAccess({
   showRelations: boolean;
   activeTagLayer: ActiveTagLayer;
   activeSourceLens: SourceLens;
-  onSelectTagLayer: (layerId: TagLayerId | null) => void;
-  onSelectSourceLens: (lensId: SourceLensId) => void;
+  onSelectTagLayer: (_layerId: TagLayerId | null) => void;
+  onSelectSourceLens: (_lensId: SourceLensId) => void;
   onReset: () => void;
   onToggleRelations: () => void;
 }) {
@@ -2076,7 +2076,7 @@ function MobileAtlasHud({
   onZoomIn: () => void;
   onZoomOut: () => void;
   onResetZoom: () => void;
-  onSelectTagLayer: (layerId: TagLayerId | null) => void;
+  onSelectTagLayer: (_layerId: TagLayerId | null) => void;
   onToggleRelations: () => void;
 }) {
   const span = dominantSpanForYear(currentYear);
@@ -2575,7 +2575,7 @@ function moduleGateCountLabel(moduleId: KosmoModuleId) {
   return `${tool.gates.length} Gates`;
 }
 
-function OrbitRoleStatePanel({ selectedRoleId, onSelectRole }: { selectedRoleId: string; onSelectRole: (roleId: string) => void }) {
+function OrbitRoleStatePanel({ selectedRoleId, onSelectRole }: { selectedRoleId: string; onSelectRole: (_roleId: string) => void }) {
   const activeRole = orbitWorkspacePreview.roles.find((role) => role.id === orbitRoleStatePreview.session.active_role_id);
   const selectedRole = orbitWorkspacePreview.roles.find((role) => role.id === selectedRoleId) ?? activeRole;
   const availableRoleIds = new Set(orbitRoleStatePreview.role_preview.available_role_ids);
@@ -2668,7 +2668,6 @@ function KosmoAssetWorkspace({ onReturnToHub }: { onReturnToHub: () => void }) {
   ] satisfies Array<{ id: AssetFamilyFilter; label: string; description: string }>;
   const filteredAssets = activeFamily === 'all' ? assets : assets.filter((asset) => assetFamily(asset) === activeFamily);
   const selectedAsset = filteredAssets.find((asset) => asset.id === selectedAssetId) ?? filteredAssets[0] ?? assets[0];
-  const formats = [...new Set(assets.flatMap((asset) => asset.formats.map((format) => format.format)))];
   const exportTargets = [...new Set(assets.flatMap((asset) => asset.export_targets))];
   const existingFormats = assets.reduce((total, asset) => total + asset.formats.filter((format) => format.status === 'exists').length, 0);
   const plannedFormats = assets.reduce((total, asset) => total + asset.formats.filter((format) => format.status === 'planned').length, 0);
@@ -4038,11 +4037,11 @@ function DatabaseArchivePanel({
   researchSeed: ResearchSeed;
   imageIdentify: ImageIdentifyState;
   developerMode: boolean;
-  onEntwurfChange: (draft: EntryEntwurf) => void;
-  onIntakeFilesChange: (files: IntakeFile[]) => void;
-  onResearchSeedChange: (seed: ResearchSeed) => void;
-  onImageIdentifyChange: (state: ImageIdentifyState) => void;
-  onCreateLocalEntry: (draft: EntryEntwurf) => void;
+  onEntwurfChange: (_draft: EntryEntwurf) => void;
+  onIntakeFilesChange: (_files: IntakeFile[]) => void;
+  onResearchSeedChange: (_seed: ResearchSeed) => void;
+  onImageIdentifyChange: (_state: ImageIdentifyState) => void;
+  onCreateLocalEntry: (_draft: EntryEntwurf) => void;
   onDismiss: () => void;
   onReturnToHub: () => void;
 }) {
@@ -4830,8 +4829,8 @@ function DatabaseBookLibraryView({
 }: {
   intakeStats: ReturnType<typeof summarizeIntakeFiles>;
   intakeFiles: IntakeFile[];
-  onDrop: (event: DragEvent<HTMLDivElement>) => void;
-  appendFiles: (files: FileList | File[]) => void;
+  onDrop: (_event: DragEvent<HTMLDivElement>) => void;
+  appendFiles: (_files: FileList | File[]) => void;
 }) {
   const bookReady = intakeStats.book + intakeStats.pdf + intakeStats.image > 0;
   const detectedBookFiles = intakeFiles.filter((file) => file.kind === 'book' || file.kind === 'pdf' || file.kind === 'image');
@@ -4945,7 +4944,7 @@ function DatabaseTabGroup({
   title: string;
   tabs: Array<{ id: DatabaseTab; label: string; hint: string }>;
   activeTab: DatabaseTab;
-  onSelect: (tab: DatabaseTab) => void;
+  onSelect: (_tab: DatabaseTab) => void;
 }) {
   return (
     <div>
@@ -5276,7 +5275,7 @@ const entryTypeOptions: Array<{ value: Entry['entry_type']; label: string }> = [
   { value: 'event', label: 'Ereignis' }
 ];
 
-function DraftInput({ label, value, onChange }: { label: string; value: string; onChange: (value: string) => void }) {
+function DraftInput({ label, value, onChange }: { label: string; value: string; onChange: (_value: string) => void }) {
   return (
     <label className="block text-[9px] uppercase tracking-[0.16em] text-[#b8b8b2]">
       {label}
@@ -5289,7 +5288,7 @@ function DraftInput({ label, value, onChange }: { label: string; value: string; 
   );
 }
 
-function DraftSelect({ label, value, options, onChange }: { label: string; value: string; options: Array<{ value: string; label: string }>; onChange: (value: string) => void }) {
+function DraftSelect({ label, value, options, onChange }: { label: string; value: string; options: Array<{ value: string; label: string }>; onChange: (_value: string) => void }) {
   return (
     <label className="block text-[9px] uppercase tracking-[0.16em] text-[#b8b8b2]">
       {label}
@@ -5567,7 +5566,7 @@ function stripFileExtension(value: string) {
     .trim();
 }
 
-function SnappedEntryOverlay({ entry, onDismiss, onSelectFilter }: { entry: Entry; onDismiss: () => void; onSelectFilter: (filter: ProjectDetailFilter) => void }) {
+function SnappedEntryOverlay({ entry, onDismiss, onSelectFilter }: { entry: Entry; onDismiss: () => void; onSelectFilter: (_filter: ProjectDetailFilter) => void }) {
   const ui = useAtlasUiMetrics();
   const cardScale = ui.dossier.cardScale;
   const cardWidth = 352 * cardScale;

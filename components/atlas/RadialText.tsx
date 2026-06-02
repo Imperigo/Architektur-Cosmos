@@ -17,7 +17,7 @@ type RadialLetterTextProps = {
   className?: string;
   inward?: boolean;
   fontStyle?: 'normal' | 'italic';
-  onClick?: (event: ReactMouseEvent<SVGElement>) => void;
+  onClick?: (_event: ReactMouseEvent<SVGElement>) => void;
 };
 
 export function RadialLetterText({

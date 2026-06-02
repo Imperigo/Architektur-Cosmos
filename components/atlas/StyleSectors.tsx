@@ -22,7 +22,7 @@ const sectorLabel: Record<StyleSector['id'], string> = {
   vernacular_architecture: 'VERNAKULÄR'
 };
 
-function StyleSectorsComponent({ state, isMoving = false, activeStyleLens = null, onSelectStyleLens }: { state: WormholeState; isMoving?: boolean; activeStyleLens?: StyleSector['id'] | null; onSelectStyleLens?: (styleId: StyleSector['id']) => void }) {
+function StyleSectorsComponent({ state, isMoving = false, activeStyleLens = null, onSelectStyleLens }: { state: WormholeState; isMoving?: boolean; activeStyleLens?: StyleSector['id'] | null; onSelectStyleLens?: (_styleId: StyleSector['id']) => void }) {
   const outerLabelOpacity = 0.64 + smoothstep(0.08, 0.42, state.timePosition) * 0.2;
   const frontDepth = tunnelFrontDepth(state);
   const labelDepth = frontDepth + 0.025;

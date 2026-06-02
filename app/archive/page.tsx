@@ -241,7 +241,7 @@ type ArchiveHealth = {
   metrics: ArchiveHealthMetric[];
 };
 
-function countBy<Key extends string>(items: Entry[], keyFn: (entry: Entry) => Key) {
+function countBy<Key extends string>(items: Entry[], keyFn: (_entry: Entry) => Key) {
   return items.reduce<Record<Key, number>>((accumulator, entry) => {
     const key = keyFn(entry);
     accumulator[key] = (accumulator[key] ?? 0) + 1;
