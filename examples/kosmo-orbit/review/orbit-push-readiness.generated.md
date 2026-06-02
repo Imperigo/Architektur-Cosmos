@@ -1,6 +1,6 @@
 # KosmoOrbit Push Readiness
 
-Generated: 2026-06-02T05:39:24.278Z
+Generated: 2026-06-02T05:41:27.442Z
 Status: `orbit_push_readiness_review_only`
 
 This is a local review-only push decision report. It does not push, deploy, upload, spend money or call external accounts.
@@ -9,15 +9,15 @@ This is a local review-only push decision report. It does not push, deploy, uplo
 
 - branch: `main`
 - remote: `origin/main`
-- ahead count: 96
+- ahead count: 98
 - worktree clean: yes
 
 ## Evidence
 
 | Report | Status | Checks |
 | --- | --- | --- |
-| `route_smoke` | `orbit_route_smoke_passed` | 179 / 179 |
-| `static_smoke` | `orbit_static_export_smoke_passed` | 65 / 65 |
+| `route_smoke` | `orbit_route_smoke_passed` | 180 / 180 |
+| `static_smoke` | `orbit_static_export_smoke_passed` | 66 / 66 |
 | `full_review` | `orbit_full_review_ready_for_review_mode` | - / - |
 | `atlas_static_smoke` | `atlas_static_export_smoke_passed` | 17 / 17 |
 
@@ -60,8 +60,8 @@ This is a local review-only push decision report. It does not push, deploy, uplo
 
 ## Latest Commits
 
+- `a7fc5ee Show push command evidence in launch brief`
+- `6abb944 Refresh strengthened KosmoOrbit push readiness`
 - `d0dd934 Strengthen KosmoOrbit push readiness checks`
 - `d188a69 Document KosmoOrbit office pilot batch`
 - `48b4524 Refresh KosmoOrbit office pilot readiness`
-- `fc0c2ca Add KosmoOrbit office pilot scene`
-- `fb943d1 Refresh KosmoOrbit push readiness report`
