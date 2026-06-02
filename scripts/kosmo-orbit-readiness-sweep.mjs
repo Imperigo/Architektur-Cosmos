@@ -3,6 +3,7 @@
 import { execFileSync } from 'node:child_process';
 
 const steps = [
+  ['kosmo:orbit-office-pilot-scene', 'Validate the local office pilot scene contract.'],
   ['kosmo:orbit-route-smoke', 'Refresh KosmoOrbit route smoke.'],
   ['kosmo:orbit-static-smoke', 'Refresh KosmoOrbit static export smoke.'],
   ['generated:cleanup', 'Remove timestamp-only generated report noise.'],

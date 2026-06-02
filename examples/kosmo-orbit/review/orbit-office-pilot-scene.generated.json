@@ -1,0 +1,88 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-02T05:57:08.662Z",
+  "generator": "kosmo-orbit-office-pilot-scene-check",
+  "status": "orbit_office_pilot_scene_ready",
+  "scene_file": "examples/kosmo-orbit/pilot/orbit-office-pilot-scene.demo.json",
+  "summary": {
+    "check_count": 13,
+    "passed_checks": 13,
+    "failed_checks": 0,
+    "step_count": 4,
+    "role_count": 4,
+    "evidence_question_count": 4
+  },
+  "checks": [
+    {
+      "id": "scene_file_exists",
+      "label": "Office pilot scene JSON exists.",
+      "status": "passed"
+    },
+    {
+      "id": "json_parsed",
+      "label": "Office pilot scene JSON parsed successfully.",
+      "status": "passed"
+    },
+    {
+      "id": "schema_version",
+      "label": "Office pilot scene uses schema version 0.1.",
+      "status": "passed"
+    },
+    {
+      "id": "local_review_only",
+      "label": "Office pilot scene stays local review only.",
+      "status": "passed"
+    },
+    {
+      "id": "tag_review_only",
+      "label": "Office pilot scene uses the review-only tag.",
+      "status": "passed"
+    },
+    {
+      "id": "safety_flags",
+      "label": "All required office pilot safety flags are true.",
+      "status": "passed"
+    },
+    {
+      "id": "steps_complete",
+      "label": "Office pilot scene has start, review, roles and decision steps.",
+      "status": "passed"
+    },
+    {
+      "id": "roles_complete",
+      "label": "Office pilot scene covers at least four office roles.",
+      "status": "passed"
+    },
+    {
+      "id": "evidence_questions_complete",
+      "label": "Office pilot scene keeps at least four evidence questions.",
+      "status": "passed"
+    },
+    {
+      "id": "decision_not_run_yet",
+      "label": "Office pilot scene does not claim a completed pilot.",
+      "status": "passed"
+    },
+    {
+      "id": "no_human_reviewer",
+      "label": "Demo office pilot scene contains no human reviewer name.",
+      "status": "passed"
+    },
+    {
+      "id": "allowed_outcomes",
+      "label": "Office pilot scene has all allowed human outcomes.",
+      "status": "passed"
+    },
+    {
+      "id": "no_failures",
+      "label": "No blocking validation failures were collected.",
+      "status": "passed"
+    }
+  ],
+  "failures": [],
+  "next_actions": [
+    "Use the scene as a local explanation contract for the first office pilot.",
+    "Keep the decision not_run_yet until a human pilot is actually run.",
+    "Do not claim savings, generation or certification from this template."
+  ]
+}
