@@ -137,12 +137,28 @@ Diese Routine laeuft lokal und review-only:
 Zweck: die richtige Reihenfolge fuer lokale Orbit-Readiness automatisieren,
 ohne Push, Deploy, Upload, externe Accounts oder Kosten auszuloesen.
 
+### Full Review und IFC-Kontext
+
+`npm run kosmo:orbit-full-review` wurde auf 24 Schritte erweitert.
+
+Neu enthalten:
+
+- `npm run kosmo:orbit-office-pilot-scene` als eigener Full-Review-Schritt;
+- Full Review Summary mit Office-Pilot-Scene-Status, 13/13 Checks, 4 Steps
+  und 4 Rollen;
+- aktualisierte Design-Kontext-Artefakte fuer das Demo-Projekt mit IFC-Bounds
+  und IFC-Rollenhinweisen.
+
+Wichtige Grenze: Die IFC-Erkennung bleibt Kontext- und Bounds-Evidenz. Sie
+ist kein BIM-Import, kein editierbares Modell und kein Design-Generation-Go.
+
 ## Lokale Nachweise
 
 Heute gruen geprueft:
 
 - `npm run kosmo:orbit-route-smoke` - 183/183 passed
 - `npm run kosmo:orbit-static-smoke` - 65/65 passed
+- `npm run kosmo:orbit-full-review` - 24/24 passed
 - `npm run atlas:static-smoke` - 17/17 passed
 - `npm run build` - static export passed
 - `npx tsc --noEmit --pretty false --incremental false` - passed
