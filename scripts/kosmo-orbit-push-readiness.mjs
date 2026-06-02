@@ -42,7 +42,8 @@ async function main() {
 
 function buildReport() {
   const branch = git(['branch', '--show-current']).trim();
-  const statusShort = git(['status', '--short']).trim();
+  const statusShortRaw = git(['status', '--short']).trim();
+  const statusShort = filterOwnOutputStatus(statusShortRaw);
   const aheadCount = Number(git(['rev-list', '--count', 'origin/main..HEAD']).trim() || 0);
   const hasUnpushedCommits = aheadCount > 0;
   const reports = Object.fromEntries(
@@ -161,6 +162,19 @@ function commandCheck(id, label, command, commandArgs) {
 function commandLabel(command) {
   if (command.startsWith(root)) return relative(root, command);
   return command;
+}
+
+function filterOwnOutputStatus(statusShort) {
+  if (!statusShort) return '';
+  const outputPaths = new Set([relative(root, outputJsonPath), relative(root, outputMdPath)]);
+  return statusShort
+    .split('\n')
+    .filter((line) => {
+      const path = line.slice(3).trim();
+      return !outputPaths.has(path);
+    })
+    .join('\n')
+    .trim();
 }
 
 function outputExcerpt(value) {
