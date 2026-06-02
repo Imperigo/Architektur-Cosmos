@@ -107,3 +107,31 @@ Vor einem Push sollte Owner bewusst entscheiden:
 Empfehlung: vor einem echten Livegang Owner-Go einholen, pushen und danach
 Live-Smoke mit Cache-Buster pruefen. Fuer eine interne lokale Demo ist der
 aktuelle Stand vorfuehrbar.
+
+## Addendum 2026-06-02
+
+Nach dem autonomen Startbatch am 2026-06-02 ist `main` lokal 83 Commits vor
+`origin/main`. Neu hinzugekommen:
+
+- Launch Decision Brief in `/orbit`: lokaler Gruenstand, Produktgrenze,
+  Owner-Entscheid und Pilot-Evidenz sind als menschliche Entscheidung sichtbar.
+- KosmoDesign Pilotpfad in `/orbit`: Review-Pilot vor jeder Generierung,
+  keine Geometrie-Writes, keine Public Claims ohne Evidenz.
+
+Aktuelle lokale Nachweise:
+
+- `npm run kosmo:orbit-route-smoke` - 173/173 passed
+- `npm run kosmo:orbit-static-smoke` - 61/61 passed
+- `npm run atlas:static-smoke` - 17/17 passed
+- `npm run build` - static export passed
+- `npx tsc --noEmit --pretty false --incremental false` - passed
+- `npm run lint` - 0 Errors, 25 bekannte Bestandswarnungen
+- `npm run brain:doctor` - 17/17 passed
+
+Browser-Smoke:
+
+- `/orbit/#launch-brief` sichtbar, CSS geladen, 0 horizontaler Overflow.
+- `/orbit/?v=design-pilot-20260602#design-pilot` sichtbar, CSS geladen,
+  0 horizontaler Overflow.
+
+Push bleibt blockiert, bis Andrin explizit Push/Live/Deploy freigibt.
