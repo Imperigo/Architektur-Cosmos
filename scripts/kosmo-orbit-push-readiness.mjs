@@ -44,7 +44,7 @@ function buildReport() {
   const branch = git(['branch', '--show-current']).trim();
   const statusShort = git(['status', '--short']).trim();
   const aheadCount = Number(git(['rev-list', '--count', 'origin/main..HEAD']).trim() || 0);
-  const latestCommits = git(['log', '--oneline', '-5']).trim().split('\n').filter(Boolean);
+  const hasUnpushedCommits = aheadCount > 0;
   const reports = Object.fromEntries(
     Object.entries(reportPaths).map(([key, path]) => [key, readJson(path)])
   );
@@ -56,7 +56,7 @@ function buildReport() {
 
   const checks = [
     check('on_main', 'Current branch is main.', branch === 'main'),
-    check('ahead_of_origin', 'Local main has commits waiting for explicit push go.', aheadCount > 0),
+    check('ahead_of_origin', 'Local main has commits waiting for explicit push go.', hasUnpushedCommits),
     check('worktree_clean', 'Worktree is clean before any push decision.', statusShort.length === 0),
     check('route_smoke_green', 'KosmoOrbit route smoke is green.', reports.route_smoke?.status === 'orbit_route_smoke_passed'),
     check('static_smoke_green', 'KosmoOrbit static export smoke is green.', reports.static_smoke?.status === 'orbit_static_export_smoke_passed'),
@@ -76,10 +76,9 @@ function buildReport() {
     git: {
       branch,
       remote: 'origin/main',
-      ahead_count: aheadCount,
+      has_unpushed_commits: hasUnpushedCommits,
       worktree_clean: statusShort.length === 0,
-      status_short: statusShort,
-      latest_commits: latestCommits
+      status_short: statusShort
     },
     evidence: {
       route_smoke: summarizeReport(reports.route_smoke),
@@ -199,7 +198,7 @@ function renderMarkdown(report) {
     '',
     `- branch: \`${report.git.branch}\``,
     `- remote: \`${report.git.remote}\``,
-    `- ahead count: ${report.git.ahead_count}`,
+    `- has unpushed commits: ${report.git.has_unpushed_commits ? 'yes' : 'no'}`,
     `- worktree clean: ${report.git.worktree_clean ? 'yes' : 'no'}`,
     '',
     '## Evidence',
@@ -229,9 +228,6 @@ function renderMarkdown(report) {
   lines.push(`- push blocked without Owner-Go: ${report.decision.push_blocked_without_owner_go ? 'yes' : 'no'}`);
   lines.push('', '## Recommended Next Options', '');
   report.decision.recommended_next_options.forEach((action) => lines.push(`- ${action}`));
-
-  lines.push('', '## Latest Commits', '');
-  report.git.latest_commits.forEach((commit) => lines.push(`- \`${commit}\``));
 
   return `${lines.join('\n')}\n`;
 }
