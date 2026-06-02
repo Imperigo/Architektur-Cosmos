@@ -66,6 +66,7 @@ function buildReport(html) {
     { id: 'commands', label: 'Command-Vertrag' },
     { id: 'audit', label: 'Audit-Trail-Vertrag' },
     { id: 'evidenz', label: 'Pruefevidenz' },
+    { id: 'workstation-profile', label: 'Workstation Profile Contract' },
     { id: 'ausbildung', label: 'Ausbildungsmodus' },
     { id: 'rechte', label: 'Rechte-Matrix' },
     { id: 'rollen', label: 'Rollenumschaltung Preview' }
@@ -75,7 +76,7 @@ function buildReport(html) {
     label: section.label,
     index: normalized.indexOf(`id="${section.id}"`)
   }));
-  const navLabels = ['Autonomie', 'Routine', '3-Minuten', 'Workflow', 'Pilot', 'Pilotplan', 'Session', 'Fortschritt', 'Vision', 'Demo', 'Live-Gate', 'Projektpaket', 'Handoff', 'Decision', 'Runtime', 'Installation', 'Health', 'Risiken', 'Commands', 'Audit', 'Evidenz', 'Ausbildung', 'Rechte', 'Rollen', 'Guardrails'];
+  const navLabels = ['Autonomie', 'Routine', '3-Minuten', 'Workflow', 'Pilot', 'Pilotplan', 'Session', 'Fortschritt', 'Vision', 'Demo', 'Live-Gate', 'Projektpaket', 'Handoff', 'Decision', 'Runtime', 'Installation', 'Health', 'Risiken', 'Commands', 'Audit', 'Evidenz', 'Profile', 'Ausbildung', 'Rechte', 'Rollen', 'Guardrails'];
   const forbiddenArtifacts = ['[object Object]', 'NaN%', 'null null'];
   const checks = [
     check('html_exists', 'Built /orbit HTML exists.', existsSync(htmlPath)),
@@ -105,6 +106,8 @@ function buildReport(html) {
     check('risk_register_visible', 'Risk register is visible in the export.', normalized.includes('Risiko-Register') && normalized.includes('human-approval-risk-register')),
     check('command_contract_visible', 'Command contract is visible in the export.', normalized.includes('Command-Vertrag') && normalized.includes('static-command-contract')),
     check('audit_trail_visible', 'Audit trail is visible in the export.', normalized.includes('Audit-Trail-Vertrag') && normalized.includes('static-audit-trail-contract')),
+    check('workstation_profile_visible', 'Workstation profile contract is visible in the export.', normalized.includes('Workstation Profile Contract') && normalized.includes('Wie KosmoOrbit je Arbeitsplatz startet')),
+    check('workstation_profile_safe', 'Workstation profile keeps accounts, user writes, persistence and auth runtime blocked.', normalized.includes('keine Accounts') && normalized.includes('keine User-Writes') && normalized.includes('keine Persistenz') && normalized.includes('keine echte Auth-Runtime')),
     check('learning_mode_visible', 'Education mode is visible in the export.', normalized.includes('Ausbildungsmodus') && normalized.includes('Kosmo als sicherer Lernbegleiter')),
     check('learning_mode_safety_visible', 'Education mode safety line is visible in the export.', normalized.includes('ohne Accounts') && normalized.includes('Projekt-Writes') && normalized.includes('Public-Publish')),
     check('permission_boundary_visible', 'Role permission boundary is visible in the export.', normalized.includes('Rechte-Matrix') && normalized.includes('generation bleibt gesperrt')),

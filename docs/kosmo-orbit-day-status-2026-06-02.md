@@ -278,6 +278,8 @@ Heute gruen geprueft:
 - `npm run kosmo:orbit-tool-registry` - 13/13 passed
 - `npm run kosmo:orbit-runtime-adapter` - 16/16 passed
 - `npm run kosmo:orbit-workstation-profile` - 16/16 passed
+- `npm run kosmo:orbit-demo-audit` - 35/35 passed
+- `npm run kosmo:orbit-responsive-audit` - 28/28 passed
 - `npm run kosmo:orbit-push-readiness` - 12/12 passed
 - `npm run kosmo:orbit-readiness-sweep` - 6/6 passed
 - `npm run generated:cleanup` - Zeitstempelrauschen entfernt, semantische

@@ -1,134 +1,139 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T19:21:33.231Z",
+  "generated_at": "2026-06-02T13:08:58.160Z",
   "generator": "kosmo-orbit-demo-audit",
   "status": "orbit_demo_audit_passed",
   "html_file": "out/orbit/index.html",
   "summary": {
-    "check_count": 33,
-    "passed_checks": 33,
+    "check_count": 35,
+    "passed_checks": 35,
     "failed_checks": 0
   },
   "demo_order": [
     {
       "id": "autonomie",
       "label": "Autonomie-Status",
-      "index": 16203
+      "index": 25851
     },
     {
       "id": "routine",
       "label": "Buero-Routine",
-      "index": 18679
+      "index": 28327
     },
     {
       "id": "presenter",
       "label": "3-Minuten-Erklaerung",
-      "index": 31491
+      "index": 58025
     },
     {
       "id": "workflow-delta",
       "label": "Workflow-Delta",
-      "index": 34508
+      "index": 61042
     },
     {
       "id": "pilotmessung",
       "label": "Pilotmessung",
-      "index": 40230
+      "index": 66764
     },
     {
       "id": "pilotplan",
       "label": "Pilot-Runbook",
-      "index": 61182
+      "index": 87716
     },
     {
       "id": "pilot-session",
       "label": "Pilot-Session Template",
-      "index": 68800
+      "index": 95334
     },
     {
       "id": "fortschritt",
       "label": "Projektfortschritt",
-      "index": 74239
+      "index": 100773
     },
     {
       "id": "vision",
       "label": "Vision Bridge",
-      "index": 80984
+      "index": 107518
     },
     {
       "id": "demo-ready",
       "label": "Demo-Bereitschaft",
-      "index": 85324
+      "index": 111858
     },
     {
       "id": "live-gate",
       "label": "Live-Gate",
-      "index": 88068
+      "index": 114613
     },
     {
       "id": "projektpaket",
       "label": "Projektpaket Tagesansicht",
-      "index": 91637
+      "index": 133935
     },
     {
       "id": "design-handoff",
       "label": "KosmoDesign Handoff",
-      "index": 101229
+      "index": 143527
     },
     {
       "id": "entscheidung",
       "label": "Review Decision Draft",
-      "index": 115360
+      "index": 163385
     },
     {
       "id": "runtime-contract",
       "label": "Runtime-Vertrag",
-      "index": 122669
+      "index": 170694
     },
     {
       "id": "installation",
       "label": "Buero-Installation",
-      "index": 128665
+      "index": 194855
     },
     {
       "id": "health",
       "label": "Health Readiness",
-      "index": 136404
+      "index": 202594
     },
     {
       "id": "risiken",
       "label": "Risiko-Register",
-      "index": 143261
+      "index": 209451
     },
     {
       "id": "commands",
       "label": "Command-Vertrag",
-      "index": 150550
+      "index": 216740
     },
     {
       "id": "audit",
       "label": "Audit-Trail-Vertrag",
-      "index": 159913
+      "index": 226103
     },
     {
       "id": "evidenz",
       "label": "Pruefevidenz",
-      "index": 167427
+      "index": 233617
+    },
+    {
+      "id": "workstation-profile",
+      "label": "Workstation Profile Contract",
+      "index": 241876
     },
     {
       "id": "ausbildung",
       "label": "Ausbildungsmodus",
-      "index": 175686
+      "index": 263883
     },
     {
       "id": "rechte",
       "label": "Rechte-Matrix",
-      "index": 180996
+      "index": 269193
     },
     {
       "id": "rollen",
       "label": "Rollenumschaltung Preview",
-      "index": 198751
+      "index": 286948
     }
   ],
   "checks": [
@@ -265,6 +270,16 @@
     {
       "id": "audit_trail_visible",
       "label": "Audit trail is visible in the export.",
+      "status": "passed"
+    },
+    {
+      "id": "workstation_profile_visible",
+      "label": "Workstation profile contract is visible in the export.",
+      "status": "passed"
+    },
+    {
+      "id": "workstation_profile_safe",
+      "label": "Workstation profile keeps accounts, user writes, persistence and auth runtime blocked.",
       "status": "passed"
     },
     {

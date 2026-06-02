@@ -1,16 +1,16 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T14:22:08.206Z",
+  "generated_at": "2026-06-02T13:08:58.183Z",
   "generator": "kosmo-orbit-responsive-audit",
   "status": "orbit_responsive_audit_passed",
   "source_dir": "app/orbit",
   "summary": {
-    "check_count": 27,
-    "passed_checks": 27,
+    "check_count": 28,
+    "passed_checks": 28,
     "failed_checks": 0,
-    "min_width_guard_count": 88,
-    "flex_wrap_count": 64,
-    "responsive_grid_count": 68
+    "min_width_guard_count": 90,
+    "flex_wrap_count": 69,
+    "responsive_grid_count": 72
   },
   "checks": [
     {
@@ -91,6 +91,11 @@
     {
       "id": "runtime_contract_responsive",
       "label": "Runtime contract uses responsive cards for the runtime stages.",
+      "status": "passed"
+    },
+    {
+      "id": "workstation_profile_responsive",
+      "label": "Workstation profile contract uses responsive cards for profile and escalation layouts.",
       "status": "passed"
     },
     {
