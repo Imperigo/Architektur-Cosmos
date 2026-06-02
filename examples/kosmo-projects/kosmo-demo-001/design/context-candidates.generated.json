@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-25T19:00:35.323192+02:00",
+  "generated_at": "2026-06-02T08:00:41.149576+02:00",
   "generator": "kosmo_design.load_project_package",
   "project_id": "kosmo-demo-001",
   "status": "generated_needs_review",
@@ -8,10 +8,10 @@
   "source_stage": "phase_0_context",
   "note": "Heuristic context candidates derived from Kosmo Prepare context. These are review prompts, not accepted design facts.",
   "summary": {
-    "candidate_count": 2,
-    "review_required_count": 2,
-    "design_readiness": "manual_seed_only",
-    "suggested_next_step": "add_project_sources"
+    "candidate_count": 7,
+    "review_required_count": 7,
+    "design_readiness": "context_ready_needs_human_layer_review",
+    "suggested_next_step": "classify_layers_before_design_generation"
   },
   "candidates": [
     {
@@ -52,6 +52,131 @@
       },
       "warnings": [
         "Perimeter is a context frame, not a verified parcel boundary."
+      ]
+    },
+    {
+      "id": "ifc-bounds",
+      "label": "IFC context bounds",
+      "kind": "ifc_bounds",
+      "source": "ifc_context",
+      "confidence": "medium",
+      "status": "needs_human_review",
+      "review_required": true,
+      "suggested_use": "context_extent_check",
+      "evidence": {
+        "object": "Kosmo_Context_IFC_Bounds_kosmo-demo-001",
+        "bounds": {
+          "min": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "max": [
+            10.0,
+            8.0,
+            3.35
+          ]
+        },
+        "point_count": 17
+      },
+      "warnings": [
+        "Bounds are derived from IFC points and are not an editable BIM import."
+      ]
+    },
+    {
+      "id": "ifc-role-1-site_project_hierarchy",
+      "label": "IFC role: site_project_hierarchy",
+      "kind": "ifc_role",
+      "source": "ifc_context",
+      "confidence": "medium",
+      "status": "needs_human_review",
+      "review_required": true,
+      "suggested_use": "ifc_pipeline_candidate",
+      "evidence": {
+        "evidence": "IFCPROJECT / IFCSITE / IFCBUILDING hierarchy present",
+        "entity_groups": {
+          "project_structure": 4,
+          "mesh_geometry": 57,
+          "product_shapes": 4,
+          "semantic_building_elements": 2,
+          "property_data": 4
+        },
+        "model_kind": "semantic_ifc_context"
+      },
+      "warnings": [
+        "IFC is currently represented as bounds/statistics only; use Bonsai/IfcOpenShell import before BIM claims."
+      ]
+    },
+    {
+      "id": "ifc-role-2-context_mesh_bounds",
+      "label": "IFC role: context_mesh_bounds",
+      "kind": "ifc_role",
+      "source": "ifc_context",
+      "confidence": "low",
+      "status": "needs_human_review",
+      "review_required": true,
+      "suggested_use": "ifc_pipeline_candidate",
+      "evidence": {
+        "evidence": "57 mesh-related IFC entities",
+        "entity_groups": {
+          "project_structure": 4,
+          "mesh_geometry": 57,
+          "product_shapes": 4,
+          "semantic_building_elements": 2,
+          "property_data": 4
+        },
+        "model_kind": "semantic_ifc_context"
+      },
+      "warnings": [
+        "IFC is currently represented as bounds/statistics only; use Bonsai/IfcOpenShell import before BIM claims."
+      ]
+    },
+    {
+      "id": "ifc-role-3-semantic_building_elements",
+      "label": "IFC role: semantic_building_elements",
+      "kind": "ifc_role",
+      "source": "ifc_context",
+      "confidence": "medium",
+      "status": "needs_human_review",
+      "review_required": true,
+      "suggested_use": "ifc_pipeline_candidate",
+      "evidence": {
+        "evidence": "2 semantic building element entities",
+        "entity_groups": {
+          "project_structure": 4,
+          "mesh_geometry": 57,
+          "product_shapes": 4,
+          "semantic_building_elements": 2,
+          "property_data": 4
+        },
+        "model_kind": "semantic_ifc_context"
+      },
+      "warnings": [
+        "IFC is currently represented as bounds/statistics only; use Bonsai/IfcOpenShell import before BIM claims."
+      ]
+    },
+    {
+      "id": "ifc-role-4-source_metadata",
+      "label": "IFC role: source_metadata",
+      "kind": "ifc_role",
+      "source": "ifc_context",
+      "confidence": "medium",
+      "status": "needs_human_review",
+      "review_required": true,
+      "suggested_use": "ifc_pipeline_candidate",
+      "evidence": {
+        "evidence": "4 property entities",
+        "entity_groups": {
+          "project_structure": 4,
+          "mesh_geometry": 57,
+          "product_shapes": 4,
+          "semantic_building_elements": 2,
+          "property_data": 4
+        },
+        "model_kind": "semantic_ifc_context"
+      },
+      "warnings": [
+        "IFC is currently represented as bounds/statistics only; use Bonsai/IfcOpenShell import before BIM claims."
       ]
     }
   ]

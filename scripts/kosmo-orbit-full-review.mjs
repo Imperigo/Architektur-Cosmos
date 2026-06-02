@@ -245,6 +245,16 @@ const steps = [
     report: resolve(workspaceRoot, 'review/orbit-office-routine.generated.json')
   },
   {
+    id: 'office_pilot_scene',
+    label: 'Orbit Office Pilot Scene',
+    script: 'kosmo:orbit-office-pilot-scene',
+    args: [
+      '--scene',
+      'examples/kosmo-orbit/pilot/orbit-office-pilot-scene.demo.json'
+    ],
+    report: resolve(workspaceRoot, 'review/orbit-office-pilot-scene.generated.json')
+  },
+  {
     id: 'pilot_session',
     label: 'Orbit Pilot Session Template',
     script: 'kosmo:orbit-pilot-session',
@@ -365,6 +375,7 @@ function buildReport(stepRows) {
   const commandContract = readOptionalJson(resolve(workspaceRoot, 'review/orbit-command-contract.generated.json'));
   const auditTrail = readOptionalJson(resolve(workspaceRoot, 'review/orbit-audit-trail.generated.json'));
   const officeRoutine = readOptionalJson(resolve(workspaceRoot, 'review/orbit-office-routine.generated.json'));
+  const officePilotScene = readOptionalJson(resolve(workspaceRoot, 'review/orbit-office-pilot-scene.generated.json'));
   const pilotSession = readOptionalJson(resolve(workspaceRoot, 'review/orbit-pilot-session.generated.json'));
   const pilotMeasurementKit = readOptionalJson(resolve(workspaceRoot, 'review/orbit-pilot-measurement-kit.generated.json'));
   const pilotResultDraft = readOptionalJson(resolve(workspaceRoot, 'review/orbit-pilot-result-draft.generated.json'));
@@ -439,6 +450,11 @@ function buildReport(stepRows) {
       office_routine_check_count: officeRoutine?.summary?.check_count ?? null,
       office_routine_count: officeRoutine?.summary?.routine_count ?? null,
       office_routine_blocked_count: officeRoutine?.summary?.blocked_action_count ?? null,
+      office_pilot_scene_status: officePilotScene?.status || null,
+      office_pilot_scene_passed_checks: officePilotScene?.summary?.passed_checks ?? null,
+      office_pilot_scene_check_count: officePilotScene?.summary?.check_count ?? null,
+      office_pilot_scene_steps: officePilotScene?.summary?.step_count ?? null,
+      office_pilot_scene_roles: officePilotScene?.summary?.role_count ?? null,
       pilot_session_status: pilotSession?.status || null,
       pilot_session_passed_checks: pilotSession?.summary?.passed_checks ?? null,
       pilot_session_check_count: pilotSession?.summary?.check_count ?? null,
@@ -495,6 +511,7 @@ function buildReport(stepRows) {
       command_contract_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-command-contract.generated.md')),
       audit_trail_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-audit-trail.generated.md')),
       office_routine_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-office-routine.generated.md')),
+      office_pilot_scene_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-office-pilot-scene.generated.md')),
       pilot_session_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-pilot-session.generated.md')),
       pilot_measurement_kit_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-pilot-measurement-kit.generated.md')),
       pilot_result_draft_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-pilot-result-draft.generated.md')),
@@ -511,11 +528,11 @@ function buildReport(stepRows) {
       role_shell_smoke_markdown: relative(root, resolve(projectRoot, 'orbit/role-shell-smoke.generated.md'))
     },
     steps: stepRows,
-    next_actions: nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHandoff, appRouteSpec, healthReadiness, commandContract, auditTrail, pilotSession, pilotMeasurementKit, pilotResultDraft, orbitRouteSmoke, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke, roleShellPrototype, roleShellSmoke })
+    next_actions: nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHandoff, appRouteSpec, healthReadiness, commandContract, auditTrail, officePilotScene, pilotSession, pilotMeasurementKit, pilotResultDraft, orbitRouteSmoke, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke, roleShellPrototype, roleShellSmoke })
   };
 }
 
-function nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHandoff, appRouteSpec, healthReadiness, commandContract, auditTrail, pilotSession, pilotMeasurementKit, pilotResultDraft, orbitRouteSmoke, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke, roleShellPrototype, roleShellSmoke }) {
+function nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHandoff, appRouteSpec, healthReadiness, commandContract, auditTrail, officePilotScene, pilotSession, pilotMeasurementKit, pilotResultDraft, orbitRouteSmoke, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke, roleShellPrototype, roleShellSmoke }) {
   const actions = [];
   if (failedSteps.length) {
     failedSteps.forEach((step) => actions.push(`Review failed step: ${step.label}`));
@@ -544,6 +561,9 @@ function nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHan
   }
   if (auditTrail?.status === 'orbit_audit_trail_contract_passed') {
     actions.push('Keep the Audit Trail static until persistence, retention and privacy rules are approved.');
+  }
+  if (officePilotScene?.status === 'orbit_office_pilot_scene_ready') {
+    actions.push('Use the office pilot scene contract to explain the first local office pilot without claiming completed results.');
   }
   if (pilotSession?.status === 'orbit_pilot_session_template_ready') {
     actions.push('Use the pilot session template for a real office pilot only after anonymising project inputs.');
@@ -628,6 +648,10 @@ function renderMarkdown(report) {
     `- office routine checks: ${report.summary.office_routine_passed_checks}/${report.summary.office_routine_check_count}`,
     `- office routine moments: ${report.summary.office_routine_count}`,
     `- office routine blocked actions: ${report.summary.office_routine_blocked_count}`,
+    `- office pilot scene: \`${report.summary.office_pilot_scene_status}\``,
+    `- office pilot scene checks: ${report.summary.office_pilot_scene_passed_checks}/${report.summary.office_pilot_scene_check_count}`,
+    `- office pilot scene steps: ${report.summary.office_pilot_scene_steps}`,
+    `- office pilot scene roles: ${report.summary.office_pilot_scene_roles}`,
     `- pilot session: \`${report.summary.pilot_session_status}\``,
     `- pilot session checks: ${report.summary.pilot_session_passed_checks}/${report.summary.pilot_session_check_count}`,
     `- pilot session measurement points: ${report.summary.pilot_session_measurement_points}`,

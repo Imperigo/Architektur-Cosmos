@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-02T05:51:18.489Z",
+  "generated_at": "2026-06-02T06:00:31.417Z",
   "generator": "kosmo-orbit-full-review",
   "workspace_path": "examples/kosmo-orbit/workspace.demo.json",
   "project_root": "examples/kosmo-projects/kosmo-demo-001",
@@ -15,8 +15,8 @@
     "no_geometry_generation": true
   },
   "summary": {
-    "step_count": 23,
-    "passed_steps": 23,
+    "step_count": 24,
+    "passed_steps": 24,
     "failed_steps": 0,
     "role_state_status": "role_state_check_passed",
     "role_state_active_role": "owner_admin",
@@ -49,6 +49,11 @@
     "office_routine_check_count": 10,
     "office_routine_count": 6,
     "office_routine_blocked_count": 9,
+    "office_pilot_scene_status": "orbit_office_pilot_scene_ready",
+    "office_pilot_scene_passed_checks": 13,
+    "office_pilot_scene_check_count": 13,
+    "office_pilot_scene_steps": 4,
+    "office_pilot_scene_roles": 4,
     "pilot_session_status": "orbit_pilot_session_template_ready",
     "pilot_session_passed_checks": 17,
     "pilot_session_check_count": 17,
@@ -105,6 +110,7 @@
     "command_contract_markdown": "examples/kosmo-orbit/review/orbit-command-contract.generated.md",
     "audit_trail_markdown": "examples/kosmo-orbit/review/orbit-audit-trail.generated.md",
     "office_routine_markdown": "examples/kosmo-orbit/review/orbit-office-routine.generated.md",
+    "office_pilot_scene_markdown": "examples/kosmo-orbit/review/orbit-office-pilot-scene.generated.md",
     "pilot_session_markdown": "examples/kosmo-orbit/review/orbit-pilot-session.generated.md",
     "pilot_measurement_kit_markdown": "examples/kosmo-orbit/review/orbit-pilot-measurement-kit.generated.md",
     "pilot_result_draft_markdown": "examples/kosmo-orbit/review/orbit-pilot-result-draft.generated.md",
@@ -350,6 +356,18 @@
       "stderr_tail": ""
     },
     {
+      "id": "office_pilot_scene",
+      "label": "Orbit Office Pilot Scene",
+      "command": "npm run kosmo:orbit-office-pilot-scene -- --scene examples/kosmo-orbit/pilot/orbit-office-pilot-scene.demo.json",
+      "status": "passed",
+      "exit_code": 0,
+      "report_path": "examples/kosmo-orbit/review/orbit-office-pilot-scene.generated.json",
+      "report_exists": true,
+      "report_status": "orbit_office_pilot_scene_ready",
+      "stdout_tail": "> architecture-cosmos@0.1.0 kosmo:orbit-office-pilot-scene\n> node scripts/kosmo-orbit-office-pilot-scene-check.mjs --scene examples/kosmo-orbit/pilot/orbit-office-pilot-scene.demo.json\n\nKosmoOrbit office pilot scene check\nStatus: orbit_office_pilot_scene_ready\nChecks: 13/13\nWrote: examples/kosmo-orbit/review/orbit-office-pilot-scene.generated.md",
+      "stderr_tail": ""
+    },
+    {
       "id": "pilot_session",
       "label": "Orbit Pilot Session Template",
       "command": "npm run kosmo:orbit-pilot-session -- --session examples/kosmo-orbit/pilot/orbit-office-pilot-session.demo.json --schema schema/kosmo-orbit-pilot-session.schema.json",
@@ -407,6 +425,7 @@
     "Keep the Health Readiness contract read-only until a local runtime adapter is approved.",
     "Keep the Command Contract static until command schemas, logs and rollback behavior are approved.",
     "Keep the Audit Trail static until persistence, retention and privacy rules are approved.",
+    "Use the office pilot scene contract to explain the first local office pilot without claiming completed results.",
     "Use the pilot session template for a real office pilot only after anonymising project inputs.",
     "Use the pilot measurement kit to structure the first office pilot without claiming savings before human data exists.",
     "Use the pilot result draft only after a human office pilot creates evidence-backed observations.",

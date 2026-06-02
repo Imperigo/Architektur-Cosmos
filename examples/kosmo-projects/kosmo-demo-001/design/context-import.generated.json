@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-05-25T19:00:35.323750+02:00",
+  "generated_at": "2026-06-02T08:00:41.150812+02:00",
   "generator": "kosmo_design.load_project_package",
   "project_id": "kosmo-demo-001",
   "status": "generated_needs_review",
@@ -9,7 +9,7 @@
   "note": "Kosmo Prepare context import report. This is a source/context analysis, not a verified BIM model.",
   "context": {
     "collection": "Kosmo_Context_kosmo-demo-001",
-    "object_count": 3,
+    "object_count": 4,
     "origin": {
       "source": "fallback_origin",
       "origin_marker": "Kosmo_Context_Origin_kosmo-demo-001",
@@ -31,25 +31,129 @@
       }
     },
     "ifc": {
-      "available": false,
+      "entity_count": 77,
+      "top_entities": [
+        {
+          "type": "IFCCARTESIANPOINT",
+          "count": 17
+        },
+        {
+          "type": "IFCFACE",
+          "count": 12
+        },
+        {
+          "type": "IFCFACEOUTERBOUND",
+          "count": 12
+        },
+        {
+          "type": "IFCPOLYLOOP",
+          "count": 12
+        },
+        {
+          "type": "IFCRELAGGREGATES",
+          "count": 3
+        },
+        {
+          "type": "IFCBUILDINGELEMENTPROXY",
+          "count": 2
+        },
+        {
+          "type": "IFCFACETEDBREP",
+          "count": 2
+        },
+        {
+          "type": "IFCOPENSHELL",
+          "count": 2
+        },
+        {
+          "type": "IFCPRODUCTDEFINITIONSHAPE",
+          "count": 2
+        },
+        {
+          "type": "IFCPROPERTYSINGLEVALUE",
+          "count": 2
+        },
+        {
+          "type": "IFCSHAPEREPRESENTATION",
+          "count": 2
+        },
+        {
+          "type": "IFCAXIS2PLACEMENT3D",
+          "count": 1
+        }
+      ],
+      "entity_groups": {
+        "project_structure": 4,
+        "mesh_geometry": 57,
+        "product_shapes": 4,
+        "semantic_building_elements": 2,
+        "property_data": 4
+      },
+      "point_count": 17,
+      "bounds": {
+        "min": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "max": [
+          10.0,
+          8.0,
+          3.35
+        ]
+      },
+      "object": "Kosmo_Context_IFC_Bounds_kosmo-demo-001",
+      "available": true,
       "classification": {
-        "model_kind": "missing_ifc",
-        "confidence": "none",
-        "suggested_roles": [],
+        "model_kind": "semantic_ifc_context",
+        "confidence": "medium",
+        "entity_groups": {
+          "project_structure": 4,
+          "mesh_geometry": 57,
+          "product_shapes": 4,
+          "semantic_building_elements": 2,
+          "property_data": 4
+        },
+        "suggested_roles": [
+          {
+            "role": "site_project_hierarchy",
+            "confidence": "medium",
+            "evidence": "IFCPROJECT / IFCSITE / IFCBUILDING hierarchy present"
+          },
+          {
+            "role": "context_mesh_bounds",
+            "confidence": "low",
+            "evidence": "57 mesh-related IFC entities"
+          },
+          {
+            "role": "semantic_building_elements",
+            "confidence": "medium",
+            "evidence": "2 semantic building element entities"
+          },
+          {
+            "role": "source_metadata",
+            "confidence": "medium",
+            "evidence": "4 property entities"
+          }
+        ],
         "warnings": [
-          "No IFC source was available in this package."
+          "IFC is currently represented as bounds/statistics only; use Bonsai/IfcOpenShell import before BIM claims."
+        ],
+        "next_actions": [
+          "Import IFC through a semantic IFC pipeline before extracting building elements.",
+          "Compare IFC bounds with DXF underlay and LV95 origin before design generation."
         ]
       }
     },
     "classification": {
-      "context_kind": "manual_or_empty_project_context",
+      "context_kind": "prepare_site_context_with_ifc",
       "origin_kind": "fallback_project_origin",
       "confidence": "low",
-      "design_readiness": "manual_seed_only",
-      "suggested_next_step": "add_project_sources",
+      "design_readiness": "context_ready_needs_human_layer_review",
+      "suggested_next_step": "classify_layers_before_design_generation",
       "warnings": [
-        "No DXF source was available in this package.",
-        "No IFC source was available in this package."
+        "IFC is currently represented as bounds/statistics only; use Bonsai/IfcOpenShell import before BIM claims.",
+        "No DXF source was available in this package."
       ]
     },
     "candidates_path": "design/context-candidates.generated.json",
