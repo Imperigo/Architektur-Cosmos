@@ -122,19 +122,23 @@ vor `origin/main`. Neu hinzugekommen:
 - Buero-Pilot Szene in `/orbit`: der erste Alltagstest fuer ein kleines
   Architekturbuero erklaert Rollen, Review-Ablauf, Blocker und Evidenz vor
   Claims.
+- Buero-Pilot Szene als lokaler JSON-Vertrag:
+  `examples/kosmo-orbit/pilot/orbit-office-pilot-scene.demo.json`.
 - Lint-Cleanup in Atlas-/Orbit-Typen: `npm run lint` ist nun ohne Errors und
   ohne Warnings.
+- Push-Readiness-Report ist stabilisiert: keine fluechtige Commitliste, keine
+  exakte Ahead-Zahl, dafuer `has_unpushed_commits` und lokale Command Evidence.
 
 Aktuelle lokale Nachweise:
 
-- `npm run kosmo:orbit-route-smoke` - 179/179 passed
+- `npm run kosmo:orbit-route-smoke` - 183/183 passed
 - `npm run kosmo:orbit-static-smoke` - 65/65 passed
 - `npm run atlas:static-smoke` - 17/17 passed
 - `npm run build` - static export passed
 - `npx tsc --noEmit --pretty false --incremental false` - passed
 - `npm run lint` - 0 Errors, 0 Warnings
 - `npm run brain:doctor` - 17/17 passed
-- `npm run kosmo:orbit-push-readiness` - 9/9 passed
+- `npm run kosmo:orbit-push-readiness` - 12/12 passed
 
 Browser-Smoke:
 

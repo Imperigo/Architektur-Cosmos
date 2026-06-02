@@ -96,17 +96,41 @@ Wichtige Grenze:
 - keine echte Auth-Runtime
 - keine unbewiesenen Zeit-/Kostenclaims
 
+Nachgezogen:
+
+- `examples/kosmo-orbit/pilot/orbit-office-pilot-scene.demo.json` haelt die
+  Szene jetzt als lokalen Demo-Vertrag;
+- `/orbit` liest Schritte, Rollen, Safety, Evidenzfragen und Decision-Status
+  aus diesem Vertrag;
+- `npm run kosmo:orbit-route-smoke` prueft den Datenvertrag explizit mit.
+
+### Push-Readiness Stabilisierung
+
+Der Push-Readiness-Report wurde stabilisiert.
+
+Zweck:
+
+- keine fluechtigen `ahead_count`-Zahlen mehr im gespeicherten Report;
+- keine `latest_commits`-Liste mehr, die nach jedem lokalen Commit sofort
+  veraltet;
+- stattdessen nur `has_unpushed_commits: true/false`;
+- eigene Output-Dateien werden beim Worktree-Clean-Check ignoriert, andere
+  Dirty Files bleiben weiterhin Blocker;
+- erneutes Generieren erzeugt nur Zeitstempelrauschen, das
+  `npm run generated:cleanup` sauber zuruecksetzt.
+
 ## Lokale Nachweise
 
 Heute gruen geprueft:
 
-- `npm run kosmo:orbit-route-smoke` - 179/179 passed
+- `npm run kosmo:orbit-route-smoke` - 183/183 passed
 - `npm run kosmo:orbit-static-smoke` - 65/65 passed
 - `npm run atlas:static-smoke` - 17/17 passed
 - `npm run build` - static export passed
 - `npx tsc --noEmit --pretty false --incremental false` - passed
 - `npm run lint` - 0 Errors, 0 Warnings
 - `npm run brain:doctor` - 17/17 passed
+- `npm run kosmo:orbit-push-readiness` - 12/12 passed
 - `npm run generated:cleanup` - Zeitstempelrauschen entfernt, semantische
   Report-Diffs behalten
 - `git diff --check` - passed
@@ -132,6 +156,8 @@ Codefehler.
 - `14ca4a2` Add KosmoDesign pilot path
 - `3d73869` Clear Atlas lint warnings
 - `fc0c2ca` Add KosmoOrbit office pilot scene
+- `77adb4b` Add KosmoOrbit office pilot scene contract
+- `2fae082` Refresh stable KosmoOrbit push readiness
 
 ## Push-/Live-Grenze
 
