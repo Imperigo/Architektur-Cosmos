@@ -122,6 +122,7 @@
     "kosmo:orbit-pilot-result": "node scripts/kosmo-orbit-pilot-result-draft-check.mjs",
     "kosmo:orbit-static-smoke": "node scripts/kosmo-orbit-static-export-smoke.mjs",
     "kosmo:orbit-push-readiness": "node scripts/kosmo-orbit-push-readiness.mjs",
+    "kosmo:orbit-readiness-sweep": "node scripts/kosmo-orbit-readiness-sweep.mjs",
     "kosmo:orbit-demo-audit": "node scripts/kosmo-orbit-demo-audit.mjs",
     "kosmo:orbit-responsive-audit": "node scripts/kosmo-orbit-responsive-audit.mjs",
     "kosmo:orbit-status": "node scripts/kosmo-orbit-status-report.mjs",
