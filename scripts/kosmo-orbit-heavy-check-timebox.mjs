@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import { spawn } from 'node:child_process';
+import { existsSync, readFileSync } from 'node:fs';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { dirname, relative, resolve } from 'node:path';
 
@@ -10,6 +11,10 @@ const outputJsonPath = resolve(root, args.output || 'examples/kosmo-orbit/review
 const outputMdPath = resolve(root, args.markdown || 'examples/kosmo-orbit/review/orbit-heavy-check-timebox.generated.md');
 const defaultTimeoutMs = numberArg(args.timeoutMs, 90_000);
 const buildTimeoutMs = numberArg(args.buildTimeoutMs, 150_000);
+const commonEnv = {
+  CI: '1',
+  NEXT_TELEMETRY_DISABLED: '1'
+};
 
 const commandPlan = [
   {
@@ -17,6 +22,37 @@ const commandPlan = [
     label: 'Git status without ahead/behind traversal',
     command: 'git',
     args: ['status', '--short', '--branch', '--no-ahead-behind'],
+    timeoutMs: 20_000
+  },
+  {
+    id: 'toolchain_probe',
+    label: 'Local Node/Next/TypeScript/ESLint probe',
+    command: process.execPath,
+    args: [
+      '-e',
+      [
+        "const {existsSync, readFileSync}=require('node:fs');",
+        "const pkg=JSON.parse(readFileSync('package.json','utf8'));",
+        "const maybe=(path)=>existsSync(path)?require(path).version:null;",
+        "const report={",
+        "node:process.version,",
+        "npm:process.env.npm_config_user_agent||null,",
+        "platform:process.platform,",
+        "arch:process.arch,",
+        "next:pkg.dependencies?.next||pkg.devDependencies?.next||null,",
+        "typescript:pkg.dependencies?.typescript||pkg.devDependencies?.typescript||null,",
+        "eslint:pkg.dependencies?.eslint||pkg.devDependencies?.eslint||null,",
+        "nextPackage:maybe('./node_modules/next/package.json'),",
+        "typescriptPackage:maybe('./node_modules/typescript/package.json'),",
+        "eslintPackage:maybe('./node_modules/eslint/package.json'),",
+        "tsconfig:existsSync('tsconfig.json'),",
+        "eslintConfig:existsSync('eslint.config.mjs'),",
+        "nextTelemetryDisabled:process.env.NEXT_TELEMETRY_DISABLED||null,",
+        "ci:process.env.CI||null",
+        "};",
+        "console.log(JSON.stringify(report));"
+      ].join('')
+    ],
     timeoutMs: 20_000
   },
   {
@@ -52,21 +88,24 @@ const commandPlan = [
     label: 'TypeScript no-emit check',
     command: resolve(root, 'node_modules/.bin/tsc'),
     args: ['--noEmit', '--pretty', 'false', '--incremental', 'false'],
-    timeoutMs: defaultTimeoutMs
+    timeoutMs: defaultTimeoutMs,
+    env: commonEnv
   },
   {
     id: 'lint',
     label: 'ESLint check',
     command: 'npm',
     args: ['run', 'lint'],
-    timeoutMs: defaultTimeoutMs
+    timeoutMs: defaultTimeoutMs,
+    env: commonEnv
   },
   {
     id: 'next_static_build',
     label: 'Next static build without fresh cleanup',
     command: resolve(root, 'node_modules/.bin/next'),
     args: ['build'],
-    timeoutMs: buildTimeoutMs
+    timeoutMs: buildTimeoutMs,
+    env: commonEnv
   }
 ];
 
@@ -119,6 +158,7 @@ function buildReport(startedAt, results) {
       no_external_account_change: true,
       purpose: 'Detect heavy-check hangs and preserve local evidence without changing public deployment.'
     },
+    environment: environmentSnapshot(),
     summary: {
       check_count: results.length,
       passed_checks: results.filter((item) => item.status === 'passed').length,
@@ -129,6 +169,7 @@ function buildReport(startedAt, results) {
     next_actions: failed.length
       ? [
           'Keep this as the current heavy-check blocker record.',
+          'Use the toolchain_probe and environment snapshot to diagnose whether the timeout is caused by local Node/Next/SWC tooling.',
           'Treat TypeScript, lint and Next build timeouts as local heavy-check/tooling blockers until they complete with logs.',
           'Rerun this timebox after the local Node/Next toolchain is healthy, before relying on the heavy checks as publish evidence.'
         ]
@@ -150,7 +191,11 @@ function runCommand(item) {
     const child = spawn(item.command, item.args, {
       cwd: root,
       detached: true,
-      stdio: ['ignore', 'pipe', 'pipe']
+      stdio: ['ignore', 'pipe', 'pipe'],
+      env: {
+        ...process.env,
+        ...(item.env || {})
+      }
     });
 
     const timer = setTimeout(() => {
@@ -189,7 +234,9 @@ function resultFor(item, started, status, exitCode, stdout, stderr, signal = nul
     signal,
     timeout_ms: item.timeoutMs,
     duration_ms: Date.now() - started,
-    output_excerpt: outputExcerpt(stdout, stderr)
+    output_excerpt: outputExcerpt(stdout, stderr),
+    stdout_bytes: Buffer.byteLength(stdout ?? '', 'utf8'),
+    stderr_bytes: Buffer.byteLength(stderr ?? '', 'utf8')
   };
 }
 
@@ -221,6 +268,17 @@ function renderMarkdown(report) {
     `- failed: ${report.summary.failed_checks}`,
     `- timed out: ${report.summary.timed_out_checks}`,
     '',
+    '## Environment',
+    '',
+    `- node: \`${report.environment.node}\``,
+    `- platform: \`${report.environment.platform}\``,
+    `- arch: \`${report.environment.arch}\``,
+    `- next package: \`${report.environment.package_versions.next}\``,
+    `- typescript package: \`${report.environment.package_versions.typescript}\``,
+    `- eslint package: \`${report.environment.package_versions.eslint}\``,
+    `- CI: \`${report.environment.env.CI || '-'}\``,
+    `- NEXT_TELEMETRY_DISABLED: \`${report.environment.env.NEXT_TELEMETRY_DISABLED || '-'}\``,
+    '',
     '## Checks',
     '',
     '| Check | Status | Duration | Command | Output |',
@@ -237,6 +295,38 @@ function renderMarkdown(report) {
   report.next_actions.forEach((action) => lines.push(`- ${action}`));
 
   return `${lines.join('\n')}\n`;
+}
+
+function environmentSnapshot() {
+  const packageJson = readOptionalJson(resolve(root, 'package.json'));
+  return {
+    node: process.version,
+    platform: process.platform,
+    arch: process.arch,
+    package_versions: {
+      next: packageJson?.dependencies?.next || packageJson?.devDependencies?.next || null,
+      typescript: packageJson?.dependencies?.typescript || packageJson?.devDependencies?.typescript || null,
+      eslint: packageJson?.dependencies?.eslint || packageJson?.devDependencies?.eslint || null
+    },
+    config_files: {
+      tsconfig: existsSync(resolve(root, 'tsconfig.json')),
+      eslint_config: existsSync(resolve(root, 'eslint.config.mjs')),
+      next_config: existsSync(resolve(root, 'next.config.js')) || existsSync(resolve(root, 'next.config.mjs'))
+    },
+    env: {
+      CI: commonEnv.CI,
+      NEXT_TELEMETRY_DISABLED: commonEnv.NEXT_TELEMETRY_DISABLED
+    }
+  };
+}
+
+function readOptionalJson(path) {
+  try {
+    if (!existsSync(path)) return null;
+    return JSON.parse(readFileSync(path, 'utf8'));
+  } catch {
+    return null;
+  }
 }
 
 function outputExcerpt(stdout, stderr) {

@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-02T20:45:46.157Z",
-  "started_at": "2026-06-02T20:42:10.486Z",
+  "generated_at": "2026-06-02T22:24:41.144Z",
+  "started_at": "2026-06-02T22:24:04.999Z",
   "generator": "kosmo-orbit-heavy-check-timebox",
   "mode": "local_review_only",
   "status": "orbit_heavy_check_timebox_blocked",
@@ -12,9 +12,28 @@
     "no_external_account_change": true,
     "purpose": "Detect heavy-check hangs and preserve local evidence without changing public deployment."
   },
+  "environment": {
+    "node": "v24.15.0",
+    "platform": "darwin",
+    "arch": "arm64",
+    "package_versions": {
+      "next": "^15.5.18",
+      "typescript": "^5.9.3",
+      "eslint": "^9.39.4"
+    },
+    "config_files": {
+      "tsconfig": true,
+      "eslint_config": true,
+      "next_config": true
+    },
+    "env": {
+      "CI": "1",
+      "NEXT_TELEMETRY_DISABLED": "1"
+    }
+  },
   "summary": {
-    "check_count": 8,
-    "passed_checks": 5,
+    "check_count": 9,
+    "passed_checks": 6,
     "failed_checks": 3,
     "timed_out_checks": 3
   },
@@ -27,8 +46,23 @@
       "exit_code": 0,
       "signal": null,
       "timeout_ms": 20000,
-      "duration_ms": 25,
-      "output_excerpt": "M examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-smoke.generated.json | M examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-smoke.generated.md | M examples/kosmo-projects/kosmo-demo-001/orbit/role-ui-smoke.generated.json | M examples/kosmo-projects/kosmo-demo-001/orbit/role-ui-smoke.generated.md | M examples/kosmo-projects/kosmo-demo-001/orbit/role-ui-variants.generated.json | M examples/kosmo-projects/kosmo-demo-001/orbit/role-ui-variants.generated.md | M package.json | ?? scripts/kosmo-orbit-heavy-check-timebox.mjs"
+      "duration_ms": 81,
+      "output_excerpt": "M examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-prototype.generated.json | M examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-smoke.generated.json | M examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-smoke.generated.md | M examples/kosmo-projects/kosmo-demo-001/orbit/role-ui-smoke.generated.json | M examples/kosmo-projects/kosmo-demo-001/orbit/role-ui-smoke.generated.md | M examples/kosmo-projects/kosmo-demo-001/orbit/role-ui-variants.generated.json | M examples/kosmo-projects/kosmo-demo-001/orbit/role-ui-variants.generated.md | M scripts/kosmo-orbit-heavy-check-timebox.mjs",
+      "stdout_bytes": 4680,
+      "stderr_bytes": 0
+    },
+    {
+      "id": "toolchain_probe",
+      "label": "Local Node/Next/TypeScript/ESLint probe",
+      "command": "/Users/andrinbaumann/.nvm/versions/node/v24.15.0/bin/node -e const {existsSync, readFileSync}=require('node:fs');const pkg=JSON.parse(readFileSync('package.json','utf8'));const maybe=(path)=>existsSync(path)?require(path).version:null;const report={node:process.version,npm:process.env.npm_config_user_agent||null,platform:process.platform,arch:process.arch,next:pkg.dependencies?.next||pkg.devDependencies?.next||null,typescript:pkg.dependencies?.typescript||pkg.devDependencies?.typescript||null,eslint:pkg.dependencies?.eslint||pkg.devDependencies?.eslint||null,nextPackage:maybe('./node_modules/next/package.json'),typescriptPackage:maybe('./node_modules/typescript/package.json'),eslintPackage:maybe('./node_modules/eslint/package.json'),tsconfig:existsSync('tsconfig.json'),eslintConfig:existsSync('eslint.config.mjs'),nextTelemetryDisabled:process.env.NEXT_TELEMETRY_DISABLED||null,ci:process.env.CI||null};console.log(JSON.stringify(report));",
+      "status": "passed",
+      "exit_code": 0,
+      "signal": null,
+      "timeout_ms": 20000,
+      "duration_ms": 33,
+      "output_excerpt": "{\"node\":\"v24.15.0\",\"npm\":\"npm/11.12.1 node/v24.15.0 darwin arm64 workspaces/false\",\"platform\":\"darwin\",\"arch\":\"arm64\",\"next\":\"^15.5.18\",\"typescript\":\"^5.9.3\",\"eslint\":\"^9.39.4\",\"nextPackage\":\"15.5.18\",\"typescriptPackage\":\"5.9.3\",\"eslintPackage\":\"9.39.4\",\"tsconfig\":true,\"eslintConfig\":true,\"nextTelemetryDisabled\":null,\"ci\":null}",
+      "stdout_bytes": 330,
+      "stderr_bytes": 0
     },
     {
       "id": "kosmosketch_adapter",
@@ -37,9 +71,11 @@
       "status": "passed",
       "exit_code": 0,
       "signal": null,
-      "timeout_ms": 60000,
-      "duration_ms": 163,
-      "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:orbit-kosmosketch-adapter | > node scripts/kosmo-orbit-kosmosketch-adapter-check.mjs | KosmoOrbit KosmoSketch adapter check | Status: kosmosketch_adapter_contract_passed | Checks: 20/20 | Wrote: examples/kosmo-orbit/review/orbit-kosmosketch-adapter.generated.md"
+      "timeout_ms": 10000,
+      "duration_ms": 173,
+      "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:orbit-kosmosketch-adapter | > node scripts/kosmo-orbit-kosmosketch-adapter-check.mjs | KosmoOrbit KosmoSketch adapter check | Status: kosmosketch_adapter_contract_passed | Checks: 20/20 | Wrote: examples/kosmo-orbit/review/orbit-kosmosketch-adapter.generated.md",
+      "stdout_bytes": 288,
+      "stderr_bytes": 0
     },
     {
       "id": "route_smoke",
@@ -48,9 +84,11 @@
       "status": "passed",
       "exit_code": 0,
       "signal": null,
-      "timeout_ms": 60000,
-      "duration_ms": 174,
-      "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:orbit-route-smoke | > node scripts/kosmo-orbit-route-smoke.mjs | KosmoOrbit route smoke | Status: orbit_route_smoke_passed | Checks: 246/246 | Wrote: examples/kosmo-orbit/review/orbit-route-smoke.generated.md"
+      "timeout_ms": 10000,
+      "duration_ms": 185,
+      "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:orbit-route-smoke | > node scripts/kosmo-orbit-route-smoke.mjs | KosmoOrbit route smoke | Status: orbit_route_smoke_passed | Checks: 246/246 | Wrote: examples/kosmo-orbit/review/orbit-route-smoke.generated.md",
+      "stdout_bytes": 235,
+      "stderr_bytes": 0
     },
     {
       "id": "responsive_audit",
@@ -59,9 +97,11 @@
       "status": "passed",
       "exit_code": 0,
       "signal": null,
-      "timeout_ms": 60000,
-      "duration_ms": 153,
-      "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:orbit-responsive-audit | > node scripts/kosmo-orbit-responsive-audit.mjs | KosmoOrbit responsive audit | Status: orbit_responsive_audit_passed | Checks: 34/34 | Wrote: examples/kosmo-orbit/review/orbit-responsive-audit.generated.md"
+      "timeout_ms": 10000,
+      "duration_ms": 164,
+      "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:orbit-responsive-audit | > node scripts/kosmo-orbit-responsive-audit.mjs | KosmoOrbit responsive audit | Status: orbit_responsive_audit_passed | Checks: 34/34 | Wrote: examples/kosmo-orbit/review/orbit-responsive-audit.generated.md",
+      "stdout_bytes": 258,
+      "stderr_bytes": 0
     },
     {
       "id": "full_review",
@@ -70,9 +110,11 @@
       "status": "passed",
       "exit_code": 0,
       "signal": null,
-      "timeout_ms": 60000,
-      "duration_ms": 5157,
-      "output_excerpt": "KosmoOrbit full review | Workspace: examples/kosmo-orbit/workspace.demo.json | Project: examples/kosmo-projects/kosmo-demo-001 | Status: orbit_full_review_ready_for_review_mode | Steps: 33/33 passed | Panel state: review_only | Design open mode: context_review_only | Wrote: examples/kosmo-orbit/review/orbit-full-review.generated.md"
+      "timeout_ms": 10000,
+      "duration_ms": 5481,
+      "output_excerpt": "KosmoOrbit full review | Workspace: examples/kosmo-orbit/workspace.demo.json | Project: examples/kosmo-projects/kosmo-demo-001 | Status: orbit_full_review_ready_for_review_mode | Steps: 33/33 passed | Panel state: review_only | Design open mode: context_review_only | Wrote: examples/kosmo-orbit/review/orbit-full-review.generated.md",
+      "stdout_bytes": 417,
+      "stderr_bytes": 0
     },
     {
       "id": "typescript_no_emit",
@@ -81,9 +123,11 @@
       "status": "timed_out",
       "exit_code": null,
       "signal": "SIGTERM",
-      "timeout_ms": 60000,
-      "duration_ms": 60026,
-      "output_excerpt": ""
+      "timeout_ms": 10000,
+      "duration_ms": 10010,
+      "output_excerpt": "",
+      "stdout_bytes": 0,
+      "stderr_bytes": 0
     },
     {
       "id": "lint",
@@ -92,9 +136,11 @@
       "status": "timed_out",
       "exit_code": null,
       "signal": "SIGTERM",
-      "timeout_ms": 60000,
-      "duration_ms": 60022,
-      "output_excerpt": "> architecture-cosmos@0.1.0 lint | > eslint ."
+      "timeout_ms": 10000,
+      "duration_ms": 10011,
+      "output_excerpt": "> architecture-cosmos@0.1.0 lint | > eslint .",
+      "stdout_bytes": 46,
+      "stderr_bytes": 0
     },
     {
       "id": "next_static_build",
@@ -103,13 +149,16 @@
       "status": "timed_out",
       "exit_code": null,
       "signal": "SIGTERM",
-      "timeout_ms": 90000,
-      "duration_ms": 89950,
-      "output_excerpt": ""
+      "timeout_ms": 10000,
+      "duration_ms": 10007,
+      "output_excerpt": "",
+      "stdout_bytes": 0,
+      "stderr_bytes": 0
     }
   ],
   "next_actions": [
     "Keep this as the current heavy-check blocker record.",
+    "Use the toolchain_probe and environment snapshot to diagnose whether the timeout is caused by local Node/Next/SWC tooling.",
     "Treat TypeScript, lint and Next build timeouts as local heavy-check/tooling blockers until they complete with logs.",
     "Rerun this timebox after the local Node/Next toolchain is healthy, before relying on the heavy checks as publish evidence."
   ]
