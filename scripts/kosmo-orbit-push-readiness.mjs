@@ -48,6 +48,11 @@ function buildReport() {
   const reports = Object.fromEntries(
     Object.entries(reportPaths).map(([key, path]) => [key, readJson(path)])
   );
+  const commandEvidence = [
+    commandCheck('git_diff_check', 'git diff --check has no whitespace errors.', 'git', ['diff', '--check']),
+    commandCheck('lint_zero_warnings', 'ESLint passes with zero warnings.', 'npm', ['run', 'lint']),
+    commandCheck('typescript_no_emit', 'TypeScript no-emit check passes.', resolve(root, 'node_modules/.bin/tsc'), ['--noEmit', '--pretty', 'false', '--incremental', 'false'])
+  ];
 
   const checks = [
     check('on_main', 'Current branch is main.', branch === 'main'),
@@ -57,6 +62,7 @@ function buildReport() {
     check('static_smoke_green', 'KosmoOrbit static export smoke is green.', reports.static_smoke?.status === 'orbit_static_export_smoke_passed'),
     check('full_review_green', 'KosmoOrbit full review is green.', reports.full_review?.status === 'orbit_full_review_ready_for_review_mode'),
     check('atlas_static_smoke_green', 'KosmoData atlas static export smoke is green.', reports.atlas_static_smoke?.status === 'atlas_static_export_smoke_passed'),
+    ...commandEvidence.map((item) => check(item.id, item.label, item.status === 'passed')),
     check('owner_gate_required', 'Push remains blocked until explicit Owner-Go.', true),
     check('no_live_action_taken', 'This report does not push, deploy, upload or call external accounts.', true)
   ];
@@ -79,7 +85,8 @@ function buildReport() {
       route_smoke: summarizeReport(reports.route_smoke),
       static_smoke: summarizeReport(reports.static_smoke),
       full_review: summarizeReport(reports.full_review),
-      atlas_static_smoke: summarizeReport(reports.atlas_static_smoke)
+      atlas_static_smoke: summarizeReport(reports.atlas_static_smoke),
+      commands: commandEvidence
     },
     decision: {
       local_demo_ready: failed.length === 0,
@@ -125,6 +132,46 @@ function check(id, label, passed) {
   };
 }
 
+function commandCheck(id, label, command, commandArgs) {
+  const displayCommand = [commandLabel(command), ...commandArgs].join(' ');
+  try {
+    const output = execFileSync(command, commandArgs, {
+      cwd: root,
+      encoding: 'utf8',
+      maxBuffer: 1024 * 1024 * 8,
+      stdio: ['ignore', 'pipe', 'pipe']
+    });
+    return {
+      id,
+      label,
+      command: displayCommand,
+      status: 'passed',
+      output_excerpt: outputExcerpt(output)
+    };
+  } catch (error) {
+    return {
+      id,
+      label,
+      command: displayCommand,
+      status: 'failed',
+      output_excerpt: outputExcerpt(`${error.stdout ?? ''}\n${error.stderr ?? ''}`)
+    };
+  }
+}
+
+function commandLabel(command) {
+  if (command.startsWith(root)) return relative(root, command);
+  return command;
+}
+
+function outputExcerpt(value) {
+  const lines = String(value ?? '')
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean);
+  return lines.slice(-6).join(' | ');
+}
+
 function readJson(path) {
   const fullPath = resolve(root, path);
   if (!existsSync(fullPath)) return null;
@@ -162,7 +209,13 @@ function renderMarkdown(report) {
   ];
 
   Object.entries(report.evidence).forEach(([key, value]) => {
+    if (key === 'commands') return;
     lines.push(`| \`${key}\` | \`${value?.status ?? 'missing'}\` | ${value?.passed_checks ?? '-'} / ${value?.check_count ?? '-'} |`);
+  });
+
+  lines.push('', '## Command Evidence', '', '| Command | Status | Output |', '| --- | --- | --- |');
+  report.evidence.commands.forEach((item) => {
+    lines.push(`| \`${escapePipe(item.command)}\` | \`${item.status}\` | ${escapePipe(item.output_excerpt || 'no output')} |`);
   });
 
   lines.push('', '## Checks', '', '| Check | Status | Meaning |', '| --- | --- | --- |');
