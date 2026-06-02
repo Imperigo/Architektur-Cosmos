@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-02T05:30:03.828Z",
+  "generated_at": "2026-06-02T05:34:08.423Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 175,
-    "passed_checks": 175,
+    "check_count": 179,
+    "passed_checks": 179,
     "failed_checks": 0
   },
   "checks": [
@@ -222,6 +222,11 @@
       "status": "passed"
     },
     {
+      "id": "office_pilot_scene_file_exists",
+      "label": "Orbit office pilot scene component exists.",
+      "status": "passed"
+    },
+    {
       "id": "demo_readiness_file_exists",
       "label": "Orbit demo readiness component exists.",
       "status": "passed"
@@ -404,6 +409,11 @@
     {
       "id": "imports_office_routine",
       "label": "Route imports the office routine component.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_office_pilot_scene",
+      "label": "Route imports the office pilot scene component.",
       "status": "passed"
     },
     {
@@ -794,6 +804,16 @@
     {
       "id": "office_routine_blocks_live_automation",
       "label": "Office routine blocks model start, Blender launch, uploads, publish, push and costs.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_office_pilot_scene",
+      "label": "Route renders the office pilot scene.",
+      "status": "passed"
+    },
+    {
+      "id": "office_pilot_scene_keeps_review_only",
+      "label": "Office pilot scene blocks uploads, writes, generation, auth runtime and unsupported claims.",
       "status": "passed"
     },
     {

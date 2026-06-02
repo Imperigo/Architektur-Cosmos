@@ -22,6 +22,7 @@ import { OrbitDesignPilotPath } from './OrbitDesignPilotPath';
 import { OrbitLearningMode } from './OrbitLearningMode';
 import { OrbitLaunchDecisionBrief } from './OrbitLaunchDecisionBrief';
 import { OrbitOfficeRoutine } from './OrbitOfficeRoutine';
+import { OrbitOfficePilotScene } from './OrbitOfficePilotScene';
 import { OrbitPermissionMatrix } from './OrbitPermissionMatrix';
 import { OrbitPilotFacilitatorChecklist } from './OrbitPilotFacilitatorChecklist';
 import { OrbitPilotMeasurement } from './OrbitPilotMeasurement';
@@ -425,6 +426,10 @@ export default function OrbitPage() {
 
           <div id="launch-brief" className="scroll-mt-4">
             <OrbitLaunchDecisionBrief />
+          </div>
+
+          <div id="office-pilot" className="scroll-mt-4">
+            <OrbitOfficePilotScene />
           </div>
 
           <div id="projektpaket" className="scroll-mt-4">

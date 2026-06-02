@@ -1,6 +1,6 @@
 # KosmoOrbit Route Smoke
 
-Generated: 2026-06-02T05:30:03.828Z
+Generated: 2026-06-02T05:34:08.423Z
 Status: `orbit_route_smoke_passed`
 Route: `app/orbit/page.tsx`
 
@@ -8,7 +8,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 
 ## Summary
 
-- checks: 175/175 passed
+- checks: 179/179 passed
 
 ## Checks
 
@@ -56,6 +56,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `autonomy_status_file_exists` | `passed` | Orbit autonomy status component exists. |
 | `office_routine_file_exists` | `passed` | Orbit office routine component exists. |
 | `office_routine_data_file_exists` | `passed` | Orbit office routine contract exists. |
+| `office_pilot_scene_file_exists` | `passed` | Orbit office pilot scene component exists. |
 | `demo_readiness_file_exists` | `passed` | Orbit demo readiness component exists. |
 | `publish_readiness_file_exists` | `passed` | Orbit publish readiness component exists. |
 | `launch_decision_brief_file_exists` | `passed` | Orbit launch decision brief component exists. |
@@ -93,6 +94,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `imports_permission_matrix` | `passed` | Route imports the permission matrix component. |
 | `imports_autonomy_status` | `passed` | Route imports the autonomy status component. |
 | `imports_office_routine` | `passed` | Route imports the office routine component. |
+| `imports_office_pilot_scene` | `passed` | Route imports the office pilot scene component. |
 | `imports_demo_readiness` | `passed` | Route imports the demo readiness component. |
 | `imports_publish_readiness` | `passed` | Route imports the publish readiness component. |
 | `imports_launch_decision_brief` | `passed` | Route imports the launch decision brief component. |
@@ -171,6 +173,8 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `shows_office_routine` | `passed` | Route renders the static office routine contract. |
 | `office_routine_covers_day_phases` | `passed` | Office routine covers morning, workday, training, evening and safety. |
 | `office_routine_blocks_live_automation` | `passed` | Office routine blocks model start, Blender launch, uploads, publish, push and costs. |
+| `shows_office_pilot_scene` | `passed` | Route renders the office pilot scene. |
+| `office_pilot_scene_keeps_review_only` | `passed` | Office pilot scene blocks uploads, writes, generation, auth runtime and unsupported claims. |
 | `shows_demo_readiness` | `passed` | Route renders demo readiness with explicit human approval boundary. |
 | `demo_readiness_shows_static_assets` | `passed` | Demo readiness exposes static export CSS/JS asset verification. |
 | `shows_publish_readiness` | `passed` | Route renders publish readiness and the live gate. |
