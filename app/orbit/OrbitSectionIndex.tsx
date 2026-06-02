@@ -26,6 +26,7 @@ const sectionGroups = [
     links: [
       { href: '#autonomie', label: 'Autonomie' },
       { href: '#routine', label: 'Routine' },
+      { href: '#tool-registry', label: 'Tools' },
       { href: '#workflow-delta', label: 'Workflow' },
       { href: '#fortschritt', label: 'Fortschritt' },
       { href: '#vision', label: 'Vision' }

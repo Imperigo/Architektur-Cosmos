@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-02T05:49:32.828Z",
+  "generated_at": "2026-06-02T06:15:16.396Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 183,
-    "passed_checks": 183,
+    "check_count": 190,
+    "passed_checks": 190,
     "failed_checks": 0
   },
   "checks": [
@@ -232,6 +232,16 @@
       "status": "passed"
     },
     {
+      "id": "tool_registry_file_exists",
+      "label": "Orbit tool registry component exists.",
+      "status": "passed"
+    },
+    {
+      "id": "tool_registry_data_file_exists",
+      "label": "Orbit tool registry workspace data exists.",
+      "status": "passed"
+    },
+    {
       "id": "demo_readiness_file_exists",
       "label": "Orbit demo readiness component exists.",
       "status": "passed"
@@ -424,6 +434,16 @@
     {
       "id": "imports_office_pilot_scene_data",
       "label": "Office pilot scene imports the local demo scene contract.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_tool_registry",
+      "label": "Route imports the tool registry component.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_tool_registry_data",
+      "label": "Tool registry imports the local workspace contract.",
       "status": "passed"
     },
     {
@@ -829,6 +849,21 @@
     {
       "id": "office_pilot_scene_keeps_review_only",
       "label": "Office pilot scene blocks uploads, writes, generation, auth runtime and unsupported claims.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_tool_registry",
+      "label": "Route renders the KosmoOrbit tool registry.",
+      "status": "passed"
+    },
+    {
+      "id": "tool_registry_uses_local_workspace_contract",
+      "label": "Tool registry uses local workspace data for tools, roles and gates.",
+      "status": "passed"
+    },
+    {
+      "id": "tool_registry_keeps_runtime_blocked",
+      "label": "Tool registry blocks launches, model starts, uploads, cost jobs and public release.",
       "status": "passed"
     },
     {

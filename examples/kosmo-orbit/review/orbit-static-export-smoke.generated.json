@@ -1,12 +1,12 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-02T05:40:53.435Z",
+  "generated_at": "2026-06-02T06:15:50.088Z",
   "generator": "kosmo-orbit-static-export-smoke",
   "status": "orbit_static_export_smoke_passed",
   "html_file": "out/orbit/index.html",
   "summary": {
-    "check_count": 66,
-    "passed_checks": 66,
+    "check_count": 68,
+    "passed_checks": 68,
     "failed_checks": 0,
     "referenced_static_asset_count": 8,
     "missing_static_asset_count": 0
@@ -20,7 +20,7 @@
       "_next/static/chunks/main-app-36e74dfd8b1eb57a.js",
       "_next/static/chunks/polyfills-42372ed130431b0a.js",
       "_next/static/chunks/webpack-81624dd509abd812.js",
-      "_next/static/css/3fc658999fbafeed.css"
+      "_next/static/css/2a280b2f7d42d33c.css"
     ],
     "missing": []
   },
@@ -63,6 +63,11 @@
     {
       "id": "renders_office_routine",
       "label": "Export renders office routine contract.",
+      "status": "passed"
+    },
+    {
+      "id": "renders_tool_registry",
+      "label": "Export renders KosmoOrbit tool registry.",
       "status": "passed"
     },
     {
@@ -318,6 +323,11 @@
     {
       "id": "keeps_office_routine_safe",
       "label": "Export keeps office routine non-operational.",
+      "status": "passed"
+    },
+    {
+      "id": "keeps_tool_registry_safe",
+      "label": "Export keeps tool registry non-operational.",
       "status": "passed"
     },
     {

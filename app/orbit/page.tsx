@@ -41,6 +41,7 @@ import { OrbitRuntimeBoundary } from './OrbitRuntimeBoundary';
 import { OrbitRuntimeContract } from './OrbitRuntimeContract';
 import { OrbitRoleSwitcher } from './OrbitRoleSwitcher';
 import { OrbitSectionIndex } from './OrbitSectionIndex';
+import { OrbitToolRegistry } from './OrbitToolRegistry';
 import { OrbitVisionBridge } from './OrbitVisionBridge';
 import { OrbitWorkflowDelta } from './OrbitWorkflowDelta';
 import { OrbitWorkstationPriorities } from './OrbitWorkstationPriorities';
@@ -374,6 +375,10 @@ export default function OrbitPage() {
 
           <div id="routine" className="scroll-mt-4">
             <OrbitOfficeRoutine />
+          </div>
+
+          <div id="tool-registry" className="scroll-mt-4">
+            <OrbitToolRegistry />
           </div>
 
           <div id="presenter" className="scroll-mt-4">

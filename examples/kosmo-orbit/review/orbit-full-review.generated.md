@@ -1,6 +1,6 @@
 # KosmoOrbit Full Review
 
-Generated: 2026-06-02T06:00:31.417Z
+Generated: 2026-06-02T06:15:16.415Z
 Status: `orbit_full_review_ready_for_review_mode`
 Workspace: `examples/kosmo-orbit/workspace.demo.json`
 Project: `examples/kosmo-projects/kosmo-demo-001`
@@ -9,7 +9,7 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 
 ## Summary
 
-- steps: 24/24 passed
+- steps: 25/25 passed
 - role state: `role_state_check_passed`
 - role state active role: `owner_admin`
 - role state selected role: `owner_admin`
@@ -40,6 +40,10 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 - office pilot scene checks: 13/13
 - office pilot scene steps: 4
 - office pilot scene roles: 4
+- tool registry: `orbit_tool_registry_ready`
+- tool registry checks: 13/13
+- tool registry tools: 8
+- tool registry blocked/review gates: 5
 - pilot session: `orbit_pilot_session_template_ready`
 - pilot session checks: 17/17
 - pilot session measurement points: 5
@@ -52,7 +56,7 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 - pilot result draft slots: 5
 - pilot result draft empty slots: 5
 - orbit route smoke: `orbit_route_smoke_passed`
-- orbit route smoke checks: 183/183
+- orbit route smoke checks: 190/190
 - workspace status: `orbit_blocked_gates_present`
 - project status: `local_review_only`
 - project artifacts: 59
@@ -102,6 +106,7 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 | Orbit Audit Trail Contract | `passed` | `examples/kosmo-orbit/review/orbit-audit-trail.generated.json` |
 | Orbit Office Routine Contract | `passed` | `examples/kosmo-orbit/review/orbit-office-routine.generated.json` |
 | Orbit Office Pilot Scene | `passed` | `examples/kosmo-orbit/review/orbit-office-pilot-scene.generated.json` |
+| Orbit Tool Registry | `passed` | `examples/kosmo-orbit/review/orbit-tool-registry.generated.json` |
 | Orbit Pilot Session Template | `passed` | `examples/kosmo-orbit/review/orbit-pilot-session.generated.json` |
 | Orbit Pilot Measurement Kit | `passed` | `examples/kosmo-orbit/review/orbit-pilot-measurement-kit.generated.json` |
 | Orbit Pilot Result Draft | `passed` | `examples/kosmo-orbit/review/orbit-pilot-result-draft.generated.json` |
@@ -120,6 +125,7 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 - audit_trail_markdown: `examples/kosmo-orbit/review/orbit-audit-trail.generated.md`
 - office_routine_markdown: `examples/kosmo-orbit/review/orbit-office-routine.generated.md`
 - office_pilot_scene_markdown: `examples/kosmo-orbit/review/orbit-office-pilot-scene.generated.md`
+- tool_registry_markdown: `examples/kosmo-orbit/review/orbit-tool-registry.generated.md`
 - pilot_session_markdown: `examples/kosmo-orbit/review/orbit-pilot-session.generated.md`
 - pilot_measurement_kit_markdown: `examples/kosmo-orbit/review/orbit-pilot-measurement-kit.generated.md`
 - pilot_result_draft_markdown: `examples/kosmo-orbit/review/orbit-pilot-result-draft.generated.md`
@@ -146,6 +152,7 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 - Keep the Command Contract static until command schemas, logs and rollback behavior are approved.
 - Keep the Audit Trail static until persistence, retention and privacy rules are approved.
 - Use the office pilot scene contract to explain the first local office pilot without claiming completed results.
+- Use the tool registry as the KosmoOrbit orchestration contract before adding any real tool launch or local runtime action.
 - Use the pilot session template for a real office pilot only after anonymising project inputs.
 - Use the pilot measurement kit to structure the first office pilot without claiming savings before human data exists.
 - Use the pilot result draft only after a human office pilot creates evidence-backed observations.

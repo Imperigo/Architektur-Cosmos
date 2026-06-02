@@ -1,0 +1,189 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-02T06:15:15.705Z",
+  "generator": "kosmo-orbit-tool-registry-check",
+  "status": "orbit_tool_registry_ready",
+  "workspace_path": "examples/kosmo-orbit/workspace.demo.json",
+  "component_path": "app/orbit/OrbitToolRegistry.tsx",
+  "summary": {
+    "check_count": 13,
+    "passed_checks": 13,
+    "failed_checks": 0,
+    "tool_count": 8,
+    "role_count": 8,
+    "gate_count": 7,
+    "active_or_prototype_tool_count": 3,
+    "blocked_or_review_gate_count": 5
+  },
+  "tools": [
+    {
+      "id": "kosmo-data",
+      "name": "KosmoData",
+      "status": "active",
+      "category": "data",
+      "primary_roles": [
+        "owner_admin",
+        "project_lead_architect",
+        "design_architect",
+        "intern",
+        "apprentice"
+      ],
+      "gate_count": 1
+    },
+    {
+      "id": "kosmo-asset",
+      "name": "KosmoAsset",
+      "status": "prototype",
+      "category": "asset",
+      "primary_roles": [
+        "owner_admin",
+        "it_ai_admin",
+        "design_architect",
+        "drafter_efz"
+      ],
+      "gate_count": 1
+    },
+    {
+      "id": "kosmo-design",
+      "name": "KosmoDesign",
+      "status": "planned",
+      "category": "design",
+      "primary_roles": [
+        "owner_admin",
+        "project_lead_architect",
+        "design_architect",
+        "intern"
+      ],
+      "gate_count": 1
+    },
+    {
+      "id": "kosmo-prepare",
+      "name": "KosmoPrepare",
+      "status": "planned",
+      "category": "prepare",
+      "primary_roles": [
+        "project_lead_architect",
+        "design_architect",
+        "intern"
+      ],
+      "gate_count": 0
+    },
+    {
+      "id": "kosmo-draw",
+      "name": "KosmoDraw",
+      "status": "prototype",
+      "category": "draw",
+      "primary_roles": [
+        "project_lead_architect",
+        "design_architect",
+        "drafter_efz"
+      ],
+      "gate_count": 1
+    },
+    {
+      "id": "kosmo-viz",
+      "name": "KosmoViz",
+      "status": "planned",
+      "category": "viz",
+      "primary_roles": [
+        "design_architect",
+        "project_lead_architect"
+      ],
+      "gate_count": 0
+    },
+    {
+      "id": "kosmo-publish",
+      "name": "KosmoPublish",
+      "status": "planned",
+      "category": "publish",
+      "primary_roles": [
+        "owner_admin",
+        "project_lead_architect",
+        "drafter_efz"
+      ],
+      "gate_count": 1
+    },
+    {
+      "id": "kosmo-zentrale",
+      "name": "KosmoZentrale",
+      "status": "external",
+      "category": "control",
+      "primary_roles": [
+        "owner_admin",
+        "it_ai_admin"
+      ],
+      "gate_count": 2
+    }
+  ],
+  "checks": [
+    {
+      "id": "workspace_has_core_tools",
+      "label": "Workspace lists all eight Architecture Kosmos tools.",
+      "status": "passed"
+    },
+    {
+      "id": "workspace_has_role_profiles",
+      "label": "Workspace covers the expected office role profiles.",
+      "status": "passed"
+    },
+    {
+      "id": "every_tool_has_role_gate_copy",
+      "label": "Every tool has roles, gates and descriptive copy.",
+      "status": "passed"
+    },
+    {
+      "id": "tool_gates_resolve",
+      "label": "Every tool gate resolves to a workspace gate.",
+      "status": "passed"
+    },
+    {
+      "id": "zentrale_is_external",
+      "label": "KosmoZentrale stays external until local runtime integration exists.",
+      "status": "passed"
+    },
+    {
+      "id": "design_has_handoff_target",
+      "label": "KosmoDesign has an explicit handoff target.",
+      "status": "passed"
+    },
+    {
+      "id": "publish_and_cost_gates_blocked",
+      "label": "Publish and cost gates are blocked or local-only.",
+      "status": "passed"
+    },
+    {
+      "id": "component_imports_workspace_contract",
+      "label": "Component imports the local workspace contract.",
+      "status": "passed"
+    },
+    {
+      "id": "component_renders_tool_orchestration",
+      "label": "Component renders KosmoOrbit as Tool-Orchestrierung.",
+      "status": "passed"
+    },
+    {
+      "id": "component_renders_safety_boundary",
+      "label": "Component states no launches, model starts, uploads, costs or public release.",
+      "status": "passed"
+    },
+    {
+      "id": "route_imports_tool_registry",
+      "label": "Orbit route imports the tool registry component.",
+      "status": "passed"
+    },
+    {
+      "id": "route_anchors_tool_registry",
+      "label": "Orbit route renders a tool-registry anchor.",
+      "status": "passed"
+    },
+    {
+      "id": "section_index_links_tool_registry",
+      "label": "Section index links to the tool registry.",
+      "status": "passed"
+    }
+  ],
+  "next_actions": [
+    "Use this registry as the next KosmoOrbit module-orchestration contract.",
+    "Keep tool launches, model starts, uploads, costs and public release blocked until a local runtime is explicitly approved."
+  ]
+}
