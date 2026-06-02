@@ -1,6 +1,6 @@
 # KosmoOrbit Route Smoke
 
-Generated: 2026-06-02T05:09:31.625Z
+Generated: 2026-06-02T05:14:33.505Z
 Status: `orbit_route_smoke_passed`
 Route: `app/orbit/page.tsx`
 
@@ -8,7 +8,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 
 ## Summary
 
-- checks: 169/169 passed
+- checks: 173/173 passed
 
 ## Checks
 
@@ -25,6 +25,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `demo_review_file_exists` | `passed` | Orbit guided demo review component exists. |
 | `project_dashboard_file_exists` | `passed` | Orbit project package dashboard component exists. |
 | `design_handoff_panel_file_exists` | `passed` | Orbit KosmoDesign handoff panel component exists. |
+| `design_pilot_path_file_exists` | `passed` | Orbit KosmoDesign pilot path component exists. |
 | `design_handoff_panel_data_file_exists` | `passed` | Orbit KosmoDesign handoff panel spec exists. |
 | `presenter_brief_file_exists` | `passed` | Orbit presenter brief component exists. |
 | `workflow_delta_file_exists` | `passed` | Orbit workflow delta component exists. |
@@ -63,6 +64,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `imports_demo_review_path` | `passed` | Route imports the guided demo review component. |
 | `imports_project_dashboard` | `passed` | Route imports the project package dashboard component. |
 | `imports_design_handoff_panel` | `passed` | Route imports the KosmoDesign handoff panel component. |
+| `imports_design_pilot_path` | `passed` | Route imports the KosmoDesign pilot path component. |
 | `imports_presenter_brief` | `passed` | Route imports the presenter brief component. |
 | `imports_workflow_delta` | `passed` | Route imports the workflow delta component. |
 | `imports_pilot_measurement` | `passed` | Route imports the pilot measurement component. |
@@ -110,6 +112,8 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `shows_project_package_dashboard` | `passed` | Route renders the project package day view. |
 | `imports_project_review_artifacts` | `passed` | Route imports project inspector and design handoff artifacts. |
 | `shows_design_handoff_panel` | `passed` | Route renders the KosmoDesign handoff review console. |
+| `shows_design_pilot_path` | `passed` | Route renders the KosmoDesign pilot path. |
+| `design_pilot_path_blocks_generation` | `passed` | KosmoDesign pilot path keeps review before generation. |
 | `design_handoff_uses_ui_panel_spec` | `passed` | KosmoDesign handoff panel imports the generated UI panel spec. |
 | `design_handoff_blocks_generation` | `passed` | KosmoDesign handoff panel keeps design generation blocked. |
 | `design_handoff_shows_context_inputs` | `passed` | KosmoDesign handoff panel shows blocked context inputs and guardrails. |

@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-02T05:09:31.625Z",
+  "generated_at": "2026-06-02T05:14:33.505Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 169,
-    "passed_checks": 169,
+    "check_count": 173,
+    "passed_checks": 173,
     "failed_checks": 0
   },
   "checks": [
@@ -64,6 +64,11 @@
     {
       "id": "design_handoff_panel_file_exists",
       "label": "Orbit KosmoDesign handoff panel component exists.",
+      "status": "passed"
+    },
+    {
+      "id": "design_pilot_path_file_exists",
+      "label": "Orbit KosmoDesign pilot path component exists.",
       "status": "passed"
     },
     {
@@ -254,6 +259,11 @@
     {
       "id": "imports_design_handoff_panel",
       "label": "Route imports the KosmoDesign handoff panel component.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_design_pilot_path",
+      "label": "Route imports the KosmoDesign pilot path component.",
       "status": "passed"
     },
     {
@@ -489,6 +499,16 @@
     {
       "id": "shows_design_handoff_panel",
       "label": "Route renders the KosmoDesign handoff review console.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_design_pilot_path",
+      "label": "Route renders the KosmoDesign pilot path.",
+      "status": "passed"
+    },
+    {
+      "id": "design_pilot_path_blocks_generation",
+      "label": "KosmoDesign pilot path keeps review before generation.",
       "status": "passed"
     },
     {

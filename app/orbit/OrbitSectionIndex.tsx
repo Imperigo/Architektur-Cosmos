@@ -34,6 +34,7 @@ const sectionGroups = [
     label: 'Review',
     links: [
       { href: '#design-handoff', label: 'Handoff' },
+      { href: '#design-pilot', label: 'Pilotpfad' },
       { href: '#entscheidung', label: 'Decision' },
       { href: '#evidenz', label: 'Evidenz' },
       { href: '#guardrails', label: 'Guardrails' }

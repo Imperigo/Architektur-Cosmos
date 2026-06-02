@@ -18,6 +18,7 @@ import { OrbitDemoQuestions } from './OrbitDemoQuestions';
 import { OrbitDemoReviewPath } from './OrbitDemoReviewPath';
 import { OrbitHealthReadiness } from './OrbitHealthReadiness';
 import { OrbitInstallationTopology } from './OrbitInstallationTopology';
+import { OrbitDesignPilotPath } from './OrbitDesignPilotPath';
 import { OrbitLearningMode } from './OrbitLearningMode';
 import { OrbitLaunchDecisionBrief } from './OrbitLaunchDecisionBrief';
 import { OrbitOfficeRoutine } from './OrbitOfficeRoutine';
@@ -432,6 +433,10 @@ export default function OrbitPage() {
 
           <div id="design-handoff" className="scroll-mt-4">
             <OrbitDesignHandoffPanel />
+          </div>
+
+          <div id="design-pilot" className="scroll-mt-4">
+            <OrbitDesignPilotPath />
           </div>
 
           <OrbitDemoQuestions />

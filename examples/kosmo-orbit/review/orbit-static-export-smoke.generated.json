@@ -1,12 +1,12 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-02T05:07:55.913Z",
+  "generated_at": "2026-06-02T05:14:33.526Z",
   "generator": "kosmo-orbit-static-export-smoke",
   "status": "orbit_static_export_smoke_passed",
   "html_file": "out/orbit/index.html",
   "summary": {
-    "check_count": 59,
-    "passed_checks": 59,
+    "check_count": 61,
+    "passed_checks": 61,
     "failed_checks": 0,
     "referenced_static_asset_count": 8,
     "missing_static_asset_count": 0
@@ -20,7 +20,7 @@
       "_next/static/chunks/main-app-36e74dfd8b1eb57a.js",
       "_next/static/chunks/polyfills-42372ed130431b0a.js",
       "_next/static/chunks/webpack-81624dd509abd812.js",
-      "_next/static/css/9a314322fbd20920.css"
+      "_next/static/css/774c3af8e4f2921a.css"
     ],
     "missing": []
   },
@@ -143,6 +143,11 @@
     {
       "id": "renders_design_handoff_panel",
       "label": "Export renders KosmoDesign handoff review console.",
+      "status": "passed"
+    },
+    {
+      "id": "renders_design_pilot_path",
+      "label": "Export renders KosmoDesign pilot path.",
       "status": "passed"
     },
     {
@@ -273,6 +278,11 @@
     {
       "id": "keeps_launch_decision_human_gated",
       "label": "Export keeps launch decision human-gated.",
+      "status": "passed"
+    },
+    {
+      "id": "keeps_design_pilot_before_generation",
+      "label": "Export keeps KosmoDesign pilot review before generation.",
       "status": "passed"
     },
     {
