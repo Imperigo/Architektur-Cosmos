@@ -42,7 +42,7 @@ async function main() {
 
 function buildReport() {
   const branch = git(['branch', '--show-current']).trim();
-  const statusShortRaw = git(['status', '--short']).trim();
+  const statusShortRaw = git(['status', '--short']);
   const statusShort = filterOwnOutputStatus(statusShortRaw);
   const aheadCount = Number(git(['rev-list', '--count', 'origin/main..HEAD']).trim() || 0);
   const hasUnpushedCommits = aheadCount > 0;
