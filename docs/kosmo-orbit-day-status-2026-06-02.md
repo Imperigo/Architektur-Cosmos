@@ -59,16 +59,53 @@ Wichtige Grenze:
 - keine echten Userrechte
 - keine Public Claims ohne Evidenz
 
+### Lint-/Qualitaetsbereinigung
+
+Die Atlas-/Orbit-Schicht wurde von den bisherigen Bestandswarnungen befreit.
+
+Zweck:
+
+- TypeScript-Callback-Signaturen benennen ungenutzte Parameter explizit mit
+  `_...`;
+- ein ungenutzter Asset-Format-Zwischenwert wurde entfernt;
+- Lint ist dadurch nicht nur fehlerfrei, sondern auch warnungsfrei;
+- die Aenderung ist reine Qualitaetsarbeit ohne neue Runtime-Logik.
+
+### Buero-Pilot Szene
+
+`/orbit` hat eine sichtbare Buero-Pilot Szene erhalten.
+
+Zweck:
+
+- KosmoOrbit wird als lokale Steuerzentrale im Alltag eines kleinen
+  Architekturburos erklaert;
+- Projektleitung, Entwurf, Chef/Admin und Ausbildung sehen unterschiedliche
+  Rollenbeduerfnisse;
+- der erste reale Nutzen wird als beobachtbarer Review-Ablauf beschrieben,
+  nicht als fertige CAD- oder Plan-Generierung;
+- Evidenzfragen halten fest, was vor Zeit-, Kosten- oder Qualitaetsclaims
+  gemessen werden muss.
+
+Wichtige Grenze:
+
+- `local-office-pilot-review-only`
+- keine Kundendaten hochladen
+- keine Cloud
+- keine Geometrie- oder Plan-Writes
+- keine Design-Generation
+- keine echte Auth-Runtime
+- keine unbewiesenen Zeit-/Kostenclaims
+
 ## Lokale Nachweise
 
 Heute gruen geprueft:
 
-- `npm run kosmo:orbit-route-smoke` - 173/173 passed
-- `npm run kosmo:orbit-static-smoke` - 61/61 passed
+- `npm run kosmo:orbit-route-smoke` - 179/179 passed
+- `npm run kosmo:orbit-static-smoke` - 65/65 passed
 - `npm run atlas:static-smoke` - 17/17 passed
 - `npm run build` - static export passed
 - `npx tsc --noEmit --pretty false --incremental false` - passed
-- `npm run lint` - 0 Errors, 25 bekannte Bestandswarnungen
+- `npm run lint` - 0 Errors, 0 Warnings
 - `npm run brain:doctor` - 17/17 passed
 - `npm run generated:cleanup` - Zeitstempelrauschen entfernt, semantische
   Report-Diffs behalten
@@ -80,6 +117,9 @@ Browser-Smokes:
   Overflow, Owner-/Pilot-Gates sichtbar.
 - `/orbit/?v=design-pilot-20260602#design-pilot`: sichtbar, Navigation
   vorhanden, CSS geladen, 0 horizontaler Overflow, Generation bleibt blockiert.
+- `/orbit/?v=office-pilot-20260602`: HTTP 200, Office-Pilot-Navigation,
+  `#office-pilot`, `local-office-pilot-review-only` und Sicherheitscopy im
+  statischen HTML vorhanden.
 
 Hinweis: Ein paralleler TypeScript-Lauf waehrend `next build` hatte kurz
 fehlende `.next/types` gemeldet. Seriell nach abgeschlossenem Build war
@@ -90,6 +130,8 @@ Codefehler.
 
 - `055cff5` Add KosmoOrbit launch decision brief
 - `14ca4a2` Add KosmoDesign pilot path
+- `3d73869` Clear Atlas lint warnings
+- `fc0c2ca` Add KosmoOrbit office pilot scene
 
 ## Push-/Live-Grenze
 
@@ -111,7 +153,7 @@ Weiterhin nicht gemacht:
 
 1. Interne lokale Demo mit `/orbit` durchgehen:
    Presenter, Demo-Bereitschaft, Live-Gate, Launch Brief, Projektpaket,
-   KosmoDesign Handoff, Design-Pilotpfad.
+   Buero-Pilot Szene, KosmoDesign Handoff, Design-Pilotpfad.
 2. Danach bewusst entscheiden:
    - `push/live/deploy`: main pushen und Live-Smoke pruefen;
    - `buero-pilot`: anonymisiertes Projektpaket nehmen und Messkit ausfuellen;

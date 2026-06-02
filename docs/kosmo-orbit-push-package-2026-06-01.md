@@ -119,15 +119,20 @@ vor `origin/main`. Neu hinzugekommen:
   Owner-Entscheid und Pilot-Evidenz sind als menschliche Entscheidung sichtbar.
 - KosmoDesign Pilotpfad in `/orbit`: Review-Pilot vor jeder Generierung,
   keine Geometrie-Writes, keine Public Claims ohne Evidenz.
+- Buero-Pilot Szene in `/orbit`: der erste Alltagstest fuer ein kleines
+  Architekturbuero erklaert Rollen, Review-Ablauf, Blocker und Evidenz vor
+  Claims.
+- Lint-Cleanup in Atlas-/Orbit-Typen: `npm run lint` ist nun ohne Errors und
+  ohne Warnings.
 
 Aktuelle lokale Nachweise:
 
-- `npm run kosmo:orbit-route-smoke` - 173/173 passed
-- `npm run kosmo:orbit-static-smoke` - 61/61 passed
+- `npm run kosmo:orbit-route-smoke` - 179/179 passed
+- `npm run kosmo:orbit-static-smoke` - 65/65 passed
 - `npm run atlas:static-smoke` - 17/17 passed
 - `npm run build` - static export passed
 - `npx tsc --noEmit --pretty false --incremental false` - passed
-- `npm run lint` - 0 Errors, 25 bekannte Bestandswarnungen
+- `npm run lint` - 0 Errors, 0 Warnings
 - `npm run brain:doctor` - 17/17 passed
 - `npm run kosmo:orbit-push-readiness` - 9/9 passed
 
@@ -136,5 +141,7 @@ Browser-Smoke:
 - `/orbit/#launch-brief` sichtbar, CSS geladen, 0 horizontaler Overflow.
 - `/orbit/?v=design-pilot-20260602#design-pilot` sichtbar, CSS geladen,
   0 horizontaler Overflow.
+- `/orbit/?v=office-pilot-20260602` per HTTP 200 geprueft; Office-Pilot
+  Navigation, Section und Safety-Copy im statischen HTML vorhanden.
 
 Push bleibt blockiert, bis der Owner explizit Push/Live/Deploy freigibt.
