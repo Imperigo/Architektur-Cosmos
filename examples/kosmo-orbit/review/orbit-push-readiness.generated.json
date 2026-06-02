@@ -1,33 +1,33 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-02T05:30:32.626Z",
+  "generated_at": "2026-06-02T05:36:22.430Z",
   "generator": "kosmo-orbit-push-readiness",
   "status": "orbit_push_readiness_review_only",
   "git": {
     "branch": "main",
     "remote": "origin/main",
-    "ahead_count": 91,
+    "ahead_count": 93,
     "worktree_clean": true,
     "status_short": "",
     "latest_commits": [
+      "fc0c2ca Add KosmoOrbit office pilot scene",
+      "fb943d1 Refresh KosmoOrbit push readiness report",
       "3d73869 Clear Atlas lint warnings",
       "01f03f1 Show push readiness in KosmoOrbit launch brief",
-      "cf252da Clarify volatile KosmoOrbit push counts",
-      "fac089e Add KosmoOrbit push readiness report output",
-      "0014f83 Add KosmoOrbit push readiness report"
+      "cf252da Clarify volatile KosmoOrbit push counts"
     ]
   },
   "evidence": {
     "route_smoke": {
       "status": "orbit_route_smoke_passed",
-      "passed_checks": 175,
-      "check_count": 175,
+      "passed_checks": 179,
+      "check_count": 179,
       "failed_checks": 0
     },
     "static_smoke": {
       "status": "orbit_static_export_smoke_passed",
-      "passed_checks": 63,
-      "check_count": 63,
+      "passed_checks": 65,
+      "check_count": 65,
       "failed_checks": 0
     },
     "full_review": {
