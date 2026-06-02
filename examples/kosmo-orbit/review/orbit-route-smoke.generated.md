@@ -1,6 +1,6 @@
 # KosmoOrbit Route Smoke
 
-Generated: 2026-06-01T20:03:08.939Z
+Generated: 2026-06-02T05:09:31.625Z
 Status: `orbit_route_smoke_passed`
 Route: `app/orbit/page.tsx`
 
@@ -8,7 +8,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 
 ## Summary
 
-- checks: 165/165 passed
+- checks: 169/169 passed
 
 ## Checks
 
@@ -57,6 +57,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `office_routine_data_file_exists` | `passed` | Orbit office routine contract exists. |
 | `demo_readiness_file_exists` | `passed` | Orbit demo readiness component exists. |
 | `publish_readiness_file_exists` | `passed` | Orbit publish readiness component exists. |
+| `launch_decision_brief_file_exists` | `passed` | Orbit launch decision brief component exists. |
 | `section_index_file_exists` | `passed` | Orbit section index component exists. |
 | `imports_role_switcher` | `passed` | Route imports the role switcher preview component. |
 | `imports_demo_review_path` | `passed` | Route imports the guided demo review component. |
@@ -92,6 +93,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `imports_office_routine` | `passed` | Route imports the office routine component. |
 | `imports_demo_readiness` | `passed` | Route imports the demo readiness component. |
 | `imports_publish_readiness` | `passed` | Route imports the publish readiness component. |
+| `imports_launch_decision_brief` | `passed` | Route imports the launch decision brief component. |
 | `imports_section_index` | `passed` | Route imports the section index navigation component. |
 | `shows_hub_return` | `passed` | Route exposes a safe return link to the Kosmo Hub. |
 | `section_index_groups_navigation` | `passed` | Section index groups the dense demo navigation into readable lanes. |
@@ -169,6 +171,8 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `demo_readiness_shows_static_assets` | `passed` | Demo readiness exposes static export CSS/JS asset verification. |
 | `shows_publish_readiness` | `passed` | Route renders publish readiness and the live gate. |
 | `publish_readiness_blocks_live_push` | `passed` | Publish readiness blocks push/deploy until owner go, security review and live smoke. |
+| `shows_launch_decision_brief` | `passed` | Route renders a launch decision brief after the live gate. |
+| `launch_decision_keeps_owner_gate` | `passed` | Launch decision brief keeps push, public claims and pilot evidence human-gated. |
 | `shows_section_index` | `passed` | Route renders compact demo section navigation. |
 | `anchors_core_sections` | `passed` | Route contains anchors for core demo sections. |
 | `shows_blocked_actions` | `passed` | Route renders blocked action labels from role state. |

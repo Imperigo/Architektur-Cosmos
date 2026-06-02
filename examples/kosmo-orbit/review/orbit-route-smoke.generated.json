@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-01T20:03:08.939Z",
+  "generated_at": "2026-06-02T05:09:31.625Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 165,
-    "passed_checks": 165,
+    "check_count": 169,
+    "passed_checks": 169,
     "failed_checks": 0
   },
   "checks": [
@@ -227,6 +227,11 @@
       "status": "passed"
     },
     {
+      "id": "launch_decision_brief_file_exists",
+      "label": "Orbit launch decision brief component exists.",
+      "status": "passed"
+    },
+    {
       "id": "section_index_file_exists",
       "label": "Orbit section index component exists.",
       "status": "passed"
@@ -399,6 +404,11 @@
     {
       "id": "imports_publish_readiness",
       "label": "Route imports the publish readiness component.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_launch_decision_brief",
+      "label": "Route imports the launch decision brief component.",
       "status": "passed"
     },
     {
@@ -784,6 +794,16 @@
     {
       "id": "publish_readiness_blocks_live_push",
       "label": "Publish readiness blocks push/deploy until owner go, security review and live smoke.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_launch_decision_brief",
+      "label": "Route renders a launch decision brief after the live gate.",
+      "status": "passed"
+    },
+    {
+      "id": "launch_decision_keeps_owner_gate",
+      "label": "Launch decision brief keeps push, public claims and pilot evidence human-gated.",
       "status": "passed"
     },
     {

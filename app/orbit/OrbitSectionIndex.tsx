@@ -5,7 +5,8 @@ const sectionGroups = [
       { href: '#presenter', label: '3-Minuten' },
       { href: '#demo-ready', label: 'Demo' },
       { href: '#projektpaket', label: 'Projektpaket' },
-      { href: '#live-gate', label: 'Live-Gate' }
+      { href: '#live-gate', label: 'Live-Gate' },
+      { href: '#launch-brief', label: 'Launch' }
     ]
   },
   {

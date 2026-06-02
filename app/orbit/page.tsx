@@ -19,6 +19,7 @@ import { OrbitDemoReviewPath } from './OrbitDemoReviewPath';
 import { OrbitHealthReadiness } from './OrbitHealthReadiness';
 import { OrbitInstallationTopology } from './OrbitInstallationTopology';
 import { OrbitLearningMode } from './OrbitLearningMode';
+import { OrbitLaunchDecisionBrief } from './OrbitLaunchDecisionBrief';
 import { OrbitOfficeRoutine } from './OrbitOfficeRoutine';
 import { OrbitPermissionMatrix } from './OrbitPermissionMatrix';
 import { OrbitPilotFacilitatorChecklist } from './OrbitPilotFacilitatorChecklist';
@@ -419,6 +420,10 @@ export default function OrbitPage() {
 
           <div id="live-gate" className="scroll-mt-4">
             <OrbitPublishReadiness />
+          </div>
+
+          <div id="launch-brief" className="scroll-mt-4">
+            <OrbitLaunchDecisionBrief />
           </div>
 
           <div id="projektpaket" className="scroll-mt-4">
