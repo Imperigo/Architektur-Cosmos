@@ -6,7 +6,9 @@ Status: lokales Review- und Push-Paket. Kein Push wurde ausgefuehrt.
 
 - Branch: `main`
 - Remote: `origin/main`
-- Lokaler Stand: 56 Commits vor `origin/main`
+- Lokaler Stand: mehrere lokale Commits vor `origin/main`; aktuelle Zahl vor
+  Push immer mit `git status --short --branch` oder
+  `npm run kosmo:orbit-push-readiness` pruefen.
 - Live/Deploy: nicht ausgefuehrt, weil Push/Live-Go fehlt
 
 ## Inhalt des Pakets
@@ -110,8 +112,8 @@ aktuelle Stand vorfuehrbar.
 
 ## Addendum 2026-06-02
 
-Nach dem autonomen Startbatch am 2026-06-02 ist `main` lokal 83 Commits vor
-`origin/main`. Neu hinzugekommen:
+Nach dem autonomen Startbatch am 2026-06-02 ist `main` weiterhin lokal deutlich
+vor `origin/main`. Neu hinzugekommen:
 
 - Launch Decision Brief in `/orbit`: lokaler Gruenstand, Produktgrenze,
   Owner-Entscheid und Pilot-Evidenz sind als menschliche Entscheidung sichtbar.
@@ -127,6 +129,7 @@ Aktuelle lokale Nachweise:
 - `npx tsc --noEmit --pretty false --incremental false` - passed
 - `npm run lint` - 0 Errors, 25 bekannte Bestandswarnungen
 - `npm run brain:doctor` - 17/17 passed
+- `npm run kosmo:orbit-push-readiness` - 9/9 passed
 
 Browser-Smoke:
 

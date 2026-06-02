@@ -8,7 +8,9 @@ Accounts, keine Kosten.
 
 - Branch: `main`
 - Remote: `origin/main`
-- Lokaler Stand nach diesem Zwischenstand: 83 Commits vor `origin/main`
+- Lokaler Stand: deutlich vor `origin/main`; aktuelle Zahl jeweils mit
+  `git status --short --branch` oder `npm run kosmo:orbit-push-readiness`
+  pruefen.
 - Arbeitsbaum zu Batchbeginn: sauber
 - Ziel: KosmoOrbit als Hauptsoftware-Zentrale weiter in Richtung
   vorfuehrbares Produktpaket bringen, ohne die Grenzen zu CAD, Runtime,
@@ -114,4 +116,3 @@ Weiterhin nicht gemacht:
    - `push/live/deploy`: main pushen und Live-Smoke pruefen;
    - `buero-pilot`: anonymisiertes Projektpaket nehmen und Messkit ausfuellen;
    - `kosmo-design-v2`: Input-Checkliste und Review Mode tiefer ausarbeiten.
-
