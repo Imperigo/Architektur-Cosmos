@@ -1,16 +1,16 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-02T14:44:51.540Z",
+  "generated_at": "2026-06-02T20:33:27.401Z",
   "generator": "kosmo-orbit-responsive-audit",
   "status": "orbit_responsive_audit_passed",
   "source_dir": "app/orbit",
   "summary": {
-    "check_count": 33,
-    "passed_checks": 33,
+    "check_count": 34,
+    "passed_checks": 34,
     "failed_checks": 0,
-    "min_width_guard_count": 95,
-    "flex_wrap_count": 91,
-    "responsive_grid_count": 97
+    "min_width_guard_count": 96,
+    "flex_wrap_count": 97,
+    "responsive_grid_count": 105
   },
   "checks": [
     {
@@ -91,6 +91,11 @@
     {
       "id": "runtime_contract_responsive",
       "label": "Runtime contract uses responsive cards for the runtime stages.",
+      "status": "passed"
+    },
+    {
+      "id": "kosmosketch_adapter_responsive",
+      "label": "KosmoSketch adapter uses responsive cards for routing, job contract, artifacts and blocked actions.",
       "status": "passed"
     },
     {

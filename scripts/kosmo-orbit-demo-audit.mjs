@@ -60,6 +60,7 @@ function buildReport(html) {
     { id: 'design-handoff', label: 'KosmoDesign Handoff' },
     { id: 'entscheidung', label: 'Review Decision Draft' },
     { id: 'runtime-contract', label: 'Runtime-Vertrag' },
+    { id: 'kosmosketch-adapter', label: 'KosmoSketch ToolAdapter' },
     { id: 'installation', label: 'Buero-Installation' },
     { id: 'health', label: 'Health Readiness' },
     { id: 'risiken', label: 'Risiko-Register' },
@@ -81,7 +82,7 @@ function buildReport(html) {
     label: section.label,
     index: normalized.indexOf(`id="${section.id}"`)
   }));
-  const navLabels = ['Autonomie', 'Routine', '3-Minuten', 'Workflow', 'Pilot', 'Pilotplan', 'Session', 'Fortschritt', 'Vision', 'Demo', 'Live-Gate', 'Projektpaket', 'Handoff', 'Decision', 'Runtime', 'Installation', 'Health', 'Risiken', 'Commands', 'Audit', 'Evidenz', 'Profile', 'Identity', 'Daten', 'Memory', 'Storage', 'Restore', 'Ausbildung', 'Rechte', 'Rollen', 'Guardrails'];
+  const navLabels = ['Autonomie', 'Routine', '3-Minuten', 'Workflow', 'Pilot', 'Pilotplan', 'Session', 'Fortschritt', 'Vision', 'Demo', 'Live-Gate', 'Projektpaket', 'Handoff', 'Decision', 'Runtime', 'Sketch', 'Installation', 'Health', 'Risiken', 'Commands', 'Audit', 'Evidenz', 'Profile', 'Identity', 'Daten', 'Memory', 'Storage', 'Restore', 'Ausbildung', 'Rechte', 'Rollen', 'Guardrails'];
   const forbiddenArtifacts = ['[object Object]', 'NaN%', 'null null'];
   const checks = [
     check('html_exists', 'Built /orbit HTML exists.', existsSync(htmlPath)),
@@ -106,6 +107,8 @@ function buildReport(html) {
     check('design_handoff_visible', 'KosmoDesign handoff console is visible in the export.', normalized.includes('KosmoDesign Handoff') && normalized.includes('Review Console')),
     check('design_handoff_blocks_generation', 'KosmoDesign handoff keeps generation visibly blocked.', normalized.includes('Generate Design') && normalized.includes('Design generation is blocked')),
     check('runtime_contract_visible', 'Runtime contract is visible and non-operational.', normalized.includes('Runtime-Vertrag') && normalized.includes('no-process-launch')),
+    check('kosmosketch_adapter_visible', 'KosmoSketch adapter contract is visible in the export.', normalized.includes('KosmoSketch ToolAdapter') && normalized.includes('Target-Tool Vertrag fuer Skizze zu BIM') && normalized.includes('kosmo-draw.kosmosketch')),
+    check('kosmosketch_adapter_safe', 'KosmoSketch adapter keeps backend calls, approvals, artifacts, Blender, BIM, IFC and 2D actions blocked.', normalized.includes('kein POST /jobs') && normalized.includes('kein /router/plan') && normalized.includes('keine Approval-Mutation') && normalized.includes('kein Artifact-Upload') && normalized.includes('kein Blender-Start') && normalized.includes('kein BIM-Commit') && normalized.includes('kein IFC-Export') && normalized.includes('keine 2D-Regeneration')),
     check('installation_topology_visible', 'Office installation topology is visible in the export.', normalized.includes('Buero-Installation') && normalized.includes('local-appliance-map')),
     check('health_readiness_visible', 'Health readiness contract is visible in the export.', normalized.includes('Health Readiness') && normalized.includes('read-only-telemetry-contract')),
     check('risk_register_visible', 'Risk register is visible in the export.', normalized.includes('Risiko-Register') && normalized.includes('human-approval-risk-register')),

@@ -1,0 +1,115 @@
+{
+  "schema_version": "0.1",
+  "status": "kosmosketch_tool_adapter_contract_ready",
+  "mode": "static_review_only",
+  "target_tool": "kosmo-draw.kosmosketch",
+  "title": "KosmoSketch ToolAdapter Contract",
+  "source_context": {
+    "source_worker": "KosmoDraw",
+    "source_files": [
+      "KosmoDraw/docs/CROSS_WORKER_INFO_2026-06-02_KosmoSketch.md",
+      "KosmoDraw/docs/KOSMOSKETCH_PLAN.md",
+      "KosmoDraw/docs/KOSMOSKETCH_VISION.md",
+      "KosmoDraw/docs/KOSMOZENTRALE_CONTRACT.md"
+    ],
+    "request": "KosmoSketch als ToolAdapter registrieren, target_tool und Entwurf-Keywords festlegen, Approval- und Artifact-Formen fuer KosmoOrbit/KosmoZentrale bestaetigen."
+  },
+  "department": {
+    "id": "entwurf",
+    "label": "Entwurf",
+    "keywords": [
+      "skizze",
+      "handskizze",
+      "plan skizzieren",
+      "entwurf aendern",
+      "raum hinzufuegen",
+      "wand verschieben",
+      "tuer setzen",
+      "raum loeschen",
+      "funktion setzen",
+      "ipad",
+      "pencil",
+      "sketchintent"
+    ]
+  },
+  "aliases": [
+    "kosmosketch",
+    "kosmo-sketch",
+    "kosmodraw-sketch",
+    "kosmo-draw",
+    "kosmo-design-sketch"
+  ],
+  "job_contract": {
+    "job_create_shape": "JobCreate{title,prompt,project,target_tool,mode,risk_level,estimated_cloud_cost_usd}",
+    "default_mode": "execute_after_approval",
+    "routing": "POST /router/plan routes prompt keywords to department Entwurf and target_tool kosmo-draw.kosmosketch.",
+    "brain_adapter": "local_brain or codex placeholder until local Kosmo is available.",
+    "panic_endpoint": "POST /panic/stop-all must stop or block every executable adapter path."
+  },
+  "approval_contract": {
+    "required_for_model_changes": true,
+    "job_status_before_commit": "waiting_for_approval",
+    "approval_endpoint": "POST /approvals/{id}/approve|deny",
+    "orbit_gate": "human_review_gate",
+    "commit_rule": "No BIM, Bridge, IFC or 2D regeneration write before human approval."
+  },
+  "artifact_contract": [
+    {
+      "type": "diff",
+      "name": "kosmosketch-intent-preview",
+      "purpose": "SketchIntent, confidence, clarifying questions, proposed edit operations and preview diff."
+    },
+    {
+      "type": "blender_export",
+      "name": "kosmosketch-approved-commit",
+      "purpose": "Approved model commit output, Bridge payload, IFC or regenerated 2D package."
+    },
+    {
+      "type": "markdown_package",
+      "name": "kosmosketch-human-review-pack",
+      "purpose": "Human-readable review summary for project lead, design architect and owner."
+    }
+  ],
+  "allowed_today": [
+    "static_adapter_contract_render",
+    "human_review_prompt",
+    "route_keyword_mapping",
+    "artifact_name_review",
+    "readiness_report_generation"
+  ],
+  "blocked_today": [
+    "post_jobs_call",
+    "router_plan_call",
+    "approval_mutation",
+    "artifact_upload",
+    "blender_process_launch",
+    "kosmosketch_job_execute",
+    "bim_commit",
+    "bridge_write",
+    "ifc_export",
+    "two_d_regeneration",
+    "ipad_upload",
+    "external_account_call",
+    "cost_job"
+  ],
+  "review_roles": [
+    "Chef / Admin",
+    "IT/KI Spezialist",
+    "Projektleitung",
+    "Entwurfsarchitekt",
+    "Datenschutz Review"
+  ],
+  "promotion_requirements": [
+    "Owner bestaetigt target_tool String und Aliases.",
+    "KosmoZentrale bestaetigt JobCreate-, Approval- und Artifact-Formen.",
+    "KosmoDraw bestaetigt headless Einstieg code/tools/kosmosketch_job.py interpret/apply.",
+    "Review-Gate bleibt fuer jede Modellveraenderung aktiv.",
+    "Panic Stop und Audit Trail sind vor executable Adapter getestet.",
+    "Keine Kundendaten oder echten Projektwrites im ersten Adapter-Smoke."
+  ],
+  "next_actions": [
+    "KosmoSketch ToolAdapter in KosmoOrbit sichtbar pruefen.",
+    "Nach Gruenstand den Contract an KosmoDraw/KosmoZentrale spiegeln.",
+    "Erst danach einen lokalen nicht-schreibenden Adapter-Smoke mit Testdaten vorbereiten."
+  ]
+}

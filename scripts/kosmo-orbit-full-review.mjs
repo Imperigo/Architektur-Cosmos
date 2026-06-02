@@ -287,6 +287,22 @@ const steps = [
     report: resolve(workspaceRoot, 'review/orbit-runtime-adapter.generated.json')
   },
   {
+    id: 'kosmosketch_adapter',
+    label: 'Orbit KosmoSketch ToolAdapter Contract',
+    script: 'kosmo:orbit-kosmosketch-adapter',
+    args: [
+      '--contract',
+      'examples/kosmo-orbit/runtime/kosmosketch-tool-adapter.contract.json',
+      '--component',
+      'app/orbit/OrbitKosmoSketchAdapterContract.tsx',
+      '--route',
+      'app/orbit/page.tsx',
+      '--sectionIndex',
+      'app/orbit/OrbitSectionIndex.tsx'
+    ],
+    report: resolve(workspaceRoot, 'review/orbit-kosmosketch-adapter.generated.json')
+  },
+  {
     id: 'workstation_profile',
     label: 'Orbit Workstation Profile Contract',
     script: 'kosmo:orbit-workstation-profile',
@@ -506,6 +522,7 @@ function buildReport(stepRows) {
   const officePilotScene = readOptionalJson(resolve(workspaceRoot, 'review/orbit-office-pilot-scene.generated.json'));
   const toolRegistry = readOptionalJson(resolve(workspaceRoot, 'review/orbit-tool-registry.generated.json'));
   const runtimeAdapter = readOptionalJson(resolve(workspaceRoot, 'review/orbit-runtime-adapter.generated.json'));
+  const kosmoSketchAdapter = readOptionalJson(resolve(workspaceRoot, 'review/orbit-kosmosketch-adapter.generated.json'));
   const workstationProfile = readOptionalJson(resolve(workspaceRoot, 'review/orbit-workstation-profile.generated.json'));
   const localIdentity = readOptionalJson(resolve(workspaceRoot, 'review/orbit-local-identity.generated.json'));
   const dataGovernance = readOptionalJson(resolve(workspaceRoot, 'review/orbit-data-governance.generated.json'));
@@ -601,6 +618,13 @@ function buildReport(stepRows) {
       runtime_adapter_check_count: runtimeAdapter?.summary?.check_count ?? null,
       runtime_adapter_lane_count: runtimeAdapter?.summary?.adapter_lane_count ?? null,
       runtime_adapter_promotion_requirement_count: runtimeAdapter?.summary?.promotion_requirement_count ?? null,
+      kosmosketch_adapter_status: kosmoSketchAdapter?.status || null,
+      kosmosketch_adapter_passed_checks: kosmoSketchAdapter?.summary?.passed_checks ?? null,
+      kosmosketch_adapter_check_count: kosmoSketchAdapter?.summary?.check_count ?? null,
+      kosmosketch_adapter_target_tool: kosmoSketchAdapter?.target_tool || null,
+      kosmosketch_adapter_keyword_count: kosmoSketchAdapter?.summary?.keyword_count ?? null,
+      kosmosketch_adapter_artifact_contract_count: kosmoSketchAdapter?.summary?.artifact_contract_count ?? null,
+      kosmosketch_adapter_blocked_today_count: kosmoSketchAdapter?.summary?.blocked_today_count ?? null,
       workstation_profile_status: workstationProfile?.status || null,
       workstation_profile_passed_checks: workstationProfile?.summary?.passed_checks ?? null,
       workstation_profile_check_count: workstationProfile?.summary?.check_count ?? null,
@@ -696,6 +720,7 @@ function buildReport(stepRows) {
       office_pilot_scene_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-office-pilot-scene.generated.md')),
       tool_registry_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-tool-registry.generated.md')),
       runtime_adapter_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-runtime-adapter.generated.md')),
+      kosmosketch_adapter_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-kosmosketch-adapter.generated.md')),
       workstation_profile_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-workstation-profile.generated.md')),
       local_identity_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-local-identity.generated.md')),
       data_governance_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-data-governance.generated.md')),
@@ -718,11 +743,11 @@ function buildReport(stepRows) {
       role_shell_smoke_markdown: relative(root, resolve(projectRoot, 'orbit/role-shell-smoke.generated.md'))
     },
     steps: stepRows,
-    next_actions: nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHandoff, appRouteSpec, healthReadiness, commandContract, auditTrail, officePilotScene, toolRegistry, runtimeAdapter, workstationProfile, localIdentity, dataGovernance, officeMemory, localStorageDecision, deleteExportRestoreDrill, pilotSession, pilotMeasurementKit, pilotResultDraft, orbitRouteSmoke, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke, roleShellPrototype, roleShellSmoke })
+    next_actions: nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHandoff, appRouteSpec, healthReadiness, commandContract, auditTrail, officePilotScene, toolRegistry, runtimeAdapter, kosmoSketchAdapter, workstationProfile, localIdentity, dataGovernance, officeMemory, localStorageDecision, deleteExportRestoreDrill, pilotSession, pilotMeasurementKit, pilotResultDraft, orbitRouteSmoke, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke, roleShellPrototype, roleShellSmoke })
   };
 }
 
-function nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHandoff, appRouteSpec, healthReadiness, commandContract, auditTrail, officePilotScene, toolRegistry, runtimeAdapter, workstationProfile, localIdentity, dataGovernance, officeMemory, localStorageDecision, deleteExportRestoreDrill, pilotSession, pilotMeasurementKit, pilotResultDraft, orbitRouteSmoke, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke, roleShellPrototype, roleShellSmoke }) {
+function nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHandoff, appRouteSpec, healthReadiness, commandContract, auditTrail, officePilotScene, toolRegistry, runtimeAdapter, kosmoSketchAdapter, workstationProfile, localIdentity, dataGovernance, officeMemory, localStorageDecision, deleteExportRestoreDrill, pilotSession, pilotMeasurementKit, pilotResultDraft, orbitRouteSmoke, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke, roleShellPrototype, roleShellSmoke }) {
   const actions = [];
   if (failedSteps.length) {
     failedSteps.forEach((step) => actions.push(`Review failed step: ${step.label}`));
@@ -760,6 +785,9 @@ function nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHan
   }
   if (runtimeAdapter?.status === 'runtime_adapter_contract_passed') {
     actions.push('Use the runtime adapter contract as the bridge from Tool Registry to KosmoZentrale before implementing executable local adapters.');
+  }
+  if (kosmoSketchAdapter?.status === 'kosmosketch_adapter_contract_passed') {
+    actions.push('Use the KosmoSketch adapter contract before registering executable sketch jobs, router calls, approvals, artifact uploads, Blender launch, BIM commits, IFC export or 2D regeneration.');
   }
   if (workstationProfile?.status === 'workstation_profile_contract_passed') {
     actions.push('Use the workstation profile contract before building persistent users, auth or real per-workstation Orbit shells.');
@@ -874,6 +902,12 @@ function renderMarkdown(report) {
     `- runtime adapter checks: ${report.summary.runtime_adapter_passed_checks}/${report.summary.runtime_adapter_check_count}`,
     `- runtime adapter lanes: ${report.summary.runtime_adapter_lane_count}`,
     `- runtime adapter promotion requirements: ${report.summary.runtime_adapter_promotion_requirement_count}`,
+    `- KosmoSketch adapter: \`${report.summary.kosmosketch_adapter_status}\``,
+    `- KosmoSketch adapter checks: ${report.summary.kosmosketch_adapter_passed_checks}/${report.summary.kosmosketch_adapter_check_count}`,
+    `- KosmoSketch target tool: \`${report.summary.kosmosketch_adapter_target_tool}\``,
+    `- KosmoSketch routing keywords: ${report.summary.kosmosketch_adapter_keyword_count}`,
+    `- KosmoSketch artifact contracts: ${report.summary.kosmosketch_adapter_artifact_contract_count}`,
+    `- KosmoSketch blocked actions: ${report.summary.kosmosketch_adapter_blocked_today_count}`,
     `- workstation profile: \`${report.summary.workstation_profile_status}\``,
     `- workstation profile checks: ${report.summary.workstation_profile_passed_checks}/${report.summary.workstation_profile_check_count}`,
     `- workstation profiles: ${report.summary.workstation_profile_count}`,

@@ -1,0 +1,161 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-02T20:38:37.068Z",
+  "generator": "kosmo-orbit-kosmosketch-adapter-check",
+  "status": "kosmosketch_adapter_contract_passed",
+  "contract_file": "examples/kosmo-orbit/runtime/kosmosketch-tool-adapter.contract.json",
+  "component_file": "app/orbit/OrbitKosmoSketchAdapterContract.tsx",
+  "summary": {
+    "check_count": 20,
+    "passed_checks": 20,
+    "failed_checks": 0,
+    "keyword_count": 12,
+    "alias_count": 5,
+    "artifact_contract_count": 3,
+    "blocked_today_count": 13,
+    "promotion_requirement_count": 6
+  },
+  "target_tool": "kosmo-draw.kosmosketch",
+  "department": {
+    "id": "entwurf",
+    "label": "Entwurf",
+    "keywords": [
+      "skizze",
+      "handskizze",
+      "plan skizzieren",
+      "entwurf aendern",
+      "raum hinzufuegen",
+      "wand verschieben",
+      "tuer setzen",
+      "raum loeschen",
+      "funktion setzen",
+      "ipad",
+      "pencil",
+      "sketchintent"
+    ]
+  },
+  "artifact_contract": [
+    {
+      "type": "diff",
+      "name": "kosmosketch-intent-preview",
+      "purpose": "SketchIntent, confidence, clarifying questions, proposed edit operations and preview diff."
+    },
+    {
+      "type": "blender_export",
+      "name": "kosmosketch-approved-commit",
+      "purpose": "Approved model commit output, Bridge payload, IFC or regenerated 2D package."
+    },
+    {
+      "type": "markdown_package",
+      "name": "kosmosketch-human-review-pack",
+      "purpose": "Human-readable review summary for project lead, design architect and owner."
+    }
+  ],
+  "checks": [
+    {
+      "id": "contract_file_exists",
+      "label": "KosmoSketch adapter contract exists.",
+      "status": "passed"
+    },
+    {
+      "id": "status_ready",
+      "label": "KosmoSketch adapter contract status is ready.",
+      "status": "passed"
+    },
+    {
+      "id": "mode_static_review_only",
+      "label": "KosmoSketch adapter contract is static review-only.",
+      "status": "passed"
+    },
+    {
+      "id": "target_tool_selected",
+      "label": "Target tool is selected as kosmo-draw.kosmosketch.",
+      "status": "passed"
+    },
+    {
+      "id": "department_entwurf",
+      "label": "Department is Entwurf.",
+      "status": "passed"
+    },
+    {
+      "id": "routing_keywords_present",
+      "label": "Routing keywords cover sketch and core edit intents.",
+      "status": "passed"
+    },
+    {
+      "id": "aliases_present",
+      "label": "Aliases cover KosmoSketch and KosmoDraw naming variants.",
+      "status": "passed"
+    },
+    {
+      "id": "job_contract_present",
+      "label": "JobCreate, execute_after_approval, router and panic contracts are present.",
+      "status": "passed"
+    },
+    {
+      "id": "approval_contract_present",
+      "label": "Approval contract requires review before model writes.",
+      "status": "passed"
+    },
+    {
+      "id": "artifact_contract_present",
+      "label": "Artifact contract includes diff, blender_export and markdown_package.",
+      "status": "passed"
+    },
+    {
+      "id": "blocked_actions_present",
+      "label": "Executable backend, Blender, BIM, Bridge, IFC and 2D actions are blocked today.",
+      "status": "passed"
+    },
+    {
+      "id": "allowed_today_review_only",
+      "label": "Allowed today items are static review and readiness only.",
+      "status": "passed"
+    },
+    {
+      "id": "review_roles_present",
+      "label": "Review roles include owner, IT/KI, project lead, design architect and privacy review.",
+      "status": "passed"
+    },
+    {
+      "id": "promotion_requirements_present",
+      "label": "Promotion requirements include owner, Zentrale, KosmoDraw, review gate, panic and no customer data.",
+      "status": "passed"
+    },
+    {
+      "id": "component_imports_contract",
+      "label": "Component imports the KosmoSketch adapter contract.",
+      "status": "passed"
+    },
+    {
+      "id": "component_renders_adapter_copy",
+      "label": "Component renders KosmoSketch target-tool copy.",
+      "status": "passed"
+    },
+    {
+      "id": "component_renders_safety_boundary",
+      "label": "Component keeps jobs, router, approvals, artifacts, Blender, BIM, IFC and 2D regeneration blocked.",
+      "status": "passed"
+    },
+    {
+      "id": "route_imports_adapter",
+      "label": "Orbit route imports the KosmoSketch adapter component.",
+      "status": "passed"
+    },
+    {
+      "id": "route_anchors_adapter",
+      "label": "Orbit route renders a kosmosketch-adapter anchor.",
+      "status": "passed"
+    },
+    {
+      "id": "section_index_links_adapter",
+      "label": "Section index links to KosmoSketch adapter.",
+      "status": "passed"
+    }
+  ],
+  "next_actions": [
+    "KosmoSketch ToolAdapter in KosmoOrbit sichtbar pruefen.",
+    "Nach Gruenstand den Contract an KosmoDraw/KosmoZentrale spiegeln.",
+    "Erst danach einen lokalen nicht-schreibenden Adapter-Smoke mit Testdaten vorbereiten."
+  ]
+}

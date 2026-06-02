@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-02T14:44:51.631Z",
+  "generated_at": "2026-06-02T20:38:38.766Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 239,
-    "passed_checks": 239,
+    "check_count": 246,
+    "passed_checks": 246,
     "failed_checks": 0
   },
   "checks": [
@@ -189,6 +189,16 @@
     {
       "id": "runtime_adapter_data_file_exists",
       "label": "Orbit runtime adapter contract exists.",
+      "status": "passed"
+    },
+    {
+      "id": "kosmosketch_adapter_file_exists",
+      "label": "Orbit KosmoSketch adapter component exists.",
+      "status": "passed"
+    },
+    {
+      "id": "kosmosketch_adapter_data_file_exists",
+      "label": "Orbit KosmoSketch adapter contract exists.",
       "status": "passed"
     },
     {
@@ -469,6 +479,16 @@
     {
       "id": "imports_runtime_adapter_data",
       "label": "Runtime adapter component imports the local contract JSON.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_kosmosketch_adapter",
+      "label": "Route imports the KosmoSketch adapter component.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_kosmosketch_adapter_data",
+      "label": "KosmoSketch adapter component imports the local contract JSON.",
       "status": "passed"
     },
     {
@@ -904,6 +924,21 @@
     {
       "id": "keeps_runtime_adapter_non_operational",
       "label": "Runtime adapter keeps adapters, processes, data writes and external accounts blocked.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_kosmosketch_adapter",
+      "label": "Route renders the KosmoSketch target-tool adapter.",
+      "status": "passed"
+    },
+    {
+      "id": "kosmosketch_adapter_uses_local_contract",
+      "label": "KosmoSketch adapter uses local contract for target tool, department, artifacts and blocked actions.",
+      "status": "passed"
+    },
+    {
+      "id": "keeps_kosmosketch_adapter_review_only",
+      "label": "KosmoSketch adapter blocks backend calls, approvals, artifacts, Blender, BIM, IFC and 2D regeneration.",
       "status": "passed"
     },
     {

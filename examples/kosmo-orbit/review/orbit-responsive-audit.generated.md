@@ -1,6 +1,6 @@
 # KosmoOrbit Responsive Audit
 
-Generated: 2026-06-02T14:44:51.540Z
+Generated: 2026-06-02T20:33:27.401Z
 Status: `orbit_responsive_audit_passed`
 Source: `app/orbit`
 
@@ -8,10 +8,10 @@ Source-level responsive guard for `/orbit`. This does not replace a visual brows
 
 ## Summary
 
-- checks: 33/33 passed
-- min-w-0 guards: 95
-- flex-wrap usages: 91
-- responsive grid usages: 97
+- checks: 34/34 passed
+- min-w-0 guards: 96
+- flex-wrap usages: 97
+- responsive grid usages: 105
 
 ## Checks
 
@@ -33,6 +33,7 @@ Source-level responsive guard for `/orbit`. This does not replace a visual brows
 | `design_handoff_responsive` | `passed` | KosmoDesign handoff panel uses responsive columns for role, model, blockers and context. |
 | `office_routine_responsive` | `passed` | Office routine uses responsive cards for day phases and hard stops. |
 | `runtime_contract_responsive` | `passed` | Runtime contract uses responsive cards for the runtime stages. |
+| `kosmosketch_adapter_responsive` | `passed` | KosmoSketch adapter uses responsive cards for routing, job contract, artifacts and blocked actions. |
 | `workstation_profile_responsive` | `passed` | Workstation profile contract uses responsive cards for profile and escalation layouts. |
 | `local_identity_responsive` | `passed` | Local identity contract uses responsive cards for profile classes, sessions and promotion requirements. |
 | `data_governance_responsive` | `passed` | Data governance contract uses responsive cards for domains, storage lanes and promotion requirements. |
