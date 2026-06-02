@@ -1,6 +1,6 @@
 # KosmoOrbit Push Readiness
 
-Generated: 2026-06-02T05:41:27.442Z
+Generated: 2026-06-02T05:46:04.609Z
 Status: `orbit_push_readiness_review_only`
 
 This is a local review-only push decision report. It does not push, deploy, upload, spend money or call external accounts.
@@ -9,7 +9,7 @@ This is a local review-only push decision report. It does not push, deploy, uplo
 
 - branch: `main`
 - remote: `origin/main`
-- ahead count: 98
+- has unpushed commits: yes
 - worktree clean: yes
 
 ## Evidence
@@ -57,11 +57,3 @@ This is a local review-only push decision report. It does not push, deploy, uplo
 - Owner-Go einholen und main pushen, danach Cloudflare Deploy und Live-Smoke pruefen.
 - Weiter lokal halten und den Buero-Pilot mit anonymisiertem Projektpaket starten.
 - KosmoDesign V2 Review Mode vertiefen, ohne Design-Generation freizuschalten.
-
-## Latest Commits
-
-- `a7fc5ee Show push command evidence in launch brief`
-- `6abb944 Refresh strengthened KosmoOrbit push readiness`
-- `d0dd934 Strengthen KosmoOrbit push readiness checks`
-- `d188a69 Document KosmoOrbit office pilot batch`
-- `48b4524 Refresh KosmoOrbit office pilot readiness`

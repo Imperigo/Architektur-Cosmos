@@ -1,21 +1,14 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-02T05:41:27.442Z",
+  "generated_at": "2026-06-02T05:46:04.609Z",
   "generator": "kosmo-orbit-push-readiness",
   "status": "orbit_push_readiness_review_only",
   "git": {
     "branch": "main",
     "remote": "origin/main",
-    "ahead_count": 98,
+    "has_unpushed_commits": true,
     "worktree_clean": true,
-    "status_short": "",
-    "latest_commits": [
-      "a7fc5ee Show push command evidence in launch brief",
-      "6abb944 Refresh strengthened KosmoOrbit push readiness",
-      "d0dd934 Strengthen KosmoOrbit push readiness checks",
-      "d188a69 Document KosmoOrbit office pilot batch",
-      "48b4524 Refresh KosmoOrbit office pilot readiness"
-    ]
+    "status_short": ""
   },
   "evidence": {
     "route_smoke": {
