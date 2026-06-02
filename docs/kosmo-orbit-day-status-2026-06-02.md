@@ -293,6 +293,49 @@ Nachgezogen:
 - `npm run kosmo:orbit-demo-audit` steht bei 39/39;
 - `npm run kosmo:orbit-responsive-audit` steht bei 30/30.
 
+### Office-Memory-Readiness-Vertrag
+
+Der Office-Memory-Readiness-Vertrag ist als naechste Grenze nach Data
+Governance umgesetzt.
+
+Zweck:
+
+- spaeteres lokales Buero-Gedaechtnis in Memory-Lanes strukturieren;
+- Projektkontext, Entscheide, Asset-Evidenz, Ausbildung und Betrieb getrennt
+  halten;
+- Owner-, Retention-, Delete/Export-, Restore-, Backup-, Rollen- und
+  Privacy-Gates vor echte Memory-Writes setzen;
+- verhindern, dass aus Review-Zusammenfassungen heimlich Indexierung,
+  Embeddings, Runtime-Logs oder externe Memory-Synchronisation werden.
+
+Wichtige Grenze:
+
+- kein Memory-Write;
+- kein Kundendatei-Scan;
+- keine automatische Indexierung;
+- kein Cross-Project-Memory-Merge;
+- kein Learning Score;
+- kein Runtime-Log-Persistieren;
+- kein Backup-Status-Write;
+- kein externer Memory-Sync;
+- kein Cloud Vector Store;
+- kein Embedding-Job;
+- kein Public Memory Publish.
+
+Nachgezogen:
+
+- `examples/kosmo-orbit/memory/orbit-office-memory-readiness.contract.json`
+  haelt den Office-Memory-Readiness-Vertrag;
+- `app/orbit/OrbitOfficeMemoryReadiness.tsx` rendert Memory-Lanes,
+  Readiness-Gates, blockierte Faehigkeiten und Safety-Copy;
+- `npm run kosmo:orbit-office-memory` prueft den Vertrag mit 16/16 Checks;
+- `npm run kosmo:orbit-full-review` enthaelt den Vertrag als eigenen Schritt
+  und steht dadurch bei 30/30;
+- `npm run kosmo:orbit-route-smoke` steht bei 225/225;
+- `npm run kosmo:orbit-static-smoke` steht bei 78/78;
+- `npm run kosmo:orbit-demo-audit` steht bei 41/41;
+- `npm run kosmo:orbit-responsive-audit` steht bei 31/31.
+
 ### Push-Readiness Stabilisierung
 
 Der Push-Readiness-Report wurde stabilisiert.
@@ -327,7 +370,7 @@ ohne Push, Deploy, Upload, externe Accounts oder Kosten auszuloesen.
 ### Full Review und IFC-Kontext
 
 `npm run kosmo:orbit-full-review` wurde zuerst auf 24, danach auf 25, 26, 27,
-28 und nun auf 29 Schritte erweitert.
+28, 29 und nun auf 30 Schritte erweitert.
 
 Neu enthalten:
 
@@ -347,6 +390,9 @@ Neu enthalten:
 - `npm run kosmo:orbit-data-governance` als eigener Full-Review-Schritt mit
   16/16 Checks, 5 Datenbereichen, 3 Speicher-Lanes und 13 blockierten
   Datenfaehigkeiten;
+- `npm run kosmo:orbit-office-memory` als eigener Full-Review-Schritt mit
+  16/16 Checks, 5 Memory-Lanes, 7 Readiness-Gates und 11 blockierten
+  Memory-Faehigkeiten;
 - aktualisierte Design-Kontext-Artefakte fuer das Demo-Projekt mit IFC-Bounds
   und IFC-Rollenhinweisen.
 
@@ -357,9 +403,9 @@ ist kein BIM-Import, kein editierbares Modell und kein Design-Generation-Go.
 
 Heute gruen geprueft:
 
-- `npm run kosmo:orbit-route-smoke` - 218/218 passed
-- `npm run kosmo:orbit-static-smoke` - 76/76 passed
-- `npm run kosmo:orbit-full-review` - 29/29 passed
+- `npm run kosmo:orbit-route-smoke` - 225/225 passed
+- `npm run kosmo:orbit-static-smoke` - 78/78 passed
+- `npm run kosmo:orbit-full-review` - 30/30 passed
 - `npm run atlas:static-smoke` - 17/17 passed
 - `npm run build` - static export passed
 - `npx tsc --noEmit --pretty false --incremental false` - passed
@@ -371,8 +417,9 @@ Heute gruen geprueft:
 - `npm run kosmo:orbit-workstation-profile` - 16/16 passed
 - `npm run kosmo:orbit-local-identity` - 16/16 passed
 - `npm run kosmo:orbit-data-governance` - 16/16 passed
-- `npm run kosmo:orbit-demo-audit` - 39/39 passed
-- `npm run kosmo:orbit-responsive-audit` - 30/30 passed
+- `npm run kosmo:orbit-office-memory` - 16/16 passed
+- `npm run kosmo:orbit-demo-audit` - 41/41 passed
+- `npm run kosmo:orbit-responsive-audit` - 31/31 passed
 - `npm run kosmo:orbit-push-readiness` - 12/12 passed
 - `npm run kosmo:orbit-readiness-sweep` - 6/6 passed
 - `npm run generated:cleanup` - Zeitstempelrauschen entfernt, semantische
@@ -407,6 +454,11 @@ Browser-Smokes:
   Static Export, Data-Governance-Grenze sichtbar, Daten-Navigation vorhanden,
   5 Datenbereiche und Safety-Copy fuer D1/R2/Kundendaten/Backup/externen Sync
   sichtbar.
+- `/orbit/?v=office-memory-20260602#office-memory`: HTTP 200 im lokalen
+  Static Export, Office-Memory-Readiness sichtbar, Memory-Navigation
+  vorhanden, 5 Memory-Lanes und Safety-Copy fuer Memory-Write,
+  Kundendatei-Scan, Embedding-Job, Backup-Status-Write, Cloud Vector Store und
+  externen Memory-Sync sichtbar.
 
 Hinweis: Ein paralleler TypeScript-Lauf waehrend `next build` hatte kurz
 fehlende `.next/types` gemeldet. Seriell nach abgeschlossenem Build war

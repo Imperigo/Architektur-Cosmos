@@ -1,149 +1,154 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-02T13:31:27.859Z",
+  "generated_at": "2026-06-02T13:58:30.429Z",
   "generator": "kosmo-orbit-demo-audit",
   "status": "orbit_demo_audit_passed",
   "html_file": "out/orbit/index.html",
   "summary": {
-    "check_count": 39,
-    "passed_checks": 39,
+    "check_count": 41,
+    "passed_checks": 41,
     "failed_checks": 0
   },
   "demo_order": [
     {
       "id": "autonomie",
       "label": "Autonomie-Status",
-      "index": 26687
+      "index": 27103
     },
     {
       "id": "routine",
       "label": "Buero-Routine",
-      "index": 29163
+      "index": 29579
     },
     {
       "id": "presenter",
       "label": "3-Minuten-Erklaerung",
-      "index": 58861
+      "index": 59277
     },
     {
       "id": "workflow-delta",
       "label": "Workflow-Delta",
-      "index": 61878
+      "index": 62294
     },
     {
       "id": "pilotmessung",
       "label": "Pilotmessung",
-      "index": 67600
+      "index": 68016
     },
     {
       "id": "pilotplan",
       "label": "Pilot-Runbook",
-      "index": 88552
+      "index": 88968
     },
     {
       "id": "pilot-session",
       "label": "Pilot-Session Template",
-      "index": 96170
+      "index": 96586
     },
     {
       "id": "fortschritt",
       "label": "Projektfortschritt",
-      "index": 101609
+      "index": 102025
     },
     {
       "id": "vision",
       "label": "Vision Bridge",
-      "index": 108354
+      "index": 108770
     },
     {
       "id": "demo-ready",
       "label": "Demo-Bereitschaft",
-      "index": 112694
+      "index": 113110
     },
     {
       "id": "live-gate",
       "label": "Live-Gate",
-      "index": 115449
+      "index": 115865
     },
     {
       "id": "projektpaket",
       "label": "Projektpaket Tagesansicht",
-      "index": 134771
+      "index": 135187
     },
     {
       "id": "design-handoff",
       "label": "KosmoDesign Handoff",
-      "index": 144363
+      "index": 144779
     },
     {
       "id": "entscheidung",
       "label": "Review Decision Draft",
-      "index": 164221
+      "index": 164637
     },
     {
       "id": "runtime-contract",
       "label": "Runtime-Vertrag",
-      "index": 171530
+      "index": 171946
     },
     {
       "id": "installation",
       "label": "Buero-Installation",
-      "index": 195691
+      "index": 196107
     },
     {
       "id": "health",
       "label": "Health Readiness",
-      "index": 203430
+      "index": 203846
     },
     {
       "id": "risiken",
       "label": "Risiko-Register",
-      "index": 210287
+      "index": 210703
     },
     {
       "id": "commands",
       "label": "Command-Vertrag",
-      "index": 217576
+      "index": 217992
     },
     {
       "id": "audit",
       "label": "Audit-Trail-Vertrag",
-      "index": 226939
+      "index": 227355
     },
     {
       "id": "evidenz",
       "label": "Pruefevidenz",
-      "index": 234453
+      "index": 234869
     },
     {
       "id": "workstation-profile",
       "label": "Workstation Profile Contract",
-      "index": 242712
+      "index": 243128
     },
     {
       "id": "local-identity",
       "label": "Local Identity Boundary",
-      "index": 264719
+      "index": 265135
     },
     {
       "id": "data-governance",
       "label": "Data Governance Boundary",
-      "index": 280653
+      "index": 281069
+    },
+    {
+      "id": "office-memory",
+      "label": "Office Memory Readiness",
+      "index": 299583
     },
     {
       "id": "ausbildung",
       "label": "Ausbildungsmodus",
-      "index": 299167
+      "index": 312968
     },
     {
       "id": "rechte",
       "label": "Rechte-Matrix",
-      "index": 304477
+      "index": 318278
     },
     {
       "id": "rollen",
       "label": "Rollenumschaltung Preview",
-      "index": 322232
+      "index": 336033
     }
   ],
   "checks": [
@@ -310,6 +315,16 @@
     {
       "id": "data_governance_safe",
       "label": "Data governance blocks database writes, uploads, customer data writes and external sync.",
+      "status": "passed"
+    },
+    {
+      "id": "office_memory_visible",
+      "label": "Office memory readiness is visible in the export.",
+      "status": "passed"
+    },
+    {
+      "id": "office_memory_safe",
+      "label": "Office memory keeps writes, scans, embeddings, backup status and external sync blocked.",
       "status": "passed"
     },
     {

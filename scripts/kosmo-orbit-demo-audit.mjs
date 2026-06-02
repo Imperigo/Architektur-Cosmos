@@ -69,6 +69,7 @@ function buildReport(html) {
     { id: 'workstation-profile', label: 'Workstation Profile Contract' },
     { id: 'local-identity', label: 'Local Identity Boundary' },
     { id: 'data-governance', label: 'Data Governance Boundary' },
+    { id: 'office-memory', label: 'Office Memory Readiness' },
     { id: 'ausbildung', label: 'Ausbildungsmodus' },
     { id: 'rechte', label: 'Rechte-Matrix' },
     { id: 'rollen', label: 'Rollenumschaltung Preview' }
@@ -78,7 +79,7 @@ function buildReport(html) {
     label: section.label,
     index: normalized.indexOf(`id="${section.id}"`)
   }));
-  const navLabels = ['Autonomie', 'Routine', '3-Minuten', 'Workflow', 'Pilot', 'Pilotplan', 'Session', 'Fortschritt', 'Vision', 'Demo', 'Live-Gate', 'Projektpaket', 'Handoff', 'Decision', 'Runtime', 'Installation', 'Health', 'Risiken', 'Commands', 'Audit', 'Evidenz', 'Profile', 'Identity', 'Daten', 'Ausbildung', 'Rechte', 'Rollen', 'Guardrails'];
+  const navLabels = ['Autonomie', 'Routine', '3-Minuten', 'Workflow', 'Pilot', 'Pilotplan', 'Session', 'Fortschritt', 'Vision', 'Demo', 'Live-Gate', 'Projektpaket', 'Handoff', 'Decision', 'Runtime', 'Installation', 'Health', 'Risiken', 'Commands', 'Audit', 'Evidenz', 'Profile', 'Identity', 'Daten', 'Memory', 'Ausbildung', 'Rechte', 'Rollen', 'Guardrails'];
   const forbiddenArtifacts = ['[object Object]', 'NaN%', 'null null'];
   const checks = [
     check('html_exists', 'Built /orbit HTML exists.', existsSync(htmlPath)),
@@ -114,6 +115,8 @@ function buildReport(html) {
     check('local_identity_safe', 'Local identity blocks logins, profile persistence, session cookies and external identity providers.', normalized.includes('keine Logins') && normalized.includes('keine Profilpersistenz') && normalized.includes('keine Session-Cookies') && normalized.includes('kein externer Identity Provider')),
     check('data_governance_visible', 'Data governance boundary is visible in the export.', normalized.includes('Data Governance Boundary') && normalized.includes('Welche lokalen Daten KosmoOrbit spaeter speichern darf')),
     check('data_governance_safe', 'Data governance blocks database writes, uploads, customer data writes and external sync.', normalized.includes('keine D1-Writes') && normalized.includes('keine R2-Uploads') && normalized.includes('keine Kundendaten-Writes') && normalized.includes('kein externer Sync')),
+    check('office_memory_visible', 'Office memory readiness is visible in the export.', normalized.includes('Office Memory Readiness') && normalized.includes('Was spaeter lokales Buero-Gedaechtnis werden darf')),
+    check('office_memory_safe', 'Office memory keeps writes, scans, embeddings, backup status and external sync blocked.', normalized.includes('kein Memory-Write') && normalized.includes('kein Kundendatei-Scan') && normalized.includes('kein Embedding-Job') && normalized.includes('kein Backup-Status-Write') && normalized.includes('kein externer Memory-Sync')),
     check('learning_mode_visible', 'Education mode is visible in the export.', normalized.includes('Ausbildungsmodus') && normalized.includes('Kosmo als sicherer Lernbegleiter')),
     check('learning_mode_safety_visible', 'Education mode safety line is visible in the export.', normalized.includes('ohne Accounts') && normalized.includes('Projekt-Writes') && normalized.includes('Public-Publish')),
     check('permission_boundary_visible', 'Role permission boundary is visible in the export.', normalized.includes('Rechte-Matrix') && normalized.includes('generation bleibt gesperrt')),

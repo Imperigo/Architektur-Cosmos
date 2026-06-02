@@ -335,6 +335,22 @@ const steps = [
     report: resolve(workspaceRoot, 'review/orbit-data-governance.generated.json')
   },
   {
+    id: 'office_memory',
+    label: 'Orbit Office Memory Readiness',
+    script: 'kosmo:orbit-office-memory',
+    args: [
+      '--contract',
+      'examples/kosmo-orbit/memory/orbit-office-memory-readiness.contract.json',
+      '--component',
+      'app/orbit/OrbitOfficeMemoryReadiness.tsx',
+      '--route',
+      'app/orbit/page.tsx',
+      '--sectionIndex',
+      'app/orbit/OrbitSectionIndex.tsx'
+    ],
+    report: resolve(workspaceRoot, 'review/orbit-office-memory-readiness.generated.json')
+  },
+  {
     id: 'pilot_session',
     label: 'Orbit Pilot Session Template',
     script: 'kosmo:orbit-pilot-session',
@@ -461,6 +477,7 @@ function buildReport(stepRows) {
   const workstationProfile = readOptionalJson(resolve(workspaceRoot, 'review/orbit-workstation-profile.generated.json'));
   const localIdentity = readOptionalJson(resolve(workspaceRoot, 'review/orbit-local-identity.generated.json'));
   const dataGovernance = readOptionalJson(resolve(workspaceRoot, 'review/orbit-data-governance.generated.json'));
+  const officeMemory = readOptionalJson(resolve(workspaceRoot, 'review/orbit-office-memory-readiness.generated.json'));
   const pilotSession = readOptionalJson(resolve(workspaceRoot, 'review/orbit-pilot-session.generated.json'));
   const pilotMeasurementKit = readOptionalJson(resolve(workspaceRoot, 'review/orbit-pilot-measurement-kit.generated.json'));
   const pilotResultDraft = readOptionalJson(resolve(workspaceRoot, 'review/orbit-pilot-result-draft.generated.json'));
@@ -568,6 +585,12 @@ function buildReport(stepRows) {
       data_governance_domain_count: dataGovernance?.summary?.data_domain_count ?? null,
       data_governance_storage_lane_count: dataGovernance?.summary?.storage_lane_count ?? null,
       data_governance_blocked_capability_count: dataGovernance?.summary?.blocked_capability_count ?? null,
+      office_memory_status: officeMemory?.status || null,
+      office_memory_passed_checks: officeMemory?.summary?.passed_checks ?? null,
+      office_memory_check_count: officeMemory?.summary?.check_count ?? null,
+      office_memory_lane_count: officeMemory?.summary?.memory_lane_count ?? null,
+      office_memory_readiness_gate_count: officeMemory?.summary?.readiness_gate_count ?? null,
+      office_memory_blocked_capability_count: officeMemory?.summary?.blocked_capability_count ?? null,
       pilot_session_status: pilotSession?.status || null,
       pilot_session_passed_checks: pilotSession?.summary?.passed_checks ?? null,
       pilot_session_check_count: pilotSession?.summary?.check_count ?? null,
@@ -630,6 +653,7 @@ function buildReport(stepRows) {
       workstation_profile_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-workstation-profile.generated.md')),
       local_identity_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-local-identity.generated.md')),
       data_governance_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-data-governance.generated.md')),
+      office_memory_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-office-memory-readiness.generated.md')),
       pilot_session_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-pilot-session.generated.md')),
       pilot_measurement_kit_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-pilot-measurement-kit.generated.md')),
       pilot_result_draft_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-pilot-result-draft.generated.md')),
@@ -646,11 +670,11 @@ function buildReport(stepRows) {
       role_shell_smoke_markdown: relative(root, resolve(projectRoot, 'orbit/role-shell-smoke.generated.md'))
     },
     steps: stepRows,
-    next_actions: nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHandoff, appRouteSpec, healthReadiness, commandContract, auditTrail, officePilotScene, toolRegistry, runtimeAdapter, workstationProfile, localIdentity, dataGovernance, pilotSession, pilotMeasurementKit, pilotResultDraft, orbitRouteSmoke, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke, roleShellPrototype, roleShellSmoke })
+    next_actions: nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHandoff, appRouteSpec, healthReadiness, commandContract, auditTrail, officePilotScene, toolRegistry, runtimeAdapter, workstationProfile, localIdentity, dataGovernance, officeMemory, pilotSession, pilotMeasurementKit, pilotResultDraft, orbitRouteSmoke, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke, roleShellPrototype, roleShellSmoke })
   };
 }
 
-function nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHandoff, appRouteSpec, healthReadiness, commandContract, auditTrail, officePilotScene, toolRegistry, runtimeAdapter, workstationProfile, localIdentity, dataGovernance, pilotSession, pilotMeasurementKit, pilotResultDraft, orbitRouteSmoke, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke, roleShellPrototype, roleShellSmoke }) {
+function nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHandoff, appRouteSpec, healthReadiness, commandContract, auditTrail, officePilotScene, toolRegistry, runtimeAdapter, workstationProfile, localIdentity, dataGovernance, officeMemory, pilotSession, pilotMeasurementKit, pilotResultDraft, orbitRouteSmoke, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke, roleShellPrototype, roleShellSmoke }) {
   const actions = [];
   if (failedSteps.length) {
     failedSteps.forEach((step) => actions.push(`Review failed step: ${step.label}`));
@@ -697,6 +721,9 @@ function nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHan
   }
   if (dataGovernance?.status === 'data_governance_contract_passed') {
     actions.push('Use the data governance contract before implementing local storage, backup jobs, retention automation or persistent office memory.');
+  }
+  if (officeMemory?.status === 'office_memory_readiness_passed') {
+    actions.push('Use the office memory readiness contract before adding persistent memory writes, customer file scans, embeddings, backup status writes or external memory sync.');
   }
   if (pilotSession?.status === 'orbit_pilot_session_template_ready') {
     actions.push('Use the pilot session template for a real office pilot only after anonymising project inputs.');
@@ -808,6 +835,11 @@ function renderMarkdown(report) {
     `- data governance domains: ${report.summary.data_governance_domain_count}`,
     `- data governance storage lanes: ${report.summary.data_governance_storage_lane_count}`,
     `- data governance blocked capabilities: ${report.summary.data_governance_blocked_capability_count}`,
+    `- office memory: \`${report.summary.office_memory_status}\``,
+    `- office memory checks: ${report.summary.office_memory_passed_checks}/${report.summary.office_memory_check_count}`,
+    `- office memory lanes: ${report.summary.office_memory_lane_count}`,
+    `- office memory readiness gates: ${report.summary.office_memory_readiness_gate_count}`,
+    `- office memory blocked capabilities: ${report.summary.office_memory_blocked_capability_count}`,
     `- pilot session: \`${report.summary.pilot_session_status}\``,
     `- pilot session checks: ${report.summary.pilot_session_passed_checks}/${report.summary.pilot_session_check_count}`,
     `- pilot session measurement points: ${report.summary.pilot_session_measurement_points}`,

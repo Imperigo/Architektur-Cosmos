@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-02T13:48:46.636Z",
+  "generated_at": "2026-06-02T14:10:13.089Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 218,
-    "passed_checks": 218,
+    "check_count": 225,
+    "passed_checks": 225,
     "failed_checks": 0
   },
   "checks": [
@@ -234,6 +234,16 @@
     {
       "id": "data_governance_data_file_exists",
       "label": "Orbit data governance contract data exists.",
+      "status": "passed"
+    },
+    {
+      "id": "office_memory_file_exists",
+      "label": "Orbit office memory readiness component exists.",
+      "status": "passed"
+    },
+    {
+      "id": "office_memory_data_file_exists",
+      "label": "Orbit office memory readiness contract data exists.",
       "status": "passed"
     },
     {
@@ -484,6 +494,16 @@
     {
       "id": "imports_data_governance_data",
       "label": "Data governance component imports the local contract JSON.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_office_memory",
+      "label": "Route imports the office memory readiness component.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_office_memory_data",
+      "label": "Office memory readiness component imports the local contract JSON.",
       "status": "passed"
     },
     {
@@ -924,6 +944,21 @@
     {
       "id": "keeps_data_governance_review_only",
       "label": "Data governance contract keeps database, upload, customer-write, backup and sync actions blocked.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_office_memory_readiness",
+      "label": "Route renders the office memory readiness boundary.",
+      "status": "passed"
+    },
+    {
+      "id": "office_memory_uses_local_contract",
+      "label": "Office memory readiness panel uses the local contract for memory lanes and readiness gates.",
+      "status": "passed"
+    },
+    {
+      "id": "keeps_office_memory_review_only",
+      "label": "Office memory readiness keeps memory writes, scans, embeddings, backup status, external sync and cloud vector stores blocked.",
       "status": "passed"
     },
     {

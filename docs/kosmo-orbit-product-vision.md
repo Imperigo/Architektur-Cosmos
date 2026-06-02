@@ -226,6 +226,11 @@ Dieser Kern zeigt:
   lokale Datenbereiche ordnet, aber D1-Writes, R2-Uploads,
   Kundendaten-Writes, Backup-Jobs, Retention-Automation und externen Sync
   bis zu Datenschutz-, Delete/Export-, Backup- und Owner-Gates blockiert;
+- einen Office-Memory-Readiness-Vertrag, der Projektkontext, Entscheide,
+  Asset-Evidenz, Ausbildung und Betrieb als spaetere Memory-Lanes fuer das
+  lokale Buero-Gedaechtnis vorbereitet, ohne Memory-Writes,
+  Kundendatei-Scans, Embedding-Jobs, Backup-Status-Writes, Cloud Vector Store
+  oder externen Memory-Sync zu aktivieren;
 - eine Rechte-Matrix, die sichtbar macht, welche Rolle Design Review,
   lokale Freigabe, Public Gate, Read-only und Generation sehen oder nicht
   nutzen darf;
@@ -238,6 +243,7 @@ Dieser Kern zeigt:
 Damit ist der erste pruefbare Produktkern vorhanden: KosmoOrbit beweist die
 Steuerzentralen-Logik mit geprueftem Tool-Register, Runtime-Adapter-Vertrag,
 Workstation-Profil-Vertrag, Local-Identity-Vertrag und
-Data-Governance-Vertrag, ohne schon echte lokale Runtime, Auth, Daten-Writes,
-Blender-Start, Geometrie-Generierung oder
+Data-Governance-Vertrag sowie Office-Memory-Readiness-Vertrag, ohne schon
+echte lokale Runtime, Auth, Daten-Writes, Memory-Writes, Blender-Start,
+Geometrie-Generierung oder
 Cloud-Integrationen zu aktivieren.

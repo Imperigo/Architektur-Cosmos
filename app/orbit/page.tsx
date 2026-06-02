@@ -23,6 +23,7 @@ import { OrbitDesignPilotPath } from './OrbitDesignPilotPath';
 import { OrbitLearningMode } from './OrbitLearningMode';
 import { OrbitLocalIdentityContract } from './OrbitLocalIdentityContract';
 import { OrbitLaunchDecisionBrief } from './OrbitLaunchDecisionBrief';
+import { OrbitOfficeMemoryReadiness } from './OrbitOfficeMemoryReadiness';
 import { OrbitOfficeRoutine } from './OrbitOfficeRoutine';
 import { OrbitOfficePilotScene } from './OrbitOfficePilotScene';
 import { OrbitPermissionMatrix } from './OrbitPermissionMatrix';
@@ -507,6 +508,10 @@ export default function OrbitPage() {
 
           <div id="data-governance" className="scroll-mt-4">
             <OrbitDataGovernanceContract />
+          </div>
+
+          <div id="office-memory" className="scroll-mt-4">
+            <OrbitOfficeMemoryReadiness />
           </div>
 
           <div id="ausbildung" className="scroll-mt-4">

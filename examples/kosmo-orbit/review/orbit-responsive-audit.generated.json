@@ -1,16 +1,16 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-02T13:31:27.950Z",
+  "generated_at": "2026-06-02T13:58:30.476Z",
   "generator": "kosmo-orbit-responsive-audit",
   "status": "orbit_responsive_audit_passed",
   "source_dir": "app/orbit",
   "summary": {
-    "check_count": 30,
-    "passed_checks": 30,
+    "check_count": 31,
+    "passed_checks": 31,
     "failed_checks": 0,
-    "min_width_guard_count": 92,
-    "flex_wrap_count": 79,
-    "responsive_grid_count": 82
+    "min_width_guard_count": 93,
+    "flex_wrap_count": 83,
+    "responsive_grid_count": 86
   },
   "checks": [
     {
@@ -106,6 +106,11 @@
     {
       "id": "data_governance_responsive",
       "label": "Data governance contract uses responsive cards for domains, storage lanes and promotion requirements.",
+      "status": "passed"
+    },
+    {
+      "id": "office_memory_responsive",
+      "label": "Office memory readiness uses responsive cards for lanes and readiness gates.",
       "status": "passed"
     },
     {

@@ -1,0 +1,126 @@
+{
+  "schema_version": "0.1",
+  "status": "office_memory_readiness_ready",
+  "mode": "static_review_only",
+  "contract_id": "orbit-office-memory-readiness-v1",
+  "readiness_principles": [
+    "Office memory is a local product capability, not a hidden logging feature.",
+    "Every memory lane needs owner, retention, export, restore and delete rules before persistence.",
+    "Project knowledge, decisions, learning notes and asset evidence stay separated until governance approves a merge path.",
+    "Kosmo may prepare memory summaries today, but must not write persistent office memory."
+  ],
+  "memory_lanes": [
+    {
+      "id": "project_context_memory",
+      "label": "Projektkontext",
+      "future_role": "Briefe, Quellen, Projektentscheidungen, Blocker und Kontextpakete lokal wiederfinden.",
+      "readiness_gate": "Projektleiter + Owner bestaetigen Quelle, Sichtbarkeit und Retention.",
+      "review_only_today": [
+        "static_project_package_summary",
+        "visible_blocker_context",
+        "manual_review_notes_placeholder"
+      ],
+      "blocked_today": [
+        "project_memory_write",
+        "customer_file_indexing",
+        "automatic_source_ingest",
+        "cross_project_merge"
+      ]
+    },
+    {
+      "id": "decision_memory",
+      "label": "Entscheide",
+      "future_role": "Review-Entscheide, Freigaben, Rueckweisungen und Evidenzketten nachvollziehbar speichern.",
+      "readiness_gate": "Decision-Record-Schema, Rollenrechte und Audit-Retention sind freigegeben.",
+      "review_only_today": [
+        "review_decision_draft",
+        "non_writing_audit_contract",
+        "promotion_requirements_preview"
+      ],
+      "blocked_today": [
+        "decision_record_write",
+        "approval_persistence",
+        "electronic_signature",
+        "automatic_promotion"
+      ]
+    },
+    {
+      "id": "asset_evidence_memory",
+      "label": "Asset-Evidenz",
+      "future_role": "Materialrechte, Asset-Zertifikate, Quellen und lokale Freigaben pro wiederverwendbarem Asset halten.",
+      "readiness_gate": "KosmoAsset Review, Rechtepruefung und Zertifikatsgrenze sind menschlich bestaetigt.",
+      "review_only_today": [
+        "asset_review_report_links",
+        "certificate_language_preview",
+        "local_promotion_guard_status"
+      ],
+      "blocked_today": [
+        "asset_memory_write",
+        "rights_claim_persistence",
+        "public_asset_publish",
+        "external_library_sync"
+      ]
+    },
+    {
+      "id": "learning_memory",
+      "label": "Ausbildung",
+      "future_role": "Lernpfade, erklaerte Buero-Standards und sichere Uebungen ohne Ueberwachung speichern.",
+      "readiness_gate": "Ausbildner und Datenschutz pruefen, dass keine verdeckten Scores oder Ueberwachungslogs entstehen.",
+      "review_only_today": [
+        "learning_mode_description",
+        "safe_exercise_placeholders",
+        "supervisor_review_prompt"
+      ],
+      "blocked_today": [
+        "learning_score_write",
+        "surveillance_log",
+        "school_platform_sync",
+        "public_learning_profile"
+      ]
+    },
+    {
+      "id": "operations_memory",
+      "label": "Betrieb",
+      "future_role": "Health, Reparaturhinweise, Update-Historie, Backupstatus und lokale Runtime-Ereignisse wiederfinden.",
+      "readiness_gate": "IT/KI bestaetigt lokale Loggrenzen, Backup-Policy, Restore-Test und Kill-Switch.",
+      "review_only_today": [
+        "health_readiness_preview",
+        "runtime_adapter_contract",
+        "office_routine_safety_copy"
+      ],
+      "blocked_today": [
+        "runtime_log_write",
+        "backup_status_persistence",
+        "process_event_capture",
+        "repair_action_memory"
+      ]
+    }
+  ],
+  "readiness_gates": [
+    "local_storage_location_named",
+    "retention_policy_approved",
+    "delete_export_restore_path_approved",
+    "backup_restore_test_defined",
+    "role_visibility_matrix_approved",
+    "privacy_review_completed",
+    "manual_memory_write_gate_defined"
+  ],
+  "blocked_capabilities": [
+    "persistent_memory_write",
+    "customer_file_scan",
+    "automatic_indexing",
+    "cross_project_memory_merge",
+    "learning_score_write",
+    "runtime_log_persistence",
+    "backup_status_write",
+    "external_memory_sync",
+    "cloud_vector_store",
+    "embedding_job_start",
+    "public_memory_publish"
+  ],
+  "next_actions": [
+    "Draft a local storage location decision before implementing any persistent memory write.",
+    "Create a delete/export/restore checklist for small architecture offices.",
+    "Connect memory readiness to KosmoZentrale only after privacy and backup gates are approved."
+  ]
+}

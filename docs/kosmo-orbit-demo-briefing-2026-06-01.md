@@ -141,6 +141,14 @@ In drei Minuten soll ein Architekturbueroleiter verstehen:
    Datenschutz, Retention, Delete/Export, Backup und Owner-Gates entschieden
    sind, darf daraus echte lokale Speicherung werden.
 
+24. **Office-Memory-Readiness zeigen**
+   Erklaeren: Der naechste Schritt ist nicht, sofort Memory zu schreiben,
+   sondern zu definieren, welche Memory-Lanes spaeter erlaubt sind:
+   Projektkontext, Entscheide, Asset-Evidenz, Ausbildung und Betrieb. Heute
+   gibt es keinen Memory-Write, keinen Kundendatei-Scan, keinen Embedding-Job,
+   keinen Backup-Status-Write, keinen Cloud Vector Store und keinen externen
+   Memory-Sync.
+
 ## Kernsaetze
 
 - Besser: Jede Rolle bekommt die richtige Oberflaechentiefe und sieht den

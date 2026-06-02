@@ -99,7 +99,15 @@ klarer und nachvollziehbarer machen.
    - Sagen: Heute gibt es keine D1/R2-Writes, keine Kundendaten-Writes, keinen
      Backup-Job und keinen externen Sync.
 
-13. **Live-Gate zeigen**
+13. **Office Memory Readiness zeigen**
+   - Sagen: Memory ist kein verstecktes Logging, sondern eine spaetere lokale
+     Produktfaehigkeit mit klaren Lanes.
+   - Sagen: Projektkontext, Entscheide, Asset-Evidenz, Ausbildung und Betrieb
+     brauchen eigene Gates.
+   - Sagen: Heute gibt es keinen Memory-Write, keinen Kundendatei-Scan, keinen
+     Embedding-Job und keinen externen Memory-Sync.
+
+14. **Live-Gate zeigen**
    - Sagen: Lokal vorfuehrbar ist nicht gleich public-ready.
    - Sagen: Push, Livegang und Cloudflare-Deploy brauchen Owner-Go und
      Live-Smoke.

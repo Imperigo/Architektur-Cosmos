@@ -123,6 +123,7 @@
     "kosmo:orbit-workstation-profile": "node scripts/kosmo-orbit-workstation-profile-check.mjs",
     "kosmo:orbit-local-identity": "node scripts/kosmo-orbit-local-identity-check.mjs",
     "kosmo:orbit-data-governance": "node scripts/kosmo-orbit-data-governance-check.mjs",
+    "kosmo:orbit-office-memory": "node scripts/kosmo-orbit-office-memory-readiness-check.mjs",
     "kosmo:orbit-pilot-session": "node scripts/kosmo-orbit-pilot-session-check.mjs",
     "kosmo:orbit-pilot-kit": "node scripts/kosmo-orbit-pilot-measurement-kit-check.mjs",
     "kosmo:orbit-pilot-result": "node scripts/kosmo-orbit-pilot-result-draft-check.mjs",

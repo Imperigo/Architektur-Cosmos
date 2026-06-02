@@ -1,0 +1,136 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-02T14:10:12.352Z",
+  "generator": "kosmo-orbit-office-memory-readiness-check",
+  "status": "office_memory_readiness_passed",
+  "contract_file": "examples/kosmo-orbit/memory/orbit-office-memory-readiness.contract.json",
+  "component_file": "app/orbit/OrbitOfficeMemoryReadiness.tsx",
+  "summary": {
+    "check_count": 16,
+    "passed_checks": 16,
+    "failed_checks": 0,
+    "principle_count": 4,
+    "memory_lane_count": 5,
+    "readiness_gate_count": 7,
+    "blocked_capability_count": 11
+  },
+  "memory_lanes": [
+    {
+      "id": "project_context_memory",
+      "review_only_count": 3,
+      "blocked_today_count": 4,
+      "readiness_gate": "Projektleiter + Owner bestaetigen Quelle, Sichtbarkeit und Retention."
+    },
+    {
+      "id": "decision_memory",
+      "review_only_count": 3,
+      "blocked_today_count": 4,
+      "readiness_gate": "Decision-Record-Schema, Rollenrechte und Audit-Retention sind freigegeben."
+    },
+    {
+      "id": "asset_evidence_memory",
+      "review_only_count": 3,
+      "blocked_today_count": 4,
+      "readiness_gate": "KosmoAsset Review, Rechtepruefung und Zertifikatsgrenze sind menschlich bestaetigt."
+    },
+    {
+      "id": "learning_memory",
+      "review_only_count": 3,
+      "blocked_today_count": 4,
+      "readiness_gate": "Ausbildner und Datenschutz pruefen, dass keine verdeckten Scores oder Ueberwachungslogs entstehen."
+    },
+    {
+      "id": "operations_memory",
+      "review_only_count": 3,
+      "blocked_today_count": 4,
+      "readiness_gate": "IT/KI bestaetigt lokale Loggrenzen, Backup-Policy, Restore-Test und Kill-Switch."
+    }
+  ],
+  "checks": [
+    {
+      "id": "contract_file_exists",
+      "label": "Office memory readiness contract file exists.",
+      "status": "passed"
+    },
+    {
+      "id": "status_ready",
+      "label": "Office memory readiness status is ready.",
+      "status": "passed"
+    },
+    {
+      "id": "mode_static_review_only",
+      "label": "Office memory readiness is static review-only.",
+      "status": "passed"
+    },
+    {
+      "id": "principles_present",
+      "label": "Readiness principles are explicit.",
+      "status": "passed"
+    },
+    {
+      "id": "required_lanes_present",
+      "label": "All required memory lanes are present.",
+      "status": "passed"
+    },
+    {
+      "id": "lanes_have_review_gate_and_blocks",
+      "label": "Every lane has future role, readiness gate, review-only preview and blocked actions.",
+      "status": "passed"
+    },
+    {
+      "id": "readiness_gates_present",
+      "label": "Readiness gates are explicit.",
+      "status": "passed"
+    },
+    {
+      "id": "blocked_capabilities_present",
+      "label": "All sensitive memory capabilities are blocked today.",
+      "status": "passed"
+    },
+    {
+      "id": "next_actions_present",
+      "label": "Next actions are explicit.",
+      "status": "passed"
+    },
+    {
+      "id": "component_imports_contract",
+      "label": "Component imports the office memory readiness contract.",
+      "status": "passed"
+    },
+    {
+      "id": "component_renders_memory_copy",
+      "label": "Component renders office memory readiness copy.",
+      "status": "passed"
+    },
+    {
+      "id": "component_renders_safety_boundary",
+      "label": "Component states memory writes, customer scans, embeddings, backup status, external sync and cloud vector stores are blocked.",
+      "status": "passed"
+    },
+    {
+      "id": "route_imports_office_memory_readiness",
+      "label": "Orbit route imports the office memory readiness component.",
+      "status": "passed"
+    },
+    {
+      "id": "route_anchors_office_memory",
+      "label": "Orbit route renders an office-memory anchor.",
+      "status": "passed"
+    },
+    {
+      "id": "section_index_links_office_memory",
+      "label": "Section index links to office memory.",
+      "status": "passed"
+    },
+    {
+      "id": "component_renders_readiness_lanes",
+      "label": "Component renders memory lanes and readiness gates.",
+      "status": "passed"
+    }
+  ],
+  "next_actions": [
+    "Draft a local storage location decision before implementing any persistent memory write.",
+    "Create a delete/export/restore checklist for small architecture offices.",
+    "Connect memory readiness to KosmoZentrale only after privacy and backup gates are approved."
+  ]
+}
