@@ -74,6 +74,16 @@ const checks = [
     safe_healing: 'diagnostics_only'
   },
   {
+    id: 'build',
+    label: 'Fresh static build',
+    command: 'npm',
+    args: ['run', 'build:fresh'],
+    retry: true,
+    safe_healing: 'rerun_failed_checks_once',
+    timeout_ms: 240_000,
+    slow: true
+  },
+  {
     id: 'atlas-static-smoke',
     label: 'Atlas static export smoke',
     command: 'npm',
@@ -138,16 +148,6 @@ const checks = [
     retry: false,
     safe_healing: 'diagnostics_only',
     timeout_ms: 120_000
-  },
-  {
-    id: 'build',
-    label: 'Build',
-    command: 'npm',
-    args: ['run', 'build'],
-    retry: true,
-    safe_healing: 'rerun_failed_checks_once',
-    timeout_ms: 180_000,
-    slow: true
   },
   {
     id: 'security-check',
