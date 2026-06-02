@@ -134,4 +134,4 @@ Browser-Smoke:
 - `/orbit/?v=design-pilot-20260602#design-pilot` sichtbar, CSS geladen,
   0 horizontaler Overflow.
 
-Push bleibt blockiert, bis Andrin explizit Push/Live/Deploy freigibt.
+Push bleibt blockiert, bis der Owner explizit Push/Live/Deploy freigibt.
