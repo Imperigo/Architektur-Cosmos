@@ -1,0 +1,113 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-02T05:23:09.635Z",
+  "generator": "kosmo-orbit-push-readiness",
+  "status": "orbit_push_readiness_review_only",
+  "git": {
+    "branch": "main",
+    "remote": "origin/main",
+    "ahead_count": 87,
+    "worktree_clean": true,
+    "status_short": "",
+    "latest_commits": [
+      "0014f83 Add KosmoOrbit push readiness report",
+      "e22c70f Normalize static asset hashes in report cleanup",
+      "c9c3337 Refresh KosmoOrbit launch review reports",
+      "2ac03b2 Document KosmoOrbit launch batch status",
+      "14ca4a2 Add KosmoDesign pilot path"
+    ]
+  },
+  "evidence": {
+    "route_smoke": {
+      "status": "orbit_route_smoke_passed",
+      "passed_checks": 173,
+      "check_count": 173,
+      "failed_checks": 0
+    },
+    "static_smoke": {
+      "status": "orbit_static_export_smoke_passed",
+      "passed_checks": 61,
+      "check_count": 61,
+      "failed_checks": 0
+    },
+    "full_review": {
+      "status": "orbit_full_review_ready_for_review_mode",
+      "passed_checks": null,
+      "check_count": null,
+      "failed_checks": null
+    },
+    "atlas_static_smoke": {
+      "status": "atlas_static_export_smoke_passed",
+      "passed_checks": 17,
+      "check_count": 17,
+      "failed_checks": 0
+    }
+  },
+  "decision": {
+    "local_demo_ready": true,
+    "push_ready_if_owner_go": true,
+    "push_blocked_without_owner_go": true,
+    "recommended_next_options": [
+      "Owner-Go einholen und main pushen, danach Cloudflare Deploy und Live-Smoke pruefen.",
+      "Weiter lokal halten und den Buero-Pilot mit anonymisiertem Projektpaket starten.",
+      "KosmoDesign V2 Review Mode vertiefen, ohne Design-Generation freizuschalten."
+    ]
+  },
+  "summary": {
+    "check_count": 9,
+    "passed_checks": 9,
+    "failed_checks": 0
+  },
+  "checks": [
+    {
+      "id": "on_main",
+      "label": "Current branch is main.",
+      "status": "passed"
+    },
+    {
+      "id": "ahead_of_origin",
+      "label": "Local main has commits waiting for explicit push go.",
+      "status": "passed"
+    },
+    {
+      "id": "worktree_clean",
+      "label": "Worktree is clean before any push decision.",
+      "status": "passed"
+    },
+    {
+      "id": "route_smoke_green",
+      "label": "KosmoOrbit route smoke is green.",
+      "status": "passed"
+    },
+    {
+      "id": "static_smoke_green",
+      "label": "KosmoOrbit static export smoke is green.",
+      "status": "passed"
+    },
+    {
+      "id": "full_review_green",
+      "label": "KosmoOrbit full review is green.",
+      "status": "passed"
+    },
+    {
+      "id": "atlas_static_smoke_green",
+      "label": "KosmoData atlas static export smoke is green.",
+      "status": "passed"
+    },
+    {
+      "id": "owner_gate_required",
+      "label": "Push remains blocked until explicit Owner-Go.",
+      "status": "passed"
+    },
+    {
+      "id": "no_live_action_taken",
+      "label": "This report does not push, deploy, upload or call external accounts.",
+      "status": "passed"
+    }
+  ],
+  "next_actions": [
+    "Do not push automatically; wait for explicit Push/Live/Deploy-Go.",
+    "If Go is given, push main and run a live smoke with a cache-buster.",
+    "If Go is not given, use this as the local demo decision record."
+  ]
+}
