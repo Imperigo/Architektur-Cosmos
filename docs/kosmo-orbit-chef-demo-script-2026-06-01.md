@@ -11,7 +11,8 @@ In 5 Minuten soll klar werden:
 - Die heutige Preview ist noch kein CAD, keine lokale KI-Appliance und keine
   automatische Planmaschine.
 - Sichtbar ist bereits die wichtigste Produktlogik: Rollen, Projektpaket,
-  sichere Gates, KosmoDesign-Handoff, Pilotmessung und Publish-Grenze.
+  Tool-Zentrale, sichere Gates, KosmoDesign-Handoff, Pilotmessung und
+  Publish-Grenze.
 
 ## Einstiegssatz
 
@@ -33,35 +34,43 @@ klarer und nachvollziehbarer machen.
    - Sagen: KosmoOrbit soll zuerst Orientierung, Blocker und naechste Schritte
      sichtbar machen.
 
-3. **Pilotmessung, Messkit und Pilot-Runbook zeigen**
+3. **Tool-Orchestrierung zeigen**
+   - Sagen: Hier sieht man, dass KosmoOrbit die spaetere Zentrale aller
+     Architektur-Kosmos-Tools ist.
+   - Zeigen: KosmoData, KosmoAsset, KosmoDesign, Prepare, Draw, Viz, Publish
+     und Zentrale.
+   - Sagen: Heute wird nichts gestartet. Rollen, Status und Gates werden nur
+     gelesen und sichtbar gemacht.
+
+4. **Pilotmessung, Messkit und Pilot-Runbook zeigen**
    - Sagen: Wir behaupten keine Prozentersparnis.
    - Sagen: Wir messen an einem kleinen Projekt, ob Suchzeit, Blocker,
      Rollenverstaendnis und Wiederholbarkeit besser werden.
    - Sagen: Das Messkit ist die leere Struktur fuer diese Beobachtung, nicht
      schon das Resultat.
 
-4. **Pilot-Session Template zeigen**
+5. **Pilot-Session Template zeigen**
    - Sagen: Das Template ist noch leer.
    - Sagen: Vorher/Nachher-Werte werden erst eingetragen, wenn ein echter
      Mensch den Pilot durchgefuehrt hat.
 
-5. **Pilot-Result-Draft zeigen**
+6. **Pilot-Result-Draft zeigen**
    - Sagen: Das ist die leere Ergebnisstruktur fuer den spaeteren Pilot.
    - Sagen: Werte, Notizen, Evidenz und oeffentliche Claims bleiben blockiert,
      bis eine menschliche Pruefung echte Beobachtungen bestaetigt.
 
-6. **KosmoDesign Handoff zeigen**
+7. **KosmoDesign Handoff zeigen**
    - Sagen: KosmoDesign ist das spaetere architektonische Haupttool.
    - Sagen: Heute ist nur Review Mode erlaubt; Design-Generation bleibt
      gesperrt.
 
-7. **Rollen und Ausbildung zeigen**
+8. **Rollen und Ausbildung zeigen**
    - Sagen: Chef, Projektleitung, Entwurf, Zeichnung und Lernende brauchen
      unterschiedliche Oberflaechen.
    - Sagen: Lernende bekommen Erklaerung und sichere Uebungen statt kritische
      Rechte.
 
-8. **Live-Gate zeigen**
+9. **Live-Gate zeigen**
    - Sagen: Lokal vorfuehrbar ist nicht gleich public-ready.
    - Sagen: Push, Livegang und Cloudflare-Deploy brauchen Owner-Go und
      Live-Smoke.
@@ -69,7 +78,7 @@ klarer und nachvollziehbarer machen.
 ## Was besser werden soll
 
 - **Besser:** Jede Rolle sieht den richtigen Entscheidungsradius.
-- **Schneller:** Status, Blocker und naechste Aktion liegen an einem Ort.
+- **Schneller:** Tools, Status, Blocker und naechste Aktion liegen an einem Ort.
 - **Praeziser:** Review-Gates trennen Kontext, Rechte, Modellqualitaet,
   Publish und Kosten.
 - **Guenstiger:** Fehler, Suchzeit und unnoetige Cloud-/Abgabe-Schritte sollen
