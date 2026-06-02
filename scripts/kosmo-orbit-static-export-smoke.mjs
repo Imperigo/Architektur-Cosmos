@@ -66,6 +66,7 @@ function buildReport(html) {
     check('renders_publish_readiness', 'Export renders publish readiness live gate.', html.includes('Live-Gate') && html.includes('no-push-without-owner-go')),
     check('renders_launch_decision_brief', 'Export renders launch decision brief.', html.includes('Launch Decision Brief') && html.includes('push-decision-not-automatic')),
     check('renders_push_readiness_report', 'Export renders push readiness report summary.', html.includes('Push Readiness Report') && html.includes('Checks gruen')),
+    check('renders_push_command_evidence', 'Export renders push readiness command evidence.', html.includes('Command Evidence') && html.includes('git diff --check') && html.includes('node_modules/.bin/tsc --noEmit')),
     check('renders_office_pilot_scene', 'Export renders office pilot scene.', html.includes('Buero-Pilot Szene') && html.includes('local-office-pilot-review-only')),
     check('renders_project_dashboard', 'Export renders project package dashboard.', html.includes('Projektpaket Tagesansicht')),
     check('renders_design_handoff_panel', 'Export renders KosmoDesign handoff review console.', html.includes('KosmoDesign Handoff') && html.includes('Review Console')),

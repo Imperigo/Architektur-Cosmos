@@ -5,6 +5,13 @@ type PushReadinessReport = {
   git: {
     worktree_clean: boolean;
   };
+  evidence?: {
+    commands?: Array<{
+      id: string;
+      command: string;
+      status: string;
+    }>;
+  };
   summary: {
     passed_checks: number;
     check_count: number;
@@ -18,6 +25,7 @@ type PushReadinessReport = {
 };
 
 const pushReadiness = pushReadinessData as PushReadinessReport;
+const commandEvidence = pushReadiness.evidence?.commands ?? [];
 
 const proofRows = [
   {
@@ -95,6 +103,21 @@ export function OrbitLaunchDecisionBrief() {
           <p className="rounded-md border border-amber-300/25 bg-amber-400/10 px-3 py-2 text-amber-100">
             Ohne Owner-Go blockiert: {pushReadiness.decision.push_blocked_without_owner_go ? 'ja' : 'nein'}.
           </p>
+        </div>
+      </div>
+
+      <div className="mt-3 grid gap-2 rounded-lg border border-white/10 bg-black/24 p-3 md:grid-cols-[0.7fr_1.3fr]">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-stone-400">Command Evidence</p>
+          <p className="mt-2 text-sm leading-5 text-stone-300">Lokale Basischecks laufen im Readiness-Report mit.</p>
+        </div>
+        <div className="grid gap-2 sm:grid-cols-3">
+          {commandEvidence.map((item) => (
+            <p key={item.id} className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2 text-xs leading-5 text-stone-300">
+              <span className="block font-mono text-[11px] text-cyan-100">{item.command}</span>
+              <span className="mt-1 block uppercase tracking-[0.14em] text-emerald-100">{item.status}</span>
+            </p>
+          ))}
         </div>
       </div>
 

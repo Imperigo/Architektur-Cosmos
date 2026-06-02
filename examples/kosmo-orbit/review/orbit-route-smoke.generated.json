@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-02T05:34:08.423Z",
+  "generated_at": "2026-06-02T05:40:21.042Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 179,
-    "passed_checks": 179,
+    "check_count": 180,
+    "passed_checks": 180,
     "failed_checks": 0
   },
   "checks": [
@@ -854,6 +854,11 @@
     {
       "id": "launch_decision_shows_owner_go_boundary",
       "label": "Launch decision brief shows push-ready only with Owner-Go.",
+      "status": "passed"
+    },
+    {
+      "id": "launch_decision_shows_command_evidence",
+      "label": "Launch decision brief shows local command evidence from push readiness.",
       "status": "passed"
     },
     {
