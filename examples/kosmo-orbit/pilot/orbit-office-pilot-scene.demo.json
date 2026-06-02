@@ -1,0 +1,89 @@
+{
+  "schema_version": "0.1",
+  "scene": {
+    "id": "orbit-office-pilot-scene-demo-001",
+    "status": "template_ready",
+    "mode": "local_review_only",
+    "tag": "local-office-pilot-review-only",
+    "summary": "Safe first office pilot scene for explaining KosmoOrbit as the local architecture office control center before any generation or runtime action."
+  },
+  "safety": {
+    "no_customer_data_upload": true,
+    "no_cloud": true,
+    "no_geometry_or_plan_writes": true,
+    "no_design_generation": true,
+    "no_auth_runtime": true,
+    "no_user_writes": true,
+    "no_unproven_time_or_cost_claims": true,
+    "no_push_without_owner_go": true
+  },
+  "steps": [
+    {
+      "id": "start",
+      "actor": "Projektleitung",
+      "title": "Projektpaket oeffnen",
+      "outcome": "KosmoOrbit zeigt Kontext, offene Blocker, Rollenprofil und erlaubte Review-Artefakte.",
+      "guard": "keine Kundendaten hochladen, keine Cloud, keine Geometrie- oder Plan-Writes"
+    },
+    {
+      "id": "review",
+      "actor": "Entwurf",
+      "title": "KosmoDesign lesen",
+      "outcome": "KosmoDesign wird als Review Mode genutzt: Referenzen, Modellprofil, Constraints und fehlende Evidenz.",
+      "guard": "keine Design-Generation, keine automatischen Varianten, kein CAD-Ersatz-Claim"
+    },
+    {
+      "id": "roles",
+      "actor": "Chef / Admin",
+      "title": "Rechte und Tiefe vergleichen",
+      "outcome": "Chef, Projektleitung, Zeichnung und Ausbildung sehen unterschiedliche Tiefe und blockierte Aktionen.",
+      "guard": "keine echte Auth-Runtime, keine User-Writes, keine Rechteveraenderung"
+    },
+    {
+      "id": "decision",
+      "actor": "Menschliches Review",
+      "title": "Pilotwert festhalten",
+      "outcome": "Nur beobachtete Zeit, Qualitaet, Blocker und Nutzen werden notiert; leere Felder bleiben leer.",
+      "guard": "keine unbewiesenen Zeit-/Kostenclaims, kein Push ohne Owner-Go"
+    }
+  ],
+  "roles": [
+    {
+      "role": "Chef / Admin",
+      "sees": "Entscheid, Risiken, Owner-Go, Public Gate",
+      "needs": "kurze Ampel, harte Stopps, Pilotnutzen"
+    },
+    {
+      "role": "Projektleitung",
+      "sees": "Projektpaket, Blocker, Review-Artefakte",
+      "needs": "naechster Pruefschritt, offene Evidenz, Zustaendigkeit"
+    },
+    {
+      "role": "Entwurf",
+      "sees": "KosmoDesign Review Mode, Kontext, Referenzen",
+      "needs": "Entwurfslogik verstehen, aber Generierung bewusst gesperrt"
+    },
+    {
+      "role": "Ausbildung",
+      "sees": "vereinfachte Begriffe, Lernmodus, sichere Beispiele",
+      "needs": "erklaerte Entscheidungen, keine riskanten Aktionen"
+    }
+  ],
+  "evidence_questions": [
+    "Wieviel Zeit brauchte der heutige Ablauf ohne KosmoOrbit?",
+    "Welche Blocker erkannte KosmoOrbit schneller oder klarer?",
+    "Welche Entscheidung traf ein Mensch danach bewusster?",
+    "Was blieb unsicher und darf noch nicht als Nutzen behauptet werden?"
+  ],
+  "decision": {
+    "status": "not_run_yet",
+    "allowed_outcomes": [
+      "needs_more_evidence",
+      "continue_local_pilot",
+      "pause",
+      "blocked"
+    ],
+    "human_reviewer": null,
+    "review_note": null
+  }
+}

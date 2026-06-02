@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-02T05:40:21.042Z",
+  "generated_at": "2026-06-02T05:49:32.828Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 180,
-    "passed_checks": 180,
+    "check_count": 183,
+    "passed_checks": 183,
     "failed_checks": 0
   },
   "checks": [
@@ -227,6 +227,11 @@
       "status": "passed"
     },
     {
+      "id": "office_pilot_scene_data_file_exists",
+      "label": "Orbit office pilot scene data contract exists.",
+      "status": "passed"
+    },
+    {
       "id": "demo_readiness_file_exists",
       "label": "Orbit demo readiness component exists.",
       "status": "passed"
@@ -414,6 +419,11 @@
     {
       "id": "imports_office_pilot_scene",
       "label": "Route imports the office pilot scene component.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_office_pilot_scene_data",
+      "label": "Office pilot scene imports the local demo scene contract.",
       "status": "passed"
     },
     {
@@ -809,6 +819,11 @@
     {
       "id": "shows_office_pilot_scene",
       "label": "Route renders the office pilot scene.",
+      "status": "passed"
+    },
+    {
+      "id": "office_pilot_scene_uses_local_contract",
+      "label": "Office pilot scene uses a local JSON contract for steps, roles, safety and decision.",
       "status": "passed"
     },
     {
