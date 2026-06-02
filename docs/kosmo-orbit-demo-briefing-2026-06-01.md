@@ -133,6 +133,14 @@ In drei Minuten soll ein Architekturbueroleiter verstehen:
    Writes und keinen externen Identity Provider. Erst ein lokaler
    Datenschutz-/Retention-/Backup-Entscheid darf daraus echte Profile machen.
 
+23. **Data-Governance-Grenze zeigen**
+   Erklaeren: KosmoOrbit trennt spaeteres lokales Buero-Gedaechtnis in
+   Projektwissen, Assets/Rechte, Profile/Sessions, Audit/Entscheide und
+   Ausbildung/Lernen. Heute gibt es keine D1-Writes, keine R2-Uploads, keine
+   Kundendaten-Writes, keinen Backup-Job und keinen externen Sync. Erst wenn
+   Datenschutz, Retention, Delete/Export, Backup und Owner-Gates entschieden
+   sind, darf daraus echte lokale Speicherung werden.
+
 ## Kernsaetze
 
 - Besser: Jede Rolle bekommt die richtige Oberflaechentiefe und sieht den

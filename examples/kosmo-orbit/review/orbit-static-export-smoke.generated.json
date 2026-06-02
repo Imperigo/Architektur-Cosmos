@@ -1,12 +1,12 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-02T13:16:30.330Z",
+  "generated_at": "2026-06-02T13:31:27.861Z",
   "generator": "kosmo-orbit-static-export-smoke",
   "status": "orbit_static_export_smoke_passed",
   "html_file": "out/orbit/index.html",
   "summary": {
-    "check_count": 74,
-    "passed_checks": 74,
+    "check_count": 76,
+    "passed_checks": 76,
     "failed_checks": 0,
     "referenced_static_asset_count": 8,
     "missing_static_asset_count": 0
@@ -20,7 +20,7 @@
       "_next/static/chunks/main-app-36e74dfd8b1eb57a.js",
       "_next/static/chunks/polyfills-42372ed130431b0a.js",
       "_next/static/chunks/webpack-81624dd509abd812.js",
-      "_next/static/css/4799a4310f4ef378.css"
+      "_next/static/css/54fe0536c2ae44be.css"
     ],
     "missing": []
   },
@@ -236,6 +236,11 @@
       "status": "passed"
     },
     {
+      "id": "renders_data_governance_contract",
+      "label": "Export renders data governance contract.",
+      "status": "passed"
+    },
+    {
       "id": "renders_learning_mode",
       "label": "Export renders education mode.",
       "status": "passed"
@@ -288,6 +293,11 @@
     {
       "id": "keeps_local_identity_review_only",
       "label": "Export keeps local identity non-operational.",
+      "status": "passed"
+    },
+    {
+      "id": "keeps_data_governance_review_only",
+      "label": "Export keeps data governance storage, backup and sync actions blocked.",
       "status": "passed"
     },
     {

@@ -207,7 +207,11 @@ Sichere erste Umsetzung:
     mit Profilklassen, Session-Grenzen, Privacy-Anforderungen, blockierten
     Identity-Faehigkeiten und Promotion Requirements
     (**initial umgesetzt mit `npm run kosmo:orbit-local-identity` und `/orbit`**)
-15. spaeter Handoff an KosmoZentrale fuer echte lokale Runtime
+15. Data-Governance-Vertrag fuer spaetere lokale Speicherung, Retention,
+    Backup, Delete/Export, Datenschutz, Lernnotizen und Auditdaten ohne D1/R2,
+    Kundendaten-Writes, Backup-Jobs oder externen Sync
+    (**initial umgesetzt mit `npm run kosmo:orbit-data-governance` und `/orbit`**)
+16. spaeter Handoff an KosmoZentrale fuer echte lokale Runtime
 
 ## 7. Zusammenarbeit mit anderen Workern
 
@@ -810,6 +814,7 @@ Architekturburo:
 - Arbeitsstations-Prioritaeten;
 - Workstation-Profil-Vertrag;
 - Local-Identity-Vertrag;
+- Data-Governance-Vertrag;
 - Ausbildungsmodus;
 - Rechte-Matrix;
 - Rollenumschaltung;
@@ -831,17 +836,18 @@ Die wichtigste Produktlinie ist damit klarer:
 
 Aktuelle lokale Nachweise:
 
-- `npm run kosmo:orbit-full-review` — 28/28 passed;
+- `npm run kosmo:orbit-full-review` — 29/29 passed;
 - `npm run kosmo:orbit-runtime-adapter` — 16/16 passed;
 - `npm run kosmo:orbit-workstation-profile` — 16/16 passed;
 - `npm run kosmo:orbit-local-identity` — 16/16 passed;
+- `npm run kosmo:orbit-data-governance` — 16/16 passed;
 - `npm run kosmo:orbit-pilot-kit` — 19/19 passed;
 - `npm run kosmo:orbit-pilot-session` — 17/17 passed;
 - `npm run kosmo:orbit-pilot-result` — 21/21 passed;
-- `npm run kosmo:orbit-route-smoke` — 211/211 passed;
-- `npm run kosmo:orbit-demo-audit` — 37/37 passed;
-- `npm run kosmo:orbit-responsive-audit` — 29/29 passed;
-- `npm run kosmo:orbit-static-smoke` — 74/74 passed;
+- `npm run kosmo:orbit-route-smoke` — 218/218 passed;
+- `npm run kosmo:orbit-demo-audit` — 39/39 passed;
+- `npm run kosmo:orbit-responsive-audit` — 30/30 passed;
+- `npm run kosmo:orbit-static-smoke` — 76/76 passed;
 - `npx tsc --noEmit --pretty false --incremental false` — passed;
 - `npm run lint` — 0 Errors, 0 Warnings;
 - `npm run ui:audit` — 72/72 passed;

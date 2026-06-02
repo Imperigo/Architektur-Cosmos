@@ -221,6 +221,11 @@ Dieser Kern zeigt:
   blockierte Identity-Faehigkeiten und Promotion Requirements trennt, ohne
   Logins, Accounts, Passwoerter, Session-Cookies, personenbezogene Writes oder
   externe Identity Provider zu aktivieren;
+- einen Data-Governance-Vertrag, der Projektwissen, Assets/Rechte,
+  Profile/Sessions, Audit/Entscheide und Ausbildung/Lernen als spaetere
+  lokale Datenbereiche ordnet, aber D1-Writes, R2-Uploads,
+  Kundendaten-Writes, Backup-Jobs, Retention-Automation und externen Sync
+  bis zu Datenschutz-, Delete/Export-, Backup- und Owner-Gates blockiert;
 - eine Rechte-Matrix, die sichtbar macht, welche Rolle Design Review,
   lokale Freigabe, Public Gate, Read-only und Generation sehen oder nicht
   nutzen darf;
@@ -232,6 +237,7 @@ Dieser Kern zeigt:
 
 Damit ist der erste pruefbare Produktkern vorhanden: KosmoOrbit beweist die
 Steuerzentralen-Logik mit geprueftem Tool-Register, Runtime-Adapter-Vertrag,
-Workstation-Profil-Vertrag und Local-Identity-Vertrag, ohne schon echte
-lokale Runtime, Auth, Blender-Start, Geometrie-Generierung oder
+Workstation-Profil-Vertrag, Local-Identity-Vertrag und
+Data-Governance-Vertrag, ohne schon echte lokale Runtime, Auth, Daten-Writes,
+Blender-Start, Geometrie-Generierung oder
 Cloud-Integrationen zu aktivieren.

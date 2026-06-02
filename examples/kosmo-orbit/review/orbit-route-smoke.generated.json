@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-02T13:17:09.355Z",
+  "generated_at": "2026-06-02T13:48:46.636Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 211,
-    "passed_checks": 211,
+    "check_count": 218,
+    "passed_checks": 218,
     "failed_checks": 0
   },
   "checks": [
@@ -224,6 +224,16 @@
     {
       "id": "local_identity_data_file_exists",
       "label": "Orbit local identity contract data exists.",
+      "status": "passed"
+    },
+    {
+      "id": "data_governance_file_exists",
+      "label": "Orbit data governance boundary component exists.",
+      "status": "passed"
+    },
+    {
+      "id": "data_governance_data_file_exists",
+      "label": "Orbit data governance contract data exists.",
       "status": "passed"
     },
     {
@@ -464,6 +474,16 @@
     {
       "id": "imports_local_identity_data",
       "label": "Local identity component imports the local contract JSON.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_data_governance",
+      "label": "Route imports the data governance component.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_data_governance_data",
+      "label": "Data governance component imports the local contract JSON.",
       "status": "passed"
     },
     {
@@ -889,6 +909,21 @@
     {
       "id": "keeps_local_identity_review_only",
       "label": "Local identity contract blocks logins, accounts, passwords, profile persistence, session cookies, personal writes and external identity providers.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_data_governance_contract",
+      "label": "Route renders the data governance boundary contract.",
+      "status": "passed"
+    },
+    {
+      "id": "data_governance_uses_local_contract",
+      "label": "Data governance panel uses the local contract for domains and storage lanes.",
+      "status": "passed"
+    },
+    {
+      "id": "keeps_data_governance_review_only",
+      "label": "Data governance contract keeps database, upload, customer-write, backup and sync actions blocked.",
       "status": "passed"
     },
     {

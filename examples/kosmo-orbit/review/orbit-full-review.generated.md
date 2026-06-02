@@ -1,6 +1,6 @@
 # KosmoOrbit Full Review
 
-Generated: 2026-06-02T13:16:54.248Z
+Generated: 2026-06-02T13:48:46.650Z
 Status: `orbit_full_review_ready_for_review_mode`
 Workspace: `examples/kosmo-orbit/workspace.demo.json`
 Project: `examples/kosmo-projects/kosmo-demo-001`
@@ -9,7 +9,7 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 
 ## Summary
 
-- steps: 28/28 passed
+- steps: 29/29 passed
 - role state: `role_state_check_passed`
 - role state active role: `owner_admin`
 - role state selected role: `owner_admin`
@@ -58,6 +58,11 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 - local identity profile classes: 5
 - local identity session boundaries: 3
 - local identity blocked capabilities: 12
+- data governance: `data_governance_contract_passed`
+- data governance checks: 16/16
+- data governance domains: 5
+- data governance storage lanes: 3
+- data governance blocked capabilities: 13
 - pilot session: `orbit_pilot_session_template_ready`
 - pilot session checks: 17/17
 - pilot session measurement points: 5
@@ -70,7 +75,7 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 - pilot result draft slots: 5
 - pilot result draft empty slots: 5
 - orbit route smoke: `orbit_route_smoke_passed`
-- orbit route smoke checks: 211/211
+- orbit route smoke checks: 218/218
 - workspace status: `orbit_blocked_gates_present`
 - project status: `local_review_only`
 - project artifacts: 59
@@ -124,6 +129,7 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 | Orbit Runtime Adapter Contract | `passed` | `examples/kosmo-orbit/review/orbit-runtime-adapter.generated.json` |
 | Orbit Workstation Profile Contract | `passed` | `examples/kosmo-orbit/review/orbit-workstation-profile.generated.json` |
 | Orbit Local Identity Contract | `passed` | `examples/kosmo-orbit/review/orbit-local-identity.generated.json` |
+| Orbit Data Governance Contract | `passed` | `examples/kosmo-orbit/review/orbit-data-governance.generated.json` |
 | Orbit Pilot Session Template | `passed` | `examples/kosmo-orbit/review/orbit-pilot-session.generated.json` |
 | Orbit Pilot Measurement Kit | `passed` | `examples/kosmo-orbit/review/orbit-pilot-measurement-kit.generated.json` |
 | Orbit Pilot Result Draft | `passed` | `examples/kosmo-orbit/review/orbit-pilot-result-draft.generated.json` |
@@ -146,6 +152,7 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 - runtime_adapter_markdown: `examples/kosmo-orbit/review/orbit-runtime-adapter.generated.md`
 - workstation_profile_markdown: `examples/kosmo-orbit/review/orbit-workstation-profile.generated.md`
 - local_identity_markdown: `examples/kosmo-orbit/review/orbit-local-identity.generated.md`
+- data_governance_markdown: `examples/kosmo-orbit/review/orbit-data-governance.generated.md`
 - pilot_session_markdown: `examples/kosmo-orbit/review/orbit-pilot-session.generated.md`
 - pilot_measurement_kit_markdown: `examples/kosmo-orbit/review/orbit-pilot-measurement-kit.generated.md`
 - pilot_result_draft_markdown: `examples/kosmo-orbit/review/orbit-pilot-result-draft.generated.md`
@@ -176,6 +183,7 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 - Use the runtime adapter contract as the bridge from Tool Registry to KosmoZentrale before implementing executable local adapters.
 - Use the workstation profile contract before building persistent users, auth or real per-workstation Orbit shells.
 - Use the local identity contract before implementing auth, profile persistence, session storage or permission mutation.
+- Use the data governance contract before implementing local storage, backup jobs, retention automation or persistent office memory.
 - Use the pilot session template for a real office pilot only after anonymising project inputs.
 - Use the pilot measurement kit to structure the first office pilot without claiming savings before human data exists.
 - Use the pilot result draft only after a human office pilot creates evidence-backed observations.

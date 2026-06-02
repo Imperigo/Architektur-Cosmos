@@ -1,0 +1,156 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-02T13:48:45.927Z",
+  "generator": "kosmo-orbit-data-governance-check",
+  "status": "data_governance_contract_passed",
+  "contract_file": "examples/kosmo-orbit/governance/orbit-data-governance.contract.json",
+  "component_file": "app/orbit/OrbitDataGovernanceContract.tsx",
+  "summary": {
+    "check_count": 16,
+    "passed_checks": 16,
+    "failed_checks": 0,
+    "principle_count": 4,
+    "data_domain_count": 5,
+    "storage_lane_count": 3,
+    "blocked_capability_count": 13,
+    "promotion_requirement_count": 6
+  },
+  "data_domains": [
+    {
+      "id": "project_knowledge",
+      "future_scope_count": 4,
+      "preview_scope_count": 3,
+      "blocked_today_count": 4,
+      "retention_gate": "Projektleitung + Owner bestaetigen Projektablage, Aufbewahrung und Loeschfrist."
+    },
+    {
+      "id": "asset_and_rights",
+      "future_scope_count": 4,
+      "preview_scope_count": 3,
+      "blocked_today_count": 4,
+      "retention_gate": "Owner bestaetigt Rechtekette, Lizenzstatus und Public-Safe-Grenze."
+    },
+    {
+      "id": "identity_and_sessions",
+      "future_scope_count": 4,
+      "preview_scope_count": 3,
+      "blocked_today_count": 4,
+      "retention_gate": "Owner + Datenschutz Review bestaetigen Consent, Retention und Offboarding."
+    },
+    {
+      "id": "audit_and_decisions",
+      "future_scope_count": 4,
+      "preview_scope_count": 3,
+      "blocked_today_count": 4,
+      "retention_gate": "Owner bestaetigt, welche Entscheide rechtlich relevant gespeichert werden."
+    },
+    {
+      "id": "learning_and_training",
+      "future_scope_count": 3,
+      "preview_scope_count": 3,
+      "blocked_today_count": 4,
+      "retention_gate": "Ausbildner + Owner bestaetigen, ob Lernhistorie ueberhaupt gespeichert werden darf."
+    }
+  ],
+  "storage_lanes": [
+    {
+      "id": "local_json_preview",
+      "blocked_today_count": 3
+    },
+    {
+      "id": "local_office_store",
+      "blocked_today_count": 3
+    },
+    {
+      "id": "external_exchange",
+      "blocked_today_count": 4
+    }
+  ],
+  "checks": [
+    {
+      "id": "contract_file_exists",
+      "label": "Data governance contract file exists.",
+      "status": "passed"
+    },
+    {
+      "id": "status_ready",
+      "label": "Data governance contract status is ready.",
+      "status": "passed"
+    },
+    {
+      "id": "mode_static_review_only",
+      "label": "Data governance contract is static review-only.",
+      "status": "passed"
+    },
+    {
+      "id": "principles_present",
+      "label": "Governance principles are explicit.",
+      "status": "passed"
+    },
+    {
+      "id": "required_domains_present",
+      "label": "All required data domains are present.",
+      "status": "passed"
+    },
+    {
+      "id": "domains_have_retention_backup_and_blocks",
+      "label": "Every data domain has preview scope, future storage scope, retention gate, backup gate and blocked actions.",
+      "status": "passed"
+    },
+    {
+      "id": "storage_lanes_present",
+      "label": "Local JSON preview, local office store and external exchange lanes are present.",
+      "status": "passed"
+    },
+    {
+      "id": "storage_lanes_block_writes",
+      "label": "Every storage lane blocks writes or sync today.",
+      "status": "passed"
+    },
+    {
+      "id": "blocked_capabilities_present",
+      "label": "All sensitive data capabilities are blocked today.",
+      "status": "passed"
+    },
+    {
+      "id": "promotion_requirements_present",
+      "label": "Promotion requirements are explicit.",
+      "status": "passed"
+    },
+    {
+      "id": "component_imports_contract",
+      "label": "Component imports the data governance contract.",
+      "status": "passed"
+    },
+    {
+      "id": "component_renders_governance_copy",
+      "label": "Component renders data governance boundary copy.",
+      "status": "passed"
+    },
+    {
+      "id": "component_renders_safety_boundary",
+      "label": "Component states D1 writes, R2 uploads, customer writes, backup jobs and external sync are blocked.",
+      "status": "passed"
+    },
+    {
+      "id": "route_imports_data_governance",
+      "label": "Orbit route imports the data governance component.",
+      "status": "passed"
+    },
+    {
+      "id": "route_anchors_data_governance",
+      "label": "Orbit route renders a data-governance anchor.",
+      "status": "passed"
+    },
+    {
+      "id": "section_index_links_data_governance",
+      "label": "Section index links to data governance.",
+      "status": "passed"
+    }
+  ],
+  "next_actions": [
+    "Use this contract before implementing any local Orbit database, backup job or persistent office memory.",
+    "Keep all /orbit data reads static until storage, retention and privacy rules are approved.",
+    "Connect this governance contract to future KosmoData, KosmoAsset and Local Identity storage work."
+  ]
+}

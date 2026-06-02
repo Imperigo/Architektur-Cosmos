@@ -58,6 +58,7 @@ const sectionGroups = [
     links: [
       { href: '#workstation-profile', label: 'Profile' },
       { href: '#local-identity', label: 'Identity' },
+      { href: '#data-governance', label: 'Daten' },
       { href: '#ausbildung', label: 'Ausbildung' },
       { href: '#rechte', label: 'Rechte' },
       { href: '#rollen', label: 'Rollen' },

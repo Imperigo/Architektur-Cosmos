@@ -12,6 +12,7 @@ import Link from 'next/link';
 import { OrbitAutonomyStatus } from './OrbitAutonomyStatus';
 import { OrbitAuditTrail } from './OrbitAuditTrail';
 import { OrbitCommandContract } from './OrbitCommandContract';
+import { OrbitDataGovernanceContract } from './OrbitDataGovernanceContract';
 import { OrbitDesignHandoffPanel } from './OrbitDesignHandoffPanel';
 import { OrbitDemoReadiness, type OrbitStaticExportSmokeReport } from './OrbitDemoReadiness';
 import { OrbitDemoQuestions } from './OrbitDemoQuestions';
@@ -502,6 +503,10 @@ export default function OrbitPage() {
 
           <div id="local-identity" className="scroll-mt-4">
             <OrbitLocalIdentityContract />
+          </div>
+
+          <div id="data-governance" className="scroll-mt-4">
+            <OrbitDataGovernanceContract />
           </div>
 
           <div id="ausbildung" className="scroll-mt-4">

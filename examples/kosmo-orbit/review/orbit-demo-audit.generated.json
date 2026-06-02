@@ -1,144 +1,149 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-02T13:17:18.387Z",
+  "generated_at": "2026-06-02T13:31:27.859Z",
   "generator": "kosmo-orbit-demo-audit",
   "status": "orbit_demo_audit_passed",
   "html_file": "out/orbit/index.html",
   "summary": {
-    "check_count": 37,
-    "passed_checks": 37,
+    "check_count": 39,
+    "passed_checks": 39,
     "failed_checks": 0
   },
   "demo_order": [
     {
       "id": "autonomie",
       "label": "Autonomie-Status",
-      "index": 26270
+      "index": 26687
     },
     {
       "id": "routine",
       "label": "Buero-Routine",
-      "index": 28746
+      "index": 29163
     },
     {
       "id": "presenter",
       "label": "3-Minuten-Erklaerung",
-      "index": 58444
+      "index": 58861
     },
     {
       "id": "workflow-delta",
       "label": "Workflow-Delta",
-      "index": 61461
+      "index": 61878
     },
     {
       "id": "pilotmessung",
       "label": "Pilotmessung",
-      "index": 67183
+      "index": 67600
     },
     {
       "id": "pilotplan",
       "label": "Pilot-Runbook",
-      "index": 88135
+      "index": 88552
     },
     {
       "id": "pilot-session",
       "label": "Pilot-Session Template",
-      "index": 95753
+      "index": 96170
     },
     {
       "id": "fortschritt",
       "label": "Projektfortschritt",
-      "index": 101192
+      "index": 101609
     },
     {
       "id": "vision",
       "label": "Vision Bridge",
-      "index": 107937
+      "index": 108354
     },
     {
       "id": "demo-ready",
       "label": "Demo-Bereitschaft",
-      "index": 112277
+      "index": 112694
     },
     {
       "id": "live-gate",
       "label": "Live-Gate",
-      "index": 115032
+      "index": 115449
     },
     {
       "id": "projektpaket",
       "label": "Projektpaket Tagesansicht",
-      "index": 134354
+      "index": 134771
     },
     {
       "id": "design-handoff",
       "label": "KosmoDesign Handoff",
-      "index": 143946
+      "index": 144363
     },
     {
       "id": "entscheidung",
       "label": "Review Decision Draft",
-      "index": 163804
+      "index": 164221
     },
     {
       "id": "runtime-contract",
       "label": "Runtime-Vertrag",
-      "index": 171113
+      "index": 171530
     },
     {
       "id": "installation",
       "label": "Buero-Installation",
-      "index": 195274
+      "index": 195691
     },
     {
       "id": "health",
       "label": "Health Readiness",
-      "index": 203013
+      "index": 203430
     },
     {
       "id": "risiken",
       "label": "Risiko-Register",
-      "index": 209870
+      "index": 210287
     },
     {
       "id": "commands",
       "label": "Command-Vertrag",
-      "index": 217159
+      "index": 217576
     },
     {
       "id": "audit",
       "label": "Audit-Trail-Vertrag",
-      "index": 226522
+      "index": 226939
     },
     {
       "id": "evidenz",
       "label": "Pruefevidenz",
-      "index": 234036
+      "index": 234453
     },
     {
       "id": "workstation-profile",
       "label": "Workstation Profile Contract",
-      "index": 242295
+      "index": 242712
     },
     {
       "id": "local-identity",
       "label": "Local Identity Boundary",
-      "index": 264302
+      "index": 264719
+    },
+    {
+      "id": "data-governance",
+      "label": "Data Governance Boundary",
+      "index": 280653
     },
     {
       "id": "ausbildung",
       "label": "Ausbildungsmodus",
-      "index": 280236
+      "index": 299167
     },
     {
       "id": "rechte",
       "label": "Rechte-Matrix",
-      "index": 285546
+      "index": 304477
     },
     {
       "id": "rollen",
       "label": "Rollenumschaltung Preview",
-      "index": 303301
+      "index": 322232
     }
   ],
   "checks": [
@@ -295,6 +300,16 @@
     {
       "id": "local_identity_safe",
       "label": "Local identity blocks logins, profile persistence, session cookies and external identity providers.",
+      "status": "passed"
+    },
+    {
+      "id": "data_governance_visible",
+      "label": "Data governance boundary is visible in the export.",
+      "status": "passed"
+    },
+    {
+      "id": "data_governance_safe",
+      "label": "Data governance blocks database writes, uploads, customer data writes and external sync.",
       "status": "passed"
     },
     {

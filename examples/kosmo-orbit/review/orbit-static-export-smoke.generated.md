@@ -1,6 +1,6 @@
 # KosmoOrbit Static Export Smoke
 
-Generated: 2026-06-02T13:16:30.330Z
+Generated: 2026-06-02T13:31:27.861Z
 Status: `orbit_static_export_smoke_passed`
 HTML: `out/orbit/index.html`
 
@@ -8,7 +8,7 @@ Checks the built static export for the visible KosmoOrbit demo panels. It does n
 
 ## Summary
 
-- checks: 74/74 passed
+- checks: 76/76 passed
 
 ## Checks
 
@@ -56,6 +56,7 @@ Checks the built static export for the visible KosmoOrbit demo panels. It does n
 | `renders_workstation_priorities` | `passed` | Export renders workstation priorities. |
 | `renders_workstation_profile_contract` | `passed` | Export renders workstation profile contract. |
 | `renders_local_identity_contract` | `passed` | Export renders local identity contract. |
+| `renders_data_governance_contract` | `passed` | Export renders data governance contract. |
 | `renders_learning_mode` | `passed` | Export renders education mode. |
 | `renders_permission_matrix` | `passed` | Export renders permission matrix. |
 | `renders_role_switcher` | `passed` | Export renders role switcher. |
@@ -67,6 +68,7 @@ Checks the built static export for the visible KosmoOrbit demo panels. It does n
 | `keeps_workflow_delta_honest` | `passed` | Export keeps workflow delta honest about savings. |
 | `keeps_workstation_profile_review_only` | `passed` | Export keeps workstation profiles non-operational. |
 | `keeps_local_identity_review_only` | `passed` | Export keeps local identity non-operational. |
+| `keeps_data_governance_review_only` | `passed` | Export keeps data governance storage, backup and sync actions blocked. |
 | `keeps_pilot_measurement_safe` | `passed` | Export keeps pilot measurement safe and local. |
 | `keeps_pilot_measurement_kit_empty` | `passed` | Export keeps pilot measurement kit empty before real pilot. |
 | `keeps_pilot_facilitator_safe` | `passed` | Export keeps pilot facilitator checklist safe and local. |

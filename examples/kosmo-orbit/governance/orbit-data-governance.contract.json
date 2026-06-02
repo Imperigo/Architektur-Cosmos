@@ -1,0 +1,108 @@
+{
+  "schema_version": "0.1",
+  "status": "data_governance_contract_ready",
+  "mode": "static_review_only",
+  "contract_id": "orbit-data-governance-v1",
+  "description": "Review-only contract for future local KosmoOrbit data storage, retention, backup and privacy boundaries.",
+  "governance_principles": [
+    "Local office data must stay local unless a human explicitly approves another path.",
+    "KosmoOrbit may prepare decisions, but stored records need owner, privacy and retention rules first.",
+    "Learning and apprentice data must avoid scoring, surveillance and public exposure.",
+    "Backup, delete, export and restore paths must be understandable to a small architecture office."
+  ],
+  "data_domains": [
+    {
+      "id": "project_knowledge",
+      "label": "Projektwissen",
+      "future_storage_scope": ["briefs", "sources", "review_notes", "blocker_history"],
+      "today_preview_scope": ["static project package", "project inspector report", "review-only notes"],
+      "retention_gate": "Projektleitung + Owner bestaetigen Projektablage, Aufbewahrung und Loeschfrist.",
+      "backup_gate": "IT/KI bestaetigt lokale Backup- und Restore-Regel.",
+      "blocked_today": ["customer_data_write", "cloud_upload", "external_sync", "automatic_retention"]
+    },
+    {
+      "id": "asset_and_rights",
+      "label": "Assets und Rechte",
+      "future_storage_scope": ["material_reviews", "license_notes", "asset_certificates", "promotion_decisions"],
+      "today_preview_scope": ["KosmoAsset review reports", "certificate drafts", "rights gates"],
+      "retention_gate": "Owner bestaetigt Rechtekette, Lizenzstatus und Public-Safe-Grenze.",
+      "backup_gate": "Asset-Bibliothek bekommt getrennte Backup- und Versionierungsregel.",
+      "blocked_today": ["public_asset_release", "license_claim_write", "shop_publish", "external_asset_upload"]
+    },
+    {
+      "id": "identity_and_sessions",
+      "label": "Profile und Sessions",
+      "future_storage_scope": ["local_profile", "role_preference", "session_log", "consent_record"],
+      "today_preview_scope": ["role preview", "workstation profile contract", "local identity contract"],
+      "retention_gate": "Owner + Datenschutz Review bestaetigen Consent, Retention und Offboarding.",
+      "backup_gate": "Profile duerfen erst nach Recovery-/Loeschprozess gesichert werden.",
+      "blocked_today": ["profile_persistence", "session_cookie", "personal_data_write", "hidden_tracking"]
+    },
+    {
+      "id": "audit_and_decisions",
+      "label": "Audit und Entscheide",
+      "future_storage_scope": ["decision_record", "audit_event", "evidence_link", "rollback_note"],
+      "today_preview_scope": ["audit trail contract", "review decision draft", "push readiness report"],
+      "retention_gate": "Owner bestaetigt, welche Entscheide rechtlich relevant gespeichert werden.",
+      "backup_gate": "Audit-Logs brauchen manipulationsarme lokale Sicherung und Exportregel.",
+      "blocked_today": ["persistent_decision_record", "electronic_signature", "automatic_approval", "audit_log_write"]
+    },
+    {
+      "id": "learning_and_training",
+      "label": "Ausbildung und Lernen",
+      "future_storage_scope": ["learning_path", "safe_exercise", "supervisor_note"],
+      "today_preview_scope": ["learning mode", "safe exercises", "guided explanations"],
+      "retention_gate": "Ausbildner + Owner bestaetigen, ob Lernhistorie ueberhaupt gespeichert werden darf.",
+      "backup_gate": "Lernnotizen duerfen nicht mit Projekt- oder Public-Daten vermischt werden.",
+      "blocked_today": ["learning_score_write", "surveillance_log", "school_platform_sync", "public_learning_profile"]
+    }
+  ],
+  "storage_lanes": [
+    {
+      "id": "local_json_preview",
+      "today": "Static JSON artifacts in the repo are read for review only.",
+      "future_requirement": "Replace preview artifacts with a local office storage model only after schema and backup review.",
+      "blocked_today": ["runtime_database_write", "customer_file_write", "profile_storage"]
+    },
+    {
+      "id": "local_office_store",
+      "today": "No real office store exists in this static preview.",
+      "future_requirement": "Local store needs encryption, role boundaries, backup, restore and delete/export flows.",
+      "blocked_today": ["create_local_database", "write_office_memory", "persist_project_notes"]
+    },
+    {
+      "id": "external_exchange",
+      "today": "External collaboration is only a future concept.",
+      "future_requirement": "Fachplaner/client exchange needs explicit format, consent, versioning and liability gates.",
+      "blocked_today": ["external_sync", "cloud_upload", "client_delivery", "public_publish"]
+    }
+  ],
+  "blocked_capabilities": [
+    "d1_write",
+    "r2_upload",
+    "cloud_upload",
+    "customer_data_write",
+    "profile_persistence",
+    "session_storage",
+    "audit_log_write",
+    "decision_record_write",
+    "learning_score_write",
+    "external_sync",
+    "backup_job_start",
+    "retention_auto_delete",
+    "public_publish"
+  ],
+  "promotion_requirements": [
+    "Data classification for project, asset, identity, audit and learning records.",
+    "Owner-approved retention and deletion policy per data domain.",
+    "Local backup and restore test before any persistent office store.",
+    "Privacy review for personal data, learning data and audit logs.",
+    "Export format and offboarding process for profiles and project records.",
+    "Human-readable incident and rollback plan for corrupted or wrongly stored data."
+  ],
+  "next_actions": [
+    "Use this contract before implementing any local Orbit database, backup job or persistent office memory.",
+    "Keep all /orbit data reads static until storage, retention and privacy rules are approved.",
+    "Connect this governance contract to future KosmoData, KosmoAsset and Local Identity storage work."
+  ]
+}

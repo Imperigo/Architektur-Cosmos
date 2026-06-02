@@ -245,11 +245,53 @@ Nachgezogen:
   Session-Grenzen, blockierte Faehigkeiten und Promotion Requirements;
 - `npm run kosmo:orbit-local-identity` prueft den Vertrag mit 16/16 Checks;
 - `npm run kosmo:orbit-full-review` enthaelt den Vertrag als eigenen Schritt
-  und steht dadurch bei 28/28;
-- `npm run kosmo:orbit-route-smoke` steht bei 211/211;
-- `npm run kosmo:orbit-static-smoke` steht bei 74/74;
-- `npm run kosmo:orbit-demo-audit` steht bei 37/37;
-- `npm run kosmo:orbit-responsive-audit` steht bei 29/29.
+  und ist inzwischen mit Data Governance auf 29/29 erweitert;
+- `npm run kosmo:orbit-route-smoke` steht inzwischen bei 218/218;
+- `npm run kosmo:orbit-static-smoke` steht inzwischen bei 76/76;
+- `npm run kosmo:orbit-demo-audit` steht inzwischen bei 39/39;
+- `npm run kosmo:orbit-responsive-audit` steht inzwischen bei 30/30.
+
+### Data-Governance-Vertrag
+
+Der Data-Governance-Vertrag ist als naechste lokale Sicherheitsgrenze
+umgesetzt.
+
+Zweck:
+
+- festlegen, welche Daten KosmoOrbit spaeter lokal speichern darf;
+- Projektwissen, Assets/Rechte, Profile/Sessions, Audit/Entscheide und
+  Ausbildung/Lernen getrennt betrachten;
+- Retention, Backup, Delete/Export, Datenschutz und Owner-Gates als
+  Vorbedingung fuer echte Writes sichtbar machen;
+- verhindern, dass aus der statischen Preview heimlich ein Datenspeicher,
+  Backup-System oder externer Sync wird.
+
+Wichtige Grenze:
+
+- keine D1-Writes;
+- keine R2-Uploads;
+- keine Kundendaten-Writes;
+- keine Profil-/Session-Persistenz;
+- keine Audit-/Decision-Record-Writes;
+- keine Learning Scores;
+- kein Backup-Job;
+- keine Retention-Automation;
+- kein externer Sync;
+- kein Public Publish.
+
+Nachgezogen:
+
+- `examples/kosmo-orbit/governance/orbit-data-governance.contract.json` haelt
+  den Data-Governance-Vertrag;
+- `app/orbit/OrbitDataGovernanceContract.tsx` rendert Datenbereiche,
+  Speicher-Lanes, blockierte Faehigkeiten und Promotion Requirements;
+- `npm run kosmo:orbit-data-governance` prueft den Vertrag mit 16/16 Checks;
+- `npm run kosmo:orbit-full-review` enthaelt den Vertrag als eigenen Schritt
+  und steht dadurch bei 29/29;
+- `npm run kosmo:orbit-route-smoke` steht bei 218/218;
+- `npm run kosmo:orbit-static-smoke` steht bei 76/76;
+- `npm run kosmo:orbit-demo-audit` steht bei 39/39;
+- `npm run kosmo:orbit-responsive-audit` steht bei 30/30.
 
 ### Push-Readiness Stabilisierung
 
@@ -284,8 +326,8 @@ ohne Push, Deploy, Upload, externe Accounts oder Kosten auszuloesen.
 
 ### Full Review und IFC-Kontext
 
-`npm run kosmo:orbit-full-review` wurde zuerst auf 24, danach auf 25, 26, 27
-und nun auf 28 Schritte erweitert.
+`npm run kosmo:orbit-full-review` wurde zuerst auf 24, danach auf 25, 26, 27,
+28 und nun auf 29 Schritte erweitert.
 
 Neu enthalten:
 
@@ -302,6 +344,9 @@ Neu enthalten:
 - `npm run kosmo:orbit-local-identity` als eigener Full-Review-Schritt mit
   16/16 Checks, 5 Profilklassen, 3 Session-Grenzen und 12 blockierten
   Identity-Faehigkeiten;
+- `npm run kosmo:orbit-data-governance` als eigener Full-Review-Schritt mit
+  16/16 Checks, 5 Datenbereichen, 3 Speicher-Lanes und 13 blockierten
+  Datenfaehigkeiten;
 - aktualisierte Design-Kontext-Artefakte fuer das Demo-Projekt mit IFC-Bounds
   und IFC-Rollenhinweisen.
 
@@ -312,9 +357,9 @@ ist kein BIM-Import, kein editierbares Modell und kein Design-Generation-Go.
 
 Heute gruen geprueft:
 
-- `npm run kosmo:orbit-route-smoke` - 211/211 passed
-- `npm run kosmo:orbit-static-smoke` - 74/74 passed
-- `npm run kosmo:orbit-full-review` - 28/28 passed
+- `npm run kosmo:orbit-route-smoke` - 218/218 passed
+- `npm run kosmo:orbit-static-smoke` - 76/76 passed
+- `npm run kosmo:orbit-full-review` - 29/29 passed
 - `npm run atlas:static-smoke` - 17/17 passed
 - `npm run build` - static export passed
 - `npx tsc --noEmit --pretty false --incremental false` - passed
@@ -325,8 +370,9 @@ Heute gruen geprueft:
 - `npm run kosmo:orbit-runtime-adapter` - 16/16 passed
 - `npm run kosmo:orbit-workstation-profile` - 16/16 passed
 - `npm run kosmo:orbit-local-identity` - 16/16 passed
-- `npm run kosmo:orbit-demo-audit` - 37/37 passed
-- `npm run kosmo:orbit-responsive-audit` - 29/29 passed
+- `npm run kosmo:orbit-data-governance` - 16/16 passed
+- `npm run kosmo:orbit-demo-audit` - 39/39 passed
+- `npm run kosmo:orbit-responsive-audit` - 30/30 passed
 - `npm run kosmo:orbit-push-readiness` - 12/12 passed
 - `npm run kosmo:orbit-readiness-sweep` - 6/6 passed
 - `npm run generated:cleanup` - Zeitstempelrauschen entfernt, semantische
@@ -357,6 +403,10 @@ Browser-Smokes:
   Static Export, Local-Identity-Grenze sichtbar, 8 Karten, Profilklassen und
   Safety-Copy sichtbar, keine horizontale Ueberbreite bei schmaler
   Viewport-Pruefung.
+- `/orbit/?v=data-governance-20260602#data-governance`: HTTP 200 im lokalen
+  Static Export, Data-Governance-Grenze sichtbar, Daten-Navigation vorhanden,
+  5 Datenbereiche und Safety-Copy fuer D1/R2/Kundendaten/Backup/externen Sync
+  sichtbar.
 
 Hinweis: Ein paralleler TypeScript-Lauf waehrend `next build` hatte kurz
 fehlende `.next/types` gemeldet. Seriell nach abgeschlossenem Build war

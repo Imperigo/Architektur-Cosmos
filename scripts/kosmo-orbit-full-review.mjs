@@ -319,6 +319,22 @@ const steps = [
     report: resolve(workspaceRoot, 'review/orbit-local-identity.generated.json')
   },
   {
+    id: 'data_governance',
+    label: 'Orbit Data Governance Contract',
+    script: 'kosmo:orbit-data-governance',
+    args: [
+      '--contract',
+      'examples/kosmo-orbit/governance/orbit-data-governance.contract.json',
+      '--component',
+      'app/orbit/OrbitDataGovernanceContract.tsx',
+      '--route',
+      'app/orbit/page.tsx',
+      '--sectionIndex',
+      'app/orbit/OrbitSectionIndex.tsx'
+    ],
+    report: resolve(workspaceRoot, 'review/orbit-data-governance.generated.json')
+  },
+  {
     id: 'pilot_session',
     label: 'Orbit Pilot Session Template',
     script: 'kosmo:orbit-pilot-session',
@@ -444,6 +460,7 @@ function buildReport(stepRows) {
   const runtimeAdapter = readOptionalJson(resolve(workspaceRoot, 'review/orbit-runtime-adapter.generated.json'));
   const workstationProfile = readOptionalJson(resolve(workspaceRoot, 'review/orbit-workstation-profile.generated.json'));
   const localIdentity = readOptionalJson(resolve(workspaceRoot, 'review/orbit-local-identity.generated.json'));
+  const dataGovernance = readOptionalJson(resolve(workspaceRoot, 'review/orbit-data-governance.generated.json'));
   const pilotSession = readOptionalJson(resolve(workspaceRoot, 'review/orbit-pilot-session.generated.json'));
   const pilotMeasurementKit = readOptionalJson(resolve(workspaceRoot, 'review/orbit-pilot-measurement-kit.generated.json'));
   const pilotResultDraft = readOptionalJson(resolve(workspaceRoot, 'review/orbit-pilot-result-draft.generated.json'));
@@ -545,6 +562,12 @@ function buildReport(stepRows) {
       local_identity_profile_class_count: localIdentity?.summary?.profile_class_count ?? null,
       local_identity_session_boundary_count: localIdentity?.summary?.session_boundary_count ?? null,
       local_identity_blocked_capability_count: localIdentity?.summary?.blocked_capability_count ?? null,
+      data_governance_status: dataGovernance?.status || null,
+      data_governance_passed_checks: dataGovernance?.summary?.passed_checks ?? null,
+      data_governance_check_count: dataGovernance?.summary?.check_count ?? null,
+      data_governance_domain_count: dataGovernance?.summary?.data_domain_count ?? null,
+      data_governance_storage_lane_count: dataGovernance?.summary?.storage_lane_count ?? null,
+      data_governance_blocked_capability_count: dataGovernance?.summary?.blocked_capability_count ?? null,
       pilot_session_status: pilotSession?.status || null,
       pilot_session_passed_checks: pilotSession?.summary?.passed_checks ?? null,
       pilot_session_check_count: pilotSession?.summary?.check_count ?? null,
@@ -606,6 +629,7 @@ function buildReport(stepRows) {
       runtime_adapter_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-runtime-adapter.generated.md')),
       workstation_profile_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-workstation-profile.generated.md')),
       local_identity_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-local-identity.generated.md')),
+      data_governance_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-data-governance.generated.md')),
       pilot_session_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-pilot-session.generated.md')),
       pilot_measurement_kit_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-pilot-measurement-kit.generated.md')),
       pilot_result_draft_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-pilot-result-draft.generated.md')),
@@ -622,11 +646,11 @@ function buildReport(stepRows) {
       role_shell_smoke_markdown: relative(root, resolve(projectRoot, 'orbit/role-shell-smoke.generated.md'))
     },
     steps: stepRows,
-    next_actions: nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHandoff, appRouteSpec, healthReadiness, commandContract, auditTrail, officePilotScene, toolRegistry, runtimeAdapter, workstationProfile, localIdentity, pilotSession, pilotMeasurementKit, pilotResultDraft, orbitRouteSmoke, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke, roleShellPrototype, roleShellSmoke })
+    next_actions: nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHandoff, appRouteSpec, healthReadiness, commandContract, auditTrail, officePilotScene, toolRegistry, runtimeAdapter, workstationProfile, localIdentity, dataGovernance, pilotSession, pilotMeasurementKit, pilotResultDraft, orbitRouteSmoke, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke, roleShellPrototype, roleShellSmoke })
   };
 }
 
-function nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHandoff, appRouteSpec, healthReadiness, commandContract, auditTrail, officePilotScene, toolRegistry, runtimeAdapter, workstationProfile, localIdentity, pilotSession, pilotMeasurementKit, pilotResultDraft, orbitRouteSmoke, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke, roleShellPrototype, roleShellSmoke }) {
+function nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHandoff, appRouteSpec, healthReadiness, commandContract, auditTrail, officePilotScene, toolRegistry, runtimeAdapter, workstationProfile, localIdentity, dataGovernance, pilotSession, pilotMeasurementKit, pilotResultDraft, orbitRouteSmoke, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke, roleShellPrototype, roleShellSmoke }) {
   const actions = [];
   if (failedSteps.length) {
     failedSteps.forEach((step) => actions.push(`Review failed step: ${step.label}`));
@@ -670,6 +694,9 @@ function nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHan
   }
   if (localIdentity?.status === 'local_identity_contract_passed') {
     actions.push('Use the local identity contract before implementing auth, profile persistence, session storage or permission mutation.');
+  }
+  if (dataGovernance?.status === 'data_governance_contract_passed') {
+    actions.push('Use the data governance contract before implementing local storage, backup jobs, retention automation or persistent office memory.');
   }
   if (pilotSession?.status === 'orbit_pilot_session_template_ready') {
     actions.push('Use the pilot session template for a real office pilot only after anonymising project inputs.');
@@ -776,6 +803,11 @@ function renderMarkdown(report) {
     `- local identity profile classes: ${report.summary.local_identity_profile_class_count}`,
     `- local identity session boundaries: ${report.summary.local_identity_session_boundary_count}`,
     `- local identity blocked capabilities: ${report.summary.local_identity_blocked_capability_count}`,
+    `- data governance: \`${report.summary.data_governance_status}\``,
+    `- data governance checks: ${report.summary.data_governance_passed_checks}/${report.summary.data_governance_check_count}`,
+    `- data governance domains: ${report.summary.data_governance_domain_count}`,
+    `- data governance storage lanes: ${report.summary.data_governance_storage_lane_count}`,
+    `- data governance blocked capabilities: ${report.summary.data_governance_blocked_capability_count}`,
     `- pilot session: \`${report.summary.pilot_session_status}\``,
     `- pilot session checks: ${report.summary.pilot_session_passed_checks}/${report.summary.pilot_session_check_count}`,
     `- pilot session measurement points: ${report.summary.pilot_session_measurement_points}`,

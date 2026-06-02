@@ -91,7 +91,15 @@ klarer und nachvollziehbarer machen.
      Session-Cookies, keine personenbezogenen Writes und keinen externen
      Identity Provider.
 
-12. **Live-Gate zeigen**
+12. **Data Governance Boundary zeigen**
+   - Sagen: Spaeter braucht KosmoOrbit lokales Buero-Gedaechtnis, aber nicht
+     ohne klare Datenschutz- und Backup-Regeln.
+   - Sagen: Projektwissen, Assets/Rechte, Profile, Audit und Ausbildung sind
+     getrennte Datenbereiche.
+   - Sagen: Heute gibt es keine D1/R2-Writes, keine Kundendaten-Writes, keinen
+     Backup-Job und keinen externen Sync.
+
+13. **Live-Gate zeigen**
    - Sagen: Lokal vorfuehrbar ist nicht gleich public-ready.
    - Sagen: Push, Livegang und Cloudflare-Deploy brauchen Owner-Go und
      Live-Smoke.
