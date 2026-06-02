@@ -168,6 +168,10 @@ Dieser Kern zeigt:
   Tool-Launch, Job-Orchestrierung und Repair/Update als spaetere lokale
   Steuerbereiche sichtbar macht, aber heute Modellstart, Prozessstarts,
   Queue, Memory-Writes und Systemaenderungen blockiert;
+- einen Runtime-Adapter-Vertrag, der Health Telemetry, lokales Kosmo-Modell,
+  Tool Launch, Job Queue, Audit Log und Publish/External Sync als spaetere
+  Adapter-Lanes beschreibt, inklusive Human Gates, Promotion Requirements und
+  Kill-Switch-Pflicht, ohne irgendeinen Adapter auszufuehren;
 - ein Installationsbild, das KosmoZentrale als lokale Appliance, KosmoOrbit
   auf Arbeitsstationen, lokales Wissen, Architektur-Tools, menschliche
   Freigabe und spaetere externe Zusammenarbeit als Buero-System ordnet;
@@ -217,6 +221,6 @@ Dieser Kern zeigt:
   in die menschliche Pushentscheidung einbindet.
 
 Damit ist der erste pruefbare Produktkern vorhanden: KosmoOrbit beweist die
-Steuerzentralen-Logik mit einem geprueften Tool-Register, ohne schon echte
-lokale Runtime, Auth, Blender-Start, Geometrie-Generierung oder
-Cloud-Integrationen zu aktivieren.
+Steuerzentralen-Logik mit geprueftem Tool-Register und Runtime-Adapter-
+Vertrag, ohne schon echte lokale Runtime, Auth, Blender-Start,
+Geometrie-Generierung oder Cloud-Integrationen zu aktivieren.

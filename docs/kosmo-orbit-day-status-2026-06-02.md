@@ -126,8 +126,48 @@ Nachgezogen:
 - `npm run kosmo:orbit-tool-registry` prueft das Register mit 13/13 Checks;
 - `npm run kosmo:orbit-full-review` enthaelt das Tool-Register als eigenen
   Schritt und steht dadurch bei 25/25;
-- `npm run kosmo:orbit-route-smoke` steht bei 190/190;
-- `npm run kosmo:orbit-static-smoke` steht bei 68/68.
+- `npm run kosmo:orbit-route-smoke` steht nach dem Runtime-Adapter bei
+  197/197;
+- `npm run kosmo:orbit-static-smoke` steht nach dem Runtime-Adapter bei 70/70.
+
+### Runtime-Adapter-Vertrag
+
+`/orbit` hat einen sichtbaren Runtime-Adapter-Vertrag erhalten.
+
+Zweck:
+
+- KosmoOrbit bekommt eine klare Bruecke zwischen Tool-Orchestrierung und
+  spaeterer lokaler KosmoZentrale-Runtime;
+- die Adapter-Lanes Health Telemetry, lokales Kosmo-Modell, Tool Launch,
+  Job Queue, Audit Log und Publish/External Sync sind als Vertrag sichtbar;
+- pro Adapter werden Zukunftsfaehigkeit, heutiger Vertrag, notwendige
+  Evidenz, Human Gate und blockierte Side Effects gezeigt;
+- Promotion Requirements halten fest, dass Schema, lokale Permissions,
+  Audit/Rollback, Privacy/Retention, Cost Gate und manueller Kill Switch
+  vor jeder echten Ausfuehrung geklaert sein muessen.
+
+Wichtige Grenze:
+
+- keine Adapter-Ausfuehrung;
+- keine Hardwarebefehle;
+- keine Modellstarts;
+- keine Memory-Writes;
+- keine Dateisystem-Scans;
+- keine Prozessstarts;
+- keine Queue-/Kostenjobs;
+- keine User-Writes;
+- keine Uploads, externen Accounts oder Public-Publish.
+
+Nachgezogen:
+
+- `examples/kosmo-orbit/runtime/orbit-runtime-adapter.contract.json` haelt
+  den lokalen Adapter-Vertrag;
+- `app/orbit/OrbitRuntimeAdapterContract.tsx` rendert die Adapter-Lanes;
+- `npm run kosmo:orbit-runtime-adapter` prueft den Vertrag mit 16/16 Checks;
+- `npm run kosmo:orbit-full-review` enthaelt den Adapter als eigenen Schritt
+  und steht dadurch bei 26/26;
+- `npm run kosmo:orbit-route-smoke` steht bei 197/197;
+- `npm run kosmo:orbit-static-smoke` steht bei 70/70.
 
 ### Push-Readiness Stabilisierung
 
@@ -162,8 +202,8 @@ ohne Push, Deploy, Upload, externe Accounts oder Kosten auszuloesen.
 
 ### Full Review und IFC-Kontext
 
-`npm run kosmo:orbit-full-review` wurde zuerst auf 24 und danach auf 25
-Schritte erweitert.
+`npm run kosmo:orbit-full-review` wurde zuerst auf 24, danach auf 25 und nun
+auf 26 Schritte erweitert.
 
 Neu enthalten:
 
@@ -172,6 +212,8 @@ Neu enthalten:
   und 4 Rollen;
 - `npm run kosmo:orbit-tool-registry` als eigener Full-Review-Schritt mit
   13/13 Checks, 8 Tools, 8 Rollen und 7 Gates;
+- `npm run kosmo:orbit-runtime-adapter` als eigener Full-Review-Schritt mit
+  16/16 Checks, 6 Adapter-Lanes und 6 Promotion Requirements;
 - aktualisierte Design-Kontext-Artefakte fuer das Demo-Projekt mit IFC-Bounds
   und IFC-Rollenhinweisen.
 
@@ -182,9 +224,9 @@ ist kein BIM-Import, kein editierbares Modell und kein Design-Generation-Go.
 
 Heute gruen geprueft:
 
-- `npm run kosmo:orbit-route-smoke` - 190/190 passed
-- `npm run kosmo:orbit-static-smoke` - 68/68 passed
-- `npm run kosmo:orbit-full-review` - 25/25 passed
+- `npm run kosmo:orbit-route-smoke` - 197/197 passed
+- `npm run kosmo:orbit-static-smoke` - 70/70 passed
+- `npm run kosmo:orbit-full-review` - 26/26 passed
 - `npm run atlas:static-smoke` - 17/17 passed
 - `npm run build` - static export passed
 - `npx tsc --noEmit --pretty false --incremental false` - passed
@@ -192,6 +234,7 @@ Heute gruen geprueft:
 - `npm run brain:doctor` - 17/17 passed
 - `npm run kosmo:orbit-office-pilot-scene` - 13/13 passed
 - `npm run kosmo:orbit-tool-registry` - 13/13 passed
+- `npm run kosmo:orbit-runtime-adapter` - 16/16 passed
 - `npm run kosmo:orbit-push-readiness` - 12/12 passed
 - `npm run kosmo:orbit-readiness-sweep` - 6/6 passed
 - `npm run generated:cleanup` - Zeitstempelrauschen entfernt, semantische
@@ -227,6 +270,7 @@ Codefehler.
 - `944ad27` Stabilize brain doctor static export order
 - `00932ae` Add KosmoOrbit tool registry
 - `ded70ce` Refresh KosmoOrbit push readiness evidence
+- `c32d725` Add KosmoOrbit runtime adapter contract
 
 ## Push-/Live-Grenze
 

@@ -90,10 +90,14 @@ In drei Minuten soll ein Architekturbueroleiter verstehen:
    Entscheid mit Evidenz und Write Guard vorbereiten. In der Preview bleibt
    der Status deshalb bewusst `needs_more_evidence`.
 
-16. **Runtime-, Command-, Audit- und Risiko-Vertraege zeigen**
+16. **Runtime-, Runtime-Adapter-, Command-, Audit- und Risiko-Vertraege zeigen**
    Erklaeren: KosmoOrbit benennt genau, was spaeter lokale Runtime wird und
-   was heute blockiert bleibt: Modellstart, Blender-Launch, Geometrie,
-   Userdaten-Writes, Upload, Publish, externer Sync und Push ohne Go.
+   was heute blockiert bleibt. Der Adapter-Vertrag zeigt die spaeteren Lanes
+   fuer Health, lokales Modell, Tool-Launch, Queue, Audit und Sync, aber nur
+   als pruefbaren Vertrag mit Human Gates, Promotion Requirements und
+   Kill-Switch-Pflicht. Modellstart, Blender-Launch, Geometrie,
+   Userdaten-Writes, Upload, Publish, externer Sync und Push ohne Go bleiben
+   gesperrt.
 
 17. **MVP-Grenze zeigen**
    Erklaeren: Heute ist die Produktlogik sichtbar. Echte lokale KI,

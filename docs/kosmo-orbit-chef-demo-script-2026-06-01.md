@@ -64,13 +64,19 @@ klarer und nachvollziehbarer machen.
    - Sagen: Heute ist nur Review Mode erlaubt; Design-Generation bleibt
      gesperrt.
 
-8. **Rollen und Ausbildung zeigen**
+8. **Runtime-Adapter zeigen**
+   - Sagen: Die spaetere lokale KosmoZentrale bekommt klare Adapter-Lanes fuer
+     Health, lokales Modell, Tool-Launch, Queue, Audit und Sync.
+   - Sagen: Heute ist das nur ein Vertrag: keine Adapter-Ausfuehrung, kein
+     Modellstart, keine Datenwrites, kein Upload und kein externer Account.
+
+9. **Rollen und Ausbildung zeigen**
    - Sagen: Chef, Projektleitung, Entwurf, Zeichnung und Lernende brauchen
      unterschiedliche Oberflaechen.
    - Sagen: Lernende bekommen Erklaerung und sichere Uebungen statt kritische
      Rechte.
 
-9. **Live-Gate zeigen**
+10. **Live-Gate zeigen**
    - Sagen: Lokal vorfuehrbar ist nicht gleich public-ready.
    - Sagen: Push, Livegang und Cloudflare-Deploy brauchen Owner-Go und
      Live-Smoke.
@@ -80,7 +86,7 @@ klarer und nachvollziehbarer machen.
 - **Besser:** Jede Rolle sieht den richtigen Entscheidungsradius.
 - **Schneller:** Tools, Status, Blocker und naechste Aktion liegen an einem Ort.
 - **Praeziser:** Review-Gates trennen Kontext, Rechte, Modellqualitaet,
-  Publish und Kosten.
+  Runtime-Adapter, Publish und Kosten.
 - **Guenstiger:** Fehler, Suchzeit und unnoetige Cloud-/Abgabe-Schritte sollen
   frueher abgefangen werden. Das ist eine Pilot-Hypothese, keine garantierte
   Zahl.

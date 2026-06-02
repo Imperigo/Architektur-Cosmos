@@ -194,7 +194,11 @@ Sichere erste Umsetzung:
     KosmoDesign, KosmoPrepare, KosmoDraw, KosmoViz, KosmoPublish und
     KosmoZentrale mit Rollen, Gates und Runtime-Sperren
     (**initial umgesetzt mit `npm run kosmo:orbit-tool-registry` und `/orbit`**)
-12. spaeter Handoff an KosmoZentrale fuer echte lokale Runtime
+12. Runtime-Adapter-Vertrag als Bruecke zwischen Tool-Register und spaeterer
+    KosmoZentrale-Runtime, mit Adapter-Lanes, Human Gates, Promotion
+    Requirements und Kill-Switch-Pflicht
+    (**initial umgesetzt mit `npm run kosmo:orbit-runtime-adapter` und `/orbit`**)
+13. spaeter Handoff an KosmoZentrale fuer echte lokale Runtime
 
 ## 7. Zusammenarbeit mit anderen Workern
 
@@ -791,7 +795,8 @@ Architekturburo:
 - KosmoDesign Handoff Console mit blockierter Design-Generation;
 - Demo-Fragen fuer ein Architekturbuero;
 - Review Decision Draft;
-- Runtime-, Health-, Installation-, Risiko-, Command- und Audit-Vertraege;
+- Runtime-, Runtime-Adapter-, Health-, Installation-, Risiko-, Command- und
+  Audit-Vertraege;
 - Pruefevidenz;
 - Arbeitsstations-Prioritaeten;
 - Ausbildungsmodus;
@@ -815,15 +820,16 @@ Die wichtigste Produktlinie ist damit klarer:
 
 Aktuelle lokale Nachweise:
 
-- `npm run kosmo:orbit-full-review` — 23/23 passed;
+- `npm run kosmo:orbit-full-review` — 26/26 passed;
+- `npm run kosmo:orbit-runtime-adapter` — 16/16 passed;
 - `npm run kosmo:orbit-pilot-kit` — 19/19 passed;
 - `npm run kosmo:orbit-pilot-session` — 17/17 passed;
 - `npm run kosmo:orbit-pilot-result` — 21/21 passed;
-- `npm run kosmo:orbit-route-smoke` — 165/165 passed;
+- `npm run kosmo:orbit-route-smoke` — 197/197 passed;
 - `npm run kosmo:orbit-demo-audit` — 33/33 passed;
 - `npm run kosmo:orbit-responsive-audit` — 27/27 passed;
-- `npm run kosmo:orbit-static-smoke` — 57/57 passed;
+- `npm run kosmo:orbit-static-smoke` — 70/70 passed;
 - `npx tsc --noEmit --pretty false --incremental false` — passed;
-- `npm run lint` — 0 Errors, bekannte Bestandswarnungen;
+- `npm run lint` — 0 Errors, 0 Warnings;
 - `npm run ui:audit` — 72/72 passed;
 - `npm run build` mit Node 22 — static export passed.
