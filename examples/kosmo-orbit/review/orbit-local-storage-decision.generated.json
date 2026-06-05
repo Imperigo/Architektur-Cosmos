@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-05T17:05:32.930Z",
+  "generated_at": "2026-06-05T17:08:21.281Z",
   "generator": "kosmo-orbit-local-storage-decision-check",
   "status": "local_storage_decision_passed",
   "draft_file": "examples/kosmo-orbit/storage/orbit-local-storage-decision.draft.json",

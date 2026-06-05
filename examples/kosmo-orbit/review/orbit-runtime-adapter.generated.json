@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-05T17:05:32.589Z",
+  "generated_at": "2026-06-05T17:08:20.954Z",
   "generator": "kosmo-orbit-runtime-adapter-check",
   "status": "runtime_adapter_contract_passed",
   "contract_file": "examples/kosmo-orbit/runtime/orbit-runtime-adapter.contract.json",

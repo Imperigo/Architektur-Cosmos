@@ -1,6 +1,6 @@
 # KosmoOrbit Command Contract Smoke
 
-Generated: 2026-06-05T17:05:32.415Z
+Generated: 2026-06-05T17:08:20.780Z
 Status: `orbit_command_contract_passed`
 Contract: `examples/kosmo-orbit/commands/orbit-command.contract.json`
 
