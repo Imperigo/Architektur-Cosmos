@@ -1,6 +1,6 @@
 # KosmoOrbit Role Shell Smoke
 
-Generated: 2026-06-05T17:01:17.403Z
+Generated: 2026-06-05T17:05:32.166Z
 Status: `role_shell_smoke_passed`
 HTML: `examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-prototype.generated.html`
 

@@ -1,6 +1,6 @@
 # KosmoOrbit Full Review
 
-Generated: 2026-06-05T17:01:18.375Z
+Generated: 2026-06-05T17:05:33.184Z
 Status: `orbit_full_review_ready_for_review_mode`
 Workspace: `examples/kosmo-orbit/workspace.demo.json`
 Project: `examples/kosmo-projects/kosmo-demo-001`
@@ -70,13 +70,13 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 - autonomous fire state: `autonomous_fire_state_passed`
 - autonomous fire checks: 21/21
 - autonomous fire interval: 5 minutes
-- autonomous fire addon memory: 8
+- autonomous fire addon memory: 9
 - autonomous fire own memory: 4
 - autonomous fire blocked today: 9
 - autonomous loop ledger: `autonomous_loop_ledger_passed`
 - autonomous loop ledger checks: 18/18
-- autonomous loop ledger fires: 5
-- autonomous loop ledger memory added: 6
+- autonomous loop ledger fires: 6
+- autonomous loop ledger memory added: 7
 - autonomous loop ledger blocked boundaries: 9
 - fire cadence guard: `fire_cadence_guard_passed`
 - fire cadence checks: 16/16

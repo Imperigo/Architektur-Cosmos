@@ -91,7 +91,7 @@ function buildReport({ contract, componentSource, routeSource, sectionIndexSourc
     check('date_and_timezone_present', 'Local date and Zurich timezone are explicit.', contract.date_local === '2026-06-05' && contract.timezone === 'Europe/Zurich'),
     check('loop_until_midnight_present', 'Loop goal references autonomous block until midnight Zurich time.', String(contract.loop_goal?.label || '').includes('24:00') && contract.loop_goal?.fire_interval_minutes === 5),
     check('summary_and_memory_required', 'Every fire requires summary and memory capture.', contract.loop_goal?.summary_required_each_fire === true && contract.loop_goal?.memory_capture_required === true),
-    check('current_fire_present', 'Current fire state and local time are recorded.', Boolean(contract.current_fire?.local_time) && contract.current_fire?.state === 'in_progress'),
+    check('current_fire_present', 'Current fire state and local time are recorded.', Boolean(contract.current_fire?.local_time) && ['in_progress', 'paused_after_user_goodnight'].includes(contract.current_fire?.state)),
     check('known_blockers_present', 'Known blockers are explicit.', knownBlockers.length >= 3),
     check('allowed_actions_present', 'Allowed autonomous actions are explicit.', requiredAllowed.every((item) => allowed.includes(item))),
     check('approval_actions_present', 'Dangerous actions require explicit approval.', requiredApproval.every((item) => approval.includes(item))),

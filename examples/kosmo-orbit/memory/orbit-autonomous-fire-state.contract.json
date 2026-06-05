@@ -13,9 +13,9 @@
     "memory_capture_required": true
   },
   "current_fire": {
-    "local_time": "17:51 CEST",
-    "state": "in_progress",
-    "last_confirmed_safe_scope": "lokal, statisch, review-only, ohne Push, Deploy, Upload, Kosten oder externe Account-Aenderung",
+    "local_time": "19:04 CEST",
+    "state": "paused_after_user_goodnight",
+    "last_confirmed_safe_scope": "lokal, statisch, review-only, ohne Push, Deploy, Upload, Kosten oder externe Account-Aenderung; Arbeitsbaum nach Commit ed73c5b sauber",
     "known_blockers": [
       "git_status_can_hang_in_local_worktree",
       "typescript_lint_next_build_timeout_in_heavy_check",
@@ -78,6 +78,11 @@
       "id": "fire_cadence_guard",
       "status": "honest_fire_interval_evidence",
       "memory": "Fire Cadence Guard dokumentiert 5-Minuten-Ziel, reale Drift, Catch-up-Fires und verhindert falsche Takt-Claims."
+    },
+    {
+      "id": "night_closure_1904",
+      "status": "paused_clean_after_goodnight",
+      "memory": "Nach User-Abschluss um 19:04 CEST wurde der Stand lokal sauber pausiert: Commit ed73c5b vorhanden, kein Push, kein Deploy, naechster Schritt ist Morgenroutine und frische Orbit-Review-Basis."
     },
     {
       "id": "worker_operating_mode",

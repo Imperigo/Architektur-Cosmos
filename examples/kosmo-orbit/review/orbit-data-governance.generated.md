@@ -1,6 +1,6 @@
 # KosmoOrbit Data Governance Check
 
-Generated: 2026-06-05T17:01:18.090Z
+Generated: 2026-06-05T17:05:32.852Z
 Status: `data_governance_contract_passed`
 Contract: `examples/kosmo-orbit/governance/orbit-data-governance.contract.json`
 

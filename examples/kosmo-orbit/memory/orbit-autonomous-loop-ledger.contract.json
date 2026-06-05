@@ -67,6 +67,17 @@
         "orbit_route_smoke_passed 286/286",
         "orbit_full_review_ready_for_review_mode 39/39"
       ]
+    },
+    {
+      "id": "fire_1904",
+      "local_time": "19:04 CEST",
+      "record": "docs/kosmo-orbit-autonomous-fire-2026-06-05-1904.md",
+      "primary_delta": "Night Closure nach User-Gute-Nacht: lokaler Stand sauber pausiert, kein Push, kein Deploy.",
+      "checks": [
+        "git_status_clean_before_night_closure",
+        "last_commit ed73c5b",
+        "orbit_full_review_ready_for_review_mode 39/39"
+      ]
     }
   ],
   "current_green_state": {
@@ -84,7 +95,8 @@
     "github_imperigo_gate",
     "autonomous_loop_ledger",
     "push_decision_draft",
-    "fire_cadence_guard"
+    "fire_cadence_guard",
+    "night_closure_1904"
   ],
   "still_blocked": [
     "push_without_owner_go",
@@ -101,6 +113,7 @@
     "Loop Ledger in /orbit sichtbar machen.",
     "Route-Smoke und Full-Review um das Ledger erweitern.",
     "Beim naechsten Fire entweder Push-Decision-Draft lokal vorbereiten oder weitere Runtime-/Memory-Grenzen schaerfen.",
-    "Weiterhin keine Live-/GitHub-Aktion ohne Owner-Go."
+    "Weiterhin keine Live-/GitHub-Aktion ohne Owner-Go.",
+    "Nach User-Gute-Nacht pausiert bleiben; naechster sinnvoller Schritt ist eine Morgenroutine mit frischem Statuscheck."
   ]
 }
