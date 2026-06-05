@@ -1,0 +1,79 @@
+{
+  "schema_version": "0.1",
+  "status": "fire_cadence_guard_ready",
+  "mode": "static_review_only",
+  "date_local": "2026-06-05",
+  "timezone": "Europe/Zurich",
+  "target_interval_minutes": 5,
+  "purpose": "KosmoOrbit soll den 5-Minuten-Fire-Takt nicht nur behaupten, sondern Abweichungen sichtbar und ehrlich als Arbeitsrhythmus-Evidenz fuehren.",
+  "observed_fires": [
+    {
+      "id": "fire_1805",
+      "local_time": "18:05",
+      "delta_from_previous_minutes": null,
+      "cadence_state": "start"
+    },
+    {
+      "id": "fire_1818",
+      "local_time": "18:18",
+      "delta_from_previous_minutes": 13,
+      "cadence_state": "drifted",
+      "reason": "Toolchain Readiness wurde implementiert und geprueft."
+    },
+    {
+      "id": "fire_1828",
+      "local_time": "18:28",
+      "delta_from_previous_minutes": 10,
+      "cadence_state": "drifted",
+      "reason": "GitHub Imperigo Gate wurde implementiert und geprueft."
+    },
+    {
+      "id": "fire_1840",
+      "local_time": "18:40",
+      "delta_from_previous_minutes": 12,
+      "cadence_state": "drifted",
+      "reason": "Autonomous Loop Ledger wurde implementiert und geprueft."
+    },
+    {
+      "id": "fire_1841",
+      "local_time": "18:41",
+      "delta_from_previous_minutes": 1,
+      "cadence_state": "catch_up_record",
+      "reason": "Push Decision Draft wurde im naechsten Fire nachgetragen."
+    },
+    {
+      "id": "fire_1851",
+      "local_time": "18:51",
+      "delta_from_previous_minutes": 10,
+      "cadence_state": "drifted",
+      "reason": "Cadence Guard wird erstellt, um den Takt kuenftig sichtbar zu steuern."
+    }
+  ],
+  "cadence_policy": {
+    "preferred_fire_scope": "kleiner lokaler Schritt plus Protokoll",
+    "max_recommended_work_minutes": 4,
+    "summary_minute_budget": 1,
+    "large_change_rule": "Wenn ein Schritt laenger dauert, Fire als drifted dokumentieren und naechsten Fire kleiner halten.",
+    "no_false_cadence_claim": true
+  },
+  "current_assessment": {
+    "cadence_perfect": false,
+    "cadence_documented": true,
+    "work_quality_green": true,
+    "recommendation": "Naechste Fires kleiner halten oder bewusst als drifted dokumentieren."
+  },
+  "blocked_today": [
+    "claim_perfect_5min_cadence",
+    "start_real_daemon",
+    "start_external_scheduler",
+    "push_due_to_cadence",
+    "deploy_due_to_cadence",
+    "hide_drift"
+  ],
+  "next_actions": [
+    "Cadence Guard in /orbit sichtbar machen.",
+    "Route-Smoke und Full-Review um den Guard erweitern.",
+    "Naechsten Fire klein halten: Ledger aktualisieren oder kurze lokale Pruefung statt grosser Feature-Block.",
+    "Abweichungen weiter offen dokumentieren."
+  ]
+}

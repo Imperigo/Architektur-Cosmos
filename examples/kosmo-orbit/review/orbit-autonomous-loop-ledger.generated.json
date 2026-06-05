@@ -1,0 +1,113 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-05T17:01:17.941Z",
+  "generator": "kosmo-orbit-autonomous-loop-ledger-check",
+  "status": "autonomous_loop_ledger_passed",
+  "contract_file": "examples/kosmo-orbit/memory/orbit-autonomous-loop-ledger.contract.json",
+  "summary": {
+    "check_count": 18,
+    "passed_checks": 18,
+    "failed_checks": 0,
+    "fire_record_count": 5,
+    "memory_added_count": 6,
+    "blocked_boundary_count": 9
+  },
+  "checks": [
+    {
+      "id": "contract_file_exists",
+      "label": "Autonomous loop ledger contract exists.",
+      "status": "passed"
+    },
+    {
+      "id": "status_ready",
+      "label": "Autonomous loop ledger is ready.",
+      "status": "passed"
+    },
+    {
+      "id": "mode_static_review_only",
+      "label": "Autonomous loop ledger is static review-only.",
+      "status": "passed"
+    },
+    {
+      "id": "zurich_boundary_present",
+      "label": "Loop boundary keeps Zurich date, 5-minute interval and 24:00 stop.",
+      "status": "passed"
+    },
+    {
+      "id": "fire_requirements_present",
+      "label": "Loop boundary requires time check, summary and memory capture each fire.",
+      "status": "passed"
+    },
+    {
+      "id": "fire_records_present",
+      "label": "At least three fire records are captured.",
+      "status": "passed"
+    },
+    {
+      "id": "fire_record_files_exist",
+      "label": "Every fire record file exists.",
+      "status": "passed"
+    },
+    {
+      "id": "fire_records_have_checks",
+      "label": "Every fire record has primary delta and check evidence.",
+      "status": "passed"
+    },
+    {
+      "id": "green_state_present",
+      "label": "Current green state records current full review and route smoke.",
+      "status": "passed"
+    },
+    {
+      "id": "memory_added_present",
+      "label": "Memory additions include Fire State, Toolchain Readiness and GitHub Imperigo.",
+      "status": "passed"
+    },
+    {
+      "id": "blocked_boundaries_present",
+      "label": "Blocked boundaries keep owner-go, heavy checks, static export, external accounts and costs gated.",
+      "status": "passed"
+    },
+    {
+      "id": "next_actions_present",
+      "label": "Next safe actions are explicit.",
+      "status": "passed"
+    },
+    {
+      "id": "component_imports_contract",
+      "label": "Component imports the autonomous loop ledger contract.",
+      "status": "passed"
+    },
+    {
+      "id": "component_renders_ledger_copy",
+      "label": "Component renders autonomous loop ledger copy.",
+      "status": "passed"
+    },
+    {
+      "id": "component_renders_summary_copy",
+      "label": "Component renders fire records, memory and blocked boundaries.",
+      "status": "passed"
+    },
+    {
+      "id": "route_imports_component",
+      "label": "Orbit route imports the autonomous loop ledger component.",
+      "status": "passed"
+    },
+    {
+      "id": "route_anchors_ledger",
+      "label": "Orbit route renders autonomous-loop-ledger anchor.",
+      "status": "passed"
+    },
+    {
+      "id": "section_index_links_ledger",
+      "label": "Section index links to autonomous loop ledger.",
+      "status": "passed"
+    }
+  ],
+  "next_actions": [
+    "Loop Ledger in /orbit sichtbar machen.",
+    "Route-Smoke und Full-Review um das Ledger erweitern.",
+    "Beim naechsten Fire entweder Push-Decision-Draft lokal vorbereiten oder weitere Runtime-/Memory-Grenzen schaerfen.",
+    "Weiterhin keine Live-/GitHub-Aktion ohne Owner-Go."
+  ]
+}

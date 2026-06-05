@@ -7,6 +7,8 @@ const sectionGroups = [
       { href: '#projektpaket', label: 'Projektpaket' },
       { href: '#live-gate', label: 'Live-Gate' },
       { href: '#launch-brief', label: 'Launch' },
+      { href: '#github-imperigo-gate', label: 'GitHub' },
+      { href: '#push-decision-draft', label: 'Push Draft' },
       { href: '#office-pilot', label: 'Buero-Pilot' }
     ]
   },
@@ -25,6 +27,9 @@ const sectionGroups = [
     label: 'System',
     links: [
       { href: '#autonomie', label: 'Autonomie' },
+      { href: '#autonomous-fire', label: 'Fire' },
+      { href: '#autonomous-loop-ledger', label: 'Ledger' },
+      { href: '#fire-cadence-guard', label: 'Cadence' },
       { href: '#routine', label: 'Routine' },
       { href: '#tool-registry', label: 'Tools' },
       { href: '#workflow-delta', label: 'Workflow' },
@@ -50,6 +55,7 @@ const sectionGroups = [
       { href: '#kosmosketch-adapter', label: 'Sketch' },
       { href: '#installation', label: 'Installation' },
       { href: '#health', label: 'Health' },
+      { href: '#toolchain-readiness', label: 'Tooling' },
       { href: '#commands', label: 'Commands' },
       { href: '#audit', label: 'Audit' }
     ]

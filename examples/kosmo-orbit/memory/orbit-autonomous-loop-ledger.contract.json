@@ -1,0 +1,106 @@
+{
+  "schema_version": "0.1",
+  "status": "autonomous_loop_ledger_ready",
+  "mode": "static_review_only",
+  "date_local": "2026-06-05",
+  "timezone": "Europe/Zurich",
+  "loop_boundary": {
+    "objective": "Autonomer Block bis 24:00 Zuerich Zeit",
+    "fire_interval_minutes": 5,
+    "stop_after_local_time": "24:00",
+    "requires_time_check_each_fire": true,
+    "requires_summary_each_fire": true,
+    "requires_memory_capture_each_fire": true
+  },
+  "fire_records": [
+    {
+      "id": "fire_1805",
+      "local_time": "18:05 CEST",
+      "record": "docs/kosmo-orbit-autonomous-fire-2026-06-05-1805.md",
+      "primary_delta": "Autonomous Fire State als lokaler Vertrag und /orbit Panel.",
+      "checks": [
+        "autonomous_fire_state_passed 21/21",
+        "orbit_route_smoke_passed 253/253",
+        "orbit_full_review_ready_for_review_mode 34/34"
+      ]
+    },
+    {
+      "id": "fire_1818",
+      "local_time": "18:18 CEST",
+      "record": "docs/kosmo-orbit-autonomous-fire-2026-06-05-1818.md",
+      "primary_delta": "Toolchain Readiness als sichtbares Release-Gate fuer Heavy-Check-Timeouts.",
+      "checks": [
+        "toolchain_readiness_passed 18/18",
+        "orbit_route_smoke_passed 260/260",
+        "orbit_full_review_ready_for_review_mode 35/35"
+      ]
+    },
+    {
+      "id": "fire_1828",
+      "local_time": "18:28 CEST",
+      "record": "docs/kosmo-orbit-autonomous-fire-2026-06-05-1828.md",
+      "primary_delta": "GitHub Imperigo Gate als Owner-Go-Grenze fuer Push, PR, Deploy, Secrets und externe CI.",
+      "checks": [
+        "github_imperigo_gate_passed 16/16",
+        "orbit_route_smoke_passed 266/266",
+        "orbit_full_review_ready_for_review_mode 36/36"
+      ]
+    },
+    {
+      "id": "fire_1841",
+      "local_time": "18:41 CEST",
+      "record": "docs/kosmo-orbit-autonomous-fire-2026-06-05-1841.md",
+      "primary_delta": "Push Decision Draft als lokaler hold/push Entscheidungsentwurf ohne Push.",
+      "checks": [
+        "push_decision_draft_passed 16/16",
+        "orbit_route_smoke_passed 279/279",
+        "orbit_full_review_ready_for_review_mode 38/38"
+      ]
+    },
+    {
+      "id": "fire_1851",
+      "local_time": "18:51 CEST",
+      "record": "docs/kosmo-orbit-autonomous-fire-2026-06-05-1851.md",
+      "primary_delta": "Fire Cadence Guard als ehrliche 5-Minuten-Takt-Evidenz mit Drift-Dokumentation.",
+      "checks": [
+        "fire_cadence_guard_passed 16/16",
+        "orbit_route_smoke_passed 286/286",
+        "orbit_full_review_ready_for_review_mode 39/39"
+      ]
+    }
+  ],
+  "current_green_state": {
+    "autonomous_fire_state": "21/21",
+    "toolchain_readiness": "18/18",
+    "github_imperigo_gate": "16/16",
+    "push_decision_draft": "16/16",
+    "fire_cadence_guard": "16/16",
+    "route_smoke": "286/286",
+    "full_review": "39/39"
+  },
+  "memory_added_today": [
+    "autonomous_fire_state",
+    "toolchain_readiness",
+    "github_imperigo_gate",
+    "autonomous_loop_ledger",
+    "push_decision_draft",
+    "fire_cadence_guard"
+  ],
+  "still_blocked": [
+    "push_without_owner_go",
+    "deploy_without_owner_go",
+    "github_mutation_without_owner_go",
+    "typescript_green_claim_without_completed_logs",
+    "eslint_green_claim_without_completed_logs",
+    "next_build_green_claim_without_completed_logs",
+    "static_export_smoke_without_successful_build",
+    "external_account_change",
+    "cost_job"
+  ],
+  "next_safe_actions": [
+    "Loop Ledger in /orbit sichtbar machen.",
+    "Route-Smoke und Full-Review um das Ledger erweitern.",
+    "Beim naechsten Fire entweder Push-Decision-Draft lokal vorbereiten oder weitere Runtime-/Memory-Grenzen schaerfen.",
+    "Weiterhin keine Live-/GitHub-Aktion ohne Owner-Go."
+  ]
+}

@@ -1,6 +1,6 @@
 # KosmoOrbit Route Smoke
 
-Generated: 2026-06-02T20:38:38.766Z
+Generated: 2026-06-05T17:01:18.366Z
 Status: `orbit_route_smoke_passed`
 Route: `app/orbit/page.tsx`
 
@@ -8,7 +8,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 
 ## Summary
 
-- checks: 246/246 passed
+- checks: 286/286 passed
 
 ## Checks
 
@@ -41,6 +41,8 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `installation_topology_file_exists` | `passed` | Orbit local installation topology component exists. |
 | `health_readiness_file_exists` | `passed` | Orbit local health readiness component exists. |
 | `health_readiness_contract_file_exists` | `passed` | Orbit health readiness contract exists. |
+| `toolchain_readiness_file_exists` | `passed` | Orbit toolchain readiness component exists. |
+| `toolchain_readiness_contract_file_exists` | `passed` | Orbit toolchain readiness contract exists. |
 | `risk_register_file_exists` | `passed` | Orbit risk register component exists. |
 | `command_contract_file_exists` | `passed` | Orbit command contract component exists. |
 | `command_contract_data_file_exists` | `passed` | Orbit command contract data exists. |
@@ -70,6 +72,12 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `learning_mode_file_exists` | `passed` | Orbit learning mode component exists. |
 | `permission_matrix_file_exists` | `passed` | Orbit permission matrix component exists. |
 | `autonomy_status_file_exists` | `passed` | Orbit autonomy status component exists. |
+| `autonomous_fire_state_file_exists` | `passed` | Orbit autonomous fire state component exists. |
+| `autonomous_fire_state_data_file_exists` | `passed` | Orbit autonomous fire state contract exists. |
+| `autonomous_loop_ledger_file_exists` | `passed` | Orbit autonomous loop ledger component exists. |
+| `autonomous_loop_ledger_data_file_exists` | `passed` | Orbit autonomous loop ledger contract exists. |
+| `fire_cadence_guard_file_exists` | `passed` | Orbit fire cadence guard component exists. |
+| `fire_cadence_guard_data_file_exists` | `passed` | Orbit fire cadence guard contract exists. |
 | `office_routine_file_exists` | `passed` | Orbit office routine component exists. |
 | `office_routine_data_file_exists` | `passed` | Orbit office routine contract exists. |
 | `office_pilot_scene_file_exists` | `passed` | Orbit office pilot scene component exists. |
@@ -79,6 +87,10 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `demo_readiness_file_exists` | `passed` | Orbit demo readiness component exists. |
 | `publish_readiness_file_exists` | `passed` | Orbit publish readiness component exists. |
 | `launch_decision_brief_file_exists` | `passed` | Orbit launch decision brief component exists. |
+| `github_imperigo_gate_file_exists` | `passed` | Orbit GitHub Imperigo gate component exists. |
+| `github_imperigo_gate_data_file_exists` | `passed` | Orbit GitHub Imperigo gate contract exists. |
+| `push_decision_draft_file_exists` | `passed` | Orbit push decision draft component exists. |
+| `push_decision_draft_data_file_exists` | `passed` | Orbit push decision draft contract exists. |
 | `section_index_file_exists` | `passed` | Orbit section index component exists. |
 | `imports_role_switcher` | `passed` | Route imports the role switcher preview component. |
 | `imports_demo_review_path` | `passed` | Route imports the guided demo review component. |
@@ -99,6 +111,9 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `imports_installation_topology` | `passed` | Route imports the local installation topology component. |
 | `imports_health_readiness` | `passed` | Route imports the local health readiness component. |
 | `imports_health_readiness_contract` | `passed` | Health readiness component imports the local contract JSON. |
+| `imports_toolchain_readiness` | `passed` | Route imports the toolchain readiness component. |
+| `imports_toolchain_readiness_contract` | `passed` | Toolchain readiness component imports the local contract JSON. |
+| `imports_heavy_check_timebox_report` | `passed` | Toolchain readiness component imports the heavy-check timebox report. |
 | `imports_risk_register` | `passed` | Route imports the risk register component. |
 | `imports_command_contract` | `passed` | Route imports the command contract component. |
 | `imports_command_contract_data` | `passed` | Command contract component imports the local contract JSON. |
@@ -128,6 +143,12 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `imports_learning_mode` | `passed` | Route imports the learning mode component. |
 | `imports_permission_matrix` | `passed` | Route imports the permission matrix component. |
 | `imports_autonomy_status` | `passed` | Route imports the autonomy status component. |
+| `imports_autonomous_fire_state` | `passed` | Route imports the autonomous fire state component. |
+| `imports_autonomous_fire_state_data` | `passed` | Autonomous fire state component imports the local contract JSON. |
+| `imports_autonomous_loop_ledger` | `passed` | Route imports the autonomous loop ledger component. |
+| `imports_autonomous_loop_ledger_data` | `passed` | Autonomous loop ledger component imports the local contract JSON. |
+| `imports_fire_cadence_guard` | `passed` | Route imports the fire cadence guard component. |
+| `imports_fire_cadence_guard_data` | `passed` | Fire cadence guard component imports the local contract JSON. |
 | `imports_office_routine` | `passed` | Route imports the office routine component. |
 | `imports_office_pilot_scene` | `passed` | Route imports the office pilot scene component. |
 | `imports_office_pilot_scene_data` | `passed` | Office pilot scene imports the local demo scene contract. |
@@ -136,6 +157,10 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `imports_demo_readiness` | `passed` | Route imports the demo readiness component. |
 | `imports_publish_readiness` | `passed` | Route imports the publish readiness component. |
 | `imports_launch_decision_brief` | `passed` | Route imports the launch decision brief component. |
+| `imports_github_imperigo_gate` | `passed` | Route imports the GitHub Imperigo gate component. |
+| `imports_github_imperigo_gate_data` | `passed` | GitHub Imperigo gate component imports the local contract JSON. |
+| `imports_push_decision_draft` | `passed` | Route imports the push decision draft component. |
+| `imports_push_decision_draft_data` | `passed` | Push decision draft component imports the local contract JSON. |
 | `imports_section_index` | `passed` | Route imports the section index navigation component. |
 | `shows_hub_return` | `passed` | Route exposes a safe return link to the Kosmo Hub. |
 | `section_index_groups_navigation` | `passed` | Section index groups the dense demo navigation into readable lanes. |
@@ -182,6 +207,8 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `keeps_installation_topology_safe` | `passed` | Installation topology keeps auth, upload, process and network actions gated. |
 | `shows_health_readiness` | `passed` | Route renders the local health readiness contract. |
 | `keeps_health_readiness_safe` | `passed` | Health readiness keeps hardware, model, filesystem, process and queue actions gated. |
+| `shows_toolchain_readiness` | `passed` | Route renders toolchain readiness and heavy-check lanes. |
+| `keeps_toolchain_release_safe` | `passed` | Toolchain readiness blocks false green release claims, static smoke without build, push and deploy. |
 | `shows_risk_register` | `passed` | Route renders the human approval risk register. |
 | `risk_register_covers_core_gates` | `passed` | Risk register covers runtime, generation, rights, profiles, data and external collaboration. |
 | `shows_command_contract` | `passed` | Route renders the static Orbit command contract. |
@@ -232,6 +259,15 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `shows_autonomy_status` | `passed` | Route renders local autonomy status and safety limits. |
 | `keeps_autonomy_cost_safe` | `passed` | Autonomy status keeps Cloud costs and writes blocked. |
 | `keeps_autonomy_named_orbit` | `passed` | Autonomy status names KosmoOrbit, not KosmoWebsite. |
+| `shows_autonomous_fire_state` | `passed` | Route renders the autonomous fire state. |
+| `autonomous_fire_uses_local_contract` | `passed` | Autonomous fire state uses the local contract for permissions, addon memory, own memory and blocked actions. |
+| `keeps_autonomous_fire_safe` | `passed` | Autonomous fire state keeps push, deploy, external accounts and runtime writes blocked. |
+| `shows_autonomous_loop_ledger` | `passed` | Route renders the autonomous loop ledger summary. |
+| `autonomous_loop_ledger_uses_local_contract` | `passed` | Autonomous loop ledger uses local contract for fire records, memory additions and blocked boundaries. |
+| `keeps_autonomous_loop_ledger_safe` | `passed` | Autonomous loop ledger keeps owner-go, heavy-check and external boundaries visible. |
+| `shows_fire_cadence_guard` | `passed` | Route renders the fire cadence guard and 5-minute drift copy. |
+| `fire_cadence_guard_uses_local_contract` | `passed` | Fire cadence guard uses the local contract for observed fires, policy and blocked boundaries. |
+| `keeps_fire_cadence_guard_safe` | `passed` | Fire cadence guard blocks daemons, external schedulers, push, deploy and hidden drift. |
 | `shows_office_routine` | `passed` | Route renders the static office routine contract. |
 | `office_routine_covers_day_phases` | `passed` | Office routine covers morning, workday, training, evening and safety. |
 | `office_routine_blocks_live_automation` | `passed` | Office routine blocks model start, Blender launch, uploads, publish, push and costs. |
@@ -250,6 +286,10 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `launch_decision_uses_push_readiness_report` | `passed` | Launch decision brief imports the push readiness report. |
 | `launch_decision_shows_owner_go_boundary` | `passed` | Launch decision brief shows push-ready only with Owner-Go. |
 | `launch_decision_shows_command_evidence` | `passed` | Launch decision brief shows local command evidence from push readiness. |
+| `shows_github_imperigo_gate` | `passed` | Route renders GitHub Imperigo gate and 5-minute fire copy. |
+| `keeps_github_imperigo_safe` | `passed` | GitHub Imperigo gate blocks push, deploy, GitHub mutation and secrets. |
+| `shows_push_decision_draft` | `passed` | Route renders push decision draft and hold-local copy. |
+| `keeps_push_decision_safe` | `passed` | Push decision draft blocks push, deploy, GitHub mutation, secrets and costs. |
 | `shows_section_index` | `passed` | Route renders compact demo section navigation. |
 | `anchors_core_sections` | `passed` | Route contains anchors for core demo sections. |
 | `shows_blocked_actions` | `passed` | Route renders blocked action labels from role state. |

@@ -1,0 +1,142 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-05T17:01:17.553Z",
+  "generator": "kosmo-orbit-toolchain-readiness-check",
+  "status": "toolchain_readiness_passed",
+  "contract_file": "examples/kosmo-orbit/health/orbit-toolchain-readiness.contract.json",
+  "heavy_report_file": "examples/kosmo-orbit/review/orbit-heavy-check-timebox.generated.json",
+  "summary": {
+    "check_count": 18,
+    "passed_checks": 18,
+    "failed_checks": 0,
+    "readiness_lane_count": 5,
+    "blocked_today_count": 9,
+    "heavy_timed_out_count": 3,
+    "heavy_passed_count": 6
+  },
+  "readiness_lanes": [
+    {
+      "id": "fast_review_checks",
+      "current_state": "passed",
+      "evidence_count": 4
+    },
+    {
+      "id": "typescript_no_emit",
+      "current_state": "timeout_blocker",
+      "evidence_count": 3
+    },
+    {
+      "id": "eslint",
+      "current_state": "timeout_blocker",
+      "evidence_count": 3
+    },
+    {
+      "id": "next_static_build",
+      "current_state": "timeout_blocker",
+      "evidence_count": 3
+    },
+    {
+      "id": "path_and_runtime",
+      "current_state": "environment_variance",
+      "evidence_count": 3
+    }
+  ],
+  "checks": [
+    {
+      "id": "contract_file_exists",
+      "label": "Toolchain readiness contract exists.",
+      "status": "passed"
+    },
+    {
+      "id": "heavy_report_exists",
+      "label": "Heavy check timebox report exists.",
+      "status": "passed"
+    },
+    {
+      "id": "status_ready",
+      "label": "Toolchain readiness status is review-ready.",
+      "status": "passed"
+    },
+    {
+      "id": "mode_static_review_only",
+      "label": "Toolchain readiness is static review-only.",
+      "status": "passed"
+    },
+    {
+      "id": "required_lanes_present",
+      "label": "All required toolchain lanes are present.",
+      "status": "passed"
+    },
+    {
+      "id": "lanes_have_state_evidence_meaning",
+      "label": "Every readiness lane has state, evidence and Orbit meaning.",
+      "status": "passed"
+    },
+    {
+      "id": "heavy_report_records_timeouts",
+      "label": "Heavy report records TypeScript, ESLint and Next Build as timed out.",
+      "status": "passed"
+    },
+    {
+      "id": "heavy_report_records_fast_passes",
+      "label": "Heavy report records fast review checks as passed.",
+      "status": "passed"
+    },
+    {
+      "id": "release_gate_policy_present",
+      "label": "Release gate policy blocks publish evidence on heavy timeouts.",
+      "status": "passed"
+    },
+    {
+      "id": "blocked_today_present",
+      "label": "Blocked actions prevent false green release claims and push/deploy from fast checks.",
+      "status": "passed"
+    },
+    {
+      "id": "next_actions_present",
+      "label": "Next actions are explicit.",
+      "status": "passed"
+    },
+    {
+      "id": "component_imports_contract",
+      "label": "Component imports the toolchain readiness contract.",
+      "status": "passed"
+    },
+    {
+      "id": "component_imports_heavy_report",
+      "label": "Component imports the heavy check timebox report.",
+      "status": "passed"
+    },
+    {
+      "id": "component_renders_toolchain_copy",
+      "label": "Component renders toolchain readiness copy.",
+      "status": "passed"
+    },
+    {
+      "id": "component_renders_release_gate_copy",
+      "label": "Component renders release-gate safety copy.",
+      "status": "passed"
+    },
+    {
+      "id": "route_imports_component",
+      "label": "Orbit route imports the toolchain readiness component.",
+      "status": "passed"
+    },
+    {
+      "id": "route_anchors_toolchain",
+      "label": "Orbit route renders a toolchain-readiness anchor.",
+      "status": "passed"
+    },
+    {
+      "id": "section_index_links_toolchain",
+      "label": "Section index links to toolchain readiness.",
+      "status": "passed"
+    }
+  ],
+  "next_actions": [
+    "Toolchain Readiness in /orbit sichtbar machen.",
+    "Heavy-Check-Timebox weiterhin als Diagnosebericht nutzen, nicht als Release-Freigabe.",
+    "Wenn Tooling stabil ist, TypeScript, Lint, Next Build und Static Export Smoke nacheinander mit Logs nachweisen.",
+    "Push/Live-Deploy weiterhin nur nach Owner-Go."
+  ]
+}

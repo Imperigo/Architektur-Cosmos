@@ -1,0 +1,89 @@
+{
+  "schema_version": "0.1",
+  "status": "toolchain_readiness_review_ready",
+  "mode": "static_review_only",
+  "source_report": "examples/kosmo-orbit/review/orbit-heavy-check-timebox.generated.json",
+  "purpose": "KosmoOrbit soll schwere lokale Qualitaetschecks sichtbar als Toolchain-Zustand fuehren, ohne daraus automatisch Push- oder Publish-Readiness abzuleiten.",
+  "readiness_lanes": [
+    {
+      "id": "fast_review_checks",
+      "label": "Fast Review Checks",
+      "current_state": "passed",
+      "evidence": [
+        "KosmoSketch Adapter",
+        "Route Smoke",
+        "Responsive Audit",
+        "Full Review"
+      ],
+      "orbit_meaning": "KosmoOrbit kann lokale review-only Vertrage schnell pruefen und fuer Demos absichern."
+    },
+    {
+      "id": "typescript_no_emit",
+      "label": "TypeScript No Emit",
+      "current_state": "timeout_blocker",
+      "evidence": [
+        "timed_out",
+        "no stdout",
+        "SIGTERM after timebox"
+      ],
+      "orbit_meaning": "TypeScript ist nicht als gruenes Release-Gate zu werten, bis der Check mit sichtbaren Logs abschliesst."
+    },
+    {
+      "id": "eslint",
+      "label": "ESLint",
+      "current_state": "timeout_blocker",
+      "evidence": [
+        "timed_out",
+        "eslint start visible",
+        "no final result"
+      ],
+      "orbit_meaning": "Lint ist nicht als gruenes Release-Gate zu werten, bis der Check sauber endet."
+    },
+    {
+      "id": "next_static_build",
+      "label": "Next Static Build",
+      "current_state": "timeout_blocker",
+      "evidence": [
+        "timed_out",
+        "no final export evidence",
+        "static smoke only valid after build"
+      ],
+      "orbit_meaning": "Static Export und Live-Readiness bleiben blockiert, bis ein Build abgeschlossen und danach Smoke-geprueft ist."
+    },
+    {
+      "id": "path_and_runtime",
+      "label": "PATH / Runtime",
+      "current_state": "environment_variance",
+      "evidence": [
+        "npm may be missing from PATH",
+        "node scripts can run via process.execPath",
+        "toolchain probe records Node/Next/TypeScript/ESLint versions"
+      ],
+      "orbit_meaning": "KosmoOrbit muss Tooling-Checks so starten, dass fehlendes npm im PATH nicht mit Produktfehlern verwechselt wird."
+    }
+  ],
+  "release_gate_policy": {
+    "fast_review_green_is_demo_evidence": true,
+    "heavy_timeout_blocks_publish_evidence": true,
+    "static_smoke_requires_successful_build": true,
+    "push_requires_owner_go": true,
+    "deploy_requires_main_push_only_after_owner_go": true
+  },
+  "blocked_today": [
+    "claim_typescript_green",
+    "claim_lint_green",
+    "claim_next_build_green",
+    "claim_static_export_green_without_build",
+    "push_due_to_fast_checks",
+    "deploy_due_to_fast_checks",
+    "cloudflare_live_claim",
+    "external_ci_mutation",
+    "dependency_install_without_go"
+  ],
+  "next_actions": [
+    "Toolchain Readiness in /orbit sichtbar machen.",
+    "Heavy-Check-Timebox weiterhin als Diagnosebericht nutzen, nicht als Release-Freigabe.",
+    "Wenn Tooling stabil ist, TypeScript, Lint, Next Build und Static Export Smoke nacheinander mit Logs nachweisen.",
+    "Push/Live-Deploy weiterhin nur nach Owner-Go."
+  ]
+}

@@ -1,0 +1,138 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-05T17:01:17.905Z",
+  "generator": "kosmo-orbit-autonomous-fire-state-check",
+  "status": "autonomous_fire_state_passed",
+  "contract_file": "examples/kosmo-orbit/memory/orbit-autonomous-fire-state.contract.json",
+  "component_file": "app/orbit/OrbitAutonomousFireState.tsx",
+  "summary": {
+    "check_count": 21,
+    "passed_checks": 21,
+    "failed_checks": 0,
+    "allowed_action_count": 7,
+    "approval_action_count": 8,
+    "addon_memory_count": 8,
+    "own_memory_count": 4,
+    "blocked_today_count": 9
+  },
+  "fire_state": {
+    "date_local": "2026-06-05",
+    "timezone": "Europe/Zurich",
+    "local_time": "17:51 CEST",
+    "fire_interval_minutes": 5,
+    "state": "in_progress"
+  },
+  "checks": [
+    {
+      "id": "contract_file_exists",
+      "label": "Autonomous fire state contract exists.",
+      "status": "passed"
+    },
+    {
+      "id": "status_ready",
+      "label": "Autonomous fire state is ready.",
+      "status": "passed"
+    },
+    {
+      "id": "mode_static_review_only",
+      "label": "Autonomous fire state is static review-only.",
+      "status": "passed"
+    },
+    {
+      "id": "date_and_timezone_present",
+      "label": "Local date and Zurich timezone are explicit.",
+      "status": "passed"
+    },
+    {
+      "id": "loop_until_midnight_present",
+      "label": "Loop goal references autonomous block until midnight Zurich time.",
+      "status": "passed"
+    },
+    {
+      "id": "summary_and_memory_required",
+      "label": "Every fire requires summary and memory capture.",
+      "status": "passed"
+    },
+    {
+      "id": "current_fire_present",
+      "label": "Current fire state and local time are recorded.",
+      "status": "passed"
+    },
+    {
+      "id": "known_blockers_present",
+      "label": "Known blockers are explicit.",
+      "status": "passed"
+    },
+    {
+      "id": "allowed_actions_present",
+      "label": "Allowed autonomous actions are explicit.",
+      "status": "passed"
+    },
+    {
+      "id": "approval_actions_present",
+      "label": "Dangerous actions require explicit approval.",
+      "status": "passed"
+    },
+    {
+      "id": "addon_memory_present",
+      "label": "Addon memory entries are present.",
+      "status": "passed"
+    },
+    {
+      "id": "own_memory_present",
+      "label": "Worker own memory entries are present.",
+      "status": "passed"
+    },
+    {
+      "id": "next_safe_actions_present",
+      "label": "Next safe actions are explicit.",
+      "status": "passed"
+    },
+    {
+      "id": "blocked_today_present",
+      "label": "Blocked today contains runtime, GitHub, Cloudflare, external API, memory write, tool execution and BIM/IFC guards.",
+      "status": "passed"
+    },
+    {
+      "id": "component_imports_contract",
+      "label": "Orbit component imports the fire state contract.",
+      "status": "passed"
+    },
+    {
+      "id": "component_renders_fire_copy",
+      "label": "Orbit component renders autonomous fire copy.",
+      "status": "passed"
+    },
+    {
+      "id": "component_renders_memory_copy",
+      "label": "Orbit component renders addon and own memory copy.",
+      "status": "passed"
+    },
+    {
+      "id": "component_renders_safety_copy",
+      "label": "Orbit component renders safety boundaries.",
+      "status": "passed"
+    },
+    {
+      "id": "route_imports_component",
+      "label": "Orbit route imports the autonomous fire state component.",
+      "status": "passed"
+    },
+    {
+      "id": "route_anchors_fire_state",
+      "label": "Orbit route renders an autonomous-fire anchor.",
+      "status": "passed"
+    },
+    {
+      "id": "section_index_links_fire_state",
+      "label": "Section index links to autonomous fire state.",
+      "status": "passed"
+    }
+  ],
+  "next_actions": [
+    "Autonomous Fire State in /orbit sichtbar machen.",
+    "Fast lokale Checks fuer Fire State, KosmoSketch Adapter, Route Smoke und Full Review laufen lassen.",
+    "Tages-/Fire-Zusammenfassung fuer den 05.06. speichern.",
+    "Git und Heavy-Checks weiterhin als Blocker behandeln, bis sie stabil und mit Logs abgeschlossen sind."
+  ]
+}

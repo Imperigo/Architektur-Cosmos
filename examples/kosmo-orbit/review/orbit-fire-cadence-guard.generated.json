@@ -1,0 +1,103 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-05T17:01:17.977Z",
+  "generator": "kosmo-orbit-fire-cadence-guard-check",
+  "status": "fire_cadence_guard_passed",
+  "contract_file": "examples/kosmo-orbit/memory/orbit-fire-cadence-guard.contract.json",
+  "summary": {
+    "check_count": 16,
+    "passed_checks": 16,
+    "failed_checks": 0,
+    "observed_fire_count": 6,
+    "drifted_fire_count": 4,
+    "blocked_today_count": 6
+  },
+  "checks": [
+    {
+      "id": "contract_file_exists",
+      "label": "Fire cadence guard contract exists.",
+      "status": "passed"
+    },
+    {
+      "id": "status_ready",
+      "label": "Fire cadence guard is ready.",
+      "status": "passed"
+    },
+    {
+      "id": "mode_static_review_only",
+      "label": "Fire cadence guard is static review-only.",
+      "status": "passed"
+    },
+    {
+      "id": "target_interval_present",
+      "label": "Target interval is 5 minutes in Zurich.",
+      "status": "passed"
+    },
+    {
+      "id": "observed_fires_present",
+      "label": "Observed fires include at least six records.",
+      "status": "passed"
+    },
+    {
+      "id": "drift_is_documented",
+      "label": "At least one drifted fire is explicitly documented.",
+      "status": "passed"
+    },
+    {
+      "id": "no_false_cadence_claim",
+      "label": "Policy forbids false perfect-cadence claims.",
+      "status": "passed"
+    },
+    {
+      "id": "work_quality_green_recorded",
+      "label": "Assessment records work quality as green despite cadence drift.",
+      "status": "passed"
+    },
+    {
+      "id": "blocked_today_present",
+      "label": "Blocked list prevents perfect-cadence claims, daemons, external schedulers, push/deploy and hidden drift.",
+      "status": "passed"
+    },
+    {
+      "id": "next_actions_present",
+      "label": "Next actions are explicit.",
+      "status": "passed"
+    },
+    {
+      "id": "component_imports_contract",
+      "label": "Component imports the fire cadence guard contract.",
+      "status": "passed"
+    },
+    {
+      "id": "component_renders_cadence_copy",
+      "label": "Component renders cadence guard copy.",
+      "status": "passed"
+    },
+    {
+      "id": "component_renders_safety_copy",
+      "label": "Component renders no daemon/scheduler/push/deploy safety copy.",
+      "status": "passed"
+    },
+    {
+      "id": "route_imports_component",
+      "label": "Orbit route imports the fire cadence guard component.",
+      "status": "passed"
+    },
+    {
+      "id": "route_anchors_guard",
+      "label": "Orbit route renders fire-cadence-guard anchor.",
+      "status": "passed"
+    },
+    {
+      "id": "section_index_links_guard",
+      "label": "Section index links to fire cadence guard.",
+      "status": "passed"
+    }
+  ],
+  "next_actions": [
+    "Cadence Guard in /orbit sichtbar machen.",
+    "Route-Smoke und Full-Review um den Guard erweitern.",
+    "Naechsten Fire klein halten: Ledger aktualisieren oder kurze lokale Pruefung statt grosser Feature-Block.",
+    "Abweichungen weiter offen dokumentieren."
+  ]
+}

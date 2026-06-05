@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-02T20:38:38.766Z",
+  "generated_at": "2026-06-05T17:01:18.366Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 246,
-    "passed_checks": 246,
+    "check_count": 286,
+    "passed_checks": 286,
     "failed_checks": 0
   },
   "checks": [
@@ -144,6 +144,16 @@
     {
       "id": "health_readiness_contract_file_exists",
       "label": "Orbit health readiness contract exists.",
+      "status": "passed"
+    },
+    {
+      "id": "toolchain_readiness_file_exists",
+      "label": "Orbit toolchain readiness component exists.",
+      "status": "passed"
+    },
+    {
+      "id": "toolchain_readiness_contract_file_exists",
+      "label": "Orbit toolchain readiness contract exists.",
       "status": "passed"
     },
     {
@@ -292,6 +302,36 @@
       "status": "passed"
     },
     {
+      "id": "autonomous_fire_state_file_exists",
+      "label": "Orbit autonomous fire state component exists.",
+      "status": "passed"
+    },
+    {
+      "id": "autonomous_fire_state_data_file_exists",
+      "label": "Orbit autonomous fire state contract exists.",
+      "status": "passed"
+    },
+    {
+      "id": "autonomous_loop_ledger_file_exists",
+      "label": "Orbit autonomous loop ledger component exists.",
+      "status": "passed"
+    },
+    {
+      "id": "autonomous_loop_ledger_data_file_exists",
+      "label": "Orbit autonomous loop ledger contract exists.",
+      "status": "passed"
+    },
+    {
+      "id": "fire_cadence_guard_file_exists",
+      "label": "Orbit fire cadence guard component exists.",
+      "status": "passed"
+    },
+    {
+      "id": "fire_cadence_guard_data_file_exists",
+      "label": "Orbit fire cadence guard contract exists.",
+      "status": "passed"
+    },
+    {
       "id": "office_routine_file_exists",
       "label": "Orbit office routine component exists.",
       "status": "passed"
@@ -334,6 +374,26 @@
     {
       "id": "launch_decision_brief_file_exists",
       "label": "Orbit launch decision brief component exists.",
+      "status": "passed"
+    },
+    {
+      "id": "github_imperigo_gate_file_exists",
+      "label": "Orbit GitHub Imperigo gate component exists.",
+      "status": "passed"
+    },
+    {
+      "id": "github_imperigo_gate_data_file_exists",
+      "label": "Orbit GitHub Imperigo gate contract exists.",
+      "status": "passed"
+    },
+    {
+      "id": "push_decision_draft_file_exists",
+      "label": "Orbit push decision draft component exists.",
+      "status": "passed"
+    },
+    {
+      "id": "push_decision_draft_data_file_exists",
+      "label": "Orbit push decision draft contract exists.",
       "status": "passed"
     },
     {
@@ -434,6 +494,21 @@
     {
       "id": "imports_health_readiness_contract",
       "label": "Health readiness component imports the local contract JSON.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_toolchain_readiness",
+      "label": "Route imports the toolchain readiness component.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_toolchain_readiness_contract",
+      "label": "Toolchain readiness component imports the local contract JSON.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_heavy_check_timebox_report",
+      "label": "Toolchain readiness component imports the heavy-check timebox report.",
       "status": "passed"
     },
     {
@@ -582,6 +657,36 @@
       "status": "passed"
     },
     {
+      "id": "imports_autonomous_fire_state",
+      "label": "Route imports the autonomous fire state component.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_autonomous_fire_state_data",
+      "label": "Autonomous fire state component imports the local contract JSON.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_autonomous_loop_ledger",
+      "label": "Route imports the autonomous loop ledger component.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_autonomous_loop_ledger_data",
+      "label": "Autonomous loop ledger component imports the local contract JSON.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_fire_cadence_guard",
+      "label": "Route imports the fire cadence guard component.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_fire_cadence_guard_data",
+      "label": "Fire cadence guard component imports the local contract JSON.",
+      "status": "passed"
+    },
+    {
       "id": "imports_office_routine",
       "label": "Route imports the office routine component.",
       "status": "passed"
@@ -619,6 +724,26 @@
     {
       "id": "imports_launch_decision_brief",
       "label": "Route imports the launch decision brief component.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_github_imperigo_gate",
+      "label": "Route imports the GitHub Imperigo gate component.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_github_imperigo_gate_data",
+      "label": "GitHub Imperigo gate component imports the local contract JSON.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_push_decision_draft",
+      "label": "Route imports the push decision draft component.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_push_decision_draft_data",
+      "label": "Push decision draft component imports the local contract JSON.",
       "status": "passed"
     },
     {
@@ -849,6 +974,16 @@
     {
       "id": "keeps_health_readiness_safe",
       "label": "Health readiness keeps hardware, model, filesystem, process and queue actions gated.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_toolchain_readiness",
+      "label": "Route renders toolchain readiness and heavy-check lanes.",
+      "status": "passed"
+    },
+    {
+      "id": "keeps_toolchain_release_safe",
+      "label": "Toolchain readiness blocks false green release claims, static smoke without build, push and deploy.",
       "status": "passed"
     },
     {
@@ -1102,6 +1237,51 @@
       "status": "passed"
     },
     {
+      "id": "shows_autonomous_fire_state",
+      "label": "Route renders the autonomous fire state.",
+      "status": "passed"
+    },
+    {
+      "id": "autonomous_fire_uses_local_contract",
+      "label": "Autonomous fire state uses the local contract for permissions, addon memory, own memory and blocked actions.",
+      "status": "passed"
+    },
+    {
+      "id": "keeps_autonomous_fire_safe",
+      "label": "Autonomous fire state keeps push, deploy, external accounts and runtime writes blocked.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_autonomous_loop_ledger",
+      "label": "Route renders the autonomous loop ledger summary.",
+      "status": "passed"
+    },
+    {
+      "id": "autonomous_loop_ledger_uses_local_contract",
+      "label": "Autonomous loop ledger uses local contract for fire records, memory additions and blocked boundaries.",
+      "status": "passed"
+    },
+    {
+      "id": "keeps_autonomous_loop_ledger_safe",
+      "label": "Autonomous loop ledger keeps owner-go, heavy-check and external boundaries visible.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_fire_cadence_guard",
+      "label": "Route renders the fire cadence guard and 5-minute drift copy.",
+      "status": "passed"
+    },
+    {
+      "id": "fire_cadence_guard_uses_local_contract",
+      "label": "Fire cadence guard uses the local contract for observed fires, policy and blocked boundaries.",
+      "status": "passed"
+    },
+    {
+      "id": "keeps_fire_cadence_guard_safe",
+      "label": "Fire cadence guard blocks daemons, external schedulers, push, deploy and hidden drift.",
+      "status": "passed"
+    },
+    {
       "id": "shows_office_routine",
       "label": "Route renders the static office routine contract.",
       "status": "passed"
@@ -1189,6 +1369,26 @@
     {
       "id": "launch_decision_shows_command_evidence",
       "label": "Launch decision brief shows local command evidence from push readiness.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_github_imperigo_gate",
+      "label": "Route renders GitHub Imperigo gate and 5-minute fire copy.",
+      "status": "passed"
+    },
+    {
+      "id": "keeps_github_imperigo_safe",
+      "label": "GitHub Imperigo gate blocks push, deploy, GitHub mutation and secrets.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_push_decision_draft",
+      "label": "Route renders push decision draft and hold-local copy.",
+      "status": "passed"
+    },
+    {
+      "id": "keeps_push_decision_safe",
+      "label": "Push decision draft blocks push, deploy, GitHub mutation, secrets and costs.",
       "status": "passed"
     },
     {

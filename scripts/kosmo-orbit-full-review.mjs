@@ -13,6 +13,7 @@ const roleStatePath = resolve(root, args.state || 'examples/kosmo-orbit/role-sta
 const projectRoot = resolve(root, args.project || 'examples/kosmo-projects/kosmo-demo-001');
 const outputJsonPath = resolve(workspaceRoot, args.output || 'review/orbit-full-review.generated.json');
 const outputMdPath = resolve(workspaceRoot, args.markdown || 'review/orbit-full-review.generated.md');
+const packageScripts = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8')).scripts || {};
 
 const steps = [
   {
@@ -215,6 +216,56 @@ const steps = [
     report: resolve(workspaceRoot, 'review/orbit-health-readiness.generated.json')
   },
   {
+    id: 'toolchain_readiness',
+    label: 'Orbit Toolchain Readiness',
+    script: 'kosmo:orbit-toolchain-readiness',
+    args: [
+      '--contract',
+      'examples/kosmo-orbit/health/orbit-toolchain-readiness.contract.json',
+      '--heavyReport',
+      'examples/kosmo-orbit/review/orbit-heavy-check-timebox.generated.json',
+      '--component',
+      'app/orbit/OrbitToolchainReadiness.tsx',
+      '--route',
+      'app/orbit/page.tsx',
+      '--sectionIndex',
+      'app/orbit/OrbitSectionIndex.tsx'
+    ],
+    report: resolve(workspaceRoot, 'review/orbit-toolchain-readiness.generated.json')
+  },
+  {
+    id: 'github_imperigo_gate',
+    label: 'Orbit GitHub Imperigo Gate',
+    script: 'kosmo:orbit-github-imperigo-gate',
+    args: [
+      '--contract',
+      'examples/kosmo-orbit/governance/orbit-github-imperigo-gate.contract.json',
+      '--component',
+      'app/orbit/OrbitGitHubImperigoGate.tsx',
+      '--route',
+      'app/orbit/page.tsx',
+      '--sectionIndex',
+      'app/orbit/OrbitSectionIndex.tsx'
+    ],
+    report: resolve(workspaceRoot, 'review/orbit-github-imperigo-gate.generated.json')
+  },
+  {
+    id: 'push_decision_draft',
+    label: 'Orbit Push Decision Draft',
+    script: 'kosmo:orbit-push-decision-draft',
+    args: [
+      '--contract',
+      'examples/kosmo-orbit/governance/orbit-push-decision-draft.contract.json',
+      '--component',
+      'app/orbit/OrbitPushDecisionDraft.tsx',
+      '--route',
+      'app/orbit/page.tsx',
+      '--sectionIndex',
+      'app/orbit/OrbitSectionIndex.tsx'
+    ],
+    report: resolve(workspaceRoot, 'review/orbit-push-decision-draft.generated.json')
+  },
+  {
     id: 'command_contract',
     label: 'Orbit Command Contract',
     script: 'kosmo:orbit-command-contract',
@@ -301,6 +352,54 @@ const steps = [
       'app/orbit/OrbitSectionIndex.tsx'
     ],
     report: resolve(workspaceRoot, 'review/orbit-kosmosketch-adapter.generated.json')
+  },
+  {
+    id: 'autonomous_fire_state',
+    label: 'Orbit Autonomous Fire State',
+    script: 'kosmo:orbit-autonomous-fire',
+    args: [
+      '--contract',
+      'examples/kosmo-orbit/memory/orbit-autonomous-fire-state.contract.json',
+      '--component',
+      'app/orbit/OrbitAutonomousFireState.tsx',
+      '--route',
+      'app/orbit/page.tsx',
+      '--sectionIndex',
+      'app/orbit/OrbitSectionIndex.tsx'
+    ],
+    report: resolve(workspaceRoot, 'review/orbit-autonomous-fire-state.generated.json')
+  },
+  {
+    id: 'autonomous_loop_ledger',
+    label: 'Orbit Autonomous Loop Ledger',
+    script: 'kosmo:orbit-autonomous-loop-ledger',
+    args: [
+      '--contract',
+      'examples/kosmo-orbit/memory/orbit-autonomous-loop-ledger.contract.json',
+      '--component',
+      'app/orbit/OrbitAutonomousLoopLedger.tsx',
+      '--route',
+      'app/orbit/page.tsx',
+      '--sectionIndex',
+      'app/orbit/OrbitSectionIndex.tsx'
+    ],
+    report: resolve(workspaceRoot, 'review/orbit-autonomous-loop-ledger.generated.json')
+  },
+  {
+    id: 'fire_cadence_guard',
+    label: 'Orbit Fire Cadence Guard',
+    script: 'kosmo:orbit-fire-cadence-guard',
+    args: [
+      '--contract',
+      'examples/kosmo-orbit/memory/orbit-fire-cadence-guard.contract.json',
+      '--component',
+      'app/orbit/OrbitFireCadenceGuard.tsx',
+      '--route',
+      'app/orbit/page.tsx',
+      '--sectionIndex',
+      'app/orbit/OrbitSectionIndex.tsx'
+    ],
+    report: resolve(workspaceRoot, 'review/orbit-fire-cadence-guard.generated.json')
   },
   {
     id: 'workstation_profile',
@@ -486,7 +585,7 @@ async function main() {
 }
 
 function runStep(step) {
-  const command = ['npm', 'run', step.script, '--', ...step.args];
+  const command = commandForScript(step.script, step.args);
   const result = spawnSync(command[0], command.slice(1), {
     cwd: root,
     encoding: 'utf8',
@@ -509,6 +608,15 @@ function runStep(step) {
   };
 }
 
+function commandForScript(scriptName, scriptArgs) {
+  const scriptCommand = packageScripts[scriptName];
+  if (typeof scriptCommand === 'string' && scriptCommand.startsWith('node ')) {
+    const scriptPath = scriptCommand.slice('node '.length).trim().split(/\s+/)[0];
+    return [process.execPath, scriptPath, ...scriptArgs];
+  }
+  return ['npm', 'run', scriptName, '--', ...scriptArgs];
+}
+
 function buildReport(stepRows) {
   const failedSteps = stepRows.filter((step) => step.status !== 'passed');
   const roleStateCheck = readOptionalJson(resolve(workspaceRoot, 'review/orbit-role-state-check.generated.json'));
@@ -516,6 +624,9 @@ function buildReport(stepRows) {
   const roleStateHandoff = readOptionalJson(resolve(workspaceRoot, 'review/orbit-role-state-handoff.generated.json'));
   const appRouteSpec = readOptionalJson(resolve(workspaceRoot, 'review/orbit-app-route-spec.generated.json'));
   const healthReadiness = readOptionalJson(resolve(workspaceRoot, 'review/orbit-health-readiness.generated.json'));
+  const toolchainReadiness = readOptionalJson(resolve(workspaceRoot, 'review/orbit-toolchain-readiness.generated.json'));
+  const githubImperigoGate = readOptionalJson(resolve(workspaceRoot, 'review/orbit-github-imperigo-gate.generated.json'));
+  const pushDecisionDraft = readOptionalJson(resolve(workspaceRoot, 'review/orbit-push-decision-draft.generated.json'));
   const commandContract = readOptionalJson(resolve(workspaceRoot, 'review/orbit-command-contract.generated.json'));
   const auditTrail = readOptionalJson(resolve(workspaceRoot, 'review/orbit-audit-trail.generated.json'));
   const officeRoutine = readOptionalJson(resolve(workspaceRoot, 'review/orbit-office-routine.generated.json'));
@@ -523,6 +634,9 @@ function buildReport(stepRows) {
   const toolRegistry = readOptionalJson(resolve(workspaceRoot, 'review/orbit-tool-registry.generated.json'));
   const runtimeAdapter = readOptionalJson(resolve(workspaceRoot, 'review/orbit-runtime-adapter.generated.json'));
   const kosmoSketchAdapter = readOptionalJson(resolve(workspaceRoot, 'review/orbit-kosmosketch-adapter.generated.json'));
+  const autonomousFireState = readOptionalJson(resolve(workspaceRoot, 'review/orbit-autonomous-fire-state.generated.json'));
+  const autonomousLoopLedger = readOptionalJson(resolve(workspaceRoot, 'review/orbit-autonomous-loop-ledger.generated.json'));
+  const fireCadenceGuard = readOptionalJson(resolve(workspaceRoot, 'review/orbit-fire-cadence-guard.generated.json'));
   const workstationProfile = readOptionalJson(resolve(workspaceRoot, 'review/orbit-workstation-profile.generated.json'));
   const localIdentity = readOptionalJson(resolve(workspaceRoot, 'review/orbit-local-identity.generated.json'));
   const dataGovernance = readOptionalJson(resolve(workspaceRoot, 'review/orbit-data-governance.generated.json'));
@@ -588,6 +702,22 @@ function buildReport(stepRows) {
       health_readiness_passed_checks: healthReadiness?.summary?.passed_checks ?? null,
       health_readiness_check_count: healthReadiness?.summary?.check_count ?? null,
       health_readiness_channel_count: healthReadiness?.summary?.channel_count ?? null,
+      toolchain_readiness_status: toolchainReadiness?.status || null,
+      toolchain_readiness_passed_checks: toolchainReadiness?.summary?.passed_checks ?? null,
+      toolchain_readiness_check_count: toolchainReadiness?.summary?.check_count ?? null,
+      toolchain_readiness_lane_count: toolchainReadiness?.summary?.readiness_lane_count ?? null,
+      toolchain_readiness_heavy_timed_out_count: toolchainReadiness?.summary?.heavy_timed_out_count ?? null,
+      github_imperigo_gate_status: githubImperigoGate?.status || null,
+      github_imperigo_gate_passed_checks: githubImperigoGate?.summary?.passed_checks ?? null,
+      github_imperigo_gate_check_count: githubImperigoGate?.summary?.check_count ?? null,
+      github_imperigo_gate_owner_go_count: githubImperigoGate?.summary?.owner_go_required_count ?? null,
+      github_imperigo_gate_blocked_today_count: githubImperigoGate?.summary?.blocked_today_count ?? null,
+      push_decision_draft_status: pushDecisionDraft?.status || null,
+      push_decision_draft_passed_checks: pushDecisionDraft?.summary?.passed_checks ?? null,
+      push_decision_draft_check_count: pushDecisionDraft?.summary?.check_count ?? null,
+      push_decision_draft_positive_evidence_count: pushDecisionDraft?.summary?.positive_evidence_count ?? null,
+      push_decision_draft_blocking_evidence_count: pushDecisionDraft?.summary?.blocking_evidence_count ?? null,
+      push_decision_draft_blocked_today_count: pushDecisionDraft?.summary?.blocked_today_count ?? null,
       command_contract_status: commandContract?.status || null,
       command_contract_passed_checks: commandContract?.summary?.passed_checks ?? null,
       command_contract_check_count: commandContract?.summary?.check_count ?? null,
@@ -625,6 +755,25 @@ function buildReport(stepRows) {
       kosmosketch_adapter_keyword_count: kosmoSketchAdapter?.summary?.keyword_count ?? null,
       kosmosketch_adapter_artifact_contract_count: kosmoSketchAdapter?.summary?.artifact_contract_count ?? null,
       kosmosketch_adapter_blocked_today_count: kosmoSketchAdapter?.summary?.blocked_today_count ?? null,
+      autonomous_fire_state_status: autonomousFireState?.status || null,
+      autonomous_fire_state_passed_checks: autonomousFireState?.summary?.passed_checks ?? null,
+      autonomous_fire_state_check_count: autonomousFireState?.summary?.check_count ?? null,
+      autonomous_fire_interval_minutes: autonomousFireState?.fire_state?.fire_interval_minutes ?? null,
+      autonomous_fire_addon_memory_count: autonomousFireState?.summary?.addon_memory_count ?? null,
+      autonomous_fire_own_memory_count: autonomousFireState?.summary?.own_memory_count ?? null,
+      autonomous_fire_blocked_today_count: autonomousFireState?.summary?.blocked_today_count ?? null,
+      autonomous_loop_ledger_status: autonomousLoopLedger?.status || null,
+      autonomous_loop_ledger_passed_checks: autonomousLoopLedger?.summary?.passed_checks ?? null,
+      autonomous_loop_ledger_check_count: autonomousLoopLedger?.summary?.check_count ?? null,
+      autonomous_loop_ledger_fire_record_count: autonomousLoopLedger?.summary?.fire_record_count ?? null,
+      autonomous_loop_ledger_memory_added_count: autonomousLoopLedger?.summary?.memory_added_count ?? null,
+      autonomous_loop_ledger_blocked_boundary_count: autonomousLoopLedger?.summary?.blocked_boundary_count ?? null,
+      fire_cadence_guard_status: fireCadenceGuard?.status || null,
+      fire_cadence_guard_passed_checks: fireCadenceGuard?.summary?.passed_checks ?? null,
+      fire_cadence_guard_check_count: fireCadenceGuard?.summary?.check_count ?? null,
+      fire_cadence_guard_observed_fire_count: fireCadenceGuard?.summary?.observed_fire_count ?? null,
+      fire_cadence_guard_drifted_fire_count: fireCadenceGuard?.summary?.drifted_fire_count ?? null,
+      fire_cadence_guard_blocked_today_count: fireCadenceGuard?.summary?.blocked_today_count ?? null,
       workstation_profile_status: workstationProfile?.status || null,
       workstation_profile_passed_checks: workstationProfile?.summary?.passed_checks ?? null,
       workstation_profile_check_count: workstationProfile?.summary?.check_count ?? null,
@@ -714,6 +863,9 @@ function buildReport(stepRows) {
       role_state_handoff_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-role-state-handoff.generated.md')),
       app_route_spec_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-app-route-spec.generated.md')),
       health_readiness_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-health-readiness.generated.md')),
+      toolchain_readiness_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-toolchain-readiness.generated.md')),
+      github_imperigo_gate_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-github-imperigo-gate.generated.md')),
+      push_decision_draft_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-push-decision-draft.generated.md')),
       command_contract_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-command-contract.generated.md')),
       audit_trail_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-audit-trail.generated.md')),
       office_routine_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-office-routine.generated.md')),
@@ -721,6 +873,9 @@ function buildReport(stepRows) {
       tool_registry_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-tool-registry.generated.md')),
       runtime_adapter_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-runtime-adapter.generated.md')),
       kosmosketch_adapter_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-kosmosketch-adapter.generated.md')),
+      autonomous_fire_state_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-autonomous-fire-state.generated.md')),
+      autonomous_loop_ledger_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-autonomous-loop-ledger.generated.md')),
+      fire_cadence_guard_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-fire-cadence-guard.generated.md')),
       workstation_profile_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-workstation-profile.generated.md')),
       local_identity_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-local-identity.generated.md')),
       data_governance_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-data-governance.generated.md')),
@@ -743,11 +898,11 @@ function buildReport(stepRows) {
       role_shell_smoke_markdown: relative(root, resolve(projectRoot, 'orbit/role-shell-smoke.generated.md'))
     },
     steps: stepRows,
-    next_actions: nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHandoff, appRouteSpec, healthReadiness, commandContract, auditTrail, officePilotScene, toolRegistry, runtimeAdapter, kosmoSketchAdapter, workstationProfile, localIdentity, dataGovernance, officeMemory, localStorageDecision, deleteExportRestoreDrill, pilotSession, pilotMeasurementKit, pilotResultDraft, orbitRouteSmoke, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke, roleShellPrototype, roleShellSmoke })
+    next_actions: nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHandoff, appRouteSpec, healthReadiness, toolchainReadiness, githubImperigoGate, pushDecisionDraft, commandContract, auditTrail, officePilotScene, toolRegistry, runtimeAdapter, kosmoSketchAdapter, autonomousFireState, autonomousLoopLedger, fireCadenceGuard, workstationProfile, localIdentity, dataGovernance, officeMemory, localStorageDecision, deleteExportRestoreDrill, pilotSession, pilotMeasurementKit, pilotResultDraft, orbitRouteSmoke, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke, roleShellPrototype, roleShellSmoke })
   };
 }
 
-function nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHandoff, appRouteSpec, healthReadiness, commandContract, auditTrail, officePilotScene, toolRegistry, runtimeAdapter, kosmoSketchAdapter, workstationProfile, localIdentity, dataGovernance, officeMemory, localStorageDecision, deleteExportRestoreDrill, pilotSession, pilotMeasurementKit, pilotResultDraft, orbitRouteSmoke, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke, roleShellPrototype, roleShellSmoke }) {
+function nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHandoff, appRouteSpec, healthReadiness, toolchainReadiness, githubImperigoGate, pushDecisionDraft, commandContract, auditTrail, officePilotScene, toolRegistry, runtimeAdapter, kosmoSketchAdapter, autonomousFireState, autonomousLoopLedger, fireCadenceGuard, workstationProfile, localIdentity, dataGovernance, officeMemory, localStorageDecision, deleteExportRestoreDrill, pilotSession, pilotMeasurementKit, pilotResultDraft, orbitRouteSmoke, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke, roleShellPrototype, roleShellSmoke }) {
   const actions = [];
   if (failedSteps.length) {
     failedSteps.forEach((step) => actions.push(`Review failed step: ${step.label}`));
@@ -771,6 +926,15 @@ function nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHan
   if (healthReadiness?.status === 'health_readiness_contract_passed') {
     actions.push('Keep the Health Readiness contract read-only until a local runtime adapter is approved.');
   }
+  if (toolchainReadiness?.status === 'toolchain_readiness_passed') {
+    actions.push('Use Toolchain Readiness to keep TypeScript, ESLint and Next Build timeouts visible as release blockers, not as green publish evidence.');
+  }
+  if (githubImperigoGate?.status === 'github_imperigo_gate_passed') {
+    actions.push('Use the GitHub Imperigo Gate before any push, PR, GitHub mutation, deploy claim, external CI mutation or secret access.');
+  }
+  if (pushDecisionDraft?.status === 'push_decision_draft_passed') {
+    actions.push('Use the Push Decision Draft as the local hold/push decision record; do not push until Owner-Go and heavy-check/build evidence are green.');
+  }
   if (commandContract?.status === 'orbit_command_contract_passed') {
     actions.push('Keep the Command Contract static until command schemas, logs and rollback behavior are approved.');
   }
@@ -788,6 +952,15 @@ function nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHan
   }
   if (kosmoSketchAdapter?.status === 'kosmosketch_adapter_contract_passed') {
     actions.push('Use the KosmoSketch adapter contract before registering executable sketch jobs, router calls, approvals, artifact uploads, Blender launch, BIM commits, IFC export or 2D regeneration.');
+  }
+  if (autonomousFireState?.status === 'autonomous_fire_state_passed') {
+    actions.push('Use the Autonomous Fire State as the local memory record for 5-minute fires, but do not start a real timer, daemon, GitHub push or deploy without explicit Go.');
+  }
+  if (autonomousLoopLedger?.status === 'autonomous_loop_ledger_passed') {
+    actions.push('Use the Autonomous Loop Ledger as the running summary of fire records, memory additions and still-blocked release boundaries.');
+  }
+  if (fireCadenceGuard?.status === 'fire_cadence_guard_passed') {
+    actions.push('Use the Fire Cadence Guard to document 5-minute fire drift honestly and keep next fires smaller instead of claiming a perfect timer.');
   }
   if (workstationProfile?.status === 'workstation_profile_contract_passed') {
     actions.push('Use the workstation profile contract before building persistent users, auth or real per-workstation Orbit shells.');
@@ -878,6 +1051,19 @@ function renderMarkdown(report) {
     `- health readiness: \`${report.summary.health_readiness_status}\``,
     `- health readiness checks: ${report.summary.health_readiness_passed_checks}/${report.summary.health_readiness_check_count}`,
     `- health readiness channels: ${report.summary.health_readiness_channel_count}`,
+    `- toolchain readiness: \`${report.summary.toolchain_readiness_status}\``,
+    `- toolchain readiness checks: ${report.summary.toolchain_readiness_passed_checks}/${report.summary.toolchain_readiness_check_count}`,
+    `- toolchain readiness lanes: ${report.summary.toolchain_readiness_lane_count}`,
+    `- toolchain heavy timeouts: ${report.summary.toolchain_readiness_heavy_timed_out_count}`,
+    `- GitHub Imperigo gate: \`${report.summary.github_imperigo_gate_status}\``,
+    `- GitHub Imperigo checks: ${report.summary.github_imperigo_gate_passed_checks}/${report.summary.github_imperigo_gate_check_count}`,
+    `- GitHub Imperigo owner-go gates: ${report.summary.github_imperigo_gate_owner_go_count}`,
+    `- GitHub Imperigo blocked today: ${report.summary.github_imperigo_gate_blocked_today_count}`,
+    `- push decision draft: \`${report.summary.push_decision_draft_status}\``,
+    `- push decision checks: ${report.summary.push_decision_draft_passed_checks}/${report.summary.push_decision_draft_check_count}`,
+    `- push decision positive evidence: ${report.summary.push_decision_draft_positive_evidence_count}`,
+    `- push decision blocking evidence: ${report.summary.push_decision_draft_blocking_evidence_count}`,
+    `- push decision blocked today: ${report.summary.push_decision_draft_blocked_today_count}`,
     `- command contract: \`${report.summary.command_contract_status}\``,
     `- command contract checks: ${report.summary.command_contract_passed_checks}/${report.summary.command_contract_check_count}`,
     `- command contract commands: ${report.summary.command_contract_command_count}`,
@@ -908,6 +1094,22 @@ function renderMarkdown(report) {
     `- KosmoSketch routing keywords: ${report.summary.kosmosketch_adapter_keyword_count}`,
     `- KosmoSketch artifact contracts: ${report.summary.kosmosketch_adapter_artifact_contract_count}`,
     `- KosmoSketch blocked actions: ${report.summary.kosmosketch_adapter_blocked_today_count}`,
+    `- autonomous fire state: \`${report.summary.autonomous_fire_state_status}\``,
+    `- autonomous fire checks: ${report.summary.autonomous_fire_state_passed_checks}/${report.summary.autonomous_fire_state_check_count}`,
+    `- autonomous fire interval: ${report.summary.autonomous_fire_interval_minutes} minutes`,
+    `- autonomous fire addon memory: ${report.summary.autonomous_fire_addon_memory_count}`,
+    `- autonomous fire own memory: ${report.summary.autonomous_fire_own_memory_count}`,
+    `- autonomous fire blocked today: ${report.summary.autonomous_fire_blocked_today_count}`,
+    `- autonomous loop ledger: \`${report.summary.autonomous_loop_ledger_status}\``,
+    `- autonomous loop ledger checks: ${report.summary.autonomous_loop_ledger_passed_checks}/${report.summary.autonomous_loop_ledger_check_count}`,
+    `- autonomous loop ledger fires: ${report.summary.autonomous_loop_ledger_fire_record_count}`,
+    `- autonomous loop ledger memory added: ${report.summary.autonomous_loop_ledger_memory_added_count}`,
+    `- autonomous loop ledger blocked boundaries: ${report.summary.autonomous_loop_ledger_blocked_boundary_count}`,
+    `- fire cadence guard: \`${report.summary.fire_cadence_guard_status}\``,
+    `- fire cadence checks: ${report.summary.fire_cadence_guard_passed_checks}/${report.summary.fire_cadence_guard_check_count}`,
+    `- fire cadence observed fires: ${report.summary.fire_cadence_guard_observed_fire_count}`,
+    `- fire cadence drifted fires: ${report.summary.fire_cadence_guard_drifted_fire_count}`,
+    `- fire cadence blocked today: ${report.summary.fire_cadence_guard_blocked_today_count}`,
     `- workstation profile: \`${report.summary.workstation_profile_status}\``,
     `- workstation profile checks: ${report.summary.workstation_profile_passed_checks}/${report.summary.workstation_profile_check_count}`,
     `- workstation profiles: ${report.summary.workstation_profile_count}`,

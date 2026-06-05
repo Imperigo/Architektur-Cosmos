@@ -1,0 +1,88 @@
+{
+  "schema_version": "0.1",
+  "status": "push_decision_draft_ready",
+  "mode": "static_review_only",
+  "title": "KosmoOrbit Push Decision Draft",
+  "purpose": "Lokaler Entscheidungsentwurf fuer ein spaeteres Owner-Go: KosmoOrbit sammelt Evidenz und Blocker, ohne GitHub, Cloudflare oder externe Accounts zu veraendern.",
+  "decision_state": {
+    "recommended_decision_now": "hold_local",
+    "push_ready_now": false,
+    "owner_go_required": true,
+    "reason": "Fast review checks sind gruen, aber Heavy-Check-/Build-Evidenz ist nicht belastbar genug fuer Push/Live."
+  },
+  "current_positive_evidence": [
+    {
+      "id": "route_smoke",
+      "status": "passed",
+      "evidence": "orbit_route_smoke_passed 273/273"
+    },
+    {
+      "id": "full_review",
+      "status": "passed",
+      "evidence": "orbit_full_review_ready_for_review_mode 37/37"
+    },
+    {
+      "id": "autonomous_loop_ledger",
+      "status": "passed",
+      "evidence": "autonomous_loop_ledger_passed 18/18"
+    },
+    {
+      "id": "github_imperigo_gate",
+      "status": "passed",
+      "evidence": "github_imperigo_gate_passed 16/16"
+    }
+  ],
+  "blocking_evidence": [
+    {
+      "id": "typescript_no_emit",
+      "status": "not_release_evidence",
+      "reason": "Timeout/kein abgeschlossener Log darf nicht als Gruenstand zaehlen."
+    },
+    {
+      "id": "eslint",
+      "status": "not_release_evidence",
+      "reason": "Timeout/kein abgeschlossener Log darf nicht als Gruenstand zaehlen."
+    },
+    {
+      "id": "next_static_build",
+      "status": "not_release_evidence",
+      "reason": "Kein abgeschlossener Build, daher kein belastbarer Static Export."
+    },
+    {
+      "id": "static_export_smoke",
+      "status": "blocked_until_build",
+      "reason": "Static Smoke ist nur nach erfolgreichem Build gueltig."
+    }
+  ],
+  "owner_go_checklist": [
+    "Owner bestaetigt Push/Live-Go explizit.",
+    "Git-Status und Diff laufen ohne Haenger und ohne Whitespace-Fehler.",
+    "TypeScript noEmit endet mit sichtbarem Gruen-Log.",
+    "ESLint endet mit sichtbarem Gruen-Log.",
+    "Next Static Build endet erfolgreich.",
+    "Static Export Smoke laeuft nach dem Build erfolgreich.",
+    "Nach main-Push: Cloudflare Deploy abwarten und Live-Smoke pruefen."
+  ],
+  "prepared_summary": {
+    "draft_commit_scope": "KosmoOrbit autonomous fire state, loop ledger, toolchain readiness and GitHub Imperigo governance gates.",
+    "draft_risk_note": "Review-only governance and UI contracts; no runtime, no external account mutation, no deploy.",
+    "draft_release_note": "Improves KosmoOrbit as local control center by making autonomous loop evidence, heavy-check blockers and GitHub/Deploy owner gates visible."
+  },
+  "blocked_today": [
+    "git_push",
+    "github_pr_create",
+    "github_issue_mutation",
+    "cloudflare_deploy_claim",
+    "external_ci_mutation",
+    "secret_read",
+    "live_claim",
+    "dependency_install",
+    "cost_job"
+  ],
+  "next_actions": [
+    "Push Decision Draft in /orbit sichtbar machen.",
+    "Route-Smoke und Full-Review um den Draft erweitern.",
+    "Bei spaeterem Owner-Go zuerst Heavy-Check-/Build-Evidenz erneuern.",
+    "Ohne Owner-Go weiter lokal halten."
+  ]
+}

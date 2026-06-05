@@ -1,0 +1,111 @@
+{
+  "schema_version": "0.1",
+  "status": "autonomous_fire_state_ready",
+  "mode": "static_review_only",
+  "date_local": "2026-06-05",
+  "timezone": "Europe/Zurich",
+  "loop_goal": {
+    "label": "Autonomer Block bis 24:00 Zuerich Zeit",
+    "fire_interval_minutes": 5,
+    "worker": "KosmoOrbit",
+    "focus": "Vision/Plan Realisierung fuer KosmoOrbit als Hauptsoftware-Zentrale",
+    "summary_required_each_fire": true,
+    "memory_capture_required": true
+  },
+  "current_fire": {
+    "local_time": "17:51 CEST",
+    "state": "in_progress",
+    "last_confirmed_safe_scope": "lokal, statisch, review-only, ohne Push, Deploy, Upload, Kosten oder externe Account-Aenderung",
+    "known_blockers": [
+      "git_status_can_hang_in_local_worktree",
+      "typescript_lint_next_build_timeout_in_heavy_check",
+      "static_export_smoke_only_valid_after_successful_build"
+    ]
+  },
+  "autonomous_permissions": {
+    "allowed_without_question": [
+      "read_project_docs",
+      "create_static_contracts",
+      "create_review_reports",
+      "update_orbit_review_only_ui",
+      "run_fast_local_smokes",
+      "write_memory_snapshots",
+      "write_autonomous_fire_records"
+    ],
+    "ask_or_explicit_go_required": [
+      "push_to_main",
+      "live_deploy",
+      "external_account_change",
+      "cloud_upload",
+      "cost_job",
+      "customer_data_scan",
+      "real_runtime_process_launch",
+      "destructive_git_or_filesystem_action"
+    ]
+  },
+  "addon_memory": [
+    {
+      "id": "kosmosketch_tool_adapter",
+      "status": "static_contract_visible",
+      "memory": "KosmoSketch ist als kosmo-draw.kosmosketch ToolAdapter-Vertrag in KosmoOrbit sichtbar, bleibt aber nicht ausfuehrend."
+    },
+    {
+      "id": "heavy_check_timebox",
+      "status": "diagnostic_blocker_record",
+      "memory": "Schwere Checks werden mit Timebox dokumentiert, weil TypeScript, ESLint und Next Build lokal haengen koennen."
+    },
+    {
+      "id": "toolchain_readiness",
+      "status": "visible_release_gate",
+      "memory": "Toolchain Readiness macht schwere TypeScript-, ESLint- und Next-Static-Build-Timeouts in KosmoOrbit sichtbar und verhindert falsche Publish-Claims aus schnellen Checks."
+    },
+    {
+      "id": "github_imperigo_gate",
+      "status": "owner_gated_external_boundary",
+      "memory": "GitHub Imperigo ist als lokaler Gate-Vertrag sichtbar: Zusammenfassungen und Evidenz duerfen automatisch vorbereitet werden, aber Push, PR, Deploy, Secrets und externe CI bleiben Owner-Go-pflichtig."
+    },
+    {
+      "id": "autonomous_loop_ledger",
+      "status": "running_fire_summary",
+      "memory": "Der Autonomous Loop Ledger sammelt die Fire-Records, Gruenstaende, neuen Memories und weiterhin blockierten Grenzen des 24:00-Zuerich-Blocks."
+    },
+    {
+      "id": "push_decision_draft",
+      "status": "local_hold_decision",
+      "memory": "Der Push Decision Draft haelt lokal fest: aktueller Entscheid ist hold_local; Push ist erst nach Owner-Go und belastbarer Heavy-Check-/Build-Evidenz erlaubt."
+    },
+    {
+      "id": "fire_cadence_guard",
+      "status": "honest_fire_interval_evidence",
+      "memory": "Fire Cadence Guard dokumentiert 5-Minuten-Ziel, reale Drift, Catch-up-Fires und verhindert falsche Takt-Claims."
+    },
+    {
+      "id": "worker_operating_mode",
+      "status": "autonomous_large_batches",
+      "memory": "KosmoOrbit arbeitet in groesseren autonomen lokalen Batches und fragt nur bei wichtigen Abzweigern."
+    }
+  ],
+  "own_memory": [
+    "KosmoOrbit ist die Hauptsoftware-Zentrale von Architektur Kosmos, nicht KosmoWebsite.",
+    "KosmoOrbit orchestriert spaeter KosmoZentrale, lokale KI Kosmo und Untertools wie KosmoDesign, Prepare, Draw, Viz, Publish, Data und Asset.",
+    "Der heutige MVP ist bewusst review-only: menschliche Freigabe bleibt Pflicht vor Design-Generation, Writes, Public-Publish und Runtime-Ausfuehrung.",
+    "Der naechste sichere Fortschritt liegt in Vertragen, Pruefevidenz, Rollen-/Memory-Grenzen und ToolAdapter-Handoffs, nicht in echter CAD-/BIM-Ausfuehrung."
+  ],
+  "next_safe_actions": [
+    "Autonomous Fire State in /orbit sichtbar machen.",
+    "Fast lokale Checks fuer Fire State, KosmoSketch Adapter, Route Smoke und Full Review laufen lassen.",
+    "Tages-/Fire-Zusammenfassung fuer den 05.06. speichern.",
+    "Git und Heavy-Checks weiterhin als Blocker behandeln, bis sie stabil und mit Logs abgeschlossen sind."
+  ],
+  "blocked_today": [
+    "real_timer_daemon",
+    "automation_process_launch",
+    "github_push_without_owner_go",
+    "cloudflare_deploy",
+    "external_api_call",
+    "runtime_memory_write",
+    "tool_execution",
+    "blender_launch",
+    "bim_or_ifc_write"
+  ]
+}

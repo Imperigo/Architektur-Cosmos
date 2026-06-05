@@ -10,6 +10,8 @@ import shellManifestData from '@/examples/kosmo-projects/kosmo-demo-001/orbit/ro
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { OrbitAutonomyStatus } from './OrbitAutonomyStatus';
+import { OrbitAutonomousFireState } from './OrbitAutonomousFireState';
+import { OrbitAutonomousLoopLedger } from './OrbitAutonomousLoopLedger';
 import { OrbitAuditTrail } from './OrbitAuditTrail';
 import { OrbitCommandContract } from './OrbitCommandContract';
 import { OrbitDataGovernanceContract } from './OrbitDataGovernanceContract';
@@ -17,7 +19,9 @@ import { OrbitDesignHandoffPanel } from './OrbitDesignHandoffPanel';
 import { OrbitDemoReadiness, type OrbitStaticExportSmokeReport } from './OrbitDemoReadiness';
 import { OrbitDemoQuestions } from './OrbitDemoQuestions';
 import { OrbitDemoReviewPath } from './OrbitDemoReviewPath';
+import { OrbitFireCadenceGuard } from './OrbitFireCadenceGuard';
 import { OrbitHealthReadiness } from './OrbitHealthReadiness';
+import { OrbitGitHubImperigoGate } from './OrbitGitHubImperigoGate';
 import { OrbitInstallationTopology } from './OrbitInstallationTopology';
 import { OrbitDesignPilotPath } from './OrbitDesignPilotPath';
 import { OrbitLearningMode } from './OrbitLearningMode';
@@ -38,6 +42,7 @@ import { OrbitPilotSessionTemplate } from './OrbitPilotSessionTemplate';
 import { OrbitPresenterBrief } from './OrbitPresenterBrief';
 import { OrbitProgressMap } from './OrbitProgressMap';
 import { OrbitPublishReadiness } from './OrbitPublishReadiness';
+import { OrbitPushDecisionDraft } from './OrbitPushDecisionDraft';
 import { OrbitProjectDashboard, type DesignHandoffPreview, type ProjectInspectorReport } from './OrbitProjectDashboard';
 import { OrbitQualityEvidence, type OrbitFullReviewReport, type OrbitRouteSmokeReport } from './OrbitQualityEvidence';
 import { OrbitReviewDecisionDraft } from './OrbitReviewDecisionDraft';
@@ -49,6 +54,7 @@ import { OrbitKosmoSketchAdapterContract } from './OrbitKosmoSketchAdapterContra
 import { OrbitRoleSwitcher } from './OrbitRoleSwitcher';
 import { OrbitSectionIndex } from './OrbitSectionIndex';
 import { OrbitToolRegistry } from './OrbitToolRegistry';
+import { OrbitToolchainReadiness } from './OrbitToolchainReadiness';
 import { OrbitVisionBridge } from './OrbitVisionBridge';
 import { OrbitWorkflowDelta } from './OrbitWorkflowDelta';
 import { OrbitWorkstationPriorities } from './OrbitWorkstationPriorities';
@@ -381,6 +387,18 @@ export default function OrbitPage() {
             <OrbitAutonomyStatus />
           </div>
 
+          <div id="autonomous-fire" className="scroll-mt-4">
+            <OrbitAutonomousFireState />
+          </div>
+
+          <div id="autonomous-loop-ledger" className="scroll-mt-4">
+            <OrbitAutonomousLoopLedger />
+          </div>
+
+          <div id="fire-cadence-guard" className="scroll-mt-4">
+            <OrbitFireCadenceGuard />
+          </div>
+
           <div id="routine" className="scroll-mt-4">
             <OrbitOfficeRoutine />
           </div>
@@ -441,6 +459,14 @@ export default function OrbitPage() {
             <OrbitLaunchDecisionBrief />
           </div>
 
+          <div id="github-imperigo-gate" className="scroll-mt-4">
+            <OrbitGitHubImperigoGate />
+          </div>
+
+          <div id="push-decision-draft" className="scroll-mt-4">
+            <OrbitPushDecisionDraft />
+          </div>
+
           <div id="office-pilot" className="scroll-mt-4">
             <OrbitOfficePilotScene />
           </div>
@@ -485,6 +511,10 @@ export default function OrbitPage() {
 
           <div id="health" className="scroll-mt-4">
             <OrbitHealthReadiness />
+          </div>
+
+          <div id="toolchain-readiness" className="scroll-mt-4">
+            <OrbitToolchainReadiness />
           </div>
 
           <div id="risiken" className="scroll-mt-4">

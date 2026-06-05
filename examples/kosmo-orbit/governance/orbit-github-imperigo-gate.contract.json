@@ -1,0 +1,104 @@
+{
+  "schema_version": "0.1",
+  "status": "github_imperigo_gate_ready",
+  "mode": "static_review_only",
+  "title": "GitHub Imperigo Gate",
+  "purpose": "KosmoOrbit soll GitHub-/Imperigo-Automation als sichtbare Freigabegrenze fuehren: lokale Evidenz darf automatisch gesammelt werden, aber Push, PR, Deploy und externe Account-Aenderungen bleiben owner-gated.",
+  "source_goal_terms": [
+    "GitHub Imperigo",
+    "voll automatisiert",
+    "Vision/Plan Realisierung",
+    "Fire Intervall alle 5min",
+    "Gesamt-Zusammenfassung",
+    "Addon- und eigene Erinnerungen"
+  ],
+  "local_autonomy": [
+    {
+      "id": "collect_local_evidence",
+      "label": "Lokale Evidenz sammeln",
+      "allowed": true,
+      "examples": [
+        "Route Smoke",
+        "Full Review",
+        "Fire Records",
+        "Memory Contracts"
+      ]
+    },
+    {
+      "id": "prepare_github_summary",
+      "label": "GitHub Summary vorbereiten",
+      "allowed": true,
+      "examples": [
+        "Commit-Zusammenfassung als Entwurf",
+        "Risk Notes",
+        "Check Evidence"
+      ]
+    },
+    {
+      "id": "create_local_release_gate",
+      "label": "Lokales Release Gate erstellen",
+      "allowed": true,
+      "examples": [
+        "Toolchain Readiness",
+        "Owner-Go Boundary",
+        "Push-Readiness Draft"
+      ]
+    }
+  ],
+  "owner_go_required": [
+    {
+      "id": "git_push_main",
+      "label": "Git Push main",
+      "reason": "Jeder Push auf main kann Cloudflare Static Assets automatisch deployen."
+    },
+    {
+      "id": "github_pr_or_issue_mutation",
+      "label": "GitHub PR/Issue Mutation",
+      "reason": "Externe Account-Aenderung und Projektkommunikation."
+    },
+    {
+      "id": "cloudflare_live_deploy_claim",
+      "label": "Cloudflare Live Claim",
+      "reason": "Live-Status darf erst nach Build, Deploy und Smoke behauptet werden."
+    },
+    {
+      "id": "external_ci_or_secret_access",
+      "label": "External CI / Secrets",
+      "reason": "Secrets und externe Systeme duerfen nicht automatisch beruehrt werden."
+    }
+  ],
+  "imperigo_fire_protocol": {
+    "interval_minutes": 5,
+    "until_local_time": "24:00 Europe/Zurich",
+    "requires_time_check": true,
+    "requires_summary": true,
+    "requires_memory_update": true,
+    "requires_safe_scope": true
+  },
+  "publish_evidence_required": [
+    "Owner-Go",
+    "Git status and diff health without hangs",
+    "TypeScript noEmit completed with logs",
+    "ESLint completed with logs",
+    "Next static build completed",
+    "Static export smoke completed after build",
+    "Live smoke only after main push and Cloudflare deploy"
+  ],
+  "blocked_today": [
+    "git_push_without_owner_go",
+    "github_pr_create",
+    "github_issue_mutation",
+    "gh_auth_or_secret_read",
+    "cloudflare_deploy_action",
+    "external_ci_mutation",
+    "live_claim_without_smoke",
+    "cost_job",
+    "dependency_install_without_go"
+  ],
+  "next_actions": [
+    "GitHub Imperigo Gate in /orbit sichtbar machen.",
+    "Route-Smoke und Full-Review um den Gate-Vertrag erweitern.",
+    "Fire Records weiterhin lokal speichern.",
+    "Push/Live erst nach explizitem Owner-Go und belastbarer Toolchain-Evidenz."
+  ]
+}

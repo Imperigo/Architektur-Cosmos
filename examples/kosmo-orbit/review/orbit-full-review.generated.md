@@ -1,6 +1,6 @@
 # KosmoOrbit Full Review
 
-Generated: 2026-06-02T20:38:38.779Z
+Generated: 2026-06-05T17:01:18.375Z
 Status: `orbit_full_review_ready_for_review_mode`
 Workspace: `examples/kosmo-orbit/workspace.demo.json`
 Project: `examples/kosmo-projects/kosmo-demo-001`
@@ -9,7 +9,7 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 
 ## Summary
 
-- steps: 33/33 passed
+- steps: 39/39 passed
 - role state: `role_state_check_passed`
 - role state active role: `owner_admin`
 - role state selected role: `owner_admin`
@@ -24,6 +24,19 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 - health readiness: `health_readiness_contract_passed`
 - health readiness checks: 14/14
 - health readiness channels: 6
+- toolchain readiness: `toolchain_readiness_passed`
+- toolchain readiness checks: 18/18
+- toolchain readiness lanes: 5
+- toolchain heavy timeouts: 3
+- GitHub Imperigo gate: `github_imperigo_gate_passed`
+- GitHub Imperigo checks: 16/16
+- GitHub Imperigo owner-go gates: 4
+- GitHub Imperigo blocked today: 9
+- push decision draft: `push_decision_draft_passed`
+- push decision checks: 16/16
+- push decision positive evidence: 4
+- push decision blocking evidence: 4
+- push decision blocked today: 9
 - command contract: `orbit_command_contract_passed`
 - command contract checks: 14/14
 - command contract commands: 9
@@ -54,6 +67,22 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 - KosmoSketch routing keywords: 12
 - KosmoSketch artifact contracts: 3
 - KosmoSketch blocked actions: 13
+- autonomous fire state: `autonomous_fire_state_passed`
+- autonomous fire checks: 21/21
+- autonomous fire interval: 5 minutes
+- autonomous fire addon memory: 8
+- autonomous fire own memory: 4
+- autonomous fire blocked today: 9
+- autonomous loop ledger: `autonomous_loop_ledger_passed`
+- autonomous loop ledger checks: 18/18
+- autonomous loop ledger fires: 5
+- autonomous loop ledger memory added: 6
+- autonomous loop ledger blocked boundaries: 9
+- fire cadence guard: `fire_cadence_guard_passed`
+- fire cadence checks: 16/16
+- fire cadence observed fires: 6
+- fire cadence drifted fires: 4
+- fire cadence blocked today: 6
 - workstation profile: `workstation_profile_contract_passed`
 - workstation profile checks: 16/16
 - workstation profiles: 8
@@ -96,7 +125,7 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 - pilot result draft slots: 5
 - pilot result draft empty slots: 5
 - orbit route smoke: `orbit_route_smoke_passed`
-- orbit route smoke checks: 246/246
+- orbit route smoke checks: 286/286
 - workspace status: `orbit_blocked_gates_present`
 - project status: `local_review_only`
 - project artifacts: 59
@@ -142,6 +171,9 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 | Role State Handoff | `passed` | `examples/kosmo-orbit/review/orbit-role-state-handoff.generated.json` |
 | Orbit App Route Spec | `passed` | `examples/kosmo-orbit/review/orbit-app-route-spec.generated.json` |
 | Health Readiness Contract | `passed` | `examples/kosmo-orbit/review/orbit-health-readiness.generated.json` |
+| Orbit Toolchain Readiness | `passed` | `examples/kosmo-orbit/review/orbit-toolchain-readiness.generated.json` |
+| Orbit GitHub Imperigo Gate | `passed` | `examples/kosmo-orbit/review/orbit-github-imperigo-gate.generated.json` |
+| Orbit Push Decision Draft | `passed` | `examples/kosmo-orbit/review/orbit-push-decision-draft.generated.json` |
 | Orbit Command Contract | `passed` | `examples/kosmo-orbit/review/orbit-command-contract.generated.json` |
 | Orbit Audit Trail Contract | `passed` | `examples/kosmo-orbit/review/orbit-audit-trail.generated.json` |
 | Orbit Office Routine Contract | `passed` | `examples/kosmo-orbit/review/orbit-office-routine.generated.json` |
@@ -149,6 +181,9 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 | Orbit Tool Registry | `passed` | `examples/kosmo-orbit/review/orbit-tool-registry.generated.json` |
 | Orbit Runtime Adapter Contract | `passed` | `examples/kosmo-orbit/review/orbit-runtime-adapter.generated.json` |
 | Orbit KosmoSketch ToolAdapter Contract | `passed` | `examples/kosmo-orbit/review/orbit-kosmosketch-adapter.generated.json` |
+| Orbit Autonomous Fire State | `passed` | `examples/kosmo-orbit/review/orbit-autonomous-fire-state.generated.json` |
+| Orbit Autonomous Loop Ledger | `passed` | `examples/kosmo-orbit/review/orbit-autonomous-loop-ledger.generated.json` |
+| Orbit Fire Cadence Guard | `passed` | `examples/kosmo-orbit/review/orbit-fire-cadence-guard.generated.json` |
 | Orbit Workstation Profile Contract | `passed` | `examples/kosmo-orbit/review/orbit-workstation-profile.generated.json` |
 | Orbit Local Identity Contract | `passed` | `examples/kosmo-orbit/review/orbit-local-identity.generated.json` |
 | Orbit Data Governance Contract | `passed` | `examples/kosmo-orbit/review/orbit-data-governance.generated.json` |
@@ -169,6 +204,9 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 - role_state_handoff_markdown: `examples/kosmo-orbit/review/orbit-role-state-handoff.generated.md`
 - app_route_spec_markdown: `examples/kosmo-orbit/review/orbit-app-route-spec.generated.md`
 - health_readiness_markdown: `examples/kosmo-orbit/review/orbit-health-readiness.generated.md`
+- toolchain_readiness_markdown: `examples/kosmo-orbit/review/orbit-toolchain-readiness.generated.md`
+- github_imperigo_gate_markdown: `examples/kosmo-orbit/review/orbit-github-imperigo-gate.generated.md`
+- push_decision_draft_markdown: `examples/kosmo-orbit/review/orbit-push-decision-draft.generated.md`
 - command_contract_markdown: `examples/kosmo-orbit/review/orbit-command-contract.generated.md`
 - audit_trail_markdown: `examples/kosmo-orbit/review/orbit-audit-trail.generated.md`
 - office_routine_markdown: `examples/kosmo-orbit/review/orbit-office-routine.generated.md`
@@ -176,6 +214,9 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 - tool_registry_markdown: `examples/kosmo-orbit/review/orbit-tool-registry.generated.md`
 - runtime_adapter_markdown: `examples/kosmo-orbit/review/orbit-runtime-adapter.generated.md`
 - kosmosketch_adapter_markdown: `examples/kosmo-orbit/review/orbit-kosmosketch-adapter.generated.md`
+- autonomous_fire_state_markdown: `examples/kosmo-orbit/review/orbit-autonomous-fire-state.generated.md`
+- autonomous_loop_ledger_markdown: `examples/kosmo-orbit/review/orbit-autonomous-loop-ledger.generated.md`
+- fire_cadence_guard_markdown: `examples/kosmo-orbit/review/orbit-fire-cadence-guard.generated.md`
 - workstation_profile_markdown: `examples/kosmo-orbit/review/orbit-workstation-profile.generated.md`
 - local_identity_markdown: `examples/kosmo-orbit/review/orbit-local-identity.generated.md`
 - data_governance_markdown: `examples/kosmo-orbit/review/orbit-data-governance.generated.md`
@@ -205,12 +246,18 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 - Use the role state handoff as the next contract before implementing a static Orbit app route.
 - Use the Orbit app route spec before changing app/orbit/page.tsx.
 - Keep the Health Readiness contract read-only until a local runtime adapter is approved.
+- Use Toolchain Readiness to keep TypeScript, ESLint and Next Build timeouts visible as release blockers, not as green publish evidence.
+- Use the GitHub Imperigo Gate before any push, PR, GitHub mutation, deploy claim, external CI mutation or secret access.
+- Use the Push Decision Draft as the local hold/push decision record; do not push until Owner-Go and heavy-check/build evidence are green.
 - Keep the Command Contract static until command schemas, logs and rollback behavior are approved.
 - Keep the Audit Trail static until persistence, retention and privacy rules are approved.
 - Use the office pilot scene contract to explain the first local office pilot without claiming completed results.
 - Use the tool registry as the KosmoOrbit orchestration contract before adding any real tool launch or local runtime action.
 - Use the runtime adapter contract as the bridge from Tool Registry to KosmoZentrale before implementing executable local adapters.
 - Use the KosmoSketch adapter contract before registering executable sketch jobs, router calls, approvals, artifact uploads, Blender launch, BIM commits, IFC export or 2D regeneration.
+- Use the Autonomous Fire State as the local memory record for 5-minute fires, but do not start a real timer, daemon, GitHub push or deploy without explicit Go.
+- Use the Autonomous Loop Ledger as the running summary of fire records, memory additions and still-blocked release boundaries.
+- Use the Fire Cadence Guard to document 5-minute fire drift honestly and keep next fires smaller instead of claiming a perfect timer.
 - Use the workstation profile contract before building persistent users, auth or real per-workstation Orbit shells.
 - Use the local identity contract before implementing auth, profile persistence, session storage or permission mutation.
 - Use the data governance contract before implementing local storage, backup jobs, retention automation or persistent office memory.

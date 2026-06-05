@@ -1,6 +1,6 @@
 # KosmoOrbit Local Storage Decision Check
 
-Generated: 2026-06-02T14:33:42.551Z
+Generated: 2026-06-05T17:01:18.161Z
 Status: `local_storage_decision_passed`
 Draft: `examples/kosmo-orbit/storage/orbit-local-storage-decision.draft.json`
 

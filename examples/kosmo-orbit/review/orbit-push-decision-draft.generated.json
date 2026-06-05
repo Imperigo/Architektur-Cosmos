@@ -1,0 +1,104 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-05T17:01:17.627Z",
+  "generator": "kosmo-orbit-push-decision-draft-check",
+  "status": "push_decision_draft_passed",
+  "contract_file": "examples/kosmo-orbit/governance/orbit-push-decision-draft.contract.json",
+  "summary": {
+    "check_count": 16,
+    "passed_checks": 16,
+    "failed_checks": 0,
+    "positive_evidence_count": 4,
+    "blocking_evidence_count": 4,
+    "owner_go_checklist_count": 7,
+    "blocked_today_count": 9
+  },
+  "checks": [
+    {
+      "id": "contract_file_exists",
+      "label": "Push decision draft contract exists.",
+      "status": "passed"
+    },
+    {
+      "id": "status_ready",
+      "label": "Push decision draft is ready.",
+      "status": "passed"
+    },
+    {
+      "id": "mode_static_review_only",
+      "label": "Push decision draft is static review-only.",
+      "status": "passed"
+    },
+    {
+      "id": "decision_holds_local",
+      "label": "Decision recommends holding local and not pushing now.",
+      "status": "passed"
+    },
+    {
+      "id": "positive_evidence_present",
+      "label": "Positive evidence includes route smoke, full review, loop ledger and GitHub Imperigo gate.",
+      "status": "passed"
+    },
+    {
+      "id": "blocking_evidence_present",
+      "label": "Blocking evidence includes TypeScript, ESLint, Next build and static export smoke.",
+      "status": "passed"
+    },
+    {
+      "id": "owner_go_checklist_present",
+      "label": "Owner-Go checklist covers Git, TypeScript, ESLint, build, static smoke and live smoke.",
+      "status": "passed"
+    },
+    {
+      "id": "prepared_summary_present",
+      "label": "Prepared summary includes commit scope, risk note and release note.",
+      "status": "passed"
+    },
+    {
+      "id": "blocked_today_present",
+      "label": "Blocked today covers push, GitHub mutation, deploy claims, secrets, dependencies and costs.",
+      "status": "passed"
+    },
+    {
+      "id": "next_actions_present",
+      "label": "Next actions are explicit.",
+      "status": "passed"
+    },
+    {
+      "id": "component_imports_contract",
+      "label": "Component imports the push decision draft contract.",
+      "status": "passed"
+    },
+    {
+      "id": "component_renders_decision_copy",
+      "label": "Component renders push decision draft copy.",
+      "status": "passed"
+    },
+    {
+      "id": "component_renders_safety_copy",
+      "label": "Component renders no-push/deploy safety copy.",
+      "status": "passed"
+    },
+    {
+      "id": "route_imports_component",
+      "label": "Orbit route imports the push decision draft component.",
+      "status": "passed"
+    },
+    {
+      "id": "route_anchors_draft",
+      "label": "Orbit route renders push-decision-draft anchor.",
+      "status": "passed"
+    },
+    {
+      "id": "section_index_links_draft",
+      "label": "Section index links to push decision draft.",
+      "status": "passed"
+    }
+  ],
+  "next_actions": [
+    "Push Decision Draft in /orbit sichtbar machen.",
+    "Route-Smoke und Full-Review um den Draft erweitern.",
+    "Bei spaeterem Owner-Go zuerst Heavy-Check-/Build-Evidenz erneuern.",
+    "Ohne Owner-Go weiter lokal halten."
+  ]
+}
