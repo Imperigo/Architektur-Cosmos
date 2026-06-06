@@ -30,6 +30,14 @@ type LocalRuntimeBridgeReport = {
     cloud_starter_commit: string | null;
     orbit_website_commit: string | null;
   };
+  home_pc_handover: {
+    platform: string;
+    zip_artifact: string;
+    checksum_artifact: string;
+    manifest_artifact: string;
+    purpose: string;
+    first_commands: string[];
+  };
 };
 
 const localRuntimeBridge = localRuntimeBridgeData as LocalRuntimeBridgeReport;
@@ -114,6 +122,34 @@ export function OrbitLocalRuntimeBridge() {
             GitHub-Trennung bleibt sichtbar blockiert, bis ein dediziertes Starter-Repo existiert oder ein
             Import explizit freigegeben ist.
           </p>
+        </div>
+      </div>
+
+      <div className="mt-4 rounded-lg border border-cyan-300/20 bg-cyan-300/[0.06] p-3">
+        <div className="flex flex-wrap items-start justify-between gap-2">
+          <div className="min-w-0">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cyan-100">Home-PC Handover Index</p>
+            <p className="mt-2 text-sm leading-6 text-stone-300">{localRuntimeBridge.home_pc_handover.purpose}</p>
+          </div>
+          <BridgeChip label={localRuntimeBridge.home_pc_handover.platform} tone="cyan" />
+        </div>
+        <div className="mt-3 grid gap-2 text-sm leading-5 md:grid-cols-3">
+          <p className="rounded-md border border-cyan-300/20 bg-black/20 px-3 py-2 text-cyan-100">
+            ZIP <code className="block break-words text-stone-200">{localRuntimeBridge.home_pc_handover.zip_artifact}</code>
+          </p>
+          <p className="rounded-md border border-cyan-300/20 bg-black/20 px-3 py-2 text-cyan-100">
+            SHA <code className="block break-words text-stone-200">{localRuntimeBridge.home_pc_handover.checksum_artifact}</code>
+          </p>
+          <p className="rounded-md border border-cyan-300/20 bg-black/20 px-3 py-2 text-cyan-100">
+            JSON <code className="block break-words text-stone-200">{localRuntimeBridge.home_pc_handover.manifest_artifact}</code>
+          </p>
+        </div>
+        <div className="mt-3 grid gap-2 lg:grid-cols-2">
+          {localRuntimeBridge.home_pc_handover.first_commands.map((command) => (
+            <code key={command} className="block break-words rounded-md border border-white/10 bg-black/28 px-3 py-2 text-xs leading-5 text-stone-200">
+              {command}
+            </code>
+          ))}
         </div>
       </div>
 

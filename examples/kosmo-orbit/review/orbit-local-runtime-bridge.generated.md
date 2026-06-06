@@ -1,6 +1,6 @@
 # KosmoOrbit Local Runtime Bridge
 
-Generated: 2026-06-06T00:14:02.011Z
+Generated: 2026-06-06T00:33:10.380Z
 Status: `local_runtime_bridge_passed`
 Input: `examples/kosmo-orbit/runtime/kosmo-night-status.demo.json`
 Mode: `external_local_status_import`
@@ -22,14 +22,28 @@ Review-only bridge from the local KOSMO Night Status into KosmoOrbit. It reads a
 | `kosmo-model` | `ready` | KOSMO Ollama enthaelt qwen2.5-coder:1.5b. | odysseus-kosmo-model-sync.sh apply ausfuehren, falls der Endpoint driftet. |
 | `desktop-artifacts` | `ready` | odysseus-vanilla-desktop-manifest.json=present, Odysseus-vanilla-linux-workstation.zip=present, KOSMO-Desktop-v2-linux-workstation.zip=present, ArchitekturkosmosMac.app=present | Vanilla/Desktop-Gates neu bauen, falls Manifest oder ZIP fehlt. |
 | `home-pc-handover` | `ready` | KOSMO-home-pc-linux-handover.zip: OK | kosmo-home-pc-linux-handover-zip.sh neu ausfuehren und Checksum pruefen. |
-| `kosmo-orbit` | `ready` | repo_commit=215f85b, report=present | Orbit bleibt review-only; naechster Hebel ist die sichtbare Odysseus/KOSMO-Statusbruecke. |
+| `kosmo-orbit` | `ready` | repo_commit=f303aff, report=present | Orbit bleibt review-only; naechster Hebel ist die sichtbare Odysseus/KOSMO-Statusbruecke. |
 | `github-separation` | `blocked` | Dedicated Starter-Repo fehlt; Website-Repo wird nicht als Ersatz benutzt. | Eigenes Imperigo/Architekturkosmos_Codex_Starter Repo anlegen oder Import explizit freigeben. |
 
 ## Sources
 
-- local starter commit: `590e674`
+- local starter commit: `3844b46`
 - cloud starter commit: `863dcde`
-- Orbit website commit: `215f85b`
+- Orbit website commit: `f303aff`
+
+## Home PC Handover
+
+- platform: `linux-workstation`
+- zip: `dist/KOSMO-home-pc-linux-handover.zip`
+- checksum: `dist/KOSMO-home-pc-linux-handover.zip.sha256`
+- manifest: `tmp/kosmo-home-pc-linux-handover-manifest.json`
+- purpose: Machine-readable Linux handover index for the future Home-PC setup.
+
+First commands:
+- `shasum -a 256 -c KOSMO-home-pc-linux-handover.zip.sha256`
+- `unzip KOSMO-home-pc-linux-handover.zip -d KOSMO-home-pc-linux-handover`
+- `less KOSMO-home-pc-linux-handover/tmp/kosmo-night-status.md`
+- `less KOSMO-home-pc-linux-handover/tmp/kosmo-home-pc-linux-handover-manifest.json`
 
 ## Checks
 

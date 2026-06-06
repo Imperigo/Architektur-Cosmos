@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-06T00:23:43.190Z",
+  "generated_at": "2026-06-06T00:33:14.841Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 253,
-    "passed_checks": 253,
+    "check_count": 254,
+    "passed_checks": 254,
     "failed_checks": 0
   },
   "checks": [
@@ -954,6 +954,11 @@
     {
       "id": "local_runtime_bridge_uses_generated_report",
       "label": "Local runtime bridge uses the generated bridge report for lanes, progress and source commits.",
+      "status": "passed"
+    },
+    {
+      "id": "local_runtime_bridge_shows_home_pc_index",
+      "label": "Local runtime bridge shows the Home-PC handover index artifacts and Linux first commands.",
       "status": "passed"
     },
     {

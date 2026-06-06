@@ -124,6 +124,19 @@ function buildReport(status) {
       cloud_starter_commit: sources.cloud_starter?.commit || null,
       orbit_website_commit: sources.orbit_website?.commit || null
     },
+    home_pc_handover: {
+      platform: 'linux-workstation',
+      zip_artifact: 'dist/KOSMO-home-pc-linux-handover.zip',
+      checksum_artifact: 'dist/KOSMO-home-pc-linux-handover.zip.sha256',
+      manifest_artifact: 'tmp/kosmo-home-pc-linux-handover-manifest.json',
+      purpose: 'Machine-readable Linux handover index for the future Home-PC setup.',
+      first_commands: [
+        'shasum -a 256 -c KOSMO-home-pc-linux-handover.zip.sha256',
+        'unzip KOSMO-home-pc-linux-handover.zip -d KOSMO-home-pc-linux-handover',
+        'less KOSMO-home-pc-linux-handover/tmp/kosmo-night-status.md',
+        'less KOSMO-home-pc-linux-handover/tmp/kosmo-home-pc-linux-handover-manifest.json'
+      ]
+    },
     checks,
     next_actions: asArray(status.next_three_implementation_steps)
   };
@@ -161,6 +174,15 @@ function renderMarkdown(report) {
   lines.push(`- local starter commit: \`${report.sources.local_starter_commit}\``);
   lines.push(`- cloud starter commit: \`${report.sources.cloud_starter_commit}\``);
   lines.push(`- Orbit website commit: \`${report.sources.orbit_website_commit}\``);
+
+  lines.push('', '## Home PC Handover', '');
+  lines.push(`- platform: \`${report.home_pc_handover.platform}\``);
+  lines.push(`- zip: \`${report.home_pc_handover.zip_artifact}\``);
+  lines.push(`- checksum: \`${report.home_pc_handover.checksum_artifact}\``);
+  lines.push(`- manifest: \`${report.home_pc_handover.manifest_artifact}\``);
+  lines.push(`- purpose: ${report.home_pc_handover.purpose}`);
+  lines.push('', 'First commands:');
+  report.home_pc_handover.first_commands.forEach((command) => lines.push(`- \`${command}\``));
 
   lines.push('', '## Checks', '', '| Check | Status | Meaning |', '| --- | --- | --- |');
   report.checks.forEach((item) => lines.push(`| \`${item.id}\` | \`${item.status}\` | ${escapePipe(item.label)} |`));
