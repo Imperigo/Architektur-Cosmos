@@ -16,6 +16,7 @@ const requiredLanes = [
   'kosmo-model',
   'desktop-artifacts',
   'home-pc-handover',
+  'home-pc-start-readiness',
   'kosmo-orbit',
   'github-separation'
 ];
@@ -70,10 +71,11 @@ function buildReport(status) {
     check('progress_number', 'Progress percent is a valid number between 0 and 100.', Number.isFinite(status.progress_percent) && status.progress_percent >= 0 && status.progress_percent <= 100),
     check('progress_bar_present', 'Progress bar is present for UI handoff.', typeof status.progress_bar === 'string' && status.progress_bar.includes('%')),
     check('required_lanes_present', 'All KOSMO control-spine lanes are present.', requiredLanes.every((id) => laneIds.has(id))),
-    check('ready_lane_majority', 'At least five of six lanes are ready.', readyLanes.length >= 5),
+    check('ready_lane_majority', 'At least six of seven lanes are ready.', readyLanes.length >= 6),
     check('runtime_ready', 'Odysseus runtime lane is ready.', lanes.some((lane) => lane.id === 'odysseus-runtime' && lane.status === 'ready')),
     check('model_ready', 'KOSMO Ollama model lane is ready.', lanes.some((lane) => lane.id === 'kosmo-model' && lane.status === 'ready')),
     check('handover_ready', 'Home-PC handover lane is ready.', lanes.some((lane) => lane.id === 'home-pc-handover' && lane.status === 'ready')),
+    check('home_pc_start_ready', 'Home-PC start readiness lane is ready.', lanes.some((lane) => lane.id === 'home-pc-start-readiness' && lane.status === 'ready')),
     check('github_separation_blocked', 'GitHub separation remains blocked until a dedicated Starter repo or explicit import approval exists.', githubLane?.status === 'blocked'),
     check('policy_flags_present', 'All safety policy flags are present and true.', requiredPolicies.every((key) => policy[key] === true)),
     check('sources_present', 'Local starter, cloud starter and Orbit website sources are represented.', Boolean(sources.local_starter && sources.cloud_starter && sources.orbit_website)),

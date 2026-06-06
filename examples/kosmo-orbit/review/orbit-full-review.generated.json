@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-06T00:33:14.853Z",
+  "generated_at": "2026-06-06T00:51:15.319Z",
   "generator": "kosmo-orbit-full-review",
   "workspace_path": "examples/kosmo-orbit/workspace.demo.json",
   "project_root": "examples/kosmo-projects/kosmo-demo-001",
@@ -126,11 +126,11 @@
     "orbit_route_smoke_check_count": 254,
     "workspace_status": "orbit_blocked_gates_present",
     "local_runtime_bridge_status": "local_runtime_bridge_passed",
-    "local_runtime_bridge_progress": 83,
-    "local_runtime_bridge_ready_lanes": 5,
+    "local_runtime_bridge_progress": 86,
+    "local_runtime_bridge_ready_lanes": 6,
     "local_runtime_bridge_blocked_lanes": 1,
-    "local_runtime_bridge_checks": 14,
-    "local_runtime_bridge_check_count": 14,
+    "local_runtime_bridge_checks": 15,
+    "local_runtime_bridge_check_count": 15,
     "project_status": "local_review_only",
     "project_artifact_count": 59,
     "project_review_artifact_count": 46,
@@ -253,7 +253,7 @@
       "report_path": "examples/kosmo-orbit/review/orbit-local-runtime-bridge.generated.json",
       "report_exists": true,
       "report_status": "local_runtime_bridge_passed",
-      "stdout_tail": "> architecture-cosmos@0.1.0 kosmo:orbit-local-runtime-bridge\n> node scripts/kosmo-orbit-local-runtime-bridge.mjs --status examples/kosmo-orbit/runtime/kosmo-night-status.demo.json\n\nKosmoOrbit local runtime bridge\nStatus: local_runtime_bridge_passed\nProgress: 83%\nChecks: 14/14\nWrote: examples/kosmo-orbit/review/orbit-local-runtime-bridge.generated.md",
+      "stdout_tail": "> architecture-cosmos@0.1.0 kosmo:orbit-local-runtime-bridge\n> node scripts/kosmo-orbit-local-runtime-bridge.mjs --status examples/kosmo-orbit/runtime/kosmo-night-status.demo.json\n\nKosmoOrbit local runtime bridge\nStatus: local_runtime_bridge_passed\nProgress: 86%\nChecks: 15/15\nWrote: examples/kosmo-orbit/review/orbit-local-runtime-bridge.generated.md",
       "stderr_tail": ""
     },
     {

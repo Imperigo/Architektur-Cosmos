@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-06T00:46:10.934Z",
+  "generated_at": "2026-06-06T00:51:10.935Z",
   "generator": "kosmo-orbit-local-runtime-bridge",
   "status": "local_runtime_bridge_passed",
   "input_status_file": "examples/kosmo-orbit/runtime/kosmo-night-status.demo.json",
@@ -16,18 +16,18 @@
     "no_external_accounts": true
   },
   "summary": {
-    "check_count": 14,
-    "passed_checks": 14,
+    "check_count": 15,
+    "passed_checks": 15,
     "failed_checks": 0,
-    "progress_percent": 83,
-    "ready_lanes": 5,
+    "progress_percent": 86,
+    "ready_lanes": 6,
     "blocked_lanes": 1,
     "open_blocker_count": 1
   },
   "control_spine": {
     "goal": "KOSMO local control spine over Odysseus with safe Home-PC handover",
-    "progress_bar": "[####################----] 83%",
-    "generated_at": "2026-06-06T00:43:53.744954+00:00"
+    "progress_bar": "[#####################---] 86%",
+    "generated_at": "2026-06-06T00:50:54.889663+00:00"
   },
   "lanes": [
     {
@@ -59,10 +59,17 @@
       "next_action": "kosmo-home-pc-linux-handover-zip.sh neu ausfuehren und Checksum pruefen."
     },
     {
+      "id": "home-pc-start-readiness",
+      "label": "Home-PC Start Readiness",
+      "status": "ready",
+      "evidence": "status=home_pc_start_dry_run_passed, checks=25/25, warnings=0",
+      "next_action": "kosmo-home-pc-start-dry-run.sh ausfuehren und fehlende Pflichtchecks beheben."
+    },
+    {
       "id": "kosmo-orbit",
       "label": "KosmoOrbit Interface",
       "status": "ready",
-      "evidence": "repo_commit=3506a33, report=present",
+      "evidence": "repo_commit=da46f0a, report=present",
       "next_action": "Orbit bleibt review-only; naechster Hebel ist die sichtbare Odysseus/KOSMO-Statusbruecke."
     },
     {
@@ -74,9 +81,9 @@
     }
   ],
   "sources": {
-    "local_starter_commit": "7e258a9",
+    "local_starter_commit": "b7bd449",
     "cloud_starter_commit": "863dcde",
-    "orbit_website_commit": "3506a33"
+    "orbit_website_commit": "da46f0a"
   },
   "home_pc_handover": {
     "platform": "linux-workstation",
@@ -128,7 +135,7 @@
     },
     {
       "id": "ready_lane_majority",
-      "label": "At least five of six lanes are ready.",
+      "label": "At least six of seven lanes are ready.",
       "status": "passed"
     },
     {
@@ -144,6 +151,11 @@
     {
       "id": "handover_ready",
       "label": "Home-PC handover lane is ready.",
+      "status": "passed"
+    },
+    {
+      "id": "home_pc_start_ready",
+      "label": "Home-PC start readiness lane is ready.",
       "status": "passed"
     },
     {

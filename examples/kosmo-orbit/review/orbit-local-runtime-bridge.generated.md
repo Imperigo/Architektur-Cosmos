@@ -1,6 +1,6 @@
 # KosmoOrbit Local Runtime Bridge
 
-Generated: 2026-06-06T00:46:10.934Z
+Generated: 2026-06-06T00:51:10.935Z
 Status: `local_runtime_bridge_passed`
 Input: `examples/kosmo-orbit/runtime/kosmo-night-status.demo.json`
 Mode: `external_local_status_import`
@@ -9,9 +9,9 @@ Review-only bridge from the local KOSMO Night Status into KosmoOrbit. It reads a
 
 ## Summary
 
-- progress: `[####################----] 83%`
-- checks: 14/14 passed
-- ready lanes: 5
+- progress: `[#####################---] 86%`
+- checks: 15/15 passed
+- ready lanes: 6
 - blocked lanes: 1
 
 ## Lanes
@@ -22,14 +22,15 @@ Review-only bridge from the local KOSMO Night Status into KosmoOrbit. It reads a
 | `kosmo-model` | `ready` | KOSMO Ollama enthaelt qwen2.5-coder:1.5b. | odysseus-kosmo-model-sync.sh apply ausfuehren, falls der Endpoint driftet. |
 | `desktop-artifacts` | `ready` | odysseus-vanilla-desktop-manifest.json=present, Odysseus-vanilla-linux-workstation.zip=present, KOSMO-Desktop-v2-linux-workstation.zip=present, ArchitekturkosmosMac.app=present | Vanilla/Desktop-Gates neu bauen, falls Manifest oder ZIP fehlt. |
 | `home-pc-handover` | `ready` | KOSMO-home-pc-linux-handover.zip: OK | kosmo-home-pc-linux-handover-zip.sh neu ausfuehren und Checksum pruefen. |
-| `kosmo-orbit` | `ready` | repo_commit=3506a33, report=present | Orbit bleibt review-only; naechster Hebel ist die sichtbare Odysseus/KOSMO-Statusbruecke. |
+| `home-pc-start-readiness` | `ready` | status=home_pc_start_dry_run_passed, checks=25/25, warnings=0 | kosmo-home-pc-start-dry-run.sh ausfuehren und fehlende Pflichtchecks beheben. |
+| `kosmo-orbit` | `ready` | repo_commit=da46f0a, report=present | Orbit bleibt review-only; naechster Hebel ist die sichtbare Odysseus/KOSMO-Statusbruecke. |
 | `github-separation` | `blocked` | Dedicated Starter-Repo fehlt; Website-Repo wird nicht als Ersatz benutzt. | Eigenes Imperigo/Architekturkosmos_Codex_Starter Repo anlegen oder Import explizit freigeben. |
 
 ## Sources
 
-- local starter commit: `7e258a9`
+- local starter commit: `b7bd449`
 - cloud starter commit: `863dcde`
-- Orbit website commit: `3506a33`
+- Orbit website commit: `da46f0a`
 
 ## Home PC Handover
 
@@ -59,10 +60,11 @@ First commands:
 | `progress_number` | `passed` | Progress percent is a valid number between 0 and 100. |
 | `progress_bar_present` | `passed` | Progress bar is present for UI handoff. |
 | `required_lanes_present` | `passed` | All KOSMO control-spine lanes are present. |
-| `ready_lane_majority` | `passed` | At least five of six lanes are ready. |
+| `ready_lane_majority` | `passed` | At least six of seven lanes are ready. |
 | `runtime_ready` | `passed` | Odysseus runtime lane is ready. |
 | `model_ready` | `passed` | KOSMO Ollama model lane is ready. |
 | `handover_ready` | `passed` | Home-PC handover lane is ready. |
+| `home_pc_start_ready` | `passed` | Home-PC start readiness lane is ready. |
 | `github_separation_blocked` | `passed` | GitHub separation remains blocked until a dedicated Starter repo or explicit import approval exists. |
 | `policy_flags_present` | `passed` | All safety policy flags are present and true. |
 | `sources_present` | `passed` | Local starter, cloud starter and Orbit website sources are represented. |
