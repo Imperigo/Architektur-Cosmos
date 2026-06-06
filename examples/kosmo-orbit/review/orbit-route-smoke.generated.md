@@ -1,6 +1,6 @@
 # KosmoOrbit Route Smoke
 
-Generated: 2026-06-06T00:33:14.841Z
+Generated: 2026-06-06T01:02:55.432Z
 Status: `orbit_route_smoke_passed`
 Route: `app/orbit/page.tsx`
 
@@ -8,7 +8,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 
 ## Summary
 
-- checks: 254/254 passed
+- checks: 255/255 passed
 
 ## Checks
 
@@ -204,6 +204,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `shows_local_runtime_bridge` | `passed` | Route renders the local Odysseus/KOSMO runtime bridge. |
 | `local_runtime_bridge_uses_generated_report` | `passed` | Local runtime bridge uses the generated bridge report for lanes, progress and source commits. |
 | `local_runtime_bridge_shows_home_pc_index` | `passed` | Local runtime bridge shows the Home-PC handover index artifacts and Linux first commands. |
+| `local_runtime_bridge_shows_github_separation_decision` | `passed` | Local runtime bridge shows the GitHub separation Owner-Go decision and keeps the website repo separate. |
 | `keeps_local_runtime_bridge_review_only` | `passed` | Local runtime bridge blocks processes, model starts, private scans, uploads and publish actions. |
 | `shows_kosmosketch_adapter` | `passed` | Route renders the KosmoSketch target-tool adapter. |
 | `kosmosketch_adapter_uses_local_contract` | `passed` | KosmoSketch adapter uses local contract for target tool, department, artifacts and blocked actions. |

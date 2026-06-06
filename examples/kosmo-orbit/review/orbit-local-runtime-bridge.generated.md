@@ -1,6 +1,6 @@
 # KosmoOrbit Local Runtime Bridge
 
-Generated: 2026-06-06T00:58:29.213Z
+Generated: 2026-06-06T01:02:50.960Z
 Status: `local_runtime_bridge_passed`
 Input: `examples/kosmo-orbit/runtime/kosmo-night-status.demo.json`
 Mode: `external_local_status_import`
@@ -49,6 +49,27 @@ First commands:
 - `unzip KOSMO-home-pc-linux-handover.zip -d KOSMO-home-pc-linux-handover`
 - `less KOSMO-home-pc-linux-handover/tmp/kosmo-night-status.md`
 - `less KOSMO-home-pc-linux-handover/tmp/kosmo-home-pc-linux-handover-manifest.json`
+
+## GitHub Separation Decision
+
+- status: `owner_go_required`
+- recommended repository: `Imperigo/Architekturkosmos_Codex_Starter`
+- first import branch: `kosmo-starter-initial-import-20260606`
+- website repository: `Imperigo/Architektur-Cosmos`
+- evidence: Decision pack proposed repo=Imperigo/Architekturkosmos_Codex_Starter; waiting for owner-go.
+
+Blocked until:
+- Dedicated Starter repository exists.
+- Owner explicitly approves first import.
+- First push uses a review branch, not main.
+- Website repository remains separate.
+
+Forbidden without Owner-Go:
+- create GitHub repository
+- push to main
+- push starter tree into website repository
+- change secrets
+- enable deployments
 
 ## Checks
 

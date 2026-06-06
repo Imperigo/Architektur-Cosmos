@@ -42,6 +42,15 @@ type LocalRuntimeBridgeReport = {
     purpose: string;
     first_commands: string[];
   };
+  github_separation_decision: {
+    status: string;
+    recommended_repository: string;
+    first_import_branch: string;
+    website_repository: string;
+    evidence: string;
+    blocked_until: string[];
+    forbidden_without_owner_go: string[];
+  };
 };
 
 const localRuntimeBridge = localRuntimeBridgeData as LocalRuntimeBridgeReport;
@@ -166,6 +175,46 @@ export function OrbitLocalRuntimeBridge() {
               {command}
             </code>
           ))}
+        </div>
+      </div>
+
+      <div className="mt-4 rounded-lg border border-amber-300/25 bg-amber-300/[0.07] p-3">
+        <div className="flex flex-wrap items-start justify-between gap-2">
+          <div className="min-w-0">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-amber-100">GitHub Separation Owner-Go</p>
+            <h3 className="mt-2 text-lg font-semibold text-white">Dediziertes Starter-Repo statt Website-Vermischung</h3>
+            <p className="mt-2 text-sm leading-6 text-stone-300">{localRuntimeBridge.github_separation_decision.evidence}</p>
+          </div>
+          <BridgeChip label={localRuntimeBridge.github_separation_decision.status} tone="amber" />
+        </div>
+        <div className="mt-3 grid gap-2 text-sm leading-5 md:grid-cols-3">
+          <p className="rounded-md border border-amber-300/20 bg-black/20 px-3 py-2 text-amber-100">
+            Starter <code className="block break-words text-stone-200">{localRuntimeBridge.github_separation_decision.recommended_repository}</code>
+          </p>
+          <p className="rounded-md border border-amber-300/20 bg-black/20 px-3 py-2 text-amber-100">
+            Import <code className="block break-words text-stone-200">{localRuntimeBridge.github_separation_decision.first_import_branch}</code>
+          </p>
+          <p className="rounded-md border border-amber-300/20 bg-black/20 px-3 py-2 text-amber-100">
+            Website bleibt <code className="block break-words text-stone-200">{localRuntimeBridge.github_separation_decision.website_repository}</code>
+          </p>
+        </div>
+        <div className="mt-3 grid gap-3 lg:grid-cols-2">
+          <div className="rounded-md border border-white/10 bg-black/20 p-3">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-stone-500">Blockiert bis</p>
+            <ul className="mt-2 space-y-1 text-sm leading-5 text-stone-300">
+              {localRuntimeBridge.github_separation_decision.blocked_until.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </div>
+          <div className="rounded-md border border-rose-300/20 bg-rose-300/10 p-3">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-rose-100">Ohne Owner-Go verboten</p>
+            <ul className="mt-2 space-y-1 text-sm leading-5 text-rose-50/90">
+              {localRuntimeBridge.github_separation_decision.forbidden_without_owner_go.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
 

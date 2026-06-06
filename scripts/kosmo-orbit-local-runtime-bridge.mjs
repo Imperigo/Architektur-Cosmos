@@ -143,6 +143,26 @@ function buildReport(status) {
         'less KOSMO-home-pc-linux-handover/tmp/kosmo-home-pc-linux-handover-manifest.json'
       ]
     },
+    github_separation_decision: {
+      status: 'owner_go_required',
+      recommended_repository: 'Imperigo/Architekturkosmos_Codex_Starter',
+      first_import_branch: 'kosmo-starter-initial-import-20260606',
+      website_repository: 'Imperigo/Architektur-Cosmos',
+      evidence: githubLane?.evidence || 'Decision pack pending.',
+      blocked_until: [
+        'Dedicated Starter repository exists.',
+        'Owner explicitly approves first import.',
+        'First push uses a review branch, not main.',
+        'Website repository remains separate.'
+      ],
+      forbidden_without_owner_go: [
+        'create GitHub repository',
+        'push to main',
+        'push starter tree into website repository',
+        'change secrets',
+        'enable deployments'
+      ]
+    },
     checks,
     next_actions: asArray(status.next_three_implementation_steps)
   };
@@ -193,6 +213,17 @@ function renderMarkdown(report) {
   lines.push(`- purpose: ${report.home_pc_handover.purpose}`);
   lines.push('', 'First commands:');
   report.home_pc_handover.first_commands.forEach((command) => lines.push(`- \`${command}\``));
+
+  lines.push('', '## GitHub Separation Decision', '');
+  lines.push(`- status: \`${report.github_separation_decision.status}\``);
+  lines.push(`- recommended repository: \`${report.github_separation_decision.recommended_repository}\``);
+  lines.push(`- first import branch: \`${report.github_separation_decision.first_import_branch}\``);
+  lines.push(`- website repository: \`${report.github_separation_decision.website_repository}\``);
+  lines.push(`- evidence: ${report.github_separation_decision.evidence}`);
+  lines.push('', 'Blocked until:');
+  report.github_separation_decision.blocked_until.forEach((item) => lines.push(`- ${item}`));
+  lines.push('', 'Forbidden without Owner-Go:');
+  report.github_separation_decision.forbidden_without_owner_go.forEach((item) => lines.push(`- ${item}`));
 
   lines.push('', '## Checks', '', '| Check | Status | Meaning |', '| --- | --- | --- |');
   report.checks.forEach((item) => lines.push(`| \`${item.id}\` | \`${item.status}\` | ${escapePipe(item.label)} |`));
