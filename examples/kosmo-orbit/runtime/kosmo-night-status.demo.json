@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-06T00:30:29.335104+00:00",
+  "generated_at": "2026-06-06T00:43:53.744954+00:00",
   "goal": "KOSMO local control spine over Odysseus with safe Home-PC handover",
   "progress_percent": 83,
   "progress_bar": "[####################----] 83%",
@@ -16,7 +16,7 @@
       "path": "<local_starter>",
       "exists": true,
       "clean": true,
-      "commit": "3844b46",
+      "commit": "7e258a9",
       "status_short": ""
     },
     "cloud_starter": {
@@ -30,7 +30,7 @@
       "path": "<orbit_website>",
       "exists": true,
       "clean": true,
-      "commit": "f303aff",
+      "commit": "3506a33",
       "status_short": ""
     },
     "runtime_dir": "<runtime_dir>"
@@ -73,7 +73,7 @@
       "label": "KosmoOrbit Interface",
       "status": "ready",
       "ready": true,
-      "evidence": "repo_commit=f303aff, report=present",
+      "evidence": "repo_commit=3506a33, report=present",
       "next_action": "Orbit bleibt review-only; naechster Hebel ist die sichtbare Odysseus/KOSMO-Statusbruecke."
     },
     {

@@ -35,6 +35,10 @@ type LocalRuntimeBridgeReport = {
     zip_artifact: string;
     checksum_artifact: string;
     manifest_artifact: string;
+    start_dry_run_script: string;
+    start_dry_run_report: string;
+    start_dry_run_status: string;
+    start_dry_run_checks: string;
     purpose: string;
     first_commands: string[];
   };
@@ -142,6 +146,18 @@ export function OrbitLocalRuntimeBridge() {
           </p>
           <p className="rounded-md border border-cyan-300/20 bg-black/20 px-3 py-2 text-cyan-100">
             JSON <code className="block break-words text-stone-200">{localRuntimeBridge.home_pc_handover.manifest_artifact}</code>
+          </p>
+        </div>
+        <div className="mt-3 grid gap-2 text-sm leading-5 md:grid-cols-[1.1fr_1.1fr_0.8fr]">
+          <p className="rounded-md border border-emerald-300/20 bg-emerald-300/10 px-3 py-2 text-emerald-100">
+            Dry-Run <code className="block break-words text-stone-200">{localRuntimeBridge.home_pc_handover.start_dry_run_script}</code>
+          </p>
+          <p className="rounded-md border border-emerald-300/20 bg-emerald-300/10 px-3 py-2 text-emerald-100">
+            Report <code className="block break-words text-stone-200">{localRuntimeBridge.home_pc_handover.start_dry_run_report}</code>
+          </p>
+          <p className="rounded-md border border-emerald-300/20 bg-emerald-300/10 px-3 py-2 text-emerald-100">
+            {localRuntimeBridge.home_pc_handover.start_dry_run_checks}
+            <code className="block break-words text-stone-200">{localRuntimeBridge.home_pc_handover.start_dry_run_status}</code>
           </p>
         </div>
         <div className="mt-3 grid gap-2 lg:grid-cols-2">

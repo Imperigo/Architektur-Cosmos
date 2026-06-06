@@ -129,6 +129,10 @@ function buildReport(status) {
       zip_artifact: 'dist/KOSMO-home-pc-linux-handover.zip',
       checksum_artifact: 'dist/KOSMO-home-pc-linux-handover.zip.sha256',
       manifest_artifact: 'tmp/kosmo-home-pc-linux-handover-manifest.json',
+      start_dry_run_script: 'scripts/kosmo-home-pc-start-dry-run.sh',
+      start_dry_run_report: 'tmp/kosmo-home-pc-start-dry-run.json',
+      start_dry_run_status: 'home_pc_start_dry_run_passed',
+      start_dry_run_checks: '25/25',
       purpose: 'Machine-readable Linux handover index for the future Home-PC setup.',
       first_commands: [
         'shasum -a 256 -c KOSMO-home-pc-linux-handover.zip.sha256',
@@ -180,6 +184,10 @@ function renderMarkdown(report) {
   lines.push(`- zip: \`${report.home_pc_handover.zip_artifact}\``);
   lines.push(`- checksum: \`${report.home_pc_handover.checksum_artifact}\``);
   lines.push(`- manifest: \`${report.home_pc_handover.manifest_artifact}\``);
+  lines.push(`- start dry-run script: \`${report.home_pc_handover.start_dry_run_script}\``);
+  lines.push(`- start dry-run report: \`${report.home_pc_handover.start_dry_run_report}\``);
+  lines.push(`- start dry-run status: \`${report.home_pc_handover.start_dry_run_status}\``);
+  lines.push(`- start dry-run checks: \`${report.home_pc_handover.start_dry_run_checks}\``);
   lines.push(`- purpose: ${report.home_pc_handover.purpose}`);
   lines.push('', 'First commands:');
   report.home_pc_handover.first_commands.forEach((command) => lines.push(`- \`${command}\``));

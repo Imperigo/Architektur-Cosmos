@@ -1,6 +1,6 @@
 # KosmoOrbit Local Runtime Bridge
 
-Generated: 2026-06-06T00:33:10.380Z
+Generated: 2026-06-06T00:46:10.934Z
 Status: `local_runtime_bridge_passed`
 Input: `examples/kosmo-orbit/runtime/kosmo-night-status.demo.json`
 Mode: `external_local_status_import`
@@ -22,14 +22,14 @@ Review-only bridge from the local KOSMO Night Status into KosmoOrbit. It reads a
 | `kosmo-model` | `ready` | KOSMO Ollama enthaelt qwen2.5-coder:1.5b. | odysseus-kosmo-model-sync.sh apply ausfuehren, falls der Endpoint driftet. |
 | `desktop-artifacts` | `ready` | odysseus-vanilla-desktop-manifest.json=present, Odysseus-vanilla-linux-workstation.zip=present, KOSMO-Desktop-v2-linux-workstation.zip=present, ArchitekturkosmosMac.app=present | Vanilla/Desktop-Gates neu bauen, falls Manifest oder ZIP fehlt. |
 | `home-pc-handover` | `ready` | KOSMO-home-pc-linux-handover.zip: OK | kosmo-home-pc-linux-handover-zip.sh neu ausfuehren und Checksum pruefen. |
-| `kosmo-orbit` | `ready` | repo_commit=f303aff, report=present | Orbit bleibt review-only; naechster Hebel ist die sichtbare Odysseus/KOSMO-Statusbruecke. |
+| `kosmo-orbit` | `ready` | repo_commit=3506a33, report=present | Orbit bleibt review-only; naechster Hebel ist die sichtbare Odysseus/KOSMO-Statusbruecke. |
 | `github-separation` | `blocked` | Dedicated Starter-Repo fehlt; Website-Repo wird nicht als Ersatz benutzt. | Eigenes Imperigo/Architekturkosmos_Codex_Starter Repo anlegen oder Import explizit freigeben. |
 
 ## Sources
 
-- local starter commit: `3844b46`
+- local starter commit: `7e258a9`
 - cloud starter commit: `863dcde`
-- Orbit website commit: `f303aff`
+- Orbit website commit: `3506a33`
 
 ## Home PC Handover
 
@@ -37,6 +37,10 @@ Review-only bridge from the local KOSMO Night Status into KosmoOrbit. It reads a
 - zip: `dist/KOSMO-home-pc-linux-handover.zip`
 - checksum: `dist/KOSMO-home-pc-linux-handover.zip.sha256`
 - manifest: `tmp/kosmo-home-pc-linux-handover-manifest.json`
+- start dry-run script: `scripts/kosmo-home-pc-start-dry-run.sh`
+- start dry-run report: `tmp/kosmo-home-pc-start-dry-run.json`
+- start dry-run status: `home_pc_start_dry_run_passed`
+- start dry-run checks: `25/25`
 - purpose: Machine-readable Linux handover index for the future Home-PC setup.
 
 First commands:

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-06T00:33:10.380Z",
+  "generated_at": "2026-06-06T00:46:10.934Z",
   "generator": "kosmo-orbit-local-runtime-bridge",
   "status": "local_runtime_bridge_passed",
   "input_status_file": "examples/kosmo-orbit/runtime/kosmo-night-status.demo.json",
@@ -27,7 +27,7 @@
   "control_spine": {
     "goal": "KOSMO local control spine over Odysseus with safe Home-PC handover",
     "progress_bar": "[####################----] 83%",
-    "generated_at": "2026-06-06T00:30:29.335104+00:00"
+    "generated_at": "2026-06-06T00:43:53.744954+00:00"
   },
   "lanes": [
     {
@@ -62,7 +62,7 @@
       "id": "kosmo-orbit",
       "label": "KosmoOrbit Interface",
       "status": "ready",
-      "evidence": "repo_commit=f303aff, report=present",
+      "evidence": "repo_commit=3506a33, report=present",
       "next_action": "Orbit bleibt review-only; naechster Hebel ist die sichtbare Odysseus/KOSMO-Statusbruecke."
     },
     {
@@ -74,15 +74,19 @@
     }
   ],
   "sources": {
-    "local_starter_commit": "3844b46",
+    "local_starter_commit": "7e258a9",
     "cloud_starter_commit": "863dcde",
-    "orbit_website_commit": "f303aff"
+    "orbit_website_commit": "3506a33"
   },
   "home_pc_handover": {
     "platform": "linux-workstation",
     "zip_artifact": "dist/KOSMO-home-pc-linux-handover.zip",
     "checksum_artifact": "dist/KOSMO-home-pc-linux-handover.zip.sha256",
     "manifest_artifact": "tmp/kosmo-home-pc-linux-handover-manifest.json",
+    "start_dry_run_script": "scripts/kosmo-home-pc-start-dry-run.sh",
+    "start_dry_run_report": "tmp/kosmo-home-pc-start-dry-run.json",
+    "start_dry_run_status": "home_pc_start_dry_run_passed",
+    "start_dry_run_checks": "25/25",
     "purpose": "Machine-readable Linux handover index for the future Home-PC setup.",
     "first_commands": [
       "shasum -a 256 -c KOSMO-home-pc-linux-handover.zip.sha256",
