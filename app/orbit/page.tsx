@@ -22,6 +22,7 @@ import { OrbitInstallationTopology } from './OrbitInstallationTopology';
 import { OrbitDesignPilotPath } from './OrbitDesignPilotPath';
 import { OrbitLearningMode } from './OrbitLearningMode';
 import { OrbitLocalIdentityContract } from './OrbitLocalIdentityContract';
+import { OrbitLocalRuntimeBridge } from './OrbitLocalRuntimeBridge';
 import { OrbitLocalStorageDecisionDraft } from './OrbitLocalStorageDecisionDraft';
 import { OrbitDeleteExportRestoreDrill } from './OrbitDeleteExportRestoreDrill';
 import { OrbitLaunchDecisionBrief } from './OrbitLaunchDecisionBrief';
@@ -473,6 +474,10 @@ export default function OrbitPage() {
 
           <div id="runtime-adapter" className="scroll-mt-4">
             <OrbitRuntimeAdapterContract />
+          </div>
+
+          <div id="local-runtime-bridge" className="scroll-mt-4">
+            <OrbitLocalRuntimeBridge />
           </div>
 
           <div id="kosmosketch-adapter" className="scroll-mt-4">

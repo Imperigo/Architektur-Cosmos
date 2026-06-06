@@ -47,6 +47,7 @@ const sectionGroups = [
     links: [
       { href: '#runtime-contract', label: 'Runtime' },
       { href: '#runtime-adapter', label: 'Adapter' },
+      { href: '#local-runtime-bridge', label: 'Bridge' },
       { href: '#kosmosketch-adapter', label: 'Sketch' },
       { href: '#installation', label: 'Installation' },
       { href: '#health', label: 'Health' },

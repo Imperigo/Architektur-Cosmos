@@ -1,6 +1,6 @@
 # KosmoOrbit Route Smoke
 
-Generated: 2026-06-02T20:38:38.766Z
+Generated: 2026-06-06T00:23:43.190Z
 Status: `orbit_route_smoke_passed`
 Route: `app/orbit/page.tsx`
 
@@ -8,7 +8,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 
 ## Summary
 
-- checks: 246/246 passed
+- checks: 253/253 passed
 
 ## Checks
 
@@ -50,6 +50,8 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `runtime_boundary_file_exists` | `passed` | Orbit MVP/runtime boundary component exists. |
 | `runtime_adapter_file_exists` | `passed` | Orbit runtime adapter component exists. |
 | `runtime_adapter_data_file_exists` | `passed` | Orbit runtime adapter contract exists. |
+| `local_runtime_bridge_file_exists` | `passed` | Orbit local runtime bridge component exists. |
+| `local_runtime_bridge_data_file_exists` | `passed` | Orbit local runtime bridge report exists. |
 | `kosmosketch_adapter_file_exists` | `passed` | Orbit KosmoSketch adapter component exists. |
 | `kosmosketch_adapter_data_file_exists` | `passed` | Orbit KosmoSketch adapter contract exists. |
 | `runtime_contract_file_exists` | `passed` | Orbit local runtime contract component exists. |
@@ -108,6 +110,8 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `imports_runtime_boundary` | `passed` | Route imports the MVP/runtime boundary component. |
 | `imports_runtime_adapter` | `passed` | Route imports the runtime adapter component. |
 | `imports_runtime_adapter_data` | `passed` | Runtime adapter component imports the local contract JSON. |
+| `imports_local_runtime_bridge` | `passed` | Route imports the local runtime bridge component. |
+| `imports_local_runtime_bridge_data` | `passed` | Local runtime bridge imports the generated bridge report. |
 | `imports_kosmosketch_adapter` | `passed` | Route imports the KosmoSketch adapter component. |
 | `imports_kosmosketch_adapter_data` | `passed` | KosmoSketch adapter component imports the local contract JSON. |
 | `imports_runtime_contract` | `passed` | Route imports the local runtime contract component. |
@@ -197,6 +201,9 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `shows_runtime_adapter` | `passed` | Route renders the Runtime Adapter contract. |
 | `runtime_adapter_uses_local_contract` | `passed` | Runtime adapter uses the local JSON contract for lanes and promotion requirements. |
 | `keeps_runtime_adapter_non_operational` | `passed` | Runtime adapter keeps adapters, processes, data writes and external accounts blocked. |
+| `shows_local_runtime_bridge` | `passed` | Route renders the local Odysseus/KOSMO runtime bridge. |
+| `local_runtime_bridge_uses_generated_report` | `passed` | Local runtime bridge uses the generated bridge report for lanes, progress and source commits. |
+| `keeps_local_runtime_bridge_review_only` | `passed` | Local runtime bridge blocks processes, model starts, private scans, uploads and publish actions. |
 | `shows_kosmosketch_adapter` | `passed` | Route renders the KosmoSketch target-tool adapter. |
 | `kosmosketch_adapter_uses_local_contract` | `passed` | KosmoSketch adapter uses local contract for target tool, department, artifacts and blocked actions. |
 | `keeps_kosmosketch_adapter_review_only` | `passed` | KosmoSketch adapter blocks backend calls, approvals, artifacts, Blender, BIM, IFC and 2D regeneration. |

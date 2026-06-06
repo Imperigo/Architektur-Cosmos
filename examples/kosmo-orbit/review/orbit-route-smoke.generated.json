@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-02T20:38:38.766Z",
+  "generated_at": "2026-06-06T00:23:43.190Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 246,
-    "passed_checks": 246,
+    "check_count": 253,
+    "passed_checks": 253,
     "failed_checks": 0
   },
   "checks": [
@@ -189,6 +189,16 @@
     {
       "id": "runtime_adapter_data_file_exists",
       "label": "Orbit runtime adapter contract exists.",
+      "status": "passed"
+    },
+    {
+      "id": "local_runtime_bridge_file_exists",
+      "label": "Orbit local runtime bridge component exists.",
+      "status": "passed"
+    },
+    {
+      "id": "local_runtime_bridge_data_file_exists",
+      "label": "Orbit local runtime bridge report exists.",
       "status": "passed"
     },
     {
@@ -479,6 +489,16 @@
     {
       "id": "imports_runtime_adapter_data",
       "label": "Runtime adapter component imports the local contract JSON.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_local_runtime_bridge",
+      "label": "Route imports the local runtime bridge component.",
+      "status": "passed"
+    },
+    {
+      "id": "imports_local_runtime_bridge_data",
+      "label": "Local runtime bridge imports the generated bridge report.",
       "status": "passed"
     },
     {
@@ -924,6 +944,21 @@
     {
       "id": "keeps_runtime_adapter_non_operational",
       "label": "Runtime adapter keeps adapters, processes, data writes and external accounts blocked.",
+      "status": "passed"
+    },
+    {
+      "id": "shows_local_runtime_bridge",
+      "label": "Route renders the local Odysseus/KOSMO runtime bridge.",
+      "status": "passed"
+    },
+    {
+      "id": "local_runtime_bridge_uses_generated_report",
+      "label": "Local runtime bridge uses the generated bridge report for lanes, progress and source commits.",
+      "status": "passed"
+    },
+    {
+      "id": "keeps_local_runtime_bridge_review_only",
+      "label": "Local runtime bridge blocks processes, model starts, private scans, uploads and publish actions.",
       "status": "passed"
     },
     {
