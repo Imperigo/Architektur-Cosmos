@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-05T17:08:20.918Z",
+  "generated_at": "2026-06-06T07:07:24.715Z",
   "generator": "kosmo-orbit-tool-registry-check",
   "status": "orbit_tool_registry_ready",
   "workspace_path": "examples/kosmo-orbit/workspace.demo.json",

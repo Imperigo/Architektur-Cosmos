@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-05T17:08:20.494Z",
+  "generated_at": "2026-06-06T07:07:24.204Z",
   "generator": "kosmo-orbit-role-shell-prototype",
   "source_variants": "examples/kosmo-projects/kosmo-demo-001/orbit/role-ui-variants.generated.json",
   "source_smoke": "examples/kosmo-projects/kosmo-demo-001/orbit/role-ui-smoke.generated.json",

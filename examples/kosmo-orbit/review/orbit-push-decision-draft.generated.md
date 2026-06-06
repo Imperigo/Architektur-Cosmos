@@ -1,6 +1,6 @@
 # KosmoOrbit Push Decision Draft Check
 
-Generated: 2026-06-05T17:08:20.744Z
+Generated: 2026-06-06T07:07:24.510Z
 Status: `push_decision_draft_passed`
 Contract: `examples/kosmo-orbit/governance/orbit-push-decision-draft.contract.json`
 

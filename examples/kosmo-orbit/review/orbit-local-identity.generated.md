@@ -1,6 +1,6 @@
 # KosmoOrbit Local Identity Check
 
-Generated: 2026-06-05T17:08:21.165Z
+Generated: 2026-06-06T07:07:25.022Z
 Status: `local_identity_contract_passed`
 Contract: `examples/kosmo-orbit/identity/orbit-local-identity.contract.json`
 

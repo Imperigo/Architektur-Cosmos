@@ -1,6 +1,6 @@
 # KosmoOrbit Toolchain Readiness Check
 
-Generated: 2026-06-05T17:08:20.673Z
+Generated: 2026-06-06T07:07:24.432Z
 Status: `toolchain_readiness_passed`
 Contract: `examples/kosmo-orbit/health/orbit-toolchain-readiness.contract.json`
 Heavy report: `examples/kosmo-orbit/review/orbit-heavy-check-timebox.generated.json`

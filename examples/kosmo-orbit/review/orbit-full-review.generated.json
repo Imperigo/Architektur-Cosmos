@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-05T17:08:21.495Z",
+  "generated_at": "2026-06-06T07:07:25.381Z",
   "generator": "kosmo-orbit-full-review",
   "workspace_path": "examples/kosmo-orbit/workspace.demo.json",
   "project_root": "examples/kosmo-projects/kosmo-demo-001",
@@ -233,7 +233,7 @@
     {
       "id": "workspace_check",
       "label": "Workspace Check",
-      "command": "/Applications/Codex.app/Contents/Resources/node scripts/kosmo-orbit-workspace-check.mjs --workspace examples/kosmo-orbit/workspace.demo.json",
+      "command": "/Users/andrinbaumann/.nvm/versions/node/v24.15.0/bin/node scripts/kosmo-orbit-workspace-check.mjs --workspace examples/kosmo-orbit/workspace.demo.json",
       "status": "passed",
       "exit_code": 0,
       "report_path": null,
@@ -245,7 +245,7 @@
     {
       "id": "role_state_check",
       "label": "Role State Check",
-      "command": "/Applications/Codex.app/Contents/Resources/node scripts/kosmo-orbit-role-state-check.mjs --workspace examples/kosmo-orbit/workspace.demo.json --state examples/kosmo-orbit/role-state.demo.json",
+      "command": "/Users/andrinbaumann/.nvm/versions/node/v24.15.0/bin/node scripts/kosmo-orbit-role-state-check.mjs --workspace examples/kosmo-orbit/workspace.demo.json --state examples/kosmo-orbit/role-state.demo.json",
       "status": "passed",
       "exit_code": 0,
       "report_path": "examples/kosmo-orbit/review/orbit-role-state-check.generated.json",
@@ -257,7 +257,7 @@
     {
       "id": "role_state_smoke",
       "label": "Role State Smoke",
-      "command": "/Applications/Codex.app/Contents/Resources/node scripts/kosmo-orbit-role-state-smoke.mjs --state examples/kosmo-orbit/role-state.demo.json --schema schema/kosmo-orbit-role-state.schema.json",
+      "command": "/Users/andrinbaumann/.nvm/versions/node/v24.15.0/bin/node scripts/kosmo-orbit-role-state-smoke.mjs --state examples/kosmo-orbit/role-state.demo.json --schema schema/kosmo-orbit-role-state.schema.json",
       "status": "passed",
       "exit_code": 0,
       "report_path": "examples/kosmo-orbit/review/orbit-role-state-smoke.generated.json",
@@ -269,7 +269,7 @@
     {
       "id": "workspace_status",
       "label": "Workspace Status",
-      "command": "/Applications/Codex.app/Contents/Resources/node scripts/kosmo-orbit-status-report.mjs --workspace examples/kosmo-orbit/workspace.demo.json",
+      "command": "/Users/andrinbaumann/.nvm/versions/node/v24.15.0/bin/node scripts/kosmo-orbit-status-report.mjs --workspace examples/kosmo-orbit/workspace.demo.json",
       "status": "passed",
       "exit_code": 0,
       "report_path": "examples/kosmo-orbit/review/orbit-status-report.generated.json",
@@ -281,7 +281,7 @@
     {
       "id": "project_inspector",
       "label": "Project Package Inspector",
-      "command": "/Applications/Codex.app/Contents/Resources/node scripts/kosmo-orbit-project-inspector.mjs --project examples/kosmo-projects/kosmo-demo-001",
+      "command": "/Users/andrinbaumann/.nvm/versions/node/v24.15.0/bin/node scripts/kosmo-orbit-project-inspector.mjs --project examples/kosmo-projects/kosmo-demo-001",
       "status": "passed",
       "exit_code": 0,
       "report_path": "examples/kosmo-projects/kosmo-demo-001/orbit/project-inspector.generated.json",
@@ -293,7 +293,7 @@
     {
       "id": "design_handoff",
       "label": "KosmoDesign Handoff Preview",
-      "command": "/Applications/Codex.app/Contents/Resources/node scripts/kosmo-orbit-design-handoff-preview.mjs --project examples/kosmo-projects/kosmo-demo-001 --workspaceReport examples/kosmo-orbit/review/orbit-status-report.generated.json --projectInspector examples/kosmo-projects/kosmo-demo-001/orbit/project-inspector.generated.json",
+      "command": "/Users/andrinbaumann/.nvm/versions/node/v24.15.0/bin/node scripts/kosmo-orbit-design-handoff-preview.mjs --project examples/kosmo-projects/kosmo-demo-001 --workspaceReport examples/kosmo-orbit/review/orbit-status-report.generated.json --projectInspector examples/kosmo-projects/kosmo-demo-001/orbit/project-inspector.generated.json",
       "status": "passed",
       "exit_code": 0,
       "report_path": "examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-preview.generated.json",
@@ -305,7 +305,7 @@
     {
       "id": "design_ui_panel",
       "label": "KosmoDesign UI Panel Spec",
-      "command": "/Applications/Codex.app/Contents/Resources/node scripts/kosmo-orbit-design-ui-panel-spec.mjs --project examples/kosmo-projects/kosmo-demo-001 --handoff orbit/design-handoff-preview.generated.json",
+      "command": "/Users/andrinbaumann/.nvm/versions/node/v24.15.0/bin/node scripts/kosmo-orbit-design-ui-panel-spec.mjs --project examples/kosmo-projects/kosmo-demo-001 --handoff orbit/design-handoff-preview.generated.json",
       "status": "passed",
       "exit_code": 0,
       "report_path": "examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-ui-panel.generated.json",
@@ -317,7 +317,7 @@
     {
       "id": "design_ui_prototype",
       "label": "KosmoDesign Static UI Prototype",
-      "command": "/Applications/Codex.app/Contents/Resources/node scripts/kosmo-orbit-design-ui-prototype.mjs --project examples/kosmo-projects/kosmo-demo-001 --panel orbit/design-handoff-ui-panel.generated.json",
+      "command": "/Users/andrinbaumann/.nvm/versions/node/v24.15.0/bin/node scripts/kosmo-orbit-design-ui-prototype.mjs --project examples/kosmo-projects/kosmo-demo-001 --panel orbit/design-handoff-ui-panel.generated.json",
       "status": "passed",
       "exit_code": 0,
       "report_path": "examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-ui-prototype.generated.json",
@@ -329,7 +329,7 @@
     {
       "id": "design_ui_smoke",
       "label": "KosmoDesign UI Smoke",
-      "command": "/Applications/Codex.app/Contents/Resources/node scripts/kosmo-orbit-design-ui-smoke.mjs --project examples/kosmo-projects/kosmo-demo-001 --html orbit/design-handoff-ui-prototype.generated.html --manifest orbit/design-handoff-ui-prototype.generated.json",
+      "command": "/Users/andrinbaumann/.nvm/versions/node/v24.15.0/bin/node scripts/kosmo-orbit-design-ui-smoke.mjs --project examples/kosmo-projects/kosmo-demo-001 --html orbit/design-handoff-ui-prototype.generated.html --manifest orbit/design-handoff-ui-prototype.generated.json",
       "status": "passed",
       "exit_code": 0,
       "report_path": "examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-ui-smoke.generated.json",
@@ -341,7 +341,7 @@
     {
       "id": "role_ui_variants",
       "label": "Role UI Variants",
-      "command": "/Applications/Codex.app/Contents/Resources/node scripts/kosmo-orbit-role-ui-variants.mjs --workspace examples/kosmo-orbit/workspace.demo.json --project examples/kosmo-projects/kosmo-demo-001 --panel orbit/design-handoff-ui-panel.generated.json",
+      "command": "/Users/andrinbaumann/.nvm/versions/node/v24.15.0/bin/node scripts/kosmo-orbit-role-ui-variants.mjs --workspace examples/kosmo-orbit/workspace.demo.json --project examples/kosmo-projects/kosmo-demo-001 --panel orbit/design-handoff-ui-panel.generated.json",
       "status": "passed",
       "exit_code": 0,
       "report_path": "examples/kosmo-projects/kosmo-demo-001/orbit/role-ui-variants.generated.json",
@@ -353,7 +353,7 @@
     {
       "id": "role_ui_smoke",
       "label": "Role UI Smoke",
-      "command": "/Applications/Codex.app/Contents/Resources/node scripts/kosmo-orbit-role-ui-smoke.mjs --project examples/kosmo-projects/kosmo-demo-001 --variants orbit/role-ui-variants.generated.json",
+      "command": "/Users/andrinbaumann/.nvm/versions/node/v24.15.0/bin/node scripts/kosmo-orbit-role-ui-smoke.mjs --project examples/kosmo-projects/kosmo-demo-001 --variants orbit/role-ui-variants.generated.json",
       "status": "passed",
       "exit_code": 0,
       "report_path": "examples/kosmo-projects/kosmo-demo-001/orbit/role-ui-smoke.generated.json",
@@ -365,7 +365,7 @@
     {
       "id": "role_shell_prototype",
       "label": "Role Shell Prototype",
-      "command": "/Applications/Codex.app/Contents/Resources/node scripts/kosmo-orbit-role-shell-prototype.mjs --project examples/kosmo-projects/kosmo-demo-001 --variants orbit/role-ui-variants.generated.json --smoke orbit/role-ui-smoke.generated.json --state examples/kosmo-orbit/role-state.demo.json",
+      "command": "/Users/andrinbaumann/.nvm/versions/node/v24.15.0/bin/node scripts/kosmo-orbit-role-shell-prototype.mjs --project examples/kosmo-projects/kosmo-demo-001 --variants orbit/role-ui-variants.generated.json --smoke orbit/role-ui-smoke.generated.json --state examples/kosmo-orbit/role-state.demo.json",
       "status": "passed",
       "exit_code": 0,
       "report_path": "examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-prototype.generated.json",
@@ -377,7 +377,7 @@
     {
       "id": "role_shell_smoke",
       "label": "Role Shell Smoke",
-      "command": "/Applications/Codex.app/Contents/Resources/node scripts/kosmo-orbit-role-shell-smoke.mjs --project examples/kosmo-projects/kosmo-demo-001 --html orbit/role-shell-prototype.generated.html --manifest orbit/role-shell-prototype.generated.json",
+      "command": "/Users/andrinbaumann/.nvm/versions/node/v24.15.0/bin/node scripts/kosmo-orbit-role-shell-smoke.mjs --project examples/kosmo-projects/kosmo-demo-001 --html orbit/role-shell-prototype.generated.html --manifest orbit/role-shell-prototype.generated.json",
       "status": "passed",
       "exit_code": 0,
       "report_path": "examples/kosmo-projects/kosmo-demo-001/orbit/role-shell-smoke.generated.json",
@@ -389,7 +389,7 @@
     {
       "id": "role_state_handoff",
       "label": "Role State Handoff",
-      "command": "/Applications/Codex.app/Contents/Resources/node scripts/kosmo-orbit-role-state-handoff.mjs --state examples/kosmo-orbit/role-state.demo.json --check examples/kosmo-orbit/review/orbit-role-state-check.generated.json --stateSmoke examples/kosmo-orbit/review/orbit-role-state-smoke.generated.json --project examples/kosmo-projects/kosmo-demo-001 --shell orbit/role-shell-prototype.generated.json --shellSmoke orbit/role-shell-smoke.generated.json",
+      "command": "/Users/andrinbaumann/.nvm/versions/node/v24.15.0/bin/node scripts/kosmo-orbit-role-state-handoff.mjs --state examples/kosmo-orbit/role-state.demo.json --check examples/kosmo-orbit/review/orbit-role-state-check.generated.json --stateSmoke examples/kosmo-orbit/review/orbit-role-state-smoke.generated.json --project examples/kosmo-projects/kosmo-demo-001 --shell orbit/role-shell-prototype.generated.json --shellSmoke orbit/role-shell-smoke.generated.json",
       "status": "passed",
       "exit_code": 0,
       "report_path": "examples/kosmo-orbit/review/orbit-role-state-handoff.generated.json",
@@ -401,7 +401,7 @@
     {
       "id": "app_route_spec",
       "label": "Orbit App Route Spec",
-      "command": "/Applications/Codex.app/Contents/Resources/node scripts/kosmo-orbit-app-route-spec.mjs --handoff examples/kosmo-orbit/review/orbit-role-state-handoff.generated.json --state examples/kosmo-orbit/role-state.demo.json --project examples/kosmo-projects/kosmo-demo-001 --shell orbit/role-shell-prototype.generated.json",
+      "command": "/Users/andrinbaumann/.nvm/versions/node/v24.15.0/bin/node scripts/kosmo-orbit-app-route-spec.mjs --handoff examples/kosmo-orbit/review/orbit-role-state-handoff.generated.json --state examples/kosmo-orbit/role-state.demo.json --project examples/kosmo-projects/kosmo-demo-001 --shell orbit/role-shell-prototype.generated.json",
       "status": "passed",
       "exit_code": 0,
       "report_path": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
@@ -413,7 +413,7 @@
     {
       "id": "health_readiness",
       "label": "Health Readiness Contract",
-      "command": "/Applications/Codex.app/Contents/Resources/node scripts/kosmo-orbit-health-readiness-smoke.mjs --contract examples/kosmo-orbit/health/health-readiness.contract.json",
+      "command": "/Users/andrinbaumann/.nvm/versions/node/v24.15.0/bin/node scripts/kosmo-orbit-health-readiness-smoke.mjs --contract examples/kosmo-orbit/health/health-readiness.contract.json",
       "status": "passed",
       "exit_code": 0,
       "report_path": "examples/kosmo-orbit/review/orbit-health-readiness.generated.json",
@@ -425,7 +425,7 @@
     {
       "id": "toolchain_readiness",
       "label": "Orbit Toolchain Readiness",
-      "command": "/Applications/Codex.app/Contents/Resources/node scripts/kosmo-orbit-toolchain-readiness-check.mjs --contract examples/kosmo-orbit/health/orbit-toolchain-readiness.contract.json --heavyReport examples/kosmo-orbit/review/orbit-heavy-check-timebox.generated.json --component app/orbit/OrbitToolchainReadiness.tsx --route app/orbit/page.tsx --sectionIndex app/orbit/OrbitSectionIndex.tsx",
+      "command": "/Users/andrinbaumann/.nvm/versions/node/v24.15.0/bin/node scripts/kosmo-orbit-toolchain-readiness-check.mjs --contract examples/kosmo-orbit/health/orbit-toolchain-readiness.contract.json --heavyReport examples/kosmo-orbit/review/orbit-heavy-check-timebox.generated.json --component app/orbit/OrbitToolchainReadiness.tsx --route app/orbit/page.tsx --sectionIndex app/orbit/OrbitSectionIndex.tsx",
       "status": "passed",
       "exit_code": 0,
       "report_path": "examples/kosmo-orbit/review/orbit-toolchain-readiness.generated.json",
@@ -437,7 +437,7 @@
     {
       "id": "github_imperigo_gate",
       "label": "Orbit GitHub Imperigo Gate",
-      "command": "/Applications/Codex.app/Contents/Resources/node scripts/kosmo-orbit-github-imperigo-gate-check.mjs --contract examples/kosmo-orbit/governance/orbit-github-imperigo-gate.contract.json --component app/orbit/OrbitGitHubImperigoGate.tsx --route app/orbit/page.tsx --sectionIndex app/orbit/OrbitSectionIndex.tsx",
+      "command": "/Users/andrinbaumann/.nvm/versions/node/v24.15.0/bin/node scripts/kosmo-orbit-github-imperigo-gate-check.mjs --contract examples/kosmo-orbit/governance/orbit-github-imperigo-gate.contract.json --component app/orbit/OrbitGitHubImperigoGate.tsx --route app/orbit/page.tsx --sectionIndex app/orbit/OrbitSectionIndex.tsx",
       "status": "passed",
       "exit_code": 0,
       "report_path": "examples/kosmo-orbit/review/orbit-github-imperigo-gate.generated.json",
@@ -449,7 +449,7 @@
     {
       "id": "push_decision_draft",
       "label": "Orbit Push Decision Draft",
-      "command": "/Applications/Codex.app/Contents/Resources/node scripts/kosmo-orbit-push-decision-draft-check.mjs --contract examples/kosmo-orbit/governance/orbit-push-decision-draft.contract.json --component app/orbit/OrbitPushDecisionDraft.tsx --route app/orbit/page.tsx --sectionIndex app/orbit/OrbitSectionIndex.tsx",
+      "command": "/Users/andrinbaumann/.nvm/versions/node/v24.15.0/bin/node scripts/kosmo-orbit-push-decision-draft-check.mjs --contract examples/kosmo-orbit/governance/orbit-push-decision-draft.contract.json --component app/orbit/OrbitPushDecisionDraft.tsx --route app/orbit/page.tsx --sectionIndex app/orbit/OrbitSectionIndex.tsx",
       "status": "passed",
       "exit_code": 0,
       "report_path": "examples/kosmo-orbit/review/orbit-push-decision-draft.generated.json",
@@ -461,7 +461,7 @@
     {
       "id": "command_contract",
       "label": "Orbit Command Contract",
-      "command": "/Applications/Codex.app/Contents/Resources/node scripts/kosmo-orbit-command-contract-smoke.mjs --contract examples/kosmo-orbit/commands/orbit-command.contract.json",
+      "command": "/Users/andrinbaumann/.nvm/versions/node/v24.15.0/bin/node scripts/kosmo-orbit-command-contract-smoke.mjs --contract examples/kosmo-orbit/commands/orbit-command.contract.json",
       "status": "passed",
       "exit_code": 0,
       "report_path": "examples/kosmo-orbit/review/orbit-command-contract.generated.json",
@@ -473,7 +473,7 @@
     {
       "id": "audit_trail",
       "label": "Orbit Audit Trail Contract",
-      "command": "/Applications/Codex.app/Contents/Resources/node scripts/kosmo-orbit-audit-trail-smoke.mjs --contract examples/kosmo-orbit/audit/orbit-audit-trail.contract.json",
+      "command": "/Users/andrinbaumann/.nvm/versions/node/v24.15.0/bin/node scripts/kosmo-orbit-audit-trail-smoke.mjs --contract examples/kosmo-orbit/audit/orbit-audit-trail.contract.json",
       "status": "passed",
       "exit_code": 0,
       "report_path": "examples/kosmo-orbit/review/orbit-audit-trail.generated.json",
@@ -485,7 +485,7 @@
     {
       "id": "office_routine",
       "label": "Orbit Office Routine Contract",
-      "command": "/Applications/Codex.app/Contents/Resources/node scripts/kosmo-orbit-office-routine-smoke.mjs --contract examples/kosmo-orbit/routines/orbit-office-routine.contract.json",
+      "command": "/Users/andrinbaumann/.nvm/versions/node/v24.15.0/bin/node scripts/kosmo-orbit-office-routine-smoke.mjs --contract examples/kosmo-orbit/routines/orbit-office-routine.contract.json",
       "status": "passed",
       "exit_code": 0,
       "report_path": "examples/kosmo-orbit/review/orbit-office-routine.generated.json",
@@ -497,7 +497,7 @@
     {
       "id": "office_pilot_scene",
       "label": "Orbit Office Pilot Scene",
-      "command": "/Applications/Codex.app/Contents/Resources/node scripts/kosmo-orbit-office-pilot-scene-check.mjs --scene examples/kosmo-orbit/pilot/orbit-office-pilot-scene.demo.json",
+      "command": "/Users/andrinbaumann/.nvm/versions/node/v24.15.0/bin/node scripts/kosmo-orbit-office-pilot-scene-check.mjs --scene examples/kosmo-orbit/pilot/orbit-office-pilot-scene.demo.json",
       "status": "passed",
       "exit_code": 0,
       "report_path": "examples/kosmo-orbit/review/orbit-office-pilot-scene.generated.json",
@@ -509,7 +509,7 @@
     {
       "id": "tool_registry",
       "label": "Orbit Tool Registry",
-      "command": "/Applications/Codex.app/Contents/Resources/node scripts/kosmo-orbit-tool-registry-check.mjs --workspace examples/kosmo-orbit/workspace.demo.json --component app/orbit/OrbitToolRegistry.tsx --route app/orbit/page.tsx --sectionIndex app/orbit/OrbitSectionIndex.tsx",
+      "command": "/Users/andrinbaumann/.nvm/versions/node/v24.15.0/bin/node scripts/kosmo-orbit-tool-registry-check.mjs --workspace examples/kosmo-orbit/workspace.demo.json --component app/orbit/OrbitToolRegistry.tsx --route app/orbit/page.tsx --sectionIndex app/orbit/OrbitSectionIndex.tsx",
       "status": "passed",
       "exit_code": 0,
       "report_path": "examples/kosmo-orbit/review/orbit-tool-registry.generated.json",
@@ -521,7 +521,7 @@
     {
       "id": "runtime_adapter",
       "label": "Orbit Runtime Adapter Contract",
-      "command": "/Applications/Codex.app/Contents/Resources/node scripts/kosmo-orbit-runtime-adapter-check.mjs --contract examples/kosmo-orbit/runtime/orbit-runtime-adapter.contract.json --component app/orbit/OrbitRuntimeAdapterContract.tsx --route app/orbit/page.tsx --sectionIndex app/orbit/OrbitSectionIndex.tsx",
+      "command": "/Users/andrinbaumann/.nvm/versions/node/v24.15.0/bin/node scripts/kosmo-orbit-runtime-adapter-check.mjs --contract examples/kosmo-orbit/runtime/orbit-runtime-adapter.contract.json --component app/orbit/OrbitRuntimeAdapterContract.tsx --route app/orbit/page.tsx --sectionIndex app/orbit/OrbitSectionIndex.tsx",
       "status": "passed",
       "exit_code": 0,
       "report_path": "examples/kosmo-orbit/review/orbit-runtime-adapter.generated.json",
@@ -533,7 +533,7 @@
     {
       "id": "kosmosketch_adapter",
       "label": "Orbit KosmoSketch ToolAdapter Contract",
-      "command": "/Applications/Codex.app/Contents/Resources/node scripts/kosmo-orbit-kosmosketch-adapter-check.mjs --contract examples/kosmo-orbit/runtime/kosmosketch-tool-adapter.contract.json --component app/orbit/OrbitKosmoSketchAdapterContract.tsx --route app/orbit/page.tsx --sectionIndex app/orbit/OrbitSectionIndex.tsx",
+      "command": "/Users/andrinbaumann/.nvm/versions/node/v24.15.0/bin/node scripts/kosmo-orbit-kosmosketch-adapter-check.mjs --contract examples/kosmo-orbit/runtime/kosmosketch-tool-adapter.contract.json --component app/orbit/OrbitKosmoSketchAdapterContract.tsx --route app/orbit/page.tsx --sectionIndex app/orbit/OrbitSectionIndex.tsx",
       "status": "passed",
       "exit_code": 0,
       "report_path": "examples/kosmo-orbit/review/orbit-kosmosketch-adapter.generated.json",
@@ -545,7 +545,7 @@
     {
       "id": "autonomous_fire_state",
       "label": "Orbit Autonomous Fire State",
-      "command": "/Applications/Codex.app/Contents/Resources/node scripts/kosmo-orbit-autonomous-fire-state-check.mjs --contract examples/kosmo-orbit/memory/orbit-autonomous-fire-state.contract.json --component app/orbit/OrbitAutonomousFireState.tsx --route app/orbit/page.tsx --sectionIndex app/orbit/OrbitSectionIndex.tsx",
+      "command": "/Users/andrinbaumann/.nvm/versions/node/v24.15.0/bin/node scripts/kosmo-orbit-autonomous-fire-state-check.mjs --contract examples/kosmo-orbit/memory/orbit-autonomous-fire-state.contract.json --component app/orbit/OrbitAutonomousFireState.tsx --route app/orbit/page.tsx --sectionIndex app/orbit/OrbitSectionIndex.tsx",
       "status": "passed",
       "exit_code": 0,
       "report_path": "examples/kosmo-orbit/review/orbit-autonomous-fire-state.generated.json",
@@ -557,7 +557,7 @@
     {
       "id": "autonomous_loop_ledger",
       "label": "Orbit Autonomous Loop Ledger",
-      "command": "/Applications/Codex.app/Contents/Resources/node scripts/kosmo-orbit-autonomous-loop-ledger-check.mjs --contract examples/kosmo-orbit/memory/orbit-autonomous-loop-ledger.contract.json --component app/orbit/OrbitAutonomousLoopLedger.tsx --route app/orbit/page.tsx --sectionIndex app/orbit/OrbitSectionIndex.tsx",
+      "command": "/Users/andrinbaumann/.nvm/versions/node/v24.15.0/bin/node scripts/kosmo-orbit-autonomous-loop-ledger-check.mjs --contract examples/kosmo-orbit/memory/orbit-autonomous-loop-ledger.contract.json --component app/orbit/OrbitAutonomousLoopLedger.tsx --route app/orbit/page.tsx --sectionIndex app/orbit/OrbitSectionIndex.tsx",
       "status": "passed",
       "exit_code": 0,
       "report_path": "examples/kosmo-orbit/review/orbit-autonomous-loop-ledger.generated.json",
@@ -569,7 +569,7 @@
     {
       "id": "fire_cadence_guard",
       "label": "Orbit Fire Cadence Guard",
-      "command": "/Applications/Codex.app/Contents/Resources/node scripts/kosmo-orbit-fire-cadence-guard-check.mjs --contract examples/kosmo-orbit/memory/orbit-fire-cadence-guard.contract.json --component app/orbit/OrbitFireCadenceGuard.tsx --route app/orbit/page.tsx --sectionIndex app/orbit/OrbitSectionIndex.tsx",
+      "command": "/Users/andrinbaumann/.nvm/versions/node/v24.15.0/bin/node scripts/kosmo-orbit-fire-cadence-guard-check.mjs --contract examples/kosmo-orbit/memory/orbit-fire-cadence-guard.contract.json --component app/orbit/OrbitFireCadenceGuard.tsx --route app/orbit/page.tsx --sectionIndex app/orbit/OrbitSectionIndex.tsx",
       "status": "passed",
       "exit_code": 0,
       "report_path": "examples/kosmo-orbit/review/orbit-fire-cadence-guard.generated.json",
@@ -581,7 +581,7 @@
     {
       "id": "workstation_profile",
       "label": "Orbit Workstation Profile Contract",
-      "command": "/Applications/Codex.app/Contents/Resources/node scripts/kosmo-orbit-workstation-profile-check.mjs --contract examples/kosmo-orbit/workstations/orbit-workstation-profile.contract.json --component app/orbit/OrbitWorkstationProfileContract.tsx --route app/orbit/page.tsx --sectionIndex app/orbit/OrbitSectionIndex.tsx",
+      "command": "/Users/andrinbaumann/.nvm/versions/node/v24.15.0/bin/node scripts/kosmo-orbit-workstation-profile-check.mjs --contract examples/kosmo-orbit/workstations/orbit-workstation-profile.contract.json --component app/orbit/OrbitWorkstationProfileContract.tsx --route app/orbit/page.tsx --sectionIndex app/orbit/OrbitSectionIndex.tsx",
       "status": "passed",
       "exit_code": 0,
       "report_path": "examples/kosmo-orbit/review/orbit-workstation-profile.generated.json",
@@ -593,7 +593,7 @@
     {
       "id": "local_identity",
       "label": "Orbit Local Identity Contract",
-      "command": "/Applications/Codex.app/Contents/Resources/node scripts/kosmo-orbit-local-identity-check.mjs --contract examples/kosmo-orbit/identity/orbit-local-identity.contract.json --component app/orbit/OrbitLocalIdentityContract.tsx --route app/orbit/page.tsx --sectionIndex app/orbit/OrbitSectionIndex.tsx",
+      "command": "/Users/andrinbaumann/.nvm/versions/node/v24.15.0/bin/node scripts/kosmo-orbit-local-identity-check.mjs --contract examples/kosmo-orbit/identity/orbit-local-identity.contract.json --component app/orbit/OrbitLocalIdentityContract.tsx --route app/orbit/page.tsx --sectionIndex app/orbit/OrbitSectionIndex.tsx",
       "status": "passed",
       "exit_code": 0,
       "report_path": "examples/kosmo-orbit/review/orbit-local-identity.generated.json",
@@ -605,7 +605,7 @@
     {
       "id": "data_governance",
       "label": "Orbit Data Governance Contract",
-      "command": "/Applications/Codex.app/Contents/Resources/node scripts/kosmo-orbit-data-governance-check.mjs --contract examples/kosmo-orbit/governance/orbit-data-governance.contract.json --component app/orbit/OrbitDataGovernanceContract.tsx --route app/orbit/page.tsx --sectionIndex app/orbit/OrbitSectionIndex.tsx",
+      "command": "/Users/andrinbaumann/.nvm/versions/node/v24.15.0/bin/node scripts/kosmo-orbit-data-governance-check.mjs --contract examples/kosmo-orbit/governance/orbit-data-governance.contract.json --component app/orbit/OrbitDataGovernanceContract.tsx --route app/orbit/page.tsx --sectionIndex app/orbit/OrbitSectionIndex.tsx",
       "status": "passed",
       "exit_code": 0,
       "report_path": "examples/kosmo-orbit/review/orbit-data-governance.generated.json",
@@ -617,7 +617,7 @@
     {
       "id": "office_memory",
       "label": "Orbit Office Memory Readiness",
-      "command": "/Applications/Codex.app/Contents/Resources/node scripts/kosmo-orbit-office-memory-readiness-check.mjs --contract examples/kosmo-orbit/memory/orbit-office-memory-readiness.contract.json --component app/orbit/OrbitOfficeMemoryReadiness.tsx --route app/orbit/page.tsx --sectionIndex app/orbit/OrbitSectionIndex.tsx",
+      "command": "/Users/andrinbaumann/.nvm/versions/node/v24.15.0/bin/node scripts/kosmo-orbit-office-memory-readiness-check.mjs --contract examples/kosmo-orbit/memory/orbit-office-memory-readiness.contract.json --component app/orbit/OrbitOfficeMemoryReadiness.tsx --route app/orbit/page.tsx --sectionIndex app/orbit/OrbitSectionIndex.tsx",
       "status": "passed",
       "exit_code": 0,
       "report_path": "examples/kosmo-orbit/review/orbit-office-memory-readiness.generated.json",
@@ -629,7 +629,7 @@
     {
       "id": "local_storage_decision",
       "label": "Orbit Local Storage Decision Draft",
-      "command": "/Applications/Codex.app/Contents/Resources/node scripts/kosmo-orbit-local-storage-decision-check.mjs --draft examples/kosmo-orbit/storage/orbit-local-storage-decision.draft.json --component app/orbit/OrbitLocalStorageDecisionDraft.tsx --route app/orbit/page.tsx --sectionIndex app/orbit/OrbitSectionIndex.tsx",
+      "command": "/Users/andrinbaumann/.nvm/versions/node/v24.15.0/bin/node scripts/kosmo-orbit-local-storage-decision-check.mjs --draft examples/kosmo-orbit/storage/orbit-local-storage-decision.draft.json --component app/orbit/OrbitLocalStorageDecisionDraft.tsx --route app/orbit/page.tsx --sectionIndex app/orbit/OrbitSectionIndex.tsx",
       "status": "passed",
       "exit_code": 0,
       "report_path": "examples/kosmo-orbit/review/orbit-local-storage-decision.generated.json",
@@ -641,7 +641,7 @@
     {
       "id": "delete_export_restore_drill",
       "label": "Orbit Delete / Export / Restore Drill",
-      "command": "/Applications/Codex.app/Contents/Resources/node scripts/kosmo-orbit-delete-export-restore-drill-check.mjs --contract examples/kosmo-orbit/storage/orbit-delete-export-restore-drill.contract.json --component app/orbit/OrbitDeleteExportRestoreDrill.tsx --route app/orbit/page.tsx --sectionIndex app/orbit/OrbitSectionIndex.tsx",
+      "command": "/Users/andrinbaumann/.nvm/versions/node/v24.15.0/bin/node scripts/kosmo-orbit-delete-export-restore-drill-check.mjs --contract examples/kosmo-orbit/storage/orbit-delete-export-restore-drill.contract.json --component app/orbit/OrbitDeleteExportRestoreDrill.tsx --route app/orbit/page.tsx --sectionIndex app/orbit/OrbitSectionIndex.tsx",
       "status": "passed",
       "exit_code": 0,
       "report_path": "examples/kosmo-orbit/review/orbit-delete-export-restore-drill.generated.json",
@@ -653,7 +653,7 @@
     {
       "id": "pilot_session",
       "label": "Orbit Pilot Session Template",
-      "command": "/Applications/Codex.app/Contents/Resources/node scripts/kosmo-orbit-pilot-session-check.mjs --session examples/kosmo-orbit/pilot/orbit-office-pilot-session.demo.json --schema schema/kosmo-orbit-pilot-session.schema.json",
+      "command": "/Users/andrinbaumann/.nvm/versions/node/v24.15.0/bin/node scripts/kosmo-orbit-pilot-session-check.mjs --session examples/kosmo-orbit/pilot/orbit-office-pilot-session.demo.json --schema schema/kosmo-orbit-pilot-session.schema.json",
       "status": "passed",
       "exit_code": 0,
       "report_path": "examples/kosmo-orbit/review/orbit-pilot-session.generated.json",
@@ -665,7 +665,7 @@
     {
       "id": "pilot_measurement_kit",
       "label": "Orbit Pilot Measurement Kit",
-      "command": "/Applications/Codex.app/Contents/Resources/node scripts/kosmo-orbit-pilot-measurement-kit-check.mjs --kit examples/kosmo-orbit/pilot/orbit-office-pilot-measurement-kit.demo.json --schema schema/kosmo-orbit-pilot-measurement-kit.schema.json",
+      "command": "/Users/andrinbaumann/.nvm/versions/node/v24.15.0/bin/node scripts/kosmo-orbit-pilot-measurement-kit-check.mjs --kit examples/kosmo-orbit/pilot/orbit-office-pilot-measurement-kit.demo.json --schema schema/kosmo-orbit-pilot-measurement-kit.schema.json",
       "status": "passed",
       "exit_code": 0,
       "report_path": "examples/kosmo-orbit/review/orbit-pilot-measurement-kit.generated.json",
@@ -677,7 +677,7 @@
     {
       "id": "pilot_result_draft",
       "label": "Orbit Pilot Result Draft",
-      "command": "/Applications/Codex.app/Contents/Resources/node scripts/kosmo-orbit-pilot-result-draft-check.mjs --draft examples/kosmo-orbit/pilot/orbit-office-pilot-result-draft.demo.json --schema schema/kosmo-orbit-pilot-result-draft.schema.json",
+      "command": "/Users/andrinbaumann/.nvm/versions/node/v24.15.0/bin/node scripts/kosmo-orbit-pilot-result-draft-check.mjs --draft examples/kosmo-orbit/pilot/orbit-office-pilot-result-draft.demo.json --schema schema/kosmo-orbit-pilot-result-draft.schema.json",
       "status": "passed",
       "exit_code": 0,
       "report_path": "examples/kosmo-orbit/review/orbit-pilot-result-draft.generated.json",
@@ -689,7 +689,7 @@
     {
       "id": "orbit_route_smoke",
       "label": "Orbit Route Smoke",
-      "command": "/Applications/Codex.app/Contents/Resources/node scripts/kosmo-orbit-route-smoke.mjs --route app/orbit/page.tsx --spec examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
+      "command": "/Users/andrinbaumann/.nvm/versions/node/v24.15.0/bin/node scripts/kosmo-orbit-route-smoke.mjs --route app/orbit/page.tsx --spec examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
       "status": "passed",
       "exit_code": 0,
       "report_path": "examples/kosmo-orbit/review/orbit-route-smoke.generated.json",
