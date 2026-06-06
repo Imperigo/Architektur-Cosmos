@@ -1,6 +1,6 @@
 # KosmoOrbit Route Smoke
 
-Generated: 2026-06-06T02:36:27.740Z
+Generated: 2026-06-06T02:54:17.702Z
 Status: `orbit_route_smoke_passed`
 Route: `app/orbit/page.tsx`
 
@@ -8,7 +8,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 
 ## Summary
 
-- checks: 262/262 passed
+- checks: 263/263 passed
 
 ## Checks
 
@@ -210,6 +210,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `local_runtime_bridge_shows_runway_report` | `passed` | Local runtime bridge shows the phased KOSMO runway report. |
 | `local_runtime_bridge_shows_closeout_aggregator` | `passed` | Local runtime bridge shows the KOSMO closeout aggregator with read order, evidence and safety limits. |
 | `local_runtime_bridge_shows_handover_doctor` | `passed` | Local runtime bridge shows the Home-PC handover doctor gate. |
+| `local_runtime_bridge_shows_orbit_render_smoke` | `passed` | Local runtime bridge shows Orbit local render smoke evidence. |
 | `local_runtime_bridge_shows_github_separation_decision` | `passed` | Local runtime bridge shows the GitHub separation Owner-Go decision and keeps the website repo separate. |
 | `local_runtime_bridge_shows_import_readiness` | `passed` | Local runtime bridge shows read-only GitHub import readiness without removing Owner-Go. |
 | `keeps_local_runtime_bridge_review_only` | `passed` | Local runtime bridge blocks processes, model starts, private scans, uploads and publish actions. |

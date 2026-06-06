@@ -106,6 +106,9 @@ type LocalRuntimeBridgeReport = {
       runtime_bundle: string;
       runtime_latest_zip: string;
       orbit_review_branch: string;
+      orbit_render_smoke: string;
+      orbit_render_smoke_checks: string;
+      orbit_render_smoke_report: string;
     };
     read_order: string[];
     owner_go_blockers: string[];

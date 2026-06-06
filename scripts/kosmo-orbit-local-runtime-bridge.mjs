@@ -18,6 +18,7 @@ const requiredLanes = [
   'home-pc-handover',
   'home-pc-start-readiness',
   'kosmo-orbit',
+  'kosmo-orbit-render-smoke',
   'github-separation'
 ];
 
@@ -72,17 +73,19 @@ function buildReport(status) {
     check('progress_number', 'Progress percent is a valid number between 0 and 100.', Number.isFinite(status.progress_percent) && status.progress_percent >= 0 && status.progress_percent <= 100),
     check('progress_bar_present', 'Progress bar is present for UI handoff.', typeof status.progress_bar === 'string' && status.progress_bar.includes('%')),
     check('required_lanes_present', 'All KOSMO control-spine lanes are present.', requiredLanes.every((id) => laneIds.has(id))),
-    check('ready_lane_majority', 'At least six of seven lanes are ready.', readyLanes.length >= 6),
+    check('ready_lane_majority', 'At least seven of eight lanes are ready.', readyLanes.length >= 7),
     check('runtime_ready', 'Odysseus runtime lane is ready.', lanes.some((lane) => lane.id === 'odysseus-runtime' && lane.status === 'ready')),
     check('model_ready', 'KOSMO Ollama model lane is ready.', lanes.some((lane) => lane.id === 'kosmo-model' && lane.status === 'ready')),
     check('handover_ready', 'Home-PC handover lane is ready.', lanes.some((lane) => lane.id === 'home-pc-handover' && lane.status === 'ready')),
     check('home_pc_start_ready', 'Home-PC start readiness lane is ready.', lanes.some((lane) => lane.id === 'home-pc-start-readiness' && lane.status === 'ready')),
+    check('orbit_render_smoke_ready', 'Orbit local render smoke lane is ready and visible.', lanes.some((lane) => lane.id === 'kosmo-orbit-render-smoke' && lane.status === 'ready' && String(lane.evidence || '').includes('9/9'))),
     check('github_separation_blocked', 'GitHub separation remains blocked until a dedicated Starter repo or explicit import approval exists.', githubLane?.status === 'blocked'),
     check('github_import_readiness_visible', 'GitHub import readiness is visible while Owner-Go remains blocked.', String(githubLane?.evidence || '').includes('import_readiness=passed')),
     check('next_action_queue_visible', 'Next-action queue is visible for allowed, waiting and blocked work.', status.next_action_queue?.status === 'next_action_queue_ready' && asArray(status.next_action_queue.actions).length >= 4),
     check('runway_report_visible', 'Runway report is visible for Mac, Linux, Owner-Go and post-boot phases.', status.runway_report?.status === 'runway_report_ready' && asArray(status.runway_report.runway).length === 4),
     check('closeout_aggregator_visible', 'Closeout aggregator is visible as the Home-PC read order and final evidence packet.', status.closeout_aggregator?.status === 'closeout_aggregator_ready' && asArray(status.closeout_aggregator.read_order).length >= 5),
     check('home_pc_doctor_visible', 'Home-PC handover doctor evidence is visible in the closeout packet.', String(status.closeout_aggregator?.evidence?.home_pc_handover_doctor || '') === 'home_pc_handover_doctor_passed'),
+    check('orbit_render_smoke_closeout_visible', 'Orbit render smoke evidence is visible in the closeout packet.', String(status.closeout_aggregator?.evidence?.orbit_render_smoke || '') === 'orbit_local_render_smoke_passed' && String(status.closeout_aggregator?.evidence?.orbit_render_smoke_checks || '') === '9/9'),
     check('policy_flags_present', 'All safety policy flags are present and true.', requiredPolicies.every((key) => policy[key] === true)),
     check('sources_present', 'Local starter, cloud starter and Orbit website sources are represented.', Boolean(sources.local_starter && sources.cloud_starter && sources.orbit_website)),
     check('no_private_path_required', 'Bridge can run from a repo-local demo status without a private local path.', relative(root, statusPath).startsWith('examples/kosmo-orbit/runtime/') || Boolean(process.env.KOSMO_NIGHT_STATUS_JSON))
@@ -389,7 +392,10 @@ function normalizeCloseoutAggregator(closeout) {
       handover_checksum: evidence.handover_checksum || 'missing',
       runtime_bundle: evidence.runtime_bundle || 'missing',
       runtime_latest_zip: evidence.runtime_latest_zip || 'missing',
-      orbit_review_branch: evidence.orbit_review_branch || 'missing'
+      orbit_review_branch: evidence.orbit_review_branch || 'missing',
+      orbit_render_smoke: evidence.orbit_render_smoke || 'missing',
+      orbit_render_smoke_checks: evidence.orbit_render_smoke_checks || 'missing',
+      orbit_render_smoke_report: evidence.orbit_render_smoke_report || 'missing'
     },
     read_order: asArray(closeout?.read_order),
     owner_go_blockers: asArray(closeout?.owner_go_blockers),

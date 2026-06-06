@@ -1,6 +1,6 @@
 # KosmoOrbit Local Runtime Bridge
 
-Generated: 2026-06-06T02:30:08.658Z
+Generated: 2026-06-06T02:54:13.550Z
 Status: `local_runtime_bridge_passed`
 Input: `examples/kosmo-orbit/runtime/kosmo-night-status.demo.json`
 Mode: `external_local_status_import`
@@ -9,9 +9,9 @@ Review-only bridge from the local KOSMO Night Status into KosmoOrbit. It reads a
 
 ## Summary
 
-- progress: `[#####################---] 86%`
-- checks: 20/20 passed
-- ready lanes: 6
+- progress: `[#####################---] 88%`
+- checks: 22/22 passed
+- ready lanes: 7
 - blocked lanes: 1
 
 ## Lanes
@@ -22,15 +22,16 @@ Review-only bridge from the local KOSMO Night Status into KosmoOrbit. It reads a
 | `kosmo-model` | `ready` | KOSMO Ollama enthaelt qwen2.5-coder:1.5b. | odysseus-kosmo-model-sync.sh apply ausfuehren, falls der Endpoint driftet. |
 | `desktop-artifacts` | `ready` | odysseus-vanilla-desktop-manifest.json=present, Odysseus-vanilla-linux-workstation.zip=present, KOSMO-Desktop-v2-linux-workstation.zip=present, ArchitekturkosmosMac.app=present | Vanilla/Desktop-Gates neu bauen, falls Manifest oder ZIP fehlt. |
 | `home-pc-handover` | `ready` | KOSMO-home-pc-linux-handover.zip: OK | kosmo-home-pc-linux-handover-zip.sh neu ausfuehren und Checksum pruefen. |
-| `home-pc-start-readiness` | `ready` | status=home_pc_start_dry_run_passed, checks=54/54, warnings=0 | kosmo-home-pc-start-dry-run.sh ausfuehren und fehlende Pflichtchecks beheben. |
-| `kosmo-orbit` | `ready` | repo_commit=2b802c2, report=present | Orbit bleibt review-only; naechster Hebel ist die sichtbare Odysseus/KOSMO-Statusbruecke. |
+| `home-pc-start-readiness` | `ready` | status=home_pc_start_dry_run_passed, checks=55/55, warnings=0 | kosmo-home-pc-start-dry-run.sh ausfuehren und fehlende Pflichtchecks beheben. |
+| `kosmo-orbit` | `ready` | repo_commit=37ad7a0, report=present | Orbit bleibt review-only; naechster Hebel ist die sichtbare Odysseus/KOSMO-Statusbruecke. |
+| `kosmo-orbit-render-smoke` | `ready` | status=orbit_local_render_smoke_passed, checks=9/9, url=http://localhost:3107/orbit/ | Auf der Orbit-Review-Branch lokalen Server starten und kosmo:orbit-local-render-smoke ausfuehren. |
 | `github-separation` | `blocked` | Decision pack proposed repo=Imperigo/Architekturkosmos_Codex_Starter; import_readiness=passed; waiting for owner-go. | Eigenes Imperigo/Architekturkosmos_Codex_Starter Repo anlegen oder Import explizit freigeben. |
 
 ## Sources
 
-- local starter commit: `39933a0`
+- local starter commit: `4b1ecb7`
 - cloud starter commit: `863dcde`
-- Orbit website commit: `d7cb40e`
+- Orbit website commit: `37ad7a0`
 
 ## Home PC Handover
 
@@ -41,11 +42,11 @@ Review-only bridge from the local KOSMO Night Status into KosmoOrbit. It reads a
 - start dry-run script: `scripts/kosmo-home-pc-start-dry-run.sh`
 - start dry-run report: `tmp/kosmo-home-pc-start-dry-run.json`
 - start dry-run status: `home_pc_start_dry_run_passed`
-- start dry-run checks: `54/54`
+- start dry-run checks: `55/55`
 - doctor script: `scripts/kosmo-home-pc-handover-doctor.sh`
 - doctor report: `tmp/kosmo-home-pc-handover-doctor.json`
 - doctor status: `home_pc_handover_doctor_passed`
-- doctor checks: `17/17`
+- doctor checks: `18/18`
 - purpose: Machine-readable Linux handover index for the future Home-PC setup.
 
 First commands:
@@ -92,10 +93,10 @@ First commands:
 - status: `closeout_aggregator_ready`
 - checks: 13/13
 - warnings: 0
-- starter commit: `39933a0`
-- orbit commit: `2b802c2`
-- Home-PC dry-run: `home_pc_start_dry_run_passed` (54/54)
-- Home-PC doctor: `home_pc_handover_doctor_passed` (17/17)
+- starter commit: `4b1ecb7`
+- orbit commit: `37ad7a0`
+- Home-PC dry-run: `home_pc_start_dry_run_passed` (55/55)
+- Home-PC doctor: `home_pc_handover_doctor_passed` (18/18)
 - handover ZIP: `dist/KOSMO-home-pc-linux-handover.zip`
 - handover checksum: `KOSMO-home-pc-linux-handover.zip: OK`
 
@@ -108,6 +109,7 @@ Read order:
 - `tmp/kosmo-home-pc-handover-doctor.md`
 - `tmp/kosmo-home-pc-start-dry-run.md`
 - `tmp/kosmo-home-pc-linux-handover-manifest.json`
+- `docs/home_station/KOSMO_ORBIT_REVIEW_HANDOFF.md`
 
 Owner-Go blockers:
 - Dedicated Starter repository must exist before Starter push.
@@ -157,17 +159,19 @@ Forbidden without Owner-Go:
 | `progress_number` | `passed` | Progress percent is a valid number between 0 and 100. |
 | `progress_bar_present` | `passed` | Progress bar is present for UI handoff. |
 | `required_lanes_present` | `passed` | All KOSMO control-spine lanes are present. |
-| `ready_lane_majority` | `passed` | At least six of seven lanes are ready. |
+| `ready_lane_majority` | `passed` | At least seven of eight lanes are ready. |
 | `runtime_ready` | `passed` | Odysseus runtime lane is ready. |
 | `model_ready` | `passed` | KOSMO Ollama model lane is ready. |
 | `handover_ready` | `passed` | Home-PC handover lane is ready. |
 | `home_pc_start_ready` | `passed` | Home-PC start readiness lane is ready. |
+| `orbit_render_smoke_ready` | `passed` | Orbit local render smoke lane is ready and visible. |
 | `github_separation_blocked` | `passed` | GitHub separation remains blocked until a dedicated Starter repo or explicit import approval exists. |
 | `github_import_readiness_visible` | `passed` | GitHub import readiness is visible while Owner-Go remains blocked. |
 | `next_action_queue_visible` | `passed` | Next-action queue is visible for allowed, waiting and blocked work. |
 | `runway_report_visible` | `passed` | Runway report is visible for Mac, Linux, Owner-Go and post-boot phases. |
 | `closeout_aggregator_visible` | `passed` | Closeout aggregator is visible as the Home-PC read order and final evidence packet. |
 | `home_pc_doctor_visible` | `passed` | Home-PC handover doctor evidence is visible in the closeout packet. |
+| `orbit_render_smoke_closeout_visible` | `passed` | Orbit render smoke evidence is visible in the closeout packet. |
 | `policy_flags_present` | `passed` | All safety policy flags are present and true. |
 | `sources_present` | `passed` | Local starter, cloud starter and Orbit website sources are represented. |
 | `no_private_path_required` | `passed` | Bridge can run from a repo-local demo status without a private local path. |

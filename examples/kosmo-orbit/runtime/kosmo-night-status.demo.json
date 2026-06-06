@@ -1,9 +1,9 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-06T02:26:14.000000+00:00",
+  "generated_at": "2026-06-06T02:50:31.798493+00:00",
   "goal": "KOSMO local control spine over Odysseus with safe Home-PC handover",
-  "progress_percent": 86,
-  "progress_bar": "[#####################---] 86%",
+  "progress_percent": 88,
+  "progress_bar": "[#####################---] 88%",
   "policy": {
     "no_publish": true,
     "no_external_accounts": true,
@@ -16,7 +16,7 @@
       "path": "<local_starter>",
       "exists": true,
       "clean": true,
-      "commit": "39933a0",
+      "commit": "4b1ecb7",
       "status_short": ""
     },
     "cloud_starter": {
@@ -30,7 +30,7 @@
       "path": "<orbit_website>",
       "exists": true,
       "clean": true,
-      "commit": "d7cb40e",
+      "commit": "37ad7a0",
       "status_short": ""
     },
     "runtime_dir": "<runtime_dir>"
@@ -73,7 +73,7 @@
       "label": "Home-PC Start Readiness",
       "status": "ready",
       "ready": true,
-      "evidence": "status=home_pc_start_dry_run_passed, checks=54/54, warnings=0",
+      "evidence": "status=home_pc_start_dry_run_passed, checks=55/55, warnings=0",
       "next_action": "kosmo-home-pc-start-dry-run.sh ausfuehren und fehlende Pflichtchecks beheben."
     },
     {
@@ -81,8 +81,16 @@
       "label": "KosmoOrbit Interface",
       "status": "ready",
       "ready": true,
-      "evidence": "repo_commit=2b802c2, report=present",
+      "evidence": "repo_commit=37ad7a0, report=present",
       "next_action": "Orbit bleibt review-only; naechster Hebel ist die sichtbare Odysseus/KOSMO-Statusbruecke."
+    },
+    {
+      "id": "kosmo-orbit-render-smoke",
+      "label": "KosmoOrbit Local Render Smoke",
+      "status": "ready",
+      "ready": true,
+      "evidence": "status=orbit_local_render_smoke_passed, checks=9/9, url=http://localhost:3107/orbit/",
+      "next_action": "Auf der Orbit-Review-Branch lokalen Server starten und kosmo:orbit-local-render-smoke ausfuehren."
     },
     {
       "id": "github-separation",
@@ -102,7 +110,8 @@
     "status": "next_action_queue_ready",
     "summary": {
       "ready_actions": 4,
-      "blocked_actions": 1
+      "blocked_actions": 1,
+      "night_progress": "[#####################---] 88%"
     },
     "actions": [
       {
@@ -113,7 +122,7 @@
         "status": "ready",
         "mode": "dry_run_read_only",
         "command": "./scripts/kosmo-github-import-readiness.sh && ./scripts/kosmo-home-pc-linux-first-run-plan.sh && ./scripts/kosmo-home-pc-start-dry-run.sh && ./scripts/kosmo-night-status.sh",
-        "evidence": "Keeps local status, import readiness and Home-PC dry-run evidence current.",
+        "evidence": "Keeps local status, import readiness, Home-PC dry-run and Orbit render-smoke evidence current.",
         "owner_go_required": false,
         "autonomous_allowed": true
       },
@@ -161,7 +170,7 @@
         "status": "ready",
         "mode": "review_only",
         "command": "Review existing branch kosmo-orbit-runtime-bridge-20260606",
-        "evidence": "Orbit bridge remains review-only.",
+        "evidence": "Orbit bridge remains review-only; local render smoke is passed 9/9.",
         "owner_go_required": false,
         "autonomous_allowed": false
       },
@@ -182,7 +191,8 @@
   "runway_report": {
     "status": "runway_report_ready",
     "summary": {
-      "phase_count": 4
+      "phase_count": 4,
+      "night_progress": "[#####################---] 88%"
     },
     "runway": [
       {
@@ -209,7 +219,7 @@
             "title": "Keep KosmoOrbit as the visible review interface.",
             "status": "ready",
             "next_step": "Review existing branch kosmo-orbit-runtime-bridge-20260606",
-            "evidence": "Orbit bridge remains review-only."
+            "evidence": "Orbit bridge remains review-only; render smoke 9/9."
           }
         ]
       },
@@ -223,7 +233,7 @@
             "title": "Read the first-run plan before starting services.",
             "status": "home_pc_linux_first_run_plan_ready",
             "next_step": "less tmp/kosmo-home-pc-linux-first-run-plan.md",
-            "evidence": "checks=22/23"
+            "evidence": "checks=23/24, warnings=1"
           },
           {
             "id": "read-next-action-queue",
@@ -237,7 +247,7 @@
             "title": "Run Home-PC dry-run after unpacking.",
             "status": "home_pc_start_dry_run_passed",
             "next_step": "./scripts/kosmo-home-pc-start-dry-run.sh",
-            "evidence": "checks=54/54"
+            "evidence": "checks=55/55"
           }
         ]
       },
@@ -293,10 +303,10 @@
       "warnings": 0
     },
     "current_state": {
-      "starter_commit": "39933a0",
-      "orbit_commit": "2b802c2",
-      "night_progress": "[#####################---] 86%",
-      "ready_lanes": 6,
+      "starter_commit": "4b1ecb7",
+      "orbit_commit": "37ad7a0",
+      "night_progress": "[#####################---] 88%",
+      "ready_lanes": 7,
       "blocked_lanes": 1
     },
     "evidence": {
@@ -305,15 +315,18 @@
       "queue": "next_action_queue_ready",
       "runway": "runway_report_ready",
       "home_pc_dry_run": "home_pc_start_dry_run_passed",
-      "home_pc_dry_run_checks": "54/54",
+      "home_pc_dry_run_checks": "55/55",
       "home_pc_handover_doctor": "home_pc_handover_doctor_passed",
-      "home_pc_handover_doctor_checks": "17/17",
+      "home_pc_handover_doctor_checks": "18/18",
       "home_pc_handover_doctor_report": "tmp/kosmo-home-pc-handover-doctor.json",
       "handover_zip": "dist/KOSMO-home-pc-linux-handover.zip",
       "handover_checksum": "KOSMO-home-pc-linux-handover.zip: OK",
-      "runtime_bundle": "Architekturkosmos_Codex_Starter_Local_39933a0_20260606-0424.bundle",
+      "runtime_bundle": "Architekturkosmos_Codex_Starter_Local_4b1ecb7_20260606-0451.bundle",
       "runtime_latest_zip": "Architekturkosmos_Codex_Starter_Local_latest.zip",
-      "orbit_review_branch": "kosmo-orbit-runtime-bridge-20260606"
+      "orbit_review_branch": "kosmo-orbit-runtime-bridge-20260606",
+      "orbit_render_smoke": "orbit_local_render_smoke_passed",
+      "orbit_render_smoke_checks": "9/9",
+      "orbit_render_smoke_report": "examples/kosmo-orbit/review/orbit-local-render-smoke.generated.json"
     },
     "read_order": [
       "tmp/kosmo-closeout-aggregator.md",
@@ -323,7 +336,8 @@
       "tmp/kosmo-home-pc-linux-first-run-plan.md",
       "tmp/kosmo-home-pc-handover-doctor.md",
       "tmp/kosmo-home-pc-start-dry-run.md",
-      "tmp/kosmo-home-pc-linux-handover-manifest.json"
+      "tmp/kosmo-home-pc-linux-handover-manifest.json",
+      "docs/home_station/KOSMO_ORBIT_REVIEW_HANDOFF.md"
     ],
     "owner_go_blockers": [
       "Dedicated Starter repository must exist before Starter push.",

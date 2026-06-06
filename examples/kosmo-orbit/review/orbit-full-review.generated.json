@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-06T02:36:27.750Z",
+  "generated_at": "2026-06-06T02:54:17.713Z",
   "generator": "kosmo-orbit-full-review",
   "workspace_path": "examples/kosmo-orbit/workspace.demo.json",
   "project_root": "examples/kosmo-projects/kosmo-demo-001",
@@ -122,15 +122,15 @@
     "pilot_result_draft_slots": 5,
     "pilot_result_draft_empty_slots": 5,
     "orbit_route_smoke_status": "orbit_route_smoke_passed",
-    "orbit_route_smoke_passed_checks": 262,
-    "orbit_route_smoke_check_count": 262,
+    "orbit_route_smoke_passed_checks": 263,
+    "orbit_route_smoke_check_count": 263,
     "workspace_status": "orbit_blocked_gates_present",
     "local_runtime_bridge_status": "local_runtime_bridge_passed",
-    "local_runtime_bridge_progress": 86,
-    "local_runtime_bridge_ready_lanes": 6,
+    "local_runtime_bridge_progress": 88,
+    "local_runtime_bridge_ready_lanes": 7,
     "local_runtime_bridge_blocked_lanes": 1,
-    "local_runtime_bridge_checks": 20,
-    "local_runtime_bridge_check_count": 20,
+    "local_runtime_bridge_checks": 22,
+    "local_runtime_bridge_check_count": 22,
     "project_status": "local_review_only",
     "project_artifact_count": 59,
     "project_review_artifact_count": 46,
@@ -253,7 +253,7 @@
       "report_path": "examples/kosmo-orbit/review/orbit-local-runtime-bridge.generated.json",
       "report_exists": true,
       "report_status": "local_runtime_bridge_passed",
-      "stdout_tail": "> architecture-cosmos@0.1.0 kosmo:orbit-local-runtime-bridge\n> node scripts/kosmo-orbit-local-runtime-bridge.mjs --status examples/kosmo-orbit/runtime/kosmo-night-status.demo.json\n\nKosmoOrbit local runtime bridge\nStatus: local_runtime_bridge_passed\nProgress: 86%\nChecks: 20/20\nWrote: examples/kosmo-orbit/review/orbit-local-runtime-bridge.generated.md",
+      "stdout_tail": "> architecture-cosmos@0.1.0 kosmo:orbit-local-runtime-bridge\n> node scripts/kosmo-orbit-local-runtime-bridge.mjs --status examples/kosmo-orbit/runtime/kosmo-night-status.demo.json\n\nKosmoOrbit local runtime bridge\nStatus: local_runtime_bridge_passed\nProgress: 88%\nChecks: 22/22\nWrote: examples/kosmo-orbit/review/orbit-local-runtime-bridge.generated.md",
       "stderr_tail": ""
     },
     {
@@ -601,7 +601,7 @@
       "report_path": "examples/kosmo-orbit/review/orbit-route-smoke.generated.json",
       "report_exists": true,
       "report_status": "orbit_route_smoke_passed",
-      "stdout_tail": "> architecture-cosmos@0.1.0 kosmo:orbit-route-smoke\n> node scripts/kosmo-orbit-route-smoke.mjs --route app/orbit/page.tsx --spec examples/kosmo-orbit/review/orbit-app-route-spec.generated.json\n\nKosmoOrbit route smoke\nStatus: orbit_route_smoke_passed\nChecks: 262/262\nWrote: examples/kosmo-orbit/review/orbit-route-smoke.generated.md",
+      "stdout_tail": "> architecture-cosmos@0.1.0 kosmo:orbit-route-smoke\n> node scripts/kosmo-orbit-route-smoke.mjs --route app/orbit/page.tsx --spec examples/kosmo-orbit/review/orbit-app-route-spec.generated.json\n\nKosmoOrbit route smoke\nStatus: orbit_route_smoke_passed\nChecks: 263/263\nWrote: examples/kosmo-orbit/review/orbit-route-smoke.generated.md",
       "stderr_tail": ""
     }
   ],

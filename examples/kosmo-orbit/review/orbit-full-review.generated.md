@@ -1,6 +1,6 @@
 # KosmoOrbit Full Review
 
-Generated: 2026-06-06T02:36:27.750Z
+Generated: 2026-06-06T02:54:17.713Z
 Status: `orbit_full_review_ready_for_review_mode`
 Workspace: `examples/kosmo-orbit/workspace.demo.json`
 Project: `examples/kosmo-projects/kosmo-demo-001`
@@ -96,12 +96,12 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 - pilot result draft slots: 5
 - pilot result draft empty slots: 5
 - orbit route smoke: `orbit_route_smoke_passed`
-- orbit route smoke checks: 262/262
+- orbit route smoke checks: 263/263
 - workspace status: `orbit_blocked_gates_present`
 - local runtime bridge: `local_runtime_bridge_passed`
-- local runtime bridge progress: 86%
-- local runtime bridge lanes: 6 ready / 1 blocked
-- local runtime bridge checks: 20/20
+- local runtime bridge progress: 88%
+- local runtime bridge lanes: 7 ready / 1 blocked
+- local runtime bridge checks: 22/22
 - project status: `local_review_only`
 - project artifacts: 59
 - review artifacts: 46

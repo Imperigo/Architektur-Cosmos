@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-06T02:36:27.740Z",
+  "generated_at": "2026-06-06T02:54:17.702Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 262,
-    "passed_checks": 262,
+    "check_count": 263,
+    "passed_checks": 263,
     "failed_checks": 0
   },
   "checks": [
@@ -989,6 +989,11 @@
     {
       "id": "local_runtime_bridge_shows_handover_doctor",
       "label": "Local runtime bridge shows the Home-PC handover doctor gate.",
+      "status": "passed"
+    },
+    {
+      "id": "local_runtime_bridge_shows_orbit_render_smoke",
+      "label": "Local runtime bridge shows Orbit local render smoke evidence.",
       "status": "passed"
     },
     {
