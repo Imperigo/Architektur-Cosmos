@@ -1,6 +1,6 @@
 # KosmoOrbit Local Runtime Bridge
 
-Generated: 2026-06-06T02:15:04.293Z
+Generated: 2026-06-06T02:19:09.699Z
 Status: `local_runtime_bridge_passed`
 Input: `examples/kosmo-orbit/runtime/kosmo-night-status.demo.json`
 Mode: `external_local_status_import`
@@ -28,7 +28,7 @@ Review-only bridge from the local KOSMO Night Status into KosmoOrbit. It reads a
 
 ## Sources
 
-- local starter commit: `6381d9c`
+- local starter commit: `c61d73e`
 - cloud starter commit: `863dcde`
 - Orbit website commit: `d7cb40e`
 
@@ -81,7 +81,7 @@ First commands:
 - status: `closeout_aggregator_ready`
 - checks: 13/13
 - warnings: 0
-- starter commit: `6381d9c`
+- starter commit: `c61d73e`
 - orbit commit: `19cefd6`
 - Home-PC dry-run: `home_pc_start_dry_run_passed` (51/51)
 - handover ZIP: `dist/KOSMO-home-pc-linux-handover.zip`

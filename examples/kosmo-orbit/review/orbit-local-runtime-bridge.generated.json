@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-06T02:15:04.293Z",
+  "generated_at": "2026-06-06T02:19:09.699Z",
   "generator": "kosmo-orbit-local-runtime-bridge",
   "status": "local_runtime_bridge_passed",
   "input_status_file": "examples/kosmo-orbit/runtime/kosmo-night-status.demo.json",
@@ -27,7 +27,7 @@
   "control_spine": {
     "goal": "KOSMO local control spine over Odysseus with safe Home-PC handover",
     "progress_bar": "[#####################---] 86%",
-    "generated_at": "2026-06-06T02:14:00.000000+00:00"
+    "generated_at": "2026-06-06T02:18:00.000000+00:00"
   },
   "lanes": [
     {
@@ -81,7 +81,7 @@
     }
   ],
   "sources": {
-    "local_starter_commit": "6381d9c",
+    "local_starter_commit": "c61d73e",
     "cloud_starter_commit": "863dcde",
     "orbit_website_commit": "d7cb40e"
   },
@@ -293,7 +293,7 @@
     "check_count": 13,
     "warnings": 0,
     "current_state": {
-      "starter_commit": "6381d9c",
+      "starter_commit": "c61d73e",
       "orbit_commit": "19cefd6",
       "night_progress": "[#####################---] 86%",
       "ready_lanes": 6,
@@ -308,7 +308,7 @@
       "home_pc_dry_run_checks": "51/51",
       "handover_zip": "dist/KOSMO-home-pc-linux-handover.zip",
       "handover_checksum": "KOSMO-home-pc-linux-handover.zip: OK",
-      "runtime_bundle": "Architekturkosmos_Codex_Starter_Local_6381d9c_20260606-0414.bundle",
+      "runtime_bundle": "Architekturkosmos_Codex_Starter_Local_c61d73e_20260606-0418.bundle",
       "runtime_latest_zip": "Architekturkosmos_Codex_Starter_Local_latest.zip",
       "orbit_review_branch": "kosmo-orbit-runtime-bridge-20260606"
     },
