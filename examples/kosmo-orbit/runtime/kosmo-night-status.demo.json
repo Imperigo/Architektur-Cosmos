@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-06T00:50:54.889663+00:00",
+  "generated_at": "2026-06-06T00:57:20.029223+00:00",
   "goal": "KOSMO local control spine over Odysseus with safe Home-PC handover",
   "progress_percent": 86,
   "progress_bar": "[#####################---] 86%",
@@ -16,7 +16,7 @@
       "path": "<local_starter>",
       "exists": true,
       "clean": true,
-      "commit": "b7bd449",
+      "commit": "d2084d2",
       "status_short": ""
     },
     "cloud_starter": {
@@ -30,7 +30,7 @@
       "path": "<orbit_website>",
       "exists": true,
       "clean": true,
-      "commit": "da46f0a",
+      "commit": "862eb2c",
       "status_short": ""
     },
     "runtime_dir": "<runtime_dir>"
@@ -73,7 +73,7 @@
       "label": "Home-PC Start Readiness",
       "status": "ready",
       "ready": true,
-      "evidence": "status=home_pc_start_dry_run_passed, checks=25/25, warnings=0",
+      "evidence": "status=home_pc_start_dry_run_passed, checks=29/29, warnings=0",
       "next_action": "kosmo-home-pc-start-dry-run.sh ausfuehren und fehlende Pflichtchecks beheben."
     },
     {
@@ -81,7 +81,7 @@
       "label": "KosmoOrbit Interface",
       "status": "ready",
       "ready": true,
-      "evidence": "repo_commit=da46f0a, report=present",
+      "evidence": "repo_commit=862eb2c, report=present",
       "next_action": "Orbit bleibt review-only; naechster Hebel ist die sichtbare Odysseus/KOSMO-Statusbruecke."
     },
     {
@@ -89,12 +89,12 @@
       "label": "GitHub Trennung",
       "status": "blocked",
       "ready": false,
-      "evidence": "Dedicated Starter-Repo fehlt; Website-Repo wird nicht als Ersatz benutzt.",
+      "evidence": "Decision pack proposed repo=Imperigo/Architekturkosmos_Codex_Starter; waiting for owner-go.",
       "next_action": "Eigenes Imperigo/Architekturkosmos_Codex_Starter Repo anlegen oder Import explizit freigeben."
     }
   ],
   "next_three_implementation_steps": [
-    "KOSMO Control Spine als sichtbare Statusbruecke in KosmoOrbit einhaengen.",
+    "GitHub Separation Decision Pack owner-seitig bestaetigen oder Repo-Erstellung weiter blockiert lassen.",
     "Dediziertes GitHub-Repo fuer den Starter anlegen oder Import-Ziel freigeben.",
     "Home-PC Linux Handover auf Zielmaschine testen und erste Memory/Worker-Sync-Probe fahren."
   ]

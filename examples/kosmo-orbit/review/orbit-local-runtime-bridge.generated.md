@@ -1,6 +1,6 @@
 # KosmoOrbit Local Runtime Bridge
 
-Generated: 2026-06-06T00:51:10.935Z
+Generated: 2026-06-06T00:58:29.213Z
 Status: `local_runtime_bridge_passed`
 Input: `examples/kosmo-orbit/runtime/kosmo-night-status.demo.json`
 Mode: `external_local_status_import`
@@ -22,15 +22,15 @@ Review-only bridge from the local KOSMO Night Status into KosmoOrbit. It reads a
 | `kosmo-model` | `ready` | KOSMO Ollama enthaelt qwen2.5-coder:1.5b. | odysseus-kosmo-model-sync.sh apply ausfuehren, falls der Endpoint driftet. |
 | `desktop-artifacts` | `ready` | odysseus-vanilla-desktop-manifest.json=present, Odysseus-vanilla-linux-workstation.zip=present, KOSMO-Desktop-v2-linux-workstation.zip=present, ArchitekturkosmosMac.app=present | Vanilla/Desktop-Gates neu bauen, falls Manifest oder ZIP fehlt. |
 | `home-pc-handover` | `ready` | KOSMO-home-pc-linux-handover.zip: OK | kosmo-home-pc-linux-handover-zip.sh neu ausfuehren und Checksum pruefen. |
-| `home-pc-start-readiness` | `ready` | status=home_pc_start_dry_run_passed, checks=25/25, warnings=0 | kosmo-home-pc-start-dry-run.sh ausfuehren und fehlende Pflichtchecks beheben. |
-| `kosmo-orbit` | `ready` | repo_commit=da46f0a, report=present | Orbit bleibt review-only; naechster Hebel ist die sichtbare Odysseus/KOSMO-Statusbruecke. |
-| `github-separation` | `blocked` | Dedicated Starter-Repo fehlt; Website-Repo wird nicht als Ersatz benutzt. | Eigenes Imperigo/Architekturkosmos_Codex_Starter Repo anlegen oder Import explizit freigeben. |
+| `home-pc-start-readiness` | `ready` | status=home_pc_start_dry_run_passed, checks=29/29, warnings=0 | kosmo-home-pc-start-dry-run.sh ausfuehren und fehlende Pflichtchecks beheben. |
+| `kosmo-orbit` | `ready` | repo_commit=862eb2c, report=present | Orbit bleibt review-only; naechster Hebel ist die sichtbare Odysseus/KOSMO-Statusbruecke. |
+| `github-separation` | `blocked` | Decision pack proposed repo=Imperigo/Architekturkosmos_Codex_Starter; waiting for owner-go. | Eigenes Imperigo/Architekturkosmos_Codex_Starter Repo anlegen oder Import explizit freigeben. |
 
 ## Sources
 
-- local starter commit: `b7bd449`
+- local starter commit: `d2084d2`
 - cloud starter commit: `863dcde`
-- Orbit website commit: `da46f0a`
+- Orbit website commit: `862eb2c`
 
 ## Home PC Handover
 
@@ -72,6 +72,6 @@ First commands:
 
 ## Next Actions
 
-- KOSMO Control Spine als sichtbare Statusbruecke in KosmoOrbit einhaengen.
+- GitHub Separation Decision Pack owner-seitig bestaetigen oder Repo-Erstellung weiter blockiert lassen.
 - Dediziertes GitHub-Repo fuer den Starter anlegen oder Import-Ziel freigeben.
 - Home-PC Linux Handover auf Zielmaschine testen und erste Memory/Worker-Sync-Probe fahren.
