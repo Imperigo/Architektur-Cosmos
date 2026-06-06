@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-06T02:18:00.000000+00:00",
+  "generated_at": "2026-06-06T02:24:00.000000+00:00",
   "goal": "KOSMO local control spine over Odysseus with safe Home-PC handover",
   "progress_percent": 86,
   "progress_bar": "[#####################---] 86%",
@@ -16,7 +16,7 @@
       "path": "<local_starter>",
       "exists": true,
       "clean": true,
-      "commit": "c61d73e",
+      "commit": "39933a0",
       "status_short": ""
     },
     "cloud_starter": {
@@ -73,7 +73,7 @@
       "label": "Home-PC Start Readiness",
       "status": "ready",
       "ready": true,
-      "evidence": "status=home_pc_start_dry_run_passed, checks=51/51, warnings=0",
+      "evidence": "status=home_pc_start_dry_run_passed, checks=54/54, warnings=0",
       "next_action": "kosmo-home-pc-start-dry-run.sh ausfuehren und fehlende Pflichtchecks beheben."
     },
     {
@@ -237,7 +237,7 @@
             "title": "Run Home-PC dry-run after unpacking.",
             "status": "home_pc_start_dry_run_passed",
             "next_step": "./scripts/kosmo-home-pc-start-dry-run.sh",
-            "evidence": "checks=51/51"
+            "evidence": "checks=54/54"
           }
         ]
       },
@@ -293,7 +293,7 @@
       "warnings": 0
     },
     "current_state": {
-      "starter_commit": "c61d73e",
+      "starter_commit": "39933a0",
       "orbit_commit": "19cefd6",
       "night_progress": "[#####################---] 86%",
       "ready_lanes": 6,
@@ -305,10 +305,10 @@
       "queue": "next_action_queue_ready",
       "runway": "runway_report_ready",
       "home_pc_dry_run": "home_pc_start_dry_run_passed",
-      "home_pc_dry_run_checks": "51/51",
+      "home_pc_dry_run_checks": "54/54",
       "handover_zip": "dist/KOSMO-home-pc-linux-handover.zip",
       "handover_checksum": "KOSMO-home-pc-linux-handover.zip: OK",
-      "runtime_bundle": "Architekturkosmos_Codex_Starter_Local_c61d73e_20260606-0418.bundle",
+      "runtime_bundle": "Architekturkosmos_Codex_Starter_Local_39933a0_20260606-0424.bundle",
       "runtime_latest_zip": "Architekturkosmos_Codex_Starter_Local_latest.zip",
       "orbit_review_branch": "kosmo-orbit-runtime-bridge-20260606"
     },
