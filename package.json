@@ -137,6 +137,7 @@
     "kosmo:orbit-responsive-audit": "node scripts/kosmo-orbit-responsive-audit.mjs",
     "kosmo:orbit-heavy-check-timebox": "node scripts/kosmo-orbit-heavy-check-timebox.mjs",
     "kosmo:orbit-status": "node scripts/kosmo-orbit-status-report.mjs",
+    "kosmo:orbit-local-runtime-bridge": "node scripts/kosmo-orbit-local-runtime-bridge.mjs",
     "kosmo:orbit-project-inspector": "node scripts/kosmo-orbit-project-inspector.mjs",
     "kosmo:orbit-design-handoff": "node scripts/kosmo-orbit-design-handoff-preview.mjs",
     "kosmo:orbit-design-ui-panel": "node scripts/kosmo-orbit-design-ui-panel-spec.mjs",

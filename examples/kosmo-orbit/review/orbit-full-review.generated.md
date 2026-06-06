@@ -1,6 +1,6 @@
 # KosmoOrbit Full Review
 
-Generated: 2026-06-02T20:38:38.779Z
+Generated: 2026-06-06T00:14:06.724Z
 Status: `orbit_full_review_ready_for_review_mode`
 Workspace: `examples/kosmo-orbit/workspace.demo.json`
 Project: `examples/kosmo-projects/kosmo-demo-001`
@@ -9,7 +9,7 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 
 ## Summary
 
-- steps: 33/33 passed
+- steps: 34/34 passed
 - role state: `role_state_check_passed`
 - role state active role: `owner_admin`
 - role state selected role: `owner_admin`
@@ -98,6 +98,10 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 - orbit route smoke: `orbit_route_smoke_passed`
 - orbit route smoke checks: 246/246
 - workspace status: `orbit_blocked_gates_present`
+- local runtime bridge: `local_runtime_bridge_passed`
+- local runtime bridge progress: 83%
+- local runtime bridge lanes: 5 ready / 1 blocked
+- local runtime bridge checks: 14/14
 - project status: `local_review_only`
 - project artifacts: 59
 - review artifacts: 46
@@ -130,6 +134,7 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 | Role State Check | `passed` | `examples/kosmo-orbit/review/orbit-role-state-check.generated.json` |
 | Role State Smoke | `passed` | `examples/kosmo-orbit/review/orbit-role-state-smoke.generated.json` |
 | Workspace Status | `passed` | `examples/kosmo-orbit/review/orbit-status-report.generated.json` |
+| Local Runtime Bridge | `passed` | `examples/kosmo-orbit/review/orbit-local-runtime-bridge.generated.json` |
 | Project Package Inspector | `passed` | `examples/kosmo-projects/kosmo-demo-001/orbit/project-inspector.generated.json` |
 | KosmoDesign Handoff Preview | `passed` | `examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-preview.generated.json` |
 | KosmoDesign UI Panel Spec | `passed` | `examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-ui-panel.generated.json` |
@@ -187,6 +192,7 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 - pilot_result_draft_markdown: `examples/kosmo-orbit/review/orbit-pilot-result-draft.generated.md`
 - orbit_route_smoke_markdown: `examples/kosmo-orbit/review/orbit-route-smoke.generated.md`
 - workspace_status_markdown: `examples/kosmo-orbit/review/orbit-status-report.generated.md`
+- local_runtime_bridge_markdown: `examples/kosmo-orbit/review/orbit-local-runtime-bridge.generated.md`
 - project_inspector_markdown: `examples/kosmo-projects/kosmo-demo-001/orbit/project-inspector.generated.md`
 - design_handoff_markdown: `examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-preview.generated.md`
 - design_ui_panel_markdown: `examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-ui-panel.generated.md`
@@ -224,6 +230,7 @@ Review-only. This full review does not open Blender, generate geometry, publish 
 - Resolve or explicitly reject blocked context inputs before allowing design generation.
 - Keep generated project artifacts local until human review closes design/draw/viz evidence.
 - Keep public, rights and publish gates visible as blocked in the Orbit shell.
+- Use the local runtime bridge as the review-only link from Odysseus/KOSMO Night Status into KosmoOrbit before adding executable runtime adapters.
 - Use the generated static HTML prototype as the visual reference for the first KosmoOrbit app screen.
 - Keep the UI smoke in the Orbit full review before any UI handoff or prototype change.
 - Use the generated role variants to drive the next KosmoOrbit UI prototype pass.

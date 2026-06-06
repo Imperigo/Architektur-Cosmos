@@ -54,6 +54,16 @@ const steps = [
     report: resolve(workspaceRoot, 'review/orbit-status-report.generated.json')
   },
   {
+    id: 'local_runtime_bridge',
+    label: 'Local Runtime Bridge',
+    script: 'kosmo:orbit-local-runtime-bridge',
+    args: [
+      '--status',
+      'examples/kosmo-orbit/runtime/kosmo-night-status.demo.json'
+    ],
+    report: resolve(workspaceRoot, 'review/orbit-local-runtime-bridge.generated.json')
+  },
+  {
     id: 'project_inspector',
     label: 'Project Package Inspector',
     script: 'kosmo:orbit-project-inspector',
@@ -534,6 +544,7 @@ function buildReport(stepRows) {
   const pilotResultDraft = readOptionalJson(resolve(workspaceRoot, 'review/orbit-pilot-result-draft.generated.json'));
   const orbitRouteSmoke = readOptionalJson(resolve(workspaceRoot, 'review/orbit-route-smoke.generated.json'));
   const workspaceStatus = readOptionalJson(resolve(workspaceRoot, 'review/orbit-status-report.generated.json'));
+  const localRuntimeBridge = readOptionalJson(resolve(workspaceRoot, 'review/orbit-local-runtime-bridge.generated.json'));
   const projectInspector = readOptionalJson(resolve(projectRoot, 'orbit/project-inspector.generated.json'));
   const designHandoff = readOptionalJson(resolve(projectRoot, 'orbit/design-handoff-preview.generated.json'));
   const designPanel = readOptionalJson(resolve(projectRoot, 'orbit/design-handoff-ui-panel.generated.json'));
@@ -679,6 +690,12 @@ function buildReport(stepRows) {
       orbit_route_smoke_passed_checks: orbitRouteSmoke?.summary?.passed_checks ?? null,
       orbit_route_smoke_check_count: orbitRouteSmoke?.summary?.check_count ?? null,
       workspace_status: workspaceStatus?.status || null,
+      local_runtime_bridge_status: localRuntimeBridge?.status || null,
+      local_runtime_bridge_progress: localRuntimeBridge?.summary?.progress_percent ?? null,
+      local_runtime_bridge_ready_lanes: localRuntimeBridge?.summary?.ready_lanes ?? null,
+      local_runtime_bridge_blocked_lanes: localRuntimeBridge?.summary?.blocked_lanes ?? null,
+      local_runtime_bridge_checks: localRuntimeBridge?.summary?.passed_checks ?? null,
+      local_runtime_bridge_check_count: localRuntimeBridge?.summary?.check_count ?? null,
       project_status: projectInspector?.status || null,
       project_artifact_count: projectInspector?.summary?.artifact_count ?? null,
       project_review_artifact_count: projectInspector?.summary?.review_artifact_count ?? null,
@@ -732,6 +749,7 @@ function buildReport(stepRows) {
       pilot_result_draft_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-pilot-result-draft.generated.md')),
       orbit_route_smoke_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-route-smoke.generated.md')),
       workspace_status_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-status-report.generated.md')),
+      local_runtime_bridge_markdown: relative(root, resolve(workspaceRoot, 'review/orbit-local-runtime-bridge.generated.md')),
       project_inspector_markdown: relative(root, resolve(projectRoot, 'orbit/project-inspector.generated.md')),
       design_handoff_markdown: relative(root, resolve(projectRoot, 'orbit/design-handoff-preview.generated.md')),
       design_ui_panel_markdown: relative(root, resolve(projectRoot, 'orbit/design-handoff-ui-panel.generated.md')),
@@ -743,11 +761,11 @@ function buildReport(stepRows) {
       role_shell_smoke_markdown: relative(root, resolve(projectRoot, 'orbit/role-shell-smoke.generated.md'))
     },
     steps: stepRows,
-    next_actions: nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHandoff, appRouteSpec, healthReadiness, commandContract, auditTrail, officePilotScene, toolRegistry, runtimeAdapter, kosmoSketchAdapter, workstationProfile, localIdentity, dataGovernance, officeMemory, localStorageDecision, deleteExportRestoreDrill, pilotSession, pilotMeasurementKit, pilotResultDraft, orbitRouteSmoke, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke, roleShellPrototype, roleShellSmoke })
+    next_actions: nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHandoff, appRouteSpec, healthReadiness, commandContract, auditTrail, officePilotScene, toolRegistry, runtimeAdapter, kosmoSketchAdapter, workstationProfile, localIdentity, dataGovernance, officeMemory, localStorageDecision, deleteExportRestoreDrill, pilotSession, pilotMeasurementKit, pilotResultDraft, orbitRouteSmoke, workspaceStatus, localRuntimeBridge, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke, roleShellPrototype, roleShellSmoke })
   };
 }
 
-function nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHandoff, appRouteSpec, healthReadiness, commandContract, auditTrail, officePilotScene, toolRegistry, runtimeAdapter, kosmoSketchAdapter, workstationProfile, localIdentity, dataGovernance, officeMemory, localStorageDecision, deleteExportRestoreDrill, pilotSession, pilotMeasurementKit, pilotResultDraft, orbitRouteSmoke, workspaceStatus, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke, roleShellPrototype, roleShellSmoke }) {
+function nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHandoff, appRouteSpec, healthReadiness, commandContract, auditTrail, officePilotScene, toolRegistry, runtimeAdapter, kosmoSketchAdapter, workstationProfile, localIdentity, dataGovernance, officeMemory, localStorageDecision, deleteExportRestoreDrill, pilotSession, pilotMeasurementKit, pilotResultDraft, orbitRouteSmoke, workspaceStatus, localRuntimeBridge, projectInspector, designHandoff, designPanel, designPrototype, designUiSmoke, roleVariants, roleUiSmoke, roleShellPrototype, roleShellSmoke }) {
   const actions = [];
   if (failedSteps.length) {
     failedSteps.forEach((step) => actions.push(`Review failed step: ${step.label}`));
@@ -827,6 +845,9 @@ function nextActions({ failedSteps, roleStateCheck, roleStateSmoke, roleStateHan
   }
   if (workspaceStatus?.summary?.blocked_gate_count > 0) {
     actions.push('Keep public, rights and publish gates visible as blocked in the Orbit shell.');
+  }
+  if (localRuntimeBridge?.status === 'local_runtime_bridge_passed') {
+    actions.push('Use the local runtime bridge as the review-only link from Odysseus/KOSMO Night Status into KosmoOrbit before adding executable runtime adapters.');
   }
   if (designPrototype?.status === 'ui_prototype_ready') {
     actions.push('Use the generated static HTML prototype as the visual reference for the first KosmoOrbit app screen.');
@@ -952,6 +973,10 @@ function renderMarkdown(report) {
     `- orbit route smoke: \`${report.summary.orbit_route_smoke_status}\``,
     `- orbit route smoke checks: ${report.summary.orbit_route_smoke_passed_checks}/${report.summary.orbit_route_smoke_check_count}`,
     `- workspace status: \`${report.summary.workspace_status}\``,
+    `- local runtime bridge: \`${report.summary.local_runtime_bridge_status}\``,
+    `- local runtime bridge progress: ${report.summary.local_runtime_bridge_progress}%`,
+    `- local runtime bridge lanes: ${report.summary.local_runtime_bridge_ready_lanes} ready / ${report.summary.local_runtime_bridge_blocked_lanes} blocked`,
+    `- local runtime bridge checks: ${report.summary.local_runtime_bridge_checks}/${report.summary.local_runtime_bridge_check_count}`,
     `- project status: \`${report.summary.project_status}\``,
     `- project artifacts: ${report.summary.project_artifact_count}`,
     `- review artifacts: ${report.summary.project_review_artifact_count}`,

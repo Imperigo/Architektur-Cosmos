@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-02T20:38:38.779Z",
+  "generated_at": "2026-06-06T00:14:06.724Z",
   "generator": "kosmo-orbit-full-review",
   "workspace_path": "examples/kosmo-orbit/workspace.demo.json",
   "project_root": "examples/kosmo-projects/kosmo-demo-001",
@@ -15,8 +15,8 @@
     "no_geometry_generation": true
   },
   "summary": {
-    "step_count": 33,
-    "passed_steps": 33,
+    "step_count": 34,
+    "passed_steps": 34,
     "failed_steps": 0,
     "role_state_status": "role_state_check_passed",
     "role_state_active_role": "owner_admin",
@@ -125,6 +125,12 @@
     "orbit_route_smoke_passed_checks": 246,
     "orbit_route_smoke_check_count": 246,
     "workspace_status": "orbit_blocked_gates_present",
+    "local_runtime_bridge_status": "local_runtime_bridge_passed",
+    "local_runtime_bridge_progress": 83,
+    "local_runtime_bridge_ready_lanes": 5,
+    "local_runtime_bridge_blocked_lanes": 1,
+    "local_runtime_bridge_checks": 14,
+    "local_runtime_bridge_check_count": 14,
     "project_status": "local_review_only",
     "project_artifact_count": 59,
     "project_review_artifact_count": 46,
@@ -178,6 +184,7 @@
     "pilot_result_draft_markdown": "examples/kosmo-orbit/review/orbit-pilot-result-draft.generated.md",
     "orbit_route_smoke_markdown": "examples/kosmo-orbit/review/orbit-route-smoke.generated.md",
     "workspace_status_markdown": "examples/kosmo-orbit/review/orbit-status-report.generated.md",
+    "local_runtime_bridge_markdown": "examples/kosmo-orbit/review/orbit-local-runtime-bridge.generated.md",
     "project_inspector_markdown": "examples/kosmo-projects/kosmo-demo-001/orbit/project-inspector.generated.md",
     "design_handoff_markdown": "examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-preview.generated.md",
     "design_ui_panel_markdown": "examples/kosmo-projects/kosmo-demo-001/orbit/design-handoff-ui-panel.generated.md",
@@ -235,6 +242,18 @@
       "report_exists": true,
       "report_status": "orbit_blocked_gates_present",
       "stdout_tail": "KosmoOrbit status report generated\nWorkspace: Architecture Kosmos Demo Office\nStatus: orbit_blocked_gates_present\nTools: 8\nGates: 7\nBlocked gates: 2\nNeeds review: 4\nWrote: examples/kosmo-orbit/review/orbit-status-report.generated.md",
+      "stderr_tail": ""
+    },
+    {
+      "id": "local_runtime_bridge",
+      "label": "Local Runtime Bridge",
+      "command": "npm run kosmo:orbit-local-runtime-bridge -- --status examples/kosmo-orbit/runtime/kosmo-night-status.demo.json",
+      "status": "passed",
+      "exit_code": 0,
+      "report_path": "examples/kosmo-orbit/review/orbit-local-runtime-bridge.generated.json",
+      "report_exists": true,
+      "report_status": "local_runtime_bridge_passed",
+      "stdout_tail": "> architecture-cosmos@0.1.0 kosmo:orbit-local-runtime-bridge\n> node scripts/kosmo-orbit-local-runtime-bridge.mjs --status examples/kosmo-orbit/runtime/kosmo-night-status.demo.json\n\nKosmoOrbit local runtime bridge\nStatus: local_runtime_bridge_passed\nProgress: 83%\nChecks: 14/14\nWrote: examples/kosmo-orbit/review/orbit-local-runtime-bridge.generated.md",
       "stderr_tail": ""
     },
     {
@@ -612,6 +631,7 @@
     "Resolve or explicitly reject blocked context inputs before allowing design generation.",
     "Keep generated project artifacts local until human review closes design/draw/viz evidence.",
     "Keep public, rights and publish gates visible as blocked in the Orbit shell.",
+    "Use the local runtime bridge as the review-only link from Odysseus/KOSMO Night Status into KosmoOrbit before adding executable runtime adapters.",
     "Use the generated static HTML prototype as the visual reference for the first KosmoOrbit app screen.",
     "Keep the UI smoke in the Orbit full review before any UI handoff or prototype change.",
     "Use the generated role variants to drive the next KosmoOrbit UI prototype pass.",

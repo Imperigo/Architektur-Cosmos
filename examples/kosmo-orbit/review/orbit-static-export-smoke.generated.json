@@ -1,12 +1,12 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-02T14:43:07.648Z",
+  "generated_at": "2026-06-06T00:15:41.242Z",
   "generator": "kosmo-orbit-static-export-smoke",
   "status": "orbit_static_export_smoke_passed",
   "html_file": "out/orbit/index.html",
   "summary": {
-    "check_count": 82,
-    "passed_checks": 82,
+    "check_count": 84,
+    "passed_checks": 84,
     "failed_checks": 0,
     "referenced_static_asset_count": 8,
     "missing_static_asset_count": 0
@@ -16,11 +16,11 @@
       "_next/static/chunks/255-81ba70bd132d3eed.js",
       "_next/static/chunks/4bd1b696-c023c6e3521b1417.js",
       "_next/static/chunks/619-ba102abea3e3d0e4.js",
-      "_next/static/chunks/app/orbit/page-98e77b3b47da0b2e.js",
-      "_next/static/chunks/main-app-36e74dfd8b1eb57a.js",
+      "_next/static/chunks/app/orbit/page-cb8e6d39279c1e4c.js",
+      "_next/static/chunks/main-app-310dc59efa176d33.js",
       "_next/static/chunks/polyfills-42372ed130431b0a.js",
       "_next/static/chunks/webpack-81624dd509abd812.js",
-      "_next/static/css/c54327aad473751c.css"
+      "_next/static/css/3e470312ba206d69.css"
     ],
     "missing": []
   },
@@ -191,6 +191,11 @@
       "status": "passed"
     },
     {
+      "id": "renders_kosmosketch_adapter",
+      "label": "Export renders KosmoSketch tool adapter contract.",
+      "status": "passed"
+    },
+    {
       "id": "renders_installation_topology",
       "label": "Export renders local office installation topology.",
       "status": "passed"
@@ -293,6 +298,11 @@
     {
       "id": "keeps_runtime_adapter_safe",
       "label": "Export keeps runtime adapters non-operational.",
+      "status": "passed"
+    },
+    {
+      "id": "keeps_kosmosketch_adapter_review_only",
+      "label": "Export keeps KosmoSketch backend, approval, artifact, Blender, BIM, IFC and 2D actions blocked.",
       "status": "passed"
     },
     {

@@ -853,7 +853,8 @@ Die wichtigste Produktlinie ist damit klarer:
 
 Aktuelle lokale Nachweise:
 
-- `npm run kosmo:orbit-full-review` — 32/32 passed;
+- `npm run kosmo:orbit-full-review` — 34/34 passed;
+- `npm run kosmo:orbit-local-runtime-bridge` — 14/14 passed; bridges the KOSMO Night Status into Orbit as a review-only status artifact;
 - `npm run kosmo:orbit-runtime-adapter` — 16/16 passed;
 - `npm run kosmo:orbit-workstation-profile` — 16/16 passed;
 - `npm run kosmo:orbit-local-identity` — 16/16 passed;
@@ -867,7 +868,7 @@ Aktuelle lokale Nachweise:
 - `npm run kosmo:orbit-route-smoke` — 239/239 passed;
 - `npm run kosmo:orbit-demo-audit` — 45/45 passed;
 - `npm run kosmo:orbit-responsive-audit` — 33/33 passed;
-- `npm run kosmo:orbit-static-smoke` — 82/82 passed;
+- `npm run kosmo:orbit-static-smoke` — 84/84 passed;
 - `npx tsc --noEmit --pretty false --incremental false` — passed;
 - `npm run lint` — 0 Errors, 0 Warnings;
 - `npm run ui:audit` — 72/72 passed;

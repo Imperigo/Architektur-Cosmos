@@ -1,0 +1,57 @@
+# KosmoOrbit Local Runtime Bridge
+
+Generated: 2026-06-06T00:14:02.011Z
+Status: `local_runtime_bridge_passed`
+Input: `examples/kosmo-orbit/runtime/kosmo-night-status.demo.json`
+Mode: `external_local_status_import`
+
+Review-only bridge from the local KOSMO Night Status into KosmoOrbit. It reads a JSON snapshot and writes report artifacts only; it does not launch processes, start models, scan private files, upload, publish, access external accounts or spend money.
+
+## Summary
+
+- progress: `[####################----] 83%`
+- checks: 14/14 passed
+- ready lanes: 5
+- blocked lanes: 1
+
+## Lanes
+
+| Lane | Status | Evidence | Next |
+| --- | --- | --- | --- |
+| `odysseus-runtime` | `ready` | status=running, chroma=running, url=http://127.0.0.1:7860 | Odysseus laufen lassen und bei Fehlern odysseus-vanilla-smoke.sh erneut ausfuehren. |
+| `kosmo-model` | `ready` | KOSMO Ollama enthaelt qwen2.5-coder:1.5b. | odysseus-kosmo-model-sync.sh apply ausfuehren, falls der Endpoint driftet. |
+| `desktop-artifacts` | `ready` | odysseus-vanilla-desktop-manifest.json=present, Odysseus-vanilla-linux-workstation.zip=present, KOSMO-Desktop-v2-linux-workstation.zip=present, ArchitekturkosmosMac.app=present | Vanilla/Desktop-Gates neu bauen, falls Manifest oder ZIP fehlt. |
+| `home-pc-handover` | `ready` | KOSMO-home-pc-linux-handover.zip: OK | kosmo-home-pc-linux-handover-zip.sh neu ausfuehren und Checksum pruefen. |
+| `kosmo-orbit` | `ready` | repo_commit=215f85b, report=present | Orbit bleibt review-only; naechster Hebel ist die sichtbare Odysseus/KOSMO-Statusbruecke. |
+| `github-separation` | `blocked` | Dedicated Starter-Repo fehlt; Website-Repo wird nicht als Ersatz benutzt. | Eigenes Imperigo/Architekturkosmos_Codex_Starter Repo anlegen oder Import explizit freigeben. |
+
+## Sources
+
+- local starter commit: `590e674`
+- cloud starter commit: `863dcde`
+- Orbit website commit: `215f85b`
+
+## Checks
+
+| Check | Status | Meaning |
+| --- | --- | --- |
+| `status_file_exists` | `passed` | Night status input file exists. |
+| `schema_version` | `passed` | Night status schema version is 0.1. |
+| `goal_present` | `passed` | Night status carries the KOSMO control-spine goal. |
+| `progress_number` | `passed` | Progress percent is a valid number between 0 and 100. |
+| `progress_bar_present` | `passed` | Progress bar is present for UI handoff. |
+| `required_lanes_present` | `passed` | All KOSMO control-spine lanes are present. |
+| `ready_lane_majority` | `passed` | At least five of six lanes are ready. |
+| `runtime_ready` | `passed` | Odysseus runtime lane is ready. |
+| `model_ready` | `passed` | KOSMO Ollama model lane is ready. |
+| `handover_ready` | `passed` | Home-PC handover lane is ready. |
+| `github_separation_blocked` | `passed` | GitHub separation remains blocked until a dedicated Starter repo or explicit import approval exists. |
+| `policy_flags_present` | `passed` | All safety policy flags are present and true. |
+| `sources_present` | `passed` | Local starter, cloud starter and Orbit website sources are represented. |
+| `no_private_path_required` | `passed` | Bridge can run from a repo-local demo status without a private local path. |
+
+## Next Actions
+
+- KOSMO Control Spine als sichtbare Statusbruecke in KosmoOrbit einhaengen.
+- Dediziertes GitHub-Repo fuer den Starter anlegen oder Import-Ziel freigeben.
+- Home-PC Linux Handover auf Zielmaschine testen und erste Memory/Worker-Sync-Probe fahren.

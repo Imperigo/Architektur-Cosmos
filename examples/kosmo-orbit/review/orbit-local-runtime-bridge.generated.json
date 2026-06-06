@@ -1,0 +1,158 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-06T00:14:02.011Z",
+  "generator": "kosmo-orbit-local-runtime-bridge",
+  "status": "local_runtime_bridge_passed",
+  "input_status_file": "examples/kosmo-orbit/runtime/kosmo-night-status.demo.json",
+  "mode": "external_local_status_import",
+  "policy": {
+    "review_only": true,
+    "no_runtime_actions": true,
+    "no_process_launches": true,
+    "no_model_starts": true,
+    "no_filesystem_scan": true,
+    "no_uploads": true,
+    "no_public_publish": true,
+    "no_external_accounts": true
+  },
+  "summary": {
+    "check_count": 14,
+    "passed_checks": 14,
+    "failed_checks": 0,
+    "progress_percent": 83,
+    "ready_lanes": 5,
+    "blocked_lanes": 1,
+    "open_blocker_count": 1
+  },
+  "control_spine": {
+    "goal": "KOSMO local control spine over Odysseus with safe Home-PC handover",
+    "progress_bar": "[####################----] 83%",
+    "generated_at": "2026-06-06T00:09:09.463226+00:00"
+  },
+  "lanes": [
+    {
+      "id": "odysseus-runtime",
+      "label": "Odysseus Runtime",
+      "status": "ready",
+      "evidence": "status=running, chroma=running, url=http://127.0.0.1:7860",
+      "next_action": "Odysseus laufen lassen und bei Fehlern odysseus-vanilla-smoke.sh erneut ausfuehren."
+    },
+    {
+      "id": "kosmo-model",
+      "label": "KOSMO Ollama Modell",
+      "status": "ready",
+      "evidence": "KOSMO Ollama enthaelt qwen2.5-coder:1.5b.",
+      "next_action": "odysseus-kosmo-model-sync.sh apply ausfuehren, falls der Endpoint driftet."
+    },
+    {
+      "id": "desktop-artifacts",
+      "label": "Desktop Artefakte",
+      "status": "ready",
+      "evidence": "odysseus-vanilla-desktop-manifest.json=present, Odysseus-vanilla-linux-workstation.zip=present, KOSMO-Desktop-v2-linux-workstation.zip=present, ArchitekturkosmosMac.app=present",
+      "next_action": "Vanilla/Desktop-Gates neu bauen, falls Manifest oder ZIP fehlt."
+    },
+    {
+      "id": "home-pc-handover",
+      "label": "Home-PC Linux Handover",
+      "status": "ready",
+      "evidence": "KOSMO-home-pc-linux-handover.zip: OK",
+      "next_action": "kosmo-home-pc-linux-handover-zip.sh neu ausfuehren und Checksum pruefen."
+    },
+    {
+      "id": "kosmo-orbit",
+      "label": "KosmoOrbit Interface",
+      "status": "ready",
+      "evidence": "repo_commit=215f85b, report=present",
+      "next_action": "Orbit bleibt review-only; naechster Hebel ist die sichtbare Odysseus/KOSMO-Statusbruecke."
+    },
+    {
+      "id": "github-separation",
+      "label": "GitHub Trennung",
+      "status": "blocked",
+      "evidence": "Dedicated Starter-Repo fehlt; Website-Repo wird nicht als Ersatz benutzt.",
+      "next_action": "Eigenes Imperigo/Architekturkosmos_Codex_Starter Repo anlegen oder Import explizit freigeben."
+    }
+  ],
+  "sources": {
+    "local_starter_commit": "590e674",
+    "cloud_starter_commit": "863dcde",
+    "orbit_website_commit": "215f85b"
+  },
+  "checks": [
+    {
+      "id": "status_file_exists",
+      "label": "Night status input file exists.",
+      "status": "passed"
+    },
+    {
+      "id": "schema_version",
+      "label": "Night status schema version is 0.1.",
+      "status": "passed"
+    },
+    {
+      "id": "goal_present",
+      "label": "Night status carries the KOSMO control-spine goal.",
+      "status": "passed"
+    },
+    {
+      "id": "progress_number",
+      "label": "Progress percent is a valid number between 0 and 100.",
+      "status": "passed"
+    },
+    {
+      "id": "progress_bar_present",
+      "label": "Progress bar is present for UI handoff.",
+      "status": "passed"
+    },
+    {
+      "id": "required_lanes_present",
+      "label": "All KOSMO control-spine lanes are present.",
+      "status": "passed"
+    },
+    {
+      "id": "ready_lane_majority",
+      "label": "At least five of six lanes are ready.",
+      "status": "passed"
+    },
+    {
+      "id": "runtime_ready",
+      "label": "Odysseus runtime lane is ready.",
+      "status": "passed"
+    },
+    {
+      "id": "model_ready",
+      "label": "KOSMO Ollama model lane is ready.",
+      "status": "passed"
+    },
+    {
+      "id": "handover_ready",
+      "label": "Home-PC handover lane is ready.",
+      "status": "passed"
+    },
+    {
+      "id": "github_separation_blocked",
+      "label": "GitHub separation remains blocked until a dedicated Starter repo or explicit import approval exists.",
+      "status": "passed"
+    },
+    {
+      "id": "policy_flags_present",
+      "label": "All safety policy flags are present and true.",
+      "status": "passed"
+    },
+    {
+      "id": "sources_present",
+      "label": "Local starter, cloud starter and Orbit website sources are represented.",
+      "status": "passed"
+    },
+    {
+      "id": "no_private_path_required",
+      "label": "Bridge can run from a repo-local demo status without a private local path.",
+      "status": "passed"
+    }
+  ],
+  "next_actions": [
+    "KOSMO Control Spine als sichtbare Statusbruecke in KosmoOrbit einhaengen.",
+    "Dediziertes GitHub-Repo fuer den Starter anlegen oder Import-Ziel freigeben.",
+    "Home-PC Linux Handover auf Zielmaschine testen und erste Memory/Worker-Sync-Probe fahren."
+  ]
+}

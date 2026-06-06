@@ -1,0 +1,93 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-06T00:09:09.463226+00:00",
+  "goal": "KOSMO local control spine over Odysseus with safe Home-PC handover",
+  "progress_percent": 83,
+  "progress_bar": "[####################----] 83%",
+  "policy": {
+    "no_publish": true,
+    "no_external_accounts": true,
+    "no_secrets_changes": true,
+    "no_repo_mixing_without_approval": true,
+    "dry_run_first": true
+  },
+  "sources_of_truth": {
+    "local_starter": {
+      "path": "LOCAL_STARTER_REDACTED",
+      "exists": true,
+      "clean": true,
+      "commit": "590e674",
+      "status_short": ""
+    },
+    "cloud_starter": {
+      "path": "ONEDRIVE_STARTER_REDACTED",
+      "exists": true,
+      "clean": true,
+      "commit": "863dcde",
+      "status_short": ""
+    },
+    "orbit_website": {
+      "path": "ORBIT_REPO_REDACTED",
+      "exists": true,
+      "clean": true,
+      "commit": "215f85b",
+      "status_short": ""
+    },
+    "runtime_dir": "ARCHITEKTURKOSMOS_RUNTIME_REDACTED"
+  },
+  "lanes": [
+    {
+      "id": "odysseus-runtime",
+      "label": "Odysseus Runtime",
+      "status": "ready",
+      "ready": true,
+      "evidence": "status=running, chroma=running, url=http://127.0.0.1:7860",
+      "next_action": "Odysseus laufen lassen und bei Fehlern odysseus-vanilla-smoke.sh erneut ausfuehren."
+    },
+    {
+      "id": "kosmo-model",
+      "label": "KOSMO Ollama Modell",
+      "status": "ready",
+      "ready": true,
+      "evidence": "KOSMO Ollama enthaelt qwen2.5-coder:1.5b.",
+      "next_action": "odysseus-kosmo-model-sync.sh apply ausfuehren, falls der Endpoint driftet."
+    },
+    {
+      "id": "desktop-artifacts",
+      "label": "Desktop Artefakte",
+      "status": "ready",
+      "ready": true,
+      "evidence": "odysseus-vanilla-desktop-manifest.json=present, Odysseus-vanilla-linux-workstation.zip=present, KOSMO-Desktop-v2-linux-workstation.zip=present, ArchitekturkosmosMac.app=present",
+      "next_action": "Vanilla/Desktop-Gates neu bauen, falls Manifest oder ZIP fehlt."
+    },
+    {
+      "id": "home-pc-handover",
+      "label": "Home-PC Linux Handover",
+      "status": "ready",
+      "ready": true,
+      "evidence": "KOSMO-home-pc-linux-handover.zip: OK",
+      "next_action": "kosmo-home-pc-linux-handover-zip.sh neu ausfuehren und Checksum pruefen."
+    },
+    {
+      "id": "kosmo-orbit",
+      "label": "KosmoOrbit Interface",
+      "status": "ready",
+      "ready": true,
+      "evidence": "repo_commit=215f85b, report=present",
+      "next_action": "Orbit bleibt review-only; naechster Hebel ist die sichtbare Odysseus/KOSMO-Statusbruecke."
+    },
+    {
+      "id": "github-separation",
+      "label": "GitHub Trennung",
+      "status": "blocked",
+      "ready": false,
+      "evidence": "Dedicated Starter-Repo fehlt; Website-Repo wird nicht als Ersatz benutzt.",
+      "next_action": "Eigenes Imperigo/Architekturkosmos_Codex_Starter Repo anlegen oder Import explizit freigeben."
+    }
+  ],
+  "next_three_implementation_steps": [
+    "KOSMO Control Spine als sichtbare Statusbruecke in KosmoOrbit einhaengen.",
+    "Dediziertes GitHub-Repo fuer den Starter anlegen oder Import-Ziel freigeben.",
+    "Home-PC Linux Handover auf Zielmaschine testen und erste Memory/Worker-Sync-Probe fahren."
+  ]
+}

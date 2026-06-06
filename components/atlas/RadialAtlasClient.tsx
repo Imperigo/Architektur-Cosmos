@@ -1,19 +1,27 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useSyncExternalStore } from 'react';
 import { RadialAtlas } from '@/components/atlas/RadialAtlas';
 import type { Entry, EntryRelation } from '@/lib/types';
 
 export function RadialAtlasClient({ entries, relations }: { entries: Entry[]; relations: EntryRelation[] }) {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useSyncExternalStore(subscribeToClientMount, getClientSnapshot, getServerSnapshot);
 
   if (!mounted) return <AtlasBootFallback />;
 
   return <RadialAtlas entries={entries} relations={relations} />;
+}
+
+function subscribeToClientMount() {
+  return () => {};
+}
+
+function getClientSnapshot() {
+  return true;
+}
+
+function getServerSnapshot() {
+  return false;
 }
 
 function AtlasBootFallback() {

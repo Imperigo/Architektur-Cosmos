@@ -401,25 +401,27 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     const params = new URLSearchParams(window.location.search);
     if (!isKosmoDataReturn(params)) return;
 
-    setIntroState('idle');
-    setReturningFromDatabase(true);
     params.delete('return');
     const nextQuery = params.toString();
     window.history.replaceState(window.history.state, '', `${window.location.pathname}${nextQuery ? `?${nextQuery}` : ''}${window.location.hash}`);
 
-    motionRef.current = {
-      currentTravel: 0.085,
-      targetTravel: 0,
-      velocity: -0.0018,
-      frame: null,
-      timeout: null
-    };
-    setMotion({
-      currentTravel: 0.085,
-      targetTravel: 0,
-      velocity: -0.0018,
-      isMoving: true,
-      isSettling: false
+    const returnFrame = window.requestAnimationFrame(() => {
+      setIntroState('idle');
+      setReturningFromDatabase(true);
+      motionRef.current = {
+        currentTravel: 0.085,
+        targetTravel: 0,
+        velocity: -0.0018,
+        frame: null,
+        timeout: null
+      };
+      setMotion({
+        currentTravel: 0.085,
+        targetTravel: 0,
+        velocity: -0.0018,
+        isMoving: true,
+        isSettling: false
+      });
     });
 
     const travelTimeout = window.setTimeout(() => {
@@ -445,6 +447,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
     }, 1180);
 
     return () => {
+      window.cancelAnimationFrame(returnFrame);
       window.clearTimeout(travelTimeout);
       window.clearTimeout(doneTimeout);
     };
@@ -2850,10 +2853,6 @@ function AssetInspector({ asset }: { asset: AssetPreviewRecord }) {
   const reviewSummary = assetReviewSummary({ asset, reviewPack, decisionLedger, handoffSmoke });
   const [activeActionId, setActiveActionId] = useState(reviewActions[0]?.id ?? 'library-check');
   const activeAction = reviewActions.find((action) => action.id === activeActionId) ?? reviewActions[0];
-
-  useEffect(() => {
-    setActiveActionId(reviewActions[0]?.id ?? 'library-check');
-  }, [asset.id, reviewActions]);
 
   return (
     <aside className="kosmo-asset-inspector" style={{ '--asset-accent': accent } as CSSProperties} aria-label={`${asset.title} Inspektor`}>
