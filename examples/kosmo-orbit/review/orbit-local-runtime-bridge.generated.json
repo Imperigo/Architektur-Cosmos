@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-06T02:24:57.526Z",
+  "generated_at": "2026-06-06T02:27:42.577Z",
   "generator": "kosmo-orbit-local-runtime-bridge",
   "status": "local_runtime_bridge_passed",
   "input_status_file": "examples/kosmo-orbit/runtime/kosmo-night-status.demo.json",
@@ -16,8 +16,8 @@
     "no_external_accounts": true
   },
   "summary": {
-    "check_count": 19,
-    "passed_checks": 19,
+    "check_count": 20,
+    "passed_checks": 20,
     "failed_checks": 0,
     "progress_percent": 86,
     "ready_lanes": 6,
@@ -27,7 +27,7 @@
   "control_spine": {
     "goal": "KOSMO local control spine over Odysseus with safe Home-PC handover",
     "progress_bar": "[#####################---] 86%",
-    "generated_at": "2026-06-06T02:24:00.000000+00:00"
+    "generated_at": "2026-06-06T02:26:14.000000+00:00"
   },
   "lanes": [
     {
@@ -69,7 +69,7 @@
       "id": "kosmo-orbit",
       "label": "KosmoOrbit Interface",
       "status": "ready",
-      "evidence": "repo_commit=19cefd6, report=present",
+      "evidence": "repo_commit=2b802c2, report=present",
       "next_action": "Orbit bleibt review-only; naechster Hebel ist die sichtbare Odysseus/KOSMO-Statusbruecke."
     },
     {
@@ -294,7 +294,7 @@
     "warnings": 0,
     "current_state": {
       "starter_commit": "39933a0",
-      "orbit_commit": "19cefd6",
+      "orbit_commit": "2b802c2",
       "night_progress": "[#####################---] 86%",
       "ready_lanes": 6,
       "blocked_lanes": 1
@@ -306,6 +306,9 @@
       "runway": "runway_report_ready",
       "home_pc_dry_run": "home_pc_start_dry_run_passed",
       "home_pc_dry_run_checks": "54/54",
+      "home_pc_handover_doctor": "home_pc_handover_doctor_passed",
+      "home_pc_handover_doctor_checks": "17/17",
+      "home_pc_handover_doctor_report": "tmp/kosmo-home-pc-handover-doctor.json",
       "handover_zip": "dist/KOSMO-home-pc-linux-handover.zip",
       "handover_checksum": "KOSMO-home-pc-linux-handover.zip: OK",
       "runtime_bundle": "Architekturkosmos_Codex_Starter_Local_39933a0_20260606-0424.bundle",
@@ -318,6 +321,7 @@
       "tmp/kosmo-next-action-queue.md",
       "tmp/kosmo-runway-report.md",
       "tmp/kosmo-home-pc-linux-first-run-plan.md",
+      "tmp/kosmo-home-pc-handover-doctor.md",
       "tmp/kosmo-home-pc-start-dry-run.md",
       "tmp/kosmo-home-pc-linux-handover-manifest.json"
     ],
@@ -438,6 +442,11 @@
     {
       "id": "closeout_aggregator_visible",
       "label": "Closeout aggregator is visible as the Home-PC read order and final evidence packet.",
+      "status": "passed"
+    },
+    {
+      "id": "home_pc_doctor_visible",
+      "label": "Home-PC handover doctor evidence is visible in the closeout packet.",
       "status": "passed"
     },
     {

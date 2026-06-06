@@ -94,6 +94,9 @@ type LocalRuntimeBridgeReport = {
       runway: string;
       home_pc_dry_run: string;
       home_pc_dry_run_checks: string;
+      home_pc_handover_doctor: string;
+      home_pc_handover_doctor_checks: string;
+      home_pc_handover_doctor_report: string;
       handover_zip: string;
       handover_checksum: string;
       runtime_bundle: string;
@@ -299,6 +302,17 @@ export function OrbitLocalRuntimeBridge() {
           </p>
           <p className="rounded-md border border-rose-300/20 bg-rose-300/10 px-3 py-2 text-rose-100">
             Blocked <code className="block break-words text-stone-200">{localRuntimeBridge.closeout_aggregator.current_state.blocked_lanes}</code>
+          </p>
+        </div>
+        <div className="mt-3 grid gap-2 text-sm leading-5 md:grid-cols-3">
+          <p className="rounded-md border border-emerald-300/20 bg-emerald-300/10 px-3 py-2 text-emerald-100">
+            Handover Doctor <code className="block break-words text-stone-200">{localRuntimeBridge.closeout_aggregator.evidence.home_pc_handover_doctor}</code>
+          </p>
+          <p className="rounded-md border border-emerald-300/20 bg-emerald-300/10 px-3 py-2 text-emerald-100">
+            Doctor Checks <code className="block break-words text-stone-200">{localRuntimeBridge.closeout_aggregator.evidence.home_pc_handover_doctor_checks}</code>
+          </p>
+          <p className="rounded-md border border-emerald-300/20 bg-emerald-300/10 px-3 py-2 text-emerald-100">
+            Doctor Report <code className="block break-words text-stone-200">{localRuntimeBridge.closeout_aggregator.evidence.home_pc_handover_doctor_report}</code>
           </p>
         </div>
         <div className="mt-3 grid gap-3 xl:grid-cols-[0.9fr_1.1fr]">

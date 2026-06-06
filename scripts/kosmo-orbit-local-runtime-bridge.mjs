@@ -81,6 +81,7 @@ function buildReport(status) {
     check('next_action_queue_visible', 'Next-action queue is visible for allowed, waiting and blocked work.', status.next_action_queue?.status === 'next_action_queue_ready' && asArray(status.next_action_queue.actions).length >= 4),
     check('runway_report_visible', 'Runway report is visible for Mac, Linux, Owner-Go and post-boot phases.', status.runway_report?.status === 'runway_report_ready' && asArray(status.runway_report.runway).length === 4),
     check('closeout_aggregator_visible', 'Closeout aggregator is visible as the Home-PC read order and final evidence packet.', status.closeout_aggregator?.status === 'closeout_aggregator_ready' && asArray(status.closeout_aggregator.read_order).length >= 5),
+    check('home_pc_doctor_visible', 'Home-PC handover doctor evidence is visible in the closeout packet.', String(status.closeout_aggregator?.evidence?.home_pc_handover_doctor || '') === 'home_pc_handover_doctor_passed'),
     check('policy_flags_present', 'All safety policy flags are present and true.', requiredPolicies.every((key) => policy[key] === true)),
     check('sources_present', 'Local starter, cloud starter and Orbit website sources are represented.', Boolean(sources.local_starter && sources.cloud_starter && sources.orbit_website)),
     check('no_private_path_required', 'Bridge can run from a repo-local demo status without a private local path.', relative(root, statusPath).startsWith('examples/kosmo-orbit/runtime/') || Boolean(process.env.KOSMO_NIGHT_STATUS_JSON))
@@ -250,6 +251,7 @@ function renderMarkdown(report) {
   lines.push(`- starter commit: \`${report.closeout_aggregator.current_state.starter_commit}\``);
   lines.push(`- orbit commit: \`${report.closeout_aggregator.current_state.orbit_commit}\``);
   lines.push(`- Home-PC dry-run: \`${report.closeout_aggregator.evidence.home_pc_dry_run}\` (${report.closeout_aggregator.evidence.home_pc_dry_run_checks})`);
+  lines.push(`- Home-PC doctor: \`${report.closeout_aggregator.evidence.home_pc_handover_doctor}\` (${report.closeout_aggregator.evidence.home_pc_handover_doctor_checks})`);
   lines.push(`- handover ZIP: \`${report.closeout_aggregator.evidence.handover_zip}\``);
   lines.push(`- handover checksum: \`${report.closeout_aggregator.evidence.handover_checksum}\``);
   lines.push('', 'Read order:');
@@ -364,6 +366,9 @@ function normalizeCloseoutAggregator(closeout) {
       runway: evidence.runway || 'missing',
       home_pc_dry_run: evidence.home_pc_dry_run || 'missing',
       home_pc_dry_run_checks: evidence.home_pc_dry_run_checks || 'missing',
+      home_pc_handover_doctor: evidence.home_pc_handover_doctor || 'missing',
+      home_pc_handover_doctor_checks: evidence.home_pc_handover_doctor_checks || 'missing',
+      home_pc_handover_doctor_report: evidence.home_pc_handover_doctor_report || 'missing',
       handover_zip: evidence.handover_zip || 'missing',
       handover_checksum: evidence.handover_checksum || 'missing',
       runtime_bundle: evidence.runtime_bundle || 'missing',
