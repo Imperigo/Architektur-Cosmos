@@ -86,6 +86,7 @@ function buildReport(status) {
     check('closeout_aggregator_visible', 'Closeout aggregator is visible as the Home-PC read order and final evidence packet.', status.closeout_aggregator?.status === 'closeout_aggregator_ready' && asArray(status.closeout_aggregator.read_order).length >= 5),
     check('loop_closeout_dashboard_visible', 'Loop closeout dashboard is visible with safest next action.', status.loop_closeout_dashboard?.status === 'loop_closeout_dashboard_ready' && status.loop_closeout_dashboard?.safest_next_action?.id === 'refresh-control-spine'),
     check('home_pc_doctor_visible', 'Home-PC handover doctor evidence is visible in the closeout packet.', String(status.closeout_aggregator?.evidence?.home_pc_handover_doctor || '') === 'home_pc_handover_doctor_passed'),
+    check('home_pc_zip_smoke_visible', 'Home-PC ZIP smoke evidence and Start Card are visible in the closeout packet.', String(status.closeout_aggregator?.evidence?.home_pc_handover_zip_smoke || '') === 'home_pc_handover_zip_smoke_passed' && String(status.closeout_aggregator?.evidence?.home_pc_handover_zip_smoke_checks || '') === '19/19' && String(status.closeout_aggregator?.evidence?.home_pc_start_card || '').includes('KOSMO_HOME_PC_START_CARD.md')),
     check('orbit_render_smoke_closeout_visible', 'Orbit render smoke evidence is visible in the closeout packet.', String(status.closeout_aggregator?.evidence?.orbit_render_smoke || '') === 'orbit_local_render_smoke_passed' && String(status.closeout_aggregator?.evidence?.orbit_render_smoke_checks || '') === '9/9'),
     check('policy_flags_present', 'All safety policy flags are present and true.', requiredPolicies.every((key) => policy[key] === true)),
     check('sources_present', 'Local starter, cloud starter and Orbit website sources are represented.', Boolean(sources.local_starter && sources.cloud_starter && sources.orbit_website)),
@@ -149,6 +150,11 @@ function buildReport(status) {
       doctor_report: closeoutEvidence.home_pc_handover_doctor_report || 'tmp/kosmo-home-pc-handover-doctor.json',
       doctor_status: closeoutEvidence.home_pc_handover_doctor || 'missing',
       doctor_checks: closeoutEvidence.home_pc_handover_doctor_checks || 'missing',
+      zip_smoke_script: 'scripts/kosmo-home-pc-handover-zip-smoke.sh',
+      zip_smoke_report: closeoutEvidence.home_pc_handover_zip_smoke_report || 'tmp/kosmo-home-pc-handover-zip-smoke.json',
+      zip_smoke_status: closeoutEvidence.home_pc_handover_zip_smoke || 'missing',
+      zip_smoke_checks: closeoutEvidence.home_pc_handover_zip_smoke_checks || 'missing',
+      start_card: closeoutEvidence.home_pc_start_card || 'docs/home_station/KOSMO_HOME_PC_START_CARD.md',
       purpose: 'Machine-readable Linux handover index for the future Home-PC setup.',
       first_commands: [
         'shasum -a 256 -c KOSMO-home-pc-linux-handover.zip.sha256',
@@ -158,7 +164,10 @@ function buildReport(status) {
         './scripts/kosmo-home-pc-handover-index.sh',
         './scripts/kosmo-home-pc-handover-doctor.sh',
         './scripts/kosmo-home-pc-start-dry-run.sh',
-        'less KOSMO-home-pc-linux-handover/tmp/kosmo-home-pc-linux-first-run-plan.md',
+        './scripts/kosmo-loop-refresh-evidence.sh',
+        './scripts/kosmo-home-pc-handover-zip-smoke.sh',
+        'less docs/home_station/KOSMO_HOME_PC_START_CARD.md',
+        'less tmp/kosmo-home-pc-linux-first-run-plan.md',
         'less KOSMO-home-pc-linux-handover/tmp/kosmo-next-action-queue.md',
         'less KOSMO-home-pc-linux-handover/tmp/kosmo-runway-report.md',
         'less KOSMO-home-pc-linux-handover/tmp/kosmo-closeout-aggregator.md',
@@ -244,6 +253,11 @@ function renderMarkdown(report) {
   lines.push(`- doctor report: \`${report.home_pc_handover.doctor_report}\``);
   lines.push(`- doctor status: \`${report.home_pc_handover.doctor_status}\``);
   lines.push(`- doctor checks: \`${report.home_pc_handover.doctor_checks}\``);
+  lines.push(`- ZIP smoke script: \`${report.home_pc_handover.zip_smoke_script}\``);
+  lines.push(`- ZIP smoke report: \`${report.home_pc_handover.zip_smoke_report}\``);
+  lines.push(`- ZIP smoke status: \`${report.home_pc_handover.zip_smoke_status}\``);
+  lines.push(`- ZIP smoke checks: \`${report.home_pc_handover.zip_smoke_checks}\``);
+  lines.push(`- Start Card: \`${report.home_pc_handover.start_card}\``);
   lines.push(`- purpose: ${report.home_pc_handover.purpose}`);
   lines.push('', 'First commands:');
   report.home_pc_handover.first_commands.forEach((command) => lines.push(`- \`${command}\``));
@@ -273,6 +287,8 @@ function renderMarkdown(report) {
   lines.push(`- orbit commit: \`${report.closeout_aggregator.current_state.orbit_commit}\``);
   lines.push(`- Home-PC dry-run: \`${report.closeout_aggregator.evidence.home_pc_dry_run}\` (${report.closeout_aggregator.evidence.home_pc_dry_run_checks})`);
   lines.push(`- Home-PC doctor: \`${report.closeout_aggregator.evidence.home_pc_handover_doctor}\` (${report.closeout_aggregator.evidence.home_pc_handover_doctor_checks})`);
+  lines.push(`- Home-PC ZIP smoke: \`${report.closeout_aggregator.evidence.home_pc_handover_zip_smoke}\` (${report.closeout_aggregator.evidence.home_pc_handover_zip_smoke_checks})`);
+  lines.push(`- Home-PC Start Card: \`${report.closeout_aggregator.evidence.home_pc_start_card}\``);
   lines.push(`- handover ZIP: \`${report.closeout_aggregator.evidence.handover_zip}\``);
   lines.push(`- handover checksum: \`${report.closeout_aggregator.evidence.handover_checksum}\``);
   lines.push('', 'Read order:');
@@ -399,6 +415,10 @@ function normalizeCloseoutAggregator(closeout) {
       home_pc_handover_doctor: evidence.home_pc_handover_doctor || 'missing',
       home_pc_handover_doctor_checks: evidence.home_pc_handover_doctor_checks || 'missing',
       home_pc_handover_doctor_report: evidence.home_pc_handover_doctor_report || 'missing',
+      home_pc_handover_zip_smoke: evidence.home_pc_handover_zip_smoke || 'missing',
+      home_pc_handover_zip_smoke_checks: evidence.home_pc_handover_zip_smoke_checks || 'missing',
+      home_pc_handover_zip_smoke_report: evidence.home_pc_handover_zip_smoke_report || 'missing',
+      home_pc_start_card: evidence.home_pc_start_card || 'missing',
       handover_zip: evidence.handover_zip || 'missing',
       handover_checksum: evidence.handover_checksum || 'missing',
       runtime_bundle: evidence.runtime_bundle || 'missing',
@@ -438,6 +458,8 @@ function normalizeLoopCloseoutDashboard(dashboard) {
       night_status: evidence.night_status || 'missing',
       doctor: evidence.doctor || 'missing',
       dry_run: evidence.dry_run || 'missing',
+      zip_smoke: evidence.zip_smoke || 'missing',
+      start_card: evidence.start_card || 'missing',
       closeout: evidence.closeout || 'missing',
       orbit_render_smoke: evidence.orbit_render_smoke || 'missing',
       handover_checksum: evidence.handover_checksum || 'missing',

@@ -15,8 +15,11 @@ const markers = [
   ['renders_doctor_checks', 'Doctor Checks'],
   ['renders_doctor_report', 'Doctor Report'],
   ['renders_doctor_passed_status', 'home_pc_handover_doctor_passed'],
-  ['renders_doctor_check_count', '17/17'],
-  ['renders_home_pc_dry_run_check_count', '54/54'],
+  ['renders_doctor_check_count', '19/19'],
+  ['renders_home_pc_dry_run_check_count', '62/62'],
+  ['renders_zip_smoke_passed_status', 'home_pc_handover_zip_smoke_passed'],
+  ['renders_zip_smoke_check_count', '19/19'],
+  ['renders_start_card_path', 'KOSMO_HOME_PC_START_CARD.md'],
   ['renders_doctor_script_command', 'scripts/kosmo-home-pc-handover-doctor.sh'],
   ['renders_doctor_report_path', 'tmp/kosmo-home-pc-handover-doctor.json']
 ];

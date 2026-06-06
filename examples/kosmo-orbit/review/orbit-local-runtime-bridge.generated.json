@@ -1,10 +1,10 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-06T03:05:51.868Z",
+  "generated_at": "2026-06-06T03:40:55.807Z",
   "generator": "kosmo-orbit-local-runtime-bridge",
   "status": "local_runtime_bridge_passed",
   "input_status_file": "examples/kosmo-orbit/runtime/kosmo-night-status.demo.json",
-  "mode": "external_local_status_import",
+  "mode": "repo_local_demo_status",
   "policy": {
     "review_only": true,
     "no_runtime_actions": true,
@@ -16,8 +16,8 @@
     "no_external_accounts": true
   },
   "summary": {
-    "check_count": 23,
-    "passed_checks": 23,
+    "check_count": 24,
+    "passed_checks": 24,
     "failed_checks": 0,
     "progress_percent": 88,
     "ready_lanes": 7,
@@ -55,15 +55,15 @@
       "id": "home-pc-handover",
       "label": "Home-PC Linux Handover",
       "status": "ready",
-      "evidence": "KOSMO-home-pc-linux-handover.zip: OK",
+      "evidence": "KOSMO-home-pc-linux-handover.zip: OK; zip_smoke=home_pc_handover_zip_smoke_passed 19/19; start_card=present",
       "next_action": "kosmo-home-pc-linux-handover-zip.sh neu ausfuehren und Checksum pruefen."
     },
     {
       "id": "home-pc-start-readiness",
       "label": "Home-PC Start Readiness",
       "status": "ready",
-      "evidence": "status=home_pc_start_dry_run_passed, checks=55/55, warnings=0",
-      "next_action": "kosmo-home-pc-start-dry-run.sh ausfuehren und fehlende Pflichtchecks beheben."
+      "evidence": "status=home_pc_start_dry_run_passed, checks=62/62, warnings=0; zip_smoke=19/19; start_card=present",
+      "next_action": "./scripts/kosmo-loop-refresh-evidence.sh ausfuehren; bei Transfer das ZIP mit kosmo-home-pc-handover-zip-smoke.sh pruefen."
     },
     {
       "id": "kosmo-orbit",
@@ -88,9 +88,9 @@
     }
   ],
   "sources": {
-    "local_starter_commit": "4b1ecb7",
+    "local_starter_commit": "245df32",
     "cloud_starter_commit": "863dcde",
-    "orbit_website_commit": "37ad7a0"
+    "orbit_website_commit": "a6e5bf5"
   },
   "home_pc_handover": {
     "platform": "linux-workstation",
@@ -100,11 +100,16 @@
     "start_dry_run_script": "scripts/kosmo-home-pc-start-dry-run.sh",
     "start_dry_run_report": "tmp/kosmo-home-pc-start-dry-run.json",
     "start_dry_run_status": "home_pc_start_dry_run_passed",
-    "start_dry_run_checks": "55/55",
+    "start_dry_run_checks": "62/62",
     "doctor_script": "scripts/kosmo-home-pc-handover-doctor.sh",
     "doctor_report": "tmp/kosmo-home-pc-handover-doctor.json",
     "doctor_status": "home_pc_handover_doctor_passed",
-    "doctor_checks": "18/18",
+    "doctor_checks": "19/19",
+    "zip_smoke_script": "scripts/kosmo-home-pc-handover-zip-smoke.sh",
+    "zip_smoke_report": "tmp/kosmo-home-pc-handover-zip-smoke.json",
+    "zip_smoke_status": "home_pc_handover_zip_smoke_passed",
+    "zip_smoke_checks": "19/19",
+    "start_card": "docs/home_station/KOSMO_HOME_PC_START_CARD.md",
     "purpose": "Machine-readable Linux handover index for the future Home-PC setup.",
     "first_commands": [
       "shasum -a 256 -c KOSMO-home-pc-linux-handover.zip.sha256",
@@ -114,7 +119,10 @@
       "./scripts/kosmo-home-pc-handover-index.sh",
       "./scripts/kosmo-home-pc-handover-doctor.sh",
       "./scripts/kosmo-home-pc-start-dry-run.sh",
-      "less KOSMO-home-pc-linux-handover/tmp/kosmo-home-pc-linux-first-run-plan.md",
+      "./scripts/kosmo-loop-refresh-evidence.sh",
+      "./scripts/kosmo-home-pc-handover-zip-smoke.sh",
+      "less docs/home_station/KOSMO_HOME_PC_START_CARD.md",
+      "less tmp/kosmo-home-pc-linux-first-run-plan.md",
       "less KOSMO-home-pc-linux-handover/tmp/kosmo-next-action-queue.md",
       "less KOSMO-home-pc-linux-handover/tmp/kosmo-runway-report.md",
       "less KOSMO-home-pc-linux-handover/tmp/kosmo-closeout-aggregator.md",
@@ -134,8 +142,8 @@
         "priority": "P1",
         "status": "ready",
         "mode": "dry_run_read_only",
-        "command": "./scripts/kosmo-github-import-readiness.sh && ./scripts/kosmo-home-pc-linux-first-run-plan.sh && ./scripts/kosmo-home-pc-start-dry-run.sh && ./scripts/kosmo-night-status.sh",
-        "evidence": "Keeps local status, import readiness, Home-PC dry-run and Orbit render-smoke evidence current.",
+        "command": "./scripts/kosmo-loop-refresh-evidence.sh",
+        "evidence": "Keeps local status, import readiness, Home-PC dry-run, ZIP smoke, Doctor, Closeout and Dashboard evidence current in stable dependency order.",
         "owner_go_required": false,
         "autonomous_allowed": true
       },
@@ -146,7 +154,7 @@
         "priority": "P1",
         "status": "ready",
         "mode": "dry_run_local_filesystem",
-        "command": "cd dist && shasum -a 256 -c KOSMO-home-pc-linux-handover.zip.sha256",
+        "command": "./scripts/kosmo-home-pc-handover-zip-smoke.sh",
         "evidence": "Checksum verification is local-only.",
         "owner_go_required": false,
         "autonomous_allowed": true
@@ -214,15 +222,15 @@
             "id": "refresh-control-spine",
             "title": "Refresh local KOSMO control-spine reports.",
             "status": "ready",
-            "next_step": "./scripts/kosmo-github-import-readiness.sh && ./scripts/kosmo-home-pc-linux-first-run-plan.sh && ./scripts/kosmo-home-pc-start-dry-run.sh && ./scripts/kosmo-night-status.sh",
-            "evidence": "Keeps local status, import readiness and Home-PC dry-run evidence current."
+            "next_step": "./scripts/kosmo-loop-refresh-evidence.sh",
+            "evidence": "Keeps local status, import readiness, Home-PC dry-run, ZIP smoke, Doctor, Closeout and Dashboard evidence current."
           },
           {
             "id": "verify-handover-zip",
             "title": "Verify the current Home-PC handover ZIP checksum and extracted dry-run.",
             "status": "ready",
-            "next_step": "cd dist && shasum -a 256 -c KOSMO-home-pc-linux-handover.zip.sha256",
-            "evidence": "Checksum verification is local-only."
+            "next_step": "./scripts/kosmo-home-pc-handover-zip-smoke.sh",
+            "evidence": "Checksum plus temporary extract smoke are local-only."
           },
           {
             "id": "orbit-review-visible",
@@ -257,7 +265,7 @@
             "title": "Run Home-PC dry-run after unpacking.",
             "status": "home_pc_start_dry_run_passed",
             "next_step": "./scripts/kosmo-home-pc-start-dry-run.sh",
-            "evidence": "checks=55/55"
+            "evidence": "checks=62/62, start_card=present"
           }
         ]
       },
@@ -311,8 +319,8 @@
     "check_count": 13,
     "warnings": 0,
     "current_state": {
-      "starter_commit": "4b1ecb7",
-      "orbit_commit": "37ad7a0",
+      "starter_commit": "245df32",
+      "orbit_commit": "a6e5bf5",
       "night_progress": "[#####################---] 88%",
       "ready_lanes": 7,
       "blocked_lanes": 1
@@ -323,13 +331,17 @@
       "queue": "next_action_queue_ready",
       "runway": "runway_report_ready",
       "home_pc_dry_run": "home_pc_start_dry_run_passed",
-      "home_pc_dry_run_checks": "55/55",
+      "home_pc_dry_run_checks": "62/62",
       "home_pc_handover_doctor": "home_pc_handover_doctor_passed",
-      "home_pc_handover_doctor_checks": "18/18",
+      "home_pc_handover_doctor_checks": "19/19",
       "home_pc_handover_doctor_report": "tmp/kosmo-home-pc-handover-doctor.json",
+      "home_pc_handover_zip_smoke": "home_pc_handover_zip_smoke_passed",
+      "home_pc_handover_zip_smoke_checks": "19/19",
+      "home_pc_handover_zip_smoke_report": "tmp/kosmo-home-pc-handover-zip-smoke.json",
+      "home_pc_start_card": "docs/home_station/KOSMO_HOME_PC_START_CARD.md",
       "handover_zip": "dist/KOSMO-home-pc-linux-handover.zip",
       "handover_checksum": "KOSMO-home-pc-linux-handover.zip: OK",
-      "runtime_bundle": "Architekturkosmos_Codex_Starter_Local_4b1ecb7_20260606-0451.bundle",
+      "runtime_bundle": "Architekturkosmos_Codex_Starter_Local_245df32_20260606-0534.bundle",
       "runtime_latest_zip": "Architekturkosmos_Codex_Starter_Local_latest.zip",
       "orbit_review_branch": "kosmo-orbit-runtime-bridge-20260606",
       "orbit_render_smoke": "orbit_local_render_smoke_passed",
@@ -338,6 +350,7 @@
     },
     "read_order": [
       "tmp/kosmo-closeout-aggregator.md",
+      "docs/home_station/KOSMO_HOME_PC_START_CARD.md",
       "tmp/kosmo-night-status.md",
       "tmp/kosmo-next-action-queue.md",
       "tmp/kosmo-runway-report.md",
@@ -364,23 +377,25 @@
   },
   "loop_closeout_dashboard": {
     "status": "loop_closeout_dashboard_ready",
-    "passed_checks": 14,
-    "check_count": 14,
+    "passed_checks": 15,
+    "check_count": 15,
     "warnings": 0,
     "progress": "[#####################---] 88%",
     "current_state": {
-      "starter_commit": "58ee646",
-      "orbit_commit": "a48fc14",
+      "starter_commit": "245df32",
+      "orbit_commit": "a6e5bf5",
       "orbit_branch": "kosmo-orbit-runtime-bridge-20260606",
-      "runtime_bundle": "Architekturkosmos_Codex_Starter_Local_58ee646_20260606-0502.bundle",
+      "runtime_bundle": "Architekturkosmos_Codex_Starter_Local_245df32_20260606-0534.bundle",
       "runtime_latest_zip": "Architekturkosmos_Codex_Starter_Local_latest.zip",
       "home_pc_handover_zip": "dist/KOSMO-home-pc-linux-handover.zip",
-      "manifest_source_commit": "1257b5fd93eaa6dbf2896b55645898844b1a102c"
+      "manifest_source_commit": "d920b6c6a996bed0b8d98bff0e91accec2cd3d4b"
     },
     "evidence": {
       "night_status": "[#####################---] 88%",
-      "doctor": "home_pc_handover_doctor_passed 18/18",
-      "dry_run": "home_pc_start_dry_run_passed 58/58",
+      "doctor": "home_pc_handover_doctor_passed 19/19",
+      "dry_run": "home_pc_start_dry_run_passed 62/62",
+      "zip_smoke": "home_pc_handover_zip_smoke_passed 19/19",
+      "start_card": "docs/home_station/KOSMO_HOME_PC_START_CARD.md",
       "closeout": "closeout_aggregator_ready",
       "orbit_render_smoke": "status=orbit_local_render_smoke_passed, checks=9/9, url=http://localhost:3107/orbit/",
       "handover_checksum": "KOSMO-home-pc-linux-handover.zip: OK",
@@ -389,8 +404,8 @@
     "safest_next_action": {
       "id": "refresh-control-spine",
       "title": "Refresh local KOSMO control-spine reports.",
-      "command": "./scripts/kosmo-github-import-readiness.sh && ./scripts/kosmo-home-pc-linux-first-run-plan.sh && ./scripts/kosmo-home-pc-start-dry-run.sh && ./scripts/kosmo-night-status.sh",
-      "reason": "Keeps local status, import readiness and Home-PC dry-run evidence current."
+      "command": "./scripts/kosmo-loop-refresh-evidence.sh",
+      "reason": "Keeps local status, import readiness, Home-PC dry-run, ZIP smoke, Doctor, Closeout and Dashboard evidence current in stable dependency order."
     },
     "forbidden_without_owner_go": [
       "create GitHub repository",
@@ -519,6 +534,11 @@
     {
       "id": "home_pc_doctor_visible",
       "label": "Home-PC handover doctor evidence is visible in the closeout packet.",
+      "status": "passed"
+    },
+    {
+      "id": "home_pc_zip_smoke_visible",
+      "label": "Home-PC ZIP smoke evidence and Start Card are visible in the closeout packet.",
       "status": "passed"
     },
     {

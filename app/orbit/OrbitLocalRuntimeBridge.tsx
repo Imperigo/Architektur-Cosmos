@@ -43,6 +43,11 @@ type LocalRuntimeBridgeReport = {
     doctor_report: string;
     doctor_status: string;
     doctor_checks: string;
+    zip_smoke_script: string;
+    zip_smoke_report: string;
+    zip_smoke_status: string;
+    zip_smoke_checks: string;
+    start_card: string;
     purpose: string;
     first_commands: string[];
   };
@@ -101,6 +106,10 @@ type LocalRuntimeBridgeReport = {
       home_pc_handover_doctor: string;
       home_pc_handover_doctor_checks: string;
       home_pc_handover_doctor_report: string;
+      home_pc_handover_zip_smoke: string;
+      home_pc_handover_zip_smoke_checks: string;
+      home_pc_handover_zip_smoke_report: string;
+      home_pc_start_card: string;
       handover_zip: string;
       handover_checksum: string;
       runtime_bundle: string;
@@ -460,6 +469,21 @@ export function OrbitLocalRuntimeBridge() {
             <code className="block break-words text-stone-200">{localRuntimeBridge.home_pc_handover.doctor_status}</code>
           </p>
         </div>
+        <div className="mt-3 grid gap-2 text-sm leading-5 md:grid-cols-[1.1fr_1.1fr_0.8fr]">
+          <p className="rounded-md border border-cyan-300/20 bg-black/20 px-3 py-2 text-cyan-100">
+            ZIP Smoke <code className="block break-words text-stone-200">{localRuntimeBridge.home_pc_handover.zip_smoke_script}</code>
+          </p>
+          <p className="rounded-md border border-cyan-300/20 bg-black/20 px-3 py-2 text-cyan-100">
+            ZIP Report <code className="block break-words text-stone-200">{localRuntimeBridge.home_pc_handover.zip_smoke_report}</code>
+          </p>
+          <p className="rounded-md border border-cyan-300/20 bg-black/20 px-3 py-2 text-cyan-100">
+            {localRuntimeBridge.home_pc_handover.zip_smoke_checks}
+            <code className="block break-words text-stone-200">{localRuntimeBridge.home_pc_handover.zip_smoke_status}</code>
+          </p>
+        </div>
+        <p className="mt-3 rounded-md border border-cyan-300/20 bg-cyan-300/10 px-3 py-2 text-sm leading-5 text-cyan-100">
+          Start Card <code className="block break-words text-stone-200">{localRuntimeBridge.home_pc_handover.start_card}</code>
+        </p>
         <div className="mt-3 grid gap-2 lg:grid-cols-2">
           {localRuntimeBridge.home_pc_handover.first_commands.map((command) => (
             <code key={command} className="block break-words rounded-md border border-white/10 bg-black/28 px-3 py-2 text-xs leading-5 text-stone-200">

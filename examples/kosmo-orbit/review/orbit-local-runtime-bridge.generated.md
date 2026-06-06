@@ -1,16 +1,16 @@
 # KosmoOrbit Local Runtime Bridge
 
-Generated: 2026-06-06T03:05:51.868Z
+Generated: 2026-06-06T03:40:55.807Z
 Status: `local_runtime_bridge_passed`
 Input: `examples/kosmo-orbit/runtime/kosmo-night-status.demo.json`
-Mode: `external_local_status_import`
+Mode: `repo_local_demo_status`
 
 Review-only bridge from the local KOSMO Night Status into KosmoOrbit. It reads a JSON snapshot and writes report artifacts only; it does not launch processes, start models, scan private files, upload, publish, access external accounts or spend money.
 
 ## Summary
 
 - progress: `[#####################---] 88%`
-- checks: 23/23 passed
+- checks: 24/24 passed
 - ready lanes: 7
 - blocked lanes: 1
 
@@ -21,17 +21,17 @@ Review-only bridge from the local KOSMO Night Status into KosmoOrbit. It reads a
 | `odysseus-runtime` | `ready` | status=running, chroma=running, url=http://127.0.0.1:7860 | Odysseus laufen lassen und bei Fehlern odysseus-vanilla-smoke.sh erneut ausfuehren. |
 | `kosmo-model` | `ready` | KOSMO Ollama enthaelt qwen2.5-coder:1.5b. | odysseus-kosmo-model-sync.sh apply ausfuehren, falls der Endpoint driftet. |
 | `desktop-artifacts` | `ready` | odysseus-vanilla-desktop-manifest.json=present, Odysseus-vanilla-linux-workstation.zip=present, KOSMO-Desktop-v2-linux-workstation.zip=present, ArchitekturkosmosMac.app=present | Vanilla/Desktop-Gates neu bauen, falls Manifest oder ZIP fehlt. |
-| `home-pc-handover` | `ready` | KOSMO-home-pc-linux-handover.zip: OK | kosmo-home-pc-linux-handover-zip.sh neu ausfuehren und Checksum pruefen. |
-| `home-pc-start-readiness` | `ready` | status=home_pc_start_dry_run_passed, checks=55/55, warnings=0 | kosmo-home-pc-start-dry-run.sh ausfuehren und fehlende Pflichtchecks beheben. |
+| `home-pc-handover` | `ready` | KOSMO-home-pc-linux-handover.zip: OK; zip_smoke=home_pc_handover_zip_smoke_passed 19/19; start_card=present | kosmo-home-pc-linux-handover-zip.sh neu ausfuehren und Checksum pruefen. |
+| `home-pc-start-readiness` | `ready` | status=home_pc_start_dry_run_passed, checks=62/62, warnings=0; zip_smoke=19/19; start_card=present | ./scripts/kosmo-loop-refresh-evidence.sh ausfuehren; bei Transfer das ZIP mit kosmo-home-pc-handover-zip-smoke.sh pruefen. |
 | `kosmo-orbit` | `ready` | repo_commit=37ad7a0, report=present | Orbit bleibt review-only; naechster Hebel ist die sichtbare Odysseus/KOSMO-Statusbruecke. |
 | `kosmo-orbit-render-smoke` | `ready` | status=orbit_local_render_smoke_passed, checks=9/9, url=http://localhost:3107/orbit/ | Auf der Orbit-Review-Branch lokalen Server starten und kosmo:orbit-local-render-smoke ausfuehren. |
 | `github-separation` | `blocked` | Decision pack proposed repo=Imperigo/Architekturkosmos_Codex_Starter; import_readiness=passed; waiting for owner-go. | Eigenes Imperigo/Architekturkosmos_Codex_Starter Repo anlegen oder Import explizit freigeben. |
 
 ## Sources
 
-- local starter commit: `4b1ecb7`
+- local starter commit: `245df32`
 - cloud starter commit: `863dcde`
-- Orbit website commit: `37ad7a0`
+- Orbit website commit: `a6e5bf5`
 
 ## Home PC Handover
 
@@ -42,11 +42,16 @@ Review-only bridge from the local KOSMO Night Status into KosmoOrbit. It reads a
 - start dry-run script: `scripts/kosmo-home-pc-start-dry-run.sh`
 - start dry-run report: `tmp/kosmo-home-pc-start-dry-run.json`
 - start dry-run status: `home_pc_start_dry_run_passed`
-- start dry-run checks: `55/55`
+- start dry-run checks: `62/62`
 - doctor script: `scripts/kosmo-home-pc-handover-doctor.sh`
 - doctor report: `tmp/kosmo-home-pc-handover-doctor.json`
 - doctor status: `home_pc_handover_doctor_passed`
-- doctor checks: `18/18`
+- doctor checks: `19/19`
+- ZIP smoke script: `scripts/kosmo-home-pc-handover-zip-smoke.sh`
+- ZIP smoke report: `tmp/kosmo-home-pc-handover-zip-smoke.json`
+- ZIP smoke status: `home_pc_handover_zip_smoke_passed`
+- ZIP smoke checks: `19/19`
+- Start Card: `docs/home_station/KOSMO_HOME_PC_START_CARD.md`
 - purpose: Machine-readable Linux handover index for the future Home-PC setup.
 
 First commands:
@@ -57,7 +62,10 @@ First commands:
 - `./scripts/kosmo-home-pc-handover-index.sh`
 - `./scripts/kosmo-home-pc-handover-doctor.sh`
 - `./scripts/kosmo-home-pc-start-dry-run.sh`
-- `less KOSMO-home-pc-linux-handover/tmp/kosmo-home-pc-linux-first-run-plan.md`
+- `./scripts/kosmo-loop-refresh-evidence.sh`
+- `./scripts/kosmo-home-pc-handover-zip-smoke.sh`
+- `less docs/home_station/KOSMO_HOME_PC_START_CARD.md`
+- `less tmp/kosmo-home-pc-linux-first-run-plan.md`
 - `less KOSMO-home-pc-linux-handover/tmp/kosmo-next-action-queue.md`
 - `less KOSMO-home-pc-linux-handover/tmp/kosmo-runway-report.md`
 - `less KOSMO-home-pc-linux-handover/tmp/kosmo-closeout-aggregator.md`
@@ -93,15 +101,18 @@ First commands:
 - status: `closeout_aggregator_ready`
 - checks: 13/13
 - warnings: 0
-- starter commit: `4b1ecb7`
-- orbit commit: `37ad7a0`
-- Home-PC dry-run: `home_pc_start_dry_run_passed` (55/55)
-- Home-PC doctor: `home_pc_handover_doctor_passed` (18/18)
+- starter commit: `245df32`
+- orbit commit: `a6e5bf5`
+- Home-PC dry-run: `home_pc_start_dry_run_passed` (62/62)
+- Home-PC doctor: `home_pc_handover_doctor_passed` (19/19)
+- Home-PC ZIP smoke: `home_pc_handover_zip_smoke_passed` (19/19)
+- Home-PC Start Card: `docs/home_station/KOSMO_HOME_PC_START_CARD.md`
 - handover ZIP: `dist/KOSMO-home-pc-linux-handover.zip`
 - handover checksum: `KOSMO-home-pc-linux-handover.zip: OK`
 
 Read order:
 - `tmp/kosmo-closeout-aggregator.md`
+- `docs/home_station/KOSMO_HOME_PC_START_CARD.md`
 - `tmp/kosmo-night-status.md`
 - `tmp/kosmo-next-action-queue.md`
 - `tmp/kosmo-runway-report.md`
@@ -128,12 +139,12 @@ Forbidden actions:
 ## Loop Closeout Dashboard
 
 - status: `loop_closeout_dashboard_ready`
-- checks: 14/14
+- checks: 15/15
 - progress: `[#####################---] 88%`
-- starter commit: `58ee646`
-- runtime bundle: `Architekturkosmos_Codex_Starter_Local_58ee646_20260606-0502.bundle`
+- starter commit: `245df32`
+- runtime bundle: `Architekturkosmos_Codex_Starter_Local_245df32_20260606-0534.bundle`
 - safest next action: `refresh-control-spine`
-- command: `./scripts/kosmo-github-import-readiness.sh && ./scripts/kosmo-home-pc-linux-first-run-plan.sh && ./scripts/kosmo-home-pc-start-dry-run.sh && ./scripts/kosmo-night-status.sh`
+- command: `./scripts/kosmo-loop-refresh-evidence.sh`
 
 ## GitHub Separation Decision
 
@@ -182,6 +193,7 @@ Forbidden without Owner-Go:
 | `closeout_aggregator_visible` | `passed` | Closeout aggregator is visible as the Home-PC read order and final evidence packet. |
 | `loop_closeout_dashboard_visible` | `passed` | Loop closeout dashboard is visible with safest next action. |
 | `home_pc_doctor_visible` | `passed` | Home-PC handover doctor evidence is visible in the closeout packet. |
+| `home_pc_zip_smoke_visible` | `passed` | Home-PC ZIP smoke evidence and Start Card are visible in the closeout packet. |
 | `orbit_render_smoke_closeout_visible` | `passed` | Orbit render smoke evidence is visible in the closeout packet. |
 | `policy_flags_present` | `passed` | All safety policy flags are present and true. |
 | `sources_present` | `passed` | Local starter, cloud starter and Orbit website sources are represented. |
