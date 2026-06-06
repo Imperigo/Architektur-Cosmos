@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-06T01:31:26.248Z",
+  "generated_at": "2026-06-06T01:42:18.827Z",
   "generator": "kosmo-orbit-static-export-smoke",
   "status": "orbit_static_export_smoke_passed",
   "html_file": "out/orbit/index.html",
@@ -20,7 +20,7 @@
       "_next/static/chunks/main-app-310dc59efa176d33.js",
       "_next/static/chunks/polyfills-42372ed130431b0a.js",
       "_next/static/chunks/webpack-81624dd509abd812.js",
-      "_next/static/css/05a6497756912a0f.css"
+      "_next/static/css/65947a93adc1e0de.css"
     ],
     "missing": []
   },

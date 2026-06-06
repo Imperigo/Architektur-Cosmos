@@ -59,6 +59,22 @@ type LocalRuntimeBridgeReport = {
       autonomous_allowed: boolean;
     }>;
   };
+  runway_report: {
+    status: string;
+    phase_count: number;
+    runway: Array<{
+      id: string;
+      title: string;
+      intent: string;
+      items: Array<{
+        id: string;
+        title: string;
+        status: string;
+        next_step: string;
+        evidence: string;
+      }>;
+    }>;
+  };
   github_separation_decision: {
     status: string;
     recommended_repository: string;
@@ -188,6 +204,40 @@ export function OrbitLocalRuntimeBridge() {
               <code className="mt-3 block break-words rounded-md border border-white/10 bg-black/28 px-3 py-2 text-xs leading-5 text-stone-200">
                 {action.command}
               </code>
+            </article>
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-4 rounded-lg border border-violet-300/20 bg-violet-300/[0.055] p-3">
+        <div className="flex flex-wrap items-start justify-between gap-2">
+          <div className="min-w-0">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-violet-100">Runway Report</p>
+            <p className="mt-2 text-sm leading-6 text-stone-300">
+              Der Runway verbindet die laufende Mac-Nacht, den ersten Linux-Abend, Owner-Go-Grenzen und die Schritte nach dem Home-PC-Start.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <BridgeChip label={localRuntimeBridge.runway_report.status} tone="green" />
+            <BridgeChip label={`${localRuntimeBridge.runway_report.phase_count} phases`} tone="cyan" />
+          </div>
+        </div>
+        <div className="mt-3 grid gap-3 xl:grid-cols-2">
+          {localRuntimeBridge.runway_report.runway.map((phase) => (
+            <article key={phase.id} className="min-w-0 rounded-md border border-white/10 bg-black/24 p-3">
+              <h3 className="text-sm font-semibold text-white">{phase.title}</h3>
+              <p className="mt-2 text-sm leading-5 text-stone-300">{phase.intent}</p>
+              <div className="mt-3 space-y-2">
+                {phase.items.map((item) => (
+                  <div key={item.id} className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2">
+                    <div className="flex flex-wrap items-start justify-between gap-2">
+                      <p className="break-words text-sm font-medium text-stone-100">{item.title}</p>
+                      <BridgeChip label={item.status} tone={laneTone(item.status)} />
+                    </div>
+                    <code className="mt-2 block break-words text-xs leading-5 text-violet-100">{item.next_step}</code>
+                  </div>
+                ))}
+              </div>
             </article>
           ))}
         </div>

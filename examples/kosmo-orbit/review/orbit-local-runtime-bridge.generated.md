@@ -1,6 +1,6 @@
 # KosmoOrbit Local Runtime Bridge
 
-Generated: 2026-06-06T01:31:00.642Z
+Generated: 2026-06-06T01:41:54.384Z
 Status: `local_runtime_bridge_passed`
 Input: `examples/kosmo-orbit/runtime/kosmo-night-status.demo.json`
 Mode: `external_local_status_import`
@@ -10,7 +10,7 @@ Review-only bridge from the local KOSMO Night Status into KosmoOrbit. It reads a
 ## Summary
 
 - progress: `[#####################---] 86%`
-- checks: 17/17 passed
+- checks: 18/18 passed
 - ready lanes: 6
 - blocked lanes: 1
 
@@ -28,7 +28,7 @@ Review-only bridge from the local KOSMO Night Status into KosmoOrbit. It reads a
 
 ## Sources
 
-- local starter commit: `f652623`
+- local starter commit: `ab1b790`
 - cloud starter commit: `863dcde`
 - Orbit website commit: `d7cb40e`
 
@@ -66,6 +66,15 @@ First commands:
 | `starter-github-owner-go` | `github-separation` | `blocked` | `true` | `false` |
 | `orbit-review-branch` | `kosmo-orbit` | `ready` | `false` | `false` |
 | `odysseus-runtime-watch` | `odysseus-runtime` | `ready` | `false` | `true` |
+
+## Runway Report
+
+- status: `runway_report_ready`
+- phases: 4
+- Tonight On Mac: Keep the local KOSMO/Odysseus state current without production actions.
+- First Linux Evening: Start the future Home-PC from evidence, not memory.
+- Owner-Go Only: Keep irreversible or external work blocked until explicit approval.
+- After Home-PC Boots: Move from packaged readiness into local runtime operation.
 
 ## GitHub Separation Decision
 
@@ -109,6 +118,7 @@ Forbidden without Owner-Go:
 | `github_separation_blocked` | `passed` | GitHub separation remains blocked until a dedicated Starter repo or explicit import approval exists. |
 | `github_import_readiness_visible` | `passed` | GitHub import readiness is visible while Owner-Go remains blocked. |
 | `next_action_queue_visible` | `passed` | Next-action queue is visible for allowed, waiting and blocked work. |
+| `runway_report_visible` | `passed` | Runway report is visible for Mac, Linux, Owner-Go and post-boot phases. |
 | `policy_flags_present` | `passed` | All safety policy flags are present and true. |
 | `sources_present` | `passed` | Local starter, cloud starter and Orbit website sources are represented. |
 | `no_private_path_required` | `passed` | Bridge can run from a repo-local demo status without a private local path. |

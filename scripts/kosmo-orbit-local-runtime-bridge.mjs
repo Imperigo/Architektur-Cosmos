@@ -79,6 +79,7 @@ function buildReport(status) {
     check('github_separation_blocked', 'GitHub separation remains blocked until a dedicated Starter repo or explicit import approval exists.', githubLane?.status === 'blocked'),
     check('github_import_readiness_visible', 'GitHub import readiness is visible while Owner-Go remains blocked.', String(githubLane?.evidence || '').includes('import_readiness=passed')),
     check('next_action_queue_visible', 'Next-action queue is visible for allowed, waiting and blocked work.', status.next_action_queue?.status === 'next_action_queue_ready' && asArray(status.next_action_queue.actions).length >= 4),
+    check('runway_report_visible', 'Runway report is visible for Mac, Linux, Owner-Go and post-boot phases.', status.runway_report?.status === 'runway_report_ready' && asArray(status.runway_report.runway).length === 4),
     check('policy_flags_present', 'All safety policy flags are present and true.', requiredPolicies.every((key) => policy[key] === true)),
     check('sources_present', 'Local starter, cloud starter and Orbit website sources are represented.', Boolean(sources.local_starter && sources.cloud_starter && sources.orbit_website)),
     check('no_private_path_required', 'Bridge can run from a repo-local demo status without a private local path.', relative(root, statusPath).startsWith('examples/kosmo-orbit/runtime/') || Boolean(process.env.KOSMO_NIGHT_STATUS_JSON))
@@ -148,6 +149,7 @@ function buildReport(status) {
       ]
     },
     next_action_queue: normalizeNextActionQueue(status.next_action_queue),
+    runway_report: normalizeRunwayReport(status.runway_report),
     github_separation_decision: {
       status: 'owner_go_required',
       recommended_repository: 'Imperigo/Architekturkosmos_Codex_Starter',
@@ -232,6 +234,13 @@ function renderMarkdown(report) {
     lines.push(`| \`${action.id}\` | \`${action.lane}\` | \`${action.status}\` | \`${action.owner_go_required}\` | \`${action.autonomous_allowed}\` |`);
   });
 
+  lines.push('', '## Runway Report', '');
+  lines.push(`- status: \`${report.runway_report.status}\``);
+  lines.push(`- phases: ${report.runway_report.phase_count}`);
+  report.runway_report.runway.forEach((phase) => {
+    lines.push(`- ${phase.title}: ${phase.intent}`);
+  });
+
   lines.push('', '## GitHub Separation Decision', '');
   lines.push(`- status: \`${report.github_separation_decision.status}\``);
   lines.push(`- recommended repository: \`${report.github_separation_decision.recommended_repository}\``);
@@ -290,6 +299,27 @@ function normalizeNextActionQueue(queue) {
     ready_actions: queue?.summary?.ready_actions ?? actions.filter((action) => action.status === 'ready').length,
     blocked_actions: queue?.summary?.blocked_actions ?? actions.filter((action) => action.status === 'blocked').length,
     actions
+  };
+}
+
+function normalizeRunwayReport(runwayReport) {
+  const runway = asArray(runwayReport?.runway).map((phase) => ({
+    id: phase.id,
+    title: phase.title,
+    intent: phase.intent,
+    items: asArray(phase.items).map((item) => ({
+      id: item.id,
+      title: item.title,
+      status: item.status,
+      next_step: item.next_step,
+      evidence: item.evidence
+    }))
+  }));
+
+  return {
+    status: runwayReport?.status || 'missing',
+    phase_count: runwayReport?.summary?.phase_count ?? runway.length,
+    runway
   };
 }
 
