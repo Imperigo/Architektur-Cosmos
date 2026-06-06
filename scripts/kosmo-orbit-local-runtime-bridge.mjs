@@ -77,6 +77,7 @@ function buildReport(status) {
     check('handover_ready', 'Home-PC handover lane is ready.', lanes.some((lane) => lane.id === 'home-pc-handover' && lane.status === 'ready')),
     check('home_pc_start_ready', 'Home-PC start readiness lane is ready.', lanes.some((lane) => lane.id === 'home-pc-start-readiness' && lane.status === 'ready')),
     check('github_separation_blocked', 'GitHub separation remains blocked until a dedicated Starter repo or explicit import approval exists.', githubLane?.status === 'blocked'),
+    check('github_import_readiness_visible', 'GitHub import readiness is visible while Owner-Go remains blocked.', String(githubLane?.evidence || '').includes('import_readiness=passed')),
     check('policy_flags_present', 'All safety policy flags are present and true.', requiredPolicies.every((key) => policy[key] === true)),
     check('sources_present', 'Local starter, cloud starter and Orbit website sources are represented.', Boolean(sources.local_starter && sources.cloud_starter && sources.orbit_website)),
     check('no_private_path_required', 'Bridge can run from a repo-local demo status without a private local path.', relative(root, statusPath).startsWith('examples/kosmo-orbit/runtime/') || Boolean(process.env.KOSMO_NIGHT_STATUS_JSON))
@@ -134,7 +135,7 @@ function buildReport(status) {
       start_dry_run_script: 'scripts/kosmo-home-pc-start-dry-run.sh',
       start_dry_run_report: 'tmp/kosmo-home-pc-start-dry-run.json',
       start_dry_run_status: 'home_pc_start_dry_run_passed',
-      start_dry_run_checks: '25/25',
+      start_dry_run_checks: '33/33',
       purpose: 'Machine-readable Linux handover index for the future Home-PC setup.',
       first_commands: [
         'shasum -a 256 -c KOSMO-home-pc-linux-handover.zip.sha256',
@@ -148,6 +149,9 @@ function buildReport(status) {
       recommended_repository: 'Imperigo/Architekturkosmos_Codex_Starter',
       first_import_branch: 'kosmo-starter-initial-import-20260606',
       website_repository: 'Imperigo/Architektur-Cosmos',
+      import_readiness_status: String(githubLane?.evidence || '').includes('import_readiness=passed') ? 'github_import_readiness_passed' : 'missing_or_blocked',
+      import_readiness_checks: '19/19',
+      import_readiness_report: 'tmp/kosmo-github-import-readiness.json',
       evidence: githubLane?.evidence || 'Decision pack pending.',
       blocked_until: [
         'Dedicated Starter repository exists.',
@@ -219,6 +223,9 @@ function renderMarkdown(report) {
   lines.push(`- recommended repository: \`${report.github_separation_decision.recommended_repository}\``);
   lines.push(`- first import branch: \`${report.github_separation_decision.first_import_branch}\``);
   lines.push(`- website repository: \`${report.github_separation_decision.website_repository}\``);
+  lines.push(`- import readiness: \`${report.github_separation_decision.import_readiness_status}\``);
+  lines.push(`- import readiness checks: \`${report.github_separation_decision.import_readiness_checks}\``);
+  lines.push(`- import readiness report: \`${report.github_separation_decision.import_readiness_report}\``);
   lines.push(`- evidence: ${report.github_separation_decision.evidence}`);
   lines.push('', 'Blocked until:');
   report.github_separation_decision.blocked_until.forEach((item) => lines.push(`- ${item}`));

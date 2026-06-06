@@ -47,6 +47,9 @@ type LocalRuntimeBridgeReport = {
     recommended_repository: string;
     first_import_branch: string;
     website_repository: string;
+    import_readiness_status: string;
+    import_readiness_checks: string;
+    import_readiness_report: string;
     evidence: string;
     blocked_until: string[];
     forbidden_without_owner_go: string[];
@@ -196,6 +199,17 @@ export function OrbitLocalRuntimeBridge() {
           </p>
           <p className="rounded-md border border-amber-300/20 bg-black/20 px-3 py-2 text-amber-100">
             Website bleibt <code className="block break-words text-stone-200">{localRuntimeBridge.github_separation_decision.website_repository}</code>
+          </p>
+        </div>
+        <div className="mt-3 grid gap-2 text-sm leading-5 md:grid-cols-3">
+          <p className="rounded-md border border-emerald-300/20 bg-emerald-300/10 px-3 py-2 text-emerald-100">
+            Import Readiness <code className="block break-words text-stone-200">{localRuntimeBridge.github_separation_decision.import_readiness_status}</code>
+          </p>
+          <p className="rounded-md border border-emerald-300/20 bg-emerald-300/10 px-3 py-2 text-emerald-100">
+            Checks <code className="block break-words text-stone-200">{localRuntimeBridge.github_separation_decision.import_readiness_checks}</code>
+          </p>
+          <p className="rounded-md border border-emerald-300/20 bg-emerald-300/10 px-3 py-2 text-emerald-100">
+            Report <code className="block break-words text-stone-200">{localRuntimeBridge.github_separation_decision.import_readiness_report}</code>
           </p>
         </div>
         <div className="mt-3 grid gap-3 lg:grid-cols-2">

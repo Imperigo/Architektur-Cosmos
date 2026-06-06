@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-06T01:02:50.960Z",
+  "generated_at": "2026-06-06T01:13:48.863Z",
   "generator": "kosmo-orbit-local-runtime-bridge",
   "status": "local_runtime_bridge_passed",
   "input_status_file": "examples/kosmo-orbit/runtime/kosmo-night-status.demo.json",
@@ -16,8 +16,8 @@
     "no_external_accounts": true
   },
   "summary": {
-    "check_count": 15,
-    "passed_checks": 15,
+    "check_count": 16,
+    "passed_checks": 16,
     "failed_checks": 0,
     "progress_percent": 86,
     "ready_lanes": 6,
@@ -27,7 +27,7 @@
   "control_spine": {
     "goal": "KOSMO local control spine over Odysseus with safe Home-PC handover",
     "progress_bar": "[#####################---] 86%",
-    "generated_at": "2026-06-06T00:57:20.029223+00:00"
+    "generated_at": "2026-06-06T01:10:36.000000+00:00"
   },
   "lanes": [
     {
@@ -62,28 +62,28 @@
       "id": "home-pc-start-readiness",
       "label": "Home-PC Start Readiness",
       "status": "ready",
-      "evidence": "status=home_pc_start_dry_run_passed, checks=29/29, warnings=0",
+      "evidence": "status=home_pc_start_dry_run_passed, checks=33/33, warnings=0",
       "next_action": "kosmo-home-pc-start-dry-run.sh ausfuehren und fehlende Pflichtchecks beheben."
     },
     {
       "id": "kosmo-orbit",
       "label": "KosmoOrbit Interface",
       "status": "ready",
-      "evidence": "repo_commit=862eb2c, report=present",
+      "evidence": "repo_commit=d7cb40e, report=present",
       "next_action": "Orbit bleibt review-only; naechster Hebel ist die sichtbare Odysseus/KOSMO-Statusbruecke."
     },
     {
       "id": "github-separation",
       "label": "GitHub Trennung",
       "status": "blocked",
-      "evidence": "Decision pack proposed repo=Imperigo/Architekturkosmos_Codex_Starter; waiting for owner-go.",
+      "evidence": "Decision pack proposed repo=Imperigo/Architekturkosmos_Codex_Starter; import_readiness=passed; waiting for owner-go.",
       "next_action": "Eigenes Imperigo/Architekturkosmos_Codex_Starter Repo anlegen oder Import explizit freigeben."
     }
   ],
   "sources": {
-    "local_starter_commit": "d2084d2",
+    "local_starter_commit": "0ab9a6d",
     "cloud_starter_commit": "863dcde",
-    "orbit_website_commit": "862eb2c"
+    "orbit_website_commit": "d7cb40e"
   },
   "home_pc_handover": {
     "platform": "linux-workstation",
@@ -93,7 +93,7 @@
     "start_dry_run_script": "scripts/kosmo-home-pc-start-dry-run.sh",
     "start_dry_run_report": "tmp/kosmo-home-pc-start-dry-run.json",
     "start_dry_run_status": "home_pc_start_dry_run_passed",
-    "start_dry_run_checks": "25/25",
+    "start_dry_run_checks": "33/33",
     "purpose": "Machine-readable Linux handover index for the future Home-PC setup.",
     "first_commands": [
       "shasum -a 256 -c KOSMO-home-pc-linux-handover.zip.sha256",
@@ -107,7 +107,10 @@
     "recommended_repository": "Imperigo/Architekturkosmos_Codex_Starter",
     "first_import_branch": "kosmo-starter-initial-import-20260606",
     "website_repository": "Imperigo/Architektur-Cosmos",
-    "evidence": "Decision pack proposed repo=Imperigo/Architekturkosmos_Codex_Starter; waiting for owner-go.",
+    "import_readiness_status": "github_import_readiness_passed",
+    "import_readiness_checks": "19/19",
+    "import_readiness_report": "tmp/kosmo-github-import-readiness.json",
+    "evidence": "Decision pack proposed repo=Imperigo/Architekturkosmos_Codex_Starter; import_readiness=passed; waiting for owner-go.",
     "blocked_until": [
       "Dedicated Starter repository exists.",
       "Owner explicitly approves first import.",
@@ -181,6 +184,11 @@
     {
       "id": "github_separation_blocked",
       "label": "GitHub separation remains blocked until a dedicated Starter repo or explicit import approval exists.",
+      "status": "passed"
+    },
+    {
+      "id": "github_import_readiness_visible",
+      "label": "GitHub import readiness is visible while Owner-Go remains blocked.",
       "status": "passed"
     },
     {

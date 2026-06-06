@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-06T00:57:20.029223+00:00",
+  "generated_at": "2026-06-06T01:10:36.000000+00:00",
   "goal": "KOSMO local control spine over Odysseus with safe Home-PC handover",
   "progress_percent": 86,
   "progress_bar": "[#####################---] 86%",
@@ -16,7 +16,7 @@
       "path": "<local_starter>",
       "exists": true,
       "clean": true,
-      "commit": "d2084d2",
+      "commit": "0ab9a6d",
       "status_short": ""
     },
     "cloud_starter": {
@@ -30,7 +30,7 @@
       "path": "<orbit_website>",
       "exists": true,
       "clean": true,
-      "commit": "862eb2c",
+      "commit": "d7cb40e",
       "status_short": ""
     },
     "runtime_dir": "<runtime_dir>"
@@ -73,7 +73,7 @@
       "label": "Home-PC Start Readiness",
       "status": "ready",
       "ready": true,
-      "evidence": "status=home_pc_start_dry_run_passed, checks=29/29, warnings=0",
+      "evidence": "status=home_pc_start_dry_run_passed, checks=33/33, warnings=0",
       "next_action": "kosmo-home-pc-start-dry-run.sh ausfuehren und fehlende Pflichtchecks beheben."
     },
     {
@@ -81,7 +81,7 @@
       "label": "KosmoOrbit Interface",
       "status": "ready",
       "ready": true,
-      "evidence": "repo_commit=862eb2c, report=present",
+      "evidence": "repo_commit=d7cb40e, report=present",
       "next_action": "Orbit bleibt review-only; naechster Hebel ist die sichtbare Odysseus/KOSMO-Statusbruecke."
     },
     {
@@ -89,7 +89,7 @@
       "label": "GitHub Trennung",
       "status": "blocked",
       "ready": false,
-      "evidence": "Decision pack proposed repo=Imperigo/Architekturkosmos_Codex_Starter; waiting for owner-go.",
+      "evidence": "Decision pack proposed repo=Imperigo/Architekturkosmos_Codex_Starter; import_readiness=passed; waiting for owner-go.",
       "next_action": "Eigenes Imperigo/Architekturkosmos_Codex_Starter Repo anlegen oder Import explizit freigeben."
     }
   ],

@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-06T01:02:55.432Z",
+  "generated_at": "2026-06-06T01:13:53.387Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 255,
-    "passed_checks": 255,
+    "check_count": 256,
+    "passed_checks": 256,
     "failed_checks": 0
   },
   "checks": [
@@ -964,6 +964,11 @@
     {
       "id": "local_runtime_bridge_shows_github_separation_decision",
       "label": "Local runtime bridge shows the GitHub separation Owner-Go decision and keeps the website repo separate.",
+      "status": "passed"
+    },
+    {
+      "id": "local_runtime_bridge_shows_import_readiness",
+      "label": "Local runtime bridge shows read-only GitHub import readiness without removing Owner-Go.",
       "status": "passed"
     },
     {

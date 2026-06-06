@@ -1,6 +1,6 @@
 # KosmoOrbit Local Runtime Bridge
 
-Generated: 2026-06-06T01:02:50.960Z
+Generated: 2026-06-06T01:13:48.863Z
 Status: `local_runtime_bridge_passed`
 Input: `examples/kosmo-orbit/runtime/kosmo-night-status.demo.json`
 Mode: `external_local_status_import`
@@ -10,7 +10,7 @@ Review-only bridge from the local KOSMO Night Status into KosmoOrbit. It reads a
 ## Summary
 
 - progress: `[#####################---] 86%`
-- checks: 15/15 passed
+- checks: 16/16 passed
 - ready lanes: 6
 - blocked lanes: 1
 
@@ -22,15 +22,15 @@ Review-only bridge from the local KOSMO Night Status into KosmoOrbit. It reads a
 | `kosmo-model` | `ready` | KOSMO Ollama enthaelt qwen2.5-coder:1.5b. | odysseus-kosmo-model-sync.sh apply ausfuehren, falls der Endpoint driftet. |
 | `desktop-artifacts` | `ready` | odysseus-vanilla-desktop-manifest.json=present, Odysseus-vanilla-linux-workstation.zip=present, KOSMO-Desktop-v2-linux-workstation.zip=present, ArchitekturkosmosMac.app=present | Vanilla/Desktop-Gates neu bauen, falls Manifest oder ZIP fehlt. |
 | `home-pc-handover` | `ready` | KOSMO-home-pc-linux-handover.zip: OK | kosmo-home-pc-linux-handover-zip.sh neu ausfuehren und Checksum pruefen. |
-| `home-pc-start-readiness` | `ready` | status=home_pc_start_dry_run_passed, checks=29/29, warnings=0 | kosmo-home-pc-start-dry-run.sh ausfuehren und fehlende Pflichtchecks beheben. |
-| `kosmo-orbit` | `ready` | repo_commit=862eb2c, report=present | Orbit bleibt review-only; naechster Hebel ist die sichtbare Odysseus/KOSMO-Statusbruecke. |
-| `github-separation` | `blocked` | Decision pack proposed repo=Imperigo/Architekturkosmos_Codex_Starter; waiting for owner-go. | Eigenes Imperigo/Architekturkosmos_Codex_Starter Repo anlegen oder Import explizit freigeben. |
+| `home-pc-start-readiness` | `ready` | status=home_pc_start_dry_run_passed, checks=33/33, warnings=0 | kosmo-home-pc-start-dry-run.sh ausfuehren und fehlende Pflichtchecks beheben. |
+| `kosmo-orbit` | `ready` | repo_commit=d7cb40e, report=present | Orbit bleibt review-only; naechster Hebel ist die sichtbare Odysseus/KOSMO-Statusbruecke. |
+| `github-separation` | `blocked` | Decision pack proposed repo=Imperigo/Architekturkosmos_Codex_Starter; import_readiness=passed; waiting for owner-go. | Eigenes Imperigo/Architekturkosmos_Codex_Starter Repo anlegen oder Import explizit freigeben. |
 
 ## Sources
 
-- local starter commit: `d2084d2`
+- local starter commit: `0ab9a6d`
 - cloud starter commit: `863dcde`
-- Orbit website commit: `862eb2c`
+- Orbit website commit: `d7cb40e`
 
 ## Home PC Handover
 
@@ -41,7 +41,7 @@ Review-only bridge from the local KOSMO Night Status into KosmoOrbit. It reads a
 - start dry-run script: `scripts/kosmo-home-pc-start-dry-run.sh`
 - start dry-run report: `tmp/kosmo-home-pc-start-dry-run.json`
 - start dry-run status: `home_pc_start_dry_run_passed`
-- start dry-run checks: `25/25`
+- start dry-run checks: `33/33`
 - purpose: Machine-readable Linux handover index for the future Home-PC setup.
 
 First commands:
@@ -56,7 +56,10 @@ First commands:
 - recommended repository: `Imperigo/Architekturkosmos_Codex_Starter`
 - first import branch: `kosmo-starter-initial-import-20260606`
 - website repository: `Imperigo/Architektur-Cosmos`
-- evidence: Decision pack proposed repo=Imperigo/Architekturkosmos_Codex_Starter; waiting for owner-go.
+- import readiness: `github_import_readiness_passed`
+- import readiness checks: `19/19`
+- import readiness report: `tmp/kosmo-github-import-readiness.json`
+- evidence: Decision pack proposed repo=Imperigo/Architekturkosmos_Codex_Starter; import_readiness=passed; waiting for owner-go.
 
 Blocked until:
 - Dedicated Starter repository exists.
@@ -87,6 +90,7 @@ Forbidden without Owner-Go:
 | `handover_ready` | `passed` | Home-PC handover lane is ready. |
 | `home_pc_start_ready` | `passed` | Home-PC start readiness lane is ready. |
 | `github_separation_blocked` | `passed` | GitHub separation remains blocked until a dedicated Starter repo or explicit import approval exists. |
+| `github_import_readiness_visible` | `passed` | GitHub import readiness is visible while Owner-Go remains blocked. |
 | `policy_flags_present` | `passed` | All safety policy flags are present and true. |
 | `sources_present` | `passed` | Local starter, cloud starter and Orbit website sources are represented. |
 | `no_private_path_required` | `passed` | Bridge can run from a repo-local demo status without a private local path. |
