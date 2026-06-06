@@ -1,6 +1,6 @@
 # KosmoOrbit Local Runtime Bridge
 
-Generated: 2026-06-06T01:58:04.003Z
+Generated: 2026-06-06T02:09:01.428Z
 Status: `local_runtime_bridge_passed`
 Input: `examples/kosmo-orbit/runtime/kosmo-night-status.demo.json`
 Mode: `external_local_status_import`
@@ -22,13 +22,13 @@ Review-only bridge from the local KOSMO Night Status into KosmoOrbit. It reads a
 | `kosmo-model` | `ready` | KOSMO Ollama enthaelt qwen2.5-coder:1.5b. | odysseus-kosmo-model-sync.sh apply ausfuehren, falls der Endpoint driftet. |
 | `desktop-artifacts` | `ready` | odysseus-vanilla-desktop-manifest.json=present, Odysseus-vanilla-linux-workstation.zip=present, KOSMO-Desktop-v2-linux-workstation.zip=present, ArchitekturkosmosMac.app=present | Vanilla/Desktop-Gates neu bauen, falls Manifest oder ZIP fehlt. |
 | `home-pc-handover` | `ready` | KOSMO-home-pc-linux-handover.zip: OK | kosmo-home-pc-linux-handover-zip.sh neu ausfuehren und Checksum pruefen. |
-| `home-pc-start-readiness` | `ready` | status=home_pc_start_dry_run_passed, checks=49/49, warnings=0 | kosmo-home-pc-start-dry-run.sh ausfuehren und fehlende Pflichtchecks beheben. |
+| `home-pc-start-readiness` | `ready` | status=home_pc_start_dry_run_passed, checks=50/50, warnings=0 | kosmo-home-pc-start-dry-run.sh ausfuehren und fehlende Pflichtchecks beheben. |
 | `kosmo-orbit` | `ready` | repo_commit=19cefd6, report=present | Orbit bleibt review-only; naechster Hebel ist die sichtbare Odysseus/KOSMO-Statusbruecke. |
 | `github-separation` | `blocked` | Decision pack proposed repo=Imperigo/Architekturkosmos_Codex_Starter; import_readiness=passed; waiting for owner-go. | Eigenes Imperigo/Architekturkosmos_Codex_Starter Repo anlegen oder Import explizit freigeben. |
 
 ## Sources
 
-- local starter commit: `14861d7`
+- local starter commit: `ae32901`
 - cloud starter commit: `863dcde`
 - Orbit website commit: `d7cb40e`
 
@@ -81,9 +81,9 @@ First commands:
 - status: `closeout_aggregator_ready`
 - checks: 13/13
 - warnings: 0
-- starter commit: `14861d7`
+- starter commit: `ae32901`
 - orbit commit: `19cefd6`
-- Home-PC dry-run: `home_pc_start_dry_run_passed` (49/49)
+- Home-PC dry-run: `home_pc_start_dry_run_passed` (50/50)
 - handover ZIP: `dist/KOSMO-home-pc-linux-handover.zip`
 - handover checksum: `KOSMO-home-pc-linux-handover.zip: OK`
 

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-06T01:58:04.003Z",
+  "generated_at": "2026-06-06T02:09:01.428Z",
   "generator": "kosmo-orbit-local-runtime-bridge",
   "status": "local_runtime_bridge_passed",
   "input_status_file": "examples/kosmo-orbit/runtime/kosmo-night-status.demo.json",
@@ -27,7 +27,7 @@
   "control_spine": {
     "goal": "KOSMO local control spine over Odysseus with safe Home-PC handover",
     "progress_bar": "[#####################---] 86%",
-    "generated_at": "2026-06-06T01:53:34.000000+00:00"
+    "generated_at": "2026-06-06T02:08:16.000000+00:00"
   },
   "lanes": [
     {
@@ -62,7 +62,7 @@
       "id": "home-pc-start-readiness",
       "label": "Home-PC Start Readiness",
       "status": "ready",
-      "evidence": "status=home_pc_start_dry_run_passed, checks=49/49, warnings=0",
+      "evidence": "status=home_pc_start_dry_run_passed, checks=50/50, warnings=0",
       "next_action": "kosmo-home-pc-start-dry-run.sh ausfuehren und fehlende Pflichtchecks beheben."
     },
     {
@@ -81,7 +81,7 @@
     }
   ],
   "sources": {
-    "local_starter_commit": "14861d7",
+    "local_starter_commit": "ae32901",
     "cloud_starter_commit": "863dcde",
     "orbit_website_commit": "d7cb40e"
   },
@@ -239,7 +239,7 @@
             "title": "Run Home-PC dry-run after unpacking.",
             "status": "home_pc_start_dry_run_passed",
             "next_step": "./scripts/kosmo-home-pc-start-dry-run.sh",
-            "evidence": "checks=49/49"
+            "evidence": "checks=50/50"
           }
         ]
       },
@@ -293,7 +293,7 @@
     "check_count": 13,
     "warnings": 0,
     "current_state": {
-      "starter_commit": "14861d7",
+      "starter_commit": "ae32901",
       "orbit_commit": "19cefd6",
       "night_progress": "[#####################---] 86%",
       "ready_lanes": 6,
@@ -305,10 +305,10 @@
       "queue": "next_action_queue_ready",
       "runway": "runway_report_ready",
       "home_pc_dry_run": "home_pc_start_dry_run_passed",
-      "home_pc_dry_run_checks": "49/49",
+      "home_pc_dry_run_checks": "50/50",
       "handover_zip": "dist/KOSMO-home-pc-linux-handover.zip",
       "handover_checksum": "KOSMO-home-pc-linux-handover.zip: OK",
-      "runtime_bundle": "Architekturkosmos_Codex_Starter_Local_14861d7_20260606-0352.bundle",
+      "runtime_bundle": "Architekturkosmos_Codex_Starter_Local_ae32901_20260606-0407.bundle",
       "runtime_latest_zip": "Architekturkosmos_Codex_Starter_Local_latest.zip",
       "orbit_review_branch": "kosmo-orbit-runtime-bridge-20260606"
     },
