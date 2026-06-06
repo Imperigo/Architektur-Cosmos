@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-06T01:13:53.387Z",
+  "generated_at": "2026-06-06T01:31:05.194Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 256,
-    "passed_checks": 256,
+    "check_count": 257,
+    "passed_checks": 257,
     "failed_checks": 0
   },
   "checks": [
@@ -959,6 +959,11 @@
     {
       "id": "local_runtime_bridge_shows_home_pc_index",
       "label": "Local runtime bridge shows the Home-PC handover index artifacts and Linux first commands.",
+      "status": "passed"
+    },
+    {
+      "id": "local_runtime_bridge_shows_next_action_queue",
+      "label": "Local runtime bridge shows the KOSMO next-action queue.",
       "status": "passed"
     },
     {

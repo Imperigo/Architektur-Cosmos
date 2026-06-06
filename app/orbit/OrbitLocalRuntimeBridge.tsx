@@ -42,6 +42,23 @@ type LocalRuntimeBridgeReport = {
     purpose: string;
     first_commands: string[];
   };
+  next_action_queue: {
+    status: string;
+    ready_actions: number;
+    blocked_actions: number;
+    actions: Array<{
+      id: string;
+      title: string;
+      lane: string;
+      priority: string;
+      status: string;
+      mode: string;
+      command: string;
+      evidence: string;
+      owner_go_required: boolean;
+      autonomous_allowed: boolean;
+    }>;
+  };
   github_separation_decision: {
     status: string;
     recommended_repository: string;
@@ -138,6 +155,41 @@ export function OrbitLocalRuntimeBridge() {
             GitHub-Trennung bleibt sichtbar blockiert, bis ein dediziertes Starter-Repo existiert oder ein
             Import explizit freigegeben ist.
           </p>
+        </div>
+      </div>
+
+      <div className="mt-4 rounded-lg border border-emerald-300/20 bg-emerald-300/[0.055] p-3">
+        <div className="flex flex-wrap items-start justify-between gap-2">
+          <div className="min-w-0">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-100">Next-Action Queue</p>
+            <p className="mt-2 text-sm leading-6 text-stone-300">
+              KOSMO trennt hier lokale Checks, Linux-Home-PC-Schritte, review-only Orbit-Evidenz und Owner-Go-blockierte GitHub-Aktionen.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <BridgeChip label={localRuntimeBridge.next_action_queue.status} tone="green" />
+            <BridgeChip label={`${localRuntimeBridge.next_action_queue.ready_actions} ready`} tone="cyan" />
+            <BridgeChip label={`${localRuntimeBridge.next_action_queue.blocked_actions} blocked`} tone="rose" />
+          </div>
+        </div>
+        <div className="mt-3 grid gap-2 lg:grid-cols-2">
+          {localRuntimeBridge.next_action_queue.actions.map((action) => (
+            <article key={action.id} className="min-w-0 rounded-md border border-white/10 bg-black/24 p-3">
+              <div className="flex flex-wrap items-start justify-between gap-2">
+                <h3 className="break-words text-sm font-semibold text-white">{action.title}</h3>
+                <BridgeChip label={action.status} tone={laneTone(action.status)} />
+              </div>
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                <BridgeChip label={action.lane} />
+                <BridgeChip label={action.priority} tone="cyan" />
+                {action.owner_go_required ? <BridgeChip label="owner-go" tone="amber" /> : null}
+                {action.autonomous_allowed ? <BridgeChip label="autonomous" tone="green" /> : <BridgeChip label="manual/review" />}
+              </div>
+              <code className="mt-3 block break-words rounded-md border border-white/10 bg-black/28 px-3 py-2 text-xs leading-5 text-stone-200">
+                {action.command}
+              </code>
+            </article>
+          ))}
         </div>
       </div>
 

@@ -1,6 +1,6 @@
 # KosmoOrbit Static Export Smoke
 
-Generated: 2026-06-06T01:14:15.356Z
+Generated: 2026-06-06T01:31:26.248Z
 Status: `orbit_static_export_smoke_passed`
 HTML: `out/orbit/index.html`
 

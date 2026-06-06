@@ -1,6 +1,6 @@
 # KosmoOrbit Local Runtime Bridge
 
-Generated: 2026-06-06T01:13:48.863Z
+Generated: 2026-06-06T01:31:00.642Z
 Status: `local_runtime_bridge_passed`
 Input: `examples/kosmo-orbit/runtime/kosmo-night-status.demo.json`
 Mode: `external_local_status_import`
@@ -10,7 +10,7 @@ Review-only bridge from the local KOSMO Night Status into KosmoOrbit. It reads a
 ## Summary
 
 - progress: `[#####################---] 86%`
-- checks: 16/16 passed
+- checks: 17/17 passed
 - ready lanes: 6
 - blocked lanes: 1
 
@@ -22,13 +22,13 @@ Review-only bridge from the local KOSMO Night Status into KosmoOrbit. It reads a
 | `kosmo-model` | `ready` | KOSMO Ollama enthaelt qwen2.5-coder:1.5b. | odysseus-kosmo-model-sync.sh apply ausfuehren, falls der Endpoint driftet. |
 | `desktop-artifacts` | `ready` | odysseus-vanilla-desktop-manifest.json=present, Odysseus-vanilla-linux-workstation.zip=present, KOSMO-Desktop-v2-linux-workstation.zip=present, ArchitekturkosmosMac.app=present | Vanilla/Desktop-Gates neu bauen, falls Manifest oder ZIP fehlt. |
 | `home-pc-handover` | `ready` | KOSMO-home-pc-linux-handover.zip: OK | kosmo-home-pc-linux-handover-zip.sh neu ausfuehren und Checksum pruefen. |
-| `home-pc-start-readiness` | `ready` | status=home_pc_start_dry_run_passed, checks=33/33, warnings=0 | kosmo-home-pc-start-dry-run.sh ausfuehren und fehlende Pflichtchecks beheben. |
+| `home-pc-start-readiness` | `ready` | status=home_pc_start_dry_run_passed, checks=41/41, warnings=0 | kosmo-home-pc-start-dry-run.sh ausfuehren und fehlende Pflichtchecks beheben. |
 | `kosmo-orbit` | `ready` | repo_commit=d7cb40e, report=present | Orbit bleibt review-only; naechster Hebel ist die sichtbare Odysseus/KOSMO-Statusbruecke. |
 | `github-separation` | `blocked` | Decision pack proposed repo=Imperigo/Architekturkosmos_Codex_Starter; import_readiness=passed; waiting for owner-go. | Eigenes Imperigo/Architekturkosmos_Codex_Starter Repo anlegen oder Import explizit freigeben. |
 
 ## Sources
 
-- local starter commit: `0ab9a6d`
+- local starter commit: `f652623`
 - cloud starter commit: `863dcde`
 - Orbit website commit: `d7cb40e`
 
@@ -41,14 +41,31 @@ Review-only bridge from the local KOSMO Night Status into KosmoOrbit. It reads a
 - start dry-run script: `scripts/kosmo-home-pc-start-dry-run.sh`
 - start dry-run report: `tmp/kosmo-home-pc-start-dry-run.json`
 - start dry-run status: `home_pc_start_dry_run_passed`
-- start dry-run checks: `33/33`
+- start dry-run checks: `41/41`
 - purpose: Machine-readable Linux handover index for the future Home-PC setup.
 
 First commands:
 - `shasum -a 256 -c KOSMO-home-pc-linux-handover.zip.sha256`
 - `unzip KOSMO-home-pc-linux-handover.zip -d KOSMO-home-pc-linux-handover`
+- `less KOSMO-home-pc-linux-handover/tmp/kosmo-home-pc-linux-first-run-plan.md`
+- `less KOSMO-home-pc-linux-handover/tmp/kosmo-next-action-queue.md`
 - `less KOSMO-home-pc-linux-handover/tmp/kosmo-night-status.md`
 - `less KOSMO-home-pc-linux-handover/tmp/kosmo-home-pc-linux-handover-manifest.json`
+
+## Next-Action Queue
+
+- status: `next_action_queue_ready`
+- ready actions: 4
+- blocked actions: 1
+
+| Action | Lane | Status | Owner-Go | Autonomous |
+| --- | --- | --- | --- | --- |
+| `refresh-control-spine` | `control-spine` | `ready` | `false` | `true` |
+| `verify-handover-zip` | `home-pc-handover` | `ready` | `false` | `true` |
+| `home-pc-first-evening` | `home-pc-linux` | `waiting_for_target_machine` | `false` | `false` |
+| `starter-github-owner-go` | `github-separation` | `blocked` | `true` | `false` |
+| `orbit-review-branch` | `kosmo-orbit` | `ready` | `false` | `false` |
+| `odysseus-runtime-watch` | `odysseus-runtime` | `ready` | `false` | `true` |
 
 ## GitHub Separation Decision
 
@@ -91,6 +108,7 @@ Forbidden without Owner-Go:
 | `home_pc_start_ready` | `passed` | Home-PC start readiness lane is ready. |
 | `github_separation_blocked` | `passed` | GitHub separation remains blocked until a dedicated Starter repo or explicit import approval exists. |
 | `github_import_readiness_visible` | `passed` | GitHub import readiness is visible while Owner-Go remains blocked. |
+| `next_action_queue_visible` | `passed` | Next-action queue is visible for allowed, waiting and blocked work. |
 | `policy_flags_present` | `passed` | All safety policy flags are present and true. |
 | `sources_present` | `passed` | Local starter, cloud starter and Orbit website sources are represented. |
 | `no_private_path_required` | `passed` | Bridge can run from a repo-local demo status without a private local path. |

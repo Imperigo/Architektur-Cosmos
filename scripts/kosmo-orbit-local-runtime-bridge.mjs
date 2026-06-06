@@ -78,6 +78,7 @@ function buildReport(status) {
     check('home_pc_start_ready', 'Home-PC start readiness lane is ready.', lanes.some((lane) => lane.id === 'home-pc-start-readiness' && lane.status === 'ready')),
     check('github_separation_blocked', 'GitHub separation remains blocked until a dedicated Starter repo or explicit import approval exists.', githubLane?.status === 'blocked'),
     check('github_import_readiness_visible', 'GitHub import readiness is visible while Owner-Go remains blocked.', String(githubLane?.evidence || '').includes('import_readiness=passed')),
+    check('next_action_queue_visible', 'Next-action queue is visible for allowed, waiting and blocked work.', status.next_action_queue?.status === 'next_action_queue_ready' && asArray(status.next_action_queue.actions).length >= 4),
     check('policy_flags_present', 'All safety policy flags are present and true.', requiredPolicies.every((key) => policy[key] === true)),
     check('sources_present', 'Local starter, cloud starter and Orbit website sources are represented.', Boolean(sources.local_starter && sources.cloud_starter && sources.orbit_website)),
     check('no_private_path_required', 'Bridge can run from a repo-local demo status without a private local path.', relative(root, statusPath).startsWith('examples/kosmo-orbit/runtime/') || Boolean(process.env.KOSMO_NIGHT_STATUS_JSON))
@@ -135,15 +136,18 @@ function buildReport(status) {
       start_dry_run_script: 'scripts/kosmo-home-pc-start-dry-run.sh',
       start_dry_run_report: 'tmp/kosmo-home-pc-start-dry-run.json',
       start_dry_run_status: 'home_pc_start_dry_run_passed',
-      start_dry_run_checks: '33/33',
+      start_dry_run_checks: '41/41',
       purpose: 'Machine-readable Linux handover index for the future Home-PC setup.',
       first_commands: [
         'shasum -a 256 -c KOSMO-home-pc-linux-handover.zip.sha256',
         'unzip KOSMO-home-pc-linux-handover.zip -d KOSMO-home-pc-linux-handover',
+        'less KOSMO-home-pc-linux-handover/tmp/kosmo-home-pc-linux-first-run-plan.md',
+        'less KOSMO-home-pc-linux-handover/tmp/kosmo-next-action-queue.md',
         'less KOSMO-home-pc-linux-handover/tmp/kosmo-night-status.md',
         'less KOSMO-home-pc-linux-handover/tmp/kosmo-home-pc-linux-handover-manifest.json'
       ]
     },
+    next_action_queue: normalizeNextActionQueue(status.next_action_queue),
     github_separation_decision: {
       status: 'owner_go_required',
       recommended_repository: 'Imperigo/Architekturkosmos_Codex_Starter',
@@ -218,6 +222,16 @@ function renderMarkdown(report) {
   lines.push('', 'First commands:');
   report.home_pc_handover.first_commands.forEach((command) => lines.push(`- \`${command}\``));
 
+  lines.push('', '## Next-Action Queue', '');
+  lines.push(`- status: \`${report.next_action_queue.status}\``);
+  lines.push(`- ready actions: ${report.next_action_queue.ready_actions}`);
+  lines.push(`- blocked actions: ${report.next_action_queue.blocked_actions}`);
+  lines.push('', '| Action | Lane | Status | Owner-Go | Autonomous |');
+  lines.push('| --- | --- | --- | --- | --- |');
+  report.next_action_queue.actions.forEach((action) => {
+    lines.push(`| \`${action.id}\` | \`${action.lane}\` | \`${action.status}\` | \`${action.owner_go_required}\` | \`${action.autonomous_allowed}\` |`);
+  });
+
   lines.push('', '## GitHub Separation Decision', '');
   lines.push(`- status: \`${report.github_separation_decision.status}\``);
   lines.push(`- recommended repository: \`${report.github_separation_decision.recommended_repository}\``);
@@ -255,6 +269,28 @@ function asArray(value) {
 
 function readJson(pathname) {
   return JSON.parse(readFileSync(pathname, 'utf8'));
+}
+
+function normalizeNextActionQueue(queue) {
+  const actions = asArray(queue?.actions).map((action) => ({
+    id: action.id,
+    title: action.title,
+    lane: action.lane,
+    priority: action.priority,
+    status: action.status,
+    mode: action.mode,
+    command: action.command,
+    evidence: action.evidence,
+    owner_go_required: Boolean(action.owner_go_required),
+    autonomous_allowed: Boolean(action.autonomous_allowed)
+  }));
+
+  return {
+    status: queue?.status || 'missing',
+    ready_actions: queue?.summary?.ready_actions ?? actions.filter((action) => action.status === 'ready').length,
+    blocked_actions: queue?.summary?.blocked_actions ?? actions.filter((action) => action.status === 'blocked').length,
+    actions
+  };
 }
 
 function escapePipe(value) {

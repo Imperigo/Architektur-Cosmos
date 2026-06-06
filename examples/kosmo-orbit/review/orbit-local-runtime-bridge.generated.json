@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-06T01:13:48.863Z",
+  "generated_at": "2026-06-06T01:31:00.642Z",
   "generator": "kosmo-orbit-local-runtime-bridge",
   "status": "local_runtime_bridge_passed",
   "input_status_file": "examples/kosmo-orbit/runtime/kosmo-night-status.demo.json",
@@ -16,8 +16,8 @@
     "no_external_accounts": true
   },
   "summary": {
-    "check_count": 16,
-    "passed_checks": 16,
+    "check_count": 17,
+    "passed_checks": 17,
     "failed_checks": 0,
     "progress_percent": 86,
     "ready_lanes": 6,
@@ -27,7 +27,7 @@
   "control_spine": {
     "goal": "KOSMO local control spine over Odysseus with safe Home-PC handover",
     "progress_bar": "[#####################---] 86%",
-    "generated_at": "2026-06-06T01:10:36.000000+00:00"
+    "generated_at": "2026-06-06T01:28:32.000000+00:00"
   },
   "lanes": [
     {
@@ -62,7 +62,7 @@
       "id": "home-pc-start-readiness",
       "label": "Home-PC Start Readiness",
       "status": "ready",
-      "evidence": "status=home_pc_start_dry_run_passed, checks=33/33, warnings=0",
+      "evidence": "status=home_pc_start_dry_run_passed, checks=41/41, warnings=0",
       "next_action": "kosmo-home-pc-start-dry-run.sh ausfuehren und fehlende Pflichtchecks beheben."
     },
     {
@@ -81,7 +81,7 @@
     }
   ],
   "sources": {
-    "local_starter_commit": "0ab9a6d",
+    "local_starter_commit": "f652623",
     "cloud_starter_commit": "863dcde",
     "orbit_website_commit": "d7cb40e"
   },
@@ -93,13 +93,94 @@
     "start_dry_run_script": "scripts/kosmo-home-pc-start-dry-run.sh",
     "start_dry_run_report": "tmp/kosmo-home-pc-start-dry-run.json",
     "start_dry_run_status": "home_pc_start_dry_run_passed",
-    "start_dry_run_checks": "33/33",
+    "start_dry_run_checks": "41/41",
     "purpose": "Machine-readable Linux handover index for the future Home-PC setup.",
     "first_commands": [
       "shasum -a 256 -c KOSMO-home-pc-linux-handover.zip.sha256",
       "unzip KOSMO-home-pc-linux-handover.zip -d KOSMO-home-pc-linux-handover",
+      "less KOSMO-home-pc-linux-handover/tmp/kosmo-home-pc-linux-first-run-plan.md",
+      "less KOSMO-home-pc-linux-handover/tmp/kosmo-next-action-queue.md",
       "less KOSMO-home-pc-linux-handover/tmp/kosmo-night-status.md",
       "less KOSMO-home-pc-linux-handover/tmp/kosmo-home-pc-linux-handover-manifest.json"
+    ]
+  },
+  "next_action_queue": {
+    "status": "next_action_queue_ready",
+    "ready_actions": 4,
+    "blocked_actions": 1,
+    "actions": [
+      {
+        "id": "refresh-control-spine",
+        "title": "Refresh local KOSMO control-spine reports.",
+        "lane": "control-spine",
+        "priority": "P1",
+        "status": "ready",
+        "mode": "dry_run_read_only",
+        "command": "./scripts/kosmo-github-import-readiness.sh && ./scripts/kosmo-home-pc-linux-first-run-plan.sh && ./scripts/kosmo-home-pc-start-dry-run.sh && ./scripts/kosmo-night-status.sh",
+        "evidence": "Keeps local status, import readiness and Home-PC dry-run evidence current.",
+        "owner_go_required": false,
+        "autonomous_allowed": true
+      },
+      {
+        "id": "verify-handover-zip",
+        "title": "Verify the current Home-PC handover ZIP checksum and extracted dry-run.",
+        "lane": "home-pc-handover",
+        "priority": "P1",
+        "status": "ready",
+        "mode": "dry_run_local_filesystem",
+        "command": "cd dist && shasum -a 256 -c KOSMO-home-pc-linux-handover.zip.sha256",
+        "evidence": "Checksum verification is local-only.",
+        "owner_go_required": false,
+        "autonomous_allowed": true
+      },
+      {
+        "id": "home-pc-first-evening",
+        "title": "Run the first-run sequence on the future Linux Home-PC.",
+        "lane": "home-pc-linux",
+        "priority": "P1",
+        "status": "waiting_for_target_machine",
+        "mode": "manual_on_linux_home_pc",
+        "command": "less tmp/kosmo-home-pc-linux-first-run-plan.md",
+        "evidence": "Requires the actual Linux Home-PC.",
+        "owner_go_required": false,
+        "autonomous_allowed": false
+      },
+      {
+        "id": "starter-github-owner-go",
+        "title": "Create or approve the dedicated Starter repository before any Starter push.",
+        "lane": "github-separation",
+        "priority": "P1",
+        "status": "blocked",
+        "mode": "owner_go_required",
+        "command": "Imperigo/Architekturkosmos_Codex_Starter on branch kosmo-starter-initial-import-20260606",
+        "evidence": "Decision pack proposed repo=Imperigo/Architekturkosmos_Codex_Starter; import_readiness=passed; waiting for owner-go.",
+        "owner_go_required": true,
+        "autonomous_allowed": false
+      },
+      {
+        "id": "orbit-review-branch",
+        "title": "Keep KosmoOrbit bridge on review branch as visual interface evidence.",
+        "lane": "kosmo-orbit",
+        "priority": "P2",
+        "status": "ready",
+        "mode": "review_only",
+        "command": "Review existing branch kosmo-orbit-runtime-bridge-20260606",
+        "evidence": "Orbit bridge remains review-only.",
+        "owner_go_required": false,
+        "autonomous_allowed": false
+      },
+      {
+        "id": "odysseus-runtime-watch",
+        "title": "Keep Odysseus Vanilla as the stable local basis; rerun smoke only after drift.",
+        "lane": "odysseus-runtime",
+        "priority": "P2",
+        "status": "ready",
+        "mode": "dry_run_smoke_on_drift",
+        "command": "./scripts/odysseus-vanilla-smoke.sh",
+        "evidence": "status=running, chroma=running, url=http://127.0.0.1:7860",
+        "owner_go_required": false,
+        "autonomous_allowed": true
+      }
     ]
   },
   "github_separation_decision": {
@@ -189,6 +270,11 @@
     {
       "id": "github_import_readiness_visible",
       "label": "GitHub import readiness is visible while Owner-Go remains blocked.",
+      "status": "passed"
+    },
+    {
+      "id": "next_action_queue_visible",
+      "label": "Next-action queue is visible for allowed, waiting and blocked work.",
       "status": "passed"
     },
     {
