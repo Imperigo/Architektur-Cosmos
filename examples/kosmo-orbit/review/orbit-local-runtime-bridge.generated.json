@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-06T03:40:55.807Z",
+  "generated_at": "2026-06-06T03:51:19.585Z",
   "generator": "kosmo-orbit-local-runtime-bridge",
   "status": "local_runtime_bridge_passed",
   "input_status_file": "examples/kosmo-orbit/runtime/kosmo-night-status.demo.json",
@@ -88,7 +88,7 @@
     }
   ],
   "sources": {
-    "local_starter_commit": "245df32",
+    "local_starter_commit": "e5309ea",
     "cloud_starter_commit": "863dcde",
     "orbit_website_commit": "a6e5bf5"
   },
@@ -319,7 +319,7 @@
     "check_count": 13,
     "warnings": 0,
     "current_state": {
-      "starter_commit": "245df32",
+      "starter_commit": "e5309ea",
       "orbit_commit": "a6e5bf5",
       "night_progress": "[#####################---] 88%",
       "ready_lanes": 7,
@@ -341,7 +341,7 @@
       "home_pc_start_card": "docs/home_station/KOSMO_HOME_PC_START_CARD.md",
       "handover_zip": "dist/KOSMO-home-pc-linux-handover.zip",
       "handover_checksum": "KOSMO-home-pc-linux-handover.zip: OK",
-      "runtime_bundle": "Architekturkosmos_Codex_Starter_Local_245df32_20260606-0534.bundle",
+      "runtime_bundle": "Architekturkosmos_Codex_Starter_Local_e5309ea_20260606-0549.bundle",
       "runtime_latest_zip": "Architekturkosmos_Codex_Starter_Local_latest.zip",
       "orbit_review_branch": "kosmo-orbit-runtime-bridge-20260606",
       "orbit_render_smoke": "orbit_local_render_smoke_passed",
@@ -382,13 +382,13 @@
     "warnings": 0,
     "progress": "[#####################---] 88%",
     "current_state": {
-      "starter_commit": "245df32",
+      "starter_commit": "e5309ea",
       "orbit_commit": "a6e5bf5",
       "orbit_branch": "kosmo-orbit-runtime-bridge-20260606",
-      "runtime_bundle": "Architekturkosmos_Codex_Starter_Local_245df32_20260606-0534.bundle",
+      "runtime_bundle": "Architekturkosmos_Codex_Starter_Local_e5309ea_20260606-0549.bundle",
       "runtime_latest_zip": "Architekturkosmos_Codex_Starter_Local_latest.zip",
       "home_pc_handover_zip": "dist/KOSMO-home-pc-linux-handover.zip",
-      "manifest_source_commit": "d920b6c6a996bed0b8d98bff0e91accec2cd3d4b"
+      "manifest_source_commit": "d0265fa6820a5c16d21b3582917c881245aa2a5d"
     },
     "evidence": {
       "night_status": "[#####################---] 88%",

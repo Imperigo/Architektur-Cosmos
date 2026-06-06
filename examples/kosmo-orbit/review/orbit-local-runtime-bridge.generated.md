@@ -1,6 +1,6 @@
 # KosmoOrbit Local Runtime Bridge
 
-Generated: 2026-06-06T03:40:55.807Z
+Generated: 2026-06-06T03:51:19.585Z
 Status: `local_runtime_bridge_passed`
 Input: `examples/kosmo-orbit/runtime/kosmo-night-status.demo.json`
 Mode: `repo_local_demo_status`
@@ -29,7 +29,7 @@ Review-only bridge from the local KOSMO Night Status into KosmoOrbit. It reads a
 
 ## Sources
 
-- local starter commit: `245df32`
+- local starter commit: `e5309ea`
 - cloud starter commit: `863dcde`
 - Orbit website commit: `a6e5bf5`
 
@@ -101,7 +101,7 @@ First commands:
 - status: `closeout_aggregator_ready`
 - checks: 13/13
 - warnings: 0
-- starter commit: `245df32`
+- starter commit: `e5309ea`
 - orbit commit: `a6e5bf5`
 - Home-PC dry-run: `home_pc_start_dry_run_passed` (62/62)
 - Home-PC doctor: `home_pc_handover_doctor_passed` (19/19)
@@ -141,8 +141,8 @@ Forbidden actions:
 - status: `loop_closeout_dashboard_ready`
 - checks: 15/15
 - progress: `[#####################---] 88%`
-- starter commit: `245df32`
-- runtime bundle: `Architekturkosmos_Codex_Starter_Local_245df32_20260606-0534.bundle`
+- starter commit: `e5309ea`
+- runtime bundle: `Architekturkosmos_Codex_Starter_Local_e5309ea_20260606-0549.bundle`
 - safest next action: `refresh-control-spine`
 - command: `./scripts/kosmo-loop-refresh-evidence.sh`
 

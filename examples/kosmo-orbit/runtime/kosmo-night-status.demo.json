@@ -16,7 +16,7 @@
       "path": "<local_starter>",
       "exists": true,
       "clean": true,
-      "commit": "245df32",
+      "commit": "e5309ea",
       "status_short": ""
     },
     "cloud_starter": {
@@ -303,7 +303,7 @@
       "warnings": 0
     },
     "current_state": {
-      "starter_commit": "245df32",
+      "starter_commit": "e5309ea",
       "orbit_commit": "a6e5bf5",
       "night_progress": "[#####################---] 88%",
       "ready_lanes": 7,
@@ -321,7 +321,7 @@
       "home_pc_handover_doctor_report": "tmp/kosmo-home-pc-handover-doctor.json",
       "handover_zip": "dist/KOSMO-home-pc-linux-handover.zip",
       "handover_checksum": "KOSMO-home-pc-linux-handover.zip: OK",
-      "runtime_bundle": "Architekturkosmos_Codex_Starter_Local_245df32_20260606-0534.bundle",
+      "runtime_bundle": "Architekturkosmos_Codex_Starter_Local_e5309ea_20260606-0549.bundle",
       "runtime_latest_zip": "Architekturkosmos_Codex_Starter_Local_latest.zip",
       "orbit_review_branch": "kosmo-orbit-runtime-bridge-20260606",
       "orbit_render_smoke": "orbit_local_render_smoke_passed",
@@ -374,13 +374,13 @@
       "blocked_lanes": 1
     },
     "current_state": {
-      "starter_commit": "245df32",
+      "starter_commit": "e5309ea",
       "orbit_commit": "a6e5bf5",
       "orbit_branch": "kosmo-orbit-runtime-bridge-20260606",
-      "runtime_bundle": "Architekturkosmos_Codex_Starter_Local_245df32_20260606-0534.bundle",
+      "runtime_bundle": "Architekturkosmos_Codex_Starter_Local_e5309ea_20260606-0549.bundle",
       "runtime_latest_zip": "Architekturkosmos_Codex_Starter_Local_latest.zip",
       "home_pc_handover_zip": "dist/KOSMO-home-pc-linux-handover.zip",
-      "manifest_source_commit": "d920b6c6a996bed0b8d98bff0e91accec2cd3d4b"
+      "manifest_source_commit": "d0265fa6820a5c16d21b3582917c881245aa2a5d"
     },
     "evidence": {
       "night_status": "[#####################---] 88%",
