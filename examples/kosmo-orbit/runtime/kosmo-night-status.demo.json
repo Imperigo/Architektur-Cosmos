@@ -353,5 +353,153 @@
       "no Starter tree pushed into Website repository",
       "no irreversible file or data action"
     ]
+  },
+  "loop_closeout_dashboard": {
+    "schema_version": "0.1",
+    "generated_at": "2026-06-06T03:03:59.352924+00:00",
+    "status": "loop_closeout_dashboard_ready",
+    "mode": "dry_run_read_only_loop_dashboard",
+    "summary": {
+      "check_count": 14,
+      "passed_checks": 14,
+      "failed_required_checks": 0,
+      "warnings": 0,
+      "progress": "[#####################---] 88%",
+      "ready_lanes": 7,
+      "blocked_lanes": 1
+    },
+    "current_state": {
+      "starter_commit": "58ee646",
+      "orbit_commit": "a48fc14",
+      "orbit_branch": "kosmo-orbit-runtime-bridge-20260606",
+      "runtime_bundle": "Architekturkosmos_Codex_Starter_Local_58ee646_20260606-0502.bundle",
+      "runtime_latest_zip": "Architekturkosmos_Codex_Starter_Local_latest.zip",
+      "home_pc_handover_zip": "dist/KOSMO-home-pc-linux-handover.zip",
+      "manifest_source_commit": "1257b5fd93eaa6dbf2896b55645898844b1a102c"
+    },
+    "evidence": {
+      "night_status": "[#####################---] 88%",
+      "doctor": "home_pc_handover_doctor_passed 18/18",
+      "dry_run": "home_pc_start_dry_run_passed 58/58",
+      "closeout": "closeout_aggregator_ready",
+      "orbit_render_smoke": "status=orbit_local_render_smoke_passed, checks=9/9, url=http://localhost:3107/orbit/",
+      "handover_checksum": "KOSMO-home-pc-linux-handover.zip: OK",
+      "latest_zip_checksum": "Architekturkosmos_Codex_Starter_Local_latest.zip: OK"
+    },
+    "safest_next_action": {
+      "id": "refresh-control-spine",
+      "title": "Refresh local KOSMO control-spine reports.",
+      "command": "./scripts/kosmo-github-import-readiness.sh && ./scripts/kosmo-home-pc-linux-first-run-plan.sh && ./scripts/kosmo-home-pc-start-dry-run.sh && ./scripts/kosmo-night-status.sh",
+      "reason": "Keeps local status, import readiness and Home-PC dry-run evidence current."
+    },
+    "forbidden_without_owner_go": [
+      "create GitHub repository",
+      "push Starter history",
+      "push to main",
+      "deploy or publish",
+      "change secrets",
+      "connect or mutate external accounts",
+      "start Home-PC services or models before dry-run review"
+    ],
+    "checks": [
+      {
+        "id": "night_status_ready",
+        "label": "Night status is ready.",
+        "status": "passed",
+        "required": true,
+        "evidence": "[#####################---] 88%"
+      },
+      {
+        "id": "queue_ready",
+        "label": "Next-action queue is ready.",
+        "status": "passed",
+        "required": true,
+        "evidence": "next_action_queue_ready"
+      },
+      {
+        "id": "runway_ready",
+        "label": "Runway report is ready.",
+        "status": "passed",
+        "required": true,
+        "evidence": "runway_report_ready"
+      },
+      {
+        "id": "closeout_ready",
+        "label": "Closeout aggregator is ready.",
+        "status": "passed",
+        "required": true,
+        "evidence": "closeout_aggregator_ready"
+      },
+      {
+        "id": "doctor_ready",
+        "label": "Home-PC handover doctor is green.",
+        "status": "passed",
+        "required": true,
+        "evidence": "home_pc_handover_doctor_passed"
+      },
+      {
+        "id": "dry_run_ready",
+        "label": "Home-PC dry-run is green.",
+        "status": "passed",
+        "required": true,
+        "evidence": "home_pc_start_dry_run_passed"
+      },
+      {
+        "id": "handover_manifest_ready",
+        "label": "Handover manifest is readable.",
+        "status": "passed",
+        "required": true,
+        "evidence": "1257b5fd93eaa6dbf2896b55645898844b1a102c"
+      },
+      {
+        "id": "handover_zip_checksum",
+        "label": "Home-PC handover ZIP checksum verifies.",
+        "status": "passed",
+        "required": true,
+        "evidence": "KOSMO-home-pc-linux-handover.zip: OK"
+      },
+      {
+        "id": "runtime_bundle_present",
+        "label": "Latest runtime bundle is present.",
+        "status": "passed",
+        "required": false,
+        "evidence": "Architekturkosmos_Codex_Starter_Local_58ee646_20260606-0502.bundle"
+      },
+      {
+        "id": "runtime_latest_zip_checksum",
+        "label": "Runtime latest ZIP checksum verifies.",
+        "status": "passed",
+        "required": false,
+        "evidence": "Architekturkosmos_Codex_Starter_Local_latest.zip: OK"
+      },
+      {
+        "id": "starter_worktree_clean",
+        "label": "Starter worktree is clean.",
+        "status": "passed",
+        "required": false,
+        "evidence": "clean"
+      },
+      {
+        "id": "orbit_worktree_clean",
+        "label": "Orbit worktree is clean.",
+        "status": "passed",
+        "required": false,
+        "evidence": "clean"
+      },
+      {
+        "id": "github_owner_go_blocked",
+        "label": "GitHub separation remains blocked.",
+        "status": "passed",
+        "required": true,
+        "evidence": "Decision pack proposed repo=Imperigo/Architekturkosmos_Codex_Starter; import_readiness=passed; waiting for owner-go."
+      },
+      {
+        "id": "orbit_render_smoke_visible",
+        "label": "Orbit render smoke is visible and ready.",
+        "status": "passed",
+        "required": true,
+        "evidence": "status=orbit_local_render_smoke_passed, checks=9/9, url=http://localhost:3107/orbit/"
+      }
+    ]
   }
 }

@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-06T02:54:17.702Z",
+  "generated_at": "2026-06-06T03:05:56.244Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 263,
-    "passed_checks": 263,
+    "check_count": 264,
+    "passed_checks": 264,
     "failed_checks": 0
   },
   "checks": [
@@ -984,6 +984,11 @@
     {
       "id": "local_runtime_bridge_shows_closeout_aggregator",
       "label": "Local runtime bridge shows the KOSMO closeout aggregator with read order, evidence and safety limits.",
+      "status": "passed"
+    },
+    {
+      "id": "local_runtime_bridge_shows_loop_dashboard",
+      "label": "Local runtime bridge shows the loop closeout dashboard and safest next action.",
       "status": "passed"
     },
     {

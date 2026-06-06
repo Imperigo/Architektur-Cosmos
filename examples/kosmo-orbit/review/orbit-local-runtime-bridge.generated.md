@@ -1,6 +1,6 @@
 # KosmoOrbit Local Runtime Bridge
 
-Generated: 2026-06-06T02:54:13.550Z
+Generated: 2026-06-06T03:05:51.868Z
 Status: `local_runtime_bridge_passed`
 Input: `examples/kosmo-orbit/runtime/kosmo-night-status.demo.json`
 Mode: `external_local_status_import`
@@ -10,7 +10,7 @@ Review-only bridge from the local KOSMO Night Status into KosmoOrbit. It reads a
 ## Summary
 
 - progress: `[#####################---] 88%`
-- checks: 22/22 passed
+- checks: 23/23 passed
 - ready lanes: 7
 - blocked lanes: 1
 
@@ -125,6 +125,16 @@ Forbidden actions:
 - no Starter tree pushed into Website repository
 - no irreversible file or data action
 
+## Loop Closeout Dashboard
+
+- status: `loop_closeout_dashboard_ready`
+- checks: 14/14
+- progress: `[#####################---] 88%`
+- starter commit: `58ee646`
+- runtime bundle: `Architekturkosmos_Codex_Starter_Local_58ee646_20260606-0502.bundle`
+- safest next action: `refresh-control-spine`
+- command: `./scripts/kosmo-github-import-readiness.sh && ./scripts/kosmo-home-pc-linux-first-run-plan.sh && ./scripts/kosmo-home-pc-start-dry-run.sh && ./scripts/kosmo-night-status.sh`
+
 ## GitHub Separation Decision
 
 - status: `owner_go_required`
@@ -170,6 +180,7 @@ Forbidden without Owner-Go:
 | `next_action_queue_visible` | `passed` | Next-action queue is visible for allowed, waiting and blocked work. |
 | `runway_report_visible` | `passed` | Runway report is visible for Mac, Linux, Owner-Go and post-boot phases. |
 | `closeout_aggregator_visible` | `passed` | Closeout aggregator is visible as the Home-PC read order and final evidence packet. |
+| `loop_closeout_dashboard_visible` | `passed` | Loop closeout dashboard is visible with safest next action. |
 | `home_pc_doctor_visible` | `passed` | Home-PC handover doctor evidence is visible in the closeout packet. |
 | `orbit_render_smoke_closeout_visible` | `passed` | Orbit render smoke evidence is visible in the closeout packet. |
 | `policy_flags_present` | `passed` | All safety policy flags are present and true. |

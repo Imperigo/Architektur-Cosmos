@@ -114,6 +114,30 @@ type LocalRuntimeBridgeReport = {
     owner_go_blockers: string[];
     forbidden_actions: string[];
   };
+  loop_closeout_dashboard: {
+    status: string;
+    passed_checks: number;
+    check_count: number;
+    warnings: number;
+    progress: string | null;
+    current_state: {
+      starter_commit: string | null;
+      orbit_commit: string | null;
+      orbit_branch: string | null;
+      runtime_bundle: string | null;
+      runtime_latest_zip: string | null;
+      home_pc_handover_zip: string | null;
+      manifest_source_commit: string | null;
+    };
+    evidence: Record<string, string>;
+    safest_next_action: {
+      id: string;
+      title: string;
+      command: string;
+      reason: string;
+    };
+    forbidden_without_owner_go: string[];
+  };
   github_separation_decision: {
     status: string;
     recommended_repository: string;
@@ -362,6 +386,35 @@ export function OrbitLocalRuntimeBridge() {
             </ul>
           </div>
         </div>
+      </div>
+
+      <div className="mt-4 rounded-lg border border-lime-300/20 bg-lime-300/[0.06] p-3">
+        <div className="flex flex-wrap items-start justify-between gap-2">
+          <div className="min-w-0">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-lime-100">Loop Closeout Dashboard</p>
+            <h3 className="mt-2 text-lg font-semibold text-white">Sicherste Naechste Aktion</h3>
+            <p className="mt-2 text-sm leading-6 text-stone-300">{localRuntimeBridge.loop_closeout_dashboard.safest_next_action.reason}</p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <BridgeChip label={localRuntimeBridge.loop_closeout_dashboard.status} tone="green" />
+            <BridgeChip label={`${localRuntimeBridge.loop_closeout_dashboard.passed_checks}/${localRuntimeBridge.loop_closeout_dashboard.check_count} checks`} tone="cyan" />
+            <BridgeChip label={localRuntimeBridge.loop_closeout_dashboard.progress || 'progress missing'} tone="green" />
+          </div>
+        </div>
+        <div className="mt-3 grid gap-2 text-sm leading-5 md:grid-cols-3">
+          <p className="rounded-md border border-lime-300/20 bg-black/20 px-3 py-2 text-lime-100">
+            Starter <code className="block break-words text-stone-200">{localRuntimeBridge.loop_closeout_dashboard.current_state.starter_commit}</code>
+          </p>
+          <p className="rounded-md border border-lime-300/20 bg-black/20 px-3 py-2 text-lime-100">
+            Orbit <code className="block break-words text-stone-200">{localRuntimeBridge.loop_closeout_dashboard.current_state.orbit_commit}</code>
+          </p>
+          <p className="rounded-md border border-lime-300/20 bg-black/20 px-3 py-2 text-lime-100">
+            Bundle <code className="block break-words text-stone-200">{localRuntimeBridge.loop_closeout_dashboard.current_state.runtime_bundle}</code>
+          </p>
+        </div>
+        <code className="mt-3 block break-words rounded-md border border-lime-300/20 bg-black/28 px-3 py-2 text-xs leading-5 text-lime-100">
+          {localRuntimeBridge.loop_closeout_dashboard.safest_next_action.command}
+        </code>
       </div>
 
       <div className="mt-4 rounded-lg border border-cyan-300/20 bg-cyan-300/[0.06] p-3">

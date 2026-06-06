@@ -84,6 +84,7 @@ function buildReport(status) {
     check('next_action_queue_visible', 'Next-action queue is visible for allowed, waiting and blocked work.', status.next_action_queue?.status === 'next_action_queue_ready' && asArray(status.next_action_queue.actions).length >= 4),
     check('runway_report_visible', 'Runway report is visible for Mac, Linux, Owner-Go and post-boot phases.', status.runway_report?.status === 'runway_report_ready' && asArray(status.runway_report.runway).length === 4),
     check('closeout_aggregator_visible', 'Closeout aggregator is visible as the Home-PC read order and final evidence packet.', status.closeout_aggregator?.status === 'closeout_aggregator_ready' && asArray(status.closeout_aggregator.read_order).length >= 5),
+    check('loop_closeout_dashboard_visible', 'Loop closeout dashboard is visible with safest next action.', status.loop_closeout_dashboard?.status === 'loop_closeout_dashboard_ready' && status.loop_closeout_dashboard?.safest_next_action?.id === 'refresh-control-spine'),
     check('home_pc_doctor_visible', 'Home-PC handover doctor evidence is visible in the closeout packet.', String(status.closeout_aggregator?.evidence?.home_pc_handover_doctor || '') === 'home_pc_handover_doctor_passed'),
     check('orbit_render_smoke_closeout_visible', 'Orbit render smoke evidence is visible in the closeout packet.', String(status.closeout_aggregator?.evidence?.orbit_render_smoke || '') === 'orbit_local_render_smoke_passed' && String(status.closeout_aggregator?.evidence?.orbit_render_smoke_checks || '') === '9/9'),
     check('policy_flags_present', 'All safety policy flags are present and true.', requiredPolicies.every((key) => policy[key] === true)),
@@ -168,6 +169,7 @@ function buildReport(status) {
     next_action_queue: normalizeNextActionQueue(status.next_action_queue),
     runway_report: normalizeRunwayReport(status.runway_report),
     closeout_aggregator: normalizeCloseoutAggregator(status.closeout_aggregator),
+    loop_closeout_dashboard: normalizeLoopCloseoutDashboard(status.loop_closeout_dashboard),
     github_separation_decision: {
       status: 'owner_go_required',
       recommended_repository: 'Imperigo/Architekturkosmos_Codex_Starter',
@@ -279,6 +281,15 @@ function renderMarkdown(report) {
   report.closeout_aggregator.owner_go_blockers.forEach((item) => lines.push(`- ${item}`));
   lines.push('', 'Forbidden actions:');
   report.closeout_aggregator.forbidden_actions.forEach((item) => lines.push(`- ${item}`));
+
+  lines.push('', '## Loop Closeout Dashboard', '');
+  lines.push(`- status: \`${report.loop_closeout_dashboard.status}\``);
+  lines.push(`- checks: ${report.loop_closeout_dashboard.passed_checks}/${report.loop_closeout_dashboard.check_count}`);
+  lines.push(`- progress: \`${report.loop_closeout_dashboard.progress}\``);
+  lines.push(`- starter commit: \`${report.loop_closeout_dashboard.current_state.starter_commit}\``);
+  lines.push(`- runtime bundle: \`${report.loop_closeout_dashboard.current_state.runtime_bundle}\``);
+  lines.push(`- safest next action: \`${report.loop_closeout_dashboard.safest_next_action.id}\``);
+  lines.push(`- command: \`${report.loop_closeout_dashboard.safest_next_action.command}\``);
 
   lines.push('', '## GitHub Separation Decision', '');
   lines.push(`- status: \`${report.github_separation_decision.status}\``);
@@ -400,6 +411,45 @@ function normalizeCloseoutAggregator(closeout) {
     read_order: asArray(closeout?.read_order),
     owner_go_blockers: asArray(closeout?.owner_go_blockers),
     forbidden_actions: asArray(closeout?.forbidden_actions)
+  };
+}
+
+function normalizeLoopCloseoutDashboard(dashboard) {
+  const currentState = dashboard?.current_state || {};
+  const evidence = dashboard?.evidence || {};
+  const action = dashboard?.safest_next_action || {};
+
+  return {
+    status: dashboard?.status || 'missing',
+    passed_checks: dashboard?.summary?.passed_checks ?? 0,
+    check_count: dashboard?.summary?.check_count ?? 0,
+    warnings: dashboard?.summary?.warnings ?? 0,
+    progress: dashboard?.summary?.progress || null,
+    current_state: {
+      starter_commit: currentState.starter_commit || null,
+      orbit_commit: currentState.orbit_commit || null,
+      orbit_branch: currentState.orbit_branch || null,
+      runtime_bundle: currentState.runtime_bundle || null,
+      runtime_latest_zip: currentState.runtime_latest_zip || null,
+      home_pc_handover_zip: currentState.home_pc_handover_zip || null,
+      manifest_source_commit: currentState.manifest_source_commit || null
+    },
+    evidence: {
+      night_status: evidence.night_status || 'missing',
+      doctor: evidence.doctor || 'missing',
+      dry_run: evidence.dry_run || 'missing',
+      closeout: evidence.closeout || 'missing',
+      orbit_render_smoke: evidence.orbit_render_smoke || 'missing',
+      handover_checksum: evidence.handover_checksum || 'missing',
+      latest_zip_checksum: evidence.latest_zip_checksum || 'missing'
+    },
+    safest_next_action: {
+      id: action.id || 'missing',
+      title: action.title || 'missing',
+      command: action.command || 'missing',
+      reason: action.reason || 'missing'
+    },
+    forbidden_without_owner_go: asArray(dashboard?.forbidden_without_owner_go)
   };
 }
 
