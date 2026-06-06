@@ -1,6 +1,6 @@
 # KosmoOrbit Route Smoke
 
-Generated: 2026-06-06T02:30:12.634Z
+Generated: 2026-06-06T02:36:27.740Z
 Status: `orbit_route_smoke_passed`
 Route: `app/orbit/page.tsx`
 
@@ -8,13 +8,15 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 
 ## Summary
 
-- checks: 260/260 passed
+- checks: 262/262 passed
 
 ## Checks
 
 | Check | Status | Meaning |
 | --- | --- | --- |
 | `route_file_exists` | `passed` | app/orbit/page.tsx exists. |
+| `local_render_smoke_file_exists` | `passed` | KosmoOrbit local render smoke exists for running local UI marker checks. |
+| `local_render_smoke_script_registered` | `passed` | package.json registers the local render smoke npm script. |
 | `spec_ready` | `passed` | App route spec is ready. |
 | `spec_sees_implemented_route` | `passed` | App route spec sees the route as implemented static preview. |
 | `imports_route_spec` | `passed` | Route imports the local route spec JSON. |

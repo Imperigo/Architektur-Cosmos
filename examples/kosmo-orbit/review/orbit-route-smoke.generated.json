@@ -1,19 +1,29 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-06T02:30:12.634Z",
+  "generated_at": "2026-06-06T02:36:27.740Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
   "spec_file": "examples/kosmo-orbit/review/orbit-app-route-spec.generated.json",
   "summary": {
-    "check_count": 260,
-    "passed_checks": 260,
+    "check_count": 262,
+    "passed_checks": 262,
     "failed_checks": 0
   },
   "checks": [
     {
       "id": "route_file_exists",
       "label": "app/orbit/page.tsx exists.",
+      "status": "passed"
+    },
+    {
+      "id": "local_render_smoke_file_exists",
+      "label": "KosmoOrbit local render smoke exists for running local UI marker checks.",
+      "status": "passed"
+    },
+    {
+      "id": "local_render_smoke_script_registered",
+      "label": "package.json registers the local render smoke npm script.",
       "status": "passed"
     },
     {

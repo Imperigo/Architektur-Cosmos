@@ -69,6 +69,8 @@ const publishReadinessPath = resolve(root, args.publishReadiness || 'app/orbit/O
 const launchDecisionBriefPath = resolve(root, args.launchDecisionBrief || 'app/orbit/OrbitLaunchDecisionBrief.tsx');
 const sectionIndexPath = resolve(root, args.sectionIndex || 'app/orbit/OrbitSectionIndex.tsx');
 const specPath = resolve(root, args.spec || 'examples/kosmo-orbit/review/orbit-app-route-spec.generated.json');
+const packageJsonPath = resolve(root, args.packageJson || 'package.json');
+const localRenderSmokePath = resolve(root, args.localRenderSmoke || 'scripts/kosmo-orbit-local-render-smoke.mjs');
 const outputJsonPath = resolve(root, args.output || 'examples/kosmo-orbit/review/orbit-route-smoke.generated.json');
 const outputMdPath = resolve(root, args.markdown || 'examples/kosmo-orbit/review/orbit-route-smoke.generated.md');
 
@@ -171,9 +173,13 @@ function buildReport({ routeSource, roleSwitcherSource, demoReviewSource, projec
     { id: 'no_headers', pattern: /\bheaders\s*\(/ },
     { id: 'no_redirect', pattern: /\bredirect\s*\(/ }
   ];
+  const packageJsonSource = existsSync(packageJsonPath) ? readFileSync(packageJsonPath, 'utf8') : '';
+  const localRenderSmokeSource = existsSync(localRenderSmokePath) ? readFileSync(localRenderSmokePath, 'utf8') : '';
 
   const checks = [
     check('route_file_exists', 'app/orbit/page.tsx exists.', existsSync(routePath)),
+    check('local_render_smoke_file_exists', 'KosmoOrbit local render smoke exists for running local UI marker checks.', existsSync(localRenderSmokePath)),
+    check('local_render_smoke_script_registered', 'package.json registers the local render smoke npm script.', packageJsonSource.includes('"kosmo:orbit-local-render-smoke"') && packageJsonSource.includes('scripts/kosmo-orbit-local-render-smoke.mjs') && localRenderSmokeSource.includes('orbit_local_render_smoke_passed')),
     check('spec_ready', 'App route spec is ready.', spec.status === 'orbit_app_route_spec_ready'),
     check('spec_sees_implemented_route', 'App route spec sees the route as implemented static preview.', spec.route_spec?.status === 'implemented_static_preview'),
     check('imports_route_spec', 'Route imports the local route spec JSON.', source.includes('orbit-app-route-spec.generated.json')),

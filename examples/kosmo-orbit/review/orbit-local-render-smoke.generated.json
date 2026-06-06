@@ -1,0 +1,70 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-06T02:35:40.267Z",
+  "generator": "kosmo-orbit-local-render-smoke",
+  "status": "orbit_local_render_smoke_passed",
+  "url": "http://localhost:3107/orbit/",
+  "mode": "local_review_only",
+  "safety": {
+    "starts_server": false,
+    "calls_external_network": false,
+    "mutates_cloud_data": false,
+    "writes_project_report_only": true
+  },
+  "summary": {
+    "check_count": 9,
+    "passed_checks": 9,
+    "failed_checks": 0
+  },
+  "checks": [
+    {
+      "id": "renders_home_pc_handover_index",
+      "label": "Rendered HTML contains Home-PC Handover Index.",
+      "status": "passed"
+    },
+    {
+      "id": "renders_handover_doctor",
+      "label": "Rendered HTML contains Handover Doctor.",
+      "status": "passed"
+    },
+    {
+      "id": "renders_doctor_checks",
+      "label": "Rendered HTML contains Doctor Checks.",
+      "status": "passed"
+    },
+    {
+      "id": "renders_doctor_report",
+      "label": "Rendered HTML contains Doctor Report.",
+      "status": "passed"
+    },
+    {
+      "id": "renders_doctor_passed_status",
+      "label": "Rendered HTML contains home_pc_handover_doctor_passed.",
+      "status": "passed"
+    },
+    {
+      "id": "renders_doctor_check_count",
+      "label": "Rendered HTML contains 17/17.",
+      "status": "passed"
+    },
+    {
+      "id": "renders_home_pc_dry_run_check_count",
+      "label": "Rendered HTML contains 54/54.",
+      "status": "passed"
+    },
+    {
+      "id": "renders_doctor_script_command",
+      "label": "Rendered HTML contains scripts/kosmo-home-pc-handover-doctor.sh.",
+      "status": "passed"
+    },
+    {
+      "id": "renders_doctor_report_path",
+      "label": "Rendered HTML contains tmp/kosmo-home-pc-handover-doctor.json.",
+      "status": "passed"
+    }
+  ],
+  "next_actions": [
+    "Keep this smoke as the local UI gate after refreshing the Orbit runtime bridge evidence.",
+    "Run it against a local dev or preview server before handing Orbit UI changes to the Home-PC worker."
+  ]
+}
