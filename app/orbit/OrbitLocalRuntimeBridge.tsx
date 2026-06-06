@@ -75,6 +75,35 @@ type LocalRuntimeBridgeReport = {
       }>;
     }>;
   };
+  closeout_aggregator: {
+    status: string;
+    passed_checks: number;
+    check_count: number;
+    warnings: number;
+    current_state: {
+      starter_commit: string | null;
+      orbit_commit: string | null;
+      night_progress: string | null;
+      ready_lanes: number | null;
+      blocked_lanes: number | null;
+    };
+    evidence: {
+      github_import: string;
+      first_run: string;
+      queue: string;
+      runway: string;
+      home_pc_dry_run: string;
+      home_pc_dry_run_checks: string;
+      handover_zip: string;
+      handover_checksum: string;
+      runtime_bundle: string;
+      runtime_latest_zip: string;
+      orbit_review_branch: string;
+    };
+    read_order: string[];
+    owner_go_blockers: string[];
+    forbidden_actions: string[];
+  };
   github_separation_decision: {
     status: string;
     recommended_repository: string;
@@ -240,6 +269,77 @@ export function OrbitLocalRuntimeBridge() {
               </div>
             </article>
           ))}
+        </div>
+      </div>
+
+      <div className="mt-4 rounded-lg border border-emerald-300/20 bg-black/24 p-3">
+        <div className="flex flex-wrap items-start justify-between gap-2">
+          <div className="min-w-0">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-100">Closeout Aggregator</p>
+            <p className="mt-2 text-sm leading-6 text-stone-300">
+              Das Home-PC-Paket liest diesen Abschlusszustand als Reihenfolge: erst Status, dann Queue, Runway,
+              Dry-Run, Handover und erst danach Owner-Go-Fragen.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <BridgeChip label={localRuntimeBridge.closeout_aggregator.status} tone="green" />
+            <BridgeChip label={`${localRuntimeBridge.closeout_aggregator.passed_checks}/${localRuntimeBridge.closeout_aggregator.check_count} checks`} tone="cyan" />
+            <BridgeChip label={`${localRuntimeBridge.closeout_aggregator.warnings} warnings`} tone={localRuntimeBridge.closeout_aggregator.warnings ? 'amber' : 'green'} />
+          </div>
+        </div>
+        <div className="mt-3 grid gap-2 text-sm leading-5 md:grid-cols-4">
+          <p className="rounded-md border border-emerald-300/20 bg-emerald-300/10 px-3 py-2 text-emerald-100">
+            Starter <code className="block break-words text-stone-200">{localRuntimeBridge.closeout_aggregator.current_state.starter_commit}</code>
+          </p>
+          <p className="rounded-md border border-violet-300/20 bg-violet-300/10 px-3 py-2 text-violet-100">
+            Orbit <code className="block break-words text-stone-200">{localRuntimeBridge.closeout_aggregator.current_state.orbit_commit}</code>
+          </p>
+          <p className="rounded-md border border-cyan-300/20 bg-cyan-300/10 px-3 py-2 text-cyan-100">
+            Night <code className="block break-words text-stone-200">{localRuntimeBridge.closeout_aggregator.current_state.night_progress}</code>
+          </p>
+          <p className="rounded-md border border-rose-300/20 bg-rose-300/10 px-3 py-2 text-rose-100">
+            Blocked <code className="block break-words text-stone-200">{localRuntimeBridge.closeout_aggregator.current_state.blocked_lanes}</code>
+          </p>
+        </div>
+        <div className="mt-3 grid gap-3 xl:grid-cols-[0.9fr_1.1fr]">
+          <div className="rounded-md border border-white/10 bg-white/[0.04] p-3">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-stone-500">Read Order</p>
+            <div className="mt-2 grid gap-2">
+              {localRuntimeBridge.closeout_aggregator.read_order.map((item) => (
+                <code key={item} className="block break-words rounded-md border border-white/10 bg-black/24 px-3 py-2 text-xs leading-5 text-stone-200">
+                  {item}
+                </code>
+              ))}
+            </div>
+          </div>
+          <div className="rounded-md border border-white/10 bg-white/[0.04] p-3">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-stone-500">Evidence</p>
+            <div className="mt-2 grid gap-2 text-xs leading-5 md:grid-cols-2">
+              {Object.entries(localRuntimeBridge.closeout_aggregator.evidence).map(([key, value]) => (
+                <p key={key} className="rounded-md border border-white/10 bg-black/24 px-3 py-2 text-stone-300">
+                  {key} <code className="block break-words text-emerald-100">{value}</code>
+                </p>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div className="mt-3 grid gap-3 lg:grid-cols-2">
+          <div className="rounded-md border border-amber-300/20 bg-amber-300/10 p-3">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-amber-100">Owner-Go Blockers</p>
+            <ul className="mt-2 space-y-1 text-sm leading-5 text-amber-50/90">
+              {localRuntimeBridge.closeout_aggregator.owner_go_blockers.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </div>
+          <div className="rounded-md border border-rose-300/20 bg-rose-300/10 p-3">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-rose-100">Forbidden Actions</p>
+            <ul className="mt-2 space-y-1 text-sm leading-5 text-rose-50/90">
+              {localRuntimeBridge.closeout_aggregator.forbidden_actions.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
 

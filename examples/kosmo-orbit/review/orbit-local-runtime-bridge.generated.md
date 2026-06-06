@@ -1,6 +1,6 @@
 # KosmoOrbit Local Runtime Bridge
 
-Generated: 2026-06-06T01:41:54.384Z
+Generated: 2026-06-06T01:58:04.003Z
 Status: `local_runtime_bridge_passed`
 Input: `examples/kosmo-orbit/runtime/kosmo-night-status.demo.json`
 Mode: `external_local_status_import`
@@ -10,7 +10,7 @@ Review-only bridge from the local KOSMO Night Status into KosmoOrbit. It reads a
 ## Summary
 
 - progress: `[#####################---] 86%`
-- checks: 18/18 passed
+- checks: 19/19 passed
 - ready lanes: 6
 - blocked lanes: 1
 
@@ -22,13 +22,13 @@ Review-only bridge from the local KOSMO Night Status into KosmoOrbit. It reads a
 | `kosmo-model` | `ready` | KOSMO Ollama enthaelt qwen2.5-coder:1.5b. | odysseus-kosmo-model-sync.sh apply ausfuehren, falls der Endpoint driftet. |
 | `desktop-artifacts` | `ready` | odysseus-vanilla-desktop-manifest.json=present, Odysseus-vanilla-linux-workstation.zip=present, KOSMO-Desktop-v2-linux-workstation.zip=present, ArchitekturkosmosMac.app=present | Vanilla/Desktop-Gates neu bauen, falls Manifest oder ZIP fehlt. |
 | `home-pc-handover` | `ready` | KOSMO-home-pc-linux-handover.zip: OK | kosmo-home-pc-linux-handover-zip.sh neu ausfuehren und Checksum pruefen. |
-| `home-pc-start-readiness` | `ready` | status=home_pc_start_dry_run_passed, checks=41/41, warnings=0 | kosmo-home-pc-start-dry-run.sh ausfuehren und fehlende Pflichtchecks beheben. |
-| `kosmo-orbit` | `ready` | repo_commit=d7cb40e, report=present | Orbit bleibt review-only; naechster Hebel ist die sichtbare Odysseus/KOSMO-Statusbruecke. |
+| `home-pc-start-readiness` | `ready` | status=home_pc_start_dry_run_passed, checks=49/49, warnings=0 | kosmo-home-pc-start-dry-run.sh ausfuehren und fehlende Pflichtchecks beheben. |
+| `kosmo-orbit` | `ready` | repo_commit=19cefd6, report=present | Orbit bleibt review-only; naechster Hebel ist die sichtbare Odysseus/KOSMO-Statusbruecke. |
 | `github-separation` | `blocked` | Decision pack proposed repo=Imperigo/Architekturkosmos_Codex_Starter; import_readiness=passed; waiting for owner-go. | Eigenes Imperigo/Architekturkosmos_Codex_Starter Repo anlegen oder Import explizit freigeben. |
 
 ## Sources
 
-- local starter commit: `ab1b790`
+- local starter commit: `14861d7`
 - cloud starter commit: `863dcde`
 - Orbit website commit: `d7cb40e`
 
@@ -76,6 +76,40 @@ First commands:
 - Owner-Go Only: Keep irreversible or external work blocked until explicit approval.
 - After Home-PC Boots: Move from packaged readiness into local runtime operation.
 
+## Closeout Aggregator
+
+- status: `closeout_aggregator_ready`
+- checks: 13/13
+- warnings: 0
+- starter commit: `14861d7`
+- orbit commit: `19cefd6`
+- Home-PC dry-run: `home_pc_start_dry_run_passed` (49/49)
+- handover ZIP: `dist/KOSMO-home-pc-linux-handover.zip`
+- handover checksum: `KOSMO-home-pc-linux-handover.zip: OK`
+
+Read order:
+- `tmp/kosmo-closeout-aggregator.md`
+- `tmp/kosmo-night-status.md`
+- `tmp/kosmo-next-action-queue.md`
+- `tmp/kosmo-runway-report.md`
+- `tmp/kosmo-home-pc-linux-first-run-plan.md`
+- `tmp/kosmo-home-pc-start-dry-run.md`
+- `tmp/kosmo-home-pc-linux-handover-manifest.json`
+
+Owner-Go blockers:
+- Dedicated Starter repository must exist before Starter push.
+- Owner must explicitly approve first import branch.
+- Website repository stays separate from Starter source.
+- Public deploy remains blocked until explicit release decision.
+
+Forbidden actions:
+- no production deploy
+- no secrets changes
+- no external account mutation
+- no push to main
+- no Starter tree pushed into Website repository
+- no irreversible file or data action
+
 ## GitHub Separation Decision
 
 - status: `owner_go_required`
@@ -119,6 +153,7 @@ Forbidden without Owner-Go:
 | `github_import_readiness_visible` | `passed` | GitHub import readiness is visible while Owner-Go remains blocked. |
 | `next_action_queue_visible` | `passed` | Next-action queue is visible for allowed, waiting and blocked work. |
 | `runway_report_visible` | `passed` | Runway report is visible for Mac, Linux, Owner-Go and post-boot phases. |
+| `closeout_aggregator_visible` | `passed` | Closeout aggregator is visible as the Home-PC read order and final evidence packet. |
 | `policy_flags_present` | `passed` | All safety policy flags are present and true. |
 | `sources_present` | `passed` | Local starter, cloud starter and Orbit website sources are represented. |
 | `no_private_path_required` | `passed` | Bridge can run from a repo-local demo status without a private local path. |

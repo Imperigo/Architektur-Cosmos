@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-06T01:39:26.000000+00:00",
+  "generated_at": "2026-06-06T01:53:34.000000+00:00",
   "goal": "KOSMO local control spine over Odysseus with safe Home-PC handover",
   "progress_percent": 86,
   "progress_bar": "[#####################---] 86%",
@@ -16,7 +16,7 @@
       "path": "<local_starter>",
       "exists": true,
       "clean": true,
-      "commit": "ab1b790",
+      "commit": "14861d7",
       "status_short": ""
     },
     "cloud_starter": {
@@ -73,7 +73,7 @@
       "label": "Home-PC Start Readiness",
       "status": "ready",
       "ready": true,
-      "evidence": "status=home_pc_start_dry_run_passed, checks=41/41, warnings=0",
+      "evidence": "status=home_pc_start_dry_run_passed, checks=49/49, warnings=0",
       "next_action": "kosmo-home-pc-start-dry-run.sh ausfuehren und fehlende Pflichtchecks beheben."
     },
     {
@@ -81,7 +81,7 @@
       "label": "KosmoOrbit Interface",
       "status": "ready",
       "ready": true,
-      "evidence": "repo_commit=d7cb40e, report=present",
+      "evidence": "repo_commit=19cefd6, report=present",
       "next_action": "Orbit bleibt review-only; naechster Hebel ist die sichtbare Odysseus/KOSMO-Statusbruecke."
     },
     {
@@ -237,7 +237,7 @@
             "title": "Run Home-PC dry-run after unpacking.",
             "status": "home_pc_start_dry_run_passed",
             "next_step": "./scripts/kosmo-home-pc-start-dry-run.sh",
-            "evidence": "checks=45/45"
+            "evidence": "checks=49/49"
           }
         ]
       },
@@ -283,6 +283,57 @@
           }
         ]
       }
+    ]
+  },
+  "closeout_aggregator": {
+    "status": "closeout_aggregator_ready",
+    "summary": {
+      "passed_checks": 13,
+      "check_count": 13,
+      "warnings": 0
+    },
+    "current_state": {
+      "starter_commit": "14861d7",
+      "orbit_commit": "19cefd6",
+      "night_progress": "[#####################---] 86%",
+      "ready_lanes": 6,
+      "blocked_lanes": 1
+    },
+    "evidence": {
+      "github_import": "github_import_readiness_passed",
+      "first_run": "home_pc_linux_first_run_plan_ready",
+      "queue": "next_action_queue_ready",
+      "runway": "runway_report_ready",
+      "home_pc_dry_run": "home_pc_start_dry_run_passed",
+      "home_pc_dry_run_checks": "49/49",
+      "handover_zip": "dist/KOSMO-home-pc-linux-handover.zip",
+      "handover_checksum": "KOSMO-home-pc-linux-handover.zip: OK",
+      "runtime_bundle": "Architekturkosmos_Codex_Starter_Local_14861d7_20260606-0352.bundle",
+      "runtime_latest_zip": "Architekturkosmos_Codex_Starter_Local_latest.zip",
+      "orbit_review_branch": "kosmo-orbit-runtime-bridge-20260606"
+    },
+    "read_order": [
+      "tmp/kosmo-closeout-aggregator.md",
+      "tmp/kosmo-night-status.md",
+      "tmp/kosmo-next-action-queue.md",
+      "tmp/kosmo-runway-report.md",
+      "tmp/kosmo-home-pc-linux-first-run-plan.md",
+      "tmp/kosmo-home-pc-start-dry-run.md",
+      "tmp/kosmo-home-pc-linux-handover-manifest.json"
+    ],
+    "owner_go_blockers": [
+      "Dedicated Starter repository must exist before Starter push.",
+      "Owner must explicitly approve first import branch.",
+      "Website repository stays separate from Starter source.",
+      "Public deploy remains blocked until explicit release decision."
+    ],
+    "forbidden_actions": [
+      "no production deploy",
+      "no secrets changes",
+      "no external account mutation",
+      "no push to main",
+      "no Starter tree pushed into Website repository",
+      "no irreversible file or data action"
     ]
   }
 }
