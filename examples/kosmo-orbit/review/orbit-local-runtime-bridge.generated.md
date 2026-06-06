@@ -1,6 +1,6 @@
 # KosmoOrbit Local Runtime Bridge
 
-Generated: 2026-06-06T02:27:42.577Z
+Generated: 2026-06-06T02:30:08.658Z
 Status: `local_runtime_bridge_passed`
 Input: `examples/kosmo-orbit/runtime/kosmo-night-status.demo.json`
 Mode: `external_local_status_import`
@@ -41,14 +41,25 @@ Review-only bridge from the local KOSMO Night Status into KosmoOrbit. It reads a
 - start dry-run script: `scripts/kosmo-home-pc-start-dry-run.sh`
 - start dry-run report: `tmp/kosmo-home-pc-start-dry-run.json`
 - start dry-run status: `home_pc_start_dry_run_passed`
-- start dry-run checks: `41/41`
+- start dry-run checks: `54/54`
+- doctor script: `scripts/kosmo-home-pc-handover-doctor.sh`
+- doctor report: `tmp/kosmo-home-pc-handover-doctor.json`
+- doctor status: `home_pc_handover_doctor_passed`
+- doctor checks: `17/17`
 - purpose: Machine-readable Linux handover index for the future Home-PC setup.
 
 First commands:
 - `shasum -a 256 -c KOSMO-home-pc-linux-handover.zip.sha256`
 - `unzip KOSMO-home-pc-linux-handover.zip -d KOSMO-home-pc-linux-handover`
+- `cd KOSMO-home-pc-linux-handover`
+- `./scripts/kosmo-home-pc-start-here.sh`
+- `./scripts/kosmo-home-pc-handover-index.sh`
+- `./scripts/kosmo-home-pc-handover-doctor.sh`
+- `./scripts/kosmo-home-pc-start-dry-run.sh`
 - `less KOSMO-home-pc-linux-handover/tmp/kosmo-home-pc-linux-first-run-plan.md`
 - `less KOSMO-home-pc-linux-handover/tmp/kosmo-next-action-queue.md`
+- `less KOSMO-home-pc-linux-handover/tmp/kosmo-runway-report.md`
+- `less KOSMO-home-pc-linux-handover/tmp/kosmo-closeout-aggregator.md`
 - `less KOSMO-home-pc-linux-handover/tmp/kosmo-night-status.md`
 - `less KOSMO-home-pc-linux-handover/tmp/kosmo-home-pc-linux-handover-manifest.json`
 

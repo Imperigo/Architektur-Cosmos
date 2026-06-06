@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-06T02:27:46.557Z",
+  "generated_at": "2026-06-06T02:30:12.634Z",
   "generator": "kosmo-orbit-route-smoke",
   "status": "orbit_route_smoke_passed",
   "route_file": "app/orbit/page.tsx",
@@ -958,7 +958,7 @@
     },
     {
       "id": "local_runtime_bridge_shows_home_pc_index",
-      "label": "Local runtime bridge shows the Home-PC handover index artifacts and Linux first commands.",
+      "label": "Local runtime bridge shows the Home-PC handover index artifacts, doctor gate and Linux first commands.",
       "status": "passed"
     },
     {

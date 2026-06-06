@@ -39,6 +39,10 @@ type LocalRuntimeBridgeReport = {
     start_dry_run_report: string;
     start_dry_run_status: string;
     start_dry_run_checks: string;
+    doctor_script: string;
+    doctor_report: string;
+    doctor_status: string;
+    doctor_checks: string;
     purpose: string;
     first_commands: string[];
   };
@@ -386,6 +390,18 @@ export function OrbitLocalRuntimeBridge() {
           <p className="rounded-md border border-emerald-300/20 bg-emerald-300/10 px-3 py-2 text-emerald-100">
             {localRuntimeBridge.home_pc_handover.start_dry_run_checks}
             <code className="block break-words text-stone-200">{localRuntimeBridge.home_pc_handover.start_dry_run_status}</code>
+          </p>
+        </div>
+        <div className="mt-3 grid gap-2 text-sm leading-5 md:grid-cols-[1.1fr_1.1fr_0.8fr]">
+          <p className="rounded-md border border-emerald-300/20 bg-black/20 px-3 py-2 text-emerald-100">
+            Doctor <code className="block break-words text-stone-200">{localRuntimeBridge.home_pc_handover.doctor_script}</code>
+          </p>
+          <p className="rounded-md border border-emerald-300/20 bg-black/20 px-3 py-2 text-emerald-100">
+            Doctor Report <code className="block break-words text-stone-200">{localRuntimeBridge.home_pc_handover.doctor_report}</code>
+          </p>
+          <p className="rounded-md border border-emerald-300/20 bg-black/20 px-3 py-2 text-emerald-100">
+            {localRuntimeBridge.home_pc_handover.doctor_checks}
+            <code className="block break-words text-stone-200">{localRuntimeBridge.home_pc_handover.doctor_status}</code>
           </p>
         </div>
         <div className="mt-3 grid gap-2 lg:grid-cols-2">

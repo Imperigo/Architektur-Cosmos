@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-06T02:27:42.577Z",
+  "generated_at": "2026-06-06T02:30:08.658Z",
   "generator": "kosmo-orbit-local-runtime-bridge",
   "status": "local_runtime_bridge_passed",
   "input_status_file": "examples/kosmo-orbit/runtime/kosmo-night-status.demo.json",
@@ -93,13 +93,24 @@
     "start_dry_run_script": "scripts/kosmo-home-pc-start-dry-run.sh",
     "start_dry_run_report": "tmp/kosmo-home-pc-start-dry-run.json",
     "start_dry_run_status": "home_pc_start_dry_run_passed",
-    "start_dry_run_checks": "41/41",
+    "start_dry_run_checks": "54/54",
+    "doctor_script": "scripts/kosmo-home-pc-handover-doctor.sh",
+    "doctor_report": "tmp/kosmo-home-pc-handover-doctor.json",
+    "doctor_status": "home_pc_handover_doctor_passed",
+    "doctor_checks": "17/17",
     "purpose": "Machine-readable Linux handover index for the future Home-PC setup.",
     "first_commands": [
       "shasum -a 256 -c KOSMO-home-pc-linux-handover.zip.sha256",
       "unzip KOSMO-home-pc-linux-handover.zip -d KOSMO-home-pc-linux-handover",
+      "cd KOSMO-home-pc-linux-handover",
+      "./scripts/kosmo-home-pc-start-here.sh",
+      "./scripts/kosmo-home-pc-handover-index.sh",
+      "./scripts/kosmo-home-pc-handover-doctor.sh",
+      "./scripts/kosmo-home-pc-start-dry-run.sh",
       "less KOSMO-home-pc-linux-handover/tmp/kosmo-home-pc-linux-first-run-plan.md",
       "less KOSMO-home-pc-linux-handover/tmp/kosmo-next-action-queue.md",
+      "less KOSMO-home-pc-linux-handover/tmp/kosmo-runway-report.md",
+      "less KOSMO-home-pc-linux-handover/tmp/kosmo-closeout-aggregator.md",
       "less KOSMO-home-pc-linux-handover/tmp/kosmo-night-status.md",
       "less KOSMO-home-pc-linux-handover/tmp/kosmo-home-pc-linux-handover-manifest.json"
     ]

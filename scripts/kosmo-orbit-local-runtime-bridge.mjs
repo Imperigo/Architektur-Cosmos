@@ -64,6 +64,7 @@ function buildReport(status) {
   const blockedLanes = lanes.filter((lane) => lane.status === 'blocked');
   const policy = status.policy || {};
   const sources = status.sources_of_truth || {};
+  const closeoutEvidence = status.closeout_aggregator?.evidence || {};
   const checks = [
     check('status_file_exists', 'Night status input file exists.', existsSync(statusPath)),
     check('schema_version', 'Night status schema version is 0.1.', status.schema_version === '0.1'),
@@ -138,14 +139,25 @@ function buildReport(status) {
       manifest_artifact: 'tmp/kosmo-home-pc-linux-handover-manifest.json',
       start_dry_run_script: 'scripts/kosmo-home-pc-start-dry-run.sh',
       start_dry_run_report: 'tmp/kosmo-home-pc-start-dry-run.json',
-      start_dry_run_status: 'home_pc_start_dry_run_passed',
-      start_dry_run_checks: '41/41',
+      start_dry_run_status: closeoutEvidence.home_pc_dry_run || 'home_pc_start_dry_run_passed',
+      start_dry_run_checks: closeoutEvidence.home_pc_dry_run_checks || 'missing',
+      doctor_script: 'scripts/kosmo-home-pc-handover-doctor.sh',
+      doctor_report: closeoutEvidence.home_pc_handover_doctor_report || 'tmp/kosmo-home-pc-handover-doctor.json',
+      doctor_status: closeoutEvidence.home_pc_handover_doctor || 'missing',
+      doctor_checks: closeoutEvidence.home_pc_handover_doctor_checks || 'missing',
       purpose: 'Machine-readable Linux handover index for the future Home-PC setup.',
       first_commands: [
         'shasum -a 256 -c KOSMO-home-pc-linux-handover.zip.sha256',
         'unzip KOSMO-home-pc-linux-handover.zip -d KOSMO-home-pc-linux-handover',
+        'cd KOSMO-home-pc-linux-handover',
+        './scripts/kosmo-home-pc-start-here.sh',
+        './scripts/kosmo-home-pc-handover-index.sh',
+        './scripts/kosmo-home-pc-handover-doctor.sh',
+        './scripts/kosmo-home-pc-start-dry-run.sh',
         'less KOSMO-home-pc-linux-handover/tmp/kosmo-home-pc-linux-first-run-plan.md',
         'less KOSMO-home-pc-linux-handover/tmp/kosmo-next-action-queue.md',
+        'less KOSMO-home-pc-linux-handover/tmp/kosmo-runway-report.md',
+        'less KOSMO-home-pc-linux-handover/tmp/kosmo-closeout-aggregator.md',
         'less KOSMO-home-pc-linux-handover/tmp/kosmo-night-status.md',
         'less KOSMO-home-pc-linux-handover/tmp/kosmo-home-pc-linux-handover-manifest.json'
       ]
@@ -223,6 +235,10 @@ function renderMarkdown(report) {
   lines.push(`- start dry-run report: \`${report.home_pc_handover.start_dry_run_report}\``);
   lines.push(`- start dry-run status: \`${report.home_pc_handover.start_dry_run_status}\``);
   lines.push(`- start dry-run checks: \`${report.home_pc_handover.start_dry_run_checks}\``);
+  lines.push(`- doctor script: \`${report.home_pc_handover.doctor_script}\``);
+  lines.push(`- doctor report: \`${report.home_pc_handover.doctor_report}\``);
+  lines.push(`- doctor status: \`${report.home_pc_handover.doctor_status}\``);
+  lines.push(`- doctor checks: \`${report.home_pc_handover.doctor_checks}\``);
   lines.push(`- purpose: ${report.home_pc_handover.purpose}`);
   lines.push('', 'First commands:');
   report.home_pc_handover.first_commands.forEach((command) => lines.push(`- \`${command}\``));

@@ -1,6 +1,6 @@
 # KosmoOrbit Route Smoke
 
-Generated: 2026-06-06T02:27:46.557Z
+Generated: 2026-06-06T02:30:12.634Z
 Status: `orbit_route_smoke_passed`
 Route: `app/orbit/page.tsx`
 
@@ -203,7 +203,7 @@ Static route smoke for the first `/orbit` preview. This check rejects server-onl
 | `keeps_runtime_adapter_non_operational` | `passed` | Runtime adapter keeps adapters, processes, data writes and external accounts blocked. |
 | `shows_local_runtime_bridge` | `passed` | Route renders the local Odysseus/KOSMO runtime bridge. |
 | `local_runtime_bridge_uses_generated_report` | `passed` | Local runtime bridge uses the generated bridge report for lanes, progress and source commits. |
-| `local_runtime_bridge_shows_home_pc_index` | `passed` | Local runtime bridge shows the Home-PC handover index artifacts and Linux first commands. |
+| `local_runtime_bridge_shows_home_pc_index` | `passed` | Local runtime bridge shows the Home-PC handover index artifacts, doctor gate and Linux first commands. |
 | `local_runtime_bridge_shows_next_action_queue` | `passed` | Local runtime bridge shows the KOSMO next-action queue. |
 | `local_runtime_bridge_shows_runway_report` | `passed` | Local runtime bridge shows the phased KOSMO runway report. |
 | `local_runtime_bridge_shows_closeout_aggregator` | `passed` | Local runtime bridge shows the KOSMO closeout aggregator with read order, evidence and safety limits. |
