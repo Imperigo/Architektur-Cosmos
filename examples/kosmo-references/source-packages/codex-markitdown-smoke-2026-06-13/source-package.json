@@ -1,0 +1,143 @@
+{
+  "schema_version": "0.1",
+  "package_id": "codex-markitdown-smoke-2026-06-13",
+  "title": "Codex MarkItDown Smoke Source Package",
+  "description": "Review-only source package demonstrating text-PDF and map-PDF extraction behavior for the KosmoReferences ingestion lane.",
+  "created_at": "2026-06-13",
+  "updated_at": "2026-06-13",
+  "status": "extracted",
+  "rights_scope": "private_research",
+  "source_kind": "mixed",
+  "source_root": "/mnt/data/ArchitekturKosmos",
+  "public_policy": {
+    "source_files_public": false,
+    "extracted_text_public": false,
+    "derived_summary_public": true,
+    "notes": [
+      "Source files and extracted Markdown stay local/private unless file-level rights are reviewed.",
+      "Public output may use only metadata, source links and own-written summaries."
+    ]
+  },
+  "sources": [
+    {
+      "id": "architekturkosmos-ai-workflow-pipeline-pdf",
+      "title": "Architekturkosmos AI Workflow Pipeline Projekt Dokument",
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Architekturkosmos Zentrale/Architekturkosmos_AI_Workflow_Pipeline_Projekt_Dokument.pdf",
+      "file_type": "pdf",
+      "source_role": "workflow_doc",
+      "rights_status": "private_research",
+      "sha256": "a46d51f88c2bec0dfa444f71c4aed44d1b5ce557f812e4acb1a073b6e8b0e964",
+      "bytes": 320826,
+      "notes": "Text-heavy local workflow document; good MarkItDown candidate."
+    },
+    {
+      "id": "villa-savoye-unesco-1321rev-maps-pdf",
+      "title": "Villa Savoye UNESCO 1321rev Maps",
+      "path": "archive-inbox/villa-savoye/sources/unesco-1321rev-maps.pdf",
+      "file_type": "pdf",
+      "source_role": "plan_or_map",
+      "rights_status": "needs_review",
+      "sha256": "d34e5439734ee8a22b6cf6ede88798dd5b774bea77714a62986bc595b0b474ef",
+      "bytes": 57016807,
+      "notes": "Map-heavy PDF; MarkItDown returns little useful semantic content and a vision/layout pipeline is required."
+    }
+  ],
+  "extraction_artifacts": [
+    {
+      "id": "architekturkosmos-ai-workflow-pipeline-markdown",
+      "source_id": "architekturkosmos-ai-workflow-pipeline-pdf",
+      "path": "out/codex-markitdown-smoke/2026-06-13/architekturkosmos-ai-workflow-pipeline.md",
+      "artifact_type": "markdown_text",
+      "tool": "markitdown 0.1.5",
+      "status": "created",
+      "sha256": "83fb56de386144bdc09a787393dc6069efb29a88386cb749c77ae0516228ce8d",
+      "bytes": 20029,
+      "quality_notes": [
+        "Good text extraction for headings, role legend and pipeline prose."
+      ]
+    },
+    {
+      "id": "villa-savoye-unesco-1321rev-maps-markdown",
+      "source_id": "villa-savoye-unesco-1321rev-maps-pdf",
+      "path": "out/codex-markitdown-smoke/2026-06-13/villa-savoye-unesco-1321rev-maps.md",
+      "artifact_type": "markdown_text",
+      "tool": "markitdown 0.1.5",
+      "status": "needs_layout_review",
+      "sha256": "fb42dd94c1a2b79c3dfbec8ccc132bd34832c6913f124dee82bc5f426337cc26",
+      "bytes": 2005,
+      "quality_notes": [
+        "Mostly repeated headers and map numbers.",
+        "Requires OCR/Vision/Layout extraction before semantic project use."
+      ]
+    }
+  ],
+  "candidate_projects": [
+    {
+      "id": "architecturekosmos-workflow",
+      "title": "ArchitekturKosmos Workflow Pipeline",
+      "confidence": 0.91,
+      "promotion_status": "source_only",
+      "evidence": [
+        "Text-heavy extraction produced usable Markdown.",
+        "Source is a workflow/system document, not a public architecture reference entry."
+      ]
+    },
+    {
+      "id": "villa-savoye",
+      "title": "Villa Savoye",
+      "entry_id": "villa-savoye",
+      "architects": [
+        "Le Corbusier",
+        "Pierre Jeanneret"
+      ],
+      "confidence": 0.58,
+      "promotion_status": "draft_candidate",
+      "evidence": [
+        "Source path is inside archive-inbox/villa-savoye.",
+        "Extraction quality is low because source is map-heavy."
+      ]
+    }
+  ],
+  "review_gates": [
+    {
+      "id": "source_integrity",
+      "status": "pass",
+      "notes": "SHA-256 and byte counts recorded for both inputs and generated Markdown artifacts."
+    },
+    {
+      "id": "rights",
+      "status": "partial",
+      "notes": "Local/private workflow document and map PDF must not be publicly reproduced without review."
+    },
+    {
+      "id": "text_quality",
+      "status": "partial",
+      "notes": "Text-heavy workflow PDF passes; map-heavy Villa Savoye PDF needs OCR/Vision."
+    },
+    {
+      "id": "layout_quality",
+      "status": "not_run",
+      "notes": "No page-image or layout-block extraction has been run yet."
+    },
+    {
+      "id": "entry_mapping",
+      "status": "partial",
+      "notes": "Villa Savoye maps can support an existing entry after layout review; workflow document is system knowledge only."
+    },
+    {
+      "id": "asset_mapping",
+      "status": "not_run",
+      "notes": "No 2D/3D assets should be derived from these source files yet."
+    },
+    {
+      "id": "public_private_split",
+      "status": "pass",
+      "notes": "Tracked manifest stores metadata only; extracted artifacts remain under gitignored out/."
+    }
+  ],
+  "next_actions": [
+    "Use MarkItDown-first for text PDFs and Office files.",
+    "Add OCR/Vision/Layout extraction for map, plan and scan PDFs.",
+    "Keep generated Markdown from private sources out of public repo outputs."
+  ]
+}

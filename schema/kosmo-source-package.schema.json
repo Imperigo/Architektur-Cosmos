@@ -1,0 +1,252 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://architekturkosmos.ch/schema/kosmo-source-package.schema.json",
+  "title": "KosmoReferences Source Package",
+  "description": "Local review manifest for source packages feeding KosmoReferences and KosmoAsset without publishing protected source material.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "package_id",
+    "title",
+    "status",
+    "rights_scope",
+    "source_kind",
+    "public_policy",
+    "sources",
+    "extraction_artifacts",
+    "candidate_projects",
+    "review_gates"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "0.1"
+    },
+    "package_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{2,120}$"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "description": {
+      "type": "string"
+    },
+    "created_at": {
+      "type": "string"
+    },
+    "updated_at": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "extracted", "review_ready", "blocked", "archived"]
+    },
+    "rights_scope": {
+      "type": "string",
+      "enum": ["private_research", "internal_review", "public_candidate"]
+    },
+    "source_kind": {
+      "type": "string",
+      "enum": ["book", "lecture", "competition_pdf", "office_source", "archive_source", "public_web", "mixed"]
+    },
+    "source_root": {
+      "type": "string"
+    },
+    "public_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_files_public", "extracted_text_public", "derived_summary_public", "notes"],
+      "properties": {
+        "source_files_public": {
+          "type": "boolean"
+        },
+        "extracted_text_public": {
+          "type": "boolean"
+        },
+        "derived_summary_public": {
+          "type": "boolean"
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/source"
+      }
+    },
+    "extraction_artifacts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/extraction_artifact"
+      }
+    },
+    "candidate_projects": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/candidate_project"
+      }
+    },
+    "review_gates": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/review_gate"
+      }
+    },
+    "next_actions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "$defs": {
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "path", "file_type", "rights_status", "sha256", "bytes"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{2,120}$"
+        },
+        "title": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "file_type": {
+          "type": "string",
+          "enum": ["pdf", "image", "markdown", "text", "office", "web_link", "other"]
+        },
+        "source_role": {
+          "type": "string",
+          "enum": ["primary_source", "secondary_source", "lecture_note", "book_extract", "plan_or_map", "workflow_doc", "unknown"]
+        },
+        "rights_status": {
+          "type": "string",
+          "enum": ["private_research", "link_only", "licensed", "public_domain", "own_work", "needs_review", "blocked"]
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "extraction_artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "source_id", "path", "artifact_type", "tool", "status", "sha256", "bytes"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{2,120}$"
+        },
+        "source_id": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "artifact_type": {
+          "type": "string",
+          "enum": ["markdown_text", "ocr_json", "layout_json", "page_images", "thumbnail", "source_map", "review_report"]
+        },
+        "tool": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["created", "partial", "failed", "needs_ocr", "needs_layout_review"]
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "quality_notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "candidate_project": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "confidence", "promotion_status", "evidence"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{2,120}$"
+        },
+        "title": {
+          "type": "string"
+        },
+        "entry_id": {
+          "type": "string"
+        },
+        "architects": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "promotion_status": {
+          "type": "string",
+          "enum": ["source_only", "draft_candidate", "ready_for_entry_review", "blocked"]
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "review_gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "status", "notes"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "enum": ["source_integrity", "rights", "text_quality", "layout_quality", "entry_mapping", "asset_mapping", "public_private_split"]
+        },
+        "status": {
+          "type": "string",
+          "enum": ["pass", "partial", "fail", "not_run"]
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
