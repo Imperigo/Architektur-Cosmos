@@ -7,9 +7,12 @@
   "doctrine_ref": "data/kosmoreferences-worker-doctrine-2026-06-13.json",
   "source_package_ref": "examples/kosmo-references/source-packages/architecturekosmos-private-project-sources-2026-06-13/source-package.json",
   "status_refs": [
+    "data/kosmodata-lane-sweep-2026-06-13.json",
+    "data/kosmo-human-decision-queue-2026-06-13.json",
     "data/kosmoreferences-data-lane-status.json",
     "data/kosmoreferences-private-library-diagnostic-2026-06-13.json",
-    "examples/kosmo-references/provenance/owner-review-decision-pack-2026-06-13-review/owner-review-decision-check.generated.json"
+    "examples/kosmo-references/provenance/owner-review-decision-pack-2026-06-13-review/owner-review-decision-check.generated.json",
+    "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-full-review.generated.json"
   ],
   "private_context_paths": [
     "/mnt/data/ArchitekturKosmos/KosmoZentrale/sources/private-extracts/architecturekosmos-private-project-sources-2026-06-13/architecture-cosmos-vision-document.md",
@@ -113,6 +116,26 @@
         "Separates public source availability from public asset clearance.",
         "Keeps all three pilots review-only."
       ]
+    },
+    {
+      "task_id": "kosmo-human-decision-queue-triage",
+      "priority": 6,
+      "lane": "human_review_support",
+      "input_refs": [
+        "data/kosmodata-lane-sweep-2026-06-13.json",
+        "data/kosmo-human-decision-queue-2026-06-13.json",
+        "docs/codex/kosmo-human-decision-queue-2026-06-13.md",
+        "docs/codex/kosmoreferences-owner-decision-worksheet-2026-06-13.md",
+        "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-human-review-session.generated.md"
+      ],
+      "output_path": "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-local-worker-2026-06-13/human-decision-queue-triage.private.md",
+      "objective": "Group the 16 open human decisions into an owner-friendly review order with safe defaults and missing evidence notes.",
+      "acceptance": [
+        "Does not select or apply decisions.",
+        "Keeps public_ready_after_queue=0.",
+        "Separates owner decisions from asset human reviews.",
+        "Identifies which items can be safely kept blocked by default."
+      ]
     }
   ],
   "handoff_back_to_overseers": {
@@ -121,7 +144,8 @@
       "reference-pilot-gap-map.private.json",
       "book-library-mount-questions.private.md",
       "asset-seed-candidates.private.json",
-      "public-source-link-synthesis.private.json"
+      "public-source-link-synthesis.private.json",
+      "human-decision-queue-triage.private.md"
     ],
     "reviewers": [
       "codex-central-overseer",

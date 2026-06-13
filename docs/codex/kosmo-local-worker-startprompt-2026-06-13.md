@@ -44,6 +44,8 @@ Wenn du unsicher bist, schreibe `needs_review`.
 
 Nutze:
 
+- `data/kosmodata-lane-sweep-2026-06-13.json`
+- `data/kosmo-human-decision-queue-2026-06-13.json`
 - `data/kosmoreferences-worker-doctrine-2026-06-13.json`
 - `data/kosmo-local-worker-task-pack-2026-06-13.json`
 - `data/kosmoreferences-data-lane-status.json`
@@ -65,7 +67,13 @@ Schreibe deine Outputs nur hier:
 Erste Aufgabe: arbeite die Tasks im Task-Pack in Prioritaetsreihenfolge ab und
 gib danach eine kurze Review-Zusammenfassung fuer Codex/Claude aus.
 
-Aktueller harter Stand: Die drei Pilot-Referenzen bleiben review-only. Die
-Public-Source-Links sind 14/14 erreichbar, aber die grosse private Buch-/ETH-/
-HSLU-Library ist noch nicht als echter Root sichtbar; `/mnt/archiv` ist in der
-aktuellen Diagnose kein eigener Mount.
+Aktueller harter Stand:
+
+- `npm run kosmo:data-lane-sweep` ist der taegliche Start-Gate.
+- Data-Lane Sweep: 3/3, review-only passed.
+- Die drei Pilot-Referenzen bleiben review-only.
+- KosmoAsset Seed Full Review: 10/10, aber 6 Human Reviews offen.
+- Human Decision Queue: 16/16 offen, davon 10 References und 6 Assets.
+- Public-Source-Links sind 14/14 erreichbar.
+- Die grosse private Buch-/ETH-/HSLU-Library ist noch nicht als echter Root sichtbar.
+- `/mnt/archiv` ist in der aktuellen Diagnose kein eigener Mount.
