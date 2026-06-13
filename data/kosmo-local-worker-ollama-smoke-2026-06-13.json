@@ -1,21 +1,21 @@
 {
   "schema_version": "0.1",
-  "checked_at": "2026-06-13T19:42:44.117Z",
+  "checked_at": "2026-06-13T19:47:22.781Z",
   "status": "passed",
   "endpoint": "http://127.0.0.1:11434/api/generate",
   "model": "kosmo-qwen3-coder:30b-a3b-q4km",
-  "duration_ms": 483,
+  "duration_ms": 296,
   "checks": {
     "http_ok": true,
     "model_returned": true,
     "response_non_empty": true
   },
   "advisory_checks": {
-    "mentions_review_only": false,
+    "mentions_review_only": true,
     "mentions_no_public_promotion": true
   },
-  "response_length": 374,
-  "response_preview": "Die Architektur-Kosmos-Local-Worker-Prüfung wurde erfolgreich abgeschlossen, wobei ausschließlich interne Bewertungen durchgeführt wurden, ohne öffentliche Werbung oder Promotion zu erfolgen.  \n\n(Translation: The ArchitectureKosmos local wo",
+  "response_length": 139,
+  "response_preview": "Die Architektur-Kosmos-Prüfung wurde von einem lokalen Mitarbeiter als Review-only durchgeführt, ohne öffentliche Förderung oder Promotion.",
   "policy": {
     "private_content_sent": false,
     "public_promotion": false,

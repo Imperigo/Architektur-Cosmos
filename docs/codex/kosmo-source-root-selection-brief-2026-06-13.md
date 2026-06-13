@@ -1,6 +1,6 @@
 # Kosmo Source-Root Selection Brief
 
-Generated: 2026-06-13T19:41:04.395Z
+Generated: 2026-06-13T19:47:28.757Z
 Status: `source_root_owner_selection_needed`
 
 ## Summary

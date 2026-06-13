@@ -75,6 +75,20 @@ const steps = [
     command: 'npm',
     args: ['run', 'kosmo:sogn-source-root-brief'],
     report: 'data/sogn-benedetg-source-root-decision-brief-2026-06-13.json'
+  },
+  {
+    id: 'source_root_locator',
+    label: 'Source Root Locator',
+    command: 'npm',
+    args: ['run', 'kosmo:source-root-locator'],
+    report: 'data/kosmo-source-root-locator-2026-06-13.json'
+  },
+  {
+    id: 'source_root_selection_brief',
+    label: 'Source Root Selection Brief',
+    command: 'npm',
+    args: ['run', 'kosmo:source-root-selection-brief'],
+    report: 'data/kosmo-source-root-selection-brief-2026-06-13.json'
   }
 ];
 
@@ -100,10 +114,12 @@ async function main() {
   const villaBrief = await readOptionalJson(resolve(root, steps[6].report));
   const ingenbohlBrief = await readOptionalJson(resolve(root, steps[7].report));
   const sognBrief = await readOptionalJson(resolve(root, steps[8].report));
+  const sourceRootLocator = await readOptionalJson(resolve(root, steps[9].report));
+  const sourceRootSelectionBrief = await readOptionalJson(resolve(root, steps[10].report));
   const failedSteps = stepResults.filter((step) => step.exit_code !== 0);
   const status = failedSteps.length
     ? 'kosmodata_lane_sweep_failed'
-    : isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief })
+    : isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief })
       ? 'kosmodata_lane_sweep_review_only_passed'
       : 'kosmodata_lane_sweep_needs_review';
 
@@ -168,7 +184,15 @@ async function main() {
       sogn_brief_status: sognBrief?.status || null,
       sogn_brief_public_links: sognBrief?.summary?.public_link_sources ?? null,
       sogn_brief_local_files: sognBrief?.summary?.local_file_count ?? null,
-      sogn_brief_public_ready_after: sognBrief?.summary?.public_ready_after_brief ?? null
+      sogn_brief_public_ready_after: sognBrief?.summary?.public_ready_after_brief ?? null,
+      source_root_locator_status: sourceRootLocator?.status || null,
+      source_root_locator_candidates: sourceRootLocator?.summary?.candidates ?? null,
+      source_root_locator_probable_libraries: sourceRootLocator?.summary?.probable_large_private_libraries ?? null,
+      source_root_locator_workflow_mirrors: sourceRootLocator?.summary?.workflow_or_project_mirrors ?? null,
+      source_root_locator_sync_roots: sourceRootLocator?.summary?.roots_with_sync_errors ?? null,
+      source_root_selection_status: sourceRootSelectionBrief?.status || null,
+      source_root_selection_options: sourceRootSelectionBrief?.selection_options?.length ?? null,
+      source_root_selection_public_ready_after: sourceRootSelectionBrief?.summary?.public_ready_after_brief ?? null
     },
     reports: {
       references_gate: steps[0].report,
@@ -180,10 +204,12 @@ async function main() {
       pilot_evidence_matrix: steps[5].report,
       villa_provenance_review_brief: steps[6].report,
       ingenbohl_pdf_extraction_brief: steps[7].report,
-      sogn_source_root_brief: steps[8].report
+      sogn_source_root_brief: steps[8].report,
+      source_root_locator: steps[9].report,
+      source_root_selection_brief: steps[10].report
     },
     steps: stepResults,
-    next_actions: nextActions({ failedSteps, referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief })
+    next_actions: nextActions({ failedSteps, referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief })
   };
 
   await mkdir(dirname(outputJson), { recursive: true });
@@ -242,7 +268,7 @@ async function runStep(step) {
   };
 }
 
-function isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief }) {
+function isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief }) {
   const referencesOk = referencesGate?.status === 'passed_review_only' &&
     (referencesGate?.summary?.public_ready_assets ?? referencesStatus?.summary?.public_ready_assets) === 0;
   const assetOk = assetFullReview?.status === 'asset_full_review_ready_for_human_decisions' &&
@@ -272,10 +298,18 @@ function isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview
     sognBrief?.policy?.public_ready_allowed !== true &&
     sognBrief?.policy?.private_content_copied !== true &&
     sognBrief?.policy?.generated_geometry_allowed_now !== true;
-  return referencesOk && assetOk && queueOk && batchesOk && localWorkerOk && pilotEvidenceOk && villaBriefOk && ingenbohlBriefOk && sognBriefOk;
+  const sourceRootLocatorOk = ['source_root_candidates_need_owner_selection', 'probable_source_root_visible', 'no_strong_source_root_candidate'].includes(sourceRootLocator?.status) &&
+    sourceRootLocator?.policy?.file_content_read !== true &&
+    sourceRootLocator?.policy?.copied_private_content !== true;
+  const sourceRootSelectionBriefOk = sourceRootSelectionBrief?.status === 'source_root_owner_selection_needed' &&
+    sourceRootSelectionBrief?.summary?.public_ready_after_brief === 0 &&
+    sourceRootSelectionBrief?.policy?.inventory_allowed_now !== true &&
+    sourceRootSelectionBrief?.policy?.public_ready_allowed !== true &&
+    sourceRootSelectionBrief?.policy?.copied_private_content !== true;
+  return referencesOk && assetOk && queueOk && batchesOk && localWorkerOk && pilotEvidenceOk && villaBriefOk && ingenbohlBriefOk && sognBriefOk && sourceRootLocatorOk && sourceRootSelectionBriefOk;
 }
 
-function nextActions({ failedSteps, referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief }) {
+function nextActions({ failedSteps, referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief }) {
   if (failedSteps.length > 0) return [`Fix failed sweep steps: ${failedSteps.map((step) => step.id).join(', ')}.`];
   const actions = [];
   const ownerPending = humanDecisionQueue?.summary?.reference_items ?? referencesGate?.summary?.owner_decision_session_pending ?? referencesStatus?.summary?.owner_decision_session_pending ?? 0;
@@ -294,6 +328,8 @@ function nextActions({ failedSteps, referencesGate, referencesStatus, assetFullR
   if (villaBlocked > 0) actions.push(`Keep ${villaBlocked} Villa Savoye files blocked until source-basis/build-log review exists.`);
   if (ingenbohlBrief?.status === 'ingenbohl_pdf_extraction_decision_needed') actions.push('Decide whether Ingenbohl PDF remains link-only or enters private metadata-only extraction.');
   if (sognBrief?.status === 'sogn_source_root_decision_needed') actions.push('Keep Sogn Benedetg link-only until the real private source root is visible and inventoried.');
+  if ((sourceRootLocator?.summary?.probable_large_private_libraries ?? 0) === 0) actions.push('Select or mount the real source root; source-root locator has 0 probable large private libraries.');
+  if (sourceRootSelectionBrief?.status === 'source_root_owner_selection_needed') actions.push('Use the source-root selection brief before any private inventory or source-dependent authoring.');
   const privateLibrary = referencesGate?.summary?.private_library_status ?? referencesStatus?.summary?.private_library_status;
   const syncErrors = referencesStatus?.summary?.private_library_sync_error_files ?? 0;
   if (privateLibrary !== 'library_candidate_visible') actions.push('Expose or mount the real large private book/ETH/HSLU library root.');
@@ -350,6 +386,12 @@ function renderMarkdown(report) {
   lines.push(`- Sogn brief: ${report.summary.sogn_brief_status}`);
   lines.push(`- Sogn public links/local files: ${report.summary.sogn_brief_public_links}/${report.summary.sogn_brief_local_files}`);
   lines.push(`- Sogn public-ready after brief: ${report.summary.sogn_brief_public_ready_after}`);
+  lines.push(`- Source-root locator: ${report.summary.source_root_locator_status}`);
+  lines.push(`- Source-root locator probable/candidates: ${report.summary.source_root_locator_probable_libraries}/${report.summary.source_root_locator_candidates}`);
+  lines.push(`- Source-root locator mirrors/sync roots: ${report.summary.source_root_locator_workflow_mirrors}/${report.summary.source_root_locator_sync_roots}`);
+  lines.push(`- Source-root selection: ${report.summary.source_root_selection_status}`);
+  lines.push(`- Source-root selection options: ${report.summary.source_root_selection_options}`);
+  lines.push(`- Source-root selection public-ready after brief: ${report.summary.source_root_selection_public_ready_after}`);
   lines.push('');
   lines.push('## Steps');
   lines.push('');
