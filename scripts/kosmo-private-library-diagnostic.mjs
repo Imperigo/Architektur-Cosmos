@@ -169,6 +169,7 @@ async function scanRoot(start) {
       const ext = extensionOf(lower);
       const lowerPath = child.toLowerCase();
       counts.extensions[ext || '<none>'] = (counts.extensions[ext || '<none>'] || 0) + 1;
+      if (lower.endsWith('_error.txt')) counts.sync_error_files += 1;
       if (bookExtensions.has(ext)) counts.book_like_files += 1;
       if (textExtensions.has(ext)) counts.text_like_files += 1;
       if (keywords.some((keyword) => lower.includes(keyword))) {
@@ -206,6 +207,7 @@ function summarize(rootReports) {
   const targetMatches = rootReports.reduce((sum, item) => sum + item.target_filename_matches.length, 0);
   const rawTargetMatches = rootReports.reduce((sum, item) => sum + item.raw_target_filename_matches.length, 0);
   const bookLike = rootReports.reduce((sum, item) => sum + item.counts.book_like_files, 0);
+  const syncErrorFiles = rootReports.reduce((sum, item) => sum + item.counts.sync_error_files, 0);
   const libraryCandidates = rootReports.filter((item) => item.status === 'library_candidate');
   const workflowMirrors = rootReports.filter((item) => isWorkflowMirror(item) && item.exists);
   return {
@@ -213,6 +215,7 @@ function summarize(rootReports) {
     existing_roots: existing.length,
     own_mount_roots: ownMounts.length,
     book_like_files: bookLike,
+    sync_error_files: syncErrorFiles,
     target_filename_matches: targetMatches,
     raw_target_filename_matches: rawTargetMatches,
     library_candidate_roots: libraryCandidates.map((item) => item.path),
@@ -230,6 +233,7 @@ function nextActions(summary) {
   if (summary.workflow_mirror_visible && !summary.expected_large_library_visible) {
     actions.push('Small ArchitectureKosmos/OneDrive workflow mirrors are visible, but the expected large book, ETH and HSLU lecture library is still not visible.');
   }
+  if (summary.sync_error_files > 0) actions.push(`OneDrive sync error marker files are visible (${summary.sync_error_files}); inspect sync status before assuming folders are complete.`);
   if (!summary.expected_large_library_visible) actions.push('Ask owner/Claude/KosmoOverseer for the real private book, ETH and HSLU lecture library root.');
   actions.push('Re-run this diagnostic after mounting or syncing the library.');
   return actions;
@@ -278,6 +282,7 @@ function renderMarkdown(report) {
   lines.push(`- Existing roots: ${report.summary.existing_roots}`);
   lines.push(`- Own mount roots: ${report.summary.own_mount_roots}`);
   lines.push(`- Book-like files: ${report.summary.book_like_files}`);
+  lines.push(`- OneDrive sync error files: ${report.summary.sync_error_files}`);
   lines.push(`- Target filename matches: ${report.summary.target_filename_matches}`);
   lines.push(`- Raw target filename matches: ${report.summary.raw_target_filename_matches}`);
   lines.push(`- Workflow mirrors visible: ${report.summary.workflow_mirror_visible ? 'yes' : 'no'}`);
@@ -287,10 +292,10 @@ function renderMarkdown(report) {
   lines.push('');
   lines.push('## Roots');
   lines.push('');
-  lines.push('| Root | Status | Own mount | Files | Book-like | Target matches | Raw matches | Ignored dirs | Mount source |');
-  lines.push('| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |');
+  lines.push('| Root | Status | Own mount | Files | Book-like | Sync errors | Target matches | Raw matches | Ignored dirs | Mount source |');
+  lines.push('| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |');
   for (const item of report.roots) {
-    lines.push(`| \`${item.path}\` | ${item.status} | ${item.own_mount ? 'yes' : 'no'} | ${item.counts.files} | ${item.counts.book_like_files} | ${item.target_filename_matches.length} | ${item.raw_target_filename_matches.length} | ${item.counts.ignored_dirs} | ${item.mount?.source || '-'} |`);
+    lines.push(`| \`${item.path}\` | ${item.status} | ${item.own_mount ? 'yes' : 'no'} | ${item.counts.files} | ${item.counts.book_like_files} | ${item.counts.sync_error_files} | ${item.target_filename_matches.length} | ${item.raw_target_filename_matches.length} | ${item.counts.ignored_dirs} | ${item.mount?.source || '-'} |`);
   }
   lines.push('');
   lines.push('## Target Filename Matches');
@@ -324,6 +329,7 @@ function emptyCounts() {
     other: 0,
     ignored_dirs: 0,
     ignored_keyword_matches: 0,
+    sync_error_files: 0,
     unreadable_dirs: 0,
     book_like_files: 0,
     text_like_files: 0,

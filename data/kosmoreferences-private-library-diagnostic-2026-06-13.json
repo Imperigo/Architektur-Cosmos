@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-13T18:23:38.803Z",
+  "generated_at": "2026-06-13T18:45:07.279Z",
   "status": "small_workflow_mirror_visible",
   "policy": {
     "read_only": true,
@@ -27,6 +27,7 @@
     "existing_roots": 5,
     "own_mount_roots": 0,
     "book_like_files": 39,
+    "sync_error_files": 30,
     "target_filename_matches": 0,
     "raw_target_filename_matches": 0,
     "library_candidate_roots": [],
@@ -114,6 +115,7 @@
         "other": 0,
         "ignored_dirs": 6,
         "ignored_keyword_matches": 0,
+        "sync_error_files": 0,
         "unreadable_dirs": 0,
         "book_like_files": 23,
         "text_like_files": 441,
@@ -181,6 +183,7 @@
         "other": 0,
         "ignored_dirs": 4,
         "ignored_keyword_matches": 0,
+        "sync_error_files": 30,
         "unreadable_dirs": 0,
         "book_like_files": 16,
         "text_like_files": 46,
@@ -237,6 +240,7 @@
         "other": 0,
         "ignored_dirs": 0,
         "ignored_keyword_matches": 0,
+        "sync_error_files": 0,
         "unreadable_dirs": 0,
         "book_like_files": 0,
         "text_like_files": 0,
@@ -264,6 +268,7 @@
         "other": 0,
         "ignored_dirs": 0,
         "ignored_keyword_matches": 0,
+        "sync_error_files": 0,
         "unreadable_dirs": 0,
         "book_like_files": 0,
         "text_like_files": 0,
@@ -296,6 +301,7 @@
         "other": 0,
         "ignored_dirs": 0,
         "ignored_keyword_matches": 0,
+        "sync_error_files": 0,
         "unreadable_dirs": 0,
         "book_like_files": 0,
         "text_like_files": 2,
@@ -312,6 +318,7 @@
   "next_actions": [
     "Confirm whether the archive HDD should be mounted at /mnt/archiv; it is not visible as its own mount in this diagnostic.",
     "Small ArchitectureKosmos/OneDrive workflow mirrors are visible, but the expected large book, ETH and HSLU lecture library is still not visible.",
+    "OneDrive sync error marker files are visible (30); inspect sync status before assuming folders are complete.",
     "Ask owner/Claude/KosmoOverseer for the real private book, ETH and HSLU lecture library root.",
     "Re-run this diagnostic after mounting or syncing the library."
   ]
