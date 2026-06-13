@@ -20,24 +20,34 @@ This runbook is the daily execution order for the KosmoReferences/KosmoAsset dat
 
 1. Check local repository state before editing.
 2. Read the newest KosmoOrbit handoffs from `_overseer/intake/inbox`.
-3. Run the KosmoReferences Nightly Gate:
+3. Run the combined KosmoData Lane Sweep:
+
+   ```bash
+   npm run kosmo:data-lane-sweep
+   ```
+
+4. Open the generated report:
+
+   - `docs/codex/kosmodata-lane-sweep-2026-06-13.md`
+
+5. If a narrow rerun is needed, run the KosmoReferences Nightly Gate:
 
    ```bash
    npm run kosmo:references-nightly-gate
    ```
 
-4. Open the generated reports:
+6. Open the generated reports:
 
    - `docs/codex/kosmoreferences-nightly-gate-2026-06-13.md`
    - `data/kosmoreferences-data-lane-status.md`
 
-5. Run the KosmoAsset seed full review:
+7. If a narrow asset rerun is needed, run the KosmoAsset seed full review:
 
    ```bash
    npm run kosmo:asset-full-review -- --library examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json
    ```
 
-6. Open the generated report:
+8. Open the generated report:
 
    - `examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-full-review.generated.md`
 
