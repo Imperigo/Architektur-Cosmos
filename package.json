@@ -119,6 +119,7 @@
     "kosmo:local-worker-output-review": "node scripts/kosmo-local-worker-output-review.mjs",
     "kosmo:pilot-evidence-matrix": "node scripts/kosmoreferences-pilot-evidence-matrix.mjs",
     "kosmo:villa-provenance-brief": "node scripts/kosmo-villa-provenance-review-brief.mjs",
+    "kosmo:ingenbohl-pdf-brief": "node scripts/kosmo-ingenbohl-pdf-extraction-brief.mjs",
     "kosmo:references-status-card": "node scripts/kosmo-reference-status-card.mjs",
     "kosmo:references-nightly-gate": "node scripts/kosmo-references-nightly-gate.mjs",
     "kosmo:data-lane-sweep": "node scripts/kosmo-data-lane-sweep.mjs",
