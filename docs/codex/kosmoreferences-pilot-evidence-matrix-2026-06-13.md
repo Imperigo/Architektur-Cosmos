@@ -1,6 +1,6 @@
 # KosmoReferences Pilot Evidence Matrix
 
-Generated: 2026-06-13T19:12:39.456Z
+Generated: 2026-06-13T19:19:53.429Z
 Status: `pilot_evidence_matrix_review_only`
 
 ## Summary
@@ -10,7 +10,7 @@ Status: `pilot_evidence_matrix_review_only`
 - Media slots blocked: 12
 - Asset candidates blocked: 9
 - Public-ready assets: 0
-- Data-Lane Sweep: 5/5 (kosmodata_lane_sweep_review_only_passed)
+- Data-Lane Sweep: 6/6 (kosmodata_lane_sweep_review_only_passed)
 - Local Worker Review: 7/7, 0 risk (local_worker_outputs_present_review_only)
 - Private library: small_workflow_mirror_visible, 30 curated sync errors
 - OneDrive Repair Sweep: 58/59 markers, 58 missing

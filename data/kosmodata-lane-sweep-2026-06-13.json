@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-13T19:12:39.470Z",
+  "generated_at": "2026-06-13T19:19:53.443Z",
   "status": "kosmodata_lane_sweep_review_only_passed",
   "policy": {
     "review_only": true,
@@ -10,7 +10,7 @@
     "note": "This sweep orchestrates existing KosmoReferences and KosmoAsset gates. It does not approve, promote, upload or publish assets."
   },
   "summary": {
-    "duration_ms": 16726,
+    "duration_ms": 15517,
     "steps": 6,
     "passed_steps": 6,
     "failed_steps": 0,
@@ -65,8 +65,8 @@
       "label": "KosmoReferences Nightly Gate",
       "command": "npm run kosmo:references-nightly-gate",
       "report": "data/kosmoreferences-nightly-gate-2026-06-13.json",
-      "started_at": "2026-06-13T19:12:22.744Z",
-      "duration_ms": 12275,
+      "started_at": "2026-06-13T19:19:37.927Z",
+      "duration_ms": 11012,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:references-nightly-gate\n> node scripts/kosmo-references-nightly-gate.mjs\n\nKosmoReferences nightly gate\nStatus: passed_review_only\nSteps: 10/10 passed\nSource packages with links: 3\nPublic-ready assets: 0\nOwner session: passed_pending_owner_input\nWrote: data/kosmoreferences-nightly-gate-2026-06-13.json"
@@ -76,8 +76,8 @@
       "label": "KosmoAsset Seed Full Review",
       "command": "npm run kosmo:asset-full-review -- --library examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json",
       "report": "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-full-review.generated.json",
-      "started_at": "2026-06-13T19:12:35.019Z",
-      "duration_ms": 3527,
+      "started_at": "2026-06-13T19:19:48.939Z",
+      "duration_ms": 3554,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:asset-full-review\n> node scripts/kosmo-asset-full-review.mjs --library examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json\n\nKosmoAsset full review\nLibrary: examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json\nStatus: asset_full_review_ready_for_human_decisions\nSteps: 10/10 passed\nOpen human reviews: 6\nBlocked routes: 1\nWrote: examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-full-review.generated.md"
@@ -87,8 +87,8 @@
       "label": "Human Decision Queue",
       "command": "npm run kosmo:human-decision-queue",
       "report": "data/kosmo-human-decision-queue-2026-06-13.json",
-      "started_at": "2026-06-13T19:12:38.546Z",
-      "duration_ms": 231,
+      "started_at": "2026-06-13T19:19:52.493Z",
+      "duration_ms": 234,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:human-decision-queue\n> node scripts/kosmo-human-decision-queue.mjs\n\nKosmo human decision queue\nStatus: human_decision_queue_open\nItems: 16/16 open\nReferences: 10\nAssets: 6\nWrote: docs/codex/kosmo-human-decision-queue-2026-06-13.md"
@@ -98,8 +98,8 @@
       "label": "Owner Decision Batches",
       "command": "npm run kosmo:human-decision-owner-batches",
       "report": "data/kosmo-human-decision-owner-batches-2026-06-13.json",
-      "started_at": "2026-06-13T19:12:38.777Z",
-      "duration_ms": 232,
+      "started_at": "2026-06-13T19:19:52.727Z",
+      "duration_ms": 233,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:human-decision-owner-batches\n> node scripts/kosmo-human-decision-owner-batches.mjs\n\nKosmo human decision owner batches\nStatus: owner_decision_batches_open\nBatches: 5/5 open\nItems: 16/16 open\nWrote: docs/codex/kosmo-human-decision-owner-batches-2026-06-13.md"
@@ -109,8 +109,8 @@
       "label": "Local Worker Output Review",
       "command": "npm run kosmo:local-worker-output-review",
       "report": "data/kosmo-local-worker-output-review-2026-06-13.json",
-      "started_at": "2026-06-13T19:12:39.009Z",
-      "duration_ms": 229,
+      "started_at": "2026-06-13T19:19:52.960Z",
+      "duration_ms": 237,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:local-worker-output-review\n> node scripts/kosmo-local-worker-output-review.mjs\n\nKosmo local worker output review\nStatus: local_worker_outputs_present_review_only\nRequired: 7\nPresent: 7\nMissing: 0\nHigh-risk hits: 0\nWrote: docs/codex/kosmo-local-worker-output-review-2026-06-13.md"
@@ -120,11 +120,11 @@
       "label": "Pilot Evidence Matrix",
       "command": "npm run kosmo:pilot-evidence-matrix",
       "report": "data/kosmoreferences-pilot-evidence-matrix-2026-06-13.json",
-      "started_at": "2026-06-13T19:12:39.238Z",
-      "duration_ms": 230,
+      "started_at": "2026-06-13T19:19:53.197Z",
+      "duration_ms": 245,
       "exit_code": 0,
       "status": "passed",
-      "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:pilot-evidence-matrix\n> node scripts/kosmoreferences-pilot-evidence-matrix.mjs\n\nKosmoReferences pilot evidence matrix\nStatus: pilot_evidence_matrix_review_only\nPilots: 3\nGaps: 12\nData lane: 5/5\nWrote: docs/codex/kosmoreferences-pilot-evidence-matrix-2026-06-13.md"
+      "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:pilot-evidence-matrix\n> node scripts/kosmoreferences-pilot-evidence-matrix.mjs\n\nKosmoReferences pilot evidence matrix\nStatus: pilot_evidence_matrix_review_only\nPilots: 3\nGaps: 12\nData lane: 6/6\nWrote: docs/codex/kosmoreferences-pilot-evidence-matrix-2026-06-13.md"
     }
   ],
   "next_actions": [

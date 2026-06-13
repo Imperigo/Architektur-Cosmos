@@ -1,10 +1,10 @@
 # Kosmo Local Worker Ollama Smoke
 
-Checked: 2026-06-13T19:12:34.756Z
+Checked: 2026-06-13T19:19:48.689Z
 Status: `passed`
 Model: `kosmo-qwen3-coder:30b-a3b-q4km`
 Endpoint: `http://127.0.0.1:11434/api/generate`
-Duration: 2773ms
+Duration: 2583ms
 
 ## Checks
 
@@ -14,7 +14,7 @@ Duration: 2773ms
 
 ## Advisory Checks
 
-- mentions_review_only: needs_review
+- mentions_review_only: passed
 - mentions_no_public_promotion: passed
 
 ## Policy

@@ -15,6 +15,12 @@
     "data/kosmo-onedrive-sync-error-summary-2026-06-13.json",
     "docs/codex/kosmo-private-library-sync-resolution-2026-06-13.md",
     "docs/codex/kosmo-onedrive-sync-error-summary-2026-06-13.md",
+    "data/kosmoreferences-pilot-evidence-matrix-2026-06-13.json",
+    "docs/codex/kosmoreferences-pilot-evidence-matrix-2026-06-13.md",
+    "data/villa-savoye-provenance-review-brief-2026-06-13.json",
+    "docs/codex/villa-savoye-provenance-review-brief-2026-06-13.md",
+    "data/ingenbohl-pdf-extraction-decision-brief-2026-06-13.json",
+    "docs/codex/ingenbohl-pdf-extraction-decision-brief-2026-06-13.md",
     "examples/kosmo-references/provenance/owner-review-decision-pack-2026-06-13-review/owner-review-decision-check.generated.json",
     "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-full-review.generated.json"
   ],
@@ -58,14 +64,19 @@
         "data/kosmoreferences-registry.json",
         "examples/kosmo-references/entry-drafts/villa-savoye.entry-draft.json",
         "examples/kosmo-references/entry-drafts/kapelle-sogn-benedetg.entry-draft.json",
-        "examples/kosmo-references/entry-drafts/alterszentrum-kloster-ingenbohl.entry-draft.json"
+        "examples/kosmo-references/entry-drafts/alterszentrum-kloster-ingenbohl.entry-draft.json",
+        "data/kosmoreferences-pilot-evidence-matrix-2026-06-13.json",
+        "docs/codex/kosmoreferences-pilot-evidence-matrix-2026-06-13.md",
+        "data/villa-savoye-provenance-review-brief-2026-06-13.json",
+        "data/ingenbohl-pdf-extraction-decision-brief-2026-06-13.json"
       ],
       "output_path": "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-local-worker-2026-06-13/reference-pilot-gap-map.private.json",
       "objective": "List missing evidence, media, plan, material, structure, model and rights gaps for the three reference pilots.",
       "acceptance": [
         "One row per pilot and gap type.",
         "Every gap has suggested next source type.",
-        "No gap is marked public-safe."
+        "No gap is marked public-safe.",
+        "References the Villa brief and Ingenbohl PDF brief where relevant."
       ]
     },
     {

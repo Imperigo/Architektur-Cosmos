@@ -52,8 +52,14 @@ Nutze:
 - `data/kosmoreferences-data-lane-status.json`
 - `data/kosmoreferences-private-library-diagnostic-2026-06-13.json`
 - `data/kosmo-onedrive-sync-error-summary-2026-06-13.json`
+- `data/kosmoreferences-pilot-evidence-matrix-2026-06-13.json`
+- `data/villa-savoye-provenance-review-brief-2026-06-13.json`
+- `data/ingenbohl-pdf-extraction-decision-brief-2026-06-13.json`
 - `docs/codex/kosmo-private-library-sync-resolution-2026-06-13.md`
 - `docs/codex/kosmo-onedrive-sync-error-summary-2026-06-13.md`
+- `docs/codex/kosmoreferences-pilot-evidence-matrix-2026-06-13.md`
+- `docs/codex/villa-savoye-provenance-review-brief-2026-06-13.md`
+- `docs/codex/ingenbohl-pdf-extraction-decision-brief-2026-06-13.md`
 - `examples/kosmo-references/source-packages/architecturekosmos-private-project-sources-2026-06-13/source-package.json`
 
 Private lokale Extrakte liegen hier:
@@ -74,8 +80,11 @@ gib danach eine kurze Review-Zusammenfassung fuer Codex/Claude aus.
 Aktueller harter Stand:
 
 - `npm run kosmo:data-lane-sweep` ist der taegliche Start-Gate.
-- Data-Lane Sweep: 4/4, review-only passed.
+- Data-Lane Sweep: 6/6, review-only passed.
 - Die drei Pilot-Referenzen bleiben review-only.
+- Pilot Evidence Matrix: 3 Piloten, 12 Gaps, 0 public-ready.
+- Villa Savoye Provenance Brief: 7 Review-Items, 3 spaetere Human-Review-Kandidaten, 4 blockiert, 0 public-ready.
+- Ingenbohl PDF Brief: 1 link-only PDF, keine Extraktion, 0 public-ready.
 - KosmoAsset Seed Full Review: 10/10, aber 6 Human Reviews offen.
 - Human Decision Queue: 16/16 offen, davon 10 References und 6 Assets.
 - Owner Decision Batches: 5/5 offen, 16 Items; immer batchweise bearbeiten.

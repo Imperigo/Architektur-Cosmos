@@ -1,12 +1,12 @@
 # KosmoData Lane Sweep
 
-Generated: 2026-06-13T19:12:39.470Z
+Generated: 2026-06-13T19:19:53.443Z
 Status: `kosmodata_lane_sweep_review_only_passed`
 
 ## Summary
 
 - Steps passed: 6/6
-- Duration: 16726ms
+- Duration: 15517ms
 - KosmoReferences: passed_review_only (10/10)
 - References public-ready assets: 0
 - References owner pending: 10
@@ -40,12 +40,12 @@ Status: `kosmodata_lane_sweep_review_only_passed`
 
 | Step | Status | Duration | Report |
 | --- | --- | ---: | --- |
-| KosmoReferences Nightly Gate | passed | 12275ms | `data/kosmoreferences-nightly-gate-2026-06-13.json` |
-| KosmoAsset Seed Full Review | passed | 3527ms | `examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-full-review.generated.json` |
-| Human Decision Queue | passed | 231ms | `data/kosmo-human-decision-queue-2026-06-13.json` |
-| Owner Decision Batches | passed | 232ms | `data/kosmo-human-decision-owner-batches-2026-06-13.json` |
-| Local Worker Output Review | passed | 229ms | `data/kosmo-local-worker-output-review-2026-06-13.json` |
-| Pilot Evidence Matrix | passed | 230ms | `data/kosmoreferences-pilot-evidence-matrix-2026-06-13.json` |
+| KosmoReferences Nightly Gate | passed | 11012ms | `data/kosmoreferences-nightly-gate-2026-06-13.json` |
+| KosmoAsset Seed Full Review | passed | 3554ms | `examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-full-review.generated.json` |
+| Human Decision Queue | passed | 234ms | `data/kosmo-human-decision-queue-2026-06-13.json` |
+| Owner Decision Batches | passed | 233ms | `data/kosmo-human-decision-owner-batches-2026-06-13.json` |
+| Local Worker Output Review | passed | 237ms | `data/kosmo-local-worker-output-review-2026-06-13.json` |
+| Pilot Evidence Matrix | passed | 245ms | `data/kosmoreferences-pilot-evidence-matrix-2026-06-13.json` |
 
 ## Next Actions
 
