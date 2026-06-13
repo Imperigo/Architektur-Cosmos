@@ -96,6 +96,13 @@ const steps = [
     command: 'npm',
     args: ['run', 'kosmo:source-root-decision-session-check'],
     report: 'data/kosmo-source-root-decision-session-check-2026-06-13.json'
+  },
+  {
+    id: 'private_source_inventory_plan',
+    label: 'Private Source Inventory Plan',
+    command: 'npm',
+    args: ['run', 'kosmo:private-source-inventory-plan'],
+    report: 'data/kosmo-private-source-inventory-plan-2026-06-13.json'
   }
 ];
 
@@ -124,10 +131,11 @@ async function main() {
   const sourceRootLocator = await readOptionalJson(resolve(root, steps[9].report));
   const sourceRootSelectionBrief = await readOptionalJson(resolve(root, steps[10].report));
   const sourceRootDecisionSessionCheck = await readOptionalJson(resolve(root, steps[11].report));
+  const privateSourceInventoryPlan = await readOptionalJson(resolve(root, steps[12].report));
   const failedSteps = stepResults.filter((step) => step.exit_code !== 0);
   const status = failedSteps.length
     ? 'kosmodata_lane_sweep_failed'
-    : isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief, sourceRootDecisionSessionCheck })
+    : isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief, sourceRootDecisionSessionCheck, privateSourceInventoryPlan })
       ? 'kosmodata_lane_sweep_review_only_passed'
       : 'kosmodata_lane_sweep_needs_review';
 
@@ -205,7 +213,10 @@ async function main() {
       source_root_decision_session_selected: sourceRootDecisionSessionCheck?.summary?.selected_decision || null,
       source_root_decision_session_root_exists: sourceRootDecisionSessionCheck?.summary?.selected_root_exists ?? null,
       source_root_decision_session_private_diagnostic_allowed: sourceRootDecisionSessionCheck?.summary?.private_diagnostic_allowed === true,
-      source_root_decision_session_public_ready_after: sourceRootDecisionSessionCheck?.summary?.public_ready_after_session ?? null
+      source_root_decision_session_public_ready_after: sourceRootDecisionSessionCheck?.summary?.public_ready_after_session ?? null,
+      private_source_inventory_plan_status: privateSourceInventoryPlan?.status || null,
+      private_source_inventory_plan_allowed: privateSourceInventoryPlan?.summary?.private_diagnostic_allowed === true,
+      private_source_inventory_plan_public_ready_after: privateSourceInventoryPlan?.summary?.public_ready_after_plan ?? null
     },
     reports: {
       references_gate: steps[0].report,
@@ -220,10 +231,11 @@ async function main() {
       sogn_source_root_brief: steps[8].report,
       source_root_locator: steps[9].report,
       source_root_selection_brief: steps[10].report,
-      source_root_decision_session_check: steps[11].report
+      source_root_decision_session_check: steps[11].report,
+      private_source_inventory_plan: steps[12].report
     },
     steps: stepResults,
-    next_actions: nextActions({ failedSteps, referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief, sourceRootDecisionSessionCheck })
+    next_actions: nextActions({ failedSteps, referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief, sourceRootDecisionSessionCheck, privateSourceInventoryPlan })
   };
 
   await mkdir(dirname(outputJson), { recursive: true });
@@ -282,7 +294,7 @@ async function runStep(step) {
   };
 }
 
-function isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief, sourceRootDecisionSessionCheck }) {
+function isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief, sourceRootDecisionSessionCheck, privateSourceInventoryPlan }) {
   const referencesOk = referencesGate?.status === 'passed_review_only' &&
     (referencesGate?.summary?.public_ready_assets ?? referencesStatus?.summary?.public_ready_assets) === 0;
   const assetOk = assetFullReview?.status === 'asset_full_review_ready_for_human_decisions' &&
@@ -325,10 +337,16 @@ function isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview
     sourceRootDecisionSessionCheck?.policy?.private_content_read !== true &&
     sourceRootDecisionSessionCheck?.policy?.copied_private_content !== true &&
     sourceRootDecisionSessionCheck?.policy?.public_ready_allowed !== true;
-  return referencesOk && assetOk && queueOk && batchesOk && localWorkerOk && pilotEvidenceOk && villaBriefOk && ingenbohlBriefOk && sognBriefOk && sourceRootLocatorOk && sourceRootSelectionBriefOk && sourceRootDecisionSessionOk;
+  const privateSourceInventoryPlanOk = ['private_metadata_inventory_blocked', 'private_metadata_inventory_plan_ready'].includes(privateSourceInventoryPlan?.status) &&
+    privateSourceInventoryPlan?.summary?.public_ready_after_plan === 0 &&
+    privateSourceInventoryPlan?.policy?.reads_private_content !== true &&
+    privateSourceInventoryPlan?.policy?.copies_private_content !== true &&
+    privateSourceInventoryPlan?.policy?.writes_public_files !== true &&
+    privateSourceInventoryPlan?.policy?.writes_public_manifest !== true;
+  return referencesOk && assetOk && queueOk && batchesOk && localWorkerOk && pilotEvidenceOk && villaBriefOk && ingenbohlBriefOk && sognBriefOk && sourceRootLocatorOk && sourceRootSelectionBriefOk && sourceRootDecisionSessionOk && privateSourceInventoryPlanOk;
 }
 
-function nextActions({ failedSteps, referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief, sourceRootDecisionSessionCheck }) {
+function nextActions({ failedSteps, referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief, sourceRootDecisionSessionCheck, privateSourceInventoryPlan }) {
   if (failedSteps.length > 0) return [`Fix failed sweep steps: ${failedSteps.map((step) => step.id).join(', ')}.`];
   const actions = [];
   const ownerPending = humanDecisionQueue?.summary?.reference_items ?? referencesGate?.summary?.owner_decision_session_pending ?? referencesStatus?.summary?.owner_decision_session_pending ?? 0;
@@ -353,6 +371,7 @@ function nextActions({ failedSteps, referencesGate, referencesStatus, assetFullR
   if (sourceRootDecisionSessionCheck?.summary?.private_diagnostic_allowed === true) {
     actions.push(`Run private-library diagnostic against selected root: ${sourceRootDecisionSessionCheck.summary.selected_root_path}.`);
   }
+  if (privateSourceInventoryPlan?.status === 'private_metadata_inventory_blocked') actions.push('Use the private source inventory plan only as a blocked next-step contract until source-root selection passes.');
   const privateLibrary = referencesGate?.summary?.private_library_status ?? referencesStatus?.summary?.private_library_status;
   const syncErrors = referencesStatus?.summary?.private_library_sync_error_files ?? 0;
   if (privateLibrary !== 'library_candidate_visible') actions.push('Expose or mount the real large private book/ETH/HSLU library root.');
@@ -420,6 +439,9 @@ function renderMarkdown(report) {
   lines.push(`- Source-root selected root exists: ${report.summary.source_root_decision_session_root_exists}`);
   lines.push(`- Source-root private diagnostic allowed: ${report.summary.source_root_decision_session_private_diagnostic_allowed ? 'yes' : 'no'}`);
   lines.push(`- Source-root decision public-ready after session: ${report.summary.source_root_decision_session_public_ready_after}`);
+  lines.push(`- Private source inventory plan: ${report.summary.private_source_inventory_plan_status}`);
+  lines.push(`- Private source inventory allowed: ${report.summary.private_source_inventory_plan_allowed ? 'yes' : 'no'}`);
+  lines.push(`- Private source inventory public-ready after plan: ${report.summary.private_source_inventory_plan_public_ready_after}`);
   lines.push('');
   lines.push('## Steps');
   lines.push('');

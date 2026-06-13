@@ -1,0 +1,75 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-13T20:06:07.341Z",
+  "status": "private_metadata_inventory_blocked",
+  "policy": {
+    "review_only": true,
+    "reads_private_content": false,
+    "copies_private_content": false,
+    "writes_public_files": false,
+    "writes_public_manifest": false,
+    "public_ready_after_plan": 0,
+    "note": "This plan prepares the private metadata inventory sequence. It does not inspect private source contents."
+  },
+  "source_refs": [
+    "data/kosmo-source-root-decision-session-check-2026-06-13.json",
+    "data/kosmoreferences-pilot-evidence-matrix-2026-06-13.json"
+  ],
+  "summary": {
+    "source_root_decision_status": "passed_pending_owner_input",
+    "selected_root_path": null,
+    "selected_root_exists": false,
+    "private_diagnostic_allowed": false,
+    "pilot_count": 3,
+    "pilot_gap_count": 12,
+    "public_ready_after_plan": 0
+  },
+  "inventory_scope": [
+    {
+      "pilot_id": "villa-savoye",
+      "title": "Villa Savoye",
+      "first_pass": "metadata_only_media_plan_model_provenance",
+      "source_need": "file-level provenance and build-log evidence for existing media, diagrams and low.glb",
+      "allowed_now": false,
+      "public_ready_after_inventory": false
+    },
+    {
+      "pilot_id": "kapelle-sogn-benedetg",
+      "title": "Kapelle Sogn Benedetg",
+      "first_pass": "metadata_only_private_library_source_discovery",
+      "source_need": "private book/ETH/HSLU references for timber structure, drawings, materials and model basis",
+      "allowed_now": false,
+      "public_ready_after_inventory": false
+    },
+    {
+      "pilot_id": "alterszentrum-kloster-ingenbohl",
+      "title": "Alterszentrum Kloster Ingenbohl",
+      "first_pass": "metadata_only_pdf_and_structure_source_discovery",
+      "source_need": "private/link-only study-commission PDF decision, structure/material evidence and model basis",
+      "allowed_now": false,
+      "public_ready_after_inventory": false
+    }
+  ],
+  "output_contract": {
+    "private_root": "/mnt/data/ArchitekturKosmos/KosmoZentrale/sources/private-inventory",
+    "public_repo_outputs_allowed": [
+      "metadata counts",
+      "file path fingerprints",
+      "rights status placeholders",
+      "gap summaries written in own words"
+    ],
+    "public_repo_outputs_forbidden": [
+      "book scans",
+      "PDF full text",
+      "protected plans or screenshots",
+      "private images",
+      "long quotations",
+      "public-ready promotion flags"
+    ]
+  },
+  "next_actions": [
+    "Keep private inventory blocked.",
+    "Record a source-root decision session and rerun npm run kosmo:source-root-decision-session-check.",
+    "Only continue when private_diagnostic_allowed=true."
+  ]
+}

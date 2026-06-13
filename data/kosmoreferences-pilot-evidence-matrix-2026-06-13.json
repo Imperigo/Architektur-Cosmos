@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-13T20:00:08.458Z",
+  "generated_at": "2026-06-13T20:06:05.560Z",
   "status": "pilot_evidence_matrix_review_only",
   "policy": {
     "review_only": true,
@@ -21,8 +21,8 @@
     "asset_candidates_blocked": 9,
     "public_ready_assets": 0,
     "data_lane_status": "kosmodata_lane_sweep_review_only_passed",
-    "data_lane_steps": 12,
-    "data_lane_passed_steps": 12,
+    "data_lane_steps": 13,
+    "data_lane_passed_steps": 13,
     "local_worker_review_status": "local_worker_outputs_present_review_only",
     "local_worker_outputs": "7/7",
     "local_worker_high_risk_hits": 0,

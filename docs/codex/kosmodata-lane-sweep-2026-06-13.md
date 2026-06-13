@@ -1,12 +1,12 @@
 # KosmoData Lane Sweep
 
-Generated: 2026-06-13T20:00:09.997Z
+Generated: 2026-06-13T20:06:07.356Z
 Status: `kosmodata_lane_sweep_review_only_passed`
 
 ## Summary
 
-- Steps passed: 12/12
-- Duration: 13234ms
+- Steps passed: 13/13
+- Duration: 14226ms
 - KosmoReferences: passed_review_only (10/10)
 - References public-ready assets: 0
 - References owner pending: 10
@@ -55,23 +55,27 @@ Status: `kosmodata_lane_sweep_review_only_passed`
 - Source-root selected root exists: false
 - Source-root private diagnostic allowed: no
 - Source-root decision public-ready after session: 0
+- Private source inventory plan: private_metadata_inventory_blocked
+- Private source inventory allowed: no
+- Private source inventory public-ready after plan: 0
 
 ## Steps
 
 | Step | Status | Duration | Report |
 | --- | --- | ---: | --- |
-| KosmoReferences Nightly Gate | passed | 7266ms | `data/kosmoreferences-nightly-gate-2026-06-13.json` |
-| KosmoAsset Seed Full Review | passed | 3496ms | `examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-full-review.generated.json` |
-| Human Decision Queue | passed | 238ms | `data/kosmo-human-decision-queue-2026-06-13.json` |
-| Owner Decision Batches | passed | 235ms | `data/kosmo-human-decision-owner-batches-2026-06-13.json` |
-| Local Worker Output Review | passed | 238ms | `data/kosmo-local-worker-output-review-2026-06-13.json` |
-| Pilot Evidence Matrix | passed | 233ms | `data/kosmoreferences-pilot-evidence-matrix-2026-06-13.json` |
-| Villa Savoye Provenance Review Brief | passed | 236ms | `data/villa-savoye-provenance-review-brief-2026-06-13.json` |
-| Ingenbohl PDF Extraction Brief | passed | 227ms | `data/ingenbohl-pdf-extraction-decision-brief-2026-06-13.json` |
+| KosmoReferences Nightly Gate | passed | 7965ms | `data/kosmoreferences-nightly-gate-2026-06-13.json` |
+| KosmoAsset Seed Full Review | passed | 3541ms | `examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-full-review.generated.json` |
+| Human Decision Queue | passed | 235ms | `data/kosmo-human-decision-queue-2026-06-13.json` |
+| Owner Decision Batches | passed | 231ms | `data/kosmo-human-decision-owner-batches-2026-06-13.json` |
+| Local Worker Output Review | passed | 236ms | `data/kosmo-local-worker-output-review-2026-06-13.json` |
+| Pilot Evidence Matrix | passed | 235ms | `data/kosmoreferences-pilot-evidence-matrix-2026-06-13.json` |
+| Villa Savoye Provenance Review Brief | passed | 246ms | `data/villa-savoye-provenance-review-brief-2026-06-13.json` |
+| Ingenbohl PDF Extraction Brief | passed | 234ms | `data/ingenbohl-pdf-extraction-decision-brief-2026-06-13.json` |
 | Sogn Benedetg Source-Root Brief | passed | 235ms | `data/sogn-benedetg-source-root-decision-brief-2026-06-13.json` |
-| Source Root Locator | passed | 371ms | `data/kosmo-source-root-locator-2026-06-13.json` |
-| Source Root Selection Brief | passed | 229ms | `data/kosmo-source-root-selection-brief-2026-06-13.json` |
-| Source Root Decision Session Check | passed | 228ms | `data/kosmo-source-root-decision-session-check-2026-06-13.json` |
+| Source Root Locator | passed | 366ms | `data/kosmo-source-root-locator-2026-06-13.json` |
+| Source Root Selection Brief | passed | 237ms | `data/kosmo-source-root-selection-brief-2026-06-13.json` |
+| Source Root Decision Session Check | passed | 230ms | `data/kosmo-source-root-decision-session-check-2026-06-13.json` |
+| Private Source Inventory Plan | passed | 232ms | `data/kosmo-private-source-inventory-plan-2026-06-13.json` |
 
 ## Next Actions
 
@@ -85,6 +89,7 @@ Status: `kosmodata_lane_sweep_review_only_passed`
 - Select or mount the real source root; source-root locator has 0 probable large private libraries.
 - Use the source-root selection brief before any private inventory or source-dependent authoring.
 - Record the source-root decision session before any private diagnostic.
+- Use the private source inventory plan only as a blocked next-step contract until source-root selection passes.
 - Expose or mount the real large private book/ETH/HSLU library root.
 - Resolve 30 OneDrive sync error marker files before treating the visible mirror as complete.
 - Keep public-ready assets at 0 until separate owner and promotion reviews pass.
