@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-13T21:11:05.059Z",
+  "generated_at": "2026-06-13T21:18:14.710Z",
   "status": "worker_router_guarded_review_only",
   "source_refs": [
     "data/kosmodata-lane-sweep-2026-06-13.json"
@@ -15,7 +15,7 @@
   },
   "summary": {
     "data_lane_status": "kosmodata_lane_sweep_review_only_passed",
-    "data_lane_steps": "23/23",
+    "data_lane_steps": "24/24",
     "source_root_decision_status": "passed_pending_owner_input",
     "private_diagnostic_allowed": false,
     "private_inventory_plan_status": "private_metadata_inventory_blocked",
@@ -77,7 +77,8 @@
     "npm run kosmo:private-inventory-output-template",
     "npm run kosmo:private-inventory-output-check",
     "npm run kosmo:human-decision-owner-batches",
-    "npm run kosmo:owner-decision-session-check"
+    "npm run kosmo:owner-decision-session-check",
+    "npm run kosmo:owner-review-packet-check"
   ],
   "blocked_commands_now": [
     {

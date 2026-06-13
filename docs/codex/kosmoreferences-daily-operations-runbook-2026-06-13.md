@@ -50,7 +50,8 @@ This runbook is the daily execution order for the KosmoReferences/KosmoAsset dat
    - Owner Answer Session Edit Plan;
    - Owner Question Brief;
    - Owner Question Brief Check;
-   - Owner Review Packet.
+   - Owner Review Packet;
+   - Owner Review Packet Check.
 
 4. Open the generated report:
 
@@ -183,24 +184,34 @@ This runbook is the daily execution order for the KosmoReferences/KosmoAsset dat
 
    - `docs/codex/kosmo-owner-review-packet-2026-06-13.md`
 
-30. If a narrow rerun is needed, run the KosmoReferences Nightly Gate:
+30. Check the owner review packet:
+
+   ```bash
+   npm run kosmo:owner-review-packet-check
+   ```
+
+31. Open the generated check:
+
+   - `docs/codex/kosmo-owner-review-packet-check-2026-06-13.md`
+
+32. If a narrow rerun is needed, run the KosmoReferences Nightly Gate:
 
    ```bash
    npm run kosmo:references-nightly-gate
    ```
 
-31. Open the generated reports:
+33. Open the generated reports:
 
    - `docs/codex/kosmoreferences-nightly-gate-2026-06-13.md`
    - `data/kosmoreferences-data-lane-status.md`
 
-32. If a narrow asset rerun is needed, run the KosmoAsset seed full review:
+34. If a narrow asset rerun is needed, run the KosmoAsset seed full review:
 
    ```bash
    npm run kosmo:asset-full-review -- --library examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json
    ```
 
-33. Open the generated report:
+35. Open the generated report:
 
    - `examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-full-review.generated.md`
 
@@ -229,6 +240,7 @@ Use the result as the current read-only status:
 - `owner_question_brief_ready` means the next owner-facing question block is ready; it still records no decisions.
 - `owner_question_brief_guard_passed` means the owner-facing question block matches the answer-sheet source and is safe to present.
 - `owner_review_packet_ready` means the owner-facing brief, guards, intake and edit-plan references are bundled into one entry point.
+- `owner_review_packet_guard_passed` means the bundled owner review entry point is internally consistent and still records no answers, decisions or public-ready changes.
 
 Then continue with one of these safe work types:
 

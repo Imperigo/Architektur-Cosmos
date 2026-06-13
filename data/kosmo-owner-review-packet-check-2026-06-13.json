@@ -1,0 +1,275 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-13T21:18:14.471Z",
+  "status": "owner_review_packet_guard_passed",
+  "policy": {
+    "records_decisions": false,
+    "writes_session_files": false,
+    "applies_decisions": false,
+    "writes_public_files": false,
+    "writes_public_manifest": false,
+    "public_ready_after_guard": 0,
+    "note": "This guard validates the owner review packet entry point. It does not collect answers, apply decisions or publish files."
+  },
+  "source_refs": [
+    "data/kosmo-owner-review-packet-2026-06-13.json"
+  ],
+  "summary": {
+    "packet_status": "owner_review_packet_ready",
+    "data_lane_status": "kosmodata_lane_sweep_review_only_passed",
+    "review_order_items": 5,
+    "questions": 6,
+    "filled_answers": 0,
+    "planned_edits": 0,
+    "failures": 0,
+    "warnings": 0,
+    "public_ready_after_guard": 0
+  },
+  "findings": [
+    {
+      "id": "packet_status_ready",
+      "severity": "passed",
+      "message": "Owner review packet status must be owner_review_packet_ready."
+    },
+    {
+      "id": "records_decisions_false",
+      "severity": "passed",
+      "message": "Packet must not record decisions."
+    },
+    {
+      "id": "writes_session_files_false",
+      "severity": "passed",
+      "message": "Packet must not write session files."
+    },
+    {
+      "id": "applies_decisions_false",
+      "severity": "passed",
+      "message": "Packet must not apply decisions."
+    },
+    {
+      "id": "writes_public_files_false",
+      "severity": "passed",
+      "message": "Packet must not write public files."
+    },
+    {
+      "id": "writes_public_manifest_false",
+      "severity": "passed",
+      "message": "Packet must not write public manifests."
+    },
+    {
+      "id": "public_ready_after_packet_zero",
+      "severity": "passed",
+      "message": "Packet policy must keep public-ready after packet at 0."
+    },
+    {
+      "id": "data_lane_review_only_passed",
+      "severity": "passed",
+      "message": "Packet must reference a review-only passed data lane."
+    },
+    {
+      "id": "question_brief_ready",
+      "severity": "passed",
+      "message": "Question brief must be ready."
+    },
+    {
+      "id": "question_brief_guard_passed",
+      "severity": "passed",
+      "message": "Question brief guard must pass."
+    },
+    {
+      "id": "question_count_six",
+      "severity": "passed",
+      "message": "Packet must expose the six-question owner brief."
+    },
+    {
+      "id": "intake_pending_owner",
+      "severity": "passed",
+      "message": "Owner answer intake must still wait for owner input."
+    },
+    {
+      "id": "intake_guard_pending_owner",
+      "severity": "passed",
+      "message": "Owner answer intake guard must pass while pending owner input."
+    },
+    {
+      "id": "filled_answers_zero",
+      "severity": "passed",
+      "message": "Packet must not contain filled answers."
+    },
+    {
+      "id": "session_edit_plan_pending_owner",
+      "severity": "passed",
+      "message": "Session edit plan must remain pending owner input."
+    },
+    {
+      "id": "planned_edits_zero",
+      "severity": "passed",
+      "message": "Packet must not plan edits."
+    },
+    {
+      "id": "summary_public_ready_zero",
+      "severity": "passed",
+      "message": "Packet summary must keep public-ready at 0."
+    },
+    {
+      "id": "review_order_length",
+      "severity": "passed",
+      "message": "Packet review order must contain 5 items."
+    },
+    {
+      "id": "review_order_number:1",
+      "severity": "passed",
+      "message": "Review order item 1 must be in sequence."
+    },
+    {
+      "id": "review_order_title:Owner Question Brief",
+      "severity": "passed",
+      "message": "Review order item 1 must be Owner Question Brief."
+    },
+    {
+      "id": "review_order_status:Owner Question Brief",
+      "severity": "passed",
+      "message": "Owner Question Brief must require status owner_question_brief_ready."
+    },
+    {
+      "id": "review_order_json:Owner Question Brief",
+      "severity": "passed",
+      "message": "Owner Question Brief must include a JSON source path."
+    },
+    {
+      "id": "review_order_number:2",
+      "severity": "passed",
+      "message": "Review order item 2 must be in sequence."
+    },
+    {
+      "id": "review_order_title:Question Brief Guard",
+      "severity": "passed",
+      "message": "Review order item 2 must be Question Brief Guard."
+    },
+    {
+      "id": "review_order_status:Question Brief Guard",
+      "severity": "passed",
+      "message": "Question Brief Guard must require status owner_question_brief_guard_passed."
+    },
+    {
+      "id": "review_order_json:Question Brief Guard",
+      "severity": "passed",
+      "message": "Question Brief Guard must include a JSON source path."
+    },
+    {
+      "id": "review_order_number:3",
+      "severity": "passed",
+      "message": "Review order item 3 must be in sequence."
+    },
+    {
+      "id": "review_order_title:Owner Answer Intake",
+      "severity": "passed",
+      "message": "Review order item 3 must be Owner Answer Intake."
+    },
+    {
+      "id": "review_order_status:Owner Answer Intake",
+      "severity": "passed",
+      "message": "Owner Answer Intake must require status owner_answer_intake_template_pending_owner_input."
+    },
+    {
+      "id": "review_order_json:Owner Answer Intake",
+      "severity": "passed",
+      "message": "Owner Answer Intake must include a JSON source path."
+    },
+    {
+      "id": "review_order_number:4",
+      "severity": "passed",
+      "message": "Review order item 4 must be in sequence."
+    },
+    {
+      "id": "review_order_title:Owner Answer Intake Check",
+      "severity": "passed",
+      "message": "Review order item 4 must be Owner Answer Intake Check."
+    },
+    {
+      "id": "review_order_status:Owner Answer Intake Check",
+      "severity": "passed",
+      "message": "Owner Answer Intake Check must require status owner_answer_intake_guard_passed_pending_owner_input."
+    },
+    {
+      "id": "review_order_json:Owner Answer Intake Check",
+      "severity": "passed",
+      "message": "Owner Answer Intake Check must include a JSON source path."
+    },
+    {
+      "id": "review_order_number:5",
+      "severity": "passed",
+      "message": "Review order item 5 must be in sequence."
+    },
+    {
+      "id": "review_order_title:Session Edit Plan",
+      "severity": "passed",
+      "message": "Review order item 5 must be Session Edit Plan."
+    },
+    {
+      "id": "review_order_status:Session Edit Plan",
+      "severity": "passed",
+      "message": "Session Edit Plan must require status owner_answer_session_edit_plan_pending_owner_input."
+    },
+    {
+      "id": "review_order_json:Session Edit Plan",
+      "severity": "passed",
+      "message": "Session Edit Plan must include a JSON source path."
+    },
+    {
+      "id": "review_ref_exists:Owner Question Brief",
+      "severity": "passed",
+      "message": "Owner Question Brief JSON source must exist."
+    },
+    {
+      "id": "review_ref_status:Owner Question Brief",
+      "severity": "passed",
+      "message": "Owner Question Brief source status must match packet required status."
+    },
+    {
+      "id": "review_ref_exists:Question Brief Guard",
+      "severity": "passed",
+      "message": "Question Brief Guard JSON source must exist."
+    },
+    {
+      "id": "review_ref_status:Question Brief Guard",
+      "severity": "passed",
+      "message": "Question Brief Guard source status must match packet required status."
+    },
+    {
+      "id": "review_ref_exists:Owner Answer Intake",
+      "severity": "passed",
+      "message": "Owner Answer Intake JSON source must exist."
+    },
+    {
+      "id": "review_ref_status:Owner Answer Intake",
+      "severity": "passed",
+      "message": "Owner Answer Intake source status must match packet required status."
+    },
+    {
+      "id": "review_ref_exists:Owner Answer Intake Check",
+      "severity": "passed",
+      "message": "Owner Answer Intake Check JSON source must exist."
+    },
+    {
+      "id": "review_ref_status:Owner Answer Intake Check",
+      "severity": "passed",
+      "message": "Owner Answer Intake Check source status must match packet required status."
+    },
+    {
+      "id": "review_ref_exists:Session Edit Plan",
+      "severity": "passed",
+      "message": "Session Edit Plan JSON source must exist."
+    },
+    {
+      "id": "review_ref_status:Session Edit Plan",
+      "severity": "passed",
+      "message": "Session Edit Plan source status must match packet required status."
+    }
+  ],
+  "next_actions": [
+    "Use the owner review packet as the single entry point for the next owner review round.",
+    "Present questions without treating chat text as recorded decisions.",
+    "Transfer only explicit owner answers into the intake template, then rerun intake and session edit guards."
+  ]
+}

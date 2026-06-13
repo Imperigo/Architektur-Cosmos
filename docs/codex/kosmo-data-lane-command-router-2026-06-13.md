@@ -1,11 +1,11 @@
 # Kosmo Data-Lane Command Router
 
-Generated: 2026-06-13T21:11:05.059Z
+Generated: 2026-06-13T21:18:14.710Z
 Status: `worker_router_guarded_review_only`
 
 ## Summary
 
-- Data lane: 23/23 (kosmodata_lane_sweep_review_only_passed)
+- Data lane: 24/24 (kosmodata_lane_sweep_review_only_passed)
 - Source-root decision: passed_pending_owner_input
 - Private diagnostic allowed: no
 - Private inventory plan: private_metadata_inventory_blocked
@@ -68,6 +68,7 @@ Forbidden now:
 - `npm run kosmo:private-inventory-output-check`
 - `npm run kosmo:human-decision-owner-batches`
 - `npm run kosmo:owner-decision-session-check`
+- `npm run kosmo:owner-review-packet-check`
 
 ## Blocked Commands Now
 

@@ -125,6 +125,7 @@
     "kosmo:owner-question-brief": "node scripts/kosmo-owner-question-brief.mjs",
     "kosmo:owner-question-brief-check": "node scripts/kosmo-owner-question-brief-check.mjs",
     "kosmo:owner-review-packet": "node scripts/kosmo-owner-review-packet.mjs",
+    "kosmo:owner-review-packet-check": "node scripts/kosmo-owner-review-packet-check.mjs",
     "kosmo:private-library-diagnostic": "node scripts/kosmo-private-library-diagnostic.mjs",
     "kosmo:source-root-locator": "node scripts/kosmo-source-root-locator.mjs",
     "kosmo:source-root-selection-brief": "node scripts/kosmo-source-root-selection-brief.mjs",
