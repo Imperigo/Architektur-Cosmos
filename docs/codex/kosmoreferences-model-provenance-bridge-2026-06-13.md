@@ -48,3 +48,4 @@ Studiencharakter explizit freigibt.
 - `archive-intake/alterszentrum-kloster-ingenbohl/models/model-package.manifest.json`
 - `out/brain-model-review/2026-06-13/latest.json`
 - `examples/kosmo-references/provenance/model-provenance-bridge-2026-06-13.json`
+- `examples/kosmo-references/provenance/model-promotion-dry-run-2026-06-13.json`
