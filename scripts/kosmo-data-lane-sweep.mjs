@@ -40,6 +40,13 @@ const steps = [
     command: 'npm',
     args: ['run', 'kosmo:human-decision-owner-batches'],
     report: 'data/kosmo-human-decision-owner-batches-2026-06-13.json'
+  },
+  {
+    id: 'local_worker_output_review',
+    label: 'Local Worker Output Review',
+    command: 'npm',
+    args: ['run', 'kosmo:local-worker-output-review'],
+    report: 'data/kosmo-local-worker-output-review-2026-06-13.json'
   }
 ];
 
@@ -60,10 +67,11 @@ async function main() {
   const assetFullReview = await readOptionalJson(resolve(root, steps[1].report));
   const humanDecisionQueue = await readOptionalJson(resolve(root, steps[2].report));
   const ownerDecisionBatches = await readOptionalJson(resolve(root, steps[3].report));
+  const localWorkerReview = await readOptionalJson(resolve(root, steps[4].report));
   const failedSteps = stepResults.filter((step) => step.exit_code !== 0);
   const status = failedSteps.length
     ? 'kosmodata_lane_sweep_failed'
-    : isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches })
+    : isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview })
       ? 'kosmodata_lane_sweep_review_only_passed'
       : 'kosmodata_lane_sweep_needs_review';
 
@@ -104,17 +112,25 @@ async function main() {
       owner_batches_status: ownerDecisionBatches?.status || null,
       owner_batches_total: ownerDecisionBatches?.summary?.total_batches ?? null,
       owner_batches_open: ownerDecisionBatches?.summary?.batches_with_open_items ?? null,
-      owner_batches_open_items: ownerDecisionBatches?.summary?.open_items ?? null
+      owner_batches_open_items: ownerDecisionBatches?.summary?.open_items ?? null,
+      local_worker_review_status: localWorkerReview?.status || null,
+      local_worker_required_outputs: localWorkerReview?.summary?.required_outputs ?? null,
+      local_worker_present_outputs: localWorkerReview?.summary?.present_outputs ?? null,
+      local_worker_missing_outputs: localWorkerReview?.summary?.missing_outputs ?? null,
+      local_worker_invalid_json_outputs: localWorkerReview?.summary?.invalid_json_outputs ?? null,
+      local_worker_high_risk_hits: localWorkerReview?.summary?.high_risk_hits ?? null,
+      local_worker_public_ready_allowed: localWorkerReview?.summary?.public_ready_allowed === true
     },
     reports: {
       references_gate: steps[0].report,
       references_status: 'data/kosmoreferences-data-lane-status.json',
       asset_full_review: steps[1].report,
       human_decision_queue: steps[2].report,
-      owner_decision_batches: steps[3].report
+      owner_decision_batches: steps[3].report,
+      local_worker_output_review: steps[4].report
     },
     steps: stepResults,
-    next_actions: nextActions({ failedSteps, referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches })
+    next_actions: nextActions({ failedSteps, referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview })
   };
 
   await mkdir(dirname(outputJson), { recursive: true });
@@ -173,7 +189,7 @@ async function runStep(step) {
   };
 }
 
-function isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches }) {
+function isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview }) {
   const referencesOk = referencesGate?.status === 'passed_review_only' &&
     (referencesGate?.summary?.public_ready_assets ?? referencesStatus?.summary?.public_ready_assets) === 0;
   const assetOk = assetFullReview?.status === 'asset_full_review_ready_for_human_decisions' &&
@@ -183,10 +199,15 @@ function isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview
     humanDecisionQueue?.summary?.public_ready_after_queue === 0;
   const batchesOk = ['owner_decision_batches_open', 'owner_decision_batches_clear'].includes(ownerDecisionBatches?.status) &&
     ownerDecisionBatches?.summary?.public_ready_after_batches === 0;
-  return referencesOk && assetOk && queueOk && batchesOk;
+  const localWorkerOk = localWorkerReview?.status === 'local_worker_outputs_present_review_only' &&
+    localWorkerReview?.summary?.missing_outputs === 0 &&
+    localWorkerReview?.summary?.invalid_json_outputs === 0 &&
+    localWorkerReview?.summary?.high_risk_hits === 0 &&
+    localWorkerReview?.summary?.public_ready_allowed !== true;
+  return referencesOk && assetOk && queueOk && batchesOk && localWorkerOk;
 }
 
-function nextActions({ failedSteps, referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches }) {
+function nextActions({ failedSteps, referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview }) {
   if (failedSteps.length > 0) return [`Fix failed sweep steps: ${failedSteps.map((step) => step.id).join(', ')}.`];
   const actions = [];
   const ownerPending = humanDecisionQueue?.summary?.reference_items ?? referencesGate?.summary?.owner_decision_session_pending ?? referencesStatus?.summary?.owner_decision_session_pending ?? 0;
@@ -195,6 +216,10 @@ function nextActions({ failedSteps, referencesGate, referencesStatus, assetFullR
   if (assetOpen > 0) actions.push(`Complete ${assetOpen} KosmoAsset human reviews before local approvals or sandbox certificates.`);
   const openBatches = ownerDecisionBatches?.summary?.batches_with_open_items ?? 0;
   if (openBatches > 0) actions.push(`Use ${openBatches} owner decision batches for review rounds instead of asking all open items at once.`);
+  const localWorkerRisk = localWorkerReview?.summary?.high_risk_hits ?? 0;
+  const localWorkerMissing = localWorkerReview?.summary?.missing_outputs ?? 0;
+  if (localWorkerMissing > 0) actions.push(`Regenerate ${localWorkerMissing} missing local worker output files before using worker packets.`);
+  if (localWorkerRisk > 0) actions.push(`Review ${localWorkerRisk} high-risk local worker output hits with Codex/Claude.`);
   const privateLibrary = referencesGate?.summary?.private_library_status ?? referencesStatus?.summary?.private_library_status;
   const syncErrors = referencesStatus?.summary?.private_library_sync_error_files ?? 0;
   if (privateLibrary !== 'library_candidate_visible') actions.push('Expose or mount the real large private book/ETH/HSLU library root.');
@@ -230,6 +255,12 @@ function renderMarkdown(report) {
   lines.push(`- Owner decision batches: ${report.summary.owner_batches_status}`);
   lines.push(`- Owner decision batches open: ${report.summary.owner_batches_open}/${report.summary.owner_batches_total}`);
   lines.push(`- Owner decision batch items open: ${report.summary.owner_batches_open_items}`);
+  lines.push(`- Local worker review: ${report.summary.local_worker_review_status}`);
+  lines.push(`- Local worker outputs: ${report.summary.local_worker_present_outputs}/${report.summary.local_worker_required_outputs}`);
+  lines.push(`- Local worker missing outputs: ${report.summary.local_worker_missing_outputs}`);
+  lines.push(`- Local worker invalid JSON outputs: ${report.summary.local_worker_invalid_json_outputs}`);
+  lines.push(`- Local worker high-risk hits: ${report.summary.local_worker_high_risk_hits}`);
+  lines.push(`- Local worker public-ready allowed: ${report.summary.local_worker_public_ready_allowed ? 'yes' : 'no'}`);
   lines.push('');
   lines.push('## Steps');
   lines.push('');
