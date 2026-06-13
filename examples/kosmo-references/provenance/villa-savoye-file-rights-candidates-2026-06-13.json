@@ -1,0 +1,130 @@
+{
+  "schema_version": "0.1",
+  "created_at": "2026-06-13",
+  "status": "rights_candidate_review",
+  "entry_id": "villa-savoye",
+  "title": "Villa Savoye File Rights Candidates",
+  "purpose": "Attach researched source and license candidates to local Villa Savoye files without marking any file public-ready.",
+  "source_inventory_ref": "examples/kosmo-references/provenance/villa-savoye-file-level-provenance-2026-06-13.json",
+  "policy": {
+    "public_ready": false,
+    "rule": "Exact remote hash match plus license evidence may support a future human promotion decision, but this candidate manifest does not promote files.",
+    "human_review_required": true
+  },
+  "remote_verification": {
+    "method": "Downloaded candidate originals with curl --http1.1 -L and compared SHA-256 plus byte counts to local files.",
+    "verified_at": "2026-06-13T16:58:00Z",
+    "exact_remote_matches": 3,
+    "derived_or_unmatched_files": 4
+  },
+  "files": [
+    {
+      "file_id": "villa-savoye-exterior-savoye-3-cc0",
+      "local_path": "public/archive-media/villa-savoye/exterior/savoye-3-exterior-cc0.jpg",
+      "local_sha256": "a3253847fe345dbd53aabcac24af953a06e795f1b0bef0e1bf93bbfc313f6c75",
+      "local_bytes": 1775497,
+      "source_status": "exact_remote_match",
+      "source_page_url": "https://commons.wikimedia.org/wiki/File:Savoye_3.JPG",
+      "remote_file_url": "https://upload.wikimedia.org/wikipedia/commons/e/ed/Savoye_3.JPG",
+      "remote_sha256": "a3253847fe345dbd53aabcac24af953a06e795f1b0bef0e1bf93bbfc313f6c75",
+      "remote_bytes": 1775497,
+      "source_title": "File:Savoye 3.JPG",
+      "creator": "Wasily",
+      "source_license": "CC0 1.0 Universal Public Domain Dedication",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "recommended_rights_status": "public_domain_candidate",
+      "public_ready": false,
+      "promotion_blocker": "human file-level rights review still required before changing public flags"
+    },
+    {
+      "file_id": "villa-savoye-exterior-loc-full",
+      "local_path": "public/archive-media/villa-savoye/exterior/villa-savoye-loc-exterior.jpg",
+      "local_sha256": "8d03cf5ec5ee76f6e95ad3d9a44443048feaf3952881ea175ec5ee73b0733daf",
+      "local_bytes": 99151,
+      "source_status": "exact_remote_match",
+      "source_page_url": "https://www.loc.gov/pictures/item/2020714937/",
+      "remote_file_url": "https://tile.loc.gov/storage-services/service/pnp/ppmsca/65100/65198v.jpg",
+      "remote_sha256": "8d03cf5ec5ee76f6e95ad3d9a44443048feaf3952881ea175ec5ee73b0733daf",
+      "remote_bytes": 99151,
+      "source_title": "[Villa Savoye, Poissey, France. Exterior]",
+      "creator": "Balthazar Korab",
+      "source_license": "Library of Congress rights advisory: no known restrictions on publication",
+      "license_url": "https://www.loc.gov/pictures/item/2020714937/",
+      "recommended_rights_status": "no_known_restrictions_candidate",
+      "public_ready": false,
+      "promotion_blocker": "LOC rights advisory is not a license grant; human review and attribution decision required"
+    },
+    {
+      "file_id": "villa-savoye-exterior-loc-crop",
+      "local_path": "public/archive-media/villa-savoye/exterior/villa-savoye-loc-exterior-crop.jpg",
+      "local_sha256": "0a183593549479ca8a77ac5b84ea518251776fca3deb0133f1dcebf9693b9270",
+      "local_bytes": 29345,
+      "source_status": "derived_candidate_from_loc_full",
+      "source_page_url": "https://www.loc.gov/pictures/item/2020714937/",
+      "remote_file_url": "https://tile.loc.gov/storage-services/service/pnp/ppmsca/65100/65198v.jpg",
+      "remote_sha256": "8d03cf5ec5ee76f6e95ad3d9a44443048feaf3952881ea175ec5ee73b0733daf",
+      "remote_bytes": 99151,
+      "source_title": "[Villa Savoye, Poissey, France. Exterior]",
+      "creator": "Balthazar Korab",
+      "source_license": "Library of Congress rights advisory: no known restrictions on publication",
+      "license_url": "https://www.loc.gov/pictures/item/2020714937/",
+      "recommended_rights_status": "derived_no_known_restrictions_candidate",
+      "public_ready": false,
+      "promotion_blocker": "local file is not an exact remote match; crop/derivative basis and attribution must be reviewed"
+    },
+    {
+      "file_id": "villa-savoye-interior-chaise-cc-by-sa",
+      "local_path": "public/archive-media/villa-savoye/interior/villa-savoye-chaise-longue-interior-cc-by-sa-2.jpg",
+      "local_sha256": "b1c707298c7863dc008a8de6e6992d40f437ff536ac9eb5c987825d04cb8c2c4",
+      "local_bytes": 2154227,
+      "source_status": "exact_remote_match",
+      "source_page_url": "https://commons.wikimedia.org/wiki/File:Villa_Savoye_(8237925975).jpg",
+      "remote_file_url": "https://upload.wikimedia.org/wikipedia/commons/e/ee/Villa_Savoye_%288237925975%29.jpg",
+      "remote_sha256": "b1c707298c7863dc008a8de6e6992d40f437ff536ac9eb5c987825d04cb8c2c4",
+      "remote_bytes": 2154227,
+      "source_title": "File:Villa Savoye (8237925975).jpg",
+      "creator": "jeanbaptisteparis",
+      "source_license": "Creative Commons Attribution-Share Alike 2.0 Generic",
+      "license_url": "https://creativecommons.org/licenses/by-sa/2.0/",
+      "recommended_rights_status": "licensed_candidate",
+      "public_ready": false,
+      "promotion_blocker": "requires attribution, license link, share-alike compatibility and modification review before public use"
+    },
+    {
+      "file_id": "villa-savoye-plan-ground-floor-svg",
+      "local_path": "public/archive-media/villa-savoye/plan/villa-savoye-ground-floor-diagram.svg",
+      "local_sha256": "1846db4e53d591d3eb099eb453ad5786ef26e077635ec05f10e5eca9519c730b",
+      "local_bytes": 4040,
+      "source_status": "no_file_level_source_identified",
+      "recommended_rights_status": "derived_asset_review_required",
+      "public_ready": false,
+      "promotion_blocker": "must confirm own analytical reconstruction versus protected plan reproduction"
+    },
+    {
+      "file_id": "villa-savoye-section-long-svg",
+      "local_path": "public/archive-media/villa-savoye/section/villa-savoye-long-section-diagram.svg",
+      "local_sha256": "83f2fd4d8e0a49d7291b53f74bc41f02ecbf9c764d62412447a90550f60ea0fd",
+      "local_bytes": 3439,
+      "source_status": "no_file_level_source_identified",
+      "recommended_rights_status": "derived_asset_review_required",
+      "public_ready": false,
+      "promotion_blocker": "must confirm own analytical reconstruction versus protected section reproduction"
+    },
+    {
+      "file_id": "villa-savoye-low-glb",
+      "local_path": "public/archive-models/villa-savoye/low.glb",
+      "local_sha256": "ea4e5187653def0f9abee3fa925ce0c479640ac3ebf78510eff21adef7d117aa",
+      "local_bytes": 39536,
+      "source_status": "no_file_level_source_identified",
+      "recommended_rights_status": "derived_asset_review_required",
+      "public_ready": false,
+      "promotion_blocker": "must attach model generation/build log and source-basis review"
+    }
+  ],
+  "next_actions": [
+    "Human-review the three exact remote matches and decide whether their attribution/license conditions are acceptable for public display.",
+    "Create attribution strings for Wasily/CC0, Balthazar Korab/LOC and jeanbaptisteparis/CC BY-SA 2.0 if promoted later.",
+    "Keep LOC crop, SVG plan, SVG section and GLB blocked until derivative/source-basis review is complete.",
+    "Do not set public_ready=true in this candidate manifest."
+  ]
+}

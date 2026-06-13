@@ -1,0 +1,94 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-13T16:59:12.592Z",
+  "candidate_path": "examples/kosmo-references/provenance/villa-savoye-file-rights-candidates-2026-06-13.json",
+  "inventory_path": "examples/kosmo-references/provenance/villa-savoye-file-level-provenance-2026-06-13.json",
+  "entry_id": "villa-savoye",
+  "status": "passed",
+  "summary": {
+    "files": 7,
+    "inventory_files": 7,
+    "exact_remote_matches": 3,
+    "derived_or_unmatched_files": 4,
+    "public_ready_files": 0,
+    "failures": 0,
+    "warnings": 0,
+    "source_status": {
+      "exact_remote_match": 3,
+      "derived_candidate_from_loc_full": 1,
+      "no_file_level_source_identified": 3
+    },
+    "recommended_rights_status": {
+      "public_domain_candidate": 1,
+      "no_known_restrictions_candidate": 1,
+      "derived_no_known_restrictions_candidate": 1,
+      "licensed_candidate": 1,
+      "derived_asset_review_required": 3
+    }
+  },
+  "files": [
+    {
+      "file_id": "villa-savoye-exterior-savoye-3-cc0",
+      "source_status": "exact_remote_match",
+      "recommended_rights_status": "public_domain_candidate",
+      "public_ready": false,
+      "has_source_page": true,
+      "exact_hash_match": true
+    },
+    {
+      "file_id": "villa-savoye-exterior-loc-full",
+      "source_status": "exact_remote_match",
+      "recommended_rights_status": "no_known_restrictions_candidate",
+      "public_ready": false,
+      "has_source_page": true,
+      "exact_hash_match": true
+    },
+    {
+      "file_id": "villa-savoye-exterior-loc-crop",
+      "source_status": "derived_candidate_from_loc_full",
+      "recommended_rights_status": "derived_no_known_restrictions_candidate",
+      "public_ready": false,
+      "has_source_page": true,
+      "exact_hash_match": false
+    },
+    {
+      "file_id": "villa-savoye-interior-chaise-cc-by-sa",
+      "source_status": "exact_remote_match",
+      "recommended_rights_status": "licensed_candidate",
+      "public_ready": false,
+      "has_source_page": true,
+      "exact_hash_match": true
+    },
+    {
+      "file_id": "villa-savoye-plan-ground-floor-svg",
+      "source_status": "no_file_level_source_identified",
+      "recommended_rights_status": "derived_asset_review_required",
+      "public_ready": false,
+      "has_source_page": false,
+      "exact_hash_match": false
+    },
+    {
+      "file_id": "villa-savoye-section-long-svg",
+      "source_status": "no_file_level_source_identified",
+      "recommended_rights_status": "derived_asset_review_required",
+      "public_ready": false,
+      "has_source_page": false,
+      "exact_hash_match": false
+    },
+    {
+      "file_id": "villa-savoye-low-glb",
+      "source_status": "no_file_level_source_identified",
+      "recommended_rights_status": "derived_asset_review_required",
+      "public_ready": false,
+      "has_source_page": false,
+      "exact_hash_match": false
+    }
+  ],
+  "failures": [],
+  "warnings": [],
+  "next_actions": [
+    "Human-review exact remote matches before changing any public flag.",
+    "Resolve derivative/source-basis blockers for crop, SVG and GLB files.",
+    "Regenerate this check after every rights-candidate edit."
+  ]
+}

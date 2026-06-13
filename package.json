@@ -107,6 +107,7 @@
     "kosmo:references-registry-check": "node scripts/kosmo-references-registry-check.mjs",
     "kosmo:references-provenance-check": "node scripts/kosmo-reference-provenance-check.mjs",
     "kosmo:reference-file-provenance-check": "node scripts/kosmo-reference-file-provenance-check.mjs",
+    "kosmo:reference-rights-candidate-check": "node scripts/kosmo-reference-rights-candidate-check.mjs",
     "kosmo:references-status-card": "node scripts/kosmo-reference-status-card.mjs",
     "kosmo:asset-generate-demo-glb": "node scripts/kosmo-asset-generate-demo-glb.mjs",
     "kosmo:asset-generate-demo-dxf": "node scripts/kosmo-asset-generate-demo-dxf.mjs",

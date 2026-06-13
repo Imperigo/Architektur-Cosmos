@@ -1,6 +1,6 @@
 # KosmoReferences File Provenance Check
 
-Generated: 2026-06-13T16:52:41.033Z
+Generated: 2026-06-13T16:59:12.608Z
 Inventory: `examples/kosmo-references/provenance/villa-savoye-file-level-provenance-2026-06-13.json`
 Entry: `villa-savoye`
 Status: `passed`
