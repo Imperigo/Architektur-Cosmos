@@ -1,0 +1,155 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-13T16:52:41.033Z",
+  "inventory_path": "examples/kosmo-references/provenance/villa-savoye-file-level-provenance-2026-06-13.json",
+  "entry_id": "villa-savoye",
+  "status": "passed",
+  "policy": {
+    "public_safe_rights": [
+      "own_work",
+      "licensed",
+      "public_domain"
+    ],
+    "rule": "Public-ready requires public-safe rights plus file-level source/creator/license review."
+  },
+  "summary": {
+    "files": 7,
+    "existing_files": 7,
+    "public_ready_files": 0,
+    "blocked_files": 7,
+    "failures": 0,
+    "warnings": 0,
+    "rights_status": {
+      "needs_file_level_review": 4,
+      "derived_asset_review_required": 3
+    },
+    "slots": {
+      "exterior": 3,
+      "interior": 1,
+      "plan": 1,
+      "section": 1,
+      "model": 1
+    }
+  },
+  "files": [
+    {
+      "id": "villa-savoye-exterior-savoye-3-cc0",
+      "slot": "exterior",
+      "path": "public/archive-media/villa-savoye/exterior/savoye-3-exterior-cc0.jpg",
+      "mime_type": "image/jpeg",
+      "bytes": 1775497,
+      "actual_bytes": 1775497,
+      "sha256": "a3253847fe345dbd53aabcac24af953a06e795f1b0bef0e1bf93bbfc313f6c75",
+      "actual_sha256": "a3253847fe345dbd53aabcac24af953a06e795f1b0bef0e1bf93bbfc313f6c75",
+      "exists": true,
+      "integrity": "pass",
+      "filename_rights_hint": "cc0",
+      "rights_status": "needs_file_level_review",
+      "public_ready": false,
+      "review_requirement_count": 4
+    },
+    {
+      "id": "villa-savoye-exterior-loc-crop",
+      "slot": "exterior",
+      "path": "public/archive-media/villa-savoye/exterior/villa-savoye-loc-exterior-crop.jpg",
+      "mime_type": "image/jpeg",
+      "bytes": 29345,
+      "actual_bytes": 29345,
+      "sha256": "0a183593549479ca8a77ac5b84ea518251776fca3deb0133f1dcebf9693b9270",
+      "actual_sha256": "0a183593549479ca8a77ac5b84ea518251776fca3deb0133f1dcebf9693b9270",
+      "exists": true,
+      "integrity": "pass",
+      "filename_rights_hint": "loc",
+      "rights_status": "needs_file_level_review",
+      "public_ready": false,
+      "review_requirement_count": 4
+    },
+    {
+      "id": "villa-savoye-exterior-loc-full",
+      "slot": "exterior",
+      "path": "public/archive-media/villa-savoye/exterior/villa-savoye-loc-exterior.jpg",
+      "mime_type": "image/jpeg",
+      "bytes": 99151,
+      "actual_bytes": 99151,
+      "sha256": "8d03cf5ec5ee76f6e95ad3d9a44443048feaf3952881ea175ec5ee73b0733daf",
+      "actual_sha256": "8d03cf5ec5ee76f6e95ad3d9a44443048feaf3952881ea175ec5ee73b0733daf",
+      "exists": true,
+      "integrity": "pass",
+      "filename_rights_hint": "loc",
+      "rights_status": "needs_file_level_review",
+      "public_ready": false,
+      "review_requirement_count": 3
+    },
+    {
+      "id": "villa-savoye-interior-chaise-cc-by-sa",
+      "slot": "interior",
+      "path": "public/archive-media/villa-savoye/interior/villa-savoye-chaise-longue-interior-cc-by-sa-2.jpg",
+      "mime_type": "image/jpeg",
+      "bytes": 2154227,
+      "actual_bytes": 2154227,
+      "sha256": "b1c707298c7863dc008a8de6e6992d40f437ff536ac9eb5c987825d04cb8c2c4",
+      "actual_sha256": "b1c707298c7863dc008a8de6e6992d40f437ff536ac9eb5c987825d04cb8c2c4",
+      "exists": true,
+      "integrity": "pass",
+      "filename_rights_hint": "cc-by-sa-2",
+      "rights_status": "needs_file_level_review",
+      "public_ready": false,
+      "review_requirement_count": 4
+    },
+    {
+      "id": "villa-savoye-plan-ground-floor-svg",
+      "slot": "plan",
+      "path": "public/archive-media/villa-savoye/plan/villa-savoye-ground-floor-diagram.svg",
+      "mime_type": "image/svg+xml",
+      "bytes": 4040,
+      "actual_bytes": 4040,
+      "sha256": "1846db4e53d591d3eb099eb453ad5786ef26e077635ec05f10e5eca9519c730b",
+      "actual_sha256": "1846db4e53d591d3eb099eb453ad5786ef26e077635ec05f10e5eca9519c730b",
+      "exists": true,
+      "integrity": "pass",
+      "filename_rights_hint": "own_or_generated_diagram_unknown",
+      "rights_status": "derived_asset_review_required",
+      "public_ready": false,
+      "review_requirement_count": 4
+    },
+    {
+      "id": "villa-savoye-section-long-svg",
+      "slot": "section",
+      "path": "public/archive-media/villa-savoye/section/villa-savoye-long-section-diagram.svg",
+      "mime_type": "image/svg+xml",
+      "bytes": 3439,
+      "actual_bytes": 3439,
+      "sha256": "83f2fd4d8e0a49d7291b53f74bc41f02ecbf9c764d62412447a90550f60ea0fd",
+      "actual_sha256": "83f2fd4d8e0a49d7291b53f74bc41f02ecbf9c764d62412447a90550f60ea0fd",
+      "exists": true,
+      "integrity": "pass",
+      "filename_rights_hint": "own_or_generated_diagram_unknown",
+      "rights_status": "derived_asset_review_required",
+      "public_ready": false,
+      "review_requirement_count": 4
+    },
+    {
+      "id": "villa-savoye-low-glb",
+      "slot": "model",
+      "path": "public/archive-models/villa-savoye/low.glb",
+      "mime_type": "model/gltf-binary",
+      "bytes": 39536,
+      "actual_bytes": 39536,
+      "sha256": "ea4e5187653def0f9abee3fa925ce0c479640ac3ebf78510eff21adef7d117aa",
+      "actual_sha256": "ea4e5187653def0f9abee3fa925ce0c479640ac3ebf78510eff21adef7d117aa",
+      "exists": true,
+      "integrity": "pass",
+      "filename_rights_hint": "generated_or_local_model_unknown",
+      "rights_status": "derived_asset_review_required",
+      "public_ready": false,
+      "review_requirement_count": 4
+    }
+  ],
+  "failures": [],
+  "warnings": [],
+  "next_actions": [
+    "Fill source URL, creator/license evidence and attribution decisions for candidate public images.",
+    "Keep derived diagrams and models blocked until their source basis and generation/build logs are reviewed.",
+    "Regenerate this check after every file-level provenance update."
+  ]
+}

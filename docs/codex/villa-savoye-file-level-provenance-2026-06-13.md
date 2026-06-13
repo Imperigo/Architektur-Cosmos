@@ -8,6 +8,8 @@ inventarisiert.
 ## Dateien
 
 - `examples/kosmo-references/provenance/villa-savoye-file-level-provenance-2026-06-13.json`
+- `examples/kosmo-references/provenance/villa-savoye-file-level-review/file-provenance-check.generated.json`
+- `examples/kosmo-references/provenance/villa-savoye-file-level-review/file-provenance-check.generated.md`
 
 ## Ergebnis
 
@@ -16,6 +18,7 @@ inventarisiert.
 - Modell: 1
 - Public-ready: 0
 - Blockiert: 7
+- Checker: `passed`, 0 Failures, 0 Warnings
 
 Slots:
 
@@ -44,3 +47,11 @@ Rechtefreigabe. Public-Promotion braucht file-level:
    Reproduktionen sind.
 3. Build-Log/Source-Basis fuer `low.glb` erfassen.
 4. Bis dahin alle sieben Dateien im Public-Gate blockiert lassen.
+
+## Check
+
+```bash
+npm run kosmo:reference-file-provenance-check -- \
+  --inventory examples/kosmo-references/provenance/villa-savoye-file-level-provenance-2026-06-13.json \
+  --out examples/kosmo-references/provenance/villa-savoye-file-level-review
+```
