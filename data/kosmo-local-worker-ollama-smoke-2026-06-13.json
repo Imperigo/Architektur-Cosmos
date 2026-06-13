@@ -1,21 +1,21 @@
 {
   "schema_version": "0.1",
-  "checked_at": "2026-06-13T18:23:41.677Z",
+  "checked_at": "2026-06-13T18:50:54.538Z",
   "status": "passed",
   "endpoint": "http://127.0.0.1:11434/api/generate",
   "model": "kosmo-qwen3-coder:30b-a3b-q4km",
-  "duration_ms": 2645,
+  "duration_ms": 2660,
   "checks": {
     "http_ok": true,
     "model_returned": true,
     "response_non_empty": true
   },
   "advisory_checks": {
-    "mentions_review_only": true,
-    "mentions_no_public_promotion": false
+    "mentions_review_only": false,
+    "mentions_no_public_promotion": true
   },
-  "response_length": 150,
-  "response_preview": "Die Architektur-Kosmos-Prüfung wurde erfolgreich abgeschlossen, wobei der lokale Mitarbeiter in einem vertraulichen Review-only-Zugang getestet wurde.",
+  "response_length": 207,
+  "response_preview": "Die Architektur-Kosmos-Prüfung wurde erfolgreich abgeschlossen, wobei der lokale Mitarbeiter in einem vertraulichen, nur für Überprüfungen bestimmten Rahmen arbeitete und keine öffentliche Werbung stattfand.",
   "policy": {
     "private_content_sent": false,
     "public_promotion": false,
