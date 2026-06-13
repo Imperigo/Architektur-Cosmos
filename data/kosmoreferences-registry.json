@@ -138,7 +138,7 @@
     "Find the real local book/ETH/HSLU library path.",
     "Privately extract and index the ArchitectureKosmos project-source package for local worker context.",
     "Add OCR/Vision/Layout extraction for scan, plan and map PDFs.",
-    "Resolve the Sogn draft-to-mock-entry bridge before relying on KosmoAsset context reports.",
+    "Promote Sogn from entry draft into the future canonical entry store when the data model is ready.",
     "Promote no public media until rights gates pass.",
     "Expose this registry in KosmoOrbit or Claude handoff views as a read-only data-lane map."
   ]

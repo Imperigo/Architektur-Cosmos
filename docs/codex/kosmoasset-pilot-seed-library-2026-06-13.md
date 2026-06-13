@@ -38,12 +38,13 @@ Resultat:
 - Status: `passed`
 - Assets: 6
 - Failures: 0
-- Warnings: 2
+- Warnings: 0
 - Public ready: 0
 
-Die zwei Warnungen betreffen Sogn Benedetg: Der neue Entry-Draft existiert, ist
-aber noch nicht im alten `data/mock-entries.json`-Set. Das ist ein Bridge-Gap,
-kein Grund fuer Public-Promotion.
+Der Asset-Checker erkennt inzwischen auch neue
+`examples/kosmo-references/entry-drafts/*.entry-draft.json`, deshalb ist Sogn
+Benedetg als KosmoData-Kontextziel aufgeloest, obwohl der alte
+`data/mock-entries.json`-Store noch nicht erweitert wurde.
 
 ## Registry / Provenance
 
@@ -58,6 +59,6 @@ Nach Regeneration:
 
 ## Naechster Schritt
 
-Sogn als echte KosmoData/KosmoReferences-Bruecke sauber in die Entry-/Mock- oder
-zukuenftige D1-Struktur ueberfuehren, bevor Asset-Kontextberichte fuer Sogn als
-vollstaendig gelten.
+Sogn spaeter aus dem Entry-Draft in die kanonische Entry-/D1-Struktur
+ueberfuehren. Bis dahin bleiben Draft-basierte Asset-Kontextberichte
+review-only.

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-13T16:45:50.703Z",
+  "generated_at": "2026-06-13T16:48:10.549Z",
   "generator": "kosmo-asset-library-check",
   "library_path": "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json",
   "library_id": "kosmoreferences-pilot-seed-library-2026-06-13",
@@ -23,7 +23,7 @@
     "public_ready_count": 0,
     "planned_only_count": 6,
     "failure_count": 0,
-    "warning_count": 2,
+    "warning_count": 0,
     "formats": {
       "material_json": 3,
       "svg": 2,
@@ -153,11 +153,11 @@
         {
           "kind": "reference_entry",
           "entry_id": "kapelle-sogn-benedetg",
-          "entry_title": null,
+          "entry_title": "Kapelle Sogn Benedetg",
           "relation": "material_context",
           "usage_policy": "derived_asset_review_required",
           "review_status": "needs_human_review",
-          "entry_exists": false
+          "entry_exists": true
         }
       ],
       "existing_format_count": 0,
@@ -196,11 +196,11 @@
         {
           "kind": "reference_entry",
           "entry_id": "kapelle-sogn-benedetg",
-          "entry_title": null,
+          "entry_title": "Kapelle Sogn Benedetg",
           "relation": "typology_context",
           "usage_policy": "context_only",
           "review_status": "context_only",
-          "entry_exists": false
+          "entry_exists": true
         }
       ],
       "existing_format_count": 0,
@@ -306,13 +306,8 @@
     }
   ],
   "failures": [],
-  "warnings": [
-    "sogn-benedetg-wood-shingle-material-001.kosmodata_refs[0] references unknown KosmoData entry: kapelle-sogn-benedetg",
-    "sogn-benedetg-light-band-detail-001.kosmodata_refs[0] references unknown KosmoData entry: kapelle-sogn-benedetg"
-  ],
+  "warnings": [],
   "next_actions": [
-    "Review warnings, especially private research, missing source entry links and planned export keys.",
-    "Generate or attach reviewed local files for planned-only assets.",
-    "Fix unknown KosmoData references before relying on asset/context bridge reports."
+    "Generate or attach reviewed local files for planned-only assets."
   ]
 }

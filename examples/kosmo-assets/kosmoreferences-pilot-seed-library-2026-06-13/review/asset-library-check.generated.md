@@ -1,7 +1,7 @@
 # KosmoAsset Library Check
 
 Library: `kosmoreferences-pilot-seed-library-2026-06-13`
-Generated: 2026-06-13T16:45:50.703Z
+Generated: 2026-06-13T16:48:10.549Z
 Status: `passed`
 
 This is a local review-only check. It does not upload assets, write D1/R2 or publish public downloads.
@@ -14,7 +14,7 @@ This is a local review-only check. It does not upload assets, write D1/R2 or pub
 - planned only: 6
 - KosmoData refs: 6
 - failures: 0
-- warnings: 2
+- warnings: 0
 
 ## Assets
 
@@ -33,8 +33,8 @@ This is a local review-only check. It does not upload assets, write D1/R2 or pub
 | --- | --- | --- | --- | --- |
 | Villa Savoye Concrete Frame Material Study | Villa Savoye | material_context | derived_asset_review_required | needs_human_review |
 | Villa Savoye Five Points Diagram Kit | Villa Savoye | typology_context | context_only | context_only |
-| Sogn Benedetg Wood Shingle Material Study | kapelle-sogn-benedetg | material_context | derived_asset_review_required | needs_human_review |
-| Sogn Benedetg Light Band Detail Study | kapelle-sogn-benedetg | typology_context | context_only | context_only |
+| Sogn Benedetg Wood Shingle Material Study | Kapelle Sogn Benedetg | material_context | derived_asset_review_required | needs_human_review |
+| Sogn Benedetg Light Band Detail Study | Kapelle Sogn Benedetg | typology_context | context_only | context_only |
 | Ingenbohl Mineral Pigment Material Study | Alterszentrum Kloster Ingenbohl | material_context | derived_asset_review_required | needs_human_review |
 | Ingenbohl Concrete Core and Frame Study | Alterszentrum Kloster Ingenbohl | model_context | derived_asset_review_required | needs_human_review |
 
@@ -44,11 +44,8 @@ This is a local review-only check. It does not upload assets, write D1/R2 or pub
 
 ## Warnings
 
-- sogn-benedetg-wood-shingle-material-001.kosmodata_refs[0] references unknown KosmoData entry: kapelle-sogn-benedetg
-- sogn-benedetg-light-band-detail-001.kosmodata_refs[0] references unknown KosmoData entry: kapelle-sogn-benedetg
+- None.
 
 ## Next Actions
 
-- Review warnings, especially private research, missing source entry links and planned export keys.
 - Generate or attach reviewed local files for planned-only assets.
-- Fix unknown KosmoData references before relying on asset/context bridge reports.

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { dirname, relative, resolve } from 'node:path';
 
@@ -9,6 +9,7 @@ const args = parseArgs(process.argv.slice(2));
 const libraryPath = resolve(root, args.library || 'examples/kosmo-assets/kosmo-asset-demo/library.json');
 const libraryRoot = dirname(libraryPath);
 const entriesPath = resolve(root, 'data/mock-entries.json');
+const entryDraftsDir = resolve(root, 'examples/kosmo-references/entry-drafts');
 const outputJsonPath = resolve(libraryRoot, args.output || 'review/asset-library-check.generated.json');
 const outputMdPath = resolve(libraryRoot, args.markdown || 'review/asset-library-check.generated.md');
 
@@ -321,14 +322,36 @@ function readJson(pathname) {
 }
 
 function loadKosmoDataEntries() {
-  if (!existsSync(entriesPath)) return new Map();
-  const entries = readJson(entriesPath);
   const rows = new Map();
-  for (const entry of Array.isArray(entries) ? entries : []) {
-    if (entry.id) rows.set(entry.id, entry);
-    if (entry.slug) rows.set(entry.slug, entry);
+
+  if (existsSync(entriesPath)) {
+    const entries = readJson(entriesPath);
+    for (const entry of Array.isArray(entries) ? entries : []) {
+      addEntry(rows, entry);
+    }
   }
+
+  if (existsSync(entryDraftsDir)) {
+    const draftFiles = readdirSync(entryDraftsDir)
+      .filter((filename) => filename.endsWith('.entry-draft.json'))
+      .sort();
+    for (const filename of draftFiles) {
+      const draft = readJson(resolve(entryDraftsDir, filename));
+      addEntry(rows, {
+        ...draft,
+        source: 'kosmoreferences_entry_draft',
+        entry_draft_path: `examples/kosmo-references/entry-drafts/${filename}`
+      }, { overwrite: false });
+    }
+  }
+
   return rows;
+}
+
+function addEntry(rows, entry, options = {}) {
+  if (!entry || typeof entry !== 'object') return;
+  if (entry.id && (options.overwrite || !rows.has(entry.id))) rows.set(entry.id, entry);
+  if (entry.slug && (options.overwrite || !rows.has(entry.slug))) rows.set(entry.slug, entry);
 }
 
 function escapePipe(value) {
