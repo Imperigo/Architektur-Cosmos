@@ -1,7 +1,7 @@
 # KosmoAsset Full Review
 
 Library: `kosmoreferences-pilot-seed-library-2026-06-13`
-Generated: 2026-06-13T18:23:45.471Z
+Generated: 2026-06-13T18:32:10.183Z
 Status: `asset_full_review_ready_for_human_decisions`
 
 Review-only evening batch. This command runs the local KosmoAsset review chain and does not upload, publish, write D1/R2 or approve public use.

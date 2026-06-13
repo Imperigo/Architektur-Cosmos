@@ -1,12 +1,12 @@
 # KosmoData Lane Sweep
 
-Generated: 2026-06-13T18:23:45.717Z
+Generated: 2026-06-13T18:32:10.423Z
 Status: `kosmodata_lane_sweep_review_only_passed`
 
 ## Summary
 
 - Steps passed: 3/3
-- Duration: 14958ms
+- Duration: 12672ms
 - KosmoReferences: passed_review_only (10/10)
 - References public-ready assets: 0
 - References owner pending: 10
@@ -24,9 +24,9 @@ Status: `kosmodata_lane_sweep_review_only_passed`
 
 | Step | Status | Duration | Report |
 | --- | --- | ---: | --- |
-| KosmoReferences Nightly Gate | passed | 11168ms | `data/kosmoreferences-nightly-gate-2026-06-13.json` |
+| KosmoReferences Nightly Gate | passed | 8889ms | `data/kosmoreferences-nightly-gate-2026-06-13.json` |
 | KosmoAsset Seed Full Review | passed | 3553ms | `examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-full-review.generated.json` |
-| Human Decision Queue | passed | 236ms | `data/kosmo-human-decision-queue-2026-06-13.json` |
+| Human Decision Queue | passed | 229ms | `data/kosmo-human-decision-queue-2026-06-13.json` |
 
 ## Next Actions
 
