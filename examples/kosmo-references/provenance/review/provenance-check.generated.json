@@ -1,0 +1,424 @@
+{
+  "checked_at": "2026-06-13T16:21:35.188Z",
+  "registry_path": "data/kosmoreferences-registry.json",
+  "status": "passed",
+  "policy": {
+    "public_safe_rights": [
+      "own_work",
+      "licensed",
+      "public_domain"
+    ],
+    "review_rights": [
+      "link_only",
+      "private_research",
+      "needs_permission",
+      "needs_review",
+      "generated_needs_review",
+      "derived_asset_review_required",
+      "file_level_review_required",
+      "review_only"
+    ],
+    "rule": "Public promotion requires public_safe rights, file-level provenance and explicit public flag."
+  },
+  "summary": {
+    "entry_drafts": 3,
+    "asset_libraries": 1,
+    "library_assets": 5,
+    "public_ready_assets": 0,
+    "blocked_public_promotions": 26,
+    "failures": 0,
+    "warnings": 0
+  },
+  "entry_drafts": [
+    {
+      "id": "kapelle-sogn-benedetg",
+      "title": "Kapelle Sogn Benedetg",
+      "path": "examples/kosmo-references/entry-drafts/kapelle-sogn-benedetg.entry-draft.json",
+      "public_ready": false,
+      "source_package_id": "kapelle-sogn-benedetg-public-source-candidate-2026-06-13",
+      "media": [
+        {
+          "entry_id": "kapelle-sogn-benedetg",
+          "type": "exterior",
+          "label": "Exterior placeholder",
+          "rights_status": "link_only",
+          "credit": "link_only_until_review",
+          "public_ready": false,
+          "public_blocked": true,
+          "reason": "review-only, link-only or missing public-safe file-level rights"
+        },
+        {
+          "entry_id": "kapelle-sogn-benedetg",
+          "type": "interior",
+          "label": "Interior placeholder",
+          "rights_status": "link_only",
+          "credit": "link_only_until_review",
+          "public_ready": false,
+          "public_blocked": true,
+          "reason": "review-only, link-only or missing public-safe file-level rights"
+        },
+        {
+          "entry_id": "kapelle-sogn-benedetg",
+          "type": "section",
+          "label": "Section placeholder",
+          "rights_status": "generated_needs_review",
+          "credit": "generated_needs_review",
+          "public_ready": false,
+          "public_blocked": true,
+          "reason": "review-only, link-only or missing public-safe file-level rights"
+        },
+        {
+          "entry_id": "kapelle-sogn-benedetg",
+          "type": "plan",
+          "label": "Plan placeholder",
+          "rights_status": "generated_needs_review",
+          "credit": "generated_needs_review",
+          "public_ready": false,
+          "public_blocked": true,
+          "reason": "review-only, link-only or missing public-safe file-level rights"
+        }
+      ],
+      "asset_candidates": [
+        {
+          "entry_id": "kapelle-sogn-benedetg",
+          "title": "Holzschindel-Huelle material study",
+          "kind": "material",
+          "rights_status": "generated_needs_review",
+          "planned_r2_key": "entries/kapelle-sogn-benedetg/assets/materials/holzschindel-study.placeholder.json",
+          "public_ready": false,
+          "public_blocked": true,
+          "reason": "not public-safe; keep as review-only candidate"
+        },
+        {
+          "entry_id": "kapelle-sogn-benedetg",
+          "title": "Teardrop plan geometry study",
+          "kind": "component",
+          "rights_status": "generated_needs_review",
+          "planned_r2_key": "entries/kapelle-sogn-benedetg/assets/geometry/teardrop-plan-study.placeholder.json",
+          "public_ready": false,
+          "public_blocked": true,
+          "reason": "not public-safe; keep as review-only candidate"
+        },
+        {
+          "entry_id": "kapelle-sogn-benedetg",
+          "title": "Light band and timber interior study",
+          "kind": "detail",
+          "rights_status": "generated_needs_review",
+          "planned_r2_key": "entries/kapelle-sogn-benedetg/assets/details/light-band-timber-study.placeholder.json",
+          "public_ready": false,
+          "public_blocked": true,
+          "reason": "not public-safe; keep as review-only candidate"
+        }
+      ],
+      "blocked_media_count": 4,
+      "blocked_asset_candidate_count": 3
+    },
+    {
+      "id": "alterszentrum-kloster-ingenbohl",
+      "title": "Alterszentrum Kloster Ingenbohl",
+      "path": "examples/kosmo-references/entry-drafts/alterszentrum-kloster-ingenbohl.entry-draft.json",
+      "public_ready": false,
+      "source_package_id": "alterszentrum-kloster-ingenbohl-public-source-candidate-2026-06-13",
+      "media": [
+        {
+          "entry_id": "alterszentrum-kloster-ingenbohl",
+          "type": "exterior",
+          "label": "Exterior placeholder",
+          "rights_status": "link_only",
+          "credit": "link_only_until_review",
+          "public_ready": false,
+          "public_blocked": true,
+          "reason": "review-only, link-only or missing public-safe file-level rights"
+        },
+        {
+          "entry_id": "alterszentrum-kloster-ingenbohl",
+          "type": "interior",
+          "label": "Interior placeholder",
+          "rights_status": "link_only",
+          "credit": "link_only_until_review",
+          "public_ready": false,
+          "public_blocked": true,
+          "reason": "review-only, link-only or missing public-safe file-level rights"
+        },
+        {
+          "entry_id": "alterszentrum-kloster-ingenbohl",
+          "type": "section",
+          "label": "Section placeholder",
+          "rights_status": "generated_needs_review",
+          "credit": "generated_needs_review",
+          "public_ready": false,
+          "public_blocked": true,
+          "reason": "review-only, link-only or missing public-safe file-level rights"
+        },
+        {
+          "entry_id": "alterszentrum-kloster-ingenbohl",
+          "type": "plan",
+          "label": "Plan placeholder",
+          "rights_status": "generated_needs_review",
+          "credit": "generated_needs_review",
+          "public_ready": false,
+          "public_blocked": true,
+          "reason": "review-only, link-only or missing public-safe file-level rights"
+        }
+      ],
+      "asset_candidates": [
+        {
+          "entry_id": "alterszentrum-kloster-ingenbohl",
+          "title": "Ingenbohl mineral/timber facade material study",
+          "kind": "material",
+          "rights_status": "generated_needs_review",
+          "planned_r2_key": "entries/alterszentrum-kloster-ingenbohl/assets/materials/mineral-timber-facade-study.placeholder.json",
+          "public_ready": false,
+          "public_blocked": true,
+          "reason": "not public-safe; keep as review-only candidate"
+        },
+        {
+          "entry_id": "alterszentrum-kloster-ingenbohl",
+          "title": "Concrete frame and core structure study",
+          "kind": "component",
+          "rights_status": "generated_needs_review",
+          "planned_r2_key": "entries/alterszentrum-kloster-ingenbohl/assets/structure/concrete-frame-core-study.placeholder.json",
+          "public_ready": false,
+          "public_blocked": true,
+          "reason": "not public-safe; keep as review-only candidate"
+        },
+        {
+          "entry_id": "alterszentrum-kloster-ingenbohl",
+          "title": "Monastery-courtyard relation diagram",
+          "kind": "diagram",
+          "rights_status": "generated_needs_review",
+          "planned_r2_key": "entries/alterszentrum-kloster-ingenbohl/assets/diagrams/monastery-courtyard-relation.placeholder.json",
+          "public_ready": false,
+          "public_blocked": true,
+          "reason": "not public-safe; keep as review-only candidate"
+        }
+      ],
+      "blocked_media_count": 4,
+      "blocked_asset_candidate_count": 3
+    },
+    {
+      "id": "villa-savoye",
+      "title": "Villa Savoye",
+      "path": "examples/kosmo-references/entry-drafts/villa-savoye.entry-draft.json",
+      "public_ready": false,
+      "source_package_id": "villa-savoye-public-source-candidate-2026-06-13",
+      "media": [
+        {
+          "entry_id": "villa-savoye",
+          "type": "exterior",
+          "label": "Exterior review slot",
+          "rights_status": "file_level_review_required",
+          "credit": "file_level_review_required",
+          "public_ready": false,
+          "public_blocked": true,
+          "reason": "review-only, link-only or missing public-safe file-level rights"
+        },
+        {
+          "entry_id": "villa-savoye",
+          "type": "interior",
+          "label": "Interior review slot",
+          "rights_status": "file_level_review_required",
+          "credit": "file_level_review_required",
+          "public_ready": false,
+          "public_blocked": true,
+          "reason": "review-only, link-only or missing public-safe file-level rights"
+        },
+        {
+          "entry_id": "villa-savoye",
+          "type": "section",
+          "label": "Section review slot",
+          "rights_status": "derived_asset_review_required",
+          "credit": "derived_asset_review_required",
+          "public_ready": false,
+          "public_blocked": true,
+          "reason": "review-only, link-only or missing public-safe file-level rights"
+        },
+        {
+          "entry_id": "villa-savoye",
+          "type": "plan",
+          "label": "Plan review slot",
+          "rights_status": "derived_asset_review_required",
+          "credit": "derived_asset_review_required",
+          "public_ready": false,
+          "public_blocked": true,
+          "reason": "review-only, link-only or missing public-safe file-level rights"
+        }
+      ],
+      "asset_candidates": [
+        {
+          "entry_id": "villa-savoye",
+          "title": "Villa Savoye ground-floor vector plan review slot",
+          "kind": "vector_plan",
+          "rights_status": "derived_asset_review_required",
+          "planned_r2_key": "entries/villa-savoye/assets/plans/ground-floor-vector-review.placeholder.json",
+          "public_ready": false,
+          "public_blocked": true,
+          "reason": "not public-safe; keep as review-only candidate"
+        },
+        {
+          "entry_id": "villa-savoye",
+          "title": "Villa Savoye structure/free-plan model layer review slot",
+          "kind": "model",
+          "rights_status": "derived_asset_review_required",
+          "planned_r2_key": "entries/villa-savoye/assets/models/structure-free-plan-review.placeholder.json",
+          "public_ready": false,
+          "public_blocked": true,
+          "reason": "not public-safe; keep as review-only candidate"
+        },
+        {
+          "entry_id": "villa-savoye",
+          "title": "Five-points analytical diagram slot",
+          "kind": "diagram",
+          "rights_status": "generated_needs_review",
+          "planned_r2_key": "entries/villa-savoye/assets/diagrams/five-points-analysis.placeholder.json",
+          "public_ready": false,
+          "public_blocked": true,
+          "reason": "not public-safe; keep as review-only candidate"
+        }
+      ],
+      "blocked_media_count": 4,
+      "blocked_asset_candidate_count": 3
+    }
+  ],
+  "library_assets": [
+    {
+      "library_id": "codex-pilot-library",
+      "id": "villa-savoye-plan-vector-001",
+      "title": "Villa Savoye Ground Floor Vector Plan",
+      "source_entry_id": "villa-savoye",
+      "rights_status": "private_research",
+      "license": "review_only",
+      "review_status": "draft",
+      "public_use_allowed": false,
+      "local_only": true,
+      "public_safe_rights": false,
+      "public_ready": false,
+      "public_blocked": true,
+      "local_file_missing": [],
+      "formats": [
+        {
+          "format": "svg",
+          "status": "exists",
+          "path": "../../../public/archive-media/villa-savoye/plan/villa-savoye-ground-floor-diagram.svg",
+          "planned_r2_key": null,
+          "exists": true
+        }
+      ],
+      "reason": "asset is local-review-only or lacks public-safe file-level rights"
+    },
+    {
+      "library_id": "codex-pilot-library",
+      "id": "villa-savoye-low-glb-001",
+      "title": "Villa Savoye Low GLB Reference Model",
+      "source_entry_id": "villa-savoye",
+      "rights_status": "private_research",
+      "license": "review_only",
+      "review_status": "draft",
+      "public_use_allowed": false,
+      "local_only": true,
+      "public_safe_rights": false,
+      "public_ready": false,
+      "public_blocked": true,
+      "local_file_missing": [],
+      "formats": [
+        {
+          "format": "glb",
+          "status": "exists",
+          "path": "../../../public/archive-models/villa-savoye/low.glb",
+          "planned_r2_key": null,
+          "exists": true
+        }
+      ],
+      "reason": "asset is local-review-only or lacks public-safe file-level rights"
+    },
+    {
+      "library_id": "codex-pilot-library",
+      "id": "ingenbohl-mineral-timber-material-001",
+      "title": "Ingenbohl Mineral Timber Facade Material Study",
+      "source_entry_id": "alterszentrum-kloster-ingenbohl",
+      "rights_status": "generated_needs_review",
+      "license": "review_only",
+      "review_status": "planned",
+      "public_use_allowed": false,
+      "local_only": true,
+      "public_safe_rights": false,
+      "public_ready": false,
+      "public_blocked": true,
+      "local_file_missing": [],
+      "formats": [
+        {
+          "format": "material_json",
+          "status": "planned",
+          "path": null,
+          "planned_r2_key": "assets/codex-pilot-library/ingenbohl-mineral-timber-material-001/material.json",
+          "exists": false
+        }
+      ],
+      "reason": "asset is local-review-only or lacks public-safe file-level rights"
+    },
+    {
+      "library_id": "codex-pilot-library",
+      "id": "villa-savoye-pilotis-detail-001",
+      "title": "Villa Savoye Pilotis Detail Slot",
+      "source_entry_id": null,
+      "rights_status": "generated_needs_review",
+      "license": "review_only",
+      "review_status": "planned",
+      "public_use_allowed": false,
+      "local_only": true,
+      "public_safe_rights": false,
+      "public_ready": false,
+      "public_blocked": true,
+      "local_file_missing": [],
+      "formats": [
+        {
+          "format": "dxf",
+          "status": "planned",
+          "path": null,
+          "planned_r2_key": "assets/codex-pilot-library/villa-savoye-pilotis-detail-001/pilotis-detail.dxf",
+          "exists": false
+        },
+        {
+          "format": "svg",
+          "status": "planned",
+          "path": null,
+          "planned_r2_key": "assets/codex-pilot-library/villa-savoye-pilotis-detail-001/pilotis-detail.svg",
+          "exists": false
+        }
+      ],
+      "reason": "asset is local-review-only or lacks public-safe file-level rights"
+    },
+    {
+      "library_id": "codex-pilot-library",
+      "id": "kosmoreferences-blender-archicad-profile-001",
+      "title": "KosmoReferences Blender/ArchiCAD Layer Profile",
+      "source_entry_id": null,
+      "rights_status": "own_work",
+      "license": "internal_review",
+      "review_status": "draft",
+      "public_use_allowed": false,
+      "local_only": true,
+      "public_safe_rights": true,
+      "public_ready": false,
+      "public_blocked": true,
+      "local_file_missing": [],
+      "formats": [
+        {
+          "format": "json",
+          "status": "planned",
+          "path": null,
+          "planned_r2_key": "assets/codex-pilot-library/kosmoreferences-blender-archicad-profile-001/profile.json",
+          "exists": false
+        }
+      ],
+      "reason": "asset is local-review-only or lacks public-safe file-level rights"
+    }
+  ],
+  "failures": [],
+  "warnings": [],
+  "next_actions": [
+    "Keep all review-only drafts out of public publishing until file-level rights are verified.",
+    "Run separate provenance review before promoting Villa Savoye local media, plan vectors or GLB models.",
+    "Use this report as a KosmoOrbit read-only rights/provenance status card."
+  ]
+}
