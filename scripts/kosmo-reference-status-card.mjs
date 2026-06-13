@@ -12,6 +12,7 @@ const privateLibraryPath = resolve(root, readArg('--private-library') ?? 'data/k
 const modelBridgePath = resolve(root, readArg('--model-bridge') ?? 'examples/kosmo-references/provenance/model-provenance-bridge-2026-06-13.json');
 const modelPromotionPath = resolve(root, readArg('--model-promotion') ?? 'examples/kosmo-references/provenance/model-promotion-dry-run-2026-06-13.json');
 const ownerReviewPath = resolve(root, readArg('--owner-review') ?? 'examples/kosmo-references/provenance/owner-review-decision-pack-2026-06-13-review/owner-review-decision-check.generated.json');
+const localWorkerSmokePath = resolve(root, readArg('--local-worker-smoke') ?? 'data/kosmo-local-worker-ollama-smoke-2026-06-13.json');
 const outputPath = resolve(root, readArg('--out') ?? 'data/kosmoreferences-data-lane-status.json');
 const markdownPath = outputPath.replace(/\.json$/, '.md');
 
@@ -29,7 +30,8 @@ async function main() {
     privateLibrary: readOptionalJson(privateLibraryPath),
     modelBridge: readOptionalJson(modelBridgePath),
     modelPromotion: readOptionalJson(modelPromotionPath),
-    ownerReview: readOptionalJson(ownerReviewPath)
+    ownerReview: readOptionalJson(ownerReviewPath),
+    localWorkerSmoke: readOptionalJson(localWorkerSmokePath)
   });
 
   await mkdir(dirname(outputPath), { recursive: true });
@@ -48,6 +50,7 @@ async function main() {
   console.log(`Blocked public promotions: ${status.summary.blocked_public_promotions}`);
   console.log(`Owner review: ${status.extended_checks.owner_review.status}`);
   console.log(`Private library: ${status.extended_checks.private_library.status}`);
+  console.log(`Local worker: ${status.extended_checks.local_worker.status}`);
   console.log(`Wrote: ${relative(root, outputPath)}`);
 }
 
@@ -61,6 +64,7 @@ function buildStatus(registry, provenance, extra) {
   const modelReview = summarizeModelReview(extra.modelBridge);
   const modelPromotion = summarizeModelPromotion(extra.modelPromotion);
   const ownerReview = summarizeOwnerReview(extra.ownerReview);
+  const localWorker = summarizeLocalWorker(extra.localWorkerSmoke);
 
   const pilots = (registry.reference_pilots ?? []).map((pilot) => {
     const entry = entryById.get(pilot.id);
@@ -110,7 +114,8 @@ function buildStatus(registry, provenance, extra) {
       private_library: relative(root, privateLibraryPath),
       model_bridge: relative(root, modelBridgePath),
       model_promotion: relative(root, modelPromotionPath),
-      owner_review: relative(root, ownerReviewPath)
+      owner_review: relative(root, ownerReviewPath),
+      local_worker_smoke: relative(root, localWorkerSmokePath)
     },
     summary: {
       pilots: pilots.length,
@@ -127,7 +132,10 @@ function buildStatus(registry, provenance, extra) {
       private_library_book_like_files: privateLibrary.book_like_files,
       model_review_average: modelReview.average_score,
       owner_review_decision_items: ownerReview.decision_items,
-      owner_review_public_ready_now: ownerReview.public_ready_now
+      owner_review_public_ready_now: ownerReview.public_ready_now,
+      local_worker_status: localWorker.status,
+      local_worker_model: localWorker.model,
+      local_worker_duration_ms: localWorker.duration_ms
     },
     checks: {
       registry: 'passed',
@@ -140,7 +148,8 @@ function buildStatus(registry, provenance, extra) {
       private_library: privateLibrary,
       model_review: modelReview,
       model_promotion: modelPromotion,
-      owner_review: ownerReview
+      owner_review: ownerReview,
+      local_worker: localWorker
     },
     pilots,
     worker_guidance: [
@@ -180,6 +189,7 @@ function renderMarkdown(status) {
   lines.push(`- Model review average: ${status.summary.model_review_average}`);
   lines.push(`- Owner-review decisions: ${status.summary.owner_review_decision_items}`);
   lines.push(`- Owner-review public-ready now: ${status.summary.owner_review_public_ready_now}`);
+  lines.push(`- Local worker: ${status.summary.local_worker_status} (${status.summary.local_worker_model}, ${status.summary.local_worker_duration_ms}ms)`);
   lines.push('');
   lines.push('## Pilots');
   lines.push('');
@@ -289,6 +299,17 @@ function summarizeOwnerReview(report) {
     failures: report?.summary?.failures ?? 0,
     warnings: report?.summary?.warnings ?? 0,
     auto_promote_allowed: report?.policy?.auto_promote_allowed ?? false
+  };
+}
+
+function summarizeLocalWorker(report) {
+  return {
+    status: report?.status ?? 'missing_report',
+    model: report?.model ?? null,
+    duration_ms: report?.duration_ms ?? null,
+    endpoint: report?.endpoint ?? null,
+    private_content_sent: report?.policy?.private_content_sent ?? null,
+    public_promotion: report?.policy?.public_promotion ?? null
   };
 }
 

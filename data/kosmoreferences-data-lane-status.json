@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-13T17:37:49.970Z",
+  "generated_at": "2026-06-13T17:45:53.707Z",
   "status": "passed_review_only",
   "source_paths": {
     "registry": "data/kosmoreferences-registry.json",
@@ -9,7 +9,8 @@
     "private_library": "data/kosmoreferences-private-library-diagnostic-2026-06-13.json",
     "model_bridge": "examples/kosmo-references/provenance/model-provenance-bridge-2026-06-13.json",
     "model_promotion": "examples/kosmo-references/provenance/model-promotion-dry-run-2026-06-13.json",
-    "owner_review": "examples/kosmo-references/provenance/owner-review-decision-pack-2026-06-13-review/owner-review-decision-check.generated.json"
+    "owner_review": "examples/kosmo-references/provenance/owner-review-decision-pack-2026-06-13-review/owner-review-decision-check.generated.json",
+    "local_worker_smoke": "data/kosmo-local-worker-ollama-smoke-2026-06-13.json"
   },
   "summary": {
     "pilots": 3,
@@ -26,7 +27,10 @@
     "private_library_book_like_files": 39,
     "model_review_average": 96,
     "owner_review_decision_items": 10,
-    "owner_review_public_ready_now": 0
+    "owner_review_public_ready_now": 0,
+    "local_worker_status": "passed",
+    "local_worker_model": "kosmo-qwen3-coder:30b-a3b-q4km",
+    "local_worker_duration_ms": 528
   },
   "checks": {
     "registry": "passed",
@@ -78,6 +82,14 @@
       "failures": 0,
       "warnings": 0,
       "auto_promote_allowed": false
+    },
+    "local_worker": {
+      "status": "passed",
+      "model": "kosmo-qwen3-coder:30b-a3b-q4km",
+      "duration_ms": 528,
+      "endpoint": "http://127.0.0.1:11434/api/generate",
+      "private_content_sent": false,
+      "public_promotion": false
     }
   },
   "pilots": [

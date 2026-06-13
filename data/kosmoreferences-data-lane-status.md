@@ -1,6 +1,6 @@
 # KosmoReferences Data-Lane Status
 
-Generated: 2026-06-13T17:37:49.970Z
+Generated: 2026-06-13T17:45:53.707Z
 Status: `passed_review_only`
 
 ## Summary
@@ -17,6 +17,7 @@ Status: `passed_review_only`
 - Model review average: 96
 - Owner-review decisions: 10
 - Owner-review public-ready now: 0
+- Local worker: passed (kosmo-qwen3-coder:30b-a3b-q4km, 528ms)
 
 ## Pilots
 
