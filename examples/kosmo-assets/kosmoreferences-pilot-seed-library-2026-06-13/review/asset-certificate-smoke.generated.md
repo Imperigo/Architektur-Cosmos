@@ -2,7 +2,7 @@
 
 Asset: `villa-savoye-concrete-frame-material-001`
 Route: `blender`
-Generated: 2026-06-13T18:10:34.995Z
+Generated: 2026-06-13T18:15:52.114Z
 Status: `asset_certificate_smoke_passed`
 
 This smoke test creates temporary local review evidence, verifies the certificate gate, then removes the temporary decision and certificate files. It does not upload, publish, write D1/R2 or mutate the asset library.

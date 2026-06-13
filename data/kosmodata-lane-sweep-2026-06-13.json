@@ -1,0 +1,66 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-13T18:15:52.363Z",
+  "status": "kosmodata_lane_sweep_review_only_passed",
+  "policy": {
+    "review_only": true,
+    "public_writes_allowed": false,
+    "public_ready_required": 0,
+    "asset_public_downloads_allowed": false,
+    "note": "This sweep orchestrates existing KosmoReferences and KosmoAsset gates. It does not approve, promote, upload or publish assets."
+  },
+  "summary": {
+    "duration_ms": 14877,
+    "steps": 2,
+    "passed_steps": 2,
+    "failed_steps": 0,
+    "references_status": "passed_review_only",
+    "references_steps": 10,
+    "references_passed_steps": 10,
+    "references_public_ready_assets": 0,
+    "references_owner_pending": 10,
+    "references_private_library": "small_workflow_mirror_visible",
+    "asset_status": "asset_full_review_ready_for_human_decisions",
+    "asset_steps": 10,
+    "asset_passed_steps": 10,
+    "asset_open_human_reviews": 6,
+    "asset_public_ready_count": 0,
+    "asset_promotion_allowed": false,
+    "asset_promotion_blockers": 18
+  },
+  "reports": {
+    "references_gate": "data/kosmoreferences-nightly-gate-2026-06-13.json",
+    "references_status": "data/kosmoreferences-data-lane-status.json",
+    "asset_full_review": "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-full-review.generated.json"
+  },
+  "steps": [
+    {
+      "id": "kosmoreferences_nightly_gate",
+      "label": "KosmoReferences Nightly Gate",
+      "command": "npm run kosmo:references-nightly-gate",
+      "report": "data/kosmoreferences-nightly-gate-2026-06-13.json",
+      "started_at": "2026-06-13T18:15:37.486Z",
+      "duration_ms": 11329,
+      "exit_code": 0,
+      "status": "passed",
+      "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:references-nightly-gate\n> node scripts/kosmo-references-nightly-gate.mjs\n\nKosmoReferences nightly gate\nStatus: passed_review_only\nSteps: 10/10 passed\nSource packages with links: 3\nPublic-ready assets: 0\nOwner session: passed_pending_owner_input\nWrote: data/kosmoreferences-nightly-gate-2026-06-13.json"
+    },
+    {
+      "id": "kosmoasset_seed_full_review",
+      "label": "KosmoAsset Seed Full Review",
+      "command": "npm run kosmo:asset-full-review -- --library examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json",
+      "report": "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-full-review.generated.json",
+      "started_at": "2026-06-13T18:15:48.815Z",
+      "duration_ms": 3547,
+      "exit_code": 0,
+      "status": "passed",
+      "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:asset-full-review\n> node scripts/kosmo-asset-full-review.mjs --library examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json\n\nKosmoAsset full review\nLibrary: examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json\nStatus: asset_full_review_ready_for_human_decisions\nSteps: 10/10 passed\nOpen human reviews: 6\nBlocked routes: 1\nWrote: examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-full-review.generated.md"
+    }
+  ],
+  "next_actions": [
+    "Owner resolves 10 KosmoReferences decisions before public promotion review.",
+    "Complete 6 KosmoAsset human reviews before local approvals or sandbox certificates.",
+    "Expose or mount the real large private book/ETH/HSLU library root.",
+    "Keep public-ready assets at 0 until separate owner and promotion reviews pass."
+  ]
+}

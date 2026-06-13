@@ -1,7 +1,7 @@
 # KosmoAsset Promotion Guard
 
 Library: `kosmoreferences-pilot-seed-library-2026-06-13`
-Generated: 2026-06-13T18:10:35.229Z
+Generated: 2026-06-13T18:15:52.342Z
 Status: `asset_promotion_guard_blocked`
 
 Promotion guard. This report does not promote assets, upload files, write D1/R2, open public downloads or mutate the library.
