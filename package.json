@@ -120,6 +120,8 @@
     "kosmo:source-root-decision-session-create": "node scripts/kosmo-source-root-decision-session-create.mjs",
     "kosmo:source-root-decision-session-check": "node scripts/kosmo-source-root-decision-session-check.mjs",
     "kosmo:private-source-inventory-plan": "node scripts/kosmo-private-source-inventory-plan.mjs",
+    "kosmo:private-inventory-output-template": "node scripts/kosmo-private-inventory-output-template.mjs",
+    "kosmo:private-inventory-output-check": "node scripts/kosmo-private-inventory-output-check.mjs",
     "kosmo:local-worker-ollama-smoke": "node scripts/kosmo-local-worker-ollama-smoke.mjs",
     "kosmo:local-worker-output-review": "node scripts/kosmo-local-worker-output-review.mjs",
     "kosmo:pilot-evidence-matrix": "node scripts/kosmoreferences-pilot-evidence-matrix.mjs",

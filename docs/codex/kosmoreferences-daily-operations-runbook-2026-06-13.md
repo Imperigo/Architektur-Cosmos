@@ -40,7 +40,9 @@ This runbook is the daily execution order for the KosmoReferences/KosmoAsset dat
    - Source Root Locator;
    - Source Root Selection Brief;
    - Source Root Decision Session Check;
-   - Private Source Inventory Plan.
+   - Private Source Inventory Plan;
+   - Private Inventory Output Template;
+   - Private Inventory Output Check.
 
 4. Open the generated report:
 
@@ -78,6 +80,7 @@ Use the result as the current read-only status:
 - `source_root_owner_selection_needed` means Sogn private inventory, Ingenbohl private PDF extraction and source-dependent asset authoring stay blocked until owner/overseer selects the real private source root.
 - `passed_pending_owner_input` on the Source Root Decision Session means no private diagnostic is allowed yet.
 - `private_metadata_inventory_blocked` means the inventory sequence is prepared but must not run before a passing recorded source-root decision.
+- `private_inventory_output_contract_passed` means the empty output template is structurally safe; real private outputs must still be checked before handoff.
 
 Then continue with one of these safe work types:
 
@@ -114,7 +117,14 @@ Before any private source inventory or source-dependent asset authoring:
    npm run kosmo:private-source-inventory-plan
    ```
 
-7. Only then open a private metadata-only inventory task under KosmoZentrale.
+7. Create/check the private inventory output contract:
+
+   ```bash
+   npm run kosmo:private-inventory-output-template
+   npm run kosmo:private-inventory-output-check -- --inventory "<private-inventory-json>"
+   ```
+
+8. Only then open a private metadata-only inventory task under KosmoZentrale.
 
 Until this happens, keep blocked:
 

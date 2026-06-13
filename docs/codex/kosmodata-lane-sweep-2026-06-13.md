@@ -1,12 +1,12 @@
 # KosmoData Lane Sweep
 
-Generated: 2026-06-13T20:06:07.356Z
+Generated: 2026-06-13T20:13:33.836Z
 Status: `kosmodata_lane_sweep_review_only_passed`
 
 ## Summary
 
-- Steps passed: 13/13
-- Duration: 14226ms
+- Steps passed: 15/15
+- Duration: 15401ms
 - KosmoReferences: passed_review_only (10/10)
 - References public-ready assets: 0
 - References owner pending: 10
@@ -58,24 +58,32 @@ Status: `kosmodata_lane_sweep_review_only_passed`
 - Private source inventory plan: private_metadata_inventory_blocked
 - Private source inventory allowed: no
 - Private source inventory public-ready after plan: 0
+- Private inventory template: private_inventory_template_only
+- Private inventory template pilots: 3
+- Private inventory template public-ready after inventory: 0
+- Private inventory output check: private_inventory_output_contract_passed
+- Private inventory output check pilots: 3
+- Private inventory output check failures/public-ready hits: 0/0
 
 ## Steps
 
 | Step | Status | Duration | Report |
 | --- | --- | ---: | --- |
-| KosmoReferences Nightly Gate | passed | 7965ms | `data/kosmoreferences-nightly-gate-2026-06-13.json` |
+| KosmoReferences Nightly Gate | passed | 8674ms | `data/kosmoreferences-nightly-gate-2026-06-13.json` |
 | KosmoAsset Seed Full Review | passed | 3541ms | `examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-full-review.generated.json` |
-| Human Decision Queue | passed | 235ms | `data/kosmo-human-decision-queue-2026-06-13.json` |
-| Owner Decision Batches | passed | 231ms | `data/kosmo-human-decision-owner-batches-2026-06-13.json` |
+| Human Decision Queue | passed | 233ms | `data/kosmo-human-decision-queue-2026-06-13.json` |
+| Owner Decision Batches | passed | 233ms | `data/kosmo-human-decision-owner-batches-2026-06-13.json` |
 | Local Worker Output Review | passed | 236ms | `data/kosmo-local-worker-output-review-2026-06-13.json` |
-| Pilot Evidence Matrix | passed | 235ms | `data/kosmoreferences-pilot-evidence-matrix-2026-06-13.json` |
-| Villa Savoye Provenance Review Brief | passed | 246ms | `data/villa-savoye-provenance-review-brief-2026-06-13.json` |
+| Pilot Evidence Matrix | passed | 237ms | `data/kosmoreferences-pilot-evidence-matrix-2026-06-13.json` |
+| Villa Savoye Provenance Review Brief | passed | 233ms | `data/villa-savoye-provenance-review-brief-2026-06-13.json` |
 | Ingenbohl PDF Extraction Brief | passed | 234ms | `data/ingenbohl-pdf-extraction-decision-brief-2026-06-13.json` |
-| Sogn Benedetg Source-Root Brief | passed | 235ms | `data/sogn-benedetg-source-root-decision-brief-2026-06-13.json` |
-| Source Root Locator | passed | 366ms | `data/kosmo-source-root-locator-2026-06-13.json` |
-| Source Root Selection Brief | passed | 237ms | `data/kosmo-source-root-selection-brief-2026-06-13.json` |
-| Source Root Decision Session Check | passed | 230ms | `data/kosmo-source-root-decision-session-check-2026-06-13.json` |
-| Private Source Inventory Plan | passed | 232ms | `data/kosmo-private-source-inventory-plan-2026-06-13.json` |
+| Sogn Benedetg Source-Root Brief | passed | 232ms | `data/sogn-benedetg-source-root-decision-brief-2026-06-13.json` |
+| Source Root Locator | passed | 368ms | `data/kosmo-source-root-locator-2026-06-13.json` |
+| Source Root Selection Brief | passed | 233ms | `data/kosmo-source-root-selection-brief-2026-06-13.json` |
+| Source Root Decision Session Check | passed | 243ms | `data/kosmo-source-root-decision-session-check-2026-06-13.json` |
+| Private Source Inventory Plan | passed | 233ms | `data/kosmo-private-source-inventory-plan-2026-06-13.json` |
+| Private Inventory Output Template | passed | 237ms | `examples/kosmo-references/private-inventory/private-inventory-output-template-2026-06-13.json` |
+| Private Inventory Output Check | passed | 230ms | `data/kosmo-private-inventory-output-check-2026-06-13.json` |
 
 ## Next Actions
 
@@ -90,6 +98,7 @@ Status: `kosmodata_lane_sweep_review_only_passed`
 - Use the source-root selection brief before any private inventory or source-dependent authoring.
 - Record the source-root decision session before any private diagnostic.
 - Use the private source inventory plan only as a blocked next-step contract until source-root selection passes.
+- Validate any future private inventory JSON with npm run kosmo:private-inventory-output-check before handoff.
 - Expose or mount the real large private book/ETH/HSLU library root.
 - Resolve 30 OneDrive sync error marker files before treating the visible mirror as complete.
 - Keep public-ready assets at 0 until separate owner and promotion reviews pass.
