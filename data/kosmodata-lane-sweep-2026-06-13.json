@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-13T21:06:10.769Z",
+  "generated_at": "2026-06-13T21:10:54.823Z",
   "status": "kosmodata_lane_sweep_review_only_passed",
   "policy": {
     "review_only": true,
@@ -10,9 +10,9 @@
     "note": "This sweep orchestrates existing KosmoReferences and KosmoAsset gates. It does not approve, promote, upload or publish assets."
   },
   "summary": {
-    "duration_ms": 15845,
-    "steps": 22,
-    "passed_steps": 22,
+    "duration_ms": 15700,
+    "steps": 23,
+    "passed_steps": 23,
     "failed_steps": 0,
     "references_status": "passed_review_only",
     "references_steps": 10,
@@ -111,7 +111,12 @@
     "owner_question_brief_check_status": "owner_question_brief_guard_passed",
     "owner_question_brief_check_failures": 0,
     "owner_question_brief_check_warnings": 0,
-    "owner_question_brief_check_public_ready_after": 0
+    "owner_question_brief_check_public_ready_after": 0,
+    "owner_review_packet_status": "owner_review_packet_ready",
+    "owner_review_packet_questions": 6,
+    "owner_review_packet_filled_answers": 0,
+    "owner_review_packet_planned_edits": 0,
+    "owner_review_packet_public_ready_after": 0
   },
   "reports": {
     "references_gate": "data/kosmoreferences-nightly-gate-2026-06-13.json",
@@ -136,7 +141,8 @@
     "owner_answer_intake_check": "data/kosmo-owner-answer-intake-check-2026-06-13.json",
     "owner_answer_session_edit_plan": "data/kosmo-owner-answer-session-edit-plan-2026-06-13.json",
     "owner_question_brief": "data/kosmo-owner-question-brief-2026-06-13.json",
-    "owner_question_brief_check": "data/kosmo-owner-question-brief-check-2026-06-13.json"
+    "owner_question_brief_check": "data/kosmo-owner-question-brief-check-2026-06-13.json",
+    "owner_review_packet": "data/kosmo-owner-review-packet-2026-06-13.json"
   },
   "steps": [
     {
@@ -144,8 +150,8 @@
       "label": "KosmoReferences Nightly Gate",
       "command": "npm run kosmo:references-nightly-gate",
       "report": "data/kosmoreferences-nightly-gate-2026-06-13.json",
-      "started_at": "2026-06-13T21:05:54.924Z",
-      "duration_ms": 7492,
+      "started_at": "2026-06-13T21:10:39.123Z",
+      "duration_ms": 7209,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:references-nightly-gate\n> node scripts/kosmo-references-nightly-gate.mjs\n\nKosmoReferences nightly gate\nStatus: passed_review_only\nSteps: 10/10 passed\nSource packages with links: 3\nPublic-ready assets: 0\nOwner session: passed_pending_owner_input\nWrote: data/kosmoreferences-nightly-gate-2026-06-13.json"
@@ -155,8 +161,8 @@
       "label": "KosmoAsset Seed Full Review",
       "command": "npm run kosmo:asset-full-review -- --library examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json",
       "report": "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-full-review.generated.json",
-      "started_at": "2026-06-13T21:06:02.416Z",
-      "duration_ms": 3528,
+      "started_at": "2026-06-13T21:10:46.332Z",
+      "duration_ms": 3509,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:asset-full-review\n> node scripts/kosmo-asset-full-review.mjs --library examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json\n\nKosmoAsset full review\nLibrary: examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json\nStatus: asset_full_review_ready_for_human_decisions\nSteps: 10/10 passed\nOpen human reviews: 6\nBlocked routes: 1\nWrote: examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-full-review.generated.md"
@@ -166,8 +172,8 @@
       "label": "Human Decision Queue",
       "command": "npm run kosmo:human-decision-queue",
       "report": "data/kosmo-human-decision-queue-2026-06-13.json",
-      "started_at": "2026-06-13T21:06:05.944Z",
-      "duration_ms": 236,
+      "started_at": "2026-06-13T21:10:49.841Z",
+      "duration_ms": 230,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:human-decision-queue\n> node scripts/kosmo-human-decision-queue.mjs\n\nKosmo human decision queue\nStatus: human_decision_queue_open\nItems: 16/16 open\nReferences: 10\nAssets: 6\nWrote: docs/codex/kosmo-human-decision-queue-2026-06-13.md"
@@ -177,8 +183,8 @@
       "label": "Owner Decision Batches",
       "command": "npm run kosmo:human-decision-owner-batches",
       "report": "data/kosmo-human-decision-owner-batches-2026-06-13.json",
-      "started_at": "2026-06-13T21:06:06.180Z",
-      "duration_ms": 235,
+      "started_at": "2026-06-13T21:10:50.071Z",
+      "duration_ms": 229,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:human-decision-owner-batches\n> node scripts/kosmo-human-decision-owner-batches.mjs\n\nKosmo human decision owner batches\nStatus: owner_decision_batches_open\nBatches: 5/5 open\nItems: 16/16 open\nWrote: docs/codex/kosmo-human-decision-owner-batches-2026-06-13.md"
@@ -188,7 +194,7 @@
       "label": "Local Worker Output Review",
       "command": "npm run kosmo:local-worker-output-review",
       "report": "data/kosmo-local-worker-output-review-2026-06-13.json",
-      "started_at": "2026-06-13T21:06:06.415Z",
+      "started_at": "2026-06-13T21:10:50.300Z",
       "duration_ms": 230,
       "exit_code": 0,
       "status": "passed",
@@ -199,19 +205,19 @@
       "label": "Pilot Evidence Matrix",
       "command": "npm run kosmo:pilot-evidence-matrix",
       "report": "data/kosmoreferences-pilot-evidence-matrix-2026-06-13.json",
-      "started_at": "2026-06-13T21:06:06.645Z",
-      "duration_ms": 234,
+      "started_at": "2026-06-13T21:10:50.530Z",
+      "duration_ms": 231,
       "exit_code": 0,
       "status": "passed",
-      "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:pilot-evidence-matrix\n> node scripts/kosmoreferences-pilot-evidence-matrix.mjs\n\nKosmoReferences pilot evidence matrix\nStatus: pilot_evidence_matrix_review_only\nPilots: 3\nGaps: 12\nData lane: 21/21\nWrote: docs/codex/kosmoreferences-pilot-evidence-matrix-2026-06-13.md"
+      "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:pilot-evidence-matrix\n> node scripts/kosmoreferences-pilot-evidence-matrix.mjs\n\nKosmoReferences pilot evidence matrix\nStatus: pilot_evidence_matrix_review_only\nPilots: 3\nGaps: 12\nData lane: 22/22\nWrote: docs/codex/kosmoreferences-pilot-evidence-matrix-2026-06-13.md"
     },
     {
       "id": "villa_provenance_review_brief",
       "label": "Villa Savoye Provenance Review Brief",
       "command": "npm run kosmo:villa-provenance-brief",
       "report": "data/villa-savoye-provenance-review-brief-2026-06-13.json",
-      "started_at": "2026-06-13T21:06:06.879Z",
-      "duration_ms": 232,
+      "started_at": "2026-06-13T21:10:50.761Z",
+      "duration_ms": 236,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:villa-provenance-brief\n> node scripts/kosmo-villa-provenance-review-brief.mjs\n\nVilla Savoye provenance review brief\nStatus: villa_provenance_review_brief_ready\nCandidates: 3\nBlocked: 4\nWrote: docs/codex/villa-savoye-provenance-review-brief-2026-06-13.md"
@@ -221,8 +227,8 @@
       "label": "Ingenbohl PDF Extraction Brief",
       "command": "npm run kosmo:ingenbohl-pdf-brief",
       "report": "data/ingenbohl-pdf-extraction-decision-brief-2026-06-13.json",
-      "started_at": "2026-06-13T21:06:07.111Z",
-      "duration_ms": 227,
+      "started_at": "2026-06-13T21:10:50.997Z",
+      "duration_ms": 230,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:ingenbohl-pdf-brief\n> node scripts/kosmo-ingenbohl-pdf-extraction-brief.mjs\n\nIngenbohl PDF extraction decision brief\nStatus: ingenbohl_pdf_extraction_decision_needed\nPDF links: 1\nWrote: docs/codex/ingenbohl-pdf-extraction-decision-brief-2026-06-13.md"
@@ -232,8 +238,8 @@
       "label": "Sogn Benedetg Source-Root Brief",
       "command": "npm run kosmo:sogn-source-root-brief",
       "report": "data/sogn-benedetg-source-root-decision-brief-2026-06-13.json",
-      "started_at": "2026-06-13T21:06:07.338Z",
-      "duration_ms": 231,
+      "started_at": "2026-06-13T21:10:51.227Z",
+      "duration_ms": 234,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:sogn-source-root-brief\n> node scripts/kosmo-sogn-source-root-decision-brief.mjs\n\nSogn Benedetg source-root decision brief\nStatus: sogn_source_root_decision_needed\nPublic links: 4\nLocal files: 0\nWrote: docs/codex/sogn-benedetg-source-root-decision-brief-2026-06-13.md"
@@ -243,8 +249,8 @@
       "label": "Source Root Locator",
       "command": "npm run kosmo:source-root-locator",
       "report": "data/kosmo-source-root-locator-2026-06-13.json",
-      "started_at": "2026-06-13T21:06:07.569Z",
-      "duration_ms": 378,
+      "started_at": "2026-06-13T21:10:51.461Z",
+      "duration_ms": 372,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:source-root-locator\n> node scripts/kosmo-source-root-locator.mjs\n\nKosmo source-root locator\nStatus: source_root_candidates_need_owner_selection\nCandidates: 708\nProbable libraries: 0\nWorkflow mirrors: 64\nWrote: docs/codex/kosmo-source-root-locator-2026-06-13.md"
@@ -254,8 +260,8 @@
       "label": "Source Root Selection Brief",
       "command": "npm run kosmo:source-root-selection-brief",
       "report": "data/kosmo-source-root-selection-brief-2026-06-13.json",
-      "started_at": "2026-06-13T21:06:07.947Z",
-      "duration_ms": 235,
+      "started_at": "2026-06-13T21:10:51.833Z",
+      "duration_ms": 232,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:source-root-selection-brief\n> node scripts/kosmo-source-root-selection-brief.mjs\n\nKosmo source-root selection brief\nStatus: source_root_owner_selection_needed\nOptions: 10\nWrote: docs/codex/kosmo-source-root-selection-brief-2026-06-13.md"
@@ -265,8 +271,8 @@
       "label": "Source Root Decision Session Check",
       "command": "npm run kosmo:source-root-decision-session-check",
       "report": "data/kosmo-source-root-decision-session-check-2026-06-13.json",
-      "started_at": "2026-06-13T21:06:08.182Z",
-      "duration_ms": 231,
+      "started_at": "2026-06-13T21:10:52.065Z",
+      "duration_ms": 232,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:source-root-decision-session-check\n> node scripts/kosmo-source-root-decision-session-check.mjs\n\nKosmo source-root decision session check\nSession: examples/kosmo-references/provenance/source-root-decision-session-2026-06-13.json\nStatus: passed_pending_owner_input\nSelected decision: pending\nSelected root exists: false\nPrivate diagnostic allowed: false\nPublic-ready after session: 0\nFailures: 0\nWarnings: 0\nWrote: docs/codex/kosmo-source-root-decision-session-check-2026-06-13.md"
@@ -276,8 +282,8 @@
       "label": "Private Source Inventory Plan",
       "command": "npm run kosmo:private-source-inventory-plan",
       "report": "data/kosmo-private-source-inventory-plan-2026-06-13.json",
-      "started_at": "2026-06-13T21:06:08.413Z",
-      "duration_ms": 234,
+      "started_at": "2026-06-13T21:10:52.297Z",
+      "duration_ms": 224,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:private-source-inventory-plan\n> node scripts/kosmo-private-source-inventory-plan.mjs\n\nKosmo private source inventory plan\nStatus: private_metadata_inventory_blocked\nPrivate diagnostic allowed: false\nPublic-ready after plan: 0\nWrote: docs/codex/kosmo-private-source-inventory-plan-2026-06-13.md"
@@ -287,8 +293,8 @@
       "label": "Private Inventory Output Template",
       "command": "npm run kosmo:private-inventory-output-template",
       "report": "examples/kosmo-references/private-inventory/private-inventory-output-template-2026-06-13.json",
-      "started_at": "2026-06-13T21:06:08.647Z",
-      "duration_ms": 233,
+      "started_at": "2026-06-13T21:10:52.521Z",
+      "duration_ms": 229,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:private-inventory-output-template\n> node scripts/kosmo-private-inventory-output-template.mjs\n\nKosmo private inventory output template\nStatus: private_inventory_template_only\nPilots: 3\nWrote: examples/kosmo-references/private-inventory/private-inventory-output-template-2026-06-13.json\nWrote: docs/codex/kosmo-private-inventory-output-template-2026-06-13.md"
@@ -298,8 +304,8 @@
       "label": "Private Inventory Output Check",
       "command": "npm run kosmo:private-inventory-output-check",
       "report": "data/kosmo-private-inventory-output-check-2026-06-13.json",
-      "started_at": "2026-06-13T21:06:08.880Z",
-      "duration_ms": 243,
+      "started_at": "2026-06-13T21:10:52.750Z",
+      "duration_ms": 229,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:private-inventory-output-check\n> node scripts/kosmo-private-inventory-output-check.mjs\n\nKosmo private inventory output check\nInventory: examples/kosmo-references/private-inventory/private-inventory-output-template-2026-06-13.json\nStatus: private_inventory_output_contract_passed\nPilots: 3\nPublic-ready hits: 0\nForbidden field hits: 0\nLong string hits: 0\nFailures: 0\nWarnings: 0\nWrote: docs/codex/kosmo-private-inventory-output-check-2026-06-13.md"
@@ -309,8 +315,8 @@
       "label": "Owner Answer Sheet",
       "command": "npm run kosmo:owner-answer-sheet",
       "report": "data/kosmo-owner-answer-sheet-2026-06-13.json",
-      "started_at": "2026-06-13T21:06:09.123Z",
-      "duration_ms": 245,
+      "started_at": "2026-06-13T21:10:52.979Z",
+      "duration_ms": 229,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:owner-answer-sheet\n> node scripts/kosmo-owner-answer-sheet.mjs\n\nKosmo owner answer sheet\nStatus: owner_answer_sheet_ready\nOwner cards: 5/16\nSource-root options: 10\nWrote: docs/codex/kosmo-owner-answer-sheet-2026-06-13.md"
@@ -320,7 +326,7 @@
       "label": "Owner Answer Sheet Check",
       "command": "npm run kosmo:owner-answer-sheet-check",
       "report": "data/kosmo-owner-answer-sheet-check-2026-06-13.json",
-      "started_at": "2026-06-13T21:06:09.368Z",
+      "started_at": "2026-06-13T21:10:53.208Z",
       "duration_ms": 231,
       "exit_code": 0,
       "status": "passed",
@@ -331,8 +337,8 @@
       "label": "Owner Answer Intake Template",
       "command": "npm run kosmo:owner-answer-intake-template",
       "report": "examples/kosmo-references/provenance/owner-answer-intake-template-2026-06-13.json",
-      "started_at": "2026-06-13T21:06:09.599Z",
-      "duration_ms": 234,
+      "started_at": "2026-06-13T21:10:53.439Z",
+      "duration_ms": 228,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:owner-answer-intake-template\n> node scripts/kosmo-owner-answer-intake-template.mjs\n\nKosmo owner answer intake template\nStatus: owner_answer_intake_template_pending_owner_input\nOwner cards: 5\nReference decisions: 10\nWrote: docs/codex/kosmo-owner-answer-intake-template-2026-06-13.md"
@@ -342,8 +348,8 @@
       "label": "Owner Answer Intake Check",
       "command": "npm run kosmo:owner-answer-intake-check",
       "report": "data/kosmo-owner-answer-intake-check-2026-06-13.json",
-      "started_at": "2026-06-13T21:06:09.833Z",
-      "duration_ms": 235,
+      "started_at": "2026-06-13T21:10:53.667Z",
+      "duration_ms": 232,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:owner-answer-intake-check\n> node scripts/kosmo-owner-answer-intake-check.mjs\n\nKosmo owner answer intake check\nStatus: owner_answer_intake_guard_passed_pending_owner_input\nFilled answers: 0\nFailures: 0\nWarnings: 0\nWrote: docs/codex/kosmo-owner-answer-intake-check-2026-06-13.md"
@@ -353,8 +359,8 @@
       "label": "Owner Answer Session Edit Plan",
       "command": "npm run kosmo:owner-answer-session-edit-plan",
       "report": "data/kosmo-owner-answer-session-edit-plan-2026-06-13.json",
-      "started_at": "2026-06-13T21:06:10.068Z",
-      "duration_ms": 233,
+      "started_at": "2026-06-13T21:10:53.899Z",
+      "duration_ms": 229,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:owner-answer-session-edit-plan\n> node scripts/kosmo-owner-answer-session-edit-plan.mjs\n\nKosmo owner answer session edit plan\nStatus: owner_answer_session_edit_plan_pending_owner_input\nPlanned edits: 0\nWrote: docs/codex/kosmo-owner-answer-session-edit-plan-2026-06-13.md"
@@ -364,8 +370,8 @@
       "label": "Owner Question Brief",
       "command": "npm run kosmo:owner-question-brief",
       "report": "data/kosmo-owner-question-brief-2026-06-13.json",
-      "started_at": "2026-06-13T21:06:10.301Z",
-      "duration_ms": 233,
+      "started_at": "2026-06-13T21:10:54.128Z",
+      "duration_ms": 232,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:owner-question-brief\n> node scripts/kosmo-owner-question-brief.mjs\n\nKosmo owner question brief\nStatus: owner_question_brief_ready\nQuestions: 6\nWrote: docs/codex/kosmo-owner-question-brief-2026-06-13.md"
@@ -375,11 +381,22 @@
       "label": "Owner Question Brief Check",
       "command": "npm run kosmo:owner-question-brief-check",
       "report": "data/kosmo-owner-question-brief-check-2026-06-13.json",
-      "started_at": "2026-06-13T21:06:10.534Z",
-      "duration_ms": 232,
+      "started_at": "2026-06-13T21:10:54.360Z",
+      "duration_ms": 229,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:owner-question-brief-check\n> node scripts/kosmo-owner-question-brief-check.mjs\n\nKosmo owner question brief check\nStatus: owner_question_brief_guard_passed\nFailures: 0\nWarnings: 0\nWrote: docs/codex/kosmo-owner-question-brief-check-2026-06-13.md"
+    },
+    {
+      "id": "owner_review_packet",
+      "label": "Owner Review Packet",
+      "command": "npm run kosmo:owner-review-packet",
+      "report": "data/kosmo-owner-review-packet-2026-06-13.json",
+      "started_at": "2026-06-13T21:10:54.589Z",
+      "duration_ms": 231,
+      "exit_code": 0,
+      "status": "passed",
+      "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:owner-review-packet\n> node scripts/kosmo-owner-review-packet.mjs\n\nKosmo owner review packet\nStatus: owner_review_packet_ready\nQuestions: 6\nFilled answers: 0\nPlanned edits: 0\nWrote: docs/codex/kosmo-owner-review-packet-2026-06-13.md"
     }
   ],
   "next_actions": [
@@ -402,6 +419,7 @@
     "Session edit plan is ready and waiting for non-empty checked owner intake.",
     "Use the owner question brief for the next 6 owner questions.",
     "Owner question brief guard passed; present questions without treating answers as decisions.",
+    "Use the owner review packet as the single entry point for the next owner review round.",
     "Expose or mount the real large private book/ETH/HSLU library root.",
     "Resolve 30 OneDrive sync error marker files before treating the visible mirror as complete.",
     "Keep public-ready assets at 0 until separate owner and promotion reviews pass."

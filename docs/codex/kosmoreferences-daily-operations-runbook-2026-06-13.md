@@ -49,7 +49,8 @@ This runbook is the daily execution order for the KosmoReferences/KosmoAsset dat
    - Owner Answer Intake Check;
    - Owner Answer Session Edit Plan;
    - Owner Question Brief;
-   - Owner Question Brief Check.
+   - Owner Question Brief Check;
+   - Owner Review Packet.
 
 4. Open the generated report:
 
@@ -172,24 +173,34 @@ This runbook is the daily execution order for the KosmoReferences/KosmoAsset dat
 
    - `docs/codex/kosmo-owner-question-brief-check-2026-06-13.md`
 
-28. If a narrow rerun is needed, run the KosmoReferences Nightly Gate:
+28. Generate the owner review packet:
+
+   ```bash
+   npm run kosmo:owner-review-packet
+   ```
+
+29. Open the generated packet:
+
+   - `docs/codex/kosmo-owner-review-packet-2026-06-13.md`
+
+30. If a narrow rerun is needed, run the KosmoReferences Nightly Gate:
 
    ```bash
    npm run kosmo:references-nightly-gate
    ```
 
-29. Open the generated reports:
+31. Open the generated reports:
 
    - `docs/codex/kosmoreferences-nightly-gate-2026-06-13.md`
    - `data/kosmoreferences-data-lane-status.md`
 
-30. If a narrow asset rerun is needed, run the KosmoAsset seed full review:
+32. If a narrow asset rerun is needed, run the KosmoAsset seed full review:
 
    ```bash
    npm run kosmo:asset-full-review -- --library examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json
    ```
 
-31. Open the generated report:
+33. Open the generated report:
 
    - `examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-full-review.generated.md`
 
@@ -217,6 +228,7 @@ Use the result as the current read-only status:
 - `owner_answer_session_edit_plan_pending_owner_input` means the edit-plan layer is ready, but no session edit is planned until checked owner intake exists.
 - `owner_question_brief_ready` means the next owner-facing question block is ready; it still records no decisions.
 - `owner_question_brief_guard_passed` means the owner-facing question block matches the answer-sheet source and is safe to present.
+- `owner_review_packet_ready` means the owner-facing brief, guards, intake and edit-plan references are bundled into one entry point.
 
 Then continue with one of these safe work types:
 

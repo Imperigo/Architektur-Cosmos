@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-13T21:06:19.775Z",
+  "generated_at": "2026-06-13T21:11:05.055Z",
   "status": "night_loop_guarded_ready",
   "policy": {
     "review_only": true,
@@ -16,8 +16,8 @@
   ],
   "summary": {
     "data_lane_status": "kosmodata_lane_sweep_review_only_passed",
-    "data_lane_steps": "22/22",
-    "data_lane_duration_ms": 15845,
+    "data_lane_steps": "23/23",
+    "data_lane_duration_ms": 15700,
     "router_status": "worker_router_guarded_review_only",
     "owner_brief_status": "owner_next_review_brief_open",
     "owner_open_batches": 5,
