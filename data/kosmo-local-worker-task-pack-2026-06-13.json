@@ -1,0 +1,104 @@
+{
+  "schema_version": "0.1",
+  "created_at": "2026-06-13",
+  "status": "ready_for_local_review",
+  "title": "Kosmo Local Worker Task Pack",
+  "target_worker": "kosmo-odysseus-local-llm",
+  "doctrine_ref": "data/kosmoreferences-worker-doctrine-2026-06-13.json",
+  "source_package_ref": "examples/kosmo-references/source-packages/architecturekosmos-private-project-sources-2026-06-13/source-package.json",
+  "private_context_paths": [
+    "/mnt/data/ArchitekturKosmos/KosmoZentrale/sources/private-extracts/architecturekosmos-private-project-sources-2026-06-13/architecture-cosmos-vision-document.md",
+    "/mnt/data/ArchitekturKosmos/KosmoZentrale/sources/private-extracts/architecturekosmos-private-project-sources-2026-06-13/architekturkosmos-ai-workflow-pipeline.md"
+  ],
+  "output_root": "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-local-worker-2026-06-13",
+  "global_rules": [
+    "Operate in private_research mode by default.",
+    "Never write public-ready=true.",
+    "Never claim rights or license status beyond the provided metadata.",
+    "Keep source quotes short and only in private outputs; public/repo outputs must be own-written summaries.",
+    "Every output must include source references, confidence and open questions.",
+    "Do not overwrite source files.",
+    "Do not push to Git or write cloud/R2/D1 state; hand outputs to Codex/Claude."
+  ],
+  "tasks": [
+    {
+      "task_id": "kosmo-private-doctrine-summary",
+      "priority": 1,
+      "lane": "kosmoreferences",
+      "input_refs": [
+        "data/kosmoreferences-worker-doctrine-2026-06-13.json",
+        "private_context_paths"
+      ],
+      "output_path": "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-local-worker-2026-06-13/doctrine-summary.private.md",
+      "objective": "Create a concise private summary of ArchitectureKosmos intent, worker hierarchy, data-lane rules and rights boundaries.",
+      "acceptance": [
+        "No copied long passages.",
+        "Mentions that public promotion is blocked without file-level provenance.",
+        "Separates KosmoReferences from KosmoAsset."
+      ]
+    },
+    {
+      "task_id": "kosmo-reference-pilot-gap-map",
+      "priority": 2,
+      "lane": "kosmoreferences",
+      "input_refs": [
+        "data/kosmoreferences-registry.json",
+        "examples/kosmo-references/entry-drafts/villa-savoye.entry-draft.json",
+        "examples/kosmo-references/entry-drafts/kapelle-sogn-benedetg.entry-draft.json",
+        "examples/kosmo-references/entry-drafts/alterszentrum-kloster-ingenbohl.entry-draft.json"
+      ],
+      "output_path": "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-local-worker-2026-06-13/reference-pilot-gap-map.private.json",
+      "objective": "List missing evidence, media, plan, material, structure, model and rights gaps for the three reference pilots.",
+      "acceptance": [
+        "One row per pilot and gap type.",
+        "Every gap has suggested next source type.",
+        "No gap is marked public-safe."
+      ]
+    },
+    {
+      "task_id": "kosmo-book-library-mount-questions",
+      "priority": 3,
+      "lane": "source_discovery",
+      "input_refs": [
+        "data/kosmoreferences-local-library-inventory-2026-06-13.json",
+        "docs/codex/kosmoreferences-local-library-inventory-2026-06-13.md"
+      ],
+      "output_path": "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-local-worker-2026-06-13/book-library-mount-questions.private.md",
+      "objective": "Prepare a short, concrete checklist for locating the missing book/ETH/HSLU library.",
+      "acceptance": [
+        "Includes likely mount/path questions.",
+        "Does not assume the library is present.",
+        "Keeps action items under 10 bullets."
+      ]
+    },
+    {
+      "task_id": "kosmo-asset-seed-candidates",
+      "priority": 4,
+      "lane": "kosmoasset",
+      "input_refs": [
+        "docs/kosmo-asset-library.md",
+        "examples/kosmo-assets/codex-pilot-library/library.json"
+      ],
+      "output_path": "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-local-worker-2026-06-13/asset-seed-candidates.private.json",
+      "objective": "Suggest local-review-only asset candidates that could be derived or authored for the three pilot projects without public promotion.",
+      "acceptance": [
+        "Every asset candidate has rights_status=review_only or private_research.",
+        "Every candidate is marked local_only=true.",
+        "No generated asset is claimed accurate without human review."
+      ]
+    }
+  ],
+  "handoff_back_to_overseers": {
+    "required_files": [
+      "doctrine-summary.private.md",
+      "reference-pilot-gap-map.private.json",
+      "book-library-mount-questions.private.md",
+      "asset-seed-candidates.private.json"
+    ],
+    "reviewers": [
+      "codex-central-overseer",
+      "claude-code-overseer"
+    ],
+    "promotion_rule": "Codex/Claude must review and convert local private outputs into checked repo artifacts before any Git commit."
+  }
+}
