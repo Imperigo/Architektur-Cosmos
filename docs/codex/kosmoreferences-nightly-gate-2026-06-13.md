@@ -1,12 +1,12 @@
 # KosmoReferences Nightly Gate
 
-Generated: 2026-06-13T18:37:33.858Z
+Generated: 2026-06-13T18:50:54.775Z
 Status: `passed_review_only`
 
 ## Summary
 
 - Steps passed: 10/10
-- Duration: 11395ms
+- Duration: 12252ms
 - Source packages: 5
 - Web source packages: 3
 - Public-ready assets: 0
@@ -19,16 +19,16 @@ Status: `passed_review_only`
 
 | Step | Status | Duration |
 | --- | --- | ---: |
-| `references-registry-check` | passed | 247ms |
-| `references-provenance-check` | passed | 232ms |
-| `source-package-link-check:alterszentrum-kloster-ingenbohl-public-source-candidate-2026-06-13` | passed | 1512ms |
-| `source-package-link-check:kapelle-sogn-benedetg-public-source-candidate-2026-06-13` | passed | 3097ms |
-| `source-package-link-check:villa-savoye-public-source-candidate-2026-06-13` | passed | 2302ms |
-| `owner-review-decision-check` | passed | 283ms |
-| `owner-decision-session-check` | passed | 234ms |
+| `references-registry-check` | passed | 228ms |
+| `references-provenance-check` | passed | 240ms |
+| `source-package-link-check:alterszentrum-kloster-ingenbohl-public-source-candidate-2026-06-13` | passed | 2461ms |
+| `source-package-link-check:kapelle-sogn-benedetg-public-source-candidate-2026-06-13` | passed | 3145ms |
+| `source-package-link-check:villa-savoye-public-source-candidate-2026-06-13` | passed | 2295ms |
+| `owner-review-decision-check` | passed | 281ms |
+| `owner-decision-session-check` | passed | 240ms |
 | `private-library-diagnostic` | passed | 239ms |
-| `local-worker-ollama-smoke` | passed | 3017ms |
-| `references-status-card` | passed | 231ms |
+| `local-worker-ollama-smoke` | passed | 2894ms |
+| `references-status-card` | passed | 228ms |
 
 ## Source Packages
 

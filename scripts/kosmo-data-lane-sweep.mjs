@@ -89,6 +89,7 @@ async function main() {
       references_public_ready_assets: referencesGate?.summary?.public_ready_assets ?? referencesStatus?.summary?.public_ready_assets ?? null,
       references_owner_pending: referencesGate?.summary?.owner_decision_session_pending ?? referencesStatus?.summary?.owner_decision_session_pending ?? null,
       references_private_library: referencesGate?.summary?.private_library_status ?? referencesStatus?.summary?.private_library_status ?? null,
+      references_private_library_sync_errors: referencesStatus?.summary?.private_library_sync_error_files ?? null,
       asset_status: assetFullReview?.status || null,
       asset_steps: assetFullReview?.summary?.step_count || null,
       asset_passed_steps: assetFullReview?.summary?.passed_steps || null,
@@ -195,7 +196,9 @@ function nextActions({ failedSteps, referencesGate, referencesStatus, assetFullR
   const openBatches = ownerDecisionBatches?.summary?.batches_with_open_items ?? 0;
   if (openBatches > 0) actions.push(`Use ${openBatches} owner decision batches for review rounds instead of asking all open items at once.`);
   const privateLibrary = referencesGate?.summary?.private_library_status ?? referencesStatus?.summary?.private_library_status;
+  const syncErrors = referencesStatus?.summary?.private_library_sync_error_files ?? 0;
   if (privateLibrary !== 'library_candidate_visible') actions.push('Expose or mount the real large private book/ETH/HSLU library root.');
+  if (syncErrors > 0) actions.push(`Resolve ${syncErrors} OneDrive sync error marker files before treating the visible mirror as complete.`);
   actions.push('Keep public-ready assets at 0 until separate owner and promotion reviews pass.');
   return actions;
 }
@@ -215,6 +218,7 @@ function renderMarkdown(report) {
   lines.push(`- References public-ready assets: ${report.summary.references_public_ready_assets}`);
   lines.push(`- References owner pending: ${report.summary.references_owner_pending}`);
   lines.push(`- Private library: ${report.summary.references_private_library}`);
+  lines.push(`- Private library sync errors: ${report.summary.references_private_library_sync_errors}`);
   lines.push(`- KosmoAsset: ${report.summary.asset_status} (${report.summary.asset_passed_steps}/${report.summary.asset_steps})`);
   lines.push(`- KosmoAsset open human reviews: ${report.summary.asset_open_human_reviews}`);
   lines.push(`- KosmoAsset public-ready assets: ${report.summary.asset_public_ready_count}`);
