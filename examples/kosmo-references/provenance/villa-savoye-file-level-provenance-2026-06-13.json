@@ -1,0 +1,158 @@
+{
+  "schema_version": "0.1",
+  "created_at": "2026-06-13",
+  "status": "review_only_inventory",
+  "entry_id": "villa-savoye",
+  "title": "Villa Savoye File-Level Provenance Inventory",
+  "purpose": "Inventory local Villa Savoye media/model files with hashes, slots and blocking review requirements. This does not grant public-use permission.",
+  "source_refs": [
+    "examples/kosmo-references/entry-drafts/villa-savoye.entry-draft.json",
+    "examples/kosmo-references/provenance/review/provenance-check.generated.json",
+    "data/kosmoreferences-pilot-gap-map-2026-06-13.json"
+  ],
+  "policy": {
+    "public_ready": false,
+    "rule": "Filename hints are not rights clearance. Public promotion requires file-level source URL, author/creator, license evidence, attribution decision and human review.",
+    "allowed_current_use": "local_review_only"
+  },
+  "summary": {
+    "files": 7,
+    "media_files": 6,
+    "model_files": 1,
+    "public_ready_files": 0,
+    "blocked_files": 7,
+    "slots": {
+      "exterior": 3,
+      "interior": 1,
+      "plan": 1,
+      "section": 1,
+      "model": 1
+    }
+  },
+  "files": [
+    {
+      "id": "villa-savoye-exterior-savoye-3-cc0",
+      "slot": "exterior",
+      "path": "public/archive-media/villa-savoye/exterior/savoye-3-exterior-cc0.jpg",
+      "mime_type": "image/jpeg",
+      "bytes": 1775497,
+      "sha256": "a3253847fe345dbd53aabcac24af953a06e795f1b0bef0e1bf93bbfc313f6c75",
+      "filename_rights_hint": "cc0",
+      "rights_status": "needs_file_level_review",
+      "public_ready": false,
+      "review_requirements": [
+        "confirm original source URL",
+        "confirm creator/author if required",
+        "confirm CC0/public-domain evidence at file level",
+        "record attribution/public-display decision"
+      ]
+    },
+    {
+      "id": "villa-savoye-exterior-loc-crop",
+      "slot": "exterior",
+      "path": "public/archive-media/villa-savoye/exterior/villa-savoye-loc-exterior-crop.jpg",
+      "mime_type": "image/jpeg",
+      "bytes": 29345,
+      "sha256": "0a183593549479ca8a77ac5b84ea518251776fca3deb0133f1dcebf9693b9270",
+      "filename_rights_hint": "loc",
+      "rights_status": "needs_file_level_review",
+      "public_ready": false,
+      "review_requirements": [
+        "confirm original Library of Congress or source record",
+        "confirm rights advisory and reuse constraints",
+        "link crop to original full image",
+        "record whether crop is own derivative and public-safe"
+      ]
+    },
+    {
+      "id": "villa-savoye-exterior-loc-full",
+      "slot": "exterior",
+      "path": "public/archive-media/villa-savoye/exterior/villa-savoye-loc-exterior.jpg",
+      "mime_type": "image/jpeg",
+      "bytes": 99151,
+      "sha256": "8d03cf5ec5ee76f6e95ad3d9a44443048feaf3952881ea175ec5ee73b0733daf",
+      "filename_rights_hint": "loc",
+      "rights_status": "needs_file_level_review",
+      "public_ready": false,
+      "review_requirements": [
+        "confirm original Library of Congress or source record",
+        "confirm rights advisory and reuse constraints",
+        "record attribution/public-display decision"
+      ]
+    },
+    {
+      "id": "villa-savoye-interior-chaise-cc-by-sa",
+      "slot": "interior",
+      "path": "public/archive-media/villa-savoye/interior/villa-savoye-chaise-longue-interior-cc-by-sa-2.jpg",
+      "mime_type": "image/jpeg",
+      "bytes": 2154227,
+      "sha256": "b1c707298c7863dc008a8de6e6992d40f437ff536ac9eb5c987825d04cb8c2c4",
+      "filename_rights_hint": "cc-by-sa-2",
+      "rights_status": "needs_file_level_review",
+      "public_ready": false,
+      "review_requirements": [
+        "confirm original source URL",
+        "confirm exact CC BY-SA version",
+        "record creator, license URL and attribution text",
+        "confirm whether modifications occurred"
+      ]
+    },
+    {
+      "id": "villa-savoye-plan-ground-floor-svg",
+      "slot": "plan",
+      "path": "public/archive-media/villa-savoye/plan/villa-savoye-ground-floor-diagram.svg",
+      "mime_type": "image/svg+xml",
+      "bytes": 4040,
+      "sha256": "1846db4e53d591d3eb099eb453ad5786ef26e077635ec05f10e5eca9519c730b",
+      "filename_rights_hint": "own_or_generated_diagram_unknown",
+      "rights_status": "derived_asset_review_required",
+      "public_ready": false,
+      "review_requirements": [
+        "confirm whether SVG is own diagrammatic reconstruction",
+        "record source basis for geometry",
+        "separate measured plan reproduction from analytical own diagram",
+        "human review before public use"
+      ]
+    },
+    {
+      "id": "villa-savoye-section-long-svg",
+      "slot": "section",
+      "path": "public/archive-media/villa-savoye/section/villa-savoye-long-section-diagram.svg",
+      "mime_type": "image/svg+xml",
+      "bytes": 3439,
+      "sha256": "83f2fd4d8e0a49d7291b53f74bc41f02ecbf9c764d62412447a90550f60ea0fd",
+      "filename_rights_hint": "own_or_generated_diagram_unknown",
+      "rights_status": "derived_asset_review_required",
+      "public_ready": false,
+      "review_requirements": [
+        "confirm whether SVG is own diagrammatic reconstruction",
+        "record source basis for geometry",
+        "separate measured section reproduction from analytical own diagram",
+        "human review before public use"
+      ]
+    },
+    {
+      "id": "villa-savoye-low-glb",
+      "slot": "model",
+      "path": "public/archive-models/villa-savoye/low.glb",
+      "mime_type": "model/gltf-binary",
+      "bytes": 39536,
+      "sha256": "ea4e5187653def0f9abee3fa925ce0c479640ac3ebf78510eff21adef7d117aa",
+      "filename_rights_hint": "generated_or_local_model_unknown",
+      "rights_status": "derived_asset_review_required",
+      "public_ready": false,
+      "review_requirements": [
+        "confirm model generation/build log",
+        "record source basis for geometry",
+        "confirm whether plan-derived geometry was used",
+        "human review before public model preview or download"
+      ]
+    }
+  ],
+  "next_actions": [
+    "Create file-level source URL and attribution fields for each image candidate.",
+    "Decide whether the SVG plan/section are own analytical diagrams or derived reproductions.",
+    "Attach model generation provenance for low.glb before any public model promotion.",
+    "Keep all seven files blocked in public provenance until review requirements are satisfied."
+  ]
+}
