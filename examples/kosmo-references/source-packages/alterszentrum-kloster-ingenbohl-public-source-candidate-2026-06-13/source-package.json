@@ -1,0 +1,140 @@
+{
+  "schema_version": "0.1",
+  "package_id": "alterszentrum-kloster-ingenbohl-public-source-candidate-2026-06-13",
+  "title": "Alterszentrum Kloster Ingenbohl Public Source Candidate",
+  "description": "Link-only public-source candidate for the Roger Boltshauser / Boltshauser Architekten pilot. No web page content, media, plans, screenshots or protected PDF pages are copied into this package.",
+  "created_at": "2026-06-13",
+  "updated_at": "2026-06-13",
+  "status": "review_ready",
+  "rights_scope": "public_candidate",
+  "source_kind": "public_web",
+  "source_root": "link_only",
+  "public_policy": {
+    "source_files_public": false,
+    "extracted_text_public": false,
+    "derived_summary_public": true,
+    "notes": [
+      "This package stores link metadata and URL fingerprints only.",
+      "Images, plans, project texts and screenshots remain link-only unless file-level rights are cleared.",
+      "The project may be described publicly through own-written summaries and source links after review."
+    ]
+  },
+  "sources": [
+    {
+      "id": "boltshauser-alterszentrum-kloster-ingenbohl",
+      "title": "Boltshauser Architekten: Alterszentrum Kloster Ingenbohl",
+      "path": "https://boltshauser.info/projekt/alterszentrum-kloster-ingenbohl/",
+      "file_type": "web_link",
+      "source_role": "primary_source",
+      "rights_status": "link_only",
+      "sha256": "6d3a15fb0249f1fc01048249512dfa32bdb9982aa4e9da4680bb8c9f06fbe1f7",
+      "bytes": 65,
+      "notes": "Primary office link for project identity, authorship and architectural/material reading. URL fingerprint only."
+    },
+    {
+      "id": "schnetzer-puskas-alterszentrum-kloster-ingenbohl",
+      "title": "Schnetzer Puskas: Alterszentrum Kloster Ingenbohl",
+      "path": "https://www.schnetzerpuskas.com/de/projekte/3705-alterszentrum-kloster-ingenbohl",
+      "file_type": "web_link",
+      "source_role": "secondary_source",
+      "rights_status": "link_only",
+      "sha256": "b6450114a77b48b77edae6457c6fcbe96721087fe3c8f321ed58e7d402c3b232",
+      "bytes": 80,
+      "notes": "Engineering source trail for built status, planning/realisation years and structure-related metadata. URL fingerprint only."
+    },
+    {
+      "id": "halter-alterszentrum-kloster-ingenbohl",
+      "title": "Halter: Alterszentrum Kloster Ingenbohl",
+      "path": "https://www.halter.ch/de/projekte/alterszentrum-kloster-ingenbohl",
+      "file_type": "web_link",
+      "source_role": "secondary_source",
+      "rights_status": "link_only",
+      "sha256": "cfc5a29d91cf1316f240d61490743f80056c63ed3512a392fb3f02006b62e47b",
+      "bytes": 65,
+      "notes": "Contractor/developer source trail for program, construction and material-system hints. URL fingerprint only."
+    },
+    {
+      "id": "kloster-ingenbohl-neues-alterszentrum-st-josef",
+      "title": "Kloster Ingenbohl: Neues Alterszentrum St. Josef",
+      "path": "https://www.kloster-ingenbohl.ch/neues-alterszentrum-st-josef/",
+      "file_type": "web_link",
+      "source_role": "primary_source",
+      "rights_status": "link_only",
+      "sha256": "c14fef75b2559acd41ef62a91ca305b5060d15331c5ce6da39ce4ecb6da643a7",
+      "bytes": 62,
+      "notes": "Client/institution source trail for construction timeline and local project context. URL fingerprint only."
+    },
+    {
+      "id": "ingenbohl-study-commission-report-2019",
+      "title": "Studienauftrag Kloster Ingenbohl Neubau Alterszentrum: Beurteilungsbericht 2019",
+      "path": "https://schaerburi.ch/images/Projekte/544-Koster_ingenbohl/Final-Beurteilungsbericht-2019-01-31.pdf",
+      "file_type": "web_link",
+      "source_role": "secondary_source",
+      "rights_status": "link_only",
+      "sha256": "53055ec21c5b0adf79f55aa6d7d3ce2d81a5c44b7ed52b2a47b3e8a2f710964f",
+      "bytes": 99,
+      "notes": "Public PDF link for competition/study-commission trail. No PDF pages or text are copied in this package."
+    }
+  ],
+  "extraction_artifacts": [],
+  "candidate_projects": [
+    {
+      "id": "alterszentrum-kloster-ingenbohl",
+      "title": "Alterszentrum Kloster Ingenbohl",
+      "entry_id": "alterszentrum-kloster-ingenbohl",
+      "architects": [
+        "Boltshauser Architekten",
+        "Roger Boltshauser"
+      ],
+      "confidence": 0.88,
+      "promotion_status": "draft_candidate",
+      "evidence": [
+        "Primary office and institutional links identify the project as Alterszentrum Kloster Ingenbohl / St. Josef in Brunnen.",
+        "Engineering and contractor links support the contemporary Swiss transformation/material/structure pilot role.",
+        "Package stores link metadata only; media, plans and direct project text reproduction remain blocked."
+      ]
+    }
+  ],
+  "review_gates": [
+    {
+      "id": "source_integrity",
+      "status": "pass",
+      "notes": "URL fingerprints and byte counts recorded for all link-only sources."
+    },
+    {
+      "id": "rights",
+      "status": "partial",
+      "notes": "Links and own summaries can support review; no media, plans, screenshots, PDF pages or page text may be republished from this package."
+    },
+    {
+      "id": "text_quality",
+      "status": "partial",
+      "notes": "Own-written summary can be created after source review; no copied web or PDF text is stored here."
+    },
+    {
+      "id": "layout_quality",
+      "status": "not_run",
+      "notes": "No plan, section, image-layout or geometry extraction has been run."
+    },
+    {
+      "id": "entry_mapping",
+      "status": "partial",
+      "notes": "Candidate is suitable as Roger Boltshauser / contemporary Swiss transformation pilot, but needs local book/lecture/source review before final promotion."
+    },
+    {
+      "id": "asset_mapping",
+      "status": "not_run",
+      "notes": "Potential assets are material-system studies, facade/rammed-earth or timber-panel hypotheses, structural frame/core studies and courtyard/terrace relation diagrams; all remain generated/review-only."
+    },
+    {
+      "id": "public_private_split",
+      "status": "pass",
+      "notes": "The package contains link metadata only and keeps all source content link-only."
+    }
+  ],
+  "next_actions": [
+    "Use this package to keep the Ingenbohl entry draft versioned and rights-gated.",
+    "Search Andrins book/ETH/HSLU/OneDrive library for stronger local source packages.",
+    "Do not derive public media, plans or model geometry until file-level rights and source gates are cleared."
+  ]
+}

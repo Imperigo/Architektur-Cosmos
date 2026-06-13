@@ -1,0 +1,72 @@
+{
+  "checked_at": "2026-06-13T16:15:31.575Z",
+  "package_path": "examples/kosmo-references/source-packages/alterszentrum-kloster-ingenbohl-public-source-candidate-2026-06-13/source-package.json",
+  "package_id": "alterszentrum-kloster-ingenbohl-public-source-candidate-2026-06-13",
+  "title": "Alterszentrum Kloster Ingenbohl Public Source Candidate",
+  "status": "passed",
+  "summary": {
+    "sources": 5,
+    "extraction_artifacts": 0,
+    "candidate_projects": 1,
+    "review_gates": 7
+  },
+  "checks": [
+    {
+      "kind": "source",
+      "id": "boltshauser-alterszentrum-kloster-ingenbohl",
+      "path": "https://boltshauser.info/projekt/alterszentrum-kloster-ingenbohl/",
+      "status": "link_fingerprint_pass",
+      "resolved_path": "https://boltshauser.info/projekt/alterszentrum-kloster-ingenbohl/",
+      "expected_sha256": "6d3a15fb0249f1fc01048249512dfa32bdb9982aa4e9da4680bb8c9f06fbe1f7",
+      "actual_sha256": "6d3a15fb0249f1fc01048249512dfa32bdb9982aa4e9da4680bb8c9f06fbe1f7",
+      "expected_bytes": 65,
+      "actual_bytes": 65
+    },
+    {
+      "kind": "source",
+      "id": "schnetzer-puskas-alterszentrum-kloster-ingenbohl",
+      "path": "https://www.schnetzerpuskas.com/de/projekte/3705-alterszentrum-kloster-ingenbohl",
+      "status": "link_fingerprint_pass",
+      "resolved_path": "https://www.schnetzerpuskas.com/de/projekte/3705-alterszentrum-kloster-ingenbohl",
+      "expected_sha256": "b6450114a77b48b77edae6457c6fcbe96721087fe3c8f321ed58e7d402c3b232",
+      "actual_sha256": "b6450114a77b48b77edae6457c6fcbe96721087fe3c8f321ed58e7d402c3b232",
+      "expected_bytes": 80,
+      "actual_bytes": 80
+    },
+    {
+      "kind": "source",
+      "id": "halter-alterszentrum-kloster-ingenbohl",
+      "path": "https://www.halter.ch/de/projekte/alterszentrum-kloster-ingenbohl",
+      "status": "link_fingerprint_pass",
+      "resolved_path": "https://www.halter.ch/de/projekte/alterszentrum-kloster-ingenbohl",
+      "expected_sha256": "cfc5a29d91cf1316f240d61490743f80056c63ed3512a392fb3f02006b62e47b",
+      "actual_sha256": "cfc5a29d91cf1316f240d61490743f80056c63ed3512a392fb3f02006b62e47b",
+      "expected_bytes": 65,
+      "actual_bytes": 65
+    },
+    {
+      "kind": "source",
+      "id": "kloster-ingenbohl-neues-alterszentrum-st-josef",
+      "path": "https://www.kloster-ingenbohl.ch/neues-alterszentrum-st-josef/",
+      "status": "link_fingerprint_pass",
+      "resolved_path": "https://www.kloster-ingenbohl.ch/neues-alterszentrum-st-josef/",
+      "expected_sha256": "c14fef75b2559acd41ef62a91ca305b5060d15331c5ce6da39ce4ecb6da643a7",
+      "actual_sha256": "c14fef75b2559acd41ef62a91ca305b5060d15331c5ce6da39ce4ecb6da643a7",
+      "expected_bytes": 62,
+      "actual_bytes": 62
+    },
+    {
+      "kind": "source",
+      "id": "ingenbohl-study-commission-report-2019",
+      "path": "https://schaerburi.ch/images/Projekte/544-Koster_ingenbohl/Final-Beurteilungsbericht-2019-01-31.pdf",
+      "status": "link_fingerprint_pass",
+      "resolved_path": "https://schaerburi.ch/images/Projekte/544-Koster_ingenbohl/Final-Beurteilungsbericht-2019-01-31.pdf",
+      "expected_sha256": "53055ec21c5b0adf79f55aa6d7d3ce2d81a5c44b7ed52b2a47b3e8a2f710964f",
+      "actual_sha256": "53055ec21c5b0adf79f55aa6d7d3ce2d81a5c44b7ed52b2a47b3e8a2f710964f",
+      "expected_bytes": 99,
+      "actual_bytes": 99
+    }
+  ],
+  "failures": [],
+  "warnings": []
+}

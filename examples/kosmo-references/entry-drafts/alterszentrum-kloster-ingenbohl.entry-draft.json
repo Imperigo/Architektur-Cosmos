@@ -1,0 +1,224 @@
+{
+  "id": "alterszentrum-kloster-ingenbohl",
+  "slug": "alterszentrum-kloster-ingenbohl",
+  "title": "Alterszentrum Kloster Ingenbohl",
+  "entry_type": "building",
+  "year_start": 2020,
+  "year_end": 2023,
+  "authors": [
+    "Boltshauser Architekten",
+    "Roger Boltshauser"
+  ],
+  "city": "Brunnen / Ingenbohl",
+  "country": "Schweiz",
+  "style_sector": "sustainable_architecture",
+  "lecture_cluster": [
+    "Architecture Cosmos dev research",
+    "contemporary Swiss architecture",
+    "Roger Boltshauser",
+    "transformation and care architecture"
+  ],
+  "themes": [
+    "adaptive reuse",
+    "monastery landscape",
+    "care architecture",
+    "reinforced concrete structure",
+    "reinforced core",
+    "timber facade",
+    "natural pigments",
+    "material atmosphere",
+    "inner courtyard",
+    "terrace and landscape relation",
+    "existing fabric"
+  ],
+  "short_description": "Review-only KosmoReferences draft for the Alterszentrum Kloster Ingenbohl, a contemporary Swiss care-building and monastery-transformation pilot by Boltshauser Architekten.",
+  "one_sentence": "Das Alterszentrum Kloster Ingenbohl dient KosmoReferences als Roger-Boltshauser-Pilot fuer Weiterbauen, Pflegearchitektur, Materialsysteme, Tragstruktur und den Uebergang zwischen Klosterlandschaft und Neubau.",
+  "full_description": "Das Alterszentrum Kloster Ingenbohl wird fuer KosmoReferences als kontrollierter zeitgenoessischer Schweizer Referenzfall gefuehrt. Der Entwurf ist fuer die Data-Lane wichtig, weil er Pflegearchitektur, bestehendes Klosterareal, Landschaftsbezug, Tragstruktur, Materialatmosphaere und alte-neue Fugen in einem Projekt buendelt. Der Draft bleibt review-only: Quellen werden als Link-Fingerprints gefuehrt, Medien und Plaene bleiben gesperrt, und Modell- oder Asset-Ableitungen duerfen nur als eigene, generierte Studien oder aus freigegebenen Quellen entstehen.",
+  "media": [
+    {
+      "type": "exterior",
+      "label": "Exterior placeholder",
+      "placeholder": "Exterior media slot blocked until file-level rights are cleared or own/generated review media exists.",
+      "credit": "link_only_until_review"
+    },
+    {
+      "type": "interior",
+      "label": "Interior placeholder",
+      "placeholder": "Interior media slot blocked until file-level rights are cleared or own/generated review media exists.",
+      "credit": "link_only_until_review"
+    },
+    {
+      "type": "section",
+      "label": "Section placeholder",
+      "placeholder": "Section media slot planned as own/generated study drawing after source and geometry review.",
+      "credit": "generated_needs_review"
+    },
+    {
+      "type": "plan",
+      "label": "Plan placeholder",
+      "placeholder": "Plan media slot planned as own/generated study geometry after source and geometry review.",
+      "credit": "generated_needs_review"
+    }
+  ],
+  "source_quality": "public_source_candidate",
+  "source_package_ref": "examples/kosmo-references/source-packages/alterszentrum-kloster-ingenbohl-public-source-candidate-2026-06-13/source-package.json",
+  "source_documents": [
+    "Boltshauser Architekten / Alterszentrum Kloster Ingenbohl",
+    "Schnetzer Puskas / Alterszentrum Kloster Ingenbohl",
+    "Halter / Alterszentrum Kloster Ingenbohl",
+    "Kloster Ingenbohl / Neues Alterszentrum St. Josef",
+    "Studienauftrag Kloster Ingenbohl Neubau Alterszentrum / Beurteilungsbericht 2019"
+  ],
+  "source_url": "https://boltshauser.info/projekt/alterszentrum-kloster-ingenbohl/",
+  "source_candidates": [
+    {
+      "source_type": "public_web_link",
+      "title": "Boltshauser Architekten / Alterszentrum Kloster Ingenbohl",
+      "url": "https://boltshauser.info/projekt/alterszentrum-kloster-ingenbohl/",
+      "reliability_level": "primary_source",
+      "rights_status": "link_only",
+      "notes": "Use for project identity, authorship and architectural/material source trail. Do not copy media or page text."
+    },
+    {
+      "source_type": "public_web_link",
+      "title": "Schnetzer Puskas / Alterszentrum Kloster Ingenbohl",
+      "url": "https://www.schnetzerpuskas.com/de/projekte/3705-alterszentrum-kloster-ingenbohl",
+      "reliability_level": "high",
+      "rights_status": "link_only",
+      "notes": "Use for engineering/project metadata source trail. Do not copy media or page text."
+    },
+    {
+      "source_type": "public_web_link",
+      "title": "Halter / Alterszentrum Kloster Ingenbohl",
+      "url": "https://www.halter.ch/de/projekte/alterszentrum-kloster-ingenbohl",
+      "reliability_level": "high",
+      "rights_status": "link_only",
+      "notes": "Use for program and construction source trail. Do not copy media or page text."
+    },
+    {
+      "source_type": "public_web_link",
+      "title": "Kloster Ingenbohl / Neues Alterszentrum St. Josef",
+      "url": "https://www.kloster-ingenbohl.ch/neues-alterszentrum-st-josef/",
+      "reliability_level": "primary_source",
+      "rights_status": "link_only",
+      "notes": "Use for client/institution timeline context. Do not copy media or page text."
+    },
+    {
+      "source_type": "public_pdf_link",
+      "title": "Studienauftrag Kloster Ingenbohl Neubau Alterszentrum / Beurteilungsbericht 2019",
+      "url": "https://schaerburi.ch/images/Projekte/544-Koster_ingenbohl/Final-Beurteilungsbericht-2019-01-31.pdf",
+      "reliability_level": "high",
+      "rights_status": "link_only",
+      "notes": "Use as competition/study-commission source trail only until PDF rights and extraction policy are reviewed."
+    }
+  ],
+  "asset_candidates": [
+    {
+      "kind": "material",
+      "media_slot": "exterior",
+      "title": "Ingenbohl mineral/timber facade material study",
+      "planned_r2_key": "entries/alterszentrum-kloster-ingenbohl/assets/materials/mineral-timber-facade-study.placeholder.json",
+      "rights_status": "generated_needs_review",
+      "public_display_allowed": false
+    },
+    {
+      "kind": "component",
+      "media_slot": "section",
+      "title": "Concrete frame and core structure study",
+      "planned_r2_key": "entries/alterszentrum-kloster-ingenbohl/assets/structure/concrete-frame-core-study.placeholder.json",
+      "rights_status": "generated_needs_review",
+      "public_display_allowed": false
+    },
+    {
+      "kind": "diagram",
+      "media_slot": "plan",
+      "title": "Monastery-courtyard relation diagram",
+      "planned_r2_key": "entries/alterszentrum-kloster-ingenbohl/assets/diagrams/monastery-courtyard-relation.placeholder.json",
+      "rights_status": "generated_needs_review",
+      "public_display_allowed": false
+    }
+  ],
+  "model_packages": [
+    {
+      "package_type": "reference_model",
+      "status": "planned",
+      "planned_paths": [
+        "entries/alterszentrum-kloster-ingenbohl/models/mass.glb",
+        "entries/alterszentrum-kloster-ingenbohl/models/structure.glb",
+        "entries/alterszentrum-kloster-ingenbohl/models/material-system.glb"
+      ],
+      "notes": "Generate only as own/review-only study geometry until source and rights review passes."
+    }
+  ],
+  "analysis_layers": [
+    {
+      "analysis_type": "structure",
+      "summary": "Review hypothesis: reinforced concrete frame and reinforced core form the primary structural reading; exact spans, cores and old/new junctions need source review.",
+      "review_status": "needs_source_review"
+    },
+    {
+      "analysis_type": "material_system",
+      "summary": "Review hypothesis: natural pigments, mineral surfaces, timber facade elements and care-building interior atmosphere should become separate material layers.",
+      "review_status": "draft"
+    },
+    {
+      "analysis_type": "topos_typos_tectonics",
+      "summary": "Read as monastery-landscape transformation: institutional care, courtyard/terrace order, roof/landscape relation and quiet tectonic continuity.",
+      "review_status": "draft"
+    }
+  ],
+  "analysis_observations": [
+    {
+      "analysis_type": "structure",
+      "label": "reinforced-concrete-frame-and-core-study",
+      "confidence_score": 0.74,
+      "source": "public_source_package"
+    },
+    {
+      "analysis_type": "material_tag",
+      "label": "material natural-pigment-mineral-surfaces",
+      "confidence_score": 0.68,
+      "source": "public_source_package"
+    },
+    {
+      "analysis_type": "typology",
+      "label": "typology care-architecture-monastery-transformation",
+      "confidence_score": 0.84,
+      "source": "public_source_package"
+    }
+  ],
+  "ingestion_status": {
+    "stage": "review_only_draft",
+    "source_status": "public_link_package",
+    "asset_status": "planned_generated_review_only",
+    "model_status": "planned",
+    "updated_at": "2026-06-13"
+  },
+  "database_tags": [
+    "source:public-link-package",
+    "source:boltshauser",
+    "source:schnetzer-puskas",
+    "source:halter",
+    "source:kloster-ingenbohl",
+    "typology:care-architecture",
+    "typology:monastery-transformation",
+    "structure:reinforced-concrete",
+    "structure:core",
+    "material:timber-facade",
+    "material:natural-pigments",
+    "theme:swiss-contemporary",
+    "theme:adaptive-reuse",
+    "theme:material-atmosphere",
+    "rights:link-only",
+    "analysis:needs-local-library-review"
+  ],
+  "database_profile": {
+    "status": "draft",
+    "r2_prefix": "entries/alterszentrum-kloster-ingenbohl",
+    "source_count": 5,
+    "media_count": 4,
+    "model_count": 1,
+    "analysis_count": 3,
+    "tag_count": 16
+  }
+}

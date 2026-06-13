@@ -30,6 +30,17 @@
       "source_kind": "public_web",
       "check_status": "passed",
       "role": "link-only public-source candidate for the Swiss timber pilot"
+    },
+    {
+      "id": "alterszentrum-kloster-ingenbohl-public-source-candidate-2026-06-13",
+      "title": "Alterszentrum Kloster Ingenbohl Public Source Candidate",
+      "path": "examples/kosmo-references/source-packages/alterszentrum-kloster-ingenbohl-public-source-candidate-2026-06-13/source-package.json",
+      "review_report": "examples/kosmo-references/source-packages/alterszentrum-kloster-ingenbohl-public-source-candidate-2026-06-13/review/source-package-check.generated.md",
+      "status": "review_ready",
+      "rights_scope": "public_candidate",
+      "source_kind": "public_web",
+      "check_status": "passed",
+      "role": "link-only public-source candidate for the Roger Boltshauser / Ingenbohl pilot"
     }
   ],
   "entry_drafts": [
@@ -42,6 +53,16 @@
       "check_status": "archive_entry_draft_passed",
       "public_ready": false,
       "role": "preferred interim Swiss timber reference candidate"
+    },
+    {
+      "id": "alterszentrum-kloster-ingenbohl",
+      "title": "Alterszentrum Kloster Ingenbohl",
+      "path": "examples/kosmo-references/entry-drafts/alterszentrum-kloster-ingenbohl.entry-draft.json",
+      "source_package_id": "alterszentrum-kloster-ingenbohl-public-source-candidate-2026-06-13",
+      "status": "review_only_draft",
+      "check_status": "archive_entry_draft_passed",
+      "public_ready": false,
+      "role": "Roger Boltshauser / contemporary Swiss transformation and material pilot"
     }
   ],
   "asset_libraries": [
