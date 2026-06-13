@@ -108,7 +108,7 @@ gib danach eine kurze Review-Zusammenfassung fuer Codex/Claude aus.
 Aktueller harter Stand:
 
 - `npm run kosmo:data-lane-sweep` ist der taegliche Start-Gate.
-- Data-Lane Sweep: 15/15, review-only passed.
+- Data-Lane Sweep: 16/16, review-only passed.
 - Die drei Pilot-Referenzen bleiben review-only.
 - Pilot Evidence Matrix: 3 Piloten, 12 Gaps, 0 public-ready.
 - Villa Savoye Provenance Brief: 7 Review-Items, 3 spaetere Human-Review-Kandidaten, 4 blockiert, 0 public-ready.

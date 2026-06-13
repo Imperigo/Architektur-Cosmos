@@ -42,7 +42,8 @@ This runbook is the daily execution order for the KosmoReferences/KosmoAsset dat
    - Source Root Decision Session Check;
    - Private Source Inventory Plan;
    - Private Inventory Output Template;
-   - Private Inventory Output Check.
+   - Private Inventory Output Check;
+   - Owner Answer Sheet.
 
 4. Open the generated report:
 
