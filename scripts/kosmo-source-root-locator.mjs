@@ -150,7 +150,7 @@ async function main() {
         sync_error_files: item.counts.sync_error_files
       }))
     },
-    candidates: inspected,
+    candidates: inspected.slice(0, 50).map(slimCandidate),
     next_actions: nextActions(inspected)
   };
 
@@ -165,6 +165,25 @@ async function main() {
   console.log(`Probable libraries: ${report.summary.probable_large_private_libraries}`);
   console.log(`Workflow mirrors: ${report.summary.workflow_or_project_mirrors}`);
   console.log(`Wrote: ${relative(root, outputMd)}`);
+}
+
+function slimCandidate(item) {
+  return {
+    path: item.path,
+    redacted_path: item.redacted_path,
+    depth: item.depth,
+    own_mount: item.own_mount,
+    mount: item.mount ? {
+      mount_point: item.mount.mount_point,
+      fs_type: item.mount.fs_type,
+      source: item.mount.source
+    } : null,
+    signals: item.signals,
+    score: item.score,
+    classification: item.classification,
+    counts: item.counts,
+    inspect_truncated: item.inspect_truncated
+  };
 }
 
 async function scanForCandidateDirs(startRoot, mounts, seen) {

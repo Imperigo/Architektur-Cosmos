@@ -1,6 +1,6 @@
 # Kosmo Source-Root Locator
 
-Generated: 2026-06-13T19:35:39.729Z
+Generated: 2026-06-13T19:36:08.606Z
 Status: `source_root_candidates_need_owner_selection`
 
 ## Summary
