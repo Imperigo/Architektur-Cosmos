@@ -59,6 +59,7 @@ Nutze:
 - `data/kosmo-private-source-inventory-plan-2026-06-13.json`
 - `examples/kosmo-references/private-inventory/private-inventory-output-template-2026-06-13.json`
 - `data/kosmo-private-inventory-output-check-2026-06-13.json`
+- `data/kosmo-data-lane-command-router-2026-06-13.json`
 - `data/kosmoreferences-pilot-evidence-matrix-2026-06-13.json`
 - `data/villa-savoye-provenance-review-brief-2026-06-13.json`
 - `data/ingenbohl-pdf-extraction-decision-brief-2026-06-13.json`
@@ -72,6 +73,7 @@ Nutze:
 - `docs/codex/kosmo-private-source-inventory-plan-2026-06-13.md`
 - `docs/codex/kosmo-private-inventory-output-template-2026-06-13.md`
 - `docs/codex/kosmo-private-inventory-output-check-2026-06-13.md`
+- `docs/codex/kosmo-data-lane-command-router-2026-06-13.md`
 - `docs/codex/kosmoreferences-pilot-evidence-matrix-2026-06-13.md`
 - `docs/codex/villa-savoye-provenance-review-brief-2026-06-13.md`
 - `docs/codex/ingenbohl-pdf-extraction-decision-brief-2026-06-13.md`
@@ -112,6 +114,7 @@ Aktueller harter Stand:
 - Source-Root Decision Session: `passed_pending_owner_input`, selected decision pending, private diagnostic nicht erlaubt, 0 public-ready.
 - Private Source Inventory Plan: `private_metadata_inventory_blocked`, private diagnostic nicht erlaubt, 0 public-ready.
 - Private Inventory Output Check: `private_inventory_output_contract_passed`, 3 Piloten, 0 Failures, 0 Public-ready Hits.
+- Data-Lane Command Router: `worker_router_guarded_review_only`; lokaler Worker darf nur Review-/Metadaten-Fleissarbeit machen, keine Git-/Cloud-/Public-Promotion- oder Source-Copy-Aktionen.
 - Source-Root Locator, Source-Root Selection Brief, Source-Root Decision Session Check, Private Source Inventory Plan und Private Inventory Output Check sind jetzt feste Steps im Data-Lane Sweep. Der lokale Worker darf diese Blockade nicht umgehen.
 - Im kuratierten Home-OneDrive-Diagnosepfad sind 30 Sync-Error-Marker sichtbar; diesen Spiegel nicht als vollstaendig behandeln.
 - Der tiefere OneDrive-Reparatur-Sweep sieht 59 Marker-Dateien, 58 Leaf-Marker und 58 Aggregate-Missing-Items. Diese Zahl fuer Sync-Reparatur verwenden, nicht ungeprueft mit der DataPanel-Zahl vermischen.

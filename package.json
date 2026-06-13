@@ -131,6 +131,7 @@
     "kosmo:references-status-card": "node scripts/kosmo-reference-status-card.mjs",
     "kosmo:references-nightly-gate": "node scripts/kosmo-references-nightly-gate.mjs",
     "kosmo:data-lane-sweep": "node scripts/kosmo-data-lane-sweep.mjs",
+    "kosmo:data-lane-command-router": "node scripts/kosmo-data-lane-command-router.mjs",
     "kosmo:onedrive-sync-errors": "node scripts/kosmo-onedrive-sync-error-summary.mjs",
     "kosmo:asset-generate-demo-glb": "node scripts/kosmo-asset-generate-demo-glb.mjs",
     "kosmo:asset-generate-demo-dxf": "node scripts/kosmo-asset-generate-demo-dxf.mjs",
