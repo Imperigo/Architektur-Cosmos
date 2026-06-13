@@ -1,12 +1,12 @@
 # KosmoData Lane Sweep
 
-Generated: 2026-06-13T19:05:53.032Z
+Generated: 2026-06-13T19:12:39.470Z
 Status: `kosmodata_lane_sweep_review_only_passed`
 
 ## Summary
 
-- Steps passed: 5/5
-- Duration: 15523ms
+- Steps passed: 6/6
+- Duration: 16726ms
 - KosmoReferences: passed_review_only (10/10)
 - References public-ready assets: 0
 - References owner pending: 10
@@ -29,22 +29,30 @@ Status: `kosmodata_lane_sweep_review_only_passed`
 - Local worker invalid JSON outputs: 0
 - Local worker high-risk hits: 0
 - Local worker public-ready allowed: no
+- Pilot evidence matrix: pilot_evidence_matrix_review_only
+- Pilot evidence pilots: 3
+- Pilot evidence gaps: 12
+- Pilot media slots blocked: 12
+- Pilot asset candidates blocked: 9
+- Pilot evidence public-ready assets: 0
 
 ## Steps
 
 | Step | Status | Duration | Report |
 | --- | --- | ---: | --- |
-| KosmoReferences Nightly Gate | passed | 11311ms | `data/kosmoreferences-nightly-gate-2026-06-13.json` |
-| KosmoAsset Seed Full Review | passed | 3507ms | `examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-full-review.generated.json` |
-| Human Decision Queue | passed | 225ms | `data/kosmo-human-decision-queue-2026-06-13.json` |
-| Owner Decision Batches | passed | 234ms | `data/kosmo-human-decision-owner-batches-2026-06-13.json` |
-| Local Worker Output Review | passed | 244ms | `data/kosmo-local-worker-output-review-2026-06-13.json` |
+| KosmoReferences Nightly Gate | passed | 12275ms | `data/kosmoreferences-nightly-gate-2026-06-13.json` |
+| KosmoAsset Seed Full Review | passed | 3527ms | `examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-full-review.generated.json` |
+| Human Decision Queue | passed | 231ms | `data/kosmo-human-decision-queue-2026-06-13.json` |
+| Owner Decision Batches | passed | 232ms | `data/kosmo-human-decision-owner-batches-2026-06-13.json` |
+| Local Worker Output Review | passed | 229ms | `data/kosmo-local-worker-output-review-2026-06-13.json` |
+| Pilot Evidence Matrix | passed | 230ms | `data/kosmoreferences-pilot-evidence-matrix-2026-06-13.json` |
 
 ## Next Actions
 
 - Owner resolves 10 KosmoReferences decisions before public promotion review.
 - Complete 6 KosmoAsset human reviews before local approvals or sandbox certificates.
 - Use 5 owner decision batches for review rounds instead of asking all open items at once.
+- Track 12 pilot evidence gaps across Villa Savoye, Sogn Benedetg and Ingenbohl.
 - Expose or mount the real large private book/ETH/HSLU library root.
 - Resolve 30 OneDrive sync error marker files before treating the visible mirror as complete.
 - Keep public-ready assets at 0 until separate owner and promotion reviews pass.
