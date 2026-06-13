@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-13T17:59:17.221Z",
-  "status": "library_root_not_visible",
+  "generated_at": "2026-06-13T18:06:06.856Z",
+  "status": "small_workflow_mirror_visible",
   "policy": {
     "read_only": true,
     "copied_private_content": false,
@@ -30,7 +30,12 @@
     "target_filename_matches": 0,
     "raw_target_filename_matches": 0,
     "library_candidate_roots": [],
+    "workflow_mirror_roots": [
+      "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09",
+      "/home/andrin-baumann/ArchitekturKosmos Onedrive"
+    ],
     "expected_large_library_visible": false,
+    "workflow_mirror_visible": true,
     "archive_mount_visible": false,
     "archive_root_status": "empty_directory_or_not_mounted"
   },
@@ -306,6 +311,7 @@
   ],
   "next_actions": [
     "Confirm whether the archive HDD should be mounted at /mnt/archiv; it is not visible as its own mount in this diagnostic.",
+    "Small ArchitectureKosmos/OneDrive workflow mirrors are visible, but the expected large book, ETH and HSLU lecture library is still not visible.",
     "Ask owner/Claude/KosmoOverseer for the real private book, ETH and HSLU lecture library root.",
     "Re-run this diagnostic after mounting or syncing the library."
   ]

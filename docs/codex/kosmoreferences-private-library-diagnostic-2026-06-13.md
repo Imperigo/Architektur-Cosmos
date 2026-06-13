@@ -1,7 +1,7 @@
 # KosmoReferences Private Library Diagnostic
 
-Generated: 2026-06-13T17:59:17.221Z
-Status: `library_root_not_visible`
+Generated: 2026-06-13T18:06:06.856Z
+Status: `small_workflow_mirror_visible`
 
 ## Summary
 
@@ -11,6 +11,8 @@ Status: `library_root_not_visible`
 - Book-like files: 39
 - Target filename matches: 0
 - Raw target filename matches: 0
+- Workflow mirrors visible: yes
+- Workflow mirror roots: 2
 - Archive mount visible: no
 - Archive root status: empty_directory_or_not_mounted
 
@@ -35,6 +37,7 @@ Status: `library_root_not_visible`
 ## Next Actions
 
 - Confirm whether the archive HDD should be mounted at /mnt/archiv; it is not visible as its own mount in this diagnostic.
+- Small ArchitectureKosmos/OneDrive workflow mirrors are visible, but the expected large book, ETH and HSLU lecture library is still not visible.
 - Ask owner/Claude/KosmoOverseer for the real private book, ETH and HSLU lecture library root.
 - Re-run this diagnostic after mounting or syncing the library.
 

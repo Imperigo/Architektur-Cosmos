@@ -58,7 +58,11 @@ async function main() {
   const report = {
     schema_version: '0.1',
     generated_at: new Date().toISOString(),
-    status: summary.expected_large_library_visible ? 'library_candidate_visible' : 'library_root_not_visible',
+    status: summary.expected_large_library_visible
+      ? 'library_candidate_visible'
+      : summary.workflow_mirror_visible
+        ? 'small_workflow_mirror_visible'
+        : 'library_root_not_visible',
     policy: {
       read_only: true,
       copied_private_content: false,
@@ -203,6 +207,7 @@ function summarize(rootReports) {
   const rawTargetMatches = rootReports.reduce((sum, item) => sum + item.raw_target_filename_matches.length, 0);
   const bookLike = rootReports.reduce((sum, item) => sum + item.counts.book_like_files, 0);
   const libraryCandidates = rootReports.filter((item) => item.status === 'library_candidate');
+  const workflowMirrors = rootReports.filter((item) => isWorkflowMirror(item) && item.exists);
   return {
     roots: rootReports.length,
     existing_roots: existing.length,
@@ -211,7 +216,9 @@ function summarize(rootReports) {
     target_filename_matches: targetMatches,
     raw_target_filename_matches: rawTargetMatches,
     library_candidate_roots: libraryCandidates.map((item) => item.path),
+    workflow_mirror_roots: workflowMirrors.map((item) => item.path),
     expected_large_library_visible: libraryCandidates.length > 0,
+    workflow_mirror_visible: workflowMirrors.length > 0,
     archive_mount_visible: rootReports.some((item) => item.path === '/mnt/archiv' && item.own_mount),
     archive_root_status: rootReports.find((item) => item.path === '/mnt/archiv')?.status || 'missing'
   };
@@ -220,9 +227,18 @@ function summarize(rootReports) {
 function nextActions(summary) {
   const actions = [];
   if (!summary.archive_mount_visible) actions.push('Confirm whether the archive HDD should be mounted at /mnt/archiv; it is not visible as its own mount in this diagnostic.');
+  if (summary.workflow_mirror_visible && !summary.expected_large_library_visible) {
+    actions.push('Small ArchitectureKosmos/OneDrive workflow mirrors are visible, but the expected large book, ETH and HSLU lecture library is still not visible.');
+  }
   if (!summary.expected_large_library_visible) actions.push('Ask owner/Claude/KosmoOverseer for the real private book, ETH and HSLU lecture library root.');
   actions.push('Re-run this diagnostic after mounting or syncing the library.');
   return actions;
+}
+
+function isWorkflowMirror(rootReport) {
+  const lower = rootReport.path.toLowerCase();
+  return (lower.includes('11_ai_workflow') || lower.includes('architekturkosmos onedrive')) &&
+    (rootReport.counts.files > 0 || rootReport.counts.book_like_files > 0);
 }
 
 async function readMounts() {
@@ -264,6 +280,8 @@ function renderMarkdown(report) {
   lines.push(`- Book-like files: ${report.summary.book_like_files}`);
   lines.push(`- Target filename matches: ${report.summary.target_filename_matches}`);
   lines.push(`- Raw target filename matches: ${report.summary.raw_target_filename_matches}`);
+  lines.push(`- Workflow mirrors visible: ${report.summary.workflow_mirror_visible ? 'yes' : 'no'}`);
+  lines.push(`- Workflow mirror roots: ${report.summary.workflow_mirror_roots.length}`);
   lines.push(`- Archive mount visible: ${report.summary.archive_mount_visible ? 'yes' : 'no'}`);
   lines.push(`- Archive root status: ${report.summary.archive_root_status}`);
   lines.push('');
