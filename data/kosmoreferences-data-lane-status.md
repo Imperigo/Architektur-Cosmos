@@ -1,6 +1,6 @@
 # KosmoReferences Data-Lane Status
 
-Generated: 2026-06-13T18:15:48.797Z
+Generated: 2026-06-13T18:23:41.906Z
 Status: `passed_review_only`
 
 ## Summary
@@ -18,7 +18,7 @@ Status: `passed_review_only`
 - Owner-review decisions: 10
 - Owner-review public-ready now: 0
 - Owner decision session: passed_pending_owner_input (0 selected / 10 pending)
-- Local worker: passed (kosmo-qwen3-coder:30b-a3b-q4km, 2744ms)
+- Local worker: passed (kosmo-qwen3-coder:30b-a3b-q4km, 2645ms)
 
 ## Pilots
 

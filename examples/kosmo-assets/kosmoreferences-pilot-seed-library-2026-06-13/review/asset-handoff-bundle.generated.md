@@ -1,7 +1,7 @@
 # KosmoAsset Handoff Bundle
 
 Library: `kosmoreferences-pilot-seed-library-2026-06-13`
-Generated: 2026-06-13T18:15:50.217Z
+Generated: 2026-06-13T18:23:43.332Z
 Status: `local_review_handoff_bundle`
 
 Review-only. The generated Blender script is non-mutating by default and the ArchiCAD CSV is a reference schedule.

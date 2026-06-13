@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-13T18:15:48.797Z",
+  "generated_at": "2026-06-13T18:23:41.906Z",
   "status": "passed_review_only",
   "source_paths": {
     "registry": "data/kosmoreferences-registry.json",
@@ -34,7 +34,7 @@
     "owner_decision_session_pending": 10,
     "local_worker_status": "passed",
     "local_worker_model": "kosmo-qwen3-coder:30b-a3b-q4km",
-    "local_worker_duration_ms": 2744
+    "local_worker_duration_ms": 2645
   },
   "checks": {
     "registry": "passed",
@@ -99,7 +99,7 @@
     "local_worker": {
       "status": "passed",
       "model": "kosmo-qwen3-coder:30b-a3b-q4km",
-      "duration_ms": 2744,
+      "duration_ms": 2645,
       "endpoint": "http://127.0.0.1:11434/api/generate",
       "private_content_sent": false,
       "public_promotion": false

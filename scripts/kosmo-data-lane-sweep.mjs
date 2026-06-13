@@ -26,6 +26,13 @@ const steps = [
     command: 'npm',
     args: ['run', 'kosmo:asset-full-review', '--', '--library', assetLibrary],
     report: 'examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-full-review.generated.json'
+  },
+  {
+    id: 'human_decision_queue',
+    label: 'Human Decision Queue',
+    command: 'npm',
+    args: ['run', 'kosmo:human-decision-queue'],
+    report: 'data/kosmo-human-decision-queue-2026-06-13.json'
   }
 ];
 
@@ -44,10 +51,11 @@ async function main() {
   const referencesGate = await readOptionalJson(resolve(root, steps[0].report));
   const referencesStatus = await readOptionalJson(resolve(root, 'data/kosmoreferences-data-lane-status.json'));
   const assetFullReview = await readOptionalJson(resolve(root, steps[1].report));
+  const humanDecisionQueue = await readOptionalJson(resolve(root, steps[2].report));
   const failedSteps = stepResults.filter((step) => step.exit_code !== 0);
   const status = failedSteps.length
     ? 'kosmodata_lane_sweep_failed'
-    : isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview })
+    : isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview, humanDecisionQueue })
       ? 'kosmodata_lane_sweep_review_only_passed'
       : 'kosmodata_lane_sweep_needs_review';
 
@@ -79,15 +87,20 @@ async function main() {
       asset_open_human_reviews: assetFullReview?.summary?.open_human_review_count ?? null,
       asset_public_ready_count: assetFullReview?.summary?.public_ready_count ?? null,
       asset_promotion_allowed: assetFullReview?.summary?.promotion_allowed === true,
-      asset_promotion_blockers: assetFullReview?.summary?.promotion_guard_blockers ?? null
+      asset_promotion_blockers: assetFullReview?.summary?.promotion_guard_blockers ?? null,
+      human_queue_status: humanDecisionQueue?.status || null,
+      human_queue_open_items: humanDecisionQueue?.summary?.open_items ?? null,
+      human_queue_reference_items: humanDecisionQueue?.summary?.reference_items ?? null,
+      human_queue_asset_items: humanDecisionQueue?.summary?.asset_items ?? null
     },
     reports: {
       references_gate: steps[0].report,
       references_status: 'data/kosmoreferences-data-lane-status.json',
-      asset_full_review: steps[1].report
+      asset_full_review: steps[1].report,
+      human_decision_queue: steps[2].report
     },
     steps: stepResults,
-    next_actions: nextActions({ failedSteps, referencesGate, referencesStatus, assetFullReview })
+    next_actions: nextActions({ failedSteps, referencesGate, referencesStatus, assetFullReview, humanDecisionQueue })
   };
 
   await mkdir(dirname(outputJson), { recursive: true });
@@ -146,21 +159,23 @@ async function runStep(step) {
   };
 }
 
-function isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview }) {
+function isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview, humanDecisionQueue }) {
   const referencesOk = referencesGate?.status === 'passed_review_only' &&
     (referencesGate?.summary?.public_ready_assets ?? referencesStatus?.summary?.public_ready_assets) === 0;
   const assetOk = assetFullReview?.status === 'asset_full_review_ready_for_human_decisions' &&
     assetFullReview?.summary?.promotion_allowed !== true &&
     assetFullReview?.summary?.public_ready_count === 0;
-  return referencesOk && assetOk;
+  const queueOk = humanDecisionQueue?.status === 'human_decision_queue_open' &&
+    humanDecisionQueue?.summary?.public_ready_after_queue === 0;
+  return referencesOk && assetOk && queueOk;
 }
 
-function nextActions({ failedSteps, referencesGate, referencesStatus, assetFullReview }) {
+function nextActions({ failedSteps, referencesGate, referencesStatus, assetFullReview, humanDecisionQueue }) {
   if (failedSteps.length > 0) return [`Fix failed sweep steps: ${failedSteps.map((step) => step.id).join(', ')}.`];
   const actions = [];
-  const ownerPending = referencesGate?.summary?.owner_decision_session_pending ?? referencesStatus?.summary?.owner_decision_session_pending ?? 0;
+  const ownerPending = humanDecisionQueue?.summary?.reference_items ?? referencesGate?.summary?.owner_decision_session_pending ?? referencesStatus?.summary?.owner_decision_session_pending ?? 0;
   if (ownerPending > 0) actions.push(`Owner resolves ${ownerPending} KosmoReferences decisions before public promotion review.`);
-  const assetOpen = assetFullReview?.summary?.open_human_review_count ?? 0;
+  const assetOpen = humanDecisionQueue?.summary?.asset_items ?? assetFullReview?.summary?.open_human_review_count ?? 0;
   if (assetOpen > 0) actions.push(`Complete ${assetOpen} KosmoAsset human reviews before local approvals or sandbox certificates.`);
   const privateLibrary = referencesGate?.summary?.private_library_status ?? referencesStatus?.summary?.private_library_status;
   if (privateLibrary !== 'library_candidate_visible') actions.push('Expose or mount the real large private book/ETH/HSLU library root.');
@@ -188,6 +203,9 @@ function renderMarkdown(report) {
   lines.push(`- KosmoAsset public-ready assets: ${report.summary.asset_public_ready_count}`);
   lines.push(`- KosmoAsset promotion allowed: ${report.summary.asset_promotion_allowed ? 'yes' : 'no'}`);
   lines.push(`- KosmoAsset promotion blockers: ${report.summary.asset_promotion_blockers}`);
+  lines.push(`- Human decision queue: ${report.summary.human_queue_status}`);
+  lines.push(`- Human decision open items: ${report.summary.human_queue_open_items}`);
+  lines.push(`- Human decision split: ${report.summary.human_queue_reference_items} references / ${report.summary.human_queue_asset_items} assets`);
   lines.push('');
   lines.push('## Steps');
   lines.push('');

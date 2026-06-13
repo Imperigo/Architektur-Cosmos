@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-13T18:15:50.461Z",
+  "generated_at": "2026-06-13T18:23:43.582Z",
   "generator": "kosmo-asset-handoff-smoke",
   "library_path": "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json",
   "bundle_path": "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-handoff-bundle.generated.json",

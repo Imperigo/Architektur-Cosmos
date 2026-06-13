@@ -1,7 +1,7 @@
 # KosmoAsset Review Pack
 
 Library: `kosmoreferences-pilot-seed-library-2026-06-13`
-Generated: 2026-06-13T18:15:49.745Z
+Generated: 2026-06-13T18:23:42.846Z
 Status: `asset_human_review_required`
 Rights scope: `local_review_only`
 

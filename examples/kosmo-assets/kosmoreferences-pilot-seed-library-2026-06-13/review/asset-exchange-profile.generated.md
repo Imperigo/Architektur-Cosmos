@@ -1,7 +1,7 @@
 # KosmoAsset Exchange Profile
 
 Library: `kosmoreferences-pilot-seed-library-2026-06-13`
-Generated: 2026-06-13T18:15:49.982Z
+Generated: 2026-06-13T18:23:43.088Z
 Status: `local_review_exchange_profile`
 
 Review-only. This profile prepares Blender, ArchiCAD and Web naming/mapping; it does not import, upload or publish assets.
