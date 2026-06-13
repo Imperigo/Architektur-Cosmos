@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-13T22:05:14.242Z",
+  "generated_at": "2026-06-13T22:07:32.591Z",
   "status": "worker_router_guarded_review_only",
   "source_refs": [
     "data/kosmodata-lane-sweep-2026-06-13.json"
@@ -78,6 +78,7 @@
     "npm run kosmo:private-inventory-output-check",
     "npm run kosmo:human-decision-owner-batches",
     "npm run kosmo:source-root-blocker-refresh",
+    "npm run kosmo:source-root-unlock-runbook",
     "npm run kosmo:local-worker-launch-queue",
     "npm run kosmo:local-worker-output-conversion-plan",
     "npm run kosmo:owner-decision-session-check",

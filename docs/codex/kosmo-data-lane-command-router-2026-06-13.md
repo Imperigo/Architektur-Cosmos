@@ -1,6 +1,6 @@
 # Kosmo Data-Lane Command Router
 
-Generated: 2026-06-13T22:05:14.242Z
+Generated: 2026-06-13T22:07:32.591Z
 Status: `worker_router_guarded_review_only`
 
 ## Summary
@@ -68,6 +68,7 @@ Forbidden now:
 - `npm run kosmo:private-inventory-output-check`
 - `npm run kosmo:human-decision-owner-batches`
 - `npm run kosmo:source-root-blocker-refresh`
+- `npm run kosmo:source-root-unlock-runbook`
 - `npm run kosmo:local-worker-launch-queue`
 - `npm run kosmo:local-worker-output-conversion-plan`
 - `npm run kosmo:owner-decision-session-check`

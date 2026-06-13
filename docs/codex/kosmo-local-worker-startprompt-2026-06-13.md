@@ -55,6 +55,7 @@ Nutze:
 - `data/kosmo-source-root-locator-2026-06-13.json`
 - `data/kosmo-source-root-selection-brief-2026-06-13.json`
 - `data/kosmo-source-root-blocker-refresh-2026-06-13.json`
+- `data/kosmo-source-root-unlock-runbook-2026-06-13.json`
 - `examples/kosmo-references/provenance/source-root-decision-session-2026-06-13.json`
 - `data/kosmo-source-root-decision-session-check-2026-06-13.json`
 - `data/kosmo-private-source-inventory-plan-2026-06-13.json`
@@ -91,6 +92,7 @@ Nutze:
 - `docs/codex/kosmo-source-root-locator-2026-06-13.md`
 - `docs/codex/kosmo-source-root-selection-brief-2026-06-13.md`
 - `docs/codex/kosmo-source-root-blocker-refresh-2026-06-13.md`
+- `docs/codex/kosmo-source-root-unlock-runbook-2026-06-13.md`
 - `docs/codex/kosmo-source-root-decision-session-2026-06-13.md`
 - `docs/codex/kosmo-source-root-decision-session-check-2026-06-13.md`
 - `docs/codex/kosmo-private-source-inventory-plan-2026-06-13.md`
@@ -157,6 +159,7 @@ Aktueller harter Stand:
 - Source-Root Locator: 708 Kandidaten, 0 probable large private libraries, 64 Workflow-/Projektspiegel, 38 OneDrive-like Roots, 5 Roots mit Sync-Errors; Owner/Overseer muss echten Root auswaehlen oder Archiv/OneDrive korrekt mounten.
 - Source-Root Selection Brief: 10 Optionen, Status `source_root_owner_selection_needed`; Sogn private inventory, Ingenbohl PDF private extraction und source-dependent asset authoring bleiben blockiert bis zur echten Root-Auswahl.
 - Source-Root Blocker Refresh: `source_root_blocker_still_active`, OneDrive 59/58/58 Marker/Leaf/Missing, 0 probable Libraries, private diagnostic nicht erlaubt.
+- Source-Root Unlock Runbook: `source_root_unlock_runbook_owner_storage_action_needed`; erst Storage/Owner-Aktion, dann definierte Command-Sequenz.
 - Worker Boundary Pack: `worker_boundary_pack_review_only_locked`, public-ready 0, private diagnostic false, Git/Cloud/Public writes fuer lokale Worker verboten.
 - Worker Boundary Pack Check: `worker_boundary_pack_guard_passed`, 0 Failures/Warnungen erwartet; lokale Worker duerfen nur mit bestandenem Guard starten.
 - Local Worker Launch Queue: wenn `local_worker_launch_queue_idle_outputs_present`, keine neuen lokalen LLM-Tasks starten; vorhandene Outputs nur metadata-safe reviewen.

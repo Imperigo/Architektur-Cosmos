@@ -104,6 +104,7 @@ async function main() {
       'npm run kosmo:private-inventory-output-check',
       'npm run kosmo:human-decision-owner-batches',
       'npm run kosmo:source-root-blocker-refresh',
+      'npm run kosmo:source-root-unlock-runbook',
       'npm run kosmo:local-worker-launch-queue',
       'npm run kosmo:local-worker-output-conversion-plan',
       'npm run kosmo:owner-decision-session-check',

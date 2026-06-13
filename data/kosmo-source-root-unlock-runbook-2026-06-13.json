@@ -1,0 +1,157 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-13T22:07:32.824Z",
+  "status": "source_root_unlock_runbook_owner_storage_action_needed",
+  "policy": {
+    "metadata_only": true,
+    "reads_private_content": false,
+    "copies_private_content": false,
+    "selects_root": false,
+    "runs_private_diagnostic": false,
+    "public_ready_allowed": false,
+    "public_ready_after_runbook": 0,
+    "note": "This runbook explains how to unlock source-root diagnostics after owner/storage action. It does not select a root or run private inventory."
+  },
+  "source_refs": [
+    "data/kosmo-source-root-blocker-refresh-2026-06-13.json",
+    "data/kosmo-source-root-selection-brief-2026-06-13.json",
+    "data/kosmo-source-root-decision-session-check-2026-06-13.json",
+    "data/kosmo-data-lane-command-router-2026-06-13.json"
+  ],
+  "hard_state": {
+    "blocker_status": "source_root_blocker_still_active",
+    "onedrive_marker_leaf_missing": [
+      59,
+      58,
+      58
+    ],
+    "source_root_candidates": 708,
+    "probable_libraries": 0,
+    "workflow_mirrors": 64,
+    "selected_decision": null,
+    "selected_root_exists": false,
+    "private_diagnostic_allowed": false,
+    "router_status": "worker_router_guarded_review_only",
+    "public_ready_after_runbook": 0
+  },
+  "owner_storage_actions": [
+    {
+      "id": "mount_or_confirm_real_root",
+      "action": "Mount or confirm the exact real book/ETH/HSLU architecture source root.",
+      "success_condition": "The selected path exists and is not only a workflow/project mirror."
+    },
+    {
+      "id": "repair_onedrive_if_used",
+      "action": "Repair OneDrive sync if the chosen source root is OneDrive-based.",
+      "success_condition": "OneDrive marker/leaf/missing counts no longer indicate incomplete source access."
+    },
+    {
+      "id": "record_decision_session",
+      "action": "Record selected_decision and selected_root_path in the approved source-root decision session.",
+      "success_condition": "`npm run kosmo:source-root-decision-session-check` reports private_diagnostic_allowed=true."
+    }
+  ],
+  "selection_options": [
+    {
+      "id": "workflow-or-project-mirror-mnt-data-architekturkosmos-11-ai-workflow-onedrive-2026-06-09-0",
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC/KosmoWebsite",
+      "classification": "workflow_or_project_mirror",
+      "score": 38,
+      "safe_default": "keep_blocked",
+      "recommended_action": "Treat as workflow mirror only; do not use as the large architecture source library."
+    },
+    {
+      "id": "possible-source-root-mnt-data-architekturkosmos",
+      "path": "/mnt/data/ArchitekturKosmos",
+      "classification": "possible_source_root",
+      "score": 32,
+      "safe_default": "keep_blocked",
+      "recommended_action": "Keep blocked unless owner/overseer confirms this exact path as the real source root."
+    },
+    {
+      "id": "incomplete-onedrive-candidate-home-andrin-baumann-architekturkosmos-onedrive",
+      "path": "/home/andrin-baumann/ArchitekturKosmos Onedrive",
+      "classification": "incomplete_onedrive_candidate",
+      "score": 22,
+      "safe_default": "keep_blocked",
+      "recommended_action": "Do not inventory yet; repair sync errors or confirm the complete synced root first."
+    },
+    {
+      "id": "weak-path-signal-mnt-archiv",
+      "path": "/mnt/archiv",
+      "classification": "weak_path_signal",
+      "score": 20,
+      "safe_default": "keep_blocked",
+      "recommended_action": "Use only as a mount/path clue; not enough evidence for private inventory."
+    },
+    {
+      "id": "weak-path-signal-mnt-data-archive-logs",
+      "path": "/mnt/data/_archive_logs",
+      "classification": "weak_path_signal",
+      "score": 20,
+      "safe_default": "keep_blocked",
+      "recommended_action": "Use only as a mount/path clue; not enough evidence for private inventory."
+    },
+    {
+      "id": "weak-path-signal-mnt-data-zum-archivieren",
+      "path": "/mnt/data/Zum_Archivieren",
+      "classification": "weak_path_signal",
+      "score": 20,
+      "safe_default": "keep_blocked",
+      "recommended_action": "Use only as a mount/path clue; not enough evidence for private inventory."
+    },
+    {
+      "id": "workflow-or-project-mirror-home-andrin-baumann-architekturkosmos-onedrive-11-ai-workflow",
+      "path": "/home/andrin-baumann/ArchitekturKosmos Onedrive/11 AI Workflow",
+      "classification": "workflow_or_project_mirror",
+      "score": 16,
+      "safe_default": "keep_blocked",
+      "recommended_action": "Treat as workflow mirror only; do not use as the large architecture source library."
+    },
+    {
+      "id": "workflow-or-project-mirror-home-andrin-baumann-architekturkosmos-onedrive-11-ai-workflow-0",
+      "path": "/home/andrin-baumann/ArchitekturKosmos Onedrive/11 AI Workflow/00 Architekturkosmos Zentrale",
+      "classification": "workflow_or_project_mirror",
+      "score": 16,
+      "safe_default": "keep_blocked",
+      "recommended_action": "Treat as workflow mirror only; do not use as the large architecture source library."
+    },
+    {
+      "id": "mount_archive_or_missing_root",
+      "path": null,
+      "classification": "missing_or_unmounted_root",
+      "score": null,
+      "safe_default": "keep_blocked",
+      "recommended_action": "Mount or expose the real archive/OneDrive library root, then rerun locator and private-library diagnostic."
+    },
+    {
+      "id": "repair_onedrive_first",
+      "path": null,
+      "classification": "sync_repair_first",
+      "score": null,
+      "safe_default": "repair_before_inventory",
+      "recommended_action": "Resolve OneDrive sync error roots before using visible OneDrive mirrors for inventory."
+    }
+  ],
+  "command_sequence_after_owner_storage_action": [
+    "npm run kosmo:source-root-locator",
+    "npm run kosmo:source-root-selection-brief",
+    "npm run kosmo:source-root-decision-session-check",
+    "npm run kosmo:source-root-blocker-refresh",
+    "npm run kosmo:data-lane-command-router",
+    "npm run kosmo:worker-boundary-pack",
+    "npm run kosmo:worker-boundary-pack-check"
+  ],
+  "still_forbidden_until_unlock": [
+    "private PDF/OCR extraction",
+    "private inventory extraction",
+    "source-dependent asset authoring",
+    "public-ready promotion",
+    "local-worker Git/cloud/public writes"
+  ],
+  "next_actions": [
+    "Owner/KosmoOverseer chooses storage path or repairs sync outside Git.",
+    "Rerun the command sequence only after that storage action.",
+    "If private_diagnostic_allowed remains false, keep all source-dependent work blocked."
+  ]
+}
