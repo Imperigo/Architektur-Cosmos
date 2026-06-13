@@ -104,6 +104,7 @@
     "kosmo:asset-handoff-smoke": "node scripts/kosmo-asset-handoff-smoke.mjs",
     "kosmo:asset-review-decision": "node scripts/kosmo-asset-review-decision.mjs",
     "kosmo:asset-review-pack": "node scripts/kosmo-asset-review-pack.mjs",
+    "kosmo:references-registry-check": "node scripts/kosmo-references-registry-check.mjs",
     "kosmo:asset-generate-demo-glb": "node scripts/kosmo-asset-generate-demo-glb.mjs",
     "kosmo:asset-generate-demo-dxf": "node scripts/kosmo-asset-generate-demo-dxf.mjs",
     "kosmo:asset-generate-demo-material-profile": "node scripts/kosmo-asset-generate-demo-material-profile.mjs",

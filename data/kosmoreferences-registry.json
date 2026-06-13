@@ -50,7 +50,7 @@
       "title": "Codex KosmoAsset Pilot Library",
       "path": "examples/kosmo-assets/codex-pilot-library/library.json",
       "review_report": "examples/kosmo-assets/codex-pilot-library/review/asset-library-check.generated.md",
-      "status": "review_ready",
+      "status": "draft",
       "check_status": "passed",
       "role": "first mixed 2D/3D/material/detail/export-profile asset pilot"
     }

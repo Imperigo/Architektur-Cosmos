@@ -47,3 +47,28 @@ aber nicht als Freigabe fuer Public-Publishing interpretiert werden.
 
 Public-ready ist ein Objekt erst, wenn Source-Package, Rechte-Gate,
 Entry-/Asset-Review und Medien-/Modellpolitik jeweils gruen sind.
+
+## Lokaler Check
+
+Die Registry kann lokal geprueft werden:
+
+```bash
+npm run kosmo:references-registry-check
+```
+
+Der Check liest die Registry, oeffnet die referenzierten JSON-Manifeste und
+Report-JSONs, prueft IDs, Statuswerte, Review-Reports, Public-Ready-Flags,
+Source-Package-Verknuepfungen und Asset-Library-Policies.
+
+Output:
+
+```text
+out/kosmoreferences-registry/registry-check.generated.json
+out/kosmoreferences-registry/registry-check.generated.md
+```
+
+Fuer ein versioniertes Handoff:
+
+```bash
+npm run kosmo:references-registry-check -- --out examples/kosmo-references/registry/review
+```
