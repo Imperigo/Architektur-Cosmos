@@ -131,6 +131,7 @@
     "kosmo:private-library-diagnostic": "node scripts/kosmo-private-library-diagnostic.mjs",
     "kosmo:source-root-locator": "node scripts/kosmo-source-root-locator.mjs",
     "kosmo:source-root-selection-brief": "node scripts/kosmo-source-root-selection-brief.mjs",
+    "kosmo:source-root-blocker-refresh": "node scripts/kosmo-source-root-blocker-refresh.mjs",
     "kosmo:source-root-decision-session-create": "node scripts/kosmo-source-root-decision-session-create.mjs",
     "kosmo:source-root-decision-session-check": "node scripts/kosmo-source-root-decision-session-check.mjs",
     "kosmo:private-source-inventory-plan": "node scripts/kosmo-private-source-inventory-plan.mjs",

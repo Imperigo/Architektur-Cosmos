@@ -103,6 +103,7 @@ async function main() {
       'npm run kosmo:private-inventory-output-template',
       'npm run kosmo:private-inventory-output-check',
       'npm run kosmo:human-decision-owner-batches',
+      'npm run kosmo:source-root-blocker-refresh',
       'npm run kosmo:owner-decision-session-check',
       'npm run kosmo:owner-review-packet-check',
       'npm run kosmo:owner-review-session-brief',
