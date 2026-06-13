@@ -51,7 +51,9 @@ Nutze:
 - `data/kosmo-local-worker-task-pack-2026-06-13.json`
 - `data/kosmoreferences-data-lane-status.json`
 - `data/kosmoreferences-private-library-diagnostic-2026-06-13.json`
+- `data/kosmo-onedrive-sync-error-summary-2026-06-13.json`
 - `docs/codex/kosmo-private-library-sync-resolution-2026-06-13.md`
+- `docs/codex/kosmo-onedrive-sync-error-summary-2026-06-13.md`
 - `examples/kosmo-references/source-packages/architecturekosmos-private-project-sources-2026-06-13/source-package.json`
 
 Private lokale Extrakte liegen hier:
@@ -79,5 +81,6 @@ Aktueller harter Stand:
 - Owner Decision Batches: 5/5 offen, 16 Items; immer batchweise bearbeiten.
 - Public-Source-Links sind 14/14 erreichbar.
 - Die grosse private Buch-/ETH-/HSLU-Library ist noch nicht als echter Root sichtbar.
-- Im Home-OneDrive-Spiegel sind 30 Sync-Error-Marker sichtbar; diesen Spiegel nicht als vollstaendig behandeln.
+- Im kuratierten Home-OneDrive-Diagnosepfad sind 30 Sync-Error-Marker sichtbar; diesen Spiegel nicht als vollstaendig behandeln.
+- Der tiefere OneDrive-Reparatur-Sweep sieht 59 Marker-Dateien, 58 Leaf-Marker und 58 Aggregate-Missing-Items. Diese Zahl fuer Sync-Reparatur verwenden, nicht ungeprueft mit der DataPanel-Zahl vermischen.
 - `/mnt/archiv` ist in der aktuellen Diagnose kein eigener Mount.

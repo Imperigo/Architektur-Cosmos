@@ -35,6 +35,7 @@ Private library:
 
 - Extended the private-library diagnostic with OneDrive sync error counts.
 - Current visible OneDrive/Home mirror has 30 sync error marker files.
+- Added a deeper OneDrive repair sweep: 59 marker files, 58 leaf marker files, 58 aggregate missing listed items.
 - Added private-library sync/mount checklist.
 - Added sync error visibility to KosmoReferences status card, KosmoData sweep and KosmoOrbit DataPanel.
 
@@ -53,7 +54,7 @@ KosmoOrbit:
 2. Owner Decision Batches remain open: 5/5.
 3. Large private book/ETH/HSLU library is not visible.
 4. `/mnt/archiv` is not visible as its own archive HDD mount.
-5. Home OneDrive mirror has 30 sync error marker files.
+5. Home OneDrive mirror has 30 curated diagnostic sync error marker files; the deeper repair sweep has 59 marker files / 58 leaf marker files.
 6. Six KosmoAsset human reviews remain open.
 
 ## Safe Next Work
@@ -61,10 +62,11 @@ KosmoOrbit:
 Do next, in this order:
 
 1. Resolve storage/sync question for the real private library root.
-2. Re-run `npm run kosmo:private-library-diagnostic`.
-3. Re-run `npm run kosmo:data-lane-sweep`.
-4. If the library becomes visible, create a private source inventory for Sogn Benedetg, ETH and HSLU material.
-5. If owner review is desired before library sync, use `docs/codex/kosmo-owner-review-agenda-2026-06-13.md` and ask only one batch at a time.
+2. Re-run `npm run kosmo:onedrive-sync-errors`.
+3. Re-run `npm run kosmo:private-library-diagnostic`.
+4. Re-run `npm run kosmo:data-lane-sweep`.
+5. If the library becomes visible, create a private source inventory for Sogn Benedetg, ETH and HSLU material.
+6. If owner review is desired before library sync, use `docs/codex/kosmo-owner-review-agenda-2026-06-13.md` and ask only one batch at a time.
 
 ## Commands Verified
 
@@ -72,6 +74,7 @@ ArchitectureCosmos:
 
 ```bash
 node --check scripts/kosmo-data-lane-sweep.mjs
+npm run kosmo:onedrive-sync-errors
 npm run kosmo:data-lane-sweep
 ```
 

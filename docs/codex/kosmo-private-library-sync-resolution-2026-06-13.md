@@ -17,7 +17,8 @@ Blocked or incomplete:
 
 - `/mnt/archiv` exists as a directory but is not its own archive HDD mount.
 - `/mnt/data/Zum_Archivieren` is empty or not mounted.
-- `/home/andrin-baumann/ArchitekturKosmos Onedrive` contains 30 OneDrive sync error marker files.
+- `/home/andrin-baumann/ArchitekturKosmos Onedrive` contains 30 OneDrive sync error marker files in the curated private-library diagnostic.
+- The deeper OneDrive repair sweep finds 59 marker files, 58 leaf marker files and 58 aggregate missing listed items.
 - Current visible mirrors contain only 39 book-like files, not a large source library.
 
 ## What This Means
@@ -32,8 +33,9 @@ KosmoReferences should not treat the current OneDrive mirror as complete. The mi
 4. Confirm whether the large private library is on the archive HDD, OneDrive, or another disk.
 5. If OneDrive is the source, resolve the sync errors before treating the mirror as complete.
 6. If a ZIP is the source, extract only into a private local root, not into public repo folders.
-7. Re-run `npm run kosmo:private-library-diagnostic`.
-8. If `library_candidate_visible` appears, run `npm run kosmo:data-lane-sweep`.
+7. Re-run `npm run kosmo:onedrive-sync-errors`.
+8. Re-run `npm run kosmo:private-library-diagnostic`.
+9. If `library_candidate_visible` appears, run `npm run kosmo:data-lane-sweep`.
 
 ## Safe Target Layout
 
@@ -66,6 +68,7 @@ Rules:
 
 ```bash
 df -h
+npm run kosmo:onedrive-sync-errors
 npm run kosmo:private-library-diagnostic
 npm run kosmo:data-lane-sweep
 ```
