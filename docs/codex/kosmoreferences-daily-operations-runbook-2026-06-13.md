@@ -68,24 +68,34 @@ This runbook is the daily execution order for the KosmoReferences/KosmoAsset dat
 
    - `docs/codex/kosmo-owner-next-review-brief-2026-06-13.md`
 
-9. If a narrow rerun is needed, run the KosmoReferences Nightly Gate:
+9. Refresh the night loop checkpoint:
+
+   ```bash
+   npm run kosmo:night-loop-checkpoint
+   ```
+
+10. Open the generated checkpoint:
+
+   - `docs/codex/kosmo-night-loop-checkpoint-2026-06-13.md`
+
+11. If a narrow rerun is needed, run the KosmoReferences Nightly Gate:
 
    ```bash
    npm run kosmo:references-nightly-gate
    ```
 
-10. Open the generated reports:
+12. Open the generated reports:
 
    - `docs/codex/kosmoreferences-nightly-gate-2026-06-13.md`
    - `data/kosmoreferences-data-lane-status.md`
 
-11. If a narrow asset rerun is needed, run the KosmoAsset seed full review:
+13. If a narrow asset rerun is needed, run the KosmoAsset seed full review:
 
    ```bash
    npm run kosmo:asset-full-review -- --library examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json
    ```
 
-12. Open the generated report:
+14. Open the generated report:
 
    - `examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-full-review.generated.md`
 
@@ -103,6 +113,7 @@ Use the result as the current read-only status:
 - `private_inventory_output_contract_passed` means the empty output template is structurally safe; real private outputs must still be checked before handoff.
 - `worker_router_guarded_review_only` means local workers may only do metadata/review-only work and may not run Git, cloud, public promotion or source-copy actions.
 - `owner_next_review_brief_open` means owner questions are prepared in five small batches, but no decision has been recorded.
+- `night_loop_guarded_ready` means the next autonomous loop is structurally ready but remains guarded by source-root and owner-decision blockers.
 
 Then continue with one of these safe work types:
 
