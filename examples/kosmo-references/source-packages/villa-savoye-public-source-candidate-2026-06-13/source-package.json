@@ -1,0 +1,140 @@
+{
+  "schema_version": "0.1",
+  "package_id": "villa-savoye-public-source-candidate-2026-06-13",
+  "title": "Villa Savoye Public Source Candidate",
+  "description": "Link-only public-source candidate for the Villa Savoye KosmoReferences goldstandard. No web page content, media, plans, screenshots or protected files are copied into this package.",
+  "created_at": "2026-06-13",
+  "updated_at": "2026-06-13",
+  "status": "review_ready",
+  "rights_scope": "public_candidate",
+  "source_kind": "public_web",
+  "source_root": "link_only",
+  "public_policy": {
+    "source_files_public": false,
+    "extracted_text_public": false,
+    "derived_summary_public": true,
+    "notes": [
+      "This package stores link metadata and URL fingerprints only.",
+      "Existing local Villa Savoye media/model assets remain governed by their own file-level rights metadata.",
+      "The project may be described publicly through own-written summaries and source links after review."
+    ]
+  },
+  "sources": [
+    {
+      "id": "cmn-villa-savoye-visit-page",
+      "title": "Centre des monuments nationaux: Welcome to the Villa Savoye in Poissy",
+      "path": "https://www.villa-savoye.fr/en",
+      "file_type": "web_link",
+      "source_role": "primary_source",
+      "rights_status": "link_only",
+      "sha256": "ef39ec123630bbff9a304d626966b03c1c2368fd3271e41c4be26ea50bc6460a",
+      "bytes": 30,
+      "notes": "Official monument/visit link for current public source trail. URL fingerprint only."
+    },
+    {
+      "id": "cmn-villa-savoye-history-page",
+      "title": "Centre des monuments nationaux: History of the Villa Savoye",
+      "path": "https://www.villa-savoye.fr/en/discover/history-of-the-villa-savoye",
+      "file_type": "web_link",
+      "source_role": "primary_source",
+      "rights_status": "link_only",
+      "sha256": "74c7c7a7a476d369e3eba736edbc3986d82b00adb57f27c6c76e32c885bee15d",
+      "bytes": 67,
+      "notes": "Official history/source-trail link. Do not copy media or page text."
+    },
+    {
+      "id": "fondation-le-corbusier-villa-savoye",
+      "title": "Fondation Le Corbusier: Villa Savoye and Gardener's Lodge",
+      "path": "https://www.fondationlecorbusier.fr/en/work-architecture/achievements-villa-savoye-and-gardeners-lodge-poissy-france-1928-1931/",
+      "file_type": "web_link",
+      "source_role": "primary_source",
+      "rights_status": "link_only",
+      "sha256": "5ec12a31270013b6b68438c853b60ae4bf056408b34eb460be9bf9ca99981d5e",
+      "bytes": 127,
+      "notes": "Foundation source trail for authorship, dating and five-points reading. URL fingerprint only."
+    },
+    {
+      "id": "unesco-le-corbusier-world-heritage-1321",
+      "title": "UNESCO: The Architectural Work of Le Corbusier",
+      "path": "https://whc.unesco.org/en/list/1321/",
+      "file_type": "web_link",
+      "source_role": "secondary_source",
+      "rights_status": "link_only",
+      "sha256": "4c5f3455bed0f21b4860b5168ce00184c086a5e3a48c3f8f6a2dd7debd844cd5",
+      "bytes": 36,
+      "notes": "UNESCO source trail for world-heritage context. URL fingerprint only."
+    },
+    {
+      "id": "lecorbusier-worldheritage-villa-savoye",
+      "title": "Le Corbusier World Heritage: Villa Savoye et loge du jardinier",
+      "path": "https://lecorbusier-worldheritage.org/en/villa-savoye-et-loge-du-jardinier/",
+      "file_type": "web_link",
+      "source_role": "secondary_source",
+      "rights_status": "link_only",
+      "sha256": "a08cc3f5c60cea420082cac40f8ce7b0395d00cbfd75693b3d8cf355feb1a382",
+      "bytes": 75,
+      "notes": "World-heritage component page for source-trail triangulation. URL fingerprint only."
+    }
+  ],
+  "extraction_artifacts": [],
+  "candidate_projects": [
+    {
+      "id": "villa-savoye",
+      "title": "Villa Savoye",
+      "entry_id": "villa-savoye",
+      "architects": [
+        "Le Corbusier",
+        "Pierre Jeanneret"
+      ],
+      "confidence": 0.95,
+      "promotion_status": "goldstandard_candidate",
+      "evidence": [
+        "Official monument, foundation and UNESCO links identify Villa Savoye as a central modernist reference.",
+        "Existing ArchitectureCosmos data already contains media, analysis and model layers for Villa Savoye.",
+        "This package provides a clean source-trail envelope while keeping media and exact plan reuse rights-gated."
+      ]
+    }
+  ],
+  "review_gates": [
+    {
+      "id": "source_integrity",
+      "status": "pass",
+      "notes": "URL fingerprints and byte counts recorded for all link-only sources."
+    },
+    {
+      "id": "rights",
+      "status": "partial",
+      "notes": "Links and own summaries can support review; existing images, plans and models require separate file-level review."
+    },
+    {
+      "id": "text_quality",
+      "status": "partial",
+      "notes": "Own-written summaries are allowed after review; no copied source text is stored here."
+    },
+    {
+      "id": "layout_quality",
+      "status": "not_run",
+      "notes": "No plan, section, image-layout or geometry extraction has been run in this package."
+    },
+    {
+      "id": "entry_mapping",
+      "status": "pass",
+      "notes": "Villa Savoye maps directly to the existing ArchitectureCosmos goldstandard entry."
+    },
+    {
+      "id": "asset_mapping",
+      "status": "partial",
+      "notes": "Existing local plan/model/media assets exist, but all derived assets still need file-level rights and provenance review."
+    },
+    {
+      "id": "public_private_split",
+      "status": "pass",
+      "notes": "The package contains link metadata only and keeps all source content link-only."
+    }
+  ],
+  "next_actions": [
+    "Create and validate the versioned Villa Savoye entry draft from the existing goldstandard data.",
+    "Connect the Villa source package to the KosmoReferences registry.",
+    "Run a separate asset/provenance review before promoting any existing Villa media or plan-derived geometry."
+  ]
+}

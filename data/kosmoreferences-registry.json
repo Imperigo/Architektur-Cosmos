@@ -41,6 +41,17 @@
       "source_kind": "public_web",
       "check_status": "passed",
       "role": "link-only public-source candidate for the Roger Boltshauser / Ingenbohl pilot"
+    },
+    {
+      "id": "villa-savoye-public-source-candidate-2026-06-13",
+      "title": "Villa Savoye Public Source Candidate",
+      "path": "examples/kosmo-references/source-packages/villa-savoye-public-source-candidate-2026-06-13/source-package.json",
+      "review_report": "examples/kosmo-references/source-packages/villa-savoye-public-source-candidate-2026-06-13/review/source-package-check.generated.md",
+      "status": "review_ready",
+      "rights_scope": "public_candidate",
+      "source_kind": "public_web",
+      "check_status": "passed",
+      "role": "link-only public-source candidate for the Villa Savoye goldstandard pilot"
     }
   ],
   "entry_drafts": [
@@ -63,6 +74,16 @@
       "check_status": "archive_entry_draft_passed",
       "public_ready": false,
       "role": "Roger Boltshauser / contemporary Swiss transformation and material pilot"
+    },
+    {
+      "id": "villa-savoye",
+      "title": "Villa Savoye",
+      "path": "examples/kosmo-references/entry-drafts/villa-savoye.entry-draft.json",
+      "source_package_id": "villa-savoye-public-source-candidate-2026-06-13",
+      "status": "review_only_draft",
+      "check_status": "archive_entry_draft_passed",
+      "public_ready": false,
+      "role": "ArchitectureCosmos goldstandard reference pilot"
     }
   ],
   "asset_libraries": [

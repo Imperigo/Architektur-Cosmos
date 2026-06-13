@@ -1,13 +1,13 @@
 {
-  "checked_at": "2026-06-13T16:15:38.470Z",
+  "checked_at": "2026-06-13T16:19:05.143Z",
   "registry_path": "data/kosmoreferences-registry.json",
   "status": "passed",
   "summary": {
-    "source_packages": 3,
-    "entry_drafts": 2,
+    "source_packages": 4,
+    "entry_drafts": 3,
     "asset_libraries": 1,
     "reference_pilots": 3,
-    "checks": 10,
+    "checks": 13,
     "failures": 0,
     "warnings": 0
   },
@@ -49,6 +49,18 @@
       "status": "read_json"
     },
     {
+      "kind": "source_package",
+      "id": "villa-savoye-public-source-candidate-2026-06-13",
+      "path": "examples/kosmo-references/source-packages/villa-savoye-public-source-candidate-2026-06-13/source-package.json",
+      "status": "read_json"
+    },
+    {
+      "kind": "source_package_report",
+      "id": "villa-savoye-public-source-candidate-2026-06-13",
+      "path": "examples/kosmo-references/source-packages/villa-savoye-public-source-candidate-2026-06-13/review/source-package-check.generated.json",
+      "status": "read_json"
+    },
+    {
       "kind": "entry_draft",
       "id": "kapelle-sogn-benedetg",
       "path": "examples/kosmo-references/entry-drafts/kapelle-sogn-benedetg.entry-draft.json",
@@ -58,6 +70,12 @@
       "kind": "entry_draft",
       "id": "alterszentrum-kloster-ingenbohl",
       "path": "examples/kosmo-references/entry-drafts/alterszentrum-kloster-ingenbohl.entry-draft.json",
+      "status": "read_json"
+    },
+    {
+      "kind": "entry_draft",
+      "id": "villa-savoye",
+      "path": "examples/kosmo-references/entry-drafts/villa-savoye.entry-draft.json",
       "status": "read_json"
     },
     {

@@ -1,0 +1,72 @@
+{
+  "checked_at": "2026-06-13T16:18:59.749Z",
+  "package_path": "examples/kosmo-references/source-packages/villa-savoye-public-source-candidate-2026-06-13/source-package.json",
+  "package_id": "villa-savoye-public-source-candidate-2026-06-13",
+  "title": "Villa Savoye Public Source Candidate",
+  "status": "passed",
+  "summary": {
+    "sources": 5,
+    "extraction_artifacts": 0,
+    "candidate_projects": 1,
+    "review_gates": 7
+  },
+  "checks": [
+    {
+      "kind": "source",
+      "id": "cmn-villa-savoye-visit-page",
+      "path": "https://www.villa-savoye.fr/en",
+      "status": "link_fingerprint_pass",
+      "resolved_path": "https://www.villa-savoye.fr/en",
+      "expected_sha256": "ef39ec123630bbff9a304d626966b03c1c2368fd3271e41c4be26ea50bc6460a",
+      "actual_sha256": "ef39ec123630bbff9a304d626966b03c1c2368fd3271e41c4be26ea50bc6460a",
+      "expected_bytes": 30,
+      "actual_bytes": 30
+    },
+    {
+      "kind": "source",
+      "id": "cmn-villa-savoye-history-page",
+      "path": "https://www.villa-savoye.fr/en/discover/history-of-the-villa-savoye",
+      "status": "link_fingerprint_pass",
+      "resolved_path": "https://www.villa-savoye.fr/en/discover/history-of-the-villa-savoye",
+      "expected_sha256": "74c7c7a7a476d369e3eba736edbc3986d82b00adb57f27c6c76e32c885bee15d",
+      "actual_sha256": "74c7c7a7a476d369e3eba736edbc3986d82b00adb57f27c6c76e32c885bee15d",
+      "expected_bytes": 67,
+      "actual_bytes": 67
+    },
+    {
+      "kind": "source",
+      "id": "fondation-le-corbusier-villa-savoye",
+      "path": "https://www.fondationlecorbusier.fr/en/work-architecture/achievements-villa-savoye-and-gardeners-lodge-poissy-france-1928-1931/",
+      "status": "link_fingerprint_pass",
+      "resolved_path": "https://www.fondationlecorbusier.fr/en/work-architecture/achievements-villa-savoye-and-gardeners-lodge-poissy-france-1928-1931/",
+      "expected_sha256": "5ec12a31270013b6b68438c853b60ae4bf056408b34eb460be9bf9ca99981d5e",
+      "actual_sha256": "5ec12a31270013b6b68438c853b60ae4bf056408b34eb460be9bf9ca99981d5e",
+      "expected_bytes": 127,
+      "actual_bytes": 127
+    },
+    {
+      "kind": "source",
+      "id": "unesco-le-corbusier-world-heritage-1321",
+      "path": "https://whc.unesco.org/en/list/1321/",
+      "status": "link_fingerprint_pass",
+      "resolved_path": "https://whc.unesco.org/en/list/1321/",
+      "expected_sha256": "4c5f3455bed0f21b4860b5168ce00184c086a5e3a48c3f8f6a2dd7debd844cd5",
+      "actual_sha256": "4c5f3455bed0f21b4860b5168ce00184c086a5e3a48c3f8f6a2dd7debd844cd5",
+      "expected_bytes": 36,
+      "actual_bytes": 36
+    },
+    {
+      "kind": "source",
+      "id": "lecorbusier-worldheritage-villa-savoye",
+      "path": "https://lecorbusier-worldheritage.org/en/villa-savoye-et-loge-du-jardinier/",
+      "status": "link_fingerprint_pass",
+      "resolved_path": "https://lecorbusier-worldheritage.org/en/villa-savoye-et-loge-du-jardinier/",
+      "expected_sha256": "a08cc3f5c60cea420082cac40f8ce7b0395d00cbfd75693b3d8cf355feb1a382",
+      "actual_sha256": "a08cc3f5c60cea420082cac40f8ce7b0395d00cbfd75693b3d8cf355feb1a382",
+      "expected_bytes": 75,
+      "actual_bytes": 75
+    }
+  ],
+  "failures": [],
+  "warnings": []
+}

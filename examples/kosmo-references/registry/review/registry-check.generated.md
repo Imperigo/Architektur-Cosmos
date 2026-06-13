@@ -1,16 +1,16 @@
 # KosmoReferences Registry Check
 
-Generated: 2026-06-13T16:15:38.470Z
+Generated: 2026-06-13T16:19:05.143Z
 Registry: `data/kosmoreferences-registry.json`
 Status: `passed`
 
 ## Summary
 
-- Source packages: 3
-- Entry drafts: 2
+- Source packages: 4
+- Entry drafts: 3
 - Asset libraries: 1
 - Reference pilots: 3
-- Checks: 10
+- Checks: 13
 - Failures: 0
 - Warnings: 0
 
@@ -22,8 +22,11 @@ Status: `passed`
 - `source_package_report:kapelle-sogn-benedetg-public-source-candidate-2026-06-13` -> `read_json`
 - `source_package:alterszentrum-kloster-ingenbohl-public-source-candidate-2026-06-13` -> `read_json`
 - `source_package_report:alterszentrum-kloster-ingenbohl-public-source-candidate-2026-06-13` -> `read_json`
+- `source_package:villa-savoye-public-source-candidate-2026-06-13` -> `read_json`
+- `source_package_report:villa-savoye-public-source-candidate-2026-06-13` -> `read_json`
 - `entry_draft:kapelle-sogn-benedetg` -> `read_json`
 - `entry_draft:alterszentrum-kloster-ingenbohl` -> `read_json`
+- `entry_draft:villa-savoye` -> `read_json`
 - `asset_library:codex-pilot-library` -> `read_json`
 - `asset_library_report:codex-pilot-library` -> `read_json`
 

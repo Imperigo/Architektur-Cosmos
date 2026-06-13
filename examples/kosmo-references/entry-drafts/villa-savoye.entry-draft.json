@@ -1,0 +1,210 @@
+{
+  "id": "villa-savoye",
+  "slug": "villa-savoye",
+  "title": "Villa Savoye",
+  "entry_type": "building",
+  "year_start": 1928,
+  "year_end": 1931,
+  "authors": [
+    "Le Corbusier",
+    "Pierre Jeanneret"
+  ],
+  "city": "Poissy",
+  "country": "France",
+  "style_sector": "modern_architecture",
+  "lecture_cluster": [
+    "Architecture Cosmos goldstandard",
+    "modern architecture",
+    "Le Corbusier",
+    "five points",
+    "promenade architecturale"
+  ],
+  "themes": [
+    "pilotis",
+    "free plan",
+    "free facade",
+    "ribbon windows",
+    "roof garden",
+    "promenade architecturale",
+    "reinforced concrete frame",
+    "modern villa",
+    "manifest house",
+    "UNESCO world heritage component"
+  ],
+  "short_description": "Review-only KosmoReferences draft for Villa Savoye, the modernist manifesto villa in Poissy and the first ArchitectureCosmos goldstandard reference.",
+  "one_sentence": "Villa Savoye dient KosmoReferences als Goldstandard, weil hier Fuenf Punkte, Promenade architecturale, Pilotis, freier Grundriss und analytische 2D/3D-Schichtung an einem kanonischen Referenzbau zusammenlaufen.",
+  "full_description": "Villa Savoye wird in KosmoReferences als erster Goldstandard-Knoten gefuehrt. Das Projekt buendelt Le Corbusiers moderne Wohnhauslogik: Pilotis, freier Grundriss, freie Fassade, Fensterband, Dachgarten und eine choreografierte Promenade architecturale. Fuer die Data-Lane ist Villa Savoye der Testfall, an dem Source-Package, Medienrechte, Planvektorisierung, Modell-Layer, Struktur-/Materialanalyse und KosmoAsset-Ableitungen zusammengebracht werden. Dieser Draft bleibt review-only: bestehende lokale Medien und Modelle duerfen nur mit file-level Provenienz- und Rechtecheck public genutzt werden.",
+  "media": [
+    {
+      "type": "exterior",
+      "label": "Exterior review slot",
+      "placeholder": "Exterior media slot exists locally but remains under file-level provenance and rights review.",
+      "credit": "file_level_review_required"
+    },
+    {
+      "type": "interior",
+      "label": "Interior review slot",
+      "placeholder": "Interior media slot exists locally but remains under file-level provenance and rights review.",
+      "credit": "file_level_review_required"
+    },
+    {
+      "type": "section",
+      "label": "Section review slot",
+      "placeholder": "Section/vector media slot exists locally but remains under plan provenance and rights review.",
+      "credit": "derived_asset_review_required"
+    },
+    {
+      "type": "plan",
+      "label": "Plan review slot",
+      "placeholder": "Plan/vector media slot exists locally but remains under plan provenance and rights review.",
+      "credit": "derived_asset_review_required"
+    }
+  ],
+  "source_quality": "public_source_candidate",
+  "source_package_ref": "examples/kosmo-references/source-packages/villa-savoye-public-source-candidate-2026-06-13/source-package.json",
+  "source_documents": [
+    "Centre des monuments nationaux / Villa Savoye visit page",
+    "Centre des monuments nationaux / History of the Villa Savoye",
+    "Fondation Le Corbusier / Villa Savoye and Gardener's Lodge",
+    "UNESCO / The Architectural Work of Le Corbusier",
+    "Le Corbusier World Heritage / Villa Savoye et loge du jardinier"
+  ],
+  "source_url": "https://www.villa-savoye.fr/en",
+  "source_candidates": [
+    {
+      "source_type": "public_web_link",
+      "title": "Centre des monuments nationaux / Villa Savoye visit page",
+      "url": "https://www.villa-savoye.fr/en",
+      "reliability_level": "primary_source",
+      "rights_status": "link_only",
+      "notes": "Use as official monument source trail. Do not copy media or page text."
+    },
+    {
+      "source_type": "public_web_link",
+      "title": "Fondation Le Corbusier / Villa Savoye and Gardener's Lodge",
+      "url": "https://www.fondationlecorbusier.fr/en/work-architecture/achievements-villa-savoye-and-gardeners-lodge-poissy-france-1928-1931/",
+      "reliability_level": "primary_source",
+      "rights_status": "link_only",
+      "notes": "Use as foundation source trail for project identity and five-points context. Do not copy media or page text."
+    },
+    {
+      "source_type": "public_web_link",
+      "title": "UNESCO / The Architectural Work of Le Corbusier",
+      "url": "https://whc.unesco.org/en/list/1321/",
+      "reliability_level": "high",
+      "rights_status": "link_only",
+      "notes": "Use as UNESCO world-heritage source trail. Do not copy media or page text."
+    }
+  ],
+  "asset_candidates": [
+    {
+      "kind": "vector_plan",
+      "media_slot": "plan",
+      "title": "Villa Savoye ground-floor vector plan review slot",
+      "planned_r2_key": "entries/villa-savoye/assets/plans/ground-floor-vector-review.placeholder.json",
+      "rights_status": "derived_asset_review_required",
+      "public_display_allowed": false
+    },
+    {
+      "kind": "model",
+      "media_slot": "section",
+      "title": "Villa Savoye structure/free-plan model layer review slot",
+      "planned_r2_key": "entries/villa-savoye/assets/models/structure-free-plan-review.placeholder.json",
+      "rights_status": "derived_asset_review_required",
+      "public_display_allowed": false
+    },
+    {
+      "kind": "diagram",
+      "media_slot": "exterior",
+      "title": "Five-points analytical diagram slot",
+      "planned_r2_key": "entries/villa-savoye/assets/diagrams/five-points-analysis.placeholder.json",
+      "rights_status": "generated_needs_review",
+      "public_display_allowed": false
+    }
+  ],
+  "model_packages": [
+    {
+      "package_type": "reference_model",
+      "status": "review_existing",
+      "planned_paths": [
+        "entries/villa-savoye/models/mass.glb",
+        "entries/villa-savoye/models/low.glb",
+        "entries/villa-savoye/models/structure.glb",
+        "entries/villa-savoye/models/tectonic.glb",
+        "entries/villa-savoye/models/site.glb"
+      ],
+      "notes": "Existing local model layers require provenance and plan-derived geometry review before any public release."
+    }
+  ],
+  "analysis_layers": [
+    {
+      "analysis_type": "structure",
+      "summary": "Reinforced-concrete frame and pilotis separate support from enclosure and make free plan/free facade analysis possible.",
+      "review_status": "draft"
+    },
+    {
+      "analysis_type": "spatial_order",
+      "summary": "Promenade architecturale: arrival, ramp, interior sequence and roof garden form the key movement system.",
+      "review_status": "draft"
+    },
+    {
+      "analysis_type": "topos_typos_tectonics",
+      "summary": "Manifest villa on a suburban Poissy site; object, driveway, lawn and elevated roof garden are part of one spatial argument.",
+      "review_status": "draft"
+    }
+  ],
+  "analysis_observations": [
+    {
+      "analysis_type": "structure",
+      "label": "pilotis-reinforced-concrete-frame",
+      "confidence_score": 0.9,
+      "source": "public_source_package"
+    },
+    {
+      "analysis_type": "spatial_order",
+      "label": "promenade-architecturale",
+      "confidence_score": 0.9,
+      "source": "public_source_package"
+    },
+    {
+      "analysis_type": "typology",
+      "label": "manifest-modern-villa",
+      "confidence_score": 0.92,
+      "source": "public_source_package"
+    }
+  ],
+  "ingestion_status": {
+    "stage": "review_only_draft",
+    "source_status": "public_link_package",
+    "asset_status": "existing_assets_need_file_level_review",
+    "model_status": "existing_models_need_provenance_review",
+    "updated_at": "2026-06-13"
+  },
+  "database_tags": [
+    "source:public-link-package",
+    "source:cmn",
+    "source:fondation-le-corbusier",
+    "source:unesco",
+    "typology:modern-villa",
+    "typology:manifest-house",
+    "structure:reinforced-concrete-frame",
+    "structure:pilotis",
+    "spatial:promenade-architecturale",
+    "spatial:free-plan",
+    "material:rendered-surface",
+    "theme:five-points",
+    "theme:roof-garden",
+    "theme:world-heritage",
+    "rights:file-level-review-required",
+    "analysis:goldstandard"
+  ],
+  "database_profile": {
+    "status": "draft",
+    "r2_prefix": "entries/villa-savoye",
+    "source_count": 5,
+    "media_count": 4,
+    "model_count": 1,
+    "analysis_count": 3,
+    "tag_count": 16
+  }
+}
