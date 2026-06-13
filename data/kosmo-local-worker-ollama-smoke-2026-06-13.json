@@ -1,10 +1,10 @@
 {
   "schema_version": "0.1",
-  "checked_at": "2026-06-13T19:19:48.689Z",
+  "checked_at": "2026-06-13T19:27:47.503Z",
   "status": "passed",
   "endpoint": "http://127.0.0.1:11434/api/generate",
   "model": "kosmo-qwen3-coder:30b-a3b-q4km",
-  "duration_ms": 2583,
+  "duration_ms": 470,
   "checks": {
     "http_ok": true,
     "model_returned": true,
@@ -14,8 +14,8 @@
     "mentions_review_only": true,
     "mentions_no_public_promotion": true
   },
-  "response_length": 100,
-  "response_preview": "Die Architektur-Kosmos-Local-Worker-Prüfung ist eine Review-only Kontrolle ohne öffentliche Werbung.",
+  "response_length": 358,
+  "response_preview": "Die Architektur-Kosmos-Prüfung wurde von einem lokalen Mitarbeiter als Review-only durchgeführt, ohne öffentliche Promotion oder Werbung. \n\nNote: The original request was in English but the example provided is German, so I've translated it ",
   "policy": {
     "private_content_sent": false,
     "public_promotion": false,
