@@ -1,0 +1,93 @@
+{
+  "schema_version": "0.1",
+  "created_at": "2026-06-13",
+  "created_by": "codex-overseer",
+  "purpose": "Targeted local/private library search for the first KosmoReferences pilot projects after Villa Savoye: Kapelle Sogn Benedetg and Alterszentrum Kloster Ingenbohl.",
+  "search_policy": {
+    "mode": "local_first",
+    "copied_private_content": false,
+    "rights_mode": "fingerprint_and_path_only",
+    "notes": "No book pages, lecture pages, protected images or PDF text were copied into this report."
+  },
+  "roots_checked": [
+    {
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09",
+      "status": "available",
+      "role": "visible OneDrive mirror on 4TB SSD",
+      "targeted_file_name_matches": 0,
+      "text_matches": "workflow/repo-context only"
+    },
+    {
+      "path": "/home/andrin-baumann/ArchitekturKosmos Onedrive",
+      "status": "available",
+      "role": "local OneDrive user folder",
+      "targeted_file_name_matches": 0,
+      "text_matches": "workflow/repo-context only"
+    },
+    {
+      "path": "/mnt/archiv",
+      "status": "mounted_empty_or_not_populated",
+      "role": "expected archive HDD mount",
+      "targeted_file_name_matches": 0,
+      "text_matches": 0,
+      "observed_listing": "directory contains no visible child files or folders"
+    },
+    {
+      "path": "/mnt/data/Zum_Archivieren",
+      "status": "available_empty_for_targeted_search",
+      "role": "SSD archive staging folder",
+      "targeted_file_name_matches": 0,
+      "text_matches": 0
+    },
+    {
+      "path": "/mnt/data/ArchitekturKosmos/KosmoZentrale/sources/private-extracts",
+      "status": "available",
+      "role": "Codex private extract store",
+      "targeted_file_name_matches": 0,
+      "text_matches": "project vision/pipeline extracts only"
+    }
+  ],
+  "queries": [
+    "sogn",
+    "benedetg",
+    "sumvitg",
+    "zumthor",
+    "ingenbohl",
+    "boltshauser",
+    "holzbau",
+    "timber"
+  ],
+  "results": {
+    "direct_private_book_or_lecture_files_found": 0,
+    "direct_sogn_source_files_found": 0,
+    "direct_ingenbohl_source_files_found": 0,
+    "direct_boltshauser_source_files_found": 0,
+    "direct_zumthor_source_files_found": 0,
+    "workflow_context_matches_found": true,
+    "repo_context_matches_found": true
+  },
+  "useful_existing_context": [
+    {
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC/KosmoWebsite/repo-context/docs/blender-wettbewerb-schema-erweiterung.md",
+      "use": "Mentions Kapelle Sogn Benedetg as Zumthor timber-shingle alpine reference and confirms this is a desired query axis."
+    },
+    {
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC/KosmoWebsite/repo-context/docs/database-research-agents.md",
+      "use": "Contains intended research commands for Kloster Ingenbohl and Swiss timber housing."
+    },
+    {
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC/KosmoWebsite/repo-context/docs/benutzerhandbuch-projektvision.md",
+      "use": "Confirms the target future query: Swiss timber buildings with pitched roofs for Blender/ArchiCAD."
+    }
+  ],
+  "decision": {
+    "sogn_benedetg": "keep_link_only_until_private_library_root_is_found_or_new_generated_study_assets_are_source_reviewed",
+    "ingenbohl": "keep_glb_blocked_until_build_log_and_geometry_source_basis_are_documented",
+    "private_library": "expected_large_book_eth_hslu_library_not_visible_in_current_mounts"
+  },
+  "next_actions": [
+    "Ask owner/Claude/KosmoOverseer to confirm the real local path or mount for the large book, ETH and HSLU lecture library.",
+    "If the archive HDD should be mounted at /mnt/archiv, remount or sync it before the next library ingestion pass.",
+    "Keep Sogn Benedetg and Ingenbohl media/model promotion blocked until concrete private source files or public-safe generated assets exist."
+  ]
+}
