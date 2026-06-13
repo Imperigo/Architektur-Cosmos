@@ -135,6 +135,7 @@ function buildStatus(registry, provenance, extra) {
       blocked_public_promotions: provenance.summary?.blocked_public_promotions ?? 0,
       private_library_status: privateLibrary.status,
       private_library_book_like_files: privateLibrary.book_like_files,
+      private_library_sync_error_files: privateLibrary.sync_error_files,
       model_review_average: modelReview.average_score,
       owner_review_decision_items: ownerReview.decision_items,
       owner_review_public_ready_now: ownerReview.public_ready_now,
@@ -194,7 +195,7 @@ function renderMarkdown(status) {
   lines.push(`- Library assets: ${status.summary.library_assets}`);
   lines.push(`- Public-ready assets: ${status.summary.public_ready_assets}`);
   lines.push(`- Blocked public promotions: ${status.summary.blocked_public_promotions}`);
-  lines.push(`- Private library: ${status.summary.private_library_status} (${status.summary.private_library_book_like_files} book-like files visible)`);
+  lines.push(`- Private library: ${status.summary.private_library_status} (${status.summary.private_library_book_like_files} book-like files visible, ${status.summary.private_library_sync_error_files} sync errors)`);
   lines.push(`- Model review average: ${status.summary.model_review_average}`);
   lines.push(`- Owner-review decisions: ${status.summary.owner_review_decision_items}`);
   lines.push(`- Owner-review public-ready now: ${status.summary.owner_review_public_ready_now}`);
@@ -272,6 +273,7 @@ function summarizePrivateLibrary(report) {
     existing_roots: report?.summary?.existing_roots ?? 0,
     own_mount_roots: report?.summary?.own_mount_roots ?? 0,
     book_like_files: report?.summary?.book_like_files ?? 0,
+    sync_error_files: report?.summary?.sync_error_files ?? 0,
     target_filename_matches: report?.summary?.target_filename_matches ?? 0,
     archive_mount_visible: report?.summary?.archive_mount_visible ?? false,
     copied_private_content: report?.policy?.copied_private_content ?? false
