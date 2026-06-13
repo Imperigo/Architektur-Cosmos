@@ -1,0 +1,160 @@
+{
+  "schema_version": "0.1",
+  "created_at": "2026-06-13",
+  "status": "review_only",
+  "title": "KosmoReferences Pilot Gap Map",
+  "source_refs": [
+    "data/kosmoreferences-registry.json",
+    "examples/kosmo-references/provenance/review/provenance-check.generated.json",
+    "examples/kosmo-references/entry-drafts/villa-savoye.entry-draft.json",
+    "examples/kosmo-references/entry-drafts/kapelle-sogn-benedetg.entry-draft.json",
+    "examples/kosmo-references/entry-drafts/alterszentrum-kloster-ingenbohl.entry-draft.json"
+  ],
+  "summary": {
+    "pilots": 3,
+    "media_slots_blocked": 12,
+    "asset_candidates_blocked": 9,
+    "public_ready_assets": 0,
+    "blocked_public_promotions_total": 26,
+    "next_batch_priority": [
+      "find or mount missing book/ETH/HSLU library",
+      "file-level rights review for Villa Savoye existing media/model assets",
+      "source-layout extraction for plans/sections",
+      "local-review-only asset seed package for material and structure studies"
+    ]
+  },
+  "pilots": [
+    {
+      "id": "villa-savoye",
+      "title": "Villa Savoye",
+      "current_status": "review_only_draft",
+      "source_package_id": "villa-savoye-public-source-candidate-2026-06-13",
+      "source_state": "public link package exists; local media/model assets exist but need file-level review",
+      "blocked_counts": {
+        "media": 4,
+        "asset_candidates": 3
+      },
+      "gaps": [
+        {
+          "gap_type": "file_level_rights",
+          "status": "blocking_public",
+          "evidence": "Exterior/interior media slots are marked file_level_review_required.",
+          "next_source_type": "local media manifest with original source URL, license, author, filename hash and public display decision",
+          "recommended_worker": "codex-central-overseer"
+        },
+        {
+          "gap_type": "plan_section_provenance",
+          "status": "blocking_public",
+          "evidence": "Plan and section slots are marked derived_asset_review_required.",
+          "next_source_type": "plan/source PDF provenance and own vector reconstruction review",
+          "recommended_worker": "kosmo-local-llm"
+        },
+        {
+          "gap_type": "model_layer_provenance",
+          "status": "needs_review",
+          "evidence": "Existing mass/low/structure/tectonic/site model paths are planned but not provenance-cleared.",
+          "next_source_type": "model build log with source separation: own modeling, derived plan geometry, generated study geometry",
+          "recommended_worker": "local-batch-workers"
+        },
+        {
+          "gap_type": "material_system",
+          "status": "draft_ok_private",
+          "evidence": "Material tags exist, but material profiles are not asset-reviewed.",
+          "next_source_type": "review-only material profile for rendered concrete, ribbon windows, roof garden and frame/enclosure separation",
+          "recommended_worker": "kosmo-local-llm"
+        }
+      ],
+      "next_action": "Run a Villa file-level asset provenance pass before any public media/model promotion."
+    },
+    {
+      "id": "kapelle-sogn-benedetg",
+      "title": "Kapelle Sogn Benedetg",
+      "current_status": "review_only_draft",
+      "source_package_id": "kapelle-sogn-benedetg-public-source-candidate-2026-06-13",
+      "source_state": "public link package exists; no visible local book/lecture package yet",
+      "blocked_counts": {
+        "media": 4,
+        "asset_candidates": 3
+      },
+      "gaps": [
+        {
+          "gap_type": "local_library_source",
+          "status": "needs_source",
+          "evidence": "Draft flags analysis:needs-local-library-review; large book/ETH/HSLU library is not visible.",
+          "next_source_type": "private book, ETH/HSLU lecture or monograph source package for Zumthor/Sogn Benedetg",
+          "recommended_worker": "owner_plus_codex"
+        },
+        {
+          "gap_type": "plan_geometry",
+          "status": "needs_review",
+          "evidence": "Teardrop/leaf plan is a study hypothesis with confidence 0.64.",
+          "next_source_type": "rights-gated plan source or own measured study drawing with uncertainty annotation",
+          "recommended_worker": "kosmo-local-llm"
+        },
+        {
+          "gap_type": "timber_structure",
+          "status": "needs_source_review",
+          "evidence": "Structure analysis is explicitly marked needs_source_review.",
+          "next_source_type": "construction/detail source for timber structure and envelope layers",
+          "recommended_worker": "kosmo-local-llm"
+        },
+        {
+          "gap_type": "material_texture_asset",
+          "status": "draft_ok_private",
+          "evidence": "Holzschindel material study is planned but generated_needs_review.",
+          "next_source_type": "own procedural shingle material profile and local-only texture study",
+          "recommended_worker": "local-batch-workers"
+        }
+      ],
+      "next_action": "Find the missing local library source first; otherwise keep Sogn geometry/material outputs clearly labeled as study hypotheses."
+    },
+    {
+      "id": "alterszentrum-kloster-ingenbohl",
+      "title": "Alterszentrum Kloster Ingenbohl",
+      "current_status": "review_only_draft",
+      "source_package_id": "alterszentrum-kloster-ingenbohl-public-source-candidate-2026-06-13",
+      "source_state": "public link package exists, including study-commission PDF link; no copied PDF/media content in package",
+      "blocked_counts": {
+        "media": 4,
+        "asset_candidates": 3
+      },
+      "gaps": [
+        {
+          "gap_type": "competition_pdf_extraction",
+          "status": "needs_rights_review",
+          "evidence": "Source package includes a public PDF link as link-only; extraction policy is not reviewed.",
+          "next_source_type": "link-only PDF extraction decision plus local/private extraction if allowed",
+          "recommended_worker": "codex-central-overseer"
+        },
+        {
+          "gap_type": "structure_evidence",
+          "status": "needs_source_review",
+          "evidence": "Concrete frame/core reading has confidence 0.74 and review_status needs_source_review.",
+          "next_source_type": "engineering/project source and study-commission drawings for structure, core and old/new junctions",
+          "recommended_worker": "kosmo-local-llm"
+        },
+        {
+          "gap_type": "material_system",
+          "status": "needs_review",
+          "evidence": "Natural pigment/mineral/timber facade reading has confidence 0.68.",
+          "next_source_type": "architect/project material text and own local material profile",
+          "recommended_worker": "kosmo-local-llm"
+        },
+        {
+          "gap_type": "site_courtyard_model",
+          "status": "draft_ok_private",
+          "evidence": "Monastery-courtyard relation diagram is planned as generated_needs_review.",
+          "next_source_type": "review-only massing/site diagram with uncertainty and no public plan reproduction",
+          "recommended_worker": "local-batch-workers"
+        }
+      ],
+      "next_action": "Decide whether the linked study-commission PDF can enter private extraction; then build structure/material gap evidence."
+    }
+  ],
+  "global_next_actions": [
+    "Ask owner for the real path or mount state of the large digital architecture book/ETH/HSLU library.",
+    "Create a file-level media/model provenance manifest for Villa Savoye existing local assets.",
+    "Keep Sogn and Ingenbohl generated geometries local-review-only until stronger source evidence exists.",
+    "Create a KosmoAsset seed package with local-only material/structure candidates for the three pilots."
+  ]
+}
