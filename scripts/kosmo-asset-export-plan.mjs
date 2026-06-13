@@ -214,6 +214,7 @@ function renderMarkdown(plan) {
     lines.push(`- public ready: ${asset.public_ready ? 'yes' : 'no'}`);
     lines.push(`- next step: ${asset.next_step}`, '');
   }
+  if (lines.at(-1) === '') lines.pop();
 
   return `${lines.join('\n')}\n`;
 }

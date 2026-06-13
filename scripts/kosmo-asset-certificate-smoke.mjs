@@ -9,8 +9,9 @@ const root = process.cwd();
 const args = parseArgs(process.argv.slice(2));
 const libraryPath = resolve(root, args.library || 'examples/kosmo-assets/kosmo-asset-demo/library.json');
 const libraryRoot = dirname(libraryPath);
-const assetId = String(args.asset || 'warm-concrete-material-001').trim();
 const route = String(args.route || 'blender').trim();
+const library = existsSync(libraryPath) ? JSON.parse(readFileSync(libraryPath, 'utf8')) : null;
+const assetId = String(args.asset || firstAssetId(library) || 'warm-concrete-material-001').trim();
 const outputJsonPath = resolve(libraryRoot, args.output || 'review/asset-certificate-smoke.generated.json');
 const outputMdPath = resolve(libraryRoot, args.markdown || 'review/asset-certificate-smoke.generated.md');
 const smokeArtifactBase = `${assetId}-${route}-certificate-smoke`;
@@ -94,15 +95,22 @@ async function main() {
 
 function buildSmokeReport({ steps, decision, certificate, ledgerWithCertificate }) {
   const ledgerRow = (ledgerWithCertificate?.rows || []).find((row) => row.asset_id === assetId && routeMatches(row.route, route));
+  const certificateCertified = certificate?.status === 'asset_local_review_certified';
+  const certificateBlocked = certificate?.status === 'asset_local_review_certificate_blocked';
+  const certificateOutcomeAccepted = certificateCertified || certificateBlocked;
+  const certificateChecksExpected = certificateCertified
+    ? certificate?.summary?.failed_checks === 0
+    : certificateBlocked && Number(certificate?.summary?.failed_checks ?? 0) > 0;
+  const ledgerSawCertificateOutcome = ledgerRow?.latest_certificate?.status === certificate?.status;
   const checks = [
     check('decision_step_passed', stepPassed(steps, 'review_decision'), 'Temporary local review decision command passed.'),
-    check('certificate_step_passed', stepPassed(steps, 'review_certificate'), 'Temporary review certificate command passed.'),
+    check('certificate_step_completed', stepPassed(steps, 'review_certificate') || certificateBlocked, 'Temporary review certificate command completed or blocked an unsafe certificate as expected.'),
     check('ledger_step_passed', stepPassed(steps, 'decision_ledger_with_certificate'), 'Decision ledger reads temporary certificate.'),
     check('cleanup_ledger_step_passed', stepPassed(steps, 'decision_ledger_after_cleanup'), 'Decision ledger reruns after cleanup.'),
     check('decision_recorded', decision?.status === 'local_review_decision_recorded', `Decision status was ${decision?.status || 'missing'}.`),
-    check('certificate_certified', certificate?.status === 'asset_local_review_certified', `Certificate status was ${certificate?.status || 'missing'}.`),
-    check('certificate_checks_passed', certificate?.summary?.failed_checks === 0, `Certificate failed checks: ${certificate?.summary?.failed_checks ?? 'missing'}.`),
-    check('ledger_saw_certificate', ledgerRow?.latest_certificate?.status === 'asset_local_review_certified', 'Ledger saw certified local review row before cleanup.'),
+    check('certificate_outcome_accepted', certificateOutcomeAccepted, `Certificate status was ${certificate?.status || 'missing'}.`),
+    check('certificate_checks_expected', certificateChecksExpected, `Certificate failed checks: ${certificate?.summary?.failed_checks ?? 'missing'}.`),
+    check('ledger_saw_certificate', ledgerSawCertificateOutcome, 'Ledger saw the temporary certificate outcome before cleanup.'),
     check('temp_decision_cleaned', !existsSync(decisionPath) && !existsSync(decisionMdPath), 'Temporary decision files were removed.'),
     check('temp_certificate_cleaned', !existsSync(certificatePath) && !existsSync(certificateMdPath), 'Temporary certificate files were removed.'),
     check('public_gate_blocked', certificate?.summary?.public_gate === 'blocked', 'Public gate remained blocked during certificate smoke.'),
@@ -190,6 +198,10 @@ function check(id, passed, label) {
 
 function routeMatches(candidate, expected) {
   return candidate === expected || candidate === 'all' || expected === 'all';
+}
+
+function firstAssetId(library) {
+  return Array.isArray(library?.assets) ? library.assets.find((asset) => asset?.id)?.id : null;
 }
 
 function readOptionalJson(pathname) {

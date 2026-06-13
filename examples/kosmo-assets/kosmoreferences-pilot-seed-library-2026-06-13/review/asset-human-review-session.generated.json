@@ -1,0 +1,879 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-13T18:10:33.600Z",
+  "generator": "kosmo-asset-human-review-session",
+  "library_path": "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json",
+  "library_id": "kosmoreferences-pilot-seed-library-2026-06-13",
+  "status": "asset_human_review_session_blocked",
+  "rights_scope": "local_review_only",
+  "policy": {
+    "no_uploads": true,
+    "no_public_downloads": true,
+    "no_d1_writes": true,
+    "no_r2_writes": true,
+    "session_does_not_approve_assets": true,
+    "session_does_not_mutate_library": true,
+    "approve_local_requires_explicit_human_command": true,
+    "certificate_status_is_not_certified": true
+  },
+  "summary": {
+    "asset_count": 6,
+    "open_item_count": 6,
+    "blocked_item_count": 6,
+    "local_ready_count": 0,
+    "public_ready_count": 0,
+    "handoff_smoke_passed": true,
+    "generated_profile_count": 0,
+    "recommended_next_step": "complete_asset_human_review_session_before_approval_commands"
+  },
+  "source_reports": {
+    "review_pack": {
+      "path": "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-review-pack.generated.json",
+      "exists": true
+    },
+    "export_plan": {
+      "path": "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-export-plan.generated.json",
+      "exists": true
+    },
+    "exchange_profile": {
+      "path": "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-exchange-profile.generated.json",
+      "exists": true
+    },
+    "handoff_bundle": {
+      "path": "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-handoff-bundle.generated.json",
+      "exists": true
+    },
+    "handoff_smoke": {
+      "path": "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-handoff-smoke.generated.json",
+      "exists": true
+    }
+  },
+  "decision_taxonomy": [
+    {
+      "state": "approved",
+      "command_decision": "approve-local",
+      "label": "Local human approval recorded",
+      "meaning": "A named human reviewer accepted this asset/route for local sandbox evidence only.",
+      "guard": "Public gate stays blocked and a local review certificate is still required before sandbox-ready status."
+    },
+    {
+      "state": "needs_more_evidence",
+      "command_decision": "needs-review",
+      "label": "Needs more evidence",
+      "meaning": "The asset remains in human review because source, rights, file, scale, layer or quality checks are not complete.",
+      "guard": "No sandbox, public gate or publication can be inferred from this note."
+    },
+    {
+      "state": "blocked",
+      "command_decision": "block-public",
+      "label": "Public use blocked",
+      "meaning": "The reviewer explicitly keeps web/download/R2 release closed.",
+      "guard": "Local metadata may remain visible for review; public use needs a separate rights and owner review."
+    },
+    {
+      "state": "rejected",
+      "command_decision": "reject",
+      "label": "Rejected for exchange use",
+      "meaning": "The asset/route is not acceptable for exchange workflows.",
+      "guard": "Keep it out of Blender, ArchiCAD and public promotion paths until a new review replaces this decision."
+    }
+  ],
+  "certificate_seed": {
+    "status": "not_certified",
+    "note": "This session is evidence for later Architecture Kosmos quality certification, but it does not certify the asset yet.",
+    "required_before_certificate": [
+      "named human reviewer",
+      "asset and route decision",
+      "rights-source confirmation",
+      "local file inspection",
+      "handoff smoke check",
+      "public gate decision"
+    ]
+  },
+  "assets": [
+    {
+      "id": "villa-savoye-concrete-frame-material-001",
+      "title": "Villa Savoye Concrete Frame Material Study",
+      "asset_type": "material",
+      "category": "material",
+      "rights_status": "generated_needs_review",
+      "review_status": "planned",
+      "human_review_status": "open",
+      "public_use_allowed": false,
+      "public_ready": false,
+      "local_ready": false,
+      "public_gate": "blocked",
+      "suggested_decision": "complete_human_review_before_promotion",
+      "review_priority": "blocked",
+      "routes": [
+        "blender",
+        "archicad",
+        "web",
+        "material_json"
+      ],
+      "primary_route": "blender",
+      "generated_profile_count": 0,
+      "machine_evidence": {
+        "review_pack_status": "available",
+        "export_route_summary": [
+          {
+            "target": "blender",
+            "status": "planned",
+            "blockers": [
+              "Required format planned but not generated: material_json or blend"
+            ]
+          },
+          {
+            "target": "archicad",
+            "status": "planned",
+            "blockers": [
+              "Required format planned but not generated: material_json or gsm"
+            ]
+          },
+          {
+            "target": "web",
+            "status": "planned",
+            "blockers": [
+              "Web/public route remains private because public_use_allowed or rights are not public-safe.",
+              "Required format planned but not generated: material_json or webp or png"
+            ]
+          }
+        ],
+        "blender_profile": true,
+        "archicad_profile": true,
+        "web_profile": true,
+        "handoff_smoke_status": "handoff_smoke_passed",
+        "handoff_smoke_passed": true
+      },
+      "human_session": {
+        "reviewer": null,
+        "reviewed_at": null,
+        "proposed_state": "needs_more_evidence",
+        "proposed_decision": "needs-review",
+        "final_decision_recorded": false,
+        "notes": "",
+        "checklist": [
+          {
+            "id": "source_basis_read",
+            "label": "Source basis was read and is plausible for local review.",
+            "status": "pending_human_review"
+          },
+          {
+            "id": "rights_risk_checked",
+            "label": "Rights status and public gate were checked by a human.",
+            "status": "pending_human_review"
+          },
+          {
+            "id": "local_file_opened",
+            "label": "At least one local file/profile was opened or inspected.",
+            "status": "pending_human_review"
+          },
+          {
+            "id": "scale_origin_layer_checked",
+            "label": "Scale, origin, naming and layer/surface mapping were checked.",
+            "status": "pending_human_review"
+          },
+          {
+            "id": "ai_slop_risk_checked",
+            "label": "Reviewer checked whether the asset is generic, coherent and not low-quality AI output.",
+            "status": "pending_human_review"
+          },
+          {
+            "id": "route_decision_ready",
+            "label": "Reviewer can choose a route decision for blender.",
+            "status": "pending_human_review"
+          }
+        ]
+      },
+      "decision_options": [
+        {
+          "decision": "needs-review",
+          "state": "needs_more_evidence",
+          "when": "default while the human checklist is still open",
+          "effect": "records a local note only; no approval and no public use"
+        },
+        {
+          "decision": "approve-local",
+          "state": "approved",
+          "when": "only after a human reviewer inspected Villa Savoye Concrete Frame Material Study for route blender",
+          "effect": "records local route evidence; still no public gate and no upload"
+        },
+        {
+          "decision": "block-public",
+          "state": "blocked",
+          "when": "default for generated or unclear rights",
+          "effect": "keeps web/download/R2 gates closed"
+        },
+        {
+          "decision": "reject",
+          "state": "rejected",
+          "when": "if quality, rights, source basis or export mapping are not acceptable",
+          "effect": "keeps the asset out of exchange workflows"
+        }
+      ],
+      "commands": {
+        "record_needs_review": "npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json --asset villa-savoye-concrete-frame-material-001 --route blender --decision needs-review",
+        "record_local_approval": "npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json --asset villa-savoye-concrete-frame-material-001 --route blender --decision approve-local --confirm-human-review --reviewer \"REPLACE_WITH_REVIEWER_NAME\"",
+        "keep_public_blocked": "npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json --asset villa-savoye-concrete-frame-material-001 --route blender --decision block-public"
+      },
+      "blockers": [
+        "local_files_or_library_check_missing"
+      ]
+    },
+    {
+      "id": "villa-savoye-five-points-diagram-001",
+      "title": "Villa Savoye Five Points Diagram Kit",
+      "asset_type": "detail",
+      "category": "annotation",
+      "rights_status": "generated_needs_review",
+      "review_status": "planned",
+      "human_review_status": "open",
+      "public_use_allowed": false,
+      "public_ready": false,
+      "local_ready": false,
+      "public_gate": "blocked",
+      "suggested_decision": "complete_human_review_before_promotion",
+      "review_priority": "blocked",
+      "routes": [
+        "web",
+        "svg",
+        "json"
+      ],
+      "primary_route": "web",
+      "generated_profile_count": 0,
+      "machine_evidence": {
+        "review_pack_status": "available",
+        "export_route_summary": [
+          {
+            "target": "svg",
+            "status": "planned",
+            "blockers": [
+              "Required format planned but not generated: svg"
+            ]
+          },
+          {
+            "target": "web",
+            "status": "planned",
+            "blockers": [
+              "Web/public route remains private because public_use_allowed or rights are not public-safe.",
+              "Required format planned but not generated: svg or glb or webp or png"
+            ]
+          },
+          {
+            "target": "layout",
+            "status": "planned",
+            "blockers": [
+              "Required format planned but not generated: svg"
+            ]
+          }
+        ],
+        "blender_profile": false,
+        "archicad_profile": false,
+        "web_profile": true,
+        "handoff_smoke_status": "handoff_smoke_passed",
+        "handoff_smoke_passed": true
+      },
+      "human_session": {
+        "reviewer": null,
+        "reviewed_at": null,
+        "proposed_state": "needs_more_evidence",
+        "proposed_decision": "needs-review",
+        "final_decision_recorded": false,
+        "notes": "",
+        "checklist": [
+          {
+            "id": "source_basis_read",
+            "label": "Source basis was read and is plausible for local review.",
+            "status": "pending_human_review"
+          },
+          {
+            "id": "rights_risk_checked",
+            "label": "Rights status and public gate were checked by a human.",
+            "status": "pending_human_review"
+          },
+          {
+            "id": "local_file_opened",
+            "label": "At least one local file/profile was opened or inspected.",
+            "status": "pending_human_review"
+          },
+          {
+            "id": "scale_origin_layer_checked",
+            "label": "Scale, origin, naming and layer/surface mapping were checked.",
+            "status": "pending_human_review"
+          },
+          {
+            "id": "ai_slop_risk_checked",
+            "label": "Reviewer checked whether the asset is generic, coherent and not low-quality AI output.",
+            "status": "pending_human_review"
+          },
+          {
+            "id": "route_decision_ready",
+            "label": "Reviewer can choose a route decision for web.",
+            "status": "pending_human_review"
+          }
+        ]
+      },
+      "decision_options": [
+        {
+          "decision": "needs-review",
+          "state": "needs_more_evidence",
+          "when": "default while the human checklist is still open",
+          "effect": "records a local note only; no approval and no public use"
+        },
+        {
+          "decision": "approve-local",
+          "state": "approved",
+          "when": "only after a human reviewer inspected Villa Savoye Five Points Diagram Kit for route web",
+          "effect": "records local route evidence; still no public gate and no upload"
+        },
+        {
+          "decision": "block-public",
+          "state": "blocked",
+          "when": "default for generated or unclear rights",
+          "effect": "keeps web/download/R2 gates closed"
+        },
+        {
+          "decision": "reject",
+          "state": "rejected",
+          "when": "if quality, rights, source basis or export mapping are not acceptable",
+          "effect": "keeps the asset out of exchange workflows"
+        }
+      ],
+      "commands": {
+        "record_needs_review": "npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json --asset villa-savoye-five-points-diagram-001 --route web --decision needs-review",
+        "record_local_approval": "npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json --asset villa-savoye-five-points-diagram-001 --route web --decision approve-local --confirm-human-review --reviewer \"REPLACE_WITH_REVIEWER_NAME\"",
+        "keep_public_blocked": "npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json --asset villa-savoye-five-points-diagram-001 --route web --decision block-public"
+      },
+      "blockers": [
+        "local_files_or_library_check_missing"
+      ]
+    },
+    {
+      "id": "sogn-benedetg-wood-shingle-material-001",
+      "title": "Sogn Benedetg Wood Shingle Material Study",
+      "asset_type": "material",
+      "category": "material",
+      "rights_status": "generated_needs_review",
+      "review_status": "needs_source",
+      "human_review_status": "open",
+      "public_use_allowed": false,
+      "public_ready": false,
+      "local_ready": false,
+      "public_gate": "blocked",
+      "suggested_decision": "complete_human_review_before_promotion",
+      "review_priority": "blocked",
+      "routes": [
+        "blender",
+        "archicad",
+        "web",
+        "material_json"
+      ],
+      "primary_route": "blender",
+      "generated_profile_count": 0,
+      "machine_evidence": {
+        "review_pack_status": "available",
+        "export_route_summary": [
+          {
+            "target": "blender",
+            "status": "planned",
+            "blockers": [
+              "Required format planned but not generated: material_json or blend"
+            ]
+          },
+          {
+            "target": "archicad",
+            "status": "planned",
+            "blockers": [
+              "Required format planned but not generated: material_json or gsm"
+            ]
+          },
+          {
+            "target": "web",
+            "status": "planned",
+            "blockers": [
+              "Web/public route remains private because public_use_allowed or rights are not public-safe.",
+              "Required format planned but not generated: material_json or webp or png"
+            ]
+          }
+        ],
+        "blender_profile": true,
+        "archicad_profile": true,
+        "web_profile": true,
+        "handoff_smoke_status": "handoff_smoke_passed",
+        "handoff_smoke_passed": true
+      },
+      "human_session": {
+        "reviewer": null,
+        "reviewed_at": null,
+        "proposed_state": "needs_more_evidence",
+        "proposed_decision": "needs-review",
+        "final_decision_recorded": false,
+        "notes": "",
+        "checklist": [
+          {
+            "id": "source_basis_read",
+            "label": "Source basis was read and is plausible for local review.",
+            "status": "pending_human_review"
+          },
+          {
+            "id": "rights_risk_checked",
+            "label": "Rights status and public gate were checked by a human.",
+            "status": "pending_human_review"
+          },
+          {
+            "id": "local_file_opened",
+            "label": "At least one local file/profile was opened or inspected.",
+            "status": "pending_human_review"
+          },
+          {
+            "id": "scale_origin_layer_checked",
+            "label": "Scale, origin, naming and layer/surface mapping were checked.",
+            "status": "pending_human_review"
+          },
+          {
+            "id": "ai_slop_risk_checked",
+            "label": "Reviewer checked whether the asset is generic, coherent and not low-quality AI output.",
+            "status": "pending_human_review"
+          },
+          {
+            "id": "route_decision_ready",
+            "label": "Reviewer can choose a route decision for blender.",
+            "status": "pending_human_review"
+          }
+        ]
+      },
+      "decision_options": [
+        {
+          "decision": "needs-review",
+          "state": "needs_more_evidence",
+          "when": "default while the human checklist is still open",
+          "effect": "records a local note only; no approval and no public use"
+        },
+        {
+          "decision": "approve-local",
+          "state": "approved",
+          "when": "only after a human reviewer inspected Sogn Benedetg Wood Shingle Material Study for route blender",
+          "effect": "records local route evidence; still no public gate and no upload"
+        },
+        {
+          "decision": "block-public",
+          "state": "blocked",
+          "when": "default for generated or unclear rights",
+          "effect": "keeps web/download/R2 gates closed"
+        },
+        {
+          "decision": "reject",
+          "state": "rejected",
+          "when": "if quality, rights, source basis or export mapping are not acceptable",
+          "effect": "keeps the asset out of exchange workflows"
+        }
+      ],
+      "commands": {
+        "record_needs_review": "npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json --asset sogn-benedetg-wood-shingle-material-001 --route blender --decision needs-review",
+        "record_local_approval": "npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json --asset sogn-benedetg-wood-shingle-material-001 --route blender --decision approve-local --confirm-human-review --reviewer \"REPLACE_WITH_REVIEWER_NAME\"",
+        "keep_public_blocked": "npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json --asset sogn-benedetg-wood-shingle-material-001 --route blender --decision block-public"
+      },
+      "blockers": [
+        "local_files_or_library_check_missing"
+      ]
+    },
+    {
+      "id": "sogn-benedetg-light-band-detail-001",
+      "title": "Sogn Benedetg Light Band Detail Study",
+      "asset_type": "detail",
+      "category": "opening",
+      "rights_status": "generated_needs_review",
+      "review_status": "needs_source",
+      "human_review_status": "open",
+      "public_use_allowed": false,
+      "public_ready": false,
+      "local_ready": false,
+      "public_gate": "blocked",
+      "suggested_decision": "complete_human_review_before_promotion",
+      "review_priority": "blocked",
+      "routes": [
+        "dxf",
+        "svg"
+      ],
+      "primary_route": "dxf",
+      "generated_profile_count": 0,
+      "machine_evidence": {
+        "review_pack_status": "available",
+        "export_route_summary": [
+          {
+            "target": "dxf",
+            "status": "planned",
+            "blockers": [
+              "Required format planned but not generated: dxf"
+            ]
+          },
+          {
+            "target": "svg",
+            "status": "planned",
+            "blockers": [
+              "Required format planned but not generated: svg"
+            ]
+          },
+          {
+            "target": "layout",
+            "status": "planned",
+            "blockers": [
+              "Required format planned but not generated: svg"
+            ]
+          }
+        ],
+        "blender_profile": false,
+        "archicad_profile": false,
+        "web_profile": false,
+        "handoff_smoke_status": "handoff_smoke_passed",
+        "handoff_smoke_passed": true
+      },
+      "human_session": {
+        "reviewer": null,
+        "reviewed_at": null,
+        "proposed_state": "needs_more_evidence",
+        "proposed_decision": "needs-review",
+        "final_decision_recorded": false,
+        "notes": "",
+        "checklist": [
+          {
+            "id": "source_basis_read",
+            "label": "Source basis was read and is plausible for local review.",
+            "status": "pending_human_review"
+          },
+          {
+            "id": "rights_risk_checked",
+            "label": "Rights status and public gate were checked by a human.",
+            "status": "pending_human_review"
+          },
+          {
+            "id": "local_file_opened",
+            "label": "At least one local file/profile was opened or inspected.",
+            "status": "pending_human_review"
+          },
+          {
+            "id": "scale_origin_layer_checked",
+            "label": "Scale, origin, naming and layer/surface mapping were checked.",
+            "status": "pending_human_review"
+          },
+          {
+            "id": "ai_slop_risk_checked",
+            "label": "Reviewer checked whether the asset is generic, coherent and not low-quality AI output.",
+            "status": "pending_human_review"
+          },
+          {
+            "id": "route_decision_ready",
+            "label": "Reviewer can choose a route decision for dxf.",
+            "status": "pending_human_review"
+          }
+        ]
+      },
+      "decision_options": [
+        {
+          "decision": "needs-review",
+          "state": "needs_more_evidence",
+          "when": "default while the human checklist is still open",
+          "effect": "records a local note only; no approval and no public use"
+        },
+        {
+          "decision": "approve-local",
+          "state": "approved",
+          "when": "only after a human reviewer inspected Sogn Benedetg Light Band Detail Study for route dxf",
+          "effect": "records local route evidence; still no public gate and no upload"
+        },
+        {
+          "decision": "block-public",
+          "state": "blocked",
+          "when": "default for generated or unclear rights",
+          "effect": "keeps web/download/R2 gates closed"
+        },
+        {
+          "decision": "reject",
+          "state": "rejected",
+          "when": "if quality, rights, source basis or export mapping are not acceptable",
+          "effect": "keeps the asset out of exchange workflows"
+        }
+      ],
+      "commands": {
+        "record_needs_review": "npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json --asset sogn-benedetg-light-band-detail-001 --route dxf --decision needs-review",
+        "record_local_approval": "npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json --asset sogn-benedetg-light-band-detail-001 --route dxf --decision approve-local --confirm-human-review --reviewer \"REPLACE_WITH_REVIEWER_NAME\"",
+        "keep_public_blocked": "npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json --asset sogn-benedetg-light-band-detail-001 --route dxf --decision block-public"
+      },
+      "blockers": [
+        "local_files_or_library_check_missing"
+      ]
+    },
+    {
+      "id": "ingenbohl-mineral-pigment-material-001",
+      "title": "Ingenbohl Mineral Pigment Material Study",
+      "asset_type": "material",
+      "category": "material",
+      "rights_status": "generated_needs_review",
+      "review_status": "planned",
+      "human_review_status": "open",
+      "public_use_allowed": false,
+      "public_ready": false,
+      "local_ready": false,
+      "public_gate": "blocked",
+      "suggested_decision": "complete_human_review_before_promotion",
+      "review_priority": "blocked",
+      "routes": [
+        "blender",
+        "archicad",
+        "web",
+        "material_json"
+      ],
+      "primary_route": "blender",
+      "generated_profile_count": 0,
+      "machine_evidence": {
+        "review_pack_status": "available",
+        "export_route_summary": [
+          {
+            "target": "blender",
+            "status": "planned",
+            "blockers": [
+              "Required format planned but not generated: material_json or blend"
+            ]
+          },
+          {
+            "target": "archicad",
+            "status": "planned",
+            "blockers": [
+              "Required format planned but not generated: material_json or gsm"
+            ]
+          },
+          {
+            "target": "web",
+            "status": "planned",
+            "blockers": [
+              "Web/public route remains private because public_use_allowed or rights are not public-safe.",
+              "Required format planned but not generated: material_json or webp or png"
+            ]
+          }
+        ],
+        "blender_profile": true,
+        "archicad_profile": true,
+        "web_profile": true,
+        "handoff_smoke_status": "handoff_smoke_passed",
+        "handoff_smoke_passed": true
+      },
+      "human_session": {
+        "reviewer": null,
+        "reviewed_at": null,
+        "proposed_state": "needs_more_evidence",
+        "proposed_decision": "needs-review",
+        "final_decision_recorded": false,
+        "notes": "",
+        "checklist": [
+          {
+            "id": "source_basis_read",
+            "label": "Source basis was read and is plausible for local review.",
+            "status": "pending_human_review"
+          },
+          {
+            "id": "rights_risk_checked",
+            "label": "Rights status and public gate were checked by a human.",
+            "status": "pending_human_review"
+          },
+          {
+            "id": "local_file_opened",
+            "label": "At least one local file/profile was opened or inspected.",
+            "status": "pending_human_review"
+          },
+          {
+            "id": "scale_origin_layer_checked",
+            "label": "Scale, origin, naming and layer/surface mapping were checked.",
+            "status": "pending_human_review"
+          },
+          {
+            "id": "ai_slop_risk_checked",
+            "label": "Reviewer checked whether the asset is generic, coherent and not low-quality AI output.",
+            "status": "pending_human_review"
+          },
+          {
+            "id": "route_decision_ready",
+            "label": "Reviewer can choose a route decision for blender.",
+            "status": "pending_human_review"
+          }
+        ]
+      },
+      "decision_options": [
+        {
+          "decision": "needs-review",
+          "state": "needs_more_evidence",
+          "when": "default while the human checklist is still open",
+          "effect": "records a local note only; no approval and no public use"
+        },
+        {
+          "decision": "approve-local",
+          "state": "approved",
+          "when": "only after a human reviewer inspected Ingenbohl Mineral Pigment Material Study for route blender",
+          "effect": "records local route evidence; still no public gate and no upload"
+        },
+        {
+          "decision": "block-public",
+          "state": "blocked",
+          "when": "default for generated or unclear rights",
+          "effect": "keeps web/download/R2 gates closed"
+        },
+        {
+          "decision": "reject",
+          "state": "rejected",
+          "when": "if quality, rights, source basis or export mapping are not acceptable",
+          "effect": "keeps the asset out of exchange workflows"
+        }
+      ],
+      "commands": {
+        "record_needs_review": "npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json --asset ingenbohl-mineral-pigment-material-001 --route blender --decision needs-review",
+        "record_local_approval": "npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json --asset ingenbohl-mineral-pigment-material-001 --route blender --decision approve-local --confirm-human-review --reviewer \"REPLACE_WITH_REVIEWER_NAME\"",
+        "keep_public_blocked": "npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json --asset ingenbohl-mineral-pigment-material-001 --route blender --decision block-public"
+      },
+      "blockers": [
+        "local_files_or_library_check_missing"
+      ]
+    },
+    {
+      "id": "ingenbohl-concrete-core-frame-study-001",
+      "title": "Ingenbohl Concrete Core and Frame Study",
+      "asset_type": "component",
+      "category": "structure",
+      "rights_status": "generated_needs_review",
+      "review_status": "needs_source",
+      "human_review_status": "open",
+      "public_use_allowed": false,
+      "public_ready": false,
+      "local_ready": false,
+      "public_gate": "blocked",
+      "suggested_decision": "keep_blocked_until_export_routes_are_fixed",
+      "review_priority": "blocked",
+      "routes": [
+        "blender",
+        "archicad",
+        "web",
+        "glb",
+        "json"
+      ],
+      "primary_route": "blender",
+      "generated_profile_count": 0,
+      "machine_evidence": {
+        "review_pack_status": "available",
+        "export_route_summary": [
+          {
+            "target": "blender",
+            "status": "planned",
+            "blockers": [
+              "Required format planned but not generated: glb or blend"
+            ]
+          },
+          {
+            "target": "archicad",
+            "status": "blocked",
+            "blockers": [
+              "Missing target format: dxf or gsm or ifc"
+            ]
+          },
+          {
+            "target": "glb",
+            "status": "planned",
+            "blockers": [
+              "Required format planned but not generated: glb"
+            ]
+          },
+          {
+            "target": "web",
+            "status": "planned",
+            "blockers": [
+              "Web/public route remains private because public_use_allowed or rights are not public-safe.",
+              "Required format planned but not generated: svg or glb or webp or png"
+            ]
+          }
+        ],
+        "blender_profile": true,
+        "archicad_profile": true,
+        "web_profile": true,
+        "handoff_smoke_status": "handoff_smoke_passed",
+        "handoff_smoke_passed": true
+      },
+      "human_session": {
+        "reviewer": null,
+        "reviewed_at": null,
+        "proposed_state": "needs_more_evidence",
+        "proposed_decision": "needs-review",
+        "final_decision_recorded": false,
+        "notes": "",
+        "checklist": [
+          {
+            "id": "source_basis_read",
+            "label": "Source basis was read and is plausible for local review.",
+            "status": "pending_human_review"
+          },
+          {
+            "id": "rights_risk_checked",
+            "label": "Rights status and public gate were checked by a human.",
+            "status": "pending_human_review"
+          },
+          {
+            "id": "local_file_opened",
+            "label": "At least one local file/profile was opened or inspected.",
+            "status": "pending_human_review"
+          },
+          {
+            "id": "scale_origin_layer_checked",
+            "label": "Scale, origin, naming and layer/surface mapping were checked.",
+            "status": "pending_human_review"
+          },
+          {
+            "id": "ai_slop_risk_checked",
+            "label": "Reviewer checked whether the asset is generic, coherent and not low-quality AI output.",
+            "status": "pending_human_review"
+          },
+          {
+            "id": "route_decision_ready",
+            "label": "Reviewer can choose a route decision for blender.",
+            "status": "pending_human_review"
+          }
+        ]
+      },
+      "decision_options": [
+        {
+          "decision": "needs-review",
+          "state": "needs_more_evidence",
+          "when": "default while the human checklist is still open",
+          "effect": "records a local note only; no approval and no public use"
+        },
+        {
+          "decision": "approve-local",
+          "state": "approved",
+          "when": "only after a human reviewer inspected Ingenbohl Concrete Core and Frame Study for route blender",
+          "effect": "records local route evidence; still no public gate and no upload"
+        },
+        {
+          "decision": "block-public",
+          "state": "blocked",
+          "when": "default for generated or unclear rights",
+          "effect": "keeps web/download/R2 gates closed"
+        },
+        {
+          "decision": "reject",
+          "state": "rejected",
+          "when": "if quality, rights, source basis or export mapping are not acceptable",
+          "effect": "keeps the asset out of exchange workflows"
+        }
+      ],
+      "commands": {
+        "record_needs_review": "npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json --asset ingenbohl-concrete-core-frame-study-001 --route blender --decision needs-review",
+        "record_local_approval": "npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json --asset ingenbohl-concrete-core-frame-study-001 --route blender --decision approve-local --confirm-human-review --reviewer \"REPLACE_WITH_REVIEWER_NAME\"",
+        "keep_public_blocked": "npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json --asset ingenbohl-concrete-core-frame-study-001 --route blender --decision block-public"
+      },
+      "blockers": [
+        "local_files_or_library_check_missing"
+      ]
+    }
+  ],
+  "next_actions": [
+    "Resolve blocked session rows before any approve-local command.",
+    "Open local asset files/profiles and complete the human checklist for every open row.",
+    "Record only explicit human decisions with kosmo:asset-review-decision.",
+    "Keep public downloads, R2 uploads and D1 writes disabled."
+  ]
+}

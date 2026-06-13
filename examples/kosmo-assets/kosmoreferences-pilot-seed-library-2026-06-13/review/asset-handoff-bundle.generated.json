@@ -1,0 +1,202 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-13T18:10:33.123Z",
+  "generator": "kosmo-asset-handoff-bundle",
+  "library_id": "kosmoreferences-pilot-seed-library-2026-06-13",
+  "status": "local_review_handoff_bundle",
+  "policy": {
+    "review_only": true,
+    "blender_script_writes_scene_by_default": false,
+    "archicad_csv_is_reference_schedule": true,
+    "no_uploads": true,
+    "no_public_downloads": true
+  },
+  "outputs": {
+    "blender_python": "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-blender-handoff.generated.py",
+    "archicad_schedule_csv": "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-archicad-schedule.generated.csv",
+    "markdown": "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-handoff-bundle.generated.md",
+    "json": "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-handoff-bundle.generated.json"
+  },
+  "summary": {
+    "asset_count": 6,
+    "blender_row_count": 4,
+    "archicad_row_count": 4,
+    "blocked_public_count": 6,
+    "open_review_count": 6
+  },
+  "assets": [
+    {
+      "id": "villa-savoye-concrete-frame-material-001",
+      "title": "Villa Savoye Concrete Frame Material Study",
+      "category": "material",
+      "human_review_status": "open",
+      "public_gate": "blocked",
+      "blender": {
+        "collection_name": "KOSMO_ASSET/material/villa-savoye-concrete-frame-material-001",
+        "import_mode": "create_material_from_parameters",
+        "material_name": "KOSMO_MAT_villa-savoye-concrete-frame-material-001",
+        "object_prefix": "kosmo_villa-savoye-concrete-frame-material-001",
+        "source_file": null,
+        "layer_names": [],
+        "approved_for_import": false
+      },
+      "archicad": {
+        "exchange_mode": "surface_attribute_reference",
+        "archicad_layer": null,
+        "archicad_surface": "KOSMO_SURFACE_VILLA_SAVOYE_CONCRETE_FRAME_MATERIAL_001",
+        "source_file": null,
+        "approved_for_exchange": false
+      },
+      "web": {
+        "enabled": true,
+        "public_gate": "blocked",
+        "preview_component": "material_swatch",
+        "route_key": "kosmo-assets/villa-savoye-concrete-frame-material-001",
+        "source_file": null,
+        "notes": [
+          "Public web preview remains blocked; show metadata/review status only."
+        ]
+      },
+      "review_note": "Human review is still open; exchange profiles are naming proposals only."
+    },
+    {
+      "id": "villa-savoye-five-points-diagram-001",
+      "title": "Villa Savoye Five Points Diagram Kit",
+      "category": "annotation",
+      "human_review_status": "open",
+      "public_gate": "blocked",
+      "blender": null,
+      "archicad": null,
+      "web": {
+        "enabled": true,
+        "public_gate": "blocked",
+        "preview_component": "wireframe_component",
+        "route_key": "kosmo-assets/villa-savoye-five-points-diagram-001",
+        "source_file": null,
+        "notes": [
+          "Public web preview remains blocked; show metadata/review status only."
+        ]
+      },
+      "review_note": "Human review is still open; exchange profiles are naming proposals only."
+    },
+    {
+      "id": "sogn-benedetg-wood-shingle-material-001",
+      "title": "Sogn Benedetg Wood Shingle Material Study",
+      "category": "material",
+      "human_review_status": "open",
+      "public_gate": "blocked",
+      "blender": {
+        "collection_name": "KOSMO_ASSET/material/sogn-benedetg-wood-shingle-material-001",
+        "import_mode": "create_material_from_parameters",
+        "material_name": "KOSMO_MAT_sogn-benedetg-wood-shingle-material-001",
+        "object_prefix": "kosmo_sogn-benedetg-wood-shingle-material-001",
+        "source_file": null,
+        "layer_names": [],
+        "approved_for_import": false
+      },
+      "archicad": {
+        "exchange_mode": "surface_attribute_reference",
+        "archicad_layer": null,
+        "archicad_surface": "KOSMO_SURFACE_SOGN_BENEDETG_WOOD_SHINGLE_MATERIAL_001",
+        "source_file": null,
+        "approved_for_exchange": false
+      },
+      "web": {
+        "enabled": true,
+        "public_gate": "blocked",
+        "preview_component": "material_swatch",
+        "route_key": "kosmo-assets/sogn-benedetg-wood-shingle-material-001",
+        "source_file": null,
+        "notes": [
+          "Public web preview remains blocked; show metadata/review status only."
+        ]
+      },
+      "review_note": "Human review is still open; exchange profiles are naming proposals only."
+    },
+    {
+      "id": "sogn-benedetg-light-band-detail-001",
+      "title": "Sogn Benedetg Light Band Detail Study",
+      "category": "opening",
+      "human_review_status": "open",
+      "public_gate": "blocked",
+      "blender": null,
+      "archicad": null,
+      "web": null,
+      "review_note": "Human review is still open; exchange profiles are naming proposals only."
+    },
+    {
+      "id": "ingenbohl-mineral-pigment-material-001",
+      "title": "Ingenbohl Mineral Pigment Material Study",
+      "category": "material",
+      "human_review_status": "open",
+      "public_gate": "blocked",
+      "blender": {
+        "collection_name": "KOSMO_ASSET/material/ingenbohl-mineral-pigment-material-001",
+        "import_mode": "create_material_from_parameters",
+        "material_name": "KOSMO_MAT_ingenbohl-mineral-pigment-material-001",
+        "object_prefix": "kosmo_ingenbohl-mineral-pigment-material-001",
+        "source_file": null,
+        "layer_names": [],
+        "approved_for_import": false
+      },
+      "archicad": {
+        "exchange_mode": "surface_attribute_reference",
+        "archicad_layer": null,
+        "archicad_surface": "KOSMO_SURFACE_INGENBOHL_MINERAL_PIGMENT_MATERIAL_001",
+        "source_file": null,
+        "approved_for_exchange": false
+      },
+      "web": {
+        "enabled": true,
+        "public_gate": "blocked",
+        "preview_component": "material_swatch",
+        "route_key": "kosmo-assets/ingenbohl-mineral-pigment-material-001",
+        "source_file": null,
+        "notes": [
+          "Public web preview remains blocked; show metadata/review status only."
+        ]
+      },
+      "review_note": "Human review is still open; exchange profiles are naming proposals only."
+    },
+    {
+      "id": "ingenbohl-concrete-core-frame-study-001",
+      "title": "Ingenbohl Concrete Core and Frame Study",
+      "category": "structure",
+      "human_review_status": "open",
+      "public_gate": "blocked",
+      "blender": {
+        "collection_name": "KOSMO_ASSET/structure/ingenbohl-concrete-core-frame-study-001",
+        "import_mode": "metadata_only",
+        "material_name": null,
+        "object_prefix": "kosmo_ingenbohl-concrete-core-frame-study-001",
+        "source_file": null,
+        "layer_names": [],
+        "approved_for_import": false
+      },
+      "archicad": {
+        "exchange_mode": "manual_reference",
+        "archicad_layer": "KOSMO_STRUCTURE_INGENBOHL_CONCRETE_CORE_FRAME_STUDY_001",
+        "archicad_surface": null,
+        "source_file": null,
+        "approved_for_exchange": false
+      },
+      "web": {
+        "enabled": true,
+        "public_gate": "blocked",
+        "preview_component": "wireframe_component",
+        "route_key": "kosmo-assets/ingenbohl-concrete-core-frame-study-001",
+        "source_file": null,
+        "notes": [
+          "Public web preview remains blocked; show metadata/review status only."
+        ]
+      },
+      "review_note": "Human review is still open; exchange profiles are naming proposals only."
+    }
+  ],
+  "next_actions": [
+    "Open the generated Blender Python file and keep ALLOW_SCENE_WRITE = False until a manual smoke test is approved.",
+    "Use the ArchiCAD CSV as a naming/reference schedule only; no BIM object is generated in V1.",
+    "Close human review before importing assets into production files.",
+    "Keep public gates blocked until rights and review are explicit."
+  ]
+}

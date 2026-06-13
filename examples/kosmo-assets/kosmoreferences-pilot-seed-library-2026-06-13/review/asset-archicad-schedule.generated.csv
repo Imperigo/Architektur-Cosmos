@@ -1,0 +1,5 @@
+"asset_id","title","exchange_mode","archicad_layer","archicad_surface","source_file","approved_for_exchange","review_status"
+"villa-savoye-concrete-frame-material-001","Villa Savoye Concrete Frame Material Study","surface_attribute_reference","","KOSMO_SURFACE_VILLA_SAVOYE_CONCRETE_FRAME_MATERIAL_001","","false","open"
+"sogn-benedetg-wood-shingle-material-001","Sogn Benedetg Wood Shingle Material Study","surface_attribute_reference","","KOSMO_SURFACE_SOGN_BENEDETG_WOOD_SHINGLE_MATERIAL_001","","false","open"
+"ingenbohl-mineral-pigment-material-001","Ingenbohl Mineral Pigment Material Study","surface_attribute_reference","","KOSMO_SURFACE_INGENBOHL_MINERAL_PIGMENT_MATERIAL_001","","false","open"
+"ingenbohl-concrete-core-frame-study-001","Ingenbohl Concrete Core and Frame Study","manual_reference","KOSMO_STRUCTURE_INGENBOHL_CONCRETE_CORE_FRAME_STUDY_001","","","false","open"

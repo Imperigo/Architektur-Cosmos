@@ -1,0 +1,380 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-13T18:10:32.421Z",
+  "generator": "kosmo-asset-export-plan",
+  "library_path": "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json",
+  "library_id": "kosmoreferences-pilot-seed-library-2026-06-13",
+  "status": "review_plan",
+  "policy": {
+    "no_uploads": true,
+    "no_public_downloads": true,
+    "export_plan_is_not_export_execution": true,
+    "public_routes_require_rights": [
+      "licensed",
+      "public_domain",
+      "own_work"
+    ]
+  },
+  "summary": {
+    "asset_count": 6,
+    "ready_route_count": 0,
+    "review_route_count": 0,
+    "planned_route_count": 18,
+    "blocked_route_count": 1,
+    "targets": {
+      "blender": 4,
+      "archicad": 4,
+      "web": 5,
+      "svg": 2,
+      "layout": 2,
+      "dxf": 1,
+      "glb": 1
+    }
+  },
+  "assets": [
+    {
+      "id": "villa-savoye-concrete-frame-material-001",
+      "title": "Villa Savoye Concrete Frame Material Study",
+      "asset_type": "material",
+      "category": "material",
+      "rights_status": "generated_needs_review",
+      "review_status": "planned",
+      "public_ready": false,
+      "existing_formats": [],
+      "planned_formats": [
+        "material_json"
+      ],
+      "preview_kind": "material_swatch",
+      "routes": [
+        {
+          "target": "blender",
+          "status": "planned",
+          "required_formats": [
+            "material_json",
+            "blend"
+          ],
+          "blockers": [
+            "Required format planned but not generated: material_json or blend"
+          ],
+          "note": "blender route is planned but needs generation/export."
+        },
+        {
+          "target": "archicad",
+          "status": "planned",
+          "required_formats": [
+            "material_json",
+            "gsm"
+          ],
+          "blockers": [
+            "Required format planned but not generated: material_json or gsm"
+          ],
+          "note": "archicad route is planned but needs generation/export."
+        },
+        {
+          "target": "web",
+          "status": "planned",
+          "required_formats": [
+            "material_json",
+            "webp",
+            "png"
+          ],
+          "blockers": [
+            "Web/public route remains private because public_use_allowed or rights are not public-safe.",
+            "Required format planned but not generated: material_json or webp or png"
+          ],
+          "note": "web route is planned but needs generation/export."
+        }
+      ],
+      "next_step": "Generate planned formats: material_json."
+    },
+    {
+      "id": "villa-savoye-five-points-diagram-001",
+      "title": "Villa Savoye Five Points Diagram Kit",
+      "asset_type": "detail",
+      "category": "annotation",
+      "rights_status": "generated_needs_review",
+      "review_status": "planned",
+      "public_ready": false,
+      "existing_formats": [],
+      "planned_formats": [
+        "svg",
+        "json"
+      ],
+      "preview_kind": "wireframe_component",
+      "routes": [
+        {
+          "target": "svg",
+          "status": "planned",
+          "required_formats": [
+            "svg"
+          ],
+          "blockers": [
+            "Required format planned but not generated: svg"
+          ],
+          "note": "svg route is planned but needs generation/export."
+        },
+        {
+          "target": "web",
+          "status": "planned",
+          "required_formats": [
+            "svg",
+            "glb",
+            "webp",
+            "png"
+          ],
+          "blockers": [
+            "Web/public route remains private because public_use_allowed or rights are not public-safe.",
+            "Required format planned but not generated: svg or glb or webp or png"
+          ],
+          "note": "web route is planned but needs generation/export."
+        },
+        {
+          "target": "layout",
+          "status": "planned",
+          "required_formats": [
+            "svg"
+          ],
+          "blockers": [
+            "Required format planned but not generated: svg"
+          ],
+          "note": "layout route is planned but needs generation/export."
+        }
+      ],
+      "next_step": "Generate planned formats: svg, json."
+    },
+    {
+      "id": "sogn-benedetg-wood-shingle-material-001",
+      "title": "Sogn Benedetg Wood Shingle Material Study",
+      "asset_type": "material",
+      "category": "material",
+      "rights_status": "generated_needs_review",
+      "review_status": "needs_source",
+      "public_ready": false,
+      "existing_formats": [],
+      "planned_formats": [
+        "material_json"
+      ],
+      "preview_kind": "material_swatch",
+      "routes": [
+        {
+          "target": "blender",
+          "status": "planned",
+          "required_formats": [
+            "material_json",
+            "blend"
+          ],
+          "blockers": [
+            "Required format planned but not generated: material_json or blend"
+          ],
+          "note": "blender route is planned but needs generation/export."
+        },
+        {
+          "target": "archicad",
+          "status": "planned",
+          "required_formats": [
+            "material_json",
+            "gsm"
+          ],
+          "blockers": [
+            "Required format planned but not generated: material_json or gsm"
+          ],
+          "note": "archicad route is planned but needs generation/export."
+        },
+        {
+          "target": "web",
+          "status": "planned",
+          "required_formats": [
+            "material_json",
+            "webp",
+            "png"
+          ],
+          "blockers": [
+            "Web/public route remains private because public_use_allowed or rights are not public-safe.",
+            "Required format planned but not generated: material_json or webp or png"
+          ],
+          "note": "web route is planned but needs generation/export."
+        }
+      ],
+      "next_step": "Generate planned formats: material_json."
+    },
+    {
+      "id": "sogn-benedetg-light-band-detail-001",
+      "title": "Sogn Benedetg Light Band Detail Study",
+      "asset_type": "detail",
+      "category": "opening",
+      "rights_status": "generated_needs_review",
+      "review_status": "needs_source",
+      "public_ready": false,
+      "existing_formats": [],
+      "planned_formats": [
+        "dxf",
+        "svg"
+      ],
+      "preview_kind": "wireframe_component",
+      "routes": [
+        {
+          "target": "dxf",
+          "status": "planned",
+          "required_formats": [
+            "dxf"
+          ],
+          "blockers": [
+            "Required format planned but not generated: dxf"
+          ],
+          "note": "dxf route is planned but needs generation/export."
+        },
+        {
+          "target": "svg",
+          "status": "planned",
+          "required_formats": [
+            "svg"
+          ],
+          "blockers": [
+            "Required format planned but not generated: svg"
+          ],
+          "note": "svg route is planned but needs generation/export."
+        },
+        {
+          "target": "layout",
+          "status": "planned",
+          "required_formats": [
+            "svg"
+          ],
+          "blockers": [
+            "Required format planned but not generated: svg"
+          ],
+          "note": "layout route is planned but needs generation/export."
+        }
+      ],
+      "next_step": "Generate planned formats: dxf, svg."
+    },
+    {
+      "id": "ingenbohl-mineral-pigment-material-001",
+      "title": "Ingenbohl Mineral Pigment Material Study",
+      "asset_type": "material",
+      "category": "material",
+      "rights_status": "generated_needs_review",
+      "review_status": "planned",
+      "public_ready": false,
+      "existing_formats": [],
+      "planned_formats": [
+        "material_json"
+      ],
+      "preview_kind": "material_swatch",
+      "routes": [
+        {
+          "target": "blender",
+          "status": "planned",
+          "required_formats": [
+            "material_json",
+            "blend"
+          ],
+          "blockers": [
+            "Required format planned but not generated: material_json or blend"
+          ],
+          "note": "blender route is planned but needs generation/export."
+        },
+        {
+          "target": "archicad",
+          "status": "planned",
+          "required_formats": [
+            "material_json",
+            "gsm"
+          ],
+          "blockers": [
+            "Required format planned but not generated: material_json or gsm"
+          ],
+          "note": "archicad route is planned but needs generation/export."
+        },
+        {
+          "target": "web",
+          "status": "planned",
+          "required_formats": [
+            "material_json",
+            "webp",
+            "png"
+          ],
+          "blockers": [
+            "Web/public route remains private because public_use_allowed or rights are not public-safe.",
+            "Required format planned but not generated: material_json or webp or png"
+          ],
+          "note": "web route is planned but needs generation/export."
+        }
+      ],
+      "next_step": "Generate planned formats: material_json."
+    },
+    {
+      "id": "ingenbohl-concrete-core-frame-study-001",
+      "title": "Ingenbohl Concrete Core and Frame Study",
+      "asset_type": "component",
+      "category": "structure",
+      "rights_status": "generated_needs_review",
+      "review_status": "needs_source",
+      "public_ready": false,
+      "existing_formats": [],
+      "planned_formats": [
+        "json",
+        "glb"
+      ],
+      "preview_kind": "wireframe_component",
+      "routes": [
+        {
+          "target": "blender",
+          "status": "planned",
+          "required_formats": [
+            "glb",
+            "blend"
+          ],
+          "blockers": [
+            "Required format planned but not generated: glb or blend"
+          ],
+          "note": "blender route is planned but needs generation/export."
+        },
+        {
+          "target": "archicad",
+          "status": "blocked",
+          "required_formats": [
+            "dxf",
+            "gsm",
+            "ifc"
+          ],
+          "blockers": [
+            "Missing target format: dxf or gsm or ifc"
+          ],
+          "note": "archicad route is blocked until missing formats or rights are resolved."
+        },
+        {
+          "target": "glb",
+          "status": "planned",
+          "required_formats": [
+            "glb"
+          ],
+          "blockers": [
+            "Required format planned but not generated: glb"
+          ],
+          "note": "glb route is planned but needs generation/export."
+        },
+        {
+          "target": "web",
+          "status": "planned",
+          "required_formats": [
+            "svg",
+            "glb",
+            "webp",
+            "png"
+          ],
+          "blockers": [
+            "Web/public route remains private because public_use_allowed or rights are not public-safe.",
+            "Required format planned but not generated: svg or glb or webp or png"
+          ],
+          "note": "web route is planned but needs generation/export."
+        }
+      ],
+      "next_step": "Generate missing target formats or remove blocked export targets."
+    }
+  ],
+  "next_actions": [
+    "Resolve blocked routes before exposing export buttons in the UI.",
+    "Generate planned DXF/GLB/GSM or material exports in local review mode."
+  ]
+}

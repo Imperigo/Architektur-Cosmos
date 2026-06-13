@@ -1,0 +1,663 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-13T18:10:32.655Z",
+  "generator": "kosmo-asset-review-pack",
+  "library_path": "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json",
+  "library_id": "kosmoreferences-pilot-seed-library-2026-06-13",
+  "status": "asset_human_review_required",
+  "rights_scope": "local_review_only",
+  "policy": {
+    "no_uploads": true,
+    "no_public_publish": true,
+    "review_pack_does_not_promote_assets": true,
+    "public_use_requires_reviewed_status": true,
+    "public_use_requires_rights": [
+      "licensed",
+      "public_domain",
+      "own_work"
+    ]
+  },
+  "source_reports": {
+    "library_check": {
+      "path": "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-library-check.generated.json",
+      "exists": true
+    },
+    "export_plan": {
+      "path": "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-export-plan.generated.json",
+      "exists": true
+    }
+  },
+  "summary": {
+    "asset_count": 6,
+    "local_ready_count": 0,
+    "public_ready_count": 0,
+    "open_human_review_count": 6,
+    "kosmodata_ref_count": 6,
+    "generated_profile_count": 0,
+    "blocked_route_count": 1,
+    "needs_review_route_count": 0,
+    "upload_allowed": false,
+    "public_assets_allowed": false,
+    "recommended_next_step": "complete_asset_human_review_before_promotion"
+  },
+  "assets": [
+    {
+      "id": "villa-savoye-concrete-frame-material-001",
+      "title": "Villa Savoye Concrete Frame Material Study",
+      "asset_type": "material",
+      "category": "material",
+      "rights_status": "generated_needs_review",
+      "review_status": "planned",
+      "human_review_status": "open",
+      "public_use_allowed": false,
+      "public_ready": false,
+      "local_ready": false,
+      "local_formats": [],
+      "kosmodata_refs": [
+        {
+          "kind": "reference_entry",
+          "entry_id": "villa-savoye",
+          "relation": "material_context",
+          "usage_policy": "derived_asset_review_required",
+          "review_status": "needs_human_review",
+          "notes": "Derived from review-only reference analysis; not a measured material specification."
+        }
+      ],
+      "export_targets": [
+        "blender",
+        "archicad",
+        "web"
+      ],
+      "routes": [
+        {
+          "target": "blender",
+          "status": "planned",
+          "blockers": [
+            "Required format planned but not generated: material_json or blend"
+          ]
+        },
+        {
+          "target": "archicad",
+          "status": "planned",
+          "blockers": [
+            "Required format planned but not generated: material_json or gsm"
+          ]
+        },
+        {
+          "target": "web",
+          "status": "planned",
+          "blockers": [
+            "Web/public route remains private because public_use_allowed or rights are not public-safe.",
+            "Required format planned but not generated: material_json or webp or png"
+          ]
+        }
+      ],
+      "generated_profiles": [],
+      "checklist": [
+        {
+          "id": "source_basis",
+          "status": "passed",
+          "label": "Source basis is documented."
+        },
+        {
+          "id": "kosmodata_bridge",
+          "status": "passed",
+          "label": "KosmoData references are explicit context/source metadata and do not imply automatic asset derivation."
+        },
+        {
+          "id": "local_files",
+          "status": "needs_human_review",
+          "label": "At least one local source/export file exists."
+        },
+        {
+          "id": "rights_gate",
+          "status": "passed",
+          "label": "Rights status does not allow unsafe public use."
+        },
+        {
+          "id": "public_gate",
+          "status": "passed",
+          "label": "Public use is blocked unless rights and review are ready."
+        },
+        {
+          "id": "review_status",
+          "status": "needs_human_review",
+          "label": "Human review status is reviewed or verified."
+        },
+        {
+          "id": "export_routes",
+          "status": "passed",
+          "label": "No export route is blocked."
+        },
+        {
+          "id": "generated_profile",
+          "status": "passed",
+          "label": "Generated assets carry a generated profile."
+        },
+        {
+          "id": "library_check",
+          "status": "needs_human_review",
+          "label": "Asset passed the library check row."
+        }
+      ],
+      "suggested_decision": "complete_human_review_before_promotion"
+    },
+    {
+      "id": "villa-savoye-five-points-diagram-001",
+      "title": "Villa Savoye Five Points Diagram Kit",
+      "asset_type": "detail",
+      "category": "annotation",
+      "rights_status": "generated_needs_review",
+      "review_status": "planned",
+      "human_review_status": "open",
+      "public_use_allowed": false,
+      "public_ready": false,
+      "local_ready": false,
+      "local_formats": [],
+      "kosmodata_refs": [
+        {
+          "kind": "reference_entry",
+          "entry_id": "villa-savoye",
+          "relation": "typology_context",
+          "usage_policy": "context_only",
+          "review_status": "context_only",
+          "notes": "Context-only analytical diagram; must not claim measured accuracy."
+        }
+      ],
+      "export_targets": [
+        "svg",
+        "web",
+        "layout"
+      ],
+      "routes": [
+        {
+          "target": "svg",
+          "status": "planned",
+          "blockers": [
+            "Required format planned but not generated: svg"
+          ]
+        },
+        {
+          "target": "web",
+          "status": "planned",
+          "blockers": [
+            "Web/public route remains private because public_use_allowed or rights are not public-safe.",
+            "Required format planned but not generated: svg or glb or webp or png"
+          ]
+        },
+        {
+          "target": "layout",
+          "status": "planned",
+          "blockers": [
+            "Required format planned but not generated: svg"
+          ]
+        }
+      ],
+      "generated_profiles": [],
+      "checklist": [
+        {
+          "id": "source_basis",
+          "status": "passed",
+          "label": "Source basis is documented."
+        },
+        {
+          "id": "kosmodata_bridge",
+          "status": "passed",
+          "label": "KosmoData references are explicit context/source metadata and do not imply automatic asset derivation."
+        },
+        {
+          "id": "local_files",
+          "status": "needs_human_review",
+          "label": "At least one local source/export file exists."
+        },
+        {
+          "id": "rights_gate",
+          "status": "passed",
+          "label": "Rights status does not allow unsafe public use."
+        },
+        {
+          "id": "public_gate",
+          "status": "passed",
+          "label": "Public use is blocked unless rights and review are ready."
+        },
+        {
+          "id": "review_status",
+          "status": "needs_human_review",
+          "label": "Human review status is reviewed or verified."
+        },
+        {
+          "id": "export_routes",
+          "status": "passed",
+          "label": "No export route is blocked."
+        },
+        {
+          "id": "generated_profile",
+          "status": "needs_human_review",
+          "label": "Generated assets carry a generated profile."
+        },
+        {
+          "id": "library_check",
+          "status": "needs_human_review",
+          "label": "Asset passed the library check row."
+        }
+      ],
+      "suggested_decision": "complete_human_review_before_promotion"
+    },
+    {
+      "id": "sogn-benedetg-wood-shingle-material-001",
+      "title": "Sogn Benedetg Wood Shingle Material Study",
+      "asset_type": "material",
+      "category": "material",
+      "rights_status": "generated_needs_review",
+      "review_status": "needs_source",
+      "human_review_status": "open",
+      "public_use_allowed": false,
+      "public_ready": false,
+      "local_ready": false,
+      "local_formats": [],
+      "kosmodata_refs": [
+        {
+          "kind": "reference_entry",
+          "entry_id": "kapelle-sogn-benedetg",
+          "relation": "material_context",
+          "usage_policy": "derived_asset_review_required",
+          "review_status": "needs_human_review",
+          "notes": "Needs local book/lecture source review before claiming project-specific accuracy."
+        }
+      ],
+      "export_targets": [
+        "blender",
+        "archicad",
+        "web"
+      ],
+      "routes": [
+        {
+          "target": "blender",
+          "status": "planned",
+          "blockers": [
+            "Required format planned but not generated: material_json or blend"
+          ]
+        },
+        {
+          "target": "archicad",
+          "status": "planned",
+          "blockers": [
+            "Required format planned but not generated: material_json or gsm"
+          ]
+        },
+        {
+          "target": "web",
+          "status": "planned",
+          "blockers": [
+            "Web/public route remains private because public_use_allowed or rights are not public-safe.",
+            "Required format planned but not generated: material_json or webp or png"
+          ]
+        }
+      ],
+      "generated_profiles": [],
+      "checklist": [
+        {
+          "id": "source_basis",
+          "status": "passed",
+          "label": "Source basis is documented."
+        },
+        {
+          "id": "kosmodata_bridge",
+          "status": "passed",
+          "label": "KosmoData references are explicit context/source metadata and do not imply automatic asset derivation."
+        },
+        {
+          "id": "local_files",
+          "status": "needs_human_review",
+          "label": "At least one local source/export file exists."
+        },
+        {
+          "id": "rights_gate",
+          "status": "passed",
+          "label": "Rights status does not allow unsafe public use."
+        },
+        {
+          "id": "public_gate",
+          "status": "passed",
+          "label": "Public use is blocked unless rights and review are ready."
+        },
+        {
+          "id": "review_status",
+          "status": "needs_human_review",
+          "label": "Human review status is reviewed or verified."
+        },
+        {
+          "id": "export_routes",
+          "status": "passed",
+          "label": "No export route is blocked."
+        },
+        {
+          "id": "generated_profile",
+          "status": "passed",
+          "label": "Generated assets carry a generated profile."
+        },
+        {
+          "id": "library_check",
+          "status": "needs_human_review",
+          "label": "Asset passed the library check row."
+        }
+      ],
+      "suggested_decision": "complete_human_review_before_promotion"
+    },
+    {
+      "id": "sogn-benedetg-light-band-detail-001",
+      "title": "Sogn Benedetg Light Band Detail Study",
+      "asset_type": "detail",
+      "category": "opening",
+      "rights_status": "generated_needs_review",
+      "review_status": "needs_source",
+      "human_review_status": "open",
+      "public_use_allowed": false,
+      "public_ready": false,
+      "local_ready": false,
+      "local_formats": [],
+      "kosmodata_refs": [
+        {
+          "kind": "reference_entry",
+          "entry_id": "kapelle-sogn-benedetg",
+          "relation": "typology_context",
+          "usage_policy": "context_only",
+          "review_status": "context_only",
+          "notes": "Atmospheric detail study only; exact construction must be source-reviewed."
+        }
+      ],
+      "export_targets": [
+        "dxf",
+        "svg",
+        "layout"
+      ],
+      "routes": [
+        {
+          "target": "dxf",
+          "status": "planned",
+          "blockers": [
+            "Required format planned but not generated: dxf"
+          ]
+        },
+        {
+          "target": "svg",
+          "status": "planned",
+          "blockers": [
+            "Required format planned but not generated: svg"
+          ]
+        },
+        {
+          "target": "layout",
+          "status": "planned",
+          "blockers": [
+            "Required format planned but not generated: svg"
+          ]
+        }
+      ],
+      "generated_profiles": [],
+      "checklist": [
+        {
+          "id": "source_basis",
+          "status": "passed",
+          "label": "Source basis is documented."
+        },
+        {
+          "id": "kosmodata_bridge",
+          "status": "passed",
+          "label": "KosmoData references are explicit context/source metadata and do not imply automatic asset derivation."
+        },
+        {
+          "id": "local_files",
+          "status": "needs_human_review",
+          "label": "At least one local source/export file exists."
+        },
+        {
+          "id": "rights_gate",
+          "status": "passed",
+          "label": "Rights status does not allow unsafe public use."
+        },
+        {
+          "id": "public_gate",
+          "status": "passed",
+          "label": "Public use is blocked unless rights and review are ready."
+        },
+        {
+          "id": "review_status",
+          "status": "needs_human_review",
+          "label": "Human review status is reviewed or verified."
+        },
+        {
+          "id": "export_routes",
+          "status": "passed",
+          "label": "No export route is blocked."
+        },
+        {
+          "id": "generated_profile",
+          "status": "needs_human_review",
+          "label": "Generated assets carry a generated profile."
+        },
+        {
+          "id": "library_check",
+          "status": "needs_human_review",
+          "label": "Asset passed the library check row."
+        }
+      ],
+      "suggested_decision": "complete_human_review_before_promotion"
+    },
+    {
+      "id": "ingenbohl-mineral-pigment-material-001",
+      "title": "Ingenbohl Mineral Pigment Material Study",
+      "asset_type": "material",
+      "category": "material",
+      "rights_status": "generated_needs_review",
+      "review_status": "planned",
+      "human_review_status": "open",
+      "public_use_allowed": false,
+      "public_ready": false,
+      "local_ready": false,
+      "local_formats": [],
+      "kosmodata_refs": [
+        {
+          "kind": "reference_entry",
+          "entry_id": "alterszentrum-kloster-ingenbohl",
+          "relation": "material_context",
+          "usage_policy": "derived_asset_review_required",
+          "review_status": "needs_human_review",
+          "notes": "Needs source review from architect/project text or private extraction before design reuse."
+        }
+      ],
+      "export_targets": [
+        "blender",
+        "archicad",
+        "web"
+      ],
+      "routes": [
+        {
+          "target": "blender",
+          "status": "planned",
+          "blockers": [
+            "Required format planned but not generated: material_json or blend"
+          ]
+        },
+        {
+          "target": "archicad",
+          "status": "planned",
+          "blockers": [
+            "Required format planned but not generated: material_json or gsm"
+          ]
+        },
+        {
+          "target": "web",
+          "status": "planned",
+          "blockers": [
+            "Web/public route remains private because public_use_allowed or rights are not public-safe.",
+            "Required format planned but not generated: material_json or webp or png"
+          ]
+        }
+      ],
+      "generated_profiles": [],
+      "checklist": [
+        {
+          "id": "source_basis",
+          "status": "passed",
+          "label": "Source basis is documented."
+        },
+        {
+          "id": "kosmodata_bridge",
+          "status": "passed",
+          "label": "KosmoData references are explicit context/source metadata and do not imply automatic asset derivation."
+        },
+        {
+          "id": "local_files",
+          "status": "needs_human_review",
+          "label": "At least one local source/export file exists."
+        },
+        {
+          "id": "rights_gate",
+          "status": "passed",
+          "label": "Rights status does not allow unsafe public use."
+        },
+        {
+          "id": "public_gate",
+          "status": "passed",
+          "label": "Public use is blocked unless rights and review are ready."
+        },
+        {
+          "id": "review_status",
+          "status": "needs_human_review",
+          "label": "Human review status is reviewed or verified."
+        },
+        {
+          "id": "export_routes",
+          "status": "passed",
+          "label": "No export route is blocked."
+        },
+        {
+          "id": "generated_profile",
+          "status": "passed",
+          "label": "Generated assets carry a generated profile."
+        },
+        {
+          "id": "library_check",
+          "status": "needs_human_review",
+          "label": "Asset passed the library check row."
+        }
+      ],
+      "suggested_decision": "complete_human_review_before_promotion"
+    },
+    {
+      "id": "ingenbohl-concrete-core-frame-study-001",
+      "title": "Ingenbohl Concrete Core and Frame Study",
+      "asset_type": "component",
+      "category": "structure",
+      "rights_status": "generated_needs_review",
+      "review_status": "needs_source",
+      "human_review_status": "open",
+      "public_use_allowed": false,
+      "public_ready": false,
+      "local_ready": false,
+      "local_formats": [],
+      "kosmodata_refs": [
+        {
+          "kind": "reference_entry",
+          "entry_id": "alterszentrum-kloster-ingenbohl",
+          "relation": "model_context",
+          "usage_policy": "derived_asset_review_required",
+          "review_status": "needs_human_review",
+          "notes": "Structure is a hypothesis until engineering/project sources are reviewed."
+        }
+      ],
+      "export_targets": [
+        "blender",
+        "archicad",
+        "glb",
+        "web"
+      ],
+      "routes": [
+        {
+          "target": "blender",
+          "status": "planned",
+          "blockers": [
+            "Required format planned but not generated: glb or blend"
+          ]
+        },
+        {
+          "target": "archicad",
+          "status": "blocked",
+          "blockers": [
+            "Missing target format: dxf or gsm or ifc"
+          ]
+        },
+        {
+          "target": "glb",
+          "status": "planned",
+          "blockers": [
+            "Required format planned but not generated: glb"
+          ]
+        },
+        {
+          "target": "web",
+          "status": "planned",
+          "blockers": [
+            "Web/public route remains private because public_use_allowed or rights are not public-safe.",
+            "Required format planned but not generated: svg or glb or webp or png"
+          ]
+        }
+      ],
+      "generated_profiles": [],
+      "checklist": [
+        {
+          "id": "source_basis",
+          "status": "passed",
+          "label": "Source basis is documented."
+        },
+        {
+          "id": "kosmodata_bridge",
+          "status": "passed",
+          "label": "KosmoData references are explicit context/source metadata and do not imply automatic asset derivation."
+        },
+        {
+          "id": "local_files",
+          "status": "needs_human_review",
+          "label": "At least one local source/export file exists."
+        },
+        {
+          "id": "rights_gate",
+          "status": "passed",
+          "label": "Rights status does not allow unsafe public use."
+        },
+        {
+          "id": "public_gate",
+          "status": "passed",
+          "label": "Public use is blocked unless rights and review are ready."
+        },
+        {
+          "id": "review_status",
+          "status": "needs_human_review",
+          "label": "Human review status is reviewed or verified."
+        },
+        {
+          "id": "export_routes",
+          "status": "needs_human_review",
+          "label": "No export route is blocked."
+        },
+        {
+          "id": "generated_profile",
+          "status": "needs_human_review",
+          "label": "Generated assets carry a generated profile."
+        },
+        {
+          "id": "library_check",
+          "status": "needs_human_review",
+          "label": "Asset passed the library check row."
+        }
+      ],
+      "suggested_decision": "keep_blocked_until_export_routes_are_fixed"
+    }
+  ],
+  "next_actions": [
+    "Resolve blocked export routes before exposing asset export buttons.",
+    "Open local SVG/DXF/GLB/material files and record a human review decision before promotion.",
+    "Confirm generated assets are not derived from protected project images, scans or third-party models."
+  ]
+}

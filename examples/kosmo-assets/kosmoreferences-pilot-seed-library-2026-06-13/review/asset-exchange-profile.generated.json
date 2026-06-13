@@ -1,0 +1,337 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-13T18:10:32.892Z",
+  "generator": "kosmo-asset-exchange-profile",
+  "library_path": "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json",
+  "library_id": "kosmoreferences-pilot-seed-library-2026-06-13",
+  "status": "local_review_exchange_profile",
+  "policy": {
+    "no_uploads": true,
+    "no_public_downloads": true,
+    "no_archicad_write": true,
+    "no_blender_write": true,
+    "exchange_profile_is_review_only": true
+  },
+  "summary": {
+    "asset_count": 6,
+    "blender_profile_count": 4,
+    "archicad_profile_count": 4,
+    "web_profile_count": 5,
+    "blocked_public_count": 6,
+    "human_review_open_count": 6,
+    "kosmodata_ref_count": 6
+  },
+  "assets": [
+    {
+      "id": "villa-savoye-concrete-frame-material-001",
+      "title": "Villa Savoye Concrete Frame Material Study",
+      "asset_type": "material",
+      "category": "material",
+      "rights_status": "generated_needs_review",
+      "review_status": "planned",
+      "human_review_status": "open",
+      "public_gate": "blocked",
+      "kosmodata_refs": [
+        {
+          "kind": "reference_entry",
+          "entry_id": "villa-savoye",
+          "relation": "material_context",
+          "usage_policy": "derived_asset_review_required",
+          "review_status": "needs_human_review",
+          "notes": "Derived from review-only reference analysis; not a measured material specification."
+        }
+      ],
+      "source_paths": {},
+      "generated_profiles": [],
+      "blender": {
+        "enabled": true,
+        "approved_for_import": false,
+        "import_mode": "create_material_from_parameters",
+        "collection_name": "KOSMO_ASSET/material/villa-savoye-concrete-frame-material-001",
+        "object_prefix": "kosmo_villa-savoye-concrete-frame-material-001",
+        "material_name": "KOSMO_MAT_villa-savoye-concrete-frame-material-001",
+        "source_file": null,
+        "unit_scale": 1,
+        "layer_names": [],
+        "notes": [
+          "Review-only Blender handoff.",
+          "Human review still open; do not import into production scenes."
+        ]
+      },
+      "archicad": {
+        "enabled": true,
+        "approved_for_exchange": false,
+        "exchange_mode": "surface_attribute_reference",
+        "archicad_layer": null,
+        "archicad_surface": "KOSMO_SURFACE_VILLA_SAVOYE_CONCRETE_FRAME_MATERIAL_001",
+        "source_file": null,
+        "layer_names": [],
+        "notes": [
+          "Review-only ArchiCAD exchange profile.",
+          "No GSM/BIM object is generated in V1; this profile prepares manual exchange naming and layer/surface mapping."
+        ]
+      },
+      "web": {
+        "enabled": true,
+        "public_gate": "blocked",
+        "preview_component": "material_swatch",
+        "route_key": "kosmo-assets/villa-savoye-concrete-frame-material-001",
+        "source_file": null,
+        "notes": [
+          "Public web preview remains blocked; show metadata/review status only."
+        ]
+      },
+      "review_note": "Human review is still open; exchange profiles are naming proposals only."
+    },
+    {
+      "id": "villa-savoye-five-points-diagram-001",
+      "title": "Villa Savoye Five Points Diagram Kit",
+      "asset_type": "detail",
+      "category": "annotation",
+      "rights_status": "generated_needs_review",
+      "review_status": "planned",
+      "human_review_status": "open",
+      "public_gate": "blocked",
+      "kosmodata_refs": [
+        {
+          "kind": "reference_entry",
+          "entry_id": "villa-savoye",
+          "relation": "typology_context",
+          "usage_policy": "context_only",
+          "review_status": "context_only",
+          "notes": "Context-only analytical diagram; must not claim measured accuracy."
+        }
+      ],
+      "source_paths": {},
+      "generated_profiles": [],
+      "blender": null,
+      "archicad": null,
+      "web": {
+        "enabled": true,
+        "public_gate": "blocked",
+        "preview_component": "wireframe_component",
+        "route_key": "kosmo-assets/villa-savoye-five-points-diagram-001",
+        "source_file": null,
+        "notes": [
+          "Public web preview remains blocked; show metadata/review status only."
+        ]
+      },
+      "review_note": "Human review is still open; exchange profiles are naming proposals only."
+    },
+    {
+      "id": "sogn-benedetg-wood-shingle-material-001",
+      "title": "Sogn Benedetg Wood Shingle Material Study",
+      "asset_type": "material",
+      "category": "material",
+      "rights_status": "generated_needs_review",
+      "review_status": "needs_source",
+      "human_review_status": "open",
+      "public_gate": "blocked",
+      "kosmodata_refs": [
+        {
+          "kind": "reference_entry",
+          "entry_id": "kapelle-sogn-benedetg",
+          "relation": "material_context",
+          "usage_policy": "derived_asset_review_required",
+          "review_status": "needs_human_review",
+          "notes": "Needs local book/lecture source review before claiming project-specific accuracy."
+        }
+      ],
+      "source_paths": {},
+      "generated_profiles": [],
+      "blender": {
+        "enabled": true,
+        "approved_for_import": false,
+        "import_mode": "create_material_from_parameters",
+        "collection_name": "KOSMO_ASSET/material/sogn-benedetg-wood-shingle-material-001",
+        "object_prefix": "kosmo_sogn-benedetg-wood-shingle-material-001",
+        "material_name": "KOSMO_MAT_sogn-benedetg-wood-shingle-material-001",
+        "source_file": null,
+        "unit_scale": 1,
+        "layer_names": [],
+        "notes": [
+          "Review-only Blender handoff.",
+          "Human review still open; do not import into production scenes."
+        ]
+      },
+      "archicad": {
+        "enabled": true,
+        "approved_for_exchange": false,
+        "exchange_mode": "surface_attribute_reference",
+        "archicad_layer": null,
+        "archicad_surface": "KOSMO_SURFACE_SOGN_BENEDETG_WOOD_SHINGLE_MATERIAL_001",
+        "source_file": null,
+        "layer_names": [],
+        "notes": [
+          "Review-only ArchiCAD exchange profile.",
+          "No GSM/BIM object is generated in V1; this profile prepares manual exchange naming and layer/surface mapping."
+        ]
+      },
+      "web": {
+        "enabled": true,
+        "public_gate": "blocked",
+        "preview_component": "material_swatch",
+        "route_key": "kosmo-assets/sogn-benedetg-wood-shingle-material-001",
+        "source_file": null,
+        "notes": [
+          "Public web preview remains blocked; show metadata/review status only."
+        ]
+      },
+      "review_note": "Human review is still open; exchange profiles are naming proposals only."
+    },
+    {
+      "id": "sogn-benedetg-light-band-detail-001",
+      "title": "Sogn Benedetg Light Band Detail Study",
+      "asset_type": "detail",
+      "category": "opening",
+      "rights_status": "generated_needs_review",
+      "review_status": "needs_source",
+      "human_review_status": "open",
+      "public_gate": "blocked",
+      "kosmodata_refs": [
+        {
+          "kind": "reference_entry",
+          "entry_id": "kapelle-sogn-benedetg",
+          "relation": "typology_context",
+          "usage_policy": "context_only",
+          "review_status": "context_only",
+          "notes": "Atmospheric detail study only; exact construction must be source-reviewed."
+        }
+      ],
+      "source_paths": {},
+      "generated_profiles": [],
+      "blender": null,
+      "archicad": null,
+      "web": null,
+      "review_note": "Human review is still open; exchange profiles are naming proposals only."
+    },
+    {
+      "id": "ingenbohl-mineral-pigment-material-001",
+      "title": "Ingenbohl Mineral Pigment Material Study",
+      "asset_type": "material",
+      "category": "material",
+      "rights_status": "generated_needs_review",
+      "review_status": "planned",
+      "human_review_status": "open",
+      "public_gate": "blocked",
+      "kosmodata_refs": [
+        {
+          "kind": "reference_entry",
+          "entry_id": "alterszentrum-kloster-ingenbohl",
+          "relation": "material_context",
+          "usage_policy": "derived_asset_review_required",
+          "review_status": "needs_human_review",
+          "notes": "Needs source review from architect/project text or private extraction before design reuse."
+        }
+      ],
+      "source_paths": {},
+      "generated_profiles": [],
+      "blender": {
+        "enabled": true,
+        "approved_for_import": false,
+        "import_mode": "create_material_from_parameters",
+        "collection_name": "KOSMO_ASSET/material/ingenbohl-mineral-pigment-material-001",
+        "object_prefix": "kosmo_ingenbohl-mineral-pigment-material-001",
+        "material_name": "KOSMO_MAT_ingenbohl-mineral-pigment-material-001",
+        "source_file": null,
+        "unit_scale": 1,
+        "layer_names": [],
+        "notes": [
+          "Review-only Blender handoff.",
+          "Human review still open; do not import into production scenes."
+        ]
+      },
+      "archicad": {
+        "enabled": true,
+        "approved_for_exchange": false,
+        "exchange_mode": "surface_attribute_reference",
+        "archicad_layer": null,
+        "archicad_surface": "KOSMO_SURFACE_INGENBOHL_MINERAL_PIGMENT_MATERIAL_001",
+        "source_file": null,
+        "layer_names": [],
+        "notes": [
+          "Review-only ArchiCAD exchange profile.",
+          "No GSM/BIM object is generated in V1; this profile prepares manual exchange naming and layer/surface mapping."
+        ]
+      },
+      "web": {
+        "enabled": true,
+        "public_gate": "blocked",
+        "preview_component": "material_swatch",
+        "route_key": "kosmo-assets/ingenbohl-mineral-pigment-material-001",
+        "source_file": null,
+        "notes": [
+          "Public web preview remains blocked; show metadata/review status only."
+        ]
+      },
+      "review_note": "Human review is still open; exchange profiles are naming proposals only."
+    },
+    {
+      "id": "ingenbohl-concrete-core-frame-study-001",
+      "title": "Ingenbohl Concrete Core and Frame Study",
+      "asset_type": "component",
+      "category": "structure",
+      "rights_status": "generated_needs_review",
+      "review_status": "needs_source",
+      "human_review_status": "open",
+      "public_gate": "blocked",
+      "kosmodata_refs": [
+        {
+          "kind": "reference_entry",
+          "entry_id": "alterszentrum-kloster-ingenbohl",
+          "relation": "model_context",
+          "usage_policy": "derived_asset_review_required",
+          "review_status": "needs_human_review",
+          "notes": "Structure is a hypothesis until engineering/project sources are reviewed."
+        }
+      ],
+      "source_paths": {},
+      "generated_profiles": [],
+      "blender": {
+        "enabled": true,
+        "approved_for_import": false,
+        "import_mode": "metadata_only",
+        "collection_name": "KOSMO_ASSET/structure/ingenbohl-concrete-core-frame-study-001",
+        "object_prefix": "kosmo_ingenbohl-concrete-core-frame-study-001",
+        "material_name": null,
+        "source_file": null,
+        "unit_scale": 1,
+        "layer_names": [],
+        "notes": [
+          "Review-only Blender handoff.",
+          "Human review still open; do not import into production scenes."
+        ]
+      },
+      "archicad": {
+        "enabled": true,
+        "approved_for_exchange": false,
+        "exchange_mode": "manual_reference",
+        "archicad_layer": "KOSMO_STRUCTURE_INGENBOHL_CONCRETE_CORE_FRAME_STUDY_001",
+        "archicad_surface": null,
+        "source_file": null,
+        "layer_names": [],
+        "notes": [
+          "Review-only ArchiCAD exchange profile.",
+          "No GSM/BIM object is generated in V1; this profile prepares manual exchange naming and layer/surface mapping."
+        ]
+      },
+      "web": {
+        "enabled": true,
+        "public_gate": "blocked",
+        "preview_component": "wireframe_component",
+        "route_key": "kosmo-assets/ingenbohl-concrete-core-frame-study-001",
+        "source_file": null,
+        "notes": [
+          "Public web preview remains blocked; show metadata/review status only."
+        ]
+      },
+      "review_note": "Human review is still open; exchange profiles are naming proposals only."
+    }
+  ],
+  "next_actions": [
+    "Close human review before importing assets into production Blender/ArchiCAD files.",
+    "Run a local Blender smoke only with review assets, not production files.",
+    "Keep ArchiCAD profiles as layer/surface naming references until reviewed.",
+    "Keep public web/download gates blocked until rights and review are explicit."
+  ]
+}

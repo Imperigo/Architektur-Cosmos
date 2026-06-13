@@ -1,0 +1,100 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-13T18:10:33.366Z",
+  "generator": "kosmo-asset-handoff-smoke",
+  "library_path": "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json",
+  "bundle_path": "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-handoff-bundle.generated.json",
+  "status": "handoff_smoke_passed",
+  "policy": {
+    "no_uploads": true,
+    "no_public_downloads": true,
+    "no_project_file_writes": true,
+    "smoke_does_not_import_assets": true
+  },
+  "summary": {
+    "check_count": 12,
+    "passed_checks": 12,
+    "failure_count": 0,
+    "blender_row_count": 4,
+    "archicad_row_count": 4,
+    "open_review_count": 6
+  },
+  "outputs": {
+    "smoke_json": "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-handoff-smoke.generated.json",
+    "smoke_markdown": "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-handoff-smoke.generated.md",
+    "blender_python": "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-blender-handoff.generated.py",
+    "archicad_schedule_csv": "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-archicad-schedule.generated.csv"
+  },
+  "checks": [
+    {
+      "id": "bundle_status",
+      "status": "passed",
+      "label": "Bundle status is local_review_handoff_bundle."
+    },
+    {
+      "id": "review_only_policy",
+      "status": "passed",
+      "label": "Bundle policy stays review-only, no uploads and no public downloads."
+    },
+    {
+      "id": "blender_output_exists",
+      "status": "passed",
+      "label": "Blender handoff exists at examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-blender-handoff.generated.py."
+    },
+    {
+      "id": "archicad_output_exists",
+      "status": "passed",
+      "label": "ArchiCAD CSV exists at examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-archicad-schedule.generated.csv."
+    },
+    {
+      "id": "blender_write_gate",
+      "status": "passed",
+      "label": "Blender script keeps ALLOW_SCENE_WRITE = False."
+    },
+    {
+      "id": "blender_no_file_write_ops",
+      "status": "passed",
+      "label": "Blender script does not call save/open mainfile operators."
+    },
+    {
+      "id": "blender_runtime_smoke",
+      "status": "passed",
+      "label": "Blender Python handoff runs in review-only mode without importing bpy."
+    },
+    {
+      "id": "csv_header",
+      "status": "passed",
+      "label": "ArchiCAD CSV header matches the handoff contract."
+    },
+    {
+      "id": "csv_row_count",
+      "status": "passed",
+      "label": "ArchiCAD CSV has 4 data rows."
+    },
+    {
+      "id": "csv_review_locked",
+      "status": "passed",
+      "label": "ArchiCAD rows remain unapproved and open for human review."
+    },
+    {
+      "id": "source_files_exist",
+      "status": "passed",
+      "label": "All referenced local source files exist."
+    },
+    {
+      "id": "public_gates_blocked",
+      "status": "passed",
+      "label": "All public gates remain blocked."
+    }
+  ],
+  "python_runtime": {
+    "command": "python3 examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-blender-handoff.generated.py",
+    "ok": true,
+    "status": 0,
+    "stdout": "KosmoAsset Blender handoff\n- Villa Savoye Concrete Frame Material Study: create_material_from_parameters -> KOSMO_ASSET/material/villa-savoye-concrete-frame-material-001\n  review gate: not approved for production import\n- Sogn Benedetg Wood Shingle Material Study: create_material_from_parameters -> KOSMO_ASSET/material/sogn-benedetg-wood-shingle-material-001\n  review gate: not approved for production import\n- Ingenbohl Mineral Pigment Material Study: create_material_from_parameters -> KOSMO_ASSET/material/ingenbohl-mineral-pigment-material-001\n  review gate: not approved for production import\n- Ingenbohl Concrete Core and Frame Study: metadata_only -> KOSMO_ASSET/structure/ingenbohl-concrete-core-frame-study-001\n  review gate: not approved for production import\nReview-only mode. Set ALLOW_SCENE_WRITE = True only inside an approved smoke-test file.",
+    "stderr": ""
+  },
+  "next_actions": [
+    "Handoff bundle is ready for human review-only smoke tests. Keep ALLOW_SCENE_WRITE disabled until explicit approval."
+  ]
+}

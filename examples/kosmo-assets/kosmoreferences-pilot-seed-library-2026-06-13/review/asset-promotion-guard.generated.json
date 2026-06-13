@@ -1,0 +1,265 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-13T18:10:35.229Z",
+  "generator": "kosmo-asset-promotion-guard",
+  "library_path": "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json",
+  "library_id": "kosmoreferences-pilot-seed-library-2026-06-13",
+  "status": "asset_promotion_guard_blocked",
+  "policy": {
+    "no_uploads": true,
+    "no_public_downloads": true,
+    "no_d1_writes": true,
+    "no_r2_writes": true,
+    "promotion_guard_does_not_promote_assets": true,
+    "public_promotion_requires_separate_owner_review": true,
+    "public_promotion_requires_public_rights_review": true
+  },
+  "summary": {
+    "asset_count": 6,
+    "promotion_allowed": false,
+    "blocker_count": 18,
+    "unsafe_finding_count": 0,
+    "missing_decision_count": 6,
+    "certificate_ready_count": 0,
+    "sandbox_ready_count": 0,
+    "named_reviewer_count": 0,
+    "reviewer_blocker_count": 0,
+    "ledger_promotion_blocker_count": 12,
+    "public_ready_count": 0,
+    "full_review_status": "asset_full_review_ready_for_human_decisions",
+    "decision_ledger_status": "asset_decision_ledger_open",
+    "recommended_next_step": "keep_assets_local_review_only"
+  },
+  "blockers": [
+    "villa-savoye-concrete-frame-material-001:local_review_not_ready",
+    "villa-savoye-concrete-frame-material-001:decision_missing",
+    "villa-savoye-concrete-frame-material-001:local_certificate_missing",
+    "villa-savoye-five-points-diagram-001:local_review_not_ready",
+    "villa-savoye-five-points-diagram-001:decision_missing",
+    "villa-savoye-five-points-diagram-001:local_certificate_missing",
+    "sogn-benedetg-wood-shingle-material-001:local_review_not_ready",
+    "sogn-benedetg-wood-shingle-material-001:decision_missing",
+    "sogn-benedetg-wood-shingle-material-001:local_certificate_missing",
+    "sogn-benedetg-light-band-detail-001:local_review_not_ready",
+    "sogn-benedetg-light-band-detail-001:decision_missing",
+    "sogn-benedetg-light-band-detail-001:local_certificate_missing",
+    "ingenbohl-mineral-pigment-material-001:local_review_not_ready",
+    "ingenbohl-mineral-pigment-material-001:decision_missing",
+    "ingenbohl-mineral-pigment-material-001:local_certificate_missing",
+    "ingenbohl-concrete-core-frame-study-001:local_review_not_ready",
+    "ingenbohl-concrete-core-frame-study-001:decision_missing",
+    "ingenbohl-concrete-core-frame-study-001:local_certificate_missing"
+  ],
+  "unsafe_findings": [],
+  "rows": [
+    {
+      "asset_id": "villa-savoye-concrete-frame-material-001",
+      "asset_title": "Villa Savoye Concrete Frame Material Study",
+      "asset_type": "material",
+      "rights_status": "generated_needs_review",
+      "review_status": "planned",
+      "public_use_allowed": false,
+      "public_gate": "blocked",
+      "local_ready": false,
+      "public_ready": false,
+      "decision_status": "missing_decision",
+      "human_decision_state": "needs_more_evidence",
+      "human_decision_label": "needs more human evidence",
+      "reviewer_status": "missing_decision",
+      "reviewer": null,
+      "certificate_status": "missing_certificate",
+      "local_certificate_ready": false,
+      "sandbox_ready": false,
+      "next_human_action": "record_or_defer_human_decision",
+      "promotion_status": "blocked",
+      "promotion_blockers": [
+        "local_review_not_ready",
+        "decision_missing",
+        "local_certificate_missing"
+      ],
+      "blockers": [
+        "local_review_not_ready",
+        "decision_missing",
+        "local_certificate_missing"
+      ]
+    },
+    {
+      "asset_id": "villa-savoye-five-points-diagram-001",
+      "asset_title": "Villa Savoye Five Points Diagram Kit",
+      "asset_type": "detail",
+      "rights_status": "generated_needs_review",
+      "review_status": "planned",
+      "public_use_allowed": false,
+      "public_gate": "blocked",
+      "local_ready": false,
+      "public_ready": false,
+      "decision_status": "missing_decision",
+      "human_decision_state": "needs_more_evidence",
+      "human_decision_label": "needs more human evidence",
+      "reviewer_status": "missing_decision",
+      "reviewer": null,
+      "certificate_status": "missing_certificate",
+      "local_certificate_ready": false,
+      "sandbox_ready": false,
+      "next_human_action": "record_or_defer_human_decision",
+      "promotion_status": "blocked",
+      "promotion_blockers": [
+        "local_review_not_ready",
+        "decision_missing",
+        "local_certificate_missing"
+      ],
+      "blockers": [
+        "local_review_not_ready",
+        "decision_missing",
+        "local_certificate_missing"
+      ]
+    },
+    {
+      "asset_id": "sogn-benedetg-wood-shingle-material-001",
+      "asset_title": "Sogn Benedetg Wood Shingle Material Study",
+      "asset_type": "material",
+      "rights_status": "generated_needs_review",
+      "review_status": "needs_source",
+      "public_use_allowed": false,
+      "public_gate": "blocked",
+      "local_ready": false,
+      "public_ready": false,
+      "decision_status": "missing_decision",
+      "human_decision_state": "needs_more_evidence",
+      "human_decision_label": "needs more human evidence",
+      "reviewer_status": "missing_decision",
+      "reviewer": null,
+      "certificate_status": "missing_certificate",
+      "local_certificate_ready": false,
+      "sandbox_ready": false,
+      "next_human_action": "record_or_defer_human_decision",
+      "promotion_status": "blocked",
+      "promotion_blockers": [
+        "local_review_not_ready",
+        "decision_missing",
+        "local_certificate_missing"
+      ],
+      "blockers": [
+        "local_review_not_ready",
+        "decision_missing",
+        "local_certificate_missing"
+      ]
+    },
+    {
+      "asset_id": "sogn-benedetg-light-band-detail-001",
+      "asset_title": "Sogn Benedetg Light Band Detail Study",
+      "asset_type": "detail",
+      "rights_status": "generated_needs_review",
+      "review_status": "needs_source",
+      "public_use_allowed": false,
+      "public_gate": "blocked",
+      "local_ready": false,
+      "public_ready": false,
+      "decision_status": "missing_decision",
+      "human_decision_state": "needs_more_evidence",
+      "human_decision_label": "needs more human evidence",
+      "reviewer_status": "missing_decision",
+      "reviewer": null,
+      "certificate_status": "missing_certificate",
+      "local_certificate_ready": false,
+      "sandbox_ready": false,
+      "next_human_action": "record_or_defer_human_decision",
+      "promotion_status": "blocked",
+      "promotion_blockers": [
+        "local_review_not_ready",
+        "decision_missing",
+        "local_certificate_missing"
+      ],
+      "blockers": [
+        "local_review_not_ready",
+        "decision_missing",
+        "local_certificate_missing"
+      ]
+    },
+    {
+      "asset_id": "ingenbohl-mineral-pigment-material-001",
+      "asset_title": "Ingenbohl Mineral Pigment Material Study",
+      "asset_type": "material",
+      "rights_status": "generated_needs_review",
+      "review_status": "planned",
+      "public_use_allowed": false,
+      "public_gate": "blocked",
+      "local_ready": false,
+      "public_ready": false,
+      "decision_status": "missing_decision",
+      "human_decision_state": "needs_more_evidence",
+      "human_decision_label": "needs more human evidence",
+      "reviewer_status": "missing_decision",
+      "reviewer": null,
+      "certificate_status": "missing_certificate",
+      "local_certificate_ready": false,
+      "sandbox_ready": false,
+      "next_human_action": "record_or_defer_human_decision",
+      "promotion_status": "blocked",
+      "promotion_blockers": [
+        "local_review_not_ready",
+        "decision_missing",
+        "local_certificate_missing"
+      ],
+      "blockers": [
+        "local_review_not_ready",
+        "decision_missing",
+        "local_certificate_missing"
+      ]
+    },
+    {
+      "asset_id": "ingenbohl-concrete-core-frame-study-001",
+      "asset_title": "Ingenbohl Concrete Core and Frame Study",
+      "asset_type": "component",
+      "rights_status": "generated_needs_review",
+      "review_status": "needs_source",
+      "public_use_allowed": false,
+      "public_gate": "blocked",
+      "local_ready": false,
+      "public_ready": false,
+      "decision_status": "missing_decision",
+      "human_decision_state": "needs_more_evidence",
+      "human_decision_label": "needs more human evidence",
+      "reviewer_status": "missing_decision",
+      "reviewer": null,
+      "certificate_status": "missing_certificate",
+      "local_certificate_ready": false,
+      "sandbox_ready": false,
+      "next_human_action": "record_or_defer_human_decision",
+      "promotion_status": "blocked",
+      "promotion_blockers": [
+        "local_review_not_ready",
+        "decision_missing",
+        "local_certificate_missing"
+      ],
+      "blockers": [
+        "local_review_not_ready",
+        "decision_missing",
+        "local_certificate_missing"
+      ]
+    }
+  ],
+  "source_reports": {
+    "review_pack": {
+      "path": "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-review-pack.generated.json",
+      "exists": true
+    },
+    "full_review": {
+      "path": "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-full-review.generated.json",
+      "exists": true
+    },
+    "decision_ledger": {
+      "path": "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-decision-ledger.generated.json",
+      "exists": true
+    },
+    "handoff_bundle": {
+      "path": "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-handoff-bundle.generated.json",
+      "exists": true
+    }
+  },
+  "next_actions": [
+    "Keep KosmoAsset in local review-only mode.",
+    "Complete human review decisions, local certificates and ledger checks before any sandbox or public promotion.",
+    "Current blocker count: 18."
+  ]
+}
