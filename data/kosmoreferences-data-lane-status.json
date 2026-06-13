@@ -1,0 +1,103 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-13T16:27:51.861Z",
+  "status": "passed_review_only",
+  "source_paths": {
+    "registry": "data/kosmoreferences-registry.json",
+    "provenance": "examples/kosmo-references/provenance/review/provenance-check.generated.json"
+  },
+  "summary": {
+    "pilots": 3,
+    "source_packages": 4,
+    "entry_drafts": 3,
+    "asset_libraries": 1,
+    "library_assets": 5,
+    "public_ready_assets": 0,
+    "blocked_public_promotions": 26
+  },
+  "checks": {
+    "registry": "passed",
+    "provenance": "passed",
+    "failures": 0,
+    "warnings": 0
+  },
+  "pilots": [
+    {
+      "id": "villa-savoye",
+      "title": "Villa Savoye",
+      "registry_role": "first full reference-project pilot",
+      "registry_status": "goldstandard_existing",
+      "entry_draft": {
+        "path": "examples/kosmo-references/entry-drafts/villa-savoye.entry-draft.json",
+        "status": "review_only_draft",
+        "public_ready": false,
+        "check_status": "archive_entry_draft_passed"
+      },
+      "source_package": {
+        "id": "villa-savoye-public-source-candidate-2026-06-13",
+        "path": "examples/kosmo-references/source-packages/villa-savoye-public-source-candidate-2026-06-13/source-package.json",
+        "status": "review_ready",
+        "rights_scope": "public_candidate",
+        "check_status": "passed"
+      },
+      "provenance": {
+        "blocked_media_count": 4,
+        "blocked_asset_candidate_count": 3
+      },
+      "public_use": "blocked_review_only"
+    },
+    {
+      "id": "alterszentrum-kloster-ingenbohl",
+      "title": "Alterszentrum Kloster Ingenbohl",
+      "registry_role": "contemporary Swiss transformation/material/tectonic pilot",
+      "registry_status": "draft_existing_rights_gated",
+      "entry_draft": {
+        "path": "examples/kosmo-references/entry-drafts/alterszentrum-kloster-ingenbohl.entry-draft.json",
+        "status": "review_only_draft",
+        "public_ready": false,
+        "check_status": "archive_entry_draft_passed"
+      },
+      "source_package": {
+        "id": "alterszentrum-kloster-ingenbohl-public-source-candidate-2026-06-13",
+        "path": "examples/kosmo-references/source-packages/alterszentrum-kloster-ingenbohl-public-source-candidate-2026-06-13/source-package.json",
+        "status": "review_ready",
+        "rights_scope": "public_candidate",
+        "check_status": "passed"
+      },
+      "provenance": {
+        "blocked_media_count": 4,
+        "blocked_asset_candidate_count": 3
+      },
+      "public_use": "blocked_review_only"
+    },
+    {
+      "id": "kapelle-sogn-benedetg",
+      "title": "Kapelle Sogn Benedetg",
+      "registry_role": "preferred interim Swiss timber pilot until local book/lecture source package is found",
+      "registry_status": "public_source_candidate_review_only",
+      "entry_draft": {
+        "path": "examples/kosmo-references/entry-drafts/kapelle-sogn-benedetg.entry-draft.json",
+        "status": "review_only_draft",
+        "public_ready": false,
+        "check_status": "archive_entry_draft_passed"
+      },
+      "source_package": {
+        "id": "kapelle-sogn-benedetg-public-source-candidate-2026-06-13",
+        "path": "examples/kosmo-references/source-packages/kapelle-sogn-benedetg-public-source-candidate-2026-06-13/source-package.json",
+        "status": "review_ready",
+        "rights_scope": "public_candidate",
+        "check_status": "passed"
+      },
+      "provenance": {
+        "blocked_media_count": 4,
+        "blocked_asset_candidate_count": 3
+      },
+      "public_use": "blocked_review_only"
+    }
+  ],
+  "worker_guidance": [
+    "KosmoOrbit may show this as a read-only KosmoReferences status card.",
+    "Local LLM workers may use review-only drafts for analysis and planning, not public publishing.",
+    "Codex/Claude overseers must keep public promotion blocked until file-level provenance passes."
+  ]
+}
