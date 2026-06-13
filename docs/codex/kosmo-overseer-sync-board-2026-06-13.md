@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board
 
-Generated: 2026-06-13T21:59:54.563Z
+Generated: 2026-06-13T22:08:32.957Z
 Status: `overseer_sync_board_ready`
 
 ## Summary
@@ -20,14 +20,14 @@ Status: `overseer_sync_board_ready`
 
 | File | Title | Mirrors |
 | --- | --- | ---: |
+| `2026-06-14-codex-synergiebericht-124-source-root-unlock-runbook.md` | Codex Synergiebericht 124 - Source Root Unlock Runbook | 2 |
+| `2026-06-14-codex-synergiebericht-123-output-conversion-plan.md` | Codex Synergiebericht 123 - Output Conversion Plan | 2 |
+| `2026-06-14-codex-synergiebericht-122-local-worker-launch-queue.md` | Codex Synergiebericht 122 - Local Worker Launch Queue | 2 |
+| `2026-06-14-codex-synergiebericht-121-overseer-sync-refresh.md` | Codex Synergiebericht 121 - Overseer Sync Refresh | 2 |
 | `2026-06-13-codex-synergiebericht-120-worker-boundary-guard.md` | Codex Synergiebericht 120 - Worker Boundary Guard | 2 |
 | `2026-06-13-codex-synergiebericht-119-worker-boundary-pack.md` | Codex Synergiebericht 119 - Worker Boundary Pack | 2 |
 | `2026-06-13-codex-synergiebericht-118-source-root-blocker-refresh.md` | Codex Synergiebericht 118 - Source Root Blocker Refresh | 2 |
 | `2026-06-13-codex-synergiebericht-117-router-overseer-sync-context.md` | Codex Synergiebericht 117 - Router Overseer Sync Context | 2 |
-| `2026-06-13-codex-synergiebericht-116-overseer-sync-board-guard.md` | Codex Synergiebericht 116 - Overseer Sync Board Guard | 2 |
-| `2026-06-13-codex-synergiebericht-115-overseer-sync-board.md` | Codex Synergiebericht 115 - Overseer Sync Board | 2 |
-| `2026-06-13-codex-synergiebericht-114-local-worker-safe-next-tasks.md` | Codex Synergiebericht 114 - Local Worker Safe Next Tasks | 2 |
-| `2026-06-13-codex-synergiebericht-113-owner-review-session-brief-guard.md` | Codex Synergiebericht 113 - Owner Review Session Brief Guard | 2 |
 
 ## Blockers
 
@@ -40,7 +40,7 @@ Status: `overseer_sync_board_ready`
 
 ## Next Actions
 
-- Claude/KosmoOverseer reviews latest handoffs 113-120 before editing related files.
+- Claude/KosmoOverseer reviews latest handoffs 117-124 before editing related files.
 - Use the owner review session brief as the next owner-facing entry point.
 - Keep local worker tasks review-only while source-root and owner answers are pending.
 - After any explicit owner answer, update intake first, then rerun guards and this sync board.

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-13T21:59:54.563Z",
+  "generated_at": "2026-06-13T22:08:32.957Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 119
+      "files": 123
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 149
+      "files": 153
     }
   ],
   "summary": {
@@ -47,6 +47,34 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-14-codex-synergiebericht-124-source-root-unlock-runbook.md",
+      "title": "Codex Synergiebericht 124 - Source Root Unlock Runbook",
+      "mirrored_inboxes": 2,
+      "bytes": 1045,
+      "modified_at": "2026-06-13T22:07:43.494Z"
+    },
+    {
+      "filename": "2026-06-14-codex-synergiebericht-123-output-conversion-plan.md",
+      "title": "Codex Synergiebericht 123 - Output Conversion Plan",
+      "mirrored_inboxes": 2,
+      "bytes": 1236,
+      "modified_at": "2026-06-13T22:05:25.135Z"
+    },
+    {
+      "filename": "2026-06-14-codex-synergiebericht-122-local-worker-launch-queue.md",
+      "title": "Codex Synergiebericht 122 - Local Worker Launch Queue",
+      "mirrored_inboxes": 2,
+      "bytes": 1184,
+      "modified_at": "2026-06-13T22:03:08.181Z"
+    },
+    {
+      "filename": "2026-06-14-codex-synergiebericht-121-overseer-sync-refresh.md",
+      "title": "Codex Synergiebericht 121 - Overseer Sync Refresh",
+      "mirrored_inboxes": 2,
+      "bytes": 1227,
+      "modified_at": "2026-06-13T22:00:17.582Z"
+    },
     {
       "filename": "2026-06-13-codex-synergiebericht-120-worker-boundary-guard.md",
       "title": "Codex Synergiebericht 120 - Worker Boundary Guard",
@@ -74,34 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 944,
       "modified_at": "2026-06-13T21:46:32.431Z"
-    },
-    {
-      "filename": "2026-06-13-codex-synergiebericht-116-overseer-sync-board-guard.md",
-      "title": "Codex Synergiebericht 116 - Overseer Sync Board Guard",
-      "mirrored_inboxes": 2,
-      "bytes": 1521,
-      "modified_at": "2026-06-13T21:44:50.434Z"
-    },
-    {
-      "filename": "2026-06-13-codex-synergiebericht-115-overseer-sync-board.md",
-      "title": "Codex Synergiebericht 115 - Overseer Sync Board",
-      "mirrored_inboxes": 2,
-      "bytes": 1292,
-      "modified_at": "2026-06-13T21:40:41.573Z"
-    },
-    {
-      "filename": "2026-06-13-codex-synergiebericht-114-local-worker-safe-next-tasks.md",
-      "title": "Codex Synergiebericht 114 - Local Worker Safe Next Tasks",
-      "mirrored_inboxes": 2,
-      "bytes": 1764,
-      "modified_at": "2026-06-13T21:36:24.826Z"
-    },
-    {
-      "filename": "2026-06-13-codex-synergiebericht-113-owner-review-session-brief-guard.md",
-      "title": "Codex Synergiebericht 113 - Owner Review Session Brief Guard",
-      "mirrored_inboxes": 2,
-      "bytes": 1906,
-      "modified_at": "2026-06-13T21:31:49.890Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 113-120 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 117-124 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."
