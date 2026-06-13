@@ -21,6 +21,7 @@
     "examples/kosmo-references/private-inventory/private-inventory-output-template-2026-06-13.json",
     "data/kosmo-private-inventory-output-check-2026-06-13.json",
     "data/kosmo-data-lane-command-router-2026-06-13.json",
+    "data/kosmo-owner-next-review-brief-2026-06-13.json",
     "docs/codex/kosmo-private-library-sync-resolution-2026-06-13.md",
     "docs/codex/kosmo-onedrive-sync-error-summary-2026-06-13.md",
     "docs/codex/kosmo-source-root-locator-2026-06-13.md",
@@ -31,6 +32,7 @@
     "docs/codex/kosmo-private-inventory-output-template-2026-06-13.md",
     "docs/codex/kosmo-private-inventory-output-check-2026-06-13.md",
     "docs/codex/kosmo-data-lane-command-router-2026-06-13.md",
+    "docs/codex/kosmo-owner-next-review-brief-2026-06-13.md",
     "data/kosmoreferences-pilot-evidence-matrix-2026-06-13.json",
     "docs/codex/kosmoreferences-pilot-evidence-matrix-2026-06-13.md",
     "data/villa-savoye-provenance-review-brief-2026-06-13.json",
@@ -123,9 +125,11 @@
         "examples/kosmo-references/private-inventory/private-inventory-output-template-2026-06-13.json",
         "data/kosmo-private-inventory-output-check-2026-06-13.json",
         "data/kosmo-data-lane-command-router-2026-06-13.json",
+        "data/kosmo-owner-next-review-brief-2026-06-13.json",
         "docs/codex/kosmo-private-inventory-output-template-2026-06-13.md",
         "docs/codex/kosmo-private-inventory-output-check-2026-06-13.md",
-        "docs/codex/kosmo-data-lane-command-router-2026-06-13.md"
+        "docs/codex/kosmo-data-lane-command-router-2026-06-13.md",
+        "docs/codex/kosmo-owner-next-review-brief-2026-06-13.md"
       ],
       "output_path": "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-local-worker-2026-06-13/book-library-mount-questions.private.md",
       "objective": "Prepare a short, concrete checklist for locating the missing book/ETH/HSLU library using the latest private-library diagnostic.",

@@ -114,6 +114,7 @@
     "kosmo:owner-decision-worksheet": "node scripts/kosmo-owner-decision-worksheet.mjs",
     "kosmo:human-decision-queue": "node scripts/kosmo-human-decision-queue.mjs",
     "kosmo:human-decision-owner-batches": "node scripts/kosmo-human-decision-owner-batches.mjs",
+    "kosmo:owner-next-review-brief": "node scripts/kosmo-owner-next-review-brief.mjs",
     "kosmo:private-library-diagnostic": "node scripts/kosmo-private-library-diagnostic.mjs",
     "kosmo:source-root-locator": "node scripts/kosmo-source-root-locator.mjs",
     "kosmo:source-root-selection-brief": "node scripts/kosmo-source-root-selection-brief.mjs",
