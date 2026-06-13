@@ -1,0 +1,100 @@
+{
+  "schema_version": "0.1",
+  "created_at": "2026-06-13",
+  "created_by": "Codex / KosmoReferences",
+  "purpose": "Local and OneDrive source-path inventory for KosmoReferences/KosmoAsset follow-up ingestion.",
+  "scanned_roots": [
+    {
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09",
+      "size": "728M",
+      "status": "available",
+      "notes": "Primary visible OneDrive mirror on 4TB SSD."
+    },
+    {
+      "path": "/home/andrin-baumann/ArchitekturKosmos Onedrive",
+      "size": "515M",
+      "status": "available",
+      "notes": "User-home OneDrive copy, partly overlapping with the SSD mirror."
+    },
+    {
+      "path": "/mnt/archiv",
+      "size": "4.0K",
+      "status": "empty_or_not_mounted",
+      "notes": "No visible archive HDD library content found at scan time."
+    }
+  ],
+  "ssd_onedrive_file_counts_excluding_build_git_venv": {
+    "total_files": 685,
+    "pdf": 23,
+    "md": 283,
+    "png": 34,
+    "json": 135,
+    "tsx": 56,
+    "mjs": 47,
+    "zip": 17,
+    "ifc": 2
+  },
+  "important_project_sources": [
+    {
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Architekturkosmos Zentrale/Architecture_Cosmos_Vision_Document.pdf",
+      "source_role": "project_vision",
+      "priority": "high",
+      "rights_scope": "private_research"
+    },
+    {
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Architekturkosmos Zentrale/Architekturkosmos_AI_Workflow_Pipeline_Projekt_Dokument.pdf",
+      "source_role": "workflow_pipeline",
+      "priority": "high",
+      "rights_scope": "private_research"
+    },
+    {
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC/KosmoWebsite/repo-context/docs/book-library-ingestion.md",
+      "source_role": "book_ingestion_prior_art",
+      "priority": "high",
+      "rights_scope": "private_research"
+    },
+    {
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC/KosmoWebsite/repo-context/docs/ai-reference-archive-vision.md",
+      "source_role": "reference_archive_vision",
+      "priority": "high",
+      "rights_scope": "private_research"
+    },
+    {
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC/KosmoWebsite/repo-context/docs/pilot-entry-standard.md",
+      "source_role": "pilot_entry_standard",
+      "priority": "high",
+      "rights_scope": "private_research"
+    },
+    {
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC/KosmoWebsite/repo-context/docs/rights-and-public-sources.md",
+      "source_role": "rights_policy",
+      "priority": "high",
+      "rights_scope": "private_research"
+    },
+    {
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC/KosmoWebsite/repo-context/docs/kosmo-asset-library.md",
+      "source_role": "asset_library_prior_art",
+      "priority": "medium",
+      "rights_scope": "private_research"
+    }
+  ],
+  "reference_library_findings": {
+    "large_book_library_found": false,
+    "eth_hslu_lecture_library_found": false,
+    "target_project_files_found": {
+      "villa_savoye": false,
+      "sogn_benedetg": false,
+      "ingenbohl": false
+    },
+    "notes": [
+      "Visible OneDrive content is primarily project documentation, app handoffs, repo extracts, design concepts, legal docs and worker packets.",
+      "No clear large digital architecture book library, ETH lecture corpus or HSLU lecture corpus was found in the scanned visible roots.",
+      "The archive HDD mount at /mnt/archiv appears empty or not mounted in this session."
+    ]
+  },
+  "recommended_next_actions": [
+    "Ask owner to confirm the exact path or mount state of the large book/ETH/HSLU library.",
+    "Use the project docs listed above as private source packages for KosmoReferences/KosmoAsset pipeline design.",
+    "Do not assume reference-project source completeness until the missing library path is found."
+  ]
+}
