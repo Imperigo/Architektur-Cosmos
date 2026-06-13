@@ -1,0 +1,133 @@
+{
+  "schema_version": "0.1",
+  "created_at": "2026-06-13",
+  "status": "human_review_required",
+  "entry_id": "villa-savoye",
+  "title": "Villa Savoye Public Promotion Review Pack",
+  "source_refs": [
+    "examples/kosmo-references/provenance/villa-savoye-file-level-provenance-2026-06-13.json",
+    "examples/kosmo-references/provenance/villa-savoye-file-rights-candidates-2026-06-13.json",
+    "examples/kosmo-references/provenance/villa-savoye-file-level-review/rights-candidate-check.generated.json"
+  ],
+  "policy": {
+    "public_ready_changes_allowed_in_this_pack": false,
+    "required_human_decision": true,
+    "rule": "This pack prepares decisions and attribution strings only. It does not change file public status."
+  },
+  "summary": {
+    "review_items": 7,
+    "candidate_promotions": 3,
+    "must_remain_blocked": 4,
+    "public_ready_after_pack": 0
+  },
+  "review_items": [
+    {
+      "file_id": "villa-savoye-exterior-savoye-3-cc0",
+      "local_path": "public/archive-media/villa-savoye/exterior/savoye-3-exterior-cc0.jpg",
+      "review_recommendation": "candidate_for_public_display_after_human_review",
+      "recommended_public_slot": "exterior_source_image",
+      "rights_basis": "Exact hash/byte match to Wikimedia Commons CC0 file.",
+      "source_page_url": "https://commons.wikimedia.org/wiki/File:Savoye_3.JPG",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution_required": false,
+      "attribution_recommended": "Photo: Wasily, Wikimedia Commons, CC0 1.0.",
+      "conditions_to_confirm": [
+        "Confirm local file is still the exact Wikimedia original.",
+        "Confirm CC0 page state before public display.",
+        "Decide whether voluntary attribution should be displayed."
+      ],
+      "public_ready": false
+    },
+    {
+      "file_id": "villa-savoye-exterior-loc-full",
+      "local_path": "public/archive-media/villa-savoye/exterior/villa-savoye-loc-exterior.jpg",
+      "review_recommendation": "candidate_for_public_display_after_human_review",
+      "recommended_public_slot": "exterior_archive_source_image",
+      "rights_basis": "Exact hash/byte match to Library of Congress digital file with no-known-restrictions advisory.",
+      "source_page_url": "https://www.loc.gov/pictures/item/2020714937/",
+      "license_url": "https://www.loc.gov/pictures/item/2020714937/",
+      "attribution_required": true,
+      "attribution_recommended": "Photo: Balthazar Korab, Library of Congress Prints and Photographs Division, LC-DIG-ppmsca-65198. Rights advisory: no known restrictions on publication.",
+      "conditions_to_confirm": [
+        "Review LOC rights advisory and Balthazar Korab collection restrictions.",
+        "Decide whether no-known-restrictions is acceptable for the public site.",
+        "Use LOC attribution and reproduction number if displayed."
+      ],
+      "public_ready": false
+    },
+    {
+      "file_id": "villa-savoye-interior-chaise-cc-by-sa",
+      "local_path": "public/archive-media/villa-savoye/interior/villa-savoye-chaise-longue-interior-cc-by-sa-2.jpg",
+      "review_recommendation": "candidate_for_public_display_after_human_review",
+      "recommended_public_slot": "interior_source_image",
+      "rights_basis": "Exact hash/byte match to Wikimedia Commons file reviewed from Flickr under CC BY-SA 2.0.",
+      "source_page_url": "https://commons.wikimedia.org/wiki/File:Villa_Savoye_(8237925975).jpg",
+      "license_url": "https://creativecommons.org/licenses/by-sa/2.0/",
+      "attribution_required": true,
+      "attribution_recommended": "Photo: jeanbaptisteparis, via Wikimedia Commons/Flickr, CC BY-SA 2.0. Indicate changes if cropped or modified.",
+      "conditions_to_confirm": [
+        "Confirm no local modifications or record changes.",
+        "Confirm CC BY-SA 2.0 compatibility with public display context.",
+        "Display author, source link, license link and change notice."
+      ],
+      "public_ready": false
+    },
+    {
+      "file_id": "villa-savoye-exterior-loc-crop",
+      "local_path": "public/archive-media/villa-savoye/exterior/villa-savoye-loc-exterior-crop.jpg",
+      "review_recommendation": "keep_blocked",
+      "rights_basis": "Likely derived from LOC full image, but not an exact remote match.",
+      "source_page_url": "https://www.loc.gov/pictures/item/2020714937/",
+      "attribution_recommended": "If kept, attribute to Balthazar Korab / Library of Congress and mark as local crop after review.",
+      "conditions_to_confirm": [
+        "Confirm crop generation source and transformation.",
+        "Decide whether to replace with exact LOC full file instead of crop.",
+        "Keep blocked until derivative review is complete."
+      ],
+      "public_ready": false
+    },
+    {
+      "file_id": "villa-savoye-plan-ground-floor-svg",
+      "local_path": "public/archive-media/villa-savoye/plan/villa-savoye-ground-floor-diagram.svg",
+      "review_recommendation": "keep_blocked",
+      "rights_basis": "No file-level source or own-work build log identified.",
+      "conditions_to_confirm": [
+        "Determine whether the SVG is an own analytical reconstruction.",
+        "Record geometry/source basis and author.",
+        "If derived from protected plan, keep private/review-only."
+      ],
+      "public_ready": false
+    },
+    {
+      "file_id": "villa-savoye-section-long-svg",
+      "local_path": "public/archive-media/villa-savoye/section/villa-savoye-long-section-diagram.svg",
+      "review_recommendation": "keep_blocked",
+      "rights_basis": "No file-level source or own-work build log identified.",
+      "conditions_to_confirm": [
+        "Determine whether the SVG is an own analytical reconstruction.",
+        "Record geometry/source basis and author.",
+        "If derived from protected section, keep private/review-only."
+      ],
+      "public_ready": false
+    },
+    {
+      "file_id": "villa-savoye-low-glb",
+      "local_path": "public/archive-models/villa-savoye/low.glb",
+      "review_recommendation": "keep_blocked",
+      "rights_basis": "No model generation/build log identified.",
+      "conditions_to_confirm": [
+        "Attach model generation script or build log.",
+        "Record source basis for dimensions and geometry.",
+        "Separate own massing from plan-derived geometry."
+      ],
+      "public_ready": false
+    }
+  ],
+  "human_decision_template": {
+    "decision_by": "",
+    "decision_at": "",
+    "approved_file_ids": [],
+    "blocked_file_ids": [],
+    "notes": ""
+  }
+}
