@@ -1,0 +1,84 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-13T20:29:41.041Z",
+  "status": "owner_review_card_ready",
+  "batch_id": "batch-a-villa-savoye-image-candidates",
+  "label": "Batch A: Villa Savoye Image Candidates",
+  "policy": {
+    "records_decisions": false,
+    "public_ready_after_card": 0,
+    "public_writes_allowed": false,
+    "decision_required_from_owner": true,
+    "note": "This card prepares a single owner discussion. It does not record decisions or approve public display."
+  },
+  "source_refs": [
+    "data/kosmo-owner-next-review-brief-2026-06-13.json",
+    "data/kosmo-night-loop-checkpoint-2026-06-13.json"
+  ],
+  "summary": {
+    "order": 1,
+    "items": 3,
+    "safe_default": "needs_more_source_context",
+    "decision_effect": "No public-ready changes are allowed from this card; any positive direction opens or confirms a separate reviewed step.",
+    "router_status": "worker_router_guarded_review_only",
+    "night_loop_status": "night_loop_guarded_ready",
+    "public_ready_after_card": 0
+  },
+  "owner_question": "Soll Villa Savoye Bildmaterial nur blockiert bleiben, oder soll genau ein Bild in eine separate Quellen-/Credit-Pruefung?",
+  "recommended_stance": [
+    "If no public preview is needed now, leave all three blocked.",
+    "If a preview is needed, open a separate source-basis review before any public-ready change."
+  ],
+  "options": [
+    {
+      "id": "keep_all_blocked",
+      "label": "Keep all blocked",
+      "safe": true,
+      "effect": "All three image candidates remain review-only; no public display is prepared."
+    },
+    {
+      "id": "open_one_source_credit_review",
+      "label": "Open one source/credit review",
+      "safe": true,
+      "effect": "Owner names exactly one image candidate for a separate provenance, license and credit review. No public-ready flag changes."
+    },
+    {
+      "id": "needs_more_context",
+      "label": "Needs more context",
+      "safe": true,
+      "effect": "Codex/Claude prepare a stronger source comparison before asking again."
+    }
+  ],
+  "items": [
+    {
+      "id": "reference:villa-savoye-public-image-candidates:villa-savoye-exterior-savoye-3-cc0",
+      "lane": "KosmoReferences",
+      "title": "villa-savoye-exterior-savoye-3-cc0",
+      "safe_default": "needs_more_source_context",
+      "source_path": "public/archive-media/villa-savoye/exterior/savoye-3-exterior-cc0.jpg",
+      "public_ready_after_decision": false
+    },
+    {
+      "id": "reference:villa-savoye-public-image-candidates:villa-savoye-exterior-loc-full",
+      "lane": "KosmoReferences",
+      "title": "villa-savoye-exterior-loc-full",
+      "safe_default": "needs_more_source_context",
+      "source_path": "public/archive-media/villa-savoye/exterior/villa-savoye-loc-exterior.jpg",
+      "public_ready_after_decision": false
+    },
+    {
+      "id": "reference:villa-savoye-public-image-candidates:villa-savoye-interior-chaise-cc-by-sa",
+      "lane": "KosmoReferences",
+      "title": "villa-savoye-interior-chaise-cc-by-sa",
+      "safe_default": "needs_more_source_context",
+      "source_path": "public/archive-media/villa-savoye/interior/villa-savoye-chaise-longue-interior-cc-by-sa-2.jpg",
+      "public_ready_after_decision": false
+    }
+  ],
+  "after_decision": [
+    "npm run kosmo:owner-decision-session-check",
+    "npm run kosmo:data-lane-sweep",
+    "npm run kosmo:data-lane-command-router",
+    "npm run kosmo:night-loop-checkpoint"
+  ]
+}

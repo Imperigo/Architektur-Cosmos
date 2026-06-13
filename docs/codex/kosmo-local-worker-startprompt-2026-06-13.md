@@ -62,6 +62,7 @@ Nutze:
 - `data/kosmo-data-lane-command-router-2026-06-13.json`
 - `data/kosmo-owner-next-review-brief-2026-06-13.json`
 - `data/kosmo-night-loop-checkpoint-2026-06-13.json`
+- `data/kosmo-owner-review-card-batch-a-villa-savoye-image-candidates-2026-06-13.json`
 - `data/kosmoreferences-pilot-evidence-matrix-2026-06-13.json`
 - `data/villa-savoye-provenance-review-brief-2026-06-13.json`
 - `data/ingenbohl-pdf-extraction-decision-brief-2026-06-13.json`
@@ -78,6 +79,7 @@ Nutze:
 - `docs/codex/kosmo-data-lane-command-router-2026-06-13.md`
 - `docs/codex/kosmo-owner-next-review-brief-2026-06-13.md`
 - `docs/codex/kosmo-night-loop-checkpoint-2026-06-13.md`
+- `docs/codex/kosmo-owner-review-card-batch-a-villa-savoye-image-candidates-2026-06-13.md`
 - `docs/codex/kosmoreferences-pilot-evidence-matrix-2026-06-13.md`
 - `docs/codex/villa-savoye-provenance-review-brief-2026-06-13.md`
 - `docs/codex/ingenbohl-pdf-extraction-decision-brief-2026-06-13.md`
@@ -121,6 +123,7 @@ Aktueller harter Stand:
 - Data-Lane Command Router: `worker_router_guarded_review_only`; lokaler Worker darf nur Review-/Metadaten-Fleissarbeit machen, keine Git-/Cloud-/Public-Promotion- oder Source-Copy-Aktionen.
 - Owner Next Review Brief: `owner_next_review_brief_open`, 5 Batches, 16 offene Items, 0 public-ready nach Brief.
 - Night Loop Checkpoint: `night_loop_guarded_ready`, naechster Loop `prepare_owner_source_root_decision_and_batch_questions`, erste Owner-Karte `batch-a-villa-savoye-image-candidates`.
+- Owner Review Card A: `owner_review_card_ready`, Villa Savoye Image Candidates, 3 Items, Safe Default `needs_more_source_context`, 0 public-ready.
 - Source-Root Locator, Source-Root Selection Brief, Source-Root Decision Session Check, Private Source Inventory Plan und Private Inventory Output Check sind jetzt feste Steps im Data-Lane Sweep. Der lokale Worker darf diese Blockade nicht umgehen.
 - Im kuratierten Home-OneDrive-Diagnosepfad sind 30 Sync-Error-Marker sichtbar; diesen Spiegel nicht als vollstaendig behandeln.
 - Der tiefere OneDrive-Reparatur-Sweep sieht 59 Marker-Dateien, 58 Leaf-Marker und 58 Aggregate-Missing-Items. Diese Zahl fuer Sync-Reparatur verwenden, nicht ungeprueft mit der DataPanel-Zahl vermischen.
