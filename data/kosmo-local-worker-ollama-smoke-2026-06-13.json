@@ -1,21 +1,21 @@
 {
   "schema_version": "0.1",
-  "checked_at": "2026-06-13T19:27:47.503Z",
+  "checked_at": "2026-06-13T19:38:05.234Z",
   "status": "passed",
   "endpoint": "http://127.0.0.1:11434/api/generate",
   "model": "kosmo-qwen3-coder:30b-a3b-q4km",
-  "duration_ms": 470,
+  "duration_ms": 2755,
   "checks": {
     "http_ok": true,
     "model_returned": true,
     "response_non_empty": true
   },
   "advisory_checks": {
-    "mentions_review_only": true,
+    "mentions_review_only": false,
     "mentions_no_public_promotion": true
   },
-  "response_length": 358,
-  "response_preview": "Die Architektur-Kosmos-Prüfung wurde von einem lokalen Mitarbeiter als Review-only durchgeführt, ohne öffentliche Promotion oder Werbung. \n\nNote: The original request was in English but the example provided is German, so I've translated it ",
+  "response_length": 369,
+  "response_preview": "Die Architektur-Kosmos-Prüfung wurde erfolgreich abgeschlossen, wobei nur interne Bewertungen durchgeführt wurden und keine öffentliche Werbung stattfand. \n\n(Translation: The ArchitectureKosmos inspection was successfully completed, with on",
   "policy": {
     "private_content_sent": false,
     "public_promotion": false,

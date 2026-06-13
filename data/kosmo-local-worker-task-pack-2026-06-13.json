@@ -13,8 +13,10 @@
     "data/kosmoreferences-data-lane-status.json",
     "data/kosmoreferences-private-library-diagnostic-2026-06-13.json",
     "data/kosmo-onedrive-sync-error-summary-2026-06-13.json",
+    "data/kosmo-source-root-locator-2026-06-13.json",
     "docs/codex/kosmo-private-library-sync-resolution-2026-06-13.md",
     "docs/codex/kosmo-onedrive-sync-error-summary-2026-06-13.md",
+    "docs/codex/kosmo-source-root-locator-2026-06-13.md",
     "data/kosmoreferences-pilot-evidence-matrix-2026-06-13.json",
     "docs/codex/kosmoreferences-pilot-evidence-matrix-2026-06-13.md",
     "data/villa-savoye-provenance-review-brief-2026-06-13.json",
@@ -93,7 +95,9 @@
         "docs/codex/kosmoreferences-private-library-diagnostic-2026-06-13.md",
         "docs/codex/kosmo-private-library-sync-resolution-2026-06-13.md",
         "data/kosmo-onedrive-sync-error-summary-2026-06-13.json",
-        "docs/codex/kosmo-onedrive-sync-error-summary-2026-06-13.md"
+        "docs/codex/kosmo-onedrive-sync-error-summary-2026-06-13.md",
+        "data/kosmo-source-root-locator-2026-06-13.json",
+        "docs/codex/kosmo-source-root-locator-2026-06-13.md"
       ],
       "output_path": "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-local-worker-2026-06-13/book-library-mount-questions.private.md",
       "objective": "Prepare a short, concrete checklist for locating the missing book/ETH/HSLU library using the latest private-library diagnostic.",
@@ -101,6 +105,7 @@
         "Includes likely mount/path questions.",
         "Does not assume the library is present.",
         "Mentions that /mnt/archiv is not visible as its own mount in the latest diagnostic.",
+        "Mentions that the source-root locator found no probable large private library and requires owner/overseer root selection.",
         "Separates the 30 curated private-library sync errors from the deeper 59 marker / 58 leaf marker OneDrive repair sweep.",
         "Keeps action items under 10 bullets."
       ]
