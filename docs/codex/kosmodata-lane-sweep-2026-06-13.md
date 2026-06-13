@@ -1,12 +1,12 @@
 # KosmoData Lane Sweep
 
-Generated: 2026-06-13T20:47:18.106Z
+Generated: 2026-06-13T20:53:16.332Z
 Status: `kosmodata_lane_sweep_review_only_passed`
 
 ## Summary
 
-- Steps passed: 17/17
-- Duration: 18901ms
+- Steps passed: 19/19
+- Duration: 20660ms
 - KosmoReferences: passed_review_only (10/10)
 - References public-ready assets: 0
 - References owner pending: 10
@@ -72,28 +72,37 @@ Status: `kosmodata_lane_sweep_review_only_passed`
 - Owner answer sheet check: owner_answer_sheet_guard_passed
 - Owner answer sheet check failures/warnings: 0/0
 - Owner answer sheet check public-ready after guard: 0
+- Owner answer intake template: owner_answer_intake_template_pending_owner_input
+- Owner answer intake template cards/reference decisions: 5/10
+- Owner answer intake template public-ready after intake: 0
+- Owner answer intake check: owner_answer_intake_guard_passed_pending_owner_input
+- Owner answer intake check filled answers: 0
+- Owner answer intake check failures/warnings: 0/0
+- Owner answer intake check public-ready after guard: 0
 
 ## Steps
 
 | Step | Status | Duration | Report |
 | --- | --- | ---: | --- |
-| KosmoReferences Nightly Gate | passed | 11776ms | `data/kosmoreferences-nightly-gate-2026-06-13.json` |
-| KosmoAsset Seed Full Review | passed | 3505ms | `examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-full-review.generated.json` |
-| Human Decision Queue | passed | 229ms | `data/kosmo-human-decision-queue-2026-06-13.json` |
-| Owner Decision Batches | passed | 231ms | `data/kosmo-human-decision-owner-batches-2026-06-13.json` |
-| Local Worker Output Review | passed | 240ms | `data/kosmo-local-worker-output-review-2026-06-13.json` |
-| Pilot Evidence Matrix | passed | 233ms | `data/kosmoreferences-pilot-evidence-matrix-2026-06-13.json` |
-| Villa Savoye Provenance Review Brief | passed | 241ms | `data/villa-savoye-provenance-review-brief-2026-06-13.json` |
-| Ingenbohl PDF Extraction Brief | passed | 231ms | `data/ingenbohl-pdf-extraction-decision-brief-2026-06-13.json` |
-| Sogn Benedetg Source-Root Brief | passed | 231ms | `data/sogn-benedetg-source-root-decision-brief-2026-06-13.json` |
-| Source Root Locator | passed | 364ms | `data/kosmo-source-root-locator-2026-06-13.json` |
-| Source Root Selection Brief | passed | 234ms | `data/kosmo-source-root-selection-brief-2026-06-13.json` |
-| Source Root Decision Session Check | passed | 229ms | `data/kosmo-source-root-decision-session-check-2026-06-13.json` |
-| Private Source Inventory Plan | passed | 236ms | `data/kosmo-private-source-inventory-plan-2026-06-13.json` |
-| Private Inventory Output Template | passed | 231ms | `examples/kosmo-references/private-inventory/private-inventory-output-template-2026-06-13.json` |
+| KosmoReferences Nightly Gate | passed | 12991ms | `data/kosmoreferences-nightly-gate-2026-06-13.json` |
+| KosmoAsset Seed Full Review | passed | 3538ms | `examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-full-review.generated.json` |
+| Human Decision Queue | passed | 234ms | `data/kosmo-human-decision-queue-2026-06-13.json` |
+| Owner Decision Batches | passed | 232ms | `data/kosmo-human-decision-owner-batches-2026-06-13.json` |
+| Local Worker Output Review | passed | 234ms | `data/kosmo-local-worker-output-review-2026-06-13.json` |
+| Pilot Evidence Matrix | passed | 232ms | `data/kosmoreferences-pilot-evidence-matrix-2026-06-13.json` |
+| Villa Savoye Provenance Review Brief | passed | 228ms | `data/villa-savoye-provenance-review-brief-2026-06-13.json` |
+| Ingenbohl PDF Extraction Brief | passed | 236ms | `data/ingenbohl-pdf-extraction-decision-brief-2026-06-13.json` |
+| Sogn Benedetg Source-Root Brief | passed | 243ms | `data/sogn-benedetg-source-root-decision-brief-2026-06-13.json` |
+| Source Root Locator | passed | 377ms | `data/kosmo-source-root-locator-2026-06-13.json` |
+| Source Root Selection Brief | passed | 235ms | `data/kosmo-source-root-selection-brief-2026-06-13.json` |
+| Source Root Decision Session Check | passed | 230ms | `data/kosmo-source-root-decision-session-check-2026-06-13.json` |
+| Private Source Inventory Plan | passed | 234ms | `data/kosmo-private-source-inventory-plan-2026-06-13.json` |
+| Private Inventory Output Template | passed | 232ms | `examples/kosmo-references/private-inventory/private-inventory-output-template-2026-06-13.json` |
 | Private Inventory Output Check | passed | 229ms | `data/kosmo-private-inventory-output-check-2026-06-13.json` |
-| Owner Answer Sheet | passed | 231ms | `data/kosmo-owner-answer-sheet-2026-06-13.json` |
-| Owner Answer Sheet Check | passed | 226ms | `data/kosmo-owner-answer-sheet-check-2026-06-13.json` |
+| Owner Answer Sheet | passed | 237ms | `data/kosmo-owner-answer-sheet-2026-06-13.json` |
+| Owner Answer Sheet Check | passed | 238ms | `data/kosmo-owner-answer-sheet-check-2026-06-13.json` |
+| Owner Answer Intake Template | passed | 240ms | `examples/kosmo-references/provenance/owner-answer-intake-template-2026-06-13.json` |
+| Owner Answer Intake Check | passed | 237ms | `data/kosmo-owner-answer-intake-check-2026-06-13.json` |
 
 ## Next Actions
 
@@ -111,6 +120,8 @@ Status: `kosmodata_lane_sweep_review_only_passed`
 - Validate any future private inventory JSON with npm run kosmo:private-inventory-output-check before handoff.
 - Use the owner answer sheet to capture Source-Root and Owner Card answers without editing session files prematurely.
 - Keep owner answer sheet changes behind the guard before any decision-session edit.
+- Use the owner answer intake template for machine-readable owner answers only after explicit confirmation.
+- Owner answer intake is structurally ready and waiting for owner input.
 - Expose or mount the real large private book/ETH/HSLU library root.
 - Resolve 30 OneDrive sync error marker files before treating the visible mirror as complete.
 - Keep public-ready assets at 0 until separate owner and promotion reviews pass.

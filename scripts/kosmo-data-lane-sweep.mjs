@@ -131,6 +131,20 @@ const steps = [
     command: 'npm',
     args: ['run', 'kosmo:owner-answer-sheet-check'],
     report: 'data/kosmo-owner-answer-sheet-check-2026-06-13.json'
+  },
+  {
+    id: 'owner_answer_intake_template',
+    label: 'Owner Answer Intake Template',
+    command: 'npm',
+    args: ['run', 'kosmo:owner-answer-intake-template'],
+    report: 'examples/kosmo-references/provenance/owner-answer-intake-template-2026-06-13.json'
+  },
+  {
+    id: 'owner_answer_intake_check',
+    label: 'Owner Answer Intake Check',
+    command: 'npm',
+    args: ['run', 'kosmo:owner-answer-intake-check'],
+    report: 'data/kosmo-owner-answer-intake-check-2026-06-13.json'
   }
 ];
 
@@ -164,10 +178,12 @@ async function main() {
   const privateInventoryOutputCheck = await readOptionalJson(resolve(root, steps[14].report));
   const ownerAnswerSheet = await readOptionalJson(resolve(root, steps[15].report));
   const ownerAnswerSheetCheck = await readOptionalJson(resolve(root, steps[16].report));
+  const ownerAnswerIntakeTemplate = await readOptionalJson(resolve(root, steps[17].report));
+  const ownerAnswerIntakeCheck = await readOptionalJson(resolve(root, steps[18].report));
   const failedSteps = stepResults.filter((step) => step.exit_code !== 0);
   const status = failedSteps.length
     ? 'kosmodata_lane_sweep_failed'
-    : isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief, sourceRootDecisionSessionCheck, privateSourceInventoryPlan, privateInventoryOutputTemplate, privateInventoryOutputCheck, ownerAnswerSheet, ownerAnswerSheetCheck })
+    : isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief, sourceRootDecisionSessionCheck, privateSourceInventoryPlan, privateInventoryOutputTemplate, privateInventoryOutputCheck, ownerAnswerSheet, ownerAnswerSheetCheck, ownerAnswerIntakeTemplate, ownerAnswerIntakeCheck })
       ? 'kosmodata_lane_sweep_review_only_passed'
       : 'kosmodata_lane_sweep_needs_review';
 
@@ -265,7 +281,16 @@ async function main() {
       owner_answer_sheet_check_status: ownerAnswerSheetCheck?.status || null,
       owner_answer_sheet_check_failures: ownerAnswerSheetCheck?.summary?.failures ?? null,
       owner_answer_sheet_check_warnings: ownerAnswerSheetCheck?.summary?.warnings ?? null,
-      owner_answer_sheet_check_public_ready_after: ownerAnswerSheetCheck?.summary?.public_ready_after_guard ?? null
+      owner_answer_sheet_check_public_ready_after: ownerAnswerSheetCheck?.summary?.public_ready_after_guard ?? null,
+      owner_answer_intake_template_status: ownerAnswerIntakeTemplate?.status || null,
+      owner_answer_intake_template_owner_cards: ownerAnswerIntakeTemplate?.summary?.owner_card_answers ?? null,
+      owner_answer_intake_template_reference_decisions: ownerAnswerIntakeTemplate?.summary?.reference_decision_answers ?? null,
+      owner_answer_intake_template_public_ready_after: ownerAnswerIntakeTemplate?.summary?.public_ready_after_intake ?? null,
+      owner_answer_intake_check_status: ownerAnswerIntakeCheck?.status || null,
+      owner_answer_intake_check_filled_answers: ownerAnswerIntakeCheck?.summary?.filled_answers ?? null,
+      owner_answer_intake_check_failures: ownerAnswerIntakeCheck?.summary?.failures ?? null,
+      owner_answer_intake_check_warnings: ownerAnswerIntakeCheck?.summary?.warnings ?? null,
+      owner_answer_intake_check_public_ready_after: ownerAnswerIntakeCheck?.summary?.public_ready_after_guard ?? null
     },
     reports: {
       references_gate: steps[0].report,
@@ -285,10 +310,12 @@ async function main() {
       private_inventory_output_template: steps[13].report,
       private_inventory_output_check: steps[14].report,
       owner_answer_sheet: steps[15].report,
-      owner_answer_sheet_check: steps[16].report
+      owner_answer_sheet_check: steps[16].report,
+      owner_answer_intake_template: steps[17].report,
+      owner_answer_intake_check: steps[18].report
     },
     steps: stepResults,
-    next_actions: nextActions({ failedSteps, referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief, sourceRootDecisionSessionCheck, privateSourceInventoryPlan, privateInventoryOutputCheck, ownerAnswerSheet, ownerAnswerSheetCheck })
+    next_actions: nextActions({ failedSteps, referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief, sourceRootDecisionSessionCheck, privateSourceInventoryPlan, privateInventoryOutputCheck, ownerAnswerSheet, ownerAnswerSheetCheck, ownerAnswerIntakeTemplate, ownerAnswerIntakeCheck })
   };
 
   await mkdir(dirname(outputJson), { recursive: true });
@@ -347,7 +374,7 @@ async function runStep(step) {
   };
 }
 
-function isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief, sourceRootDecisionSessionCheck, privateSourceInventoryPlan, privateInventoryOutputTemplate, privateInventoryOutputCheck, ownerAnswerSheet, ownerAnswerSheetCheck }) {
+function isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief, sourceRootDecisionSessionCheck, privateSourceInventoryPlan, privateInventoryOutputTemplate, privateInventoryOutputCheck, ownerAnswerSheet, ownerAnswerSheetCheck, ownerAnswerIntakeTemplate, ownerAnswerIntakeCheck }) {
   const referencesOk = referencesGate?.status === 'passed_review_only' &&
     (referencesGate?.summary?.public_ready_assets ?? referencesStatus?.summary?.public_ready_assets) === 0;
   const assetOk = assetFullReview?.status === 'asset_full_review_ready_for_human_decisions' &&
@@ -416,10 +443,22 @@ function isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview
     ownerAnswerSheetCheck?.policy?.records_decisions !== true &&
     ownerAnswerSheetCheck?.policy?.writes_session_files !== true &&
     ownerAnswerSheetCheck?.policy?.public_ready_after_guard === 0;
-  return referencesOk && assetOk && queueOk && batchesOk && localWorkerOk && pilotEvidenceOk && villaBriefOk && ingenbohlBriefOk && sognBriefOk && sourceRootLocatorOk && sourceRootSelectionBriefOk && sourceRootDecisionSessionOk && privateSourceInventoryPlanOk && privateInventoryTemplateOk && privateInventoryOutputCheckOk && ownerAnswerSheetOk && ownerAnswerSheetCheckOk;
+  const ownerAnswerIntakeTemplateOk = ownerAnswerIntakeTemplate?.status === 'owner_answer_intake_template_pending_owner_input' &&
+    ownerAnswerIntakeTemplate?.summary?.public_ready_after_intake === 0 &&
+    ownerAnswerIntakeTemplate?.policy?.records_decisions !== true &&
+    ownerAnswerIntakeTemplate?.policy?.writes_session_files !== true &&
+    ownerAnswerIntakeTemplate?.policy?.writes_public_files !== true &&
+    ownerAnswerIntakeTemplate?.policy?.writes_public_manifest !== true;
+  const ownerAnswerIntakeCheckOk = ['owner_answer_intake_guard_passed_pending_owner_input', 'owner_answer_intake_guard_passed_with_answers'].includes(ownerAnswerIntakeCheck?.status) &&
+    ownerAnswerIntakeCheck?.summary?.failures === 0 &&
+    ownerAnswerIntakeCheck?.summary?.public_ready_after_guard === 0 &&
+    ownerAnswerIntakeCheck?.policy?.records_decisions !== true &&
+    ownerAnswerIntakeCheck?.policy?.writes_session_files !== true &&
+    ownerAnswerIntakeCheck?.policy?.public_ready_after_guard === 0;
+  return referencesOk && assetOk && queueOk && batchesOk && localWorkerOk && pilotEvidenceOk && villaBriefOk && ingenbohlBriefOk && sognBriefOk && sourceRootLocatorOk && sourceRootSelectionBriefOk && sourceRootDecisionSessionOk && privateSourceInventoryPlanOk && privateInventoryTemplateOk && privateInventoryOutputCheckOk && ownerAnswerSheetOk && ownerAnswerSheetCheckOk && ownerAnswerIntakeTemplateOk && ownerAnswerIntakeCheckOk;
 }
 
-function nextActions({ failedSteps, referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief, sourceRootDecisionSessionCheck, privateSourceInventoryPlan, privateInventoryOutputCheck, ownerAnswerSheet, ownerAnswerSheetCheck }) {
+function nextActions({ failedSteps, referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief, sourceRootDecisionSessionCheck, privateSourceInventoryPlan, privateInventoryOutputCheck, ownerAnswerSheet, ownerAnswerSheetCheck, ownerAnswerIntakeTemplate, ownerAnswerIntakeCheck }) {
   if (failedSteps.length > 0) return [`Fix failed sweep steps: ${failedSteps.map((step) => step.id).join(', ')}.`];
   const actions = [];
   const ownerPending = humanDecisionQueue?.summary?.reference_items ?? referencesGate?.summary?.owner_decision_session_pending ?? referencesStatus?.summary?.owner_decision_session_pending ?? 0;
@@ -448,6 +487,8 @@ function nextActions({ failedSteps, referencesGate, referencesStatus, assetFullR
   if (privateInventoryOutputCheck?.status) actions.push('Validate any future private inventory JSON with npm run kosmo:private-inventory-output-check before handoff.');
   if (ownerAnswerSheet?.status === 'owner_answer_sheet_ready') actions.push('Use the owner answer sheet to capture Source-Root and Owner Card answers without editing session files prematurely.');
   if (ownerAnswerSheetCheck?.status === 'owner_answer_sheet_guard_passed') actions.push('Keep owner answer sheet changes behind the guard before any decision-session edit.');
+  if (ownerAnswerIntakeTemplate?.status === 'owner_answer_intake_template_pending_owner_input') actions.push('Use the owner answer intake template for machine-readable owner answers only after explicit confirmation.');
+  if (ownerAnswerIntakeCheck?.status === 'owner_answer_intake_guard_passed_pending_owner_input') actions.push('Owner answer intake is structurally ready and waiting for owner input.');
   const privateLibrary = referencesGate?.summary?.private_library_status ?? referencesStatus?.summary?.private_library_status;
   const syncErrors = referencesStatus?.summary?.private_library_sync_error_files ?? 0;
   if (privateLibrary !== 'library_candidate_visible') actions.push('Expose or mount the real large private book/ETH/HSLU library root.');
@@ -532,6 +573,13 @@ function renderMarkdown(report) {
   lines.push(`- Owner answer sheet check: ${report.summary.owner_answer_sheet_check_status}`);
   lines.push(`- Owner answer sheet check failures/warnings: ${report.summary.owner_answer_sheet_check_failures}/${report.summary.owner_answer_sheet_check_warnings}`);
   lines.push(`- Owner answer sheet check public-ready after guard: ${report.summary.owner_answer_sheet_check_public_ready_after}`);
+  lines.push(`- Owner answer intake template: ${report.summary.owner_answer_intake_template_status}`);
+  lines.push(`- Owner answer intake template cards/reference decisions: ${report.summary.owner_answer_intake_template_owner_cards}/${report.summary.owner_answer_intake_template_reference_decisions}`);
+  lines.push(`- Owner answer intake template public-ready after intake: ${report.summary.owner_answer_intake_template_public_ready_after}`);
+  lines.push(`- Owner answer intake check: ${report.summary.owner_answer_intake_check_status}`);
+  lines.push(`- Owner answer intake check filled answers: ${report.summary.owner_answer_intake_check_filled_answers}`);
+  lines.push(`- Owner answer intake check failures/warnings: ${report.summary.owner_answer_intake_check_failures}/${report.summary.owner_answer_intake_check_warnings}`);
+  lines.push(`- Owner answer intake check public-ready after guard: ${report.summary.owner_answer_intake_check_public_ready_after}`);
   lines.push('');
   lines.push('## Steps');
   lines.push('');

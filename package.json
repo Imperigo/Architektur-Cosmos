@@ -119,6 +119,8 @@
     "kosmo:owner-review-card-set": "node scripts/kosmo-owner-review-card-set.mjs",
     "kosmo:owner-answer-sheet": "node scripts/kosmo-owner-answer-sheet.mjs",
     "kosmo:owner-answer-sheet-check": "node scripts/kosmo-owner-answer-sheet-check.mjs",
+    "kosmo:owner-answer-intake-template": "node scripts/kosmo-owner-answer-intake-template.mjs",
+    "kosmo:owner-answer-intake-check": "node scripts/kosmo-owner-answer-intake-check.mjs",
     "kosmo:private-library-diagnostic": "node scripts/kosmo-private-library-diagnostic.mjs",
     "kosmo:source-root-locator": "node scripts/kosmo-source-root-locator.mjs",
     "kosmo:source-root-selection-brief": "node scripts/kosmo-source-root-selection-brief.mjs",
