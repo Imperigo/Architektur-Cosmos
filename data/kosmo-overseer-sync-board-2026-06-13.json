@@ -1,0 +1,135 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-13T21:40:06.540Z",
+  "status": "overseer_sync_board_ready",
+  "policy": {
+    "records_decisions": false,
+    "writes_session_files": false,
+    "applies_decisions": false,
+    "writes_public_files": false,
+    "writes_public_manifest": false,
+    "public_ready_after_board": 0,
+    "note": "This board summarizes Codex/Claude/KosmoOverseer coordination state. It does not record owner answers or change data-lane decisions."
+  },
+  "source_refs": [
+    "data/kosmodata-lane-sweep-2026-06-13.json",
+    "data/kosmo-data-lane-command-router-2026-06-13.json",
+    "data/kosmo-night-loop-checkpoint-2026-06-13.json",
+    "data/kosmo-owner-review-session-brief-check-2026-06-13.json",
+    "data/kosmo-local-worker-output-review-2026-06-13.json"
+  ],
+  "handoff_inboxes": [
+    {
+      "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
+      "exists": true,
+      "files": 113
+    },
+    {
+      "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
+      "exists": true,
+      "files": 143
+    }
+  ],
+  "summary": {
+    "data_lane_status": "kosmodata_lane_sweep_review_only_passed",
+    "data_lane_steps": "26/26",
+    "router_status": "worker_router_guarded_review_only",
+    "checkpoint_status": "night_loop_guarded_ready",
+    "next_loop": "prepare_owner_source_root_decision_and_batch_questions",
+    "session_brief_guard_status": "owner_review_session_brief_guard_passed",
+    "session_brief_failures": 0,
+    "local_worker_review_status": "local_worker_outputs_present_review_only",
+    "local_worker_outputs": "8/8",
+    "local_worker_high_risk_hits": 0,
+    "latest_handoffs": 8,
+    "latest_handoff_mirror_missing_files": 0,
+    "historical_handoff_mirror_missing_files": 30,
+    "public_ready_after_board": 0
+  },
+  "latest_handoffs": [
+    {
+      "filename": "2026-06-13-codex-synergiebericht-114-local-worker-safe-next-tasks.md",
+      "title": "Codex Synergiebericht 114 - Local Worker Safe Next Tasks",
+      "mirrored_inboxes": 2,
+      "bytes": 1764,
+      "modified_at": "2026-06-13T21:36:24.826Z"
+    },
+    {
+      "filename": "2026-06-13-codex-synergiebericht-113-owner-review-session-brief-guard.md",
+      "title": "Codex Synergiebericht 113 - Owner Review Session Brief Guard",
+      "mirrored_inboxes": 2,
+      "bytes": 1906,
+      "modified_at": "2026-06-13T21:31:49.890Z"
+    },
+    {
+      "filename": "2026-06-13-codex-synergiebericht-112-owner-review-session-brief.md",
+      "title": "Codex Synergiebericht 112 - Owner Review Session Brief",
+      "mirrored_inboxes": 2,
+      "bytes": 1912,
+      "modified_at": "2026-06-13T21:26:08.622Z"
+    },
+    {
+      "filename": "2026-06-13-codex-synergiebericht-111-owner-review-packet-guard.md",
+      "title": "Codex Synergiebericht 111 - Owner Review Packet Guard",
+      "mirrored_inboxes": 2,
+      "bytes": 1545,
+      "modified_at": "2026-06-13T21:19:06.171Z"
+    },
+    {
+      "filename": "2026-06-13-codex-synergiebericht-110-owner-review-packet.md",
+      "title": "Codex Synergiebericht 110 - Owner Review Packet",
+      "mirrored_inboxes": 2,
+      "bytes": 1905,
+      "modified_at": "2026-06-13T21:11:57.706Z"
+    },
+    {
+      "filename": "2026-06-13-codex-synergiebericht-109-owner-question-brief-guard.md",
+      "title": "Codex Synergiebericht 109 - Owner Question Brief Guard",
+      "mirrored_inboxes": 2,
+      "bytes": 1800,
+      "modified_at": "2026-06-13T21:07:10.477Z"
+    },
+    {
+      "filename": "2026-06-13-codex-synergiebericht-108-owner-question-brief.md",
+      "title": "Codex Synergiebericht 108 - Owner Question Brief",
+      "mirrored_inboxes": 2,
+      "bytes": 1799,
+      "modified_at": "2026-06-13T21:02:51.596Z"
+    },
+    {
+      "filename": "2026-06-13-codex-synergiebericht-107-owner-session-edit-plan.md",
+      "title": "Codex Synergiebericht 107 - Owner Session Edit Plan",
+      "mirrored_inboxes": 2,
+      "bytes": 2054,
+      "modified_at": "2026-06-13T20:58:41.137Z"
+    }
+  ],
+  "blockers": [
+    {
+      "id": "source_root_pending",
+      "status": "blocked",
+      "evidence": "source_root_blocked=true"
+    },
+    {
+      "id": "private_inventory_pending",
+      "status": "blocked",
+      "evidence": "private_inventory_blocked=true"
+    },
+    {
+      "id": "owner_answers_pending",
+      "status": "blocked",
+      "evidence": "session_brief_failures=0, prior_signals_recordable_now=0"
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": "references_public_ready_assets=0"
+    }
+  ],
+  "next_actions": [
+    "Claude/KosmoOverseer reviews latest handoffs 111-114 before editing related files.",
+    "Use the owner review session brief as the next owner-facing entry point.",
+    "Keep local worker tasks review-only while source-root and owner answers are pending.",
+    "After any explicit owner answer, update intake first, then rerun guards and this sync board."
+  ]
+}

@@ -89,151 +89,161 @@ This runbook is the daily execution order for the KosmoReferences/KosmoAsset dat
 
    - `docs/codex/kosmo-night-loop-checkpoint-2026-06-13.md`
 
-11. Generate the current owner review card:
+11. Refresh the overseer sync board:
+
+   ```bash
+   npm run kosmo:overseer-sync-board
+   ```
+
+12. Open the generated sync board:
+
+   - `docs/codex/kosmo-overseer-sync-board-2026-06-13.md`
+
+13. Generate the current owner review card:
 
    ```bash
    npm run kosmo:owner-review-card
    ```
 
-12. Open the generated card:
+14. Open the generated card:
 
    - `docs/codex/kosmo-owner-review-card-batch-a-villa-savoye-image-candidates-2026-06-13.md`
 
-13. Generate the full owner review card set:
+15. Generate the full owner review card set:
 
    ```bash
    npm run kosmo:owner-review-card-set
    ```
 
-14. Open the generated card set:
+16. Open the generated card set:
 
    - `docs/codex/kosmo-owner-review-card-set-2026-06-13.md`
 
-15. Generate the owner answer sheet:
+17. Generate the owner answer sheet:
 
    ```bash
    npm run kosmo:owner-answer-sheet
    ```
 
-16. Open the generated answer sheet:
+18. Open the generated answer sheet:
 
    - `docs/codex/kosmo-owner-answer-sheet-2026-06-13.md`
 
-17. Check the owner answer sheet contract:
+19. Check the owner answer sheet contract:
 
    ```bash
    npm run kosmo:owner-answer-sheet-check
    ```
 
-18. Open the generated check:
+20. Open the generated check:
 
    - `docs/codex/kosmo-owner-answer-sheet-check-2026-06-13.md`
 
-19. Generate the machine-readable owner answer intake template:
+21. Generate the machine-readable owner answer intake template:
 
    ```bash
    npm run kosmo:owner-answer-intake-template
    ```
 
-20. Check the owner answer intake contract:
+22. Check the owner answer intake contract:
 
    ```bash
    npm run kosmo:owner-answer-intake-check
    ```
 
-21. Open the generated intake files:
+23. Open the generated intake files:
 
    - `docs/codex/kosmo-owner-answer-intake-template-2026-06-13.md`
    - `docs/codex/kosmo-owner-answer-intake-check-2026-06-13.md`
 
-22. Generate the session edit plan:
+24. Generate the session edit plan:
 
    ```bash
    npm run kosmo:owner-answer-session-edit-plan
    ```
 
-23. Open the generated plan:
+25. Open the generated plan:
 
    - `docs/codex/kosmo-owner-answer-session-edit-plan-2026-06-13.md`
 
-24. Generate the owner-facing question brief:
+26. Generate the owner-facing question brief:
 
    ```bash
    npm run kosmo:owner-question-brief
    ```
 
-25. Open the generated brief:
+27. Open the generated brief:
 
    - `docs/codex/kosmo-owner-question-brief-2026-06-13.md`
 
-26. Check the owner-facing question brief:
+28. Check the owner-facing question brief:
 
    ```bash
    npm run kosmo:owner-question-brief-check
    ```
 
-27. Open the generated check:
+29. Open the generated check:
 
    - `docs/codex/kosmo-owner-question-brief-check-2026-06-13.md`
 
-28. Generate the owner review packet:
+30. Generate the owner review packet:
 
    ```bash
    npm run kosmo:owner-review-packet
    ```
 
-29. Open the generated packet:
+31. Open the generated packet:
 
    - `docs/codex/kosmo-owner-review-packet-2026-06-13.md`
 
-30. Check the owner review packet:
+32. Check the owner review packet:
 
    ```bash
    npm run kosmo:owner-review-packet-check
    ```
 
-31. Open the generated check:
+33. Open the generated check:
 
    - `docs/codex/kosmo-owner-review-packet-check-2026-06-13.md`
 
-32. Generate the owner review session brief:
+34. Generate the owner review session brief:
 
    ```bash
    npm run kosmo:owner-review-session-brief
    ```
 
-33. Open the generated session brief:
+35. Open the generated session brief:
 
    - `docs/codex/kosmo-owner-review-session-brief-2026-06-13.md`
 
-34. Check the owner review session brief:
+36. Check the owner review session brief:
 
    ```bash
    npm run kosmo:owner-review-session-brief-check
    ```
 
-35. Open the generated check:
+37. Open the generated check:
 
    - `docs/codex/kosmo-owner-review-session-brief-check-2026-06-13.md`
 
-36. If a narrow rerun is needed, run the KosmoReferences Nightly Gate:
+38. If a narrow rerun is needed, run the KosmoReferences Nightly Gate:
 
    ```bash
    npm run kosmo:references-nightly-gate
    ```
 
-37. Open the generated reports:
+39. Open the generated reports:
 
    - `docs/codex/kosmoreferences-nightly-gate-2026-06-13.md`
    - `data/kosmoreferences-data-lane-status.md`
 
-38. If a narrow asset rerun is needed, run the KosmoAsset seed full review:
+40. If a narrow asset rerun is needed, run the KosmoAsset seed full review:
 
    ```bash
    npm run kosmo:asset-full-review -- --library examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json
    ```
 
-39. Open the generated report:
+41. Open the generated report:
 
    - `examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-full-review.generated.md`
 
@@ -252,6 +262,7 @@ Use the result as the current read-only status:
 - `worker_router_guarded_review_only` means local workers may only do metadata/review-only work and may not run Git, cloud, public promotion or source-copy actions.
 - `owner_next_review_brief_open` means owner questions are prepared in five small batches, but no decision has been recorded.
 - `night_loop_guarded_ready` means the next autonomous loop is structurally ready but remains guarded by source-root and owner-decision blockers.
+- `overseer_sync_board_ready` means the latest Codex/KosmoOrbit handoffs are mirrored and Claude/KosmoOverseer has a compact status board.
 - `owner_review_card_ready` means exactly one owner discussion card is prepared; it still records no decision and permits no public-ready change.
 - `owner_review_card_set_ready` means all five owner discussion cards are prepared as a safe question set; it still records no decisions and keeps `public_ready_after_set: 0`.
 - `owner_answer_sheet_ready` means source-root and owner-card answers can be captured quickly; it still writes no session files and keeps `public_ready_after_sheet: 0`.
