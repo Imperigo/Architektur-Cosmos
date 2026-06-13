@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board Check
 
-Generated: 2026-06-13T21:44:17.160Z
+Generated: 2026-06-13T21:46:16.539Z
 Status: `overseer_sync_board_guard_passed`
 
 ## Summary
@@ -42,6 +42,8 @@ Status: `overseer_sync_board_guard_passed`
 - passed: `inbox_has_files:/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox` - Handoff inbox must contain files: /mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox
 - passed: `latest_handoffs_array_count` - Latest handoff array must contain eight items.
 - passed: `latest_handoff_includes_115` - Latest handoffs must include synergiebericht 115 or newer.
+- passed: `handoff_mirrored:2026-06-13-codex-synergiebericht-116-overseer-sync-board-guard.md` - 2026-06-13-codex-synergiebericht-116-overseer-sync-board-guard.md must be mirrored in both inboxes.
+- passed: `handoff_title:2026-06-13-codex-synergiebericht-116-overseer-sync-board-guard.md` - 2026-06-13-codex-synergiebericht-116-overseer-sync-board-guard.md must include a title.
 - passed: `handoff_mirrored:2026-06-13-codex-synergiebericht-115-overseer-sync-board.md` - 2026-06-13-codex-synergiebericht-115-overseer-sync-board.md must be mirrored in both inboxes.
 - passed: `handoff_title:2026-06-13-codex-synergiebericht-115-overseer-sync-board.md` - 2026-06-13-codex-synergiebericht-115-overseer-sync-board.md must include a title.
 - passed: `handoff_mirrored:2026-06-13-codex-synergiebericht-114-local-worker-safe-next-tasks.md` - 2026-06-13-codex-synergiebericht-114-local-worker-safe-next-tasks.md must be mirrored in both inboxes.
@@ -56,8 +58,6 @@ Status: `overseer_sync_board_guard_passed`
 - passed: `handoff_title:2026-06-13-codex-synergiebericht-110-owner-review-packet.md` - 2026-06-13-codex-synergiebericht-110-owner-review-packet.md must include a title.
 - passed: `handoff_mirrored:2026-06-13-codex-synergiebericht-109-owner-question-brief-guard.md` - 2026-06-13-codex-synergiebericht-109-owner-question-brief-guard.md must be mirrored in both inboxes.
 - passed: `handoff_title:2026-06-13-codex-synergiebericht-109-owner-question-brief-guard.md` - 2026-06-13-codex-synergiebericht-109-owner-question-brief-guard.md must include a title.
-- passed: `handoff_mirrored:2026-06-13-codex-synergiebericht-108-owner-question-brief.md` - 2026-06-13-codex-synergiebericht-108-owner-question-brief.md must be mirrored in both inboxes.
-- passed: `handoff_title:2026-06-13-codex-synergiebericht-108-owner-question-brief.md` - 2026-06-13-codex-synergiebericht-108-owner-question-brief.md must include a title.
 - passed: `source_root_blocked` - Source-root blocker must remain blocked.
 - passed: `private_inventory_blocked` - Private inventory blocker must remain blocked.
 - passed: `owner_answers_blocked` - Owner answers blocker must remain blocked.

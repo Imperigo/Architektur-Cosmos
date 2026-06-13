@@ -75,6 +75,8 @@ Nutze:
 - `data/kosmo-owner-review-packet-check-2026-06-13.json`
 - `data/kosmo-owner-review-session-brief-2026-06-13.json`
 - `data/kosmo-owner-review-session-brief-check-2026-06-13.json`
+- `data/kosmo-overseer-sync-board-2026-06-13.json`
+- `data/kosmo-overseer-sync-board-check-2026-06-13.json`
 - `data/kosmoreferences-pilot-evidence-matrix-2026-06-13.json`
 - `data/villa-savoye-provenance-review-brief-2026-06-13.json`
 - `data/ingenbohl-pdf-extraction-decision-brief-2026-06-13.json`
@@ -104,6 +106,8 @@ Nutze:
 - `docs/codex/kosmo-owner-review-packet-check-2026-06-13.md`
 - `docs/codex/kosmo-owner-review-session-brief-2026-06-13.md`
 - `docs/codex/kosmo-owner-review-session-brief-check-2026-06-13.md`
+- `docs/codex/kosmo-overseer-sync-board-2026-06-13.md`
+- `docs/codex/kosmo-overseer-sync-board-check-2026-06-13.md`
 - `docs/codex/kosmoreferences-pilot-evidence-matrix-2026-06-13.md`
 - `docs/codex/villa-savoye-provenance-review-brief-2026-06-13.md`
 - `docs/codex/ingenbohl-pdf-extraction-decision-brief-2026-06-13.md`
@@ -146,6 +150,8 @@ Aktueller harter Stand:
 - Private Source Inventory Plan: `private_metadata_inventory_blocked`, private diagnostic nicht erlaubt, 0 public-ready.
 - Private Inventory Output Check: `private_inventory_output_contract_passed`, 3 Piloten, 0 Failures, 0 Public-ready Hits.
 - Data-Lane Command Router: `worker_router_guarded_review_only`; lokaler Worker darf nur Review-/Metadaten-Fleissarbeit machen, keine Git-/Cloud-/Public-Promotion- oder Source-Copy-Aktionen.
+- Overseer Sync Board: `overseer_sync_board_ready`, 8 neueste Handoffs gespiegelt, 0 aktuelle Mirror-Missing-Files, historisch 30 alte Mirror-Differenzen.
+- Overseer Sync Board Check: `overseer_sync_board_guard_passed`, 0 Failures, 0 Warnings, 0 public-ready; prueft, dass das Board entscheidungsfrei und gespiegelt ist.
 - Owner Next Review Brief: `owner_next_review_brief_open`, 5 Batches, 16 offene Items, 0 public-ready nach Brief.
 - Night Loop Checkpoint: `night_loop_guarded_ready`, naechster Loop `prepare_owner_source_root_decision_and_batch_questions`, erste Owner-Karte `batch-a-villa-savoye-image-candidates`.
 - Owner Review Card A: `owner_review_card_ready`, Villa Savoye Image Candidates, 3 Items, Safe Default `needs_more_source_context`, 0 public-ready.

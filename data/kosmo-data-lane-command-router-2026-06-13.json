@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-13T21:35:30.258Z",
+  "generated_at": "2026-06-13T21:46:16.121Z",
   "status": "worker_router_guarded_review_only",
   "source_refs": [
     "data/kosmodata-lane-sweep-2026-06-13.json"
@@ -80,7 +80,9 @@
     "npm run kosmo:owner-decision-session-check",
     "npm run kosmo:owner-review-packet-check",
     "npm run kosmo:owner-review-session-brief",
-    "npm run kosmo:owner-review-session-brief-check"
+    "npm run kosmo:owner-review-session-brief-check",
+    "npm run kosmo:overseer-sync-board",
+    "npm run kosmo:overseer-sync-board-check"
   ],
   "blocked_commands_now": [
     {

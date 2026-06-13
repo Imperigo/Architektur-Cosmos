@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board
 
-Generated: 2026-06-13T21:44:16.905Z
+Generated: 2026-06-13T21:46:16.309Z
 Status: `overseer_sync_board_ready`
 
 ## Summary
@@ -20,6 +20,7 @@ Status: `overseer_sync_board_ready`
 
 | File | Title | Mirrors |
 | --- | --- | ---: |
+| `2026-06-13-codex-synergiebericht-116-overseer-sync-board-guard.md` | Codex Synergiebericht 116 - Overseer Sync Board Guard | 2 |
 | `2026-06-13-codex-synergiebericht-115-overseer-sync-board.md` | Codex Synergiebericht 115 - Overseer Sync Board | 2 |
 | `2026-06-13-codex-synergiebericht-114-local-worker-safe-next-tasks.md` | Codex Synergiebericht 114 - Local Worker Safe Next Tasks | 2 |
 | `2026-06-13-codex-synergiebericht-113-owner-review-session-brief-guard.md` | Codex Synergiebericht 113 - Owner Review Session Brief Guard | 2 |
@@ -27,7 +28,6 @@ Status: `overseer_sync_board_ready`
 | `2026-06-13-codex-synergiebericht-111-owner-review-packet-guard.md` | Codex Synergiebericht 111 - Owner Review Packet Guard | 2 |
 | `2026-06-13-codex-synergiebericht-110-owner-review-packet.md` | Codex Synergiebericht 110 - Owner Review Packet | 2 |
 | `2026-06-13-codex-synergiebericht-109-owner-question-brief-guard.md` | Codex Synergiebericht 109 - Owner Question Brief Guard | 2 |
-| `2026-06-13-codex-synergiebericht-108-owner-question-brief.md` | Codex Synergiebericht 108 - Owner Question Brief | 2 |
 
 ## Blockers
 
@@ -40,7 +40,7 @@ Status: `overseer_sync_board_ready`
 
 ## Next Actions
 
-- Claude/KosmoOverseer reviews latest handoffs 108-115 before editing related files.
+- Claude/KosmoOverseer reviews latest handoffs 109-116 before editing related files.
 - Use the owner review session brief as the next owner-facing entry point.
 - Keep local worker tasks review-only while source-root and owner answers are pending.
 - After any explicit owner answer, update intake first, then rerun guards and this sync board.
