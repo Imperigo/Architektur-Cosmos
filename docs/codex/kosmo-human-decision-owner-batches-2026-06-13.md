@@ -1,6 +1,6 @@
 # Kosmo Human Decision Owner Batches
 
-Generated: 2026-06-13T18:35:20.223Z
+Generated: 2026-06-13T18:37:37.822Z
 Status: `owner_decision_batches_open`
 
 ## Purpose

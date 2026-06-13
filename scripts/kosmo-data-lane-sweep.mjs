@@ -33,6 +33,13 @@ const steps = [
     command: 'npm',
     args: ['run', 'kosmo:human-decision-queue'],
     report: 'data/kosmo-human-decision-queue-2026-06-13.json'
+  },
+  {
+    id: 'owner_decision_batches',
+    label: 'Owner Decision Batches',
+    command: 'npm',
+    args: ['run', 'kosmo:human-decision-owner-batches'],
+    report: 'data/kosmo-human-decision-owner-batches-2026-06-13.json'
   }
 ];
 
@@ -52,10 +59,11 @@ async function main() {
   const referencesStatus = await readOptionalJson(resolve(root, 'data/kosmoreferences-data-lane-status.json'));
   const assetFullReview = await readOptionalJson(resolve(root, steps[1].report));
   const humanDecisionQueue = await readOptionalJson(resolve(root, steps[2].report));
+  const ownerDecisionBatches = await readOptionalJson(resolve(root, steps[3].report));
   const failedSteps = stepResults.filter((step) => step.exit_code !== 0);
   const status = failedSteps.length
     ? 'kosmodata_lane_sweep_failed'
-    : isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview, humanDecisionQueue })
+    : isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches })
       ? 'kosmodata_lane_sweep_review_only_passed'
       : 'kosmodata_lane_sweep_needs_review';
 
@@ -91,16 +99,21 @@ async function main() {
       human_queue_status: humanDecisionQueue?.status || null,
       human_queue_open_items: humanDecisionQueue?.summary?.open_items ?? null,
       human_queue_reference_items: humanDecisionQueue?.summary?.reference_items ?? null,
-      human_queue_asset_items: humanDecisionQueue?.summary?.asset_items ?? null
+      human_queue_asset_items: humanDecisionQueue?.summary?.asset_items ?? null,
+      owner_batches_status: ownerDecisionBatches?.status || null,
+      owner_batches_total: ownerDecisionBatches?.summary?.total_batches ?? null,
+      owner_batches_open: ownerDecisionBatches?.summary?.batches_with_open_items ?? null,
+      owner_batches_open_items: ownerDecisionBatches?.summary?.open_items ?? null
     },
     reports: {
       references_gate: steps[0].report,
       references_status: 'data/kosmoreferences-data-lane-status.json',
       asset_full_review: steps[1].report,
-      human_decision_queue: steps[2].report
+      human_decision_queue: steps[2].report,
+      owner_decision_batches: steps[3].report
     },
     steps: stepResults,
-    next_actions: nextActions({ failedSteps, referencesGate, referencesStatus, assetFullReview, humanDecisionQueue })
+    next_actions: nextActions({ failedSteps, referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches })
   };
 
   await mkdir(dirname(outputJson), { recursive: true });
@@ -159,24 +172,28 @@ async function runStep(step) {
   };
 }
 
-function isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview, humanDecisionQueue }) {
+function isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches }) {
   const referencesOk = referencesGate?.status === 'passed_review_only' &&
     (referencesGate?.summary?.public_ready_assets ?? referencesStatus?.summary?.public_ready_assets) === 0;
   const assetOk = assetFullReview?.status === 'asset_full_review_ready_for_human_decisions' &&
     assetFullReview?.summary?.promotion_allowed !== true &&
     assetFullReview?.summary?.public_ready_count === 0;
-  const queueOk = humanDecisionQueue?.status === 'human_decision_queue_open' &&
+  const queueOk = ['human_decision_queue_open', 'human_decision_queue_clear'].includes(humanDecisionQueue?.status) &&
     humanDecisionQueue?.summary?.public_ready_after_queue === 0;
-  return referencesOk && assetOk && queueOk;
+  const batchesOk = ['owner_decision_batches_open', 'owner_decision_batches_clear'].includes(ownerDecisionBatches?.status) &&
+    ownerDecisionBatches?.summary?.public_ready_after_batches === 0;
+  return referencesOk && assetOk && queueOk && batchesOk;
 }
 
-function nextActions({ failedSteps, referencesGate, referencesStatus, assetFullReview, humanDecisionQueue }) {
+function nextActions({ failedSteps, referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches }) {
   if (failedSteps.length > 0) return [`Fix failed sweep steps: ${failedSteps.map((step) => step.id).join(', ')}.`];
   const actions = [];
   const ownerPending = humanDecisionQueue?.summary?.reference_items ?? referencesGate?.summary?.owner_decision_session_pending ?? referencesStatus?.summary?.owner_decision_session_pending ?? 0;
   if (ownerPending > 0) actions.push(`Owner resolves ${ownerPending} KosmoReferences decisions before public promotion review.`);
   const assetOpen = humanDecisionQueue?.summary?.asset_items ?? assetFullReview?.summary?.open_human_review_count ?? 0;
   if (assetOpen > 0) actions.push(`Complete ${assetOpen} KosmoAsset human reviews before local approvals or sandbox certificates.`);
+  const openBatches = ownerDecisionBatches?.summary?.batches_with_open_items ?? 0;
+  if (openBatches > 0) actions.push(`Use ${openBatches} owner decision batches for review rounds instead of asking all open items at once.`);
   const privateLibrary = referencesGate?.summary?.private_library_status ?? referencesStatus?.summary?.private_library_status;
   if (privateLibrary !== 'library_candidate_visible') actions.push('Expose or mount the real large private book/ETH/HSLU library root.');
   actions.push('Keep public-ready assets at 0 until separate owner and promotion reviews pass.');
@@ -206,6 +223,9 @@ function renderMarkdown(report) {
   lines.push(`- Human decision queue: ${report.summary.human_queue_status}`);
   lines.push(`- Human decision open items: ${report.summary.human_queue_open_items}`);
   lines.push(`- Human decision split: ${report.summary.human_queue_reference_items} references / ${report.summary.human_queue_asset_items} assets`);
+  lines.push(`- Owner decision batches: ${report.summary.owner_batches_status}`);
+  lines.push(`- Owner decision batches open: ${report.summary.owner_batches_open}/${report.summary.owner_batches_total}`);
+  lines.push(`- Owner decision batch items open: ${report.summary.owner_batches_open_items}`);
   lines.push('');
   lines.push('## Steps');
   lines.push('');

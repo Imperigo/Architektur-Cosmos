@@ -26,6 +26,13 @@ This runbook is the daily execution order for the KosmoReferences/KosmoAsset dat
    npm run kosmo:data-lane-sweep
    ```
 
+   The sweep is the daily start gate and includes:
+
+   - KosmoReferences Nightly Gate;
+   - KosmoAsset Seed Full Review;
+   - Human Decision Queue;
+   - Owner Decision Batches.
+
 4. Open the generated report:
 
    - `docs/codex/kosmodata-lane-sweep-2026-06-13.md`
@@ -72,7 +79,20 @@ Then continue with one of these safe work types:
 
 ## If Owner Decisions Are Needed
 
-Generate the worksheet:
+First generate or refresh the owner batch plan:
+
+```bash
+npm run kosmo:human-decision-owner-batches
+```
+
+Use:
+
+- `docs/codex/kosmo-human-decision-owner-batches-2026-06-13.md`
+- `data/kosmo-human-decision-owner-batches-2026-06-13.json`
+
+Present one batch at a time. Do not ask the owner to resolve all open decisions in one pass.
+
+Then generate the detailed worksheet when a batch is ready for explicit decisions:
 
 ```bash
 npm run kosmo:owner-decision-worksheet
