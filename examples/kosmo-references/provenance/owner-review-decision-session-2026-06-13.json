@@ -1,0 +1,129 @@
+{
+  "schema_version": "0.1",
+  "created_at": "2026-06-13",
+  "status": "owner_decision_session_pending",
+  "source_pack": "examples/kosmo-references/provenance/owner-review-decision-pack-2026-06-13.json",
+  "policy": {
+    "auto_promote": false,
+    "writes_public_files": false,
+    "writes_public_manifest": false,
+    "public_ready_after_session": 0,
+    "rule": "This session records owner decisions only. Any public promotion requires a separate reviewed command or manifest change after this session passes."
+  },
+  "allowed_decisions": [
+    "approve_public_display_after_review",
+    "keep_blocked",
+    "open_separate_source_basis_review",
+    "needs_more_source_context"
+  ],
+  "decisions": [
+    {
+      "group_id": "villa-savoye-public-image-candidates",
+      "item_id": "villa-savoye-exterior-savoye-3-cc0",
+      "source_path": "public/archive-media/villa-savoye/exterior/savoye-3-exterior-cc0.jpg",
+      "decision_prompt": "Approve public display or keep blocked?",
+      "recommended_safe_default": "needs_more_source_context",
+      "selected_decision": null,
+      "owner_note": "",
+      "public_ready_after_decision": false
+    },
+    {
+      "group_id": "villa-savoye-public-image-candidates",
+      "item_id": "villa-savoye-exterior-loc-full",
+      "source_path": "public/archive-media/villa-savoye/exterior/villa-savoye-loc-exterior.jpg",
+      "decision_prompt": "Approve public display with LOC/credit review or keep blocked?",
+      "recommended_safe_default": "needs_more_source_context",
+      "selected_decision": null,
+      "owner_note": "",
+      "public_ready_after_decision": false
+    },
+    {
+      "group_id": "villa-savoye-public-image-candidates",
+      "item_id": "villa-savoye-interior-chaise-cc-by-sa",
+      "source_path": "public/archive-media/villa-savoye/interior/villa-savoye-chaise-longue-interior-cc-by-sa-2.jpg",
+      "decision_prompt": "Approve only if attribution and ShareAlike obligations are accepted, or keep blocked?",
+      "recommended_safe_default": "needs_more_source_context",
+      "selected_decision": null,
+      "owner_note": "",
+      "public_ready_after_decision": false
+    },
+    {
+      "group_id": "villa-savoye-blocked-derived-files",
+      "item_id": "public/archive-media/villa-savoye/exterior/villa-savoye-loc-exterior-crop.jpg",
+      "source_path": "public/archive-media/villa-savoye/exterior/villa-savoye-loc-exterior-crop.jpg",
+      "decision_prompt": "Keep blocked or open a separate source-basis review?",
+      "recommended_safe_default": "keep_blocked",
+      "selected_decision": null,
+      "owner_note": "",
+      "public_ready_after_decision": false
+    },
+    {
+      "group_id": "villa-savoye-blocked-derived-files",
+      "item_id": "public/archive-media/villa-savoye/plan/villa-savoye-ground-floor-diagram.svg",
+      "source_path": "public/archive-media/villa-savoye/plan/villa-savoye-ground-floor-diagram.svg",
+      "decision_prompt": "Keep blocked or open a separate plan/source-basis review?",
+      "recommended_safe_default": "keep_blocked",
+      "selected_decision": null,
+      "owner_note": "",
+      "public_ready_after_decision": false
+    },
+    {
+      "group_id": "villa-savoye-blocked-derived-files",
+      "item_id": "public/archive-media/villa-savoye/section/villa-savoye-long-section-diagram.svg",
+      "source_path": "public/archive-media/villa-savoye/section/villa-savoye-long-section-diagram.svg",
+      "decision_prompt": "Keep blocked or open a separate section/source-basis review?",
+      "recommended_safe_default": "keep_blocked",
+      "selected_decision": null,
+      "owner_note": "",
+      "public_ready_after_decision": false
+    },
+    {
+      "group_id": "villa-savoye-blocked-derived-files",
+      "item_id": "public/archive-models/villa-savoye/low.glb",
+      "source_path": "public/archive-models/villa-savoye/low.glb",
+      "decision_prompt": "Keep blocked or open a separate model/source-basis review?",
+      "recommended_safe_default": "keep_blocked",
+      "selected_decision": null,
+      "owner_note": "",
+      "public_ready_after_decision": false
+    },
+    {
+      "group_id": "model-promotion-owner-confirmation",
+      "item_id": "villa-savoye",
+      "source_path": "public/archive-models/villa-savoye/low.glb",
+      "decision_prompt": "Confirm model promotion only after accepting diagrammatic, not-measured status?",
+      "recommended_safe_default": "needs_more_source_context",
+      "selected_decision": null,
+      "owner_note": "",
+      "confirm_command_after_separate_review": "npm run brain:promote-model -- --entry villa-savoye --confirm-public-model",
+      "public_ready_after_decision": false
+    },
+    {
+      "group_id": "model-promotion-owner-confirmation",
+      "item_id": "alterszentrum-kloster-ingenbohl",
+      "source_path": "public/archive-models/alterszentrum-kloster-ingenbohl/low.glb",
+      "decision_prompt": "Confirm model promotion only after accepting diagrammatic, not-measured status?",
+      "recommended_safe_default": "needs_more_source_context",
+      "selected_decision": null,
+      "owner_note": "",
+      "confirm_command_after_separate_review": "npm run brain:promote-model -- --entry alterszentrum-kloster-ingenbohl --confirm-public-model",
+      "public_ready_after_decision": false
+    },
+    {
+      "group_id": "sogn-benedetg-source-gap",
+      "item_id": "sogn-benedetg-source-gap",
+      "source_path": null,
+      "decision_prompt": "Find private library root or keep Sogn link-only with review-only study assets?",
+      "recommended_safe_default": "needs_more_source_context",
+      "selected_decision": null,
+      "owner_note": "",
+      "public_ready_after_decision": false
+    }
+  ],
+  "next_actions": [
+    "Owner fills selected_decision and optional owner_note per item.",
+    "Run npm run kosmo:owner-decision-session-check.",
+    "Only after a passing session may Codex/Claude prepare a separate promotion or manifest-change review."
+  ]
+}
+

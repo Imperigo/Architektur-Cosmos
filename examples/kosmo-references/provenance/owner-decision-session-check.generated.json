@@ -1,0 +1,125 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-13T17:50:25.465Z",
+  "session_path": "examples/kosmo-references/provenance/owner-review-decision-session-2026-06-13.json",
+  "status": "passed_pending_owner_input",
+  "policy": {
+    "auto_promote_allowed": false,
+    "public_ready_after_session_required": 0,
+    "public_writes_allowed": false,
+    "separate_promotion_review_required": true
+  },
+  "summary": {
+    "decision_items": 10,
+    "selected_decisions": 0,
+    "pending_decisions": 10,
+    "public_ready_after_session": 0,
+    "confirm_commands_after_separate_review": 2,
+    "failures": 0,
+    "warnings": 0,
+    "groups": {
+      "villa-savoye-public-image-candidates": 3,
+      "villa-savoye-blocked-derived-files": 4,
+      "model-promotion-owner-confirmation": 2,
+      "sogn-benedetg-source-gap": 1
+    }
+  },
+  "decisions": [
+    {
+      "group_id": "villa-savoye-public-image-candidates",
+      "item_id": "villa-savoye-exterior-savoye-3-cc0",
+      "selected_decision": null,
+      "recommended_safe_default": "needs_more_source_context",
+      "public_ready_after_decision": false,
+      "has_owner_note": false,
+      "confirm_command_after_separate_review": null
+    },
+    {
+      "group_id": "villa-savoye-public-image-candidates",
+      "item_id": "villa-savoye-exterior-loc-full",
+      "selected_decision": null,
+      "recommended_safe_default": "needs_more_source_context",
+      "public_ready_after_decision": false,
+      "has_owner_note": false,
+      "confirm_command_after_separate_review": null
+    },
+    {
+      "group_id": "villa-savoye-public-image-candidates",
+      "item_id": "villa-savoye-interior-chaise-cc-by-sa",
+      "selected_decision": null,
+      "recommended_safe_default": "needs_more_source_context",
+      "public_ready_after_decision": false,
+      "has_owner_note": false,
+      "confirm_command_after_separate_review": null
+    },
+    {
+      "group_id": "villa-savoye-blocked-derived-files",
+      "item_id": "public/archive-media/villa-savoye/exterior/villa-savoye-loc-exterior-crop.jpg",
+      "selected_decision": null,
+      "recommended_safe_default": "keep_blocked",
+      "public_ready_after_decision": false,
+      "has_owner_note": false,
+      "confirm_command_after_separate_review": null
+    },
+    {
+      "group_id": "villa-savoye-blocked-derived-files",
+      "item_id": "public/archive-media/villa-savoye/plan/villa-savoye-ground-floor-diagram.svg",
+      "selected_decision": null,
+      "recommended_safe_default": "keep_blocked",
+      "public_ready_after_decision": false,
+      "has_owner_note": false,
+      "confirm_command_after_separate_review": null
+    },
+    {
+      "group_id": "villa-savoye-blocked-derived-files",
+      "item_id": "public/archive-media/villa-savoye/section/villa-savoye-long-section-diagram.svg",
+      "selected_decision": null,
+      "recommended_safe_default": "keep_blocked",
+      "public_ready_after_decision": false,
+      "has_owner_note": false,
+      "confirm_command_after_separate_review": null
+    },
+    {
+      "group_id": "villa-savoye-blocked-derived-files",
+      "item_id": "public/archive-models/villa-savoye/low.glb",
+      "selected_decision": null,
+      "recommended_safe_default": "keep_blocked",
+      "public_ready_after_decision": false,
+      "has_owner_note": false,
+      "confirm_command_after_separate_review": null
+    },
+    {
+      "group_id": "model-promotion-owner-confirmation",
+      "item_id": "villa-savoye",
+      "selected_decision": null,
+      "recommended_safe_default": "needs_more_source_context",
+      "public_ready_after_decision": false,
+      "has_owner_note": false,
+      "confirm_command_after_separate_review": "npm run brain:promote-model -- --entry villa-savoye --confirm-public-model"
+    },
+    {
+      "group_id": "model-promotion-owner-confirmation",
+      "item_id": "alterszentrum-kloster-ingenbohl",
+      "selected_decision": null,
+      "recommended_safe_default": "needs_more_source_context",
+      "public_ready_after_decision": false,
+      "has_owner_note": false,
+      "confirm_command_after_separate_review": "npm run brain:promote-model -- --entry alterszentrum-kloster-ingenbohl --confirm-public-model"
+    },
+    {
+      "group_id": "sogn-benedetg-source-gap",
+      "item_id": "sogn-benedetg-source-gap",
+      "selected_decision": null,
+      "recommended_safe_default": "needs_more_source_context",
+      "public_ready_after_decision": false,
+      "has_owner_note": false,
+      "confirm_command_after_separate_review": null
+    }
+  ],
+  "failures": [],
+  "warnings": [],
+  "next_actions": [
+    "Owner fills selected_decision per pending item.",
+    "Re-run this check before any promotion preparation."
+  ]
+}
