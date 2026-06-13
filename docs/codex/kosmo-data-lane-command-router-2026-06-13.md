@@ -1,6 +1,6 @@
 # Kosmo Data-Lane Command Router
 
-Generated: 2026-06-13T21:49:14.091Z
+Generated: 2026-06-13T21:54:42.606Z
 Status: `worker_router_guarded_review_only`
 
 ## Summary
@@ -74,6 +74,7 @@ Forbidden now:
 - `npm run kosmo:owner-review-session-brief-check`
 - `npm run kosmo:overseer-sync-board`
 - `npm run kosmo:overseer-sync-board-check`
+- `npm run kosmo:worker-boundary-pack`
 
 ## Blocked Commands Now
 

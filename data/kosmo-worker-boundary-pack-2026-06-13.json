@@ -1,0 +1,126 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-13T21:55:58.317Z",
+  "status": "worker_boundary_pack_review_only_locked",
+  "policy": {
+    "metadata_only": true,
+    "reads_private_content": false,
+    "copies_private_content": false,
+    "public_writes_allowed": false,
+    "public_ready_allowed": false,
+    "local_worker_git_allowed": false,
+    "note": "This pack is a single worker-facing boundary map. It does not change source-root decisions, unlock private diagnostics, promote assets or write public state."
+  },
+  "source_refs": [
+    "data/kosmodata-lane-sweep-2026-06-13.json",
+    "data/kosmo-data-lane-command-router-2026-06-13.json",
+    "data/kosmo-source-root-blocker-refresh-2026-06-13.json"
+  ],
+  "hard_state": {
+    "data_lane": "26/26",
+    "data_lane_status": "kosmodata_lane_sweep_review_only_passed",
+    "source_root_blocker_status": "source_root_blocker_still_active",
+    "source_root_candidates": 708,
+    "source_root_probable_libraries": 0,
+    "source_root_workflow_mirrors": 64,
+    "onedrive_marker_leaf_missing": [
+      59,
+      58,
+      58
+    ],
+    "selected_root_exists": false,
+    "private_diagnostic_allowed": false,
+    "private_inventory_allowed": false,
+    "owner_open_items": 16,
+    "asset_open_human_reviews": 6,
+    "public_ready_total": 0
+  },
+  "worker_boundaries": [
+    {
+      "worker_id": "kosmo-local-llm",
+      "command_scope": "metadata_review_only",
+      "allowed_tasks": [
+        "summarize existing JSON/Markdown reports",
+        "draft gap maps and checklists from repo-visible metadata",
+        "prepare local-only private inventory row shapes from templates",
+        "propose source-search keywords without reading private files"
+      ],
+      "blocked_tasks": [
+        "read or OCR private books, PDFs, plans, lectures or images",
+        "copy private excerpts into Git",
+        "write public-ready flags",
+        "run Git, cloud, deploy or external upload commands"
+      ]
+    },
+    {
+      "worker_id": "codex-central-overseer",
+      "command_scope": "review_gate_code_ui_private_push",
+      "allowed_tasks": [
+        "add validators and status reports",
+        "run review-only sweeps",
+        "review local worker outputs for high-risk terms",
+        "push scoped private commits with explicit staged files"
+      ],
+      "blocked_tasks": [
+        "select a source root from weak path signals",
+        "promote public assets from review-only status",
+        "treat previous chat signals as current owner decisions"
+      ]
+    },
+    {
+      "worker_id": "claude-code-kosmooverseer",
+      "command_scope": "parallel_review_owner_decision_recording",
+      "allowed_tasks": [
+        "review Codex handoffs",
+        "challenge provenance, source-root and rights assumptions",
+        "record explicit owner decisions in the approved session files",
+        "request rerun of diagnostics after storage changes"
+      ],
+      "blocked_tasks": [
+        "bypass source-root decision session",
+        "use workflow mirrors as the large private library",
+        "start private extraction while blocker refresh is active"
+      ]
+    }
+  ],
+  "allowed_commands_now": [
+    "npm run kosmo:data-lane-sweep",
+    "npm run kosmo:private-inventory-output-template",
+    "npm run kosmo:private-inventory-output-check",
+    "npm run kosmo:human-decision-owner-batches",
+    "npm run kosmo:source-root-blocker-refresh",
+    "npm run kosmo:owner-decision-session-check",
+    "npm run kosmo:owner-review-packet-check",
+    "npm run kosmo:owner-review-session-brief",
+    "npm run kosmo:owner-review-session-brief-check",
+    "npm run kosmo:overseer-sync-board",
+    "npm run kosmo:overseer-sync-board-check",
+    "npm run kosmo:worker-boundary-pack"
+  ],
+  "blocked_commands_now": [
+    {
+      "command": "npm run kosmo:private-library-diagnostic -- --roots \"<selected-root>\"",
+      "reason": "Source-root decision session has not passed with private_diagnostic_allowed=true."
+    },
+    {
+      "command": "private inventory extraction or source-dependent asset authoring",
+      "reason": "Private source inventory plan is still blocked."
+    },
+    {
+      "command": "public promotion / public_ready=true / R2-D1 public writes",
+      "reason": "Separate owner, provenance and rights reviews are still required."
+    }
+  ],
+  "escalation_triggers": [
+    "real private library root is mounted or selected",
+    "OneDrive sync markers are repaired",
+    "source-root decision check reports private_diagnostic_allowed=true",
+    "owner provides explicit current answers for owner review packet"
+  ],
+  "next_best_actions": [
+    "Keep worker activity metadata-only until source-root blocker clears.",
+    "Use this pack as the first local-LLM/Claude instruction boundary before any KosmoReferences task.",
+    "After a storage change, rerun source-root diagnostics, blocker refresh, command router and this pack.",
+    "Keep Villa Savoye, Sogn Benedetg and Ingenbohl pilots review-only until separate provenance and rights gates pass."
+  ]
+}

@@ -58,6 +58,7 @@ Nutze:
 - `examples/kosmo-references/provenance/source-root-decision-session-2026-06-13.json`
 - `data/kosmo-source-root-decision-session-check-2026-06-13.json`
 - `data/kosmo-private-source-inventory-plan-2026-06-13.json`
+- `data/kosmo-worker-boundary-pack-2026-06-13.json`
 - `examples/kosmo-references/private-inventory/private-inventory-output-template-2026-06-13.json`
 - `data/kosmo-private-inventory-output-check-2026-06-13.json`
 - `data/kosmo-data-lane-command-router-2026-06-13.json`
@@ -90,6 +91,7 @@ Nutze:
 - `docs/codex/kosmo-source-root-decision-session-2026-06-13.md`
 - `docs/codex/kosmo-source-root-decision-session-check-2026-06-13.md`
 - `docs/codex/kosmo-private-source-inventory-plan-2026-06-13.md`
+- `docs/codex/kosmo-worker-boundary-pack-2026-06-13.md`
 - `docs/codex/kosmo-private-inventory-output-template-2026-06-13.md`
 - `docs/codex/kosmo-private-inventory-output-check-2026-06-13.md`
 - `docs/codex/kosmo-data-lane-command-router-2026-06-13.md`
@@ -149,6 +151,7 @@ Aktueller harter Stand:
 - Source-Root Locator: 708 Kandidaten, 0 probable large private libraries, 64 Workflow-/Projektspiegel, 38 OneDrive-like Roots, 5 Roots mit Sync-Errors; Owner/Overseer muss echten Root auswaehlen oder Archiv/OneDrive korrekt mounten.
 - Source-Root Selection Brief: 10 Optionen, Status `source_root_owner_selection_needed`; Sogn private inventory, Ingenbohl PDF private extraction und source-dependent asset authoring bleiben blockiert bis zur echten Root-Auswahl.
 - Source-Root Blocker Refresh: `source_root_blocker_still_active`, OneDrive 59/58/58 Marker/Leaf/Missing, 0 probable Libraries, private diagnostic nicht erlaubt.
+- Worker Boundary Pack: `worker_boundary_pack_review_only_locked`, public-ready 0, private diagnostic false, Git/Cloud/Public writes fuer lokale Worker verboten.
 - Source-Root Decision Session: `passed_pending_owner_input`, selected decision pending, private diagnostic nicht erlaubt, 0 public-ready.
 - Private Source Inventory Plan: `private_metadata_inventory_blocked`, private diagnostic nicht erlaubt, 0 public-ready.
 - Private Inventory Output Check: `private_inventory_output_contract_passed`, 3 Piloten, 0 Failures, 0 Public-ready Hits.
