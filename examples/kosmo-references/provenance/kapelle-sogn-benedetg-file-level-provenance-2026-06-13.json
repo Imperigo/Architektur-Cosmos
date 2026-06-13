@@ -1,0 +1,32 @@
+{
+  "schema_version": "0.1",
+  "created_at": "2026-06-13",
+  "status": "review_only_inventory",
+  "entry_id": "kapelle-sogn-benedetg",
+  "title": "Kapelle Sogn Benedetg File-Level Provenance Inventory",
+  "purpose": "Record that no local Sogn Benedetg media/model files are currently available for file-level provenance review. This keeps the Swiss timber pilot link-only until reviewed local or generated files exist.",
+  "source_refs": [
+    "examples/kosmo-references/entry-drafts/kapelle-sogn-benedetg.entry-draft.json",
+    "examples/kosmo-references/source-packages/kapelle-sogn-benedetg-public-source-candidate-2026-06-13/source-package.json",
+    "data/kosmoreferences-pilot-gap-map-2026-06-13.json"
+  ],
+  "policy": {
+    "public_ready": false,
+    "rule": "Public promotion requires concrete files plus file-level source URL, generation/build evidence, author/creator, license evidence, attribution decision and human review.",
+    "allowed_current_use": "link_only_public_source_candidate"
+  },
+  "summary": {
+    "files": 0,
+    "media_files": 0,
+    "model_files": 0,
+    "public_ready_files": 0,
+    "blocked_files": 0,
+    "slots": {}
+  },
+  "files": [],
+  "next_actions": [
+    "Search local private books, ETH/HSLU lectures and OneDrive library for Sogn Benedetg source material.",
+    "Add only link-only fingerprints or private review extracts until rights are clarified.",
+    "Generate own study assets only after source basis and review status are explicit."
+  ]
+}

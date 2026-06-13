@@ -39,4 +39,3 @@ Status: `passed`
 - Keep all review-only drafts out of public publishing until file-level rights are verified.
 - Run separate provenance review before promoting Villa Savoye local media, plan vectors or GLB models.
 - Use this report as a KosmoOrbit read-only rights/provenance status card.
-

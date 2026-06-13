@@ -33,4 +33,3 @@ Status: `passed`
 - `asset_library_report:codex-pilot-library` -> `read_json`
 - `asset_library:kosmoreferences-pilot-seed-library-2026-06-13` -> `read_json`
 - `asset_library_report:kosmoreferences-pilot-seed-library-2026-06-13` -> `read_json`
-

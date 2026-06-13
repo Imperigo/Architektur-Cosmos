@@ -1,0 +1,54 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-13T17:06:51.411Z",
+  "inventory_path": "examples/kosmo-references/provenance/alterszentrum-kloster-ingenbohl-file-level-provenance-2026-06-13.json",
+  "entry_id": "alterszentrum-kloster-ingenbohl",
+  "status": "passed",
+  "policy": {
+    "public_safe_rights": [
+      "own_work",
+      "licensed",
+      "public_domain"
+    ],
+    "rule": "Public-ready requires public-safe rights plus file-level source/creator/license review."
+  },
+  "summary": {
+    "files": 1,
+    "existing_files": 1,
+    "public_ready_files": 0,
+    "blocked_files": 1,
+    "failures": 0,
+    "warnings": 0,
+    "rights_status": {
+      "derived_asset_review_required": 1
+    },
+    "slots": {
+      "model": 1
+    }
+  },
+  "files": [
+    {
+      "id": "ingenbohl-low-glb",
+      "slot": "model",
+      "path": "public/archive-models/alterszentrum-kloster-ingenbohl/low.glb",
+      "mime_type": "model/gltf-binary",
+      "bytes": 63176,
+      "actual_bytes": 63176,
+      "sha256": "bb1cffcaa254e8a736b16ccde1ae5dfdec6a657ddae4dcaed84b68b9752ccb02",
+      "actual_sha256": "bb1cffcaa254e8a736b16ccde1ae5dfdec6a657ddae4dcaed84b68b9752ccb02",
+      "exists": true,
+      "integrity": "pass",
+      "filename_rights_hint": "generated_or_local_model_unknown",
+      "rights_status": "derived_asset_review_required",
+      "public_ready": false,
+      "review_requirement_count": 5
+    }
+  ],
+  "failures": [],
+  "warnings": [],
+  "next_actions": [
+    "Fill source URL, creator/license evidence and attribution decisions for candidate public images.",
+    "Keep derived diagrams and models blocked until their source basis and generation/build logs are reviewed.",
+    "Regenerate this check after every file-level provenance update."
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-13T17:06:51.412Z",
+  "inventory_path": "examples/kosmo-references/provenance/kapelle-sogn-benedetg-file-level-provenance-2026-06-13.json",
+  "entry_id": "kapelle-sogn-benedetg",
+  "status": "passed",
+  "policy": {
+    "public_safe_rights": [
+      "own_work",
+      "licensed",
+      "public_domain"
+    ],
+    "rule": "Public-ready requires public-safe rights plus file-level source/creator/license review."
+  },
+  "summary": {
+    "files": 0,
+    "existing_files": 0,
+    "public_ready_files": 0,
+    "blocked_files": 0,
+    "failures": 0,
+    "warnings": 0,
+    "rights_status": {},
+    "slots": {}
+  },
+  "files": [],
+  "failures": [],
+  "warnings": [],
+  "next_actions": [
+    "Fill source URL, creator/license evidence and attribution decisions for candidate public images.",
+    "Keep derived diagrams and models blocked until their source basis and generation/build logs are reviewed.",
+    "Regenerate this check after every file-level provenance update."
+  ]
+}
