@@ -1,0 +1,85 @@
+{
+  "checked_at": "2026-06-13T17:13:41.906Z",
+  "package_path": "examples/kosmo-references/source-packages/alterszentrum-kloster-ingenbohl-public-source-candidate-2026-06-13/source-package.json",
+  "package_id": "alterszentrum-kloster-ingenbohl-public-source-candidate-2026-06-13",
+  "title": "Alterszentrum Kloster Ingenbohl Public Source Candidate",
+  "status": "passed",
+  "policy": {
+    "copied_content": false,
+    "request_mode": "HEAD first; fallback to GET with Range bytes=0-0 when HEAD is rejected",
+    "note": "This checker records availability metadata only. It does not store page bodies, screenshots, images, plans or PDF text."
+  },
+  "summary": {
+    "links": 5,
+    "reachable": 5,
+    "warnings": 0
+  },
+  "checks": [
+    {
+      "id": "boltshauser-alterszentrum-kloster-ingenbohl",
+      "title": "Boltshauser Architekten: Alterszentrum Kloster Ingenbohl",
+      "url": "https://boltshauser.info/projekt/alterszentrum-kloster-ingenbohl/",
+      "source_role": "primary_source",
+      "rights_status": "link_only",
+      "status": "reachable",
+      "http_status": 200,
+      "final_url": "https://boltshauser.info/projekt/alterszentrum-kloster-ingenbohl/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_length": null,
+      "method": "HEAD"
+    },
+    {
+      "id": "schnetzer-puskas-alterszentrum-kloster-ingenbohl",
+      "title": "Schnetzer Puskas: Alterszentrum Kloster Ingenbohl",
+      "url": "https://www.schnetzerpuskas.com/de/projekte/3705-alterszentrum-kloster-ingenbohl",
+      "source_role": "secondary_source",
+      "rights_status": "link_only",
+      "status": "reachable",
+      "http_status": 200,
+      "final_url": "https://www.schnetzerpuskas.com/de/projekte/3705-alterszentrum-kloster-ingenbohl",
+      "content_type": "text/html;charset=UTF-8",
+      "content_length": null,
+      "method": "HEAD"
+    },
+    {
+      "id": "halter-alterszentrum-kloster-ingenbohl",
+      "title": "Halter: Alterszentrum Kloster Ingenbohl",
+      "url": "https://www.halter.ch/de/projekte/alterszentrum-kloster-ingenbohl",
+      "source_role": "secondary_source",
+      "rights_status": "link_only",
+      "status": "reachable",
+      "http_status": 200,
+      "final_url": "https://www.halter.ch/de/projekte/alterszentrum-kloster-ingenbohl",
+      "content_type": "text/html; charset=utf-8",
+      "content_length": null,
+      "method": "HEAD"
+    },
+    {
+      "id": "kloster-ingenbohl-neues-alterszentrum-st-josef",
+      "title": "Kloster Ingenbohl: Neues Alterszentrum St. Josef",
+      "url": "https://www.kloster-ingenbohl.ch/neues-alterszentrum-st-josef/",
+      "source_role": "primary_source",
+      "rights_status": "link_only",
+      "status": "reachable",
+      "http_status": 200,
+      "final_url": "https://www.kloster-ingenbohl.ch/neues-alterszentrum-st-josef/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_length": null,
+      "method": "HEAD"
+    },
+    {
+      "id": "ingenbohl-study-commission-report-2019",
+      "title": "Studienauftrag Kloster Ingenbohl Neubau Alterszentrum: Beurteilungsbericht 2019",
+      "url": "https://schaerburi.ch/images/Projekte/544-Koster_ingenbohl/Final-Beurteilungsbericht-2019-01-31.pdf",
+      "source_role": "secondary_source",
+      "rights_status": "link_only",
+      "status": "reachable",
+      "http_status": 200,
+      "final_url": "https://schaerburi.ch/images/Projekte/544-Koster_ingenbohl/Final-Beurteilungsbericht-2019-01-31.pdf",
+      "content_type": "application/pdf",
+      "content_length": "9910726",
+      "method": "HEAD"
+    }
+  ],
+  "warnings": []
+}

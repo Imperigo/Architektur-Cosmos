@@ -1,0 +1,72 @@
+{
+  "checked_at": "2026-06-13T17:13:39.512Z",
+  "package_path": "examples/kosmo-references/source-packages/kapelle-sogn-benedetg-public-source-candidate-2026-06-13/source-package.json",
+  "package_id": "kapelle-sogn-benedetg-public-source-candidate-2026-06-13",
+  "title": "Kapelle Sogn Benedetg Public Source Candidate",
+  "status": "passed",
+  "policy": {
+    "copied_content": false,
+    "request_mode": "HEAD first; fallback to GET with Range bytes=0-0 when HEAD is rejected",
+    "note": "This checker records availability metadata only. It does not store page bodies, screenshots, images, plans or PDF text."
+  },
+  "summary": {
+    "links": 4,
+    "reachable": 4,
+    "warnings": 0
+  },
+  "checks": [
+    {
+      "id": "holzbaukultur-kapelle-sogn-benedetg",
+      "title": "Holzbaukultur: Kapelle Sogn Benedetg, Sumvitg",
+      "url": "https://www.holzbaukultur.ch/de/bauten/kapelle-sogn-benedetg-sumvitg.php",
+      "source_role": "secondary_source",
+      "rights_status": "link_only",
+      "status": "reachable",
+      "http_status": 200,
+      "final_url": "https://www.holzbaukultur.ch/de/bauten/kapelle-sogn-benedetg-sumvitg.php",
+      "content_type": "text/html; charset=UTF-8",
+      "content_length": null,
+      "method": "HEAD"
+    },
+    {
+      "id": "surselva-tourismus-kapelle-sogn-benedetg",
+      "title": "Surselva Tourismus: Kapelle Sogn Benedetg, Sumvitg",
+      "url": "https://www.surselva.info/Media/Attraktionen/Kapelle-Sogn-Benedetg-Sumvitg",
+      "source_role": "secondary_source",
+      "rights_status": "link_only",
+      "status": "reachable",
+      "http_status": 200,
+      "final_url": "https://www.surselva.info/de/mia-surselva/kultur/kultur-architektur/kapelle-sogn-benedetg-sumvitg",
+      "content_type": "text/html; charset=utf-8",
+      "content_length": null,
+      "method": "HEAD"
+    },
+    {
+      "id": "graubuenden-ferien-kapelle-s-benedetg",
+      "title": "Graubünden Ferien: Kapelle S. Benedetg",
+      "url": "https://www.graubuenden.ch/de/ausflugsziele/kapelle-s-benedetg",
+      "source_role": "secondary_source",
+      "rights_status": "link_only",
+      "status": "reachable",
+      "http_status": 200,
+      "final_url": "https://www.graubuenden.ch/de/ausflugsziele/kapelle-s-benedetg",
+      "content_type": "text/html; charset=UTF-8",
+      "content_length": "45908",
+      "method": "HEAD"
+    },
+    {
+      "id": "fiftytwo-best-buildings-caplutta-sogn-benedetg",
+      "title": "52 Beste Bauten: Caplutta, Sogn Benedetg",
+      "url": "https://52bestebauten.ch/17-caplutta-sogn-benedetg-sogn-benedetg/",
+      "source_role": "secondary_source",
+      "rights_status": "link_only",
+      "status": "reachable",
+      "http_status": 200,
+      "final_url": "https://52bestebauten.ch/17-caplutta-sogn-benedetg-sogn-benedetg/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_length": null,
+      "method": "HEAD"
+    }
+  ],
+  "warnings": []
+}
