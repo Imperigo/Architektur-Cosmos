@@ -111,6 +111,7 @@
     "kosmo:reference-rights-candidate-check": "node scripts/kosmo-reference-rights-candidate-check.mjs",
     "kosmo:owner-review-decision-check": "node scripts/kosmo-owner-review-decision-check.mjs",
     "kosmo:private-library-diagnostic": "node scripts/kosmo-private-library-diagnostic.mjs",
+    "kosmo:local-worker-ollama-smoke": "node scripts/kosmo-local-worker-ollama-smoke.mjs",
     "kosmo:references-status-card": "node scripts/kosmo-reference-status-card.mjs",
     "kosmo:asset-generate-demo-glb": "node scripts/kosmo-asset-generate-demo-glb.mjs",
     "kosmo:asset-generate-demo-dxf": "node scripts/kosmo-asset-generate-demo-dxf.mjs",

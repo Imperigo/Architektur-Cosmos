@@ -1,0 +1,22 @@
+{
+  "schema_version": "0.1",
+  "checked_at": "2026-06-13T17:43:54.943Z",
+  "status": "passed",
+  "endpoint": "http://127.0.0.1:11434/api/generate",
+  "model": "kosmo-qwen3-coder:30b-a3b-q4km",
+  "duration_ms": 528,
+  "checks": {
+    "http_ok": true,
+    "model_returned": true,
+    "response_non_empty": true,
+    "mentions_review_only": true,
+    "mentions_no_public_promotion": true
+  },
+  "response_length": 398,
+  "response_preview": "**Bitte führen Sie eine schriftliche, nur für Überprüfungs-Zwecke bestimmte Prüfung durch, ohne öffentliche Förderung oder Promotion.**  \n(Translation: Please conduct a written, review-only inspection without public promotion or advocacy.) ",
+  "policy": {
+    "private_content_sent": false,
+    "public_promotion": false,
+    "note": "Smoke prompt contains no private source content. Use Ollama HTTP API for worker automation instead of TTY CLI output."
+  }
+}
