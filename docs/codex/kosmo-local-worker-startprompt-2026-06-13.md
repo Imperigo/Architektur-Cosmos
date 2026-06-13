@@ -86,7 +86,7 @@ gib danach eine kurze Review-Zusammenfassung fuer Codex/Claude aus.
 Aktueller harter Stand:
 
 - `npm run kosmo:data-lane-sweep` ist der taegliche Start-Gate.
-- Data-Lane Sweep: 9/9, review-only passed.
+- Data-Lane Sweep: 11/11, review-only passed.
 - Die drei Pilot-Referenzen bleiben review-only.
 - Pilot Evidence Matrix: 3 Piloten, 12 Gaps, 0 public-ready.
 - Villa Savoye Provenance Brief: 7 Review-Items, 3 spaetere Human-Review-Kandidaten, 4 blockiert, 0 public-ready.
@@ -99,6 +99,7 @@ Aktueller harter Stand:
 - Die grosse private Buch-/ETH-/HSLU-Library ist noch nicht als echter Root sichtbar.
 - Source-Root Locator: 708 Kandidaten, 0 probable large private libraries, 64 Workflow-/Projektspiegel, 38 OneDrive-like Roots, 5 Roots mit Sync-Errors; Owner/Overseer muss echten Root auswaehlen oder Archiv/OneDrive korrekt mounten.
 - Source-Root Selection Brief: 10 Optionen, Status `source_root_owner_selection_needed`; Sogn private inventory, Ingenbohl PDF private extraction und source-dependent asset authoring bleiben blockiert bis zur echten Root-Auswahl.
+- Source-Root Locator und Source-Root Selection Brief sind jetzt feste Steps im Data-Lane Sweep. Der lokale Worker darf diese Blockade nicht umgehen.
 - Im kuratierten Home-OneDrive-Diagnosepfad sind 30 Sync-Error-Marker sichtbar; diesen Spiegel nicht als vollstaendig behandeln.
 - Der tiefere OneDrive-Reparatur-Sweep sieht 59 Marker-Dateien, 58 Leaf-Marker und 58 Aggregate-Missing-Items. Diese Zahl fuer Sync-Reparatur verwenden, nicht ungeprueft mit der DataPanel-Zahl vermischen.
 - `/mnt/archiv` ist in der aktuellen Diagnose kein eigener Mount.
