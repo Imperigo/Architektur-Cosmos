@@ -19,4 +19,3 @@ Status: `passed`
 - `source:villa-savoye-unesco-1321rev-maps-pdf` -> `pass`
 - `artifact:architekturkosmos-ai-workflow-pipeline-markdown` -> `pass`
 - `artifact:villa-savoye-unesco-1321rev-maps-markdown` -> `pass`
-

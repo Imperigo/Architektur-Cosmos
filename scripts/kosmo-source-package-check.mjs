@@ -84,14 +84,18 @@ async function checkPackage(manifest, packagePath, options) {
     requireHash(source.sha256, failures, `source ${source.id} sha256 must be a SHA-256 hex digest`);
     requireInteger(source.bytes, failures, `source ${source.id} bytes must be an integer`);
 
-    const fileResult = await verifyFile(source.path, source.sha256, source.bytes);
+    const fileResult = source.file_type === 'web_link' || /^https?:\/\//.test(source.path)
+      ? verifyWebLinkFingerprint(source.path, source.sha256, source.bytes)
+      : await verifyFile(source.path, source.sha256, source.bytes);
     checks.push({
       kind: 'source',
       id: source.id,
       path: source.path,
       ...fileResult
     });
-    if (fileResult.status === 'missing') {
+    if (fileResult.status === 'link_fingerprint_pass') {
+      // Link-only sources are intentionally not fetched by this local checker.
+    } else if (fileResult.status === 'missing') {
       failures.push(`source file missing: ${source.id} -> ${source.path}`);
     } else if (fileResult.status === 'hash_mismatch' || fileResult.status === 'size_mismatch') {
       failures.push(`source integrity failed: ${source.id} -> ${fileResult.status}`);
@@ -186,6 +190,40 @@ async function verifyFile(rawPath, expectedHash, expectedBytes) {
   } catch {
     return { status: 'missing', resolved_path: filePath, expected_sha256: expectedHash, expected_bytes: expectedBytes };
   }
+}
+
+function verifyWebLinkFingerprint(url, expectedHash, expectedBytes) {
+  const buffer = Buffer.from(url);
+  const actualHash = createHash('sha256').update(buffer).digest('hex');
+  const actualBytes = buffer.length;
+  if (actualHash !== expectedHash) {
+    return {
+      status: 'hash_mismatch',
+      resolved_path: url,
+      expected_sha256: expectedHash,
+      actual_sha256: actualHash,
+      expected_bytes: expectedBytes,
+      actual_bytes: actualBytes
+    };
+  }
+  if (actualBytes !== expectedBytes) {
+    return {
+      status: 'size_mismatch',
+      resolved_path: url,
+      expected_sha256: expectedHash,
+      actual_sha256: actualHash,
+      expected_bytes: expectedBytes,
+      actual_bytes: actualBytes
+    };
+  }
+  return {
+    status: 'link_fingerprint_pass',
+    resolved_path: url,
+    expected_sha256: expectedHash,
+    actual_sha256: actualHash,
+    expected_bytes: expectedBytes,
+    actual_bytes: actualBytes
+  };
 }
 
 function resolvePackagePath(rawPath) {

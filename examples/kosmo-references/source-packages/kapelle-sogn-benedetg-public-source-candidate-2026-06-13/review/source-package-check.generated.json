@@ -1,0 +1,61 @@
+{
+  "checked_at": "2026-06-13T15:59:15.282Z",
+  "package_path": "examples/kosmo-references/source-packages/kapelle-sogn-benedetg-public-source-candidate-2026-06-13/source-package.json",
+  "package_id": "kapelle-sogn-benedetg-public-source-candidate-2026-06-13",
+  "title": "Kapelle Sogn Benedetg Public Source Candidate",
+  "status": "passed",
+  "summary": {
+    "sources": 4,
+    "extraction_artifacts": 0,
+    "candidate_projects": 1,
+    "review_gates": 7
+  },
+  "checks": [
+    {
+      "kind": "source",
+      "id": "holzbaukultur-kapelle-sogn-benedetg",
+      "path": "https://www.holzbaukultur.ch/de/bauten/kapelle-sogn-benedetg-sumvitg.php",
+      "status": "link_fingerprint_pass",
+      "resolved_path": "https://www.holzbaukultur.ch/de/bauten/kapelle-sogn-benedetg-sumvitg.php",
+      "expected_sha256": "90ba570464fde83fb1dfbd87617e1a166a9a882a4e3681edfba60d1c15eb5103",
+      "actual_sha256": "90ba570464fde83fb1dfbd87617e1a166a9a882a4e3681edfba60d1c15eb5103",
+      "expected_bytes": 72,
+      "actual_bytes": 72
+    },
+    {
+      "kind": "source",
+      "id": "surselva-tourismus-kapelle-sogn-benedetg",
+      "path": "https://www.surselva.info/Media/Attraktionen/Kapelle-Sogn-Benedetg-Sumvitg",
+      "status": "link_fingerprint_pass",
+      "resolved_path": "https://www.surselva.info/Media/Attraktionen/Kapelle-Sogn-Benedetg-Sumvitg",
+      "expected_sha256": "749edf53509305e11fc23fb7fc925a0064a186f923a1b823333c45873a69e05a",
+      "actual_sha256": "749edf53509305e11fc23fb7fc925a0064a186f923a1b823333c45873a69e05a",
+      "expected_bytes": 74,
+      "actual_bytes": 74
+    },
+    {
+      "kind": "source",
+      "id": "graubuenden-ferien-kapelle-s-benedetg",
+      "path": "https://www.graubuenden.ch/de/ausflugsziele/kapelle-s-benedetg",
+      "status": "link_fingerprint_pass",
+      "resolved_path": "https://www.graubuenden.ch/de/ausflugsziele/kapelle-s-benedetg",
+      "expected_sha256": "0c1ac12d8f097e7210818335c432b876203afeb1cda1eca7d44d3a4e37bb6974",
+      "actual_sha256": "0c1ac12d8f097e7210818335c432b876203afeb1cda1eca7d44d3a4e37bb6974",
+      "expected_bytes": 62,
+      "actual_bytes": 62
+    },
+    {
+      "kind": "source",
+      "id": "fiftytwo-best-buildings-caplutta-sogn-benedetg",
+      "path": "https://52bestebauten.ch/17-caplutta-sogn-benedetg-sogn-benedetg/",
+      "status": "link_fingerprint_pass",
+      "resolved_path": "https://52bestebauten.ch/17-caplutta-sogn-benedetg-sogn-benedetg/",
+      "expected_sha256": "d92ad25b8ec6c4c2f5002cf24f1abc8e0468fb885bf1921b507c415bce52a73a",
+      "actual_sha256": "d92ad25b8ec6c4c2f5002cf24f1abc8e0468fb885bf1921b507c415bce52a73a",
+      "expected_bytes": 65,
+      "actual_bytes": 65
+    }
+  ],
+  "failures": [],
+  "warnings": []
+}

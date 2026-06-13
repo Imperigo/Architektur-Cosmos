@@ -56,6 +56,7 @@ Der Check prueft:
 - Pflichtfelder und ID-Formate;
 - Source-/Artifact-Verknuepfungen;
 - Datei-Existenz, SHA-256 und Byte-Groesse fuer lokale Dateien;
+- URL-Fingerprint fuer `web_link`-Quellen, ohne Webinhalte zu kopieren;
 - Review-Gate-Abdeckung;
 - Public/Private-Split-Regeln.
 

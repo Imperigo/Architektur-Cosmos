@@ -1,0 +1,127 @@
+{
+  "schema_version": "0.1",
+  "package_id": "kapelle-sogn-benedetg-public-source-candidate-2026-06-13",
+  "title": "Kapelle Sogn Benedetg Public Source Candidate",
+  "description": "Link-only public-source candidate for the Swiss timber pilot. No web page content, media, plans or screenshots are copied into this package.",
+  "created_at": "2026-06-13",
+  "updated_at": "2026-06-13",
+  "status": "review_ready",
+  "rights_scope": "public_candidate",
+  "source_kind": "public_web",
+  "source_root": "link_only",
+  "public_policy": {
+    "source_files_public": false,
+    "extracted_text_public": false,
+    "derived_summary_public": true,
+    "notes": [
+      "This package stores link metadata and URL fingerprints only.",
+      "Images, plans, page text and screenshots remain link-only unless file-level rights are cleared.",
+      "The project may be described publicly through own-written summaries and source links after review."
+    ]
+  },
+  "sources": [
+    {
+      "id": "holzbaukultur-kapelle-sogn-benedetg",
+      "title": "Holzbaukultur: Kapelle Sogn Benedetg, Sumvitg",
+      "path": "https://www.holzbaukultur.ch/de/bauten/kapelle-sogn-benedetg-sumvitg.php",
+      "file_type": "web_link",
+      "source_role": "secondary_source",
+      "rights_status": "link_only",
+      "sha256": "90ba570464fde83fb1dfbd87617e1a166a9a882a4e3681edfba60d1c15eb5103",
+      "bytes": 72,
+      "notes": "Public link used for timber-building context, avalanche/wettbewerb background and hölzerner Neubau wording. URL fingerprint only."
+    },
+    {
+      "id": "surselva-tourismus-kapelle-sogn-benedetg",
+      "title": "Surselva Tourismus: Kapelle Sogn Benedetg, Sumvitg",
+      "path": "https://www.surselva.info/Media/Attraktionen/Kapelle-Sogn-Benedetg-Sumvitg",
+      "file_type": "web_link",
+      "source_role": "secondary_source",
+      "rights_status": "link_only",
+      "sha256": "749edf53509305e11fc23fb7fc925a0064a186f923a1b823333c45873a69e05a",
+      "bytes": 74,
+      "notes": "Public link used for location, Peter Zumthor attribution, timber construction, local building style and teardrop plan. URL fingerprint only."
+    },
+    {
+      "id": "graubuenden-ferien-kapelle-s-benedetg",
+      "title": "Graubünden Ferien: Kapelle S. Benedetg",
+      "path": "https://www.graubuenden.ch/de/ausflugsziele/kapelle-s-benedetg",
+      "file_type": "web_link",
+      "source_role": "secondary_source",
+      "rights_status": "link_only",
+      "sha256": "0c1ac12d8f097e7210818335c432b876203afeb1cda1eca7d44d3a4e37bb6974",
+      "bytes": 62,
+      "notes": "Public tourism link used for timber chapel and shingle/landscape context. URL fingerprint only."
+    },
+    {
+      "id": "fiftytwo-best-buildings-caplutta-sogn-benedetg",
+      "title": "52 Beste Bauten: Caplutta, Sogn Benedetg",
+      "path": "https://52bestebauten.ch/17-caplutta-sogn-benedetg-sogn-benedetg/",
+      "file_type": "web_link",
+      "source_role": "secondary_source",
+      "rights_status": "link_only",
+      "sha256": "d92ad25b8ec6c4c2f5002cf24f1abc8e0468fb885bf1921b507c415bce52a73a",
+      "bytes": 65,
+      "notes": "Public cultural/architecture context link for Graubünden and Zumthor significance. URL fingerprint only."
+    }
+  ],
+  "extraction_artifacts": [],
+  "candidate_projects": [
+    {
+      "id": "kapelle-sogn-benedetg",
+      "title": "Kapelle Sogn Benedetg",
+      "architects": [
+        "Peter Zumthor"
+      ],
+      "confidence": 0.82,
+      "promotion_status": "draft_candidate",
+      "evidence": [
+        "Multiple public source links identify the chapel in Sumvitg/Sogn Benedetg.",
+        "Public source links support Peter Zumthor attribution and timber-construction relevance.",
+        "Package stores link metadata only; media and plan reproduction remain blocked."
+      ]
+    }
+  ],
+  "review_gates": [
+    {
+      "id": "source_integrity",
+      "status": "pass",
+      "notes": "URL fingerprints and byte counts recorded for all link-only sources."
+    },
+    {
+      "id": "rights",
+      "status": "partial",
+      "notes": "Links and own summaries can support review; no media, plans, screenshots or page text may be republished from this package."
+    },
+    {
+      "id": "text_quality",
+      "status": "partial",
+      "notes": "Own-written summary can be created after source review; no copied web text is stored here."
+    },
+    {
+      "id": "layout_quality",
+      "status": "not_run",
+      "notes": "No plan, section, image-layout or geometry extraction has been run."
+    },
+    {
+      "id": "entry_mapping",
+      "status": "partial",
+      "notes": "Candidate is suitable as interim Swiss timber reference, but needs a local book/ETH/HSLU source package before final pilot promotion."
+    },
+    {
+      "id": "asset_mapping",
+      "status": "not_run",
+      "notes": "Potential assets are Holzschindel-Huelle, timber interior/structure logic, light band and teardrop/leaf plan geometry; all remain generated/review-only."
+    },
+    {
+      "id": "public_private_split",
+      "status": "pass",
+      "notes": "The package contains link metadata only and keeps all source content link-only."
+    }
+  ],
+  "next_actions": [
+    "Use this package to draft a review-only Kapelle Sogn Benedetg entry stub.",
+    "Search Andrins book/ETH/HSLU library for a stronger local source package.",
+    "Do not derive public media or plans until file-level rights are cleared."
+  ]
+}
