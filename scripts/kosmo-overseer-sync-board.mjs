@@ -40,6 +40,7 @@ async function main() {
   const mirrorStatus = mirrorStatusFor(inboxes);
   const activeInboxCount = inboxes.filter((inbox) => inbox.exists).length;
   const latestMissingMirrors = latestHandoffs.filter((handoff) => handoff.mirrored_inboxes < activeInboxCount).length;
+  const handoffRange = rangeLabel(latestHandoffs);
 
   const board = {
     schema_version: '0.1',
@@ -100,7 +101,7 @@ async function main() {
       }
     ],
     next_actions: [
-      'Claude/KosmoOverseer reviews latest handoffs 111-114 before editing related files.',
+      `Claude/KosmoOverseer reviews latest handoffs ${handoffRange} before editing related files.`,
       'Use the owner review session brief as the next owner-facing entry point.',
       'Keep local worker tasks review-only while source-root and owner answers are pending.',
       'After any explicit owner answer, update intake first, then rerun guards and this sync board.'
@@ -182,6 +183,12 @@ function compareHandoffFiles(left, right) {
 function handoffNumber(filename) {
   const match = filename.match(/synergiebericht-(\d+)/);
   return match ? Number(match[1]) : 0;
+}
+
+function rangeLabel(handoffs) {
+  const numbers = handoffs.map((handoff) => handoffNumber(handoff.filename)).filter(Boolean);
+  if (numbers.length === 0) return 'n/a';
+  return `${Math.min(...numbers)}-${Math.max(...numbers)}`;
 }
 
 function mirrorStatusFor(inboxes) {

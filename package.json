@@ -148,6 +148,7 @@
     "kosmo:data-lane-command-router": "node scripts/kosmo-data-lane-command-router.mjs",
     "kosmo:night-loop-checkpoint": "node scripts/kosmo-night-loop-checkpoint.mjs",
     "kosmo:overseer-sync-board": "node scripts/kosmo-overseer-sync-board.mjs",
+    "kosmo:overseer-sync-board-check": "node scripts/kosmo-overseer-sync-board-check.mjs",
     "kosmo:onedrive-sync-errors": "node scripts/kosmo-onedrive-sync-error-summary.mjs",
     "kosmo:asset-generate-demo-glb": "node scripts/kosmo-asset-generate-demo-glb.mjs",
     "kosmo:asset-generate-demo-dxf": "node scripts/kosmo-asset-generate-demo-dxf.mjs",

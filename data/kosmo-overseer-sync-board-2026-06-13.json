@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-13T21:40:06.540Z",
+  "generated_at": "2026-06-13T21:44:16.905Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 113
+      "files": 114
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 143
+      "files": 144
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-13-codex-synergiebericht-115-overseer-sync-board.md",
+      "title": "Codex Synergiebericht 115 - Overseer Sync Board",
+      "mirrored_inboxes": 2,
+      "bytes": 1292,
+      "modified_at": "2026-06-13T21:40:41.573Z"
+    },
     {
       "filename": "2026-06-13-codex-synergiebericht-114-local-worker-safe-next-tasks.md",
       "title": "Codex Synergiebericht 114 - Local Worker Safe Next Tasks",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1799,
       "modified_at": "2026-06-13T21:02:51.596Z"
-    },
-    {
-      "filename": "2026-06-13-codex-synergiebericht-107-owner-session-edit-plan.md",
-      "title": "Codex Synergiebericht 107 - Owner Session Edit Plan",
-      "mirrored_inboxes": 2,
-      "bytes": 2054,
-      "modified_at": "2026-06-13T20:58:41.137Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 111-114 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 108-115 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."
