@@ -1,0 +1,225 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-13T21:25:12.485Z",
+  "status": "owner_review_session_brief_ready",
+  "policy": {
+    "records_decisions": false,
+    "writes_session_files": false,
+    "applies_decisions": false,
+    "writes_public_files": false,
+    "writes_public_manifest": false,
+    "public_ready_after_brief": 0,
+    "note": "This brief prepares the next owner conversation. It classifies prior chat signals but does not record answers or apply decisions."
+  },
+  "source_refs": [
+    "data/kosmo-owner-review-packet-2026-06-13.json",
+    "data/kosmo-owner-review-packet-check-2026-06-13.json",
+    "data/kosmo-owner-question-brief-2026-06-13.json",
+    "data/kosmo-owner-answer-sheet-2026-06-13.json",
+    "data/kosmo-data-lane-command-router-2026-06-13.json"
+  ],
+  "summary": {
+    "packet_status": "owner_review_packet_ready",
+    "packet_guard_status": "owner_review_packet_guard_passed",
+    "router_status": "worker_router_guarded_review_only",
+    "questions": 6,
+    "prior_signals": 5,
+    "prior_signals_recordable_now": 0,
+    "required_owner_answers": 6,
+    "source_root_options": 10,
+    "actionable_decisions_written": 0,
+    "public_ready_after_brief": 0
+  },
+  "prior_owner_signals": [
+    {
+      "id": "pilot_reference_scope",
+      "user_signal": "Villa Savoye, ein Schweizer Holzbau, und ein Bau von Roger Boltshauser/Frauenkloster Ingenbohl.",
+      "classification": "already_reflected_in_pilot_scope",
+      "recordable_now": false,
+      "reason": "The pilot scope is already represented by Villa Savoye, Sogn Benedetg and Ingenbohl. It does not answer the current source-root or owner-review card decisions."
+    },
+    {
+      "id": "sample_depth",
+      "user_signal": "Von allem eines.",
+      "classification": "scope_hint_not_decision",
+      "recordable_now": false,
+      "reason": "This supports small pilot batches, but does not select a source root, asset review target or public promotion decision."
+    },
+    {
+      "id": "local_first_onedrive_books_eth_hslu",
+      "user_signal": "Zuerst lokal; OneDrive hat eine riesige Library; Architektur-Referenzen sollen spaeter aus digitalen Buechern, ETH- und HSLU-Vorlesungen kommen.",
+      "classification": "source_root_hint_only",
+      "recordable_now": false,
+      "reason": "This confirms the desired source family, but no exact visible path is selected and OneDrive still has sync-error markers."
+    },
+    {
+      "id": "same_day_nightshift",
+      "user_signal": "Beides heute, Nachtschicht bis Nutzlimit.",
+      "classification": "execution_cadence",
+      "recordable_now": false,
+      "reason": "This authorizes autonomous preparation work, not data-lane decisions."
+    },
+    {
+      "id": "autonomous_private_github_push",
+      "user_signal": "GitHub staendig selbst autonom pushen, privat.",
+      "classification": "operational_permission",
+      "recordable_now": false,
+      "reason": "This guides Codex commit/push behavior, but does not alter reference provenance, rights, source-root or public-ready state."
+    }
+  ],
+  "source_root_status": {
+    "current_selected_decision": null,
+    "current_selected_root_path": null,
+    "safe_default": "keep_blocked",
+    "allowed_decisions": [
+      "keep_blocked",
+      "mount_archive_first",
+      "repair_onedrive_first",
+      "select_existing_root_for_private_diagnostic",
+      "select_root_after_mount_check"
+    ],
+    "top_options": [
+      {
+        "id": "workflow-or-project-mirror-mnt-data-architekturkosmos-11-ai-workflow-onedrive-2026-06-09-0",
+        "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC/KosmoWebsite",
+        "classification": "workflow_or_project_mirror",
+        "recommended_action": "Treat as workflow mirror only; do not use as the large architecture source library.",
+        "safe_default": "keep_blocked"
+      },
+      {
+        "id": "possible-source-root-mnt-data-architekturkosmos",
+        "path": "/mnt/data/ArchitekturKosmos",
+        "classification": "possible_source_root",
+        "recommended_action": "Keep blocked unless owner/overseer confirms this exact path as the real source root.",
+        "safe_default": "keep_blocked"
+      },
+      {
+        "id": "incomplete-onedrive-candidate-home-andrin-baumann-architekturkosmos-onedrive",
+        "path": "/home/andrin-baumann/ArchitekturKosmos Onedrive",
+        "classification": "incomplete_onedrive_candidate",
+        "recommended_action": "Do not inventory yet; repair sync errors or confirm the complete synced root first.",
+        "safe_default": "keep_blocked"
+      },
+      {
+        "id": "weak-path-signal-mnt-archiv",
+        "path": "/mnt/archiv",
+        "classification": "weak_path_signal",
+        "recommended_action": "Use only as a mount/path clue; not enough evidence for private inventory.",
+        "safe_default": "keep_blocked"
+      },
+      {
+        "id": "weak-path-signal-mnt-data-archive-logs",
+        "path": "/mnt/data/_archive_logs",
+        "classification": "weak_path_signal",
+        "recommended_action": "Use only as a mount/path clue; not enough evidence for private inventory.",
+        "safe_default": "keep_blocked"
+      }
+    ]
+  },
+  "owner_questions": [
+    {
+      "order": 1,
+      "id": "source-root",
+      "title": "Private Source-Root",
+      "question": "Welcher Pfad ist die echte grosse Buch-/ETH-/HSLU-Architektur-Library, oder soll alles blockiert bleiben bis Archiv/OneDrive sauber sichtbar ist?",
+      "safe_default": "keep_blocked",
+      "allowed_answers": [
+        "keep_blocked",
+        "mount_archive_first",
+        "repair_onedrive_first",
+        "select_existing_root_for_private_diagnostic",
+        "select_root_after_mount_check"
+      ],
+      "answer_field": "source_root_answer.selected_decision",
+      "note_field": "source_root_answer.owner_note",
+      "current_status": "unanswered"
+    },
+    {
+      "order": 2,
+      "id": "batch-a-villa-savoye-image-candidates",
+      "title": "Batch A: Villa Savoye Image Candidates",
+      "question": "Soll Villa Savoye Bildmaterial nur blockiert bleiben, oder soll genau ein Bild in eine separate Quellen-/Credit-Pruefung?",
+      "safe_default": "needs_more_source_context",
+      "allowed_answers": [
+        "keep_all_blocked",
+        "open_one_source_credit_review",
+        "needs_more_context"
+      ],
+      "answer_field": "owner_card_answers.batch-a-villa-savoye-image-candidates.owner_choice",
+      "note_field": "owner_card_answers.batch-a-villa-savoye-image-candidates.owner_note",
+      "current_status": "unanswered"
+    },
+    {
+      "order": 3,
+      "id": "batch-b-villa-savoye-derived-files",
+      "title": "Batch B: Villa Savoye Derived Files",
+      "question": "Sollen alle abgeleiteten Villa-Dateien blockiert bleiben, bis Plan-/Modell-Herkunft sauber belegt ist?",
+      "safe_default": "keep_blocked",
+      "allowed_answers": [
+        "use_safe_default",
+        "open_separate_review",
+        "needs_more_context"
+      ],
+      "answer_field": "owner_card_answers.batch-b-villa-savoye-derived-files.owner_choice",
+      "note_field": "owner_card_answers.batch-b-villa-savoye-derived-files.owner_note",
+      "current_status": "unanswered"
+    },
+    {
+      "order": 4,
+      "id": "batch-c-model-promotion-confirmation",
+      "title": "Batch C: Model Promotion Confirmation",
+      "question": "Sollen die vorhandenen Modelle weiterhin als diagrammatische Studien blockiert bleiben, bis Modellqualitaet und Quellenbasis geprueft sind?",
+      "safe_default": "needs_more_source_context",
+      "allowed_answers": [
+        "use_safe_default",
+        "open_separate_review",
+        "needs_more_context"
+      ],
+      "answer_field": "owner_card_answers.batch-c-model-promotion-confirmation.owner_choice",
+      "note_field": "owner_card_answers.batch-c-model-promotion-confirmation.owner_note",
+      "current_status": "unanswered"
+    },
+    {
+      "order": 5,
+      "id": "batch-d-sogn-benedetg-source-gap",
+      "title": "Batch D: Sogn Benedetg Source Gap",
+      "question": "Soll Sogn Benedetg link-only bleiben, bis der echte private Bibliotheks-Root sichtbar ist?",
+      "safe_default": "needs_more_source_context",
+      "allowed_answers": [
+        "use_safe_default",
+        "open_separate_review",
+        "needs_more_context"
+      ],
+      "answer_field": "owner_card_answers.batch-d-sogn-benedetg-source-gap.owner_choice",
+      "note_field": "owner_card_answers.batch-d-sogn-benedetg-source-gap.owner_note",
+      "current_status": "unanswered"
+    },
+    {
+      "order": 6,
+      "id": "batch-e-kosmoasset-human-reviews",
+      "title": "Batch E: KosmoAsset Human Reviews",
+      "question": "Welche lokalen Study-Assets sollen ein Human Review bekommen, ohne Public-Promotion zu erlauben?",
+      "safe_default": "needs-review",
+      "allowed_answers": [
+        "keep_needs_review",
+        "assign_named_human_review",
+        "block_public"
+      ],
+      "answer_field": "owner_card_answers.batch-e-kosmoasset-human-reviews.owner_choice",
+      "note_field": "owner_card_answers.batch-e-kosmoasset-human-reviews.owner_note",
+      "current_status": "unanswered"
+    }
+  ],
+  "paste_ready_sequence": [
+    "Ich habe deine bisherigen Aussagen eingearbeitet, aber noch keine Entscheidungen daraus geschrieben.",
+    "Bitte beantworte die sechs Punkte unten mit einer der erlaubten Antworten oder mit kurzer Notiz.",
+    "Wenn du unsicher bist, gilt der Safe Default und alles bleibt blockiert/review-only.",
+    "Nach deinen Antworten uebertragen Codex/Claude nur explizit bestaetigte Antworten in das Intake Template und lassen die Guards laufen."
+  ],
+  "next_actions": [
+    "Present this session brief to the owner before editing any intake or decision-session file.",
+    "Treat prior source statements as hints only until an exact source-root decision is confirmed.",
+    "After explicit answers, update the intake template, then rerun intake check and session edit plan.",
+    "Keep public-ready at 0 until separate provenance, rights and promotion reviews pass."
+  ]
+}

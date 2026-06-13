@@ -180,6 +180,13 @@ const steps = [
     command: 'npm',
     args: ['run', 'kosmo:owner-review-packet-check'],
     report: 'data/kosmo-owner-review-packet-check-2026-06-13.json'
+  },
+  {
+    id: 'owner_review_session_brief',
+    label: 'Owner Review Session Brief',
+    command: 'npm',
+    args: ['run', 'kosmo:owner-review-session-brief'],
+    report: 'data/kosmo-owner-review-session-brief-2026-06-13.json'
   }
 ];
 
@@ -220,10 +227,11 @@ async function main() {
   const ownerQuestionBriefCheck = await readOptionalJson(resolve(root, steps[21].report));
   const ownerReviewPacket = await readOptionalJson(resolve(root, steps[22].report));
   const ownerReviewPacketCheck = await readOptionalJson(resolve(root, steps[23].report));
+  const ownerReviewSessionBrief = await readOptionalJson(resolve(root, steps[24].report));
   const failedSteps = stepResults.filter((step) => step.exit_code !== 0);
   const status = failedSteps.length
     ? 'kosmodata_lane_sweep_failed'
-    : isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief, sourceRootDecisionSessionCheck, privateSourceInventoryPlan, privateInventoryOutputTemplate, privateInventoryOutputCheck, ownerAnswerSheet, ownerAnswerSheetCheck, ownerAnswerIntakeTemplate, ownerAnswerIntakeCheck, ownerAnswerSessionEditPlan, ownerQuestionBrief, ownerQuestionBriefCheck, ownerReviewPacket, ownerReviewPacketCheck })
+    : isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief, sourceRootDecisionSessionCheck, privateSourceInventoryPlan, privateInventoryOutputTemplate, privateInventoryOutputCheck, ownerAnswerSheet, ownerAnswerSheetCheck, ownerAnswerIntakeTemplate, ownerAnswerIntakeCheck, ownerAnswerSessionEditPlan, ownerQuestionBrief, ownerQuestionBriefCheck, ownerReviewPacket, ownerReviewPacketCheck, ownerReviewSessionBrief })
       ? 'kosmodata_lane_sweep_review_only_passed'
       : 'kosmodata_lane_sweep_needs_review';
 
@@ -349,7 +357,12 @@ async function main() {
       owner_review_packet_check_status: ownerReviewPacketCheck?.status || null,
       owner_review_packet_check_failures: ownerReviewPacketCheck?.summary?.failures ?? null,
       owner_review_packet_check_warnings: ownerReviewPacketCheck?.summary?.warnings ?? null,
-      owner_review_packet_check_public_ready_after: ownerReviewPacketCheck?.summary?.public_ready_after_guard ?? null
+      owner_review_packet_check_public_ready_after: ownerReviewPacketCheck?.summary?.public_ready_after_guard ?? null,
+      owner_review_session_brief_status: ownerReviewSessionBrief?.status || null,
+      owner_review_session_brief_questions: ownerReviewSessionBrief?.summary?.questions ?? null,
+      owner_review_session_brief_prior_signals: ownerReviewSessionBrief?.summary?.prior_signals ?? null,
+      owner_review_session_brief_recordable_now: ownerReviewSessionBrief?.summary?.prior_signals_recordable_now ?? null,
+      owner_review_session_brief_public_ready_after: ownerReviewSessionBrief?.summary?.public_ready_after_brief ?? null
     },
     reports: {
       references_gate: steps[0].report,
@@ -376,10 +389,11 @@ async function main() {
       owner_question_brief: steps[20].report,
       owner_question_brief_check: steps[21].report,
       owner_review_packet: steps[22].report,
-      owner_review_packet_check: steps[23].report
+      owner_review_packet_check: steps[23].report,
+      owner_review_session_brief: steps[24].report
     },
     steps: stepResults,
-    next_actions: nextActions({ failedSteps, referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief, sourceRootDecisionSessionCheck, privateSourceInventoryPlan, privateInventoryOutputCheck, ownerAnswerSheet, ownerAnswerSheetCheck, ownerAnswerIntakeTemplate, ownerAnswerIntakeCheck, ownerAnswerSessionEditPlan, ownerQuestionBrief, ownerQuestionBriefCheck, ownerReviewPacket, ownerReviewPacketCheck })
+    next_actions: nextActions({ failedSteps, referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief, sourceRootDecisionSessionCheck, privateSourceInventoryPlan, privateInventoryOutputCheck, ownerAnswerSheet, ownerAnswerSheetCheck, ownerAnswerIntakeTemplate, ownerAnswerIntakeCheck, ownerAnswerSessionEditPlan, ownerQuestionBrief, ownerQuestionBriefCheck, ownerReviewPacket, ownerReviewPacketCheck, ownerReviewSessionBrief })
   };
 
   await mkdir(dirname(outputJson), { recursive: true });
@@ -438,7 +452,7 @@ async function runStep(step) {
   };
 }
 
-function isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief, sourceRootDecisionSessionCheck, privateSourceInventoryPlan, privateInventoryOutputTemplate, privateInventoryOutputCheck, ownerAnswerSheet, ownerAnswerSheetCheck, ownerAnswerIntakeTemplate, ownerAnswerIntakeCheck, ownerAnswerSessionEditPlan, ownerQuestionBrief, ownerQuestionBriefCheck, ownerReviewPacket, ownerReviewPacketCheck }) {
+function isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief, sourceRootDecisionSessionCheck, privateSourceInventoryPlan, privateInventoryOutputTemplate, privateInventoryOutputCheck, ownerAnswerSheet, ownerAnswerSheetCheck, ownerAnswerIntakeTemplate, ownerAnswerIntakeCheck, ownerAnswerSessionEditPlan, ownerQuestionBrief, ownerQuestionBriefCheck, ownerReviewPacket, ownerReviewPacketCheck, ownerReviewSessionBrief }) {
   const referencesOk = referencesGate?.status === 'passed_review_only' &&
     (referencesGate?.summary?.public_ready_assets ?? referencesStatus?.summary?.public_ready_assets) === 0;
   const assetOk = assetFullReview?.status === 'asset_full_review_ready_for_human_decisions' &&
@@ -546,10 +560,18 @@ function isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview
     ownerReviewPacketCheck?.policy?.records_decisions !== true &&
     ownerReviewPacketCheck?.policy?.writes_session_files !== true &&
     ownerReviewPacketCheck?.policy?.applies_decisions !== true;
-  return referencesOk && assetOk && queueOk && batchesOk && localWorkerOk && pilotEvidenceOk && villaBriefOk && ingenbohlBriefOk && sognBriefOk && sourceRootLocatorOk && sourceRootSelectionBriefOk && sourceRootDecisionSessionOk && privateSourceInventoryPlanOk && privateInventoryTemplateOk && privateInventoryOutputCheckOk && ownerAnswerSheetOk && ownerAnswerSheetCheckOk && ownerAnswerIntakeTemplateOk && ownerAnswerIntakeCheckOk && ownerAnswerSessionEditPlanOk && ownerQuestionBriefOk && ownerQuestionBriefCheckOk && ownerReviewPacketOk && ownerReviewPacketCheckOk;
+  const ownerReviewSessionBriefOk = ownerReviewSessionBrief?.status === 'owner_review_session_brief_ready' &&
+    ownerReviewSessionBrief?.summary?.questions === 6 &&
+    ownerReviewSessionBrief?.summary?.prior_signals_recordable_now === 0 &&
+    ownerReviewSessionBrief?.summary?.actionable_decisions_written === 0 &&
+    ownerReviewSessionBrief?.summary?.public_ready_after_brief === 0 &&
+    ownerReviewSessionBrief?.policy?.records_decisions !== true &&
+    ownerReviewSessionBrief?.policy?.writes_session_files !== true &&
+    ownerReviewSessionBrief?.policy?.applies_decisions !== true;
+  return referencesOk && assetOk && queueOk && batchesOk && localWorkerOk && pilotEvidenceOk && villaBriefOk && ingenbohlBriefOk && sognBriefOk && sourceRootLocatorOk && sourceRootSelectionBriefOk && sourceRootDecisionSessionOk && privateSourceInventoryPlanOk && privateInventoryTemplateOk && privateInventoryOutputCheckOk && ownerAnswerSheetOk && ownerAnswerSheetCheckOk && ownerAnswerIntakeTemplateOk && ownerAnswerIntakeCheckOk && ownerAnswerSessionEditPlanOk && ownerQuestionBriefOk && ownerQuestionBriefCheckOk && ownerReviewPacketOk && ownerReviewPacketCheckOk && ownerReviewSessionBriefOk;
 }
 
-function nextActions({ failedSteps, referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief, sourceRootDecisionSessionCheck, privateSourceInventoryPlan, privateInventoryOutputCheck, ownerAnswerSheet, ownerAnswerSheetCheck, ownerAnswerIntakeTemplate, ownerAnswerIntakeCheck, ownerAnswerSessionEditPlan, ownerQuestionBrief, ownerQuestionBriefCheck, ownerReviewPacket, ownerReviewPacketCheck }) {
+function nextActions({ failedSteps, referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief, sourceRootDecisionSessionCheck, privateSourceInventoryPlan, privateInventoryOutputCheck, ownerAnswerSheet, ownerAnswerSheetCheck, ownerAnswerIntakeTemplate, ownerAnswerIntakeCheck, ownerAnswerSessionEditPlan, ownerQuestionBrief, ownerQuestionBriefCheck, ownerReviewPacket, ownerReviewPacketCheck, ownerReviewSessionBrief }) {
   if (failedSteps.length > 0) return [`Fix failed sweep steps: ${failedSteps.map((step) => step.id).join(', ')}.`];
   const actions = [];
   const ownerPending = humanDecisionQueue?.summary?.reference_items ?? referencesGate?.summary?.owner_decision_session_pending ?? referencesStatus?.summary?.owner_decision_session_pending ?? 0;
@@ -585,6 +607,7 @@ function nextActions({ failedSteps, referencesGate, referencesStatus, assetFullR
   if (ownerQuestionBriefCheck?.status === 'owner_question_brief_guard_passed') actions.push('Owner question brief guard passed; present questions without treating answers as decisions.');
   if (ownerReviewPacket?.status === 'owner_review_packet_ready') actions.push('Use the owner review packet as the single entry point for the next owner review round.');
   if (ownerReviewPacketCheck?.status === 'owner_review_packet_guard_passed') actions.push('Owner review packet guard passed; use packet as single reviewed entry point.');
+  if (ownerReviewSessionBrief?.status === 'owner_review_session_brief_ready') actions.push('Present the owner review session brief; prior chat signals remain non-recordable until explicit answers are confirmed.');
   const privateLibrary = referencesGate?.summary?.private_library_status ?? referencesStatus?.summary?.private_library_status;
   const syncErrors = referencesStatus?.summary?.private_library_sync_error_files ?? 0;
   if (privateLibrary !== 'library_candidate_visible') actions.push('Expose or mount the real large private book/ETH/HSLU library root.');
@@ -692,6 +715,10 @@ function renderMarkdown(report) {
   lines.push(`- Owner review packet check: ${report.summary.owner_review_packet_check_status}`);
   lines.push(`- Owner review packet check failures/warnings: ${report.summary.owner_review_packet_check_failures}/${report.summary.owner_review_packet_check_warnings}`);
   lines.push(`- Owner review packet check public-ready after guard: ${report.summary.owner_review_packet_check_public_ready_after}`);
+  lines.push(`- Owner review session brief: ${report.summary.owner_review_session_brief_status}`);
+  lines.push(`- Owner review session brief questions: ${report.summary.owner_review_session_brief_questions}`);
+  lines.push(`- Owner review session prior signals recordable/total: ${report.summary.owner_review_session_brief_recordable_now}/${report.summary.owner_review_session_brief_prior_signals}`);
+  lines.push(`- Owner review session public-ready after brief: ${report.summary.owner_review_session_brief_public_ready_after}`);
   lines.push('');
   lines.push('## Steps');
   lines.push('');

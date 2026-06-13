@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-13T21:18:14.949Z",
+  "generated_at": "2026-06-13T21:25:12.958Z",
   "status": "night_loop_guarded_ready",
   "policy": {
     "review_only": true,
@@ -16,8 +16,8 @@
   ],
   "summary": {
     "data_lane_status": "kosmodata_lane_sweep_review_only_passed",
-    "data_lane_steps": "24/24",
-    "data_lane_duration_ms": 17374,
+    "data_lane_steps": "25/25",
+    "data_lane_duration_ms": 16165,
     "router_status": "worker_router_guarded_review_only",
     "owner_brief_status": "owner_next_review_brief_open",
     "owner_open_batches": 5,
@@ -39,7 +39,8 @@
       "npm run kosmo:private-inventory-output-check",
       "npm run kosmo:human-decision-owner-batches",
       "npm run kosmo:owner-decision-session-check",
-      "npm run kosmo:owner-review-packet-check"
+      "npm run kosmo:owner-review-packet-check",
+      "npm run kosmo:owner-review-session-brief"
     ],
     "blocked_commands": [
       {
@@ -59,6 +60,7 @@
       "npm run kosmo:data-lane-sweep",
       "npm run kosmo:data-lane-command-router",
       "npm run kosmo:owner-next-review-brief",
+      "npm run kosmo:owner-review-session-brief",
       "Present one owner review card or record a confirmed source-root decision.",
       "After any decision edit, rerun sweep/router/checkpoint."
     ]

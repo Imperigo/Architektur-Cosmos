@@ -51,7 +51,8 @@ This runbook is the daily execution order for the KosmoReferences/KosmoAsset dat
    - Owner Question Brief;
    - Owner Question Brief Check;
    - Owner Review Packet;
-   - Owner Review Packet Check.
+   - Owner Review Packet Check;
+   - Owner Review Session Brief.
 
 4. Open the generated report:
 
@@ -194,24 +195,34 @@ This runbook is the daily execution order for the KosmoReferences/KosmoAsset dat
 
    - `docs/codex/kosmo-owner-review-packet-check-2026-06-13.md`
 
-32. If a narrow rerun is needed, run the KosmoReferences Nightly Gate:
+32. Generate the owner review session brief:
+
+   ```bash
+   npm run kosmo:owner-review-session-brief
+   ```
+
+33. Open the generated session brief:
+
+   - `docs/codex/kosmo-owner-review-session-brief-2026-06-13.md`
+
+34. If a narrow rerun is needed, run the KosmoReferences Nightly Gate:
 
    ```bash
    npm run kosmo:references-nightly-gate
    ```
 
-33. Open the generated reports:
+35. Open the generated reports:
 
    - `docs/codex/kosmoreferences-nightly-gate-2026-06-13.md`
    - `data/kosmoreferences-data-lane-status.md`
 
-34. If a narrow asset rerun is needed, run the KosmoAsset seed full review:
+36. If a narrow asset rerun is needed, run the KosmoAsset seed full review:
 
    ```bash
    npm run kosmo:asset-full-review -- --library examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json
    ```
 
-35. Open the generated report:
+37. Open the generated report:
 
    - `examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-full-review.generated.md`
 
@@ -241,6 +252,7 @@ Use the result as the current read-only status:
 - `owner_question_brief_guard_passed` means the owner-facing question block matches the answer-sheet source and is safe to present.
 - `owner_review_packet_ready` means the owner-facing brief, guards, intake and edit-plan references are bundled into one entry point.
 - `owner_review_packet_guard_passed` means the bundled owner review entry point is internally consistent and still records no answers, decisions or public-ready changes.
+- `owner_review_session_brief_ready` means the next owner conversation is paste-ready and prior chat signals are classified as non-recordable unless explicitly confirmed in the intake flow.
 
 Then continue with one of these safe work types:
 
