@@ -1,0 +1,202 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-13T21:06:43.599Z",
+  "status": "owner_question_brief_guard_passed",
+  "policy": {
+    "records_decisions": false,
+    "writes_session_files": false,
+    "writes_public_files": false,
+    "writes_public_manifest": false,
+    "public_ready_after_guard": 0,
+    "note": "This guard validates owner-facing question copy only. It never records answers or applies decisions."
+  },
+  "source_refs": [
+    "data/kosmo-owner-question-brief-2026-06-13.json",
+    "data/kosmo-owner-answer-sheet-2026-06-13.json"
+  ],
+  "summary": {
+    "brief_status": "owner_question_brief_ready",
+    "questions": 6,
+    "expected_questions": 6,
+    "failures": 0,
+    "warnings": 0,
+    "public_ready_after_guard": 0
+  },
+  "findings": [
+    {
+      "id": "brief_status_ready",
+      "severity": "passed",
+      "message": "Question brief status must be owner_question_brief_ready."
+    },
+    {
+      "id": "records_decisions_false",
+      "severity": "passed",
+      "message": "Question brief must not record decisions."
+    },
+    {
+      "id": "writes_session_files_false",
+      "severity": "passed",
+      "message": "Question brief must not write session files."
+    },
+    {
+      "id": "writes_public_files_false",
+      "severity": "passed",
+      "message": "Question brief must not write public files."
+    },
+    {
+      "id": "writes_public_manifest_false",
+      "severity": "passed",
+      "message": "Question brief must not write public manifests."
+    },
+    {
+      "id": "public_ready_after_brief_zero",
+      "severity": "passed",
+      "message": "Question brief must keep public_ready_after_brief at 0."
+    },
+    {
+      "id": "question_count_match",
+      "severity": "passed",
+      "message": "Question brief must contain 6 questions."
+    },
+    {
+      "id": "source_root_question_count",
+      "severity": "passed",
+      "message": "Question brief must contain one source-root question."
+    },
+    {
+      "id": "owner_card_question_count",
+      "severity": "passed",
+      "message": "Question brief must contain one question per owner card."
+    },
+    {
+      "id": "planned_edits_zero",
+      "severity": "passed",
+      "message": "Question brief must not plan edits."
+    },
+    {
+      "id": "summary_public_ready_zero",
+      "severity": "passed",
+      "message": "Question brief summary must keep public-ready at 0."
+    },
+    {
+      "id": "source_root_question_present",
+      "severity": "passed",
+      "message": "Source-root question must be present."
+    },
+    {
+      "id": "source_root_safe_default_match",
+      "severity": "passed",
+      "message": "Source-root safe default must match answer sheet."
+    },
+    {
+      "id": "source_root_allowed_answers_match",
+      "severity": "passed",
+      "message": "Source-root allowed answers must match answer sheet."
+    },
+    {
+      "id": "owner_card_question_present:batch-a-villa-savoye-image-candidates",
+      "severity": "passed",
+      "message": "Owner card question batch-a-villa-savoye-image-candidates must be present."
+    },
+    {
+      "id": "owner_card_safe_default_match:batch-a-villa-savoye-image-candidates",
+      "severity": "passed",
+      "message": "Owner card batch-a-villa-savoye-image-candidates safe default must match answer sheet."
+    },
+    {
+      "id": "owner_card_allowed_answers_match:batch-a-villa-savoye-image-candidates",
+      "severity": "passed",
+      "message": "Owner card batch-a-villa-savoye-image-candidates allowed answers must match answer sheet."
+    },
+    {
+      "id": "owner_card_question_text:batch-a-villa-savoye-image-candidates",
+      "severity": "passed",
+      "message": "Owner card batch-a-villa-savoye-image-candidates must include usable question text."
+    },
+    {
+      "id": "owner_card_question_present:batch-b-villa-savoye-derived-files",
+      "severity": "passed",
+      "message": "Owner card question batch-b-villa-savoye-derived-files must be present."
+    },
+    {
+      "id": "owner_card_safe_default_match:batch-b-villa-savoye-derived-files",
+      "severity": "passed",
+      "message": "Owner card batch-b-villa-savoye-derived-files safe default must match answer sheet."
+    },
+    {
+      "id": "owner_card_allowed_answers_match:batch-b-villa-savoye-derived-files",
+      "severity": "passed",
+      "message": "Owner card batch-b-villa-savoye-derived-files allowed answers must match answer sheet."
+    },
+    {
+      "id": "owner_card_question_text:batch-b-villa-savoye-derived-files",
+      "severity": "passed",
+      "message": "Owner card batch-b-villa-savoye-derived-files must include usable question text."
+    },
+    {
+      "id": "owner_card_question_present:batch-c-model-promotion-confirmation",
+      "severity": "passed",
+      "message": "Owner card question batch-c-model-promotion-confirmation must be present."
+    },
+    {
+      "id": "owner_card_safe_default_match:batch-c-model-promotion-confirmation",
+      "severity": "passed",
+      "message": "Owner card batch-c-model-promotion-confirmation safe default must match answer sheet."
+    },
+    {
+      "id": "owner_card_allowed_answers_match:batch-c-model-promotion-confirmation",
+      "severity": "passed",
+      "message": "Owner card batch-c-model-promotion-confirmation allowed answers must match answer sheet."
+    },
+    {
+      "id": "owner_card_question_text:batch-c-model-promotion-confirmation",
+      "severity": "passed",
+      "message": "Owner card batch-c-model-promotion-confirmation must include usable question text."
+    },
+    {
+      "id": "owner_card_question_present:batch-d-sogn-benedetg-source-gap",
+      "severity": "passed",
+      "message": "Owner card question batch-d-sogn-benedetg-source-gap must be present."
+    },
+    {
+      "id": "owner_card_safe_default_match:batch-d-sogn-benedetg-source-gap",
+      "severity": "passed",
+      "message": "Owner card batch-d-sogn-benedetg-source-gap safe default must match answer sheet."
+    },
+    {
+      "id": "owner_card_allowed_answers_match:batch-d-sogn-benedetg-source-gap",
+      "severity": "passed",
+      "message": "Owner card batch-d-sogn-benedetg-source-gap allowed answers must match answer sheet."
+    },
+    {
+      "id": "owner_card_question_text:batch-d-sogn-benedetg-source-gap",
+      "severity": "passed",
+      "message": "Owner card batch-d-sogn-benedetg-source-gap must include usable question text."
+    },
+    {
+      "id": "owner_card_question_present:batch-e-kosmoasset-human-reviews",
+      "severity": "passed",
+      "message": "Owner card question batch-e-kosmoasset-human-reviews must be present."
+    },
+    {
+      "id": "owner_card_safe_default_match:batch-e-kosmoasset-human-reviews",
+      "severity": "passed",
+      "message": "Owner card batch-e-kosmoasset-human-reviews safe default must match answer sheet."
+    },
+    {
+      "id": "owner_card_allowed_answers_match:batch-e-kosmoasset-human-reviews",
+      "severity": "passed",
+      "message": "Owner card batch-e-kosmoasset-human-reviews allowed answers must match answer sheet."
+    },
+    {
+      "id": "owner_card_question_text:batch-e-kosmoasset-human-reviews",
+      "severity": "passed",
+      "message": "Owner card batch-e-kosmoasset-human-reviews must include usable question text."
+    }
+  ],
+  "next_actions": [
+    "Use docs/codex/kosmo-owner-question-brief-2026-06-13.md as the next owner-facing question block.",
+    "Transfer only explicitly confirmed owner answers into the owner answer intake template.",
+    "Keep all decisions blocked until intake check and session edit plan pass."
+  ]
+}

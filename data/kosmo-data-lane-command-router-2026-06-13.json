@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-13T21:02:02.545Z",
+  "generated_at": "2026-06-13T21:06:19.773Z",
   "status": "worker_router_guarded_review_only",
   "source_refs": [
     "data/kosmodata-lane-sweep-2026-06-13.json"
@@ -15,7 +15,7 @@
   },
   "summary": {
     "data_lane_status": "kosmodata_lane_sweep_review_only_passed",
-    "data_lane_steps": "21/21",
+    "data_lane_steps": "22/22",
     "source_root_decision_status": "passed_pending_owner_input",
     "private_diagnostic_allowed": false,
     "private_inventory_plan_status": "private_metadata_inventory_blocked",

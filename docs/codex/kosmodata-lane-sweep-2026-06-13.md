@@ -1,12 +1,12 @@
 # KosmoData Lane Sweep
 
-Generated: 2026-06-13T21:01:54.936Z
+Generated: 2026-06-13T21:06:10.769Z
 Status: `kosmodata_lane_sweep_review_only_passed`
 
 ## Summary
 
-- Steps passed: 21/21
-- Duration: 18093ms
+- Steps passed: 22/22
+- Duration: 15845ms
 - KosmoReferences: passed_review_only (10/10)
 - References public-ready assets: 0
 - References owner pending: 10
@@ -85,32 +85,36 @@ Status: `kosmodata_lane_sweep_review_only_passed`
 - Owner question brief: owner_question_brief_ready
 - Owner question brief questions: 6
 - Owner question brief public-ready after brief: 0
+- Owner question brief check: owner_question_brief_guard_passed
+- Owner question brief check failures/warnings: 0/0
+- Owner question brief check public-ready after guard: 0
 
 ## Steps
 
 | Step | Status | Duration | Report |
 | --- | --- | ---: | --- |
-| KosmoReferences Nightly Gate | passed | 10022ms | `data/kosmoreferences-nightly-gate-2026-06-13.json` |
-| KosmoAsset Seed Full Review | passed | 3505ms | `examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-full-review.generated.json` |
-| Human Decision Queue | passed | 231ms | `data/kosmo-human-decision-queue-2026-06-13.json` |
-| Owner Decision Batches | passed | 234ms | `data/kosmo-human-decision-owner-batches-2026-06-13.json` |
-| Local Worker Output Review | passed | 232ms | `data/kosmo-local-worker-output-review-2026-06-13.json` |
-| Pilot Evidence Matrix | passed | 236ms | `data/kosmoreferences-pilot-evidence-matrix-2026-06-13.json` |
-| Villa Savoye Provenance Review Brief | passed | 231ms | `data/villa-savoye-provenance-review-brief-2026-06-13.json` |
-| Ingenbohl PDF Extraction Brief | passed | 230ms | `data/ingenbohl-pdf-extraction-decision-brief-2026-06-13.json` |
+| KosmoReferences Nightly Gate | passed | 7492ms | `data/kosmoreferences-nightly-gate-2026-06-13.json` |
+| KosmoAsset Seed Full Review | passed | 3528ms | `examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-full-review.generated.json` |
+| Human Decision Queue | passed | 236ms | `data/kosmo-human-decision-queue-2026-06-13.json` |
+| Owner Decision Batches | passed | 235ms | `data/kosmo-human-decision-owner-batches-2026-06-13.json` |
+| Local Worker Output Review | passed | 230ms | `data/kosmo-local-worker-output-review-2026-06-13.json` |
+| Pilot Evidence Matrix | passed | 234ms | `data/kosmoreferences-pilot-evidence-matrix-2026-06-13.json` |
+| Villa Savoye Provenance Review Brief | passed | 232ms | `data/villa-savoye-provenance-review-brief-2026-06-13.json` |
+| Ingenbohl PDF Extraction Brief | passed | 227ms | `data/ingenbohl-pdf-extraction-decision-brief-2026-06-13.json` |
 | Sogn Benedetg Source-Root Brief | passed | 231ms | `data/sogn-benedetg-source-root-decision-brief-2026-06-13.json` |
-| Source Root Locator | passed | 373ms | `data/kosmo-source-root-locator-2026-06-13.json` |
-| Source Root Selection Brief | passed | 231ms | `data/kosmo-source-root-selection-brief-2026-06-13.json` |
-| Source Root Decision Session Check | passed | 232ms | `data/kosmo-source-root-decision-session-check-2026-06-13.json` |
-| Private Source Inventory Plan | passed | 233ms | `data/kosmo-private-source-inventory-plan-2026-06-13.json` |
-| Private Inventory Output Template | passed | 238ms | `examples/kosmo-references/private-inventory/private-inventory-output-template-2026-06-13.json` |
-| Private Inventory Output Check | passed | 232ms | `data/kosmo-private-inventory-output-check-2026-06-13.json` |
-| Owner Answer Sheet | passed | 233ms | `data/kosmo-owner-answer-sheet-2026-06-13.json` |
-| Owner Answer Sheet Check | passed | 232ms | `data/kosmo-owner-answer-sheet-check-2026-06-13.json` |
-| Owner Answer Intake Template | passed | 233ms | `examples/kosmo-references/provenance/owner-answer-intake-template-2026-06-13.json` |
-| Owner Answer Intake Check | passed | 236ms | `data/kosmo-owner-answer-intake-check-2026-06-13.json` |
-| Owner Answer Session Edit Plan | passed | 236ms | `data/kosmo-owner-answer-session-edit-plan-2026-06-13.json` |
-| Owner Question Brief | passed | 229ms | `data/kosmo-owner-question-brief-2026-06-13.json` |
+| Source Root Locator | passed | 378ms | `data/kosmo-source-root-locator-2026-06-13.json` |
+| Source Root Selection Brief | passed | 235ms | `data/kosmo-source-root-selection-brief-2026-06-13.json` |
+| Source Root Decision Session Check | passed | 231ms | `data/kosmo-source-root-decision-session-check-2026-06-13.json` |
+| Private Source Inventory Plan | passed | 234ms | `data/kosmo-private-source-inventory-plan-2026-06-13.json` |
+| Private Inventory Output Template | passed | 233ms | `examples/kosmo-references/private-inventory/private-inventory-output-template-2026-06-13.json` |
+| Private Inventory Output Check | passed | 243ms | `data/kosmo-private-inventory-output-check-2026-06-13.json` |
+| Owner Answer Sheet | passed | 245ms | `data/kosmo-owner-answer-sheet-2026-06-13.json` |
+| Owner Answer Sheet Check | passed | 231ms | `data/kosmo-owner-answer-sheet-check-2026-06-13.json` |
+| Owner Answer Intake Template | passed | 234ms | `examples/kosmo-references/provenance/owner-answer-intake-template-2026-06-13.json` |
+| Owner Answer Intake Check | passed | 235ms | `data/kosmo-owner-answer-intake-check-2026-06-13.json` |
+| Owner Answer Session Edit Plan | passed | 233ms | `data/kosmo-owner-answer-session-edit-plan-2026-06-13.json` |
+| Owner Question Brief | passed | 233ms | `data/kosmo-owner-question-brief-2026-06-13.json` |
+| Owner Question Brief Check | passed | 232ms | `data/kosmo-owner-question-brief-check-2026-06-13.json` |
 
 ## Next Actions
 
@@ -132,6 +136,7 @@ Status: `kosmodata_lane_sweep_review_only_passed`
 - Owner answer intake is structurally ready and waiting for owner input.
 - Session edit plan is ready and waiting for non-empty checked owner intake.
 - Use the owner question brief for the next 6 owner questions.
+- Owner question brief guard passed; present questions without treating answers as decisions.
 - Expose or mount the real large private book/ETH/HSLU library root.
 - Resolve 30 OneDrive sync error marker files before treating the visible mirror as complete.
 - Keep public-ready assets at 0 until separate owner and promotion reviews pass.
