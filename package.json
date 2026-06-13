@@ -113,6 +113,7 @@
     "kosmo:owner-decision-session-check": "node scripts/kosmo-owner-decision-session-check.mjs",
     "kosmo:owner-decision-worksheet": "node scripts/kosmo-owner-decision-worksheet.mjs",
     "kosmo:human-decision-queue": "node scripts/kosmo-human-decision-queue.mjs",
+    "kosmo:human-decision-owner-batches": "node scripts/kosmo-human-decision-owner-batches.mjs",
     "kosmo:private-library-diagnostic": "node scripts/kosmo-private-library-diagnostic.mjs",
     "kosmo:local-worker-ollama-smoke": "node scripts/kosmo-local-worker-ollama-smoke.mjs",
     "kosmo:references-status-card": "node scripts/kosmo-reference-status-card.mjs",
