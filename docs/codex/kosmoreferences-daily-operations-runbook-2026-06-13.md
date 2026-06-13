@@ -52,7 +52,8 @@ This runbook is the daily execution order for the KosmoReferences/KosmoAsset dat
    - Owner Question Brief Check;
    - Owner Review Packet;
    - Owner Review Packet Check;
-   - Owner Review Session Brief.
+   - Owner Review Session Brief;
+   - Owner Review Session Brief Check.
 
 4. Open the generated report:
 
@@ -205,24 +206,34 @@ This runbook is the daily execution order for the KosmoReferences/KosmoAsset dat
 
    - `docs/codex/kosmo-owner-review-session-brief-2026-06-13.md`
 
-34. If a narrow rerun is needed, run the KosmoReferences Nightly Gate:
+34. Check the owner review session brief:
+
+   ```bash
+   npm run kosmo:owner-review-session-brief-check
+   ```
+
+35. Open the generated check:
+
+   - `docs/codex/kosmo-owner-review-session-brief-check-2026-06-13.md`
+
+36. If a narrow rerun is needed, run the KosmoReferences Nightly Gate:
 
    ```bash
    npm run kosmo:references-nightly-gate
    ```
 
-35. Open the generated reports:
+37. Open the generated reports:
 
    - `docs/codex/kosmoreferences-nightly-gate-2026-06-13.md`
    - `data/kosmoreferences-data-lane-status.md`
 
-36. If a narrow asset rerun is needed, run the KosmoAsset seed full review:
+38. If a narrow asset rerun is needed, run the KosmoAsset seed full review:
 
    ```bash
    npm run kosmo:asset-full-review -- --library examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json
    ```
 
-37. Open the generated report:
+39. Open the generated report:
 
    - `examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-full-review.generated.md`
 
@@ -253,6 +264,7 @@ Use the result as the current read-only status:
 - `owner_review_packet_ready` means the owner-facing brief, guards, intake and edit-plan references are bundled into one entry point.
 - `owner_review_packet_guard_passed` means the bundled owner review entry point is internally consistent and still records no answers, decisions or public-ready changes.
 - `owner_review_session_brief_ready` means the next owner conversation is paste-ready and prior chat signals are classified as non-recordable unless explicitly confirmed in the intake flow.
+- `owner_review_session_brief_guard_passed` means the paste-ready owner session brief is safe to present and prior chat signals remain non-recordable.
 
 Then continue with one of these safe work types:
 

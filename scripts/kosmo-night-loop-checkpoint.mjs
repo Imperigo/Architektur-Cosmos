@@ -97,6 +97,7 @@ function buildCheckpoint({ sweep, router, ownerBrief }) {
         'npm run kosmo:data-lane-command-router',
         'npm run kosmo:owner-next-review-brief',
         'npm run kosmo:owner-review-session-brief',
+        'npm run kosmo:owner-review-session-brief-check',
         'Present one owner review card or record a confirmed source-root decision.',
         'After any decision edit, rerun sweep/router/checkpoint.'
       ]

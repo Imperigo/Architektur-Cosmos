@@ -105,7 +105,8 @@ async function main() {
       'npm run kosmo:human-decision-owner-batches',
       'npm run kosmo:owner-decision-session-check',
       'npm run kosmo:owner-review-packet-check',
-      'npm run kosmo:owner-review-session-brief'
+      'npm run kosmo:owner-review-session-brief',
+      'npm run kosmo:owner-review-session-brief-check'
     ],
     blocked_commands_now: blockedCommands({ sourceRootReady, privateInventoryReady }),
     next_best_actions: nextBestActions({ sourceRootReady, privateInventoryReady, outputContractPassed, summary })

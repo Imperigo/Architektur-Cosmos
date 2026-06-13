@@ -1,12 +1,12 @@
 # Kosmo Night Loop Checkpoint
 
-Generated: 2026-06-13T21:25:12.958Z
+Generated: 2026-06-13T21:30:54.296Z
 Status: `night_loop_guarded_ready`
 
 ## Summary
 
-- Data lane: 25/25 (kosmodata_lane_sweep_review_only_passed)
-- Duration: 16165ms
+- Data lane: 26/26 (kosmodata_lane_sweep_review_only_passed)
+- Duration: 18567ms
 - Router: worker_router_guarded_review_only
 - Owner brief: owner_next_review_brief_open
 - Owner open: 5 batches / 16 items
@@ -27,6 +27,7 @@ Recommended sequence:
 - npm run kosmo:data-lane-command-router
 - npm run kosmo:owner-next-review-brief
 - npm run kosmo:owner-review-session-brief
+- npm run kosmo:owner-review-session-brief-check
 - Present one owner review card or record a confirmed source-root decision.
 - After any decision edit, rerun sweep/router/checkpoint.
 
