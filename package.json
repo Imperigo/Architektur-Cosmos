@@ -117,6 +117,8 @@
     "kosmo:private-library-diagnostic": "node scripts/kosmo-private-library-diagnostic.mjs",
     "kosmo:source-root-locator": "node scripts/kosmo-source-root-locator.mjs",
     "kosmo:source-root-selection-brief": "node scripts/kosmo-source-root-selection-brief.mjs",
+    "kosmo:source-root-decision-session-create": "node scripts/kosmo-source-root-decision-session-create.mjs",
+    "kosmo:source-root-decision-session-check": "node scripts/kosmo-source-root-decision-session-check.mjs",
     "kosmo:local-worker-ollama-smoke": "node scripts/kosmo-local-worker-ollama-smoke.mjs",
     "kosmo:local-worker-output-review": "node scripts/kosmo-local-worker-output-review.mjs",
     "kosmo:pilot-evidence-matrix": "node scripts/kosmoreferences-pilot-evidence-matrix.mjs",

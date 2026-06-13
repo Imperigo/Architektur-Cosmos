@@ -38,7 +38,8 @@ This runbook is the daily execution order for the KosmoReferences/KosmoAsset dat
    - Ingenbohl PDF Extraction Brief;
    - Sogn Benedetg Source-Root Brief;
    - Source Root Locator;
-   - Source Root Selection Brief.
+   - Source Root Selection Brief;
+   - Source Root Decision Session Check.
 
 4. Open the generated report:
 
@@ -74,6 +75,7 @@ Use the result as the current read-only status:
 - `owner_decision_session_status: passed_pending_owner_input` means the next human blocker is owner decision, not code.
 - `asset_full_review_ready_for_human_decisions` means KosmoAsset is structurally healthy but still requires explicit asset human-review decisions.
 - `source_root_owner_selection_needed` means Sogn private inventory, Ingenbohl private PDF extraction and source-dependent asset authoring stay blocked until owner/overseer selects the real private source root.
+- `passed_pending_owner_input` on the Source Root Decision Session means no private diagnostic is allowed yet.
 
 Then continue with one of these safe work types:
 
@@ -90,14 +92,21 @@ Then continue with one of these safe work types:
 Before any private source inventory or source-dependent asset authoring:
 
 1. Check `docs/codex/kosmo-source-root-selection-brief-2026-06-13.md`.
-2. Owner/Claude/KosmoOverseer must select or mount the real private book/ETH/HSLU source root.
-3. After selection, run:
+2. Record the selected decision in `examples/kosmo-references/provenance/source-root-decision-session-2026-06-13.json`.
+3. Validate it:
+
+   ```bash
+   npm run kosmo:source-root-decision-session-check
+   ```
+
+4. Owner/Claude/KosmoOverseer must select or mount the real private book/ETH/HSLU source root.
+5. Only if the check reports private diagnostic allowed, run:
 
    ```bash
    npm run kosmo:private-library-diagnostic -- --roots "<selected-root>"
    ```
 
-4. Only then open a private metadata-only inventory task under KosmoZentrale.
+6. Only then open a private metadata-only inventory task under KosmoZentrale.
 
 Until this happens, keep blocked:
 

@@ -54,6 +54,8 @@ Nutze:
 - `data/kosmo-onedrive-sync-error-summary-2026-06-13.json`
 - `data/kosmo-source-root-locator-2026-06-13.json`
 - `data/kosmo-source-root-selection-brief-2026-06-13.json`
+- `examples/kosmo-references/provenance/source-root-decision-session-2026-06-13.json`
+- `data/kosmo-source-root-decision-session-check-2026-06-13.json`
 - `data/kosmoreferences-pilot-evidence-matrix-2026-06-13.json`
 - `data/villa-savoye-provenance-review-brief-2026-06-13.json`
 - `data/ingenbohl-pdf-extraction-decision-brief-2026-06-13.json`
@@ -62,6 +64,8 @@ Nutze:
 - `docs/codex/kosmo-onedrive-sync-error-summary-2026-06-13.md`
 - `docs/codex/kosmo-source-root-locator-2026-06-13.md`
 - `docs/codex/kosmo-source-root-selection-brief-2026-06-13.md`
+- `docs/codex/kosmo-source-root-decision-session-2026-06-13.md`
+- `docs/codex/kosmo-source-root-decision-session-check-2026-06-13.md`
 - `docs/codex/kosmoreferences-pilot-evidence-matrix-2026-06-13.md`
 - `docs/codex/villa-savoye-provenance-review-brief-2026-06-13.md`
 - `docs/codex/ingenbohl-pdf-extraction-decision-brief-2026-06-13.md`
@@ -86,7 +90,7 @@ gib danach eine kurze Review-Zusammenfassung fuer Codex/Claude aus.
 Aktueller harter Stand:
 
 - `npm run kosmo:data-lane-sweep` ist der taegliche Start-Gate.
-- Data-Lane Sweep: 11/11, review-only passed.
+- Data-Lane Sweep: 12/12, review-only passed.
 - Die drei Pilot-Referenzen bleiben review-only.
 - Pilot Evidence Matrix: 3 Piloten, 12 Gaps, 0 public-ready.
 - Villa Savoye Provenance Brief: 7 Review-Items, 3 spaetere Human-Review-Kandidaten, 4 blockiert, 0 public-ready.
@@ -99,7 +103,8 @@ Aktueller harter Stand:
 - Die grosse private Buch-/ETH-/HSLU-Library ist noch nicht als echter Root sichtbar.
 - Source-Root Locator: 708 Kandidaten, 0 probable large private libraries, 64 Workflow-/Projektspiegel, 38 OneDrive-like Roots, 5 Roots mit Sync-Errors; Owner/Overseer muss echten Root auswaehlen oder Archiv/OneDrive korrekt mounten.
 - Source-Root Selection Brief: 10 Optionen, Status `source_root_owner_selection_needed`; Sogn private inventory, Ingenbohl PDF private extraction und source-dependent asset authoring bleiben blockiert bis zur echten Root-Auswahl.
-- Source-Root Locator und Source-Root Selection Brief sind jetzt feste Steps im Data-Lane Sweep. Der lokale Worker darf diese Blockade nicht umgehen.
+- Source-Root Decision Session: `passed_pending_owner_input`, selected decision pending, private diagnostic nicht erlaubt, 0 public-ready.
+- Source-Root Locator, Source-Root Selection Brief und Source-Root Decision Session Check sind jetzt feste Steps im Data-Lane Sweep. Der lokale Worker darf diese Blockade nicht umgehen.
 - Im kuratierten Home-OneDrive-Diagnosepfad sind 30 Sync-Error-Marker sichtbar; diesen Spiegel nicht als vollstaendig behandeln.
 - Der tiefere OneDrive-Reparatur-Sweep sieht 59 Marker-Dateien, 58 Leaf-Marker und 58 Aggregate-Missing-Items. Diese Zahl fuer Sync-Reparatur verwenden, nicht ungeprueft mit der DataPanel-Zahl vermischen.
 - `/mnt/archiv` ist in der aktuellen Diagnose kein eigener Mount.
