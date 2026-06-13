@@ -1,0 +1,262 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-13T15:27:01.333Z",
+  "generator": "kosmo-asset-library-check",
+  "library_path": "examples/kosmo-assets/codex-pilot-library/library.json",
+  "library_id": "codex-pilot-library",
+  "name": "Codex KosmoAsset Pilot Library",
+  "status": "passed",
+  "mode": "local_review_only",
+  "policy": {
+    "no_uploads": true,
+    "no_public_publish": true,
+    "public_assets_require_rights": [
+      "licensed",
+      "public_domain",
+      "own_work"
+    ],
+    "generated_assets_need_review_before_public_use": true
+  },
+  "summary": {
+    "asset_count": 5,
+    "local_ready_count": 2,
+    "public_ready_count": 0,
+    "planned_only_count": 3,
+    "failure_count": 0,
+    "warning_count": 0,
+    "formats": {
+      "svg": 2,
+      "glb": 1,
+      "material_json": 1,
+      "dxf": 1,
+      "json": 1
+    },
+    "asset_types": {
+      "vector_plan_component": 1,
+      "glb_model": 1,
+      "material": 1,
+      "detail": 1,
+      "archicad_layer": 1
+    },
+    "categories": {
+      "annotation": 1,
+      "structure": 2,
+      "material": 1,
+      "utility": 1
+    },
+    "rights_status": {
+      "private_research": 2,
+      "generated_needs_review": 2,
+      "own_work": 1
+    },
+    "kosmodata_ref_count": 4
+  },
+  "assets": [
+    {
+      "id": "villa-savoye-plan-vector-001",
+      "title": "Villa Savoye Ground Floor Vector Plan",
+      "asset_type": "vector_plan_component",
+      "category": "annotation",
+      "rights_status": "private_research",
+      "review_status": "draft",
+      "public_use_allowed": false,
+      "rights_public_safe": false,
+      "local_ready": true,
+      "planned_only": false,
+      "formats": [
+        "svg"
+      ],
+      "preview_kind": "wireframe_component",
+      "kosmodata_ref_count": 1,
+      "kosmodata_refs": [
+        {
+          "kind": "reference_entry",
+          "entry_id": "villa-savoye",
+          "entry_title": "Villa Savoye",
+          "relation": "model_context",
+          "usage_policy": "derived_asset_review_required",
+          "review_status": "needs_human_review",
+          "entry_exists": true
+        }
+      ],
+      "existing_format_count": 1,
+      "planned_format_count": 0,
+      "export_targets": [
+        "svg",
+        "web",
+        "layout"
+      ],
+      "tags": [
+        "villa-savoye",
+        "plan",
+        "vector",
+        "reference-derived",
+        "review-only"
+      ]
+    },
+    {
+      "id": "villa-savoye-low-glb-001",
+      "title": "Villa Savoye Low GLB Reference Model",
+      "asset_type": "glb_model",
+      "category": "structure",
+      "rights_status": "private_research",
+      "review_status": "draft",
+      "public_use_allowed": false,
+      "rights_public_safe": false,
+      "local_ready": true,
+      "planned_only": false,
+      "formats": [
+        "glb"
+      ],
+      "preview_kind": "wireframe_component",
+      "kosmodata_ref_count": 1,
+      "kosmodata_refs": [
+        {
+          "kind": "reference_entry",
+          "entry_id": "villa-savoye",
+          "entry_title": "Villa Savoye",
+          "relation": "model_context",
+          "usage_policy": "derived_asset_review_required",
+          "review_status": "needs_human_review",
+          "entry_exists": true
+        }
+      ],
+      "existing_format_count": 1,
+      "planned_format_count": 0,
+      "export_targets": [
+        "glb",
+        "blender",
+        "web"
+      ],
+      "tags": [
+        "villa-savoye",
+        "glb",
+        "low-poly",
+        "reference-model",
+        "review-only"
+      ]
+    },
+    {
+      "id": "ingenbohl-mineral-timber-material-001",
+      "title": "Ingenbohl Mineral Timber Facade Material Study",
+      "asset_type": "material",
+      "category": "material",
+      "rights_status": "generated_needs_review",
+      "review_status": "planned",
+      "public_use_allowed": false,
+      "rights_public_safe": false,
+      "local_ready": false,
+      "planned_only": true,
+      "formats": [
+        "material_json"
+      ],
+      "preview_kind": "material_swatch",
+      "kosmodata_ref_count": 1,
+      "kosmodata_refs": [
+        {
+          "kind": "reference_entry",
+          "entry_id": "alterszentrum-kloster-ingenbohl",
+          "entry_title": "Alterszentrum Kloster Ingenbohl",
+          "relation": "material_context",
+          "usage_policy": "derived_asset_review_required",
+          "review_status": "needs_human_review",
+          "entry_exists": true
+        }
+      ],
+      "existing_format_count": 0,
+      "planned_format_count": 1,
+      "export_targets": [
+        "blender",
+        "archicad",
+        "web"
+      ],
+      "tags": [
+        "ingenbohl",
+        "material",
+        "timber-facade",
+        "mineral",
+        "review-only"
+      ]
+    },
+    {
+      "id": "villa-savoye-pilotis-detail-001",
+      "title": "Villa Savoye Pilotis Detail Slot",
+      "asset_type": "detail",
+      "category": "structure",
+      "rights_status": "generated_needs_review",
+      "review_status": "planned",
+      "public_use_allowed": false,
+      "rights_public_safe": false,
+      "local_ready": false,
+      "planned_only": true,
+      "formats": [
+        "dxf",
+        "svg"
+      ],
+      "preview_kind": "wireframe_component",
+      "kosmodata_ref_count": 1,
+      "kosmodata_refs": [
+        {
+          "kind": "reference_entry",
+          "entry_id": "villa-savoye",
+          "entry_title": "Villa Savoye",
+          "relation": "typology_context",
+          "usage_policy": "context_only",
+          "review_status": "context_only",
+          "entry_exists": true
+        }
+      ],
+      "existing_format_count": 0,
+      "planned_format_count": 2,
+      "export_targets": [
+        "dxf",
+        "svg",
+        "layout"
+      ],
+      "tags": [
+        "pilotis",
+        "column",
+        "detail",
+        "villa-savoye-context",
+        "generated-review-slot"
+      ]
+    },
+    {
+      "id": "kosmoreferences-blender-archicad-profile-001",
+      "title": "KosmoReferences Blender/ArchiCAD Layer Profile",
+      "asset_type": "archicad_layer",
+      "category": "utility",
+      "rights_status": "own_work",
+      "review_status": "draft",
+      "public_use_allowed": false,
+      "rights_public_safe": true,
+      "local_ready": false,
+      "planned_only": true,
+      "formats": [
+        "json"
+      ],
+      "preview_kind": "axis_marker",
+      "kosmodata_ref_count": 0,
+      "kosmodata_refs": [],
+      "existing_format_count": 0,
+      "planned_format_count": 1,
+      "export_targets": [
+        "blender",
+        "archicad",
+        "web"
+      ],
+      "tags": [
+        "layer-profile",
+        "export-profile",
+        "kosmoreferences",
+        "kosmoasset",
+        "own-work"
+      ]
+    }
+  ],
+  "failures": [],
+  "warnings": [],
+  "next_actions": [
+    "Generate or attach reviewed local files for planned-only assets."
+  ]
+}

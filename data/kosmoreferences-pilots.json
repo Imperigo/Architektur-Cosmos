@@ -1,0 +1,116 @@
+{
+  "schema_version": "0.1",
+  "updated_at": "2026-06-13",
+  "owner_ruling": {
+    "source": "Andrin / Codex conversation 2026-06-13",
+    "local_first": true,
+    "github_private_push_allowed": true,
+    "notes": [
+      "Use local ArchitekturKosmos folders and OneDrive library first.",
+      "Digital books, ETH lectures and HSLU lectures are priority source pools.",
+      "Web sources are secondary until local source inventory is mapped."
+    ]
+  },
+  "pilots": [
+    {
+      "id": "villa-savoye",
+      "title": "Villa Savoye",
+      "status": "goldstandard_existing",
+      "kosmoreferences_role": "first full reference-project pilot",
+      "existing_local_files": [
+        "data/archive-preview.json",
+        "docs/pilot-entry-standard.md",
+        "public/archive-media/villa-savoye/exterior/savoye-3-exterior-cc0.jpg",
+        "public/archive-media/villa-savoye/exterior/villa-savoye-loc-exterior.jpg",
+        "public/archive-media/villa-savoye/exterior/villa-savoye-loc-exterior-crop.jpg",
+        "public/archive-media/villa-savoye/interior/villa-savoye-chaise-longue-interior-cc-by-sa-2.jpg",
+        "public/archive-media/villa-savoye/plan/villa-savoye-ground-floor-diagram.svg",
+        "public/archive-media/villa-savoye/section/villa-savoye-long-section-diagram.svg",
+        "public/archive-models/villa-savoye/low.glb"
+      ],
+      "target_layers": [
+        "metadata",
+        "source_trail",
+        "media",
+        "vector_plan",
+        "section",
+        "low_poly_model",
+        "structure_analysis",
+        "material_analysis",
+        "kosmoasset_derivatives"
+      ],
+      "rights_policy": "existing reviewed/public-safe metadata may be shown; derived assets remain review-only until each asset is checked",
+      "next_actions": [
+        "Run archive validation gates.",
+        "Create derived 2D and 3D KosmoAsset references.",
+        "Check whether book/lecture material exists locally for deeper source trail."
+      ]
+    },
+    {
+      "id": "alterszentrum-kloster-ingenbohl",
+      "title": "Alterszentrum Kloster Ingenbohl",
+      "status": "draft_existing",
+      "kosmoreferences_role": "contemporary Swiss transformation and material/tectonic pilot",
+      "existing_local_files": [
+        "data/drafts/alterszentrum-kloster-ingenbohl.json",
+        "data/database-analysis-preview.json",
+        "data/public-model-previews.json",
+        "public/archive-models/alterszentrum-kloster-ingenbohl/low.glb"
+      ],
+      "target_layers": [
+        "metadata",
+        "source_candidates",
+        "media_placeholders",
+        "low_poly_model",
+        "material_system",
+        "structure_analysis",
+        "tectonics",
+        "timber_facade_asset_candidate"
+      ],
+      "rights_policy": "private_research and needs_permission until images, plans and office sources are explicitly reviewed",
+      "next_actions": [
+        "Run database pilot quality audit for this entry.",
+        "Promote only source-backed fields.",
+        "Extract review-only material and facade-layer asset candidates."
+      ]
+    },
+    {
+      "id": "swiss-timber-reference-slot",
+      "title": "Schweizer Holzbau Referenzslot",
+      "status": "candidate_slot_needs_local_source",
+      "kosmoreferences_role": "first dedicated Swiss timber reference from local/OneDrive/books/ETH/HSLU library",
+      "existing_local_files": [
+        "docs/ai-reference-archive-vision.md",
+        "docs/blender-wettbewerb-schema-erweiterung.md",
+        "data/research-source-registry.json"
+      ],
+      "candidate_hints": [
+        "Schweizer Holzbau des 18. Jahrhunderts mit Satteldach",
+        "Schulhaus Paspels / Gion A. Caminada",
+        "Kapelle Sogn Benedetg / Peter Zumthor",
+        "local digital books and lecture notes should decide the first concrete pilot"
+      ],
+      "target_layers": [
+        "metadata",
+        "source_trail",
+        "material_system",
+        "structure_system",
+        "roof_form",
+        "timber_detail_asset_candidate"
+      ],
+      "rights_policy": "do not invent or publish; choose concrete project only after local source evidence is found",
+      "next_actions": [
+        "Search OneDrive/local library deeper for ETH/HSLU/book references.",
+        "Select one concrete Swiss timber project with source basis.",
+        "Create first timber-detail KosmoAsset candidate."
+      ]
+    }
+  ],
+  "asset_pilot_coverage": {
+    "2d_asset": "villa-savoye-plan-vector-001",
+    "3d_asset": "villa-savoye-low-glb-001",
+    "material_texture": "ingenbohl-mineral-timber-material-001",
+    "component_detail": "villa-savoye-pilotis-detail-001",
+    "export_profile": "kosmoreferences-blender-archicad-profile-001"
+  }
+}

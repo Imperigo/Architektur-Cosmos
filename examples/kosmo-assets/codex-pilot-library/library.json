@@ -1,0 +1,239 @@
+{
+  "schema_version": "0.1",
+  "library_id": "codex-pilot-library",
+  "name": "Codex KosmoAsset Pilot Library",
+  "description": "Review-only pilot library for the first KosmoReferences/KosmoAsset split: Villa Savoye, Ingenbohl and the Swiss timber reference slot.",
+  "status": "draft",
+  "rights_scope": "local_review_only",
+  "created_at": "2026-06-13",
+  "updated_at": "2026-06-13",
+  "storage_policy": {
+    "uploads_allowed": false,
+    "public_assets_allowed": false,
+    "local_assets_allowed": true,
+    "max_local_size_mb": 250,
+    "notes": [
+      "No R2 upload, no D1 write and no public download in this pilot.",
+      "Every derived asset remains review-only until its own rights and source trail are checked."
+    ]
+  },
+  "assets": [
+    {
+      "id": "villa-savoye-plan-vector-001",
+      "title": "Villa Savoye Ground Floor Vector Plan",
+      "description": "Existing local SVG plan artifact used as the first 2D KosmoAsset pilot.",
+      "asset_type": "vector_plan_component",
+      "category": "annotation",
+      "source_kind": "derived_from_entry",
+      "source_entry_id": "villa-savoye",
+      "kosmodata_refs": [
+        {
+          "kind": "reference_entry",
+          "entry_id": "villa-savoye",
+          "relation": "model_context",
+          "usage_policy": "derived_asset_review_required",
+          "review_status": "needs_human_review",
+          "notes": "Local SVG exists. Treat as plan-analysis/review artifact, not as automatically public reusable CAD content."
+        }
+      ],
+      "source_basis": [
+        "public/archive-media/villa-savoye/plan/villa-savoye-ground-floor-diagram.svg"
+      ],
+      "rights_status": "private_research",
+      "license": "review_only",
+      "credit": "Architecture Cosmos local reference artifact",
+      "public_use_allowed": false,
+      "local_only": true,
+      "review_status": "draft",
+      "confidence": 0.74,
+      "formats": [
+        {
+          "format": "svg",
+          "path": "../../../public/archive-media/villa-savoye/plan/villa-savoye-ground-floor-diagram.svg",
+          "software": ["web", "kosmo", "generic"],
+          "status": "exists"
+        }
+      ],
+      "preview": {
+        "kind": "wireframe_component",
+        "label": "Villa Savoye plan"
+      },
+      "export_targets": ["svg", "web", "layout"],
+      "tags": ["villa-savoye", "plan", "vector", "reference-derived", "review-only"],
+      "material_tags": []
+    },
+    {
+      "id": "villa-savoye-low-glb-001",
+      "title": "Villa Savoye Low GLB Reference Model",
+      "description": "Existing local low-poly GLB used as the first 3D KosmoAsset pilot.",
+      "asset_type": "glb_model",
+      "category": "structure",
+      "source_kind": "derived_from_entry",
+      "source_entry_id": "villa-savoye",
+      "kosmodata_refs": [
+        {
+          "kind": "reference_entry",
+          "entry_id": "villa-savoye",
+          "relation": "model_context",
+          "usage_policy": "derived_asset_review_required",
+          "review_status": "needs_human_review",
+          "notes": "Use for local model/viewer pipeline checks and structure-layer review only."
+        }
+      ],
+      "source_basis": [
+        "public/archive-models/villa-savoye/low.glb"
+      ],
+      "rights_status": "private_research",
+      "license": "review_only",
+      "credit": "Architecture Cosmos local reference model",
+      "public_use_allowed": false,
+      "local_only": true,
+      "review_status": "draft",
+      "confidence": 0.68,
+      "formats": [
+        {
+          "format": "glb",
+          "path": "../../../public/archive-models/villa-savoye/low.glb",
+          "software": ["blender", "web", "kosmo"],
+          "status": "exists"
+        }
+      ],
+      "preview": {
+        "kind": "wireframe_component",
+        "label": "Villa Savoye GLB"
+      },
+      "export_targets": ["glb", "blender", "web"],
+      "tags": ["villa-savoye", "glb", "low-poly", "reference-model", "review-only"],
+      "material_tags": []
+    },
+    {
+      "id": "ingenbohl-mineral-timber-material-001",
+      "title": "Ingenbohl Mineral Timber Facade Material Study",
+      "description": "Review-only material profile candidate from the Ingenbohl draft: mineral surfaces plus timber/facade layers.",
+      "asset_type": "material",
+      "category": "material",
+      "source_kind": "derived_from_entry",
+      "source_entry_id": "alterszentrum-kloster-ingenbohl",
+      "kosmodata_refs": [
+        {
+          "kind": "reference_entry",
+          "entry_id": "alterszentrum-kloster-ingenbohl",
+          "relation": "material_context",
+          "usage_policy": "derived_asset_review_required",
+          "review_status": "needs_human_review",
+          "notes": "Derived from draft analysis only. Must be verified from primary plans/text before use beyond review."
+        }
+      ],
+      "source_basis": [
+        "data/drafts/alterszentrum-kloster-ingenbohl.json",
+        "data/database-analysis-preview.json"
+      ],
+      "rights_status": "generated_needs_review",
+      "license": "review_only",
+      "credit": "Architecture Cosmos generated material study",
+      "public_use_allowed": false,
+      "local_only": true,
+      "review_status": "planned",
+      "confidence": 0.45,
+      "formats": [
+        {
+          "format": "material_json",
+          "planned_r2_key": "assets/codex-pilot-library/ingenbohl-mineral-timber-material-001/material.json",
+          "software": ["blender", "archicad", "kosmo"],
+          "status": "planned"
+        }
+      ],
+      "preview": {
+        "kind": "material_swatch",
+        "label": "Ingenbohl mineral/timber",
+        "swatches": ["#c9c0b6", "#a3845f", "#6e5a45"]
+      },
+      "export_targets": ["blender", "archicad", "web"],
+      "tags": ["ingenbohl", "material", "timber-facade", "mineral", "review-only"],
+      "material_tags": ["timber", "lime-plaster", "clay-plaster", "mineral"]
+    },
+    {
+      "id": "villa-savoye-pilotis-detail-001",
+      "title": "Villa Savoye Pilotis Detail Slot",
+      "description": "Generated review-only detail slot for a reusable pilotis/column diagram derived from the Villa Savoye reference context.",
+      "asset_type": "detail",
+      "category": "structure",
+      "source_kind": "generated",
+      "source_basis": [
+        "Villa Savoye reference context in data/archive-preview.json",
+        "No measured construction detail generated yet"
+      ],
+      "kosmodata_refs": [
+        {
+          "kind": "reference_entry",
+          "entry_id": "villa-savoye",
+          "relation": "typology_context",
+          "usage_policy": "context_only",
+          "review_status": "context_only",
+          "notes": "Reference context only. The generated detail must not claim measured accuracy."
+        }
+      ],
+      "rights_status": "generated_needs_review",
+      "license": "review_only",
+      "credit": "Architecture Cosmos generated review slot",
+      "public_use_allowed": false,
+      "local_only": true,
+      "review_status": "planned",
+      "confidence": 0.4,
+      "formats": [
+        {
+          "format": "dxf",
+          "planned_r2_key": "assets/codex-pilot-library/villa-savoye-pilotis-detail-001/pilotis-detail.dxf",
+          "software": ["archicad", "generic"],
+          "status": "planned"
+        },
+        {
+          "format": "svg",
+          "planned_r2_key": "assets/codex-pilot-library/villa-savoye-pilotis-detail-001/pilotis-detail.svg",
+          "software": ["web", "kosmo"],
+          "status": "planned"
+        }
+      ],
+      "preview": {
+        "kind": "wireframe_component",
+        "label": "Pilotis detail"
+      },
+      "export_targets": ["dxf", "svg", "layout"],
+      "tags": ["pilotis", "column", "detail", "villa-savoye-context", "generated-review-slot"],
+      "material_tags": ["concrete"]
+    },
+    {
+      "id": "kosmoreferences-blender-archicad-profile-001",
+      "title": "KosmoReferences Blender/ArchiCAD Layer Profile",
+      "description": "Generated export-profile slot for moving reference and asset layers into Blender and ArchiCAD without mixing source, analysis and reusable assets.",
+      "asset_type": "archicad_layer",
+      "category": "utility",
+      "source_kind": "generated",
+      "source_basis": [
+        "Codex KosmoReferences/KosmoAsset split 2026-06-13"
+      ],
+      "rights_status": "own_work",
+      "license": "internal_review",
+      "credit": "Architecture Cosmos / Codex",
+      "public_use_allowed": false,
+      "local_only": true,
+      "review_status": "draft",
+      "confidence": 0.82,
+      "formats": [
+        {
+          "format": "json",
+          "planned_r2_key": "assets/codex-pilot-library/kosmoreferences-blender-archicad-profile-001/profile.json",
+          "software": ["blender", "archicad", "kosmo"],
+          "status": "planned"
+        }
+      ],
+      "preview": {
+        "kind": "axis_marker",
+        "label": "Layer profile"
+      },
+      "export_targets": ["blender", "archicad", "web"],
+      "tags": ["layer-profile", "export-profile", "kosmoreferences", "kosmoasset", "own-work"],
+      "material_tags": []
+    }
+  ]
+}
