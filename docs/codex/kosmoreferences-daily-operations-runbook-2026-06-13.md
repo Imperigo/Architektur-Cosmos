@@ -47,7 +47,8 @@ This runbook is the daily execution order for the KosmoReferences/KosmoAsset dat
    - Owner Answer Sheet Check;
    - Owner Answer Intake Template;
    - Owner Answer Intake Check;
-   - Owner Answer Session Edit Plan.
+   - Owner Answer Session Edit Plan;
+   - Owner Question Brief.
 
 4. Open the generated report:
 
@@ -150,24 +151,34 @@ This runbook is the daily execution order for the KosmoReferences/KosmoAsset dat
 
    - `docs/codex/kosmo-owner-answer-session-edit-plan-2026-06-13.md`
 
-24. If a narrow rerun is needed, run the KosmoReferences Nightly Gate:
+24. Generate the owner-facing question brief:
+
+   ```bash
+   npm run kosmo:owner-question-brief
+   ```
+
+25. Open the generated brief:
+
+   - `docs/codex/kosmo-owner-question-brief-2026-06-13.md`
+
+26. If a narrow rerun is needed, run the KosmoReferences Nightly Gate:
 
    ```bash
    npm run kosmo:references-nightly-gate
    ```
 
-25. Open the generated reports:
+27. Open the generated reports:
 
    - `docs/codex/kosmoreferences-nightly-gate-2026-06-13.md`
    - `data/kosmoreferences-data-lane-status.md`
 
-26. If a narrow asset rerun is needed, run the KosmoAsset seed full review:
+28. If a narrow asset rerun is needed, run the KosmoAsset seed full review:
 
    ```bash
    npm run kosmo:asset-full-review -- --library examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json
    ```
 
-27. Open the generated report:
+29. Open the generated report:
 
    - `examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-full-review.generated.md`
 
@@ -193,6 +204,7 @@ Use the result as the current read-only status:
 - `owner_answer_intake_template_pending_owner_input` means the machine-readable intake file is ready but contains no owner answers yet.
 - `owner_answer_intake_guard_passed_pending_owner_input` means the intake contract is valid and waiting for owner answers.
 - `owner_answer_session_edit_plan_pending_owner_input` means the edit-plan layer is ready, but no session edit is planned until checked owner intake exists.
+- `owner_question_brief_ready` means the next owner-facing question block is ready; it still records no decisions.
 
 Then continue with one of these safe work types:
 
