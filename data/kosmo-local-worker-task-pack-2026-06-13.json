@@ -26,6 +26,12 @@
     "data/kosmo-owner-review-card-batch-a-villa-savoye-image-candidates-2026-06-13.json",
     "data/kosmo-owner-review-card-set-2026-06-13.json",
     "data/kosmo-owner-answer-sheet-2026-06-13.json",
+    "data/kosmo-owner-question-brief-2026-06-13.json",
+    "data/kosmo-owner-question-brief-check-2026-06-13.json",
+    "data/kosmo-owner-review-packet-2026-06-13.json",
+    "data/kosmo-owner-review-packet-check-2026-06-13.json",
+    "data/kosmo-owner-review-session-brief-2026-06-13.json",
+    "data/kosmo-owner-review-session-brief-check-2026-06-13.json",
     "docs/codex/kosmo-private-library-sync-resolution-2026-06-13.md",
     "docs/codex/kosmo-onedrive-sync-error-summary-2026-06-13.md",
     "docs/codex/kosmo-source-root-locator-2026-06-13.md",
@@ -41,6 +47,12 @@
     "docs/codex/kosmo-owner-review-card-batch-a-villa-savoye-image-candidates-2026-06-13.md",
     "docs/codex/kosmo-owner-review-card-set-2026-06-13.md",
     "docs/codex/kosmo-owner-answer-sheet-2026-06-13.md",
+    "docs/codex/kosmo-owner-question-brief-2026-06-13.md",
+    "docs/codex/kosmo-owner-question-brief-check-2026-06-13.md",
+    "docs/codex/kosmo-owner-review-packet-2026-06-13.md",
+    "docs/codex/kosmo-owner-review-packet-check-2026-06-13.md",
+    "docs/codex/kosmo-owner-review-session-brief-2026-06-13.md",
+    "docs/codex/kosmo-owner-review-session-brief-check-2026-06-13.md",
     "data/kosmoreferences-pilot-evidence-matrix-2026-06-13.json",
     "docs/codex/kosmoreferences-pilot-evidence-matrix-2026-06-13.md",
     "data/villa-savoye-provenance-review-brief-2026-06-13.json",
@@ -234,6 +246,28 @@
         "No question asks for public approval without mentioning separate source/rights review.",
         "Keeps Batch D focused on locating the missing private source root."
       ]
+    },
+    {
+      "task_id": "kosmo-owner-session-safe-next-tasks",
+      "priority": 8,
+      "lane": "human_review_support",
+      "input_refs": [
+        "data/kosmo-owner-review-session-brief-2026-06-13.json",
+        "data/kosmo-owner-review-session-brief-check-2026-06-13.json",
+        "docs/codex/kosmo-owner-review-session-brief-2026-06-13.md",
+        "docs/codex/kosmo-owner-review-session-brief-check-2026-06-13.md",
+        "data/kosmo-data-lane-command-router-2026-06-13.json",
+        "data/kosmo-night-loop-checkpoint-2026-06-13.json"
+      ],
+      "output_path": "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-local-worker-2026-06-13/owner-session-safe-next-tasks.private.md",
+      "objective": "Summarize what the local worker may do while the owner review session remains unanswered and guarded.",
+      "acceptance": [
+        "Does not infer or record owner answers.",
+        "Lists only review-only local worker tasks.",
+        "States that the five prior owner signals are not recordable now.",
+        "Keeps source-root, private inventory and public promotion blocked.",
+        "Provides a short handoff checklist for Codex/Claude."
+      ]
     }
   ],
   "handoff_back_to_overseers": {
@@ -244,7 +278,8 @@
       "asset-seed-candidates.private.json",
       "public-source-link-synthesis.private.json",
       "human-decision-queue-triage.private.md",
-      "owner-batch-review-questions.private.md"
+      "owner-batch-review-questions.private.md",
+      "owner-session-safe-next-tasks.private.md"
     ],
     "reviewers": [
       "codex-central-overseer",

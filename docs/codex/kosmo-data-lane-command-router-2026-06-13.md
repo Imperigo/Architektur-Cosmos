@@ -1,6 +1,6 @@
 # Kosmo Data-Lane Command Router
 
-Generated: 2026-06-13T21:30:54.064Z
+Generated: 2026-06-13T21:35:30.258Z
 Status: `worker_router_guarded_review_only`
 
 ## Summary

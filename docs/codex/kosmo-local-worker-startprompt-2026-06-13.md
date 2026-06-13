@@ -135,6 +135,7 @@ Aktueller harter Stand:
 - Ingenbohl PDF Brief: 1 link-only PDF, keine Extraktion, 0 public-ready.
 - Sogn Source-Root Brief: 4 oeffentliche Link-Quellen, 0 lokale Dateien, echter Privat-Quellenstamm fehlt, 0 public-ready.
 - KosmoAsset Seed Full Review: 10/10, aber 6 Human Reviews offen.
+- Local Worker Output Review: `local_worker_outputs_present_review_only`, 8/8 Outputs, 0 High-Risk Hits; neuer privater Output `owner-session-safe-next-tasks.private.md` ist vorhanden.
 - Human Decision Queue: 16/16 offen, davon 10 References und 6 Assets.
 - Owner Decision Batches: 5/5 offen, 16 Items; immer batchweise bearbeiten.
 - Public-Source-Links sind 14/14 erreichbar.
