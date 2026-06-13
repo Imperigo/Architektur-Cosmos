@@ -31,6 +31,16 @@ This runbook is the daily execution order for the KosmoReferences/KosmoAsset dat
    - `docs/codex/kosmoreferences-nightly-gate-2026-06-13.md`
    - `data/kosmoreferences-data-lane-status.md`
 
+5. Run the KosmoAsset seed full review:
+
+   ```bash
+   npm run kosmo:asset-full-review -- --library examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json
+   ```
+
+6. Open the generated report:
+
+   - `examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-full-review.generated.md`
+
 ## If Nightly Gate Passes
 
 Use the result as the current read-only status:
@@ -38,6 +48,7 @@ Use the result as the current read-only status:
 - `passed_review_only` means the lane is structurally healthy.
 - `public_ready_assets: 0` is expected until owner approval and separate promotion review.
 - `owner_decision_session_status: passed_pending_owner_input` means the next human blocker is owner decision, not code.
+- `asset_full_review_ready_for_human_decisions` means KosmoAsset is structurally healthy but still requires explicit asset human-review decisions.
 
 Then continue with one of these safe work types:
 
@@ -46,6 +57,7 @@ Then continue with one of these safe work types:
 - add UI visibility for read-only status;
 - prepare local-worker task packets;
 - improve KosmoAsset review-only library structure;
+- complete or refine KosmoAsset generated profiles, handoff bundles and local review worksheets;
 - write handoffs for Claude/KosmoOverseer.
 
 ## If Owner Decisions Are Needed
