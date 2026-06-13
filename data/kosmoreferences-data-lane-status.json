@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-13T17:45:53.707Z",
+  "generated_at": "2026-06-13T17:51:00.251Z",
   "status": "passed_review_only",
   "source_paths": {
     "registry": "data/kosmoreferences-registry.json",
@@ -10,6 +10,7 @@
     "model_bridge": "examples/kosmo-references/provenance/model-provenance-bridge-2026-06-13.json",
     "model_promotion": "examples/kosmo-references/provenance/model-promotion-dry-run-2026-06-13.json",
     "owner_review": "examples/kosmo-references/provenance/owner-review-decision-pack-2026-06-13-review/owner-review-decision-check.generated.json",
+    "owner_decision_session": "examples/kosmo-references/provenance/owner-decision-session-check.generated.json",
     "local_worker_smoke": "data/kosmo-local-worker-ollama-smoke-2026-06-13.json"
   },
   "summary": {
@@ -28,6 +29,9 @@
     "model_review_average": 96,
     "owner_review_decision_items": 10,
     "owner_review_public_ready_now": 0,
+    "owner_decision_session_status": "passed_pending_owner_input",
+    "owner_decision_session_selected": 0,
+    "owner_decision_session_pending": 10,
     "local_worker_status": "passed",
     "local_worker_model": "kosmo-qwen3-coder:30b-a3b-q4km",
     "local_worker_duration_ms": 528
@@ -82,6 +86,15 @@
       "failures": 0,
       "warnings": 0,
       "auto_promote_allowed": false
+    },
+    "owner_decision_session": {
+      "status": "passed_pending_owner_input",
+      "decision_items": 10,
+      "selected_decisions": 0,
+      "pending_decisions": 10,
+      "public_ready_after_session": 0,
+      "failures": 0,
+      "warnings": 0
     },
     "local_worker": {
       "status": "passed",

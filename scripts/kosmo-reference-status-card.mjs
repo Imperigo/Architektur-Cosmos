@@ -12,6 +12,7 @@ const privateLibraryPath = resolve(root, readArg('--private-library') ?? 'data/k
 const modelBridgePath = resolve(root, readArg('--model-bridge') ?? 'examples/kosmo-references/provenance/model-provenance-bridge-2026-06-13.json');
 const modelPromotionPath = resolve(root, readArg('--model-promotion') ?? 'examples/kosmo-references/provenance/model-promotion-dry-run-2026-06-13.json');
 const ownerReviewPath = resolve(root, readArg('--owner-review') ?? 'examples/kosmo-references/provenance/owner-review-decision-pack-2026-06-13-review/owner-review-decision-check.generated.json');
+const ownerDecisionSessionPath = resolve(root, readArg('--owner-decision-session') ?? 'examples/kosmo-references/provenance/owner-decision-session-check.generated.json');
 const localWorkerSmokePath = resolve(root, readArg('--local-worker-smoke') ?? 'data/kosmo-local-worker-ollama-smoke-2026-06-13.json');
 const outputPath = resolve(root, readArg('--out') ?? 'data/kosmoreferences-data-lane-status.json');
 const markdownPath = outputPath.replace(/\.json$/, '.md');
@@ -31,6 +32,7 @@ async function main() {
     modelBridge: readOptionalJson(modelBridgePath),
     modelPromotion: readOptionalJson(modelPromotionPath),
     ownerReview: readOptionalJson(ownerReviewPath),
+    ownerDecisionSession: readOptionalJson(ownerDecisionSessionPath),
     localWorkerSmoke: readOptionalJson(localWorkerSmokePath)
   });
 
@@ -49,6 +51,7 @@ async function main() {
   console.log(`Public-ready assets: ${status.summary.public_ready_assets}`);
   console.log(`Blocked public promotions: ${status.summary.blocked_public_promotions}`);
   console.log(`Owner review: ${status.extended_checks.owner_review.status}`);
+  console.log(`Owner decision session: ${status.extended_checks.owner_decision_session.status}`);
   console.log(`Private library: ${status.extended_checks.private_library.status}`);
   console.log(`Local worker: ${status.extended_checks.local_worker.status}`);
   console.log(`Wrote: ${relative(root, outputPath)}`);
@@ -64,6 +67,7 @@ function buildStatus(registry, provenance, extra) {
   const modelReview = summarizeModelReview(extra.modelBridge);
   const modelPromotion = summarizeModelPromotion(extra.modelPromotion);
   const ownerReview = summarizeOwnerReview(extra.ownerReview);
+  const ownerDecisionSession = summarizeOwnerDecisionSession(extra.ownerDecisionSession);
   const localWorker = summarizeLocalWorker(extra.localWorkerSmoke);
 
   const pilots = (registry.reference_pilots ?? []).map((pilot) => {
@@ -115,6 +119,7 @@ function buildStatus(registry, provenance, extra) {
       model_bridge: relative(root, modelBridgePath),
       model_promotion: relative(root, modelPromotionPath),
       owner_review: relative(root, ownerReviewPath),
+      owner_decision_session: relative(root, ownerDecisionSessionPath),
       local_worker_smoke: relative(root, localWorkerSmokePath)
     },
     summary: {
@@ -133,6 +138,9 @@ function buildStatus(registry, provenance, extra) {
       model_review_average: modelReview.average_score,
       owner_review_decision_items: ownerReview.decision_items,
       owner_review_public_ready_now: ownerReview.public_ready_now,
+      owner_decision_session_status: ownerDecisionSession.status,
+      owner_decision_session_selected: ownerDecisionSession.selected_decisions,
+      owner_decision_session_pending: ownerDecisionSession.pending_decisions,
       local_worker_status: localWorker.status,
       local_worker_model: localWorker.model,
       local_worker_duration_ms: localWorker.duration_ms
@@ -149,6 +157,7 @@ function buildStatus(registry, provenance, extra) {
       model_review: modelReview,
       model_promotion: modelPromotion,
       owner_review: ownerReview,
+      owner_decision_session: ownerDecisionSession,
       local_worker: localWorker
     },
     pilots,
@@ -189,6 +198,7 @@ function renderMarkdown(status) {
   lines.push(`- Model review average: ${status.summary.model_review_average}`);
   lines.push(`- Owner-review decisions: ${status.summary.owner_review_decision_items}`);
   lines.push(`- Owner-review public-ready now: ${status.summary.owner_review_public_ready_now}`);
+  lines.push(`- Owner decision session: ${status.summary.owner_decision_session_status} (${status.summary.owner_decision_session_selected} selected / ${status.summary.owner_decision_session_pending} pending)`);
   lines.push(`- Local worker: ${status.summary.local_worker_status} (${status.summary.local_worker_model}, ${status.summary.local_worker_duration_ms}ms)`);
   lines.push('');
   lines.push('## Pilots');
@@ -299,6 +309,18 @@ function summarizeOwnerReview(report) {
     failures: report?.summary?.failures ?? 0,
     warnings: report?.summary?.warnings ?? 0,
     auto_promote_allowed: report?.policy?.auto_promote_allowed ?? false
+  };
+}
+
+function summarizeOwnerDecisionSession(report) {
+  return {
+    status: report?.status ?? 'missing_report',
+    decision_items: report?.summary?.decision_items ?? 0,
+    selected_decisions: report?.summary?.selected_decisions ?? 0,
+    pending_decisions: report?.summary?.pending_decisions ?? 0,
+    public_ready_after_session: report?.summary?.public_ready_after_session ?? 0,
+    failures: report?.summary?.failures ?? 0,
+    warnings: report?.summary?.warnings ?? 0
   };
 }
 
