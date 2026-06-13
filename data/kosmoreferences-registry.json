@@ -21,6 +21,17 @@
       "role": "documents MarkItDown behavior for text-heavy PDFs and map-heavy PDFs"
     },
     {
+      "id": "architecturekosmos-private-project-sources-2026-06-13",
+      "title": "ArchitectureKosmos Private Project Sources",
+      "path": "examples/kosmo-references/source-packages/architecturekosmos-private-project-sources-2026-06-13/source-package.json",
+      "review_report": "examples/kosmo-references/source-packages/architecturekosmos-private-project-sources-2026-06-13/review/source-package-check.generated.md",
+      "status": "review_ready",
+      "rights_scope": "private_research",
+      "source_kind": "private_project_docs",
+      "check_status": "passed",
+      "role": "private owner/project doctrine for KosmoReferences, KosmoAsset, rights, ingestion and worker behavior"
+    },
+    {
       "id": "kapelle-sogn-benedetg-public-source-candidate-2026-06-13",
       "title": "Kapelle Sogn Benedetg Public Source Candidate",
       "path": "examples/kosmo-references/source-packages/kapelle-sogn-benedetg-public-source-candidate-2026-06-13/source-package.json",
@@ -116,6 +127,7 @@
   ],
   "next_actions": [
     "Find the real local book/ETH/HSLU library path.",
+    "Privately extract and index the ArchitectureKosmos project-source package for local worker context.",
     "Add OCR/Vision/Layout extraction for scan, plan and map PDFs.",
     "Promote no public media until rights gates pass.",
     "Expose this registry in KosmoOrbit or Claude handoff views as a read-only data-lane map."

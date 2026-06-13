@@ -1,13 +1,13 @@
 {
-  "checked_at": "2026-06-13T16:19:05.143Z",
+  "checked_at": "2026-06-13T16:35:27.517Z",
   "registry_path": "data/kosmoreferences-registry.json",
   "status": "passed",
   "summary": {
-    "source_packages": 4,
+    "source_packages": 5,
     "entry_drafts": 3,
     "asset_libraries": 1,
     "reference_pilots": 3,
-    "checks": 13,
+    "checks": 15,
     "failures": 0,
     "warnings": 0
   },
@@ -22,6 +22,18 @@
       "kind": "source_package_report",
       "id": "codex-markitdown-smoke-2026-06-13",
       "path": "examples/kosmo-references/source-packages/codex-markitdown-smoke-2026-06-13/review/source-package-check.generated.json",
+      "status": "read_json"
+    },
+    {
+      "kind": "source_package",
+      "id": "architecturekosmos-private-project-sources-2026-06-13",
+      "path": "examples/kosmo-references/source-packages/architecturekosmos-private-project-sources-2026-06-13/source-package.json",
+      "status": "read_json"
+    },
+    {
+      "kind": "source_package_report",
+      "id": "architecturekosmos-private-project-sources-2026-06-13",
+      "path": "examples/kosmo-references/source-packages/architecturekosmos-private-project-sources-2026-06-13/review/source-package-check.generated.json",
       "status": "read_json"
     },
     {

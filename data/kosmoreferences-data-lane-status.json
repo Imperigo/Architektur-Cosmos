@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-13T16:27:51.861Z",
+  "generated_at": "2026-06-13T16:35:30.890Z",
   "status": "passed_review_only",
   "source_paths": {
     "registry": "data/kosmoreferences-registry.json",
@@ -8,7 +8,7 @@
   },
   "summary": {
     "pilots": 3,
-    "source_packages": 4,
+    "source_packages": 5,
     "entry_drafts": 3,
     "asset_libraries": 1,
     "library_assets": 5,

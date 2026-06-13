@@ -1,0 +1,189 @@
+{
+  "schema_version": "0.1",
+  "package_id": "architecturekosmos-private-project-sources-2026-06-13",
+  "title": "ArchitectureKosmos Private Project Sources",
+  "description": "Private source package for the ArchitectureKosmos/KosmoReferences operating doctrine: owner vision, AI workflow, ingestion rules, rights policy, data model, media/model policy and KosmoAsset lane. Source contents are not copied into the repo.",
+  "created_at": "2026-06-13",
+  "updated_at": "2026-06-13",
+  "status": "review_ready",
+  "rights_scope": "private_research",
+  "source_kind": "private_project_docs",
+  "source_root": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09",
+  "public_policy": {
+    "source_files_public": false,
+    "extracted_text_public": false,
+    "derived_summary_public": true,
+    "notes": [
+      "This package stores absolute local paths, hashes and source roles only.",
+      "Private PDFs and Markdown documents remain outside the public repo content layer.",
+      "Local LLMs may use these sources for private project reasoning; public outputs require own-written summaries and explicit rights review."
+    ]
+  },
+  "sources": [
+    {
+      "id": "architecture-cosmos-vision-document-pdf",
+      "title": "Architecture Cosmos Vision Document",
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Architekturkosmos Zentrale/Architecture_Cosmos_Vision_Document.pdf",
+      "file_type": "pdf",
+      "source_role": "owner_vision",
+      "rights_status": "private_research",
+      "sha256": "7e4609a9dee327293b8a58358b524f5fa4850de54e72ba13ac726b58aca35096",
+      "bytes": 1524763,
+      "notes": "Core private vision document for ArchitectureKosmos. Use as project intent source, not public corpus text."
+    },
+    {
+      "id": "architekturkosmos-ai-workflow-pipeline-pdf",
+      "title": "Architekturkosmos AI Workflow Pipeline Projekt Dokument",
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Architekturkosmos Zentrale/Architekturkosmos_AI_Workflow_Pipeline_Projekt_Dokument.pdf",
+      "file_type": "pdf",
+      "source_role": "workflow_doctrine",
+      "rights_status": "private_research",
+      "sha256": "a46d51f88c2bec0dfa444f71c4aed44d1b5ce557f812e4acb1a073b6e8b0e964",
+      "bytes": 320826,
+      "notes": "Private worker/pipeline doctrine. Already used in MarkItDown smoke, included here as authoritative project source."
+    },
+    {
+      "id": "ai-reference-archive-vision-md",
+      "title": "AI Reference Archive Vision",
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC/KosmoWebsite/repo-context/docs/ai-reference-archive-vision.md",
+      "file_type": "markdown",
+      "source_role": "kosmoreferences_vision",
+      "rights_status": "private_research",
+      "sha256": "cd156b0ef69b42c787ae131b2361c9c1b7a0c730247e0d78b0aece795c2d5882",
+      "bytes": 4435,
+      "notes": "Reference-archive concept source for KosmoReferences scope and behavior."
+    },
+    {
+      "id": "book-library-ingestion-md",
+      "title": "Book Library Ingestion",
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC/KosmoWebsite/repo-context/docs/book-library-ingestion.md",
+      "file_type": "markdown",
+      "source_role": "library_ingestion_policy",
+      "rights_status": "private_research",
+      "sha256": "e5d9b613c798465d358832937d055a12909f90ed7482a8d80c8916720077478f",
+      "bytes": 7172,
+      "notes": "Defines ingestion direction for private books and lecture documents once the large library path is mounted/found."
+    },
+    {
+      "id": "pilot-entry-standard-md",
+      "title": "Pilot Entry Standard",
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC/KosmoWebsite/repo-context/docs/pilot-entry-standard.md",
+      "file_type": "markdown",
+      "source_role": "entry_quality_standard",
+      "rights_status": "private_research",
+      "sha256": "aa84c4910b145c18ec80e7598c51ca92276b2c479507531e4a54fbdf3424aa91",
+      "bytes": 4324,
+      "notes": "Defines expected quality for reference entries and pilots."
+    },
+    {
+      "id": "rights-and-public-sources-md",
+      "title": "Rights and Public Sources",
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC/KosmoWebsite/repo-context/docs/rights-and-public-sources.md",
+      "file_type": "markdown",
+      "source_role": "rights_policy",
+      "rights_status": "private_research",
+      "sha256": "6136bc178dd352b9610ab450e6b01537559fda11e0f59630ee294031736afecc",
+      "bytes": 4077,
+      "notes": "Private project rights policy. Public promotion must obey this source and the provenance gate."
+    },
+    {
+      "id": "kosmo-asset-library-md",
+      "title": "Kosmo Asset Library",
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC/KosmoWebsite/repo-context/docs/kosmo-asset-library.md",
+      "file_type": "markdown",
+      "source_role": "kosmoasset_doctrine",
+      "rights_status": "private_research",
+      "sha256": "9d4034d32d045272be1f22fccfc35bf59f29aa3a4d1db4dea0d1e8bf78e2fcf2",
+      "bytes": 19577,
+      "notes": "Primary KosmoAsset doctrine for reusable 2D/3D/material/component database behavior."
+    },
+    {
+      "id": "media-and-model-policy-md",
+      "title": "Media and Model Policy",
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC/KosmoWebsite/repo-context/docs/media-and-model-policy.md",
+      "file_type": "markdown",
+      "source_role": "media_model_policy",
+      "rights_status": "private_research",
+      "sha256": "4b1d5ab4062235c27479e3e210ac17a3e00aaea70f6dfc4f67da8b812dfa1432",
+      "bytes": 5505,
+      "notes": "Policy source for media/model use and file-level promotion review."
+    },
+    {
+      "id": "data-model-md",
+      "title": "Data Model",
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC/KosmoWebsite/repo-context/docs/data-model.md",
+      "file_type": "markdown",
+      "source_role": "schema_reference",
+      "rights_status": "private_research",
+      "sha256": "6374df4df7298d841ee71f7eaf58e42191b63d8c16566938848cfd6d04c265e3",
+      "bytes": 5579,
+      "notes": "Private schema/modeling source for ArchitectureCosmos data structures."
+    },
+    {
+      "id": "database-architecture-md",
+      "title": "Database Architecture",
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC/KosmoWebsite/repo-context/docs/database-architecture.md",
+      "file_type": "markdown",
+      "source_role": "database_architecture",
+      "rights_status": "private_research",
+      "sha256": "037912f591fb12339ea8f197ff2587768c029b3c4c4779d2b0507d2b33812d28",
+      "bytes": 7746,
+      "notes": "Private database architecture source for KosmoReferences/KosmoData evolution."
+    }
+  ],
+  "extraction_artifacts": [],
+  "candidate_projects": [
+    {
+      "id": "architecturekosmos-data-lane",
+      "title": "ArchitectureKosmos Data Lane Operating Doctrine",
+      "confidence": 0.95,
+      "promotion_status": "private_source_only",
+      "evidence": [
+        "Sources cover owner vision, AI workflow, reference archive, book ingestion, entry standards, rights policy, data model and KosmoAsset.",
+        "The package is intended for local/private worker reasoning and not for public reproduction."
+      ]
+    }
+  ],
+  "review_gates": [
+    {
+      "id": "source_integrity",
+      "status": "pass",
+      "notes": "SHA-256 and byte counts recorded for all private local sources."
+    },
+    {
+      "id": "rights",
+      "status": "partial",
+      "notes": "All sources are treated as private research/project sources; no source text or source files are public-ready."
+    },
+    {
+      "id": "text_quality",
+      "status": "partial",
+      "notes": "Markdown sources are readable; PDFs need extraction/OCR review before structured private indexing."
+    },
+    {
+      "id": "layout_quality",
+      "status": "not_run",
+      "notes": "No page-layout or figure/table extraction has been run for this package."
+    },
+    {
+      "id": "entry_mapping",
+      "status": "partial",
+      "notes": "This package maps to system/operating knowledge, not a single public architecture reference entry."
+    },
+    {
+      "id": "asset_mapping",
+      "status": "partial",
+      "notes": "KosmoAsset doctrine is included; no specific asset files are derived by this package."
+    },
+    {
+      "id": "public_private_split",
+      "status": "pass",
+      "notes": "Manifest stores only metadata and keeps source content private/local."
+    }
+  ],
+  "next_actions": [
+    "Run private text extraction for the two PDFs into a non-public local output path.",
+    "Use these sources as the first internal doctrine corpus for KosmoReferences and KosmoAsset workers.",
+    "Mount or locate the large book/ETH/HSLU lecture library and add a separate private library package."
+  ]
+}

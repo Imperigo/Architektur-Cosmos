@@ -1,16 +1,16 @@
 # KosmoReferences Registry Check
 
-Generated: 2026-06-13T16:19:05.143Z
+Generated: 2026-06-13T16:35:27.517Z
 Registry: `data/kosmoreferences-registry.json`
 Status: `passed`
 
 ## Summary
 
-- Source packages: 4
+- Source packages: 5
 - Entry drafts: 3
 - Asset libraries: 1
 - Reference pilots: 3
-- Checks: 13
+- Checks: 15
 - Failures: 0
 - Warnings: 0
 
@@ -18,6 +18,8 @@ Status: `passed`
 
 - `source_package:codex-markitdown-smoke-2026-06-13` -> `read_json`
 - `source_package_report:codex-markitdown-smoke-2026-06-13` -> `read_json`
+- `source_package:architecturekosmos-private-project-sources-2026-06-13` -> `read_json`
+- `source_package_report:architecturekosmos-private-project-sources-2026-06-13` -> `read_json`
 - `source_package:kapelle-sogn-benedetg-public-source-candidate-2026-06-13` -> `read_json`
 - `source_package_report:kapelle-sogn-benedetg-public-source-candidate-2026-06-13` -> `read_json`
 - `source_package:alterszentrum-kloster-ingenbohl-public-source-candidate-2026-06-13` -> `read_json`

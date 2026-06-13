@@ -1,0 +1,127 @@
+{
+  "checked_at": "2026-06-13T16:35:22.164Z",
+  "package_path": "examples/kosmo-references/source-packages/architecturekosmos-private-project-sources-2026-06-13/source-package.json",
+  "package_id": "architecturekosmos-private-project-sources-2026-06-13",
+  "title": "ArchitectureKosmos Private Project Sources",
+  "status": "passed",
+  "summary": {
+    "sources": 10,
+    "extraction_artifacts": 0,
+    "candidate_projects": 1,
+    "review_gates": 7
+  },
+  "checks": [
+    {
+      "kind": "source",
+      "id": "architecture-cosmos-vision-document-pdf",
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Architekturkosmos Zentrale/Architecture_Cosmos_Vision_Document.pdf",
+      "status": "pass",
+      "resolved_path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Architekturkosmos Zentrale/Architecture_Cosmos_Vision_Document.pdf",
+      "expected_sha256": "7e4609a9dee327293b8a58358b524f5fa4850de54e72ba13ac726b58aca35096",
+      "actual_sha256": "7e4609a9dee327293b8a58358b524f5fa4850de54e72ba13ac726b58aca35096",
+      "expected_bytes": 1524763,
+      "actual_bytes": 1524763
+    },
+    {
+      "kind": "source",
+      "id": "architekturkosmos-ai-workflow-pipeline-pdf",
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Architekturkosmos Zentrale/Architekturkosmos_AI_Workflow_Pipeline_Projekt_Dokument.pdf",
+      "status": "pass",
+      "resolved_path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Architekturkosmos Zentrale/Architekturkosmos_AI_Workflow_Pipeline_Projekt_Dokument.pdf",
+      "expected_sha256": "a46d51f88c2bec0dfa444f71c4aed44d1b5ce557f812e4acb1a073b6e8b0e964",
+      "actual_sha256": "a46d51f88c2bec0dfa444f71c4aed44d1b5ce557f812e4acb1a073b6e8b0e964",
+      "expected_bytes": 320826,
+      "actual_bytes": 320826
+    },
+    {
+      "kind": "source",
+      "id": "ai-reference-archive-vision-md",
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC/KosmoWebsite/repo-context/docs/ai-reference-archive-vision.md",
+      "status": "pass",
+      "resolved_path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC/KosmoWebsite/repo-context/docs/ai-reference-archive-vision.md",
+      "expected_sha256": "cd156b0ef69b42c787ae131b2361c9c1b7a0c730247e0d78b0aece795c2d5882",
+      "actual_sha256": "cd156b0ef69b42c787ae131b2361c9c1b7a0c730247e0d78b0aece795c2d5882",
+      "expected_bytes": 4435,
+      "actual_bytes": 4435
+    },
+    {
+      "kind": "source",
+      "id": "book-library-ingestion-md",
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC/KosmoWebsite/repo-context/docs/book-library-ingestion.md",
+      "status": "pass",
+      "resolved_path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC/KosmoWebsite/repo-context/docs/book-library-ingestion.md",
+      "expected_sha256": "e5d9b613c798465d358832937d055a12909f90ed7482a8d80c8916720077478f",
+      "actual_sha256": "e5d9b613c798465d358832937d055a12909f90ed7482a8d80c8916720077478f",
+      "expected_bytes": 7172,
+      "actual_bytes": 7172
+    },
+    {
+      "kind": "source",
+      "id": "pilot-entry-standard-md",
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC/KosmoWebsite/repo-context/docs/pilot-entry-standard.md",
+      "status": "pass",
+      "resolved_path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC/KosmoWebsite/repo-context/docs/pilot-entry-standard.md",
+      "expected_sha256": "aa84c4910b145c18ec80e7598c51ca92276b2c479507531e4a54fbdf3424aa91",
+      "actual_sha256": "aa84c4910b145c18ec80e7598c51ca92276b2c479507531e4a54fbdf3424aa91",
+      "expected_bytes": 4324,
+      "actual_bytes": 4324
+    },
+    {
+      "kind": "source",
+      "id": "rights-and-public-sources-md",
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC/KosmoWebsite/repo-context/docs/rights-and-public-sources.md",
+      "status": "pass",
+      "resolved_path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC/KosmoWebsite/repo-context/docs/rights-and-public-sources.md",
+      "expected_sha256": "6136bc178dd352b9610ab450e6b01537559fda11e0f59630ee294031736afecc",
+      "actual_sha256": "6136bc178dd352b9610ab450e6b01537559fda11e0f59630ee294031736afecc",
+      "expected_bytes": 4077,
+      "actual_bytes": 4077
+    },
+    {
+      "kind": "source",
+      "id": "kosmo-asset-library-md",
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC/KosmoWebsite/repo-context/docs/kosmo-asset-library.md",
+      "status": "pass",
+      "resolved_path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC/KosmoWebsite/repo-context/docs/kosmo-asset-library.md",
+      "expected_sha256": "9d4034d32d045272be1f22fccfc35bf59f29aa3a4d1db4dea0d1e8bf78e2fcf2",
+      "actual_sha256": "9d4034d32d045272be1f22fccfc35bf59f29aa3a4d1db4dea0d1e8bf78e2fcf2",
+      "expected_bytes": 19577,
+      "actual_bytes": 19577
+    },
+    {
+      "kind": "source",
+      "id": "media-and-model-policy-md",
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC/KosmoWebsite/repo-context/docs/media-and-model-policy.md",
+      "status": "pass",
+      "resolved_path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC/KosmoWebsite/repo-context/docs/media-and-model-policy.md",
+      "expected_sha256": "4b1d5ab4062235c27479e3e210ac17a3e00aaea70f6dfc4f67da8b812dfa1432",
+      "actual_sha256": "4b1d5ab4062235c27479e3e210ac17a3e00aaea70f6dfc4f67da8b812dfa1432",
+      "expected_bytes": 5505,
+      "actual_bytes": 5505
+    },
+    {
+      "kind": "source",
+      "id": "data-model-md",
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC/KosmoWebsite/repo-context/docs/data-model.md",
+      "status": "pass",
+      "resolved_path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC/KosmoWebsite/repo-context/docs/data-model.md",
+      "expected_sha256": "6374df4df7298d841ee71f7eaf58e42191b63d8c16566938848cfd6d04c265e3",
+      "actual_sha256": "6374df4df7298d841ee71f7eaf58e42191b63d8c16566938848cfd6d04c265e3",
+      "expected_bytes": 5579,
+      "actual_bytes": 5579
+    },
+    {
+      "kind": "source",
+      "id": "database-architecture-md",
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC/KosmoWebsite/repo-context/docs/database-architecture.md",
+      "status": "pass",
+      "resolved_path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC/KosmoWebsite/repo-context/docs/database-architecture.md",
+      "expected_sha256": "037912f591fb12339ea8f197ff2587768c029b3c4c4779d2b0507d2b33812d28",
+      "actual_sha256": "037912f591fb12339ea8f197ff2587768c029b3c4c4779d2b0507d2b33812d28",
+      "expected_bytes": 7746,
+      "actual_bytes": 7746
+    }
+  ],
+  "failures": [],
+  "warnings": []
+}
