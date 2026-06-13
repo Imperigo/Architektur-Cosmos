@@ -1,12 +1,12 @@
 # KosmoData Lane Sweep
 
-Generated: 2026-06-13T19:19:53.443Z
+Generated: 2026-06-13T19:27:52.921Z
 Status: `kosmodata_lane_sweep_review_only_passed`
 
 ## Summary
 
-- Steps passed: 6/6
-- Duration: 15517ms
+- Steps passed: 9/9
+- Duration: 12603ms
 - KosmoReferences: passed_review_only (10/10)
 - References public-ready assets: 0
 - References owner pending: 10
@@ -35,17 +35,29 @@ Status: `kosmodata_lane_sweep_review_only_passed`
 - Pilot media slots blocked: 12
 - Pilot asset candidates blocked: 9
 - Pilot evidence public-ready assets: 0
+- Villa brief: villa_provenance_review_brief_ready
+- Villa candidates/blocked: 3/4
+- Villa public-ready after brief: 0
+- Ingenbohl brief: ingenbohl_pdf_extraction_decision_needed
+- Ingenbohl PDF links: 1
+- Ingenbohl public-ready after brief: 0
+- Sogn brief: sogn_source_root_decision_needed
+- Sogn public links/local files: 4/0
+- Sogn public-ready after brief: 0
 
 ## Steps
 
 | Step | Status | Duration | Report |
 | --- | --- | ---: | --- |
-| KosmoReferences Nightly Gate | passed | 11012ms | `data/kosmoreferences-nightly-gate-2026-06-13.json` |
-| KosmoAsset Seed Full Review | passed | 3554ms | `examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-full-review.generated.json` |
-| Human Decision Queue | passed | 234ms | `data/kosmo-human-decision-queue-2026-06-13.json` |
-| Owner Decision Batches | passed | 233ms | `data/kosmo-human-decision-owner-batches-2026-06-13.json` |
-| Local Worker Output Review | passed | 237ms | `data/kosmo-local-worker-output-review-2026-06-13.json` |
-| Pilot Evidence Matrix | passed | 245ms | `data/kosmoreferences-pilot-evidence-matrix-2026-06-13.json` |
+| KosmoReferences Nightly Gate | passed | 7439ms | `data/kosmoreferences-nightly-gate-2026-06-13.json` |
+| KosmoAsset Seed Full Review | passed | 3526ms | `examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-full-review.generated.json` |
+| Human Decision Queue | passed | 231ms | `data/kosmo-human-decision-queue-2026-06-13.json` |
+| Owner Decision Batches | passed | 237ms | `data/kosmo-human-decision-owner-batches-2026-06-13.json` |
+| Local Worker Output Review | passed | 233ms | `data/kosmo-local-worker-output-review-2026-06-13.json` |
+| Pilot Evidence Matrix | passed | 231ms | `data/kosmoreferences-pilot-evidence-matrix-2026-06-13.json` |
+| Villa Savoye Provenance Review Brief | passed | 231ms | `data/villa-savoye-provenance-review-brief-2026-06-13.json` |
+| Ingenbohl PDF Extraction Brief | passed | 236ms | `data/ingenbohl-pdf-extraction-decision-brief-2026-06-13.json` |
+| Sogn Benedetg Source-Root Brief | passed | 237ms | `data/sogn-benedetg-source-root-decision-brief-2026-06-13.json` |
 
 ## Next Actions
 
@@ -53,6 +65,9 @@ Status: `kosmodata_lane_sweep_review_only_passed`
 - Complete 6 KosmoAsset human reviews before local approvals or sandbox certificates.
 - Use 5 owner decision batches for review rounds instead of asking all open items at once.
 - Track 12 pilot evidence gaps across Villa Savoye, Sogn Benedetg and Ingenbohl.
+- Keep 4 Villa Savoye files blocked until source-basis/build-log review exists.
+- Decide whether Ingenbohl PDF remains link-only or enters private metadata-only extraction.
+- Keep Sogn Benedetg link-only until the real private source root is visible and inventoried.
 - Expose or mount the real large private book/ETH/HSLU library root.
 - Resolve 30 OneDrive sync error marker files before treating the visible mirror as complete.
 - Keep public-ready assets at 0 until separate owner and promotion reviews pass.

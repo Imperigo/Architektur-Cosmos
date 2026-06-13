@@ -54,6 +54,27 @@ const steps = [
     command: 'npm',
     args: ['run', 'kosmo:pilot-evidence-matrix'],
     report: 'data/kosmoreferences-pilot-evidence-matrix-2026-06-13.json'
+  },
+  {
+    id: 'villa_provenance_review_brief',
+    label: 'Villa Savoye Provenance Review Brief',
+    command: 'npm',
+    args: ['run', 'kosmo:villa-provenance-brief'],
+    report: 'data/villa-savoye-provenance-review-brief-2026-06-13.json'
+  },
+  {
+    id: 'ingenbohl_pdf_extraction_brief',
+    label: 'Ingenbohl PDF Extraction Brief',
+    command: 'npm',
+    args: ['run', 'kosmo:ingenbohl-pdf-brief'],
+    report: 'data/ingenbohl-pdf-extraction-decision-brief-2026-06-13.json'
+  },
+  {
+    id: 'sogn_source_root_brief',
+    label: 'Sogn Benedetg Source-Root Brief',
+    command: 'npm',
+    args: ['run', 'kosmo:sogn-source-root-brief'],
+    report: 'data/sogn-benedetg-source-root-decision-brief-2026-06-13.json'
   }
 ];
 
@@ -76,10 +97,13 @@ async function main() {
   const ownerDecisionBatches = await readOptionalJson(resolve(root, steps[3].report));
   const localWorkerReview = await readOptionalJson(resolve(root, steps[4].report));
   const pilotEvidenceMatrix = await readOptionalJson(resolve(root, steps[5].report));
+  const villaBrief = await readOptionalJson(resolve(root, steps[6].report));
+  const ingenbohlBrief = await readOptionalJson(resolve(root, steps[7].report));
+  const sognBrief = await readOptionalJson(resolve(root, steps[8].report));
   const failedSteps = stepResults.filter((step) => step.exit_code !== 0);
   const status = failedSteps.length
     ? 'kosmodata_lane_sweep_failed'
-    : isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix })
+    : isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief })
       ? 'kosmodata_lane_sweep_review_only_passed'
       : 'kosmodata_lane_sweep_needs_review';
 
@@ -133,7 +157,18 @@ async function main() {
       pilot_evidence_total_gaps: pilotEvidenceMatrix?.summary?.total_gap_count ?? null,
       pilot_evidence_media_slots_blocked: pilotEvidenceMatrix?.summary?.media_slots_blocked ?? null,
       pilot_evidence_asset_candidates_blocked: pilotEvidenceMatrix?.summary?.asset_candidates_blocked ?? null,
-      pilot_evidence_public_ready_assets: pilotEvidenceMatrix?.summary?.public_ready_assets ?? null
+      pilot_evidence_public_ready_assets: pilotEvidenceMatrix?.summary?.public_ready_assets ?? null,
+      villa_brief_status: villaBrief?.status || null,
+      villa_brief_candidates: villaBrief?.summary?.candidate_promotions ?? null,
+      villa_brief_blocked_items: villaBrief?.summary?.must_remain_blocked ?? null,
+      villa_brief_public_ready_after: villaBrief?.policy?.public_ready_after_brief ?? villaBrief?.summary?.public_ready_after_pack ?? null,
+      ingenbohl_brief_status: ingenbohlBrief?.status || null,
+      ingenbohl_brief_pdf_links: ingenbohlBrief?.summary?.pdf_link_count ?? null,
+      ingenbohl_brief_public_ready_after: ingenbohlBrief?.summary?.public_ready_after_brief ?? null,
+      sogn_brief_status: sognBrief?.status || null,
+      sogn_brief_public_links: sognBrief?.summary?.public_link_sources ?? null,
+      sogn_brief_local_files: sognBrief?.summary?.local_file_count ?? null,
+      sogn_brief_public_ready_after: sognBrief?.summary?.public_ready_after_brief ?? null
     },
     reports: {
       references_gate: steps[0].report,
@@ -142,10 +177,13 @@ async function main() {
       human_decision_queue: steps[2].report,
       owner_decision_batches: steps[3].report,
       local_worker_output_review: steps[4].report,
-      pilot_evidence_matrix: steps[5].report
+      pilot_evidence_matrix: steps[5].report,
+      villa_provenance_review_brief: steps[6].report,
+      ingenbohl_pdf_extraction_brief: steps[7].report,
+      sogn_source_root_brief: steps[8].report
     },
     steps: stepResults,
-    next_actions: nextActions({ failedSteps, referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix })
+    next_actions: nextActions({ failedSteps, referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief })
   };
 
   await mkdir(dirname(outputJson), { recursive: true });
@@ -204,7 +242,7 @@ async function runStep(step) {
   };
 }
 
-function isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix }) {
+function isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief }) {
   const referencesOk = referencesGate?.status === 'passed_review_only' &&
     (referencesGate?.summary?.public_ready_assets ?? referencesStatus?.summary?.public_ready_assets) === 0;
   const assetOk = assetFullReview?.status === 'asset_full_review_ready_for_human_decisions' &&
@@ -221,10 +259,23 @@ function isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview
     localWorkerReview?.summary?.public_ready_allowed !== true;
   const pilotEvidenceOk = pilotEvidenceMatrix?.status === 'pilot_evidence_matrix_review_only' &&
     pilotEvidenceMatrix?.summary?.public_ready_assets === 0;
-  return referencesOk && assetOk && queueOk && batchesOk && localWorkerOk && pilotEvidenceOk;
+  const villaBriefOk = villaBrief?.status === 'villa_provenance_review_brief_ready' &&
+    (villaBrief?.policy?.public_ready_after_brief ?? villaBrief?.summary?.public_ready_after_pack) === 0 &&
+    villaBrief?.policy?.public_ready_changes_allowed !== true;
+  const ingenbohlBriefOk = ingenbohlBrief?.status === 'ingenbohl_pdf_extraction_decision_needed' &&
+    ingenbohlBrief?.summary?.public_ready_after_brief === 0 &&
+    ingenbohlBrief?.policy?.public_ready_allowed !== true &&
+    ingenbohlBrief?.policy?.downloaded_pdf !== true &&
+    ingenbohlBrief?.policy?.extracted_text !== true;
+  const sognBriefOk = sognBrief?.status === 'sogn_source_root_decision_needed' &&
+    sognBrief?.summary?.public_ready_after_brief === 0 &&
+    sognBrief?.policy?.public_ready_allowed !== true &&
+    sognBrief?.policy?.private_content_copied !== true &&
+    sognBrief?.policy?.generated_geometry_allowed_now !== true;
+  return referencesOk && assetOk && queueOk && batchesOk && localWorkerOk && pilotEvidenceOk && villaBriefOk && ingenbohlBriefOk && sognBriefOk;
 }
 
-function nextActions({ failedSteps, referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix }) {
+function nextActions({ failedSteps, referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief }) {
   if (failedSteps.length > 0) return [`Fix failed sweep steps: ${failedSteps.map((step) => step.id).join(', ')}.`];
   const actions = [];
   const ownerPending = humanDecisionQueue?.summary?.reference_items ?? referencesGate?.summary?.owner_decision_session_pending ?? referencesStatus?.summary?.owner_decision_session_pending ?? 0;
@@ -239,6 +290,10 @@ function nextActions({ failedSteps, referencesGate, referencesStatus, assetFullR
   if (localWorkerRisk > 0) actions.push(`Review ${localWorkerRisk} high-risk local worker output hits with Codex/Claude.`);
   const pilotGaps = pilotEvidenceMatrix?.summary?.total_gap_count ?? 0;
   if (pilotGaps > 0) actions.push(`Track ${pilotGaps} pilot evidence gaps across Villa Savoye, Sogn Benedetg and Ingenbohl.`);
+  const villaBlocked = villaBrief?.summary?.must_remain_blocked ?? 0;
+  if (villaBlocked > 0) actions.push(`Keep ${villaBlocked} Villa Savoye files blocked until source-basis/build-log review exists.`);
+  if (ingenbohlBrief?.status === 'ingenbohl_pdf_extraction_decision_needed') actions.push('Decide whether Ingenbohl PDF remains link-only or enters private metadata-only extraction.');
+  if (sognBrief?.status === 'sogn_source_root_decision_needed') actions.push('Keep Sogn Benedetg link-only until the real private source root is visible and inventoried.');
   const privateLibrary = referencesGate?.summary?.private_library_status ?? referencesStatus?.summary?.private_library_status;
   const syncErrors = referencesStatus?.summary?.private_library_sync_error_files ?? 0;
   if (privateLibrary !== 'library_candidate_visible') actions.push('Expose or mount the real large private book/ETH/HSLU library root.');
@@ -286,6 +341,15 @@ function renderMarkdown(report) {
   lines.push(`- Pilot media slots blocked: ${report.summary.pilot_evidence_media_slots_blocked}`);
   lines.push(`- Pilot asset candidates blocked: ${report.summary.pilot_evidence_asset_candidates_blocked}`);
   lines.push(`- Pilot evidence public-ready assets: ${report.summary.pilot_evidence_public_ready_assets}`);
+  lines.push(`- Villa brief: ${report.summary.villa_brief_status}`);
+  lines.push(`- Villa candidates/blocked: ${report.summary.villa_brief_candidates}/${report.summary.villa_brief_blocked_items}`);
+  lines.push(`- Villa public-ready after brief: ${report.summary.villa_brief_public_ready_after}`);
+  lines.push(`- Ingenbohl brief: ${report.summary.ingenbohl_brief_status}`);
+  lines.push(`- Ingenbohl PDF links: ${report.summary.ingenbohl_brief_pdf_links}`);
+  lines.push(`- Ingenbohl public-ready after brief: ${report.summary.ingenbohl_brief_public_ready_after}`);
+  lines.push(`- Sogn brief: ${report.summary.sogn_brief_status}`);
+  lines.push(`- Sogn public links/local files: ${report.summary.sogn_brief_public_links}/${report.summary.sogn_brief_local_files}`);
+  lines.push(`- Sogn public-ready after brief: ${report.summary.sogn_brief_public_ready_after}`);
   lines.push('');
   lines.push('## Steps');
   lines.push('');

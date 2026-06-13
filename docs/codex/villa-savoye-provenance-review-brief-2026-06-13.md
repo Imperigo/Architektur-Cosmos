@@ -1,6 +1,6 @@
 # Villa Savoye Provenance Review Brief
 
-Generated: 2026-06-13T19:16:22.050Z
+Generated: 2026-06-13T19:27:52.434Z
 Status: `villa_provenance_review_brief_ready`
 
 ## Summary
