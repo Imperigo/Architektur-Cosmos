@@ -9,6 +9,7 @@
   "status_refs": [
     "data/kosmodata-lane-sweep-2026-06-13.json",
     "data/kosmo-human-decision-queue-2026-06-13.json",
+    "data/kosmo-human-decision-owner-batches-2026-06-13.json",
     "data/kosmoreferences-data-lane-status.json",
     "data/kosmoreferences-private-library-diagnostic-2026-06-13.json",
     "examples/kosmo-references/provenance/owner-review-decision-pack-2026-06-13-review/owner-review-decision-check.generated.json",
@@ -124,7 +125,9 @@
       "input_refs": [
         "data/kosmodata-lane-sweep-2026-06-13.json",
         "data/kosmo-human-decision-queue-2026-06-13.json",
+        "data/kosmo-human-decision-owner-batches-2026-06-13.json",
         "docs/codex/kosmo-human-decision-queue-2026-06-13.md",
+        "docs/codex/kosmo-human-decision-owner-batches-2026-06-13.md",
         "docs/codex/kosmoreferences-owner-decision-worksheet-2026-06-13.md",
         "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-human-review-session.generated.md"
       ],
@@ -136,6 +139,24 @@
         "Separates owner decisions from asset human reviews.",
         "Identifies which items can be safely kept blocked by default."
       ]
+    },
+    {
+      "task_id": "kosmo-owner-batch-review-questions",
+      "priority": 7,
+      "lane": "human_review_support",
+      "input_refs": [
+        "data/kosmo-human-decision-owner-batches-2026-06-13.json",
+        "docs/codex/kosmo-human-decision-owner-batches-2026-06-13.md",
+        "docs/codex/kosmodata-lane-sweep-2026-06-13.md"
+      ],
+      "output_path": "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-local-worker-2026-06-13/owner-batch-review-questions.private.md",
+      "objective": "Draft concise owner-facing review questions for each generated batch without selecting or applying decisions.",
+      "acceptance": [
+        "One short section per owner batch.",
+        "Every section starts with the safe default.",
+        "No question asks for public approval without mentioning separate source/rights review.",
+        "Keeps Batch D focused on locating the missing private source root."
+      ]
     }
   ],
   "handoff_back_to_overseers": {
@@ -145,7 +166,8 @@
       "book-library-mount-questions.private.md",
       "asset-seed-candidates.private.json",
       "public-source-link-synthesis.private.json",
-      "human-decision-queue-triage.private.md"
+      "human-decision-queue-triage.private.md",
+      "owner-batch-review-questions.private.md"
     ],
     "reviewers": [
       "codex-central-overseer",
