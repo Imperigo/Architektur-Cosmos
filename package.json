@@ -114,6 +114,7 @@
     "kosmo:private-library-diagnostic": "node scripts/kosmo-private-library-diagnostic.mjs",
     "kosmo:local-worker-ollama-smoke": "node scripts/kosmo-local-worker-ollama-smoke.mjs",
     "kosmo:references-status-card": "node scripts/kosmo-reference-status-card.mjs",
+    "kosmo:references-nightly-gate": "node scripts/kosmo-references-nightly-gate.mjs",
     "kosmo:asset-generate-demo-glb": "node scripts/kosmo-asset-generate-demo-glb.mjs",
     "kosmo:asset-generate-demo-dxf": "node scripts/kosmo-asset-generate-demo-dxf.mjs",
     "kosmo:asset-generate-demo-material-profile": "node scripts/kosmo-asset-generate-demo-material-profile.mjs",

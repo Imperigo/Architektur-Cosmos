@@ -36,7 +36,9 @@ async function main() {
   const checks = {
     http_ok: response.ok,
     model_returned: body?.model === model,
-    response_non_empty: text.length > 0,
+    response_non_empty: text.length > 0
+  };
+  const advisory_checks = {
     mentions_review_only: /review-only/i.test(text),
     mentions_no_public_promotion: /public|öffentlich|promotion/i.test(text)
   };
@@ -49,6 +51,7 @@ async function main() {
     model,
     duration_ms: durationMs,
     checks,
+    advisory_checks,
     response_length: text.length,
     response_preview: text.slice(0, 240),
     policy: {
@@ -87,6 +90,12 @@ function renderMarkdown(report) {
     lines.push(`- ${key}: ${value ? 'passed' : 'failed'}`);
   }
   lines.push('');
+  lines.push('## Advisory Checks');
+  lines.push('');
+  for (const [key, value] of Object.entries(report.advisory_checks)) {
+    lines.push(`- ${key}: ${value ? 'passed' : 'needs_review'}`);
+  }
+  lines.push('');
   lines.push('## Policy');
   lines.push('');
   lines.push('- No private source content was sent.');
@@ -100,4 +109,3 @@ function readArg(name) {
   const index = process.argv.indexOf(name);
   return index === -1 ? null : process.argv[index + 1] ?? null;
 }
-

@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-06-13T17:15:49.446Z",
+  "checked_at": "2026-06-13T17:59:16.454Z",
   "package_path": "examples/kosmo-references/source-packages/villa-savoye-public-source-candidate-2026-06-13/source-package.json",
   "package_id": "villa-savoye-public-source-candidate-2026-06-13",
   "title": "Villa Savoye Public Source Candidate",
@@ -51,7 +51,7 @@
       "http_status": 200,
       "final_url": "https://www.fondationlecorbusier.fr/en/work-architecture/achievements-villa-savoye-and-gardeners-lodge-poissy-france-1928-1931/",
       "content_type": "text/html; charset=UTF-8",
-      "content_length": null,
+      "content_length": "14831",
       "method": "HEAD"
     },
     {

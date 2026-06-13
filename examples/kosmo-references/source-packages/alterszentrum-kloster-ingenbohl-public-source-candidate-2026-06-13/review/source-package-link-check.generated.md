@@ -1,6 +1,6 @@
 # KosmoReferences Source Package Link Check
 
-Generated: 2026-06-13T17:13:41.906Z
+Generated: 2026-06-13T17:59:13.010Z
 Package: `examples/kosmo-references/source-packages/alterszentrum-kloster-ingenbohl-public-source-candidate-2026-06-13/source-package.json`
 Status: `passed`
 

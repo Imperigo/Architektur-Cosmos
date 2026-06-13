@@ -1,6 +1,6 @@
 # KosmoReferences Source Package Link Check
 
-Generated: 2026-06-13T17:13:39.512Z
+Generated: 2026-06-13T17:59:14.559Z
 Package: `examples/kosmo-references/source-packages/kapelle-sogn-benedetg-public-source-candidate-2026-06-13/source-package.json`
 Status: `passed`
 
