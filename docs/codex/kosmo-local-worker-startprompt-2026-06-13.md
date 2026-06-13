@@ -46,6 +46,8 @@ Nutze:
 
 - `data/kosmoreferences-worker-doctrine-2026-06-13.json`
 - `data/kosmo-local-worker-task-pack-2026-06-13.json`
+- `data/kosmoreferences-data-lane-status.json`
+- `data/kosmoreferences-private-library-diagnostic-2026-06-13.json`
 - `examples/kosmo-references/source-packages/architecturekosmos-private-project-sources-2026-06-13/source-package.json`
 
 Private lokale Extrakte liegen hier:
@@ -62,3 +64,8 @@ Schreibe deine Outputs nur hier:
 
 Erste Aufgabe: arbeite die Tasks im Task-Pack in Prioritaetsreihenfolge ab und
 gib danach eine kurze Review-Zusammenfassung fuer Codex/Claude aus.
+
+Aktueller harter Stand: Die drei Pilot-Referenzen bleiben review-only. Die
+Public-Source-Links sind 14/14 erreichbar, aber die grosse private Buch-/ETH-/
+HSLU-Library ist noch nicht als echter Root sichtbar; `/mnt/archiv` ist in der
+aktuellen Diagnose kein eigener Mount.

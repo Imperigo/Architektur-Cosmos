@@ -6,6 +6,11 @@
   "target_worker": "kosmo-odysseus-local-llm",
   "doctrine_ref": "data/kosmoreferences-worker-doctrine-2026-06-13.json",
   "source_package_ref": "examples/kosmo-references/source-packages/architecturekosmos-private-project-sources-2026-06-13/source-package.json",
+  "status_refs": [
+    "data/kosmoreferences-data-lane-status.json",
+    "data/kosmoreferences-private-library-diagnostic-2026-06-13.json",
+    "examples/kosmo-references/provenance/owner-review-decision-pack-2026-06-13-review/owner-review-decision-check.generated.json"
+  ],
   "private_context_paths": [
     "/mnt/data/ArchitekturKosmos/KosmoZentrale/sources/private-extracts/architecturekosmos-private-project-sources-2026-06-13/architecture-cosmos-vision-document.md",
     "/mnt/data/ArchitekturKosmos/KosmoZentrale/sources/private-extracts/architecturekosmos-private-project-sources-2026-06-13/architekturkosmos-ai-workflow-pipeline.md"
@@ -27,6 +32,7 @@
       "lane": "kosmoreferences",
       "input_refs": [
         "data/kosmoreferences-worker-doctrine-2026-06-13.json",
+        "data/kosmoreferences-data-lane-status.json",
         "private_context_paths"
       ],
       "output_path": "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-local-worker-2026-06-13/doctrine-summary.private.md",
@@ -61,13 +67,16 @@
       "lane": "source_discovery",
       "input_refs": [
         "data/kosmoreferences-local-library-inventory-2026-06-13.json",
-        "docs/codex/kosmoreferences-local-library-inventory-2026-06-13.md"
+        "docs/codex/kosmoreferences-local-library-inventory-2026-06-13.md",
+        "data/kosmoreferences-private-library-diagnostic-2026-06-13.json",
+        "docs/codex/kosmoreferences-private-library-diagnostic-2026-06-13.md"
       ],
       "output_path": "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-local-worker-2026-06-13/book-library-mount-questions.private.md",
-      "objective": "Prepare a short, concrete checklist for locating the missing book/ETH/HSLU library.",
+      "objective": "Prepare a short, concrete checklist for locating the missing book/ETH/HSLU library using the latest private-library diagnostic.",
       "acceptance": [
         "Includes likely mount/path questions.",
         "Does not assume the library is present.",
+        "Mentions that /mnt/archiv is not visible as its own mount in the latest diagnostic.",
         "Keeps action items under 10 bullets."
       ]
     },
@@ -86,6 +95,24 @@
         "Every candidate is marked local_only=true.",
         "No generated asset is claimed accurate without human review."
       ]
+    },
+    {
+      "task_id": "kosmo-public-source-link-synthesis",
+      "priority": 5,
+      "lane": "source_discovery",
+      "input_refs": [
+        "data/kosmoreferences-data-lane-status.json",
+        "examples/kosmo-references/source-packages/villa-savoye-public-source-candidate-2026-06-13/review/source-package-link-check.generated.json",
+        "examples/kosmo-references/source-packages/kapelle-sogn-benedetg-public-source-candidate-2026-06-13/review/source-package-link-check.generated.json",
+        "examples/kosmo-references/source-packages/alterszentrum-kloster-ingenbohl-public-source-candidate-2026-06-13/review/source-package-link-check.generated.json"
+      ],
+      "output_path": "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-local-worker-2026-06-13/public-source-link-synthesis.private.json",
+      "objective": "Summarize the 14 reachable public source links by pilot, source role and rights mode without copying page bodies.",
+      "acceptance": [
+        "Reports source links as link-only metadata.",
+        "Separates public source availability from public asset clearance.",
+        "Keeps all three pilots review-only."
+      ]
     }
   ],
   "handoff_back_to_overseers": {
@@ -93,7 +120,8 @@
       "doctrine-summary.private.md",
       "reference-pilot-gap-map.private.json",
       "book-library-mount-questions.private.md",
-      "asset-seed-candidates.private.json"
+      "asset-seed-candidates.private.json",
+      "public-source-link-synthesis.private.json"
     ],
     "reviewers": [
       "codex-central-overseer",
