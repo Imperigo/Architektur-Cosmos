@@ -26,12 +26,15 @@ KosmoReferences. Es erteilt keine Public-Freigabe.
 ## Blockadegrund
 
 Das GLB kann ein nuetzlicher lokaler Studienkoerper fuer Boltshauser /
-Ingenbohl sein, aber es fehlt aktuell die belastbare Build- und Quellenkette:
-Geometriebasis, verwendete Plaene/Bilder, Materialannahmen und
-Generationsprozess sind noch nicht reviewfaehig dokumentiert.
+Ingenbohl sein. Nachtrag 2026-06-13: Das Public-Preview-GLB ist
+Byte-fuer-Byte identisch mit
+`archive-intake/alterszentrum-kloster-ingenbohl/models/low.glb`; Build-Artefakte
+und ein `brain:model-review`-Report sind vorhanden. Die Datei bleibt trotzdem
+blockiert, weil Geometriebasis, verwendete Plaene/Bilder, Materialannahmen und
+der nicht-vermessene Studienstatus menschlich reviewed werden muessen.
 
 ## Naechste Schritte
 
-- Build-Log oder Rekonstruktionsnotiz fuer das GLB finden oder neu erzeugen.
+- Gefundene Build-Artefakte und Rekonstruktionsnotiz menschlich pruefen.
 - Quelle der Geometrie getrennt von eigenen Studienannahmen erfassen.
 - Keine Public-Preview oder Download-Freigabe, bis der Human Review passiert.

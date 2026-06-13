@@ -1,0 +1,68 @@
+{
+  "schema_version": "0.1",
+  "created_at": "2026-06-13",
+  "status": "review_only_model_provenance_bridge",
+  "command": "npm run brain:model-review -- --entry villa-savoye,alterszentrum-kloster-ingenbohl",
+  "policy": {
+    "public_ready": false,
+    "rule": "Model review score is not public clearance. GLB promotion still requires owner/human review of source basis, diagrammatic status and reuse policy."
+  },
+  "summary": {
+    "reviewed": 2,
+    "ready_for_promote_review": 2,
+    "needs_layer_work": 0,
+    "missing_glb": 0,
+    "average_score": 96
+  },
+  "entries": [
+    {
+      "entry_id": "villa-savoye",
+      "title": "Villa Savoye",
+      "score": 92,
+      "recommendation": "ready_for_promote_review",
+      "public_glb_path": "public/archive-models/villa-savoye/low.glb",
+      "intake_glb_path": "archive-intake/villa-savoye/models/low.glb",
+      "hash_match": true,
+      "sha256": "ea4e5187653def0f9abee3fa925ce0c479640ac3ebf78510eff21adef7d117aa",
+      "template_id": "modern_villa_frame",
+      "node_count": 25,
+      "mesh_count": 25,
+      "material_count": 7,
+      "triangle_count": 600,
+      "checks": {
+        "local_glb": "passed",
+        "geometry_profile": "passed",
+        "tool_run": "passed",
+        "blender_profile": "passed"
+      },
+      "public_ready": false
+    },
+    {
+      "entry_id": "alterszentrum-kloster-ingenbohl",
+      "title": "Alterszentrum Kloster Ingenbohl",
+      "score": 100,
+      "recommendation": "ready_for_promote_review",
+      "public_glb_path": "public/archive-models/alterszentrum-kloster-ingenbohl/low.glb",
+      "intake_glb_path": "archive-intake/alterszentrum-kloster-ingenbohl/models/low.glb",
+      "hash_match": true,
+      "sha256": "bb1cffcaa254e8a736b16ccde1ae5dfdec6a657ddae4dcaed84b68b9752ccb02",
+      "template_id": "courtyard_institution_slope",
+      "node_count": 44,
+      "mesh_count": 44,
+      "material_count": 7,
+      "triangle_count": 708,
+      "checks": {
+        "local_glb": "passed",
+        "geometry_profile": "passed",
+        "tool_run": "passed",
+        "blender_profile": "passed"
+      },
+      "public_ready": false
+    }
+  ],
+  "next_actions": [
+    "Human-review source basis and diagrammatic/not-measured status before any public model promotion.",
+    "Keep both GLBs blocked in file-level provenance until owner decision.",
+    "Use this bridge as evidence that build artifacts exist, not as a public-rights approval."
+  ]
+}

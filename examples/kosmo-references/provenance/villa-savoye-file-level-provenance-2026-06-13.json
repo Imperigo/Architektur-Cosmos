@@ -139,11 +139,22 @@
       "bytes": 39536,
       "sha256": "ea4e5187653def0f9abee3fa925ce0c479640ac3ebf78510eff21adef7d117aa",
       "filename_rights_hint": "generated_or_local_model_unknown",
+      "build_evidence_status": "intake_build_artifacts_found",
+      "matching_intake_path": "archive-intake/villa-savoye/models/low.glb",
+      "matching_intake_sha256": "ea4e5187653def0f9abee3fa925ce0c479640ac3ebf78510eff21adef7d117aa",
+      "build_evidence_refs": [
+        "archive-intake/villa-savoye/automation/model-tool-run.json",
+        "archive-intake/villa-savoye/analysis/generated-geometry-profile.json",
+        "archive-intake/villa-savoye/automation/blender-import-profile.json",
+        "archive-intake/villa-savoye/models/model-package.manifest.json",
+        "out/brain-model-review/2026-06-13/latest.json",
+        "examples/kosmo-references/provenance/model-provenance-bridge-2026-06-13.json"
+      ],
       "rights_status": "derived_asset_review_required",
       "public_ready": false,
       "review_requirements": [
-        "confirm model generation/build log",
-        "record source basis for geometry",
+        "human-review model generation/build log and diagrammatic model status",
+        "record owner decision on source basis for geometry",
         "confirm whether plan-derived geometry was used",
         "human review before public model preview or download"
       ]
@@ -152,7 +163,7 @@
   "next_actions": [
     "Create file-level source URL and attribution fields for each image candidate.",
     "Decide whether the SVG plan/section are own analytical diagrams or derived reproductions.",
-    "Attach model generation provenance for low.glb before any public model promotion.",
+    "Review the discovered intake build artifacts for low.glb before any public model promotion.",
     "Keep all seven files blocked in public provenance until review requirements are satisfied."
   ]
 }

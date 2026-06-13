@@ -34,11 +34,22 @@
       "bytes": 63176,
       "sha256": "bb1cffcaa254e8a736b16ccde1ae5dfdec6a657ddae4dcaed84b68b9752ccb02",
       "filename_rights_hint": "generated_or_local_model_unknown",
+      "build_evidence_status": "intake_build_artifacts_found",
+      "matching_intake_path": "archive-intake/alterszentrum-kloster-ingenbohl/models/low.glb",
+      "matching_intake_sha256": "bb1cffcaa254e8a736b16ccde1ae5dfdec6a657ddae4dcaed84b68b9752ccb02",
+      "build_evidence_refs": [
+        "archive-intake/alterszentrum-kloster-ingenbohl/automation/model-tool-run.json",
+        "archive-intake/alterszentrum-kloster-ingenbohl/analysis/generated-geometry-profile.json",
+        "archive-intake/alterszentrum-kloster-ingenbohl/automation/blender-import-profile.json",
+        "archive-intake/alterszentrum-kloster-ingenbohl/models/model-package.manifest.json",
+        "out/brain-model-review/2026-06-13/latest.json",
+        "examples/kosmo-references/provenance/model-provenance-bridge-2026-06-13.json"
+      ],
       "rights_status": "derived_asset_review_required",
       "public_ready": false,
       "review_requirements": [
-        "confirm model generation/build log",
-        "record source basis for geometry and material assumptions",
+        "human-review model generation/build log and diagrammatic model status",
+        "record owner decision on source basis for geometry and material assumptions",
         "confirm whether source plans, drawings or photographs were used",
         "confirm whether geometry is own/generated study geometry",
         "human review before public model preview or download"
@@ -46,7 +57,7 @@
     }
   ],
   "next_actions": [
-    "Attach or reconstruct the model generation/build log for the Ingenbohl GLB.",
+    "Review the discovered intake build artifacts for the Ingenbohl GLB.",
     "Connect the model to source package evidence only as study geometry until source basis is reviewed.",
     "Keep the model blocked in public provenance until review requirements are satisfied."
   ]

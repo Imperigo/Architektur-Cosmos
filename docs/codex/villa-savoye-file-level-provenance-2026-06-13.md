@@ -45,7 +45,9 @@ Rechtefreigabe. Public-Promotion braucht file-level:
 1. Quellen-/Attributionsfelder fuer jedes Bild ergaenzen.
 2. Entscheiden, ob Plan/Schnitt eigene analytische Diagramme oder abgeleitete
    Reproduktionen sind.
-3. Build-Log/Source-Basis fuer `low.glb` erfassen.
+3. Gefundene Build-Artefakte fuer `low.glb` menschlich reviewen:
+   `archive-intake/villa-savoye/models/low.glb` ist Byte-fuer-Byte identisch
+   mit `public/archive-models/villa-savoye/low.glb`.
 4. Bis dahin alle sieben Dateien im Public-Gate blockiert lassen.
 
 ## Check
