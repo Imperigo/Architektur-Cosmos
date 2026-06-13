@@ -96,7 +96,8 @@
           "id": "kapelle-sogn-benedetg",
           "title": "Kapelle Sogn Benedetg",
           "local_evidence_status": "docs_hint_only",
-          "promotion_status": "needs_source_package"
+          "public_evidence_status": "public_source_candidate",
+          "promotion_status": "preferred_interim_candidate_needs_source_package"
         },
         {
           "id": "schulhaus-paspels",
