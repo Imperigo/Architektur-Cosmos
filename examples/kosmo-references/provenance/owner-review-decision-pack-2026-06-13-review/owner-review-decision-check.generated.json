@@ -1,0 +1,114 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-13T17:28:32.578Z",
+  "pack_path": "examples/kosmo-references/provenance/owner-review-decision-pack-2026-06-13.json",
+  "status": "passed",
+  "policy": {
+    "auto_promote_allowed": false,
+    "public_ready_after_pack_required": 0,
+    "confirm_commands_allowed_only_after_owner_review": true
+  },
+  "summary": {
+    "decision_groups": 4,
+    "decision_items": 10,
+    "public_ready_now": 0,
+    "confirm_commands_after_review": 2,
+    "failures": 0,
+    "warnings": 0,
+    "groups": {
+      "villa-savoye-public-image-candidates": 3,
+      "villa-savoye-blocked-derived-files": 4,
+      "model-promotion-owner-confirmation": 2,
+      "sogn-benedetg-source-gap": 1
+    }
+  },
+  "decisions": [
+    {
+      "group_id": "villa-savoye-public-image-candidates",
+      "item_id": "villa-savoye-exterior-savoye-3-cc0",
+      "decision_needed": "approve_public_display_or_keep_blocked",
+      "current_status": "candidate_for_public_display_after_human_review",
+      "public_ready_now": false,
+      "confirm_command_after_review": null
+    },
+    {
+      "group_id": "villa-savoye-public-image-candidates",
+      "item_id": "villa-savoye-exterior-loc-full",
+      "decision_needed": "approve_public_display_or_keep_blocked",
+      "current_status": "candidate_for_public_display_after_human_review",
+      "public_ready_now": false,
+      "confirm_command_after_review": null
+    },
+    {
+      "group_id": "villa-savoye-public-image-candidates",
+      "item_id": "villa-savoye-interior-chaise-cc-by-sa",
+      "decision_needed": "approve_public_display_or_keep_blocked",
+      "current_status": "candidate_for_public_display_after_human_review",
+      "public_ready_now": false,
+      "confirm_command_after_review": null
+    },
+    {
+      "group_id": "villa-savoye-blocked-derived-files",
+      "item_id": "public/archive-media/villa-savoye/exterior/villa-savoye-loc-exterior-crop.jpg",
+      "decision_needed": "keep_blocked_or_open_separate_source_basis_review",
+      "current_status": "must_remain_blocked",
+      "public_ready_now": false,
+      "confirm_command_after_review": null
+    },
+    {
+      "group_id": "villa-savoye-blocked-derived-files",
+      "item_id": "public/archive-media/villa-savoye/plan/villa-savoye-ground-floor-diagram.svg",
+      "decision_needed": "keep_blocked_or_open_separate_source_basis_review",
+      "current_status": "must_remain_blocked",
+      "public_ready_now": false,
+      "confirm_command_after_review": null
+    },
+    {
+      "group_id": "villa-savoye-blocked-derived-files",
+      "item_id": "public/archive-media/villa-savoye/section/villa-savoye-long-section-diagram.svg",
+      "decision_needed": "keep_blocked_or_open_separate_source_basis_review",
+      "current_status": "must_remain_blocked",
+      "public_ready_now": false,
+      "confirm_command_after_review": null
+    },
+    {
+      "group_id": "villa-savoye-blocked-derived-files",
+      "item_id": "public/archive-models/villa-savoye/low.glb",
+      "decision_needed": "keep_blocked_or_open_separate_source_basis_review",
+      "current_status": "must_remain_blocked",
+      "public_ready_now": false,
+      "confirm_command_after_review": null
+    },
+    {
+      "group_id": "model-promotion-owner-confirmation",
+      "item_id": "villa-savoye",
+      "decision_needed": "owner_review_required",
+      "current_status": "ready_for_owner_confirmation",
+      "public_ready_now": false,
+      "confirm_command_after_review": "npm run brain:promote-model -- --entry villa-savoye --confirm-public-model"
+    },
+    {
+      "group_id": "model-promotion-owner-confirmation",
+      "item_id": "alterszentrum-kloster-ingenbohl",
+      "decision_needed": "owner_review_required",
+      "current_status": "ready_for_owner_confirmation",
+      "public_ready_now": false,
+      "confirm_command_after_review": "npm run brain:promote-model -- --entry alterszentrum-kloster-ingenbohl --confirm-public-model"
+    },
+    {
+      "group_id": "sogn-benedetg-source-gap",
+      "item_id": "sogn-benedetg-source-gap",
+      "decision_needed": "find_private_library_root_or_generate_review_only_study_assets",
+      "current_status": "link_only_no_local_files",
+      "public_ready_now": false,
+      "confirm_command_after_review": null
+    }
+  ],
+  "failures": [],
+  "warnings": [],
+  "next_actions": [
+    "Owner reviews each prepared decision item explicitly.",
+    "Keep public_ready=false until the owner decision is recorded and a separate promotion command or manifest change is made.",
+    "Re-run this check after every owner decision pack edit."
+  ]
+}
