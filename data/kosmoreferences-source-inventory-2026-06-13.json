@@ -1,0 +1,152 @@
+{
+  "schema_version": "0.1",
+  "created_at": "2026-06-13",
+  "created_by": "codex-overseer",
+  "purpose": "Local-first source inventory for the first KosmoReferences and KosmoAsset pilots.",
+  "source_roots_checked": [
+    {
+      "path": "/mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos",
+      "status": "available",
+      "notes": "Primary local repo with archive, media, model, source registry and book-ingestion smoke data."
+    },
+    {
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09",
+      "status": "available_partial",
+      "notes": "OneDrive mirror contains project/workflow docs and repo context; no large book or ETH/HSLU lecture library found in this pass."
+    },
+    {
+      "path": "/home/andrin-baumann/ArchitekturKosmos Onedrive/11 AI Workflow",
+      "status": "available_partial",
+      "notes": "Live/local OneDrive path is about 515 MB; contains design/workflow docs, not the expected large architecture reference library."
+    },
+    {
+      "path": "/mnt/data/Zum_Archivieren",
+      "status": "directory_found",
+      "notes": "Archive directory exists; no targeted source package selected yet."
+    }
+  ],
+  "pilot_findings": [
+    {
+      "id": "villa-savoye",
+      "title": "Villa Savoye",
+      "source_status": "strong_local_evidence",
+      "local_files": [
+        "docs/pilot-entry-standard.md",
+        "archive-inbox/books/smoke-villa-savoye/notes-villa-savoye.md",
+        "archive-inbox/books/smoke-villa-savoye/page-042-villa-savoye-plan.jpg",
+        "archive-inbox/books/test-villa-savoye/notes-villa-savoye.md",
+        "archive-inbox/books/test-villa-savoye/page-042-villa-savoye-plan.jpg",
+        "public/archive-media/villa-savoye/exterior/savoye-3-exterior-cc0.jpg",
+        "public/archive-media/villa-savoye/exterior/villa-savoye-loc-exterior.jpg",
+        "public/archive-media/villa-savoye/exterior/villa-savoye-loc-exterior-crop.jpg",
+        "public/archive-media/villa-savoye/interior/villa-savoye-chaise-longue-interior-cc-by-sa-2.jpg",
+        "public/archive-media/villa-savoye/plan/villa-savoye-ground-floor-diagram.svg",
+        "public/archive-media/villa-savoye/section/villa-savoye-long-section-diagram.svg",
+        "public/archive-models/villa-savoye/low.glb"
+      ],
+      "kosmo_pipeline_readiness": {
+        "metadata": "ready_existing",
+        "source_trail": "ready_existing_needs_deeper_book_lecture_pass",
+        "media": "ready_existing_rights_reviewed_per_existing_policy",
+        "vector_plan": "ready_existing_svg",
+        "model": "ready_existing_low_glb",
+        "asset_derivatives": "pilot_manifest_created"
+      }
+    },
+    {
+      "id": "alterszentrum-kloster-ingenbohl",
+      "title": "Alterszentrum Kloster Ingenbohl",
+      "source_status": "local_draft_existing_rights_gated",
+      "local_files": [
+        "data/drafts/alterszentrum-kloster-ingenbohl.json",
+        "data/database-analysis-preview.json",
+        "data/public-model-previews.json",
+        "archive-inbox/alterszentrum-kloster-ingenbohl/sources.md",
+        "public/archive-models/alterszentrum-kloster-ingenbohl/low.glb"
+      ],
+      "kosmo_pipeline_readiness": {
+        "metadata": "draft_existing",
+        "source_trail": "draft_existing_needs_primary_source_review",
+        "media": "not_public_ready",
+        "vector_plan": "not_found_in_local_pass",
+        "model": "ready_existing_low_glb_needs_rights_context",
+        "asset_derivatives": "review_only_material_profile_created"
+      }
+    },
+    {
+      "id": "swiss-timber-reference-slot",
+      "title": "Schweizer Holzbau Referenzslot",
+      "source_status": "candidate_selection_open",
+      "local_files": [
+        "docs/ai-reference-archive-vision.md",
+        "docs/blender-wettbewerb-schema-erweiterung.md",
+        "data/research-source-registry.json"
+      ],
+      "candidate_shortlist": [
+        {
+          "id": "kapelle-sogn-benedetg",
+          "title": "Kapelle Sogn Benedetg",
+          "architects": [
+            "Peter Zumthor"
+          ],
+          "reason": "Swiss timber-shingle sacred building; explicitly named in local schema notes.",
+          "local_evidence_status": "docs_hint_only"
+        },
+        {
+          "id": "schulhaus-paspels",
+          "title": "Schulhaus Paspels",
+          "architects": [
+            "Gion A. Caminada"
+          ],
+          "reason": "Swiss school/village reference; explicitly named in local schema notes, but timber role must be source-checked.",
+          "local_evidence_status": "docs_hint_only"
+        },
+        {
+          "id": "kloster-st-gallen",
+          "title": "Kloster St. Gallen",
+          "architects": [
+            "Unknown / lecture source"
+          ],
+          "reason": "Existing Swiss historical local entry with timber tags, source candidates and generated plan/model packages; useful interim reference, but not a dedicated Holzbau pilot.",
+          "local_evidence_status": "repo_entry_existing"
+        }
+      ],
+      "kosmo_pipeline_readiness": {
+        "metadata": "candidate_only",
+        "source_trail": "needs_local_book_or_lecture_package",
+        "media": "not_ready",
+        "vector_plan": "not_ready",
+        "model": "not_ready",
+        "asset_derivatives": "not_ready"
+      }
+    }
+  ],
+  "registered_source_tools": [
+    {
+      "id": "lignumdata",
+      "name": "Lignumdata",
+      "source_type": "timber_reference_database",
+      "rights_mode": "link_only_unless_permission",
+      "automation_mode": "query_pack",
+      "use_for": "Swiss timber structure and material tags."
+    },
+    {
+      "id": "materialarchiv",
+      "name": "Material-Archiv",
+      "source_type": "material_database",
+      "rights_mode": "citation_only",
+      "automation_mode": "manual_review",
+      "use_for": "Material taxonomy and educational classification, not media republication."
+    }
+  ],
+  "open_findings": [
+    "The expected huge OneDrive architecture book / ETH / HSLU lecture library was not visible in the checked mounted paths.",
+    "The Swiss timber pilot should not be promoted until at least one concrete local source package is found or a live/public source pack is explicitly approved.",
+    "Kloster St. Gallen can serve as an interim historical Swiss timber-relevant local entry, but it should not be labelled as the dedicated Holzbau pilot."
+  ],
+  "next_actions": [
+    "Ask Claude/KosmoOverseer to point Codex at the real synced book/lecture root if it exists outside the checked paths.",
+    "Run local research packages for Villa Savoye, Ingenbohl and Swiss timber candidates.",
+    "Keep public display blocked for copyrighted book scans, office images, plan reproductions and generated assets until rights gates pass."
+  ]
+}

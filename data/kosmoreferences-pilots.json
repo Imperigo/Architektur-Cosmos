@@ -88,7 +88,28 @@
         "Schweizer Holzbau des 18. Jahrhunderts mit Satteldach",
         "Schulhaus Paspels / Gion A. Caminada",
         "Kapelle Sogn Benedetg / Peter Zumthor",
+        "Kloster St. Gallen is a local interim Swiss timber-relevant entry, but not the final dedicated Holzbau pilot",
         "local digital books and lecture notes should decide the first concrete pilot"
+      ],
+      "candidate_shortlist": [
+        {
+          "id": "kapelle-sogn-benedetg",
+          "title": "Kapelle Sogn Benedetg",
+          "local_evidence_status": "docs_hint_only",
+          "promotion_status": "needs_source_package"
+        },
+        {
+          "id": "schulhaus-paspels",
+          "title": "Schulhaus Paspels",
+          "local_evidence_status": "docs_hint_only",
+          "promotion_status": "needs_source_package"
+        },
+        {
+          "id": "kloster-st-gallen",
+          "title": "Kloster St. Gallen",
+          "local_evidence_status": "repo_entry_existing",
+          "promotion_status": "interim_reference_only"
+        }
       ],
       "target_layers": [
         "metadata",
