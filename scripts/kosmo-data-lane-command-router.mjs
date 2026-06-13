@@ -110,7 +110,8 @@ async function main() {
       'npm run kosmo:owner-review-session-brief-check',
       'npm run kosmo:overseer-sync-board',
       'npm run kosmo:overseer-sync-board-check',
-      'npm run kosmo:worker-boundary-pack'
+      'npm run kosmo:worker-boundary-pack',
+      'npm run kosmo:worker-boundary-pack-check'
     ],
     blocked_commands_now: blockedCommands({ sourceRootReady, privateInventoryReady }),
     next_best_actions: nextBestActions({ sourceRootReady, privateInventoryReady, outputContractPassed, summary })

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-13T21:55:58.317Z",
+  "generated_at": "2026-06-13T21:58:12.171Z",
   "status": "worker_boundary_pack_review_only_locked",
   "policy": {
     "metadata_only": true,
@@ -95,7 +95,8 @@
     "npm run kosmo:owner-review-session-brief-check",
     "npm run kosmo:overseer-sync-board",
     "npm run kosmo:overseer-sync-board-check",
-    "npm run kosmo:worker-boundary-pack"
+    "npm run kosmo:worker-boundary-pack",
+    "npm run kosmo:worker-boundary-pack-check"
   ],
   "blocked_commands_now": [
     {

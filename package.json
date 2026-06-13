@@ -148,6 +148,7 @@
     "kosmo:data-lane-sweep": "node scripts/kosmo-data-lane-sweep.mjs",
     "kosmo:data-lane-command-router": "node scripts/kosmo-data-lane-command-router.mjs",
     "kosmo:worker-boundary-pack": "node scripts/kosmo-worker-boundary-pack.mjs",
+    "kosmo:worker-boundary-pack-check": "node scripts/kosmo-worker-boundary-pack-check.mjs",
     "kosmo:night-loop-checkpoint": "node scripts/kosmo-night-loop-checkpoint.mjs",
     "kosmo:overseer-sync-board": "node scripts/kosmo-overseer-sync-board.mjs",
     "kosmo:overseer-sync-board-check": "node scripts/kosmo-overseer-sync-board-check.mjs",

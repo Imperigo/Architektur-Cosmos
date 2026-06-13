@@ -1,6 +1,6 @@
 # Kosmo Worker Boundary Pack
 
-Generated: 2026-06-13T21:55:58.317Z
+Generated: 2026-06-13T21:58:12.171Z
 Status: `worker_boundary_pack_review_only_locked`
 
 ## Hard State
@@ -78,6 +78,7 @@ Blocked tasks:
 - `npm run kosmo:overseer-sync-board`
 - `npm run kosmo:overseer-sync-board-check`
 - `npm run kosmo:worker-boundary-pack`
+- `npm run kosmo:worker-boundary-pack-check`
 
 ## Blocked Commands Now
 
