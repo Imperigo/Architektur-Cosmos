@@ -19,4 +19,3 @@ Status: `passed`
 - `source:surselva-tourismus-kapelle-sogn-benedetg` -> `link_fingerprint_pass`
 - `source:graubuenden-ferien-kapelle-s-benedetg` -> `link_fingerprint_pass`
 - `source:fiftytwo-best-buildings-caplutta-sogn-benedetg` -> `link_fingerprint_pass`
-

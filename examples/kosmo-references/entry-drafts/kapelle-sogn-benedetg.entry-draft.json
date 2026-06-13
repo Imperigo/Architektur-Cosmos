@@ -1,0 +1,209 @@
+{
+  "id": "kapelle-sogn-benedetg",
+  "slug": "kapelle-sogn-benedetg",
+  "title": "Kapelle Sogn Benedetg",
+  "entry_type": "building",
+  "year_start": 1989,
+  "year_end": null,
+  "authors": [
+    "Peter Zumthor"
+  ],
+  "city": "Sumvitg / Sogn Benedetg",
+  "country": "Schweiz",
+  "style_sector": "sustainable_architecture",
+  "lecture_cluster": [
+    "Architecture Cosmos dev research",
+    "Swiss timber architecture",
+    "public source candidate"
+  ],
+  "themes": [
+    "timber construction",
+    "chapel",
+    "alpine context",
+    "local building culture",
+    "material ageing",
+    "teardrop plan",
+    "sacred atmosphere",
+    "Zumthor early work"
+  ],
+  "short_description": "Kleine Holzkapelle oberhalb von Sumvitg, die nach einem Lawinenereignis als neuer Sakralbau an sicherer Lage entstand und lokale Bauweise mit einer eigenstaendigen raeumlichen Form verbindet.",
+  "one_sentence": "Die Kapelle Sogn Benedetg dient KosmoReferences als review-only Schweizer-Holzbau-Kandidat, weil sie Holzbau, Landschaft, sakralen Kleinstbau, Materialalterung und Zumthors atmosphaerische Raumlogik in einem klaren Referenzfall verbindet.",
+  "full_description": "Die Kapelle Sogn Benedetg wird fuer KosmoReferences als kontrollierter Schweizer-Holzbau-Kandidat gefuehrt. Das Projekt verbindet einen alpinen Ort, eine nach einem Lawinenereignis neu gesetzte Kapelle, eine holzbasierte Konstruktion, Holzschindelhuelle, warme Innenraumwirkung und eine tropfen- oder blattartige Grundform. Fuer die Data-Lane ist das Projekt weniger als fertiger Public-Atlas-Eintrag interessant als als sauberer Testfall fuer Source-Package, Rechte-Gate, Material-/Struktur-Layer, generierte Studiengeometrie und spaetere Blender-/ArchiCAD-Asset-Ableitungen. Alle Medien, Plaene und direkten Quellentexte bleiben link-only oder private review, bis file-level Rechte geklaert sind.",
+  "media": [
+    {
+      "type": "exterior",
+      "label": "Exterior placeholder",
+      "placeholder": "Exterior media slot blocked until file-level rights are cleared or own/generated review media exists.",
+      "credit": "link_only_until_review"
+    },
+    {
+      "type": "interior",
+      "label": "Interior placeholder",
+      "placeholder": "Interior media slot blocked until file-level rights are cleared or own/generated review media exists.",
+      "credit": "link_only_until_review"
+    },
+    {
+      "type": "section",
+      "label": "Section placeholder",
+      "placeholder": "Section media slot planned as own/generated study drawing after source and geometry review.",
+      "credit": "generated_needs_review"
+    },
+    {
+      "type": "plan",
+      "label": "Plan placeholder",
+      "placeholder": "Plan media slot planned as own/generated study geometry after source and geometry review.",
+      "credit": "generated_needs_review"
+    }
+  ],
+  "source_quality": "public_source_candidate",
+  "source_package_ref": "examples/kosmo-references/source-packages/kapelle-sogn-benedetg-public-source-candidate-2026-06-13/source-package.json",
+  "source_documents": [
+    "Holzbaukultur / Kapelle Sogn Benedetg, Sumvitg",
+    "Surselva Tourismus / Kapelle Sogn Benedetg, Sumvitg",
+    "Graubuenden Ferien / Kapelle S. Benedetg",
+    "52 Beste Bauten / Caplutta, Sogn Benedetg"
+  ],
+  "source_url": "https://www.holzbaukultur.ch/de/bauten/kapelle-sogn-benedetg-sumvitg.php",
+  "source_candidates": [
+    {
+      "source_type": "public_web_link",
+      "title": "Holzbaukultur / Kapelle Sogn Benedetg, Sumvitg",
+      "url": "https://www.holzbaukultur.ch/de/bauten/kapelle-sogn-benedetg-sumvitg.php",
+      "reliability_level": "high",
+      "rights_status": "link_only",
+      "notes": "Use as timber-building and local-building-culture source trail. Do not copy media or page text."
+    },
+    {
+      "source_type": "public_web_link",
+      "title": "Surselva Tourismus / Kapelle Sogn Benedetg, Sumvitg",
+      "url": "https://www.surselva.info/Media/Attraktionen/Kapelle-Sogn-Benedetg-Sumvitg",
+      "reliability_level": "high",
+      "rights_status": "link_only",
+      "notes": "Use for public place/project context. Do not copy media or page text."
+    },
+    {
+      "source_type": "public_web_link",
+      "title": "Graubuenden Ferien / Kapelle S. Benedetg",
+      "url": "https://www.graubuenden.ch/de/ausflugsziele/kapelle-s-benedetg",
+      "reliability_level": "high",
+      "rights_status": "link_only",
+      "notes": "Use as tourism/cultural context link. Do not copy media or page text."
+    },
+    {
+      "source_type": "public_web_link",
+      "title": "52 Beste Bauten / Caplutta, Sogn Benedetg",
+      "url": "https://52bestebauten.ch/17-caplutta-sogn-benedetg-sogn-benedetg/",
+      "reliability_level": "high",
+      "rights_status": "link_only",
+      "notes": "Use as Graubuenden architecture-context source. Do not copy media or page text."
+    }
+  ],
+  "asset_candidates": [
+    {
+      "kind": "material",
+      "media_slot": "exterior",
+      "title": "Holzschindel-Huelle material study",
+      "planned_r2_key": "entries/kapelle-sogn-benedetg/assets/materials/holzschindel-study.placeholder.json",
+      "rights_status": "generated_needs_review",
+      "public_display_allowed": false
+    },
+    {
+      "kind": "component",
+      "media_slot": "plan",
+      "title": "Teardrop plan geometry study",
+      "planned_r2_key": "entries/kapelle-sogn-benedetg/assets/geometry/teardrop-plan-study.placeholder.json",
+      "rights_status": "generated_needs_review",
+      "public_display_allowed": false
+    },
+    {
+      "kind": "detail",
+      "media_slot": "section",
+      "title": "Light band and timber interior study",
+      "planned_r2_key": "entries/kapelle-sogn-benedetg/assets/details/light-band-timber-study.placeholder.json",
+      "rights_status": "generated_needs_review",
+      "public_display_allowed": false
+    }
+  ],
+  "model_packages": [
+    {
+      "package_type": "reference_model",
+      "status": "planned",
+      "planned_paths": [
+        "entries/kapelle-sogn-benedetg/models/mass.glb",
+        "entries/kapelle-sogn-benedetg/models/timber-structure.glb",
+        "entries/kapelle-sogn-benedetg/models/material-system.glb"
+      ],
+      "notes": "Generate only as own/review-only study geometry until source and rights review passes."
+    }
+  ],
+  "analysis_layers": [
+    {
+      "analysis_type": "material_system",
+      "summary": "Review hypothesis: timber construction, shingle envelope, interior timber atmosphere and weathering behavior are central analysis layers.",
+      "review_status": "draft"
+    },
+    {
+      "analysis_type": "structure",
+      "summary": "Review hypothesis: small timber chapel with generated study structure suitable for Blender layer tests; exact structural claims need local/source review.",
+      "review_status": "needs_source_review"
+    },
+    {
+      "analysis_type": "topos_typos_tectonics",
+      "summary": "Read as alpine sacred micro-building: post-avalanche siting, chapel typology, timber envelope and atmospheric detail logic.",
+      "review_status": "draft"
+    }
+  ],
+  "analysis_observations": [
+    {
+      "analysis_type": "material_tag",
+      "label": "material timber",
+      "confidence_score": 0.82,
+      "source": "public_source_package"
+    },
+    {
+      "analysis_type": "typology",
+      "label": "typology chapel",
+      "confidence_score": 0.85,
+      "source": "public_source_package"
+    },
+    {
+      "analysis_type": "geometry",
+      "label": "teardrop-leaf-plan-study",
+      "confidence_score": 0.64,
+      "source": "public_source_package"
+    }
+  ],
+  "ingestion_status": {
+    "stage": "review_only_draft",
+    "source_status": "public_link_package",
+    "asset_status": "planned_generated_review_only",
+    "model_status": "planned",
+    "updated_at": "2026-06-13"
+  },
+  "database_tags": [
+    "source:public-link-package",
+    "source:holzbaukultur",
+    "source:surselva-tourismus",
+    "source:graubuenden-ferien",
+    "source:52-beste-bauten",
+    "typology:chapel",
+    "typology:swiss-timber-reference",
+    "material:timber",
+    "material:wood-shingles",
+    "theme:alpine-context",
+    "theme:material-ageing",
+    "theme:sacred-atmosphere",
+    "theme:zumthor",
+    "rights:link-only",
+    "analysis:needs-local-library-review"
+  ],
+  "database_profile": {
+    "status": "draft",
+    "r2_prefix": "entries/kapelle-sogn-benedetg",
+    "source_count": 4,
+    "media_count": 4,
+    "model_count": 1,
+    "analysis_count": 3,
+    "tag_count": 15
+  }
+}
