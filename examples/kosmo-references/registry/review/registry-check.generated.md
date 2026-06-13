@@ -1,6 +1,6 @@
 # KosmoReferences Registry Check
 
-Generated: 2026-06-13T16:38:19.496Z
+Generated: 2026-06-13T16:46:15.884Z
 Registry: `data/kosmoreferences-registry.json`
 Status: `passed`
 
@@ -8,9 +8,9 @@ Status: `passed`
 
 - Source packages: 5
 - Entry drafts: 3
-- Asset libraries: 1
+- Asset libraries: 2
 - Reference pilots: 3
-- Checks: 15
+- Checks: 17
 - Failures: 0
 - Warnings: 0
 
@@ -31,4 +31,6 @@ Status: `passed`
 - `entry_draft:villa-savoye` -> `read_json`
 - `asset_library:codex-pilot-library` -> `read_json`
 - `asset_library_report:codex-pilot-library` -> `read_json`
+- `asset_library:kosmoreferences-pilot-seed-library-2026-06-13` -> `read_json`
+- `asset_library_report:kosmoreferences-pilot-seed-library-2026-06-13` -> `read_json`
 

@@ -1,6 +1,6 @@
 # KosmoReferences Data-Lane Status
 
-Generated: 2026-06-13T16:38:21.914Z
+Generated: 2026-06-13T16:46:19.579Z
 Status: `passed_review_only`
 
 ## Summary
@@ -8,10 +8,10 @@ Status: `passed_review_only`
 - Pilots: 3
 - Source packages: 5
 - Entry drafts: 3
-- Asset libraries: 1
-- Library assets: 5
+- Asset libraries: 2
+- Library assets: 11
 - Public-ready assets: 0
-- Blocked public promotions: 26
+- Blocked public promotions: 32
 
 ## Pilots
 

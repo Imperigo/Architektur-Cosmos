@@ -1,0 +1,312 @@
+{
+  "schema_version": "0.1",
+  "library_id": "kosmoreferences-pilot-seed-library-2026-06-13",
+  "name": "KosmoReferences Pilot Seed Library",
+  "description": "Local review-only seed assets for the first three KosmoReferences pilots: Villa Savoye, Kapelle Sogn Benedetg and Alterszentrum Kloster Ingenbohl.",
+  "status": "draft",
+  "rights_scope": "local_review_only",
+  "created_at": "2026-06-13",
+  "updated_at": "2026-06-13",
+  "storage_policy": {
+    "uploads_allowed": false,
+    "public_assets_allowed": false,
+    "local_assets_allowed": true,
+    "max_local_size_mb": 250,
+    "notes": [
+      "Seed assets are planned local-review-only candidates.",
+      "No R2 upload, D1 write, public download or public-ready flag is allowed in this package.",
+      "All geometry/material claims need human/source review before design reuse beyond study context."
+    ]
+  },
+  "assets": [
+    {
+      "id": "villa-savoye-concrete-frame-material-001",
+      "title": "Villa Savoye Concrete Frame Material Study",
+      "description": "Review-only material profile candidate for rendered concrete frame, pilotis and white surface logic.",
+      "asset_type": "material",
+      "category": "material",
+      "source_kind": "derived_from_entry",
+      "source_entry_id": "villa-savoye",
+      "kosmodata_refs": [
+        {
+          "kind": "reference_entry",
+          "entry_id": "villa-savoye",
+          "relation": "material_context",
+          "usage_policy": "derived_asset_review_required",
+          "review_status": "needs_human_review",
+          "notes": "Derived from review-only reference analysis; not a measured material specification."
+        }
+      ],
+      "source_basis": [
+        "examples/kosmo-references/entry-drafts/villa-savoye.entry-draft.json",
+        "data/kosmoreferences-pilot-gap-map-2026-06-13.json"
+      ],
+      "rights_status": "generated_needs_review",
+      "license": "review_only",
+      "credit": "Architecture Cosmos generated material study",
+      "public_use_allowed": false,
+      "local_only": true,
+      "review_status": "planned",
+      "confidence": 0.46,
+      "formats": [
+        {
+          "format": "material_json",
+          "planned_r2_key": "assets/kosmoreferences-pilot-seed-library/villa-savoye-concrete-frame-material-001/material.json",
+          "software": ["blender", "archicad", "kosmo"],
+          "status": "planned"
+        }
+      ],
+      "preview": {
+        "kind": "material_swatch",
+        "label": "Villa concrete/render",
+        "swatches": ["#eeeae1", "#cfc9bd", "#9f9a92"]
+      },
+      "export_targets": ["blender", "archicad", "web"],
+      "tags": ["villa-savoye", "material", "concrete-frame", "pilotis", "review-only"],
+      "material_tags": ["concrete", "render", "white-surface"]
+    },
+    {
+      "id": "villa-savoye-five-points-diagram-001",
+      "title": "Villa Savoye Five Points Diagram Kit",
+      "description": "Generated local diagram kit for analyzing pilotis, free plan, free facade, ribbon windows and roof garden.",
+      "asset_type": "detail",
+      "category": "annotation",
+      "source_kind": "generated",
+      "source_entry_id": "villa-savoye",
+      "kosmodata_refs": [
+        {
+          "kind": "reference_entry",
+          "entry_id": "villa-savoye",
+          "relation": "typology_context",
+          "usage_policy": "context_only",
+          "review_status": "context_only",
+          "notes": "Context-only analytical diagram; must not claim measured accuracy."
+        }
+      ],
+      "source_basis": [
+        "examples/kosmo-references/entry-drafts/villa-savoye.entry-draft.json"
+      ],
+      "rights_status": "generated_needs_review",
+      "license": "review_only",
+      "credit": "Architecture Cosmos generated diagram study",
+      "public_use_allowed": false,
+      "local_only": true,
+      "review_status": "planned",
+      "confidence": 0.5,
+      "formats": [
+        {
+          "format": "svg",
+          "planned_r2_key": "assets/kosmoreferences-pilot-seed-library/villa-savoye-five-points-diagram-001/five-points.svg",
+          "software": ["web", "kosmo", "generic"],
+          "status": "planned"
+        },
+        {
+          "format": "json",
+          "planned_r2_key": "assets/kosmoreferences-pilot-seed-library/villa-savoye-five-points-diagram-001/diagram.json",
+          "software": ["kosmo", "web"],
+          "status": "planned"
+        }
+      ],
+      "preview": {
+        "kind": "wireframe_component",
+        "label": "Five points kit"
+      },
+      "export_targets": ["svg", "web", "layout"],
+      "tags": ["villa-savoye", "five-points", "diagram", "annotation", "review-only"],
+      "material_tags": []
+    },
+    {
+      "id": "sogn-benedetg-wood-shingle-material-001",
+      "title": "Sogn Benedetg Wood Shingle Material Study",
+      "description": "Local procedural material candidate for shingle envelope, weathering and timber atmosphere studies.",
+      "asset_type": "material",
+      "category": "material",
+      "source_kind": "derived_from_entry",
+      "source_entry_id": "kapelle-sogn-benedetg",
+      "kosmodata_refs": [
+        {
+          "kind": "reference_entry",
+          "entry_id": "kapelle-sogn-benedetg",
+          "relation": "material_context",
+          "usage_policy": "derived_asset_review_required",
+          "review_status": "needs_human_review",
+          "notes": "Needs local book/lecture source review before claiming project-specific accuracy."
+        }
+      ],
+      "source_basis": [
+        "examples/kosmo-references/entry-drafts/kapelle-sogn-benedetg.entry-draft.json",
+        "data/kosmoreferences-pilot-gap-map-2026-06-13.json"
+      ],
+      "rights_status": "generated_needs_review",
+      "license": "review_only",
+      "credit": "Architecture Cosmos generated material study",
+      "public_use_allowed": false,
+      "local_only": true,
+      "review_status": "needs_source",
+      "confidence": 0.42,
+      "formats": [
+        {
+          "format": "material_json",
+          "planned_r2_key": "assets/kosmoreferences-pilot-seed-library/sogn-benedetg-wood-shingle-material-001/material.json",
+          "software": ["blender", "archicad", "kosmo"],
+          "status": "planned"
+        }
+      ],
+      "preview": {
+        "kind": "material_swatch",
+        "label": "Weathered shingle",
+        "swatches": ["#7d6d58", "#5f5142", "#a29072"]
+      },
+      "export_targets": ["blender", "archicad", "web"],
+      "tags": ["sogn-benedetg", "timber", "wood-shingle", "weathering", "review-only"],
+      "material_tags": ["timber", "shingle", "weathered-wood"]
+    },
+    {
+      "id": "sogn-benedetg-light-band-detail-001",
+      "title": "Sogn Benedetg Light Band Detail Study",
+      "description": "Generated local detail slot for the timber interior and light-band atmosphere hypothesis.",
+      "asset_type": "detail",
+      "category": "opening",
+      "source_kind": "generated",
+      "source_entry_id": "kapelle-sogn-benedetg",
+      "kosmodata_refs": [
+        {
+          "kind": "reference_entry",
+          "entry_id": "kapelle-sogn-benedetg",
+          "relation": "typology_context",
+          "usage_policy": "context_only",
+          "review_status": "context_only",
+          "notes": "Atmospheric detail study only; exact construction must be source-reviewed."
+        }
+      ],
+      "source_basis": [
+        "examples/kosmo-references/entry-drafts/kapelle-sogn-benedetg.entry-draft.json"
+      ],
+      "rights_status": "generated_needs_review",
+      "license": "review_only",
+      "credit": "Architecture Cosmos generated detail study",
+      "public_use_allowed": false,
+      "local_only": true,
+      "review_status": "needs_source",
+      "confidence": 0.36,
+      "formats": [
+        {
+          "format": "dxf",
+          "planned_r2_key": "assets/kosmoreferences-pilot-seed-library/sogn-benedetg-light-band-detail-001/light-band-detail.dxf",
+          "software": ["archicad", "generic"],
+          "status": "planned"
+        },
+        {
+          "format": "svg",
+          "planned_r2_key": "assets/kosmoreferences-pilot-seed-library/sogn-benedetg-light-band-detail-001/light-band-detail.svg",
+          "software": ["web", "kosmo"],
+          "status": "planned"
+        }
+      ],
+      "preview": {
+        "kind": "wireframe_component",
+        "label": "Light band study"
+      },
+      "export_targets": ["dxf", "svg", "layout"],
+      "tags": ["sogn-benedetg", "light-band", "timber-interior", "detail", "review-only"],
+      "material_tags": ["timber"]
+    },
+    {
+      "id": "ingenbohl-mineral-pigment-material-001",
+      "title": "Ingenbohl Mineral Pigment Material Study",
+      "description": "Local material candidate for mineral surfaces, pigment atmosphere and timber facade relation.",
+      "asset_type": "material",
+      "category": "material",
+      "source_kind": "derived_from_entry",
+      "source_entry_id": "alterszentrum-kloster-ingenbohl",
+      "kosmodata_refs": [
+        {
+          "kind": "reference_entry",
+          "entry_id": "alterszentrum-kloster-ingenbohl",
+          "relation": "material_context",
+          "usage_policy": "derived_asset_review_required",
+          "review_status": "needs_human_review",
+          "notes": "Needs source review from architect/project text or private extraction before design reuse."
+        }
+      ],
+      "source_basis": [
+        "examples/kosmo-references/entry-drafts/alterszentrum-kloster-ingenbohl.entry-draft.json",
+        "data/kosmoreferences-pilot-gap-map-2026-06-13.json"
+      ],
+      "rights_status": "generated_needs_review",
+      "license": "review_only",
+      "credit": "Architecture Cosmos generated material study",
+      "public_use_allowed": false,
+      "local_only": true,
+      "review_status": "planned",
+      "confidence": 0.43,
+      "formats": [
+        {
+          "format": "material_json",
+          "planned_r2_key": "assets/kosmoreferences-pilot-seed-library/ingenbohl-mineral-pigment-material-001/material.json",
+          "software": ["blender", "archicad", "kosmo"],
+          "status": "planned"
+        }
+      ],
+      "preview": {
+        "kind": "material_swatch",
+        "label": "Mineral pigment",
+        "swatches": ["#c7b7a0", "#9f886c", "#6b5a49"]
+      },
+      "export_targets": ["blender", "archicad", "web"],
+      "tags": ["ingenbohl", "mineral", "pigment", "timber-facade", "review-only"],
+      "material_tags": ["mineral", "pigment", "timber"]
+    },
+    {
+      "id": "ingenbohl-concrete-core-frame-study-001",
+      "title": "Ingenbohl Concrete Core and Frame Study",
+      "description": "Generated local structure component candidate for concrete frame/core and old-new junction review.",
+      "asset_type": "component",
+      "category": "structure",
+      "source_kind": "generated",
+      "source_entry_id": "alterszentrum-kloster-ingenbohl",
+      "kosmodata_refs": [
+        {
+          "kind": "reference_entry",
+          "entry_id": "alterszentrum-kloster-ingenbohl",
+          "relation": "model_context",
+          "usage_policy": "derived_asset_review_required",
+          "review_status": "needs_human_review",
+          "notes": "Structure is a hypothesis until engineering/project sources are reviewed."
+        }
+      ],
+      "source_basis": [
+        "examples/kosmo-references/entry-drafts/alterszentrum-kloster-ingenbohl.entry-draft.json",
+        "data/kosmoreferences-pilot-gap-map-2026-06-13.json"
+      ],
+      "rights_status": "generated_needs_review",
+      "license": "review_only",
+      "credit": "Architecture Cosmos generated structure study",
+      "public_use_allowed": false,
+      "local_only": true,
+      "review_status": "needs_source",
+      "confidence": 0.38,
+      "formats": [
+        {
+          "format": "json",
+          "planned_r2_key": "assets/kosmoreferences-pilot-seed-library/ingenbohl-concrete-core-frame-study-001/structure-profile.json",
+          "software": ["blender", "archicad", "kosmo"],
+          "status": "planned"
+        },
+        {
+          "format": "glb",
+          "planned_r2_key": "assets/kosmoreferences-pilot-seed-library/ingenbohl-concrete-core-frame-study-001/structure-study.glb",
+          "software": ["blender", "web", "kosmo"],
+          "status": "planned"
+        }
+      ],
+      "preview": {
+        "kind": "wireframe_component",
+        "label": "Core/frame study"
+      },
+      "export_targets": ["blender", "archicad", "glb", "web"],
+      "tags": ["ingenbohl", "structure", "concrete-core", "frame", "review-only"],
+      "material_tags": ["concrete"]
+    }
+  ]
+}

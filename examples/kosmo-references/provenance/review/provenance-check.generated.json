@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-06-13T16:38:19.503Z",
+  "checked_at": "2026-06-13T16:46:15.908Z",
   "registry_path": "data/kosmoreferences-registry.json",
   "status": "passed",
   "policy": {
@@ -22,10 +22,10 @@
   },
   "summary": {
     "entry_drafts": 3,
-    "asset_libraries": 1,
-    "library_assets": 5,
+    "asset_libraries": 2,
+    "library_assets": 11,
     "public_ready_assets": 0,
-    "blocked_public_promotions": 26,
+    "blocked_public_promotions": 32,
     "failures": 0,
     "warnings": 0
   },
@@ -408,6 +408,177 @@
           "status": "planned",
           "path": null,
           "planned_r2_key": "assets/codex-pilot-library/kosmoreferences-blender-archicad-profile-001/profile.json",
+          "exists": false
+        }
+      ],
+      "reason": "asset is local-review-only or lacks public-safe file-level rights"
+    },
+    {
+      "library_id": "kosmoreferences-pilot-seed-library-2026-06-13",
+      "id": "villa-savoye-concrete-frame-material-001",
+      "title": "Villa Savoye Concrete Frame Material Study",
+      "source_entry_id": "villa-savoye",
+      "rights_status": "generated_needs_review",
+      "license": "review_only",
+      "review_status": "planned",
+      "public_use_allowed": false,
+      "local_only": true,
+      "public_safe_rights": false,
+      "public_ready": false,
+      "public_blocked": true,
+      "local_file_missing": [],
+      "formats": [
+        {
+          "format": "material_json",
+          "status": "planned",
+          "path": null,
+          "planned_r2_key": "assets/kosmoreferences-pilot-seed-library/villa-savoye-concrete-frame-material-001/material.json",
+          "exists": false
+        }
+      ],
+      "reason": "asset is local-review-only or lacks public-safe file-level rights"
+    },
+    {
+      "library_id": "kosmoreferences-pilot-seed-library-2026-06-13",
+      "id": "villa-savoye-five-points-diagram-001",
+      "title": "Villa Savoye Five Points Diagram Kit",
+      "source_entry_id": "villa-savoye",
+      "rights_status": "generated_needs_review",
+      "license": "review_only",
+      "review_status": "planned",
+      "public_use_allowed": false,
+      "local_only": true,
+      "public_safe_rights": false,
+      "public_ready": false,
+      "public_blocked": true,
+      "local_file_missing": [],
+      "formats": [
+        {
+          "format": "svg",
+          "status": "planned",
+          "path": null,
+          "planned_r2_key": "assets/kosmoreferences-pilot-seed-library/villa-savoye-five-points-diagram-001/five-points.svg",
+          "exists": false
+        },
+        {
+          "format": "json",
+          "status": "planned",
+          "path": null,
+          "planned_r2_key": "assets/kosmoreferences-pilot-seed-library/villa-savoye-five-points-diagram-001/diagram.json",
+          "exists": false
+        }
+      ],
+      "reason": "asset is local-review-only or lacks public-safe file-level rights"
+    },
+    {
+      "library_id": "kosmoreferences-pilot-seed-library-2026-06-13",
+      "id": "sogn-benedetg-wood-shingle-material-001",
+      "title": "Sogn Benedetg Wood Shingle Material Study",
+      "source_entry_id": "kapelle-sogn-benedetg",
+      "rights_status": "generated_needs_review",
+      "license": "review_only",
+      "review_status": "needs_source",
+      "public_use_allowed": false,
+      "local_only": true,
+      "public_safe_rights": false,
+      "public_ready": false,
+      "public_blocked": true,
+      "local_file_missing": [],
+      "formats": [
+        {
+          "format": "material_json",
+          "status": "planned",
+          "path": null,
+          "planned_r2_key": "assets/kosmoreferences-pilot-seed-library/sogn-benedetg-wood-shingle-material-001/material.json",
+          "exists": false
+        }
+      ],
+      "reason": "asset is local-review-only or lacks public-safe file-level rights"
+    },
+    {
+      "library_id": "kosmoreferences-pilot-seed-library-2026-06-13",
+      "id": "sogn-benedetg-light-band-detail-001",
+      "title": "Sogn Benedetg Light Band Detail Study",
+      "source_entry_id": "kapelle-sogn-benedetg",
+      "rights_status": "generated_needs_review",
+      "license": "review_only",
+      "review_status": "needs_source",
+      "public_use_allowed": false,
+      "local_only": true,
+      "public_safe_rights": false,
+      "public_ready": false,
+      "public_blocked": true,
+      "local_file_missing": [],
+      "formats": [
+        {
+          "format": "dxf",
+          "status": "planned",
+          "path": null,
+          "planned_r2_key": "assets/kosmoreferences-pilot-seed-library/sogn-benedetg-light-band-detail-001/light-band-detail.dxf",
+          "exists": false
+        },
+        {
+          "format": "svg",
+          "status": "planned",
+          "path": null,
+          "planned_r2_key": "assets/kosmoreferences-pilot-seed-library/sogn-benedetg-light-band-detail-001/light-band-detail.svg",
+          "exists": false
+        }
+      ],
+      "reason": "asset is local-review-only or lacks public-safe file-level rights"
+    },
+    {
+      "library_id": "kosmoreferences-pilot-seed-library-2026-06-13",
+      "id": "ingenbohl-mineral-pigment-material-001",
+      "title": "Ingenbohl Mineral Pigment Material Study",
+      "source_entry_id": "alterszentrum-kloster-ingenbohl",
+      "rights_status": "generated_needs_review",
+      "license": "review_only",
+      "review_status": "planned",
+      "public_use_allowed": false,
+      "local_only": true,
+      "public_safe_rights": false,
+      "public_ready": false,
+      "public_blocked": true,
+      "local_file_missing": [],
+      "formats": [
+        {
+          "format": "material_json",
+          "status": "planned",
+          "path": null,
+          "planned_r2_key": "assets/kosmoreferences-pilot-seed-library/ingenbohl-mineral-pigment-material-001/material.json",
+          "exists": false
+        }
+      ],
+      "reason": "asset is local-review-only or lacks public-safe file-level rights"
+    },
+    {
+      "library_id": "kosmoreferences-pilot-seed-library-2026-06-13",
+      "id": "ingenbohl-concrete-core-frame-study-001",
+      "title": "Ingenbohl Concrete Core and Frame Study",
+      "source_entry_id": "alterszentrum-kloster-ingenbohl",
+      "rights_status": "generated_needs_review",
+      "license": "review_only",
+      "review_status": "needs_source",
+      "public_use_allowed": false,
+      "local_only": true,
+      "public_safe_rights": false,
+      "public_ready": false,
+      "public_blocked": true,
+      "local_file_missing": [],
+      "formats": [
+        {
+          "format": "json",
+          "status": "planned",
+          "path": null,
+          "planned_r2_key": "assets/kosmoreferences-pilot-seed-library/ingenbohl-concrete-core-frame-study-001/structure-profile.json",
+          "exists": false
+        },
+        {
+          "format": "glb",
+          "status": "planned",
+          "path": null,
+          "planned_r2_key": "assets/kosmoreferences-pilot-seed-library/ingenbohl-concrete-core-frame-study-001/structure-study.glb",
           "exists": false
         }
       ],

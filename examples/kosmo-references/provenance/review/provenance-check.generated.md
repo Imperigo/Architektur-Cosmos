@@ -1,16 +1,16 @@
 # KosmoReferences Provenance Check
 
-Generated: 2026-06-13T16:38:19.503Z
+Generated: 2026-06-13T16:46:15.908Z
 Registry: `data/kosmoreferences-registry.json`
 Status: `passed`
 
 ## Summary
 
 - Entry drafts: 3
-- Asset libraries: 1
-- Library assets: 5
+- Asset libraries: 2
+- Library assets: 11
 - Public-ready assets: 0
-- Blocked public promotions: 26
+- Blocked public promotions: 32
 - Failures: 0
 - Warnings: 0
 
@@ -27,6 +27,12 @@ Status: `passed`
 - `ingenbohl-mineral-timber-material-001`: blocked (generated_needs_review; asset is local-review-only or lacks public-safe file-level rights)
 - `villa-savoye-pilotis-detail-001`: blocked (generated_needs_review; asset is local-review-only or lacks public-safe file-level rights)
 - `kosmoreferences-blender-archicad-profile-001`: blocked (own_work; asset is local-review-only or lacks public-safe file-level rights)
+- `villa-savoye-concrete-frame-material-001`: blocked (generated_needs_review; asset is local-review-only or lacks public-safe file-level rights)
+- `villa-savoye-five-points-diagram-001`: blocked (generated_needs_review; asset is local-review-only or lacks public-safe file-level rights)
+- `sogn-benedetg-wood-shingle-material-001`: blocked (generated_needs_review; asset is local-review-only or lacks public-safe file-level rights)
+- `sogn-benedetg-light-band-detail-001`: blocked (generated_needs_review; asset is local-review-only or lacks public-safe file-level rights)
+- `ingenbohl-mineral-pigment-material-001`: blocked (generated_needs_review; asset is local-review-only or lacks public-safe file-level rights)
+- `ingenbohl-concrete-core-frame-study-001`: blocked (generated_needs_review; asset is local-review-only or lacks public-safe file-level rights)
 
 ## Next Actions
 

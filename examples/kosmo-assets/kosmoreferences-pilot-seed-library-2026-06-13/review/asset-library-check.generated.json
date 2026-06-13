@@ -1,0 +1,318 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-13T16:45:50.703Z",
+  "generator": "kosmo-asset-library-check",
+  "library_path": "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json",
+  "library_id": "kosmoreferences-pilot-seed-library-2026-06-13",
+  "name": "KosmoReferences Pilot Seed Library",
+  "status": "passed",
+  "mode": "local_review_only",
+  "policy": {
+    "no_uploads": true,
+    "no_public_publish": true,
+    "public_assets_require_rights": [
+      "licensed",
+      "public_domain",
+      "own_work"
+    ],
+    "generated_assets_need_review_before_public_use": true
+  },
+  "summary": {
+    "asset_count": 6,
+    "local_ready_count": 0,
+    "public_ready_count": 0,
+    "planned_only_count": 6,
+    "failure_count": 0,
+    "warning_count": 2,
+    "formats": {
+      "material_json": 3,
+      "svg": 2,
+      "json": 2,
+      "dxf": 1,
+      "glb": 1
+    },
+    "asset_types": {
+      "material": 3,
+      "detail": 2,
+      "component": 1
+    },
+    "categories": {
+      "material": 3,
+      "annotation": 1,
+      "opening": 1,
+      "structure": 1
+    },
+    "rights_status": {
+      "generated_needs_review": 6
+    },
+    "kosmodata_ref_count": 6
+  },
+  "assets": [
+    {
+      "id": "villa-savoye-concrete-frame-material-001",
+      "title": "Villa Savoye Concrete Frame Material Study",
+      "asset_type": "material",
+      "category": "material",
+      "rights_status": "generated_needs_review",
+      "review_status": "planned",
+      "public_use_allowed": false,
+      "rights_public_safe": false,
+      "local_ready": false,
+      "planned_only": true,
+      "formats": [
+        "material_json"
+      ],
+      "preview_kind": "material_swatch",
+      "kosmodata_ref_count": 1,
+      "kosmodata_refs": [
+        {
+          "kind": "reference_entry",
+          "entry_id": "villa-savoye",
+          "entry_title": "Villa Savoye",
+          "relation": "material_context",
+          "usage_policy": "derived_asset_review_required",
+          "review_status": "needs_human_review",
+          "entry_exists": true
+        }
+      ],
+      "existing_format_count": 0,
+      "planned_format_count": 1,
+      "export_targets": [
+        "blender",
+        "archicad",
+        "web"
+      ],
+      "tags": [
+        "villa-savoye",
+        "material",
+        "concrete-frame",
+        "pilotis",
+        "review-only"
+      ]
+    },
+    {
+      "id": "villa-savoye-five-points-diagram-001",
+      "title": "Villa Savoye Five Points Diagram Kit",
+      "asset_type": "detail",
+      "category": "annotation",
+      "rights_status": "generated_needs_review",
+      "review_status": "planned",
+      "public_use_allowed": false,
+      "rights_public_safe": false,
+      "local_ready": false,
+      "planned_only": true,
+      "formats": [
+        "svg",
+        "json"
+      ],
+      "preview_kind": "wireframe_component",
+      "kosmodata_ref_count": 1,
+      "kosmodata_refs": [
+        {
+          "kind": "reference_entry",
+          "entry_id": "villa-savoye",
+          "entry_title": "Villa Savoye",
+          "relation": "typology_context",
+          "usage_policy": "context_only",
+          "review_status": "context_only",
+          "entry_exists": true
+        }
+      ],
+      "existing_format_count": 0,
+      "planned_format_count": 2,
+      "export_targets": [
+        "svg",
+        "web",
+        "layout"
+      ],
+      "tags": [
+        "villa-savoye",
+        "five-points",
+        "diagram",
+        "annotation",
+        "review-only"
+      ]
+    },
+    {
+      "id": "sogn-benedetg-wood-shingle-material-001",
+      "title": "Sogn Benedetg Wood Shingle Material Study",
+      "asset_type": "material",
+      "category": "material",
+      "rights_status": "generated_needs_review",
+      "review_status": "needs_source",
+      "public_use_allowed": false,
+      "rights_public_safe": false,
+      "local_ready": false,
+      "planned_only": true,
+      "formats": [
+        "material_json"
+      ],
+      "preview_kind": "material_swatch",
+      "kosmodata_ref_count": 1,
+      "kosmodata_refs": [
+        {
+          "kind": "reference_entry",
+          "entry_id": "kapelle-sogn-benedetg",
+          "entry_title": null,
+          "relation": "material_context",
+          "usage_policy": "derived_asset_review_required",
+          "review_status": "needs_human_review",
+          "entry_exists": false
+        }
+      ],
+      "existing_format_count": 0,
+      "planned_format_count": 1,
+      "export_targets": [
+        "blender",
+        "archicad",
+        "web"
+      ],
+      "tags": [
+        "sogn-benedetg",
+        "timber",
+        "wood-shingle",
+        "weathering",
+        "review-only"
+      ]
+    },
+    {
+      "id": "sogn-benedetg-light-band-detail-001",
+      "title": "Sogn Benedetg Light Band Detail Study",
+      "asset_type": "detail",
+      "category": "opening",
+      "rights_status": "generated_needs_review",
+      "review_status": "needs_source",
+      "public_use_allowed": false,
+      "rights_public_safe": false,
+      "local_ready": false,
+      "planned_only": true,
+      "formats": [
+        "dxf",
+        "svg"
+      ],
+      "preview_kind": "wireframe_component",
+      "kosmodata_ref_count": 1,
+      "kosmodata_refs": [
+        {
+          "kind": "reference_entry",
+          "entry_id": "kapelle-sogn-benedetg",
+          "entry_title": null,
+          "relation": "typology_context",
+          "usage_policy": "context_only",
+          "review_status": "context_only",
+          "entry_exists": false
+        }
+      ],
+      "existing_format_count": 0,
+      "planned_format_count": 2,
+      "export_targets": [
+        "dxf",
+        "svg",
+        "layout"
+      ],
+      "tags": [
+        "sogn-benedetg",
+        "light-band",
+        "timber-interior",
+        "detail",
+        "review-only"
+      ]
+    },
+    {
+      "id": "ingenbohl-mineral-pigment-material-001",
+      "title": "Ingenbohl Mineral Pigment Material Study",
+      "asset_type": "material",
+      "category": "material",
+      "rights_status": "generated_needs_review",
+      "review_status": "planned",
+      "public_use_allowed": false,
+      "rights_public_safe": false,
+      "local_ready": false,
+      "planned_only": true,
+      "formats": [
+        "material_json"
+      ],
+      "preview_kind": "material_swatch",
+      "kosmodata_ref_count": 1,
+      "kosmodata_refs": [
+        {
+          "kind": "reference_entry",
+          "entry_id": "alterszentrum-kloster-ingenbohl",
+          "entry_title": "Alterszentrum Kloster Ingenbohl",
+          "relation": "material_context",
+          "usage_policy": "derived_asset_review_required",
+          "review_status": "needs_human_review",
+          "entry_exists": true
+        }
+      ],
+      "existing_format_count": 0,
+      "planned_format_count": 1,
+      "export_targets": [
+        "blender",
+        "archicad",
+        "web"
+      ],
+      "tags": [
+        "ingenbohl",
+        "mineral",
+        "pigment",
+        "timber-facade",
+        "review-only"
+      ]
+    },
+    {
+      "id": "ingenbohl-concrete-core-frame-study-001",
+      "title": "Ingenbohl Concrete Core and Frame Study",
+      "asset_type": "component",
+      "category": "structure",
+      "rights_status": "generated_needs_review",
+      "review_status": "needs_source",
+      "public_use_allowed": false,
+      "rights_public_safe": false,
+      "local_ready": false,
+      "planned_only": true,
+      "formats": [
+        "json",
+        "glb"
+      ],
+      "preview_kind": "wireframe_component",
+      "kosmodata_ref_count": 1,
+      "kosmodata_refs": [
+        {
+          "kind": "reference_entry",
+          "entry_id": "alterszentrum-kloster-ingenbohl",
+          "entry_title": "Alterszentrum Kloster Ingenbohl",
+          "relation": "model_context",
+          "usage_policy": "derived_asset_review_required",
+          "review_status": "needs_human_review",
+          "entry_exists": true
+        }
+      ],
+      "existing_format_count": 0,
+      "planned_format_count": 2,
+      "export_targets": [
+        "blender",
+        "archicad",
+        "glb",
+        "web"
+      ],
+      "tags": [
+        "ingenbohl",
+        "structure",
+        "concrete-core",
+        "frame",
+        "review-only"
+      ]
+    }
+  ],
+  "failures": [],
+  "warnings": [
+    "sogn-benedetg-wood-shingle-material-001.kosmodata_refs[0] references unknown KosmoData entry: kapelle-sogn-benedetg",
+    "sogn-benedetg-light-band-detail-001.kosmodata_refs[0] references unknown KosmoData entry: kapelle-sogn-benedetg"
+  ],
+  "next_actions": [
+    "Review warnings, especially private research, missing source entry links and planned export keys.",
+    "Generate or attach reviewed local files for planned-only assets.",
+    "Fix unknown KosmoData references before relying on asset/context bridge reports."
+  ]
+}

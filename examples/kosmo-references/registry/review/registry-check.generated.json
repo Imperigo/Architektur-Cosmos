@@ -1,13 +1,13 @@
 {
-  "checked_at": "2026-06-13T16:38:19.496Z",
+  "checked_at": "2026-06-13T16:46:15.884Z",
   "registry_path": "data/kosmoreferences-registry.json",
   "status": "passed",
   "summary": {
     "source_packages": 5,
     "entry_drafts": 3,
-    "asset_libraries": 1,
+    "asset_libraries": 2,
     "reference_pilots": 3,
-    "checks": 15,
+    "checks": 17,
     "failures": 0,
     "warnings": 0
   },
@@ -100,6 +100,18 @@
       "kind": "asset_library_report",
       "id": "codex-pilot-library",
       "path": "examples/kosmo-assets/codex-pilot-library/review/asset-library-check.generated.json",
+      "status": "read_json"
+    },
+    {
+      "kind": "asset_library",
+      "id": "kosmoreferences-pilot-seed-library-2026-06-13",
+      "path": "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json",
+      "status": "read_json"
+    },
+    {
+      "kind": "asset_library_report",
+      "id": "kosmoreferences-pilot-seed-library-2026-06-13",
+      "path": "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-library-check.generated.json",
       "status": "read_json"
     }
   ],
