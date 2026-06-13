@@ -1,0 +1,195 @@
+{
+  "schema_version": "0.1",
+  "created_at": "2026-06-13",
+  "status": "review_only",
+  "title": "KosmoReferences and KosmoAsset Worker Doctrine",
+  "source_package_id": "architecturekosmos-private-project-sources-2026-06-13",
+  "source_package_path": "examples/kosmo-references/source-packages/architecturekosmos-private-project-sources-2026-06-13/source-package.json",
+  "purpose": "Compact operating doctrine for local LLM workers, Kosmo, Codex and Claude in the ArchitectureKosmos data lane.",
+  "hierarchy": [
+    {
+      "role_id": "owner",
+      "name": "Andrin / Project Owner",
+      "authority": "vision, priorities, final approvals, private source access decisions",
+      "must_do": [
+        "Confirm strategic direction and unresolved source locations when needed.",
+        "Approve public promotion, external publishing and final product direction."
+      ],
+      "must_not_do": []
+    },
+    {
+      "role_id": "codex-central-overseer",
+      "name": "Central Codex Worker",
+      "authority": "data-lane architecture, source-package contracts, validation gates, GitHub pushes, critical review",
+      "must_do": [
+        "Create and validate KosmoReferences/KosmoAsset contracts before scaling ingestion.",
+        "Keep public/private boundaries explicit.",
+        "Use local LLM workers for repetitive extraction, drafting and batch coding when quality gates are defined.",
+        "Review local-worker output before promotion.",
+        "Push scoped commits autonomously to private GitHub repos."
+      ],
+      "must_not_do": [
+        "Do not publish private source text, scans, plans, screenshots or extracted full text.",
+        "Do not treat generated assets as public-safe without file-level provenance."
+      ]
+    },
+    {
+      "role_id": "claude-code-overseer",
+      "name": "Claude Code Worker / KosmoOverseer",
+      "authority": "KosmoOrbit coordination, UI/runtime integration, cross-worker review",
+      "must_do": [
+        "Read Codex handoffs before changing shared data-lane behavior.",
+        "Surface status and risks in KosmoOrbit without exposing private source content.",
+        "Notify other workers when changing shared contracts or generated reports."
+      ],
+      "must_not_do": [
+        "Do not silently rewrite Codex source-package contracts.",
+        "Do not convert review-only data into public UI content."
+      ]
+    },
+    {
+      "role_id": "kosmo-local-llm",
+      "name": "Kosmo / Odysseus Local LLM",
+      "authority": "high-volume private drafting, extraction summaries, batch coding, architecture-specialist memory building",
+      "must_do": [
+        "Operate inside private/review-only lanes by default.",
+        "Produce structured drafts with source references, confidence and uncertainty notes.",
+        "Hand output back to Codex/Claude for review and improvement.",
+        "Specialize gradually in architecture references, typologies, material systems, plans, sections, assets and workflows."
+      ],
+      "must_not_do": [
+        "Do not claim public rights.",
+        "Do not make irreversible Git, cloud, R2 or D1 writes unless an overseer has given a specific gate."
+      ]
+    },
+    {
+      "role_id": "local-batch-workers",
+      "name": "Additional Local LLM / Script Workers",
+      "authority": "bounded repetitive work packages",
+      "must_do": [
+        "Run only scoped tasks with explicit input/output folders.",
+        "Write machine-checkable outputs.",
+        "Keep logs and never overwrite source files."
+      ],
+      "must_not_do": [
+        "Do not change architecture, rights policy or public promotion status.",
+        "Do not bypass registry, provenance or source-package checks."
+      ]
+    }
+  ],
+  "lanes": [
+    {
+      "lane_id": "kosmoreferences",
+      "name": "KosmoReferences",
+      "scope": "Architecture project and reference knowledge: sources, project entries, plans, images, materials, text, analysis, 3D/model intentions and provenance.",
+      "current_pilots": [
+        "villa-savoye",
+        "kapelle-sogn-benedetg",
+        "alterszentrum-kloster-ingenbohl"
+      ],
+      "quality_gates": [
+        "source_integrity",
+        "rights",
+        "text_quality",
+        "layout_quality",
+        "entry_mapping",
+        "asset_mapping",
+        "public_private_split",
+        "provenance"
+      ]
+    },
+    {
+      "lane_id": "kosmoasset",
+      "name": "KosmoAsset",
+      "scope": "Reusable 2D/3D/material/texture/component resources for Blender, ArchiCAD, web previews and design workflows.",
+      "current_policy": "local-review-only",
+      "quality_gates": [
+        "asset_library_check",
+        "export_plan",
+        "exchange_profile",
+        "handoff_bundle",
+        "human_review",
+        "decision_ledger",
+        "promotion_guard"
+      ]
+    }
+  ],
+  "task_routing": [
+    {
+      "task_type": "vision_prompt",
+      "primary": "codex-central-overseer",
+      "support": [
+        "claude-code-overseer"
+      ],
+      "output": "plan, gates, work packages for local workers"
+    },
+    {
+      "task_type": "bulk_source_inventory",
+      "primary": "kosmo-local-llm",
+      "support": [
+        "local-batch-workers"
+      ],
+      "output": "candidate manifests and uncertainty logs"
+    },
+    {
+      "task_type": "source_package_creation",
+      "primary": "codex-central-overseer",
+      "support": [
+        "kosmo-local-llm"
+      ],
+      "output": "validated source-package.json plus review report"
+    },
+    {
+      "task_type": "entry_draft_generation",
+      "primary": "kosmo-local-llm",
+      "support": [
+        "codex-central-overseer"
+      ],
+      "output": "review-only entry drafts with source evidence"
+    },
+    {
+      "task_type": "public_promotion",
+      "primary": "codex-central-overseer",
+      "support": [
+        "claude-code-overseer"
+      ],
+      "output": "approved public-ready state only after rights/provenance checks"
+    },
+    {
+      "task_type": "ui_status_surface",
+      "primary": "claude-code-overseer",
+      "support": [
+        "codex-central-overseer"
+      ],
+      "output": "KosmoOrbit status panels that avoid private source leaks"
+    }
+  ],
+  "operating_rules": [
+    "Default all new source work to private_research or link_only until rights are proven.",
+    "Public-ready requires public-safe rights, file-level provenance and explicit public flag.",
+    "Local LLM workers may draft, classify and summarize, but overseers review promotion decisions.",
+    "Private source files and extracted full text stay outside public repo content.",
+    "Use hashes, byte counts, source roles and review reports as the contract between workers.",
+    "Every cross-worker change needs a handoff note in KosmoOrbit overseer intake.",
+    "Git commits must stage explicit paths only because the shared worktree can be dirty."
+  ],
+  "daily_loop": [
+    "Read newest KosmoOrbit/Claude handoffs and local memory.",
+    "Check registry/provenance/status cards before changing data-lane state.",
+    "Select one bounded batch: source package, entry draft, asset package, checker, UI status or library discovery.",
+    "Run relevant checks.",
+    "Commit and push scoped changes.",
+    "Write memory and KosmoOrbit handoff.",
+    "Continue with next highest-value batch."
+  ],
+  "current_state_2026_06_13": {
+    "registry_status": "passed",
+    "data_lane_status": "passed_review_only",
+    "source_packages": 5,
+    "entry_drafts": 3,
+    "asset_libraries": 1,
+    "public_ready_assets": 0,
+    "blocked_public_promotions": 26,
+    "large_book_eth_hslu_library": "not_visible_in_checked_paths"
+  }
+}
