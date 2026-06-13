@@ -1,0 +1,96 @@
+{
+  "schema_version": "0.1",
+  "created_at": "2026-06-13",
+  "status": "owner_review_pending",
+  "purpose": "Prepare explicit owner/human decisions for the first KosmoReferences pilots without changing public manifests.",
+  "policy": {
+    "auto_promote": false,
+    "public_ready_after_pack": 0,
+    "rule": "Every promotion requires a separate owner decision and a later explicit promotion command or manifest change."
+  },
+  "decision_groups": [
+    {
+      "id": "villa-savoye-public-image-candidates",
+      "title": "Villa Savoye public image candidates",
+      "current_status": "candidate_for_public_display_after_human_review",
+      "items": [
+        {
+          "file_id": "villa-savoye-exterior-savoye-3-cc0",
+          "path": "public/archive-media/villa-savoye/exterior/savoye-3-exterior-cc0.jpg",
+          "decision_needed": "approve_public_display_or_keep_blocked",
+          "suggested_default": "approve_with_optional_attribution_if_page_state_is_confirmed",
+          "public_ready_now": false
+        },
+        {
+          "file_id": "villa-savoye-exterior-loc-full",
+          "path": "public/archive-media/villa-savoye/exterior/villa-savoye-loc-exterior.jpg",
+          "decision_needed": "approve_public_display_or_keep_blocked",
+          "suggested_default": "approve_with_loc_credit_if_rights_advisory_is_confirmed",
+          "public_ready_now": false
+        },
+        {
+          "file_id": "villa-savoye-interior-chaise-cc-by-sa",
+          "path": "public/archive-media/villa-savoye/interior/villa-savoye-chaise-longue-interior-cc-by-sa-2.jpg",
+          "decision_needed": "approve_public_display_or_keep_blocked",
+          "suggested_default": "approve_only_if_cc_by_sa_attribution_and_sharealike_obligations_are_accepted",
+          "public_ready_now": false
+        }
+      ],
+      "evidence_refs": [
+        "examples/kosmo-references/provenance/villa-savoye-file-rights-candidates-2026-06-13.json",
+        "examples/kosmo-references/provenance/villa-savoye-public-promotion-review-pack-2026-06-13.json"
+      ]
+    },
+    {
+      "id": "villa-savoye-blocked-derived-files",
+      "title": "Villa Savoye derived/crop/model blockers",
+      "current_status": "must_remain_blocked",
+      "items": [
+        "public/archive-media/villa-savoye/exterior/villa-savoye-loc-exterior-crop.jpg",
+        "public/archive-media/villa-savoye/plan/villa-savoye-ground-floor-diagram.svg",
+        "public/archive-media/villa-savoye/section/villa-savoye-long-section-diagram.svg",
+        "public/archive-models/villa-savoye/low.glb"
+      ],
+      "decision_needed": "keep_blocked_or_open_separate_source_basis_review",
+      "suggested_default": "keep_blocked_until_derivative_source_basis_is_reviewed"
+    },
+    {
+      "id": "model-promotion-owner-confirmation",
+      "title": "Model promotion owner confirmation",
+      "current_status": "ready_for_owner_confirmation_not_public_cleared",
+      "items": [
+        {
+          "entry_id": "villa-savoye",
+          "score": 92,
+          "dry_run_status": "ready_for_owner_confirmation",
+          "confirm_command_after_review": "npm run brain:promote-model -- --entry villa-savoye --confirm-public-model",
+          "public_ready_now": false
+        },
+        {
+          "entry_id": "alterszentrum-kloster-ingenbohl",
+          "score": 100,
+          "dry_run_status": "ready_for_owner_confirmation",
+          "confirm_command_after_review": "npm run brain:promote-model -- --entry alterszentrum-kloster-ingenbohl --confirm-public-model",
+          "public_ready_now": false
+        }
+      ],
+      "evidence_refs": [
+        "examples/kosmo-references/provenance/model-provenance-bridge-2026-06-13.json",
+        "examples/kosmo-references/provenance/model-promotion-dry-run-2026-06-13.json"
+      ],
+      "suggested_default": "do_not_confirm_public_model_until_owner_accepts_diagrammatic_not_measured_status"
+    },
+    {
+      "id": "sogn-benedetg-source-gap",
+      "title": "Sogn Benedetg source gap",
+      "current_status": "link_only_no_local_files",
+      "decision_needed": "find_private_library_root_or_generate_review_only_study_assets",
+      "suggested_default": "keep_link_only_until_private_library_path_is_available"
+    }
+  ],
+  "next_actions": [
+    "Owner reviews image candidates and decides approve/block per item.",
+    "Owner reviews model diagrammatic status before any --confirm-public-model command.",
+    "Claude/KosmoOverseer confirms real private library path for Sogn/Ingenbohl source deepening."
+  ]
+}
