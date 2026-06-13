@@ -1,0 +1,61 @@
+{
+  "checked_at": "2026-06-13T15:57:29.439Z",
+  "package_path": "examples/kosmo-references/source-packages/codex-markitdown-smoke-2026-06-13/source-package.json",
+  "package_id": "codex-markitdown-smoke-2026-06-13",
+  "title": "Codex MarkItDown Smoke Source Package",
+  "status": "passed",
+  "summary": {
+    "sources": 2,
+    "extraction_artifacts": 2,
+    "candidate_projects": 2,
+    "review_gates": 7
+  },
+  "checks": [
+    {
+      "kind": "source",
+      "id": "architekturkosmos-ai-workflow-pipeline-pdf",
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Architekturkosmos Zentrale/Architekturkosmos_AI_Workflow_Pipeline_Projekt_Dokument.pdf",
+      "status": "pass",
+      "resolved_path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Architekturkosmos Zentrale/Architekturkosmos_AI_Workflow_Pipeline_Projekt_Dokument.pdf",
+      "expected_sha256": "a46d51f88c2bec0dfa444f71c4aed44d1b5ce557f812e4acb1a073b6e8b0e964",
+      "actual_sha256": "a46d51f88c2bec0dfa444f71c4aed44d1b5ce557f812e4acb1a073b6e8b0e964",
+      "expected_bytes": 320826,
+      "actual_bytes": 320826
+    },
+    {
+      "kind": "source",
+      "id": "villa-savoye-unesco-1321rev-maps-pdf",
+      "path": "archive-inbox/villa-savoye/sources/unesco-1321rev-maps.pdf",
+      "status": "pass",
+      "resolved_path": "/mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/archive-inbox/villa-savoye/sources/unesco-1321rev-maps.pdf",
+      "expected_sha256": "d34e5439734ee8a22b6cf6ede88798dd5b774bea77714a62986bc595b0b474ef",
+      "actual_sha256": "d34e5439734ee8a22b6cf6ede88798dd5b774bea77714a62986bc595b0b474ef",
+      "expected_bytes": 57016807,
+      "actual_bytes": 57016807
+    },
+    {
+      "kind": "artifact",
+      "id": "architekturkosmos-ai-workflow-pipeline-markdown",
+      "path": "out/codex-markitdown-smoke/2026-06-13/architekturkosmos-ai-workflow-pipeline.md",
+      "status": "pass",
+      "resolved_path": "/mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/out/codex-markitdown-smoke/2026-06-13/architekturkosmos-ai-workflow-pipeline.md",
+      "expected_sha256": "83fb56de386144bdc09a787393dc6069efb29a88386cb749c77ae0516228ce8d",
+      "actual_sha256": "83fb56de386144bdc09a787393dc6069efb29a88386cb749c77ae0516228ce8d",
+      "expected_bytes": 20029,
+      "actual_bytes": 20029
+    },
+    {
+      "kind": "artifact",
+      "id": "villa-savoye-unesco-1321rev-maps-markdown",
+      "path": "out/codex-markitdown-smoke/2026-06-13/villa-savoye-unesco-1321rev-maps.md",
+      "status": "pass",
+      "resolved_path": "/mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/out/codex-markitdown-smoke/2026-06-13/villa-savoye-unesco-1321rev-maps.md",
+      "expected_sha256": "fb42dd94c1a2b79c3dfbec8ccc132bd34832c6913f124dee82bc5f426337cc26",
+      "actual_sha256": "fb42dd94c1a2b79c3dfbec8ccc132bd34832c6913f124dee82bc5f426337cc26",
+      "expected_bytes": 2005,
+      "actual_bytes": 2005
+    }
+  ],
+  "failures": [],
+  "warnings": []
+}

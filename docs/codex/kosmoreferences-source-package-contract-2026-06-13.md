@@ -42,6 +42,30 @@ Dieses Paket dokumentiert den MarkItDown-Smoke vom 2026-06-13:
 
 Die eigentlichen Markdown-Outputs bleiben unter `out/` und sind gitignored.
 
+## Lokaler Check
+
+Der Vertrag kann lokal geprueft werden:
+
+```bash
+node scripts/kosmo-source-package-check.mjs \
+  --package examples/kosmo-references/source-packages/codex-markitdown-smoke-2026-06-13/source-package.json
+```
+
+Der Check prueft:
+
+- Pflichtfelder und ID-Formate;
+- Source-/Artifact-Verknuepfungen;
+- Datei-Existenz, SHA-256 und Byte-Groesse fuer lokale Dateien;
+- Review-Gate-Abdeckung;
+- Public/Private-Split-Regeln.
+
+Der Report wird neben dem Source-Package geschrieben:
+
+```text
+examples/kosmo-references/source-packages/{package_id}/review/source-package-check.generated.md
+examples/kosmo-references/source-packages/{package_id}/review/source-package-check.generated.json
+```
+
 ## Pipeline-Regel
 
 Dokumenttyp entscheidet die erste Verarbeitung:
