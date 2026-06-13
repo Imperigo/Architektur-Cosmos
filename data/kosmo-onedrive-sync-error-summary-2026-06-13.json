@@ -1,0 +1,598 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-13T18:57:32.093Z",
+  "status": "onedrive_sync_errors_visible",
+  "policy": {
+    "read_only": true,
+    "copied_private_content": false,
+    "sensitive_segments_redacted": true,
+    "note": "This summary records OneDrive sync error metadata only. It does not copy private source files, book pages, lecture text, images, plans or secrets."
+  },
+  "source_root": "/home/andrin-baumann/ArchitekturKosmos Onedrive",
+  "summary": {
+    "marker_files": 59,
+    "leaf_marker_files": 58,
+    "aggregate_marker_present": true,
+    "aggregate_missing_items": 58,
+    "redacted_marker_targets": 2,
+    "affected_top_level_groups": {
+      "00 Architekturkosmos Zentrale": 46,
+      "00 Einrichtung Home_PC": 1,
+      "12 Architektur Cosmos": 1,
+      "Andrin-Owner-Pakete": 1,
+      "Architecture Cosmos Backups": 1,
+      "Claude to Blender": 1,
+      "KosmoDraw_Assets": 1,
+      "KosmoDraw": 1,
+      "KosmoDraw_H3_Posters": 1,
+      "KosmoPublish": 1,
+      "KosmosPrepare": 1,
+      "Recht": 1,
+      "alt": 1
+    },
+    "exception_types": {
+      "WebException": 58,
+      "unknown": 1
+    },
+    "latest_utc_datetime": "06/09/2026 17:43:20"
+  },
+  "markers": [
+    {
+      "marker_path": "__11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/pydantic-2.10.4.dist-info_Error.txt",
+      "target_path_redacted": "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/pydantic-2.10.4.dist-info",
+      "top_level_group": "00 Architekturkosmos Zentrale",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:09",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/pydantic_core-2.27.2.dist-info_Error.txt",
+      "target_path_redacted": "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/pydantic_core-2.27.2.dist-info",
+      "top_level_group": "00 Architekturkosmos Zentrale",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:09",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/pydantic_settings-2.7.1.dist-info_Error.txt",
+      "target_path_redacted": "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/pydantic_settings-2.7.1.dist-info",
+      "top_level_group": "00 Architekturkosmos Zentrale",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:09",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/pydantic_settings_Error.txt",
+      "target_path_redacted": "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/pydantic_settings",
+      "top_level_group": "00 Architekturkosmos Zentrale",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:09",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/pytest-8.3.4.dist-info_Error.txt",
+      "target_path_redacted": "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/pytest-8.3.4.dist-info",
+      "top_level_group": "00 Architekturkosmos Zentrale",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:09",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/pytest_Error.txt",
+      "target_path_redacted": "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/pytest",
+      "top_level_group": "00 Architekturkosmos Zentrale",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:09",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/python_dotenv-1.2.2.dist-info_Error.txt",
+      "target_path_redacted": "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/python_dotenv-1.2.2.dist-info",
+      "top_level_group": "00 Architekturkosmos Zentrale",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:09",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/pyyaml-6.0.3.dist-info_Error.txt",
+      "target_path_redacted": "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/pyyaml-6.0.3.dist-info",
+      "top_level_group": "00 Architekturkosmos Zentrale",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:09",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/requests-2.32.3.dist-info_Error.txt",
+      "target_path_redacted": "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/requests-2.32.3.dist-info",
+      "top_level_group": "00 Architekturkosmos Zentrale",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:09",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/requests_Error.txt",
+      "target_path_redacted": "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/requests",
+      "top_level_group": "00 Architekturkosmos Zentrale",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:09",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/rsa-4.9.1.dist-info_Error.txt",
+      "target_path_redacted": "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/rsa-4.9.1.dist-info",
+      "top_level_group": "00 Architekturkosmos Zentrale",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:09",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/rsa_Error.txt",
+      "target_path_redacted": "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/rsa",
+      "top_level_group": "00 Architekturkosmos Zentrale",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:09",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/setuptools-65.5.0.dist-info_Error.txt",
+      "target_path_redacted": "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/setuptools-65.5.0.dist-info",
+      "top_level_group": "00 Architekturkosmos Zentrale",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:09",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/setuptools_Error.txt",
+      "target_path_redacted": "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/setuptools",
+      "top_level_group": "00 Architekturkosmos Zentrale",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:09",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/starlette-0.41.3.dist-info_Error.txt",
+      "target_path_redacted": "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/starlette-0.41.3.dist-info",
+      "top_level_group": "00 Architekturkosmos Zentrale",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:09",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/starlette_Error.txt",
+      "target_path_redacted": "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/starlette",
+      "top_level_group": "00 Architekturkosmos Zentrale",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:09",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/typing_extensions-4.15.0.dist-info_Error.txt",
+      "target_path_redacted": "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/typing_extensions-4.15.0.dist-info",
+      "top_level_group": "00 Architekturkosmos Zentrale",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:09",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/urllib3-2.7.0.dist-info_Error.txt",
+      "target_path_redacted": "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/urllib3-2.7.0.dist-info",
+      "top_level_group": "00 Architekturkosmos Zentrale",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:10",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/urllib3_Error.txt",
+      "target_path_redacted": "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/urllib3",
+      "top_level_group": "00 Architekturkosmos Zentrale",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:10",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/uvicorn-0.34.0.dist-info_Error.txt",
+      "target_path_redacted": "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/uvicorn-0.34.0.dist-info",
+      "top_level_group": "00 Architekturkosmos Zentrale",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:10",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/uvicorn_Error.txt",
+      "target_path_redacted": "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/uvicorn",
+      "top_level_group": "00 Architekturkosmos Zentrale",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:10",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/uvloop-0.22.1.dist-info_Error.txt",
+      "target_path_redacted": "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/uvloop-0.22.1.dist-info",
+      "top_level_group": "00 Architekturkosmos Zentrale",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:10",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/uvloop_Error.txt",
+      "target_path_redacted": "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/uvloop",
+      "top_level_group": "00 Architekturkosmos Zentrale",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:10",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/watchfiles-1.2.0.dist-info_Error.txt",
+      "target_path_redacted": "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/watchfiles-1.2.0.dist-info",
+      "top_level_group": "00 Architekturkosmos Zentrale",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:10",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/watchfiles_Error.txt",
+      "target_path_redacted": "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/watchfiles",
+      "top_level_group": "00 Architekturkosmos Zentrale",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:10",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/websockets-16.0.dist-info_Error.txt",
+      "target_path_redacted": "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/websockets-16.0.dist-info",
+      "top_level_group": "00 Architekturkosmos Zentrale",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:10",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/websockets_Error.txt",
+      "target_path_redacted": "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/websockets",
+      "top_level_group": "00 Architekturkosmos Zentrale",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:10",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/yaml_Error.txt",
+      "target_path_redacted": "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/yaml",
+      "top_level_group": "00 Architekturkosmos Zentrale",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:10",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/app_Error.txt",
+      "target_path_redacted": "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/app",
+      "top_level_group": "00 Architekturkosmos Zentrale",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:10",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/tests_Error.txt",
+      "target_path_redacted": "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/tests",
+      "top_level_group": "00 Architekturkosmos Zentrale",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:10",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/blender_Error.txt",
+      "target_path_redacted": "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/blender",
+      "top_level_group": "00 Architekturkosmos Zentrale",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:11",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/codex_config_example_Error.txt",
+      "target_path_redacted": "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/codex_config_example",
+      "top_level_group": "00 Architekturkosmos Zentrale",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:11",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/config_Error.txt",
+      "target_path_redacted": "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/config",
+      "top_level_group": "00 Architekturkosmos Zentrale",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:11",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/dist_Error.txt",
+      "target_path_redacted": "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/dist",
+      "top_level_group": "00 Architekturkosmos Zentrale",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:11",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/docs_Error.txt",
+      "target_path_redacted": "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/docs",
+      "top_level_group": "00 Architekturkosmos Zentrale",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:11",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/infra_Error.txt",
+      "target_path_redacted": "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/infra",
+      "top_level_group": "00 Architekturkosmos Zentrale",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:11",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/integrations_Error.txt",
+      "target_path_redacted": "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/integrations",
+      "top_level_group": "00 Architekturkosmos Zentrale",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:11",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/macos_Error.txt",
+      "target_path_redacted": "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/macos",
+      "top_level_group": "00 Architekturkosmos Zentrale",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:11",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/scripts_Error.txt",
+      "target_path_redacted": "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/scripts",
+      "top_level_group": "00 Architekturkosmos Zentrale",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:11",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/[redacted-sensitive]",
+      "target_path_redacted": "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/[redacted-sensitive]",
+      "top_level_group": "00 Architekturkosmos Zentrale",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:11",
+      "listed_missing_items": 0,
+      "redacted": true
+    },
+    {
+      "marker_path": "__11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/[redacted-sensitive]",
+      "target_path_redacted": "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/[redacted-sensitive]",
+      "top_level_group": "00 Architekturkosmos Zentrale",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:11",
+      "listed_missing_items": 0,
+      "redacted": true
+    },
+    {
+      "marker_path": "__11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/storage_Error.txt",
+      "target_path_redacted": "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/storage",
+      "top_level_group": "00 Architekturkosmos Zentrale",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:11",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/tmp_Error.txt",
+      "target_path_redacted": "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/tmp",
+      "top_level_group": "00 Architekturkosmos Zentrale",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:11",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/vendor_Error.txt",
+      "target_path_redacted": "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/vendor",
+      "top_level_group": "00 Architekturkosmos Zentrale",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:11",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/website-adapter_Error.txt",
+      "target_path_redacted": "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/website-adapter",
+      "top_level_group": "00 Architekturkosmos Zentrale",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:11",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/00 Architekturkosmos Zentrale/storage_Error.txt",
+      "target_path_redacted": "11 AI Workflow/00 Architekturkosmos Zentrale/storage",
+      "top_level_group": "00 Architekturkosmos Zentrale",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:12",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/00 Einrichtung Home_PC_Error.txt",
+      "target_path_redacted": "11 AI Workflow/00 Einrichtung Home_PC",
+      "top_level_group": "00 Einrichtung Home_PC",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:15",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/12 Architektur Cosmos_Error.txt",
+      "target_path_redacted": "11 AI Workflow/12 Architektur Cosmos",
+      "top_level_group": "12 Architektur Cosmos",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:15",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/Andrin-Owner-Pakete_Error.txt",
+      "target_path_redacted": "11 AI Workflow/Andrin-Owner-Pakete",
+      "top_level_group": "Andrin-Owner-Pakete",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:15",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/Architecture Cosmos Backups_Error.txt",
+      "target_path_redacted": "11 AI Workflow/Architecture Cosmos Backups",
+      "top_level_group": "Architecture Cosmos Backups",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:15",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/Claude to Blender_Error.txt",
+      "target_path_redacted": "11 AI Workflow/Claude to Blender",
+      "top_level_group": "Claude to Blender",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:15",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/KosmoDraw_Assets_Error.txt",
+      "target_path_redacted": "11 AI Workflow/KosmoDraw_Assets",
+      "top_level_group": "KosmoDraw_Assets",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:15",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/KosmoDraw_Error.txt",
+      "target_path_redacted": "11 AI Workflow/KosmoDraw",
+      "top_level_group": "KosmoDraw",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:15",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/KosmoDraw_H3_Posters_Error.txt",
+      "target_path_redacted": "11 AI Workflow/KosmoDraw_H3_Posters",
+      "top_level_group": "KosmoDraw_H3_Posters",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:15",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/KosmoPublish_Error.txt",
+      "target_path_redacted": "11 AI Workflow/KosmoPublish",
+      "top_level_group": "KosmoPublish",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:15",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/KosmosPrepare_Error.txt",
+      "target_path_redacted": "11 AI Workflow/KosmosPrepare",
+      "top_level_group": "KosmosPrepare",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:15",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/Recht_Error.txt",
+      "target_path_redacted": "11 AI Workflow/Recht",
+      "top_level_group": "Recht",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:15",
+      "listed_missing_items": 0,
+      "redacted": false
+    },
+    {
+      "marker_path": "__11 AI Workflow/alt_Error.txt",
+      "target_path_redacted": "11 AI Workflow/alt",
+      "top_level_group": "alt",
+      "exception_type": "WebException",
+      "utc_datetime": "06/09/2026 17:43:15",
+      "listed_missing_items": 0,
+      "redacted": false
+    }
+  ],
+  "aggregate": {
+    "marker_path": "___All_Errors.txt",
+    "exception_type": null,
+    "utc_datetime": "06/09/2026 17:43:20",
+    "listed_missing_items": 58,
+    "sample_missing_paths_redacted": [
+      "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/pydantic_core-2.27.2.dist-info",
+      "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/pydantic_settings",
+      "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/pydantic_settings-2.7.1.dist-info",
+      "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/pydantic-2.10.4.dist-info",
+      "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/pytest",
+      "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/pytest-8.3.4.dist-info",
+      "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/python_dotenv-1.2.2.dist-info",
+      "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/pyyaml-6.0.3.dist-info",
+      "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/requests",
+      "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/requests-2.32.3.dist-info",
+      "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/rsa",
+      "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/rsa-4.9.1.dist-info",
+      "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/setuptools",
+      "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/setuptools-65.5.0.dist-info",
+      "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/starlette",
+      "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/starlette-0.41.3.dist-info",
+      "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/typing_extensions-4.15.0.dist-info",
+      "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/urllib3",
+      "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/urllib3-2.7.0.dist-info",
+      "11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend/.venv/lib/python3.11/site-packages/uvicorn"
+    ]
+  },
+  "next_actions": [
+    "Treat the visible OneDrive mirror as incomplete until sync errors are resolved.",
+    "Resolve or re-sync the affected top-level folders before running source inventory.",
+    "Do not promote source-dependent assets based on this mirror alone.",
+    "Use the aggregate marker to prioritize the 58 missing listed files/folders.",
+    "Re-run npm run kosmo:onedrive-sync-errors after sync repair."
+  ]
+}
