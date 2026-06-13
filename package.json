@@ -116,6 +116,7 @@
     "kosmo:human-decision-owner-batches": "node scripts/kosmo-human-decision-owner-batches.mjs",
     "kosmo:owner-next-review-brief": "node scripts/kosmo-owner-next-review-brief.mjs",
     "kosmo:owner-review-card": "node scripts/kosmo-owner-review-card.mjs",
+    "kosmo:owner-review-card-set": "node scripts/kosmo-owner-review-card-set.mjs",
     "kosmo:private-library-diagnostic": "node scripts/kosmo-private-library-diagnostic.mjs",
     "kosmo:source-root-locator": "node scripts/kosmo-source-root-locator.mjs",
     "kosmo:source-root-selection-brief": "node scripts/kosmo-source-root-selection-brief.mjs",

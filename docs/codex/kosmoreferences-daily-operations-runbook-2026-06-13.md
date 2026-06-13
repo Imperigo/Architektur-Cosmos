@@ -88,24 +88,34 @@ This runbook is the daily execution order for the KosmoReferences/KosmoAsset dat
 
    - `docs/codex/kosmo-owner-review-card-batch-a-villa-savoye-image-candidates-2026-06-13.md`
 
-13. If a narrow rerun is needed, run the KosmoReferences Nightly Gate:
+13. Generate the full owner review card set:
+
+   ```bash
+   npm run kosmo:owner-review-card-set
+   ```
+
+14. Open the generated card set:
+
+   - `docs/codex/kosmo-owner-review-card-set-2026-06-13.md`
+
+15. If a narrow rerun is needed, run the KosmoReferences Nightly Gate:
 
    ```bash
    npm run kosmo:references-nightly-gate
    ```
 
-14. Open the generated reports:
+16. Open the generated reports:
 
    - `docs/codex/kosmoreferences-nightly-gate-2026-06-13.md`
    - `data/kosmoreferences-data-lane-status.md`
 
-15. If a narrow asset rerun is needed, run the KosmoAsset seed full review:
+17. If a narrow asset rerun is needed, run the KosmoAsset seed full review:
 
    ```bash
    npm run kosmo:asset-full-review -- --library examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json
    ```
 
-16. Open the generated report:
+18. Open the generated report:
 
    - `examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-full-review.generated.md`
 
@@ -125,6 +135,7 @@ Use the result as the current read-only status:
 - `owner_next_review_brief_open` means owner questions are prepared in five small batches, but no decision has been recorded.
 - `night_loop_guarded_ready` means the next autonomous loop is structurally ready but remains guarded by source-root and owner-decision blockers.
 - `owner_review_card_ready` means exactly one owner discussion card is prepared; it still records no decision and permits no public-ready change.
+- `owner_review_card_set_ready` means all five owner discussion cards are prepared as a safe question set; it still records no decisions and keeps `public_ready_after_set: 0`.
 
 Then continue with one of these safe work types:
 
