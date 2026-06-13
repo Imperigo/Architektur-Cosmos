@@ -1,0 +1,85 @@
+{
+  "checked_at": "2026-06-13T17:15:49.446Z",
+  "package_path": "examples/kosmo-references/source-packages/villa-savoye-public-source-candidate-2026-06-13/source-package.json",
+  "package_id": "villa-savoye-public-source-candidate-2026-06-13",
+  "title": "Villa Savoye Public Source Candidate",
+  "status": "passed",
+  "policy": {
+    "copied_content": false,
+    "request_mode": "HEAD first; fallback to GET with Range bytes=0-0 when HEAD is rejected",
+    "note": "This checker records availability metadata only. It does not store page bodies, screenshots, images, plans or PDF text."
+  },
+  "summary": {
+    "links": 5,
+    "reachable": 5,
+    "warnings": 0
+  },
+  "checks": [
+    {
+      "id": "cmn-villa-savoye-visit-page",
+      "title": "Centre des monuments nationaux: Welcome to the Villa Savoye in Poissy",
+      "url": "https://www.villa-savoye.fr/en",
+      "source_role": "primary_source",
+      "rights_status": "link_only",
+      "status": "reachable",
+      "http_status": 200,
+      "final_url": "https://www.villa-savoye.fr/en",
+      "content_type": "text/html; charset=UTF-8",
+      "content_length": null,
+      "method": "HEAD"
+    },
+    {
+      "id": "cmn-villa-savoye-history-page",
+      "title": "Centre des monuments nationaux: History of the Villa Savoye",
+      "url": "https://www.villa-savoye.fr/en/discover/history-of-the-villa-savoye",
+      "source_role": "primary_source",
+      "rights_status": "link_only",
+      "status": "reachable",
+      "http_status": 200,
+      "final_url": "https://www.villa-savoye.fr/en/discover/history-of-the-villa-savoye",
+      "content_type": "text/html; charset=UTF-8",
+      "content_length": null,
+      "method": "HEAD"
+    },
+    {
+      "id": "fondation-le-corbusier-villa-savoye",
+      "title": "Fondation Le Corbusier: Villa Savoye and Gardener's Lodge",
+      "url": "https://www.fondationlecorbusier.fr/en/work-architecture/achievements-villa-savoye-and-gardeners-lodge-poissy-france-1928-1931/",
+      "source_role": "primary_source",
+      "rights_status": "link_only",
+      "status": "reachable",
+      "http_status": 200,
+      "final_url": "https://www.fondationlecorbusier.fr/en/work-architecture/achievements-villa-savoye-and-gardeners-lodge-poissy-france-1928-1931/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_length": null,
+      "method": "HEAD"
+    },
+    {
+      "id": "unesco-le-corbusier-world-heritage-1321",
+      "title": "UNESCO: The Architectural Work of Le Corbusier",
+      "url": "https://whc.unesco.org/en/list/1321/",
+      "source_role": "secondary_source",
+      "rights_status": "link_only",
+      "status": "reachable",
+      "http_status": 200,
+      "final_url": "https://whc.unesco.org/en/list/1321/",
+      "content_type": "text/html;charset=UTF-8",
+      "content_length": null,
+      "method": "HEAD"
+    },
+    {
+      "id": "lecorbusier-worldheritage-villa-savoye",
+      "title": "Le Corbusier World Heritage: Villa Savoye et loge du jardinier",
+      "url": "https://lecorbusier-worldheritage.org/en/villa-savoye-et-loge-du-jardinier/",
+      "source_role": "secondary_source",
+      "rights_status": "link_only",
+      "status": "reachable",
+      "http_status": 200,
+      "final_url": "https://lecorbusier-worldheritage.org/en/villa-savoye-et-loge-du-jardinier/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_length": null,
+      "method": "HEAD"
+    }
+  ],
+  "warnings": []
+}

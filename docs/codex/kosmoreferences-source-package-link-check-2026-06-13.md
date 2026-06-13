@@ -28,11 +28,15 @@ aktuell erreichbar sind.
 
 ## Pilot-Ergebnis
 
+- Villa Savoye Source-Package: 5/5 Links erreichbar, 0 Warnungen.
 - Sogn Benedetg Source-Package: 4/4 Links erreichbar, 0 Warnungen.
 - Ingenbohl Source-Package: 5/5 Links erreichbar, 0 Warnungen.
+- Gesamt: 14/14 Links erreichbar, 0 Warnungen.
 
 ## Neue Reports
 
+- `examples/kosmo-references/source-packages/villa-savoye-public-source-candidate-2026-06-13/review/source-package-link-check.generated.json`
+- `examples/kosmo-references/source-packages/villa-savoye-public-source-candidate-2026-06-13/review/source-package-link-check.generated.md`
 - `examples/kosmo-references/source-packages/kapelle-sogn-benedetg-public-source-candidate-2026-06-13/review/source-package-link-check.generated.json`
 - `examples/kosmo-references/source-packages/kapelle-sogn-benedetg-public-source-candidate-2026-06-13/review/source-package-link-check.generated.md`
 - `examples/kosmo-references/source-packages/alterszentrum-kloster-ingenbohl-public-source-candidate-2026-06-13/review/source-package-link-check.generated.json`
