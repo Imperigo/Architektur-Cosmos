@@ -124,6 +124,13 @@ const steps = [
     command: 'npm',
     args: ['run', 'kosmo:owner-answer-sheet'],
     report: 'data/kosmo-owner-answer-sheet-2026-06-13.json'
+  },
+  {
+    id: 'owner_answer_sheet_check',
+    label: 'Owner Answer Sheet Check',
+    command: 'npm',
+    args: ['run', 'kosmo:owner-answer-sheet-check'],
+    report: 'data/kosmo-owner-answer-sheet-check-2026-06-13.json'
   }
 ];
 
@@ -156,10 +163,11 @@ async function main() {
   const privateInventoryOutputTemplate = await readOptionalJson(resolve(root, steps[13].report));
   const privateInventoryOutputCheck = await readOptionalJson(resolve(root, steps[14].report));
   const ownerAnswerSheet = await readOptionalJson(resolve(root, steps[15].report));
+  const ownerAnswerSheetCheck = await readOptionalJson(resolve(root, steps[16].report));
   const failedSteps = stepResults.filter((step) => step.exit_code !== 0);
   const status = failedSteps.length
     ? 'kosmodata_lane_sweep_failed'
-    : isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief, sourceRootDecisionSessionCheck, privateSourceInventoryPlan, privateInventoryOutputTemplate, privateInventoryOutputCheck, ownerAnswerSheet })
+    : isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief, sourceRootDecisionSessionCheck, privateSourceInventoryPlan, privateInventoryOutputTemplate, privateInventoryOutputCheck, ownerAnswerSheet, ownerAnswerSheetCheck })
       ? 'kosmodata_lane_sweep_review_only_passed'
       : 'kosmodata_lane_sweep_needs_review';
 
@@ -253,7 +261,11 @@ async function main() {
       owner_answer_sheet_owner_cards: ownerAnswerSheet?.summary?.owner_cards ?? null,
       owner_answer_sheet_owner_card_items: ownerAnswerSheet?.summary?.owner_card_items ?? null,
       owner_answer_sheet_reference_decisions: ownerAnswerSheet?.summary?.owner_reference_decisions ?? null,
-      owner_answer_sheet_public_ready_after: ownerAnswerSheet?.summary?.public_ready_after_sheet ?? null
+      owner_answer_sheet_public_ready_after: ownerAnswerSheet?.summary?.public_ready_after_sheet ?? null,
+      owner_answer_sheet_check_status: ownerAnswerSheetCheck?.status || null,
+      owner_answer_sheet_check_failures: ownerAnswerSheetCheck?.summary?.failures ?? null,
+      owner_answer_sheet_check_warnings: ownerAnswerSheetCheck?.summary?.warnings ?? null,
+      owner_answer_sheet_check_public_ready_after: ownerAnswerSheetCheck?.summary?.public_ready_after_guard ?? null
     },
     reports: {
       references_gate: steps[0].report,
@@ -272,10 +284,11 @@ async function main() {
       private_source_inventory_plan: steps[12].report,
       private_inventory_output_template: steps[13].report,
       private_inventory_output_check: steps[14].report,
-      owner_answer_sheet: steps[15].report
+      owner_answer_sheet: steps[15].report,
+      owner_answer_sheet_check: steps[16].report
     },
     steps: stepResults,
-    next_actions: nextActions({ failedSteps, referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief, sourceRootDecisionSessionCheck, privateSourceInventoryPlan, privateInventoryOutputCheck, ownerAnswerSheet })
+    next_actions: nextActions({ failedSteps, referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief, sourceRootDecisionSessionCheck, privateSourceInventoryPlan, privateInventoryOutputCheck, ownerAnswerSheet, ownerAnswerSheetCheck })
   };
 
   await mkdir(dirname(outputJson), { recursive: true });
@@ -334,7 +347,7 @@ async function runStep(step) {
   };
 }
 
-function isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief, sourceRootDecisionSessionCheck, privateSourceInventoryPlan, privateInventoryOutputTemplate, privateInventoryOutputCheck, ownerAnswerSheet }) {
+function isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief, sourceRootDecisionSessionCheck, privateSourceInventoryPlan, privateInventoryOutputTemplate, privateInventoryOutputCheck, ownerAnswerSheet, ownerAnswerSheetCheck }) {
   const referencesOk = referencesGate?.status === 'passed_review_only' &&
     (referencesGate?.summary?.public_ready_assets ?? referencesStatus?.summary?.public_ready_assets) === 0;
   const assetOk = assetFullReview?.status === 'asset_full_review_ready_for_human_decisions' &&
@@ -397,10 +410,16 @@ function isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview
     ownerAnswerSheet?.summary?.public_ready_after_sheet === 0 &&
     ownerAnswerSheet?.policy?.records_decisions !== true &&
     ownerAnswerSheet?.policy?.writes_session_files !== true;
-  return referencesOk && assetOk && queueOk && batchesOk && localWorkerOk && pilotEvidenceOk && villaBriefOk && ingenbohlBriefOk && sognBriefOk && sourceRootLocatorOk && sourceRootSelectionBriefOk && sourceRootDecisionSessionOk && privateSourceInventoryPlanOk && privateInventoryTemplateOk && privateInventoryOutputCheckOk && ownerAnswerSheetOk;
+  const ownerAnswerSheetCheckOk = ownerAnswerSheetCheck?.status === 'owner_answer_sheet_guard_passed' &&
+    ownerAnswerSheetCheck?.summary?.failures === 0 &&
+    ownerAnswerSheetCheck?.summary?.public_ready_after_guard === 0 &&
+    ownerAnswerSheetCheck?.policy?.records_decisions !== true &&
+    ownerAnswerSheetCheck?.policy?.writes_session_files !== true &&
+    ownerAnswerSheetCheck?.policy?.public_ready_after_guard === 0;
+  return referencesOk && assetOk && queueOk && batchesOk && localWorkerOk && pilotEvidenceOk && villaBriefOk && ingenbohlBriefOk && sognBriefOk && sourceRootLocatorOk && sourceRootSelectionBriefOk && sourceRootDecisionSessionOk && privateSourceInventoryPlanOk && privateInventoryTemplateOk && privateInventoryOutputCheckOk && ownerAnswerSheetOk && ownerAnswerSheetCheckOk;
 }
 
-function nextActions({ failedSteps, referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief, sourceRootDecisionSessionCheck, privateSourceInventoryPlan, privateInventoryOutputCheck, ownerAnswerSheet }) {
+function nextActions({ failedSteps, referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief, sourceRootDecisionSessionCheck, privateSourceInventoryPlan, privateInventoryOutputCheck, ownerAnswerSheet, ownerAnswerSheetCheck }) {
   if (failedSteps.length > 0) return [`Fix failed sweep steps: ${failedSteps.map((step) => step.id).join(', ')}.`];
   const actions = [];
   const ownerPending = humanDecisionQueue?.summary?.reference_items ?? referencesGate?.summary?.owner_decision_session_pending ?? referencesStatus?.summary?.owner_decision_session_pending ?? 0;
@@ -428,6 +447,7 @@ function nextActions({ failedSteps, referencesGate, referencesStatus, assetFullR
   if (privateSourceInventoryPlan?.status === 'private_metadata_inventory_blocked') actions.push('Use the private source inventory plan only as a blocked next-step contract until source-root selection passes.');
   if (privateInventoryOutputCheck?.status) actions.push('Validate any future private inventory JSON with npm run kosmo:private-inventory-output-check before handoff.');
   if (ownerAnswerSheet?.status === 'owner_answer_sheet_ready') actions.push('Use the owner answer sheet to capture Source-Root and Owner Card answers without editing session files prematurely.');
+  if (ownerAnswerSheetCheck?.status === 'owner_answer_sheet_guard_passed') actions.push('Keep owner answer sheet changes behind the guard before any decision-session edit.');
   const privateLibrary = referencesGate?.summary?.private_library_status ?? referencesStatus?.summary?.private_library_status;
   const syncErrors = referencesStatus?.summary?.private_library_sync_error_files ?? 0;
   if (privateLibrary !== 'library_candidate_visible') actions.push('Expose or mount the real large private book/ETH/HSLU library root.');
@@ -509,6 +529,9 @@ function renderMarkdown(report) {
   lines.push(`- Owner answer sheet cards/items: ${report.summary.owner_answer_sheet_owner_cards}/${report.summary.owner_answer_sheet_owner_card_items}`);
   lines.push(`- Owner answer sheet reference decisions: ${report.summary.owner_answer_sheet_reference_decisions}`);
   lines.push(`- Owner answer sheet public-ready after sheet: ${report.summary.owner_answer_sheet_public_ready_after}`);
+  lines.push(`- Owner answer sheet check: ${report.summary.owner_answer_sheet_check_status}`);
+  lines.push(`- Owner answer sheet check failures/warnings: ${report.summary.owner_answer_sheet_check_failures}/${report.summary.owner_answer_sheet_check_warnings}`);
+  lines.push(`- Owner answer sheet check public-ready after guard: ${report.summary.owner_answer_sheet_check_public_ready_after}`);
   lines.push('');
   lines.push('## Steps');
   lines.push('');

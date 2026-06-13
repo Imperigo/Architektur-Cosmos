@@ -65,6 +65,7 @@ Nutze:
 - `data/kosmo-owner-review-card-batch-a-villa-savoye-image-candidates-2026-06-13.json`
 - `data/kosmo-owner-review-card-set-2026-06-13.json`
 - `data/kosmo-owner-answer-sheet-2026-06-13.json`
+- `data/kosmo-owner-answer-sheet-check-2026-06-13.json`
 - `data/kosmoreferences-pilot-evidence-matrix-2026-06-13.json`
 - `data/villa-savoye-provenance-review-brief-2026-06-13.json`
 - `data/ingenbohl-pdf-extraction-decision-brief-2026-06-13.json`
@@ -84,6 +85,7 @@ Nutze:
 - `docs/codex/kosmo-owner-review-card-batch-a-villa-savoye-image-candidates-2026-06-13.md`
 - `docs/codex/kosmo-owner-review-card-set-2026-06-13.md`
 - `docs/codex/kosmo-owner-answer-sheet-2026-06-13.md`
+- `docs/codex/kosmo-owner-answer-sheet-check-2026-06-13.md`
 - `docs/codex/kosmoreferences-pilot-evidence-matrix-2026-06-13.md`
 - `docs/codex/villa-savoye-provenance-review-brief-2026-06-13.md`
 - `docs/codex/ingenbohl-pdf-extraction-decision-brief-2026-06-13.md`
@@ -108,7 +110,7 @@ gib danach eine kurze Review-Zusammenfassung fuer Codex/Claude aus.
 Aktueller harter Stand:
 
 - `npm run kosmo:data-lane-sweep` ist der taegliche Start-Gate.
-- Data-Lane Sweep: 16/16, review-only passed.
+- Data-Lane Sweep: 17/17, review-only passed.
 - Die drei Pilot-Referenzen bleiben review-only.
 - Pilot Evidence Matrix: 3 Piloten, 12 Gaps, 0 public-ready.
 - Villa Savoye Provenance Brief: 7 Review-Items, 3 spaetere Human-Review-Kandidaten, 4 blockiert, 0 public-ready.
@@ -130,6 +132,7 @@ Aktueller harter Stand:
 - Owner Review Card A: `owner_review_card_ready`, Villa Savoye Image Candidates, 3 Items, Safe Default `needs_more_source_context`, 0 public-ready.
 - Owner Review Card Set: `owner_review_card_set_ready`, 5 Karten, 16 offene Items, 0 public-ready; bereitet Fragen vor, zeichnet aber keine Entscheidungen auf.
 - Owner Answer Sheet: `owner_answer_sheet_ready`, Source-Root + 5 Owner Cards + 10 Reference Decision Items, 0 public-ready; sammelt Antworten nur als Vorlage und schreibt keine Session-Dateien.
+- Owner Answer Sheet Check: `owner_answer_sheet_guard_passed`, 0 Failures, 0 Warnings, 0 public-ready; prueft nur den Antwortvorlagen-Vertrag.
 - Source-Root Locator, Source-Root Selection Brief, Source-Root Decision Session Check, Private Source Inventory Plan und Private Inventory Output Check sind jetzt feste Steps im Data-Lane Sweep. Der lokale Worker darf diese Blockade nicht umgehen.
 - Im kuratierten Home-OneDrive-Diagnosepfad sind 30 Sync-Error-Marker sichtbar; diesen Spiegel nicht als vollstaendig behandeln.
 - Der tiefere OneDrive-Reparatur-Sweep sieht 59 Marker-Dateien, 58 Leaf-Marker und 58 Aggregate-Missing-Items. Diese Zahl fuer Sync-Reparatur verwenden, nicht ungeprueft mit der DataPanel-Zahl vermischen.
