@@ -46,7 +46,8 @@ This runbook is the daily execution order for the KosmoReferences/KosmoAsset dat
    - Owner Answer Sheet;
    - Owner Answer Sheet Check;
    - Owner Answer Intake Template;
-   - Owner Answer Intake Check.
+   - Owner Answer Intake Check;
+   - Owner Answer Session Edit Plan.
 
 4. Open the generated report:
 
@@ -139,24 +140,34 @@ This runbook is the daily execution order for the KosmoReferences/KosmoAsset dat
    - `docs/codex/kosmo-owner-answer-intake-template-2026-06-13.md`
    - `docs/codex/kosmo-owner-answer-intake-check-2026-06-13.md`
 
-22. If a narrow rerun is needed, run the KosmoReferences Nightly Gate:
+22. Generate the session edit plan:
+
+   ```bash
+   npm run kosmo:owner-answer-session-edit-plan
+   ```
+
+23. Open the generated plan:
+
+   - `docs/codex/kosmo-owner-answer-session-edit-plan-2026-06-13.md`
+
+24. If a narrow rerun is needed, run the KosmoReferences Nightly Gate:
 
    ```bash
    npm run kosmo:references-nightly-gate
    ```
 
-23. Open the generated reports:
+25. Open the generated reports:
 
    - `docs/codex/kosmoreferences-nightly-gate-2026-06-13.md`
    - `data/kosmoreferences-data-lane-status.md`
 
-24. If a narrow asset rerun is needed, run the KosmoAsset seed full review:
+26. If a narrow asset rerun is needed, run the KosmoAsset seed full review:
 
    ```bash
    npm run kosmo:asset-full-review -- --library examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json
    ```
 
-25. Open the generated report:
+27. Open the generated report:
 
    - `examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-full-review.generated.md`
 
@@ -181,6 +192,7 @@ Use the result as the current read-only status:
 - `owner_answer_sheet_guard_passed` means the answer sheet contract matches the source-root/card/decision sessions with no failures and no public-ready change.
 - `owner_answer_intake_template_pending_owner_input` means the machine-readable intake file is ready but contains no owner answers yet.
 - `owner_answer_intake_guard_passed_pending_owner_input` means the intake contract is valid and waiting for owner answers.
+- `owner_answer_session_edit_plan_pending_owner_input` means the edit-plan layer is ready, but no session edit is planned until checked owner intake exists.
 
 Then continue with one of these safe work types:
 

@@ -145,6 +145,13 @@ const steps = [
     command: 'npm',
     args: ['run', 'kosmo:owner-answer-intake-check'],
     report: 'data/kosmo-owner-answer-intake-check-2026-06-13.json'
+  },
+  {
+    id: 'owner_answer_session_edit_plan',
+    label: 'Owner Answer Session Edit Plan',
+    command: 'npm',
+    args: ['run', 'kosmo:owner-answer-session-edit-plan'],
+    report: 'data/kosmo-owner-answer-session-edit-plan-2026-06-13.json'
   }
 ];
 
@@ -180,10 +187,11 @@ async function main() {
   const ownerAnswerSheetCheck = await readOptionalJson(resolve(root, steps[16].report));
   const ownerAnswerIntakeTemplate = await readOptionalJson(resolve(root, steps[17].report));
   const ownerAnswerIntakeCheck = await readOptionalJson(resolve(root, steps[18].report));
+  const ownerAnswerSessionEditPlan = await readOptionalJson(resolve(root, steps[19].report));
   const failedSteps = stepResults.filter((step) => step.exit_code !== 0);
   const status = failedSteps.length
     ? 'kosmodata_lane_sweep_failed'
-    : isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief, sourceRootDecisionSessionCheck, privateSourceInventoryPlan, privateInventoryOutputTemplate, privateInventoryOutputCheck, ownerAnswerSheet, ownerAnswerSheetCheck, ownerAnswerIntakeTemplate, ownerAnswerIntakeCheck })
+    : isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief, sourceRootDecisionSessionCheck, privateSourceInventoryPlan, privateInventoryOutputTemplate, privateInventoryOutputCheck, ownerAnswerSheet, ownerAnswerSheetCheck, ownerAnswerIntakeTemplate, ownerAnswerIntakeCheck, ownerAnswerSessionEditPlan })
       ? 'kosmodata_lane_sweep_review_only_passed'
       : 'kosmodata_lane_sweep_needs_review';
 
@@ -290,7 +298,10 @@ async function main() {
       owner_answer_intake_check_filled_answers: ownerAnswerIntakeCheck?.summary?.filled_answers ?? null,
       owner_answer_intake_check_failures: ownerAnswerIntakeCheck?.summary?.failures ?? null,
       owner_answer_intake_check_warnings: ownerAnswerIntakeCheck?.summary?.warnings ?? null,
-      owner_answer_intake_check_public_ready_after: ownerAnswerIntakeCheck?.summary?.public_ready_after_guard ?? null
+      owner_answer_intake_check_public_ready_after: ownerAnswerIntakeCheck?.summary?.public_ready_after_guard ?? null,
+      owner_answer_session_edit_plan_status: ownerAnswerSessionEditPlan?.status || null,
+      owner_answer_session_edit_plan_planned_edits: ownerAnswerSessionEditPlan?.summary?.planned_edits ?? null,
+      owner_answer_session_edit_plan_public_ready_after: ownerAnswerSessionEditPlan?.summary?.public_ready_after_plan ?? null
     },
     reports: {
       references_gate: steps[0].report,
@@ -312,10 +323,11 @@ async function main() {
       owner_answer_sheet: steps[15].report,
       owner_answer_sheet_check: steps[16].report,
       owner_answer_intake_template: steps[17].report,
-      owner_answer_intake_check: steps[18].report
+      owner_answer_intake_check: steps[18].report,
+      owner_answer_session_edit_plan: steps[19].report
     },
     steps: stepResults,
-    next_actions: nextActions({ failedSteps, referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief, sourceRootDecisionSessionCheck, privateSourceInventoryPlan, privateInventoryOutputCheck, ownerAnswerSheet, ownerAnswerSheetCheck, ownerAnswerIntakeTemplate, ownerAnswerIntakeCheck })
+    next_actions: nextActions({ failedSteps, referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief, sourceRootDecisionSessionCheck, privateSourceInventoryPlan, privateInventoryOutputCheck, ownerAnswerSheet, ownerAnswerSheetCheck, ownerAnswerIntakeTemplate, ownerAnswerIntakeCheck, ownerAnswerSessionEditPlan })
   };
 
   await mkdir(dirname(outputJson), { recursive: true });
@@ -374,7 +386,7 @@ async function runStep(step) {
   };
 }
 
-function isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief, sourceRootDecisionSessionCheck, privateSourceInventoryPlan, privateInventoryOutputTemplate, privateInventoryOutputCheck, ownerAnswerSheet, ownerAnswerSheetCheck, ownerAnswerIntakeTemplate, ownerAnswerIntakeCheck }) {
+function isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief, sourceRootDecisionSessionCheck, privateSourceInventoryPlan, privateInventoryOutputTemplate, privateInventoryOutputCheck, ownerAnswerSheet, ownerAnswerSheetCheck, ownerAnswerIntakeTemplate, ownerAnswerIntakeCheck, ownerAnswerSessionEditPlan }) {
   const referencesOk = referencesGate?.status === 'passed_review_only' &&
     (referencesGate?.summary?.public_ready_assets ?? referencesStatus?.summary?.public_ready_assets) === 0;
   const assetOk = assetFullReview?.status === 'asset_full_review_ready_for_human_decisions' &&
@@ -455,10 +467,15 @@ function isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview
     ownerAnswerIntakeCheck?.policy?.records_decisions !== true &&
     ownerAnswerIntakeCheck?.policy?.writes_session_files !== true &&
     ownerAnswerIntakeCheck?.policy?.public_ready_after_guard === 0;
-  return referencesOk && assetOk && queueOk && batchesOk && localWorkerOk && pilotEvidenceOk && villaBriefOk && ingenbohlBriefOk && sognBriefOk && sourceRootLocatorOk && sourceRootSelectionBriefOk && sourceRootDecisionSessionOk && privateSourceInventoryPlanOk && privateInventoryTemplateOk && privateInventoryOutputCheckOk && ownerAnswerSheetOk && ownerAnswerSheetCheckOk && ownerAnswerIntakeTemplateOk && ownerAnswerIntakeCheckOk;
+  const ownerAnswerSessionEditPlanOk = ['owner_answer_session_edit_plan_pending_owner_input', 'owner_answer_session_edit_plan_ready_for_review'].includes(ownerAnswerSessionEditPlan?.status) &&
+    ownerAnswerSessionEditPlan?.summary?.public_ready_after_plan === 0 &&
+    ownerAnswerSessionEditPlan?.policy?.writes_session_files !== true &&
+    ownerAnswerSessionEditPlan?.policy?.applies_decisions !== true &&
+    ownerAnswerSessionEditPlan?.policy?.public_ready_after_plan === 0;
+  return referencesOk && assetOk && queueOk && batchesOk && localWorkerOk && pilotEvidenceOk && villaBriefOk && ingenbohlBriefOk && sognBriefOk && sourceRootLocatorOk && sourceRootSelectionBriefOk && sourceRootDecisionSessionOk && privateSourceInventoryPlanOk && privateInventoryTemplateOk && privateInventoryOutputCheckOk && ownerAnswerSheetOk && ownerAnswerSheetCheckOk && ownerAnswerIntakeTemplateOk && ownerAnswerIntakeCheckOk && ownerAnswerSessionEditPlanOk;
 }
 
-function nextActions({ failedSteps, referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief, sourceRootDecisionSessionCheck, privateSourceInventoryPlan, privateInventoryOutputCheck, ownerAnswerSheet, ownerAnswerSheetCheck, ownerAnswerIntakeTemplate, ownerAnswerIntakeCheck }) {
+function nextActions({ failedSteps, referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief, sourceRootDecisionSessionCheck, privateSourceInventoryPlan, privateInventoryOutputCheck, ownerAnswerSheet, ownerAnswerSheetCheck, ownerAnswerIntakeTemplate, ownerAnswerIntakeCheck, ownerAnswerSessionEditPlan }) {
   if (failedSteps.length > 0) return [`Fix failed sweep steps: ${failedSteps.map((step) => step.id).join(', ')}.`];
   const actions = [];
   const ownerPending = humanDecisionQueue?.summary?.reference_items ?? referencesGate?.summary?.owner_decision_session_pending ?? referencesStatus?.summary?.owner_decision_session_pending ?? 0;
@@ -489,6 +506,7 @@ function nextActions({ failedSteps, referencesGate, referencesStatus, assetFullR
   if (ownerAnswerSheetCheck?.status === 'owner_answer_sheet_guard_passed') actions.push('Keep owner answer sheet changes behind the guard before any decision-session edit.');
   if (ownerAnswerIntakeTemplate?.status === 'owner_answer_intake_template_pending_owner_input') actions.push('Use the owner answer intake template for machine-readable owner answers only after explicit confirmation.');
   if (ownerAnswerIntakeCheck?.status === 'owner_answer_intake_guard_passed_pending_owner_input') actions.push('Owner answer intake is structurally ready and waiting for owner input.');
+  if (ownerAnswerSessionEditPlan?.status === 'owner_answer_session_edit_plan_pending_owner_input') actions.push('Session edit plan is ready and waiting for non-empty checked owner intake.');
   const privateLibrary = referencesGate?.summary?.private_library_status ?? referencesStatus?.summary?.private_library_status;
   const syncErrors = referencesStatus?.summary?.private_library_sync_error_files ?? 0;
   if (privateLibrary !== 'library_candidate_visible') actions.push('Expose or mount the real large private book/ETH/HSLU library root.');
@@ -580,6 +598,9 @@ function renderMarkdown(report) {
   lines.push(`- Owner answer intake check filled answers: ${report.summary.owner_answer_intake_check_filled_answers}`);
   lines.push(`- Owner answer intake check failures/warnings: ${report.summary.owner_answer_intake_check_failures}/${report.summary.owner_answer_intake_check_warnings}`);
   lines.push(`- Owner answer intake check public-ready after guard: ${report.summary.owner_answer_intake_check_public_ready_after}`);
+  lines.push(`- Owner answer session edit plan: ${report.summary.owner_answer_session_edit_plan_status}`);
+  lines.push(`- Owner answer session edit planned edits: ${report.summary.owner_answer_session_edit_plan_planned_edits}`);
+  lines.push(`- Owner answer session edit public-ready after plan: ${report.summary.owner_answer_session_edit_plan_public_ready_after}`);
   lines.push('');
   lines.push('## Steps');
   lines.push('');
