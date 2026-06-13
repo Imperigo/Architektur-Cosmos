@@ -1,12 +1,12 @@
 {
-  "checked_at": "2026-06-13T16:35:22.164Z",
+  "checked_at": "2026-06-13T16:38:13.852Z",
   "package_path": "examples/kosmo-references/source-packages/architecturekosmos-private-project-sources-2026-06-13/source-package.json",
   "package_id": "architecturekosmos-private-project-sources-2026-06-13",
   "title": "ArchitectureKosmos Private Project Sources",
   "status": "passed",
   "summary": {
     "sources": 10,
-    "extraction_artifacts": 0,
+    "extraction_artifacts": 2,
     "candidate_projects": 1,
     "review_gates": 7
   },
@@ -120,6 +120,28 @@
       "actual_sha256": "037912f591fb12339ea8f197ff2587768c029b3c4c4779d2b0507d2b33812d28",
       "expected_bytes": 7746,
       "actual_bytes": 7746
+    },
+    {
+      "kind": "artifact",
+      "id": "architecture-cosmos-vision-document-markdown",
+      "path": "/mnt/data/ArchitekturKosmos/KosmoZentrale/sources/private-extracts/architecturekosmos-private-project-sources-2026-06-13/architecture-cosmos-vision-document.md",
+      "status": "pass",
+      "resolved_path": "/mnt/data/ArchitekturKosmos/KosmoZentrale/sources/private-extracts/architecturekosmos-private-project-sources-2026-06-13/architecture-cosmos-vision-document.md",
+      "expected_sha256": "eb66b9ac2763c1b48b82adf42b8b09e3680b100cea397a2c6cc6e13803a73226",
+      "actual_sha256": "eb66b9ac2763c1b48b82adf42b8b09e3680b100cea397a2c6cc6e13803a73226",
+      "expected_bytes": 7504,
+      "actual_bytes": 7504
+    },
+    {
+      "kind": "artifact",
+      "id": "architekturkosmos-ai-workflow-pipeline-markdown",
+      "path": "/mnt/data/ArchitekturKosmos/KosmoZentrale/sources/private-extracts/architecturekosmos-private-project-sources-2026-06-13/architekturkosmos-ai-workflow-pipeline.md",
+      "status": "pass",
+      "resolved_path": "/mnt/data/ArchitekturKosmos/KosmoZentrale/sources/private-extracts/architecturekosmos-private-project-sources-2026-06-13/architekturkosmos-ai-workflow-pipeline.md",
+      "expected_sha256": "35b785f1a79c134355887908030b07875a901fd2f78ba54304ca789695eaf11a",
+      "actual_sha256": "35b785f1a79c134355887908030b07875a901fd2f78ba54304ca789695eaf11a",
+      "expected_bytes": 20028,
+      "actual_bytes": 20028
     }
   ],
   "failures": [],

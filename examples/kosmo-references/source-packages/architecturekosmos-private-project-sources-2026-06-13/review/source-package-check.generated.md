@@ -1,13 +1,13 @@
 # KosmoReferences Source Package Check
 
-Generated: 2026-06-13T16:35:22.164Z
+Generated: 2026-06-13T16:38:13.852Z
 Package: `examples/kosmo-references/source-packages/architecturekosmos-private-project-sources-2026-06-13/source-package.json`
 Status: `passed`
 
 ## Summary
 
 - Sources: 10
-- Extraction artifacts: 0
+- Extraction artifacts: 2
 - Candidate projects: 1
 - Review gates: 7
 - Failures: 0
@@ -25,4 +25,6 @@ Status: `passed`
 - `source:media-and-model-policy-md` -> `pass`
 - `source:data-model-md` -> `pass`
 - `source:database-architecture-md` -> `pass`
+- `artifact:architecture-cosmos-vision-document-markdown` -> `pass`
+- `artifact:architekturkosmos-ai-workflow-pipeline-markdown` -> `pass`
 

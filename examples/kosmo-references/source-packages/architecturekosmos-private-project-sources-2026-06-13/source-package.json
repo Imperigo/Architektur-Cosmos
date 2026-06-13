@@ -5,7 +5,7 @@
   "description": "Private source package for the ArchitectureKosmos/KosmoReferences operating doctrine: owner vision, AI workflow, ingestion rules, rights policy, data model, media/model policy and KosmoAsset lane. Source contents are not copied into the repo.",
   "created_at": "2026-06-13",
   "updated_at": "2026-06-13",
-  "status": "review_ready",
+  "status": "extracted",
   "rights_scope": "private_research",
   "source_kind": "private_project_docs",
   "source_root": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09",
@@ -131,7 +131,36 @@
       "notes": "Private database architecture source for KosmoReferences/KosmoData evolution."
     }
   ],
-  "extraction_artifacts": [],
+  "extraction_artifacts": [
+    {
+      "id": "architecture-cosmos-vision-document-markdown",
+      "source_id": "architecture-cosmos-vision-document-pdf",
+      "path": "/mnt/data/ArchitekturKosmos/KosmoZentrale/sources/private-extracts/architecturekosmos-private-project-sources-2026-06-13/architecture-cosmos-vision-document.md",
+      "artifact_type": "markdown_text",
+      "tool": "markitdown 0.1.5",
+      "status": "created_private",
+      "sha256": "eb66b9ac2763c1b48b82adf42b8b09e3680b100cea397a2c6cc6e13803a73226",
+      "bytes": 7504,
+      "quality_notes": [
+        "Private text extraction produced a usable first-pass doctrine text anchor.",
+        "Do not commit or publish the extracted Markdown content."
+      ]
+    },
+    {
+      "id": "architekturkosmos-ai-workflow-pipeline-markdown",
+      "source_id": "architekturkosmos-ai-workflow-pipeline-pdf",
+      "path": "/mnt/data/ArchitekturKosmos/KosmoZentrale/sources/private-extracts/architecturekosmos-private-project-sources-2026-06-13/architekturkosmos-ai-workflow-pipeline.md",
+      "artifact_type": "markdown_text",
+      "tool": "markitdown 0.1.5",
+      "status": "created_private",
+      "sha256": "35b785f1a79c134355887908030b07875a901fd2f78ba54304ca789695eaf11a",
+      "bytes": 20028,
+      "quality_notes": [
+        "Private text extraction produced a usable first-pass workflow/pipeline text anchor.",
+        "Do not commit or publish the extracted Markdown content."
+      ]
+    }
+  ],
   "candidate_projects": [
     {
       "id": "architecturekosmos-data-lane",
@@ -157,8 +186,8 @@
     },
     {
       "id": "text_quality",
-      "status": "partial",
-      "notes": "Markdown sources are readable; PDFs need extraction/OCR review before structured private indexing."
+      "status": "pass",
+      "notes": "Markdown sources are readable and both central PDFs now have private MarkItDown text artifacts for first-pass doctrine indexing."
     },
     {
       "id": "layout_quality",

@@ -25,7 +25,7 @@
       "title": "ArchitectureKosmos Private Project Sources",
       "path": "examples/kosmo-references/source-packages/architecturekosmos-private-project-sources-2026-06-13/source-package.json",
       "review_report": "examples/kosmo-references/source-packages/architecturekosmos-private-project-sources-2026-06-13/review/source-package-check.generated.md",
-      "status": "review_ready",
+      "status": "extracted",
       "rights_scope": "private_research",
       "source_kind": "private_project_docs",
       "check_status": "passed",
