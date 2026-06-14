@@ -1,29 +1,34 @@
 # Kosmo Overseer Next Shift Brief
 
-Generated: 2026-06-14T17:26:08.285Z
+Generated: 2026-06-14T18:53:59.998Z
 Status: `overseer_next_shift_brief_ready`
 
 ## Summary
 
-- Completed packs: 5
-- Claude actions: 4
-- Codex actions: 3
+- Completed packs: 8
+- Claude actions: 5
+- Codex actions: 4
 - Owner gates: 2
 - Latest handoffs: 8
 - Latest mirror missing: null
+- Training eval templates: 6
+- Training review lanes: 5
+- Ontology entity types: 8
 - Public-ready after brief: 0
 
 ## Claude Actions
 
-- `read_handoffs_168_to_175`: Review newest Codex handoffs before changing shared Orbit/KosmoOverseer behavior.
-- `verify_orbit_vision_readiness_ui`: Confirm KosmoOrbit DataPanel shows the five Vision Readiness cards without private content.
+- `read_handoffs_198_to_205`: Review newest Codex handoffs before changing shared Orbit/KosmoOverseer behavior.
+- `verify_orbit_training_ontology_rollup_ui`: Confirm KosmoOrbit DataPanel shows Training Template, Review Queue, Ontology Seed and Evening Rollup without private content.
 - `prepare_owner_reply_capture`: Use Owner Unlock Prompt Pack as the next owner-facing input surface.
+- `review_training_scaffold_boundaries`: Confirm training scaffold remains schema/review-only with no eval rows, embeddings or fine-tunes.
 - `do_not_apply_source_root_without_owner`: Do not mutate source-root decision/session files until owner answer is explicit.
 
 ## Codex Actions
 
 - `wait_for_owner_source_root_answer`: After owner answer, record only explicit fields into intake/session files.
 - `run_post_answer_guard_chain`: Run decision check, blocker refresh, activation preflight and matching readiness packs.
+- `maintain_training_ontology_guards`: Keep eval template, review queue, ontology and rollup guards synced before any future data promotion.
 - `continue_source_free_schema_work_if_needed`: If no owner answer arrives, continue only source-free schemas, UI status and guard work.
 
 ## Owner Prompt
@@ -43,6 +48,8 @@ Status: `overseer_next_shift_brief_ready`
 ## Tomorrow First Sequence After Owner Answer
 
 - npm run kosmo:owner-unlock-prompt-pack-check
+- npm run kosmo:owner-unlock-reply-validator -- --answer "<owner_reply>"
+- npm run kosmo:owner-unlock-answer-dry-run -- --answer "<owner_reply>"
 - npm run kosmo:source-root-decision-session-check
 - npm run kosmo:source-root-blocker-refresh
 - npm run kosmo:source-root-activation-preflight
@@ -54,5 +61,6 @@ Status: `overseer_next_shift_brief_ready`
 - Do not infer owner answers from chat context or prepared prompt packs.
 - Do not run private inventory until explicit owner answer and source-root guards pass.
 - Do not expose private source paths, file contents, OCR text, scans, plans or worker bodies in Orbit.
+- Do not create eval rows, queue items, embeddings or fine-tunes from this brief.
 - Do not execute local workers from this brief.
 - Do not set public-ready.

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T18:51:45.157Z",
+  "generated_at": "2026-06-14T18:54:34.725Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 204
+      "files": 205
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 249
+      "files": 250
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-14-codex-synergiebericht-206-overseer-next-shift-training-ontology-refresh.md",
+      "title": "Codex Synergiebericht 206: Overseer Next Shift Training/Ontology Refresh",
+      "mirrored_inboxes": 2,
+      "bytes": 1659,
+      "modified_at": "2026-06-14T18:54:28.276Z"
+    },
     {
       "filename": "2026-06-14-codex-synergiebericht-205-orbit-evening-rollup-status.md",
       "title": "Codex Synergiebericht 205: Orbit Evening Rollup Status",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 752,
       "modified_at": "2026-06-14T18:36:49.512Z"
-    },
-    {
-      "filename": "2026-06-14-codex-synergiebericht-198-training-eval-review-queue-plan.md",
-      "title": "Codex Synergiebericht 198: Training Eval Review Queue Plan",
-      "mirrored_inboxes": 2,
-      "bytes": 1595,
-      "modified_at": "2026-06-14T18:34:57.211Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 198-205 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 199-206 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."

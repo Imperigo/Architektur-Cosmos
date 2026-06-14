@@ -59,15 +59,17 @@ function buildReport({ rollup, promptPack, roadmap, syncBoard }) {
   }));
 
   const claudeActions = [
-    action('read_handoffs_168_to_175', 'Review newest Codex handoffs before changing shared Orbit/KosmoOverseer behavior.', 'claude-code-overseer', false),
-    action('verify_orbit_vision_readiness_ui', 'Confirm KosmoOrbit DataPanel shows the five Vision Readiness cards without private content.', 'claude-code-overseer', false),
+    action('read_handoffs_198_to_205', 'Review newest Codex handoffs before changing shared Orbit/KosmoOverseer behavior.', 'claude-code-overseer', false),
+    action('verify_orbit_training_ontology_rollup_ui', 'Confirm KosmoOrbit DataPanel shows Training Template, Review Queue, Ontology Seed and Evening Rollup without private content.', 'claude-code-overseer', false),
     action('prepare_owner_reply_capture', 'Use Owner Unlock Prompt Pack as the next owner-facing input surface.', 'claude-code-overseer', false),
+    action('review_training_scaffold_boundaries', 'Confirm training scaffold remains schema/review-only with no eval rows, embeddings or fine-tunes.', 'claude-code-overseer', false),
     action('do_not_apply_source_root_without_owner', 'Do not mutate source-root decision/session files until owner answer is explicit.', 'claude-code-overseer', false)
   ];
 
   const codexActions = [
     action('wait_for_owner_source_root_answer', 'After owner answer, record only explicit fields into intake/session files.', 'codex-central-overseer', false),
     action('run_post_answer_guard_chain', 'Run decision check, blocker refresh, activation preflight and matching readiness packs.', 'codex-central-overseer', false),
+    action('maintain_training_ontology_guards', 'Keep eval template, review queue, ontology and rollup guards synced before any future data promotion.', 'codex-central-overseer', false),
     action('continue_source_free_schema_work_if_needed', 'If no owner answer arrives, continue only source-free schemas, UI status and guard work.', 'codex-central-overseer', false)
   ];
 
@@ -98,6 +100,9 @@ function buildReport({ rollup, promptPack, roadmap, syncBoard }) {
       owner_gates: rollup.summary?.owner_gates ?? 2,
       latest_handoffs: syncBoard.summary?.latest_handoffs ?? null,
       latest_mirror_missing: syncBoard.summary?.latest_mirror_missing ?? null,
+      training_eval_templates: rollup.summary?.training_eval_templates ?? null,
+      training_review_lanes: rollup.summary?.training_review_lanes ?? null,
+      ontology_entity_types: rollup.summary?.ontology_entity_types ?? null,
       failures: failures.length,
       public_ready_after_brief: 0
     },
@@ -112,6 +117,8 @@ function buildReport({ rollup, promptPack, roadmap, syncBoard }) {
     },
     tomorrow_first_sequence_after_owner_answer: [
       'npm run kosmo:owner-unlock-prompt-pack-check',
+      'npm run kosmo:owner-unlock-reply-validator -- --answer "<owner_reply>"',
+      'npm run kosmo:owner-unlock-answer-dry-run -- --answer "<owner_reply>"',
       'npm run kosmo:source-root-decision-session-check',
       'npm run kosmo:source-root-blocker-refresh',
       'npm run kosmo:source-root-activation-preflight',
@@ -122,6 +129,7 @@ function buildReport({ rollup, promptPack, roadmap, syncBoard }) {
       'Do not infer owner answers from chat context or prepared prompt packs.',
       'Do not run private inventory until explicit owner answer and source-root guards pass.',
       'Do not expose private source paths, file contents, OCR text, scans, plans or worker bodies in Orbit.',
+      'Do not create eval rows, queue items, embeddings or fine-tunes from this brief.',
       'Do not execute local workers from this brief.',
       'Do not set public-ready.'
     ],
@@ -158,6 +166,9 @@ function renderMarkdown(report) {
   lines.push(`- Owner gates: ${report.summary.owner_gates}`);
   lines.push(`- Latest handoffs: ${report.summary.latest_handoffs}`);
   lines.push(`- Latest mirror missing: ${report.summary.latest_mirror_missing}`);
+  lines.push(`- Training eval templates: ${report.summary.training_eval_templates}`);
+  lines.push(`- Training review lanes: ${report.summary.training_review_lanes}`);
+  lines.push(`- Ontology entity types: ${report.summary.ontology_entity_types}`);
   lines.push(`- Public-ready after brief: ${report.summary.public_ready_after_brief}`);
   lines.push('');
   lines.push('## Claude Actions');

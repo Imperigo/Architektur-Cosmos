@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T17:26:08.285Z",
+  "generated_at": "2026-06-14T18:53:59.998Z",
   "status": "overseer_next_shift_brief_ready",
   "policy": {
     "brief_only": true,
@@ -19,12 +19,15 @@
     "data/kosmo-overseer-sync-board-2026-06-14.json"
   ],
   "summary": {
-    "completed_packs": 5,
-    "claude_actions": 4,
-    "codex_actions": 3,
+    "completed_packs": 8,
+    "claude_actions": 5,
+    "codex_actions": 4,
     "owner_gates": 2,
     "latest_handoffs": 8,
     "latest_mirror_missing": null,
+    "training_eval_templates": 6,
+    "training_review_lanes": 5,
+    "ontology_entity_types": 8,
     "failures": 0,
     "public_ready_after_brief": 0
   },
@@ -58,19 +61,37 @@
       "status": "kosmo_training_memory_readiness_pack_ready",
       "executable_now": false,
       "public_ready_after_pack": 0
+    },
+    {
+      "id": "training_eval_template",
+      "status": "training_eval_row_template_ready",
+      "executable_now": false,
+      "public_ready_after_pack": 0
+    },
+    {
+      "id": "training_review_queue",
+      "status": "training_eval_review_queue_plan_ready",
+      "executable_now": false,
+      "public_ready_after_pack": 0
+    },
+    {
+      "id": "architecture_ontology_seed",
+      "status": "architecture_ontology_seed_ready",
+      "executable_now": false,
+      "public_ready_after_pack": 0
     }
   ],
   "claude_actions": [
     {
-      "id": "read_handoffs_168_to_175",
+      "id": "read_handoffs_198_to_205",
       "description": "Review newest Codex handoffs before changing shared Orbit/KosmoOverseer behavior.",
       "owner": "claude-code-overseer",
       "executable_now": false,
       "public_ready_after_action": 0
     },
     {
-      "id": "verify_orbit_vision_readiness_ui",
-      "description": "Confirm KosmoOrbit DataPanel shows the five Vision Readiness cards without private content.",
+      "id": "verify_orbit_training_ontology_rollup_ui",
+      "description": "Confirm KosmoOrbit DataPanel shows Training Template, Review Queue, Ontology Seed and Evening Rollup without private content.",
       "owner": "claude-code-overseer",
       "executable_now": false,
       "public_ready_after_action": 0
@@ -78,6 +99,13 @@
     {
       "id": "prepare_owner_reply_capture",
       "description": "Use Owner Unlock Prompt Pack as the next owner-facing input surface.",
+      "owner": "claude-code-overseer",
+      "executable_now": false,
+      "public_ready_after_action": 0
+    },
+    {
+      "id": "review_training_scaffold_boundaries",
+      "description": "Confirm training scaffold remains schema/review-only with no eval rows, embeddings or fine-tunes.",
       "owner": "claude-code-overseer",
       "executable_now": false,
       "public_ready_after_action": 0
@@ -101,6 +129,13 @@
     {
       "id": "run_post_answer_guard_chain",
       "description": "Run decision check, blocker refresh, activation preflight and matching readiness packs.",
+      "owner": "codex-central-overseer",
+      "executable_now": false,
+      "public_ready_after_action": 0
+    },
+    {
+      "id": "maintain_training_ontology_guards",
+      "description": "Keep eval template, review queue, ontology and rollup guards synced before any future data promotion.",
       "owner": "codex-central-overseer",
       "executable_now": false,
       "public_ready_after_action": 0
@@ -131,6 +166,8 @@
   },
   "tomorrow_first_sequence_after_owner_answer": [
     "npm run kosmo:owner-unlock-prompt-pack-check",
+    "npm run kosmo:owner-unlock-reply-validator -- --answer \"<owner_reply>\"",
+    "npm run kosmo:owner-unlock-answer-dry-run -- --answer \"<owner_reply>\"",
     "npm run kosmo:source-root-decision-session-check",
     "npm run kosmo:source-root-blocker-refresh",
     "npm run kosmo:source-root-activation-preflight",
@@ -141,6 +178,7 @@
     "Do not infer owner answers from chat context or prepared prompt packs.",
     "Do not run private inventory until explicit owner answer and source-root guards pass.",
     "Do not expose private source paths, file contents, OCR text, scans, plans or worker bodies in Orbit.",
+    "Do not create eval rows, queue items, embeddings or fine-tunes from this brief.",
     "Do not execute local workers from this brief.",
     "Do not set public-ready."
   ],

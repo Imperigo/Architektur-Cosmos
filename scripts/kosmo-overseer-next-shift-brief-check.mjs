@@ -73,14 +73,18 @@ function buildChecks(brief) {
     check('policy_no_inventory_now', brief.policy?.runs_private_inventory_now === false, brief.policy?.runs_private_inventory_now),
     check('policy_no_workers_now', brief.policy?.executes_local_workers_now === false, brief.policy?.executes_local_workers_now),
     check('public_ready_zero', brief.summary?.public_ready_after_brief === 0, brief.summary?.public_ready_after_brief),
-    check('five_completed_packs', (brief.completed_packs || []).length === 5, (brief.completed_packs || []).length),
-    check('four_claude_actions', (brief.claude_actions || []).length === 4, (brief.claude_actions || []).length),
-    check('three_codex_actions', (brief.codex_actions || []).length === 3, (brief.codex_actions || []).length),
+    check('eight_completed_packs', (brief.completed_packs || []).length === 8, (brief.completed_packs || []).length),
+    check('five_claude_actions', (brief.claude_actions || []).length === 5, (brief.claude_actions || []).length),
+    check('four_codex_actions', (brief.codex_actions || []).length === 4, (brief.codex_actions || []).length),
     check('actions_not_executable', allActions.every((action) => action.executable_now === false), allActions.filter((action) => action.executable_now).map((action) => action.id).join(',')),
     check('action_public_ready_zero', allActions.every((action) => action.public_ready_after_action === 0), allActions.filter((action) => action.public_ready_after_action !== 0).map((action) => action.id).join(',')),
     check('owner_prompt_format_present', (brief.owner_prompt?.required_owner_reply_format || []).length >= 4, (brief.owner_prompt?.required_owner_reply_format || []).join(',')),
+    check('training_scaffold_summary_present', brief.summary?.training_eval_templates === 6 && brief.summary?.training_review_lanes === 5 && brief.summary?.ontology_entity_types === 8, `${brief.summary?.training_eval_templates}/${brief.summary?.training_review_lanes}/${brief.summary?.ontology_entity_types}`),
+    check('tomorrow_sequence_uses_reply_validator', (brief.tomorrow_first_sequence_after_owner_answer || []).join(' ').includes('owner-unlock-reply-validator'), (brief.tomorrow_first_sequence_after_owner_answer || []).join(',')),
+    check('tomorrow_sequence_uses_answer_dry_run', (brief.tomorrow_first_sequence_after_owner_answer || []).join(' ').includes('owner-unlock-answer-dry-run'), (brief.tomorrow_first_sequence_after_owner_answer || []).join(',')),
     check('tomorrow_sequence_guarded', (brief.tomorrow_first_sequence_after_owner_answer || []).includes('npm run kosmo:source-root-activation-preflight'), (brief.tomorrow_first_sequence_after_owner_answer || []).join(',')),
     check('hard_stops_no_private_work', hardStops.includes('do not infer') && hardStops.includes('private inventory') && hardStops.includes('local workers'), hardStops),
+    check('hard_stops_no_eval_queue_embedding_finetune', hardStops.includes('eval rows') && hardStops.includes('queue items') && hardStops.includes('embeddings') && hardStops.includes('fine-tunes'), hardStops),
     check('hard_stops_public_ready', hardStops.includes('public-ready'), hardStops)
   ];
 }
