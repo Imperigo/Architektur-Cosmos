@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T17:03:56.455Z",
+  "generated_at": "2026-06-14T17:07:11.645Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 169
+      "files": 170
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 213
+      "files": 214
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-14-codex-synergiebericht-171-asset-intake-readiness.md",
+      "title": "Codex Synergiebericht 171: KosmoAsset Intake Readiness",
+      "mirrored_inboxes": 2,
+      "bytes": 1590,
+      "modified_at": "2026-06-14T17:07:05.527Z"
+    },
     {
       "filename": "2026-06-14-codex-synergiebericht-170-pilot-intake-readiness.md",
       "title": "Codex Synergiebericht 170: Pilot Intake Readiness",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1923,
       "modified_at": "2026-06-14T16:13:17.092Z"
-    },
-    {
-      "filename": "2026-06-14-codex-synergiebericht-163-asset-candidate-taxonomy-review.md",
-      "title": "Codex Synergiebericht 163: Asset Candidate Taxonomy Review",
-      "mirrored_inboxes": 2,
-      "bytes": 1860,
-      "modified_at": "2026-06-14T15:51:44.359Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 163-170 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 164-171 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."

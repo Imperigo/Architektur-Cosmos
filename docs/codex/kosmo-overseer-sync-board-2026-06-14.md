@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board
 
-Generated: 2026-06-14T17:03:56.455Z
+Generated: 2026-06-14T17:07:11.645Z
 Status: `overseer_sync_board_ready`
 
 ## Summary
@@ -20,6 +20,7 @@ Status: `overseer_sync_board_ready`
 
 | File | Title | Mirrors |
 | --- | --- | ---: |
+| `2026-06-14-codex-synergiebericht-171-asset-intake-readiness.md` | Codex Synergiebericht 171: KosmoAsset Intake Readiness | 2 |
 | `2026-06-14-codex-synergiebericht-170-pilot-intake-readiness.md` | Codex Synergiebericht 170: Pilot Intake Readiness | 2 |
 | `2026-06-14-codex-synergiebericht-169-owner-answer-execution-checklist.md` | Codex Synergiebericht 169: Owner Answer Execution Checklist | 2 |
 | `2026-06-14-codex-synergiebericht-168-post-source-root-metadata-readiness.md` | Codex Synergiebericht 168: Post-Source-Root Metadata Readiness | 2 |
@@ -27,7 +28,6 @@ Status: `overseer_sync_board_ready`
 | `2026-06-14-codex-synergiebericht-166-source-free-queue-complete.md` | Codex Synergiebericht 166: Source-Free Queue Complete | 2 |
 | `2026-06-14-codex-synergiebericht-165-local-worker-output-contract-review.md` | Codex Synergiebericht 165: Local Worker Output Contract Review | 2 |
 | `2026-06-14-codex-synergiebericht-164-pilot-gap-label-review.md` | Codex Synergiebericht 164: Pilot Gap Label Review | 2 |
-| `2026-06-14-codex-synergiebericht-163-asset-candidate-taxonomy-review.md` | Codex Synergiebericht 163: Asset Candidate Taxonomy Review | 2 |
 
 ## Blockers
 
@@ -40,7 +40,7 @@ Status: `overseer_sync_board_ready`
 
 ## Next Actions
 
-- Claude/KosmoOverseer reviews latest handoffs 163-170 before editing related files.
+- Claude/KosmoOverseer reviews latest handoffs 164-171 before editing related files.
 - Use the owner review session brief as the next owner-facing entry point.
 - Keep local worker tasks review-only while source-root and owner answers are pending.
 - After any explicit owner answer, update intake first, then rerun guards and this sync board.
