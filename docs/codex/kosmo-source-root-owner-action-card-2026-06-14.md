@@ -1,13 +1,13 @@
 # Kosmo Source-Root Owner Action Card
 
-Generated: 2026-06-14T13:13:22.120Z
+Generated: 2026-06-14T13:18:44.946Z
 Status: `source_root_owner_action_required`
 
 ## Current State
 
 - Owner action required: yes
 - Data mount visible: yes
-- Data mount free GiB: 3275
+- Data mount free GiB: 3269.5
 - Archive mount visible: yes
 - OneDrive marker files: 59
 - Probable large private libraries: 0

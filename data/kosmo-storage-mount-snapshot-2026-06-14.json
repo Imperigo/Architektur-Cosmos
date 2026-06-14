@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T07:53:05.789Z",
-  "status": "storage_snapshot_data_mount_visible_archive_missing",
+  "generated_at": "2026-06-14T13:18:43.275Z",
+  "status": "storage_snapshot_archive_mount_visible",
   "policy": {
     "metadata_only": true,
     "reads_file_contents": false,
@@ -13,11 +13,18 @@
   },
   "summary": {
     "data_mount_visible": true,
+    "data_mount_source": "/dev/nvme1n1",
     "data_mount_fstype": "ext4",
     "data_mount_total_gib": 3666.5,
-    "data_mount_available_gib": 3275.9,
-    "archive_mount_visible": false,
+    "data_mount_available_gib": 3269.5,
+    "archive_mount_visible": true,
+    "archive_mount_source": "/dev/sda",
+    "archive_mount_fstype": "ext4",
+    "archive_mount_total_gib": 11086.8,
+    "archive_mount_available_gib": 10498.2,
     "archive_target_exists": true,
+    "active_project_root_path": "/mnt/data/ArchitekturKosmos",
+    "archive_root_path": "/mnt/archiv",
     "project_root_exists": true,
     "project_root_own_mount": false,
     "onedrive_targets_visible": 2,
@@ -36,8 +43,8 @@
       },
       "filesystem": {
         "total_gib": 3666.5,
-        "available_gib": 3275.9,
-        "used_gib": 390.6
+        "available_gib": 3269.5,
+        "used_gib": 396.9
       },
       "top_level": {
         "entries": 9,
@@ -60,23 +67,28 @@
     {
       "path": "/mnt/archiv",
       "exists": true,
-      "own_mount": false,
+      "own_mount": true,
       "mount": {
-        "mount_point": "/",
+        "mount_point": "/mnt/archiv",
         "fstype": "ext4",
-        "source": "/dev/nvme0n1p2"
+        "source": "/dev/sda"
       },
       "filesystem": {
-        "total_gib": 1831.7,
-        "available_gib": 1639.2,
-        "used_gib": 192.5
+        "total_gib": 11086.8,
+        "available_gib": 10498.2,
+        "used_gib": 588.6
       },
       "top_level": {
-        "entries": 0,
-        "directories": 0,
+        "entries": 4,
+        "directories": 4,
         "files": 0,
         "symlinks": 0,
-        "sample_entries": []
+        "sample_entries": [
+          "01 ArchitekturKosmos Projekt",
+          "ArchitekturKosmos",
+          "FromSSD",
+          "lost+found"
+        ]
       }
     },
     {
@@ -90,8 +102,8 @@
       },
       "filesystem": {
         "total_gib": 3666.5,
-        "available_gib": 3275.9,
-        "used_gib": 390.6
+        "available_gib": 3269.5,
+        "used_gib": 396.9
       },
       "top_level": {
         "entries": 7,
@@ -120,8 +132,8 @@
       },
       "filesystem": {
         "total_gib": 3666.5,
-        "available_gib": 3275.9,
-        "used_gib": 390.6
+        "available_gib": 3269.5,
+        "used_gib": 396.9
       },
       "top_level": {
         "entries": 14,
@@ -155,8 +167,8 @@
       },
       "filesystem": {
         "total_gib": 1831.7,
-        "available_gib": 1639.2,
-        "used_gib": 192.5
+        "available_gib": 1635.9,
+        "used_gib": 195.8
       },
       "top_level": {
         "entries": 3,
@@ -173,13 +185,13 @@
   ],
   "interpretation": [
     "/mnt/data is the active large SSD mount.",
-    "/mnt/archiv exists as a directory but is not an own mounted archive drive.",
+    "/mnt/archiv is an own mounted archive drive; owner still must select the exact source-root folder inside it or elsewhere.",
     "/mnt/data/ArchitekturKosmos is a project/workspace root inside the SSD mount, not a separate source-library mount.",
     "OneDrive-like roots are visible, but source-root guards still require sync repair or explicit owner confirmation.",
     "No source root is selected by this snapshot."
   ],
   "next_actions": [
-    "If the archive HDD should contain the private library, mount it so /mnt/archiv is an own mount with files.",
+    "Owner/KosmoOverseer should confirm the exact source-root folder inside /mnt/archiv or confirm a different complete root.",
     "If OneDrive is the real library, repair sync markers before any private inventory.",
     "After storage changes, rerun source-root locator, selection brief, decision-session check, blocker refresh and worker-boundary pack.",
     "Do not select /mnt/data/ArchitekturKosmos as the private library root unless the owner explicitly confirms it."

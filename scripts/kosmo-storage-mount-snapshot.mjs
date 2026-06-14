@@ -51,11 +51,18 @@ async function main() {
     },
     summary: {
       data_mount_visible: dataMount?.own_mount === true,
+      data_mount_source: dataMount?.mount?.source || null,
       data_mount_fstype: dataMount?.mount?.fstype || null,
       data_mount_total_gib: dataMount?.filesystem?.total_gib ?? null,
       data_mount_available_gib: dataMount?.filesystem?.available_gib ?? null,
       archive_mount_visible: archiveMount?.own_mount === true,
+      archive_mount_source: archiveMount?.mount?.source || null,
+      archive_mount_fstype: archiveMount?.mount?.fstype || null,
+      archive_mount_total_gib: archiveMount?.filesystem?.total_gib ?? null,
+      archive_mount_available_gib: archiveMount?.filesystem?.available_gib ?? null,
       archive_target_exists: archiveMount?.exists === true,
+      active_project_root_path: '/mnt/data/ArchitekturKosmos',
+      archive_root_path: '/mnt/archiv',
       project_root_exists: projectRoot?.exists === true,
       project_root_own_mount: projectRoot?.own_mount === true,
       onedrive_targets_visible: onedriveTargets.filter((item) => item.exists).length,
@@ -64,12 +71,7 @@ async function main() {
     },
     targets: targetReports,
     interpretation: interpretationFor({ dataMount, archiveMount, projectRoot, onedriveTargets }),
-    next_actions: [
-      'If the archive HDD should contain the private library, mount it so /mnt/archiv is an own mount with files.',
-      'If OneDrive is the real library, repair sync markers before any private inventory.',
-      'After storage changes, rerun source-root locator, selection brief, decision-session check, blocker refresh and worker-boundary pack.',
-      'Do not select /mnt/data/ArchitekturKosmos as the private library root unless the owner explicitly confirms it.'
-    ]
+    next_actions: nextActionsFor({ archiveMount })
   };
 
   await mkdir(dirname(outputJson), { recursive: true });
@@ -159,11 +161,25 @@ function statusFor({ dataMount, archiveMount, projectRoot }) {
 function interpretationFor({ dataMount, archiveMount, projectRoot, onedriveTargets }) {
   const notes = [];
   if (dataMount?.own_mount) notes.push('/mnt/data is the active large SSD mount.');
+  if (archiveMount?.own_mount) notes.push('/mnt/archiv is an own mounted archive drive; owner still must select the exact source-root folder inside it or elsewhere.');
   if (archiveMount?.exists && !archiveMount?.own_mount) notes.push('/mnt/archiv exists as a directory but is not an own mounted archive drive.');
   if (projectRoot?.exists && !projectRoot?.own_mount) notes.push('/mnt/data/ArchitekturKosmos is a project/workspace root inside the SSD mount, not a separate source-library mount.');
   if (onedriveTargets.some((item) => item.exists)) notes.push('OneDrive-like roots are visible, but source-root guards still require sync repair or explicit owner confirmation.');
   notes.push('No source root is selected by this snapshot.');
   return notes;
+}
+
+function nextActionsFor({ archiveMount }) {
+  const actions = [];
+  if (archiveMount?.own_mount) {
+    actions.push('Owner/KosmoOverseer should confirm the exact source-root folder inside /mnt/archiv or confirm a different complete root.');
+  } else {
+    actions.push('If the archive HDD should contain the private library, mount it so /mnt/archiv is an own mount with files.');
+  }
+  actions.push('If OneDrive is the real library, repair sync markers before any private inventory.');
+  actions.push('After storage changes, rerun source-root locator, selection brief, decision-session check, blocker refresh and worker-boundary pack.');
+  actions.push('Do not select /mnt/data/ArchitekturKosmos as the private library root unless the owner explicitly confirms it.');
+  return actions;
 }
 
 async function pathExists(path) {
@@ -193,10 +209,16 @@ function renderMarkdown(report) {
   lines.push('## Summary');
   lines.push('');
   lines.push(`- Data mount visible: ${report.summary.data_mount_visible ? 'yes' : 'no'}`);
+  lines.push(`- Data mount source: ${report.summary.data_mount_source || '-'}`);
   lines.push(`- Data mount filesystem: ${report.summary.data_mount_fstype || '-'}`);
   lines.push(`- Data mount total/available GiB: ${report.summary.data_mount_total_gib ?? '-'}/${report.summary.data_mount_available_gib ?? '-'}`);
   lines.push(`- Archive mount visible: ${report.summary.archive_mount_visible ? 'yes' : 'no'}`);
+  lines.push(`- Archive mount source: ${report.summary.archive_mount_source || '-'}`);
+  lines.push(`- Archive mount filesystem: ${report.summary.archive_mount_fstype || '-'}`);
+  lines.push(`- Archive mount total/available GiB: ${report.summary.archive_mount_total_gib ?? '-'}/${report.summary.archive_mount_available_gib ?? '-'}`);
   lines.push(`- Archive target exists: ${report.summary.archive_target_exists ? 'yes' : 'no'}`);
+  lines.push(`- Active project root: \`${report.summary.active_project_root_path}\``);
+  lines.push(`- Archive root: \`${report.summary.archive_root_path}\``);
   lines.push(`- Project root exists: ${report.summary.project_root_exists ? 'yes' : 'no'}`);
   lines.push(`- Project root own mount: ${report.summary.project_root_own_mount ? 'yes' : 'no'}`);
   lines.push(`- OneDrive targets visible: ${report.summary.onedrive_targets_visible}`);
