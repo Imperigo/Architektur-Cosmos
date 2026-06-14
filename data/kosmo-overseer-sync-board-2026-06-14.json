@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T09:05:42.594Z",
+  "generated_at": "2026-06-14T09:09:55.400Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 133
+      "files": 134
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 171
+      "files": 172
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-14-codex-synergiebericht-135-local-worker-metadata-guard.md",
+      "title": "Codex Synergiebericht 135 - Local Worker Metadata Guard",
+      "mirrored_inboxes": 2,
+      "bytes": 1793,
+      "modified_at": "2026-06-14T09:09:48.990Z"
+    },
     {
       "filename": "2026-06-14-codex-synergiebericht-134-private-metadata-inventory-guard.md",
       "title": "Codex Synergiebericht 134 - Private Metadata Inventory Guard",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1311,
       "modified_at": "2026-06-14T08:29:10.947Z"
-    },
-    {
-      "filename": "2026-06-14-codex-synergiebericht-127-rapidocr-innovation-smoke.md",
-      "title": "Codex Synergiebericht 127 - RapidOCR Innovation Smoke",
-      "mirrored_inboxes": 2,
-      "bytes": 1480,
-      "modified_at": "2026-06-14T08:22:20.828Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 127-134 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 128-135 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."
