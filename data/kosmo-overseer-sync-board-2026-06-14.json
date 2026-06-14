@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T16:24:14.877Z",
+  "generated_at": "2026-06-14T16:51:00.217Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 165
+      "files": 166
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 208
+      "files": 210
     }
   ],
   "summary": {
@@ -43,10 +43,17 @@
     "local_worker_high_risk_hits": 0,
     "latest_handoffs": 8,
     "latest_handoff_mirror_missing_files": 0,
-    "historical_handoff_mirror_missing_files": 43,
+    "historical_handoff_mirror_missing_files": 44,
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-14-codex-synergiebericht-167-vision-completion-roadmap.md",
+      "title": "Codex Synergiebericht 167: Vision Completion Roadmap",
+      "mirrored_inboxes": 2,
+      "bytes": 1501,
+      "modified_at": "2026-06-14T16:50:51.705Z"
+    },
     {
       "filename": "2026-06-14-codex-synergiebericht-166-source-free-queue-complete.md",
       "title": "Codex Synergiebericht 166: Source-Free Queue Complete",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 2226,
       "modified_at": "2026-06-14T15:20:14.273Z"
-    },
-    {
-      "filename": "2026-06-14-codex-synergiebericht-159-post-owner-activation-queue-guard.md",
-      "title": "Codex Synergiebericht 159: Post-Owner Activation Queue Guard",
-      "mirrored_inboxes": 2,
-      "bytes": 2027,
-      "modified_at": "2026-06-14T15:14:29.184Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 159-166 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 160-167 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."
