@@ -89,6 +89,7 @@ async function main() {
       recommended_action: option.recommended_action
     })),
     command_sequence_after_owner_storage_action: [
+      'npm run kosmo:storage-mount-snapshot',
       'npm run kosmo:source-root-locator',
       'npm run kosmo:source-root-selection-brief',
       'npm run kosmo:source-root-decision-session-check',

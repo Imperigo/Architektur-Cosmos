@@ -15,6 +15,7 @@ const sourceRootSession = resolve(root, `examples/kosmo-references/provenance/so
 
 const steps = [
   step('onedrive_sync_errors', 'OneDrive Sync Errors', ['run', 'kosmo:onedrive-sync-errors']),
+  step('storage_mount_snapshot', 'Storage Mount Snapshot', ['run', 'kosmo:storage-mount-snapshot']),
   step('source_root_locator', 'Source Root Locator', ['run', 'kosmo:source-root-locator']),
   step('source_root_selection_brief', 'Source Root Selection Brief', ['run', 'kosmo:source-root-selection-brief']),
   conditionalStep(

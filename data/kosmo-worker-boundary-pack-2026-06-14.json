@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T07:22:00.424Z",
+  "generated_at": "2026-06-14T07:54:24.136Z",
   "status": "worker_boundary_pack_review_only_locked",
   "policy": {
     "metadata_only": true,
@@ -20,7 +20,7 @@
     "data_lane": "24/24",
     "data_lane_status": "kosmodata_lane_sweep_review_only_passed",
     "source_root_blocker_status": "source_root_blocker_still_active",
-    "source_root_candidates": 706,
+    "source_root_candidates": 717,
     "source_root_probable_libraries": 0,
     "source_root_workflow_mirrors": 64,
     "onedrive_marker_leaf_missing": [
@@ -99,7 +99,8 @@
     "npm run kosmo:overseer-sync-board",
     "npm run kosmo:overseer-sync-board-check",
     "npm run kosmo:worker-boundary-pack",
-    "npm run kosmo:worker-boundary-pack-check"
+    "npm run kosmo:worker-boundary-pack-check",
+    "npm run kosmo:storage-mount-snapshot"
   ],
   "blocked_commands_now": [
     {

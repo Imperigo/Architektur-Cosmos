@@ -117,6 +117,7 @@ async function main() {
     ],
     allowed_commands_now: unique([
       ...(router.allowed_commands_now || []),
+      'npm run kosmo:storage-mount-snapshot',
       'npm run kosmo:worker-boundary-pack'
     ]),
     blocked_commands_now: router.blocked_commands_now || [],

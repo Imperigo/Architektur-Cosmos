@@ -1,13 +1,13 @@
 # Kosmo Worker Boundary Pack
 
-Generated: 2026-06-14T07:22:00.424Z
+Generated: 2026-06-14T07:54:24.136Z
 Status: `worker_boundary_pack_review_only_locked`
 
 ## Hard State
 
 - Data lane: 24/24 (kosmodata_lane_sweep_review_only_passed)
 - Source-root blocker: source_root_blocker_still_active
-- Source-root candidates/probable/mirrors: 706/0/64
+- Source-root candidates/probable/mirrors: 717/0/64
 - OneDrive marker/leaf/missing: 59/58/58
 - Selected root exists: no
 - Private diagnostic allowed: no
@@ -82,6 +82,7 @@ Blocked tasks:
 - `npm run kosmo:overseer-sync-board-check`
 - `npm run kosmo:worker-boundary-pack`
 - `npm run kosmo:worker-boundary-pack-check`
+- `npm run kosmo:storage-mount-snapshot`
 
 ## Blocked Commands Now
 

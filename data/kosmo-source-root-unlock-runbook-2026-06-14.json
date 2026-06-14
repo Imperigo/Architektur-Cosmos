@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T07:50:04.116Z",
+  "generated_at": "2026-06-14T07:53:04.431Z",
   "status": "source_root_unlock_runbook_owner_storage_action_needed",
   "policy": {
     "metadata_only": true,
@@ -134,6 +134,7 @@
     }
   ],
   "command_sequence_after_owner_storage_action": [
+    "npm run kosmo:storage-mount-snapshot",
     "npm run kosmo:source-root-locator",
     "npm run kosmo:source-root-selection-brief",
     "npm run kosmo:source-root-decision-session-check",

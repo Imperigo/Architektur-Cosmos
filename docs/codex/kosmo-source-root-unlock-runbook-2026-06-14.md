@@ -1,6 +1,6 @@
 # Kosmo Source-Root Unlock Runbook
 
-Generated: 2026-06-14T07:50:04.116Z
+Generated: 2026-06-14T07:53:04.431Z
 Status: `source_root_unlock_runbook_owner_storage_action_needed`
 
 ## Hard State
@@ -37,6 +37,7 @@ Status: `source_root_unlock_runbook_owner_storage_action_needed`
 
 ## Command Sequence After Storage Action
 
+- `npm run kosmo:storage-mount-snapshot`
 - `npm run kosmo:source-root-locator`
 - `npm run kosmo:source-root-selection-brief`
 - `npm run kosmo:source-root-decision-session-check`
