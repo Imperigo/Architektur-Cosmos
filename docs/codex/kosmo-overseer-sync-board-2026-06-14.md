@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board
 
-Generated: 2026-06-14T13:20:50.420Z
+Generated: 2026-06-14T13:24:36.197Z
 Status: `overseer_sync_board_ready`
 
 ## Summary
@@ -20,6 +20,7 @@ Status: `overseer_sync_board_ready`
 
 | File | Title | Mirrors |
 | --- | --- | ---: |
+| `2026-06-14-codex-synergiebericht-138-source-root-candidate-roles.md` | Codex Synergiebericht 138: Source Root Candidate Roles | 2 |
 | `2026-06-14-codex-synergiebericht-137-storage-topology.md` | Codex Synergiebericht 137: Storage Topology | 2 |
 | `2026-06-14-codex-synergiebericht-136-source-root-owner-action-card.md` | Codex Synergiebericht 136: Source Root Owner Action Card | 2 |
 | `2026-06-14-codex-synergiebericht-135-local-worker-metadata-guard.md` | Codex Synergiebericht 135 - Local Worker Metadata Guard | 2 |
@@ -27,7 +28,6 @@ Status: `overseer_sync_board_ready`
 | `2026-06-14-codex-synergiebericht-133-private-metadata-fixture-smoke.md` | Codex Synergiebericht 133 - Private Metadata Fixture Smoke | 2 |
 | `2026-06-14-codex-synergiebericht-132-private-metadata-inventory-runner.md` | Codex Synergiebericht 132 - Private Metadata Inventory Runner | 2 |
 | `2026-06-14-codex-synergiebericht-131-worker-boundary-activation-state.md` | Codex Synergiebericht 131 - Worker Boundary Activation State | 2 |
-| `2026-06-14-codex-synergiebericht-130-source-root-activation-preflight.md` | Codex Synergiebericht 130 - Source Root Activation Preflight | 2 |
 
 ## Blockers
 
@@ -40,7 +40,7 @@ Status: `overseer_sync_board_ready`
 
 ## Next Actions
 
-- Claude/KosmoOverseer reviews latest handoffs 130-137 before editing related files.
+- Claude/KosmoOverseer reviews latest handoffs 131-138 before editing related files.
 - Use the owner review session brief as the next owner-facing entry point.
 - Keep local worker tasks review-only while source-root and owner answers are pending.
 - After any explicit owner answer, update intake first, then rerun guards and this sync board.
