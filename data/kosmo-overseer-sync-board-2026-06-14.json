@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T15:14:33.703Z",
+  "generated_at": "2026-06-14T15:20:20.201Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 158
+      "files": 159
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 198
+      "files": 199
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-14-codex-synergiebericht-160-source-root-owner-final-decision-brief.md",
+      "title": "Codex Synergiebericht 160: Source Root Owner Final Decision Brief",
+      "mirrored_inboxes": 2,
+      "bytes": 2226,
+      "modified_at": "2026-06-14T15:20:14.273Z"
+    },
     {
       "filename": "2026-06-14-codex-synergiebericht-159-post-owner-activation-queue-guard.md",
       "title": "Codex Synergiebericht 159: Post-Owner Activation Queue Guard",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 2788,
       "modified_at": "2026-06-14T14:40:49.815Z"
-    },
-    {
-      "filename": "2026-06-14-codex-synergiebericht-152-source-root-candidate-integrity.md",
-      "title": "Codex Synergiebericht 152: Source Root Candidate Integrity",
-      "mirrored_inboxes": 2,
-      "bytes": 2795,
-      "modified_at": "2026-06-14T14:35:29.587Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 152-159 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 153-160 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."

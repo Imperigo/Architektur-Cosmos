@@ -44,6 +44,7 @@ const steps = [
   step('source_root_decision_dry_run', 'Source Root Decision Dry Run', ['run', 'kosmo:source-root-decision-dry-run']),
   step('source_root_post_owner_activation_queue', 'Source Root Post-Owner Activation Queue', ['run', 'kosmo:source-root-post-owner-activation-queue']),
   step('source_root_post_owner_activation_queue_check', 'Source Root Post-Owner Activation Queue Check', ['run', 'kosmo:source-root-post-owner-activation-queue-check']),
+  step('source_root_owner_final_decision_brief', 'Source Root Owner Final Decision Brief', ['run', 'kosmo:source-root-owner-final-decision-brief']),
   step('local_model_inventory', 'Local Model Inventory', ['run', 'kosmo:local-model-inventory']),
   step('bootstrap_data_lane_sweep', 'Bootstrap Data Lane Sweep', ['run', 'kosmo:data-lane-sweep'], { allowFailure: true }),
   step('bootstrap_router', 'Bootstrap Router', ['run', 'kosmo:data-lane-command-router']),
@@ -205,6 +206,7 @@ async function buildReport({ results, startedAt }) {
   const sourceRootDecisionDryRun = await readOptionalJson(`data/kosmo-source-root-decision-dry-run-${dateStamp}.json`);
   const sourceRootPostOwnerActivationQueue = await readOptionalJson(`data/kosmo-source-root-post-owner-activation-queue-${dateStamp}.json`);
   const sourceRootPostOwnerActivationQueueCheck = await readOptionalJson(`data/kosmo-source-root-post-owner-activation-queue-check-${dateStamp}.json`);
+  const sourceRootOwnerFinalDecisionBrief = await readOptionalJson(`data/kosmo-source-root-owner-final-decision-brief-${dateStamp}.json`);
   const assetSourceCandidateMap = await readOptionalJson(`data/kosmoasset-source-candidate-map-${dateStamp}.json`);
   const sourceRootActivation = await readOptionalJson(`data/kosmo-source-root-activation-preflight-${dateStamp}.json`);
   const privateMetadataInventory = await readOptionalJson(`data/kosmo-private-metadata-inventory-runner-${dateStamp}.json`);
@@ -238,6 +240,7 @@ async function buildReport({ results, startedAt }) {
     invariant('source_root_decision_dry_run_ready', sourceRootDecisionDryRun?.status === 'source_root_decision_dry_run_ready', sourceRootDecisionDryRun?.status),
     invariant('source_root_post_owner_activation_queue_ready', sourceRootPostOwnerActivationQueue?.status === 'source_root_post_owner_activation_queue_ready', sourceRootPostOwnerActivationQueue?.status),
     invariant('source_root_post_owner_activation_queue_guard_passed', sourceRootPostOwnerActivationQueueCheck?.status === 'source_root_post_owner_activation_queue_guard_passed', sourceRootPostOwnerActivationQueueCheck?.status),
+    invariant('source_root_owner_final_decision_brief_ready', sourceRootOwnerFinalDecisionBrief?.status === 'source_root_owner_final_decision_brief_ready', sourceRootOwnerFinalDecisionBrief?.status),
     invariant('asset_source_candidate_map_ready', assetSourceCandidateMap?.status === 'kosmoasset_source_candidate_map_review_only_ready', assetSourceCandidateMap?.status),
     invariant('owner_handoff_passed', ownerHandoffPassed, `${ownerPacket?.status || 'missing'} / ${ownerSession?.status || 'missing'}`),
     invariant('innovation_smoke_review_only', innovationSmoke?.status === 'innovation_smoke_passed_review_only', innovationSmoke?.status),
@@ -340,6 +343,10 @@ async function buildReport({ results, startedAt }) {
       source_root_post_owner_activation_queue_check_status: sourceRootPostOwnerActivationQueueCheck?.status || null,
       source_root_post_owner_activation_queue_check_failures: sourceRootPostOwnerActivationQueueCheck?.summary?.failures ?? null,
       source_root_post_owner_activation_queue_check_warnings: sourceRootPostOwnerActivationQueueCheck?.summary?.warnings ?? null,
+      source_root_owner_final_decision_brief_status: sourceRootOwnerFinalDecisionBrief?.status || null,
+      source_root_owner_final_decision_brief_options: sourceRootOwnerFinalDecisionBrief?.summary?.decision_options ?? null,
+      source_root_owner_final_decision_brief_unlock_options: sourceRootOwnerFinalDecisionBrief?.summary?.unlock_options ?? null,
+      source_root_owner_final_decision_brief_failures: sourceRootOwnerFinalDecisionBrief?.summary?.failures ?? null,
       asset_source_candidate_map_status: assetSourceCandidateMap?.status || null,
       asset_source_candidate_map_candidates: assetSourceCandidateMap?.summary?.asset_lane_candidates ?? null,
       source_root_activation_status: sourceRootActivation?.status || null,
@@ -376,6 +383,7 @@ async function buildReport({ results, startedAt }) {
       `data/kosmo-source-root-decision-dry-run-${dateStamp}.json`,
       `data/kosmo-source-root-post-owner-activation-queue-${dateStamp}.json`,
       `data/kosmo-source-root-post-owner-activation-queue-check-${dateStamp}.json`,
+      `data/kosmo-source-root-owner-final-decision-brief-${dateStamp}.json`,
       `data/kosmoasset-source-candidate-map-${dateStamp}.json`,
       `data/kosmo-source-root-activation-preflight-${dateStamp}.json`,
       `data/kosmo-private-metadata-inventory-runner-${dateStamp}.json`,
@@ -450,6 +458,7 @@ function renderMarkdown(report) {
   lines.push(`- Source-root decision dry run: ${report.summary.source_root_decision_dry_run_status}, scenarios ${report.summary.source_root_decision_dry_run_scenarios ?? '-'}, metadata scenarios ${report.summary.source_root_decision_dry_run_metadata_scenarios ?? '-'}, failures ${report.summary.source_root_decision_dry_run_failures ?? '-'}`);
   lines.push(`- Source-root post-owner activation queue: ${report.summary.source_root_post_owner_activation_queue_status}, steps ${report.summary.source_root_post_owner_activation_queue_steps ?? '-'}, executable ${report.summary.source_root_post_owner_activation_queue_executable_now ?? '-'}, blocked ${report.summary.source_root_post_owner_activation_queue_blocked_now ?? '-'}, failures ${report.summary.source_root_post_owner_activation_queue_failures ?? '-'}`);
   lines.push(`- Source-root post-owner activation queue check: ${report.summary.source_root_post_owner_activation_queue_check_status}, failures ${report.summary.source_root_post_owner_activation_queue_check_failures ?? '-'}, warnings ${report.summary.source_root_post_owner_activation_queue_check_warnings ?? '-'}`);
+  lines.push(`- Source-root owner final decision brief: ${report.summary.source_root_owner_final_decision_brief_status}, options ${report.summary.source_root_owner_final_decision_brief_options ?? '-'}, unlock options ${report.summary.source_root_owner_final_decision_brief_unlock_options ?? '-'}, failures ${report.summary.source_root_owner_final_decision_brief_failures ?? '-'}`);
   lines.push(`- Asset source candidate map: ${report.summary.asset_source_candidate_map_status}, candidates ${report.summary.asset_source_candidate_map_candidates ?? '-'}`);
   lines.push(`- Private diagnostic allowed: ${report.summary.private_diagnostic_allowed ? 'yes' : 'no'}`);
   lines.push(`- Night loop checkpoint: ${report.summary.night_loop_checkpoint_status}`);

@@ -144,6 +144,7 @@
     "kosmo:source-root-decision-dry-run": "node scripts/kosmo-source-root-decision-dry-run.mjs",
     "kosmo:source-root-post-owner-activation-queue": "node scripts/kosmo-source-root-post-owner-activation-queue.mjs",
     "kosmo:source-root-post-owner-activation-queue-check": "node scripts/kosmo-source-root-post-owner-activation-queue-check.mjs",
+    "kosmo:source-root-owner-final-decision-brief": "node scripts/kosmo-source-root-owner-final-decision-brief.mjs",
     "kosmo:source-root-activation-preflight": "node scripts/kosmo-source-root-activation-preflight.mjs",
     "kosmo:private-source-inventory-plan": "node scripts/kosmo-private-source-inventory-plan.mjs",
     "kosmo:private-inventory-output-template": "node scripts/kosmo-private-inventory-output-template.mjs",

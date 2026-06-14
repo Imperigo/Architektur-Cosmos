@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T15:13:13.569Z",
+  "generated_at": "2026-06-14T15:18:59.897Z",
   "status": "orbit_bridge_ready_with_blockers",
   "policy": {
     "dashboard_only": true,
@@ -23,6 +23,7 @@
     "data/kosmo-source-root-decision-dry-run-2026-06-14.json",
     "data/kosmo-source-root-post-owner-activation-queue-2026-06-14.json",
     "data/kosmo-source-root-post-owner-activation-queue-check-2026-06-14.json",
+    "data/kosmo-source-root-owner-final-decision-brief-2026-06-14.json",
     "data/kosmo-source-root-activation-preflight-2026-06-14.json",
     "data/kosmo-private-metadata-inventory-runner-2026-06-14.json",
     "data/kosmo-private-metadata-inventory-fixture-smoke-2026-06-14.json",
@@ -42,9 +43,9 @@
     "data/kosmo-night-loop-checkpoint-2026-06-14.json"
   ],
   "summary": {
-    "cards": 22,
+    "cards": 23,
     "blocking_cards": 4,
-    "owner_action_cards": 11,
+    "owner_action_cards": 12,
     "source_root_blocked": true,
     "day_batch_status": "day_batch_loop_passed_review_only",
     "source_root_decision_refresh_status": "source_root_decision_session_refresh_not_needed",
@@ -76,6 +77,10 @@
     "source_root_post_owner_activation_queue_check_status": "source_root_post_owner_activation_queue_guard_passed",
     "source_root_post_owner_activation_queue_check_failures": 0,
     "source_root_post_owner_activation_queue_check_warnings": 0,
+    "source_root_owner_final_decision_brief_status": "source_root_owner_final_decision_brief_ready",
+    "source_root_owner_final_decision_brief_options": 3,
+    "source_root_owner_final_decision_brief_unlock_options": 1,
+    "source_root_owner_final_decision_brief_failures": 0,
     "source_root_activation_status": "source_root_activation_waiting_for_owner_storage_action",
     "private_metadata_inventory_status": "private_metadata_inventory_blocked_until_activation",
     "private_metadata_inventory_fixture_status": "private_metadata_inventory_fixture_passed",
@@ -102,7 +107,7 @@
       "id": "day-batch",
       "title": "Daily Batch",
       "status": "ready",
-      "signal": "47/47 required steps",
+      "signal": "48/48 required steps",
       "owner_action_required": false,
       "route_hint": "KosmoReferences/KosmoAsset daily loop",
       "source_ref": "data/kosmo-day-batch-loop-2026-06-14.json"
@@ -187,6 +192,15 @@
       "owner_action_required": false,
       "route_hint": "Validate queue order and safety policy before activation",
       "source_ref": "data/kosmo-source-root-post-owner-activation-queue-check-2026-06-14.json"
+    },
+    {
+      "id": "source-root-owner-final-decision-brief",
+      "title": "Source Root Owner Final Decision Brief",
+      "status": "owner_action",
+      "signal": "3 options, unlock 1, failures 0",
+      "owner_action_required": true,
+      "route_hint": "Single owner-facing source-root decision surface",
+      "source_ref": "data/kosmo-source-root-owner-final-decision-brief-2026-06-14.json"
     },
     {
       "id": "source-root-activation",
@@ -311,6 +325,7 @@
     "source_root_decision_dry_run_card",
     "source_root_post_owner_activation_queue_card",
     "source_root_post_owner_activation_queue_check_card",
+    "source_root_owner_final_decision_brief_card",
     "source_root_activation_card",
     "private_metadata_inventory_card",
     "pilot_reference_cards",
