@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board
 
-Generated: 2026-06-14T18:54:34.725Z
+Generated: 2026-06-14T18:56:52.355Z
 Status: `overseer_sync_board_ready`
 
 ## Summary
@@ -20,6 +20,7 @@ Status: `overseer_sync_board_ready`
 
 | File | Title | Mirrors |
 | --- | --- | ---: |
+| `2026-06-14-codex-synergiebericht-207-orbit-next-shift-status.md` | Codex Synergiebericht 207: Orbit Next Shift Status | 2 |
 | `2026-06-14-codex-synergiebericht-206-overseer-next-shift-training-ontology-refresh.md` | Codex Synergiebericht 206: Overseer Next Shift Training/Ontology Refresh | 2 |
 | `2026-06-14-codex-synergiebericht-205-orbit-evening-rollup-status.md` | Codex Synergiebericht 205: Orbit Evening Rollup Status | 2 |
 | `2026-06-14-codex-synergiebericht-204-evening-rollup-training-ontology-refresh.md` | Codex Synergiebericht 204: Evening Rollup Training/Ontology Refresh | 2 |
@@ -27,7 +28,6 @@ Status: `overseer_sync_board_ready`
 | `2026-06-14-codex-synergiebericht-202-vision-roadmap-training-ontology-refresh.md` | Codex Synergiebericht 202: Vision Roadmap Training/Ontology Refresh | 2 |
 | `2026-06-14-codex-synergiebericht-201-orbit-ontology-status.md` | Codex Synergiebericht 201: Orbit Ontology Status | 2 |
 | `2026-06-14-codex-synergiebericht-200-architecture-ontology-seed.md` | Codex Synergiebericht 200: Architecture Ontology Seed | 2 |
-| `2026-06-14-codex-synergiebericht-199-orbit-review-queue-status.md` | Codex Synergiebericht 199: Orbit Review Queue Status | 2 |
 
 ## Blockers
 
@@ -40,7 +40,7 @@ Status: `overseer_sync_board_ready`
 
 ## Next Actions
 
-- Claude/KosmoOverseer reviews latest handoffs 199-206 before editing related files.
+- Claude/KosmoOverseer reviews latest handoffs 200-207 before editing related files.
 - Use the owner review session brief as the next owner-facing entry point.
 - Keep local worker tasks review-only while source-root and owner answers are pending.
 - After any explicit owner answer, update intake first, then rerun guards and this sync board.

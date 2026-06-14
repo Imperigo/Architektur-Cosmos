@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T18:54:34.725Z",
+  "generated_at": "2026-06-14T18:56:52.355Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 205
+      "files": 206
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 250
+      "files": 251
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-14-codex-synergiebericht-207-orbit-next-shift-status.md",
+      "title": "Codex Synergiebericht 207: Orbit Next Shift Status",
+      "mirrored_inboxes": 2,
+      "bytes": 884,
+      "modified_at": "2026-06-14T18:56:44.954Z"
+    },
     {
       "filename": "2026-06-14-codex-synergiebericht-206-overseer-next-shift-training-ontology-refresh.md",
       "title": "Codex Synergiebericht 206: Overseer Next Shift Training/Ontology Refresh",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1489,
       "modified_at": "2026-06-14T18:40:08.621Z"
-    },
-    {
-      "filename": "2026-06-14-codex-synergiebericht-199-orbit-review-queue-status.md",
-      "title": "Codex Synergiebericht 199: Orbit Review Queue Status",
-      "mirrored_inboxes": 2,
-      "bytes": 752,
-      "modified_at": "2026-06-14T18:36:49.512Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 199-206 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 200-207 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."
