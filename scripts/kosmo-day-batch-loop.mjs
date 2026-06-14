@@ -36,6 +36,7 @@ const steps = [
     `docs/codex/kosmoreferences-private-library-diagnostic-${dateStamp}.md`
   ]),
   step('source_root_blocker_refresh', 'Source Root Blocker Refresh', ['run', 'kosmo:source-root-blocker-refresh']),
+  step('local_model_inventory', 'Local Model Inventory', ['run', 'kosmo:local-model-inventory']),
   step('local_worker_task_pack_refresh', 'Local Worker Task Pack Refresh', ['run', 'kosmo:local-worker-task-pack-refresh']),
   step('local_worker_output_review', 'Local Worker Output Review', ['run', 'kosmo:local-worker-output-review']),
   step('bootstrap_data_lane_sweep', 'Bootstrap Data Lane Sweep', ['run', 'kosmo:data-lane-sweep'], { allowFailure: true }),

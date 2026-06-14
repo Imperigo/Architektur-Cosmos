@@ -139,6 +139,7 @@
     "kosmo:private-source-inventory-plan": "node scripts/kosmo-private-source-inventory-plan.mjs",
     "kosmo:private-inventory-output-template": "node scripts/kosmo-private-inventory-output-template.mjs",
     "kosmo:private-inventory-output-check": "node scripts/kosmo-private-inventory-output-check.mjs",
+    "kosmo:local-model-inventory": "node scripts/kosmo-local-model-inventory.mjs",
     "kosmo:local-worker-task-pack-refresh": "node scripts/kosmo-local-worker-task-pack-refresh.mjs",
     "kosmo:local-worker-ollama-smoke": "node scripts/kosmo-local-worker-ollama-smoke.mjs",
     "kosmo:local-worker-output-review": "node scripts/kosmo-local-worker-output-review.mjs",

@@ -1,0 +1,242 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-14T08:27:42.148Z",
+  "status": "local_model_inventory_ready_review_only",
+  "policy": {
+    "metadata_only": true,
+    "starts_models": false,
+    "sends_prompts": false,
+    "reads_private_content": false,
+    "copies_private_content": false,
+    "public_ready_after_inventory": 0,
+    "note": "This inventory reads local model metadata and runtime preset filenames only. It does not start inference, scan private libraries or approve autonomous model actions."
+  },
+  "paths": {
+    "ai_models_root": "/mnt/data/ai-models",
+    "model_runtime_root": "/mnt/data/ArchitekturKosmos/KosmoZentrale/model_runtime"
+  },
+  "summary": {
+    "ollama_available": true,
+    "ollama_model_count": 8,
+    "required_roles": 4,
+    "ready_roles": 4,
+    "missing_roles": 0,
+    "gguf_files": 1,
+    "runtime_files": 15,
+    "total_visible_ollama_size_gb": 70,
+    "public_ready_after_inventory": 0
+  },
+  "ollama": {
+    "status": "available",
+    "exit_code": 0,
+    "models": [
+      {
+        "name": "qwen3-vl:32b",
+        "id": "ff2e46876908",
+        "size": "20 GB",
+        "modified": "20 hours ago"
+      },
+      {
+        "name": "glm-ocr:latest",
+        "id": "6effedd0dc8a",
+        "size": "2.2 GB",
+        "modified": "40 hours ago"
+      },
+      {
+        "name": "qwen3-vl:8b",
+        "id": "901cae732162",
+        "size": "6.1 GB",
+        "modified": "3 days ago"
+      },
+      {
+        "name": "qwen2.5vl:7b",
+        "id": "5ced39dfa4ba",
+        "size": "6.0 GB",
+        "modified": "3 days ago"
+      },
+      {
+        "name": "qwen2.5:7b",
+        "id": "845dbda0ea48",
+        "size": "4.7 GB",
+        "modified": "3 days ago"
+      },
+      {
+        "name": "all-minilm:l6-v2",
+        "id": "1b226e2802db",
+        "size": "45 MB",
+        "modified": "4 days ago"
+      },
+      {
+        "name": "kosmo-qwen3-coder:30b-a3b-q4km",
+        "id": "f176cbe1a9b6",
+        "size": "18 GB",
+        "modified": "4 days ago"
+      },
+      {
+        "name": "gpt-oss:20b",
+        "id": "17052f91a42e",
+        "size": "13 GB",
+        "modified": "5 days ago"
+      }
+    ]
+  },
+  "role_contracts": [
+    {
+      "id": "coding_worker",
+      "required_model": "kosmo-qwen3-coder:30b-a3b-q4km",
+      "purpose": "local coding and repetitive implementation work under Codex/Claude review",
+      "required_preset": "kosmocode-preset.json",
+      "model_present": true,
+      "model_size": "18 GB",
+      "model_modified": "4 days ago",
+      "preset_present": true,
+      "ready_for_guarded_use": true,
+      "allowed_now": [
+        "metadata-only routing",
+        "synthetic/public-safe smoke prompts",
+        "review-only local worker task drafts"
+      ],
+      "blocked_now": [
+        "private source OCR/extraction while source-root blocker is active",
+        "public promotion",
+        "unreviewed Git/cloud/deploy actions by local model"
+      ]
+    },
+    {
+      "id": "vision_reference_worker",
+      "required_model": "qwen3-vl:32b",
+      "purpose": "public-safe visual/reference classification and multimodal review drafts",
+      "required_preset": "kosmovisionary-preset.json",
+      "model_present": true,
+      "model_size": "20 GB",
+      "model_modified": "20 hours ago",
+      "preset_present": true,
+      "ready_for_guarded_use": true,
+      "allowed_now": [
+        "metadata-only routing",
+        "synthetic/public-safe smoke prompts",
+        "review-only local worker task drafts"
+      ],
+      "blocked_now": [
+        "private source OCR/extraction while source-root blocker is active",
+        "public promotion",
+        "unreviewed Git/cloud/deploy actions by local model"
+      ]
+    },
+    {
+      "id": "ocr_worker",
+      "required_model": "glm-ocr:latest",
+      "purpose": "future OCR support after source-root and private-output gates",
+      "required_preset": null,
+      "model_present": true,
+      "model_size": "2.2 GB",
+      "model_modified": "40 hours ago",
+      "preset_present": true,
+      "ready_for_guarded_use": true,
+      "allowed_now": [
+        "metadata-only routing",
+        "synthetic/public-safe smoke prompts",
+        "review-only local worker task drafts"
+      ],
+      "blocked_now": [
+        "private source OCR/extraction while source-root blocker is active",
+        "public promotion",
+        "unreviewed Git/cloud/deploy actions by local model"
+      ]
+    },
+    {
+      "id": "embedding_worker",
+      "required_model": "all-minilm:l6-v2",
+      "purpose": "small local embedding/RAG smoke and routing baseline",
+      "required_preset": null,
+      "model_present": true,
+      "model_size": "45 MB",
+      "model_modified": "4 days ago",
+      "preset_present": true,
+      "ready_for_guarded_use": true,
+      "allowed_now": [
+        "metadata-only routing",
+        "synthetic/public-safe smoke prompts",
+        "review-only local worker task drafts"
+      ],
+      "blocked_now": [
+        "private source OCR/extraction while source-root blocker is active",
+        "public promotion",
+        "unreviewed Git/cloud/deploy actions by local model"
+      ]
+    }
+  ],
+  "gguf_files": [
+    {
+      "path": "/mnt/data/ai-models/huggingface/Qwen3-Coder-30B-A3B-Instruct-GGUF/Qwen3-Coder-30B-A3B-Instruct-Q4_K_M.gguf",
+      "size_gb": 17.3
+    }
+  ],
+  "runtime_files": [
+    {
+      "name": "2026-06-09-download-checkpoint.md",
+      "path": "../../KosmoZentrale/model_runtime/2026-06-09-download-checkpoint.md"
+    },
+    {
+      "name": "2026-06-09-download-complete.md",
+      "path": "../../KosmoZentrale/model_runtime/2026-06-09-download-complete.md"
+    },
+    {
+      "name": "2026-06-09-kosmo-odysseus-live.md",
+      "path": "../../KosmoZentrale/model_runtime/2026-06-09-kosmo-odysseus-live.md"
+    },
+    {
+      "name": "kosmo-operator-preset.json",
+      "path": "../../KosmoZentrale/model_runtime/kosmo-operator-preset.json"
+    },
+    {
+      "name": "kosmo-persona-router.json",
+      "path": "../../KosmoZentrale/model_runtime/kosmo-persona-router.json"
+    },
+    {
+      "name": "kosmo-persona.patch.json",
+      "path": "../../KosmoZentrale/model_runtime/kosmo-persona.patch.json"
+    },
+    {
+      "name": "kosmo-rag-index-kb.sh",
+      "path": "../../KosmoZentrale/model_runtime/kosmo-rag-index-kb.sh"
+    },
+    {
+      "name": "kosmo-worker-preset.json",
+      "path": "../../KosmoZentrale/model_runtime/kosmo-worker-preset.json"
+    },
+    {
+      "name": "kosmocode-preset.json",
+      "path": "../../KosmoZentrale/model_runtime/kosmocode-preset.json"
+    },
+    {
+      "name": "kosmodoctor-preset.json",
+      "path": "../../KosmoZentrale/model_runtime/kosmodoctor-preset.json"
+    },
+    {
+      "name": "kosmovisionary-preset.json",
+      "path": "../../KosmoZentrale/model_runtime/kosmovisionary-preset.json"
+    },
+    {
+      "name": "Modelfile.kosmo-qwen3-coder-30b-a3b-q4km",
+      "path": "../../KosmoZentrale/model_runtime/Modelfile.kosmo-qwen3-coder-30b-a3b-q4km"
+    },
+    {
+      "name": "README.md",
+      "path": "../../KosmoZentrale/model_runtime/README.md"
+    },
+    {
+      "name": "resume-gptoss-pull.sh",
+      "path": "../../KosmoZentrale/model_runtime/resume-gptoss-pull.sh"
+    },
+    {
+      "name": "resume-qwen-download.sh",
+      "path": "../../KosmoZentrale/model_runtime/resume-qwen-download.sh"
+    }
+  ],
+  "next_actions": [
+    "Use this inventory as the local-model readiness gate before launching local worker tasks.",
+    "Keep all local model work behind worker-boundary and source-root guards.",
+    "Run kosmo:local-worker-ollama-smoke separately only when a real inference smoke is needed."
+  ]
+}
