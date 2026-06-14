@@ -60,7 +60,7 @@ function buildBrief({ selectionBrief, decisionPacket, decisionPacketCheck, decis
 
   const templates = decisionPacket.decision_templates || [];
   const unlockTemplates = templates.filter((template) => template.unlocks_private_metadata_diagnostic === true);
-  const visibleOptions = selectionBrief.top_options || selectionBrief.options || [];
+  const visibleOptions = selectionBrief.selection_options || selectionBrief.top_options || selectionBrief.options || [];
   const answerChoices = templates.map((template) => ({
     id: template.id,
     label: template.label,

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T15:18:59.897Z",
+  "generated_at": "2026-06-14T15:23:17.167Z",
   "status": "orbit_bridge_ready_with_blockers",
   "policy": {
     "dashboard_only": true,
@@ -107,7 +107,7 @@
       "id": "day-batch",
       "title": "Daily Batch",
       "status": "ready",
-      "signal": "48/48 required steps",
+      "signal": "49/49 required steps",
       "owner_action_required": false,
       "route_hint": "KosmoReferences/KosmoAsset daily loop",
       "source_ref": "data/kosmo-day-batch-loop-2026-06-14.json"

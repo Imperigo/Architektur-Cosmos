@@ -1,6 +1,6 @@
 # Kosmo Orbit Status Bridge
 
-Generated: 2026-06-14T15:18:59.897Z
+Generated: 2026-06-14T15:23:17.167Z
 Status: `orbit_bridge_ready_with_blockers`
 
 ## Summary
@@ -36,7 +36,7 @@ Status: `orbit_bridge_ready_with_blockers`
 
 | Card | Status | Owner Action | Signal |
 | --- | --- | --- | --- |
-| `day-batch` Daily Batch | ready | no | 48/48 required steps |
+| `day-batch` Daily Batch | ready | no | 49/49 required steps |
 | `source-root` Source Root | blocked | yes | blocked: 0 probable libraries, 59 OneDrive markers |
 | `source-root-decision-refresh` Source Root Decision Refresh | review_only_ready | no | source_root_decision_session_refresh_not_needed, changed no, options 10 |
 | `source-root-candidate-integrity` Source Root Candidate Integrity | review_only_ready | yes | 8/8 paths visible, exact roots 1, failures 0 |

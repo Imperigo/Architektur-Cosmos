@@ -1,6 +1,6 @@
 # Kosmo Source-Root Owner Final Decision Brief
 
-Generated: 2026-06-14T15:18:12.023Z
+Generated: 2026-06-14T15:22:33.360Z
 Status: `source_root_owner_final_decision_brief_ready`
 
 ## Owner Prompt
@@ -41,6 +41,16 @@ Warning: Die unlockende Option darf nur verwendet werden, wenn der angezeigte Pf
 
 | Candidate | Role | Score | Path | Safe default |
 | --- | --- | ---: | --- | --- |
+| `possible-source-root-mnt-archiv-fromssd-onedrive-2026-06-08-00-einrichtung-home-pc-kosmowe` | workflow_mirror_or_codex_context | 70 | `/mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC/KosmoWebsite` | keep_blocked |
+| `possible-source-root-mnt-archiv-architekturkosmos-assets-claude-to-blender-abgabe-tkb-bibl` | asset_material_library_candidate | 60 | `/mnt/archiv/ArchitekturKosmos/Assets/Claude to Blender/abgabe/TKB_Bibliothek_Live-Final-Test_Abgabe` | keep_blocked |
+| `possible-source-root-mnt-archiv-architekturkosmos-assets-claude-to-blender-ai-architektur-` | asset_material_library_candidate | 60 | `/mnt/archiv/ArchitekturKosmos/Assets/Claude to Blender/Ai Architektur Workflow/PBR Library + HDRI` | keep_blocked |
+| `possible-source-root-mnt-archiv-01-architekturkosmos-projekt-00-einrichtung-home-pc-kosmow` | workflow_mirror_or_codex_context | 52 | `/mnt/archiv/01 ArchitekturKosmos Projekt/00 Einrichtung Home_PC/KosmoWebsite` | keep_blocked |
+| `possible-source-root-mnt-archiv-architekturkosmos-assets` | archive_subtree_candidate | 52 | `/mnt/archiv/ArchitekturKosmos/Assets` | keep_blocked |
+| `possible-source-root-mnt-archiv-fromssd-onedrive-2026-06-08-00-einrichtung-home-pc` | onedrive_mirror_candidate | 48 | `/mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC` | keep_blocked |
+| `possible-source-root-mnt-archiv-fromssd-onedrive-2026-06-08-00-einrichtung-home-pc-kosmowe` | workflow_mirror_or_codex_context | 48 | `/mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC/KosmoWebsite/repo-context` | keep_blocked |
+| `possible-source-root-mnt-archiv-fromssd-onedrive-2026-06-08-00-einrichtung-home-pc-kosmowe` | workflow_mirror_or_codex_context | 48 | `/mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC/KosmoWebsite/reports` | keep_blocked |
+| `mount_archive_or_missing_root` | owner_storage_action | - | - | keep_blocked |
+| `repair_onedrive_first` | onedrive_integrity_gate | - | - | repair_before_inventory |
 
 ## Post-Decision Command Order
 
