@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T18:04:48.976Z",
+  "generated_at": "2026-06-14T18:08:11.892Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 188
+      "files": 189
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 232
+      "files": 233
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-14-codex-synergiebericht-190-post-unlock-pilot-execution-matrix.md",
+      "title": "Codex Synergiebericht 190: Post-Unlock Pilot Execution Matrix",
+      "mirrored_inboxes": 2,
+      "bytes": 1840,
+      "modified_at": "2026-06-14T18:08:04.633Z"
+    },
     {
       "filename": "2026-06-14-codex-synergiebericht-189-orbit-vision-roadmap-status.md",
       "title": "Codex Synergiebericht 189: Orbit Vision Roadmap Status",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1384,
       "modified_at": "2026-06-14T17:46:06.705Z"
-    },
-    {
-      "filename": "2026-06-14-codex-synergiebericht-182-owner-reply-map-happy-path-smoke.md",
-      "title": "Codex Synergiebericht 182: Owner Reply Map Happy Path Smoke",
-      "mirrored_inboxes": 2,
-      "bytes": 1204,
-      "modified_at": "2026-06-14T17:43:12.902Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 182-189 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 183-190 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."

@@ -133,6 +133,8 @@
     "kosmo:vision-completion-roadmap": "node scripts/kosmo-vision-completion-roadmap.mjs",
     "kosmo:vision-completion-roadmap-check": "node scripts/kosmo-vision-completion-roadmap-check.mjs",
     "kosmo:post-source-root-metadata-readiness-pack": "node scripts/kosmo-post-source-root-metadata-readiness-pack.mjs",
+    "kosmo:post-unlock-pilot-execution-matrix": "node scripts/kosmo-post-unlock-pilot-execution-matrix.mjs",
+    "kosmo:post-unlock-pilot-execution-matrix-check": "node scripts/kosmo-post-unlock-pilot-execution-matrix-check.mjs",
     "kosmo:source-root-owner-answer-execution-checklist": "node scripts/kosmo-source-root-owner-answer-execution-checklist.mjs",
     "kosmo:source-root-owner-answer-execution-checklist-check": "node scripts/kosmo-source-root-owner-answer-execution-checklist-check.mjs",
     "kosmo:private-library-diagnostic": "node scripts/kosmo-private-library-diagnostic.mjs",

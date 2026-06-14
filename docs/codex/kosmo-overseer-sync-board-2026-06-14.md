@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board
 
-Generated: 2026-06-14T18:04:48.976Z
+Generated: 2026-06-14T18:08:11.892Z
 Status: `overseer_sync_board_ready`
 
 ## Summary
@@ -20,6 +20,7 @@ Status: `overseer_sync_board_ready`
 
 | File | Title | Mirrors |
 | --- | --- | ---: |
+| `2026-06-14-codex-synergiebericht-190-post-unlock-pilot-execution-matrix.md` | Codex Synergiebericht 190: Post-Unlock Pilot Execution Matrix | 2 |
 | `2026-06-14-codex-synergiebericht-189-orbit-vision-roadmap-status.md` | Codex Synergiebericht 189: Orbit Vision Roadmap Status | 2 |
 | `2026-06-14-codex-synergiebericht-188-vision-roadmap-refresh.md` | Codex Synergiebericht 188: Vision Roadmap Refresh | 2 |
 | `2026-06-14-codex-synergiebericht-187-orbit-answer-dry-run-checkpoint-status.md` | Codex Synergiebericht 187: Orbit Answer Dry Run / Checkpoint Status | 2 |
@@ -27,7 +28,6 @@ Status: `overseer_sync_board_ready`
 | `2026-06-14-codex-synergiebericht-185-owner-unlock-pipeline-checkpoint.md` | Codex Synergiebericht 185: Owner Unlock Pipeline Checkpoint | 2 |
 | `2026-06-14-codex-synergiebericht-184-orbit-unlock-runbook-status.md` | Codex Synergiebericht 184: Orbit Unlock Runbook Status | 2 |
 | `2026-06-14-codex-synergiebericht-183-owner-unlock-execution-runbook.md` | Codex Synergiebericht 183: Owner Unlock Execution Runbook | 2 |
-| `2026-06-14-codex-synergiebericht-182-owner-reply-map-happy-path-smoke.md` | Codex Synergiebericht 182: Owner Reply Map Happy Path Smoke | 2 |
 
 ## Blockers
 
@@ -40,7 +40,7 @@ Status: `overseer_sync_board_ready`
 
 ## Next Actions
 
-- Claude/KosmoOverseer reviews latest handoffs 182-189 before editing related files.
+- Claude/KosmoOverseer reviews latest handoffs 183-190 before editing related files.
 - Use the owner review session brief as the next owner-facing entry point.
 - Keep local worker tasks review-only while source-root and owner answers are pending.
 - After any explicit owner answer, update intake first, then rerun guards and this sync board.
