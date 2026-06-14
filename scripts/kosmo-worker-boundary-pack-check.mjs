@@ -80,7 +80,12 @@ async function main() {
 
 function checkPolicy(pack) {
   const findings = [];
-  expect(pack.status === 'worker_boundary_pack_review_only_locked', findings, 'pack_review_only_locked', 'Pack must remain review-only locked.');
+  expect(
+    ['worker_boundary_pack_review_only_locked', 'worker_boundary_pack_private_diagnostic_ready'].includes(pack.status),
+    findings,
+    'pack_status_guarded',
+    'Pack must remain review-only locked or metadata-diagnostic ready.'
+  );
   expect(pack.policy?.metadata_only === true, findings, 'metadata_only_true', 'Pack must be metadata-only.');
   expect(pack.policy?.reads_private_content === false, findings, 'reads_private_content_false', 'Pack must not read private content.');
   expect(pack.policy?.copies_private_content === false, findings, 'copies_private_content_false', 'Pack must not copy private content.');
@@ -93,13 +98,47 @@ function checkPolicy(pack) {
 function checkHardState(pack) {
   const state = pack.hard_state || {};
   const findings = [];
+  const activationReady = state.source_root_activation_ready === true &&
+    state.source_root_activation_status === 'source_root_activation_ready_for_private_metadata_diagnostic';
+  const privateDiagnosticAllowed = state.private_diagnostic_allowed === true;
   expect(isCompleteStepRatio(state.data_lane), findings, 'data_lane_complete', 'Data lane must have all configured steps passed.');
   expect(state.data_lane_status === 'kosmodata_lane_sweep_review_only_passed', findings, 'data_lane_review_only_passed', 'Data lane must be review-only passed.');
-  expect(state.source_root_blocker_status === 'source_root_blocker_still_active', findings, 'source_root_blocker_active', 'Source-root blocker must remain active.');
-  expect(state.source_root_probable_libraries === 0, findings, 'probable_libraries_zero', 'Probable private libraries must remain 0 until real source root is visible.');
-  expect(state.selected_root_exists === false, findings, 'selected_root_absent', 'Selected root must remain absent.');
-  expect(state.private_diagnostic_allowed === false, findings, 'private_diagnostic_false', 'Private diagnostic must remain blocked.');
-  expect(state.private_inventory_allowed === false, findings, 'private_inventory_false', 'Private inventory must remain blocked.');
+  expect(
+    state.source_root_blocker_status === 'source_root_blocker_still_active' || activationReady,
+    findings,
+    'source_root_state_guarded',
+    'Source-root must be blocked or activation preflight must be metadata-diagnostic ready.'
+  );
+  expect(
+    state.source_root_probable_libraries === 0 || activationReady,
+    findings,
+    'probable_libraries_guarded',
+    'Probable private libraries may only be nonzero after activation is ready.'
+  );
+  expect(
+    state.selected_root_exists === false || activationReady,
+    findings,
+    'selected_root_guarded',
+    'Selected root may exist only after activation is ready.'
+  );
+  expect(
+    privateDiagnosticAllowed === false || activationReady,
+    findings,
+    'private_diagnostic_guarded',
+    'Private diagnostic may only be allowed when activation preflight is ready.'
+  );
+  expect(
+    state.private_inventory_allowed === false || activationReady,
+    findings,
+    'private_inventory_guarded',
+    'Private inventory may only be allowed when activation preflight is ready.'
+  );
+  expect(
+    ['source_root_activation_waiting_for_owner_storage_action', 'source_root_activation_needs_contract_review', 'source_root_activation_ready_for_private_metadata_diagnostic'].includes(state.source_root_activation_status),
+    findings,
+    'source_root_activation_status_known',
+    'Source-root activation status must be a known guarded state.'
+  );
   expect(state.public_ready_total === 0, findings, 'public_ready_total_zero', 'Public-ready total must remain 0.');
   return findings;
 }
@@ -135,9 +174,21 @@ function checkCommands(pack) {
   const blocked = pack.blocked_commands_now || [];
   const blockedText = blocked.map((item) => `${item.command} ${item.reason}`).join(' ');
   const findings = [];
+  const activationReady = pack.hard_state?.source_root_activation_ready === true;
   expect(allowed.includes('npm run kosmo:worker-boundary-pack'), findings, 'pack_command_allowed', 'Worker boundary pack command must be allowed.');
-  expect(blocked.some((item) => item.command.includes('private-library-diagnostic')), findings, 'private_library_diagnostic_blocked', 'Private-library diagnostic must be blocked without source-root approval.');
-  expect(blockedText.includes('private inventory extraction'), findings, 'private_inventory_extraction_blocked', 'Private inventory extraction must be blocked.');
+  expect(allowed.includes('npm run kosmo:source-root-activation-preflight'), findings, 'activation_preflight_command_allowed', 'Activation preflight command must be allowed.');
+  expect(
+    activationReady || blocked.some((item) => item.command.includes('private-library-diagnostic')),
+    findings,
+    'private_library_diagnostic_guarded',
+    'Private-library diagnostic must be blocked until activation preflight is ready.'
+  );
+  expect(
+    activationReady || blockedText.includes('private inventory extraction'),
+    findings,
+    'private_inventory_extraction_guarded',
+    'Private inventory extraction must be blocked until activation preflight is ready.'
+  );
   expect(blockedText.includes('public promotion'), findings, 'public_promotion_blocked', 'Public promotion must be blocked.');
   expect(!allowed.some((command) => command.includes('public_ready=true')), findings, 'no_public_ready_command_allowed', 'No allowed command may set public_ready=true.');
   return findings;
@@ -149,6 +200,7 @@ function checkEscalation(pack) {
   expect(triggers.some((trigger) => trigger.includes('real private library root')), findings, 'trigger_real_root', 'Escalation triggers must include real private library root.');
   expect(triggers.some((trigger) => trigger.includes('OneDrive sync')), findings, 'trigger_onedrive_sync', 'Escalation triggers must include OneDrive sync repair.');
   expect(triggers.some((trigger) => trigger.includes('private_diagnostic_allowed=true')), findings, 'trigger_private_diagnostic_allowed', 'Escalation triggers must include private_diagnostic_allowed=true.');
+  expect(triggers.some((trigger) => trigger.includes('activation preflight')), findings, 'trigger_activation_preflight', 'Escalation triggers must include activation preflight readiness.');
   expect(triggers.some((trigger) => trigger.includes('explicit current answers')), findings, 'trigger_owner_answers', 'Escalation triggers must include explicit current owner answers.');
   return findings;
 }

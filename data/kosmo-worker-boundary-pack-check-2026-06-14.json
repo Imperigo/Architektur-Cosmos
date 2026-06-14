@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T07:54:24.393Z",
+  "generated_at": "2026-06-14T08:47:00.077Z",
   "status": "worker_boundary_pack_guard_passed",
   "policy": {
     "records_decisions": false,
@@ -18,7 +18,7 @@
   "summary": {
     "pack_status": "worker_boundary_pack_review_only_locked",
     "worker_count": 3,
-    "allowed_commands": 17,
+    "allowed_commands": 18,
     "blocked_commands": 3,
     "failures": 0,
     "warnings": 0,
@@ -26,9 +26,9 @@
   },
   "findings": [
     {
-      "id": "pack_review_only_locked",
+      "id": "pack_status_guarded",
       "severity": "passed",
-      "message": "Pack must remain review-only locked."
+      "message": "Pack must remain review-only locked or metadata-diagnostic ready."
     },
     {
       "id": "metadata_only_true",
@@ -71,29 +71,34 @@
       "message": "Data lane must be review-only passed."
     },
     {
-      "id": "source_root_blocker_active",
+      "id": "source_root_state_guarded",
       "severity": "passed",
-      "message": "Source-root blocker must remain active."
+      "message": "Source-root must be blocked or activation preflight must be metadata-diagnostic ready."
     },
     {
-      "id": "probable_libraries_zero",
+      "id": "probable_libraries_guarded",
       "severity": "passed",
-      "message": "Probable private libraries must remain 0 until real source root is visible."
+      "message": "Probable private libraries may only be nonzero after activation is ready."
     },
     {
-      "id": "selected_root_absent",
+      "id": "selected_root_guarded",
       "severity": "passed",
-      "message": "Selected root must remain absent."
+      "message": "Selected root may exist only after activation is ready."
     },
     {
-      "id": "private_diagnostic_false",
+      "id": "private_diagnostic_guarded",
       "severity": "passed",
-      "message": "Private diagnostic must remain blocked."
+      "message": "Private diagnostic may only be allowed when activation preflight is ready."
     },
     {
-      "id": "private_inventory_false",
+      "id": "private_inventory_guarded",
       "severity": "passed",
-      "message": "Private inventory must remain blocked."
+      "message": "Private inventory may only be allowed when activation preflight is ready."
+    },
+    {
+      "id": "source_root_activation_status_known",
+      "severity": "passed",
+      "message": "Source-root activation status must be a known guarded state."
     },
     {
       "id": "public_ready_total_zero",
@@ -151,14 +156,19 @@
       "message": "Worker boundary pack command must be allowed."
     },
     {
-      "id": "private_library_diagnostic_blocked",
+      "id": "activation_preflight_command_allowed",
       "severity": "passed",
-      "message": "Private-library diagnostic must be blocked without source-root approval."
+      "message": "Activation preflight command must be allowed."
     },
     {
-      "id": "private_inventory_extraction_blocked",
+      "id": "private_library_diagnostic_guarded",
       "severity": "passed",
-      "message": "Private inventory extraction must be blocked."
+      "message": "Private-library diagnostic must be blocked until activation preflight is ready."
+    },
+    {
+      "id": "private_inventory_extraction_guarded",
+      "severity": "passed",
+      "message": "Private inventory extraction must be blocked until activation preflight is ready."
     },
     {
       "id": "public_promotion_blocked",
@@ -184,6 +194,11 @@
       "id": "trigger_private_diagnostic_allowed",
       "severity": "passed",
       "message": "Escalation triggers must include private_diagnostic_allowed=true."
+    },
+    {
+      "id": "trigger_activation_preflight",
+      "severity": "passed",
+      "message": "Escalation triggers must include activation preflight readiness."
     },
     {
       "id": "trigger_owner_answers",

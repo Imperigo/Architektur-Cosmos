@@ -1,13 +1,16 @@
 # Kosmo Worker Boundary Pack
 
-Generated: 2026-06-14T07:54:24.136Z
+Generated: 2026-06-14T08:46:59.842Z
 Status: `worker_boundary_pack_review_only_locked`
 
 ## Hard State
 
 - Data lane: 24/24 (kosmodata_lane_sweep_review_only_passed)
 - Source-root blocker: source_root_blocker_still_active
-- Source-root candidates/probable/mirrors: 717/0/64
+- Source-root activation: source_root_activation_waiting_for_owner_storage_action
+- Source-root activation ready: no
+- Source-root activation safe/blocked commands: 13/3
+- Source-root candidates/probable/mirrors: 722/0/64
 - OneDrive marker/leaf/missing: 59/58/58
 - Selected root exists: no
 - Private diagnostic allowed: no
@@ -83,6 +86,7 @@ Blocked tasks:
 - `npm run kosmo:worker-boundary-pack`
 - `npm run kosmo:worker-boundary-pack-check`
 - `npm run kosmo:storage-mount-snapshot`
+- `npm run kosmo:source-root-activation-preflight`
 
 ## Blocked Commands Now
 
@@ -95,6 +99,7 @@ Blocked tasks:
 - real private library root is mounted or selected
 - OneDrive sync markers are repaired
 - source-root decision check reports private_diagnostic_allowed=true
+- source-root activation preflight reports metadata diagnostic ready
 - owner provides explicit current answers for owner review packet
 
 ## Next Best Actions
@@ -102,4 +107,5 @@ Blocked tasks:
 - Keep worker activity metadata-only until source-root blocker clears.
 - Use this pack as the first local-LLM/Claude instruction boundary before any KosmoReferences task.
 - After a storage change, rerun source-root diagnostics, blocker refresh, command router and this pack.
+- After any source-root decision change, rerun activation preflight before assigning private metadata work.
 - Keep Villa Savoye, Sogn Benedetg and Ingenbohl pilots review-only until separate provenance and rights gates pass.

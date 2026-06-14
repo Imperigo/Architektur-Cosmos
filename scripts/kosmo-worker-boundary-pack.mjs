@@ -10,7 +10,8 @@ const dateStamp = new Date().toISOString().slice(0, 10);
 const refs = {
   sweep: resolve(root, args.sweep || `data/kosmodata-lane-sweep-${dateStamp}.json`),
   router: resolve(root, args.router || `data/kosmo-data-lane-command-router-${dateStamp}.json`),
-  blockerRefresh: resolve(root, args.blockerRefresh || `data/kosmo-source-root-blocker-refresh-${dateStamp}.json`)
+  blockerRefresh: resolve(root, args.blockerRefresh || `data/kosmo-source-root-blocker-refresh-${dateStamp}.json`),
+  sourceRootActivation: resolve(root, args.sourceRootActivation || `data/kosmo-source-root-activation-preflight-${dateStamp}.json`)
 };
 
 const outputJson = resolve(root, args.out || `data/kosmo-worker-boundary-pack-${dateStamp}.json`);
@@ -25,12 +26,16 @@ async function main() {
   const sweep = await readJson(refs.sweep);
   const router = await readJson(refs.router);
   const blockerRefresh = await readJson(refs.blockerRefresh);
+  const sourceRootActivation = await readOptionalJson(refs.sourceRootActivation);
   const sweepSummary = sweep.summary || {};
   const blockerSummary = blockerRefresh.summary || {};
+  const activationSummary = sourceRootActivation?.summary || {};
 
   const sourceRootReady = router.summary?.private_diagnostic_allowed === true &&
     blockerSummary.private_diagnostic_allowed === true;
   const privateInventoryReady = router.summary?.private_inventory_allowed === true;
+  const activationReady = sourceRootActivation?.status === 'source_root_activation_ready_for_private_metadata_diagnostic' &&
+    activationSummary.activation_ready === true;
 
   const report = {
     schema_version: '0.1',
@@ -52,6 +57,10 @@ async function main() {
       data_lane: `${sweepSummary.passed_steps}/${sweepSummary.steps}`,
       data_lane_status: sweep.status,
       source_root_blocker_status: blockerRefresh.status,
+      source_root_activation_status: sourceRootActivation?.status || null,
+      source_root_activation_ready: activationReady,
+      source_root_activation_safe_commands: activationSummary.safe_command_count ?? null,
+      source_root_activation_blocked_commands: activationSummary.blocked_command_count ?? null,
       source_root_candidates: blockerSummary.source_root_candidates ?? null,
       source_root_probable_libraries: blockerSummary.source_root_probable_libraries ?? null,
       source_root_workflow_mirrors: blockerSummary.source_root_workflow_mirrors ?? null,
@@ -118,6 +127,7 @@ async function main() {
     allowed_commands_now: unique([
       ...(router.allowed_commands_now || []),
       'npm run kosmo:storage-mount-snapshot',
+      'npm run kosmo:source-root-activation-preflight',
       'npm run kosmo:worker-boundary-pack'
     ]),
     blocked_commands_now: router.blocked_commands_now || [],
@@ -125,12 +135,14 @@ async function main() {
       'real private library root is mounted or selected',
       'OneDrive sync markers are repaired',
       'source-root decision check reports private_diagnostic_allowed=true',
+      'source-root activation preflight reports metadata diagnostic ready',
       'owner provides explicit current answers for owner review packet'
     ],
     next_best_actions: [
       'Keep worker activity metadata-only until source-root blocker clears.',
       'Use this pack as the first local-LLM/Claude instruction boundary before any KosmoReferences task.',
       'After a storage change, rerun source-root diagnostics, blocker refresh, command router and this pack.',
+      'After any source-root decision change, rerun activation preflight before assigning private metadata work.',
       'Keep Villa Savoye, Sogn Benedetg and Ingenbohl pilots review-only until separate provenance and rights gates pass.'
     ]
   };
@@ -152,6 +164,14 @@ async function readJson(path) {
   return JSON.parse(await readFile(path, 'utf8'));
 }
 
+async function readOptionalJson(path) {
+  try {
+    return JSON.parse(await readFile(path, 'utf8'));
+  } catch {
+    return null;
+  }
+}
+
 function unique(items) {
   return [...new Set(items)];
 }
@@ -167,6 +187,9 @@ function renderMarkdown(report) {
   lines.push('');
   lines.push(`- Data lane: ${report.hard_state.data_lane} (${report.hard_state.data_lane_status})`);
   lines.push(`- Source-root blocker: ${report.hard_state.source_root_blocker_status}`);
+  lines.push(`- Source-root activation: ${report.hard_state.source_root_activation_status}`);
+  lines.push(`- Source-root activation ready: ${report.hard_state.source_root_activation_ready ? 'yes' : 'no'}`);
+  lines.push(`- Source-root activation safe/blocked commands: ${report.hard_state.source_root_activation_safe_commands}/${report.hard_state.source_root_activation_blocked_commands}`);
   lines.push(`- Source-root candidates/probable/mirrors: ${report.hard_state.source_root_candidates}/${report.hard_state.source_root_probable_libraries}/${report.hard_state.source_root_workflow_mirrors}`);
   lines.push(`- OneDrive marker/leaf/missing: ${report.hard_state.onedrive_marker_leaf_missing.join('/')}`);
   lines.push(`- Selected root exists: ${report.hard_state.selected_root_exists ? 'yes' : 'no'}`);

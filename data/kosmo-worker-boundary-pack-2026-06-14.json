@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T07:54:24.136Z",
+  "generated_at": "2026-06-14T08:46:59.842Z",
   "status": "worker_boundary_pack_review_only_locked",
   "policy": {
     "metadata_only": true,
@@ -14,13 +14,18 @@
   "source_refs": [
     "data/kosmodata-lane-sweep-2026-06-14.json",
     "data/kosmo-data-lane-command-router-2026-06-14.json",
-    "data/kosmo-source-root-blocker-refresh-2026-06-14.json"
+    "data/kosmo-source-root-blocker-refresh-2026-06-14.json",
+    "data/kosmo-source-root-activation-preflight-2026-06-14.json"
   ],
   "hard_state": {
     "data_lane": "24/24",
     "data_lane_status": "kosmodata_lane_sweep_review_only_passed",
     "source_root_blocker_status": "source_root_blocker_still_active",
-    "source_root_candidates": 717,
+    "source_root_activation_status": "source_root_activation_waiting_for_owner_storage_action",
+    "source_root_activation_ready": false,
+    "source_root_activation_safe_commands": 13,
+    "source_root_activation_blocked_commands": 3,
+    "source_root_candidates": 722,
     "source_root_probable_libraries": 0,
     "source_root_workflow_mirrors": 64,
     "onedrive_marker_leaf_missing": [
@@ -100,7 +105,8 @@
     "npm run kosmo:overseer-sync-board-check",
     "npm run kosmo:worker-boundary-pack",
     "npm run kosmo:worker-boundary-pack-check",
-    "npm run kosmo:storage-mount-snapshot"
+    "npm run kosmo:storage-mount-snapshot",
+    "npm run kosmo:source-root-activation-preflight"
   ],
   "blocked_commands_now": [
     {
@@ -120,12 +126,14 @@
     "real private library root is mounted or selected",
     "OneDrive sync markers are repaired",
     "source-root decision check reports private_diagnostic_allowed=true",
+    "source-root activation preflight reports metadata diagnostic ready",
     "owner provides explicit current answers for owner review packet"
   ],
   "next_best_actions": [
     "Keep worker activity metadata-only until source-root blocker clears.",
     "Use this pack as the first local-LLM/Claude instruction boundary before any KosmoReferences task.",
     "After a storage change, rerun source-root diagnostics, blocker refresh, command router and this pack.",
+    "After any source-root decision change, rerun activation preflight before assigning private metadata work.",
     "Keep Villa Savoye, Sogn Benedetg and Ingenbohl pilots review-only until separate provenance and rights gates pass."
   ]
 }
