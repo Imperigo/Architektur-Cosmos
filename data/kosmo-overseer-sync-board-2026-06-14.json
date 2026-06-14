@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T17:42:19.374Z",
+  "generated_at": "2026-06-14T17:43:28.421Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 180
+      "files": 181
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 224
+      "files": 225
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-14-codex-synergiebericht-182-owner-reply-map-happy-path-smoke.md",
+      "title": "Codex Synergiebericht 182: Owner Reply Map Happy Path Smoke",
+      "mirrored_inboxes": 2,
+      "bytes": 1204,
+      "modified_at": "2026-06-14T17:43:12.902Z"
+    },
     {
       "filename": "2026-06-14-codex-synergiebericht-181-orbit-owner-reply-pipeline-status.md",
       "title": "Codex Synergiebericht 181: Orbit Owner Reply Pipeline Status",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1383,
       "modified_at": "2026-06-14T17:22:59.963Z"
-    },
-    {
-      "filename": "2026-06-14-codex-synergiebericht-174-evening-batch-rollup.md",
-      "title": "Codex Synergiebericht 174: Evening Batch Rollup",
-      "mirrored_inboxes": 2,
-      "bytes": 1257,
-      "modified_at": "2026-06-14T17:16:53.796Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 174-181 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 175-182 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."
