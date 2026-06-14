@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T17:23:07.391Z",
+  "generated_at": "2026-06-14T17:26:41.305Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 174
+      "files": 175
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 218
+      "files": 219
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-14-codex-synergiebericht-176-overseer-next-shift-brief.md",
+      "title": "Codex Synergiebericht 176: Overseer Next Shift Brief",
+      "mirrored_inboxes": 2,
+      "bytes": 1321,
+      "modified_at": "2026-06-14T17:26:30.589Z"
+    },
     {
       "filename": "2026-06-14-codex-synergiebericht-175-owner-unlock-prompt-pack.md",
       "title": "Codex Synergiebericht 175: Owner Unlock Prompt Pack",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1725,
       "modified_at": "2026-06-14T16:58:12.819Z"
-    },
-    {
-      "filename": "2026-06-14-codex-synergiebericht-168-post-source-root-metadata-readiness.md",
-      "title": "Codex Synergiebericht 168: Post-Source-Root Metadata Readiness",
-      "mirrored_inboxes": 2,
-      "bytes": 1473,
-      "modified_at": "2026-06-14T16:53:50.813Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 168-175 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 169-176 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."

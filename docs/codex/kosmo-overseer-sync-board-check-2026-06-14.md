@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board Check
 
-Generated: 2026-06-14T17:23:07.636Z
+Generated: 2026-06-14T17:26:41.548Z
 Status: `overseer_sync_board_guard_passed`
 
 ## Summary
@@ -42,6 +42,8 @@ Status: `overseer_sync_board_guard_passed`
 - passed: `inbox_has_files:/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox` - Handoff inbox must contain files: /mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox
 - passed: `latest_handoffs_array_count` - Latest handoff array must contain eight items.
 - passed: `latest_handoff_includes_115` - Latest handoffs must include synergiebericht 115 or newer.
+- passed: `handoff_mirrored:2026-06-14-codex-synergiebericht-176-overseer-next-shift-brief.md` - 2026-06-14-codex-synergiebericht-176-overseer-next-shift-brief.md must be mirrored in both inboxes.
+- passed: `handoff_title:2026-06-14-codex-synergiebericht-176-overseer-next-shift-brief.md` - 2026-06-14-codex-synergiebericht-176-overseer-next-shift-brief.md must include a title.
 - passed: `handoff_mirrored:2026-06-14-codex-synergiebericht-175-owner-unlock-prompt-pack.md` - 2026-06-14-codex-synergiebericht-175-owner-unlock-prompt-pack.md must be mirrored in both inboxes.
 - passed: `handoff_title:2026-06-14-codex-synergiebericht-175-owner-unlock-prompt-pack.md` - 2026-06-14-codex-synergiebericht-175-owner-unlock-prompt-pack.md must include a title.
 - passed: `handoff_mirrored:2026-06-14-codex-synergiebericht-174-evening-batch-rollup.md` - 2026-06-14-codex-synergiebericht-174-evening-batch-rollup.md must be mirrored in both inboxes.
@@ -56,8 +58,6 @@ Status: `overseer_sync_board_guard_passed`
 - passed: `handoff_title:2026-06-14-codex-synergiebericht-170-pilot-intake-readiness.md` - 2026-06-14-codex-synergiebericht-170-pilot-intake-readiness.md must include a title.
 - passed: `handoff_mirrored:2026-06-14-codex-synergiebericht-169-owner-answer-execution-checklist.md` - 2026-06-14-codex-synergiebericht-169-owner-answer-execution-checklist.md must be mirrored in both inboxes.
 - passed: `handoff_title:2026-06-14-codex-synergiebericht-169-owner-answer-execution-checklist.md` - 2026-06-14-codex-synergiebericht-169-owner-answer-execution-checklist.md must include a title.
-- passed: `handoff_mirrored:2026-06-14-codex-synergiebericht-168-post-source-root-metadata-readiness.md` - 2026-06-14-codex-synergiebericht-168-post-source-root-metadata-readiness.md must be mirrored in both inboxes.
-- passed: `handoff_title:2026-06-14-codex-synergiebericht-168-post-source-root-metadata-readiness.md` - 2026-06-14-codex-synergiebericht-168-post-source-root-metadata-readiness.md must include a title.
 - passed: `source_root_blocked` - Source-root blocker must remain blocked.
 - passed: `private_inventory_blocked` - Private inventory blocker must remain blocked.
 - passed: `owner_answers_blocked` - Owner answers blocker must remain blocked.
