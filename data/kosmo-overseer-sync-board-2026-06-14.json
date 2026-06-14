@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T13:28:24.644Z",
+  "generated_at": "2026-06-14T13:30:39.623Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 138
+      "files": 139
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 176
+      "files": 177
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-14-codex-synergiebericht-140-review-only-asset-routing-guard.md",
+      "title": "Codex Synergiebericht 140: Review-only Asset Routing Guard",
+      "mirrored_inboxes": 2,
+      "bytes": 1186,
+      "modified_at": "2026-06-14T13:30:35.231Z"
+    },
     {
       "filename": "2026-06-14-codex-synergiebericht-139-kosmoasset-source-candidate-map.md",
       "title": "Codex Synergiebericht 139: KosmoAsset Source Candidate Map",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1840,
       "modified_at": "2026-06-14T08:59:52.884Z"
-    },
-    {
-      "filename": "2026-06-14-codex-synergiebericht-132-private-metadata-inventory-runner.md",
-      "title": "Codex Synergiebericht 132 - Private Metadata Inventory Runner",
-      "mirrored_inboxes": 2,
-      "bytes": 2267,
-      "modified_at": "2026-06-14T08:55:20.004Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 132-139 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 133-140 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."
