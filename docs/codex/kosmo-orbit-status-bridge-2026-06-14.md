@@ -1,15 +1,17 @@
 # Kosmo Orbit Status Bridge
 
-Generated: 2026-06-14T09:04:38.906Z
+Generated: 2026-06-14T13:14:17.063Z
 Status: `orbit_bridge_ready_with_blockers`
 
 ## Summary
 
-- Cards: 11
-- Blocking cards: 3
-- Owner action cards: 7
+- Cards: 12
+- Blocking cards: 4
+- Owner action cards: 8
 - Source root blocked: yes
 - Day batch: day_batch_loop_passed_review_only
+- Source-root owner action: source_root_owner_action_required
+- Source-root recommended decision: repair_onedrive_first_or_confirm_complete_non_onedrive_root
 - Source-root activation: source_root_activation_waiting_for_owner_storage_action
 - Private metadata inventory: private_metadata_inventory_blocked_until_activation
 - Private metadata inventory fixture: private_metadata_inventory_fixture_passed
@@ -23,8 +25,9 @@ Status: `orbit_bridge_ready_with_blockers`
 
 | Card | Status | Owner Action | Signal |
 | --- | --- | --- | --- |
-| `day-batch` Daily Batch | ready | no | 34/34 required steps |
+| `day-batch` Daily Batch | ready | no | 35/35 required steps |
 | `source-root` Source Root | blocked | yes | blocked: 0 probable libraries, 59 OneDrive markers |
+| `source-root-owner-action` Source Root Owner Action | blocked | yes | action required: repair_onedrive_first_or_confirm_complete_non_onedrive_root |
 | `source-root-activation` Source Root Activation | blocked | yes | source_root_activation_waiting_for_owner_storage_action, safe commands 13, blocked 4 |
 | `local-models` Local Models | review_only_ready | no | 4/4 roles, 8 Ollama models, 70 GB |
 | `private-metadata-inventory` Private Metadata Inventory | blocked_with_smoke_passed | yes | blocked until source-root activation; fixture 6 matches; guard private_metadata_inventory_guard_passed |
@@ -40,6 +43,7 @@ Status: `orbit_bridge_ready_with_blockers`
 - `status_strip`
 - `local_models_card`
 - `source_root_blocker_card`
+- `source_root_owner_action_card`
 - `source_root_activation_card`
 - `private_metadata_inventory_card`
 - `pilot_reference_cards`

@@ -36,6 +36,7 @@ const steps = [
     `docs/codex/kosmoreferences-private-library-diagnostic-${dateStamp}.md`
   ]),
   step('source_root_blocker_refresh', 'Source Root Blocker Refresh', ['run', 'kosmo:source-root-blocker-refresh']),
+  step('source_root_owner_action_card', 'Source Root Owner Action Card', ['run', 'kosmo:source-root-owner-action-card']),
   step('local_model_inventory', 'Local Model Inventory', ['run', 'kosmo:local-model-inventory']),
   step('bootstrap_data_lane_sweep', 'Bootstrap Data Lane Sweep', ['run', 'kosmo:data-lane-sweep'], { allowFailure: true }),
   step('bootstrap_router', 'Bootstrap Router', ['run', 'kosmo:data-lane-command-router']),
@@ -103,6 +104,7 @@ async function main() {
   console.log(`Private metadata inventory check: ${report.summary.private_metadata_inventory_check_status}`);
   console.log(`Innovation smoke: ${report.summary.innovation_smoke_status}`);
   console.log(`Orbit bridge: ${report.summary.orbit_bridge_status}`);
+  console.log(`Source-root owner action: ${report.summary.source_root_owner_action_status}`);
   console.log(`Wrote: ${relative(root, outputMd)}`);
 
   if (report.status !== 'day_batch_loop_passed_review_only') process.exitCode = 1;
@@ -179,6 +181,7 @@ async function buildReport({ results, startedAt }) {
   const ownerPacket = await readOptionalJson(`data/kosmo-owner-review-packet-check-${dateStamp}.json`);
   const ownerSession = await readOptionalJson(`data/kosmo-owner-review-session-brief-check-${dateStamp}.json`);
   const blocker = await readOptionalJson(`data/kosmo-source-root-blocker-refresh-${dateStamp}.json`);
+  const sourceRootOwnerAction = await readOptionalJson(`data/kosmo-source-root-owner-action-card-${dateStamp}.json`);
   const sourceRootActivation = await readOptionalJson(`data/kosmo-source-root-activation-preflight-${dateStamp}.json`);
   const privateMetadataInventory = await readOptionalJson(`data/kosmo-private-metadata-inventory-runner-${dateStamp}.json`);
   const privateMetadataInventoryFixture = await readOptionalJson(`data/kosmo-private-metadata-inventory-fixture-smoke-${dateStamp}.json`);
@@ -193,6 +196,10 @@ async function buildReport({ results, startedAt }) {
     invariant('core_sweep_review_only', sweep?.status === 'kosmodata_lane_sweep_review_only_passed', sweep?.status),
     invariant('router_guarded_review_only', router?.status === 'worker_router_guarded_review_only', router?.status),
     invariant('worker_boundary_passed', boundary?.status === 'worker_boundary_pack_guard_passed', boundary?.status),
+    invariant('source_root_owner_action_card_ready', [
+      'source_root_owner_action_required',
+      'source_root_owner_action_satisfied_metadata_only'
+    ].includes(sourceRootOwnerAction?.status), sourceRootOwnerAction?.status),
     invariant('owner_handoff_passed', ownerHandoffPassed, `${ownerPacket?.status || 'missing'} / ${ownerSession?.status || 'missing'}`),
     invariant('innovation_smoke_review_only', innovationSmoke?.status === 'innovation_smoke_passed_review_only', innovationSmoke?.status),
     invariant('orbit_bridge_ready', ['orbit_bridge_ready_with_blockers', 'orbit_bridge_all_ready_review_only'].includes(orbitBridge?.status), orbitBridge?.status),
@@ -251,6 +258,7 @@ async function buildReport({ results, startedAt }) {
       innovation_smoke_status: innovationSmoke?.status || null,
       orbit_bridge_status: orbitBridge?.status || null,
       source_root_blocker_status: blocker?.status || null,
+      source_root_owner_action_status: sourceRootOwnerAction?.status || null,
       source_root_activation_status: sourceRootActivation?.status || null,
       private_metadata_inventory_status: privateMetadataInventory?.status || null,
       private_metadata_inventory_fixture_status: privateMetadataInventoryFixture?.status || null,
@@ -266,6 +274,7 @@ async function buildReport({ results, startedAt }) {
       `data/kosmo-owner-review-packet-check-${dateStamp}.json`,
       `data/kosmo-owner-review-session-brief-check-${dateStamp}.json`,
       `data/kosmo-source-root-blocker-refresh-${dateStamp}.json`,
+      `data/kosmo-source-root-owner-action-card-${dateStamp}.json`,
       `data/kosmo-source-root-activation-preflight-${dateStamp}.json`,
       `data/kosmo-private-metadata-inventory-runner-${dateStamp}.json`,
       `data/kosmo-private-metadata-inventory-fixture-smoke-${dateStamp}.json`,
@@ -323,6 +332,7 @@ function renderMarkdown(report) {
   lines.push(`- Innovation smoke: ${report.summary.innovation_smoke_status}`);
   lines.push(`- Orbit bridge: ${report.summary.orbit_bridge_status}`);
   lines.push(`- Source-root blocker: ${report.summary.source_root_blocker_status}`);
+  lines.push(`- Source-root owner action: ${report.summary.source_root_owner_action_status}`);
   lines.push(`- Private diagnostic allowed: ${report.summary.private_diagnostic_allowed ? 'yes' : 'no'}`);
   lines.push(`- Night loop checkpoint: ${report.summary.night_loop_checkpoint_status}`);
   lines.push(`- Public-ready after loop: ${report.summary.public_ready_after_loop}`);

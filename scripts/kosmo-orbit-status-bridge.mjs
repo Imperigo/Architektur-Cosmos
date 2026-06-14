@@ -12,6 +12,7 @@ const outputMd = resolve(root, args.markdown || `docs/codex/kosmo-orbit-status-b
 const refs = {
   dayBatch: `data/kosmo-day-batch-loop-${dateStamp}.json`,
   sourceRoot: `data/kosmo-source-root-blocker-refresh-${dateStamp}.json`,
+  sourceRootOwnerAction: `data/kosmo-source-root-owner-action-card-${dateStamp}.json`,
   sourceRootActivation: `data/kosmo-source-root-activation-preflight-${dateStamp}.json`,
   privateMetadataInventory: `data/kosmo-private-metadata-inventory-runner-${dateStamp}.json`,
   privateMetadataInventoryFixture: `data/kosmo-private-metadata-inventory-fixture-smoke-${dateStamp}.json`,
@@ -51,6 +52,7 @@ async function main() {
 function buildBridge(reports) {
   const daySummary = reports.dayBatch?.summary || {};
   const sourceSummary = reports.sourceRoot?.summary || {};
+  const ownerActionSummary = reports.sourceRootOwnerAction?.summary || {};
   const activationSummary = reports.sourceRootActivation?.summary || {};
   const privateInventorySummary = reports.privateMetadataInventory?.summary || {};
   const privateInventoryFixtureSummary = reports.privateMetadataInventoryFixture?.summary || {};
@@ -78,6 +80,21 @@ function buildBridge(reports) {
       owner_action_required: sourceSummary.private_diagnostic_allowed !== true,
       route_hint: 'Owner/KosmoOverseer must record true private source root',
       source_ref: refs.sourceRoot
+    },
+    {
+      id: 'source-root-owner-action',
+      title: 'Source Root Owner Action',
+      status: reports.sourceRootOwnerAction?.status === 'source_root_owner_action_satisfied_metadata_only'
+        ? 'ready'
+        : reports.sourceRootOwnerAction?.status === 'source_root_owner_action_required'
+          ? 'blocked'
+          : 'needs_review',
+      signal: reports.sourceRootOwnerAction?.status === 'source_root_owner_action_required'
+        ? `action required: ${ownerActionSummary.recommended_decision || 'select or mount source root'}`
+        : `decision ${ownerActionSummary.selected_decision || 'pending'}, root ${ownerActionSummary.selected_root_path || 'pending'}`,
+      owner_action_required: ownerActionSummary.owner_action_required !== false,
+      route_hint: 'Exact owner edit needed for source-root decision session',
+      source_ref: refs.sourceRootOwnerAction
     },
     {
       id: 'source-root-activation',
@@ -200,6 +217,8 @@ function buildBridge(reports) {
       owner_action_cards: ownerActionCards.length,
       source_root_blocked: sourceSummary.private_diagnostic_allowed !== true,
       day_batch_status: reports.dayBatch?.status || null,
+      source_root_owner_action_status: reports.sourceRootOwnerAction?.status || null,
+      source_root_owner_recommended_decision: ownerActionSummary.recommended_decision || null,
       source_root_activation_status: reports.sourceRootActivation?.status || null,
       private_metadata_inventory_status: reports.privateMetadataInventory?.status || null,
       private_metadata_inventory_fixture_status: reports.privateMetadataInventoryFixture?.status || null,
@@ -214,6 +233,7 @@ function buildBridge(reports) {
       'status_strip',
       'local_models_card',
       'source_root_blocker_card',
+      'source_root_owner_action_card',
       'source_root_activation_card',
       'private_metadata_inventory_card',
       'pilot_reference_cards',
@@ -252,6 +272,8 @@ function renderMarkdown(bridge) {
   lines.push(`- Owner action cards: ${bridge.summary.owner_action_cards}`);
   lines.push(`- Source root blocked: ${bridge.summary.source_root_blocked ? 'yes' : 'no'}`);
   lines.push(`- Day batch: ${bridge.summary.day_batch_status}`);
+  lines.push(`- Source-root owner action: ${bridge.summary.source_root_owner_action_status}`);
+  lines.push(`- Source-root recommended decision: ${bridge.summary.source_root_owner_recommended_decision}`);
   lines.push(`- Source-root activation: ${bridge.summary.source_root_activation_status}`);
   lines.push(`- Private metadata inventory: ${bridge.summary.private_metadata_inventory_status}`);
   lines.push(`- Private metadata inventory fixture: ${bridge.summary.private_metadata_inventory_fixture_status}`);
