@@ -1,12 +1,12 @@
 # Kosmo Local Worker Launch Queue
 
-Generated: 2026-06-14T09:08:40.311Z
+Generated: 2026-06-14T13:51:30.828Z
 Status: `local_worker_launch_queue_idle_outputs_present`
 
 ## Summary
 
 - Target worker: kosmo-odysseus-local-llm
-- Tasks present: 8/8
+- Tasks present: 9/9
 - Tasks missing: 0
 - Launchable now: 0
 - Boundary guard passed: yes
@@ -25,9 +25,10 @@ Status: `local_worker_launch_queue_idle_outputs_present`
 | 3 | `kosmo-book-library-mount-questions` | source_discovery | `book-library-mount-questions.private.md` | present | do_not_launch_output_present |
 | 4 | `kosmo-asset-seed-candidates` | kosmoasset | `asset-seed-candidates.private.json` | present | do_not_launch_output_present |
 | 5 | `kosmo-public-source-link-synthesis` | source_discovery | `public-source-link-synthesis.private.json` | present | do_not_launch_output_present |
-| 6 | `kosmo-human-decision-queue-triage` | human_review_support | `human-decision-queue-triage.private.md` | present | do_not_launch_output_present |
-| 7 | `kosmo-owner-batch-review-questions` | human_review_support | `owner-batch-review-questions.private.md` | present | do_not_launch_output_present |
-| 8 | `kosmo-owner-session-safe-next-tasks` | human_review_support | `owner-session-safe-next-tasks.private.md` | present | do_not_launch_output_present |
+| 6 | `kosmo-asset-source-candidate-triage` | kosmoasset | `asset-source-candidate-triage.private.json` | present | do_not_launch_output_present |
+| 7 | `kosmo-human-decision-queue-triage` | human_review_support | `human-decision-queue-triage.private.md` | present | do_not_launch_output_present |
+| 8 | `kosmo-owner-batch-review-questions` | human_review_support | `owner-batch-review-questions.private.md` | present | do_not_launch_output_present |
+| 9 | `kosmo-owner-session-safe-next-tasks` | human_review_support | `owner-session-safe-next-tasks.private.md` | present | do_not_launch_output_present |
 
 ## Next Actions
 

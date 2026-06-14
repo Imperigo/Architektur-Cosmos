@@ -100,7 +100,7 @@ function checkSummary(board) {
   expect(summary.session_brief_guard_status === 'owner_review_session_brief_guard_passed', findings, 'session_brief_guard_passed', 'Session brief guard must pass.');
   expect(summary.session_brief_failures === 0, findings, 'session_brief_failures_zero', 'Session brief guard failures must be 0.');
   expect(summary.local_worker_review_status === 'local_worker_outputs_present_review_only', findings, 'local_worker_review_only', 'Local worker review must be review-only present.');
-  expect(summary.local_worker_outputs === '8/8', findings, 'local_worker_outputs_8', 'Local worker outputs must be 8/8.');
+  expect(isCompleteStepRatio(summary.local_worker_outputs), findings, 'local_worker_outputs_complete', 'Local worker outputs must report all required outputs present.');
   expect(summary.local_worker_high_risk_hits === 0, findings, 'local_worker_risk_zero', 'Local worker high-risk hits must be 0.');
   expect(summary.latest_handoffs === 8, findings, 'latest_handoff_count', 'Board must track eight latest handoffs.');
   expect(summary.latest_handoff_mirror_missing_files === 0, findings, 'latest_mirror_missing_zero', 'Latest handoffs must have 0 mirror-missing files.');

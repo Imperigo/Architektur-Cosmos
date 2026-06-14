@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T13:41:00.317Z",
+  "generated_at": "2026-06-14T13:50:43.119Z",
   "status": "overseer_sync_board_guard_passed",
   "policy": {
     "records_decisions": false,
@@ -19,7 +19,7 @@
     "data_lane_steps": "24/24",
     "latest_handoffs": 8,
     "latest_handoff_mirror_missing_files": 0,
-    "local_worker_outputs": "8/8",
+    "local_worker_outputs": "9/9",
     "failures": 0,
     "warnings": 0,
     "public_ready_after_guard": 0
@@ -96,9 +96,9 @@
       "message": "Local worker review must be review-only present."
     },
     {
-      "id": "local_worker_outputs_8",
+      "id": "local_worker_outputs_complete",
       "severity": "passed",
-      "message": "Local worker outputs must be 8/8."
+      "message": "Local worker outputs must report all required outputs present."
     },
     {
       "id": "local_worker_risk_zero",
@@ -154,6 +154,16 @@
       "id": "latest_handoff_includes_115",
       "severity": "passed",
       "message": "Latest handoffs must include synergiebericht 115 or newer."
+    },
+    {
+      "id": "handoff_mirrored:2026-06-14-codex-synergiebericht-144-local-worker-asset-source-triage.md",
+      "severity": "passed",
+      "message": "2026-06-14-codex-synergiebericht-144-local-worker-asset-source-triage.md must be mirrored in both inboxes."
+    },
+    {
+      "id": "handoff_title:2026-06-14-codex-synergiebericht-144-local-worker-asset-source-triage.md",
+      "severity": "passed",
+      "message": "2026-06-14-codex-synergiebericht-144-local-worker-asset-source-triage.md must include a title."
     },
     {
       "id": "handoff_mirrored:2026-06-14-codex-synergiebericht-143-kosmoorbit-day-batch-orbit-bridge-status.md",
@@ -224,16 +234,6 @@
       "id": "handoff_title:2026-06-14-codex-synergiebericht-137-storage-topology.md",
       "severity": "passed",
       "message": "2026-06-14-codex-synergiebericht-137-storage-topology.md must include a title."
-    },
-    {
-      "id": "handoff_mirrored:2026-06-14-codex-synergiebericht-136-source-root-owner-action-card.md",
-      "severity": "passed",
-      "message": "2026-06-14-codex-synergiebericht-136-source-root-owner-action-card.md must be mirrored in both inboxes."
-    },
-    {
-      "id": "handoff_title:2026-06-14-codex-synergiebericht-136-source-root-owner-action-card.md",
-      "severity": "passed",
-      "message": "2026-06-14-codex-synergiebericht-136-source-root-owner-action-card.md must include a title."
     },
     {
       "id": "source_root_blocked",

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T09:08:40.071Z",
+  "generated_at": "2026-06-14T13:51:30.592Z",
   "status": "local_worker_outputs_present_review_only",
   "policy": {
     "private_outputs_not_copied": true,
@@ -10,8 +10,8 @@
   "task_pack": "data/kosmo-local-worker-task-pack-2026-06-14.json",
   "output_root": "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-local-worker-2026-06-13",
   "summary": {
-    "required_outputs": 8,
-    "present_outputs": 8,
+    "required_outputs": 9,
+    "present_outputs": 9,
     "missing_outputs": 0,
     "invalid_json_outputs": 0,
     "high_risk_hits": 0,
@@ -73,6 +73,13 @@
       "status": "present",
       "bytes": 2091,
       "json_status": "not_json",
+      "high_risk_terms": []
+    },
+    {
+      "filename": "asset-source-candidate-triage.private.json",
+      "status": "present",
+      "bytes": 9272,
+      "json_status": "valid",
       "high_risk_terms": []
     }
   ],

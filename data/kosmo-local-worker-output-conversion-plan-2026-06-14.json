@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T07:48:25.955Z",
+  "generated_at": "2026-06-14T13:51:31.096Z",
   "status": "local_worker_output_conversion_plan_review_only",
   "policy": {
     "metadata_only": true,
@@ -18,8 +18,8 @@
     "data/kosmo-worker-boundary-pack-check-2026-06-14.json"
   ],
   "summary": {
-    "tasks_total": 8,
-    "eligible_for_manual_metadata_review": 8,
+    "tasks_total": 9,
+    "eligible_for_manual_metadata_review": 9,
     "repo_conversion_allowed_now": 0,
     "high_risk_hits": 0,
     "guard_passed": true,
@@ -118,8 +118,26 @@
       ]
     },
     {
-      "task_id": "kosmo-human-decision-queue-triage",
+      "task_id": "kosmo-asset-source-candidate-triage",
       "priority": 6,
+      "lane": "kosmoasset",
+      "output_filename": "asset-source-candidate-triage.private.json",
+      "output_status": "present",
+      "output_bytes": 9272,
+      "json_status": "valid",
+      "high_risk_terms": [],
+      "conversion_status": "eligible_for_manual_metadata_review",
+      "repo_conversion_allowed_now": false,
+      "required_review": [
+        "human reads private output locally",
+        "extract only own-written metadata-safe summary",
+        "cite source reports, not private passages",
+        "keep public-ready at 0"
+      ]
+    },
+    {
+      "task_id": "kosmo-human-decision-queue-triage",
+      "priority": 7,
       "lane": "human_review_support",
       "output_filename": "human-decision-queue-triage.private.md",
       "output_status": "present",
@@ -137,7 +155,7 @@
     },
     {
       "task_id": "kosmo-owner-batch-review-questions",
-      "priority": 7,
+      "priority": 8,
       "lane": "human_review_support",
       "output_filename": "owner-batch-review-questions.private.md",
       "output_status": "present",
@@ -155,7 +173,7 @@
     },
     {
       "task_id": "kosmo-owner-session-safe-next-tasks",
-      "priority": 8,
+      "priority": 9,
       "lane": "human_review_support",
       "output_filename": "owner-session-safe-next-tasks.private.md",
       "output_status": "present",

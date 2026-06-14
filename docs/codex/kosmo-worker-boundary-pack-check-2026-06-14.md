@@ -1,13 +1,13 @@
 # Kosmo Worker Boundary Pack Check
 
-Generated: 2026-06-14T08:58:30.034Z
+Generated: 2026-06-14T13:51:28.931Z
 Status: `worker_boundary_pack_guard_passed`
 
 ## Summary
 
 - Pack status: worker_boundary_pack_review_only_locked
 - Workers: 3
-- Allowed commands: 19
+- Allowed commands: 22
 - Blocked commands: 3
 - Failures: 0
 - Warnings: 0

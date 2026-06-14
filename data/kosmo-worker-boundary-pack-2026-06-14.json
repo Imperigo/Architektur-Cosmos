@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T08:58:29.797Z",
+  "generated_at": "2026-06-14T13:51:28.690Z",
   "status": "worker_boundary_pack_review_only_locked",
   "policy": {
     "metadata_only": true,
@@ -25,7 +25,7 @@
     "source_root_activation_ready": false,
     "source_root_activation_safe_commands": 13,
     "source_root_activation_blocked_commands": 4,
-    "source_root_candidates": 722,
+    "source_root_candidates": 947,
     "source_root_probable_libraries": 0,
     "source_root_workflow_mirrors": 64,
     "onedrive_marker_leaf_missing": [
@@ -96,6 +96,9 @@
     "npm run kosmo:human-decision-owner-batches",
     "npm run kosmo:source-root-blocker-refresh",
     "npm run kosmo:source-root-unlock-runbook",
+    "npm run kosmo:source-root-owner-action-card",
+    "npm run kosmo:asset-source-candidate-map",
+    "npm run kosmo:orbit-status-bridge",
     "npm run kosmo:local-worker-launch-queue",
     "npm run kosmo:local-worker-output-conversion-plan",
     "npm run kosmo:owner-decision-session-check",

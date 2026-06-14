@@ -1,13 +1,13 @@
 # Kosmo Local Worker Task Pack
 
-Created: 2026-06-14T09:08:39.833Z
+Created: 2026-06-14T13:51:30.315Z
 Status: `ready_for_local_review`
 
 ## Summary
 
 - Target worker: kosmo-odysseus-local-llm
-- Tasks: 8
-- Updated refs: 79
+- Tasks: 9
+- Updated refs: 87
 - Metadata inventory guard refs: 4
 - Reuses existing output paths: yes
 - Public-ready after refresh: 0
@@ -27,9 +27,10 @@ Status: `ready_for_local_review`
 | 3 | `kosmo-book-library-mount-questions` | source_discovery | `/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-local-worker-2026-06-13/book-library-mount-questions.private.md` |
 | 4 | `kosmo-asset-seed-candidates` | kosmoasset | `/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-local-worker-2026-06-13/asset-seed-candidates.private.json` |
 | 5 | `kosmo-public-source-link-synthesis` | source_discovery | `/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-local-worker-2026-06-13/public-source-link-synthesis.private.json` |
-| 6 | `kosmo-human-decision-queue-triage` | human_review_support | `/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-local-worker-2026-06-13/human-decision-queue-triage.private.md` |
-| 7 | `kosmo-owner-batch-review-questions` | human_review_support | `/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-local-worker-2026-06-13/owner-batch-review-questions.private.md` |
-| 8 | `kosmo-owner-session-safe-next-tasks` | human_review_support | `/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-local-worker-2026-06-13/owner-session-safe-next-tasks.private.md` |
+| 6 | `kosmo-asset-source-candidate-triage` | kosmoasset | `/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-local-worker-2026-06-13/asset-source-candidate-triage.private.json` |
+| 7 | `kosmo-human-decision-queue-triage` | human_review_support | `/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-local-worker-2026-06-13/human-decision-queue-triage.private.md` |
+| 8 | `kosmo-owner-batch-review-questions` | human_review_support | `/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-local-worker-2026-06-13/owner-batch-review-questions.private.md` |
+| 9 | `kosmo-owner-session-safe-next-tasks` | human_review_support | `/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-local-worker-2026-06-13/owner-session-safe-next-tasks.private.md` |
 
 ## Next Actions
 

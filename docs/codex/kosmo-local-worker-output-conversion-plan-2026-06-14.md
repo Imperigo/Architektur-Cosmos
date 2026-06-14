@@ -1,12 +1,12 @@
 # Kosmo Local Worker Output Conversion Plan
 
-Generated: 2026-06-14T07:48:25.955Z
+Generated: 2026-06-14T13:51:31.096Z
 Status: `local_worker_output_conversion_plan_review_only`
 
 ## Summary
 
-- Tasks total: 8
-- Eligible for manual metadata review: 8
+- Tasks total: 9
+- Eligible for manual metadata review: 9
 - Repo conversion allowed now: 0
 - High-risk hits: 0
 - Boundary guard passed: yes
@@ -22,9 +22,10 @@ Status: `local_worker_output_conversion_plan_review_only`
 | 3 | `kosmo-book-library-mount-questions` | `book-library-mount-questions.private.md` | present/not_json/0 risk | eligible_for_manual_metadata_review | no |
 | 4 | `kosmo-asset-seed-candidates` | `asset-seed-candidates.private.json` | present/valid/0 risk | eligible_for_manual_metadata_review | no |
 | 5 | `kosmo-public-source-link-synthesis` | `public-source-link-synthesis.private.json` | present/valid/0 risk | eligible_for_manual_metadata_review | no |
-| 6 | `kosmo-human-decision-queue-triage` | `human-decision-queue-triage.private.md` | present/not_json/0 risk | eligible_for_manual_metadata_review | no |
-| 7 | `kosmo-owner-batch-review-questions` | `owner-batch-review-questions.private.md` | present/not_json/0 risk | eligible_for_manual_metadata_review | no |
-| 8 | `kosmo-owner-session-safe-next-tasks` | `owner-session-safe-next-tasks.private.md` | present/not_json/0 risk | eligible_for_manual_metadata_review | no |
+| 6 | `kosmo-asset-source-candidate-triage` | `asset-source-candidate-triage.private.json` | present/valid/0 risk | eligible_for_manual_metadata_review | no |
+| 7 | `kosmo-human-decision-queue-triage` | `human-decision-queue-triage.private.md` | present/not_json/0 risk | eligible_for_manual_metadata_review | no |
+| 8 | `kosmo-owner-batch-review-questions` | `owner-batch-review-questions.private.md` | present/not_json/0 risk | eligible_for_manual_metadata_review | no |
+| 9 | `kosmo-owner-session-safe-next-tasks` | `owner-session-safe-next-tasks.private.md` | present/not_json/0 risk | eligible_for_manual_metadata_review | no |
 
 ## Next Actions
 

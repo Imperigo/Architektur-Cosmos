@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "created_at": "2026-06-14T09:08:39.833Z",
+  "created_at": "2026-06-14T13:51:30.315Z",
   "status": "ready_for_local_review",
   "title": "Kosmo Local Worker Task Pack 2026-06-14",
   "target_worker": "kosmo-odysseus-local-llm",
@@ -65,7 +65,8 @@
     "55": "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-full-review.generated.json",
     "private_metadata_inventory_runner": "data/kosmo-private-metadata-inventory-runner-2026-06-14.json",
     "private_metadata_inventory_fixture_smoke": "data/kosmo-private-metadata-inventory-fixture-smoke-2026-06-14.json",
-    "private_metadata_inventory_check": "data/kosmo-private-metadata-inventory-check-2026-06-14.json"
+    "private_metadata_inventory_check": "data/kosmo-private-metadata-inventory-check-2026-06-14.json",
+    "kosmoasset_source_candidate_map": "data/kosmoasset-source-candidate-map-2026-06-14.json"
   },
   "private_context_paths": [
     "/mnt/data/ArchitekturKosmos/KosmoZentrale/sources/private-extracts/architecturekosmos-private-project-sources-2026-06-13/architecture-cosmos-vision-document.md",
@@ -231,8 +232,35 @@
       ]
     },
     {
-      "task_id": "kosmo-human-decision-queue-triage",
+      "task_id": "kosmo-asset-source-candidate-triage",
       "priority": 6,
+      "lane": "kosmoasset",
+      "input_refs": [
+        "data/kosmoasset-source-candidate-map-2026-06-14.json",
+        "docs/codex/kosmoasset-source-candidate-map-2026-06-14.md",
+        "data/kosmo-source-root-selection-brief-2026-06-14.json",
+        "docs/codex/kosmo-source-root-selection-brief-2026-06-14.md",
+        "data/kosmo-data-lane-command-router-2026-06-14.json",
+        "data/kosmo-worker-boundary-pack-check-2026-06-14.json"
+      ],
+      "output_path": "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-local-worker-2026-06-13/asset-source-candidate-triage.private.json",
+      "objective": "Classify the review-only KosmoAsset source candidate map into owner-safe lanes and propose the next metadata-only local worker actions without reading private source folders.",
+      "acceptance": [
+        "Uses only the provided JSON/Markdown reports as inputs.",
+        "Keeps every candidate review-only with asset_use_allowed_now=false unless owner confirmation and rights review are explicitly present.",
+        "Separates material_texture_library, project_asset_library, workflow_mirror_or_codex_context and blocked/unknown candidates.",
+        "Recommends no OCR, extraction, copying, public export, Git push or cloud write for private assets."
+      ],
+      "forbidden_actions": [
+        "Do not open or scan the candidate paths under /mnt/archiv or /mnt/data.",
+        "Do not copy, OCR, vectorize or extract private files.",
+        "Do not set public-ready or rights-cleared flags.",
+        "Do not run Git or cloud writes."
+      ]
+    },
+    {
+      "task_id": "kosmo-human-decision-queue-triage",
+      "priority": 7,
       "lane": "human_review_support",
       "input_refs": [
         "data/kosmodata-lane-sweep-2026-06-14.json",
@@ -258,7 +286,7 @@
     },
     {
       "task_id": "kosmo-owner-batch-review-questions",
-      "priority": 7,
+      "priority": 8,
       "lane": "human_review_support",
       "input_refs": [
         "data/kosmo-human-decision-owner-batches-2026-06-14.json",
@@ -280,7 +308,7 @@
     },
     {
       "task_id": "kosmo-owner-session-safe-next-tasks",
-      "priority": 8,
+      "priority": 9,
       "lane": "human_review_support",
       "input_refs": [
         "data/kosmo-owner-review-session-brief-2026-06-14.json",
@@ -314,7 +342,8 @@
       "public-source-link-synthesis.private.json",
       "human-decision-queue-triage.private.md",
       "owner-batch-review-questions.private.md",
-      "owner-session-safe-next-tasks.private.md"
+      "owner-session-safe-next-tasks.private.md",
+      "asset-source-candidate-triage.private.json"
     ],
     "reviewers": [
       "codex-central-overseer",
@@ -339,9 +368,10 @@
     "public_ready_after_refresh": 0
   },
   "summary": {
-    "tasks": 8,
-    "updated_refs": 79,
+    "tasks": 9,
+    "updated_refs": 87,
     "metadata_inventory_guard_refs": 4,
+    "asset_source_candidate_refs": 6,
     "reused_existing_output_paths": true,
     "public_ready_after_refresh": 0
   }

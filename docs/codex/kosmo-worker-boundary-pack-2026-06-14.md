@@ -1,6 +1,6 @@
 # Kosmo Worker Boundary Pack
 
-Generated: 2026-06-14T08:58:29.797Z
+Generated: 2026-06-14T13:51:28.690Z
 Status: `worker_boundary_pack_review_only_locked`
 
 ## Hard State
@@ -10,7 +10,7 @@ Status: `worker_boundary_pack_review_only_locked`
 - Source-root activation: source_root_activation_waiting_for_owner_storage_action
 - Source-root activation ready: no
 - Source-root activation safe/blocked commands: 13/4
-- Source-root candidates/probable/mirrors: 722/0/64
+- Source-root candidates/probable/mirrors: 947/0/64
 - OneDrive marker/leaf/missing: 59/58/58
 - Selected root exists: no
 - Private diagnostic allowed: no
@@ -76,6 +76,9 @@ Blocked tasks:
 - `npm run kosmo:human-decision-owner-batches`
 - `npm run kosmo:source-root-blocker-refresh`
 - `npm run kosmo:source-root-unlock-runbook`
+- `npm run kosmo:source-root-owner-action-card`
+- `npm run kosmo:asset-source-candidate-map`
+- `npm run kosmo:orbit-status-bridge`
 - `npm run kosmo:local-worker-launch-queue`
 - `npm run kosmo:local-worker-output-conversion-plan`
 - `npm run kosmo:owner-decision-session-check`

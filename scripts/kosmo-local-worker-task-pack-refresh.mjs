@@ -41,7 +41,15 @@ function refreshTaskPack(template) {
     `data/kosmo-private-metadata-inventory-check-${dateStamp}.json`,
     `docs/codex/kosmo-private-metadata-inventory-check-${dateStamp}.md`
   ].filter((ref) => existsSync(resolve(root, ref)));
-  const tasks = (template.tasks || []).map((task) => {
+  const assetSourceCandidateRefs = [
+    `data/kosmoasset-source-candidate-map-${dateStamp}.json`,
+    `docs/codex/kosmoasset-source-candidate-map-${dateStamp}.md`,
+    `data/kosmo-source-root-selection-brief-${dateStamp}.json`,
+    `docs/codex/kosmo-source-root-selection-brief-${dateStamp}.md`,
+    `data/kosmo-data-lane-command-router-${dateStamp}.json`,
+    `data/kosmo-worker-boundary-pack-check-${dateStamp}.json`
+  ].filter((ref) => existsSync(resolve(root, ref)));
+  const refreshedTemplateTasks = (template.tasks || []).map((task) => {
     const inputRefs = ensureRefs((task.input_refs || []).map((ref) => refreshDatedRef(ref)), metadataInventoryRefs);
     return {
       ...task,
@@ -49,6 +57,7 @@ function refreshTaskPack(template) {
       output_path: args.newOutputs ? String(task.output_path || '').replaceAll(templateDate, dateStamp) : task.output_path
     };
   });
+  const tasks = ensureAssetSourceTriageTask(refreshedTemplateTasks, assetSourceCandidateRefs);
   const updatedRefs = countUpdatedRefs(template.tasks || [], tasks);
   return {
     ...template,
@@ -60,7 +69,8 @@ function refreshTaskPack(template) {
       ...refreshRefsObject(template.status_refs || {}),
       private_metadata_inventory_runner: `data/kosmo-private-metadata-inventory-runner-${dateStamp}.json`,
       private_metadata_inventory_fixture_smoke: `data/kosmo-private-metadata-inventory-fixture-smoke-${dateStamp}.json`,
-      private_metadata_inventory_check: `data/kosmo-private-metadata-inventory-check-${dateStamp}.json`
+      private_metadata_inventory_check: `data/kosmo-private-metadata-inventory-check-${dateStamp}.json`,
+      kosmoasset_source_candidate_map: `data/kosmoasset-source-candidate-map-${dateStamp}.json`
     },
     metadata_inventory_guard_refs: metadataInventoryRefs,
     output_root: args.newOutputs
@@ -80,11 +90,61 @@ function refreshTaskPack(template) {
       tasks: tasks.length,
       updated_refs: updatedRefs,
       metadata_inventory_guard_refs: metadataInventoryRefs.length,
+      asset_source_candidate_refs: assetSourceCandidateRefs.length,
       reused_existing_output_paths: !args.newOutputs,
       public_ready_after_refresh: 0
     },
-    tasks
+    tasks,
+    handoff_back_to_overseers: {
+      ...(template.handoff_back_to_overseers || {}),
+      required_files: ensureRefs(
+        template.handoff_back_to_overseers?.required_files || [],
+        ['asset-source-candidate-triage.private.json']
+      )
+    }
   };
+}
+
+function ensureAssetSourceTriageTask(tasks, assetSourceCandidateRefs) {
+  const outputRoot = args.newOutputs
+    ? '/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-local-worker-2026-06-14'
+    : '/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-local-worker-2026-06-13';
+  const task = {
+    task_id: 'kosmo-asset-source-candidate-triage',
+    priority: 5,
+    lane: 'kosmoasset',
+    input_refs: ensureRefs(assetSourceCandidateRefs, [
+      `docs/codex/kosmoasset-source-candidate-map-${dateStamp}.md`,
+      `data/kosmo-data-lane-command-router-${dateStamp}.json`,
+      `data/kosmo-worker-boundary-pack-check-${dateStamp}.json`
+    ]),
+    output_path: `${outputRoot}/asset-source-candidate-triage.private.json`,
+    objective: 'Classify the review-only KosmoAsset source candidate map into owner-safe lanes and propose the next metadata-only local worker actions without reading private source folders.',
+    acceptance: [
+      'Uses only the provided JSON/Markdown reports as inputs.',
+      'Keeps every candidate review-only with asset_use_allowed_now=false unless owner confirmation and rights review are explicitly present.',
+      'Separates material_texture_library, project_asset_library, workflow_mirror_or_codex_context and blocked/unknown candidates.',
+      'Recommends no OCR, extraction, copying, public export, Git push or cloud write for private assets.'
+    ],
+    forbidden_actions: [
+      'Do not open or scan the candidate paths under /mnt/archiv or /mnt/data.',
+      'Do not copy, OCR, vectorize or extract private files.',
+      'Do not set public-ready or rights-cleared flags.',
+      'Do not run Git or cloud writes.'
+    ]
+  };
+
+  const existingIndex = tasks.findIndex((item) => item.task_id === task.task_id);
+  const withUpdated = existingIndex >= 0
+    ? tasks.map((item, index) => (index === existingIndex ? { ...item, ...task } : item))
+    : [...tasks, task];
+
+  return withUpdated
+    .sort((left, right) => Number(left.priority || 999) - Number(right.priority || 999))
+    .map((item, index) => ({
+      ...item,
+      priority: index + 1
+    }));
 }
 
 function refreshRefsObject(refs) {

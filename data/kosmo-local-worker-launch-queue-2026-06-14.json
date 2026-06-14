@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T09:08:40.311Z",
+  "generated_at": "2026-06-14T13:51:30.828Z",
   "status": "local_worker_launch_queue_idle_outputs_present",
   "policy": {
     "metadata_only": true,
@@ -21,8 +21,8 @@
   ],
   "summary": {
     "target_worker": "kosmo-odysseus-local-llm",
-    "tasks_total": 8,
-    "tasks_present": 8,
+    "tasks_total": 9,
+    "tasks_present": 9,
     "tasks_missing": 0,
     "launchable_now": 0,
     "guard_passed": true,
@@ -134,8 +134,28 @@
       ]
     },
     {
-      "task_id": "kosmo-human-decision-queue-triage",
+      "task_id": "kosmo-asset-source-candidate-triage",
       "priority": 6,
+      "lane": "kosmoasset",
+      "output_filename": "asset-source-candidate-triage.private.json",
+      "output_status": "present",
+      "output_bytes": 9272,
+      "launch_decision": "do_not_launch_output_present",
+      "allowed_mode": "metadata_review_only",
+      "guard_state": {
+        "worker_boundary_guard_passed": true,
+        "private_metadata_inventory_guard_passed": true
+      },
+      "forbidden_side_effects": [
+        "private reads/OCR outside provided refs",
+        "Git commands",
+        "cloud/R2/D1 writes",
+        "public-ready flags"
+      ]
+    },
+    {
+      "task_id": "kosmo-human-decision-queue-triage",
+      "priority": 7,
       "lane": "human_review_support",
       "output_filename": "human-decision-queue-triage.private.md",
       "output_status": "present",
@@ -155,7 +175,7 @@
     },
     {
       "task_id": "kosmo-owner-batch-review-questions",
-      "priority": 7,
+      "priority": 8,
       "lane": "human_review_support",
       "output_filename": "owner-batch-review-questions.private.md",
       "output_status": "present",
@@ -175,7 +195,7 @@
     },
     {
       "task_id": "kosmo-owner-session-safe-next-tasks",
-      "priority": 8,
+      "priority": 9,
       "lane": "human_review_support",
       "output_filename": "owner-session-safe-next-tasks.private.md",
       "output_status": "present",

@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board Check
 
-Generated: 2026-06-14T13:41:00.317Z
+Generated: 2026-06-14T13:50:43.119Z
 Status: `overseer_sync_board_guard_passed`
 
 ## Summary
@@ -9,7 +9,7 @@ Status: `overseer_sync_board_guard_passed`
 - Data lane steps: 24/24
 - Latest handoffs: 8
 - Latest handoff mirror missing files: 0
-- Local worker outputs: 8/8
+- Local worker outputs: 9/9
 - Failures: 0
 - Warnings: 0
 - Public-ready after guard: 0
@@ -30,7 +30,7 @@ Status: `overseer_sync_board_guard_passed`
 - passed: `session_brief_guard_passed` - Session brief guard must pass.
 - passed: `session_brief_failures_zero` - Session brief guard failures must be 0.
 - passed: `local_worker_review_only` - Local worker review must be review-only present.
-- passed: `local_worker_outputs_8` - Local worker outputs must be 8/8.
+- passed: `local_worker_outputs_complete` - Local worker outputs must report all required outputs present.
 - passed: `local_worker_risk_zero` - Local worker high-risk hits must be 0.
 - passed: `latest_handoff_count` - Board must track eight latest handoffs.
 - passed: `latest_mirror_missing_zero` - Latest handoffs must have 0 mirror-missing files.
@@ -42,6 +42,8 @@ Status: `overseer_sync_board_guard_passed`
 - passed: `inbox_has_files:/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox` - Handoff inbox must contain files: /mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox
 - passed: `latest_handoffs_array_count` - Latest handoff array must contain eight items.
 - passed: `latest_handoff_includes_115` - Latest handoffs must include synergiebericht 115 or newer.
+- passed: `handoff_mirrored:2026-06-14-codex-synergiebericht-144-local-worker-asset-source-triage.md` - 2026-06-14-codex-synergiebericht-144-local-worker-asset-source-triage.md must be mirrored in both inboxes.
+- passed: `handoff_title:2026-06-14-codex-synergiebericht-144-local-worker-asset-source-triage.md` - 2026-06-14-codex-synergiebericht-144-local-worker-asset-source-triage.md must include a title.
 - passed: `handoff_mirrored:2026-06-14-codex-synergiebericht-143-kosmoorbit-day-batch-orbit-bridge-status.md` - 2026-06-14-codex-synergiebericht-143-kosmoorbit-day-batch-orbit-bridge-status.md must be mirrored in both inboxes.
 - passed: `handoff_title:2026-06-14-codex-synergiebericht-143-kosmoorbit-day-batch-orbit-bridge-status.md` - 2026-06-14-codex-synergiebericht-143-kosmoorbit-day-batch-orbit-bridge-status.md must include a title.
 - passed: `handoff_mirrored:2026-06-14-codex-synergiebericht-142-kosmoorbit-data-panel-status.md` - 2026-06-14-codex-synergiebericht-142-kosmoorbit-data-panel-status.md must be mirrored in both inboxes.
@@ -56,8 +58,6 @@ Status: `overseer_sync_board_guard_passed`
 - passed: `handoff_title:2026-06-14-codex-synergiebericht-138-source-root-candidate-roles.md` - 2026-06-14-codex-synergiebericht-138-source-root-candidate-roles.md must include a title.
 - passed: `handoff_mirrored:2026-06-14-codex-synergiebericht-137-storage-topology.md` - 2026-06-14-codex-synergiebericht-137-storage-topology.md must be mirrored in both inboxes.
 - passed: `handoff_title:2026-06-14-codex-synergiebericht-137-storage-topology.md` - 2026-06-14-codex-synergiebericht-137-storage-topology.md must include a title.
-- passed: `handoff_mirrored:2026-06-14-codex-synergiebericht-136-source-root-owner-action-card.md` - 2026-06-14-codex-synergiebericht-136-source-root-owner-action-card.md must be mirrored in both inboxes.
-- passed: `handoff_title:2026-06-14-codex-synergiebericht-136-source-root-owner-action-card.md` - 2026-06-14-codex-synergiebericht-136-source-root-owner-action-card.md must include a title.
 - passed: `source_root_blocked` - Source-root blocker must remain blocked.
 - passed: `private_inventory_blocked` - Private inventory blocker must remain blocked.
 - passed: `owner_answers_blocked` - Owner answers blocker must remain blocked.

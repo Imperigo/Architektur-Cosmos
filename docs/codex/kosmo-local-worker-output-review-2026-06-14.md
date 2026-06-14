@@ -1,12 +1,12 @@
 # Kosmo Local Worker Output Review
 
-Generated: 2026-06-14T09:08:40.071Z
+Generated: 2026-06-14T13:51:30.592Z
 Status: `local_worker_outputs_present_review_only`
 
 ## Summary
 
-- Required outputs: 8
-- Present outputs: 8
+- Required outputs: 9
+- Present outputs: 9
 - Missing outputs: 0
 - Invalid JSON outputs: 0
 - High-risk hits: 0
@@ -24,6 +24,7 @@ Status: `local_worker_outputs_present_review_only`
 | `human-decision-queue-triage.private.md` | present | 4396 | not_json | - |
 | `owner-batch-review-questions.private.md` | present | 4020 | not_json | - |
 | `owner-session-safe-next-tasks.private.md` | present | 2091 | not_json | - |
+| `asset-source-candidate-triage.private.json` | present | 9272 | valid | - |
 
 ## Next Actions
 
