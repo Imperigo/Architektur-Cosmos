@@ -12,6 +12,7 @@ const outputMd = resolve(root, args.markdown || `docs/codex/kosmo-orbit-status-b
 const refs = {
   dayBatch: `data/kosmo-day-batch-loop-${dateStamp}.json`,
   sourceRoot: `data/kosmo-source-root-blocker-refresh-${dateStamp}.json`,
+  localModelInventory: `data/kosmo-local-model-inventory-${dateStamp}.json`,
   sweep: `data/kosmodata-lane-sweep-${dateStamp}.json`,
   workerBoundary: `data/kosmo-worker-boundary-pack-check-${dateStamp}.json`,
   ownerPacket: `data/kosmo-owner-review-packet-check-${dateStamp}.json`,
@@ -46,6 +47,7 @@ async function main() {
 function buildBridge(reports) {
   const daySummary = reports.dayBatch?.summary || {};
   const sourceSummary = reports.sourceRoot?.summary || {};
+  const modelSummary = reports.localModelInventory?.summary || {};
   const sweepSummary = reports.sweep?.summary || {};
   const assetBridgeSummary = reports.assetBridge?.summary || {};
   const innovationSummary = reports.innovationSmoke?.summary || {};
@@ -69,6 +71,15 @@ function buildBridge(reports) {
       owner_action_required: sourceSummary.private_diagnostic_allowed !== true,
       route_hint: 'Owner/KosmoOverseer must record true private source root',
       source_ref: refs.sourceRoot
+    },
+    {
+      id: 'local-models',
+      title: 'Local Models',
+      status: reports.localModelInventory?.status === 'local_model_inventory_ready_review_only' ? 'review_only_ready' : 'needs_review',
+      signal: `${modelSummary.ready_roles ?? 0}/${modelSummary.required_roles ?? 0} roles, ${modelSummary.ollama_model_count ?? 0} Ollama models, ${modelSummary.total_visible_ollama_size_gb ?? 0} GB`,
+      owner_action_required: false,
+      route_hint: 'Ollama/Odysseus local worker readiness',
+      source_ref: refs.localModelInventory
     },
     {
       id: 'pilot-references',
@@ -149,6 +160,7 @@ function buildBridge(reports) {
       owner_action_cards: ownerActionCards.length,
       source_root_blocked: sourceSummary.private_diagnostic_allowed !== true,
       day_batch_status: reports.dayBatch?.status || null,
+      local_model_inventory_status: reports.localModelInventory?.status || null,
       asset_bridge_status: reports.assetBridge?.status || null,
       innovation_smoke_status: reports.innovationSmoke?.status || null,
       public_ready_after_bridge: 0
@@ -156,6 +168,7 @@ function buildBridge(reports) {
     orbit_cards: cards,
     recommended_orbit_sections: [
       'status_strip',
+      'local_models_card',
       'source_root_blocker_card',
       'pilot_reference_cards',
       'asset_reference_bridge_card',
@@ -193,6 +206,7 @@ function renderMarkdown(bridge) {
   lines.push(`- Owner action cards: ${bridge.summary.owner_action_cards}`);
   lines.push(`- Source root blocked: ${bridge.summary.source_root_blocked ? 'yes' : 'no'}`);
   lines.push(`- Day batch: ${bridge.summary.day_batch_status}`);
+  lines.push(`- Local models: ${bridge.summary.local_model_inventory_status}`);
   lines.push(`- Asset bridge: ${bridge.summary.asset_bridge_status}`);
   lines.push(`- Innovation smoke: ${bridge.summary.innovation_smoke_status}`);
   lines.push(`- Public-ready after bridge: ${bridge.summary.public_ready_after_bridge}`);
