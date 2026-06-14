@@ -2,7 +2,7 @@
 
 import { existsSync, readFileSync } from 'node:fs';
 import { mkdir, writeFile } from 'node:fs/promises';
-import { dirname, relative, resolve } from 'node:path';
+import { relative, resolve } from 'node:path';
 
 const root = process.cwd();
 const registryPath = resolve(root, readArg('--registry') ?? 'data/kosmoreferences-registry.json');

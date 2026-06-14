@@ -148,6 +148,8 @@
     "kosmo:sogn-source-root-brief": "node scripts/kosmo-sogn-source-root-decision-brief.mjs",
     "kosmo:references-status-card": "node scripts/kosmo-reference-status-card.mjs",
     "kosmo:references-nightly-gate": "node scripts/kosmo-references-nightly-gate.mjs",
+    "kosmo:innovation-lane-plan": "node scripts/kosmo-innovation-lane-plan.mjs",
+    "kosmo:day-batch-loop": "node scripts/kosmo-day-batch-loop.mjs",
     "kosmo:data-lane-sweep": "node scripts/kosmo-data-lane-sweep.mjs",
     "kosmo:data-lane-command-router": "node scripts/kosmo-data-lane-command-router.mjs",
     "kosmo:worker-boundary-pack": "node scripts/kosmo-worker-boundary-pack.mjs",
