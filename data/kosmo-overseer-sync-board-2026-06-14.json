@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T08:35:19.501Z",
+  "generated_at": "2026-06-14T08:44:12.577Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 128
+      "files": 129
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 163
+      "files": 164
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-14-codex-synergiebericht-130-source-root-activation-preflight.md",
+      "title": "Codex Synergiebericht 130 - Source Root Activation Preflight",
+      "mirrored_inboxes": 2,
+      "bytes": 2585,
+      "modified_at": "2026-06-14T08:44:06.257Z"
+    },
     {
       "filename": "2026-06-14-codex-synergiebericht-129-local-worker-smoke-refresh.md",
       "title": "Codex Synergiebericht 129 - Local Worker Smoke Refresh",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1236,
       "modified_at": "2026-06-13T22:05:25.135Z"
-    },
-    {
-      "filename": "2026-06-14-codex-synergiebericht-122-local-worker-launch-queue.md",
-      "title": "Codex Synergiebericht 122 - Local Worker Launch Queue",
-      "mirrored_inboxes": 2,
-      "bytes": 1184,
-      "modified_at": "2026-06-13T22:03:08.181Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 122-129 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 123-130 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."
