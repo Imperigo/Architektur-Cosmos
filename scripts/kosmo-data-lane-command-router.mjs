@@ -58,6 +58,7 @@ async function main() {
         allowed_now: [
           'summarize existing repo reports in own words',
           'prepare gap maps from provided JSON/Markdown',
+          'classify KosmoAsset/source-root candidates from provided review-only reports',
           'draft metadata-only private inventory rows using the output template after owner-approved source-root flow',
           'run no Git, cloud, public promotion or source-copy actions'
         ],
@@ -105,6 +106,9 @@ async function main() {
       'npm run kosmo:human-decision-owner-batches',
       'npm run kosmo:source-root-blocker-refresh',
       'npm run kosmo:source-root-unlock-runbook',
+      'npm run kosmo:source-root-owner-action-card',
+      'npm run kosmo:asset-source-candidate-map',
+      'npm run kosmo:orbit-status-bridge',
       'npm run kosmo:local-worker-launch-queue',
       'npm run kosmo:local-worker-output-conversion-plan',
       'npm run kosmo:owner-decision-session-check',
