@@ -1,12 +1,12 @@
 # Kosmo Source-Root Activation Preflight
 
-Generated: 2026-06-14T08:53:47.035Z
+Generated: 2026-06-14T08:58:30.265Z
 Status: `source_root_activation_waiting_for_owner_storage_action`
 
 ## Summary
 
 - Data mount visible: yes
-- Data mount available GiB: 3275.1
+- Data mount available GiB: 3275
 - Archive mount visible: no
 - OneDrive marker files: 59
 - Source-root decision: passed_pending_owner_input

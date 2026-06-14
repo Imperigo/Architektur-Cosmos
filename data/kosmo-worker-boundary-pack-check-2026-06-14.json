@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T08:53:46.782Z",
+  "generated_at": "2026-06-14T08:58:30.034Z",
   "status": "worker_boundary_pack_guard_passed",
   "policy": {
     "records_decisions": false,

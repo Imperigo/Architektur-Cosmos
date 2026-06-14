@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T08:53:52.115Z",
+  "generated_at": "2026-06-14T08:58:35.665Z",
   "status": "day_batch_loop_passed_review_only",
   "policy": {
     "review_only": true,
@@ -13,10 +13,10 @@
     "note": "This loop runs review-only guards and handoff generators. It does not select source roots, read private source contents, promote assets or publish files."
   },
   "summary": {
-    "duration_ms": 47928,
-    "steps": 35,
-    "required_steps": 33,
-    "required_passed_steps": 33,
+    "duration_ms": 44364,
+    "steps": 36,
+    "required_steps": 34,
+    "required_passed_steps": 34,
     "allowed_failures": 0,
     "skipped_steps": 1,
     "core_sweep_status": "kosmodata_lane_sweep_review_only_passed",
@@ -28,6 +28,7 @@
     "source_root_blocker_status": "source_root_blocker_still_active",
     "source_root_activation_status": "source_root_activation_waiting_for_owner_storage_action",
     "private_metadata_inventory_status": "private_metadata_inventory_blocked_until_activation",
+    "private_metadata_inventory_fixture_status": "private_metadata_inventory_fixture_passed",
     "private_diagnostic_allowed": false,
     "night_loop_checkpoint_status": "night_loop_guarded_ready",
     "public_ready_after_loop": 0
@@ -41,6 +42,7 @@
     "data/kosmo-source-root-blocker-refresh-2026-06-14.json",
     "data/kosmo-source-root-activation-preflight-2026-06-14.json",
     "data/kosmo-private-metadata-inventory-runner-2026-06-14.json",
+    "data/kosmo-private-metadata-inventory-fixture-smoke-2026-06-14.json",
     "data/kosmo-night-loop-checkpoint-2026-06-14.json",
     "data/kosmo-innovation-smoke-2026-06-14.json",
     "data/kosmo-orbit-status-bridge-2026-06-14.json"
@@ -49,7 +51,7 @@
     {
       "id": "required_steps_passed",
       "status": "passed",
-      "evidence": "33/33"
+      "evidence": "34/34"
     },
     {
       "id": "core_sweep_review_only",
@@ -92,6 +94,11 @@
       "evidence": "private_metadata_inventory_blocked_until_activation"
     },
     {
+      "id": "private_metadata_inventory_fixture_smoke_passed",
+      "status": "passed",
+      "evidence": "private_metadata_inventory_fixture_passed, matches=6"
+    },
+    {
       "id": "public_ready_zero",
       "status": "passed",
       "evidence": "public_ready=0"
@@ -108,8 +115,8 @@
       "label": "OneDrive Sync Errors",
       "command": "npm run kosmo:onedrive-sync-errors",
       "required": true,
-      "started_at": "2026-06-14T08:53:04.187Z",
-      "duration_ms": 325,
+      "started_at": "2026-06-14T08:57:51.301Z",
+      "duration_ms": 356,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:onedrive-sync-errors\n> node scripts/kosmo-onedrive-sync-error-summary.mjs\n\nKosmo OneDrive sync error summary\nStatus: onedrive_sync_errors_visible\nMarker files: 59\nLeaf markers: 58\nAggregate missing items: 58\nWrote: docs/codex/kosmo-onedrive-sync-error-summary-2026-06-14.md"
@@ -119,8 +126,8 @@
       "label": "Storage Mount Snapshot",
       "command": "npm run kosmo:storage-mount-snapshot",
       "required": true,
-      "started_at": "2026-06-14T08:53:04.512Z",
-      "duration_ms": 244,
+      "started_at": "2026-06-14T08:57:51.657Z",
+      "duration_ms": 246,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:storage-mount-snapshot\n> node scripts/kosmo-storage-mount-snapshot.mjs\n\nKosmo storage mount snapshot\nStatus: storage_snapshot_data_mount_visible_archive_missing\nData mount: visible\nArchive mount: not-own-mount\nProject root exists: true\nWrote: docs/codex/kosmo-storage-mount-snapshot-2026-06-14.md"
@@ -130,8 +137,8 @@
       "label": "Source Root Locator",
       "command": "npm run kosmo:source-root-locator",
       "required": true,
-      "started_at": "2026-06-14T08:53:04.756Z",
-      "duration_ms": 372,
+      "started_at": "2026-06-14T08:57:51.904Z",
+      "duration_ms": 371,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:source-root-locator\n> node scripts/kosmo-source-root-locator.mjs\n\nKosmo source-root locator\nStatus: source_root_candidates_need_owner_selection\nCandidates: 722\nProbable libraries: 0\nWorkflow mirrors: 64\nWrote: docs/codex/kosmo-source-root-locator-2026-06-14.md"
@@ -141,8 +148,8 @@
       "label": "Source Root Selection Brief",
       "command": "npm run kosmo:source-root-selection-brief",
       "required": true,
-      "started_at": "2026-06-14T08:53:05.128Z",
-      "duration_ms": 230,
+      "started_at": "2026-06-14T08:57:52.275Z",
+      "duration_ms": 242,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:source-root-selection-brief\n> node scripts/kosmo-source-root-selection-brief.mjs\n\nKosmo source-root selection brief\nStatus: source_root_owner_selection_needed\nOptions: 10\nWrote: docs/codex/kosmo-source-root-selection-brief-2026-06-14.md"
@@ -152,7 +159,7 @@
       "label": "Source Root Decision Session Create",
       "command": "npm run kosmo:source-root-decision-session-create",
       "required": false,
-      "started_at": "2026-06-14T08:53:05.358Z",
+      "started_at": "2026-06-14T08:57:52.517Z",
       "duration_ms": 0,
       "exit_code": 0,
       "status": "skipped",
@@ -163,8 +170,8 @@
       "label": "Source Root Decision Session Check",
       "command": "npm run kosmo:source-root-decision-session-check",
       "required": true,
-      "started_at": "2026-06-14T08:53:05.358Z",
-      "duration_ms": 238,
+      "started_at": "2026-06-14T08:57:52.517Z",
+      "duration_ms": 234,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:source-root-decision-session-check\n> node scripts/kosmo-source-root-decision-session-check.mjs\n\nKosmo source-root decision session check\nSession: examples/kosmo-references/provenance/source-root-decision-session-2026-06-14.json\nStatus: passed_pending_owner_input\nSelected decision: pending\nSelected root exists: false\nPrivate diagnostic allowed: false\nPublic-ready after session: 0\nFailures: 0\nWarnings: 0\nWrote: docs/codex/kosmo-source-root-decision-session-check-2026-06-14.md"
@@ -174,8 +181,8 @@
       "label": "Private Library Diagnostic Metadata",
       "command": "npm run kosmo:private-library-diagnostic -- --out data/kosmoreferences-private-library-diagnostic-2026-06-14.json --markdown docs/codex/kosmoreferences-private-library-diagnostic-2026-06-14.md",
       "required": true,
-      "started_at": "2026-06-14T08:53:05.596Z",
-      "duration_ms": 235,
+      "started_at": "2026-06-14T08:57:52.751Z",
+      "duration_ms": 244,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:private-library-diagnostic\n> node scripts/kosmo-private-library-diagnostic.mjs --out data/kosmoreferences-private-library-diagnostic-2026-06-14.json --markdown docs/codex/kosmoreferences-private-library-diagnostic-2026-06-14.md\n\nKosmoReferences private library diagnostic\nStatus: small_workflow_mirror_visible\nRoots: 5\nExisting roots: 5\nOwn mount roots: 0\nBook-like files: 39\nTarget filename matches: 0\nWrote: docs/codex/kosmoreferences-private-library-diagnostic-2026-06-14.md"
@@ -185,8 +192,8 @@
       "label": "Source Root Blocker Refresh",
       "command": "npm run kosmo:source-root-blocker-refresh",
       "required": true,
-      "started_at": "2026-06-14T08:53:05.831Z",
-      "duration_ms": 236,
+      "started_at": "2026-06-14T08:57:52.995Z",
+      "duration_ms": 243,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:source-root-blocker-refresh\n> node scripts/kosmo-source-root-blocker-refresh.mjs\n\nKosmo source-root blocker refresh\nStatus: source_root_blocker_still_active\nOneDrive markers: 59\nProbable libraries: 0\nPrivate diagnostic allowed: false\nWrote: docs/codex/kosmo-source-root-blocker-refresh-2026-06-14.md"
@@ -196,8 +203,8 @@
       "label": "Local Model Inventory",
       "command": "npm run kosmo:local-model-inventory",
       "required": true,
-      "started_at": "2026-06-14T08:53:06.067Z",
-      "duration_ms": 440,
+      "started_at": "2026-06-14T08:57:53.238Z",
+      "duration_ms": 435,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:local-model-inventory\n> node scripts/kosmo-local-model-inventory.mjs\n\nKosmo local model inventory\nStatus: local_model_inventory_ready_review_only\nOllama models: 8\nReady roles: 4/4\nWrote: docs/codex/kosmo-local-model-inventory-2026-06-14.md"
@@ -207,8 +214,8 @@
       "label": "Local Worker Task Pack Refresh",
       "command": "npm run kosmo:local-worker-task-pack-refresh",
       "required": true,
-      "started_at": "2026-06-14T08:53:06.507Z",
-      "duration_ms": 234,
+      "started_at": "2026-06-14T08:57:53.673Z",
+      "duration_ms": 240,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:local-worker-task-pack-refresh\n> node scripts/kosmo-local-worker-task-pack-refresh.mjs\n\nKosmo local worker task pack refresh\nStatus: ready_for_local_review\nTasks: 8\nUpdated refs: 47\nOutput paths reused: true\nWrote: docs/codex/kosmo-local-worker-task-pack-2026-06-14.md"
@@ -218,8 +225,8 @@
       "label": "Local Worker Output Review",
       "command": "npm run kosmo:local-worker-output-review",
       "required": true,
-      "started_at": "2026-06-14T08:53:06.741Z",
-      "duration_ms": 237,
+      "started_at": "2026-06-14T08:57:53.913Z",
+      "duration_ms": 246,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:local-worker-output-review\n> node scripts/kosmo-local-worker-output-review.mjs\n\nKosmo local worker output review\nStatus: local_worker_outputs_present_review_only\nRequired: 8\nPresent: 8\nMissing: 0\nHigh-risk hits: 0\nWrote: docs/codex/kosmo-local-worker-output-review-2026-06-14.md"
@@ -229,8 +236,8 @@
       "label": "Bootstrap Data Lane Sweep",
       "command": "npm run kosmo:data-lane-sweep",
       "required": false,
-      "started_at": "2026-06-14T08:53:06.978Z",
-      "duration_ms": 21329,
+      "started_at": "2026-06-14T08:57:54.159Z",
+      "duration_ms": 17164,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:data-lane-sweep\n> node scripts/kosmo-data-lane-sweep.mjs\n\nKosmoData lane sweep\nStatus: kosmodata_lane_sweep_review_only_passed\nSteps: 24/24 passed\nReferences: passed_review_only\nKosmoAsset: asset_full_review_ready_for_human_decisions\nWrote: docs/codex/kosmodata-lane-sweep-2026-06-14.md"
@@ -240,8 +247,8 @@
       "label": "Bootstrap Router",
       "command": "npm run kosmo:data-lane-command-router",
       "required": true,
-      "started_at": "2026-06-14T08:53:28.307Z",
-      "duration_ms": 241,
+      "started_at": "2026-06-14T08:58:11.323Z",
+      "duration_ms": 244,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:data-lane-command-router\n> node scripts/kosmo-data-lane-command-router.mjs\n\nKosmo data-lane command router\nStatus: worker_router_guarded_review_only\nData lane: 24/24\nPrivate diagnostic allowed: false\nPrivate inventory allowed: false\nWrote: docs/codex/kosmo-data-lane-command-router-2026-06-14.md"
@@ -251,8 +258,8 @@
       "label": "Core Data Lane Sweep",
       "command": "npm run kosmo:data-lane-sweep",
       "required": true,
-      "started_at": "2026-06-14T08:53:28.548Z",
-      "duration_ms": 15947,
+      "started_at": "2026-06-14T08:58:11.567Z",
+      "duration_ms": 16349,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:data-lane-sweep\n> node scripts/kosmo-data-lane-sweep.mjs\n\nKosmoData lane sweep\nStatus: kosmodata_lane_sweep_review_only_passed\nSteps: 24/24 passed\nReferences: passed_review_only\nKosmoAsset: asset_full_review_ready_for_human_decisions\nWrote: docs/codex/kosmodata-lane-sweep-2026-06-14.md"
@@ -262,8 +269,8 @@
       "label": "Pilot Evidence Matrix",
       "command": "npm run kosmo:pilot-evidence-matrix",
       "required": true,
-      "started_at": "2026-06-14T08:53:44.495Z",
-      "duration_ms": 238,
+      "started_at": "2026-06-14T08:58:27.916Z",
+      "duration_ms": 241,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:pilot-evidence-matrix\n> node scripts/kosmoreferences-pilot-evidence-matrix.mjs\n\nKosmoReferences pilot evidence matrix\nStatus: pilot_evidence_matrix_review_only\nPilots: 3\nGaps: 12\nData lane: 24/24\nWrote: docs/codex/kosmoreferences-pilot-evidence-matrix-2026-06-14.md"
@@ -273,8 +280,8 @@
       "label": "Private Source Inventory Plan",
       "command": "npm run kosmo:private-source-inventory-plan",
       "required": true,
-      "started_at": "2026-06-14T08:53:44.733Z",
-      "duration_ms": 240,
+      "started_at": "2026-06-14T08:58:28.157Z",
+      "duration_ms": 235,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:private-source-inventory-plan\n> node scripts/kosmo-private-source-inventory-plan.mjs\n\nKosmo private source inventory plan\nStatus: private_metadata_inventory_blocked\nPrivate diagnostic allowed: false\nPublic-ready after plan: 0\nWrote: docs/codex/kosmo-private-source-inventory-plan-2026-06-14.md"
@@ -284,8 +291,8 @@
       "label": "Private Inventory Output Template",
       "command": "npm run kosmo:private-inventory-output-template",
       "required": true,
-      "started_at": "2026-06-14T08:53:44.973Z",
-      "duration_ms": 264,
+      "started_at": "2026-06-14T08:58:28.392Z",
+      "duration_ms": 230,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:private-inventory-output-template\n> node scripts/kosmo-private-inventory-output-template.mjs\n\nKosmo private inventory output template\nStatus: private_inventory_template_only\nPilots: 3\nWrote: examples/kosmo-references/private-inventory/private-inventory-output-template-2026-06-14.json\nWrote: docs/codex/kosmo-private-inventory-output-template-2026-06-14.md"
@@ -295,8 +302,8 @@
       "label": "Private Inventory Output Check",
       "command": "npm run kosmo:private-inventory-output-check",
       "required": true,
-      "started_at": "2026-06-14T08:53:45.237Z",
-      "duration_ms": 283,
+      "started_at": "2026-06-14T08:58:28.622Z",
+      "duration_ms": 231,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:private-inventory-output-check\n> node scripts/kosmo-private-inventory-output-check.mjs\n\nKosmo private inventory output check\nInventory: examples/kosmo-references/private-inventory/private-inventory-output-template-2026-06-14.json\nStatus: private_inventory_output_contract_passed\nPilots: 3\nPublic-ready hits: 0\nForbidden field hits: 0\nLong string hits: 0\nFailures: 0\nWarnings: 0\nWrote: docs/codex/kosmo-private-inventory-output-check-2026-06-14.md"
@@ -306,8 +313,8 @@
       "label": "Pilot Package Check",
       "command": "npm run kosmo:pilot-package-check",
       "required": true,
-      "started_at": "2026-06-14T08:53:45.520Z",
-      "duration_ms": 272,
+      "started_at": "2026-06-14T08:58:28.853Z",
+      "duration_ms": 239,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:pilot-package-check\n> node scripts/kosmoreferences-pilot-package-check.mjs\n\nKosmoReferences pilot package check\nStatus: pilot_packages_review_only_complete\nPilots: 3/3\nFailures: 0\nWrote: docs/codex/kosmoreferences-pilot-package-check-2026-06-14.md"
@@ -317,8 +324,8 @@
       "label": "Asset Reference Bridge Check",
       "command": "npm run kosmo:asset-reference-bridge-check",
       "required": true,
-      "started_at": "2026-06-14T08:53:45.792Z",
-      "duration_ms": 258,
+      "started_at": "2026-06-14T08:58:29.092Z",
+      "duration_ms": 242,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:asset-reference-bridge-check\n> node scripts/kosmoasset-reference-bridge-check.mjs\n\nKosmoAsset reference bridge check\nStatus: kosmoasset_reference_bridge_review_only_passed\nPilot bridges: 3/3\nAssets: 6\nFailures: 0\nWrote: docs/codex/kosmoasset-reference-bridge-check-2026-06-14.md"
@@ -328,8 +335,8 @@
       "label": "Core Router",
       "command": "npm run kosmo:data-lane-command-router",
       "required": true,
-      "started_at": "2026-06-14T08:53:46.050Z",
-      "duration_ms": 253,
+      "started_at": "2026-06-14T08:58:29.334Z",
+      "duration_ms": 235,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:data-lane-command-router\n> node scripts/kosmo-data-lane-command-router.mjs\n\nKosmo data-lane command router\nStatus: worker_router_guarded_review_only\nData lane: 24/24\nPrivate diagnostic allowed: false\nPrivate inventory allowed: false\nWrote: docs/codex/kosmo-data-lane-command-router-2026-06-14.md"
@@ -339,8 +346,8 @@
       "label": "Worker Boundary Pack",
       "command": "npm run kosmo:worker-boundary-pack",
       "required": true,
-      "started_at": "2026-06-14T08:53:46.303Z",
-      "duration_ms": 245,
+      "started_at": "2026-06-14T08:58:29.569Z",
+      "duration_ms": 240,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:worker-boundary-pack\n> node scripts/kosmo-worker-boundary-pack.mjs\n\nKosmo worker boundary pack\nStatus: worker_boundary_pack_review_only_locked\nData lane: 24/24\nPrivate diagnostic allowed: false\nPublic-ready total: 0\nWrote: docs/codex/kosmo-worker-boundary-pack-2026-06-14.md"
@@ -350,8 +357,8 @@
       "label": "Worker Boundary Pack Check",
       "command": "npm run kosmo:worker-boundary-pack-check",
       "required": true,
-      "started_at": "2026-06-14T08:53:46.548Z",
-      "duration_ms": 247,
+      "started_at": "2026-06-14T08:58:29.809Z",
+      "duration_ms": 237,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:worker-boundary-pack-check\n> node scripts/kosmo-worker-boundary-pack-check.mjs\n\nKosmo worker boundary pack check\nStatus: worker_boundary_pack_guard_passed\nFailures: 0\nWarnings: 0\nWrote: docs/codex/kosmo-worker-boundary-pack-check-2026-06-14.md"
@@ -361,8 +368,8 @@
       "label": "Source Root Activation Preflight",
       "command": "npm run kosmo:source-root-activation-preflight",
       "required": true,
-      "started_at": "2026-06-14T08:53:46.795Z",
-      "duration_ms": 253,
+      "started_at": "2026-06-14T08:58:30.046Z",
+      "duration_ms": 231,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:source-root-activation-preflight\n> node scripts/kosmo-source-root-activation-preflight.mjs\n\nKosmo source-root activation preflight\nStatus: source_root_activation_waiting_for_owner_storage_action\nSelected root: pending\nActivation ready: no\nSafe commands: 13\nBlocked commands: 4\nPublic-ready after preflight: 0\nWrote: docs/codex/kosmo-source-root-activation-preflight-2026-06-14.md"
@@ -372,19 +379,30 @@
       "label": "Private Metadata Inventory Runner",
       "command": "npm run kosmo:private-metadata-inventory",
       "required": true,
-      "started_at": "2026-06-14T08:53:47.048Z",
-      "duration_ms": 244,
+      "started_at": "2026-06-14T08:58:30.277Z",
+      "duration_ms": 230,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:private-metadata-inventory\n> node scripts/kosmo-private-metadata-inventory-runner.mjs\n\nKosmo private metadata inventory runner\nStatus: private_metadata_inventory_blocked_until_activation\nMode: private_guarded\nRoot scanned: no\nFiles scanned: 0\nPilot matches: 0\nPublic-ready after run: 0\nWrote: docs/codex/kosmo-private-metadata-inventory-runner-2026-06-14.md"
+    },
+    {
+      "id": "private_metadata_inventory_fixture_smoke",
+      "label": "Private Metadata Inventory Fixture Smoke",
+      "command": "npm run kosmo:private-metadata-inventory-fixture-smoke",
+      "required": true,
+      "started_at": "2026-06-14T08:58:30.507Z",
+      "duration_ms": 307,
+      "exit_code": 0,
+      "status": "passed",
+      "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:private-metadata-inventory-fixture-smoke\n> node scripts/kosmo-private-metadata-inventory-fixture-smoke.mjs\n\nKosmo private metadata inventory runner\nStatus: private_metadata_inventory_fixture_passed\nMode: fixture_public_safe\nRoot scanned: yes\nFiles scanned: 6\nPilot matches: 6\nPublic-ready after run: 0\nWrote: docs/codex/kosmo-private-metadata-inventory-fixture-smoke-2026-06-14.md"
     },
     {
       "id": "local_worker_launch_queue",
       "label": "Local Worker Launch Queue",
       "command": "npm run kosmo:local-worker-launch-queue",
       "required": true,
-      "started_at": "2026-06-14T08:53:47.292Z",
-      "duration_ms": 231,
+      "started_at": "2026-06-14T08:58:30.814Z",
+      "duration_ms": 243,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:local-worker-launch-queue\n> node scripts/kosmo-local-worker-launch-queue.mjs\n\nKosmo local worker launch queue\nStatus: local_worker_launch_queue_idle_outputs_present\nTasks present: 8/8\nLaunchable now: 0\nWrote: docs/codex/kosmo-local-worker-launch-queue-2026-06-14.md"
@@ -394,8 +412,8 @@
       "label": "Local Worker Output Conversion Plan",
       "command": "npm run kosmo:local-worker-output-conversion-plan",
       "required": true,
-      "started_at": "2026-06-14T08:53:47.523Z",
-      "duration_ms": 236,
+      "started_at": "2026-06-14T08:58:31.057Z",
+      "duration_ms": 241,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:local-worker-output-conversion-plan\n> node scripts/kosmo-local-worker-output-conversion-plan.mjs\n\nKosmo local worker output conversion plan\nStatus: local_worker_output_conversion_plan_review_only\nEligible: 8/8\nRepo conversion allowed now: 0\nWrote: docs/codex/kosmo-local-worker-output-conversion-plan-2026-06-14.md"
@@ -405,8 +423,8 @@
       "label": "Owner Review Packet",
       "command": "npm run kosmo:owner-review-packet",
       "required": true,
-      "started_at": "2026-06-14T08:53:47.759Z",
-      "duration_ms": 239,
+      "started_at": "2026-06-14T08:58:31.298Z",
+      "duration_ms": 237,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:owner-review-packet\n> node scripts/kosmo-owner-review-packet.mjs\n\nKosmo owner review packet\nStatus: owner_review_packet_ready\nQuestions: 6\nFilled answers: 0\nPlanned edits: 0\nWrote: docs/codex/kosmo-owner-review-packet-2026-06-14.md"
@@ -416,7 +434,7 @@
       "label": "Owner Review Packet Check",
       "command": "npm run kosmo:owner-review-packet-check",
       "required": true,
-      "started_at": "2026-06-14T08:53:47.998Z",
+      "started_at": "2026-06-14T08:58:31.535Z",
       "duration_ms": 238,
       "exit_code": 0,
       "status": "passed",
@@ -427,8 +445,8 @@
       "label": "Owner Review Session Brief",
       "command": "npm run kosmo:owner-review-session-brief",
       "required": true,
-      "started_at": "2026-06-14T08:53:48.236Z",
-      "duration_ms": 239,
+      "started_at": "2026-06-14T08:58:31.773Z",
+      "duration_ms": 245,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:owner-review-session-brief\n> node scripts/kosmo-owner-review-session-brief.mjs\n\nKosmo owner review session brief\nStatus: owner_review_session_brief_ready\nQuestions: 6\nPrior signals: 5\nRecordable now: 0\nWrote: docs/codex/kosmo-owner-review-session-brief-2026-06-14.md"
@@ -438,8 +456,8 @@
       "label": "Owner Review Session Brief Check",
       "command": "npm run kosmo:owner-review-session-brief-check",
       "required": true,
-      "started_at": "2026-06-14T08:53:48.475Z",
-      "duration_ms": 244,
+      "started_at": "2026-06-14T08:58:32.018Z",
+      "duration_ms": 239,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:owner-review-session-brief-check\n> node scripts/kosmo-owner-review-session-brief-check.mjs\n\nKosmo owner review session brief check\nStatus: owner_review_session_brief_guard_passed\nFailures: 0\nWarnings: 0\nWrote: docs/codex/kosmo-owner-review-session-brief-check-2026-06-14.md"
@@ -449,8 +467,8 @@
       "label": "Night Loop Checkpoint",
       "command": "npm run kosmo:night-loop-checkpoint",
       "required": true,
-      "started_at": "2026-06-14T08:53:48.719Z",
-      "duration_ms": 232,
+      "started_at": "2026-06-14T08:58:32.257Z",
+      "duration_ms": 240,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:night-loop-checkpoint\n> node scripts/kosmo-night-loop-checkpoint.mjs\n\nKosmo night loop checkpoint\nStatus: night_loop_guarded_ready\nData lane: 24/24\nNext loop: prepare_owner_source_root_decision_and_batch_questions\nWrote: docs/codex/kosmo-night-loop-checkpoint-2026-06-14.md"
@@ -460,8 +478,8 @@
       "label": "Innovation Lane Plan",
       "command": "npm run kosmo:innovation-lane-plan",
       "required": true,
-      "started_at": "2026-06-14T08:53:48.951Z",
-      "duration_ms": 1091,
+      "started_at": "2026-06-14T08:58:32.497Z",
+      "duration_ms": 1112,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:innovation-lane-plan\n> node scripts/kosmo-innovation-lane-plan.mjs\n\nKosmo innovation lane plan\nStatus: innovation_lane_metadata_plan_ready\nLanes: 5\nReady now: 5\nBlocked by source root: 3\nWrote: docs/codex/kosmo-innovation-lane-plan-2026-06-14.md"
@@ -471,8 +489,8 @@
       "label": "Innovation Smoke",
       "command": "npm run kosmo:innovation-smoke",
       "required": true,
-      "started_at": "2026-06-14T08:53:50.042Z",
-      "duration_ms": 1824,
+      "started_at": "2026-06-14T08:58:33.609Z",
+      "duration_ms": 1815,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:innovation-smoke\n> node scripts/kosmo-innovation-smoke.mjs\n\nKosmo innovation smoke\nStatus: innovation_smoke_passed_review_only\nChecks: 5/5 passed, 0 skipped\nWrote: docs/codex/kosmo-innovation-smoke-2026-06-14.md"
@@ -482,8 +500,8 @@
       "label": "Orbit Status Bridge",
       "command": "npm run kosmo:orbit-status-bridge",
       "required": true,
-      "started_at": "2026-06-14T08:53:51.866Z",
-      "duration_ms": 246,
+      "started_at": "2026-06-14T08:58:35.424Z",
+      "duration_ms": 239,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:orbit-status-bridge\n> node scripts/kosmo-orbit-status-bridge.mjs\n\nKosmo Orbit status bridge\nStatus: orbit_bridge_ready_with_blockers\nCards: 11\nBlocking cards: 3\nWrote: docs/codex/kosmo-orbit-status-bridge-2026-06-14.md"
