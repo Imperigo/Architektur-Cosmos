@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T13:30:39.623Z",
+  "generated_at": "2026-06-14T13:35:04.849Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 139
+      "files": 140
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 177
+      "files": 178
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-14-codex-synergiebericht-141-owner-source-root-review-options.md",
+      "title": "Codex Synergiebericht 141: Owner Source Root Review Options",
+      "mirrored_inboxes": 2,
+      "bytes": 1463,
+      "modified_at": "2026-06-14T13:34:58.073Z"
+    },
     {
       "filename": "2026-06-14-codex-synergiebericht-140-review-only-asset-routing-guard.md",
       "title": "Codex Synergiebericht 140: Review-only Asset Routing Guard",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1729,
       "modified_at": "2026-06-14T09:05:35.865Z"
-    },
-    {
-      "filename": "2026-06-14-codex-synergiebericht-133-private-metadata-fixture-smoke.md",
-      "title": "Codex Synergiebericht 133 - Private Metadata Fixture Smoke",
-      "mirrored_inboxes": 2,
-      "bytes": 1840,
-      "modified_at": "2026-06-14T08:59:52.884Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 133-140 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 134-141 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."
