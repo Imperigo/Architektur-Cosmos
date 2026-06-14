@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T18:22:36.478Z",
+  "generated_at": "2026-06-14T18:26:51.996Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 194
+      "files": 195
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 238
+      "files": 239
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-14-codex-synergiebericht-196-training-eval-row-template.md",
+      "title": "Codex Synergiebericht 196: Training Eval Row Template",
+      "mirrored_inboxes": 2,
+      "bytes": 1220,
+      "modified_at": "2026-06-14T18:26:45.610Z"
+    },
     {
       "filename": "2026-06-14-codex-synergiebericht-195-orbit-training-rubric-status.md",
       "title": "Codex Synergiebericht 195: Orbit Training Rubric Status",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 708,
       "modified_at": "2026-06-14T18:04:28.462Z"
-    },
-    {
-      "filename": "2026-06-14-codex-synergiebericht-188-vision-roadmap-refresh.md",
-      "title": "Codex Synergiebericht 188: Vision Roadmap Refresh",
-      "mirrored_inboxes": 2,
-      "bytes": 1479,
-      "modified_at": "2026-06-14T18:02:15.063Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 188-195 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 189-196 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."

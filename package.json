@@ -139,6 +139,8 @@
     "kosmo:local-worker-pilot-task-queue-check": "node scripts/kosmo-local-worker-pilot-task-queue-check.mjs",
     "kosmo:training-eval-rubric-pack": "node scripts/kosmo-training-eval-rubric-pack.mjs",
     "kosmo:training-eval-rubric-pack-check": "node scripts/kosmo-training-eval-rubric-pack-check.mjs",
+    "kosmo:training-eval-row-template": "node scripts/kosmo-training-eval-row-template.mjs",
+    "kosmo:training-eval-row-template-check": "node scripts/kosmo-training-eval-row-template-check.mjs",
     "kosmo:source-root-owner-answer-execution-checklist": "node scripts/kosmo-source-root-owner-answer-execution-checklist.mjs",
     "kosmo:source-root-owner-answer-execution-checklist-check": "node scripts/kosmo-source-root-owner-answer-execution-checklist-check.mjs",
     "kosmo:private-library-diagnostic": "node scripts/kosmo-private-library-diagnostic.mjs",
