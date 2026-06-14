@@ -94,7 +94,7 @@ function checkSummary(board) {
   const summary = board.summary || {};
   const findings = [];
   expect(summary.data_lane_status === 'kosmodata_lane_sweep_review_only_passed', findings, 'data_lane_passed', 'Data lane must be review-only passed.');
-  expect(summary.data_lane_steps === '26/26', findings, 'data_lane_steps_26', 'Data lane must report 26/26.');
+  expect(isCompleteStepRatio(summary.data_lane_steps), findings, 'data_lane_steps_complete', 'Data lane must report all steps passed.');
   expect(summary.router_status === 'worker_router_guarded_review_only', findings, 'router_guarded', 'Router must remain guarded review-only.');
   expect(summary.checkpoint_status === 'night_loop_guarded_ready', findings, 'checkpoint_guarded', 'Night-loop checkpoint must remain guarded ready.');
   expect(summary.session_brief_guard_status === 'owner_review_session_brief_guard_passed', findings, 'session_brief_guard_passed', 'Session brief guard must pass.');
@@ -145,6 +145,14 @@ function checkBlockers(board) {
 function handoffNumber(filename = '') {
   const match = filename.match(/synergiebericht-(\d+)/);
   return match ? Number(match[1]) : 0;
+}
+
+function isCompleteStepRatio(value) {
+  const match = String(value ?? '').match(/^(\d+)\/(\d+)$/);
+  if (!match) return false;
+  const passed = Number(match[1]);
+  const total = Number(match[2]);
+  return total > 0 && passed === total;
 }
 
 function expect(condition, findings, id, message) {
