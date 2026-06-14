@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T15:05:32.448Z",
+  "generated_at": "2026-06-14T15:13:13.569Z",
   "status": "orbit_bridge_ready_with_blockers",
   "policy": {
     "dashboard_only": true,
@@ -22,6 +22,7 @@
     "data/kosmo-source-root-owner-decision-packet-check-2026-06-14.json",
     "data/kosmo-source-root-decision-dry-run-2026-06-14.json",
     "data/kosmo-source-root-post-owner-activation-queue-2026-06-14.json",
+    "data/kosmo-source-root-post-owner-activation-queue-check-2026-06-14.json",
     "data/kosmo-source-root-activation-preflight-2026-06-14.json",
     "data/kosmo-private-metadata-inventory-runner-2026-06-14.json",
     "data/kosmo-private-metadata-inventory-fixture-smoke-2026-06-14.json",
@@ -41,7 +42,7 @@
     "data/kosmo-night-loop-checkpoint-2026-06-14.json"
   ],
   "summary": {
-    "cards": 21,
+    "cards": 22,
     "blocking_cards": 4,
     "owner_action_cards": 11,
     "source_root_blocked": true,
@@ -72,6 +73,9 @@
     "source_root_post_owner_activation_queue_executable_now": 0,
     "source_root_post_owner_activation_queue_blocked_now": 7,
     "source_root_post_owner_activation_queue_failures": 0,
+    "source_root_post_owner_activation_queue_check_status": "source_root_post_owner_activation_queue_guard_passed",
+    "source_root_post_owner_activation_queue_check_failures": 0,
+    "source_root_post_owner_activation_queue_check_warnings": 0,
     "source_root_activation_status": "source_root_activation_waiting_for_owner_storage_action",
     "private_metadata_inventory_status": "private_metadata_inventory_blocked_until_activation",
     "private_metadata_inventory_fixture_status": "private_metadata_inventory_fixture_passed",
@@ -98,7 +102,7 @@
       "id": "day-batch",
       "title": "Daily Batch",
       "status": "ready",
-      "signal": "46/46 required steps",
+      "signal": "47/47 required steps",
       "owner_action_required": false,
       "route_hint": "KosmoReferences/KosmoAsset daily loop",
       "source_ref": "data/kosmo-day-batch-loop-2026-06-14.json"
@@ -174,6 +178,15 @@
       "owner_action_required": false,
       "route_hint": "Safe command order after recorded source-root decision",
       "source_ref": "data/kosmo-source-root-post-owner-activation-queue-2026-06-14.json"
+    },
+    {
+      "id": "source-root-post-owner-activation-queue-check",
+      "title": "Source Root Post-Owner Activation Queue Check",
+      "status": "guard_passed",
+      "signal": "0 failures, 0 warnings",
+      "owner_action_required": false,
+      "route_hint": "Validate queue order and safety policy before activation",
+      "source_ref": "data/kosmo-source-root-post-owner-activation-queue-check-2026-06-14.json"
     },
     {
       "id": "source-root-activation",
@@ -297,6 +310,7 @@
     "source_root_owner_decision_packet_check_card",
     "source_root_decision_dry_run_card",
     "source_root_post_owner_activation_queue_card",
+    "source_root_post_owner_activation_queue_check_card",
     "source_root_activation_card",
     "private_metadata_inventory_card",
     "pilot_reference_cards",

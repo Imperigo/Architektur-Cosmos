@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board
 
-Generated: 2026-06-14T15:08:51.362Z
+Generated: 2026-06-14T15:14:33.703Z
 Status: `overseer_sync_board_ready`
 
 ## Summary
@@ -20,6 +20,7 @@ Status: `overseer_sync_board_ready`
 
 | File | Title | Mirrors |
 | --- | --- | ---: |
+| `2026-06-14-codex-synergiebericht-159-post-owner-activation-queue-guard.md` | Codex Synergiebericht 159: Post-Owner Activation Queue Guard | 2 |
 | `2026-06-14-codex-synergiebericht-158-post-owner-activation-queue.md` | Codex Synergiebericht 158: Post-Owner Activation Queue | 2 |
 | `2026-06-14-codex-synergiebericht-157-source-root-decision-dry-run.md` | Codex Synergiebericht 157: Source Root Decision Dry Run | 2 |
 | `2026-06-14-codex-synergiebericht-156-owner-decision-packet-guard.md` | Codex Synergiebericht 156: Owner Decision Packet Guard | 2 |
@@ -27,7 +28,6 @@ Status: `overseer_sync_board_ready`
 | `2026-06-14-codex-synergiebericht-154-source-root-owner-decision-packet.md` | Codex Synergiebericht 154: Source Root Owner Decision Packet | 2 |
 | `2026-06-14-codex-synergiebericht-153-source-root-decision-refresh.md` | Codex Synergiebericht 153: Source Root Decision Refresh | 2 |
 | `2026-06-14-codex-synergiebericht-152-source-root-candidate-integrity.md` | Codex Synergiebericht 152: Source Root Candidate Integrity | 2 |
-| `2026-06-14-codex-synergiebericht-151-execution-runbook-check.md` | Codex Synergiebericht 151: Execution Runbook Check | 2 |
 
 ## Blockers
 
@@ -40,7 +40,7 @@ Status: `overseer_sync_board_ready`
 
 ## Next Actions
 
-- Claude/KosmoOverseer reviews latest handoffs 151-158 before editing related files.
+- Claude/KosmoOverseer reviews latest handoffs 152-159 before editing related files.
 - Use the owner review session brief as the next owner-facing entry point.
 - Keep local worker tasks review-only while source-root and owner answers are pending.
 - After any explicit owner answer, update intake first, then rerun guards and this sync board.
