@@ -177,6 +177,8 @@
     "kosmo:pilot-gap-label-review": "node scripts/kosmoreferences-pilot-gap-label-review.mjs",
     "kosmo:pilot-gap-label-review-check": "node scripts/kosmoreferences-pilot-gap-label-review-check.mjs",
     "kosmo:pilot-package-check": "node scripts/kosmoreferences-pilot-package-check.mjs",
+    "kosmo:pilot-intake-readiness-pack": "node scripts/kosmoreferences-pilot-intake-readiness-pack.mjs",
+    "kosmo:pilot-intake-readiness-pack-check": "node scripts/kosmoreferences-pilot-intake-readiness-pack-check.mjs",
     "kosmo:asset-reference-bridge-check": "node scripts/kosmoasset-reference-bridge-check.mjs",
     "kosmo:asset-source-candidate-map": "node scripts/kosmoasset-source-candidate-map.mjs",
     "kosmo:asset-candidate-taxonomy-review": "node scripts/kosmoasset-candidate-taxonomy-review.mjs",

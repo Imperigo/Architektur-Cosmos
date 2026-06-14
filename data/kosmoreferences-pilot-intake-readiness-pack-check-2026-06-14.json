@@ -1,0 +1,104 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-14T17:03:25.002Z",
+  "status": "kosmoreferences_pilot_intake_readiness_pack_guard_passed",
+  "policy": {
+    "validates_pack_only": true,
+    "reads_private_content": false,
+    "executes_local_workers": false,
+    "runs_private_inventory_now": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmoreferences-pilot-intake-readiness-pack-2026-06-14.json"
+  ],
+  "summary": {
+    "checks": 16,
+    "passed": 16,
+    "failures": 0,
+    "warnings": 0,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_ready",
+      "status": "passed",
+      "evidence": "kosmoreferences_pilot_intake_readiness_pack_ready"
+    },
+    {
+      "id": "policy_readiness_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_private_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_copy",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_inventory_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_local_workers_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "three_pilots",
+      "status": "passed",
+      "evidence": 3
+    },
+    {
+      "id": "expected_stage_count",
+      "status": "passed",
+      "evidence": 24
+    },
+    {
+      "id": "all_stages_blocked_now",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "all_stages_no_private_read_now",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "stage_public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "command_order_has_private_inventory_check",
+      "status": "passed",
+      "evidence": "npm run kosmo:private-metadata-inventory npm run kosmo:private-metadata-inventory-check npm run kosmo:pilot-evidence-matrix npm run kosmo:pilot-package-check npm run kosmo:pilot-intake-readiness-pack npm run kosmo:pilot-intake-readiness-pack-check npm run kosmo:data-lane-sweep npm run kosmo:references-nightly-gate npm run kosmo:pilot-package-check npm run kosmo:pilot-package-check npm run kosmo:pilot-package-check npm run kosmo:pilot-package-check npm run kosmo:pilot-package-check npm run kosmo:references-nightly-gate manual overseer review plus local worker output contract npm run kosmo:data-lane-sweep npm run kosmo:pilot-package-check npm run kosmo:pilot-package-check npm run kosmo:pilot-package-check npm run kosmo:pilot-package-check npm run kosmo:pilot-package-check npm run kosmo:references-nightly-gate manual overseer review plus local worker output contract npm run kosmo:data-lane-sweep npm run kosmo:pilot-package-check npm run kosmo:pilot-package-check npm run kosmo:pilot-package-check npm run kosmo:pilot-package-check npm run kosmo:pilot-package-check npm run kosmo:references-nightly-gate manual overseer review plus local worker output contract npm run kosmo:data-lane-sweep"
+    },
+    {
+      "id": "command_order_has_nightly_gate",
+      "status": "passed",
+      "evidence": "npm run kosmo:private-metadata-inventory npm run kosmo:private-metadata-inventory-check npm run kosmo:pilot-evidence-matrix npm run kosmo:pilot-package-check npm run kosmo:pilot-intake-readiness-pack npm run kosmo:pilot-intake-readiness-pack-check npm run kosmo:data-lane-sweep npm run kosmo:references-nightly-gate npm run kosmo:pilot-package-check npm run kosmo:pilot-package-check npm run kosmo:pilot-package-check npm run kosmo:pilot-package-check npm run kosmo:pilot-package-check npm run kosmo:references-nightly-gate manual overseer review plus local worker output contract npm run kosmo:data-lane-sweep npm run kosmo:pilot-package-check npm run kosmo:pilot-package-check npm run kosmo:pilot-package-check npm run kosmo:pilot-package-check npm run kosmo:pilot-package-check npm run kosmo:references-nightly-gate manual overseer review plus local worker output contract npm run kosmo:data-lane-sweep npm run kosmo:pilot-package-check npm run kosmo:pilot-package-check npm run kosmo:pilot-package-check npm run kosmo:pilot-package-check npm run kosmo:pilot-package-check npm run kosmo:references-nightly-gate manual overseer review plus local worker output contract npm run kosmo:data-lane-sweep"
+    },
+    {
+      "id": "no_forbidden_extraction_commands",
+      "status": "passed",
+      "evidence": "npm run kosmo:private-metadata-inventory npm run kosmo:private-metadata-inventory-check npm run kosmo:pilot-evidence-matrix npm run kosmo:pilot-package-check npm run kosmo:pilot-intake-readiness-pack npm run kosmo:pilot-intake-readiness-pack-check npm run kosmo:data-lane-sweep npm run kosmo:references-nightly-gate npm run kosmo:pilot-package-check npm run kosmo:pilot-package-check npm run kosmo:pilot-package-check npm run kosmo:pilot-package-check npm run kosmo:pilot-package-check npm run kosmo:references-nightly-gate manual overseer review plus local worker output contract npm run kosmo:data-lane-sweep npm run kosmo:pilot-package-check npm run kosmo:pilot-package-check npm run kosmo:pilot-package-check npm run kosmo:pilot-package-check npm run kosmo:pilot-package-check npm run kosmo:references-nightly-gate manual overseer review plus local worker output contract npm run kosmo:data-lane-sweep npm run kosmo:pilot-package-check npm run kosmo:pilot-package-check npm run kosmo:pilot-package-check npm run kosmo:pilot-package-check npm run kosmo:pilot-package-check npm run kosmo:references-nightly-gate manual overseer review plus local worker output contract npm run kosmo:data-lane-sweep"
+    },
+    {
+      "id": "hard_stops_present",
+      "status": "passed",
+      "evidence": 5
+    }
+  ]
+}

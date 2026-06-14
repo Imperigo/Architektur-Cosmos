@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T16:58:18.740Z",
+  "generated_at": "2026-06-14T17:03:56.455Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 168
+      "files": 169
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 212
+      "files": 213
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-14-codex-synergiebericht-170-pilot-intake-readiness.md",
+      "title": "Codex Synergiebericht 170: Pilot Intake Readiness",
+      "mirrored_inboxes": 2,
+      "bytes": 1574,
+      "modified_at": "2026-06-14T17:03:47.903Z"
+    },
     {
       "filename": "2026-06-14-codex-synergiebericht-169-owner-answer-execution-checklist.md",
       "title": "Codex Synergiebericht 169: Owner Answer Execution Checklist",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1860,
       "modified_at": "2026-06-14T15:51:44.359Z"
-    },
-    {
-      "filename": "2026-06-14-codex-synergiebericht-162-source-independent-work-queue.md",
-      "title": "Codex Synergiebericht 162: Source-Independent Work Queue",
-      "mirrored_inboxes": 2,
-      "bytes": 1675,
-      "modified_at": "2026-06-14T15:38:09.235Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 162-169 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 163-170 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."
