@@ -1,15 +1,16 @@
 # Kosmo Orbit Status Bridge
 
-Generated: 2026-06-14T08:30:45.055Z
+Generated: 2026-06-14T08:42:27.675Z
 Status: `orbit_bridge_ready_with_blockers`
 
 ## Summary
 
-- Cards: 9
-- Blocking cards: 1
-- Owner action cards: 5
+- Cards: 10
+- Blocking cards: 2
+- Owner action cards: 6
 - Source root blocked: yes
 - Day batch: day_batch_loop_passed_review_only
+- Source-root activation: source_root_activation_waiting_for_owner_storage_action
 - Local models: local_model_inventory_ready_review_only
 - Asset bridge: kosmoasset_reference_bridge_review_only_passed
 - Innovation smoke: innovation_smoke_passed_review_only
@@ -21,6 +22,7 @@ Status: `orbit_bridge_ready_with_blockers`
 | --- | --- | --- | --- |
 | `day-batch` Daily Batch | ready | no | 28/28 required steps |
 | `source-root` Source Root | blocked | yes | blocked: 0 probable libraries, 59 OneDrive markers |
+| `source-root-activation` Source Root Activation | blocked | yes | source_root_activation_waiting_for_owner_storage_action, safe commands 13, blocked 3 |
 | `local-models` Local Models | review_only_ready | no | 4/4 roles, 8 Ollama models, 70 GB |
 | `pilot-references` Pilot References | review_only | yes | 3 pilots, 12 evidence gaps |
 | `kosmoasset` KosmoAsset | review_only | yes | 6 human reviews open, public-ready 0 |
@@ -34,6 +36,7 @@ Status: `orbit_bridge_ready_with_blockers`
 - `status_strip`
 - `local_models_card`
 - `source_root_blocker_card`
+- `source_root_activation_card`
 - `pilot_reference_cards`
 - `asset_reference_bridge_card`
 - `worker_boundary_card`

@@ -43,11 +43,15 @@ const steps = [
   step('bootstrap_router', 'Bootstrap Router', ['run', 'kosmo:data-lane-command-router']),
   step('core_data_lane_sweep', 'Core Data Lane Sweep', ['run', 'kosmo:data-lane-sweep']),
   step('pilot_evidence_matrix', 'Pilot Evidence Matrix', ['run', 'kosmo:pilot-evidence-matrix']),
+  step('private_source_inventory_plan', 'Private Source Inventory Plan', ['run', 'kosmo:private-source-inventory-plan']),
+  step('private_inventory_output_template', 'Private Inventory Output Template', ['run', 'kosmo:private-inventory-output-template']),
+  step('private_inventory_output_check', 'Private Inventory Output Check', ['run', 'kosmo:private-inventory-output-check']),
   step('pilot_package_check', 'Pilot Package Check', ['run', 'kosmo:pilot-package-check']),
   step('asset_reference_bridge_check', 'Asset Reference Bridge Check', ['run', 'kosmo:asset-reference-bridge-check']),
   step('core_router', 'Core Router', ['run', 'kosmo:data-lane-command-router']),
   step('worker_boundary_pack', 'Worker Boundary Pack', ['run', 'kosmo:worker-boundary-pack']),
   step('worker_boundary_pack_check', 'Worker Boundary Pack Check', ['run', 'kosmo:worker-boundary-pack-check']),
+  step('source_root_activation_preflight', 'Source Root Activation Preflight', ['run', 'kosmo:source-root-activation-preflight']),
   step('local_worker_launch_queue', 'Local Worker Launch Queue', ['run', 'kosmo:local-worker-launch-queue']),
   step('local_worker_output_conversion_plan', 'Local Worker Output Conversion Plan', ['run', 'kosmo:local-worker-output-conversion-plan']),
   step('owner_review_packet', 'Owner Review Packet', ['run', 'kosmo:owner-review-packet']),
@@ -90,6 +94,7 @@ async function main() {
   console.log(`Core sweep: ${report.summary.core_sweep_status}`);
   console.log(`Worker boundary: ${report.summary.worker_boundary_status}`);
   console.log(`Owner handoff: ${report.summary.owner_handoff_status}`);
+  console.log(`Source-root activation: ${report.summary.source_root_activation_status}`);
   console.log(`Innovation smoke: ${report.summary.innovation_smoke_status}`);
   console.log(`Orbit bridge: ${report.summary.orbit_bridge_status}`);
   console.log(`Wrote: ${relative(root, outputMd)}`);
@@ -168,6 +173,7 @@ async function buildReport({ results, startedAt }) {
   const ownerPacket = await readOptionalJson(`data/kosmo-owner-review-packet-check-${dateStamp}.json`);
   const ownerSession = await readOptionalJson(`data/kosmo-owner-review-session-brief-check-${dateStamp}.json`);
   const blocker = await readOptionalJson(`data/kosmo-source-root-blocker-refresh-${dateStamp}.json`);
+  const sourceRootActivation = await readOptionalJson(`data/kosmo-source-root-activation-preflight-${dateStamp}.json`);
   const checkpoint = await readOptionalJson(`data/kosmo-night-loop-checkpoint-${dateStamp}.json`);
   const innovationSmoke = await readOptionalJson(`data/kosmo-innovation-smoke-${dateStamp}.json`);
   const orbitBridge = await readOptionalJson(`data/kosmo-orbit-status-bridge-${dateStamp}.json`);
@@ -181,8 +187,18 @@ async function buildReport({ results, startedAt }) {
     invariant('owner_handoff_passed', ownerHandoffPassed, `${ownerPacket?.status || 'missing'} / ${ownerSession?.status || 'missing'}`),
     invariant('innovation_smoke_review_only', innovationSmoke?.status === 'innovation_smoke_passed_review_only', innovationSmoke?.status),
     invariant('orbit_bridge_ready', ['orbit_bridge_ready_with_blockers', 'orbit_bridge_all_ready_review_only'].includes(orbitBridge?.status), orbitBridge?.status),
+    invariant('source_root_activation_guarded', [
+      'source_root_activation_waiting_for_owner_storage_action',
+      'source_root_activation_needs_contract_review',
+      'source_root_activation_ready_for_private_metadata_diagnostic'
+    ].includes(sourceRootActivation?.status), sourceRootActivation?.status),
     invariant('public_ready_zero', (sweep?.summary?.references_public_ready_assets ?? 0) === 0, `public_ready=${sweep?.summary?.references_public_ready_assets ?? 0}`),
-    invariant('private_source_still_guarded', blocker?.summary?.private_diagnostic_allowed !== true, `private_diagnostic_allowed=${blocker?.summary?.private_diagnostic_allowed}`)
+    invariant(
+      'private_source_guard_state_valid',
+      blocker?.summary?.private_diagnostic_allowed !== true ||
+        sourceRootActivation?.status === 'source_root_activation_ready_for_private_metadata_diagnostic',
+      `private_diagnostic_allowed=${blocker?.summary?.private_diagnostic_allowed}, activation=${sourceRootActivation?.status}`
+    )
   ];
   const passed = invariants.every((item) => item.status === 'passed');
 
@@ -214,6 +230,7 @@ async function buildReport({ results, startedAt }) {
       innovation_smoke_status: innovationSmoke?.status || null,
       orbit_bridge_status: orbitBridge?.status || null,
       source_root_blocker_status: blocker?.status || null,
+      source_root_activation_status: sourceRootActivation?.status || null,
       private_diagnostic_allowed: blocker?.summary?.private_diagnostic_allowed === true,
       night_loop_checkpoint_status: checkpoint?.status || null,
       public_ready_after_loop: 0
@@ -225,6 +242,7 @@ async function buildReport({ results, startedAt }) {
       `data/kosmo-owner-review-packet-check-${dateStamp}.json`,
       `data/kosmo-owner-review-session-brief-check-${dateStamp}.json`,
       `data/kosmo-source-root-blocker-refresh-${dateStamp}.json`,
+      `data/kosmo-source-root-activation-preflight-${dateStamp}.json`,
       `data/kosmo-night-loop-checkpoint-${dateStamp}.json`,
       `data/kosmo-innovation-smoke-${dateStamp}.json`,
       `data/kosmo-orbit-status-bridge-${dateStamp}.json`
@@ -271,6 +289,7 @@ function renderMarkdown(report) {
   lines.push(`- Router: ${report.summary.router_status}`);
   lines.push(`- Worker boundary: ${report.summary.worker_boundary_status}`);
   lines.push(`- Owner handoff: ${report.summary.owner_handoff_status}`);
+  lines.push(`- Source-root activation: ${report.summary.source_root_activation_status}`);
   lines.push(`- Innovation smoke: ${report.summary.innovation_smoke_status}`);
   lines.push(`- Orbit bridge: ${report.summary.orbit_bridge_status}`);
   lines.push(`- Source-root blocker: ${report.summary.source_root_blocker_status}`);

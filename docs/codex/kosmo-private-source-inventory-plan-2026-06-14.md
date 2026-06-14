@@ -1,6 +1,6 @@
 # Kosmo Private Source Inventory Plan
 
-Generated: 2026-06-14T07:21:57.269Z
+Generated: 2026-06-14T08:42:21.059Z
 Status: `private_metadata_inventory_blocked`
 
 ## Summary

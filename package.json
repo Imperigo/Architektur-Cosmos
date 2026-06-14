@@ -136,6 +136,7 @@
     "kosmo:source-root-unlock-runbook": "node scripts/kosmo-source-root-unlock-runbook.mjs",
     "kosmo:source-root-decision-session-create": "node scripts/kosmo-source-root-decision-session-create.mjs",
     "kosmo:source-root-decision-session-check": "node scripts/kosmo-source-root-decision-session-check.mjs",
+    "kosmo:source-root-activation-preflight": "node scripts/kosmo-source-root-activation-preflight.mjs",
     "kosmo:private-source-inventory-plan": "node scripts/kosmo-private-source-inventory-plan.mjs",
     "kosmo:private-inventory-output-template": "node scripts/kosmo-private-inventory-output-template.mjs",
     "kosmo:private-inventory-output-check": "node scripts/kosmo-private-inventory-output-check.mjs",
