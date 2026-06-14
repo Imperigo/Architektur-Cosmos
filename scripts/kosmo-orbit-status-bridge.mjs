@@ -21,6 +21,7 @@ const refs = {
   sourceRootPostOwnerActivationQueue: `data/kosmo-source-root-post-owner-activation-queue-${dateStamp}.json`,
   sourceRootPostOwnerActivationQueueCheck: `data/kosmo-source-root-post-owner-activation-queue-check-${dateStamp}.json`,
   sourceRootOwnerFinalDecisionBrief: `data/kosmo-source-root-owner-final-decision-brief-${dateStamp}.json`,
+  sourceRootOwnerChoiceConsequenceMatrix: `data/kosmo-source-root-owner-choice-consequence-matrix-${dateStamp}.json`,
   sourceRootActivation: `data/kosmo-source-root-activation-preflight-${dateStamp}.json`,
   privateMetadataInventory: `data/kosmo-private-metadata-inventory-runner-${dateStamp}.json`,
   privateMetadataInventoryFixture: `data/kosmo-private-metadata-inventory-fixture-smoke-${dateStamp}.json`,
@@ -74,6 +75,7 @@ function buildBridge(reports) {
   const postOwnerActivationQueueSummary = reports.sourceRootPostOwnerActivationQueue?.summary || {};
   const postOwnerActivationQueueCheckSummary = reports.sourceRootPostOwnerActivationQueueCheck?.summary || {};
   const ownerFinalDecisionBriefSummary = reports.sourceRootOwnerFinalDecisionBrief?.summary || {};
+  const ownerChoiceConsequenceMatrixSummary = reports.sourceRootOwnerChoiceConsequenceMatrix?.summary || {};
   const activationSummary = reports.sourceRootActivation?.summary || {};
   const privateInventorySummary = reports.privateMetadataInventory?.summary || {};
   const privateInventoryFixtureSummary = reports.privateMetadataInventoryFixture?.summary || {};
@@ -230,6 +232,19 @@ function buildBridge(reports) {
       owner_action_required: true,
       route_hint: 'Single owner-facing source-root decision surface',
       source_ref: refs.sourceRootOwnerFinalDecisionBrief
+    },
+    {
+      id: 'source-root-owner-choice-consequence-matrix',
+      title: 'Source Root Owner Choice Consequence Matrix',
+      status: reports.sourceRootOwnerChoiceConsequenceMatrix?.status === 'source_root_owner_choice_consequence_matrix_ready'
+        ? 'owner_action'
+        : 'needs_review',
+      signal: reports.sourceRootOwnerChoiceConsequenceMatrix?.status
+        ? `${ownerChoiceConsequenceMatrixSummary.choices ?? 0} choices, unlock ${ownerChoiceConsequenceMatrixSummary.unlock_choices ?? 0}, blocked ${ownerChoiceConsequenceMatrixSummary.blocked_choices ?? 0}, failures ${ownerChoiceConsequenceMatrixSummary.failures ?? 0}`
+        : 'missing owner choice consequence matrix',
+      owner_action_required: true,
+      route_hint: 'Preview consequences before recording an owner source-root choice',
+      source_ref: refs.sourceRootOwnerChoiceConsequenceMatrix
     },
     {
       id: 'source-root-activation',
@@ -422,6 +437,11 @@ function buildBridge(reports) {
       source_root_owner_final_decision_brief_options: ownerFinalDecisionBriefSummary.decision_options ?? null,
       source_root_owner_final_decision_brief_unlock_options: ownerFinalDecisionBriefSummary.unlock_options ?? null,
       source_root_owner_final_decision_brief_failures: ownerFinalDecisionBriefSummary.failures ?? null,
+      source_root_owner_choice_consequence_matrix_status: reports.sourceRootOwnerChoiceConsequenceMatrix?.status || null,
+      source_root_owner_choice_consequence_matrix_choices: ownerChoiceConsequenceMatrixSummary.choices ?? null,
+      source_root_owner_choice_consequence_matrix_unlock_choices: ownerChoiceConsequenceMatrixSummary.unlock_choices ?? null,
+      source_root_owner_choice_consequence_matrix_blocked_choices: ownerChoiceConsequenceMatrixSummary.blocked_choices ?? null,
+      source_root_owner_choice_consequence_matrix_failures: ownerChoiceConsequenceMatrixSummary.failures ?? null,
       source_root_activation_status: reports.sourceRootActivation?.status || null,
       private_metadata_inventory_status: reports.privateMetadataInventory?.status || null,
       private_metadata_inventory_fixture_status: reports.privateMetadataInventoryFixture?.status || null,
@@ -459,6 +479,7 @@ function buildBridge(reports) {
       'source_root_post_owner_activation_queue_card',
       'source_root_post_owner_activation_queue_check_card',
       'source_root_owner_final_decision_brief_card',
+      'source_root_owner_choice_consequence_matrix_card',
       'source_root_activation_card',
       'private_metadata_inventory_card',
       'pilot_reference_cards',
@@ -508,6 +529,7 @@ function renderMarkdown(bridge) {
   lines.push(`- Source-root post-owner activation queue: ${bridge.summary.source_root_post_owner_activation_queue_status}, steps ${bridge.summary.source_root_post_owner_activation_queue_steps ?? '-'}, executable ${bridge.summary.source_root_post_owner_activation_queue_executable_now ?? '-'}, blocked ${bridge.summary.source_root_post_owner_activation_queue_blocked_now ?? '-'}, failures ${bridge.summary.source_root_post_owner_activation_queue_failures ?? '-'}`);
   lines.push(`- Source-root post-owner activation queue check: ${bridge.summary.source_root_post_owner_activation_queue_check_status}, failures ${bridge.summary.source_root_post_owner_activation_queue_check_failures ?? '-'}, warnings ${bridge.summary.source_root_post_owner_activation_queue_check_warnings ?? '-'}`);
   lines.push(`- Source-root owner final decision brief: ${bridge.summary.source_root_owner_final_decision_brief_status}, options ${bridge.summary.source_root_owner_final_decision_brief_options ?? '-'}, unlock options ${bridge.summary.source_root_owner_final_decision_brief_unlock_options ?? '-'}, failures ${bridge.summary.source_root_owner_final_decision_brief_failures ?? '-'}`);
+  lines.push(`- Source-root owner choice consequence matrix: ${bridge.summary.source_root_owner_choice_consequence_matrix_status}, choices ${bridge.summary.source_root_owner_choice_consequence_matrix_choices ?? '-'}, unlock ${bridge.summary.source_root_owner_choice_consequence_matrix_unlock_choices ?? '-'}, blocked ${bridge.summary.source_root_owner_choice_consequence_matrix_blocked_choices ?? '-'}, failures ${bridge.summary.source_root_owner_choice_consequence_matrix_failures ?? '-'}`);
   lines.push(`- Source-root activation: ${bridge.summary.source_root_activation_status}`);
   lines.push(`- Private metadata inventory: ${bridge.summary.private_metadata_inventory_status}`);
   lines.push(`- Private metadata inventory fixture: ${bridge.summary.private_metadata_inventory_fixture_status}`);

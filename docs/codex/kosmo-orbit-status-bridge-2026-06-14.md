@@ -1,13 +1,13 @@
 # Kosmo Orbit Status Bridge
 
-Generated: 2026-06-14T15:23:17.167Z
+Generated: 2026-06-14T15:27:20.759Z
 Status: `orbit_bridge_ready_with_blockers`
 
 ## Summary
 
-- Cards: 23
+- Cards: 24
 - Blocking cards: 4
-- Owner action cards: 12
+- Owner action cards: 13
 - Source root blocked: yes
 - Day batch: day_batch_loop_passed_review_only
 - Source-root decision refresh: source_root_decision_session_refresh_not_needed, changed no, options 10, failures 0
@@ -20,6 +20,7 @@ Status: `orbit_bridge_ready_with_blockers`
 - Source-root post-owner activation queue: source_root_post_owner_activation_queue_ready, steps 7, executable 0, blocked 7, failures 0
 - Source-root post-owner activation queue check: source_root_post_owner_activation_queue_guard_passed, failures 0, warnings 0
 - Source-root owner final decision brief: source_root_owner_final_decision_brief_ready, options 3, unlock options 1, failures 0
+- Source-root owner choice consequence matrix: source_root_owner_choice_consequence_matrix_ready, choices 3, unlock 1, blocked 2, failures 0
 - Source-root activation: source_root_activation_waiting_for_owner_storage_action
 - Private metadata inventory: private_metadata_inventory_blocked_until_activation
 - Private metadata inventory fixture: private_metadata_inventory_fixture_passed
@@ -47,6 +48,7 @@ Status: `orbit_bridge_ready_with_blockers`
 | `source-root-post-owner-activation-queue` Source Root Post-Owner Activation Queue | review_only_ready | no | 7 steps, executable 0, blocked 7 |
 | `source-root-post-owner-activation-queue-check` Source Root Post-Owner Activation Queue Check | guard_passed | no | 0 failures, 0 warnings |
 | `source-root-owner-final-decision-brief` Source Root Owner Final Decision Brief | owner_action | yes | 3 options, unlock 1, failures 0 |
+| `source-root-owner-choice-consequence-matrix` Source Root Owner Choice Consequence Matrix | owner_action | yes | 3 choices, unlock 1, blocked 2, failures 0 |
 | `source-root-activation` Source Root Activation | blocked | yes | source_root_activation_waiting_for_owner_storage_action, safe commands 13, blocked 4 |
 | `local-models` Local Models | review_only_ready | no | 4/4 roles, 8 Ollama models, 70 GB |
 | `local-worker-http-runner` Local Worker HTTP Runner | review_only_ready | no | local_worker_http_runner_dry_run_ready, check local_worker_http_runner_guard_passed, safe inputs 6 |
@@ -76,6 +78,7 @@ Status: `orbit_bridge_ready_with_blockers`
 - `source_root_post_owner_activation_queue_card`
 - `source_root_post_owner_activation_queue_check_card`
 - `source_root_owner_final_decision_brief_card`
+- `source_root_owner_choice_consequence_matrix_card`
 - `source_root_activation_card`
 - `private_metadata_inventory_card`
 - `pilot_reference_cards`

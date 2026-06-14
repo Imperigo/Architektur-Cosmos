@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T15:23:17.167Z",
+  "generated_at": "2026-06-14T15:27:20.759Z",
   "status": "orbit_bridge_ready_with_blockers",
   "policy": {
     "dashboard_only": true,
@@ -24,6 +24,7 @@
     "data/kosmo-source-root-post-owner-activation-queue-2026-06-14.json",
     "data/kosmo-source-root-post-owner-activation-queue-check-2026-06-14.json",
     "data/kosmo-source-root-owner-final-decision-brief-2026-06-14.json",
+    "data/kosmo-source-root-owner-choice-consequence-matrix-2026-06-14.json",
     "data/kosmo-source-root-activation-preflight-2026-06-14.json",
     "data/kosmo-private-metadata-inventory-runner-2026-06-14.json",
     "data/kosmo-private-metadata-inventory-fixture-smoke-2026-06-14.json",
@@ -43,9 +44,9 @@
     "data/kosmo-night-loop-checkpoint-2026-06-14.json"
   ],
   "summary": {
-    "cards": 23,
+    "cards": 24,
     "blocking_cards": 4,
-    "owner_action_cards": 12,
+    "owner_action_cards": 13,
     "source_root_blocked": true,
     "day_batch_status": "day_batch_loop_passed_review_only",
     "source_root_decision_refresh_status": "source_root_decision_session_refresh_not_needed",
@@ -81,6 +82,11 @@
     "source_root_owner_final_decision_brief_options": 3,
     "source_root_owner_final_decision_brief_unlock_options": 1,
     "source_root_owner_final_decision_brief_failures": 0,
+    "source_root_owner_choice_consequence_matrix_status": "source_root_owner_choice_consequence_matrix_ready",
+    "source_root_owner_choice_consequence_matrix_choices": 3,
+    "source_root_owner_choice_consequence_matrix_unlock_choices": 1,
+    "source_root_owner_choice_consequence_matrix_blocked_choices": 2,
+    "source_root_owner_choice_consequence_matrix_failures": 0,
     "source_root_activation_status": "source_root_activation_waiting_for_owner_storage_action",
     "private_metadata_inventory_status": "private_metadata_inventory_blocked_until_activation",
     "private_metadata_inventory_fixture_status": "private_metadata_inventory_fixture_passed",
@@ -201,6 +207,15 @@
       "owner_action_required": true,
       "route_hint": "Single owner-facing source-root decision surface",
       "source_ref": "data/kosmo-source-root-owner-final-decision-brief-2026-06-14.json"
+    },
+    {
+      "id": "source-root-owner-choice-consequence-matrix",
+      "title": "Source Root Owner Choice Consequence Matrix",
+      "status": "owner_action",
+      "signal": "3 choices, unlock 1, blocked 2, failures 0",
+      "owner_action_required": true,
+      "route_hint": "Preview consequences before recording an owner source-root choice",
+      "source_ref": "data/kosmo-source-root-owner-choice-consequence-matrix-2026-06-14.json"
     },
     {
       "id": "source-root-activation",
@@ -326,6 +341,7 @@
     "source_root_post_owner_activation_queue_card",
     "source_root_post_owner_activation_queue_check_card",
     "source_root_owner_final_decision_brief_card",
+    "source_root_owner_choice_consequence_matrix_card",
     "source_root_activation_card",
     "private_metadata_inventory_card",
     "pilot_reference_cards",
