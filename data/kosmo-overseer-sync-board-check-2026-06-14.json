@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T17:26:41.548Z",
+  "generated_at": "2026-06-14T17:33:29.870Z",
   "status": "overseer_sync_board_guard_passed",
   "policy": {
     "records_decisions": false,
@@ -156,6 +156,26 @@
       "message": "Latest handoffs must include synergiebericht 115 or newer."
     },
     {
+      "id": "handoff_mirrored:2026-06-14-codex-synergiebericht-178-owner-unlock-reply-validator.md",
+      "severity": "passed",
+      "message": "2026-06-14-codex-synergiebericht-178-owner-unlock-reply-validator.md must be mirrored in both inboxes."
+    },
+    {
+      "id": "handoff_title:2026-06-14-codex-synergiebericht-178-owner-unlock-reply-validator.md",
+      "severity": "passed",
+      "message": "2026-06-14-codex-synergiebericht-178-owner-unlock-reply-validator.md must include a title."
+    },
+    {
+      "id": "handoff_mirrored:2026-06-14-codex-synergiebericht-177-orbit-owner-unlock-next-shift-status.md",
+      "severity": "passed",
+      "message": "2026-06-14-codex-synergiebericht-177-orbit-owner-unlock-next-shift-status.md must be mirrored in both inboxes."
+    },
+    {
+      "id": "handoff_title:2026-06-14-codex-synergiebericht-177-orbit-owner-unlock-next-shift-status.md",
+      "severity": "passed",
+      "message": "2026-06-14-codex-synergiebericht-177-orbit-owner-unlock-next-shift-status.md must include a title."
+    },
+    {
       "id": "handoff_mirrored:2026-06-14-codex-synergiebericht-176-overseer-next-shift-brief.md",
       "severity": "passed",
       "message": "2026-06-14-codex-synergiebericht-176-overseer-next-shift-brief.md must be mirrored in both inboxes."
@@ -214,26 +234,6 @@
       "id": "handoff_title:2026-06-14-codex-synergiebericht-171-asset-intake-readiness.md",
       "severity": "passed",
       "message": "2026-06-14-codex-synergiebericht-171-asset-intake-readiness.md must include a title."
-    },
-    {
-      "id": "handoff_mirrored:2026-06-14-codex-synergiebericht-170-pilot-intake-readiness.md",
-      "severity": "passed",
-      "message": "2026-06-14-codex-synergiebericht-170-pilot-intake-readiness.md must be mirrored in both inboxes."
-    },
-    {
-      "id": "handoff_title:2026-06-14-codex-synergiebericht-170-pilot-intake-readiness.md",
-      "severity": "passed",
-      "message": "2026-06-14-codex-synergiebericht-170-pilot-intake-readiness.md must include a title."
-    },
-    {
-      "id": "handoff_mirrored:2026-06-14-codex-synergiebericht-169-owner-answer-execution-checklist.md",
-      "severity": "passed",
-      "message": "2026-06-14-codex-synergiebericht-169-owner-answer-execution-checklist.md must be mirrored in both inboxes."
-    },
-    {
-      "id": "handoff_title:2026-06-14-codex-synergiebericht-169-owner-answer-execution-checklist.md",
-      "severity": "passed",
-      "message": "2026-06-14-codex-synergiebericht-169-owner-answer-execution-checklist.md must include a title."
     },
     {
       "id": "source_root_blocked",

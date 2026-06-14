@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T17:26:41.305Z",
+  "generated_at": "2026-06-14T17:33:29.636Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 175
+      "files": 177
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 219
+      "files": 221
     }
   ],
   "summary": {
@@ -47,6 +47,20 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-14-codex-synergiebericht-178-owner-unlock-reply-validator.md",
+      "title": "Codex Synergiebericht 178: Owner Unlock Reply Validator",
+      "mirrored_inboxes": 2,
+      "bytes": 1644,
+      "modified_at": "2026-06-14T17:33:11.764Z"
+    },
+    {
+      "filename": "2026-06-14-codex-synergiebericht-177-orbit-owner-unlock-next-shift-status.md",
+      "title": "Codex Synergiebericht 177: Orbit Owner Unlock / Next Shift Status",
+      "mirrored_inboxes": 2,
+      "bytes": 719,
+      "modified_at": "2026-06-14T17:28:58.254Z"
+    },
     {
       "filename": "2026-06-14-codex-synergiebericht-176-overseer-next-shift-brief.md",
       "title": "Codex Synergiebericht 176: Overseer Next Shift Brief",
@@ -88,20 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1590,
       "modified_at": "2026-06-14T17:07:05.527Z"
-    },
-    {
-      "filename": "2026-06-14-codex-synergiebericht-170-pilot-intake-readiness.md",
-      "title": "Codex Synergiebericht 170: Pilot Intake Readiness",
-      "mirrored_inboxes": 2,
-      "bytes": 1574,
-      "modified_at": "2026-06-14T17:03:47.903Z"
-    },
-    {
-      "filename": "2026-06-14-codex-synergiebericht-169-owner-answer-execution-checklist.md",
-      "title": "Codex Synergiebericht 169: Owner Answer Execution Checklist",
-      "mirrored_inboxes": 2,
-      "bytes": 1725,
-      "modified_at": "2026-06-14T16:58:12.819Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 169-176 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 171-178 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."
