@@ -12,7 +12,8 @@ const blockerPath = resolve(root, args.blocker || `data/kosmo-source-root-blocke
 const outputJson = resolve(root, args.out || `data/kosmo-innovation-lane-plan-${dateStamp}.json`);
 const outputMd = resolve(root, args.markdown || `docs/codex/kosmo-innovation-lane-plan-${dateStamp}.md`);
 const knownToolPaths = {
-  markitdown: process.env.KOSMO_MARKITDOWN_BIN || '/mnt/data/ArchitekturKosmos/tools/markitdown-venv/bin/markitdown'
+  markitdown: process.env.KOSMO_MARKITDOWN_BIN || '/mnt/data/ArchitekturKosmos/tools/markitdown-venv/bin/markitdown',
+  ifcPython: process.env.KOSMO_IFC_PYTHON || '/mnt/data/ArchitekturKosmos/tools/ifcopenshell-venv/bin/python'
 };
 
 main().catch((error) => {
@@ -170,7 +171,10 @@ function runProbes() {
     ]),
     tesseract_cli: probe('tesseract', ['--version']),
     ollama_list: probe('ollama', ['list']),
-    ifcopenshell_import: probe('python3', ['-c', 'import ifcopenshell; print(ifcopenshell.version)'])
+    ifcopenshell_import: probeCandidates([
+      ['python3', ['-c', 'import ifcopenshell; print(ifcopenshell.version)']],
+      [knownToolPaths.ifcPython, ['-c', 'import ifcopenshell; print(ifcopenshell.version)']]
+    ])
   };
 }
 

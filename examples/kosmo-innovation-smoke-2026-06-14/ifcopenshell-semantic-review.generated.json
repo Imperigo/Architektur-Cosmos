@@ -1,0 +1,230 @@
+{
+  "distributions": {
+    "kosmo_object_type": [
+      {
+        "count": 2,
+        "value": "unclassified"
+      }
+    ],
+    "property_sets": [
+      {
+        "count": 2,
+        "value": "Pset_KosmoDemo"
+      }
+    ],
+    "representation": [
+      {
+        "count": 2,
+        "value": "Body/Brep"
+      }
+    ],
+    "storey_container": [
+      {
+        "count": 2,
+        "value": "IfcBuildingStorey #4 Level 0"
+      }
+    ]
+  },
+  "element_sample": [
+    {
+      "class": "IfcBuildingElementProxy",
+      "container_label": "IfcBuildingStorey #4 Level 0",
+      "global_id": "KOSMO_WALL_001",
+      "has_object_placement": true,
+      "has_representation": true,
+      "kosmo_object_type": null,
+      "name": "Demo Wall",
+      "object_placement_class": "IfcLocalPlacement",
+      "predefined_type": null,
+      "properties_sample": {
+        "Pset_KosmoDemo": {
+          "Material": "Concrete",
+          "SourceRole": "context_fixture"
+        }
+      },
+      "property_set_count": 1,
+      "property_set_names": [
+        "Pset_KosmoDemo"
+      ],
+      "representation_signature": "Body/Brep",
+      "representations": [
+        {
+          "identifier": "Body",
+          "item_count": 1,
+          "type": "Brep"
+        }
+      ],
+      "step_id": 130
+    },
+    {
+      "class": "IfcBuildingElementProxy",
+      "container_label": "IfcBuildingStorey #4 Level 0",
+      "global_id": "KOSMO_SLAB_001",
+      "has_object_placement": true,
+      "has_representation": true,
+      "kosmo_object_type": null,
+      "name": "Demo Slab",
+      "object_placement_class": "IfcLocalPlacement",
+      "predefined_type": null,
+      "properties_sample": {
+        "Pset_KosmoDemo": {
+          "Material": "Concrete",
+          "SourceRole": "context_fixture"
+        }
+      },
+      "property_set_count": 1,
+      "property_set_names": [
+        "Pset_KosmoDemo"
+      ],
+      "representation_signature": "Body/Brep",
+      "representations": [
+        {
+          "identifier": "Body",
+          "item_count": 1,
+          "type": "Brep"
+        }
+      ],
+      "step_id": 230
+    }
+  ],
+  "generator": "kosmo-ifcopenshell-semantic-review",
+  "ifc_schema": "IFC4",
+  "machine_checks": [
+    {
+      "detail": "IfcOpenShell opened the IFC file.",
+      "id": "ifc_file_opened",
+      "status": "passed"
+    },
+    {
+      "detail": "Schema is IFC4.",
+      "id": "schema_ifc4",
+      "status": "passed"
+    },
+    {
+      "detail": "Unit scale is 1.",
+      "id": "meter_unit_scale",
+      "status": "passed"
+    },
+    {
+      "detail": "Projects: 1.",
+      "id": "single_project",
+      "status": "passed"
+    },
+    {
+      "detail": "Sites: 1.",
+      "id": "single_site",
+      "status": "passed"
+    },
+    {
+      "detail": "Buildings: 1.",
+      "id": "single_building",
+      "status": "passed"
+    },
+    {
+      "detail": "Storeys: 1.",
+      "id": "storey_present",
+      "status": "passed"
+    },
+    {
+      "detail": "IfcBuildingElementProxy: 2.",
+      "id": "proxy_elements_present",
+      "status": "passed"
+    },
+    {
+      "detail": "All proxy elements have GlobalId.",
+      "id": "all_proxies_have_global_id",
+      "status": "passed"
+    },
+    {
+      "detail": "All proxy elements have ObjectPlacement.",
+      "id": "all_proxies_have_placement",
+      "status": "passed"
+    },
+    {
+      "detail": "All proxy elements use Body/Brep representation.",
+      "id": "all_proxies_have_body_brep",
+      "status": "passed"
+    },
+    {
+      "detail": "All proxy elements are contained in a spatial structure.",
+      "id": "all_proxies_contained",
+      "status": "passed"
+    },
+    {
+      "detail": "All proxy elements have property sets.",
+      "id": "all_proxies_have_psets",
+      "status": "passed"
+    }
+  ],
+  "next_actions": [
+    "Open the same IFC visually in Bonsai/IfcOpenShell UI and compare semantic tree with this report.",
+    "Decide whether IfcBuildingElementProxy plus OBJEKTART is sufficient as context semantics or requires reclassification.",
+    "Keep context-selection approved_for_design_generation=false until a human reviewer approves a design seed."
+  ],
+  "policy": {
+    "human_decision_required_before_design_seed": true,
+    "review_does_not_approve_design_generation": true,
+    "review_does_not_create_or_modify_geometry": true
+  },
+  "project_id": "kosmo-demo-001-innovation-smoke",
+  "rights_status": "internal_only",
+  "schema_version": "0.1",
+  "source_file": {
+    "name": "Bestand_Kontext.ifc",
+    "path": "examples/kosmo-projects/kosmo-demo-001/data/source-files/Bestand_Kontext.ifc",
+    "size_bytes": 3582
+  },
+  "spatial_structure": [
+    {
+      "global_id": "KOSMO_PROJECT",
+      "name": "Kosmo Demo Project",
+      "step_id": 1,
+      "type": "IfcProject"
+    },
+    {
+      "global_id": "KOSMO_SITE",
+      "name": "Demo Site",
+      "step_id": 2,
+      "type": "IfcSite"
+    },
+    {
+      "global_id": "KOSMO_BUILDING",
+      "name": "Demo Building",
+      "step_id": 3,
+      "type": "IfcBuilding"
+    },
+    {
+      "global_id": "KOSMO_STOREY_0",
+      "name": "Level 0",
+      "step_id": 4,
+      "type": "IfcBuildingStorey"
+    }
+  ],
+  "status": "ifcopenshell_semantic_review_ready",
+  "summary": {
+    "building_count": 1,
+    "design_seed_approved": false,
+    "ifcbuildingelementproxy_count": 2,
+    "ifcelement_count": 2,
+    "ifcopenshell_available": true,
+    "ifcopenshell_version": "0.8.5",
+    "machine_check_count": 13,
+    "machine_checks_passed": 13,
+    "map_conversion_count": 0,
+    "project_count": 1,
+    "projected_crs_count": 0,
+    "proxies_contained_in_spatial_structure": 2,
+    "proxies_with_body_brep": 2,
+    "proxies_with_global_id": 2,
+    "proxies_with_object_placement": 2,
+    "proxies_with_property_sets": 2,
+    "recommended_decision": "keep_needs_more_source_review",
+    "site_count": 1,
+    "storey_count": 1,
+    "unit_scale": 1
+  },
+  "units": {
+    "unit_scale": 1,
+    "units": []
+  }
+}

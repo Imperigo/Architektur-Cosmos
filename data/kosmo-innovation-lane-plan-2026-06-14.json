@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T07:35:45.742Z",
+  "generated_at": "2026-06-14T07:38:01.314Z",
   "status": "innovation_lane_metadata_plan_ready",
   "policy": {
     "metadata_only": true,
@@ -81,15 +81,31 @@
       "output_excerpt": ""
     },
     "ifcopenshell_import": {
-      "command": "python3 -c import ifcopenshell; print(ifcopenshell.version)",
-      "executable": "python3",
+      "command": "/mnt/data/ArchitekturKosmos/tools/ifcopenshell-venv/bin/python -c import ifcopenshell; print(ifcopenshell.version)",
+      "executable": "/mnt/data/ArchitekturKosmos/tools/ifcopenshell-venv/bin/python",
       "args": [
         "-c",
         "import ifcopenshell; print(ifcopenshell.version)"
       ],
-      "status": "not_ready",
-      "exit_code": 1,
-      "output_excerpt": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n    import ifcopenshell; print(ifcopenshell.version)\n    ^^^^^^^^^^^^^^^^^^^\nModuleNotFoundError: No module named 'ifcopenshell'"
+      "status": "available",
+      "exit_code": 0,
+      "output_excerpt": "0.8.5",
+      "candidates": [
+        [
+          "python3",
+          [
+            "-c",
+            "import ifcopenshell; print(ifcopenshell.version)"
+          ]
+        ],
+        [
+          "/mnt/data/ArchitekturKosmos/tools/ifcopenshell-venv/bin/python",
+          [
+            "-c",
+            "import ifcopenshell; print(ifcopenshell.version)"
+          ]
+        ]
+      ]
     }
   },
   "lanes": [
@@ -151,7 +167,7 @@
       "name": "IfcOpenShell Geometry/Structure Lane",
       "intent": "Use IFC parsing as the future bridge from reference/project packages to model-layer reasoning.",
       "tool_probe": "ifcopenshell_import",
-      "current_tool_state": "not_ready",
+      "current_tool_state": "available",
       "allowed_now": [
         "run existing IFC demo/project checks",
         "define structure/material/level extraction targets",

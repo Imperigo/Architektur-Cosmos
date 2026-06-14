@@ -1,6 +1,6 @@
 # Kosmo Innovation Lane Plan
 
-Generated: 2026-06-14T07:35:45.742Z
+Generated: 2026-06-14T07:38:01.314Z
 Status: `innovation_lane_metadata_plan_ready`
 
 ## Summary
@@ -21,7 +21,7 @@ Status: `innovation_lane_metadata_plan_ready`
 | `markitdown_cli` | available | `/mnt/data/ArchitekturKosmos/tools/markitdown-venv/bin/markitdown --version` |
 | `tesseract_cli` | missing | `tesseract --version` |
 | `ollama_list` | available | `ollama list` |
-| `ifcopenshell_import` | not_ready | `python3 -c import ifcopenshell; print(ifcopenshell.version)` |
+| `ifcopenshell_import` | available | `/mnt/data/ArchitekturKosmos/tools/ifcopenshell-venv/bin/python -c import ifcopenshell; print(ifcopenshell.version)` |
 
 ## Lanes
 
@@ -55,7 +55,7 @@ Status: `innovation_lane_metadata_plan_ready`
 ### IfcOpenShell Geometry/Structure Lane
 
 - ID: `ifcopenshell_geometry_lane`
-- Tool state: not_ready
+- Tool state: available
 - Intent: Use IFC parsing as the future bridge from reference/project packages to model-layer reasoning.
 - First smoke: Run semantic proof on existing demo IFC only, then connect output to pilot evidence gaps.
 - Promotion gate: No derived model asset becomes public-ready without file-level provenance and human review.

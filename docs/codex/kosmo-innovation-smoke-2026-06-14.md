@@ -1,13 +1,13 @@
 # Kosmo Innovation Smoke
 
-Generated: 2026-06-14T07:35:46.491Z
+Generated: 2026-06-14T07:38:02.320Z
 Status: `innovation_smoke_passed_review_only`
 
 ## Summary
 
 - Checks: 5
-- Passed: 3
-- Skipped: 2
+- Passed: 4
+- Skipped: 1
 - Failures: 0
 - Public-ready after smoke: 0
 - Fixture root: `examples/kosmo-innovation-smoke-2026-06-14`
@@ -19,7 +19,7 @@ Status: `innovation_smoke_passed_review_only`
 | `markitdown_prepare_m2` | passed | Converted synthetic fixture to examples/kosmo-innovation-smoke-2026-06-14/markitdown-output.md. |
 | `local_ocr_scanned_sources` | skipped_missing_tool | tesseract CLI is not installed. |
 | `qwen_embedding_rag` | passed | Wrote public-safe embedding contract examples/kosmo-innovation-smoke-2026-06-14/embedding-contract.generated.json. |
-| `ifcopenshell_geometry_lane` | skipped_missing_python_module | ifcopenshell is not importable in the current Python environment. |
+| `ifcopenshell_geometry_lane` | passed | Reviewed existing demo IFC with 13/13 checks; wrote examples/kosmo-innovation-smoke-2026-06-14/ifcopenshell-semantic-review.generated.json. |
 | `paper2poster_publish_lane` | passed | Wrote public-safe layout contract examples/kosmo-innovation-smoke-2026-06-14/publish-layout-contract.generated.json. |
 
 ## Next Actions

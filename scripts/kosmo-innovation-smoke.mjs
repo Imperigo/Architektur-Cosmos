@@ -147,7 +147,30 @@ async function embeddingContractSmoke({ fixture }) {
 async function ifcOpenShellSmoke({ plan }) {
   const probe = plan.probes?.ifcopenshell_import;
   if (probe?.status !== 'available') return skipped('ifcopenshell_geometry_lane', 'skipped_missing_python_module', 'ifcopenshell is not importable in the current Python environment.');
-  return passed('ifcopenshell_geometry_lane', 'ifcopenshell import probe is available; use existing demo IFC for the next geometry smoke.');
+  const ifcPath = resolve(root, 'examples/kosmo-projects/kosmo-demo-001/data/source-files/Bestand_Kontext.ifc');
+  const outputPath = resolve(smokeRoot, 'ifcopenshell-semantic-review.generated.json');
+  const pythonScript = resolve(root, 'scripts/kosmo_ifcopenshell_semantic_review.py');
+  const result = spawnSync(probe.executable || 'python3', [
+    pythonScript,
+    '--ifc',
+    ifcPath,
+    '--project-id',
+    'kosmo-demo-001-innovation-smoke',
+    '--output-json',
+    outputPath,
+    '--display-ifc-path',
+    relative(root, ifcPath)
+  ], {
+    cwd: root,
+    encoding: 'utf8',
+    timeout: 60000
+  });
+  if (result.status !== 0) return failed('ifcopenshell_geometry_lane', `IfcOpenShell smoke failed: ${result.stderr || result.stdout || 'no output'}`);
+  const review = JSON.parse(await readFile(outputPath, 'utf8'));
+  if (review.policy?.review_does_not_create_or_modify_geometry !== true) {
+    return failed('ifcopenshell_geometry_lane', 'IfcOpenShell review policy did not prove no geometry modification.');
+  }
+  return passed('ifcopenshell_geometry_lane', `Reviewed existing demo IFC with ${review.summary.machine_checks_passed}/${review.summary.machine_check_count} checks; wrote ${relative(root, outputPath)}.`);
 }
 
 async function paper2PosterContractSmoke({ fixture }) {
