@@ -1,0 +1,103 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-14T17:16:32.166Z",
+  "status": "kosmo_evening_batch_rollup_ready",
+  "policy": {
+    "rollup_only": true,
+    "reads_private_content": false,
+    "records_owner_decisions": false,
+    "runs_private_inventory_now": false,
+    "executes_local_workers_now": false,
+    "writes_training_data_now": false,
+    "public_ready_after_rollup": 0
+  },
+  "source_refs": [
+    "data/kosmo-vision-completion-roadmap-2026-06-14.json",
+    "data/kosmo-source-root-owner-answer-execution-checklist-2026-06-14.json",
+    "data/kosmo-post-source-root-metadata-readiness-pack-2026-06-14.json",
+    "data/kosmoreferences-pilot-intake-readiness-pack-2026-06-14.json",
+    "data/kosmoasset-intake-readiness-pack-2026-06-14.json",
+    "data/kosmo-training-memory-readiness-pack-2026-06-14.json"
+  ],
+  "summary": {
+    "phases": 6,
+    "readiness_packs": 5,
+    "guarded_checks": "post-source, owner paths, pilot intake, asset intake, training memory",
+    "executable_now": 0,
+    "owner_gates": 2,
+    "source_free_codex_tasks_remaining": 0,
+    "failures": 0,
+    "public_ready_after_rollup": 0
+  },
+  "packs": [
+    {
+      "id": "post_source_metadata",
+      "status": "post_source_root_metadata_readiness_pack_ready",
+      "count": 9,
+      "blocked_or_executable": 7,
+      "executable_now": false,
+      "public_ready_after_pack": 0,
+      "note": "Owner answer first, then source-root guards."
+    },
+    {
+      "id": "owner_answer_paths",
+      "status": "source_root_owner_answer_execution_checklist_ready",
+      "count": 3,
+      "blocked_or_executable": 0,
+      "executable_now": false,
+      "public_ready_after_pack": 0,
+      "note": "Three branches, one unlock branch; no automatic decision."
+    },
+    {
+      "id": "pilot_intake",
+      "status": "kosmoreferences_pilot_intake_readiness_pack_ready",
+      "count": 24,
+      "blocked_or_executable": 24,
+      "executable_now": false,
+      "public_ready_after_pack": 0,
+      "note": "Three pilots prepared; all stages blocked until source-root unlock."
+    },
+    {
+      "id": "asset_intake",
+      "status": "kosmoasset_intake_readiness_pack_ready",
+      "count": 36,
+      "blocked_or_executable": 0,
+      "executable_now": false,
+      "public_ready_after_pack": 0,
+      "note": "Pilot assets and private library candidates separated."
+    },
+    {
+      "id": "training_memory",
+      "status": "kosmo_training_memory_readiness_pack_ready",
+      "count": 4,
+      "blocked_or_executable": 0,
+      "executable_now": false,
+      "public_ready_after_pack": 0,
+      "note": "RAG/eval/fine-tune/embedding lanes prepared; no data writes now."
+    }
+  ],
+  "next_owner_action": {
+    "required": true,
+    "answer_surface": "Source Root Owner Answer Execution Checklist",
+    "accepted_choices": [
+      "keep_blocked",
+      "repair_onedrive_first",
+      "select_exact_root_1"
+    ],
+    "unlock_rule": "Use select_exact_root_1 only if the owner confirms the exact shown path is the complete private architecture source root."
+  },
+  "next_codex_after_owner_answer": [
+    "Record the explicit source-root answer in the decision session.",
+    "Run source-root decision session check, blocker refresh and activation preflight.",
+    "If and only if activation is ready, run metadata-only private inventory and its guard.",
+    "Then rerun pilot, asset and training readiness packs before any worker execution."
+  ],
+  "hard_stops": [
+    "Do not infer owner decisions from rollup status.",
+    "Do not run private inventory before explicit owner answer and source-root guards.",
+    "Do not read, OCR, embed, train on or copy private source contents from this rollup.",
+    "Do not execute local workers from this rollup.",
+    "Keep public-ready at 0."
+  ],
+  "failures": []
+}

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T17:10:37.860Z",
+  "generated_at": "2026-06-14T17:17:07.561Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 171
+      "files": 173
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 215
+      "files": 217
     }
   ],
   "summary": {
@@ -47,6 +47,20 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-14-codex-synergiebericht-174-evening-batch-rollup.md",
+      "title": "Codex Synergiebericht 174: Evening Batch Rollup",
+      "mirrored_inboxes": 2,
+      "bytes": 1257,
+      "modified_at": "2026-06-14T17:16:53.796Z"
+    },
+    {
+      "filename": "2026-06-14-codex-synergiebericht-173-orbit-vision-readiness-status.md",
+      "title": "Codex Synergiebericht 173: Orbit Vision Readiness Status",
+      "mirrored_inboxes": 2,
+      "bytes": 921,
+      "modified_at": "2026-06-14T17:14:08.412Z"
+    },
     {
       "filename": "2026-06-14-codex-synergiebericht-172-training-memory-readiness.md",
       "title": "Codex Synergiebericht 172: Kosmo Training Memory Readiness",
@@ -88,20 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1501,
       "modified_at": "2026-06-14T16:50:51.705Z"
-    },
-    {
-      "filename": "2026-06-14-codex-synergiebericht-166-source-free-queue-complete.md",
-      "title": "Codex Synergiebericht 166: Source-Free Queue Complete",
-      "mirrored_inboxes": 2,
-      "bytes": 1611,
-      "modified_at": "2026-06-14T16:24:04.967Z"
-    },
-    {
-      "filename": "2026-06-14-codex-synergiebericht-165-local-worker-output-contract-review.md",
-      "title": "Codex Synergiebericht 165: Local Worker Output Contract Review",
-      "mirrored_inboxes": 2,
-      "bytes": 1910,
-      "modified_at": "2026-06-14T16:20:14.966Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 165-172 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 167-174 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."

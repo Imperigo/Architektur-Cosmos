@@ -187,6 +187,8 @@
     "kosmo:asset-intake-readiness-pack-check": "node scripts/kosmoasset-intake-readiness-pack-check.mjs",
     "kosmo:training-memory-readiness-pack": "node scripts/kosmo-training-memory-readiness-pack.mjs",
     "kosmo:training-memory-readiness-pack-check": "node scripts/kosmo-training-memory-readiness-pack-check.mjs",
+    "kosmo:evening-batch-rollup": "node scripts/kosmo-evening-batch-rollup.mjs",
+    "kosmo:evening-batch-rollup-check": "node scripts/kosmo-evening-batch-rollup-check.mjs",
     "kosmo:villa-provenance-brief": "node scripts/kosmo-villa-provenance-review-brief.mjs",
     "kosmo:ingenbohl-pdf-brief": "node scripts/kosmo-ingenbohl-pdf-extraction-brief.mjs",
     "kosmo:sogn-source-root-brief": "node scripts/kosmo-sogn-source-root-decision-brief.mjs",
