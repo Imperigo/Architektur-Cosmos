@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T18:26:51.996Z",
+  "generated_at": "2026-06-14T18:29:50.286Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 195
+      "files": 196
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 239
+      "files": 240
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-14-codex-synergiebericht-197-orbit-training-template-status.md",
+      "title": "Codex Synergiebericht 197: Orbit Training Template Status",
+      "mirrored_inboxes": 2,
+      "bytes": 704,
+      "modified_at": "2026-06-14T18:29:43.658Z"
+    },
     {
       "filename": "2026-06-14-codex-synergiebericht-196-training-eval-row-template.md",
       "title": "Codex Synergiebericht 196: Training Eval Row Template",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1840,
       "modified_at": "2026-06-14T18:08:04.633Z"
-    },
-    {
-      "filename": "2026-06-14-codex-synergiebericht-189-orbit-vision-roadmap-status.md",
-      "title": "Codex Synergiebericht 189: Orbit Vision Roadmap Status",
-      "mirrored_inboxes": 2,
-      "bytes": 708,
-      "modified_at": "2026-06-14T18:04:28.462Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 189-196 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 190-197 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."
