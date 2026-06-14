@@ -1,6 +1,6 @@
 # Kosmo Source-Root Owner Decision Packet
 
-Generated: 2026-06-14T14:44:47.335Z
+Generated: 2026-06-14T14:48:40.014Z
 Status: `source_root_owner_decision_packet_ready`
 
 ## Summary
