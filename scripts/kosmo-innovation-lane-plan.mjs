@@ -11,6 +11,9 @@ const dayBatchPath = resolve(root, args.dayBatch || `data/kosmo-day-batch-loop-$
 const blockerPath = resolve(root, args.blocker || `data/kosmo-source-root-blocker-refresh-${dateStamp}.json`);
 const outputJson = resolve(root, args.out || `data/kosmo-innovation-lane-plan-${dateStamp}.json`);
 const outputMd = resolve(root, args.markdown || `docs/codex/kosmo-innovation-lane-plan-${dateStamp}.md`);
+const knownToolPaths = {
+  markitdown: process.env.KOSMO_MARKITDOWN_BIN || '/mnt/data/ArchitekturKosmos/tools/markitdown-venv/bin/markitdown'
+};
 
 main().catch((error) => {
   console.error(error);
@@ -161,11 +164,21 @@ function buildPlan({ dayBatch, blocker, probes }) {
 function runProbes() {
   return {
     python_cli: probe('python3', ['--version']),
-    markitdown_cli: probe('markitdown', ['--version']),
+    markitdown_cli: probeCandidates([
+      ['markitdown', ['--version']],
+      [knownToolPaths.markitdown, ['--version']]
+    ]),
     tesseract_cli: probe('tesseract', ['--version']),
     ollama_list: probe('ollama', ['list']),
     ifcopenshell_import: probe('python3', ['-c', 'import ifcopenshell; print(ifcopenshell.version)'])
   };
+}
+
+function probeCandidates(candidates) {
+  const results = candidates.map(([command, commandArgs]) => probe(command, commandArgs));
+  const available = results.find((result) => result.status === 'available');
+  if (available) return { ...available, candidates };
+  return { ...results[0], candidates, fallback_results: results.slice(1) };
 }
 
 function probe(command, args) {
@@ -178,6 +191,8 @@ function probe(command, args) {
   const output = `${result.stdout || ''}${result.stderr || ''}`.trim();
   return {
     command: [command, ...args].join(' '),
+    executable: command,
+    args,
     status: result.status === 0 ? 'available' : result.error?.code === 'ENOENT' ? 'missing' : 'not_ready',
     exit_code: result.status ?? null,
     output_excerpt: output.length > 500 ? output.slice(0, 500) : output

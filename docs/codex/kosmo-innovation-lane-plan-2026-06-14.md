@@ -1,6 +1,6 @@
 # Kosmo Innovation Lane Plan
 
-Generated: 2026-06-14T07:32:34.424Z
+Generated: 2026-06-14T07:35:45.742Z
 Status: `innovation_lane_metadata_plan_ready`
 
 ## Summary
@@ -18,7 +18,7 @@ Status: `innovation_lane_metadata_plan_ready`
 | Probe | Status | Command |
 | --- | --- | --- |
 | `python_cli` | available | `python3 --version` |
-| `markitdown_cli` | missing | `markitdown --version` |
+| `markitdown_cli` | available | `/mnt/data/ArchitekturKosmos/tools/markitdown-venv/bin/markitdown --version` |
 | `tesseract_cli` | missing | `tesseract --version` |
 | `ollama_list` | available | `ollama list` |
 | `ifcopenshell_import` | not_ready | `python3 -c import ifcopenshell; print(ifcopenshell.version)` |
@@ -28,7 +28,7 @@ Status: `innovation_lane_metadata_plan_ready`
 ### MarkItDown for KosmoPrepare M2
 
 - ID: `markitdown_prepare_m2`
-- Tool state: missing
+- Tool state: available
 - Intent: Convert allowed documents into Markdown for downstream metadata extraction and review packs.
 - First smoke: Create a tiny synthetic public-domain text/PDF fixture and verify Markdown output contains no private content.
 - Promotion gate: No private Markdown enters Git; private outputs stay under KosmoZentrale private inventory paths.

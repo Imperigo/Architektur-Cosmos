@@ -1,6 +1,6 @@
 # Kosmo Day Batch Loop
 
-Generated: 2026-06-14T07:33:13.538Z
+Generated: 2026-06-14T07:36:34.717Z
 Status: `day_batch_loop_passed_review_only`
 
 ## Summary
@@ -33,24 +33,24 @@ Status: `day_batch_loop_passed_review_only`
 
 | Step | Status | Required | Duration |
 | --- | --- | --- | ---: |
-| OneDrive Sync Errors | passed | yes | 360ms |
-| Source Root Locator | passed | yes | 402ms |
-| Source Root Selection Brief | passed | yes | 256ms |
+| OneDrive Sync Errors | passed | yes | 341ms |
+| Source Root Locator | passed | yes | 389ms |
+| Source Root Selection Brief | passed | yes | 238ms |
 | Source Root Decision Session Create | skipped | no | 0ms |
-| Source Root Decision Session Check | passed | yes | 255ms |
-| Private Library Diagnostic Metadata | passed | yes | 245ms |
-| Source Root Blocker Refresh | passed | yes | 245ms |
-| Bootstrap Data Lane Sweep | passed | no | 18142ms |
-| Bootstrap Router | passed | yes | 240ms |
-| Core Data Lane Sweep | passed | yes | 16587ms |
-| Core Router | passed | yes | 231ms |
-| Worker Boundary Pack | passed | yes | 232ms |
-| Worker Boundary Pack Check | passed | yes | 233ms |
-| Owner Review Packet | passed | yes | 243ms |
-| Owner Review Packet Check | passed | yes | 239ms |
-| Owner Review Session Brief | passed | yes | 240ms |
-| Owner Review Session Brief Check | passed | yes | 236ms |
-| Night Loop Checkpoint | passed | yes | 235ms |
+| Source Root Decision Session Check | passed | yes | 250ms |
+| Private Library Diagnostic Metadata | passed | yes | 253ms |
+| Source Root Blocker Refresh | passed | yes | 248ms |
+| Bootstrap Data Lane Sweep | passed | no | 19468ms |
+| Bootstrap Router | passed | yes | 242ms |
+| Core Data Lane Sweep | passed | yes | 17719ms |
+| Core Router | passed | yes | 248ms |
+| Worker Boundary Pack | passed | yes | 255ms |
+| Worker Boundary Pack Check | passed | yes | 248ms |
+| Owner Review Packet | passed | yes | 245ms |
+| Owner Review Packet Check | passed | yes | 255ms |
+| Owner Review Session Brief | passed | yes | 262ms |
+| Owner Review Session Brief Check | passed | yes | 258ms |
+| Night Loop Checkpoint | passed | yes | 253ms |
 
 ## Next Actions
 

@@ -110,7 +110,7 @@ async function markitdownSmoke({ plan, fixture }) {
   const probe = plan.probes?.markitdown_cli;
   if (probe?.status !== 'available') return skipped('markitdown_prepare_m2', 'skipped_missing_tool', 'markitdown CLI is not installed.');
   const outputPath = resolve(smokeRoot, 'markitdown-output.md');
-  const result = spawnSync('markitdown', [fixture.notePath], { encoding: 'utf8', timeout: 30000 });
+  const result = spawnSync(probe.executable || 'markitdown', [fixture.notePath], { encoding: 'utf8', timeout: 30000 });
   if (result.status !== 0) return failed('markitdown_prepare_m2', `markitdown failed: ${result.stderr || result.stdout || 'no output'}`);
   await writeFile(outputPath, String(result.stdout || '').trim() + '\n');
   return passed('markitdown_prepare_m2', `Converted synthetic fixture to ${relative(root, outputPath)}.`);

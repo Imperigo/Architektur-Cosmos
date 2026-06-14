@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T07:32:34.424Z",
+  "generated_at": "2026-06-14T07:35:45.742Z",
   "status": "innovation_lane_metadata_plan_ready",
   "policy": {
     "metadata_only": true,
@@ -28,30 +28,65 @@
   "probes": {
     "python_cli": {
       "command": "python3 --version",
+      "executable": "python3",
+      "args": [
+        "--version"
+      ],
       "status": "available",
       "exit_code": 0,
       "output_excerpt": "Python 3.14.4"
     },
     "markitdown_cli": {
-      "command": "markitdown --version",
-      "status": "missing",
-      "exit_code": null,
-      "output_excerpt": ""
+      "command": "/mnt/data/ArchitekturKosmos/tools/markitdown-venv/bin/markitdown --version",
+      "executable": "/mnt/data/ArchitekturKosmos/tools/markitdown-venv/bin/markitdown",
+      "args": [
+        "--version"
+      ],
+      "status": "available",
+      "exit_code": 0,
+      "output_excerpt": "markitdown 0.1.5\n/mnt/data/ArchitekturKosmos/tools/markitdown-venv/lib/python3.12/site-packages/pydub/utils.py:170: RuntimeWarning: Couldn't find ffmpeg or avconv - defaulting to ffmpeg, but may not work\n  warn(\"Couldn't find ffmpeg or avconv - defaulting to ffmpeg, but may not work\", RuntimeWarning)",
+      "candidates": [
+        [
+          "markitdown",
+          [
+            "--version"
+          ]
+        ],
+        [
+          "/mnt/data/ArchitekturKosmos/tools/markitdown-venv/bin/markitdown",
+          [
+            "--version"
+          ]
+        ]
+      ]
     },
     "tesseract_cli": {
       "command": "tesseract --version",
+      "executable": "tesseract",
+      "args": [
+        "--version"
+      ],
       "status": "missing",
       "exit_code": null,
       "output_excerpt": ""
     },
     "ollama_list": {
       "command": "ollama list",
+      "executable": "ollama",
+      "args": [
+        "list"
+      ],
       "status": "available",
       "exit_code": 0,
       "output_excerpt": ""
     },
     "ifcopenshell_import": {
       "command": "python3 -c import ifcopenshell; print(ifcopenshell.version)",
+      "executable": "python3",
+      "args": [
+        "-c",
+        "import ifcopenshell; print(ifcopenshell.version)"
+      ],
       "status": "not_ready",
       "exit_code": 1,
       "output_excerpt": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n    import ifcopenshell; print(ifcopenshell.version)\n    ^^^^^^^^^^^^^^^^^^^\nModuleNotFoundError: No module named 'ifcopenshell'"
@@ -63,7 +98,7 @@
       "name": "MarkItDown for KosmoPrepare M2",
       "intent": "Convert allowed documents into Markdown for downstream metadata extraction and review packs.",
       "tool_probe": "markitdown_cli",
-      "current_tool_state": "missing",
+      "current_tool_state": "available",
       "allowed_now": [
         "run public/synthetic smoke conversions",
         "draft Markdown field contract",

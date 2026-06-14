@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T07:32:34.674Z",
+  "generated_at": "2026-06-14T07:35:46.490Z",
   "status": "embedding_contract_public_safe",
   "model_route": "deterministic-smoke-vector",
   "intended_future_model": "qwen-local-embedding-or-reranker",
