@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T17:46:11.746Z",
+  "generated_at": "2026-06-14T17:47:57.791Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 182
+      "files": 183
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 226
+      "files": 227
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-14-codex-synergiebericht-184-orbit-unlock-runbook-status.md",
+      "title": "Codex Synergiebericht 184: Orbit Unlock Runbook Status",
+      "mirrored_inboxes": 2,
+      "bytes": 716,
+      "modified_at": "2026-06-14T17:47:36.968Z"
+    },
     {
       "filename": "2026-06-14-codex-synergiebericht-183-owner-unlock-execution-runbook.md",
       "title": "Codex Synergiebericht 183: Owner Unlock Execution Runbook",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 719,
       "modified_at": "2026-06-14T17:28:58.254Z"
-    },
-    {
-      "filename": "2026-06-14-codex-synergiebericht-176-overseer-next-shift-brief.md",
-      "title": "Codex Synergiebericht 176: Overseer Next Shift Brief",
-      "mirrored_inboxes": 2,
-      "bytes": 1321,
-      "modified_at": "2026-06-14T17:26:30.589Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 176-183 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 177-184 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."
