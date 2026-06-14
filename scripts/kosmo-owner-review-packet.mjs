@@ -13,6 +13,7 @@ const refs = {
   answerIntake: resolve(root, args.answerIntake || `examples/kosmo-references/provenance/owner-answer-intake-template-${dateStamp}.json`),
   answerIntakeCheck: resolve(root, args.answerIntakeCheck || `data/kosmo-owner-answer-intake-check-${dateStamp}.json`),
   sessionEditPlan: resolve(root, args.sessionEditPlan || `data/kosmo-owner-answer-session-edit-plan-${dateStamp}.json`),
+  sourceRootOwnerDecisionPacket: resolve(root, args.sourceRootOwnerDecisionPacket || `data/kosmo-source-root-owner-decision-packet-${dateStamp}.json`),
   dataLaneSweep: resolve(root, args.dataLaneSweep || `data/kosmodata-lane-sweep-${dateStamp}.json`)
 };
 
@@ -30,6 +31,7 @@ async function main() {
   const answerIntake = await readJson(refs.answerIntake);
   const answerIntakeCheck = await readJson(refs.answerIntakeCheck);
   const sessionEditPlan = await readJson(refs.sessionEditPlan);
+  const sourceRootOwnerDecisionPacket = await readJson(refs.sourceRootOwnerDecisionPacket);
   const dataLaneSweep = await readJson(refs.dataLaneSweep);
 
   const packet = {
@@ -57,6 +59,10 @@ async function main() {
       filled_answers: answerIntakeCheck.summary?.filled_answers ?? 0,
       session_edit_plan_status: sessionEditPlan.status,
       planned_edits: sessionEditPlan.summary?.planned_edits ?? 0,
+      source_root_owner_decision_packet_status: sourceRootOwnerDecisionPacket.status,
+      source_root_owner_decision_templates: sourceRootOwnerDecisionPacket.summary?.decision_templates ?? null,
+      source_root_owner_decision_exact_roots: sourceRootOwnerDecisionPacket.summary?.owner_confirmable_exact_roots ?? null,
+      source_root_owner_decision_public_ready_after: sourceRootOwnerDecisionPacket.summary?.public_ready_after_packet ?? null,
       public_ready_after_packet: 0
     },
     review_order: [
@@ -99,6 +105,14 @@ async function main() {
         json: relative(root, refs.sessionEditPlan),
         markdown: `docs/codex/kosmo-owner-answer-session-edit-plan-${dateStamp}.md`,
         required_status: 'owner_answer_session_edit_plan_pending_owner_input'
+      },
+      {
+        order: 6,
+        title: 'Source Root Owner Decision Packet',
+        purpose: 'Present safe source-root decision templates without applying them.',
+        json: relative(root, refs.sourceRootOwnerDecisionPacket),
+        markdown: `docs/codex/kosmo-source-root-owner-decision-packet-${dateStamp}.md`,
+        required_status: 'source_root_owner_decision_packet_ready'
       }
     ],
     next_actions: [
@@ -143,6 +157,9 @@ function renderMarkdown(packet) {
   lines.push(`- Filled answers: ${packet.summary.filled_answers}`);
   lines.push(`- Session edit plan: ${packet.summary.session_edit_plan_status}`);
   lines.push(`- Planned edits: ${packet.summary.planned_edits}`);
+  lines.push(`- Source-root owner decision packet: ${packet.summary.source_root_owner_decision_packet_status}`);
+  lines.push(`- Source-root decision templates: ${packet.summary.source_root_owner_decision_templates}`);
+  lines.push(`- Source-root exact roots: ${packet.summary.source_root_owner_decision_exact_roots}`);
   lines.push(`- Public-ready after packet: ${packet.summary.public_ready_after_packet}`);
   lines.push('');
   lines.push('## Review Order');

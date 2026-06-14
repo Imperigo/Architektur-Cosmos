@@ -103,6 +103,9 @@ function checkSummary(packet) {
   expect(summary.filled_answers === 0, findings, 'filled_answers_zero', 'Packet must not contain filled answers.');
   expect(summary.session_edit_plan_status === 'owner_answer_session_edit_plan_pending_owner_input', findings, 'session_edit_plan_pending_owner', 'Session edit plan must remain pending owner input.');
   expect(summary.planned_edits === 0, findings, 'planned_edits_zero', 'Packet must not plan edits.');
+  expect(summary.source_root_owner_decision_packet_status === 'source_root_owner_decision_packet_ready', findings, 'source_root_owner_decision_packet_ready', 'Source-root owner decision packet must be ready.');
+  expect(summary.source_root_owner_decision_templates >= 3, findings, 'source_root_owner_decision_templates_present', 'Source-root owner decision packet must expose decision templates.');
+  expect(summary.source_root_owner_decision_public_ready_after === 0, findings, 'source_root_owner_decision_public_ready_zero', 'Source-root owner decision packet must keep public-ready at 0.');
   expect(summary.public_ready_after_packet === 0, findings, 'summary_public_ready_zero', 'Packet summary must keep public-ready at 0.');
   return findings;
 }
@@ -115,7 +118,8 @@ function checkReviewOrder(packet) {
     ['Question Brief Guard', 'owner_question_brief_guard_passed'],
     ['Owner Answer Intake', 'owner_answer_intake_template_pending_owner_input'],
     ['Owner Answer Intake Check', 'owner_answer_intake_guard_passed_pending_owner_input'],
-    ['Session Edit Plan', 'owner_answer_session_edit_plan_pending_owner_input']
+    ['Session Edit Plan', 'owner_answer_session_edit_plan_pending_owner_input'],
+    ['Source Root Owner Decision Packet', 'source_root_owner_decision_packet_ready']
   ];
   expect(order.length === required.length, findings, 'review_order_length', `Packet review order must contain ${required.length} items.`);
   required.forEach(([title, status], index) => {

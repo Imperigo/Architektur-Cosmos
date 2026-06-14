@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T13:34:20.373Z",
+  "generated_at": "2026-06-14T14:49:17.363Z",
   "status": "owner_review_packet_ready",
   "policy": {
     "records_decisions": false,
@@ -17,6 +17,7 @@
     "examples/kosmo-references/provenance/owner-answer-intake-template-2026-06-14.json",
     "data/kosmo-owner-answer-intake-check-2026-06-14.json",
     "data/kosmo-owner-answer-session-edit-plan-2026-06-14.json",
+    "data/kosmo-source-root-owner-decision-packet-2026-06-14.json",
     "data/kosmodata-lane-sweep-2026-06-14.json"
   ],
   "summary": {
@@ -30,6 +31,10 @@
     "filled_answers": 0,
     "session_edit_plan_status": "owner_answer_session_edit_plan_pending_owner_input",
     "planned_edits": 0,
+    "source_root_owner_decision_packet_status": "source_root_owner_decision_packet_ready",
+    "source_root_owner_decision_templates": 3,
+    "source_root_owner_decision_exact_roots": 1,
+    "source_root_owner_decision_public_ready_after": 0,
     "public_ready_after_packet": 0
   },
   "review_order": [
@@ -72,6 +77,14 @@
       "json": "data/kosmo-owner-answer-session-edit-plan-2026-06-14.json",
       "markdown": "docs/codex/kosmo-owner-answer-session-edit-plan-2026-06-14.md",
       "required_status": "owner_answer_session_edit_plan_pending_owner_input"
+    },
+    {
+      "order": 6,
+      "title": "Source Root Owner Decision Packet",
+      "purpose": "Present safe source-root decision templates without applying them.",
+      "json": "data/kosmo-source-root-owner-decision-packet-2026-06-14.json",
+      "markdown": "docs/codex/kosmo-source-root-owner-decision-packet-2026-06-14.md",
+      "required_status": "source_root_owner_decision_packet_ready"
     }
   ],
   "next_actions": [

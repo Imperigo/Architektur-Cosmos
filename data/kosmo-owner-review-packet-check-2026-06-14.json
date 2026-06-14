@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T13:34:20.619Z",
+  "generated_at": "2026-06-14T14:49:17.609Z",
   "status": "owner_review_packet_guard_passed",
   "policy": {
     "records_decisions": false,
@@ -17,7 +17,7 @@
   "summary": {
     "packet_status": "owner_review_packet_ready",
     "data_lane_status": "kosmodata_lane_sweep_review_only_passed",
-    "review_order_items": 5,
+    "review_order_items": 6,
     "questions": 6,
     "filled_answers": 0,
     "planned_edits": 0,
@@ -107,6 +107,21 @@
       "message": "Packet must not plan edits."
     },
     {
+      "id": "source_root_owner_decision_packet_ready",
+      "severity": "passed",
+      "message": "Source-root owner decision packet must be ready."
+    },
+    {
+      "id": "source_root_owner_decision_templates_present",
+      "severity": "passed",
+      "message": "Source-root owner decision packet must expose decision templates."
+    },
+    {
+      "id": "source_root_owner_decision_public_ready_zero",
+      "severity": "passed",
+      "message": "Source-root owner decision packet must keep public-ready at 0."
+    },
+    {
       "id": "summary_public_ready_zero",
       "severity": "passed",
       "message": "Packet summary must keep public-ready at 0."
@@ -114,7 +129,7 @@
     {
       "id": "review_order_length",
       "severity": "passed",
-      "message": "Packet review order must contain 5 items."
+      "message": "Packet review order must contain 6 items."
     },
     {
       "id": "review_order_number:1",
@@ -217,6 +232,26 @@
       "message": "Session Edit Plan must include a JSON source path."
     },
     {
+      "id": "review_order_number:6",
+      "severity": "passed",
+      "message": "Review order item 6 must be in sequence."
+    },
+    {
+      "id": "review_order_title:Source Root Owner Decision Packet",
+      "severity": "passed",
+      "message": "Review order item 6 must be Source Root Owner Decision Packet."
+    },
+    {
+      "id": "review_order_status:Source Root Owner Decision Packet",
+      "severity": "passed",
+      "message": "Source Root Owner Decision Packet must require status source_root_owner_decision_packet_ready."
+    },
+    {
+      "id": "review_order_json:Source Root Owner Decision Packet",
+      "severity": "passed",
+      "message": "Source Root Owner Decision Packet must include a JSON source path."
+    },
+    {
       "id": "review_ref_exists:Owner Question Brief",
       "severity": "passed",
       "message": "Owner Question Brief JSON source must exist."
@@ -265,6 +300,16 @@
       "id": "review_ref_status:Session Edit Plan",
       "severity": "passed",
       "message": "Session Edit Plan source status must match packet required status."
+    },
+    {
+      "id": "review_ref_exists:Source Root Owner Decision Packet",
+      "severity": "passed",
+      "message": "Source Root Owner Decision Packet JSON source must exist."
+    },
+    {
+      "id": "review_ref_status:Source Root Owner Decision Packet",
+      "severity": "passed",
+      "message": "Source Root Owner Decision Packet source status must match packet required status."
     }
   ],
   "next_actions": [

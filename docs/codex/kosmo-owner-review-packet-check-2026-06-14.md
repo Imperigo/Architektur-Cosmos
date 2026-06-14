@@ -1,13 +1,13 @@
 # Kosmo Owner Review Packet Check
 
-Generated: 2026-06-14T13:34:20.619Z
+Generated: 2026-06-14T14:49:17.609Z
 Status: `owner_review_packet_guard_passed`
 
 ## Summary
 
 - Packet status: owner_review_packet_ready
 - Data lane status: kosmodata_lane_sweep_review_only_passed
-- Review order items: 5
+- Review order items: 6
 - Questions: 6
 - Filled answers: 0
 - Planned edits: 0
@@ -33,8 +33,11 @@ Status: `owner_review_packet_guard_passed`
 - passed: `filled_answers_zero` - Packet must not contain filled answers.
 - passed: `session_edit_plan_pending_owner` - Session edit plan must remain pending owner input.
 - passed: `planned_edits_zero` - Packet must not plan edits.
+- passed: `source_root_owner_decision_packet_ready` - Source-root owner decision packet must be ready.
+- passed: `source_root_owner_decision_templates_present` - Source-root owner decision packet must expose decision templates.
+- passed: `source_root_owner_decision_public_ready_zero` - Source-root owner decision packet must keep public-ready at 0.
 - passed: `summary_public_ready_zero` - Packet summary must keep public-ready at 0.
-- passed: `review_order_length` - Packet review order must contain 5 items.
+- passed: `review_order_length` - Packet review order must contain 6 items.
 - passed: `review_order_number:1` - Review order item 1 must be in sequence.
 - passed: `review_order_title:Owner Question Brief` - Review order item 1 must be Owner Question Brief.
 - passed: `review_order_status:Owner Question Brief` - Owner Question Brief must require status owner_question_brief_ready.
@@ -55,6 +58,10 @@ Status: `owner_review_packet_guard_passed`
 - passed: `review_order_title:Session Edit Plan` - Review order item 5 must be Session Edit Plan.
 - passed: `review_order_status:Session Edit Plan` - Session Edit Plan must require status owner_answer_session_edit_plan_pending_owner_input.
 - passed: `review_order_json:Session Edit Plan` - Session Edit Plan must include a JSON source path.
+- passed: `review_order_number:6` - Review order item 6 must be in sequence.
+- passed: `review_order_title:Source Root Owner Decision Packet` - Review order item 6 must be Source Root Owner Decision Packet.
+- passed: `review_order_status:Source Root Owner Decision Packet` - Source Root Owner Decision Packet must require status source_root_owner_decision_packet_ready.
+- passed: `review_order_json:Source Root Owner Decision Packet` - Source Root Owner Decision Packet must include a JSON source path.
 - passed: `review_ref_exists:Owner Question Brief` - Owner Question Brief JSON source must exist.
 - passed: `review_ref_status:Owner Question Brief` - Owner Question Brief source status must match packet required status.
 - passed: `review_ref_exists:Question Brief Guard` - Question Brief Guard JSON source must exist.
@@ -65,6 +72,8 @@ Status: `owner_review_packet_guard_passed`
 - passed: `review_ref_status:Owner Answer Intake Check` - Owner Answer Intake Check source status must match packet required status.
 - passed: `review_ref_exists:Session Edit Plan` - Session Edit Plan JSON source must exist.
 - passed: `review_ref_status:Session Edit Plan` - Session Edit Plan source status must match packet required status.
+- passed: `review_ref_exists:Source Root Owner Decision Packet` - Source Root Owner Decision Packet JSON source must exist.
+- passed: `review_ref_status:Source Root Owner Decision Packet` - Source Root Owner Decision Packet source status must match packet required status.
 
 ## Next Actions
 

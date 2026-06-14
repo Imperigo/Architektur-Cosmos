@@ -1,6 +1,6 @@
 # Kosmo Owner Review Packet
 
-Generated: 2026-06-14T13:34:20.373Z
+Generated: 2026-06-14T14:49:17.363Z
 Status: `owner_review_packet_ready`
 
 ## Summary
@@ -13,6 +13,9 @@ Status: `owner_review_packet_ready`
 - Filled answers: 0
 - Session edit plan: owner_answer_session_edit_plan_pending_owner_input
 - Planned edits: 0
+- Source-root owner decision packet: source_root_owner_decision_packet_ready
+- Source-root decision templates: 3
+- Source-root exact roots: 1
 - Public-ready after packet: 0
 
 ## Review Order
@@ -42,6 +45,11 @@ Status: `owner_review_packet_ready`
    - JSON: `data/kosmo-owner-answer-session-edit-plan-2026-06-14.json`
    - Markdown: `docs/codex/kosmo-owner-answer-session-edit-plan-2026-06-14.md`
    - Required status: `owner_answer_session_edit_plan_pending_owner_input`
+6. Source Root Owner Decision Packet
+   - Purpose: Present safe source-root decision templates without applying them.
+   - JSON: `data/kosmo-source-root-owner-decision-packet-2026-06-14.json`
+   - Markdown: `docs/codex/kosmo-source-root-owner-decision-packet-2026-06-14.md`
+   - Required status: `source_root_owner_decision_packet_ready`
 
 ## Next Actions
 
