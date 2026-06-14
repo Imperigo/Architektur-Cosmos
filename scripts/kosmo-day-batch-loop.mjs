@@ -52,6 +52,7 @@ const steps = [
   step('worker_boundary_pack', 'Worker Boundary Pack', ['run', 'kosmo:worker-boundary-pack']),
   step('worker_boundary_pack_check', 'Worker Boundary Pack Check', ['run', 'kosmo:worker-boundary-pack-check']),
   step('source_root_activation_preflight', 'Source Root Activation Preflight', ['run', 'kosmo:source-root-activation-preflight']),
+  step('private_metadata_inventory', 'Private Metadata Inventory Runner', ['run', 'kosmo:private-metadata-inventory']),
   step('local_worker_launch_queue', 'Local Worker Launch Queue', ['run', 'kosmo:local-worker-launch-queue']),
   step('local_worker_output_conversion_plan', 'Local Worker Output Conversion Plan', ['run', 'kosmo:local-worker-output-conversion-plan']),
   step('owner_review_packet', 'Owner Review Packet', ['run', 'kosmo:owner-review-packet']),
@@ -95,6 +96,7 @@ async function main() {
   console.log(`Worker boundary: ${report.summary.worker_boundary_status}`);
   console.log(`Owner handoff: ${report.summary.owner_handoff_status}`);
   console.log(`Source-root activation: ${report.summary.source_root_activation_status}`);
+  console.log(`Private metadata inventory: ${report.summary.private_metadata_inventory_status}`);
   console.log(`Innovation smoke: ${report.summary.innovation_smoke_status}`);
   console.log(`Orbit bridge: ${report.summary.orbit_bridge_status}`);
   console.log(`Wrote: ${relative(root, outputMd)}`);
@@ -174,6 +176,7 @@ async function buildReport({ results, startedAt }) {
   const ownerSession = await readOptionalJson(`data/kosmo-owner-review-session-brief-check-${dateStamp}.json`);
   const blocker = await readOptionalJson(`data/kosmo-source-root-blocker-refresh-${dateStamp}.json`);
   const sourceRootActivation = await readOptionalJson(`data/kosmo-source-root-activation-preflight-${dateStamp}.json`);
+  const privateMetadataInventory = await readOptionalJson(`data/kosmo-private-metadata-inventory-runner-${dateStamp}.json`);
   const checkpoint = await readOptionalJson(`data/kosmo-night-loop-checkpoint-${dateStamp}.json`);
   const innovationSmoke = await readOptionalJson(`data/kosmo-innovation-smoke-${dateStamp}.json`);
   const orbitBridge = await readOptionalJson(`data/kosmo-orbit-status-bridge-${dateStamp}.json`);
@@ -192,6 +195,11 @@ async function buildReport({ results, startedAt }) {
       'source_root_activation_needs_contract_review',
       'source_root_activation_ready_for_private_metadata_diagnostic'
     ].includes(sourceRootActivation?.status), sourceRootActivation?.status),
+    invariant('private_metadata_inventory_guarded', [
+      'private_metadata_inventory_blocked_until_activation',
+      'private_metadata_inventory_ready_private_output_written',
+      'private_metadata_inventory_fixture_passed'
+    ].includes(privateMetadataInventory?.status), privateMetadataInventory?.status),
     invariant('public_ready_zero', (sweep?.summary?.references_public_ready_assets ?? 0) === 0, `public_ready=${sweep?.summary?.references_public_ready_assets ?? 0}`),
     invariant(
       'private_source_guard_state_valid',
@@ -231,6 +239,7 @@ async function buildReport({ results, startedAt }) {
       orbit_bridge_status: orbitBridge?.status || null,
       source_root_blocker_status: blocker?.status || null,
       source_root_activation_status: sourceRootActivation?.status || null,
+      private_metadata_inventory_status: privateMetadataInventory?.status || null,
       private_diagnostic_allowed: blocker?.summary?.private_diagnostic_allowed === true,
       night_loop_checkpoint_status: checkpoint?.status || null,
       public_ready_after_loop: 0
@@ -243,6 +252,7 @@ async function buildReport({ results, startedAt }) {
       `data/kosmo-owner-review-session-brief-check-${dateStamp}.json`,
       `data/kosmo-source-root-blocker-refresh-${dateStamp}.json`,
       `data/kosmo-source-root-activation-preflight-${dateStamp}.json`,
+      `data/kosmo-private-metadata-inventory-runner-${dateStamp}.json`,
       `data/kosmo-night-loop-checkpoint-${dateStamp}.json`,
       `data/kosmo-innovation-smoke-${dateStamp}.json`,
       `data/kosmo-orbit-status-bridge-${dateStamp}.json`
@@ -290,6 +300,7 @@ function renderMarkdown(report) {
   lines.push(`- Worker boundary: ${report.summary.worker_boundary_status}`);
   lines.push(`- Owner handoff: ${report.summary.owner_handoff_status}`);
   lines.push(`- Source-root activation: ${report.summary.source_root_activation_status}`);
+  lines.push(`- Private metadata inventory: ${report.summary.private_metadata_inventory_status}`);
   lines.push(`- Innovation smoke: ${report.summary.innovation_smoke_status}`);
   lines.push(`- Orbit bridge: ${report.summary.orbit_bridge_status}`);
   lines.push(`- Source-root blocker: ${report.summary.source_root_blocker_status}`);

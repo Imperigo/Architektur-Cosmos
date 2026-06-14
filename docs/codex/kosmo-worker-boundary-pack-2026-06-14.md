@@ -1,6 +1,6 @@
 # Kosmo Worker Boundary Pack
 
-Generated: 2026-06-14T08:46:59.842Z
+Generated: 2026-06-14T08:53:46.536Z
 Status: `worker_boundary_pack_review_only_locked`
 
 ## Hard State
@@ -9,7 +9,7 @@ Status: `worker_boundary_pack_review_only_locked`
 - Source-root blocker: source_root_blocker_still_active
 - Source-root activation: source_root_activation_waiting_for_owner_storage_action
 - Source-root activation ready: no
-- Source-root activation safe/blocked commands: 13/3
+- Source-root activation safe/blocked commands: 13/4
 - Source-root candidates/probable/mirrors: 722/0/64
 - OneDrive marker/leaf/missing: 59/58/58
 - Selected root exists: no
@@ -29,6 +29,7 @@ Allowed tasks:
 - summarize existing JSON/Markdown reports
 - draft gap maps and checklists from repo-visible metadata
 - prepare local-only private inventory row shapes from templates
+- run pilot-scoped metadata inventory only after source-root activation is ready
 - propose source-search keywords without reading private files
 
 Blocked tasks:
@@ -87,6 +88,7 @@ Blocked tasks:
 - `npm run kosmo:worker-boundary-pack-check`
 - `npm run kosmo:storage-mount-snapshot`
 - `npm run kosmo:source-root-activation-preflight`
+- `npm run kosmo:private-metadata-inventory`
 
 ## Blocked Commands Now
 
@@ -100,6 +102,7 @@ Blocked tasks:
 - OneDrive sync markers are repaired
 - source-root decision check reports private_diagnostic_allowed=true
 - source-root activation preflight reports metadata diagnostic ready
+- private metadata inventory runner writes contract-safe private output
 - owner provides explicit current answers for owner review packet
 
 ## Next Best Actions

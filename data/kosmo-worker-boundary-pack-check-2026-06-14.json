@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T08:47:00.077Z",
+  "generated_at": "2026-06-14T08:53:46.782Z",
   "status": "worker_boundary_pack_guard_passed",
   "policy": {
     "records_decisions": false,
@@ -18,7 +18,7 @@
   "summary": {
     "pack_status": "worker_boundary_pack_review_only_locked",
     "worker_count": 3,
-    "allowed_commands": 18,
+    "allowed_commands": 19,
     "blocked_commands": 3,
     "failures": 0,
     "warnings": 0,
@@ -161,6 +161,11 @@
       "message": "Activation preflight command must be allowed."
     },
     {
+      "id": "private_metadata_inventory_command_allowed",
+      "severity": "passed",
+      "message": "Private metadata inventory command must be available as a self-guarding command."
+    },
+    {
       "id": "private_library_diagnostic_guarded",
       "severity": "passed",
       "message": "Private-library diagnostic must be blocked until activation preflight is ready."
@@ -199,6 +204,11 @@
       "id": "trigger_activation_preflight",
       "severity": "passed",
       "message": "Escalation triggers must include activation preflight readiness."
+    },
+    {
+      "id": "trigger_private_metadata_inventory",
+      "severity": "passed",
+      "message": "Escalation triggers must include private metadata inventory contract output."
     },
     {
       "id": "trigger_owner_answers",

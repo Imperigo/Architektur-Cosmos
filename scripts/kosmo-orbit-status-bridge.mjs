@@ -13,6 +13,7 @@ const refs = {
   dayBatch: `data/kosmo-day-batch-loop-${dateStamp}.json`,
   sourceRoot: `data/kosmo-source-root-blocker-refresh-${dateStamp}.json`,
   sourceRootActivation: `data/kosmo-source-root-activation-preflight-${dateStamp}.json`,
+  privateMetadataInventory: `data/kosmo-private-metadata-inventory-runner-${dateStamp}.json`,
   localModelInventory: `data/kosmo-local-model-inventory-${dateStamp}.json`,
   sweep: `data/kosmodata-lane-sweep-${dateStamp}.json`,
   workerBoundary: `data/kosmo-worker-boundary-pack-check-${dateStamp}.json`,
@@ -49,6 +50,7 @@ function buildBridge(reports) {
   const daySummary = reports.dayBatch?.summary || {};
   const sourceSummary = reports.sourceRoot?.summary || {};
   const activationSummary = reports.sourceRootActivation?.summary || {};
+  const privateInventorySummary = reports.privateMetadataInventory?.summary || {};
   const modelSummary = reports.localModelInventory?.summary || {};
   const sweepSummary = reports.sweep?.summary || {};
   const assetBridgeSummary = reports.assetBridge?.summary || {};
@@ -97,6 +99,21 @@ function buildBridge(reports) {
       owner_action_required: false,
       route_hint: 'Ollama/Odysseus local worker readiness',
       source_ref: refs.localModelInventory
+    },
+    {
+      id: 'private-metadata-inventory',
+      title: 'Private Metadata Inventory',
+      status: reports.privateMetadataInventory?.status === 'private_metadata_inventory_ready_private_output_written'
+        ? 'review_only_ready'
+        : reports.privateMetadataInventory?.status === 'private_metadata_inventory_blocked_until_activation'
+          ? 'blocked'
+          : 'needs_review',
+      signal: reports.privateMetadataInventory?.status === 'private_metadata_inventory_blocked_until_activation'
+        ? 'blocked until source-root activation'
+        : `${privateInventorySummary.total_candidate_matches ?? 0} candidates, scanned ${privateInventorySummary.files_scanned ?? 0} files`,
+      owner_action_required: reports.privateMetadataInventory?.status === 'private_metadata_inventory_blocked_until_activation',
+      route_hint: 'Pilot-scoped metadata-only inventory',
+      source_ref: refs.privateMetadataInventory
     },
     {
       id: 'pilot-references',
@@ -178,6 +195,7 @@ function buildBridge(reports) {
       source_root_blocked: sourceSummary.private_diagnostic_allowed !== true,
       day_batch_status: reports.dayBatch?.status || null,
       source_root_activation_status: reports.sourceRootActivation?.status || null,
+      private_metadata_inventory_status: reports.privateMetadataInventory?.status || null,
       local_model_inventory_status: reports.localModelInventory?.status || null,
       asset_bridge_status: reports.assetBridge?.status || null,
       innovation_smoke_status: reports.innovationSmoke?.status || null,
@@ -189,6 +207,7 @@ function buildBridge(reports) {
       'local_models_card',
       'source_root_blocker_card',
       'source_root_activation_card',
+      'private_metadata_inventory_card',
       'pilot_reference_cards',
       'asset_reference_bridge_card',
       'worker_boundary_card',
@@ -226,6 +245,7 @@ function renderMarkdown(bridge) {
   lines.push(`- Source root blocked: ${bridge.summary.source_root_blocked ? 'yes' : 'no'}`);
   lines.push(`- Day batch: ${bridge.summary.day_batch_status}`);
   lines.push(`- Source-root activation: ${bridge.summary.source_root_activation_status}`);
+  lines.push(`- Private metadata inventory: ${bridge.summary.private_metadata_inventory_status}`);
   lines.push(`- Local models: ${bridge.summary.local_model_inventory_status}`);
   lines.push(`- Asset bridge: ${bridge.summary.asset_bridge_status}`);
   lines.push(`- Innovation smoke: ${bridge.summary.innovation_smoke_status}`);

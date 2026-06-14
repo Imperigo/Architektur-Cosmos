@@ -1,16 +1,17 @@
 # Kosmo Orbit Status Bridge
 
-Generated: 2026-06-14T08:47:05.331Z
+Generated: 2026-06-14T08:53:52.100Z
 Status: `orbit_bridge_ready_with_blockers`
 
 ## Summary
 
-- Cards: 10
-- Blocking cards: 2
-- Owner action cards: 6
+- Cards: 11
+- Blocking cards: 3
+- Owner action cards: 7
 - Source root blocked: yes
 - Day batch: day_batch_loop_passed_review_only
 - Source-root activation: source_root_activation_waiting_for_owner_storage_action
+- Private metadata inventory: private_metadata_inventory_blocked_until_activation
 - Local models: local_model_inventory_ready_review_only
 - Asset bridge: kosmoasset_reference_bridge_review_only_passed
 - Innovation smoke: innovation_smoke_passed_review_only
@@ -22,8 +23,9 @@ Status: `orbit_bridge_ready_with_blockers`
 | --- | --- | --- | --- |
 | `day-batch` Daily Batch | ready | no | 32/32 required steps |
 | `source-root` Source Root | blocked | yes | blocked: 0 probable libraries, 59 OneDrive markers |
-| `source-root-activation` Source Root Activation | blocked | yes | source_root_activation_waiting_for_owner_storage_action, safe commands 13, blocked 3 |
+| `source-root-activation` Source Root Activation | blocked | yes | source_root_activation_waiting_for_owner_storage_action, safe commands 13, blocked 4 |
 | `local-models` Local Models | review_only_ready | no | 4/4 roles, 8 Ollama models, 70 GB |
+| `private-metadata-inventory` Private Metadata Inventory | blocked | yes | blocked until source-root activation |
 | `pilot-references` Pilot References | review_only | yes | 3 pilots, 12 evidence gaps |
 | `kosmoasset` KosmoAsset | review_only | yes | 6 human reviews open, public-ready 0 |
 | `asset-reference-bridge` Asset Reference Bridge | review_only_ready | yes | 3/3 pilot bridges, 6 assets, public-ready 0 |
@@ -37,6 +39,7 @@ Status: `orbit_bridge_ready_with_blockers`
 - `local_models_card`
 - `source_root_blocker_card`
 - `source_root_activation_card`
+- `private_metadata_inventory_card`
 - `pilot_reference_cards`
 - `asset_reference_bridge_card`
 - `worker_boundary_card`

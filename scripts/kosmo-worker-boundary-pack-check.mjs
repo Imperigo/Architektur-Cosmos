@@ -177,6 +177,7 @@ function checkCommands(pack) {
   const activationReady = pack.hard_state?.source_root_activation_ready === true;
   expect(allowed.includes('npm run kosmo:worker-boundary-pack'), findings, 'pack_command_allowed', 'Worker boundary pack command must be allowed.');
   expect(allowed.includes('npm run kosmo:source-root-activation-preflight'), findings, 'activation_preflight_command_allowed', 'Activation preflight command must be allowed.');
+  expect(allowed.includes('npm run kosmo:private-metadata-inventory'), findings, 'private_metadata_inventory_command_allowed', 'Private metadata inventory command must be available as a self-guarding command.');
   expect(
     activationReady || blocked.some((item) => item.command.includes('private-library-diagnostic')),
     findings,
@@ -201,6 +202,7 @@ function checkEscalation(pack) {
   expect(triggers.some((trigger) => trigger.includes('OneDrive sync')), findings, 'trigger_onedrive_sync', 'Escalation triggers must include OneDrive sync repair.');
   expect(triggers.some((trigger) => trigger.includes('private_diagnostic_allowed=true')), findings, 'trigger_private_diagnostic_allowed', 'Escalation triggers must include private_diagnostic_allowed=true.');
   expect(triggers.some((trigger) => trigger.includes('activation preflight')), findings, 'trigger_activation_preflight', 'Escalation triggers must include activation preflight readiness.');
+  expect(triggers.some((trigger) => trigger.includes('private metadata inventory')), findings, 'trigger_private_metadata_inventory', 'Escalation triggers must include private metadata inventory contract output.');
   expect(triggers.some((trigger) => trigger.includes('explicit current answers')), findings, 'trigger_owner_answers', 'Escalation triggers must include explicit current owner answers.');
   return findings;
 }

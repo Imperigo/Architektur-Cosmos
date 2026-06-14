@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T08:47:05.331Z",
+  "generated_at": "2026-06-14T08:53:52.100Z",
   "status": "orbit_bridge_ready_with_blockers",
   "policy": {
     "dashboard_only": true,
@@ -16,6 +16,7 @@
     "data/kosmo-day-batch-loop-2026-06-14.json",
     "data/kosmo-source-root-blocker-refresh-2026-06-14.json",
     "data/kosmo-source-root-activation-preflight-2026-06-14.json",
+    "data/kosmo-private-metadata-inventory-runner-2026-06-14.json",
     "data/kosmo-local-model-inventory-2026-06-14.json",
     "data/kosmodata-lane-sweep-2026-06-14.json",
     "data/kosmo-worker-boundary-pack-check-2026-06-14.json",
@@ -26,12 +27,13 @@
     "data/kosmo-night-loop-checkpoint-2026-06-14.json"
   ],
   "summary": {
-    "cards": 10,
-    "blocking_cards": 2,
-    "owner_action_cards": 6,
+    "cards": 11,
+    "blocking_cards": 3,
+    "owner_action_cards": 7,
     "source_root_blocked": true,
     "day_batch_status": "day_batch_loop_passed_review_only",
     "source_root_activation_status": "source_root_activation_waiting_for_owner_storage_action",
+    "private_metadata_inventory_status": "private_metadata_inventory_blocked_until_activation",
     "local_model_inventory_status": "local_model_inventory_ready_review_only",
     "asset_bridge_status": "kosmoasset_reference_bridge_review_only_passed",
     "innovation_smoke_status": "innovation_smoke_passed_review_only",
@@ -60,7 +62,7 @@
       "id": "source-root-activation",
       "title": "Source Root Activation",
       "status": "blocked",
-      "signal": "source_root_activation_waiting_for_owner_storage_action, safe commands 13, blocked 3",
+      "signal": "source_root_activation_waiting_for_owner_storage_action, safe commands 13, blocked 4",
       "owner_action_required": true,
       "route_hint": "Post-source-root safe activation sequence",
       "source_ref": "data/kosmo-source-root-activation-preflight-2026-06-14.json"
@@ -73,6 +75,15 @@
       "owner_action_required": false,
       "route_hint": "Ollama/Odysseus local worker readiness",
       "source_ref": "data/kosmo-local-model-inventory-2026-06-14.json"
+    },
+    {
+      "id": "private-metadata-inventory",
+      "title": "Private Metadata Inventory",
+      "status": "blocked",
+      "signal": "blocked until source-root activation",
+      "owner_action_required": true,
+      "route_hint": "Pilot-scoped metadata-only inventory",
+      "source_ref": "data/kosmo-private-metadata-inventory-runner-2026-06-14.json"
     },
     {
       "id": "pilot-references",
@@ -134,6 +145,7 @@
     "local_models_card",
     "source_root_blocker_card",
     "source_root_activation_card",
+    "private_metadata_inventory_card",
     "pilot_reference_cards",
     "asset_reference_bridge_card",
     "worker_boundary_card",

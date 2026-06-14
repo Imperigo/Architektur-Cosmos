@@ -1,6 +1,6 @@
 # Kosmo Source-Root Activation Preflight
 
-Generated: 2026-06-14T08:47:00.322Z
+Generated: 2026-06-14T08:53:47.035Z
 Status: `source_root_activation_waiting_for_owner_storage_action`
 
 ## Summary
@@ -48,6 +48,7 @@ Status: `source_root_activation_waiting_for_owner_storage_action`
 ## Blocked Commands
 
 - `npm run kosmo:private-library-diagnostic -- --roots "<selected-root>"` - blocked until source-root decision check allows private diagnostic
+- `npm run kosmo:private-metadata-inventory -- --root "<selected-root>"` - blocked until source-root activation preflight is ready
 - `local OCR/PDF extraction on private files` - blocked until source-root, scope and output guards pass
 - `any public-ready promotion` - blocked until provenance, rights and owner review pass
 

@@ -84,6 +84,7 @@ async function main() {
           'summarize existing JSON/Markdown reports',
           'draft gap maps and checklists from repo-visible metadata',
           'prepare local-only private inventory row shapes from templates',
+          'run pilot-scoped metadata inventory only after source-root activation is ready',
           'propose source-search keywords without reading private files'
         ],
         blocked_tasks: [
@@ -128,6 +129,7 @@ async function main() {
       ...(router.allowed_commands_now || []),
       'npm run kosmo:storage-mount-snapshot',
       'npm run kosmo:source-root-activation-preflight',
+      'npm run kosmo:private-metadata-inventory',
       'npm run kosmo:worker-boundary-pack'
     ]),
     blocked_commands_now: router.blocked_commands_now || [],
@@ -136,6 +138,7 @@ async function main() {
       'OneDrive sync markers are repaired',
       'source-root decision check reports private_diagnostic_allowed=true',
       'source-root activation preflight reports metadata diagnostic ready',
+      'private metadata inventory runner writes contract-safe private output',
       'owner provides explicit current answers for owner review packet'
     ],
     next_best_actions: [

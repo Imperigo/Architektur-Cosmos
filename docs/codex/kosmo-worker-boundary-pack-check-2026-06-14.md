@@ -1,13 +1,13 @@
 # Kosmo Worker Boundary Pack Check
 
-Generated: 2026-06-14T08:47:00.077Z
+Generated: 2026-06-14T08:53:46.782Z
 Status: `worker_boundary_pack_guard_passed`
 
 ## Summary
 
 - Pack status: worker_boundary_pack_review_only_locked
 - Workers: 3
-- Allowed commands: 18
+- Allowed commands: 19
 - Blocked commands: 3
 - Failures: 0
 - Warnings: 0
@@ -42,6 +42,7 @@ Status: `worker_boundary_pack_guard_passed`
 - passed: `local_blocks_git_cloud` - Local LLM must block Git/cloud/upload commands.
 - passed: `pack_command_allowed` - Worker boundary pack command must be allowed.
 - passed: `activation_preflight_command_allowed` - Activation preflight command must be allowed.
+- passed: `private_metadata_inventory_command_allowed` - Private metadata inventory command must be available as a self-guarding command.
 - passed: `private_library_diagnostic_guarded` - Private-library diagnostic must be blocked until activation preflight is ready.
 - passed: `private_inventory_extraction_guarded` - Private inventory extraction must be blocked until activation preflight is ready.
 - passed: `public_promotion_blocked` - Public promotion must be blocked.
@@ -50,6 +51,7 @@ Status: `worker_boundary_pack_guard_passed`
 - passed: `trigger_onedrive_sync` - Escalation triggers must include OneDrive sync repair.
 - passed: `trigger_private_diagnostic_allowed` - Escalation triggers must include private_diagnostic_allowed=true.
 - passed: `trigger_activation_preflight` - Escalation triggers must include activation preflight readiness.
+- passed: `trigger_private_metadata_inventory` - Escalation triggers must include private metadata inventory contract output.
 - passed: `trigger_owner_answers` - Escalation triggers must include explicit current owner answers.
 
 ## Next Actions

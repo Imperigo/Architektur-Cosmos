@@ -86,6 +86,11 @@ async function buildReport(loaded) {
           'private_library_diagnostic_selected_root',
           `npm run kosmo:private-library-diagnostic -- --roots "${selectedRootPath}"`,
           'metadata-only diagnostic for the owner-approved root'
+        ),
+        command(
+          'private_metadata_inventory_selected_root',
+          `npm run kosmo:private-metadata-inventory -- --root "${selectedRootPath}"`,
+          'pilot-scoped metadata inventory for the owner-approved root'
         )
       ]
     : [];
@@ -94,6 +99,7 @@ async function buildReport(loaded) {
     ? []
     : [
         command('private_library_diagnostic_without_root', 'npm run kosmo:private-library-diagnostic -- --roots "<selected-root>"', 'blocked until source-root decision check allows private diagnostic'),
+        command('private_metadata_inventory_without_activation', 'npm run kosmo:private-metadata-inventory -- --root "<selected-root>"', 'blocked until source-root activation preflight is ready'),
         command('private_ocr_or_extraction', 'local OCR/PDF extraction on private files', 'blocked until source-root, scope and output guards pass'),
         command('public_promotion', 'any public-ready promotion', 'blocked until provenance, rights and owner review pass')
       ];

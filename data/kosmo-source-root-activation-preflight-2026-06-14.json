@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T08:47:00.322Z",
+  "generated_at": "2026-06-14T08:53:47.035Z",
   "status": "source_root_activation_waiting_for_owner_storage_action",
   "policy": {
     "metadata_only": true,
@@ -40,7 +40,7 @@
     "private_root_outside_repo": true,
     "activation_ready": false,
     "safe_command_count": 13,
-    "blocked_command_count": 3,
+    "blocked_command_count": 4,
     "public_ready_after_preflight": 0
   },
   "pilot_scope": [
@@ -141,6 +141,11 @@
       "id": "private_library_diagnostic_without_root",
       "command": "npm run kosmo:private-library-diagnostic -- --roots \"<selected-root>\"",
       "purpose": "blocked until source-root decision check allows private diagnostic"
+    },
+    {
+      "id": "private_metadata_inventory_without_activation",
+      "command": "npm run kosmo:private-metadata-inventory -- --root \"<selected-root>\"",
+      "purpose": "blocked until source-root activation preflight is ready"
     },
     {
       "id": "private_ocr_or_extraction",

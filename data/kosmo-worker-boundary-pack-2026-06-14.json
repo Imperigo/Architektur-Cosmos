@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T08:46:59.842Z",
+  "generated_at": "2026-06-14T08:53:46.536Z",
   "status": "worker_boundary_pack_review_only_locked",
   "policy": {
     "metadata_only": true,
@@ -24,7 +24,7 @@
     "source_root_activation_status": "source_root_activation_waiting_for_owner_storage_action",
     "source_root_activation_ready": false,
     "source_root_activation_safe_commands": 13,
-    "source_root_activation_blocked_commands": 3,
+    "source_root_activation_blocked_commands": 4,
     "source_root_candidates": 722,
     "source_root_probable_libraries": 0,
     "source_root_workflow_mirrors": 64,
@@ -48,6 +48,7 @@
         "summarize existing JSON/Markdown reports",
         "draft gap maps and checklists from repo-visible metadata",
         "prepare local-only private inventory row shapes from templates",
+        "run pilot-scoped metadata inventory only after source-root activation is ready",
         "propose source-search keywords without reading private files"
       ],
       "blocked_tasks": [
@@ -106,7 +107,8 @@
     "npm run kosmo:worker-boundary-pack",
     "npm run kosmo:worker-boundary-pack-check",
     "npm run kosmo:storage-mount-snapshot",
-    "npm run kosmo:source-root-activation-preflight"
+    "npm run kosmo:source-root-activation-preflight",
+    "npm run kosmo:private-metadata-inventory"
   ],
   "blocked_commands_now": [
     {
@@ -127,6 +129,7 @@
     "OneDrive sync markers are repaired",
     "source-root decision check reports private_diagnostic_allowed=true",
     "source-root activation preflight reports metadata diagnostic ready",
+    "private metadata inventory runner writes contract-safe private output",
     "owner provides explicit current answers for owner review packet"
   ],
   "next_best_actions": [
