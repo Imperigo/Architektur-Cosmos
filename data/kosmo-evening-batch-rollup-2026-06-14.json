@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T17:16:32.166Z",
+  "generated_at": "2026-06-14T18:49:10.606Z",
   "status": "kosmo_evening_batch_rollup_ready",
   "policy": {
     "rollup_only": true,
@@ -17,15 +17,21 @@
     "data/kosmo-post-source-root-metadata-readiness-pack-2026-06-14.json",
     "data/kosmoreferences-pilot-intake-readiness-pack-2026-06-14.json",
     "data/kosmoasset-intake-readiness-pack-2026-06-14.json",
-    "data/kosmo-training-memory-readiness-pack-2026-06-14.json"
+    "data/kosmo-training-memory-readiness-pack-2026-06-14.json",
+    "data/kosmo-training-eval-row-template-2026-06-14.json",
+    "data/kosmo-training-eval-review-queue-plan-2026-06-14.json",
+    "data/kosmo-architecture-ontology-seed-2026-06-14.json"
   ],
   "summary": {
     "phases": 6,
-    "readiness_packs": 5,
-    "guarded_checks": "post-source, owner paths, pilot intake, asset intake, training memory",
+    "readiness_packs": 8,
+    "guarded_checks": "post-source, owner paths, pilot intake, asset intake, training memory, eval template, review queue, ontology",
     "executable_now": 0,
     "owner_gates": 2,
     "source_free_codex_tasks_remaining": 0,
+    "training_eval_templates": 6,
+    "training_review_lanes": 5,
+    "ontology_entity_types": 8,
     "failures": 0,
     "public_ready_after_rollup": 0
   },
@@ -74,6 +80,33 @@
       "executable_now": false,
       "public_ready_after_pack": 0,
       "note": "RAG/eval/fine-tune/embedding lanes prepared; no data writes now."
+    },
+    {
+      "id": "training_eval_template",
+      "status": "training_eval_row_template_ready",
+      "count": 6,
+      "blocked_or_executable": 0,
+      "executable_now": false,
+      "public_ready_after_pack": 0,
+      "note": "Eval row template prepared; no eval rows now."
+    },
+    {
+      "id": "training_review_queue",
+      "status": "training_eval_review_queue_plan_ready",
+      "count": 5,
+      "blocked_or_executable": 0,
+      "executable_now": false,
+      "public_ready_after_pack": 0,
+      "note": "Review queue plan prepared; no queue items now."
+    },
+    {
+      "id": "architecture_ontology_seed",
+      "status": "architecture_ontology_seed_ready",
+      "count": 8,
+      "blocked_or_executable": 0,
+      "executable_now": false,
+      "public_ready_after_pack": 0,
+      "note": "Ontology seed prepared; no private facts instantiated."
     }
   ],
   "next_owner_action": {
@@ -90,12 +123,13 @@
     "Record the explicit source-root answer in the decision session.",
     "Run source-root decision session check, blocker refresh and activation preflight.",
     "If and only if activation is ready, run metadata-only private inventory and its guard.",
-    "Then rerun pilot, asset and training readiness packs before any worker execution."
+    "Then rerun pilot, asset, training, review queue and ontology guards before any worker execution."
   ],
   "hard_stops": [
     "Do not infer owner decisions from rollup status.",
     "Do not run private inventory before explicit owner answer and source-root guards.",
     "Do not read, OCR, embed, train on or copy private source contents from this rollup.",
+    "Do not create eval rows, queue items, embeddings or fine-tunes from this rollup.",
     "Do not execute local workers from this rollup.",
     "Keep public-ready at 0."
   ],

@@ -13,6 +13,9 @@ const postSourceReadinessPath = resolve(root, args.postSource || `data/kosmo-pos
 const pilotIntakePath = resolve(root, args.pilotIntake || `data/kosmoreferences-pilot-intake-readiness-pack-${dateStamp}.json`);
 const assetIntakePath = resolve(root, args.assetIntake || `data/kosmoasset-intake-readiness-pack-${dateStamp}.json`);
 const trainingReadinessPath = resolve(root, args.training || `data/kosmo-training-memory-readiness-pack-${dateStamp}.json`);
+const trainingTemplatePath = resolve(root, args.trainingTemplate || `data/kosmo-training-eval-row-template-${dateStamp}.json`);
+const reviewQueuePath = resolve(root, args.reviewQueue || `data/kosmo-training-eval-review-queue-plan-${dateStamp}.json`);
+const ontologyPath = resolve(root, args.ontology || `data/kosmo-architecture-ontology-seed-${dateStamp}.json`);
 const outputJson = resolve(root, args.out || `data/kosmo-evening-batch-rollup-${dateStamp}.json`);
 const outputMd = resolve(root, args.markdown || `docs/codex/kosmo-evening-batch-rollup-${dateStamp}.md`);
 
@@ -28,7 +31,20 @@ async function main() {
   const pilotIntake = await readJson(pilotIntakePath);
   const assetIntake = await readJson(assetIntakePath);
   const trainingReadiness = await readJson(trainingReadinessPath);
-  const report = buildReport({ roadmap, ownerChecklist, postSourceReadiness, pilotIntake, assetIntake, trainingReadiness });
+  const trainingTemplate = await readJson(trainingTemplatePath);
+  const reviewQueue = await readJson(reviewQueuePath);
+  const ontology = await readJson(ontologyPath);
+  const report = buildReport({
+    roadmap,
+    ownerChecklist,
+    postSourceReadiness,
+    pilotIntake,
+    assetIntake,
+    trainingReadiness,
+    trainingTemplate,
+    reviewQueue,
+    ontology
+  });
 
   await mkdir(dirname(outputJson), { recursive: true });
   await mkdir(dirname(outputMd), { recursive: true });
@@ -48,7 +64,17 @@ async function main() {
   if (report.failures.length > 0) process.exitCode = 1;
 }
 
-function buildReport({ roadmap, ownerChecklist, postSourceReadiness, pilotIntake, assetIntake, trainingReadiness }) {
+function buildReport({
+  roadmap,
+  ownerChecklist,
+  postSourceReadiness,
+  pilotIntake,
+  assetIntake,
+  trainingReadiness,
+  trainingTemplate,
+  reviewQueue,
+  ontology
+}) {
   const failures = [];
   const expected = [
     ['roadmap', roadmap.status, 'vision_completion_roadmap_ready'],
@@ -56,7 +82,10 @@ function buildReport({ roadmap, ownerChecklist, postSourceReadiness, pilotIntake
     ['post_source_readiness', postSourceReadiness.status, 'post_source_root_metadata_readiness_pack_ready'],
     ['pilot_intake', pilotIntake.status, 'kosmoreferences_pilot_intake_readiness_pack_ready'],
     ['asset_intake', assetIntake.status, 'kosmoasset_intake_readiness_pack_ready'],
-    ['training_readiness', trainingReadiness.status, 'kosmo_training_memory_readiness_pack_ready']
+    ['training_readiness', trainingReadiness.status, 'kosmo_training_memory_readiness_pack_ready'],
+    ['training_template', trainingTemplate.status, 'training_eval_row_template_ready'],
+    ['review_queue', reviewQueue.status, 'training_eval_review_queue_plan_ready'],
+    ['ontology', ontology.status, 'architecture_ontology_seed_ready']
   ];
   expected.forEach(([id, status, wanted]) => {
     if (status !== wanted) failures.push(`${id} not ready: ${status}`);
@@ -67,7 +96,10 @@ function buildReport({ roadmap, ownerChecklist, postSourceReadiness, pilotIntake
     pack('owner_answer_paths', ownerChecklist.status, ownerChecklist.summary?.branches, ownerChecklist.summary?.executable_now, 'Three branches, one unlock branch; no automatic decision.'),
     pack('pilot_intake', pilotIntake.status, pilotIntake.summary?.total_stages, pilotIntake.summary?.blocked_now, 'Three pilots prepared; all stages blocked until source-root unlock.'),
     pack('asset_intake', assetIntake.status, assetIntake.summary?.total_stages, assetIntake.summary?.executable_now, 'Pilot assets and private library candidates separated.'),
-    pack('training_memory', trainingReadiness.status, trainingReadiness.summary?.lanes, trainingReadiness.summary?.executable_now, 'RAG/eval/fine-tune/embedding lanes prepared; no data writes now.')
+    pack('training_memory', trainingReadiness.status, trainingReadiness.summary?.lanes, trainingReadiness.summary?.executable_now, 'RAG/eval/fine-tune/embedding lanes prepared; no data writes now.'),
+    pack('training_eval_template', trainingTemplate.status, trainingTemplate.summary?.templates, trainingTemplate.summary?.writes_eval_rows_now, 'Eval row template prepared; no eval rows now.'),
+    pack('training_review_queue', reviewQueue.status, reviewQueue.summary?.review_lanes, reviewQueue.summary?.queue_items_created_now, 'Review queue plan prepared; no queue items now.'),
+    pack('architecture_ontology_seed', ontology.status, ontology.summary?.entity_types, ontology.summary?.public_ready_after_seed, 'Ontology seed prepared; no private facts instantiated.')
   ];
 
   return {
@@ -89,15 +121,21 @@ function buildReport({ roadmap, ownerChecklist, postSourceReadiness, pilotIntake
       relative(root, postSourceReadinessPath),
       relative(root, pilotIntakePath),
       relative(root, assetIntakePath),
-      relative(root, trainingReadinessPath)
+      relative(root, trainingReadinessPath),
+      relative(root, trainingTemplatePath),
+      relative(root, reviewQueuePath),
+      relative(root, ontologyPath)
     ],
     summary: {
       phases: roadmap.summary?.phases ?? null,
       readiness_packs: packs.length,
-      guarded_checks: 'post-source, owner paths, pilot intake, asset intake, training memory',
+      guarded_checks: 'post-source, owner paths, pilot intake, asset intake, training memory, eval template, review queue, ontology',
       executable_now: 0,
       owner_gates: roadmap.summary?.immediate_owner_gates ?? 2,
       source_free_codex_tasks_remaining: roadmap.summary?.source_free_codex_tasks_remaining ?? 0,
+      training_eval_templates: trainingTemplate.summary?.templates ?? null,
+      training_review_lanes: reviewQueue.summary?.review_lanes ?? null,
+      ontology_entity_types: ontology.summary?.entity_types ?? null,
       failures: failures.length,
       public_ready_after_rollup: 0
     },
@@ -112,12 +150,13 @@ function buildReport({ roadmap, ownerChecklist, postSourceReadiness, pilotIntake
       'Record the explicit source-root answer in the decision session.',
       'Run source-root decision session check, blocker refresh and activation preflight.',
       'If and only if activation is ready, run metadata-only private inventory and its guard.',
-      'Then rerun pilot, asset and training readiness packs before any worker execution.'
+      'Then rerun pilot, asset, training, review queue and ontology guards before any worker execution.'
     ],
     hard_stops: [
       'Do not infer owner decisions from rollup status.',
       'Do not run private inventory before explicit owner answer and source-root guards.',
       'Do not read, OCR, embed, train on or copy private source contents from this rollup.',
+      'Do not create eval rows, queue items, embeddings or fine-tunes from this rollup.',
       'Do not execute local workers from this rollup.',
       'Keep public-ready at 0.'
     ],
@@ -155,6 +194,9 @@ function renderMarkdown(report) {
   lines.push(`- Executable now: ${report.summary.executable_now}`);
   lines.push(`- Owner gates: ${report.summary.owner_gates}`);
   lines.push(`- Source-free Codex tasks remaining: ${report.summary.source_free_codex_tasks_remaining}`);
+  lines.push(`- Training eval templates: ${report.summary.training_eval_templates}`);
+  lines.push(`- Training review lanes: ${report.summary.training_review_lanes}`);
+  lines.push(`- Ontology entity types: ${report.summary.ontology_entity_types}`);
   lines.push(`- Public-ready after rollup: ${report.summary.public_ready_after_rollup}`);
   lines.push('');
   lines.push('## Packs');

@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board
 
-Generated: 2026-06-14T18:47:04.359Z
+Generated: 2026-06-14T18:49:41.757Z
 Status: `overseer_sync_board_ready`
 
 ## Summary
@@ -20,6 +20,7 @@ Status: `overseer_sync_board_ready`
 
 | File | Title | Mirrors |
 | --- | --- | ---: |
+| `2026-06-14-codex-synergiebericht-204-evening-rollup-training-ontology-refresh.md` | Codex Synergiebericht 204: Evening Rollup Training/Ontology Refresh | 2 |
 | `2026-06-14-codex-synergiebericht-203-orbit-roadmap-training-ontology-status.md` | Codex Synergiebericht 203: Orbit Roadmap Training/Ontology Status | 2 |
 | `2026-06-14-codex-synergiebericht-202-vision-roadmap-training-ontology-refresh.md` | Codex Synergiebericht 202: Vision Roadmap Training/Ontology Refresh | 2 |
 | `2026-06-14-codex-synergiebericht-201-orbit-ontology-status.md` | Codex Synergiebericht 201: Orbit Ontology Status | 2 |
@@ -27,7 +28,6 @@ Status: `overseer_sync_board_ready`
 | `2026-06-14-codex-synergiebericht-199-orbit-review-queue-status.md` | Codex Synergiebericht 199: Orbit Review Queue Status | 2 |
 | `2026-06-14-codex-synergiebericht-198-training-eval-review-queue-plan.md` | Codex Synergiebericht 198: Training Eval Review Queue Plan | 2 |
 | `2026-06-14-codex-synergiebericht-197-orbit-training-template-status.md` | Codex Synergiebericht 197: Orbit Training Template Status | 2 |
-| `2026-06-14-codex-synergiebericht-196-training-eval-row-template.md` | Codex Synergiebericht 196: Training Eval Row Template | 2 |
 
 ## Blockers
 
@@ -40,7 +40,7 @@ Status: `overseer_sync_board_ready`
 
 ## Next Actions
 
-- Claude/KosmoOverseer reviews latest handoffs 196-203 before editing related files.
+- Claude/KosmoOverseer reviews latest handoffs 197-204 before editing related files.
 - Use the owner review session brief as the next owner-facing entry point.
 - Keep local worker tasks review-only while source-root and owner answers are pending.
 - After any explicit owner answer, update intake first, then rerun guards and this sync board.

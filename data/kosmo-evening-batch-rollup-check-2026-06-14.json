@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T17:16:32.412Z",
+  "generated_at": "2026-06-14T18:49:10.853Z",
   "status": "kosmo_evening_batch_rollup_guard_passed",
   "policy": {
     "validates_rollup_only": true,
@@ -15,8 +15,8 @@
     "data/kosmo-evening-batch-rollup-2026-06-14.json"
   ],
   "summary": {
-    "checks": 17,
-    "passed": 17,
+    "checks": 22,
+    "passed": 22,
     "failures": 0,
     "warnings": 0,
     "public_ready_after_check": 0
@@ -63,9 +63,9 @@
       "evidence": 0
     },
     {
-      "id": "five_readiness_packs",
+      "id": "eight_readiness_packs",
       "status": "passed",
-      "evidence": "post_source_metadata,owner_answer_paths,pilot_intake,asset_intake,training_memory"
+      "evidence": "post_source_metadata,owner_answer_paths,pilot_intake,asset_intake,training_memory,training_eval_template,training_review_queue,architecture_ontology_seed"
     },
     {
       "id": "packs_not_executable",
@@ -98,14 +98,39 @@
       "evidence": 0
     },
     {
+      "id": "training_eval_templates_six",
+      "status": "passed",
+      "evidence": 6
+    },
+    {
+      "id": "training_review_lanes_five",
+      "status": "passed",
+      "evidence": 5
+    },
+    {
+      "id": "ontology_entity_types_eight",
+      "status": "passed",
+      "evidence": 8
+    },
+    {
+      "id": "guarded_checks_include_training_scaffold",
+      "status": "passed",
+      "evidence": "post-source, owner paths, pilot intake, asset intake, training memory, eval template, review queue, ontology"
+    },
+    {
       "id": "hard_stops_private_training",
       "status": "passed",
-      "evidence": "do not infer owner decisions from rollup status. do not run private inventory before explicit owner answer and source-root guards. do not read, ocr, embed, train on or copy private source contents from this rollup. do not execute local workers from this rollup. keep public-ready at 0."
+      "evidence": "do not infer owner decisions from rollup status. do not run private inventory before explicit owner answer and source-root guards. do not read, ocr, embed, train on or copy private source contents from this rollup. do not create eval rows, queue items, embeddings or fine-tunes from this rollup. do not execute local workers from this rollup. keep public-ready at 0."
+    },
+    {
+      "id": "hard_stops_no_eval_queue_embedding_finetune",
+      "status": "passed",
+      "evidence": "do not infer owner decisions from rollup status. do not run private inventory before explicit owner answer and source-root guards. do not read, ocr, embed, train on or copy private source contents from this rollup. do not create eval rows, queue items, embeddings or fine-tunes from this rollup. do not execute local workers from this rollup. keep public-ready at 0."
     },
     {
       "id": "hard_stops_public_ready",
       "status": "passed",
-      "evidence": "do not infer owner decisions from rollup status. do not run private inventory before explicit owner answer and source-root guards. do not read, ocr, embed, train on or copy private source contents from this rollup. do not execute local workers from this rollup. keep public-ready at 0."
+      "evidence": "do not infer owner decisions from rollup status. do not run private inventory before explicit owner answer and source-root guards. do not read, ocr, embed, train on or copy private source contents from this rollup. do not create eval rows, queue items, embeddings or fine-tunes from this rollup. do not execute local workers from this rollup. keep public-ready at 0."
     }
   ]
 }

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T18:47:04.837Z",
+  "generated_at": "2026-06-14T18:49:42.232Z",
   "status": "owner_unlock_pipeline_checkpoint_ready",
   "policy": {
     "checkpoint_only": true,
@@ -30,8 +30,8 @@
     "components_ready": 11,
     "guard_checks": 113,
     "guard_checks_passed": 113,
-    "latest_handoff_min": 196,
-    "latest_handoff_max": 203,
+    "latest_handoff_min": 197,
+    "latest_handoff_max": 204,
     "latest_handoff_count": 8,
     "owner_reply_state": "pending",
     "source_root_state": "blocked_until_explicit_owner_reply_and_guards",
