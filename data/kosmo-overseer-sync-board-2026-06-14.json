@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T09:00:00.736Z",
+  "generated_at": "2026-06-14T09:05:42.594Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 132
+      "files": 133
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 169
+      "files": 171
     }
   ],
   "summary": {
@@ -43,10 +43,17 @@
     "local_worker_high_risk_hits": 0,
     "latest_handoffs": 8,
     "latest_handoff_mirror_missing_files": 0,
-    "historical_handoff_mirror_missing_files": 37,
+    "historical_handoff_mirror_missing_files": 38,
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-14-codex-synergiebericht-134-private-metadata-inventory-guard.md",
+      "title": "Codex Synergiebericht 134 - Private Metadata Inventory Guard",
+      "mirrored_inboxes": 2,
+      "bytes": 1729,
+      "modified_at": "2026-06-14T09:05:35.865Z"
+    },
     {
       "filename": "2026-06-14-codex-synergiebericht-133-private-metadata-fixture-smoke.md",
       "title": "Codex Synergiebericht 133 - Private Metadata Fixture Smoke",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1480,
       "modified_at": "2026-06-14T08:22:20.828Z"
-    },
-    {
-      "filename": "2026-06-14-codex-synergiebericht-126-kosmoasset-bridge-gate.md",
-      "title": "Codex Synergiebericht 126 - KosmoAsset Bridge Gate",
-      "mirrored_inboxes": 2,
-      "bytes": 1838,
-      "modified_at": "2026-06-14T08:11:45.030Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 126-133 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 127-134 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."
