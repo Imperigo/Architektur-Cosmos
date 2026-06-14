@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board
 
-Generated: 2026-06-14T17:17:07.561Z
+Generated: 2026-06-14T17:23:07.391Z
 Status: `overseer_sync_board_ready`
 
 ## Summary
@@ -20,6 +20,7 @@ Status: `overseer_sync_board_ready`
 
 | File | Title | Mirrors |
 | --- | --- | ---: |
+| `2026-06-14-codex-synergiebericht-175-owner-unlock-prompt-pack.md` | Codex Synergiebericht 175: Owner Unlock Prompt Pack | 2 |
 | `2026-06-14-codex-synergiebericht-174-evening-batch-rollup.md` | Codex Synergiebericht 174: Evening Batch Rollup | 2 |
 | `2026-06-14-codex-synergiebericht-173-orbit-vision-readiness-status.md` | Codex Synergiebericht 173: Orbit Vision Readiness Status | 2 |
 | `2026-06-14-codex-synergiebericht-172-training-memory-readiness.md` | Codex Synergiebericht 172: Kosmo Training Memory Readiness | 2 |
@@ -27,7 +28,6 @@ Status: `overseer_sync_board_ready`
 | `2026-06-14-codex-synergiebericht-170-pilot-intake-readiness.md` | Codex Synergiebericht 170: Pilot Intake Readiness | 2 |
 | `2026-06-14-codex-synergiebericht-169-owner-answer-execution-checklist.md` | Codex Synergiebericht 169: Owner Answer Execution Checklist | 2 |
 | `2026-06-14-codex-synergiebericht-168-post-source-root-metadata-readiness.md` | Codex Synergiebericht 168: Post-Source-Root Metadata Readiness | 2 |
-| `2026-06-14-codex-synergiebericht-167-vision-completion-roadmap.md` | Codex Synergiebericht 167: Vision Completion Roadmap | 2 |
 
 ## Blockers
 
@@ -40,7 +40,7 @@ Status: `overseer_sync_board_ready`
 
 ## Next Actions
 
-- Claude/KosmoOverseer reviews latest handoffs 167-174 before editing related files.
+- Claude/KosmoOverseer reviews latest handoffs 168-175 before editing related files.
 - Use the owner review session brief as the next owner-facing entry point.
 - Keep local worker tasks review-only while source-root and owner answers are pending.
 - After any explicit owner answer, update intake first, then rerun guards and this sync board.
