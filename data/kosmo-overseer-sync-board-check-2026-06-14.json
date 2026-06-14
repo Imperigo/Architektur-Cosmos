@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T18:49:41.994Z",
+  "generated_at": "2026-06-14T18:51:45.394Z",
   "status": "overseer_sync_board_guard_passed",
   "policy": {
     "records_decisions": false,
@@ -156,6 +156,16 @@
       "message": "Latest handoffs must include synergiebericht 115 or newer."
     },
     {
+      "id": "handoff_mirrored:2026-06-14-codex-synergiebericht-205-orbit-evening-rollup-status.md",
+      "severity": "passed",
+      "message": "2026-06-14-codex-synergiebericht-205-orbit-evening-rollup-status.md must be mirrored in both inboxes."
+    },
+    {
+      "id": "handoff_title:2026-06-14-codex-synergiebericht-205-orbit-evening-rollup-status.md",
+      "severity": "passed",
+      "message": "2026-06-14-codex-synergiebericht-205-orbit-evening-rollup-status.md must include a title."
+    },
+    {
       "id": "handoff_mirrored:2026-06-14-codex-synergiebericht-204-evening-rollup-training-ontology-refresh.md",
       "severity": "passed",
       "message": "2026-06-14-codex-synergiebericht-204-evening-rollup-training-ontology-refresh.md must be mirrored in both inboxes."
@@ -224,16 +234,6 @@
       "id": "handoff_title:2026-06-14-codex-synergiebericht-198-training-eval-review-queue-plan.md",
       "severity": "passed",
       "message": "2026-06-14-codex-synergiebericht-198-training-eval-review-queue-plan.md must include a title."
-    },
-    {
-      "id": "handoff_mirrored:2026-06-14-codex-synergiebericht-197-orbit-training-template-status.md",
-      "severity": "passed",
-      "message": "2026-06-14-codex-synergiebericht-197-orbit-training-template-status.md must be mirrored in both inboxes."
-    },
-    {
-      "id": "handoff_title:2026-06-14-codex-synergiebericht-197-orbit-training-template-status.md",
-      "severity": "passed",
-      "message": "2026-06-14-codex-synergiebericht-197-orbit-training-template-status.md must include a title."
     },
     {
       "id": "source_root_blocked",
