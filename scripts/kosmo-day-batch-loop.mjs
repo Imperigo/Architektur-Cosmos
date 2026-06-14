@@ -43,6 +43,7 @@ const steps = [
   step('core_data_lane_sweep', 'Core Data Lane Sweep', ['run', 'kosmo:data-lane-sweep']),
   step('pilot_evidence_matrix', 'Pilot Evidence Matrix', ['run', 'kosmo:pilot-evidence-matrix']),
   step('pilot_package_check', 'Pilot Package Check', ['run', 'kosmo:pilot-package-check']),
+  step('asset_reference_bridge_check', 'Asset Reference Bridge Check', ['run', 'kosmo:asset-reference-bridge-check']),
   step('core_router', 'Core Router', ['run', 'kosmo:data-lane-command-router']),
   step('worker_boundary_pack', 'Worker Boundary Pack', ['run', 'kosmo:worker-boundary-pack']),
   step('worker_boundary_pack_check', 'Worker Boundary Pack Check', ['run', 'kosmo:worker-boundary-pack-check']),
