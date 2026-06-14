@@ -16,6 +16,8 @@ const paths = {
   intakeMapCheck: resolve(root, args.intakeMapCheck || `data/kosmo-owner-unlock-reply-intake-map-check-${dateStamp}.json`),
   runbook: resolve(root, args.runbook || `data/kosmo-owner-unlock-execution-runbook-${dateStamp}.json`),
   runbookCheck: resolve(root, args.runbookCheck || `data/kosmo-owner-unlock-execution-runbook-check-${dateStamp}.json`),
+  answerDryRun: resolve(root, args.answerDryRun || `data/kosmo-owner-unlock-answer-dry-run-${dateStamp}.json`),
+  answerDryRunCheck: resolve(root, args.answerDryRunCheck || `data/kosmo-owner-unlock-answer-dry-run-check-${dateStamp}.json`),
   syncBoard: resolve(root, args.syncBoard || `data/kosmo-overseer-sync-board-${dateStamp}.json`)
 };
 
@@ -58,6 +60,8 @@ function buildCheckpoint(reports) {
     component('intake-map-guard', reports.intakeMapCheck.status, 'owner_unlock_reply_intake_map_guard_passed', reports.intakeMapCheck.summary?.public_ready_after_check),
     component('execution-runbook', reports.runbook.status, 'owner_unlock_execution_runbook_ready', reports.runbook.summary?.public_ready_after_runbook),
     component('execution-runbook-guard', reports.runbookCheck.status, 'owner_unlock_execution_runbook_guard_passed', reports.runbookCheck.summary?.public_ready_after_check),
+    component('answer-dry-run', reports.answerDryRun.status, 'owner_unlock_answer_dry_run_pending_answer', reports.answerDryRun.summary?.public_ready_after_dry_run),
+    component('answer-dry-run-guard', reports.answerDryRunCheck.status, 'owner_unlock_answer_dry_run_guard_passed', reports.answerDryRunCheck.summary?.public_ready_after_check),
     component('overseer-sync-board', reports.syncBoard.status, 'overseer_sync_board_ready', reports.syncBoard.summary?.public_ready_after_board)
   ];
   const handoffNumbers = (reports.syncBoard.latest_handoffs || [])
@@ -67,13 +71,15 @@ function buildCheckpoint(reports) {
     reports.validatorCheck.summary?.checks,
     reports.smokeCheck.summary?.checks,
     reports.intakeMapCheck.summary?.checks,
-    reports.runbookCheck.summary?.checks
+    reports.runbookCheck.summary?.checks,
+    reports.answerDryRunCheck.summary?.checks
   ].reduce((sum, value) => sum + Number(value || 0), 0);
   const guardChecksPassed = [
     reports.validatorCheck.summary?.passed,
     reports.smokeCheck.summary?.passed,
     reports.intakeMapCheck.summary?.passed,
-    reports.runbookCheck.summary?.passed
+    reports.runbookCheck.summary?.passed,
+    reports.answerDryRunCheck.summary?.passed
   ].reduce((sum, value) => sum + Number(value || 0), 0);
 
   return {

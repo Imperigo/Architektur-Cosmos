@@ -203,6 +203,8 @@
     "kosmo:owner-unlock-execution-runbook-check": "node scripts/kosmo-owner-unlock-execution-runbook-check.mjs",
     "kosmo:owner-unlock-pipeline-checkpoint": "node scripts/kosmo-owner-unlock-pipeline-checkpoint.mjs",
     "kosmo:owner-unlock-pipeline-checkpoint-check": "node scripts/kosmo-owner-unlock-pipeline-checkpoint-check.mjs",
+    "kosmo:owner-unlock-answer-dry-run": "node scripts/kosmo-owner-unlock-answer-dry-run.mjs",
+    "kosmo:owner-unlock-answer-dry-run-check": "node scripts/kosmo-owner-unlock-answer-dry-run-check.mjs",
     "kosmo:villa-provenance-brief": "node scripts/kosmo-villa-provenance-review-brief.mjs",
     "kosmo:ingenbohl-pdf-brief": "node scripts/kosmo-ingenbohl-pdf-extraction-brief.mjs",
     "kosmo:sogn-source-root-brief": "node scripts/kosmo-sogn-source-root-decision-brief.mjs",

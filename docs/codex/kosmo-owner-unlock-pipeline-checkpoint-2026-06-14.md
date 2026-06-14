@@ -1,13 +1,13 @@
 # Kosmo Owner Unlock Pipeline Checkpoint
 
-Generated: 2026-06-14T17:50:25.634Z
+Generated: 2026-06-14T17:55:32.596Z
 Status: `owner_unlock_pipeline_checkpoint_ready`
 
 ## Summary
 
-- Components: 9/9
-- Guard checks: 90/90
-- Latest handoffs: 178-185
+- Components: 11/11
+- Guard checks: 113/113
+- Latest handoffs: 179-186
 - Owner reply state: pending
 - Source-root state: blocked_until_explicit_owner_reply_and_guards
 - Public-ready after checkpoint: 0
@@ -22,6 +22,8 @@ Status: `owner_unlock_pipeline_checkpoint_ready`
 - ready: `intake-map-guard` -> `owner_unlock_reply_intake_map_guard_passed`
 - ready: `execution-runbook` -> `owner_unlock_execution_runbook_ready`
 - ready: `execution-runbook-guard` -> `owner_unlock_execution_runbook_guard_passed`
+- ready: `answer-dry-run` -> `owner_unlock_answer_dry_run_pending_answer`
+- ready: `answer-dry-run-guard` -> `owner_unlock_answer_dry_run_guard_passed`
 - ready: `overseer-sync-board` -> `overseer_sync_board_ready`
 
 ## Next Actions

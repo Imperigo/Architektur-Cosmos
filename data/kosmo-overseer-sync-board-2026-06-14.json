@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T17:50:19.327Z",
+  "generated_at": "2026-06-14T17:55:32.132Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 184
+      "files": 185
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 228
+      "files": 229
     }
   ],
   "summary": {
@@ -48,11 +48,18 @@
   },
   "latest_handoffs": [
     {
+      "filename": "2026-06-14-codex-synergiebericht-186-owner-unlock-answer-dry-run.md",
+      "title": "Codex Synergiebericht 186: Owner Unlock Answer Dry Run",
+      "mirrored_inboxes": 2,
+      "bytes": 1744,
+      "modified_at": "2026-06-14T17:54:48.809Z"
+    },
+    {
       "filename": "2026-06-14-codex-synergiebericht-185-owner-unlock-pipeline-checkpoint.md",
       "title": "Codex Synergiebericht 185: Owner Unlock Pipeline Checkpoint",
       "mirrored_inboxes": 2,
       "bytes": 1351,
-      "modified_at": "2026-06-14T17:50:13.049Z"
+      "modified_at": "2026-06-14T17:50:35.776Z"
     },
     {
       "filename": "2026-06-14-codex-synergiebericht-184-orbit-unlock-runbook-status.md",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1627,
       "modified_at": "2026-06-14T17:36:21.404Z"
-    },
-    {
-      "filename": "2026-06-14-codex-synergiebericht-178-owner-unlock-reply-validator.md",
-      "title": "Codex Synergiebericht 178: Owner Unlock Reply Validator",
-      "mirrored_inboxes": 2,
-      "bytes": 1644,
-      "modified_at": "2026-06-14T17:33:11.764Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 178-185 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 179-186 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."

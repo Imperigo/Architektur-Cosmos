@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board
 
-Generated: 2026-06-14T17:50:19.327Z
+Generated: 2026-06-14T17:55:32.132Z
 Status: `overseer_sync_board_ready`
 
 ## Summary
@@ -20,6 +20,7 @@ Status: `overseer_sync_board_ready`
 
 | File | Title | Mirrors |
 | --- | --- | ---: |
+| `2026-06-14-codex-synergiebericht-186-owner-unlock-answer-dry-run.md` | Codex Synergiebericht 186: Owner Unlock Answer Dry Run | 2 |
 | `2026-06-14-codex-synergiebericht-185-owner-unlock-pipeline-checkpoint.md` | Codex Synergiebericht 185: Owner Unlock Pipeline Checkpoint | 2 |
 | `2026-06-14-codex-synergiebericht-184-orbit-unlock-runbook-status.md` | Codex Synergiebericht 184: Orbit Unlock Runbook Status | 2 |
 | `2026-06-14-codex-synergiebericht-183-owner-unlock-execution-runbook.md` | Codex Synergiebericht 183: Owner Unlock Execution Runbook | 2 |
@@ -27,7 +28,6 @@ Status: `overseer_sync_board_ready`
 | `2026-06-14-codex-synergiebericht-181-orbit-owner-reply-pipeline-status.md` | Codex Synergiebericht 181: Orbit Owner Reply Pipeline Status | 2 |
 | `2026-06-14-codex-synergiebericht-180-owner-unlock-reply-intake-map.md` | Codex Synergiebericht 180: Owner Unlock Reply Intake Map | 2 |
 | `2026-06-14-codex-synergiebericht-179-owner-unlock-reply-validator-smoke.md` | Codex Synergiebericht 179: Owner Unlock Reply Validator Smoke | 2 |
-| `2026-06-14-codex-synergiebericht-178-owner-unlock-reply-validator.md` | Codex Synergiebericht 178: Owner Unlock Reply Validator | 2 |
 
 ## Blockers
 
@@ -40,7 +40,7 @@ Status: `overseer_sync_board_ready`
 
 ## Next Actions
 
-- Claude/KosmoOverseer reviews latest handoffs 178-185 before editing related files.
+- Claude/KosmoOverseer reviews latest handoffs 179-186 before editing related files.
 - Use the owner review session brief as the next owner-facing entry point.
 - Keep local worker tasks review-only while source-root and owner answers are pending.
 - After any explicit owner answer, update intake first, then rerun guards and this sync board.

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T17:50:25.634Z",
+  "generated_at": "2026-06-14T17:55:32.596Z",
   "status": "owner_unlock_pipeline_checkpoint_ready",
   "policy": {
     "checkpoint_only": true,
@@ -21,15 +21,17 @@
     "data/kosmo-owner-unlock-reply-intake-map-check-2026-06-14.json",
     "data/kosmo-owner-unlock-execution-runbook-2026-06-14.json",
     "data/kosmo-owner-unlock-execution-runbook-check-2026-06-14.json",
+    "data/kosmo-owner-unlock-answer-dry-run-2026-06-14.json",
+    "data/kosmo-owner-unlock-answer-dry-run-check-2026-06-14.json",
     "data/kosmo-overseer-sync-board-2026-06-14.json"
   ],
   "summary": {
-    "components": 9,
-    "components_ready": 9,
-    "guard_checks": 90,
-    "guard_checks_passed": 90,
-    "latest_handoff_min": 178,
-    "latest_handoff_max": 185,
+    "components": 11,
+    "components_ready": 11,
+    "guard_checks": 113,
+    "guard_checks_passed": 113,
+    "latest_handoff_min": 179,
+    "latest_handoff_max": 186,
     "latest_handoff_count": 8,
     "owner_reply_state": "pending",
     "source_root_state": "blocked_until_explicit_owner_reply_and_guards",
@@ -89,6 +91,20 @@
       "id": "execution-runbook-guard",
       "actual_status": "owner_unlock_execution_runbook_guard_passed",
       "expected_status": "owner_unlock_execution_runbook_guard_passed",
+      "ready": true,
+      "public_ready_after_component": 0
+    },
+    {
+      "id": "answer-dry-run",
+      "actual_status": "owner_unlock_answer_dry_run_pending_answer",
+      "expected_status": "owner_unlock_answer_dry_run_pending_answer",
+      "ready": true,
+      "public_ready_after_component": 0
+    },
+    {
+      "id": "answer-dry-run-guard",
+      "actual_status": "owner_unlock_answer_dry_run_guard_passed",
+      "expected_status": "owner_unlock_answer_dry_run_guard_passed",
       "ready": true,
       "public_ready_after_component": 0
     },
