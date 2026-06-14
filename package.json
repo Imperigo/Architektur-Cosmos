@@ -132,6 +132,7 @@
     "kosmo:storage-mount-snapshot": "node scripts/kosmo-storage-mount-snapshot.mjs",
     "kosmo:source-root-locator": "node scripts/kosmo-source-root-locator.mjs",
     "kosmo:source-root-selection-brief": "node scripts/kosmo-source-root-selection-brief.mjs",
+    "kosmo:source-root-candidate-integrity-check": "node scripts/kosmo-source-root-candidate-integrity-check.mjs",
     "kosmo:source-root-blocker-refresh": "node scripts/kosmo-source-root-blocker-refresh.mjs",
     "kosmo:source-root-unlock-runbook": "node scripts/kosmo-source-root-unlock-runbook.mjs",
     "kosmo:source-root-owner-action-card": "node scripts/kosmo-source-root-owner-action-card.mjs",

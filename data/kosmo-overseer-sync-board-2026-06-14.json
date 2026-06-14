@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T14:27:53.400Z",
+  "generated_at": "2026-06-14T14:35:34.665Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 150
+      "files": 151
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 188
+      "files": 190
     }
   ],
   "summary": {
@@ -43,10 +43,17 @@
     "local_worker_high_risk_hits": 0,
     "latest_handoffs": 8,
     "latest_handoff_mirror_missing_files": 0,
-    "historical_handoff_mirror_missing_files": 38,
+    "historical_handoff_mirror_missing_files": 39,
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-14-codex-synergiebericht-152-source-root-candidate-integrity.md",
+      "title": "Codex Synergiebericht 152: Source Root Candidate Integrity",
+      "mirrored_inboxes": 2,
+      "bytes": 2795,
+      "modified_at": "2026-06-14T14:35:29.587Z"
+    },
     {
       "filename": "2026-06-14-codex-synergiebericht-151-execution-runbook-check.md",
       "title": "Codex Synergiebericht 151: Execution Runbook Check",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1320,
       "modified_at": "2026-06-14T13:54:31.013Z"
-    },
-    {
-      "filename": "2026-06-14-codex-synergiebericht-144-local-worker-asset-source-triage.md",
-      "title": "Codex Synergiebericht 144: Local Worker Asset Source Triage",
-      "mirrored_inboxes": 2,
-      "bytes": 2964,
-      "modified_at": "2026-06-14T13:50:18.235Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 144-151 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 145-152 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."
