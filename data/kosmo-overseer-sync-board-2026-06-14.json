@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T13:50:42.871Z",
+  "generated_at": "2026-06-14T13:54:35.853Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 143
+      "files": 144
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 181
+      "files": 182
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-14-codex-synergiebericht-145-ollama-json-capture-smoke.md",
+      "title": "Codex Synergiebericht 145: Ollama JSON Capture Smoke",
+      "mirrored_inboxes": 2,
+      "bytes": 1320,
+      "modified_at": "2026-06-14T13:54:31.013Z"
+    },
     {
       "filename": "2026-06-14-codex-synergiebericht-144-local-worker-asset-source-triage.md",
       "title": "Codex Synergiebericht 144: Local Worker Asset Source Triage",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 2575,
       "modified_at": "2026-06-14T13:24:31.892Z"
-    },
-    {
-      "filename": "2026-06-14-codex-synergiebericht-137-storage-topology.md",
-      "title": "Codex Synergiebericht 137: Storage Topology",
-      "mirrored_inboxes": 2,
-      "bytes": 2052,
-      "modified_at": "2026-06-14T13:20:46.124Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 137-144 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 138-145 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."

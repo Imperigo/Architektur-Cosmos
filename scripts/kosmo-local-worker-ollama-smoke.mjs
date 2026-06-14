@@ -16,37 +16,46 @@ main().catch((error) => {
 });
 
 async function main() {
-  const prompt = [
+  const textPrompt = [
     'Return exactly one line for an ArchitectureKosmos local worker smoke check.',
     'The line must include the exact tokens REVIEW_ONLY and NO_PUBLIC_PROMOTION.',
     'No explanation, no translation, no markdown.'
   ].join(' ');
   const started = Date.now();
-  const response = await fetch(endpoint, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model,
-      stream: false,
-      options: { temperature: 0.1, num_predict: 80 },
-      prompt
-    })
+  const textResult = await generate({
+    prompt: textPrompt,
+    options: { temperature: 0.1, num_predict: 80 }
+  });
+  const jsonResult = await generate({
+    prompt: [
+      'Return a single valid JSON object for an ArchitectureKosmos local worker JSON capture smoke.',
+      'Use this exact shape:',
+      '{"status":"review_only","public_ready_after_smoke":0,"private_content_sent":false,"notes":["NO_PUBLIC_PROMOTION"]}',
+      'Do not include markdown.'
+    ].join(' '),
+    format: 'json',
+    options: { temperature: 0, num_predict: 160 }
   });
   const durationMs = Date.now() - started;
-  const body = await response.json().catch(() => null);
-  const text = String(body?.response ?? '').trim();
+  const text = textResult.text;
+  const parsedJson = parseJsonObject(jsonResult.text);
   const checks = {
-    http_ok: response.ok,
-    model_returned: body?.model === model,
-    response_non_empty: text.length > 0
+    http_ok: textResult.response_ok && jsonResult.response_ok,
+    model_returned: textResult.model_returned && jsonResult.model_returned,
+    response_non_empty: text.length > 0,
+    json_response_non_empty: jsonResult.text.length > 0,
+    json_response_valid: parsedJson.valid,
+    json_status_review_only: parsedJson.value?.status === 'review_only',
+    json_public_ready_zero: parsedJson.value?.public_ready_after_smoke === 0,
+    json_private_content_false: parsedJson.value?.private_content_sent === false
   };
   const advisory_checks = {
     mentions_review_only: /\bREVIEW_ONLY\b/i.test(text),
-    mentions_no_public_promotion: /\bNO_PUBLIC_PROMOTION\b/i.test(text)
+    mentions_no_public_promotion: /\bNO_PUBLIC_PROMOTION\b/i.test(text) || /\bNO_PUBLIC_PROMOTION\b/i.test(jsonResult.text)
   };
   const passed = Object.values(checks).every(Boolean);
   const report = {
-    schema_version: '0.1',
+    schema_version: '0.2',
     checked_at: new Date().toISOString(),
     status: passed ? 'passed' : 'failed',
     endpoint,
@@ -56,10 +65,25 @@ async function main() {
     advisory_checks,
     response_length: text.length,
     response_preview: text.slice(0, 240),
+    json_capture: {
+      response_length: jsonResult.text.length,
+      response_preview: jsonResult.text.slice(0, 240),
+      parse_error: parsedJson.error,
+      parsed: parsedJson.valid
+        ? {
+            status: parsedJson.value.status,
+            public_ready_after_smoke: parsedJson.value.public_ready_after_smoke,
+            private_content_sent: parsedJson.value.private_content_sent,
+            notes_count: Array.isArray(parsedJson.value.notes) ? parsedJson.value.notes.length : 0
+          }
+        : null
+    },
     policy: {
       private_content_sent: false,
       public_promotion: false,
-      note: 'Smoke prompt contains no private source content. Use Ollama HTTP API for worker automation instead of TTY CLI output.'
+      starts_model: true,
+      stores_full_response: false,
+      note: 'Smoke prompt contains no private source content. Use Ollama HTTP API with format=json for structured worker automation instead of TTY CLI output.'
     }
   };
 
@@ -71,9 +95,38 @@ async function main() {
   console.log(`Status: ${report.status}`);
   console.log(`Model: ${model}`);
   console.log(`Duration: ${durationMs}ms`);
+  console.log(`JSON valid: ${report.checks.json_response_valid}`);
   console.log(`Wrote: ${relative(root, outputPath)}`);
 
   if (!passed) process.exitCode = 1;
+}
+
+async function generate({ prompt, format, options }) {
+  const response = await fetch(endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model,
+      stream: false,
+      ...(format ? { format } : {}),
+      options,
+      prompt
+    })
+  });
+  const body = await response.json().catch(() => null);
+  return {
+    response_ok: response.ok,
+    model_returned: body?.model === model,
+    text: String(body?.response ?? '').trim()
+  };
+}
+
+function parseJsonObject(text) {
+  try {
+    return { valid: true, value: JSON.parse(text), error: null };
+  } catch (error) {
+    return { valid: false, value: null, error: error.message };
+  }
 }
 
 function renderMarkdown(report) {
@@ -102,7 +155,14 @@ function renderMarkdown(report) {
   lines.push('');
   lines.push('- No private source content was sent.');
   lines.push('- No public promotion was performed.');
-  lines.push('- Use the Ollama HTTP API for local worker automation; avoid raw TTY CLI output for stored packets.');
+  lines.push('- Use the Ollama HTTP API with `format=json` for structured local worker automation; avoid raw TTY CLI output for stored packets.');
+  lines.push('');
+  lines.push('## JSON Capture');
+  lines.push('');
+  lines.push(`- JSON valid: ${report.checks.json_response_valid ? 'passed' : 'failed'}`);
+  lines.push(`- JSON status review-only: ${report.checks.json_status_review_only ? 'passed' : 'failed'}`);
+  lines.push(`- JSON public-ready zero: ${report.checks.json_public_ready_zero ? 'passed' : 'failed'}`);
+  lines.push(`- JSON private content false: ${report.checks.json_private_content_false ? 'passed' : 'failed'}`);
   lines.push('');
   return `${lines.join('\n')}\n`;
 }

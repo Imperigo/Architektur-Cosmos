@@ -1,24 +1,42 @@
 {
-  "schema_version": "0.1",
-  "checked_at": "2026-06-14T08:34:13.627Z",
+  "schema_version": "0.2",
+  "checked_at": "2026-06-14T13:53:58.534Z",
   "status": "passed",
   "endpoint": "http://127.0.0.1:11434/api/generate",
   "model": "kosmo-qwen3-coder:30b-a3b-q4km",
-  "duration_ms": 208,
+  "duration_ms": 475,
   "checks": {
     "http_ok": true,
     "model_returned": true,
-    "response_non_empty": true
+    "response_non_empty": true,
+    "json_response_non_empty": true,
+    "json_response_valid": true,
+    "json_status_review_only": true,
+    "json_public_ready_zero": true,
+    "json_private_content_false": true
   },
   "advisory_checks": {
     "mentions_review_only": true,
     "mentions_no_public_promotion": true
   },
-  "response_length": 70,
-  "response_preview": "REVIEW_ONLY: Local worker is running with NO_PUBLIC_PROMOTION enabled.",
+  "response_length": 75,
+  "response_preview": "REVIEW_ONLY: Local worker smoke check passed - NO_PUBLIC_PROMOTION applied.",
+  "json_capture": {
+    "response_length": 114,
+    "response_preview": "{\"status\":\"review_only\",\"public_ready_after_smoke\":0,\"private_content_sent\":false,\"notes\":[\"NO_PUBLIC_PROMOTION\"]}",
+    "parse_error": null,
+    "parsed": {
+      "status": "review_only",
+      "public_ready_after_smoke": 0,
+      "private_content_sent": false,
+      "notes_count": 1
+    }
+  },
   "policy": {
     "private_content_sent": false,
     "public_promotion": false,
-    "note": "Smoke prompt contains no private source content. Use Ollama HTTP API for worker automation instead of TTY CLI output."
+    "starts_model": true,
+    "stores_full_response": false,
+    "note": "Smoke prompt contains no private source content. Use Ollama HTTP API with format=json for structured worker automation instead of TTY CLI output."
   }
 }
