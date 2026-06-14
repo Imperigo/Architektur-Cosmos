@@ -61,6 +61,7 @@ async function main() {
 function buildChecks(roadmap) {
   const phaseById = new Map((roadmap.phases || []).map((phase) => [phase.id, phase]));
   const phaseOne = phaseById.get('phase_1_owner_unlock');
+  const phaseSix = phaseById.get('phase_6_kosmo_training_memory');
   return [
     check('status_ready', roadmap.status === 'vision_completion_roadmap_ready', roadmap.status),
     check('policy_review_only', roadmap.policy?.review_only === true, roadmap.policy?.review_only),
@@ -77,8 +78,15 @@ function buildChecks(roadmap) {
     check('phase_1_status_uses_dry_run', phaseOne?.status === 'dry_run_pipeline_ready_blocked_by_owner_reply', phaseOne?.status),
     check('phase_1_gate_dry_run', (phaseOne?.gates || []).includes('owner_unlock_answer_dry_run'), (phaseOne?.gates || []).join(',')),
     check('phase_1_codex_now_mentions_dry_run', (phaseOne?.codex_now || []).join(' ').includes('owner-unlock-answer-dry-run'), (phaseOne?.codex_now || []).join(' ')),
+    check('training_templates_ready', roadmap.summary?.training_eval_templates === 6 && roadmap.summary?.training_eval_required_fields === 10, `${roadmap.summary?.training_eval_templates}/${roadmap.summary?.training_eval_required_fields}`),
+    check('training_review_queue_ready', roadmap.summary?.training_review_lanes === 5 && roadmap.summary?.training_review_queue_states === 6, `${roadmap.summary?.training_review_lanes}/${roadmap.summary?.training_review_queue_states}`),
+    check('ontology_seed_ready', roadmap.summary?.ontology_entity_types === 8 && roadmap.summary?.ontology_relation_types === 10 && roadmap.summary?.ontology_facet_groups === 6, `${roadmap.summary?.ontology_entity_types}/${roadmap.summary?.ontology_relation_types}/${roadmap.summary?.ontology_facet_groups}`),
+    check('phase_6_status_training_scaffold', phaseSix?.status === 'training_scaffold_ready_blocked_by_verified_data', phaseSix?.status),
+    check('phase_6_mentions_owner_training_gate', (phaseSix?.gates || []).includes('owner training gate'), (phaseSix?.gates || []).join(',')),
+    check('phase_6_blocks_queue_eval_embedding_finetune', (phaseSix?.codex_now || []).join(' ').includes('queue items, eval rows, embeddings and fine-tunes at 0'), (phaseSix?.codex_now || []).join(' ')),
     check('all_phases_public_ready_zero', (roadmap.phases || []).every((phase) => phase.public_ready_after_phase === 0), (roadmap.phases || []).filter((phase) => phase.public_ready_after_phase !== 0).map((phase) => phase.id).join(',')),
     check('tonight_batch_uses_unlock_prompt', (roadmap.tonight_batch || []).join(' ').includes('Owner Unlock Prompt'), (roadmap.tonight_batch || []).join(' ')),
+    check('tonight_batch_blocks_training_execution', (roadmap.tonight_batch || []).join(' ').includes('no queue items, eval rows, embeddings or fine-tunes'), (roadmap.tonight_batch || []).join(' ')),
     check('tonight_batch_blocks_private_inventory', (roadmap.tonight_batch || []).join(' ').includes('Do not run private inventory'), (roadmap.tonight_batch || []).join(' '))
   ];
 }

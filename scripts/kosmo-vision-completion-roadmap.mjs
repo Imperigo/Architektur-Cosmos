@@ -13,6 +13,9 @@ const queuePath = resolve(root, args.queue || `data/kosmo-source-independent-wor
 const pilotGapPath = resolve(root, args.pilotGapLabels || `data/kosmoreferences-pilot-gap-label-review-${dateStamp}.json`);
 const assetTaxonomyPath = resolve(root, args.assetTaxonomy || `data/kosmoasset-candidate-taxonomy-review-${dateStamp}.json`);
 const ownerUnlockCheckpointPath = resolve(root, args.ownerUnlockCheckpoint || `data/kosmo-owner-unlock-pipeline-checkpoint-${dateStamp}.json`);
+const trainingTemplatePath = resolve(root, args.trainingTemplate || `data/kosmo-training-eval-row-template-${dateStamp}.json`);
+const reviewQueuePath = resolve(root, args.reviewQueue || `data/kosmo-training-eval-review-queue-plan-${dateStamp}.json`);
+const ontologyPath = resolve(root, args.ontology || `data/kosmo-architecture-ontology-seed-${dateStamp}.json`);
 const outputJson = resolve(root, args.out || `data/kosmo-vision-completion-roadmap-${dateStamp}.json`);
 const outputMd = resolve(root, args.markdown || `docs/codex/kosmo-vision-completion-roadmap-${dateStamp}.md`);
 
@@ -28,7 +31,20 @@ async function main() {
   const pilotGapLabels = await readJson(pilotGapPath);
   const assetTaxonomy = await readJson(assetTaxonomyPath);
   const ownerUnlockCheckpoint = await readJson(ownerUnlockCheckpointPath);
-  const report = buildReport({ dayBatch, ownerBrief, queue, pilotGapLabels, assetTaxonomy, ownerUnlockCheckpoint });
+  const trainingTemplate = await readJson(trainingTemplatePath);
+  const reviewQueue = await readJson(reviewQueuePath);
+  const ontology = await readJson(ontologyPath);
+  const report = buildReport({
+    dayBatch,
+    ownerBrief,
+    queue,
+    pilotGapLabels,
+    assetTaxonomy,
+    ownerUnlockCheckpoint,
+    trainingTemplate,
+    reviewQueue,
+    ontology
+  });
 
   await mkdir(dirname(outputJson), { recursive: true });
   await mkdir(dirname(outputMd), { recursive: true });
@@ -46,12 +62,25 @@ async function main() {
   if (report.failures.length > 0) process.exitCode = 1;
 }
 
-function buildReport({ dayBatch, ownerBrief, queue, pilotGapLabels, assetTaxonomy, ownerUnlockCheckpoint }) {
+function buildReport({
+  dayBatch,
+  ownerBrief,
+  queue,
+  pilotGapLabels,
+  assetTaxonomy,
+  ownerUnlockCheckpoint,
+  trainingTemplate,
+  reviewQueue,
+  ontology
+}) {
   const failures = [];
   if (dayBatch.status !== 'day_batch_loop_passed_review_only') failures.push(`Day batch not passed: ${dayBatch.status}`);
   if (ownerBrief.status !== 'owner_remaining_decision_brief_ready') failures.push(`Owner brief not ready: ${ownerBrief.status}`);
   if (queue.status !== 'source_independent_work_queue_ready') failures.push(`Source-free queue not ready: ${queue.status}`);
   if (ownerUnlockCheckpoint.status !== 'owner_unlock_pipeline_checkpoint_ready') failures.push(`Owner unlock checkpoint not ready: ${ownerUnlockCheckpoint.status}`);
+  if (trainingTemplate.status !== 'training_eval_row_template_ready') failures.push(`Training eval row template not ready: ${trainingTemplate.status}`);
+  if (reviewQueue.status !== 'training_eval_review_queue_plan_ready') failures.push(`Training eval review queue not ready: ${reviewQueue.status}`);
+  if (ontology.status !== 'architecture_ontology_seed_ready') failures.push(`Architecture ontology seed not ready: ${ontology.status}`);
   if ((queue.summary?.codex_executable_now ?? 1) !== 0) failures.push('Source-free queue still has Codex-executable tasks.');
 
   const phases = [
@@ -144,17 +173,22 @@ function buildReport({ dayBatch, ownerBrief, queue, pilotGapLabels, assetTaxonom
       id: 'phase_6_kosmo_training_memory',
       title: 'Kosmo Training Memory',
       objective: 'Transform verified references/assets into future RAG, eval and fine-tuning material for Kosmo KI.',
-      status: 'future_after_verified_data',
-      gates: ['verified provenance', 'rights classification', 'quality evals'],
+      status: 'training_scaffold_ready_blocked_by_verified_data',
+      gates: ['verified provenance', 'rights classification', 'quality evals', 'owner training gate'],
       deliverables: [
         'Architecture-specific schema',
+        'Architecture ontology seed',
+        'Eval row template',
+        'Eval review queue',
         'RAG corpus',
         'Evaluation set',
         'Fine-tuning candidate set'
       ],
       codex_now: [
         'Do not train on unverified private content',
-        'Prepare schemas and eval rubrics first'
+        `Use ${trainingTemplate.summary?.templates ?? 0} eval row templates and ${reviewQueue.summary?.review_lanes ?? 0} review lanes`,
+        `Bind future rows to ontology ${ontology.summary?.entity_types ?? 0}/${ontology.summary?.relation_types ?? 0}/${ontology.summary?.facet_groups ?? 0}`,
+        'Keep queue items, eval rows, embeddings and fine-tunes at 0 until verified data and owner training gate exist'
       ]
     })
   ];
@@ -179,7 +213,10 @@ function buildReport({ dayBatch, ownerBrief, queue, pilotGapLabels, assetTaxonom
       relative(root, queuePath),
       relative(root, pilotGapPath),
       relative(root, assetTaxonomyPath),
-      relative(root, ownerUnlockCheckpointPath)
+      relative(root, ownerUnlockCheckpointPath),
+      relative(root, trainingTemplatePath),
+      relative(root, reviewQueuePath),
+      relative(root, ontologyPath)
     ],
     summary: {
       phases: phases.length,
@@ -193,6 +230,13 @@ function buildReport({ dayBatch, ownerBrief, queue, pilotGapLabels, assetTaxonom
       codex_ready_tonight: 2,
       pilot_gap_owner_decisions: pilotGapLabels.summary?.owner_decisions_required ?? null,
       asset_owner_confirmations: assetTaxonomy.summary?.owner_confirmations_required ?? null,
+      training_eval_templates: trainingTemplate.summary?.templates ?? null,
+      training_eval_required_fields: trainingTemplate.summary?.required_fields ?? null,
+      training_review_lanes: reviewQueue.summary?.review_lanes ?? null,
+      training_review_queue_states: reviewQueue.summary?.queue_states ?? null,
+      ontology_entity_types: ontology.summary?.entity_types ?? null,
+      ontology_relation_types: ontology.summary?.relation_types ?? null,
+      ontology_facet_groups: ontology.summary?.facet_groups ?? null,
       public_ready_after_roadmap: 0,
       failures: failures.length
     },
@@ -201,6 +245,7 @@ function buildReport({ dayBatch, ownerBrief, queue, pilotGapLabels, assetTaxonom
       'Publish this roadmap artifact and guard status.',
       'Use Owner Unlock Answer Dry Run as the next machine entry point after owner reply.',
       'Keep Owner Unlock Prompt as the single next human decision surface.',
+      'Keep the training scaffold as schema/review-only: no queue items, eval rows, embeddings or fine-tunes.',
       'Do not run private inventory, local worker execution or public promotion until owner gates pass.'
     ],
     failures
@@ -241,6 +286,9 @@ function renderMarkdown(report) {
   lines.push(`- Codex-ready tonight: ${report.summary.codex_ready_tonight}`);
   lines.push(`- Pilot-gap owner decisions: ${report.summary.pilot_gap_owner_decisions}`);
   lines.push(`- Asset owner confirmations: ${report.summary.asset_owner_confirmations}`);
+  lines.push(`- Training eval templates/fields: ${report.summary.training_eval_templates}/${report.summary.training_eval_required_fields}`);
+  lines.push(`- Training review lanes/states: ${report.summary.training_review_lanes}/${report.summary.training_review_queue_states}`);
+  lines.push(`- Ontology entity/relation/facet groups: ${report.summary.ontology_entity_types}/${report.summary.ontology_relation_types}/${report.summary.ontology_facet_groups}`);
   lines.push(`- Public-ready after roadmap: ${report.summary.public_ready_after_roadmap}`);
   lines.push('');
   lines.push('## Phases');

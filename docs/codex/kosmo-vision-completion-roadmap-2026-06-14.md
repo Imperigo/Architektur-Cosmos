@@ -1,6 +1,6 @@
 # Kosmo Vision Completion Roadmap
 
-Generated: 2026-06-14T18:01:42.261Z
+Generated: 2026-06-14T18:44:54.261Z
 Status: `vision_completion_roadmap_ready`
 
 ## Summary
@@ -8,11 +8,14 @@ Status: `vision_completion_roadmap_ready`
 - Phases: 6
 - Immediate owner gates: 2
 - Owner unlock checkpoint: 11/11 components, 113/113 guards
-- Owner unlock latest handoff: 187
+- Owner unlock latest handoff: 201
 - Source-free Codex tasks remaining: 0
 - Codex-ready tonight: 2
 - Pilot-gap owner decisions: 7
 - Asset owner confirmations: 3
+- Training eval templates/fields: 6/10
+- Training review lanes/states: 5/6
+- Ontology entity/relation/facet groups: 8/10/6
 - Public-ready after roadmap: 0
 
 ## Phases
@@ -59,15 +62,16 @@ Status: `vision_completion_roadmap_ready`
 
 ### Kosmo Training Memory
 
-- Status: future_after_verified_data
+- Status: training_scaffold_ready_blocked_by_verified_data
 - Objective: Transform verified references/assets into future RAG, eval and fine-tuning material for Kosmo KI.
-- Gates: verified provenance, rights classification, quality evals
-- Deliverables: Architecture-specific schema; RAG corpus; Evaluation set; Fine-tuning candidate set
-- Codex now: Do not train on unverified private content; Prepare schemas and eval rubrics first
+- Gates: verified provenance, rights classification, quality evals, owner training gate
+- Deliverables: Architecture-specific schema; Architecture ontology seed; Eval row template; Eval review queue; RAG corpus; Evaluation set; Fine-tuning candidate set
+- Codex now: Do not train on unverified private content; Use 6 eval row templates and 5 review lanes; Bind future rows to ontology 8/10/6; Keep queue items, eval rows, embeddings and fine-tunes at 0 until verified data and owner training gate exist
 
 ## Tonight Batch
 
 - Publish this roadmap artifact and guard status.
 - Use Owner Unlock Answer Dry Run as the next machine entry point after owner reply.
 - Keep Owner Unlock Prompt as the single next human decision surface.
+- Keep the training scaffold as schema/review-only: no queue items, eval rows, embeddings or fine-tunes.
 - Do not run private inventory, local worker execution or public promotion until owner gates pass.
