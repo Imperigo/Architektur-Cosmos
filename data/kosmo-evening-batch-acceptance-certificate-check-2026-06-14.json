@@ -1,0 +1,120 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-14T18:59:47.980Z",
+  "status": "evening_batch_acceptance_certificate_guard_passed",
+  "policy": {
+    "validates_certificate_only": true,
+    "reads_private_content_now": false,
+    "records_owner_decisions": false,
+    "runs_private_inventory_now": false,
+    "executes_local_workers_now": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-evening-batch-acceptance-certificate-2026-06-14.json"
+  ],
+  "summary": {
+    "checks": 19,
+    "passed": 19,
+    "failures": 0,
+    "warnings": 0,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_ready",
+      "status": "passed",
+      "evidence": "evening_batch_acceptance_certificate_ready"
+    },
+    {
+      "id": "policy_certificate_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_private_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_decisions",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_inventory",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_workers",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_eval_rows",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_training",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "five_guard_families",
+      "status": "passed",
+      "evidence": 5
+    },
+    {
+      "id": "all_known_guards_passed",
+      "status": "passed",
+      "evidence": "136/136"
+    },
+    {
+      "id": "latest_handoff_current",
+      "status": "passed",
+      "evidence": 207
+    },
+    {
+      "id": "owner_reply_pending",
+      "status": "passed",
+      "evidence": "pending"
+    },
+    {
+      "id": "guard_families_no_failures",
+      "status": "passed",
+      "evidence": ""
+    },
+    {
+      "id": "acceptance_mentions_source_free",
+      "status": "passed",
+      "evidence": "Evening batch is accepted as source-free, review-only, handoff-synced and blocked on explicit owner source-root reply."
+    },
+    {
+      "id": "hard_stop_not_owner_approval",
+      "status": "passed",
+      "evidence": "do not treat this certificate as owner approval. do not run private inventory, ocr, embeddings, fine-tuning or local worker execution from this certificate. do not create eval rows or queue items from this certificate. keep public-ready at 0."
+    },
+    {
+      "id": "hard_stop_blocks_private_and_training",
+      "status": "passed",
+      "evidence": "do not treat this certificate as owner approval. do not run private inventory, ocr, embeddings, fine-tuning or local worker execution from this certificate. do not create eval rows or queue items from this certificate. keep public-ready at 0."
+    },
+    {
+      "id": "hard_stop_blocks_eval_queue",
+      "status": "passed",
+      "evidence": "do not treat this certificate as owner approval. do not run private inventory, ocr, embeddings, fine-tuning or local worker execution from this certificate. do not create eval rows or queue items from this certificate. keep public-ready at 0."
+    },
+    {
+      "id": "hard_stop_public_ready_zero",
+      "status": "passed",
+      "evidence": "do not treat this certificate as owner approval. do not run private inventory, ocr, embeddings, fine-tuning or local worker execution from this certificate. do not create eval rows or queue items from this certificate. keep public-ready at 0."
+    }
+  ]
+}

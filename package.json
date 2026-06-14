@@ -202,6 +202,8 @@
     "kosmo:training-memory-readiness-pack-check": "node scripts/kosmo-training-memory-readiness-pack-check.mjs",
     "kosmo:evening-batch-rollup": "node scripts/kosmo-evening-batch-rollup.mjs",
     "kosmo:evening-batch-rollup-check": "node scripts/kosmo-evening-batch-rollup-check.mjs",
+    "kosmo:evening-batch-acceptance-certificate": "node scripts/kosmo-evening-batch-acceptance-certificate.mjs",
+    "kosmo:evening-batch-acceptance-certificate-check": "node scripts/kosmo-evening-batch-acceptance-certificate-check.mjs",
     "kosmo:owner-unlock-prompt-pack": "node scripts/kosmo-owner-unlock-prompt-pack.mjs",
     "kosmo:owner-unlock-prompt-pack-check": "node scripts/kosmo-owner-unlock-prompt-pack-check.mjs",
     "kosmo:overseer-next-shift-brief": "node scripts/kosmo-overseer-next-shift-brief.mjs",
