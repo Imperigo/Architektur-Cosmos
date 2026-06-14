@@ -18,6 +18,7 @@ const refs = {
   sourceRootOwnerDecisionPacket: `data/kosmo-source-root-owner-decision-packet-${dateStamp}.json`,
   sourceRootOwnerDecisionPacketCheck: `data/kosmo-source-root-owner-decision-packet-check-${dateStamp}.json`,
   sourceRootDecisionDryRun: `data/kosmo-source-root-decision-dry-run-${dateStamp}.json`,
+  sourceRootPostOwnerActivationQueue: `data/kosmo-source-root-post-owner-activation-queue-${dateStamp}.json`,
   sourceRootActivation: `data/kosmo-source-root-activation-preflight-${dateStamp}.json`,
   privateMetadataInventory: `data/kosmo-private-metadata-inventory-runner-${dateStamp}.json`,
   privateMetadataInventoryFixture: `data/kosmo-private-metadata-inventory-fixture-smoke-${dateStamp}.json`,
@@ -68,6 +69,7 @@ function buildBridge(reports) {
   const ownerDecisionPacketSummary = reports.sourceRootOwnerDecisionPacket?.summary || {};
   const ownerDecisionPacketCheckSummary = reports.sourceRootOwnerDecisionPacketCheck?.summary || {};
   const decisionDryRunSummary = reports.sourceRootDecisionDryRun?.summary || {};
+  const postOwnerActivationQueueSummary = reports.sourceRootPostOwnerActivationQueue?.summary || {};
   const activationSummary = reports.sourceRootActivation?.summary || {};
   const privateInventorySummary = reports.privateMetadataInventory?.summary || {};
   const privateInventoryFixtureSummary = reports.privateMetadataInventoryFixture?.summary || {};
@@ -185,6 +187,19 @@ function buildBridge(reports) {
       owner_action_required: false,
       route_hint: 'Preview source-root decision consequences without applying them',
       source_ref: refs.sourceRootDecisionDryRun
+    },
+    {
+      id: 'source-root-post-owner-activation-queue',
+      title: 'Source Root Post-Owner Activation Queue',
+      status: reports.sourceRootPostOwnerActivationQueue?.status === 'source_root_post_owner_activation_queue_ready'
+        ? 'review_only_ready'
+        : 'needs_review',
+      signal: reports.sourceRootPostOwnerActivationQueue?.status
+        ? `${postOwnerActivationQueueSummary.queue_steps ?? 0} steps, executable ${postOwnerActivationQueueSummary.executable_now ?? 0}, blocked ${postOwnerActivationQueueSummary.blocked_now ?? 0}`
+        : 'missing post-owner activation queue',
+      owner_action_required: false,
+      route_hint: 'Safe command order after recorded source-root decision',
+      source_ref: refs.sourceRootPostOwnerActivationQueue
     },
     {
       id: 'source-root-activation',
@@ -365,6 +380,11 @@ function buildBridge(reports) {
       source_root_decision_dry_run_scenarios: decisionDryRunSummary.scenarios ?? null,
       source_root_decision_dry_run_metadata_scenarios: decisionDryRunSummary.metadata_diagnostic_scenarios ?? null,
       source_root_decision_dry_run_failures: decisionDryRunSummary.failures ?? null,
+      source_root_post_owner_activation_queue_status: reports.sourceRootPostOwnerActivationQueue?.status || null,
+      source_root_post_owner_activation_queue_steps: postOwnerActivationQueueSummary.queue_steps ?? null,
+      source_root_post_owner_activation_queue_executable_now: postOwnerActivationQueueSummary.executable_now ?? null,
+      source_root_post_owner_activation_queue_blocked_now: postOwnerActivationQueueSummary.blocked_now ?? null,
+      source_root_post_owner_activation_queue_failures: postOwnerActivationQueueSummary.failures ?? null,
       source_root_activation_status: reports.sourceRootActivation?.status || null,
       private_metadata_inventory_status: reports.privateMetadataInventory?.status || null,
       private_metadata_inventory_fixture_status: reports.privateMetadataInventoryFixture?.status || null,
@@ -399,6 +419,7 @@ function buildBridge(reports) {
       'source_root_owner_decision_packet_card',
       'source_root_owner_decision_packet_check_card',
       'source_root_decision_dry_run_card',
+      'source_root_post_owner_activation_queue_card',
       'source_root_activation_card',
       'private_metadata_inventory_card',
       'pilot_reference_cards',
@@ -445,6 +466,7 @@ function renderMarkdown(bridge) {
   lines.push(`- Source-root owner decision packet: ${bridge.summary.source_root_owner_decision_packet_status}, templates ${bridge.summary.source_root_owner_decision_packet_templates ?? '-'}, exact roots ${bridge.summary.source_root_owner_decision_packet_exact_roots ?? '-'}, failures ${bridge.summary.source_root_owner_decision_packet_failures ?? '-'}`);
   lines.push(`- Source-root owner decision packet check: ${bridge.summary.source_root_owner_decision_packet_check_status}, failures ${bridge.summary.source_root_owner_decision_packet_check_failures ?? '-'}, warnings ${bridge.summary.source_root_owner_decision_packet_check_warnings ?? '-'}`);
   lines.push(`- Source-root decision dry run: ${bridge.summary.source_root_decision_dry_run_status}, scenarios ${bridge.summary.source_root_decision_dry_run_scenarios ?? '-'}, metadata scenarios ${bridge.summary.source_root_decision_dry_run_metadata_scenarios ?? '-'}, failures ${bridge.summary.source_root_decision_dry_run_failures ?? '-'}`);
+  lines.push(`- Source-root post-owner activation queue: ${bridge.summary.source_root_post_owner_activation_queue_status}, steps ${bridge.summary.source_root_post_owner_activation_queue_steps ?? '-'}, executable ${bridge.summary.source_root_post_owner_activation_queue_executable_now ?? '-'}, blocked ${bridge.summary.source_root_post_owner_activation_queue_blocked_now ?? '-'}, failures ${bridge.summary.source_root_post_owner_activation_queue_failures ?? '-'}`);
   lines.push(`- Source-root activation: ${bridge.summary.source_root_activation_status}`);
   lines.push(`- Private metadata inventory: ${bridge.summary.private_metadata_inventory_status}`);
   lines.push(`- Private metadata inventory fixture: ${bridge.summary.private_metadata_inventory_fixture_status}`);

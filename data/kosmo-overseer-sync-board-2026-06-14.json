@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T15:01:39.485Z",
+  "generated_at": "2026-06-14T15:08:51.362Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 156
+      "files": 157
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 196
+      "files": 197
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-14-codex-synergiebericht-158-post-owner-activation-queue.md",
+      "title": "Codex Synergiebericht 158: Post-Owner Activation Queue",
+      "mirrored_inboxes": 2,
+      "bytes": 1727,
+      "modified_at": "2026-06-14T15:08:46.943Z"
+    },
     {
       "filename": "2026-06-14-codex-synergiebericht-157-source-root-decision-dry-run.md",
       "title": "Codex Synergiebericht 157: Source Root Decision Dry Run",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1357,
       "modified_at": "2026-06-14T14:27:44.397Z"
-    },
-    {
-      "filename": "2026-06-14-codex-synergiebericht-150-local-worker-execution-runbook.md",
-      "title": "Codex Synergiebericht 150: Local Worker Execution Runbook",
-      "mirrored_inboxes": 2,
-      "bytes": 1542,
-      "modified_at": "2026-06-14T14:20:56.009Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 150-157 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 151-158 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."

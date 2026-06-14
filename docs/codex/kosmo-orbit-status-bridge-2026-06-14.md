@@ -1,11 +1,11 @@
 # Kosmo Orbit Status Bridge
 
-Generated: 2026-06-14T15:00:20.771Z
+Generated: 2026-06-14T15:05:32.448Z
 Status: `orbit_bridge_ready_with_blockers`
 
 ## Summary
 
-- Cards: 20
+- Cards: 21
 - Blocking cards: 4
 - Owner action cards: 11
 - Source root blocked: yes
@@ -17,6 +17,7 @@ Status: `orbit_bridge_ready_with_blockers`
 - Source-root owner decision packet: source_root_owner_decision_packet_ready, templates 3, exact roots 1, failures 0
 - Source-root owner decision packet check: source_root_owner_decision_packet_guard_passed, failures 0, warnings 0
 - Source-root decision dry run: source_root_decision_dry_run_ready, scenarios 3, metadata scenarios 1, failures 0
+- Source-root post-owner activation queue: source_root_post_owner_activation_queue_ready, steps 7, executable 0, blocked 7, failures 0
 - Source-root activation: source_root_activation_waiting_for_owner_storage_action
 - Private metadata inventory: private_metadata_inventory_blocked_until_activation
 - Private metadata inventory fixture: private_metadata_inventory_fixture_passed
@@ -33,7 +34,7 @@ Status: `orbit_bridge_ready_with_blockers`
 
 | Card | Status | Owner Action | Signal |
 | --- | --- | --- | --- |
-| `day-batch` Daily Batch | ready | no | 45/45 required steps |
+| `day-batch` Daily Batch | ready | no | 46/46 required steps |
 | `source-root` Source Root | blocked | yes | blocked: 0 probable libraries, 59 OneDrive markers |
 | `source-root-decision-refresh` Source Root Decision Refresh | review_only_ready | no | source_root_decision_session_refresh_not_needed, changed no, options 10 |
 | `source-root-candidate-integrity` Source Root Candidate Integrity | review_only_ready | yes | 8/8 paths visible, exact roots 1, failures 0 |
@@ -41,6 +42,7 @@ Status: `orbit_bridge_ready_with_blockers`
 | `source-root-owner-decision-packet` Source Root Owner Decision Packet | ready | yes | 3 templates, exact roots 1, failures 0 |
 | `source-root-owner-decision-packet-check` Source Root Owner Decision Packet Check | locked | no | source_root_owner_decision_packet_guard_passed, failures 0, warnings 0 |
 | `source-root-decision-dry-run` Source Root Decision Dry Run | review_only_ready | no | 3 scenarios, metadata 1, failures 0 |
+| `source-root-post-owner-activation-queue` Source Root Post-Owner Activation Queue | review_only_ready | no | 7 steps, executable 0, blocked 7 |
 | `source-root-activation` Source Root Activation | blocked | yes | source_root_activation_waiting_for_owner_storage_action, safe commands 13, blocked 4 |
 | `local-models` Local Models | review_only_ready | no | 4/4 roles, 8 Ollama models, 70 GB |
 | `local-worker-http-runner` Local Worker HTTP Runner | review_only_ready | no | local_worker_http_runner_dry_run_ready, check local_worker_http_runner_guard_passed, safe inputs 6 |
@@ -67,6 +69,7 @@ Status: `orbit_bridge_ready_with_blockers`
 - `source_root_owner_decision_packet_card`
 - `source_root_owner_decision_packet_check_card`
 - `source_root_decision_dry_run_card`
+- `source_root_post_owner_activation_queue_card`
 - `source_root_activation_card`
 - `private_metadata_inventory_card`
 - `pilot_reference_cards`
