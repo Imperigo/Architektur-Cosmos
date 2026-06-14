@@ -9,7 +9,7 @@ const dateStamp = new Date().toISOString().slice(0, 10);
 
 const sourceRootSessionPath = resolve(
   root,
-  args.sourceRootSession || 'examples/kosmo-references/provenance/source-root-decision-session-2026-06-13.json'
+  args.sourceRootSession || `examples/kosmo-references/provenance/source-root-decision-session-${dateStamp}.json`
 );
 const ownerCardSetPath = resolve(root, args.ownerCardSet || `data/kosmo-owner-review-card-set-${dateStamp}.json`);
 const ownerDecisionSessionPath = resolve(
@@ -60,7 +60,7 @@ async function main() {
       buildReferenceDecisionSection(ownerDecisionSession)
     ],
     next_actions_after_owner_answers: [
-      'Record source-root answers in examples/kosmo-references/provenance/source-root-decision-session-2026-06-13.json only after owner confirmation.',
+      `Record source-root answers in examples/kosmo-references/provenance/source-root-decision-session-${dateStamp}.json only after owner confirmation.`,
       'Run npm run kosmo:source-root-decision-session-check after source-root answers are recorded.',
       'Record reference owner answers in examples/kosmo-references/provenance/owner-review-decision-session-2026-06-13.json only after owner confirmation.',
       'Run npm run kosmo:owner-decision-session-check after reference answers are recorded.',

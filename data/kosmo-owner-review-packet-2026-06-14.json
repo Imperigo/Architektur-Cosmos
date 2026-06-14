@@ -1,0 +1,83 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-14T07:22:00.932Z",
+  "status": "owner_review_packet_ready",
+  "policy": {
+    "records_decisions": false,
+    "writes_session_files": false,
+    "applies_decisions": false,
+    "writes_public_files": false,
+    "writes_public_manifest": false,
+    "public_ready_after_packet": 0,
+    "note": "This packet is an index and handoff bundle only. It does not collect, apply or publish owner decisions."
+  },
+  "source_refs": [
+    "data/kosmo-owner-question-brief-2026-06-14.json",
+    "data/kosmo-owner-question-brief-check-2026-06-14.json",
+    "examples/kosmo-references/provenance/owner-answer-intake-template-2026-06-14.json",
+    "data/kosmo-owner-answer-intake-check-2026-06-14.json",
+    "data/kosmo-owner-answer-session-edit-plan-2026-06-14.json",
+    "data/kosmodata-lane-sweep-2026-06-14.json"
+  ],
+  "summary": {
+    "data_lane_status": "kosmodata_lane_sweep_review_only_passed",
+    "data_lane_steps": "24/24",
+    "question_brief_status": "owner_question_brief_ready",
+    "question_brief_guard_status": "owner_question_brief_guard_passed",
+    "questions": 6,
+    "intake_status": "owner_answer_intake_template_pending_owner_input",
+    "intake_guard_status": "owner_answer_intake_guard_passed_pending_owner_input",
+    "filled_answers": 0,
+    "session_edit_plan_status": "owner_answer_session_edit_plan_pending_owner_input",
+    "planned_edits": 0,
+    "public_ready_after_packet": 0
+  },
+  "review_order": [
+    {
+      "order": 1,
+      "title": "Owner Question Brief",
+      "purpose": "Present owner-facing questions.",
+      "json": "data/kosmo-owner-question-brief-2026-06-14.json",
+      "markdown": "docs/codex/kosmo-owner-question-brief-2026-06-14.md",
+      "required_status": "owner_question_brief_ready"
+    },
+    {
+      "order": 2,
+      "title": "Question Brief Guard",
+      "purpose": "Confirm the question brief is safe to present.",
+      "json": "data/kosmo-owner-question-brief-check-2026-06-14.json",
+      "markdown": "docs/codex/kosmo-owner-question-brief-check-2026-06-14.md",
+      "required_status": "owner_question_brief_guard_passed"
+    },
+    {
+      "order": 3,
+      "title": "Owner Answer Intake",
+      "purpose": "Machine-readable location for explicitly confirmed answers.",
+      "json": "examples/kosmo-references/provenance/owner-answer-intake-template-2026-06-14.json",
+      "markdown": "docs/codex/kosmo-owner-answer-intake-template-2026-06-14.md",
+      "required_status": "owner_answer_intake_template_pending_owner_input"
+    },
+    {
+      "order": 4,
+      "title": "Owner Answer Intake Check",
+      "purpose": "Validate filled intake before any session edit planning.",
+      "json": "data/kosmo-owner-answer-intake-check-2026-06-14.json",
+      "markdown": "docs/codex/kosmo-owner-answer-intake-check-2026-06-14.md",
+      "required_status": "owner_answer_intake_guard_passed_pending_owner_input"
+    },
+    {
+      "order": 5,
+      "title": "Session Edit Plan",
+      "purpose": "Describe possible session edits only after checked intake exists.",
+      "json": "data/kosmo-owner-answer-session-edit-plan-2026-06-14.json",
+      "markdown": "docs/codex/kosmo-owner-answer-session-edit-plan-2026-06-14.md",
+      "required_status": "owner_answer_session_edit_plan_pending_owner_input"
+    }
+  ],
+  "next_actions": [
+    "Use the owner question brief as the only owner-facing prompt for this review round.",
+    "Do not edit decision sessions directly from chat text.",
+    "Transfer explicit owner answers into the intake template, then run intake check and session edit plan.",
+    "Keep public-ready at 0 until separate provenance, rights and promotion reviews pass."
+  ]
+}

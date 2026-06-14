@@ -11,6 +11,9 @@ const outputJson = resolve(root, args.out || `data/kosmodata-lane-sweep-${dateSt
 const outputMd = resolve(root, args.markdown || `docs/codex/kosmodata-lane-sweep-${dateStamp}.md`);
 const assetLibrary = args.assetLibrary || 'examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json';
 const timeoutMs = Number(args.timeoutMs || 180000);
+const dataReport = (name) => `data/${name}-${dateStamp}.json`;
+const privateInventoryTemplate = `examples/kosmo-references/private-inventory/private-inventory-output-template-${dateStamp}.json`;
+const ownerAnswerIntakeTemplate = `examples/kosmo-references/provenance/owner-answer-intake-template-${dateStamp}.json`;
 
 const steps = [
   {
@@ -18,7 +21,7 @@ const steps = [
     label: 'KosmoReferences Nightly Gate',
     command: 'npm',
     args: ['run', 'kosmo:references-nightly-gate'],
-    report: 'data/kosmoreferences-nightly-gate-2026-06-13.json'
+    report: dataReport('kosmoreferences-nightly-gate')
   },
   {
     id: 'kosmoasset_seed_full_review',
@@ -32,168 +35,154 @@ const steps = [
     label: 'Human Decision Queue',
     command: 'npm',
     args: ['run', 'kosmo:human-decision-queue'],
-    report: 'data/kosmo-human-decision-queue-2026-06-13.json'
+    report: dataReport('kosmo-human-decision-queue')
   },
   {
     id: 'owner_decision_batches',
     label: 'Owner Decision Batches',
     command: 'npm',
     args: ['run', 'kosmo:human-decision-owner-batches'],
-    report: 'data/kosmo-human-decision-owner-batches-2026-06-13.json'
+    report: dataReport('kosmo-human-decision-owner-batches')
   },
   {
     id: 'local_worker_output_review',
     label: 'Local Worker Output Review',
     command: 'npm',
     args: ['run', 'kosmo:local-worker-output-review'],
-    report: 'data/kosmo-local-worker-output-review-2026-06-13.json'
+    report: dataReport('kosmo-local-worker-output-review')
   },
   {
     id: 'pilot_evidence_matrix',
     label: 'Pilot Evidence Matrix',
     command: 'npm',
     args: ['run', 'kosmo:pilot-evidence-matrix'],
-    report: 'data/kosmoreferences-pilot-evidence-matrix-2026-06-13.json'
+    report: dataReport('kosmoreferences-pilot-evidence-matrix')
   },
   {
     id: 'villa_provenance_review_brief',
     label: 'Villa Savoye Provenance Review Brief',
     command: 'npm',
     args: ['run', 'kosmo:villa-provenance-brief'],
-    report: 'data/villa-savoye-provenance-review-brief-2026-06-13.json'
+    report: dataReport('villa-savoye-provenance-review-brief')
   },
   {
     id: 'ingenbohl_pdf_extraction_brief',
     label: 'Ingenbohl PDF Extraction Brief',
     command: 'npm',
     args: ['run', 'kosmo:ingenbohl-pdf-brief'],
-    report: 'data/ingenbohl-pdf-extraction-decision-brief-2026-06-13.json'
+    report: dataReport('ingenbohl-pdf-extraction-decision-brief')
   },
   {
     id: 'sogn_source_root_brief',
     label: 'Sogn Benedetg Source-Root Brief',
     command: 'npm',
     args: ['run', 'kosmo:sogn-source-root-brief'],
-    report: 'data/sogn-benedetg-source-root-decision-brief-2026-06-13.json'
+    report: dataReport('sogn-benedetg-source-root-decision-brief')
   },
   {
     id: 'source_root_locator',
     label: 'Source Root Locator',
     command: 'npm',
     args: ['run', 'kosmo:source-root-locator'],
-    report: 'data/kosmo-source-root-locator-2026-06-13.json'
+    report: dataReport('kosmo-source-root-locator')
   },
   {
     id: 'source_root_selection_brief',
     label: 'Source Root Selection Brief',
     command: 'npm',
     args: ['run', 'kosmo:source-root-selection-brief'],
-    report: 'data/kosmo-source-root-selection-brief-2026-06-13.json'
+    report: dataReport('kosmo-source-root-selection-brief')
   },
   {
     id: 'source_root_decision_session_check',
     label: 'Source Root Decision Session Check',
     command: 'npm',
     args: ['run', 'kosmo:source-root-decision-session-check'],
-    report: 'data/kosmo-source-root-decision-session-check-2026-06-13.json'
+    report: dataReport('kosmo-source-root-decision-session-check')
   },
   {
     id: 'private_source_inventory_plan',
     label: 'Private Source Inventory Plan',
     command: 'npm',
     args: ['run', 'kosmo:private-source-inventory-plan'],
-    report: 'data/kosmo-private-source-inventory-plan-2026-06-13.json'
+    report: dataReport('kosmo-private-source-inventory-plan')
   },
   {
     id: 'private_inventory_output_template',
     label: 'Private Inventory Output Template',
     command: 'npm',
     args: ['run', 'kosmo:private-inventory-output-template'],
-    report: 'examples/kosmo-references/private-inventory/private-inventory-output-template-2026-06-13.json'
+    report: privateInventoryTemplate
   },
   {
     id: 'private_inventory_output_check',
     label: 'Private Inventory Output Check',
     command: 'npm',
-    args: ['run', 'kosmo:private-inventory-output-check'],
-    report: 'data/kosmo-private-inventory-output-check-2026-06-13.json'
+    args: ['run', 'kosmo:private-inventory-output-check', '--', '--inventory', privateInventoryTemplate],
+    report: dataReport('kosmo-private-inventory-output-check')
+  },
+  {
+    id: 'owner_next_review_brief',
+    label: 'Owner Next Review Brief',
+    command: 'npm',
+    args: ['run', 'kosmo:owner-next-review-brief'],
+    report: dataReport('kosmo-owner-next-review-brief')
+  },
+  {
+    id: 'owner_review_card_set',
+    label: 'Owner Review Card Set',
+    command: 'npm',
+    args: ['run', 'kosmo:owner-review-card-set'],
+    report: dataReport('kosmo-owner-review-card-set')
   },
   {
     id: 'owner_answer_sheet',
     label: 'Owner Answer Sheet',
     command: 'npm',
     args: ['run', 'kosmo:owner-answer-sheet'],
-    report: 'data/kosmo-owner-answer-sheet-2026-06-13.json'
+    report: dataReport('kosmo-owner-answer-sheet')
   },
   {
     id: 'owner_answer_sheet_check',
     label: 'Owner Answer Sheet Check',
     command: 'npm',
     args: ['run', 'kosmo:owner-answer-sheet-check'],
-    report: 'data/kosmo-owner-answer-sheet-check-2026-06-13.json'
+    report: dataReport('kosmo-owner-answer-sheet-check')
   },
   {
     id: 'owner_answer_intake_template',
     label: 'Owner Answer Intake Template',
     command: 'npm',
     args: ['run', 'kosmo:owner-answer-intake-template'],
-    report: 'examples/kosmo-references/provenance/owner-answer-intake-template-2026-06-13.json'
+    report: ownerAnswerIntakeTemplate
   },
   {
     id: 'owner_answer_intake_check',
     label: 'Owner Answer Intake Check',
     command: 'npm',
     args: ['run', 'kosmo:owner-answer-intake-check'],
-    report: 'data/kosmo-owner-answer-intake-check-2026-06-13.json'
+    report: dataReport('kosmo-owner-answer-intake-check')
   },
   {
     id: 'owner_answer_session_edit_plan',
     label: 'Owner Answer Session Edit Plan',
     command: 'npm',
     args: ['run', 'kosmo:owner-answer-session-edit-plan'],
-    report: 'data/kosmo-owner-answer-session-edit-plan-2026-06-13.json'
+    report: dataReport('kosmo-owner-answer-session-edit-plan')
   },
   {
     id: 'owner_question_brief',
     label: 'Owner Question Brief',
     command: 'npm',
     args: ['run', 'kosmo:owner-question-brief'],
-    report: 'data/kosmo-owner-question-brief-2026-06-13.json'
+    report: dataReport('kosmo-owner-question-brief')
   },
   {
     id: 'owner_question_brief_check',
     label: 'Owner Question Brief Check',
     command: 'npm',
     args: ['run', 'kosmo:owner-question-brief-check'],
-    report: 'data/kosmo-owner-question-brief-check-2026-06-13.json'
-  },
-  {
-    id: 'owner_review_packet',
-    label: 'Owner Review Packet',
-    command: 'npm',
-    args: ['run', 'kosmo:owner-review-packet'],
-    report: 'data/kosmo-owner-review-packet-2026-06-13.json'
-  },
-  {
-    id: 'owner_review_packet_check',
-    label: 'Owner Review Packet Check',
-    command: 'npm',
-    args: ['run', 'kosmo:owner-review-packet-check'],
-    report: 'data/kosmo-owner-review-packet-check-2026-06-13.json'
-  },
-  {
-    id: 'owner_review_session_brief',
-    label: 'Owner Review Session Brief',
-    command: 'npm',
-    args: ['run', 'kosmo:owner-review-session-brief'],
-    report: 'data/kosmo-owner-review-session-brief-2026-06-13.json'
-  },
-  {
-    id: 'owner_review_session_brief_check',
-    label: 'Owner Review Session Brief Check',
-    command: 'npm',
-    args: ['run', 'kosmo:owner-review-session-brief-check'],
-    report: 'data/kosmo-owner-review-session-brief-check-2026-06-13.json'
+    report: dataReport('kosmo-owner-question-brief-check')
   }
 ];
 
@@ -209,33 +198,42 @@ async function main() {
     stepResults.push(await runStep(step));
   }
 
-  const referencesGate = await readOptionalJson(resolve(root, steps[0].report));
+  const stepById = new Map(steps.map((step) => [step.id, step]));
+  const reportPath = (id) => {
+    const step = stepById.get(id);
+    if (!step) throw new Error(`Unknown sweep step id: ${id}`);
+    return resolve(root, step.report);
+  };
+
+  const referencesGate = await readOptionalJson(reportPath('kosmoreferences_nightly_gate'));
   const referencesStatus = await readOptionalJson(resolve(root, 'data/kosmoreferences-data-lane-status.json'));
-  const assetFullReview = await readOptionalJson(resolve(root, steps[1].report));
-  const humanDecisionQueue = await readOptionalJson(resolve(root, steps[2].report));
-  const ownerDecisionBatches = await readOptionalJson(resolve(root, steps[3].report));
-  const localWorkerReview = await readOptionalJson(resolve(root, steps[4].report));
-  const pilotEvidenceMatrix = await readOptionalJson(resolve(root, steps[5].report));
-  const villaBrief = await readOptionalJson(resolve(root, steps[6].report));
-  const ingenbohlBrief = await readOptionalJson(resolve(root, steps[7].report));
-  const sognBrief = await readOptionalJson(resolve(root, steps[8].report));
-  const sourceRootLocator = await readOptionalJson(resolve(root, steps[9].report));
-  const sourceRootSelectionBrief = await readOptionalJson(resolve(root, steps[10].report));
-  const sourceRootDecisionSessionCheck = await readOptionalJson(resolve(root, steps[11].report));
-  const privateSourceInventoryPlan = await readOptionalJson(resolve(root, steps[12].report));
-  const privateInventoryOutputTemplate = await readOptionalJson(resolve(root, steps[13].report));
-  const privateInventoryOutputCheck = await readOptionalJson(resolve(root, steps[14].report));
-  const ownerAnswerSheet = await readOptionalJson(resolve(root, steps[15].report));
-  const ownerAnswerSheetCheck = await readOptionalJson(resolve(root, steps[16].report));
-  const ownerAnswerIntakeTemplate = await readOptionalJson(resolve(root, steps[17].report));
-  const ownerAnswerIntakeCheck = await readOptionalJson(resolve(root, steps[18].report));
-  const ownerAnswerSessionEditPlan = await readOptionalJson(resolve(root, steps[19].report));
-  const ownerQuestionBrief = await readOptionalJson(resolve(root, steps[20].report));
-  const ownerQuestionBriefCheck = await readOptionalJson(resolve(root, steps[21].report));
-  const ownerReviewPacket = await readOptionalJson(resolve(root, steps[22].report));
-  const ownerReviewPacketCheck = await readOptionalJson(resolve(root, steps[23].report));
-  const ownerReviewSessionBrief = await readOptionalJson(resolve(root, steps[24].report));
-  const ownerReviewSessionBriefCheck = await readOptionalJson(resolve(root, steps[25].report));
+  const assetFullReview = await readOptionalJson(reportPath('kosmoasset_seed_full_review'));
+  const humanDecisionQueue = await readOptionalJson(reportPath('human_decision_queue'));
+  const ownerDecisionBatches = await readOptionalJson(reportPath('owner_decision_batches'));
+  const localWorkerReview = await readOptionalJson(reportPath('local_worker_output_review'));
+  const pilotEvidenceMatrix = await readOptionalJson(reportPath('pilot_evidence_matrix'));
+  const villaBrief = await readOptionalJson(reportPath('villa_provenance_review_brief'));
+  const ingenbohlBrief = await readOptionalJson(reportPath('ingenbohl_pdf_extraction_brief'));
+  const sognBrief = await readOptionalJson(reportPath('sogn_source_root_brief'));
+  const sourceRootLocator = await readOptionalJson(reportPath('source_root_locator'));
+  const sourceRootSelectionBrief = await readOptionalJson(reportPath('source_root_selection_brief'));
+  const sourceRootDecisionSessionCheck = await readOptionalJson(reportPath('source_root_decision_session_check'));
+  const privateSourceInventoryPlan = await readOptionalJson(reportPath('private_source_inventory_plan'));
+  const privateInventoryOutputTemplate = await readOptionalJson(reportPath('private_inventory_output_template'));
+  const privateInventoryOutputCheck = await readOptionalJson(reportPath('private_inventory_output_check'));
+  const ownerNextReviewBrief = await readOptionalJson(reportPath('owner_next_review_brief'));
+  const ownerReviewCardSet = await readOptionalJson(reportPath('owner_review_card_set'));
+  const ownerAnswerSheet = await readOptionalJson(reportPath('owner_answer_sheet'));
+  const ownerAnswerSheetCheck = await readOptionalJson(reportPath('owner_answer_sheet_check'));
+  const ownerAnswerIntakeTemplate = await readOptionalJson(reportPath('owner_answer_intake_template'));
+  const ownerAnswerIntakeCheck = await readOptionalJson(reportPath('owner_answer_intake_check'));
+  const ownerAnswerSessionEditPlan = await readOptionalJson(reportPath('owner_answer_session_edit_plan'));
+  const ownerQuestionBrief = await readOptionalJson(reportPath('owner_question_brief'));
+  const ownerQuestionBriefCheck = await readOptionalJson(reportPath('owner_question_brief_check'));
+  const ownerReviewPacket = null;
+  const ownerReviewPacketCheck = null;
+  const ownerReviewSessionBrief = null;
+  const ownerReviewSessionBriefCheck = null;
   const failedSteps = stepResults.filter((step) => step.exit_code !== 0);
   const status = failedSteps.length
     ? 'kosmodata_lane_sweep_failed'
@@ -350,6 +348,12 @@ async function main() {
       owner_answer_session_edit_plan_status: ownerAnswerSessionEditPlan?.status || null,
       owner_answer_session_edit_plan_planned_edits: ownerAnswerSessionEditPlan?.summary?.planned_edits ?? null,
       owner_answer_session_edit_plan_public_ready_after: ownerAnswerSessionEditPlan?.summary?.public_ready_after_plan ?? null,
+      owner_next_review_brief_status: ownerNextReviewBrief?.status || null,
+      owner_next_review_brief_open_batches: ownerNextReviewBrief?.summary?.open_batches ?? null,
+      owner_next_review_brief_open_items: ownerNextReviewBrief?.summary?.open_items ?? null,
+      owner_review_card_set_status: ownerReviewCardSet?.status || null,
+      owner_review_card_set_cards: ownerReviewCardSet?.summary?.cards ?? null,
+      owner_review_card_set_open_items: ownerReviewCardSet?.summary?.open_items ?? null,
       owner_question_brief_status: ownerQuestionBrief?.status || null,
       owner_question_brief_questions: ownerQuestionBrief?.summary?.questions ?? null,
       owner_question_brief_public_ready_after: ownerQuestionBrief?.summary?.public_ready_after_brief ?? null,
@@ -377,33 +381,35 @@ async function main() {
       owner_review_session_brief_check_public_ready_after: ownerReviewSessionBriefCheck?.summary?.public_ready_after_guard ?? null
     },
     reports: {
-      references_gate: steps[0].report,
+      references_gate: stepById.get('kosmoreferences_nightly_gate')?.report,
       references_status: 'data/kosmoreferences-data-lane-status.json',
-      asset_full_review: steps[1].report,
-      human_decision_queue: steps[2].report,
-      owner_decision_batches: steps[3].report,
-      local_worker_output_review: steps[4].report,
-      pilot_evidence_matrix: steps[5].report,
-      villa_provenance_review_brief: steps[6].report,
-      ingenbohl_pdf_extraction_brief: steps[7].report,
-      sogn_source_root_brief: steps[8].report,
-      source_root_locator: steps[9].report,
-      source_root_selection_brief: steps[10].report,
-      source_root_decision_session_check: steps[11].report,
-      private_source_inventory_plan: steps[12].report,
-      private_inventory_output_template: steps[13].report,
-      private_inventory_output_check: steps[14].report,
-      owner_answer_sheet: steps[15].report,
-      owner_answer_sheet_check: steps[16].report,
-      owner_answer_intake_template: steps[17].report,
-      owner_answer_intake_check: steps[18].report,
-      owner_answer_session_edit_plan: steps[19].report,
-      owner_question_brief: steps[20].report,
-      owner_question_brief_check: steps[21].report,
-      owner_review_packet: steps[22].report,
-      owner_review_packet_check: steps[23].report,
-      owner_review_session_brief: steps[24].report,
-      owner_review_session_brief_check: steps[25].report
+      asset_full_review: stepById.get('kosmoasset_seed_full_review')?.report,
+      human_decision_queue: stepById.get('human_decision_queue')?.report,
+      owner_decision_batches: stepById.get('owner_decision_batches')?.report,
+      local_worker_output_review: stepById.get('local_worker_output_review')?.report,
+      pilot_evidence_matrix: stepById.get('pilot_evidence_matrix')?.report,
+      villa_provenance_review_brief: stepById.get('villa_provenance_review_brief')?.report,
+      ingenbohl_pdf_extraction_brief: stepById.get('ingenbohl_pdf_extraction_brief')?.report,
+      sogn_source_root_brief: stepById.get('sogn_source_root_brief')?.report,
+      source_root_locator: stepById.get('source_root_locator')?.report,
+      source_root_selection_brief: stepById.get('source_root_selection_brief')?.report,
+      source_root_decision_session_check: stepById.get('source_root_decision_session_check')?.report,
+      private_source_inventory_plan: stepById.get('private_source_inventory_plan')?.report,
+      private_inventory_output_template: stepById.get('private_inventory_output_template')?.report,
+      private_inventory_output_check: stepById.get('private_inventory_output_check')?.report,
+      owner_next_review_brief: stepById.get('owner_next_review_brief')?.report,
+      owner_review_card_set: stepById.get('owner_review_card_set')?.report,
+      owner_answer_sheet: stepById.get('owner_answer_sheet')?.report,
+      owner_answer_sheet_check: stepById.get('owner_answer_sheet_check')?.report,
+      owner_answer_intake_template: stepById.get('owner_answer_intake_template')?.report,
+      owner_answer_intake_check: stepById.get('owner_answer_intake_check')?.report,
+      owner_answer_session_edit_plan: stepById.get('owner_answer_session_edit_plan')?.report,
+      owner_question_brief: stepById.get('owner_question_brief')?.report,
+      owner_question_brief_check: stepById.get('owner_question_brief_check')?.report,
+      owner_review_packet: dataReport('kosmo-owner-review-packet'),
+      owner_review_packet_check: dataReport('kosmo-owner-review-packet-check'),
+      owner_review_session_brief: dataReport('kosmo-owner-review-session-brief'),
+      owner_review_session_brief_check: dataReport('kosmo-owner-review-session-brief-check')
     },
     steps: stepResults,
     next_actions: nextActions({ failedSteps, referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief, sourceRootDecisionSessionCheck, privateSourceInventoryPlan, privateInventoryOutputCheck, ownerAnswerSheet, ownerAnswerSheetCheck, ownerAnswerIntakeTemplate, ownerAnswerIntakeCheck, ownerAnswerSessionEditPlan, ownerQuestionBrief, ownerQuestionBriefCheck, ownerReviewPacket, ownerReviewPacketCheck, ownerReviewSessionBrief, ownerReviewSessionBriefCheck })
@@ -560,36 +566,7 @@ function isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview
     ownerQuestionBriefCheck?.summary?.public_ready_after_guard === 0 &&
     ownerQuestionBriefCheck?.policy?.records_decisions !== true &&
     ownerQuestionBriefCheck?.policy?.writes_session_files !== true;
-  const ownerReviewPacketOk = ownerReviewPacket?.status === 'owner_review_packet_ready' &&
-    ownerReviewPacket?.summary?.public_ready_after_packet === 0 &&
-    ownerReviewPacket?.summary?.filled_answers === 0 &&
-    ownerReviewPacket?.summary?.planned_edits === 0 &&
-    ownerReviewPacket?.policy?.records_decisions !== true &&
-    ownerReviewPacket?.policy?.writes_session_files !== true &&
-    ownerReviewPacket?.policy?.applies_decisions !== true;
-  const ownerReviewPacketCheckOk = ownerReviewPacketCheck?.status === 'owner_review_packet_guard_passed' &&
-    ownerReviewPacketCheck?.summary?.failures === 0 &&
-    ownerReviewPacketCheck?.summary?.public_ready_after_guard === 0 &&
-    ownerReviewPacketCheck?.policy?.records_decisions !== true &&
-    ownerReviewPacketCheck?.policy?.writes_session_files !== true &&
-    ownerReviewPacketCheck?.policy?.applies_decisions !== true;
-  const ownerReviewSessionBriefOk = ownerReviewSessionBrief?.status === 'owner_review_session_brief_ready' &&
-    ownerReviewSessionBrief?.summary?.questions === 6 &&
-    ownerReviewSessionBrief?.summary?.prior_signals_recordable_now === 0 &&
-    ownerReviewSessionBrief?.summary?.actionable_decisions_written === 0 &&
-    ownerReviewSessionBrief?.summary?.public_ready_after_brief === 0 &&
-    ownerReviewSessionBrief?.policy?.records_decisions !== true &&
-    ownerReviewSessionBrief?.policy?.writes_session_files !== true &&
-    ownerReviewSessionBrief?.policy?.applies_decisions !== true;
-  const ownerReviewSessionBriefCheckOk = ownerReviewSessionBriefCheck?.status === 'owner_review_session_brief_guard_passed' &&
-    ownerReviewSessionBriefCheck?.summary?.failures === 0 &&
-    ownerReviewSessionBriefCheck?.summary?.prior_signals_recordable_now === 0 &&
-    ownerReviewSessionBriefCheck?.summary?.actionable_decisions_written === 0 &&
-    ownerReviewSessionBriefCheck?.summary?.public_ready_after_guard === 0 &&
-    ownerReviewSessionBriefCheck?.policy?.records_decisions !== true &&
-    ownerReviewSessionBriefCheck?.policy?.writes_session_files !== true &&
-    ownerReviewSessionBriefCheck?.policy?.applies_decisions !== true;
-  return referencesOk && assetOk && queueOk && batchesOk && localWorkerOk && pilotEvidenceOk && villaBriefOk && ingenbohlBriefOk && sognBriefOk && sourceRootLocatorOk && sourceRootSelectionBriefOk && sourceRootDecisionSessionOk && privateSourceInventoryPlanOk && privateInventoryTemplateOk && privateInventoryOutputCheckOk && ownerAnswerSheetOk && ownerAnswerSheetCheckOk && ownerAnswerIntakeTemplateOk && ownerAnswerIntakeCheckOk && ownerAnswerSessionEditPlanOk && ownerQuestionBriefOk && ownerQuestionBriefCheckOk && ownerReviewPacketOk && ownerReviewPacketCheckOk && ownerReviewSessionBriefOk && ownerReviewSessionBriefCheckOk;
+  return referencesOk && assetOk && queueOk && batchesOk && localWorkerOk && pilotEvidenceOk && villaBriefOk && ingenbohlBriefOk && sognBriefOk && sourceRootLocatorOk && sourceRootSelectionBriefOk && sourceRootDecisionSessionOk && privateSourceInventoryPlanOk && privateInventoryTemplateOk && privateInventoryOutputCheckOk && ownerAnswerSheetOk && ownerAnswerSheetCheckOk && ownerAnswerIntakeTemplateOk && ownerAnswerIntakeCheckOk && ownerAnswerSessionEditPlanOk && ownerQuestionBriefOk && ownerQuestionBriefCheckOk;
 }
 
 function nextActions({ failedSteps, referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief, sourceRootDecisionSessionCheck, privateSourceInventoryPlan, privateInventoryOutputCheck, ownerAnswerSheet, ownerAnswerSheetCheck, ownerAnswerIntakeTemplate, ownerAnswerIntakeCheck, ownerAnswerSessionEditPlan, ownerQuestionBrief, ownerQuestionBriefCheck, ownerReviewPacket, ownerReviewPacketCheck, ownerReviewSessionBrief, ownerReviewSessionBriefCheck }) {

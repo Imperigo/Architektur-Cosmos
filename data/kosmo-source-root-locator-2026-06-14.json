@@ -1,0 +1,1854 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-14T07:21:56.544Z",
+  "status": "source_root_candidates_need_owner_selection",
+  "policy": {
+    "read_only": true,
+    "copied_private_content": false,
+    "file_content_read": false,
+    "note": "This locator reads directory entries and filesystem metadata only. It does not open books, PDFs, lecture documents, plans, images or private source files."
+  },
+  "scan": {
+    "start_roots": [
+      "/home/andrin-baumann",
+      "/mnt/data",
+      "/mnt/archiv",
+      "/mnt",
+      "/media",
+      "/run/media"
+    ],
+    "max_depth": 5,
+    "max_dirs": 60000,
+    "inspect_max_entries": 3000,
+    "scanned_dirs": 2925,
+    "truncated": false
+  },
+  "summary": {
+    "candidates": 706,
+    "probable_large_private_libraries": 0,
+    "workflow_or_project_mirrors": 64,
+    "archive_like_roots": 164,
+    "onedrive_like_roots": 38,
+    "roots_with_sync_errors": 5,
+    "own_mount_candidates": 0,
+    "top_candidates": [
+      {
+        "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC/KosmoWebsite",
+        "classification": "workflow_or_project_mirror",
+        "score": 38,
+        "book_like_files": 3,
+        "lecture_like_files": 107,
+        "sync_error_files": 0
+      },
+      {
+        "path": "/mnt/data/ArchitekturKosmos",
+        "classification": "possible_source_root",
+        "score": 32,
+        "book_like_files": 12,
+        "lecture_like_files": 207,
+        "sync_error_files": 0
+      },
+      {
+        "path": "/home/andrin-baumann/ArchitekturKosmos Onedrive",
+        "classification": "incomplete_onedrive_candidate",
+        "score": 22,
+        "book_like_files": 13,
+        "lecture_like_files": 30,
+        "sync_error_files": 14
+      },
+      {
+        "path": "/mnt/archiv",
+        "classification": "weak_path_signal",
+        "score": 20,
+        "book_like_files": 0,
+        "lecture_like_files": 0,
+        "sync_error_files": 0
+      },
+      {
+        "path": "/mnt/data/_archive_logs",
+        "classification": "weak_path_signal",
+        "score": 20,
+        "book_like_files": 0,
+        "lecture_like_files": 0,
+        "sync_error_files": 0
+      },
+      {
+        "path": "/mnt/data/Zum_Archivieren",
+        "classification": "weak_path_signal",
+        "score": 20,
+        "book_like_files": 0,
+        "lecture_like_files": 0,
+        "sync_error_files": 0
+      },
+      {
+        "path": "/home/andrin-baumann/ArchitekturKosmos Onedrive/11 AI Workflow",
+        "classification": "workflow_or_project_mirror",
+        "score": 16,
+        "book_like_files": 16,
+        "lecture_like_files": 22,
+        "sync_error_files": 0
+      },
+      {
+        "path": "/home/andrin-baumann/ArchitekturKosmos Onedrive/11 AI Workflow/00 Architekturkosmos Zentrale",
+        "classification": "workflow_or_project_mirror",
+        "score": 16,
+        "book_like_files": 12,
+        "lecture_like_files": 21,
+        "sync_error_files": 0
+      }
+    ]
+  },
+  "candidates": [
+    {
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC/KosmoWebsite",
+      "redacted_path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC/KosmoWebsite",
+      "depth": 5,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/data",
+        "fs_type": "ext4",
+        "source": "/dev/nvme1n1"
+      },
+      "signals": [
+        "onedrive_like",
+        "workflow_named",
+        "small_book_count",
+        "lecture_file_count"
+      ],
+      "score": 38,
+      "classification": "workflow_or_project_mirror",
+      "counts": {
+        "files": 121,
+        "dirs": 9,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 3,
+        "lecture_like_files": 107,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 94,
+          ".txt": 10,
+          ".patch": 8,
+          ".pdf": 3,
+          ".json": 2,
+          ".mjs": 1,
+          ".js": 1,
+          ".jsonc": 1,
+          ".html": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/data/ArchitekturKosmos",
+      "redacted_path": "/mnt/data/ArchitekturKosmos",
+      "depth": 1,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/data",
+        "fs_type": "ext4",
+        "source": "/dev/nvme1n1"
+      },
+      "signals": [
+        "small_book_count",
+        "lecture_file_count"
+      ],
+      "score": 32,
+      "classification": "possible_source_root",
+      "counts": {
+        "files": 285,
+        "dirs": 188,
+        "other": 5,
+        "ignored_dirs": 14,
+        "unreadable_dirs": 0,
+        "book_like_files": 12,
+        "lecture_like_files": 207,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 191,
+          ".json": 18,
+          ".pdf": 12,
+          ".gitignore": 10,
+          ".log": 7,
+          ".sh": 7,
+          ".txt": 4,
+          ".py": 3,
+          ".ts": 3,
+          ".js": 3,
+          ".png": 3,
+          ".tag": 2,
+          ".overseer-bak-2026-06-12": 2,
+          "<none>": 2,
+          ".nvmrc": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/home/andrin-baumann/ArchitekturKosmos Onedrive",
+      "redacted_path": "/home/andrin-baumann/ArchitekturKosmos Onedrive",
+      "depth": 1,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/",
+        "fs_type": "ext4",
+        "source": "/dev/nvme0n1p2"
+      },
+      "signals": [
+        "onedrive_like",
+        "small_book_count",
+        "sync_errors_visible"
+      ],
+      "score": 22,
+      "classification": "incomplete_onedrive_candidate",
+      "counts": {
+        "files": 38,
+        "dirs": 7,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 13,
+        "lecture_like_files": 30,
+        "sync_error_files": 14,
+        "extensions": {
+          ".txt": 15,
+          ".pdf": 13,
+          ".zip": 2,
+          ".bat": 1,
+          ".exe": 1,
+          ".md": 1,
+          ".py": 1,
+          ".msi": 1,
+          ".pptx": 1,
+          ".png": 1,
+          ".rtf": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/archiv",
+      "redacted_path": "/mnt/archiv",
+      "depth": 0,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/",
+        "fs_type": "ext4",
+        "source": "/dev/nvme0n1p2"
+      },
+      "signals": [
+        "archive_like"
+      ],
+      "score": 20,
+      "classification": "weak_path_signal",
+      "counts": {
+        "files": 0,
+        "dirs": 0,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 0,
+        "sync_error_files": 0,
+        "extensions": {}
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/data/_archive_logs",
+      "redacted_path": "/mnt/data/_archive_logs",
+      "depth": 1,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/data",
+        "fs_type": "ext4",
+        "source": "/dev/nvme1n1"
+      },
+      "signals": [
+        "archive_like"
+      ],
+      "score": 20,
+      "classification": "weak_path_signal",
+      "counts": {
+        "files": 6,
+        "dirs": 0,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 0,
+        "sync_error_files": 0,
+        "extensions": {
+          ".log": 6
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/data/Zum_Archivieren",
+      "redacted_path": "/mnt/data/Zum_Archivieren",
+      "depth": 1,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/data",
+        "fs_type": "ext4",
+        "source": "/dev/nvme1n1"
+      },
+      "signals": [
+        "archive_like"
+      ],
+      "score": 20,
+      "classification": "weak_path_signal",
+      "counts": {
+        "files": 0,
+        "dirs": 0,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 0,
+        "sync_error_files": 0,
+        "extensions": {}
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/home/andrin-baumann/ArchitekturKosmos Onedrive/11 AI Workflow",
+      "redacted_path": "/home/andrin-baumann/ArchitekturKosmos Onedrive/11 AI Workflow",
+      "depth": 2,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/",
+        "fs_type": "ext4",
+        "source": "/dev/nvme0n1p2"
+      },
+      "signals": [
+        "onedrive_like",
+        "workflow_named",
+        "small_book_count"
+      ],
+      "score": 16,
+      "classification": "workflow_or_project_mirror",
+      "counts": {
+        "files": 34,
+        "dirs": 7,
+        "other": 0,
+        "ignored_dirs": 1,
+        "unreadable_dirs": 0,
+        "book_like_files": 16,
+        "lecture_like_files": 22,
+        "sync_error_files": 0,
+        "extensions": {
+          ".pdf": 16,
+          ".md": 4,
+          ".zip": 2,
+          ".bat": 1,
+          ".txt": 1,
+          ".exe": 1,
+          ".py": 1,
+          ".msi": 1,
+          ".pptx": 1,
+          ".png": 1,
+          ".rtf": 1,
+          ".env": 1,
+          ".example": 1,
+          ".gitignore": 1,
+          ".yml": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/home/andrin-baumann/ArchitekturKosmos Onedrive/11 AI Workflow/00 Architekturkosmos Zentrale",
+      "redacted_path": "/home/andrin-baumann/ArchitekturKosmos Onedrive/11 AI Workflow/00 Architekturkosmos Zentrale",
+      "depth": 3,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/",
+        "fs_type": "ext4",
+        "source": "/dev/nvme0n1p2"
+      },
+      "signals": [
+        "onedrive_like",
+        "workflow_named",
+        "small_book_count"
+      ],
+      "score": 16,
+      "classification": "workflow_or_project_mirror",
+      "counts": {
+        "files": 38,
+        "dirs": 13,
+        "other": 0,
+        "ignored_dirs": 2,
+        "unreadable_dirs": 0,
+        "book_like_files": 12,
+        "lecture_like_files": 21,
+        "sync_error_files": 0,
+        "extensions": {
+          ".pdf": 12,
+          ".md": 7,
+          ".zip": 2,
+          ".gitignore": 2,
+          ".kts": 2,
+          "<none>": 2,
+          ".pptx": 1,
+          ".png": 1,
+          ".rtf": 1,
+          ".env": 1,
+          ".example": 1,
+          ".yml": 1,
+          ".tag": 1,
+          ".properties": 1,
+          ".bat": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/home/andrin-baumann/ArchitekturKosmos Onedrive/11 AI Workflow/00 Architekturkosmos Zentrale/01 Gestaltungskonzepte",
+      "redacted_path": "/home/andrin-baumann/ArchitekturKosmos Onedrive/11 AI Workflow/00 Architekturkosmos Zentrale/01 Gestaltungskonzepte",
+      "depth": 4,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/",
+        "fs_type": "ext4",
+        "source": "/dev/nvme0n1p2"
+      },
+      "signals": [
+        "onedrive_like",
+        "workflow_named",
+        "small_book_count"
+      ],
+      "score": 16,
+      "classification": "workflow_or_project_mirror",
+      "counts": {
+        "files": 3,
+        "dirs": 0,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 3,
+        "lecture_like_files": 3,
+        "sync_error_files": 0,
+        "extensions": {
+          ".pdf": 3
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09",
+      "redacted_path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09",
+      "depth": 3,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/data",
+        "fs_type": "ext4",
+        "source": "/dev/nvme1n1"
+      },
+      "signals": [
+        "onedrive_like",
+        "workflow_named",
+        "small_book_count"
+      ],
+      "score": 16,
+      "classification": "workflow_or_project_mirror",
+      "counts": {
+        "files": 175,
+        "dirs": 56,
+        "other": 0,
+        "ignored_dirs": 2,
+        "unreadable_dirs": 0,
+        "book_like_files": 18,
+        "lecture_like_files": 83,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 57,
+          ".png": 28,
+          ".pdf": 18,
+          ".svg": 17,
+          ".py": 16,
+          ".zip": 15,
+          ".txt": 7,
+          ".rtf": 4,
+          ".json": 3,
+          ".ifc": 2,
+          ".ts": 2,
+          ".js": 2,
+          ".pptx": 1,
+          ".sha256": 1,
+          ".gitignore": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Architekturkosmos Zentrale",
+      "redacted_path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Architekturkosmos Zentrale",
+      "depth": 4,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/data",
+        "fs_type": "ext4",
+        "source": "/dev/nvme1n1"
+      },
+      "signals": [
+        "onedrive_like",
+        "workflow_named",
+        "small_book_count"
+      ],
+      "score": 16,
+      "classification": "workflow_or_project_mirror",
+      "counts": {
+        "files": 17,
+        "dirs": 12,
+        "other": 0,
+        "ignored_dirs": 1,
+        "unreadable_dirs": 0,
+        "book_like_files": 12,
+        "lecture_like_files": 13,
+        "sync_error_files": 0,
+        "extensions": {
+          ".pdf": 12,
+          ".pptx": 1,
+          ".png": 1,
+          ".zip": 1,
+          ".rtf": 1,
+          ".sqlite3": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Architekturkosmos Zentrale/01 Gestaltungskonzepte",
+      "redacted_path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Architekturkosmos Zentrale/01 Gestaltungskonzepte",
+      "depth": 5,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/data",
+        "fs_type": "ext4",
+        "source": "/dev/nvme1n1"
+      },
+      "signals": [
+        "onedrive_like",
+        "workflow_named",
+        "small_book_count"
+      ],
+      "score": 16,
+      "classification": "workflow_or_project_mirror",
+      "counts": {
+        "files": 3,
+        "dirs": 0,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 3,
+        "lecture_like_files": 3,
+        "sync_error_files": 0,
+        "extensions": {
+          ".pdf": 3
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC",
+      "redacted_path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC",
+      "depth": 4,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/data",
+        "fs_type": "ext4",
+        "source": "/dev/nvme1n1"
+      },
+      "signals": [
+        "onedrive_like",
+        "workflow_named",
+        "small_book_count"
+      ],
+      "score": 16,
+      "classification": "workflow_or_project_mirror",
+      "counts": {
+        "files": 150,
+        "dirs": 38,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 3,
+        "lecture_like_files": 59,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 42,
+          ".png": 33,
+          ".svg": 17,
+          ".txt": 14,
+          ".zip": 13,
+          ".json": 13,
+          ".jsonl": 3,
+          ".sh": 3,
+          ".pdf": 3,
+          ".sha256": 2,
+          ".ifc": 2,
+          ".bundle": 1,
+          ".mjs": 1,
+          ".js": 1,
+          ".jsonc": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC/ZUG_Volumenstudien_2026-06-08",
+      "redacted_path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC/ZUG_Volumenstudien_2026-06-08",
+      "depth": 5,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/data",
+        "fs_type": "ext4",
+        "source": "/dev/nvme1n1"
+      },
+      "signals": [
+        "onedrive_like",
+        "workflow_named",
+        "small_book_count"
+      ],
+      "score": 16,
+      "classification": "workflow_or_project_mirror",
+      "counts": {
+        "files": 13,
+        "dirs": 4,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 1,
+        "lecture_like_files": 5,
+        "sync_error_files": 0,
+        "extensions": {
+          ".png": 6,
+          ".md": 4,
+          ".pdf": 1,
+          ".csv": 1,
+          ".json": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/alt",
+      "redacted_path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/alt",
+      "depth": 4,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/data",
+        "fs_type": "ext4",
+        "source": "/dev/nvme1n1"
+      },
+      "signals": [
+        "onedrive_like",
+        "workflow_named",
+        "small_book_count"
+      ],
+      "score": 16,
+      "classification": "workflow_or_project_mirror",
+      "counts": {
+        "files": 1,
+        "dirs": 0,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 1,
+        "lecture_like_files": 1,
+        "sync_error_files": 0,
+        "extensions": {
+          ".pdf": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/Recht",
+      "redacted_path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/Recht",
+      "depth": 4,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/data",
+        "fs_type": "ext4",
+        "source": "/dev/nvme1n1"
+      },
+      "signals": [
+        "onedrive_like",
+        "workflow_named",
+        "small_book_count"
+      ],
+      "score": 16,
+      "classification": "workflow_or_project_mirror",
+      "counts": {
+        "files": 42,
+        "dirs": 3,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 1,
+        "lecture_like_files": 42,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 40,
+          ".pdf": 1,
+          ".txt": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/data/ArchitekturKosmos/KosmoZentrale/data/wettbewerbe/onedrive",
+      "redacted_path": "/mnt/data/ArchitekturKosmos/KosmoZentrale/data/wettbewerbe/onedrive",
+      "depth": 5,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/data",
+        "fs_type": "ext4",
+        "source": "/dev/nvme1n1"
+      },
+      "signals": [
+        "onedrive_like",
+        "workflow_named",
+        "small_book_count"
+      ],
+      "score": 16,
+      "classification": "workflow_or_project_mirror",
+      "counts": {
+        "files": 13,
+        "dirs": 3,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 12,
+        "lecture_like_files": 13,
+        "sync_error_files": 0,
+        "extensions": {
+          ".pdf": 12,
+          ".docx": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/archive-intake",
+      "redacted_path": "/mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/archive-intake",
+      "depth": 4,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/data",
+        "fs_type": "ext4",
+        "source": "/dev/nvme1n1"
+      },
+      "signals": [
+        "archive_like",
+        "dev_or_generated_path",
+        "small_book_count",
+        "lecture_file_count"
+      ],
+      "score": 14,
+      "classification": "dev_or_generated_candidate",
+      "counts": {
+        "files": 2069,
+        "dirs": 931,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 4,
+        "lecture_like_files": 207,
+        "sync_error_files": 0,
+        "extensions": {
+          ".json": 1478,
+          ".svg": 271,
+          ".md": 201,
+          ".dxf": 89,
+          ".glb": 10,
+          ".url": 5,
+          ".jpg": 4,
+          ".pdf": 4,
+          ".blend": 3,
+          ".blend1": 2,
+          ".txt": 2
+        }
+      },
+      "inspect_truncated": true
+    },
+    {
+      "path": "/mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/archive-inbox/books",
+      "redacted_path": "/mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/archive-inbox/books",
+      "depth": 5,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/data",
+        "fs_type": "ext4",
+        "source": "/dev/nvme1n1"
+      },
+      "signals": [
+        "archive_like",
+        "library_named",
+        "dev_or_generated_path"
+      ],
+      "score": 12,
+      "classification": "dev_or_generated_candidate",
+      "counts": {
+        "files": 4,
+        "dirs": 2,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 2,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 2,
+          ".jpg": 2
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/archive-inbox/palladio-four-books",
+      "redacted_path": "/mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/archive-inbox/palladio-four-books",
+      "depth": 5,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/data",
+        "fs_type": "ext4",
+        "source": "/dev/nvme1n1"
+      },
+      "signals": [
+        "archive_like",
+        "library_named",
+        "dev_or_generated_path"
+      ],
+      "score": 12,
+      "classification": "dev_or_generated_candidate",
+      "counts": {
+        "files": 1,
+        "dirs": 0,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 0,
+        "sync_error_files": 0,
+        "extensions": {
+          ".json": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/archive-intake/books",
+      "redacted_path": "/mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/archive-intake/books",
+      "depth": 5,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/data",
+        "fs_type": "ext4",
+        "source": "/dev/nvme1n1"
+      },
+      "signals": [
+        "archive_like",
+        "library_named",
+        "dev_or_generated_path"
+      ],
+      "score": 12,
+      "classification": "dev_or_generated_candidate",
+      "counts": {
+        "files": 0,
+        "dirs": 12,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 0,
+        "sync_error_files": 0,
+        "extensions": {}
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/archive-intake/palladio-four-books",
+      "redacted_path": "/mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/archive-intake/palladio-four-books",
+      "depth": 5,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/data",
+        "fs_type": "ext4",
+        "source": "/dev/nvme1n1"
+      },
+      "signals": [
+        "archive_like",
+        "library_named",
+        "dev_or_generated_path"
+      ],
+      "score": 12,
+      "classification": "dev_or_generated_candidate",
+      "counts": {
+        "files": 24,
+        "dirs": 8,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 2,
+        "sync_error_files": 0,
+        "extensions": {
+          ".json": 18,
+          ".svg": 3,
+          ".md": 2,
+          ".dxf": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/data/ArchitekturKosmos/Code/KosmoPublish/output/_archive_2026-06-01",
+      "redacted_path": "/mnt/data/ArchitekturKosmos/Code/KosmoPublish/output/_archive_2026-06-01",
+      "depth": 5,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/data",
+        "fs_type": "ext4",
+        "source": "/dev/nvme1n1"
+      },
+      "signals": [
+        "archive_like",
+        "dev_or_generated_path",
+        "medium_book_count"
+      ],
+      "score": 10,
+      "classification": "dev_or_generated_candidate",
+      "counts": {
+        "files": 150,
+        "dirs": 26,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 42,
+        "lecture_like_files": 42,
+        "sync_error_files": 0,
+        "extensions": {
+          ".svg": 66,
+          ".pdf": 42,
+          ".png": 33,
+          ".html": 7,
+          ".dxf": 1,
+          ".db": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/home/andrin-baumann/ArchitekturKosmos Onedrive/11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter",
+      "redacted_path": "/home/andrin-baumann/ArchitekturKosmos Onedrive/11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter",
+      "depth": 4,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/",
+        "fs_type": "ext4",
+        "source": "/dev/nvme0n1p2"
+      },
+      "signals": [
+        "onedrive_like",
+        "workflow_named"
+      ],
+      "score": 6,
+      "classification": "workflow_or_project_mirror",
+      "counts": {
+        "files": 27,
+        "dirs": 22,
+        "other": 0,
+        "ignored_dirs": 3,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 9,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 8,
+          ".gitignore": 3,
+          ".kts": 3,
+          ".tag": 2,
+          "<none>": 2,
+          ".env": 1,
+          ".example": 1,
+          ".yml": 1,
+          ".properties": 1,
+          ".bat": 1,
+          ".toml": 1,
+          ".txt": 1,
+          ".probe": 1,
+          ".json": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/home/andrin-baumann/ArchitekturKosmos Onedrive/11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/android",
+      "redacted_path": "/home/andrin-baumann/ArchitekturKosmos Onedrive/11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/android",
+      "depth": 5,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/",
+        "fs_type": "ext4",
+        "source": "/dev/nvme0n1p2"
+      },
+      "signals": [
+        "onedrive_like",
+        "workflow_named"
+      ],
+      "score": 6,
+      "classification": "workflow_or_project_mirror",
+      "counts": {
+        "files": 19,
+        "dirs": 21,
+        "other": 0,
+        "ignored_dirs": 1,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 2,
+        "sync_error_files": 0,
+        "extensions": {
+          ".properties": 5,
+          ".kts": 3,
+          ".md": 2,
+          ".log": 2,
+          "<none>": 1,
+          ".bat": 1,
+          ".probe": 1,
+          ".json": 1,
+          ".lock": 1,
+          ".bin": 1,
+          ".jar": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/home/andrin-baumann/ArchitekturKosmos Onedrive/11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend",
+      "redacted_path": "/home/andrin-baumann/ArchitekturKosmos Onedrive/11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend",
+      "depth": 5,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/",
+        "fs_type": "ext4",
+        "source": "/dev/nvme0n1p2"
+      },
+      "signals": [
+        "onedrive_like",
+        "workflow_named"
+      ],
+      "score": 6,
+      "classification": "workflow_or_project_mirror",
+      "counts": {
+        "files": 7,
+        "dirs": 4,
+        "other": 0,
+        "ignored_dirs": 1,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 3,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 2,
+          "<none>": 1,
+          ".toml": 1,
+          ".txt": 1,
+          ".gitignore": 1,
+          ".tag": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter",
+      "redacted_path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter",
+      "depth": 5,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/data",
+        "fs_type": "ext4",
+        "source": "/dev/nvme1n1"
+      },
+      "signals": [
+        "onedrive_like",
+        "workflow_named"
+      ],
+      "score": 6,
+      "classification": "workflow_or_project_mirror",
+      "counts": {
+        "files": 0,
+        "dirs": 13,
+        "other": 0,
+        "ignored_dirs": 4,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 0,
+        "sync_error_files": 0,
+        "extensions": {}
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Architekturkosmos Zentrale/storage",
+      "redacted_path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Architekturkosmos Zentrale/storage",
+      "depth": 5,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/data",
+        "fs_type": "ext4",
+        "source": "/dev/nvme1n1"
+      },
+      "signals": [
+        "onedrive_like",
+        "workflow_named"
+      ],
+      "score": 6,
+      "classification": "workflow_or_project_mirror",
+      "counts": {
+        "files": 1,
+        "dirs": 0,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 0,
+        "sync_error_files": 0,
+        "extensions": {
+          ".sqlite3": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC/KOSMO_HomePC_Codex_Worker_Packet_20260607_1106",
+      "redacted_path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC/KOSMO_HomePC_Codex_Worker_Packet_20260607_1106",
+      "depth": 5,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/data",
+        "fs_type": "ext4",
+        "source": "/dev/nvme1n1"
+      },
+      "signals": [
+        "onedrive_like",
+        "workflow_named"
+      ],
+      "score": 6,
+      "classification": "workflow_or_project_mirror",
+      "counts": {
+        "files": 42,
+        "dirs": 5,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 22,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 20,
+          ".json": 10,
+          ".jsonl": 3,
+          ".sh": 3,
+          ".txt": 2,
+          ".zip": 2,
+          ".bundle": 1,
+          ".sha256": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC/KosmoDesign",
+      "redacted_path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC/KosmoDesign",
+      "depth": 5,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/data",
+        "fs_type": "ext4",
+        "source": "/dev/nvme1n1"
+      },
+      "signals": [
+        "onedrive_like",
+        "workflow_named"
+      ],
+      "score": 6,
+      "classification": "workflow_or_project_mirror",
+      "counts": {
+        "files": 1,
+        "dirs": 0,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 0,
+        "sync_error_files": 0,
+        "extensions": {
+          ".zip": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC/KosmoOrbit(Software)",
+      "redacted_path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC/KosmoOrbit(Software)",
+      "depth": 5,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/data",
+        "fs_type": "ext4",
+        "source": "/dev/nvme1n1"
+      },
+      "signals": [
+        "onedrive_like",
+        "workflow_named"
+      ],
+      "score": 6,
+      "classification": "workflow_or_project_mirror",
+      "counts": {
+        "files": 242,
+        "dirs": 27,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 83,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 81,
+          ".json": 59,
+          ".tsx": 51,
+          ".mjs": 46,
+          ".txt": 2,
+          ".html": 2,
+          ".js": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC/ZUG_2D_Plaene_2026-06-07",
+      "redacted_path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC/ZUG_2D_Plaene_2026-06-07",
+      "depth": 5,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/data",
+        "fs_type": "ext4",
+        "source": "/dev/nvme1n1"
+      },
+      "signals": [
+        "onedrive_like",
+        "workflow_named"
+      ],
+      "score": 6,
+      "classification": "workflow_or_project_mirror",
+      "counts": {
+        "files": 33,
+        "dirs": 0,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 0,
+        "sync_error_files": 0,
+        "extensions": {
+          ".png": 17,
+          ".svg": 16
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/12 Architektur Cosmos",
+      "redacted_path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/12 Architektur Cosmos",
+      "depth": 4,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/data",
+        "fs_type": "ext4",
+        "source": "/dev/nvme1n1"
+      },
+      "signals": [
+        "onedrive_like",
+        "workflow_named"
+      ],
+      "score": 6,
+      "classification": "workflow_or_project_mirror",
+      "counts": {
+        "files": 20,
+        "dirs": 9,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 6,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 6,
+          ".json": 5,
+          ".ts": 4,
+          ".js": 2,
+          ".tsx": 2,
+          ".css": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/12 Architektur Cosmos/Architektur-Cosmos-Browser",
+      "redacted_path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/12 Architektur Cosmos/Architektur-Cosmos-Browser",
+      "depth": 5,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/data",
+        "fs_type": "ext4",
+        "source": "/dev/nvme1n1"
+      },
+      "signals": [
+        "onedrive_like",
+        "workflow_named"
+      ],
+      "score": 6,
+      "classification": "workflow_or_project_mirror",
+      "counts": {
+        "files": 23,
+        "dirs": 8,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 6,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 6,
+          ".json": 5,
+          ".tsx": 5,
+          ".ts": 4,
+          ".js": 2,
+          ".css": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/Andrin-Owner-Pakete",
+      "redacted_path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/Andrin-Owner-Pakete",
+      "depth": 4,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/data",
+        "fs_type": "ext4",
+        "source": "/dev/nvme1n1"
+      },
+      "signals": [
+        "onedrive_like",
+        "workflow_named"
+      ],
+      "score": 6,
+      "classification": "workflow_or_project_mirror",
+      "counts": {
+        "files": 6,
+        "dirs": 0,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 0,
+        "sync_error_files": 0,
+        "extensions": {
+          ".zip": 3,
+          ".rtf": 3
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/Recht/Patente",
+      "redacted_path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/Recht/Patente",
+      "depth": 5,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/data",
+        "fs_type": "ext4",
+        "source": "/dev/nvme1n1"
+      },
+      "signals": [
+        "onedrive_like",
+        "workflow_named"
+      ],
+      "score": 6,
+      "classification": "workflow_or_project_mirror",
+      "counts": {
+        "files": 6,
+        "dirs": 0,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 6,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 6
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/Recht/Repo_Hygiene",
+      "redacted_path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/Recht/Repo_Hygiene",
+      "depth": 5,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/data",
+        "fs_type": "ext4",
+        "source": "/dev/nvme1n1"
+      },
+      "signals": [
+        "onedrive_like",
+        "workflow_named"
+      ],
+      "score": 6,
+      "classification": "workflow_or_project_mirror",
+      "counts": {
+        "files": 8,
+        "dirs": 0,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 8,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 7,
+          ".txt": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/Recht/Templates",
+      "redacted_path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/Recht/Templates",
+      "depth": 5,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/data",
+        "fs_type": "ext4",
+        "source": "/dev/nvme1n1"
+      },
+      "signals": [
+        "onedrive_like",
+        "workflow_named"
+      ],
+      "score": 6,
+      "classification": "workflow_or_project_mirror",
+      "counts": {
+        "files": 16,
+        "dirs": 0,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 16,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 16
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/home/andrin-baumann/.claude/projects/-home-andrin-baumann-ArchitekturKosmos-Codex",
+      "redacted_path": "/home/andrin-baumann/.claude/projects/-home-andrin-baumann-ArchitekturKosmos-Codex",
+      "depth": 3,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/",
+        "fs_type": "ext4",
+        "source": "/dev/nvme0n1p2"
+      },
+      "signals": [
+        "small_book_count"
+      ],
+      "score": 2,
+      "classification": "possible_source_root",
+      "counts": {
+        "files": 242,
+        "dirs": 55,
+        "other": 1,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 14,
+        "lecture_like_files": 62,
+        "sync_error_files": 0,
+        "extensions": {
+          ".json": 116,
+          ".jsonl": 64,
+          ".txt": 42,
+          ".pdf": 14,
+          ".md": 6
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/home/andrin-baumann/.claude/projects/-home-andrin-baumann-ArchitekturKosmos-Codex/31292ef2-fb22-49fc-85c0-20191dae4061",
+      "redacted_path": "/home/andrin-baumann/.claude/projects/-home-andrin-baumann-ArchitekturKosmos-Codex/31292ef2-fb22-49fc-85c0-20191dae4061",
+      "depth": 4,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/",
+        "fs_type": "ext4",
+        "source": "/dev/nvme0n1p2"
+      },
+      "signals": [
+        "small_book_count"
+      ],
+      "score": 2,
+      "classification": "possible_source_root",
+      "counts": {
+        "files": 39,
+        "dirs": 2,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 1,
+        "lecture_like_files": 19,
+        "sync_error_files": 0,
+        "extensions": {
+          ".txt": 18,
+          ".jsonl": 10,
+          ".json": 10,
+          ".pdf": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/home/andrin-baumann/.claude/projects/-home-andrin-baumann-ArchitekturKosmos-Codex/31292ef2-fb22-49fc-85c0-20191dae4061/tool-results",
+      "redacted_path": "/home/andrin-baumann/.claude/projects/-home-andrin-baumann-ArchitekturKosmos-Codex/31292ef2-fb22-49fc-85c0-20191dae4061/tool-results",
+      "depth": 5,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/",
+        "fs_type": "ext4",
+        "source": "/dev/nvme0n1p2"
+      },
+      "signals": [
+        "small_book_count"
+      ],
+      "score": 2,
+      "classification": "possible_source_root",
+      "counts": {
+        "files": 19,
+        "dirs": 0,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 1,
+        "lecture_like_files": 19,
+        "sync_error_files": 0,
+        "extensions": {
+          ".txt": 18,
+          ".pdf": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/home/andrin-baumann/.claude/projects/-home-andrin-baumann-ArchitekturKosmos-Codex/713f4df4-689e-48db-aa59-3329e45a50ce",
+      "redacted_path": "/home/andrin-baumann/.claude/projects/-home-andrin-baumann-ArchitekturKosmos-Codex/713f4df4-689e-48db-aa59-3329e45a50ce",
+      "depth": 4,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/",
+        "fs_type": "ext4",
+        "source": "/dev/nvme0n1p2"
+      },
+      "signals": [
+        "small_book_count"
+      ],
+      "score": 2,
+      "classification": "possible_source_root",
+      "counts": {
+        "files": 102,
+        "dirs": 30,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 2,
+        "lecture_like_files": 5,
+        "sync_error_files": 0,
+        "extensions": {
+          ".jpg": 49,
+          ".json": 24,
+          ".js": 19,
+          ".jsonl": 5,
+          ".txt": 3,
+          ".pdf": 2
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/home/andrin-baumann/.claude/projects/-home-andrin-baumann-ArchitekturKosmos-Codex/713f4df4-689e-48db-aa59-3329e45a50ce/tool-results",
+      "redacted_path": "/home/andrin-baumann/.claude/projects/-home-andrin-baumann-ArchitekturKosmos-Codex/713f4df4-689e-48db-aa59-3329e45a50ce/tool-results",
+      "depth": 5,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/",
+        "fs_type": "ext4",
+        "source": "/dev/nvme0n1p2"
+      },
+      "signals": [
+        "small_book_count"
+      ],
+      "score": 2,
+      "classification": "possible_source_root",
+      "counts": {
+        "files": 54,
+        "dirs": 6,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 2,
+        "lecture_like_files": 5,
+        "sync_error_files": 0,
+        "extensions": {
+          ".jpg": 49,
+          ".txt": 3,
+          ".pdf": 2
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/home/andrin-baumann/.claude/projects/-home-andrin-baumann-ArchitekturKosmos-Codex/d162fb2a-4e9a-4e7d-af88-39122f7a1bcf",
+      "redacted_path": "/home/andrin-baumann/.claude/projects/-home-andrin-baumann-ArchitekturKosmos-Codex/d162fb2a-4e9a-4e7d-af88-39122f7a1bcf",
+      "depth": 4,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/",
+        "fs_type": "ext4",
+        "source": "/dev/nvme0n1p2"
+      },
+      "signals": [
+        "small_book_count"
+      ],
+      "score": 2,
+      "classification": "possible_source_root",
+      "counts": {
+        "files": 33,
+        "dirs": 12,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 11,
+        "lecture_like_files": 19,
+        "sync_error_files": 0,
+        "extensions": {
+          ".pdf": 11,
+          ".json": 9,
+          ".txt": 8,
+          ".jsonl": 3,
+          ".js": 2
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/home/andrin-baumann/.claude/projects/-home-andrin-baumann-ArchitekturKosmos-Codex/d162fb2a-4e9a-4e7d-af88-39122f7a1bcf/tool-results",
+      "redacted_path": "/home/andrin-baumann/.claude/projects/-home-andrin-baumann-ArchitekturKosmos-Codex/d162fb2a-4e9a-4e7d-af88-39122f7a1bcf/tool-results",
+      "depth": 5,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/",
+        "fs_type": "ext4",
+        "source": "/dev/nvme0n1p2"
+      },
+      "signals": [
+        "small_book_count"
+      ],
+      "score": 2,
+      "classification": "possible_source_root",
+      "counts": {
+        "files": 19,
+        "dirs": 0,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 11,
+        "lecture_like_files": 19,
+        "sync_error_files": 0,
+        "extensions": {
+          ".pdf": 11,
+          ".txt": 8
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/home/andrin-baumann/ArchitekturKosmos Onedrive/__11 AI Workflow",
+      "redacted_path": "/home/andrin-baumann/ArchitekturKosmos Onedrive/__11 AI Workflow",
+      "depth": 2,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/",
+        "fs_type": "ext4",
+        "source": "/dev/nvme0n1p2"
+      },
+      "signals": [
+        "onedrive_like",
+        "workflow_named",
+        "sync_errors_visible"
+      ],
+      "score": 0,
+      "classification": "workflow_or_project_mirror",
+      "counts": {
+        "files": 28,
+        "dirs": 3,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 28,
+        "sync_error_files": 28,
+        "extensions": {
+          ".txt": 28
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/home/andrin-baumann/ArchitekturKosmos Onedrive/__11 AI Workflow/00 Architekturkosmos Zentrale",
+      "redacted_path": "/home/andrin-baumann/ArchitekturKosmos Onedrive/__11 AI Workflow/00 Architekturkosmos Zentrale",
+      "depth": 3,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/",
+        "fs_type": "ext4",
+        "source": "/dev/nvme0n1p2"
+      },
+      "signals": [
+        "onedrive_like",
+        "workflow_named",
+        "sync_errors_visible"
+      ],
+      "score": 0,
+      "classification": "workflow_or_project_mirror",
+      "counts": {
+        "files": 18,
+        "dirs": 3,
+        "other": 0,
+        "ignored_dirs": 1,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 18,
+        "sync_error_files": 18,
+        "extensions": {
+          ".txt": 18
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/home/andrin-baumann/ArchitekturKosmos Onedrive/__11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter",
+      "redacted_path": "/home/andrin-baumann/ArchitekturKosmos Onedrive/__11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter",
+      "depth": 4,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/",
+        "fs_type": "ext4",
+        "source": "/dev/nvme0n1p2"
+      },
+      "signals": [
+        "onedrive_like",
+        "workflow_named",
+        "sync_errors_visible"
+      ],
+      "score": 0,
+      "classification": "workflow_or_project_mirror",
+      "counts": {
+        "files": 17,
+        "dirs": 2,
+        "other": 0,
+        "ignored_dirs": 1,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 17,
+        "sync_error_files": 17,
+        "extensions": {
+          ".txt": 17
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/home/andrin-baumann/ArchitekturKosmos Onedrive/__11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend",
+      "redacted_path": "/home/andrin-baumann/ArchitekturKosmos Onedrive/__11 AI Workflow/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/backend",
+      "depth": 5,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/",
+        "fs_type": "ext4",
+        "source": "/dev/nvme0n1p2"
+      },
+      "signals": [
+        "onedrive_like",
+        "workflow_named",
+        "sync_errors_visible"
+      ],
+      "score": 0,
+      "classification": "workflow_or_project_mirror",
+      "counts": {
+        "files": 2,
+        "dirs": 1,
+        "other": 0,
+        "ignored_dirs": 1,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 2,
+        "sync_error_files": 2,
+        "extensions": {
+          ".txt": 2
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/data/ArchitekturKosmos/_incoming",
+      "redacted_path": "/mnt/data/ArchitekturKosmos/_incoming",
+      "depth": 2,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/data",
+        "fs_type": "ext4",
+        "source": "/dev/nvme1n1"
+      },
+      "signals": [],
+      "score": 0,
+      "classification": "weak_path_signal",
+      "counts": {
+        "files": 0,
+        "dirs": 0,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 0,
+        "sync_error_files": 0,
+        "extensions": {}
+      },
+      "inspect_truncated": false
+    }
+  ],
+  "next_actions": [
+    "No strong large-library root was confirmed by metadata. Keep Sogn and source-dependent assets review-only.",
+    "Ask owner/Claude whether the archive HDD or OneDrive library is mounted under another path.",
+    "Resolve visible OneDrive sync error markers before treating any OneDrive candidate as complete.",
+    "Do not ingest or copy private files until a root is explicitly selected and a private metadata-only inventory task is opened."
+  ]
+}

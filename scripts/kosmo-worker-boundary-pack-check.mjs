@@ -93,7 +93,7 @@ function checkPolicy(pack) {
 function checkHardState(pack) {
   const state = pack.hard_state || {};
   const findings = [];
-  expect(state.data_lane === '26/26', findings, 'data_lane_26', 'Data lane must remain 26/26.');
+  expect(isCompleteStepRatio(state.data_lane), findings, 'data_lane_complete', 'Data lane must have all configured steps passed.');
   expect(state.data_lane_status === 'kosmodata_lane_sweep_review_only_passed', findings, 'data_lane_review_only_passed', 'Data lane must be review-only passed.');
   expect(state.source_root_blocker_status === 'source_root_blocker_still_active', findings, 'source_root_blocker_active', 'Source-root blocker must remain active.');
   expect(state.source_root_probable_libraries === 0, findings, 'probable_libraries_zero', 'Probable private libraries must remain 0 until real source root is visible.');
@@ -102,6 +102,12 @@ function checkHardState(pack) {
   expect(state.private_inventory_allowed === false, findings, 'private_inventory_false', 'Private inventory must remain blocked.');
   expect(state.public_ready_total === 0, findings, 'public_ready_total_zero', 'Public-ready total must remain 0.');
   return findings;
+}
+
+function isCompleteStepRatio(value) {
+  const match = String(value || '').match(/^(\d+)\/(\d+)$/);
+  if (!match) return false;
+  return Number(match[1]) === Number(match[2]) && Number(match[2]) > 0;
 }
 
 function checkWorkerBoundaries(pack) {

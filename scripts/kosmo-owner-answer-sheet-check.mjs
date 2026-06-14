@@ -11,7 +11,7 @@ const answerSheetPath = resolve(root, args.answerSheet || `data/kosmo-owner-answ
 const ownerCardSetPath = resolve(root, args.ownerCardSet || `data/kosmo-owner-review-card-set-${dateStamp}.json`);
 const sourceRootSessionPath = resolve(
   root,
-  args.sourceRootSession || 'examples/kosmo-references/provenance/source-root-decision-session-2026-06-13.json'
+  args.sourceRootSession || `examples/kosmo-references/provenance/source-root-decision-session-${dateStamp}.json`
 );
 const ownerDecisionSessionPath = resolve(
   root,
@@ -113,8 +113,8 @@ function checkAnswerSheetPolicy(sheet) {
 function checkSourceRefs(sheet) {
   const refs = new Set(sheet.source_refs || []);
   const requiredRefs = [
-    'examples/kosmo-references/provenance/source-root-decision-session-2026-06-13.json',
-    'data/kosmo-owner-review-card-set-2026-06-13.json',
+    relative(root, sourceRootSessionPath),
+    relative(root, ownerCardSetPath),
     'examples/kosmo-references/provenance/owner-review-decision-session-2026-06-13.json'
   ];
   return requiredRefs.map((ref) => ({
