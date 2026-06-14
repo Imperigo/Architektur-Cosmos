@@ -15,6 +15,7 @@ const refs = {
   sourceRootActivation: `data/kosmo-source-root-activation-preflight-${dateStamp}.json`,
   privateMetadataInventory: `data/kosmo-private-metadata-inventory-runner-${dateStamp}.json`,
   privateMetadataInventoryFixture: `data/kosmo-private-metadata-inventory-fixture-smoke-${dateStamp}.json`,
+  privateMetadataInventoryCheck: `data/kosmo-private-metadata-inventory-check-${dateStamp}.json`,
   localModelInventory: `data/kosmo-local-model-inventory-${dateStamp}.json`,
   sweep: `data/kosmodata-lane-sweep-${dateStamp}.json`,
   workerBoundary: `data/kosmo-worker-boundary-pack-check-${dateStamp}.json`,
@@ -108,12 +109,13 @@ function buildBridge(reports) {
       status: reports.privateMetadataInventory?.status === 'private_metadata_inventory_ready_private_output_written'
         ? 'review_only_ready'
         : reports.privateMetadataInventory?.status === 'private_metadata_inventory_blocked_until_activation'
-          ? reports.privateMetadataInventoryFixture?.status === 'private_metadata_inventory_fixture_passed'
+          ? reports.privateMetadataInventoryFixture?.status === 'private_metadata_inventory_fixture_passed' &&
+            reports.privateMetadataInventoryCheck?.status === 'private_metadata_inventory_guard_passed'
             ? 'blocked_with_smoke_passed'
             : 'blocked'
           : 'needs_review',
       signal: reports.privateMetadataInventory?.status === 'private_metadata_inventory_blocked_until_activation'
-        ? `blocked until source-root activation; fixture ${privateInventoryFixtureSummary.total_candidate_matches ?? 0} matches`
+        ? `blocked until source-root activation; fixture ${privateInventoryFixtureSummary.total_candidate_matches ?? 0} matches; guard ${reports.privateMetadataInventoryCheck?.status || 'missing'}`
         : `${privateInventorySummary.total_candidate_matches ?? 0} candidates, scanned ${privateInventorySummary.files_scanned ?? 0} files`,
       owner_action_required: reports.privateMetadataInventory?.status === 'private_metadata_inventory_blocked_until_activation',
       route_hint: 'Pilot-scoped metadata-only inventory',
@@ -201,6 +203,7 @@ function buildBridge(reports) {
       source_root_activation_status: reports.sourceRootActivation?.status || null,
       private_metadata_inventory_status: reports.privateMetadataInventory?.status || null,
       private_metadata_inventory_fixture_status: reports.privateMetadataInventoryFixture?.status || null,
+      private_metadata_inventory_check_status: reports.privateMetadataInventoryCheck?.status || null,
       local_model_inventory_status: reports.localModelInventory?.status || null,
       asset_bridge_status: reports.assetBridge?.status || null,
       innovation_smoke_status: reports.innovationSmoke?.status || null,
@@ -252,6 +255,7 @@ function renderMarkdown(bridge) {
   lines.push(`- Source-root activation: ${bridge.summary.source_root_activation_status}`);
   lines.push(`- Private metadata inventory: ${bridge.summary.private_metadata_inventory_status}`);
   lines.push(`- Private metadata inventory fixture: ${bridge.summary.private_metadata_inventory_fixture_status}`);
+  lines.push(`- Private metadata inventory check: ${bridge.summary.private_metadata_inventory_check_status}`);
   lines.push(`- Local models: ${bridge.summary.local_model_inventory_status}`);
   lines.push(`- Asset bridge: ${bridge.summary.asset_bridge_status}`);
   lines.push(`- Innovation smoke: ${bridge.summary.innovation_smoke_status}`);

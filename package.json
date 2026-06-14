@@ -142,6 +142,7 @@
     "kosmo:private-inventory-output-check": "node scripts/kosmo-private-inventory-output-check.mjs",
     "kosmo:private-metadata-inventory": "node scripts/kosmo-private-metadata-inventory-runner.mjs",
     "kosmo:private-metadata-inventory-fixture-smoke": "node scripts/kosmo-private-metadata-inventory-fixture-smoke.mjs",
+    "kosmo:private-metadata-inventory-check": "node scripts/kosmo-private-metadata-inventory-check.mjs",
     "kosmo:local-model-inventory": "node scripts/kosmo-local-model-inventory.mjs",
     "kosmo:local-worker-task-pack-refresh": "node scripts/kosmo-local-worker-task-pack-refresh.mjs",
     "kosmo:local-worker-ollama-smoke": "node scripts/kosmo-local-worker-ollama-smoke.mjs",
