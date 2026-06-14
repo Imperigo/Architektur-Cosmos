@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T13:17:04.694Z",
+  "generated_at": "2026-06-14T13:20:50.420Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 135
+      "files": 136
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 173
+      "files": 174
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-14-codex-synergiebericht-137-storage-topology.md",
+      "title": "Codex Synergiebericht 137: Storage Topology",
+      "mirrored_inboxes": 2,
+      "bytes": 2052,
+      "modified_at": "2026-06-14T13:20:46.124Z"
+    },
     {
       "filename": "2026-06-14-codex-synergiebericht-136-source-root-owner-action-card.md",
       "title": "Codex Synergiebericht 136: Source Root Owner Action Card",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 2585,
       "modified_at": "2026-06-14T08:44:06.257Z"
-    },
-    {
-      "filename": "2026-06-14-codex-synergiebericht-129-local-worker-smoke-refresh.md",
-      "title": "Codex Synergiebericht 129 - Local Worker Smoke Refresh",
-      "mirrored_inboxes": 2,
-      "bytes": 1083,
-      "modified_at": "2026-06-14T08:35:10.432Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 129-136 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 130-137 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."
