@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T18:59:47.727Z",
+  "generated_at": "2026-06-14T19:03:34.386Z",
   "status": "evening_batch_acceptance_certificate_ready",
   "policy": {
     "certificate_only": true,
@@ -24,8 +24,8 @@
     "guard_families": 5,
     "known_guard_checks_passed": 136,
     "known_guard_checks_total": 136,
-    "latest_handoff_min": 200,
-    "latest_handoff_max": 207,
+    "latest_handoff_min": 202,
+    "latest_handoff_max": 209,
     "owner_reply_status": "pending",
     "public_ready_after_certificate": 0,
     "failures": 0

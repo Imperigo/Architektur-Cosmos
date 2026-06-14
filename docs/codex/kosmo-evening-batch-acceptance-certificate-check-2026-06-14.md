@@ -1,6 +1,6 @@
 # Kosmo Evening Batch Acceptance Certificate Check
 
-Generated: 2026-06-14T18:59:47.980Z
+Generated: 2026-06-14T19:03:34.628Z
 Status: `evening_batch_acceptance_certificate_guard_passed`
 
 ## Summary
@@ -23,7 +23,7 @@ Status: `evening_batch_acceptance_certificate_guard_passed`
 - passed: `public_ready_zero` - 0
 - passed: `five_guard_families` - 5
 - passed: `all_known_guards_passed` - 136/136
-- passed: `latest_handoff_current` - 207
+- passed: `latest_handoff_current` - 209
 - passed: `owner_reply_pending` - pending
 - passed: `guard_families_no_failures` - 
 - passed: `acceptance_mentions_source_free` - Evening batch is accepted as source-free, review-only, handoff-synced and blocked on explicit owner source-root reply.

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T19:02:20.740Z",
+  "generated_at": "2026-06-14T19:04:08.425Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 208
+      "files": 209
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 253
+      "files": 254
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-14-codex-synergiebericht-210-acceptance-certificate-refresh.md",
+      "title": "Codex Synergiebericht 210: Acceptance Certificate Refresh",
+      "mirrored_inboxes": 2,
+      "bytes": 961,
+      "modified_at": "2026-06-14T19:04:01.097Z"
+    },
     {
       "filename": "2026-06-14-codex-synergiebericht-209-orbit-acceptance-certificate-status.md",
       "title": "Codex Synergiebericht 209: Orbit Acceptance Certificate Status",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 818,
       "modified_at": "2026-06-14T18:46:57.674Z"
-    },
-    {
-      "filename": "2026-06-14-codex-synergiebericht-202-vision-roadmap-training-ontology-refresh.md",
-      "title": "Codex Synergiebericht 202: Vision Roadmap Training/Ontology Refresh",
-      "mirrored_inboxes": 2,
-      "bytes": 1241,
-      "modified_at": "2026-06-14T18:45:18.478Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 202-209 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 203-210 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."

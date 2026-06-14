@@ -1,13 +1,13 @@
 # Kosmo Evening Batch Acceptance Certificate
 
-Generated: 2026-06-14T18:59:47.727Z
+Generated: 2026-06-14T19:03:34.386Z
 Status: `evening_batch_acceptance_certificate_ready`
 
 ## Summary
 
 - Guard families: 5
 - Known guard checks: 136/136
-- Latest handoffs: 200-207
+- Latest handoffs: 202-209
 - Owner reply status: pending
 - Public-ready after certificate: 0
 
