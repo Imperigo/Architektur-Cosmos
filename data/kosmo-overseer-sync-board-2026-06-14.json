@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T09:09:55.400Z",
+  "generated_at": "2026-06-14T13:17:04.694Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 134
+      "files": 135
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 172
+      "files": 173
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-14-codex-synergiebericht-136-source-root-owner-action-card.md",
+      "title": "Codex Synergiebericht 136: Source Root Owner Action Card",
+      "mirrored_inboxes": 2,
+      "bytes": 3024,
+      "modified_at": "2026-06-14T13:16:59.684Z"
+    },
     {
       "filename": "2026-06-14-codex-synergiebericht-135-local-worker-metadata-guard.md",
       "title": "Codex Synergiebericht 135 - Local Worker Metadata Guard",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1083,
       "modified_at": "2026-06-14T08:35:10.432Z"
-    },
-    {
-      "filename": "2026-06-14-codex-synergiebericht-128-local-model-inventory.md",
-      "title": "Codex Synergiebericht 128 - Local Model Inventory",
-      "mirrored_inboxes": 2,
-      "bytes": 1311,
-      "modified_at": "2026-06-14T08:29:10.947Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 128-135 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 129-136 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T09:09:55.630Z",
+  "generated_at": "2026-06-14T13:17:04.933Z",
   "status": "overseer_sync_board_guard_passed",
   "policy": {
     "records_decisions": false,
@@ -156,6 +156,16 @@
       "message": "Latest handoffs must include synergiebericht 115 or newer."
     },
     {
+      "id": "handoff_mirrored:2026-06-14-codex-synergiebericht-136-source-root-owner-action-card.md",
+      "severity": "passed",
+      "message": "2026-06-14-codex-synergiebericht-136-source-root-owner-action-card.md must be mirrored in both inboxes."
+    },
+    {
+      "id": "handoff_title:2026-06-14-codex-synergiebericht-136-source-root-owner-action-card.md",
+      "severity": "passed",
+      "message": "2026-06-14-codex-synergiebericht-136-source-root-owner-action-card.md must include a title."
+    },
+    {
       "id": "handoff_mirrored:2026-06-14-codex-synergiebericht-135-local-worker-metadata-guard.md",
       "severity": "passed",
       "message": "2026-06-14-codex-synergiebericht-135-local-worker-metadata-guard.md must be mirrored in both inboxes."
@@ -224,16 +234,6 @@
       "id": "handoff_title:2026-06-14-codex-synergiebericht-129-local-worker-smoke-refresh.md",
       "severity": "passed",
       "message": "2026-06-14-codex-synergiebericht-129-local-worker-smoke-refresh.md must include a title."
-    },
-    {
-      "id": "handoff_mirrored:2026-06-14-codex-synergiebericht-128-local-model-inventory.md",
-      "severity": "passed",
-      "message": "2026-06-14-codex-synergiebericht-128-local-model-inventory.md must be mirrored in both inboxes."
-    },
-    {
-      "id": "handoff_title:2026-06-14-codex-synergiebericht-128-local-model-inventory.md",
-      "severity": "passed",
-      "message": "2026-06-14-codex-synergiebericht-128-local-model-inventory.md must include a title."
     },
     {
       "id": "source_root_blocked",
