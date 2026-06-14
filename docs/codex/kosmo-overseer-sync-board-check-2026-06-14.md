@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board Check
 
-Generated: 2026-06-14T13:57:49.071Z
+Generated: 2026-06-14T14:00:37.583Z
 Status: `overseer_sync_board_guard_passed`
 
 ## Summary
@@ -42,6 +42,8 @@ Status: `overseer_sync_board_guard_passed`
 - passed: `inbox_has_files:/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox` - Handoff inbox must contain files: /mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox
 - passed: `latest_handoffs_array_count` - Latest handoff array must contain eight items.
 - passed: `latest_handoff_includes_115` - Latest handoffs must include synergiebericht 115 or newer.
+- passed: `handoff_mirrored:2026-06-14-codex-synergiebericht-147-local-worker-http-runner.md` - 2026-06-14-codex-synergiebericht-147-local-worker-http-runner.md must be mirrored in both inboxes.
+- passed: `handoff_title:2026-06-14-codex-synergiebericht-147-local-worker-http-runner.md` - 2026-06-14-codex-synergiebericht-147-local-worker-http-runner.md must include a title.
 - passed: `handoff_mirrored:2026-06-14-codex-synergiebericht-146-kosmoorbit-local-worker-json-status.md` - 2026-06-14-codex-synergiebericht-146-kosmoorbit-local-worker-json-status.md must be mirrored in both inboxes.
 - passed: `handoff_title:2026-06-14-codex-synergiebericht-146-kosmoorbit-local-worker-json-status.md` - 2026-06-14-codex-synergiebericht-146-kosmoorbit-local-worker-json-status.md must include a title.
 - passed: `handoff_mirrored:2026-06-14-codex-synergiebericht-145-ollama-json-capture-smoke.md` - 2026-06-14-codex-synergiebericht-145-ollama-json-capture-smoke.md must be mirrored in both inboxes.
@@ -56,8 +58,6 @@ Status: `overseer_sync_board_guard_passed`
 - passed: `handoff_title:2026-06-14-codex-synergiebericht-141-owner-source-root-review-options.md` - 2026-06-14-codex-synergiebericht-141-owner-source-root-review-options.md must include a title.
 - passed: `handoff_mirrored:2026-06-14-codex-synergiebericht-140-review-only-asset-routing-guard.md` - 2026-06-14-codex-synergiebericht-140-review-only-asset-routing-guard.md must be mirrored in both inboxes.
 - passed: `handoff_title:2026-06-14-codex-synergiebericht-140-review-only-asset-routing-guard.md` - 2026-06-14-codex-synergiebericht-140-review-only-asset-routing-guard.md must include a title.
-- passed: `handoff_mirrored:2026-06-14-codex-synergiebericht-139-kosmoasset-source-candidate-map.md` - 2026-06-14-codex-synergiebericht-139-kosmoasset-source-candidate-map.md must be mirrored in both inboxes.
-- passed: `handoff_title:2026-06-14-codex-synergiebericht-139-kosmoasset-source-candidate-map.md` - 2026-06-14-codex-synergiebericht-139-kosmoasset-source-candidate-map.md must include a title.
 - passed: `source_root_blocked` - Source-root blocker must remain blocked.
 - passed: `private_inventory_blocked` - Private inventory blocker must remain blocked.
 - passed: `owner_answers_blocked` - Owner answers blocker must remain blocked.
