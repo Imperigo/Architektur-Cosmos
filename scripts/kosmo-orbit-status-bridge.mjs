@@ -17,6 +17,7 @@ const refs = {
   sourceRootOwnerAction: `data/kosmo-source-root-owner-action-card-${dateStamp}.json`,
   sourceRootOwnerDecisionPacket: `data/kosmo-source-root-owner-decision-packet-${dateStamp}.json`,
   sourceRootOwnerDecisionPacketCheck: `data/kosmo-source-root-owner-decision-packet-check-${dateStamp}.json`,
+  sourceRootDecisionDryRun: `data/kosmo-source-root-decision-dry-run-${dateStamp}.json`,
   sourceRootActivation: `data/kosmo-source-root-activation-preflight-${dateStamp}.json`,
   privateMetadataInventory: `data/kosmo-private-metadata-inventory-runner-${dateStamp}.json`,
   privateMetadataInventoryFixture: `data/kosmo-private-metadata-inventory-fixture-smoke-${dateStamp}.json`,
@@ -66,6 +67,7 @@ function buildBridge(reports) {
   const ownerActionSummary = reports.sourceRootOwnerAction?.summary || {};
   const ownerDecisionPacketSummary = reports.sourceRootOwnerDecisionPacket?.summary || {};
   const ownerDecisionPacketCheckSummary = reports.sourceRootOwnerDecisionPacketCheck?.summary || {};
+  const decisionDryRunSummary = reports.sourceRootDecisionDryRun?.summary || {};
   const activationSummary = reports.sourceRootActivation?.summary || {};
   const privateInventorySummary = reports.privateMetadataInventory?.summary || {};
   const privateInventoryFixtureSummary = reports.privateMetadataInventoryFixture?.summary || {};
@@ -170,6 +172,19 @@ function buildBridge(reports) {
       owner_action_required: false,
       route_hint: 'Guard source-root decision templates before owner presentation',
       source_ref: refs.sourceRootOwnerDecisionPacketCheck
+    },
+    {
+      id: 'source-root-decision-dry-run',
+      title: 'Source Root Decision Dry Run',
+      status: reports.sourceRootDecisionDryRun?.status === 'source_root_decision_dry_run_ready'
+        ? 'review_only_ready'
+        : 'needs_review',
+      signal: reports.sourceRootDecisionDryRun?.status
+        ? `${decisionDryRunSummary.scenarios ?? 0} scenarios, metadata ${decisionDryRunSummary.metadata_diagnostic_scenarios ?? 0}, failures ${decisionDryRunSummary.failures ?? 0}`
+        : 'missing source-root decision dry run',
+      owner_action_required: false,
+      route_hint: 'Preview source-root decision consequences without applying them',
+      source_ref: refs.sourceRootDecisionDryRun
     },
     {
       id: 'source-root-activation',
@@ -346,6 +361,10 @@ function buildBridge(reports) {
       source_root_owner_decision_packet_check_status: reports.sourceRootOwnerDecisionPacketCheck?.status || null,
       source_root_owner_decision_packet_check_failures: ownerDecisionPacketCheckSummary.failures ?? null,
       source_root_owner_decision_packet_check_warnings: ownerDecisionPacketCheckSummary.warnings ?? null,
+      source_root_decision_dry_run_status: reports.sourceRootDecisionDryRun?.status || null,
+      source_root_decision_dry_run_scenarios: decisionDryRunSummary.scenarios ?? null,
+      source_root_decision_dry_run_metadata_scenarios: decisionDryRunSummary.metadata_diagnostic_scenarios ?? null,
+      source_root_decision_dry_run_failures: decisionDryRunSummary.failures ?? null,
       source_root_activation_status: reports.sourceRootActivation?.status || null,
       private_metadata_inventory_status: reports.privateMetadataInventory?.status || null,
       private_metadata_inventory_fixture_status: reports.privateMetadataInventoryFixture?.status || null,
@@ -379,6 +398,7 @@ function buildBridge(reports) {
       'source_root_owner_action_card',
       'source_root_owner_decision_packet_card',
       'source_root_owner_decision_packet_check_card',
+      'source_root_decision_dry_run_card',
       'source_root_activation_card',
       'private_metadata_inventory_card',
       'pilot_reference_cards',
@@ -424,6 +444,7 @@ function renderMarkdown(bridge) {
   lines.push(`- Source-root recommended decision: ${bridge.summary.source_root_owner_recommended_decision}`);
   lines.push(`- Source-root owner decision packet: ${bridge.summary.source_root_owner_decision_packet_status}, templates ${bridge.summary.source_root_owner_decision_packet_templates ?? '-'}, exact roots ${bridge.summary.source_root_owner_decision_packet_exact_roots ?? '-'}, failures ${bridge.summary.source_root_owner_decision_packet_failures ?? '-'}`);
   lines.push(`- Source-root owner decision packet check: ${bridge.summary.source_root_owner_decision_packet_check_status}, failures ${bridge.summary.source_root_owner_decision_packet_check_failures ?? '-'}, warnings ${bridge.summary.source_root_owner_decision_packet_check_warnings ?? '-'}`);
+  lines.push(`- Source-root decision dry run: ${bridge.summary.source_root_decision_dry_run_status}, scenarios ${bridge.summary.source_root_decision_dry_run_scenarios ?? '-'}, metadata scenarios ${bridge.summary.source_root_decision_dry_run_metadata_scenarios ?? '-'}, failures ${bridge.summary.source_root_decision_dry_run_failures ?? '-'}`);
   lines.push(`- Source-root activation: ${bridge.summary.source_root_activation_status}`);
   lines.push(`- Private metadata inventory: ${bridge.summary.private_metadata_inventory_status}`);
   lines.push(`- Private metadata inventory fixture: ${bridge.summary.private_metadata_inventory_fixture_status}`);

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T14:56:53.894Z",
+  "generated_at": "2026-06-14T15:01:39.485Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 155
+      "files": 156
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 195
+      "files": 196
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-14-codex-synergiebericht-157-source-root-decision-dry-run.md",
+      "title": "Codex Synergiebericht 157: Source Root Decision Dry Run",
+      "mirrored_inboxes": 2,
+      "bytes": 2220,
+      "modified_at": "2026-06-14T15:01:34.566Z"
+    },
     {
       "filename": "2026-06-14-codex-synergiebericht-156-owner-decision-packet-guard.md",
       "title": "Codex Synergiebericht 156: Owner Decision Packet Guard",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1542,
       "modified_at": "2026-06-14T14:20:56.009Z"
-    },
-    {
-      "filename": "2026-06-14-codex-synergiebericht-149-http-runner-check.md",
-      "title": "Codex Synergiebericht 149: HTTP Runner Check",
-      "mirrored_inboxes": 2,
-      "bytes": 1288,
-      "modified_at": "2026-06-14T14:13:09.485Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 149-156 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 150-157 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."
