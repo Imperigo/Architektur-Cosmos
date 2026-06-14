@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T14:05:06.723Z",
+  "generated_at": "2026-06-14T14:11:21.174Z",
   "status": "orbit_bridge_ready_with_blockers",
   "policy": {
     "dashboard_only": true,
@@ -22,6 +22,7 @@
     "data/kosmo-private-metadata-inventory-check-2026-06-14.json",
     "data/kosmo-local-model-inventory-2026-06-14.json",
     "data/kosmo-local-worker-http-runner-2026-06-14.json",
+    "data/kosmo-local-worker-http-runner-check-2026-06-14.json",
     "data/kosmodata-lane-sweep-2026-06-14.json",
     "data/kosmo-worker-boundary-pack-check-2026-06-14.json",
     "data/kosmo-owner-review-packet-check-2026-06-14.json",
@@ -47,6 +48,8 @@
     "local_worker_http_runner_status": "local_worker_http_runner_dry_run_ready",
     "local_worker_http_runner_guard_passed": true,
     "local_worker_http_runner_safe_inputs": 6,
+    "local_worker_http_runner_check_status": "local_worker_http_runner_guard_passed",
+    "local_worker_http_runner_check_failures": 0,
     "asset_bridge_status": "kosmoasset_reference_bridge_review_only_passed",
     "asset_source_candidate_map_status": "kosmoasset_source_candidate_map_review_only_ready",
     "asset_source_candidate_map_candidates": 3,
@@ -58,7 +61,7 @@
       "id": "day-batch",
       "title": "Daily Batch",
       "status": "ready",
-      "signal": "37/37 required steps",
+      "signal": "38/38 required steps",
       "owner_action_required": false,
       "route_hint": "KosmoReferences/KosmoAsset daily loop",
       "source_ref": "data/kosmo-day-batch-loop-2026-06-14.json"
@@ -103,7 +106,7 @@
       "id": "local-worker-http-runner",
       "title": "Local Worker HTTP Runner",
       "status": "review_only_ready",
-      "signal": "local_worker_http_runner_dry_run_ready, guard passed, safe inputs 6",
+      "signal": "local_worker_http_runner_dry_run_ready, check local_worker_http_runner_guard_passed, safe inputs 6",
       "owner_action_required": false,
       "route_hint": "Guarded HTTP/JSON bridge for local LLM task execution",
       "source_ref": "data/kosmo-local-worker-http-runner-2026-06-14.json"

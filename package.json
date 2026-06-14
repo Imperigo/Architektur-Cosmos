@@ -149,6 +149,7 @@
     "kosmo:local-worker-ollama-smoke": "node scripts/kosmo-local-worker-ollama-smoke.mjs",
     "kosmo:local-worker-http-runner": "node scripts/kosmo-local-worker-http-runner.mjs",
     "kosmo:local-worker-http-runner-smoke": "node scripts/kosmo-local-worker-http-runner.mjs --task kosmo-asset-source-candidate-triage",
+    "kosmo:local-worker-http-runner-check": "node scripts/kosmo-local-worker-http-runner-check.mjs",
     "kosmo:local-worker-output-review": "node scripts/kosmo-local-worker-output-review.mjs",
     "kosmo:local-worker-launch-queue": "node scripts/kosmo-local-worker-launch-queue.mjs",
     "kosmo:local-worker-output-conversion-plan": "node scripts/kosmo-local-worker-output-conversion-plan.mjs",

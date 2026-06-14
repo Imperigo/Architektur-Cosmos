@@ -1,6 +1,6 @@
 # Kosmo Orbit Status Bridge
 
-Generated: 2026-06-14T14:05:06.723Z
+Generated: 2026-06-14T14:11:21.174Z
 Status: `orbit_bridge_ready_with_blockers`
 
 ## Summary
@@ -17,7 +17,7 @@ Status: `orbit_bridge_ready_with_blockers`
 - Private metadata inventory fixture: private_metadata_inventory_fixture_passed
 - Private metadata inventory check: private_metadata_inventory_guard_passed
 - Local models: local_model_inventory_ready_review_only
-- Local worker HTTP runner: local_worker_http_runner_dry_run_ready, guard passed, safe inputs 6
+- Local worker HTTP runner: local_worker_http_runner_dry_run_ready, check local_worker_http_runner_guard_passed, safe inputs 6
 - Asset bridge: kosmoasset_reference_bridge_review_only_passed
 - Asset source candidate map: kosmoasset_source_candidate_map_review_only_ready, candidates 3
 - Innovation smoke: innovation_smoke_passed_review_only
@@ -27,12 +27,12 @@ Status: `orbit_bridge_ready_with_blockers`
 
 | Card | Status | Owner Action | Signal |
 | --- | --- | --- | --- |
-| `day-batch` Daily Batch | ready | no | 37/37 required steps |
+| `day-batch` Daily Batch | ready | no | 38/38 required steps |
 | `source-root` Source Root | blocked | yes | blocked: 0 probable libraries, 59 OneDrive markers |
 | `source-root-owner-action` Source Root Owner Action | blocked | yes | action required: repair_onedrive_first_or_confirm_complete_non_onedrive_root |
 | `source-root-activation` Source Root Activation | blocked | yes | source_root_activation_waiting_for_owner_storage_action, safe commands 13, blocked 4 |
 | `local-models` Local Models | review_only_ready | no | 4/4 roles, 8 Ollama models, 70 GB |
-| `local-worker-http-runner` Local Worker HTTP Runner | review_only_ready | no | local_worker_http_runner_dry_run_ready, guard passed, safe inputs 6 |
+| `local-worker-http-runner` Local Worker HTTP Runner | review_only_ready | no | local_worker_http_runner_dry_run_ready, check local_worker_http_runner_guard_passed, safe inputs 6 |
 | `private-metadata-inventory` Private Metadata Inventory | blocked_with_smoke_passed | yes | blocked until source-root activation; fixture 6 matches; guard private_metadata_inventory_guard_passed |
 | `pilot-references` Pilot References | review_only | yes | 3 pilots, 12 evidence gaps |
 | `kosmoasset` KosmoAsset | review_only | yes | 6 human reviews open, public-ready 0 |

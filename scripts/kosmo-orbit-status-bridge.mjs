@@ -19,6 +19,7 @@ const refs = {
   privateMetadataInventoryCheck: `data/kosmo-private-metadata-inventory-check-${dateStamp}.json`,
   localModelInventory: `data/kosmo-local-model-inventory-${dateStamp}.json`,
   localWorkerHttpRunner: `data/kosmo-local-worker-http-runner-${dateStamp}.json`,
+  localWorkerHttpRunnerCheck: `data/kosmo-local-worker-http-runner-check-${dateStamp}.json`,
   sweep: `data/kosmodata-lane-sweep-${dateStamp}.json`,
   workerBoundary: `data/kosmo-worker-boundary-pack-check-${dateStamp}.json`,
   ownerPacket: `data/kosmo-owner-review-packet-check-${dateStamp}.json`,
@@ -61,6 +62,7 @@ function buildBridge(reports) {
   const modelSummary = reports.localModelInventory?.summary || {};
   const localWorkerHttpRunner = reports.localWorkerHttpRunner || {};
   const localWorkerHttpRunnerGuard = localWorkerHttpRunner.guard || {};
+  const localWorkerHttpRunnerCheck = reports.localWorkerHttpRunnerCheck || {};
   const sweepSummary = reports.sweep?.summary || {};
   const assetBridgeSummary = reports.assetBridge?.summary || {};
   const assetSourceCandidateSummary = reports.assetSourceCandidateMap?.summary || {};
@@ -128,11 +130,12 @@ function buildBridge(reports) {
     {
       id: 'local-worker-http-runner',
       title: 'Local Worker HTTP Runner',
-      status: ['local_worker_http_runner_dry_run_ready', 'local_worker_http_runner_executed_review_only'].includes(localWorkerHttpRunner.status)
+      status: ['local_worker_http_runner_dry_run_ready', 'local_worker_http_runner_executed_review_only'].includes(localWorkerHttpRunner.status) &&
+        localWorkerHttpRunnerCheck.status === 'local_worker_http_runner_guard_passed'
         ? 'review_only_ready'
         : 'needs_review',
       signal: localWorkerHttpRunner.status
-        ? `${localWorkerHttpRunner.status}, guard ${localWorkerHttpRunnerGuard.passed === true ? 'passed' : 'failed'}, safe inputs ${localWorkerHttpRunnerGuard.safe_inputs?.length ?? 0}`
+        ? `${localWorkerHttpRunner.status}, check ${localWorkerHttpRunnerCheck.status || 'missing'}, safe inputs ${localWorkerHttpRunnerGuard.safe_inputs?.length ?? 0}`
         : 'missing runner report',
       owner_action_required: false,
       route_hint: 'Guarded HTTP/JSON bridge for local LLM task execution',
@@ -254,6 +257,8 @@ function buildBridge(reports) {
       local_worker_http_runner_status: localWorkerHttpRunner.status || null,
       local_worker_http_runner_guard_passed: localWorkerHttpRunnerGuard.passed === true,
       local_worker_http_runner_safe_inputs: localWorkerHttpRunnerGuard.safe_inputs?.length ?? null,
+      local_worker_http_runner_check_status: localWorkerHttpRunnerCheck.status || null,
+      local_worker_http_runner_check_failures: localWorkerHttpRunnerCheck.summary?.failures ?? null,
       asset_bridge_status: reports.assetBridge?.status || null,
       asset_source_candidate_map_status: reports.assetSourceCandidateMap?.status || null,
       asset_source_candidate_map_candidates: assetSourceCandidateSummary.asset_lane_candidates ?? null,
@@ -313,7 +318,7 @@ function renderMarkdown(bridge) {
   lines.push(`- Private metadata inventory fixture: ${bridge.summary.private_metadata_inventory_fixture_status}`);
   lines.push(`- Private metadata inventory check: ${bridge.summary.private_metadata_inventory_check_status}`);
   lines.push(`- Local models: ${bridge.summary.local_model_inventory_status}`);
-  lines.push(`- Local worker HTTP runner: ${bridge.summary.local_worker_http_runner_status}, guard ${bridge.summary.local_worker_http_runner_guard_passed ? 'passed' : 'failed'}, safe inputs ${bridge.summary.local_worker_http_runner_safe_inputs ?? '-'}`);
+  lines.push(`- Local worker HTTP runner: ${bridge.summary.local_worker_http_runner_status}, check ${bridge.summary.local_worker_http_runner_check_status}, safe inputs ${bridge.summary.local_worker_http_runner_safe_inputs ?? '-'}`);
   lines.push(`- Asset bridge: ${bridge.summary.asset_bridge_status}`);
   lines.push(`- Asset source candidate map: ${bridge.summary.asset_source_candidate_map_status}, candidates ${bridge.summary.asset_source_candidate_map_candidates ?? '-'}`);
   lines.push(`- Innovation smoke: ${bridge.summary.innovation_smoke_status}`);

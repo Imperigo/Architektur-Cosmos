@@ -57,6 +57,7 @@ const steps = [
   step('private_metadata_inventory_check', 'Private Metadata Inventory Check', ['run', 'kosmo:private-metadata-inventory-check']),
   step('local_worker_task_pack_refresh', 'Local Worker Task Pack Refresh', ['run', 'kosmo:local-worker-task-pack-refresh']),
   step('local_worker_http_runner_smoke', 'Local Worker HTTP Runner Smoke', ['run', 'kosmo:local-worker-http-runner-smoke']),
+  step('local_worker_http_runner_check', 'Local Worker HTTP Runner Check', ['run', 'kosmo:local-worker-http-runner-check']),
   step('local_worker_output_review', 'Local Worker Output Review', ['run', 'kosmo:local-worker-output-review']),
   step('local_worker_launch_queue', 'Local Worker Launch Queue', ['run', 'kosmo:local-worker-launch-queue']),
   step('local_worker_output_conversion_plan', 'Local Worker Output Conversion Plan', ['run', 'kosmo:local-worker-output-conversion-plan']),
@@ -105,6 +106,7 @@ async function main() {
   console.log(`Private metadata inventory fixture: ${report.summary.private_metadata_inventory_fixture_status}`);
   console.log(`Private metadata inventory check: ${report.summary.private_metadata_inventory_check_status}`);
   console.log(`Local worker HTTP runner: ${report.summary.local_worker_http_runner_status}`);
+  console.log(`Local worker HTTP runner check: ${report.summary.local_worker_http_runner_check_status}`);
   console.log(`Innovation smoke: ${report.summary.innovation_smoke_status}`);
   console.log(`Orbit bridge: ${report.summary.orbit_bridge_status}`);
   console.log(`Source-root owner action: ${report.summary.source_root_owner_action_status}`);
@@ -191,6 +193,7 @@ async function buildReport({ results, startedAt }) {
   const privateMetadataInventoryFixture = await readOptionalJson(`data/kosmo-private-metadata-inventory-fixture-smoke-${dateStamp}.json`);
   const privateMetadataInventoryCheck = await readOptionalJson(`data/kosmo-private-metadata-inventory-check-${dateStamp}.json`);
   const localWorkerHttpRunner = await readOptionalJson(`data/kosmo-local-worker-http-runner-${dateStamp}.json`);
+  const localWorkerHttpRunnerCheck = await readOptionalJson(`data/kosmo-local-worker-http-runner-check-${dateStamp}.json`);
   const checkpoint = await readOptionalJson(`data/kosmo-night-loop-checkpoint-${dateStamp}.json`);
   const innovationSmoke = await readOptionalJson(`data/kosmo-innovation-smoke-${dateStamp}.json`);
   const orbitBridge = await readOptionalJson(`data/kosmo-orbit-status-bridge-${dateStamp}.json`);
@@ -233,6 +236,7 @@ async function buildReport({ results, startedAt }) {
         (localWorkerHttpRunner?.policy?.public_ready_after_runner ?? 0) === 0,
       `${localWorkerHttpRunner?.status || 'missing'}, guard=${localWorkerHttpRunner?.guard?.passed ?? 'missing'}`
     ),
+    invariant('local_worker_http_runner_check_passed', localWorkerHttpRunnerCheck?.status === 'local_worker_http_runner_guard_passed', localWorkerHttpRunnerCheck?.status),
     invariant('public_ready_zero', (sweep?.summary?.references_public_ready_assets ?? 0) === 0, `public_ready=${sweep?.summary?.references_public_ready_assets ?? 0}`),
     invariant(
       'private_source_guard_state_valid',
@@ -282,6 +286,8 @@ async function buildReport({ results, startedAt }) {
       local_worker_http_runner_guard_passed: localWorkerHttpRunner?.guard?.passed === true,
       local_worker_http_runner_safe_inputs: localWorkerHttpRunner?.guard?.safe_inputs?.length ?? null,
       local_worker_http_runner_execute_requested: localWorkerHttpRunner?.task?.execute_requested === true,
+      local_worker_http_runner_check_status: localWorkerHttpRunnerCheck?.status || null,
+      local_worker_http_runner_check_failures: localWorkerHttpRunnerCheck?.summary?.failures ?? null,
       private_diagnostic_allowed: blocker?.summary?.private_diagnostic_allowed === true,
       night_loop_checkpoint_status: checkpoint?.status || null,
       public_ready_after_loop: 0
@@ -300,6 +306,7 @@ async function buildReport({ results, startedAt }) {
       `data/kosmo-private-metadata-inventory-fixture-smoke-${dateStamp}.json`,
       `data/kosmo-private-metadata-inventory-check-${dateStamp}.json`,
       `data/kosmo-local-worker-http-runner-${dateStamp}.json`,
+      `data/kosmo-local-worker-http-runner-check-${dateStamp}.json`,
       `data/kosmo-night-loop-checkpoint-${dateStamp}.json`,
       `data/kosmo-innovation-smoke-${dateStamp}.json`,
       `data/kosmo-orbit-status-bridge-${dateStamp}.json`
@@ -351,6 +358,7 @@ function renderMarkdown(report) {
   lines.push(`- Private metadata inventory fixture: ${report.summary.private_metadata_inventory_fixture_status}`);
   lines.push(`- Private metadata inventory check: ${report.summary.private_metadata_inventory_check_status}`);
   lines.push(`- Local worker HTTP runner: ${report.summary.local_worker_http_runner_status}, guard ${report.summary.local_worker_http_runner_guard_passed ? 'passed' : 'failed'}, safe inputs ${report.summary.local_worker_http_runner_safe_inputs ?? '-'}`);
+  lines.push(`- Local worker HTTP runner check: ${report.summary.local_worker_http_runner_check_status}, failures ${report.summary.local_worker_http_runner_check_failures ?? '-'}`);
   lines.push(`- Innovation smoke: ${report.summary.innovation_smoke_status}`);
   lines.push(`- Orbit bridge: ${report.summary.orbit_bridge_status}`);
   lines.push(`- Source-root blocker: ${report.summary.source_root_blocker_status}`);

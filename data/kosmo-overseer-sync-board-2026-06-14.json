@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T14:07:34.449Z",
+  "generated_at": "2026-06-14T14:13:38.584Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 147
+      "files": 148
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 185
+      "files": 186
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-14-codex-synergiebericht-149-http-runner-check.md",
+      "title": "Codex Synergiebericht 149: HTTP Runner Check",
+      "mirrored_inboxes": 2,
+      "bytes": 1288,
+      "modified_at": "2026-06-14T14:13:09.485Z"
+    },
     {
       "filename": "2026-06-14-codex-synergiebericht-148-http-runner-orbit-gate.md",
       "title": "Codex Synergiebericht 148: HTTP Runner Orbit Gate",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1003,
       "modified_at": "2026-06-14T13:37:44.186Z"
-    },
-    {
-      "filename": "2026-06-14-codex-synergiebericht-141-owner-source-root-review-options.md",
-      "title": "Codex Synergiebericht 141: Owner Source Root Review Options",
-      "mirrored_inboxes": 2,
-      "bytes": 1463,
-      "modified_at": "2026-06-14T13:34:58.073Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 141-148 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 142-149 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."
