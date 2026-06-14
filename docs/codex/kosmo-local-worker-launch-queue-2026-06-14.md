@@ -1,6 +1,6 @@
 # Kosmo Local Worker Launch Queue
 
-Generated: 2026-06-14T07:48:25.707Z
+Generated: 2026-06-14T09:08:40.311Z
 Status: `local_worker_launch_queue_idle_outputs_present`
 
 ## Summary
@@ -10,6 +10,7 @@ Status: `local_worker_launch_queue_idle_outputs_present`
 - Tasks missing: 0
 - Launchable now: 0
 - Boundary guard passed: yes
+- Private metadata inventory guard passed: yes
 - Outputs complete: yes
 - Local worker Git blocked: yes
 - Public-ready blocked: yes
@@ -31,5 +32,6 @@ Status: `local_worker_launch_queue_idle_outputs_present`
 ## Next Actions
 
 - Do not launch new local LLM tasks now; all required outputs are present.
+- Keep private metadata inventory tasks blocked unless source-root activation and private metadata inventory guard pass.
 - Codex/Claude should review existing private outputs metadata-safely before converting anything into repo artifacts.
 - Create a new task pack only after owner/source-root state changes or a new explicit worker objective is defined.

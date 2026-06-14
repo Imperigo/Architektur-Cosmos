@@ -35,8 +35,14 @@ async function main() {
 }
 
 function refreshTaskPack(template) {
+  const metadataInventoryRefs = [
+    `data/kosmo-private-metadata-inventory-runner-${dateStamp}.json`,
+    `data/kosmo-private-metadata-inventory-fixture-smoke-${dateStamp}.json`,
+    `data/kosmo-private-metadata-inventory-check-${dateStamp}.json`,
+    `docs/codex/kosmo-private-metadata-inventory-check-${dateStamp}.md`
+  ].filter((ref) => existsSync(resolve(root, ref)));
   const tasks = (template.tasks || []).map((task) => {
-    const inputRefs = (task.input_refs || []).map((ref) => refreshDatedRef(ref));
+    const inputRefs = ensureRefs((task.input_refs || []).map((ref) => refreshDatedRef(ref)), metadataInventoryRefs);
     return {
       ...task,
       input_refs: inputRefs,
@@ -50,7 +56,13 @@ function refreshTaskPack(template) {
     status: 'ready_for_local_review',
     title: `Kosmo Local Worker Task Pack ${dateStamp}`,
     source_package_ref: refreshDatedRef(template.source_package_ref),
-    status_refs: refreshRefsObject(template.status_refs || {}),
+    status_refs: {
+      ...refreshRefsObject(template.status_refs || {}),
+      private_metadata_inventory_runner: `data/kosmo-private-metadata-inventory-runner-${dateStamp}.json`,
+      private_metadata_inventory_fixture_smoke: `data/kosmo-private-metadata-inventory-fixture-smoke-${dateStamp}.json`,
+      private_metadata_inventory_check: `data/kosmo-private-metadata-inventory-check-${dateStamp}.json`
+    },
+    metadata_inventory_guard_refs: metadataInventoryRefs,
     output_root: args.newOutputs
       ? String(template.output_root || '').replaceAll(templateDate, dateStamp)
       : template.output_root,
@@ -67,6 +79,7 @@ function refreshTaskPack(template) {
     summary: {
       tasks: tasks.length,
       updated_refs: updatedRefs,
+      metadata_inventory_guard_refs: metadataInventoryRefs.length,
       reused_existing_output_paths: !args.newOutputs,
       public_ready_after_refresh: 0
     },
@@ -76,6 +89,10 @@ function refreshTaskPack(template) {
 
 function refreshRefsObject(refs) {
   return Object.fromEntries(Object.entries(refs).map(([key, value]) => [key, refreshDatedRef(value)]));
+}
+
+function ensureRefs(refs, additions) {
+  return [...new Set([...refs, ...additions])];
 }
 
 function refreshDatedRef(value) {
@@ -108,6 +125,7 @@ function renderMarkdown(taskPack) {
   lines.push(`- Target worker: ${taskPack.target_worker}`);
   lines.push(`- Tasks: ${taskPack.summary.tasks}`);
   lines.push(`- Updated refs: ${taskPack.summary.updated_refs}`);
+  lines.push(`- Metadata inventory guard refs: ${taskPack.summary.metadata_inventory_guard_refs}`);
   lines.push(`- Reuses existing output paths: ${taskPack.summary.reused_existing_output_paths ? 'yes' : 'no'}`);
   lines.push(`- Public-ready after refresh: ${taskPack.summary.public_ready_after_refresh}`);
   lines.push('');

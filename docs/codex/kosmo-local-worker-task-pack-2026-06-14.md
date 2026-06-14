@@ -1,13 +1,14 @@
 # Kosmo Local Worker Task Pack
 
-Created: 2026-06-14T07:46:50.162Z
+Created: 2026-06-14T09:08:39.833Z
 Status: `ready_for_local_review`
 
 ## Summary
 
 - Target worker: kosmo-odysseus-local-llm
 - Tasks: 8
-- Updated refs: 47
+- Updated refs: 79
+- Metadata inventory guard refs: 4
 - Reuses existing output paths: yes
 - Public-ready after refresh: 0
 

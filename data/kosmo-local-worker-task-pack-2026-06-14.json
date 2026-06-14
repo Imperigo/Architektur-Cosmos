@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "created_at": "2026-06-14T07:46:50.162Z",
+  "created_at": "2026-06-14T09:08:39.833Z",
   "status": "ready_for_local_review",
   "title": "Kosmo Local Worker Task Pack 2026-06-14",
   "target_worker": "kosmo-odysseus-local-llm",
@@ -62,7 +62,10 @@
     "52": "data/sogn-benedetg-source-root-decision-brief-2026-06-14.json",
     "53": "docs/codex/sogn-benedetg-source-root-decision-brief-2026-06-14.md",
     "54": "examples/kosmo-references/provenance/owner-review-decision-pack-2026-06-13-review/owner-review-decision-check.generated.json",
-    "55": "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-full-review.generated.json"
+    "55": "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-full-review.generated.json",
+    "private_metadata_inventory_runner": "data/kosmo-private-metadata-inventory-runner-2026-06-14.json",
+    "private_metadata_inventory_fixture_smoke": "data/kosmo-private-metadata-inventory-fixture-smoke-2026-06-14.json",
+    "private_metadata_inventory_check": "data/kosmo-private-metadata-inventory-check-2026-06-14.json"
   },
   "private_context_paths": [
     "/mnt/data/ArchitekturKosmos/KosmoZentrale/sources/private-extracts/architecturekosmos-private-project-sources-2026-06-13/architecture-cosmos-vision-document.md",
@@ -86,7 +89,11 @@
       "input_refs": [
         "data/kosmoreferences-worker-doctrine-2026-06-13.json",
         "data/kosmoreferences-data-lane-status.json",
-        "private_context_paths"
+        "private_context_paths",
+        "data/kosmo-private-metadata-inventory-runner-2026-06-14.json",
+        "data/kosmo-private-metadata-inventory-fixture-smoke-2026-06-14.json",
+        "data/kosmo-private-metadata-inventory-check-2026-06-14.json",
+        "docs/codex/kosmo-private-metadata-inventory-check-2026-06-14.md"
       ],
       "output_path": "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-local-worker-2026-06-13/doctrine-summary.private.md",
       "objective": "Create a concise private summary of ArchitectureKosmos intent, worker hierarchy, data-lane rules and rights boundaries.",
@@ -109,7 +116,11 @@
         "docs/codex/kosmoreferences-pilot-evidence-matrix-2026-06-14.md",
         "data/villa-savoye-provenance-review-brief-2026-06-14.json",
         "data/ingenbohl-pdf-extraction-decision-brief-2026-06-14.json",
-        "data/sogn-benedetg-source-root-decision-brief-2026-06-14.json"
+        "data/sogn-benedetg-source-root-decision-brief-2026-06-14.json",
+        "data/kosmo-private-metadata-inventory-runner-2026-06-14.json",
+        "data/kosmo-private-metadata-inventory-fixture-smoke-2026-06-14.json",
+        "data/kosmo-private-metadata-inventory-check-2026-06-14.json",
+        "docs/codex/kosmo-private-metadata-inventory-check-2026-06-14.md"
       ],
       "output_path": "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-local-worker-2026-06-13/reference-pilot-gap-map.private.json",
       "objective": "List missing evidence, media, plan, material, structure, model and rights gaps for the three reference pilots.",
@@ -157,7 +168,11 @@
         "docs/codex/kosmo-night-loop-checkpoint-2026-06-14.md",
         "docs/codex/kosmo-owner-review-card-batch-a-villa-savoye-image-candidates-2026-06-13.md",
         "docs/codex/kosmo-owner-review-card-set-2026-06-14.md",
-        "docs/codex/kosmo-owner-answer-sheet-2026-06-14.md"
+        "docs/codex/kosmo-owner-answer-sheet-2026-06-14.md",
+        "data/kosmo-private-metadata-inventory-runner-2026-06-14.json",
+        "data/kosmo-private-metadata-inventory-fixture-smoke-2026-06-14.json",
+        "data/kosmo-private-metadata-inventory-check-2026-06-14.json",
+        "docs/codex/kosmo-private-metadata-inventory-check-2026-06-14.md"
       ],
       "output_path": "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-local-worker-2026-06-13/book-library-mount-questions.private.md",
       "objective": "Prepare a short, concrete checklist for locating the missing book/ETH/HSLU library using the latest private-library diagnostic.",
@@ -179,7 +194,11 @@
       "lane": "kosmoasset",
       "input_refs": [
         "docs/kosmo-asset-library.md",
-        "examples/kosmo-assets/codex-pilot-library/library.json"
+        "examples/kosmo-assets/codex-pilot-library/library.json",
+        "data/kosmo-private-metadata-inventory-runner-2026-06-14.json",
+        "data/kosmo-private-metadata-inventory-fixture-smoke-2026-06-14.json",
+        "data/kosmo-private-metadata-inventory-check-2026-06-14.json",
+        "docs/codex/kosmo-private-metadata-inventory-check-2026-06-14.md"
       ],
       "output_path": "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-local-worker-2026-06-13/asset-seed-candidates.private.json",
       "objective": "Suggest local-review-only asset candidates that could be derived or authored for the three pilot projects without public promotion.",
@@ -197,7 +216,11 @@
         "data/kosmoreferences-data-lane-status.json",
         "examples/kosmo-references/source-packages/villa-savoye-public-source-candidate-2026-06-13/review/source-package-link-check.generated.json",
         "examples/kosmo-references/source-packages/kapelle-sogn-benedetg-public-source-candidate-2026-06-13/review/source-package-link-check.generated.json",
-        "examples/kosmo-references/source-packages/alterszentrum-kloster-ingenbohl-public-source-candidate-2026-06-13/review/source-package-link-check.generated.json"
+        "examples/kosmo-references/source-packages/alterszentrum-kloster-ingenbohl-public-source-candidate-2026-06-13/review/source-package-link-check.generated.json",
+        "data/kosmo-private-metadata-inventory-runner-2026-06-14.json",
+        "data/kosmo-private-metadata-inventory-fixture-smoke-2026-06-14.json",
+        "data/kosmo-private-metadata-inventory-check-2026-06-14.json",
+        "docs/codex/kosmo-private-metadata-inventory-check-2026-06-14.md"
       ],
       "output_path": "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-local-worker-2026-06-13/public-source-link-synthesis.private.json",
       "objective": "Summarize the 14 reachable public source links by pilot, source role and rights mode without copying page bodies.",
@@ -218,7 +241,11 @@
         "docs/codex/kosmo-human-decision-queue-2026-06-14.md",
         "docs/codex/kosmo-human-decision-owner-batches-2026-06-14.md",
         "docs/codex/kosmoreferences-owner-decision-worksheet-2026-06-13.md",
-        "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-human-review-session.generated.md"
+        "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-human-review-session.generated.md",
+        "data/kosmo-private-metadata-inventory-runner-2026-06-14.json",
+        "data/kosmo-private-metadata-inventory-fixture-smoke-2026-06-14.json",
+        "data/kosmo-private-metadata-inventory-check-2026-06-14.json",
+        "docs/codex/kosmo-private-metadata-inventory-check-2026-06-14.md"
       ],
       "output_path": "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-local-worker-2026-06-13/human-decision-queue-triage.private.md",
       "objective": "Group the 16 open human decisions into an owner-friendly review order with safe defaults and missing evidence notes.",
@@ -236,7 +263,11 @@
       "input_refs": [
         "data/kosmo-human-decision-owner-batches-2026-06-14.json",
         "docs/codex/kosmo-human-decision-owner-batches-2026-06-14.md",
-        "docs/codex/kosmodata-lane-sweep-2026-06-14.md"
+        "docs/codex/kosmodata-lane-sweep-2026-06-14.md",
+        "data/kosmo-private-metadata-inventory-runner-2026-06-14.json",
+        "data/kosmo-private-metadata-inventory-fixture-smoke-2026-06-14.json",
+        "data/kosmo-private-metadata-inventory-check-2026-06-14.json",
+        "docs/codex/kosmo-private-metadata-inventory-check-2026-06-14.md"
       ],
       "output_path": "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-local-worker-2026-06-13/owner-batch-review-questions.private.md",
       "objective": "Draft concise owner-facing review questions for each generated batch without selecting or applying decisions.",
@@ -257,7 +288,11 @@
         "docs/codex/kosmo-owner-review-session-brief-2026-06-14.md",
         "docs/codex/kosmo-owner-review-session-brief-check-2026-06-14.md",
         "data/kosmo-data-lane-command-router-2026-06-14.json",
-        "data/kosmo-night-loop-checkpoint-2026-06-14.json"
+        "data/kosmo-night-loop-checkpoint-2026-06-14.json",
+        "data/kosmo-private-metadata-inventory-runner-2026-06-14.json",
+        "data/kosmo-private-metadata-inventory-fixture-smoke-2026-06-14.json",
+        "data/kosmo-private-metadata-inventory-check-2026-06-14.json",
+        "docs/codex/kosmo-private-metadata-inventory-check-2026-06-14.md"
       ],
       "output_path": "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-local-worker-2026-06-13/owner-session-safe-next-tasks.private.md",
       "objective": "Summarize what the local worker may do while the owner review session remains unanswered and guarded.",
@@ -287,6 +322,12 @@
     ],
     "promotion_rule": "Codex/Claude must review and convert local private outputs into checked repo artifacts before any Git commit."
   },
+  "metadata_inventory_guard_refs": [
+    "data/kosmo-private-metadata-inventory-runner-2026-06-14.json",
+    "data/kosmo-private-metadata-inventory-fixture-smoke-2026-06-14.json",
+    "data/kosmo-private-metadata-inventory-check-2026-06-14.json",
+    "docs/codex/kosmo-private-metadata-inventory-check-2026-06-14.md"
+  ],
   "refresh_policy": {
     "source_template": "data/kosmo-local-worker-task-pack-2026-06-13.json",
     "refreshed_for_date": "2026-06-14",
@@ -299,7 +340,8 @@
   },
   "summary": {
     "tasks": 8,
-    "updated_refs": 47,
+    "updated_refs": 79,
+    "metadata_inventory_guard_refs": 4,
     "reused_existing_output_paths": true,
     "public_ready_after_refresh": 0
   }

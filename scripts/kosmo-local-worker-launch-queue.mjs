@@ -11,7 +11,8 @@ const refs = {
   taskPack: resolve(root, args.taskPack || `data/kosmo-local-worker-task-pack-${dateStamp}.json`),
   boundaryPack: resolve(root, args.boundaryPack || `data/kosmo-worker-boundary-pack-${dateStamp}.json`),
   boundaryCheck: resolve(root, args.boundaryCheck || `data/kosmo-worker-boundary-pack-check-${dateStamp}.json`),
-  outputReview: resolve(root, args.outputReview || `data/kosmo-local-worker-output-review-${dateStamp}.json`)
+  outputReview: resolve(root, args.outputReview || `data/kosmo-local-worker-output-review-${dateStamp}.json`),
+  metadataInventoryCheck: resolve(root, args.metadataInventoryCheck || `data/kosmo-private-metadata-inventory-check-${dateStamp}.json`)
 };
 
 const outputJson = resolve(root, args.out || `data/kosmo-local-worker-launch-queue-${dateStamp}.json`);
@@ -27,9 +28,14 @@ async function main() {
   const boundaryPack = await readJson(refs.boundaryPack);
   const boundaryCheck = await readJson(refs.boundaryCheck);
   const outputReview = await readJson(refs.outputReview);
+  const metadataInventoryCheck = await readJson(refs.metadataInventoryCheck);
 
   const guardPassed = boundaryCheck.status === 'worker_boundary_pack_guard_passed' &&
     boundaryCheck.summary?.failures === 0;
+  const metadataInventoryGuardPassed = metadataInventoryCheck.status === 'private_metadata_inventory_guard_passed' &&
+    metadataInventoryCheck.summary?.failures === 0 &&
+    metadataInventoryCheck.summary?.public_ready_hits === 0 &&
+    metadataInventoryCheck.summary?.forbidden_field_hits === 0;
   const outputsComplete = outputReview.summary?.present_outputs === outputReview.summary?.required_outputs &&
     outputReview.summary?.missing_outputs === 0 &&
     outputReview.summary?.high_risk_hits === 0;
@@ -47,8 +53,12 @@ async function main() {
       output_bytes: output.bytes,
       launch_decision: output.exists
         ? 'do_not_launch_output_present'
-        : guardPassed ? 'launch_allowed_metadata_only_if_requested' : 'launch_blocked_guard_failed',
+        : guardPassed && metadataInventoryGuardPassed ? 'launch_allowed_metadata_only_if_requested' : 'launch_blocked_guard_failed',
       allowed_mode: 'metadata_review_only',
+      guard_state: {
+        worker_boundary_guard_passed: guardPassed,
+        private_metadata_inventory_guard_passed: metadataInventoryGuardPassed
+      },
       forbidden_side_effects: [
         'private reads/OCR outside provided refs',
         'Git commands',
@@ -83,6 +93,7 @@ async function main() {
       tasks_missing: tasks.filter((task) => task.output_status === 'missing').length,
       launchable_now: launchableNow.length,
       guard_passed: guardPassed,
+      private_metadata_inventory_guard_passed: metadataInventoryGuardPassed,
       outputs_complete: outputsComplete,
       local_worker_git_blocked: localWorkerGitBlocked,
       public_ready_blocked: publicReadyBlocked,
@@ -92,11 +103,12 @@ async function main() {
     next_actions: launchableNow.length === 0
       ? [
           'Do not launch new local LLM tasks now; all required outputs are present.',
+          'Keep private metadata inventory tasks blocked unless source-root activation and private metadata inventory guard pass.',
           'Codex/Claude should review existing private outputs metadata-safely before converting anything into repo artifacts.',
           'Create a new task pack only after owner/source-root state changes or a new explicit worker objective is defined.'
         ]
       : [
-          'Launch only the missing tasks, only in metadata_review_only mode, and only after confirming the boundary guard still passes.',
+          'Launch only the missing tasks, only in metadata_review_only mode, and only after confirming the boundary guard and private metadata inventory guard still pass.',
           'After local worker returns outputs, rerun local-worker-output-review, worker-boundary-pack-check and this launch queue.'
         ]
   };
@@ -140,6 +152,7 @@ function renderMarkdown(report) {
   lines.push(`- Tasks missing: ${report.summary.tasks_missing}`);
   lines.push(`- Launchable now: ${report.summary.launchable_now}`);
   lines.push(`- Boundary guard passed: ${report.summary.guard_passed ? 'yes' : 'no'}`);
+  lines.push(`- Private metadata inventory guard passed: ${report.summary.private_metadata_inventory_guard_passed ? 'yes' : 'no'}`);
   lines.push(`- Outputs complete: ${report.summary.outputs_complete ? 'yes' : 'no'}`);
   lines.push(`- Local worker Git blocked: ${report.summary.local_worker_git_blocked ? 'yes' : 'no'}`);
   lines.push(`- Public-ready blocked: ${report.summary.public_ready_blocked ? 'yes' : 'no'}`);
