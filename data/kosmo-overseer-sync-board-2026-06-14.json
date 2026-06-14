@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T18:02:22.870Z",
+  "generated_at": "2026-06-14T18:04:48.976Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 187
+      "files": 188
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 231
+      "files": 232
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-14-codex-synergiebericht-189-orbit-vision-roadmap-status.md",
+      "title": "Codex Synergiebericht 189: Orbit Vision Roadmap Status",
+      "mirrored_inboxes": 2,
+      "bytes": 708,
+      "modified_at": "2026-06-14T18:04:28.462Z"
+    },
     {
       "filename": "2026-06-14-codex-synergiebericht-188-vision-roadmap-refresh.md",
       "title": "Codex Synergiebericht 188: Vision Roadmap Refresh",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1204,
       "modified_at": "2026-06-14T17:43:12.902Z"
-    },
-    {
-      "filename": "2026-06-14-codex-synergiebericht-181-orbit-owner-reply-pipeline-status.md",
-      "title": "Codex Synergiebericht 181: Orbit Owner Reply Pipeline Status",
-      "mirrored_inboxes": 2,
-      "bytes": 944,
-      "modified_at": "2026-06-14T17:42:00.518Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 181-188 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 182-189 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."
