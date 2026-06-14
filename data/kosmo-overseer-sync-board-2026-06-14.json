@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T14:50:32.123Z",
+  "generated_at": "2026-06-14T14:56:53.894Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 154
+      "files": 155
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 194
+      "files": 195
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-14-codex-synergiebericht-156-owner-decision-packet-guard.md",
+      "title": "Codex Synergiebericht 156: Owner Decision Packet Guard",
+      "mirrored_inboxes": 2,
+      "bytes": 2347,
+      "modified_at": "2026-06-14T14:56:49.600Z"
+    },
     {
       "filename": "2026-06-14-codex-synergiebericht-155-owner-review-packet-source-root-entry.md",
       "title": "Codex Synergiebericht 155: Owner Review Packet Source-Root Entry",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1288,
       "modified_at": "2026-06-14T14:13:09.485Z"
-    },
-    {
-      "filename": "2026-06-14-codex-synergiebericht-148-http-runner-orbit-gate.md",
-      "title": "Codex Synergiebericht 148: HTTP Runner Orbit Gate",
-      "mirrored_inboxes": 2,
-      "bytes": 1381,
-      "modified_at": "2026-06-14T14:07:24.210Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 148-155 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 149-156 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."

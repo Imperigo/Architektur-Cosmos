@@ -140,6 +140,7 @@
     "kosmo:source-root-decision-session-refresh": "node scripts/kosmo-source-root-decision-session-refresh.mjs",
     "kosmo:source-root-decision-session-check": "node scripts/kosmo-source-root-decision-session-check.mjs",
     "kosmo:source-root-owner-decision-packet": "node scripts/kosmo-source-root-owner-decision-packet.mjs",
+    "kosmo:source-root-owner-decision-packet-check": "node scripts/kosmo-source-root-owner-decision-packet-check.mjs",
     "kosmo:source-root-activation-preflight": "node scripts/kosmo-source-root-activation-preflight.mjs",
     "kosmo:private-source-inventory-plan": "node scripts/kosmo-private-source-inventory-plan.mjs",
     "kosmo:private-inventory-output-template": "node scripts/kosmo-private-inventory-output-template.mjs",

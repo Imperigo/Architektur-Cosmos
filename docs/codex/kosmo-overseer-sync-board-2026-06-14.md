@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board
 
-Generated: 2026-06-14T14:50:32.123Z
+Generated: 2026-06-14T14:56:53.894Z
 Status: `overseer_sync_board_ready`
 
 ## Summary
@@ -20,6 +20,7 @@ Status: `overseer_sync_board_ready`
 
 | File | Title | Mirrors |
 | --- | --- | ---: |
+| `2026-06-14-codex-synergiebericht-156-owner-decision-packet-guard.md` | Codex Synergiebericht 156: Owner Decision Packet Guard | 2 |
 | `2026-06-14-codex-synergiebericht-155-owner-review-packet-source-root-entry.md` | Codex Synergiebericht 155: Owner Review Packet Source-Root Entry | 2 |
 | `2026-06-14-codex-synergiebericht-154-source-root-owner-decision-packet.md` | Codex Synergiebericht 154: Source Root Owner Decision Packet | 2 |
 | `2026-06-14-codex-synergiebericht-153-source-root-decision-refresh.md` | Codex Synergiebericht 153: Source Root Decision Refresh | 2 |
@@ -27,7 +28,6 @@ Status: `overseer_sync_board_ready`
 | `2026-06-14-codex-synergiebericht-151-execution-runbook-check.md` | Codex Synergiebericht 151: Execution Runbook Check | 2 |
 | `2026-06-14-codex-synergiebericht-150-local-worker-execution-runbook.md` | Codex Synergiebericht 150: Local Worker Execution Runbook | 2 |
 | `2026-06-14-codex-synergiebericht-149-http-runner-check.md` | Codex Synergiebericht 149: HTTP Runner Check | 2 |
-| `2026-06-14-codex-synergiebericht-148-http-runner-orbit-gate.md` | Codex Synergiebericht 148: HTTP Runner Orbit Gate | 2 |
 
 ## Blockers
 
@@ -40,7 +40,7 @@ Status: `overseer_sync_board_ready`
 
 ## Next Actions
 
-- Claude/KosmoOverseer reviews latest handoffs 148-155 before editing related files.
+- Claude/KosmoOverseer reviews latest handoffs 149-156 before editing related files.
 - Use the owner review session brief as the next owner-facing entry point.
 - Keep local worker tasks review-only while source-root and owner answers are pending.
 - After any explicit owner answer, update intake first, then rerun guards and this sync board.

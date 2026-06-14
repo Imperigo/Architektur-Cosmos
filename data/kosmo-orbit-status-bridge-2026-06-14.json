@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T14:45:33.539Z",
+  "generated_at": "2026-06-14T14:55:27.090Z",
   "status": "orbit_bridge_ready_with_blockers",
   "policy": {
     "dashboard_only": true,
@@ -19,6 +19,7 @@
     "data/kosmo-source-root-candidate-integrity-check-2026-06-14.json",
     "data/kosmo-source-root-owner-action-card-2026-06-14.json",
     "data/kosmo-source-root-owner-decision-packet-2026-06-14.json",
+    "data/kosmo-source-root-owner-decision-packet-check-2026-06-14.json",
     "data/kosmo-source-root-activation-preflight-2026-06-14.json",
     "data/kosmo-private-metadata-inventory-runner-2026-06-14.json",
     "data/kosmo-private-metadata-inventory-fixture-smoke-2026-06-14.json",
@@ -38,7 +39,7 @@
     "data/kosmo-night-loop-checkpoint-2026-06-14.json"
   ],
   "summary": {
-    "cards": 18,
+    "cards": 19,
     "blocking_cards": 4,
     "owner_action_cards": 11,
     "source_root_blocked": true,
@@ -57,6 +58,9 @@
     "source_root_owner_decision_packet_templates": 3,
     "source_root_owner_decision_packet_exact_roots": 1,
     "source_root_owner_decision_packet_failures": 0,
+    "source_root_owner_decision_packet_check_status": "source_root_owner_decision_packet_guard_passed",
+    "source_root_owner_decision_packet_check_failures": 0,
+    "source_root_owner_decision_packet_check_warnings": 0,
     "source_root_activation_status": "source_root_activation_waiting_for_owner_storage_action",
     "private_metadata_inventory_status": "private_metadata_inventory_blocked_until_activation",
     "private_metadata_inventory_fixture_status": "private_metadata_inventory_fixture_passed",
@@ -83,7 +87,7 @@
       "id": "day-batch",
       "title": "Daily Batch",
       "status": "ready",
-      "signal": "43/43 required steps",
+      "signal": "44/44 required steps",
       "owner_action_required": false,
       "route_hint": "KosmoReferences/KosmoAsset daily loop",
       "source_ref": "data/kosmo-day-batch-loop-2026-06-14.json"
@@ -132,6 +136,15 @@
       "owner_action_required": true,
       "route_hint": "Owner-facing source-root decision templates",
       "source_ref": "data/kosmo-source-root-owner-decision-packet-2026-06-14.json"
+    },
+    {
+      "id": "source-root-owner-decision-packet-check",
+      "title": "Source Root Owner Decision Packet Check",
+      "status": "locked",
+      "signal": "source_root_owner_decision_packet_guard_passed, failures 0, warnings 0",
+      "owner_action_required": false,
+      "route_hint": "Guard source-root decision templates before owner presentation",
+      "source_ref": "data/kosmo-source-root-owner-decision-packet-check-2026-06-14.json"
     },
     {
       "id": "source-root-activation",
@@ -252,6 +265,7 @@
     "source_root_candidate_integrity_card",
     "source_root_owner_action_card",
     "source_root_owner_decision_packet_card",
+    "source_root_owner_decision_packet_check_card",
     "source_root_activation_card",
     "private_metadata_inventory_card",
     "pilot_reference_cards",

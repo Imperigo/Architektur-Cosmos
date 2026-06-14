@@ -40,6 +40,7 @@ const steps = [
   step('source_root_blocker_refresh', 'Source Root Blocker Refresh', ['run', 'kosmo:source-root-blocker-refresh']),
   step('source_root_owner_action_card', 'Source Root Owner Action Card', ['run', 'kosmo:source-root-owner-action-card']),
   step('source_root_owner_decision_packet', 'Source Root Owner Decision Packet', ['run', 'kosmo:source-root-owner-decision-packet']),
+  step('source_root_owner_decision_packet_check', 'Source Root Owner Decision Packet Check', ['run', 'kosmo:source-root-owner-decision-packet-check']),
   step('local_model_inventory', 'Local Model Inventory', ['run', 'kosmo:local-model-inventory']),
   step('bootstrap_data_lane_sweep', 'Bootstrap Data Lane Sweep', ['run', 'kosmo:data-lane-sweep'], { allowFailure: true }),
   step('bootstrap_router', 'Bootstrap Router', ['run', 'kosmo:data-lane-command-router']),
@@ -197,6 +198,7 @@ async function buildReport({ results, startedAt }) {
   const candidateIntegrity = await readOptionalJson(`data/kosmo-source-root-candidate-integrity-check-${dateStamp}.json`);
   const sourceRootOwnerAction = await readOptionalJson(`data/kosmo-source-root-owner-action-card-${dateStamp}.json`);
   const sourceRootOwnerDecisionPacket = await readOptionalJson(`data/kosmo-source-root-owner-decision-packet-${dateStamp}.json`);
+  const sourceRootOwnerDecisionPacketCheck = await readOptionalJson(`data/kosmo-source-root-owner-decision-packet-check-${dateStamp}.json`);
   const assetSourceCandidateMap = await readOptionalJson(`data/kosmoasset-source-candidate-map-${dateStamp}.json`);
   const sourceRootActivation = await readOptionalJson(`data/kosmo-source-root-activation-preflight-${dateStamp}.json`);
   const privateMetadataInventory = await readOptionalJson(`data/kosmo-private-metadata-inventory-runner-${dateStamp}.json`);
@@ -226,6 +228,7 @@ async function buildReport({ results, startedAt }) {
       'source_root_owner_action_satisfied_metadata_only'
     ].includes(sourceRootOwnerAction?.status), sourceRootOwnerAction?.status),
     invariant('source_root_owner_decision_packet_ready', sourceRootOwnerDecisionPacket?.status === 'source_root_owner_decision_packet_ready', sourceRootOwnerDecisionPacket?.status),
+    invariant('source_root_owner_decision_packet_guard_passed', sourceRootOwnerDecisionPacketCheck?.status === 'source_root_owner_decision_packet_guard_passed', sourceRootOwnerDecisionPacketCheck?.status),
     invariant('asset_source_candidate_map_ready', assetSourceCandidateMap?.status === 'kosmoasset_source_candidate_map_review_only_ready', assetSourceCandidateMap?.status),
     invariant('owner_handoff_passed', ownerHandoffPassed, `${ownerPacket?.status || 'missing'} / ${ownerSession?.status || 'missing'}`),
     invariant('innovation_smoke_review_only', innovationSmoke?.status === 'innovation_smoke_passed_review_only', innovationSmoke?.status),
@@ -313,6 +316,9 @@ async function buildReport({ results, startedAt }) {
       source_root_owner_decision_packet_templates: sourceRootOwnerDecisionPacket?.summary?.decision_templates ?? null,
       source_root_owner_decision_packet_exact_roots: sourceRootOwnerDecisionPacket?.summary?.owner_confirmable_exact_roots ?? null,
       source_root_owner_decision_packet_failures: sourceRootOwnerDecisionPacket?.summary?.failures ?? null,
+      source_root_owner_decision_packet_check_status: sourceRootOwnerDecisionPacketCheck?.status || null,
+      source_root_owner_decision_packet_check_failures: sourceRootOwnerDecisionPacketCheck?.summary?.failures ?? null,
+      source_root_owner_decision_packet_check_warnings: sourceRootOwnerDecisionPacketCheck?.summary?.warnings ?? null,
       asset_source_candidate_map_status: assetSourceCandidateMap?.status || null,
       asset_source_candidate_map_candidates: assetSourceCandidateMap?.summary?.asset_lane_candidates ?? null,
       source_root_activation_status: sourceRootActivation?.status || null,
@@ -345,6 +351,7 @@ async function buildReport({ results, startedAt }) {
       `data/kosmo-source-root-candidate-integrity-check-${dateStamp}.json`,
       `data/kosmo-source-root-owner-action-card-${dateStamp}.json`,
       `data/kosmo-source-root-owner-decision-packet-${dateStamp}.json`,
+      `data/kosmo-source-root-owner-decision-packet-check-${dateStamp}.json`,
       `data/kosmoasset-source-candidate-map-${dateStamp}.json`,
       `data/kosmo-source-root-activation-preflight-${dateStamp}.json`,
       `data/kosmo-private-metadata-inventory-runner-${dateStamp}.json`,
@@ -415,6 +422,7 @@ function renderMarkdown(report) {
   lines.push(`- Source-root candidate integrity: ${report.summary.source_root_candidate_integrity_status}, existing ${report.summary.source_root_candidate_integrity_existing_paths ?? '-'}, exact roots ${report.summary.source_root_candidate_integrity_exact_roots ?? '-'}, failures ${report.summary.source_root_candidate_integrity_failures ?? '-'}`);
   lines.push(`- Source-root owner action: ${report.summary.source_root_owner_action_status}`);
   lines.push(`- Source-root owner decision packet: ${report.summary.source_root_owner_decision_packet_status}, templates ${report.summary.source_root_owner_decision_packet_templates ?? '-'}, exact roots ${report.summary.source_root_owner_decision_packet_exact_roots ?? '-'}, failures ${report.summary.source_root_owner_decision_packet_failures ?? '-'}`);
+  lines.push(`- Source-root owner decision packet check: ${report.summary.source_root_owner_decision_packet_check_status}, failures ${report.summary.source_root_owner_decision_packet_check_failures ?? '-'}, warnings ${report.summary.source_root_owner_decision_packet_check_warnings ?? '-'}`);
   lines.push(`- Asset source candidate map: ${report.summary.asset_source_candidate_map_status}, candidates ${report.summary.asset_source_candidate_map_candidates ?? '-'}`);
   lines.push(`- Private diagnostic allowed: ${report.summary.private_diagnostic_allowed ? 'yes' : 'no'}`);
   lines.push(`- Night loop checkpoint: ${report.summary.night_loop_checkpoint_status}`);
