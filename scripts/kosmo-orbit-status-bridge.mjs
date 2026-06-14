@@ -35,6 +35,8 @@ const refs = {
   sweep: `data/kosmodata-lane-sweep-${dateStamp}.json`,
   workerBoundary: `data/kosmo-worker-boundary-pack-check-${dateStamp}.json`,
   ownerPacket: `data/kosmo-owner-review-packet-check-${dateStamp}.json`,
+  pilotGapLabelReview: `data/kosmoreferences-pilot-gap-label-review-${dateStamp}.json`,
+  pilotGapLabelReviewCheck: `data/kosmoreferences-pilot-gap-label-review-check-${dateStamp}.json`,
   assetBridge: `data/kosmoasset-reference-bridge-check-${dateStamp}.json`,
   assetSourceCandidateMap: `data/kosmoasset-source-candidate-map-${dateStamp}.json`,
   assetCandidateTaxonomyReview: `data/kosmoasset-candidate-taxonomy-review-${dateStamp}.json`,
@@ -91,6 +93,8 @@ function buildBridge(reports) {
   const localWorkerExecutionRunbookCheck = reports.localWorkerExecutionRunbookCheck || {};
   const sourceIndependentWorkQueueSummary = reports.sourceIndependentWorkQueue?.summary || {};
   const sweepSummary = reports.sweep?.summary || {};
+  const pilotGapLabelSummary = reports.pilotGapLabelReview?.summary || {};
+  const pilotGapLabelCheckSummary = reports.pilotGapLabelReviewCheck?.summary || {};
   const assetBridgeSummary = reports.assetBridge?.summary || {};
   const assetSourceCandidateSummary = reports.assetSourceCandidateMap?.summary || {};
   const assetCandidateTaxonomySummary = reports.assetCandidateTaxonomyReview?.summary || {};
@@ -345,6 +349,18 @@ function buildBridge(reports) {
       source_ref: refs.sweep
     },
     {
+      id: 'pilot-gap-labels',
+      title: 'Pilot Gap Labels',
+      status: reports.pilotGapLabelReview?.status === 'pilot_gap_label_review_ready' &&
+        reports.pilotGapLabelReviewCheck?.status === 'pilot_gap_label_review_guard_passed'
+        ? 'review_only_ready'
+        : 'needs_review',
+      signal: `${pilotGapLabelSummary.gap_labels ?? 0} labels, ${pilotGapLabelSummary.hard_blockers ?? 0} hard blockers, owner ${pilotGapLabelSummary.owner_decisions_required ?? 0}, failures ${pilotGapLabelCheckSummary.failures ?? 0}`,
+      owner_action_required: (pilotGapLabelSummary.owner_decisions_required ?? 0) > 0,
+      route_hint: 'Review-only pilot gap labels and worker routing',
+      source_ref: refs.pilotGapLabelReview
+    },
+    {
       id: 'kosmoasset',
       title: 'KosmoAsset',
       status: sweepSummary.asset_promotion_allowed === true ? 'ready' : 'review_only',
@@ -494,6 +510,12 @@ function buildBridge(reports) {
       source_independent_work_queue_codex_executable_now: sourceIndependentWorkQueueSummary.codex_executable_now ?? null,
       source_independent_work_queue_owner_actions: sourceIndependentWorkQueueSummary.owner_actions ?? null,
       source_independent_work_queue_failures: sourceIndependentWorkQueueSummary.failures ?? null,
+      pilot_gap_label_review_status: reports.pilotGapLabelReview?.status || null,
+      pilot_gap_label_review_labels: pilotGapLabelSummary.gap_labels ?? null,
+      pilot_gap_label_review_hard_blockers: pilotGapLabelSummary.hard_blockers ?? null,
+      pilot_gap_label_review_owner_decisions: pilotGapLabelSummary.owner_decisions_required ?? null,
+      pilot_gap_label_review_check_status: reports.pilotGapLabelReviewCheck?.status || null,
+      pilot_gap_label_review_check_failures: pilotGapLabelCheckSummary.failures ?? null,
       asset_bridge_status: reports.assetBridge?.status || null,
       asset_source_candidate_map_status: reports.assetSourceCandidateMap?.status || null,
       asset_source_candidate_map_candidates: assetSourceCandidateSummary.asset_lane_candidates ?? null,
@@ -527,6 +549,7 @@ function buildBridge(reports) {
       'source_root_activation_card',
       'private_metadata_inventory_card',
       'pilot_reference_cards',
+      'pilot_gap_label_card',
       'asset_reference_bridge_card',
       'asset_source_candidate_map_card',
       'asset_candidate_taxonomy_card',
@@ -583,6 +606,7 @@ function renderMarkdown(bridge) {
   lines.push(`- Local worker HTTP runner: ${bridge.summary.local_worker_http_runner_status}, check ${bridge.summary.local_worker_http_runner_check_status}, safe inputs ${bridge.summary.local_worker_http_runner_safe_inputs ?? '-'}`);
   lines.push(`- Local worker execution runbook: ${bridge.summary.local_worker_execution_runbook_status}, check ${bridge.summary.local_worker_execution_runbook_check_status}, executable now ${bridge.summary.local_worker_execution_runbook_executable_now ?? '-'}`);
   lines.push(`- Source-independent work queue: ${bridge.summary.source_independent_work_queue_status}, tasks ${bridge.summary.source_independent_work_queue_tasks ?? '-'}, completed ${bridge.summary.source_independent_work_queue_completed_review_only ?? '-'}, codex executable ${bridge.summary.source_independent_work_queue_codex_executable_now ?? '-'}, owner actions ${bridge.summary.source_independent_work_queue_owner_actions ?? '-'}, failures ${bridge.summary.source_independent_work_queue_failures ?? '-'}`);
+  lines.push(`- Pilot gap label review: ${bridge.summary.pilot_gap_label_review_status}, labels ${bridge.summary.pilot_gap_label_review_labels ?? '-'}, hard blockers ${bridge.summary.pilot_gap_label_review_hard_blockers ?? '-'}, owner decisions ${bridge.summary.pilot_gap_label_review_owner_decisions ?? '-'}, check ${bridge.summary.pilot_gap_label_review_check_status}, failures ${bridge.summary.pilot_gap_label_review_check_failures ?? '-'}`);
   lines.push(`- Asset bridge: ${bridge.summary.asset_bridge_status}`);
   lines.push(`- Asset source candidate map: ${bridge.summary.asset_source_candidate_map_status}, candidates ${bridge.summary.asset_source_candidate_map_candidates ?? '-'}`);
   lines.push(`- Asset candidate taxonomy review: ${bridge.summary.asset_candidate_taxonomy_review_status}, candidates ${bridge.summary.asset_candidate_taxonomy_review_candidates ?? '-'}, reviewable ${bridge.summary.asset_candidate_taxonomy_review_reviewable_lanes ?? '-'}, owner confirmations ${bridge.summary.asset_candidate_taxonomy_review_owner_confirmations ?? '-'}, check ${bridge.summary.asset_candidate_taxonomy_review_check_status}, failures ${bridge.summary.asset_candidate_taxonomy_review_check_failures ?? '-'}`);

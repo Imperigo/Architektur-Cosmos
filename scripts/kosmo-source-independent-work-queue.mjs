@@ -15,6 +15,8 @@ const refs = {
   assetCandidateTaxonomyReview: resolve(root, args.assetCandidateTaxonomyReview || `data/kosmoasset-candidate-taxonomy-review-${dateStamp}.json`),
   assetCandidateTaxonomyReviewCheck: resolve(root, args.assetCandidateTaxonomyReviewCheck || `data/kosmoasset-candidate-taxonomy-review-check-${dateStamp}.json`),
   pilotEvidence: resolve(root, args.pilotEvidence || `data/kosmoreferences-pilot-evidence-matrix-${dateStamp}.json`),
+  pilotGapLabelReview: resolve(root, args.pilotGapLabelReview || `data/kosmoreferences-pilot-gap-label-review-${dateStamp}.json`),
+  pilotGapLabelReviewCheck: resolve(root, args.pilotGapLabelReviewCheck || `data/kosmoreferences-pilot-gap-label-review-check-${dateStamp}.json`),
   choiceMatrix: resolve(root, args.choiceMatrix || `data/kosmo-source-root-owner-choice-consequence-matrix-${dateStamp}.json`)
 };
 
@@ -35,6 +37,8 @@ async function main() {
     assetCandidateTaxonomyReview: await readOptionalJson(refs.assetCandidateTaxonomyReview),
     assetCandidateTaxonomyReviewCheck: await readOptionalJson(refs.assetCandidateTaxonomyReviewCheck),
     pilotEvidence: await readJson(refs.pilotEvidence),
+    pilotGapLabelReview: await readOptionalJson(refs.pilotGapLabelReview),
+    pilotGapLabelReviewCheck: await readOptionalJson(refs.pilotGapLabelReviewCheck),
     choiceMatrix: await readJson(refs.choiceMatrix)
   };
   const queue = buildQueue(reports);
@@ -66,6 +70,8 @@ function buildQueue({
   assetCandidateTaxonomyReview,
   assetCandidateTaxonomyReviewCheck,
   pilotEvidence,
+  pilotGapLabelReview,
+  pilotGapLabelReviewCheck,
   choiceMatrix
 }) {
   const failures = [];
@@ -78,6 +84,8 @@ function buildQueue({
 
   const assetTaxonomyDone = assetCandidateTaxonomyReview?.status === 'kosmoasset_candidate_taxonomy_review_ready' &&
     assetCandidateTaxonomyReviewCheck?.status === 'kosmoasset_candidate_taxonomy_review_guard_passed';
+  const pilotGapLabelsDone = pilotGapLabelReview?.status === 'pilot_gap_label_review_ready' &&
+    pilotGapLabelReviewCheck?.status === 'pilot_gap_label_review_guard_passed';
 
   const tasks = [
     task({
@@ -110,11 +118,14 @@ function buildQueue({
       lane: 'kosmoreferences',
       actor: 'codex',
       action: 'Review pilot evidence gap labels and keep private-dependent media/asset slots blocked.',
-      executableNow: true,
+      executableNow: !pilotGapLabelsDone,
+      completed: pilotGapLabelsDone,
       ownerAction: false,
       sourceIndependent: true,
-      command: 'npm run kosmo:pilot-evidence-matrix',
-      evidence: `gaps ${pilotEvidence.summary?.total_gap_count ?? 0}, media blocked ${pilotEvidence.summary?.media_slots_blocked ?? 0}`
+      command: 'npm run kosmo:pilot-gap-label-review && npm run kosmo:pilot-gap-label-review-check',
+      evidence: pilotGapLabelsDone
+        ? `completed ${pilotGapLabelReview.summary?.gap_labels ?? 0} labels, guard ${pilotGapLabelReviewCheck.summary?.passed ?? 0}/${pilotGapLabelReviewCheck.summary?.checks ?? 0}`
+        : `gaps ${pilotEvidence.summary?.total_gap_count ?? 0}, media blocked ${pilotEvidence.summary?.media_slots_blocked ?? 0}`
     }),
     task({
       id: 'codex_local_worker_output_contract_review',

@@ -166,6 +166,8 @@
     "kosmo:local-worker-launch-queue": "node scripts/kosmo-local-worker-launch-queue.mjs",
     "kosmo:local-worker-output-conversion-plan": "node scripts/kosmo-local-worker-output-conversion-plan.mjs",
     "kosmo:pilot-evidence-matrix": "node scripts/kosmoreferences-pilot-evidence-matrix.mjs",
+    "kosmo:pilot-gap-label-review": "node scripts/kosmoreferences-pilot-gap-label-review.mjs",
+    "kosmo:pilot-gap-label-review-check": "node scripts/kosmoreferences-pilot-gap-label-review-check.mjs",
     "kosmo:pilot-package-check": "node scripts/kosmoreferences-pilot-package-check.mjs",
     "kosmo:asset-reference-bridge-check": "node scripts/kosmoasset-reference-bridge-check.mjs",
     "kosmo:asset-source-candidate-map": "node scripts/kosmoasset-source-candidate-map.mjs",
