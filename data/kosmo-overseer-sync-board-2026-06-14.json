@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T08:11:51.558Z",
+  "generated_at": "2026-06-14T08:22:25.559Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 125
+      "files": 126
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 159
+      "files": 160
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-14-codex-synergiebericht-127-rapidocr-innovation-smoke.md",
+      "title": "Codex Synergiebericht 127 - RapidOCR Innovation Smoke",
+      "mirrored_inboxes": 2,
+      "bytes": 1480,
+      "modified_at": "2026-06-14T08:22:20.828Z"
+    },
     {
       "filename": "2026-06-14-codex-synergiebericht-126-kosmoasset-bridge-gate.md",
       "title": "Codex Synergiebericht 126 - KosmoAsset Bridge Gate",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1262,
       "modified_at": "2026-06-13T21:58:44.024Z"
-    },
-    {
-      "filename": "2026-06-13-codex-synergiebericht-119-worker-boundary-pack.md",
-      "title": "Codex Synergiebericht 119 - Worker Boundary Pack",
-      "mirrored_inboxes": 2,
-      "bytes": 1472,
-      "modified_at": "2026-06-13T21:55:39.151Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 119-126 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 120-127 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."
