@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T13:34:24.718Z",
+  "generated_at": "2026-06-14T14:05:06.723Z",
   "status": "orbit_bridge_ready_with_blockers",
   "policy": {
     "dashboard_only": true,
@@ -21,6 +21,7 @@
     "data/kosmo-private-metadata-inventory-fixture-smoke-2026-06-14.json",
     "data/kosmo-private-metadata-inventory-check-2026-06-14.json",
     "data/kosmo-local-model-inventory-2026-06-14.json",
+    "data/kosmo-local-worker-http-runner-2026-06-14.json",
     "data/kosmodata-lane-sweep-2026-06-14.json",
     "data/kosmo-worker-boundary-pack-check-2026-06-14.json",
     "data/kosmo-owner-review-packet-check-2026-06-14.json",
@@ -31,7 +32,7 @@
     "data/kosmo-night-loop-checkpoint-2026-06-14.json"
   ],
   "summary": {
-    "cards": 13,
+    "cards": 14,
     "blocking_cards": 4,
     "owner_action_cards": 9,
     "source_root_blocked": true,
@@ -43,6 +44,9 @@
     "private_metadata_inventory_fixture_status": "private_metadata_inventory_fixture_passed",
     "private_metadata_inventory_check_status": "private_metadata_inventory_guard_passed",
     "local_model_inventory_status": "local_model_inventory_ready_review_only",
+    "local_worker_http_runner_status": "local_worker_http_runner_dry_run_ready",
+    "local_worker_http_runner_guard_passed": true,
+    "local_worker_http_runner_safe_inputs": 6,
     "asset_bridge_status": "kosmoasset_reference_bridge_review_only_passed",
     "asset_source_candidate_map_status": "kosmoasset_source_candidate_map_review_only_ready",
     "asset_source_candidate_map_candidates": 3,
@@ -94,6 +98,15 @@
       "owner_action_required": false,
       "route_hint": "Ollama/Odysseus local worker readiness",
       "source_ref": "data/kosmo-local-model-inventory-2026-06-14.json"
+    },
+    {
+      "id": "local-worker-http-runner",
+      "title": "Local Worker HTTP Runner",
+      "status": "review_only_ready",
+      "signal": "local_worker_http_runner_dry_run_ready, guard passed, safe inputs 6",
+      "owner_action_required": false,
+      "route_hint": "Guarded HTTP/JSON bridge for local LLM task execution",
+      "source_ref": "data/kosmo-local-worker-http-runner-2026-06-14.json"
     },
     {
       "id": "private-metadata-inventory",
@@ -171,6 +184,7 @@
   "recommended_orbit_sections": [
     "status_strip",
     "local_models_card",
+    "local_worker_http_runner_card",
     "source_root_blocker_card",
     "source_root_owner_action_card",
     "source_root_activation_card",

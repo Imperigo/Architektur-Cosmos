@@ -1,11 +1,11 @@
 # Kosmo Orbit Status Bridge
 
-Generated: 2026-06-14T13:34:24.718Z
+Generated: 2026-06-14T14:05:06.723Z
 Status: `orbit_bridge_ready_with_blockers`
 
 ## Summary
 
-- Cards: 13
+- Cards: 14
 - Blocking cards: 4
 - Owner action cards: 9
 - Source root blocked: yes
@@ -17,6 +17,7 @@ Status: `orbit_bridge_ready_with_blockers`
 - Private metadata inventory fixture: private_metadata_inventory_fixture_passed
 - Private metadata inventory check: private_metadata_inventory_guard_passed
 - Local models: local_model_inventory_ready_review_only
+- Local worker HTTP runner: local_worker_http_runner_dry_run_ready, guard passed, safe inputs 6
 - Asset bridge: kosmoasset_reference_bridge_review_only_passed
 - Asset source candidate map: kosmoasset_source_candidate_map_review_only_ready, candidates 3
 - Innovation smoke: innovation_smoke_passed_review_only
@@ -31,6 +32,7 @@ Status: `orbit_bridge_ready_with_blockers`
 | `source-root-owner-action` Source Root Owner Action | blocked | yes | action required: repair_onedrive_first_or_confirm_complete_non_onedrive_root |
 | `source-root-activation` Source Root Activation | blocked | yes | source_root_activation_waiting_for_owner_storage_action, safe commands 13, blocked 4 |
 | `local-models` Local Models | review_only_ready | no | 4/4 roles, 8 Ollama models, 70 GB |
+| `local-worker-http-runner` Local Worker HTTP Runner | review_only_ready | no | local_worker_http_runner_dry_run_ready, guard passed, safe inputs 6 |
 | `private-metadata-inventory` Private Metadata Inventory | blocked_with_smoke_passed | yes | blocked until source-root activation; fixture 6 matches; guard private_metadata_inventory_guard_passed |
 | `pilot-references` Pilot References | review_only | yes | 3 pilots, 12 evidence gaps |
 | `kosmoasset` KosmoAsset | review_only | yes | 6 human reviews open, public-ready 0 |
@@ -44,6 +46,7 @@ Status: `orbit_bridge_ready_with_blockers`
 
 - `status_strip`
 - `local_models_card`
+- `local_worker_http_runner_card`
 - `source_root_blocker_card`
 - `source_root_owner_action_card`
 - `source_root_activation_card`

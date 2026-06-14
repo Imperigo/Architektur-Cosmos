@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board
 
-Generated: 2026-06-14T14:00:37.344Z
+Generated: 2026-06-14T14:07:34.449Z
 Status: `overseer_sync_board_ready`
 
 ## Summary
@@ -20,6 +20,7 @@ Status: `overseer_sync_board_ready`
 
 | File | Title | Mirrors |
 | --- | --- | ---: |
+| `2026-06-14-codex-synergiebericht-148-http-runner-orbit-gate.md` | Codex Synergiebericht 148: HTTP Runner Orbit Gate | 2 |
 | `2026-06-14-codex-synergiebericht-147-local-worker-http-runner.md` | Codex Synergiebericht 147: Local Worker HTTP Runner | 2 |
 | `2026-06-14-codex-synergiebericht-146-kosmoorbit-local-worker-json-status.md` | Codex Synergiebericht 146: KosmoOrbit Local Worker JSON Status | 2 |
 | `2026-06-14-codex-synergiebericht-145-ollama-json-capture-smoke.md` | Codex Synergiebericht 145: Ollama JSON Capture Smoke | 2 |
@@ -27,7 +28,6 @@ Status: `overseer_sync_board_ready`
 | `2026-06-14-codex-synergiebericht-143-kosmoorbit-day-batch-orbit-bridge-status.md` | Codex Synergiebericht 143: KosmoOrbit Day Batch + Orbit Bridge Status | 2 |
 | `2026-06-14-codex-synergiebericht-142-kosmoorbit-data-panel-status.md` | Codex Synergiebericht 142: KosmoOrbit DataPanel Status | 2 |
 | `2026-06-14-codex-synergiebericht-141-owner-source-root-review-options.md` | Codex Synergiebericht 141: Owner Source Root Review Options | 2 |
-| `2026-06-14-codex-synergiebericht-140-review-only-asset-routing-guard.md` | Codex Synergiebericht 140: Review-only Asset Routing Guard | 2 |
 
 ## Blockers
 
@@ -40,7 +40,7 @@ Status: `overseer_sync_board_ready`
 
 ## Next Actions
 
-- Claude/KosmoOverseer reviews latest handoffs 140-147 before editing related files.
+- Claude/KosmoOverseer reviews latest handoffs 141-148 before editing related files.
 - Use the owner review session brief as the next owner-facing entry point.
 - Keep local worker tasks review-only while source-root and owner answers are pending.
 - After any explicit owner answer, update intake first, then rerun guards and this sync board.
