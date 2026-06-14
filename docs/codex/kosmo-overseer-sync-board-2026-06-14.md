@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board
 
-Generated: 2026-06-14T13:37:57.313Z
+Generated: 2026-06-14T13:41:00.075Z
 Status: `overseer_sync_board_ready`
 
 ## Summary
@@ -20,6 +20,7 @@ Status: `overseer_sync_board_ready`
 
 | File | Title | Mirrors |
 | --- | --- | ---: |
+| `2026-06-14-codex-synergiebericht-143-kosmoorbit-day-batch-orbit-bridge-status.md` | Codex Synergiebericht 143: KosmoOrbit Day Batch + Orbit Bridge Status | 2 |
 | `2026-06-14-codex-synergiebericht-142-kosmoorbit-data-panel-status.md` | Codex Synergiebericht 142: KosmoOrbit DataPanel Status | 2 |
 | `2026-06-14-codex-synergiebericht-141-owner-source-root-review-options.md` | Codex Synergiebericht 141: Owner Source Root Review Options | 2 |
 | `2026-06-14-codex-synergiebericht-140-review-only-asset-routing-guard.md` | Codex Synergiebericht 140: Review-only Asset Routing Guard | 2 |
@@ -27,7 +28,6 @@ Status: `overseer_sync_board_ready`
 | `2026-06-14-codex-synergiebericht-138-source-root-candidate-roles.md` | Codex Synergiebericht 138: Source Root Candidate Roles | 2 |
 | `2026-06-14-codex-synergiebericht-137-storage-topology.md` | Codex Synergiebericht 137: Storage Topology | 2 |
 | `2026-06-14-codex-synergiebericht-136-source-root-owner-action-card.md` | Codex Synergiebericht 136: Source Root Owner Action Card | 2 |
-| `2026-06-14-codex-synergiebericht-135-local-worker-metadata-guard.md` | Codex Synergiebericht 135 - Local Worker Metadata Guard | 2 |
 
 ## Blockers
 
@@ -40,7 +40,7 @@ Status: `overseer_sync_board_ready`
 
 ## Next Actions
 
-- Claude/KosmoOverseer reviews latest handoffs 135-142 before editing related files.
+- Claude/KosmoOverseer reviews latest handoffs 136-143 before editing related files.
 - Use the owner review session brief as the next owner-facing entry point.
 - Keep local worker tasks review-only while source-root and owner answers are pending.
 - After any explicit owner answer, update intake first, then rerun guards and this sync board.

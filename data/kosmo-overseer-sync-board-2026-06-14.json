@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T13:37:57.313Z",
+  "generated_at": "2026-06-14T13:41:00.075Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 141
+      "files": 142
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 179
+      "files": 180
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-14-codex-synergiebericht-143-kosmoorbit-day-batch-orbit-bridge-status.md",
+      "title": "Codex Synergiebericht 143: KosmoOrbit Day Batch + Orbit Bridge Status",
+      "mirrored_inboxes": 2,
+      "bytes": 940,
+      "modified_at": "2026-06-14T13:40:47.382Z"
+    },
     {
       "filename": "2026-06-14-codex-synergiebericht-142-kosmoorbit-data-panel-status.md",
       "title": "Codex Synergiebericht 142: KosmoOrbit DataPanel Status",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 3024,
       "modified_at": "2026-06-14T13:16:59.684Z"
-    },
-    {
-      "filename": "2026-06-14-codex-synergiebericht-135-local-worker-metadata-guard.md",
-      "title": "Codex Synergiebericht 135 - Local Worker Metadata Guard",
-      "mirrored_inboxes": 2,
-      "bytes": 1793,
-      "modified_at": "2026-06-14T09:09:48.990Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 135-142 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 136-143 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."
