@@ -1,6 +1,6 @@
 # Kosmo Source-Root Candidate Integrity Check
 
-Generated: 2026-06-14T14:32:54.317Z
+Generated: 2026-06-14T14:38:44.024Z
 Status: `source_root_candidate_integrity_owner_review_ready`
 
 ## Summary

@@ -25,6 +25,7 @@ const steps = [
     () => !existsSync(sourceRootSession),
     `Session already exists: ${relative(root, sourceRootSession)}`
   ),
+  step('source_root_decision_session_refresh', 'Source Root Decision Session Refresh', ['run', 'kosmo:source-root-decision-session-refresh']),
   step('source_root_decision_session_check', 'Source Root Decision Session Check', ['run', 'kosmo:source-root-decision-session-check']),
   step('source_root_candidate_integrity_check', 'Source Root Candidate Integrity Check', ['run', 'kosmo:source-root-candidate-integrity-check']),
   step('private_library_diagnostic', 'Private Library Diagnostic Metadata', [
@@ -191,6 +192,7 @@ async function buildReport({ results, startedAt }) {
   const ownerPacket = await readOptionalJson(`data/kosmo-owner-review-packet-check-${dateStamp}.json`);
   const ownerSession = await readOptionalJson(`data/kosmo-owner-review-session-brief-check-${dateStamp}.json`);
   const blocker = await readOptionalJson(`data/kosmo-source-root-blocker-refresh-${dateStamp}.json`);
+  const decisionSessionRefresh = await readOptionalJson(`data/kosmo-source-root-decision-session-refresh-${dateStamp}.json`);
   const candidateIntegrity = await readOptionalJson(`data/kosmo-source-root-candidate-integrity-check-${dateStamp}.json`);
   const sourceRootOwnerAction = await readOptionalJson(`data/kosmo-source-root-owner-action-card-${dateStamp}.json`);
   const assetSourceCandidateMap = await readOptionalJson(`data/kosmoasset-source-candidate-map-${dateStamp}.json`);
@@ -212,6 +214,10 @@ async function buildReport({ results, startedAt }) {
     invariant('core_sweep_review_only', sweep?.status === 'kosmodata_lane_sweep_review_only_passed', sweep?.status),
     invariant('router_guarded_review_only', router?.status === 'worker_router_guarded_review_only', router?.status),
     invariant('worker_boundary_passed', boundary?.status === 'worker_boundary_pack_guard_passed', boundary?.status),
+    invariant('source_root_decision_session_refresh_safe', [
+      'source_root_decision_session_refreshed_pending',
+      'source_root_decision_session_refresh_not_needed'
+    ].includes(decisionSessionRefresh?.status), decisionSessionRefresh?.status),
     invariant('source_root_candidate_integrity_ready', candidateIntegrity?.status === 'source_root_candidate_integrity_owner_review_ready', candidateIntegrity?.status),
     invariant('source_root_owner_action_card_ready', [
       'source_root_owner_action_required',
@@ -291,6 +297,10 @@ async function buildReport({ results, startedAt }) {
       innovation_smoke_status: innovationSmoke?.status || null,
       orbit_bridge_status: orbitBridge?.status || null,
       source_root_blocker_status: blocker?.status || null,
+      source_root_decision_session_refresh_status: decisionSessionRefresh?.status || null,
+      source_root_decision_session_refresh_changed: decisionSessionRefresh?.summary?.changed === true,
+      source_root_decision_session_refresh_options: decisionSessionRefresh?.summary?.refreshed_options ?? null,
+      source_root_decision_session_refresh_failures: decisionSessionRefresh?.summary?.failures ?? null,
       source_root_candidate_integrity_status: candidateIntegrity?.status || null,
       source_root_candidate_integrity_existing_paths: candidateIntegrity?.summary?.existing_path_options ?? null,
       source_root_candidate_integrity_exact_roots: candidateIntegrity?.summary?.owner_confirmable_exact_roots ?? null,
@@ -324,6 +334,7 @@ async function buildReport({ results, startedAt }) {
       `data/kosmo-owner-review-packet-check-${dateStamp}.json`,
       `data/kosmo-owner-review-session-brief-check-${dateStamp}.json`,
       `data/kosmo-source-root-blocker-refresh-${dateStamp}.json`,
+      `data/kosmo-source-root-decision-session-refresh-${dateStamp}.json`,
       `data/kosmo-source-root-candidate-integrity-check-${dateStamp}.json`,
       `data/kosmo-source-root-owner-action-card-${dateStamp}.json`,
       `data/kosmoasset-source-candidate-map-${dateStamp}.json`,
@@ -392,6 +403,7 @@ function renderMarkdown(report) {
   lines.push(`- Innovation smoke: ${report.summary.innovation_smoke_status}`);
   lines.push(`- Orbit bridge: ${report.summary.orbit_bridge_status}`);
   lines.push(`- Source-root blocker: ${report.summary.source_root_blocker_status}`);
+  lines.push(`- Source-root decision session refresh: ${report.summary.source_root_decision_session_refresh_status}, changed ${report.summary.source_root_decision_session_refresh_changed ? 'yes' : 'no'}, options ${report.summary.source_root_decision_session_refresh_options ?? '-'}, failures ${report.summary.source_root_decision_session_refresh_failures ?? '-'}`);
   lines.push(`- Source-root candidate integrity: ${report.summary.source_root_candidate_integrity_status}, existing ${report.summary.source_root_candidate_integrity_existing_paths ?? '-'}, exact roots ${report.summary.source_root_candidate_integrity_exact_roots ?? '-'}, failures ${report.summary.source_root_candidate_integrity_failures ?? '-'}`);
   lines.push(`- Source-root owner action: ${report.summary.source_root_owner_action_status}`);
   lines.push(`- Asset source candidate map: ${report.summary.asset_source_candidate_map_status}, candidates ${report.summary.asset_source_candidate_map_candidates ?? '-'}`);

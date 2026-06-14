@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T14:35:34.665Z",
+  "generated_at": "2026-06-14T14:40:53.771Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 151
+      "files": 152
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 190
+      "files": 192
     }
   ],
   "summary": {
@@ -43,10 +43,17 @@
     "local_worker_high_risk_hits": 0,
     "latest_handoffs": 8,
     "latest_handoff_mirror_missing_files": 0,
-    "historical_handoff_mirror_missing_files": 39,
+    "historical_handoff_mirror_missing_files": 40,
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-14-codex-synergiebericht-153-source-root-decision-refresh.md",
+      "title": "Codex Synergiebericht 153: Source Root Decision Refresh",
+      "mirrored_inboxes": 2,
+      "bytes": 2788,
+      "modified_at": "2026-06-14T14:40:49.815Z"
+    },
     {
       "filename": "2026-06-14-codex-synergiebericht-152-source-root-candidate-integrity.md",
       "title": "Codex Synergiebericht 152: Source Root Candidate Integrity",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1128,
       "modified_at": "2026-06-14T13:57:20.205Z"
-    },
-    {
-      "filename": "2026-06-14-codex-synergiebericht-145-ollama-json-capture-smoke.md",
-      "title": "Codex Synergiebericht 145: Ollama JSON Capture Smoke",
-      "mirrored_inboxes": 2,
-      "bytes": 1320,
-      "modified_at": "2026-06-14T13:54:31.013Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 145-152 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 146-153 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."

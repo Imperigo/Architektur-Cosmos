@@ -1,6 +1,7 @@
 # Kosmo Source-Root Decision Session
 
 Created: 2026-06-14T07:14:14.743Z
+Refreshed: 2026-06-14T14:38:36.878Z
 Status: `source_root_decision_session_pending`
 
 ## Decision Fields
@@ -21,14 +22,14 @@ Status: `source_root_decision_session_pending`
 
 | Option | Classification | Score | Path | Safe default |
 | --- | --- | ---: | --- | --- |
-| `workflow-or-project-mirror-mnt-data-architekturkosmos-11-ai-workflow-onedrive-2026-06-09-0` | workflow_or_project_mirror | 38 | `/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC/KosmoWebsite` | keep_blocked |
-| `possible-source-root-mnt-data-architekturkosmos` | possible_source_root | 32 | `/mnt/data/ArchitekturKosmos` | keep_blocked |
-| `incomplete-onedrive-candidate-home-andrin-baumann-architekturkosmos-onedrive` | incomplete_onedrive_candidate | 22 | `/home/andrin-baumann/ArchitekturKosmos Onedrive` | keep_blocked |
-| `weak-path-signal-mnt-archiv` | weak_path_signal | 20 | `/mnt/archiv` | keep_blocked |
-| `weak-path-signal-mnt-data-archive-logs` | weak_path_signal | 20 | `/mnt/data/_archive_logs` | keep_blocked |
-| `weak-path-signal-mnt-data-zum-archivieren` | weak_path_signal | 20 | `/mnt/data/Zum_Archivieren` | keep_blocked |
-| `workflow-or-project-mirror-home-andrin-baumann-architekturkosmos-onedrive-11-ai-workflow` | workflow_or_project_mirror | 16 | `/home/andrin-baumann/ArchitekturKosmos Onedrive/11 AI Workflow` | keep_blocked |
-| `workflow-or-project-mirror-home-andrin-baumann-architekturkosmos-onedrive-11-ai-workflow-0` | workflow_or_project_mirror | 16 | `/home/andrin-baumann/ArchitekturKosmos Onedrive/11 AI Workflow/00 Architekturkosmos Zentrale` | keep_blocked |
+| `possible-source-root-mnt-archiv-fromssd-onedrive-2026-06-08-00-einrichtung-home-pc-kosmowe` | possible_source_root | 70 | `/mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC/KosmoWebsite` | keep_blocked |
+| `possible-source-root-mnt-archiv-architekturkosmos-assets-claude-to-blender-abgabe-tkb-bibl` | possible_source_root | 60 | `/mnt/archiv/ArchitekturKosmos/Assets/Claude to Blender/abgabe/TKB_Bibliothek_Live-Final-Test_Abgabe` | keep_blocked |
+| `possible-source-root-mnt-archiv-architekturkosmos-assets-claude-to-blender-ai-architektur-` | possible_source_root | 60 | `/mnt/archiv/ArchitekturKosmos/Assets/Claude to Blender/Ai Architektur Workflow/PBR Library + HDRI` | keep_blocked |
+| `possible-source-root-mnt-archiv-01-architekturkosmos-projekt-00-einrichtung-home-pc-kosmow` | possible_source_root | 52 | `/mnt/archiv/01 ArchitekturKosmos Projekt/00 Einrichtung Home_PC/KosmoWebsite` | keep_blocked |
+| `possible-source-root-mnt-archiv-architekturkosmos-assets` | possible_source_root | 52 | `/mnt/archiv/ArchitekturKosmos/Assets` | keep_blocked |
+| `possible-source-root-mnt-archiv-fromssd-onedrive-2026-06-08-00-einrichtung-home-pc` | possible_source_root | 48 | `/mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC` | keep_blocked |
+| `possible-source-root-mnt-archiv-fromssd-onedrive-2026-06-08-00-einrichtung-home-pc-kosmowe` | possible_source_root | 48 | `/mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC/KosmoWebsite/repo-context` | keep_blocked |
+| `possible-source-root-mnt-archiv-fromssd-onedrive-2026-06-08-00-einrichtung-home-pc-kosmowe` | possible_source_root | 48 | `/mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC/KosmoWebsite/reports` | keep_blocked |
 | `mount_archive_or_missing_root` | missing_or_unmounted_root | - | - | keep_blocked |
 | `repair_onedrive_first` | sync_repair_first | - | - | repair_before_inventory |
 

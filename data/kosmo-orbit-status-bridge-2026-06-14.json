@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T14:33:53.263Z",
+  "generated_at": "2026-06-14T14:39:32.193Z",
   "status": "orbit_bridge_ready_with_blockers",
   "policy": {
     "dashboard_only": true,
@@ -15,6 +15,7 @@
   "source_refs": [
     "data/kosmo-day-batch-loop-2026-06-14.json",
     "data/kosmo-source-root-blocker-refresh-2026-06-14.json",
+    "data/kosmo-source-root-decision-session-refresh-2026-06-14.json",
     "data/kosmo-source-root-candidate-integrity-check-2026-06-14.json",
     "data/kosmo-source-root-owner-action-card-2026-06-14.json",
     "data/kosmo-source-root-activation-preflight-2026-06-14.json",
@@ -36,11 +37,15 @@
     "data/kosmo-night-loop-checkpoint-2026-06-14.json"
   ],
   "summary": {
-    "cards": 16,
+    "cards": 17,
     "blocking_cards": 4,
     "owner_action_cards": 10,
     "source_root_blocked": true,
     "day_batch_status": "day_batch_loop_passed_review_only",
+    "source_root_decision_refresh_status": "source_root_decision_session_refresh_not_needed",
+    "source_root_decision_refresh_changed": false,
+    "source_root_decision_refresh_options": 10,
+    "source_root_decision_refresh_failures": 0,
     "source_root_candidate_integrity_status": "source_root_candidate_integrity_owner_review_ready",
     "source_root_candidate_integrity_existing_paths": 8,
     "source_root_candidate_integrity_exact_roots": 1,
@@ -73,7 +78,7 @@
       "id": "day-batch",
       "title": "Daily Batch",
       "status": "ready",
-      "signal": "41/41 required steps",
+      "signal": "42/42 required steps",
       "owner_action_required": false,
       "route_hint": "KosmoReferences/KosmoAsset daily loop",
       "source_ref": "data/kosmo-day-batch-loop-2026-06-14.json"
@@ -86,6 +91,15 @@
       "owner_action_required": true,
       "route_hint": "Owner/KosmoOverseer must record true private source root",
       "source_ref": "data/kosmo-source-root-blocker-refresh-2026-06-14.json"
+    },
+    {
+      "id": "source-root-decision-refresh",
+      "title": "Source Root Decision Refresh",
+      "status": "review_only_ready",
+      "signal": "source_root_decision_session_refresh_not_needed, changed no, options 10",
+      "owner_action_required": false,
+      "route_hint": "Keep pending source-root decision options aligned with current storage evidence",
+      "source_ref": "data/kosmo-source-root-decision-session-refresh-2026-06-14.json"
     },
     {
       "id": "source-root-candidate-integrity",
@@ -220,6 +234,7 @@
     "local_worker_http_runner_card",
     "local_worker_execution_runbook_card",
     "source_root_blocker_card",
+    "source_root_decision_refresh_card",
     "source_root_candidate_integrity_card",
     "source_root_owner_action_card",
     "source_root_activation_card",

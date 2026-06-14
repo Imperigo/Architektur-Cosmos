@@ -12,6 +12,7 @@ const outputMd = resolve(root, args.markdown || `docs/codex/kosmo-orbit-status-b
 const refs = {
   dayBatch: `data/kosmo-day-batch-loop-${dateStamp}.json`,
   sourceRoot: `data/kosmo-source-root-blocker-refresh-${dateStamp}.json`,
+  sourceRootDecisionRefresh: `data/kosmo-source-root-decision-session-refresh-${dateStamp}.json`,
   sourceRootCandidateIntegrity: `data/kosmo-source-root-candidate-integrity-check-${dateStamp}.json`,
   sourceRootOwnerAction: `data/kosmo-source-root-owner-action-card-${dateStamp}.json`,
   sourceRootActivation: `data/kosmo-source-root-activation-preflight-${dateStamp}.json`,
@@ -58,6 +59,7 @@ async function main() {
 function buildBridge(reports) {
   const daySummary = reports.dayBatch?.summary || {};
   const sourceSummary = reports.sourceRoot?.summary || {};
+  const decisionRefreshSummary = reports.sourceRootDecisionRefresh?.summary || {};
   const candidateIntegritySummary = reports.sourceRootCandidateIntegrity?.summary || {};
   const ownerActionSummary = reports.sourceRootOwnerAction?.summary || {};
   const activationSummary = reports.sourceRootActivation?.summary || {};
@@ -94,6 +96,22 @@ function buildBridge(reports) {
       owner_action_required: sourceSummary.private_diagnostic_allowed !== true,
       route_hint: 'Owner/KosmoOverseer must record true private source root',
       source_ref: refs.sourceRoot
+    },
+    {
+      id: 'source-root-decision-refresh',
+      title: 'Source Root Decision Refresh',
+      status: [
+        'source_root_decision_session_refreshed_pending',
+        'source_root_decision_session_refresh_not_needed'
+      ].includes(reports.sourceRootDecisionRefresh?.status)
+        ? 'review_only_ready'
+        : 'needs_review',
+      signal: reports.sourceRootDecisionRefresh?.status
+        ? `${reports.sourceRootDecisionRefresh.status}, changed ${decisionRefreshSummary.changed ? 'yes' : 'no'}, options ${decisionRefreshSummary.refreshed_options ?? 0}`
+        : 'missing decision session refresh',
+      owner_action_required: false,
+      route_hint: 'Keep pending source-root decision options aligned with current storage evidence',
+      source_ref: refs.sourceRootDecisionRefresh
     },
     {
       id: 'source-root-candidate-integrity',
@@ -281,6 +299,10 @@ function buildBridge(reports) {
       owner_action_cards: ownerActionCards.length,
       source_root_blocked: sourceSummary.private_diagnostic_allowed !== true,
       day_batch_status: reports.dayBatch?.status || null,
+      source_root_decision_refresh_status: reports.sourceRootDecisionRefresh?.status || null,
+      source_root_decision_refresh_changed: decisionRefreshSummary.changed === true,
+      source_root_decision_refresh_options: decisionRefreshSummary.refreshed_options ?? null,
+      source_root_decision_refresh_failures: decisionRefreshSummary.failures ?? null,
       source_root_candidate_integrity_status: reports.sourceRootCandidateIntegrity?.status || null,
       source_root_candidate_integrity_existing_paths: candidateIntegritySummary.existing_path_options ?? null,
       source_root_candidate_integrity_exact_roots: candidateIntegritySummary.owner_confirmable_exact_roots ?? null,
@@ -315,6 +337,7 @@ function buildBridge(reports) {
       'local_worker_http_runner_card',
       'local_worker_execution_runbook_card',
       'source_root_blocker_card',
+      'source_root_decision_refresh_card',
       'source_root_candidate_integrity_card',
       'source_root_owner_action_card',
       'source_root_activation_card',
@@ -356,6 +379,7 @@ function renderMarkdown(bridge) {
   lines.push(`- Owner action cards: ${bridge.summary.owner_action_cards}`);
   lines.push(`- Source root blocked: ${bridge.summary.source_root_blocked ? 'yes' : 'no'}`);
   lines.push(`- Day batch: ${bridge.summary.day_batch_status}`);
+  lines.push(`- Source-root decision refresh: ${bridge.summary.source_root_decision_refresh_status}, changed ${bridge.summary.source_root_decision_refresh_changed ? 'yes' : 'no'}, options ${bridge.summary.source_root_decision_refresh_options ?? '-'}, failures ${bridge.summary.source_root_decision_refresh_failures ?? '-'}`);
   lines.push(`- Source-root candidate integrity: ${bridge.summary.source_root_candidate_integrity_status}, existing ${bridge.summary.source_root_candidate_integrity_existing_paths ?? '-'}, exact roots ${bridge.summary.source_root_candidate_integrity_exact_roots ?? '-'}, failures ${bridge.summary.source_root_candidate_integrity_failures ?? '-'}`);
   lines.push(`- Source-root owner action: ${bridge.summary.source_root_owner_action_status}`);
   lines.push(`- Source-root recommended decision: ${bridge.summary.source_root_owner_recommended_decision}`);
