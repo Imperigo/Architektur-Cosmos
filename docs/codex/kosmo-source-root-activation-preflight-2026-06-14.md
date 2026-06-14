@@ -1,6 +1,6 @@
 # Kosmo Source-Root Activation Preflight
 
-Generated: 2026-06-14T13:19:38.194Z
+Generated: 2026-06-14T13:23:06.058Z
 Status: `source_root_activation_waiting_for_owner_storage_action`
 
 ## Summary

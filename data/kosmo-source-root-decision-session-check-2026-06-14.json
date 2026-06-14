@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T07:21:57.029Z",
+  "generated_at": "2026-06-14T13:23:00.601Z",
   "session_path": "examples/kosmo-references/provenance/source-root-decision-session-2026-06-14.json",
   "status": "passed_pending_owner_input",
   "policy": {

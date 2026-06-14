@@ -1,6 +1,6 @@
 # Kosmo Source-Root Owner Action Card
 
-Generated: 2026-06-14T13:18:44.946Z
+Generated: 2026-06-14T13:22:25.439Z
 Status: `source_root_owner_action_required`
 
 ## Current State

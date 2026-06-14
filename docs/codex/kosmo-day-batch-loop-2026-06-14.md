@@ -1,6 +1,6 @@
 # Kosmo Day Batch Loop
 
-Generated: 2026-06-14T13:19:48.984Z
+Generated: 2026-06-14T13:23:12.269Z
 Status: `day_batch_loop_passed_review_only`
 
 ## Summary
@@ -47,44 +47,44 @@ Status: `day_batch_loop_passed_review_only`
 
 | Step | Status | Required | Duration |
 | --- | --- | --- | ---: |
-| OneDrive Sync Errors | passed | yes | 343ms |
-| Storage Mount Snapshot | passed | yes | 249ms |
-| Source Root Locator | passed | yes | 424ms |
-| Source Root Selection Brief | passed | yes | 240ms |
+| OneDrive Sync Errors | passed | yes | 339ms |
+| Storage Mount Snapshot | passed | yes | 248ms |
+| Source Root Locator | passed | yes | 413ms |
+| Source Root Selection Brief | passed | yes | 236ms |
 | Source Root Decision Session Create | skipped | no | 0ms |
-| Source Root Decision Session Check | passed | yes | 240ms |
-| Private Library Diagnostic Metadata | passed | yes | 278ms |
-| Source Root Blocker Refresh | passed | yes | 244ms |
-| Source Root Owner Action Card | passed | yes | 247ms |
-| Local Model Inventory | passed | yes | 446ms |
-| Bootstrap Data Lane Sweep | passed | no | 27551ms |
-| Bootstrap Router | passed | yes | 281ms |
-| Core Data Lane Sweep | passed | yes | 20136ms |
-| Pilot Evidence Matrix | passed | yes | 401ms |
-| Private Source Inventory Plan | passed | yes | 357ms |
-| Private Inventory Output Template | passed | yes | 395ms |
-| Private Inventory Output Check | passed | yes | 370ms |
-| Pilot Package Check | passed | yes | 539ms |
-| Asset Reference Bridge Check | passed | yes | 535ms |
-| Core Router | passed | yes | 527ms |
-| Worker Boundary Pack | passed | yes | 550ms |
-| Worker Boundary Pack Check | passed | yes | 599ms |
-| Source Root Activation Preflight | passed | yes | 606ms |
-| Private Metadata Inventory Runner | passed | yes | 459ms |
-| Private Metadata Inventory Fixture Smoke | passed | yes | 382ms |
-| Private Metadata Inventory Check | passed | yes | 342ms |
-| Local Worker Task Pack Refresh | passed | yes | 316ms |
-| Local Worker Output Review | passed | yes | 314ms |
-| Local Worker Launch Queue | passed | yes | 354ms |
-| Local Worker Output Conversion Plan | passed | yes | 316ms |
-| Owner Review Packet | passed | yes | 308ms |
-| Owner Review Packet Check | passed | yes | 323ms |
-| Owner Review Session Brief | passed | yes | 280ms |
-| Owner Review Session Brief Check | passed | yes | 326ms |
-| Night Loop Checkpoint | passed | yes | 613ms |
-| Innovation Lane Plan | passed | yes | 2716ms |
-| Innovation Smoke | passed | yes | 3312ms |
-| Orbit Status Bridge | passed | yes | 367ms |
+| Source Root Decision Session Check | passed | yes | 249ms |
+| Private Library Diagnostic Metadata | passed | yes | 286ms |
+| Source Root Blocker Refresh | passed | yes | 246ms |
+| Source Root Owner Action Card | passed | yes | 236ms |
+| Local Model Inventory | passed | yes | 455ms |
+| Bootstrap Data Lane Sweep | passed | no | 21594ms |
+| Bootstrap Router | passed | yes | 248ms |
+| Core Data Lane Sweep | passed | yes | 15852ms |
+| Pilot Evidence Matrix | passed | yes | 248ms |
+| Private Source Inventory Plan | passed | yes | 241ms |
+| Private Inventory Output Template | passed | yes | 250ms |
+| Private Inventory Output Check | passed | yes | 243ms |
+| Pilot Package Check | passed | yes | 244ms |
+| Asset Reference Bridge Check | passed | yes | 252ms |
+| Core Router | passed | yes | 248ms |
+| Worker Boundary Pack | passed | yes | 250ms |
+| Worker Boundary Pack Check | passed | yes | 246ms |
+| Source Root Activation Preflight | passed | yes | 249ms |
+| Private Metadata Inventory Runner | passed | yes | 256ms |
+| Private Metadata Inventory Fixture Smoke | passed | yes | 304ms |
+| Private Metadata Inventory Check | passed | yes | 236ms |
+| Local Worker Task Pack Refresh | passed | yes | 235ms |
+| Local Worker Output Review | passed | yes | 239ms |
+| Local Worker Launch Queue | passed | yes | 237ms |
+| Local Worker Output Conversion Plan | passed | yes | 238ms |
+| Owner Review Packet | passed | yes | 240ms |
+| Owner Review Packet Check | passed | yes | 239ms |
+| Owner Review Session Brief | passed | yes | 238ms |
+| Owner Review Session Brief Check | passed | yes | 239ms |
+| Night Loop Checkpoint | passed | yes | 253ms |
+| Innovation Lane Plan | passed | yes | 1156ms |
+| Innovation Smoke | passed | yes | 1843ms |
+| Orbit Status Bridge | passed | yes | 240ms |
 
 ## Next Actions
 

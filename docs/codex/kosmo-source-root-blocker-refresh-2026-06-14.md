@@ -1,16 +1,16 @@
 # Kosmo Source-Root Blocker Refresh
 
-Generated: 2026-06-14T07:14:45.746Z
+Generated: 2026-06-14T13:22:25.204Z
 Status: `source_root_blocker_still_active`
 
 ## Summary
 
 - OneDrive status: onedrive_sync_errors_visible
 - OneDrive markers/leaf/missing: 59/58/58
-- Private library: small_workflow_mirror_visible
-- Private library book-like/target/own mounts: 39/0/0
+- Private library: library_candidate_visible
+- Private library book-like/target/own mounts: 168/1/1
 - Source-root locator: source_root_candidates_need_owner_selection
-- Source-root candidates/probable/mirrors: 706/0/64
+- Source-root candidates/probable/mirrors: 947/0/64
 - Source-root selection: source_root_owner_selection_needed, options 10
 - Decision check: passed_pending_owner_input
 - Selected decision: pending

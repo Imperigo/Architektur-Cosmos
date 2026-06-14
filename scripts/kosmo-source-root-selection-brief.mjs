@@ -7,6 +7,7 @@ const root = process.cwd();
 const args = parseArgs(process.argv.slice(2));
 const dateStamp = new Date().toISOString().slice(0, 10);
 const locatorPath = resolve(root, args.locator || `data/kosmo-source-root-locator-${dateStamp}.json`);
+const storagePath = resolve(root, args.storage || `data/kosmo-storage-mount-snapshot-${dateStamp}.json`);
 const outputJson = resolve(root, args.out || `data/kosmo-source-root-selection-brief-${dateStamp}.json`);
 const outputMd = resolve(root, args.markdown || `docs/codex/kosmo-source-root-selection-brief-${dateStamp}.md`);
 
@@ -17,6 +18,7 @@ main().catch((error) => {
 
 async function main() {
   const locator = JSON.parse(await readFile(locatorPath, 'utf8'));
+  const storage = await readOptionalJson(storagePath);
   const candidateRows = locator.candidates || [];
   const report = {
     schema_version: '0.1',
@@ -29,7 +31,7 @@ async function main() {
       public_ready_allowed: false,
       note: 'This brief converts source-root locator metadata into an owner/overseer selection worksheet. It does not read, copy, ingest or approve private source files.'
     },
-    source_refs: [relative(root, locatorPath)],
+    source_refs: [relative(root, locatorPath), relative(root, storagePath)],
     summary: {
       locator_status: locator.status,
       candidates: locator.summary?.candidates ?? candidateRows.length,
@@ -37,33 +39,17 @@ async function main() {
       workflow_or_project_mirrors: locator.summary?.workflow_or_project_mirrors ?? null,
       onedrive_like_roots: locator.summary?.onedrive_like_roots ?? null,
       roots_with_sync_errors: locator.summary?.roots_with_sync_errors ?? null,
+      archive_mount_visible: storage?.summary?.archive_mount_visible === true,
+      archive_mount_source: storage?.summary?.archive_mount_source || null,
+      archive_mount_total_gib: storage?.summary?.archive_mount_total_gib ?? null,
+      data_mount_source: storage?.summary?.data_mount_source || null,
+      data_mount_total_gib: storage?.summary?.data_mount_total_gib ?? null,
       owner_selection_required: true,
       private_inventory_allowed_after_selection: true,
       public_ready_after_brief: 0
     },
     selection_options: buildSelectionOptions(locator, candidateRows),
-    owner_questions: [
-      {
-        id: 'true_private_library_root',
-        question: 'Which exact path is the real large book/ETH/HSLU architecture source library?',
-        safe_default: 'unknown_keep_blocked'
-      },
-      {
-        id: 'archive_mount',
-        question: 'Should the archive HDD be mounted or exposed at a different path than /mnt/archiv?',
-        safe_default: 'do_not_assume_mounted'
-      },
-      {
-        id: 'onedrive_repair',
-        question: 'Should OneDrive sync repair happen before any private metadata inventory?',
-        safe_default: 'repair_before_inventory'
-      },
-      {
-        id: 'private_inventory_scope',
-        question: 'After a true root is selected, should the first inventory cover only Villa/Sogn/Ingenbohl or the whole architecture library?',
-        safe_default: 'pilots_first_metadata_only'
-      }
-    ],
+    owner_questions: buildOwnerQuestions(storage),
     blocked_until_selection: [
       'sogn_private_source_inventory',
       'ingenbohl_pdf_private_extraction',
@@ -71,7 +57,7 @@ async function main() {
       'public_ready_promotion_from_private_sources'
     ],
     next_actions: [
-      'Owner/Claude/KosmoOverseer selects or mounts the real private source root.',
+      'Owner/Claude/KosmoOverseer selects the exact real private source root, now preferably as a concrete folder path rather than a broad mount.',
       'Run npm run kosmo:private-library-diagnostic -- --roots "<selected-root>" after selection.',
       'Open a private metadata-only inventory task under KosmoZentrale, not Git.',
       'Keep all source-dependent public-ready states at 0 until provenance and rights reviews pass.'
@@ -89,6 +75,34 @@ async function main() {
   console.log(`Wrote: ${relative(root, outputMd)}`);
 }
 
+function buildOwnerQuestions(storage) {
+  const archiveVisible = storage?.summary?.archive_mount_visible === true;
+  return [
+    {
+      id: 'true_private_library_root',
+      question: 'Which exact path is the real large book/ETH/HSLU architecture source library?',
+      safe_default: 'unknown_keep_blocked'
+    },
+    {
+      id: 'archive_mount',
+      question: archiveVisible
+        ? 'The archive HDD is mounted at /mnt/archiv. Which exact folder inside it, if any, is the real private source root?'
+        : 'Should the archive HDD be mounted or exposed at a different path than /mnt/archiv?',
+      safe_default: archiveVisible ? 'select_exact_subfolder_or_keep_blocked' : 'do_not_assume_mounted'
+    },
+    {
+      id: 'onedrive_repair',
+      question: 'Should OneDrive sync repair happen before any private metadata inventory?',
+      safe_default: 'repair_before_inventory'
+    },
+    {
+      id: 'private_inventory_scope',
+      question: 'After a true root is selected, should the first inventory cover only Villa/Sogn/Ingenbohl or the whole architecture library?',
+      safe_default: 'pilots_first_metadata_only'
+    }
+  ];
+}
+
 function buildSelectionOptions(locator, candidates) {
   const options = [];
   const topCandidates = candidates.slice(0, 8);
@@ -97,6 +111,7 @@ function buildSelectionOptions(locator, candidates) {
       id: slug(candidate.classification, candidate.path),
       path: candidate.path,
       classification: candidate.classification,
+      role_guess: roleGuess(candidate),
       score: candidate.score,
       book_like_files: candidate.counts?.book_like_files ?? 0,
       lecture_like_files: candidate.counts?.lecture_like_files ?? 0,
@@ -109,6 +124,7 @@ function buildSelectionOptions(locator, candidates) {
     id: 'mount_archive_or_missing_root',
     path: null,
     classification: 'missing_or_unmounted_root',
+    role_guess: 'owner_storage_action',
     score: null,
     book_like_files: null,
     lecture_like_files: null,
@@ -121,6 +137,7 @@ function buildSelectionOptions(locator, candidates) {
       id: 'repair_onedrive_first',
       path: null,
       classification: 'sync_repair_first',
+      role_guess: 'onedrive_integrity_gate',
       score: null,
       book_like_files: null,
       lecture_like_files: null,
@@ -133,6 +150,16 @@ function buildSelectionOptions(locator, candidates) {
 }
 
 function recommendedAction(candidate) {
+  const role = roleGuess(candidate);
+  if (role === 'workflow_mirror_or_codex_context') {
+    return 'Treat as workflow/context mirror first; only select as source root if owner explicitly confirms it contains the complete private architecture library.';
+  }
+  if (role === 'asset_material_library_candidate') {
+    return 'Treat as KosmoAsset/material-library candidate; do not use as the main architecture reference root without owner confirmation.';
+  }
+  if (role === 'onedrive_mirror_candidate') {
+    return 'Treat as OneDrive mirror candidate; confirm completeness and sync health before any private metadata inventory.';
+  }
   if (candidate.classification === 'probable_large_private_library') {
     return 'Privately inspect as selected root candidate, then run private-library diagnostic with this exact path.';
   }
@@ -146,6 +173,23 @@ function recommendedAction(candidate) {
     return 'Use only as a mount/path clue; not enough evidence for private inventory.';
   }
   return 'Keep blocked unless owner/overseer confirms this exact path as the real source root.';
+}
+
+function roleGuess(candidate) {
+  const lower = String(candidate.path || '').toLowerCase();
+  if (lower.includes('kosmowebsite') || lower.includes('repo-context') || lower.includes('/reports')) return 'workflow_mirror_or_codex_context';
+  if (lower.includes('pbr library') || lower.includes('hdri') || lower.includes('/assets/')) return 'asset_material_library_candidate';
+  if (lower.includes('onedrive') || lower.includes('fromssd')) return 'onedrive_mirror_candidate';
+  if (lower.startsWith('/mnt/archiv')) return 'archive_subtree_candidate';
+  return 'unknown_owner_confirmation_required';
+}
+
+async function readOptionalJson(path) {
+  try {
+    return JSON.parse(await readFile(path, 'utf8'));
+  } catch {
+    return null;
+  }
 }
 
 function renderMarkdown(report) {
@@ -163,15 +207,18 @@ function renderMarkdown(report) {
   lines.push(`- Workflow/project mirrors: ${report.summary.workflow_or_project_mirrors}`);
   lines.push(`- OneDrive-like roots: ${report.summary.onedrive_like_roots}`);
   lines.push(`- Roots with sync errors: ${report.summary.roots_with_sync_errors}`);
+  lines.push(`- Archive mount visible: ${report.summary.archive_mount_visible ? 'yes' : 'no'}`);
+  lines.push(`- Archive mount source/total GiB: ${report.summary.archive_mount_source || '-'}/${report.summary.archive_mount_total_gib ?? '-'}`);
+  lines.push(`- Data mount source/total GiB: ${report.summary.data_mount_source || '-'}/${report.summary.data_mount_total_gib ?? '-'}`);
   lines.push(`- Owner selection required: ${report.summary.owner_selection_required ? 'yes' : 'no'}`);
   lines.push(`- Public-ready after brief: ${report.summary.public_ready_after_brief}`);
   lines.push('');
   lines.push('## Selection Options');
   lines.push('');
-  lines.push('| Option | Classification | Score | Path | Safe default | Recommended action |');
-  lines.push('| --- | --- | ---: | --- | --- | --- |');
+  lines.push('| Option | Role guess | Classification | Score | Path | Safe default | Recommended action |');
+  lines.push('| --- | --- | --- | ---: | --- | --- | --- |');
   for (const option of report.selection_options) {
-    lines.push(`| \`${option.id}\` | ${option.classification} | ${option.score ?? '-'} | ${option.path ? `\`${escapePipe(option.path)}\`` : '-' } | ${option.safe_default} | ${escapePipe(option.recommended_action)} |`);
+    lines.push(`| \`${option.id}\` | ${option.role_guess} | ${option.classification} | ${option.score ?? '-'} | ${option.path ? `\`${escapePipe(option.path)}\`` : '-' } | ${option.safe_default} | ${escapePipe(option.recommended_action)} |`);
   }
   lines.push('');
   lines.push('## Owner Questions');
