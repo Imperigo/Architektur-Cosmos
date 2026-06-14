@@ -19,7 +19,8 @@ const refs = {
   pilotEvidence: resolve(root, args.pilotEvidence || `data/kosmoreferences-pilot-evidence-matrix-${dateStamp}.json`),
   pilotGapLabelReview: resolve(root, args.pilotGapLabelReview || `data/kosmoreferences-pilot-gap-label-review-${dateStamp}.json`),
   pilotGapLabelReviewCheck: resolve(root, args.pilotGapLabelReviewCheck || `data/kosmoreferences-pilot-gap-label-review-check-${dateStamp}.json`),
-  choiceMatrix: resolve(root, args.choiceMatrix || `data/kosmo-source-root-owner-choice-consequence-matrix-${dateStamp}.json`)
+  choiceMatrix: resolve(root, args.choiceMatrix || `data/kosmo-source-root-owner-choice-consequence-matrix-${dateStamp}.json`),
+  orbitBridge: resolve(root, args.orbitBridge || `data/kosmo-orbit-status-bridge-${dateStamp}.json`)
 };
 
 const outputJson = resolve(root, args.out || `data/kosmo-source-independent-work-queue-${dateStamp}.json`);
@@ -43,7 +44,8 @@ async function main() {
     pilotEvidence: await readJson(refs.pilotEvidence),
     pilotGapLabelReview: await readOptionalJson(refs.pilotGapLabelReview),
     pilotGapLabelReviewCheck: await readOptionalJson(refs.pilotGapLabelReviewCheck),
-    choiceMatrix: await readJson(refs.choiceMatrix)
+    choiceMatrix: await readJson(refs.choiceMatrix),
+    orbitBridge: await readOptionalJson(refs.orbitBridge)
   };
   const queue = buildQueue(reports);
 
@@ -78,7 +80,8 @@ function buildQueue({
   pilotEvidence,
   pilotGapLabelReview,
   pilotGapLabelReviewCheck,
-  choiceMatrix
+  choiceMatrix,
+  orbitBridge
 }) {
   const failures = [];
   if (dataLaneSweep.status !== 'kosmodata_lane_sweep_review_only_passed') failures.push(`Data lane not passed: ${dataLaneSweep.status}`);
@@ -94,6 +97,10 @@ function buildQueue({
     pilotGapLabelReviewCheck?.status === 'pilot_gap_label_review_guard_passed';
   const localWorkerContractDone = localWorkerOutputContractReview?.status === 'local_worker_output_contract_review_ready' &&
     localWorkerOutputContractReviewCheck?.status === 'local_worker_output_contract_review_guard_passed';
+  const orbitRefreshDone = ['orbit_bridge_ready_with_blockers', 'orbit_bridge_all_ready_review_only'].includes(orbitBridge?.status) &&
+    (orbitBridge?.summary?.cards ?? 0) >= 28 &&
+    (orbitBridge?.summary?.source_independent_work_queue_completed_review_only ?? 0) >= 3 &&
+    (orbitBridge?.summary?.public_ready_after_bridge ?? 0) === 0;
 
   const tasks = [
     task({
@@ -165,11 +172,14 @@ function buildQueue({
       lane: 'orbit',
       actor: 'codex',
       action: 'Refresh Orbit status after source-independent queue changes and keep blockers visible.',
-      executableNow: true,
+      executableNow: !orbitRefreshDone,
+      completed: orbitRefreshDone,
       ownerAction: false,
       sourceIndependent: true,
       command: 'npm run kosmo:orbit-status-bridge',
-      evidence: `source root blocked ${nightLoop.summary?.source_root_blocked === true ? 'yes' : 'no'}, private inventory blocked ${nightLoop.summary?.private_inventory_blocked === true ? 'yes' : 'no'}`
+      evidence: orbitRefreshDone
+        ? `completed ${orbitBridge.summary?.cards ?? 0} cards, blockers ${orbitBridge.summary?.blocking_cards ?? 0}, owner ${orbitBridge.summary?.owner_action_cards ?? 0}`
+        : `source root blocked ${nightLoop.summary?.source_root_blocked === true ? 'yes' : 'no'}, private inventory blocked ${nightLoop.summary?.private_inventory_blocked === true ? 'yes' : 'no'}`
     })
   ];
 

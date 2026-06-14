@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T16:20:20.599Z",
+  "generated_at": "2026-06-14T16:24:14.877Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 164
+      "files": 165
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 207
+      "files": 208
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-14-codex-synergiebericht-166-source-free-queue-complete.md",
+      "title": "Codex Synergiebericht 166: Source-Free Queue Complete",
+      "mirrored_inboxes": 2,
+      "bytes": 1611,
+      "modified_at": "2026-06-14T16:24:04.967Z"
+    },
     {
       "filename": "2026-06-14-codex-synergiebericht-165-local-worker-output-contract-review.md",
       "title": "Codex Synergiebericht 165: Local Worker Output Contract Review",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 2027,
       "modified_at": "2026-06-14T15:14:29.184Z"
-    },
-    {
-      "filename": "2026-06-14-codex-synergiebericht-158-post-owner-activation-queue.md",
-      "title": "Codex Synergiebericht 158: Post-Owner Activation Queue",
-      "mirrored_inboxes": 2,
-      "bytes": 1727,
-      "modified_at": "2026-06-14T15:08:46.943Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 158-165 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 159-166 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."

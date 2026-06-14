@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T16:18:48.425Z",
+  "generated_at": "2026-06-14T16:22:52.326Z",
   "status": "source_independent_work_queue_ready",
   "policy": {
     "queue_only": true,
@@ -26,7 +26,8 @@
     "data/kosmoreferences-pilot-evidence-matrix-2026-06-14.json",
     "data/kosmoreferences-pilot-gap-label-review-2026-06-14.json",
     "data/kosmoreferences-pilot-gap-label-review-check-2026-06-14.json",
-    "data/kosmo-source-root-owner-choice-consequence-matrix-2026-06-14.json"
+    "data/kosmo-source-root-owner-choice-consequence-matrix-2026-06-14.json",
+    "data/kosmo-orbit-status-bridge-2026-06-14.json"
   ],
   "summary": {
     "data_lane_status": "kosmodata_lane_sweep_review_only_passed",
@@ -34,8 +35,8 @@
     "source_root_blocked": true,
     "private_inventory_blocked": true,
     "tasks": 6,
-    "completed_review_only": 3,
-    "codex_executable_now": 1,
+    "completed_review_only": 4,
+    "codex_executable_now": 0,
     "owner_actions": 2,
     "blocked_by_private_or_source_root": 0,
     "failures": 0,
@@ -131,11 +132,11 @@
       "id": "codex_orbit_status_refresh",
       "lane": "orbit",
       "actor": "codex",
-      "status": "ready",
+      "status": "completed_review_only",
       "action": "Refresh Orbit status after source-independent queue changes and keep blockers visible.",
       "command": "npm run kosmo:orbit-status-bridge",
-      "evidence": "source root blocked yes, private inventory blocked yes",
-      "executable_now": true,
+      "evidence": "completed 28 cards, blockers 4, owner 16",
+      "executable_now": false,
       "owner_action_required": false,
       "source_independent": true,
       "blocked_by_private_or_source_root": false,

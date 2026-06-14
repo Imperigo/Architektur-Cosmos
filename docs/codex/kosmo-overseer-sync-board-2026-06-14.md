@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board
 
-Generated: 2026-06-14T16:20:20.599Z
+Generated: 2026-06-14T16:24:14.877Z
 Status: `overseer_sync_board_ready`
 
 ## Summary
@@ -20,6 +20,7 @@ Status: `overseer_sync_board_ready`
 
 | File | Title | Mirrors |
 | --- | --- | ---: |
+| `2026-06-14-codex-synergiebericht-166-source-free-queue-complete.md` | Codex Synergiebericht 166: Source-Free Queue Complete | 2 |
 | `2026-06-14-codex-synergiebericht-165-local-worker-output-contract-review.md` | Codex Synergiebericht 165: Local Worker Output Contract Review | 2 |
 | `2026-06-14-codex-synergiebericht-164-pilot-gap-label-review.md` | Codex Synergiebericht 164: Pilot Gap Label Review | 2 |
 | `2026-06-14-codex-synergiebericht-163-asset-candidate-taxonomy-review.md` | Codex Synergiebericht 163: Asset Candidate Taxonomy Review | 2 |
@@ -27,7 +28,6 @@ Status: `overseer_sync_board_ready`
 | `2026-06-14-codex-synergiebericht-161-source-root-choice-consequence-matrix.md` | Codex Synergiebericht 161: Source Root Choice Consequence Matrix | 2 |
 | `2026-06-14-codex-synergiebericht-160-source-root-owner-final-decision-brief.md` | Codex Synergiebericht 160: Source Root Owner Final Decision Brief | 2 |
 | `2026-06-14-codex-synergiebericht-159-post-owner-activation-queue-guard.md` | Codex Synergiebericht 159: Post-Owner Activation Queue Guard | 2 |
-| `2026-06-14-codex-synergiebericht-158-post-owner-activation-queue.md` | Codex Synergiebericht 158: Post-Owner Activation Queue | 2 |
 
 ## Blockers
 
@@ -40,7 +40,7 @@ Status: `overseer_sync_board_ready`
 
 ## Next Actions
 
-- Claude/KosmoOverseer reviews latest handoffs 158-165 before editing related files.
+- Claude/KosmoOverseer reviews latest handoffs 159-166 before editing related files.
 - Use the owner review session brief as the next owner-facing entry point.
 - Keep local worker tasks review-only while source-root and owner answers are pending.
 - After any explicit owner answer, update intake first, then rerun guards and this sync board.
