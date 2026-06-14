@@ -16,6 +16,10 @@ const ownerDecisionSessionPath = resolve(
   root,
   args.ownerDecisionSession || 'examples/kosmo-references/provenance/owner-review-decision-session-2026-06-13.json'
 );
+const sourceRootSelectionBriefPath = resolve(
+  root,
+  args.sourceRootSelectionBrief || `data/kosmo-source-root-selection-brief-${dateStamp}.json`
+);
 const outputJson = resolve(root, args.out || `data/kosmo-owner-answer-sheet-${dateStamp}.json`);
 const outputMd = resolve(root, args.markdown || `docs/codex/kosmo-owner-answer-sheet-${dateStamp}.md`);
 
@@ -28,6 +32,8 @@ async function main() {
   const sourceRootSession = JSON.parse(await readFile(sourceRootSessionPath, 'utf8'));
   const ownerCardSet = JSON.parse(await readFile(ownerCardSetPath, 'utf8'));
   const ownerDecisionSession = JSON.parse(await readFile(ownerDecisionSessionPath, 'utf8'));
+  const sourceRootSelectionBrief = await readOptionalJson(sourceRootSelectionBriefPath);
+  const sourceRootOptions = sourceRootSelectionBrief?.selection_options || sourceRootSession.selection_options;
 
   const sheet = {
     schema_version: '0.1',
@@ -43,19 +49,21 @@ async function main() {
     source_refs: [
       relative(root, sourceRootSessionPath),
       relative(root, ownerCardSetPath),
-      relative(root, ownerDecisionSessionPath)
+      relative(root, ownerDecisionSessionPath),
+      relative(root, sourceRootSelectionBriefPath)
     ],
     summary: {
       source_root_decision_status: sourceRootSession.status,
       source_root_allowed_decisions: sourceRootSession.allowed_decisions.length,
-      source_root_options: sourceRootSession.selection_options.length,
+      source_root_options: sourceRootOptions.length,
+      source_root_options_source: sourceRootSelectionBrief ? 'source_root_selection_brief' : 'source_root_decision_session',
       owner_cards: ownerCardSet.summary.cards,
       owner_card_items: ownerCardSet.summary.open_items,
       owner_reference_decisions: ownerDecisionSession.decisions.length,
       public_ready_after_sheet: 0
     },
     sections: [
-      buildSourceRootSection(sourceRootSession),
+      buildSourceRootSection(sourceRootSession, sourceRootOptions),
       buildOwnerCardsSection(ownerCardSet),
       buildReferenceDecisionSection(ownerDecisionSession)
     ],
@@ -81,7 +89,7 @@ async function main() {
   console.log(`Wrote: ${relative(root, outputMd)}`);
 }
 
-function buildSourceRootSection(session) {
+function buildSourceRootSection(session, sourceRootOptions) {
   return {
     id: 'source-root-decision',
     title: 'Source-Root Decision',
@@ -96,10 +104,11 @@ function buildSourceRootSection(session) {
       { field: 'selected_root_path', allowed_values: ['absolute local path or null'] },
       { field: 'owner_note', allowed_values: ['short free text'] }
     ],
-    top_options: session.selection_options.map((option) => ({
+    top_options: sourceRootOptions.map((option) => ({
       id: option.id,
       path: option.path,
       classification: option.classification,
+      role_guess: option.role_guess || null,
       recommended_action: option.recommended_action,
       safe_default: option.safe_default
     }))
@@ -142,6 +151,14 @@ function buildReferenceDecisionSection(session) {
   };
 }
 
+async function readOptionalJson(path) {
+  try {
+    return JSON.parse(await readFile(path, 'utf8'));
+  } catch {
+    return null;
+  }
+}
+
 function renderMarkdown(sheet) {
   const sourceRoot = sheet.sections.find((section) => section.id === 'source-root-decision');
   const cards = sheet.sections.find((section) => section.id === 'owner-review-cards');
@@ -163,6 +180,7 @@ function renderMarkdown(sheet) {
   lines.push('## Summary');
   lines.push('');
   lines.push(`- Source-root options: ${sheet.summary.source_root_options}`);
+  lines.push(`- Source-root options source: ${sheet.summary.source_root_options_source}`);
   lines.push(`- Owner cards: ${sheet.summary.owner_cards}`);
   lines.push(`- Owner card items: ${sheet.summary.owner_card_items}`);
   lines.push(`- Reference decision items: ${sheet.summary.owner_reference_decisions}`);
@@ -184,7 +202,7 @@ function renderMarkdown(sheet) {
   lines.push('');
   lines.push('Top options:');
   for (const option of sourceRoot.top_options) {
-    lines.push(`- \`${option.id}\` - ${option.path || 'no path'} - ${option.classification} - ${option.safe_default}`);
+    lines.push(`- \`${option.id}\` - ${option.path || 'no path'} - ${option.classification}${option.role_guess ? `/${option.role_guess}` : ''} - ${option.safe_default}`);
   }
   lines.push('');
   lines.push('Blocked until recorded selection:');

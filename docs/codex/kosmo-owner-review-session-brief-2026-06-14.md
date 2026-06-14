@@ -1,6 +1,6 @@
 # Kosmo Owner Review Session Brief
 
-Generated: 2026-06-14T07:22:01.457Z
+Generated: 2026-06-14T13:34:20.863Z
 Status: `owner_review_session_brief_ready`
 
 ## Guardrails
@@ -63,11 +63,11 @@ Status: `owner_review_session_brief_ready`
 - Safe default: `keep_blocked`
 
 Top Optionen:
-- `workflow_or_project_mirror`: /mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC/KosmoWebsite - Treat as workflow mirror only; do not use as the large architecture source library.
-- `possible_source_root`: /mnt/data/ArchitekturKosmos - Keep blocked unless owner/overseer confirms this exact path as the real source root.
-- `incomplete_onedrive_candidate`: /home/andrin-baumann/ArchitekturKosmos Onedrive - Do not inventory yet; repair sync errors or confirm the complete synced root first.
-- `weak_path_signal`: /mnt/archiv - Use only as a mount/path clue; not enough evidence for private inventory.
-- `weak_path_signal`: /mnt/data/_archive_logs - Use only as a mount/path clue; not enough evidence for private inventory.
+- `possible_source_root/workflow_mirror_or_codex_context`: /mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC/KosmoWebsite - Treat as workflow/context mirror first; only select as source root if owner explicitly confirms it contains the complete private architecture library.
+- `possible_source_root/asset_material_library_candidate`: /mnt/archiv/ArchitekturKosmos/Assets/Claude to Blender/abgabe/TKB_Bibliothek_Live-Final-Test_Abgabe - Treat as KosmoAsset/material-library candidate; do not use as the main architecture reference root without owner confirmation.
+- `possible_source_root/asset_material_library_candidate`: /mnt/archiv/ArchitekturKosmos/Assets/Claude to Blender/Ai Architektur Workflow/PBR Library + HDRI - Treat as KosmoAsset/material-library candidate; do not use as the main architecture reference root without owner confirmation.
+- `possible_source_root/workflow_mirror_or_codex_context`: /mnt/archiv/01 ArchitekturKosmos Projekt/00 Einrichtung Home_PC/KosmoWebsite - Treat as workflow/context mirror first; only select as source root if owner explicitly confirms it contains the complete private architecture library.
+- `possible_source_root/archive_subtree_candidate`: /mnt/archiv/ArchitekturKosmos/Assets - Keep blocked unless owner/overseer confirms this exact path as the real source root.
 
 ## Paste-Ready Fragerunde
 

@@ -1,6 +1,6 @@
 # Kosmo Owner Answer Sheet
 
-Generated: 2026-06-14T07:21:58.473Z
+Generated: 2026-06-14T13:34:14.182Z
 Status: `owner_answer_sheet_ready`
 
 ## Guardrails
@@ -13,6 +13,7 @@ Status: `owner_answer_sheet_ready`
 ## Summary
 
 - Source-root options: 10
+- Source-root options source: source_root_selection_brief
 - Owner cards: 5
 - Owner card items: 16
 - Reference decision items: 10
@@ -37,16 +38,16 @@ owner_note:
 ```
 
 Top options:
-- `workflow-or-project-mirror-mnt-data-architekturkosmos-11-ai-workflow-onedrive-2026-06-09-0` - /mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC/KosmoWebsite - workflow_or_project_mirror - keep_blocked
-- `possible-source-root-mnt-data-architekturkosmos` - /mnt/data/ArchitekturKosmos - possible_source_root - keep_blocked
-- `incomplete-onedrive-candidate-home-andrin-baumann-architekturkosmos-onedrive` - /home/andrin-baumann/ArchitekturKosmos Onedrive - incomplete_onedrive_candidate - keep_blocked
-- `weak-path-signal-mnt-archiv` - /mnt/archiv - weak_path_signal - keep_blocked
-- `weak-path-signal-mnt-data-archive-logs` - /mnt/data/_archive_logs - weak_path_signal - keep_blocked
-- `weak-path-signal-mnt-data-zum-archivieren` - /mnt/data/Zum_Archivieren - weak_path_signal - keep_blocked
-- `workflow-or-project-mirror-home-andrin-baumann-architekturkosmos-onedrive-11-ai-workflow` - /home/andrin-baumann/ArchitekturKosmos Onedrive/11 AI Workflow - workflow_or_project_mirror - keep_blocked
-- `workflow-or-project-mirror-home-andrin-baumann-architekturkosmos-onedrive-11-ai-workflow-0` - /home/andrin-baumann/ArchitekturKosmos Onedrive/11 AI Workflow/00 Architekturkosmos Zentrale - workflow_or_project_mirror - keep_blocked
-- `mount_archive_or_missing_root` - no path - missing_or_unmounted_root - keep_blocked
-- `repair_onedrive_first` - no path - sync_repair_first - repair_before_inventory
+- `possible-source-root-mnt-archiv-fromssd-onedrive-2026-06-08-00-einrichtung-home-pc-kosmowe` - /mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC/KosmoWebsite - possible_source_root/workflow_mirror_or_codex_context - keep_blocked
+- `possible-source-root-mnt-archiv-architekturkosmos-assets-claude-to-blender-abgabe-tkb-bibl` - /mnt/archiv/ArchitekturKosmos/Assets/Claude to Blender/abgabe/TKB_Bibliothek_Live-Final-Test_Abgabe - possible_source_root/asset_material_library_candidate - keep_blocked
+- `possible-source-root-mnt-archiv-architekturkosmos-assets-claude-to-blender-ai-architektur-` - /mnt/archiv/ArchitekturKosmos/Assets/Claude to Blender/Ai Architektur Workflow/PBR Library + HDRI - possible_source_root/asset_material_library_candidate - keep_blocked
+- `possible-source-root-mnt-archiv-01-architekturkosmos-projekt-00-einrichtung-home-pc-kosmow` - /mnt/archiv/01 ArchitekturKosmos Projekt/00 Einrichtung Home_PC/KosmoWebsite - possible_source_root/workflow_mirror_or_codex_context - keep_blocked
+- `possible-source-root-mnt-archiv-architekturkosmos-assets` - /mnt/archiv/ArchitekturKosmos/Assets - possible_source_root/archive_subtree_candidate - keep_blocked
+- `possible-source-root-mnt-archiv-fromssd-onedrive-2026-06-08-00-einrichtung-home-pc` - /mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC - possible_source_root/onedrive_mirror_candidate - keep_blocked
+- `possible-source-root-mnt-archiv-fromssd-onedrive-2026-06-08-00-einrichtung-home-pc-kosmowe` - /mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC/KosmoWebsite/repo-context - possible_source_root/workflow_mirror_or_codex_context - keep_blocked
+- `possible-source-root-mnt-archiv-fromssd-onedrive-2026-06-08-00-einrichtung-home-pc-kosmowe` - /mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC/KosmoWebsite/reports - possible_source_root/workflow_mirror_or_codex_context - keep_blocked
+- `mount_archive_or_missing_root` - no path - missing_or_unmounted_root/owner_storage_action - keep_blocked
+- `repair_onedrive_first` - no path - sync_repair_first/onedrive_integrity_gate - repair_before_inventory
 
 Blocked until recorded selection:
 - `sogn_private_source_inventory`

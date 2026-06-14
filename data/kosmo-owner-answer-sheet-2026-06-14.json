@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T07:21:58.473Z",
+  "generated_at": "2026-06-14T13:34:14.182Z",
   "status": "owner_answer_sheet_ready",
   "policy": {
     "records_decisions": false,
@@ -12,12 +12,14 @@
   "source_refs": [
     "examples/kosmo-references/provenance/source-root-decision-session-2026-06-14.json",
     "data/kosmo-owner-review-card-set-2026-06-14.json",
-    "examples/kosmo-references/provenance/owner-review-decision-session-2026-06-13.json"
+    "examples/kosmo-references/provenance/owner-review-decision-session-2026-06-13.json",
+    "data/kosmo-source-root-selection-brief-2026-06-14.json"
   ],
   "summary": {
     "source_root_decision_status": "source_root_decision_session_pending",
     "source_root_allowed_decisions": 5,
     "source_root_options": 10,
+    "source_root_options_source": "source_root_selection_brief",
     "owner_cards": 5,
     "owner_card_items": 16,
     "owner_reference_decisions": 10,
@@ -70,65 +72,74 @@
       ],
       "top_options": [
         {
-          "id": "workflow-or-project-mirror-mnt-data-architekturkosmos-11-ai-workflow-onedrive-2026-06-09-0",
-          "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09/00 Einrichtung Home_PC/KosmoWebsite",
-          "classification": "workflow_or_project_mirror",
-          "recommended_action": "Treat as workflow mirror only; do not use as the large architecture source library.",
+          "id": "possible-source-root-mnt-archiv-fromssd-onedrive-2026-06-08-00-einrichtung-home-pc-kosmowe",
+          "path": "/mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC/KosmoWebsite",
+          "classification": "possible_source_root",
+          "role_guess": "workflow_mirror_or_codex_context",
+          "recommended_action": "Treat as workflow/context mirror first; only select as source root if owner explicitly confirms it contains the complete private architecture library.",
           "safe_default": "keep_blocked"
         },
         {
-          "id": "possible-source-root-mnt-data-architekturkosmos",
-          "path": "/mnt/data/ArchitekturKosmos",
+          "id": "possible-source-root-mnt-archiv-architekturkosmos-assets-claude-to-blender-abgabe-tkb-bibl",
+          "path": "/mnt/archiv/ArchitekturKosmos/Assets/Claude to Blender/abgabe/TKB_Bibliothek_Live-Final-Test_Abgabe",
           "classification": "possible_source_root",
+          "role_guess": "asset_material_library_candidate",
+          "recommended_action": "Treat as KosmoAsset/material-library candidate; do not use as the main architecture reference root without owner confirmation.",
+          "safe_default": "keep_blocked"
+        },
+        {
+          "id": "possible-source-root-mnt-archiv-architekturkosmos-assets-claude-to-blender-ai-architektur-",
+          "path": "/mnt/archiv/ArchitekturKosmos/Assets/Claude to Blender/Ai Architektur Workflow/PBR Library + HDRI",
+          "classification": "possible_source_root",
+          "role_guess": "asset_material_library_candidate",
+          "recommended_action": "Treat as KosmoAsset/material-library candidate; do not use as the main architecture reference root without owner confirmation.",
+          "safe_default": "keep_blocked"
+        },
+        {
+          "id": "possible-source-root-mnt-archiv-01-architekturkosmos-projekt-00-einrichtung-home-pc-kosmow",
+          "path": "/mnt/archiv/01 ArchitekturKosmos Projekt/00 Einrichtung Home_PC/KosmoWebsite",
+          "classification": "possible_source_root",
+          "role_guess": "workflow_mirror_or_codex_context",
+          "recommended_action": "Treat as workflow/context mirror first; only select as source root if owner explicitly confirms it contains the complete private architecture library.",
+          "safe_default": "keep_blocked"
+        },
+        {
+          "id": "possible-source-root-mnt-archiv-architekturkosmos-assets",
+          "path": "/mnt/archiv/ArchitekturKosmos/Assets",
+          "classification": "possible_source_root",
+          "role_guess": "archive_subtree_candidate",
           "recommended_action": "Keep blocked unless owner/overseer confirms this exact path as the real source root.",
           "safe_default": "keep_blocked"
         },
         {
-          "id": "incomplete-onedrive-candidate-home-andrin-baumann-architekturkosmos-onedrive",
-          "path": "/home/andrin-baumann/ArchitekturKosmos Onedrive",
-          "classification": "incomplete_onedrive_candidate",
-          "recommended_action": "Do not inventory yet; repair sync errors or confirm the complete synced root first.",
+          "id": "possible-source-root-mnt-archiv-fromssd-onedrive-2026-06-08-00-einrichtung-home-pc",
+          "path": "/mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC",
+          "classification": "possible_source_root",
+          "role_guess": "onedrive_mirror_candidate",
+          "recommended_action": "Treat as OneDrive mirror candidate; confirm completeness and sync health before any private metadata inventory.",
           "safe_default": "keep_blocked"
         },
         {
-          "id": "weak-path-signal-mnt-archiv",
-          "path": "/mnt/archiv",
-          "classification": "weak_path_signal",
-          "recommended_action": "Use only as a mount/path clue; not enough evidence for private inventory.",
+          "id": "possible-source-root-mnt-archiv-fromssd-onedrive-2026-06-08-00-einrichtung-home-pc-kosmowe",
+          "path": "/mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC/KosmoWebsite/repo-context",
+          "classification": "possible_source_root",
+          "role_guess": "workflow_mirror_or_codex_context",
+          "recommended_action": "Treat as workflow/context mirror first; only select as source root if owner explicitly confirms it contains the complete private architecture library.",
           "safe_default": "keep_blocked"
         },
         {
-          "id": "weak-path-signal-mnt-data-archive-logs",
-          "path": "/mnt/data/_archive_logs",
-          "classification": "weak_path_signal",
-          "recommended_action": "Use only as a mount/path clue; not enough evidence for private inventory.",
-          "safe_default": "keep_blocked"
-        },
-        {
-          "id": "weak-path-signal-mnt-data-zum-archivieren",
-          "path": "/mnt/data/Zum_Archivieren",
-          "classification": "weak_path_signal",
-          "recommended_action": "Use only as a mount/path clue; not enough evidence for private inventory.",
-          "safe_default": "keep_blocked"
-        },
-        {
-          "id": "workflow-or-project-mirror-home-andrin-baumann-architekturkosmos-onedrive-11-ai-workflow",
-          "path": "/home/andrin-baumann/ArchitekturKosmos Onedrive/11 AI Workflow",
-          "classification": "workflow_or_project_mirror",
-          "recommended_action": "Treat as workflow mirror only; do not use as the large architecture source library.",
-          "safe_default": "keep_blocked"
-        },
-        {
-          "id": "workflow-or-project-mirror-home-andrin-baumann-architekturkosmos-onedrive-11-ai-workflow-0",
-          "path": "/home/andrin-baumann/ArchitekturKosmos Onedrive/11 AI Workflow/00 Architekturkosmos Zentrale",
-          "classification": "workflow_or_project_mirror",
-          "recommended_action": "Treat as workflow mirror only; do not use as the large architecture source library.",
+          "id": "possible-source-root-mnt-archiv-fromssd-onedrive-2026-06-08-00-einrichtung-home-pc-kosmowe",
+          "path": "/mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC/KosmoWebsite/reports",
+          "classification": "possible_source_root",
+          "role_guess": "workflow_mirror_or_codex_context",
+          "recommended_action": "Treat as workflow/context mirror first; only select as source root if owner explicitly confirms it contains the complete private architecture library.",
           "safe_default": "keep_blocked"
         },
         {
           "id": "mount_archive_or_missing_root",
           "path": null,
           "classification": "missing_or_unmounted_root",
+          "role_guess": "owner_storage_action",
           "recommended_action": "Mount or expose the real archive/OneDrive library root, then rerun locator and private-library diagnostic.",
           "safe_default": "keep_blocked"
         },
@@ -136,6 +147,7 @@
           "id": "repair_onedrive_first",
           "path": null,
           "classification": "sync_repair_first",
+          "role_guess": "onedrive_integrity_gate",
           "recommended_action": "Resolve OneDrive sync error roots before using visible OneDrive mirrors for inventory.",
           "safe_default": "repair_before_inventory"
         }

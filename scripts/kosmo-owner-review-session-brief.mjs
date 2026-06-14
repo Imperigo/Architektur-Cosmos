@@ -80,6 +80,7 @@ async function main() {
         id: option.id,
         path: option.path,
         classification: option.classification,
+        role_guess: option.role_guess || null,
         recommended_action: option.recommended_action,
         safe_default: option.safe_default
       }))
@@ -204,7 +205,7 @@ function renderMarkdown(brief) {
   lines.push('');
   lines.push('Top Optionen:');
   brief.source_root_status.top_options.forEach((option) => {
-    lines.push(`- \`${option.classification}\`: ${option.path || option.id} - ${option.recommended_action}`);
+    lines.push(`- \`${option.classification}${option.role_guess ? `/${option.role_guess}` : ''}\`: ${option.path || option.id} - ${option.recommended_action}`);
   });
   lines.push('');
   lines.push('## Paste-Ready Fragerunde');
