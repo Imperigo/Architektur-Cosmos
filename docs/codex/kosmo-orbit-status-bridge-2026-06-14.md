@@ -1,13 +1,13 @@
 # Kosmo Orbit Status Bridge
 
-Generated: 2026-06-14T13:23:12.254Z
+Generated: 2026-06-14T13:27:32.383Z
 Status: `orbit_bridge_ready_with_blockers`
 
 ## Summary
 
-- Cards: 12
+- Cards: 13
 - Blocking cards: 4
-- Owner action cards: 8
+- Owner action cards: 9
 - Source root blocked: yes
 - Day batch: day_batch_loop_passed_review_only
 - Source-root owner action: source_root_owner_action_required
@@ -18,6 +18,7 @@ Status: `orbit_bridge_ready_with_blockers`
 - Private metadata inventory check: private_metadata_inventory_guard_passed
 - Local models: local_model_inventory_ready_review_only
 - Asset bridge: kosmoasset_reference_bridge_review_only_passed
+- Asset source candidate map: kosmoasset_source_candidate_map_review_only_ready, candidates 3
 - Innovation smoke: innovation_smoke_passed_review_only
 - Public-ready after bridge: 0
 
@@ -34,6 +35,7 @@ Status: `orbit_bridge_ready_with_blockers`
 | `pilot-references` Pilot References | review_only | yes | 3 pilots, 12 evidence gaps |
 | `kosmoasset` KosmoAsset | review_only | yes | 6 human reviews open, public-ready 0 |
 | `asset-reference-bridge` Asset Reference Bridge | review_only_ready | yes | 3/3 pilot bridges, 6 assets, public-ready 0 |
+| `asset-source-candidates` Asset Source Candidates | review_only_ready | yes | 3 asset-lane candidates, material 2, public-ready 0 |
 | `worker-boundary` Worker Boundary | locked | no | 3 workers, 3 blocked command classes |
 | `innovation` Innovation Lanes | review_only_ready | no | 5/5 public-safe smoke checks passed |
 | `owner-handoff` Owner Handoff | ready | yes | 6 questions, no filled answers recorded |
@@ -48,6 +50,7 @@ Status: `orbit_bridge_ready_with_blockers`
 - `private_metadata_inventory_card`
 - `pilot_reference_cards`
 - `asset_reference_bridge_card`
+- `asset_source_candidate_map_card`
 - `worker_boundary_card`
 - `innovation_lane_card`
 - `owner_handoff_card`

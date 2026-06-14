@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T13:23:12.254Z",
+  "generated_at": "2026-06-14T13:27:32.383Z",
   "status": "orbit_bridge_ready_with_blockers",
   "policy": {
     "dashboard_only": true,
@@ -25,14 +25,15 @@
     "data/kosmo-worker-boundary-pack-check-2026-06-14.json",
     "data/kosmo-owner-review-packet-check-2026-06-14.json",
     "data/kosmoasset-reference-bridge-check-2026-06-14.json",
+    "data/kosmoasset-source-candidate-map-2026-06-14.json",
     "data/kosmo-innovation-lane-plan-2026-06-14.json",
     "data/kosmo-innovation-smoke-2026-06-14.json",
     "data/kosmo-night-loop-checkpoint-2026-06-14.json"
   ],
   "summary": {
-    "cards": 12,
+    "cards": 13,
     "blocking_cards": 4,
-    "owner_action_cards": 8,
+    "owner_action_cards": 9,
     "source_root_blocked": true,
     "day_batch_status": "day_batch_loop_passed_review_only",
     "source_root_owner_action_status": "source_root_owner_action_required",
@@ -43,6 +44,8 @@
     "private_metadata_inventory_check_status": "private_metadata_inventory_guard_passed",
     "local_model_inventory_status": "local_model_inventory_ready_review_only",
     "asset_bridge_status": "kosmoasset_reference_bridge_review_only_passed",
+    "asset_source_candidate_map_status": "kosmoasset_source_candidate_map_review_only_ready",
+    "asset_source_candidate_map_candidates": 3,
     "innovation_smoke_status": "innovation_smoke_passed_review_only",
     "public_ready_after_bridge": 0
   },
@@ -129,6 +132,15 @@
       "source_ref": "data/kosmoasset-reference-bridge-check-2026-06-14.json"
     },
     {
+      "id": "asset-source-candidates",
+      "title": "Asset Source Candidates",
+      "status": "review_only_ready",
+      "signal": "3 asset-lane candidates, material 2, public-ready 0",
+      "owner_action_required": true,
+      "route_hint": "Map source-root candidates into KosmoAsset lanes without ingestion",
+      "source_ref": "data/kosmoasset-source-candidate-map-2026-06-14.json"
+    },
+    {
       "id": "worker-boundary",
       "title": "Worker Boundary",
       "status": "locked",
@@ -165,6 +177,7 @@
     "private_metadata_inventory_card",
     "pilot_reference_cards",
     "asset_reference_bridge_card",
+    "asset_source_candidate_map_card",
     "worker_boundary_card",
     "innovation_lane_card",
     "owner_handoff_card"

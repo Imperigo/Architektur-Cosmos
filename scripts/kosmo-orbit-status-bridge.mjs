@@ -22,6 +22,7 @@ const refs = {
   workerBoundary: `data/kosmo-worker-boundary-pack-check-${dateStamp}.json`,
   ownerPacket: `data/kosmo-owner-review-packet-check-${dateStamp}.json`,
   assetBridge: `data/kosmoasset-reference-bridge-check-${dateStamp}.json`,
+  assetSourceCandidateMap: `data/kosmoasset-source-candidate-map-${dateStamp}.json`,
   innovationPlan: `data/kosmo-innovation-lane-plan-${dateStamp}.json`,
   innovationSmoke: `data/kosmo-innovation-smoke-${dateStamp}.json`,
   nightLoop: `data/kosmo-night-loop-checkpoint-${dateStamp}.json`
@@ -59,6 +60,7 @@ function buildBridge(reports) {
   const modelSummary = reports.localModelInventory?.summary || {};
   const sweepSummary = reports.sweep?.summary || {};
   const assetBridgeSummary = reports.assetBridge?.summary || {};
+  const assetSourceCandidateSummary = reports.assetSourceCandidateMap?.summary || {};
   const innovationSummary = reports.innovationSmoke?.summary || {};
   const cards = [
     {
@@ -166,6 +168,15 @@ function buildBridge(reports) {
       source_ref: refs.assetBridge
     },
     {
+      id: 'asset-source-candidates',
+      title: 'Asset Source Candidates',
+      status: reports.assetSourceCandidateMap?.status === 'kosmoasset_source_candidate_map_review_only_ready' ? 'review_only_ready' : 'needs_review',
+      signal: `${assetSourceCandidateSummary.asset_lane_candidates ?? 0} asset-lane candidates, material ${assetSourceCandidateSummary.material_library_candidates ?? 0}, public-ready ${assetSourceCandidateSummary.public_ready_after_map ?? 0}`,
+      owner_action_required: (assetSourceCandidateSummary.asset_lane_candidates ?? 0) > 0,
+      route_hint: 'Map source-root candidates into KosmoAsset lanes without ingestion',
+      source_ref: refs.assetSourceCandidateMap
+    },
+    {
       id: 'worker-boundary',
       title: 'Worker Boundary',
       status: reports.workerBoundary?.status === 'worker_boundary_pack_guard_passed' ? 'locked' : 'needs_review',
@@ -225,6 +236,8 @@ function buildBridge(reports) {
       private_metadata_inventory_check_status: reports.privateMetadataInventoryCheck?.status || null,
       local_model_inventory_status: reports.localModelInventory?.status || null,
       asset_bridge_status: reports.assetBridge?.status || null,
+      asset_source_candidate_map_status: reports.assetSourceCandidateMap?.status || null,
+      asset_source_candidate_map_candidates: assetSourceCandidateSummary.asset_lane_candidates ?? null,
       innovation_smoke_status: reports.innovationSmoke?.status || null,
       public_ready_after_bridge: 0
     },
@@ -238,6 +251,7 @@ function buildBridge(reports) {
       'private_metadata_inventory_card',
       'pilot_reference_cards',
       'asset_reference_bridge_card',
+      'asset_source_candidate_map_card',
       'worker_boundary_card',
       'innovation_lane_card',
       'owner_handoff_card'
@@ -280,6 +294,7 @@ function renderMarkdown(bridge) {
   lines.push(`- Private metadata inventory check: ${bridge.summary.private_metadata_inventory_check_status}`);
   lines.push(`- Local models: ${bridge.summary.local_model_inventory_status}`);
   lines.push(`- Asset bridge: ${bridge.summary.asset_bridge_status}`);
+  lines.push(`- Asset source candidate map: ${bridge.summary.asset_source_candidate_map_status}, candidates ${bridge.summary.asset_source_candidate_map_candidates ?? '-'}`);
   lines.push(`- Innovation smoke: ${bridge.summary.innovation_smoke_status}`);
   lines.push(`- Public-ready after bridge: ${bridge.summary.public_ready_after_bridge}`);
   lines.push('');

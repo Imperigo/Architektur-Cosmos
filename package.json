@@ -153,6 +153,7 @@
     "kosmo:pilot-evidence-matrix": "node scripts/kosmoreferences-pilot-evidence-matrix.mjs",
     "kosmo:pilot-package-check": "node scripts/kosmoreferences-pilot-package-check.mjs",
     "kosmo:asset-reference-bridge-check": "node scripts/kosmoasset-reference-bridge-check.mjs",
+    "kosmo:asset-source-candidate-map": "node scripts/kosmoasset-source-candidate-map.mjs",
     "kosmo:villa-provenance-brief": "node scripts/kosmo-villa-provenance-review-brief.mjs",
     "kosmo:ingenbohl-pdf-brief": "node scripts/kosmo-ingenbohl-pdf-extraction-brief.mjs",
     "kosmo:sogn-source-root-brief": "node scripts/kosmo-sogn-source-root-decision-brief.mjs",

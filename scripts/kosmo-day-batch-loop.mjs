@@ -47,6 +47,7 @@ const steps = [
   step('private_inventory_output_check', 'Private Inventory Output Check', ['run', 'kosmo:private-inventory-output-check']),
   step('pilot_package_check', 'Pilot Package Check', ['run', 'kosmo:pilot-package-check']),
   step('asset_reference_bridge_check', 'Asset Reference Bridge Check', ['run', 'kosmo:asset-reference-bridge-check']),
+  step('asset_source_candidate_map', 'Asset Source Candidate Map', ['run', 'kosmo:asset-source-candidate-map']),
   step('core_router', 'Core Router', ['run', 'kosmo:data-lane-command-router']),
   step('worker_boundary_pack', 'Worker Boundary Pack', ['run', 'kosmo:worker-boundary-pack']),
   step('worker_boundary_pack_check', 'Worker Boundary Pack Check', ['run', 'kosmo:worker-boundary-pack-check']),
@@ -182,6 +183,7 @@ async function buildReport({ results, startedAt }) {
   const ownerSession = await readOptionalJson(`data/kosmo-owner-review-session-brief-check-${dateStamp}.json`);
   const blocker = await readOptionalJson(`data/kosmo-source-root-blocker-refresh-${dateStamp}.json`);
   const sourceRootOwnerAction = await readOptionalJson(`data/kosmo-source-root-owner-action-card-${dateStamp}.json`);
+  const assetSourceCandidateMap = await readOptionalJson(`data/kosmoasset-source-candidate-map-${dateStamp}.json`);
   const sourceRootActivation = await readOptionalJson(`data/kosmo-source-root-activation-preflight-${dateStamp}.json`);
   const privateMetadataInventory = await readOptionalJson(`data/kosmo-private-metadata-inventory-runner-${dateStamp}.json`);
   const privateMetadataInventoryFixture = await readOptionalJson(`data/kosmo-private-metadata-inventory-fixture-smoke-${dateStamp}.json`);
@@ -200,6 +202,7 @@ async function buildReport({ results, startedAt }) {
       'source_root_owner_action_required',
       'source_root_owner_action_satisfied_metadata_only'
     ].includes(sourceRootOwnerAction?.status), sourceRootOwnerAction?.status),
+    invariant('asset_source_candidate_map_ready', assetSourceCandidateMap?.status === 'kosmoasset_source_candidate_map_review_only_ready', assetSourceCandidateMap?.status),
     invariant('owner_handoff_passed', ownerHandoffPassed, `${ownerPacket?.status || 'missing'} / ${ownerSession?.status || 'missing'}`),
     invariant('innovation_smoke_review_only', innovationSmoke?.status === 'innovation_smoke_passed_review_only', innovationSmoke?.status),
     invariant('orbit_bridge_ready', ['orbit_bridge_ready_with_blockers', 'orbit_bridge_all_ready_review_only'].includes(orbitBridge?.status), orbitBridge?.status),
@@ -259,6 +262,8 @@ async function buildReport({ results, startedAt }) {
       orbit_bridge_status: orbitBridge?.status || null,
       source_root_blocker_status: blocker?.status || null,
       source_root_owner_action_status: sourceRootOwnerAction?.status || null,
+      asset_source_candidate_map_status: assetSourceCandidateMap?.status || null,
+      asset_source_candidate_map_candidates: assetSourceCandidateMap?.summary?.asset_lane_candidates ?? null,
       source_root_activation_status: sourceRootActivation?.status || null,
       private_metadata_inventory_status: privateMetadataInventory?.status || null,
       private_metadata_inventory_fixture_status: privateMetadataInventoryFixture?.status || null,
@@ -275,6 +280,7 @@ async function buildReport({ results, startedAt }) {
       `data/kosmo-owner-review-session-brief-check-${dateStamp}.json`,
       `data/kosmo-source-root-blocker-refresh-${dateStamp}.json`,
       `data/kosmo-source-root-owner-action-card-${dateStamp}.json`,
+      `data/kosmoasset-source-candidate-map-${dateStamp}.json`,
       `data/kosmo-source-root-activation-preflight-${dateStamp}.json`,
       `data/kosmo-private-metadata-inventory-runner-${dateStamp}.json`,
       `data/kosmo-private-metadata-inventory-fixture-smoke-${dateStamp}.json`,
@@ -333,6 +339,7 @@ function renderMarkdown(report) {
   lines.push(`- Orbit bridge: ${report.summary.orbit_bridge_status}`);
   lines.push(`- Source-root blocker: ${report.summary.source_root_blocker_status}`);
   lines.push(`- Source-root owner action: ${report.summary.source_root_owner_action_status}`);
+  lines.push(`- Asset source candidate map: ${report.summary.asset_source_candidate_map_status}, candidates ${report.summary.asset_source_candidate_map_candidates ?? '-'}`);
   lines.push(`- Private diagnostic allowed: ${report.summary.private_diagnostic_allowed ? 'yes' : 'no'}`);
   lines.push(`- Night loop checkpoint: ${report.summary.night_loop_checkpoint_status}`);
   lines.push(`- Public-ready after loop: ${report.summary.public_ready_after_loop}`);
