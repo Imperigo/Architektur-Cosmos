@@ -45,7 +45,10 @@ const steps = [
   step('owner_review_packet_check', 'Owner Review Packet Check', ['run', 'kosmo:owner-review-packet-check']),
   step('owner_review_session_brief', 'Owner Review Session Brief', ['run', 'kosmo:owner-review-session-brief']),
   step('owner_review_session_brief_check', 'Owner Review Session Brief Check', ['run', 'kosmo:owner-review-session-brief-check']),
-  step('night_loop_checkpoint', 'Night Loop Checkpoint', ['run', 'kosmo:night-loop-checkpoint'])
+  step('night_loop_checkpoint', 'Night Loop Checkpoint', ['run', 'kosmo:night-loop-checkpoint']),
+  step('innovation_lane_plan', 'Innovation Lane Plan', ['run', 'kosmo:innovation-lane-plan']),
+  step('innovation_smoke', 'Innovation Smoke', ['run', 'kosmo:innovation-smoke']),
+  step('orbit_status_bridge', 'Orbit Status Bridge', ['run', 'kosmo:orbit-status-bridge'])
 ];
 
 main().catch((error) => {
@@ -78,6 +81,8 @@ async function main() {
   console.log(`Core sweep: ${report.summary.core_sweep_status}`);
   console.log(`Worker boundary: ${report.summary.worker_boundary_status}`);
   console.log(`Owner handoff: ${report.summary.owner_handoff_status}`);
+  console.log(`Innovation smoke: ${report.summary.innovation_smoke_status}`);
+  console.log(`Orbit bridge: ${report.summary.orbit_bridge_status}`);
   console.log(`Wrote: ${relative(root, outputMd)}`);
 
   if (report.status !== 'day_batch_loop_passed_review_only') process.exitCode = 1;
@@ -155,6 +160,8 @@ async function buildReport({ results, startedAt }) {
   const ownerSession = await readOptionalJson(`data/kosmo-owner-review-session-brief-check-${dateStamp}.json`);
   const blocker = await readOptionalJson(`data/kosmo-source-root-blocker-refresh-${dateStamp}.json`);
   const checkpoint = await readOptionalJson(`data/kosmo-night-loop-checkpoint-${dateStamp}.json`);
+  const innovationSmoke = await readOptionalJson(`data/kosmo-innovation-smoke-${dateStamp}.json`);
+  const orbitBridge = await readOptionalJson(`data/kosmo-orbit-status-bridge-${dateStamp}.json`);
   const ownerHandoffPassed = ownerPacket?.status === 'owner_review_packet_guard_passed' &&
     ownerSession?.status === 'owner_review_session_brief_guard_passed';
   const invariants = [
@@ -163,6 +170,8 @@ async function buildReport({ results, startedAt }) {
     invariant('router_guarded_review_only', router?.status === 'worker_router_guarded_review_only', router?.status),
     invariant('worker_boundary_passed', boundary?.status === 'worker_boundary_pack_guard_passed', boundary?.status),
     invariant('owner_handoff_passed', ownerHandoffPassed, `${ownerPacket?.status || 'missing'} / ${ownerSession?.status || 'missing'}`),
+    invariant('innovation_smoke_review_only', innovationSmoke?.status === 'innovation_smoke_passed_review_only', innovationSmoke?.status),
+    invariant('orbit_bridge_ready', ['orbit_bridge_ready_with_blockers', 'orbit_bridge_all_ready_review_only'].includes(orbitBridge?.status), orbitBridge?.status),
     invariant('public_ready_zero', (sweep?.summary?.references_public_ready_assets ?? 0) === 0, `public_ready=${sweep?.summary?.references_public_ready_assets ?? 0}`),
     invariant('private_source_still_guarded', blocker?.summary?.private_diagnostic_allowed !== true, `private_diagnostic_allowed=${blocker?.summary?.private_diagnostic_allowed}`)
   ];
@@ -193,6 +202,8 @@ async function buildReport({ results, startedAt }) {
       router_status: router?.status || null,
       worker_boundary_status: boundary?.status || null,
       owner_handoff_status: ownerHandoffPassed ? 'passed' : 'needs_review',
+      innovation_smoke_status: innovationSmoke?.status || null,
+      orbit_bridge_status: orbitBridge?.status || null,
       source_root_blocker_status: blocker?.status || null,
       private_diagnostic_allowed: blocker?.summary?.private_diagnostic_allowed === true,
       night_loop_checkpoint_status: checkpoint?.status || null,
@@ -205,7 +216,9 @@ async function buildReport({ results, startedAt }) {
       `data/kosmo-owner-review-packet-check-${dateStamp}.json`,
       `data/kosmo-owner-review-session-brief-check-${dateStamp}.json`,
       `data/kosmo-source-root-blocker-refresh-${dateStamp}.json`,
-      `data/kosmo-night-loop-checkpoint-${dateStamp}.json`
+      `data/kosmo-night-loop-checkpoint-${dateStamp}.json`,
+      `data/kosmo-innovation-smoke-${dateStamp}.json`,
+      `data/kosmo-orbit-status-bridge-${dateStamp}.json`
     ],
     invariants,
     steps: results,
@@ -249,6 +262,8 @@ function renderMarkdown(report) {
   lines.push(`- Router: ${report.summary.router_status}`);
   lines.push(`- Worker boundary: ${report.summary.worker_boundary_status}`);
   lines.push(`- Owner handoff: ${report.summary.owner_handoff_status}`);
+  lines.push(`- Innovation smoke: ${report.summary.innovation_smoke_status}`);
+  lines.push(`- Orbit bridge: ${report.summary.orbit_bridge_status}`);
   lines.push(`- Source-root blocker: ${report.summary.source_root_blocker_status}`);
   lines.push(`- Private diagnostic allowed: ${report.summary.private_diagnostic_allowed ? 'yes' : 'no'}`);
   lines.push(`- Night loop checkpoint: ${report.summary.night_loop_checkpoint_status}`);
