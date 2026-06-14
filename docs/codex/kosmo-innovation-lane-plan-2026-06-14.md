@@ -1,6 +1,6 @@
 # Kosmo Innovation Lane Plan
 
-Generated: 2026-06-14T07:43:06.569Z
+Generated: 2026-06-14T08:21:13.671Z
 Status: `innovation_lane_metadata_plan_ready`
 
 ## Summary
@@ -20,6 +20,7 @@ Status: `innovation_lane_metadata_plan_ready`
 | `python_cli` | available | `python3 --version` |
 | `markitdown_cli` | available | `/mnt/data/ArchitekturKosmos/tools/markitdown-venv/bin/markitdown --version` |
 | `tesseract_cli` | missing | `tesseract --version` |
+| `rapidocr_python` | available | `/mnt/data/ArchitekturKosmos/tools/rapidocr-venv/bin/python -c import rapidocr_onnxruntime; print("rapidocr available")` |
 | `ollama_list` | available | `ollama list` |
 | `ifcopenshell_import` | available | `/mnt/data/ArchitekturKosmos/tools/ifcopenshell-venv/bin/python -c import ifcopenshell; print(ifcopenshell.version)` |
 
@@ -37,7 +38,7 @@ Status: `innovation_lane_metadata_plan_ready`
 ### Local OCR for Scanned Architecture Sources
 
 - ID: `local_ocr_scanned_sources`
-- Tool state: missing
+- Tool state: available
 - Intent: Evaluate OCR fallback for scanned plans/books after source-root and rights gates.
 - First smoke: Use one generated/public image fixture with a short text label; write only metadata and confidence summary.
 - Promotion gate: OCR text from private scans is never committed; only owner-approved summaries may enter review packs.

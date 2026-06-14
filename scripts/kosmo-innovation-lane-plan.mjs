@@ -13,7 +13,8 @@ const outputJson = resolve(root, args.out || `data/kosmo-innovation-lane-plan-${
 const outputMd = resolve(root, args.markdown || `docs/codex/kosmo-innovation-lane-plan-${dateStamp}.md`);
 const knownToolPaths = {
   markitdown: process.env.KOSMO_MARKITDOWN_BIN || '/mnt/data/ArchitekturKosmos/tools/markitdown-venv/bin/markitdown',
-  ifcPython: process.env.KOSMO_IFC_PYTHON || '/mnt/data/ArchitekturKosmos/tools/ifcopenshell-venv/bin/python'
+  ifcPython: process.env.KOSMO_IFC_PYTHON || '/mnt/data/ArchitekturKosmos/tools/ifcopenshell-venv/bin/python',
+  rapidOcrPython: process.env.KOSMO_RAPIDOCR_PYTHON || '/mnt/data/ArchitekturKosmos/tools/rapidocr-venv/bin/python'
 };
 
 main().catch((error) => {
@@ -64,8 +65,8 @@ function buildPlan({ dayBatch, blocker, probes }) {
       id: 'local_ocr_scanned_sources',
       name: 'Local OCR for Scanned Architecture Sources',
       intent: 'Evaluate OCR fallback for scanned plans/books after source-root and rights gates.',
-      tool_probe: 'tesseract_cli',
-      current_tool_state: probes.tesseract_cli.status,
+      tool_probe: 'rapidocr_python',
+      current_tool_state: probes.rapidocr_python.status,
       allowed_now: [
         'document OCR contract and forbidden fields',
         'run OCR only on synthetic/public fixture images',
@@ -170,6 +171,7 @@ function runProbes() {
       [knownToolPaths.markitdown, ['--version']]
     ]),
     tesseract_cli: probe('tesseract', ['--version']),
+    rapidocr_python: probe(knownToolPaths.rapidOcrPython, ['-c', 'import rapidocr_onnxruntime; print("rapidocr available")']),
     ollama_list: probe('ollama', ['list']),
     ifcopenshell_import: probeCandidates([
       ['python3', ['-c', 'import ifcopenshell; print(ifcopenshell.version)']],

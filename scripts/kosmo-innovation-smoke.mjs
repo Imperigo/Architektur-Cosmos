@@ -117,9 +117,59 @@ async function markitdownSmoke({ plan, fixture }) {
 }
 
 async function ocrSmoke({ plan }) {
-  const probe = plan.probes?.tesseract_cli;
-  if (probe?.status !== 'available') return skipped('local_ocr_scanned_sources', 'skipped_missing_tool', 'tesseract CLI is not installed.');
-  return skipped('local_ocr_scanned_sources', 'skipped_no_image_fixture', 'OCR tool exists, but no generated image fixture is part of this metadata-only smoke yet.');
+  const probe = plan.probes?.rapidocr_python;
+  if (probe?.status !== 'available') return skipped('local_ocr_scanned_sources', 'skipped_missing_tool', 'RapidOCR Python environment is not available.');
+  const imagePath = resolve(smokeRoot, 'fixtures', 'synthetic-ocr-fixture.png');
+  const outputPath = resolve(smokeRoot, 'ocr-contract.generated.json');
+  const code = `
+import json
+import sys
+from pathlib import Path
+from PIL import Image, ImageDraw, ImageFont
+from rapidocr_onnxruntime import RapidOCR
+
+image_path = Path(sys.argv[1])
+output_path = Path(sys.argv[2])
+image_path.parent.mkdir(parents=True, exist_ok=True)
+label = "KOSMO OCR PUBLIC TEST"
+img = Image.new("RGB", (900, 220), "white")
+draw = ImageDraw.Draw(img)
+try:
+    font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 48)
+except Exception:
+    font = None
+draw.text((40, 70), label, fill="black", font=font)
+img.save(image_path)
+ocr = RapidOCR()
+result, _ = ocr(str(image_path))
+rows = [
+    {"text": row[1], "confidence": float(row[2])}
+    for row in (result or [])
+]
+payload = {
+    "schema_version": "0.1",
+    "status": "ocr_contract_public_safe",
+    "public_safe_fixture": True,
+    "private_content_included": False,
+    "image_path": str(image_path),
+    "expected_text": label,
+    "rows": rows
+}
+output_path.write_text(json.dumps(payload, indent=2) + "\\n", encoding="utf-8")
+`;
+  const result = spawnSync(probe.executable, ['-c', code, imagePath, outputPath], {
+    cwd: root,
+    encoding: 'utf8',
+    timeout: 60000
+  });
+  if (result.status !== 0) return failed('local_ocr_scanned_sources', `RapidOCR smoke failed: ${result.stderr || result.stdout || 'no output'}`);
+  const payload = JSON.parse(await readFile(outputPath, 'utf8'));
+  const recognizedText = payload.rows.map((row) => row.text).join(' ');
+  if (!recognizedText.includes('KOSMO OCR PUBLIC TEST')) {
+    return failed('local_ocr_scanned_sources', `RapidOCR did not recognize expected synthetic text; got: ${recognizedText || 'empty'}`);
+  }
+  const bestConfidence = Math.max(...payload.rows.map((row) => row.confidence), 0);
+  return passed('local_ocr_scanned_sources', `Recognized synthetic OCR fixture at confidence ${bestConfidence.toFixed(3)}; wrote ${relative(root, outputPath)}.`);
 }
 
 async function embeddingContractSmoke({ fixture }) {

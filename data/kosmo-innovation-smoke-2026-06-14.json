@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T07:43:07.545Z",
+  "generated_at": "2026-06-14T08:21:15.549Z",
   "status": "innovation_smoke_passed_review_only",
   "policy": {
     "public_safe_fixtures_only": true,
@@ -22,8 +22,8 @@
   },
   "summary": {
     "checks": 5,
-    "passed": 4,
-    "skipped": 1,
+    "passed": 5,
+    "skipped": 0,
     "failures": 0,
     "public_ready_after_smoke": 0
   },
@@ -35,8 +35,8 @@
     },
     {
       "id": "local_ocr_scanned_sources",
-      "status": "skipped_missing_tool",
-      "evidence": "tesseract CLI is not installed."
+      "status": "passed",
+      "evidence": "Recognized synthetic OCR fixture at confidence 0.992; wrote examples/kosmo-innovation-smoke-2026-06-14/ocr-contract.generated.json."
     },
     {
       "id": "qwen_embedding_rag",

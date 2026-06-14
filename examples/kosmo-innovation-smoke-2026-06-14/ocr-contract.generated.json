@@ -1,0 +1,14 @@
+{
+  "schema_version": "0.1",
+  "status": "ocr_contract_public_safe",
+  "public_safe_fixture": true,
+  "private_content_included": false,
+  "image_path": "/mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/examples/kosmo-innovation-smoke-2026-06-14/fixtures/synthetic-ocr-fixture.png",
+  "expected_text": "KOSMO OCR PUBLIC TEST",
+  "rows": [
+    {
+      "text": "KOSMO OCR PUBLIC TEST",
+      "confidence": 0.9916835540816897
+    }
+  ]
+}

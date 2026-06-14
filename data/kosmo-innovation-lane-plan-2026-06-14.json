@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T07:43:06.569Z",
+  "generated_at": "2026-06-14T08:21:13.671Z",
   "status": "innovation_lane_metadata_plan_ready",
   "policy": {
     "metadata_only": true,
@@ -70,6 +70,17 @@
       "exit_code": null,
       "output_excerpt": ""
     },
+    "rapidocr_python": {
+      "command": "/mnt/data/ArchitekturKosmos/tools/rapidocr-venv/bin/python -c import rapidocr_onnxruntime; print(\"rapidocr available\")",
+      "executable": "/mnt/data/ArchitekturKosmos/tools/rapidocr-venv/bin/python",
+      "args": [
+        "-c",
+        "import rapidocr_onnxruntime; print(\"rapidocr available\")"
+      ],
+      "status": "available",
+      "exit_code": 0,
+      "output_excerpt": "rapidocr available"
+    },
     "ollama_list": {
       "command": "ollama list",
       "executable": "ollama",
@@ -130,8 +141,8 @@
       "id": "local_ocr_scanned_sources",
       "name": "Local OCR for Scanned Architecture Sources",
       "intent": "Evaluate OCR fallback for scanned plans/books after source-root and rights gates.",
-      "tool_probe": "tesseract_cli",
-      "current_tool_state": "missing",
+      "tool_probe": "rapidocr_python",
+      "current_tool_state": "available",
       "allowed_now": [
         "document OCR contract and forbidden fields",
         "run OCR only on synthetic/public fixture images",

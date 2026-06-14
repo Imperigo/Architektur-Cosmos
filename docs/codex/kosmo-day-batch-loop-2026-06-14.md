@@ -1,6 +1,6 @@
 # Kosmo Day Batch Loop
 
-Generated: 2026-06-14T08:14:26.679Z
+Generated: 2026-06-14T08:21:15.804Z
 Status: `day_batch_loop_passed_review_only`
 
 ## Summary
@@ -37,35 +37,35 @@ Status: `day_batch_loop_passed_review_only`
 
 | Step | Status | Required | Duration |
 | --- | --- | --- | ---: |
-| OneDrive Sync Errors | passed | yes | 359ms |
-| Storage Mount Snapshot | passed | yes | 257ms |
-| Source Root Locator | passed | yes | 420ms |
-| Source Root Selection Brief | passed | yes | 250ms |
+| OneDrive Sync Errors | passed | yes | 374ms |
+| Storage Mount Snapshot | passed | yes | 267ms |
+| Source Root Locator | passed | yes | 422ms |
+| Source Root Selection Brief | passed | yes | 253ms |
 | Source Root Decision Session Create | skipped | no | 0ms |
-| Source Root Decision Session Check | passed | yes | 253ms |
-| Private Library Diagnostic Metadata | passed | yes | 264ms |
-| Source Root Blocker Refresh | passed | yes | 244ms |
-| Local Worker Task Pack Refresh | passed | yes | 242ms |
-| Local Worker Output Review | passed | yes | 251ms |
-| Bootstrap Data Lane Sweep | passed | no | 46051ms |
-| Bootstrap Router | passed | yes | 244ms |
-| Core Data Lane Sweep | passed | yes | 36800ms |
-| Pilot Evidence Matrix | passed | yes | 257ms |
-| Pilot Package Check | passed | yes | 246ms |
-| Asset Reference Bridge Check | passed | yes | 257ms |
-| Core Router | passed | yes | 243ms |
-| Worker Boundary Pack | passed | yes | 247ms |
-| Worker Boundary Pack Check | passed | yes | 247ms |
-| Local Worker Launch Queue | passed | yes | 242ms |
-| Local Worker Output Conversion Plan | passed | yes | 247ms |
-| Owner Review Packet | passed | yes | 248ms |
-| Owner Review Packet Check | passed | yes | 244ms |
-| Owner Review Session Brief | passed | yes | 255ms |
-| Owner Review Session Brief Check | passed | yes | 247ms |
-| Night Loop Checkpoint | passed | yes | 254ms |
-| Innovation Lane Plan | passed | yes | 1016ms |
-| Innovation Smoke | passed | yes | 970ms |
-| Orbit Status Bridge | passed | yes | 253ms |
+| Source Root Decision Session Check | passed | yes | 247ms |
+| Private Library Diagnostic Metadata | passed | yes | 255ms |
+| Source Root Blocker Refresh | passed | yes | 248ms |
+| Local Worker Task Pack Refresh | passed | yes | 262ms |
+| Local Worker Output Review | passed | yes | 261ms |
+| Bootstrap Data Lane Sweep | timed_out | no | 243373ms |
+| Bootstrap Router | passed | yes | 245ms |
+| Core Data Lane Sweep | passed | yes | 28999ms |
+| Pilot Evidence Matrix | passed | yes | 244ms |
+| Pilot Package Check | passed | yes | 260ms |
+| Asset Reference Bridge Check | passed | yes | 243ms |
+| Core Router | passed | yes | 253ms |
+| Worker Boundary Pack | passed | yes | 242ms |
+| Worker Boundary Pack Check | passed | yes | 248ms |
+| Local Worker Launch Queue | passed | yes | 244ms |
+| Local Worker Output Conversion Plan | passed | yes | 246ms |
+| Owner Review Packet | passed | yes | 252ms |
+| Owner Review Packet Check | passed | yes | 245ms |
+| Owner Review Session Brief | passed | yes | 257ms |
+| Owner Review Session Brief Check | passed | yes | 246ms |
+| Night Loop Checkpoint | passed | yes | 245ms |
+| Innovation Lane Plan | passed | yes | 1188ms |
+| Innovation Smoke | passed | yes | 1878ms |
+| Orbit Status Bridge | passed | yes | 243ms |
 
 ## Next Actions
 
