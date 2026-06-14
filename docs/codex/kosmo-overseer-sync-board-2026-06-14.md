@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board
 
-Generated: 2026-06-14T19:00:18.106Z
+Generated: 2026-06-14T19:02:20.740Z
 Status: `overseer_sync_board_ready`
 
 ## Summary
@@ -20,6 +20,7 @@ Status: `overseer_sync_board_ready`
 
 | File | Title | Mirrors |
 | --- | --- | ---: |
+| `2026-06-14-codex-synergiebericht-209-orbit-acceptance-certificate-status.md` | Codex Synergiebericht 209: Orbit Acceptance Certificate Status | 2 |
 | `2026-06-14-codex-synergiebericht-208-evening-batch-acceptance-certificate.md` | Codex Synergiebericht 208: Evening Batch Acceptance Certificate | 2 |
 | `2026-06-14-codex-synergiebericht-207-orbit-next-shift-status.md` | Codex Synergiebericht 207: Orbit Next Shift Status | 2 |
 | `2026-06-14-codex-synergiebericht-206-overseer-next-shift-training-ontology-refresh.md` | Codex Synergiebericht 206: Overseer Next Shift Training/Ontology Refresh | 2 |
@@ -27,7 +28,6 @@ Status: `overseer_sync_board_ready`
 | `2026-06-14-codex-synergiebericht-204-evening-rollup-training-ontology-refresh.md` | Codex Synergiebericht 204: Evening Rollup Training/Ontology Refresh | 2 |
 | `2026-06-14-codex-synergiebericht-203-orbit-roadmap-training-ontology-status.md` | Codex Synergiebericht 203: Orbit Roadmap Training/Ontology Status | 2 |
 | `2026-06-14-codex-synergiebericht-202-vision-roadmap-training-ontology-refresh.md` | Codex Synergiebericht 202: Vision Roadmap Training/Ontology Refresh | 2 |
-| `2026-06-14-codex-synergiebericht-201-orbit-ontology-status.md` | Codex Synergiebericht 201: Orbit Ontology Status | 2 |
 
 ## Blockers
 
@@ -40,7 +40,7 @@ Status: `overseer_sync_board_ready`
 
 ## Next Actions
 
-- Claude/KosmoOverseer reviews latest handoffs 201-208 before editing related files.
+- Claude/KosmoOverseer reviews latest handoffs 202-209 before editing related files.
 - Use the owner review session brief as the next owner-facing entry point.
 - Keep local worker tasks review-only while source-root and owner answers are pending.
 - After any explicit owner answer, update intake first, then rerun guards and this sync board.

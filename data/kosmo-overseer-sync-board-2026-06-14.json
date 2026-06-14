@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T19:00:18.106Z",
+  "generated_at": "2026-06-14T19:02:20.740Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 207
+      "files": 208
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 252
+      "files": 253
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-14-codex-synergiebericht-209-orbit-acceptance-certificate-status.md",
+      "title": "Codex Synergiebericht 209: Orbit Acceptance Certificate Status",
+      "mirrored_inboxes": 2,
+      "bytes": 843,
+      "modified_at": "2026-06-14T19:02:11.333Z"
+    },
     {
       "filename": "2026-06-14-codex-synergiebericht-208-evening-batch-acceptance-certificate.md",
       "title": "Codex Synergiebericht 208: Evening Batch Acceptance Certificate",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1241,
       "modified_at": "2026-06-14T18:45:18.478Z"
-    },
-    {
-      "filename": "2026-06-14-codex-synergiebericht-201-orbit-ontology-status.md",
-      "title": "Codex Synergiebericht 201: Orbit Ontology Status",
-      "mirrored_inboxes": 2,
-      "bytes": 780,
-      "modified_at": "2026-06-14T18:42:02.574Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 201-208 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 202-209 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."
