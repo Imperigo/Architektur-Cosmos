@@ -21,6 +21,7 @@ const refs = {
   localWorkerHttpRunner: `data/kosmo-local-worker-http-runner-${dateStamp}.json`,
   localWorkerHttpRunnerCheck: `data/kosmo-local-worker-http-runner-check-${dateStamp}.json`,
   localWorkerExecutionRunbook: `data/kosmo-local-worker-execution-runbook-${dateStamp}.json`,
+  localWorkerExecutionRunbookCheck: `data/kosmo-local-worker-execution-runbook-check-${dateStamp}.json`,
   sweep: `data/kosmodata-lane-sweep-${dateStamp}.json`,
   workerBoundary: `data/kosmo-worker-boundary-pack-check-${dateStamp}.json`,
   ownerPacket: `data/kosmo-owner-review-packet-check-${dateStamp}.json`,
@@ -66,6 +67,7 @@ function buildBridge(reports) {
   const localWorkerHttpRunnerCheck = reports.localWorkerHttpRunnerCheck || {};
   const localWorkerExecutionRunbook = reports.localWorkerExecutionRunbook || {};
   const localWorkerExecutionRunbookSummary = localWorkerExecutionRunbook.summary || {};
+  const localWorkerExecutionRunbookCheck = reports.localWorkerExecutionRunbookCheck || {};
   const sweepSummary = reports.sweep?.summary || {};
   const assetBridgeSummary = reports.assetBridge?.summary || {};
   const assetSourceCandidateSummary = reports.assetSourceCandidateMap?.summary || {};
@@ -147,11 +149,12 @@ function buildBridge(reports) {
     {
       id: 'local-worker-execution-runbook',
       title: 'Local Worker Execution Runbook',
-      status: ['local_worker_execution_runbook_idle_review_only', 'local_worker_execution_runbook_has_executable_tasks'].includes(localWorkerExecutionRunbook.status)
+      status: ['local_worker_execution_runbook_idle_review_only', 'local_worker_execution_runbook_has_executable_tasks'].includes(localWorkerExecutionRunbook.status) &&
+        localWorkerExecutionRunbookCheck.status === 'local_worker_execution_runbook_guard_passed'
         ? 'review_only_ready'
         : 'needs_review',
       signal: localWorkerExecutionRunbook.status
-        ? `${localWorkerExecutionRunbook.status}, runner-safe ${localWorkerExecutionRunbookSummary.runner_safe_tasks ?? 0}, executable now ${localWorkerExecutionRunbookSummary.execute_allowed_if_output_missing ?? 0}`
+        ? `${localWorkerExecutionRunbook.status}, check ${localWorkerExecutionRunbookCheck.status || 'missing'}, executable now ${localWorkerExecutionRunbookSummary.execute_allowed_if_output_missing ?? 0}`
         : 'missing execution runbook',
       owner_action_required: false,
       route_hint: 'Safe command map for local worker task execution',
@@ -278,6 +281,8 @@ function buildBridge(reports) {
       local_worker_execution_runbook_status: localWorkerExecutionRunbook.status || null,
       local_worker_execution_runbook_runner_safe_tasks: localWorkerExecutionRunbookSummary.runner_safe_tasks ?? null,
       local_worker_execution_runbook_executable_now: localWorkerExecutionRunbookSummary.execute_allowed_if_output_missing ?? null,
+      local_worker_execution_runbook_check_status: localWorkerExecutionRunbookCheck.status || null,
+      local_worker_execution_runbook_check_failures: localWorkerExecutionRunbookCheck.summary?.failures ?? null,
       asset_bridge_status: reports.assetBridge?.status || null,
       asset_source_candidate_map_status: reports.assetSourceCandidateMap?.status || null,
       asset_source_candidate_map_candidates: assetSourceCandidateSummary.asset_lane_candidates ?? null,
@@ -339,7 +344,7 @@ function renderMarkdown(bridge) {
   lines.push(`- Private metadata inventory check: ${bridge.summary.private_metadata_inventory_check_status}`);
   lines.push(`- Local models: ${bridge.summary.local_model_inventory_status}`);
   lines.push(`- Local worker HTTP runner: ${bridge.summary.local_worker_http_runner_status}, check ${bridge.summary.local_worker_http_runner_check_status}, safe inputs ${bridge.summary.local_worker_http_runner_safe_inputs ?? '-'}`);
-  lines.push(`- Local worker execution runbook: ${bridge.summary.local_worker_execution_runbook_status}, runner-safe ${bridge.summary.local_worker_execution_runbook_runner_safe_tasks ?? '-'}, executable now ${bridge.summary.local_worker_execution_runbook_executable_now ?? '-'}`);
+  lines.push(`- Local worker execution runbook: ${bridge.summary.local_worker_execution_runbook_status}, check ${bridge.summary.local_worker_execution_runbook_check_status}, executable now ${bridge.summary.local_worker_execution_runbook_executable_now ?? '-'}`);
   lines.push(`- Asset bridge: ${bridge.summary.asset_bridge_status}`);
   lines.push(`- Asset source candidate map: ${bridge.summary.asset_source_candidate_map_status}, candidates ${bridge.summary.asset_source_candidate_map_candidates ?? '-'}`);
   lines.push(`- Innovation smoke: ${bridge.summary.innovation_smoke_status}`);

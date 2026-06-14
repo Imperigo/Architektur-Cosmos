@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T14:21:02.691Z",
+  "generated_at": "2026-06-14T14:27:53.400Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 149
+      "files": 150
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 187
+      "files": 188
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-14-codex-synergiebericht-151-execution-runbook-check.md",
+      "title": "Codex Synergiebericht 151: Execution Runbook Check",
+      "mirrored_inboxes": 2,
+      "bytes": 1357,
+      "modified_at": "2026-06-14T14:27:44.397Z"
+    },
     {
       "filename": "2026-06-14-codex-synergiebericht-150-local-worker-execution-runbook.md",
       "title": "Codex Synergiebericht 150: Local Worker Execution Runbook",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 2964,
       "modified_at": "2026-06-14T13:50:18.235Z"
-    },
-    {
-      "filename": "2026-06-14-codex-synergiebericht-143-kosmoorbit-day-batch-orbit-bridge-status.md",
-      "title": "Codex Synergiebericht 143: KosmoOrbit Day Batch + Orbit Bridge Status",
-      "mirrored_inboxes": 2,
-      "bytes": 940,
-      "modified_at": "2026-06-14T13:40:47.382Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 143-150 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 144-151 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."
