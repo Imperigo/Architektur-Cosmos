@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board
 
-Generated: 2026-06-14T08:29:16.046Z
+Generated: 2026-06-14T08:35:19.501Z
 Status: `overseer_sync_board_ready`
 
 ## Summary
@@ -20,6 +20,7 @@ Status: `overseer_sync_board_ready`
 
 | File | Title | Mirrors |
 | --- | --- | ---: |
+| `2026-06-14-codex-synergiebericht-129-local-worker-smoke-refresh.md` | Codex Synergiebericht 129 - Local Worker Smoke Refresh | 2 |
 | `2026-06-14-codex-synergiebericht-128-local-model-inventory.md` | Codex Synergiebericht 128 - Local Model Inventory | 2 |
 | `2026-06-14-codex-synergiebericht-127-rapidocr-innovation-smoke.md` | Codex Synergiebericht 127 - RapidOCR Innovation Smoke | 2 |
 | `2026-06-14-codex-synergiebericht-126-kosmoasset-bridge-gate.md` | Codex Synergiebericht 126 - KosmoAsset Bridge Gate | 2 |
@@ -27,7 +28,6 @@ Status: `overseer_sync_board_ready`
 | `2026-06-14-codex-synergiebericht-124-source-root-unlock-runbook.md` | Codex Synergiebericht 124 - Source Root Unlock Runbook | 2 |
 | `2026-06-14-codex-synergiebericht-123-output-conversion-plan.md` | Codex Synergiebericht 123 - Output Conversion Plan | 2 |
 | `2026-06-14-codex-synergiebericht-122-local-worker-launch-queue.md` | Codex Synergiebericht 122 - Local Worker Launch Queue | 2 |
-| `2026-06-14-codex-synergiebericht-121-overseer-sync-refresh.md` | Codex Synergiebericht 121 - Overseer Sync Refresh | 2 |
 
 ## Blockers
 
@@ -40,7 +40,7 @@ Status: `overseer_sync_board_ready`
 
 ## Next Actions
 
-- Claude/KosmoOverseer reviews latest handoffs 121-128 before editing related files.
+- Claude/KosmoOverseer reviews latest handoffs 122-129 before editing related files.
 - Use the owner review session brief as the next owner-facing entry point.
 - Keep local worker tasks review-only while source-root and owner answers are pending.
 - After any explicit owner answer, update intake first, then rerun guards and this sync board.
