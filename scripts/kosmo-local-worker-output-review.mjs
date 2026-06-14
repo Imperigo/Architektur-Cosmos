@@ -6,7 +6,7 @@ import { dirname, relative, resolve } from 'node:path';
 const root = process.cwd();
 const args = parseArgs(process.argv.slice(2));
 const dateStamp = new Date().toISOString().slice(0, 10);
-const taskPackPath = resolve(root, args.taskPack || 'data/kosmo-local-worker-task-pack-2026-06-13.json');
+const taskPackPath = resolve(root, args.taskPack || `data/kosmo-local-worker-task-pack-${dateStamp}.json`);
 const outputJson = resolve(root, args.out || `data/kosmo-local-worker-output-review-${dateStamp}.json`);
 const outputMd = resolve(root, args.markdown || `docs/codex/kosmo-local-worker-output-review-${dateStamp}.md`);
 
