@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T14:11:21.174Z",
+  "generated_at": "2026-06-14T14:18:15.083Z",
   "status": "orbit_bridge_ready_with_blockers",
   "policy": {
     "dashboard_only": true,
@@ -23,6 +23,7 @@
     "data/kosmo-local-model-inventory-2026-06-14.json",
     "data/kosmo-local-worker-http-runner-2026-06-14.json",
     "data/kosmo-local-worker-http-runner-check-2026-06-14.json",
+    "data/kosmo-local-worker-execution-runbook-2026-06-14.json",
     "data/kosmodata-lane-sweep-2026-06-14.json",
     "data/kosmo-worker-boundary-pack-check-2026-06-14.json",
     "data/kosmo-owner-review-packet-check-2026-06-14.json",
@@ -33,7 +34,7 @@
     "data/kosmo-night-loop-checkpoint-2026-06-14.json"
   ],
   "summary": {
-    "cards": 14,
+    "cards": 15,
     "blocking_cards": 4,
     "owner_action_cards": 9,
     "source_root_blocked": true,
@@ -50,6 +51,9 @@
     "local_worker_http_runner_safe_inputs": 6,
     "local_worker_http_runner_check_status": "local_worker_http_runner_guard_passed",
     "local_worker_http_runner_check_failures": 0,
+    "local_worker_execution_runbook_status": "local_worker_execution_runbook_idle_review_only",
+    "local_worker_execution_runbook_runner_safe_tasks": 8,
+    "local_worker_execution_runbook_executable_now": 0,
     "asset_bridge_status": "kosmoasset_reference_bridge_review_only_passed",
     "asset_source_candidate_map_status": "kosmoasset_source_candidate_map_review_only_ready",
     "asset_source_candidate_map_candidates": 3,
@@ -61,7 +65,7 @@
       "id": "day-batch",
       "title": "Daily Batch",
       "status": "ready",
-      "signal": "38/38 required steps",
+      "signal": "39/39 required steps",
       "owner_action_required": false,
       "route_hint": "KosmoReferences/KosmoAsset daily loop",
       "source_ref": "data/kosmo-day-batch-loop-2026-06-14.json"
@@ -110,6 +114,15 @@
       "owner_action_required": false,
       "route_hint": "Guarded HTTP/JSON bridge for local LLM task execution",
       "source_ref": "data/kosmo-local-worker-http-runner-2026-06-14.json"
+    },
+    {
+      "id": "local-worker-execution-runbook",
+      "title": "Local Worker Execution Runbook",
+      "status": "review_only_ready",
+      "signal": "local_worker_execution_runbook_idle_review_only, runner-safe 8, executable now 0",
+      "owner_action_required": false,
+      "route_hint": "Safe command map for local worker task execution",
+      "source_ref": "data/kosmo-local-worker-execution-runbook-2026-06-14.json"
     },
     {
       "id": "private-metadata-inventory",
@@ -188,6 +201,7 @@
     "status_strip",
     "local_models_card",
     "local_worker_http_runner_card",
+    "local_worker_execution_runbook_card",
     "source_root_blocker_card",
     "source_root_owner_action_card",
     "source_root_activation_card",

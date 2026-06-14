@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board Check
 
-Generated: 2026-06-14T14:13:38.829Z
+Generated: 2026-06-14T14:21:02.925Z
 Status: `overseer_sync_board_guard_passed`
 
 ## Summary
@@ -42,6 +42,8 @@ Status: `overseer_sync_board_guard_passed`
 - passed: `inbox_has_files:/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox` - Handoff inbox must contain files: /mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox
 - passed: `latest_handoffs_array_count` - Latest handoff array must contain eight items.
 - passed: `latest_handoff_includes_115` - Latest handoffs must include synergiebericht 115 or newer.
+- passed: `handoff_mirrored:2026-06-14-codex-synergiebericht-150-local-worker-execution-runbook.md` - 2026-06-14-codex-synergiebericht-150-local-worker-execution-runbook.md must be mirrored in both inboxes.
+- passed: `handoff_title:2026-06-14-codex-synergiebericht-150-local-worker-execution-runbook.md` - 2026-06-14-codex-synergiebericht-150-local-worker-execution-runbook.md must include a title.
 - passed: `handoff_mirrored:2026-06-14-codex-synergiebericht-149-http-runner-check.md` - 2026-06-14-codex-synergiebericht-149-http-runner-check.md must be mirrored in both inboxes.
 - passed: `handoff_title:2026-06-14-codex-synergiebericht-149-http-runner-check.md` - 2026-06-14-codex-synergiebericht-149-http-runner-check.md must include a title.
 - passed: `handoff_mirrored:2026-06-14-codex-synergiebericht-148-http-runner-orbit-gate.md` - 2026-06-14-codex-synergiebericht-148-http-runner-orbit-gate.md must be mirrored in both inboxes.
@@ -56,8 +58,6 @@ Status: `overseer_sync_board_guard_passed`
 - passed: `handoff_title:2026-06-14-codex-synergiebericht-144-local-worker-asset-source-triage.md` - 2026-06-14-codex-synergiebericht-144-local-worker-asset-source-triage.md must include a title.
 - passed: `handoff_mirrored:2026-06-14-codex-synergiebericht-143-kosmoorbit-day-batch-orbit-bridge-status.md` - 2026-06-14-codex-synergiebericht-143-kosmoorbit-day-batch-orbit-bridge-status.md must be mirrored in both inboxes.
 - passed: `handoff_title:2026-06-14-codex-synergiebericht-143-kosmoorbit-day-batch-orbit-bridge-status.md` - 2026-06-14-codex-synergiebericht-143-kosmoorbit-day-batch-orbit-bridge-status.md must include a title.
-- passed: `handoff_mirrored:2026-06-14-codex-synergiebericht-142-kosmoorbit-data-panel-status.md` - 2026-06-14-codex-synergiebericht-142-kosmoorbit-data-panel-status.md must be mirrored in both inboxes.
-- passed: `handoff_title:2026-06-14-codex-synergiebericht-142-kosmoorbit-data-panel-status.md` - 2026-06-14-codex-synergiebericht-142-kosmoorbit-data-panel-status.md must include a title.
 - passed: `source_root_blocked` - Source-root blocker must remain blocked.
 - passed: `private_inventory_blocked` - Private inventory blocker must remain blocked.
 - passed: `owner_answers_blocked` - Owner answers blocker must remain blocked.

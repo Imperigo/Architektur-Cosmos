@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T14:13:38.584Z",
+  "generated_at": "2026-06-14T14:21:02.691Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 148
+      "files": 149
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 186
+      "files": 187
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-14-codex-synergiebericht-150-local-worker-execution-runbook.md",
+      "title": "Codex Synergiebericht 150: Local Worker Execution Runbook",
+      "mirrored_inboxes": 2,
+      "bytes": 1542,
+      "modified_at": "2026-06-14T14:20:56.009Z"
+    },
     {
       "filename": "2026-06-14-codex-synergiebericht-149-http-runner-check.md",
       "title": "Codex Synergiebericht 149: HTTP Runner Check",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 940,
       "modified_at": "2026-06-14T13:40:47.382Z"
-    },
-    {
-      "filename": "2026-06-14-codex-synergiebericht-142-kosmoorbit-data-panel-status.md",
-      "title": "Codex Synergiebericht 142: KosmoOrbit DataPanel Status",
-      "mirrored_inboxes": 2,
-      "bytes": 1003,
-      "modified_at": "2026-06-14T13:37:44.186Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 142-149 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 143-150 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."

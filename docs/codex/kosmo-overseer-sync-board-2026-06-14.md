@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board
 
-Generated: 2026-06-14T14:13:38.584Z
+Generated: 2026-06-14T14:21:02.691Z
 Status: `overseer_sync_board_ready`
 
 ## Summary
@@ -20,6 +20,7 @@ Status: `overseer_sync_board_ready`
 
 | File | Title | Mirrors |
 | --- | --- | ---: |
+| `2026-06-14-codex-synergiebericht-150-local-worker-execution-runbook.md` | Codex Synergiebericht 150: Local Worker Execution Runbook | 2 |
 | `2026-06-14-codex-synergiebericht-149-http-runner-check.md` | Codex Synergiebericht 149: HTTP Runner Check | 2 |
 | `2026-06-14-codex-synergiebericht-148-http-runner-orbit-gate.md` | Codex Synergiebericht 148: HTTP Runner Orbit Gate | 2 |
 | `2026-06-14-codex-synergiebericht-147-local-worker-http-runner.md` | Codex Synergiebericht 147: Local Worker HTTP Runner | 2 |
@@ -27,7 +28,6 @@ Status: `overseer_sync_board_ready`
 | `2026-06-14-codex-synergiebericht-145-ollama-json-capture-smoke.md` | Codex Synergiebericht 145: Ollama JSON Capture Smoke | 2 |
 | `2026-06-14-codex-synergiebericht-144-local-worker-asset-source-triage.md` | Codex Synergiebericht 144: Local Worker Asset Source Triage | 2 |
 | `2026-06-14-codex-synergiebericht-143-kosmoorbit-day-batch-orbit-bridge-status.md` | Codex Synergiebericht 143: KosmoOrbit Day Batch + Orbit Bridge Status | 2 |
-| `2026-06-14-codex-synergiebericht-142-kosmoorbit-data-panel-status.md` | Codex Synergiebericht 142: KosmoOrbit DataPanel Status | 2 |
 
 ## Blockers
 
@@ -40,7 +40,7 @@ Status: `overseer_sync_board_ready`
 
 ## Next Actions
 
-- Claude/KosmoOverseer reviews latest handoffs 142-149 before editing related files.
+- Claude/KosmoOverseer reviews latest handoffs 143-150 before editing related files.
 - Use the owner review session brief as the next owner-facing entry point.
 - Keep local worker tasks review-only while source-root and owner answers are pending.
 - After any explicit owner answer, update intake first, then rerun guards and this sync board.
