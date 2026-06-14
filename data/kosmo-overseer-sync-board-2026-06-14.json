@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T07:50:04.400Z",
+  "generated_at": "2026-06-14T08:04:08.092Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 123
+      "files": 124
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 156
+      "files": 157
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-14-codex-synergiebericht-125-day-batch-pilot-gates.md",
+      "title": "Codex Synergiebericht 125 - Day Batch Pilot Gates",
+      "mirrored_inboxes": 2,
+      "bytes": 2460,
+      "modified_at": "2026-06-14T08:04:02.679Z"
+    },
     {
       "filename": "2026-06-14-codex-synergiebericht-124-source-root-unlock-runbook.md",
       "title": "Codex Synergiebericht 124 - Source Root Unlock Runbook",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1729,
       "modified_at": "2026-06-13T21:50:28.532Z"
-    },
-    {
-      "filename": "2026-06-13-codex-synergiebericht-117-router-overseer-sync-context.md",
-      "title": "Codex Synergiebericht 117 - Router Overseer Sync Context",
-      "mirrored_inboxes": 2,
-      "bytes": 944,
-      "modified_at": "2026-06-13T21:46:32.431Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 117-124 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 118-125 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."

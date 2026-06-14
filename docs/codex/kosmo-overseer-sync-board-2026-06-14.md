@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board
 
-Generated: 2026-06-14T07:50:04.400Z
+Generated: 2026-06-14T08:04:08.092Z
 Status: `overseer_sync_board_ready`
 
 ## Summary
@@ -20,6 +20,7 @@ Status: `overseer_sync_board_ready`
 
 | File | Title | Mirrors |
 | --- | --- | ---: |
+| `2026-06-14-codex-synergiebericht-125-day-batch-pilot-gates.md` | Codex Synergiebericht 125 - Day Batch Pilot Gates | 2 |
 | `2026-06-14-codex-synergiebericht-124-source-root-unlock-runbook.md` | Codex Synergiebericht 124 - Source Root Unlock Runbook | 2 |
 | `2026-06-14-codex-synergiebericht-123-output-conversion-plan.md` | Codex Synergiebericht 123 - Output Conversion Plan | 2 |
 | `2026-06-14-codex-synergiebericht-122-local-worker-launch-queue.md` | Codex Synergiebericht 122 - Local Worker Launch Queue | 2 |
@@ -27,7 +28,6 @@ Status: `overseer_sync_board_ready`
 | `2026-06-13-codex-synergiebericht-120-worker-boundary-guard.md` | Codex Synergiebericht 120 - Worker Boundary Guard | 2 |
 | `2026-06-13-codex-synergiebericht-119-worker-boundary-pack.md` | Codex Synergiebericht 119 - Worker Boundary Pack | 2 |
 | `2026-06-13-codex-synergiebericht-118-source-root-blocker-refresh.md` | Codex Synergiebericht 118 - Source Root Blocker Refresh | 2 |
-| `2026-06-13-codex-synergiebericht-117-router-overseer-sync-context.md` | Codex Synergiebericht 117 - Router Overseer Sync Context | 2 |
 
 ## Blockers
 
@@ -40,7 +40,7 @@ Status: `overseer_sync_board_ready`
 
 ## Next Actions
 
-- Claude/KosmoOverseer reviews latest handoffs 117-124 before editing related files.
+- Claude/KosmoOverseer reviews latest handoffs 118-125 before editing related files.
 - Use the owner review session brief as the next owner-facing entry point.
 - Keep local worker tasks review-only while source-root and owner answers are pending.
 - After any explicit owner answer, update intake first, then rerun guards and this sync board.
