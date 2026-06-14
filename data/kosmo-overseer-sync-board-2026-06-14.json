@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T17:43:28.421Z",
+  "generated_at": "2026-06-14T17:46:11.746Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 181
+      "files": 182
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 225
+      "files": 226
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-14-codex-synergiebericht-183-owner-unlock-execution-runbook.md",
+      "title": "Codex Synergiebericht 183: Owner Unlock Execution Runbook",
+      "mirrored_inboxes": 2,
+      "bytes": 1384,
+      "modified_at": "2026-06-14T17:46:06.705Z"
+    },
     {
       "filename": "2026-06-14-codex-synergiebericht-182-owner-reply-map-happy-path-smoke.md",
       "title": "Codex Synergiebericht 182: Owner Reply Map Happy Path Smoke",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1321,
       "modified_at": "2026-06-14T17:26:30.589Z"
-    },
-    {
-      "filename": "2026-06-14-codex-synergiebericht-175-owner-unlock-prompt-pack.md",
-      "title": "Codex Synergiebericht 175: Owner Unlock Prompt Pack",
-      "mirrored_inboxes": 2,
-      "bytes": 1383,
-      "modified_at": "2026-06-14T17:22:59.963Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 175-182 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 176-183 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."

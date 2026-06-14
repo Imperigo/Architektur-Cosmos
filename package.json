@@ -199,6 +199,8 @@
     "kosmo:owner-unlock-reply-validator-smoke-check": "node scripts/kosmo-owner-unlock-reply-validator-smoke-check.mjs",
     "kosmo:owner-unlock-reply-intake-map": "node scripts/kosmo-owner-unlock-reply-intake-map.mjs",
     "kosmo:owner-unlock-reply-intake-map-check": "node scripts/kosmo-owner-unlock-reply-intake-map-check.mjs",
+    "kosmo:owner-unlock-execution-runbook": "node scripts/kosmo-owner-unlock-execution-runbook.mjs",
+    "kosmo:owner-unlock-execution-runbook-check": "node scripts/kosmo-owner-unlock-execution-runbook-check.mjs",
     "kosmo:villa-provenance-brief": "node scripts/kosmo-villa-provenance-review-brief.mjs",
     "kosmo:ingenbohl-pdf-brief": "node scripts/kosmo-ingenbohl-pdf-extraction-brief.mjs",
     "kosmo:sogn-source-root-brief": "node scripts/kosmo-sogn-source-root-decision-brief.mjs",
