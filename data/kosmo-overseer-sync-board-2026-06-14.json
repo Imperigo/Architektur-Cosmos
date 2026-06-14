@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T13:54:35.853Z",
+  "generated_at": "2026-06-14T13:57:48.832Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 144
+      "files": 145
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 182
+      "files": 183
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-14-codex-synergiebericht-146-kosmoorbit-local-worker-json-status.md",
+      "title": "Codex Synergiebericht 146: KosmoOrbit Local Worker JSON Status",
+      "mirrored_inboxes": 2,
+      "bytes": 1128,
+      "modified_at": "2026-06-14T13:57:20.205Z"
+    },
     {
       "filename": "2026-06-14-codex-synergiebericht-145-ollama-json-capture-smoke.md",
       "title": "Codex Synergiebericht 145: Ollama JSON Capture Smoke",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 2010,
       "modified_at": "2026-06-14T13:28:20.874Z"
-    },
-    {
-      "filename": "2026-06-14-codex-synergiebericht-138-source-root-candidate-roles.md",
-      "title": "Codex Synergiebericht 138: Source Root Candidate Roles",
-      "mirrored_inboxes": 2,
-      "bytes": 2575,
-      "modified_at": "2026-06-14T13:24:31.892Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 138-145 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 139-146 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."
