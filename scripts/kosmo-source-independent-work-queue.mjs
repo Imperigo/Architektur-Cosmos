@@ -11,6 +11,8 @@ const refs = {
   dataLaneSweep: resolve(root, args.dataLaneSweep || `data/kosmodata-lane-sweep-${dateStamp}.json`),
   nightLoop: resolve(root, args.nightLoop || `data/kosmo-night-loop-checkpoint-${dateStamp}.json`),
   localWorkerRunbook: resolve(root, args.localWorkerRunbook || `data/kosmo-local-worker-execution-runbook-${dateStamp}.json`),
+  localWorkerOutputContractReview: resolve(root, args.localWorkerOutputContractReview || `data/kosmo-local-worker-output-contract-review-${dateStamp}.json`),
+  localWorkerOutputContractReviewCheck: resolve(root, args.localWorkerOutputContractReviewCheck || `data/kosmo-local-worker-output-contract-review-check-${dateStamp}.json`),
   assetSourceMap: resolve(root, args.assetSourceMap || `data/kosmoasset-source-candidate-map-${dateStamp}.json`),
   assetCandidateTaxonomyReview: resolve(root, args.assetCandidateTaxonomyReview || `data/kosmoasset-candidate-taxonomy-review-${dateStamp}.json`),
   assetCandidateTaxonomyReviewCheck: resolve(root, args.assetCandidateTaxonomyReviewCheck || `data/kosmoasset-candidate-taxonomy-review-check-${dateStamp}.json`),
@@ -33,6 +35,8 @@ async function main() {
     dataLaneSweep: await readJson(refs.dataLaneSweep),
     nightLoop: await readJson(refs.nightLoop),
     localWorkerRunbook: await readJson(refs.localWorkerRunbook),
+    localWorkerOutputContractReview: await readOptionalJson(refs.localWorkerOutputContractReview),
+    localWorkerOutputContractReviewCheck: await readOptionalJson(refs.localWorkerOutputContractReviewCheck),
     assetSourceMap: await readJson(refs.assetSourceMap),
     assetCandidateTaxonomyReview: await readOptionalJson(refs.assetCandidateTaxonomyReview),
     assetCandidateTaxonomyReviewCheck: await readOptionalJson(refs.assetCandidateTaxonomyReviewCheck),
@@ -66,6 +70,8 @@ function buildQueue({
   dataLaneSweep,
   nightLoop,
   localWorkerRunbook,
+  localWorkerOutputContractReview,
+  localWorkerOutputContractReviewCheck,
   assetSourceMap,
   assetCandidateTaxonomyReview,
   assetCandidateTaxonomyReviewCheck,
@@ -86,6 +92,8 @@ function buildQueue({
     assetCandidateTaxonomyReviewCheck?.status === 'kosmoasset_candidate_taxonomy_review_guard_passed';
   const pilotGapLabelsDone = pilotGapLabelReview?.status === 'pilot_gap_label_review_ready' &&
     pilotGapLabelReviewCheck?.status === 'pilot_gap_label_review_guard_passed';
+  const localWorkerContractDone = localWorkerOutputContractReview?.status === 'local_worker_output_contract_review_ready' &&
+    localWorkerOutputContractReviewCheck?.status === 'local_worker_output_contract_review_guard_passed';
 
   const tasks = [
     task({
@@ -132,11 +140,14 @@ function buildQueue({
       lane: 'local_worker',
       actor: 'codex',
       action: 'Review local worker runbook metadata and output-contract state without reading private output contents.',
-      executableNow: true,
+      executableNow: !localWorkerContractDone,
+      completed: localWorkerContractDone,
       ownerAction: false,
       sourceIndependent: true,
-      command: 'npm run kosmo:local-worker-execution-runbook-check',
-      evidence: `outputs ${localWorkerRunbook.summary?.outputs_present ?? 0}/${localWorkerRunbook.summary?.tasks_total ?? 0}, executable ${localWorkerRunbook.summary?.execute_allowed_if_output_missing ?? 0}`
+      command: 'npm run kosmo:local-worker-output-contract-review && npm run kosmo:local-worker-output-contract-review-check',
+      evidence: localWorkerContractDone
+        ? `completed ${localWorkerOutputContractReview.summary?.contracts ?? 0} contracts, guard ${localWorkerOutputContractReviewCheck.summary?.passed ?? 0}/${localWorkerOutputContractReviewCheck.summary?.checks ?? 0}`
+        : `outputs ${localWorkerRunbook.summary?.outputs_present ?? 0}/${localWorkerRunbook.summary?.tasks_total ?? 0}, executable ${localWorkerRunbook.summary?.execute_allowed_if_output_missing ?? 0}`
     }),
     task({
       id: 'owner_open_review_batches',

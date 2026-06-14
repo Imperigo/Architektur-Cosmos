@@ -31,6 +31,8 @@ const refs = {
   localWorkerHttpRunnerCheck: `data/kosmo-local-worker-http-runner-check-${dateStamp}.json`,
   localWorkerExecutionRunbook: `data/kosmo-local-worker-execution-runbook-${dateStamp}.json`,
   localWorkerExecutionRunbookCheck: `data/kosmo-local-worker-execution-runbook-check-${dateStamp}.json`,
+  localWorkerOutputContractReview: `data/kosmo-local-worker-output-contract-review-${dateStamp}.json`,
+  localWorkerOutputContractReviewCheck: `data/kosmo-local-worker-output-contract-review-check-${dateStamp}.json`,
   sourceIndependentWorkQueue: `data/kosmo-source-independent-work-queue-${dateStamp}.json`,
   sweep: `data/kosmodata-lane-sweep-${dateStamp}.json`,
   workerBoundary: `data/kosmo-worker-boundary-pack-check-${dateStamp}.json`,
@@ -91,6 +93,8 @@ function buildBridge(reports) {
   const localWorkerExecutionRunbook = reports.localWorkerExecutionRunbook || {};
   const localWorkerExecutionRunbookSummary = localWorkerExecutionRunbook.summary || {};
   const localWorkerExecutionRunbookCheck = reports.localWorkerExecutionRunbookCheck || {};
+  const localWorkerOutputContractSummary = reports.localWorkerOutputContractReview?.summary || {};
+  const localWorkerOutputContractCheckSummary = reports.localWorkerOutputContractReviewCheck?.summary || {};
   const sourceIndependentWorkQueueSummary = reports.sourceIndependentWorkQueue?.summary || {};
   const sweepSummary = reports.sweep?.summary || {};
   const pilotGapLabelSummary = reports.pilotGapLabelReview?.summary || {};
@@ -309,6 +313,18 @@ function buildBridge(reports) {
       source_ref: refs.localWorkerExecutionRunbook
     },
     {
+      id: 'local-worker-output-contracts',
+      title: 'Local Worker Output Contracts',
+      status: reports.localWorkerOutputContractReview?.status === 'local_worker_output_contract_review_ready' &&
+        reports.localWorkerOutputContractReviewCheck?.status === 'local_worker_output_contract_review_guard_passed'
+        ? 'review_only_ready'
+        : 'needs_review',
+      signal: `${localWorkerOutputContractSummary.contracts ?? 0} contracts, present ${localWorkerOutputContractSummary.present_valid_outputs ?? 0}, repo ${localWorkerOutputContractSummary.repo_conversion_allowed_now ?? 0}, execute ${localWorkerOutputContractSummary.execute_allowed_now ?? 0}, failures ${localWorkerOutputContractCheckSummary.failures ?? 0}`,
+      owner_action_required: false,
+      route_hint: 'Review local worker output contracts without reading private output bodies',
+      source_ref: refs.localWorkerOutputContractReview
+    },
+    {
       id: 'source-independent-work-queue',
       title: 'Source-Independent Work Queue',
       status: reports.sourceIndependentWorkQueue?.status === 'source_independent_work_queue_ready'
@@ -504,6 +520,13 @@ function buildBridge(reports) {
       local_worker_execution_runbook_executable_now: localWorkerExecutionRunbookSummary.execute_allowed_if_output_missing ?? null,
       local_worker_execution_runbook_check_status: localWorkerExecutionRunbookCheck.status || null,
       local_worker_execution_runbook_check_failures: localWorkerExecutionRunbookCheck.summary?.failures ?? null,
+      local_worker_output_contract_review_status: reports.localWorkerOutputContractReview?.status || null,
+      local_worker_output_contract_review_contracts: localWorkerOutputContractSummary.contracts ?? null,
+      local_worker_output_contract_review_present_valid: localWorkerOutputContractSummary.present_valid_outputs ?? null,
+      local_worker_output_contract_review_repo_conversion_now: localWorkerOutputContractSummary.repo_conversion_allowed_now ?? null,
+      local_worker_output_contract_review_execute_allowed_now: localWorkerOutputContractSummary.execute_allowed_now ?? null,
+      local_worker_output_contract_review_check_status: reports.localWorkerOutputContractReviewCheck?.status || null,
+      local_worker_output_contract_review_check_failures: localWorkerOutputContractCheckSummary.failures ?? null,
       source_independent_work_queue_status: reports.sourceIndependentWorkQueue?.status || null,
       source_independent_work_queue_tasks: sourceIndependentWorkQueueSummary.tasks ?? null,
       source_independent_work_queue_completed_review_only: sourceIndependentWorkQueueSummary.completed_review_only ?? null,
@@ -534,6 +557,7 @@ function buildBridge(reports) {
       'local_models_card',
       'local_worker_http_runner_card',
       'local_worker_execution_runbook_card',
+      'local_worker_output_contract_card',
       'source_independent_work_queue_card',
       'source_root_blocker_card',
       'source_root_decision_refresh_card',
@@ -605,6 +629,7 @@ function renderMarkdown(bridge) {
   lines.push(`- Local models: ${bridge.summary.local_model_inventory_status}`);
   lines.push(`- Local worker HTTP runner: ${bridge.summary.local_worker_http_runner_status}, check ${bridge.summary.local_worker_http_runner_check_status}, safe inputs ${bridge.summary.local_worker_http_runner_safe_inputs ?? '-'}`);
   lines.push(`- Local worker execution runbook: ${bridge.summary.local_worker_execution_runbook_status}, check ${bridge.summary.local_worker_execution_runbook_check_status}, executable now ${bridge.summary.local_worker_execution_runbook_executable_now ?? '-'}`);
+  lines.push(`- Local worker output contracts: ${bridge.summary.local_worker_output_contract_review_status}, contracts ${bridge.summary.local_worker_output_contract_review_contracts ?? '-'}, present valid ${bridge.summary.local_worker_output_contract_review_present_valid ?? '-'}, repo conversion now ${bridge.summary.local_worker_output_contract_review_repo_conversion_now ?? '-'}, execute now ${bridge.summary.local_worker_output_contract_review_execute_allowed_now ?? '-'}, check ${bridge.summary.local_worker_output_contract_review_check_status}, failures ${bridge.summary.local_worker_output_contract_review_check_failures ?? '-'}`);
   lines.push(`- Source-independent work queue: ${bridge.summary.source_independent_work_queue_status}, tasks ${bridge.summary.source_independent_work_queue_tasks ?? '-'}, completed ${bridge.summary.source_independent_work_queue_completed_review_only ?? '-'}, codex executable ${bridge.summary.source_independent_work_queue_codex_executable_now ?? '-'}, owner actions ${bridge.summary.source_independent_work_queue_owner_actions ?? '-'}, failures ${bridge.summary.source_independent_work_queue_failures ?? '-'}`);
   lines.push(`- Pilot gap label review: ${bridge.summary.pilot_gap_label_review_status}, labels ${bridge.summary.pilot_gap_label_review_labels ?? '-'}, hard blockers ${bridge.summary.pilot_gap_label_review_hard_blockers ?? '-'}, owner decisions ${bridge.summary.pilot_gap_label_review_owner_decisions ?? '-'}, check ${bridge.summary.pilot_gap_label_review_check_status}, failures ${bridge.summary.pilot_gap_label_review_check_failures ?? '-'}`);
   lines.push(`- Asset bridge: ${bridge.summary.asset_bridge_status}`);

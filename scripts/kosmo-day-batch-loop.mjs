@@ -76,6 +76,8 @@ const steps = [
   step('local_worker_output_conversion_plan', 'Local Worker Output Conversion Plan', ['run', 'kosmo:local-worker-output-conversion-plan']),
   step('local_worker_execution_runbook', 'Local Worker Execution Runbook', ['run', 'kosmo:local-worker-execution-runbook']),
   step('local_worker_execution_runbook_check', 'Local Worker Execution Runbook Check', ['run', 'kosmo:local-worker-execution-runbook-check']),
+  step('local_worker_output_contract_review', 'Local Worker Output Contract Review', ['run', 'kosmo:local-worker-output-contract-review']),
+  step('local_worker_output_contract_review_check', 'Local Worker Output Contract Review Check', ['run', 'kosmo:local-worker-output-contract-review-check']),
   step('owner_review_packet', 'Owner Review Packet', ['run', 'kosmo:owner-review-packet']),
   step('owner_review_packet_check', 'Owner Review Packet Check', ['run', 'kosmo:owner-review-packet-check']),
   step('owner_review_session_brief', 'Owner Review Session Brief', ['run', 'kosmo:owner-review-session-brief']),
@@ -227,6 +229,8 @@ async function buildReport({ results, startedAt }) {
   const localWorkerHttpRunnerCheck = await readOptionalJson(`data/kosmo-local-worker-http-runner-check-${dateStamp}.json`);
   const localWorkerExecutionRunbook = await readOptionalJson(`data/kosmo-local-worker-execution-runbook-${dateStamp}.json`);
   const localWorkerExecutionRunbookCheck = await readOptionalJson(`data/kosmo-local-worker-execution-runbook-check-${dateStamp}.json`);
+  const localWorkerOutputContractReview = await readOptionalJson(`data/kosmo-local-worker-output-contract-review-${dateStamp}.json`);
+  const localWorkerOutputContractReviewCheck = await readOptionalJson(`data/kosmo-local-worker-output-contract-review-check-${dateStamp}.json`);
   const checkpoint = await readOptionalJson(`data/kosmo-night-loop-checkpoint-${dateStamp}.json`);
   const sourceIndependentWorkQueue = await readOptionalJson(`data/kosmo-source-independent-work-queue-${dateStamp}.json`);
   const innovationSmoke = await readOptionalJson(`data/kosmo-innovation-smoke-${dateStamp}.json`);
@@ -294,6 +298,8 @@ async function buildReport({ results, startedAt }) {
       localWorkerExecutionRunbook?.status
     ),
     invariant('local_worker_execution_runbook_check_passed', localWorkerExecutionRunbookCheck?.status === 'local_worker_execution_runbook_guard_passed', localWorkerExecutionRunbookCheck?.status),
+    invariant('local_worker_output_contract_review_ready', localWorkerOutputContractReview?.status === 'local_worker_output_contract_review_ready', localWorkerOutputContractReview?.status),
+    invariant('local_worker_output_contract_review_guard_passed', localWorkerOutputContractReviewCheck?.status === 'local_worker_output_contract_review_guard_passed', localWorkerOutputContractReviewCheck?.status),
     invariant('source_independent_work_queue_ready', sourceIndependentWorkQueue?.status === 'source_independent_work_queue_ready', sourceIndependentWorkQueue?.status),
     invariant('public_ready_zero', (sweep?.summary?.references_public_ready_assets ?? 0) === 0, `public_ready=${sweep?.summary?.references_public_ready_assets ?? 0}`),
     invariant(
@@ -402,6 +408,14 @@ async function buildReport({ results, startedAt }) {
       local_worker_execution_runbook_executable_now: localWorkerExecutionRunbook?.summary?.execute_allowed_if_output_missing ?? null,
       local_worker_execution_runbook_check_status: localWorkerExecutionRunbookCheck?.status || null,
       local_worker_execution_runbook_check_failures: localWorkerExecutionRunbookCheck?.summary?.failures ?? null,
+      local_worker_output_contract_review_status: localWorkerOutputContractReview?.status || null,
+      local_worker_output_contract_review_contracts: localWorkerOutputContractReview?.summary?.contracts ?? null,
+      local_worker_output_contract_review_present_valid: localWorkerOutputContractReview?.summary?.present_valid_outputs ?? null,
+      local_worker_output_contract_review_repo_conversion_now: localWorkerOutputContractReview?.summary?.repo_conversion_allowed_now ?? null,
+      local_worker_output_contract_review_execute_allowed_now: localWorkerOutputContractReview?.summary?.execute_allowed_now ?? null,
+      local_worker_output_contract_review_failures: localWorkerOutputContractReview?.summary?.failures ?? null,
+      local_worker_output_contract_review_check_status: localWorkerOutputContractReviewCheck?.status || null,
+      local_worker_output_contract_review_check_failures: localWorkerOutputContractReviewCheck?.summary?.failures ?? null,
       source_independent_work_queue_status: sourceIndependentWorkQueue?.status || null,
       source_independent_work_queue_tasks: sourceIndependentWorkQueue?.summary?.tasks ?? null,
       source_independent_work_queue_completed_review_only: sourceIndependentWorkQueue?.summary?.completed_review_only ?? null,
@@ -442,6 +456,8 @@ async function buildReport({ results, startedAt }) {
       `data/kosmo-local-worker-http-runner-check-${dateStamp}.json`,
       `data/kosmo-local-worker-execution-runbook-${dateStamp}.json`,
       `data/kosmo-local-worker-execution-runbook-check-${dateStamp}.json`,
+      `data/kosmo-local-worker-output-contract-review-${dateStamp}.json`,
+      `data/kosmo-local-worker-output-contract-review-check-${dateStamp}.json`,
       `data/kosmo-night-loop-checkpoint-${dateStamp}.json`,
       `data/kosmo-source-independent-work-queue-${dateStamp}.json`,
       `data/kosmo-innovation-smoke-${dateStamp}.json`,
@@ -497,6 +513,7 @@ function renderMarkdown(report) {
   lines.push(`- Local worker HTTP runner check: ${report.summary.local_worker_http_runner_check_status}, failures ${report.summary.local_worker_http_runner_check_failures ?? '-'}`);
   lines.push(`- Local worker execution runbook: ${report.summary.local_worker_execution_runbook_status}, runner-safe ${report.summary.local_worker_execution_runbook_runner_safe_tasks ?? '-'}, executable now ${report.summary.local_worker_execution_runbook_executable_now ?? '-'}`);
   lines.push(`- Local worker execution runbook check: ${report.summary.local_worker_execution_runbook_check_status}, failures ${report.summary.local_worker_execution_runbook_check_failures ?? '-'}`);
+  lines.push(`- Local worker output contract review: ${report.summary.local_worker_output_contract_review_status}, contracts ${report.summary.local_worker_output_contract_review_contracts ?? '-'}, present valid ${report.summary.local_worker_output_contract_review_present_valid ?? '-'}, repo conversion now ${report.summary.local_worker_output_contract_review_repo_conversion_now ?? '-'}, execute now ${report.summary.local_worker_output_contract_review_execute_allowed_now ?? '-'}, failures ${report.summary.local_worker_output_contract_review_failures ?? '-'}, check ${report.summary.local_worker_output_contract_review_check_status}`);
   lines.push(`- Source-independent work queue: ${report.summary.source_independent_work_queue_status}, tasks ${report.summary.source_independent_work_queue_tasks ?? '-'}, completed ${report.summary.source_independent_work_queue_completed_review_only ?? '-'}, codex executable ${report.summary.source_independent_work_queue_codex_executable_now ?? '-'}, owner actions ${report.summary.source_independent_work_queue_owner_actions ?? '-'}, failures ${report.summary.source_independent_work_queue_failures ?? '-'}`);
   lines.push(`- Innovation smoke: ${report.summary.innovation_smoke_status}`);
   lines.push(`- Orbit bridge: ${report.summary.orbit_bridge_status}`);

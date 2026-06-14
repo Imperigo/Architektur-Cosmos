@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T16:13:24.349Z",
+  "generated_at": "2026-06-14T16:20:20.599Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 163
+      "files": 164
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 204
+      "files": 207
     }
   ],
   "summary": {
@@ -43,10 +43,17 @@
     "local_worker_high_risk_hits": 0,
     "latest_handoffs": 8,
     "latest_handoff_mirror_missing_files": 0,
-    "historical_handoff_mirror_missing_files": 41,
+    "historical_handoff_mirror_missing_files": 43,
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-14-codex-synergiebericht-165-local-worker-output-contract-review.md",
+      "title": "Codex Synergiebericht 165: Local Worker Output Contract Review",
+      "mirrored_inboxes": 2,
+      "bytes": 1910,
+      "modified_at": "2026-06-14T16:20:14.966Z"
+    },
     {
       "filename": "2026-06-14-codex-synergiebericht-164-pilot-gap-label-review.md",
       "title": "Codex Synergiebericht 164: Pilot Gap Label Review",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1727,
       "modified_at": "2026-06-14T15:08:46.943Z"
-    },
-    {
-      "filename": "2026-06-14-codex-synergiebericht-157-source-root-decision-dry-run.md",
-      "title": "Codex Synergiebericht 157: Source Root Decision Dry Run",
-      "mirrored_inboxes": 2,
-      "bytes": 2220,
-      "modified_at": "2026-06-14T15:01:34.566Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 157-164 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 158-165 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."

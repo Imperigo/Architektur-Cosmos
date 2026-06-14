@@ -162,6 +162,8 @@
     "kosmo:local-worker-http-runner-check": "node scripts/kosmo-local-worker-http-runner-check.mjs",
     "kosmo:local-worker-execution-runbook": "node scripts/kosmo-local-worker-execution-runbook.mjs",
     "kosmo:local-worker-execution-runbook-check": "node scripts/kosmo-local-worker-execution-runbook-check.mjs",
+    "kosmo:local-worker-output-contract-review": "node scripts/kosmo-local-worker-output-contract-review.mjs",
+    "kosmo:local-worker-output-contract-review-check": "node scripts/kosmo-local-worker-output-contract-review-check.mjs",
     "kosmo:local-worker-output-review": "node scripts/kosmo-local-worker-output-review.mjs",
     "kosmo:local-worker-launch-queue": "node scripts/kosmo-local-worker-launch-queue.mjs",
     "kosmo:local-worker-output-conversion-plan": "node scripts/kosmo-local-worker-output-conversion-plan.mjs",
