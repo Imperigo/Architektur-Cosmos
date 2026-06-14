@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board
 
-Generated: 2026-06-14T08:48:15.146Z
+Generated: 2026-06-14T08:55:25.879Z
 Status: `overseer_sync_board_ready`
 
 ## Summary
@@ -20,6 +20,7 @@ Status: `overseer_sync_board_ready`
 
 | File | Title | Mirrors |
 | --- | --- | ---: |
+| `2026-06-14-codex-synergiebericht-132-private-metadata-inventory-runner.md` | Codex Synergiebericht 132 - Private Metadata Inventory Runner | 2 |
 | `2026-06-14-codex-synergiebericht-131-worker-boundary-activation-state.md` | Codex Synergiebericht 131 - Worker Boundary Activation State | 2 |
 | `2026-06-14-codex-synergiebericht-130-source-root-activation-preflight.md` | Codex Synergiebericht 130 - Source Root Activation Preflight | 2 |
 | `2026-06-14-codex-synergiebericht-129-local-worker-smoke-refresh.md` | Codex Synergiebericht 129 - Local Worker Smoke Refresh | 2 |
@@ -27,7 +28,6 @@ Status: `overseer_sync_board_ready`
 | `2026-06-14-codex-synergiebericht-127-rapidocr-innovation-smoke.md` | Codex Synergiebericht 127 - RapidOCR Innovation Smoke | 2 |
 | `2026-06-14-codex-synergiebericht-126-kosmoasset-bridge-gate.md` | Codex Synergiebericht 126 - KosmoAsset Bridge Gate | 2 |
 | `2026-06-14-codex-synergiebericht-125-day-batch-pilot-gates.md` | Codex Synergiebericht 125 - Day Batch Pilot Gates | 2 |
-| `2026-06-14-codex-synergiebericht-124-source-root-unlock-runbook.md` | Codex Synergiebericht 124 - Source Root Unlock Runbook | 2 |
 
 ## Blockers
 
@@ -40,7 +40,7 @@ Status: `overseer_sync_board_ready`
 
 ## Next Actions
 
-- Claude/KosmoOverseer reviews latest handoffs 124-131 before editing related files.
+- Claude/KosmoOverseer reviews latest handoffs 125-132 before editing related files.
 - Use the owner review session brief as the next owner-facing entry point.
 - Keep local worker tasks review-only while source-root and owner answers are pending.
 - After any explicit owner answer, update intake first, then rerun guards and this sync board.

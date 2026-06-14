@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T08:48:15.146Z",
+  "generated_at": "2026-06-14T08:55:25.879Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 130
+      "files": 131
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 166
+      "files": 167
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-14-codex-synergiebericht-132-private-metadata-inventory-runner.md",
+      "title": "Codex Synergiebericht 132 - Private Metadata Inventory Runner",
+      "mirrored_inboxes": 2,
+      "bytes": 2267,
+      "modified_at": "2026-06-14T08:55:20.004Z"
+    },
     {
       "filename": "2026-06-14-codex-synergiebericht-131-worker-boundary-activation-state.md",
       "title": "Codex Synergiebericht 131 - Worker Boundary Activation State",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 2460,
       "modified_at": "2026-06-14T08:04:02.679Z"
-    },
-    {
-      "filename": "2026-06-14-codex-synergiebericht-124-source-root-unlock-runbook.md",
-      "title": "Codex Synergiebericht 124 - Source Root Unlock Runbook",
-      "mirrored_inboxes": 2,
-      "bytes": 1045,
-      "modified_at": "2026-06-13T22:07:43.494Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 124-131 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 125-132 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."
