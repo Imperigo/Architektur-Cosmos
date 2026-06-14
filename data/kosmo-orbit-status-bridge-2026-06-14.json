@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T15:39:39.857Z",
+  "generated_at": "2026-06-14T16:05:50.086Z",
   "status": "orbit_bridge_ready_with_blockers",
   "policy": {
     "dashboard_only": true,
@@ -40,14 +40,16 @@
     "data/kosmo-owner-review-packet-check-2026-06-14.json",
     "data/kosmoasset-reference-bridge-check-2026-06-14.json",
     "data/kosmoasset-source-candidate-map-2026-06-14.json",
+    "data/kosmoasset-candidate-taxonomy-review-2026-06-14.json",
+    "data/kosmoasset-candidate-taxonomy-review-check-2026-06-14.json",
     "data/kosmo-innovation-lane-plan-2026-06-14.json",
     "data/kosmo-innovation-smoke-2026-06-14.json",
     "data/kosmo-night-loop-checkpoint-2026-06-14.json"
   ],
   "summary": {
-    "cards": 25,
+    "cards": 26,
     "blocking_cards": 4,
-    "owner_action_cards": 14,
+    "owner_action_cards": 15,
     "source_root_blocked": true,
     "day_batch_status": "day_batch_loop_passed_review_only",
     "source_root_decision_refresh_status": "source_root_decision_session_refresh_not_needed",
@@ -105,12 +107,19 @@
     "local_worker_execution_runbook_check_failures": 0,
     "source_independent_work_queue_status": "source_independent_work_queue_ready",
     "source_independent_work_queue_tasks": 6,
-    "source_independent_work_queue_codex_executable_now": 4,
+    "source_independent_work_queue_completed_review_only": 1,
+    "source_independent_work_queue_codex_executable_now": 3,
     "source_independent_work_queue_owner_actions": 2,
     "source_independent_work_queue_failures": 0,
     "asset_bridge_status": "kosmoasset_reference_bridge_review_only_passed",
     "asset_source_candidate_map_status": "kosmoasset_source_candidate_map_review_only_ready",
     "asset_source_candidate_map_candidates": 3,
+    "asset_candidate_taxonomy_review_status": "kosmoasset_candidate_taxonomy_review_ready",
+    "asset_candidate_taxonomy_review_candidates": 10,
+    "asset_candidate_taxonomy_review_reviewable_lanes": 3,
+    "asset_candidate_taxonomy_review_owner_confirmations": 3,
+    "asset_candidate_taxonomy_review_check_status": "kosmoasset_candidate_taxonomy_review_guard_passed",
+    "asset_candidate_taxonomy_review_check_failures": 0,
     "innovation_smoke_status": "innovation_smoke_passed_review_only",
     "public_ready_after_bridge": 0
   },
@@ -119,7 +128,7 @@
       "id": "day-batch",
       "title": "Daily Batch",
       "status": "ready",
-      "signal": "51/51 required steps",
+      "signal": "53/53 required steps",
       "owner_action_required": false,
       "route_hint": "KosmoReferences/KosmoAsset daily loop",
       "source_ref": "data/kosmo-day-batch-loop-2026-06-14.json"
@@ -263,7 +272,7 @@
       "id": "source-independent-work-queue",
       "title": "Source-Independent Work Queue",
       "status": "review_only_ready",
-      "signal": "6 tasks, codex 4, owner 2, failures 0",
+      "signal": "6 tasks, completed 1, codex 3, owner 2, failures 0",
       "owner_action_required": true,
       "route_hint": "Safe work that does not require private source-root activation",
       "source_ref": "data/kosmo-source-independent-work-queue-2026-06-14.json"
@@ -312,6 +321,15 @@
       "owner_action_required": true,
       "route_hint": "Map source-root candidates into KosmoAsset lanes without ingestion",
       "source_ref": "data/kosmoasset-source-candidate-map-2026-06-14.json"
+    },
+    {
+      "id": "asset-candidate-taxonomy",
+      "title": "Asset Candidate Taxonomy",
+      "status": "review_only_ready",
+      "signal": "10 reviews, 3 reviewable, owner 3, failures 0",
+      "owner_action_required": true,
+      "route_hint": "Review-only KosmoAsset lane contract without paths or ingestion",
+      "source_ref": "data/kosmoasset-candidate-taxonomy-review-2026-06-14.json"
     },
     {
       "id": "worker-boundary",
@@ -363,6 +381,7 @@
     "pilot_reference_cards",
     "asset_reference_bridge_card",
     "asset_source_candidate_map_card",
+    "asset_candidate_taxonomy_card",
     "worker_boundary_card",
     "innovation_lane_card",
     "owner_handoff_card"

@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board
 
-Generated: 2026-06-14T15:38:26.155Z
+Generated: 2026-06-14T15:51:49.701Z
 Status: `overseer_sync_board_ready`
 
 ## Summary
@@ -20,6 +20,7 @@ Status: `overseer_sync_board_ready`
 
 | File | Title | Mirrors |
 | --- | --- | ---: |
+| `2026-06-14-codex-synergiebericht-163-asset-candidate-taxonomy-review.md` | Codex Synergiebericht 163: Asset Candidate Taxonomy Review | 2 |
 | `2026-06-14-codex-synergiebericht-162-source-independent-work-queue.md` | Codex Synergiebericht 162: Source-Independent Work Queue | 2 |
 | `2026-06-14-codex-synergiebericht-161-source-root-choice-consequence-matrix.md` | Codex Synergiebericht 161: Source Root Choice Consequence Matrix | 2 |
 | `2026-06-14-codex-synergiebericht-160-source-root-owner-final-decision-brief.md` | Codex Synergiebericht 160: Source Root Owner Final Decision Brief | 2 |
@@ -27,7 +28,6 @@ Status: `overseer_sync_board_ready`
 | `2026-06-14-codex-synergiebericht-158-post-owner-activation-queue.md` | Codex Synergiebericht 158: Post-Owner Activation Queue | 2 |
 | `2026-06-14-codex-synergiebericht-157-source-root-decision-dry-run.md` | Codex Synergiebericht 157: Source Root Decision Dry Run | 2 |
 | `2026-06-14-codex-synergiebericht-156-owner-decision-packet-guard.md` | Codex Synergiebericht 156: Owner Decision Packet Guard | 2 |
-| `2026-06-14-codex-synergiebericht-155-owner-review-packet-source-root-entry.md` | Codex Synergiebericht 155: Owner Review Packet Source-Root Entry | 2 |
 
 ## Blockers
 
@@ -40,7 +40,7 @@ Status: `overseer_sync_board_ready`
 
 ## Next Actions
 
-- Claude/KosmoOverseer reviews latest handoffs 155-162 before editing related files.
+- Claude/KosmoOverseer reviews latest handoffs 156-163 before editing related files.
 - Use the owner review session brief as the next owner-facing entry point.
 - Keep local worker tasks review-only while source-root and owner answers are pending.
 - After any explicit owner answer, update intake first, then rerun guards and this sync board.

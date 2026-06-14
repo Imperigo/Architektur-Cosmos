@@ -37,6 +37,8 @@ const refs = {
   ownerPacket: `data/kosmo-owner-review-packet-check-${dateStamp}.json`,
   assetBridge: `data/kosmoasset-reference-bridge-check-${dateStamp}.json`,
   assetSourceCandidateMap: `data/kosmoasset-source-candidate-map-${dateStamp}.json`,
+  assetCandidateTaxonomyReview: `data/kosmoasset-candidate-taxonomy-review-${dateStamp}.json`,
+  assetCandidateTaxonomyReviewCheck: `data/kosmoasset-candidate-taxonomy-review-check-${dateStamp}.json`,
   innovationPlan: `data/kosmo-innovation-lane-plan-${dateStamp}.json`,
   innovationSmoke: `data/kosmo-innovation-smoke-${dateStamp}.json`,
   nightLoop: `data/kosmo-night-loop-checkpoint-${dateStamp}.json`
@@ -91,6 +93,8 @@ function buildBridge(reports) {
   const sweepSummary = reports.sweep?.summary || {};
   const assetBridgeSummary = reports.assetBridge?.summary || {};
   const assetSourceCandidateSummary = reports.assetSourceCandidateMap?.summary || {};
+  const assetCandidateTaxonomySummary = reports.assetCandidateTaxonomyReview?.summary || {};
+  const assetCandidateTaxonomyCheckSummary = reports.assetCandidateTaxonomyReviewCheck?.summary || {};
   const innovationSummary = reports.innovationSmoke?.summary || {};
   const cards = [
     {
@@ -307,7 +311,7 @@ function buildBridge(reports) {
         ? 'review_only_ready'
         : 'needs_review',
       signal: reports.sourceIndependentWorkQueue?.status
-        ? `${sourceIndependentWorkQueueSummary.tasks ?? 0} tasks, codex ${sourceIndependentWorkQueueSummary.codex_executable_now ?? 0}, owner ${sourceIndependentWorkQueueSummary.owner_actions ?? 0}, failures ${sourceIndependentWorkQueueSummary.failures ?? 0}`
+        ? `${sourceIndependentWorkQueueSummary.tasks ?? 0} tasks, completed ${sourceIndependentWorkQueueSummary.completed_review_only ?? 0}, codex ${sourceIndependentWorkQueueSummary.codex_executable_now ?? 0}, owner ${sourceIndependentWorkQueueSummary.owner_actions ?? 0}, failures ${sourceIndependentWorkQueueSummary.failures ?? 0}`
         : 'missing source-independent work queue',
       owner_action_required: (sourceIndependentWorkQueueSummary.owner_actions ?? 0) > 0,
       route_hint: 'Safe work that does not require private source-root activation',
@@ -366,6 +370,18 @@ function buildBridge(reports) {
       owner_action_required: (assetSourceCandidateSummary.asset_lane_candidates ?? 0) > 0,
       route_hint: 'Map source-root candidates into KosmoAsset lanes without ingestion',
       source_ref: refs.assetSourceCandidateMap
+    },
+    {
+      id: 'asset-candidate-taxonomy',
+      title: 'Asset Candidate Taxonomy',
+      status: reports.assetCandidateTaxonomyReview?.status === 'kosmoasset_candidate_taxonomy_review_ready' &&
+        reports.assetCandidateTaxonomyReviewCheck?.status === 'kosmoasset_candidate_taxonomy_review_guard_passed'
+        ? 'review_only_ready'
+        : 'needs_review',
+      signal: `${assetCandidateTaxonomySummary.candidate_reviews ?? 0} reviews, ${assetCandidateTaxonomySummary.reviewable_asset_lanes ?? 0} reviewable, owner ${assetCandidateTaxonomySummary.owner_confirmations_required ?? 0}, failures ${assetCandidateTaxonomyCheckSummary.failures ?? 0}`,
+      owner_action_required: (assetCandidateTaxonomySummary.owner_confirmations_required ?? 0) > 0,
+      route_hint: 'Review-only KosmoAsset lane contract without paths or ingestion',
+      source_ref: refs.assetCandidateTaxonomyReview
     },
     {
       id: 'worker-boundary',
@@ -474,12 +490,19 @@ function buildBridge(reports) {
       local_worker_execution_runbook_check_failures: localWorkerExecutionRunbookCheck.summary?.failures ?? null,
       source_independent_work_queue_status: reports.sourceIndependentWorkQueue?.status || null,
       source_independent_work_queue_tasks: sourceIndependentWorkQueueSummary.tasks ?? null,
+      source_independent_work_queue_completed_review_only: sourceIndependentWorkQueueSummary.completed_review_only ?? null,
       source_independent_work_queue_codex_executable_now: sourceIndependentWorkQueueSummary.codex_executable_now ?? null,
       source_independent_work_queue_owner_actions: sourceIndependentWorkQueueSummary.owner_actions ?? null,
       source_independent_work_queue_failures: sourceIndependentWorkQueueSummary.failures ?? null,
       asset_bridge_status: reports.assetBridge?.status || null,
       asset_source_candidate_map_status: reports.assetSourceCandidateMap?.status || null,
       asset_source_candidate_map_candidates: assetSourceCandidateSummary.asset_lane_candidates ?? null,
+      asset_candidate_taxonomy_review_status: reports.assetCandidateTaxonomyReview?.status || null,
+      asset_candidate_taxonomy_review_candidates: assetCandidateTaxonomySummary.candidate_reviews ?? null,
+      asset_candidate_taxonomy_review_reviewable_lanes: assetCandidateTaxonomySummary.reviewable_asset_lanes ?? null,
+      asset_candidate_taxonomy_review_owner_confirmations: assetCandidateTaxonomySummary.owner_confirmations_required ?? null,
+      asset_candidate_taxonomy_review_check_status: reports.assetCandidateTaxonomyReviewCheck?.status || null,
+      asset_candidate_taxonomy_review_check_failures: assetCandidateTaxonomyCheckSummary.failures ?? null,
       innovation_smoke_status: reports.innovationSmoke?.status || null,
       public_ready_after_bridge: 0
     },
@@ -506,6 +529,7 @@ function buildBridge(reports) {
       'pilot_reference_cards',
       'asset_reference_bridge_card',
       'asset_source_candidate_map_card',
+      'asset_candidate_taxonomy_card',
       'worker_boundary_card',
       'innovation_lane_card',
       'owner_handoff_card'
@@ -558,9 +582,10 @@ function renderMarkdown(bridge) {
   lines.push(`- Local models: ${bridge.summary.local_model_inventory_status}`);
   lines.push(`- Local worker HTTP runner: ${bridge.summary.local_worker_http_runner_status}, check ${bridge.summary.local_worker_http_runner_check_status}, safe inputs ${bridge.summary.local_worker_http_runner_safe_inputs ?? '-'}`);
   lines.push(`- Local worker execution runbook: ${bridge.summary.local_worker_execution_runbook_status}, check ${bridge.summary.local_worker_execution_runbook_check_status}, executable now ${bridge.summary.local_worker_execution_runbook_executable_now ?? '-'}`);
-  lines.push(`- Source-independent work queue: ${bridge.summary.source_independent_work_queue_status}, tasks ${bridge.summary.source_independent_work_queue_tasks ?? '-'}, codex executable ${bridge.summary.source_independent_work_queue_codex_executable_now ?? '-'}, owner actions ${bridge.summary.source_independent_work_queue_owner_actions ?? '-'}, failures ${bridge.summary.source_independent_work_queue_failures ?? '-'}`);
+  lines.push(`- Source-independent work queue: ${bridge.summary.source_independent_work_queue_status}, tasks ${bridge.summary.source_independent_work_queue_tasks ?? '-'}, completed ${bridge.summary.source_independent_work_queue_completed_review_only ?? '-'}, codex executable ${bridge.summary.source_independent_work_queue_codex_executable_now ?? '-'}, owner actions ${bridge.summary.source_independent_work_queue_owner_actions ?? '-'}, failures ${bridge.summary.source_independent_work_queue_failures ?? '-'}`);
   lines.push(`- Asset bridge: ${bridge.summary.asset_bridge_status}`);
   lines.push(`- Asset source candidate map: ${bridge.summary.asset_source_candidate_map_status}, candidates ${bridge.summary.asset_source_candidate_map_candidates ?? '-'}`);
+  lines.push(`- Asset candidate taxonomy review: ${bridge.summary.asset_candidate_taxonomy_review_status}, candidates ${bridge.summary.asset_candidate_taxonomy_review_candidates ?? '-'}, reviewable ${bridge.summary.asset_candidate_taxonomy_review_reviewable_lanes ?? '-'}, owner confirmations ${bridge.summary.asset_candidate_taxonomy_review_owner_confirmations ?? '-'}, check ${bridge.summary.asset_candidate_taxonomy_review_check_status}, failures ${bridge.summary.asset_candidate_taxonomy_review_check_failures ?? '-'}`);
   lines.push(`- Innovation smoke: ${bridge.summary.innovation_smoke_status}`);
   lines.push(`- Public-ready after bridge: ${bridge.summary.public_ready_after_bridge}`);
   lines.push('');

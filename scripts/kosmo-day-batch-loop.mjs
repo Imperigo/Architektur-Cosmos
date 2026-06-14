@@ -10,7 +10,7 @@ const args = parseArgs(process.argv.slice(2));
 const dateStamp = new Date().toISOString().slice(0, 10);
 const outputJson = resolve(root, args.out || `data/kosmo-day-batch-loop-${dateStamp}.json`);
 const outputMd = resolve(root, args.markdown || `docs/codex/kosmo-day-batch-loop-${dateStamp}.md`);
-const timeoutMs = Number(args.timeoutMs || 240000);
+const timeoutMs = Number(args.timeoutMs || 420000);
 const sourceRootSession = resolve(root, `examples/kosmo-references/provenance/source-root-decision-session-${dateStamp}.json`);
 
 const steps = [
@@ -57,6 +57,8 @@ const steps = [
   step('pilot_package_check', 'Pilot Package Check', ['run', 'kosmo:pilot-package-check']),
   step('asset_reference_bridge_check', 'Asset Reference Bridge Check', ['run', 'kosmo:asset-reference-bridge-check']),
   step('asset_source_candidate_map', 'Asset Source Candidate Map', ['run', 'kosmo:asset-source-candidate-map']),
+  step('asset_candidate_taxonomy_review', 'Asset Candidate Taxonomy Review', ['run', 'kosmo:asset-candidate-taxonomy-review']),
+  step('asset_candidate_taxonomy_review_check', 'Asset Candidate Taxonomy Review Check', ['run', 'kosmo:asset-candidate-taxonomy-review-check']),
   step('core_router', 'Core Router', ['run', 'kosmo:data-lane-command-router']),
   step('worker_boundary_pack', 'Worker Boundary Pack', ['run', 'kosmo:worker-boundary-pack']),
   step('worker_boundary_pack_check', 'Worker Boundary Pack Check', ['run', 'kosmo:worker-boundary-pack-check']),
@@ -211,6 +213,8 @@ async function buildReport({ results, startedAt }) {
   const sourceRootOwnerFinalDecisionBrief = await readOptionalJson(`data/kosmo-source-root-owner-final-decision-brief-${dateStamp}.json`);
   const sourceRootOwnerChoiceConsequenceMatrix = await readOptionalJson(`data/kosmo-source-root-owner-choice-consequence-matrix-${dateStamp}.json`);
   const assetSourceCandidateMap = await readOptionalJson(`data/kosmoasset-source-candidate-map-${dateStamp}.json`);
+  const assetCandidateTaxonomyReview = await readOptionalJson(`data/kosmoasset-candidate-taxonomy-review-${dateStamp}.json`);
+  const assetCandidateTaxonomyReviewCheck = await readOptionalJson(`data/kosmoasset-candidate-taxonomy-review-check-${dateStamp}.json`);
   const sourceRootActivation = await readOptionalJson(`data/kosmo-source-root-activation-preflight-${dateStamp}.json`);
   const privateMetadataInventory = await readOptionalJson(`data/kosmo-private-metadata-inventory-runner-${dateStamp}.json`);
   const privateMetadataInventoryFixture = await readOptionalJson(`data/kosmo-private-metadata-inventory-fixture-smoke-${dateStamp}.json`);
@@ -247,6 +251,8 @@ async function buildReport({ results, startedAt }) {
     invariant('source_root_owner_final_decision_brief_ready', sourceRootOwnerFinalDecisionBrief?.status === 'source_root_owner_final_decision_brief_ready', sourceRootOwnerFinalDecisionBrief?.status),
     invariant('source_root_owner_choice_consequence_matrix_ready', sourceRootOwnerChoiceConsequenceMatrix?.status === 'source_root_owner_choice_consequence_matrix_ready', sourceRootOwnerChoiceConsequenceMatrix?.status),
     invariant('asset_source_candidate_map_ready', assetSourceCandidateMap?.status === 'kosmoasset_source_candidate_map_review_only_ready', assetSourceCandidateMap?.status),
+    invariant('asset_candidate_taxonomy_review_ready', assetCandidateTaxonomyReview?.status === 'kosmoasset_candidate_taxonomy_review_ready', assetCandidateTaxonomyReview?.status),
+    invariant('asset_candidate_taxonomy_review_guard_passed', assetCandidateTaxonomyReviewCheck?.status === 'kosmoasset_candidate_taxonomy_review_guard_passed', assetCandidateTaxonomyReviewCheck?.status),
     invariant('owner_handoff_passed', ownerHandoffPassed, `${ownerPacket?.status || 'missing'} / ${ownerSession?.status || 'missing'}`),
     invariant('innovation_smoke_review_only', innovationSmoke?.status === 'innovation_smoke_passed_review_only', innovationSmoke?.status),
     invariant('orbit_bridge_ready', ['orbit_bridge_ready_with_blockers', 'orbit_bridge_all_ready_review_only'].includes(orbitBridge?.status), orbitBridge?.status),
@@ -360,6 +366,13 @@ async function buildReport({ results, startedAt }) {
       source_root_owner_choice_consequence_matrix_failures: sourceRootOwnerChoiceConsequenceMatrix?.summary?.failures ?? null,
       asset_source_candidate_map_status: assetSourceCandidateMap?.status || null,
       asset_source_candidate_map_candidates: assetSourceCandidateMap?.summary?.asset_lane_candidates ?? null,
+      asset_candidate_taxonomy_review_status: assetCandidateTaxonomyReview?.status || null,
+      asset_candidate_taxonomy_review_candidates: assetCandidateTaxonomyReview?.summary?.candidate_reviews ?? null,
+      asset_candidate_taxonomy_review_reviewable_lanes: assetCandidateTaxonomyReview?.summary?.reviewable_asset_lanes ?? null,
+      asset_candidate_taxonomy_review_owner_confirmations: assetCandidateTaxonomyReview?.summary?.owner_confirmations_required ?? null,
+      asset_candidate_taxonomy_review_failures: assetCandidateTaxonomyReview?.summary?.failures ?? null,
+      asset_candidate_taxonomy_review_check_status: assetCandidateTaxonomyReviewCheck?.status || null,
+      asset_candidate_taxonomy_review_check_failures: assetCandidateTaxonomyReviewCheck?.summary?.failures ?? null,
       source_root_activation_status: sourceRootActivation?.status || null,
       private_metadata_inventory_status: privateMetadataInventory?.status || null,
       private_metadata_inventory_fixture_status: privateMetadataInventoryFixture?.status || null,
@@ -377,6 +390,7 @@ async function buildReport({ results, startedAt }) {
       local_worker_execution_runbook_check_failures: localWorkerExecutionRunbookCheck?.summary?.failures ?? null,
       source_independent_work_queue_status: sourceIndependentWorkQueue?.status || null,
       source_independent_work_queue_tasks: sourceIndependentWorkQueue?.summary?.tasks ?? null,
+      source_independent_work_queue_completed_review_only: sourceIndependentWorkQueue?.summary?.completed_review_only ?? null,
       source_independent_work_queue_codex_executable_now: sourceIndependentWorkQueue?.summary?.codex_executable_now ?? null,
       source_independent_work_queue_owner_actions: sourceIndependentWorkQueue?.summary?.owner_actions ?? null,
       source_independent_work_queue_failures: sourceIndependentWorkQueue?.summary?.failures ?? null,
@@ -402,6 +416,8 @@ async function buildReport({ results, startedAt }) {
       `data/kosmo-source-root-owner-final-decision-brief-${dateStamp}.json`,
       `data/kosmo-source-root-owner-choice-consequence-matrix-${dateStamp}.json`,
       `data/kosmoasset-source-candidate-map-${dateStamp}.json`,
+      `data/kosmoasset-candidate-taxonomy-review-${dateStamp}.json`,
+      `data/kosmoasset-candidate-taxonomy-review-check-${dateStamp}.json`,
       `data/kosmo-source-root-activation-preflight-${dateStamp}.json`,
       `data/kosmo-private-metadata-inventory-runner-${dateStamp}.json`,
       `data/kosmo-private-metadata-inventory-fixture-smoke-${dateStamp}.json`,
@@ -465,7 +481,7 @@ function renderMarkdown(report) {
   lines.push(`- Local worker HTTP runner check: ${report.summary.local_worker_http_runner_check_status}, failures ${report.summary.local_worker_http_runner_check_failures ?? '-'}`);
   lines.push(`- Local worker execution runbook: ${report.summary.local_worker_execution_runbook_status}, runner-safe ${report.summary.local_worker_execution_runbook_runner_safe_tasks ?? '-'}, executable now ${report.summary.local_worker_execution_runbook_executable_now ?? '-'}`);
   lines.push(`- Local worker execution runbook check: ${report.summary.local_worker_execution_runbook_check_status}, failures ${report.summary.local_worker_execution_runbook_check_failures ?? '-'}`);
-  lines.push(`- Source-independent work queue: ${report.summary.source_independent_work_queue_status}, tasks ${report.summary.source_independent_work_queue_tasks ?? '-'}, codex executable ${report.summary.source_independent_work_queue_codex_executable_now ?? '-'}, owner actions ${report.summary.source_independent_work_queue_owner_actions ?? '-'}, failures ${report.summary.source_independent_work_queue_failures ?? '-'}`);
+  lines.push(`- Source-independent work queue: ${report.summary.source_independent_work_queue_status}, tasks ${report.summary.source_independent_work_queue_tasks ?? '-'}, completed ${report.summary.source_independent_work_queue_completed_review_only ?? '-'}, codex executable ${report.summary.source_independent_work_queue_codex_executable_now ?? '-'}, owner actions ${report.summary.source_independent_work_queue_owner_actions ?? '-'}, failures ${report.summary.source_independent_work_queue_failures ?? '-'}`);
   lines.push(`- Innovation smoke: ${report.summary.innovation_smoke_status}`);
   lines.push(`- Orbit bridge: ${report.summary.orbit_bridge_status}`);
   lines.push(`- Source-root blocker: ${report.summary.source_root_blocker_status}`);
@@ -480,6 +496,7 @@ function renderMarkdown(report) {
   lines.push(`- Source-root owner final decision brief: ${report.summary.source_root_owner_final_decision_brief_status}, options ${report.summary.source_root_owner_final_decision_brief_options ?? '-'}, unlock options ${report.summary.source_root_owner_final_decision_brief_unlock_options ?? '-'}, failures ${report.summary.source_root_owner_final_decision_brief_failures ?? '-'}`);
   lines.push(`- Source-root owner choice consequence matrix: ${report.summary.source_root_owner_choice_consequence_matrix_status}, choices ${report.summary.source_root_owner_choice_consequence_matrix_choices ?? '-'}, unlock ${report.summary.source_root_owner_choice_consequence_matrix_unlock_choices ?? '-'}, blocked ${report.summary.source_root_owner_choice_consequence_matrix_blocked_choices ?? '-'}, failures ${report.summary.source_root_owner_choice_consequence_matrix_failures ?? '-'}`);
   lines.push(`- Asset source candidate map: ${report.summary.asset_source_candidate_map_status}, candidates ${report.summary.asset_source_candidate_map_candidates ?? '-'}`);
+  lines.push(`- Asset candidate taxonomy review: ${report.summary.asset_candidate_taxonomy_review_status}, candidates ${report.summary.asset_candidate_taxonomy_review_candidates ?? '-'}, reviewable ${report.summary.asset_candidate_taxonomy_review_reviewable_lanes ?? '-'}, owner confirmations ${report.summary.asset_candidate_taxonomy_review_owner_confirmations ?? '-'}, failures ${report.summary.asset_candidate_taxonomy_review_failures ?? '-'}, check ${report.summary.asset_candidate_taxonomy_review_check_status}`);
   lines.push(`- Private diagnostic allowed: ${report.summary.private_diagnostic_allowed ? 'yes' : 'no'}`);
   lines.push(`- Night loop checkpoint: ${report.summary.night_loop_checkpoint_status}`);
   lines.push(`- Public-ready after loop: ${report.summary.public_ready_after_loop}`);

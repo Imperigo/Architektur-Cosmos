@@ -1,6 +1,6 @@
 # Kosmo Source-Independent Work Queue
 
-Generated: 2026-06-14T15:39:36.482Z
+Generated: 2026-06-14T16:04:56.064Z
 Status: `source_independent_work_queue_ready`
 
 ## Summary
@@ -10,7 +10,8 @@ Status: `source_independent_work_queue_ready`
 - Source-root blocked: yes
 - Private inventory blocked: yes
 - Tasks: 6
-- Codex executable now: 4
+- Completed review-only: 1
+- Codex executable now: 3
 - Owner actions: 2
 - Blocked by private/source root: 0
 - Failures: 0
@@ -18,14 +19,14 @@ Status: `source_independent_work_queue_ready`
 
 ## Tasks
 
-| Task | Lane | Actor | Executable now | Owner action | Command | Evidence |
-| --- | --- | --- | --- | --- | --- | --- |
-| `owner_source_root_choice` | owner_decision | owner_or_overseer | no | yes | `review docs/codex/kosmo-source-root-owner-choice-consequence-matrix-2026-06-14.md` | choices 3, unlock 1 |
-| `codex_asset_candidate_taxonomy_review` | kosmoasset | codex | yes | no | `npm run kosmo:asset-source-candidate-map` | asset candidates 3, material 2 |
-| `codex_pilot_gap_label_review` | kosmoreferences | codex | yes | no | `npm run kosmo:pilot-evidence-matrix` | gaps 12, media blocked 12 |
-| `codex_local_worker_output_contract_review` | local_worker | codex | yes | no | `npm run kosmo:local-worker-execution-runbook-check` | outputs 9/9, executable 0 |
-| `owner_open_review_batches` | owner_decision | owner_or_overseer | no | yes | `review docs/codex/kosmo-owner-review-packet-2026-06-14.md` | open batches 5, open items 16 |
-| `codex_orbit_status_refresh` | orbit | codex | yes | no | `npm run kosmo:orbit-status-bridge` | source root blocked yes, private inventory blocked yes |
+| Task | Lane | Actor | Status | Executable now | Owner action | Command | Evidence |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| `owner_source_root_choice` | owner_decision | owner_or_overseer | owner_action_required | no | yes | `review docs/codex/kosmo-source-root-owner-choice-consequence-matrix-2026-06-14.md` | choices 3, unlock 1 |
+| `codex_asset_candidate_taxonomy_review` | kosmoasset | codex | completed_review_only | no | no | `npm run kosmo:asset-candidate-taxonomy-review && npm run kosmo:asset-candidate-taxonomy-review-check` | completed 10 reviews, guard 12/12 |
+| `codex_pilot_gap_label_review` | kosmoreferences | codex | ready | yes | no | `npm run kosmo:pilot-evidence-matrix` | gaps 12, media blocked 12 |
+| `codex_local_worker_output_contract_review` | local_worker | codex | ready | yes | no | `npm run kosmo:local-worker-execution-runbook-check` | outputs 9/9, executable 0 |
+| `owner_open_review_batches` | owner_decision | owner_or_overseer | owner_action_required | no | yes | `review docs/codex/kosmo-owner-review-packet-2026-06-14.md` | open batches 5, open items 16 |
+| `codex_orbit_status_refresh` | orbit | codex | ready | yes | no | `npm run kosmo:orbit-status-bridge` | source root blocked yes, private inventory blocked yes |
 
 ## Hard Stops
 
