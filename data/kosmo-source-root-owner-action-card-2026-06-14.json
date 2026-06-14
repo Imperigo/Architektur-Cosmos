@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T13:22:25.439Z",
+  "generated_at": "2026-06-14T14:44:47.081Z",
   "status": "source_root_owner_action_required",
   "policy": {
     "decision_card_only": true,
@@ -25,7 +25,7 @@
   "summary": {
     "owner_action_required": true,
     "data_mount_visible": true,
-    "data_mount_available_gib": 3269.5,
+    "data_mount_available_gib": 3267.6,
     "archive_mount_visible": true,
     "onedrive_marker_files": 59,
     "probable_large_private_libraries": 0,
