@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T18:08:11.892Z",
+  "generated_at": "2026-06-14T18:11:06.444Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 189
+      "files": 190
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 233
+      "files": 234
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-14-codex-synergiebericht-191-orbit-post-unlock-matrix-status.md",
+      "title": "Codex Synergiebericht 191: Orbit Post-Unlock Matrix Status",
+      "mirrored_inboxes": 2,
+      "bytes": 745,
+      "modified_at": "2026-06-14T18:10:44.989Z"
+    },
     {
       "filename": "2026-06-14-codex-synergiebericht-190-post-unlock-pilot-execution-matrix.md",
       "title": "Codex Synergiebericht 190: Post-Unlock Pilot Execution Matrix",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 716,
       "modified_at": "2026-06-14T17:47:36.968Z"
-    },
-    {
-      "filename": "2026-06-14-codex-synergiebericht-183-owner-unlock-execution-runbook.md",
-      "title": "Codex Synergiebericht 183: Owner Unlock Execution Runbook",
-      "mirrored_inboxes": 2,
-      "bytes": 1384,
-      "modified_at": "2026-06-14T17:46:06.705Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 183-190 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 184-191 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."

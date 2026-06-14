@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T18:08:12.132Z",
+  "generated_at": "2026-06-14T18:11:06.676Z",
   "status": "overseer_sync_board_guard_passed",
   "policy": {
     "records_decisions": false,
@@ -156,6 +156,16 @@
       "message": "Latest handoffs must include synergiebericht 115 or newer."
     },
     {
+      "id": "handoff_mirrored:2026-06-14-codex-synergiebericht-191-orbit-post-unlock-matrix-status.md",
+      "severity": "passed",
+      "message": "2026-06-14-codex-synergiebericht-191-orbit-post-unlock-matrix-status.md must be mirrored in both inboxes."
+    },
+    {
+      "id": "handoff_title:2026-06-14-codex-synergiebericht-191-orbit-post-unlock-matrix-status.md",
+      "severity": "passed",
+      "message": "2026-06-14-codex-synergiebericht-191-orbit-post-unlock-matrix-status.md must include a title."
+    },
+    {
       "id": "handoff_mirrored:2026-06-14-codex-synergiebericht-190-post-unlock-pilot-execution-matrix.md",
       "severity": "passed",
       "message": "2026-06-14-codex-synergiebericht-190-post-unlock-pilot-execution-matrix.md must be mirrored in both inboxes."
@@ -224,16 +234,6 @@
       "id": "handoff_title:2026-06-14-codex-synergiebericht-184-orbit-unlock-runbook-status.md",
       "severity": "passed",
       "message": "2026-06-14-codex-synergiebericht-184-orbit-unlock-runbook-status.md must include a title."
-    },
-    {
-      "id": "handoff_mirrored:2026-06-14-codex-synergiebericht-183-owner-unlock-execution-runbook.md",
-      "severity": "passed",
-      "message": "2026-06-14-codex-synergiebericht-183-owner-unlock-execution-runbook.md must be mirrored in both inboxes."
-    },
-    {
-      "id": "handoff_title:2026-06-14-codex-synergiebericht-183-owner-unlock-execution-runbook.md",
-      "severity": "passed",
-      "message": "2026-06-14-codex-synergiebericht-183-owner-unlock-execution-runbook.md must include a title."
     },
     {
       "id": "source_root_blocked",
