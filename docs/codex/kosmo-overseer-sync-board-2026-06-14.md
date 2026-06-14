@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board
 
-Generated: 2026-06-14T18:20:24.773Z
+Generated: 2026-06-14T18:22:36.478Z
 Status: `overseer_sync_board_ready`
 
 ## Summary
@@ -20,6 +20,7 @@ Status: `overseer_sync_board_ready`
 
 | File | Title | Mirrors |
 | --- | --- | ---: |
+| `2026-06-14-codex-synergiebericht-195-orbit-training-rubric-status.md` | Codex Synergiebericht 195: Orbit Training Rubric Status | 2 |
 | `2026-06-14-codex-synergiebericht-194-training-eval-rubric-pack.md` | Codex Synergiebericht 194: Training Eval Rubric Pack | 2 |
 | `2026-06-14-codex-synergiebericht-193-orbit-local-worker-pilot-queue-status.md` | Codex Synergiebericht 193: Orbit Local Worker Pilot Queue Status | 2 |
 | `2026-06-14-codex-synergiebericht-192-local-worker-pilot-task-queue.md` | Codex Synergiebericht 192: Local Worker Pilot Task Queue | 2 |
@@ -27,7 +28,6 @@ Status: `overseer_sync_board_ready`
 | `2026-06-14-codex-synergiebericht-190-post-unlock-pilot-execution-matrix.md` | Codex Synergiebericht 190: Post-Unlock Pilot Execution Matrix | 2 |
 | `2026-06-14-codex-synergiebericht-189-orbit-vision-roadmap-status.md` | Codex Synergiebericht 189: Orbit Vision Roadmap Status | 2 |
 | `2026-06-14-codex-synergiebericht-188-vision-roadmap-refresh.md` | Codex Synergiebericht 188: Vision Roadmap Refresh | 2 |
-| `2026-06-14-codex-synergiebericht-187-orbit-answer-dry-run-checkpoint-status.md` | Codex Synergiebericht 187: Orbit Answer Dry Run / Checkpoint Status | 2 |
 
 ## Blockers
 
@@ -40,7 +40,7 @@ Status: `overseer_sync_board_ready`
 
 ## Next Actions
 
-- Claude/KosmoOverseer reviews latest handoffs 187-194 before editing related files.
+- Claude/KosmoOverseer reviews latest handoffs 188-195 before editing related files.
 - Use the owner review session brief as the next owner-facing entry point.
 - Keep local worker tasks review-only while source-root and owner answers are pending.
 - After any explicit owner answer, update intake first, then rerun guards and this sync board.

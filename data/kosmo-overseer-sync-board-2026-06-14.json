@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T18:20:24.773Z",
+  "generated_at": "2026-06-14T18:22:36.478Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 193
+      "files": 194
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 237
+      "files": 238
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-14-codex-synergiebericht-195-orbit-training-rubric-status.md",
+      "title": "Codex Synergiebericht 195: Orbit Training Rubric Status",
+      "mirrored_inboxes": 2,
+      "bytes": 692,
+      "modified_at": "2026-06-14T18:22:16.692Z"
+    },
     {
       "filename": "2026-06-14-codex-synergiebericht-194-training-eval-rubric-pack.md",
       "title": "Codex Synergiebericht 194: Training Eval Rubric Pack",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1479,
       "modified_at": "2026-06-14T18:02:15.063Z"
-    },
-    {
-      "filename": "2026-06-14-codex-synergiebericht-187-orbit-answer-dry-run-checkpoint-status.md",
-      "title": "Codex Synergiebericht 187: Orbit Answer Dry Run / Checkpoint Status",
-      "mirrored_inboxes": 2,
-      "bytes": 813,
-      "modified_at": "2026-06-14T17:58:07.950Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 187-194 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 188-195 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."
