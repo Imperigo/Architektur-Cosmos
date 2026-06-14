@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T17:07:11.645Z",
+  "generated_at": "2026-06-14T17:10:37.860Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 170
+      "files": 171
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 214
+      "files": 215
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-14-codex-synergiebericht-172-training-memory-readiness.md",
+      "title": "Codex Synergiebericht 172: Kosmo Training Memory Readiness",
+      "mirrored_inboxes": 2,
+      "bytes": 1362,
+      "modified_at": "2026-06-14T17:10:27.593Z"
+    },
     {
       "filename": "2026-06-14-codex-synergiebericht-171-asset-intake-readiness.md",
       "title": "Codex Synergiebericht 171: KosmoAsset Intake Readiness",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1910,
       "modified_at": "2026-06-14T16:20:14.966Z"
-    },
-    {
-      "filename": "2026-06-14-codex-synergiebericht-164-pilot-gap-label-review.md",
-      "title": "Codex Synergiebericht 164: Pilot Gap Label Review",
-      "mirrored_inboxes": 2,
-      "bytes": 1923,
-      "modified_at": "2026-06-14T16:13:17.092Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 164-171 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 165-172 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."

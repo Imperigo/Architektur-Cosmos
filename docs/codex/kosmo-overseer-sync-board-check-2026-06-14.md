@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board Check
 
-Generated: 2026-06-14T17:07:11.890Z
+Generated: 2026-06-14T17:10:38.144Z
 Status: `overseer_sync_board_guard_passed`
 
 ## Summary
@@ -42,6 +42,8 @@ Status: `overseer_sync_board_guard_passed`
 - passed: `inbox_has_files:/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox` - Handoff inbox must contain files: /mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox
 - passed: `latest_handoffs_array_count` - Latest handoff array must contain eight items.
 - passed: `latest_handoff_includes_115` - Latest handoffs must include synergiebericht 115 or newer.
+- passed: `handoff_mirrored:2026-06-14-codex-synergiebericht-172-training-memory-readiness.md` - 2026-06-14-codex-synergiebericht-172-training-memory-readiness.md must be mirrored in both inboxes.
+- passed: `handoff_title:2026-06-14-codex-synergiebericht-172-training-memory-readiness.md` - 2026-06-14-codex-synergiebericht-172-training-memory-readiness.md must include a title.
 - passed: `handoff_mirrored:2026-06-14-codex-synergiebericht-171-asset-intake-readiness.md` - 2026-06-14-codex-synergiebericht-171-asset-intake-readiness.md must be mirrored in both inboxes.
 - passed: `handoff_title:2026-06-14-codex-synergiebericht-171-asset-intake-readiness.md` - 2026-06-14-codex-synergiebericht-171-asset-intake-readiness.md must include a title.
 - passed: `handoff_mirrored:2026-06-14-codex-synergiebericht-170-pilot-intake-readiness.md` - 2026-06-14-codex-synergiebericht-170-pilot-intake-readiness.md must be mirrored in both inboxes.
@@ -56,8 +58,6 @@ Status: `overseer_sync_board_guard_passed`
 - passed: `handoff_title:2026-06-14-codex-synergiebericht-166-source-free-queue-complete.md` - 2026-06-14-codex-synergiebericht-166-source-free-queue-complete.md must include a title.
 - passed: `handoff_mirrored:2026-06-14-codex-synergiebericht-165-local-worker-output-contract-review.md` - 2026-06-14-codex-synergiebericht-165-local-worker-output-contract-review.md must be mirrored in both inboxes.
 - passed: `handoff_title:2026-06-14-codex-synergiebericht-165-local-worker-output-contract-review.md` - 2026-06-14-codex-synergiebericht-165-local-worker-output-contract-review.md must include a title.
-- passed: `handoff_mirrored:2026-06-14-codex-synergiebericht-164-pilot-gap-label-review.md` - 2026-06-14-codex-synergiebericht-164-pilot-gap-label-review.md must be mirrored in both inboxes.
-- passed: `handoff_title:2026-06-14-codex-synergiebericht-164-pilot-gap-label-review.md` - 2026-06-14-codex-synergiebericht-164-pilot-gap-label-review.md must include a title.
 - passed: `source_root_blocked` - Source-root blocker must remain blocked.
 - passed: `private_inventory_blocked` - Private inventory blocker must remain blocked.
 - passed: `owner_answers_blocked` - Owner answers blocker must remain blocked.
