@@ -1,0 +1,62 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-14T07:32:34.675Z",
+  "status": "innovation_smoke_passed_review_only",
+  "policy": {
+    "public_safe_fixtures_only": true,
+    "installs_tools": false,
+    "reads_private_content": false,
+    "copies_private_content": false,
+    "writes_public_files": false,
+    "writes_public_manifest": false,
+    "public_ready_after_smoke": 0,
+    "note": "This smoke uses generated synthetic fixtures and local tool probes only. Missing optional tools are skipped, not installed."
+  },
+  "source_refs": [
+    "data/kosmo-innovation-lane-plan-2026-06-14.json"
+  ],
+  "fixture": {
+    "root": "examples/kosmo-innovation-smoke-2026-06-14",
+    "note": "examples/kosmo-innovation-smoke-2026-06-14/fixtures/public-safe-architecture-note.txt",
+    "manifest": "examples/kosmo-innovation-smoke-2026-06-14/fixtures/fixture-manifest.json"
+  },
+  "summary": {
+    "checks": 5,
+    "passed": 2,
+    "skipped": 3,
+    "failures": 0,
+    "public_ready_after_smoke": 0
+  },
+  "checks": [
+    {
+      "id": "markitdown_prepare_m2",
+      "status": "skipped_missing_tool",
+      "evidence": "markitdown CLI is not installed."
+    },
+    {
+      "id": "local_ocr_scanned_sources",
+      "status": "skipped_missing_tool",
+      "evidence": "tesseract CLI is not installed."
+    },
+    {
+      "id": "qwen_embedding_rag",
+      "status": "passed",
+      "evidence": "Wrote public-safe embedding contract examples/kosmo-innovation-smoke-2026-06-14/embedding-contract.generated.json."
+    },
+    {
+      "id": "ifcopenshell_geometry_lane",
+      "status": "skipped_missing_python_module",
+      "evidence": "ifcopenshell is not importable in the current Python environment."
+    },
+    {
+      "id": "paper2poster_publish_lane",
+      "status": "passed",
+      "evidence": "Wrote public-safe layout contract examples/kosmo-innovation-smoke-2026-06-14/publish-layout-contract.generated.json."
+    }
+  ],
+  "next_actions": [
+    "Install missing tools only in isolated environments when owner confirms the lane.",
+    "Keep private source OCR, conversion and embeddings blocked until source-root gates pass.",
+    "Use the generated layout and embedding contracts as the next implementation targets for KosmoPrepare/KosmoPublish."
+  ]
+}

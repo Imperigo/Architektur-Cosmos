@@ -1,0 +1,35 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-14T07:32:34.675Z",
+  "status": "publish_layout_contract_public_safe",
+  "inspiration": "paper2poster_layout_reasoning",
+  "source_fixture": "examples/kosmo-innovation-smoke-2026-06-14/fixtures/public-safe-architecture-note.txt",
+  "public_safe_fixture": true,
+  "private_content_included": false,
+  "board": {
+    "format": "A1-landscape-review-only",
+    "sections": [
+      {
+        "id": "project_identity",
+        "title": "Project Identity",
+        "media_slots": 0
+      },
+      {
+        "id": "typology_structure_material",
+        "title": "Typology / Structure / Material",
+        "media_slots": 3
+      },
+      {
+        "id": "evidence_gaps",
+        "title": "Evidence Gaps",
+        "media_slots": 0
+      },
+      {
+        "id": "asset_candidates",
+        "title": "Asset Candidates",
+        "media_slots": 3
+      }
+    ]
+  },
+  "promotion_gate": "No media slot may be populated from private or unclear-rights files before provenance review."
+}
