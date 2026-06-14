@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T17:58:26.785Z",
+  "generated_at": "2026-06-14T18:02:22.870Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 186
+      "files": 187
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 230
+      "files": 231
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-14-codex-synergiebericht-188-vision-roadmap-refresh.md",
+      "title": "Codex Synergiebericht 188: Vision Roadmap Refresh",
+      "mirrored_inboxes": 2,
+      "bytes": 1479,
+      "modified_at": "2026-06-14T18:02:15.063Z"
+    },
     {
       "filename": "2026-06-14-codex-synergiebericht-187-orbit-answer-dry-run-checkpoint-status.md",
       "title": "Codex Synergiebericht 187: Orbit Answer Dry Run / Checkpoint Status",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 944,
       "modified_at": "2026-06-14T17:42:00.518Z"
-    },
-    {
-      "filename": "2026-06-14-codex-synergiebericht-180-owner-unlock-reply-intake-map.md",
-      "title": "Codex Synergiebericht 180: Owner Unlock Reply Intake Map",
-      "mirrored_inboxes": 2,
-      "bytes": 1780,
-      "modified_at": "2026-06-14T17:39:30.174Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 180-187 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 181-188 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."

@@ -1,0 +1,114 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-14T18:01:42.491Z",
+  "status": "vision_completion_roadmap_guard_passed",
+  "policy": {
+    "validates_roadmap_only": true,
+    "reads_private_content": false,
+    "records_owner_decisions": false,
+    "runs_private_inventory_now": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-vision-completion-roadmap-2026-06-14.json"
+  ],
+  "summary": {
+    "checks": 18,
+    "passed": 18,
+    "failures": 0,
+    "warnings": 0,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_ready",
+      "status": "passed",
+      "evidence": "vision_completion_roadmap_ready"
+    },
+    {
+      "id": "policy_review_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_plan_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_private_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_decisions",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_inventory_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "six_phases",
+      "status": "passed",
+      "evidence": 6
+    },
+    {
+      "id": "owner_unlock_checkpoint_11_components",
+      "status": "passed",
+      "evidence": "11/11"
+    },
+    {
+      "id": "owner_unlock_checkpoint_113_guards",
+      "status": "passed",
+      "evidence": "113/113"
+    },
+    {
+      "id": "owner_unlock_handoff_current",
+      "status": "passed",
+      "evidence": 187
+    },
+    {
+      "id": "source_free_tasks_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "phase_1_status_uses_dry_run",
+      "status": "passed",
+      "evidence": "dry_run_pipeline_ready_blocked_by_owner_reply"
+    },
+    {
+      "id": "phase_1_gate_dry_run",
+      "status": "passed",
+      "evidence": "owner_unlock_answer_dry_run,intake_map_review,source_root_choice,owner_open_review_batches"
+    },
+    {
+      "id": "phase_1_codex_now_mentions_dry_run",
+      "status": "passed",
+      "evidence": "Use checkpoint 11/11 components and 113/113 guards Run npm run kosmo:owner-unlock-answer-dry-run -- --answer \"<owner_reply>\" before any intake edit Keep source-root private diagnostics blocked until reviewed intake and source-root guards pass"
+    },
+    {
+      "id": "all_phases_public_ready_zero",
+      "status": "passed",
+      "evidence": ""
+    },
+    {
+      "id": "tonight_batch_uses_unlock_prompt",
+      "status": "passed",
+      "evidence": "Publish this roadmap artifact and guard status. Use Owner Unlock Answer Dry Run as the next machine entry point after owner reply. Keep Owner Unlock Prompt as the single next human decision surface. Do not run private inventory, local worker execution or public promotion until owner gates pass."
+    },
+    {
+      "id": "tonight_batch_blocks_private_inventory",
+      "status": "passed",
+      "evidence": "Publish this roadmap artifact and guard status. Use Owner Unlock Answer Dry Run as the next machine entry point after owner reply. Keep Owner Unlock Prompt as the single next human decision surface. Do not run private inventory, local worker execution or public promotion until owner gates pass."
+    }
+  ]
+}

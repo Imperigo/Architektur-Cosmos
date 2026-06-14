@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T16:50:25.121Z",
+  "generated_at": "2026-06-14T18:01:42.261Z",
   "status": "vision_completion_roadmap_ready",
   "policy": {
     "review_only": true,
@@ -15,13 +15,19 @@
     "data/kosmo-owner-remaining-decision-brief-2026-06-14.json",
     "data/kosmo-source-independent-work-queue-2026-06-14.json",
     "data/kosmoreferences-pilot-gap-label-review-2026-06-14.json",
-    "data/kosmoasset-candidate-taxonomy-review-2026-06-14.json"
+    "data/kosmoasset-candidate-taxonomy-review-2026-06-14.json",
+    "data/kosmo-owner-unlock-pipeline-checkpoint-2026-06-14.json"
   ],
   "summary": {
     "phases": 6,
     "immediate_owner_gates": 2,
+    "owner_unlock_components_ready": 11,
+    "owner_unlock_components": 11,
+    "owner_unlock_guard_checks_passed": 113,
+    "owner_unlock_guard_checks": 113,
+    "owner_unlock_latest_handoff_max": 187,
     "source_free_codex_tasks_remaining": 0,
-    "codex_ready_tonight": 3,
+    "codex_ready_tonight": 2,
     "pilot_gap_owner_decisions": 7,
     "asset_owner_confirmations": 3,
     "public_ready_after_roadmap": 0,
@@ -31,20 +37,24 @@
     {
       "id": "phase_1_owner_unlock",
       "title": "Owner/Overseer Unlock",
-      "objective": "Resolve source-root choice and open review batches without weakening privacy guards.",
-      "status": "blocked_by_owner_action",
+      "objective": "Capture the explicit owner source-root/review-batch answer through dry-run, map review and guards without weakening privacy rules.",
+      "status": "dry_run_pipeline_ready_blocked_by_owner_reply",
       "gates": [
+        "owner_unlock_answer_dry_run",
+        "intake_map_review",
         "source_root_choice",
         "owner_open_review_batches"
       ],
       "deliverables": [
-        "Recorded source-root decision session",
-        "Owner review batch answers",
+        "Validated owner reply dry-run",
+        "Reviewed intake patch",
+        "Recorded owner answer intake",
         "Activation preflight rerun"
       ],
       "codex_now": [
-        "Keep decision packets short and auditable",
-        "Prepare exact command order after owner answer"
+        "Use checkpoint 11/11 components and 113/113 guards",
+        "Run npm run kosmo:owner-unlock-answer-dry-run -- --answer \"<owner_reply>\" before any intake edit",
+        "Keep source-root private diagnostics blocked until reviewed intake and source-root guards pass"
       ],
       "public_ready_after_phase": 0
     },
@@ -159,8 +169,8 @@
   ],
   "tonight_batch": [
     "Publish this roadmap artifact and guard status.",
-    "Keep Owner Remaining Decision Brief as the single next human decision surface.",
-    "Prepare no-private-content templates for post-source-root metadata inventory.",
+    "Use Owner Unlock Answer Dry Run as the next machine entry point after owner reply.",
+    "Keep Owner Unlock Prompt as the single next human decision surface.",
     "Do not run private inventory, local worker execution or public promotion until owner gates pass."
   ],
   "failures": []

@@ -12,6 +12,7 @@ const ownerBriefPath = resolve(root, args.ownerBrief || `data/kosmo-owner-remain
 const queuePath = resolve(root, args.queue || `data/kosmo-source-independent-work-queue-${dateStamp}.json`);
 const pilotGapPath = resolve(root, args.pilotGapLabels || `data/kosmoreferences-pilot-gap-label-review-${dateStamp}.json`);
 const assetTaxonomyPath = resolve(root, args.assetTaxonomy || `data/kosmoasset-candidate-taxonomy-review-${dateStamp}.json`);
+const ownerUnlockCheckpointPath = resolve(root, args.ownerUnlockCheckpoint || `data/kosmo-owner-unlock-pipeline-checkpoint-${dateStamp}.json`);
 const outputJson = resolve(root, args.out || `data/kosmo-vision-completion-roadmap-${dateStamp}.json`);
 const outputMd = resolve(root, args.markdown || `docs/codex/kosmo-vision-completion-roadmap-${dateStamp}.md`);
 
@@ -26,7 +27,8 @@ async function main() {
   const queue = await readJson(queuePath);
   const pilotGapLabels = await readJson(pilotGapPath);
   const assetTaxonomy = await readJson(assetTaxonomyPath);
-  const report = buildReport({ dayBatch, ownerBrief, queue, pilotGapLabels, assetTaxonomy });
+  const ownerUnlockCheckpoint = await readJson(ownerUnlockCheckpointPath);
+  const report = buildReport({ dayBatch, ownerBrief, queue, pilotGapLabels, assetTaxonomy, ownerUnlockCheckpoint });
 
   await mkdir(dirname(outputJson), { recursive: true });
   await mkdir(dirname(outputMd), { recursive: true });
@@ -44,28 +46,31 @@ async function main() {
   if (report.failures.length > 0) process.exitCode = 1;
 }
 
-function buildReport({ dayBatch, ownerBrief, queue, pilotGapLabels, assetTaxonomy }) {
+function buildReport({ dayBatch, ownerBrief, queue, pilotGapLabels, assetTaxonomy, ownerUnlockCheckpoint }) {
   const failures = [];
   if (dayBatch.status !== 'day_batch_loop_passed_review_only') failures.push(`Day batch not passed: ${dayBatch.status}`);
   if (ownerBrief.status !== 'owner_remaining_decision_brief_ready') failures.push(`Owner brief not ready: ${ownerBrief.status}`);
   if (queue.status !== 'source_independent_work_queue_ready') failures.push(`Source-free queue not ready: ${queue.status}`);
+  if (ownerUnlockCheckpoint.status !== 'owner_unlock_pipeline_checkpoint_ready') failures.push(`Owner unlock checkpoint not ready: ${ownerUnlockCheckpoint.status}`);
   if ((queue.summary?.codex_executable_now ?? 1) !== 0) failures.push('Source-free queue still has Codex-executable tasks.');
 
   const phases = [
     phase({
       id: 'phase_1_owner_unlock',
       title: 'Owner/Overseer Unlock',
-      objective: 'Resolve source-root choice and open review batches without weakening privacy guards.',
-      status: 'blocked_by_owner_action',
-      gates: ['source_root_choice', 'owner_open_review_batches'],
+      objective: 'Capture the explicit owner source-root/review-batch answer through dry-run, map review and guards without weakening privacy rules.',
+      status: 'dry_run_pipeline_ready_blocked_by_owner_reply',
+      gates: ['owner_unlock_answer_dry_run', 'intake_map_review', 'source_root_choice', 'owner_open_review_batches'],
       deliverables: [
-        'Recorded source-root decision session',
-        'Owner review batch answers',
+        'Validated owner reply dry-run',
+        'Reviewed intake patch',
+        'Recorded owner answer intake',
         'Activation preflight rerun'
       ],
       codex_now: [
-        'Keep decision packets short and auditable',
-        'Prepare exact command order after owner answer'
+        `Use checkpoint ${ownerUnlockCheckpoint.summary?.components_ready ?? 0}/${ownerUnlockCheckpoint.summary?.components ?? 0} components and ${ownerUnlockCheckpoint.summary?.guard_checks_passed ?? 0}/${ownerUnlockCheckpoint.summary?.guard_checks ?? 0} guards`,
+        'Run npm run kosmo:owner-unlock-answer-dry-run -- --answer "<owner_reply>" before any intake edit',
+        'Keep source-root private diagnostics blocked until reviewed intake and source-root guards pass'
       ]
     }),
     phase({
@@ -173,13 +178,19 @@ function buildReport({ dayBatch, ownerBrief, queue, pilotGapLabels, assetTaxonom
       relative(root, ownerBriefPath),
       relative(root, queuePath),
       relative(root, pilotGapPath),
-      relative(root, assetTaxonomyPath)
+      relative(root, assetTaxonomyPath),
+      relative(root, ownerUnlockCheckpointPath)
     ],
     summary: {
       phases: phases.length,
       immediate_owner_gates: ownerBrief.summary?.open_owner_actions ?? 2,
+      owner_unlock_components_ready: ownerUnlockCheckpoint.summary?.components_ready ?? null,
+      owner_unlock_components: ownerUnlockCheckpoint.summary?.components ?? null,
+      owner_unlock_guard_checks_passed: ownerUnlockCheckpoint.summary?.guard_checks_passed ?? null,
+      owner_unlock_guard_checks: ownerUnlockCheckpoint.summary?.guard_checks ?? null,
+      owner_unlock_latest_handoff_max: ownerUnlockCheckpoint.summary?.latest_handoff_max ?? null,
       source_free_codex_tasks_remaining: queue.summary?.codex_executable_now ?? null,
-      codex_ready_tonight: 3,
+      codex_ready_tonight: 2,
       pilot_gap_owner_decisions: pilotGapLabels.summary?.owner_decisions_required ?? null,
       asset_owner_confirmations: assetTaxonomy.summary?.owner_confirmations_required ?? null,
       public_ready_after_roadmap: 0,
@@ -188,8 +199,8 @@ function buildReport({ dayBatch, ownerBrief, queue, pilotGapLabels, assetTaxonom
     phases,
     tonight_batch: [
       'Publish this roadmap artifact and guard status.',
-      'Keep Owner Remaining Decision Brief as the single next human decision surface.',
-      'Prepare no-private-content templates for post-source-root metadata inventory.',
+      'Use Owner Unlock Answer Dry Run as the next machine entry point after owner reply.',
+      'Keep Owner Unlock Prompt as the single next human decision surface.',
       'Do not run private inventory, local worker execution or public promotion until owner gates pass.'
     ],
     failures
@@ -224,6 +235,8 @@ function renderMarkdown(report) {
   lines.push('');
   lines.push(`- Phases: ${report.summary.phases}`);
   lines.push(`- Immediate owner gates: ${report.summary.immediate_owner_gates}`);
+  lines.push(`- Owner unlock checkpoint: ${report.summary.owner_unlock_components_ready}/${report.summary.owner_unlock_components} components, ${report.summary.owner_unlock_guard_checks_passed}/${report.summary.owner_unlock_guard_checks} guards`);
+  lines.push(`- Owner unlock latest handoff: ${report.summary.owner_unlock_latest_handoff_max}`);
   lines.push(`- Source-free Codex tasks remaining: ${report.summary.source_free_codex_tasks_remaining}`);
   lines.push(`- Codex-ready tonight: ${report.summary.codex_ready_tonight}`);
   lines.push(`- Pilot-gap owner decisions: ${report.summary.pilot_gap_owner_decisions}`);

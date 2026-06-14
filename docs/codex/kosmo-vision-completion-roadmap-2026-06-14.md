@@ -1,14 +1,16 @@
 # Kosmo Vision Completion Roadmap
 
-Generated: 2026-06-14T16:50:25.121Z
+Generated: 2026-06-14T18:01:42.261Z
 Status: `vision_completion_roadmap_ready`
 
 ## Summary
 
 - Phases: 6
 - Immediate owner gates: 2
+- Owner unlock checkpoint: 11/11 components, 113/113 guards
+- Owner unlock latest handoff: 187
 - Source-free Codex tasks remaining: 0
-- Codex-ready tonight: 3
+- Codex-ready tonight: 2
 - Pilot-gap owner decisions: 7
 - Asset owner confirmations: 3
 - Public-ready after roadmap: 0
@@ -17,11 +19,11 @@ Status: `vision_completion_roadmap_ready`
 
 ### Owner/Overseer Unlock
 
-- Status: blocked_by_owner_action
-- Objective: Resolve source-root choice and open review batches without weakening privacy guards.
-- Gates: source_root_choice, owner_open_review_batches
-- Deliverables: Recorded source-root decision session; Owner review batch answers; Activation preflight rerun
-- Codex now: Keep decision packets short and auditable; Prepare exact command order after owner answer
+- Status: dry_run_pipeline_ready_blocked_by_owner_reply
+- Objective: Capture the explicit owner source-root/review-batch answer through dry-run, map review and guards without weakening privacy rules.
+- Gates: owner_unlock_answer_dry_run, intake_map_review, source_root_choice, owner_open_review_batches
+- Deliverables: Validated owner reply dry-run; Reviewed intake patch; Recorded owner answer intake; Activation preflight rerun
+- Codex now: Use checkpoint 11/11 components and 113/113 guards; Run npm run kosmo:owner-unlock-answer-dry-run -- --answer "<owner_reply>" before any intake edit; Keep source-root private diagnostics blocked until reviewed intake and source-root guards pass
 
 ### Private Metadata Inventory
 
@@ -66,6 +68,6 @@ Status: `vision_completion_roadmap_ready`
 ## Tonight Batch
 
 - Publish this roadmap artifact and guard status.
-- Keep Owner Remaining Decision Brief as the single next human decision surface.
-- Prepare no-private-content templates for post-source-root metadata inventory.
+- Use Owner Unlock Answer Dry Run as the next machine entry point after owner reply.
+- Keep Owner Unlock Prompt as the single next human decision surface.
 - Do not run private inventory, local worker execution or public promotion until owner gates pass.
