@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T13:24:36.197Z",
+  "generated_at": "2026-06-14T13:28:24.644Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 137
+      "files": 138
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 175
+      "files": 176
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-14-codex-synergiebericht-139-kosmoasset-source-candidate-map.md",
+      "title": "Codex Synergiebericht 139: KosmoAsset Source Candidate Map",
+      "mirrored_inboxes": 2,
+      "bytes": 2010,
+      "modified_at": "2026-06-14T13:28:20.874Z"
+    },
     {
       "filename": "2026-06-14-codex-synergiebericht-138-source-root-candidate-roles.md",
       "title": "Codex Synergiebericht 138: Source Root Candidate Roles",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 2267,
       "modified_at": "2026-06-14T08:55:20.004Z"
-    },
-    {
-      "filename": "2026-06-14-codex-synergiebericht-131-worker-boundary-activation-state.md",
-      "title": "Codex Synergiebericht 131 - Worker Boundary Activation State",
-      "mirrored_inboxes": 2,
-      "bytes": 2310,
-      "modified_at": "2026-06-14T08:48:08.927Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 131-138 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 132-139 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."
