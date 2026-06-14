@@ -145,6 +145,7 @@
     "kosmo:local-worker-launch-queue": "node scripts/kosmo-local-worker-launch-queue.mjs",
     "kosmo:local-worker-output-conversion-plan": "node scripts/kosmo-local-worker-output-conversion-plan.mjs",
     "kosmo:pilot-evidence-matrix": "node scripts/kosmoreferences-pilot-evidence-matrix.mjs",
+    "kosmo:pilot-package-check": "node scripts/kosmoreferences-pilot-package-check.mjs",
     "kosmo:villa-provenance-brief": "node scripts/kosmo-villa-provenance-review-brief.mjs",
     "kosmo:ingenbohl-pdf-brief": "node scripts/kosmo-ingenbohl-pdf-extraction-brief.mjs",
     "kosmo:sogn-source-root-brief": "node scripts/kosmo-sogn-source-root-decision-brief.mjs",

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T07:21:55.415Z",
+  "generated_at": "2026-06-14T08:02:24.494Z",
   "status": "pilot_evidence_matrix_review_only",
   "policy": {
     "review_only": true,
@@ -10,9 +10,9 @@
   },
   "source_refs": [
     "data/kosmoreferences-pilot-gap-map-2026-06-13.json",
-    "data/kosmodata-lane-sweep-2026-06-13.json",
-    "data/kosmo-local-worker-output-review-2026-06-13.json",
-    "data/kosmo-onedrive-sync-error-summary-2026-06-13.json"
+    "data/kosmodata-lane-sweep-2026-06-14.json",
+    "data/kosmo-local-worker-output-review-2026-06-14.json",
+    "data/kosmo-onedrive-sync-error-summary-2026-06-14.json"
   ],
   "summary": {
     "pilots": 3,
@@ -21,8 +21,8 @@
     "asset_candidates_blocked": 9,
     "public_ready_assets": 0,
     "data_lane_status": "kosmodata_lane_sweep_review_only_passed",
-    "data_lane_steps": 26,
-    "data_lane_passed_steps": 26,
+    "data_lane_steps": 24,
+    "data_lane_passed_steps": 24,
     "local_worker_review_status": "local_worker_outputs_present_review_only",
     "local_worker_outputs": "8/8",
     "local_worker_high_risk_hits": 0,

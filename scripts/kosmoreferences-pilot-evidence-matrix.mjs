@@ -1,15 +1,16 @@
 #!/usr/bin/env node
 
+import { existsSync } from 'node:fs';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, relative, resolve } from 'node:path';
 
 const root = process.cwd();
 const args = parseArgs(process.argv.slice(2));
 const dateStamp = new Date().toISOString().slice(0, 10);
-const gapMapPath = resolve(root, args.gapMap || 'data/kosmoreferences-pilot-gap-map-2026-06-13.json');
-const dataLanePath = resolve(root, args.dataLane || 'data/kosmodata-lane-sweep-2026-06-13.json');
-const localWorkerReviewPath = resolve(root, args.localWorkerReview || 'data/kosmo-local-worker-output-review-2026-06-13.json');
-const oneDriveRepairPath = resolve(root, args.oneDriveRepair || 'data/kosmo-onedrive-sync-error-summary-2026-06-13.json');
+const gapMapPath = resolve(root, args.gapMap || existingDatedPath('data/kosmoreferences-pilot-gap-map', dateStamp, '2026-06-13'));
+const dataLanePath = resolve(root, args.dataLane || existingDatedPath('data/kosmodata-lane-sweep', dateStamp, '2026-06-13'));
+const localWorkerReviewPath = resolve(root, args.localWorkerReview || existingDatedPath('data/kosmo-local-worker-output-review', dateStamp, '2026-06-13'));
+const oneDriveRepairPath = resolve(root, args.oneDriveRepair || existingDatedPath('data/kosmo-onedrive-sync-error-summary', dateStamp, '2026-06-13'));
 const outputJson = resolve(root, args.out || `data/kosmoreferences-pilot-evidence-matrix-${dateStamp}.json`);
 const outputMd = resolve(root, args.markdown || `docs/codex/kosmoreferences-pilot-evidence-matrix-${dateStamp}.md`);
 
@@ -155,6 +156,12 @@ function unique(values) {
 
 function sumBy(values, selector) {
   return values.reduce((sum, value) => sum + Number(selector(value) || 0), 0);
+}
+
+function existingDatedPath(prefix, preferredDate, fallbackDate) {
+  const preferred = `${prefix}-${preferredDate}.json`;
+  if (existsSync(resolve(root, preferred))) return preferred;
+  return `${prefix}-${fallbackDate}.json`;
 }
 
 function parseArgs(argv) {

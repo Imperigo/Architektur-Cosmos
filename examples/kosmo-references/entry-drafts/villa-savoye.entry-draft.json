@@ -148,6 +148,11 @@
       "review_status": "draft"
     },
     {
+      "analysis_type": "material_system",
+      "summary": "Review hypothesis: reinforced concrete frame, rendered envelope surfaces, ribbon-window glazing and roof-garden build-up form the baseline material system for later KosmoAsset studies.",
+      "review_status": "draft"
+    },
+    {
       "analysis_type": "topos_typos_tectonics",
       "summary": "Manifest villa on a suburban Poissy site; object, driveway, lawn and elevated roof garden are part of one spatial argument.",
       "review_status": "draft"
@@ -204,7 +209,7 @@
     "source_count": 5,
     "media_count": 4,
     "model_count": 1,
-    "analysis_count": 3,
+    "analysis_count": 4,
     "tag_count": 16
   }
 }
