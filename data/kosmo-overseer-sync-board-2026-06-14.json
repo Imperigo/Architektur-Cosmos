@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T18:40:17.492Z",
+  "generated_at": "2026-06-14T18:42:07.993Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 199
+      "files": 200
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 243
+      "files": 245
     }
   ],
   "summary": {
@@ -43,10 +43,17 @@
     "local_worker_high_risk_hits": 0,
     "latest_handoffs": 8,
     "latest_handoff_mirror_missing_files": 0,
-    "historical_handoff_mirror_missing_files": 44,
+    "historical_handoff_mirror_missing_files": 45,
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-14-codex-synergiebericht-201-orbit-ontology-status.md",
+      "title": "Codex Synergiebericht 201: Orbit Ontology Status",
+      "mirrored_inboxes": 2,
+      "bytes": 780,
+      "modified_at": "2026-06-14T18:42:02.574Z"
+    },
     {
       "filename": "2026-06-14-codex-synergiebericht-200-architecture-ontology-seed.md",
       "title": "Codex Synergiebericht 200: Architecture Ontology Seed",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1322,
       "modified_at": "2026-06-14T18:20:13.705Z"
-    },
-    {
-      "filename": "2026-06-14-codex-synergiebericht-193-orbit-local-worker-pilot-queue-status.md",
-      "title": "Codex Synergiebericht 193: Orbit Local Worker Pilot Queue Status",
-      "mirrored_inboxes": 2,
-      "bytes": 743,
-      "modified_at": "2026-06-14T18:16:06.397Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 193-200 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 194-201 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."

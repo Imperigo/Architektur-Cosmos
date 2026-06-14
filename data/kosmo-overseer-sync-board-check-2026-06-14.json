@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T18:40:17.745Z",
+  "generated_at": "2026-06-14T18:42:08.235Z",
   "status": "overseer_sync_board_guard_passed",
   "policy": {
     "records_decisions": false,
@@ -156,6 +156,16 @@
       "message": "Latest handoffs must include synergiebericht 115 or newer."
     },
     {
+      "id": "handoff_mirrored:2026-06-14-codex-synergiebericht-201-orbit-ontology-status.md",
+      "severity": "passed",
+      "message": "2026-06-14-codex-synergiebericht-201-orbit-ontology-status.md must be mirrored in both inboxes."
+    },
+    {
+      "id": "handoff_title:2026-06-14-codex-synergiebericht-201-orbit-ontology-status.md",
+      "severity": "passed",
+      "message": "2026-06-14-codex-synergiebericht-201-orbit-ontology-status.md must include a title."
+    },
+    {
       "id": "handoff_mirrored:2026-06-14-codex-synergiebericht-200-architecture-ontology-seed.md",
       "severity": "passed",
       "message": "2026-06-14-codex-synergiebericht-200-architecture-ontology-seed.md must be mirrored in both inboxes."
@@ -224,16 +234,6 @@
       "id": "handoff_title:2026-06-14-codex-synergiebericht-194-training-eval-rubric-pack.md",
       "severity": "passed",
       "message": "2026-06-14-codex-synergiebericht-194-training-eval-rubric-pack.md must include a title."
-    },
-    {
-      "id": "handoff_mirrored:2026-06-14-codex-synergiebericht-193-orbit-local-worker-pilot-queue-status.md",
-      "severity": "passed",
-      "message": "2026-06-14-codex-synergiebericht-193-orbit-local-worker-pilot-queue-status.md must be mirrored in both inboxes."
-    },
-    {
-      "id": "handoff_title:2026-06-14-codex-synergiebericht-193-orbit-local-worker-pilot-queue-status.md",
-      "severity": "passed",
-      "message": "2026-06-14-codex-synergiebericht-193-orbit-local-worker-pilot-queue-status.md must include a title."
     },
     {
       "id": "source_root_blocked",
