@@ -4,9 +4,10 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { dirname, relative, resolve } from 'node:path';
 
 const root = process.cwd();
+const dateStamp = new Date().toISOString().slice(0, 10);
 const model = readArg('--model') ?? 'kosmo-qwen3-coder:30b-a3b-q4km';
 const endpoint = readArg('--endpoint') ?? 'http://127.0.0.1:11434/api/generate';
-const outputPath = resolve(root, readArg('--out') ?? 'data/kosmo-local-worker-ollama-smoke-2026-06-13.json');
+const outputPath = resolve(root, readArg('--out') ?? `data/kosmo-local-worker-ollama-smoke-${dateStamp}.json`);
 const markdownPath = outputPath.replace(/\.json$/, '.md');
 
 main().catch((error) => {
@@ -16,8 +17,9 @@ main().catch((error) => {
 
 async function main() {
   const prompt = [
-    'Return one concise German sentence for a private review-only ArchitectureKosmos local worker smoke check.',
-    'Must mention review-only and no public promotion.'
+    'Return exactly one line for an ArchitectureKosmos local worker smoke check.',
+    'The line must include the exact tokens REVIEW_ONLY and NO_PUBLIC_PROMOTION.',
+    'No explanation, no translation, no markdown.'
   ].join(' ');
   const started = Date.now();
   const response = await fetch(endpoint, {
@@ -39,8 +41,8 @@ async function main() {
     response_non_empty: text.length > 0
   };
   const advisory_checks = {
-    mentions_review_only: /review-only/i.test(text),
-    mentions_no_public_promotion: /public|öffentlich|promotion/i.test(text)
+    mentions_review_only: /\bREVIEW_ONLY\b/i.test(text),
+    mentions_no_public_promotion: /\bNO_PUBLIC_PROMOTION\b/i.test(text)
   };
   const passed = Object.values(checks).every(Boolean);
   const report = {

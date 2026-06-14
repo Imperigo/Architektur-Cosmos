@@ -5,15 +5,16 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { dirname, relative, resolve } from 'node:path';
 
 const root = process.cwd();
+const dateStamp = new Date().toISOString().slice(0, 10);
 const registryPath = resolve(root, readArg('--registry') ?? 'data/kosmoreferences-registry.json');
 const provenancePath = resolve(root, readArg('--provenance') ?? 'examples/kosmo-references/provenance/review/provenance-check.generated.json');
 const sourcePackagesRoot = resolve(root, readArg('--source-packages-root') ?? 'examples/kosmo-references/source-packages');
-const privateLibraryPath = resolve(root, readArg('--private-library') ?? 'data/kosmoreferences-private-library-diagnostic-2026-06-13.json');
+const privateLibraryPath = resolve(root, readArg('--private-library') ?? `data/kosmoreferences-private-library-diagnostic-${dateStamp}.json`);
 const modelBridgePath = resolve(root, readArg('--model-bridge') ?? 'examples/kosmo-references/provenance/model-provenance-bridge-2026-06-13.json');
 const modelPromotionPath = resolve(root, readArg('--model-promotion') ?? 'examples/kosmo-references/provenance/model-promotion-dry-run-2026-06-13.json');
 const ownerReviewPath = resolve(root, readArg('--owner-review') ?? 'examples/kosmo-references/provenance/owner-review-decision-pack-2026-06-13-review/owner-review-decision-check.generated.json');
 const ownerDecisionSessionPath = resolve(root, readArg('--owner-decision-session') ?? 'examples/kosmo-references/provenance/owner-decision-session-check.generated.json');
-const localWorkerSmokePath = resolve(root, readArg('--local-worker-smoke') ?? 'data/kosmo-local-worker-ollama-smoke-2026-06-13.json');
+const localWorkerSmokePath = resolve(root, readArg('--local-worker-smoke') ?? `data/kosmo-local-worker-ollama-smoke-${dateStamp}.json`);
 const outputPath = resolve(root, readArg('--out') ?? 'data/kosmoreferences-data-lane-status.json');
 const markdownPath = outputPath.replace(/\.json$/, '.md');
 
