@@ -195,6 +195,8 @@
     "kosmo:overseer-next-shift-brief-check": "node scripts/kosmo-overseer-next-shift-brief-check.mjs",
     "kosmo:owner-unlock-reply-validator": "node scripts/kosmo-owner-unlock-reply-validator.mjs",
     "kosmo:owner-unlock-reply-validator-check": "node scripts/kosmo-owner-unlock-reply-validator-check.mjs",
+    "kosmo:owner-unlock-reply-validator-smoke": "node scripts/kosmo-owner-unlock-reply-validator-smoke.mjs",
+    "kosmo:owner-unlock-reply-validator-smoke-check": "node scripts/kosmo-owner-unlock-reply-validator-smoke-check.mjs",
     "kosmo:villa-provenance-brief": "node scripts/kosmo-villa-provenance-review-brief.mjs",
     "kosmo:ingenbohl-pdf-brief": "node scripts/kosmo-ingenbohl-pdf-extraction-brief.mjs",
     "kosmo:sogn-source-root-brief": "node scripts/kosmo-sogn-source-root-decision-brief.mjs",

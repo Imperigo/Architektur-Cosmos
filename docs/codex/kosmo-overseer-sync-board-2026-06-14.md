@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board
 
-Generated: 2026-06-14T17:33:29.636Z
+Generated: 2026-06-14T17:36:26.097Z
 Status: `overseer_sync_board_ready`
 
 ## Summary
@@ -20,6 +20,7 @@ Status: `overseer_sync_board_ready`
 
 | File | Title | Mirrors |
 | --- | --- | ---: |
+| `2026-06-14-codex-synergiebericht-179-owner-unlock-reply-validator-smoke.md` | Codex Synergiebericht 179: Owner Unlock Reply Validator Smoke | 2 |
 | `2026-06-14-codex-synergiebericht-178-owner-unlock-reply-validator.md` | Codex Synergiebericht 178: Owner Unlock Reply Validator | 2 |
 | `2026-06-14-codex-synergiebericht-177-orbit-owner-unlock-next-shift-status.md` | Codex Synergiebericht 177: Orbit Owner Unlock / Next Shift Status | 2 |
 | `2026-06-14-codex-synergiebericht-176-overseer-next-shift-brief.md` | Codex Synergiebericht 176: Overseer Next Shift Brief | 2 |
@@ -27,7 +28,6 @@ Status: `overseer_sync_board_ready`
 | `2026-06-14-codex-synergiebericht-174-evening-batch-rollup.md` | Codex Synergiebericht 174: Evening Batch Rollup | 2 |
 | `2026-06-14-codex-synergiebericht-173-orbit-vision-readiness-status.md` | Codex Synergiebericht 173: Orbit Vision Readiness Status | 2 |
 | `2026-06-14-codex-synergiebericht-172-training-memory-readiness.md` | Codex Synergiebericht 172: Kosmo Training Memory Readiness | 2 |
-| `2026-06-14-codex-synergiebericht-171-asset-intake-readiness.md` | Codex Synergiebericht 171: KosmoAsset Intake Readiness | 2 |
 
 ## Blockers
 
@@ -40,7 +40,7 @@ Status: `overseer_sync_board_ready`
 
 ## Next Actions
 
-- Claude/KosmoOverseer reviews latest handoffs 171-178 before editing related files.
+- Claude/KosmoOverseer reviews latest handoffs 172-179 before editing related files.
 - Use the owner review session brief as the next owner-facing entry point.
 - Keep local worker tasks review-only while source-root and owner answers are pending.
 - After any explicit owner answer, update intake first, then rerun guards and this sync board.
