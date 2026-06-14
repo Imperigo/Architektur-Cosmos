@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board
 
-Generated: 2026-06-14T18:29:50.286Z
+Generated: 2026-06-14T18:35:05.680Z
 Status: `overseer_sync_board_ready`
 
 ## Summary
@@ -20,6 +20,7 @@ Status: `overseer_sync_board_ready`
 
 | File | Title | Mirrors |
 | --- | --- | ---: |
+| `2026-06-14-codex-synergiebericht-198-training-eval-review-queue-plan.md` | Codex Synergiebericht 198: Training Eval Review Queue Plan | 2 |
 | `2026-06-14-codex-synergiebericht-197-orbit-training-template-status.md` | Codex Synergiebericht 197: Orbit Training Template Status | 2 |
 | `2026-06-14-codex-synergiebericht-196-training-eval-row-template.md` | Codex Synergiebericht 196: Training Eval Row Template | 2 |
 | `2026-06-14-codex-synergiebericht-195-orbit-training-rubric-status.md` | Codex Synergiebericht 195: Orbit Training Rubric Status | 2 |
@@ -27,7 +28,6 @@ Status: `overseer_sync_board_ready`
 | `2026-06-14-codex-synergiebericht-193-orbit-local-worker-pilot-queue-status.md` | Codex Synergiebericht 193: Orbit Local Worker Pilot Queue Status | 2 |
 | `2026-06-14-codex-synergiebericht-192-local-worker-pilot-task-queue.md` | Codex Synergiebericht 192: Local Worker Pilot Task Queue | 2 |
 | `2026-06-14-codex-synergiebericht-191-orbit-post-unlock-matrix-status.md` | Codex Synergiebericht 191: Orbit Post-Unlock Matrix Status | 2 |
-| `2026-06-14-codex-synergiebericht-190-post-unlock-pilot-execution-matrix.md` | Codex Synergiebericht 190: Post-Unlock Pilot Execution Matrix | 2 |
 
 ## Blockers
 
@@ -40,7 +40,7 @@ Status: `overseer_sync_board_ready`
 
 ## Next Actions
 
-- Claude/KosmoOverseer reviews latest handoffs 190-197 before editing related files.
+- Claude/KosmoOverseer reviews latest handoffs 191-198 before editing related files.
 - Use the owner review session brief as the next owner-facing entry point.
 - Keep local worker tasks review-only while source-root and owner answers are pending.
 - After any explicit owner answer, update intake first, then rerun guards and this sync board.
