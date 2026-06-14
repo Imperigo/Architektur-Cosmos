@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board Check
 
-Generated: 2026-06-14T08:04:08.345Z
+Generated: 2026-06-14T08:11:51.803Z
 Status: `overseer_sync_board_guard_passed`
 
 ## Summary
@@ -42,6 +42,8 @@ Status: `overseer_sync_board_guard_passed`
 - passed: `inbox_has_files:/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox` - Handoff inbox must contain files: /mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox
 - passed: `latest_handoffs_array_count` - Latest handoff array must contain eight items.
 - passed: `latest_handoff_includes_115` - Latest handoffs must include synergiebericht 115 or newer.
+- passed: `handoff_mirrored:2026-06-14-codex-synergiebericht-126-kosmoasset-bridge-gate.md` - 2026-06-14-codex-synergiebericht-126-kosmoasset-bridge-gate.md must be mirrored in both inboxes.
+- passed: `handoff_title:2026-06-14-codex-synergiebericht-126-kosmoasset-bridge-gate.md` - 2026-06-14-codex-synergiebericht-126-kosmoasset-bridge-gate.md must include a title.
 - passed: `handoff_mirrored:2026-06-14-codex-synergiebericht-125-day-batch-pilot-gates.md` - 2026-06-14-codex-synergiebericht-125-day-batch-pilot-gates.md must be mirrored in both inboxes.
 - passed: `handoff_title:2026-06-14-codex-synergiebericht-125-day-batch-pilot-gates.md` - 2026-06-14-codex-synergiebericht-125-day-batch-pilot-gates.md must include a title.
 - passed: `handoff_mirrored:2026-06-14-codex-synergiebericht-124-source-root-unlock-runbook.md` - 2026-06-14-codex-synergiebericht-124-source-root-unlock-runbook.md must be mirrored in both inboxes.
@@ -56,8 +58,6 @@ Status: `overseer_sync_board_guard_passed`
 - passed: `handoff_title:2026-06-13-codex-synergiebericht-120-worker-boundary-guard.md` - 2026-06-13-codex-synergiebericht-120-worker-boundary-guard.md must include a title.
 - passed: `handoff_mirrored:2026-06-13-codex-synergiebericht-119-worker-boundary-pack.md` - 2026-06-13-codex-synergiebericht-119-worker-boundary-pack.md must be mirrored in both inboxes.
 - passed: `handoff_title:2026-06-13-codex-synergiebericht-119-worker-boundary-pack.md` - 2026-06-13-codex-synergiebericht-119-worker-boundary-pack.md must include a title.
-- passed: `handoff_mirrored:2026-06-13-codex-synergiebericht-118-source-root-blocker-refresh.md` - 2026-06-13-codex-synergiebericht-118-source-root-blocker-refresh.md must be mirrored in both inboxes.
-- passed: `handoff_title:2026-06-13-codex-synergiebericht-118-source-root-blocker-refresh.md` - 2026-06-13-codex-synergiebericht-118-source-root-blocker-refresh.md must include a title.
 - passed: `source_root_blocked` - Source-root blocker must remain blocked.
 - passed: `private_inventory_blocked` - Private inventory blocker must remain blocked.
 - passed: `owner_answers_blocked` - Owner answers blocker must remain blocked.

@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board
 
-Generated: 2026-06-14T08:04:08.092Z
+Generated: 2026-06-14T08:11:51.558Z
 Status: `overseer_sync_board_ready`
 
 ## Summary
@@ -13,13 +13,14 @@ Status: `overseer_sync_board_ready`
 - Local worker review: local_worker_outputs_present_review_only, outputs 8/8, risk 0
 - Latest handoffs tracked: 8
 - Latest handoff mirror missing files: 0
-- Historical handoff mirror missing files: 33
+- Historical handoff mirror missing files: 34
 - Public-ready after board: 0
 
 ## Latest Handoffs
 
 | File | Title | Mirrors |
 | --- | --- | ---: |
+| `2026-06-14-codex-synergiebericht-126-kosmoasset-bridge-gate.md` | Codex Synergiebericht 126 - KosmoAsset Bridge Gate | 2 |
 | `2026-06-14-codex-synergiebericht-125-day-batch-pilot-gates.md` | Codex Synergiebericht 125 - Day Batch Pilot Gates | 2 |
 | `2026-06-14-codex-synergiebericht-124-source-root-unlock-runbook.md` | Codex Synergiebericht 124 - Source Root Unlock Runbook | 2 |
 | `2026-06-14-codex-synergiebericht-123-output-conversion-plan.md` | Codex Synergiebericht 123 - Output Conversion Plan | 2 |
@@ -27,7 +28,6 @@ Status: `overseer_sync_board_ready`
 | `2026-06-14-codex-synergiebericht-121-overseer-sync-refresh.md` | Codex Synergiebericht 121 - Overseer Sync Refresh | 2 |
 | `2026-06-13-codex-synergiebericht-120-worker-boundary-guard.md` | Codex Synergiebericht 120 - Worker Boundary Guard | 2 |
 | `2026-06-13-codex-synergiebericht-119-worker-boundary-pack.md` | Codex Synergiebericht 119 - Worker Boundary Pack | 2 |
-| `2026-06-13-codex-synergiebericht-118-source-root-blocker-refresh.md` | Codex Synergiebericht 118 - Source Root Blocker Refresh | 2 |
 
 ## Blockers
 
@@ -40,7 +40,7 @@ Status: `overseer_sync_board_ready`
 
 ## Next Actions
 
-- Claude/KosmoOverseer reviews latest handoffs 118-125 before editing related files.
+- Claude/KosmoOverseer reviews latest handoffs 119-126 before editing related files.
 - Use the owner review session brief as the next owner-facing entry point.
 - Keep local worker tasks review-only while source-root and owner answers are pending.
 - After any explicit owner answer, update intake first, then rerun guards and this sync board.

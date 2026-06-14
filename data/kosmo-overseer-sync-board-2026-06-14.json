@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T08:04:08.092Z",
+  "generated_at": "2026-06-14T08:11:51.558Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 124
+      "files": 125
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 157
+      "files": 159
     }
   ],
   "summary": {
@@ -43,10 +43,17 @@
     "local_worker_high_risk_hits": 0,
     "latest_handoffs": 8,
     "latest_handoff_mirror_missing_files": 0,
-    "historical_handoff_mirror_missing_files": 33,
+    "historical_handoff_mirror_missing_files": 34,
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-14-codex-synergiebericht-126-kosmoasset-bridge-gate.md",
+      "title": "Codex Synergiebericht 126 - KosmoAsset Bridge Gate",
+      "mirrored_inboxes": 2,
+      "bytes": 1838,
+      "modified_at": "2026-06-14T08:11:45.030Z"
+    },
     {
       "filename": "2026-06-14-codex-synergiebericht-125-day-batch-pilot-gates.md",
       "title": "Codex Synergiebericht 125 - Day Batch Pilot Gates",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1472,
       "modified_at": "2026-06-13T21:55:39.151Z"
-    },
-    {
-      "filename": "2026-06-13-codex-synergiebericht-118-source-root-blocker-refresh.md",
-      "title": "Codex Synergiebericht 118 - Source Root Blocker Refresh",
-      "mirrored_inboxes": 2,
-      "bytes": 1729,
-      "modified_at": "2026-06-13T21:50:28.532Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 118-125 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 119-126 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."
