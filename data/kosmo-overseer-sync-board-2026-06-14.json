@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T19:04:08.425Z",
+  "generated_at": "2026-06-14T19:07:17.979Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 209
+      "files": 210
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 254
+      "files": 255
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-14-codex-synergiebericht-211-tomorrow-day-batch.md",
+      "title": "Codex Synergiebericht 211: Tomorrow Day Batch",
+      "mirrored_inboxes": 2,
+      "bytes": 1049,
+      "modified_at": "2026-06-14T19:07:08.713Z"
+    },
     {
       "filename": "2026-06-14-codex-synergiebericht-210-acceptance-certificate-refresh.md",
       "title": "Codex Synergiebericht 210: Acceptance Certificate Refresh",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1213,
       "modified_at": "2026-06-14T18:49:34.165Z"
-    },
-    {
-      "filename": "2026-06-14-codex-synergiebericht-203-orbit-roadmap-training-ontology-status.md",
-      "title": "Codex Synergiebericht 203: Orbit Roadmap Training/Ontology Status",
-      "mirrored_inboxes": 2,
-      "bytes": 818,
-      "modified_at": "2026-06-14T18:46:57.674Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 203-210 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 204-211 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."

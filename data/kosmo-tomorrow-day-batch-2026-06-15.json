@@ -1,0 +1,74 @@
+{
+  "schema_version": "0.1",
+  "date": "2026-06-15",
+  "status": "tomorrow_day_batch_ready",
+  "policy": {
+    "source_free_until_owner_unlock": true,
+    "reads_private_content_now": false,
+    "runs_private_inventory_now": false,
+    "runs_ocr_now": false,
+    "creates_embeddings_now": false,
+    "runs_fine_tuning_now": false,
+    "executes_local_workers_now": false,
+    "public_ready_after_plan": 0
+  },
+  "source_state": {
+    "source_root": "pending_owner",
+    "owner_reply": "pending",
+    "owner_unlock_components": "11/11",
+    "owner_unlock_guards": "113/113",
+    "acceptance_certificate_known_checks": "136/136",
+    "acceptance_certificate_guard": "19/19",
+    "latest_handoff_before_plan": 210
+  },
+  "tracks": [
+    {
+      "id": "owner_unlock_path",
+      "condition": "explicit_owner_reply_present",
+      "status": "blocked_until_owner_reply",
+      "commands": [
+        "npm run kosmo:owner-unlock-prompt-pack-check",
+        "npm run kosmo:owner-unlock-reply-validator -- --answer \"<owner_reply>\"",
+        "npm run kosmo:owner-unlock-answer-dry-run -- --answer \"<owner_reply>\"",
+        "npm run kosmo:source-root-decision-session-check",
+        "npm run kosmo:source-root-blocker-refresh",
+        "npm run kosmo:source-root-activation-preflight",
+        "npm run kosmo:source-root-post-owner-activation-queue",
+        "npm run kosmo:source-root-post-owner-activation-queue-check"
+      ],
+      "after_clean_guards_only": [
+        "npm run kosmo:private-metadata-inventory",
+        "npm run kosmo:private-metadata-inventory-check"
+      ]
+    },
+    {
+      "id": "source_free_fallback",
+      "condition": "owner_reply_missing_or_invalid",
+      "status": "ready",
+      "work_blocks": [
+        "KosmoReferences pilot schemas",
+        "KosmoAsset candidate contracts",
+        "Training eval template and review queue",
+        "Architecture ontology contracts",
+        "KosmoOrbit status visibility",
+        "Claude/KosmoOverseer handoff",
+        "Acceptance certificate refresh"
+      ]
+    }
+  ],
+  "pilot_scope": [
+    "villa-savoye",
+    "kapelle-sogn-benedetg",
+    "alterszentrum-kloster-ingenbohl"
+  ],
+  "acceptance_criteria": [
+    "source root either explicitly validated or cleanly blocked",
+    "no private content in git",
+    "no OCR embeddings fine-tune or local worker execution without gate",
+    "KosmoReferences KosmoAsset Training Ontology visible or handed off",
+    "Claude/KosmoOverseer handoff written",
+    "ArchitectureCosmos and KosmoOrbit pushed",
+    "acceptance certificate and next shift brief refreshed"
+  ],
+  "start_sentence": "Weiter mit docs/codex/kosmo-tomorrow-day-batch-2026-06-15.md. Zuerst Source-Root-Antwort pruefen, sonst source-free Fallback ausfuehren."
+}
