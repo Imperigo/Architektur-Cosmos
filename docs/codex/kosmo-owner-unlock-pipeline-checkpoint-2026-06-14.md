@@ -1,13 +1,13 @@
 # Kosmo Owner Unlock Pipeline Checkpoint
 
-Generated: 2026-06-14T18:16:59.934Z
+Generated: 2026-06-14T18:20:25.258Z
 Status: `owner_unlock_pipeline_checkpoint_ready`
 
 ## Summary
 
 - Components: 11/11
 - Guard checks: 113/113
-- Latest handoffs: 186-193
+- Latest handoffs: 187-194
 - Owner reply state: pending
 - Source-root state: blocked_until_explicit_owner_reply_and_guards
 - Public-ready after checkpoint: 0

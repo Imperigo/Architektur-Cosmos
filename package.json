@@ -137,6 +137,8 @@
     "kosmo:post-unlock-pilot-execution-matrix-check": "node scripts/kosmo-post-unlock-pilot-execution-matrix-check.mjs",
     "kosmo:local-worker-pilot-task-queue": "node scripts/kosmo-local-worker-pilot-task-queue.mjs",
     "kosmo:local-worker-pilot-task-queue-check": "node scripts/kosmo-local-worker-pilot-task-queue-check.mjs",
+    "kosmo:training-eval-rubric-pack": "node scripts/kosmo-training-eval-rubric-pack.mjs",
+    "kosmo:training-eval-rubric-pack-check": "node scripts/kosmo-training-eval-rubric-pack-check.mjs",
     "kosmo:source-root-owner-answer-execution-checklist": "node scripts/kosmo-source-root-owner-answer-execution-checklist.mjs",
     "kosmo:source-root-owner-answer-execution-checklist-check": "node scripts/kosmo-source-root-owner-answer-execution-checklist-check.mjs",
     "kosmo:private-library-diagnostic": "node scripts/kosmo-private-library-diagnostic.mjs",

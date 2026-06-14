@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board Check
 
-Generated: 2026-06-14T18:16:59.699Z
+Generated: 2026-06-14T18:20:25.014Z
 Status: `overseer_sync_board_guard_passed`
 
 ## Summary
@@ -42,6 +42,8 @@ Status: `overseer_sync_board_guard_passed`
 - passed: `inbox_has_files:/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox` - Handoff inbox must contain files: /mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox
 - passed: `latest_handoffs_array_count` - Latest handoff array must contain eight items.
 - passed: `latest_handoff_includes_115` - Latest handoffs must include synergiebericht 115 or newer.
+- passed: `handoff_mirrored:2026-06-14-codex-synergiebericht-194-training-eval-rubric-pack.md` - 2026-06-14-codex-synergiebericht-194-training-eval-rubric-pack.md must be mirrored in both inboxes.
+- passed: `handoff_title:2026-06-14-codex-synergiebericht-194-training-eval-rubric-pack.md` - 2026-06-14-codex-synergiebericht-194-training-eval-rubric-pack.md must include a title.
 - passed: `handoff_mirrored:2026-06-14-codex-synergiebericht-193-orbit-local-worker-pilot-queue-status.md` - 2026-06-14-codex-synergiebericht-193-orbit-local-worker-pilot-queue-status.md must be mirrored in both inboxes.
 - passed: `handoff_title:2026-06-14-codex-synergiebericht-193-orbit-local-worker-pilot-queue-status.md` - 2026-06-14-codex-synergiebericht-193-orbit-local-worker-pilot-queue-status.md must include a title.
 - passed: `handoff_mirrored:2026-06-14-codex-synergiebericht-192-local-worker-pilot-task-queue.md` - 2026-06-14-codex-synergiebericht-192-local-worker-pilot-task-queue.md must be mirrored in both inboxes.
@@ -56,8 +58,6 @@ Status: `overseer_sync_board_guard_passed`
 - passed: `handoff_title:2026-06-14-codex-synergiebericht-188-vision-roadmap-refresh.md` - 2026-06-14-codex-synergiebericht-188-vision-roadmap-refresh.md must include a title.
 - passed: `handoff_mirrored:2026-06-14-codex-synergiebericht-187-orbit-answer-dry-run-checkpoint-status.md` - 2026-06-14-codex-synergiebericht-187-orbit-answer-dry-run-checkpoint-status.md must be mirrored in both inboxes.
 - passed: `handoff_title:2026-06-14-codex-synergiebericht-187-orbit-answer-dry-run-checkpoint-status.md` - 2026-06-14-codex-synergiebericht-187-orbit-answer-dry-run-checkpoint-status.md must include a title.
-- passed: `handoff_mirrored:2026-06-14-codex-synergiebericht-186-owner-unlock-answer-dry-run.md` - 2026-06-14-codex-synergiebericht-186-owner-unlock-answer-dry-run.md must be mirrored in both inboxes.
-- passed: `handoff_title:2026-06-14-codex-synergiebericht-186-owner-unlock-answer-dry-run.md` - 2026-06-14-codex-synergiebericht-186-owner-unlock-answer-dry-run.md must include a title.
 - passed: `source_root_blocked` - Source-root blocker must remain blocked.
 - passed: `private_inventory_blocked` - Private inventory blocker must remain blocked.
 - passed: `owner_answers_blocked` - Owner answers blocker must remain blocked.

@@ -1,0 +1,130 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-14T18:19:37.856Z",
+  "status": "training_eval_rubric_pack_guard_passed",
+  "policy": {
+    "validates_rubric_only": true,
+    "writes_training_data_now": false,
+    "writes_embeddings_now": false,
+    "runs_fine_tuning_now": false,
+    "reads_private_content_now": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-training-eval-rubric-pack-2026-06-14.json"
+  ],
+  "summary": {
+    "checks": 21,
+    "passed": 21,
+    "failures": 0,
+    "warnings": 0,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_ready",
+      "status": "passed",
+      "evidence": "training_eval_rubric_pack_ready"
+    },
+    {
+      "id": "policy_rubric_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_training_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_embeddings_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_fine_tuning_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_worker_bodies",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "six_suites",
+      "status": "passed",
+      "evidence": 6
+    },
+    {
+      "id": "twenty_four_criteria",
+      "status": "passed",
+      "evidence": 24
+    },
+    {
+      "id": "twenty_four_eval_items",
+      "status": "passed",
+      "evidence": 24
+    },
+    {
+      "id": "expected_suites_present",
+      "status": "passed",
+      "evidence": "source_grounding_provenance,architectural_analysis_depth,asset_schema_quality,retrieval_answer_quality,local_worker_output_review,kosmo_architecture_identity"
+    },
+    {
+      "id": "all_suites_public_ready_zero",
+      "status": "passed",
+      "evidence": ""
+    },
+    {
+      "id": "training_lanes_four",
+      "status": "passed",
+      "evidence": 4
+    },
+    {
+      "id": "pilot_worker_tasks_twelve",
+      "status": "passed",
+      "evidence": 12
+    },
+    {
+      "id": "scoring_scale_0_3",
+      "status": "passed",
+      "evidence": "0-3"
+    },
+    {
+      "id": "no_auto_public_release",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "hard_stop_no_training",
+      "status": "passed",
+      "evidence": "do not train or fine-tune now. do not create embeddings now. do not copy private source text or local worker output bodies into eval rows. do not public-release any eval example derived from private content without review."
+    },
+    {
+      "id": "hard_stop_no_embeddings",
+      "status": "passed",
+      "evidence": "do not train or fine-tune now. do not create embeddings now. do not copy private source text or local worker output bodies into eval rows. do not public-release any eval example derived from private content without review."
+    },
+    {
+      "id": "hard_stop_no_private_text",
+      "status": "passed",
+      "evidence": "do not train or fine-tune now. do not create embeddings now. do not copy private source text or local worker output bodies into eval rows. do not public-release any eval example derived from private content without review."
+    },
+    {
+      "id": "hard_stop_no_public_release",
+      "status": "passed",
+      "evidence": "do not train or fine-tune now. do not create embeddings now. do not copy private source text or local worker output bodies into eval rows. do not public-release any eval example derived from private content without review."
+    }
+  ]
+}
