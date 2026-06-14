@@ -129,6 +129,7 @@
     "kosmo:owner-review-session-brief": "node scripts/kosmo-owner-review-session-brief.mjs",
     "kosmo:owner-review-session-brief-check": "node scripts/kosmo-owner-review-session-brief-check.mjs",
     "kosmo:owner-remaining-decision-brief": "node scripts/kosmo-owner-remaining-decision-brief.mjs",
+    "kosmo:owner-remaining-decision-brief-check": "node scripts/kosmo-owner-remaining-decision-brief-check.mjs",
     "kosmo:private-library-diagnostic": "node scripts/kosmo-private-library-diagnostic.mjs",
     "kosmo:storage-mount-snapshot": "node scripts/kosmo-storage-mount-snapshot.mjs",
     "kosmo:source-root-locator": "node scripts/kosmo-source-root-locator.mjs",
