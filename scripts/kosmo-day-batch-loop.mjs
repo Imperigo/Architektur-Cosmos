@@ -77,6 +77,7 @@ const steps = [
   step('owner_review_session_brief', 'Owner Review Session Brief', ['run', 'kosmo:owner-review-session-brief']),
   step('owner_review_session_brief_check', 'Owner Review Session Brief Check', ['run', 'kosmo:owner-review-session-brief-check']),
   step('night_loop_checkpoint', 'Night Loop Checkpoint', ['run', 'kosmo:night-loop-checkpoint']),
+  step('source_independent_work_queue', 'Source-Independent Work Queue', ['run', 'kosmo:source-independent-work-queue']),
   step('innovation_lane_plan', 'Innovation Lane Plan', ['run', 'kosmo:innovation-lane-plan']),
   step('innovation_smoke', 'Innovation Smoke', ['run', 'kosmo:innovation-smoke']),
   step('orbit_status_bridge', 'Orbit Status Bridge', ['run', 'kosmo:orbit-status-bridge'])
@@ -219,6 +220,7 @@ async function buildReport({ results, startedAt }) {
   const localWorkerExecutionRunbook = await readOptionalJson(`data/kosmo-local-worker-execution-runbook-${dateStamp}.json`);
   const localWorkerExecutionRunbookCheck = await readOptionalJson(`data/kosmo-local-worker-execution-runbook-check-${dateStamp}.json`);
   const checkpoint = await readOptionalJson(`data/kosmo-night-loop-checkpoint-${dateStamp}.json`);
+  const sourceIndependentWorkQueue = await readOptionalJson(`data/kosmo-source-independent-work-queue-${dateStamp}.json`);
   const innovationSmoke = await readOptionalJson(`data/kosmo-innovation-smoke-${dateStamp}.json`);
   const orbitBridge = await readOptionalJson(`data/kosmo-orbit-status-bridge-${dateStamp}.json`);
   const ownerHandoffPassed = ownerPacket?.status === 'owner_review_packet_guard_passed' &&
@@ -280,6 +282,7 @@ async function buildReport({ results, startedAt }) {
       localWorkerExecutionRunbook?.status
     ),
     invariant('local_worker_execution_runbook_check_passed', localWorkerExecutionRunbookCheck?.status === 'local_worker_execution_runbook_guard_passed', localWorkerExecutionRunbookCheck?.status),
+    invariant('source_independent_work_queue_ready', sourceIndependentWorkQueue?.status === 'source_independent_work_queue_ready', sourceIndependentWorkQueue?.status),
     invariant('public_ready_zero', (sweep?.summary?.references_public_ready_assets ?? 0) === 0, `public_ready=${sweep?.summary?.references_public_ready_assets ?? 0}`),
     invariant(
       'private_source_guard_state_valid',
@@ -372,6 +375,11 @@ async function buildReport({ results, startedAt }) {
       local_worker_execution_runbook_executable_now: localWorkerExecutionRunbook?.summary?.execute_allowed_if_output_missing ?? null,
       local_worker_execution_runbook_check_status: localWorkerExecutionRunbookCheck?.status || null,
       local_worker_execution_runbook_check_failures: localWorkerExecutionRunbookCheck?.summary?.failures ?? null,
+      source_independent_work_queue_status: sourceIndependentWorkQueue?.status || null,
+      source_independent_work_queue_tasks: sourceIndependentWorkQueue?.summary?.tasks ?? null,
+      source_independent_work_queue_codex_executable_now: sourceIndependentWorkQueue?.summary?.codex_executable_now ?? null,
+      source_independent_work_queue_owner_actions: sourceIndependentWorkQueue?.summary?.owner_actions ?? null,
+      source_independent_work_queue_failures: sourceIndependentWorkQueue?.summary?.failures ?? null,
       private_diagnostic_allowed: blocker?.summary?.private_diagnostic_allowed === true,
       night_loop_checkpoint_status: checkpoint?.status || null,
       public_ready_after_loop: 0
@@ -403,6 +411,7 @@ async function buildReport({ results, startedAt }) {
       `data/kosmo-local-worker-execution-runbook-${dateStamp}.json`,
       `data/kosmo-local-worker-execution-runbook-check-${dateStamp}.json`,
       `data/kosmo-night-loop-checkpoint-${dateStamp}.json`,
+      `data/kosmo-source-independent-work-queue-${dateStamp}.json`,
       `data/kosmo-innovation-smoke-${dateStamp}.json`,
       `data/kosmo-orbit-status-bridge-${dateStamp}.json`
     ],
@@ -456,6 +465,7 @@ function renderMarkdown(report) {
   lines.push(`- Local worker HTTP runner check: ${report.summary.local_worker_http_runner_check_status}, failures ${report.summary.local_worker_http_runner_check_failures ?? '-'}`);
   lines.push(`- Local worker execution runbook: ${report.summary.local_worker_execution_runbook_status}, runner-safe ${report.summary.local_worker_execution_runbook_runner_safe_tasks ?? '-'}, executable now ${report.summary.local_worker_execution_runbook_executable_now ?? '-'}`);
   lines.push(`- Local worker execution runbook check: ${report.summary.local_worker_execution_runbook_check_status}, failures ${report.summary.local_worker_execution_runbook_check_failures ?? '-'}`);
+  lines.push(`- Source-independent work queue: ${report.summary.source_independent_work_queue_status}, tasks ${report.summary.source_independent_work_queue_tasks ?? '-'}, codex executable ${report.summary.source_independent_work_queue_codex_executable_now ?? '-'}, owner actions ${report.summary.source_independent_work_queue_owner_actions ?? '-'}, failures ${report.summary.source_independent_work_queue_failures ?? '-'}`);
   lines.push(`- Innovation smoke: ${report.summary.innovation_smoke_status}`);
   lines.push(`- Orbit bridge: ${report.summary.orbit_bridge_status}`);
   lines.push(`- Source-root blocker: ${report.summary.source_root_blocker_status}`);

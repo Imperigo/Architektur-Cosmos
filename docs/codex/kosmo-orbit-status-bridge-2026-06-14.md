@@ -1,13 +1,13 @@
 # Kosmo Orbit Status Bridge
 
-Generated: 2026-06-14T15:27:20.759Z
+Generated: 2026-06-14T15:39:39.857Z
 Status: `orbit_bridge_ready_with_blockers`
 
 ## Summary
 
-- Cards: 24
+- Cards: 25
 - Blocking cards: 4
-- Owner action cards: 13
+- Owner action cards: 14
 - Source root blocked: yes
 - Day batch: day_batch_loop_passed_review_only
 - Source-root decision refresh: source_root_decision_session_refresh_not_needed, changed no, options 10, failures 0
@@ -28,6 +28,7 @@ Status: `orbit_bridge_ready_with_blockers`
 - Local models: local_model_inventory_ready_review_only
 - Local worker HTTP runner: local_worker_http_runner_dry_run_ready, check local_worker_http_runner_guard_passed, safe inputs 6
 - Local worker execution runbook: local_worker_execution_runbook_idle_review_only, check local_worker_execution_runbook_guard_passed, executable now 0
+- Source-independent work queue: source_independent_work_queue_ready, tasks 6, codex executable 4, owner actions 2, failures 0
 - Asset bridge: kosmoasset_reference_bridge_review_only_passed
 - Asset source candidate map: kosmoasset_source_candidate_map_review_only_ready, candidates 3
 - Innovation smoke: innovation_smoke_passed_review_only
@@ -37,7 +38,7 @@ Status: `orbit_bridge_ready_with_blockers`
 
 | Card | Status | Owner Action | Signal |
 | --- | --- | --- | --- |
-| `day-batch` Daily Batch | ready | no | 49/49 required steps |
+| `day-batch` Daily Batch | ready | no | 51/51 required steps |
 | `source-root` Source Root | blocked | yes | blocked: 0 probable libraries, 59 OneDrive markers |
 | `source-root-decision-refresh` Source Root Decision Refresh | review_only_ready | no | source_root_decision_session_refresh_not_needed, changed no, options 10 |
 | `source-root-candidate-integrity` Source Root Candidate Integrity | review_only_ready | yes | 8/8 paths visible, exact roots 1, failures 0 |
@@ -53,6 +54,7 @@ Status: `orbit_bridge_ready_with_blockers`
 | `local-models` Local Models | review_only_ready | no | 4/4 roles, 8 Ollama models, 70 GB |
 | `local-worker-http-runner` Local Worker HTTP Runner | review_only_ready | no | local_worker_http_runner_dry_run_ready, check local_worker_http_runner_guard_passed, safe inputs 6 |
 | `local-worker-execution-runbook` Local Worker Execution Runbook | review_only_ready | no | local_worker_execution_runbook_idle_review_only, check local_worker_execution_runbook_guard_passed, executable now 0 |
+| `source-independent-work-queue` Source-Independent Work Queue | review_only_ready | yes | 6 tasks, codex 4, owner 2, failures 0 |
 | `private-metadata-inventory` Private Metadata Inventory | blocked_with_smoke_passed | yes | blocked until source-root activation; fixture 6 matches; guard private_metadata_inventory_guard_passed |
 | `pilot-references` Pilot References | review_only | yes | 3 pilots, 12 evidence gaps |
 | `kosmoasset` KosmoAsset | review_only | yes | 6 human reviews open, public-ready 0 |
@@ -68,6 +70,7 @@ Status: `orbit_bridge_ready_with_blockers`
 - `local_models_card`
 - `local_worker_http_runner_card`
 - `local_worker_execution_runbook_card`
+- `source_independent_work_queue_card`
 - `source_root_blocker_card`
 - `source_root_decision_refresh_card`
 - `source_root_candidate_integrity_card`

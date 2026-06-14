@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T15:28:49.906Z",
+  "generated_at": "2026-06-14T15:38:26.155Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 160
+      "files": 161
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 200
+      "files": 201
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-14-codex-synergiebericht-162-source-independent-work-queue.md",
+      "title": "Codex Synergiebericht 162: Source-Independent Work Queue",
+      "mirrored_inboxes": 2,
+      "bytes": 1675,
+      "modified_at": "2026-06-14T15:38:09.235Z"
+    },
     {
       "filename": "2026-06-14-codex-synergiebericht-161-source-root-choice-consequence-matrix.md",
       "title": "Codex Synergiebericht 161: Source Root Choice Consequence Matrix",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1777,
       "modified_at": "2026-06-14T14:50:26.370Z"
-    },
-    {
-      "filename": "2026-06-14-codex-synergiebericht-154-source-root-owner-decision-packet.md",
-      "title": "Codex Synergiebericht 154: Source Root Owner Decision Packet",
-      "mirrored_inboxes": 2,
-      "bytes": 2432,
-      "modified_at": "2026-06-14T14:46:58.153Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 154-161 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 155-162 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."

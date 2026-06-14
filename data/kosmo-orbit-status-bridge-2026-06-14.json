@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T15:27:20.759Z",
+  "generated_at": "2026-06-14T15:39:39.857Z",
   "status": "orbit_bridge_ready_with_blockers",
   "policy": {
     "dashboard_only": true,
@@ -34,6 +34,7 @@
     "data/kosmo-local-worker-http-runner-check-2026-06-14.json",
     "data/kosmo-local-worker-execution-runbook-2026-06-14.json",
     "data/kosmo-local-worker-execution-runbook-check-2026-06-14.json",
+    "data/kosmo-source-independent-work-queue-2026-06-14.json",
     "data/kosmodata-lane-sweep-2026-06-14.json",
     "data/kosmo-worker-boundary-pack-check-2026-06-14.json",
     "data/kosmo-owner-review-packet-check-2026-06-14.json",
@@ -44,9 +45,9 @@
     "data/kosmo-night-loop-checkpoint-2026-06-14.json"
   ],
   "summary": {
-    "cards": 24,
+    "cards": 25,
     "blocking_cards": 4,
-    "owner_action_cards": 13,
+    "owner_action_cards": 14,
     "source_root_blocked": true,
     "day_batch_status": "day_batch_loop_passed_review_only",
     "source_root_decision_refresh_status": "source_root_decision_session_refresh_not_needed",
@@ -102,6 +103,11 @@
     "local_worker_execution_runbook_executable_now": 0,
     "local_worker_execution_runbook_check_status": "local_worker_execution_runbook_guard_passed",
     "local_worker_execution_runbook_check_failures": 0,
+    "source_independent_work_queue_status": "source_independent_work_queue_ready",
+    "source_independent_work_queue_tasks": 6,
+    "source_independent_work_queue_codex_executable_now": 4,
+    "source_independent_work_queue_owner_actions": 2,
+    "source_independent_work_queue_failures": 0,
     "asset_bridge_status": "kosmoasset_reference_bridge_review_only_passed",
     "asset_source_candidate_map_status": "kosmoasset_source_candidate_map_review_only_ready",
     "asset_source_candidate_map_candidates": 3,
@@ -113,7 +119,7 @@
       "id": "day-batch",
       "title": "Daily Batch",
       "status": "ready",
-      "signal": "49/49 required steps",
+      "signal": "51/51 required steps",
       "owner_action_required": false,
       "route_hint": "KosmoReferences/KosmoAsset daily loop",
       "source_ref": "data/kosmo-day-batch-loop-2026-06-14.json"
@@ -254,6 +260,15 @@
       "source_ref": "data/kosmo-local-worker-execution-runbook-2026-06-14.json"
     },
     {
+      "id": "source-independent-work-queue",
+      "title": "Source-Independent Work Queue",
+      "status": "review_only_ready",
+      "signal": "6 tasks, codex 4, owner 2, failures 0",
+      "owner_action_required": true,
+      "route_hint": "Safe work that does not require private source-root activation",
+      "source_ref": "data/kosmo-source-independent-work-queue-2026-06-14.json"
+    },
+    {
       "id": "private-metadata-inventory",
       "title": "Private Metadata Inventory",
       "status": "blocked_with_smoke_passed",
@@ -331,6 +346,7 @@
     "local_models_card",
     "local_worker_http_runner_card",
     "local_worker_execution_runbook_card",
+    "source_independent_work_queue_card",
     "source_root_blocker_card",
     "source_root_decision_refresh_card",
     "source_root_candidate_integrity_card",

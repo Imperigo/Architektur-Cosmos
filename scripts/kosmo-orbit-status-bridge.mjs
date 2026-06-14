@@ -31,6 +31,7 @@ const refs = {
   localWorkerHttpRunnerCheck: `data/kosmo-local-worker-http-runner-check-${dateStamp}.json`,
   localWorkerExecutionRunbook: `data/kosmo-local-worker-execution-runbook-${dateStamp}.json`,
   localWorkerExecutionRunbookCheck: `data/kosmo-local-worker-execution-runbook-check-${dateStamp}.json`,
+  sourceIndependentWorkQueue: `data/kosmo-source-independent-work-queue-${dateStamp}.json`,
   sweep: `data/kosmodata-lane-sweep-${dateStamp}.json`,
   workerBoundary: `data/kosmo-worker-boundary-pack-check-${dateStamp}.json`,
   ownerPacket: `data/kosmo-owner-review-packet-check-${dateStamp}.json`,
@@ -86,6 +87,7 @@ function buildBridge(reports) {
   const localWorkerExecutionRunbook = reports.localWorkerExecutionRunbook || {};
   const localWorkerExecutionRunbookSummary = localWorkerExecutionRunbook.summary || {};
   const localWorkerExecutionRunbookCheck = reports.localWorkerExecutionRunbookCheck || {};
+  const sourceIndependentWorkQueueSummary = reports.sourceIndependentWorkQueue?.summary || {};
   const sweepSummary = reports.sweep?.summary || {};
   const assetBridgeSummary = reports.assetBridge?.summary || {};
   const assetSourceCandidateSummary = reports.assetSourceCandidateMap?.summary || {};
@@ -299,6 +301,19 @@ function buildBridge(reports) {
       source_ref: refs.localWorkerExecutionRunbook
     },
     {
+      id: 'source-independent-work-queue',
+      title: 'Source-Independent Work Queue',
+      status: reports.sourceIndependentWorkQueue?.status === 'source_independent_work_queue_ready'
+        ? 'review_only_ready'
+        : 'needs_review',
+      signal: reports.sourceIndependentWorkQueue?.status
+        ? `${sourceIndependentWorkQueueSummary.tasks ?? 0} tasks, codex ${sourceIndependentWorkQueueSummary.codex_executable_now ?? 0}, owner ${sourceIndependentWorkQueueSummary.owner_actions ?? 0}, failures ${sourceIndependentWorkQueueSummary.failures ?? 0}`
+        : 'missing source-independent work queue',
+      owner_action_required: (sourceIndependentWorkQueueSummary.owner_actions ?? 0) > 0,
+      route_hint: 'Safe work that does not require private source-root activation',
+      source_ref: refs.sourceIndependentWorkQueue
+    },
+    {
       id: 'private-metadata-inventory',
       title: 'Private Metadata Inventory',
       status: reports.privateMetadataInventory?.status === 'private_metadata_inventory_ready_private_output_written'
@@ -457,6 +472,11 @@ function buildBridge(reports) {
       local_worker_execution_runbook_executable_now: localWorkerExecutionRunbookSummary.execute_allowed_if_output_missing ?? null,
       local_worker_execution_runbook_check_status: localWorkerExecutionRunbookCheck.status || null,
       local_worker_execution_runbook_check_failures: localWorkerExecutionRunbookCheck.summary?.failures ?? null,
+      source_independent_work_queue_status: reports.sourceIndependentWorkQueue?.status || null,
+      source_independent_work_queue_tasks: sourceIndependentWorkQueueSummary.tasks ?? null,
+      source_independent_work_queue_codex_executable_now: sourceIndependentWorkQueueSummary.codex_executable_now ?? null,
+      source_independent_work_queue_owner_actions: sourceIndependentWorkQueueSummary.owner_actions ?? null,
+      source_independent_work_queue_failures: sourceIndependentWorkQueueSummary.failures ?? null,
       asset_bridge_status: reports.assetBridge?.status || null,
       asset_source_candidate_map_status: reports.assetSourceCandidateMap?.status || null,
       asset_source_candidate_map_candidates: assetSourceCandidateSummary.asset_lane_candidates ?? null,
@@ -469,6 +489,7 @@ function buildBridge(reports) {
       'local_models_card',
       'local_worker_http_runner_card',
       'local_worker_execution_runbook_card',
+      'source_independent_work_queue_card',
       'source_root_blocker_card',
       'source_root_decision_refresh_card',
       'source_root_candidate_integrity_card',
@@ -537,6 +558,7 @@ function renderMarkdown(bridge) {
   lines.push(`- Local models: ${bridge.summary.local_model_inventory_status}`);
   lines.push(`- Local worker HTTP runner: ${bridge.summary.local_worker_http_runner_status}, check ${bridge.summary.local_worker_http_runner_check_status}, safe inputs ${bridge.summary.local_worker_http_runner_safe_inputs ?? '-'}`);
   lines.push(`- Local worker execution runbook: ${bridge.summary.local_worker_execution_runbook_status}, check ${bridge.summary.local_worker_execution_runbook_check_status}, executable now ${bridge.summary.local_worker_execution_runbook_executable_now ?? '-'}`);
+  lines.push(`- Source-independent work queue: ${bridge.summary.source_independent_work_queue_status}, tasks ${bridge.summary.source_independent_work_queue_tasks ?? '-'}, codex executable ${bridge.summary.source_independent_work_queue_codex_executable_now ?? '-'}, owner actions ${bridge.summary.source_independent_work_queue_owner_actions ?? '-'}, failures ${bridge.summary.source_independent_work_queue_failures ?? '-'}`);
   lines.push(`- Asset bridge: ${bridge.summary.asset_bridge_status}`);
   lines.push(`- Asset source candidate map: ${bridge.summary.asset_source_candidate_map_status}, candidates ${bridge.summary.asset_source_candidate_map_candidates ?? '-'}`);
   lines.push(`- Innovation smoke: ${bridge.summary.innovation_smoke_status}`);
