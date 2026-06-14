@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T07:43:07.789Z",
+  "generated_at": "2026-06-14T08:14:26.663Z",
   "status": "orbit_bridge_ready_with_blockers",
   "policy": {
     "dashboard_only": true,
@@ -18,16 +18,18 @@
     "data/kosmodata-lane-sweep-2026-06-14.json",
     "data/kosmo-worker-boundary-pack-check-2026-06-14.json",
     "data/kosmo-owner-review-packet-check-2026-06-14.json",
+    "data/kosmoasset-reference-bridge-check-2026-06-14.json",
     "data/kosmo-innovation-lane-plan-2026-06-14.json",
     "data/kosmo-innovation-smoke-2026-06-14.json",
     "data/kosmo-night-loop-checkpoint-2026-06-14.json"
   ],
   "summary": {
-    "cards": 7,
+    "cards": 8,
     "blocking_cards": 1,
-    "owner_action_cards": 4,
+    "owner_action_cards": 5,
     "source_root_blocked": true,
     "day_batch_status": "day_batch_loop_passed_review_only",
+    "asset_bridge_status": "kosmoasset_reference_bridge_review_only_passed",
     "innovation_smoke_status": "innovation_smoke_passed_review_only",
     "public_ready_after_bridge": 0
   },
@@ -36,7 +38,7 @@
       "id": "day-batch",
       "title": "Daily Batch",
       "status": "ready",
-      "signal": "16/16 required steps",
+      "signal": "27/27 required steps",
       "owner_action_required": false,
       "route_hint": "KosmoReferences/KosmoAsset daily loop",
       "source_ref": "data/kosmo-day-batch-loop-2026-06-14.json"
@@ -67,6 +69,15 @@
       "owner_action_required": true,
       "route_hint": "Review-only seed asset lane",
       "source_ref": "data/kosmodata-lane-sweep-2026-06-14.json"
+    },
+    {
+      "id": "asset-reference-bridge",
+      "title": "Asset Reference Bridge",
+      "status": "review_only_ready",
+      "signal": "3/3 pilot bridges, 6 assets, public-ready 0",
+      "owner_action_required": true,
+      "route_hint": "Villa/Sogn/Ingenbohl asset derivation gate",
+      "source_ref": "data/kosmoasset-reference-bridge-check-2026-06-14.json"
     },
     {
       "id": "worker-boundary",
@@ -100,6 +111,7 @@
     "status_strip",
     "source_root_blocker_card",
     "pilot_reference_cards",
+    "asset_reference_bridge_card",
     "worker_boundary_card",
     "innovation_lane_card",
     "owner_handoff_card"

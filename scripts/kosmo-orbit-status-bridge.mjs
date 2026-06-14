@@ -15,6 +15,7 @@ const refs = {
   sweep: `data/kosmodata-lane-sweep-${dateStamp}.json`,
   workerBoundary: `data/kosmo-worker-boundary-pack-check-${dateStamp}.json`,
   ownerPacket: `data/kosmo-owner-review-packet-check-${dateStamp}.json`,
+  assetBridge: `data/kosmoasset-reference-bridge-check-${dateStamp}.json`,
   innovationPlan: `data/kosmo-innovation-lane-plan-${dateStamp}.json`,
   innovationSmoke: `data/kosmo-innovation-smoke-${dateStamp}.json`,
   nightLoop: `data/kosmo-night-loop-checkpoint-${dateStamp}.json`
@@ -46,6 +47,7 @@ function buildBridge(reports) {
   const daySummary = reports.dayBatch?.summary || {};
   const sourceSummary = reports.sourceRoot?.summary || {};
   const sweepSummary = reports.sweep?.summary || {};
+  const assetBridgeSummary = reports.assetBridge?.summary || {};
   const innovationSummary = reports.innovationSmoke?.summary || {};
   const cards = [
     {
@@ -85,6 +87,15 @@ function buildBridge(reports) {
       owner_action_required: (sweepSummary.asset_open_human_reviews ?? 0) > 0,
       route_hint: 'Review-only seed asset lane',
       source_ref: refs.sweep
+    },
+    {
+      id: 'asset-reference-bridge',
+      title: 'Asset Reference Bridge',
+      status: reports.assetBridge?.status === 'kosmoasset_reference_bridge_review_only_passed' ? 'review_only_ready' : 'needs_review',
+      signal: `${assetBridgeSummary.complete_pilot_bridges ?? 0}/${assetBridgeSummary.pilots ?? 0} pilot bridges, ${assetBridgeSummary.asset_count ?? 0} assets, public-ready ${assetBridgeSummary.public_ready_count ?? 0}`,
+      owner_action_required: (assetBridgeSummary.open_human_review_count ?? 0) > 0,
+      route_hint: 'Villa/Sogn/Ingenbohl asset derivation gate',
+      source_ref: refs.assetBridge
     },
     {
       id: 'worker-boundary',
@@ -138,6 +149,7 @@ function buildBridge(reports) {
       owner_action_cards: ownerActionCards.length,
       source_root_blocked: sourceSummary.private_diagnostic_allowed !== true,
       day_batch_status: reports.dayBatch?.status || null,
+      asset_bridge_status: reports.assetBridge?.status || null,
       innovation_smoke_status: reports.innovationSmoke?.status || null,
       public_ready_after_bridge: 0
     },
@@ -146,6 +158,7 @@ function buildBridge(reports) {
       'status_strip',
       'source_root_blocker_card',
       'pilot_reference_cards',
+      'asset_reference_bridge_card',
       'worker_boundary_card',
       'innovation_lane_card',
       'owner_handoff_card'
@@ -180,6 +193,7 @@ function renderMarkdown(bridge) {
   lines.push(`- Owner action cards: ${bridge.summary.owner_action_cards}`);
   lines.push(`- Source root blocked: ${bridge.summary.source_root_blocked ? 'yes' : 'no'}`);
   lines.push(`- Day batch: ${bridge.summary.day_batch_status}`);
+  lines.push(`- Asset bridge: ${bridge.summary.asset_bridge_status}`);
   lines.push(`- Innovation smoke: ${bridge.summary.innovation_smoke_status}`);
   lines.push(`- Public-ready after bridge: ${bridge.summary.public_ready_after_bridge}`);
   lines.push('');
