@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T14:27:51.773Z",
+  "generated_at": "2026-06-15T14:31:20.080Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 253
+      "files": 254
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 103
+      "files": 104
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-15-codex-synergiebericht-255-github-fixture-contract-plan.md",
+      "title": "Codex Synergiebericht 255: GitHub-inspirierter Fixture Contract Plan",
+      "mirrored_inboxes": 2,
+      "bytes": 1376,
+      "modified_at": "2026-06-15T14:30:38.310Z"
+    },
     {
       "filename": "2026-06-15-codex-synergiebericht-254-github-readme-signal-scan.md",
       "title": "Codex Synergiebericht 254: GitHub README Signal Scan",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 884,
       "modified_at": "2026-06-15T14:13:20.636Z"
-    },
-    {
-      "filename": "2026-06-15-codex-synergiebericht-247-github-discovery-scout.md",
-      "title": "Codex Synergiebericht 247: GitHub Discovery Scout fuer neue Code-Kandidaten",
-      "mirrored_inboxes": 2,
-      "bytes": 1330,
-      "modified_at": "2026-06-15T14:11:05.226Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 247-254 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 248-255 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."
