@@ -1,0 +1,502 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T14:38:01.677Z",
+  "status": "innovation_github_fixture_skeletons_guard_passed",
+  "policy": {
+    "validates_skeletons_only": true,
+    "copies_github_code": false,
+    "copies_readme_text": false,
+    "clones_repositories_now": false,
+    "installs_dependencies_now": false,
+    "downloads_models_now": false,
+    "runs_discovered_code_now": false,
+    "reads_private_content": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-innovation-github-fixture-skeletons-2026-06-15.json"
+  ],
+  "summary": {
+    "skeletons_status": "innovation_github_fixture_skeletons_ready",
+    "files_checked": 10,
+    "failures": 0,
+    "public_ready_after_check": 0
+  },
+  "findings": [
+    {
+      "id": "schema_version",
+      "severity": "passed",
+      "message": "Skeleton report schema_version must be 0.1."
+    },
+    {
+      "id": "skeletons_ready",
+      "severity": "passed",
+      "message": "Skeleton report must be ready."
+    },
+    {
+      "id": "skeletons_only",
+      "severity": "passed",
+      "message": "Report must be skeletons-only."
+    },
+    {
+      "id": "synthetic_only",
+      "severity": "passed",
+      "message": "Report must be synthetic-fixture-only."
+    },
+    {
+      "id": "github_refs_only",
+      "severity": "passed",
+      "message": "GitHub repositories must be references only."
+    },
+    {
+      "id": "no_github_code_copy",
+      "severity": "passed",
+      "message": "Report must not copy GitHub code."
+    },
+    {
+      "id": "no_readme_copy",
+      "severity": "passed",
+      "message": "Report must not copy README text."
+    },
+    {
+      "id": "no_clone",
+      "severity": "passed",
+      "message": "Report must not clone repositories."
+    },
+    {
+      "id": "no_install",
+      "severity": "passed",
+      "message": "Report must not install dependencies."
+    },
+    {
+      "id": "no_download",
+      "severity": "passed",
+      "message": "Report must not download models."
+    },
+    {
+      "id": "no_discovered_code_run",
+      "severity": "passed",
+      "message": "Report must not run discovered code."
+    },
+    {
+      "id": "no_private_reads",
+      "severity": "passed",
+      "message": "Report must not read private content."
+    },
+    {
+      "id": "public_ready_zero",
+      "severity": "passed",
+      "message": "Report must keep public-ready at 0."
+    },
+    {
+      "id": "written_file_count",
+      "severity": "passed",
+      "message": "Report must write at least two files per GitHub fixture contract."
+    },
+    {
+      "id": "file_root:examples/kosmo-innovation-fixtures/kosmo_prepare-sii-sc22mc-docfusion-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/kosmo_prepare-sii-sc22mc-docfusion-signal-fixture/fixture-manifest.json must stay under examples/kosmo-innovation-fixtures."
+    },
+    {
+      "id": "file_exists:examples/kosmo-innovation-fixtures/kosmo_prepare-sii-sc22mc-docfusion-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/kosmo_prepare-sii-sc22mc-docfusion-signal-fixture/fixture-manifest.json must exist."
+    },
+    {
+      "id": "manifest_status:examples/kosmo-innovation-fixtures/kosmo_prepare-sii-sc22mc-docfusion-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/kosmo_prepare-sii-sc22mc-docfusion-signal-fixture/fixture-manifest.json must be github_signal_fixture_skeleton_only."
+    },
+    {
+      "id": "manifest_repo_ref:examples/kosmo-innovation-fixtures/kosmo_prepare-sii-sc22mc-docfusion-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/kosmo_prepare-sii-sc22mc-docfusion-signal-fixture/fixture-manifest.json must mark the source repo as reference only."
+    },
+    {
+      "id": "manifest_synthetic:examples/kosmo-innovation-fixtures/kosmo_prepare-sii-sc22mc-docfusion-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/kosmo_prepare-sii-sc22mc-docfusion-signal-fixture/fixture-manifest.json must be synthetic-fixture-only."
+    },
+    {
+      "id": "manifest_github_ref:examples/kosmo-innovation-fixtures/kosmo_prepare-sii-sc22mc-docfusion-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/kosmo_prepare-sii-sc22mc-docfusion-signal-fixture/fixture-manifest.json must mark GitHub as reference only."
+    },
+    {
+      "id": "manifest_no_code_copy:examples/kosmo-innovation-fixtures/kosmo_prepare-sii-sc22mc-docfusion-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/kosmo_prepare-sii-sc22mc-docfusion-signal-fixture/fixture-manifest.json must not copy GitHub code."
+    },
+    {
+      "id": "manifest_no_readme_copy:examples/kosmo-innovation-fixtures/kosmo_prepare-sii-sc22mc-docfusion-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/kosmo_prepare-sii-sc22mc-docfusion-signal-fixture/fixture-manifest.json must not copy README text."
+    },
+    {
+      "id": "manifest_no_private:examples/kosmo-innovation-fixtures/kosmo_prepare-sii-sc22mc-docfusion-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/kosmo_prepare-sii-sc22mc-docfusion-signal-fixture/fixture-manifest.json must declare no private content."
+    },
+    {
+      "id": "manifest_no_install:examples/kosmo-innovation-fixtures/kosmo_prepare-sii-sc22mc-docfusion-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/kosmo_prepare-sii-sc22mc-docfusion-signal-fixture/fixture-manifest.json must not require install now."
+    },
+    {
+      "id": "manifest_no_run:examples/kosmo-innovation-fixtures/kosmo_prepare-sii-sc22mc-docfusion-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/kosmo_prepare-sii-sc22mc-docfusion-signal-fixture/fixture-manifest.json must not require tool run now."
+    },
+    {
+      "id": "manifest_public_ready_zero:examples/kosmo-innovation-fixtures/kosmo_prepare-sii-sc22mc-docfusion-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/kosmo_prepare-sii-sc22mc-docfusion-signal-fixture/fixture-manifest.json must keep public-ready at 0."
+    },
+    {
+      "id": "manifest_fixture_count:examples/kosmo-innovation-fixtures/kosmo_prepare-sii-sc22mc-docfusion-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/kosmo_prepare-sii-sc22mc-docfusion-signal-fixture/fixture-manifest.json must include fixtures."
+    },
+    {
+      "id": "manifest_fixture_no_private:examples/kosmo-innovation-fixtures/kosmo_prepare-sii-sc22mc-docfusion-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/kosmo_prepare-sii-sc22mc-docfusion-signal-fixture/fixture-manifest.json fixtures must be non-private."
+    },
+    {
+      "id": "file_root:examples/kosmo-innovation-fixtures/kosmo_prepare-sii-sc22mc-docfusion-signal-fixture/README.md",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/kosmo_prepare-sii-sc22mc-docfusion-signal-fixture/README.md must stay under examples/kosmo-innovation-fixtures."
+    },
+    {
+      "id": "file_exists:examples/kosmo-innovation-fixtures/kosmo_prepare-sii-sc22mc-docfusion-signal-fixture/README.md",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/kosmo_prepare-sii-sc22mc-docfusion-signal-fixture/README.md must exist."
+    },
+    {
+      "id": "file_root:examples/kosmo-innovation-fixtures/kosmo_asset-lee-agi-3d-model-base-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/kosmo_asset-lee-agi-3d-model-base-signal-fixture/fixture-manifest.json must stay under examples/kosmo-innovation-fixtures."
+    },
+    {
+      "id": "file_exists:examples/kosmo-innovation-fixtures/kosmo_asset-lee-agi-3d-model-base-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/kosmo_asset-lee-agi-3d-model-base-signal-fixture/fixture-manifest.json must exist."
+    },
+    {
+      "id": "manifest_status:examples/kosmo-innovation-fixtures/kosmo_asset-lee-agi-3d-model-base-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/kosmo_asset-lee-agi-3d-model-base-signal-fixture/fixture-manifest.json must be github_signal_fixture_skeleton_only."
+    },
+    {
+      "id": "manifest_repo_ref:examples/kosmo-innovation-fixtures/kosmo_asset-lee-agi-3d-model-base-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/kosmo_asset-lee-agi-3d-model-base-signal-fixture/fixture-manifest.json must mark the source repo as reference only."
+    },
+    {
+      "id": "manifest_synthetic:examples/kosmo-innovation-fixtures/kosmo_asset-lee-agi-3d-model-base-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/kosmo_asset-lee-agi-3d-model-base-signal-fixture/fixture-manifest.json must be synthetic-fixture-only."
+    },
+    {
+      "id": "manifest_github_ref:examples/kosmo-innovation-fixtures/kosmo_asset-lee-agi-3d-model-base-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/kosmo_asset-lee-agi-3d-model-base-signal-fixture/fixture-manifest.json must mark GitHub as reference only."
+    },
+    {
+      "id": "manifest_no_code_copy:examples/kosmo-innovation-fixtures/kosmo_asset-lee-agi-3d-model-base-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/kosmo_asset-lee-agi-3d-model-base-signal-fixture/fixture-manifest.json must not copy GitHub code."
+    },
+    {
+      "id": "manifest_no_readme_copy:examples/kosmo-innovation-fixtures/kosmo_asset-lee-agi-3d-model-base-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/kosmo_asset-lee-agi-3d-model-base-signal-fixture/fixture-manifest.json must not copy README text."
+    },
+    {
+      "id": "manifest_no_private:examples/kosmo-innovation-fixtures/kosmo_asset-lee-agi-3d-model-base-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/kosmo_asset-lee-agi-3d-model-base-signal-fixture/fixture-manifest.json must declare no private content."
+    },
+    {
+      "id": "manifest_no_install:examples/kosmo-innovation-fixtures/kosmo_asset-lee-agi-3d-model-base-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/kosmo_asset-lee-agi-3d-model-base-signal-fixture/fixture-manifest.json must not require install now."
+    },
+    {
+      "id": "manifest_no_run:examples/kosmo-innovation-fixtures/kosmo_asset-lee-agi-3d-model-base-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/kosmo_asset-lee-agi-3d-model-base-signal-fixture/fixture-manifest.json must not require tool run now."
+    },
+    {
+      "id": "manifest_public_ready_zero:examples/kosmo-innovation-fixtures/kosmo_asset-lee-agi-3d-model-base-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/kosmo_asset-lee-agi-3d-model-base-signal-fixture/fixture-manifest.json must keep public-ready at 0."
+    },
+    {
+      "id": "manifest_fixture_count:examples/kosmo-innovation-fixtures/kosmo_asset-lee-agi-3d-model-base-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/kosmo_asset-lee-agi-3d-model-base-signal-fixture/fixture-manifest.json must include fixtures."
+    },
+    {
+      "id": "manifest_fixture_no_private:examples/kosmo-innovation-fixtures/kosmo_asset-lee-agi-3d-model-base-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/kosmo_asset-lee-agi-3d-model-base-signal-fixture/fixture-manifest.json fixtures must be non-private."
+    },
+    {
+      "id": "file_root:examples/kosmo-innovation-fixtures/kosmo_asset-lee-agi-3d-model-base-signal-fixture/README.md",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/kosmo_asset-lee-agi-3d-model-base-signal-fixture/README.md must stay under examples/kosmo-innovation-fixtures."
+    },
+    {
+      "id": "file_exists:examples/kosmo-innovation-fixtures/kosmo_asset-lee-agi-3d-model-base-signal-fixture/README.md",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/kosmo_asset-lee-agi-3d-model-base-signal-fixture/README.md must exist."
+    },
+    {
+      "id": "file_root:examples/kosmo-innovation-fixtures/worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture/fixture-manifest.json must stay under examples/kosmo-innovation-fixtures."
+    },
+    {
+      "id": "file_exists:examples/kosmo-innovation-fixtures/worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture/fixture-manifest.json must exist."
+    },
+    {
+      "id": "manifest_status:examples/kosmo-innovation-fixtures/worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture/fixture-manifest.json must be github_signal_fixture_skeleton_only."
+    },
+    {
+      "id": "manifest_repo_ref:examples/kosmo-innovation-fixtures/worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture/fixture-manifest.json must mark the source repo as reference only."
+    },
+    {
+      "id": "manifest_synthetic:examples/kosmo-innovation-fixtures/worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture/fixture-manifest.json must be synthetic-fixture-only."
+    },
+    {
+      "id": "manifest_github_ref:examples/kosmo-innovation-fixtures/worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture/fixture-manifest.json must mark GitHub as reference only."
+    },
+    {
+      "id": "manifest_no_code_copy:examples/kosmo-innovation-fixtures/worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture/fixture-manifest.json must not copy GitHub code."
+    },
+    {
+      "id": "manifest_no_readme_copy:examples/kosmo-innovation-fixtures/worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture/fixture-manifest.json must not copy README text."
+    },
+    {
+      "id": "manifest_no_private:examples/kosmo-innovation-fixtures/worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture/fixture-manifest.json must declare no private content."
+    },
+    {
+      "id": "manifest_no_install:examples/kosmo-innovation-fixtures/worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture/fixture-manifest.json must not require install now."
+    },
+    {
+      "id": "manifest_no_run:examples/kosmo-innovation-fixtures/worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture/fixture-manifest.json must not require tool run now."
+    },
+    {
+      "id": "manifest_public_ready_zero:examples/kosmo-innovation-fixtures/worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture/fixture-manifest.json must keep public-ready at 0."
+    },
+    {
+      "id": "manifest_fixture_count:examples/kosmo-innovation-fixtures/worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture/fixture-manifest.json must include fixtures."
+    },
+    {
+      "id": "manifest_fixture_no_private:examples/kosmo-innovation-fixtures/worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture/fixture-manifest.json fixtures must be non-private."
+    },
+    {
+      "id": "file_root:examples/kosmo-innovation-fixtures/worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture/README.md",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture/README.md must stay under examples/kosmo-innovation-fixtures."
+    },
+    {
+      "id": "file_exists:examples/kosmo-innovation-fixtures/worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture/README.md",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture/README.md must exist."
+    },
+    {
+      "id": "file_root:examples/kosmo-innovation-fixtures/kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture/fixture-manifest.json must stay under examples/kosmo-innovation-fixtures."
+    },
+    {
+      "id": "file_exists:examples/kosmo-innovation-fixtures/kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture/fixture-manifest.json must exist."
+    },
+    {
+      "id": "manifest_status:examples/kosmo-innovation-fixtures/kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture/fixture-manifest.json must be github_signal_fixture_skeleton_only."
+    },
+    {
+      "id": "manifest_repo_ref:examples/kosmo-innovation-fixtures/kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture/fixture-manifest.json must mark the source repo as reference only."
+    },
+    {
+      "id": "manifest_synthetic:examples/kosmo-innovation-fixtures/kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture/fixture-manifest.json must be synthetic-fixture-only."
+    },
+    {
+      "id": "manifest_github_ref:examples/kosmo-innovation-fixtures/kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture/fixture-manifest.json must mark GitHub as reference only."
+    },
+    {
+      "id": "manifest_no_code_copy:examples/kosmo-innovation-fixtures/kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture/fixture-manifest.json must not copy GitHub code."
+    },
+    {
+      "id": "manifest_no_readme_copy:examples/kosmo-innovation-fixtures/kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture/fixture-manifest.json must not copy README text."
+    },
+    {
+      "id": "manifest_no_private:examples/kosmo-innovation-fixtures/kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture/fixture-manifest.json must declare no private content."
+    },
+    {
+      "id": "manifest_no_install:examples/kosmo-innovation-fixtures/kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture/fixture-manifest.json must not require install now."
+    },
+    {
+      "id": "manifest_no_run:examples/kosmo-innovation-fixtures/kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture/fixture-manifest.json must not require tool run now."
+    },
+    {
+      "id": "manifest_public_ready_zero:examples/kosmo-innovation-fixtures/kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture/fixture-manifest.json must keep public-ready at 0."
+    },
+    {
+      "id": "manifest_fixture_count:examples/kosmo-innovation-fixtures/kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture/fixture-manifest.json must include fixtures."
+    },
+    {
+      "id": "manifest_fixture_no_private:examples/kosmo-innovation-fixtures/kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture/fixture-manifest.json fixtures must be non-private."
+    },
+    {
+      "id": "file_root:examples/kosmo-innovation-fixtures/kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture/README.md",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture/README.md must stay under examples/kosmo-innovation-fixtures."
+    },
+    {
+      "id": "file_exists:examples/kosmo-innovation-fixtures/kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture/README.md",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture/README.md must exist."
+    },
+    {
+      "id": "file_root:examples/kosmo-innovation-fixtures/worker_integration-mac999-bim-llm-code-agent-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/worker_integration-mac999-bim-llm-code-agent-signal-fixture/fixture-manifest.json must stay under examples/kosmo-innovation-fixtures."
+    },
+    {
+      "id": "file_exists:examples/kosmo-innovation-fixtures/worker_integration-mac999-bim-llm-code-agent-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/worker_integration-mac999-bim-llm-code-agent-signal-fixture/fixture-manifest.json must exist."
+    },
+    {
+      "id": "manifest_status:examples/kosmo-innovation-fixtures/worker_integration-mac999-bim-llm-code-agent-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/worker_integration-mac999-bim-llm-code-agent-signal-fixture/fixture-manifest.json must be github_signal_fixture_skeleton_only."
+    },
+    {
+      "id": "manifest_repo_ref:examples/kosmo-innovation-fixtures/worker_integration-mac999-bim-llm-code-agent-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/worker_integration-mac999-bim-llm-code-agent-signal-fixture/fixture-manifest.json must mark the source repo as reference only."
+    },
+    {
+      "id": "manifest_synthetic:examples/kosmo-innovation-fixtures/worker_integration-mac999-bim-llm-code-agent-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/worker_integration-mac999-bim-llm-code-agent-signal-fixture/fixture-manifest.json must be synthetic-fixture-only."
+    },
+    {
+      "id": "manifest_github_ref:examples/kosmo-innovation-fixtures/worker_integration-mac999-bim-llm-code-agent-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/worker_integration-mac999-bim-llm-code-agent-signal-fixture/fixture-manifest.json must mark GitHub as reference only."
+    },
+    {
+      "id": "manifest_no_code_copy:examples/kosmo-innovation-fixtures/worker_integration-mac999-bim-llm-code-agent-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/worker_integration-mac999-bim-llm-code-agent-signal-fixture/fixture-manifest.json must not copy GitHub code."
+    },
+    {
+      "id": "manifest_no_readme_copy:examples/kosmo-innovation-fixtures/worker_integration-mac999-bim-llm-code-agent-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/worker_integration-mac999-bim-llm-code-agent-signal-fixture/fixture-manifest.json must not copy README text."
+    },
+    {
+      "id": "manifest_no_private:examples/kosmo-innovation-fixtures/worker_integration-mac999-bim-llm-code-agent-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/worker_integration-mac999-bim-llm-code-agent-signal-fixture/fixture-manifest.json must declare no private content."
+    },
+    {
+      "id": "manifest_no_install:examples/kosmo-innovation-fixtures/worker_integration-mac999-bim-llm-code-agent-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/worker_integration-mac999-bim-llm-code-agent-signal-fixture/fixture-manifest.json must not require install now."
+    },
+    {
+      "id": "manifest_no_run:examples/kosmo-innovation-fixtures/worker_integration-mac999-bim-llm-code-agent-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/worker_integration-mac999-bim-llm-code-agent-signal-fixture/fixture-manifest.json must not require tool run now."
+    },
+    {
+      "id": "manifest_public_ready_zero:examples/kosmo-innovation-fixtures/worker_integration-mac999-bim-llm-code-agent-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/worker_integration-mac999-bim-llm-code-agent-signal-fixture/fixture-manifest.json must keep public-ready at 0."
+    },
+    {
+      "id": "manifest_fixture_count:examples/kosmo-innovation-fixtures/worker_integration-mac999-bim-llm-code-agent-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/worker_integration-mac999-bim-llm-code-agent-signal-fixture/fixture-manifest.json must include fixtures."
+    },
+    {
+      "id": "manifest_fixture_no_private:examples/kosmo-innovation-fixtures/worker_integration-mac999-bim-llm-code-agent-signal-fixture/fixture-manifest.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/worker_integration-mac999-bim-llm-code-agent-signal-fixture/fixture-manifest.json fixtures must be non-private."
+    },
+    {
+      "id": "file_root:examples/kosmo-innovation-fixtures/worker_integration-mac999-bim-llm-code-agent-signal-fixture/README.md",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/worker_integration-mac999-bim-llm-code-agent-signal-fixture/README.md must stay under examples/kosmo-innovation-fixtures."
+    },
+    {
+      "id": "file_exists:examples/kosmo-innovation-fixtures/worker_integration-mac999-bim-llm-code-agent-signal-fixture/README.md",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/worker_integration-mac999-bim-llm-code-agent-signal-fixture/README.md must exist."
+    }
+  ],
+  "next_actions": [
+    "Generate synthetic payloads for one fixture per lane.",
+    "Keep GitHub repositories as references only until an explicit adapter review is complete.",
+    "Update day-batch loop only after payload checks exist."
+  ]
+}

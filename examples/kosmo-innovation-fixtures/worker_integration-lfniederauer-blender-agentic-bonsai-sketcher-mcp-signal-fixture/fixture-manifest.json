@@ -1,0 +1,83 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T14:38:01.434Z",
+  "contract_id": "github-fixture-plan-03",
+  "fixture_id": "worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture",
+  "source_repo": "lfniederauer/blender-agentic-bonsai-sketcher-mcp",
+  "source_url": "https://github.com/lfniederauer/blender-agentic-bonsai-sketcher-mcp",
+  "source_repo_is_reference_only": true,
+  "source_lane": "ifc_reasoning",
+  "lane": "worker_integration",
+  "status": "github_signal_fixture_skeleton_only",
+  "policy": {
+    "synthetic_fixture_only": true,
+    "github_reference_only": true,
+    "copied_github_code": false,
+    "copied_readme_text": false,
+    "private_content": false,
+    "install_required_now": false,
+    "tool_run_required_now": false,
+    "public_ready_after_fixture": 0
+  },
+  "allowed_inputs": [
+    "synthetic_command_registry",
+    "worker_boundary_matrix",
+    "expected_json_output_schema"
+  ],
+  "expected_outputs": [
+    "command_contract",
+    "runtime_risk_matrix",
+    "review_gate_report"
+  ],
+  "fixtures": [
+    {
+      "id": "synthetic_command_boundary",
+      "description": "Generated command registry for local worker orchestration without runtime execution.",
+      "status": "payload_pending",
+      "private_content": false,
+      "generated_or_public_safe": true,
+      "expected_payload_path": "payloads/synthetic_command_boundary.fixture.json"
+    },
+    {
+      "id": "synthetic_runtime_risk_matrix",
+      "description": "Expected risk and output-contract matrix for BIM/IFC/RAG worker handoff review.",
+      "status": "payload_pending",
+      "private_content": false,
+      "generated_or_public_safe": true,
+      "expected_payload_path": "payloads/synthetic_runtime_risk_matrix.fixture.json"
+    }
+  ],
+  "acceptance": [
+    "Command boundary can represent allowed inputs, expected JSON outputs and blocked runtime actions.",
+    "No private content, protected source files or worker outputs are used.",
+    "No GitHub code, README prose or assets are copied into the fixture.",
+    "Output keeps public_ready false/0 and requires overseer review before execution."
+  ],
+  "guard_requirements": [
+    "synthetic inputs only",
+    "no GitHub code copied",
+    "no README text copied",
+    "no repository clone",
+    "no dependency install",
+    "no model download",
+    "no private content",
+    "human/overseer review before worker execution"
+  ],
+  "forbidden_inputs": [
+    "private source roots",
+    "private PDFs/books/scans/images",
+    "raw README text copied from GitHub",
+    "GitHub repository source files",
+    "repository clones",
+    "dependency installs",
+    "model downloads",
+    "local worker private outputs",
+    "public-ready or rights-cleared claims"
+  ],
+  "allowed_outputs": [
+    "fixture manifest JSON",
+    "synthetic payload JSON",
+    "fixture smoke report JSON/Markdown",
+    "review-only handoff notes"
+  ]
+}
