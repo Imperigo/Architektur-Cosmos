@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T18:06:18.714Z",
+  "generated_at": "2026-06-15T18:10:02.647Z",
   "status": "orbit_bridge_ready_with_blockers",
   "policy": {
     "dashboard_only": true,
@@ -120,6 +120,8 @@
     "data/kosmo-innovation-github-fixture-payload-smoke-check-2026-06-15.json",
     "data/kosmo-codex-morning-routine-run-2026-06-15.json",
     "data/kosmo-codex-morning-routine-run-check-2026-06-15.json",
+    "data/kosmo-today-loop-plan-2026-06-15.json",
+    "data/kosmo-today-loop-plan-check-2026-06-15.json",
     "data/kosmo-training-eval-rubric-pack-2026-06-15.json",
     "data/kosmo-training-eval-rubric-pack-check-2026-06-15.json",
     "data/kosmo-training-eval-row-template-2026-06-15.json",
@@ -135,7 +137,7 @@
     "data/kosmo-night-loop-checkpoint-2026-06-15.json"
   ],
   "summary": {
-    "cards": 70,
+    "cards": 71,
     "blocking_cards": 4,
     "owner_action_cards": 25,
     "source_root_blocked": true,
@@ -848,6 +850,15 @@
       "owner_action_required": false,
       "route_hint": "Guarded morning execution evidence: git fetch, handoff mirror, Source Root gate, next-batch route",
       "source_ref": "data/kosmo-codex-morning-routine-run-2026-06-15.json"
+    },
+    {
+      "id": "today-loop-plan",
+      "title": "Today Loop Plan",
+      "status": "ready",
+      "signal": "source_free_path_b, blocks 6, tick 2m, checkup 3m, failures 0",
+      "owner_action_required": false,
+      "route_hint": "Current-day autonomous loop plan until 18:00 local; source-free unless exact owner unlock appears",
+      "source_ref": "data/kosmo-today-loop-plan-2026-06-15.json"
     },
     {
       "id": "github-readme-signal-scan",

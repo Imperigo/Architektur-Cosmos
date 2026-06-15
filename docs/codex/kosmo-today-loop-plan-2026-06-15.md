@@ -1,6 +1,6 @@
 # Kosmo Today Loop Plan
 
-Generated: 2026-06-15T15:49:21.515Z
+Generated: 2026-06-15T18:10:02.114Z
 Status: `today_loop_plan_ready`
 
 ## Summary
@@ -13,6 +13,7 @@ Status: `today_loop_plan_ready`
 - Data lane: kosmodata_lane_sweep_review_only_passed (24/24)
 - Router: worker_router_guarded_review_only
 - Worker boundary guard: worker_boundary_pack_guard_passed
+- Conversion evidence ledger: local_worker_innovation_conversion_evidence_ledger_ready
 - Source-root unlocked: no
 - Public-ready after plan: 0
 
@@ -26,6 +27,13 @@ Status: `today_loop_plan_ready`
 - `npm run kosmo:overseer-sync-board && npm run kosmo:overseer-sync-board-check`
 
 ## Work Blocks
+
+### local_worker_conversion_governance
+
+- Lane: local-worker-kosmo-prepare-kosmoasset
+- Objective: Keep the local-worker output path executable only through validator, review, preview, apply guard and evidence ledger.
+- First commands: `npm run kosmo:local-worker-innovation-output-validator`, `npm run kosmo:local-worker-innovation-output-validator-check`, `npm run kosmo:local-worker-innovation-post-output-intake-review`, `npm run kosmo:local-worker-innovation-post-output-intake-review-check`, `npm run kosmo:local-worker-innovation-human-overseer-review-decision-card`, `npm run kosmo:local-worker-innovation-human-overseer-review-decision-card-check`, `npm run kosmo:local-worker-innovation-conversion-plan-preview`, `npm run kosmo:local-worker-innovation-conversion-plan-preview-check`, `npm run kosmo:local-worker-innovation-conversion-apply-guard`, `npm run kosmo:local-worker-innovation-conversion-apply-guard-check`, `npm run kosmo:local-worker-innovation-conversion-evidence-ledger`, `npm run kosmo:local-worker-innovation-conversion-evidence-ledger-check`
+- Acceptance: all local-worker conversion gates remain green; no worker body copied into git; no repo derivative or training row created; public-ready remains 0
 
 ### innovation_scout
 
@@ -79,6 +87,7 @@ Status: `today_loop_plan_ready`
 - Continue source-free schema, guard, eval, Orbit and handoff work.
 - Do not scan private books, plans, PDFs, OCR text, OneDrive libraries or archive roots.
 - Use public/current technical research only for planning and isolated experiments.
+- Use Notion or project notes only for planning context; do not copy private-source bodies into Git.
 - Commit only repo-safe metadata, docs, scripts and checks.
 
 ## Handoff Notes

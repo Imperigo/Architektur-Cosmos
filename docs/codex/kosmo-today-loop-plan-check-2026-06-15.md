@@ -1,13 +1,13 @@
 # Kosmo Today Loop Plan Check
 
-Generated: 2026-06-15T14:57:53.690Z
+Generated: 2026-06-15T18:10:02.385Z
 Status: `today_loop_plan_guard_passed`
 
 ## Summary
 
 - Plan status: today_loop_plan_ready
 - Execution mode: source_free_path_b
-- Work blocks: 5
+- Work blocks: 6
 - Tick max: 2
 - Checkup interval: 3
 - Failures: 0
@@ -20,6 +20,7 @@ Status: `today_loop_plan_guard_passed`
 - passed: `max_tick_two_minutes` - Max loop tick must be at most two minutes.
 - passed: `checkup_three_minutes` - Checkup interval must be at most three minutes.
 - passed: `no_idle_wait` - Plan must prohibit idle waits between tasks.
+- passed: `immediate_next_task` - Plan must start the next task immediately after completion.
 - passed: `no_private_reads` - Plan must not read private content.
 - passed: `no_private_copies` - Plan must not copy private content.
 - passed: `no_private_ocr` - Plan must not run private OCR.
@@ -35,11 +36,13 @@ Status: `today_loop_plan_guard_passed`
 - passed: `worker_boundary_passed` - Worker boundary guard should pass at plan time.
 - passed: `source_root_not_unlocked` - Source Root should remain locked unless explicit owner answer exists.
 - passed: `work_blocks_minimum` - Plan must include at least five work blocks.
+- passed: `work_block:local_worker_conversion_governance` - Plan must include work block local_worker_conversion_governance.
 - passed: `work_block:innovation_scout` - Plan must include work block innovation_scout.
 - passed: `work_block:references_schema_hardening` - Plan must include work block references_schema_hardening.
 - passed: `work_block:asset_schema_hardening` - Plan must include work block asset_schema_hardening.
 - passed: `work_block:training_eval_readiness` - Plan must include work block training_eval_readiness.
 - passed: `work_block:orbit_and_handoff` - Plan must include work block orbit_and_handoff.
+- passed: `conversion_governance_evidence_ledger` - Local worker conversion governance must include the evidence ledger.
 - passed: `innovation_scout_github_fixture_skeletons` - Innovation scout must include GitHub fixture skeletons.
 - passed: `innovation_scout_github_fixture_payloads` - Innovation scout must include GitHub fixture payloads.
 - passed: `innovation_scout_github_fixture_payload_smoke` - Innovation scout must include GitHub fixture payload smoke.

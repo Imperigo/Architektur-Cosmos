@@ -1,12 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T15:49:21.515Z",
+  "generated_at": "2026-06-15T18:10:02.114Z",
   "status": "today_loop_plan_ready",
   "policy": {
     "autonomous_until_local_time": "18:00",
     "max_tick_minutes": 2,
     "checkup_interval_minutes": 3,
     "no_idle_wait_between_tasks": true,
+    "starts_next_task_immediately_after_completion": true,
     "source_root_gate_respected": true,
     "reads_private_content": false,
     "copies_private_content": false,
@@ -25,6 +26,8 @@
     "data/kosmo-day-batch-loop-2026-06-15.json",
     "data/kosmo-source-root-owner-action-card-2026-06-15.json",
     "data/kosmo-source-root-owner-final-decision-brief-2026-06-15.json",
+    "data/kosmo-local-worker-innovation-conversion-evidence-ledger-2026-06-15.json",
+    "data/kosmo-local-worker-innovation-conversion-evidence-ledger-check-2026-06-15.json",
     "data/kosmo-tomorrow-day-batch-2026-06-15.json"
   ],
   "summary": {
@@ -34,6 +37,8 @@
     "data_lane_steps": "24/24",
     "router_status": "worker_router_guarded_review_only",
     "worker_boundary_guard_status": "worker_boundary_pack_guard_passed",
+    "conversion_evidence_ledger_status": "local_worker_innovation_conversion_evidence_ledger_ready",
+    "conversion_evidence_ledger_guard_status": "local_worker_innovation_conversion_evidence_ledger_guard_passed",
     "day_batch_loop_status": "day_batch_loop_passed_review_only",
     "owner_action_required": true,
     "source_root_unlocked": false,
@@ -86,6 +91,31 @@
     }
   ],
   "work_blocks": [
+    {
+      "id": "local_worker_conversion_governance",
+      "lane": "local-worker-kosmo-prepare-kosmoasset",
+      "objective": "Keep the local-worker output path executable only through validator, review, preview, apply guard and evidence ledger.",
+      "first_commands": [
+        "npm run kosmo:local-worker-innovation-output-validator",
+        "npm run kosmo:local-worker-innovation-output-validator-check",
+        "npm run kosmo:local-worker-innovation-post-output-intake-review",
+        "npm run kosmo:local-worker-innovation-post-output-intake-review-check",
+        "npm run kosmo:local-worker-innovation-human-overseer-review-decision-card",
+        "npm run kosmo:local-worker-innovation-human-overseer-review-decision-card-check",
+        "npm run kosmo:local-worker-innovation-conversion-plan-preview",
+        "npm run kosmo:local-worker-innovation-conversion-plan-preview-check",
+        "npm run kosmo:local-worker-innovation-conversion-apply-guard",
+        "npm run kosmo:local-worker-innovation-conversion-apply-guard-check",
+        "npm run kosmo:local-worker-innovation-conversion-evidence-ledger",
+        "npm run kosmo:local-worker-innovation-conversion-evidence-ledger-check"
+      ],
+      "acceptance": [
+        "all local-worker conversion gates remain green",
+        "no worker body copied into git",
+        "no repo derivative or training row created",
+        "public-ready remains 0"
+      ]
+    },
     {
       "id": "innovation_scout",
       "lane": "kosmo-prepare-kosmoreferences-kosmoasset",
@@ -201,6 +231,7 @@
     "Continue source-free schema, guard, eval, Orbit and handoff work.",
     "Do not scan private books, plans, PDFs, OCR text, OneDrive libraries or archive roots.",
     "Use public/current technical research only for planning and isolated experiments.",
+    "Use Notion or project notes only for planning context; do not copy private-source bodies into Git.",
     "Commit only repo-safe metadata, docs, scripts and checks."
   ],
   "handoff_notes": [

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T14:57:53.690Z",
+  "generated_at": "2026-06-15T18:10:02.385Z",
   "status": "today_loop_plan_guard_passed",
   "policy": {
     "reads_private_content": false,
@@ -15,7 +15,7 @@
   "summary": {
     "plan_status": "today_loop_plan_ready",
     "execution_mode": "source_free_path_b",
-    "work_blocks": 5,
+    "work_blocks": 6,
     "tick_max_minutes": 2,
     "checkup_interval_minutes": 3,
     "failures": 0,
@@ -46,6 +46,11 @@
       "id": "no_idle_wait",
       "severity": "passed",
       "message": "Plan must prohibit idle waits between tasks."
+    },
+    {
+      "id": "immediate_next_task",
+      "severity": "passed",
+      "message": "Plan must start the next task immediately after completion."
     },
     {
       "id": "no_private_reads",
@@ -123,6 +128,11 @@
       "message": "Plan must include at least five work blocks."
     },
     {
+      "id": "work_block:local_worker_conversion_governance",
+      "severity": "passed",
+      "message": "Plan must include work block local_worker_conversion_governance."
+    },
+    {
       "id": "work_block:innovation_scout",
       "severity": "passed",
       "message": "Plan must include work block innovation_scout."
@@ -146,6 +156,11 @@
       "id": "work_block:orbit_and_handoff",
       "severity": "passed",
       "message": "Plan must include work block orbit_and_handoff."
+    },
+    {
+      "id": "conversion_governance_evidence_ledger",
+      "severity": "passed",
+      "message": "Local worker conversion governance must include the evidence ledger."
     },
     {
       "id": "innovation_scout_github_fixture_skeletons",

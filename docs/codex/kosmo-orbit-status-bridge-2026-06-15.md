@@ -1,11 +1,11 @@
 # Kosmo Orbit Status Bridge
 
-Generated: 2026-06-15T18:06:18.714Z
+Generated: 2026-06-15T18:10:02.647Z
 Status: `orbit_bridge_ready_with_blockers`
 
 ## Summary
 
-- Cards: 70
+- Cards: 71
 - Blocking cards: 4
 - Owner action cards: 25
 - Source root blocked: yes
@@ -113,6 +113,7 @@ Status: `orbit_bridge_ready_with_blockers`
 | `github-innovation-discovery` GitHub Innovation Discovery | review_only_ready | no | 5/10 queries with results, 23 candidates, failures 0 |
 | `github-innovation-review-queue` GitHub Innovation Review Queue | review_only_ready | no | 7 review items, high 5, execute 0, failures 0 |
 | `codex-morning-routine-run` Codex Morning Routine Run | review_only_ready | no | fetch 2/2, behind 0, handoff 286, next source_free_innovation_and_guarding, failures 0 |
+| `today-loop-plan` Today Loop Plan | ready | no | source_free_path_b, blocks 6, tick 2m, checkup 3m, failures 0 |
 | `github-readme-signal-scan` GitHub README Signal Scan | review_only_ready | no | 7 scanned, README 6, high-signal 5, failures 0 |
 | `github-fixture-contract-plan` GitHub Fixture Contract Plan | review_only_ready | no | 5 plans, prepare 2, asset 1, worker 2, failures 0 |
 | `github-promotion-matrix` GitHub Promotion Matrix | review_only_ready | no | 5 promotable, held 2, lanes 3, training 3, failures 0 |

@@ -74,6 +74,7 @@ function checkPlan(plan) {
   expect(plan.policy?.max_tick_minutes <= 2, findings, 'max_tick_two_minutes', 'Max loop tick must be at most two minutes.');
   expect(plan.policy?.checkup_interval_minutes <= 3, findings, 'checkup_three_minutes', 'Checkup interval must be at most three minutes.');
   expect(plan.policy?.no_idle_wait_between_tasks === true, findings, 'no_idle_wait', 'Plan must prohibit idle waits between tasks.');
+  expect(plan.policy?.starts_next_task_immediately_after_completion === true, findings, 'immediate_next_task', 'Plan must start the next task immediately after completion.');
   expect(plan.policy?.reads_private_content === false, findings, 'no_private_reads', 'Plan must not read private content.');
   expect(plan.policy?.copies_private_content === false, findings, 'no_private_copies', 'Plan must not copy private content.');
   expect(plan.policy?.runs_private_ocr === false, findings, 'no_private_ocr', 'Plan must not run private OCR.');
@@ -89,9 +90,11 @@ function checkPlan(plan) {
   expect(plan.summary?.worker_boundary_guard_status === 'worker_boundary_pack_guard_passed', findings, 'worker_boundary_passed', 'Worker boundary guard should pass at plan time.');
   expect(plan.summary?.source_root_unlocked === false, findings, 'source_root_not_unlocked', 'Source Root should remain locked unless explicit owner answer exists.');
   expect((plan.work_blocks || []).length >= 5, findings, 'work_blocks_minimum', 'Plan must include at least five work blocks.');
-  for (const required of ['innovation_scout', 'references_schema_hardening', 'asset_schema_hardening', 'training_eval_readiness', 'orbit_and_handoff']) {
+  for (const required of ['local_worker_conversion_governance', 'innovation_scout', 'references_schema_hardening', 'asset_schema_hardening', 'training_eval_readiness', 'orbit_and_handoff']) {
     expect((plan.work_blocks || []).some((block) => block.id === required), findings, `work_block:${required}`, `Plan must include work block ${required}.`);
   }
+  const conversionCommands = ((plan.work_blocks || []).find((block) => block.id === 'local_worker_conversion_governance')?.first_commands || []).join(' ');
+  expect(conversionCommands.includes('local-worker-innovation-conversion-evidence-ledger'), findings, 'conversion_governance_evidence_ledger', 'Local worker conversion governance must include the evidence ledger.');
   const innovationCommands = ((plan.work_blocks || []).find((block) => block.id === 'innovation_scout')?.first_commands || []).join(' ');
   expect(innovationCommands.includes('innovation-github-fixture-skeletons'), findings, 'innovation_scout_github_fixture_skeletons', 'Innovation scout must include GitHub fixture skeletons.');
   expect(innovationCommands.includes('innovation-github-fixture-payloads'), findings, 'innovation_scout_github_fixture_payloads', 'Innovation scout must include GitHub fixture payloads.');

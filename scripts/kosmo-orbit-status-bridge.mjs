@@ -117,6 +117,8 @@ const refs = {
   githubFixturePayloadSmokeCheck: `data/kosmo-innovation-github-fixture-payload-smoke-check-${dateStamp}.json`,
   codexMorningRoutineRun: `data/kosmo-codex-morning-routine-run-${dateStamp}.json`,
   codexMorningRoutineRunCheck: `data/kosmo-codex-morning-routine-run-check-${dateStamp}.json`,
+  todayLoopPlan: `data/kosmo-today-loop-plan-${dateStamp}.json`,
+  todayLoopPlanCheck: `data/kosmo-today-loop-plan-check-${dateStamp}.json`,
   trainingEvalRubricPack: `data/kosmo-training-eval-rubric-pack-${dateStamp}.json`,
   trainingEvalRubricPackCheck: `data/kosmo-training-eval-rubric-pack-check-${dateStamp}.json`,
   trainingEvalRowTemplate: `data/kosmo-training-eval-row-template-${dateStamp}.json`,
@@ -261,6 +263,8 @@ function buildBridge(reports) {
   const githubFixturePayloadSmokeCheckSummary = reports.githubFixturePayloadSmokeCheck?.summary || {};
   const codexMorningRoutineRunSummary = reports.codexMorningRoutineRun?.summary || {};
   const codexMorningRoutineRunCheckSummary = reports.codexMorningRoutineRunCheck?.summary || {};
+  const todayLoopPlanSummary = reports.todayLoopPlan?.summary || {};
+  const todayLoopPlanCheckSummary = reports.todayLoopPlanCheck?.summary || {};
   const trainingEvalRubricSummary = reports.trainingEvalRubricPack?.summary || {};
   const trainingEvalRubricCheckSummary = reports.trainingEvalRubricPackCheck?.summary || {};
   const trainingEvalRowTemplateSummary = reports.trainingEvalRowTemplate?.summary || {};
@@ -990,6 +994,18 @@ function buildBridge(reports) {
       owner_action_required: false,
       route_hint: 'Guarded morning execution evidence: git fetch, handoff mirror, Source Root gate, next-batch route',
       source_ref: refs.codexMorningRoutineRun
+    },
+    {
+      id: 'today-loop-plan',
+      title: 'Today Loop Plan',
+      status: reports.todayLoopPlan?.status === 'today_loop_plan_ready' &&
+        reports.todayLoopPlanCheck?.status === 'today_loop_plan_guard_passed'
+        ? 'ready'
+        : 'needs_review',
+      signal: `${todayLoopPlanSummary.execution_mode || '-'}, blocks ${reports.todayLoopPlan?.work_blocks?.length ?? 0}, tick ${reports.todayLoopPlan?.loop?.tick_max_minutes ?? '-'}m, checkup ${reports.todayLoopPlan?.loop?.checkup_interval_minutes ?? '-'}m, failures ${todayLoopPlanCheckSummary.failures ?? 0}`,
+      owner_action_required: false,
+      route_hint: 'Current-day autonomous loop plan until 18:00 local; source-free unless exact owner unlock appears',
+      source_ref: refs.todayLoopPlan
     },
     {
       id: 'github-readme-signal-scan',

@@ -14,6 +14,8 @@ const refs = {
   dayBatchLoop: resolve(root, args.dayBatchLoop || `data/kosmo-day-batch-loop-${dateStamp}.json`),
   sourceRootOwnerAction: resolve(root, args.sourceRootOwnerAction || `data/kosmo-source-root-owner-action-card-${dateStamp}.json`),
   sourceRootFinalBrief: resolve(root, args.sourceRootFinalBrief || `data/kosmo-source-root-owner-final-decision-brief-${dateStamp}.json`),
+  conversionEvidenceLedger: resolve(root, args.conversionEvidenceLedger || `data/kosmo-local-worker-innovation-conversion-evidence-ledger-${dateStamp}.json`),
+  conversionEvidenceLedgerCheck: resolve(root, args.conversionEvidenceLedgerCheck || `data/kosmo-local-worker-innovation-conversion-evidence-ledger-check-${dateStamp}.json`),
   tomorrowPlan: resolve(root, args.tomorrowPlan || `data/kosmo-tomorrow-day-batch-${dateStamp}.json`)
 };
 
@@ -33,6 +35,8 @@ async function main() {
     dayBatchLoop: await readOptionalJson(refs.dayBatchLoop),
     sourceRootOwnerAction: await readOptionalJson(refs.sourceRootOwnerAction),
     sourceRootFinalBrief: await readOptionalJson(refs.sourceRootFinalBrief),
+    conversionEvidenceLedger: await readOptionalJson(refs.conversionEvidenceLedger),
+    conversionEvidenceLedgerCheck: await readOptionalJson(refs.conversionEvidenceLedgerCheck),
     tomorrowPlan: await readOptionalJson(refs.tomorrowPlan)
   };
   const plan = buildPlan(reports);
@@ -75,6 +79,7 @@ function buildPlan(reports) {
       max_tick_minutes: 2,
       checkup_interval_minutes: 3,
       no_idle_wait_between_tasks: true,
+      starts_next_task_immediately_after_completion: true,
       source_root_gate_respected: !sourceRootUnlocked,
       reads_private_content: false,
       copies_private_content: false,
@@ -94,6 +99,8 @@ function buildPlan(reports) {
       data_lane_steps: `${reports.dataLaneSweep?.summary?.passed_steps ?? '?'}/${reports.dataLaneSweep?.summary?.steps ?? '?'}`,
       router_status: reports.router?.status || null,
       worker_boundary_guard_status: reports.workerBoundaryCheck?.status || null,
+      conversion_evidence_ledger_status: reports.conversionEvidenceLedger?.status || null,
+      conversion_evidence_ledger_guard_status: reports.conversionEvidenceLedgerCheck?.status || null,
       day_batch_loop_status: reports.dayBatchLoop?.status || null,
       owner_action_required: ownerActionRequired,
       source_root_unlocked: sourceRootUnlocked,
@@ -122,6 +129,26 @@ function buildPlan(reports) {
       command('refresh_overseer_board', 'npm run kosmo:overseer-sync-board && npm run kosmo:overseer-sync-board-check')
     ],
     work_blocks: [
+      {
+        id: 'local_worker_conversion_governance',
+        lane: 'local-worker-kosmo-prepare-kosmoasset',
+        objective: 'Keep the local-worker output path executable only through validator, review, preview, apply guard and evidence ledger.',
+        first_commands: [
+          'npm run kosmo:local-worker-innovation-output-validator',
+          'npm run kosmo:local-worker-innovation-output-validator-check',
+          'npm run kosmo:local-worker-innovation-post-output-intake-review',
+          'npm run kosmo:local-worker-innovation-post-output-intake-review-check',
+          'npm run kosmo:local-worker-innovation-human-overseer-review-decision-card',
+          'npm run kosmo:local-worker-innovation-human-overseer-review-decision-card-check',
+          'npm run kosmo:local-worker-innovation-conversion-plan-preview',
+          'npm run kosmo:local-worker-innovation-conversion-plan-preview-check',
+          'npm run kosmo:local-worker-innovation-conversion-apply-guard',
+          'npm run kosmo:local-worker-innovation-conversion-apply-guard-check',
+          'npm run kosmo:local-worker-innovation-conversion-evidence-ledger',
+          'npm run kosmo:local-worker-innovation-conversion-evidence-ledger-check'
+        ],
+        acceptance: ['all local-worker conversion gates remain green', 'no worker body copied into git', 'no repo derivative or training row created', 'public-ready remains 0']
+      },
       {
         id: 'innovation_scout',
         lane: 'kosmo-prepare-kosmoreferences-kosmoasset',
@@ -192,6 +219,7 @@ function buildPlan(reports) {
       'Continue source-free schema, guard, eval, Orbit and handoff work.',
       'Do not scan private books, plans, PDFs, OCR text, OneDrive libraries or archive roots.',
       'Use public/current technical research only for planning and isolated experiments.',
+      'Use Notion or project notes only for planning context; do not copy private-source bodies into Git.',
       'Commit only repo-safe metadata, docs, scripts and checks.'
     ],
     handoff_notes: [
@@ -231,6 +259,7 @@ function renderMarkdown(plan) {
   lines.push(`- Data lane: ${plan.summary.data_lane_status} (${plan.summary.data_lane_steps})`);
   lines.push(`- Router: ${plan.summary.router_status}`);
   lines.push(`- Worker boundary guard: ${plan.summary.worker_boundary_guard_status}`);
+  lines.push(`- Conversion evidence ledger: ${plan.summary.conversion_evidence_ledger_status}`);
   lines.push(`- Source-root unlocked: ${plan.summary.source_root_unlocked ? 'yes' : 'no'}`);
   lines.push(`- Public-ready after plan: ${plan.summary.public_ready_after_plan}`);
   lines.push('');
