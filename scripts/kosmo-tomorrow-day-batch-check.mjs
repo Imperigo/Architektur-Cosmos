@@ -88,6 +88,7 @@ function checkPlan(plan) {
   expect(startSequence.includes('local-worker-innovation-launch-apply-guard-smoke'), findings, 'start_sequence_local_worker_innovation_launch_apply_guard_smoke', 'Start sequence must include local worker innovation launch apply guard smoke.');
   expect(startSequence.includes('local-worker-innovation-launch-runbook-checkpoint'), findings, 'start_sequence_local_worker_innovation_launch_runbook_checkpoint', 'Start sequence must include local worker innovation launch runbook checkpoint.');
   expect(startSequence.includes('local-worker-innovation-launch-execution-envelope'), findings, 'start_sequence_local_worker_innovation_launch_execution_envelope', 'Start sequence must include local worker innovation launch execution envelope.');
+  expect(startSequence.includes('local-worker-innovation-post-output-intake-review'), findings, 'start_sequence_local_worker_innovation_post_output_intake_review', 'Start sequence must include local worker innovation post-output intake review.');
   expect(startSequence.includes('codex-morning-routine-run'), findings, 'start_sequence_morning_routine_run', 'Start sequence must include Codex morning routine run.');
   expect(startSequence.includes('codex-morning-routine-run-check'), findings, 'start_sequence_morning_routine_run_check', 'Start sequence must include Codex morning routine run check.');
   expect(startSequence.includes('owner-unlock-pipeline-checkpoint'), findings, 'start_sequence_owner_checkpoint', 'Start sequence must include owner unlock checkpoint.');

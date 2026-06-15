@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T17:36:44.710Z",
+  "generated_at": "2026-06-15T17:41:09.595Z",
   "status": "orbit_bridge_ready_with_blockers",
   "policy": {
     "dashboard_only": true,
@@ -90,6 +90,8 @@
     "data/kosmo-local-worker-innovation-launch-runbook-checkpoint-check-2026-06-15.json",
     "data/kosmo-local-worker-innovation-launch-execution-envelope-2026-06-15.json",
     "data/kosmo-local-worker-innovation-launch-execution-envelope-check-2026-06-15.json",
+    "data/kosmo-local-worker-innovation-post-output-intake-review-2026-06-15.json",
+    "data/kosmo-local-worker-innovation-post-output-intake-review-check-2026-06-15.json",
     "data/kosmo-innovation-github-watchlist-2026-06-15.json",
     "data/kosmo-innovation-github-watchlist-check-2026-06-15.json",
     "data/kosmo-innovation-github-discovery-2026-06-15.json",
@@ -125,7 +127,7 @@
     "data/kosmo-night-loop-checkpoint-2026-06-15.json"
   ],
   "summary": {
-    "cards": 65,
+    "cards": 66,
     "blocking_cards": 4,
     "owner_action_cards": 25,
     "source_root_blocked": true,
@@ -757,6 +759,15 @@
       "owner_action_required": false,
       "route_hint": "Empty guarded output-slot envelope for future separate local-worker launch",
       "source_ref": "data/kosmo-local-worker-innovation-launch-execution-envelope-check-2026-06-15.json"
+    },
+    {
+      "id": "local-worker-innovation-post-output-intake-review",
+      "title": "Local Worker Innovation Post-Output Intake Review",
+      "status": "review_only_ready",
+      "signal": "waiting_for_worker_outputs, candidates 0, accepted 0, public 0, failures 0",
+      "owner_action_required": false,
+      "route_hint": "Review-only intake gate for future local-worker outputs; no direct repo conversion",
+      "source_ref": "data/kosmo-local-worker-innovation-post-output-intake-review-check-2026-06-15.json"
     },
     {
       "id": "github-innovation-watchlist",

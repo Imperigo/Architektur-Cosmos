@@ -87,6 +87,8 @@ const refs = {
   localWorkerInnovationLaunchRunbookCheckpointCheck: `data/kosmo-local-worker-innovation-launch-runbook-checkpoint-check-${dateStamp}.json`,
   localWorkerInnovationLaunchExecutionEnvelope: `data/kosmo-local-worker-innovation-launch-execution-envelope-${dateStamp}.json`,
   localWorkerInnovationLaunchExecutionEnvelopeCheck: `data/kosmo-local-worker-innovation-launch-execution-envelope-check-${dateStamp}.json`,
+  localWorkerInnovationPostOutputIntakeReview: `data/kosmo-local-worker-innovation-post-output-intake-review-${dateStamp}.json`,
+  localWorkerInnovationPostOutputIntakeReviewCheck: `data/kosmo-local-worker-innovation-post-output-intake-review-check-${dateStamp}.json`,
   githubWatchlist: `data/kosmo-innovation-github-watchlist-${dateStamp}.json`,
   githubWatchlistCheck: `data/kosmo-innovation-github-watchlist-check-${dateStamp}.json`,
   githubDiscovery: `data/kosmo-innovation-github-discovery-${dateStamp}.json`,
@@ -221,6 +223,8 @@ function buildBridge(reports) {
   const localWorkerInnovationLaunchRunbookCheckpointCheckSummary = reports.localWorkerInnovationLaunchRunbookCheckpointCheck?.summary || {};
   const localWorkerInnovationLaunchExecutionEnvelopeSummary = reports.localWorkerInnovationLaunchExecutionEnvelope?.summary || {};
   const localWorkerInnovationLaunchExecutionEnvelopeCheckSummary = reports.localWorkerInnovationLaunchExecutionEnvelopeCheck?.summary || {};
+  const localWorkerInnovationPostOutputIntakeReviewSummary = reports.localWorkerInnovationPostOutputIntakeReview?.summary || {};
+  const localWorkerInnovationPostOutputIntakeReviewCheckSummary = reports.localWorkerInnovationPostOutputIntakeReviewCheck?.summary || {};
   const githubWatchlistSummary = reports.githubWatchlist?.summary || {};
   const githubWatchlistCheckSummary = reports.githubWatchlistCheck?.summary || {};
   const githubDiscoverySummary = reports.githubDiscovery?.summary || {};
@@ -860,6 +864,18 @@ function buildBridge(reports) {
       owner_action_required: false,
       route_hint: 'Empty guarded output-slot envelope for future separate local-worker launch',
       source_ref: refs.localWorkerInnovationLaunchExecutionEnvelopeCheck
+    },
+    {
+      id: 'local-worker-innovation-post-output-intake-review',
+      title: 'Local Worker Innovation Post-Output Intake Review',
+      status: reports.localWorkerInnovationPostOutputIntakeReview?.status === 'local_worker_innovation_post_output_intake_review_ready' &&
+        reports.localWorkerInnovationPostOutputIntakeReviewCheck?.status === 'local_worker_innovation_post_output_intake_review_guard_passed'
+        ? 'review_only_ready'
+        : 'needs_review',
+      signal: `${localWorkerInnovationPostOutputIntakeReviewSummary.mode || '-'}, candidates ${localWorkerInnovationPostOutputIntakeReviewSummary.review_candidates ?? 0}, accepted ${localWorkerInnovationPostOutputIntakeReviewSummary.accepted_now ?? 0}, public ${localWorkerInnovationPostOutputIntakeReviewSummary.public_ready_after_intake ?? 0}, failures ${localWorkerInnovationPostOutputIntakeReviewCheckSummary.failures ?? 0}`,
+      owner_action_required: false,
+      route_hint: 'Review-only intake gate for future local-worker outputs; no direct repo conversion',
+      source_ref: refs.localWorkerInnovationPostOutputIntakeReviewCheck
     },
     {
       id: 'github-innovation-watchlist',

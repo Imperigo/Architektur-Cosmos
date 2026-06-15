@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T17:36:45.195Z",
+  "generated_at": "2026-06-15T17:41:10.079Z",
   "status": "tomorrow_day_batch_guard_passed",
   "policy": {
     "validates_source_free_default": true,
@@ -163,6 +163,11 @@
       "id": "start_sequence_local_worker_innovation_launch_execution_envelope",
       "severity": "passed",
       "message": "Start sequence must include local worker innovation launch execution envelope."
+    },
+    {
+      "id": "start_sequence_local_worker_innovation_post_output_intake_review",
+      "severity": "passed",
+      "message": "Start sequence must include local worker innovation post-output intake review."
     },
     {
       "id": "start_sequence_morning_routine_run",

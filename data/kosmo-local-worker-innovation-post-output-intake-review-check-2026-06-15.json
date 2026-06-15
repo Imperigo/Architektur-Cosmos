@@ -1,0 +1,152 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T17:41:09.343Z",
+  "status": "local_worker_innovation_post_output_intake_review_guard_passed",
+  "policy": {
+    "validates_intake_review_only": true,
+    "metadata_only": true,
+    "executes_local_workers_now": false,
+    "starts_models_now": false,
+    "reads_private_content_now": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-local-worker-innovation-post-output-intake-review-2026-06-15.json"
+  ],
+  "summary": {
+    "checks": 25,
+    "passed": 25,
+    "failures": 0,
+    "intake_status": "local_worker_innovation_post_output_intake_review_ready",
+    "mode": "waiting_for_worker_outputs",
+    "review_candidates": 0,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_ready",
+      "status": "passed",
+      "evidence": "local_worker_innovation_post_output_intake_review_ready"
+    },
+    {
+      "id": "mode_guarded",
+      "status": "passed",
+      "evidence": "waiting_for_worker_outputs"
+    },
+    {
+      "id": "policy_intake_review_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_metadata_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_private_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_execution",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_model_start",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_body_copy",
+      "status": "passed",
+      "evidence": "{\"intake_review_only\":true,\"metadata_only\":true,\"reads_private_sources_now\":false,\"executes_local_workers_now\":false,\"starts_models_now\":false,\"copies_worker_output_body_now\":false,\"copies_worker_recommendation_text_now\":false,\"accepts_outputs_as_review_candidates_only\":true,\"writes_repo_derivatives_now\":false,\"promotes_training_rows_now\":false,\"public_ready_after_intake\":0}"
+    },
+    {
+      "id": "policy_review_candidates_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_derivatives",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_training_promotion",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "five_items",
+      "status": "passed",
+      "evidence": "5/5"
+    },
+    {
+      "id": "accepted_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "conversions_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "training_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "body_copy_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "recommendation_copy_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "item_public_ready_zero",
+      "status": "passed",
+      "evidence": 5
+    },
+    {
+      "id": "required_acceptance_has_overseer",
+      "status": "passed",
+      "evidence": "output_validator_guard_passed, human_or_overseer_review_decision, no_private_content_assertion_confirmed, public_ready_remains_false, training_promotion_separate_review_required"
+    },
+    {
+      "id": "required_acceptance_has_private_assertion",
+      "status": "passed",
+      "evidence": "output_validator_guard_passed, human_or_overseer_review_decision, no_private_content_assertion_confirmed, public_ready_remains_false, training_promotion_separate_review_required"
+    },
+    {
+      "id": "hard_stop_no_direct_repo",
+      "status": "passed",
+      "evidence": "do not accept any worker output directly into repo artifacts. do not copy worker output bodies or recommendation text into git from this intake review. do not promote training rows from this intake review. do not mark public-ready from this intake review. do not read private source root, onedrive or archive-library content."
+    },
+    {
+      "id": "hard_stop_no_body_copy",
+      "status": "passed",
+      "evidence": "do not accept any worker output directly into repo artifacts. do not copy worker output bodies or recommendation text into git from this intake review. do not promote training rows from this intake review. do not mark public-ready from this intake review. do not read private source root, onedrive or archive-library content."
+    },
+    {
+      "id": "hard_stop_no_training_public",
+      "status": "passed",
+      "evidence": "do not accept any worker output directly into repo artifacts. do not copy worker output bodies or recommendation text into git from this intake review. do not promote training rows from this intake review. do not mark public-ready from this intake review. do not read private source root, onedrive or archive-library content."
+    },
+    {
+      "id": "hard_stop_no_private",
+      "status": "passed",
+      "evidence": "do not accept any worker output directly into repo artifacts. do not copy worker output bodies or recommendation text into git from this intake review. do not promote training rows from this intake review. do not mark public-ready from this intake review. do not read private source root, onedrive or archive-library content."
+    }
+  ]
+}
