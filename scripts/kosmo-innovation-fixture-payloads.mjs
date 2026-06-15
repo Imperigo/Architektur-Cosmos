@@ -112,7 +112,7 @@ function buildPayload({ manifest, fixture }) {
   };
 }
 
-function contentFor(contractId, fixtureId) {
+function contentFor(contractId, _fixtureId) {
   if (contractId.includes('ifcopenshell')) {
     return {
       type: 'ifc_shape_manifest',

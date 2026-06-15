@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T12:44:29.433Z",
+  "generated_at": "2026-06-15T13:01:42.947Z",
   "status": "innovation_dependency_preflight_plan_ready",
   "policy": {
     "plan_only": true,
@@ -143,7 +143,7 @@
       ],
       "preflight_commands": [
         "python -m pip show specklepy",
-        "node -e \"console.log(\\\"speckle-contract-only\\\")\""
+        "node -e \"console.log('speckle-contract-only')\""
       ],
       "requires_passed_lanes": [
         "speckle_connector_boundary_shape"

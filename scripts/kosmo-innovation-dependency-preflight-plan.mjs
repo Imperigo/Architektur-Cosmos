@@ -14,10 +14,10 @@ const dependencyGroups = [
   group('docling', 'python', ['docling'], ['python -m pip show docling', 'python -c "import docling; print(docling.__version__)"'], ['docling_markitdown_document_shape']),
   group('markitdown', 'python', ['markitdown'], ['python -m pip show markitdown', 'python -c "import markitdown; print(markitdown.__name__)"'], ['docling_markitdown_document_shape']),
   group('ifcopenshell', 'python', ['ifcopenshell'], ['python -m pip show ifcopenshell', 'python -c "import ifcopenshell; print(ifcopenshell.version)"'], ['ifcopenshell_entity_shape']),
-  group('qwen_embedding_reranker', 'model_or_python', ['sentence-transformers_or_transformers', 'Qwen3-Embedding model files'], ['python -c "import transformers; print(transformers.__version__)"', 'test -d \"$KOSMO_MODEL_ROOT/qwen3-embedding\"'], ['qwen_retrieval_shape']),
-  group('deepseek_ocr', 'model_or_python', ['torch', 'transformers', 'DeepSeek-OCR model files'], ['python -c "import torch, transformers; print(torch.__version__, transformers.__version__)"', 'test -d \"$KOSMO_MODEL_ROOT/deepseek-ocr\"'], ['deepseek_ocr_shape']),
+  group('qwen_embedding_reranker', 'model_or_python', ['sentence-transformers_or_transformers', 'Qwen3-Embedding model files'], ['python -c "import transformers; print(transformers.__version__)"', 'test -d "$KOSMO_MODEL_ROOT/qwen3-embedding"'], ['qwen_retrieval_shape']),
+  group('deepseek_ocr', 'model_or_python', ['torch', 'transformers', 'DeepSeek-OCR model files'], ['python -c "import torch, transformers; print(torch.__version__, transformers.__version__)"', 'test -d "$KOSMO_MODEL_ROOT/deepseek-ocr"'], ['deepseek_ocr_shape']),
   group('topologicpy', 'python', ['topologicpy'], ['python -m pip show topologicpy', 'python -c "import topologicpy; print(topologicpy.__name__)"'], ['topologicpy_graph_shape']),
-  group('speckle', 'python_or_node', ['specklepy_or_speckle_connector_contracts'], ['python -m pip show specklepy', 'node -e "console.log(\\\"speckle-contract-only\\\")"'], ['speckle_connector_boundary_shape'])
+  group('speckle', 'python_or_node', ['specklepy_or_speckle_connector_contracts'], ['python -m pip show specklepy', `node -e "console.log('speckle-contract-only')"`], ['speckle_connector_boundary_shape'])
 ];
 
 main().catch((error) => {
