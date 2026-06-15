@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T14:39:16.503Z",
+  "generated_at": "2026-06-15T14:47:22.443Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 256
+      "files": 259
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 106
+      "files": 109
     }
   ],
   "summary": {
@@ -47,6 +47,27 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-15-codex-synergiebericht-260-day-batch-github-fixtures.md",
+      "title": "Codex Synergiebericht 260 - Day Batch GitHub Fixtures",
+      "mirrored_inboxes": 2,
+      "bytes": 1497,
+      "modified_at": "2026-06-15T14:47:14.367Z"
+    },
+    {
+      "filename": "2026-06-15-codex-synergiebericht-259-github-fixture-payload-smoke.md",
+      "title": "Codex Synergiebericht 259 - GitHub Fixture Payload Smoke",
+      "mirrored_inboxes": 2,
+      "bytes": 1376,
+      "modified_at": "2026-06-15T14:44:27.161Z"
+    },
+    {
+      "filename": "2026-06-15-codex-synergiebericht-258-github-fixture-payloads.md",
+      "title": "Codex Synergiebericht 258 - GitHub Fixture Payloads",
+      "mirrored_inboxes": 2,
+      "bytes": 1469,
+      "modified_at": "2026-06-15T14:42:08.348Z"
+    },
     {
       "filename": "2026-06-15-codex-synergiebericht-257-github-fixture-skeletons.md",
       "title": "Codex Synergiebericht 257 - GitHub Fixture Skeletons",
@@ -81,27 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1311,
       "modified_at": "2026-06-15T14:23:05.384Z"
-    },
-    {
-      "filename": "2026-06-15-codex-synergiebericht-252-github-discovery-refinement.md",
-      "title": "Codex Synergiebericht 252: GitHub Discovery verfeinert",
-      "mirrored_inboxes": 2,
-      "bytes": 1427,
-      "modified_at": "2026-06-15T14:19:23.443Z"
-    },
-    {
-      "filename": "2026-06-15-codex-synergiebericht-251-today-plan-discovery-sync.md",
-      "title": "Codex Synergiebericht 251: Today-Loop kennt GitHub Discovery",
-      "mirrored_inboxes": 2,
-      "bytes": 753,
-      "modified_at": "2026-06-15T14:16:08.668Z"
-    },
-    {
-      "filename": "2026-06-15-codex-synergiebericht-250-architecture-build-green.md",
-      "title": "Codex Synergiebericht 250: ArchitectureCosmos Build gruen",
-      "mirrored_inboxes": 2,
-      "bytes": 774,
-      "modified_at": "2026-06-15T14:15:15.917Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 250-257 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 253-260 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."
