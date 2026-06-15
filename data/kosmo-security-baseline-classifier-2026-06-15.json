@@ -1,0 +1,126 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T13:08:13.281Z",
+  "status": "security_baseline_classifier_ready",
+  "policy": {
+    "classifier_only": true,
+    "suppresses_findings_now": false,
+    "modifies_security_check_now": false,
+    "secrets_never_allowed": true,
+    "redacts_identifier_values_in_output": true,
+    "public_ready_after_classifier": 0
+  },
+  "summary": {
+    "files_scanned": 1588,
+    "personal_identifier_findings": 202,
+    "secret_findings": 0,
+    "unclassified_personal_findings": 25,
+    "public_ready_after_classifier": 0
+  },
+  "category_counts": {
+    "generated_review_allowed": 41,
+    "must_redact": 25,
+    "private_repo_allowed": 132,
+    "script_context_allowed": 4
+  },
+  "rule_counts": {
+    "generated_orbit_reviews": 41,
+    "local_context_scripts": 4,
+    "onedrive_sync_artifacts": 21,
+    "owner_review_artifacts": 14,
+    "private_library_diagnostics": 17,
+    "source_root_artifacts": 80,
+    "unclassified": 25
+  },
+  "top_files": [
+    {
+      "file": "examples/kosmo-orbit/review/orbit-full-review.generated.json",
+      "count": 39
+    },
+    {
+      "file": "data/kosmo-source-root-locator-2026-06-13.json",
+      "count": 38
+    },
+    {
+      "file": "data/kosmo-owner-answer-sheet-2026-06-13.json",
+      "count": 6
+    },
+    {
+      "file": "data/kosmo-source-root-selection-brief-2026-06-13.json",
+      "count": 6
+    },
+    {
+      "file": "data/kosmo-source-root-unlock-runbook-2026-06-13.json",
+      "count": 6
+    },
+    {
+      "file": "data/kosmo-source-root-unlock-runbook-2026-06-14.json",
+      "count": 6
+    },
+    {
+      "file": "examples/kosmo-references/provenance/source-root-decision-session-2026-06-13.json",
+      "count": 6
+    },
+    {
+      "file": "data/kosmo-onedrive-sync-error-summary-2026-06-13.json",
+      "count": 5
+    },
+    {
+      "file": "data/kosmo-onedrive-sync-error-summary-2026-06-14.json",
+      "count": 5
+    },
+    {
+      "file": "data/kosmo-onedrive-sync-error-summary-2026-06-15.json",
+      "count": 5
+    },
+    {
+      "file": "data/kosmoreferences-private-library-diagnostic-2026-06-13.json",
+      "count": 4
+    },
+    {
+      "file": "data/kosmoreferences-private-library-diagnostic-2026-06-14.json",
+      "count": 4
+    },
+    {
+      "file": "data/kosmoreferences-private-library-diagnostic-2026-06-15.json",
+      "count": 4
+    },
+    {
+      "file": "docs/codex/kosmo-source-root-locator-2026-06-13.md",
+      "count": 4
+    },
+    {
+      "file": "data/kosmo-storage-mount-snapshot-2026-06-14.json",
+      "count": 3
+    },
+    {
+      "file": "data/kosmo-storage-mount-snapshot-2026-06-15.json",
+      "count": 3
+    },
+    {
+      "file": "docs/codex/kosmo-owner-answer-sheet-2026-06-13.md",
+      "count": 3
+    },
+    {
+      "file": "docs/codex/kosmo-source-root-decision-session-2026-06-13.md",
+      "count": 3
+    },
+    {
+      "file": "docs/codex/kosmo-source-root-selection-brief-2026-06-13.md",
+      "count": 3
+    },
+    {
+      "file": "docs/codex/kosmo-source-root-unlock-runbook-2026-06-13.md",
+      "count": 3
+    }
+  ],
+  "secret_summary": {
+    "count": 0,
+    "labels": []
+  },
+  "next_actions": [
+    "Review must_redact counts before enabling any suppression.",
+    "Create config baseline only for reviewed private_repo_allowed/generated/script-context groups.",
+    "Keep secret findings hard-failing regardless of baseline."
+  ]
+}

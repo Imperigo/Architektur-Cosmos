@@ -1,0 +1,79 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T13:08:13.526Z",
+  "status": "security_baseline_classifier_guard_passed",
+  "policy": {
+    "validates_classifier_only": true,
+    "suppresses_findings_now": false,
+    "modifies_security_check_now": false,
+    "secrets_never_allowed": true,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-security-baseline-classifier-2026-06-15.json"
+  ],
+  "summary": {
+    "classifier_status": "security_baseline_classifier_ready",
+    "personal_identifier_findings": 202,
+    "secret_findings": 0,
+    "failures": 0,
+    "public_ready_after_check": 0
+  },
+  "findings": [
+    {
+      "id": "schema_version",
+      "severity": "passed",
+      "message": "Classifier schema_version must be 0.1."
+    },
+    {
+      "id": "classifier_ready",
+      "severity": "passed",
+      "message": "Classifier must be ready."
+    },
+    {
+      "id": "classifier_only",
+      "severity": "passed",
+      "message": "Classifier must be classifier-only."
+    },
+    {
+      "id": "no_suppression_now",
+      "severity": "passed",
+      "message": "Classifier must not suppress findings."
+    },
+    {
+      "id": "no_security_check_patch",
+      "severity": "passed",
+      "message": "Classifier must not modify security check."
+    },
+    {
+      "id": "secrets_never_allowed",
+      "severity": "passed",
+      "message": "Classifier must keep secrets never allowed."
+    },
+    {
+      "id": "redacted_output",
+      "severity": "passed",
+      "message": "Classifier output must avoid identifier values."
+    },
+    {
+      "id": "public_ready_zero",
+      "severity": "passed",
+      "message": "Classifier must keep public-ready at 0."
+    },
+    {
+      "id": "personal_count_present",
+      "severity": "passed",
+      "message": "Classifier must count personal findings."
+    },
+    {
+      "id": "secret_count_present",
+      "severity": "passed",
+      "message": "Classifier must count secret findings."
+    },
+    {
+      "id": "top_files_present",
+      "severity": "passed",
+      "message": "Classifier must include top files by count."
+    }
+  ]
+}
