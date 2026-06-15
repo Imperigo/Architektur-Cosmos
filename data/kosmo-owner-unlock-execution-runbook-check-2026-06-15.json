@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T16:08:48.717Z",
+  "generated_at": "2026-06-15T16:14:01.991Z",
   "status": "owner_unlock_execution_runbook_guard_passed",
   "policy": {
     "validates_runbook_only": true,
@@ -16,8 +16,8 @@
     "data/kosmo-owner-unlock-execution-runbook-2026-06-15.json"
   ],
   "summary": {
-    "checks": 38,
-    "passed": 38,
+    "checks": 39,
+    "passed": 39,
     "failures": 0,
     "warnings": 0,
     "public_ready_after_check": 0
@@ -157,6 +157,11 @@
       "id": "only_current_session_target_allowed",
       "status": "passed",
       "evidence": "examples/kosmo-references/provenance/source-root-decision-session-2026-06-15.json"
+    },
+    {
+      "id": "session_apply_guard_after_manual_edit",
+      "status": "passed",
+      "evidence": "npm run kosmo:owner-unlock-session-apply-guard; npm run kosmo:owner-unlock-session-apply-guard-check"
     },
     {
       "id": "no_old_2026_06_14_targets",

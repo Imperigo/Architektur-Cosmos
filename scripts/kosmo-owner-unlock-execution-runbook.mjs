@@ -130,7 +130,11 @@ function buildReport(reports) {
         expectedSessionFile
       ],
       expected_selected_root_path: selectedRoot,
-      public_ready_after_edit: 0
+      public_ready_after_edit: 0,
+      after_manual_apply_commands: [
+        'npm run kosmo:owner-unlock-session-apply-guard',
+        'npm run kosmo:owner-unlock-session-apply-guard-check'
+      ]
     },
     {
       id: 'phase-6-source-root-guards',

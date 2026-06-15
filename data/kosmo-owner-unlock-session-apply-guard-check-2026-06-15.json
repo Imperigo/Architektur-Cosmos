@@ -1,0 +1,116 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T16:14:01.521Z",
+  "status": "owner_unlock_session_apply_guard_check_passed",
+  "policy": {
+    "validates_guard_only": true,
+    "writes_session_files_now": false,
+    "records_decisions_now": false,
+    "reads_private_content_now": false,
+    "runs_private_inventory_now": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-owner-unlock-session-apply-guard-2026-06-15.json"
+  ],
+  "summary": {
+    "guard_status": "owner_unlock_session_apply_guard_waiting_for_manual_apply",
+    "mode": "waiting_for_manual_apply",
+    "checks": 18,
+    "passed": 18,
+    "failures": 0,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_acceptable",
+      "status": "passed",
+      "evidence": "owner_unlock_session_apply_guard_waiting_for_manual_apply"
+    },
+    {
+      "id": "policy_guard_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_session_writes",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_decisions_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_inventory",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "target_current_session",
+      "status": "passed",
+      "evidence": "examples/kosmo-references/provenance/source-root-decision-session-2026-06-15.json"
+    },
+    {
+      "id": "expected_status_recorded",
+      "status": "passed",
+      "evidence": "source_root_decision_session_recorded"
+    },
+    {
+      "id": "expected_decision_exact",
+      "status": "passed",
+      "evidence": "select_existing_root_for_private_diagnostic"
+    },
+    {
+      "id": "expected_root_assets",
+      "status": "passed",
+      "evidence": "/mnt/archiv/ArchitekturKosmos/Assets"
+    },
+    {
+      "id": "pending_or_matches_preview",
+      "status": "passed",
+      "evidence": "true/false"
+    },
+    {
+      "id": "waiting_blocks_private_diagnostic",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "applied_allows_private_diagnostic",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "hard_stop_no_auto_apply",
+      "status": "passed",
+      "evidence": "do not apply this guard automatically. do not infer approval from a broad freeform reply. do not run private inventory while this guard is waiting. do not change public-ready state."
+    },
+    {
+      "id": "hard_stop_no_freeform",
+      "status": "passed",
+      "evidence": "do not apply this guard automatically. do not infer approval from a broad freeform reply. do not run private inventory while this guard is waiting. do not change public-ready state."
+    },
+    {
+      "id": "hard_stop_no_inventory_while_waiting",
+      "status": "passed",
+      "evidence": "do not apply this guard automatically. do not infer approval from a broad freeform reply. do not run private inventory while this guard is waiting. do not change public-ready state."
+    },
+    {
+      "id": "hard_stop_no_public_ready",
+      "status": "passed",
+      "evidence": "do not apply this guard automatically. do not infer approval from a broad freeform reply. do not run private inventory while this guard is waiting. do not change public-ready state."
+    }
+  ]
+}

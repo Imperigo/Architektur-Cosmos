@@ -1,13 +1,13 @@
 # Kosmo Owner Unlock Pipeline Checkpoint
 
-Generated: 2026-06-15T16:08:48.955Z
+Generated: 2026-06-15T16:14:02.242Z
 Status: `owner_unlock_pipeline_checkpoint_ready`
 
 ## Summary
 
-- Components: 23/23
-- Guard checks: 249/249
-- Latest handoffs: 274-281
+- Components: 25/25
+- Guard checks: 268/268
+- Latest handoffs: 275-282
 - Owner reply state: broad_intent_seen_exact_reply_not_applied
 - Source-root state: blocked_until_explicit_owner_reply_and_guards
 - Path A ready after exact owner reply: yes
@@ -39,6 +39,8 @@ Status: `owner_unlock_pipeline_checkpoint_ready`
 - ready: `intake-apply-plan-guard` -> `owner_unlock_intake_apply_plan_guard_passed`
 - ready: `session-edit-preview` -> `owner_unlock_session_edit_preview_ready`
 - ready: `session-edit-preview-guard` -> `owner_unlock_session_edit_preview_guard_passed`
+- ready: `session-apply-guard` -> `owner_unlock_session_apply_guard_waiting_for_manual_apply`
+- ready: `session-apply-guard-check` -> `owner_unlock_session_apply_guard_check_passed`
 - ready: `overseer-sync-board` -> `overseer_sync_board_ready`
 
 ## Next Actions

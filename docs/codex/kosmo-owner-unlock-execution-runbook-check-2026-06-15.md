@@ -1,11 +1,11 @@
 # Kosmo Owner Unlock Execution Runbook Check
 
-Generated: 2026-06-15T16:08:48.717Z
+Generated: 2026-06-15T16:14:01.991Z
 Status: `owner_unlock_execution_runbook_guard_passed`
 
 ## Summary
 
-- Checks: 38/38
+- Checks: 39/39
 - Failures: 0
 - Warnings: 0
 - Public-ready after check: 0
@@ -39,6 +39,7 @@ Status: `owner_unlock_execution_runbook_guard_passed`
 - passed: `one_mutating_phase_after_review` - 1
 - passed: `current_session_file_summary` - examples/kosmo-references/provenance/source-root-decision-session-2026-06-15.json
 - passed: `only_current_session_target_allowed` - examples/kosmo-references/provenance/source-root-decision-session-2026-06-15.json
+- passed: `session_apply_guard_after_manual_edit` - npm run kosmo:owner-unlock-session-apply-guard; npm run kosmo:owner-unlock-session-apply-guard-check
 - passed: `no_old_2026_06_14_targets` - old target search
 - passed: `start_card_status_ready` - owner_unlock_operational_start_card_ready
 - passed: `checkpoint_status_ready` - owner_unlock_pipeline_checkpoint_ready

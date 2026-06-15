@@ -1,20 +1,20 @@
 # Kosmo Tagesauftrag 2026-06-16
 
-Generated: 2026-06-15T16:08:48.002Z
+Generated: 2026-06-15T16:14:02.956Z
 Status: `tomorrow_day_batch_ready`
 
 ## Summary
 
 - Execution mode: source_free_path_until_exact_owner_unlock
 - Source-root unlocked: no
-- Owner unlock components: 23/23
-- Owner unlock guards: 249/249
+- Owner unlock components: 25/25
+- Owner unlock guards: 268/268
 - Acceptance known checks: -
 - Source queue: source_independent_work_queue_ready
 - Codex executable now: 0
 - Open owner actions: 2
 - Live GitHub probe: 9/9
-- Latest handoff: 280
+- Latest handoff: 282
 - Public-ready after plan: 0
 
 ## Policy
@@ -67,6 +67,8 @@ Status: `tomorrow_day_batch_ready`
 - `npm run kosmo:owner-unlock-operational-start-card-check`
 - `npm run kosmo:owner-unlock-execution-runbook`
 - `npm run kosmo:owner-unlock-execution-runbook-check`
+- `npm run kosmo:owner-unlock-session-apply-guard`
+- `npm run kosmo:owner-unlock-session-apply-guard-check`
 
 ## Path A If Exact Owner Unlock Reply Is Present
 

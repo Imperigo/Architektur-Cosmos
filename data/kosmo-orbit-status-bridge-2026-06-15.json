@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T16:08:47.764Z",
+  "generated_at": "2026-06-15T16:14:02.721Z",
   "status": "orbit_bridge_ready_with_blockers",
   "policy": {
     "dashboard_only": true,
@@ -41,6 +41,8 @@
     "data/kosmo-owner-unlock-operational-start-card-check-2026-06-15.json",
     "data/kosmo-owner-unlock-execution-runbook-2026-06-15.json",
     "data/kosmo-owner-unlock-execution-runbook-check-2026-06-15.json",
+    "data/kosmo-owner-unlock-session-apply-guard-2026-06-15.json",
+    "data/kosmo-owner-unlock-session-apply-guard-check-2026-06-15.json",
     "data/kosmo-source-root-activation-preflight-2026-06-15.json",
     "data/kosmo-private-metadata-inventory-runner-2026-06-15.json",
     "data/kosmo-private-metadata-inventory-fixture-smoke-2026-06-15.json",
@@ -97,9 +99,9 @@
     "data/kosmo-night-loop-checkpoint-2026-06-15.json"
   ],
   "summary": {
-    "cards": 51,
+    "cards": 52,
     "blocking_cards": 4,
-    "owner_action_cards": 24,
+    "owner_action_cards": 25,
     "source_root_blocked": true,
     "day_batch_status": "day_batch_loop_passed_review_only",
     "source_root_decision_refresh_status": "source_root_decision_session_refresh_not_needed",
@@ -429,6 +431,15 @@
       "owner_action_required": true,
       "route_hint": "Current guarded source-root unlock sequence; runbook only",
       "source_ref": "data/kosmo-owner-unlock-execution-runbook-2026-06-15.json"
+    },
+    {
+      "id": "owner-unlock-session-apply-guard",
+      "title": "Owner Unlock Session Apply Guard",
+      "status": "review_only_ready",
+      "signal": "waiting_for_manual_apply, target examples/kosmo-references/provenance/source-root-decision-session-2026-06-15.json, matches no, private diagnostic no, failures 0",
+      "owner_action_required": true,
+      "route_hint": "Proves the manual session edit matches the reviewed preview before activation",
+      "source_ref": "data/kosmo-owner-unlock-session-apply-guard-2026-06-15.json"
     },
     {
       "id": "source-root-activation",

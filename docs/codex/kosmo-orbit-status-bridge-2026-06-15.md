@@ -1,13 +1,13 @@
 # Kosmo Orbit Status Bridge
 
-Generated: 2026-06-15T16:08:47.764Z
+Generated: 2026-06-15T16:14:02.721Z
 Status: `orbit_bridge_ready_with_blockers`
 
 ## Summary
 
-- Cards: 51
+- Cards: 52
 - Blocking cards: 4
-- Owner action cards: 24
+- Owner action cards: 25
 - Source root blocked: yes
 - Day batch: day_batch_loop_passed_review_only
 - Source-root decision refresh: source_root_decision_session_refresh_not_needed, changed no, options 10, failures 0
@@ -77,6 +77,7 @@ Status: `orbit_bridge_ready_with_blockers`
 | `owner-unlock-session-edit-preview` Owner Unlock Session Edit Preview | review_only_ready | yes | 6 preview edits, session files 1, manual triage 5, writes now no, failures 0 |
 | `owner-unlock-operational-start-card` Owner Unlock Operational Start Card | owner_action | yes | 6/6 components, next 9, blocked 5, writes now no, failures 0 |
 | `owner-unlock-execution-runbook` Owner Unlock Execution Runbook | review_only_ready | yes | 8 phases, 21 commands, target examples/kosmo-references/provenance/source-root-decision-session-2026-06-15.json, queue executable 0, failures 0 |
+| `owner-unlock-session-apply-guard` Owner Unlock Session Apply Guard | review_only_ready | yes | waiting_for_manual_apply, target examples/kosmo-references/provenance/source-root-decision-session-2026-06-15.json, matches no, private diagnostic no, failures 0 |
 | `source-root-activation` Source Root Activation | blocked | yes | source_root_activation_waiting_for_owner_storage_action, safe commands 13, blocked 4 |
 | `local-models` Local Models | review_only_ready | no | 4/4 roles, 8 Ollama models, 70 GB |
 | `local-worker-http-runner` Local Worker HTTP Runner | review_only_ready | no | local_worker_http_runner_dry_run_ready, check local_worker_http_runner_guard_passed, safe inputs 6 |

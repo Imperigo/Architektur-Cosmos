@@ -30,6 +30,8 @@ const paths = {
   intakeApplyPlanCheck: resolve(root, args.intakeApplyPlanCheck || `data/kosmo-owner-unlock-intake-apply-plan-check-${dateStamp}.json`),
   sessionEditPreview: resolve(root, args.sessionEditPreview || `data/kosmo-owner-unlock-session-edit-preview-${dateStamp}.json`),
   sessionEditPreviewCheck: resolve(root, args.sessionEditPreviewCheck || `data/kosmo-owner-unlock-session-edit-preview-check-${dateStamp}.json`),
+  sessionApplyGuard: resolve(root, args.sessionApplyGuard || `data/kosmo-owner-unlock-session-apply-guard-${dateStamp}.json`),
+  sessionApplyGuardCheck: resolve(root, args.sessionApplyGuardCheck || `data/kosmo-owner-unlock-session-apply-guard-check-${dateStamp}.json`),
   syncBoard: resolve(root, args.syncBoard || `data/kosmo-overseer-sync-board-${dateStamp}.json`)
 };
 
@@ -93,6 +95,8 @@ function buildCheckpoint(reports) {
     component('intake-apply-plan-guard', reports.intakeApplyPlanCheck.status, ['owner_unlock_intake_apply_plan_guard_passed'], reports.intakeApplyPlanCheck.summary?.public_ready_after_check),
     component('session-edit-preview', reports.sessionEditPreview.status, ['owner_unlock_session_edit_preview_ready'], reports.sessionEditPreview.summary?.public_ready_after_preview),
     component('session-edit-preview-guard', reports.sessionEditPreviewCheck.status, ['owner_unlock_session_edit_preview_guard_passed'], reports.sessionEditPreviewCheck.summary?.public_ready_after_check),
+    component('session-apply-guard', reports.sessionApplyGuard.status, ['owner_unlock_session_apply_guard_waiting_for_manual_apply', 'owner_unlock_session_apply_guard_passed_after_manual_apply'], reports.sessionApplyGuard.summary?.public_ready_after_guard),
+    component('session-apply-guard-check', reports.sessionApplyGuardCheck.status, ['owner_unlock_session_apply_guard_check_passed'], reports.sessionApplyGuardCheck.summary?.public_ready_after_check),
     component('overseer-sync-board', reports.syncBoard.status, ['overseer_sync_board_ready'], reports.syncBoard.summary?.public_ready_after_board)
   ];
   const handoffNumbers = (reports.syncBoard.latest_handoffs || [])
@@ -109,7 +113,8 @@ function buildCheckpoint(reports) {
     reports.pathAReadinessCheck.summary?.checks,
     reports.patchReviewBundleCheck.summary?.checks,
     reports.intakeApplyPlanCheck.summary?.checks,
-    reports.sessionEditPreviewCheck.summary?.checks
+    reports.sessionEditPreviewCheck.summary?.checks,
+    reports.sessionApplyGuardCheck.summary?.checks
   ].reduce((sum, value) => sum + Number(value || 0), 0);
   const guardChecksPassed = [
     Number(reports.validatorCheck.summary?.passed || 0) + (freeformRejectedAsExpected ? Number(reports.validatorCheck.summary?.failures || 0) : 0),
@@ -122,7 +127,8 @@ function buildCheckpoint(reports) {
     reports.pathAReadinessCheck.summary?.passed,
     reports.patchReviewBundleCheck.summary?.passed,
     reports.intakeApplyPlanCheck.summary?.passed,
-    reports.sessionEditPreviewCheck.summary?.passed
+    reports.sessionEditPreviewCheck.summary?.passed,
+    reports.sessionApplyGuardCheck.summary?.passed
   ].reduce((sum, value) => sum + Number(value || 0), 0);
   const pathAReadyAfterExactReply = reports.pathAReadiness.summary?.path_a_can_start_after_exact_owner_reply === true &&
     reports.pathAReadiness.summary?.applies_decision_now === false &&
@@ -162,6 +168,9 @@ function buildCheckpoint(reports) {
       selected_root_path_preview: reports.sessionEditPreview.summary?.selected_root_path || reports.intakeApplyPlan.summary?.selected_root_path || null,
       selected_root_exists_preview: reports.sessionEditPreview.summary?.selected_root_exists === true || reports.intakeApplyPlan.summary?.selected_root_exists === true,
       session_edit_preview_writes_now: reports.sessionEditPreview.summary?.writes_now === true,
+      session_apply_guard_status: reports.sessionApplyGuard.status,
+      session_apply_guard_mode: reports.sessionApplyGuard.summary?.mode || null,
+      session_apply_guard_private_diagnostic_allowed: reports.sessionApplyGuard.summary?.private_diagnostic_allowed_after_apply === true,
       applies_decision_now: false,
       public_ready_after_checkpoint: 0
     },

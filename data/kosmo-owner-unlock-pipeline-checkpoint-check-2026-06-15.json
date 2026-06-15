@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T16:08:49.189Z",
+  "generated_at": "2026-06-15T16:14:02.481Z",
   "status": "owner_unlock_pipeline_checkpoint_guard_passed",
   "policy": {
     "validates_checkpoint_only": true,
@@ -15,8 +15,8 @@
     "data/kosmo-owner-unlock-pipeline-checkpoint-2026-06-15.json"
   ],
   "summary": {
-    "checks": 26,
-    "passed": 26,
+    "checks": 28,
+    "passed": 28,
     "failures": 0,
     "warnings": 0,
     "public_ready_after_check": 0
@@ -68,24 +68,24 @@
       "evidence": 0
     },
     {
-      "id": "twenty_three_components",
+      "id": "twenty_five_components",
       "status": "passed",
-      "evidence": 23
+      "evidence": 25
     },
     {
       "id": "all_components_ready",
       "status": "passed",
-      "evidence": "23/23"
+      "evidence": "25/25"
     },
     {
-      "id": "guard_checks_at_least_230",
+      "id": "guard_checks_at_least_260",
       "status": "passed",
-      "evidence": 249
+      "evidence": 268
     },
     {
       "id": "guard_checks_all_passed",
       "status": "passed",
-      "evidence": "249/249"
+      "evidence": "268/268"
     },
     {
       "id": "freeform_rejection_accounted",
@@ -95,7 +95,7 @@
     {
       "id": "latest_handoffs_include_277_or_newer",
       "status": "passed",
-      "evidence": 281
+      "evidence": 282
     },
     {
       "id": "owner_reply_not_applied",
@@ -119,6 +119,16 @@
     },
     {
       "id": "session_preview_no_writes_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "session_apply_guard_present",
+      "status": "passed",
+      "evidence": "waiting_for_manual_apply"
+    },
+    {
+      "id": "session_apply_waiting_blocks_private_diagnostic",
       "status": "passed",
       "evidence": false
     },

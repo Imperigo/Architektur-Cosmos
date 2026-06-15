@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T16:08:48.477Z",
+  "generated_at": "2026-06-15T16:14:01.754Z",
   "status": "owner_unlock_execution_runbook_ready",
   "policy": {
     "runbook_only": true,
@@ -114,7 +114,11 @@
         "examples/kosmo-references/provenance/source-root-decision-session-2026-06-15.json"
       ],
       "expected_selected_root_path": "/mnt/archiv/ArchitekturKosmos/Assets",
-      "public_ready_after_edit": 0
+      "public_ready_after_edit": 0,
+      "after_manual_apply_commands": [
+        "npm run kosmo:owner-unlock-session-apply-guard",
+        "npm run kosmo:owner-unlock-session-apply-guard-check"
+      ]
     },
     {
       "id": "phase-6-source-root-guards",

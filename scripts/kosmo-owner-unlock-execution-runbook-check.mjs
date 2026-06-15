@@ -95,6 +95,7 @@ function buildChecks(runbook) {
     check('one_mutating_phase_after_review', runbook.summary?.phases_that_may_mutate_after_review === 1, runbook.summary?.phases_that_may_mutate_after_review),
     check('current_session_file_summary', runbook.summary?.expected_session_file === expectedSessionFile, runbook.summary?.expected_session_file),
     check('only_current_session_target_allowed', allowedTargets.length === 1 && allowedTargets[0] === expectedSessionFile, allowedTargets.join(',')),
+    check('session_apply_guard_after_manual_edit', (phases[4]?.after_manual_apply_commands || []).includes('npm run kosmo:owner-unlock-session-apply-guard-check'), (phases[4]?.after_manual_apply_commands || []).join('; ')),
     check('no_old_2026_06_14_targets', !JSON.stringify(runbook).includes('source-root-decision-session-2026-06-14') && !JSON.stringify(runbook).includes('owner-answer-intake-template-2026-06-14'), 'old target search'),
     check('start_card_status_ready', runbook.summary?.operational_start_card_status === 'owner_unlock_operational_start_card_ready', runbook.summary?.operational_start_card_status),
     check('checkpoint_status_ready', runbook.summary?.pipeline_checkpoint_status === 'owner_unlock_pipeline_checkpoint_ready', runbook.summary?.pipeline_checkpoint_status),

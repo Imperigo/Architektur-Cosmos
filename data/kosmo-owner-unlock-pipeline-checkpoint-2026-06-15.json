@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T16:08:48.955Z",
+  "generated_at": "2026-06-15T16:14:02.242Z",
   "status": "owner_unlock_pipeline_checkpoint_ready",
   "policy": {
     "checkpoint_only": true,
@@ -35,16 +35,18 @@
     "data/kosmo-owner-unlock-intake-apply-plan-check-2026-06-15.json",
     "data/kosmo-owner-unlock-session-edit-preview-2026-06-15.json",
     "data/kosmo-owner-unlock-session-edit-preview-check-2026-06-15.json",
+    "data/kosmo-owner-unlock-session-apply-guard-2026-06-15.json",
+    "data/kosmo-owner-unlock-session-apply-guard-check-2026-06-15.json",
     "data/kosmo-overseer-sync-board-2026-06-15.json"
   ],
   "summary": {
-    "components": 23,
-    "components_ready": 23,
-    "guard_checks": 249,
-    "guard_checks_passed": 249,
+    "components": 25,
+    "components_ready": 25,
+    "guard_checks": 268,
+    "guard_checks_passed": 268,
     "expected_freeform_guard_failures": 2,
-    "latest_handoff_min": 274,
-    "latest_handoff_max": 281,
+    "latest_handoff_min": 275,
+    "latest_handoff_max": 282,
     "latest_handoff_count": 8,
     "owner_reply_state": "broad_intent_seen_exact_reply_not_applied",
     "source_root_state": "blocked_until_explicit_owner_reply_and_guards",
@@ -52,6 +54,9 @@
     "selected_root_path_preview": "/mnt/archiv/ArchitekturKosmos/Assets",
     "selected_root_exists_preview": true,
     "session_edit_preview_writes_now": false,
+    "session_apply_guard_status": "owner_unlock_session_apply_guard_waiting_for_manual_apply",
+    "session_apply_guard_mode": "waiting_for_manual_apply",
+    "session_apply_guard_private_diagnostic_allowed": false,
     "applies_decision_now": false,
     "public_ready_after_checkpoint": 0
   },
@@ -252,6 +257,25 @@
       "actual_status": "owner_unlock_session_edit_preview_guard_passed",
       "expected_statuses": [
         "owner_unlock_session_edit_preview_guard_passed"
+      ],
+      "ready": true,
+      "public_ready_after_component": 0
+    },
+    {
+      "id": "session-apply-guard",
+      "actual_status": "owner_unlock_session_apply_guard_waiting_for_manual_apply",
+      "expected_statuses": [
+        "owner_unlock_session_apply_guard_waiting_for_manual_apply",
+        "owner_unlock_session_apply_guard_passed_after_manual_apply"
+      ],
+      "ready": true,
+      "public_ready_after_component": 0
+    },
+    {
+      "id": "session-apply-guard-check",
+      "actual_status": "owner_unlock_session_apply_guard_check_passed",
+      "expected_statuses": [
+        "owner_unlock_session_apply_guard_check_passed"
       ],
       "ready": true,
       "public_ready_after_component": 0
