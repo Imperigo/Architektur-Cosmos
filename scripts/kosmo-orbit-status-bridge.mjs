@@ -75,6 +75,8 @@ const refs = {
   localWorkerInnovationOutputValidatorCheck: `data/kosmo-local-worker-innovation-output-validator-check-${dateStamp}.json`,
   localWorkerInnovationOutputValidatorFixtures: `data/kosmo-local-worker-innovation-output-validator-fixtures-${dateStamp}.json`,
   localWorkerInnovationOutputValidatorFixturesCheck: `data/kosmo-local-worker-innovation-output-validator-fixtures-check-${dateStamp}.json`,
+  localWorkerInnovationLaunchDryRun: `data/kosmo-local-worker-innovation-launch-dry-run-${dateStamp}.json`,
+  localWorkerInnovationLaunchDryRunCheck: `data/kosmo-local-worker-innovation-launch-dry-run-check-${dateStamp}.json`,
   githubWatchlist: `data/kosmo-innovation-github-watchlist-${dateStamp}.json`,
   githubWatchlistCheck: `data/kosmo-innovation-github-watchlist-check-${dateStamp}.json`,
   githubDiscovery: `data/kosmo-innovation-github-discovery-${dateStamp}.json`,
@@ -197,6 +199,8 @@ function buildBridge(reports) {
   const localWorkerInnovationOutputValidatorCheckSummary = reports.localWorkerInnovationOutputValidatorCheck?.summary || {};
   const localWorkerInnovationOutputValidatorFixturesSummary = reports.localWorkerInnovationOutputValidatorFixtures?.summary || {};
   const localWorkerInnovationOutputValidatorFixturesCheckSummary = reports.localWorkerInnovationOutputValidatorFixturesCheck?.summary || {};
+  const localWorkerInnovationLaunchDryRunSummary = reports.localWorkerInnovationLaunchDryRun?.summary || {};
+  const localWorkerInnovationLaunchDryRunCheckSummary = reports.localWorkerInnovationLaunchDryRunCheck?.summary || {};
   const githubWatchlistSummary = reports.githubWatchlist?.summary || {};
   const githubWatchlistCheckSummary = reports.githubWatchlistCheck?.summary || {};
   const githubDiscoverySummary = reports.githubDiscovery?.summary || {};
@@ -758,6 +762,18 @@ function buildBridge(reports) {
       source_ref: refs.localWorkerInnovationOutputValidatorFixturesCheck
     },
     {
+      id: 'local-worker-innovation-launch-dry-run',
+      title: 'Local Worker Innovation Launch Dry Run',
+      status: reports.localWorkerInnovationLaunchDryRun?.status === 'local_worker_innovation_launch_dry_run_ready' &&
+        reports.localWorkerInnovationLaunchDryRunCheck?.status === 'local_worker_innovation_launch_dry_run_guard_passed'
+        ? 'review_only_ready'
+        : 'needs_review',
+      signal: `${localWorkerInnovationLaunchDryRunSummary.dry_run_ready_tasks ?? 0}/${localWorkerInnovationLaunchDryRunSummary.tasks ?? 0} dry-run ready, execute ${localWorkerInnovationLaunchDryRunSummary.execute_now ?? 0}, gates ${localWorkerInnovationLaunchDryRunSummary.explicit_gate_required ?? 0}, failures ${localWorkerInnovationLaunchDryRunCheckSummary.failures ?? 0}`,
+      owner_action_required: false,
+      route_hint: 'Launch path prepared as dry-run only; explicit overseer gate required before any local worker execution',
+      source_ref: refs.localWorkerInnovationLaunchDryRunCheck
+    },
+    {
       id: 'github-innovation-watchlist',
       title: 'GitHub Innovation Watchlist',
       status: reports.githubWatchlist?.status === 'innovation_github_watchlist_ready' &&
@@ -1121,6 +1137,13 @@ function buildBridge(reports) {
       local_worker_innovation_output_validator_fixtures_negative_failures: localWorkerInnovationOutputValidatorFixturesSummary.negative_failures ?? null,
       local_worker_innovation_output_validator_fixtures_check_status: reports.localWorkerInnovationOutputValidatorFixturesCheck?.status || null,
       local_worker_innovation_output_validator_fixtures_check_failures: localWorkerInnovationOutputValidatorFixturesCheckSummary.failures ?? null,
+      local_worker_innovation_launch_dry_run_status: reports.localWorkerInnovationLaunchDryRun?.status || null,
+      local_worker_innovation_launch_dry_run_tasks: localWorkerInnovationLaunchDryRunSummary.tasks ?? null,
+      local_worker_innovation_launch_dry_run_ready_tasks: localWorkerInnovationLaunchDryRunSummary.dry_run_ready_tasks ?? null,
+      local_worker_innovation_launch_dry_run_execute_now: localWorkerInnovationLaunchDryRunSummary.execute_now ?? null,
+      local_worker_innovation_launch_dry_run_explicit_gate_required: localWorkerInnovationLaunchDryRunSummary.explicit_gate_required ?? null,
+      local_worker_innovation_launch_dry_run_check_status: reports.localWorkerInnovationLaunchDryRunCheck?.status || null,
+      local_worker_innovation_launch_dry_run_check_failures: localWorkerInnovationLaunchDryRunCheckSummary.failures ?? null,
       github_watchlist_status: reports.githubWatchlist?.status || null,
       github_watchlist_candidates: githubWatchlistSummary.candidates ?? null,
       github_watchlist_live_probe_succeeded: githubWatchlistSummary.live_probe_succeeded ?? null,

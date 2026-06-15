@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T17:06:57.068Z",
+  "generated_at": "2026-06-15T17:12:13.419Z",
   "status": "tomorrow_day_batch_guard_passed",
   "policy": {
     "validates_source_free_default": true,
@@ -133,6 +133,11 @@
       "id": "start_sequence_local_worker_innovation_output_validator_fixtures",
       "severity": "passed",
       "message": "Start sequence must include local worker innovation output validator fixtures."
+    },
+    {
+      "id": "start_sequence_local_worker_innovation_launch_dry_run",
+      "severity": "passed",
+      "message": "Start sequence must include local worker innovation launch dry run."
     },
     {
       "id": "start_sequence_morning_routine_run",

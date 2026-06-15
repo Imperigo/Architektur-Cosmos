@@ -1,0 +1,121 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T17:12:12.699Z",
+  "status": "local_worker_innovation_launch_dry_run_guard_passed",
+  "policy": {
+    "dry_run_only": true,
+    "review_only": true,
+    "executes_local_workers": false,
+    "starts_models": false,
+    "reads_private_content": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-local-worker-innovation-launch-dry-run-2026-06-15.json"
+  ],
+  "summary": {
+    "checks": 19,
+    "passed": 19,
+    "failures": 0,
+    "tasks": 5,
+    "execute_now": 0,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_ready",
+      "status": "passed",
+      "evidence": "local_worker_innovation_launch_dry_run_ready"
+    },
+    {
+      "id": "policy_dry_run_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_private_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_worker_execution",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_model_start",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_worker_outputs",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_repo_outputs",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_training_promotion",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "five_tasks",
+      "status": "passed",
+      "evidence": "5/5"
+    },
+    {
+      "id": "all_dry_run_ready",
+      "status": "passed",
+      "evidence": 5
+    },
+    {
+      "id": "execute_now_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "explicit_gate_all",
+      "status": "passed",
+      "evidence": 5
+    },
+    {
+      "id": "local_worker_allowed_false",
+      "status": "passed",
+      "evidence": 5
+    },
+    {
+      "id": "repo_conversion_zero",
+      "status": "passed",
+      "evidence": 5
+    },
+    {
+      "id": "task_public_ready_zero",
+      "status": "passed",
+      "evidence": 5
+    },
+    {
+      "id": "validator_fixtures_guarded",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "required_before_execute_present",
+      "status": "passed",
+      "evidence": 6
+    },
+    {
+      "id": "forbidden_actions_present",
+      "status": "passed",
+      "evidence": 6
+    }
+  ]
+}
