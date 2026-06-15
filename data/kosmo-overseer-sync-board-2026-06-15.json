@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T13:40:01.535Z",
+  "generated_at": "2026-06-15T13:43:43.487Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 235
+      "files": 237
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 85
+      "files": 87
     }
   ],
   "summary": {
@@ -47,6 +47,20 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-15-codex-synergiebericht-238-local-worker-fixture-chain-task-pack.md",
+      "title": "Codex Synergiebericht 238: Local Worker Fixture Chain Task Pack",
+      "mirrored_inboxes": 2,
+      "bytes": 2150,
+      "modified_at": "2026-06-15T13:43:01.262Z"
+    },
+    {
+      "filename": "2026-06-15-codex-synergiebericht-237-orbit-fixture-chain-status.md",
+      "title": "Codex Synergiebericht 237: Orbit Fixture Chain Status",
+      "mirrored_inboxes": 2,
+      "bytes": 1860,
+      "modified_at": "2026-06-15T13:40:41.017Z"
+    },
     {
       "filename": "2026-06-15-codex-synergiebericht-236-asset-prepare-phase1-fixture-contract.md",
       "title": "Codex Synergiebericht 236: KosmoAsset Prepare Phase 1 Fixture Contract",
@@ -88,20 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1781,
       "modified_at": "2026-06-15T13:18:24.419Z"
-    },
-    {
-      "filename": "2026-06-15-codex-synergiebericht-230-security-baseline-active.md",
-      "title": "Codex Synergiebericht 230: Active Security Baseline",
-      "mirrored_inboxes": 2,
-      "bytes": 1818,
-      "modified_at": "2026-06-15T13:14:55.111Z"
-    },
-    {
-      "filename": "2026-06-15-codex-synergiebericht-229-security-unclassified-files.md",
-      "title": "Codex Synergiebericht 229: Security Unclassified Files",
-      "mirrored_inboxes": 2,
-      "bytes": 1528,
-      "modified_at": "2026-06-15T13:09:50.545Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 229-236 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 231-238 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."

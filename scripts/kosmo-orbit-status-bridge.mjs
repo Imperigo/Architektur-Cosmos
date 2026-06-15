@@ -45,6 +45,8 @@ const refs = {
   assetCandidateTaxonomyReviewCheck: `data/kosmoasset-candidate-taxonomy-review-check-${dateStamp}.json`,
   preparePhase1SourcePackageContractCheck: `data/kosmo-prepare-phase1-source-package-contract-check-${dateStamp}.json`,
   assetPreparePhase1FixtureContractCheck: `data/kosmo-asset-prepare-phase1-fixture-contract-check-${dateStamp}.json`,
+  localWorkerFixtureChainTaskPack: `data/kosmo-local-worker-fixture-chain-task-pack-${dateStamp}.json`,
+  localWorkerFixtureChainTaskPackCheck: `data/kosmo-local-worker-fixture-chain-task-pack-check-${dateStamp}.json`,
   innovationPlan: `data/kosmo-innovation-lane-plan-${dateStamp}.json`,
   innovationSmoke: `data/kosmo-innovation-smoke-${dateStamp}.json`,
   nightLoop: `data/kosmo-night-loop-checkpoint-${dateStamp}.json`
@@ -107,6 +109,8 @@ function buildBridge(reports) {
   const assetCandidateTaxonomyCheckSummary = reports.assetCandidateTaxonomyReviewCheck?.summary || {};
   const preparePhase1SourcePackageSummary = reports.preparePhase1SourcePackageContractCheck?.summary || {};
   const assetPreparePhase1FixtureSummary = reports.assetPreparePhase1FixtureContractCheck?.summary || {};
+  const localWorkerFixtureChainTaskPackSummary = reports.localWorkerFixtureChainTaskPack?.summary || {};
+  const localWorkerFixtureChainTaskPackCheckSummary = reports.localWorkerFixtureChainTaskPackCheck?.summary || {};
   const innovationSummary = reports.innovationSmoke?.summary || {};
   const cards = [
     {
@@ -432,6 +436,18 @@ function buildBridge(reports) {
       source_ref: refs.assetPreparePhase1FixtureContractCheck
     },
     {
+      id: 'fixture-chain-local-worker-task-pack',
+      title: 'Fixture Chain Local Worker Task Pack',
+      status: reports.localWorkerFixtureChainTaskPack?.status === 'local_worker_fixture_chain_task_pack_ready' &&
+        reports.localWorkerFixtureChainTaskPackCheck?.status === 'local_worker_fixture_chain_task_pack_guard_passed'
+        ? 'review_only_ready'
+        : 'needs_review',
+      signal: `${localWorkerFixtureChainTaskPackSummary.tasks ?? 0} tasks, executable now ${localWorkerFixtureChainTaskPackSummary.executable_now ?? '-'}, missing refs ${localWorkerFixtureChainTaskPackSummary.missing_refs ?? '-'}`,
+      owner_action_required: false,
+      route_hint: 'Fixture-only local LLM task pack; not executed by Orbit',
+      source_ref: refs.localWorkerFixtureChainTaskPackCheck
+    },
+    {
       id: 'worker-boundary',
       title: 'Worker Boundary',
       status: reports.workerBoundary?.status === 'worker_boundary_pack_guard_passed' ? 'locked' : 'needs_review',
@@ -571,6 +587,12 @@ function buildBridge(reports) {
       asset_prepare_phase1_fixture_contract_library_id: assetPreparePhase1FixtureSummary.library_id || null,
       asset_prepare_phase1_fixture_contract_assets: assetPreparePhase1FixtureSummary.assets ?? null,
       asset_prepare_phase1_fixture_contract_failures: assetPreparePhase1FixtureSummary.failures ?? null,
+      local_worker_fixture_chain_task_pack_status: reports.localWorkerFixtureChainTaskPack?.status || null,
+      local_worker_fixture_chain_task_pack_tasks: localWorkerFixtureChainTaskPackSummary.tasks ?? null,
+      local_worker_fixture_chain_task_pack_executable_now: localWorkerFixtureChainTaskPackSummary.executable_now ?? null,
+      local_worker_fixture_chain_task_pack_missing_refs: localWorkerFixtureChainTaskPackSummary.missing_refs ?? null,
+      local_worker_fixture_chain_task_pack_check_status: reports.localWorkerFixtureChainTaskPackCheck?.status || null,
+      local_worker_fixture_chain_task_pack_check_failures: localWorkerFixtureChainTaskPackCheckSummary.failures ?? null,
       innovation_smoke_status: reports.innovationSmoke?.status || null,
       public_ready_after_bridge: 0
     },
@@ -601,6 +623,7 @@ function buildBridge(reports) {
       'asset_source_candidate_map_card',
       'asset_candidate_taxonomy_card',
       'prepare_references_asset_fixture_chain_card',
+      'fixture_chain_local_worker_task_pack_card',
       'worker_boundary_card',
       'innovation_lane_card',
       'owner_handoff_card'
@@ -661,6 +684,7 @@ function renderMarkdown(bridge) {
   lines.push(`- Asset candidate taxonomy review: ${bridge.summary.asset_candidate_taxonomy_review_status}, candidates ${bridge.summary.asset_candidate_taxonomy_review_candidates ?? '-'}, reviewable ${bridge.summary.asset_candidate_taxonomy_review_reviewable_lanes ?? '-'}, owner confirmations ${bridge.summary.asset_candidate_taxonomy_review_owner_confirmations ?? '-'}, check ${bridge.summary.asset_candidate_taxonomy_review_check_status}, failures ${bridge.summary.asset_candidate_taxonomy_review_check_failures ?? '-'}`);
   lines.push(`- Prepare source package contract: ${bridge.summary.prepare_phase1_source_package_contract_check_status}, package ${bridge.summary.prepare_phase1_source_package_contract_package_id ?? '-'}, failures ${bridge.summary.prepare_phase1_source_package_contract_failures ?? '-'}`);
   lines.push(`- Asset prepare fixture contract: ${bridge.summary.asset_prepare_phase1_fixture_contract_check_status}, library ${bridge.summary.asset_prepare_phase1_fixture_contract_library_id ?? '-'}, assets ${bridge.summary.asset_prepare_phase1_fixture_contract_assets ?? '-'}, failures ${bridge.summary.asset_prepare_phase1_fixture_contract_failures ?? '-'}`);
+  lines.push(`- Local worker fixture chain task pack: ${bridge.summary.local_worker_fixture_chain_task_pack_status}, tasks ${bridge.summary.local_worker_fixture_chain_task_pack_tasks ?? '-'}, executable ${bridge.summary.local_worker_fixture_chain_task_pack_executable_now ?? '-'}, missing refs ${bridge.summary.local_worker_fixture_chain_task_pack_missing_refs ?? '-'}, check ${bridge.summary.local_worker_fixture_chain_task_pack_check_status}, failures ${bridge.summary.local_worker_fixture_chain_task_pack_check_failures ?? '-'}`);
   lines.push(`- Innovation smoke: ${bridge.summary.innovation_smoke_status}`);
   lines.push(`- Public-ready after bridge: ${bridge.summary.public_ready_after_bridge}`);
   lines.push('');
