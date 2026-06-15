@@ -290,6 +290,8 @@
     "kosmo:local-worker-innovation-human-overseer-review-decision-card-check": "node scripts/kosmo-local-worker-innovation-human-overseer-review-decision-card-check.mjs",
     "kosmo:local-worker-innovation-conversion-plan-preview": "node scripts/kosmo-local-worker-innovation-conversion-plan-preview.mjs",
     "kosmo:local-worker-innovation-conversion-plan-preview-check": "node scripts/kosmo-local-worker-innovation-conversion-plan-preview-check.mjs",
+    "kosmo:local-worker-innovation-conversion-apply-guard": "node scripts/kosmo-local-worker-innovation-conversion-apply-guard.mjs",
+    "kosmo:local-worker-innovation-conversion-apply-guard-check": "node scripts/kosmo-local-worker-innovation-conversion-apply-guard-check.mjs",
     "kosmo:owner-unlock-prompt-pack": "node scripts/kosmo-owner-unlock-prompt-pack.mjs",
     "kosmo:owner-unlock-prompt-pack-check": "node scripts/kosmo-owner-unlock-prompt-pack-check.mjs",
     "kosmo:overseer-next-shift-brief": "node scripts/kosmo-overseer-next-shift-brief.mjs",

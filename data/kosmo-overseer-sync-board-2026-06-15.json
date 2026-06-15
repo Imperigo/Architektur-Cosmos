@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T17:50:07.379Z",
+  "generated_at": "2026-06-15T17:59:52.307Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 298
+      "files": 299
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 148
+      "files": 150
     }
   ],
   "summary": {
@@ -43,10 +43,17 @@
     "local_worker_high_risk_hits": 0,
     "latest_handoffs": 8,
     "latest_handoff_mirror_missing_files": 0,
-    "historical_handoff_mirror_missing_files": 254,
+    "historical_handoff_mirror_missing_files": 255,
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-15-codex-synergiebericht-300-conversion-apply-guard.md",
+      "title": "Codex Synergiebericht 300 - Conversion Apply Guard",
+      "mirrored_inboxes": 2,
+      "bytes": 3118,
+      "modified_at": "2026-06-15T17:59:29.660Z"
+    },
     {
       "filename": "2026-06-15-codex-synergiebericht-299-conversion-plan-preview.md",
       "title": "Codex Synergiebericht 299 - Conversion Plan Preview",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 3096,
       "modified_at": "2026-06-15T17:16:59.399Z"
-    },
-    {
-      "filename": "2026-06-15-codex-synergiebericht-292-innovation-launch-dry-run.md",
-      "title": "Codex Synergiebericht 292 - Innovation Launch Dry Run",
-      "mirrored_inboxes": 2,
-      "bytes": 3047,
-      "modified_at": "2026-06-15T17:11:56.542Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 292-299 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 293-300 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."

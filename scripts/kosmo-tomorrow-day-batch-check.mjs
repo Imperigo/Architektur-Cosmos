@@ -91,6 +91,7 @@ function checkPlan(plan) {
   expect(startSequence.includes('local-worker-innovation-post-output-intake-review'), findings, 'start_sequence_local_worker_innovation_post_output_intake_review', 'Start sequence must include local worker innovation post-output intake review.');
   expect(startSequence.includes('local-worker-innovation-human-overseer-review-decision-card'), findings, 'start_sequence_local_worker_innovation_human_overseer_review_decision_card', 'Start sequence must include local worker innovation human/overseer review decision card.');
   expect(startSequence.includes('local-worker-innovation-conversion-plan-preview'), findings, 'start_sequence_local_worker_innovation_conversion_plan_preview', 'Start sequence must include local worker innovation conversion plan preview.');
+  expect(startSequence.includes('local-worker-innovation-conversion-apply-guard'), findings, 'start_sequence_local_worker_innovation_conversion_apply_guard', 'Start sequence must include local worker innovation conversion apply guard.');
   expect(startSequence.includes('codex-morning-routine-run'), findings, 'start_sequence_morning_routine_run', 'Start sequence must include Codex morning routine run.');
   expect(startSequence.includes('codex-morning-routine-run-check'), findings, 'start_sequence_morning_routine_run_check', 'Start sequence must include Codex morning routine run check.');
   expect(startSequence.includes('owner-unlock-pipeline-checkpoint'), findings, 'start_sequence_owner_checkpoint', 'Start sequence must include owner unlock checkpoint.');

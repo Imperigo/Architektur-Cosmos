@@ -1,11 +1,11 @@
 # Kosmo Orbit Status Bridge
 
-Generated: 2026-06-15T17:50:12.400Z
+Generated: 2026-06-15T17:59:57.888Z
 Status: `orbit_bridge_ready_with_blockers`
 
 ## Summary
 
-- Cards: 68
+- Cards: 69
 - Blocking cards: 4
 - Owner action cards: 25
 - Source root blocked: yes
@@ -107,6 +107,7 @@ Status: `orbit_bridge_ready_with_blockers`
 | `local-worker-innovation-post-output-intake-review` Local Worker Innovation Post-Output Intake Review | review_only_ready | no | waiting_for_worker_outputs, candidates 0, accepted 0, public 0, failures 0 |
 | `local-worker-innovation-human-overseer-review-decision-card` Local Worker Innovation Human/Overseer Review Decision Card | review_only_ready | no | waiting_for_review_candidates, candidates 0, decisions 0, public 0, failures 0 |
 | `local-worker-innovation-conversion-plan-preview` Local Worker Innovation Conversion Plan Preview | review_only_ready | no | waiting_for_positive_review_decisions, eligible 0, conversions 0, public 0, failures 0 |
+| `local-worker-innovation-conversion-apply-guard` Local Worker Innovation Conversion Apply Guard | review_only_ready | no | waiting_for_positive_review_decisions, eligible 0, apply no, conversions 0, failures 0 |
 | `github-innovation-watchlist` GitHub Innovation Watchlist | review_only_ready | no | 9 seeded repos, live 9, fallback 0, failures 0 |
 | `github-innovation-discovery` GitHub Innovation Discovery | review_only_ready | no | 5/10 queries with results, 23 candidates, failures 0 |
 | `github-innovation-review-queue` GitHub Innovation Review Queue | review_only_ready | no | 7 review items, high 5, execute 0, failures 0 |

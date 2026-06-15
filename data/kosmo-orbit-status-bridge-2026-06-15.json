@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T17:50:12.400Z",
+  "generated_at": "2026-06-15T17:59:57.888Z",
   "status": "orbit_bridge_ready_with_blockers",
   "policy": {
     "dashboard_only": true,
@@ -96,6 +96,8 @@
     "data/kosmo-local-worker-innovation-human-overseer-review-decision-card-check-2026-06-15.json",
     "data/kosmo-local-worker-innovation-conversion-plan-preview-2026-06-15.json",
     "data/kosmo-local-worker-innovation-conversion-plan-preview-check-2026-06-15.json",
+    "data/kosmo-local-worker-innovation-conversion-apply-guard-2026-06-15.json",
+    "data/kosmo-local-worker-innovation-conversion-apply-guard-check-2026-06-15.json",
     "data/kosmo-innovation-github-watchlist-2026-06-15.json",
     "data/kosmo-innovation-github-watchlist-check-2026-06-15.json",
     "data/kosmo-innovation-github-discovery-2026-06-15.json",
@@ -131,7 +133,7 @@
     "data/kosmo-night-loop-checkpoint-2026-06-15.json"
   ],
   "summary": {
-    "cards": 68,
+    "cards": 69,
     "blocking_cards": 4,
     "owner_action_cards": 25,
     "source_root_blocked": true,
@@ -790,6 +792,15 @@
       "owner_action_required": false,
       "route_hint": "Preview-only conversion plan for future approved local-worker candidates; no repo derivatives",
       "source_ref": "data/kosmo-local-worker-innovation-conversion-plan-preview-check-2026-06-15.json"
+    },
+    {
+      "id": "local-worker-innovation-conversion-apply-guard",
+      "title": "Local Worker Innovation Conversion Apply Guard",
+      "status": "review_only_ready",
+      "signal": "waiting_for_positive_review_decisions, eligible 0, apply no, conversions 0, failures 0",
+      "owner_action_required": false,
+      "route_hint": "Apply guard for future conversion plan; validates exact reply and still executes nothing",
+      "source_ref": "data/kosmo-local-worker-innovation-conversion-apply-guard-check-2026-06-15.json"
     },
     {
       "id": "github-innovation-watchlist",
