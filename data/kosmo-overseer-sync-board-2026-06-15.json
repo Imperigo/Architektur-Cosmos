@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T14:20:07.175Z",
+  "generated_at": "2026-06-15T14:23:53.320Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 251
+      "files": 252
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 101
+      "files": 102
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-15-codex-synergiebericht-253-github-review-queue.md",
+      "title": "Codex Synergiebericht 253: GitHub Discovery Review Queue",
+      "mirrored_inboxes": 2,
+      "bytes": 1311,
+      "modified_at": "2026-06-15T14:23:05.384Z"
+    },
     {
       "filename": "2026-06-15-codex-synergiebericht-252-github-discovery-refinement.md",
       "title": "Codex Synergiebericht 252: GitHub Discovery verfeinert",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1162,
       "modified_at": "2026-06-15T14:08:07.851Z"
-    },
-    {
-      "filename": "2026-06-15-codex-synergiebericht-245-tomorrow-day-batch-generator.md",
-      "title": "Codex Synergiebericht 245: Tomorrow-Day-Batch ist reproduzierbar",
-      "mirrored_inboxes": 2,
-      "bytes": 1600,
-      "modified_at": "2026-06-15T14:04:55.360Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 245-252 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 246-253 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."
