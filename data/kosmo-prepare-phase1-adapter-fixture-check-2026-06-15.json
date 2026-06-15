@@ -1,0 +1,102 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T13:27:58.690Z",
+  "status": "prepare_phase1_adapter_fixture_guard_passed",
+  "policy": {
+    "validates_synthetic_fixture_only": true,
+    "reads_private_content": false,
+    "downloads_models_now": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "examples/kosmo-prepare/phase1-adapter-fixture/prepare-phase1-adapter-report.json"
+  ],
+  "summary": {
+    "fixture_status": "prepare_phase1_adapter_fixture_ready",
+    "checks": 4,
+    "failures": 0,
+    "public_ready_after_check": 0
+  },
+  "findings": [
+    {
+      "id": "schema_version",
+      "severity": "passed",
+      "message": "Report schema_version must be 0.1."
+    },
+    {
+      "id": "fixture_ready",
+      "severity": "passed",
+      "message": "Adapter fixture must be ready."
+    },
+    {
+      "id": "synthetic_only",
+      "severity": "passed",
+      "message": "Adapter fixture must be synthetic-only."
+    },
+    {
+      "id": "no_private_reads",
+      "severity": "passed",
+      "message": "Adapter fixture must not read private content."
+    },
+    {
+      "id": "no_model_downloads",
+      "severity": "passed",
+      "message": "Adapter fixture must not download models."
+    },
+    {
+      "id": "public_ready_zero",
+      "severity": "passed",
+      "message": "Adapter fixture must keep public-ready at 0."
+    },
+    {
+      "id": "output_exists:source_html",
+      "severity": "passed",
+      "message": "source_html output must exist."
+    },
+    {
+      "id": "output_exists:converted_markdown",
+      "severity": "passed",
+      "message": "converted_markdown output must exist."
+    },
+    {
+      "id": "output_exists:ifc_entity_manifest",
+      "severity": "passed",
+      "message": "ifc_entity_manifest output must exist."
+    },
+    {
+      "id": "output_exists:report_json",
+      "severity": "passed",
+      "message": "report_json output must exist."
+    },
+    {
+      "id": "output_exists:report_markdown",
+      "severity": "passed",
+      "message": "report_markdown output must exist."
+    },
+    {
+      "id": "markdown_heading",
+      "severity": "passed",
+      "message": "Converted markdown must include fixture heading."
+    },
+    {
+      "id": "markdown_material",
+      "severity": "passed",
+      "message": "Converted markdown must include material line."
+    },
+    {
+      "id": "ifc_project",
+      "severity": "passed",
+      "message": "IFC manifest must include IfcProject."
+    },
+    {
+      "id": "ifc_material",
+      "severity": "passed",
+      "message": "IFC manifest must include IfcMaterial."
+    },
+    {
+      "id": "all_report_checks_passed",
+      "severity": "passed",
+      "message": "All report checks must pass."
+    }
+  ]
+}

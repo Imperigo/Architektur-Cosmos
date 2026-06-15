@@ -1,0 +1,48 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T13:27:58.454Z",
+  "status": "prepare_phase1_adapter_fixture_ready",
+  "policy": {
+    "synthetic_fixture_only": true,
+    "reads_private_content": false,
+    "downloads_models_now": false,
+    "public_ready_after_fixture": 0
+  },
+  "outputs": {
+    "source_html": "examples/kosmo-prepare/phase1-adapter-fixture/source.synthetic.html",
+    "converted_markdown": "examples/kosmo-prepare/phase1-adapter-fixture/converted.markitdown.md",
+    "ifc_entity_manifest": "examples/kosmo-prepare/phase1-adapter-fixture/ifcopenshell-entity-manifest.json",
+    "report_json": "examples/kosmo-prepare/phase1-adapter-fixture/prepare-phase1-adapter-report.json",
+    "report_markdown": "examples/kosmo-prepare/phase1-adapter-fixture/prepare-phase1-adapter-report.md"
+  },
+  "adapter_contract": {
+    "prepare_input_type": "synthetic_html_plus_synthetic_ifc_entities",
+    "markitdown_output_slot": "brief/converted-source.md",
+    "ifcopenshell_output_slot": "design/ifc-semantic-proof.generated.json",
+    "downstream_modules": [
+      "KosmoPrepare",
+      "KosmoData",
+      "KosmoDesign",
+      "KosmoAsset"
+    ],
+    "human_review_required_before_private_use": true
+  },
+  "checks": [
+    {
+      "id": "markitdown_contains_heading",
+      "status": "passed"
+    },
+    {
+      "id": "markitdown_contains_material",
+      "status": "passed"
+    },
+    {
+      "id": "ifcopenshell_has_project",
+      "status": "passed"
+    },
+    {
+      "id": "ifcopenshell_has_material",
+      "status": "passed"
+    }
+  ]
+}

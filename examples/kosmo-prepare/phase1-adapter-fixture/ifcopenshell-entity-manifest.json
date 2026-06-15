@@ -1,0 +1,26 @@
+{
+  "schema": "IFC4",
+  "entities": [
+    {
+      "type": "IfcProject",
+      "name": "KosmoPrepare Synthetic Fixture"
+    },
+    {
+      "type": "IfcSite",
+      "name": "Synthetic Site"
+    },
+    {
+      "type": "IfcBuilding",
+      "name": "Synthetic Pavilion"
+    },
+    {
+      "type": "IfcBuildingStorey",
+      "name": "Ground Level"
+    },
+    {
+      "type": "IfcMaterial",
+      "name": "Timber"
+    }
+  ],
+  "entity_count": 5
+}
