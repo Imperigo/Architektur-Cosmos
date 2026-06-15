@@ -1,11 +1,11 @@
 # Kosmo Orbit Status Bridge
 
-Generated: 2026-06-15T15:03:58.567Z
+Generated: 2026-06-15T15:07:31.910Z
 Status: `orbit_bridge_ready_with_blockers`
 
 ## Summary
 
-- Cards: 39
+- Cards: 43
 - Blocking cards: 4
 - Owner action cards: 16
 - Source root blocked: yes
@@ -41,6 +41,10 @@ Status: `orbit_bridge_ready_with_blockers`
 - GitHub fixture skeletons: innovation_github_fixture_skeletons_ready, directories 5, files 10
 - GitHub fixture payloads: innovation_github_fixture_payloads_ready, payloads 10
 - GitHub fixture payload smoke: innovation_github_fixture_payload_smoke_passed, payloads 10, lanes 3, content types 6
+- Training eval rubric: training_eval_rubric_pack_ready, suites 6, criteria 24
+- Training eval row template: training_eval_row_template_ready, templates 6
+- Training eval review queue: training_eval_review_queue_plan_ready, lanes 5
+- Architecture ontology seed: architecture_ontology_seed_ready, entities 8, relations 10
 - Innovation smoke: innovation_smoke_passed_review_only
 - Public-ready after bridge: 0
 
@@ -83,6 +87,10 @@ Status: `orbit_bridge_ready_with_blockers`
 | `github-fixture-skeletons` GitHub Fixture Skeletons | review_only_ready | no | 5 directories, 10 files, executable 0, failures 0 |
 | `github-fixture-payloads` GitHub Fixture Payloads | review_only_ready | no | 5 manifests, 10 payloads, executable 0, failures 0 |
 | `github-fixture-payload-smoke` GitHub Fixture Payload Smoke | review_only_ready | no | 10 payloads, lanes 3/3, content 6/6, failures 0 |
+| `training-eval-rubric` Training Eval Rubric | review_only_ready | no | 6 suites, 24 criteria, eval items 24, failures 0 |
+| `training-eval-row-template` Training Eval Row Template | review_only_ready | no | 6 templates, 10 required fields, writes rows now 0, failures 0 |
+| `training-eval-review-queue` Training Eval Review Queue | review_only_ready | no | 5 lanes, 6 states, queue items now 0, failures 0 |
+| `architecture-ontology-seed` Architecture Ontology Seed | review_only_ready | no | 8 entities, 10 relations, 6 facet groups, failures 0 |
 | `tomorrow-day-batch` Tomorrow Day Batch | ready | no | source_free_path_until_exact_owner_unlock, target 2026-06-16, failures 0 |
 | `worker-boundary` Worker Boundary | locked | no | 3 workers, 3 blocked command classes |
 | `innovation` Innovation Lanes | review_only_ready | no | 5/5 public-safe smoke checks passed |
@@ -124,6 +132,10 @@ Status: `orbit_bridge_ready_with_blockers`
 - `github_fixture_skeletons_card`
 - `github_fixture_payloads_card`
 - `github_fixture_payload_smoke_card`
+- `training_eval_rubric_card`
+- `training_eval_row_template_card`
+- `training_eval_review_queue_card`
+- `architecture_ontology_seed_card`
 - `tomorrow_day_batch_card`
 - `worker_boundary_card`
 - `innovation_lane_card`

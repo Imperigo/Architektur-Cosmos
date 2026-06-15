@@ -63,6 +63,14 @@ const refs = {
   githubFixturePayloadsCheck: `data/kosmo-innovation-github-fixture-payloads-check-${dateStamp}.json`,
   githubFixturePayloadSmoke: `data/kosmo-innovation-github-fixture-payload-smoke-${dateStamp}.json`,
   githubFixturePayloadSmokeCheck: `data/kosmo-innovation-github-fixture-payload-smoke-check-${dateStamp}.json`,
+  trainingEvalRubricPack: `data/kosmo-training-eval-rubric-pack-${dateStamp}.json`,
+  trainingEvalRubricPackCheck: `data/kosmo-training-eval-rubric-pack-check-${dateStamp}.json`,
+  trainingEvalRowTemplate: `data/kosmo-training-eval-row-template-${dateStamp}.json`,
+  trainingEvalRowTemplateCheck: `data/kosmo-training-eval-row-template-check-${dateStamp}.json`,
+  trainingEvalReviewQueuePlan: `data/kosmo-training-eval-review-queue-plan-${dateStamp}.json`,
+  trainingEvalReviewQueuePlanCheck: `data/kosmo-training-eval-review-queue-plan-check-${dateStamp}.json`,
+  architectureOntologySeed: `data/kosmo-architecture-ontology-seed-${dateStamp}.json`,
+  architectureOntologySeedCheck: `data/kosmo-architecture-ontology-seed-check-${dateStamp}.json`,
   tomorrowDayBatch: `data/kosmo-tomorrow-day-batch-${dateStamp}.json`,
   tomorrowDayBatchCheck: `data/kosmo-tomorrow-day-batch-check-${dateStamp}.json`,
   innovationPlan: `data/kosmo-innovation-lane-plan-${dateStamp}.json`,
@@ -145,6 +153,14 @@ function buildBridge(reports) {
   const githubFixturePayloadsCheckSummary = reports.githubFixturePayloadsCheck?.summary || {};
   const githubFixturePayloadSmokeSummary = reports.githubFixturePayloadSmoke?.summary || {};
   const githubFixturePayloadSmokeCheckSummary = reports.githubFixturePayloadSmokeCheck?.summary || {};
+  const trainingEvalRubricSummary = reports.trainingEvalRubricPack?.summary || {};
+  const trainingEvalRubricCheckSummary = reports.trainingEvalRubricPackCheck?.summary || {};
+  const trainingEvalRowTemplateSummary = reports.trainingEvalRowTemplate?.summary || {};
+  const trainingEvalRowTemplateCheckSummary = reports.trainingEvalRowTemplateCheck?.summary || {};
+  const trainingEvalReviewQueueSummary = reports.trainingEvalReviewQueuePlan?.summary || {};
+  const trainingEvalReviewQueueCheckSummary = reports.trainingEvalReviewQueuePlanCheck?.summary || {};
+  const architectureOntologySummary = reports.architectureOntologySeed?.summary || {};
+  const architectureOntologyCheckSummary = reports.architectureOntologySeedCheck?.summary || {};
   const tomorrowDayBatchSummary = reports.tomorrowDayBatch?.summary || {};
   const tomorrowDayBatchCheckSummary = reports.tomorrowDayBatchCheck?.summary || {};
   const innovationSummary = reports.innovationSmoke?.summary || {};
@@ -580,6 +596,54 @@ function buildBridge(reports) {
       source_ref: refs.githubFixturePayloadSmoke
     },
     {
+      id: 'training-eval-rubric',
+      title: 'Training Eval Rubric',
+      status: reports.trainingEvalRubricPack?.status === 'training_eval_rubric_pack_ready' &&
+        reports.trainingEvalRubricPackCheck?.status === 'training_eval_rubric_pack_guard_passed'
+        ? 'review_only_ready'
+        : 'needs_review',
+      signal: `${trainingEvalRubricSummary.suites ?? 0} suites, ${trainingEvalRubricSummary.criteria ?? 0} criteria, eval items ${trainingEvalRubricSummary.eval_items_planned ?? 0}, failures ${trainingEvalRubricCheckSummary.failures ?? 0}`,
+      owner_action_required: false,
+      route_hint: 'Kosmo KI quality rubric before any private training rows exist',
+      source_ref: refs.trainingEvalRubricPack
+    },
+    {
+      id: 'training-eval-row-template',
+      title: 'Training Eval Row Template',
+      status: reports.trainingEvalRowTemplate?.status === 'training_eval_row_template_ready' &&
+        reports.trainingEvalRowTemplateCheck?.status === 'training_eval_row_template_guard_passed'
+        ? 'review_only_ready'
+        : 'needs_review',
+      signal: `${trainingEvalRowTemplateSummary.templates ?? 0} templates, ${trainingEvalRowTemplateSummary.required_fields ?? 0} required fields, writes rows now ${trainingEvalRowTemplateSummary.writes_eval_rows_now ?? 0}, failures ${trainingEvalRowTemplateCheckSummary.failures ?? 0}`,
+      owner_action_required: false,
+      route_hint: 'Source-free row schema for future reviewed eval examples',
+      source_ref: refs.trainingEvalRowTemplate
+    },
+    {
+      id: 'training-eval-review-queue',
+      title: 'Training Eval Review Queue',
+      status: reports.trainingEvalReviewQueuePlan?.status === 'training_eval_review_queue_plan_ready' &&
+        reports.trainingEvalReviewQueuePlanCheck?.status === 'training_eval_review_queue_plan_guard_passed'
+        ? 'review_only_ready'
+        : 'needs_review',
+      signal: `${trainingEvalReviewQueueSummary.review_lanes ?? 0} lanes, ${trainingEvalReviewQueueSummary.queue_states ?? 0} states, queue items now ${trainingEvalReviewQueueSummary.queue_items_created_now ?? 0}, failures ${trainingEvalReviewQueueCheckSummary.failures ?? 0}`,
+      owner_action_required: false,
+      route_hint: 'Human/overseer review queue before training data promotion',
+      source_ref: refs.trainingEvalReviewQueuePlan
+    },
+    {
+      id: 'architecture-ontology-seed',
+      title: 'Architecture Ontology Seed',
+      status: reports.architectureOntologySeed?.status === 'architecture_ontology_seed_ready' &&
+        reports.architectureOntologySeedCheck?.status === 'architecture_ontology_seed_guard_passed'
+        ? 'review_only_ready'
+        : 'needs_review',
+      signal: `${architectureOntologySummary.entity_types ?? 0} entities, ${architectureOntologySummary.relation_types ?? 0} relations, ${architectureOntologySummary.facet_groups ?? 0} facet groups, failures ${architectureOntologyCheckSummary.failures ?? 0}`,
+      owner_action_required: false,
+      route_hint: 'Architecture ontology seed for References, Assets and future Kosmo evals',
+      source_ref: refs.architectureOntologySeed
+    },
+    {
       id: 'tomorrow-day-batch',
       title: 'Tomorrow Day Batch',
       status: reports.tomorrowDayBatch?.status === 'tomorrow_day_batch_ready' &&
@@ -760,6 +824,16 @@ function buildBridge(reports) {
       github_fixture_payload_smoke_payloads: githubFixturePayloadSmokeSummary.payloads ?? null,
       github_fixture_payload_smoke_lanes: githubFixturePayloadSmokeSummary.lanes ?? null,
       github_fixture_payload_smoke_content_types: githubFixturePayloadSmokeSummary.content_types ?? null,
+      training_eval_rubric_status: reports.trainingEvalRubricPack?.status || null,
+      training_eval_rubric_suites: trainingEvalRubricSummary.suites ?? null,
+      training_eval_rubric_criteria: trainingEvalRubricSummary.criteria ?? null,
+      training_eval_row_template_status: reports.trainingEvalRowTemplate?.status || null,
+      training_eval_row_template_templates: trainingEvalRowTemplateSummary.templates ?? null,
+      training_eval_review_queue_status: reports.trainingEvalReviewQueuePlan?.status || null,
+      training_eval_review_queue_lanes: trainingEvalReviewQueueSummary.review_lanes ?? null,
+      architecture_ontology_seed_status: reports.architectureOntologySeed?.status || null,
+      architecture_ontology_entity_types: architectureOntologySummary.entity_types ?? null,
+      architecture_ontology_relation_types: architectureOntologySummary.relation_types ?? null,
       tomorrow_day_batch_status: reports.tomorrowDayBatch?.status || null,
       tomorrow_day_batch_target_date: reports.tomorrowDayBatch?.target_date || null,
       innovation_smoke_status: reports.innovationSmoke?.status || null,
@@ -801,6 +875,10 @@ function buildBridge(reports) {
       'github_fixture_skeletons_card',
       'github_fixture_payloads_card',
       'github_fixture_payload_smoke_card',
+      'training_eval_rubric_card',
+      'training_eval_row_template_card',
+      'training_eval_review_queue_card',
+      'architecture_ontology_seed_card',
       'tomorrow_day_batch_card',
       'worker_boundary_card',
       'innovation_lane_card',
@@ -867,6 +945,10 @@ function renderMarkdown(bridge) {
   lines.push(`- GitHub fixture skeletons: ${bridge.summary.github_fixture_skeletons_status}, directories ${bridge.summary.github_fixture_skeletons_directories ?? '-'}, files ${bridge.summary.github_fixture_skeletons_files ?? '-'}`);
   lines.push(`- GitHub fixture payloads: ${bridge.summary.github_fixture_payloads_status}, payloads ${bridge.summary.github_fixture_payloads_written ?? '-'}`);
   lines.push(`- GitHub fixture payload smoke: ${bridge.summary.github_fixture_payload_smoke_status}, payloads ${bridge.summary.github_fixture_payload_smoke_payloads ?? '-'}, lanes ${bridge.summary.github_fixture_payload_smoke_lanes ?? '-'}, content types ${bridge.summary.github_fixture_payload_smoke_content_types ?? '-'}`);
+  lines.push(`- Training eval rubric: ${bridge.summary.training_eval_rubric_status}, suites ${bridge.summary.training_eval_rubric_suites ?? '-'}, criteria ${bridge.summary.training_eval_rubric_criteria ?? '-'}`);
+  lines.push(`- Training eval row template: ${bridge.summary.training_eval_row_template_status}, templates ${bridge.summary.training_eval_row_template_templates ?? '-'}`);
+  lines.push(`- Training eval review queue: ${bridge.summary.training_eval_review_queue_status}, lanes ${bridge.summary.training_eval_review_queue_lanes ?? '-'}`);
+  lines.push(`- Architecture ontology seed: ${bridge.summary.architecture_ontology_seed_status}, entities ${bridge.summary.architecture_ontology_entity_types ?? '-'}, relations ${bridge.summary.architecture_ontology_relation_types ?? '-'}`);
   lines.push(`- Innovation smoke: ${bridge.summary.innovation_smoke_status}`);
   lines.push(`- Public-ready after bridge: ${bridge.summary.public_ready_after_bridge}`);
   lines.push('');

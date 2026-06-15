@@ -29,6 +29,7 @@ type OrbitStatusBridgeReport = {
 
 const bridge = orbitStatusBridgeData as OrbitStatusBridgeReport;
 const githubCards = bridge.orbit_cards.filter((card) => card.id.startsWith('github-'));
+const trainingCards = bridge.orbit_cards.filter((card) => card.id.startsWith('training-') || card.id === 'architecture-ontology-seed');
 const blockerCards = bridge.orbit_cards.filter((card) => card.status === 'blocked' || card.status.startsWith('blocked_') || card.status === 'needs_review');
 
 function toneForStatus(status: string) {
@@ -86,6 +87,23 @@ export function OrbitStatusBridge() {
       <div className="mt-4 grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center justify-between gap-3">
+            <h3 className="text-base font-semibold text-white">Kosmo-KI Readiness</h3>
+            <span className="text-xs text-stone-500">{trainingCards.length} Gates</span>
+          </div>
+          <div className="mt-3 grid gap-3 md:grid-cols-2">
+            {trainingCards.map((card) => (
+              <article key={card.id} className="rounded-lg border border-white/10 bg-black/24 p-3">
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                  <h4 className="min-w-0 text-sm font-semibold leading-5 text-white">{card.title}</h4>
+                  <StatusPill value={card.status} />
+                </div>
+                <p className="mt-3 text-sm leading-5 text-stone-300">{card.signal}</p>
+                <p className="mt-2 text-xs leading-5 text-stone-500">{card.route_hint}</p>
+              </article>
+            ))}
+          </div>
+
+          <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
             <h3 className="text-base font-semibold text-white">GitHub-Signal-Kette</h3>
             <span className="text-xs text-stone-500">{githubCards.length} Signale</span>
           </div>

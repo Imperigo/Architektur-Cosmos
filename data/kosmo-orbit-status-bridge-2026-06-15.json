@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T15:03:58.567Z",
+  "generated_at": "2026-06-15T15:07:31.910Z",
   "status": "orbit_bridge_ready_with_blockers",
   "policy": {
     "dashboard_only": true,
@@ -66,6 +66,14 @@
     "data/kosmo-innovation-github-fixture-payloads-check-2026-06-15.json",
     "data/kosmo-innovation-github-fixture-payload-smoke-2026-06-15.json",
     "data/kosmo-innovation-github-fixture-payload-smoke-check-2026-06-15.json",
+    "data/kosmo-training-eval-rubric-pack-2026-06-15.json",
+    "data/kosmo-training-eval-rubric-pack-check-2026-06-15.json",
+    "data/kosmo-training-eval-row-template-2026-06-15.json",
+    "data/kosmo-training-eval-row-template-check-2026-06-15.json",
+    "data/kosmo-training-eval-review-queue-plan-2026-06-15.json",
+    "data/kosmo-training-eval-review-queue-plan-check-2026-06-15.json",
+    "data/kosmo-architecture-ontology-seed-2026-06-15.json",
+    "data/kosmo-architecture-ontology-seed-check-2026-06-15.json",
     "data/kosmo-tomorrow-day-batch-2026-06-15.json",
     "data/kosmo-tomorrow-day-batch-check-2026-06-15.json",
     "data/kosmo-innovation-lane-plan-2026-06-15.json",
@@ -73,7 +81,7 @@
     "data/kosmo-night-loop-checkpoint-2026-06-15.json"
   ],
   "summary": {
-    "cards": 39,
+    "cards": 43,
     "blocking_cards": 4,
     "owner_action_cards": 16,
     "source_root_blocked": true,
@@ -195,6 +203,16 @@
     "github_fixture_payload_smoke_payloads": 10,
     "github_fixture_payload_smoke_lanes": 3,
     "github_fixture_payload_smoke_content_types": 6,
+    "training_eval_rubric_status": "training_eval_rubric_pack_ready",
+    "training_eval_rubric_suites": 6,
+    "training_eval_rubric_criteria": 24,
+    "training_eval_row_template_status": "training_eval_row_template_ready",
+    "training_eval_row_template_templates": 6,
+    "training_eval_review_queue_status": "training_eval_review_queue_plan_ready",
+    "training_eval_review_queue_lanes": 5,
+    "architecture_ontology_seed_status": "architecture_ontology_seed_ready",
+    "architecture_ontology_entity_types": 8,
+    "architecture_ontology_relation_types": 10,
     "tomorrow_day_batch_status": "tomorrow_day_batch_ready",
     "tomorrow_day_batch_target_date": "2026-06-16",
     "innovation_smoke_status": "innovation_smoke_passed_review_only",
@@ -517,6 +535,42 @@
       "source_ref": "data/kosmo-innovation-github-fixture-payload-smoke-2026-06-15.json"
     },
     {
+      "id": "training-eval-rubric",
+      "title": "Training Eval Rubric",
+      "status": "review_only_ready",
+      "signal": "6 suites, 24 criteria, eval items 24, failures 0",
+      "owner_action_required": false,
+      "route_hint": "Kosmo KI quality rubric before any private training rows exist",
+      "source_ref": "data/kosmo-training-eval-rubric-pack-2026-06-15.json"
+    },
+    {
+      "id": "training-eval-row-template",
+      "title": "Training Eval Row Template",
+      "status": "review_only_ready",
+      "signal": "6 templates, 10 required fields, writes rows now 0, failures 0",
+      "owner_action_required": false,
+      "route_hint": "Source-free row schema for future reviewed eval examples",
+      "source_ref": "data/kosmo-training-eval-row-template-2026-06-15.json"
+    },
+    {
+      "id": "training-eval-review-queue",
+      "title": "Training Eval Review Queue",
+      "status": "review_only_ready",
+      "signal": "5 lanes, 6 states, queue items now 0, failures 0",
+      "owner_action_required": false,
+      "route_hint": "Human/overseer review queue before training data promotion",
+      "source_ref": "data/kosmo-training-eval-review-queue-plan-2026-06-15.json"
+    },
+    {
+      "id": "architecture-ontology-seed",
+      "title": "Architecture Ontology Seed",
+      "status": "review_only_ready",
+      "signal": "8 entities, 10 relations, 6 facet groups, failures 0",
+      "owner_action_required": false,
+      "route_hint": "Architecture ontology seed for References, Assets and future Kosmo evals",
+      "source_ref": "data/kosmo-architecture-ontology-seed-2026-06-15.json"
+    },
+    {
       "id": "tomorrow-day-batch",
       "title": "Tomorrow Day Batch",
       "status": "ready",
@@ -588,6 +642,10 @@
     "github_fixture_skeletons_card",
     "github_fixture_payloads_card",
     "github_fixture_payload_smoke_card",
+    "training_eval_rubric_card",
+    "training_eval_row_template_card",
+    "training_eval_review_queue_card",
+    "architecture_ontology_seed_card",
     "tomorrow_day_batch_card",
     "worker_boundary_card",
     "innovation_lane_card",
