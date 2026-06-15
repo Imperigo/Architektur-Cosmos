@@ -26,6 +26,8 @@ const refs = {
   ownerUnlockFastReplyCardCheck: `data/kosmo-owner-unlock-fast-reply-card-check-${dateStamp}.json`,
   ownerUnlockExactReplyPreview: `data/kosmo-owner-unlock-exact-reply-preview-${dateStamp}.json`,
   ownerUnlockExactReplyPreviewCheck: `data/kosmo-owner-unlock-exact-reply-preview-check-${dateStamp}.json`,
+  ownerUnlockPathAReadinessCertificate: `data/kosmo-owner-unlock-path-a-readiness-certificate-${dateStamp}.json`,
+  ownerUnlockPathAReadinessCertificateCheck: `data/kosmo-owner-unlock-path-a-readiness-certificate-check-${dateStamp}.json`,
   sourceRootActivation: `data/kosmo-source-root-activation-preflight-${dateStamp}.json`,
   privateMetadataInventory: `data/kosmo-private-metadata-inventory-runner-${dateStamp}.json`,
   privateMetadataInventoryFixture: `data/kosmo-private-metadata-inventory-fixture-smoke-${dateStamp}.json`,
@@ -121,6 +123,8 @@ function buildBridge(reports) {
   const ownerUnlockFastReplyCardCheckSummary = reports.ownerUnlockFastReplyCardCheck?.summary || {};
   const ownerUnlockExactReplyPreviewSummary = reports.ownerUnlockExactReplyPreview?.summary || {};
   const ownerUnlockExactReplyPreviewCheckSummary = reports.ownerUnlockExactReplyPreviewCheck?.summary || {};
+  const ownerUnlockPathAReadinessSummary = reports.ownerUnlockPathAReadinessCertificate?.summary || {};
+  const ownerUnlockPathAReadinessCheckSummary = reports.ownerUnlockPathAReadinessCertificateCheck?.summary || {};
   const activationSummary = reports.sourceRootActivation?.summary || {};
   const privateInventorySummary = reports.privateMetadataInventory?.summary || {};
   const privateInventoryFixtureSummary = reports.privateMetadataInventoryFixture?.summary || {};
@@ -355,6 +359,20 @@ function buildBridge(reports) {
       owner_action_required: true,
       route_hint: 'Proof that the exact reply block reaches dry-run review without applying a decision',
       source_ref: refs.ownerUnlockExactReplyPreview
+    },
+    {
+      id: 'owner-unlock-path-a-readiness',
+      title: 'Owner Unlock Path A Readiness',
+      status: reports.ownerUnlockPathAReadinessCertificate?.status === 'owner_unlock_path_a_readiness_certificate_ready' &&
+        reports.ownerUnlockPathAReadinessCertificateCheck?.status === 'owner_unlock_path_a_readiness_certificate_guard_passed'
+        ? 'owner_action'
+        : 'needs_review',
+      signal: reports.ownerUnlockPathAReadinessCertificate?.status
+        ? `can start after exact reply ${ownerUnlockPathAReadinessSummary.path_a_can_start_after_exact_owner_reply ? 'yes' : 'no'}, applies now ${ownerUnlockPathAReadinessSummary.applies_decision_now ? 'yes' : 'no'}, activation ready ${ownerUnlockPathAReadinessSummary.activation_ready_now ? 'yes' : 'no'}, failures ${ownerUnlockPathAReadinessCheckSummary.failures ?? 0}`
+        : 'missing Path A readiness certificate',
+      owner_action_required: true,
+      route_hint: 'Certificate of the exact owner-reply path before any private activation',
+      source_ref: refs.ownerUnlockPathAReadinessCertificate
     },
     {
       id: 'source-root-activation',
@@ -876,6 +894,9 @@ function buildBridge(reports) {
       owner_unlock_exact_reply_preview_status: reports.ownerUnlockExactReplyPreview?.status || null,
       owner_unlock_exact_reply_preview_validator_status: ownerUnlockExactReplyPreviewSummary.validator_status ?? null,
       owner_unlock_exact_reply_preview_patch_operations: ownerUnlockExactReplyPreviewSummary.patch_operations ?? null,
+      owner_unlock_path_a_readiness_status: reports.ownerUnlockPathAReadinessCertificate?.status || null,
+      owner_unlock_path_a_can_start_after_exact_reply: ownerUnlockPathAReadinessSummary.path_a_can_start_after_exact_owner_reply ?? null,
+      owner_unlock_path_a_applies_now: ownerUnlockPathAReadinessSummary.applies_decision_now ?? null,
       tomorrow_day_batch_status: reports.tomorrowDayBatch?.status || null,
       tomorrow_day_batch_target_date: reports.tomorrowDayBatch?.target_date || null,
       innovation_smoke_status: reports.innovationSmoke?.status || null,
@@ -902,6 +923,7 @@ function buildBridge(reports) {
       'source_root_owner_choice_consequence_matrix_card',
       'owner_unlock_fast_reply_card',
       'owner_unlock_exact_reply_preview_card',
+      'owner_unlock_path_a_readiness_card',
       'source_root_activation_card',
       'private_metadata_inventory_card',
       'pilot_reference_cards',
@@ -995,6 +1017,7 @@ function renderMarkdown(bridge) {
   lines.push(`- Architecture ontology seed: ${bridge.summary.architecture_ontology_seed_status}, entities ${bridge.summary.architecture_ontology_entity_types ?? '-'}, relations ${bridge.summary.architecture_ontology_relation_types ?? '-'}`);
   lines.push(`- Owner unlock fast reply card: ${bridge.summary.owner_unlock_fast_reply_card_status}, broad intent ${bridge.summary.owner_unlock_fast_reply_card_broad_intent ?? '-'}, applies now ${bridge.summary.owner_unlock_fast_reply_card_applies_now ?? '-'}`);
   lines.push(`- Owner unlock exact reply preview: ${bridge.summary.owner_unlock_exact_reply_preview_status}, validator ${bridge.summary.owner_unlock_exact_reply_preview_validator_status ?? '-'}, patches ${bridge.summary.owner_unlock_exact_reply_preview_patch_operations ?? '-'}`);
+  lines.push(`- Owner unlock Path A readiness: ${bridge.summary.owner_unlock_path_a_readiness_status}, can start after exact reply ${bridge.summary.owner_unlock_path_a_can_start_after_exact_reply ?? '-'}, applies now ${bridge.summary.owner_unlock_path_a_applies_now ?? '-'}`);
   lines.push(`- Innovation smoke: ${bridge.summary.innovation_smoke_status}`);
   lines.push(`- Public-ready after bridge: ${bridge.summary.public_ready_after_bridge}`);
   lines.push('');

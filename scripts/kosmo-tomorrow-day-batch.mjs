@@ -123,7 +123,9 @@ function buildPlan(reports) {
       'npm run kosmo:owner-unlock-fast-reply-card',
       'npm run kosmo:owner-unlock-fast-reply-card-check',
       'npm run kosmo:owner-unlock-exact-reply-preview',
-      'npm run kosmo:owner-unlock-exact-reply-preview-check'
+      'npm run kosmo:owner-unlock-exact-reply-preview-check',
+      'npm run kosmo:owner-unlock-path-a-readiness-certificate',
+      'npm run kosmo:owner-unlock-path-a-readiness-certificate-check'
     ],
     path_a_if_exact_owner_unlock_reply_present: [
       'npm run kosmo:owner-unlock-prompt-pack-check',

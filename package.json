@@ -280,6 +280,8 @@
     "kosmo:owner-unlock-fast-reply-card-check": "node scripts/kosmo-owner-unlock-fast-reply-card-check.mjs",
     "kosmo:owner-unlock-exact-reply-preview": "node scripts/kosmo-owner-unlock-exact-reply-preview.mjs",
     "kosmo:owner-unlock-exact-reply-preview-check": "node scripts/kosmo-owner-unlock-exact-reply-preview-check.mjs",
+    "kosmo:owner-unlock-path-a-readiness-certificate": "node scripts/kosmo-owner-unlock-path-a-readiness-certificate.mjs",
+    "kosmo:owner-unlock-path-a-readiness-certificate-check": "node scripts/kosmo-owner-unlock-path-a-readiness-certificate-check.mjs",
     "kosmo:villa-provenance-brief": "node scripts/kosmo-villa-provenance-review-brief.mjs",
     "kosmo:ingenbohl-pdf-brief": "node scripts/kosmo-ingenbohl-pdf-extraction-brief.mjs",
     "kosmo:sogn-source-root-brief": "node scripts/kosmo-sogn-source-root-decision-brief.mjs",
