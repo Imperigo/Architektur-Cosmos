@@ -126,7 +126,7 @@ function buildPlan(reports) {
         id: 'innovation_scout',
         lane: 'kosmo-prepare-kosmoreferences-kosmoasset',
         objective: 'Check current primary-source code and model candidates that can accelerate ArchitekturKosmos without installing or touching private data.',
-        first_commands: ['npm run kosmo:daily-innovation-scout', 'npm run kosmo:daily-innovation-scout-check'],
+        first_commands: ['npm run kosmo:daily-innovation-scout', 'npm run kosmo:daily-innovation-scout-check', 'npm run kosmo:innovation-github-watchlist', 'npm run kosmo:innovation-github-watchlist-check', 'npm run kosmo:innovation-github-discovery', 'npm run kosmo:innovation-github-discovery-check'],
         acceptance: ['Scout report exists', 'all candidates mapped to lanes', 'no install/private-read/training action enabled']
       },
       {
