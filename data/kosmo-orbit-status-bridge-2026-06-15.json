@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T15:33:17.740Z",
+  "generated_at": "2026-06-15T15:37:55.298Z",
   "status": "orbit_bridge_ready_with_blockers",
   "policy": {
     "dashboard_only": true,
@@ -31,6 +31,8 @@
     "data/kosmo-owner-unlock-exact-reply-preview-check-2026-06-15.json",
     "data/kosmo-owner-unlock-path-a-readiness-certificate-2026-06-15.json",
     "data/kosmo-owner-unlock-path-a-readiness-certificate-check-2026-06-15.json",
+    "data/kosmo-owner-unlock-patch-review-bundle-2026-06-15.json",
+    "data/kosmo-owner-unlock-patch-review-bundle-check-2026-06-15.json",
     "data/kosmo-source-root-activation-preflight-2026-06-15.json",
     "data/kosmo-private-metadata-inventory-runner-2026-06-15.json",
     "data/kosmo-private-metadata-inventory-fixture-smoke-2026-06-15.json",
@@ -87,9 +89,9 @@
     "data/kosmo-night-loop-checkpoint-2026-06-15.json"
   ],
   "summary": {
-    "cards": 46,
+    "cards": 47,
     "blocking_cards": 4,
-    "owner_action_cards": 19,
+    "owner_action_cards": 20,
     "source_root_blocked": true,
     "day_batch_status": "day_batch_loop_passed_review_only",
     "source_root_decision_refresh_status": "source_root_decision_session_refresh_not_needed",
@@ -228,6 +230,9 @@
     "owner_unlock_path_a_readiness_status": "owner_unlock_path_a_readiness_certificate_ready",
     "owner_unlock_path_a_can_start_after_exact_reply": true,
     "owner_unlock_path_a_applies_now": false,
+    "owner_unlock_patch_review_bundle_status": "owner_unlock_patch_review_bundle_ready",
+    "owner_unlock_patch_review_bundle_operations": 6,
+    "owner_unlock_patch_review_bundle_applies_now": false,
     "tomorrow_day_batch_status": "tomorrow_day_batch_ready",
     "tomorrow_day_batch_target_date": "2026-06-16",
     "innovation_smoke_status": "innovation_smoke_passed_review_only",
@@ -368,6 +373,15 @@
       "owner_action_required": true,
       "route_hint": "Certificate of the exact owner-reply path before any private activation",
       "source_ref": "data/kosmo-owner-unlock-path-a-readiness-certificate-2026-06-15.json"
+    },
+    {
+      "id": "owner-unlock-patch-review-bundle",
+      "title": "Owner Unlock Patch Review Bundle",
+      "status": "review_only_ready",
+      "signal": "6 patches, source-root 1, owner cards 5, applies now no, failures 0",
+      "owner_action_required": true,
+      "route_hint": "Review exact intake patch operations before any template edit",
+      "source_ref": "data/kosmo-owner-unlock-patch-review-bundle-2026-06-15.json"
     },
     {
       "id": "source-root-activation",
@@ -670,6 +684,7 @@
     "owner_unlock_fast_reply_card",
     "owner_unlock_exact_reply_preview_card",
     "owner_unlock_path_a_readiness_card",
+    "owner_unlock_patch_review_bundle_card",
     "source_root_activation_card",
     "private_metadata_inventory_card",
     "pilot_reference_cards",

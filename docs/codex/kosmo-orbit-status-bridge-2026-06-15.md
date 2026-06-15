@@ -1,13 +1,13 @@
 # Kosmo Orbit Status Bridge
 
-Generated: 2026-06-15T15:33:17.740Z
+Generated: 2026-06-15T15:37:55.298Z
 Status: `orbit_bridge_ready_with_blockers`
 
 ## Summary
 
-- Cards: 46
+- Cards: 47
 - Blocking cards: 4
-- Owner action cards: 19
+- Owner action cards: 20
 - Source root blocked: yes
 - Day batch: day_batch_loop_passed_review_only
 - Source-root decision refresh: source_root_decision_session_refresh_not_needed, changed no, options 10, failures 0
@@ -48,6 +48,7 @@ Status: `orbit_bridge_ready_with_blockers`
 - Owner unlock fast reply card: owner_unlock_fast_reply_card_ready, broad intent true, applies now false
 - Owner unlock exact reply preview: owner_unlock_answer_dry_run_ready_for_review, validator owner_unlock_reply_valid, patches 6
 - Owner unlock Path A readiness: owner_unlock_path_a_readiness_certificate_ready, can start after exact reply true, applies now false
+- Owner unlock patch review bundle: owner_unlock_patch_review_bundle_ready, operations 6, applies now false
 - Innovation smoke: innovation_smoke_passed_review_only
 - Public-ready after bridge: 0
 
@@ -70,6 +71,7 @@ Status: `orbit_bridge_ready_with_blockers`
 | `owner-unlock-fast-reply-card` Owner Unlock Fast Reply Card | owner_action | yes | broad intent yes, suggestions 2, applies now no, failures 0 |
 | `owner-unlock-exact-reply-preview` Owner Unlock Exact Reply Preview | review_only_ready | yes | validator owner_unlock_reply_valid, intake owner_unlock_reply_intake_map_ready_for_review, patches 6, failures 0 |
 | `owner-unlock-path-a-readiness` Owner Unlock Path A Readiness | owner_action | yes | can start after exact reply yes, applies now no, activation ready no, failures 0 |
+| `owner-unlock-patch-review-bundle` Owner Unlock Patch Review Bundle | review_only_ready | yes | 6 patches, source-root 1, owner cards 5, applies now no, failures 0 |
 | `source-root-activation` Source Root Activation | blocked | yes | source_root_activation_waiting_for_owner_storage_action, safe commands 13, blocked 4 |
 | `local-models` Local Models | review_only_ready | no | 4/4 roles, 8 Ollama models, 70 GB |
 | `local-worker-http-runner` Local Worker HTTP Runner | review_only_ready | no | local_worker_http_runner_dry_run_ready, check local_worker_http_runner_guard_passed, safe inputs 6 |
@@ -124,6 +126,7 @@ Status: `orbit_bridge_ready_with_blockers`
 - `owner_unlock_fast_reply_card`
 - `owner_unlock_exact_reply_preview_card`
 - `owner_unlock_path_a_readiness_card`
+- `owner_unlock_patch_review_bundle_card`
 - `source_root_activation_card`
 - `private_metadata_inventory_card`
 - `pilot_reference_cards`

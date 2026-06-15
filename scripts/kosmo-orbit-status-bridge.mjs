@@ -28,6 +28,8 @@ const refs = {
   ownerUnlockExactReplyPreviewCheck: `data/kosmo-owner-unlock-exact-reply-preview-check-${dateStamp}.json`,
   ownerUnlockPathAReadinessCertificate: `data/kosmo-owner-unlock-path-a-readiness-certificate-${dateStamp}.json`,
   ownerUnlockPathAReadinessCertificateCheck: `data/kosmo-owner-unlock-path-a-readiness-certificate-check-${dateStamp}.json`,
+  ownerUnlockPatchReviewBundle: `data/kosmo-owner-unlock-patch-review-bundle-${dateStamp}.json`,
+  ownerUnlockPatchReviewBundleCheck: `data/kosmo-owner-unlock-patch-review-bundle-check-${dateStamp}.json`,
   sourceRootActivation: `data/kosmo-source-root-activation-preflight-${dateStamp}.json`,
   privateMetadataInventory: `data/kosmo-private-metadata-inventory-runner-${dateStamp}.json`,
   privateMetadataInventoryFixture: `data/kosmo-private-metadata-inventory-fixture-smoke-${dateStamp}.json`,
@@ -125,6 +127,8 @@ function buildBridge(reports) {
   const ownerUnlockExactReplyPreviewCheckSummary = reports.ownerUnlockExactReplyPreviewCheck?.summary || {};
   const ownerUnlockPathAReadinessSummary = reports.ownerUnlockPathAReadinessCertificate?.summary || {};
   const ownerUnlockPathAReadinessCheckSummary = reports.ownerUnlockPathAReadinessCertificateCheck?.summary || {};
+  const ownerUnlockPatchReviewBundleSummary = reports.ownerUnlockPatchReviewBundle?.summary || {};
+  const ownerUnlockPatchReviewBundleCheckSummary = reports.ownerUnlockPatchReviewBundleCheck?.summary || {};
   const activationSummary = reports.sourceRootActivation?.summary || {};
   const privateInventorySummary = reports.privateMetadataInventory?.summary || {};
   const privateInventoryFixtureSummary = reports.privateMetadataInventoryFixture?.summary || {};
@@ -373,6 +377,20 @@ function buildBridge(reports) {
       owner_action_required: true,
       route_hint: 'Certificate of the exact owner-reply path before any private activation',
       source_ref: refs.ownerUnlockPathAReadinessCertificate
+    },
+    {
+      id: 'owner-unlock-patch-review-bundle',
+      title: 'Owner Unlock Patch Review Bundle',
+      status: reports.ownerUnlockPatchReviewBundle?.status === 'owner_unlock_patch_review_bundle_ready' &&
+        reports.ownerUnlockPatchReviewBundleCheck?.status === 'owner_unlock_patch_review_bundle_guard_passed'
+        ? 'review_only_ready'
+        : 'needs_review',
+      signal: reports.ownerUnlockPatchReviewBundle?.status
+        ? `${ownerUnlockPatchReviewBundleSummary.patch_operations ?? 0} patches, source-root ${ownerUnlockPatchReviewBundleSummary.source_root_patches ?? 0}, owner cards ${ownerUnlockPatchReviewBundleSummary.owner_card_patches ?? 0}, applies now ${ownerUnlockPatchReviewBundleSummary.applies_patch_now ? 'yes' : 'no'}, failures ${ownerUnlockPatchReviewBundleCheckSummary.failures ?? 0}`
+        : 'missing patch review bundle',
+      owner_action_required: true,
+      route_hint: 'Review exact intake patch operations before any template edit',
+      source_ref: refs.ownerUnlockPatchReviewBundle
     },
     {
       id: 'source-root-activation',
@@ -897,6 +915,9 @@ function buildBridge(reports) {
       owner_unlock_path_a_readiness_status: reports.ownerUnlockPathAReadinessCertificate?.status || null,
       owner_unlock_path_a_can_start_after_exact_reply: ownerUnlockPathAReadinessSummary.path_a_can_start_after_exact_owner_reply ?? null,
       owner_unlock_path_a_applies_now: ownerUnlockPathAReadinessSummary.applies_decision_now ?? null,
+      owner_unlock_patch_review_bundle_status: reports.ownerUnlockPatchReviewBundle?.status || null,
+      owner_unlock_patch_review_bundle_operations: ownerUnlockPatchReviewBundleSummary.patch_operations ?? null,
+      owner_unlock_patch_review_bundle_applies_now: ownerUnlockPatchReviewBundleSummary.applies_patch_now ?? null,
       tomorrow_day_batch_status: reports.tomorrowDayBatch?.status || null,
       tomorrow_day_batch_target_date: reports.tomorrowDayBatch?.target_date || null,
       innovation_smoke_status: reports.innovationSmoke?.status || null,
@@ -924,6 +945,7 @@ function buildBridge(reports) {
       'owner_unlock_fast_reply_card',
       'owner_unlock_exact_reply_preview_card',
       'owner_unlock_path_a_readiness_card',
+      'owner_unlock_patch_review_bundle_card',
       'source_root_activation_card',
       'private_metadata_inventory_card',
       'pilot_reference_cards',
@@ -1018,6 +1040,7 @@ function renderMarkdown(bridge) {
   lines.push(`- Owner unlock fast reply card: ${bridge.summary.owner_unlock_fast_reply_card_status}, broad intent ${bridge.summary.owner_unlock_fast_reply_card_broad_intent ?? '-'}, applies now ${bridge.summary.owner_unlock_fast_reply_card_applies_now ?? '-'}`);
   lines.push(`- Owner unlock exact reply preview: ${bridge.summary.owner_unlock_exact_reply_preview_status}, validator ${bridge.summary.owner_unlock_exact_reply_preview_validator_status ?? '-'}, patches ${bridge.summary.owner_unlock_exact_reply_preview_patch_operations ?? '-'}`);
   lines.push(`- Owner unlock Path A readiness: ${bridge.summary.owner_unlock_path_a_readiness_status}, can start after exact reply ${bridge.summary.owner_unlock_path_a_can_start_after_exact_reply ?? '-'}, applies now ${bridge.summary.owner_unlock_path_a_applies_now ?? '-'}`);
+  lines.push(`- Owner unlock patch review bundle: ${bridge.summary.owner_unlock_patch_review_bundle_status}, operations ${bridge.summary.owner_unlock_patch_review_bundle_operations ?? '-'}, applies now ${bridge.summary.owner_unlock_patch_review_bundle_applies_now ?? '-'}`);
   lines.push(`- Innovation smoke: ${bridge.summary.innovation_smoke_status}`);
   lines.push(`- Public-ready after bridge: ${bridge.summary.public_ready_after_bridge}`);
   lines.push('');

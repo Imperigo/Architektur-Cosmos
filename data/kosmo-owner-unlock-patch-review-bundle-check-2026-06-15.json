@@ -1,0 +1,131 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T15:37:16.104Z",
+  "status": "owner_unlock_patch_review_bundle_guard_passed",
+  "policy": {
+    "review_only": true,
+    "validates_bundle_only": true,
+    "writes_intake_file": false,
+    "records_decisions": false,
+    "reads_private_content": false,
+    "runs_private_inventory_now": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-owner-unlock-patch-review-bundle-2026-06-15.json"
+  ],
+  "summary": {
+    "checks": 21,
+    "passed": 21,
+    "failures": 0,
+    "warnings": 0,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_ready",
+      "status": "passed",
+      "evidence": "owner_unlock_patch_review_bundle_ready"
+    },
+    {
+      "id": "policy_review_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_bundle_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "does_not_apply_patch_now",
+      "status": "passed",
+      "evidence": "false/false"
+    },
+    {
+      "id": "policy_no_intake_write",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_decision_recording",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_session_mutation",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_source_root_guards",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_inventory",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "six_patch_operations",
+      "status": "passed",
+      "evidence": 6
+    },
+    {
+      "id": "one_source_root_patch",
+      "status": "passed",
+      "evidence": 1
+    },
+    {
+      "id": "five_owner_card_patches",
+      "status": "passed",
+      "evidence": 5
+    },
+    {
+      "id": "all_owner_card_patches_allowed",
+      "status": "passed",
+      "evidence": "5/5"
+    },
+    {
+      "id": "no_reference_decision_patches",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "hard_stop_no_apply",
+      "status": "passed",
+      "evidence": "do not apply this bundle automatically. do not write the intake template from this bundle. do not mutate session files from this bundle. do not run source-root guards from this bundle. do not read private content. keep public-ready at 0."
+    },
+    {
+      "id": "hard_stop_no_intake_write",
+      "status": "passed",
+      "evidence": "do not apply this bundle automatically. do not write the intake template from this bundle. do not mutate session files from this bundle. do not run source-root guards from this bundle. do not read private content. keep public-ready at 0."
+    },
+    {
+      "id": "hard_stop_no_session_mutation",
+      "status": "passed",
+      "evidence": "do not apply this bundle automatically. do not write the intake template from this bundle. do not mutate session files from this bundle. do not run source-root guards from this bundle. do not read private content. keep public-ready at 0."
+    },
+    {
+      "id": "hard_stop_no_private_content",
+      "status": "passed",
+      "evidence": "do not apply this bundle automatically. do not write the intake template from this bundle. do not mutate session files from this bundle. do not run source-root guards from this bundle. do not read private content. keep public-ready at 0."
+    },
+    {
+      "id": "hard_stop_public_ready_zero",
+      "status": "passed",
+      "evidence": "do not apply this bundle automatically. do not write the intake template from this bundle. do not mutate session files from this bundle. do not run source-root guards from this bundle. do not read private content. keep public-ready at 0."
+    }
+  ]
+}
